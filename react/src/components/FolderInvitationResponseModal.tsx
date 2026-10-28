@@ -84,7 +84,26 @@ const FolderInvitationResponseModal: React.FC<
             {sharePermissionSummary(item.permissions)}
           </MetadataListItem>
         </BAIMetadataList>
-        <HStack gap={2}>
+        <HStack gap={2} justify="end">
+          <Button
+            variant="destructive"
+            label={t('summary.Decline')}
+            clickAction={async () => {
+              try {
+                await rejectInvitation(item.id);
+                message.success(
+                  t('data.invitation.SuccessfullyDeclinedInvitation'),
+                );
+              } catch (e: any) {
+                message.error(
+                  getErrorMessage(
+                    _.get(_.castArray(e)[0], 'message') ||
+                      t('data.invitation.FailedToDeclineInvitation'),
+                  ),
+                );
+              }
+            }}
+          />
           <Button
             variant="primary"
             label={t('summary.Accept')}
@@ -112,25 +131,6 @@ const FolderInvitationResponseModal: React.FC<
                   getErrorMessage(
                     _.get(_.castArray(e)[0], 'message') ||
                       t('data.invitation.FailedToAcceptInvitation'),
-                  ),
-                );
-              }
-            }}
-          />
-          <Button
-            variant="destructive"
-            label={t('summary.Decline')}
-            clickAction={async () => {
-              try {
-                await rejectInvitation(item.id);
-                message.success(
-                  t('data.invitation.SuccessfullyDeclinedInvitation'),
-                );
-              } catch (e: any) {
-                message.error(
-                  getErrorMessage(
-                    _.get(_.castArray(e)[0], 'message') ||
-                      t('data.invitation.FailedToDeclineInvitation'),
                   ),
                 );
               }

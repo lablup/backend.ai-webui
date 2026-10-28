@@ -372,15 +372,16 @@ const InviteFolderSettingModalBody: React.FC<{
                       );
                       setRecipientError(null);
                     }}
-                    status={
-                      recipientError
-                        ? { type: 'error', message: recipientError }
-                        : undefined
-                    }
+                    status={recipientError ? { type: 'error' } : undefined}
                     width="100%"
                   />
                 </Tooltip>
               </Suspense>
+              {recipientError ? (
+                <BAIText type="danger" role="alert">
+                  {recipientError}
+                </BAIText>
+              ) : null}
             </StackItem>
             <StackItem size="static">
               <BAIEntitySharePermissionSelector
@@ -855,8 +856,11 @@ const SharedUserTable: React.FC<{
         {
           title: t('data.folders.MountPermission'),
           dataIndex: 'mountLevel',
+          // A mount policy row is keyed by user id, so a share sent to an
+          // account is editable before it is accepted; an e-mail invite gets
+          // its user id on acceptance.
           render: (level: ShareRow['mountLevel'], row) =>
-            row.status === 'ACCEPTED' && row.userId ? (
+            row.userId ? (
               <BAISelector
                 aria-label={t('data.folders.MountPermission')}
                 placement="below"

@@ -181,12 +181,12 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
       label: t('data.folders.Ownership'),
       children:
         vfolderNode?.accessControl?.ownershipType === 'USER' ? (
-          <HStack gap={2}>
+          <HStack gap={2} align="center">
             <Text>{t('data.User')}</Text>
             <UserIcon size="1em" />
           </HStack>
         ) : (
-          <HStack gap={2}>
+          <HStack gap={2} align="center">
             <Text>{t('data.Project')}</Text>
             <UsersIcon size="1em" />
           </HStack>

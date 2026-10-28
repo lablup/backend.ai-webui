@@ -163,12 +163,12 @@ const SharedFolderPermissionInfoModalV2: React.FC<
           </MetadataListItem>
           <MetadataListItem label={t('data.folders.Type')}>
             {isUserOwned ? (
-              <HStack gap={2}>
+              <HStack gap={2} align="center">
                 <Text>{t('data.User')}</Text>
                 <UserIcon size="1em" />
               </HStack>
             ) : (
-              <HStack gap={2}>
+              <HStack gap={2} align="center">
                 <Text>{t('data.Project')}</Text>
                 <UsersIcon size="1em" />
               </HStack>
