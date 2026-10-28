@@ -7,7 +7,6 @@ import type {
   AdminDeploymentQuery as AdminDeploymentQueryType,
   DeploymentFilter,
   DeploymentOrderBy,
-  DeploymentStatus,
 } from '../__generated__/AdminDeploymentQuery.graphql';
 import { App } from '../app-shim';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
@@ -20,6 +19,11 @@ import {
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import DeploymentSettingModal from './DeploymentSettingModal';
+import DeploymentStatusCategoryControl, {
+  type DeploymentStatusCategory,
+  deploymentStatusCategoryFilter,
+  deploymentStatusCategoryOf,
+} from './DeploymentStatusCategoryControl';
 import { Link } from '@lablup/ui-common/Link';
 import { Text } from '@lablup/ui-common/Text';
 import {
@@ -33,8 +37,6 @@ import {
   type BAITableSettings,
   BAIUnmountAfterClose,
   BAIScopedUserSelect,
-  BAISegmentedControl,
-  BAISegmentedControlItem,
   availableDeploymentSorterKeys,
   DeploymentOrderValue,
   filterOutEmpty,
@@ -59,8 +61,6 @@ import {
   usePreloadedQuery,
   UseQueryLoaderLoadQueryOptions,
 } from 'react-relay';
-
-export type DeploymentStatusCategory = 'running' | 'finished';
 
 export const AdminDeploymentQuery = graphql`
   query AdminDeploymentQuery(
@@ -106,16 +106,6 @@ export interface AdminDeploymentProps {
   tableSettings: BAITableSettings;
 }
 
-const finishedStatuses: ReadonlyArray<DeploymentStatus> = ['STOPPED'];
-
-/** The hard-coded status scope behind the Running / Terminated toggle. */
-export const statusCategoryFilterFor = (
-  category: DeploymentStatusCategory,
-): DeploymentFilter =>
-  category === 'finished'
-    ? { status: { in: finishedStatuses } }
-    : { status: { notIn: finishedStatuses } };
-
 /**
  * `order` is `[-]<camelCaseKey>`; a key the table cannot sort by is dropped.
  * Shared with `AdminDeploymentPage`, which sanitizes URL-supplied `order`
@@ -159,9 +149,11 @@ const AdminDeployment = ({
 
   const mergedFilter = queryRef.variables.filter as
     DeploymentFilter | undefined;
-  const statusCategory: DeploymentStatusCategory =
-    mergedFilter?.status?.in?.includes('STOPPED') ? 'finished' : 'running';
-  const userFilter = _.omit(mergedFilter, 'status') as DeploymentFilter;
+  const statusCategory = deploymentStatusCategoryOf(mergedFilter);
+  const userFilter = _.omit(mergedFilter, [
+    'status',
+    'desiredReplicas',
+  ]) as DeploymentFilter;
 
   const order =
     (convertFirstOrderByToString(
@@ -356,32 +348,22 @@ const AdminDeployment = ({
       <BAIFlex direction="column" align="stretch" gap="sm">
         <BAIFlex justify="between" wrap="wrap" gap="sm">
           <BAIFlex gap="sm" align="start" wrap="wrap" style={{ flexShrink: 1 }}>
-            <BAISegmentedControl
+            <DeploymentStatusCategoryControl
               value={statusCategory}
-              onChange={(value) => {
-                const nextCategory = value as DeploymentStatusCategory;
+              onChange={(nextCategory: DeploymentStatusCategory) => {
                 onReload(
                   {
                     ...queryRef.variables,
                     filter: {
                       ...userFilter,
-                      ...statusCategoryFilterFor(nextCategory),
+                      ...deploymentStatusCategoryFilter(nextCategory),
                     },
                     offset: 0,
                   },
                   { fetchPolicy: 'network-only' },
                 );
               }}
-            >
-              <BAISegmentedControlItem
-                value="running"
-                label={t('deployment.Running')}
-              />
-              <BAISegmentedControlItem
-                value="finished"
-                label={t('deployment.status.Terminated')}
-              />
-            </BAISegmentedControl>
+            />
             <BAIGraphQLPropertyFilter<DeploymentFilter>
               filterProperties={filterProperties}
               value={userFilter ?? undefined}
@@ -391,7 +373,7 @@ const AdminDeployment = ({
                     ...queryRef.variables,
                     filter: {
                       ...(value ?? {}),
-                      ...statusCategoryFilterFor(statusCategory),
+                      ...deploymentStatusCategoryFilter(statusCategory),
                     },
                     offset: 0,
                   },
@@ -418,7 +400,7 @@ const AdminDeployment = ({
                 ...queryRef.variables,
                 filter: {
                   ...toEntityLabelFilter(label),
-                  ...statusCategoryFilterFor(statusCategory),
+                  ...deploymentStatusCategoryFilter(statusCategory),
                 },
                 offset: 0,
               },

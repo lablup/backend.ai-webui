@@ -1227,6 +1227,8 @@
         "deployment.OpenToPublicCannotBeChanged",
         "deployment.OpenToPublicTooltip",
         "deployment.Owner",
+        "deployment.Paused",
+        "deployment.PausedTooltip",
         "deployment.Private",
         "deployment.Project",
         "deployment.Public",
@@ -1235,8 +1237,9 @@
         "deployment.RevisionDetail",
         "deployment.RevisionNumber",
         "deployment.RevisionNumberWithID",
-        "deployment.Running",
         "deployment.RuntimeVariant",
+        "deployment.Serving",
+        "deployment.ServingTooltip",
         "deployment.Tags",
         "deployment.TagsPlaceholder",
         "deployment.TagsTooltip",
@@ -3325,13 +3328,15 @@
       "tabs": [
         {
           "param": "statusCategory",
-          "key": "finished",
-          "labelKey": "deployment.status.Terminated"
+          "key": "finished"
         },
         {
           "param": "statusCategory",
-          "key": "running",
-          "labelKey": "deployment.Running"
+          "key": "paused"
+        },
+        {
+          "param": "statusCategory",
+          "key": "serving"
         }
       ],
       "settings": [],
@@ -3364,18 +3369,23 @@
         "deployment.OpenToPublic",
         "deployment.OpenToPublicCannotBeChanged",
         "deployment.OpenToPublicTooltip",
+        "deployment.Paused",
+        "deployment.PausedTooltip",
         "deployment.Public",
         "deployment.ResourceGroupCannotBeChanged",
         "deployment.RevisionDetail",
         "deployment.RevisionNumber",
         "deployment.RevisionNumberWithID",
         "deployment.RuntimeVariant",
+        "deployment.Serving",
+        "deployment.ServingTooltip",
         "deployment.Tags",
         "deployment.TagsPlaceholder",
         "deployment.TagsTooltip",
         "deployment.filter.EndpointUrl",
         "deployment.filter.Name",
         "deployment.filter.OpenToPublic",
+        "deployment.status.Terminated",
         "entityLabel.LabelKey",
         "entityLabel.LabelValue",
         "modelService.ExpectedStatusCode",
@@ -4230,8 +4240,7 @@
       "tabs": [
         {
           "param": "statusCategory",
-          "key": "finished",
-          "labelKey": "deployment.status.Terminated"
+          "key": "finished"
         },
         {
           "param": "statusCategory",
@@ -4288,6 +4297,7 @@
         "deployment.filter.EndpointUrl",
         "deployment.filter.Name",
         "deployment.filter.OpenToPublic",
+        "deployment.status.Terminated",
         "entityLabel.LabelKey",
         "entityLabel.LabelValue",
         "modelService.ExpectedStatusCode",

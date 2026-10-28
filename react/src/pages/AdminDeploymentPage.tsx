@@ -28,7 +28,6 @@ import type {
 import AdminDeployment, {
   AdminDeploymentQuery,
   sanitizeDeploymentOrder,
-  statusCategoryFilterFor,
 } from '../components/AdminDeployment';
 import AdminDeploymentPreset, {
   AdminDeploymentPresetQuery,
@@ -43,6 +42,7 @@ import AdminRuntimeVariantPreset, {
   AdminRuntimeVariantPresetQuery,
 } from '../components/AdminRuntimeVariantPreset';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
+import { deploymentStatusCategoryFilter } from '../components/DeploymentStatusCategoryControl';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { useCurrentDomainValue } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -92,11 +92,9 @@ const AdminDeploymentPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
 
-  // Default status scope for the deployments tab: hide terminated deployments.
-  // `status` is never a user-settable filter property, so the deployments tab
-  // owns it entirely via its running/finished toggle. On first load (no
-  // persisted filter) we fall back to "running".
-  const deploymentRunningFilter = statusCategoryFilterFor('running');
+  // The deployments tab owns `status` and `desiredReplicas` through its
+  // Serving / Paused / Terminated toggle; a first load falls back to Serving.
+  const deploymentRunningFilter = deploymentStatusCategoryFilter('serving');
 
   // A single `{ tab, filter, order }` URL state is shared by every tab, plus a
   // single pagination state. Only the active tab's values are ever present in
@@ -313,7 +311,7 @@ const AdminDeploymentPage: React.FC = () => {
           loadDeploymentQuery(
             {
               // A link from elsewhere (e.g. a tag on the detail page) carries
-              // no `status`, so it starts in the running scope.
+              // no `status`, so it starts in the Serving scope.
               filter: urlFilter?.status
                 ? urlFilter
                 : { ...urlFilter, ...deploymentRunningFilter },
