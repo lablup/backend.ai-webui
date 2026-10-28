@@ -88,6 +88,8 @@ describe('applyWebUISettings', () => {
       loginAttemptLimit: 5,
       loginBlockTime: 600,
       autoLogout: true,
+      pluginLogin: 'signup-cloud',
+      pluginPage: ['test-plugin1', 'test-plugin2'],
     };
     expect(applyWebUISettings(state, doc, 'domain')).toEqual(state);
     const next = applyWebUISettings(state, doc, 'public');
@@ -97,6 +99,8 @@ describe('applyWebUISettings', () => {
     expect(next.login_attempt_limit).toBe(5);
     expect(next.login_block_time).toBe(600);
     expect(next.autoLogout).toBe(true);
+    expect(next.loginPlugin).toBe('signup-cloud');
+    expect(next.pluginPages).toEqual(['test-plugin1', 'test-plugin2']);
   });
 
   it('does not mutate the input state', () => {
