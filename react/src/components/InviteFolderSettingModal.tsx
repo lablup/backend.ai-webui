@@ -403,7 +403,9 @@ const InviteFolderSettingModalBody: React.FC<{
                   placement="below"
                   width={150}
                   options={mountLevelOptions}
-                  value={mountLevel}
+                  // An e-mail invite gets the folder default, so the disabled
+                  // selector shows that value rather than the last pick.
+                  value={isEmailInvite ? defaultMountLevel : mountLevel}
                   onChange={(next) => setMountLevel(next as MountLevel)}
                   disabled={isEmailInvite}
                 />
