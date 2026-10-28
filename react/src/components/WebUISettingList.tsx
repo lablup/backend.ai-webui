@@ -24,8 +24,14 @@ import SettingList, { type SettingGroup } from './SettingList';
 import { useWebUISettingLabels } from './WebUISettingLabels';
 import { Button } from '@lablup/ui-common/Button';
 import { Text } from '@lablup/ui-common/Text';
-import { BAIUncontrolledInput, useErrorMessageResolver } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAIModal,
+  BAIUncontrolledInput,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { CircleAlert } from 'lucide-react';
 import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useBlocker } from 'react-router-dom';
@@ -127,32 +133,29 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, []);
 
-  const applySettings = () => {
-    modal.confirm({
-      title: t('webuiSettings.ApplySettings'),
-      content: t('webuiSettings.ApplySettingsDesc'),
-      okText: t('webuiSettings.Apply'),
-      cancelText: t('button.Cancel'),
-      onOk: async () => {
-        try {
-          await updateDomainAppConfig(
-            WEBUI_SETTINGS_CONFIG_KEY,
-            buildWebUISettingsDocument('domain', draft, fileState),
-          );
-          if (canEditPublic) {
-            await updatePublicDomainAppConfig(
-              WEBUI_SETTINGS_CONFIG_KEY,
-              buildWebUISettingsDocument('public', draft, fileState),
-            );
-          }
-          // The reloaded page runs the merge again; that is the feedback.
-          isLeavingAfterApplyRef.current = true;
-          window.location.reload();
-        } catch (error) {
-          message.error(getErrorMessage(error));
-        }
-      },
-    });
+  const [isApplyConfirmOpen, setIsApplyConfirmOpen] = useState(false);
+  const [isApplying, setIsApplying] = useState(false);
+
+  const applySettings = async () => {
+    setIsApplying(true);
+    try {
+      await updateDomainAppConfig(
+        WEBUI_SETTINGS_CONFIG_KEY,
+        buildWebUISettingsDocument('domain', draft, fileState),
+      );
+      if (canEditPublic) {
+        await updatePublicDomainAppConfig(
+          WEBUI_SETTINGS_CONFIG_KEY,
+          buildWebUISettingsDocument('public', draft, fileState),
+        );
+      }
+      // The reloaded page runs the merge again; that is the feedback.
+      isLeavingAfterApplyRef.current = true;
+      window.location.reload();
+    } catch (error) {
+      message.error(getErrorMessage(error));
+      setIsApplying(false);
+    }
   };
 
   const toSettingItem = (
@@ -258,21 +261,40 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
   );
 
   return (
-    <SettingList
-      settingGroups={settingGroups}
-      showSearchBar
-      showChangedOptionFilter
-      showResetButton
-      onReset={() => setDraft({})}
-      primaryButton={
-        <Button
-          variant="primary"
-          label={t('webuiSettings.Apply')}
-          isDisabled={!isDirty}
-          onClick={applySettings}
-        />
-      }
-    />
+    <>
+      <SettingList
+        settingGroups={settingGroups}
+        showSearchBar
+        showChangedOptionFilter
+        showResetButton
+        onReset={() => setDraft({})}
+        primaryButton={
+          <Button
+            variant="primary"
+            label={t('webuiSettings.Apply')}
+            isDisabled={!isDirty}
+            onClick={() => setIsApplyConfirmOpen(true)}
+          />
+        }
+      />
+      <BAIModal
+        open={isApplyConfirmOpen}
+        title={
+          <BAIFlex gap="xxs" align="center">
+            <CircleAlert size="1em" color="var(--color-warning)" />
+            {t('webuiSettings.ApplySettings')}
+          </BAIFlex>
+        }
+        okText={t('webuiSettings.Apply')}
+        cancelText={t('button.Cancel')}
+        confirmLoading={isApplying}
+        maskClosable={false}
+        onOk={applySettings}
+        onCancel={() => setIsApplyConfirmOpen(false)}
+      >
+        <Text>{t('webuiSettings.ApplySettingsDesc')}</Text>
+      </BAIModal>
+    </>
   );
 };
 
