@@ -2777,6 +2777,7 @@
     "PresetName": "자원 프리셋 이름",
     "PresetOnlyAvailableInResourceGroup": "\"{{preset}}\" 프리셋은 \"{{name}}\" 자원 그룹에서만 사용할 수 있습니다. 다른 자원그룹을 선택해주세요.",
     "RAM": "메모리 (GB)",
+    "RequiresSlotsNotInResourceGroup": "선택한 자원 그룹에 없는 {{slots}} 자원이 필요합니다",
     "ResourcePreset": "자원 프리셋",
     "ResourcePresets": "자원 프리셋",
     "Resources": "자원",

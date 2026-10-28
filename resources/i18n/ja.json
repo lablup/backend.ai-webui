@@ -2777,6 +2777,7 @@
     "PresetName": "プリセット名",
     "PresetOnlyAvailableInResourceGroup": "\"{{preset}}\" プリセットは \"{{name}}\" リソースグループでのみ使用できます。別のリソースグループを選択してください。",
     "RAM": "RAM（GB）",
+    "RequiresSlotsNotInResourceGroup": "選択したリソースグループにない {{slots}} が必要です",
     "ResourcePreset": "リソースプリセット",
     "ResourcePresets": "リソースプリセット",
     "Resources": "リソース",

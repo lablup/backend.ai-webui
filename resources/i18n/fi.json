@@ -2775,6 +2775,7 @@
     "PresetName": "Esiasetuksen nimi",
     "PresetOnlyAvailableInResourceGroup": "Esiasetus \"{{preset}}\" on käytettävissä vain resurssiryhmässä \"{{name}}\". Valitse toinen resurssiryhmä.",
     "RAM": "RAM-MUISTI (GB)",
+    "RequiresSlotsNotInResourceGroup": "Vaatii resurssin {{slots}}, jota valittu resurssiryhmä ei tarjoa",
     "ResourcePreset": "Resurssien esiasetus",
     "ResourcePresets": "Resurssien esiasetukset",
     "Resources": "Resurssit",

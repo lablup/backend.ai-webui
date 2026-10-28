@@ -2762,6 +2762,7 @@
     "PresetName": "Preset Name",
     "PresetOnlyAvailableInResourceGroup": "The \"{{preset}}\" preset is only available in the \"{{name}}\" resource group. Please select a different resource group.",
     "RAM": "RAM (GB)",
+    "RequiresSlotsNotInResourceGroup": "Requires {{slots}}, which the selected resource group does not provide",
     "ResourcePreset": "Resource Preset",
     "ResourcePresets": "Resource Presets",
     "Resources": "Resources",
