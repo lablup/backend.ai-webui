@@ -81,11 +81,16 @@ describe('applyWebUISettings', () => {
   });
 
   it('applies public-scope keys only for the public scope', () => {
-    const doc = { allowChangeSigninMode: true, ssoRealmName: 'Corp' };
+    const doc = {
+      allowChangeSigninMode: true,
+      ssoRealmName: 'Corp',
+      debug: true,
+    };
     expect(applyWebUISettings(state, doc, 'domain')).toEqual(state);
     const next = applyWebUISettings(state, doc, 'public');
     expect(next.change_signin_support).toBe(true);
     expect(next.ssoRealmName).toBe('Corp');
+    expect(next.debug).toBe(true);
   });
 
   it('does not mutate the input state', () => {

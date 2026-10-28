@@ -552,19 +552,19 @@ export async function loadConfigFromWebServer(
     jotaiStore.set(rawConfigState, mergedConfig);
 
     // Re-process the merged config
-    const { refreshConfigFromToml } = await import('./loginConfig');
+    const { refreshConfigFromToml, syncDebugFlag } =
+      await import('./loginConfig');
     const { loginConfigState } = await import('../hooks/useWebUIConfig');
     const publicSlice = await fetchPublicDomainConfigOnce(
       resolvePublicConfigTarget(mergedConfig),
     );
-    jotaiStore.set(
-      loginConfigState,
-      applyWebUISettings(
-        refreshConfigFromToml(mergedConfig),
-        publicSlice?.[WEBUI_SETTINGS_CONFIG_KEY],
-        'public',
-      ),
+    const effectiveLoginConfig = applyWebUISettings(
+      refreshConfigFromToml(mergedConfig),
+      publicSlice?.[WEBUI_SETTINGS_CONFIG_KEY],
+      'public',
     );
+    syncDebugFlag(effectiveLoginConfig);
+    jotaiStore.set(loginConfigState, effectiveLoginConfig);
   }
 }
 

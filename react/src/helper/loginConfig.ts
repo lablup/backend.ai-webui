@@ -119,10 +119,12 @@ export interface LoginConfigState {
   pluginPages: string;
   domain_name: string;
   domain_id: string;
+  debug: boolean;
 }
 
 export function getDefaultLoginConfig(): LoginConfigState {
   return {
+    debug: false,
     signup_support: false,
     allowAnonymousChangePassword: false,
     change_signin_support: false,
@@ -209,12 +211,12 @@ export function refreshConfigFromToml(config: any): LoginConfigState {
   const pl = config.plugin;
 
   // -- general section --
-  (globalThis as any).backendaiwebui = (globalThis as any).backendaiwebui || {};
-  (globalThis as any).backendaiwebui.debug = getConfigValueByExists(g, {
+  state.debug = getConfigValueByExists(g, {
     valueType: 'boolean',
     defaultValue: false,
     value: g?.debug,
   }) as boolean;
+  syncDebugFlag(state);
 
   state.signup_support = getConfigValueByExists(g, {
     valueType: 'boolean',
@@ -643,10 +645,21 @@ export function refreshConfigFromToml(config: any): LoginConfigState {
 }
 
 /**
+ * The diagnostics surfaces (i18n key markers, error details) read
+ * `globalThis.backendaiwebui.debug` at call time, so every state the app
+ * settles on is mirrored there: the file value, then each merged document.
+ */
+export function syncDebugFlag(cfg: Pick<LoginConfigState, 'debug'>): void {
+  (globalThis as any).backendaiwebui = (globalThis as any).backendaiwebui || {};
+  (globalThis as any).backendaiwebui.debug = cfg.debug;
+}
+
+/**
  * Apply the login configuration state to globalThis.backendaiclient._config
  * after a successful GQL connection.
  */
 export function applyConfigToClient(cfg: LoginConfigState): void {
+  syncDebugFlag(cfg);
   const client = (globalThis as any).backendaiclient;
   if (!client || !client._config) return;
 
