@@ -972,7 +972,6 @@
       "CreatedAt": "Yaratılmış",
       "Creator": "Oluşturan",
       "DefaultMountPermission": "Varsayılan bağlama izni",
-      "DefaultMountPermissionAppliesTo": "Kendine ait bağlama izni olmayan paylaşılan kullanıcılar ve her yeni davet için geçerlidir.",
       "Delete": "Sil",
       "DeleteAFolder": "Klasörü sil",
       "DeleteFailureDescription": "{{total}} klasörden {{failed}} tanesi silinemedi. Aşağıda her klasörün nedenini kontrol edin.",

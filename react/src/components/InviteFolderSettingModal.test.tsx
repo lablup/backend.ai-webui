@@ -509,7 +509,8 @@ describe('InviteFolderSettingModal (#10295)', () => {
     );
   });
 
-  it('edits the folder default mount permission from the settings card (#10647)', async () => {
+  it('edits the folder default mount permission from the Folder Info section (#10647)', async () => {
+    installPopoverMock();
     const user = userEvent.setup();
     const environment = await renderModal();
 
@@ -525,7 +526,12 @@ describe('InviteFolderSettingModal (#10295)', () => {
     });
     expect(saveButton).toBeDisabled();
     await user.click(
-      within(editModal).getByRole('radio', { name: 'data.ReadWrite' }),
+      within(editModal).getByRole('combobox', {
+        name: 'data.folders.DefaultMountPermission',
+      }),
+    );
+    await user.click(
+      within(editModal).getByRole('option', { name: 'data.ReadWrite', ...h }),
     );
     expect(saveButton).toBeEnabled();
     await user.click(saveButton);

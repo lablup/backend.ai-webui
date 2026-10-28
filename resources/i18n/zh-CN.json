@@ -972,7 +972,6 @@
       "CreatedAt": "创建在",
       "Creator": "创建者",
       "DefaultMountPermission": "默认挂载权限",
-      "DefaultMountPermissionAppliesTo": "适用于没有单独挂载权限的共享用户以及之后的所有邀请。",
       "Delete": "删除",
       "DeleteAFolder": "删除文件夹",
       "DeleteFailureDescription": "{{total}} 个文件夹中有 {{failed}} 个无法删除。请在下方查看每个文件夹的失败原因。",

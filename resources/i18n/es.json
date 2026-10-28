@@ -972,7 +972,6 @@
       "CreatedAt": "Creado a",
       "Creator": "Creador",
       "DefaultMountPermission": "Permiso de montaje predeterminado",
-      "DefaultMountPermissionAppliesTo": "Se aplica a los usuarios compartidos sin permiso de montaje individual y a cada nueva invitación.",
       "Delete": "Borrar",
       "DeleteAFolder": "Eliminar una carpeta",
       "DeleteFailureDescription": "No se pudieron eliminar {{failed}} de {{total}} carpetas. Consulte el motivo de cada carpeta a continuación.",

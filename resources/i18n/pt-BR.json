@@ -972,7 +972,6 @@
       "CreatedAt": "Criado em",
       "Creator": "Criador",
       "DefaultMountPermission": "Permissão de montagem padrão",
-      "DefaultMountPermissionAppliesTo": "Aplica-se a usuários compartilhados sem permissão de montagem individual e a cada novo convite.",
       "Delete": "Excluir",
       "DeleteAFolder": "Excluir uma pasta",
       "DeleteFailureDescription": "{{failed}} de {{total}} pastas não puderam ser excluídas. Verifique o motivo de cada pasta abaixo.",

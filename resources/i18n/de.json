@@ -972,7 +972,6 @@
       "CreatedAt": "Erstellt at",
       "Creator": "Ersteller",
       "DefaultMountPermission": "Standard-Mount-Berechtigung",
-      "DefaultMountPermissionAppliesTo": "Gilt für freigegebene Benutzer ohne eigene Mount-Berechtigung und für jede neue Einladung.",
       "Delete": "Löschen",
       "DeleteAFolder": "Einen Ordner löschen",
       "DeleteFailureDescription": "{{failed}} von {{total}} Ordnern konnten nicht gelöscht werden. Überprüfen Sie unten den Grund für jeden Ordner.",

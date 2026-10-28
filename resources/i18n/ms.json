@@ -972,7 +972,6 @@
       "CreatedAt": "Dicipta di",
       "Creator": "Pencipta",
       "DefaultMountPermission": "Kebenaran lekap lalai",
-      "DefaultMountPermissionAppliesTo": "Terpakai kepada pengguna berkongsi tanpa kebenaran lekap tersendiri dan kepada setiap jemputan baharu.",
       "Delete": "Padam",
       "DeleteAFolder": "Padamkan folder",
       "DeleteFailureDescription": "{{failed}} daripada {{total}} folder tidak dapat dipadam. Semak sebab untuk setiap folder di bawah.",

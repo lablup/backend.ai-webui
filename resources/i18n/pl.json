@@ -972,7 +972,6 @@
       "CreatedAt": "Utworzony w",
       "Creator": "Twórca",
       "DefaultMountPermission": "Domyślne uprawnienie montowania",
-      "DefaultMountPermissionAppliesTo": "Dotyczy użytkowników współdzielonych bez indywidualnego uprawnienia montowania oraz każdego nowego zaproszenia.",
       "Delete": "Kasować",
       "DeleteAFolder": "Usuń folder",
       "DeleteFailureDescription": "Nie udało się usunąć {{failed}} z {{total}} folderów. Sprawdź poniżej powód dla każdego folderu.",

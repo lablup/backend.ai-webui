@@ -972,7 +972,6 @@
       "CreatedAt": "Luotu jhk",
       "Creator": "Luoja",
       "DefaultMountPermission": "Oletusliitosoikeus",
-      "DefaultMountPermissionAppliesTo": "Koskee jaettuja käyttäjiä, joilla ei ole omaa liitosoikeutta, sekä jokaista uutta kutsua.",
       "Delete": "Poista",
       "DeleteAFolder": "Poista kansio",
       "DeleteFailureDescription": "{{failed}}/{{total}} kansiota ei voitu poistaa. Tarkista alla kunkin kansion syy.",

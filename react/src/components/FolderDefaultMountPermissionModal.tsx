@@ -8,16 +8,16 @@
 import { FolderDefaultMountPermissionModalRefreshQuery } from '../__generated__/FolderDefaultMountPermissionModalRefreshQuery.graphql';
 import { App } from '../app-shim';
 import { useBaiSignedRequestWithPromise } from '../helper';
-import { VStack } from '@lablup/ui-common/Stack';
+import { Field } from '@lablup/ui-common/Field';
+import { HStack } from '@lablup/ui-common/Stack';
 import {
   BAIModal,
   type BAIModalProps,
-  BAIRadioList,
-  BAIRadioListItem,
-  BAIText,
+  BAIQuestionIconWithTooltip,
+  BAISelector,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay';
 
@@ -52,6 +52,7 @@ const FolderDefaultMountPermissionModal: React.FC<
   const { getErrorMessage } = useErrorMessageResolver();
   const relayEnv = useRelayEnvironment();
   const request = useBaiSignedRequestWithPromise();
+  const inputId = useId();
 
   const [picked, setPicked] = useState<FolderMountLevel | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -111,7 +112,14 @@ const FolderDefaultMountPermissionModal: React.FC<
         setPicked(null);
         afterClose?.();
       }}
-      title={t('data.folders.EditDefaultMountPermission')}
+      title={
+        <HStack gap={1} align="center">
+          {t('data.folders.EditDefaultMountPermission')}
+          <BAIQuestionIconWithTooltip
+            title={t('data.folders.SharedMountPermissionDesc')}
+          />
+        </HStack>
+      }
       okText={t('button.Save')}
       onOk={handleSave}
       onCancel={() => onRequestClose()}
@@ -119,31 +127,27 @@ const FolderDefaultMountPermissionModal: React.FC<
       okButtonProps={{ disabled: value === mountLevel }}
       width={480}
     >
-      <VStack gap={3} align="stretch">
-        <BAIText type="secondary">
-          {t('data.folders.SharedMountPermissionDesc')}
-        </BAIText>
-        <BAIRadioList
+      <Field label={t('data.folders.DefaultMountPermission')} inputID={inputId}>
+        <BAISelector
+          id={inputId}
           aria-label={t('data.folders.DefaultMountPermission')}
+          placement="below"
+          width="100%"
+          options={[
+            { value: 'ro', label: t('data.ReadOnly') },
+            {
+              value: 'rw',
+              label: t('data.ReadWrite'),
+              disabled: restrictToReadOnly,
+              description: restrictToReadOnly
+                ? t('data.folders.ModelProjectFolderRestrictedToReadOnly')
+                : undefined,
+            },
+          ]}
           value={value}
           onChange={(next) => setPicked(next as FolderMountLevel)}
-        >
-          <BAIRadioListItem value="ro" label={t('data.ReadOnly')} />
-          <BAIRadioListItem
-            value="rw"
-            label={t('data.ReadWrite')}
-            isDisabled={restrictToReadOnly}
-            description={
-              restrictToReadOnly
-                ? t('data.folders.ModelProjectFolderRestrictedToReadOnly')
-                : undefined
-            }
-          />
-        </BAIRadioList>
-        <BAIText type="warning" size="sm">
-          {t('data.folders.DefaultMountPermissionAppliesTo')}
-        </BAIText>
-      </VStack>
+        />
+      </Field>
     </BAIModal>
   );
 };

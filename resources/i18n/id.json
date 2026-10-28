@@ -972,7 +972,6 @@
       "CreatedAt": "Dibuat di",
       "Creator": "Pembuat",
       "DefaultMountPermission": "Izin mount default",
-      "DefaultMountPermissionAppliesTo": "Berlaku untuk pengguna berbagi tanpa izin mount tersendiri dan untuk setiap undangan baru.",
       "Delete": "Hapus",
       "DeleteAFolder": "Hapus folder",
       "DeleteFailureDescription": "{{failed}} dari {{total}} folder tidak dapat dihapus. Periksa alasan untuk setiap folder di bawah ini.",

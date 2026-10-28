@@ -972,7 +972,6 @@
       "CreatedAt": "で作成されました",
       "Creator": "作成者",
       "DefaultMountPermission": "デフォルトのマウント権限",
-      "DefaultMountPermissionAppliesTo": "個別のマウント権限が設定されていない共有ユーザーと、今後のすべての招待に適用されます。",
       "Delete": "削除",
       "DeleteAFolder": "フォルダを削除する",
       "DeleteFailureDescription": "{{total}}件中{{failed}}件のフォルダを削除できませんでした。以下で各フォルダの理由を確認してください。",

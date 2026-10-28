@@ -968,7 +968,6 @@
       "CreateModelFolderOnlyInExclusiveProject": "โมเดลโฟลเดอร์โครงการสามารถสร้างขึ้นได้ในโครงการโมเดล - โครงการพิเศษเท่านั้น",
       "CreatedAt": "สร้างขึ้นที่",
       "DefaultMountPermission": "สิทธิ์การเมานต์เริ่มต้น",
-      "DefaultMountPermissionAppliesTo": "ใช้กับผู้ใช้ที่แชร์ซึ่งไม่มีสิทธิ์การเมานต์เฉพาะราย และกับคำเชิญใหม่ทุกรายการ",
       "Delete": "ลบ",
       "DeleteAFolder": "ลบโฟลเดอร์",
       "DeleteFailureDescription": "ไม่สามารถลบโฟลเดอร์ได้ {{failed}} จาก {{total}} โฟลเดอร์ ตรวจสอบเหตุผลของแต่ละโฟลเดอร์ด้านล่าง",

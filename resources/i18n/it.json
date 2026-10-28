@@ -972,7 +972,6 @@
       "CreatedAt": "Creato a",
       "Creator": "Creatore",
       "DefaultMountPermission": "Permesso di montaggio predefinito",
-      "DefaultMountPermissionAppliesTo": "Si applica agli utenti condivisi senza un permesso di montaggio individuale e a ogni nuovo invito.",
       "Delete": "Elimina",
       "DeleteAFolder": "Elimina una cartella",
       "DeleteFailureDescription": "Impossibile eliminare {{failed}} cartelle su {{total}}. Controlla il motivo per ciascuna cartella qui sotto.",

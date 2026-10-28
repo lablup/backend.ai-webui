@@ -972,7 +972,6 @@
       "CreatedAt": "Бүтэмж дээр бүтсэн",
       "Creator": "Үүсгэгч",
       "DefaultMountPermission": "Үндсэн холболтын эрх",
-      "DefaultMountPermissionAppliesTo": "Тусдаа холболтын эрх тохируулаагүй хуваалцсан хэрэглэгчид болон цаашдын бүх урилгад хамаарна.",
       "Delete": "Устгах",
       "DeleteAFolder": "Фолдер устгах",
       "DeleteFailureDescription": "{{total}} фолдероос {{failed}}-ыг устгаж чадаагүй. Доор фолдер бүрийн шалтгааныг шалгана уу.",

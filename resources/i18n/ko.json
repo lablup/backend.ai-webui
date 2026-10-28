@@ -972,7 +972,6 @@
       "CreatedAt": "생성 시간",
       "Creator": "생성자",
       "DefaultMountPermission": "기본 마운트 권한",
-      "DefaultMountPermissionAppliesTo": "개별 마운트 권한이 없는 공유 사용자와 이후 모든 초대에 적용됩니다.",
       "Delete": "삭제",
       "DeleteAFolder": "폴더 삭제",
       "DeleteFailureDescription": "폴더 {{total}}개 중 {{failed}}개를 삭제하지 못했습니다. 아래에서 폴더별 사유를 확인하세요.",

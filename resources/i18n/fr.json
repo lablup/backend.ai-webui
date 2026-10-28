@@ -972,7 +972,6 @@
       "CreatedAt": "Créé à",
       "Creator": "Créateur",
       "DefaultMountPermission": "Permission de montage par défaut",
-      "DefaultMountPermissionAppliesTo": "S'applique aux utilisateurs partagés sans permission de montage individuelle et à chaque nouvelle invitation.",
       "Delete": "Effacer",
       "DeleteAFolder": "Supprimer un dossier",
       "DeleteFailureDescription": "{{failed}} dossier(s) sur {{total}} n'ont pas pu être supprimés. Vérifiez la raison de chaque dossier ci-dessous.",

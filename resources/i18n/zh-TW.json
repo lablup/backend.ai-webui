@@ -972,7 +972,6 @@
       "CreatedAt": "創建在",
       "Creator": "建立者",
       "DefaultMountPermission": "預設掛載權限",
-      "DefaultMountPermissionAppliesTo": "適用於沒有個別掛載權限的共用使用者以及之後的所有邀請。",
       "Delete": "刪除",
       "DeleteAFolder": "刪除文件夾",
       "DeleteFailureDescription": "{{total}} 個資料夾中有 {{failed}} 個無法刪除。請在下方查看每個資料夾的失敗原因。",

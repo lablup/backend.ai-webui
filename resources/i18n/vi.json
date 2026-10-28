@@ -972,7 +972,6 @@
       "CreatedAt": "Được tạo ra tại",
       "Creator": "Người tạo",
       "DefaultMountPermission": "Quyền gắn kết mặc định",
-      "DefaultMountPermissionAppliesTo": "Áp dụng cho người dùng được chia sẻ chưa có quyền gắn kết riêng và cho mọi lời mời mới.",
       "Delete": "Xóa bỏ",
       "DeleteAFolder": "Xóa một thư mục",
       "DeleteFailureDescription": "{{failed}} trong số {{total}} thư mục không thể xóa. Kiểm tra lý do cho từng thư mục bên dưới.",

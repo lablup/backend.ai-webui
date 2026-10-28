@@ -959,7 +959,6 @@
       "CreatedAt": "Created At",
       "Creator": "Creator",
       "DefaultMountPermission": "Default mount permission",
-      "DefaultMountPermissionAppliesTo": "Applies to shared users without an individual mount permission and to every new invitation.",
       "Delete": "Delete",
       "DeleteAFolder": "Delete folder",
       "DeleteFailureDescription": "{{failed}} of {{total}} folders could not be deleted. Check the reason for each folder below.",
