@@ -7,15 +7,17 @@ import {
   PERMISSION_DISPLAY_MAP,
   hasMountWithoutFileOps,
 } from '../helper/storageHostPermission';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { Divider } from '@lablup/ui-common/Divider';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
-  CheckboxList,
-  CheckboxListItem,
-} from '@astryxdesign/core/CheckboxList';
-import { Divider } from '@astryxdesign/core/Divider';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { BAIFlex, BAIModal, type BAIModalProps } from 'backend.ai-ui';
+  BAICheckboxInput,
+  BAICheckboxList,
+  BAICheckboxListItem,
+  BAIFlex,
+  BAIModal,
+  type BAIModalProps,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -170,24 +172,24 @@ const StoragePermissionEditModal: React.FC<Props> = ({
           {/* MAPPING §4: `checked` -> `value`, `indeterminate` ->
               `value="indeterminate"`, `onChange(e)` -> `onChange(checked, e)`,
               and the children become the required `label` string. */}
-          <CheckboxInput
-            label={t('storageHost.permission.All')}
+          <BAICheckboxInput
             value={indeterminate ? 'indeterminate' : allSelected}
             onChange={(checked) => {
               setEditedKeys(checked ? [...permissionKeys] : []);
             }}
-          />
+          >
+            {t('storageHost.permission.All')}
+          </BAICheckboxInput>
           <Text color="secondary">
             {selectedCount} / {totalCount}
           </Text>
         </BAIFlex>
         <Divider />
-        {/* `Checkbox.Group` -> `CheckboxList`, whose required `label` is the
-            heading this section used to render as a separate `Text` — so the
-            heading IS the group's accessible name now instead of a
-            visually-adjacent string with no programmatic association. */}
-        <CheckboxList
-          label={t('storageHost.permission.Permissions')}
+        {/* ui-common's CheckboxList renders no label: the heading is visible
+            text, and `aria-label` names the group with the same string. */}
+        <Text type="label">{t('storageHost.permission.Permissions')}</Text>
+        <BAICheckboxList
+          aria-label={t('storageHost.permission.Permissions')}
           density="compact"
           width="100%"
           value={editedKeys}
@@ -196,14 +198,14 @@ const StoragePermissionEditModal: React.FC<Props> = ({
           {permissionKeys.map((permKey) => {
             const display = PERMISSION_DISPLAY_MAP[permKey];
             return (
-              <CheckboxListItem
+              <BAICheckboxListItem
                 key={permKey}
                 value={permKey}
                 label={display ? t(display.labelKey) : permKey}
               />
             );
           })}
-        </CheckboxList>
+        </BAICheckboxList>
       </BAIFlex>
     </BAIModal>
   );

@@ -86,11 +86,9 @@ export class FolderCreationModal {
   }
 
   async getFormItemByLabel(label: string): Promise<Locator> {
-    // Every form item renders the BAI visual shell, whose root carries
-    // `data-bai-form-item`
-    // (`packages/backend.ai-ui/src/form-engine/FormItemVisual.tsx`).
+    // Every form item's root is `.uic-form-item` (`@lablup/ui-common/Form`).
     const RadioContainer = this.modal.locator(
-      `[data-bai-form-item]:has-text("${label}")`,
+      `.uic-form-item:has-text("${label}")`,
     );
     // The modal shell becomes visible before its form body finishes
     // mounting, and on a busy shared cluster that hydration was directly
@@ -111,7 +109,7 @@ export class FolderCreationModal {
    */
   async expectTypeFormItemHidden(): Promise<void> {
     await expect(
-      this.modal.locator('[data-bai-form-item]:has-text("Type")'),
+      this.modal.locator('.uic-form-item:has-text("Type")'),
     ).toHaveCount(0);
   }
 

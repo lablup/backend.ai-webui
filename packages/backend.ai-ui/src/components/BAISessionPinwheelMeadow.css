@@ -1,0 +1,635 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAISessionPinwheelMeadow> (P17). The meadow is an
+ illustration, so its sky, grass, paper and ink colours are scene-local
+ literals paired light/dark (dusk) — no theme token carries them. Motion is
+ CSS only, paced per pinwheel by `--pw-util` and per hillside by `--pw-wind`.
+*/
+
+/* `@keyframes` never joins a cascade layer, so the names are BUI-scoped. */
+@keyframes bai-pw-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bai-pw-sway {
+  0%,
+  100% {
+    transform: rotate(-2.5deg);
+  }
+  50% {
+    transform: rotate(2.5deg);
+  }
+}
+
+@keyframes bai-pw-drift-cloud {
+  0% {
+    transform: translateX(-18px);
+  }
+  100% {
+    transform: translateX(18px);
+  }
+}
+
+@keyframes bai-pw-wind {
+  to {
+    stroke-dashoffset: -240;
+  }
+}
+
+@keyframes bai-pw-ribbon {
+  0%,
+  100% {
+    transform: skewY(0deg) scaleX(1);
+  }
+  50% {
+    transform: skewY(-9deg) scaleX(0.92);
+  }
+}
+
+@keyframes bai-pw-wings {
+  0%,
+  70%,
+  100% {
+    transform: scaleY(1);
+  }
+  80% {
+    transform: scaleY(0.25);
+  }
+  90% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes bai-pw-ember {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(3px, -14px) scale(0.3);
+    opacity: 0;
+  }
+}
+
+@keyframes bai-pw-blade-away {
+  0%,
+  35% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(22px, -16px) rotate(140deg);
+    opacity: 0;
+  }
+}
+
+@keyframes bai-pw-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1.5px);
+  }
+}
+
+@keyframes bai-pw-found {
+  0% {
+    transform: translateY(calc(var(--pw-lift, 0px) * -1))
+      scale(var(--pw-scale, 1));
+  }
+  40% {
+    transform: translateY(calc(var(--pw-lift, 0px) * -1 - 7px))
+      scale(calc(var(--pw-scale, 1) * 1.18));
+  }
+  100% {
+    transform: translateY(calc(var(--pw-lift, 0px) * -1 - 2px))
+      scale(calc(var(--pw-scale, 1) * 1.12));
+  }
+}
+
+@layer components {
+  .bai-pinwheel-meadow {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+
+    --pw-ink: light-dark(#4b3b30, #2a211b);
+    --pw-sky-top: light-dark(#9fcdea, #2e3a63);
+    --pw-sky-low: light-dark(#e3f1f4, #7a6a8f);
+    --pw-horizon: light-dark(#fbf1d9, #d7a98c);
+    --pw-cloud: light-dark(#ffffff, #d9d6ea);
+    --pw-cloud-shade: light-dark(#c7dcec, #8f8fb5);
+    --pw-breeze: rgb(255 255 255 / 0.85);
+    --pw-hill: light-dark(#a8d08b, #4c6f45);
+    --pw-grass-top: light-dark(#9cc97f, #45663f);
+    --pw-grass-low: light-dark(#6fa45d, #2c4529);
+    --pw-tuft: light-dark(#5d9a4c, #2b4a2a);
+    --pw-flower: light-dark(#fff6d6, #e9d9a8);
+    --pw-flower-pink: light-dark(#f6c3c8, #c99aa6);
+    --pw-flower-gold: light-dark(#f7d774, #d8b85c);
+    --pw-wood: light-dark(#b98a5a, #8d6440);
+    --pw-wood-light: light-dark(#e4c79c, #b48d63);
+    --pw-paper: light-dark(#fff8ea, #efe4cf);
+    --pw-hero: #d94a3d;
+    --pw-glow: light-dark(#fff3b8, #ffd98a);
+  }
+
+  .pw-zones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-3);
+    align-items: stretch;
+  }
+
+  .pw-zone {
+    position: relative;
+    isolation: isolate;
+    flex: 1 1 260px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: var(--border-width) solid
+      color-mix(in srgb, var(--pw-ink) 35%, transparent);
+    border-radius: var(--radius-element);
+    background: linear-gradient(var(--pw-grass-top), var(--pw-grass-low));
+    transition:
+      border-color var(--duration-medium-min) var(--ease-standard),
+      opacity var(--duration-medium-min) var(--ease-standard),
+      filter var(--duration-medium-min) var(--ease-standard);
+  }
+
+  /* Watercolour paper grain over the whole vignette; static, so it is cached. */
+  .pw-zone::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    opacity: 0.22;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.36 0 0 0 0 0.25 0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .pw-zone.has-found {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px
+      color-mix(in srgb, var(--color-accent) 35%, transparent);
+  }
+
+  .pw-zone.is-empty-of-found {
+    opacity: 0.6;
+    filter: saturate(0.5);
+  }
+
+  .pw-sky {
+    position: relative;
+    height: 68px;
+    background: linear-gradient(
+      var(--pw-sky-top) 0%,
+      var(--pw-sky-low) 70%,
+      var(--pw-horizon) 100%
+    );
+  }
+
+  .pw-clouds {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .pw-cloud circle,
+  .pw-cloud rect {
+    fill: var(--pw-cloud);
+  }
+
+  .pw-cloud .pw-cloud-shade {
+    fill: var(--pw-cloud-shade);
+    transform: translateY(3px);
+  }
+
+  .pw-cloud-1 {
+    animation: bai-pw-drift-cloud 26s ease-in-out infinite alternate;
+  }
+
+  .pw-cloud-2 {
+    animation: bai-pw-drift-cloud 34s ease-in-out -9s infinite alternate-reverse;
+  }
+
+  /* Breeze lines: livelier and faster on a busier hillside. */
+  .pw-wind path {
+    fill: none;
+    stroke: var(--pw-breeze);
+    stroke-width: 1.4;
+    stroke-linecap: round;
+    stroke-dasharray: 26 94;
+    opacity: calc(0.15 + 0.75 * var(--pw-wind, 0));
+    animation: bai-pw-wind calc(9s - 7s * var(--pw-wind, 0)) linear infinite;
+  }
+
+  .pw-wind path:nth-child(2) {
+    animation-delay: -2.5s;
+  }
+
+  .pw-sign-row {
+    position: relative;
+    z-index: 1;
+    padding: var(--spacing-2) var(--spacing-3);
+  }
+
+  /* A little wooden sign board. */
+  .pw-sign {
+    display: inline-flex;
+    padding: 1px var(--spacing-2);
+    color: var(--pw-ink);
+    background: linear-gradient(var(--pw-wood-light), var(--pw-wood));
+    border: 1.5px solid var(--pw-ink);
+    border-radius: 4px 6px 5px 3px;
+    box-shadow: 1px 2px 0 color-mix(in srgb, var(--pw-ink) 30%, transparent);
+  }
+
+  .pw-sign-count {
+    background: var(--pw-paper);
+  }
+
+  .pw-hill {
+    display: block;
+    width: 100%;
+    height: 16px;
+    margin-top: -15px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .pw-hill path {
+    fill: var(--pw-grass-top);
+  }
+
+  .pw-field {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0 var(--spacing-1);
+    min-height: 80px;
+    padding: 0 var(--spacing-2) var(--spacing-2);
+    /* Scattered meadow flowers. */
+    background-image:
+      radial-gradient(circle, var(--pw-flower) 1.3px, transparent 1.9px),
+      radial-gradient(circle, var(--pw-flower-pink) 1.1px, transparent 1.7px),
+      radial-gradient(circle, var(--pw-flower-gold) 0.9px, transparent 1.5px),
+      radial-gradient(
+        ellipse 60% 18% at 30% 40%,
+        color-mix(in srgb, var(--pw-grass-low) 35%, transparent),
+        transparent
+      ),
+      radial-gradient(
+        ellipse 50% 14% at 75% 75%,
+        color-mix(in srgb, var(--pw-grass-low) 30%, transparent),
+        transparent
+      );
+    background-size:
+      61px 47px,
+      89px 67px,
+      43px 103px,
+      100% 100%,
+      100% 100%;
+    background-position:
+      7px 13px,
+      37px 31px,
+      19px 5px,
+      0 0,
+      0 0;
+  }
+
+  /* --- one pinwheel ---------------------------------------------------- */
+
+  .pw-item {
+    all: unset;
+    position: relative;
+    display: inline-flex;
+    width: 44px;
+    height: 66px;
+    cursor: pointer;
+    border-radius: var(--radius-element);
+    transform: translateY(calc(var(--pw-lift, 0px) * -1))
+      scale(var(--pw-scale, 1));
+    transform-origin: 50% 100%;
+    transition:
+      opacity var(--duration-medium-min) var(--ease-standard),
+      filter var(--duration-medium-min) var(--ease-standard);
+
+    --pw-a: #e2685a;
+    --pw-b: #f6e7c8;
+  }
+
+  /* Paper palettes: two colours per pinwheel, cut from origami sheets. */
+  .pw-item.pal-0 {
+    --pw-a: #e2685a;
+    --pw-b: #f6e7c8;
+  }
+  .pw-item.pal-1 {
+    --pw-a: #6fa8d6;
+    --pw-b: #f4dd8a;
+  }
+  .pw-item.pal-2 {
+    --pw-a: #8cc084;
+    --pw-b: #f2b38f;
+  }
+  .pw-item.pal-3 {
+    --pw-a: #a99ad6;
+    --pw-b: #c4e6cf;
+  }
+  .pw-item.pal-4 {
+    --pw-a: #f0c24b;
+    --pw-b: #e88b6e;
+  }
+  .pw-item.pal-hot {
+    --pw-a: #e8553e;
+    --pw-b: #f6a03b;
+  }
+
+  .pw-item.is-legend {
+    width: 24px;
+    height: 36px;
+    cursor: default;
+    transform: none;
+  }
+
+  .pw-item:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .pw-glyph {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .pw-tuft {
+    fill: var(--pw-tuft);
+  }
+
+  .pw-sway {
+    transform-box: view-box;
+    transform-origin: 24px 70px;
+    animation: bai-pw-sway calc(5s - 2s * var(--pw-util, 0)) ease-in-out
+      infinite;
+    animation-delay: var(--pw-phase, 0s);
+  }
+
+  .pw-stick {
+    fill: var(--pw-wood);
+    stroke: var(--pw-ink);
+    stroke-width: 0.9;
+  }
+
+  .pw-face,
+  .pw-fold {
+    stroke: var(--pw-ink);
+    stroke-width: 1.1;
+    stroke-linejoin: round;
+  }
+
+  .pw-face.pw-a {
+    fill: var(--pw-a);
+  }
+  .pw-face.pw-b {
+    fill: var(--pw-b);
+  }
+  .pw-fold.pw-a {
+    fill: color-mix(in srgb, var(--pw-a) 72%, var(--pw-ink));
+  }
+  .pw-fold.pw-b {
+    fill: color-mix(in srgb, var(--pw-b) 75%, var(--pw-ink));
+  }
+
+  .pw-hub {
+    fill: var(--pw-paper);
+    stroke: var(--pw-ink);
+    stroke-width: 1;
+  }
+
+  .pw-blades,
+  .pw-blur {
+    transform-box: view-box;
+    transform-origin: 24px 22px;
+  }
+
+  /* Faster spin = a paler, wider blur disc behind the blades — so the speed
+     still reads when motion is reduced. */
+  .pw-blur {
+    fill: color-mix(in srgb, var(--pw-a) 45%, var(--pw-b));
+    opacity: calc(var(--pw-util, 0) * 0.45);
+  }
+
+  /* Working: one turn takes 3.4s idle-ish … 0.3s at full load. */
+  .mood-working .pw-blades {
+    animation: bai-pw-spin calc(3.4s - 3.1s * var(--pw-util, 0)) linear infinite;
+    animation-delay: var(--pw-phase, 0s);
+  }
+
+  .mood-overheated .pw-blades {
+    animation: bai-pw-spin 0.22s linear infinite;
+  }
+
+  .mood-overheated .pw-blur {
+    opacity: 0.55;
+    fill: var(--pw-glow);
+  }
+
+  .pw-embers circle {
+    fill: #f6a03b;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: bai-pw-ember 1.3s ease-out infinite;
+    animation-delay: var(--pw-phase, 0s);
+  }
+
+  .pw-embers circle:nth-child(2) {
+    animation-delay: calc(var(--pw-phase, 0s) - 0.45s);
+  }
+
+  .pw-embers circle:nth-child(3) {
+    animation-delay: calc(var(--pw-phase, 0s) - 0.9s);
+  }
+
+  /* Idle: still, faded paper, a dragonfly resting on the top blade. */
+  .mood-idle .pw-face,
+  .mood-idle .pw-fold {
+    filter: saturate(0.45) brightness(1.05);
+  }
+
+  .mood-idle .pw-blur {
+    opacity: 0;
+  }
+
+  .mood-idle .pw-sway {
+    animation-duration: 7s;
+  }
+
+  .pw-dragonfly line {
+    stroke: #3e8c8a;
+    stroke-width: 1.4;
+    stroke-linecap: round;
+  }
+
+  .pw-dragonfly circle {
+    fill: #3e8c8a;
+  }
+
+  .pw-wings ellipse {
+    fill: rgb(255 255 255 / 0.75);
+    stroke: color-mix(in srgb, var(--pw-ink) 50%, transparent);
+    stroke-width: 0.4;
+  }
+
+  .pw-wings {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: bai-pw-wings 3.6s ease-in-out infinite;
+    animation-delay: var(--pw-phase, 0s);
+  }
+
+  /* Waiting: an uncut sheet with its fold lines, bobbing with a ticket. */
+  .pw-bud {
+    transform-box: view-box;
+    transform-origin: 24px 22px;
+    animation: bai-pw-bob 2.2s ease-in-out infinite;
+    animation-delay: var(--pw-phase, 0s);
+  }
+
+  .pw-cut {
+    fill: none;
+    stroke: var(--pw-ink);
+    stroke-width: 0.8;
+    stroke-dasharray: 1.6 1.4;
+  }
+
+  .pw-ticket line {
+    stroke: var(--pw-ink);
+    stroke-width: 0.7;
+  }
+
+  .pw-ticket rect {
+    fill: var(--pw-paper);
+    stroke: var(--pw-ink);
+    stroke-width: 0.9;
+  }
+
+  .pw-ticket text {
+    fill: var(--pw-ink);
+    font: var(--font-weight-semibold) 6px var(--font-family-code);
+    text-anchor: middle;
+  }
+
+  /* Leaving: blades come loose one by one and blow away. */
+  .mood-leaving .pw-blur {
+    opacity: 0;
+  }
+
+  .mood-leaving .pw-stick {
+    opacity: 0.7;
+  }
+
+  .pw-blade-drift {
+    transform-box: fill-box;
+    transform-origin: 0% 100%;
+  }
+
+  .mood-leaving .pw-blade-drift {
+    animation: bai-pw-blade-away 3.2s ease-in infinite;
+  }
+
+  .mood-leaving .pw-blade-1 .pw-blade-drift {
+    animation-delay: -0.8s;
+  }
+  .mood-leaving .pw-blade-2 .pw-blade-drift {
+    animation-delay: -1.6s;
+  }
+  .mood-leaving .pw-blade-3 .pw-blade-drift {
+    animation-delay: -2.4s;
+  }
+
+  /* Hero: a red ribbon tied under the hub, fluttering in the breeze. */
+  .pw-ribbon path {
+    fill: var(--pw-hero);
+    stroke: var(--pw-ink);
+    stroke-width: 0.8;
+    stroke-linejoin: round;
+  }
+
+  .pw-ribbon {
+    transform-box: fill-box;
+    transform-origin: 0% 40%;
+    animation: bai-pw-ribbon 1.1s ease-in-out infinite;
+    animation-delay: var(--pw-phase, 0s);
+  }
+
+  /* --- finder spotlight -------------------------------------------------- */
+
+  .is-searching .pw-item.is-dimmed {
+    opacity: 0.3;
+    filter: grayscale(0.85);
+  }
+
+  .is-searching .pw-item.is-found {
+    z-index: 2;
+    animation: bai-pw-found var(--duration-medium) var(--ease-standard) both;
+  }
+
+  /* A sunbeam falling on what the finder found. */
+  .is-searching .pw-item.is-found::before {
+    content: '';
+    position: absolute;
+    inset: -14px -12px -4px;
+    z-index: -1;
+    border-radius: 50%;
+    background: radial-gradient(
+      ellipse at 50% 40%,
+      color-mix(in srgb, var(--pw-glow) 95%, transparent) 0%,
+      color-mix(in srgb, var(--pw-glow) 45%, transparent) 45%,
+      transparent 72%
+    );
+  }
+
+  .is-legend.mood-leaving .pw-blade-1 .pw-blade-drift {
+    transform: translate(7px, -6px) rotate(50deg);
+    opacity: 0.6;
+  }
+
+  .is-legend .pw-sway,
+  .is-legend .pw-blades,
+  .is-legend .pw-ribbon,
+  .is-legend .pw-wings,
+  .is-legend .pw-embers circle,
+  .is-legend .pw-bud,
+  .is-legend .pw-blade-drift {
+    animation: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Moods are carried by props and the blur disc, so everything holds. */
+    .bai-pinwheel-meadow *,
+    .bai-pinwheel-meadow *::before,
+    .bai-pinwheel-meadow *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+
+    .is-searching .pw-item.is-found {
+      transform: translateY(calc(var(--pw-lift, 0px) * -1 - 2px))
+        scale(calc(var(--pw-scale, 1) * 1.12));
+    }
+  }
+}

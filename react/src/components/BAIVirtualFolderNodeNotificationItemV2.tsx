@@ -7,18 +7,18 @@ import {
   NotificationState,
   useSetBAINotification,
 } from '../hooks/useBAINotification';
+import './BAINodeNotificationItem.css';
 import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgress';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import { Card } from '@astryxdesign/core/Card';
-import { Link } from '@astryxdesign/core/Link';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Card } from '@lablup/ui-common/Card';
+import { Link } from '@lablup/ui-common/Link';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIFlex,
   BAILink,
   BAINotificationItem,
   BAIText,
-  toLocalId,
   useToggle,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -53,6 +53,7 @@ const BAIVirtualFolderNodeNotificationItemV2: React.FC<
     graphql`
       fragment BAIVirtualFolderNodeNotificationItemV2Fragment on VFolder {
         id
+        entityId
         metadata {
           name
         }
@@ -63,11 +64,12 @@ const BAIVirtualFolderNodeNotificationItemV2: React.FC<
 
   if (!node) return null;
 
-  const localId = toLocalId(node.id);
+  const localId = node.entityId;
   const folderName = node.metadata?.name;
 
   return (
     <BAINotificationItem
+      className="bai-node-notification-item"
       title={
         <BAIText ellipsis>
           {t('general.Folder')}:&nbsp;

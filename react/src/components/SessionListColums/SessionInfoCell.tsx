@@ -9,10 +9,9 @@ import {
   useSuspendedBackendaiClient,
 } from '../../hooks';
 import { useTanMutation } from '../../hooks/reactQueryAlias';
-import { AstryxFormTextInput } from '../astryxFormControls';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Text } from '@astryxdesign/core/Text';
-import { BAIFlex } from 'backend.ai-ui';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Text } from '@lablup/ui-common/Text';
+import { BAIFlex, BAITextInput } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { SquarePen } from 'lucide-react';
 import React, { useRef, useState } from 'react';
@@ -137,15 +136,15 @@ const SessionInfoCell: React.FC<{
             }),
           ]}
         >
-          {/* The inline rename field. `onEnter` / `onKeyDown` / `hasAutoFocus`
-              are on the SHARED adapter now (D10 fold-back), so this no longer
-              needs a local copy of the two `Form.Item` contracts. */}
-          <AstryxFormTextInput
-            label={t('session.launcher.SessionName')}
+          <BAITextInput
+            aria-label={t('session.launcher.SessionName')}
             hasAutoFocus
             onEnter={save}
             onKeyDown={(e) => {
-              if (e.key === 'Escape') setEditing(false);
+              if (e.key !== 'Escape') return;
+              // Claims the press, so an open scrimless drawer stays open.
+              e.preventDefault();
+              setEditing(false);
             }}
           />
         </Form.Item>

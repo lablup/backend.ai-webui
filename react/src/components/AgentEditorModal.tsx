@@ -16,17 +16,16 @@ import {
   useAIAgent,
 } from '../hooks/useAIAgent';
 import BAIFormItem from './BAIFormItem';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Code } from '@lablup/ui-common/Code';
+import { Divider } from '@lablup/ui-common/Divider';
+import { Text } from '@lablup/ui-common/Text';
 import {
-  AstryxFormSegmented,
-  AstryxFormTextArea,
-  AstryxFormTextInput,
-} from './astryxFormControls';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Code } from '@astryxdesign/core/Code';
-import { Divider } from '@astryxdesign/core/Divider';
-import { Switch } from '@astryxdesign/core/Switch';
-import { Text } from '@astryxdesign/core/Text';
-import {
+  BAISegmentedControl,
+  BAISegmentedControlItem,
+  BAISwitch,
+  BAITextArea,
+  BAITextInput,
   BAIFlex,
   BAIModal,
   BAIModalProps,
@@ -66,8 +65,8 @@ const AgentTagsInput: React.FC<{
   'use memo';
   const { t } = useTranslation();
   return (
-    <AstryxFormTextInput
-      label={t('aiAgent.Tags')}
+    <BAITextInput
+      aria-label={t('aiAgent.Tags')}
       placeholder={t('aiAgent.TagsPlaceholder')}
       value={(value ?? []).join(', ')}
       onChange={(text) =>
@@ -259,6 +258,7 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
     >
       {isBuiltin && (
         <Banner
+          role="status"
           status="info"
           style={{ marginBottom: 16 }}
           title={t('aiAgent.BuiltinReadonlyTitle')}
@@ -276,15 +276,15 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
           name="name"
           rules={[{ required: true, message: t('aiAgent.NameRequired') }]}
         >
-          <AstryxFormTextInput label={t('aiAgent.Name')} />
+          <BAITextInput aria-label={t('aiAgent.Name')} />
         </BAIFormItem>
 
         <BAIFormItem label={t('aiAgent.Icon')} name="icon">
-          <AstryxFormTextInput label={t('aiAgent.Icon')} placeholder="🤖" />
+          <BAITextInput aria-label={t('aiAgent.Icon')} placeholder="🤖" />
         </BAIFormItem>
 
         <BAIFormItem label={t('aiAgent.Description')} name="description">
-          <AstryxFormTextArea label={t('aiAgent.Description')} rows={2} />
+          <BAITextArea aria-label={t('aiAgent.Description')} rows={2} />
         </BAIFormItem>
 
         <BAIFormItem label={t('aiAgent.Tags')} name="tags">
@@ -299,7 +299,7 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
           ]}
           tooltip={t('aiAgent.SystemPromptTooltip')}
         >
-          <AstryxFormTextArea label={t('aiAgent.SystemPrompt')} rows={6} />
+          <BAITextArea aria-label={t('aiAgent.SystemPrompt')} rows={6} />
         </BAIFormItem>
 
         <BAIFormItem
@@ -307,7 +307,7 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
           name="instructions"
           tooltip={t('aiAgent.InstructionsTooltip')}
         >
-          <AstryxFormTextArea label={t('aiAgent.Instructions')} rows={3} />
+          <BAITextArea aria-label={t('aiAgent.Instructions')} rows={3} />
         </BAIFormItem>
 
         <BAIFormItem
@@ -315,8 +315,8 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
           name="preferredModelId"
           tooltip={t('aiAgent.PreferredModelIdTooltip')}
         >
-          <AstryxFormTextInput
-            label={t('aiAgent.PreferredModelId')}
+          <BAITextInput
+            aria-label={t('aiAgent.PreferredModelId')}
             placeholder={t('aiAgent.PreferredModelIdPlaceholder')}
           />
         </BAIFormItem>
@@ -328,22 +328,25 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
         <Divider>{t('aiAgent.Connection')}</Divider>
 
         <BAIFormItem label={t('aiAgent.ConnectionType')} name="connectionType">
-          <AstryxFormSegmented
-            label={t('aiAgent.ConnectionType')}
-            options={[
-              { value: 'backendai', label: t('aiAgent.BackendAIEndpoint') },
-              { value: 'external', label: t('aiAgent.ExternalEndpoint') },
-            ]}
-          />
+          <BAISegmentedControl aria-label={t('aiAgent.ConnectionType')}>
+            <BAISegmentedControlItem
+              value="backendai"
+              label={t('aiAgent.BackendAIEndpoint')}
+            />
+            <BAISegmentedControlItem
+              value="external"
+              label={t('aiAgent.ExternalEndpoint')}
+            />
+          </BAISegmentedControl>
         </BAIFormItem>
 
         {connectionType === 'backendai' && (
           <>
             <BAIFormItem label={t('aiAgent.EndpointName')} name="endpoint">
-              <AstryxFormTextInput label={t('aiAgent.EndpointName')} />
+              <BAITextInput aria-label={t('aiAgent.EndpointName')} />
             </BAIFormItem>
             <BAIFormItem label={t('aiAgent.EndpointId')} name="endpointId">
-              <AstryxFormTextInput label={t('aiAgent.EndpointId')} />
+              <BAITextInput aria-label={t('aiAgent.EndpointId')} />
             </BAIFormItem>
           </>
         )}
@@ -371,14 +374,14 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
                 },
               ]}
             >
-              <AstryxFormTextInput
-                label={t('aiAgent.EndpointUrl')}
+              <BAITextInput
+                aria-label={t('aiAgent.EndpointUrl')}
                 placeholder="https://api.example.com/v1"
               />
             </BAIFormItem>
             <BAIFormItem label={t('aiAgent.ApiKey')} name="apiKey">
-              <AstryxFormTextInput
-                label={t('aiAgent.ApiKey')}
+              <BAITextInput
+                aria-label={t('aiAgent.ApiKey')}
                 type="password"
                 placeholder={t('aiAgent.ApiKeyPlaceholder')}
               />
@@ -388,6 +391,7 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
 
         <Divider>{t('aiAgent.ToolConfig')}</Divider>
         <Banner
+          role="status"
           status="info"
           style={{ marginBottom: 16 }}
           title={t('aiAgent.ToolCallingComingSoonTitle')}
@@ -433,20 +437,18 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
         />
         <BAIFlex gap="md" align="center">
           <Text>{t('aiAgent.RequiresToolCalling')}</Text>
-          <Switch
+          <BAISwitch
             value={modelPreferences.requiresToolCalling ?? false}
-            label={t('aiAgent.RequiresToolCalling')}
-            isLabelHidden
-            isDisabled
+            aria-label={t('aiAgent.RequiresToolCalling')}
+            disabled
           />
         </BAIFlex>
         <BAIFlex gap="md" align="center" style={{ marginTop: 8 }}>
           <Text>{t('aiAgent.RequiresVision')}</Text>
-          <Switch
+          <BAISwitch
             value={modelPreferences.requiresVision ?? false}
-            label={t('aiAgent.RequiresVision')}
-            isLabelHidden
-            isDisabled
+            aria-label={t('aiAgent.RequiresVision')}
+            disabled
           />
         </BAIFlex>
 

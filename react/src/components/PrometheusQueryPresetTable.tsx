@@ -6,7 +6,7 @@ import {
   PrometheusQueryPresetTableFragment$data,
   PrometheusQueryPresetTableFragment$key,
 } from '../__generated__/PrometheusQueryPresetTableFragment.graphql';
-import { Token } from '@astryxdesign/core/Token';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAIColumnsType,
   BAIFlex,
@@ -15,7 +15,6 @@ import {
   BAITableProps,
   BAIText,
   filterOutNullAndUndefined,
-  toLocalId,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -74,6 +73,7 @@ const PrometheusQueryPresetTable: React.FC<PrometheusQueryPresetTableProps> = ({
       fragment PrometheusQueryPresetTableFragment on QueryDefinition
       @relay(plural: true) {
         id
+        entityId
         name
         description
         rank
@@ -134,9 +134,9 @@ const PrometheusQueryPresetTable: React.FC<PrometheusQueryPresetTableProps> = ({
       defaultHidden: true,
       sorter: isEnableSorter('id'),
       onCell: () => ({ style: { maxWidth: 120 } }),
-      render: (id: string) => (
+      render: (_id: string, row) => (
         <BAIText copyable ellipsis={{ tooltip: true }} monospace>
-          {toLocalId(id)}
+          {row.entityId}
         </BAIText>
       ),
     },

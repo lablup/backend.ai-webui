@@ -13,10 +13,10 @@ import {
   ChatComposerInput,
   ChatSendButton,
   type ChatComposerInputHandle,
-} from '@astryxdesign/core/Chat';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Thumbnail } from '@astryxdesign/core/Thumbnail';
-import { Token } from '@astryxdesign/core/Token';
+} from '@lablup/ui-common/Chat';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Thumbnail } from '@lablup/ui-common/Thumbnail';
+import { Token } from '@lablup/ui-common/Token';
 import { isEmpty } from 'lodash-es';
 import { PaperclipIcon } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';

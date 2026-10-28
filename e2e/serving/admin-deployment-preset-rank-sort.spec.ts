@@ -1,7 +1,6 @@
 // Covers the Rank column added to Admin Settings > Deployments > Deployment
 // Presets in #9639 (FR-3914), which made the existing RANK ordering reachable.
 import { createAdminApiContext, gqlAdmin } from '../utils/admin-api';
-import { skipUnlessClientFeature } from '../utils/feature-gate-util';
 import {
   getSortableColumnHeader,
   loginAsAdmin,
@@ -101,11 +100,6 @@ test.describe(
     test.beforeEach(async ({ page, request }) => {
       prefix = `e2e-rank-preset-${Date.now()}-`;
       await loginAsAdmin(page, request);
-      await skipUnlessClientFeature(
-        page,
-        'deployment-preset',
-        "Deployment Presets require 'deployment-preset' (manager >= 26.4.2, FR-3914)",
-      );
       api = await createAdminApiContext();
       await createRankedPresets(api, prefix, presetIds);
     });

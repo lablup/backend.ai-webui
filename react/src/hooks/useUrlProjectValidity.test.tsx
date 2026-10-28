@@ -81,6 +81,19 @@ describe('useUrlProjectValidity', () => {
     expect(result.current.isInvalid).toBe(true);
   });
 
+  it('resolves the personal project the selector offers', () => {
+    mockUseAccessibleProjects.mockReturnValue({
+      accessibleProjects: [{ id: 'id-alpha', name: 'alpha' }],
+      personalProject: { id: 'id-personal', name: 'me' },
+    });
+    mockUseMatches.mockReturnValue(matchWithProject('me'));
+
+    const { result } = renderHook(() => useUrlProjectValidity());
+    expect(result.current.isInvalid).toBe(false);
+    expect(result.current.resolvedId).toBe('id-personal');
+    expect(result.current.groups).toEqual(['alpha', 'me']);
+  });
+
   it('reads the DEEPEST match carrying a projectName param', () => {
     mockUseAccessibleProjects.mockReturnValue(
       accessible([

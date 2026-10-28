@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<48e1db5f3b3c2581617d6ca85fb7af05>>
+ * @generated SignedSource<<98b384ab52facac2e56bbb040b6487a5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -218,7 +218,14 @@ v11 = [
     ]
   }
 ],
-v12 = [
+v12 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "entityId",
+  "storageKey": null
+},
+v13 = [
   (v5/*: any*/),
   {
     "alias": null,
@@ -228,52 +235,27 @@ v12 = [
     "storageKey": null
   }
 ],
-v13 = [
-  {
-    "alias": null,
-    "args": null,
-    "concreteType": "ArtifactRevisionEdge",
-    "kind": "LinkedField",
-    "name": "edges",
-    "plural": true,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "ArtifactRevision",
-        "kind": "LinkedField",
-        "name": "node",
-        "plural": false,
-        "selections": [
-          (v7/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "version",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "size",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "status",
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
-  }
-];
+v14 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "version",
+  "storageKey": null
+},
+v15 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "size",
+  "storageKey": null
+},
+v16 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "status",
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": [
@@ -487,6 +469,7 @@ return {
                 "plural": false,
                 "selections": [
                   (v7/*: any*/),
+                  (v12/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -530,7 +513,7 @@ return {
                 "plural": false,
                 "selections": [
                   (v7/*: any*/),
-                  (v7/*: any*/),
+                  (v12/*: any*/),
                   (v5/*: any*/),
                   {
                     "alias": null,
@@ -567,7 +550,7 @@ return {
                     "kind": "LinkedField",
                     "name": "registry",
                     "plural": false,
-                    "selections": (v12/*: any*/),
+                    "selections": (v13/*: any*/),
                     "storageKey": null
                   },
                   {
@@ -577,7 +560,7 @@ return {
                     "kind": "LinkedField",
                     "name": "source",
                     "plural": false,
-                    "selections": (v12/*: any*/),
+                    "selections": (v13/*: any*/),
                     "storageKey": null
                   },
                   (v6/*: any*/),
@@ -588,7 +571,34 @@ return {
                     "kind": "LinkedField",
                     "name": "revisions",
                     "plural": false,
-                    "selections": (v13/*: any*/),
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "ArtifactRevisionEdge",
+                        "kind": "LinkedField",
+                        "name": "edges",
+                        "plural": true,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "ArtifactRevision",
+                            "kind": "LinkedField",
+                            "name": "node",
+                            "plural": false,
+                            "selections": [
+                              (v7/*: any*/),
+                              (v14/*: any*/),
+                              (v15/*: any*/),
+                              (v16/*: any*/)
+                            ],
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      }
+                    ],
                     "storageKey": "revisions(limit:1,orderBy:[{\"direction\":\"DESC\",\"field\":\"VERSION\"},{\"direction\":\"DESC\",\"field\":\"UPDATED_AT\"}])"
                   },
                   {
@@ -598,7 +608,41 @@ return {
                     "kind": "LinkedField",
                     "name": "revisions",
                     "plural": false,
-                    "selections": (v13/*: any*/),
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "ArtifactRevisionEdge",
+                        "kind": "LinkedField",
+                        "name": "edges",
+                        "plural": true,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "ArtifactRevision",
+                            "kind": "LinkedField",
+                            "name": "node",
+                            "plural": false,
+                            "selections": [
+                              (v7/*: any*/),
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "fieldId",
+                                "storageKey": null
+                              },
+                              (v14/*: any*/),
+                              (v15/*: any*/),
+                              (v16/*: any*/)
+                            ],
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      }
+                    ],
                     "storageKey": "revisions(limit:1,orderBy:[{\"direction\":\"DESC\",\"field\":\"VERSION\"},{\"direction\":\"DESC\",\"field\":\"UPDATED_AT\"}])"
                   }
                 ],
@@ -613,16 +657,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "756eb34c8d2fa3cf2659a5befe2c451f",
+    "cacheID": "f09c62bb7a624193b8382adf3f4a2e85",
     "id": null,
     "metadata": {},
     "name": "ReservoirPageQuery",
     "operationKind": "query",
-    "text": "query ReservoirPageQuery(\n  $order: [ArtifactOrderBy!]\n  $limit: Int\n  $offset: Int\n  $filter: ArtifactFilter\n) {\n  defaultArtifactRegistry(artifactType: MODEL) {\n    name\n    type\n    id\n  }\n  huggingfaceRegistries @since(version: \"25.14.0\") {\n    edges {\n      node {\n        id\n        ...BAIHuggingFaceRegistrySettingModalFragment\n      }\n    }\n  }\n  total: artifacts(filter: {availability: [ALIVE, DELETED]}) {\n    count\n  }\n  artifacts(orderBy: $order, limit: $limit, offset: $offset, filter: $filter) {\n    count\n    edges {\n      node {\n        id @since(version: \"25.17.0\")\n        ...BAIArtifactTableArtifactFragment\n        ...BAIImportArtifactModalArtifactFragment\n        ...BAIDeactivateArtifactsModalArtifactsFragment\n        ...BAIActivateArtifactsModalArtifactsFragment\n        revisions(limit: 1, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}]) {\n          edges {\n            node {\n              id\n              ...BAIImportArtifactModalArtifactRevisionFragment\n            }\n          }\n        }\n      }\n    }\n  }\n}\n\nfragment BAIActivateArtifactsModalArtifactsFragment on Artifact {\n  id\n  name\n}\n\nfragment BAIArtifactDescriptionsFragment on Artifact {\n  name\n  description\n  source {\n    name\n    url\n  }\n  ...BAIArtifactTypeTokenFragment\n}\n\nfragment BAIArtifactRevisionDownloadButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactStatusBadgeFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactTableArtifactFragment on Artifact {\n  id\n  name\n  description\n  updatedAt\n  scannedAt\n  availability\n  registry {\n    name\n    url\n  }\n  source {\n    name\n    url\n  }\n  ...BAIArtifactTypeTokenFragment\n  latestVersion: revisions(limit: 1, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}]) {\n    edges {\n      node {\n        id\n        version\n        size\n        status\n        ...BAIArtifactStatusBadgeFragment\n        ...BAIArtifactRevisionDownloadButtonFragment\n      }\n    }\n  }\n}\n\nfragment BAIArtifactTypeTokenFragment on Artifact {\n  type\n}\n\nfragment BAIDeactivateArtifactsModalArtifactsFragment on Artifact {\n  id\n  name\n}\n\nfragment BAIHuggingFaceRegistrySettingModalFragment on HuggingFaceRegistry {\n  id\n  token\n}\n\nfragment BAIImportArtifactModalArtifactFragment on Artifact {\n  id\n  name\n  ...BAIArtifactDescriptionsFragment\n}\n\nfragment BAIImportArtifactModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  version\n  size\n  status\n}\n"
+    "text": "query ReservoirPageQuery(\n  $order: [ArtifactOrderBy!]\n  $limit: Int\n  $offset: Int\n  $filter: ArtifactFilter\n) {\n  defaultArtifactRegistry(artifactType: MODEL) {\n    name\n    type\n    id\n  }\n  huggingfaceRegistries {\n    edges {\n      node {\n        id\n        ...BAIHuggingFaceRegistrySettingModalFragment\n      }\n    }\n  }\n  total: artifacts(filter: {availability: [ALIVE, DELETED]}) {\n    count\n  }\n  artifacts(orderBy: $order, limit: $limit, offset: $offset, filter: $filter) {\n    count\n    edges {\n      node {\n        id\n        ...BAIArtifactTableArtifactFragment\n        ...BAIImportArtifactModalArtifactFragment\n        ...BAIDeactivateArtifactsModalArtifactsFragment\n        ...BAIActivateArtifactsModalArtifactsFragment\n        revisions(limit: 1, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}]) {\n          edges {\n            node {\n              id\n              ...BAIImportArtifactModalArtifactRevisionFragment\n            }\n          }\n        }\n      }\n    }\n  }\n}\n\nfragment BAIActivateArtifactsModalArtifactsFragment on Artifact {\n  id\n  entityId\n  name\n}\n\nfragment BAIArtifactDescriptionsFragment on Artifact {\n  name\n  description\n  source {\n    name\n    url\n  }\n  ...BAIArtifactTypeTokenFragment\n}\n\nfragment BAIArtifactRevisionDownloadButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactStatusBadgeFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactTableArtifactFragment on Artifact {\n  id\n  entityId\n  name\n  description\n  updatedAt\n  scannedAt\n  availability\n  registry {\n    name\n    url\n  }\n  source {\n    name\n    url\n  }\n  ...BAIArtifactTypeTokenFragment\n  latestVersion: revisions(limit: 1, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}]) {\n    edges {\n      node {\n        id\n        version\n        size\n        status\n        ...BAIArtifactStatusBadgeFragment\n        ...BAIArtifactRevisionDownloadButtonFragment\n      }\n    }\n  }\n}\n\nfragment BAIArtifactTypeTokenFragment on Artifact {\n  type\n}\n\nfragment BAIDeactivateArtifactsModalArtifactsFragment on Artifact {\n  id\n  entityId\n  name\n}\n\nfragment BAIHuggingFaceRegistrySettingModalFragment on HuggingFaceRegistry {\n  id\n  entityId\n  token\n}\n\nfragment BAIImportArtifactModalArtifactFragment on Artifact {\n  id\n  entityId\n  name\n  ...BAIArtifactDescriptionsFragment\n}\n\nfragment BAIImportArtifactModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  fieldId\n  version\n  size\n  status\n}\n"
   }
 };
 })();
 
-(node as any).hash = "077e0b0b0d4218132cb616b6beb02f12";
+(node as any).hash = "40fc900512963c9101365fe40460f032";
 
 export default node;

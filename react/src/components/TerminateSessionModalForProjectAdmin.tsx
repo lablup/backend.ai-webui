@@ -7,17 +7,16 @@ import { TerminateSessionModalForProjectAdminMutation } from '../__generated__/T
 import { App } from '../app-shim';
 import { useCurrentUserRole } from '../hooks/backendai';
 import './TerminateSessionModalForProjectAdmin.css';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAICard,
   BAIFlex,
   BAIModal,
-  type BAIModalProps,
   BAIText,
   filterOutNullAndUndefined,
-  toLocalId,
+  type BAIModalProps,
+  BAICheckboxInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useState } from 'react';
@@ -61,6 +60,7 @@ const TerminateSessionModalForProjectAdmin: React.FC<
         fragment TerminateSessionModalForProjectAdminFragment on SessionV2
         @relay(plural: true) {
           id
+          entityId
           metadata {
             name
           }
@@ -127,7 +127,7 @@ const TerminateSessionModalForProjectAdmin: React.FC<
         }
         commitTerminate({
           variables: {
-            sessionIds: sessions.map((session) => toLocalId(session.id)),
+            sessionIds: sessions.map((session) => session.entityId),
             forced: isForce,
           },
           onCompleted: (_response, errors) => {
@@ -164,11 +164,12 @@ const TerminateSessionModalForProjectAdmin: React.FC<
         </BAIText>
         {/* MAPPING §4: `checked` -> `value`, `onChange(e)` ->
             `onChange(checked)`, children -> the required `label`. */}
-        <CheckboxInput
-          label={t('button.ForceTerminate')}
+        <BAICheckboxInput
           value={isForce}
           onChange={(checked) => setIsForce(checked)}
-        />
+        >
+          {t('button.ForceTerminate')}
+        </BAICheckboxInput>
         {isForce && (
           <BAICard styles={{ body: { padding: token('--spacing-4') } }}>
             {/* `Typography.Paragraph` -> `Text as="p" display="block"`; the

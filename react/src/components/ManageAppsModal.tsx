@@ -7,12 +7,11 @@ import { ManageAppsModal_image$key } from '../__generated__/ManageAppsModal_imag
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import BAIFormItem from './BAIFormItem';
-import { AstryxFormTextInput } from './astryxFormControls';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Text } from '@astryxdesign/core/Text';
-import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Text } from '@lablup/ui-common/Text';
+import { BAIFlex, BAIModal, BAIModalProps, BAITextInput } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Trash, PlusIcon } from 'lucide-react';
 import React from 'react';
@@ -45,8 +44,7 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
           value
         }
         registry
-        name @deprecatedSince(version: "24.12.0")
-        namespace @since(version: "24.12.0")
+        namespace
         architecture
         tag
       }
@@ -125,7 +123,7 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
         // newly created sessions immediately without any image reinstall.
         commitModifyImageInput({
           variables: {
-            target: `${image?.registry}/${image?.name ?? image.namespace}:${image?.tag}`,
+            target: `${image?.registry}/${image?.namespace}:${image?.tag}`,
             architecture: image?.architecture,
             props: {
               labels: labels,
@@ -170,6 +168,7 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
           marginBottom token becomes BAIFlex column gaps. */}
       <BAIFlex direction="column" align="stretch" gap="md">
         <Banner
+          role="status"
           status="info"
           title={t('environment.AppPortsApplyToNewSessionsOnly')}
         />
@@ -210,8 +209,8 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                           },
                         ]}
                       >
-                        <AstryxFormTextInput
-                          label={t('environment.AppName')}
+                        <BAITextInput
+                          aria-label={t('environment.AppName')}
                           placeholder={t('environment.AppName')}
                         />
                       </BAIFormItem>
@@ -229,8 +228,8 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                           },
                         ]}
                       >
-                        <AstryxFormTextInput
-                          label={t('environment.Protocol')}
+                        <BAITextInput
+                          aria-label={t('environment.Protocol')}
                           placeholder={t('environment.Protocol')}
                         />
                       </BAIFormItem>
@@ -287,8 +286,8 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                           },
                         ]}
                       >
-                        <AstryxFormTextInput
-                          label={t('environment.Port')}
+                        <BAITextInput
+                          aria-label={t('environment.Port')}
                           placeholder={t('environment.Port')}
                         />
                       </BAIFormItem>

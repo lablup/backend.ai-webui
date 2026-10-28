@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<44a6cdf64de6980568f3b74f0dbd5872>>
+ * @generated SignedSource<<f99fa345b7f57555c857f08f5f188c1b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,7 +13,9 @@ import { FragmentRefs } from "relay-runtime";
 export type BAILoginSessionTableFragment$data = ReadonlyArray<{
   readonly accessKey: string;
   readonly createdAt: string;
+  readonly fieldId: string;
   readonly id: string;
+  readonly lastAccessedAt: string | null | undefined;
   readonly user: {
     readonly basicInfo: {
       readonly email: string;
@@ -48,6 +50,13 @@ return {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
+      "name": "fieldId",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "accessKey",
       "storageKey": null
     },
@@ -56,6 +65,13 @@ return {
       "args": null,
       "kind": "ScalarField",
       "name": "createdAt",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "lastAccessedAt",
       "storageKey": null
     },
     {
@@ -94,6 +110,6 @@ return {
 };
 })();
 
-(node as any).hash = "b191c9ad8bef80db83e6a304d36baeac";
+(node as any).hash = "951db8f8c2f9e63e9dc2d1aa3a7b896b";
 
 export default node;

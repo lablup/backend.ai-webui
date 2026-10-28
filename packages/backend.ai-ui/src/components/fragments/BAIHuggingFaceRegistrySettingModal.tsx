@@ -2,12 +2,11 @@ import { BAIHuggingFaceRegistrySettingModalFragment$key } from '../../__generate
 import { BAIHuggingFaceRegistrySettingModalMutation } from '../../__generated__/BAIHuggingFaceRegistrySettingModalMutation.graphql';
 import { App } from '../../app-shim';
 import { Form, FormInstance } from '../../form-engine';
-import { toLocalId } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIModal, { BAIModalProps } from '../BAIModal';
-import { AstryxFormTextInput } from '../astryxFormControls';
-import { InputGroup } from '@astryxdesign/core/InputGroup';
-import { Link } from '@astryxdesign/core/Link';
+import BAITextInput from '../BAITextInput';
+import { InputGroup } from '@lablup/ui-common/InputGroup';
+import { Link } from '@lablup/ui-common/Link';
 import { useRef, useState } from 'react';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
@@ -35,6 +34,7 @@ const BAIHuggingFaceRegistrySettingModal: React.FC<
     graphql`
       fragment BAIHuggingFaceRegistrySettingModalFragment on HuggingFaceRegistry {
         id
+        entityId
         token
       }
     `,
@@ -65,7 +65,7 @@ const BAIHuggingFaceRegistrySettingModal: React.FC<
         commitUpdateRegistry({
           variables: {
             input: {
-              id: toLocalId(huggingFaceRegistry.id),
+              id: huggingFaceRegistry.entityId,
               token: values.token || null,
             },
           },
@@ -117,8 +117,8 @@ const BAIHuggingFaceRegistrySettingModal: React.FC<
               label={t('comp:BAIHuggingFaceRegistrySettingModal.Token')}
               isLabelHidden
             >
-              <AstryxFormTextInput
-                label={t('comp:BAIHuggingFaceRegistrySettingModal.Token')}
+              <BAITextInput
+                aria-label={t('comp:BAIHuggingFaceRegistrySettingModal.Token')}
                 type="password"
                 value="••••••••••••"
                 disabled
@@ -128,8 +128,8 @@ const BAIHuggingFaceRegistrySettingModal: React.FC<
               </Link>
             </InputGroup>
           ) : (
-            <AstryxFormTextInput
-              label={t('comp:BAIHuggingFaceRegistrySettingModal.Token')}
+            <BAITextInput
+              aria-label={t('comp:BAIHuggingFaceRegistrySettingModal.Token')}
               type="password"
               placeholder={t(
                 'comp:BAIHuggingFaceRegistrySettingModal.EnterToken',

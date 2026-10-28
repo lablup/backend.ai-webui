@@ -8,17 +8,15 @@ import {
   FormItemProps,
   FormListProps,
 } from '../form-engine';
-import { AstryxFormTextInput } from './astryxFormControls';
-import { usePopover } from '@astryxdesign/core/Popover';
-import { TextInput } from '@astryxdesign/core/TextInput';
+import { usePopover } from '@lablup/ui-common/Popover';
 import {
   colorVars,
   radiusVars,
   spacingVars,
   typeScaleVars,
-} from '@astryxdesign/core/theme/tokens.stylex';
+} from '@lablup/ui-common/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
-import { BAIButton, BAIFlex } from 'backend.ai-ui';
+import { BAIButton, BAIFlex, BAITextInput } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleMinus, PlusIcon } from 'lucide-react';
 import React, { useId, useRef, useState } from 'react';
@@ -35,7 +33,7 @@ export interface EnvVarConfig {
  * The value input's placeholder depends on the SIBLING `variable` field.
  *
  * `Form.Item`'s `dependencies` re-renders the *Field*, but the
- * `<AstryxFormTextInput placeholder={…}>` element it renders is still the same
+ * `<BAITextInput placeholder={…}>` element it renders is still the same
  * static element object created on the last OUTER render, so a placeholder
  * computed inline from `form.getFieldValue(...)` never updates — the field the
  * user just typed into keeps showing the generic hint. `Form.useWatch`
@@ -51,10 +49,7 @@ const EnvVarValueInput: React.FC<
     variableNamePath: Parameters<FormInstance['getFieldValue']>[0];
     getPlaceholderForVariable: (variable: string) => string;
     label: string;
-  } & Omit<
-    React.ComponentProps<typeof AstryxFormTextInput>,
-    'label' | 'placeholder'
-  >
+  } & Omit<React.ComponentProps<typeof BAITextInput>, 'placeholder'>
 > = ({
   form,
   variableNamePath,
@@ -65,9 +60,9 @@ const EnvVarValueInput: React.FC<
   'use memo';
   const variable = Form.useWatch(variableNamePath, form);
   return (
-    <AstryxFormTextInput
+    <BAITextInput
       {...controlProps}
-      label={label}
+      aria-label={label}
       placeholder={getPlaceholderForVariable(variable)}
     />
   );
@@ -253,7 +248,7 @@ const EnvVarNameInput: React.FC<EnvVarNameInputProps> = ({
       }}
       {...stylex.props(comboboxStyles.anchor)}
     >
-      <TextInput
+      <BAITextInput
         ref={(el) => {
           inputElRef.current = el;
         }}
@@ -268,8 +263,7 @@ const EnvVarNameInput: React.FC<EnvVarNameInputProps> = ({
             popover.hide();
           }
         }}
-        label={label}
-        isLabelHidden
+        aria-label={label}
         placeholder={placeholder}
         width="100%"
         role="combobox"
@@ -586,11 +580,7 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
             <BAIButton
               type="dashed"
               // PILOT-DECISION: the antd `InputRef.focus()` that jumped the
-              // caret into the row just added is DROPPED. Astryx uses a
-              // `handleRef` convention rather than `ref` + `InputRef`
-              // (MAPPING §6.2) and `AstryxFormTextInput` exposes no ref
-              // slot; the same call was already made for the select stack
-              // (P26-8).
+              // caret into the row just added is DROPPED (MAPPING §6.2).
               onClick={() => {
                 add();
               }}

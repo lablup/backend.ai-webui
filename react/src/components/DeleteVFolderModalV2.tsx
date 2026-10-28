@@ -5,14 +5,14 @@
 import { DeleteVFolderModalV2Fragment$key } from '../__generated__/DeleteVFolderModalV2Fragment.graphql';
 import { DeleteVFolderModalV2Mutation } from '../__generated__/DeleteVFolderModalV2Mutation.graphql';
 import { App } from '../app-shim';
-import { useSuspendedBackendaiClient } from '../hooks';
-import { Text } from '@astryxdesign/core/Text';
+import { VStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAIBulkErrorModal,
   type BAIColumnsType,
+  BAIListAlert,
   BAIModal,
   type BAIModalProps,
-  toLocalId,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -45,12 +45,6 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
-  // Older managers have no `items` / `failed` on the payload and reject the
-  // whole document, so the per-id selections are gated and the deprecated
-  // count is selected instead.
-  const supportsPerIdResults = useSuspendedBackendaiClient().supports(
-    'bulk-mutation-per-id-results',
-  );
   // Per-folder failures of the last request; `total` is what the request
   // carried, kept apart from the selection the parent clears on success.
   const [failureReport, setFailureReport] = useState<{
@@ -62,9 +56,11 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
     graphql`
       fragment DeleteVFolderModalV2Fragment on VFolder @relay(plural: true) {
         id
+        entityId
         metadata {
           name
         }
+        permissions @since(version: "26.9.0rc1")
       }
     `,
     vfolderFrgmts,
@@ -76,25 +72,24 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
         $input: BulkDeleteVFoldersV2Input!
       ) {
         bulkDeleteVfoldersV2(input: $input) {
-          items @since(version: "26.9.0") {
+          items @since(version: "26.9.0rc1") {
             id
           }
-          failed @since(version: "26.9.0") {
+          failed @since(version: "26.9.0rc1") {
             vfolderId
             message
           }
-          deletedCount @deprecatedSince(version: "26.9.0")
         }
       }
     `);
 
-  // TODO(needs-backend): V2 `VFolder` does not expose a per-user action
-  // permission (legacy `VirtualFolderNode.permissions` had `delete_vfolder`).
-  // `accessControl.permission` is a mount-level enum (RO/RW/RW_DELETE), not
-  // an entity-level action permission, so it cannot be used to filter out
-  // undeletable folders here. Send all selected folders and let the backend
-  // reject unauthorized ones until a proper permission field is exposed.
-  const folders = vfolders ?? [];
+  const { deletable: folders = [], undeletable = [] } = _.groupBy(
+    vfolders ?? [],
+    (vfolder) =>
+      _.includes(vfolder.permissions, 'SOFT_DELETE')
+        ? 'deletable'
+        : 'undeletable',
+  );
 
   const failureColumns: BAIColumnsType<DeleteFailure> = [
     { key: 'name', title: t('data.folders.Name'), dataIndex: 'name' },
@@ -122,7 +117,7 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
             onRequestClose?.(false);
             return;
           }
-          const ids = _.map(folders, (vfolder) => toLocalId(vfolder.id));
+          const ids = _.map(folders, (vfolder) => vfolder.entityId);
           commitBulkDeleteMutation({
             variables: { input: { ids } },
             onCompleted: (data, errors) => {
@@ -133,15 +128,14 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
                 );
                 return;
               }
-              const deletedCount = supportsPerIdResults
-                ? (data?.bulkDeleteVfoldersV2?.items?.length ?? 0)
-                : (data?.bulkDeleteVfoldersV2?.deletedCount ?? 0);
+              const deletedCount =
+                data?.bulkDeleteVfoldersV2?.items?.length ?? 0;
               const failed = data?.bulkDeleteVfoldersV2?.failed ?? [];
               // The mutation answers per id, so a partial failure arrives as a
               // success with `failed` populated rather than as a top-level error.
               if (failed.length > 0) {
                 const nameByLocalId = _.fromPairs(
-                  _.map(folders, (v) => [toLocalId(v.id), v.metadata?.name]),
+                  _.map(folders, (v) => [v.entityId, v.metadata?.name]),
                 );
                 setFailureReport({
                   total: folders.length,
@@ -188,15 +182,29 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
         }}
         {...baiModalProps}
       >
-        <Text>
-          {folders.length === 1
-            ? t('data.folders.MoveToTrashDescription', {
-                folderName: folders[0]?.metadata?.name,
-              })
-            : t('data.folders.MoveToTrashMultipleDescription', {
-                folderLength: folders.length,
+        <VStack gap={3} align="stretch">
+          {undeletable.length > 0 && (
+            <BAIListAlert
+              banner
+              title={t('data.folders.ExcludedFolders', {
+                count: undeletable.length,
               })}
-        </Text>
+              items={_.map(undeletable, (vfolder) => ({
+                key: vfolder.id,
+                content: vfolder.metadata?.name,
+              }))}
+            />
+          )}
+          <Text>
+            {folders.length === 1
+              ? t('data.folders.MoveToTrashDescription', {
+                  folderName: folders[0]?.metadata?.name,
+                })
+              : t('data.folders.MoveToTrashMultipleDescription', {
+                  folderLength: folders.length,
+                })}
+          </Text>
+        </VStack>
       </BAIModal>
       <BAIBulkErrorModal<DeleteFailure>
         open={!!failureReport}

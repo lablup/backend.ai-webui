@@ -16,15 +16,15 @@ import {
   useVFolderInvitations,
 } from '../hooks/useVFolderInvitations';
 import VFolderPermissionCell from './VFolderPermissionCell';
-import { Button } from '@astryxdesign/core/Button';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { List, ListItem } from '@astryxdesign/core/List';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { HStack } from '@astryxdesign/core/Stack';
+import { Button } from '@lablup/ui-common/Button';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { List, ListItem } from '@lablup/ui-common/List';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { HStack } from '@lablup/ui-common/Stack';
 import {
   borderVars,
   typeScaleVars,
-} from '@astryxdesign/core/theme/tokens.stylex';
+} from '@lablup/ui-common/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
 import {
   BAIMetadataList,

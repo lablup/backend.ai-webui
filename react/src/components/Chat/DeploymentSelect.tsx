@@ -40,16 +40,15 @@ import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import { useProjectPath } from '../../hooks/useRouteScope';
 import { getCustomEndpointHost } from './ChatModel';
-import { Button } from '@astryxdesign/core/Button';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { HStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Button } from '@lablup/ui-common/Button';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { HStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIComplexSelect,
   BAIFlex,
   toGlobalId,
-  toLocalId,
   type BAIComplexSelectOption,
   type BAIComplexSelectProps,
   type BAIComplexSelectValue,
@@ -117,13 +116,13 @@ const DeploymentSelect: React.FC<DeploymentSelectProps> = ({
   const [searchStr, setSearchStr] = useState<string>('');
   const deferredSearchStr = useDeferredValue(searchStr);
 
-  // See the antd original for the full rationale (deployment-replica-nested-
-  // filter support gate, unscoped-by-project note). Unchanged here.
+  // Same serving-replica filter as ChatPage: nested replica filter on manager
+  // 26.8.0+, lifecycle status on older ones. Deliberately not project-scoped.
   const nameFilter = deferredSearchStr
     ? { name: { iContains: deferredSearchStr } }
     : undefined;
   const deploymentFilter: DeploymentSelectQuery['variables']['filter'] =
-    baiClient.supports('deployment-replica-nested-filter')
+    baiClient.isManagerVersionCompatibleWith('26.8.0')
       ? {
           replicas: {
             some: {
@@ -182,6 +181,7 @@ const DeploymentSelect: React.FC<DeploymentSelectProps> = ({
           edges {
             node {
               id
+              entityId
               metadata {
                 name
               }
@@ -200,14 +200,14 @@ const DeploymentSelect: React.FC<DeploymentSelectProps> = ({
       getTotal: (result) => result.myDeployments?.count,
       getItem: (result) =>
         result.myDeployments?.edges?.map((edge) => edge?.node),
-      getId: (node) => (node?.id ? toLocalId(node.id) : undefined),
+      getId: (node) => node?.entityId,
     },
   );
 
   const total = myDeployments?.count ?? undefined;
   const options: Array<BAIComplexSelectOption> = _.compact(
     _.map(paginationData, (node) => {
-      const value = node?.id ? toLocalId(node.id) : undefined;
+      const value = node?.entityId;
       return value && node?.metadata.name
         ? { value, label: node.metadata.name }
         : null;

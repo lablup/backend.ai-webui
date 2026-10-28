@@ -8,12 +8,12 @@ import { Form, type FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIFormItem from './BAIFormItem';
-import { AstryxFormTextInput } from './astryxFormControls';
-import { Banner } from '@astryxdesign/core/Banner';
+import { Banner } from '@lablup/ui-common/Banner';
 import {
   BAIModal,
   BAIModalProps,
   useErrorMessageResolver,
+  BAITextInput,
 } from 'backend.ai-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -86,7 +86,11 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
         {/* The warning was wrapped in a state-less `Form.Item name="alert"`
             purely for spacing; it holds no field value, so the wrapper goes
             and the `Alert` becomes an Astryx `Banner` (MAPPING §4). */}
-        <Banner title={t('login.DescConfirmLeave')} status="warning" />
+        <Banner
+          role="alert"
+          title={t('login.DescConfirmLeave')}
+          status="warning"
+        />
         <BAIFormItem
           name="email"
           label={t('general.E-Mail')}
@@ -108,7 +112,7 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
             }),
           ]}
         >
-          <AstryxFormTextInput label={t('general.E-Mail')} />
+          <BAITextInput aria-label={t('general.E-Mail')} />
         </BAIFormItem>
         <BAIFormItem
           name="password"
@@ -127,7 +131,7 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
             }),
           ]}
         >
-          <AstryxFormTextInput type="password" label={t('general.Password')} />
+          <BAITextInput type="password" aria-label={t('general.Password')} />
         </BAIFormItem>
       </Form>
     </BAIModal>

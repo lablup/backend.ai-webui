@@ -7,11 +7,15 @@ import { App } from '../app-shim';
 import { Form } from '../form-engine';
 import { useAnonymousBackendaiClient } from '../hooks';
 import BAIFormItem from './BAIFormItem';
-import { AstryxFormTextInput } from './astryxFormControls';
-import { Button } from '@astryxdesign/core/Button';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
-import { BAIFlex, BAIModal, ESMClientErrorResponse } from 'backend.ai-ui';
+import { Button } from '@lablup/ui-common/Button';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
+import {
+  BAIFlex,
+  BAIModal,
+  BAITextInput,
+  ESMClientErrorResponse,
+} from 'backend.ai-ui';
 import { CircleCheck } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -148,8 +152,8 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
                 },
               ]}
             >
-              <AstryxFormTextInput
-                label={t('data.explorer.EnterEmailAddress')}
+              <BAITextInput
+                aria-label={t('data.explorer.EnterEmailAddress')}
                 hasAutoFocus
               />
             </BAIFormItem>
@@ -171,9 +175,9 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
                 },
               ]}
             >
-              <AstryxFormTextInput
+              <BAITextInput
                 type="password"
-                label={t('webui.menu.NewPassword')}
+                aria-label={t('webui.menu.NewPassword')}
               />
             </BAIFormItem>
             <BAIFormItem
@@ -194,9 +198,9 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
                 },
               ]}
             >
-              <AstryxFormTextInput
+              <BAITextInput
                 type="password"
-                label={t('webui.menu.NewPasswordAgain')}
+                aria-label={t('webui.menu.NewPasswordAgain')}
               />
             </BAIFormItem>
           </Form>

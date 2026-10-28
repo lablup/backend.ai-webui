@@ -2,20 +2,20 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Form } from '../../form-engine';
-import type { FormInstance } from '../../form-engine';
+import { Form, type FormInstance } from '../../form-engine';
 import { COMMAND_SHELL_OPTIONS } from '../../helper/modelServiceCommand';
 import { useSuspendedBackendaiClient } from '../../hooks';
-import {
-  AstryxFormNumberInput,
-  AstryxFormRadioList,
-  AstryxFormTextArea,
-  AstryxFormTextInput,
-} from '../astryxFormControls';
 import '../collapsible-section.css';
-import { Collapsible } from '@astryxdesign/core/Collapsible';
-import { useTheme } from '@astryxdesign/core/theme';
-import { BAIFlex } from 'backend.ai-ui';
+import { Collapsible } from '@lablup/ui-common/Collapsible';
+import { useTheme } from '@lablup/ui-common/theme';
+import {
+  BAIFlex,
+  BAINumberInput,
+  BAIRadioList,
+  BAIRadioListItem,
+  BAITextArea,
+  BAITextInput,
+} from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -29,8 +29,8 @@ export interface ServiceConfigurationFormItemsProps {
   /**
    * BA-7210 / FR-3481: appended below the base Port tooltip text when the
    * caller's manager supports inheriting an omitted port from the runtime
-   * variant baseline. Only the preset page passes this (gated on
-   * `preset-model-config-type`); the revision modal never inherits a port.
+   * variant baseline. Only the preset page passes this (gated on manager
+   * 26.9.0); the revision modal never inherits a port.
    */
   portTooltipExtra?: string;
 }
@@ -59,9 +59,8 @@ const ServiceConfigurationFormItems: React.FC<
   const { t } = useTranslation();
   const { token } = useTheme();
   const baiClient = useSuspendedBackendaiClient();
-  const supportsCommandShell = baiClient.supports(
-    'model-service-command-string',
-  );
+  const supportsCommandShell =
+    baiClient.isManagerVersionCompatibleWith('26.8.0');
 
   return (
     // PILOT-DECISION: antd `Collapse` (single bordered panel, size="small",
@@ -102,20 +101,19 @@ const ServiceConfigurationFormItems: React.FC<
             required
             rules={[{ required: true }]}
           >
-            {/* antd Radio.Group → AstryxFormRadioList. */}
-            <AstryxFormRadioList
-              label={t('modelService.Execution')}
-              options={[
-                {
-                  label: t('modelService.ExecutionShell'),
-                  value: 'shell',
-                },
-                {
-                  label: t('modelService.ExecutionExec'),
-                  value: 'exec',
-                },
-              ]}
-            />
+            <BAIRadioList
+              aria-label={t('modelService.Execution')}
+              orientation="horizontal"
+            >
+              <BAIRadioListItem
+                value="shell"
+                label={t('modelService.ExecutionShell')}
+              />
+              <BAIRadioListItem
+                value="exec"
+                label={t('modelService.ExecutionExec')}
+              />
+            </BAIRadioList>
           </Form.Item>
           <Form.Item dependencies={[[...namePrefix, 'execution']]} noStyle>
             {({ getFieldValue: getExec }: FormInstance) =>
@@ -131,14 +129,14 @@ const ServiceConfigurationFormItems: React.FC<
                   rules={[{ required: true, whitespace: true }]}
                 >
                   {/* PILOT-DECISION: antd `AutoComplete` →
-                      `AstryxFormTextInput` (free-text AutoComplete
+                      `TextInput` (free-text AutoComplete
                       does NOT map to `Typeahead`, which commits
                       `T | null` and cannot keep a typed string). The
                       suggestion dropdown is dropped; the known shells
                       are surfaced in the placeholder instead.
                       `allowClear` → `hasClear`. */}
-                  <AstryxFormTextInput
-                    label={t('modelService.Shell')}
+                  <BAITextInput
+                    aria-label={t('modelService.Shell')}
                     placeholder={COMMAND_SHELL_OPTIONS.map((o) => o.value).join(
                       ', ',
                     )}
@@ -199,22 +197,22 @@ const ServiceConfigurationFormItems: React.FC<
               {!supportsCommandShell ? (
                 // Legacy (<26.8.0): plain single-line input,
                 // tokenized on submit.
-                <AstryxFormTextInput
-                  label={commandLabel}
+                <BAITextInput
+                  aria-label={commandLabel}
                   placeholder={placeholders?.command}
                 />
               ) : isExec ? (
                 // Exec: argv example, no shell operators.
-                <AstryxFormTextInput
-                  label={commandLabel}
+                <BAITextInput
+                  aria-label={commandLabel}
                   placeholder={placeholders?.command}
                 />
               ) : (
                 // PILOT-DECISION: antd `autoSize={{ minRows: 2 }}`
                 // (grow-with-content) has no Astryx TextArea
                 // equivalent — fixed `rows={2}` instead.
-                <AstryxFormTextArea
-                  label={commandLabel}
+                <BAITextArea
+                  aria-label={commandLabel}
                   placeholder={placeholders?.command}
                   rows={2}
                 />
@@ -244,8 +242,9 @@ const ServiceConfigurationFormItems: React.FC<
       >
         {/* Backend `PresetModelServiceConfigInput.port` is `gt=1` exclusive,
             hence min 2. */}
-        <AstryxFormNumberInput
-          label={t('modelService.Port')}
+        <BAINumberInput
+          width="100%"
+          aria-label={t('modelService.Port')}
           min={2}
           max={65535}
           placeholder={placeholders?.port}

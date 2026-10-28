@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-09-08
+> **Last Updated:** 2026-10-23
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 348 / 505 features covered (69%)**
+**Overall (in-scope routes): 375 / 525 features covered (71%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -20,26 +20,26 @@
 | Change Password          | `/change-password`                               |    9     |    9    | ✅ 100% |
 | Start Page               | `/start`                                         |    8     |    6    | 🔶 75%  |
 | Dashboard                | `/dashboard`                                     |    11    |    9    | 🔶 82%  |
-| Session List             | `/session`                                       |    23    |   15    | 🔶 65%  |
-| Session Launcher         | `/session/start`                                 |    14    |    3    | 🔶 21%  |
+| Session List             | `/session`                                       |    26    |   18    | 🔶 69%  |
+| Session Launcher         | `/session/start`                                 |    13    |    3    | 🔶 23%  |
 | Serving                  | `/serving`                                       |    7     |    2    | 🔶 29%  |
-| Endpoint Detail          | `/serving/:serviceId`                            |    20    |    9    | 🔶 45%  |
+| Endpoint Detail          | `/serving/:serviceId`                            |    19    |    8    | 🔶 42%  |
 | Service Launcher         | `/service/start`                                 |    5     |    1    | 🔶 20%  |
-| VFolder / Data           | `/data`                                          |    48    |   35    | 🔶 73%  |
+| VFolder / Data           | `/data`                                          |    51    |   38    | 🔶 75%  |
 | Model Store              | `/model-store`                                   |    6     |    6    | ✅ 100% |
-| Admin Model Store        | `/admin-model-store`                             |    28    |   22    | 🔶 79%  |
+| Admin Model Store        | `/admin-model-store`                             |    28    |   28    | ✅ 100% |
 | Storage Host             | `/storage-settings/:hostname`                    |    3     |    0    |  ❌ 0%  |
 | My Environment           | `/my-environment`                                |    2     |    2    | ✅ 100% |
-| Environment              | `/environment`                                   |    27    |   21    | 🔶 78%  |
+| Environment              | `/environment`                                   |    29    |   23    | 🔶 79%  |
 | Configurations           | `/settings`                                      |    11    |    9    | 🔶 82%  |
 | Resources                | `/agent-summary`, `/agent`                       |    10    |    3    | 🔶 30%  |
 | Resource Policy          | `/resource-policy`                               |    13    |   10    | 🔶 77%  |
-| User Credentials         | `/credential`                                    |    22    |   15    | 🔶 68%  |
-| Maintenance              | `/maintenance`                                   |    3     |    2    | 🔶 67%  |
+| User Credentials         | `/credential`                                    |    25    |   18    | 🔶 72%  |
+| Maintenance              | `/maintenance`                                   |    5     |    4    | 🔶 80%  |
 | User Settings            | `/usersettings`                                  |    10    |    1    | 🔶 10%  |
 | Project                  | `/project`                                       |    6     |    5    | 🔶 83%  |
 | Statistics               | `/statistics`                                    |    2     |    2    | ✅ 100% |
-| Scheduler                | `/scheduler`                                     |    6     |    0    |  ❌ 0%  |
+| Scheduler                | `/scheduler`                                     |    7     |    1    | 🔶 14%  |
 | Information              | `/information`                                   |    2     |    2    | ✅ 100% |
 | Reservoir                | `/reservoir`, `/reservoir/:artifactId`           |    18    |    0    |  ❌ 0%  |
 | Branding                 | `/branding`                                      |    14    |    0    |  ❌ 0%  |
@@ -47,14 +47,14 @@
 | Edu App Launcher         | `/applauncher`, `/edu-applauncher`               |    8     |    5    | 🔶 63%  |
 | Chat                     | `/chat/:id?`                                     |    7     |    7    | ✅ 100% |
 | Plugin System            | (config-based)                                   |    12    |   12    | ✅ 100% |
-| RBAC Management          | `/rbac`                                          |    22    |   21    | 🔶 95%  |
+| RBAC Management          | `/rbac`                                          |    23    |   22    | 🔶 96%  |
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule`           |    33    |   32    | 🔶 97%  |
-| Deployments              | `/deployments`, `/deployments/:id`               |    17    |   14    | 🔶 82%  |
-| Admin Deployment Preset  | `/admin/deployments/deployment-presets/new`      |    4     |    4    | ✅ 100% |
+| Deployments              | `/deployments`, `/deployments/:id`               |    23    |   20    | 🔶 87%  |
+| Admin Deployment Preset  | `/admin/deployments/deployment-presets/new`      |    5     |    5    | ✅ 100% |
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **505**  | **348** | **69%** |
+| **Total**                |                                                  | **525**  | **375** | **71%** |
 
 ---
 
@@ -110,6 +110,8 @@
 | Auth failed — missing keypair                        | ✅     | `missing keypair shows login information mismatch notification`                                                |
 | Active login session exists notification             | ✅     | `active login session exists shows session exists notification`                                                |
 | Monitor role login forbidden                         | ✅     | `monitor role user sees login forbidden notification`                                                          |
+| Sign-in mode switch locked when apiEndpoint is set   | ✅     | `User cannot switch to API sign-in when apiEndpoint is configured`                                             |
+| Sign-in mode switch usable when apiEndpoint is empty | ✅     | `User can switch to API sign-in when apiEndpoint is empty`                                                     |
 | OAuth/SSO login flow                                 | ❌     | -                                                                                                              |
 | Session persistence                                  | ❌     | -                                                                                                              |
 
@@ -182,7 +184,7 @@
 
 ### 4. Session List (`/session`)
 
-**Test files:** [`e2e/session/session-creation.spec.ts`](session/session-creation.spec.ts), [`e2e/session/session-lifecycle.spec.ts`](session/session-lifecycle.spec.ts), [`e2e/session/session-scheduling-history-modal.spec.ts`](session/session-scheduling-history-modal.spec.ts), [`e2e/session/session-dependency.spec.ts`](session/session-dependency.spec.ts), [`e2e/session/session-detail-drawer-transition-delay.spec.ts`](session/session-detail-drawer-transition-delay.spec.ts)
+**Test files:** [`e2e/session/session-creation.spec.ts`](session/session-creation.spec.ts), [`e2e/session/session-lifecycle.spec.ts`](session/session-lifecycle.spec.ts), [`e2e/session/session-scheduling-history-modal.spec.ts`](session/session-scheduling-history-modal.spec.ts), [`e2e/session/session-dependency.spec.ts`](session/session-dependency.spec.ts), [`e2e/session/session-detail-drawer-transition-delay.spec.ts`](session/session-detail-drawer-transition-delay.spec.ts), [`e2e/session/session-status-kernel-breakdown.spec.ts`](session/session-status-kernel-breakdown.spec.ts)
 
 **Tabs:** `all` | `interactive` | `batch` | `inference` | `system`
 **Sub-tabs:** Running | Finished
@@ -204,6 +206,7 @@
 | Scheduling history modal                                 | ✅     | `Session Scheduling History Modal` (via mocked GraphQL)                                                                                              |
 | Session name click → SessionDetailDrawer                 | 🚧     | `Session detail drawer renders correctly and can show dependency info` (fixme: requires running agent)                                               |
 | Drawer opens promptly under held refetch (FR-3568)       | ✅     | `User can open the session detail drawer promptly while a session-list refetch is held in flight` (`session-detail-drawer-transition-delay.spec.ts`) |
+| Multi-node status badge kernel breakdown (FR-3924)       | ✅     | `User can see the per-kernel status breakdown when hovering a creating multi-node session badge` + 1 more (via mocked GraphQL)                       |
 | Dependencies column toggle                               | ✅     | `Dependencies column can be enabled via table settings`                                                                                              |
 | Session type filtering (interactive/batch/inference)     | ❌     | -                                                                                                                                                    |
 | Running/Finished status toggle                           | ❌     | -                                                                                                                                                    |
@@ -213,8 +216,10 @@
 | Batch terminate → TerminateSessionModal                  | ❌     | -                                                                                                                                                    |
 | Scheduling history modal → SessionSchedulingHistoryModal | ✅     | `Admin can see the scheduling history button` + 18 more tests                                                                                        |
 | Resource policy warnings                                 | 🚧     | Skipped: `superadmin to modify keypair resource policy`                                                                                              |
+| Header session monitor chip (experimental setting)       | ✅     | `User can enable the session monitor and see their unfinished session count in the header`                                                           |
+| Session monitor popover → SessionDetailDrawer            | ✅     | `User can open a watched session in the detail drawer from the session monitor popover` (via mocked GraphQL)                                         |
 
-**Coverage: 🔶 15/23 features**
+**Coverage: 🔶 18/26 features**
 
 ---
 
@@ -237,12 +242,11 @@
 | Port configuration (Step 4)            | ❌     | -                                                                                                              |
 | Batch schedule/timeout options         | ❌     | -                                                                                                              |
 | Session dependency via useStartSession | 🚧     | `Creates batch + interactive session with dependency` (fixme: requires running agent)                          |
-| Session owner selection (admin)        | ❌     | -                                                                                                              |
 | Form validation errors                 | ❌     | -                                                                                                              |
 | Cluster mode warning (multi-node x1)   | 🔶     | `session-cluster-mode.spec.ts` (10 tests: 5 active, 5 skipped due to cluster-size limits/capacity constraints) |
 | Session history → SessionTemplateModal | ✅     | `session-template-modal.spec.ts` (7 tests)                                                                     |
 
-**Coverage: 🔶 3/14 features (most only indirectly tested)**
+**Coverage: 🔶 3/13 features (most only indirectly tested)**
 
 ---
 
@@ -277,30 +281,29 @@
 **Modals:** `AutoScalingRuleEditorModal`, `EndpointTokenGenerationModal`, `BAIJSONViewerModal`, `SessionDetailDrawer`, `InferenceSessionErrorModal`
 **Mocks:** [`e2e/serving/mocking/endpoint-detail-mock.ts`](serving/mocking/endpoint-detail-mock.ts), [`e2e/serving/mocking/endpoint-list-mock.ts`](serving/mocking/endpoint-list-mock.ts)
 
-| Feature                                                 | Status | Test                                                                                                                                                   |
-| ------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Service info display                                    | ❌     | -                                                                                                                                                      |
-| Edit button → navigate to `/service/update/:endpointId` | ❌     | -                                                                                                                                                      |
-| "Add Rules" → AutoScalingRuleEditorModal (create)       | ❌     | -                                                                                                                                                      |
-| Edit scaling rule → AutoScalingRuleEditorModal (edit)   | ❌     | -                                                                                                                                                      |
-| Delete scaling rule → Popconfirm                        | ❌     | -                                                                                                                                                      |
-| "Generate Token" → EndpointTokenGenerationModal         | ❌     | -                                                                                                                                                      |
-| Token list display                                      | ❌     | -                                                                                                                                                      |
-| Feature flag: route-node table toggle                   | ✅     | `1.1 Admin sees the new BAIRouteNodes table when route-node flag is enabled`, `1.2 Admin sees the legacy route table when route-node flag is disabled` |
-| Routes table display (columns, tags, values)            | ✅     | `4.1`–`4.7` (column headers, status tags, traffic tags, traffic ratio, session ID dash)                                                                |
-| Route category toggle (Running/Finished)                | ✅     | `2.1`–`2.3` (default Running, switch to Finished, switch back)                                                                                         |
-| Route property filtering (Traffic Status)               | ✅     | `3.1`–`3.4` (filter selector, filter by trafficStatus ACTIVE, filter by trafficStatus INACTIVE, remove filter)                                         |
-| Route table sorting                                     | ✅     | `7.1`–`7.3` (sort by Status, sort by Traffic Ratio, Session ID no sorter)                                                                              |
-| Route table pagination                                  | ✅     | `6.1`–`6.2` (total count display, navigate to page 2)                                                                                                  |
-| Route empty state                                       | ✅     | `9.1`–`9.2` (empty Running, empty Finished)                                                                                                            |
-| Route error → BAIJSONViewerModal                        | ✅     | `5.1`–`5.3` (error icon, open modal with JSON, close modal)                                                                                            |
-| Route session ID click → SessionDetailDrawer            | ❌     | -                                                                                                                                                      |
-| Session error → InferenceSessionErrorModal              | ❌     | -                                                                                                                                                      |
-| "Sync Routes" action                                    | ✅     | `8.1`–`8.3` (button visible, success notification, error notification)                                                                                 |
-| "Clear Errors" action                                   | ❌     | -                                                                                                                                                      |
-| Chat test link                                          | ❌     | -                                                                                                                                                      |
+| Feature                                                 | Status | Test                                                                                                           |
+| ------------------------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------- |
+| Service info display                                    | ❌     | -                                                                                                              |
+| Edit button → navigate to `/service/update/:endpointId` | ❌     | -                                                                                                              |
+| "Add Rules" → AutoScalingRuleEditorModal (create)       | ❌     | -                                                                                                              |
+| Edit scaling rule → AutoScalingRuleEditorModal (edit)   | ❌     | -                                                                                                              |
+| Delete scaling rule → Popconfirm                        | ❌     | -                                                                                                              |
+| "Generate Token" → EndpointTokenGenerationModal         | ❌     | -                                                                                                              |
+| Token list display                                      | ❌     | -                                                                                                              |
+| Route-node table (`BAIRouteNodes`)                      | ✅     | `1.1 Admin sees the BAIRouteNodes table`                                                                       |
+| Routes table display (columns, tags, values)            | ✅     | `4.1`–`4.7` (column headers, status tags, traffic tags, traffic ratio, session ID dash)                        |
+| Route category toggle (Running/Finished)                | ✅     | `2.1`–`2.3` (default Running, switch to Finished, switch back)                                                 |
+| Route property filtering (Traffic Status)               | ✅     | `3.1`–`3.4` (filter selector, filter by trafficStatus ACTIVE, filter by trafficStatus INACTIVE, remove filter) |
+| Route table sorting                                     | ✅     | `7.1`–`7.3` (sort by Status, sort by Traffic Ratio, Session ID no sorter)                                      |
+| Route table pagination                                  | ✅     | `6.1`–`6.2` (total count display, navigate to page 2)                                                          |
+| Route empty state                                       | ✅     | `9.1`–`9.2` (empty Running, empty Finished)                                                                    |
+| Route error → BAIJSONViewerModal                        | ✅     | `5.1`–`5.3` (error icon, open modal with JSON, close modal)                                                    |
+| Route session ID click → SessionDetailDrawer            | ❌     | -                                                                                                              |
+| Session error → InferenceSessionErrorModal              | ❌     | -                                                                                                              |
+| "Clear Errors" action                                   | ❌     | -                                                                                                              |
+| Chat test link                                          | ❌     | -                                                                                                              |
 
-**Coverage: 🔶 9/20 features**
+**Coverage: 🔶 8/19 features**
 
 ---
 
@@ -308,7 +311,7 @@
 
 **Test files:**
 
-- [`e2e/serving/add-revision-manual-image.spec.ts`](serving/add-revision-manual-image.spec.ts) (integration; requires a live backend with an existing deployment)
+- [`e2e/serving/add-revision-manual-image.spec.ts`](serving/add-revision-manual-image.spec.ts) (integration; requires a live backend with an existing deployment; the #10038 Additional Mounts test provisions its own deployment and folders)
 - [`e2e/serving/add-revision-command-shell.spec.ts`](serving/add-revision-command-shell.spec.ts) (hybrid mock — real deployment shell + live model folder, modal-internal GraphQL stubbed; FR-3205)
 - [`e2e/serving/add-revision-runtime-defaults.spec.ts`](serving/add-revision-runtime-defaults.spec.ts) (hybrid mock — real deployment shell, runtime-variant / defaults GraphQL stubbed; FR-3342)
 
@@ -333,11 +336,13 @@
 | Model Definition File Path value does not feed back into the command placeholder (FR-3342)                                                                                                                                         | ✅     | `Admin sees the Model Definition File Path leave the command placeholder unchanged`                                                   |
 | Model Definition File Path hidden for a non-config-reading variant (FR-3342)                                                                                                                                                       | ✅     | asserted inside `… default-command note for a non-config-reading variant (vllm)`                                                      |
 | Old-manager name-based `readsVfolderConfigFiles` fallback, reachable from a fresh variant select — `BAIRuntimeVariantSelect` resolves the omitted flag via `?? name === 'custom'` before the modal ever sees `undefined` (FR-3342) | ✅     | `Admin sees the custom service config for an old-manager variant (readsVfolderConfigFiles omitted, name === custom)`                  |
+| Health Check on with every detail field blank: fields optional, Path / Max Retries / Startup Grace Period placeholders from the model definition, the rest from manager defaults, mutation sends only `{ enable: true }` (#10223)  | ✅     | `Admin can add a revision with health check enabled and detail fields left blank`                                                     |
+| Additional Mounts folder select: a general folder is listed, model folders (including the picked one) are not, the pick shows as a source → mount path row, and the added revision carries the mount (#10038)                      | ✅     | `Admin can add a revision that mounts an additional general folder`                                                                   |
 | Old-manager name-based `readsVfolderConfigFiles` fallback via the "Load current revision" prefill path                                                                                                                             | ⏸️     | deferred — needs a full `DeploymentDetailPageQuery` mock with a `currentRevision` whose variant name is `custom` and the flag omitted |
 | Command prefill suppressed when the source revision's variant does not read config files (FR-3342)                                                                                                                                 | ⏸️     | same prefill path as the row above — needs the deferred `DeploymentDetailPageQuery` mock                                              |
 | `definitionPath` sent as null for a non-config-reading variant (FR-3342)                                                                                                                                                           | ⏸️     | submit-path guard; the field is unreachable in the UI for those variants, so only the mutation payload shows it                       |
 
-**Coverage: ✅ 15 features (FR-3278 regression guard + FR-3205 Start Command redesign + FR-3342 runtime-variant defaults); 3 deferred**
+**Coverage: ✅ 17 features (FR-3278 regression guard + FR-3205 Start Command redesign + FR-3342 runtime-variant defaults + #10223 optional health-check fields + #10038 Additional Mounts folder select); 3 deferred**
 
 > The FR-3205 preset-side change (the Admin Deployment Preset form no longer coerces
 > Basic mode's `shell` to the client default) has its own suite — see
@@ -361,8 +366,9 @@
 | Full Create submission carries Service Configuration / Health Check / Pre-Start Actions in the expected nested `modelDefinition.models[0].service` shape (FR-3474)                                                                                                                                          | ✅     | `Admin creates a preset carrying Service Configuration, Health Check, and a Pre-Start Action`                                                      |
 | Leaving Start Command and Port blank still submits successfully — `command` omitted, `port` falls back to the submit-mapping layer's default (FR-3474/BA-6613)                                                                                                                                              | ✅     | `Admin creates a preset with Start Command and Port left blank`                                                                                    |
 | Legacy manager (`preset-model-config-type` off): Service Configuration/Health Check/Pre-Start Actions render nested inside Model Definition rather than independently in Basic Info, and the create mutation still carries the required `name`/`modelPath` plus the full nested `service` payload (FR-3481) | ✅     | `Admin sees Service Configuration/Health Check/Pre-Start Actions nested inside Model Definition, and the mutation carries required name/modelPath` |
+| Health Check on with every detail field blank: placeholders show the preset defaults (`/health`, 10, 10, 15, 200, 1800), Create sends only `{ enable: true }` (#10223)                                                                                                                                      | ✅     | `Admin can save a deployment preset with health check enabled and blank detail fields`                                                             |
 
-**Coverage: ✅ 4 features**
+**Coverage: ✅ 5 features**
 
 ---
 
@@ -384,7 +390,7 @@
 
 ### 9. Data / VFolder (`/data`)
 
-**Test files:** [`e2e/vfolder/vfolder-crud.spec.ts`](vfolder/vfolder-crud.spec.ts), [`e2e/vfolder/vfolder-explorer-modal.spec.ts`](vfolder/vfolder-explorer-modal.spec.ts), [`e2e/vfolder/vfolder-consecutive-deletion.spec.ts`](vfolder/vfolder-consecutive-deletion.spec.ts), [`e2e/vfolder/file-upload.spec.ts`](vfolder/file-upload.spec.ts), [`e2e/vfolder/file-upload-dnd.spec.ts`](vfolder/file-upload-dnd.spec.ts), [`e2e/vfolder/file-upload-duplicate.spec.ts`](vfolder/file-upload-duplicate.spec.ts), [`e2e/vfolder/file-upload-permissions.spec.ts`](vfolder/file-upload-permissions.spec.ts), [`e2e/vfolder/file-upload-subdirectory.spec.ts`](vfolder/file-upload-subdirectory.spec.ts), [`e2e/vfolder/file-create.spec.ts`](vfolder/file-create.spec.ts), [`e2e/vfolder/vfolder-type-selection.spec.ts`](vfolder/vfolder-type-selection.spec.ts), [`e2e/vfolder/vfolder-explorer-url-desync.spec.ts`](vfolder/vfolder-explorer-url-desync.spec.ts)
+**Test files:** [`e2e/vfolder/vfolder-crud.spec.ts`](vfolder/vfolder-crud.spec.ts), [`e2e/vfolder/vfolder-explorer-modal.spec.ts`](vfolder/vfolder-explorer-modal.spec.ts), [`e2e/vfolder/vfolder-consecutive-deletion.spec.ts`](vfolder/vfolder-consecutive-deletion.spec.ts), [`e2e/vfolder/file-upload.spec.ts`](vfolder/file-upload.spec.ts), [`e2e/vfolder/file-upload-dnd.spec.ts`](vfolder/file-upload-dnd.spec.ts), [`e2e/vfolder/file-upload-duplicate.spec.ts`](vfolder/file-upload-duplicate.spec.ts), [`e2e/vfolder/file-upload-permissions.spec.ts`](vfolder/file-upload-permissions.spec.ts), [`e2e/vfolder/file-upload-subdirectory.spec.ts`](vfolder/file-upload-subdirectory.spec.ts), [`e2e/vfolder/file-create.spec.ts`](vfolder/file-create.spec.ts), [`e2e/vfolder/vfolder-type-selection.spec.ts`](vfolder/vfolder-type-selection.spec.ts), [`e2e/vfolder/vfolder-explorer-url-desync.spec.ts`](vfolder/vfolder-explorer-url-desync.spec.ts), [`e2e/vfolder/vfolder-explorer-side-panel-reset.spec.ts`](vfolder/vfolder-explorer-side-panel-reset.spec.ts)
 
 **Tabs:** Active | Deleted
 **Filter (Active tab):** all | general | pipeline | automount | model
@@ -420,6 +426,7 @@
 | Explorer modal (file browser fallback, `defaultFileBrowserImage` unset)  | ✅     | `File Browser button falls back to an installed image when defaultFileBrowserImage is unset` (env-gated `@requires-image-filebrowser`) |
 | Explorer modal (details view)                                            | ✅     | `User can view VFolder details in the explorer`                                                                                        |
 | Explorer modal (opens despite suspending detail query, URL-param desync) | ✅     | `clicking a folder opens the explorer even when the detail query suspends inside the nuqs transition` (FR-3358 regression)             |
+| Explorer modal (side panel resets to Metadata per session)               | ✅     | `User can see the side panel start on Metadata when opening another folder after viewing the Audit Log` (FR-4005)                      |
 | File creation (Create File button)                                       | ✅     | `User can see Create File button in file explorer`                                                                                     |
 | File creation (new file)                                                 | ✅     | `User can create a new file in the file explorer`                                                                                      |
 | File creation (yaml config)                                              | ✅     | `User can create a yaml configuration file`                                                                                            |
@@ -433,6 +440,8 @@
 | Type selection: Project enabled for general                              | ✅     | `Project radio is enabled when usage mode is general`                                                                                  |
 | Type selection: User-only for regular user                               | ✅     | `Regular user sees only User-type radio (no Project radio)`                                                                            |
 | Type selection: Both types for admin                                     | ✅     | `Admin sees both User-type and Project-type radios`                                                                                    |
+| Edit labels (Labels column hover action) and filter by clicking a label  | ✅     | `User can edit labels on a folder and filter the list by a label`                                                                      |
+| Bulk add labels to selected folders                                      | ✅     | `User can add labels to multiple selected folders`                                                                                     |
 | Active/Deleted tab switching                                             | ❌     | -                                                                                                                                      |
 | Usage mode filtering (general/pipeline/automount/model)                  | ❌     | -                                                                                                                                      |
 | Property filtering (name, status, location)                              | ❌     | -                                                                                                                                      |
@@ -445,7 +454,7 @@
 | Shared folder permission → SharedFolderPermissionInfoModal               | ❌     | -                                                                                                                                      |
 | File download                                                            | ❌     | -                                                                                                                                      |
 
-**Coverage: 🔶 33/46 features (includes 1 skipped)**
+**Coverage: 🔶 36/49 features (includes 1 skipped)**
 
 ---
 
@@ -477,38 +486,38 @@
 **Row actions:** Edit (setting icon), Delete (trash icon)
 **Bulk actions:** Bulk delete via header checkbox selection
 
-| Feature                                                   | Status | Test                                                                                                   |
-| --------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------ |
-| Page load and table rendering                             | ✅     | `admin-model-card-page-load.spec.ts`                                                                   |
-| Column visibility and pagination                          | ✅     | `admin-model-card-page-load.spec.ts`                                                                   |
-| Name filter search                                        | ✅     | `admin-model-card-filter.spec.ts`                                                                      |
-| Filter clear and empty state                              | ✅     | `admin-model-card-filter.spec.ts`                                                                      |
-| Open create modal                                         | ✅     | `admin-model-card-create.spec.ts`                                                                      |
-| Create with required fields only                          | 🚧     | Skipped: `Superadmin can create a model card with only required fields` (backend `min_resource` kwarg) |
-| Create with all fields                                    | 🚧     | Skipped: `Superadmin can create a model card with all fields populated` (backend `min_resource` kwarg) |
-| Create validation (name required)                         | ✅     | `admin-model-card-create.spec.ts`                                                                      |
-| Create validation (VFolder required)                      | ✅     | `admin-model-card-create.spec.ts`                                                                      |
-| Cancel create modal                                       | ✅     | `admin-model-card-create.spec.ts`                                                                      |
-| Open edit modal                                           | 🚧     | Skipped: `admin-model-card-edit.spec.ts` (backend `min_resource` kwarg blocks the seed)                |
-| Update model card fields                                  | 🚧     | Skipped: `admin-model-card-edit.spec.ts` (backend `min_resource` kwarg blocks the seed)                |
-| Edit validation                                           | 🚧     | Skipped: `admin-model-card-edit.spec.ts` (backend `min_resource` kwarg blocks the seed)                |
-| Cancel edit modal                                         | 🚧     | Skipped: `admin-model-card-edit.spec.ts` (backend `min_resource` kwarg blocks the seed)                |
-| Single delete with confirmation                           | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
-| Cancel single delete                                      | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
-| Delete card + folder together (checkbox)                  | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
-| Notification + Go to Trash with folder filter             | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
-| Delete card only, folder kept notification                | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
-| Go to Trash without folder filter                         | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
-| Bulk select and delete                                    | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
-| Cancel bulk delete                                        | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
-| Clear selection                                           | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
-| Select all via header checkbox                            | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
-| Bulk delete + move folders to trash (checkbox)            | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
-| Bulk delete notification → Go to Trash (no folder filter) | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
-| Non-admin access blocked                                  | ✅     | `admin-model-card-access-control.spec.ts`                                                              |
-| URL state persistence (filter/sort/pagination)            | ✅     | `admin-model-card-url-state.spec.ts`                                                                   |
+| Feature                                                   | Status | Test                                                             |
+| --------------------------------------------------------- | ------ | ---------------------------------------------------------------- |
+| Page load and table rendering                             | ✅     | `admin-model-card-page-load.spec.ts`                             |
+| Column visibility and pagination                          | ✅     | `admin-model-card-page-load.spec.ts`                             |
+| Name filter search                                        | ✅     | `admin-model-card-filter.spec.ts`                                |
+| Filter clear and empty state                              | ✅     | `admin-model-card-filter.spec.ts`                                |
+| Open create modal                                         | ✅     | `admin-model-card-create.spec.ts`                                |
+| Create with required fields only                          | ✅     | `Superadmin can create a model card with only required fields`   |
+| Create with all fields                                    | ✅     | `Superadmin can create a model card with all fields populated`   |
+| Create validation (name required)                         | ✅     | `admin-model-card-create.spec.ts`                                |
+| Create validation (VFolder required)                      | ✅     | `admin-model-card-create.spec.ts`                                |
+| Cancel create modal                                       | ✅     | `admin-model-card-create.spec.ts`                                |
+| Open edit modal                                           | ✅     | `Superadmin can open the Edit Model Card modal from a table row` |
+| Update model card fields                                  | ✅     | `Superadmin can update a model card's metadata fields`           |
+| Edit validation                                           | ✅     | `Superadmin cannot save an edit when the Name field is cleared`  |
+| Cancel edit modal                                         | ✅     | `Superadmin can cancel the Edit modal without saving changes`    |
+| Single delete with confirmation                           | ✅     | `admin-model-card-delete.spec.ts`                                |
+| Cancel single delete                                      | ✅     | `admin-model-card-delete.spec.ts`                                |
+| Delete card + folder together (checkbox)                  | ✅     | `admin-model-card-delete.spec.ts`                                |
+| Notification + Go to Trash with folder filter             | ✅     | `admin-model-card-delete.spec.ts`                                |
+| Delete card only, folder kept notification                | ✅     | `admin-model-card-delete.spec.ts`                                |
+| Go to Trash without folder filter                         | ✅     | `admin-model-card-delete.spec.ts`                                |
+| Bulk select and delete                                    | ✅     | `admin-model-card-delete.spec.ts`                                |
+| Cancel bulk delete                                        | ✅     | `admin-model-card-delete.spec.ts`                                |
+| Clear selection                                           | ✅     | `admin-model-card-delete.spec.ts`                                |
+| Select all via header checkbox                            | ✅     | `admin-model-card-delete.spec.ts`                                |
+| Bulk delete + move folders to trash (checkbox)            | ✅     | `admin-model-card-delete.spec.ts`                                |
+| Bulk delete notification → Go to Trash (no folder filter) | ✅     | `admin-model-card-delete.spec.ts`                                |
+| Non-admin access blocked                                  | ✅     | `admin-model-card-access-control.spec.ts`                        |
+| URL state persistence (filter/sort/pagination)            | ✅     | `admin-model-card-url-state.spec.ts`                             |
 
-**Coverage: 🔶 22/28 features (6 skipped — `adminCreateModelCardV2` fails server-side with an unexpected `min_resource` kwarg)**
+**Coverage: ✅ 28/28 features**
 
 ---
 
@@ -547,7 +556,7 @@
 
 #### Images Tab
 
-**Row actions:** `ImageInstallModal`, `ManageAppsModal`, `ManageImageResourceLimitModal`
+**Row actions:** `ImageInstallModal`, `ManageAppsModal`, `ManageImageResourceLimitModal`, Rescan (superadmin, ALIVE rows)
 **Filter:** `BAIPropertyFilter` (Name, Architecture, Status, Type, Registry)
 
 | Feature                                              | Status | Test                                                                        |
@@ -556,6 +565,8 @@
 | Image resource limit → ManageImageResourceLimitModal | ✅     | `user can modify image resource limit`                                      |
 | Image app management → ManageAppsModal               | ✅     | `user can manage apps`                                                      |
 | Image installation → ImageInstallModal               | 🚧     | Skipped: `user can install image`                                           |
+| Rescan a single ALIVE image (row action)             | ✅     | `Superadmin can rescan a single ALIVE image from the Images list`           |
+| Rescan hidden on non-ALIVE rows                      | ✅     | `Superadmin cannot see the Rescan button on a non-ALIVE image row`          |
 | BAIPropertyFilter UI rendering                       | ✅     | `Admin can see the BAIPropertyFilter on the Images tab`                     |
 | Filter by name (free text)                           | ✅     | `Admin can filter images by name using a text value`                        |
 | Filter by architecture (strict selection)            | ✅     | `Admin can filter images by architecture using strict selection`            |
@@ -596,7 +607,7 @@
 | Enable/disable registry toggle                 | ✅     | `Registry Control Operations` suite                            |
 | Registry filtering / search                    | ✅     | `Registry Filtering` suite                                     |
 
-**Coverage: 🔶 21/27 features**
+**Coverage: 🔶 23/29 features**
 
 ---
 
@@ -720,7 +731,7 @@
 
 ### 17. User Credentials (`/credential`)
 
-**Test files:** [`e2e/user/user-crud.spec.ts`](user/user-crud.spec.ts), [`e2e/user/bulk-user-creation.spec.ts`](user/bulk-user-creation.spec.ts), [`e2e/credential/credential-keypair.spec.ts`](credential/credential-keypair.spec.ts), [`e2e/user-profile/user-ip-restriction-enforcement.spec.ts`](user-profile/user-ip-restriction-enforcement.spec.ts), [`e2e/credential/bulk-create-from-csv.spec.ts`](credential/bulk-create-from-csv.spec.ts), [`e2e/credential/bulk-create-from-csv-submit.spec.ts`](credential/bulk-create-from-csv-submit.spec.ts)
+**Test files:** [`e2e/user/user-crud.spec.ts`](user/user-crud.spec.ts), [`e2e/user/bulk-user-creation.spec.ts`](user/bulk-user-creation.spec.ts), [`e2e/credential/credential-keypair.spec.ts`](credential/credential-keypair.spec.ts), [`e2e/user-profile/user-ip-restriction-enforcement.spec.ts`](user-profile/user-ip-restriction-enforcement.spec.ts), [`e2e/credential/bulk-create-from-csv.spec.ts`](credential/bulk-create-from-csv.spec.ts), [`e2e/credential/bulk-create-from-csv-submit.spec.ts`](credential/bulk-create-from-csv-submit.spec.ts), [`e2e/user/user-project-membership.spec.ts`](user/user-project-membership.spec.ts), [`e2e/user/user-login-unblock.spec.ts`](user/user-login-unblock.spec.ts)
 
 **Tabs:** Users | Credentials
 
@@ -729,7 +740,7 @@
 **Primary action:** "+" → `UserSettingModal`
 **Dropdown action:** "Bulk Create Users" → `UserSettingModal` (bulk mode)
 **Table link:** User name → `UserInfoModal`
-**Row actions:** Edit → `UserSettingModal`, Delete → Popconfirm
+**Row actions:** Edit → `UserSettingModal`, Delete → Popconfirm, Unblock login (More actions) → confirm dialog
 **Bulk actions:** Bulk edit → `UpdateUsersModal`, Bulk delete → `PurgeUsersModal`
 
 | Feature                                                  | Status | Test                                                                                                                        |
@@ -741,10 +752,13 @@
 | Bulk create users from CSV (client-side validation)      | ✅     | `bulk-create-from-csv.spec.ts` (preview stats + submit enable/disable)                                                      |
 | Bulk create users from CSV → real submit + purge cleanup | ✅     | `bulk-create-from-csv-submit.spec.ts` (creates users on backend, then deactivates + purges)                                 |
 | Update user → UserSettingModal                           | ✅     | `Admin can update user information`                                                                                         |
+| Update user in >10 projects keeps every membership       | ✅     | `Admin can save a user in more than 10 projects without losing memberships`                                                 |
 | Deactivate user                                          | ✅     | `Admin can deactivate a user`                                                                                               |
 | Reactivate user                                          | ✅     | `Admin can reactivate an inactive user`                                                                                     |
 | Purge user → PurgeUsersModal                             | ✅     | `Admin can deactivate and permanently delete`                                                                               |
 | Deleted user login blocked                               | ✅     | `Deleted user cannot log in`                                                                                                |
+| Unblock login (More actions) → confirm → success toast   | ✅     | `Admin can unblock a user's failed-login lock from the user list`                                                           |
+| Locked-out user signs in again after unblock             | ✅     | `User can log in again after admin unblocks their failed-login lock`                                                        |
 | Allowed IP restriction enforcement (active session)      | ✅     | `User can access pages when their current IP is in the allowed list` / `User is denied access after admin revokes their IP` |
 | User name click → UserInfoModal                          | ❌     | -                                                                                                                           |
 | Bulk edit → UpdateUsersModal                             | ❌     | -                                                                                                                           |
@@ -766,7 +780,7 @@
 | Edit keypair → KeypairSettingModal             | ❌     | -                                                     |
 | SSH key management → SSHKeypairManagementModal | ❌     | -                                                     |
 
-**Coverage: 🔶 15/22 features**
+**Coverage: 🔶 18/25 features**
 
 ---
 
@@ -774,13 +788,15 @@
 
 **Test files:** [`e2e/maintenance/maintenance.spec.ts`](maintenance/maintenance.spec.ts)
 
-| Feature                   | Status | Test                                 |
-| ------------------------- | ------ | ------------------------------------ |
-| Recalculate usage         | ✅     | `click the Recalculate Usage button` |
-| Rescan images             | ✅     | `click the Rescan Images button`     |
-| Other maintenance actions | ❌     | -                                    |
+| Feature                     | Status | Test                                                                   |
+| --------------------------- | ------ | ---------------------------------------------------------------------- |
+| Recalculate usage           | ✅     | `click the Recalculate Usage button`                                   |
+| Rescan images               | ✅     | `click the Rescan Images button`                                       |
+| Publish system announcement | ✅     | `Admin can publish a system announcement with a title`                 |
+| Save announcement as draft  | ✅     | `Admin can save an announcement as a draft without showing the banner` |
+| Other maintenance actions   | ❌     | -                                                                      |
 
-**Coverage: 🔶 2/3 features**
+**Coverage: 🔶 4/5 features**
 
 ---
 
@@ -854,22 +870,23 @@
 
 ### 22. Scheduler (`/scheduler`)
 
-**Test files:** None
+**Test files:** [`e2e/config/page-access-control.spec.ts`](config/page-access-control.spec.ts)
 
 **Primary action:** Refresh (auto-update 7s)
 **Resource group selector:** `SharedResourceGroupSelectForCurrentProject`
 **Table link:** Session name → `SessionDetailAndContainerLogOpenerLegacy` drawer
 
-| Feature                                   | Status | Test |
-| ----------------------------------------- | ------ | ---- |
-| Pending session list rendering            | ❌     | -    |
-| Resource group filtering                  | ❌     | -    |
-| Session name click → SessionDetail drawer | ❌     | -    |
-| Auto-refresh (7s interval)                | ❌     | -    |
-| Pagination and page size                  | ❌     | -    |
-| Column visibility settings                | ❌     | -    |
+| Feature                                       | Status | Test                                             |
+| --------------------------------------------- | ------ | ------------------------------------------------ |
+| Superadmin opens it from the menu and the URL | ✅     | `Superadmin can see and open the Scheduler page` |
+| Pending session list rendering                | ❌     | -                                                |
+| Resource group filtering                      | ❌     | -                                                |
+| Session name click → SessionDetail drawer     | ❌     | -                                                |
+| Auto-refresh (7s interval)                    | ❌     | -                                                |
+| Pagination and page size                      | ❌     | -                                                |
+| Column visibility settings                    | ❌     | -                                                |
 
-**Coverage: ❌ 0/6 features**
+**Coverage: 🔶 1/7 features**
 
 ---
 
@@ -1075,32 +1092,33 @@ External portals (LMS) open these routes with a signed `sToken` plus the app and
 
 **Test files:** [`e2e/rbac/rbac-role-list.spec.ts`](rbac/rbac-role-list.spec.ts), [`e2e/rbac/rbac-role-crud.spec.ts`](rbac/rbac-role-crud.spec.ts), [`e2e/rbac/rbac-role-detail.spec.ts`](rbac/rbac-role-detail.spec.ts)
 
-| Feature                                            | Status | Test                                                                            |
-| -------------------------------------------------- | ------ | ------------------------------------------------------------------------------- |
-| Display RBAC management page with role list table  | ✅     | `Superadmin can view the RBAC management page with role list table`             |
-| Switch between Active/Inactive role filters        | ✅     | `Superadmin can switch to Inactive roles filter and back to Active`             |
-| Search for a role by name using property filter    | ✅     | `Superadmin can search for a role by name using the property filter`            |
-| Filter roles by Source (SYSTEM or CUSTOM)          | 🚧     | `Superadmin can filter roles by Source (SYSTEM or CUSTOM)`                      |
-| Empty state when no roles match search             | ✅     | `Superadmin sees empty state message when no roles match the search`            |
-| Sort role list by Role Name column                 | ✅     | `Superadmin can sort role list by Role Name column`                             |
-| Refresh role list using refresh button             | ✅     | `Superadmin can refresh the role list using the refresh button`                 |
-| Create a new custom role with name and description | ✅     | `Superadmin can create a new custom role with name and description`             |
-| Edit a custom role name and description via drawer | ✅     | `Superadmin can edit a custom role name and description via drawer`             |
-| System role edit button absent                     | ✅     | `Superadmin cannot edit a system role name or description (edit button absent)` |
-| Deactivate (soft-delete) an active custom role     | ✅     | `Superadmin can delete (soft-delete) an active custom role`                     |
-| Activate (restore) a soft-deleted role             | ✅     | `Superadmin can activate (restore) a soft-deleted role`                         |
-| Purge (hard-delete) a soft-deleted role            | ✅     | `Superadmin can purge (hard-delete) a soft-deleted role`                        |
-| Open role detail drawer by clicking role name      | ✅     | `Superadmin can open the role detail drawer by clicking a role name`            |
-| Drawer shows Role Assignments and Permissions tabs | ✅     | `Drawer shows "Role Assignments" and "Permissions" tabs`                        |
-| Close role detail drawer                           | ✅     | `Superadmin can close the role detail drawer`                                   |
-| Add a permission to a role                         | ✅     | `Superadmin can add a permission to a role`                                     |
-| Delete a permission from a role                    | ✅     | `Superadmin can delete a permission from a role`                                |
-| Empty state in Permissions tab                     | ✅     | `Superadmin sees empty state in Permissions tab when role has no permissions`   |
-| Assign a user to a role                            | ✅     | `Superadmin can assign a user to a role`                                        |
-| Revoke a user from a role                          | ✅     | `Superadmin can revoke a single user from a role`                               |
-| Empty state in Role Assignments tab                | ✅     | `Superadmin sees empty state in Role Assignments tab when role has no users`    |
+| Feature                                            | Status | Test                                                                                  |
+| -------------------------------------------------- | ------ | ------------------------------------------------------------------------------------- |
+| Display RBAC management page with role list table  | ✅     | `Superadmin can view the RBAC management page with role list table`                   |
+| Switch between Active/Inactive role filters        | ✅     | `Superadmin can switch to Inactive roles filter and back to Active`                   |
+| Search for a role by name using property filter    | ✅     | `Superadmin can search for a role by name using the property filter`                  |
+| Filter roles by Source (SYSTEM or CUSTOM)          | 🚧     | `Superadmin can filter roles by Source (SYSTEM or CUSTOM)`                            |
+| Empty state when no roles match search             | ✅     | `Superadmin sees empty state message when no roles match the search`                  |
+| Sort role list by Role Name column                 | ✅     | `Superadmin can sort role list by Role Name column`                                   |
+| Refresh role list using refresh button             | ✅     | `Superadmin can refresh the role list using the refresh button`                       |
+| Create a new custom role with name and description | ✅     | `Superadmin can create a new custom role with name and description`                   |
+| Edit a custom role name and description via drawer | ✅     | `Superadmin can edit a custom role name and description via drawer`                   |
+| System role edit button absent                     | ✅     | `Superadmin cannot edit a system role name or description (edit button absent)`       |
+| Deactivate (soft-delete) an active custom role     | ✅     | `Superadmin can delete (soft-delete) an active custom role`                           |
+| Activate (restore) a soft-deleted role             | ✅     | `Superadmin can activate (restore) a soft-deleted role`                               |
+| Purge (hard-delete) a soft-deleted role            | ✅     | `Superadmin can purge (hard-delete) a soft-deleted role`                              |
+| Open role detail drawer by clicking role name      | ✅     | `Superadmin can open the role detail drawer by clicking a role name`                  |
+| Drawer shows Role Assignments and Permissions tabs | ✅     | `Drawer shows "Role Assignments" and "Permissions" tabs`                              |
+| Close role detail drawer                           | ✅     | `Superadmin can close the role detail drawer`                                         |
+| Add a permission to a role                         | ✅     | `Superadmin can add a permission to a role`                                           |
+| Delete a permission from a role                    | ✅     | `Superadmin can delete a permission from a role`                                      |
+| Empty state in Permissions tab                     | ✅     | `Superadmin sees empty state in Permissions tab when role has no permissions`         |
+| Assign a user to a role                            | ✅     | `Superadmin can assign a user to a role`                                              |
+| Revoke a user from a role                          | ✅     | `Superadmin can revoke a single user from a role`                                     |
+| Empty state in Role Assignments tab                | ✅     | `Superadmin sees empty state in Role Assignments tab when role has no users`          |
+| System role View Presets link opens its own preset | ✅     | `Superadmin can open exactly the preset of a system role from the role detail drawer` |
 
-**Coverage: 🔶 21/22 features**
+**Coverage: 🔶 22/23 features**
 
 ---
 
@@ -1186,17 +1204,26 @@ External portals (LMS) open these routes with a signed `sToken` plus the app and
 
 ### 30. Deployments (`/deployments`, `/deployments/:id`)
 
-**Test files:** [`e2e/serving/deployment-lifecycle.spec.ts`](serving/deployment-lifecycle.spec.ts), [`e2e/serving/deployment-access-token.spec.ts`](serving/deployment-access-token.spec.ts)
+**Test files:** [`e2e/serving/deployment-lifecycle.spec.ts`](serving/deployment-lifecycle.spec.ts), [`e2e/serving/deployment-access-token.spec.ts`](serving/deployment-access-token.spec.ts), [`e2e/serving/admin-deployment-filter.spec.ts`](serving/admin-deployment-filter.spec.ts)
 
 **Requires:** Superadmin login; `deployment-preset` feature flag (manager ≥ 26.4.x) for the revision-attach and access-token tests (they skip with an auditable reason otherwise), plus at least one `bai/ngc-pytorch` or python image. No hand-seeded preset or folder is required — [`e2e/utils/deployment-fixtures.ts`](utils/deployment-fixtures.ts) self-provisions the preset (find-or-create) and model folder per run.
 **Primary action:** "Create Deployment" → detail page → "Add Revision" (`Preset` / `Advanced` mode)
 
 #### List Page
 
-| Feature                                                                   | Status | Test                                                                     |
-| ------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------ |
-| List columns, Running/Terminated toggle, reload & Create controls         | ✅     | `Admin can view the deployments list with expected columns and controls` |
-| Create deployment (defaults, auto-redirect) + typed-name permanent delete | ✅     | `Admin can create a new deployment and permanently delete it`            |
+| Feature                                                                                   | Status | Test                                                                          |
+| ----------------------------------------------------------------------------------------- | ------ | ----------------------------------------------------------------------------- |
+| List columns, Serving/Paused/Terminated tabs with help tooltips, reload & Create controls | ✅     | `Admin can view the deployments list with expected columns and controls`      |
+| Zero Desired Replicas lists under Paused (not Serving), tab kept in URL across reload     | ✅     | `Admin can find a deployment with zero Desired Replicas under the Paused tab` |
+| Create deployment (defaults, auto-redirect) + typed-name permanent delete                 | ✅     | `Admin can create a new deployment and permanently delete it`                 |
+
+#### Admin List — Filters (`/admin/deployments`)
+
+| Feature                                                              | Status | Test                                             |
+| -------------------------------------------------------------------- | ------ | ------------------------------------------------ |
+| Owner filter (`createdUserId`) shows the owner email, not a UUID     | ✅     | `Admin can filter deployments by owner`          |
+| Tags-column click filters by the exact tag (`iEquals`)               | ✅     | `Admin can filter deployments by clicking a tag` |
+| Edit labels, filter by Label key / Label value, label on detail card | ✅     | `Admin can filter deployments by label`          |
 
 #### Detail Page
 
@@ -1227,11 +1254,12 @@ External portals (LMS) open these routes with a signed `sToken` plus the app and
 | Feature                                                                            | Status | Test                                                                                                                     |
 | ---------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------ |
 | Create Access Token disabled without a revision → enabled after one → token issued | ✅     | `Admin can issue an access token after adding a revision to a deployment`                                                |
+| Access token table paginates past 10 tokens (mocked token list)                    | ✅     | `Admin can page through more than 10 access tokens on a deployment`                                                      |
 | Issued token appears as a table row / revoke                                       | ❌     | Deferred — list-refresh is non-deterministic while the deployment is still Deploying; belongs to backend-surface testing |
 | Replica scheduling completion (Lifecycle leaves Pending → replica scheduled)       | ❌     | Deferred — measured ~40s–20min+ on the shared cluster; out of scope for webui e2e                                        |
 | Revision rollback / promote from Revision History                                  | ❌     | -                                                                                                                        |
 
-**Coverage: 🔶 12/16 features (4 deferred to backend-surface testing or future work)**
+**Coverage: 🔶 17/21 features (4 deferred to backend-surface testing or future work)**
 
 ---
 
@@ -1356,7 +1384,7 @@ These are core user workflows that affect the largest number of users.
 | 9   | **Environment - Presets** (`/environment`)                          | 4 uncovered features for Resource Presets tab. Each with CRUD modals.                                      | Medium               |
 | 10  | **Resources - Resource Groups** (`/agent`)                          | 5 uncovered features with 3 modals (create/edit/info). Agent drawer also untested.                         | Medium               |
 | 11  | **Model Store** (`/model-store`)                                    | Browse/search models. ModelCardModal for detail. Read-only interface.                                      | Low                  |
-| 12  | **Scheduler** (`/scheduler`)                                        | 6 features. Pending session queue monitoring. Admin tool.                                                  | Low                  |
+| 12  | **Scheduler** (`/scheduler`)                                        | 6 uncovered features. Pending session queue monitoring. Superadmin access control is covered.              | Low                  |
 | 13  | **Branding** (`/branding`)                                          | 14 features. Theme/logo customization. Admin tool.                                                         | Medium               |
 | 14  | **Storage Host Settings** (`/storage-settings/:hostname`)           | Niche admin feature.                                                                                       | Low                  |
 | 15  | **Chat** (`/chat/:id?`)                                             | ✅ Covered. Mock-based tests for chat UI, history, multi-pane, sync.                                       | -                    |
@@ -1389,6 +1417,7 @@ These are core user workflows that affect the largest number of users.
 | `test-util.ts`      | [`e2e/utils/test-util.ts`](utils/test-util.ts)                                               | Login, config modification, TOML helpers, route-error screen locators (`notFoundPageHeading` / `forbiddenPageHeading`) |
 | `test-util-antd.ts` | [`e2e/utils/test-util-antd.ts`](utils/test-util-antd.ts)                                     | Ant Design component interaction helpers                                                                               |
 | `SessionAPIHelper`  | [`e2e/utils/classes/session/SessionAPIHelper.ts`](utils/classes/session/SessionAPIHelper.ts) | Create and manage sessions via Backend.AI API                                                                          |
+| `admin-api.ts`      | [`e2e/utils/admin-api.ts`](utils/admin-api.ts)                                               | Admin GraphQL helpers: users, projects, deployments (`findDeploymentByName`, `setDeploymentTagsViaApi`, delete/sweep)  |
 
 ### Page Object Models Needed
 
@@ -1433,7 +1462,7 @@ To efficiently build new E2E tests, these POMs should be created:
 | `/project`                             |        🔶        |      ❌      |    -     |
 | `/statistics`                          |        ✅        |      ❌      |    -     |
 | `/usersettings`                        |        🔶        |      ❌      |  **P2**  |
-| `/scheduler`                           |        ❌        |      ❌      |    P3    |
+| `/scheduler`                           |        🔶        |      ❌      |    P3    |
 | `/information`                         |        ✅        |      ✅      |    -     |
 | `/reservoir`                           |        ❌        |      ❌      |    P2    |
 | `/branding`                            |        ❌        |      ❌      |    P3    |

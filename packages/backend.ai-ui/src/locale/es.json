@@ -89,26 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Se produjo un error inesperado. Inténtelo de nuevo más tarde o contacte con el soporte si el problema persiste."
   },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "Limpiar",
-    "KeepAsIs": "Mantener como está",
-    "UndoChanges": "Deshacer cambios"
-  },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "Error de ejecución",
-    "ErrorOccurred": "Se produjo un error"
-  },
-  "comp:BAIColorPicker": {
-    "Clear": "Limpiar",
-    "HexValue": "Valor hexadecimal",
-    "NoColor": "Sin color",
-    "SelectColor": "Seleccionar color"
-  },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Borrar Buscar opciones",
-    "NoResults": "Sin resultados",
-    "SearchOptions": "Buscar opciones"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Seleccionar registro de contenedores"
   },
@@ -128,14 +108,6 @@
     "Size": "Tamaño",
     "SuccessFullyRemoved": "Las versiones {{count}} eliminadas con éxito.",
     "Version": "Versión"
-  },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "¿Está seguro de que desea eliminar?",
-    "AreYouSureToPermanentlyDeleteTarget": "¿Está seguro de que desea eliminar permanentemente {{target}}?",
-    "CannotBeUndone": "Esta acción no se puede deshacer.",
-    "DeleteItem": "Eliminar",
-    "DeleteNItems": "Eliminar {{count}} elementos",
-    "TypeToConfirm": "Escriba <token>{{confirmText}}</token> para confirmar."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Creado por"
@@ -174,11 +146,39 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Cantidad"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "Añadir etiquetas"
+  },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "Editar etiquetas"
+  },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "Añadir etiqueta",
+    "AddLabelsToItems": "Añadir etiquetas a {{count}} elementos",
+    "BulkDescription": "Estas etiquetas se añaden a todos los elementos seleccionados. Si un elemento ya tiene la clave, recibe el nuevo valor; sus otras etiquetas se mantienen.",
+    "EditLabels": "Editar etiquetas",
+    "Error": "Error",
+    "Key": "Clave",
+    "KeyMustBeUnique": "Cada clave solo puede usarse una vez.",
+    "KeyRequired": "Introduzca una clave.",
+    "Label": "Etiqueta",
+    "LabelsSaved": "Etiquetas guardadas.",
+    "RemoveLabel": "Quitar etiqueta",
+    "Save": "Guardar",
+    "SomeLabelsFailed": "Fallaron {{count}} cambios de etiquetas",
+    "Target": "Destino",
+    "TooLong": "Use como máximo {{max}} caracteres.",
+    "Value": "Valor",
+    "ValueRequired": "Introduzca un valor."
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "Etiqueta"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Actualización automática",
-    "EveryHours": "{{count}}h",
-    "EveryMinutes": "{{count}}m",
-    "EverySeconds": "{{count}}s",
+    "EveryHours": "{{count}} h",
+    "EveryMinutes": "{{count}} min",
+    "EverySeconds": "{{count}} s",
     "LastUpdated": "Última actualización",
     "Off": "Desactivado",
     "Refresh": "Actualizar"
@@ -281,7 +281,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "Clave de acceso",
     "CreatedAt": "Creado en",
-    "InvalidatedAt": "Invalidado en",
+    "LastAccessedAt": "Último acceso",
     "User": "Usuario"
   },
   "comp:BAIModal": {
@@ -319,7 +319,6 @@
     "RevisionNumber": "Revisión",
     "RevisionNumberTooltip": "El número de revisión actual del despliegue.",
     "StrategyType": "Estrategia",
-    "Tags": "Etiquetas",
     "UpdatedAt": "Actualizado en"
   },
   "comp:BAINameActionCell": {
@@ -347,7 +346,6 @@
     "ContainerRegistryForImageCommit": "Registro de contenedores para el commit de imágenes",
     "CreateProject": "Crear proyecto",
     "Description": "Descripción",
-    "Domain": "Dominio",
     "FailedToCreateProject": "No se pudo crear el proyecto",
     "FailedToUpdateProject": "No se pudo actualizar el proyecto",
     "IsActive": "¿Está activo?",
@@ -416,11 +414,6 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Asignado / Solicitado"
-  },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "Cambiar el color del grupo",
-    "ResourceGrid": "Cuadrícula de recursos",
-    "UseColorN": "Usar el color {{n}}"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Ilimitado"
@@ -564,6 +557,9 @@
     "To": "Estado de destino",
     "UpdatedAt": "Actualizado el"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Seleccionar carpeta"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agente"
   },
@@ -571,8 +567,26 @@
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Soltero"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "Ilimitado"
+  "comp:BAISessionScene": {
+    "FoundCount": "{{count}} encontrado(s)",
+    "Hero": "Mías",
+    "Measuring": "Midiendo",
+    "ResourceShare": "Cuota de recursos",
+    "ShowAll": "Mostrar todo",
+    "Utilization": "Utilización",
+    "mood": {
+      "Idle": "Inactiva",
+      "Leaving": "Finalizando",
+      "Overheated": "Sobrecalentada",
+      "Waiting": "Esperando recursos",
+      "Working": "Trabajando"
+    }
+  },
+  "comp:BAISessionTypeToken": {
+    "Batch": "Lote",
+    "Inference": "Inferencia",
+    "Interactive": "Interactivo",
+    "System": "Carga"
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Seleccionar host de almacenamiento"
@@ -590,28 +604,13 @@
     "Time": "Hora"
   },
   "comp:BAITable": {
-    "Apply": "Aplicar",
-    "Cancel": "Cancelar",
     "CollapseAll": "Contraer todo",
     "ExpandAll": "Expandir todo",
     "ExpandErrorsOnly": "Expandir solo errores",
-    "ExpandOptions": "Opciones de expansión",
-    "ExpandRow": "Expandir fila",
-    "Export": "Exportar",
-    "ExportCSV": "Exportar CSV",
-    "GoToFirstPage": "Ir a la primera página",
-    "InvalidPageNumber": "Número de página no válido",
-    "NoDataToDisplay": "No hay datos para mostrar",
-    "Pagination": "Paginación",
-    "SearchTableColumn": "Columnas de la tabla de búsqueda",
-    "SelectColumnToDisplay": "Seleccionar columnas para mostrar",
-    "SettingTable": "Configuración de tabla"
+    "ExpandOptions": "Opciones de expansión"
   },
   "comp:BAITestButton": {
     "Test": "prueba"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "y {{rest}} más"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Creado en",
@@ -634,8 +633,6 @@
     "CreateFolder": "Crear una nueva carpeta de almacenamiento",
     "DestinationPath": "Ruta del contenedor (destination)",
     "Folders": "Carpetas",
-    "OwnerProject": "Proyecto",
-    "OwnerUser": "Usuario",
     "PathAndAliasTooltip": "La ruta dentro del contenedor donde se montará la carpeta. Déjelo vacío para usar la ruta predeterminada.",
     "Refresh": "Actualizar",
     "RemoveFolder": "Eliminar",
@@ -703,9 +700,6 @@
       "FileNameRequired": "Ingrese un nombre de archivo o carpeta."
     }
   },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} de {{total}} elementos"
-  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "No hay datos de recursos disponibles"
   },
@@ -767,62 +761,18 @@
   "error": {
     "UnknownError": "Ocurrió un error desconocido. \nPor favor intente de nuevo."
   },
-  "form": {
-    "Optional": "(opcional)",
-    "validateMessages": {
-      "Default": "Error de validación del campo ${label}",
-      "Required": "Por favor, rellena ${label}",
-      "Whitespace": "${label} no puede ser un carácter en blanco",
-      "array": {
-        "Len": "Debe ser ${len} ${label}",
-        "Max": "Como máximo ${max} ${label}",
-        "Min": "Al menos ${min} ${label}",
-        "Range": "El valor de ${label} debe estar entre ${min}-${max}"
-      },
-      "number": {
-        "Len": "${label} debe ser igual a ${len}",
-        "Max": "${label} valor máximo es ${max}",
-        "Min": "${label} valor mínimo es ${min}",
-        "Range": "${label} debe ser entre ${min}-${max}"
-      },
-      "pattern": {
-        "Mismatch": "${label} no coincide con el patrón ${pattern}"
-      },
-      "string": {
-        "Len": "${label} debe tener ${len} caracteres",
-        "Max": "${label} debe tener hasta ${max} caracteres",
-        "Min": "${label} debe tener al menos ${min} caracteres",
-        "Range": "${label} debe tener entre ${min}-${max} caracteres"
-      },
-      "types": {
-        "Email": "${label} no es un ${type} válido",
-        "Number": "${label} no es un ${type} válido",
-        "Object": "${label} no es un ${type} válido",
-        "String": "${label} no es un ${type} válido",
-        "Url": "${label} no es un ${type} válido"
-      }
-    }
-  },
   "general": {
-    "Decrease": "Disminuir",
-    "DeselectAll": "Deseleccionar todo",
     "File": "Archivo",
-    "Increase": "Aumentar",
-    "Loading": "Cargando...",
-    "NSelected": "{{count}} seleccionado",
     "Optional": "Opcional",
     "Project": "Proyecto",
     "Search": "Buscar",
     "Select": "Seleccionar",
-    "SelectPlaceholder": "Seleccione {{label}}",
-    "TotalItems": "Total {{total}} elementos",
     "Unit": "Unidad",
     "button": {
       "Action": "Acción",
       "Back": "Atrás",
       "Cancel": "Cancelar",
       "Close": "Cerca",
-      "Collapse": "Colapsar",
       "Confirm": "Confirmar",
       "Copied": "Copiado",
       "Copy": "Copiar",
@@ -830,7 +780,6 @@
       "Create": "Crear",
       "Delete": "Borrar",
       "Edit": "Editar",
-      "Expand": "Expandir",
       "Remove": "Eliminar",
       "Save": "Guardar",
       "Upload": "Subir"

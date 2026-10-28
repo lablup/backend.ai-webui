@@ -24,20 +24,19 @@ import { EditableVFolderNameV2RefetchQuery } from '../__generated__/EditableVFol
 import { App } from '../app-shim';
 // Ticket 34: `Form` is the self-hosted engine; `Form.Item` IS BAIFormItem.
 import { Form } from '../form-engine';
+import { isDeletedCategory } from '../helper/vfolderStatus';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
-import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import { ProjectContextOrNull } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import { AstryxFormTextInput } from './astryxFormControls';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Link } from '@astryxdesign/core/Link';
-import { HStack } from '@astryxdesign/core/Stack';
-import { Heading, Text } from '@astryxdesign/core/Text';
-import { toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Link } from '@lablup/ui-common/Link';
+import { HStack } from '@lablup/ui-common/Stack';
+import { Heading, Text } from '@lablup/ui-common/Text';
+import { BAITextInput, useErrorMessageResolver } from 'backend.ai-ui';
 import { PencilIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -82,6 +81,7 @@ const EditableVFolderNameV2: React.FC<EditableVFolderNameV2Props> = ({
     graphql`
       fragment EditableVFolderNameV2Fragment on VFolder {
         id
+        entityId
         status
         metadata {
           name
@@ -104,7 +104,7 @@ const EditableVFolderNameV2: React.FC<EditableVFolderNameV2Props> = ({
   const baiClient = useSuspendedBackendaiClient();
   const renameMutation = useTanMutation({
     mutationFn: (input: { id: string; name: string }) => {
-      return baiClient.vfolder.rename(input.name, toLocalId(vfolderNode?.id));
+      return baiClient.vfolder.rename(input.name, vfolderNode.entityId);
     },
   });
   const relayEnv = useRelayEnvironment();
@@ -135,7 +135,7 @@ const EditableVFolderNameV2: React.FC<EditableVFolderNameV2Props> = ({
   const displayedName = isPendingRenameMutation
     ? optimisticName
     : vfolderNode.metadata?.name;
-  const folderPath = generateFolderPath(toLocalId(vfolderNode?.id));
+  const folderPath = generateFolderPath(vfolderNode.entityId);
 
   const nameNode =
     variant === 'title' ? (
@@ -221,7 +221,7 @@ const EditableVFolderNameV2: React.FC<EditableVFolderNameV2Props> = ({
                       }
                     `,
                     {
-                      vfolderId: toLocalId(vfolderNode.id),
+                      vfolderId: vfolderNode.entityId,
                     },
                   ).toPromise();
                 },
@@ -278,7 +278,7 @@ const EditableVFolderNameV2: React.FC<EditableVFolderNameV2Props> = ({
                 margin: 0,
               }}
             >
-              <AstryxFormTextInput label={t('data.Foldername')} hasAutoFocus />
+              <BAITextInput aria-label={t('data.Foldername')} hasAutoFocus />
             </BAIFormItem>
           </span>
         </Form>

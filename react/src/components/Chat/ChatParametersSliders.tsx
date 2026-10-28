@@ -7,10 +7,9 @@ import { Form } from '../../form-engine';
 import BAIFormItem from '../BAIFormItem';
 import InputNumberWithSlider from '../InputNumberWithSlider';
 import { DEFAULT_CHAT_PARAMETERS, type ChatParameters } from './ChatModel';
-import { Divider } from '@astryxdesign/core/Divider';
-import { Switch } from '@astryxdesign/core/Switch';
-import { Text } from '@astryxdesign/core/Text';
-import { BAIFlex, BAIQuestionIconWithTooltip } from 'backend.ai-ui';
+import { Divider } from '@lablup/ui-common/Divider';
+import { Text } from '@lablup/ui-common/Text';
+import { BAIFlex, BAIQuestionIconWithTooltip, BAISwitch } from 'backend.ai-ui';
 import { t } from 'i18next';
 import { useRef } from 'react';
 
@@ -133,13 +132,8 @@ export const ChatParametersSliders = ({
   );
 
   return (
-    // PILOT-DECISION: the antd `ConfigProvider` Form component-token override
-    // (`verticalLabelPadding: 0`, `itemMarginBottom`) tightened antd
-    // `Form.Item`'s own spacing. `BAIFormItem` no longer renders antd's
-    // spacing at all (MAPPING.md §"SHIM" — the engine stays, the visuals are
-    // ours), so the override is moot; the equivalent hook is BAIFormItem's
-    // own `--bai-form-item-*` CSS custom properties, set here on the
-    // container instead.
+    // Tighter item spacing through the form item's own hooks
+    // (`--form-item-*`, ui-common Form).
     <Form
       size="small"
       layout="vertical"
@@ -147,8 +141,8 @@ export const ChatParametersSliders = ({
       style={
         {
           width: 240,
-          '--bai-form-item-margin-bottom': 'var(--spacing-2, 8px)',
-          '--bai-form-item-gap': '4px',
+          '--form-item-margin-bottom': 'var(--spacing-2, 8px)',
+          '--form-item-gap': '4px',
         } as React.CSSProperties
       }
       initialValues={
@@ -170,10 +164,9 @@ export const ChatParametersSliders = ({
         <Text style={{ fontSize: 'var(--font-size-lg)' }}>
           {t('chatui.chat.parameter.Title')}
         </Text>
-        <Switch
+        <BAISwitch
           value={usingParameters}
-          label={t('chatui.chat.parameter.Title')}
-          isLabelHidden
+          aria-label={t('chatui.chat.parameter.Title')}
           onChange={() => {
             onChangeParameter(!usingParameters, {
               ...currentParameters.current,

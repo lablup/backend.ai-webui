@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<15af007cd87fbd4d0b901ba12c0e395e>>
+ * @generated SignedSource<<edc89320fbd851013509e7b8fd8d1d21>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,7 +20,6 @@ export type useDefaultImagesWithFallbackQuery$data = {
       readonly key: string | null | undefined;
       readonly value: string | null | undefined;
     } | null | undefined> | null | undefined;
-    readonly name: string | null | undefined;
     readonly namespace: string | null | undefined;
     readonly registry: string | null | undefined;
     readonly resource_limits: ReadonlyArray<{
@@ -112,13 +111,6 @@ v3 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "name",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
         "name": "namespace",
         "storageKey": null
       },
@@ -190,16 +182,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "50986f0b2ceaf84de4cd397a2d793329",
+    "cacheID": "9ab17e1599bcc5bc00de2b9e9bba588d",
     "id": null,
     "metadata": {},
     "name": "useDefaultImagesWithFallbackQuery",
     "operationKind": "query",
-    "text": "query useDefaultImagesWithFallbackQuery(\n  $installed: Boolean\n) {\n  images(is_installed: $installed) {\n    id\n    tag\n    registry\n    architecture\n    name @deprecatedSince(version: \"24.12.0\")\n    namespace @since(version: \"24.12.0\")\n    labels {\n      key\n      value\n    }\n    tags @since(version: \"24.12.0\") {\n      key\n      value\n    }\n    resource_limits {\n      key\n      min\n      max\n    }\n  }\n}\n"
+    "text": "query useDefaultImagesWithFallbackQuery(\n  $installed: Boolean\n) {\n  images(is_installed: $installed) {\n    id\n    tag\n    registry\n    architecture\n    namespace\n    labels {\n      key\n      value\n    }\n    tags {\n      key\n      value\n    }\n    resource_limits {\n      key\n      min\n      max\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "10405daea8947c9eb138ed58ff364fe0";
+(node as any).hash = "eb58e7ce4ab6b04c3bc41e67418d1142";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2ccabac94ded47572fcd26799ae56d31>>
+ * @generated SignedSource<<bef8478b717e09b0eaa3d879b9384c4f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,7 +14,7 @@ export type StorageHostDetailDrawerContentFragment$data = {
   readonly capabilities: ReadonlyArray<string | null | undefined> | null | undefined;
   readonly id: string | null | undefined;
   readonly path: string | null | undefined;
-  readonly " $fragmentSpreads": FragmentRefs<"ProjectFolderPermissionPanel_storageVolumeFrgmt" | "StorageHostResourcePanelFragment" | "StorageHostSettingsPanel_storageVolumeFrgmt" | "UserFolderPermissionPanelV2_storageVolumeFrgmt" | "UserFolderPermissionPanel_storageVolumeFrgmt">;
+  readonly " $fragmentSpreads": FragmentRefs<"ProjectFolderPermissionPanel_storageVolumeFrgmt" | "StorageHostResourcePanelFragment" | "StorageHostSettingsPanel_storageVolumeFrgmt" | "UserFolderPermissionPanelV2_storageVolumeFrgmt">;
   readonly " $fragmentType": "StorageHostDetailDrawerContentFragment";
 };
 export type StorageHostDetailDrawerContentFragment$key = {
@@ -67,11 +67,6 @@ const node: ReaderFragment = {
     {
       "args": null,
       "kind": "FragmentSpread",
-      "name": "UserFolderPermissionPanel_storageVolumeFrgmt"
-    },
-    {
-      "args": null,
-      "kind": "FragmentSpread",
       "name": "UserFolderPermissionPanelV2_storageVolumeFrgmt"
     }
   ],
@@ -79,6 +74,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "f9b7f28d4e665e3f3a23bab9a6f04e4b";
+(node as any).hash = "427dadd808909acc2598007882fad61f";
 
 export default node;

@@ -10,7 +10,7 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
  * Key features:
  * - Uses Relay fragment to fetch session type from GraphQL
  * - Colour-coded tokens: INTERACTIVE (blue), BATCH (cyan), INFERENCE (purple)
- * - Auto-uppercases the session type text
+ * - Shows the translated session type name
  *
  * @see BAISessionTypeToken.tsx for implementation details
  */
@@ -28,7 +28,7 @@ const meta: Meta<typeof BAISessionTypeToken> = {
 ## Features
 - Colour-coded tokens based on session type
 - Supports three session types: INTERACTIVE, BATCH, INFERENCE
-- Automatically uppercases the session type text
+- Shows the translated session type name
 - Uses GraphQL fragment for data fetching
 
 ## Session Type Colors

@@ -70,6 +70,24 @@ export type {
   BAIDeactivateArtifactsModalProps,
   BAIDeactivateArtifactsModalArtifactsFragmentKey,
 } from './BAIDeactivateArtifactsModal';
+export { default as BAIEntityLabelBulkEditButton } from './BAIEntityLabelBulkEditButton';
+export type { BAIEntityLabelBulkEditButtonProps } from './BAIEntityLabelBulkEditButton';
+export { default as BAIEntityLabelSettingModal } from './BAIEntityLabelSettingModal';
+export type {
+  BAIEntityLabelSettingModalProps,
+  BAIEntityLabelSettingModalTarget,
+} from './BAIEntityLabelSettingModal';
+export {
+  default as BAIEntityLabelTokens,
+  formatEntityLabel,
+  toEntityLabelFilter,
+} from './BAIEntityLabelTokens';
+export type {
+  BAIEntityLabel,
+  BAIEntityLabelTokensProps,
+} from './BAIEntityLabelTokens';
+export { default as BAIEntityLabelCell } from './BAIEntityLabelCell';
+export type { BAIEntityLabelCellProps } from './BAIEntityLabelCell';
 export { default as BAIActivateArtifactsModal } from './BAIActivateArtifactsModal';
 export type {
   BAIActivateArtifactsModalProps,
@@ -115,6 +133,14 @@ export type {
   BAIVFolderPermission,
   BAIVFolderSelectRef,
 } from './BAIVFolderSelect';
+export { default as BAIScopedVFolderSelect } from './BAIScopedVFolderSelect';
+export type {
+  BAIScopedVFolderSelectProps,
+  BAIScopedVFolderSelectRef,
+  ScopedVFolderNode,
+  ScopedVFolderResolution,
+  ScopedVFolderSummary,
+} from './BAIScopedVFolderSelect';
 export { default as BAIVFolderMountConfigInput } from './BAIVFolderMountConfigInput';
 export {
   inputToMountDestination,
@@ -125,10 +151,8 @@ export {
   useVFolderMountConfigFormRule,
 } from './BAIVFolderMountConfigInput';
 export type {
-  AutoMountedFolder,
   BAIVFolderMountConfigInputProps,
   BAIVFolderMountConfigInputRef,
-  LegacyVFolder,
   VFolderMountConfigValue,
   VFolderMountConfigStatusOptions,
   VFolderMountConfigEntryStatus,
@@ -154,12 +178,13 @@ export type {
   BAIRuntimeVariantSelectRef,
   RuntimeVariantNode,
 } from './BAIRuntimeVariantSelect';
-export { default as BAIUserSelect } from './BAIUserSelect';
+export { default as BAIScopedUserSelect } from './BAIScopedUserSelect';
 export type {
-  BAIUserSelectProps,
-  AstryxUserNode,
-  BAIUserSelectRef,
-} from './BAIUserSelect';
+  BAIScopedUserSelectProps,
+  BAIScopedUserSelectFilter,
+  BAIScopedUserSelectRef,
+  ScopedUserNode,
+} from './BAIScopedUserSelect';
 export { default as BAIAdminUserV2Select } from './BAIAdminUserV2Select';
 export type {
   BAIAdminUserV2SelectProps,
@@ -267,11 +292,11 @@ export type {
   BAIStorageHostSelectRef,
   StorageHostNode,
 } from './BAIStorageHostSelect';
-export { default as BAIAdminImageSelect } from './BAIAdminImageSelect';
+export { default as BAIScopedImageSelect } from './BAIScopedImageSelect';
 export type {
-  BAIAdminImageSelectProps,
-  BAIAdminImageSelectRef,
+  BAIScopedImageSelectProps,
+  BAIScopedImageSelectRef,
   AstryxImageV2Node,
-} from './BAIAdminImageSelect';
+} from './BAIScopedImageSelect';
 export { default as BAISubStepNodes } from './BAISubStepNodes';
 export type { BAISubStepNodesProps, SubStepInList } from './BAISubStepNodes';

@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The anchored one-click confirmation: an Astryx `Popover` whose content this component owns — an optional icon, a title, a supporting line, then Cancel and Confirm. It is the REVERSIBLE tier of the project confirmation convention (deactivate a keypair, reset a form, leave a shared folder); anything irreversible goes to `BAIDeleteConfirmModal` with `requireConfirmInput` instead. `onConfirm` may return a promise: it is handed to the Astryx `clickAction`, which drives the confirm button pending state, blocks re-entry, closes the popover on resolve and keeps it open on reject so the user can retry. Cancel is rendered first in DOM order and explicitly focused on open, so a stray Enter cancels rather than confirms, and focus is handed back to the trigger on close. Props extend Astryx `PopoverProps`, so `placement`, `alignment`, `isModal`, `hasLightDismiss` and the rest pass through; `content` is not accepted because this component owns it.',
+      'The anchored one-click confirmation, an adapter over ui-common `ConfirmPopover` that keeps the antd `Popconfirm` names (`okText`, `cancelText`, `onConfirm`): an Astryx `Popover` whose content the component owns — an optional icon, a title, a supporting line, then Cancel and Confirm. It is the REVERSIBLE tier of the project confirmation convention (deactivate a keypair, reset a form, leave a shared folder); anything irreversible goes to `BAIDeleteConfirmModal` with `requireConfirmInput` instead. `onConfirm` may return a promise: it is handed to the Astryx `clickAction`, which drives the confirm button pending state, blocks re-entry, and closes the popover once it resolves; a rejection does not close it. Cancel is rendered first in DOM order and explicitly focused on open, so a stray Enter cancels rather than confirms, and focus is handed back to the trigger on close. Props extend Astryx `PopoverProps`, so `placement`, `alignment`, `isModal`, `hasLightDismiss` and the rest pass through; `content` is not accepted because this component owns it.',
     bestPractices: [
       {
         guidance: true,
@@ -63,13 +63,13 @@ export const docs = {
       name: 'okText',
       type: 'string',
       description:
-        'Confirm button label. Defaults to the shared `general.button.Confirm` translation.',
+        "Confirm button label. Defaults to ui-common's `uic.common.confirm` catalog string.",
     },
     {
       name: 'cancelText',
       type: 'string',
       description:
-        'Cancel button label. Defaults to the shared `general.button.Cancel` translation.',
+        "Cancel button label. Defaults to ui-common's `uic.common.cancel` catalog string.",
     },
     {
       name: 'isDanger',
@@ -89,7 +89,7 @@ export const docs = {
       name: 'onConfirm',
       type: '(e: React.MouseEvent<HTMLButtonElement>) => void | Promise<void>',
       description:
-        'Confirm handler. A returned promise drives the button pending state; the popover closes on resolve and stays open on reject.',
+        'Confirm handler. A returned promise drives the button pending state; the popover closes once it resolves.',
     },
     {
       name: 'onCancel',

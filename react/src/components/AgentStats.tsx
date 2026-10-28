@@ -4,26 +4,24 @@
  */
 import { AgentStatsFragment$key } from '../__generated__/AgentStatsFragment.graphql';
 import { useResourceSlotsDetails } from '../hooks/backendai';
+import { Heading } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
-import { Heading } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
-import {
-  BAISkeleton,
   BAIBoardItemTitle,
   BAIDoubleBadge,
   BAIFetchKeyButton,
   BAIFlex,
   BAIFlexProps,
+  BAISkeleton,
   ResourceStatistics,
   convertToNumber,
   processMemoryValue,
   useControllableValue,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { useTransition, ReactNode } from 'react';
+import { ReactNode, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
 
@@ -63,21 +61,20 @@ const AgentStats: React.FC<AgentStatsProps> = ({
         schedulableAgentFilter: { type: "String!" }
       )
       @refetchable(queryName: "AgentStatsRefetchQuery") {
-        agentStats @since(version: "25.15.0") {
+        agentStats {
           totalResource {
             free
             used
             capacity
           }
         }
-        aliveAgents: agent_nodes(filter: $aliveAgentFilter, first: 1)
-          @since(version: "24.12.0") {
+        aliveAgents: agent_nodes(filter: $aliveAgentFilter, first: 1) {
           count
         }
         schedulableAgents: agent_nodes(
           filter: $schedulableAgentFilter
           first: 1
-        ) @since(version: "24.12.0") {
+        ) {
           count
         }
       }
@@ -210,9 +207,9 @@ const AgentStats: React.FC<AgentStatsProps> = ({
             {/* PILOT-DECISION: SegmentedControl.label is aria-only and required;
                 composed from the two existing option labels to avoid adding new
                 i18n keys while page tickets run in parallel. */}
-            <SegmentedControl
+            <BAISegmentedControl
               size="sm"
-              label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
+              aria-label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
               value={displayType}
               onChange={(v) =>
                 setDisplayType(
@@ -220,9 +217,15 @@ const AgentStats: React.FC<AgentStatsProps> = ({
                 )
               }
             >
-              <SegmentedControlItem value="used" label={t('dashboard.Used')} />
-              <SegmentedControlItem value="free" label={t('dashboard.Free')} />
-            </SegmentedControl>
+              <BAISegmentedControlItem
+                value="used"
+                label={t('dashboard.Used')}
+              />
+              <BAISegmentedControlItem
+                value="free"
+                label={t('dashboard.Free')}
+              />
+            </BAISegmentedControl>
             <BAIFetchKeyButton
               size="small"
               loading={isPendingRefetch || isRefetching}

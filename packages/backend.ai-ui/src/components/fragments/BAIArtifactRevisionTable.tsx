@@ -9,7 +9,7 @@ import BAIFlex from '../BAIFlex';
 import BAIText from '../BAIText';
 import { BAIColumnType, BAITable, BAITableProps } from '../Table';
 import BAIArtifactStatusBadge from './BAIArtifactStatusBadge';
-import { Badge } from '@astryxdesign/core/Badge';
+import { Badge } from '@lablup/ui-common/Badge';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import * as _ from 'lodash-es';

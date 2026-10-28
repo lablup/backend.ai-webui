@@ -12,17 +12,19 @@ import type {
 import { App } from '../app-shim';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { buildPath } from '../helper/pathBuilder';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import {
+  useSuspendedBackendaiClient,
+  useWebUINavigate,
+  useCurrentDomain,
+} from '../hooks';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
-import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import DeploymentSettingModal from './DeploymentSettingModal';
-import { Link } from '@astryxdesign/core/Link';
-import { Text } from '@astryxdesign/core/Text';
+import { Link } from '@lablup/ui-common/Link';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAIAdminProjectSelect,
   BAIDeleteConfirmModal,
-  BAIDeploymentTagTokens,
   BAIFlex,
   BAIGraphQLFilterProperty,
   BAIGraphQLPropertyFilter,
@@ -30,20 +32,25 @@ import {
   BAINameActionCell,
   type BAITableSettings,
   BAIUnmountAfterClose,
-  BAIUserSelect,
+  BAIScopedUserSelect,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
   availableDeploymentSorterKeys,
   DeploymentOrderValue,
-  type DeploymentSorterKey,
   filterOutEmpty,
   filterOutNullAndUndefined,
   isDeploymentInStoppedCategory,
   isValidUUID,
-  toLocalId,
   useBAILogger,
+  BAIEntityLabelSettingModal,
+  toEntityLabelFilter,
+  useIsLabelableEntityType,
+  type ModelDeploymentNodeInList,
+  BAISelect,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Trash2, SquarePenIcon } from 'lucide-react';
-import { useDeferredValue, useState } from 'react';
+import { useDeferredValue, useState, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -72,13 +79,14 @@ export const AdminDeploymentQuery = graphql`
       edges {
         node {
           id
+          entityId
           ...BAIModelDeploymentNodesFragment
           ...DeploymentSettingModal_deployment
           metadata {
             name
             status
           }
-          currentRevision @since(version: "26.4.3") {
+          currentRevision {
             id
             revisionNumber
             ...DeploymentRevisionDetail_revision
@@ -99,56 +107,26 @@ export interface AdminDeploymentProps {
 }
 
 const finishedStatuses: ReadonlyArray<DeploymentStatus> = ['STOPPED'];
-// Every DeploymentStatus except STOPPED, in schema order.
-const runningStatuses: ReadonlyArray<DeploymentStatus> = [
-  'PENDING',
-  'SCALING',
-  'DEPLOYING',
-  'READY',
-  'STOPPING',
-];
 
-/**
- * The hard-coded status scope behind the Running / Terminated toggle.
- * `DeploymentStatusFilter.notIn` only exists from 26.4.3
- * (`model-deployment-extended-filter`); below that the running scope has to be
- * spelled out as the complementary `in` list.
- */
+/** The hard-coded status scope behind the Running / Terminated toggle. */
 export const statusCategoryFilterFor = (
   category: DeploymentStatusCategory,
-  supportsExtendedFilter: boolean,
-): DeploymentFilter => {
-  if (category === 'finished') {
-    return { status: { in: finishedStatuses } };
-  }
-  return supportsExtendedFilter
-    ? { status: { notIn: finishedStatuses } }
-    : { status: { in: runningStatuses } };
-};
+): DeploymentFilter =>
+  category === 'finished'
+    ? { status: { in: finishedStatuses } }
+    : { status: { notIn: finishedStatuses } };
 
 /**
- * DOMAIN / PROJECT / RESOURCE_GROUP / TAG joined `DeploymentOrderField` in
- * 26.4.3, together with the filters behind the same flag. Shared with
- * `AdminDeploymentPage`, which sanitizes URL-supplied `order` against it
+ * `order` is `[-]<camelCaseKey>`; a key the table cannot sort by is dropped.
+ * Shared with `AdminDeploymentPage`, which sanitizes URL-supplied `order`
  * before the tab's first query runs.
  */
-export const deploymentSorterKeysFor = (
-  supportsExtendedFilter: boolean,
-): ReadonlyArray<DeploymentSorterKey> =>
-  supportsExtendedFilter
-    ? availableDeploymentSorterKeys
-    : (['name', 'createdAt'] as const);
-
-/** `order` is `[-]<camelCaseKey>`; a key this manager cannot sort by is dropped. */
 export const sanitizeDeploymentOrder = (
   order: string | null | undefined,
-  supportsExtendedFilter: boolean,
 ): string | null => {
   if (!order) return null;
   const key = order.startsWith('-') ? order.slice(1) : order;
-  return _.includes(deploymentSorterKeysFor(supportsExtendedFilter), key)
-    ? order
-    : null;
+  return _.includes(availableDeploymentSorterKeys, key) ? order : null;
 };
 
 const AdminDeployment = ({
@@ -157,6 +135,8 @@ const AdminDeployment = ({
   tableSettings,
 }: AdminDeploymentProps) => {
   'use memo';
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
@@ -169,14 +149,13 @@ const AdminDeployment = ({
   const [deletingDeploymentId, setDeletingDeploymentId] = useState<
     string | null
   >(null);
+  const isLabelable = useIsLabelableEntityType('deployment');
+  const [labelingDeployment, setLabelingDeployment] =
+    useState<ModelDeploymentNodeInList | null>(null);
   const [drawerRevisionId, setDrawerRevisionId] = useState<string | null>(null);
 
-  const supportsExtendedFilter = baiClient.supports(
-    'model-deployment-extended-filter',
-  );
-  const supportsReplicaNestedFilter = baiClient.supports(
-    'deployment-replica-nested-filter',
-  );
+  const supportsReplicaNestedFilter =
+    baiClient.isManagerVersionCompatibleWith('26.8.0');
 
   const mergedFilter = queryRef.variables.filter as
     DeploymentFilter | undefined;
@@ -233,17 +212,10 @@ const AdminDeployment = ({
     validate: (value: string) => isValidUUID(value.toLowerCase()),
   };
 
-  const sortableKeys = deploymentSorterKeysFor(supportsExtendedFilter);
-
   const filterProperties: Array<BAIGraphQLFilterProperty> = filterOutEmpty([
     {
       key: 'name',
       propertyLabel: t('deployment.filter.Name'),
-      type: 'string',
-    },
-    {
-      key: 'tags',
-      propertyLabel: t('deployment.filter.Tags'),
       type: 'string',
     },
     {
@@ -256,17 +228,12 @@ const AdminDeployment = ({
       propertyLabel: t('deployment.filter.OpenToPublic'),
       type: 'boolean',
     },
-    supportsExtendedFilter && {
-      key: 'domainName',
-      propertyLabel: t('deployment.filter.DomainName'),
-      type: 'string' as const,
-    },
-    supportsExtendedFilter && {
+    {
       key: 'resourceGroup',
       propertyLabel: t('deployment.filter.ResourceGroup'),
       type: 'string' as const,
     },
-    supportsExtendedFilter && {
+    {
       key: 'projectId',
       propertyLabel: t('deployment.Project'),
       type: 'uuid' as const,
@@ -287,42 +254,45 @@ const AdminDeployment = ({
         />
       ),
     },
-    supportsExtendedFilter && {
+    {
       key: 'createdAt',
       propertyLabel: t('deployment.filter.CreatedAt'),
       type: 'datetime' as const,
       operators: ['after' as const, 'before' as const],
       defaultOperator: 'after' as const,
     },
-    supportsExtendedFilter && {
+    {
       key: 'destroyedAt',
       propertyLabel: t('deployment.filter.DestroyedAt'),
       type: 'datetime' as const,
       operators: ['after' as const, 'before' as const],
       defaultOperator: 'after' as const,
     },
-    supportsExtendedFilter && {
+    {
       key: 'createdUserId',
       propertyLabel: t('deployment.Owner'),
       type: 'uuid' as const,
       fixedOperator: 'equals' as const,
       rule: uuidRule,
       renderInput: ({ onAddCondition, value, isDisabled }) => (
-        <BAIUserSelect
-          valuePropName="id"
-          label={t('deployment.Owner')}
-          isLabelHidden
-          value={value}
-          isDisabled={isDisabled}
-          onChange={(next, option) =>
-            // The picker emits the user UUID; forward the option label
-            // (email) so the condition tag stays readable.
-            onAddCondition(
-              next as string | undefined,
-              Array.isArray(option) ? option[0]?.label : option?.label,
-            )
-          }
-        />
+        <Suspense fallback={<BAISelect disabled loading />}>
+          <BAIScopedUserSelect
+            scope={domainScope}
+            valuePropName="id"
+            label={t('deployment.Owner')}
+            isLabelHidden
+            value={value}
+            isDisabled={isDisabled}
+            onChange={(next, option) =>
+              // The picker emits the user UUID; forward the option label
+              // (email) so the condition tag stays readable.
+              onAddCondition(
+                next as string | undefined,
+                Array.isArray(option) ? option[0]?.label : option?.label,
+              )
+            }
+          />
+        </Suspense>
       ),
     },
     // `replicas.some.X` nests as ReplicaNestedFilter -> ReplicaFilter -> the
@@ -365,6 +335,20 @@ const AdminDeployment = ({
         { label: t('replicaStatus.Inactive'), value: 'INACTIVE' },
       ],
     },
+    ...(isLabelable
+      ? [
+          {
+            key: 'labels.some.key',
+            propertyLabel: t('entityLabel.LabelKey'),
+            type: 'string' as const,
+          },
+          {
+            key: 'labels.some.value',
+            propertyLabel: t('entityLabel.LabelValue'),
+            type: 'string' as const,
+          },
+        ]
+      : []),
   ]);
 
   return (
@@ -372,33 +356,32 @@ const AdminDeployment = ({
       <BAIFlex direction="column" align="stretch" gap="sm">
         <BAIFlex justify="between" wrap="wrap" gap="sm">
           <BAIFlex gap="sm" align="start" wrap="wrap" style={{ flexShrink: 1 }}>
-            <BAIRadioGroup
+            <BAISegmentedControl
               value={statusCategory}
-              onChange={(e) => {
-                const nextCategory = e.target.value as DeploymentStatusCategory;
+              onChange={(value) => {
+                const nextCategory = value as DeploymentStatusCategory;
                 onReload(
                   {
                     ...queryRef.variables,
                     filter: {
                       ...userFilter,
-                      ...statusCategoryFilterFor(
-                        nextCategory,
-                        supportsExtendedFilter,
-                      ),
+                      ...statusCategoryFilterFor(nextCategory),
                     },
                     offset: 0,
                   },
                   { fetchPolicy: 'network-only' },
                 );
               }}
-              options={[
-                { label: t('deployment.Running'), value: 'running' },
-                {
-                  label: t('deployment.status.Terminated'),
-                  value: 'finished',
-                },
-              ]}
-            />
+            >
+              <BAISegmentedControlItem
+                value="running"
+                label={t('deployment.Running')}
+              />
+              <BAISegmentedControlItem
+                value="finished"
+                label={t('deployment.status.Terminated')}
+              />
+            </BAISegmentedControl>
             <BAIGraphQLPropertyFilter<DeploymentFilter>
               filterProperties={filterProperties}
               value={userFilter ?? undefined}
@@ -408,10 +391,7 @@ const AdminDeployment = ({
                     ...queryRef.variables,
                     filter: {
                       ...(value ?? {}),
-                      ...statusCategoryFilterFor(
-                        statusCategory,
-                        supportsExtendedFilter,
-                      ),
+                      ...statusCategoryFilterFor(statusCategory),
                     },
                     offset: 0,
                   },
@@ -430,6 +410,21 @@ const AdminDeployment = ({
           />
         </BAIFlex>
         <BAIModelDeploymentNodes
+          onEditLabels={isLabelable ? setLabelingDeployment : undefined}
+          showLabelsByDefault
+          onLabelClick={(label) => {
+            onReload(
+              {
+                ...queryRef.variables,
+                filter: {
+                  ...toEntityLabelFilter(label),
+                  ...statusCategoryFilterFor(statusCategory),
+                },
+                offset: 0,
+              },
+              { fetchPolicy: 'network-only' },
+            );
+          }}
           deploymentsFrgmt={deploymentNodes}
           loading={isRefetching}
           order={order}
@@ -460,7 +455,6 @@ const AdminDeployment = ({
                 { fetchPolicy: 'network-only' },
               ),
           }}
-          sortableKeys={sortableKeys}
           tableSettings={tableSettings}
           // Drop the replicas / currentRevisionId / preferredDomainName /
           // strategyType columns entirely and show `owner` by default,
@@ -471,13 +465,13 @@ const AdminDeployment = ({
               'name',
               'currentRevisionNumber',
               'status',
+              'labels',
               'replicaSummary',
               'model',
               'createdAt',
               'owner',
               'id',
               'endpointUrl',
-              'tags',
               'updatedAt',
               'openToPublic',
               'resourceGroup',
@@ -488,6 +482,7 @@ const AdminDeployment = ({
               'name',
               'currentRevisionNumber',
               'status',
+              'labels',
               'replicaSummary',
               'model',
               'createdAt',
@@ -510,7 +505,7 @@ const AdminDeployment = ({
                             webUINavigate(
                               buildPath(
                                 'admin',
-                                `deployments/${toLocalId(record.id)}`,
+                                `deployments/${record.entityId}`,
                               ),
                             )
                           }
@@ -560,34 +555,31 @@ const AdminDeployment = ({
                     },
                   };
                 }
-                if (col.key === 'tags') {
-                  return {
-                    ...col,
-                    defaultHidden,
-                    render: (_value, record) => (
-                      <BAIDeploymentTagTokens
-                        metadataFrgmt={record.metadata}
-                        stopRowClick
-                        onTagClick={(tag) => {
-                          webUINavigate({
-                            pathname: buildPath('admin', 'deployments'),
-                            search: new URLSearchParams({
-                              filter: JSON.stringify({
-                                tags: { iContains: tag },
-                              }),
-                            }).toString(),
-                          });
-                        }}
-                        fallback={<Text color="secondary">-</Text>}
-                      />
-                    ),
-                  };
-                }
                 return { ...col, defaultHidden };
               });
           }}
         />
       </BAIFlex>
+      <BAIEntityLabelSettingModal
+        open={!!labelingDeployment}
+        entityType="deployment"
+        targets={
+          labelingDeployment
+            ? [
+                {
+                  entityId: labelingDeployment.entityId,
+                  name: labelingDeployment.metadata?.name ?? undefined,
+                },
+              ]
+            : []
+        }
+        entityLabelsFrgmt={labelingDeployment?.entityLabels}
+        onRequestClose={(success) => {
+          setLabelingDeployment(null);
+          if (success)
+            onReload(queryRef.variables, { fetchPolicy: 'network-only' });
+        }}
+      />
       {/* Edit-only call site: the deployment already belongs to a project, so
           the props union rejects a `project` here entirely (ADR-0001). That
           member requires a non-null fragment, hence the guard. */}
@@ -625,7 +617,7 @@ const AdminDeployment = ({
           commitDeleteMutation({
             variables: {
               input: {
-                id: toLocalId(deletingDeployment.id) ?? deletingDeployment.id,
+                id: deletingDeployment.entityId,
               },
             },
             onCompleted: (_response, errors) => {

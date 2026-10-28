@@ -6,7 +6,7 @@ import { badgeVariantForStatus } from '../helper/astryxTagVariant';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIFlex from './BAIFlex';
 import './BAIKernelProgressBreakdown.css';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import classNames from 'classnames';
 import React from 'react';
 

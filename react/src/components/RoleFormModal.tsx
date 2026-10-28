@@ -10,31 +10,26 @@ import { RoleFormModalUpdateMutation } from '../__generated__/RoleFormModalUpdat
 import { App } from '../app-shim';
 import { Form } from '../form-engine';
 import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
-import { useSuspendedBackendaiClient } from '../hooks';
-import {
-  AstryxFormCheckbox,
-  AstryxFormSelector,
-  AstryxFormTextArea,
-  AstryxFormTextInput,
-} from './astryxFormControls';
+import { useCurrentDomain } from '../hooks';
 import {
   BAIAdminContainerRegistrySelect,
   BAIAdminModelServiceSelect,
   BAIAdminProjectSelect,
   BAIAdminResourceGroupSelect,
   BAIAdminSessionSelect,
-  BAIDomainSelect,
-  BAIDomainSelectV2,
   BAIFlex,
   BAIKeypairSelect,
   BAIModal,
   BAIModalProps,
   BAISelect,
   BAIStorageHostSelect,
-  BAIUserSelect,
+  BAIAdminUserV2Select,
   BAIVFolderSelect,
-  toLocalId,
   useBAILogger,
+  BAICheckboxInput,
+  BAISelector,
+  BAITextArea,
+  BAITextInput,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense } from 'react';
@@ -116,13 +111,16 @@ const ResourceGroupScopeIdSelect: React.FC<ScopeIdBranchProps> = (props) => {
   return <BAIAdminResourceGroupSelect queryRef={queryRef} {...props} />;
 };
 
+/** True for the DOMAIN scope, whose id is the signed-in domain and is never shown. */
+export const isDomainScopeType = (scopeType?: string) =>
+  scopeType?.toUpperCase() === 'DOMAIN';
+
 export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   scopeType: rawScopeType,
   ...selectProps
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
   const scopeType = rawScopeType?.toUpperCase();
   // The surrounding `Form.Item` already prints "Scope ID", so the Astryx
   // field's own label is the accessible name only.
@@ -132,34 +130,14 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
     isLabelHidden: true,
   };
   const fallback = (
-    <AstryxFormSelector
-      label={t('rbac.ScopeId')}
+    <BAISelector
+      aria-label={t('rbac.ScopeId')}
       placeholder={selectProps.placeholder}
       isLoading
       disabled
       options={[]}
     />
   );
-  if (scopeType === 'DOMAIN') {
-    // Managers >= 26.9.0 (BA-7234) parse a DOMAIN scopeId as the domain uuid;
-    // older managers expect the domain name. FR-3618.
-    const domainSelectProps = {
-      showSearch: true,
-      placeholder: selectProps.placeholder,
-      disabled: selectProps.isDisabled,
-      value: selectProps.value,
-      onChange: selectProps.onChange,
-    };
-    return (
-      <Suspense fallback={fallback}>
-        {baiClient.supports('rbac-domain-scope-uuid') ? (
-          <BAIDomainSelectV2 {...domainSelectProps} />
-        ) : (
-          <BAIDomainSelect {...domainSelectProps} />
-        )}
-      </Suspense>
-    );
-  }
   if (scopeType === 'PROJECT') {
     return (
       <Suspense fallback={fallback}>
@@ -170,7 +148,7 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   if (scopeType === 'USER') {
     return (
       <Suspense fallback={fallback}>
-        <BAIUserSelect valuePropName="id" {...branchProps} />
+        <BAIAdminUserV2Select valuePropName="id" {...branchProps} />
       </Suspense>
     );
   }
@@ -228,8 +206,8 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   }
   // No scope type picked yet: an inert, empty field.
   return (
-    <AstryxFormSelector
-      label={t('rbac.ScopeId')}
+    <BAISelector
+      aria-label={t('rbac.ScopeId')}
       placeholder={selectProps.placeholder}
       value={selectProps.value}
       disabled
@@ -253,13 +231,8 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const [form] = Form.useForm();
-  const baiClient = useSuspendedBackendaiClient();
-  // Auto-assign is only supported on managers >= 26.4.4. Gate the form field
-  // and the mutation input so older managers never receive the unknown field.
-  const supportsAutoAssign = baiClient.supports('role-auto-assign');
-  // Managers >= 26.9.0 take the one scope as `scope`; older ones as `scopes`.
-  const isSingleScopeRole = baiClient.supports('rbac-single-scope-role');
   const scopeType = Form.useWatch('scopeType', form) as string | undefined;
+  const currentDomain = useCurrentDomain();
 
   const { rbacPermissionMatrix } =
     useLazyLoadQuery<RoleFormModalPermissionMatrixQuery>(
@@ -292,9 +265,10 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
     graphql`
       fragment RoleFormModalFragment on Role {
         id
+        entityId
         name
         description
-        autoAssign @since(version: "26.4.4")
+        autoAssign
       }
     `,
     roleNodeFrgmt ?? null,
@@ -311,7 +285,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
           description
           source
           status
-          autoAssign @since(version: "26.4.4")
+          autoAssign
           createdAt
           updatedAt
         }
@@ -325,7 +299,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
           id
           name
           description
-          autoAssign @since(version: "26.4.4")
+          autoAssign
           updatedAt
         }
       }
@@ -357,10 +331,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
           ) {
             changedFields.description = values.description || null;
           }
-          if (
-            supportsAutoAssign &&
-            values.autoAssign !== editingRole.autoAssign
-          ) {
+          if (values.autoAssign !== editingRole.autoAssign) {
             changedFields.autoAssign = values.autoAssign;
           }
 
@@ -372,7 +343,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
           commitUpdateRole({
             variables: {
               input: {
-                id: toLocalId(editingRole.id),
+                id: editingRole.entityId,
                 ...changedFields,
               },
             },
@@ -408,29 +379,16 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
             },
           });
         } else {
+          const scopeId = isDomainScopeType(values.scopeType)
+            ? currentDomain.id
+            : values.scopeId;
           commitCreateRole({
             variables: {
               input: {
                 name: values.name,
                 description: values.description || null,
-                ...(supportsAutoAssign
-                  ? { autoAssign: values.autoAssign }
-                  : {}),
-                ...(isSingleScopeRole
-                  ? {
-                      scope: {
-                        scopeType: values.scopeType,
-                        scopeId: values.scopeId,
-                      },
-                    }
-                  : {
-                      scopes: [
-                        {
-                          scopeType: values.scopeType,
-                          scopeId: values.scopeId,
-                        },
-                      ],
-                    }),
+                autoAssign: values.autoAssign,
+                scope: { scopeType: values.scopeType, scopeId },
               },
             },
             onCompleted: (_data, errors) => {
@@ -501,21 +459,19 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
             },
           ]}
         >
-          <AstryxFormTextInput label={t('rbac.RoleName')} hasAutoFocus />
+          <BAITextInput aria-label={t('rbac.RoleName')} hasAutoFocus />
         </Form.Item>
         <Form.Item name="description" label={t('rbac.RoleDescription')}>
-          <AstryxFormTextArea label={t('rbac.RoleDescription')} rows={1} />
+          <BAITextArea aria-label={t('rbac.RoleDescription')} rows={1} />
         </Form.Item>
-        {supportsAutoAssign && (
-          <Form.Item
-            name="autoAssign"
-            label={t('rbac.AutoAssign')}
-            valuePropName="checked"
-            tooltip={t('rbac.AutoAssignDescription')}
-          >
-            <AstryxFormCheckbox label={t('general.Enable')} />
-          </Form.Item>
-        )}
+        <Form.Item
+          name="autoAssign"
+          label={t('rbac.AutoAssign')}
+          valuePropName="checked"
+          tooltip={t('rbac.AutoAssignDescription')}
+        >
+          <BAICheckboxInput>{t('general.Enable')}</BAICheckboxInput>
+        </Form.Item>
         {!isEditMode && (
           <BAIFlex direction="row" gap="xs" align="start">
             <Form.Item
@@ -538,24 +494,26 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
                 onChange={() => form.setFieldsValue({ scopeId: undefined })}
               />
             </Form.Item>
-            <Form.Item
-              name="scopeId"
-              label={t('rbac.ScopeId')}
-              style={{ flex: 1 }}
-              rules={[
-                {
-                  required: true,
-                  message: t('general.ValueRequired', {
-                    name: t('rbac.ScopeId'),
-                  }),
-                },
-              ]}
-            >
-              <ScopeIdSelect
-                scopeType={scopeType}
-                placeholder={t('rbac.ScopeId')}
-              />
-            </Form.Item>
+            {!isDomainScopeType(scopeType) && (
+              <Form.Item
+                name="scopeId"
+                label={t('rbac.ScopeId')}
+                style={{ flex: 1 }}
+                rules={[
+                  {
+                    required: true,
+                    message: t('general.ValueRequired', {
+                      name: t('rbac.ScopeId'),
+                    }),
+                  },
+                ]}
+              >
+                <ScopeIdSelect
+                  scopeType={scopeType}
+                  placeholder={t('rbac.ScopeId')}
+                />
+              </Form.Item>
+            )}
           </BAIFlex>
         )}
       </Form>

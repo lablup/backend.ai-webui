@@ -6,10 +6,9 @@ import { UsageBucketModal_DomainFragment$key } from '../../__generated__/UsageBu
 import { UsageBucketModal_ProjectFragment$key } from '../../__generated__/UsageBucketModal_ProjectFragment.graphql';
 import { UsageBucketModal_UserFragment$key } from '../../__generated__/UsageBucketModal_UserFragment.graphql';
 import UsageBucketChartContent from './UsageBucketChartContent';
-import type { ISODateString } from '@astryxdesign/core/Calendar';
-import { DateRangeInput } from '@astryxdesign/core/DateRangeInput';
-import type { DateRange } from '@astryxdesign/core/DateRangeInput';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import type { ISODateString } from '@lablup/ui-common/Calendar';
+import type { DateRange } from '@lablup/ui-common/DateRangeInput';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import {
   BAISkeleton,
   BAIFetchKeyButton,
@@ -19,6 +18,7 @@ import {
   BAIModalProps,
   BAITokenList,
   useFetchKey,
+  BAIDateRangeInput,
 } from 'backend.ai-ui';
 import dayjs, { Dayjs } from 'dayjs';
 import * as _ from 'lodash-es';
@@ -176,9 +176,8 @@ const UsageBucketModal: React.FC<UsageBucketModalProps> = ({
               `onChange` guard already ignores half-picked ranges.
               PILOT-DECISION: `allowClear={false}` → `hasClear={false}`, and
               `maxDate` → `max`. */}
-          <DateRangeInput
-            label={t('fairShare.UsageHistory')}
-            isLabelHidden
+          <BAIDateRangeInput
+            aria-label={t('fairShare.UsageHistory')}
             hasClear={false}
             max={toISODate(dayjs())}
             value={{

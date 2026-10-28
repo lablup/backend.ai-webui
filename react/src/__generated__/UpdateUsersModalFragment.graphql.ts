@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<00f8a962dc10906a3fb0bfedb2326cfa>>
+ * @generated SignedSource<<b648267855e82819b02f6a602dfe37fd>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,6 +14,7 @@ export type UpdateUsersModalFragment$data = ReadonlyArray<{
   readonly basicInfo: {
     readonly email: string;
   };
+  readonly entityId: string;
   readonly id: string;
   readonly " $fragmentType": "UpdateUsersModalFragment";
 }>;
@@ -40,6 +41,13 @@ const node: ReaderFragment = {
     {
       "alias": null,
       "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "UserV2BasicInfo",
       "kind": "LinkedField",
       "name": "basicInfo",
@@ -60,6 +68,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "40575d04a8aad160c8b8385cc80c7fab";
+(node as any).hash = "a16df54c642f5c4ec476e5952876e995";
 
 export default node;

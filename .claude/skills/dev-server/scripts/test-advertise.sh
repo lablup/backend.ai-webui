@@ -155,19 +155,114 @@ check 'and a comment without the marker is not matched' '' \
   "$(jq -r 'map(select(.body | contains(env.BAI_MARKER))) | .[0].id // empty' <<<'[{"id":77,"body":"unrelated"}]')"
 unset BAI_MARKER
 
-# ── Jira key from a PR body ───────────────────────────────────────────────────
-check 'jira_key from Resolves line' 'FR-3810' \
-  "$(jira_key 'Resolves #9329 (FR-3810)
+# ── legacy FR key from a PR body or branch ───────────────────────────────────
+check 'legacy_key from the Resolves line' 'FR-3810' \
+  "$(legacy_key 'Resolves #9329 (FR-3810)
 
 ## What
 …')"
-check 'jira_key takes the first key only' 'FR-3810' \
-  "$(jira_key 'Resolves #9329 (FR-3810), relates to (FR-3811)')"
-check 'jira_key is empty when the body names none' '' "$(jira_key 'no ticket here')"
-# Not just empty — successful. `key=$(jira_key_for_pr ...)` runs under `set -e`,
+check 'legacy_key takes the first key only' 'FR-3810' \
+  "$(legacy_key 'Resolves #9329 (FR-3810), relates to (FR-3811)')"
+check 'legacy_key falls back to the branch' 'FR-4160' "$(legacy_key 'no ticket here' feat/fr-4160-sync)"
+check 'the body key wins over the branch key' 'FR-1' "$(legacy_key '(FR-1)' feat/FR-2-x)"
+check 'legacy_key ignores fr- inside a word' '' "$(legacy_key '' fix/xfr-12)"
+check 'legacy_key is empty when nothing names one' '' "$(legacy_key 'no ticket here' main)"
+# Not just empty — successful. `key=$(legacy_key ...)` runs under `set -e`,
 # so a grep that exits 1 would abort advertising on the first key-less PR.
-jira_key 'no ticket here' >/dev/null
-check 'jira_key succeeds when the body names none' '0' "$?"
+legacy_key 'no ticket here' main >/dev/null
+check 'legacy_key succeeds when nothing names one' '0' "$?"
+check 'the clone search is the exact JIRA Issue line, in this repo' \
+  'repo:lablup/backend.ai-webui "JIRA Issue: FR-4160" in:body' \
+  "$(clone_search_query lablup/backend.ai-webui FR-4160)"
+
+# ── legacy key → GitHub clone, through a fake `gh` (no network) ──────────────
+TMP=$(mktemp -d)
+CLONE_CACHE_DIR="$TMP/clones"
+# A recorded search response: search ranks FR-854's clone first for "FR-1"
+# (the exact phrase is token-fuzzy), and FR-4160's clone second for its own key.
+SEARCH='{"items":[
+  {"number":3523,"body":"…\n\nJIRA Issue: FR-854"},
+  {"number":10147,"body":"…\n\nJIRA Issue: FR-4160"},
+  {"number":10200,"body":"…\n\nJIRA Issue: FR-41600"}]}'
+gh() { # records every call; answers searches with $SEARCH through the --jq filter
+  printf '%s\n' "$*" >>"$TMP/gh-calls"
+  local f="" a
+  for a in "$@"; do [ "$f" = next ] && f=$a; [ "$a" = --jq ] && f=next; done
+  case "$1 $2" in
+    'pr view') pr_body ;;
+    *) jq -r "$f" <<<"$SEARCH" ;;
+  esac
+}
+pr_body() { printf ''; }
+check 'a legacy key resolves to its clone' '10147' "$(resolve_legacy_key lablup/backend.ai-webui FR-4160)"
+check 'the search carries the exact phrase' 'yes' \
+  "$(grep -qF 'q=repo:lablup/backend.ai-webui "JIRA Issue: FR-4160" in:body' "$TMP/gh-calls" && echo yes || echo no)"
+check 'the second lookup is served from the cache' '10147 1' \
+  "$(resolve_legacy_key lablup/backend.ai-webui FR-4160) $(wc -l <"$TMP/gh-calls" | tr -d ' ')"
+check 'a key with no clone is empty, even when search ranks another clone' '' \
+  "$(resolve_legacy_key lablup/backend.ai-webui FR-1)"
+check 'a longer key does not borrow a shorter one' '' "$(resolve_legacy_key lablup/backend.ai-webui FR-416)"
+check 'and is not cached, so a later clone is still found' 'absent' \
+  "$([ -e "$CLONE_CACHE_DIR/lablup-backend.ai-webui-FR-1" ] && echo cached || echo absent)"
+check 'no key (or a malformed one) asks nothing' '3' "$(resolve_legacy_key lablup/backend.ai-webui ''; resolve_legacy_key o/r 'FR-1") | x'; wc -l <"$TMP/gh-calls" | tr -d ' ')"
+
+# issue_ref_for_pr: Resolves #N, else gh-N, else the legacy key through the resolver.
+pr_body() { printf 'Resolves #9329 (FR-3810)'; }
+check 'a Resolves line names the issue; the key is kept' '9329|FR-3810' "$(issue_ref_for_pr o/r 1 feat/x)"
+pr_body() { printf 'no reference'; }
+check 'a gh-N branch names the issue' '10144|' "$(issue_ref_for_pr o/r 1 fix/gh-10144-x)"
+check 'an FR branch resolves to the clone' '10147|FR-4160' "$(issue_ref_for_pr lablup/backend.ai-webui 1 feat/FR-4160-x)"
+check 'an unresolvable key keeps the key and no issue' '|FR-9999' "$(issue_ref_for_pr o/r 1 feat/FR-9999-x)"
+check 'nothing at all is empty on both sides' '|' "$(issue_ref_for_pr o/r 1 main)"
+unset -f gh pr_body
+rm -rf "$TMP"
+
+# ── issue number from a PR body or branch ─────────────────────────────────────────
+check 'github_issue from the Resolves line' '10144' \
+  "$(github_issue 'Resolves #10144
+
+## What' fix/gh-1-other)"
+check 'github_issue reads the lowercase PR-template form' '10144' "$(github_issue 'resolves #10144')"
+check 'github_issue falls back to the gh-N branch' '10144' \
+  "$(github_issue 'no reference here' fix/gh-10144-drawer-header)"
+check 'github_issue ignores gh- inside a word' '' "$(github_issue '' fix/through-123)"
+check 'github_issue is empty when nothing names one' '' "$(github_issue 'see #12' main)"
+github_issue 'no reference here' main >/dev/null
+check 'github_issue succeeds when nothing names one' '0' "$?"
+
+# ── Teams thread from the issue field (fixture strings, no network) ───────────
+THREAD='https://teams.microsoft.com/l/message/19%3Aabc%40thread.tacv2/1700000000000?tenantId=t&groupId=g&parentMessageId=1700000000000'
+check 'the field value is the thread URL' "$THREAD" "$(teams_thread_url "$THREAD")"
+check 'surrounding whitespace and a CRLF are trimmed' "$THREAD" \
+  "$(teams_thread_url "$(printf '  %s \r\n' "$THREAD")")"
+check 'a non-https value is refused' '' "$(teams_thread_url 'javascript:alert(1)')"
+check 'a value that is more than one URL is refused' '' "$(teams_thread_url "see $THREAD")"
+check 'an empty value is empty' '' "$(teams_thread_url '')"
+teams_thread_url 'not a url' >/dev/null
+check 'teams_thread_url succeeds on a value it refuses' '0' "$?"
+
+# The filter `gh api graphql --jq` runs (raw output, as `jq -r`). The response
+# shape is the schema's, by introspection: no issue carries a value to record yet.
+field_value() { GITHUB_TEAMS_FIELD=${2:-$GITHUB_TEAMS_FIELD} jq -r "$TEAMS_FIELD_FILTER" <<<"$1"; }
+nodes() { printf '{"data":{"repository":{"issue":{"issueFieldValues":{"nodes":%s}}}}}' "$1"; }
+VALUES=$(nodes "$(jq -n --arg t "$THREAD" '[
+  {}, null,
+  {value: "DRI", field: {name: "Owner"}},
+  {value: $t, field: {name: "Teams thread"}},
+  {value: "https://second.example", field: {name: "Teams thread"}}]')")
+check 'the field is matched by name, among other kinds of value' "$THREAD" "$(field_value "$VALUES")"
+check 'the field name is configurable' 'DRI' "$(field_value "$VALUES" Owner)"
+check 'an issue with no field values prints nothing' '' "$(field_value "$(nodes '[]')")"
+check 'an issue that has other fields but not this one prints nothing' '' \
+  "$(field_value "$(nodes '[{}, {"value":"DRI","field":{"name":"Owner"}}]')")"
+check 'a field of that name with no text value prints nothing' '' \
+  "$(field_value "$(nodes '[{"value":null,"field":{"name":"Teams thread"}}, {"field":{"name":"Teams thread"}}]')")"
+check 'an issue GitHub could not resolve prints nothing' '' \
+  "$(field_value '{"data":{"repository":{"issue":null}},"errors":[{"type":"NOT_FOUND"}]}')"
+check 'an error body with no data prints nothing' '' \
+  "$(field_value '{"message":"Resource not accessible by personal access token","status":"403"}')"
+field_value '{"message":"Not Found","status":"404"}' >/dev/null
+check 'and the filter does not fail on it' '0' "$?"
 
 # ── boot record ───────────────────────────────────────────────────────────────
 SERVED='[{"pr":9330,"branch":"feat/FR-3810","jiraKey":"FR-3810",
@@ -187,7 +282,7 @@ check 'boot record optional context fields' \
 check 'boot record served entry' \
   '9330 feat/FR-3810 FR-3810 https://teams.microsoft.com/l/message/x 77 https://github.com/o/r/pull/9330#issuecomment-77' \
   "$(jq -r '.served[0] | [.pr, .branch, .jiraKey, .teamsThread, .commentId, .commentUrl] | map(tostring) | join(" ")' <<<"$REC")"
-check 'a PR with no Jira key, thread or comment records nulls' \
+check 'a PR with no legacy key, thread or comment records nulls' \
   'null null null null' \
   "$(boot_record a "$URL" r b '' 2026-08-31T00:00:00Z \
      '[{"pr":1,"branch":"b","jiraKey":null,"teamsThread":null,"commentId":null,"commentUrl":null}]' \
@@ -240,8 +335,8 @@ JSON
 missing_tools() { printf ''; }
 probe_portless() { PROBE_STATUS=200; return 0; }
 served_set() { printf '%s' '[{"pr":9328,"branch":"a"},{"pr":9329,"branch":"b"}]'; }
-jira_key_for_pr() { printf ''; }
-teams_thread_for_key() { printf ''; }
+issue_ref_for_pr() { printf '|'; }
+teams_thread_for_issue() { printf ''; }
 upsert_comment() { printf '%s\thttps://example.invalid/c/%s' "$2" "$2"; }
 patch_stopped() { printf '%s\n' "$2" >>"$TMP/patched"; printf '%s' "$3" >"$TMP/patched-body"; }
 ( cmd_advertise --app testapp --branch b --repo o/r --pid 7 ) 2>/dev/null
@@ -267,6 +362,29 @@ check 'a stopped record does not donate its boot time to the next server' 'new' 
        2026-01-01T00:00:00Z) echo stale ;; *) echo new ;; esac)"
 check 'the fresh record is running again, not stopped' 'null' \
   "$(jq -r '.stoppedAt' "$STATE_DIR/testapp.json")"
+check 'a PR with neither a legacy key nor an issue records nulls for both' 'null null null' \
+  "$(jq -r '.served[0] | [.jiraKey, .githubIssue, .teamsThread] | map(tostring) | join(" ")' "$STATE_DIR/testapp.json")"
+
+# A legacy PR (9328, FR key resolved to its clone) and a GitHub-native one
+# (9329) take the same path: the issue field holds the thread for both.
+issue_ref_for_pr() { case $2 in 9328) printf '10147|FR-4160' ;; *) printf '10144|' ;; esac; }
+teams_thread_for_issue() { [ -n "$2" ] && printf 'https://teams.example/issue-%s' "$2"; return 0; }
+( cmd_advertise --app testapp --branch b --repo o/r --pid 7 ) 2>"$TMP/said"
+check 'the legacy PR records its key, its clone and the clone thread' 'FR-4160 10147 https://teams.example/issue-10147' \
+  "$(jq -r '.served[0] | [.jiraKey, .githubIssue, .teamsThread] | map(tostring) | join(" ")' "$STATE_DIR/testapp.json")"
+check 'the GitHub-native PR records its issue and its thread' 'null 10144 https://teams.example/issue-10144' \
+  "$(jq -r '.served[1] | [.jiraKey, .githubIssue, .teamsThread] | map(tostring) | join(" ")' "$STATE_DIR/testapp.json")"
+check 'the printed line names the issue (and the legacy key)' \
+  'issue #10147 (FR-4160), teams thread https://teams.example/issue-10147|issue #10144, teams thread https://teams.example/issue-10144' \
+  "$(sed -n 's/.*comment [0-9]*, //p' "$TMP/said" | paste -sd'|')"
+# A legacy key with no clone: the override still applies, nothing else is asked.
+issue_ref_for_pr() { printf '|FR-9999'; }
+teams_thread_for_issue() { [ -n "$2" ] && printf 'asked'; return 0; }
+( cmd_advertise --app testapp --branch b --repo o/r --pid 7 --teams-thread 9329=https://teams.example/o ) 2>"$TMP/said"
+check 'an unresolved key is recorded with no issue' 'FR-9999 null null|FR-9999 null https://teams.example/o' \
+  "$(jq -r '.served[] | [.jiraKey, .githubIssue, .teamsThread] | map(tostring) | join(" ")' "$STATE_DIR/testapp.json" | paste -sd'|')"
+check 'and the line says no clone was found' 'FR-9999 (no GitHub clone found)' \
+  "$(sed -n '1s/.*comment [0-9]*, \(.*\), teams.*/\1/p' "$TMP/said")"
 rm -rf "$TMP"
 
 # ── stop: a PR we never commented on gets no first comment at teardown ────────

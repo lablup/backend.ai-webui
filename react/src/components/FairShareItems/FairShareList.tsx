@@ -7,15 +7,15 @@ import DomainFairShareStep from './DomainFairShareStep';
 import ProjectFairShareStep from './ProjectFairShareStep';
 import ResourceGroupFairShareStep from './ResourceGroupFairShareStep';
 import UserFairShareStep from './UserFairShareStep';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Heading } from '@astryxdesign/core/Heading';
-import { Step, Stepper } from '@astryxdesign/core/Stepper';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Heading } from '@lablup/ui-common/Heading';
+import { Step, Stepper } from '@lablup/ui-common/Stepper';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAISkeleton,
-  BAIQuestionIconWithTooltip,
   BAIBackButton,
   BAIFlex,
+  BAIQuestionIconWithTooltip,
+  BAISkeleton,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
@@ -187,7 +187,11 @@ const FairShareList: React.FC = () => {
 
   return (
     <BAIFlex direction="column" gap="md" align="stretch">
-      <Banner status="info" title={t('fairShare.step.Description')} />
+      <Banner
+        role="status"
+        status="info"
+        title={t('fairShare.step.Description')}
+      />
       <Stepper
         label={t('fairShare.step.Description')}
         activeStep={stepItems.findIndex((item) => item.key === currentStep)}

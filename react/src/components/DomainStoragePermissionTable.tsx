@@ -12,13 +12,13 @@ import {
   parseAllowedHosts,
 } from '../helper/storageHostPermission';
 import StoragePermissionEditModal from './StoragePermissionEditModal';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAINameActionCell,
   BAITable,
-  type BAITableProps,
   BAIUnmountAfterClose,
+  type BAITableProps,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleCheck, CircleX, SquarePenIcon } from 'lucide-react';

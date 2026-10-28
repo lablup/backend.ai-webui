@@ -6,16 +6,15 @@ import { PurgeUsersModalBulkMutation } from '../__generated__/PurgeUsersModalBul
 import { PurgeUsersModalFragment$key } from '../__generated__/PurgeUsersModalFragment.graphql';
 import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { VStack } from '@astryxdesign/core/Stack';
+import { VStack } from '@lablup/ui-common/Stack';
 import {
   BAIBulkErrorModal,
   type BAIColumnsType,
   BAIDeleteConfirmModal,
   type BAIDeleteConfirmModalProps,
   filterOutNullAndUndefined,
-  toLocalId,
   useBAILogger,
+  BAICheckboxInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useState } from 'react';
@@ -60,6 +59,7 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
       graphql`
         fragment PurgeUsersModalFragment on UserV2 @relay(plural: true) {
           id
+          entityId
           basicInfo {
             email
           }
@@ -89,9 +89,8 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
 
   // `successes` only exists on 26.9.0+ managers; older ones reject the whole
   // document, so it is gated and the deprecated count is selected instead.
-  const supportsPerIdResults = useSuspendedBackendaiClient().supports(
-    'bulk-mutation-per-id-results',
-  );
+  const supportsPerIdResults =
+    useSuspendedBackendaiClient().isManagerVersionCompatibleWith('26.9.0');
 
   const [commitBulkPurge, isInFlightBulkPurge] =
     useMutation<PurgeUsersModalBulkMutation>(graphql`
@@ -113,7 +112,7 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
       // checked = delete endpoints (don't delegate), unchecked = delegate ownership
       const delegateEndpointOwnership = !deleteModelServices;
 
-      const userIds = userList.map((user) => toLocalId(user.id));
+      const userIds = userList.map((user) => user.entityId);
       commitBulkPurge({
         variables: {
           input: {
@@ -145,15 +144,15 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
             : userList.length - failed.length;
 
           if (failed.length > 0) {
-            const emailByLocalId = _.fromPairs(
-              _.map(userList, (u) => [toLocalId(u.id), u.basicInfo.email]),
+            const emailByUserId = _.fromPairs(
+              _.map(userList, (u) => [u.entityId, u.basicInfo.email]),
             );
             setFailureReport({
               total: userList.length,
               purgedCount,
               failures: _.map(failed, (f) => ({
                 key: f.userId,
-                email: emailByLocalId[f.userId] ?? f.userId,
+                email: emailByUserId[f.userId] ?? f.userId,
                 message: f.message,
               })),
             });
@@ -214,16 +213,18 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
         cancelText={t('button.Cancel')}
         extraContent={
           <VStack gap={1} align="stretch">
-            <CheckboxInput
-              label={t('credential.DeleteSharedVirtualFolders')}
+            <BAICheckboxInput
               value={purgeSharedVfolders}
               onChange={setPurgeSharedVfolders}
-            />
-            <CheckboxInput
-              label={t('credential.DeleteDeploymentsAsWell')}
+            >
+              {t('credential.DeleteSharedVirtualFolders')}
+            </BAICheckboxInput>
+            <BAICheckboxInput
               value={deleteModelServices}
               onChange={setDeleteModelServices}
-            />
+            >
+              {t('credential.DeleteDeploymentsAsWell')}
+            </BAICheckboxInput>
           </VStack>
         }
         onOk={handleAction}

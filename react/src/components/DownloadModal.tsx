@@ -9,20 +9,20 @@ import {
 } from '../hooks';
 import BAITabs from './BAITabs';
 import SourceCodeView from './SourceCodeView';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { Divider } from '@astryxdesign/core/Divider';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Selector } from '@astryxdesign/core/Selector';
-import { Stack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { Divider } from '@lablup/ui-common/Divider';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Stack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIFlex,
   BAIMetadataList,
   BAIModal,
   BAIModalProps,
   filterOutEmpty,
+  BAISelector,
 } from 'backend.ai-ui';
 import { map, toUpper } from 'lodash-es';
 import { Download } from 'lucide-react';
@@ -44,9 +44,8 @@ const DesktopAppDownloadTab: React.FC = () => {
         {/* antd `Select` with `Select.Option` children -> `Selector` with an
             `options` array; `label` is required and hidden because the
             metadata row already prints it. */}
-        <Selector
-          label={t('summary.OS')}
-          isLabelHidden
+        <BAISelector
+          aria-label={t('summary.OS')}
           value={selectedOS}
           // Astryx `Selector` commits a plain `string`; the hook's setter is
           // typed on the OS literal union, so the narrowing happens here.
@@ -155,9 +154,8 @@ const CLIDownloadTab: React.FC = () => {
             <Text weight="semibold">{t('summary.CLIDownloadExecutable')}</Text>
             <BAIMetadataList columns="single">
               <MetadataListItem label={t('summary.OS')}>
-                <Selector
-                  label={t('summary.OS')}
-                  isLabelHidden
+                <BAISelector
+                  aria-label={t('summary.OS')}
                   value={selectedOS}
                   onChange={(value) =>
                     setSelectedOS(value as typeof selectedOS)
@@ -193,6 +191,7 @@ const CLIDownloadTab: React.FC = () => {
             </BAIMetadataList>
             {selectedOS === 'MacOS' ? (
               <Banner
+                role="alert"
                 status="warning"
                 title={t('summary.CLIMacOSUnsignedTitle')}
                 description={

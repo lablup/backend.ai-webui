@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c1fccec7250457cf07244eb8952836b3>>
+ * @generated SignedSource<<7e97d39860543b3fd08ac0fbc0f26a94>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -129,16 +129,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "6aea9773e50cdfa81562c7a8322c8faa",
+    "cacheID": "bd87bf038ba07cd710fd2ef67f4a9e35",
     "id": null,
     "metadata": {},
     "name": "ProjectResourcePolicyListQuery",
     "operationKind": "query",
-    "text": "query ProjectResourcePolicyListQuery {\n  project_resource_policies {\n    id\n    name\n    created_at\n    max_vfolder_count @since(version: \"23.09.6\")\n    max_quota_scope_size @since(version: \"23.09.2\")\n    max_network_count @since(version: \"24.12.0\")\n    ...ProjectResourcePolicySettingModalFragment\n  }\n}\n\nfragment ProjectResourcePolicySettingModalFragment on ProjectResourcePolicy {\n  id\n  name\n  created_at\n  max_vfolder_count @since(version: \"23.09.6\")\n  max_quota_scope_size @since(version: \"23.09.2\")\n  max_network_count @since(version: \"24.12.0\")\n}\n"
+    "text": "query ProjectResourcePolicyListQuery {\n  project_resource_policies {\n    id\n    name\n    created_at\n    max_vfolder_count\n    max_quota_scope_size\n    max_network_count\n    ...ProjectResourcePolicySettingModalFragment\n  }\n}\n\nfragment ProjectResourcePolicySettingModalFragment on ProjectResourcePolicy {\n  id\n  name\n  created_at\n  max_vfolder_count\n  max_quota_scope_size\n  max_network_count\n}\n"
   }
 };
 })();
 
-(node as any).hash = "4c7451b05822ee2f8c5e2c8d35ed57db";
+(node as any).hash = "4ab20912cc5a9d1edfb37cd5992a8a95";
 
 export default node;

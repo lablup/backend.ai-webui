@@ -3,8 +3,8 @@ import { useBAIi18n } from './useBAIi18n';
 import {
   DropdownMenu,
   type DropdownMenuOption,
-} from '@astryxdesign/core/DropdownMenu';
-import { HStack } from '@astryxdesign/core/Stack';
+} from '@lablup/ui-common/DropdownMenu';
+import { HStack } from '@lablup/ui-common/Stack';
 import * as _ from 'lodash-es';
 import { EllipsisVerticalIcon } from 'lucide-react';
 import * as React from 'react';

@@ -9,14 +9,19 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import AutoUpdateFetchKeyButton, {
   LONG_AUTO_UPDATE_DELAY_OPTIONS,
 } from './AutoUpdateFetchKeyButton';
-import BAIBoard, { BAIBoardItem } from './BAIBoard';
 import SessionMetricGraph from './SessionMetricGraph';
-import { Banner } from '@astryxdesign/core/Banner';
-import type { ISODateString } from '@astryxdesign/core/Calendar';
-import { DateRangeInput } from '@astryxdesign/core/DateRangeInput';
-import type { DateRange } from '@astryxdesign/core/DateRangeInput';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { useUpdatableState, BAIFlex, filterOutEmpty } from 'backend.ai-ui';
+import { Banner } from '@lablup/ui-common/Banner';
+import type { ISODateString } from '@lablup/ui-common/Calendar';
+import type { DateRange } from '@lablup/ui-common/DateRangeInput';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import {
+  useUpdatableState,
+  BAIBoard,
+  type BAIBoardItem,
+  BAIFlex,
+  filterOutEmpty,
+  BAIDateRangeInput,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { parseAsString, useQueryState } from 'nuqs';
@@ -196,9 +201,8 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
             the URL defaults already were. `maxDate={dayjs()}` -> `max`;
             `allowClear={false}` -> `hasClear={false}`; the six antd presets
             keep their labels, expressed as day-granular ranges. */}
-        <DateRangeInput
-          label={t('statistics.SelectPeriod')}
-          isLabelHidden
+        <BAIDateRangeInput
+          aria-label={t('statistics.SelectPeriod')}
           hasClear={false}
           max={dayjs().format('YYYY-MM-DD') as ISODateString}
           value={{
@@ -257,6 +261,7 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
         // untyped antd default (`info`) becomes an explicit `status="info"`;
         // `showIcon` is dropped (Banner always shows its status icon).
         <Banner
+          role="status"
           status="info"
           title={t('statistics.prometheus.DataMissingInLowUsageDesc')}
         />

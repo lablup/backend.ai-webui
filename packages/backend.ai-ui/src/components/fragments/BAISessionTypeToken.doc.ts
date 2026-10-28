@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      "Renders a compute session's type as a coloured Astryx Token — INTERACTIVE, BATCH or INFERENCE. It reads the `BAISessionTypeTokenFragment` on `ComputeSessionNode` (field `type`), so the caller spreads `...BAISessionTypeTokenFragment` into the session selection and passes the node as `sessionFrgmt`. The label is upper-cased before rendering and the hue comes from `tokenColorForStatus('sessionType')`, so every surface agrees on which colour a type gets; a type outside that lookup falls back to the default colour. When the fragment carries no type at all the component renders a dash instead of an empty token.",
+      "Renders a compute session's type as a coloured Astryx Token — INTERACTIVE, BATCH or INFERENCE. It reads the `BAISessionTypeTokenFragment` on `ComputeSessionNode` (field `type`), so the caller spreads `...BAISessionTypeTokenFragment` into the session selection and passes the node as `sessionFrgmt`. The label is the translated type name (`comp:BAISessionTypeToken.*`, raw value for an unknown type) and the hue comes from `tokenColorForStatus('sessionType')`, so every surface agrees on which colour a type gets; a type outside that lookup falls back to the default colour. When the fragment carries no type at all the component renders a dash instead of an empty token.",
     bestPractices: [
       {
         guidance: true,

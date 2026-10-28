@@ -51,14 +51,14 @@ import {
   type FilterPropertyOption,
   type FilterRenderInput,
 } from './BAIPowerSearchAdapters';
-import { PowerSearch } from '@astryxdesign/core/PowerSearch';
+import { PowerSearch } from '@lablup/ui-common/PowerSearch';
 import type {
   FilterValue,
   OperatorValue,
   PowerSearchConfig,
   PowerSearchField,
   PowerSearchFilter,
-} from '@astryxdesign/core/PowerSearch';
+} from '@lablup/ui-common/PowerSearch';
 import classNames from 'classnames';
 import dayjs from 'dayjs';
 import type { TFunction } from 'i18next';
@@ -314,6 +314,30 @@ export function buildNestedFilter(path: string, value: any): GraphQLFilter {
   return { [keys[0]]: nested };
 }
 
+const QUANTIFIER_SEGMENTS = new Set(['some', 'every', 'none']);
+
+/**
+ * `labels.some.key` -> `{ parent: 'labels.some', leaf: 'key' }`; undefined
+ * when no inner segment is a to-many quantifier.
+ */
+function splitAtQuantifier(
+  path: string,
+): { parent: string; leaf: string } | undefined {
+  const keys = path.split('.');
+  const at = _.findIndex(
+    keys,
+    (key, i) => i > 0 && i < keys.length - 1 && QUANTIFIER_SEGMENTS.has(key),
+  );
+  return at < 0
+    ? undefined
+    : {
+        parent: keys.slice(0, at + 1).join('.'),
+        leaf: keys.slice(at + 1).join('.'),
+      };
+}
+
+type QuantifierRow = { parent: string; leaves: Map<string, any> };
+
 function convertConditionsToGraphQLFilter(
   conditions: FilterCondition[],
   filterProperties: FilterProperty[],
@@ -321,8 +345,11 @@ function convertConditionsToGraphQLFilter(
 ): GraphQLFilter | undefined {
   if (conditions.length === 0) return undefined;
 
-  // Build individual filter for each condition (no grouping)
-  const filters: GraphQLFilter[] = [];
+  // A to-many quantifier (`some` / `every` / `none`) scopes its conditions to
+  // ONE related row, so under AND the conditions sharing a quantifier path are
+  // packed into one object; a leaf the row already has opens the next row.
+  const entries: Array<{ filter: GraphQLFilter } | { row: QuantifierRow }> = [];
+  const rows: QuantifierRow[] = [];
 
   conditions.forEach((condition) => {
     const propertyConfig = filterProperties.find(
@@ -361,10 +388,42 @@ function convertConditionsToGraphQLFilter(
       filterValue = { [condition.operator]: value };
     }
 
-    // Create a separate filter object for each condition
-    // Supports dot notation for nested objects (e.g., "project.name" -> { project: { name: value } })
-    filters.push(buildNestedFilter(condition.property, filterValue));
+    const split =
+      combinationMode === 'AND'
+        ? splitAtQuantifier(condition.property)
+        : undefined;
+    if (!split) {
+      // Dot notation nests: "project.name" -> { project: { name: value } }
+      entries.push({
+        filter: buildNestedFilter(condition.property, filterValue),
+      });
+      return;
+    }
+    let row = _.find(
+      rows,
+      (r) => r.parent === split.parent && !r.leaves.has(split.leaf),
+    );
+    if (!row) {
+      row = { parent: split.parent, leaves: new Map() };
+      rows.push(row);
+      entries.push({ row });
+    }
+    row.leaves.set(split.leaf, filterValue);
   });
+
+  const filters: GraphQLFilter[] = _.map(entries, (entry) =>
+    'row' in entry
+      ? buildNestedFilter(
+          entry.row.parent,
+          _.merge(
+            {},
+            ...Array.from(entry.row.leaves, ([leaf, value]) =>
+              buildNestedFilter(leaf, value),
+            ),
+          ),
+        )
+      : entry.filter,
+  );
 
   // If there's only one filter, return it directly
   if (filters.length === 1) {

@@ -7,9 +7,9 @@ import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
 import { resolveRBACScopeName } from '../helper/rbacScopeName';
 import RoleAssignmentTab from './RoleAssignmentTab';
 import RolePermissionSummaryTable from './RolePermissionSummaryTable';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Tab, TabList } from '@astryxdesign/core/TabList';
-import { Token } from '@astryxdesign/core/Token';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Tab, TabList } from '@lablup/ui-common/TabList';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAIAlert,
   BAICard,
@@ -21,7 +21,6 @@ import {
   BAIText,
   tokenColorForTagColor,
   tokenColorForStatus,
-  toLocalId,
   useBAIBreakpoint,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -35,10 +34,8 @@ interface RoleDetailDrawerContentV2Props {
 }
 
 /**
- * Body of `RoleDetailDrawerV2` (managers >= 26.9.0a4): the role's name and
- * description, its metadata with the one scope it belongs to, and the
- * Permissions / Role Assignments tabs. The scope fields carry `@since` because
- * this fragment rides the role list query every manager receives (ADR 0006).
+ * Body of `RoleDetailDrawerV2`: the role's name and description, its metadata
+ * with the one scope it belongs to, and the Permissions / Role Assignments tabs.
  */
 const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
   roleNodeFrgmt,
@@ -56,14 +53,14 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
         description
         source
         status
-        autoAssign @since(version: "26.4.4")
+        autoAssign
         createdAt
         updatedAt
-        scopeType @since(version: "26.9.0a4")
-        scopeId @since(version: "26.9.0a4")
+        scopeType
+        scopeId
         # Aliases only where nullability differs: the manager caps a document
         # at 20 aliases and the list query carries every drawer fragment.
-        scope @since(version: "26.9.0a4") {
+        scope {
           ... on DomainV2 {
             basicInfo {
               name
@@ -79,8 +76,10 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
               email
             }
           }
-          ... on VirtualFolderNode {
-            vfolderName: name
+          ... on VFolder {
+            metadata {
+              name
+            }
           }
           ... on SessionV2 {
             metadata {
@@ -100,9 +99,7 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
             project
           }
         }
-        rolePreset @since(version: "26.9.0rc1") {
-          id
-        }
+        rolePresetId
         ...RoleAssignmentTabFragment
         ...RolePermissionSummaryTableFragment
       }
@@ -111,11 +108,11 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
   );
 
   const scopeName = resolveRBACScopeName(role);
-  // Before 26.9.0rc1 a role does not name its preset, so the link falls back to the
-  // kind in the name (`project_member-1a2b3c4d`); the last match beats a scope name.
+  // A role without a preset id falls back to the kind in the name
+  // (`project_member-1a2b3c4d`); the last match beats a scope name.
   const roleKind = role.name?.match(/.*(admin|member)/i)?.[1]?.toLowerCase();
-  const presetFilter = role.rolePreset
-    ? { id: { equals: toLocalId(role.rolePreset.id) } }
+  const presetFilter = role.rolePresetId
+    ? { id: { equals: role.rolePresetId } }
     : {
         ...(role.scopeType && {
           scopeType: { equals: role.scopeType.toLowerCase() },

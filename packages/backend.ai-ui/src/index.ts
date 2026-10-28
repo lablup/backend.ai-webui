@@ -1,8 +1,8 @@
 /// <reference types="vite-plugin-svgr/client" />
 // BUI's stylesheets, kept as the FIRST statements so bundlers that consume BUI
 // from source get them before any component module evaluates.
-// `package.json#sideEffects` lists `**/*.css` precisely so these imports
-// survive tree-shaking; consumers of the built `dist` that bundle CSS
+// `package.json#sideEffects` lists this file as well as `**/*.css`, so these
+// imports survive tree-shaking; consumers of the built `dist` that bundle CSS
 // separately import `backend.ai-ui/styles.css`.
 //
 // The two are ordered alphabetically by the import sorter, NOT by intent, and
@@ -31,16 +31,11 @@ export * from './tests';
 export * from './styles/zIndexLadder';
 export * from './theme';
 export * from './app-shim';
-// The self-hosted form engine (tickets 34 + 35). `Form` is exported as a NAMED
-// export only — BUI has no default export — and `react/src/form-engine`
-// re-exports it for app files, mirroring app-shim / theme-shim. Safe to
-// republish now that the alias resolves to BUI's OWN engine rather than
-// forwarding to antd: there is only one `Form`/`FormInstance` in the graph.
+// The form engine (`@lablup/ui-common/Form` through the `form-engine` alias).
+// `Form` is exported as a NAMED export only — BUI has no default export — and
+// `react/src/form-engine` re-exports it for app files.
 export * from './form-engine';
-// The `locale` prop shape for `<BAIConfigProvider>`. Hosts used to reach the
-// per-language modules under `backend.ai-ui/dist/locale/*` for this; that
-// package export existed only to ship antd `Locale` bundles and went away with
-// the ConfigProvider layer (to-astryx final switch), so the type is published
-// from the main entry instead. The i18next INSTANCE stays unexported on
-// purpose — BUI components bind to it explicitly via `useBAIi18n()`.
+// The `locale` prop shape for `<BAIConfigProvider>`; the per-language values
+// are the `backend.ai-ui/locale/*` export. The i18next INSTANCE stays unexported
+// on purpose — BUI components bind to it explicitly via `useBAIi18n()`.
 export type { BAILocale } from './locale';

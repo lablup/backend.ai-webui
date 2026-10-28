@@ -6,7 +6,6 @@ import {
   convertToDecimalUnit,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  toLocalId,
 } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIButton from '../BAIButton';
@@ -17,8 +16,8 @@ import { BAIColumnType, BAITable, BAITableProps } from '../Table';
 import BAIArtifactRevisionDownloadButton from './BAIArtifactRevisionDownloadButton';
 import BAIArtifactStatusBadge from './BAIArtifactStatusBadge';
 import BAIArtifactTypeToken from './BAIArtifactTypeToken';
-import { Link } from '@astryxdesign/core/Link';
-import { Text } from '@astryxdesign/core/Text';
+import { Link } from '@lablup/ui-common/Link';
+import { Text } from '@lablup/ui-common/Text';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import * as _ from 'lodash-es';
@@ -130,6 +129,7 @@ const BAIArtifactTable = ({
       fragment BAIArtifactTableArtifactFragment on Artifact
       @relay(plural: true) {
         id
+        entityId
         name
         description
         updatedAt
@@ -177,7 +177,7 @@ const BAIArtifactTable = ({
         return (
           <BAIFlex direction="column" align="start" wrap="wrap">
             <BAIFlex gap={'xs'}>
-              <BAILink to={'/reservoir/' + toLocalId(record.id)} style={{}}>
+              <BAILink to={'/reservoir/' + record.entityId} style={{}}>
                 {name}
               </BAILink>
               <BAIArtifactTypeToken artifactTypeFrgmt={record} />

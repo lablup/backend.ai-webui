@@ -24,7 +24,6 @@ export interface RBACScopeNameSource {
       sessionName?: string | null;
       deploymentName?: string | null;
     } | null;
-    vfolderName?: string | null;
     resourceGroupName?: string | null;
     registryName?: string | null;
     project?: string | null;
@@ -49,7 +48,7 @@ export const resolveRBACScopeName = (
     case 'USER':
       return scope.basicInfo?.email ?? scope.basicInfo?.userEmail ?? null;
     case 'VFOLDER':
-      return scope.vfolderName ?? scope.name ?? null;
+      return scope.metadata?.name ?? null;
     case 'SESSION':
       return scope.metadata?.sessionName ?? scope.metadata?.name ?? null;
     case 'MODEL_DEPLOYMENT':

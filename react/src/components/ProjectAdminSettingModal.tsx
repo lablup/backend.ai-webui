@@ -7,10 +7,9 @@ import { ProjectAdminSettingModalQuery } from '../__generated__/ProjectAdminSett
 import { ProjectAdminSettingModalRevokeMutation } from '../__generated__/ProjectAdminSettingModalRevokeMutation.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import { useSetBAINotification } from '../hooks/useBAINotification';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { useWebUINavigate, useCurrentDomain } from '../hooks';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIButton,
   BAIFlex,
@@ -19,9 +18,8 @@ import {
   BAIModalProps,
   BAISelect,
   BAITable,
-  BAIUserSelect,
+  BAIScopedUserSelect,
   filterOutNullAndUndefined,
-  toLocalId,
   useBAILogger,
   useMutationWithPromise,
 } from 'backend.ai-ui';
@@ -50,6 +48,7 @@ export const ProjectAdminSettingQuery = graphql`
       edges {
         node {
           id
+          entityId
           name
           users(limit: $limit, offset: $offset) {
             count
@@ -86,46 +85,28 @@ type ProjectAdminRole = NonNullable<
   >['node']
 >;
 
-// 26.9.0+ (`matchesByScopeAdminPermission`): project admin is a `scope_admin`
-// permission on any role in the scope; `permissions.some` matches roles
-// carrying at least one such entry (backend BA-8077), and the scope type is
-// answered in lowercase, hence `iEquals` (ADR 0006). Older managers register
-// one SYSTEM role pair per project (`project-<id>-member` / `-admin`) and
-// only the name says which is which, so they get the pair and
-// `selectProjectAdminRoles` keeps the `-admin` one.
+// Project admin is a `scope_admin` permission on any role in the scope;
+// `permissions.some` matches roles carrying at least one such entry (backend
+// BA-8077), and the scope type is answered in lowercase, hence `iEquals`.
 export const buildProjectAdminRoleFilter = (
   projectId: string,
-  matchesByScopeAdminPermission: boolean,
-): ProjectAdminRoleFilter =>
-  matchesByScopeAdminPermission
-    ? {
-        status: { equals: 'ACTIVE' },
-        mappedScope: {
-          scopeType: { iEquals: 'project' },
-          scopeId: { equals: projectId },
-        },
-        permissions: {
-          some: { entityType: { iEquals: SCOPE_ADMIN_ENTITY_TYPE } },
-        },
-      }
-    : {
-        status: { equals: 'ACTIVE' },
-        source: { equals: 'SYSTEM' },
-        mappedScope: {
-          scopeType: { equals: 'PROJECT' },
-          scopeId: { equals: projectId },
-        },
-      };
+): ProjectAdminRoleFilter => ({
+  status: { equals: 'ACTIVE' },
+  mappedScope: {
+    scopeType: { iEquals: 'project' },
+    scopeId: { equals: projectId },
+  },
+  permissions: {
+    some: { entityType: { iEquals: SCOPE_ADMIN_ENTITY_TYPE } },
+  },
+});
 
 export const selectProjectAdminRoles = (
   data: ProjectAdminSettingModalQuery['response'] | undefined,
-  matchesByScopeAdminPermission: boolean,
 ): Array<ProjectAdminRole> =>
   _.sortBy(
     filterOutNullAndUndefined(
       _.map(data?.adminRoles?.edges, (edge) => edge?.node),
-    ).filter(
-      (node) => matchesByScopeAdminPermission || _.endsWith(node.name, 'admin'),
     ),
     // `adminRoles` is unordered, and the modal's RBAC shortcut opens roles[0].
     ['name', 'id'],
@@ -150,7 +131,7 @@ export const groupProjectAdminAssignmentsByUser = (
       roles.flatMap((role) =>
         filterOutNullAndUndefined(
           _.map(role.users?.edges, (edge) => edge?.node),
-        ).map((node) => ({ ...node, roleId: role.id })),
+        ).map((node) => ({ ...node, roleId: role.entityId })),
       ),
       'userId',
     ),
@@ -188,15 +169,12 @@ const ProjectAdminSettingModal = ({
   ...modalProps
 }: ProjectAdminSettingModalProps) => {
   'use memo';
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
-  const { upsertNotification } = useSetBAINotification();
   const webuiNavigate = useWebUINavigate();
-  const baiClient = useSuspendedBackendaiClient();
-  const matchesByScopeAdminPermission = baiClient.supports(
-    'rbac-single-scope-role',
-  );
   const formRef = useRef<FormInstance<{ userIds: string[] }>>(null);
 
   // Keep the previous result visible while a reload is in flight so the table
@@ -209,7 +187,7 @@ const ProjectAdminSettingModal = ({
     deferredQueryRef,
   );
 
-  const roles = selectProjectAdminRoles(data, matchesByScopeAdminPermission);
+  const roles = selectProjectAdminRoles(data);
   const assignments = groupProjectAdminAssignmentsByUser(roles);
 
   const mutateBulkAssignRole =
@@ -221,10 +199,6 @@ const ProjectAdminSettingModal = ({
           assigned {
             id
             userId
-          }
-          failed {
-            userId
-            message
           }
         }
       }
@@ -263,7 +237,7 @@ const ProjectAdminSettingModal = ({
           roles.map((adminRole, index) =>
             mutateBulkAssignRole({
               input: {
-                roleId: toLocalId(adminRole.id),
+                roleId: adminRole.entityId,
                 userIds: values.userIds,
                 // Passing projectId auto-adds the project to each user's
                 // allowed project list — once is enough, and concurrent
@@ -276,34 +250,9 @@ const ProjectAdminSettingModal = ({
         const rejected = settled.filter(
           (result) => result.status === 'rejected',
         );
-        // Pre-26.9 managers report a refused user here instead of raising;
-        // from 26.9 `failed` is always empty.
-        const failed = settled.flatMap((result, index) =>
-          result.status === 'fulfilled'
-            ? (result.value.adminBulkAssignRole?.failed ?? []).map((item) => ({
-                ...item,
-                roleId: roles[index].id,
-              }))
-            : [],
-        );
-        _.forEach(failed, (item) => {
-          upsertNotification({
-            key: `project-admin-assign-failed-${item.roleId}-${item.userId}`,
-            open: true,
-            duration: 0,
-            type: 'error',
-            message: item.message,
-          });
-        });
         if (rejected.length > 0) {
           _.forEach(rejected, (result) => logger.error(result.reason));
           message.error(resolveErrorMessage(rejected[0].reason));
-        } else if (failed.length > 0) {
-          message.warning(
-            t('rbac.BulkAssignPartialFailure', {
-              count: _.uniq(_.map(failed, 'userId')).length,
-            }),
-          );
         } else {
           message.success(t('rbac.UsersAssigned'));
           formRef.current?.resetFields();
@@ -326,7 +275,7 @@ const ProjectAdminSettingModal = ({
       roleIds.map((roleId) =>
         mutateRevokeRole({
           input: {
-            roleId: toLocalId(roleId),
+            roleId,
             userId,
           },
         }),
@@ -378,8 +327,16 @@ const ProjectAdminSettingModal = ({
       <BAIFlex direction="column" align="stretch" gap="sm">
         {/* antd `Alert` → `Banner` (MAPPING §4): `type` → `status`, `showIcon`
             dropped (Banner always renders its status icon). */}
-        <Banner status="info" title={t('project.DescSetProjectAdmin')} />
-        <Banner status="warning" title={t('project.DescRevokeProjectAdmin')} />
+        <Banner
+          role="status"
+          status="info"
+          title={t('project.DescSetProjectAdmin')}
+        />
+        <Banner
+          role="alert"
+          status="warning"
+          title={t('project.DescRevokeProjectAdmin')}
+        />
         <Form ref={formRef}>
           <BAIFlex gap="xs" align="start">
             <Suspense
@@ -395,7 +352,8 @@ const ProjectAdminSettingModal = ({
                 ]}
                 style={{ flex: 1, marginBottom: 0 }}
               >
-                <BAIUserSelect
+                <BAIScopedUserSelect
+                  scope={domainScope}
                   multiple
                   valuePropName="id"
                   label={t('rbac.SelectUsers')}

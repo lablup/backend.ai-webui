@@ -4,6 +4,7 @@
  */
 import {
   BAIColumnType,
+  BAIEntityLabelCell,
   BAIFlex,
   BAIId,
   BAIImageNodeSimpleTagV2,
@@ -15,6 +16,8 @@ import {
   badgeVariantForStatus,
   filterOutEmpty,
   filterOutNullAndUndefined,
+  useIsLabelableEntityType,
+  type BAIEntityLabel,
 } from '..';
 import type {
   BAISessionNodesV2Fragment$data,
@@ -23,7 +26,7 @@ import type {
 } from '../__generated__/BAISessionNodesV2Fragment.graphql';
 import { convertToBinaryUnit } from '../helper';
 import { useBAIi18n } from '../hooks/useBAIi18n';
-import { Badge } from '@astryxdesign/core/Badge';
+import { Badge } from '@lablup/ui-common/Badge';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import * as _ from 'lodash-es';
@@ -128,6 +131,11 @@ interface BAISessionNodesV2Props extends Omit<
   onChangeOrder?: (
     order: (typeof availableSessionV2SorterValues)[number] | null,
   ) => void;
+  /** Adds "Edit labels" to the Labels column's hover actions. */
+  onEditLabels?: (session: SessionV2InList) => void;
+  onLabelClick?: (label: BAIEntityLabel) => void;
+  /** Shows the Labels column at the start; otherwise it starts hidden, revealed from the column settings. */
+  showLabelsByDefault?: boolean;
 }
 
 const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
@@ -135,15 +143,20 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
   customizeColumns,
   disableSorter,
   onChangeOrder,
+  onEditLabels,
+  onLabelClick,
+  showLabelsByDefault = false,
   ...tableProps
 }) => {
   'use memo';
   const { t } = useBAIi18n();
+  const isLabelable = useIsLabelableEntityType('session');
 
   const sessions = useFragment(
     graphql`
       fragment BAISessionNodesV2Fragment on SessionV2 @relay(plural: true) {
         id @required(action: NONE)
+        entityId
         project {
           id
           basicInfo {
@@ -191,6 +204,10 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
             email
           }
         }
+        entityLabels(limit: 100) {
+          ...BAIEntityLabelTokensFragment
+          ...BAIEntityLabelSettingModalFragment
+        }
       }
     `,
     sessionsFrgmt,
@@ -222,7 +239,7 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
         key: 'sessionId',
         title: t('comp:SessionV2Nodes.SessionId'),
         defaultHidden: true,
-        render: (__, session) => <BAIId globalId={session.id} />,
+        render: (__, session) => <BAIId uuid={session.entityId} />,
       },
       {
         key: 'status',
@@ -362,6 +379,18 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
         key: 'owner',
         title: t('comp:SessionV2Nodes.OwnerEmail'),
         render: (__, session) => session.user?.basicInfo?.email || '-',
+      },
+      isLabelable && {
+        key: 'labels',
+        title: t('comp:BAIEntityLabelTokens.Labels'),
+        defaultHidden: !showLabelsByDefault,
+        render: (__, session) => (
+          <BAIEntityLabelCell
+            entityLabelsFrgmt={session.entityLabels}
+            onEdit={onEditLabels ? () => onEditLabels(session) : undefined}
+            onLabelClick={onLabelClick}
+          />
+        ),
       },
     ]),
     (column) => {

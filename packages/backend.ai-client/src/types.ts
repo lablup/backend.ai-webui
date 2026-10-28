@@ -127,9 +127,8 @@ export interface LoginEnvelope {
 }
 
 /**
- * Feature-flag map populated by `Client._updateSupportList`. Values are
- * booleans for capability presence; the actual key set is server-version
- * dependent.
+ * Feature-flag map read by `Client.supports`. Nothing populates it: manager
+ * version gates live at the call site (`isManagerVersionCompatibleWith`, ADR 0010).
  */
 export type FeatureSet = Record<string, boolean>;
 

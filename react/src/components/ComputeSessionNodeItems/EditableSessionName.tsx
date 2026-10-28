@@ -10,14 +10,11 @@ import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useTanMutation } from '../../hooks/reactQueryAlias';
 import { useValidateSessionName } from '../../hooks/useValidateSessionName';
-// FRONTIER (ticket 17 / ticket 34): the inline rename editor keeps the antd
-// Form ENGINE (Form + Form.Item) — locked SHIM decision. The control inside
-// the item is Astryx now.
-import { AstryxFormTextInput } from '../astryxFormControls';
-import { Heading } from '@astryxdesign/core/Heading';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { HStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
+import { Heading } from '@lablup/ui-common/Heading';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { HStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
+import { BAITextInput } from 'backend.ai-ui';
 import { CheckIcon, CopyIcon, PencilIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -212,13 +209,9 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
                 `suffix={<CornerDownLeftIcon/>}` "press Enter" hint is DROPPED
                 — MAPPING §3.6 gives `suffix` no `TextInput` destination, and
                 the only route (`InputGroup`) welds a bordered addon box that
-                reads as a button, not as the faint inline hint this was.
-
-                `size` and `onKeyDown` are on the SHARED adapter now (D10
-                fold-back), so this no longer needs a local copy of the
-                `Form.Item` contracts. */}
-            <AstryxFormTextInput
-              label={t('session.SessionName')}
+                reads as a button, not as the faint inline hint this was. */}
+            <BAITextInput
+              aria-label={t('session.SessionName')}
               size="lg"
               hasAutoFocus
               onKeyDown={(e) => {

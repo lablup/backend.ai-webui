@@ -3,10 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { DiagnosticResult } from '../types/diagnostics';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
-import { BAISkeleton, BAIFlex } from 'backend.ai-ui';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
+import { BAIFlex, BAISkeleton, bannerLiveRole } from 'backend.ai-ui';
 import { CheckCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -51,6 +51,7 @@ const DiagnosticResultList: React.FC<DiagnosticResultListProps> = ({
         <Banner
           key={result.id}
           status={severityToBannerStatus[result.severity]}
+          role={bannerLiveRole(severityToBannerStatus[result.severity])}
           title={t(result.titleKey, result.interpolationValues)}
           description={
             <BAIFlex align="start" direction="column" gap="xxs">

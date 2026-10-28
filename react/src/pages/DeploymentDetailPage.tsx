@@ -24,11 +24,11 @@ import {
   useWebUIMenuItems,
 } from '../hooks/useWebUIMenuItems';
 import { toProjectContext } from '../types/projectContext';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { Heading } from '@astryxdesign/core/Heading';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { Heading } from '@lablup/ui-common/Heading';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIButton,
   BAIDeploymentStatus,
@@ -153,7 +153,7 @@ const DeploymentDetailPage: React.FC = () => {
               name
               status
               projectId
-              projectV2 @since(version: "26.4.3") {
+              projectV2 {
                 basicInfo {
                   name
                 }
@@ -172,13 +172,13 @@ const DeploymentDetailPage: React.FC = () => {
             accessTokens {
               count
             }
-            currentRevision @since(version: "26.4.3") {
+            currentRevision {
               id
             }
-            deployingRevision @since(version: "26.4.3") {
+            deployingRevision {
               id
             }
-            creator @since(version: "26.4.3") {
+            creator {
               basicInfo {
                 email
               }
@@ -335,12 +335,20 @@ const DeploymentDetailPage: React.FC = () => {
   const cannotUseModelServiceAlert = () => {
     if (hasNoDesiredReplicas) {
       return (
-        <Banner status="warning" title={t('deployment.NoDesiredReplicas')} />
+        <Banner
+          role="alert"
+          status="warning"
+          title={t('deployment.NoDesiredReplicas')}
+        />
       );
     }
     if (hasNoRunningReplicas) {
       return (
-        <Banner status="warning" title={t('deployment.NoRunningReplicas')} />
+        <Banner
+          role="alert"
+          status="warning"
+          title={t('deployment.NoRunningReplicas')}
+        />
       );
     }
   };
@@ -349,6 +357,7 @@ const DeploymentDetailPage: React.FC = () => {
     <BAIFlex direction="column" align="stretch" gap="md">
       {isProjectMismatch && deploymentProjectId && (
         <Banner
+          role="alert"
           status="warning"
           title={t('deployment.NotInProject')}
           endContent={
@@ -365,6 +374,7 @@ const DeploymentDetailPage: React.FC = () => {
         cannotUseModelServiceAlert()}
       {isDeploymentReady && !hasNoRevision && !hasNoActiveReplicas && (
         <Banner
+          role="status"
           status="success"
           title={t('deployment.DeploymentReady')}
           endContent={
@@ -394,6 +404,7 @@ const DeploymentDetailPage: React.FC = () => {
         !isProjectMismatch &&
         !isDeploymentInStoppedCategory(deploymentStatus) && (
           <Banner
+            role="alert"
             status="warning"
             title={t('deployment.NoCurrentRevisionDeployed')}
             endContent={
@@ -414,6 +425,7 @@ const DeploymentDetailPage: React.FC = () => {
         )}
       {isPrivateDeployment && (
         <Banner
+          role="status"
           status="info"
           title={t('deployment.PrivateDeploymentAlertTitle')}
           endContent={

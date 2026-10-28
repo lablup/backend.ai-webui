@@ -124,10 +124,10 @@ export const inScope = (element: Element, anchor: AnchorV3): boolean => {
 /**
  * Modals the browser does not put in the top layer: ARIA modals, and the
  * portal roots of this app's own dialogs and drawers, which carry neither
- * (`BAI_MODAL_OPEN_ATTRIBUTE`, packages/backend.ai-ui dialogLevelStack.ts).
+ * (`MODAL_OPEN_ATTRIBUTE`, @lablup/ui-common/Modal).
  */
 export const PORTAL_MODAL =
-  '[role="dialog"][aria-modal="true"], [role="alertdialog"][aria-modal="true"], [data-bai-modal-open]';
+  '[role="dialog"][aria-modal="true"], [role="alertdialog"][aria-modal="true"], [data-uic-modal-open]';
 
 /**
  * Astryx renders every Popover (BAIPopconfirm included) as an `aria-modal`
@@ -135,7 +135,7 @@ export const PORTAL_MODAL =
  */
 const isLightDismissSurface = (modal: Element): boolean =>
   modal.tagName !== 'DIALOG' &&
-  !modal.hasAttribute('data-bai-modal-open') &&
+  !modal.hasAttribute('data-uic-modal-open') &&
   !!modal.closest('[popover]');
 
 /** Where on its box an element is sampled for what the browser paints there. */

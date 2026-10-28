@@ -22,16 +22,16 @@ import {
 import { tokenizeShellCommand } from '../helper/parseCliCommand';
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import { type RuntimeVariantPresetValueEntry } from '../hooks/useRuntimeParameterSchema';
-import { Heading } from '@astryxdesign/core/Heading';
-import { useTheme } from '@astryxdesign/core/theme';
+import type { RuntimeVariantPresetValueEntry } from '../hooks/useRuntimeParameterSchema';
+import { Heading } from '@lablup/ui-common/Heading';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIFlex,
   convertToUUID,
-  toLocalId,
   useBAILogger,
   useMutationWithPromise,
 } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -39,9 +39,6 @@ import { useParams } from 'react-router-dom';
 
 const buildModelDefinitionInput = (
   value: ModelDefinitionFormValue | undefined,
-  // 26.4.4rc7+ managers accept the `enable` flag on ModelHealthCheckInput;
-  // older managers reject it, so we keep the legacy null-when-disabled shape.
-  supportsHealthCheckEnable: boolean,
   // The single-string `command` + `shell` fields exist since 26.7.0; the WebUI
   // gates them at 26.8.0 (see `client.ts`).
   // older managers only understand the deprecated `startCommand` token list.
@@ -147,20 +144,20 @@ const buildModelDefinitionInput = (
               // pydantic rejects), so `{ enable: false }` alone still fails —
               // null is the only way to disable.
               if (!checked) return null;
-              // Enabled → the form requires all HC fields, so they are present.
-              const fields = {
-                path: hc?.path,
-                interval: hc?.interval,
-                maxRetries: hc?.maxRetries,
-                maxWaitTime: hc?.maxWaitTime,
-                expectedStatusCode: hc?.expectedStatusCode,
-                initialDelay: hc?.initialDelay,
-              };
-              // Managers < 26.4.4rc7 strip the `enable` flag; on 26.4.4rc7+ it
-              // is sent explicitly to mark the check enabled.
-              return supportsHealthCheckEnable
-                ? { enable: true, ...fields }
-                : fields;
+              // Enabled → the input's fields are non-null with server defaults,
+              // so a blank field must be omitted, never sent as null.
+              const fields = _.omitBy(
+                {
+                  path: hc?.path,
+                  interval: hc?.interval,
+                  maxRetries: hc?.maxRetries,
+                  maxWaitTime: hc?.maxWaitTime,
+                  expectedStatusCode: hc?.expectedStatusCode,
+                  initialDelay: hc?.initialDelay,
+                },
+                (v) => v === null || v === undefined || v === '',
+              );
+              return { enable: true, ...fields };
             })(),
           },
           metadata:
@@ -201,23 +198,14 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const baiClient = useSuspendedBackendaiClient();
-  const supportsHealthCheckEnable = baiClient.supports(
-    'model-health-check-enable',
-  );
-  // The single-string `command` + `shell` fields exist since 26.7.0; gated at 26.8.0 on the
-  // preset service config (FR-3205); older managers only understand the
-  // deprecated `startCommand` token list.
-  const supportsCommandShell = baiClient.supports(
-    'model-service-command-string',
-  );
-  // BA-7210 / FR-3481: managers this version+ resolve an omitted
-  // name/modelPath/port from the runtime variant baseline / model mount
-  // destination at revision resolution, so the submit payload can send null
-  // instead of coercing a fallback value. Older managers require non-null
-  // name/modelPath/port, so the fallbacks stay in place for them.
-  const supportsNullableModelDefinition = baiClient.supports(
-    'preset-model-config-type',
-  );
+  // Single-string `command` + `shell` (FR-3205); older managers only
+  // understand the deprecated `startCommand` token list.
+  const supportsCommandShell =
+    baiClient.isManagerVersionCompatibleWith('26.8.0');
+  // BA-7210 / FR-3481: newer managers resolve an omitted name/modelPath/port,
+  // so submit sends null; older managers keep the fallback values.
+  const supportsNullableModelDefinition =
+    baiClient.isManagerVersionCompatibleWith('26.9.0');
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -255,7 +243,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
           runtimeVariants(limit: 100) {
             edges {
               node {
-                id
+                entityId
                 name
                 readsVfolderConfigFiles @since(version: "26.8.0")
               }
@@ -291,7 +279,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
   const selectedVariantInList =
     !!watchedRuntimeVariantId &&
     paginatedRuntimeVariantList.some(
-      (rt) => toLocalId(rt.id) === watchedRuntimeVariantId,
+      (rt) => rt.entityId === watchedRuntimeVariantId,
     );
   const { runtimeVariant: selectedRuntimeVariantLookup } =
     useLazyLoadQuery<AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery>(
@@ -301,7 +289,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
           $skip: Boolean!
         ) {
           runtimeVariant(id: $id) @skip(if: $skip) {
-            id
+            entityId
             name
             readsVfolderConfigFiles @since(version: "26.8.0")
           }
@@ -351,7 +339,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
   const runtimeVariantList =
     selectedRuntimeVariantLookup &&
     !paginatedRuntimeVariantList.some(
-      (rt) => rt.id === selectedRuntimeVariantLookup.id,
+      (rt) => rt.entityId === selectedRuntimeVariantLookup.entityId,
     )
       ? [...paginatedRuntimeVariantList, selectedRuntimeVariantLookup]
       : paginatedRuntimeVariantList;
@@ -397,7 +385,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
                 id
                 name
               }
-              image @since(version: "26.4.4") {
+              image {
                 id
                 identity {
                   canonicalName
@@ -436,7 +424,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
     // Resolve whether the selected variant reads vfolder config files so
     // buildModelDefinitionInput can exclude stale command/port data.
     const selectedVariant = runtimeVariantList.find(
-      (rt) => toLocalId(rt.id) === values.runtimeVariantId,
+      (rt) => rt.entityId === values.runtimeVariantId,
     );
     const reads = resolvesReadsVfolderConfigFiles(selectedVariant);
 
@@ -478,7 +466,6 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
             resourceOpts: values.resourceOpts ?? [],
             modelDefinition: buildModelDefinitionInput(
               values.modelDefinition,
-              supportsHealthCheckEnable,
               supportsCommandShell,
               !!reads,
               supportsNullableModelDefinition,
@@ -524,7 +511,6 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
               : null,
             modelDefinition: buildModelDefinitionInput(
               values.modelDefinition,
-              supportsHealthCheckEnable,
               supportsCommandShell,
               !!reads,
               supportsNullableModelDefinition,

@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The select foundation for server-backed option lists — a Relay connection paged a few rows at a time, searched server-side, and loaded further by scrolling the popup. It renders Astryx ComplexSelector, which hands the popup body back as a render prop, and that body is what this component owns: the search box, the roving-highlight listbox, the scroll-to-bottom hook that drives `loadNext`, and the total-count footer. Its value is antd `labelInValue`-shaped ({ label, value }, an array in multiple mode), so BAIFormItem bindings and mutation payloads carry labels without a normalizer. Use BAISelect instead when the options are a fixed local list; use this when the list is paginated or the search runs on the server. Roughly twenty Relay-backed `*Select` wrappers are built on it.',
+      'The select foundation for server-backed option lists — a Relay connection paged a few rows at a time, searched server-side, and loaded further by scrolling the popup. It is the BUI adapter over ui-common `PagedSelector`, which owns the field, the search box, the roving-highlight listbox, the scroll-to-end hook that drives `loadNext`, and the total-count footer; the adapter keeps the antd-shaped props the Relay wrappers are written against and maps them across (`multiple` to `isMultiple`, `endReached` to `onEndReached`, `allowClear` to `hasClear`, …). Its value is antd `labelInValue`-shaped ({ label, value }, an array in multiple mode), so BAIFormItem bindings and mutation payloads carry labels without a normalizer; the labels of the current value are handed to PagedSelector, so a selection on a page that is not loaded keeps its name. Props not listed here pass through to PagedSelector. Use BAISelect instead when the options are a fixed local list; use this when the list is paginated or the search runs on the server. Roughly twenty Relay-backed `*Select` wrappers are built on it.',
     bestPractices: [
       {
         guidance: true,
@@ -99,7 +99,8 @@ export const docs = {
     {
       name: 'placeholder',
       type: 'string',
-      description: 'Trigger text shown while nothing is selected.',
+      description:
+        'Trigger text shown while nothing is selected. Defaults to ui-common\'s localized "Select {label}".',
     },
     {
       name: 'hasSearch',
@@ -124,7 +125,7 @@ export const docs = {
       name: 'searchPlaceholder',
       type: 'string',
       description:
-        'Placeholder and accessible name of the search box. Defaults to the localized "Search".',
+        'Placeholder of the search box. Defaults to ui-common\'s localized "Search".',
     },
     {
       name: 'isLoading',
@@ -166,7 +167,7 @@ export const docs = {
     {
       name: 'width',
       type: 'SizeValue',
-      description: 'Field width, forwarded to ComplexSelector.',
+      description: 'Field width, forwarded to PagedSelector.',
       default: "'100%'",
     },
     {
@@ -208,15 +209,15 @@ export const docs = {
     },
     {
       name: 'footer',
-      type: 'React.ReactNode',
+      type: 'React.ReactNode | ((close: () => void) => React.ReactNode)',
       description:
-        'Content rendered below the option list. Supplying it replaces the default total-count footer.',
+        'Content rendered below the option list, or a function that receives `close`. Supplying it replaces the default total-count footer; the `bai-complex-select__foot` class (plus `--divided`) lines a custom footer up with the default one.',
     },
     {
       name: 'emptyContent',
       type: 'React.ReactNode',
       description:
-        'Shown in place of the list when there are no options. Defaults to the localized "No results".',
+        'Shown in place of the list when there are no options, the loading row included. Defaults to ui-common\'s localized "Loading" while `isLoading`, else "No results".',
     },
     {
       name: 'onOpenChange',
@@ -249,7 +250,7 @@ export const docs = {
       name: 'allowClear',
       type: 'boolean',
       description:
-        'Shows a clear button between the loading spinner and the chevron while something is selected (Astryx `ComplexSelector.hasClear`, added by `react/patches/@astryxdesign__core@0.6.2.patch`); it emits `[]` in `multiple` mode and `null` otherwise.',
+        'Shows a clear button between the loading spinner and the chevron while something is selected (PagedSelector `hasClear`); it emits `[]` in `multiple` mode and `null` otherwise.',
       default: 'false',
     },
     {
@@ -262,8 +263,7 @@ export const docs = {
     {
       name: 'data-testid',
       type: 'string',
-      description:
-        'Test hook on the field. The option list gets the same value suffixed with `-listbox`.',
+      description: 'Test hook on the field.',
     },
   ],
   examples: [

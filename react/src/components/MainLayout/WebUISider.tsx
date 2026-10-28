@@ -9,7 +9,7 @@ import SiderToggleButton from '../SiderToggleButton';
 import WebUISiderFooter from './WebUISiderFooter';
 import WebUISiderLogo from './WebUISiderLogo';
 import WebUISiderNavigation from './WebUISiderNavigation';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import { useHover } from 'backend.ai-ui';
 import React, { useRef } from 'react';
 

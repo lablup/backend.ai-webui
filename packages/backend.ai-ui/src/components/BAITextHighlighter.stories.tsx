@@ -1,7 +1,7 @@
 import BAICard from './BAICard';
 import BAIFlex from './BAIFlex';
 import BAITextHighlighter from './BAITextHighlighter';
-import { TextInput } from '@astryxdesign/core/TextInput';
+import BAITextInput from './BAITextInput';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import React from 'react';
 
@@ -254,9 +254,8 @@ export const InteractiveSearch: Story = {
           styles={{ body: { paddingTop: 0 } }}
         >
           <BAIFlex direction="column" gap="sm">
-            <TextInput
-              label="Search"
-              isLabelHidden
+            <BAITextInput
+              aria-label="Search"
               placeholder="Search..."
               value={searchKeyword}
               onChange={setSearchKeyword}

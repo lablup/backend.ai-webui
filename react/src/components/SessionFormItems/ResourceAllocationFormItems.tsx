@@ -9,6 +9,11 @@ import {
   compareNumberWithUnits,
   convertToBinaryUnit,
 } from '../../helper';
+import {
+  getUnifiedSlotNameFromTag,
+  isUnifiedAcceleratorSlot,
+  UNIFIED_SLOT_TAG_PREFIX,
+} from '../../helper/unifiedAcceleratorSlot';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import {
   useResourceSlots,
@@ -33,12 +38,11 @@ import SharedMemoryFormItems from './SharedMemoryFormItems';
 // FRONTIER (ticket 17): the launcher's form-visual core. The Form ENGINE and
 // `Form.Item` are self-hosted since ticket 34 (live again since ticket 35),
 // and every control and every piece of chrome below is Astryx now.
-import { Card } from '@astryxdesign/core/Card';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { SegmentedControl } from '@astryxdesign/core/SegmentedControl';
-import { VStack } from '@astryxdesign/core/Stack';
-import { useTheme } from '@astryxdesign/core/theme';
-import { spacingVars } from '@astryxdesign/core/theme/tokens.stylex';
+import { Card } from '@lablup/ui-common/Card';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { VStack } from '@lablup/ui-common/Stack';
+import { useTheme } from '@lablup/ui-common/theme';
+import { spacingVars } from '@lablup/ui-common/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
 import {
   BAIDynamicUnitInputNumberWithSlider,
@@ -50,6 +54,7 @@ import {
   useEventNotStable,
   useProjectResourceGroups,
   useUpdatableState,
+  BAISegmentedControl,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { RotateCw } from 'lucide-react';
@@ -123,41 +128,10 @@ export const pickChangedResourceValues = <T extends Record<string, unknown>>(
     return true;
   }) as Partial<T>;
 
-/**
- * Returns true when the given accelerator slot name represents a unified
- * memory architecture, where the accelerator memory and the host memory
- * share a single physical pool. Identified by a `.unified` suffix on the
- * slot name (e.g. `cuda.unified`).
- */
-export const isUnifiedAcceleratorSlot = (slotName?: string | null): boolean => {
-  return !!slotName && _.endsWith(slotName, '.unified');
-};
-
-/**
- * Prefix of the session `tag` that marks a session as using a unified-memory
- * accelerator slot (e.g. `unified-slot:cuda.unified`). This is a temporary
- * marker until the session model exposes unified-memory usage directly.
- */
-export const UNIFIED_SLOT_TAG_PREFIX = 'unified-slot:';
-
-/**
- * Extracts the unified-memory accelerator slot name from a session `tag`
- * (e.g. `unified-slot:cuda.unified` -> `cuda.unified`). Returns `undefined`
- * when the tag carries no unified-slot marker, or when the marked slot is not
- * actually a unified-memory slot (i.e. does not end with `.unified`) — this
- * guards the downstream UI, which assumes a genuine unified slot. The tag is
- * treated as a comma/whitespace-separated list so it stays correct even if
- * other markers are appended later.
- */
-export const getUnifiedSlotNameFromTag = (
-  tag?: string | null,
-): string | undefined => {
-  if (!tag) return undefined;
-  const token = tag
-    .split(/[,\s]+/)
-    .find((part) => part.startsWith(UNIFIED_SLOT_TAG_PREFIX));
-  const slotName = token?.slice(UNIFIED_SLOT_TAG_PREFIX.length);
-  return isUnifiedAcceleratorSlot(slotName) ? slotName : undefined;
+export {
+  getUnifiedSlotNameFromTag,
+  isUnifiedAcceleratorSlot,
+  UNIFIED_SLOT_TAG_PREFIX,
 };
 
 export interface ResourceAllocationFormValue {
@@ -238,24 +212,21 @@ const clusterModeSegmentedStyles = stylex.create({
 /**
  * Cluster-mode segmented control — the twin of the one in
  * `ClusterModeFormItems`, declared locally for the same reason: each option
- * carries a help tooltip that the shared `AstryxFormSegmented` option shape
- * does not model. The two `Form.Item` contracts are honoured inline.
+ * carries a help tooltip.
  */
 const ClusterModeSegmented: React.FC<{
   label: string;
-  isDisabled?: boolean;
   onValueChange: () => void;
   items: Array<{ value: string; label: string; tooltip: React.ReactNode }>;
   /** Injected by `Form.Item`. */
   value?: string;
   /** Injected by `Form.Item`. */
   onChange?: (value: string) => void;
-}> = ({ label, isDisabled, onValueChange, items, value, onChange }) => {
+}> = ({ label, onValueChange, items, value, onChange }) => {
   'use memo';
   return (
-    <SegmentedControl
-      label={label}
-      isDisabled={isDisabled}
+    <BAISegmentedControl
+      aria-label={label}
       value={value ?? items[0]?.value ?? ''}
       xstyle={clusterModeSegmentedStyles.control}
       onChange={(next) => {
@@ -280,7 +251,7 @@ const ClusterModeSegmented: React.FC<{
           }
         />
       ))}
-    </SegmentedControl>
+    </BAISegmentedControl>
   );
 };
 
@@ -303,7 +274,6 @@ const ResourceAllocationFormItems: React.FC<
   const { token } = useTheme();
 
   const baiClient = useSuspendedBackendaiClient();
-  const supportMultiAgents = baiClient.supports('multi-agents');
 
   const [{ keypairResourcePolicy }] =
     useCurrentKeyPairResourcePolicyLazyLoadQuery();
@@ -330,7 +300,7 @@ const ResourceAllocationFormItems: React.FC<
           resource_presets {
             id
             name
-            scaling_group_name @since(version: "25.4.0")
+            scaling_group_name
           }
         }
       `,
@@ -338,9 +308,7 @@ const ResourceAllocationFormItems: React.FC<
         projectID: project.id,
       },
       {
-        fetchPolicy: baiClient.supports('custom-accelerator-quantum-size')
-          ? 'store-and-network'
-          : 'store-only', // to skip network request when accessible_scaling_groups is not available
+        fetchPolicy: 'store-and-network',
       },
     );
 
@@ -1641,15 +1609,7 @@ const ResourceAllocationFormItems: React.FC<
         <Form.Item
           label={t('session.launcher.SelectAgent')}
           required
-          tooltip={
-            <Trans
-              i18nKey={
-                supportMultiAgents
-                  ? 'session.launcher.DescSelectAgent'
-                  : 'session.launcher.DescSelectAgentBefore2516'
-              }
-            />
-          }
+          tooltip={<Trans i18nKey={'session.launcher.DescSelectAgent'} />}
         >
           <BAIFlex gap={'xs'}>
             <Suspense>
@@ -1657,25 +1617,10 @@ const ResourceAllocationFormItems: React.FC<
                 <AgentSelect
                   resourceGroup={currentResourceGroupInForm}
                   fetchKey={agentFetchKey}
-                  mode={supportMultiAgents ? 'multiple' : undefined}
+                  mode="multiple"
                   fallbackToAuto
-                  labelRender={
-                    supportMultiAgents
-                      ? ({ label, value }) => {
-                          return value === 'auto' ? label : value;
-                        }
-                      : undefined
-                  }
-                  onChange={(value) => {
-                    if (
-                      !supportMultiAgents &&
-                      !_.isEqual(_.castArray(value), ['auto'])
-                    ) {
-                      form.setFieldsValue({
-                        cluster_mode: 'single-node',
-                        cluster_size: 1,
-                      });
-                    }
+                  labelRender={({ label, value }) => {
+                    return value === 'auto' ? label : value;
                   }}
                 ></AgentSelect>
               </Form.Item>
@@ -1697,243 +1642,205 @@ const ResourceAllocationFormItems: React.FC<
         </Form.Item>
       )}
       {!hideClusterFormItems && (
-        <Form.Item
-          label={t('session.launcher.ClusterMode')}
-          required
-          dependencies={['agent']}
-        >
-          {({ getFieldValue }) => {
-            return (
-              <>
-                {/* RESPONSIVE-POLICY: `Row gutter` + two full-width
-                    `Col xs={24}` is a single column with a gap — not a grid.
-                    MAPPING §3.9 keeps only the breakpoint-free shapes, and
-                    this one is `VStack gap`. No `xs`-driven reflow is lost:
-                    both columns already spanned the full 24.
-                    The Radio.Group -> SegmentedControl move mirrors
-                    `ClusterModeFormItems` exactly. */}
-                <VStack gap={5} align="stretch">
-                  <Form.Item name={'cluster_mode'} required noStyle>
-                    <ClusterModeSegmented
-                      label={t('session.launcher.ClusterMode')}
-                      isDisabled={
-                        !supportMultiAgents &&
-                        !_.isEqual(_.castArray(getFieldValue('agent')), [
-                          'auto',
-                        ])
-                      }
-                      onValueChange={() => {
-                        form.validateFields().catch(() => {});
-                      }}
-                      items={[
+        <Form.Item label={t('session.launcher.ClusterMode')} required>
+          <VStack gap={5} align="stretch">
+            <Form.Item name={'cluster_mode'} required noStyle>
+              <ClusterModeSegmented
+                label={t('session.launcher.ClusterMode')}
+                onValueChange={() => {
+                  form.validateFields().catch(() => {});
+                }}
+                items={[
+                  {
+                    value: 'multi-node',
+                    label: t('session.launcher.MultiNode'),
+                    tooltip: (
+                      <Trans i18nKey={'session.launcher.DescMultiNode'} />
+                    ),
+                  },
+                  {
+                    value: 'single-node',
+                    label: t('session.launcher.SingleNode'),
+                    tooltip: (
+                      <Trans i18nKey={'session.launcher.DescSingleNode'} />
+                    ),
+                  },
+                ]}
+              />
+            </Form.Item>
+            <>
+              <Form.Item
+                noStyle
+                shouldUpdate={(prev, next) =>
+                  prev.cluster_mode !== next.cluster_mode ||
+                  prev.cluster_size !== next.cluster_size ||
+                  prev.resource?.cpu !== next.resource?.cpu ||
+                  prev.resource?.mem !== next.resource?.mem ||
+                  prev.resource?.accelerator !== next.resource?.accelerator ||
+                  prev.resource?.acceleratorType !==
+                    next.resource?.acceleratorType
+                }
+              >
+                {() => {
+                  const derivedClusterSizeMaxLimit =
+                    keypairResourcePolicy.max_containers_per_session;
+
+                  const clusterUnit =
+                    form.getFieldValue('cluster_mode') === 'single-node'
+                      ? t('session.launcher.Container')
+                      : t('session.launcher.Node');
+
+                  // Calculate max cluster size that can start immediately
+                  // based on current resource allocation and remaining resources
+                  const currentResource = form.getFieldValue('resource');
+                  const maxClusterCandidates: number[] = [];
+                  if (
+                    Number.isFinite(remaining.cpu) &&
+                    currentResource?.cpu > 0
+                  ) {
+                    maxClusterCandidates.push(
+                      Math.floor(remaining.cpu! / currentResource.cpu),
+                    );
+                  }
+                  if (Number.isFinite(remaining.mem) && currentResource?.mem) {
+                    const memBytes =
+                      convertToBinaryUnit(currentResource.mem, '')?.number || 0;
+                    if (memBytes > 0) {
+                      maxClusterCandidates.push(
+                        Math.floor(remaining.mem! / memBytes),
+                      );
+                    }
+                  }
+                  const accelType = currentResource?.acceleratorType;
+                  const accelValue = currentResource?.accelerator || 0;
+                  if (
+                    accelType &&
+                    accelValue > 0 &&
+                    Number.isFinite(remaining.accelerators[accelType])
+                  ) {
+                    maxClusterCandidates.push(
+                      Math.floor(
+                        remaining.accelerators[accelType]! / accelValue,
+                      ),
+                    );
+                  }
+                  const maxImmediateClusterSize =
+                    maxClusterCandidates.length > 0
+                      ? _.min(maxClusterCandidates)
+                      : undefined;
+
+                  // Use resource-aware remaining mark instead of raw remaining.cpu
+                  // Clamp to slider max so the mark doesn't render outside the range
+                  const remainingMarkValue =
+                    _.isNumber(maxImmediateClusterSize) &&
+                    maxImmediateClusterSize >= 1
+                      ? _.isNumber(derivedClusterSizeMaxLimit)
+                        ? Math.min(
+                            maxImmediateClusterSize,
+                            derivedClusterSizeMaxLimit,
+                          )
+                        : maxImmediateClusterSize
+                      : undefined;
+
+                  return (
+                    <Form.Item
+                      name={'cluster_size'}
+                      noStyle
+                      required
+                      dependencies={[
+                        ['resource', 'cpu'],
+                        ['resource', 'mem'],
+                        ['resource', 'accelerator'],
+                        ['resource', 'acceleratorType'],
+                      ]}
+                      rules={[
                         {
-                          value: 'multi-node',
-                          label: t('session.launcher.MultiNode'),
-                          tooltip: (
-                            <Trans i18nKey={'session.launcher.DescMultiNode'} />
-                          ),
+                          warningOnly: true,
+                          validator: async (_rule, value: number) => {
+                            if (
+                              form.getFieldValue('cluster_mode') ===
+                                'multi-node' &&
+                              value === 1
+                            ) {
+                              return Promise.reject(
+                                t(
+                                  'session.launcher.ClusterSizeOneMultiNodeConvertInfo',
+                                ),
+                              );
+                            }
+                            return Promise.resolve();
+                          },
                         },
                         {
-                          value: 'single-node',
-                          label: t('session.launcher.SingleNode'),
-                          tooltip: (
-                            <Trans
-                              i18nKey={'session.launcher.DescSingleNode'}
-                            />
-                          ),
+                          warningOnly: true,
+                          validator: async (_rule, value: number) => {
+                            if (showRemainingWarning && value > 1) {
+                              if (
+                                _.isNumber(maxImmediateClusterSize) &&
+                                maxImmediateClusterSize >= 1 &&
+                                value > maxImmediateClusterSize
+                              ) {
+                                return Promise.reject(
+                                  t(
+                                    'session.launcher.ClusterSizeExceedsImmediateCapacity',
+                                    {
+                                      maxClusterSize: maxImmediateClusterSize,
+                                      unit: clusterUnit,
+                                    },
+                                  ),
+                                );
+                              }
+                            }
+                            return Promise.resolve();
+                          },
                         },
                       ]}
-                    />
-                  </Form.Item>
-                  <>
-                    <Form.Item
-                      noStyle
-                      shouldUpdate={(prev, next) =>
-                        prev.cluster_mode !== next.cluster_mode ||
-                        prev.cluster_size !== next.cluster_size ||
-                        prev.resource?.cpu !== next.resource?.cpu ||
-                        prev.resource?.mem !== next.resource?.mem ||
-                        prev.resource?.accelerator !==
-                          next.resource?.accelerator ||
-                        prev.resource?.acceleratorType !==
-                          next.resource?.acceleratorType
-                      }
                     >
-                      {() => {
-                        const derivedClusterSizeMaxLimit =
-                          keypairResourcePolicy.max_containers_per_session;
-
-                        const clusterUnit =
-                          form.getFieldValue('cluster_mode') === 'single-node'
-                            ? t('session.launcher.Container')
-                            : t('session.launcher.Node');
-
-                        // Calculate max cluster size that can start immediately
-                        // based on current resource allocation and remaining resources
-                        const currentResource = form.getFieldValue('resource');
-                        const maxClusterCandidates: number[] = [];
-                        if (
-                          Number.isFinite(remaining.cpu) &&
-                          currentResource?.cpu > 0
-                        ) {
-                          maxClusterCandidates.push(
-                            Math.floor(remaining.cpu! / currentResource.cpu),
-                          );
+                      <InputNumberWithSlider
+                        inputContainerMinWidth={190}
+                        min={1}
+                        step={1}
+                        // TODO: max cluster size
+                        max={
+                          _.isNumber(derivedClusterSizeMaxLimit)
+                            ? derivedClusterSizeMaxLimit
+                            : undefined
                         }
-                        if (
-                          Number.isFinite(remaining.mem) &&
-                          currentResource?.mem
-                        ) {
-                          const memBytes =
-                            convertToBinaryUnit(currentResource.mem, '')
-                              ?.number || 0;
-                          if (memBytes > 0) {
-                            maxClusterCandidates.push(
-                              Math.floor(remaining.mem! / memBytes),
-                            );
-                          }
-                        }
-                        const accelType = currentResource?.acceleratorType;
-                        const accelValue = currentResource?.accelerator || 0;
-                        if (
-                          accelType &&
-                          accelValue > 0 &&
-                          Number.isFinite(remaining.accelerators[accelType])
-                        ) {
-                          maxClusterCandidates.push(
-                            Math.floor(
-                              remaining.accelerators[accelType]! / accelValue,
-                            ),
-                          );
-                        }
-                        const maxImmediateClusterSize =
-                          maxClusterCandidates.length > 0
-                            ? _.min(maxClusterCandidates)
-                            : undefined;
-
-                        // Use resource-aware remaining mark instead of raw remaining.cpu
-                        // Clamp to slider max so the mark doesn't render outside the range
-                        const remainingMarkValue =
-                          _.isNumber(maxImmediateClusterSize) &&
-                          maxImmediateClusterSize >= 1
-                            ? _.isNumber(derivedClusterSizeMaxLimit)
-                              ? Math.min(
-                                  maxImmediateClusterSize,
-                                  derivedClusterSizeMaxLimit,
-                                )
-                              : maxImmediateClusterSize
-                            : undefined;
-
-                        return (
-                          <Form.Item
-                            name={'cluster_size'}
-                            noStyle
-                            required
-                            dependencies={[
-                              ['resource', 'cpu'],
-                              ['resource', 'mem'],
-                              ['resource', 'accelerator'],
-                              ['resource', 'acceleratorType'],
-                            ]}
-                            rules={[
-                              {
-                                warningOnly: true,
-                                validator: async (_rule, value: number) => {
-                                  if (
-                                    form.getFieldValue('cluster_mode') ===
-                                      'multi-node' &&
-                                    value === 1
-                                  ) {
-                                    return Promise.reject(
-                                      t(
-                                        'session.launcher.ClusterSizeOneMultiNodeConvertInfo',
-                                      ),
-                                    );
-                                  }
-                                  return Promise.resolve();
-                                },
-                              },
-                              {
-                                warningOnly: true,
-                                validator: async (_rule, value: number) => {
-                                  if (showRemainingWarning && value > 1) {
-                                    if (
-                                      _.isNumber(maxImmediateClusterSize) &&
-                                      maxImmediateClusterSize >= 1 &&
-                                      value > maxImmediateClusterSize
-                                    ) {
-                                      return Promise.reject(
-                                        t(
-                                          'session.launcher.ClusterSizeExceedsImmediateCapacity',
-                                          {
-                                            maxClusterSize:
-                                              maxImmediateClusterSize,
-                                            unit: clusterUnit,
-                                          },
-                                        ),
-                                      );
-                                    }
-                                  }
-                                  return Promise.resolve();
-                                },
-                              },
-                            ]}
-                          >
-                            <InputNumberWithSlider
-                              inputContainerMinWidth={190}
-                              min={1}
-                              step={1}
-                              // TODO: max cluster size
-                              max={
-                                _.isNumber(derivedClusterSizeMaxLimit)
-                                  ? derivedClusterSizeMaxLimit
-                                  : undefined
-                              }
-                              disabled={
-                                derivedClusterSizeMaxLimit === 1 ||
-                                (!supportMultiAgents &&
-                                  !_.isEqual(
-                                    _.castArray(getFieldValue('agent')),
-                                    ['auto'],
-                                  ))
-                              }
-                              sliderProps={{
-                                marks: {
-                                  1: '1',
-                                  // remaining mark code should be located before max mark code to prevent overlapping when it is same value
-                                  ...(remainingMarkValue && showRemainingWarning
-                                    ? {
-                                        [remainingMarkValue]: {
-                                          label: <RemainingMark />,
-                                        },
-                                      }
-                                    : {}),
-                                  ...(_.isNumber(derivedClusterSizeMaxLimit)
-                                    ? {
-                                        [derivedClusterSizeMaxLimit]:
-                                          derivedClusterSizeMaxLimit,
-                                      }
-                                    : {}),
-                                },
-                                tooltip: {
-                                  formatter: (value = 0) => {
-                                    return `${value} ${clusterUnit}`;
+                        disabled={derivedClusterSizeMaxLimit === 1}
+                        sliderProps={{
+                          marks: {
+                            1: '1',
+                            // remaining mark code should be located before max mark code to prevent overlapping when it is same value
+                            ...(remainingMarkValue && showRemainingWarning
+                              ? {
+                                  [remainingMarkValue]: {
+                                    label: <RemainingMark />,
                                   },
-                                },
-                              }}
-                              inputNumberProps={{
-                                suffix: clusterUnit,
-                              }}
-                            />
-                          </Form.Item>
-                        );
-                      }}
+                                }
+                              : {}),
+                            ...(_.isNumber(derivedClusterSizeMaxLimit)
+                              ? {
+                                  [derivedClusterSizeMaxLimit]:
+                                    derivedClusterSizeMaxLimit,
+                                }
+                              : {}),
+                          },
+                          tooltip: {
+                            formatter: (value = 0) => {
+                              return `${value} ${clusterUnit}`;
+                            },
+                          },
+                        }}
+                        inputNumberProps={{
+                          suffix: clusterUnit,
+                        }}
+                      />
                     </Form.Item>
-                  </>
-                </VStack>
-              </>
-            );
-          }}
+                  );
+                }}
+              </Form.Item>
+            </>
+          </VStack>
         </Form.Item>
       )}
     </>

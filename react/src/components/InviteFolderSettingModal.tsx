@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  Ticket 16 — converted to Astryx. The antd Form ENGINE stays (locked ticket-05
- decision); its controls become Astryx via the `astryxFormControls` adapters
+ decision); its controls are ui-common's Form.Item-aware form controls
  and `BAIFormItem` carries the visuals. The invite row's `Descriptions title`
  wrapper (used purely as a section heading) becomes a `Heading`; the invitee
  table is `BAITable` (Astryx engine since ticket 30-D) with Astryx cells.
@@ -21,12 +21,10 @@ import { localeCompare, useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import BAIFormItem from './BAIFormItem';
-import { AstryxFormSelector, AstryxFormTextInput } from './astryxFormControls';
-import { Button } from '@astryxdesign/core/Button';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Selector } from '@astryxdesign/core/Selector';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Heading } from '@astryxdesign/core/Text';
+import { Button } from '@lablup/ui-common/Button';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Heading } from '@lablup/ui-common/Text';
 import {
   BAIPopconfirm,
   BAIModal,
@@ -34,6 +32,8 @@ import {
   BAIQuestionIconWithTooltip,
   BAITable,
   useErrorMessageResolver,
+  BAISelector,
+  BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleXIcon } from 'lucide-react';
@@ -216,14 +216,11 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
                 ]}
                 style={{ marginBottom: 0 }}
               >
-                {/* Enter-to-invite. This used to be a `<span onKeyDown>`
-                    wrapped around the input — but `Form.Item` clones its
-                    DIRECT child, so `value`/`onChange` landed on the span and
-                    the field could not be typed into at all. The adapter's own
-                    `onEnter` (antd's `onPressEnter`) does the same job with
-                    the control back as the direct child. */}
-                <AstryxFormTextInput
-                  label={t('general.E-Mail')}
+                {/* Enter-to-invite through `onEnter`: `Form.Item` clones its
+                    DIRECT child, so a key-handling wrapper would take the
+                    field's `value`/`onChange`. */}
+                <BAITextInput
+                  aria-label={t('general.E-Mail')}
                   placeholder={t('data.explorer.EnterEmailAddress')}
                   maxLength={64}
                   onEnter={handleInvite}
@@ -235,8 +232,8 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
                 style={{ marginBottom: 0 }}
                 required
               >
-                <AstryxFormSelector
-                  label={t('data.Permission')}
+                <BAISelector
+                  aria-label={t('data.Permission')}
                   options={[
                     { label: t('data.ReadOnly'), value: 'ro' },
                     { label: t('data.ReadWrite'), value: 'rw' },
@@ -255,7 +252,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
         </VStack>
 
         <VStack align="stretch" gap={4}>
-          <HStack gap={2}>
+          <HStack gap={2} align="center">
             <Heading level={5}>{t('data.folders.SharedUser')}</Heading>
             <BAIQuestionIconWithTooltip
               title={t('data.folders.SharedUserDesc')}
@@ -281,10 +278,9 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
                 dataIndex: 'perm',
                 render: (perm, record) => {
                   return (
-                    <HStack gap={1}>
-                      <Selector
-                        label={t('data.explorer.Permission')}
-                        isLabelHidden
+                    <HStack gap={1} align="center">
+                      <BAISelector
+                        aria-label={t('data.explorer.Permission')}
                         width={130}
                         options={[
                           { label: t('data.ReadOnly'), value: 'ro' },

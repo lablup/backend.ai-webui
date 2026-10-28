@@ -6,12 +6,11 @@ import { RBACPermissionGridMatrixQuery } from '../__generated__/RBACPermissionGr
 import { App } from '../app-shim';
 import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
 import './RBACPermissionGrid.css';
-import { Button } from '@astryxdesign/core/Button';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { Text } from '@astryxdesign/core/Text';
-import { TextInput } from '@astryxdesign/core/TextInput';
-import { Token } from '@astryxdesign/core/Token';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Button } from '@lablup/ui-common/Button';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIButton,
   BAICheckbox,
@@ -20,6 +19,7 @@ import {
   BAIFlex,
   BAIListAlert,
   BAITable,
+  BAITextInput,
 } from 'backend.ai-ui';
 import { Search } from 'lucide-react';
 import React, { useState } from 'react';
@@ -339,9 +339,8 @@ const RBACPermissionGrid: React.FC<RBACPermissionGridProps> = ({
       <BAIFlex justify="between" align="center" gap="sm" wrap="wrap">
         <BAIFlex gap="sm" align="center" wrap="wrap">
           {toolbarStart}
-          <TextInput
-            label={t('rbac.FilterByPermissionType')}
-            isLabelHidden
+          <BAITextInput
+            aria-label={t('rbac.FilterByPermissionType')}
             value={filterText}
             hasClear
             startIcon={Search}

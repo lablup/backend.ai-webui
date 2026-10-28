@@ -40,6 +40,16 @@
           {
             "type": "command",
             "command": ".claude/scripts/block-gt.sh"
+          },
+          {
+            "type": "command",
+            "if": "Bash(gh pr create*)",
+            "command": ".claude/scripts/require-e2e-flow.sh"
+          },
+          {
+            "type": "command",
+            "if": "Bash(gh stack submit*)",
+            "command": ".claude/scripts/require-e2e-flow.sh"
           }
         ]
       }

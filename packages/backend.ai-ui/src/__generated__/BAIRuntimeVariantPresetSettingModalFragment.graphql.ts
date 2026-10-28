@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<45a719d1329a3a401dcf0fbc6ee20d0f>>
+ * @generated SignedSource<<8e3c332a586ab5bd0a94222e8374a60c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,6 +16,7 @@ export type BAIRuntimeVariantPresetSettingModalFragment$data = {
   readonly category: string | null | undefined;
   readonly description: string | null | undefined;
   readonly displayName: string | null | undefined;
+  readonly entityId: string;
   readonly id: string;
   readonly name: string;
   readonly rank: number;
@@ -81,6 +82,13 @@ return {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
       "storageKey": null
     },
     {
@@ -282,6 +290,6 @@ return {
 };
 })();
 
-(node as any).hash = "78eb89068b7e6445d84ece9834aefce9";
+(node as any).hash = "b7e1fc379e29fdf9052363cfc294924e";
 
 export default node;

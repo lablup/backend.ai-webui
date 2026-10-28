@@ -9,7 +9,6 @@ import {
 } from '../__generated__/AdminComputeSessionListPageQuery.graphql';
 import { App } from '../app-shim';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
-import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import TerminateSessionModal from '../components/ComputeSessionNodeItems/TerminateSessionModal';
 import SessionNodes, {
@@ -20,18 +19,14 @@ import { handleRowSelectionChange } from '../helper';
 import { liftProjectPredicate } from '../helper/adminSessionProjectLift';
 import { ExtractResultValue } from '../helper/resultTypes';
 import { buildSessionExportFilter } from '../helper/sessionExportFilter';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
-import { Banner } from '@astryxdesign/core/Banner';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Banner } from '@lablup/ui-common/Banner';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIAdminProjectSelect,
   BAIFlex,
@@ -45,6 +40,8 @@ import {
   mergeFilterValues,
   useBAILogger,
   useFetchKey,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { LayoutGridIcon, PowerOffIcon, TableIcon } from 'lucide-react';
@@ -89,7 +86,6 @@ const AdminComputeSessionListPage = () => {
   'use memo';
 
   const userRole = useCurrentUserRole();
-  const baiClient = useSuspendedBackendaiClient();
 
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -333,25 +329,25 @@ const AdminComputeSessionListPage = () => {
             }}
             wrap="wrap"
           >
-            <BAIRadioGroup
-              optionType="button"
+            <BAISegmentedControl
               value={queryParams.statusCategory}
-              onChange={(e) => {
-                setQueryParams({ statusCategory: e.target.value });
+              onChange={(value) => {
+                setQueryParams({
+                  statusCategory: value as typeof queryParams.statusCategory,
+                });
                 setTablePaginationOption({ current: 1 });
                 setSelectedSessionList([]);
               }}
-              options={[
-                {
-                  label: t('session.Running'),
-                  value: 'running',
-                },
-                {
-                  label: t('session.Finished'),
-                  value: 'finished',
-                },
-              ]}
-            />
+            >
+              <BAISegmentedControlItem
+                value="running"
+                label={t('session.Running')}
+              />
+              <BAISegmentedControlItem
+                value="finished"
+                label={t('session.Finished')}
+              />
+            </BAISegmentedControl>
             <BAIPropertyFilter
               filterProperties={filterOutEmpty([
                 {
@@ -417,11 +413,6 @@ const AdminComputeSessionListPage = () => {
                   // above matches its UUID through the project select.
                   key: 'group_name',
                   propertyLabel: t('session.ProjectName'),
-                  type: 'string',
-                },
-                {
-                  key: 'domain_name',
-                  propertyLabel: t('session.Domain'),
                   type: 'string',
                 },
                 {
@@ -509,15 +500,15 @@ const AdminComputeSessionListPage = () => {
               </>
             )}
             {experimentalSessionResourceGrid && (
-              <SegmentedControl
-                label={t('session.resourceGrid.ViewMode')}
+              <BAISegmentedControl
+                aria-label={t('session.resourceGrid.ViewMode')}
                 value={queryParams.view}
                 onChange={(value) =>
                   setQueryParams({ view: value as 'table' | 'grid' })
                 }
               >
                 <Tooltip content={t('session.resourceGrid.TableView')}>
-                  <SegmentedControlItem
+                  <BAISegmentedControlItem
                     value="table"
                     label={t('session.resourceGrid.TableView')}
                     isLabelHidden
@@ -525,14 +516,14 @@ const AdminComputeSessionListPage = () => {
                   />
                 </Tooltip>
                 <Tooltip content={t('session.resourceGrid.GridView')}>
-                  <SegmentedControlItem
+                  <BAISegmentedControlItem
                     value="grid"
                     label={t('session.resourceGrid.GridView')}
                     isLabelHidden
                     icon={<LayoutGridIcon size="1em" />}
                   />
                 </Tooltip>
-              </SegmentedControl>
+              </BAISegmentedControl>
             )}
             <AutoUpdateFetchKeyButton
               settingId="admin-session-list"
@@ -677,11 +668,7 @@ const AdminComputeSessionListPage = () => {
                       // superset of the table and never a subset (FR-3915).
                       _.assign(
                         csvFilter,
-                        buildSessionExportFilter(queryParams.filter, {
-                          supportsUserFilter: baiClient.supports(
-                            'session-export-user-filter',
-                          ),
-                        }),
+                        buildSessionExportFilter(queryParams.filter),
                       );
                       await exportCSV(selectedExportKeys, csvFilter).catch(
                         (err) => {
@@ -695,7 +682,11 @@ const AdminComputeSessionListPage = () => {
             }
           />
         ) : (
-          <Banner status="error" title={t('error.FailedToLoadTableData')} />
+          <Banner
+            role="alert"
+            status="error"
+            title={t('error.FailedToLoadTableData')}
+          />
         )}
       </BAIFlex>
       <TerminateSessionModal

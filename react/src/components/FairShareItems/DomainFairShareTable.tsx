@@ -8,15 +8,15 @@ import {
   DomainFairShareTableFragment$key,
 } from '../../__generated__/DomainFairShareTableFragment.graphql';
 import DomainResourceGroupWarningIcon from './DomainResourceGroupWarningIcon';
-import { Divider } from '@astryxdesign/core/Divider';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Divider } from '@lablup/ui-common/Divider';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIQuestionIconWithTooltip,
   BAIBadge,
   BAIColumnsType,
   BAIFlex,
   BAINameActionCell,
+  BAIQuestionIconWithTooltip,
   BAIResourceNumberWithIcon,
   BAITable,
   BAITableProps,

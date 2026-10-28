@@ -9,25 +9,25 @@ section was (re)defined by the Astryx migration, ticket 30.
 
 ### Peer dependencies
 
-The design-system contract is **Astryx**:
+The design-system contract is **Astryx, reached through
+`@lablup/ui-common`** (ADR 0009, `docs/adr/0009-ui-common-as-the-single-entry-point-to-astryx.md`):
 
-| Peer                                        | Required? | Why                                                                 |
-| ------------------------------------------- | --------- | ------------------------------------------------------------------- |
-| `@astryxdesign/core`                        | yes       | Every component BUI renders. Must be a **single** copy — see below. |
-| `@astryxdesign/theme-neutral`               | yes       | The base theme BUI's `src/theme` recipe data extends.               |
-| `react` / `react-dom`                       | yes       | —                                                                   |
-| `react-relay` / `relay-runtime` / `graphql` | yes       | The `fragments/` components are Relay-bound.                        |
-| `@tanstack/react-query`                     | yes       | `BAIConfigProvider` owns the QueryClient.                           |
-| `react-router-dom`                          | yes       | `BAILink` and friends.                                              |
+| Peer                                        | Required? | Why                                                             |
+| ------------------------------------------- | --------- | --------------------------------------------------------------- |
+| `@lablup/ui-common`                         | yes       | Every Astryx component BUI renders, as `@lablup/ui-common/<X>`. |
+| `@astryxdesign/lab`                         | yes       | Backs `@lablup/ui-common/lab` (`BAIDrawer`, tours).             |
+| `react` / `react-dom`                       | yes       | —                                                               |
+| `react-relay` / `relay-runtime` / `graphql` | yes       | The `fragments/` components are Relay-bound.                    |
+| `@tanstack/react-query`                     | yes       | `BAIConfigProvider` owns the QueryClient.                       |
+| `react-router-dom`                          | yes       | `BAILink` and friends.                                          |
 
-`@astryxdesign/core` and `@astryxdesign/theme-neutral` are peers, **not**
-dependencies and **not** bundled. They were `devDependencies` until ticket 30,
-which meant `rollupOptions.external` (derived from `peerDependencies`) did not
-cover them and BUI's `dist` carried its own inlined copy of Astryx. Two copies
-means two StyleX registries and two React contexts: a `<Theme>` mounted by the
-app would not be seen by BUI's components, and vice versa. If you ever see
-theme values diverge between app-level and BUI-level components, check for a
-duplicated `@astryxdesign/core` first.
+ui-common depends on `@astryxdesign/core` and `@astryxdesign/theme-neutral` at
+exact pins; neither is bundled into BUI's `dist` (`vite.config.ts` keeps every
+`@astryxdesign/*` import external). There must be a **single** copy of core: two
+copies means two StyleX registries and two React contexts, so a `<Theme>`
+mounted by the app would not be seen by BUI's components. If theme values
+diverge between app-level and BUI-level components, check for a duplicated
+`@astryxdesign/core` first.
 
 ### There is no antd surface any more
 
@@ -35,8 +35,9 @@ BUI has **no antd in its source, its peers, or its types**. The last of it went
 in the to-astryx final switch, which removed the antd `ConfigProvider` leg of
 `BAIConfigProvider` and, with it, the 21 `src/locale/*_*.ts` modules that
 existed only to hand antd's `Locale` bundles to that provider (they were also
-the `backend.ai-ui/dist/locale/*` package export — that export is gone too, see
-"Localization" below).
+the `backend.ai-ui/dist/locale/*` package export). The per-language modules
+that exist today are a different export, `backend.ai-ui/locale/*`, which
+carries Astryx's catalogs instead — see "Localization" below.
 
 The path here is worth knowing, because the intermediate states are still
 visible in comments across the package:
@@ -58,7 +59,11 @@ visible in comments across the package:
   Astryx's `useTheme().token()`, and what remains under `src/theme/` is
   measured data, not ported antd code: the alignment tables
   (`antdParity.ts`) and the custom-token builder (`baiCustomTokens.ts`) the
-  app's theme recipe and Storybook's brand theme are both built from.
+  app's theme recipe and Storybook's brand theme are both built from. They
+  are also published on their own as `backend.ai-ui/theme`, so a consumer can
+  apply BUI's theme tokens without the component barrel; the app's theme
+  recipe imports them from there because `astryx theme build` loads it in
+  Node (ADR 0013).
 
 No antd-family package remains, not even in `devDependencies` — the
 workspace's exact-pinned `pnpm-lock.yaml` is what keeps it that way.
@@ -72,8 +77,8 @@ import 'backend.ai-ui/styles.css';
 ```
 
 `src/index.ts` imports it too, so consumers that bundle BUI **from source**
-(this repo's `react/` app does — see the `backend.ai-ui` → `src` alias in
-`react/vite.config.ts`) get it through the module graph and need no explicit
+(this repo's `react/` app does, through the `@backend.ai/source` export
+condition — ADR 0013) get it through the module graph and need no explicit
 import. Consumers of the built `dist` must import it: a Vite/Rollup library
 build strips CSS imports out of the emitted JS and writes
 `dist/backend.ai-ui.css` beside it.
@@ -89,7 +94,7 @@ Every rule BUI ships lives in `@layer components`, and BUI's stylesheet opens
 with the full order statement:
 
 ```css
-@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
+@layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;
 ```
 
 Astryx ships its component CSS in `@layer astryx-base`, and an _unlayered_ rule
@@ -257,27 +262,30 @@ Components that are not related to Relay can be tested using Storybook.
 
 ## Localization
 
-BUI's own catalogs live in `src/locale/*.json` and are bundled into the
-package's single entry. A host selects the language by handing
-`BAIConfigProvider` a `BAILocale` — which is just the language code:
+A host selects the language by handing `BAIConfigProvider` a `BAILocale`.
+The per-language modules under `backend.ai-ui/locale/*` (`en_US`, `ko_KR`, …)
+each export one; load only the one you need:
 
 ```tsx
 import { BAIConfigProvider, type BAILocale } from 'backend.ai-ui';
+import en_US from 'backend.ai-ui/locale/en_US';
 
-const locale: BAILocale = { lang: 'en' };
+// Non-English modules are best loaded on demand:
+// const { default: ko_KR } = await import('backend.ai-ui/locale/ko_KR');
 
-const App = ({ children }) => {
+const App = ({ children }) => (
   // please use BAIConfigProvider at the top-level root
-  return <BAIConfigProvider locale={locale}>{children}</BAIConfigProvider>;
-};
+  <BAIConfigProvider locale={en_US}>{children}</BAIConfigProvider>
+);
 ```
 
-> Until the to-astryx final switch this was `import en_US from
-'backend.ai-ui/dist/locale/en_US'`, one of 21 published per-language modules.
-> Each carried an `antd/es/locale/*` bundle in `BAILocale.antdLocale`, whose
-> only consumer was antd `ConfigProvider`'s `locale` prop. With that provider
-> gone the modules, the `./dist/locale/*` package export and the field were all
-> removed rather than left as dead surface.
+A non-English module (`import ko_KR from 'backend.ai-ui/locale/ko_KR'` gives
+`{ lang, astryxLocale }`, the Astryx chrome strings for that language) also
+registers its `dayjs` locale and starts loading BUI's catalog for that
+language. `BAIConfigProvider` suspends until that catalog is in, so mount it
+under a `<Suspense>` boundary. These modules used to live at
+`backend.ai-ui/dist/locale/*` and carry antd bundles in `BAILocale.antdLocale`;
+that field is gone.
 
 ### How many i18n runtimes are there? (P13)
 
@@ -286,33 +294,24 @@ Two catalogs, one language.
 - **BUI's own i18next instance** (`src/locale/index.ts`) holds BUI's strings.
   It is deliberately separate from the host's instance — `useBAIi18n` and
   `<BAITrans>` bind to it explicitly rather than through React context, so BUI
-  resolves its own keys no matter what i18n stack (or none) the host runs.
-  That is FR-2986 and it stays.
-- **Astryx's resolver** (`@astryxdesign/core/i18n`) holds the strings baked
-  into Astryx components. It is not configurable as a catalog you own; it
-  takes a locale plus sparse per-locale `overrides`.
+  resolves its own keys no matter what i18n stack (or none) the host runs
+  (FR-2986). Only `en.json` is bundled; every other `src/locale/<lang>.json`
+  is a lazy chunk the instance loads when that language is requested.
+- **Astryx's resolver** (`@lablup/ui-common/i18n`) holds the strings baked
+  into Astryx and ui-common components. It takes a locale plus sparse
+  per-locale `overrides`. Each non-English `src/locale/<lang>_<REGION>.ts`
+  module merges ui-common's `uic.*` strings for its language
+  (`withUiCommonMessages`) under BUI's `@astryx.*` overrides from
+  `src/locale/astryx/<lang>.json` into `BAILocale.astryxLocale`. `en_US` has
+  none: both libraries fall back to their shipped English.
 
 `BAIConfigProvider` is the single place a language change lands. It drives
 `buiI18n.changeLanguage`, `dayjs.locale` **and** Astryx's
-`InternationalizationProvider` from the one `locale.lang` prop. Before ticket
-30 the third one was missing entirely, so Astryx components formatted their
-plurals, numbers and dates as `en` in every non-English session.
+`InternationalizationProvider` from the one `locale.lang` prop.
 
-To translate an Astryx string, add its key under an `astryx` object in the
-matching BUI locale JSON — no new catalog, no host change:
-
-```json
-// src/locale/ko.json
-{
-  "astryx": {
-    "@astryx.pagination.next": "다음 페이지로 이동"
-  }
-}
-```
-
-Keys you do not override fall through to Astryx's shipped English, so the
-subtree can stay empty and grow one key at a time. See
-`src/locale/astryxOverrides.ts`.
+To translate an Astryx string, add its key to the language's
+`src/locale/astryx/<lang>.json`. Keys you do not override fall through to
+Astryx's shipped English.
 
 ### Adding i18n strings
 

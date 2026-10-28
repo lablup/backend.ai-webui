@@ -24,10 +24,8 @@ import {
   type RuntimeVariantPresetNodeInList,
   type BAITableSettings,
   BAIUnmountAfterClose,
-  filterOutEmpty,
   filterOutNullAndUndefined,
   isValidUUID,
-  toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -109,15 +107,9 @@ const AdminRuntimeVariantPreset = ({
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const baiClient = useSuspendedBackendaiClient();
-  // AND/OR/NOT sub-filters only exist on managers with the `sub-filter`
-  // capability (Strawberry V2). On older managers, restrict the property
-  // filter to a single condition so it emits a flat filter the backend accepts.
-  const supportsSubFilter = baiClient.supports('sub-filter');
-  // BA-5918 (26.4.4rc3) turned `runtimeVariantId` into a UUIDFilter; the
-  // control only emits the wrapper shape.
-  const supportsFilterWrapperInputs = baiClient.supports(
-    'v2-filter-wrapper-inputs',
-  );
+  // AND/OR/NOT sub-filters need manager 26.7.0; older managers get a single
+  // condition so the filter stays flat.
+  const supportsSubFilter = baiClient.isManagerVersionCompatibleWith('26.7.0');
 
   const [deletingPreset, setDeletingPreset] =
     useState<RuntimeVariantPresetNodeInList | null>(null);
@@ -171,13 +163,13 @@ const AdminRuntimeVariantPreset = ({
         <BAIFlex gap={'sm'} align="start" wrap="wrap" style={{ flexShrink: 1 }}>
           <BAIGraphQLPropertyFilter<RuntimeVariantPresetFilter>
             maxConditions={supportsSubFilter ? undefined : 1}
-            filterProperties={filterOutEmpty([
+            filterProperties={[
               {
                 key: 'name',
                 propertyLabel: t('adminRuntimeVariantPreset.Name'),
                 type: 'string',
               },
-              supportsFilterWrapperInputs && {
+              {
                 key: 'runtimeVariantId',
                 propertyLabel: t('adminRuntimeVariantPreset.Runtime'),
                 type: 'uuid' as const,
@@ -195,7 +187,7 @@ const AdminRuntimeVariantPreset = ({
                   />
                 ),
               },
-            ])}
+            ]}
             value={filter}
             onChange={(next) => {
               onReload(
@@ -305,7 +297,7 @@ const AdminRuntimeVariantPreset = ({
         onOk={() => {
           if (!deletingPreset) return;
           commitDeletePreset({
-            variables: { id: toLocalId(deletingPreset.id) },
+            variables: { id: deletingPreset.entityId },
             onCompleted: (_data, errors) => {
               if (errors && errors.length > 0) {
                 logger.error(errors[0]);

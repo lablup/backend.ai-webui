@@ -9,7 +9,6 @@ import {
   convertToDecimalUnit,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  toLocalId,
 } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIAlert from '../BAIAlert';
@@ -20,7 +19,7 @@ import BAIText from '../BAIText';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import { BAIColumnsType, BAITable } from '../Table';
 import BAIArtifactDescriptions from './BAIArtifactDescriptions';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import * as _ from 'lodash-es';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
@@ -86,6 +85,7 @@ const BAIDeleteArtifactRevisionsModal = ({
         fragment BAIDeleteArtifactRevisionsModalArtifactRevisionFragment on ArtifactRevision
         @relay(plural: true) {
           id
+          fieldId
           version
           size
           status
@@ -127,8 +127,8 @@ const BAIDeleteArtifactRevisionsModal = ({
           cleanupVersion({
             variables: {
               input: {
-                artifactRevisionIds: filteredSelectedRevisions.map((revision) =>
-                  toLocalId(revision.id),
+                artifactRevisionIds: filteredSelectedRevisions.map(
+                  (revision) => revision.fieldId,
                 ),
               },
             },

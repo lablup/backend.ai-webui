@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { AgentComputePluginsFragment$key } from '../../__generated__/AgentComputePluginsFragment.graphql';
-import { Token } from '@astryxdesign/core/Token';
+import { Token } from '@lablup/ui-common/Token';
 import { BAIDoubleToken } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';

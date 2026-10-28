@@ -4,23 +4,22 @@
  */
 import { Form } from '../../form-engine';
 import { compareNumberWithUnits, convertToBinaryUnit } from '../../helper';
-import { MergedResourceAllocationFormValue } from './ResourceAllocationFormItems';
-import { Switch } from '@astryxdesign/core/Switch';
-import { useTheme } from '@astryxdesign/core/theme';
+import type { MergedResourceAllocationFormValue } from './ResourceAllocationFormItems';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIQuestionIconWithTooltip,
   BAIDynamicUnitInputNumber,
   BAIDynamicUnitInputNumberProps,
   BAIFlex,
+  BAIQuestionIconWithTooltip,
+  BAISwitch,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 /**
- * The auto/manual shared-memory toggle. A local adapter rather than the shared
- * `AstryxFormSwitch`, because the visible label flips with the state. The two
- * `Form.Item` contracts are honoured inline.
+ * The auto/manual shared-memory toggle, local because the visible label flips
+ * with the state.
  */
 const AutomaticShmemSwitch: React.FC<{
   autoLabel: string;
@@ -33,15 +32,16 @@ const AutomaticShmemSwitch: React.FC<{
 }> = ({ autoLabel, manualLabel, onToggle, checked, onChange }) => {
   'use memo';
   return (
-    <Switch
+    <BAISwitch
       size="sm"
-      label={checked ? autoLabel : manualLabel}
       value={checked ?? false}
       onChange={(next) => {
         onChange?.(next);
         onToggle?.(next);
       }}
-    />
+    >
+      {checked ? autoLabel : manualLabel}
+    </BAISwitch>
   );
 };
 

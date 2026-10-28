@@ -28,14 +28,7 @@ async function openEditModalViaRowAction(
   await expect(adminModelCardPage.getEditModal()).toBeVisible();
 }
 
-// BLOCKED BY BACKEND: every test in this describe block relies on the shared
-// `beforeEach` seeding a model card via `adminCreateModelCardV2`, which
-// currently fails server-side with "ModelCardGQL.__init__() got an
-// unexpected keyword argument 'min_resource'" (backendai_generic_internal-error).
-// The Access Level / VFolder locators here are correct (Astryx `Selector` /
-// `ComplexSelector`); the seed mutation itself cannot succeed until the
-// manager is fixed.
-test.describe.fixme(
+test.describe(
   'Admin Model Card Management - Edit',
   { tag: ['@admin-model-card', '@admin', '@crud'] },
   () => {
@@ -71,7 +64,7 @@ test.describe.fixme(
       // Access Level is a plain Astryx `Selector` (role="combobox" trigger,
       // role="listbox"/"option" popup).
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Access Level' })
         .getByRole('combobox')
         .click();
@@ -80,7 +73,7 @@ test.describe.fixme(
       // In antd v6, Form.Item tooltip icons contribute to the accessible name.
       // Use the form item container to locate the textbox by label text.
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Title' })
         .getByRole('textbox')
         .fill('Original Title');
@@ -108,7 +101,11 @@ test.describe.fixme(
           `Model card create mutation returned errors: ${JSON.stringify(createBody.errors)}`,
         );
       }
-      await expect(page.getByText('Model card has been created.')).toBeVisible({
+      await expect(
+        adminModelCardPage
+          .getToastRegion()
+          .getByText('Model card has been created.'),
+      ).toBeVisible({
         timeout: 15000,
       });
       await expect(modal).toBeHidden({ timeout: 30000 });
@@ -220,7 +217,7 @@ test.describe.fixme(
       // Clear the Title field and type a new value.
       // In antd v6, tooltip icons alter the accessible name — use form item container.
       const titleInput = modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Title' })
         .getByRole('textbox');
       await titleInput.clear();
@@ -231,7 +228,7 @@ test.describe.fixme(
       // Access Level is a plain Astryx `Selector` (role="combobox" trigger,
       // role="listbox"/"option" popup).
       const accessLevelFormItem = modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Access Level' });
       await accessLevelFormItem.scrollIntoViewIfNeeded();
       await accessLevelFormItem.getByRole('combobox').click();
@@ -246,7 +243,11 @@ test.describe.fixme(
       await adminModelCardPage.getEditModalSaveButton().click();
 
       // Verify success message
-      await expect(page.getByText('Model card has been updated.')).toBeVisible({
+      await expect(
+        adminModelCardPage
+          .getToastRegion()
+          .getByText('Model card has been updated.'),
+      ).toBeVisible({
         timeout: 15000,
       });
 
@@ -332,7 +333,7 @@ test.describe.fixme(
       // Change the Title to a value that should not be saved.
       // In antd v6, tooltip icons alter the accessible name — use form item container.
       const titleInput = modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Title' })
         .getByRole('textbox');
       await titleInput.clear();

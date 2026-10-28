@@ -10,20 +10,18 @@ import {
 import { App } from '../../app-shim';
 import { Form, FormInstance } from '../../form-engine';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
+import { Grid } from '@lablup/ui-common/Grid';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  AstryxFormNumberInput,
-  AstryxFormTextInput,
-} from '../astryxFormControls';
-import { Grid } from '@astryxdesign/core/Grid';
-import { useTheme } from '@astryxdesign/core/theme';
-import {
-  BAIQuestionIconWithTooltip,
   BAIAlert,
   BAICard,
   BAIFlex,
   BAIModal,
   BAIModalProps,
+  BAIQuestionIconWithTooltip,
   useBAILogger,
+  BAINumberInput,
+  BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useRef } from 'react';
@@ -189,7 +187,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
           name="resourceGroupName"
           required
         >
-          <AstryxFormTextInput label={t('fairShare.ResourceGroup')} disabled />
+          <BAITextInput aria-label={t('fairShare.ResourceGroup')} disabled />
         </Form.Item>
 
         {/* antd `Row gutter={[24,16]}` + `Col span={12}` (a fixed 2-up over
@@ -214,8 +212,9 @@ const ResourceGroupFairShareSettingModal: React.FC<
           >
             {/* antd `InputNumber suffix` (a unit string) -> `NumberInput
                 units` (MAPPING §3.17). */}
-            <AstryxFormNumberInput
-              label={t('fairShare.DecayUnitDays')}
+            <BAINumberInput
+              width="100%"
+              aria-label={t('fairShare.DecayUnitDays')}
               min={1}
               step={1}
               units={t('fairShare.Days')}
@@ -251,8 +250,9 @@ const ResourceGroupFairShareSettingModal: React.FC<
               },
             ]}
           >
-            <AstryxFormNumberInput
-              label={t('fairShare.HalfLifeDays')}
+            <BAINumberInput
+              width="100%"
+              aria-label={t('fairShare.HalfLifeDays')}
               min={1}
               step={1}
               units={t('fairShare.Days')}
@@ -288,8 +288,9 @@ const ResourceGroupFairShareSettingModal: React.FC<
               },
             ]}
           >
-            <AstryxFormNumberInput
-              label={t('fairShare.LookbackDays')}
+            <BAINumberInput
+              width="100%"
+              aria-label={t('fairShare.LookbackDays')}
               min={1}
               step={1}
               units={t('fairShare.Days')}
@@ -315,8 +316,9 @@ const ResourceGroupFairShareSettingModal: React.FC<
               },
             ]}
           >
-            <AstryxFormNumberInput
-              label={t('fairShare.DefaultWeight')}
+            <BAINumberInput
+              width="100%"
+              aria-label={t('fairShare.DefaultWeight')}
               min={0}
               step={0.1}
             />
@@ -357,8 +359,9 @@ const ResourceGroupFairShareSettingModal: React.FC<
                     label={weightLabel}
                     name={['resourceWeights', entry?.resourceType]}
                   >
-                    <AstryxFormNumberInput
-                      label={weightLabel}
+                    <BAINumberInput
+                      width="100%"
+                      aria-label={weightLabel}
                       min={0}
                       step={0.1}
                     />

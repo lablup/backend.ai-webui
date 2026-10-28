@@ -951,28 +951,44 @@ function showIn(page, lang) {
 
 /**
  * The element's text, with the overlay's own capture: by the stop's `find`, or
- * in another language's pass by where it stood — the element of the same tag
- * under its left edge, which a translated (longer, shorter) text keeps.
+ * in another language's pass by the element the base pass read (`home`). A
+ * `find` without text names it in every language; otherwise the selector
+ * captured there does, when it lands on the same tag; the point where it
+ * stood is the last resort, since another element can sit there unscrolled.
  */
-function readElement(page, find, spot) {
+function readElement(page, find, home) {
   return page.evaluate(
-    async ([find, findJs, spot]) => {
+    async ([find, findJs, home]) => {
       const anchorMod = await import(/* @vite-ignore */ "/__review/anchor.js");
-      const el = spot
-        ? document
-            .elementsFromPoint(spot.x, spot.y)
-            .find(
-              (node) =>
-                node.tagName === spot.tag &&
-                !node.closest("[data-bai-review-overlay]"),
-            )
-        : (0, eval)(findJs)(find);
+      const bySelector = () => {
+        try {
+          const node = home.sel ? document.querySelector(home.sel) : null;
+          return node?.tagName === home.spot.tag ? node : null;
+        } catch {
+          return null;
+        }
+      };
+      const byPoint = () =>
+        document
+          .elementsFromPoint(home.spot.x, home.spot.y)
+          .find(
+            (node) =>
+              node.tagName === home.spot.tag &&
+              !node.closest("[data-bai-review-overlay]"),
+          );
+      const el = !home
+        ? (0, eval)(findJs)(find)
+        : ((!find.text && (0, eval)(findJs)(find)) ||
+          bySelector() ||
+          byPoint());
       if (!el) return null;
       el.scrollIntoView({ block: "center" });
       const box = el.getBoundingClientRect();
+      const signals = anchorMod.captureAnchorSignals(el);
       return {
-        txt: anchorMod.captureAnchorSignals(el).txt,
+        txt: signals.txt,
         lang: document.documentElement.lang,
+        sel: signals.s,
         spot: {
           x: box.left + Math.min(4, box.width / 2),
           y: box.top + box.height / 2,
@@ -980,7 +996,7 @@ function readElement(page, find, spot) {
         },
       };
     },
-    [find, FIND_JS, spot],
+    [find, FIND_JS, home],
   );
 }
 
@@ -1017,14 +1033,36 @@ async function mintStop(
         { timeout: FIND_TIMEOUT_MS },
       )
       .catch(() => {});
+  const mint = async (via) => {
+    if (stop.via) fields.via = via;
+    const result = await mintInPage(page, stop.find, fields, at, texts);
+    // The testids replay added can push a stop past the part cap; the
+    // manifest's own via fit before them.
+    if (
+      result.error?.startsWith("anchor is") &&
+      stop.via &&
+      fields.via !== stop.via
+    )
+      return mintInPage(
+        page,
+        stop.find,
+        { ...fields, via: stop.via },
+        at,
+        texts,
+      );
+    return result;
+  };
 
   // A translated stop's element text, per language: an element rendered in
   // one language (a validation message) keeps that text when the app merely
   // switches, so each language gets its own replay.
   const texts = {};
   if (stop.i18n) {
-    await reach();
+    const via = await reach();
     await waitFor();
+    // A sole-testid anchor drops every txt in `mintInPage`, so the language
+    // passes would read texts nobody keeps; mint from this page as it stands.
+    if (await soleTestid(page, stop.find)) return mint(via);
     const home = await readElement(page, stop.find);
     if (home) {
       texts[home.lang] = home.txt;
@@ -1036,7 +1074,7 @@ async function mintStop(
         for (let attempt = 0; attempt < 3; attempt++) {
           if (!(await reach(lang).catch(() => null))) continue;
           await page.waitForTimeout(settleMs);
-          const there = await readElement(page, stop.find, home.spot);
+          const there = await readElement(page, stop.find, home);
           if (there?.lang !== lang || !there.txt) continue;
           texts[lang] = there.txt;
           if (there.txt !== home.txt) break;
@@ -1046,20 +1084,31 @@ async function mintStop(
   }
 
   const via = await reach();
-  if (stop.via) fields.via = via;
   // A lazy route renders long after `domcontentloaded`, so wait for the
   // element itself rather than guessing how long the page needs.
   await waitFor();
-  const result = await mintInPage(page, stop.find, fields, at, texts);
-  // The testids replay added can push a stop past the part cap; the manifest's
-  // own via fit before them.
-  if (
-    result.error?.startsWith("anchor is") &&
-    stop.via &&
-    fields.via !== stop.via
-  )
-    return mintInPage(page, stop.find, { ...fields, via: stop.via }, at, texts);
-  return result;
+  return mint(via);
+}
+
+/** Whether the anchor captured for `find` is one testid, unique on the page. */
+function soleTestid(page, find) {
+  return page
+    .evaluate(
+      async ([find, findJs]) => {
+        const el = (0, eval)(findJs)(find);
+        if (!el) return false;
+        const anchorMod = await import(
+          /* @vite-ignore */ "/__review/anchor.js"
+        );
+        const { s } = anchorMod.captureAnchorSignals(el);
+        return (
+          /^\[data-testid="[^"]+"\]$/.test(s) &&
+          document.querySelectorAll(s).length === 1
+        );
+      },
+      [find, FIND_JS],
+    )
+    .catch(() => false);
 }
 
 /**

@@ -1,6 +1,6 @@
 {
   "name": "backend.ai-ui",
-  "version": "26.9.0-alpha.0",
+  "version": "26.10.0-alpha.1",
   "description": "React components for Backend.AI",
   "repository": {
     "type": "git",
@@ -20,16 +20,24 @@
   "module": "./dist/backend.ai-ui.js",
   "types": "./dist/index.d.ts",
   "sideEffects": [
-    "**/*.css"
+    "**/*.css",
+    "./src/index.ts"
   ],
   "exports": {
     ".": {
+      "@backend.ai/source": "./src/index.ts",
       "import": "./dist/backend.ai-ui.js",
       "types": "./dist/index.d.ts"
     },
     "./locale/*": {
+      "@backend.ai/source": "./src/locale/*.ts",
       "import": "./dist/locale/*.js",
       "types": "./dist/locale/*.d.ts"
+    },
+    "./theme": {
+      "@backend.ai/source": "./src/theme/index.ts",
+      "import": "./dist/theme.js",
+      "types": "./dist/theme/index.d.ts"
     },
     "./styles.css": "./dist/backend.ai-ui.css"
   },
@@ -44,15 +52,14 @@
     "vitest:watch": "vitest",
     "storybook": "portless run --force -- sh -c 'storybook dev -p $PORT'",
     "build-storybook": "storybook build",
-    "lint": "eslint ./src --ignore-pattern '**.graphql.**' --max-warnings=0 --no-warn-ignored --concurrency auto",
-    "lint:ci": "eslint ./src --ignore-pattern '**.graphql.**' --max-warnings=0 --no-warn-ignored --concurrency auto --cache --cache-strategy content --cache-location .eslintcache",
+    "lint": "eslint ./src ./.storybook --ignore-pattern '**.graphql.**' --max-warnings=0 --no-warn-ignored --concurrency auto",
+    "lint:ci": "eslint ./src ./.storybook --ignore-pattern '**.graphql.**' --max-warnings=0 --no-warn-ignored --concurrency auto --cache --cache-strategy content --cache-location .eslintcache",
     "lint:files": "eslint --ignore-pattern '**.graphql.**' --max-warnings=0 --no-warn-ignored --concurrency auto --cache --cache-strategy content --cache-location .eslintcache",
     "prepublishOnly": "pnpm lint && pnpm test && pnpm build"
   },
   "peerDependencies": {
-    "@astryxdesign/core": "catalog:",
-    "@astryxdesign/theme-neutral": "catalog:",
     "@astryxdesign/lab": "catalog:",
+    "@lablup/ui-common": "catalog:",
     "@tanstack/react-query": "catalog:",
     "graphql": "catalog:",
     "react": "catalog:",
@@ -64,12 +71,9 @@
   "dependencies": {
     "@dicebear/core": "^9.4.3",
     "@dicebear/shapes": "^9.4.2",
-    "@dnd-kit/core": "^6.3.1",
-    "@dnd-kit/modifiers": "^9.0.0",
-    "@dnd-kit/sortable": "^10.0.0",
-    "@dnd-kit/utilities": "^3.2.2",
     "big.js": "catalog:",
     "classnames": "catalog:",
+    "copy-to-clipboard": "^3.3.3",
     "dayjs": "catalog:",
     "i18next": "catalog:",
     "lodash-es": "catalog:",
@@ -82,8 +86,8 @@
   "devDependencies": {
     "@astryxdesign/cli": "catalog:",
     "@astryxdesign/core": "catalog:",
-    "@astryxdesign/theme-neutral": "catalog:",
     "@astryxdesign/lab": "catalog:",
+    "@lablup/ui-common": "catalog:",
     "@eslint/js": "catalog:",
     "@jest/expect": "catalog:",
     "@jest/globals": "catalog:",

@@ -1,4 +1,3 @@
-import { BAI_MODAL_OPEN_ATTRIBUTE } from '../../../../packages/backend.ai-ui/src/components/dialogLevelStack';
 import {
   findAnchorTarget,
   findViaTarget,
@@ -9,6 +8,7 @@ import {
   quickFindTarget,
 } from './resolve.js';
 import type { AnchorV3 } from './types.js';
+import { MODAL_OPEN_ATTRIBUTE } from '@lablup/ui-common/Modal';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 /** react-grab 0.1.50's synchronous `getDisplayName`, stubbed per test. */
@@ -586,10 +586,10 @@ describe('isBehindModal', () => {
 
   it('counts the app dialog portal, which carries no aria-modal', () => {
     // Retyped in the overlay, which cannot import the package it reviews.
-    expect(PORTAL_MODAL).toContain(`[${BAI_MODAL_OPEN_ATTRIBUTE}]`);
+    expect(PORTAL_MODAL).toContain(`[${MODAL_OPEN_ATTRIBUTE}]`);
     document.body.insertAdjacentHTML(
       'beforeend',
-      `<div ${BAI_MODAL_OPEN_ATTRIBUTE}><div role="dialog"><button id="in">in</button></div></div>`,
+      `<div ${MODAL_OPEN_ATTRIBUTE}><div role="dialog"><button id="in">in</button></div></div>`,
     );
     expect(isBehindModal(byId('page'))).toBe(true);
     expect(isBehindModal(byId('in'))).toBe(false);
@@ -599,8 +599,8 @@ describe('isBehindModal', () => {
     // The level stack inerts a covered root; a reopened one keeps its place.
     document.body.insertAdjacentHTML(
       'beforeend',
-      '<div data-bai-modal-open><button id="top">top</button></div>' +
-        '<div data-bai-modal-open inert><button id="under">under</button></div>',
+      '<div data-uic-modal-open><button id="top">top</button></div>' +
+        '<div data-uic-modal-open inert><button id="under">under</button></div>',
     );
     expect(isBehindModal(byId('top'))).toBe(false);
     expect(isBehindModal(byId('under'))).toBe(true);
@@ -702,10 +702,10 @@ describe('findViaTarget', () => {
   it('points at nothing under an open modal, or when the label is gone', () => {
     document.body.insertAdjacentHTML(
       'beforeend',
-      '<div data-bai-modal-open><div role="dialog">form</div></div>',
+      '<div data-uic-modal-open><div role="dialog">form</div></div>',
     );
     expect(findViaTarget([click('Create Folder', 'create')])).toBeNull();
-    document.querySelector('[data-bai-modal-open]')!.remove();
+    document.querySelector('[data-uic-modal-open]')!.remove();
     expect(findViaTarget([click('Delete')])).toBeNull();
   });
 

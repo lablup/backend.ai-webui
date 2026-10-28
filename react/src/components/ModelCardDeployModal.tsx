@@ -10,19 +10,18 @@ import { useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
-import { Banner } from '@astryxdesign/core/Banner';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Banner } from '@lablup/ui-common/Banner';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIAvailablePresetSelect,
   BAIFlex,
   BAILink,
   BAIModal,
-  type BAIModalProps,
   BAIProjectResourceGroupSelect,
-  toLocalId,
   useErrorMessageResolver,
   useProjectResourceGroups,
+  type BAIModalProps,
 } from 'backend.ai-ui';
 import { Info } from 'lucide-react';
 import React, {
@@ -83,6 +82,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
     graphql`
       fragment ModelCardDeployModalFragment on ModelCardV2 {
         id
+        entityId
         availablePresets(
           orderBy: [{ field: RANK, direction: "ASC" }]
           limit: 100
@@ -90,6 +90,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
           edges {
             node {
               id
+              entityId
               name
               runtimeVariantId
               ...DeploymentPresetDetailModalFragment
@@ -100,7 +101,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
     `,
     modelCardFrgmt ?? null,
   );
-  const modelCardRowId = modelCard?.id ? toLocalId(modelCard.id) : undefined;
+  const modelCardRowId = modelCard?.entityId;
   const availablePresets =
     modelCard?.availablePresets?.edges
       ?.map((edge) => edge?.node)
@@ -136,8 +137,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
   >(undefined);
   const [presetDetailId, setPresetDetailId] = useState<string | null>(null);
   const effectivePresetId =
-    userSelectedPresetId ??
-    (availablePresets[0]?.id ? toLocalId(availablePresets[0].id) : undefined);
+    userSelectedPresetId ?? availablePresets[0]?.entityId;
 
   // The resource-group selection is held in an antd Form. `Form.useWatch`
   // subscribes to changes on the `resourceGroup` field so the Deploy button's
@@ -151,7 +151,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
     if (!modelCardRowId || !projectId) return Promise.resolve();
 
     const presetId = isAutoDeployScenario
-      ? toLocalId(availablePresets[0]?.id)
+      ? availablePresets[0]?.entityId
       : effectivePresetId;
     const resourceGroup = isAutoDeployScenario
       ? resourceGroups[0]?.name
@@ -279,6 +279,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
     >
       {noAvailablePresets && (
         <Banner
+          role="status"
           status="info"
           title={t('deployment.NoPresetsAvailable')}
           description={
@@ -352,7 +353,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
           open={!!presetDetailId}
           presetFrgmt={
             presetDetailId
-              ? availablePresets.find((p) => toLocalId(p.id) === presetDetailId)
+              ? availablePresets.find((p) => p.entityId === presetDetailId)
               : null
           }
           onCancel={() => setPresetDetailId(null)}

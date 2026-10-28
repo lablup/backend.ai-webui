@@ -9,9 +9,9 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { toProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIButton,
   BAIFlex,
@@ -20,7 +20,6 @@ import {
   BAISelect,
   BAIVFolderSelect,
   BAIVFolderSelectRef,
-  convertToUUID,
   mergeFilterValues,
   toGlobalId,
   toLocalId,
@@ -31,7 +30,7 @@ import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useMutation, useFragment } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 export interface ImportArtifactRevisionToFolderModalProps extends Omit<
   BAIModalProps,
@@ -90,6 +89,7 @@ const ImportArtifactRevisionToFolderModal = ({
       fragment ImportArtifactRevisionToFolderModalArtifactRevisionFragment on ArtifactRevision
       @relay(plural: true) {
         id @required(action: THROW)
+        fieldId
       }
     `,
     selectedArtifactRevisionFrgmt,
@@ -139,6 +139,7 @@ const ImportArtifactRevisionToFolderModal = ({
               version
               artifact {
                 id
+                entityId
                 name
               }
             }
@@ -149,7 +150,7 @@ const ImportArtifactRevisionToFolderModal = ({
 
   const selectedArtifactRevisionIds = _.map(
     selectedArtifactRevisions,
-    (revision) => revision.id,
+    (revision) => revision.fieldId,
   );
 
   return (
@@ -178,10 +179,7 @@ const ImportArtifactRevisionToFolderModal = ({
               importArtifacts({
                 variables: {
                   input: {
-                    artifactRevisionIds: _.map(
-                      selectedArtifactRevisionIds,
-                      (id) => toLocalId(id),
-                    ),
+                    artifactRevisionIds: selectedArtifactRevisionIds,
                     vfolderId: values.vfolderId
                       ? toLocalId(values.vfolderId)
                       : null,
@@ -225,7 +223,7 @@ const ImportArtifactRevisionToFolderModal = ({
                           taskId: task.taskId!,
                           version: task.artifactRevision.version,
                           artifact: {
-                            id: toLocalId(artifact.id ?? ''),
+                            id: artifact.entityId,
                             name: artifact.name ?? '',
                           },
                         };
@@ -266,6 +264,7 @@ const ImportArtifactRevisionToFolderModal = ({
             {/* antd `Alert` → `Banner` (MAPPING §4): `type` → `status`,
                 `showIcon` dropped (Banner always renders its status icon). */}
             <Banner
+              role="alert"
               status="warning"
               title={t('importArtifactRevisionToFolderModal.OverwriteWarning')}
               style={{ marginBottom: token('--spacing-5') }}
@@ -361,13 +360,8 @@ const ImportArtifactRevisionToFolderModal = ({
         onRequestClose={(result) => {
           toggleIsOpenCreateModal();
           if (result) {
-            // Set the created folder as the selected value in the vfolderId
-            // TODO: FolderCreateModalV2 returns id without '-'.
             formRef.current?.setFieldsValue({
-              vfolderId: toGlobalId(
-                'VirtualFolderNode',
-                convertToUUID(result.id),
-              ),
+              vfolderId: toGlobalId('VirtualFolderNode', result.entityId),
             });
             vfolderSelectRef.current?.refetch();
           }

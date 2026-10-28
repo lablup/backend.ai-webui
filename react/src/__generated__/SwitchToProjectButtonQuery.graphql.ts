@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3848ed0926bc9964b6ebdb3772c96e5c>>
+ * @generated SignedSource<<21fa9830ab489a11a347093f654564c8>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -82,16 +82,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "d9b043a52eacadb018a0097fe3c1f3c2",
+    "cacheID": "7a607b48620c9c6baa80d008eedb6147",
     "id": null,
     "metadata": {},
     "name": "SwitchToProjectButtonQuery",
     "operationKind": "query",
-    "text": "query SwitchToProjectButtonQuery(\n  $projectId: String!\n) {\n  group_node(id: $projectId) @since(version: \"24.03.0\") {\n    id\n    name\n  }\n}\n"
+    "text": "query SwitchToProjectButtonQuery(\n  $projectId: String!\n) {\n  group_node(id: $projectId) {\n    id\n    name\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "4618e2aed2bc3c75a1d0a91f0b01c28c";
+(node as any).hash = "cca58f1c222430cbc38fa4c733d52d71";
 
 export default node;

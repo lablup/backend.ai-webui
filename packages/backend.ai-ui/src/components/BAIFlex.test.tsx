@@ -1,9 +1,56 @@
 import BAIFlex from './BAIFlex';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
+import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
+import { dirname, resolve } from 'node:path';
 
-// Nothing is mocked: `--spacing-*` are core Astryx tokens, and `useTheme()`
-// resolves those from its JS `tokenDefaults` without a `<Theme>` or its CSS.
+/**
+ * The spacing custom properties as Astryx's stylesheet declares them, read
+ * from the file the app loads (`@lablup/ui-common/astryx.css` imports core's).
+ * jsdom applies no stylesheet, so this is what a browser resolves
+ * `var(--spacing-N)` to.
+ */
+const astryxSpacing = (() => {
+  const require = createRequire(import.meta.url);
+  const mirror = require.resolve('@lablup/ui-common/astryx.css');
+  const target = /@import "([^"]+)"/.exec(readFileSync(mirror, 'utf8'))![1];
+  const css = readFileSync(
+    createRequire(resolve(dirname(mirror), 'x.js')).resolve(target),
+    'utf8',
+  );
+  const vars = new Map<string, number>();
+  // Astryx 0.7 declares spacing in rem; the browser's root is 16px.
+  for (const [, name, value, unit] of css.matchAll(
+    /(--spacing-[\d-]+):\s*([\d.]+)(px|rem)/g,
+  )) {
+    const px = unit === 'rem' ? Number(value) * 16 : Number(value);
+    if (vars.has(name) && vars.get(name) !== px) {
+      throw new Error(`${name} is declared with two values`);
+    }
+    vars.set(name, px);
+  }
+  return vars;
+})();
+
+/** A gap declaration as a browser computes it, one or two lengths. */
+const toPx = (gap: string) =>
+  gap
+    .split(' ')
+    .map((part) => {
+      const v = /^var\((--[\w-]+)\)$/.exec(part);
+      if (v) {
+        const px = astryxSpacing.get(v[1]);
+        if (px === undefined) throw new Error(`${v[1]} is not declared`);
+        return `${px}px`;
+      }
+      return part;
+    })
+    .join(' ');
+
+const gapOf = (element: ReturnType<typeof render>['container']) =>
+  (element.firstChild as HTMLElement).style.gap;
+
 describe('BAIFlex', () => {
   test('default render', () => {
     const { baseElement } = render(<BAIFlex />);
@@ -47,9 +94,9 @@ describe('BAIFlex', () => {
   });
 
   // Regression guard for the collapsed-spacing bug: every named gap MUST
-  // produce a concrete gap. A token name the theme does not provide yields
-  // `undefined`, React omits the declaration, and the flex silently packs to
-  // a 0 gap — visible as "layout broken everywhere", with nothing failing.
+  // produce a concrete gap. A missing rung yields `undefined`, React omits the
+  // declaration, and the flex silently packs to a 0 gap — visible as "layout
+  // broken everywhere", with nothing failing.
   test.each([
     ['xxs', '4px'],
     ['xs', '8px'],
@@ -61,6 +108,21 @@ describe('BAIFlex', () => {
     ['xxl', '48px'],
   ] as const)('gap="%s" resolves to %s', (gap, expected) => {
     const { container } = render(<BAIFlex gap={gap} />);
-    expect((container.firstChild as HTMLElement).style.gap).toBe(expected);
+    expect(gapOf(container)).toMatch(/^var\(--spacing-[\d-]+\)$/);
+    expect(toPx(gapOf(container))).toBe(expected);
+  });
+
+  test('a row/column tuple resolves each rung', () => {
+    const { container } = render(<BAIFlex gap={['sm', 'xxl']} />);
+    expect(toPx(gapOf(container))).toBe('12px 48px');
+  });
+
+  test('a number is pixels, and a tuple mixes numbers and rungs', () => {
+    const { container: numeric } = render(<BAIFlex gap={10} />);
+    expect(gapOf(numeric)).toBe('10px');
+    const { container: tuple } = render(<BAIFlex gap={[16, 'xs']} />);
+    expect(toPx(gapOf(tuple))).toBe('16px 8px');
+    const { container: none } = render(<BAIFlex />);
+    expect(gapOf(none)).toBe('0px');
   });
 });

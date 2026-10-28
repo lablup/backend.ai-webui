@@ -7,17 +7,17 @@ import { Form, FormInstance } from '../form-engine';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
-import { ResourceAllocationFormValue } from './SessionFormItems/ResourceAllocationFormItems';
-import { AstryxFormNumberInput } from './astryxFormControls';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import type { ResourceAllocationFormValue } from './SessionFormItems/ResourceAllocationFormItems';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIFlex,
   BAIMetadataList,
   BAIModal,
   BAIModalProps,
   convertToBinaryUnit,
+  BAINumberInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useRef } from 'react';
@@ -213,12 +213,11 @@ const LaunchMultipleSessionsModal: React.FC<
             ]}
             style={{ marginBottom: 0 }}
           >
-            {/* antd `InputNumber` → `AstryxFormNumberInput` (MAPPING §3.17):
-                `suffix` → `units` (a genuinely better fit), `precision={0}` →
-                `isIntegerOnly`, and `style={{width:'100%'}}` is the adapter's
-                default `width`. */}
-            <AstryxFormNumberInput
-              label={t('session.launcher.LaunchMultipleSessionsSessionCount')}
+            <BAINumberInput
+              width="100%"
+              aria-label={t(
+                'session.launcher.LaunchMultipleSessionsSessionCount',
+              )}
               min={MIN_COUNT}
               isIntegerOnly
               step={1}

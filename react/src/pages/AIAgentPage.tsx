@@ -8,30 +8,30 @@ import { useWebUINavigate } from '../hooks';
 import { AIAgent, useAIAgent } from '../hooks/useAIAgent';
 import { useProjectPath } from '../hooks/useRouteScope';
 import './AIAgentPage.css';
-import { Button } from '@astryxdesign/core/Button';
-import { Card } from '@astryxdesign/core/Card';
+import { Button } from '@lablup/ui-common/Button';
+import { Card } from '@lablup/ui-common/Card';
 import {
   DropdownMenu,
   type DropdownMenuOption,
-} from '@astryxdesign/core/DropdownMenu';
-import { Grid } from '@astryxdesign/core/Grid';
-import { Text } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
-import { useTheme } from '@astryxdesign/core/theme';
+} from '@lablup/ui-common/DropdownMenu';
+import { Grid } from '@lablup/ui-common/Grid';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAISkeleton,
-  BAIFlex,
-  BAIUnmountAfterClose,
   BAIDeleteConfirmModal,
+  BAIFlex,
+  BAISkeleton,
+  BAIUnmountAfterClose,
   tokenColorForTagColor,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
-  Trash2,
   EllipsisVertical,
-  Undo2,
   PlusIcon,
   SquarePenIcon,
+  Trash2,
+  Undo2,
 } from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';

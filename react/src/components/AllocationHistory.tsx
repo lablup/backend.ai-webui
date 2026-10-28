@@ -4,13 +4,13 @@
  */
 import { Form } from '../form-engine';
 import AllocationHistoryStatistics from './AllocationHistoryStatistics';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Selector } from '@astryxdesign/core/Selector';
+import { Banner } from '@lablup/ui-common/Banner';
 import {
   BAISkeleton,
   useUpdatableState,
   BAIFlex,
   BAIFetchKeyButton,
+  BAISelector,
 } from 'backend.ai-ui';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Suspense, useTransition } from 'react';
@@ -47,7 +47,11 @@ const AllocationHistory: React.FC = () => {
 
   return (
     <BAIFlex direction="column" align="stretch" gap={'md'}>
-      <Banner status="info" title={t('statistics.UsageHistoryNote')} />
+      <Banner
+        role="status"
+        status="info"
+        title={t('statistics.UsageHistoryNote')}
+      />
       <BAIFlex gap={'sm'} justify="between">
         <Form.Item
           label={t('statistics.SelectPeriod')}
@@ -58,9 +62,8 @@ const AllocationHistory: React.FC = () => {
               `Form.Item` label the only one rendered (flip recipe).
               `popupMatchSelectWidth={false}` has no destination — Astryx sizes
               its popup to the trigger. */}
-          <Selector
-            label={t('statistics.SelectPeriod')}
-            isLabelHidden
+          <BAISelector
+            aria-label={t('statistics.SelectPeriod')}
             options={periodOptions}
             value={selectedPeriod}
             onChange={(value) => setSelectedPeriod(value as Period)}

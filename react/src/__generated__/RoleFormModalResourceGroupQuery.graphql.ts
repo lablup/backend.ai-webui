@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<da468024d567e8bb33d11b396ae24e87>>
+ * @generated SignedSource<<3446a13e55c2d095ac0619f3862cf3da>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -156,12 +156,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "92caa24d9f102ece23d6e349aca8cd2e",
+    "cacheID": "0e22023e9b74f8165a8c19ef7068433c",
     "id": null,
     "metadata": {},
     "name": "RoleFormModalResourceGroupQuery",
     "operationKind": "query",
-    "text": "query RoleFormModalResourceGroupQuery {\n  ...BAIAdminResourceGroupSelect_resourceGroupsFragment\n}\n\nfragment BAIAdminResourceGroupSelect_resourceGroupsFragment on Query {\n  adminResourceGroups(first: 10) @since(version: \"26.2.0\") {\n    count\n    edges {\n      node {\n        id\n        name\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query RoleFormModalResourceGroupQuery {\n  ...BAIAdminResourceGroupSelect_resourceGroupsFragment\n}\n\nfragment BAIAdminResourceGroupSelect_resourceGroupsFragment on Query {\n  adminResourceGroups(first: 10) {\n    count\n    edges {\n      node {\n        id\n        name\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();

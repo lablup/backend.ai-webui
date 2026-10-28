@@ -15,17 +15,19 @@ import DeploymentSchedulingHistoryModal, {
   DeploymentSchedulingHistoryQuery,
 } from './DeploymentSchedulingHistoryModal';
 import DeploymentSettingModal from './DeploymentSettingModal';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Text } from '@astryxdesign/core/Text';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAIButton,
   BAICard,
   BAIDeleteConfirmModal,
   BAIDeploymentStatusBadge,
   BAIDeploymentTagTokens,
+  BAIEntityLabelSettingModal,
+  BAIEntityLabelTokens,
   BAIFetchKeyButton,
   BAIFlex,
   BAIId,
@@ -34,13 +36,18 @@ import {
   BAIUnmountAfterClose,
   BAIBooleanToken,
   isDeploymentInStoppedCategory,
-  safeDecodeUuid,
-  toLocalId,
+  toEntityLabelFilter,
   useBAILogger,
-  useConnectedBAIClient,
+  useIsLabelableEntityType,
 } from 'backend.ai-ui';
 import type { BAIDeploymentStatus } from 'backend.ai-ui';
-import { Trash2, History, EllipsisVertical, SquarePenIcon } from 'lucide-react';
+import {
+  Trash2,
+  History,
+  EllipsisVertical,
+  SquarePenIcon,
+  TagsIcon,
+} from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation, useQueryLoader } from 'react-relay';
@@ -75,6 +82,7 @@ const DeploymentOverviewContent: React.FC<{
   const { t } = useTranslation();
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
+  const isLabelable = useIsLabelableEntityType('deployment');
 
   const projectName =
     deployment?.metadata.projectV2?.basicInfo?.name ??
@@ -113,9 +121,9 @@ const DeploymentOverviewContent: React.FC<{
         )}
       </MetadataListItem>
       <MetadataListItem label={t('deployment.DeploymentId')}>
-        {deployment?.id ? (
+        {deployment?.entityId ? (
           <BAIId
-            globalId={deployment.id}
+            uuid={deployment.entityId}
             copyable
             ellipsis={false}
             style={{ maxWidth: 'none' }}
@@ -154,24 +162,25 @@ const DeploymentOverviewContent: React.FC<{
       <MetadataListItem label={t('deployment.Tags')}>
         <BAIDeploymentTagTokens
           metadataFrgmt={deployment?.metadata ?? null}
-          onTagClick={(tag) => {
-            // Stay within the same deployment-list URL space the user came
-            // from (admin / project-admin / user `deployments`) so breadcrumb /
-            // back navigation remain coherent — see FR-2847 (admin) and
-            // FR-2930 (project admin) for the per-scope detail-route precedent.
-            // The current scope (from the route handle) plus the active project
-            // name yield the correct scope-aware list path via `useProjectPath`.
-            const targetPathname = buildProjectPath('deployments');
-            webuiNavigate({
-              pathname: targetPathname,
-              search: new URLSearchParams({
-                filter: JSON.stringify({ tags: { iContains: tag } }),
-              }).toString(),
-            });
-          }}
           fallback={renderFallback()}
         />
       </MetadataListItem>
+      {isLabelable && (
+        <MetadataListItem label={t('entityLabel.Labels')}>
+          <BAIEntityLabelTokens
+            entityLabelsFrgmt={deployment?.entityLabels}
+            onLabelClick={(label) => {
+              webuiNavigate({
+                pathname: buildProjectPath('deployments'),
+                search: new URLSearchParams({
+                  filter: JSON.stringify(toEntityLabelFilter(label)),
+                }).toString(),
+              });
+            }}
+            fallback={renderFallback()}
+          />
+        </MetadataListItem>
+      )}
     </BAIMetadataList>
   );
 };
@@ -198,6 +207,7 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
     graphql`
       fragment DeploymentBasicInfoCard_deployment on ModelDeployment {
         id
+        entityId
         ...DeploymentSettingModal_deployment
         metadata {
           name
@@ -205,7 +215,7 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
           domainName
           status
           resourceGroupName
-          projectV2 @since(version: "26.4.3") {
+          projectV2 {
             basicInfo {
               name
             }
@@ -219,6 +229,10 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
         replicaState {
           desiredReplicaCount
         }
+        entityLabels(limit: 100) {
+          ...BAIEntityLabelTokensFragment
+          ...BAIEntityLabelSettingModalFragment
+        }
       }
     `,
     deploymentFrgmt,
@@ -227,14 +241,12 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
   const [settingModalOpen, setSettingModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [historyModalOpen, setHistoryModalOpen] = useState(false);
+  const isLabelable = useIsLabelableEntityType('deployment');
+  const [isLabelModalOpen, setIsLabelModalOpen] = useState(false);
   const [deploymentHistoryQueryRef, loadDeploymentHistoryQuery] =
     useQueryLoader<DeploymentSchedulingHistoryModalQuery>(
       DeploymentSchedulingHistoryQuery,
     );
-
-  const baiClient = useConnectedBAIClient();
-  const supportsDeploymentSchedulingHistory =
-    baiClient?.supports('deployment-scheduling-history') ?? false;
 
   const [commitDeleteMutation, isInFlightDeleteMutation] =
     useMutation<DeploymentBasicInfoCardDeleteMutation>(graphql`
@@ -257,11 +269,11 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
   const listPath = buildProjectPath('deployments');
 
   const handleDelete = () => {
-    if (!deployment?.id) return;
+    if (!deployment?.entityId) return;
     commitDeleteMutation({
       variables: {
         input: {
-          id: toLocalId(deployment.id) ?? deployment.id,
+          id: deployment.entityId,
         },
       },
       onCompleted: (_response, errors) => {
@@ -316,6 +328,17 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
                 placement="below"
                 alignment="end"
                 items={[
+                  ...(isLabelable
+                    ? [
+                        {
+                          label: t('entityLabel.EditLabels'),
+                          icon: <TagsIcon size="1em" />,
+                          isDisabled:
+                            isDeploymentInStoppedCategory(deploymentStatus),
+                          onClick: () => setIsLabelModalOpen(true),
+                        },
+                      ]
+                    : []),
                   {
                     label: t('deployment.DeleteDeployment'),
                     icon: <Trash2 size="1em" />,
@@ -330,22 +353,17 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
             </ButtonGroup>
           </BAIFlex>
         }
-        styles={{ body: { paddingTop: 0 } }}
       >
         <DeploymentOverviewContent
           deployment={deployment}
           onClickSchedulingHistoryAction={
-            supportsDeploymentSchedulingHistory && deployment?.id
+            deployment?.entityId
               ? async () => {
                   // Render-as-you-fetch: start the request in the open event.
-                  const rawId = deployment.id;
-                  if (!rawId) {
-                    return;
-                  }
                   loadDeploymentHistoryQuery(
                     {
                       scope: {
-                        deploymentId: safeDecodeUuid(rawId) ?? rawId,
+                        deploymentId: deployment.entityId,
                       },
                       orderBy: [{ field: 'UPDATED_AT', direction: 'DESC' }],
                       limit: 10,
@@ -368,6 +386,23 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
           deploymentFrgmt={deployment}
           onRequestClose={(success) => {
             setSettingModalOpen(false);
+            if (success) onRefetch();
+          }}
+        />
+      )}
+      {deployment != null && (
+        <BAIEntityLabelSettingModal
+          open={isLabelModalOpen}
+          entityType="deployment"
+          targets={[
+            {
+              entityId: deployment.entityId,
+              name: deployment.metadata.name,
+            },
+          ]}
+          entityLabelsFrgmt={deployment.entityLabels}
+          onRequestClose={(success) => {
+            setIsLabelModalOpen(false);
             if (success) onRefetch();
           }}
         />

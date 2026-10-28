@@ -9,6 +9,7 @@ import { ResourceGroupSettingModalUpdateMutation } from '../__generated__/Resour
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { newLineToBrElement } from '../helper';
+import { getSessionTypeLabel } from '../helper/sessionTypeLabel';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import {
   computeProxyDelta,
@@ -18,18 +19,9 @@ import {
 } from '../hooks/useSFTPResourceGroups';
 import BAIFormItem from './BAIFormItem';
 import { ScalingGroupOpts } from './ResourceGroupList';
-import {
-  AstryxFormMultiSelector,
-  AstryxFormNumberInput,
-  AstryxFormSelector,
-  AstryxFormSwitch,
-  AstryxFormTextArea,
-  AstryxFormTextInput,
-} from './astryxFormControls';
-import { Grid } from '@astryxdesign/core/Grid';
+import { Grid } from '@lablup/ui-common/Grid';
 import {
   BAICard,
-  BAIDomainSelect,
   BAIFlex,
   BAIModal,
   BAIModalProps,
@@ -38,6 +30,12 @@ import {
   BAIStorageProxySelect,
   omitNullAndUndefinedFields,
   useBAILogger,
+  BAIMultiSelector,
+  BAINumberInput,
+  BAISelector,
+  BAISwitch,
+  BAITextArea,
+  BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense, useDeferredValue, useMemo, useRef } from 'react';
@@ -46,7 +44,6 @@ import { graphql, useFragment, useMutation } from 'react-relay';
 
 type FormInputType = {
   name: string;
-  domain: string;
   description: string;
   allowedSessionTypes: string[];
   wsProxyAddress: string;
@@ -158,7 +155,6 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
   const INITIAL_FORM_VALUES = omitNullAndUndefinedFields({
     name: resourceGroup?.name,
     description: resourceGroup?.description,
-    domain: currentDomain,
     scheduler: resourceGroup?.scheduler ?? 'fifo',
     allowedSessionTypes: schedulerOpts?.allowed_session_types ?? [
       'batch',
@@ -307,7 +303,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
 
                 commitAssociateDomain({
                   variables: {
-                    domain: values.domain,
+                    domain: currentDomain,
                     scaling_group: values.name,
                   },
                   onCompleted: (
@@ -366,32 +362,16 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               },
             ]}
           >
-            <AstryxFormTextInput
-              label={t('resourceGroup.Name')}
+            <BAITextInput
+              aria-label={t('resourceGroup.Name')}
               disabled={!!resourceGroup}
             />
           </BAIFormItem>
-          {!resourceGroup ? (
-            <BAIFormItem
-              label={t('resourceGroup.Domain')}
-              name="domain"
-              rules={[
-                {
-                  required: true,
-                  message: t('general.ValueRequired', {
-                    name: t('resourceGroup.Domain'),
-                  }),
-                },
-              ]}
-            >
-              <BAIDomainSelect />
-            </BAIFormItem>
-          ) : null}
           <BAIFormItem
             label={t('resourceGroup.Description')}
             name="description"
           >
-            <AstryxFormTextArea label={t('resourceGroup.Description')} />
+            <BAITextArea aria-label={t('resourceGroup.Description')} />
           </BAIFormItem>
           <BAIFormItem
             label={t('resourceGroup.AllowedSessionTypes')}
@@ -405,14 +385,12 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               },
             ]}
           >
-            <AstryxFormMultiSelector
-              label={t('resourceGroup.AllowedSessionTypes')}
-              options={[
-                { label: 'Batch', value: 'batch' },
-                { label: 'Interactive', value: 'interactive' },
-                { label: 'Inference', value: 'inference' },
-                { label: 'System', value: 'system' },
-              ]}
+            <BAIMultiSelector
+              aria-label={t('resourceGroup.AllowedSessionTypes')}
+              options={_.map(
+                ['batch', 'interactive', 'inference', 'system'],
+                (value) => ({ label: getSessionTypeLabel(t, value), value }),
+              )}
             />
           </BAIFormItem>
           <BAIFormItem
@@ -420,8 +398,8 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
             name="wsProxyAddress"
             rules={[{ type: 'url', message: t('error.InvalidUrl') }]}
           >
-            <AstryxFormTextInput
-              label={t('resourceGroup.AppProxyAddress')}
+            <BAITextInput
+              aria-label={t('resourceGroup.AppProxyAddress')}
               placeholder="http://localhost:10200"
             />
           </BAIFormItem>
@@ -429,8 +407,8 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
             label={t('resourceGroup.AppProxyAPIToken')}
             name="wsProxyAPIToken"
           >
-            <AstryxFormTextInput
-              label={t('resourceGroup.AppProxyAPIToken')}
+            <BAITextInput
+              aria-label={t('resourceGroup.AppProxyAPIToken')}
               type="password"
               placeholder={t('resourceGroup.EnterAPIToken')}
             />
@@ -465,7 +443,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               label={t('resourceGroup.Active')}
               name="active"
             >
-              <AstryxFormSwitch label={t('resourceGroup.Active')} />
+              <BAISwitch aria-label={t('resourceGroup.Active')} />
             </BAIFormItem>
             <BAIFormItem
               layout="horizontal"
@@ -473,7 +451,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               name="public"
               tooltip={t('resourceGroup.PublicDesc')}
             >
-              <AstryxFormSwitch label={t('resourceGroup.Public')} />
+              <BAISwitch aria-label={t('resourceGroup.Public')} />
             </BAIFormItem>
           </Grid>
           <BAIFormItem
@@ -488,8 +466,8 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               },
             ]}
           >
-            <AstryxFormSelector
-              label={t('resourceGroup.Scheduler')}
+            <BAISelector
+              aria-label={t('resourceGroup.Scheduler')}
               options={[
                 {
                   label: 'FIFO',
@@ -525,8 +503,9 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                 }
                 name="pendingTimeout"
               >
-                <AstryxFormNumberInput
-                  label={t('resourceGroup.PendingTimeout')}
+                <BAINumberInput
+                  width="100%"
+                  aria-label={t('resourceGroup.PendingTimeout')}
                   units={t('resourceGroup.TimeoutSeconds')}
                   min={0}
                 />
@@ -539,8 +518,9 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                 }
                 name="retriesToSkip"
               >
-                <AstryxFormNumberInput
-                  label={t('resourceGroup.RetriesToSkipDesc')}
+                <BAINumberInput
+                  width="100%"
+                  aria-label={t('resourceGroup.RetriesToSkipDesc')}
                   units={t('resourceGroup.RetriesToSkip')}
                   min={0}
                 />

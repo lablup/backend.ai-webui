@@ -226,7 +226,7 @@ async function createServiceViaUI(
   // the spinbutton inside it. Ant Design Form.Item uses a `label` element that
   // may not have a `for` attribute in all versions, so we use a compound selector.
   const acceleratorFormItem = page
-    .locator('[data-bai-form-item]')
+    .locator('.uic-form-item')
     .filter({ hasText: 'AI Accelerator' })
     .first();
   const acceleratorSpinbutton = acceleratorFormItem.getByRole('spinbutton');
@@ -300,7 +300,7 @@ async function createServiceViaUI(
     // renders the same shell — `Form.Item` IS `BAIFormItem` — so one anchor
     // covers the whole page (it used to need a migrated/unmigrated pair).
     const fieldErrorTexts = await page
-      .locator('[data-bai-form-item-explain-error]')
+      .locator('.uic-form-item__explain-error')
       .allTextContents()
       .catch(() => [] as string[]);
     const fieldErrors = fieldErrorTexts.filter((t) => t.trim().length > 0);

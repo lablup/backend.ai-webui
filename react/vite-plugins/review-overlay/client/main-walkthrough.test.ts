@@ -93,6 +93,7 @@ interface StopSpec {
   id: string;
   testid: string;
   path?: string;
+  query?: string;
   /** The stop's element lives inside a dialog, so it resolves only in one. */
   dlg?: true;
   via?: string;
@@ -105,6 +106,7 @@ const anchorFor = (spec: StopSpec): AnchorV3 => ({
   v: 3,
   s: `[data-testid="${spec.testid}"]`,
   p: spec.path ?? '/',
+  ...(spec.query ? { q: spec.query } : {}),
   tag: 'button',
   txt: spec.testid,
   ...(spec.check === undefined
@@ -268,6 +270,26 @@ describe('the navigator', () => {
 
     expect(seen).toEqual(['/session/start']);
     expect(pillText()).toContain('2 / 3');
+  });
+
+  it('reloads for a stop on the same path, where the router would keep the page mounted', async () => {
+    const seen: string[] = [];
+    window.__BAI_REVIEW__ = { navigate: (to) => seen.push(to) };
+    const hash = [
+      await part({ id: A, testid: 'upload', check: 'Upload is renamed' }),
+      await part({
+        id: B,
+        testid: 'create',
+        query: 'tab=credentials',
+        check: 'The other tab lists credentials',
+      }),
+    ].join('&');
+    await bootOn(hash);
+
+    act('next')?.click();
+
+    expect(seen).toEqual([]);
+    expect(sessionStorage.getItem(WALKTHROUGH_FOCUS_KEY)).toBe(B);
   });
 
   it('takes every mark and attribute off on exit', async () => {
@@ -583,6 +605,15 @@ describe('what the reader gives back', () => {
     node<HTMLTextAreaElement>('[data-pact="comment"]')?.focus();
     press('KeyN');
     expect(pillText()).toContain('1 / 2');
+
+    // So is one typed into the composer the review chord opens.
+    const composer = node<HTMLTextAreaElement>('.compose textarea');
+    expect(composer).toBeTruthy();
+    composer?.focus();
+    press('KeyN');
+    press('KeyV');
+    expect(pillText()).toContain('1 / 2');
+    expect(pillText()).toContain('1 viewed');
   });
 });
 
@@ -717,7 +748,7 @@ describe('a stop under an open modal', () => {
   it('draws no mark over the modal, and marks itself when the modal closes in place', async () => {
     document.body.insertAdjacentHTML(
       'beforeend',
-      '<div data-bai-modal-open id="modal"><div role="dialog"><button data-testid="confirm">confirm</button></div></div>',
+      '<div data-uic-modal-open id="modal"><div role="dialog"><button data-testid="confirm">confirm</button></div></div>',
     );
     const hash = [
       await part({ id: A, testid: 'confirm', check: 'Confirm is primary' }),
@@ -733,8 +764,8 @@ describe('a stop under an open modal', () => {
       'Behind the open dialog',
     );
 
-    // BAIDialog closes in place, dropping the attribute; no childList record.
-    document.getElementById('modal')?.removeAttribute('data-bai-modal-open');
+    // ui-common Modal closes in place, dropping the attribute; no childList record.
+    document.getElementById('modal')?.removeAttribute('data-uic-modal-open');
     await ticks(30);
 
     expect(ordinals()).toEqual(['1', '2']);

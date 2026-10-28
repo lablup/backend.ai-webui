@@ -10,7 +10,7 @@
 // at startup and exposed as VITE_DEV_SHARE_URL.
 import { spawn, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { resolveAppName } from './portless-app-name.mjs';
@@ -66,7 +66,8 @@ const portFlag = process.env.PORT ? `--app-port ${process.env.PORT} ` : '';
 delete env.PORT; // Avoid leaking to portless / CRA before Portless reassigns it.
 
 // Decide the portless app name (`https://<name>.localhost:1355`) — the issue key,
-// the PR number and a word for what this branch is: `fr-3665-pr9049-statusline`.
+// the PR number and a word for what this branch is: `fr-3665-pr9049-statusline`
+// (`gh-10144-pr10150-drawer` on the branch of a GitHub-native issue).
 // Composition rules and fallbacks live in portless-app-name.mjs.
 //
 // PORTLESS_APP_NAME supplies only the descriptive word (the dev-server skill fills
@@ -220,6 +221,15 @@ if (devGwShareBase && devGwPortMismatch) {
   // `portless run` derives the app name itself, so it is unknown until it prints.
   console.log(
     `-- Team share URL: ${devGwShareBase.replace('{app}', '<app>')} — <app> is the name Portless prints below (dev VPN, via dev-gw)`,
+  );
+}
+
+// Vite serves `/config.toml` only when the file exists; otherwise the SPA
+// fallback answers with index.html and every switch silently takes its default.
+if (!existsSync(new URL('../config.toml', import.meta.url))) {
+  console.log(
+    '-- config.toml is missing: /config.toml will be served as index.html and every switch falls back to its default. ' +
+      'Run `pnpm run dev-env use <server>` (writes it from the server\'s probed switches) or copy config.toml.sample.',
   );
 }
 

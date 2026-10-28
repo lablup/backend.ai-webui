@@ -19,21 +19,36 @@ test.describe.serial(
   'RBAC Role CRUD',
   { tag: ['@rbac', '@critical', '@functional'] },
   () => {
+    // BAIPropertyFilter (Astryx PowerSearch) with more than one field opens a
+    // Field / Operator / Value popover; see rbac-role-detail.spec.ts.
+    async function applyRoleNameFilter(page: Page, roleName: string) {
+      await page.getByRole('combobox', { name: 'Search filters' }).click();
+      await page
+        .getByRole('option', { name: 'Role Name', exact: true })
+        .click();
+      await page.getByRole('textbox', { name: 'Value' }).fill(roleName);
+      await page.getByRole('button', { name: 'Apply', exact: true }).click();
+    }
+
     async function searchForRole(page: Page, roleName: string) {
-      // Use the property filter to search for the role by name
-      const filterContainer = page.locator('.ant-space-compact').first();
-      const propertySelect = filterContainer.locator('.ant-select').first();
-      await propertySelect.click();
-      await page.getByRole('option', { name: 'Role Name' }).click();
-      const searchInput = filterContainer
-        .locator('.ant-select')
-        .last()
-        .locator('input');
-      await searchInput.fill(roleName);
-      await page.getByRole('button', { name: 'search' }).click();
-      await expect(
-        page.getByRole('row').filter({ hasText: roleName }).first(),
-      ).toBeVisible({ timeout: 10000 });
+      await clearRoleSearch(page);
+      await applyRoleNameFilter(page, roleName);
+      await expect(roleRowOf(page, roleName)).toBeVisible({ timeout: 10000 });
+    }
+
+    function roleRowOf(page: Page, roleName: string) {
+      return page.getByRole('row').filter({ hasText: roleName }).first();
+    }
+
+    // `RoleDetailDrawer` is an Astryx dialog named by its fixed title.
+    function roleDrawer(page: Page) {
+      return page.getByRole('dialog', { name: 'RBAC Role Info' });
+    }
+
+    // The app-shim's `message.*` renders an Astryx toast (role="status") and
+    // a live-region copy of it, so the text matches twice.
+    function toast(page: Page, text: RegExp) {
+      return page.getByRole('status').filter({ hasText: text }).first();
     }
 
     // Scope status-filter clicks to the radiogroup — the AutoAssign column
@@ -44,16 +59,16 @@ test.describe.serial(
     }
 
     async function clearRoleSearch(page: Page) {
-      // Remove any active filter chip — scope to the filter-chip area so we
-      // don't accidentally click tag close icons in the table itself.
-      const filterChip = page
-        .locator('.ant-space-compact')
-        .first()
-        .locator('.ant-tag-close-icon')
-        .first();
-      if (await filterChip.isVisible({ timeout: 1000 }).catch(() => false)) {
-        await filterChip.click();
-        await expect(filterChip).toBeHidden({ timeout: 5000 });
+      // PowerSearch's own "Clear all" shows only while a filter is committed.
+      const clearAllButton = page.getByRole('button', {
+        name: 'Clear all',
+        exact: true,
+      });
+      if (
+        await clearAllButton.isVisible({ timeout: 1000 }).catch(() => false)
+      ) {
+        await clearAllButton.click();
+        await expect(clearAllButton).toBeHidden({ timeout: 5000 });
       }
     }
 
@@ -146,7 +161,7 @@ test.describe.serial(
       // 8. Verify a validation error appears for the Role Name field.
       // Scope to the modal's form error area for reliability.
       await expect(
-        modal.locator('[data-bai-form-item-explain-error]').filter({
+        modal.locator('.uic-form-item__explain-error').filter({
           hasText: /Please enter Role Name/i,
         }),
       ).toBeVisible({ timeout: 10000 });
@@ -157,24 +172,25 @@ test.describe.serial(
       // 10. Fill in the Description field
       await modal.getByLabel('Description').fill(ROLE_DESCRIPTION);
 
-      // 11. Fill in the required "Scope Type / Target" field.
-      // ScopeRow renders BAISelect (Scope Type) and ScopeIdSelect (Target) as
-      // Astryx Selector triggers (`role="button"`), each opening a floating
-      // `listbox`/`option` panel — not an antd `.ant-select`.
-      await modal.getByRole('button', { name: 'Scope Type' }).click();
-      await page.getByRole('option', { name: 'Domain', exact: true }).click();
-
-      // Wait for the Target select to become enabled (DomainScopeIdSelect
-      // loads its options asynchronously once a scope type is picked) and
-      // pick the first available domain.
+      // 11. Pick the required scope. BAISelect (Scope Type) and ScopeIdSelect
+      // (Target) render as Astryx Selector triggers (`role="button"`), each
+      // opening a floating `listbox`/`option` panel — not an antd
+      // `.ant-select`. A trigger's accessible name is its label plus its
+      // current value, so match the label as a substring.
+      // A Project scope asks for its Target project.
+      const scopeTypeTrigger = modal.getByRole('button', {
+        name: 'Scope Type',
+      });
       const targetTrigger = modal.getByRole('button', { name: 'Target' });
-      await expect(targetTrigger).toBeEnabled({ timeout: 5000 });
-      await targetTrigger.click();
-      const targetOptions = page
-        .getByRole('listbox', { name: 'Target' })
-        .getByRole('option');
-      await expect(targetOptions.first()).toBeVisible({ timeout: 10000 });
-      await targetOptions.first().click();
+      await scopeTypeTrigger.click();
+      await page.getByRole('option', { name: 'Project', exact: true }).click();
+      await expect(targetTrigger).toBeEnabled({ timeout: 10000 });
+
+      // A Domain scope uses the signed-in domain (#10081, FR-4141), so the
+      // Target field goes away.
+      await scopeTypeTrigger.click();
+      await page.getByRole('option', { name: 'Domain', exact: true }).click();
+      await expect(targetTrigger).toBeHidden();
 
       // 12. Click OK to submit
       await modal.getByRole('button', { name: 'OK' }).click();
@@ -185,11 +201,9 @@ test.describe.serial(
       // 13. Verify a success notification "Role created successfully." appears.
       // RoleFormModal reports through the app-shim's `message.success`, which
       // is backed by an Astryx toast (role="status"), not BAINotificationStack.
-      await expect(
-        page
-          .getByRole('status')
-          .filter({ hasText: /Role created successfully/i }),
-      ).toBeVisible({ timeout: 10000 });
+      await expect(toast(page, /Role created successfully/i)).toBeVisible({
+        timeout: 10000,
+      });
 
       // 14. Creation is validated via the success notification.
       // Avoid asserting table row visibility here because the RBAC role list is paginated
@@ -206,50 +220,47 @@ test.describe.serial(
       // 2. Navigate to RBAC page
       await navigateTo(page, 'rbac');
 
-      // Wait for RBAC page to fully load before interacting
+      // Wait for RBAC page to fully load before interacting. The role list
+      // lives on the "Roles" tab of a `navigation "Tabs"` button list.
       await expect(
-        page.getByRole('tab', { name: 'RBAC Management' }),
+        page
+          .getByRole('navigation', { name: 'Tabs' })
+          .getByRole('button', { name: 'Roles', exact: true }),
       ).toBeVisible({ timeout: 10000 });
-      await expect(page.locator('.ant-table-row').first()).toBeVisible({
-        timeout: 10000,
-      });
 
       // 3. Search for the test custom role by name (pagination may hide it otherwise)
       await searchForRole(page, ROLE_NAME);
-      const roleRow = page
-        .getByRole('row')
-        .filter({ hasText: ROLE_NAME })
-        .first();
 
-      // 4. Click the role name cell's typography element to open the detail drawer
-      await roleRow
-        .getByRole('cell')
-        .first()
-        .locator('.ant-typography')
-        .first()
+      // 4. Click the role name (BAINameActionCell's title button) to open the
+      // detail drawer
+      await roleRowOf(page, ROLE_NAME)
+        .getByRole('button', { name: ROLE_NAME, exact: true })
         .click();
 
-      // 5. Verify the drawer opens and title "RBAC Role Info" appears
-      const drawer = page.locator('.ant-drawer');
-      await expect(page.locator('.ant-drawer-content-wrapper')).toBeVisible({
+      // 5. Verify the drawer opens with the title "RBAC Role Info" and the role name
+      const drawer = roleDrawer(page);
+      await expect(drawer).toBeVisible({ timeout: 10000 });
+      await expect(
+        drawer.getByRole('heading', { name: 'RBAC Role Info' }),
+      ).toBeVisible();
+      await expect(drawer.getByText(ROLE_NAME, { exact: true })).toBeVisible({
         timeout: 10000,
       });
-      await expect(drawer.getByText('RBAC Role Info')).toBeVisible();
 
-      // 6. Verify the Edit button is visible (only for CUSTOM roles), which also confirms data loaded
-      // The Edit Role button is an icon-only button with size="large" (CSS class .ant-btn-lg), unique in the drawer
-      const editButton = drawer.locator('.ant-btn-lg').first();
+      // 6. Verify the Edit Role button is visible (only for CUSTOM roles)
+      const editButton = drawer.getByRole('button', { name: 'Edit Role' });
       await expect(editButton).toBeVisible({ timeout: 10000 });
 
       // 8. Click the Edit button
       await editButton.click();
 
       // 9. Verify a modal titled "Edit Role" appears with pre-filled name and description
-      const editModal = page
-        .locator('.ant-modal')
-        .filter({ hasText: 'Edit Role' });
+      const editModal = page.getByRole('dialog', { name: 'Edit Role' });
       await expect(editModal).toBeVisible();
       await expect(editModal.getByLabel('Role Name')).toHaveValue(ROLE_NAME);
+      await expect(editModal.getByLabel('Description')).toHaveValue(
+        ROLE_DESCRIPTION,
+      );
 
       // 10. Clear the Role Name field and type a new name
       await editModal.getByLabel('Role Name').clear();
@@ -266,22 +277,21 @@ test.describe.serial(
       await expect(editModal).toBeHidden({ timeout: 10000 });
 
       // 14. Verify a success notification "Role updated successfully." appears
-      await expect(
-        page
-          .locator('.ant-message-notice-wrapper')
-          .filter({ hasText: /Role updated successfully/i }),
-      ).toBeVisible({ timeout: 10000 });
-
-      // 15. Verify the drawer heading updates to the new role name
-      await expect(drawer.getByText(ROLE_NAME_EDITED)).toBeVisible({
+      await expect(toast(page, /Role updated successfully/i)).toBeVisible({
         timeout: 10000,
       });
 
+      // 15. Verify the drawer updates to the new name and description
+      await expect(
+        drawer.getByText(ROLE_NAME_EDITED, { exact: true }),
+      ).toBeVisible({ timeout: 10000 });
+      await expect(
+        drawer.getByText('Updated description', { exact: true }),
+      ).toBeVisible();
+
       // 16. Close the drawer
-      await drawer.getByRole('button', { name: 'close' }).click();
-      await expect(page.locator('.ant-drawer-content-wrapper')).toBeHidden({
-        timeout: 5000,
-      });
+      await drawer.getByRole('button', { name: 'Close' }).click();
+      await expect(drawer).toBeHidden({ timeout: 5000 });
     });
 
     test('Superadmin can delete (soft-delete) an active custom role', async ({
@@ -299,31 +309,25 @@ test.describe.serial(
 
       // 4. Search for the test role by name (using the edited name from previous test)
       await searchForRole(page, ROLE_NAME_EDITED);
-      const roleRow = page
-        .getByRole('row')
-        .filter({ hasText: ROLE_NAME_EDITED })
-        .first();
+      const roleRow = roleRowOf(page, ROLE_NAME_EDITED);
 
-      // 5. Click the "Deactivate" action button on the role row (first button in action cell)
-      // The deactivate action is gated by a Popconfirm — click the button then confirm.
+      // 5. Click the row's "Deactivate" action, then confirm its popover
+      // (an Astryx dialog named after the action, "Deactivate").
       await roleRow
-        .locator('.bai-name-action-cell-actions button')
-        .first()
+        .getByRole('button', { name: 'Deactivate', exact: true })
         .click();
       await page
-        .locator('.ant-popconfirm')
-        .getByRole('button', { name: 'Deactivate' })
+        .getByRole('dialog', { name: 'Deactivate', exact: true })
+        .getByRole('button', { name: 'Deactivate', exact: true })
         .click();
 
       // 6. Verify the role disappears from the "Active" roles list
       await expect(roleRow).toBeHidden({ timeout: 10000 });
 
       // 7. Verify a success notification "Role deactivated successfully." appears
-      await expect(
-        page
-          .locator('.ant-message-notice-wrapper')
-          .filter({ hasText: /Role deactivated successfully/i }),
-      ).toBeVisible({ timeout: 10000 });
+      await expect(toast(page, /Role deactivated successfully/i)).toBeVisible({
+        timeout: 10000,
+      });
 
       // 8. Click the "Inactive" filter to verify the role appears there
       await statusFilterOption(page, 'Inactive').click();
@@ -345,33 +349,26 @@ test.describe.serial(
 
       // 4. Search for the test role by name and locate the row
       await searchForRole(page, ROLE_NAME_EDITED);
-      const inactiveRoleRow = page
-        .getByRole('row')
-        .filter({ hasText: ROLE_NAME_EDITED })
-        .first();
+      const inactiveRoleRow = roleRowOf(page, ROLE_NAME_EDITED);
 
-      // 5. Verify an "Activate" action button is visible (first button in action cell)
-      await expect(
-        inactiveRoleRow.locator('.bai-name-action-cell-actions button').first(),
-      ).toBeVisible();
+      // 5. Verify an "Activate" action button is visible
+      const activateButton = inactiveRoleRow.getByRole('button', {
+        name: 'Activate',
+        exact: true,
+      });
+      await expect(activateButton).toBeVisible();
 
-      // 6. Click the "Activate" button (first action button in Inactive view).
-      // The activate action is gated by a Popconfirm — click the button then confirm.
-      await inactiveRoleRow
-        .locator('.bai-name-action-cell-actions button')
-        .first()
-        .click();
+      // 6. Click "Activate", then confirm its "Activate" popover.
+      await activateButton.click();
       await page
-        .locator('.ant-popconfirm')
-        .getByRole('button', { name: 'Activate' })
+        .getByRole('dialog', { name: 'Activate', exact: true })
+        .getByRole('button', { name: 'Activate', exact: true })
         .click();
 
       // 7. Verify a success notification "Role activated successfully." appears
-      await expect(
-        page
-          .locator('.ant-message-notice-wrapper')
-          .filter({ hasText: /Role activated successfully/i }),
-      ).toBeVisible({ timeout: 10000 });
+      await expect(toast(page, /Role activated successfully/i)).toBeVisible({
+        timeout: 10000,
+      });
 
       // 8. Verify the role disappears from the Inactive list
       await expect(inactiveRoleRow).toBeHidden({ timeout: 10000 });
@@ -394,20 +391,13 @@ test.describe.serial(
       // 3. Deactivate the role first (so it's in the Inactive state for purging)
       await statusFilterOption(page, 'Active').click();
       await searchForRole(page, ROLE_NAME_EDITED);
-      const activeRoleRow = page
-        .getByRole('row')
-        .filter({ hasText: ROLE_NAME_EDITED })
-        .first();
-      // Hover to reveal action buttons, then click deactivate (first action button in Active view).
-      // The deactivate action is gated by a Popconfirm — click the button then confirm.
-      await activeRoleRow.hover();
+      const activeRoleRow = roleRowOf(page, ROLE_NAME_EDITED);
       await activeRoleRow
-        .locator('.bai-name-action-cell-actions button')
-        .first()
+        .getByRole('button', { name: 'Deactivate', exact: true })
         .click();
       await page
-        .locator('.ant-popconfirm')
-        .getByRole('button', { name: 'Deactivate' })
+        .getByRole('dialog', { name: 'Deactivate', exact: true })
+        .getByRole('button', { name: 'Deactivate', exact: true })
         .click();
       await expect(activeRoleRow).toBeHidden({ timeout: 10000 });
 
@@ -416,46 +406,40 @@ test.describe.serial(
 
       // 5. Search for and locate the deleted test role row
       await searchForRole(page, ROLE_NAME_EDITED);
-      const inactiveRoleRow = page
-        .getByRole('row')
-        .filter({ hasText: ROLE_NAME_EDITED })
-        .first();
+      const inactiveRoleRow = roleRowOf(page, ROLE_NAME_EDITED);
 
-      // 6. Hover to reveal action buttons, then verify "Purge Role" button is visible
-      await inactiveRoleRow.hover();
-      await expect(
-        inactiveRoleRow.locator('.bai-name-action-cell-actions button').last(),
-      ).toBeVisible();
+      // 6. Verify the "Purge Role" action is visible
+      const purgeButton = inactiveRoleRow.getByRole('button', {
+        name: 'Purge Role',
+        exact: true,
+      });
+      await expect(purgeButton).toBeVisible();
 
-      // 7. Click the "Purge Role" button (last action button in Inactive view)
-      await inactiveRoleRow
-        .locator('.bai-name-action-cell-actions button')
-        .last()
-        .click();
+      // 7. Click the "Purge Role" button
+      await purgeButton.click();
 
       // 8. Verify a confirmation modal titled "Purge Role" appears
-      const purgeModal = page
-        .locator('.ant-modal')
-        .filter({ hasText: 'Purge Role' });
+      const purgeModal = page.getByRole('dialog', { name: 'Purge Role' });
       await expect(purgeModal).toBeVisible();
 
       // 9. Verify the modal contains the role name
-      await expect(purgeModal.getByText(ROLE_NAME_EDITED)).toBeVisible();
+      await expect(
+        purgeModal.getByText(ROLE_NAME_EDITED).first(),
+      ).toBeVisible();
 
-      // 9a. Type the role name in the confirmation input to enable the Delete button.
-      // BAIDeleteConfirmModal with requireConfirmInput=true requires typing the confirmText
-      // before the Delete button becomes enabled.
-      await purgeModal.locator('input').fill(ROLE_NAME_EDITED);
+      // 9a. BAIDeleteConfirmModal enables Delete only after the role name is
+      // typed into its confirmation textbox.
+      const deleteButton = purgeModal.getByRole('button', { name: 'Delete' });
+      await expect(deleteButton).toBeDisabled();
+      await purgeModal.getByRole('textbox').fill(ROLE_NAME_EDITED);
 
       // 10. Click the Delete button in the modal to confirm purge
-      await purgeModal.getByRole('button', { name: 'Delete' }).click();
+      await deleteButton.click();
 
       // 11. Verify a success notification "Role permanently removed." appears
-      await expect(
-        page
-          .locator('.ant-message-notice-wrapper')
-          .filter({ hasText: /Role permanently removed/i }),
-      ).toBeVisible({ timeout: 10000 });
+      await expect(toast(page, /Role permanently removed/i)).toBeVisible({
+        timeout: 10000,
+      });
 
       // 12. Verify the role no longer appears in the Inactive list
       await expect(inactiveRoleRow).toBeHidden({ timeout: 10000 });
@@ -541,13 +525,12 @@ test.describe(
       const drawer = page.getByRole('dialog', { name: 'RBAC Role Info' });
       await expect(drawer).toBeVisible();
 
-      // 7. Verify the drawer heading matches the role name we clicked.
-      // `BAIDrawer`'s title renders through Astryx `Heading level={5}`.
+      // 7. Verify the drawer shows the role name we clicked. The drawer's
+      // level-5 heading is its fixed title; the role name is plain text in
+      // the metadata card (#9849).
       if (systemRoleName) {
         await expect(
-          drawer
-            .getByRole('heading', { level: 5 })
-            .filter({ hasText: systemRoleName }),
+          drawer.getByText(systemRoleName, { exact: true }),
         ).toBeVisible({
           timeout: 5000,
         });

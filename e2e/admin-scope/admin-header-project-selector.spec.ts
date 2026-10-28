@@ -18,10 +18,9 @@ import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import { test, expect } from '@playwright/test';
 
 /**
- * Menu keys whose page is behind a manager feature flag (`routes.tsx` gates
- * them on `baiClient.supports(...)` and redirects to `/error` otherwise).
- * They are still gated in the app; they are just not navigable on every test
- * cluster, so this spec cannot assert the header on them.
+ * Menu keys whose visibility depends on cluster config or role (not every
+ * admin/cluster has them enabled), so this spec cannot assert the header on
+ * them reliably across test targets.
  */
 const FEATURE_GATED_MENU_KEYS = new Set<ProjectAgnosticMenuKey>([
   'scheduler', // 'fair-share-scheduling'

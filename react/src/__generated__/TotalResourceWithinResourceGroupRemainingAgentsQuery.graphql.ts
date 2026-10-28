@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2b6613ad5977950f2cf5986abc842af5>>
+ * @generated SignedSource<<d601613e813a5cbd679c8c45e826d479>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -226,16 +226,16 @@ return {
     "selections": (v7/*: any*/)
   },
   "params": {
-    "cacheID": "3820a5d66740fde49d460e12914d8fcc",
+    "cacheID": "166eaa53162b3d655052563fe6a9102b",
     "id": null,
     "metadata": {},
     "name": "TotalResourceWithinResourceGroupRemainingAgentsQuery",
     "operationKind": "query",
-    "text": "query TotalResourceWithinResourceGroupRemainingAgentsQuery(\n  $resourceGroup: String\n  $isSuperAdmin: Boolean!\n  $agentNodeFilter: String!\n  $limit: Int!\n  $offset: Int!\n) {\n  agent_summary_list(limit: $limit, offset: $offset, status: \"ALIVE\", scaling_group: $resourceGroup, filter: \"schedulable == true\") @skip(if: $isSuperAdmin) {\n    items {\n      id\n      available_slots\n      occupied_slots\n    }\n  }\n  agent_nodes(filter: $agentNodeFilter, first: $limit, offset: $offset) @include(if: $isSuperAdmin) @since(version: \"24.12.0\") {\n    edges {\n      node {\n        id\n        available_slots\n        occupied_slots\n      }\n    }\n  }\n}\n"
+    "text": "query TotalResourceWithinResourceGroupRemainingAgentsQuery(\n  $resourceGroup: String\n  $isSuperAdmin: Boolean!\n  $agentNodeFilter: String!\n  $limit: Int!\n  $offset: Int!\n) {\n  agent_summary_list(limit: $limit, offset: $offset, status: \"ALIVE\", scaling_group: $resourceGroup, filter: \"schedulable == true\") @skip(if: $isSuperAdmin) {\n    items {\n      id\n      available_slots\n      occupied_slots\n    }\n  }\n  agent_nodes(filter: $agentNodeFilter, first: $limit, offset: $offset) @include(if: $isSuperAdmin) {\n    edges {\n      node {\n        id\n        available_slots\n        occupied_slots\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "191312af37b40de0984637eb396a6f87";
+(node as any).hash = "7e2bcadbae534a8ca336a6f67189b95a";
 
 export default node;

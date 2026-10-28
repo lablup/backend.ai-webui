@@ -12,6 +12,7 @@ import { convertToOrderBy } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { CSV_EXPORT_MAX_ROWS } from '../helper/pagedExport';
+import { useCurrentDomain } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { usePagedCSVExport } from '../hooks/usePagedCSVExport';
 import KeypairResourcePolicyV2SettingModal from './KeypairResourcePolicyV2SettingModal';
@@ -25,8 +26,8 @@ import {
   BAIKeypairResourcePolicyV2Table,
   type BAIKeypairResourcePolicyV2TableProps,
   BAINameActionCell,
-  BAISkeleton,
-  BAIUserSelect,
+  BAISelect,
+  BAIScopedUserSelect,
   filterOutNullAndUndefined,
   useFetchKey,
 } from 'backend.ai-ui';
@@ -141,6 +142,8 @@ const KeypairResourcePolicyV2 = ({
   ...tableProps
 }: KeypairResourcePolicyV2Props) => {
   'use memo';
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [fetchKey, updateFetchKey] = useFetchKey();
@@ -307,17 +310,14 @@ const KeypairResourcePolicyV2 = ({
               defaultOperator: 'greaterThanOrEqual',
             },
             {
-              // Added in manager 26.4.4; this V2 list only renders on >= 26.7.0,
-              // so it needs no `baiClient.supports()` gate of its own.
               key: 'keypair.userId',
               propertyLabel: t('resourcePolicy.User'),
               type: 'uuid',
               fixedOperator: 'equals',
               renderInput: ({ onAddCondition, value, isDisabled }) => (
-                <Suspense
-                  fallback={<BAISkeleton variant="input" width={200} />}
-                >
-                  <BAIUserSelect
+                <Suspense fallback={<BAISelect disabled loading />}>
+                  <BAIScopedUserSelect
+                    scope={domainScope}
                     valuePropName="id"
                     value={value}
                     isDisabled={isDisabled}

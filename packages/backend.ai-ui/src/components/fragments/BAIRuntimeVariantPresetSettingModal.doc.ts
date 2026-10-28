@@ -42,7 +42,7 @@ export const docs = {
       {
         guidance: false,
         description:
-          'Assume the category, display name, UI-option and required fields render — each is behind a server capability check and is simply absent, along with its mutation input field, when the connected client does not advertise support.',
+          'Assume the category, display name, UI-option and required fields render — each is behind a manager version check and is simply absent, along with its mutation input field, when the connected manager is too old to serve it.',
       },
     ],
   },

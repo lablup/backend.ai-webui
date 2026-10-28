@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d067e48368a957089870d360fdbc5743>>
+ * @generated SignedSource<<f9868cb92fe5d410eb65d70d8447008c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,106 +10,10 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type OperationType = "CREATE" | "GRANT_ALL" | "GRANT_HARD_DELETE" | "GRANT_READ" | "GRANT_SOFT_DELETE" | "GRANT_UPDATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
-export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
-export type RBACElementType = "AGENT" | "APP_CONFIG" | "APP_CONFIG_ALLOW_LIST" | "APP_CONFIG_DEFINITION" | "APP_CONFIG_FRAGMENT" | "ARTIFACT" | "ARTIFACT_REGISTRY" | "ARTIFACT_REVISION" | "AUDIT_LOG" | "CONTAINER_REGISTRY" | "DEPLOYMENT_POLICY" | "DEPLOYMENT_REVISION" | "DEPLOYMENT_TOKEN" | "DOMAIN" | "DOMAIN_ADMIN_PAGE" | "EVENT_LOG" | "IDLE_CHECKER_ASSIGNMENT" | "IMAGE" | "IMAGE_ALIAS" | "KERNEL" | "KERNEL_HISTORY" | "KEYPAIR" | "KEYPAIR_RESOURCE_POLICY" | "MODEL_CARD" | "MODEL_DEPLOYMENT" | "NETWORK" | "NOTIFICATION_CHANNEL" | "NOTIFICATION_RULE" | "PROJECT" | "PROJECT_ADMIN_PAGE" | "PROJECT_RESOURCE_POLICY" | "RESOURCE_GROUP" | "RESOURCE_PRESET" | "ROLE" | "ROLE_ASSIGNMENT" | "ROUTING" | "SESSION" | "SESSION_APP_SERVICE" | "SESSION_TEMPLATE" | "STORAGE_HOST" | "USER" | "USER_EMAIL" | "USER_RESOURCE_POLICY" | "VFOLDER" | "VFOLDER_DATA" | "%future added value";
-export type RoleAssignmentOrderField = "EMAIL" | "GRANTED_AT" | "USERNAME" | "%future added value";
-export type RoleSource = "CUSTOM" | "SYSTEM" | "%future added value";
-export type RoleStatus = "ACTIVE" | "DELETED" | "INACTIVE" | "%future added value";
 export type UserRoleV2 = "ADMIN" | "MONITOR" | "SUPERADMIN" | "USER" | "%future added value";
 export type UserStatusV2 = "ACTIVE" | "BEFORE_VERIFICATION" | "DELETED" | "INACTIVE" | "%future added value";
 export type UserV2OrderField = "CONTAINER_MAIN_GID" | "CONTAINER_UID" | "CREATED_AT" | "DESCRIPTION" | "DOMAIN_ID" | "DOMAIN_NAME" | "EMAIL" | "ENTITY_ID" | "FULL_NAME" | "INTEGRATION_NAME" | "MODIFIED_AT" | "NEED_PASSWORD_CHANGE" | "PROJECT_NAME" | "RESOURCE_POLICY" | "ROLE" | "STATUS" | "STATUS_INFO" | "SUDO_SESSION_ENABLED" | "TOTP_ACTIVATED" | "TOTP_ACTIVATED_AT" | "USERNAME" | "%future added value";
-export type RoleAssignmentFilter = {
-  AND?: ReadonlyArray<RoleAssignmentFilter> | null | undefined;
-  NOT?: ReadonlyArray<RoleAssignmentFilter> | null | undefined;
-  OR?: ReadonlyArray<RoleAssignmentFilter> | null | undefined;
-  email?: StringFilter | null | undefined;
-  permission?: PermissionNestedFilter | null | undefined;
-  role?: RoleAssignmentRoleNestedFilter | null | undefined;
-  roleId?: UUIDFilter | null | undefined;
-  username?: StringFilter | null | undefined;
-};
-export type UUIDFilter = {
-  equals?: string | null | undefined;
-  in?: ReadonlyArray<string> | null | undefined;
-  notEquals?: string | null | undefined;
-  notIn?: ReadonlyArray<string> | null | undefined;
-};
-export type RoleAssignmentRoleNestedFilter = {
-  AND?: ReadonlyArray<RoleAssignmentRoleNestedFilter> | null | undefined;
-  NOT?: ReadonlyArray<RoleAssignmentRoleNestedFilter> | null | undefined;
-  OR?: ReadonlyArray<RoleAssignmentRoleNestedFilter> | null | undefined;
-  name?: StringFilter | null | undefined;
-  source?: RoleSourceFilter | null | undefined;
-  status?: RoleStatusFilter | null | undefined;
-};
-export type StringFilter = {
-  contains?: string | null | undefined;
-  endsWith?: string | null | undefined;
-  equals?: string | null | undefined;
-  iContains?: string | null | undefined;
-  iEndsWith?: string | null | undefined;
-  iEquals?: string | null | undefined;
-  iIn?: ReadonlyArray<string> | null | undefined;
-  iNotContains?: string | null | undefined;
-  iNotEndsWith?: string | null | undefined;
-  iNotEquals?: string | null | undefined;
-  iNotIn?: ReadonlyArray<string> | null | undefined;
-  iNotStartsWith?: string | null | undefined;
-  iStartsWith?: string | null | undefined;
-  in?: ReadonlyArray<string> | null | undefined;
-  notContains?: string | null | undefined;
-  notEndsWith?: string | null | undefined;
-  notEquals?: string | null | undefined;
-  notIn?: ReadonlyArray<string> | null | undefined;
-  notStartsWith?: string | null | undefined;
-  startsWith?: string | null | undefined;
-};
-export type RoleSourceFilter = {
-  equals?: RoleSource | null | undefined;
-  in?: ReadonlyArray<RoleSource> | null | undefined;
-  notEquals?: RoleSource | null | undefined;
-  notIn?: ReadonlyArray<RoleSource> | null | undefined;
-};
-export type RoleStatusFilter = {
-  equals?: RoleStatus | null | undefined;
-  in?: ReadonlyArray<RoleStatus> | null | undefined;
-  notEquals?: RoleStatus | null | undefined;
-  notIn?: ReadonlyArray<RoleStatus> | null | undefined;
-};
-export type PermissionNestedFilter = {
-  AND?: ReadonlyArray<PermissionNestedFilter> | null | undefined;
-  NOT?: ReadonlyArray<PermissionNestedFilter> | null | undefined;
-  OR?: ReadonlyArray<PermissionNestedFilter> | null | undefined;
-  entityType?: StringFilter | null | undefined;
-  operation?: OperationTypeFilter | null | undefined;
-  permission?: PermissionBitFilter | null | undefined;
-  scopeId?: StringFilter | null | undefined;
-  scopeType?: RBACElementTypeFilter | null | undefined;
-};
-export type PermissionBitFilter = {
-  equals?: PermissionBit | null | undefined;
-  in?: ReadonlyArray<PermissionBit> | null | undefined;
-  notEquals?: PermissionBit | null | undefined;
-  notIn?: ReadonlyArray<PermissionBit> | null | undefined;
-};
-export type RBACElementTypeFilter = {
-  equals?: RBACElementType | null | undefined;
-  in?: ReadonlyArray<RBACElementType> | null | undefined;
-  notEquals?: RBACElementType | null | undefined;
-  notIn?: ReadonlyArray<RBACElementType> | null | undefined;
-};
-export type OperationTypeFilter = {
-  equals?: OperationType | null | undefined;
-  in?: ReadonlyArray<OperationType> | null | undefined;
-  notEquals?: OperationType | null | undefined;
-  notIn?: ReadonlyArray<OperationType> | null | undefined;
-};
-export type RoleAssignmentOrderBy = {
-  direction?: OrderDirection;
-  field: RoleAssignmentOrderField;
-};
 export type UserV2Filter = {
   AND?: ReadonlyArray<UserV2Filter> | null | undefined;
   NOT?: ReadonlyArray<UserV2Filter> | null | undefined;
@@ -138,6 +42,34 @@ export type UserV2Filter = {
   totpActivatedAt?: NullableDateTimeFilter | null | undefined;
   username?: StringFilter | null | undefined;
   uuid?: UUIDFilter | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
+};
+export type StringFilter = {
+  contains?: string | null | undefined;
+  endsWith?: string | null | undefined;
+  equals?: string | null | undefined;
+  iContains?: string | null | undefined;
+  iEndsWith?: string | null | undefined;
+  iEquals?: string | null | undefined;
+  iIn?: ReadonlyArray<string> | null | undefined;
+  iNotContains?: string | null | undefined;
+  iNotEndsWith?: string | null | undefined;
+  iNotEquals?: string | null | undefined;
+  iNotIn?: ReadonlyArray<string> | null | undefined;
+  iNotStartsWith?: string | null | undefined;
+  iStartsWith?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notContains?: string | null | undefined;
+  notEndsWith?: string | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
+  notStartsWith?: string | null | undefined;
+  startsWith?: string | null | undefined;
 };
 export type UserStatusV2EnumFilter = {
   equals?: UserStatusV2 | null | undefined;
@@ -209,11 +141,9 @@ export type UserV2OrderBy = {
   field?: UserV2OrderField;
 };
 export type RoleAssignmentTabRefetchQuery$variables = {
-  filter?: RoleAssignmentFilter | null | undefined;
   id: string;
   limit?: number | null | undefined;
   offset?: number | null | undefined;
-  orderBy?: ReadonlyArray<RoleAssignmentOrderBy> | null | undefined;
   userFilter?: UserV2Filter | null | undefined;
   userOrderBy?: ReadonlyArray<UserV2OrderBy> | null | undefined;
 };
@@ -231,116 +161,57 @@ const node: ConcreteRequest = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "filter"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
   "name": "id"
 },
-v2 = {
+v1 = {
   "defaultValue": 10,
   "kind": "LocalArgument",
   "name": "limit"
 },
-v3 = {
+v2 = {
   "defaultValue": 0,
   "kind": "LocalArgument",
   "name": "offset"
 },
-v4 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "orderBy"
-},
-v5 = {
+v3 = {
   "defaultValue": null,
   "kind": "LocalArgument",
   "name": "userFilter"
 },
-v6 = {
+v4 = {
   "defaultValue": null,
   "kind": "LocalArgument",
   "name": "userOrderBy"
 },
-v7 = [
+v5 = [
   {
     "kind": "Variable",
     "name": "id",
     "variableName": "id"
   }
 ],
-v8 = {
-  "kind": "Variable",
-  "name": "filter",
-  "variableName": "filter"
-},
-v9 = {
+v6 = {
   "kind": "Variable",
   "name": "limit",
   "variableName": "limit"
 },
-v10 = {
+v7 = {
   "kind": "Variable",
   "name": "offset",
   "variableName": "offset"
 },
-v11 = {
-  "kind": "Variable",
-  "name": "orderBy",
-  "variableName": "orderBy"
-},
-v12 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v13 = {
+v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "scopeType",
-  "storageKey": null
-},
-v14 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "scopeId",
-  "storageKey": null
-},
-v15 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "count",
-  "storageKey": null
-},
-v16 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "UserV2BasicInfo",
-  "kind": "LinkedField",
-  "name": "basicInfo",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "email",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "fullName",
-      "storageKey": null
-    }
-  ],
+  "name": "entityId",
   "storageKey": null
 };
 return {
@@ -350,9 +221,7 @@ return {
       (v1/*: any*/),
       (v2/*: any*/),
       (v3/*: any*/),
-      (v4/*: any*/),
-      (v5/*: any*/),
-      (v6/*: any*/)
+      (v4/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
@@ -360,7 +229,7 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v7/*: any*/),
+        "args": (v5/*: any*/),
         "concreteType": null,
         "kind": "LinkedField",
         "name": "node",
@@ -368,10 +237,8 @@ return {
         "selections": [
           {
             "args": [
-              (v8/*: any*/),
-              (v9/*: any*/),
-              (v10/*: any*/),
-              (v11/*: any*/),
+              (v6/*: any*/),
+              (v7/*: any*/),
               {
                 "kind": "Variable",
                 "name": "userFilter",
@@ -396,20 +263,18 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v0/*: any*/),
+      (v1/*: any*/),
       (v2/*: any*/),
       (v3/*: any*/),
       (v4/*: any*/),
-      (v5/*: any*/),
-      (v6/*: any*/),
-      (v1/*: any*/)
+      (v0/*: any*/)
     ],
     "kind": "Operation",
     "name": "RoleAssignmentTabRefetchQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v7/*: any*/),
+        "args": (v5/*: any*/),
         "concreteType": null,
         "kind": "LinkedField",
         "name": "node",
@@ -422,10 +287,11 @@ return {
             "name": "__typename",
             "storageKey": null
           },
-          (v12/*: any*/),
+          (v8/*: any*/),
           {
             "kind": "InlineFragment",
             "selections": [
+              (v9/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -441,114 +307,17 @@ return {
                 "storageKey": null
               },
               {
-                "alias": "firstScope",
-                "args": [
-                  {
-                    "kind": "Literal",
-                    "name": "first",
-                    "value": 1
-                  }
-                ],
-                "concreteType": "EntityConnection",
-                "kind": "LinkedField",
-                "name": "scopes",
-                "plural": false,
-                "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "EntityRefEdge",
-                    "kind": "LinkedField",
-                    "name": "edges",
-                    "plural": true,
-                    "selections": [
-                      {
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "EntityRef",
-                        "kind": "LinkedField",
-                        "name": "node",
-                        "plural": false,
-                        "selections": [
-                          (v13/*: any*/),
-                          (v14/*: any*/),
-                          (v12/*: any*/)
-                        ],
-                        "storageKey": null
-                      }
-                    ],
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": "scopes(first:1)"
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "scopeType",
+                "storageKey": null
               },
-              (v13/*: any*/),
-              (v14/*: any*/),
               {
                 "alias": null,
-                "args": [
-                  (v8/*: any*/),
-                  (v9/*: any*/),
-                  (v10/*: any*/),
-                  (v11/*: any*/)
-                ],
-                "concreteType": "RoleAssignmentConnection",
-                "kind": "LinkedField",
-                "name": "users",
-                "plural": false,
-                "selections": [
-                  (v15/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "RoleAssignmentEdge",
-                    "kind": "LinkedField",
-                    "name": "edges",
-                    "plural": true,
-                    "selections": [
-                      {
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "RoleAssignment",
-                        "kind": "LinkedField",
-                        "name": "node",
-                        "plural": false,
-                        "selections": [
-                          (v12/*: any*/),
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "userId",
-                            "storageKey": null
-                          },
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "grantedAt",
-                            "storageKey": null
-                          },
-                          {
-                            "alias": null,
-                            "args": null,
-                            "concreteType": "UserV2",
-                            "kind": "LinkedField",
-                            "name": "user",
-                            "plural": false,
-                            "selections": [
-                              (v12/*: any*/),
-                              (v16/*: any*/)
-                            ],
-                            "storageKey": null
-                          }
-                        ],
-                        "storageKey": null
-                      }
-                    ],
-                    "storageKey": null
-                  }
-                ],
+                "args": null,
+                "kind": "ScalarField",
+                "name": "scopeId",
                 "storageKey": null
               },
               {
@@ -559,8 +328,8 @@ return {
                     "name": "filter",
                     "variableName": "userFilter"
                   },
-                  (v9/*: any*/),
-                  (v10/*: any*/),
+                  (v6/*: any*/),
+                  (v7/*: any*/),
                   {
                     "kind": "Variable",
                     "name": "orderBy",
@@ -572,7 +341,13 @@ return {
                 "name": "usersV2",
                 "plural": false,
                 "selections": [
-                  (v15/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "count",
+                    "storageKey": null
+                  },
                   {
                     "alias": null,
                     "args": null,
@@ -589,15 +364,33 @@ return {
                         "name": "node",
                         "plural": false,
                         "selections": [
-                          (v12/*: any*/),
+                          (v8/*: any*/),
+                          (v9/*: any*/),
                           {
                             "alias": null,
                             "args": null,
-                            "kind": "ScalarField",
-                            "name": "entityId",
+                            "concreteType": "UserV2BasicInfo",
+                            "kind": "LinkedField",
+                            "name": "basicInfo",
+                            "plural": false,
+                            "selections": [
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "email",
+                                "storageKey": null
+                              },
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "fullName",
+                                "storageKey": null
+                              }
+                            ],
                             "storageKey": null
-                          },
-                          (v16/*: any*/)
+                          }
                         ],
                         "storageKey": null
                       }
@@ -617,16 +410,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "15597cb5bb8ff4469d96ed6fef946e87",
+    "cacheID": "6fd11d4f5272852a520ad452673108c4",
     "id": null,
     "metadata": {},
     "name": "RoleAssignmentTabRefetchQuery",
     "operationKind": "query",
-    "text": "query RoleAssignmentTabRefetchQuery(\n  $filter: RoleAssignmentFilter\n  $limit: Int = 10\n  $offset: Int = 0\n  $orderBy: [RoleAssignmentOrderBy!]\n  $userFilter: UserV2Filter\n  $userOrderBy: [UserV2OrderBy!]\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...RoleAssignmentTabFragment_36l2j3\n    id\n  }\n}\n\nfragment RoleAssignmentTabFragment_36l2j3 on Role {\n  id\n  name\n  source\n  firstScope: scopes(first: 1) @deprecatedSince(version: \"26.9.0a4\") {\n    edges {\n      node {\n        scopeType\n        scopeId\n        id\n      }\n    }\n  }\n  scopeType @since(version: \"26.9.0a4\")\n  scopeId @since(version: \"26.9.0a4\")\n  users(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) @deprecatedSince(version: \"26.9.0a4\") {\n    count\n    edges {\n      node {\n        id\n        userId\n        grantedAt\n        user {\n          id\n          basicInfo {\n            email\n            fullName\n          }\n        }\n      }\n    }\n  }\n  usersV2(filter: $userFilter, orderBy: $userOrderBy, limit: $limit, offset: $offset) @since(version: \"26.9.0a4\") {\n    count\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query RoleAssignmentTabRefetchQuery(\n  $limit: Int = 10\n  $offset: Int = 0\n  $userFilter: UserV2Filter\n  $userOrderBy: [UserV2OrderBy!]\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...RoleAssignmentTabFragment_3TOizZ\n    id\n  }\n}\n\nfragment RoleAssignmentTabFragment_3TOizZ on Role {\n  id\n  entityId\n  name\n  source\n  scopeType\n  scopeId\n  usersV2(filter: $userFilter, orderBy: $userOrderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "c40588e5b4a36e7533b40d0bb2f41dc2";
+(node as any).hash = "bda9609fa45fa888691c0319340c76e3";
 
 export default node;

@@ -22,7 +22,8 @@ The Deployments page displays a list of all deployments in the current project. 
 
 At the top of the page, you can filter deployments by lifecycle stage:
 
-- **Running**: Shows deployments that are currently running or being created. This is the default view.
+- **Serving**: Shows deployments whose Desired Replicas is 1 or more. This is the default view.
+- **Paused**: Shows deployments that are not terminated but have Desired Replicas set to 0. They move back to **Serving** once Desired Replicas is 1 or more.
 - **Terminated**: Shows deployments that have been terminated.
 
 Click the `Create Deployment` button to open the **Create Deployment** modal.
@@ -144,7 +145,7 @@ In **Exec** mode the same line is split into arguments and executed directly, so
 
 The **Enable Health Check** and **Pre-Start Actions** fields follow the Service Configuration section and are shown for every runtime variant.
 
-- **Enable Health Check**: When enabled, the system periodically sends HTTP requests to the inference server to verify it is responding correctly. When disabled (the default for new revisions), no health check is configured and unhealthy replicas are not automatically detected. Turn this on for production deployments. When **Enable Health Check** is checked, the following additional fields appear:
+- **Enable Health Check**: When enabled, the system periodically sends HTTP requests to the inference server to verify it is responding correctly. When disabled (the default for new revisions), no health check is configured and unhealthy replicas are not automatically detected. Turn this on for production deployments. When **Enable Health Check** is checked, the following additional fields appear, all of them optional — a field left blank keeps its default value:
    * **Path**: The HTTP endpoint path called during service health checks (default: `/health`).
    * **Interval**: Seconds between consecutive health checks.
    * **Max Retries**: Maximum consecutive health check failures before the replica is marked `UNHEALTHY`.
@@ -240,7 +241,7 @@ The **Cluster and Resources** section lets you specify the compute resources to 
 Expand the **Advanced Settings** collapse panel to point at the model definition file and to mount additional storage folders alongside the model storage folder.
 
 - **Model Definition File Path**: The path to the model definition file within the model storage folder (default: `model-definition.yaml`). Shown only for runtime variants that read their configuration from the model folder, such as `Custom`.
-- **Additional Mounts**: A table of storage folders to mount into the inference server container. Only general-purpose (non-model) folders in `ready` state are listed. Hidden folders (names starting with `.`) and the model storage folder itself are excluded.
+- **Additional Mounts**: Storage folders to mount into the inference server container. Pick a folder with the folder selector to add it as a mount row with its own source and container path fields, as in the session launcher's [Data & Storage](#session-mounts) step.
 
 <a id="custom-runtime-config-files"></a>
 
@@ -513,14 +514,15 @@ The Service Info card displays the following details:
 - **Additional Mounts**: Any extra storage folders mounted.
 - **Environment Variables**: Displayed as a code block.
 - **Image**: The container image used for the service.
+- **Labels**: The key-value labels attached to the deployment.
 
 ![](../images/endpoint_detail_visibility.png)
 
 #### More menu (edit and delete)
 
-The Service Info card's header exposes an **Edit** button alongside a **More** menu. The **Edit** button opens the **Edit Deployment** modal described in [Create deployment modal](#create-deployment). The More menu currently contains the **Delete Deployment** action.
+The Service Info card's header exposes an **Edit** button alongside a **More** menu. The **Edit** button opens the **Edit Deployment** modal described in [Create deployment modal](#create-deployment). The More menu contains **Edit labels** and **Delete Deployment**.
 
-![=192px](../images/endpoint_detail_more_menu.png)
+![=196px](../images/endpoint_detail_more_menu.png)
 
 <a id="scheduling-history"></a>
 
@@ -668,7 +670,7 @@ The rule list provides:
 
 - A property filter bar to filter rules by **Created At** and **Last Triggered** datetime ranges.
 - Server-side pagination.
-- The following columns: **Metric Source**, **Condition**, **Cooldown Sec.**, **Step Size**, **Min / Max Replicas**, **Created At**, and **Last Triggered**. The **Step Size** column automatically shows `+`, `−`, or `±` based on the direction derived from the thresholds you have set.
+- The following columns: **Metric Source**, **Condition**, **Cooldown (s)**, **Step Size**, **Min / Max Replicas**, **Created At**, and **Last Triggered**. The **Step Size** column automatically shows `+`, `−`, or `±` based on the direction derived from the thresholds you have set.
 - Per-row edit and delete icons shown next to the condition summary in each row.
 
 Click the `Add Rules` button to open the **Add Auto Scaling Rule** editor.
@@ -677,7 +679,7 @@ To modify an existing rule, click the edit icon on its row; the **Edit Auto Scal
 
 - **Metric Source**: Select `Kernel` or `Prometheus`.
 - **Metric Name**: For `Kernel`, enter a metric name. Common metrics such as `cpu_util`, `mem`, `net_rx`, and `net_tx` are offered as autocomplete suggestions, and you can also type a custom name freely.
-- **Metric Name (Prometheus Preset)**: Shown only when **Metric Source** is `Prometheus`. Select a preset from the dropdown; the preset's metric name, query template, and (when defined) **Cooldown Sec.** are filled in automatically.
+- **Metric Name (Prometheus Preset)**: Shown only when **Metric Source** is `Prometheus`. Select a preset from the dropdown; the preset's metric name, query template, and (when defined) **Cooldown (s)** are filled in automatically.
 - **Condition**: A segmented control for choosing the scaling direction. It provides three options.
 
    - **Scale In**: Decreases replicas when the metric falls below a threshold. Sets `Metric < [threshold]`.
@@ -692,7 +694,7 @@ To modify an existing rule, click the edit icon on its row; the **Edit Auto Scal
    - Only a maximum threshold is set: `[metric] > [maxThreshold]` triggers **Scale Out** (replicas increase when the metric rises above the threshold).
    - Both thresholds are set: if `[metric] < [minThreshold]`, replicas **scale in**; if `[metric] > [maxThreshold]`, replicas **scale out**.
 
-- **Cooldown Sec.**: The time, in seconds, to wait after a scaling event before the next evaluation.
+- **Cooldown (s)**: The time, in seconds, to wait after a scaling event before the next evaluation.
 - **Min Replicas** and **Max Replicas**: The lower and upper bounds that auto-scaling enforces on the replica count. Auto-scaling will not reduce the number of replicas below **Min Replicas** or increase it above **Max Replicas**.
 
 ![=520px](../images/auto_scaling_rules_modal_v2.png)

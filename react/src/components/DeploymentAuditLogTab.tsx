@@ -7,7 +7,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
-import { BAISkeleton, safeDecodeUuid } from 'backend.ai-ui';
+import { BAISkeleton } from 'backend.ai-ui';
 import React, { Suspense, useEffect, useEffectEvent } from 'react';
 import { useQueryLoader } from 'react-relay';
 
@@ -50,10 +50,10 @@ const DeploymentAuditLogTab: React.FC<DeploymentAuditLogTabProps> = ({
             {
               // 26.9.0 names the entity by the manager's own `EntityType`;
               // 26.4.4-26.8.x type this as the RBAC enum instead (FR-3982).
-              entityType: baiClient.supports('audit-log-entity-type-name')
+              entityType: baiClient.isManagerVersionCompatibleWith('26.9.0')
                 ? 'deployment'
                 : 'MODEL_DEPLOYMENT',
-              entityId: safeDecodeUuid(deploymentId) ?? deploymentId,
+              entityId: deploymentId,
             },
           ],
         },

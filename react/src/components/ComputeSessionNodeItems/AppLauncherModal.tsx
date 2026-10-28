@@ -17,29 +17,22 @@ import {
   TCP_APPS,
   useBackendAIAppLauncher,
 } from '../../hooks/useBackendAIAppLauncher';
-import {
-  AstryxFormNumberInput,
-  AstryxFormTagsInput,
-} from '../astryxFormControls';
 import AppLaunchConfirmationModal from './AppLaunchConfirmationModal';
-import SFTPConnectionInfoModal from './SFTPConnectionInfoModal';
 import TCPConnectionInfoModal from './TCPConnectionInfoModal';
 import TensorboardPathModal from './TensorboardPathModal';
 import VNCConnectionInfoModal from './VNCConnectionInfoModal';
 import VSCodeDesktopConnectionModal from './VSCodeDesktopConnectionModal';
 import XRDPConnectionInfoModal from './XRDPConnectionInfoModal';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { Grid } from '@astryxdesign/core/Grid';
-import { Heading } from '@astryxdesign/core/Heading';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Text } from '@astryxdesign/core/Text';
-import { TextInput } from '@astryxdesign/core/TextInput';
+import { Grid } from '@lablup/ui-common/Grid';
+import { Heading } from '@lablup/ui-common/Heading';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Text } from '@lablup/ui-common/Text';
 import * as stylex from '@stylexjs/stylex';
-// FRONTIER (ticket 17): the Form ENGINE is self-hosted since ticket 34 (live
-// again since ticket 35). The CONTROLS inside the items are Astryx now — the
-// `astryxFormControls` adapters where a `Form.Item` injects `value`/`onChange`,
-// raw Astryx components where it does not.
 import {
+  BAICheckboxInput,
+  BAINumberInput,
+  BAITagsInput,
+  BAITextInput,
   BAIFlex,
   BAIModal,
   type BAIModalProps,
@@ -48,9 +41,14 @@ import {
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { useEffect, useRef, useState } from 'react';
+import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
+
+// Carries SourceCodeView (shiki); load it when the SFTP modal first opens.
+const SFTPConnectionInfoModal = React.lazy(
+  () => import('./SFTPConnectionInfoModal'),
+);
 
 // PILOT-DECISION: antd `ModalProps` -> BUI `BAIModalProps` (§6 — a type-only
 // antd import is still an antd import). The render was already `BAIModal`, so
@@ -447,11 +445,12 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                 tooltip={<Trans i18nKey="session.OpenToPublicDesc" />}
                 label={
                   <BAIFlex gap={'xs'}>
-                    <CheckboxInput
-                      label={t('session.OpenToPublic')}
+                    <BAICheckboxInput
                       value={openToPublic}
                       onChange={(checked) => setOpenToPublic(checked)}
-                    />
+                    >
+                      {t('session.OpenToPublic')}
+                    </BAICheckboxInput>
                   </BAIFlex>
                 }
                 rules={[
@@ -475,9 +474,9 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                   },
                 ]}
               >
-                <AstryxFormTagsInput
+                <BAITagsInput
                   tokenSeparators={[',', ' ']}
-                  label={t('session.OpenToPublic')}
+                  aria-label={t('session.OpenToPublic')}
                   disabled={!openToPublic}
                   placeholder={t('session.AllowedMultipleClientsIps')}
                 />
@@ -488,11 +487,12 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                 name={'preferredPort'}
                 label={
                   <BAIFlex gap={'xs'}>
-                    <CheckboxInput
-                      label={t('session.TryPreferredPort')}
+                    <BAICheckboxInput
                       value={tryPreferredPort}
                       onChange={(checked) => setTryPreferredPort(checked)}
-                    />
+                    >
+                      {t('session.TryPreferredPort')}
+                    </BAICheckboxInput>
                   </BAIFlex>
                 }
                 rules={[
@@ -506,8 +506,9 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                   },
                 ]}
               >
-                <AstryxFormNumberInput
-                  label={t('session.TryPreferredPort')}
+                <BAINumberInput
+                  width="100%"
+                  aria-label={t('session.TryPreferredPort')}
                   placeholder="10250"
                   disabled={!tryPreferredPort}
                 />
@@ -520,41 +521,43 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                 <Form.Item
                   label={
                     <BAIFlex gap={'xs'}>
-                      <CheckboxInput
-                        label={t('session.UseSubdomain')}
+                      <BAICheckboxInput
                         value={useSubDomain}
                         onChange={(checked) => setUseSubDomain(checked)}
-                      />
+                      >
+                        {t('session.UseSubdomain')}
+                      </BAICheckboxInput>
                     </BAIFlex>
                   }
                 >
                   {/* Not a bound field (the `Form.Item` has no `name`), so
                       the raw Astryx control is used rather than an adapter.
                       `onChange` takes the VALUE, not the event (P3). */}
-                  <TextInput
-                    label={t('session.UseSubdomain')}
-                    isLabelHidden
-                    isDisabled={!useSubDomain}
+                  <BAITextInput
+                    aria-label={t('session.UseSubdomain')}
+                    disabled={!useSubDomain}
                     value={subDomainValue}
                     onChange={(next) => setSubDomainValue(next)}
                     width="100%"
                   />
                 </Form.Item>
                 <Form.Item>
-                  <CheckboxInput
-                    label={t('session.ForceUseV1Proxy')}
+                  <BAICheckboxInput
                     value={forceUseV1Proxy}
-                    isDisabled={forceUseV2Proxy}
+                    disabled={forceUseV2Proxy}
                     onChange={(checked) => setForceUseV1Proxy(checked)}
-                  />
+                  >
+                    {t('session.ForceUseV1Proxy')}
+                  </BAICheckboxInput>
                 </Form.Item>
                 <Form.Item>
-                  <CheckboxInput
-                    label={t('session.ForceUseV2Proxy')}
+                  <BAICheckboxInput
                     value={forceUseV2Proxy}
-                    isDisabled={forceUseV1Proxy}
+                    disabled={forceUseV1Proxy}
                     onChange={(checked) => setForceUseV2Proxy(checked)}
-                  />
+                  >
+                    {t('session.ForceUseV2Proxy')}
+                  </BAICheckboxInput>
                 </Form.Item>
               </>
             ) : null}
@@ -563,17 +566,23 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
       </BAIModal>
       {session ? (
         <>
-          <BAIUnmountAfterClose>
-            <SFTPConnectionInfoModal
-              sessionFrgmt={session}
-              open={sftpModalState.open}
-              host={sftpModalState.host}
-              port={sftpModalState.port}
-              onCancel={() => {
-                setSftpModalState({ open: false, host: '127.0.0.1', port: 0 });
-              }}
-            />
-          </BAIUnmountAfterClose>
+          <Suspense fallback={null}>
+            <BAIUnmountAfterClose>
+              <SFTPConnectionInfoModal
+                sessionFrgmt={session}
+                open={sftpModalState.open}
+                host={sftpModalState.host}
+                port={sftpModalState.port}
+                onCancel={() => {
+                  setSftpModalState({
+                    open: false,
+                    host: '127.0.0.1',
+                    port: 0,
+                  });
+                }}
+              />
+            </BAIUnmountAfterClose>
+          </Suspense>
           <BAIUnmountAfterClose>
             <VNCConnectionInfoModal
               open={vncModalState.open}

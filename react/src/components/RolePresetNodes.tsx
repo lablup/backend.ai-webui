@@ -9,8 +9,8 @@ import {
 import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Token } from '@astryxdesign/core/Token';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAIColumnType,
   BAITable,

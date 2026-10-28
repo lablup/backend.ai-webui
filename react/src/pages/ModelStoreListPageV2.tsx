@@ -10,26 +10,26 @@ import { ModelStoreListPageV2_ModelCardV2Fragment$key } from '../__generated__/M
 import AuthorIcon from '../components/AuthorIcon';
 import ModelBrandIcon from '../components/ModelBrandIcon';
 import ModelCardDrawer from '../components/ModelCardDrawer';
-import TextHighlighter from '../components/TextHighlighter';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useModelStoreProject } from '../hooks/useModelStoreProject';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Card } from '@astryxdesign/core/Card';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { Grid } from '@astryxdesign/core/Grid';
-import { Pagination } from '@astryxdesign/core/Pagination';
-import { Text } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Card } from '@lablup/ui-common/Card';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { Grid } from '@lablup/ui-common/Grid';
+import { Pagination } from '@lablup/ui-common/Pagination';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAISelect,
   BAIStorageHostSelect,
-  safeDecodeUuid,
+  isValidUUID,
   useUpdatableState,
+  BAITextHighlighter,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { ArrowUpDown } from 'lucide-react';
@@ -142,9 +142,9 @@ const ModelCardV2Card: React.FC<{
         <BAIFlex direction="row" align="center" gap="xs">
           <ModelBrandIcon modelName={modelCard.name} />
           <Text weight="semibold" maxLines={1} style={{ flex: 1 }}>
-            <TextHighlighter keyword={searchKeyword}>
+            <BAITextHighlighter keyword={searchKeyword}>
               {modelCard.metadata?.title || modelCard.name}
-            </TextHighlighter>
+            </BAITextHighlighter>
           </Text>
         </BAIFlex>
         <BAIFlex direction="row" justify="between" wrap="wrap" gap="xs">
@@ -219,16 +219,15 @@ const ModelCardV2Grid: React.FC<{
   // The store lists public cards only, whoever is looking; private ones live
   // on the admin page. The manager never applies the access level itself, and
   // the filter field exists from 26.9.0 (FR-4013 gate).
-  const effectiveFilter: ModelCardV2Filter | undefined = baiClient.supports(
-    'model-card-search-axes',
-  )
-    ? {
-        AND: [
-          { accessLevel: { equals: 'public' } },
-          ...(filter ? [filter] : []),
-        ],
-      }
-    : filter;
+  const effectiveFilter: ModelCardV2Filter | undefined =
+    baiClient.isManagerVersionCompatibleWith('26.9.0')
+      ? {
+          AND: [
+            { accessLevel: { equals: 'public' } },
+            ...(filter ? [filter] : []),
+          ],
+        }
+      : filter;
 
   const result = useLazyLoadQuery<ModelStoreListPageV2Query>(
     graphql`
@@ -250,6 +249,7 @@ const ModelCardV2Grid: React.FC<{
           edges {
             node {
               id
+              entityId
               ...ModelStoreListPageV2_ModelCardV2Fragment
             }
           }
@@ -297,7 +297,7 @@ const ModelCardV2Grid: React.FC<{
             key={item.id}
             modelCardV2Frgmt={item}
             searchKeyword={searchKeyword}
-            onClick={() => onCardClick?.(item.id)}
+            onClick={() => onCardClick?.(item.entityId)}
           />
         );
       })}
@@ -355,9 +355,11 @@ const ModelStoreListPageV2: React.FC = () => {
   // only kicks in once the drawer actually commits to opening.
   const selectedModelCardId = queryParams.modelCard;
   const drawerOpen = !!selectedModelCardId;
-  const localSelectedModelCardId = selectedModelCardId
-    ? safeDecodeUuid(selectedModelCardId)
-    : undefined;
+  // A hand-edited `?modelCard=` must not reach the `UUID!` query variable.
+  const validModelCardId =
+    selectedModelCardId && isValidUUID(selectedModelCardId)
+      ? selectedModelCardId
+      : undefined;
 
   const isPendingPage =
     deferredLimit !== baiPaginationOption.limit ||
@@ -391,6 +393,7 @@ const ModelStoreListPageV2: React.FC = () => {
   if (!modelStoreProject.id) {
     return (
       <Banner
+        role="alert"
         status="error"
         title={t('modelStore.ProjectNotFound')}
         description={t('modelStore.ProjectNotFoundDescription')}
@@ -517,7 +520,7 @@ const ModelStoreListPageV2: React.FC = () => {
       )}
 
       <ModelCardDrawer
-        modelCardId={localSelectedModelCardId}
+        modelCardId={validModelCardId}
         open={drawerOpen}
         onClose={() => {
           setQueryParams({ modelCard: null });

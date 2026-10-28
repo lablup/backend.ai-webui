@@ -9,7 +9,7 @@
 import '../../__test__/matchMedia.mock.js';
 import '../../__test__/resizeObserver.mock.js';
 import ProjectSelect from './ProjectSelect';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import { isValidElement, type ReactElement, type ReactNode } from 'react';
@@ -72,6 +72,7 @@ const renderSelect = (props: {
   value: Array<string>;
   personalProject?: { id: string; name: string };
   lockedProjectTypes?: Array<string>;
+  lockPersonalProject?: boolean;
 }) =>
   render(
     <ProjectSelect
@@ -126,6 +127,23 @@ describe('ProjectSelect personalProject', () => {
 
     const general = groupsJson[0].options[0];
     expect(general).toMatchObject({ disabled: false, label: 'coredev' });
+  });
+
+  it('offers the personal project as a selectable option when unlocked', () => {
+    renderSelect({
+      value: ['project-general'],
+      personalProject,
+      lockPersonalProject: false,
+    });
+
+    const personal = readGroups().find(
+      (group) => group.label === 'projectSelect.Personal',
+    )?.options[0];
+    expect(personal).toMatchObject({
+      value: 'project-personal',
+      disabled: false,
+      label: 'seungwon',
+    });
   });
 
   it('has no personal option without the prop', () => {

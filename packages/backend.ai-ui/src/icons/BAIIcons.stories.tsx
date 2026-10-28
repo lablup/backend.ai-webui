@@ -1,8 +1,8 @@
 import BAIFlex from '../components/BAIFlex';
 import BAIText from '../components/BAIText';
+import BAITextInput from '../components/BAITextInput';
 import * as Icons from './index';
-import { TextInput } from '@astryxdesign/core/TextInput';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import React, { useState } from 'react';
 
@@ -66,14 +66,13 @@ const IconsOverview: React.FC = () => {
 
   return (
     <BAIFlex direction="column" gap="lg">
-      <TextInput
-        label="Search icons"
-        isLabelHidden
+      <BAITextInput
+        aria-label="Search icons"
         placeholder="Search icons..."
         value={filter}
         onChange={setFilter}
         hasClear
-        style={{ maxWidth: 300 }}
+        controlStyle={{ maxWidth: 300 }}
       />
       <BAIText type="secondary">
         {filteredIcons.length} icon{filteredIcons.length !== 1 ? 's' : ''} found

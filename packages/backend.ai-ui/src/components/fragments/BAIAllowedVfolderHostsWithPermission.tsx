@@ -11,7 +11,7 @@ import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
 import BAIModal from '../BAIModal';
 import { BAITable } from '../Table';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import * as _ from 'lodash-es';
 import { CircleCheck, Ban, LockIcon, LockOpenIcon } from 'lucide-react';
 import React from 'react';

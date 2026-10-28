@@ -9,23 +9,21 @@ import {
 } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
 import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
+import { Heading } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
-import { Heading } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
-import {
-  BAISkeleton,
   BAIBoardItemTitle,
   BAIFetchKeyButton,
   BAIFlex,
   BAIFlexProps,
+  BAISkeleton,
   ResourceStatistics,
   convertToNumber,
   processMemoryValue,
   useControllableValue,
   useFetchKey,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { ReactNode, useDeferredValue, useMemo, useTransition } from 'react';
@@ -217,9 +215,9 @@ const MyResourceWithinResourceGroup: React.FC<
           <BAIFlex gap={'xs'}>
             {/* PILOT-DECISION: SegmentedControl.label is aria-only and required;
                 composed from the two option labels to avoid new i18n keys. */}
-            <SegmentedControl
+            <BAISegmentedControl
               size="sm"
-              label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
+              aria-label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
               value={displayType}
               onChange={(v) =>
                 v &&
@@ -231,9 +229,15 @@ const MyResourceWithinResourceGroup: React.FC<
                 )
               }
             >
-              <SegmentedControlItem value="used" label={t('dashboard.Used')} />
-              <SegmentedControlItem value="free" label={t('dashboard.Free')} />
-            </SegmentedControl>
+              <BAISegmentedControlItem
+                value="used"
+                label={t('dashboard.Used')}
+              />
+              <BAISegmentedControlItem
+                value="free"
+                label={t('dashboard.Free')}
+              />
+            </BAISegmentedControl>
             <BAIFetchKeyButton
               size="small"
               loading={isPending || refetching}

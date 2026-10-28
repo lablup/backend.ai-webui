@@ -8,7 +8,7 @@ import {
   getStaticAppearanceConfig,
   pickSeed,
 } from '../../helper/customThemeConfig';
-import { useDefaultTheme } from '../../hooks/useDefaultTheme';
+import { usePreviewThemeConfig } from '../../hooks/usePreviewThemeConfig';
 import LightDarkColorPicker from '../LightDarkColorPicker';
 import * as _ from 'lodash-es';
 
@@ -29,9 +29,10 @@ const ThemeColorPicker: React.FC<ThemeColorPickerSettingItemProps> = ({
 }) => {
   'use memo';
 
-  const { getDefaultThemeValue, updateDefaultTheme } = useDefaultTheme();
+  const { getThemeConfigValue, updateThemeConfigValue } =
+    usePreviewThemeConfig();
 
-  const draftValue = getDefaultThemeValue<BAIThemeSeedValue>(seedPath);
+  const draftValue = getThemeConfigValue<BAIThemeSeedValue>(seedPath);
   // Shipped theme.json value backs an empty draft slot so the picker never
   // shows a blank swatch for a seed the app actually renders.
   const shippedValue = _.get(getStaticAppearanceConfig(), seedPath) as
@@ -47,7 +48,7 @@ const ThemeColorPicker: React.FC<ThemeColorPickerSettingItemProps> = ({
     const otherValue = pickSeed(currentValue, other) ?? value;
     const next: [string, string] =
       mode === 'light' ? [value, otherValue] : [otherValue, value];
-    updateDefaultTheme(seedPath, next);
+    updateThemeConfigValue(seedPath, next);
   };
 
   return (

@@ -12,13 +12,12 @@ import RBACPermissionGrid, {
   type RBACPermissionChanges,
   type RBACPermissionSaveFailure,
 } from './RBACPermissionGrid';
-import { Token } from '@astryxdesign/core/Token';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAIFlex,
   BAIId,
   BAIText,
   INITIAL_FETCH_KEY,
-  toLocalId,
   useBAILogger,
   useFetchKey,
   useMutationWithPromise,
@@ -43,11 +42,8 @@ export interface RolePermissionSummaryTableProps {
 }
 
 /**
- * The Permissions tab of `RoleDetailDrawerV2` (managers >= 26.9.0a4, one
- * scope per role): the role's grants in `RBACPermissionGrid`, saved as the two
- * bulk role-permission mutations. Its own query and mutations select the 26.9
- * fields only; the fragment's `scopeType` carries `@since` because it rides
- * the role list query (ADR 0006).
+ * The Permissions tab of `RoleDetailDrawerV2`: the role's grants in
+ * `RBACPermissionGrid`, saved as the two bulk role-permission mutations.
  */
 const RolePermissionSummaryTable: React.FC<RolePermissionSummaryTableProps> = ({
   roleNodeFrgmt,
@@ -62,13 +58,14 @@ const RolePermissionSummaryTable: React.FC<RolePermissionSummaryTableProps> = ({
     graphql`
       fragment RolePermissionSummaryTableFragment on Role {
         id
+        entityId
         source
-        scopeType @since(version: "26.9.0a4")
+        scopeType
       }
     `,
     roleNodeFrgmt,
   );
-  const roleId = toLocalId(role.id);
+  const roleId = role.entityId;
   const scopeType = role.scopeType ?? '';
 
   const [fetchKey, updateFetchKey] = useFetchKey();
@@ -84,6 +81,7 @@ const RolePermissionSummaryTable: React.FC<RolePermissionSummaryTableProps> = ({
             edges {
               node {
                 id
+                fieldId
                 entityType
                 permission
               }
@@ -141,7 +139,7 @@ const RolePermissionSummaryTable: React.FC<RolePermissionSummaryTableProps> = ({
   const grants = _.compact(
     (data.adminRole?.permissions?.edges ?? []).map((edge) => edge?.node),
   ).map((node) => ({
-    id: toLocalId(node.id),
+    id: node.fieldId,
     entityType: node.entityType,
     permission: node.permission,
   }));

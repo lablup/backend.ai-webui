@@ -4,8 +4,8 @@
  */
 import { UsageProgressFragment_usageFrgmt$key } from '../__generated__/UsageProgressFragment_usageFrgmt.graphql';
 import { bytesToGB } from '../helper';
-import { ProgressBar } from '@astryxdesign/core/ProgressBar';
-import { Text } from '@astryxdesign/core/Text';
+import { ProgressBar } from '@lablup/ui-common/ProgressBar';
+import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

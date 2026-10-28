@@ -12,22 +12,21 @@ import useControllableState_deprecated from '../hooks/useControllableState';
 import type {
   SelectorOptionData,
   SelectorOptionType,
-} from '@astryxdesign/core/Selector';
-import { Selector } from '@astryxdesign/core/Selector';
-import { Token } from '@astryxdesign/core/Token';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { useTheme } from '@astryxdesign/core/theme';
+} from '@lablup/ui-common/Selector';
+import { Token } from '@lablup/ui-common/Token';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIFlex,
   BAIIconWithTooltip,
   BAIResourceNumberWithIcon,
   useThrottleFn,
   useUpdatableState,
+  BAISelector,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { SquarePen, Info } from 'lucide-react';
-import React, { useEffect, useTransition } from 'react';
-import type { CSSProperties } from 'react';
+import { Info, SquarePen } from 'lucide-react';
+import React, { useEffect, useTransition, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -106,7 +105,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
             name
             resource_slots
             shared_memory
-            scaling_group_name @since(version: "25.4.0")
+            scaling_group_name
           }
         }
       `,
@@ -318,17 +317,16 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
         updateFetchKeyUnderTransition();
       }}
     >
-      <Selector
+      <BAISelector
         // QA-FINDINGS Q-40: `session.launcher.ResourcePresets` does not exist
         // in any locale file, so i18next fell through and Astryx rendered the
         // RAW KEY as this Selector's accessible name.
         // `resourcePreset.ResourcePresets` is the same string and is present in
         // all 21 locales.
-        label={t('resourcePreset.ResourcePresets')}
-        isLabelHidden
+        aria-label={t('resourcePreset.ResourcePresets')}
         isLoading={isPendingUpdate}
-        isDisabled={disabled}
-        style={style}
+        disabled={disabled}
+        controlStyle={style}
         width="100%"
         hasSearch
         options={options}

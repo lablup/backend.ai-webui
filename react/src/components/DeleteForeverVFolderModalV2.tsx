@@ -11,7 +11,6 @@ import {
   type BAIColumnsType,
   BAIDeleteConfirmModal,
   type BAIDeleteConfirmModalProps,
-  toLocalId,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -42,11 +41,10 @@ const DeleteForeverVFolderModalV2: React.FC<
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
-  // `successes` is 26.9.0+ and `failed` 26.4.4+; `@since` strips each from
-  // the document below its version, and the flag picks which count to read.
-  const supportsPerIdResults = useSuspendedBackendaiClient().supports(
-    'bulk-mutation-per-id-results',
-  );
+  // `successes` is 26.9.0+; `@since` strips it from the document below that
+  // version, and this picks which count to read.
+  const supportsPerIdResults =
+    useSuspendedBackendaiClient().isManagerVersionCompatibleWith('26.9.0');
   // Per-folder failures of the last request; `total` is what the request
   // carried, kept apart from the selection the parent clears on success.
   const [failureReport, setFailureReport] = useState<{
@@ -59,6 +57,7 @@ const DeleteForeverVFolderModalV2: React.FC<
       fragment DeleteForeverVFolderModalV2Fragment on VFolder
       @relay(plural: true) {
         id
+        entityId
         metadata {
           name
         }
@@ -74,7 +73,7 @@ const DeleteForeverVFolderModalV2: React.FC<
       ) {
         bulkPurgeVfoldersV2(input: $input) {
           successes @since(version: "26.9.0")
-          failed @since(version: "26.4.4") {
+          failed {
             vfolderId
             message
           }
@@ -136,7 +135,7 @@ const DeleteForeverVFolderModalV2: React.FC<
             onRequestClose?.(false);
             return;
           }
-          const ids = _.map(purgeable, (vfolder) => toLocalId(vfolder.id));
+          const ids = _.map(purgeable, (vfolder) => vfolder.entityId);
           commitBulkPurgeMutation({
             variables: { input: { ids } },
             onCompleted: (data, errors) => {
@@ -155,7 +154,7 @@ const DeleteForeverVFolderModalV2: React.FC<
               // success with `failed` populated rather than as a top-level error.
               if (failed.length > 0) {
                 const nameByLocalId = _.fromPairs(
-                  _.map(purgeable, (v) => [toLocalId(v.id), v.metadata?.name]),
+                  _.map(purgeable, (v) => [v.entityId, v.metadata?.name]),
                 );
                 setFailureReport({
                   total: purgeable.length,

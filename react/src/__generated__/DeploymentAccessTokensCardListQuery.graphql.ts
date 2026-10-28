@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5357af9987e4a4f5de41698b4da365b5>>
+ * @generated SignedSource<<93237c97f6ca9b60c8d29224a33cfe1f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -22,6 +22,7 @@ export type DeploymentAccessTokensCardListQuery$data = {
         readonly node: {
           readonly createdAt: string;
           readonly expiresAt: string | null | undefined;
+          readonly fieldId: string;
           readonly id: string;
           readonly token: string;
         };
@@ -123,6 +124,13 @@ v3 = {
               "alias": null,
               "args": null,
               "kind": "ScalarField",
+              "name": "fieldId",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
               "name": "token",
               "storageKey": null
             },
@@ -194,16 +202,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "2d33f8bad9d8cf4cb452aaab7304922f",
+    "cacheID": "15f3315917487cbbd54f068245d9ccf8",
     "id": null,
     "metadata": {},
     "name": "DeploymentAccessTokensCardListQuery",
     "operationKind": "query",
-    "text": "query DeploymentAccessTokensCardListQuery(\n  $deploymentId: ID!\n  $limit: Int!\n  $offset: Int!\n) {\n  deployment(id: $deploymentId) {\n    accessTokens(orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit, offset: $offset) {\n      count\n      edges {\n        node {\n          id\n          token\n          createdAt\n          expiresAt\n        }\n      }\n    }\n    id\n  }\n}\n"
+    "text": "query DeploymentAccessTokensCardListQuery(\n  $deploymentId: ID!\n  $limit: Int!\n  $offset: Int!\n) {\n  deployment(id: $deploymentId) {\n    accessTokens(orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit, offset: $offset) {\n      count\n      edges {\n        node {\n          id\n          fieldId\n          token\n          createdAt\n          expiresAt\n        }\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "32017b93a3ea54d62f79fa78a6bb438f";
+(node as any).hash = "ffa46a3aaf32dad81fc49a9e4a97830b";
 
 export default node;

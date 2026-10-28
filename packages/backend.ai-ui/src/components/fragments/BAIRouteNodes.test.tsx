@@ -6,12 +6,9 @@ vi.mock('react-relay', async (importOriginal) => ({
   useFragment: (_fragment: unknown, ref: unknown) => ref,
 }));
 
-vi.mock('../provider/BAIClientProvider/hooks/useConnectedBAIClient', () => ({
-  default: () => ({ supports: () => true }),
-}));
-
 const route = (localId: string, status: string, healthStatus: string) => ({
   id: btoa(`Route:${localId}`),
+  fieldId: localId,
   status,
   healthStatus,
   trafficRatio: 1,

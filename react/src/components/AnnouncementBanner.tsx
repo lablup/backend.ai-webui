@@ -3,34 +3,41 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
+  DOMAIN_ANNOUNCEMENT_CONFIG_KEY,
+  DomainAnnouncement,
   isAnnouncementCollapsible,
-  splitAnnouncement,
-  summarizeAnnouncement,
-} from '../helper/announcementSummary';
+  isAnnouncementVisible,
+  summarizeAnnouncementTitle,
+} from '../helper/announcement';
 import { useCurrentUserRole } from '../hooks/backendai';
-import { useSuspenseGetAnnouncement } from '../hooks/useSuspenseGetAnnouncement';
+import { useDomainAppConfig } from '../hooks/useAppConfig';
 import './AnnouncementBanner.css';
-import AnnouncementEditModal from './AnnouncementEditModal';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { Markdown } from '@astryxdesign/core/Markdown';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIUnmountAfterClose,
   useSessionStorageState,
   useToggle,
 } from 'backend.ai-ui';
-import * as _ from 'lodash-es';
 import { ChevronDownIcon, ChevronUpIcon, SquarePenIcon } from 'lucide-react';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
+// The markdown engine and the editor load only when expanded / opened.
+const Markdown = React.lazy(() =>
+  import('@lablup/ui-common/Markdown').then((m) => ({ default: m.Markdown })),
+);
+const AnnouncementEditModal = React.lazy(
+  () => import('./AnnouncementEditModal'),
+);
+
 /**
- * The system announcement as AppShell's top banner (FR-3612), replacing the
- * StartPage-only `AnnouncementAlert`. A long announcement renders collapsed —
- * a one-line summary followed by an explicit labelled expand toggle revealing
- * the full markdown. Dismissal is remembered per session and per message, so
- * a new announcement resurfaces the banner.
+ * The domain's system announcement as AppShell's top banner (FR-3612), read
+ * from the domain app config (FR-3877). The title shows in every state; a
+ * body (or a title past the cutoff) renders collapsed behind an explicit
+ * labelled expand toggle. Dismissal is remembered per session and per
+ * publication, so a re-published announcement resurfaces the banner.
  */
 const AnnouncementBanner: React.FC = () => {
   'use memo';
@@ -42,35 +49,31 @@ const AnnouncementBanner: React.FC = () => {
   const [isEditOpen, { toggle: toggleEditModal }] = useToggle(false);
   // Expansion is owned here rather than by Banner's `children` slot: Banner's
   // own toggle sits at the far end of the header, away from the text it
-  // reveals. (0.5.0's `collapsible` config added a controlled mode; the
-  // placement is what still rules the slot out.)
+  // reveals.
   const [isExpanded, { toggle: toggleExpanded }] = useToggle(false);
-  const { data: announcement } = useSuspenseGetAnnouncement();
-  const [dismissedMessage, setDismissedMessage] = useSessionStorageState<
+  const announcement = useDomainAppConfig<DomainAnnouncement>(
+    DOMAIN_ANNOUNCEMENT_CONFIG_KEY,
+  );
+  const [dismissedKey, setDismissedKey] = useSessionStorageState<
     string | undefined
   >('backendaiwebui.dismissed_announcement');
 
-  const message = announcement.message ?? '';
-  if (_.isEmpty(message) || dismissedMessage === message) {
+  if (!isAnnouncementVisible(announcement)) {
+    return null;
+  }
+  const dismissKey = announcement.updatedAt ?? announcement.title;
+  if (dismissedKey === dismissKey) {
     return null;
   }
 
-  // Must use the same renderer settings as the editor preview (FR-3402); the
-  // banner sits above the page h1, so markdown `#` starts at h3.
-  const renderMarkdown = (source: string) => (
-    <Markdown density="compact" headingLevelStart={3} autolink="gfm">
-      {source}
-    </Markdown>
-  );
-  const isCollapsible = isAnnouncementCollapsible(message);
-  // The first line is the banner's title in both states, so the expanded body
-  // is the source WITHOUT it — expanding adds only what the title does not
-  // already show.
-  const { headline, body } = splitAnnouncement(message);
+  const title = announcement.title.trim();
+  const body = (announcement.body ?? '').trim();
+  const isCollapsible = isAnnouncementCollapsible(announcement);
 
   return (
     <>
       <Banner
+        role="status"
         status="info"
         container="section"
         className="webui-announcement-banner"
@@ -83,14 +86,13 @@ const AnnouncementBanner: React.FC = () => {
           } as React.CSSProperties
         }
         isDismissable
-        onDismiss={() => setDismissedMessage(message)}
-        // Collapsible shape: the first line is the title in BOTH states, with
-        // the expand toggle right beside it — collapsed it is cut to one row,
-        // expanded it shows in full (so a cropped long line is never lost) and
-        // `description` adds the rest of the source below it. Short shape:
-        // body in `description`, not `title` — Banner centres its header on
+        onDismiss={() => setDismissedKey(dismissKey)}
+        // Collapsible shape: the title in BOTH states with the expand toggle
+        // right beside it — collapsed it is cut to one row, expanded it shows
+        // in full and `description` adds the body below it. Short shape: the
+        // title in `description`, not `title` — Banner centres its header on
         // `description == null && hasActions`, which misaligns the icon and
-        // Edit button against a multi-line announcement (FR-3482).
+        // Edit button against a wrapping line (FR-3482).
         title={
           isCollapsible ? (
             <span className="webui-announcement-title">
@@ -101,7 +103,7 @@ const AnnouncementBanner: React.FC = () => {
                     : 'webui-announcement-summary'
                 }
               >
-                {isExpanded ? headline : summarizeAnnouncement(message)}
+                {isExpanded ? title : summarizeAnnouncementTitle(title)}
               </span>
               <Button
                 className="webui-announcement-toggle"
@@ -125,11 +127,34 @@ const AnnouncementBanner: React.FC = () => {
           ) : null
         }
         description={
-          isCollapsible
-            ? isExpanded && body.length > 0
-              ? renderMarkdown(body)
-              : undefined
-            : renderMarkdown(message)
+          isCollapsible ? (
+            isExpanded && body.length > 0 ? (
+              // Must use the same renderer settings as the editor preview
+              // (FR-3402); the banner sits above the page h1, so markdown `#`
+              // starts at h3.
+              <Suspense
+                fallback={
+                  <span
+                    className="webui-announcement-body"
+                    style={{ whiteSpace: 'pre-wrap' }}
+                  >
+                    {body}
+                  </span>
+                }
+              >
+                <Markdown
+                  className="webui-announcement-body"
+                  density="compact"
+                  headingLevelStart={3}
+                  autolink="gfm"
+                >
+                  {body}
+                </Markdown>
+              </Suspense>
+            ) : undefined
+          ) : (
+            <span className="webui-announcement-text">{title}</span>
+          )
         }
         endContent={
           isSuperAdmin ? (
@@ -144,12 +169,14 @@ const AnnouncementBanner: React.FC = () => {
         }
       />
       {isSuperAdmin && (
-        <BAIUnmountAfterClose>
-          <AnnouncementEditModal
-            open={isEditOpen}
-            onRequestClose={toggleEditModal}
-          />
-        </BAIUnmountAfterClose>
+        <Suspense fallback={null}>
+          <BAIUnmountAfterClose>
+            <AnnouncementEditModal
+              open={isEditOpen}
+              onRequestClose={toggleEditModal}
+            />
+          </BAIUnmountAfterClose>
+        </Suspense>
       )}
     </>
   );

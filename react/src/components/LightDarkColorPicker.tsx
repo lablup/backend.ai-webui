@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Grid } from '@astryxdesign/core/Grid';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Grid } from '@lablup/ui-common/Grid';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIColorPicker,
   BAIFlex,
@@ -29,7 +29,7 @@ export interface LightDarkColorPickerProps {
  * Shared presentational light/dark two-column colour-picker layout. The
  * persistence strategy is injected per scheme via props: the Branding
  * `ThemeColorPicker` writes the appearance-document seed paths through
- * `useDefaultTheme`.
+ * `usePreviewThemeConfig`.
  */
 const LightDarkColorPicker: React.FC<LightDarkColorPickerProps> = ({
   light,

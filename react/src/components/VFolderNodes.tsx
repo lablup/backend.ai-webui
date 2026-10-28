@@ -15,13 +15,13 @@ import {
   VFolderNodesFragment$key,
 } from '../__generated__/VFolderNodesFragment.graphql';
 import { App } from '../app-shim';
+import { isDeletedCategory } from '../helper/vfolderStatus';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import { ProjectContextOrNull } from '../types/projectContext';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import InviteFolderSettingModal from './InviteFolderSettingModal';
@@ -29,12 +29,12 @@ import SharedFolderPermissionInfoModal from './SharedFolderPermissionInfoModal';
 import VFolderDeployModal, { VFolderDeployQuery } from './VFolderDeployModal';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import VFolderPermissionCell from './VFolderPermissionCell';
-import { Badge } from '@astryxdesign/core/Badge';
-import type { BadgeVariant } from '@astryxdesign/core/Badge';
-import { Link } from '@astryxdesign/core/Link';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Badge } from '@lablup/ui-common/Badge';
+import type { BadgeVariant } from '@lablup/ui-common/Badge';
+import { Link } from '@lablup/ui-common/Link';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAITable,
   BAITableProps,
@@ -398,7 +398,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         num_files
         cur_size
         cloneable
-        permissions @since(version: "24.09.0")
+        permissions
         ...VFolderPermissionCellFragment
         ...VFolderNodeIdenticonFragment
         ...SharedFolderPermissionInfoModalFragment

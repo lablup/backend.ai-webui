@@ -9,19 +9,19 @@ import {
 } from '../../__generated__/ResourceGroupFairShareTableFragment.graphql';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
 import ResourceGroupFairShareSettingModal from './ResourceGroupFairShareSettingModal';
-import { Divider } from '@astryxdesign/core/Divider';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Divider } from '@lablup/ui-common/Divider';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIQuestionIconWithTooltip,
   BAIBadge,
   BAIFlex,
   BAINameActionCell,
+  BAIQuestionIconWithTooltip,
   BAITable,
   BAITableProps,
   BAIUnmountAfterClose,
-  convertToBinaryUnit,
   ResourceTypeIcon,
+  convertToBinaryUnit,
   type BAIColumnsType,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';

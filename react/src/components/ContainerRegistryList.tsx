@@ -16,10 +16,9 @@ import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting'
 import { usePainKiller } from '../hooks/usePainKiller';
 import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
-import { Button } from '@astryxdesign/core/Button';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Switch } from '@astryxdesign/core/Switch';
-import { Token } from '@astryxdesign/core/Token';
+import { Button } from '@lablup/ui-common/Button';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAITokenRow,
   BAIDeleteConfirmModal,
@@ -35,6 +34,7 @@ import {
   useBAILogger,
   useFetchKey,
   useToggle,
+  BAISwitch,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
@@ -402,17 +402,14 @@ const ContainerRegistryList: React.FC<{
           // antd Switch checked/loading/disabled -> Astryx Switch
           // value/isLoading/isDisabled; `label` is required, hidden here
           // because the column header already names the control (P2).
-          <Switch
-            label={t('general.Enabled')}
-            isLabelHidden
+          <BAISwitch
+            aria-label={t('general.Enabled')}
             value={
               inFlightHostName === record.id + deferredFetchKey
                 ? !isEnabled
                 : isEnabled
             }
-            isDisabled={
-              deferredFetchKey !== fetchKey || isInFlightDomainMutation
-            }
+            disabled={deferredFetchKey !== fetchKey || isInFlightDomainMutation}
             isLoading={
               (deferredFetchKey !== fetchKey || isInFlightDomainMutation) &&
               inFlightHostName === record.id + deferredFetchKey
@@ -571,6 +568,7 @@ const ContainerRegistryList: React.FC<{
       <ContainerRegistryEditorModal
         containerRegistryFrgmt={editingRegistry}
         open={!!editingRegistry || isNewModalOpen}
+        unmountOnClose
         onOk={(type) => {
           if (type === 'create') {
             message.success({

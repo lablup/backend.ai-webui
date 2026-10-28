@@ -3,7 +3,6 @@
 //            9 (My Resources in Resource Group Widget), 10 (Agent Stats Widget),
 //            11 (Recently Created Sessions Widget), 12 (Board Layout)
 // plus: custom panel add flow (edit sider -> panel modal), added after the plan
-import { skipUnlessClientFeature } from '../utils/feature-gate-util';
 import { loginAsAdmin, loginAsUser, navigateTo } from '../utils/test-util';
 import { test, expect, type Page } from '@playwright/test';
 
@@ -44,7 +43,7 @@ test.describe(
           // 2. Verify the "Active Sessions" widget is visible (superadmin sees "Active Sessions")
           await expect(
             page
-              .locator('.bai_grid_item')
+              .locator('.uic-board-item')
               .filter({ hasText: 'Active Sessions' })
               .first(),
           ).toBeVisible({ timeout: WIDGET_TIMEOUT });
@@ -52,7 +51,7 @@ test.describe(
           // 3. Verify the "My Resources" widget is visible with CPU and Memory statistics
           await expect(
             page
-              .locator('.bai_grid_item')
+              .locator('.uic-board-item')
               .filter({ hasText: 'My Total Resource Usage' })
               .first(),
           ).toBeVisible({ timeout: WIDGET_TIMEOUT });
@@ -61,7 +60,7 @@ test.describe(
           // The widget title is "My Resources in" followed by a resource group selector
           await expect(
             page
-              .locator('.bai_grid_item')
+              .locator('.uic-board-item')
               .filter({ hasText: 'My Resources in' })
               .first(),
           ).toBeVisible({ timeout: WIDGET_TIMEOUT });
@@ -69,7 +68,7 @@ test.describe(
           // 5. Verify the "Recently Created Sessions" widget is visible
           await expect(
             page
-              .locator('.bai_grid_item')
+              .locator('.uic-board-item')
               .filter({ hasText: 'Recently Created Sessions' })
               .first(),
           ).toBeVisible({ timeout: WIDGET_TIMEOUT });
@@ -87,13 +86,13 @@ test.describe(
         // 2. Verify the widget title reads "My Sessions" (not "Active Sessions")
         await expect(
           page
-            .locator('.bai_grid_item')
+            .locator('.uic-board-item')
             .filter({ hasText: 'My Sessions' })
             .first(),
         ).toBeVisible({ timeout: WIDGET_TIMEOUT });
         await expect(
           page
-            .locator('.bai_grid_item')
+            .locator('.uic-board-item')
             .filter({ hasText: 'Active Sessions' })
             .first(),
         ).not.toBeVisible();
@@ -110,7 +109,7 @@ test.describe(
         // 2. Verify the "My Sessions" widget is visible
         await expect(
           page
-            .locator('.bai_grid_item')
+            .locator('.uic-board-item')
             .filter({ hasText: 'My Sessions' })
             .first(),
         ).toBeVisible({ timeout: WIDGET_TIMEOUT });
@@ -118,7 +117,7 @@ test.describe(
         // 3. Verify the "My Resources" widget is visible
         await expect(
           page
-            .locator('.bai_grid_item')
+            .locator('.uic-board-item')
             .filter({ hasText: 'My Total Resource Usage' })
             .first(),
         ).toBeVisible({ timeout: WIDGET_TIMEOUT });
@@ -127,7 +126,7 @@ test.describe(
         // The widget title is "My Resources in" followed by a resource group selector
         await expect(
           page
-            .locator('.bai_grid_item')
+            .locator('.uic-board-item')
             .filter({ hasText: 'My Resources in' })
             .first(),
         ).toBeVisible({ timeout: WIDGET_TIMEOUT });
@@ -135,7 +134,7 @@ test.describe(
         // 5. Verify the "Agent Stats" widget is NOT present (admin only)
         await expect(
           page
-            .locator('.bai_grid_item')
+            .locator('.uic-board-item')
             .filter({ hasText: 'Agent Statistics' })
             .first(),
         ).not.toBeVisible();
@@ -143,7 +142,7 @@ test.describe(
         // 6. Verify the "Recently Created Sessions" table is visible
         await expect(
           page
-            .locator('.bai_grid_item')
+            .locator('.uic-board-item')
             .filter({ hasText: 'Recently Created Sessions' })
             .first(),
         ).toBeVisible({ timeout: WIDGET_TIMEOUT });
@@ -164,7 +163,7 @@ test.describe(
       }) => {
         // 1. Locate the "Active Sessions" widget
         const widget = page
-          .locator('.bai_grid_item')
+          .locator('.uic-board-item')
           .filter({ hasText: 'Active Sessions' })
           .first();
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
@@ -182,7 +181,7 @@ test.describe(
       }) => {
         // 1. Locate the "Active Sessions" widget
         const widget = page
-          .locator('.bai_grid_item')
+          .locator('.uic-board-item')
           .filter({ hasText: 'Active Sessions' })
           .first();
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
@@ -211,7 +210,7 @@ test.describe(
       }) => {
         // 1. Locate the "My Resources" widget
         const widget = page
-          .locator('.bai_grid_item')
+          .locator('.uic-board-item')
           .filter({ hasText: 'My Total Resource Usage' })
           .first();
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
@@ -228,7 +227,7 @@ test.describe(
       }) => {
         // 1. Locate the "My Resources" widget
         const widget = page
-          .locator('.bai_grid_item')
+          .locator('.uic-board-item')
           .filter({ hasText: 'My Total Resource Usage' })
           .first();
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
@@ -257,7 +256,7 @@ test.describe(
         // 1. Locate the "My Resources in Resource Group" widget
         // The widget title is "My Resources in" followed by a resource group selector
         const widget = page
-          .locator('.bai_grid_item')
+          .locator('.uic-board-item')
           .filter({ hasText: 'My Resources in' })
           .first();
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
@@ -306,7 +305,7 @@ test.describe(
         // 1. Locate the "My Resources in Resource Group" widget
         // The widget title is "My Resources in" followed by a resource group selector
         const widget = page
-          .locator('.bai_grid_item')
+          .locator('.uic-board-item')
           .filter({ hasText: 'My Resources in' })
           .first();
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
@@ -346,23 +345,14 @@ test.describe(
         test.beforeEach(async ({ page, request }) => {
           await loginAsAdmin(page, request);
           await navigateTo(page, 'summary');
-
-          // Declarative feature gate (FR-3112): the Agent Statistics widget is
-          // rendered only when the manager supports 'agent-stats'
-          // (manager >= 25.15.0; widget introduced by FR-1575).
-          await skipUnlessClientFeature(
-            page,
-            'agent-stats',
-            "Agent Statistics widget requires the 'agent-stats' capability (Backend.AI manager >= 25.15.0, FR-1575)",
-          );
         });
 
         test('Admin can view cluster-level resource statistics in the Agent Stats widget', async ({
           page,
         }) => {
-          // 1. The backend is capable — the widget MUST be present; absence is a failure.
+          // The widget ships with manager 25.15 (see the tag).
           const widget = page
-            .locator('.bai_grid_item')
+            .locator('.uic-board-item')
             .filter({ hasText: 'Agent Statistics' });
           await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
@@ -391,9 +381,8 @@ test.describe(
         test('Admin can manually refresh the Agent Stats widget', async ({
           page,
         }) => {
-          // 1. The backend is capable — the widget MUST be present; absence is a failure.
           const widget = page
-            .locator('.bai_grid_item')
+            .locator('.uic-board-item')
             .filter({ hasText: 'Agent Statistics' });
           await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
@@ -421,7 +410,7 @@ test.describe(
       }) => {
         // 1. Locate the "Recently Created Sessions" widget
         const widget = page
-          .locator('.bai_grid_item')
+          .locator('.uic-board-item')
           .filter({ hasText: 'Recently Created Sessions' });
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
@@ -434,7 +423,7 @@ test.describe(
       }) => {
         // 1. Locate the "Recently Created Sessions" widget
         const widget = page
-          .locator('.bai_grid_item')
+          .locator('.uic-board-item')
           .filter({ hasText: 'Recently Created Sessions' });
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
@@ -465,14 +454,18 @@ test.describe(
         ).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
         // 3. Verify board container exists with multiple widgets
-        const boardItems = page.locator('.bai_grid_item');
+        const boardItems = page.locator('.uic-board-item');
         await expect(boardItems.first()).toBeVisible();
         const count = await boardItems.count();
         expect(count).toBeGreaterThanOrEqual(3);
 
         // 4. Panels are rearrangeable at all times — no mode to enter first
-        await expect(page.locator('.bai_board_handle').first()).toBeVisible();
-        await expect(page.locator('.bai_board_resizer').first()).toBeVisible();
+        await expect(
+          page.locator('.uic-board-item__drag-handle').first(),
+        ).toBeVisible();
+        await expect(
+          page.locator('.uic-board-item__resize-handle').first(),
+        ).toBeVisible();
       });
 
       test('Admin can open and close the dashboard edit sider', async ({
@@ -525,7 +518,7 @@ test.describe(
         await expect(modal).toBeVisible();
 
         // 3. Pick the "Sessions" data source (project-scoped, available to every
-        //    role). The AstryxFormSelector for the `resourceType` field is
+        //    role). The Selector for the `resourceType` field is
         //    labelled `t('dashboard.panelModal.DataSource')` = "Data source"
         //    (`DashboardPanelModal.tsx`); the other combobox in the dialog is
         //    the condition property filter ("Search filters").
@@ -549,7 +542,7 @@ test.describe(
         //    (The panel is persisted in localStorage only, and each test runs in
         //    a fresh browser context, so no cleanup is needed.)
         await expect(
-          page.locator('.bai_grid_item').filter({ hasText: panelTitle }),
+          page.locator('.uic-board-item').filter({ hasText: panelTitle }),
         ).toBeVisible({ timeout: WIDGET_TIMEOUT });
       });
     });

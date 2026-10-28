@@ -31,13 +31,13 @@ import {
   useBAIResourceSlots,
   useConnectedBAIClient,
 } from '../provider';
-import { Text } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
+import { useTheme } from '@lablup/ui-common/theme';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { CircleCheck, CircleMinus } from 'lucide-react';
-import { type ErrorInfo } from 'react';
+import type { ErrorInfo } from 'react';
 import {
   ErrorBoundary,
   type ErrorBoundaryPropsWithRender,

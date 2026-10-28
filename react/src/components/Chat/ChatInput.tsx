@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import ChatSender, { type ChatSenderProps } from './ChatSender';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex } from 'backend.ai-ui';
 import { atom, useAtom } from 'jotai';
 import { isEmpty, isEqual, isUndefined } from 'lodash-es';

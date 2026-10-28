@@ -14,9 +14,9 @@
  (`src/styles/zIndexLadder.ts`): it stacks over the explorer body, not the window.
 */
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
+import BAIFileInput from '../../BAIFileInput';
 import './DragAndDrop.css';
 import type { RcFile } from './hooks';
-import { FileInput } from '@astryxdesign/core/FileInput';
 import { useRef } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -59,17 +59,16 @@ const DragAndDrop: React.FC<DragAndDropProps> = ({
         backdropFilter: 'blur(4px)',
       }}
     >
-      <FileInput
+      <BAIFileInput
         mode="dropzone"
         // `FileInput` spreads unknown props onto its hidden <input>, so a
-        // data-testid cannot reach the drop area — `className` can, and both
+        // data-testid cannot reach the drop area — `controlClassName` can, and both
         // e2e and `DragAndDrop.css` need a repo-owned handle on it (never an
         // `astryx-*` class).
-        className="bai-file-explorer-dropzone"
-        // The caption has to live INSIDE the drop area: `label` / `description`
-        // render above it in the Field, on top of the explorer title (FR-3575).
-        label={t('comp:FileExplorer.DragAndDropDesc')}
-        isLabelHidden
+        controlClassName="bai-file-explorer-dropzone"
+        // The caption lives INSIDE the drop area (`placeholder`), not above it
+        // on top of the explorer title (FR-3575).
+        aria-label={t('comp:FileExplorer.DragAndDropDesc')}
         placeholder={t('comp:FileExplorer.DragAndDropDesc')}
         isMultiple
         value={null}
@@ -82,9 +81,9 @@ const DragAndDrop: React.FC<DragAndDropProps> = ({
           }
           lastFileListRef.current = fileList;
         }}
-        // `style` lands on the dropzone element, so the drop area itself fills
+        // `controlStyle` lands on the dropzone element, so the drop area itself fills
         // the overlay — the Field wrapper it sits in has no height of its own.
-        style={{ position: 'absolute', inset: 0 }}
+        controlStyle={{ position: 'absolute', inset: 0 }}
       />
     </div>
   );

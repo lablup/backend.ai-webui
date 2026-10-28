@@ -3,12 +3,11 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '.';
-import {
-  useCurrentUserProjectRolesQuery,
-  PermissionNestedFilter,
-} from '../__generated__/useCurrentUserProjectRolesQuery.graphql';
+import { useCurrentUserProjectRolesQuery } from '../__generated__/useCurrentUserProjectRolesQuery.graphql';
+import { useAccessibleProjects } from './useAccessibleProjects';
 import { useCurrentProjectValue } from './useCurrentProject';
 import { useUrlProjectValidity } from './useUrlProjectValidity';
+import * as _ from 'lodash-es';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export interface CurrentUserProjectRolesResult {
@@ -17,116 +16,74 @@ export interface CurrentUserProjectRolesResult {
   /** Domain names the user has domain-admin rights over (derived from baiClient for now). */
   domainAdminDomains: string[];
   /**
-   * Project UUIDs where the user holds a project-scoped admin role. Grants
-   * inherited from the domain or global scope are not counted.
+   * UUIDs of the user's member projects on which they hold the `scope_admin`
+   * permission, through any scope that governs the project.
    */
   projectAdminIds: string[];
 }
 
+// `myAtomicBulkScopePermissions` refuses more than 100 targets.
+const MAX_PERMISSION_TARGETS = 100;
+
 /**
- * Hook that reports which projects the user holds a project-admin role in.
- *
- * Managers >= 26.9.0 answer `myRolesV2`: the user's project-scoped roles that
- * carry a `scope_admin` permission. Older managers answer `myRoles`
- * (assignments) filtered on the retired `PROJECT_ADMIN_PAGE` entity. The
- * request transformer strips whichever root field the connected manager does
- * not know, and `@catch(to: RESULT)` keeps general pages rendering when both fail.
- *
- * `@include` / `@skip` mirror the `@since` / `@deprecatedSince` gates so Relay
- * never expects the root field the transformer stripped; otherwise
- * store-or-network refetches (and suspends) on every mount.
+ * Hook that reports which projects the header's selector lists grant the
+ * `scope_admin` permission, asked through `myAtomicBulkScopePermissions`.
+ * A super-admin bypasses RBAC, so every listed project counts for them.
+ * `@catch(to: RESULT)` keeps general pages rendering when the query fails.
  */
 export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
+  'use memo';
   const baiClient = useSuspendedBackendaiClient();
-  const supportsMyRolesV2 = baiClient.supports('rbac-single-scope-role');
 
-  const PROJECT_ADMIN_PAGE = 'PROJECT_ADMIN_PAGE';
-  const legacyPermissionFilter: PermissionNestedFilter = {
-    // Cast confined to the one field the generated type can't model.
-    entityType: (baiClient.supports('rbac-filter-wrapper')
-      ? { equals: PROJECT_ADMIN_PAGE }
-      : PROJECT_ADMIN_PAGE) as PermissionNestedFilter['entityType'],
-  };
+  // The same member list the header's project selector renders.
+  const { accessibleProjects, personalProject } = useAccessibleProjects();
+  const memberProjectIds = _.uniq(
+    _.compact([
+      ..._.map(accessibleProjects, (project) => project?.id),
+      personalProject?.id,
+    ]),
+  )
+    .sort()
+    .slice(0, MAX_PERMISSION_TARGETS);
 
   const data = useLazyLoadQuery<useCurrentUserProjectRolesQuery>(
     graphql`
-      query useCurrentUserProjectRolesQuery(
-        $legacyPermissionFilter: PermissionNestedFilter
-        $supportsMyRolesV2: Boolean!
-      ) {
-        projectAdminRoles: myRolesV2(
-          first: 100
-          filter: {
-            status: { equals: ACTIVE }
-            mappedScope: { scopeType: { iEquals: "project" } }
-            permissions: { some: { entityType: { iEquals: "scope_admin" } } }
-          }
-        )
-          @since(version: "26.9.0a4")
-          @include(if: $supportsMyRolesV2)
-          @catch(to: RESULT) {
-          edges {
-            node {
-              id
-              scopeId
-            }
-          }
-        }
-        legacyRoles: myRoles(
-          first: 100
-          filter: { permission: $legacyPermissionFilter }
-        )
-          @deprecatedSince(version: "26.9.0a4")
-          @skip(if: $supportsMyRolesV2)
-          @catch(to: RESULT) {
-          edges {
-            node {
-              id
-              role {
-                id
-                scopes(first: 1) {
-                  edges {
-                    node {
-                      scopeId
-                      scopeType
-                    }
-                  }
-                }
-              }
-            }
+      query useCurrentUserProjectRolesQuery($targets: [PermissionTarget!]!) {
+        projectAdminPermissions: myAtomicBulkScopePermissions(
+          input: { targets: $targets }
+        ) @catch(to: RESULT) {
+          items {
+            scopeId
+            permissions
           }
         }
       }
     `,
-    { legacyPermissionFilter, supportsMyRolesV2 },
     {
-      // store-or-network keeps the result cached across pages for the session.
-      fetchPolicy: baiClient.supports('my-roles')
-        ? 'store-or-network'
-        : 'store-only',
+      targets: _.map(memberProjectIds, (scopeId) => ({
+        scopeType: 'project',
+        scopeId,
+        entityType: 'scope_admin',
+      })),
+    },
+    {
+      fetchPolicy:
+        memberProjectIds.length > 0 ? 'store-or-network' : 'store-only',
     },
   );
 
-  const ids = new Set<string>();
-  if (data.projectAdminRoles?.ok === true) {
-    for (const roleEdge of data.projectAdminRoles.value?.edges ?? []) {
-      if (roleEdge?.node?.scopeId) {
-        ids.add(roleEdge.node.scopeId);
-      }
-    }
-  }
-  if (data.legacyRoles?.ok === true) {
-    for (const assignmentEdge of data.legacyRoles.value?.edges ?? []) {
-      for (const scopeEdge of assignmentEdge?.node?.role?.scopes?.edges ?? []) {
-        const scope = scopeEdge?.node;
-        if (scope?.scopeType?.toUpperCase() === 'PROJECT' && scope.scopeId) {
-          ids.add(scope.scopeId);
-        }
-      }
-    }
-  }
-  // Sort for deterministic output across fetches.
-  const projectAdminIds = Array.from(ids).sort();
+  const projectAdminIds =
+    data.projectAdminPermissions?.ok === true
+      ? _.uniq(
+          _.map(
+            _.filter(
+              data.projectAdminPermissions.value?.items,
+              (item) => item.permissions.length > 0,
+            ),
+            'scopeId',
+          ),
+        ).sort()
+      : [];
 
   const isSuperAdmin: boolean = !!baiClient?.is_superadmin;
   // Domain-admin detection via RBAC is out of scope for this PR (no stable
@@ -163,16 +120,24 @@ export type EffectiveAdminRole =
  * what converges the atom to the URL — from ever mounting.
  */
 export const useEffectiveAdminRole = (): EffectiveAdminRole => {
-  const { isSuperAdmin, domainAdminDomains, projectAdminIds } =
-    useCurrentUserProjectRoles();
-
-  const { urlProjectName, resolvedId } = useUrlProjectValidity();
-  const currentProjectId = useCurrentProjectValue()?.id;
-  const targetProjectId = urlProjectName ? resolvedId : currentProjectId;
+  const { isSuperAdmin, domainAdminDomains } = useCurrentUserProjectRoles();
+  const isCurrentProjectAdmin = useIsCurrentProjectAdmin();
 
   if (isSuperAdmin) return 'superadmin';
   if (domainAdminDomains.length > 0) return 'domainAdmin';
-  if (targetProjectId && projectAdminIds.includes(targetProjectId))
-    return 'currentProjectAdmin';
+  if (isCurrentProjectAdmin) return 'currentProjectAdmin';
   return 'none';
+};
+
+/**
+ * Whether the user holds a project-scoped admin role in the target project
+ * (URL project, else the current-project atom), regardless of super/domain
+ * admin rights.
+ */
+export const useIsCurrentProjectAdmin = (): boolean => {
+  const { projectAdminIds } = useCurrentUserProjectRoles();
+  const { urlProjectName, resolvedId } = useUrlProjectValidity();
+  const currentProjectId = useCurrentProjectValue()?.id;
+  const targetProjectId = urlProjectName ? resolvedId : currentProjectId;
+  return !!targetProjectId && projectAdminIds.includes(targetProjectId);
 };

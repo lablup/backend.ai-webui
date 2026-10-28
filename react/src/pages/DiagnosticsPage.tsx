@@ -10,16 +10,16 @@ import StorageProxyDiagnosticsSection from '../components/StorageProxyDiagnostic
 import WebServerConfigDiagnosticsSection from '../components/WebServerConfigDiagnosticsSection';
 import { downloadCSV, escapeCsvValue } from '../helper/csv-util';
 import { DiagnosticResult } from '../types/diagnostics';
-import { Collapsible, CollapsibleGroup } from '@astryxdesign/core/Collapsible';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { Switch } from '@astryxdesign/core/Switch';
+import { Collapsible, CollapsibleGroup } from '@lablup/ui-common/Collapsible';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
 import {
   BAISkeleton,
   BAIButton,
   BAICard,
   BAIFlex,
   useFetchKey,
+  BAISwitch,
 } from 'backend.ai-ui';
 import { Download, EllipsisVertical, RotateCw } from 'lucide-react';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
@@ -225,12 +225,13 @@ const DiagnosticsPage = () => {
               is not just redundant, it was the only thing giving the toggle an
               accessible name — and it never actually did, because antd's
               Switch and that Text were unassociated siblings. */}
-          <Switch
+          <BAISwitch
             size="sm"
             value={showOnlyFailed}
             onChange={setShowOnlyFailed}
-            label={t('diagnostics.ShowOnlyFailedItems')}
-          />
+          >
+            {t('diagnostics.ShowOnlyFailedItems')}
+          </BAISwitch>
           <BAIButton
             icon={
               <RotateCw

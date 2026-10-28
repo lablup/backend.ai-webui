@@ -34,13 +34,14 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { nodeToAccessibleLabel } from '../helper/astryxLabel';
-import { useControllableValue, useUpdatableState } from '../hooks';
 import { useBAIi18n } from '../hooks/useBAIi18n';
+import useControllableValue from '../hooks/useControllableValue';
+import { useUpdatableState } from '../hooks/useUpdatableState';
 import BAIDynamicUnitInputNumber, {
   BAIDynamicUnitInputNumberProps,
 } from './BAIDynamicUnitInputNumber';
 import BAIFlex from './BAIFlex';
-import { Slider } from '@astryxdesign/core/Slider';
+import BAISlider from './BAISlider';
 import * as _ from 'lodash-es';
 import React, { useEffect, useMemo } from 'react';
 
@@ -209,9 +210,8 @@ const BAIDynamicUnitInputNumberWithSlider: React.FC<
               ></div>
             </BAIFlex>
           )} */}
-          <Slider
-            label={t('comp:BAIDynamicUnitInputNumberWithSlider.Amount')}
-            isLabelHidden
+          <BAISlider
+            aria-label={t('comp:BAIDynamicUnitInputNumberWithSlider.Amount')}
             // antd's `Slider` filled its flex track; Astryx's sizes to its
             // CONTENT unless told otherwise, which collapsed the rail to a
             // few pixels and stacked the marks on top of each other. Caught by
@@ -227,7 +227,7 @@ const BAIDynamicUnitInputNumberWithSlider: React.FC<
             // Most of case, it's not a good idea to set the different value to the control value,
             // but in this case, it's okay to hide all information and disabled the slider.
             value={isMinOversMaxValue ? 0 : (valueGiB?.number ?? 0)}
-            isDisabled={isMinOversMaxValue}
+            disabled={isMinOversMaxValue}
             valueDisplay={isMinOversMaxValue ? 'none' : 'tooltip'}
             formatValue={(sliderValue = 0) =>
               sliderValue < 1

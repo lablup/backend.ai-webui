@@ -29,54 +29,6 @@ import { test, expect } from '@playwright/test';
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Install a persistent `model-card-v2` feature flag override via
- * `page.addInitScript`. This runs on every navigation (including full-page
- * reloads via `page.goto` / `navigateTo`), so the flag survives across
- * `setupModelStorePage`'s serving → model-store navigation hop where a plain
- * `page.evaluate` override would be wiped out by the reload that rebuilds
- * `window.backendaiclient` from scratch.
- *
- * The script patches `supports()` the moment the client object is assigned to
- * `window.backendaiclient`, so downstream `useSuspendedBackendaiClient` /
- * route guards see `model-card-v2 === true` deterministically regardless of
- * the backend manager version under test.
- */
-async function installModelCardV2FlagOverride(page: any) {
-  await page.addInitScript(() => {
-    let clientRef: any = undefined;
-    Object.defineProperty(window, 'backendaiclient', {
-      get() {
-        return clientRef;
-      },
-      set(value: any) {
-        if (
-          value &&
-          typeof value.supports === 'function' &&
-          !value.__mcv2Patched
-        ) {
-          const origSupports = value.supports.bind(value);
-          value.supports = function (feature: string) {
-            // Force model-card-v2 on so EndpointDetailPage reads
-            // modelDeployment.metadata.status (which our mocks populate).
-            if (feature === 'model-card-v2') return true;
-            // Force prometheus-auto-scaling-rule off so the EndpointDetailPage
-            // does not render <AutoScalingRuleList>, which fires an
-            // unmocked AutoScalingRuleListQuery whose `deployment(id: ...)`
-            // root field collides with the same Relay store key populated
-            // by EndpointDetailPageQuery and nulls out modelDeployment.
-            if (feature === 'prometheus-auto-scaling-rule') return false;
-            return origSupports(feature);
-          };
-          value.__mcv2Patched = true;
-        }
-        clientRef = value;
-      },
-      configurable: true,
-    });
-  });
-}
-
-/**
  * Intercepts the REST endpoints used by `useProjectResourceGroups` so tests
  * can control which resource groups appear in the Deploy modal selector.
  * The hook calls `/scaling-groups?group=...` and `/folders/_/hosts` via the
@@ -110,8 +62,7 @@ async function setupResourceGroupsRestMock(
 
 /**
  * Shared setup: login, navigate to serving (establishes backendaiclient),
- * inject the model-card-v2 feature flag, then set up GraphQL mocks before
- * navigating to the model-store page.
+ * then set up GraphQL mocks before navigating to the model-store page.
  */
 async function setupModelStorePage(
   page: any,
@@ -120,14 +71,6 @@ async function setupModelStorePage(
   resourceGroupNames: ReadonlyArray<string> = ['default'],
 ) {
   await loginAsAdmin(page, request);
-
-  // Install the model-card-v2 flag override via addInitScript so it survives
-  // the subsequent full-page reloads (`navigateTo` uses `page.goto`). A plain
-  // `page.evaluate` patch would be discarded the moment we navigate away from
-  // the serving page — the new document rebuilds `window.backendaiclient`
-  // from scratch, which then resolves `supports('model-card-v2')` against
-  // whatever the backend manager reports (may be `false` on older managers).
-  await installModelCardV2FlagOverride(page);
 
   // Mock the REST endpoints that feed `useProjectResourceGroups` before
   // anything navigates — the Deploy modal reads resource groups from REST,
@@ -521,19 +464,19 @@ test.describe(
       });
       await expect(deployModal).toBeVisible();
 
-      // Click the Resource Group selector dropdown (second combobox in the modal)
-      await deployModal.getByRole('combobox').last().click();
+      // The Resource Group select is an Astryx Selector: a button trigger
+      // whose accessible name starts with its form label, plus a listbox.
+      await deployModal
+        .getByRole('button', { name: /^Resource Group/ })
+        .click();
 
       // Verify resource group options are visible
+      const listbox = page.getByRole('listbox');
       await expect(
-        page.locator('.ant-select-dropdown .ant-select-item-option', {
-          hasText: 'default',
-        }),
+        listbox.getByRole('option', { name: 'default', exact: true }),
       ).toBeVisible();
       await expect(
-        page.locator('.ant-select-dropdown .ant-select-item-option', {
-          hasText: 'gpu-cluster',
-        }),
+        listbox.getByRole('option', { name: 'gpu-cluster', exact: true }),
       ).toBeVisible();
     });
 
@@ -555,6 +498,7 @@ test.describe(
       // Verify the Deploy button in modal footer is enabled (default selections are applied)
       const modalDeployButton = deployModal.getByRole('button', {
         name: 'Deploy',
+        exact: true,
       });
       await expect(modalDeployButton).toBeEnabled();
     });
@@ -595,7 +539,7 @@ test.describe(
 
       // Verify the Deploy button remains enabled after selection change
       await expect(
-        deployModal.getByRole('button', { name: 'Deploy' }),
+        deployModal.getByRole('button', { name: 'Deploy', exact: true }),
       ).toBeEnabled();
     });
 
@@ -614,19 +558,21 @@ test.describe(
       });
       await expect(deployModal).toBeVisible();
 
-      // Click the Resource Group dropdown (second combobox in the modal)
-      await deployModal.getByRole('combobox').last().click();
+      const resourceGroupSelect = deployModal.getByRole('button', {
+        name: /^Resource Group/,
+      });
+      await resourceGroupSelect.click();
 
       // Select "gpu-cluster"
       await page
-        .locator('.ant-select-dropdown .ant-select-item-option', {
-          hasText: 'gpu-cluster',
-        })
+        .getByRole('listbox')
+        .getByRole('option', { name: 'gpu-cluster', exact: true })
         .click();
+      await expect(resourceGroupSelect).toContainText('gpu-cluster');
 
       // Verify the Deploy button remains enabled after selection change
       await expect(
-        deployModal.getByRole('button', { name: 'Deploy' }),
+        deployModal.getByRole('button', { name: 'Deploy', exact: true }),
       ).toBeEnabled();
     });
 
@@ -701,11 +647,13 @@ test.describe(
 
       // Verify the Deploy button is enabled (both preset and resource group have defaults)
       await expect(
-        deployModal.getByRole('button', { name: 'Deploy' }),
+        deployModal.getByRole('button', { name: 'Deploy', exact: true }),
       ).toBeEnabled();
 
       // Click the Deploy button in the modal to trigger deployment
-      await deployModal.getByRole('button', { name: 'Deploy' }).click();
+      await deployModal
+        .getByRole('button', { name: 'Deploy', exact: true })
+        .click();
 
       // Wait for navigation to /deployments/:deploymentId after successful mutation
       // (FR-2664 renamed the URL from /serving/:id to /deployments/:id)
@@ -776,14 +724,6 @@ test.describe(
     ) {
       await loginAsAdmin(page, request);
 
-      // Install the model-card-v2 flag override via addInitScript so that
-      // `isDeploymentDeploying` and `hasAnyHealthyRoute` read from
-      // `modelDeployment.metadata.status` (mocked) rather than
-      // `endpoint.lifecycle_stage`, which is not set by our endpoint mocks.
-      // `navigateTo` does a full page reload — a plain `page.evaluate`
-      // override would be wiped out before the detail page renders.
-      await installModelCardV2FlagOverride(page);
-
       // Mock both queries the detail page fires. ServingPageQuery is fired
       // once on `/serving` before we drill in, and EndpointDetailPageQuery is
       // the detail page's main query. Any unmocked GQL operation that falls
@@ -797,7 +737,7 @@ test.describe(
       // Navigate to serving first to initialize backendaiclient
       await navigateTo(page, 'serving');
 
-      // Navigate to the endpoint detail page (flag override persists across reloads)
+      // Navigate to the endpoint detail page.
       await navigateTo(page, `serving/${MOCK_ENDPOINT_UUID}`);
     }
 

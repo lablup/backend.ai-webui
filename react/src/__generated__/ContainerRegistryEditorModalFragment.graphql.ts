@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<90042dca6ba92e72d14eb12dfbb1dcfa>>
+ * @generated SignedSource<<8f1db80865ad94052aa5e38e080d9f42>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,9 +14,12 @@ export type ContainerRegistryEditorModalFragment$data = {
   readonly allowed_groups: {
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly domain_name: string | null | undefined;
         readonly id: string;
+        readonly is_active: boolean | null | undefined;
         readonly name: string | null | undefined;
         readonly row_id: string | null | undefined;
+        readonly type: string | null | undefined;
       } | null | undefined;
     } | null | undefined>;
   } | null | undefined;
@@ -59,6 +62,13 @@ v2 = {
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "type",
+  "storageKey": null
 };
 return {
   "argumentDefinitions": [],
@@ -83,13 +93,7 @@ return {
       "name": "url",
       "storageKey": null
     },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "type",
-      "storageKey": null
-    },
+    (v3/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -157,7 +161,22 @@ return {
               "selections": [
                 (v0/*: any*/),
                 (v1/*: any*/),
-                (v2/*: any*/)
+                (v2/*: any*/),
+                (v3/*: any*/),
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "is_active",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "domain_name",
+                  "storageKey": null
+                }
               ],
               "storageKey": null
             }
@@ -173,6 +192,6 @@ return {
 };
 })();
 
-(node as any).hash = "455e714a2043bf7b36ee954ea98771a9";
+(node as any).hash = "0502cfcae07401fa05bc0d8bea6005fa";
 
 export default node;

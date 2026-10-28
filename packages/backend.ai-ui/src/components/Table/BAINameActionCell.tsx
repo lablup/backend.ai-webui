@@ -1,20 +1,21 @@
 import { App } from '../../app-shim';
+import { cssLengthToPx } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { useEventNotStable } from '../../hooks/useEventNotStable';
 import BAIButton from '../BAIButton';
 import BAILink from '../BAILink';
 import BAIText from '../BAIText';
 import './BAINameActionCell.css';
-import { Button } from '@astryxdesign/core/Button';
+import { Button } from '@lablup/ui-common/Button';
 import {
   DropdownMenu,
   type DropdownMenuItemData,
   type DropdownMenuOption,
-} from '@astryxdesign/core/DropdownMenu';
-import { Popover } from '@astryxdesign/core/Popover';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+} from '@lablup/ui-common/DropdownMenu';
+import { Popover } from '@lablup/ui-common/Popover';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import classNames from 'classnames';
 import { EllipsisVertical } from 'lucide-react';
 import React, { useEffect, useRef, useState, useTransition } from 'react';
@@ -127,11 +128,10 @@ export interface BAINameActionCellProps {
   minVisibleActions?: number;
   /**
    * Width (px) the title keeps before an action may claim space; actions that
-   * no longer fit fold into the more menu. `showActions="always"` only —
-   * hover mode collapses its actions to zero width at rest, so nothing
-   * competes for the title there. The default suits an identifier a few
-   * characters of which already identify the row; raise it where the title is
-   * long and the cell narrow (FR-3926).
+   * no longer fit fold into the more menu. Applies in both modes: hover mode
+   * reserves the actions' width at rest too (#10371). The default suits an
+   * identifier a few characters of which already identify the row; raise it
+   * where the title is long and the cell narrow (FR-3926).
    */
   minTitleWidth?: number;
   /** Disable the overflow More (…) button. Individual menu items remain visible. */
@@ -278,16 +278,12 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
       );
       const titleIconWidth = titleIcon ? titleIcon.clientWidth : 0;
       const minTitleReserve =
-        titleIconWidth + parseFloat(token('--spacing-1')) + minTitleWidth;
+        titleIconWidth + cssLengthToPx(token('--spacing-1')) + minTitleWidth;
       // Account for the more button which is always shown when menuOnlyActions exist
       const moreButtonReserve =
         menuOnlyActions.length > 0 ? MORE_BUTTON_WIDTH + ACTIONS_GAP : 0;
-      // Hover mode keeps the whole width: its action group is `max-width: 0`
-      // until the row is hovered, so the title never competes with it at rest.
       const availableWidth =
-        (showActions === 'hover'
-          ? containerWidth
-          : containerWidth - minTitleReserve) - moreButtonReserve;
+        containerWidth - minTitleReserve - moreButtonReserve;
 
       if (availableWidth <= 0) {
         setVisibleCount(Math.max(0, minVisibleActions));

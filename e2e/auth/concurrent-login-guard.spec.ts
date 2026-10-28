@@ -8,11 +8,12 @@
  *
  * Mock strategy (following the pattern in e2e/auth/password-expiry.spec.ts):
  *   - GET  /func/              → mock server version (get_manager_version)
- *   - POST /server/login-check → mock not-authenticated (show login form)
+ *   - POST /func/admin/gql   → mock 401 auth-failed (no session; show login form)
  *   - POST /server/login       → per-test mock (409, TOTP-required, etc.)
  */
 import {
   modifyConfigToml,
+  seedStoredApiEndpoint,
   userInfo,
   webServerEndpoint,
   webuiEndpoint,
@@ -71,7 +72,7 @@ const TEST_PASSWORD = userInfo.admin.password;
 /**
  * Set up common mocks so the app reaches the login form without a live backend.
  *   - GET /func/              → server version
- *   - POST /server/login-check → { authenticated: false }
+ *   - POST /func/admin/gql   → 401 auth-failed (no session)
  */
 async function setupBaseMocks(page: Page): Promise<void> {
   await page.route(`${webServerEndpoint}/func/`, async (route) => {
@@ -86,11 +87,14 @@ async function setupBaseMocks(page: Page): Promise<void> {
     }
   });
 
-  await page.route('**/server/login-check', async (route) => {
+  await page.route('**/func/admin/gql', async (route) => {
     await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({ authenticated: false }),
+      status: 401,
+      contentType: 'application/problem+json',
+      body: JSON.stringify({
+        type: 'https://api.backend.ai/probs/auth-failed',
+        title: 'Unauthorized access',
+      }),
     });
   });
 }
@@ -124,12 +128,22 @@ async function gotoLoginPage(
     },
   });
   await setupBaseMocks(page);
+  await seedStoredApiEndpoint(page);
+  // The app attempts a silent re-login on load; let that request finish
+  // before a test installs its own /server/login mock or spy.
+  const silentLogin = page.waitForResponse(
+    (response) =>
+      response.url().endsWith('/server/login') &&
+      response.request().method() === 'POST',
+    { timeout: 30_000 },
+  );
   await page.goto(webuiEndpoint);
   await page
     .evaluate(() => {
       document.getElementById('webpack-dev-server-client-overlay')?.remove();
     })
     .catch(() => {});
+  await silentLogin;
 }
 
 // ---------------------------------------------------------------------------
@@ -166,7 +180,7 @@ test.describe(
       await fillLoginForm(page);
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
-      const concurrentModal = page.getByRole('dialog', {
+      const concurrentModal = page.getByRole('alertdialog', {
         name: 'Logged in elsewhere',
       });
       await expect(concurrentModal).toBeVisible({
@@ -203,7 +217,7 @@ test.describe(
       await fillLoginForm(page);
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
-      const concurrentModal = page.getByRole('dialog', {
+      const concurrentModal = page.getByRole('alertdialog', {
         name: 'Logged in elsewhere',
       });
       await expect(concurrentModal).toBeVisible({
@@ -275,7 +289,7 @@ test.describe(
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       // Modal appears
-      const concurrentModal = page.getByRole('dialog', {
+      const concurrentModal = page.getByRole('alertdialog', {
         name: 'Logged in elsewhere',
       });
       await expect(concurrentModal).toBeVisible({
@@ -366,7 +380,7 @@ test.describe(
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       // Step 1: Concurrent session modal
-      const concurrentModal = page.getByRole('dialog', {
+      const concurrentModal = page.getByRole('alertdialog', {
         name: 'Logged in elsewhere',
       });
       await expect(concurrentModal).toBeVisible({
@@ -447,7 +461,7 @@ test.describe(
 
       // Concurrent session modal must NOT appear (showError=false path)
       await expect(
-        page.getByRole('dialog', { name: 'Logged in elsewhere' }),
+        page.getByRole('alertdialog', { name: 'Logged in elsewhere' }),
       ).toBeHidden();
     });
   },

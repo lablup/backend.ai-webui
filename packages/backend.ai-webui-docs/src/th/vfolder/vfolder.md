@@ -225,6 +225,7 @@ Backend.AI รองรับ [FileBrowser](https://filebrowser.org) FileBrowser
 คุณสามารถเห็นว่า FileBrowser ถูกเปิดในหน้าต่างใหม่ คุณยังสามารถเห็นว่าหมายเหตุข้อมูลที่คุณเปิดหน้าต่างสำรวจกลายเป็นโฟลเดอร์หลัก จากหน้าต่าง FileBrowser คุณสามารถอัปโหลด แก้ไข และลบโฟลเดอร์และไฟล์ใด ๆ ได้อย่างอิสระ
 
 ![](../images/filebrowser_with_new_window.png)
+<!-- TODO: Capture FileBrowser or SFTP screenshots on an operational server -->
 
 เมื่อผู้ใช้คลิกปุ่ม `เรียกใช้เบราว์เซอร์ไฟล์` ระบบ Backend.AI จะสร้างเซสชันการคำนวณเฉพาะสำหรับแอปโดยอัตโนมัติ ดังนั้นในหน้าเซสชัน คุณควรเห็นเซสชันการคำนวณ FileBrowser เป็นความรับผิดชอบของผู้ใช้ในการลบเซสชันการคำนวณนี้
 

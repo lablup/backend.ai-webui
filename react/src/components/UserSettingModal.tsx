@@ -4,8 +4,8 @@
  */
 import { GeneratedKeypairListModalFragment$key } from '../__generated__/GeneratedKeypairListModalFragment.graphql';
 import {
-  UserSettingModalBulkCreateMutation,
   UserRoleV2,
+  UserSettingModalBulkCreateMutation,
   UserStatusV2,
 } from '../__generated__/UserSettingModalBulkCreateMutation.graphql';
 import { UserSettingModalCreateMutation } from '../__generated__/UserSettingModalCreateMutation.graphql';
@@ -15,6 +15,7 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { isValidIPOrCidr } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
+import { roleFromV2 } from '../helper/userRole';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole, useTOTPSupported } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -22,40 +23,33 @@ import AccessKeySelect from './AccessKeySelect';
 import BAIFormItem from './BAIFormItem';
 import {
   BulkCreateUserErrorModal,
-  type FailedUserCreation,
   toFailedUserCreations,
+  type FailedUserCreation,
 } from './BulkCreateUserFailure';
 import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import ProjectSelect from './ProjectSelect';
-import TOTPActivateModal from './TOTPActivateModal';
+import TOTPActivateModal from './TOTPActivateModalLazy';
 import UserResourcePolicySelect from './UserResourcePolicySelect';
+import { Text } from '@lablup/ui-common/Text';
+import type { SearchSource, SearchableItem } from '@lablup/ui-common/Typeahead';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  AstryxFormCheckbox,
-  AstryxFormNumberInput,
-  AstryxFormSelector,
-  AstryxFormTagsInput,
-  AstryxFormTextArea,
-  AstryxFormTextInput,
-} from './astryxFormControls';
-import { Switch } from '@astryxdesign/core/Switch';
-import { Text } from '@astryxdesign/core/Text';
-import { Tokenizer } from '@astryxdesign/core/Tokenizer';
-import type {
-  SearchableItem,
-  SearchSource,
-} from '@astryxdesign/core/Typeahead';
-import { useTheme } from '@astryxdesign/core/theme';
-import {
-  BAISkeleton,
+  BAICheckboxInput,
+  BAINumberInput,
+  BAISelector,
+  BAISwitch,
+  BAITagsInput,
+  BAITextArea,
+  BAITextInput,
+  BAITokenizer,
   BAIAlert,
   BAICompactGroup,
-  BAIDomainSelect,
   BAIModal,
   BAIModalProps,
   BAISelect,
+  BAISkeleton,
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
-  toLocalId,
   useBAILogger,
   useToggle,
   useUpdatableState,
@@ -64,7 +58,7 @@ import * as _ from 'lodash-es';
 import { CircleAlert } from 'lucide-react';
 import React, { Suspense, useDeferredValue, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useMutation, useFragment } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 type UserRole = {
   [key: string]: string[];
@@ -90,7 +84,6 @@ type FormValues = {
   full_name?: string;
   description?: string;
   role: string;
-  domain_name: string;
   group_ids?: string[];
   status: string;
   allowed_client_ip?: string[];
@@ -132,13 +125,6 @@ const statusFromV2: Record<string, string> = {
   DELETED: 'deleted',
 };
 
-const roleFromV2: Record<string, string> = {
-  USER: 'user',
-  ADMIN: 'admin',
-  SUPERADMIN: 'superadmin',
-  MONITOR: 'monitor',
-};
-
 const formatBulkEmail = (
   prefix: string,
   suffix: string,
@@ -173,7 +159,7 @@ const EMPTY_TAG_SEARCH_SOURCE: SearchSource<SearchableItem> = {
 // comma/space-separated text into multiple tags) has no Tokenizer
 // equivalent and is dropped — tags are committed one at a time with Enter
 // (`hasCreate`). The per-tag red highlight for invalid IPs (the antd
-// `tagRender`) is also dropped: `astryx component Tokenizer` best practices
+// `tagRender`) is also dropped: `ui-common component Tokenizer` best practices
 // explicitly discourage custom per-token colors, and the field's own
 // `rules` validator (kept unchanged below) already surfaces every invalid
 // IP in the BAIFormItem's error text under the control, so the same
@@ -186,9 +172,8 @@ const AllowedClientIpInput: React.FC<{
 }> = ({ value, onChange, label, placeholder }) => {
   'use memo';
   return (
-    <Tokenizer
-      label={label}
-      isLabelHidden
+    <BAITokenizer
+      aria-label={label}
       value={(value ?? []).map((ip) => ({ id: ip, label: ip }))}
       onChange={(items) =>
         onChange?.(
@@ -199,31 +184,6 @@ const AllowedClientIpInput: React.FC<{
       hasCreate
       placeholder={placeholder}
       width="100%"
-    />
-  );
-};
-
-// Bridge for `BAIFormItem name="totp_activated" valuePropName="checked"`:
-// this field needs `isLoading` (while the TOTP-support check / removal
-// mutation is in flight), which `AstryxFormSwitch`'s adapter surface does
-// not expose, so the raw Astryx `Switch` is used directly here — coalescing
-// antd's injected `checked` the same way the adapter does elsewhere.
-const TotpSwitch: React.FC<{
-  checked?: boolean;
-  onChange?: (checked: boolean) => void;
-  label: string;
-  isLoading?: boolean;
-  disabled?: boolean;
-}> = ({ checked, onChange, label, isLoading, disabled }) => {
-  'use memo';
-  return (
-    <Switch
-      value={checked ?? false}
-      onChange={(next) => onChange?.(next)}
-      label={label}
-      isLabelHidden
-      isLoading={isLoading}
-      isDisabled={disabled}
     />
   );
 };
@@ -282,6 +242,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
     graphql`
       fragment UserSettingModalFragment on UserV2 {
         id
+        entityId
         basicInfo {
           email
           username
@@ -316,6 +277,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
           edges {
             node {
               id
+              entityId
               basicInfo {
                 name
                 type
@@ -332,9 +294,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
   // PERSONAL included: the manager ignores it in `groupIds`, and the selector
   // shows it as a locked option.
   const projectMembershipIds = _.compact(
-    _.map(user?.projects?.edges, (edge) =>
-      edge?.node?.id ? toLocalId(edge.node.id) : null,
-    ),
+    _.map(user?.projects?.edges, (edge) => edge?.node?.entityId),
   );
   const personalProjectNode = _.find(
     user?.projects?.edges,
@@ -342,7 +302,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
   )?.node;
   const personalProject = personalProjectNode
     ? {
-        id: toLocalId(personalProjectNode.id),
+        id: personalProjectNode.entityId,
         name: personalProjectNode.basicInfo.name,
       }
     : undefined;
@@ -391,6 +351,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               edges {
                 node {
                   id
+                  entityId
                   basicInfo {
                     name
                     type
@@ -512,7 +473,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
           bulkValues.user_count,
         ),
         password: bulkValues.password as string,
-        domainName: bulkValues.domain_name,
+        domainName: currentDomainName,
         needPasswordChange: bulkValues.need_password_change || false,
         status: statusToV2[bulkValues.status] || 'ACTIVE',
         role: roleToV2[bulkValues.role] || 'USER',
@@ -589,7 +550,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
     if (user) {
       commitUpdateUserV2({
         variables: {
-          userId: toLocalId(user.id),
+          userId: user.entityId,
           input: {
             username: formValues.username,
             password: formValues.password || undefined,
@@ -599,7 +560,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               ? statusToV2[formValues.status]
               : undefined,
             role: formValues.role ? roleToV2[formValues.role] : undefined,
-            domainName: formValues.domain_name,
             groupIds: formValues.group_ids,
             allowedClientIp: formValues.allowed_client_ip,
             needPasswordChange: formValues.need_password_change || false,
@@ -635,7 +595,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             email: formValues.email,
             username: formValues.username,
             password: formValues.password as string,
-            domainName: formValues.domain_name,
+            domainName: currentDomainName,
             needPasswordChange: formValues.need_password_change || false,
             status: statusToV2[formValues.status] || 'ACTIVE',
             role: roleToV2[formValues.role] || 'USER',
@@ -731,7 +691,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   role: user.organization.role
                     ? roleFromV2[user.organization.role]
                     : undefined,
-                  domain_name: user.organization.domainName ?? undefined,
                   resource_policy: user.organization.resourcePolicy,
                   main_access_key: user.organization.mainAccessKey ?? undefined,
                   sudo_session_enabled: user.security.sudoSessionEnabled,
@@ -743,7 +702,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   container_main_gid:
                     user.container.containerMainGid ?? undefined,
                   // Convert container_gids from number[] to string[]: the tags
-                  // input (AstryxFormTagsInput) works on strings; the submit
+                  // input (TagsInput) works on strings; the submit
                   // handler converts back with _.toNumber.
                   container_gids: user.container.containerGids
                     ? _.map(user.container.containerGids, (gid) => String(gid))
@@ -754,7 +713,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   need_password_change: bulkCreate ? true : false,
                   user_count: 1,
                   status: 'active',
-                  domain_name: currentDomainName,
                   role: 'user',
                   is_active: true,
                   resource_policy: 'default',
@@ -796,8 +754,8 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                     { max: 30 },
                   ]}
                 >
-                  <AstryxFormTextInput
-                    label={t('credential.EmailPrefix')}
+                  <BAITextInput
+                    aria-label={t('credential.EmailPrefix')}
                     placeholder={t('maxLength.30chars')}
                   />
                 </BAIFormItem>
@@ -819,8 +777,8 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                       "@" glyph inline before the text; Astryx TextInput only
                       supports an icon `startIcon`, not arbitrary prefix text
                       (no equivalent), so the "@" adornment is dropped. */}
-                  <AstryxFormTextInput
-                    label={t('credential.EmailSuffix')}
+                  <BAITextInput
+                    aria-label={t('credential.EmailSuffix')}
                     placeholder={t('maxLength.30chars')}
                   />
                 </BAIFormItem>
@@ -889,8 +847,9 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   </BAIFormItem>
                 }
               >
-                <AstryxFormNumberInput
-                  label={t('credential.UserCount')}
+                <BAINumberInput
+                  width="100%"
+                  aria-label={t('credential.UserCount')}
                   min={1}
                 />
               </BAIFormItem>
@@ -902,8 +861,8 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                 label={t('general.E-Mail')}
                 rules={[{ required: !user }, { type: 'email' }]}
               >
-                <AstryxFormTextInput
-                  label={t('general.E-Mail')}
+                <BAITextInput
+                  aria-label={t('general.E-Mail')}
                   type="email"
                   disabled={!!user}
                 />
@@ -920,8 +879,8 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   },
                 ]}
               >
-                <AstryxFormTextInput
-                  label={t('credential.UserName')}
+                <BAITextInput
+                  aria-label={t('credential.UserName')}
                   placeholder={t('maxLength.64chars')}
                 />
               </BAIFormItem>
@@ -934,8 +893,8 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   },
                 ]}
               >
-                <AstryxFormTextInput
-                  label={t('credential.FullName')}
+                <BAITextInput
+                  aria-label={t('credential.FullName')}
                   placeholder={t('maxLength.64chars')}
                 />
               </BAIFormItem>
@@ -954,8 +913,10 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               },
             ]}
           >
-            <AstryxFormTextInput
-              label={user ? t('general.NewPassword') : t('general.Password')}
+            <BAITextInput
+              aria-label={
+                user ? t('general.NewPassword') : t('general.Password')
+              }
               type="password"
             />
           </BAIFormItem>
@@ -989,8 +950,8 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               }),
             ]}
           >
-            <AstryxFormTextInput
-              label={
+            <BAITextInput
+              aria-label={
                 user
                   ? t('webui.menu.NewPasswordAgain')
                   : t('general.ConfirmPassword')
@@ -1004,21 +965,21 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             valuePropName="checked"
             tooltip={t('credential.TooltipForRequirePasswordChange')}
           >
-            <AstryxFormCheckbox label={t('general.Enable')} />
+            <BAICheckboxInput>{t('general.Enable')}</BAICheckboxInput>
           </BAIFormItem>
           <BAIFormItem
             name="description"
             label={t('credential.Description')}
             rules={[{ max: 500 }]}
           >
-            <AstryxFormTextArea
-              label={t('credential.Description')}
+            <BAITextArea
+              aria-label={t('credential.Description')}
               placeholder={t('maxLength.500chars')}
             />
           </BAIFormItem>
           <BAIFormItem name="status" label={t('credential.UserStatus')}>
-            <AstryxFormSelector
-              label={t('credential.UserStatus')}
+            <BAISelector
+              aria-label={t('credential.UserStatus')}
               options={[
                 {
                   value: 'active',
@@ -1042,8 +1003,8 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
           {!!currentUserRole &&
             currentUserRole in permissionRangeOfRoleChanges && (
               <BAIFormItem name="role" label={t('credential.Role')}>
-                <AstryxFormSelector
-                  label={t('credential.Role')}
+                <BAISelector
+                  aria-label={t('credential.Role')}
                   options={_.map(
                     permissionRangeOfRoleChanges[currentUserRole],
                     (item) => {
@@ -1061,7 +1022,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             label={t('credential.EnableSudoSession')}
             valuePropName="checked"
           >
-            <AstryxFormCheckbox label={t('general.Allow')} />
+            <BAICheckboxInput>{t('general.Allow')}</BAICheckboxInput>
           </BAIFormItem>
           {!!isTOTPSupported && !bulkCreate && (
             <BAIFormItem
@@ -1076,8 +1037,8 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                 )
               }
             >
-              <TotpSwitch
-                label={t('webui.menu.TotpActivated')}
+              <BAISwitch
+                aria-label={t('webui.menu.TotpActivated')}
                 isLoading={
                   isLoadingManagerSupportingTOTP ||
                   mutationToRemoveTotp.isPending
@@ -1139,17 +1100,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
           >
             <UserResourcePolicySelect />
           </BAIFormItem>
-          <BAIFormItem
-            name="domain_name"
-            label={t('credential.Domain')}
-            rules={[{ required: true }]}
-          >
-            <BAIDomainSelect
-              onChange={() => {
-                formRef.current?.setFieldValue('group_ids', []);
-              }}
-            />
-          </BAIFormItem>
           <Suspense
             fallback={
               <BAIFormItem label={t('credential.Projects')}>
@@ -1157,30 +1107,21 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               </BAIFormItem>
             }
           >
-            <BAIFormItem noStyle dependencies={['domain_name']}>
-              {(form) => {
-                // BAIFormItem render-prop children receive `unknown` (antd
-                // typed this as FormInstance); narrow it back.
-                const { getFieldValue } = form as FormInstance<FormValues>;
-                return (
-                  <BAIFormItem
-                    name="group_ids"
-                    label={t('credential.Projects')}
-                    getValueFromEvent={(value) => value}
-                    getValueProps={(value) => ({
-                      value: _.isArray(value) ? value : projectMembershipIds,
-                    })}
-                  >
-                    <ProjectSelect
-                      mode="multiple"
-                      domain={getFieldValue('domain_name')}
-                      disableDefaultFilter
-                      lockedProjectTypes={!user ? ['MODEL_STORE'] : undefined}
-                      personalProject={personalProject}
-                    />
-                  </BAIFormItem>
-                );
-              }}
+            <BAIFormItem
+              name="group_ids"
+              label={t('credential.Projects')}
+              getValueFromEvent={(value) => value}
+              getValueProps={(value) => ({
+                value: _.isArray(value) ? value : projectMembershipIds,
+              })}
+            >
+              <ProjectSelect
+                mode="multiple"
+                domain={user?.organization.domainName ?? currentDomainName}
+                disableDefaultFilter
+                lockedProjectTypes={!user ? ['MODEL_STORE'] : undefined}
+                personalProject={personalProject}
+              />
             </BAIFormItem>
           </Suspense>
           <BAIFormItem
@@ -1228,8 +1169,9 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   },
                 ]}
               >
-                <AstryxFormNumberInput
-                  label={t('credential.ContainerUID')}
+                <BAINumberInput
+                  width="100%"
+                  aria-label={t('credential.ContainerUID')}
                   max={SIGNED_32BIT_MAX_INT}
                   min={1}
                 />
@@ -1248,8 +1190,9 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   },
                 ]}
               >
-                <AstryxFormNumberInput
-                  label={t('credential.ContainerGID')}
+                <BAINumberInput
+                  width="100%"
+                  aria-label={t('credential.ContainerGID')}
                   max={SIGNED_32BIT_MAX_INT}
                   min={1}
                 />
@@ -1315,9 +1258,9 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   }),
                 ]}
               >
-                <AstryxFormTagsInput
+                <BAITagsInput
                   tokenSeparators={[',', ' ']}
-                  label={t('credential.ContainerSupplementaryGIDs')}
+                  aria-label={t('credential.ContainerSupplementaryGIDs')}
                   placeholder={t(
                     'credential.ContainerSupplementaryGIDsPlaceholder',
                   )}

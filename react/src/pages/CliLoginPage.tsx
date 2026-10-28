@@ -5,11 +5,10 @@
 import { CSSTokenVariables } from '../components/MainLayout/MainLayout';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
-import { Button } from '@astryxdesign/core/Button';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { Code } from '@astryxdesign/core/Code';
-import { CodeBlock } from '@astryxdesign/core/CodeBlock';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import { Button } from '@lablup/ui-common/Button';
+import { Code } from '@lablup/ui-common/Code';
+import { CodeBlock } from '@lablup/ui-common/CodeBlock';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import {
   BAI_Z_INDEX,
   BAIAlert,
@@ -17,6 +16,7 @@ import {
   BAIFlex,
   BAIMetadataList,
   BAIText,
+  BAICheckboxInput,
 } from 'backend.ai-ui';
 import { Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -166,11 +166,9 @@ export const CliLoginConsent = () => {
               <BAIText type="secondary">
                 {t('cliLogin.MatchCodeDescription')}
               </BAIText>
-              <CheckboxInput
-                label={t('cliLogin.Attestation')}
-                value={agreed}
-                onChange={setAgreed}
-              />
+              <BAICheckboxInput value={agreed} onChange={setAgreed}>
+                {t('cliLogin.Attestation')}
+              </BAICheckboxInput>
               <BAIFlex direction="row" justify="end" gap="xs">
                 <Button
                   size="lg"

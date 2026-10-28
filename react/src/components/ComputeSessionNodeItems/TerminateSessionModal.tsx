@@ -14,10 +14,9 @@ import { useCurrentUserRole } from '../../hooks/backendai';
 import { useSetBAINotification } from '../../hooks/useBAINotification';
 import { usePainKiller } from '../../hooks/usePainKiller';
 import { usePromiseTracker } from '../../usePromiseTracker';
-import { Card } from '@astryxdesign/core/Card';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { Heading } from '@astryxdesign/core/Heading';
-import { Text } from '@astryxdesign/core/Text';
+import { Card } from '@lablup/ui-common/Card';
+import { Heading } from '@lablup/ui-common/Heading';
+import { Text } from '@lablup/ui-common/Text';
 import * as stylex from '@stylexjs/stylex';
 import {
   filterOutEmpty,
@@ -25,6 +24,7 @@ import {
   BAIModal,
   type BAIModalProps,
   BAIText,
+  BAICheckboxInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useState } from 'react';
@@ -386,13 +386,14 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
             ? sessions?.[0]?.name
             : `${sessions?.length} sessions`}
         </Text>
-        <CheckboxInput
-          label={t('button.ForceTerminate')}
+        <BAICheckboxInput
           value={isForce}
           onChange={(checked) => {
             setIsForce(checked);
           }}
-        />
+        >
+          {t('button.ForceTerminate')}
+        </BAICheckboxInput>
         {isForce && (
           <Card variant="muted">
             <Text as="p" display="block" xstyle={styles.dangerText}>

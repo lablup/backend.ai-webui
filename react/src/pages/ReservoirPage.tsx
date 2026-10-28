@@ -12,7 +12,6 @@ import {
   ArtifactOrderField,
 } from '../__generated__/ReservoirPageQuery.graphql';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
-import BAIRadioGroup from '../components/BAIRadioGroup';
 import ScanArtifactModelsFromHuggingFaceModal from '../components/ScanArtifactModelsFromHuggingFaceModal';
 import { convertToOrderBy } from '../helper';
 import { buildPath } from '../helper/pathBuilder';
@@ -20,13 +19,13 @@ import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { Button } from '@astryxdesign/core/Button';
-import { Card } from '@astryxdesign/core/Card';
-import { Grid } from '@astryxdesign/core/Grid';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { HStack } from '@astryxdesign/core/Stack';
-import { useTheme } from '@astryxdesign/core/theme';
-import { Stat } from '@astryxdesign/lab';
+import { Button } from '@lablup/ui-common/Button';
+import { Card } from '@lablup/ui-common/Card';
+import { Grid } from '@lablup/ui-common/Grid';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { HStack } from '@lablup/ui-common/Stack';
+import { Stat } from '@lablup/ui-common/lab';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   // TODO(needs-backend): BAIHuggingFaceRegistrySettingModal - uncomment when storage-proxy applies DB config via Redis
   BAIImportArtifactModal,
@@ -46,9 +45,10 @@ import {
   BAISelectionLabel,
   INITIAL_FETCH_KEY,
   filterOutEmpty,
-  toLocalId,
   useToggle,
   useUpdatableState,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { BanIcon, Brain, UndoIcon } from 'lucide-react';
@@ -192,7 +192,7 @@ const ReservoirPage: React.FC = () => {
             name
             type
           }
-          huggingfaceRegistries @since(version: "25.14.0") {
+          huggingfaceRegistries {
             edges {
               node {
                 id
@@ -212,7 +212,7 @@ const ReservoirPage: React.FC = () => {
             count
             edges {
               node {
-                id @since(version: "25.17.0")
+                id
                 ...BAIArtifactTableArtifactFragment
                 ...BAIImportArtifactModalArtifactFragment
                 ...BAIDeactivateArtifactsModalArtifactsFragment
@@ -315,27 +315,25 @@ const ReservoirPage: React.FC = () => {
               }}
               wrap="wrap"
             >
-              <BAIRadioGroup
-                optionType="button"
-                options={[
-                  {
-                    label: t('reservoirPage.Active'),
-                    value: 'ALIVE',
-                  },
-                  {
-                    label: t('reservoirPage.Inactive'),
-                    value: 'DELETED',
-                  },
-                ]}
+              <BAISegmentedControl
                 value={queryParams.mode}
-                onChange={(e) => {
-                  setQuery({ mode: e.target.value });
+                onChange={(value) => {
+                  setQuery({ mode: value });
                   setTablePaginationOption({ current: 1 });
                   setSelectedArtifactIdList([]);
                   setSelectedArtifacts([]);
                   setSelectedRestoreArtifacts([]);
                 }}
-              />
+              >
+                <BAISegmentedControlItem
+                  value="ALIVE"
+                  label={t('reservoirPage.Active')}
+                />
+                <BAISegmentedControlItem
+                  value="DELETED"
+                  label={t('reservoirPage.Inactive')}
+                />
+              </BAISegmentedControl>
               <BAIGraphQLPropertyFilter
                 combinationMode="AND"
                 onChange={(value) => {
@@ -548,38 +546,6 @@ const ReservoirPage: React.FC = () => {
             }}
           />
         </BAIFlex>
-        {/* TODO: implement audit log for reservoir page */}
-        {/* {curTabKey === 'audit' ? (
-          <Suspense fallback={<Skeleton active />}>
-            <ReservoirAuditLogList
-              auditLogs={filteredAuditLogs}
-              loading={false}
-              filterValue={queryParams.auditFilter}
-              onFilterChange={(value) => {
-                setQuery({ auditFilter: value });
-              }}
-              pagination={{
-                pageSize: tablePaginationOption.pageSize,
-                current: tablePaginationOption.current,
-                total: filteredAuditLogs.length,
-                showTotal: (total) => (
-                  <BAIText type="secondary">
-                    {t('general.TotalItems', { total: total })}
-                  </BAIText>
-                ),
-                onChange: (current, pageSize) => {
-                  if (_.isNumber(current) && _.isNumber(pageSize)) {
-                    setTablePaginationOption({ current, pageSize });
-                  }
-                },
-              }}
-              order={queryParams.auditOrder}
-              onChangeOrder={(order) => {
-                setQuery({ auditOrder: order });
-              }}
-            />
-          </Suspense>
-        ) : null} */}
       </BAICard>
       <BAIImportArtifactModal
         selectedArtifactFrgmt={selectedArtifact}
@@ -634,7 +600,7 @@ const ReservoirPage: React.FC = () => {
         open={deferredOpenHuggingFaceModal}
         onRequestClose={(_e, artifactId) => {
           toggleOpenHuggingFaceModal();
-          navigate(buildPath('admin', `reservoir/${toLocalId(artifactId)}`));
+          navigate(buildPath('admin', `reservoir/${artifactId}`));
         }}
         onCancel={toggleOpenHuggingFaceModal}
       />

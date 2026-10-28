@@ -4,11 +4,7 @@
  */
 import {
   convertToUUID,
-  isMountableLegacyVFolder,
   mountDestinationToInput,
-  type AutoMountedFolder,
-  type LegacyVFolder,
-  type LegacyVFolderMountScope,
   type VFolderMountConfigValue,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -63,45 +59,3 @@ export const normalizeLegacyMountFields = <T extends object>(
     }),
   };
 };
-
-/** The launcher's "launch on behalf of" owner block, as the form stores it. */
-interface SessionOwner {
-  enabled?: boolean;
-  email?: string;
-  [key: string]: unknown;
-}
-
-/**
- * The owner whose folders the launcher should list, or `undefined` for the
- * caller's own: a half-filled owner block means the user is still choosing.
- */
-export const ownerEmailFromOwner = (
-  owner: SessionOwner | undefined,
-): string | undefined => {
-  const isComplete =
-    owner?.enabled &&
-    _.every(_.omit(owner, 'enabled'), (field) => field !== undefined);
-  return isComplete ? owner?.email : undefined;
-};
-
-/** A dotfile folder is what a session mounts without being asked. */
-export const isAutoMountFolderName = (name: string) => name.startsWith('.');
-
-/**
- * The folders a session mounts on its own — ready dotfile folders — picked out
- * of a `GET /folders` list the same way VFolderTable did it.
- */
-export const autoMountedFoldersFrom = (
-  folders: Array<LegacyVFolder>,
-  scope: LegacyVFolderMountScope,
-): Array<AutoMountedFolder> =>
-  _.map(
-    _.filter(
-      folders,
-      (folder) =>
-        folder.status === 'ready' &&
-        isAutoMountFolderName(folder.name) &&
-        isMountableLegacyVFolder(folder, scope),
-    ),
-    (folder) => ({ vfolderId: convertToUUID(folder.id), name: folder.name }),
-  );

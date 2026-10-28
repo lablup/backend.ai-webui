@@ -14,17 +14,16 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { ProjectContextOrNull } from '../types/projectContext';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from './BAIErrorBoundary';
-import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import ReplicaStatusBadge, { ReplicaStatus } from './ReplicaStatusBadge';
 import RouteSchedulingHistoryModal, {
   RouteSchedulingHistoryQuery,
 } from './RouteSchedulingHistoryModal';
 import SessionDetailDrawer from './SessionDetailDrawer';
-import { Badge } from '@astryxdesign/core/Badge';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Link } from '@astryxdesign/core/Link';
-import { Text } from '@astryxdesign/core/Text';
+import { Badge } from '@lablup/ui-common/Badge';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Link } from '@lablup/ui-common/Link';
+import { Text } from '@lablup/ui-common/Text';
 import { BAISkeleton } from 'backend.ai-ui';
 import {
   BAICard,
@@ -33,14 +32,13 @@ import {
   BAIGraphQLPropertyFilter,
   BAIId,
   BAIQuestionIconWithTooltip,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
   BAITable,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   filterOutEmpty,
-  safeDecodeUuid,
-  toLocalId,
   type GraphQLFilter,
-  useConnectedBAIClient,
   BAILink,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -234,10 +232,6 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
   const isInitialFetch =
     fetchKey === 0 &&
     (replicaFetchKey === undefined || replicaFetchKey === INITIAL_FETCH_KEY);
-  const baiClient = useConnectedBAIClient();
-  const supportsRouteSchedulingHistory = baiClient.supports(
-    'route-scheduling-history',
-  );
   const [isRouteHistoryOpen, setIsRouteHistoryOpen] = useState(false);
   const [routeHistoryQueryRef, loadRouteHistoryQuery] =
     useQueryLoader<RouteSchedulingHistoryModalQuery>(
@@ -270,6 +264,7 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
               edges {
                 node {
                   id
+                  fieldId
                   sessionId
                   revisionId
                   status
@@ -278,11 +273,13 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
                   createdAt
                   revision {
                     id
+                    fieldId
                     revisionNumber
                     ...DeploymentRevisionDetail_revision
                   }
-                  sessionV2 @since(version: "26.4.3") {
+                  sessionV2 {
                     id
+                    entityId
                     metadata {
                       name
                     }
@@ -344,7 +341,7 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
       dataIndex: 'id',
       fixed: 'left',
       sorter: isEnableSorter('id'),
-      render: (value: string) => <BAIId globalId={value} copyable />,
+      render: (_id: string, record) => <BAIId uuid={record.fieldId} copyable />,
     },
     {
       // Lifecycle status (PROVISIONING → RUNNING → TERMINATING …) shown
@@ -366,35 +363,29 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
       render: (value: string | null | undefined, record: ReplicaNode) => (
         <BAIFlex align="center" gap="xs">
           <ReplicaStatusBadge status={toReplicaStatus(value)} />
-          {supportsRouteSchedulingHistory && (
-            // `IconButton`'s own `label`/`tooltip` — the wrapping `Tooltip` left
-            // the button with no accessible name (it resolved to "Action"),
-            // and `type="link"` lost the accent tint (FR-3572).
-            <IconButton
-              className="bai-action-accent"
-              variant="ghost"
-              size="sm"
-              icon={<History size="1em" />}
-              label={t('route.RouteSchedulingHistory')}
-              tooltip={t('route.RouteSchedulingHistory')}
-              clickAction={async () => {
-                const id = safeDecodeUuid(record.id) ?? record.id;
-                // Render-as-you-fetch: start the request in the open event.
-                loadRouteHistoryQuery(
-                  {
-                    scope: { routeId: id },
-                    orderBy: [{ field: 'UPDATED_AT', direction: 'DESC' }],
-                    limit: 10,
-                    offset: 0,
-                  },
-                  {
-                    fetchPolicy: 'store-and-network',
-                  },
-                );
-                setIsRouteHistoryOpen(true);
-              }}
-            />
-          )}
+          <IconButton
+            className="bai-action-accent"
+            variant="ghost"
+            size="sm"
+            icon={<History size="1em" />}
+            label={t('route.RouteSchedulingHistory')}
+            tooltip={t('route.RouteSchedulingHistory')}
+            clickAction={async () => {
+              // Render-as-you-fetch: start the request in the open event.
+              loadRouteHistoryQuery(
+                {
+                  scope: { routeId: record.fieldId },
+                  orderBy: [{ field: 'UPDATED_AT', direction: 'DESC' }],
+                  limit: 10,
+                  offset: 0,
+                },
+                {
+                  fetchPolicy: 'store-and-network',
+                },
+              );
+              setIsRouteHistoryOpen(true);
+            }}
+          />
         </BAIFlex>
       ),
     },
@@ -459,20 +450,20 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
         }
         const name = session.metadata?.name;
         if (!name) {
-          return <BAIId globalId={session.id} />;
+          return <BAIId uuid={session.entityId} />;
         }
         return (
           <>
             <BAILink
               ellipsis
-              onClick={() => setSelectedSessionId(toLocalId(session.id))}
+              onClick={() => setSelectedSessionId(session.entityId)}
               style={{ maxWidth: 160 }}
             >
               {name}
             </BAILink>
             &nbsp;
             <Text color="secondary">
-              (<BAIId globalId={session.id} type="secondary" />)
+              (<BAIId uuid={session.entityId} type="secondary" />)
             </Text>
           </>
         );
@@ -508,7 +499,7 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
             </Link>
             &nbsp;
             <Text color="secondary">
-              (<BAIId globalId={revision.id} type="secondary" />)
+              (<BAIId uuid={revision.fieldId} type="secondary" />)
             </Text>
           </>
         );
@@ -533,10 +524,10 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
         style={{ marginBottom: 12 }}
       >
         <BAIFlex gap="sm" align="start" wrap="wrap" style={{ flexShrink: 1 }}>
-          <BAIRadioGroup
+          <BAISegmentedControl
             value={queryParams.rStatusCategory}
-            onChange={(e) => {
-              const category = e.target.value as ReplicaStatusCategory;
+            onChange={(value) => {
+              const category = value as ReplicaStatusCategory;
               const userFilter = queryParams.rFilter
                 ? parseReplicaFilter(queryParams.rFilter)
                 : null;
@@ -546,11 +537,16 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
                 offset: 0,
               });
             }}
-            options={[
-              { label: t('deployment.Running'), value: 'running' },
-              { label: t('deployment.status.Terminated'), value: 'terminated' },
-            ]}
-          />
+          >
+            <BAISegmentedControlItem
+              value="running"
+              label={t('deployment.Running')}
+            />
+            <BAISegmentedControlItem
+              value="terminated"
+              label={t('deployment.status.Terminated')}
+            />
+          </BAISegmentedControl>
           <BAIGraphQLPropertyFilter
             filterProperties={filterProperties}
             value={filterValue}

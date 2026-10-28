@@ -5,24 +5,24 @@
 import {
   DomainV2Filter,
   ProjectV2Filter,
-  UserV2Filter,
   UsageBucketChartContentQuery,
   UsageBucketChartContentQuery$variables,
+  UserV2Filter,
 } from '../../__generated__/UsageBucketChartContentQuery.graphql';
 import { UsageBucketChartContent_DomainFragment$key } from '../../__generated__/UsageBucketChartContent_DomainFragment.graphql';
 import { UsageBucketChartContent_ProjectFragment$key } from '../../__generated__/UsageBucketChartContent_ProjectFragment.graphql';
 import { UsageBucketChartContent_UserFragment$key } from '../../__generated__/UsageBucketChartContent_UserFragment.graphql';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
 import './UsageBucketChartContent.css';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { Tab, TabList } from '@astryxdesign/core/TabList';
-import { useTheme } from '@astryxdesign/core/theme';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { Tab, TabList } from '@lablup/ui-common/TabList';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  convertToBinaryUnit,
-  INITIAL_FETCH_KEY,
-  toFixedFloorWithoutTrailingZeros,
   BAIFlex,
   BAIText,
+  INITIAL_FETCH_KEY,
+  convertToBinaryUnit,
+  toFixedFloorWithoutTrailingZeros,
 } from 'backend.ai-ui';
 import dayjs, { Dayjs } from 'dayjs';
 import * as _ from 'lodash-es';

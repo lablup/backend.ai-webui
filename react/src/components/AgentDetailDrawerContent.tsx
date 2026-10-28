@@ -18,10 +18,10 @@ import AgentSessions, {
 } from './AgentNodeItems/AgentSessions';
 import AgentStatusBadge from './AgentNodeItems/AgentStatusBadge';
 import BAIErrorBoundary from './BAIErrorBoundary';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Tab, TabList } from '@astryxdesign/core/TabList';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Tab, TabList } from '@lablup/ui-common/TabList';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAICard,
   BAIDoubleBadge,
@@ -55,7 +55,7 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
   const { token } = useTheme();
   const baiClient = useSuspendedBackendaiClient();
   const statusBuckets = getSessionV2StatusBuckets(
-    baiClient.supports('session-preemption-statuses'),
+    baiClient.isManagerVersionCompatibleWith('26.8.0'),
   );
 
   const [activeTabKey, setActiveTabKey] = useState<TabKey>('resources');

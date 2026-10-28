@@ -32,17 +32,6 @@ vi.mock('react-i18next', () => ({
   initReactI18next: { type: '3rdParty', init: () => {} },
 }));
 
-vi.mock('../../hooks', async (importOriginal) => {
-  const originalModule = await importOriginal<typeof import('../../hooks')>();
-  return {
-    ...originalModule,
-    useSuspendedBackendaiClient: () => ({
-      supports: () => false,
-      _config: {},
-    }),
-  };
-});
-
 const TestRenderer: React.FC<{ showTooltip?: boolean }> = ({ showTooltip }) => {
   'use memo';
   const data = useLazyLoadQuery<SessionStatusBadgeTestQuery>(
@@ -79,7 +68,6 @@ const renderTag = (session: {
         id: 'session-id',
         status: session.status,
         status_info: null,
-        status_data: null,
         queue_position: null,
         cluster_size: session.cluster_size,
         kernel_nodes: {

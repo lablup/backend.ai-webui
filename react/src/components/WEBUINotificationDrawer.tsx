@@ -8,15 +8,16 @@ import BAIGeneralNotificationItem from './BAIGeneralNotificationItem';
 import BAIMultiStepNotificationItem from './BAIMultiStepNotificationItem';
 import BAINodeNotificationItem from './BAINodeNotificationItem';
 import './WEBUINotificationDrawer.css';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { VStack } from '@lablup/ui-common/Stack';
+import { StatusDot } from '@lablup/ui-common/StatusDot';
 import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
-import { VStack } from '@astryxdesign/core/Stack';
-import { StatusDot } from '@astryxdesign/core/StatusDot';
-import { BAIDrawer, BAIFlex } from 'backend.ai-ui';
+  BAIDrawer,
+  BAIFlex,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
+} from 'backend.ai-ui';
 import { BellOff, EllipsisVertical } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -111,16 +112,16 @@ const WEBUINotificationDrawer: React.FC<Props> = ({
             into a plain `VStack`, not Astryx `List` — "don't place interactive
             elements inside an interactive list item" is an Astryx rule. */}
         <BAIFlex justify="end">
-          <SegmentedControl
+          <BAISegmentedControl
             value={selectedCategory}
             onChange={(value) =>
               setSelectedCategory(value as NotificationCategory)
             }
             size="sm"
-            label={t('notification.Notifications')}
+            aria-label={t('notification.Notifications')}
           >
-            <SegmentedControlItem value="all" label={t('general.All')} />
-            <SegmentedControlItem
+            <BAISegmentedControlItem value="all" label={t('general.All')} />
+            <BAISegmentedControlItem
               value="in progress"
               label={t('general.InProgress')}
               // `SegmentedControlItem.label` is a required STRING (P2), so
@@ -134,7 +135,7 @@ const WEBUINotificationDrawer: React.FC<Props> = ({
                 ) : undefined
               }
             />
-          </SegmentedControl>
+          </BAISegmentedControl>
         </BAIFlex>
         {visibleNotifications.length === 0 ? (
           <EmptyState

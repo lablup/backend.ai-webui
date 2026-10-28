@@ -28,26 +28,19 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
 import BAIFormItem from './BAIFormItem';
-import SignupModal from './SignupModal';
-import {
-  TOTPActivateForm,
-  type TOTPActivateFormData,
-} from './TOTPActivateModal';
-import { AstryxFormTextInput } from './astryxFormControls';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { Heading } from '@astryxdesign/core/Heading';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Link } from '@astryxdesign/core/Link';
-import { List, ListItem } from '@astryxdesign/core/List';
-import { usePopover } from '@astryxdesign/core/Popover';
-import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
-import { focusVars, spacingVars } from '@astryxdesign/core/theme/tokens.stylex';
+import SanitizedHtml from './SanitizedHtml';
+import type { TOTPActivateFormData } from './TOTPActivateModal';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { Heading } from '@lablup/ui-common/Heading';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Link } from '@lablup/ui-common/Link';
+import { List, ListItem } from '@lablup/ui-common/List';
+import { usePopover } from '@lablup/ui-common/Popover';
+import { Spinner } from '@lablup/ui-common/Spinner';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
+import { focusVars, spacingVars } from '@lablup/ui-common/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
 import {
   BAI_Z_INDEX,
@@ -56,8 +49,10 @@ import {
   BAIFlex,
   useBAILogger,
   BAIUnmountAfterClose,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
+  BAITextInput,
 } from 'backend.ai-ui';
-import DOMPurify from 'dompurify';
 import {
   X,
   ChevronDown,
@@ -66,8 +61,16 @@ import {
   Trash2,
   TriangleAlert,
 } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+// Signup pulls Typeahead/Tokenizer form controls; load it when it opens.
+const SignupModal = React.lazy(() => import('./SignupModal'));
+
+// The QR renderer (qrcode.react) loads only when TOTP setup is shown.
+const TOTPActivateForm = React.lazy(() =>
+  import('./TOTPActivateModal').then((m) => ({ default: m.TOTPActivateForm })),
+);
 
 type ConnectionMode = 'SESSION' | 'API';
 
@@ -120,6 +123,11 @@ interface LoginFormPanelProps {
   loginError: { message: string; description?: string } | null;
   onClearLoginError?: () => void;
   connectionMode: ConnectionMode;
+  /**
+   * Why the Session/API switch cannot be operated, or `false` when it can.
+   * The reason travels with the flag so the two can never disagree.
+   */
+  signinModeDisabled: boolean | { reason: string };
   loginConfig: LoginConfigState;
   apiEndpoint: string;
   otpRequired: boolean;
@@ -137,6 +145,8 @@ interface LoginFormPanelProps {
   onDeleteEndpoint: (ep: string) => void;
   onKeyDown: (e: React.KeyboardEvent) => void;
   onLogin: () => void;
+  /** The single automatic login right after a forced password change. */
+  onReloginAfterPasswordChange: () => void;
   onConnectionModeChange: (mode: ConnectionMode) => void;
   onShowSignupDialog: (token?: string) => void;
   onSAMLLogin: () => void;
@@ -154,6 +164,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   loginError,
   onClearLoginError,
   connectionMode,
+  signinModeDisabled,
   loginConfig,
   apiEndpoint,
   otpRequired,
@@ -171,6 +182,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   onDeleteEndpoint,
   onKeyDown,
   onLogin,
+  onReloginAfterPasswordChange,
   onConnectionModeChange,
   onShowSignupDialog,
   onSAMLLogin,
@@ -329,20 +341,29 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
         {/* Mode switching: Segmented control */}
         {loginConfig.change_signin_support && (
           <div style={{ marginBottom: token('--spacing-5') }}>
-            <SegmentedControl
+            {/* `disabledMessage` is the whole control's, not a segment's:
+                Astryx has no per-item reason, and a disabled control swallows
+                the hover an external Tooltip would need. */}
+            <BAISegmentedControl
               value={connectionMode}
               onChange={(value) =>
                 onConnectionModeChange(value as ConnectionMode)
               }
               layout="fill"
-              label={t('login.Login', { postProcess: [] })}
+              aria-label={t('login.Login', { postProcess: [] })}
+              disabled={!!signinModeDisabled}
+              disabledMessage={
+                typeof signinModeDisabled === 'object'
+                  ? signinModeDisabled.reason
+                  : undefined
+              }
             >
-              <SegmentedControlItem
+              <BAISegmentedControlItem
                 value="SESSION"
                 label={t('login.SessionMode')}
               />
-              <SegmentedControlItem value="API" label={t('login.APIMode')} />
-            </SegmentedControl>
+              <BAISegmentedControlItem value="API" label={t('login.APIMode')} />
+            </BAISegmentedControl>
           </div>
         )}
 
@@ -370,8 +391,8 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                 name="user_id"
                 style={{ marginBottom: token('--spacing-3') }}
               >
-                <AstryxFormTextInput
-                  label={t('login.E-mailOrUsername', { postProcess: [] })}
+                <BAITextInput
+                  aria-label={t('login.E-mailOrUsername', { postProcess: [] })}
                   placeholder={t('login.E-mailOrUsername', { postProcess: [] })}
                   maxLength={64}
                   autoComplete="username"
@@ -386,9 +407,9 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                 name="password"
                 style={{ marginBottom: token('--spacing-3') }}
               >
-                <AstryxFormTextInput
+                <BAITextInput
                   type="password"
-                  label={t('login.Password', { postProcess: [] })}
+                  aria-label={t('login.Password', { postProcess: [] })}
                   placeholder={t('login.Password', { postProcess: [] })}
                   autoComplete="current-password"
                   disabled={isLoading}
@@ -399,8 +420,8 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                   name="otp"
                   style={{ marginBottom: token('--spacing-3') }}
                 >
-                  <AstryxFormTextInput
-                    label={t('totp.OTP', { postProcess: [] })}
+                  <BAITextInput
+                    aria-label={t('totp.OTP', { postProcess: [] })}
                     placeholder={t('totp.OTP', { postProcess: [] })}
                     disabled={isLoading}
                     hasAutoFocus
@@ -417,8 +438,8 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                 name="api_key"
                 style={{ marginBottom: token('--spacing-3') }}
               >
-                <AstryxFormTextInput
-                  label={t('login.APIKey', { postProcess: [] })}
+                <BAITextInput
+                  aria-label={t('login.APIKey', { postProcess: [] })}
                   placeholder={t('login.APIKey', { postProcess: [] })}
                   maxLength={20}
                   hasAutoFocus
@@ -429,9 +450,9 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                 name="secret_key"
                 style={{ marginBottom: token('--spacing-3') }}
               >
-                <AstryxFormTextInput
+                <BAITextInput
                   type="password"
-                  label={t('login.SecretKey', { postProcess: [] })}
+                  aria-label={t('login.SecretKey', { postProcess: [] })}
                   placeholder={t('login.SecretKey', { postProcess: [] })}
                   maxLength={40}
                   disabled={isLoading}
@@ -443,6 +464,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
           {/* Login error alert */}
           {loginError && (
             <Banner
+              role="alert"
               status="error"
               title={loginError.message}
               description={loginError.description}
@@ -585,8 +607,8 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                         },
                       ]}
                     >
-                      <AstryxFormTextInput
-                        label={t('login.Endpoint', { postProcess: [] })}
+                      <BAITextInput
+                        aria-label={t('login.Endpoint', { postProcess: [] })}
                         placeholder={t('login.Endpoint', { postProcess: [] })}
                         disabled={isEndpointDisabled || isLoading}
                         onChange={(value) => onSetApiEndpoint(value)}
@@ -748,11 +770,9 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               onClick={() => setHelpPanel(null)}
             />
           </BAIFlex>
-          <div
+          <SanitizedHtml
             style={{ fontSize: 13, lineHeight: 1.6 }}
-            dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(effectiveHelpPanel.content),
-            }}
+            html={effectiveHelpPanel.content}
           />
         </div>
       )}
@@ -767,11 +787,8 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
         onOk={(newPassword) => {
           onSetNeedToResetPassword(false);
           form.setFieldValue('password', newPassword);
-          // Defer onLogin to the next microtask so that Ant Design's
-          // setFieldValue has settled before the login handler reads the
-          // form. Without this, React 19 batching could cause onLogin()
-          // to read the stale (expired) password.
-          setTimeout(() => onLogin(), 0);
+          // Deferred so the login handler reads the new password, not the expired one.
+          setTimeout(() => onReloginAfterPasswordChange(), 0);
         }}
       />
 
@@ -787,15 +804,19 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
       />
 
       {/* Signup Modal */}
-      <SignupModal
-        open={showSignupModal}
-        endpoint={apiEndpoint}
-        allowSignupWithoutConfirmation={
-          loginConfig.allowSignupWithoutConfirmation
-        }
-        preloadedToken={signupPreloadedToken}
-        onRequestClose={() => onSetShowSignupModal(false)}
-      />
+      {showSignupModal && (
+        <Suspense fallback={null}>
+          <SignupModal
+            open={showSignupModal}
+            endpoint={apiEndpoint}
+            allowSignupWithoutConfirmation={
+              loginConfig.allowSignupWithoutConfirmation
+            }
+            preloadedToken={signupPreloadedToken}
+            onRequestClose={() => onSetShowSignupModal(false)}
+          />
+        </Suspense>
+      )}
 
       {/* Change Password Email Modal */}
       <BAIUnmountAfterClose>
@@ -936,9 +957,9 @@ const ResetPasswordRequiredInline: React.FC<{
             ]}
             hasFeedback
           >
-            <AstryxFormTextInput
+            <BAITextInput
               type="password"
-              label={t('webui.menu.NewPassword')}
+              aria-label={t('webui.menu.NewPassword')}
             />
           </BAIFormItem>
           <BAIFormItem
@@ -963,9 +984,9 @@ const ResetPasswordRequiredInline: React.FC<{
             {/* antd `Input.Password onPressEnter` -> dropped: the Astryx
                 adapter exposes no Enter hook, and the visible Update button
                 below is the submit affordance. */}
-            <AstryxFormTextInput
+            <BAITextInput
               type="password"
-              label={t('webui.menu.NewPasswordAgain')}
+              aria-label={t('webui.menu.NewPasswordAgain')}
             />
           </BAIFormItem>
         </Form>
@@ -1086,11 +1107,19 @@ const TOTPActivateInline: React.FC<{
           )}
         </BAIFlex>
       ) : (
-        <TOTPActivateForm
-          ref={formRef}
-          totp_uri={initializedTotp.totp_uri}
-          totp_key={initializedTotp.totp_key}
-        />
+        <Suspense
+          fallback={
+            <BAIFlex justify="center">
+              <Spinner />
+            </BAIFlex>
+          }
+        >
+          <TOTPActivateForm
+            ref={formRef}
+            totp_uri={initializedTotp.totp_uri}
+            totp_key={initializedTotp.totp_key}
+          />
+        </Suspense>
       )}
     </BAIModal>
   );
@@ -1173,9 +1202,9 @@ const ChangePasswordEmailModal: React.FC<
             },
           ]}
         >
-          <AstryxFormTextInput
+          <BAITextInput
             type="email"
-            label={t('signUp.E-mail')}
+            aria-label={t('signUp.E-mail')}
             hasAutoFocus
           />
         </BAIFormItem>

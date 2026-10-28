@@ -14,10 +14,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Architecture
 
-This is a **React web application** using React 19 + Astryx (`@astryxdesign/core`) + Relay 20 (GraphQL).
+This is a **React web application** using React 19 + Astryx + Relay 20 (GraphQL). Astryx is
+imported only through `@lablup/ui-common` (`@lablup/ui-common/<X>`); ESLint rejects
+`@astryxdesign/*` imports (ADR 0009).
 
 **Astryx is the component system, and the only one.** New UI is written against Astryx
-directly (see the `ASTRYX` block below for the discover-don't-guess workflow). antd is not
+directly (see the `UI-COMMON` block below for the discover-don't-guess workflow). antd is not
 a dependency of this workspace, directly or transitively (versions are pinned exactly), so
 any `from 'antd'` import fails `tsc`.
 
@@ -27,37 +29,42 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
 ### Development Workflow
 
 1. **Dev Server**: Run `pnpm run dev` (TypeScript watch + Relay watch + React dev server under [Portless](https://github.com/vercel-labs/portless)). Portless is a `devDependency`, no global install needed; `dev.mjs` auto-starts the daemon on port 1355 (HTTPS by default).
-2. **URL**: For branches matching `FR-XXXX` the dev URL is `https://fr-XXXX.localhost:1355`; otherwise Portless derives a branch-based subdomain (printed on startup). See `DEV_ENVIRONMENT.md` for theme color and troubleshooting.
+2. **URL**: For branches matching `FR-XXXX` the dev URL is `https://fr-XXXX.localhost:1355` (`gh-N` → `https://gh-N.localhost:1355` for a GitHub-native issue, see below); otherwise Portless derives a branch-based subdomain (printed on startup). See `DEV_ENVIRONMENT.md` for theme color and troubleshooting.
 
 # Additional Workflow Description
 
-- All work items are created in Jira and serve as the starting point for understanding and resolving tasks.
-- Work items are cloned as GitHub issues in the corresponding repository.
-- GitHub PR titles follow this format:
-  - prefix
-    - feat: New features or feature improvements and changes
-    - fix: Bug fixes
-    - refactor: Refactoring
-    - style: Design changes without functional changes
-    - chore: Other small tasks
-  - Format: `prefix(JIRA-ISSUE-NUMBER): title`
-  - GitHub PR content starts with `Resolves #1234 (FR-1234)` where #1234 is the cloned issue number and FR-1234 is the Jira issue number. The space between `#1234` and `(FR-1234)` is required — without it GitHub does not auto-link the issue reference and downstream tooling (the `.github/workflows/project-status-sync.yml` workflow) fails to detect the link.
+- Work items are GitHub issues in this repository, created directly on GitHub and planned on [GitHub Project 41](https://github.com/orgs/lablup/projects/41) (its Iteration field is the sprint). Jira is not used for new work items. For issue number `N`:
+  - PR title: `prefix(#N): title` — for example `fix(#10144): keep the drawer header visible`. Write `#N`, never `GH-N`: an automation reads any `ABC-123`-shaped token in a PR title as a Jira key.
+    - prefix
+      - feat: New features or feature improvements and changes
+      - fix: Bug fixes
+      - refactor: Refactoring
+      - style: Design changes without functional changes
+      - chore: Other small tasks
+  - PR content starts with `Resolves #N` — no parenthesized key after it.
+  - Branch: `type/gh-N-slug` — for example `fix/gh-10144-drawer-header`.
+  - Dev server: `gh-N` in the app name (`gh-10144-pr10150-drawer`).
+  - Teams thread: read from the issue's `Teams thread` field — an organization-level Issue field visible to organization members only, filled automatically when the issue is created. The repository is public, so the thread URL is never written into an issue or PR comment.
+- An issue whose body ends with `JIRA Issue: FR-XXXX` is a clone of a legacy Jira issue. Work on it exactly the same way: `prefix(#N): title`, `Resolves #N`, `type/gh-N-slug`. Do **not** put the FR key in the PR title — an automation closes the Jira side when the GitHub issue closes.
 
 - **Tool Requirements**:
-  - **Jira**: Use `jira-workflow` skill (fw plugin). Project config in `.jira.config`.
+  - **Jira**: read-only legacy. Use the `jira-workflow` skill (fw plugin; config in `.jira.config`) only to inspect existing FR issues — never to create work items.
   - **GitHub**: Use `gh` CLI (preferred) or GitHub MCP (`mcp__github__*`)
   - **Git/PR**: Use **GitHub Stacked PRs** via the `gh stack` CLI (`github/gh-stack` extension) for all stacked branch/PR work. The command reference lives in the `gh-stack` skill (`.claude/skills/gh-stack/`) and the project conventions (naming, draft→ready lifecycle, bottom-up merge, sync/rebase/conflict loops, non-interactive agent rules) in the `fw:stacked-pr-workflow` skill — load both before stack work.
     - **Graphite (`gt`) is banned in this repository (FR-3391).** Never run any `gt` command; a permissions deny rule plus a `PreToolUse` hook block `gt` invocations. Stack metadata lives on GitHub itself.
     - Open and update PRs with `gh stack submit --auto`, which creates them as drafts. For a genuinely single, unstacked PR, plain `git push` + `gh pr create` is acceptable. Leave them as drafts — marking a PR ready (`--open` / `gh pr ready`) belongs to the gate below, not here.
-    - **Draft → ready goes through the `fw:pr-ready-gate` skill (FR-3508), never a bare `gh pr ready` / `--open`.** Copilot's automatic review is disabled on this repository, so the gate is what requests it: it asks Copilot to review while the PR is still a draft, fixes what is objectively wrong, brings anything needing a human decision back to you with the thread left open, replies to and resolves the rest, and only then flips the PR out of draft. Copilot is the first reader; humans are the second.
-  - **After the PR exists: dev server, then walkthrough, in that order.** Right after `gh stack submit --auto` / `gh pr create`, boot the branch's dev server with the `dev-server` skill — or reuse the live one its boot record already names for the branch; one server per branch — so `advertise.sh` writes the record and the dev-server comment; then run the `walkthrough` skill (`.claude/skills/walkthrough/`) as the last step. It mints the PR's review stops against that server, upserts one walkthrough comment, and gives you the `[Walkthrough](<set link>) · N stops` line for the final message — a markdown link, so chat and PR bodies render it short. Do not wait to be asked for either: nothing else in this workflow boots a server, so a walkthrough that only runs "after the server is advertised" never runs on its own. The endpoint and credentials follow `dev-server` §2c–§2d as written there.
-    - Two skips, each named in the final message with its one-line reason: the backend is unreachable or kills the app shell after login; the PR changes nothing a person can recognize on screen — schema, tests, docs, generated files, i18n key plumbing (a relabel *is* on screen and gets a stop).
-    - A backend that does not yet ship the feature is **not** a skip: mint anyway, write each stop's check as value → what shows (`walkthrough` §5), and list what that server cannot show under "Not shown in the walkthrough".
-    - A stack submitted in one sitting gets one walkthrough per layer with on-screen changes: the top layer's server serves the lower ones (their heads are contained in it), so mint each lower layer with `/walkthrough <pr>` (`walkthrough` §1a) against that same server — no second boot. The same command serves a PR opened by another session or on another day, from any checkout.
-    - When the PR is done with, `advertise.sh stop --app <name>` after killing the server (`dev-server` §5); a server nobody stopped is a ~1 GB process and a boot record every reader has to distrust (FR-3993).
+    - **Draft → ready goes through the `fw:pr-ready-gate` (fw ≥ 29.0.0) skill (FR-3508), never a bare `gh pr ready` / `--open`.** The gate runs Claude Code's `/code-review` (hunt + verify) at an effort set by the PR's risk tier from `REVIEW.md`, adds a security review on High-tier PRs, and posts the findings as threads tagged Important / Nit / Pre-existing. It fixes what is objectively wrong, brings anything needing a human decision back to you with the thread left open, replies to and resolves the rest, and only then flips the PR out of draft — at most two review rounds. The agent is the first reader; humans are the second.
+    - **Reviewing a PR here? Follow `REVIEW.md`** — what failure looks like in this repo, the evidence rule, the skip list, the Nit cap, and the risk tiers the gate reads.
+  - **Before the PR exists: check user flows with the `e2e-flow` skill** before `gh stack submit --auto` / `gh pr create`. A PreToolUse hook (`.claude/scripts/require-e2e-flow.sh`) refuses both until the skill has recorded the branch HEAD. The PR only defines changed flows in `e2e-agent/`; automation runs them.
+  - **After the PR exists: dev server, then walkthrough when it is needed.** First decide with `walkthrough` section 0 whether the PR needs one: it does when a reviewer would have to hunt for the change or set up a state to see it (a dialog or step, several places, data-dependent display). Then, right after `gh stack submit --auto` / `gh pr create`, boot the branch's dev server with the `dev-server` skill — or reuse the live one its boot record already names for the branch; one server per branch — so `advertise.sh` writes the record and the dev-server comment; and, when section 0 said so, run the `walkthrough` skill (`.claude/skills/walkthrough/`) as the last step. It mints the PR's review stops against that server, upserts one walkthrough comment, and gives you the `[Walkthrough](<set link>) · N stops` line for the final message — a markdown link, so chat and PR bodies render it short. Do not wait to be asked: nothing else in this workflow boots a server or makes that call. The endpoint and credentials follow `dev-server` sections 2c–2d as written there.
+    - Skips, each named in the final message with its one-line reason (`walkthrough` section 0): the PR changes nothing a person can recognize on screen (schema, tests, docs, generated files, i18n key plumbing, a same-render refactor), in which case boot no dev server either; the change is one spot a reader finds on landing (a relabel, copy, icon or spacing tweak), which gets a `Where to look:` line in the PR body instead; the connected backend can show none of it, which gets its value → what shows condition in the PR body; the backend is unreachable or kills the app shell after login. A change behind a `config.toml` switch is not a skip: the PR body carries a `Config: <section>.<key> = <value>` line and the dev server is booted with it (`dev-server` section 2f, `pnpm run dev-env use … --set`).
+    - What the PR shows is **English**, whatever language the chat is in: each stop's base fields (`ch`, `ck`, `old`/`new`) are English with `"lng": "en"`, and so is the "Not shown" list. The stop itself carries a Korean translation under `i18n.ko`, so the reviewer can switch the popover between English and Korean (`walkthrough` section 5).
+    - A stack submitted in one sitting gets one walkthrough per layer with on-screen changes: the top layer's server serves the lower ones (their heads are contained in it), so mint each lower layer with `/walkthrough <pr>` (`walkthrough` section 1a) against that same server — no second boot. The same command serves a PR opened by another session or on another day, from any checkout.
+    - When the PR is done with, `advertise.sh stop --app <name>` after killing the server (`dev-server` section 5); a server nobody stopped is a ~1 GB process and a boot record every reader has to distrust (FR-3993).
     - The skill list is fixed when a session starts: a session that began before a skill landed on `main` needs `/reload-plugins` (or a fresh session) before this step can call it — observed on 2026-09-18, when `walkthrough` appeared only after the reload.
 - Follow the GitHub Stacked PRs strategy. Write work by appropriately stacking individual PRs.
 - When amending a PR with significant changes, update the PR description to reflect the new scope. Minor fixes don't need description updates, but new features, deleted files, or changed approach should be reflected.
+- **GitHub Project**: https://github.com/orgs/lablup/projects/41 (lablup/41) — Iteration = sprint
 
 ### Configuration
 
@@ -106,6 +113,8 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
 - **ADR**: `adr-writing` skill (file conventions, section skeleton, writing rules, landing checks; when a change needs one is `.claude/rules/adr.md`)
 - **Backend.AI live data, field meanings, GraphQL**: `bai-agent` skill (preflight/login, the `search` -> `docs show`/`schema show`/`explain` -> `query` loop, and pointing the user at the `webui_url` the query result already carries). It ships with the CLI (`packages/backend.ai-agent-cli/skill/`), not as a repository skill: install it per user with `pnpm run bai-agent init --skill --no-login`. Its workflow contract is the generated `BAI-AGENT` block at the bottom of this file.
 - **Relay mutations**: `relay-mutation-store-updates` skill (when a mutation can skip the refetch — update mutations must return their changed fields so Relay patches the normalized store; refetch only when list membership changes)
+- **Changing ui-common, or moving its pin**: `ui-common-change` skill (ui-common edited in its own worktree through a subagent, its PR's `pr-<N>` preview pinned with `pnpm run ui-common:pin`, verified in the webui PR, repinned to the canary after it merges; never edit the catalog pins by hand)
+- **WebUI theme from a brand**: `theme-builder` skill (brand extraction from a URL / hex colours, the v2 appearance document field map, contrast-checked light/dark seeds, schema validation, and the dev-server / Branding-page preview steps)
 
 Component-authoring patterns (Relay tables, selects, modals, forms, layout) have no
 dedicated skills: read `react.instructions.md` for the project deltas, then copy the
@@ -126,7 +135,7 @@ When terms disagree, precedence is: (1) the live UI i18n label in `resources/i18
 
 ### Verification Harness
 
-Run `bash scripts/verify.sh` from project root to check Relay, Lint, Format, and TypeScript (plus the Astryx, agent-CLI and terminology gates). Output ends with `=== ALL PASS ===` on success. Agents should use this script instead of running checks individually. Relay and the search index rebuild first; every other check is a parallel lane with its own log under `node_modules/.cache/verify/`, so a cold worktree finishes in ~10s (~20s when the branch touches lint config or `package.json`, which forces the full lint) and a warm checkout in ~6s. A passing lane prints its `>>` scope notes, so the output says whether Lint ran on changed files or fell back to the full tree. Lint (react, backend.ai-ui), Format and the Vitest lanes look only at what the branch changed relative to `main` — the same set lint-staged formats at commit — and fall back to the whole tree when there is no `main` to compare against or the lint config / dependencies changed; `VERIFY_BASE=<ref>` compares against a stack parent instead. `VERIFY_TESTS=1` adds the Vitest suites CI runs, limited to tests that import a changed file — worth running when you touched code that has tests; `VERIFY_SERIAL=1` runs the lanes one at a time.
+Run `bash scripts/verify.sh` from project root to check Relay, Lint, Format, and TypeScript (plus the Astryx, agent-CLI and terminology gates). Output ends with `=== ALL PASS ===` on success. Agents should use this script instead of running checks individually. Relay and the search index rebuild first; every other check is a parallel lane with its own log under `node_modules/.cache/verify/`, so a cold worktree finishes in ~10s (~20s when the branch touches lint config or `package.json`, which forces the full lint) and a warm checkout in ~6s. A passing lane prints its `>>` scope notes, so the output says whether Lint ran on changed files or fell back to the full tree. Lint (react, backend.ai-ui), Format and the Vitest lanes look only at what the branch changed relative to `main` — the same set lint-staged formats at commit — and fall back to the whole tree when there is no `main` to compare against or the lint config / dependencies changed; `VERIFY_BASE=<ref>` compares against a stack parent instead. `VERIFY_TESTS=1` adds the Vitest suites CI runs, limited to tests that import a changed file — worth running when you touched code that has tests; `VERIFY_SERIAL=1` runs the lanes one at a time. The `Compat floor` lane is report-only: it runs `pnpm run dev-env compat` (the supported manager floor from the team dev catalog and the version gates at or below it, ADR 0011) with a 4 s timeout, skips when `~/.config/fw/dev-gw.json` is absent (CI), and never affects `=== ALL PASS ===`.
 
 **The Astryx token gate is report-only in `verify.sh`**: it prints the counts and the undeclared usages but never affects `=== ALL PASS ===`, because it has pre-existing findings. The bar is **no new findings** — the list must not grow relative to `main`. After touching CSS, theme tokens, or any `var(--…)` — anywhere in the repository, `react/src` and `packages/backend.ai-ui/src` alike — run the full gate for the fix hints:
 
@@ -147,41 +156,66 @@ When reviewing PRs (especially agent-generated ones), check:
 - `TODO(needs-backend)` markers are properly placed with issue references
 - No hardcoded strings, magic numbers, or debug artifacts left behind
 
-<!-- ASTRYX:START -->
-Astryx v0.6.2 · 164 components
-CLI: run every command as `pnpm exec astryx <cmd>` (shown below as `astryx ...`).
+<!-- UI-COMMON:START -->
+@lablup/ui-common v0.2.0-alpha.20.canary-20261024004224-2768d882e · Astryx v0.7.3 · 173 components
+CLI: run every command as `pnpm exec ui-common <cmd>` (shown below as `ui-common ...`).
 
-SETUP (once, in your app entry e.g. main.tsx) — without these, components render unstyled:
-  import "@astryxdesign/core/reset.css";
-  import "@astryxdesign/core/astryx.css";
+SETUP (once, first in your entry stylesheet) — without these, components render unstyled:
+  @layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;
+  @import "@lablup/ui-common/reset.css";
+  @import "@lablup/ui-common/astryx.css";
+  @import "@lablup/ui-common/theme/lablup/theme.css";
+  @import "@lablup/ui-common/ui-common.css";
 
-WORKFLOW — discover, don't guess. Before writing UI:
-1. `astryx build "<idea>"` — START HERE: returns a kit (closest [page] + [block]s + [component]s). No args = full playbook.
-2. `astryx template <name> [--skeleton]` — scaffold the [page]/[block]s it named, or study their layout. Templates are reference code.
-3. `astryx component <Name>` — props + examples for every component you use.
+WORKFLOW — start every page from a template, never from scratch:
+1. `ui-common build "<idea>"` — names the template to scaffold from and the parts it lacks.
+2. `ui-common template <name> <path>` — scaffold it; keep its frame, gap and padding; replace the content.
+3. `ui-common template <Block>` for parts it lacks; `ui-common component <Name>` to read props before using one.
+Changing an existing page? Keep it: skip step 2 and add blocks/components inside its sections.
 
 RULES:
-- No <div> — components do all layout/spacing, page frame included.
-- Frame first: read `astryx docs layout` before writing any page or screen — page frame, region widths, breakpoint behavior.
-- Dense data = rows (Table, List/Item), never Card-wrapped list items; Card is for standalone widgets. Status = StatusDot/Token; Badge = counts only.
-- Custom styling: component props first; else the xstyle prop / StyleX tokens (@astryxdesign/core/theme/tokens.stylex). No raw hex/px.
-- Tokens for every value (`astryx docs tokens`). Brand/accent belongs in the theme (`astryx theme list` / `theme add <slug>`, or `astryx theme template` for a custom one) — never override --color-* in :root.
-- SELF-CHECK before you finish: re-read the file and replace any className=, style={{…}}, raw <div>/<span> layout, imported .css/@apply, or hardcoded #hex/px with the component or the xstyle prop + a token. If unsure a component/prop exists, run `astryx component <Name>` / `astryx search "<thing>"`; don't hand-roll CSS.
-- MIGRATION RELAXATION (antd → Astryx): the className=/style={{…}} part of the SELF-CHECK is relaxed for files carried over from the antd era, which are still full of `className` / inline `style` and `theme.useToken()` reads. Do not rewrite those wholesale — convert a file's idioms when you are already changing it for another reason. A style that props/xstyle cannot express goes in a co-located `.css` file the component imports (P17), with `var(--…)` Astryx tokens; never a runtime style engine.
+- No <div> — components handle all layout and spacing.
+- Read `ui-common docs layout` before changing a template's frame.
+- Dense data = rows (Table, List/Item), not Card-wrapped lists. Badge = counts only.
+- Style with component props first, then the xstyle prop / StyleX tokens. No raw hex/px.
+- Palettes and custom colors go through the theme, never :root overrides. Run `ui-common theme add <slug>` to import; `theme eject <slug>` only forks source. See `ui-common docs theme`.
+- SELF-CHECK: re-read the file; replace any className=, style={{…}}, raw <div>/<span>, imported .css/@apply, or hardcoded #hex/px with the component or the xstyle prop + a token.
+
+`ui-common help` lists every command. Key ones beyond the workflow:
+  search "<query>"   find any component / hook / doc / template
+  discover <words>   integrations you could add
+  docs <topic>       getting-started, principles, tokens, theme … (`ui-common docs` lists all)
+  docs cli           commands and API reference
+  docs authoring     build an integration package, and every field it holds
+  upgrade --from <old version> --apply   run after a dependency bump
+
+UI-COMMON (@lablup/ui-common v0.2.0-alpha.20.canary-20261024004224-2768d882e wraps Astryx v0.7.3):
+- Import only from @lablup/ui-common: the root, or the same subpath Astryx uses (@lablup/ui-common/Button, /theme/tokens.stylex, /lab). Never import @astryxdesign/* directly.
+- Layers: declare `@layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;` once, first, in the entry stylesheet. ui-common's styles sit in `ui-common`; yours go in `components` / `utilities`.
+- Use AlertModal (@lablup/ui-common/AlertModal), not AlertDialog: ui-common hides AlertDialog.
+- Use Modal (@lablup/ui-common/Modal), not Dialog: ui-common hides Dialog.
+- CommandPalette (@lablup/ui-common/CommandPalette) comes from ui-common: Astryx's, wrapped, same API and import path. The palette sits at a fixed offset from the top of the viewport instead of centred, so its input stays put while the result list shrinks or grows. The API is Astryx's.
+- ComplexSelector (@lablup/ui-common/ComplexSelector) comes from ui-common: its own copy of Astryx's, same API and import path. Adds hasClear and onClear, a clear button as Selector has (facebook/astryx#6362).
+- Drawer (@lablup/ui-common/Drawer) comes from ui-common: its own copy of Astryx's, same API and import path. A scrimless drawer stays out of the top layer (show() and a z-index), so ui-common's Modal and notification stack paint above it; a Modal inside a scrimmed drawer opens above it; aria-modal passes through. DrawerHeader is Astryx's, re-exported unchanged.
+- Popover (@lablup/ui-common/Popover) comes from ui-common: Astryx's, wrapped, same API and import path. Its content is not part of the Form.Item it opens from, as antd's: a control inside takes none of the item's status or label. The API is Astryx's.
+- Tour (@lablup/ui-common/lab) comes from ui-common: its own copy of Astryx's, same API and import path. A step's highlight is promoted into the top layer once, so under StrictMode the spotlight dim no longer covers the callout.
+- Form controls (CheckboxInput, CheckboxList, DateInput, DateRangeInput, DateTimeInput, FileInput, MultiSelector, NumberInput, RadioList, SegmentedControl, Selector, Slider, Switch, TextArea, TextInput, TimeInput, Tokenizer, Typeahead) are ui-common's Form.Item wrappers at Astryx's import paths: no label, description, isRequired or status message props. Use them inside Form.Item, which owns label, extra, rules and help; `status` is "error" | "warning" for the border only.
+- Theme: <Theme theme={lablupTheme}> with lablupTheme from @lablup/ui-common/theme/lablup/built, plus @lablup/ui-common/theme/lablup/theme.css. A product palette is its own defineTheme over lablupTheme.
+- Strings: every built-in string is a prop; defaults come from ui-common's catalog. Pass uiCommonMessages from @lablup/ui-common/i18n-catalog to Astryx's InternationalizationProvider. Never a product i18n runtime.
+- ui-common's own components: AlertModal, Board, BoardItemTitle, BooleanToken, BulkEditFormItem, BulkErrorModal, ColorPicker, ConfirmPopover, CountBadge, CountdownBorder, DataGrid, DeleteConfirmModal, DigitPopIn, DividedRow, DoubleBadge, DoubleToken, ErrorState, Form, IconWithTooltip, ImageWithFallback, ListBanner, Modal, NotificationItem, NotificationStack, OverlayScrollbar, PageHeader, PageLayout, PagedSelector, ProgressWithLabel, SelectionLabel, SkeletonCard, SkeletonChart, SkeletonRow, SkeletonText, SmoothHeight, StatCard, Statistic, StepNumberInput, TagsInput, TextHighlighter, TokenList, TokenRow, UncontrolledInput, UnitGrid. `pnpm exec ui-common docs ui-common` explains them.
+- Templates are ui-common's own: create-modal, dashboard-board, detail-drawer, info-modal, list-page, list-toolbar, settings-page, tabbed-page. They import only @lablup/ui-common, react and lucide-react. Astryx's templates are not offered (they import @astryxdesign/* directly).
+- The `ui-common` bin is @lablup/ui-common-cli, a devDependency pinned to the same version as @lablup/ui-common; bump both together. Without it installed, `pnpm dlx @lablup/ui-common-cli@next <cmd>` (or `npx @lablup/ui-common-cli@next <cmd>`); drop `@next` once 0.2.0 is published.
+- After bumping @lablup/ui-common and @lablup/ui-common-cli: `pnpm exec ui-common upgrade --from <old version>`, then read ui-common-upgrade-report.md.
+<!-- UI-COMMON:END -->
+PROJECT LINES (this repo; outside the generated markers so `ui-common agents --write` keeps them, and they win where they disagree with the block):
+- SETUP (this repo): `react/src/index.css` declares the layer order and imports only `reset.css` and `astryx.css`. The theme is webui's own Backend.AI theme family (`react/src/astryx-theme/`, a `defineTheme` over `neutralTheme`), not `lablupTheme` and not `theme/lablup/theme.css`. `ui-common.css` is not imported either: it holds only global scrollbar rules, and each ui-common component imports its own CSS.
+- CLI (this repo): the `ui-common` bin comes from `@lablup/ui-common-cli`, a `react/` devDependency pinned in the catalog next to `@lablup/ui-common`, so `pnpm exec ui-common <cmd>` works inside `react/`. From the repository root run `pnpm run ui-common <cmd>` (root `package.json` proxies it into `react/`); from `packages/backend.ai-ui/`, `pnpm -w run ui-common <cmd>`. `ui-common astryx <cmd>` runs the Astryx CLI without rewriting its output.
+- MIGRATION RELAXATION (antd → Astryx): the className=/style={{…}} part of the SELF-CHECK is relaxed for files carried over from the antd era, which are still full of `className` / inline `style` and `useTheme().token('--…')` reads (the former `theme.useToken()` reads; FR-3605 retired the theme-shim). Do not rewrite those wholesale — convert a file's idioms when you are already changing it for another reason. A style that props/xstyle cannot express goes in a co-located `.css` file the component imports (P17), with `var(--…)` Astryx tokens; never a runtime style engine. In a style position, prefer `'var(--…)'` over a `token()` read: `token()` is for values JS must compute with (numeric props, SVG attributes).
 - STATUS SEMANTICS (this repo; overrides "Status = StatusDot/Token; Badge = counts only" above — ADR 0007): Badge = a value the system changes on its own over time (lifecycle/health status, in-progress markers, live tickers, counts). Token = a value that changes only when a user edits it, or a category/classification label (names, types, permissions, tags, versions, on/off settings, recorded outcomes). StatusDot stays for dot-only status. BUI chips are named *Badge / *Token by the primitive they render; "Tag" is only a domain noun. Rule: .claude/rules/badge-vs-token.md.
-- BUI INTEGRATION (this repo): `backend.ai-ui` is registered as an Astryx integration, so `astryx component`, `astryx search` and `astryx component --list` cover the `BAI*` wrappers next to core's primitives, and `astryx docs backend-ai-ui` explains the layer. The `component --list` count in the generated line below is core's own — `astryx init` counts only what core discovers — so the live catalog is larger than the number printed there; run the command to see it. When a `BAI*` component and a core primitive both fit, use the `BAI*` one — it carries the project defaults, and it imports from `backend.ai-ui`. A new `BAI*` component ships a same-stem `{Name}.doc.ts` beside its source.
+- BUI INTEGRATION (this repo): `backend.ai-ui` is registered as an Astryx integration, so `ui-common component`, `ui-common search` and `ui-common component --list` cover the `BAI*` wrappers next to ui-common's and core's components, and `ui-common docs backend-ai-ui` explains the layer. The component count in the block's first line is core's own, so the live catalog is larger; run the command to see it. When a `BAI*` component and a ui-common or core component both fit, use the `BAI*` one — it carries the project defaults, and it imports from `backend.ai-ui`. A new `BAI*` component ships a same-stem `{Name}.doc.ts` beside its source; a new product-neutral component goes to ui-common instead (.claude/rules/bui-component-home.md).
+- FORM CONTROLS (this repo; overrides the "Form controls … at Astryx's import paths" line above for `react/` — ADR 0014): import ui-common's Form.Item-aware controls from `backend.ai-ui` as `BAI<X>` (`BAITextInput`, `BAINumberInput`, `BAISelector`, `BAISwitch`, `BAICheckboxInput`, `BAITagsInput`, `BAIRadioList`/`BAIRadioListItem`, `BAISegmentedControl`/`BAISegmentedControlItem`, …). They are plain re-exports, so the props are ui-common's; ESLint blocks the component names from the ui-common subpaths, while their types stay importable there.
 
-MORE CLI:
-  search "<query>"   find any component / hook / doc / template / block
-  component --list   164 components by category
-  template --list    page + block recipes
-  docs <topic>       browser-support, cli-integrations, color, elevation, getting-started, icons, illustrations, internationalization, layout, migration, motion, principles, shape, spacing, styling-libraries, styling, theme, tokens, typography, working-with-ai, backend-ai-ui
-  swizzle <Name>     eject component source for deep customization
-  upgrade --apply    run after any Astryx or integration dependency bump
-<!-- ASTRYX:END -->
-The ASTRYX block above is `astryx init --features agents` output (run from `react/`, where the StyleX compiler is detected) in **StyleX mode**, plus the project-specific MIGRATION RELAXATION and STATUS SEMANTICS lines (keep both on re-sync). Canonical generated copy: `react/AGENTS.md`. Re-run the init from `react/` on every `@astryxdesign/core` bump and re-sync this block.
-
-The block's `pnpm exec astryx <cmd>` assumes you are **inside `react/`**. `@astryxdesign/cli` is a devDependency of that workspace only, so the root `node_modules/.bin` has no `astryx` binary — and `pnpm exec` resolves binaries, not package scripts, so it fails at the root with `ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL`. **From the repository root, run `pnpm run astryx <cmd>` instead** (root `package.json` proxies it to the same CLI). Both forms take identical arguments.
+The UI-COMMON block above is `ui-common agents` output, generated from `react/` (StyleX mode is detected there) — **do not hand-edit it**. After every `@lablup/ui-common` / `@lablup/ui-common-cli` bump (they move together), regenerate both copies from `react/`: `pnpm exec ui-common agents --write ../AGENTS.md` and `pnpm exec ui-common agents --write AGENTS.md`. `scripts/verify.sh` fails when either is stale (`ui-common agents --check`). The PROJECT LINES right after the markers are this repository's and survive a rewrite (ADR 0009). The different markers keep `astryx init` / `astryx upgrade` from overwriting the block — do not re-add an `ASTRYX` block.
 
 <!-- BAI-AGENT:start -->
 bai-agent · 14 commands

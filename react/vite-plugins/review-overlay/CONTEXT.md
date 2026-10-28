@@ -77,6 +77,13 @@ pin; every block carries its own pin's link, so a block pasted on its own still
 opens, and the set's link follows the last block once.
 _Avoid_: snippet, template, card (the on-screen thing)
 
+**Footer**:
+The one line under a copied set saying where it was reviewed: WebUI version,
+manager version, API endpoint and, while the dock's account switch is on, the
+reviewer's account. Set-wide, never per pin; the host answers it, and a host
+with no app behind it answers nothing, so the copy ends where it always has.
+_Avoid_: signature, metadata, environment line
+
 **Label**:
 The human-readable path to a pin's element: route › landmark › element with its
 on-screen text. Always English for the route part.

@@ -115,6 +115,23 @@ export const webServerEndpoint =
 export const isLocalEnvironment =
   webuiEndpoint.includes('127.0.0.1') || webuiEndpoint.includes('localhost');
 
+/**
+ * Remember `endpoint` as the last-used API endpoint before the app loads, so
+ * the login page probes it and attempts the silent `/server/login` on load.
+ * A dev server gets this from `VITE_DEFAULT_API_ENDPOINT`; a production build
+ * with an empty `apiEndpoint` has no endpoint until one is stored.
+ */
+export async function seedStoredApiEndpoint(
+  page: Page,
+  endpoint: string = webServerEndpoint,
+) {
+  await page.addInitScript((ep) => {
+    if (localStorage.getItem('backendaiwebui.api_endpoint') === null) {
+      localStorage.setItem('backendaiwebui.api_endpoint', ep);
+    }
+  }, endpoint);
+}
+
 export async function login(
   page: Page,
   request: APIRequestContext,
@@ -414,6 +431,34 @@ export async function fillOutVaadinGridCellFilter(
 }
 
 /**
+ * Astryx 0.7.0 (#7339, picked up in #10327) forwards `PowerSearch`'s
+ * `data-testid` through its `Tokenizer` onto the typeahead's combobox
+ * `<input>` itself instead of the field root, so the test id element no
+ * longer contains the tokens or the combobox. The tokens sit next to the
+ * input inside the field's `role="group"` (labelled by the control, e.g.
+ * "Search filters"). Return the test id element plus that enclosing group, so
+ * scoping through it works whether the test id lands on the root (before
+ * 0.7.0) or on the input (0.7.0+).
+ */
+function getPowerSearchScope(page: Page, testId: string = 'vfolder-filter') {
+  const testIdElement = page.getByTestId(testId);
+  return testIdElement.or(
+    page.getByRole('group').filter({ has: testIdElement }),
+  );
+}
+
+/**
+ * The PowerSearch typeahead (`role="combobox"`) of the `BAIPropertyFilter` /
+ * `BAIGraphQLPropertyFilter` with `testId`; see `getPowerSearchScope`.
+ */
+export function getPowerSearchInput(
+  page: Page,
+  testId: string = 'vfolder-filter',
+) {
+  return getPowerSearchScope(page, testId).getByRole('combobox').first();
+}
+
+/**
  * `BAIPropertyFilter` / `BAIGraphQLPropertyFilter` (to-astryx ticket 28) are
  * built on Astryx `PowerSearch`. A committed filter is a token whose remove
  * control carries `aria-label="Remove {label}"`
@@ -425,9 +470,9 @@ export async function fillOutVaadinGridCellFilter(
  */
 export async function removeSearchButton(page: Page, folderName: string) {
   try {
-    const removeButton = page
-      .getByTestId('vfolder-filter')
-      .getByRole('button', { name: `Remove Name: contains ${folderName}` });
+    const removeButton = getPowerSearchScope(page).getByRole('button', {
+      name: `Remove Name: contains ${folderName}`,
+    });
 
     // Only try to click if the filter token exists
     if (await removeButton.isVisible({ timeout: 1000 })) {
@@ -443,9 +488,9 @@ export async function clearAllFilters(page: Page) {
   try {
     // Every token's remove button carries an aria-label starting with
     // "Remove " (see `removeSearchButton` above).
-    const filterChips = page
-      .getByTestId('vfolder-filter')
-      .getByRole('button', { name: /^Remove / });
+    const filterChips = getPowerSearchScope(page).getByRole('button', {
+      name: /^Remove /,
+    });
 
     // Get count of filter chips
     const count = await filterChips.count();
@@ -470,11 +515,9 @@ export async function clearAllFilters(page: Page) {
  * `BAIGraphQLPropertyFilter` component (to-astryx ticket 28 rebuilt both on
  * Astryx `PowerSearch`: a single typeahead that, for a field with no
  * pre-filled value, opens an edit popover (Field/Operator/Value) on
- * selection — `PowerSearch.tsx` `handleTokenizerChange`). The `data-testid`
- * lands on `PowerSearch`'s own root (`data-testid={testId}`,
- * `PowerSearch.tsx`), which contains exactly one `role="combobox"` (the
- * typeahead), so scoping through it stays unambiguous regardless of any
- * per-page `label` override.
+ * selection — `PowerSearch.tsx` `handleTokenizerChange`). The typeahead is
+ * found through `testId` (`getPowerSearchInput`), so it stays unambiguous
+ * regardless of any per-page `label` override.
  * @param page - Playwright Page object
  * @param propertyName - Name of the property to filter by (e.g., 'Name', 'Status')
  * @param searchValue - Value to search for
@@ -486,10 +529,8 @@ export async function selectPropertyFilter(
   searchValue: string,
   testId: string = 'vfolder-filter',
 ) {
-  const filterContainer = page.getByTestId(testId);
-
   // Open the typeahead and pick the field.
-  const searchBar = filterContainer.getByRole('combobox').first();
+  const searchBar = getPowerSearchInput(page, testId);
   await searchBar.click();
   await page.getByRole('option', { name: propertyName, exact: true }).click();
 
@@ -591,8 +632,11 @@ async function retryWithTableRefresh(
 }
 
 export function getVFolderRow(page: Page, folderName: string) {
+  // The identicon renders `alt=""`, so the row's accessible name starts with
+  // the checkbox's "Select <global id>" — match the row by its exact name text.
   return page
-    .getByRole('row', { name: `VFolder Identicon ${folderName}` })
+    .getByRole('row')
+    .filter({ has: page.getByText(folderName, { exact: true }) })
     .first();
 }
 
@@ -709,26 +753,27 @@ export async function moveToTrashAndVerify(
   });
   await expect(moveToTrashButton).toBeEnabled({ timeout: 10000 });
   await moveToTrashButton.click();
-  // The "Move to trash" confirmation is the app-shim `modal.confirm`, which
-  // renders as role="alertdialog" (not "dialog") with a "Confirm" button; the
-  // old `.ant-modal-confirm` scope matched nothing.
+  // The row action's confirm is an anchored popover (role="dialog", named
+  // after the action) whose description is the folder name.
   const confirmButton = page
-    .getByRole('alertdialog')
+    .getByRole('dialog', { name: 'Move to trash bin' })
+    .filter({ hasText: folderName })
     .getByRole('button', { name: 'Confirm', exact: true });
   await expect(confirmButton).toBeVisible();
-  // Wait for the DELETE /folders API response so a rejected request fails
-  // here with the status/body instead of surfacing as a row-gone timeout.
+  // Since #10051 the row action commits the `deleteVfolderV2` GraphQL
+  // mutation; surface its errors here instead of as a row-gone timeout.
   const deletionResponsePromise = page.waitForResponse(
     (response) =>
-      response.url().includes('/folders') &&
-      response.request().method() === 'DELETE',
+      response.request().method() === 'POST' &&
+      (response.request().postData() ?? '').includes('deleteVfolderV2'),
     { timeout: 30000 },
   );
   await confirmButton.click();
   const deletionResponse = await deletionResponsePromise;
-  if (!deletionResponse.ok()) {
+  const deletionBody = await deletionResponse.json().catch(() => null);
+  if (!deletionResponse.ok() || deletionBody?.errors?.length) {
     throw new Error(
-      `DELETE /folders returned ${deletionResponse.status()}: ${await deletionResponse.text()}`,
+      `deleteVfolderV2 for "${folderName}" failed (${deletionResponse.status()}): ${JSON.stringify(deletionBody?.errors ?? deletionBody).slice(0, 300)}`,
     );
   }
   // Verify in place: with the name filter still applied, the row must leave
@@ -867,17 +912,15 @@ export async function shareVFolderAndVerify(
 
   // Click the share button inside the BAINameActionCell of the folder row.
   // Action buttons (share/trash) are embedded in the Name cell; locate the
-  // "share" button by its icon's aria-label rather than by td index.
-  const folderRow = page.getByRole('row', {
-    name: `VFolder Identicon ${folderName}`,
-  });
+  // button by its accessible name "Share" rather than by td index.
+  const folderRow = getVFolderRow(page, folderName);
   await expect(folderRow).toBeVisible({ timeout: 10000 });
-  await folderRow.getByRole('button', { name: 'share' }).first().click();
+  await folderRow.getByRole('button', { name: 'Share' }).first().click();
 
   // Fill in invited user's email in the share modal
-  const shareModal = page.locator('.ant-modal');
+  const shareModal = page.getByRole('dialog', { name: 'Share Folder' });
   await expect(shareModal).toBeVisible();
-  await shareModal.getByRole('textbox').fill(invitedUser);
+  await shareModal.getByRole('textbox', { name: 'Email' }).fill(invitedUser);
 
   // Set up the response promise before clicking Add to avoid a race condition
   // where the response fires before we start listening.
@@ -896,7 +939,7 @@ export async function shareVFolderAndVerify(
     );
   }
 
-  await shareModal.getByRole('button', { name: 'close' }).click();
+  await shareModal.getByRole('button', { name: 'Close', exact: true }).click();
 
   await removeSearchButton(page, folderName);
 }
@@ -934,9 +977,7 @@ export async function acceptAllInvitationAndVerifySpecificFolder(
     window.dispatchEvent(new PopStateEvent('popstate'));
   });
 
-  const invitationModal = page.locator('.ant-modal').filter({
-    has: page.getByRole('button', { name: /Accept/i }),
-  });
+  const invitationModal = page.getByRole('dialog', { name: 'Invited Folders' });
   await expect(invitationModal.first()).toBeVisible({ timeout: 15000 });
 
   // Verify the inviter's email is rendered in the "From" field only if the
@@ -976,7 +1017,7 @@ export async function acceptAllInvitationAndVerifySpecificFolder(
   let folderInvitationAccepted = false;
   for (let i = 0; i < 20; i++) {
     const invitationItem = invitationModal
-      .locator('.ant-list-item')
+      .getByRole('listitem')
       .filter({ hasText: folderName })
       .first();
     const isItemVisible = await invitationItem
@@ -1026,11 +1067,9 @@ export async function acceptAllInvitationAndVerifySpecificFolder(
   }
 
   // Close the modal if still open.
-  await page
-    .locator('.ant-modal')
-    .getByRole('button', { name: /close/i })
-    .first()
-    .click()
+  await invitationModal
+    .getByRole('button', { name: 'Close', exact: true })
+    .click({ timeout: 5000 })
     .catch(() => {});
 
   // Verify the shared folder now appears in the user's Active data page.
@@ -1063,28 +1102,24 @@ export async function leaveSharedFolderAndVerify(
 
   // For folders the user does not own, the "share" action button opens the
   // SharedFolderPermissionInfoModal instead of the invite modal (see
-  // VFolderNodes.tsx onShare). The button's aria-label is still "share".
-  const folderRow = page.getByRole('row', {
-    name: `VFolder Identicon ${folderName}`,
-  });
+  // VFolderNodesV2.tsx onShare); its accessible name is still "Share".
+  const folderRow = getVFolderRow(page, folderName);
   await expect(folderRow).toBeVisible({ timeout: 10000 });
-  await folderRow.getByRole('button', { name: 'share' }).first().click();
+  await folderRow.getByRole('button', { name: 'Share' }).first().click();
 
-  // The modal renders a Tooltip-wrapped Leave button whose accessible name is
-  // the tooltip's title ('Leave the shared folder').
-  const sharedFolderModal = page.locator('.ant-modal').filter({
-    hasText: folderName,
-  });
+  const sharedFolderModal = page
+    .getByRole('dialog', { name: 'Shared Folder Permission' })
+    .filter({ hasText: folderName });
   await expect(sharedFolderModal.first()).toBeVisible({ timeout: 10000 });
   await sharedFolderModal
     .getByRole('button', { name: 'Leave the shared folder' })
     .first()
     .click();
 
-  // Popconfirm OK button — confirm leaving.
+  // Confirm leaving in the anchored popover (role="dialog").
   await page
-    .locator('.ant-popover')
-    .getByRole('button', { name: /^OK$/i })
+    .getByRole('dialog', { name: /Do you want to leave the shared folder/ })
+    .getByRole('button', { name: 'Confirm', exact: true })
     .click();
 
   // Success toast should appear (no 400) and the folder should disappear from
@@ -1141,10 +1176,11 @@ export async function restoreVFolderAndVerify(page: Page, folderName: string) {
   );
   await restoreButton.click();
 
-  // The Restore button is wrapped in a Popconfirm — click the OK button to confirm.
+  // The Restore action confirms in an anchored popover (role="dialog").
   const popconfirmOkButton = page
-    .locator('.ant-popover')
-    .getByRole('button', { name: 'Confirm' });
+    .getByRole('dialog', { name: 'Restore' })
+    .filter({ hasText: folderName })
+    .getByRole('button', { name: 'Confirm', exact: true });
   await expect(popconfirmOkButton).toBeVisible({ timeout: 5000 });
   await popconfirmOkButton.click();
 

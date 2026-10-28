@@ -13,14 +13,17 @@ import { AutoScalingRuleEditorModalLegacyModifyMutation } from '../__generated__
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
+import { InputGroup } from '@lablup/ui-common/InputGroup';
 import {
-  AstryxFormNumberInput,
-  AstryxFormRadioList,
-  AstryxFormSelector,
-  AstryxFormTextInput,
-} from './astryxFormControls';
-import { InputGroup } from '@astryxdesign/core/InputGroup';
-import { BAIModal, BAIModalProps, useBAILogger } from 'backend.ai-ui';
+  BAIModal,
+  BAIModalProps,
+  BAINumberInput,
+  BAIRadioList,
+  BAIRadioListItem,
+  BAISelector,
+  BAITextInput,
+  useBAILogger,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -278,37 +281,29 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
           name={'type'}
           rules={[{ required: true }]}
         >
-          {/* antd `Radio.Group` with `options` -> `RadioList` (MAPPING §3.10).
-              The `BAIFlex`-wrapped labels collapse to plain strings:
-              `RadioListItem.label` is a required STRING (P2) and the wrapper
-              added no content, only a flex box around one word. `onChange`
-              takes the VALUE, not the event (P3). */}
-          <AstryxFormRadioList
-            label={t('autoScalingRule.ScalingType')}
-            options={[
-              {
-                label: t('autoScalingRule.ScaleOut'),
-                value: 'out',
-              },
-              {
-                label: t('autoScalingRule.ScaleIn'),
-                value: 'in',
-              },
-            ]}
+          <BAIRadioList
+            aria-label={t('autoScalingRule.ScalingType')}
+            orientation="horizontal"
             onChange={(value) => {
               value === 'in'
                 ? formRef.current?.setFieldsValue({ max_replicas: 1 })
                 : formRef.current?.setFieldsValue({ min_replicas: 1 });
             }}
-          />
+          >
+            <BAIRadioListItem
+              value="out"
+              label={t('autoScalingRule.ScaleOut')}
+            />
+            <BAIRadioListItem value="in" label={t('autoScalingRule.ScaleIn')} />
+          </BAIRadioList>
         </Form.Item>
         <Form.Item
           label={t('autoScalingRule.MetricSource')}
           name={'metric_source'}
           rules={[{ required: true }]}
         >
-          <AstryxFormSelector
-            label={t('autoScalingRule.MetricSource')}
+          <BAISelector
+            aria-label={t('autoScalingRule.MetricSource')}
             onChange={(value) => {
               // @ts-ignore
               setNameOptions(METRIC_NAMES_MAP[value] || []);
@@ -350,14 +345,14 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
                       placeholder rather than a rebuilt `TextInput` + `Popover`
                       popup; the client-side `onSearch` filter goes with the
                       dropdown. Same call as the V2 editor above. */}
-                  <AstryxFormTextInput
-                    label={t('autoScalingRule.MetricName')}
+                  <BAITextInput
+                    aria-label={t('autoScalingRule.MetricName')}
                     placeholder={
                       nameOptions.length > 0
                         ? nameOptions.join(', ')
                         : t('autoScalingRule.MetricName')
                     }
-                    allowClear
+                    hasClear
                   />
                 </Form.Item>
                 <Form.Item
@@ -372,8 +367,8 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
                       no `optionLabelProp`, so the two-part row collapses to one
                       string, `"<label> (<value>)"`, which carries both pieces
                       the node did. `style={{width:100}}` -> `width={100}`. */}
-                  <AstryxFormSelector
-                    label={t('autoScalingRule.Comparator')}
+                  <BAISelector
+                    aria-label={t('autoScalingRule.Comparator')}
                     width={100}
                     options={_.map(COMPARATOR_LABELS, (label, value) => ({
                       label: `${label} (${value})`,
@@ -390,8 +385,8 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
                       surrounding element, so the unit is expressed as the
                       field's placeholder suffix instead of a second addon box
                       (MAPPING §3.6: `TextInput` has no `suffix`). */}
-                  <AstryxFormTextInput
-                    label={t('autoScalingRule.Threshold')}
+                  <BAITextInput
+                    aria-label={t('autoScalingRule.Threshold')}
                     placeholder={
                       getFieldValue('metric_source') === 'KERNEL'
                         ? `${t('autoScalingRule.Threshold')} (%)`
@@ -425,8 +420,9 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
             },
           ]}
         >
-          <AstryxFormNumberInput
-            label={t('autoScalingRule.StepSize')}
+          <BAINumberInput
+            width="100%"
+            aria-label={t('autoScalingRule.StepSize')}
             min={1}
             step={1}
           />
@@ -459,8 +455,9 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
                   },
                 ]}
               >
-                <AstryxFormNumberInput
-                  label={t('autoScalingRule.MaxReplicas')}
+                <BAINumberInput
+                  width="100%"
+                  aria-label={t('autoScalingRule.MaxReplicas')}
                   min={0}
                   max={SIGNED_32BIT_MAX_INT}
                 />
@@ -491,8 +488,9 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
                   },
                 ]}
               >
-                <AstryxFormNumberInput
-                  label={t('autoScalingRule.MinReplicas')}
+                <BAINumberInput
+                  width="100%"
+                  aria-label={t('autoScalingRule.MinReplicas')}
                   min={0}
                   max={SIGNED_32BIT_MAX_INT}
                 />
@@ -523,7 +521,10 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
             },
           ]}
         >
-          <AstryxFormNumberInput label={t('autoScalingRule.CoolDownSeconds')} />
+          <BAINumberInput
+            width="100%"
+            aria-label={t('autoScalingRule.CoolDownSeconds')}
+          />
         </Form.Item>
       </Form>
     </BAIModal>

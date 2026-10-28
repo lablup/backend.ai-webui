@@ -12,8 +12,7 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useThemeMode } from '../hooks/useThemeMode';
 import AgentDetailDrawer from './AgentDetailDrawer';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
-import BAIRadioGroup from './BAIRadioGroup';
-import { Token } from '@astryxdesign/core/Token';
+import { Token } from '@lablup/ui-common/Token';
 import {
   AgentNodeInList,
   BAIAgentTable,
@@ -22,6 +21,8 @@ import {
   BAIFlex,
   BAIFlexProps,
   BAIPropertyFilter,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
   BAITableProps,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
@@ -212,23 +213,22 @@ const AgentList: React.FC<AgentListProps> = ({
           style={{ flex: 1 }}
           wrap="wrap"
         >
-          <BAIRadioGroup
-            options={[
-              {
-                label: t('agent.Connected'),
-                value: 'ALIVE',
-              },
-              {
-                label: t('agent.Terminated'),
-                value: 'TERMINATED',
-              },
-            ]}
+          <BAISegmentedControl
             value={queryParams.status}
-            onChange={(e) => {
-              setQueryParams({ status: e.target.value });
+            onChange={(value) => {
+              setQueryParams({ status: value });
               setTablePaginationOption({ current: 1 });
             }}
-          />
+          >
+            <BAISegmentedControlItem
+              value="ALIVE"
+              label={t('agent.Connected')}
+            />
+            <BAISegmentedControlItem
+              value="TERMINATED"
+              label={t('agent.Terminated')}
+            />
+          </BAISegmentedControl>
 
           <BAIPropertyFilter
             filterProperties={[

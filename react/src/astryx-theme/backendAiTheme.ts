@@ -15,7 +15,7 @@
  Every brand value comes from the appearance document (`resources/theme.json`
  shipped, the operator's document at runtime): `accent` (brand), `info`
  (admin accent + info), `success` (secondary accent + success), `error`,
- `warning`, `link`, `headerBg`, `fontFamily`. This module holds NO defaults
+ `warning`, `link`, `headerBg`, `headerBgAdmin`, `fontFamily`. This module holds NO defaults
  of its own — a seed the document omits is not pinned, and Astryx's own token
  applies (FR-3605).
 
@@ -51,13 +51,13 @@ import type {
   BAIThemeConfig,
   BAIThemeSeedValue,
 } from '../helper/customThemeConfig';
-import { defineTheme, type DefinedTheme } from '@astryxdesign/core/theme';
-import { neutralTheme } from '@astryxdesign/theme-neutral';
+import { defineTheme, type DefinedTheme } from '@lablup/ui-common/theme';
+import { neutralTheme } from '@lablup/ui-common/theme/neutral';
 import {
   ANTD_ALIGN_TOKENS,
   BAI_SELF_COLOR_TOKENS,
   buildBaiCustomTokens,
-} from 'backend.ai-ui';
+} from 'backend.ai-ui/theme';
 
 // Re-exported from BUI so this module keeps its ticket-02 public API.
 export { ANTD_ALIGN_TOKENS };
@@ -679,7 +679,7 @@ const COMMAND_PALETTE_ROW_OVERLAYS = {
  * All five are Astryx `DropdownMenu` component defaults, not call-site
  * decisions, and every dropdown in the app inherited the same drift from the
  * same antd baseline — so one `components:` block fixes the reported surface
- * and the other 34 `<DropdownMenu>` call sites at once. `astryx component
+ * and the other 34 `<DropdownMenu>` call sites at once. `ui-common component
  * DropdownMenu` documents exactly these two theming keys (`dropdown-menu`,
  * `dropdown-menu-item`), which is the sanctioned knob; the alternative was a
  * scoped `.astryx-item` override, which would have to be repeated per call
@@ -890,7 +890,7 @@ const ANTD_DROPDOWN_DENSITY = {
  * to the components that composite it over something that must survive —
  * `button` (which reflects
  * `data-variant`, so `variant:*` keys render) and `tab`. Both keys are the ones
- * `astryx component Button` / `astryx component TabList` document.
+ * `ui-common component Button` / `ui-common component TabList` document.
  *
  * PILOT-DECISION — the filled-button hover is a translucent WHITE WASH rather
  * than antd's exact `colorPrimaryHover`. antd derives that step from its palette
@@ -995,6 +995,8 @@ export interface BuildBackendAIThemeOptions {
   link?: BrandSeedPair;
   /** Header band background pair (`--header-bg`); applied verbatim. */
   headerBg?: BrandSeedPair;
+  /** System admin header band pair (`--header-bg-admin`); applied verbatim. */
+  headerBgAdmin?: BrandSeedPair;
   fontFamily?: string;
 }
 
@@ -1076,6 +1078,7 @@ interface ResolvedSeeds {
   info?: BrandSeedPair;
   link?: BrandSeedPair;
   headerBg?: BrandSeedPair;
+  headerBgAdmin?: BrandSeedPair;
   fontFamily?: string;
 }
 
@@ -1106,6 +1109,7 @@ export const computeThemeName = (
       seeds.info,
       seeds.link,
       seeds.headerBg,
+      seeds.headerBgAdmin,
       seeds.fontFamily,
       BAI_SELF_COLOR_TOKENS,
       ANTD_ALIGN_TOKENS,
@@ -1316,6 +1320,8 @@ export const themeOptionsFromConfig = (
   const seeds = familyConfig?.seeds ?? config?.families?.default?.seeds;
   const headerBgValue =
     familyConfig?.headerBg ?? config?.families?.default?.headerBg;
+  const headerBgAdminValue =
+    familyConfig?.headerBgAdmin ?? config?.families?.default?.headerBgAdmin;
   const accentValue =
     role === 'admin'
       ? seeds?.info
@@ -1335,6 +1341,7 @@ export const themeOptionsFromConfig = (
     info: seedPairFromValue(seeds?.info),
     link: seedPairFromValue(seeds?.link),
     headerBg: seedPairFromValue(headerBgValue),
+    headerBgAdmin: seedPairFromValue(headerBgAdminValue),
     fontFamily:
       typeof config?.fontFamily === 'string' && config.fontFamily
         ? config.fontFamily

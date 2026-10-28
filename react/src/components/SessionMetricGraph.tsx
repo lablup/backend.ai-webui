@@ -13,13 +13,14 @@ import {
 } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import './SessionMetricGraph.css';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { Heading } from '@astryxdesign/core/Heading';
-import { useTheme } from '@astryxdesign/core/theme';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { Heading } from '@lablup/ui-common/Heading';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIQuestionIconWithTooltip,
   BAIFlex,
+  BAIQuestionIconWithTooltip,
   BAISkeleton,
+  cssLengthToPx,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -27,15 +28,15 @@ import { Suspense, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
   CartesianGrid,
   Legend,
-  ResponsiveContainer,
+  Line,
+  LineChart,
   ReferenceLine,
+  ResponsiveContainer,
   Tooltip as ChartTooltip,
+  XAxis,
+  YAxis,
 } from 'recharts';
 
 type MetricData = NonNullable<
@@ -232,7 +233,7 @@ const SessionMetricGraphBody: React.FC<PrometheusMetricGraphProps> = ({
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis
               dataKey="timestamp"
-              minTickGap={parseFloat(token('--spacing-5'))}
+              minTickGap={cssLengthToPx(token('--spacing-5'))}
             />
             <YAxis domain={[0, 'dataMax']} />
             <ChartTooltip

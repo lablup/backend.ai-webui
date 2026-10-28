@@ -10,7 +10,6 @@ import type {
 } from '../__generated__/ProjectAdminDataPageQuery.graphql';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
-import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import DeleteForeverVFolderModalV2 from '../components/DeleteForeverVFolderModalV2';
 import DeleteVFolderModalV2 from '../components/DeleteVFolderModalV2';
@@ -27,28 +26,31 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { ProjectContext, toProjectContext } from '../types/projectContext';
 import { isDeletedCategory } from './VFolderNodeListPage';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Button } from '@astryxdesign/core/Button';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Badge } from '@lablup/ui-common/Badge';
+import { Button } from '@lablup/ui-common/Button';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
 import {
-  BAIVFolderDeleteButtonV2,
   BAISkeleton,
   // Translating frontier (ticket 28): the GraphQL-object property filter is a
   // BUI antd composite shared with unmigrated pages; it keeps its contract
   // here until the PowerSearch generalization covers the object-filter DSL.
   BAICard,
   BAIGraphQLPropertyFilter,
+  BAIEntityLabelBulkEditButton,
   BAISelectionLabel,
   INITIAL_FETCH_KEY,
   filterOutEmpty,
   filterOutNullAndUndefined,
   useFetchKey,
   useToggle,
+  toEntityLabelFilter,
+  useIsLabelableEntityType,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PlusIcon, RotateCcwIcon, Trash2Icon } from 'lucide-react';
+import { PlusIcon, RotateCcwIcon, Trash2Icon, TrashIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, {
   Suspense,
@@ -115,6 +117,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
   'use memo';
 
   const { t } = useTranslation();
+  const isLabelable = useIsLabelableEntityType('vfolder');
   const baiClient = useSuspendedBackendaiClient();
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
@@ -222,12 +225,15 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
             edges @required(action: THROW) {
               node @required(action: THROW) {
                 id @required(action: THROW)
+                entityId
                 vfolderStatus: status
+                metadata {
+                  name
+                }
                 ...VFolderNodesV2Fragment
                 ...DeleteVFolderModalV2Fragment
                 ...DeleteForeverVFolderModalV2Fragment
                 ...RestoreVFolderModalV2Fragment
-                ...BAIVFolderDeleteButtonV2Fragment
               }
             }
             count
@@ -308,15 +314,15 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
       <VStack align="stretch" gap={3}>
         <HStack justify="between" wrap="wrap" gap={3}>
           <HStack gap={3} align="start" style={{ flexShrink: 1 }} wrap="wrap">
-            <BAIRadioGroup
-              optionType="button"
+            <BAISegmentedControl
               value={queryParams.mode}
-              onChange={(e) => {
-                setQuery({ mode: e.target.value });
+              onChange={(value) => {
+                setQuery({ mode: value as typeof queryParams.mode });
                 setTablePaginationOption({ current: 1 });
                 setSelectedFolderList([]);
               }}
-              options={filterOutEmpty([
+            >
+              {filterOutEmpty([
                 { label: t('data.All'), value: 'all' },
                 { label: t('data.General'), value: 'general' },
                 baiClient?._config?.fasttrackEndpoint && {
@@ -328,8 +334,14 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
                   label: t('data.Models'),
                   value: 'model',
                 },
-              ])}
-            />
+              ]).map((option) => (
+                <BAISegmentedControlItem
+                  key={option.value}
+                  value={option.value}
+                  label={option.label}
+                />
+              ))}
+            </BAISegmentedControl>
             <BAIGraphQLPropertyFilter<VFolderFilter>
               data-testid="vfolder-filter"
               // TODO(needs-backend): V2 `VFolderFilter` does not expose
@@ -346,6 +358,20 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
                   propertyLabel: t('data.folders.Location'),
                   type: 'string',
                 },
+                ...(isLabelable
+                  ? [
+                      {
+                        key: 'labels.some.key',
+                        propertyLabel: t('entityLabel.LabelKey'),
+                        type: 'string' as const,
+                      },
+                      {
+                        key: 'labels.some.value',
+                        propertyLabel: t('entityLabel.LabelValue'),
+                        type: 'string' as const,
+                      },
+                    ]
+                  : []),
               ]}
               value={queryParams.filter ?? undefined}
               onChange={(value) => {
@@ -358,48 +384,56 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
           <HStack gap={2}>
             {selectedFolderList.length > 0 &&
               queryParams.statusCategory === 'active' && (
-                <>
+                <HStack gap={1} align="center">
                   <BAISelectionLabel
                     count={selectedFolderList.length}
                     onClearSelection={() => setSelectedFolderList([])}
                   />
-                  <BAIVFolderDeleteButtonV2
-                    vfolderFrgmt={selectedFolderList}
-                    // P8: the accessible name is now on the control itself.
+                  <BAIEntityLabelBulkEditButton
+                    entityType="vfolder"
+                    targets={selectedFolderList.map((folder) => ({
+                      entityId: folder.entityId,
+                      name: folder.metadata?.name ?? undefined,
+                    }))}
+                    onLabelsChanged={() => updateFetchKey()}
+                  />
+                  <IconButton
                     label={t('data.folders.MoveToTrash')}
+                    tooltip={t('data.folders.MoveToTrash')}
+                    icon={<TrashIcon color="var(--color-error)" />}
+                    variant="ghost"
                     onClick={() => {
                       toggleDeleteModal();
                     }}
                   />
-                </>
+                </HStack>
               )}
             {selectedFolderList.length > 0 &&
               queryParams.statusCategory === 'deleted' && (
-                <>
+                <HStack gap={1} align="center">
                   <BAISelectionLabel
                     count={selectedFolderList.length}
                     onClearSelection={() => setSelectedFolderList([])}
                   />
-                  <Tooltip content={t('data.folders.Restore')}>
-                    <IconButton
-                      label={t('data.folders.Restore')}
-                      icon={<RotateCcwIcon />}
-                      onClick={() => {
-                        toggleRestoreModal();
-                      }}
-                    />
-                  </Tooltip>
+                  <IconButton
+                    label={t('data.folders.Restore')}
+                    tooltip={t('data.folders.Restore')}
+                    icon={<RotateCcwIcon />}
+                    variant="ghost"
+                    onClick={() => {
+                      toggleRestoreModal();
+                    }}
+                  />
                   <IconButton
                     label={t('data.folders.Delete')}
                     tooltip={t('data.folders.Delete')}
-                    icon={<Trash2Icon />}
-                    className="bai-name-action-cell-danger"
+                    icon={<Trash2Icon color="var(--color-error)" />}
                     variant="ghost"
                     onClick={() => {
                       toggleDeleteForeverModal();
                     }}
                   />
-                </>
+                </HStack>
               )}
             <AutoUpdateFetchKeyButton
               settingId="project-admin-data"
@@ -469,6 +503,13 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
                   (order as (typeof availableVFolderSorterValues)[number]) ??
                   null,
               });
+            }}
+            onLabelsChanged={() => updateFetchKey()}
+            showLabelsByDefault
+            onLabelClick={(label) => {
+              setQuery({ filter: toEntityLabelFilter(label) });
+              setTablePaginationOption({ current: 1 });
+              setSelectedFolderList([]);
             }}
             onRemoveRow={(removedId) => {
               setSelectedFolderList((prevSelected) =>

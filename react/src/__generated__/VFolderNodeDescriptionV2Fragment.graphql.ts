@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3288b2d30b225e6bac8e57e8f0f133ee>>
+ * @generated SignedSource<<4415f7d6a78cc8330a3bc8a068fbcb3a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,6 +19,7 @@ export type VFolderNodeDescriptionV2Fragment$data = {
     readonly ownershipType: VFolderOwnershipType;
     readonly permission: VFolderMountPermission;
   };
+  readonly entityId: string;
   readonly host: string;
   readonly id: string;
   readonly metadata: {
@@ -41,6 +42,12 @@ export type VFolderNodeDescriptionV2Fragment$data = {
       };
     } | null | undefined;
     readonly userId: string | null | undefined;
+  };
+  readonly quota: {
+    readonly maxFiles: number;
+    readonly maxSize: {
+      readonly expr: string;
+    } | null | undefined;
   };
   readonly status: VFolderOperationStatus;
   readonly unmanagedPath: string | null | undefined;
@@ -71,6 +78,13 @@ return {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
       "storageKey": null
     },
     {
@@ -147,6 +161,42 @@ return {
           "args": null,
           "kind": "ScalarField",
           "name": "ownershipType",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "VFolderQuotaInfo",
+      "kind": "LinkedField",
+      "name": "quota",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "maxFiles",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "BinarySizeInfo",
+          "kind": "LinkedField",
+          "name": "maxSize",
+          "plural": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "expr",
+              "storageKey": null
+            }
+          ],
           "storageKey": null
         }
       ],
@@ -252,6 +302,6 @@ return {
 };
 })();
 
-(node as any).hash = "38f8809b455b0643ff7fdb45dfd0aa89";
+(node as any).hash = "5b7517f9bda5f798fd8b54628c781d4f";
 
 export default node;

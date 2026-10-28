@@ -8,8 +8,78 @@
  * Extracted from backend-ai-login.ts _connectViaGQL method.
  * Handles post-authentication GQL connection and client setup.
  */
+import { RelayEnvironment } from '../RelayEnvironment';
+import { loginSessionAuthMyUserQuery } from '../__generated__/loginSessionAuthMyUserQuery.graphql';
 import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
+import { getActAsTarget } from './actAs';
+import {
+  LoginBootstrapIncompleteError,
+  type LoginBootstrap,
+} from './loginBootstrap';
 import { applyConfigToClient, type LoginConfigState } from './loginConfig';
+import * as _ from 'lodash-es';
+import { fetchQuery, graphql } from 'react-relay';
+
+// Only the starting project is needed: the remembered one if it is still a
+// GENERAL project of the user, else the first by name (the header's order).
+const myUserQuery = graphql`
+  query loginSessionAuthMyUserQuery(
+    $recentProjectName: String!
+    $hasRecentProject: Boolean!
+  ) {
+    myUserV2 {
+      id
+      entityId
+      basicInfo {
+        email
+        fullName
+      }
+      organization {
+        domainName
+        role
+      }
+      domain {
+        entityId
+        basicInfo {
+          name
+        }
+      }
+      recentProject: projects(
+        filter: {
+          isActive: true
+          type: { equals: GENERAL }
+          name: { equals: $recentProjectName }
+        }
+        limit: 1
+      ) @include(if: $hasRecentProject) {
+        edges {
+          node {
+            id
+            entityId
+            basicInfo {
+              name
+            }
+          }
+        }
+      }
+      defaultProject: projects(
+        filter: { isActive: true, type: { equals: GENERAL } }
+        orderBy: [{ field: NAME, direction: ASC }]
+        limit: 1
+      ) {
+        edges {
+          node {
+            id
+            entityId
+            basicInfo {
+              name
+            }
+          }
+        }
+      }
+    }
+  }
+`;
 
 /**
  * Create a Backend.AI client with the given credentials.
@@ -30,18 +100,19 @@ export function createBackendAIClient(
     clientConfig,
     'Backend.AI Console.',
   );
+  client.actAsUserId = getActAsTarget()?.userId ?? null;
   return { client, clientConfig };
 }
 
 /**
  * Dev-only escape from a hung login. A reviewer's dev server is usually pinned
  * to a backend they cannot reach, and the reachability probe then holds the
- * screen for the client-wide timeout; Esc (see LoginView) aborts it. The
+ * screen for the client-wide timeout; Backspace (see LoginView) aborts it. The
  * production path is untouched — `import.meta.env.DEV` is statically false.
  */
 export class LoginProbeCancelledError extends Error {
   constructor() {
-    super('The login reachability probe was aborted with Esc.');
+    super('The login reachability probe was aborted with Backspace.');
     this.name = 'LoginProbeCancelledError';
   }
 }
@@ -82,118 +153,126 @@ export async function probeManager(client: any): Promise<void> {
   }
 }
 
-/**
- * Check if the current session is already logged in.
- */
-export async function checkLoginSession(apiEndpoint: string): Promise<boolean> {
-  if (!apiEndpoint) return false;
-  const { client } = createBackendAIClient('', '', apiEndpoint, 'SESSION');
-  try {
-    await probeManager(client);
-    const isLogon = await client.check_login();
-    return !!isLogon;
-  } catch {
-    return false;
+/** Thrown by `connectViaGQL` when its login attempt was cancelled mid-flight. */
+export class LoginAttemptCancelledError extends Error {
+  constructor() {
+    super('The login attempt was cancelled.');
+    this.name = 'LoginAttemptCancelledError';
   }
 }
 
 /**
  * Perform GQL connection after successful authentication.
- * Sets up globalThis.backendaiclient with user info, groups, and config.
+ * Sets up globalThis.backendaiclient with user info, projects, and config.
+ * Pass the `bootstrap` a `probeLoginSession` call already fetched to reuse
+ * its keypair under act-as.
+ * A cancelled attempt (`isCancelled`) leaves the globals and the login
+ * cookie untouched, since a newer attempt may already own them.
  */
 export async function connectViaGQL(
   client: any,
   cfg: LoginConfigState,
   endpoints: string[],
+  bootstrap?: LoginBootstrap | null,
+  isCancelled?: () => boolean,
 ): Promise<string[]> {
-  const fields = ['user_id', 'resource_policy', 'user'];
-  const q = `query { keypair { ${fields.join(' ')} } }`;
-  const v = {};
+  // The login cookie is shared with the super admin's other tabs, so an act-as
+  // tab must never log it out.
+  const isActingAs = !!client.actAsUserId;
 
-  let response;
-  try {
-    response = await client.query(q, v);
-  } catch (err) {
-    // A refused session is cleaned up like an empty keypair; a network blip is not.
-    const status = (err as { statusCode?: unknown } | null)?.statusCode;
-    if (status === 401 || status === 403) await client.logout().catch(() => {});
-    throw err;
-  }
-
+  if (isCancelled?.()) throw new LoginAttemptCancelledError();
+  // The Relay query below reads the global client, so a cancelled attempt
+  // puts the previous one back.
+  const previousClient = (globalThis as any).backendaiclient;
+  const cancel = () => {
+    (globalThis as any).backendaiclient = previousClient;
+    return new LoginAttemptCancelledError();
+  };
   (globalThis as any).backendaiclient = client;
 
-  if (!response['keypair']) {
-    await client.logout();
-    throw new Error('Keypair information is missing.');
+  const recentProjectName =
+    (globalThis as any).backendaiutils._peekRecentProjectGroup() ?? '';
+  let response: loginSessionAuthMyUserQuery['response'] | undefined;
+  try {
+    response = await fetchQuery<loginSessionAuthMyUserQuery>(
+      RelayEnvironment,
+      myUserQuery,
+      { recentProjectName, hasRecentProject: !!recentProjectName },
+      { fetchPolicy: 'network-only' },
+    ).toPromise();
+  } catch (err) {
+    if (isCancelled?.()) throw cancel();
+    // A refused session is cleaned up like a missing user; a network blip is not.
+    // RelayEnvironment rewraps a 401 as an `AuthorizationError`.
+    const e = err as { statusCode?: unknown; name?: unknown } | null;
+    if (
+      !isActingAs &&
+      (e?.name === 'AuthorizationError' ||
+        e?.statusCode === 401 ||
+        e?.statusCode === 403)
+    )
+      await client.logout().catch(() => {});
+    // Any other HTTP failure (a wrapped manager 5xx, a timeout) leaves the
+    // session live; the recovery dialog handles it.
+    const status = e?.statusCode;
+    if (
+      typeof status === 'number' &&
+      status >= 400 &&
+      status !== 401 &&
+      status !== 403
+    ) {
+      throw new LoginBootstrapIncompleteError(err);
+    }
+    throw err;
   }
-
-  const resourcePolicy = response['keypair'].resource_policy;
-  (globalThis as any).backendaiclient.resource_policy = resourcePolicy;
-  const user = response['keypair'].user;
-
-  // Get user details
-  const userFields = [
-    'username',
-    'email',
-    'full_name',
-    'is_active',
-    'role',
-    'domain_name',
-    'groups {name, id}',
-    'need_password_change',
-    'uuid',
-  ];
-  const userQuery = `query { user{ ${userFields.join(' ')} } }`;
-  const userResponse = await (globalThis as any).backendaiclient.query(
-    userQuery,
-    { uuid: user },
+  if (isCancelled?.()) throw cancel();
+  // The session is live; the manager failed to resolve the user (an errors[]
+  // entry Relay hands back as null data). Not a reason to log out.
+  if (!response?.myUserV2) {
+    throw new LoginBootstrapIncompleteError(response);
+  }
+  const me = response.myUserV2;
+  const projects = _.uniqBy(
+    _.map(
+      [...(me.recentProject?.edges ?? []), ...(me.defaultProject?.edges ?? [])],
+      ({ node }) => ({ id: node.entityId, name: node.basicInfo.name }),
+    ),
+    'name',
   );
 
-  const email = userResponse['user'].email;
-  const userGroups = userResponse['user'].groups;
-  const role = userResponse['user'].role;
-  const domainName = userResponse['user'].domain_name;
-
-  (globalThis as any).backendaiclient.email = email;
-  (globalThis as any).backendaiclient.user_uuid = userResponse['user'].uuid;
-  (globalThis as any).backendaiclient.full_name =
-    userResponse['user'].full_name;
-  (globalThis as any).backendaiclient.is_admin = false;
-  (globalThis as any).backendaiclient.is_superadmin = false;
-  (globalThis as any).backendaiclient.need_password_change =
-    userResponse['user'].need_password_change;
-
-  if (['superadmin', 'admin'].includes(role)) {
-    (globalThis as any).backendaiclient.is_admin = true;
-  }
-  if (['superadmin'].includes(role)) {
-    (globalThis as any).backendaiclient.is_superadmin = true;
+  // `check_login` reads the access key from the webserver session, which stays
+  // the super admin's; under act-as the manager answers with the target's.
+  if (isActingAs) {
+    const accessKey =
+      bootstrap?.keypair?.access_key ??
+      (await client.query('query { keypair { access_key } }', {}))?.keypair
+        ?.access_key;
+    if (accessKey) {
+      client._config._accessKey = accessKey;
+    }
   }
 
-  // Get group list
-  const groupResponse = await (globalThis as any).backendaiclient.group.list(
-    true,
-    false,
-    ['id', 'name', 'description', 'is_active'],
-  );
+  const role = (me.organization.role ?? '').toLowerCase();
+  const domainName =
+    me.organization.domainName ?? me.domain?.basicInfo.name ?? '';
 
-  const groups = groupResponse.groups;
-  const userGroupIds = userGroups.map(({ id }: { id: string }) => id);
+  (globalThis as any).backendaiclient.email = me.basicInfo.email;
+  (globalThis as any).backendaiclient.user_uuid = me.entityId;
+  (globalThis as any).backendaiclient.full_name = me.basicInfo.fullName;
+  (globalThis as any).backendaiclient.is_admin = [
+    'superadmin',
+    'admin',
+  ].includes(role);
+  (globalThis as any).backendaiclient.is_superadmin = role === 'superadmin';
 
-  if (groups !== null) {
-    (globalThis as any).backendaiclient.groups = groups
-      .filter((item: any) => userGroupIds.includes(item.id))
-      .map((item: any) => item.name)
-      .sort();
-
-    const groupMap: Record<string, string> = {};
-    groups.forEach((element: any) => {
-      groupMap[element.name] = element.id;
-    });
-    (globalThis as any).backendaiclient.groupIds = groupMap;
-  } else {
-    (globalThis as any).backendaiclient.groups = ['default'];
-  }
+  // `_readRecentProjectGroup` keeps the remembered name only if it is listed
+  // here, so the remembered project goes first and the default second.
+  (globalThis as any).backendaiclient.groups = projects.map(({ name }) => name);
+  const groupMap: Record<string, string> = {};
+  projects.forEach(({ id, name }) => {
+    groupMap[name] = id;
+  });
+  (globalThis as any).backendaiclient.groupIds = groupMap;
 
   const currentGroup = (
     globalThis as any
@@ -208,8 +287,11 @@ export async function connectViaGQL(
   };
 
   // Apply config
-  const updatedConfig = { ...cfg, domain_name: domainName };
-  applyConfigToClient(updatedConfig);
+  applyConfigToClient({
+    ...cfg,
+    domain_name: domainName,
+    domain_id: me.domain?.entityId ?? '',
+  });
 
   // Manage endpoint history
   let updatedEndpoints = [...endpoints];

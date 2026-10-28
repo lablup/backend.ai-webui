@@ -53,7 +53,7 @@ vi.mock('../hooks', async (importOriginal) => {
   return {
     ...originalModule,
     useSuspendedBackendaiClient: () => ({
-      supports: () => false,
+      isManagerVersionCompatibleWith: () => false,
       _config: { allowCustomResourceAllocation: true },
     }),
     useWebUINavigate: () => vi.fn(),
@@ -135,7 +135,9 @@ vi.mock('./FolderCreateModalV2', async () => {
 vi.mock('./ImageEnvironmentSelectFormItems', () => ({ default: () => null }));
 vi.mock('./RuntimeParameterFormSection', () => ({ default: () => null }));
 vi.mock('./EnvVarFormList', () => ({ default: () => null }));
-vi.mock('./VFolderTableFormItem', () => ({ default: () => null }));
+vi.mock('../hooks/useMountableStorageHosts', () => ({
+  useMountableStorageHosts: () => [],
+}));
 vi.mock('./DeploymentPresetDetailModal', () => ({ default: () => null }));
 
 let presetSelectMounts = 0;
@@ -147,6 +149,11 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
   const originalModule = await importOriginal<typeof import('backend.ai-ui')>();
   return {
     ...originalModule,
+    BAIVFolderMountConfigInput: () => null,
+    useSuspendedAutoMountedVFolders: () => ({
+      autoMountedFolders: [],
+      refetch: () => {},
+    }),
     BAIVFolderSelect: (props: any) =>
       React.createElement(
         'button',
@@ -291,7 +298,7 @@ describe('DeploymentAddRevisionModal project derivation contract (ADR-0001)', ()
     renderModal({
       resourceGroupName: 'deployment-rg',
       projectId: 'deployment-project-id',
-      // Pre-26.4.3 manager: no projectV2 → the project name is unresolvable.
+      // No projectV2 → the project name is unresolvable.
       projectV2: null,
     });
 

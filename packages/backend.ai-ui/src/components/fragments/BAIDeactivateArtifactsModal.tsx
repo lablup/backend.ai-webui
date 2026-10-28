@@ -1,11 +1,10 @@
 import { BAIDeactivateArtifactsModalArtifactsFragment$key } from '../../__generated__/BAIDeactivateArtifactsModalArtifactsFragment.graphql';
 import { BAIDeactivateArtifactsModalDeleteArtifactsMutation } from '../../__generated__/BAIDeactivateArtifactsModalDeleteArtifactsMutation.graphql';
 import { App } from '../../app-shim';
-import { toLocalId } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIModal, { type BAIModalProps } from '../BAIModal';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 export type BAIDeactivateArtifactsModalArtifactsFragmentKey =
@@ -29,6 +28,7 @@ const BAIDeactivateArtifactsModal = ({
         fragment BAIDeactivateArtifactsModalArtifactsFragment on Artifact
         @relay(plural: true) {
           id
+          entityId
           name
         }
       `,
@@ -59,7 +59,7 @@ const BAIDeactivateArtifactsModal = ({
           deleteArtifacts({
             variables: {
               input: {
-                artifactIds: selectedArtifacts.map((a) => toLocalId(a.id)),
+                artifactIds: selectedArtifacts.map((a) => a.entityId),
               },
             },
             onCompleted: (_res, errors) => {

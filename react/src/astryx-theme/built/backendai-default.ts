@@ -11,7 +11,8 @@
 
  Regenerate after any recipe or theme.json change:
 
-     cd react && pnpm exec astryx theme build src/astryx-theme/built/backendai-default.ts
+     cd react && NODE_OPTIONS="--import=$PWD/../scripts/astryx-theme-css-stub.mjs" \
+       pnpm exec astryx theme build src/astryx-theme/built/backendai-default.ts
 
  `scripts/verify.sh` runs the CLI's `--check` mode to fail on stale artifacts.
 
@@ -25,10 +26,15 @@ import themeJson from '../../../../resources/theme.json';
 import type { BAIThemeConfig } from '../../helper/customThemeConfig';
 import { buildBackendAITheme, themeOptionsFromConfig } from '../backendAiTheme';
 
-export default buildBackendAITheme(
+const theme = buildBackendAITheme(
   themeOptionsFromConfig(
     themeJson.theme as unknown as BAIThemeConfig,
     'brand',
     'default',
   ),
 );
+
+// The registry neutral supplies cannot be imported into the built module (the
+// CLI resolves only a literal `icons:` import), so leave it out: Astryx falls
+// back to core's default icons, as the 0.6 build did by dropping it silently.
+export default { ...theme, icons: undefined };

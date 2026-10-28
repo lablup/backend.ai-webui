@@ -17,6 +17,13 @@ export const I18N_LANGS_MAX = 4;
 /** `ko`, `en`, `pt-BR` — mirrors `LANG_RE` in stop-guard.ts. */
 const LANG_RE = /^[a-z]{2}(-[A-Za-z]{2,4})?$/;
 
+/**
+ * The PR comment prints a stop's base fields, so they are English; Korean is
+ * the one translation, a toggle away in the popover.
+ */
+export const STOP_LNG = "en";
+export const STOP_TRANSLATIONS = ["ko"];
+
 /** A walkthrough a reader will not finish is not a walkthrough (FR-3945). */
 export const MAX_STOPS = 20;
 
@@ -100,6 +107,10 @@ function checkI18n(stop, where, errors) {
   if (lng === undefined && i18n === undefined) return;
   if (lng !== undefined && (typeof lng !== "string" || !LANG_RE.test(lng)))
     errors.push(`${where}: lng must be a language code like "ko"`);
+  else if (lng !== undefined && lng !== STOP_LNG)
+    errors.push(
+      `${where}: lng must be "${STOP_LNG}" — the PR comment prints it`,
+    );
   if (i18n === undefined)
     return errors.push(`${where}: lng needs i18n — one language is no toggle`);
   if (lng === undefined)
@@ -117,6 +128,8 @@ function checkI18n(stop, where, errors) {
       errors.push(`${at}: not a language code like "en"`);
     if (lang === lng)
       errors.push(`${at}: is already the language ch/ck are written in`);
+    else if (LANG_RE.test(lang) && !STOP_TRANSLATIONS.includes(lang))
+      errors.push(`${at}: only ${STOP_TRANSLATIONS.join(", ")} is written`);
     const text = i18n[lang];
     if (!text || typeof text !== "object" || Array.isArray(text)) {
       errors.push(`${at}: not an object`);

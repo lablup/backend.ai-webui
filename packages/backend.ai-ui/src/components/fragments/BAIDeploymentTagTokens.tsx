@@ -1,6 +1,6 @@
 import { BAIDeploymentTagTokens_metadata$key } from '../../__generated__/BAIDeploymentTagTokens_metadata.graphql';
 import BAIFlex from '../BAIFlex';
-import { Token } from '@astryxdesign/core/Token';
+import { Token } from '@lablup/ui-common/Token';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
 

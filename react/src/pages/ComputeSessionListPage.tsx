@@ -10,7 +10,6 @@ import {
 import { App } from '../app-shim';
 import ActionItemContent from '../components/ActionItemContent';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
-import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import TerminateSessionModal from '../components/ComputeSessionNodeItems/TerminateSessionModal';
 import ConfigurableResourceCard from '../components/ConfigurableResourceCard';
@@ -20,23 +19,19 @@ import SessionNodes, {
 import SessionResourceGrid from '../components/SessionResourceGrid';
 import { handleRowSelectionChange } from '../helper';
 import { ExtractResultValue } from '../helper/resultTypes';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { Grid, GridSpan } from '@astryxdesign/core/Grid';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { Grid, GridSpan } from '@lablup/ui-common/Grid';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import * as stylex from '@stylexjs/stylex';
 import {
   BAIAlertIconWithTooltip,
@@ -48,12 +43,14 @@ import {
   BAISelectionLabel,
   BAISessionsIcon,
   BAITabCountBadge,
-  filterOutNullAndUndefined,
   INITIAL_FETCH_KEY,
+  filterOutNullAndUndefined,
   mergeFilterValues,
+  useBAIBreakpoint,
   useBAILogger,
   useFetchKey,
-  useBAIBreakpoint,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { LayoutGridIcon, PowerOffIcon, TableIcon } from 'lucide-react';
@@ -97,7 +94,6 @@ const ComputeSessionListPage = () => {
   const currentProject = useCurrentProjectValue();
 
   const [currentUser] = useCurrentUserInfo();
-  const baiClient = useSuspendedBackendaiClient();
 
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -463,25 +459,25 @@ const ComputeSessionListPage = () => {
               }}
               wrap="wrap"
             >
-              <BAIRadioGroup
-                optionType="button"
+              <BAISegmentedControl
                 value={queryParams.statusCategory}
-                onChange={(e) => {
-                  setQueryParams({ statusCategory: e.target.value });
+                onChange={(value) => {
+                  setQueryParams({
+                    statusCategory: value as typeof queryParams.statusCategory,
+                  });
                   setTablePaginationOption({ current: 1 });
                   setSelectedSessionList([]);
                 }}
-                options={[
-                  {
-                    label: t('session.Running'),
-                    value: 'running',
-                  },
-                  {
-                    label: t('session.Finished'),
-                    value: 'finished',
-                  },
-                ]}
-              />
+              >
+                <BAISegmentedControlItem
+                  value="running"
+                  label={t('session.Running')}
+                />
+                <BAISegmentedControlItem
+                  value="finished"
+                  label={t('session.Finished')}
+                />
+              </BAISegmentedControl>
               <BAIPropertyFilter
                 filterProperties={[
                   {
@@ -526,15 +522,15 @@ const ComputeSessionListPage = () => {
                 </>
               )}
               {experimentalSessionResourceGrid && (
-                <SegmentedControl
-                  label={t('session.resourceGrid.ViewMode')}
+                <BAISegmentedControl
+                  aria-label={t('session.resourceGrid.ViewMode')}
                   value={queryParams.view}
                   onChange={(value) =>
                     setQueryParams({ view: value as 'table' | 'grid' })
                   }
                 >
                   <Tooltip content={t('session.resourceGrid.TableView')}>
-                    <SegmentedControlItem
+                    <BAISegmentedControlItem
                       value="table"
                       label={t('session.resourceGrid.TableView')}
                       isLabelHidden
@@ -542,14 +538,14 @@ const ComputeSessionListPage = () => {
                     />
                   </Tooltip>
                   <Tooltip content={t('session.resourceGrid.GridView')}>
-                    <SegmentedControlItem
+                    <BAISegmentedControlItem
                       value="grid"
                       label={t('session.resourceGrid.GridView')}
                       isLabelHidden
                       icon={<LayoutGridIcon size="1em" />}
                     />
                   </Tooltip>
-                </SegmentedControl>
+                </BAISegmentedControl>
               )}
               <AutoUpdateFetchKeyButton
                 settingId="session-list"
@@ -686,10 +682,7 @@ const ComputeSessionListPage = () => {
                         // user too — otherwise an admin exports every user's
                         // sessions. Mirrors the table's user_id filter via the
                         // session export `user.email` filter (BA-6480).
-                        if (
-                          baiClient.supports('session-export-user-filter') &&
-                          currentUser.email
-                        ) {
+                        if (currentUser.email) {
                           csvFilter.user = {
                             email: { equals: currentUser.email },
                           };
@@ -706,7 +699,11 @@ const ComputeSessionListPage = () => {
               }
             />
           ) : (
-            <Banner status="error" title={t('error.FailedToLoadTableData')} />
+            <Banner
+              role="alert"
+              status="error"
+              title={t('error.FailedToLoadTableData')}
+            />
           )}
         </BAIFlex>
       </BAICard>

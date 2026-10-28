@@ -5,11 +5,11 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import SSHKeyBlock from './SSHKeyBlock';
-import { Button } from '@astryxdesign/core/Button';
-import { Overlay } from '@astryxdesign/core/Overlay';
-import { Spinner } from '@astryxdesign/core/Spinner';
-import { HStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
+import { Button } from '@lablup/ui-common/Button';
+import { Overlay } from '@lablup/ui-common/Overlay';
+import { Spinner } from '@lablup/ui-common/Spinner';
+import { HStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
 import { BAIPopconfirm, BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

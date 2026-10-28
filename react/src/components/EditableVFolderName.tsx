@@ -36,18 +36,22 @@ import { EditableVFolderNameFragment$key } from '../__generated__/EditableVFolde
 import { EditableVFolderNameRefetchQuery } from '../__generated__/EditableVFolderNameRefetchQuery.graphql';
 import { App } from '../app-shim';
 import { Form } from '../form-engine';
+import { isDeletedCategory } from '../helper/vfolderStatus';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import BAIFormItem from './BAIFormItem';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import { AstryxFormTextInput } from './astryxFormControls';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { HStack } from '@astryxdesign/core/Stack';
-import { Heading, Text } from '@astryxdesign/core/Text';
-import { BAILink, toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { HStack } from '@lablup/ui-common/Stack';
+import { Heading, Text } from '@lablup/ui-common/Text';
+import {
+  BAILink,
+  BAITextInput,
+  toLocalId,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import { PencilIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -72,7 +76,7 @@ type EditableVFolderNameProps = {
    * Legacy antd surface, kept so the unmigrated consumer compiles unchanged
    * (frontier rule). `component` and `level` only select `variant="title"`;
    * `ellipsis` is always on (Astryx truncates with `maxLines`); `inputProps`
-   * carried an antd `Input` `size` that `AstryxFormTextInput` does not expose.
+   * is ignored.
    */
   component?: unknown;
   level?: 1 | 2 | 3 | 4 | 5;
@@ -267,7 +271,7 @@ const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
                 margin: 0,
               }}
             >
-              <AstryxFormTextInput label={t('data.Foldername')} hasAutoFocus />
+              <BAITextInput aria-label={t('data.Foldername')} hasAutoFocus />
             </BAIFormItem>
           </span>
         </Form>

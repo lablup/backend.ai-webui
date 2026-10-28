@@ -1,6 +1,6 @@
 import { BAIArtifactRevisionDeleteButtonFragment$key } from '../../__generated__/BAIArtifactRevisionDeleteButtonFragment.graphql';
 import BAIButton, { BAIButtonProps } from '../BAIButton';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import * as _ from 'lodash-es';
 import { Trash2 } from 'lucide-react';
 import { graphql, useFragment } from 'react-relay';

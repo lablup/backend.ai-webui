@@ -30,9 +30,18 @@ import {
 } from './bridge';
 import { message, type MessageApi } from './message';
 import { AppShimModalHost, modal, type ModalApi } from './modal';
-import { LayerProvider, type LayerToastConfig } from '@astryxdesign/core/Layer';
-import { useToast } from '@astryxdesign/core/Toast';
-import React, { useEffect, type ReactNode } from 'react';
+import { LayerProvider, type LayerToastConfig } from '@lablup/ui-common/Layer';
+import {
+  MODAL_LIVE_ATTRIBUTE,
+  refreshModalBackground,
+} from '@lablup/ui-common/Modal';
+import { useToast } from '@lablup/ui-common/Toast';
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  type ReactNode,
+} from 'react';
 
 export { message, modal };
 export type { MessageApi, ModalApi, AppShimMessageConfig };
@@ -90,6 +99,44 @@ const BAIAppBridgeMount: React.FC<{
   return null;
 };
 
+/**
+ * Keeps the toast viewport usable over an open ui-common `Modal`, which inerts
+ * everything outside `[data-uic-modal-live]`. `LayerProvider` renders the
+ * viewport's outlet right after its children and takes no props for it, so
+ * this `<template>` (never inerted, never painted) is rendered last to reach
+ * it. Astryx 0.7 moves the viewport into that outlet after this effect runs,
+ * so the outlet is marked once the viewport (`[popover]`) appears in it.
+ */
+const ToastViewportLiveMark: React.FC = () => {
+  'use memo';
+  const anchorRef = useRef<HTMLTemplateElement>(null);
+
+  useLayoutEffect(() => {
+    // Only the outermost LayerProvider owns a viewport; a nested one renders
+    // its children bare, and then no viewport ever appears here.
+    const outlet = anchorRef.current?.nextElementSibling;
+    if (!outlet) return;
+    let marked = false;
+    const markOnceViewportArrives = () => {
+      if (marked || !outlet.querySelector('[popover]')) return;
+      marked = true;
+      outlet.setAttribute(MODAL_LIVE_ATTRIBUTE, '');
+      refreshModalBackground();
+    };
+    const observer = new MutationObserver(markOnceViewportArrives);
+    observer.observe(outlet, { childList: true, subtree: true });
+    markOnceViewportArrives();
+    return () => {
+      observer.disconnect();
+      if (!marked) return;
+      outlet.removeAttribute(MODAL_LIVE_ATTRIBUTE);
+      refreshModalBackground();
+    };
+  }, []);
+
+  return <template ref={anchorRef} data-bai-toast-viewport-anchor="" />;
+};
+
 export interface BAIAppProviderProps {
   children?: ReactNode;
   /** antd `AppProps['message']`-shaped global message config. */
@@ -113,6 +160,7 @@ export const BAIAppProvider: React.FC<BAIAppProviderProps> = ({
       <BAIAppBridgeMount messageConfig={messageConfig} />
       <AppShimModalHost />
       {children}
+      <ToastViewportLiveMark />
     </LayerProvider>
   );
 };

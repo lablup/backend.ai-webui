@@ -4,7 +4,6 @@
  */
 import { useRuntimeParameterSchemaPresetsQuery } from '../__generated__/useRuntimeParameterSchemaPresetsQuery.graphql';
 import { useRuntimeParameterSchemaVariantsQuery } from '../__generated__/useRuntimeParameterSchemaVariantsQuery.graphql';
-import { toLocalId } from 'backend.ai-ui';
 import { useMemo } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -26,11 +25,11 @@ export interface SelectOption {
 /** A single runtime variant preset from the API. */
 export interface RuntimeVariantPresetDef {
   /**
-   * Relay global id of the preset. Used to build the standalone
+   * UUID of the preset. Used to build the standalone
    * `runtimeVariantPresetValues` list (`{ presetId, value }`) that is sent as
    * its own mutation variable, decoupled from env vars / EXTRA_ARGS.
    */
-  id: string;
+  entityId: string;
   /** Preset name (unique identifier within the variant). */
   name: string;
   /** Human-readable description of the parameter. */
@@ -94,6 +93,7 @@ export function useRuntimeParameterSchema(
           edges {
             node {
               id
+              entityId
               name
             }
           }
@@ -108,11 +108,11 @@ export function useRuntimeParameterSchema(
     { fetchPolicy: 'store-or-network' },
   );
 
-  const variantGlobalId =
+  const variantId =
     variantData.runtimeVariantsResult?.ok === true
-      ? (variantData.runtimeVariantsResult.value?.edges?.[0]?.node?.id ?? null)
+      ? (variantData.runtimeVariantsResult.value?.edges?.[0]?.node?.entityId ??
+        null)
       : null;
-  const variantId = variantGlobalId ? toLocalId(variantGlobalId) : null;
 
   // Step 2: Fetch presets for the resolved variant
   const presetsData = useLazyLoadQuery<useRuntimeParameterSchemaPresetsQuery>(
@@ -129,12 +129,13 @@ export function useRuntimeParameterSchema(
           edges {
             node {
               id
+              entityId
               name
               description
               rank
               category
               displayName
-              required @since(version: "26.4.4")
+              required
               targetSpec {
                 presetTarget
                 valueType
@@ -192,15 +193,13 @@ export function useRuntimeParameterSchema(
       .map((edge) => edge?.node)
       .filter(Boolean)
       .map((node) => ({
-        id: node.id,
+        entityId: node.entityId,
         name: node.name,
         description: node.description ?? null,
         rank: node.rank,
         category: node.category ?? null,
         displayName: node.displayName ?? null,
-        // `required` is absent when the field is version-gated out (see the
-        // `@since` directive in the query) — default to false on legacy backends.
-        required: node.required ?? false,
+        required: node.required,
         presetTarget: node.targetSpec.presetTarget as PresetTarget,
         valueType: node.targetSpec.valueType as PresetValueType,
         defaultValue: node.targetSpec.defaultValue ?? null,
@@ -301,7 +300,7 @@ export function collectTouchedRuntimePresetParams(
  * trimmed away when it happens to match the default.
  *
  * The control state (`values`) is keyed by `param.key` (the UI binding); this
- * maps each touched key back to its preset `id`.
+ * maps each touched key back to its preset `entityId`.
  */
 export function buildRuntimeVariantPresetValues(
   groups: RuntimeParameterGroup[],
@@ -309,9 +308,8 @@ export function buildRuntimeVariantPresetValues(
   touchedKeys: Set<string>,
 ): RuntimeVariantPresetValueEntry[] {
   return collectTouchedRuntimePresetParams(groups, values, touchedKeys).map(
-    // `param.id` is a Relay global id; the backend's `preset_id` is a UUID.
     ({ param, value }) => ({
-      presetId: toLocalId(param.id) ?? param.id,
+      presetId: param.entityId,
       value,
     }),
   );

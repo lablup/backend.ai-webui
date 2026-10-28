@@ -19,14 +19,13 @@ import {
 } from '../hooks/useStartSession';
 import { ProjectContext, ProjectContextOrNull } from '../types/projectContext';
 import { PrimaryAppOption } from './ComputeSessionNodeItems/SessionActionButtons';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIButton,
   BAIButtonProps,
-  toLocalId,
   useBAILogger,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
@@ -137,6 +136,7 @@ const FileBrowserButtonWithProject: React.FC<
     graphql`
       fragment FileBrowserButtonV2Fragment on VFolder {
         id
+        entityId
         host
         metadata {
           name
@@ -163,7 +163,7 @@ const FileBrowserButtonWithProject: React.FC<
 
   // Helper to create launcher value for filebrowser
   const createFilebrowserLauncherValue = (): StartSessionWithDefaultValue => ({
-    sessionName: `filebrowser-${toLocalId(vfolderNode.id || '')}`,
+    sessionName: `filebrowser-${vfolderNode.entityId}`,
     sessionType: 'interactive',
     environments: {
       version: filebrowserImage || '',
@@ -173,7 +173,7 @@ const FileBrowserButtonWithProject: React.FC<
     cluster_size: 1,
     vfolderMounts: [
       {
-        vfolderId: toLocalId(vfolderNode.id || ''),
+        vfolderId: vfolderNode.entityId,
         name: vfolderNode.metadata.name,
       },
     ],
@@ -223,7 +223,7 @@ const FileBrowserButtonWithProject: React.FC<
                 if (results?.fulfilled && results.fulfilled.length > 0) {
                   upsertSessionNotification(results.fulfilled, [
                     {
-                      key: `filebrowser-${toLocalId(vfolderNode.id || '')}`,
+                      key: `filebrowser-${vfolderNode.entityId}`,
                       extraData: {
                         appName: 'filebrowser',
                       } as PrimaryAppOption,

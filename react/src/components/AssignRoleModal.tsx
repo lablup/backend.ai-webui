@@ -6,19 +6,18 @@ import { AssignRoleModalBulkAssignMutation } from '../__generated__/AssignRoleMo
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { reasonMessage } from '../helper/mutationError';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIAdminUserV2Select,
   BAIBulkErrorModal,
-  type BAIColumnsType,
   BAIModal,
   BAIModalProps,
+  BAISelect,
   useBAILogger,
   useMutationWithPromise,
+  type BAIColumnsType,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, { useRef, useState } from 'react';
+import React, { Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql } from 'react-relay';
 
@@ -37,13 +36,10 @@ interface FailedAssignment {
 }
 
 /**
- * Assigns users to a role via `adminBulkAssignRole` (FR-3357). On partial
- * failure the modal stays open: successfully assigned users are deselected,
- * only the failed users remain in the select (marked with an error border),
- * and the shared `BAIBulkErrorModal` lists each failure — pressing Assign
- * again retries just the remaining users. A manager >= 26.9.0a4 reports no
- * partial failure (a refused user rejects the whole request), so there every
- * selected user stays in the select for the retry.
+ * Assigns users to a role via `adminBulkAssignRole` (FR-3357). A refused user
+ * rejects the whole request, so on failure the modal stays open with every
+ * selected user still selected (marked with an error border) and the shared
+ * `BAIBulkErrorModal` lists each of them — pressing Assign again retries.
  */
 const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
   roleId,
@@ -53,7 +49,6 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = useTheme();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const formRef = useRef<FormInstance<{ userIds: string[] }>>(null);
@@ -64,12 +59,6 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
   const [failedAssignments, setFailedAssignments] = useState<
     FailedAssignment[]
   >([]);
-  // Whether any assignment already reached the backend (partial success) —
-  // the parent must refetch on close even if the user then cancels.
-  const [hasAssignedAny, setHasAssignedAny] = useState(false);
-  // How many of the last save's requests the backend accepted — shown next to
-  // the partial-failure notice as "(Success: n, Failed: m)".
-  const [succeededRequestCount, setSucceededRequestCount] = useState(0);
   // Labels of every user selected so far, for failure rows — the options
   // list only holds the current search results, so failed users may no
   // longer be in it when the failure arrives.
@@ -85,12 +74,6 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
             grantedBy
             grantedAt
           }
-          # A manager >= 26.9.0a4 answers no per-user failures: a refused user
-          # rejects the whole mutation, which the catch below handles.
-          failed @deprecatedSince(version: "26.9.0a4") {
-            userId
-            message
-          }
         }
       }
     `);
@@ -98,69 +81,32 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
   const userLabelOf = (userId: string) =>
     userLabelsRef.current.get(userId) ?? userId;
 
-  // Keep only the failed users selected (error border via a field error) so
-  // the next Assign retries exactly what failed.
-  const markFailures = (
-    failures: FailedAssignment[],
-    failedIds: string[],
-    succeededCount: number,
-  ) => {
-    setSelectedUserIds(failedIds);
-    formRef.current?.setFieldsValue({ userIds: failedIds });
-    // Empty-string error: error status (red border) without printing a
-    // message under the select — details live in the error modal. Changing
-    // the selection revalidates the `required` rule and clears it.
-    formRef.current?.setFields([{ name: 'userIds', errors: [''] }]);
-    // Immediate failure notice as a toast on top of the detail modal — the
-    // modal carries the per-request table, the message the at-a-glance cue.
-    message.error(t('rbac.UserAssignmentsPartialFailureDescription'));
-    setSucceededRequestCount(succeededCount);
-    setFailedAssignments(failures);
-  };
-
   const handleAssign = async () => {
     setIsAssigning(true);
     try {
-      const result = await bulkAssignRole({
+      await bulkAssignRole({
         input: {
           userIds: selectedUserIds,
           roleId,
           ...(projectId ? { projectId } : {}),
         },
       });
-      const failed = result.adminBulkAssignRole?.failed ?? [];
-      if (failed.length === 0) {
-        message.success(t('rbac.UsersAssigned'));
-        onRequestClose(true);
-        return;
-      }
-      const assignedCount = (result.adminBulkAssignRole?.assigned ?? []).length;
-      if (assignedCount > 0) {
-        setHasAssignedAny(true);
-      }
-      failed.forEach((failure) =>
-        logger.error('Failed to assign user', failure.message),
-      );
-      markFailures(
-        failed.map((failure) => ({
-          key: failure.userId,
-          userLabel: userLabelOf(failure.userId),
-          message: failure.message,
-        })),
-        failed.map((failure) => failure.userId),
-        assignedCount,
-      );
+      message.success(t('rbac.UsersAssigned'));
+      onRequestClose(true);
     } catch (error) {
-      // A wholly-rejected request counts every requested user as failed.
+      // A rejected request counts every requested user as failed.
       logger.error('Failed to bulk assign role', error);
-      markFailures(
+      // Empty-string error: error status (red border) without printing a
+      // message under the select — details live in the error modal. Changing
+      // the selection revalidates the `required` rule and clears it.
+      formRef.current?.setFields([{ name: 'userIds', errors: [''] }]);
+      message.error(t('rbac.UserAssignmentsPartialFailureDescription'));
+      setFailedAssignments(
         selectedUserIds.map((userId) => ({
           key: userId,
           userLabel: userLabelOf(userId),
           message: reasonMessage(error),
         })),
-        selectedUserIds,
-        0,
       );
     } finally {
       setIsAssigning(false);
@@ -201,54 +147,46 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
             logger.debug(e);
           });
       }}
-      // After a partial failure some assignments did reach the backend, so
-      // even a cancel must report success=true — the parent then refetches.
-      onCancel={() => onRequestClose(hasAssignedAny)}
+      onCancel={() => onRequestClose(false)}
       {...baiModalProps}
     >
       <Form ref={formRef} layout="vertical">
-        <Form.Item
-          name="userIds"
-          label={t('credential.Users')}
-          rules={[{ required: true, message: t('rbac.PleaseSelectUsers') }]}
+        <Suspense
+          fallback={
+            <Form.Item label={t('credential.Users')}>
+              <BAISelect mode="multiple" disabled loading />
+            </Form.Item>
+          }
         >
-          <BAIAdminUserV2Select
-            multiple
-            valuePropName="id"
+          <Form.Item
+            name="userIds"
             label={t('credential.Users')}
-            isLabelHidden
-            placeholder={t('rbac.SelectUsers')}
-            onChange={(value, option) => {
-              _.castArray(option ?? []).forEach((o) => {
-                userLabelsRef.current.set(
-                  String(o.value),
-                  String(o.label ?? o.value),
-                );
-              });
-              setSelectedUserIds(_.castArray(value ?? []));
-            }}
-          />
-        </Form.Item>
+            rules={[{ required: true, message: t('rbac.PleaseSelectUsers') }]}
+          >
+            <BAIAdminUserV2Select
+              multiple
+              valuePropName="id"
+              label={t('credential.Users')}
+              isLabelHidden
+              placeholder={t('rbac.SelectUsers')}
+              onChange={(value, option) => {
+                _.castArray(option ?? []).forEach((o) => {
+                  userLabelsRef.current.set(
+                    String(o.value),
+                    String(o.label ?? o.value),
+                  );
+                });
+                setSelectedUserIds(_.castArray(value ?? []));
+              }}
+            />
+          </Form.Item>
+        </Suspense>
       </Form>
-      {/* Per-user errors of a partially-failed assignment (FR-3357). The
-          assign modal (and the remaining failed selection) stays open behind
-          it for a retry. */}
+      {/* Per-user errors of a failed assignment (FR-3357). The assign modal
+          (and the selection) stays open behind it for a retry. */}
       <BAIBulkErrorModal<FailedAssignment>
         open={!_.isEmpty(failedAssignments)}
-        alertDescription={
-          <>
-            {t('rbac.UserAssignmentsPartialFailureDescription')}{' '}
-            <Text
-              color="secondary"
-              style={{ fontSize: token('--font-size-sm') }}
-            >
-              {t('rbac.PermissionsPartialFailureCounts', {
-                succeeded: succeededRequestCount,
-                failed: failedAssignments.length,
-              })}
-            </Text>
-          </>
-        }
+        alertDescription={t('rbac.UserAssignmentsPartialFailureDescription')}
         columns={failureColumns}
         dataSource={failedAssignments}
         onRequestClose={() => setFailedAssignments([])}

@@ -4,6 +4,7 @@ import {
 } from '../../__generated__/BAIModelDeploymentNodesFragment.graphql';
 import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { useIsLabelableEntityType } from '../../hooks/useLabelableEntityTypes';
 import BAIBooleanToken from '../BAIBooleanToken';
 import BAIDeploymentStatusBadge, {
   BAIDeploymentStatus,
@@ -19,10 +20,11 @@ import {
   BAITableProps,
 } from '../Table';
 import BAIDeploymentOwnerInfo from './BAIDeploymentOwnerInfo';
-import BAIDeploymentTagTokens from './BAIDeploymentTagTokens';
-import { Link } from '@astryxdesign/core/Link';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import BAIEntityLabelCell from './BAIEntityLabelCell';
+import type { BAIEntityLabel } from './BAIEntityLabelTokens';
+import { Link } from '@lablup/ui-common/Link';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { CircleHelp } from 'lucide-react';
@@ -38,16 +40,15 @@ export type ModelDeploymentNodeInList = NonNullable<
  * (see `AdminDeploymentPresetTable`). A sortable column's `dataIndex` matches
  * an entry here, and callers bridge these strings to the server
  * `DeploymentOrderField` enum with the shared `convertToOrderBy` helper
- * (`createdAt` → `CREATED_AT`, `tag` → `TAG`, …). `updatedAt` is
+ * (`createdAt` → `CREATED_AT`, `resourceGroup` → `RESOURCE_GROUP`, …). `updatedAt` is
  * intentionally omitted because the server enum does not include it.
  */
 export const availableDeploymentSorterKeys = [
   'name',
   'createdAt',
-  'domain',
   'project',
   'resourceGroup',
-  'tag',
+  'desiredReplicas',
 ] as const;
 
 export type DeploymentSorterKey =
@@ -70,52 +71,54 @@ export interface BAIModelDeploymentNodesProps extends Omit<
     baseColumns: BAIColumnsType<ModelDeploymentNodeInList>,
   ) => BAIColumnsType<ModelDeploymentNodeInList>;
   disableSorter?: boolean;
-  /**
-   * Which columns may be sorted. Defaults to every key the current server enum
-   * has; a caller on an older manager narrows it (`DOMAIN`/`PROJECT`/
-   * `RESOURCE_GROUP`/`TAG` only exist from 26.4.3).
-   */
-  sortableKeys?: ReadonlyArray<DeploymentSorterKey>;
   onChangeOrder?: (
     order: (typeof availableDeploymentSorterValues)[number] | null,
   ) => void;
+  /** Adds "Edit labels" to the Labels column's hover actions. */
+  onEditLabels?: (deployment: ModelDeploymentNodeInList) => void;
+  onLabelClick?: (label: BAIEntityLabel) => void;
+  /** Shows the Labels column at the start; otherwise it starts hidden, revealed from the column settings. */
+  showLabelsByDefault?: boolean;
 }
 
 const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
   deploymentsFrgmt,
   customizeColumns,
   disableSorter,
-  sortableKeys = availableDeploymentSorterKeys,
   onChangeOrder,
+  onEditLabels,
+  onLabelClick,
+  showLabelsByDefault = false,
   ...tableProps
 }) => {
   'use memo';
   const { t } = useBAIi18n();
 
-  const isEnableSorter = (key: string) => _.includes(sortableKeys, key);
+  const isEnableSorter = (key: string) =>
+    _.includes(availableDeploymentSorterKeys, key);
+  const isLabelable = useIsLabelableEntityType('deployment');
 
   const deployments = useFragment<BAIModelDeploymentNodesFragment$key>(
     graphql`
       fragment BAIModelDeploymentNodesFragment on ModelDeployment
       @relay(plural: true) {
         id
+        entityId
         currentRevisionId
         metadata {
           projectId
           domainName
           name
           status
-          tags
           createdAt
           updatedAt
           resourceGroupName
-          projectV2 @since(version: "26.4.3") {
+          projectV2 {
             basicInfo {
               name
             }
             id
           }
-          ...BAIDeploymentTagTokens_metadata
         }
         networkAccess {
           endpointUrl
@@ -131,7 +134,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         runningReplicas: replicas(filter: { status: { equals: RUNNING } }) {
           count
         }
-        currentRevision @since(version: "26.4.3") {
+        currentRevision {
           id
           revisionNumber
           modelMountConfig {
@@ -140,6 +143,10 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
               name
             }
           }
+        }
+        entityLabels(limit: 100) {
+          ...BAIEntityLabelTokensFragment
+          ...BAIEntityLabelSettingModalFragment
         }
         ...BAIDeploymentOwnerInfo_deployment
       }
@@ -201,6 +208,8 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
       },
       {
         key: 'replicaSummary',
+        dataIndex: 'desiredReplicas',
+        sorter: isEnableSorter('desiredReplicas'),
         title: (
           <BAIFlex gap="xxs" align="center">
             {t('comp:BAIModelDeploymentNodes.ReplicaSummary')}
@@ -249,6 +258,8 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         key: 'replicas',
         title: t('comp:BAIModelDeploymentNodes.Replicas'),
         defaultHidden: true,
+        dataIndex: 'desiredReplicas',
+        sorter: isEnableSorter('desiredReplicas'),
         render: (__, record) => {
           const desired = record.replicaState?.desiredReplicaCount;
           if (!_.isNumber(desired)) {
@@ -261,21 +272,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         key: 'id',
         title: t('comp:BAIModelDeploymentNodes.DeploymentID'),
         defaultHidden: true,
-        render: (__, record) => <BAIId globalId={record.id} copyable />,
-      },
-      {
-        key: 'tags',
-        title: t('comp:BAIModelDeploymentNodes.Tags'),
-        defaultHidden: true,
-        dataIndex: 'tag',
-        sorter: isEnableSorter('tag'),
-        render: (__, record) => (
-          <BAIDeploymentTagTokens
-            metadataFrgmt={record.metadata}
-            stopRowClick
-            fallback={<Text color="secondary">-</Text>}
-          />
-        ),
+        render: (__, record) => <BAIId uuid={record.entityId} copyable />,
       },
       {
         key: 'projectId',
@@ -430,6 +427,18 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
           record.metadata?.createdAt
             ? dayjs(record.metadata.createdAt).format('lll')
             : '-',
+      },
+      isLabelable && {
+        key: 'labels',
+        title: t('comp:BAIEntityLabelTokens.Labels'),
+        defaultHidden: !showLabelsByDefault,
+        render: (__, record) => (
+          <BAIEntityLabelCell
+            entityLabelsFrgmt={record.entityLabels}
+            onEdit={onEditLabels ? () => onEditLabels(record) : undefined}
+            onLabelClick={onLabelClick}
+          />
+        ),
       },
     ]),
     (column) => {

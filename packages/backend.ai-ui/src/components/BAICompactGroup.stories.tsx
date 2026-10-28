@@ -1,9 +1,9 @@
 import { Form } from '../form-engine';
 import BAICompactGroup from './BAICompactGroup';
-import { Button } from '@astryxdesign/core/Button';
-import { HStack } from '@astryxdesign/core/HStack';
-import { Selector } from '@astryxdesign/core/Selector';
-import { TextInput } from '@astryxdesign/core/TextInput';
+import BAISelector from './BAISelector';
+import BAITextInput from './BAITextInput';
+import { Button } from '@lablup/ui-common/Button';
+import { HStack } from '@lablup/ui-common/HStack';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
@@ -44,10 +44,10 @@ const meta: Meta<typeof BAICompactGroup> = {
 \`\`\`tsx
 <BAICompactGroup>
   <Form.Item name="email_prefix" label="E-Mail Prefix" style={{ flex: 1 }}>
-    <AstryxFormTextInput label="E-Mail Prefix" />
+    <TextInput />
   </Form.Item>
   <Form.Item name="email_suffix" label="E-Mail Suffix" style={{ flex: 1 }}>
-    <AstryxFormTextInput label="E-Mail Suffix" />
+    <TextInput />
   </Form.Item>
 </BAICompactGroup>
 \`\`\`
@@ -104,20 +104,20 @@ const EmailPair = ({ status }: { status?: 'error' }) => {
   const [suffix, setSuffix] = useState('lablup.com');
   return (
     <BAICompactGroup>
-      <TextInput
-        label="E-Mail Prefix"
+      <BAITextInput
+        aria-label="E-Mail Prefix"
         value={prefix}
         onChange={setPrefix}
         width="100%"
         placeholder="Max. 30 characters"
       />
-      <TextInput
-        label="E-Mail Suffix"
+      <BAITextInput
+        aria-label="E-Mail Suffix"
         value={suffix}
         onChange={setSuffix}
         width="100%"
         placeholder="Max. 30 characters"
-        status={status ? { type: 'error' } : undefined}
+        status={status}
       />
     </BAICompactGroup>
   );
@@ -168,14 +168,14 @@ export const AgainstAPlainRow: Story = {
       const [suffix, setSuffix] = useState('lablup.com');
       return (
         <HStack gap={0} width="100%">
-          <TextInput
-            label="E-Mail Prefix"
+          <BAITextInput
+            aria-label="E-Mail Prefix"
             value={prefix}
             onChange={setPrefix}
             width="100%"
           />
-          <TextInput
-            label="E-Mail Suffix"
+          <BAITextInput
+            aria-label="E-Mail Suffix"
             value={suffix}
             onChange={setSuffix}
             width="100%"
@@ -212,8 +212,8 @@ export const WithTrailingButton: Story = {
       const [value, setValue] = useState('');
       return (
         <BAICompactGroup width="auto">
-          <TextInput
-            label="Search"
+          <BAITextInput
+            aria-label="Search"
             value={value}
             onChange={setValue}
             hasClear
@@ -248,21 +248,21 @@ export const ThreeMembers: Story = {
       const [domain, setDomain] = useState<string | null>('lablup.com');
       return (
         <BAICompactGroup>
-          <TextInput
-            label="Prefix"
+          <BAITextInput
+            aria-label="Prefix"
             value={prefix}
             onChange={setPrefix}
             width="100%"
           />
-          <TextInput
-            label="Team"
+          <BAITextInput
+            aria-label="Team"
             value={middle}
             onChange={setMiddle}
             width="100%"
             placeholder="optional"
           />
-          <Selector
-            label="Domain"
+          <BAISelector
+            aria-label="Domain"
             value={domain}
             onChange={setDomain}
             options={sampleDomains}
@@ -324,7 +324,7 @@ export const InsideAForm: Story = {
           style={{ flex: 1 }}
           rules={[{ required: true }]}
         >
-          <FormTextInput label="E-Mail Prefix" />
+          <BAITextInput aria-label="E-Mail Prefix" />
         </Form.Item>
         <Form.Item
           name="email_suffix"
@@ -332,35 +332,9 @@ export const InsideAForm: Story = {
           style={{ flex: 1 }}
           rules={[{ required: true }]}
         >
-          <FormTextInput label="E-Mail Suffix" />
+          <BAITextInput aria-label="E-Mail Suffix" />
         </Form.Item>
       </BAICompactGroup>
     </Form>
   ),
 };
-
-/**
- * `Form.Item` clones its child with `value` / `onChange`, and Astryx's
- * `TextInput` types `value` as a required `string`. The host app has
- * `AstryxFormTextInput` for this; BUI has no equivalent, so the story declares
- * the minimal adapter it needs rather than importing across the boundary.
- */
-function FormTextInput({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value?: string;
-  onChange?: (value: string) => void;
-}) {
-  return (
-    <TextInput
-      label={label}
-      isLabelHidden
-      value={value ?? ''}
-      onChange={(next) => onChange?.(next)}
-      width="100%"
-    />
-  );
-}

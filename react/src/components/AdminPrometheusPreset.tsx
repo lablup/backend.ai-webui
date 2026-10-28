@@ -6,7 +6,6 @@ import { AdminPrometheusPresetDeleteMutation } from '../__generated__/AdminProme
 import { AdminPrometheusPresetQuery as AdminPrometheusPresetQueryType } from '../__generated__/AdminPrometheusPresetQuery.graphql';
 import { App } from '../app-shim';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
 import AutoUpdateFetchKeyButton, {
   LONG_AUTO_UPDATE_DELAY_OPTIONS,
 } from './AutoUpdateFetchKeyButton';
@@ -23,9 +22,7 @@ import {
   BAISelect,
   BAIUnmountAfterClose,
   type BAITableSettings,
-  filterOutEmpty,
   isValidUUID,
-  toLocalId,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
@@ -63,7 +60,7 @@ export const AdminPrometheusPresetQuery = graphql`
   }
 `;
 
-type DeletingPresetTarget = { id: string; name: string };
+type DeletingPresetTarget = { entityId: string; name: string };
 
 export interface AdminPrometheusPresetProps {
   queryRef: PreloadedQuery<AdminPrometheusPresetQueryType>;
@@ -82,12 +79,6 @@ const AdminPrometheusPreset = ({
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const baiClient = useSuspendedBackendaiClient();
-  // `QueryDefinitionFilter.categoryId` and its AND/OR/NOT combinators arrived
-  // in 26.4.4, two releases after the tab's own `prometheus-query-preset` gate.
-  const supportsExtendedFilter = baiClient.supports(
-    'prometheus-query-preset-extended-filter',
-  );
 
   const [isOpenEditorModal, setIsOpenEditorModal] = useState(false);
   const [editingPreset, setEditingPreset] =
@@ -120,9 +111,9 @@ const AdminPrometheusPreset = ({
 
   const [commitDeleteMutation, isInflightDelete] =
     useMutation<AdminPrometheusPresetDeleteMutation>(graphql`
-      mutation AdminPrometheusPresetDeleteMutation($id: ID!) {
-        adminDeletePrometheusQueryPreset(id: $id) {
-          id
+      mutation AdminPrometheusPresetDeleteMutation($id: UUID!) {
+        purgePrometheusQueryPreset(id: $id) {
+          entityId
         }
       }
     `);
@@ -136,7 +127,6 @@ const AdminPrometheusPreset = ({
       <BAIFlex direction="row" justify="between" wrap="wrap" gap="sm">
         <BAIGraphQLPropertyFilter
           combinationMode="AND"
-          maxConditions={supportsExtendedFilter ? undefined : 1}
           value={filter}
           onChange={(value) => {
             onReload(
@@ -144,13 +134,13 @@ const AdminPrometheusPreset = ({
               { fetchPolicy: 'network-only' },
             );
           }}
-          filterProperties={filterOutEmpty([
+          filterProperties={[
             {
               key: 'name',
               propertyLabel: t('prometheusQueryPreset.Name'),
               type: 'string',
             },
-            supportsExtendedFilter && {
+            {
               key: 'categoryId',
               propertyLabel: t('prometheusQueryPreset.Category'),
               type: 'uuid' as const,
@@ -185,7 +175,7 @@ const AdminPrometheusPreset = ({
                 </Suspense>
               ),
             },
-          ])}
+          ]}
         />
         <BAIFlex gap="xs">
           <AutoUpdateFetchKeyButton
@@ -240,7 +230,7 @@ const AdminPrometheusPreset = ({
         tableSettings={tableSettings}
         onEditPreset={(preset) => openEditor(preset)}
         onDeletePreset={(preset) => {
-          setDeletingPreset({ id: preset.id, name: preset.name });
+          setDeletingPreset({ entityId: preset.entityId, name: preset.name });
         }}
       />
       <BAIUnmountAfterClose>
@@ -268,7 +258,7 @@ const AdminPrometheusPreset = ({
         target={t('webui.menu.PrometheusPreset')}
         items={
           deletingPreset
-            ? [{ key: deletingPreset.id, label: deletingPreset.name }]
+            ? [{ key: deletingPreset.entityId, label: deletingPreset.name }]
             : []
         }
         confirmText={deletingPreset?.name ?? ''}
@@ -279,7 +269,7 @@ const AdminPrometheusPreset = ({
           if (!deletingPreset) return;
           commitDeleteMutation({
             variables: {
-              id: toLocalId(deletingPreset.id),
+              id: deletingPreset.entityId,
             },
             onCompleted: (_res, errors) => {
               if (errors && errors.length > 0) {

@@ -41,12 +41,13 @@ export function profileModal(page: Page): Locator {
 
 /**
  * The overflow ("More") dropdown trigger beside the Credential page's
- * "Create User" button. `AdminUserManagement.tsx`'s `DropdownMenu` trigger
- * carries `t('button.More')` as its accessible name; the old "ellipsis" name
- * came from the antd icon glyph and no longer exists.
+ * "Create User" button, scoped to their `ButtonGroup` (role="group",
+ * name "Create User") so it does not also match each row's "More actions".
  */
 export function createUserMoreButton(page: Page): Locator {
-  return page.getByRole('button', { name: 'More' });
+  return page
+    .getByRole('group', { name: 'Create User' })
+    .getByRole('button', { name: 'More', exact: true });
 }
 
 /**
@@ -115,11 +116,11 @@ export async function getCurrentClientIp(page: Page): Promise<string> {
 /**
  * Gets the Allowed Client IP form item container within a modal or page.
  * `UserSettingModal.tsx` renders this field via `BAIFormItem`
- * (`[data-bai-form-item]`).
+ * (`.uic-form-item`).
  */
 export function getAllowedClientIpFormItem(container: Locator) {
   return container
-    .locator('[data-bai-form-item]')
+    .locator('.uic-form-item')
     .filter({ hasText: 'Allowed client IP' });
 }
 

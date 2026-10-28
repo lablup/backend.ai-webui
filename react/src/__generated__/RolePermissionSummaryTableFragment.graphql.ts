@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2815d75ed9dea6a0ebd0c02a52263e68>>
+ * @generated SignedSource<<b8abc44b951505a08bab81be2dfea97d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,7 @@ import { ReaderFragment } from 'relay-runtime';
 export type RoleSource = "CUSTOM" | "SYSTEM" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type RolePermissionSummaryTableFragment$data = {
+  readonly entityId: string;
   readonly id: string;
   readonly scopeType: string;
   readonly source: RoleSource;
@@ -39,6 +40,13 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "source",
       "storageKey": null
     },
@@ -54,6 +62,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "6f637854c9d9433e9da1c028df65cfd0";
+(node as any).hash = "2e57a393be624854bb12947fd7f58937";
 
 export default node;

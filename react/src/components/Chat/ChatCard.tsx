@@ -10,12 +10,12 @@ import PureChatHeader from './ChatHeader';
 import PureChatInput from './ChatInput';
 import ChatMessages from './ChatMessages';
 import {
-  getAIErrorMessage,
-  ChatProviderData,
   ChatData,
-  ChatModel,
-  getLatestUserMessage,
   ChatMessage,
+  ChatModel,
+  ChatProviderData,
+  getAIErrorMessage,
+  getLatestUserMessage,
   isCustomEndpointProvider,
 } from './ChatModel';
 import CustomEndpointForm from './CustomEndpointForm';
@@ -27,12 +27,12 @@ import {
 import { fetchOpenAIModels } from './openAIModels';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { useChat } from '@ai-sdk/react';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Card } from '@astryxdesign/core/Card';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Card } from '@lablup/ui-common/Card';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  convertToModelMessages,
   DefaultChatTransport,
+  convertToModelMessages,
   extractReasoningMiddleware,
   streamText,
   wrapLanguageModel,
@@ -41,7 +41,6 @@ import {
   BAIFlex,
   BAILogger,
   toGlobalId,
-  toLocalId,
   useBAILogger,
   useEventNotStable,
   useUpdatableState,
@@ -212,6 +211,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
       query ChatCardQuery($deploymentId: ID!) {
         deployment(id: $deploymentId) @catch {
           id
+          entityId
           networkAccess {
             endpointUrl
           }
@@ -244,7 +244,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
     deployment?.replicaState.desiredReplicaCount === 0;
   // Consumers below address the deployment by its local UUID, as the chat
   // provider and the `deploymentId` URL param do.
-  const deploymentId = deployment?.id ? toLocalId(deployment.id) : undefined;
+  const deploymentId = deployment?.entityId;
 
   const { token } = useTheme();
 
@@ -644,6 +644,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
         )}
         {!_.isEmpty(error?.message) ? (
           <Banner
+            role="alert"
             title={error?.message ?? ''}
             status="error"
             style={{
@@ -654,6 +655,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
         ) : null}
         {!baseURL && !showCustomEndpointForm ? (
           <Banner
+            role="alert"
             title={t('error.InvalidBaseURL')}
             status="error"
             style={{

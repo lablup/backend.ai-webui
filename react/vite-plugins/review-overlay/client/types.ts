@@ -191,8 +191,33 @@ declare global {
        * `location.assign` then.
        */
       navigate?: (to: string) => void;
+      /**
+       * What the reviewer was looking at, read at COPY time so a login that
+       * happened after boot still counts. Absent on a host with no app behind
+       * it, and the copy ends where it always has.
+       */
+      env?: () => ReviewEnv | undefined;
     };
   }
+}
+
+/**
+ * The environment a set was reviewed in, rendered once under the set as a
+ * footer. Every field optional; a field the host cannot answer is left out of
+ * the line rather than printed blank.
+ */
+export interface ReviewEnv {
+  /** The WebUI's own version. */
+  webui?: string;
+  /** The manager version the session is logged into. */
+  manager?: string;
+  /** The API endpoint the session talks to. */
+  endpoint?: string;
+  /**
+   * `email (role)` of the logged-in account. Ships only while the dock's
+   * account switch is on — it names a person in a comment others read.
+   */
+  account?: string;
 }
 
 /**

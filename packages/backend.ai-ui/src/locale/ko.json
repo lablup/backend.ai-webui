@@ -89,26 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "예기치 못한 오류가 발생했습니다. 잠시 후 다시 시도하거나 문제가 지속되면 지원팀에 문의하세요."
   },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "지우기",
-    "KeepAsIs": "그대로 유지",
-    "UndoChanges": "변경 취소"
-  },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "실행 오류",
-    "ErrorOccurred": "문제가 발생했습니다."
-  },
-  "comp:BAIColorPicker": {
-    "Clear": "지우기",
-    "HexValue": "16진수 값",
-    "NoColor": "색상 없음",
-    "SelectColor": "색상 선택"
-  },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "옵션 검색 지우기",
-    "NoResults": "결과 없음",
-    "SearchOptions": "옵션 검색"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "컨테이너 레지스트리를 선택해주세요"
   },
@@ -128,14 +108,6 @@
     "Size": "크기",
     "SuccessFullyRemoved": "{{count}}개 버전을 제거했습니다.",
     "Version": "버전"
-  },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "정말 삭제하시겠습니까?",
-    "AreYouSureToPermanentlyDeleteTarget": "{{target}}을(를) 영구 삭제하시겠습니까?",
-    "CannotBeUndone": "이 작업은 되돌릴 수 없습니다.",
-    "DeleteItem": "삭제",
-    "DeleteNItems": "{{count}}개 항목 삭제",
-    "TypeToConfirm": "<token>{{confirmText}}</token>을(를) 입력해주세요."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "생성자"
@@ -173,6 +145,34 @@
   },
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "수량"
+  },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "라벨 추가"
+  },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "라벨 편집"
+  },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "라벨 추가",
+    "AddLabelsToItems": "{{count}}개 항목에 라벨 추가",
+    "BulkDescription": "선택한 모든 항목에 아래 라벨을 추가합니다. 이미 같은 키가 있는 항목은 값이 바뀌고, 다른 라벨은 그대로 유지됩니다.",
+    "EditLabels": "라벨 편집",
+    "Error": "오류",
+    "Key": "키",
+    "KeyMustBeUnique": "같은 키는 한 번만 사용할 수 있습니다.",
+    "KeyRequired": "키를 입력하세요.",
+    "Label": "라벨",
+    "LabelsSaved": "라벨을 저장했습니다.",
+    "RemoveLabel": "라벨 삭제",
+    "Save": "저장",
+    "SomeLabelsFailed": "라벨 변경 {{count}}건 실패",
+    "Target": "대상",
+    "TooLong": "{{max}}자 이하로 입력하세요.",
+    "Value": "값",
+    "ValueRequired": "값을 입력하세요."
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "라벨"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "자동 새로고침",
@@ -281,7 +281,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "액세스 키",
     "CreatedAt": "생성 시각",
-    "InvalidatedAt": "무효화 시각",
+    "LastAccessedAt": "마지막 접근 시각",
     "User": "사용자"
   },
   "comp:BAIModal": {
@@ -319,7 +319,6 @@
     "RevisionNumber": "리비전",
     "RevisionNumberTooltip": "배포의 현재 리비전 번호입니다.",
     "StrategyType": "전략",
-    "Tags": "태그",
     "UpdatedAt": "수정 시각"
   },
   "comp:BAINameActionCell": {
@@ -347,7 +346,6 @@
     "ContainerRegistryForImageCommit": "이미지 커밋용 컨테이너 레지스트리",
     "CreateProject": "프로젝트 생성",
     "Description": "설명",
-    "Domain": "도메인",
     "FailedToCreateProject": "프로젝트 생성에 실패했습니다.",
     "FailedToUpdateProject": "프로젝트 업데이트에 실패했습니다.",
     "IsActive": "활성화 여부",
@@ -416,11 +414,6 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "할당 자원 / 요청 자원"
-  },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "그룹 색상 변경",
-    "ResourceGrid": "자원 그리드",
-    "UseColorN": "색상 {{n}} 사용"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "제한없음"
@@ -564,6 +557,9 @@
     "To": "이후 상태",
     "UpdatedAt": "수정일"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "폴더를 선택해주세요"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "실행노드"
   },
@@ -571,8 +567,26 @@
     "MultiNodeShort": "다중",
     "SingleNodeShort": "단일"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "제한없음"
+  "comp:BAISessionScene": {
+    "FoundCount": "{{count}}개 발견",
+    "Hero": "내 세션",
+    "Measuring": "측정 중",
+    "ResourceShare": "자원 점유",
+    "ShowAll": "전체 보기",
+    "Utilization": "사용률",
+    "mood": {
+      "Idle": "유휴",
+      "Leaving": "종료 중",
+      "Overheated": "과열",
+      "Waiting": "자원 대기 중",
+      "Working": "작업 중"
+    }
+  },
+  "comp:BAISessionTypeToken": {
+    "Batch": "배치",
+    "Inference": "추론",
+    "Interactive": "인터랙티브",
+    "System": "업로드"
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "스토리지 호스트를 선택해주세요"
@@ -590,28 +604,13 @@
     "Time": "시간"
   },
   "comp:BAITable": {
-    "Apply": "적용",
-    "Cancel": "취소",
     "CollapseAll": "모두 닫기",
     "ExpandAll": "모두 열기",
     "ExpandErrorsOnly": "오류만 펼치기",
-    "ExpandOptions": "펼치기 옵션",
-    "ExpandRow": "행 펼치기",
-    "Export": "내보내기",
-    "ExportCSV": "CSV로 내보내기",
-    "GoToFirstPage": "첫 페이지로 이동하기",
-    "InvalidPageNumber": "유효하지 않은 페이지 번호입니다",
-    "NoDataToDisplay": "표시할 데이터가 없습니다",
-    "Pagination": "페이지 나누기",
-    "SearchTableColumn": "표시할 열 검색",
-    "SelectColumnToDisplay": "표시할 열 선택",
-    "SettingTable": "표 설정"
+    "ExpandOptions": "펼치기 옵션"
   },
   "comp:BAITestButton": {
     "Test": "테스트"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "외 {{rest}}개"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "생성 날짜",
@@ -634,8 +633,6 @@
     "CreateFolder": "새 폴더 추가",
     "DestinationPath": "컨테이너 경로 (destination)",
     "Folders": "폴더",
-    "OwnerProject": "프로젝트",
-    "OwnerUser": "사용자",
     "PathAndAliasTooltip": "폴더가 컨테이너 내부에 마운트될 경로입니다. 비워두면 기본 경로가 사용됩니다.",
     "Refresh": "새로고침",
     "RemoveFolder": "제거",
@@ -703,9 +700,6 @@
       "FileNameRequired": "파일 또는 폴더 이름을 입력해주세요."
     }
   },
-  "comp:PaginationInfoText": {
-    "Total": "전체 {{total}}개 중 {{start}} - {{end}}"
-  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "표시할 리소스 데이터가 없습니다"
   },
@@ -768,62 +762,18 @@
   "error": {
     "UnknownError": "알 수 없는 오류가 발생했습니다. 다시 시도해 주세요."
   },
-  "form": {
-    "Optional": "(선택사항)",
-    "validateMessages": {
-      "Default": "필드 유효성 검사 오류 ${label}",
-      "Required": "${label} 값을 입력해 주세요",
-      "Whitespace": "${label} 비워둘 수 없습니다",
-      "array": {
-        "Len": "${len}이어야 합니다 ${label}",
-        "Max": "최대 ${max}이어야 합니다 ${label}",
-        "Min": "최소 ${min}이어야 합니다 ${label}",
-        "Range": "${label} ${min}-${max} 사이어야 합니다"
-      },
-      "number": {
-        "Len": "${label} 값은 ${len}이어야 합니다",
-        "Max": "${label} 최댓값은 ${max}입니다",
-        "Min": "${label} 최솟값은 ${min}입니다",
-        "Range": "${label} 값은 ${min}-${max} 사이어야 합니다"
-      },
-      "pattern": {
-        "Mismatch": "${label} ${pattern} 패턴과 일치하지 않습니다"
-      },
-      "string": {
-        "Len": "${label} ${len}글자여야 합니다",
-        "Max": "${label} ${max}글자 이하여야 합니다",
-        "Min": "${label} 적어도 ${min}글자 이상이어야 합니다",
-        "Range": "${label} ${min}-${max}글자 사이어야 합니다"
-      },
-      "types": {
-        "Email": "${label} 유효하지 않은 ${type}",
-        "Number": "${label} 유효하지 않은 ${type}",
-        "Object": "${label} 유효하지 않은 ${type}",
-        "String": "${label} 유효하지 않은 ${type}",
-        "Url": "${label} 유효하지 않은 ${type}"
-      }
-    }
-  },
   "general": {
-    "Decrease": "감소",
-    "DeselectAll": "선택 취소",
     "File": "파일",
-    "Increase": "증가",
-    "Loading": "로딩 중...",
-    "NSelected": "{{count}}개 선택됨",
     "Optional": "선택",
     "Project": "프로젝트",
     "Search": "검색",
     "Select": "선택",
-    "SelectPlaceholder": "{{label}}을(를) 선택해주세요",
-    "TotalItems": "총 {{total}} 항목",
     "Unit": "단위",
     "button": {
       "Action": "동작",
       "Back": "뒤로",
       "Cancel": "취소",
       "Close": "닫기",
-      "Collapse": "접기",
       "Confirm": "확인",
       "Copied": "복사됨",
       "Copy": "복사",
@@ -831,7 +781,6 @@
       "Create": "생성",
       "Delete": "삭제",
       "Edit": "편집",
-      "Expand": "펼치기",
       "Remove": "제거",
       "Save": "저장",
       "Upload": "업로드"

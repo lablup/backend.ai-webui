@@ -6,11 +6,11 @@ import type { DeploymentCurrentRevisionTab_deployment$key } from '../__generated
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import DeploymentRevisionDetail from './DeploymentRevisionDetail';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { useTheme } from '@astryxdesign/core/theme';
-import { BAIUnmountAfterClose, toLocalId } from 'backend.ai-ui';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { useTheme } from '@lablup/ui-common/theme';
+import { BAIUnmountAfterClose } from 'backend.ai-ui';
 import { LoaderCircle } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -41,13 +41,14 @@ const DeploymentCurrentRevisionTab: React.FC<
     graphql`
       fragment DeploymentCurrentRevisionTab_deployment on ModelDeployment {
         id
-        currentRevision @since(version: "26.4.3") {
+        currentRevision {
           id
           revisionNumber
           ...DeploymentRevisionDetail_revision
         }
-        deployingRevision @since(version: "26.4.3") {
+        deployingRevision {
           id
+          fieldId
           revisionNumber
           ...DeploymentRevisionDetail_revision
         }
@@ -79,6 +80,7 @@ const DeploymentCurrentRevisionTab: React.FC<
     <>
       {isDeployingDifferentRevision && (
         <Banner
+          role="status"
           status="info"
           icon={<LoaderCircle className="bai-icon-spin" size="1em" />}
           style={{ marginBottom: token('--spacing-5') }}
@@ -86,7 +88,7 @@ const DeploymentCurrentRevisionTab: React.FC<
             revisionNumber:
               deployingRevision.revisionNumber != null
                 ? `#${deployingRevision.revisionNumber}`
-                : (toLocalId(deployingRevision.id) ?? ''),
+                : deployingRevision.fieldId,
           })}
           endContent={
             <Button

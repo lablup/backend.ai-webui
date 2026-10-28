@@ -8,8 +8,8 @@ import {
 } from '../__generated__/ProjectResourcePolicyV2SettingModalCreateMutation.graphql';
 import { ProjectResourcePolicyV2SettingModalFragment$key } from '../__generated__/ProjectResourcePolicyV2SettingModalFragment.graphql';
 import {
-  UpdateProjectResourcePolicyInput,
   ProjectResourcePolicyV2SettingModalModifyMutation,
+  UpdateProjectResourcePolicyInput,
 } from '../__generated__/ProjectResourcePolicyV2SettingModalModifyMutation.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
@@ -17,13 +17,15 @@ import { GBToBytes, bytesToGB } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import BAIFormItem from './BAIFormItem';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
+import { Banner } from '@lablup/ui-common/Banner';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  AstryxFormNumberInput,
-  AstryxFormTextInput,
-} from './astryxFormControls';
-import { Banner } from '@astryxdesign/core/Banner';
-import { useTheme } from '@astryxdesign/core/theme';
-import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  BAINumberInput,
+  BAITextInput,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -205,6 +207,7 @@ const ProjectResourcePolicyV2SettingModal: React.FC<
       {...baiModalProps}
     >
       <Banner
+        role="alert"
         title={t('storageHost.BeCarefulToSetProjectResourcePolicy')}
         status="warning"
         style={{ marginBottom: token('--spacing-5') }}
@@ -229,8 +232,8 @@ const ProjectResourcePolicyV2SettingModal: React.FC<
             },
           ]}
         >
-          <AstryxFormTextInput
-            label={t('resourcePolicy.Name')}
+          <BAITextInput
+            aria-label={t('resourcePolicy.Name')}
             disabled={!!projectResourcePolicy}
           />
         </BAIFormItem>
@@ -246,8 +249,9 @@ const ProjectResourcePolicyV2SettingModal: React.FC<
             label={t('resourcePolicy.MaxFolderCount')}
             style={{ width: '100%', margin: 0 }}
           >
-            <AstryxFormNumberInput
-              label={t('resourcePolicy.MaxFolderCount')}
+            <BAINumberInput
+              width="100%"
+              aria-label={t('resourcePolicy.MaxFolderCount')}
               min={0}
               max={SIGNED_32BIT_MAX_INT}
             />
@@ -258,8 +262,9 @@ const ProjectResourcePolicyV2SettingModal: React.FC<
             label={t('storageHost.MaxFolderSize')}
             style={{ width: '100%', margin: 0 }}
           >
-            <AstryxFormNumberInput
-              label={t('storageHost.MaxFolderSize')}
+            <BAINumberInput
+              width="100%"
+              aria-label={t('storageHost.MaxFolderSize')}
               min={0}
               // Maximum safe integer divided by 10^9 to prevent overflow when converting GB to bytes
               max={Math.floor(Number.MAX_SAFE_INTEGER / Math.pow(10, 9))}
@@ -272,8 +277,9 @@ const ProjectResourcePolicyV2SettingModal: React.FC<
             label={t('resourcePolicy.MaxNetworkCount')}
             style={{ width: '100%', margin: 0 }}
           >
-            <AstryxFormNumberInput
-              label={t('resourcePolicy.MaxNetworkCount')}
+            <BAINumberInput
+              width="100%"
+              aria-label={t('resourcePolicy.MaxNetworkCount')}
               min={0}
               max={SIGNED_32BIT_MAX_INT}
             />

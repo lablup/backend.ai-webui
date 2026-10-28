@@ -13,7 +13,6 @@ import type {
 import { App } from '../app-shim';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
-import BAIRadioGroup from '../components/BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDetailDrawer';
 import DeploymentSettingModal from '../components/DeploymentSettingModal';
 import { convertToOrderBy } from '../helper';
@@ -22,13 +21,12 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { Link } from '@astryxdesign/core/Link';
-import { Text } from '@astryxdesign/core/Text';
+import { Link } from '@lablup/ui-common/Link';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAISkeleton,
   BAICard,
   BAIDeleteConfirmModal,
-  BAIDeploymentTagTokens,
   BAIFlex,
   BAIGraphQLFilterProperty,
   BAIGraphQLPropertyFilter,
@@ -40,9 +38,14 @@ import {
   availableDeploymentSorterValues,
   filterOutNullAndUndefined,
   isDeploymentInStoppedCategory,
-  toLocalId,
   useBAILogger,
   useFetchKey,
+  BAIEntityLabelSettingModal,
+  toEntityLabelFilter,
+  useIsLabelableEntityType,
+  type ModelDeploymentNodeInList,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Trash2, SquarePenIcon } from 'lucide-react';
@@ -73,6 +76,9 @@ const ProjectAdminDeploymentsContent: React.FC<
   const [deletingDeploymentId, setDeletingDeploymentId] = useState<
     string | null
   >(null);
+  const isLabelable = useIsLabelableEntityType('deployment');
+  const [labelingDeployment, setLabelingDeployment] =
+    useState<ModelDeploymentNodeInList | null>(null);
   const [drawerRevisionFrgmt, setDrawerRevisionFrgmt] =
     useState<DeploymentRevisionDetail_revision$key | null>(null);
 
@@ -147,13 +153,14 @@ const ProjectAdminDeploymentsContent: React.FC<
           edges {
             node {
               id
+              entityId
               ...BAIModelDeploymentNodesFragment
               ...DeploymentSettingModal_deployment
               metadata {
                 name
                 status
               }
-              currentRevision @since(version: "26.4.3") {
+              currentRevision {
                 id
                 revisionNumber
                 ...DeploymentRevisionDetail_revision
@@ -207,11 +214,6 @@ const ProjectAdminDeploymentsContent: React.FC<
       type: 'string',
     },
     {
-      key: 'tags',
-      propertyLabel: t('deployment.filter.Tags'),
-      type: 'string',
-    },
-    {
       key: 'endpointUrl',
       propertyLabel: t('deployment.filter.EndpointUrl'),
       type: 'string',
@@ -221,6 +223,20 @@ const ProjectAdminDeploymentsContent: React.FC<
       propertyLabel: t('deployment.filter.OpenToPublic'),
       type: 'boolean',
     },
+    ...(isLabelable
+      ? [
+          {
+            key: 'labels.some.key',
+            propertyLabel: t('entityLabel.LabelKey'),
+            type: 'string' as const,
+          },
+          {
+            key: 'labels.some.value',
+            propertyLabel: t('entityLabel.LabelValue'),
+            type: 'string' as const,
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -228,21 +244,24 @@ const ProjectAdminDeploymentsContent: React.FC<
       <BAIFlex direction="column" align="stretch" gap="sm">
         <BAIFlex justify="between" wrap="wrap" gap="sm">
           <BAIFlex gap="sm" align="start" wrap="wrap" style={{ flexShrink: 1 }}>
-            <BAIRadioGroup
-              optionType="button"
+            <BAISegmentedControl
               value={queryParams.statusCategory}
-              onChange={(e) => {
-                setQueryParams({ statusCategory: e.target.value });
+              onChange={(value) => {
+                setQueryParams({
+                  statusCategory: value as typeof queryParams.statusCategory,
+                });
                 setTablePaginationOption({ current: 1 });
               }}
-              options={[
-                { label: t('deployment.Running'), value: 'running' },
-                {
-                  label: t('deployment.status.Terminated'),
-                  value: 'finished',
-                },
-              ]}
-            />
+            >
+              <BAISegmentedControlItem
+                value="running"
+                label={t('deployment.Running')}
+              />
+              <BAISegmentedControlItem
+                value="finished"
+                label={t('deployment.status.Terminated')}
+              />
+            </BAISegmentedControl>
             <BAIGraphQLPropertyFilter<DeploymentFilter>
               filterProperties={filterProperties}
               value={queryParams.filter ?? undefined}
@@ -261,6 +280,12 @@ const ProjectAdminDeploymentsContent: React.FC<
           />
         </BAIFlex>
         <BAIModelDeploymentNodes
+          onEditLabels={isLabelable ? setLabelingDeployment : undefined}
+          showLabelsByDefault
+          onLabelClick={(label) => {
+            setQueryParams({ filter: toEntityLabelFilter(label) });
+            setTablePaginationOption({ current: 1 });
+          }}
           deploymentsFrgmt={deploymentNodes}
           loading={isLoading}
           order={queryParams.order}
@@ -287,13 +312,13 @@ const ProjectAdminDeploymentsContent: React.FC<
               'name',
               'currentRevisionNumber',
               'status',
+              'labels',
               'replicaSummary',
               'model',
               'createdAt',
               'owner',
               'id',
               'endpointUrl',
-              'tags',
               'updatedAt',
               'openToPublic',
               'resourceGroup',
@@ -304,6 +329,7 @@ const ProjectAdminDeploymentsContent: React.FC<
               'name',
               'currentRevisionNumber',
               'status',
+              'labels',
               'replicaSummary',
               'model',
               'createdAt',
@@ -326,7 +352,7 @@ const ProjectAdminDeploymentsContent: React.FC<
                           onTitleClick={() =>
                             webUINavigate(
                               buildProjectPath(
-                                `deployments/${toLocalId(record.id)}`,
+                                `deployments/${record.entityId}`,
                               ),
                             )
                           }
@@ -374,27 +400,6 @@ const ProjectAdminDeploymentsContent: React.FC<
                       );
                     },
                   };
-                } else if (col.key === 'tags') {
-                  next = {
-                    ...col,
-                    render: (_value, record) => (
-                      <BAIDeploymentTagTokens
-                        metadataFrgmt={record.metadata}
-                        stopRowClick
-                        onTagClick={(tag) => {
-                          webUINavigate({
-                            pathname: buildProjectPath('deployments'),
-                            search: new URLSearchParams({
-                              filter: JSON.stringify({
-                                tags: { iContains: tag },
-                              }),
-                            }).toString(),
-                          });
-                        }}
-                        fallback={<Text color="secondary">-</Text>}
-                      />
-                    ),
-                  };
                 }
                 if (col.key === 'name') return next;
                 return {
@@ -405,6 +410,25 @@ const ProjectAdminDeploymentsContent: React.FC<
           }}
         />
       </BAIFlex>
+      <BAIEntityLabelSettingModal
+        open={!!labelingDeployment}
+        entityType="deployment"
+        targets={
+          labelingDeployment
+            ? [
+                {
+                  entityId: labelingDeployment.entityId,
+                  name: labelingDeployment.metadata?.name ?? undefined,
+                },
+              ]
+            : []
+        }
+        entityLabelsFrgmt={labelingDeployment?.entityLabels}
+        onRequestClose={(success) => {
+          setLabelingDeployment(null);
+          if (success) updateFetchKey();
+        }}
+      />
       {/* Edit-only call site: the deployment already belongs to a project, so
           the props union rejects a `project` here entirely (ADR-0001). That
           member requires a non-null fragment, hence the guard. */}
@@ -442,7 +466,7 @@ const ProjectAdminDeploymentsContent: React.FC<
           commitDeleteMutation({
             variables: {
               input: {
-                id: toLocalId(deletingDeployment.id) ?? deletingDeployment.id,
+                id: deletingDeployment.entityId,
               },
             },
             onCompleted: (_response, errors) => {

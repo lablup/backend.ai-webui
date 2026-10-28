@@ -1,6 +1,6 @@
 import BAITable from './BAITable';
 import { BAITableColumnOverrideItem, BAIColumnsType } from './tableTypes';
-import { Token } from '@astryxdesign/core/Token';
+import { Token } from '@lablup/ui-common/Token';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState, type Key } from 'react';
 
@@ -360,6 +360,33 @@ export const WithColumnSettings: Story = {
   },
 };
 
+export const WithCsvExport: Story = {
+  name: 'CSV Export',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Table with `exportSettings`. Click the download icon to open the CSV export dialog: every column whose export key is in `supportedFields` starts checked, the rest are disabled, and `notice` warns above the list.',
+      },
+    },
+  },
+  render: () => (
+    <BAITable
+      columns={sampleColumns}
+      dataSource={sampleData}
+      exportSettings={{
+        supportedFields: ['name', 'age'],
+        onExport: async () => {},
+        notice: 'Only the first 1,000 rows are exported.',
+      }}
+      pagination={{
+        total: sampleData.length,
+        pageSize: 10,
+      }}
+    />
+  ),
+};
+
 export const WithSorting: Story = {
   name: 'Sortable Columns',
   parameters: {
@@ -402,6 +429,36 @@ export const RowSelection: Story = {
         rowSelection={{
           selectedRowKeys,
           onChange: (keys) => setSelectedRowKeys([...keys]),
+        }}
+        pagination={false}
+      />
+    );
+  },
+};
+
+export const RowSelectionWithDisabledRows: Story = {
+  name: 'Row Selection with Disabled Rows',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`rowSelection.getCheckboxProps` disables the inactive and pending rows; Jim Green starts selected. Select-all adds and removes only the enabled rows, so Jim Green stays selected either way, and the header is checked once every enabled row is.',
+      },
+    },
+  },
+  render: () => {
+    const [selectedRowKeys, setSelectedRowKeys] = useState<Array<Key>>(['2']);
+    return (
+      <BAITable
+        columns={sampleColumns}
+        dataSource={sampleData}
+        rowKey="key"
+        rowSelection={{
+          selectedRowKeys,
+          onChange: (keys) => setSelectedRowKeys([...keys]),
+          getCheckboxProps: (record) => ({
+            disabled: record.status !== 'active',
+          }),
         }}
         pagination={false}
       />

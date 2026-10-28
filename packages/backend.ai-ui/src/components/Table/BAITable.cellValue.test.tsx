@@ -119,3 +119,14 @@ describe('BAITable cell values', () => {
     expect(screen.getByText('admin')).toBeInTheDocument();
   });
 });
+
+describe('BAITable onCell', () => {
+  it("should pass `onCell` the row's index, as antd does", () => {
+    const onCell = vi.fn(() => ({}));
+    renderTable([{ title: 'Name', key: 'name', dataIndex: 'name', onCell }]);
+
+    expect(onCell).toHaveBeenCalledWith(ROWS[0], 0);
+    expect(onCell).toHaveBeenCalledWith(ROWS[1], 1);
+    expect(onCell).not.toHaveBeenCalledWith(ROWS[1], 0);
+  });
+});

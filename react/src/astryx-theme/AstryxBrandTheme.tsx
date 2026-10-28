@@ -17,7 +17,7 @@
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
 import { resolveRoleTheme } from './resolveRoleTheme';
-import { Theme as AstryxTheme } from '@astryxdesign/core/theme';
+import { Theme as AstryxTheme } from '@lablup/ui-common/theme';
 import React from 'react';
 
 export interface AstryxBrandThemeProps {

@@ -19,14 +19,14 @@
 - **What the components are**: `BAIImageNodeSimpleTagV2`는 v2 `ImageV2` fragment를 읽어 image 한 개의 행을 그린다. `BAIImageNodeSimpleTag`는 v1 `ImageNode` fragment를 읽어 같은 행을 그린다. 한쪽이 다른 쪽을 부르지 않는다. 행의 markup은 같은 폴더의 `ImageNodeSimpleTag`가 문자열과 chip fact를 prop으로 받아 그리고, 둘 다 그것을 부른다. `ImageNodeSimpleTag`는 barrel이 export하지 않는다.
 - **Why a decision is needed**: 같은 image reference `cr.backend.ai/stable/python-tensorflow:2.15-py39-cuda12.4-ubuntu20.04@x86_64`가 화면마다 다르게 보였다. 아래 여섯 곳이 그 image를 각자 그리고 있었다.
 
-| 위치 | 그린 방식 |
-|---|---|
-| `react/src/components/ImageNodeSimpleTag.tsx` | icon, `BAIText`로 그린 세 부분, 직접 쓴 `Divider`, tag chip, `BAIText copyable` |
-| `packages/backend.ai-ui/src/components/fragments/BAIImageNodeSimpleTagV2.tsx` | icon, Astryx `Text`로 그린 세 부분, 직접 쓴 `Divider`, tag chip, `BAIText copyable` |
-| `react/src/components/SessionLauncherPreview.tsx` | 같은 행을 `supportExtendedImageInfo` 분기마다 한 벌씩. FR-3544의 `ImageMetaDivider`와 `ImageTagTokens`는 썼지만 icon, 세 부분, copy control은 두 분기가 따로 조립했고 copy control은 이 파일 안의 `CopyValueIconButton`이었다 |
-| `react/src/components/ImageTags.tsx`의 `UNSAFELazySessionImageTag` | 행이 아니라 다른 모양. 이름과 version을 blue/green double tag로, base image와 architecture를 각각 badge로 |
-| `react/src/components/ImageList.tsx`의 Full image path 열 | reference 문자열. `BAIText copyable ellipsis`, monospace 아님 |
-| `react/src/components/CustomizedImageList.tsx`의 Full image path 열 | reference 문자열. `BAIText monospace copyable`, ellipsis 없음 |
+| 위치                                                                          | 그린 방식                                                                                                                                                                                                                     |
+| ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `react/src/components/ImageNodeSimpleTag.tsx`                                 | icon, `BAIText`로 그린 세 부분, 직접 쓴 `Divider`, tag chip, `BAIText copyable`                                                                                                                                               |
+| `packages/backend.ai-ui/src/components/fragments/BAIImageNodeSimpleTagV2.tsx` | icon, Astryx `Text`로 그린 세 부분, 직접 쓴 `Divider`, tag chip, `BAIText copyable`                                                                                                                                           |
+| `react/src/components/SessionLauncherPreview.tsx`                             | 같은 행을 `supportExtendedImageInfo` 분기마다 한 벌씩. FR-3544의 `ImageMetaDivider`와 `ImageTagTokens`는 썼지만 icon, 세 부분, copy control은 두 분기가 따로 조립했고 copy control은 이 파일 안의 `CopyValueIconButton`이었다 |
+| `react/src/components/ImageTags.tsx`의 `UNSAFELazySessionImageTag`            | 행이 아니라 다른 모양. 이름과 version을 blue/green double tag로, base image와 architecture를 각각 badge로                                                                                                                     |
+| `react/src/components/ImageList.tsx`의 Full image path 열                     | reference 문자열. `BAIText copyable ellipsis`, monospace 아님                                                                                                                                                                 |
+| `react/src/components/CustomizedImageList.tsx`의 Full image path 열           | reference 문자열. `BAIText monospace copyable`, ellipsis 없음                                                                                                                                                                 |
 
 - **Collapsed dividers**: `ImageNodeSimpleTag`와 `BAIImageNodeSimpleTagV2`는 `Divider orientation="vertical"`을 `marginInline: 0`으로 직접 썼다. Astryx의 vertical `Divider`는 `height: 100%`이고 `BAIFlex`의 기본값은 `align="center"`이므로 그 높이가 0으로 접혀, session 목록과 session 상세에서 구분선이 아예 보이지 않았다. FR-3544가 `ImageTags.tsx`에 만든 `ImageMetaDivider`는 이 metric을 이미 고쳐 두었지만 session launcher 경로만 그것을 썼다.
 - **Four copies of the chip rule**: double tag 판정 규칙이 `ImageTags.tsx`의 `imageTagFacts` / `imageNodeTagFacts`, `AliasedImageTagTokens`, `ImageNodeSimpleTag`, `BAIImageNodeSimpleTagV2` 네 곳에 복제돼 있었다. chip 색도 갈렸다. FR-3544의 `ImageTagTokens`는 blue를 박아 두었고, 나머지 셋은 customized가 아닌 tag에 `undefined`나 호출자가 넘긴 `color`를 넘겨 `badgeVariantForTagColor`가 neutral을 냈다. `ImageList`만 `color="blue"`를 넘겨서, 같은 Tags 열이 `ImageList`에서는 blue이고 `CustomizedImageList`에서는 neutral이었다.
@@ -44,7 +44,7 @@ flowchart TB
   end
   subgraph v2callers["v2 query를 쓰는 call site"]
     sessionsV2["BAISessionNodesV2"]
-    adminPicker["BAIAdminImageSelect"]
+    adminPicker["BAIScopedImageSelect"]
     revision["DeploymentRevisionDetail"]
   end
   subgraph v1callers["v1 query를 쓰는 call site"]
@@ -78,10 +78,10 @@ flowchart TB
 
 ### 1. schema마다 component가 하나씩 있고, prop은 셋뿐이다
 
-| component | fragment | 이름 | version | architecture | 복사하는 문자열 |
-|---|---|---|---|---|---|
+| component                 | fragment                                     | 이름                                | version                     | architecture            | 복사하는 문자열                                      |
+| ------------------------- | -------------------------------------------- | ----------------------------------- | --------------------------- | ----------------------- | ---------------------------------------------------- |
 | `BAIImageNodeSimpleTagV2` | `BAIImageNodeSimpleTagV2Fragment on ImageV2` | `tagAlias(getBaseImage(reference))` | `getBaseVersion(reference)` | `identity.architecture` | `identity.canonicalName`에 `@architecture`를 붙인 것 |
-| `BAIImageNodeSimpleTag` | `BAIImageNodeSimpleTagFragment on ImageNode` | `tagAlias(base_image_name)` | `version` | `architecture` | `registry/namespace:tag`에 `@architecture`를 붙인 것 |
+| `BAIImageNodeSimpleTag`   | `BAIImageNodeSimpleTagFragment on ImageNode` | `tagAlias(base_image_name)`         | `version`                   | `architecture`          | `registry/namespace:tag`에 `@architecture`를 붙인 것 |
 
 - **Same three props**: 두 component는 `imageFrgmt`, `withoutTag`, `copyable`만 받는다. `withoutTag`는 chip과 그 앞 구분선을 빼고, `copyable={false}`는 copy control을 뺀다. 이 이름은 antd 시절부터 call site가 쓰던 것이고, `.claude/rules/component-props-extension.md`가 그 어휘를 바꾸지 말라고 정한다.
 - **Everything else is derived**: 이름, version, architecture, chip, 복사할 문자열을 넘기는 prop은 없다. v2 `identity.canonicalName`에는 architecture가 들어 있지 않으므로 `@architecture`를 붙인 reference에서 이름과 version을 뽑는다. `architecture`는 두 schema 모두 nullable이라 없으면 `@`를 붙이지 않는다.
@@ -90,25 +90,25 @@ flowchart TB
 
 ### 2. v2 component는 v2 query에서만, v1 component는 v1 query에서만 쓴다
 
-| call site | query가 돌려주는 type | component |
-|---|---|---|
-| `BAISessionNodesV2`의 Environments 열 | `SessionV2.images` → `ImageV2` | `BAIImageNodeSimpleTagV2 withoutTag copyable={false}` |
-| `BAIAdminImageSelect`의 popup 옵션 | `adminImagesV2` → `ImageV2` | `BAIImageNodeSimpleTagV2 copyable={false}`를 `labelContent`로 |
-| `DeploymentRevisionDetail`의 Image | `Revision.imageV2` → `ImageV2` | `BAIImageNodeSimpleTagV2` |
-| `SessionNodes`의 Environments 열 | `KernelNode.image` → `ImageNode` | `BAIImageNodeSimpleTag withoutTag copyable={false}` |
-| `SessionDetailContent`의 Environments | `KernelNode.image` → `ImageNode` | `BAIImageNodeSimpleTag` |
+| call site                             | query가 돌려주는 type            | component                                                     |
+| ------------------------------------- | -------------------------------- | ------------------------------------------------------------- |
+| `BAISessionNodesV2`의 Environments 열 | `SessionV2.images` → `ImageV2`   | `BAIImageNodeSimpleTagV2 withoutTag copyable={false}`         |
+| `BAIScopedImageSelect`의 popup 옵션   | `scopedImagesV2` → `ImageV2`     | `BAIImageNodeSimpleTagV2 copyable={false}`를 `labelContent`로 |
+| `DeploymentRevisionDetail`의 Image    | `Revision.imageV2` → `ImageV2`   | `BAIImageNodeSimpleTagV2`                                     |
+| `SessionNodes`의 Environments 열      | `KernelNode.image` → `ImageNode` | `BAIImageNodeSimpleTag withoutTag copyable={false}`           |
+| `SessionDetailContent`의 Environments | `KernelNode.image` → `ImageNode` | `BAIImageNodeSimpleTag`                                       |
 
 - **Spread the fragment**: call site는 자기 query의 image node에 `...BAIImageNodeSimpleTagV2Fragment` 또는 `...BAIImageNodeSimpleTagFragment`를 spread하고 그 node를 `imageFrgmt`로 넘긴다. node를 plain object로 다시 조립하지 않는다.
 - **Never cross**: v1 `ImageNode`를 v2 component에, v2 `ImageV2`를 v1 component에 넘기지 않는다. fragment type이 막는다.
 
 ### 3. image node가 없는 화면은 host가 각자 그린다
 
-| call site | 가진 것 | 그리는 것 |
-|---|---|---|
-| `SessionLauncherPreview`의 Image | `images` query가 준 legacy `Image` form value | icon, `tagAlias(base_image_name)`, `version`, `architecture`, chip, `BAIText copyable` |
-| `UNSAFELazySessionImageTag` | `compute_session.image` 문자열과 `architecture` | icon, `tagAlias(getBaseImage(...))`, `getBaseVersion(...)`, `architecture`. tag가 없으므로 chip이 없다 |
-| `ImageEnvironmentSelectFormItems`의 version 옵션 | legacy `Image` 객체 | `version`, `architecture`, chip. 같은 환경의 옵션은 이름이 같으므로 icon과 이름을 뺀다 |
-| `AliasedImageTagTokens` | `ImageNode` fragment | chip만. 이미지 목록의 Tags 열이 쓴다 |
+| call site                                        | 가진 것                                         | 그리는 것                                                                                              |
+| ------------------------------------------------ | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `SessionLauncherPreview`의 Image                 | `images` query가 준 legacy `Image` form value   | icon, `tagAlias(base_image_name)`, `version`, `architecture`, chip, `BAIText copyable`                 |
+| `UNSAFELazySessionImageTag`                      | `compute_session.image` 문자열과 `architecture` | icon, `tagAlias(getBaseImage(...))`, `getBaseVersion(...)`, `architecture`. tag가 없으므로 chip이 없다 |
+| `ImageEnvironmentSelectFormItems`의 version 옵션 | legacy `Image` 객체                             | `version`, `architecture`, chip. 같은 환경의 옵션은 이름이 같으므로 icon과 이름을 뺀다                 |
+| `AliasedImageTagTokens`                          | `ImageNode` fragment                            | chip만. 이미지 목록의 Tags 열이 쓴다                                                                   |
 
 - **Shared parts live in `ImageTags.tsx`**: 구분선 `ImageMetaDivider`와 chip 행 `ImageTagTokens`는 FR-3544가 이 파일에 만든 것이고, 위 네 곳이 그것을 쓴다. `ImageTagTokens`는 BUI의 `BAIImageTagFact` 배열을 받고 검색어 highlight를 지원한다.
 - **Same shape**: 행은 `BAIFlex direction="row" wrap="wrap" gap="xxs"` 안에 Astryx `Text`로 부분을 늘어놓고 사이마다 `ImageMetaDivider`를 둔다. BUI의 두 component가 그리는 모양과 같다.
@@ -143,17 +143,17 @@ flowchart TB
 
 ### 8. 24.12 이전 manager를 위한 image 표현은 없다
 
-- **Support floor**: 이 저장소가 지원하는 가장 낮은 manager는 26.4.x다. `extended-image-info`는 `packages/backend.ai-client/src/client.ts`에서 manager 24.12.0부터 켜지므로, 이 flag는 지원 범위 안에서 늘 참이다.
+- **Support floor**: 이 저장소가 지원하는 가장 낮은 manager는 26.4.x다. `extended-image-info` flag는 manager 24.12.0부터 켜졌으므로 지원 범위 안에서 늘 참이었고, ADR 0010이 26.4 line 이하의 다른 flag와 함께 `packages/backend.ai-client/src/client.ts`에서 지웠다.
 - **What went**: 그 flag의 거짓 분기가 그리던 image 표현을 모두 지웠다. host의 `ImageTags` component, `CustomizedImageList`의 Namespace/Version/Base/Tags 레거시 열 네 개, `ImageEnvironmentSelectFormItems`의 version 옵션 레거시 행, `SessionLauncherPreview`의 두 번째 복제본이다.
 - **Parsers that went with them**: image 문자열에서 tag와 base image를 다시 parse하던 `getTags`와 `getBaseImages`를 host의 `imageParser`에서 지웠고, 그것을 받던 `imageTagFacts`도 지웠다. 서버가 `tags`를 직접 주므로 다시 parse할 이유가 없다.
 - **Search coverage**: `CustomizedImageList`의 검색은 이제 서버가 준 `tags`, `version`, `namespace`, `digest`, 전체 reference만 본다. 다시 parse한 base version과 base image는 같은 값을 중복으로 훑던 것이라 함께 지웠다.
-- **New code**: `supports('extended-image-info')`로 갈리는 분기를 새로 만들지 않는다.
+- **New code**: image의 `namespace`, `base_image_name`, `version`, `tags`가 있는지로 갈리는 분기를 새로 만들지 않는다.
 
 ## 대안과 기각 사유
 
 - **One row component that also takes strings**: `BAIImageNodeSimpleTagV2`가 `imageFrgmt` 대신 `fullName`, `name`, `version`, `architecture`, `tags`, `variant`를 받아 v1 adapter, launcher form value, `compute_session.image` 문자열까지 한 markup으로 그리는 형태다. 행 markup이 한 벌인 것이 장점이다. 기각한 이유는 v2 component의 prop 표면이 v1과 달라져 같은 일을 하는 두 component가 다른 계약을 갖게 되고, fragment를 spread하면 되는 곳에서도 문자열을 조립해 넘기는 adapter가 생기기 때문이다. 문자열을 받는 행은 export하지 않는 `ImageNodeSimpleTag`로만 두어, 그 markup을 한 벌로 유지하면서도 call site는 fragment만 넘긴다. v2 component에 새 prop이 필요해지면 별도 이슈로 다룬다.
 - **One fragment-reading component for both schemas**: 공용 component 하나가 v1과 v2를 모두 읽는 형태다. 기각한 이유는 Relay fragment가 한 type에만 선언되기 때문이다. v1 `ImageNode`와 v2 `ImageV2`는 schema가 다르다.
-- **Keep the shared component in the host app**: v1 화면이 모두 host에 있으니 이동 거리가 짧은 것이 장점이다. 기각한 이유는 BUI의 `BAISessionNodesV2`와 `BAIAdminImageSelect`가 같은 행을 쓰는데 BUI가 host를 import할 수 없고, `.claude/rules/bui-component-home.md`가 재사용 component의 집을 BUI로 정해 두었기 때문이다.
+- **Keep the shared component in the host app**: v1 화면이 모두 host에 있으니 이동 거리가 짧은 것이 장점이다. 기각한 이유는 BUI의 `BAISessionNodesV2`와 `BAIScopedImageSelect`가 같은 행을 쓰는데 BUI가 host를 import할 수 없고, `.claude/rules/bui-component-home.md`가 재사용 component의 집을 BUI로 정해 두었기 때문이다.
 - **The chips and the divider as exported BUI components**: 둘을 각각 component로 두고 barrel이 export해 host도 그것을 쓰는 형태다. host의 `ImageMetaDivider`와 `ImageTagTokens`가 없어지는 것이 장점이다. 기각한 이유는 부품 셋을 따로 export하면 행을 조립하는 hop이 늘고, 두 image component가 부품에 묶이기 때문이다. host의 두 부품은 FR-3544가 만든 자리에 그대로 둔다.
 - **An icon on the Full image path column too**: 표의 Full image path 열도 한눈에 framework를 알아볼 수 있는 것이 장점이다. 기각한 이유는 그 열의 폭이 `token.screenXS`로 묶여 있어 icon이 차지하는 만큼 reference가 잘리고, 그 열은 복사해서 쓰는 값이기 때문이다.
 - **Convert every surface that shows an image icon**: session template 표의 Environments 열처럼 icon과 이름을 함께 보여주는 자리를 모두 행으로 바꾸는 형태다. 예외를 세지 않아도 되는 것이 장점이다. 기각한 이유는 그런 자리가 image 한 개의 identity가 아니라 좁은 cell에 넣는 축약 label이라, 행으로 바꾸면 architecture와 copy control이 딸려 들어와 폭을 넘기기 때문이다.
@@ -179,8 +179,8 @@ flowchart TB
 
 ## 용어
 
-| 용어 | 뜻 |
-|---|---|
-| image meta row | image 하나의 icon, 이름, version, architecture, tag chip을 한 줄에 늘어놓은 표현이다. |
-| double tag | 붙어 있는 Astryx `Token` 두 개로 `key`와 `value`를 나란히 보여주는 chip이다. `BAIDoubleToken`가 그리고, metadata에 그 tag의 alias가 없거나 그 tag가 customized image의 것일 때 쓴다. |
-| extended image info | 서버가 image의 `namespace`, `base_image_name`, `version`, `tags`를 따로 제공하는 기능이다. `baiClient.supports('extended-image-info')`로 판정하고, 지원하지 않는 서버에서는 같은 정보를 image 문자열에서 parse한다. |
+| 용어                | 뜻                                                                                                                                                                                   |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| image meta row      | image 하나의 icon, 이름, version, architecture, tag chip을 한 줄에 늘어놓은 표현이다.                                                                                                |
+| double tag          | 붙어 있는 Astryx `Token` 두 개로 `key`와 `value`를 나란히 보여주는 chip이다. `BAIDoubleToken`가 그리고, metadata에 그 tag의 alias가 없거나 그 tag가 customized image의 것일 때 쓴다. |
+| extended image info | 서버가 image의 `namespace`, `base_image_name`, `version`, `tags`를 따로 제공하는 기능이다. manager 24.12.0부터 제공한다.                                                             |

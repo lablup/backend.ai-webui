@@ -11,12 +11,8 @@ import {
 } from '../hooks/backendai';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
-import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
-import { Heading } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Heading } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIBoardItemTitle,
   BAIFetchKeyButton,
@@ -29,15 +25,17 @@ import {
   processMemoryValue,
   subNumberWithUnits,
   useControllableValue,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
-  useTransition,
+  ReactNode,
   useDeferredValue,
   useEffect,
   useEffectEvent,
   useState,
-  ReactNode,
+  useTransition,
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -79,7 +77,6 @@ const remainingAgentsQuery = graphql`
       }
     }
     agent_nodes(filter: $agentNodeFilter, first: $limit, offset: $offset)
-      @since(version: "24.12.0")
       @include(if: $isSuperAdmin) {
       edges {
         node {
@@ -176,11 +173,8 @@ export const useIsAvailableTotalResourceWithinResourceGroup = () => {
   const userRole = useCurrentUserRole();
   const isHiddenAgents = !!baiClient?._config?.hideAgents;
 
-  // Superadmin users can use `agent_nodes` if available, even when hideAgents is true.
-  // The GraphQL `agent_nodes` field is only available from v24.12.0. If hideAgents is false, `agent_summary_list` can be used instead.
-  return userRole === 'superadmin'
-    ? baiClient.isManagerVersionCompatibleWith('24.12.0') || !isHiddenAgents
-    : !isHiddenAgents;
+  // Superadmins read `agent_nodes` even when hideAgents is true; others need `agent_summary_list`.
+  return userRole === 'superadmin' || !isHiddenAgents;
 };
 
 const TotalResourceWithinResourceGroup: React.FC<
@@ -222,7 +216,6 @@ const TotalResourceWithinResourceGroup: React.FC<
           total_count
         }
         agent_nodes(filter: $agentNodeFilter, first: 100)
-          @since(version: "24.12.0")
           @include(if: $isSuperAdmin) {
           edges {
             node {
@@ -451,9 +444,9 @@ const TotalResourceWithinResourceGroup: React.FC<
           <BAIFlex gap={'xs'} wrap="wrap">
             {/* PILOT-DECISION: SegmentedControl.label is aria-only and required;
                 composed from the two option labels to avoid new i18n keys. */}
-            <SegmentedControl
+            <BAISegmentedControl
               size="sm"
-              label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
+              aria-label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
               value={displayType}
               onChange={(v) =>
                 setDisplayType(
@@ -464,9 +457,15 @@ const TotalResourceWithinResourceGroup: React.FC<
                 )
               }
             >
-              <SegmentedControlItem value="used" label={t('dashboard.Used')} />
-              <SegmentedControlItem value="free" label={t('dashboard.Free')} />
-            </SegmentedControl>
+              <BAISegmentedControlItem
+                value="used"
+                label={t('dashboard.Used')}
+              />
+              <BAISegmentedControlItem
+                value="free"
+                label={t('dashboard.Free')}
+              />
+            </BAISegmentedControl>
             <BAIFetchKeyButton
               size="small"
               loading={isPendingRefetch || refetching || isLoadingRemaining}

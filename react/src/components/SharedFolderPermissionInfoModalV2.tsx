@@ -14,11 +14,11 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import VFolderPermissionCellV2 from './VFolderPermissionCellV2';
-import { Banner } from '@astryxdesign/core/Banner';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Heading, Text } from '@astryxdesign/core/Text';
+import { Banner } from '@lablup/ui-common/Banner';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Heading, Text } from '@lablup/ui-common/Text';
 import { BAIPopconfirm } from 'backend.ai-ui';
 import {
   filterOutNullAndUndefined,
@@ -28,7 +28,6 @@ import {
   type BAIModalProps,
   BAIText,
   useErrorMessageResolver,
-  toLocalId,
 } from 'backend.ai-ui';
 import { UserIcon, UsersIcon, LogOutIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -59,6 +58,7 @@ const SharedFolderPermissionInfoModalV2: React.FC<
     graphql`
       fragment SharedFolderPermissionInfoModalV2Fragment on VFolder {
         id
+        entityId
         metadata {
           name
         }
@@ -100,6 +100,7 @@ const SharedFolderPermissionInfoModalV2: React.FC<
     >
       <VStack align="stretch" gap={5}>
         <Banner
+          role="status"
           status="info"
           title={
             isUserOwned
@@ -161,9 +162,7 @@ const SharedFolderPermissionInfoModalV2: React.FC<
                         })}
                         onConfirm={() => {
                           const globalId = data?.id;
-                          const leaveFolderId = globalId
-                            ? toLocalId(globalId)
-                            : null;
+                          const leaveFolderId = data?.entityId;
                           if (leaveFolderId && globalId) {
                             leaveFolder.mutate(
                               {

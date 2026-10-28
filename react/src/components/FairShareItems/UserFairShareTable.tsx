@@ -7,17 +7,17 @@ import {
   UserFairShareTableFragment$data,
   UserFairShareTableFragment$key,
 } from '../../__generated__/UserFairShareTableFragment.graphql';
-import { Divider } from '@astryxdesign/core/Divider';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Divider } from '@lablup/ui-common/Divider';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIQuestionIconWithTooltip,
   BAIColumnsType,
   BAIFlex,
   BAINameActionCell,
+  BAIQuestionIconWithTooltip,
   BAIResourceNumberWithIcon,
   BAITable,
-  BAIText,
   BAITableProps,
+  BAIText,
   toFixedFloorWithoutTrailingZeros,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';

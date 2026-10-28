@@ -35,7 +35,7 @@ import {
   useBAIIconPath,
   useBAIResourceSlots,
 } from './provider';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import * as _ from 'lodash-es';
 import { CpuIcon, MemoryStickIcon, MicrochipIcon } from 'lucide-react';
 import type { ReactNode } from 'react';

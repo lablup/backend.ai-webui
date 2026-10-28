@@ -43,7 +43,7 @@
  * !! DIFFERENT ones silently give you whichever loads first, and
  * !! `scripts/migration-gates/layer-order-gate.mjs` fails on drift.
  */
-@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
+@layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;
 
 @layer components {
   /* First-party icon baseline. `iconShim` renders `.bai-icon` wrappers and BUI
@@ -133,6 +133,14 @@
       rgba(0, 0, 0, 0.45),
       rgba(255, 255, 255, 0.45)
     );
+  }
+
+  /* ui-common Form at antd's 22px line on 14px text (the theme's
+     `--text-body-leading` is 1.5714, which lays out at 21.9996px). Its
+     explain / extra / tooltip-glyph text reads the theme's
+     `--color-text-description` itself. */
+  :root {
+    --form-item-line-height: calc(22 / 14);
   }
 
   /* `:placeholder-shown` only — NumberInput paints its invalid VALUE with the

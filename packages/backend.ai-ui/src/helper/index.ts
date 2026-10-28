@@ -1,4 +1,4 @@
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import Big from 'big.js';
 import * as _ from 'lodash-es';
 
@@ -322,6 +322,7 @@ export const localeCompare = (a?: string | null, b?: string | null) => {
 
 type KnownGlobalIdType =
   | 'VirtualFolderNode'
+  | 'VFolder'
   | 'ComputeSessionNode'
   | 'GroupNode'
   | 'UserNode'
@@ -604,4 +605,18 @@ export const initiateDownload = async (
   document.body.appendChild(downloadLink);
   downloadLink.click();
   document.body.removeChild(downloadLink);
+};
+
+/**
+ * A CSS length token (`'8px'`, `'0.5rem'`) as a pixel number, for props that
+ * take numbers. Astryx 0.7 declares `--spacing-*` in rem.
+ */
+export const cssLengthToPx = (length: string): number => {
+  const value = parseFloat(length);
+  if (!length.trim().endsWith('rem')) return value;
+  const rootFontSize =
+    typeof document === 'undefined'
+      ? NaN
+      : parseFloat(getComputedStyle(document.documentElement).fontSize);
+  return value * (Number.isFinite(rootFontSize) ? rootFontSize : 16);
 };

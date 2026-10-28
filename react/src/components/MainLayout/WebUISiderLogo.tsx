@@ -3,9 +3,13 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
-import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
+import { useRouteScope } from '../../hooks/useRouteScope';
+import {
+  getPathFromMenuKey,
+  useWebUIMenuItems,
+} from '../../hooks/useWebUIMenuItems';
 import WebUILink from '../WebUILink';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import React from 'react';
 
 interface WebUISiderLogoProps {
@@ -24,11 +28,17 @@ const WebUISiderLogo: React.FC<WebUISiderLogoProps> = ({ collapsed }) => {
   'use memo';
   const { rawThemeConfig } = useCustomThemeConfig();
   const { mode } = useTheme();
-  const { defaultMenuPath } = useWebUIMenuItems();
+  const { defaultMenuPath, firstAvailableAdminMenuItem } = useWebUIMenuItems();
+  const isSystemAdminScope = useRouteScope() === 'admin';
   const isDark = mode === 'dark';
+  // In the system admin console the logo stays inside it.
+  const logoPath =
+    isSystemAdminScope && firstAvailableAdminMenuItem
+      ? getPathFromMenuKey(firstAvailableAdminMenuItem.key)
+      : defaultMenuPath;
 
   return (
-    <WebUILink to={defaultMenuPath} style={{ display: 'block' }}>
+    <WebUILink to={logoPath} style={{ display: 'block' }}>
       {collapsed ? (
         <img
           className="logo-collapsed"

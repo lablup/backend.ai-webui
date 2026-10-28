@@ -10,19 +10,18 @@ import { useWebUINavigate } from '../hooks';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { ProjectContext } from '../types/projectContext';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
-import { Banner } from '@astryxdesign/core/Banner';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Banner } from '@lablup/ui-common/Banner';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIAvailablePresetSelect,
   BAIFlex,
   BAILink,
   BAIModal,
-  type BAIModalProps,
   BAIProjectResourceGroupSelect,
-  toLocalId,
   useErrorMessageResolver,
   useProjectResourceGroups,
+  type BAIModalProps,
 } from 'backend.ai-ui';
 import { Info } from 'lucide-react';
 import React, {
@@ -34,8 +33,8 @@ import React, {
 } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import {
-  graphql,
   PreloadedQuery,
+  graphql,
   useMutation,
   usePreloadedQuery,
 } from 'react-relay';
@@ -60,6 +59,7 @@ export const VFolderDeployQuery = graphql`
       edges {
         node {
           id
+          entityId
           name
           runtimeVariantId
           ...DeploymentPresetDetailModalFragment
@@ -161,8 +161,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
   >(undefined);
   const [presetDetailId, setPresetDetailId] = useState<string | null>(null);
   const effectivePresetId =
-    userSelectedPresetId ??
-    (availablePresets[0]?.id ? toLocalId(availablePresets[0].id) : undefined);
+    userSelectedPresetId ?? availablePresets[0]?.entityId;
 
   // The resource-group selection is held in an antd Form. `Form.useWatch`
   // subscribes to changes on the `resourceGroup` field so the Deploy button's
@@ -176,7 +175,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
     if (!vfolderId) return Promise.resolve();
 
     const presetId = isAutoDeployScenario
-      ? toLocalId(availablePresets[0]?.id)
+      ? availablePresets[0]?.entityId
       : effectivePresetId;
     // In `isAutoDeployScenario`, `BAIProjectResourceGroupSelect` is never
     // mounted (the component returns `null` before reaching the form), so
@@ -308,6 +307,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
       {noAvailablePresets && (
         // `type` -> `status`; `showIcon` dropped (Banner always shows it).
         <Banner
+          role="status"
           status="info"
           title={t('deployment.NoPresetsAvailable')}
           description={
@@ -379,7 +379,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
           open={!!presetDetailId}
           presetFrgmt={
             presetDetailId
-              ? availablePresets.find((p) => toLocalId(p.id) === presetDetailId)
+              ? availablePresets.find((p) => p.entityId === presetDetailId)
               : null
           }
           onCancel={() => setPresetDetailId(null)}

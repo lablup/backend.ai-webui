@@ -3,20 +3,21 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { App } from '../../app-shim';
+import { migrateV1AppearanceConfig } from '../../helper/appearanceConfigV1';
 import { downloadBlob } from '../../helper/csv-util';
 import { pickValidAppearanceConfig } from '../../helper/customThemeConfig';
 import { loadMonacoEditor } from '../../helper/monacoEditor';
-import { useDefaultTheme } from '../../hooks/useDefaultTheme';
+import { usePreviewThemeConfig } from '../../hooks/usePreviewThemeConfig';
 import { useThemeMode } from '../../hooks/useThemeMode';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { useTheme } from '@lablup/ui-common/theme';
 import type { Monaco } from '@monaco-editor/react';
 import {
-  BAISkeleton,
   BAIFlex,
   BAIModal,
   BAIModalProps,
+  BAISkeleton,
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -44,14 +45,23 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
   const { token } = useTheme();
   const { message } = App.useApp();
   const { isDarkMode } = useThemeMode();
-  const { defaultTheme, setDefaultTheme } = useDefaultTheme();
+  const { themeConfig, setPreviewThemeConfig } = usePreviewThemeConfig();
   const { logger } = useBAILogger();
 
   const [editorValue, setEditorValue] = useState(
-    JSON.stringify(defaultTheme ?? {}, null, 2) ?? '',
+    JSON.stringify(themeConfig ?? {}, null, 2) ?? '',
   );
   const monacoRef = useRef<Monaco | null>(null);
   const jsonFileInputRef = useRef<HTMLInputElement>(null);
+
+  // Warnings (e.g. a deprecated key) are advisory; only errors block a draft.
+  const hasSchemaErrors = () => {
+    const monaco = monacoRef.current;
+    return _.some(
+      monaco?.editor.getModelMarkers({}),
+      (marker) => marker.severity === monaco?.MarkerSeverity.Error,
+    );
+  };
 
   const skeletonWithPadding = (
     <div
@@ -101,7 +111,13 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
 
                 try {
                   const parsed = JSON.parse(content);
-                  setEditorValue(JSON.stringify(parsed, null, 2));
+                  // An operator's pre-FR-3605 theme.json arrives in the v1
+                  // shape; it is converted rather than left to fail the schema.
+                  const migrated = migrateV1AppearanceConfig(parsed);
+                  setEditorValue(JSON.stringify(migrated ?? parsed, null, 2));
+                  if (migrated) {
+                    message.info(t('theme.ConvertedV1ThemeConfig'));
+                  }
                 } catch (error) {
                   // Invalid JSON format - still load content into editor for user to fix
                   setEditorValue(content);
@@ -119,14 +135,12 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
               icon={<ExternalLink size="1em" />}
               label={t('theme.button.ExportToJson')}
               clickAction={async () => {
-                const markers =
-                  await monacoRef.current?.editor.getModelMarkers();
-                if (_.isEmpty(defaultTheme)) {
+                if (_.isEmpty(themeConfig)) {
                   message.error(t('userSettings.theme.NoChangesMade'));
-                } else if (markers && markers.length > 0) {
+                } else if (hasSchemaErrors()) {
                   message.error(t('theme.CannotApplyInvalidJsonConfig'));
                 } else {
-                  // should export current value not the defaultTheme state
+                  // Export the editor value, not the stored document.
                   let parsedValue;
                   try {
                     parsedValue = JSON.parse(editorValue);
@@ -154,17 +168,23 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
               variant="primary"
               label={t('button.OK')}
               clickAction={async () => {
-                const markers =
-                  await monacoRef.current?.editor.getModelMarkers();
-                if (markers && markers.length > 0) {
-                  message.error(t('theme.CannotApplyInvalidJsonConfig'));
-                  return;
-                }
                 let parsedValue;
                 try {
                   parsedValue = JSON.parse(editorValue);
                 } catch (error) {
                   logger.warn('Invalid JSON format in theme config', error);
+                  message.error(t('theme.CannotApplyInvalidJsonConfig'));
+                  return;
+                }
+                // A pasted v1 document is only converted here; the next OK runs
+                // the converted draft through the v2 gate below.
+                const migrated = migrateV1AppearanceConfig(parsedValue);
+                if (migrated) {
+                  setEditorValue(JSON.stringify(migrated, null, 2));
+                  message.info(t('theme.ConvertedV1ThemeConfig'));
+                  return;
+                }
+                if (hasSchemaErrors()) {
                   message.error(t('theme.CannotApplyInvalidJsonConfig'));
                   return;
                 }
@@ -178,7 +198,7 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
                   message.error(t('theme.CannotApplyInvalidJsonConfig'));
                   return;
                 }
-                setDefaultTheme(validated);
+                setPreviewThemeConfig(validated);
                 message.success(t('theme.JsonConfigAppliedSuccessfully'));
                 onRequestClose();
               }}
@@ -201,6 +221,7 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
       {/* antd `banner` (full-width, no radius) -> Banner `container="section"`.
           `title` is unconditionally required (ground-truth .d.ts). */}
       <Banner
+        role="status"
         container="section"
         status="info"
         title={t('theme.ThemeJsonConfigurationDesc')}

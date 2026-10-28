@@ -23,11 +23,11 @@
 import AstryxAdminTheme from '../astryx-theme/AstryxAdminTheme';
 import AstryxBrandTheme from '../astryx-theme/AstryxBrandTheme';
 import AstryxSecondaryTheme from '../astryx-theme/AstryxSecondaryTheme';
-import { Button as AstryxButton } from '@astryxdesign/core/Button';
-import { Card as AstryxCard } from '@astryxdesign/core/Card';
-import { VStack } from '@astryxdesign/core/Layout';
-import { Text } from '@astryxdesign/core/Text';
-import { colorVars, spacingVars } from '@astryxdesign/core/theme/tokens.stylex';
+import { Button as AstryxButton } from '@lablup/ui-common/Button';
+import { Card as AstryxCard } from '@lablup/ui-common/Card';
+import { VStack } from '@lablup/ui-common/Layout';
+import { Text } from '@lablup/ui-common/Text';
+import { colorVars, spacingVars } from '@lablup/ui-common/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
 import { BAICard } from 'backend.ai-ui';
 import { useState } from 'react';

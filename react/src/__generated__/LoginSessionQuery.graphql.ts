@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<27c7f5a1b4759ab59e3d9f793bf3f457>>
+ * @generated SignedSource<<9bdf7ddf2753336d0397b3321b9afb4f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -241,6 +241,13 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
+                    "name": "fieldId",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "accessKey",
                     "storageKey": null
                   },
@@ -249,6 +256,13 @@ return {
                     "args": null,
                     "kind": "ScalarField",
                     "name": "createdAt",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "lastAccessedAt",
                     "storageKey": null
                   },
                   {
@@ -293,12 +307,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3e0d75c6f9a233d90ba58b2e40228b66",
+    "cacheID": "1c704fcef9d7a9afcbae7386d3c52610",
     "id": null,
     "metadata": {},
     "name": "LoginSessionQuery",
     "operationKind": "query",
-    "text": "query LoginSessionQuery(\n  $filter: LoginSessionFilter\n  $orderBy: [LoginSessionOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  myLoginSessionsV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAILoginSessionTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAILoginSessionTableFragment on LoginSessionV2 {\n  id\n  accessKey\n  createdAt\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n"
+    "text": "query LoginSessionQuery(\n  $filter: LoginSessionFilter\n  $orderBy: [LoginSessionOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  myLoginSessionsV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAILoginSessionTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAILoginSessionTableFragment on LoginSessionV2 {\n  id\n  fieldId\n  accessKey\n  createdAt\n  lastAccessedAt\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n"
   }
 };
 })();

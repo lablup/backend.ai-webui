@@ -3,34 +3,29 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { Form } from '../form-engine';
-import { useSuspendedBackendaiClient } from '../hooks';
 import {
-  RuntimeVariantPresetDef,
   RuntimeParameterGroup,
+  RuntimeVariantPresetDef,
   RuntimeVariantPresetValueEntry,
   useRuntimeParameterSchema,
 } from '../hooks/useRuntimeParameterSchema';
 import InputNumberWithSlider from './InputNumberWithSlider';
-import {
-  AstryxFormCheckbox,
-  AstryxFormNumberInput,
-  AstryxFormSelector,
-  AstryxFormTextInput,
-} from './astryxFormControls';
 import './collapsible-section.css';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Collapsible } from '@astryxdesign/core/Collapsible';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Tab, TabList } from '@astryxdesign/core/TabList';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
-import { spacingVars } from '@astryxdesign/core/theme/tokens.stylex';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Collapsible } from '@lablup/ui-common/Collapsible';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Tab, TabList } from '@lablup/ui-common/TabList';
+import { useTheme } from '@lablup/ui-common/theme';
+import { spacingVars } from '@lablup/ui-common/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
 import {
   BAIFlex,
-  isValueTypeCompatibleWithUIType,
   READ_UI_TYPE_TO_FORM_UI_TYPE,
-  toLocalId,
+  isValueTypeCompatibleWithUIType,
+  BAICheckboxInput,
+  BAINumberInput,
+  BAISelector,
+  BAITextInput,
 } from 'backend.ai-ui';
 import { Undo2 } from 'lucide-react';
 import React, { useEffect, useEffectEvent, useState } from 'react';
@@ -127,10 +122,6 @@ const RuntimeParameterFormSection: React.FC<
   'use memo';
   const { t } = useTranslation();
   const form = Form.useFormInstance();
-  const baiClient = useSuspendedBackendaiClient();
-  const supportsRequiredField = baiClient.supports(
-    'runtime-variant-preset-required',
-  );
   const groups = useRuntimeParameterSchema(runtimeVariant);
 
   // Notify parent when groups change (for serialization at submit time)
@@ -165,15 +156,12 @@ const RuntimeParameterFormSection: React.FC<
     if (!groups) return;
 
     if (initialPresetValues && initialPresetValues.length > 0) {
-      // Map preset id → preset definition so queried `{ presetId, value }`
-      // entries can hydrate the controls. Accept either the local UUID or the
-      // Relay global id, since the source of the id can vary across call sites.
+      // Map preset UUID → preset definition so queried `{ presetId, value }`
+      // entries can hydrate the controls.
       const idToParam = new Map<string, RuntimeVariantPresetDef>();
       for (const group of groups) {
         for (const param of group.params) {
-          idToParam.set(param.id, param);
-          const localId = toLocalId(param.id);
-          if (localId) idToParam.set(localId, param);
+          idToParam.set(param.entityId, param);
         }
       }
 
@@ -251,12 +239,7 @@ const RuntimeParameterFormSection: React.FC<
       defaultIsOpen
       trigger={
         <BAIFlex justify="between" align="center" style={{ flex: 1 }}>
-          <span>
-            {t('modelService.RuntimeParamTitle')}{' '}
-            {!supportsRequiredField && (
-              <Text color="secondary">({t('general.Optional')})</Text>
-            )}
-          </span>
+          <span>{t('modelService.RuntimeParamTitle')}</span>
           {/* MAPPING 3.3: an icon-only button whose accessible name was an
               ad-hoc `aria-label` is an `IconButton`, which requires `label`
               and renders the tooltip itself -- so the Tooltip wrapper goes.
@@ -278,6 +261,7 @@ const RuntimeParameterFormSection: React.FC<
     >
       {/* `type` -> `status`; `showIcon` dropped (Banner always shows it). */}
       <Banner
+        role="alert"
         status="warning"
         title={t('modelService.RuntimeParamUnchangedHint')}
       />
@@ -360,10 +344,6 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
-  const baiClient = useSuspendedBackendaiClient();
-  const supportsRequired = baiClient.supports(
-    'runtime-variant-preset-required',
-  );
 
   const label = param.displayName ?? param.name;
   const tooltip = param.description ?? undefined;
@@ -375,21 +355,14 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
 
   // Defaults are shown as placeholders (not seeded into form state), so a
   // required preset always demands an explicit user value before submit.
-  const isRequired = supportsRequired && param.required;
+  const isRequired = param.required;
   const requiredRules = isRequired
     ? [{ required: true, message: t('general.ValueRequired', { name: label }) }]
     : undefined;
   const defaultPlaceholder = param.defaultValue ?? undefined;
 
-  // The "user has touched this field" hook.
-  //
-  // Under antd the mark rode on each control's own `onChange`. The Astryx
-  // form-control ADAPTERS own that slot (they normalise `onChange` to receive
-  // the value), and only two of them expose an `onValueChange` escape hatch.
-  // Rather than fork the shared adapters, the mark moves one level up to the
-  // `Form.Item` itself: `getValueFromEvent` runs on exactly the same events,
-  // passes the value through untouched, and works uniformly for every control
-  // type -- including the ones with an escape hatch.
+  // The "user has touched this field" hook, on the `Form.Item` itself so it
+  // works the same for every control type.
   const touchOnChange = <T,>(value: T): T => {
     onTouch();
     return value;
@@ -435,6 +408,7 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
             min={min}
             max={max}
             step={step}
+            allowClear={!isRequired}
             onChange={onTouch}
             inputContainerMinWidth={190}
             inputNumberProps={{ placeholder: defaultPlaceholder }}
@@ -481,14 +455,11 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
           rules={[...(requiredRules ?? []), ...rangeRules]}
           getValueFromEvent={touchOnChange}
         >
-          {/* MAPPING 3.17: `InputNumber` -> `NumberInput`; `style.width:
-              '100%'` becomes the adapter's `width` (its default). `min`/`max`
-              are deliberately NOT passed to the adapter — it clamps, and the
-              point of `rangeRules` is validation feedback instead of
-              clamping. The adapter still repairs a typed decimal on blur when
-              `isIntegerOnly`, which does not depend on the bounds. */}
-          <AstryxFormNumberInput
-            label={label}
+          {/* `min`/`max` are deliberately NOT passed: `NumberInput` clamps,
+              and `rangeRules` give validation feedback instead. */}
+          <BAINumberInput
+            width="100%"
+            aria-label={label}
             step={isInt ? 1 : 0.1}
             isIntegerOnly={isInt}
             placeholder={defaultPlaceholder}
@@ -510,8 +481,8 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
         >
           {/* MAPPING 3.1: a small static option list -> `Selector`;
               `allowClear` -> `hasClear`. */}
-          <AstryxFormSelector
-            label={label}
+          <BAISelector
+            aria-label={label}
             hasClear
             placeholder={
               param.choices?.items.find(
@@ -538,8 +509,7 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
           rules={requiredRules}
           getValueFromEvent={touchOnChange}
         >
-          {/* MAPPING 4: children -> the required `label` string. */}
-          <AstryxFormCheckbox label={t('general.Enable')} />
+          <BAICheckboxInput>{t('general.Enable')}</BAICheckboxInput>
         </Form.Item>
       );
 
@@ -555,8 +525,8 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
           rules={requiredRules}
           getValueFromEvent={touchOnChange}
         >
-          <AstryxFormTextInput
-            label={label}
+          <BAITextInput
+            aria-label={label}
             placeholder={
               defaultPlaceholder ?? param.text?.placeholder ?? undefined
             }

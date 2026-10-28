@@ -89,26 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "An unexpected error occurred. Please try again later or contact support if the problem persists."
   },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "Clear",
-    "KeepAsIs": "Keep as is",
-    "UndoChanges": "Undo changes"
-  },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "Action execution failed",
-    "ErrorOccurred": "Error Occurred"
-  },
-  "comp:BAIColorPicker": {
-    "Clear": "Clear",
-    "HexValue": "Hex value",
-    "NoColor": "No color",
-    "SelectColor": "Select color"
-  },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Clear Search options",
-    "NoResults": "No results",
-    "SearchOptions": "Search options"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Select Container Registry"
   },
@@ -128,14 +108,6 @@
     "Size": "Size",
     "SuccessFullyRemoved": "Successfully removed {{count}} versions.",
     "Version": "Version"
-  },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "Are you sure you want to delete?",
-    "AreYouSureToPermanentlyDeleteTarget": "Are you sure you want to permanently delete {{target}}?",
-    "CannotBeUndone": "This action cannot be undone.",
-    "DeleteItem": "Delete",
-    "DeleteNItems": "Delete {{count}} items",
-    "TypeToConfirm": "Type <token>{{confirmText}}</token> to confirm."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Created by"
@@ -174,11 +146,39 @@
   "comp:BAIDynamicUnitInputNumberWithSlider": {
     "Amount": "Amount"
   },
+  "comp:BAIEntityLabelBulkEditButton": {
+    "AddLabels": "Add labels"
+  },
+  "comp:BAIEntityLabelCell": {
+    "EditLabels": "Edit labels"
+  },
+  "comp:BAIEntityLabelSettingModal": {
+    "AddLabel": "Add label",
+    "AddLabelsToItems": "Add labels ({{count}} selected)",
+    "BulkDescription": "These labels are added to every selected item. An item that already has a key gets the new value; its other labels stay.",
+    "EditLabels": "Edit labels",
+    "Error": "Error",
+    "Key": "Key",
+    "KeyMustBeUnique": "Each key can be used only once.",
+    "KeyRequired": "Enter a key.",
+    "Label": "Label",
+    "LabelsSaved": "Labels saved.",
+    "RemoveLabel": "Remove label",
+    "Save": "Save",
+    "SomeLabelsFailed": "{{count}} label changes failed",
+    "Target": "Target",
+    "TooLong": "Use at most {{max}} characters.",
+    "Value": "Value",
+    "ValueRequired": "Enter a value."
+  },
+  "comp:BAIEntityLabelTokens": {
+    "Labels": "Labels"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Auto Refresh",
-    "EveryHours": "{{count}}h",
-    "EveryMinutes": "{{count}}m",
-    "EverySeconds": "{{count}}s",
+    "EveryHours": "{{count}} h",
+    "EveryMinutes": "{{count}} min",
+    "EverySeconds": "{{count}} s",
     "LastUpdated": "Last Updated",
     "Off": "Off",
     "Refresh": "Refresh"
@@ -281,7 +281,7 @@
   "comp:BAILoginSessionTable": {
     "AccessKey": "Access Key",
     "CreatedAt": "Created At",
-    "InvalidatedAt": "Invalidated At",
+    "LastAccessedAt": "Last Accessed",
     "User": "User"
   },
   "comp:BAIModal": {
@@ -319,7 +319,6 @@
     "RevisionNumber": "Revision",
     "RevisionNumberTooltip": "The current revision number of the deployment.",
     "StrategyType": "Strategy",
-    "Tags": "Tags",
     "UpdatedAt": "Updated At"
   },
   "comp:BAINameActionCell": {
@@ -347,7 +346,6 @@
     "ContainerRegistryForImageCommit": "Container Registry for Image Commit",
     "CreateProject": "Create Project",
     "Description": "Description",
-    "Domain": "Domain",
     "FailedToCreateProject": "Failed to create a project",
     "FailedToUpdateProject": "Failed to update a project",
     "IsActive": "Is Active?",
@@ -416,11 +414,6 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Allocated / Requested"
-  },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "Change group color",
-    "ResourceGrid": "Resource grid",
-    "UseColorN": "Use color {{n}}"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Unlimited"
@@ -564,6 +557,9 @@
     "To": "To Status",
     "UpdatedAt": "Updated At"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Select Folder"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agent"
   },
@@ -571,8 +567,26 @@
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Single"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "Unlimited"
+  "comp:BAISessionScene": {
+    "FoundCount": "{{count}} found",
+    "Hero": "Yours",
+    "Measuring": "Measuring",
+    "ResourceShare": "Resource share",
+    "ShowAll": "Show all",
+    "Utilization": "Utilization",
+    "mood": {
+      "Idle": "Idle",
+      "Leaving": "Terminating",
+      "Overheated": "Overheated",
+      "Waiting": "Waiting for resources",
+      "Working": "Working"
+    }
+  },
+  "comp:BAISessionTypeToken": {
+    "Batch": "Batch",
+    "Inference": "Inference",
+    "Interactive": "Interactive",
+    "System": "Upload"
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Select Storage Host"
@@ -590,28 +604,13 @@
     "Time": "Time"
   },
   "comp:BAITable": {
-    "Apply": "Apply",
-    "Cancel": "Cancel",
     "CollapseAll": "Collapse all",
     "ExpandAll": "Expand all",
     "ExpandErrorsOnly": "Expand errors only",
-    "ExpandOptions": "Expand options",
-    "ExpandRow": "Expand row",
-    "Export": "Export",
-    "ExportCSV": "Export CSV",
-    "GoToFirstPage": "Go to first page",
-    "InvalidPageNumber": "Invalid page number",
-    "NoDataToDisplay": "No data to display",
-    "Pagination": "Pagination",
-    "SearchTableColumn": "Search table columns",
-    "SelectColumnToDisplay": "Select columns to display",
-    "SettingTable": "Table Settings"
+    "ExpandOptions": "Expand options"
   },
   "comp:BAITestButton": {
     "Test": "Test"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "and {{rest}} more"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Created At",
@@ -634,8 +633,6 @@
     "CreateFolder": "Create a new storage folder",
     "DestinationPath": "Container path (destination)",
     "Folders": "Folders",
-    "OwnerProject": "Project",
-    "OwnerUser": "User",
     "PathAndAliasTooltip": "The path inside the container where the folder will be mounted. Leave empty to use the default path.",
     "Refresh": "Refresh",
     "RemoveFolder": "Remove",
@@ -703,9 +700,6 @@
       "FileNameRequired": "Please enter a file or folder name."
     }
   },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} of {{total}} items"
-  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "No resource data available"
   },
@@ -768,62 +762,18 @@
   "error": {
     "UnknownError": "An unknown error occurred. Please try again."
   },
-  "form": {
-    "Optional": "(optional)",
-    "validateMessages": {
-      "Default": "Field validation error for ${label}",
-      "Required": "Please enter ${label}",
-      "Whitespace": "${label} cannot be a blank character",
-      "array": {
-        "Len": "Must be ${len} ${label}",
-        "Max": "At most ${max} ${label}",
-        "Min": "At least ${min} ${label}",
-        "Range": "The amount of ${label} must be between ${min}-${max}"
-      },
-      "number": {
-        "Len": "${label} must be equal to ${len}",
-        "Max": "${label} must be maximum ${max}",
-        "Min": "${label} must be minimum ${min}",
-        "Range": "${label} must be between ${min}-${max}"
-      },
-      "pattern": {
-        "Mismatch": "${label} does not match the pattern ${pattern}"
-      },
-      "string": {
-        "Len": "${label} must be ${len} characters",
-        "Max": "${label} must be up to ${max} characters",
-        "Min": "${label} must be at least ${min} characters",
-        "Range": "${label} must be between ${min}-${max} characters"
-      },
-      "types": {
-        "Email": "${label} is not a valid ${type}",
-        "Number": "${label} is not a valid ${type}",
-        "Object": "${label} is not a valid ${type}",
-        "String": "${label} is not a valid ${type}",
-        "Url": "${label} is not a valid ${type}"
-      }
-    }
-  },
   "general": {
-    "Decrease": "Decrease",
-    "DeselectAll": "Deselect all",
     "File": "File",
-    "Increase": "Increase",
-    "Loading": "Loading...",
-    "NSelected": "{{count}} selected",
     "Optional": "Optional",
     "Project": "Project",
     "Search": "Search",
     "Select": "Select",
-    "SelectPlaceholder": "Select {{label}}",
-    "TotalItems": "Total {{total}} items",
     "Unit": "Unit",
     "button": {
       "Action": "Action",
       "Back": "Back",
       "Cancel": "Cancel",
       "Close": "Close",
-      "Collapse": "Collapse",
       "Confirm": "Confirm",
       "Copied": "Copied",
       "Copy": "Copy",
@@ -831,7 +781,6 @@
       "Create": "Create",
       "Delete": "Delete",
       "Edit": "Edit",
-      "Expand": "Expand",
       "Remove": "Remove",
       "Save": "Save",
       "Upload": "Upload"

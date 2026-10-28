@@ -139,14 +139,10 @@ test.describe('Basic Chat Flow', { tag: ['@chat', '@functional'] }, () => {
     await expect(page.getByText('Hello from mock!').first()).toBeVisible();
   });
 
-  test.fixme('User can stop a streaming response mid-generation', async ({
+  test('User can stop a streaming response mid-generation', async ({
     page,
     request,
   }) => {
-    // FIXME: The stop button never becomes visible because the mock SSE response
-    // completes synchronously before the Astryx ChatComposer can switch
-    // to the loading/stop state. A real slow streaming endpoint would be needed to
-    // test this behavior reliably.
     // Setup with a slow streaming response
     await loginAsAdmin(page, request);
     await page.evaluate(() => {
@@ -171,18 +167,41 @@ test.describe('Basic Chat Flow', { tag: ['@chat', '@functional'] }, () => {
       });
     });
 
-    // Slow chunked response — uses a delay between chunks to allow stop
-    await page.route('**/v1/chat/completions', async (route) => {
-      // Fulfill with a response body that streams slowly
-      const chunks =
-        `data: ${JSON.stringify({ id: 'chatcmpl-slow', object: 'chat.completion.chunk', choices: [{ delta: { content: 'Starting...' }, index: 0, finish_reason: null }] })}\n\n` +
-        `data: ${JSON.stringify({ id: 'chatcmpl-slow', object: 'chat.completion.chunk', choices: [{ delta: { content: ' still going...' }, index: 0, finish_reason: null }] })}\n\n`;
-      await route.fulfill({
-        status: 200,
-        contentType: 'text/event-stream',
-        body: chunks,
-        // Note: no [DONE] so streaming stays open until aborted
-      });
+    // route.fulfill delivers the whole body at once, so the stream would end
+    // before Stop renders. Patch fetch to stream one chunk and stay open until aborted.
+    await page.addInitScript(() => {
+      const originalFetch = window.fetch;
+      window.fetch = (input, init) => {
+        const url =
+          typeof input === 'string'
+            ? input
+            : input instanceof URL
+              ? input.href
+              : input.url;
+        if (!url.includes('/v1/chat/completions')) {
+          return originalFetch(input, init);
+        }
+        const signal = init?.signal;
+        const chunk = `data: ${JSON.stringify({ id: 'chatcmpl-slow', object: 'chat.completion.chunk', choices: [{ delta: { content: 'Starting...' }, index: 0, finish_reason: null }] })}\n\n`;
+        const body = new ReadableStream<Uint8Array>({
+          start(controller) {
+            controller.enqueue(new TextEncoder().encode(chunk));
+            const abort = () =>
+              controller.error(new DOMException('Aborted', 'AbortError'));
+            if (signal?.aborted) {
+              abort();
+            } else {
+              signal?.addEventListener('abort', abort, { once: true });
+            }
+          },
+        });
+        return Promise.resolve(
+          new Response(body, {
+            status: 200,
+            headers: { 'Content-Type': 'text/event-stream' },
+          }),
+        );
+      };
     });
 
     await navigateTo(page, 'chat');
@@ -198,6 +217,11 @@ test.describe('Basic Chat Flow', { tag: ['@chat', '@functional'] }, () => {
     await expect(
       page.getByText('Generate a long response.').first(),
     ).toBeVisible({ timeout: 10000 });
+
+    // The first chunk has rendered while the stream is still open
+    await expect(page.getByText('Starting...').first()).toBeVisible({
+      timeout: 15000,
+    });
 
     // Wait for streaming state to begin — a stop/cancel button should appear
     // The stop button is typically rendered while the response is streaming
@@ -641,14 +665,10 @@ test.describe(
       await expect(errorAlert).toContainText(/error/i);
     });
 
-    test.fixme('User sees an error alert when the endpoint URL is invalid', async ({
+    test('User sees an error alert when the endpoint URL is invalid', async ({
       page,
       request,
     }) => {
-      // FIXME: The error alert is not displayed even though ChatCardQuery returns url: null.
-      // The Relay store-or-network fetch policy appears to use cached endpoint data with
-      // a valid URL from a real backend response, bypassing the null URL mock. As a result,
-      // createBaseURL returns a valid URL and no .ant-alert-error is rendered.
       // Set up GraphQL mocks so ChatCardQuery returns url: null
       await loginAsAdmin(page, request);
       await page.evaluate(() => {
@@ -660,8 +680,19 @@ test.describe(
         ChatCardQuery: (vars) =>
           chatCardQueryNullUrlMockResponse(vars.deploymentId),
         DeploymentSelectQuery: () => deploymentSelectQueryMockResponse(),
-        DeploymentSelectValueQuery: (vars) =>
-          deploymentSelectValueQueryMockResponse(vars.deploymentId),
+        // Same `deployment(id:)` record as ChatCardQuery: a valid URL here
+        // would overwrite the mocked null URL in the Relay store.
+        DeploymentSelectValueQuery: (vars) => {
+          const response = deploymentSelectValueQueryMockResponse(
+            vars.deploymentId,
+          );
+          return {
+            deployment: {
+              ...response.deployment,
+              networkAccess: { endpointUrl: null },
+            },
+          };
+        },
         DeploymentTokenSelectQuery: (vars) =>
           deploymentTokenSelectQueryMockResponse(vars.deploymentId),
       });
@@ -677,17 +708,13 @@ test.describe(
       // Navigate to the chat page
       await navigateTo(page, 'chat');
 
-      // Wait for the chat card to render
-      await expect(page.getByLabel('Type your message here...')).toBeVisible({
-        timeout: 10000,
-      });
-
-      // An error alert should be visible when endpoint URL is null
-      // The component renders: <Alert title={t('error.InvalidBaseURL')} type="error" .../>
-      // which translates to "Endpoint URL is not valid."
-      await expect(page.locator('.ant-alert-error').first()).toBeVisible({
-        timeout: 10000,
-      });
+      // ChatCard renders `t('error.InvalidBaseURL')` as an Astryx error
+      // Banner (role="alert") when the deployment has no endpoint URL.
+      await expect(
+        page
+          .getByRole('alert')
+          .filter({ hasText: 'Endpoint URL is not valid.' }),
+      ).toBeVisible({ timeout: 15000 });
 
       // The text input should be disabled
       await expect(
@@ -697,15 +724,10 @@ test.describe(
       });
     });
 
-    test.fixme('User sees an error notification when model fetching fails', async ({
+    test('User sees an error notification when model fetching fails', async ({
       page,
       request,
     }) => {
-      // FIXME: The error notification is not shown on initial page load.
-      // ChatCard.tsx intentionally suppresses model fetch errors on the first load:
-      //   if (modelsError && fetchKey !== 'first') { appMessage.error(...) }
-      // Since fetchKey starts as 'first', any model fetch error on initial navigation
-      // is silently ignored. The notification only appears after a manual refresh trigger.
       // Setup base mocks
       await loginAsAdmin(page, request);
       await page.evaluate(() => {
@@ -734,27 +756,24 @@ test.describe(
       // Navigate to the chat page — model fetch happens on load
       await navigateTo(page, 'chat');
 
-      // Wait for page to load
-      await expect(page.getByLabel('Type your message here...')).toBeVisible({
-        timeout: 10000,
+      // ChatCard suppresses the notification for the first (on-load) fetch and
+      // shows CustomModelForm instead; its "Refresh Model Information" button
+      // refetches the models, and that failure raises the notification.
+      const refreshButton = page.getByRole('button', {
+        name: 'Refresh Model Information',
       });
+      await expect(refreshButton).toBeVisible({ timeout: 15000 });
+      await refreshButton.click();
 
-      // An error surfaces via either the (unmigrated) antd message toast or
-      // the BAINotificationStack (to-astryx ticket 29 rewire — error notices
-      // carry `data-status="error"` on their item root).
+      // `appMessage.error` is an Astryx toast: "Error fetching models: <reason>".
       await expect(
-        page
-          .locator('.ant-message-error')
-          .or(
-            page.locator(
-              '[data-testid="bai-notification-stack"] [data-status="error"]',
-            ),
-          )
-          .first(),
+        page.getByText(/^Error fetching models: /).first(),
       ).toBeVisible({ timeout: 15000 });
 
-      // The chat card is still rendered (no crash)
-      await expect(page.getByLabel('Type your message here...')).toBeVisible();
+      // The chat card is still rendered (no crash); the composer stays
+      // disabled, which renders it hidden, so check it is still attached.
+      await expect(refreshButton).toBeVisible();
+      await expect(page.getByLabel('Type your message here...')).toBeAttached();
     });
   },
 );

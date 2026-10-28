@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import BAICodeEditor from './BAICodeEditor';
-import { Banner } from '@astryxdesign/core/Banner';
+import { Banner } from '@lablup/ui-common/Banner';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -47,7 +47,11 @@ const BAIJSONViewerModal: React.FC<BAIJSONViewerModalProps> = ({
           // antd `Alert type="warning" showIcon` -> Astryx `Banner
           // status="warning"`; `showIcon` is dropped (Banner always shows the
           // status icon — MAPPING §4).
-          <Banner status="warning" title={t('general.InvalidJSONFormat')} />
+          <Banner
+            role="alert"
+            status="warning"
+            title={t('general.InvalidJSONFormat')}
+          />
         )}
         {description}
         <BAICodeEditor

@@ -15,7 +15,7 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 เมื่อคุณเปิดดรอปดาวน์โปรเจกต์ในส่วนหัว โปรเจกต์ที่คุณมีบทบาทผู้ดูแลโปรเจกต์จะมีตราสัญลักษณ์รูปโล่ปรากฏข้างชื่อโปรเจกต์ การวางเคอร์เซอร์เหนือตราสัญลักษณ์จะแสดงคำแนะนำ **ผู้ดูแลโปรเจกต์** ซึ่งยืนยันว่าการเลือกโปรเจกต์นี้จะเปิดเผยรายการในแถบด้านข้างสำหรับผู้ดูแลโปรเจกต์ตามที่อธิบายไว้ด้านล่าง
 
 ![=266px](../images/header_project_selector_with_admin_badge.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 การสลับไปยังโปรเจกต์อื่นจากตัวเลือกโปรเจกต์ในส่วนหัวจะประเมินบทบาทของผู้ใช้ใหม่ ผู้ใช้คนเดียวกันอาจทำหน้าที่เป็นผู้ดูแลโปรเจกต์ในโปรเจกต์หนึ่งและเป็นผู้ใช้ทั่วไปในอีกโปรเจกต์หนึ่งภายในเซสชันการเข้าสู่ระบบเดียวกันได้ สำหรับวิธีการมอบและเพิกถอนบทบาทผู้ดูแลโปรเจกต์ ดูที่ส่วน[การมอบสิทธิ์ผู้ดูแลโปรเจกต์](#grant-project-admin)ในบทการจัดการ RBAC
 
@@ -60,7 +60,7 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 
 ## แถบด้านข้างของผู้ดูแลโปรเจกต์
 
-เมื่อคุณเลือกโปรเจกต์ที่คุณเป็นผู้ดูแลโปรเจกต์ ส่วน **การดำเนินงาน** ของแถบด้านข้างจะแสดงรายการสี่รายการที่อุทิศให้กับการจัดการโปรเจกต์นั้น:
+เมื่อคุณเลือกโปรเจกต์ที่คุณเป็นผู้ดูแลโปรเจกต์ แถบด้านข้างจะแสดงรายการ **การตั้งค่าโปรเจกต์** เมื่อเลือกรายการนี้ แถบด้านข้างจะเปลี่ยนเป็นเมนูการจัดการโปรเจกต์ ซึ่งส่วน **การดำเนินงาน** จะแสดงรายการสี่รายการที่อุทิศให้กับการจัดการโปรเจกต์นั้น:
 
 - **ผู้ใช้** — สมาชิกของโปรเจกต์ปัจจุบัน
 - **ข้อมูล** — โฟลเดอร์จัดเก็บที่โปรเจกต์ปัจจุบันเป็นเจ้าของ
@@ -68,12 +68,12 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 - **การปรับใช้** — การปรับใช้โมเดลที่โปรเจกต์ปัจจุบันเป็นเจ้าของ
 
 ![=240px](../images/project_admin_sidebar.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 ในหน้าผู้ดูแลโปรเจกต์ จะแสดงเฉพาะรายการภายใต้โปรเจกต์ที่เลือกด้วยตัวเลือกโปรเจกต์ที่ด้านบนเท่านั้น คุณสามารถตรวจสอบเนื้อหานี้ได้จากแบนเนอร์ที่ด้านบนของหน้า
 
 ![](../images/project_admin_scope_alert.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 <a id="refreshing-project-admin-pages"></a>
 
@@ -84,7 +84,7 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 ปุ่มดรอปดาวน์ที่อยู่ข้างปุ่มรีเฟรชจะเปิดเมนู **รีเฟรชอัตโนมัติ** ซึ่งคุณสามารถเลือกช่วงเวลาการรีเฟรชอัตโนมัติได้
 
 ![=88px](../images/project_admin_auto_refresh_menu.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 <a id="users"></a>
 
@@ -93,7 +93,7 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 หน้า **ผู้ใช้** แสดงผู้ใช้ทุกคนที่เป็นสมาชิกของโปรเจกต์ที่เลือกอยู่ในปัจจุบัน ใช้หน้านี้เพื่อตรวจสอบสมาชิกในโปรเจกต์ได้อย่างรวดเร็ว ตัวอย่างเช่น เพื่อยืนยันว่าใครมีสิทธิ์เข้าถึงทรัพยากรของโปรเจกต์ หรือเพื่อระบุบัญชีที่ไม่ได้ใช้งาน
 
 ![](../images/project_admin_users_page.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 หน้านี้มีตัวควบคุมต่อไปนี้:
 
@@ -109,7 +109,7 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 หน้า **ข้อมูล** แสดงโฟลเดอร์จัดเก็บ (vfolder) ที่โปรเจกต์ที่เลือกอยู่ในปัจจุบันเป็นเจ้าของ ใช้หน้านี้เพื่อสร้างโฟลเดอร์ที่แชร์ในโปรเจกต์ คืนค่าโฟลเดอร์ที่ถูกลบโดยไม่ตั้งใจ หรือล้างโฟลเดอร์ที่ไม่จำเป็นต้องเก็บไว้อีกต่อไปอย่างถาวร
 
 ![](../images/project_admin_data_page.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 หน้านี้มีตัวควบคุมต่อไปนี้:
 
@@ -120,6 +120,8 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 
 - **ตัวกรองคุณสมบัติ**: กรองรายการโดยใช้ตัวกรองคุณสมบัติโฟลเดอร์จัดเก็บมาตรฐาน
 
+ใช้การดำเนินการ **แก้ไขป้ายกำกับ** ของโฟลเดอร์เพื่อกำหนดป้ายกำกับแบบคีย์-ค่าให้โฟลเดอร์นั้น หรือเลือกหลายโฟลเดอร์แล้วคลิก **เพิ่มป้ายกำกับ** เพื่อกำหนดป้ายกำกับพร้อมกัน
+
 ### การสร้างโฟลเดอร์
 
 ในการสร้างโฟลเดอร์ใหม่จากหน้านี้:
@@ -129,7 +131,7 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 3. คลิก **สร้าง** เพื่อสร้างโฟลเดอร์
 
 ![=650px](../images/project_admin_create_folder_modal.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 :::info
 โฟลเดอร์ที่สร้างจากหน้าข้อมูลของผู้ดูแลโปรเจกต์จะเป็น**โฟลเดอร์โปรเจกต์**เสมอ โมดอลการสร้างไม่มีตัวเลือกประเภทโฟลเดอร์ และจะแสดงข้อความต่อไปนี้เพื่อระบุสิ่งนี้อย่างชัดเจน:
@@ -147,7 +149,7 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 - **ลบถาวร**: ล้างโฟลเดอร์ที่เลือกอย่างถาวร การดำเนินการนี้ไม่สามารถยกเลิกได้ และต้องการให้คุณพิมพ์ชื่อโฟลเดอร์เพื่อยืนยัน
 
 ![](../images/project_admin_data_deleted_tab.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 :::danger
 การลบโฟลเดอร์จัดเก็บอย่างถาวรจะลบเนื้อหาทั้งหมดและไม่สามารถยกเลิกได้ โมดอลยืนยันต้องการให้คุณพิมพ์ชื่อโฟลเดอร์ก่อนที่ปุ่มลบจะใช้งานได้
@@ -160,12 +162,14 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 หน้า **เซสชัน** แสดงเซสชันการคำนวณที่ผู้ใช้ในโปรเจกต์ที่เลือกอยู่ในปัจจุบันเป็นเจ้าของ ใช้หน้านี้เพื่อเฝ้าติดตามภาระงานที่ใช้งานอยู่ ระบุเซสชันที่ทำงานเป็นเวลานาน หรือยุติเซสชันที่ไม่จำเป็นอีกต่อไป
 
 ![](../images/project_admin_sessions_page.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 หน้านี้มีตัวควบคุมต่อไปนี้:
 
 - ตัวควบคุมแบบแบ่งส่วน **กำลังทำงาน / สิ้นสุดแล้ว**: สลับระหว่างเซสชันที่กำลังทำงานในปัจจุบันและเซสชันที่สิ้นสุดแล้ว
 - **ตัวกรองคุณสมบัติและการจัดเรียง**: กรองรายการตาม ID, ชื่อเซสชัน หรือเจ้าของ ค่าเจ้าของจะเลือกจากรายการบัญชีผู้ใช้ที่ค้นหาได้แทนการพิมพ์ UUID และแท็กตัวกรองที่ได้จะแสดงอีเมลของบัญชีนั้น คลิกที่ส่วนหัวคอลัมน์ที่สามารถจัดเรียงได้เพื่อจัดเรียงตาราง
+
+เซสชันรองรับป้ายกำกับแบบคีย์-ค่าเช่นกัน ใช้การดำเนินการ **แก้ไขป้ายกำกับ** ของเซสชัน หรือเลือกหลายเซสชันแล้วคลิก **เพิ่มป้ายกำกับ** เพื่อกำหนดป้ายกำกับพร้อมกัน
 
 ### การยุติเซสชัน
 
@@ -178,7 +182,7 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 5. คลิกปุ่มยืนยันเพื่อยุติเซสชัน
 
 ![=520px](../images/project_admin_terminate_session_modal.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 :::warning
 ใช้ **บังคับยุติ** เฉพาะเมื่อเซสชันค้างและสถานะไม่เปลี่ยนแปลงเป็นระยะเวลานานเกินไปเท่านั้น การบังคับยุติจะไม่ลบคอนเทนเนอร์จริงบนเอเจนต์ ดังนั้นอาจต้องทำความสะอาดด้วยตนเองในภายหลัง
@@ -195,12 +199,12 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 หน้า **การปรับใช้** แสดงการปรับใช้โมเดลที่โปรเจกต์ที่เลือกอยู่ในปัจจุบันเป็นเจ้าของ ใช้หน้านี้เพื่อดูแลปลายทางการอนุมาน แก้ไขการตั้งค่าการปรับใช้ หรือลบการปรับใช้ที่ไม่ใช้งานแล้ว
 
 ![](../images/project_admin_deployments_page.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 หน้านี้มีตัวควบคุมต่อไปนี้:
 
 - ตัวควบคุมแบบแบ่งส่วน **กำลังทำงาน / สิ้นสุดแล้ว**: สลับระหว่างการปรับใช้ที่กำลังทำงานในปัจจุบันและการปรับใช้ที่สิ้นสุดแล้ว
-- **ตัวกรองคุณสมบัติ**: กรองรายการตามชื่อ, แท็ก, URL ปลายทาง หรือการเปิดเป็นสาธารณะ
+- **ตัวกรองคุณสมบัติ**: กรองรายการตามชื่อ, URL ปลายทาง หรือการเปิดเป็นสาธารณะ
 
 ตารางแสดงคอลัมน์ชื่อ, รีวิชัน, วงจรชีวิต, เรพลิกา, โมเดล, เจ้าของ และวันที่สร้างของการปรับใช้ พร้อมด้วยโดเมน, โปรเจกต์ และกลุ่มทรัพยากรของการปรับใช้ตามความเหมาะสม
 
@@ -213,9 +217,10 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 - คลิก**ชื่อการปรับใช้**เพื่อไปยังหน้ารายละเอียดการปรับใช้ภายในขอบเขตของผู้ดูแลโปรเจกต์
 - คลิก**หมายเลขรีวิชัน** (`#N`) เพื่อเปิดแผงรายละเอียดของรีวิชันปัจจุบัน
 - คลิก**ไอคอนดินสอ**เพื่อแก้ไขการกำหนดค่าของการปรับใช้ในโมดอลการตั้งค่า
+- ใช้การดำเนินการ **แก้ไขป้ายกำกับ** เพื่อเพิ่ม เปลี่ยน หรือลบป้ายกำกับแบบคีย์-ค่าของการปรับใช้
 - คลิก**ไอคอนถังขยะ**เพื่อลบการปรับใช้ โมดอลยืนยันต้องการให้คุณพิมพ์ชื่อการปรับใช้ก่อนจึงจะดำเนินการลบ
 
 ![](../images/project_admin_deployment_detail.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 สำหรับรายละเอียดเกี่ยวกับรีวิชัน, เรพลิกา และการกำหนดเส้นทางทราฟฟิกของการปรับใช้ ดูที่บท[การปรับใช้](#model-serving)
