@@ -264,19 +264,13 @@ function processConfig(config: RawTomlConfig): {
     proxyUrl = config.wsproxy.proxyURL ?? '';
   }
 
-  // Login plugin
-  let loginPlugin = '';
-  if (config.plugin !== undefined && 'login' in config.plugin) {
-    loginPlugin = config.plugin.login ?? '';
-  }
-
   // Derive the full LoginConfigState from the raw config
   const loginConfig = refreshConfigFromToml(config);
 
   return {
     autoLogout: resolveAutoLogout(loginConfig),
     proxyUrl,
-    loginPlugin,
+    loginPlugin: loginConfig.loginPlugin,
     loginConfig,
   };
 }
@@ -341,9 +335,7 @@ export function initializeConfigOnce(
 
       store.set(rawConfigState, result.config);
 
-      const { proxyUrl, loginPlugin, loginConfig } = processConfig(
-        result.config,
-      );
+      const { proxyUrl, loginConfig } = processConfig(result.config);
 
       // The domain's public `settings` slice overrides the file for the keys
       // the login page needs before sign-in (#10436); the file is the
@@ -360,7 +352,7 @@ export function initializeConfigOnce(
       store.set(loginConfigState, effectiveLoginConfig);
       store.set(autoLogoutState, resolveAutoLogout(effectiveLoginConfig));
       store.set(proxyUrlState, proxyUrl);
-      store.set(loginPluginState, loginPlugin);
+      store.set(loginPluginState, effectiveLoginConfig.loginPlugin);
 
       store.set(configLoadedState, true);
     })().catch((error) => {

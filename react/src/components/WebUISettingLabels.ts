@@ -55,6 +55,14 @@ export const useWebUISettingLabels = (): {
         title: t('webuiSettings.AutoLogout'),
         description: t('webuiSettings.DescAutoLogout'),
       },
+      pluginLogin: {
+        title: t('webuiSettings.PluginLogin'),
+        description: t('webuiSettings.DescPluginLogin'),
+      },
+      pluginPage: {
+        title: t('webuiSettings.PluginPage'),
+        description: t('webuiSettings.DescPluginPage'),
+      },
       debug: {
         title: t('webuiSettings.Debug'),
         description: t('webuiSettings.DescDebug'),
@@ -246,6 +254,7 @@ export const useWebUISettingLabels = (): {
       downloads: t('webuiSettings.group.Downloads'),
       account: t('webuiSettings.group.Account'),
       diagnostics: t('webuiSettings.group.Diagnostics'),
+      plugins: t('webuiSettings.group.Plugins'),
     },
   };
 };
