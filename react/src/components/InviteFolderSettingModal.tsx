@@ -31,7 +31,6 @@ import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIBadge,
   BAIButton,
-  BAICard,
   BAIEntitySharePermissionSelector,
   type BAIEntitySharePermissionBit,
   type BAIEntitySharePermissionPreset,
@@ -299,7 +298,7 @@ const InviteFolderSettingModalBody: React.FC<{
   return (
     <VStack gap={6} align="stretch">
       <Suspense fallback={<BAISkeleton />}>
-        <FolderSharingSettingsCard
+        <FolderInfoSection
           folderName={folderName}
           defaultMountLevel={defaultMountLevel}
           ownerUserId={ownerUserId}
@@ -409,10 +408,10 @@ const InviteFolderSettingModalBody: React.FC<{
   );
 };
 
-// The folder-level sharing settings: what the folder is and how a shared user
-// mounts it by default. Editing is for the owner, a superadmin or an admin of
-// the owning project; domain admins have no per-project ownership rights.
-const FolderSharingSettingsCard: React.FC<{
+// The folder's own info: its name and how a shared user mounts it by default.
+// Editing is for the owner, a superadmin or an admin of the owning project;
+// domain admins have no per-project ownership rights.
+const FolderInfoSection: React.FC<{
   folderName: string;
   defaultMountLevel: MountLevel;
   ownerUserId: string | null;
@@ -437,23 +436,20 @@ const FolderSharingSettingsCard: React.FC<{
     (!!ownerProjectId && projectAdminIds.includes(ownerProjectId));
 
   return (
-    <BAICard
-      size="small"
-      title={t('data.folders.FolderSharingSettings')}
-      extra={
-        canEdit ? (
+    <VStack gap={3} align="stretch">
+      <HStack justify="between" align="center">
+        <Heading level={5}>{t('data.FolderInfo')}</Heading>
+        {canEdit && (
           <Button
             variant="secondary"
-            size="sm"
             icon={<PencilIcon size="1em" />}
             label={t('button.Edit')}
             onClick={onEdit}
             data-testid="edit-default-mount-permission"
           />
-        ) : undefined
-      }
-    >
-      <BAIMetadataList columns="single">
+        )}
+      </HStack>
+      <BAIMetadataList columns={2} bordered size="small">
         <BAIMetadataListItem label={t('data.folders.Name')}>
           {folderName}
         </BAIMetadataListItem>
@@ -472,7 +468,7 @@ const FolderSharingSettingsCard: React.FC<{
           </BAIText>
         </BAIMetadataListItem>
       </BAIMetadataList>
-    </BAICard>
+    </VStack>
   );
 };
 

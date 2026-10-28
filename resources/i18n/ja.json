@@ -1002,7 +1002,6 @@
       "FolderRenamed": "フォルダの名前が変更されました",
       "FolderRestored": "{{ folderName }} フォルダが復元されました。",
       "FolderSharePermission": "フォルダ共有権限",
-      "FolderSharingSettings": "フォルダ共有設定",
       "FolderUpdated": "フォルダオプションが更新されました",
       "FolderUsage": "フォルダ使用量",
       "FolderUsing": "使用量",
