@@ -14031,7 +14031,7 @@ type Mutation
   """
   Added in 26.2.0. Update fair share configuration for a resource group (admin only). Only provided fields are updated; others retain their existing values. Resource weights are validated against capacity - only resource types available in the scaling group's capacity can be specified.
   """
-  adminUpdateResourceGroupFairShareSpec(input: UpdateResourceGroupFairShareSpecInput!): UpdateResourceGroupFairShareSpecPayload @join__field(graph: STRAWBERRY)
+  adminUpdateResourceGroupFairShareSpec(input: UpdateResourceGroupFairShareSpecInput!): UpdateResourceGroupFairShareSpecPayload @join__field(graph: STRAWBERRY) @deprecated(reason: "Deprecated since 26.10.0. Use `updateResourceGroupFairShareSpec`.")
 
   """
   Added in 26.2.0. Update resource group configuration (admin only). Only provided fields are updated; others retain their existing values. Supports all configuration fields except fair_share (use separate mutation).
@@ -14075,9 +14075,9 @@ type Mutation
   replaceResourceGroupDefaultSessionOptions(input: ReplaceResourceGroupDefaultSessionOptionsInput!): ReplaceResourceGroupDefaultSessionOptionsPayload @join__field(graph: STRAWBERRY)
 
   """
-  Added in 26.2.0. Update fair share configuration for a resource group (superadmin only). Only provided fields are updated; others retain their existing values. Resource weights are validated against capacity - only resource types available in the scaling group's capacity can be specified.
+  Added in 26.2.0. Update fair share configuration for a resource group. Only provided fields are updated; others retain their existing values. Resource weights are validated against capacity - only resource types available in the scaling group's capacity can be specified.
   """
-  updateResourceGroupFairShareSpec(input: UpdateResourceGroupFairShareSpecInput!): UpdateResourceGroupFairShareSpecPayload @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_update_resource_group_fair_share_spec instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
+  updateResourceGroupFairShareSpec(input: UpdateResourceGroupFairShareSpecInput!): UpdateResourceGroupFairShareSpecPayload @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.4.2. Create a new domain (admin only). Requires superadmin privileges.

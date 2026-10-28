@@ -71,7 +71,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
     mutation ResourceGroupFairShareSettingModalMutation(
       $input: UpdateResourceGroupFairShareSpecInput!
     ) {
-      adminUpdateResourceGroupFairShareSpec(input: $input) {
+      updateResourceGroupFairShareSpec(input: $input) {
         resourceGroup {
           id
           name
@@ -144,7 +144,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
                 },
               },
               onCompleted: (res, errors) => {
-                if (!res?.adminUpdateResourceGroupFairShareSpec) {
+                if (!res?.updateResourceGroupFairShareSpec) {
                   message.error(t('dialog.ErrorOccurred'));
                   return;
                 }
