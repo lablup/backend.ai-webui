@@ -4322,7 +4322,6 @@
     "MenuBlocklist": "숨길 메뉴",
     "MenuInactivelist": "비활성 메뉴",
     "OpenPortToPublic": "앱 포트 공개 개방 허용",
-    "PageDesc": "여기서 바꾼 값은 이 도메인에서 config.toml보다 우선합니다. 기본값으로 둔 항목은 계속 config.toml을 따릅니다.",
     "PluginLogin": "로그인 페이지 플러그인",
     "PluginPage": "페이지 플러그인",
     "PublicGroupDesc": "로그인 전에 읽히는 값이라 슈퍼 관리자만 바꿀 수 있습니다. 이 도메인의 공개 앱 설정에 저장됩니다.",

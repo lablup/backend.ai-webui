@@ -4320,7 +4320,6 @@
     "MenuBlocklist": "Piilotetut valikkokohdat",
     "MenuInactivelist": "Käytöstä poistetut valikkokohdat",
     "OpenPortToPublic": "Salli sovellusporttien avaaminen julkisesti",
-    "PageDesc": "Arvot, joita ylläpitäjä muuttaa tässä, ohittavat config.toml-tiedoston tässä toimialueessa. Oletusarvoon jätetty kohta noudattaa edelleen config.toml-tiedostoa.",
     "PluginLogin": "Kirjautumissivun liitännäinen",
     "PluginPage": "Sivuliitännäiset",
     "PublicGroupDesc": "Luetaan ennen kirjautumista, joten vain superadmin voi muuttaa näitä arvoja. Tallennetaan tämän toimialueen julkiseen sovelluskokoonpanoon.",

@@ -10,7 +10,6 @@ import {
   useDomainAppConfig,
   usePublicDomainAppConfig,
 } from '../hooks/useAppConfig';
-import { Text } from '@lablup/ui-common/Text';
 import { BAICard, BAIFlex, BAISkeleton } from 'backend.ai-ui';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Suspense } from 'react';
@@ -58,7 +57,6 @@ const WebUISettingsPage: React.FC = () => {
       tabList={[{ key: 'settings', label: t('webui.menu.SystemSettings') }]}
     >
       <BAIFlex direction="column" align="stretch" gap="md">
-        <Text color="secondary">{t('webuiSettings.PageDesc')}</Text>
         <Suspense fallback={<BAISkeleton />}>
           <BAIErrorBoundary>
             {isSuperAdmin ? (

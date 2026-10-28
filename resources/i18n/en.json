@@ -4304,7 +4304,6 @@
     "MenuBlocklist": "Hidden menu items",
     "MenuInactivelist": "Disabled menu items",
     "OpenPortToPublic": "Allow opening app ports to the public",
-    "PageDesc": "Values an admin changes here override config.toml for this domain. An item left at its default keeps following config.toml.",
     "PluginLogin": "Login page plugin",
     "PluginPage": "Page plugins",
     "PublicGroupDesc": "Read before sign-in, so only a superadmin can change these. Saved in the public app config of this domain.",

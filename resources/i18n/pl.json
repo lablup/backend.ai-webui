@@ -4322,7 +4322,6 @@
     "MenuBlocklist": "Ukryte pozycje menu",
     "MenuInactivelist": "Wyłączone pozycje menu",
     "OpenPortToPublic": "Zezwalaj na publiczne otwieranie portów aplikacji",
-    "PageDesc": "Wartości zmienione tutaj przez administratora nadpisują config.toml dla tej domeny. Pozycja pozostawiona z wartością domyślną nadal korzysta z config.toml.",
     "PluginLogin": "Wtyczka strony logowania",
     "PluginPage": "Wtyczki stron",
     "PublicGroupDesc": "Odczytywane przed zalogowaniem, więc tylko superadministrator może zmienić te wartości. Zapisywane w publicznej konfiguracji aplikacji tej domeny.",

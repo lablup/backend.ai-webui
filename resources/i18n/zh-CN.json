@@ -4321,7 +4321,6 @@
     "MenuBlocklist": "隐藏的菜单项",
     "MenuInactivelist": "禁用的菜单项",
     "OpenPortToPublic": "允许公开开放应用端口",
-    "PageDesc": "管理员在此更改的值会在此域中覆盖 config.toml。保持默认值的项目继续遵循 config.toml。",
     "PluginLogin": "登录页面插件",
     "PluginPage": "页面插件",
     "PublicGroupDesc": "这些值在登录前读取，因此只有超级管理员可以更改。保存在此域的公开应用配置中。",

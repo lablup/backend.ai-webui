@@ -4323,7 +4323,6 @@
     "MenuBlocklist": "Item menu yang disembunyikan",
     "MenuInactivelist": "Item menu yang dinonaktifkan",
     "OpenPortToPublic": "Izinkan membuka port aplikasi untuk publik",
-    "PageDesc": "Nilai yang diubah admin di sini menimpa config.toml untuk domain ini. Item yang dibiarkan pada nilai bawaan tetap mengikuti config.toml.",
     "PluginLogin": "Plugin halaman masuk",
     "PluginPage": "Plugin halaman",
     "PublicGroupDesc": "Dibaca sebelum masuk, sehingga hanya superadmin yang dapat mengubah nilai ini. Disimpan di konfigurasi aplikasi publik domain ini.",

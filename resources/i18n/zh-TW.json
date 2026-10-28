@@ -4323,7 +4323,6 @@
     "MenuBlocklist": "隱藏的選單項目",
     "MenuInactivelist": "停用的選單項目",
     "OpenPortToPublic": "允許公開開放應用程式連接埠",
-    "PageDesc": "管理員在此變更的值會在此網域中覆寫 config.toml。保持預設值的項目繼續遵循 config.toml。",
     "PluginLogin": "登入頁面外掛",
     "PluginPage": "頁面外掛",
     "PublicGroupDesc": "這些值在登入前讀取，因此只有超級管理員可以變更。儲存在此網域的公開應用程式設定中。",

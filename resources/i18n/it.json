@@ -4319,7 +4319,6 @@
     "MenuBlocklist": "Voci di menu nascoste",
     "MenuInactivelist": "Voci di menu disattivate",
     "OpenPortToPublic": "Consenti l'apertura al pubblico delle porte delle app",
-    "PageDesc": "I valori che un amministratore modifica qui sostituiscono config.toml per questo dominio. Un elemento lasciato al valore predefinito continua a seguire config.toml.",
     "PluginLogin": "Plugin della pagina di accesso",
     "PluginPage": "Plugin di pagina",
     "PublicGroupDesc": "Viene letto prima dell'accesso, quindi solo un superadmin può modificare questi valori. Salvato nella configurazione pubblica dell'app di questo dominio.",

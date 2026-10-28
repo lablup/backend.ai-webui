@@ -4321,7 +4321,6 @@
     "MenuBlocklist": "Mục menu bị ẩn",
     "MenuInactivelist": "Mục menu bị vô hiệu hóa",
     "OpenPortToPublic": "Cho phép mở công khai cổng ứng dụng",
-    "PageDesc": "Các giá trị quản trị viên thay đổi tại đây sẽ ghi đè config.toml cho miền này. Mục được giữ ở giá trị mặc định vẫn tiếp tục theo config.toml.",
     "PluginLogin": "Plugin trang đăng nhập",
     "PluginPage": "Plugin trang",
     "PublicGroupDesc": "Được đọc trước khi đăng nhập, nên chỉ superadmin mới có thể thay đổi các giá trị này. Được lưu trong cấu hình ứng dụng công khai của miền này.",

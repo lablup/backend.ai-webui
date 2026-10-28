@@ -4319,7 +4319,6 @@
     "MenuBlocklist": "Item menu tersembunyi",
     "MenuInactivelist": "Item menu dilumpuhkan",
     "OpenPortToPublic": "Benarkan membuka port aplikasi kepada umum",
-    "PageDesc": "Nilai yang diubah pentadbir di sini mengatasi config.toml untuk domain ini. Item yang dibiarkan pada nilai lalai terus mengikut config.toml.",
     "PluginLogin": "Pemalam halaman log masuk",
     "PluginPage": "Pemalam halaman",
     "PublicGroupDesc": "Dibaca sebelum log masuk, jadi hanya superadmin boleh mengubah nilai ini. Disimpan dalam konfigurasi aplikasi awam domain ini.",

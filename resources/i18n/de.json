@@ -4321,7 +4321,6 @@
     "MenuBlocklist": "Ausgeblendete Menüeinträge",
     "MenuInactivelist": "Deaktivierte Menüeinträge",
     "OpenPortToPublic": "Öffentliches Freigeben von App-Ports erlauben",
-    "PageDesc": "Werte, die ein Administrator hier ändert, überschreiben config.toml für diese Domain. Ein auf dem Standardwert belassener Eintrag folgt weiterhin config.toml.",
     "PluginLogin": "Plugin der Anmeldeseite",
     "PluginPage": "Seiten-Plugins",
     "PublicGroupDesc": "Wird vor der Anmeldung gelesen, daher kann nur ein Superadmin diese Werte ändern. Gespeichert in der öffentlichen App-Konfiguration dieser Domain.",

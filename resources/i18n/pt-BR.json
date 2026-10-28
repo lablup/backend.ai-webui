@@ -4319,7 +4319,6 @@
     "MenuBlocklist": "Itens de menu ocultos",
     "MenuInactivelist": "Itens de menu desativados",
     "OpenPortToPublic": "Permitir abrir as portas dos aplicativos ao público",
-    "PageDesc": "Os valores que um administrador altera aqui substituem o config.toml para este domínio. Um item deixado no valor padrão continua seguindo o config.toml.",
     "PluginLogin": "Plugin da página de login",
     "PluginPage": "Plugins de páginas",
     "PublicGroupDesc": "É lido antes do login, então só um superadmin pode alterar estes valores. Salvo na configuração pública do aplicativo deste domínio.",
