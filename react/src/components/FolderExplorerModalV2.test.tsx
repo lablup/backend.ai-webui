@@ -334,7 +334,7 @@ const renderModal = ({
           }),
           KeyPair: () => ({ resource_policy: 'default' }),
           // The storage-host axis. Every content-changing action is the AND of
-          // this and the folder-level `UPDATE` bit, so both sides need a knob.
+          // this and the matching folder permission bit, so both sides need a knob.
           Domain: () => ({
             allowed_vfolder_hosts: JSON.stringify({
               'local:volume1': hostPermissions ?? ALL_FILE_HOST_PERMISSIONS,
@@ -586,8 +586,10 @@ describe('FolderExplorerModalV2 permission gating (FR-4140)', () => {
     };
   };
 
-  it('UPDATE plus every host permission enables every action', async () => {
-    renderModal({ ownershipProjectId: null, permissionBits: ['UPDATE'] });
+  const ALL_CONTENT_BITS = ['READ', 'CREATE', 'UPDATE', 'SOFT_DELETE'];
+
+  it('CREATE, UPDATE and SOFT_DELETE plus every host permission enable every action', async () => {
+    renderModal({ ownershipProjectId: null, permissionBits: ALL_CONTENT_BITS });
 
     await screen.findByTestId('mock-file-explorer');
 
@@ -603,10 +605,10 @@ describe('FolderExplorerModalV2 permission gating (FR-4140)', () => {
     );
   });
 
-  it('without UPDATE only download stays enabled, SOFT_DELETE included', async () => {
+  it('with READ alone only download stays enabled', async () => {
     renderModal({
       ownershipProjectId: null,
-      permissionBits: ['READ', 'SOFT_DELETE'],
+      permissionBits: ['READ'],
     });
 
     await screen.findByTestId('mock-file-explorer');
@@ -623,6 +625,34 @@ describe('FolderExplorerModalV2 permission gating (FR-4140)', () => {
     );
   });
 
+  // The bit each action needs is the one the manager checks for the
+  // matching file operation (#10647).
+  it.each([
+    ['CREATE', ['upload', 'create', 'edit']],
+    ['UPDATE', ['rename', 'edit']],
+    ['SOFT_DELETE', ['delete']],
+  ])(
+    'a folder without the %s bit disables only %j',
+    async (missingBit, disabledActions) => {
+      renderModal({
+        ownershipProjectId: null,
+        permissionBits: _.without(ALL_CONTENT_BITS, missingBit),
+      });
+
+      await screen.findByTestId('mock-file-explorer');
+
+      await waitFor(() => {
+        const props = latestPermissionProps();
+        expect(props).toEqual(
+          _.mapValues(
+            props,
+            (_enabled, action) => !disabledActions.includes(action),
+          ),
+        );
+      });
+    },
+  );
+
   it.each([
     ['upload-file', ['upload', 'edit']],
     ['create-vfolder', ['create']],
@@ -634,7 +664,7 @@ describe('FolderExplorerModalV2 permission gating (FR-4140)', () => {
     async (missingPermission, disabledActions) => {
       renderModal({
         ownershipProjectId: null,
-        permissionBits: ['READ', 'UPDATE'],
+        permissionBits: ALL_CONTENT_BITS,
         hostPermissions: _.without(
           ALL_FILE_HOST_PERMISSIONS,
           missingPermission,

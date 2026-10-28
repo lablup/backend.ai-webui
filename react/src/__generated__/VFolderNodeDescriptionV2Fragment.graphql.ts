@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6036083054d19909c9159940aad0b946>>
+ * @generated SignedSource<<16324fdadfeedc42b4b3ae60c876163e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
+export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
 export type VFolderOperationStatus = "CLONING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
 export type VFolderOwnershipType = "GROUP" | "USER" | "%future added value";
 export type VFolderUsageMode = "DATA" | "GENERAL" | "MODEL" | "%future added value";
@@ -16,6 +17,7 @@ import { FragmentRefs } from "relay-runtime";
 export type VFolderNodeDescriptionV2Fragment$data = {
   readonly accessControl: {
     readonly ownershipType: VFolderOwnershipType;
+    readonly permission: VFolderMountPermission;
   };
   readonly host: string;
   readonly id: string;
@@ -48,7 +50,7 @@ export type VFolderNodeDescriptionV2Fragment$data = {
   };
   readonly status: VFolderOperationStatus;
   readonly unmanagedPath: string | null | undefined;
-  readonly " $fragmentSpreads": FragmentRefs<"VFolderPermissionCellV2Fragment" | "useVirtualFolderNodePathV2Fragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"useVirtualFolderNodePathV2Fragment">;
   readonly " $fragmentType": "VFolderNodeDescriptionV2Fragment";
 };
 export type VFolderNodeDescriptionV2Fragment$key = {
@@ -144,6 +146,13 @@ return {
           "args": null,
           "kind": "ScalarField",
           "name": "ownershipType",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "permission",
           "storageKey": null
         }
       ],
@@ -276,11 +285,6 @@ return {
     {
       "args": null,
       "kind": "FragmentSpread",
-      "name": "VFolderPermissionCellV2Fragment"
-    },
-    {
-      "args": null,
-      "kind": "FragmentSpread",
       "name": "useVirtualFolderNodePathV2Fragment"
     }
   ],
@@ -289,6 +293,6 @@ return {
 };
 })();
 
-(node as any).hash = "f6b6e8ee5142a2dff8b886a475e65599";
+(node as any).hash = "9ee2bbe0c203543ab0ffa0d54d224db1";
 
 export default node;

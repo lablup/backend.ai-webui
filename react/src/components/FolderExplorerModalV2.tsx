@@ -412,20 +412,37 @@ const FolderExplorerBody: React.FC<{
     }
   }, [uploadStatus, updateFetchKey]);
 
-  // Changing the folder's contents needs the folder's `UPDATE` bit plus the
-  // storage host permission matching the operation (FR-4140).
+  // Each content action needs the folder permission bit the manager checks
+  // for it (upload and mkdir are CREATE, rename is UPDATE, delete is
+  // SOFT_DELETE) plus the storage host permission matching the operation
+  // (FR-4140, #10647).
   const hostPermissions = unitedAllowedPermissionByVolume[folderHost];
-  const canUpdateContent = _.includes(vfolderNode?.permissions, 'UPDATE');
-  const hasContentPermission = (hostPermission: string) =>
-    canUpdateContent && _.includes(hostPermissions, hostPermission);
+  const hasContentPermission = (
+    permissionBit: 'CREATE' | 'UPDATE' | 'SOFT_DELETE',
+    hostPermission: string,
+  ) =>
+    _.includes(vfolderNode?.permissions, permissionBit) &&
+    _.includes(hostPermissions, hostPermission);
   const hasDownloadContentPermission = _.includes(
     hostPermissions,
     'download-file',
   );
-  const hasUploadContentPermission = hasContentPermission('upload-file');
-  const hasCreateContentPermission = hasContentPermission('create-vfolder');
-  const hasDeleteContentPermission = hasContentPermission('delete-vfolder');
-  const hasModifyContentPermission = hasContentPermission('modify-vfolder');
+  const hasUploadContentPermission = hasContentPermission(
+    'CREATE',
+    'upload-file',
+  );
+  const hasCreateContentPermission = hasContentPermission(
+    'CREATE',
+    'create-vfolder',
+  );
+  const hasDeleteContentPermission = hasContentPermission(
+    'SOFT_DELETE',
+    'delete-vfolder',
+  );
+  const hasModifyContentPermission = hasContentPermission(
+    'UPDATE',
+    'modify-vfolder',
+  );
   // TODO: Skip permission check due to inaccurate API response. Update when API is fixed.
   const hasNoPermissions = false;
 

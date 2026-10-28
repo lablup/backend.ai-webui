@@ -10,10 +10,11 @@
  (#10647), not here.
 */
 import { VFolderNodeDescriptionV2Fragment$key } from '../__generated__/VFolderNodeDescriptionV2Fragment.graphql';
+import { VFolderNodeDescriptionV2MountPolicyQuery } from '../__generated__/VFolderNodeDescriptionV2MountPolicyQuery.graphql';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useVirtualFolderPathV2 } from '../hooks/useVirtualFolderNodePathV2';
+import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { formatBinarySizeInfo } from './VFolderNodesV2';
-import VFolderPermissionCellV2 from './VFolderPermissionCellV2';
 import VirtualFolderPathV2 from './VirtualFolderNodeItems/VirtualFolderPathV2';
 import { Badge } from '@lablup/ui-common/Badge';
 import { HStack } from '@lablup/ui-common/Stack';
@@ -21,9 +22,11 @@ import { Text } from '@lablup/ui-common/Text';
 import {
   BAIMetadataList,
   BAIMetadataListItem,
+  BAISkeleton,
   filterOutEmpty,
   badgeVariantForStatus,
   BAIText,
+  toLocalId,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -33,9 +36,61 @@ import {
   UserIcon,
   UsersIcon,
 } from 'lucide-react';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment } from 'react-relay';
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+
+// `VFolderMountPermission`, read as a string: RW_DELETE folds into read &
+// write and NONE (or an unknown value) is no mount permission.
+const MountPermissionText: React.FC<{
+  permission: string | null | undefined;
+}> = ({ permission }) => {
+  'use memo';
+  const { t } = useTranslation();
+  return (
+    <BAIText>
+      {permission === 'READ_ONLY'
+        ? t('data.ReadOnly')
+        : permission === 'READ_WRITE' || permission === 'RW_DELETE'
+          ? t('data.ReadWrite')
+          : t('data.folders.NoMountPermission')}
+    </BAIText>
+  );
+};
+
+// The level the caller mounts at, the way the manager's `resolve_mount_policy`
+// answers for a non-owner: the caller's own policy row, else the folder's
+// default (`accessControl.permission`). The policy list is read here, inside
+// the row, because it can be refused on its own (#10647).
+const MyMountPermission: React.FC<{
+  vfolderId: string;
+  defaultPermission: string;
+}> = ({ vfolderId, defaultPermission }) => {
+  'use memo';
+  const [currentUser] = useCurrentUserInfo();
+  const { vfolderMountPolicies } =
+    useLazyLoadQuery<VFolderNodeDescriptionV2MountPolicyQuery>(
+      graphql`
+        query VFolderNodeDescriptionV2MountPolicyQuery($vfolderId: UUID!) {
+          vfolderMountPolicies(vfolderId: $vfolderId) @catch(to: NULL) {
+            items {
+              userId
+              permission
+            }
+          }
+        }
+      `,
+      { vfolderId },
+    );
+  const myPolicy = _.find(vfolderMountPolicies?.items, {
+    userId: currentUser?.uuid,
+  });
+  return (
+    <MountPermissionText
+      permission={myPolicy?.permission ?? defaultPermission}
+    />
+  );
+};
 
 interface VFolderNodeDescriptionV2Props {
   vfolderNodeFrgmt: VFolderNodeDescriptionV2Fragment$key;
@@ -63,6 +118,7 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
         }
         accessControl {
           ownershipType
+          permission
         }
         quota {
           maxFiles
@@ -87,7 +143,6 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
             }
           }
         }
-        ...VFolderPermissionCellV2Fragment
         ...useVirtualFolderNodePathV2Fragment
       }
     `,
@@ -137,12 +192,20 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
           </HStack>
         ),
     },
-    // The owner always mounts read & write, so the row is for everyone else,
-    // showing the same server-computed level as the folder list (#10647).
+    // The owner always mounts read & write, so the row is for everyone else.
     vfolderNode.ownership?.userId !== currentUser?.uuid && {
       key: 'mount_permission',
       label: t('data.folders.MountPermission'),
-      children: <VFolderPermissionCellV2 vfolderFrgmt={vfolderNode} />,
+      children: (
+        <ErrorBoundaryWithNullFallback>
+          <Suspense fallback={<BAISkeleton variant="input" size="small" />}>
+            <MyMountPermission
+              vfolderId={toLocalId(vfolderNode.id)}
+              defaultPermission={vfolderNode.accessControl.permission}
+            />
+          </Suspense>
+        </ErrorBoundaryWithNullFallback>
+      ),
     },
     {
       key: 'owner',
