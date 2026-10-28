@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<cb494d541715e0b6b1c8c6ae38a9981a>>
+ * @generated SignedSource<<7264f3cb29e3a7789a9b204d35c91352>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -53,6 +53,26 @@ v3 = {
   "kind": "ScalarField",
   "name": "quantity",
   "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "ResourceLimitEntry",
+  "kind": "LinkedField",
+  "name": "assignable",
+  "plural": true,
+  "selections": [
+    (v2/*: any*/),
+    (v3/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "unlimited",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -84,58 +104,40 @@ return {
         "name": "effectiveResourceAllocationV2",
         "plural": false,
         "selections": [
+          (v4/*: any*/)
+        ],
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "UserResourceAllocationV2",
+        "kind": "LinkedField",
+        "name": "myUserResourceAllocationV2",
+        "plural": false,
+        "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "ResourceLimitEntry",
+            "concreteType": "ScopeResourceUsageV2",
             "kind": "LinkedField",
-            "name": "assignable",
-            "plural": true,
-            "selections": [
-              (v2/*: any*/),
-              (v3/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "unlimited",
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "EffectiveBreakdownV2",
-            "kind": "LinkedField",
-            "name": "breakdown",
+            "name": "user",
             "plural": false,
             "selections": [
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "ScopeResourceUsageV2",
+                "concreteType": "ResourceSlotEntry",
                 "kind": "LinkedField",
-                "name": "keypair",
-                "plural": false,
+                "name": "used",
+                "plural": true,
                 "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "ResourceSlotEntry",
-                    "kind": "LinkedField",
-                    "name": "used",
-                    "plural": true,
-                    "selections": [
-                      (v2/*: any*/),
-                      (v3/*: any*/)
-                    ],
-                    "storageKey": null
-                  }
+                  (v2/*: any*/),
+                  (v3/*: any*/)
                 ],
                 "storageKey": null
-              }
+              },
+              (v4/*: any*/)
             ],
             "storageKey": null
           }
@@ -145,12 +147,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "0f17cc55bea145616e3d1cc6b9c3718e",
+    "cacheID": "42dee6f52f1909413440916b6600adf1",
     "id": null,
     "metadata": {},
     "name": "MyResourceQuery",
     "operationKind": "query",
-    "text": "query MyResourceQuery(\n  $input: EffectiveResourceAllocationV2Input!\n) {\n  ...MyResourceV2StatisticsFragment_2VV6jB\n}\n\nfragment MyResourceV2StatisticsFragment_2VV6jB on Query {\n  effectiveResourceAllocationV2(input: $input) {\n    assignable {\n      resourceType\n      quantity\n      unlimited\n    }\n    breakdown {\n      keypair {\n        used {\n          resourceType\n          quantity\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query MyResourceQuery(\n  $input: EffectiveResourceAllocationV2Input!\n) {\n  ...MyResourceV2StatisticsFragment_2VV6jB\n}\n\nfragment MyResourceV2StatisticsFragment_2VV6jB on Query {\n  effectiveResourceAllocationV2(input: $input) {\n    assignable {\n      resourceType\n      quantity\n      unlimited\n    }\n  }\n  myUserResourceAllocationV2 {\n    user {\n      used {\n        resourceType\n        quantity\n      }\n      assignable {\n        resourceType\n        quantity\n        unlimited\n      }\n    }\n  }\n}\n"
   }
 };
 })();
