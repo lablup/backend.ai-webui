@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8cee309de0a7270e0d8e0a5396dcab0f>>
+ * @generated SignedSource<<b0fdd3c2baa78ca13126cc53593d7743>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -32,6 +32,7 @@ export type VFolderNodeDescriptionV2Fragment$data = {
         readonly name: string;
       };
     } | null | undefined;
+    readonly projectId: string | null | undefined;
     readonly user: {
       readonly basicInfo: {
         readonly email: string;
@@ -195,6 +196,13 @@ return {
           "alias": null,
           "args": null,
           "kind": "ScalarField",
+          "name": "projectId",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "creatorId",
           "storageKey": null
         },
@@ -228,27 +236,31 @@ return {
           "storageKey": null
         },
         {
-          "alias": null,
-          "args": null,
-          "concreteType": "ProjectV2",
-          "kind": "LinkedField",
-          "name": "project",
-          "plural": false,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "ProjectBasicInfo",
-              "kind": "LinkedField",
-              "name": "basicInfo",
-              "plural": false,
-              "selections": [
-                (v0/*: any*/)
-              ],
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
+          "kind": "CatchField",
+          "field": {
+            "alias": null,
+            "args": null,
+            "concreteType": "ProjectV2",
+            "kind": "LinkedField",
+            "name": "project",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ProjectBasicInfo",
+                "kind": "LinkedField",
+                "name": "basicInfo",
+                "plural": false,
+                "selections": [
+                  (v0/*: any*/)
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          "to": "NULL"
         }
       ],
       "storageKey": null
@@ -264,6 +276,6 @@ return {
 };
 })();
 
-(node as any).hash = "946cb25aafcc8a386f0e16f82aca75fc";
+(node as any).hash = "af55b5d43a748d22247382471805ff00";
 
 export default node;

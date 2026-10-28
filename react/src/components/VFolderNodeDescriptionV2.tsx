@@ -70,13 +70,16 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
           }
         }
         ownership {
+          projectId
           creatorId
           user {
             basicInfo {
               email
             }
           }
-          project {
+          # Readable folder, unreadable owning project (a share recipient):
+          # null here, named "Unknown project" below (#10647).
+          project @catch(to: NULL) {
             basicInfo {
               name
             }
@@ -153,10 +156,12 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
         </BAIText>
       ),
     },
-    vfolderNode.ownership?.project?.basicInfo?.name && {
+    vfolderNode.ownership?.projectId && {
       key: 'group_name',
       label: t('data.Project'),
-      children: vfolderNode.ownership?.project?.basicInfo?.name,
+      children:
+        vfolderNode.ownership.project?.basicInfo?.name ??
+        t('data.folders.UnknownProject'),
     },
     {
       key: 'cloneable',

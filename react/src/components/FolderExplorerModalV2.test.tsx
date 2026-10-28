@@ -271,6 +271,7 @@ const renderModal = ({
   hostPermissions,
   nullResolvers,
   withFieldError,
+  projectFieldError,
 }: {
   ownershipProjectId: string | null;
   ownershipProjectType?: 'GENERAL' | 'PERSONAL';
@@ -281,46 +282,70 @@ const renderModal = ({
   nullResolvers?: Array<'vfolderNode'>;
   /** Report the null as a field error, the way a broken resolver does. */
   withFieldError?: boolean;
+  /**
+   * The folder reads but its owning project does not (a share recipient):
+   * `ownership.project` is null with a permission error at its path (#10647).
+   */
+  projectFieldError?: boolean;
 }) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
+  const withProjectFieldError = (operation: any, payload: any) =>
+    projectFieldError &&
+    operation.request.node.params.name === 'FolderExplorerModalV2Query'
+      ? {
+          ...payload,
+          errors: [
+            {
+              message:
+                'Insufficient permission to perform this operation. (The caller lacks the permission this run asks for on entity folder-project-id)',
+              path: ['vfolderNode', 'ownership', 'project'],
+              extensions: { code: 'permission_access_forbidden' },
+            },
+          ],
+        }
+      : payload;
   const resolver = (operation: any) =>
-    withNullRootFields(
+    withProjectFieldError(
       operation,
-      MockPayloadGenerator.generate(operation, {
-        VFolder: () => ({
-          id: btoa(`VFolder:${VFOLDER_UUID}`),
-          host: 'local:volume1',
-          unmanagedPath: null,
-          status: 'ready',
-          metadata: { name: 'test-folder' },
-          permissions: permissionBits ?? ['READ', 'UPDATE', 'SOFT_DELETE'],
-          ownership: {
-            userId: 'someone-else-uuid',
-            projectId: ownershipProjectId,
-            project: ownershipProjectId
-              ? { basicInfo: { name: 'folder-project-name' } }
-              : null,
-          },
-        }),
-        // The owning project's type, read by the ownership banner through the
-        // legacy `group_node` (FR-3983).
-        GroupNode: () => ({
-          id: btoa(`GroupNode:${ownershipProjectId}`),
-          type: ownershipProjectType ?? 'GENERAL',
-        }),
-        KeyPair: () => ({ resource_policy: 'default' }),
-        // The storage-host axis. Every content-changing action is the AND of
-        // this and the folder-level `UPDATE` bit, so both sides need a knob.
-        Domain: () => ({
-          allowed_vfolder_hosts: JSON.stringify({
-            'local:volume1': hostPermissions ?? ALL_FILE_HOST_PERMISSIONS,
+      withNullRootFields(
+        operation,
+        MockPayloadGenerator.generate(operation, {
+          VFolder: () => ({
+            id: btoa(`VFolder:${VFOLDER_UUID}`),
+            host: 'local:volume1',
+            unmanagedPath: null,
+            status: 'ready',
+            metadata: { name: 'test-folder' },
+            permissions: permissionBits ?? ['READ', 'UPDATE', 'SOFT_DELETE'],
+            ownership: {
+              userId: 'someone-else-uuid',
+              projectId: ownershipProjectId,
+              project:
+                ownershipProjectId && !projectFieldError
+                  ? { basicInfo: { name: 'folder-project-name' } }
+                  : null,
+            },
           }),
+          // The owning project's type, read by the ownership banner through the
+          // legacy `group_node` (FR-3983).
+          GroupNode: () => ({
+            id: btoa(`GroupNode:${ownershipProjectId}`),
+            type: ownershipProjectType ?? 'GENERAL',
+          }),
+          KeyPair: () => ({ resource_policy: 'default' }),
+          // The storage-host axis. Every content-changing action is the AND of
+          // this and the folder-level `UPDATE` bit, so both sides need a knob.
+          Domain: () => ({
+            allowed_vfolder_hosts: JSON.stringify({
+              'local:volume1': hostPermissions ?? ALL_FILE_HOST_PERMISSIONS,
+            }),
+          }),
+          Group: () => ({ allowed_vfolder_hosts: '{}' }),
+          KeyPairResourcePolicy: () => ({ allowed_vfolder_hosts: '{}' }),
         }),
-        Group: () => ({ allowed_vfolder_hosts: '{}' }),
-        KeyPairResourcePolicy: () => ({ allowed_vfolder_hosts: '{}' }),
-      }),
-      nullResolvers ?? [],
-      withFieldError,
+        nullResolvers ?? [],
+        withFieldError,
+      ),
     );
   const seenOperations: Array<{ name: string; variables: any }> = [];
   for (let i = 0; i < 16; i++) {
@@ -668,5 +693,21 @@ describe('FolderExplorerModalV2 unreadable folder', () => {
       screen.queryByText('explorer.FolderNotFoundOrNoAccess'),
     ).not.toBeInTheDocument();
     expect(screen.queryByTestId('mock-file-explorer')).not.toBeInTheDocument();
+  });
+
+  it('keeps a shared folder open when its owning project cannot be read (#10647)', async () => {
+    renderModal({
+      ownershipProjectId: 'folder-project-id',
+      projectFieldError: true,
+    });
+
+    // The permission error on `ownership.project` is caught at that field,
+    // not at the node: the files and the description still show (the
+    // description names the project "Unknown project" on its own).
+    expect(await screen.findByTestId('mock-file-explorer')).toBeInTheDocument();
+    expect(screen.getByTestId('mock-vfolder-description')).toBeInTheDocument();
+    expect(
+      screen.queryByText('explorer.FolderDetailUnavailable'),
+    ).not.toBeInTheDocument();
   });
 });
