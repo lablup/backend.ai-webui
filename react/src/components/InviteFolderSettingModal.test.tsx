@@ -26,9 +26,8 @@ import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockE
  * permission, with no mount policy of its own.
  * #10329: the cap is the bits the share permission selector picks, and each
  * listed share shows its own cap in a selector that restates the share.
- * #10647: the folder's default mount permission sits in a settings card above
- * the invite form and is edited in its own modal; an invite picks no mount
- * level of its own.
+ * #10647: the folder's default mount permission sits in a Folder Info section
+ * above the invite form and is edited in its own modal.
  * `t` is identity-mapped (for BUI's `useBAIi18n` too), so the assertions read
  * as i18n keys.
  */
@@ -470,15 +469,9 @@ describe('InviteFolderSettingModal (#10295)', () => {
     const user = userEvent.setup();
     const environment = await renderModal();
 
-    // The invite form picks no mount level of its own (#10647); the note
-    // under it names the folder default every invitee starts at.
-    expect(
-      screen.getByText('data.folders.InviteStartsWithDefaultMountPermission'),
-    ).toBeInTheDocument();
     await user.click(screen.getByText('data.folders.SearchUser'));
     await resolvePendingQueries(environment);
-    // The table's mount-level Selectors are comboboxes too; the search box is
-    // the input.
+    // The mount-level Selector is a combobox too; the search box is the input.
     const searchBox = screen
       .getAllByRole('combobox', h)
       .find((el) => el.tagName === 'INPUT');
@@ -487,6 +480,11 @@ describe('InviteFolderSettingModal (#10295)', () => {
     await user.click(
       await findOptionResolvingQueries(environment, /nobody2@example\.com/),
     );
+    expect(
+      await screen.findByText(
+        'data.folders.EmailInviteUsesSharedMountPermission',
+      ),
+    ).toBeInTheDocument();
     await user.click(
       screen.getByRole('button', { name: 'data.folders.Invite' }),
     );

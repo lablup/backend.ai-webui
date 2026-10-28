@@ -3,10 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  Share modal on the 26.9 model: an invite is an entity share capped at the
- bits the share permission selector picks; a shared user mounts at the
- folder's default mount permission (edited from the folder settings card,
- #10647) unless a vfolder mount policy of their own, set in the table, says
- otherwise. See the TODO(needs-backend) on `handleInvite`.
+ bits the share permission selector picks, the invitee's mount level is a
+ vfolder mount policy — two axes, two controls. The folder's own default
+ mount permission is edited from the Folder Info section (#10647). See the
+ TODO(needs-backend) on `handleInvite`.
 */
 import { InviteFolderSettingModalCancelShareMutation } from '../__generated__/InviteFolderSettingModalCancelShareMutation.graphql';
 import { InviteFolderSettingModalCreateShareMutation } from '../__generated__/InviteFolderSettingModalCreateShareMutation.graphql';
@@ -25,6 +25,7 @@ import FolderDefaultMountPermissionModal, {
   type FolderMountLevel,
 } from './FolderDefaultMountPermissionModal';
 import { Button } from '@lablup/ui-common/Button';
+import { Field } from '@lablup/ui-common/Field';
 import { HStack, StackItem, VStack } from '@lablup/ui-common/Stack';
 import { Heading } from '@lablup/ui-common/Text';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
@@ -56,7 +57,7 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleXIcon, MailXIcon, PencilIcon } from 'lucide-react';
-import React, { Suspense, useDeferredValue, useState } from 'react';
+import React, { Suspense, useDeferredValue, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
@@ -246,23 +247,31 @@ const InviteFolderSettingModalBody: React.FC<{
   const [currentUser] = useCurrentUserInfo();
   const { accessibleProjects } = useAccessibleProjects();
   const memberProjectIds = _.compact(_.map(accessibleProjects, 'id'));
-  const { labelOf: mountLevelLabel } = useMountLevelLabels();
+  const { options: mountLevelOptions, labelOf: mountLevelLabel } =
+    useMountLevelLabels();
+  const mountLevelInputId = useId();
 
   const [fetchKey, updateFetchKey] = useFetchKey();
 
   const [recipient, setRecipient] = useState<RecipientData | null>(null);
+  const [mountLevel, setMountLevel] = useState<MountLevel>(defaultMountLevel);
   const [permissionBits, setPermissionBits] = useState<
     Array<BAIEntitySharePermissionBit>
   >([...sharePresetBits(defaultMountLevel)]);
   const [recipientError, setRecipientError] = useState<string | null>(null);
   const [isDefaultMountModalOpen, setIsDefaultMountModalOpen] = useState(false);
 
+  const setMountPolicy =
+    useMutationWithPromise<InviteFolderSettingModalSetMountPolicyMutation>(
+      SetMountPolicyMutation,
+    );
   const createShare =
     useMutationWithPromise<InviteFolderSettingModalCreateShareMutation>(
       CreateShareMutation,
     );
 
   const inviteTarget = recipient;
+  const isEmailInvite = inviteTarget?.kind === 'email';
 
   const handleInvite = async () => {
     if (!inviteTarget) {
@@ -271,9 +280,9 @@ const InviteFolderSettingModalBody: React.FC<{
     }
     setRecipientError(null);
     try {
-      // The offer is an entity share capped at the picked bits; the invitee
-      // mounts at the folder default until a policy row is set for them in
-      // the table below.
+      // The offer is an entity share capped at the picked bits; the mount
+      // level is a policy row, which an address without an account only
+      // gets at the folder default once it has one.
       // TODO(needs-backend): the manager rejects the OneOf `recipient` input
       // with one key set (BA-8482), so the invite fails until that lands.
       await createShare({
@@ -287,6 +296,15 @@ const InviteFolderSettingModalBody: React.FC<{
           permissions: permissionBits,
         },
       });
+      if (inviteTarget.kind === 'user') {
+        await setMountPolicy({
+          vfolderId,
+          input: {
+            userId: inviteTarget.userId,
+            permission: toMountPermission(mountLevel),
+          },
+        });
+      }
       message.success(t('data.invitation.Invited'));
       setRecipient(null);
       updateFetchKey();
@@ -374,16 +392,36 @@ const InviteFolderSettingModalBody: React.FC<{
               />
             </StackItem>
             <StackItem size="static">
+              <Field
+                label={t('data.folders.MountPermission')}
+                inputID={mountLevelInputId}
+                isDisabled={isEmailInvite}
+              >
+                <BAISelector
+                  id={mountLevelInputId}
+                  aria-label={t('data.folders.MountPermission')}
+                  placement="below"
+                  width={150}
+                  options={mountLevelOptions}
+                  value={mountLevel}
+                  onChange={(next) => setMountLevel(next as MountLevel)}
+                  disabled={isEmailInvite}
+                />
+              </Field>
+            </StackItem>
+            <StackItem size="static">
               <BAIButton type="primary" action={handleInvite}>
                 {t('data.folders.Invite')}
               </BAIButton>
             </StackItem>
           </HStack>
-          <BAIText type="secondary" size="sm">
-            {t('data.folders.InviteStartsWithDefaultMountPermission', {
-              permission: mountLevelLabel(defaultMountLevel),
-            })}
-          </BAIText>
+          {isEmailInvite && (
+            <BAIText type="warning" size="sm">
+              {t('data.folders.EmailInviteUsesSharedMountPermission', {
+                permission: mountLevelLabel(defaultMountLevel),
+              })}
+            </BAIText>
+          )}
         </VStack>
       </VStack>
 
