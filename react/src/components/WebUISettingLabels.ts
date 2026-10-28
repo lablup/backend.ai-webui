@@ -43,6 +43,10 @@ export const useWebUISettingLabels = (): {
         title: t('webuiSettings.SsoRealmName'),
         description: t('webuiSettings.DescSsoRealmName'),
       },
+      debug: {
+        title: t('webuiSettings.Debug'),
+        description: t('webuiSettings.DescDebug'),
+      },
       defaultSessionEnvironment: {
         title: t('webuiSettings.DefaultSessionEnvironment'),
         description: t('webuiSettings.DescDefaultSessionEnvironment'),
@@ -229,6 +233,7 @@ export const useWebUISettingLabels = (): {
       menu: t('webuiSettings.group.Menu'),
       downloads: t('webuiSettings.group.Downloads'),
       account: t('webuiSettings.group.Account'),
+      diagnostics: t('webuiSettings.group.Diagnostics'),
     },
   };
 };

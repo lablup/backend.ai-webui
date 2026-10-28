@@ -15,6 +15,7 @@
 import {
   getDefaultLoginConfig,
   refreshConfigFromToml,
+  syncDebugFlag,
   type LoginConfigState,
 } from '../helper/loginConfig';
 import {
@@ -355,14 +356,13 @@ export function initializeConfigOnce(
       const publicSlice = await fetchPublicDomainConfigOnce(
         resolvePublicConfigTarget(result.config),
       );
-      store.set(
-        loginConfigState,
-        applyWebUISettings(
-          loginConfig,
-          publicSlice?.[WEBUI_SETTINGS_CONFIG_KEY],
-          'public',
-        ),
+      const effectiveLoginConfig = applyWebUISettings(
+        loginConfig,
+        publicSlice?.[WEBUI_SETTINGS_CONFIG_KEY],
+        'public',
       );
+      syncDebugFlag(effectiveLoginConfig);
+      store.set(loginConfigState, effectiveLoginConfig);
       store.set(autoLogoutState, autoLogout);
       store.set(proxyUrlState, proxyUrl);
       store.set(loginPluginState, loginPlugin);

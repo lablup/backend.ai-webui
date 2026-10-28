@@ -248,10 +248,9 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
         {
           'data-testid': `webui-settings-group-${group}`,
           title: labels.groups[group],
-          description:
-            group === 'login' ? (
-              <Text color="secondary">{t('webuiSettings.LoginGroupDesc')}</Text>
-            ) : undefined,
+          description: definitions.some((d) => d.scope === 'public') ? (
+            <Text color="secondary">{t('webuiSettings.PublicGroupDesc')}</Text>
+          ) : undefined,
           settingItems: definitions.map(toSettingItem),
         },
       ];
