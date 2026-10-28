@@ -1,0 +1,535 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-10-28T07:44:28.244Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 5,
+        "changes": 48,
+        "added": 21,
+        "modified": 11,
+        "removed": 16,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "dashboard",
+          "title": "Dashboard",
+          "status": "modified",
+          "url": "next/en/dashboard.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/dashboard/dashboard.md",
+          "counts": {
+            "added": 19,
+            "modified": 5,
+            "removed": 11,
+            "images": 0,
+            "total": 35
+          },
+          "fingerprints": [
+            "d6b15dbdac40",
+            "91b0f1ece2b5",
+            "a8eed8953d27",
+            "bdf4bf65ca97",
+            "47ce2909001a",
+            "7ceeebd48e35",
+            "bf293b690c9a",
+            "146e3198cfad",
+            "9a1790bdb51a",
+            "435c2435bdd4",
+            "e56903dae6b4",
+            "01abda48c194",
+            "5a19ab852b6a",
+            "21f3a13f2ea0",
+            "d1879d37a898",
+            "7e258eb7e216",
+            "61b2c0a6e73b",
+            "b53a24dc561d",
+            "47c44bccd769",
+            "00e06ac3ecee",
+            "98a656c986bb",
+            "9b4aabebc666",
+            "3903c99355cd",
+            "080713c449e1",
+            "836ce9c713b4",
+            "b6d62c638204",
+            "80ca269cdfa2",
+            "dd78b4712175",
+            "1b2050f076ee",
+            "774e160872b5",
+            "b9e72d5b5a58",
+            "7b1175796fd8",
+            "4759f17e7bd8",
+            "0fefc022f21f",
+            "c7279d690088"
+          ]
+        },
+        {
+          "slug": "login",
+          "title": "Login",
+          "status": "modified",
+          "url": "next/en/login.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/login/login.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "e992b35b0b4a"
+          ]
+        },
+        {
+          "slug": "session_page",
+          "title": "Session Page",
+          "status": "modified",
+          "url": "next/en/session_page.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/session_page/session_page.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "b9dbf88102a7"
+          ]
+        },
+        {
+          "slug": "start",
+          "title": "Start Actions",
+          "status": "modified",
+          "url": "next/en/start.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/start/start.md",
+          "counts": {
+            "added": 2,
+            "modified": 3,
+            "removed": 4,
+            "images": 1,
+            "total": 9
+          },
+          "fingerprints": [
+            "938097957d57",
+            "91d96dc34b6d",
+            "80af3f64fbed",
+            "8ffd007a80c0",
+            "0b828e5ba069",
+            "408633fef2f7",
+            "978de1000af2",
+            "db219369dbbc",
+            "0a3cb92ba44c"
+          ]
+        },
+        {
+          "slug": "user_settings",
+          "title": "User Settings",
+          "status": "modified",
+          "url": "next/en/user_settings.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/user_settings/user_settings.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 1,
+            "images": 0,
+            "total": 2
+          },
+          "fingerprints": [
+            "70a7fe8af1c6",
+            "cc797fa59eb1"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 4,
+        "changes": 48,
+        "added": 22,
+        "modified": 9,
+        "removed": 17,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "dashboard",
+          "title": "ダッシュボード",
+          "status": "modified",
+          "url": "next/ja/dashboard.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/dashboard/dashboard.md",
+          "counts": {
+            "added": 21,
+            "modified": 3,
+            "removed": 13,
+            "images": 0,
+            "total": 37
+          },
+          "fingerprints": [
+            "f90f1da4afc9",
+            "e144eaa65f02",
+            "3e84aeaac140",
+            "95bdcf7ec0ad",
+            "c55b838f9497",
+            "5a7d5ec594a2",
+            "2590e7f02719",
+            "a2a053a2cb0a",
+            "2e36a09db6c8",
+            "14503783ca02",
+            "101d75cf098b",
+            "12cab6c63b0e",
+            "236b3d282e8a",
+            "99e075db71cf",
+            "d33867e7811b",
+            "8fc8a7c862ae",
+            "b5bcffd23da4",
+            "92038c869dc6",
+            "08ec25f64984",
+            "928c9f1f5e69",
+            "2e4d36f1d044",
+            "4e0953e98d7b",
+            "4f662fe5c8bc",
+            "fb7f7302729b",
+            "6dd38330f4b0",
+            "023eb58af87a",
+            "e1544fb24df4",
+            "02a48ee1c3b7",
+            "64673a855e65",
+            "2cb445c8321e",
+            "6e2b7b35a332",
+            "ab4a72b576e6",
+            "4868904a4b1c",
+            "1bb30d029613",
+            "080766456f52",
+            "b4d3d5b54f4d",
+            "88c84e7baff8"
+          ]
+        },
+        {
+          "slug": "login",
+          "title": "ログイン",
+          "status": "modified",
+          "url": "next/ja/login.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/login/login.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "9c82cdd02ca1"
+          ]
+        },
+        {
+          "slug": "start",
+          "title": "スタートアクション",
+          "status": "modified",
+          "url": "next/ja/start.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/start/start.md",
+          "counts": {
+            "added": 1,
+            "modified": 4,
+            "removed": 3,
+            "images": 1,
+            "total": 8
+          },
+          "fingerprints": [
+            "d07bb79d3dd2",
+            "ec04763d38e9",
+            "d26def60e2db",
+            "dad1d0e68e0b",
+            "45e7197311b7",
+            "0fe7e9a1287d",
+            "681cde4d6e17",
+            "2660e1501a0a"
+          ]
+        },
+        {
+          "slug": "user_settings",
+          "title": "ユーザー設定",
+          "status": "modified",
+          "url": "next/ja/user_settings.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/user_settings/user_settings.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 1,
+            "images": 0,
+            "total": 2
+          },
+          "fingerprints": [
+            "6b953931cbe2",
+            "69aeafcc33a4"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 4,
+        "changes": 49,
+        "added": 22,
+        "modified": 10,
+        "removed": 17,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "dashboard",
+          "title": "대시보드",
+          "status": "modified",
+          "url": "next/ko/dashboard.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/dashboard/dashboard.md",
+          "counts": {
+            "added": 19,
+            "modified": 5,
+            "removed": 11,
+            "images": 0,
+            "total": 35
+          },
+          "fingerprints": [
+            "b93a76d35ca6",
+            "ee373268e2cf",
+            "3833b2101572",
+            "175aa9546190",
+            "c134a0bab93f",
+            "21e552e38a43",
+            "b4f7427f08ad",
+            "abb2040fa9f2",
+            "d6002b654acf",
+            "3b762e486948",
+            "5fc6c17f2378",
+            "a40fe6bdf058",
+            "8b148e85e195",
+            "002ee850af4f",
+            "f1ebffc73b63",
+            "71f5784326e7",
+            "7af183833809",
+            "ce2974542462",
+            "9cb11cc6995c",
+            "edee0d9254f1",
+            "7d6d8fa93a77",
+            "bbe7036380df",
+            "7df9c23113e0",
+            "556093c9d929",
+            "8e9dbf4d24a8",
+            "a275a5f96f24",
+            "531a1d6d8cd3",
+            "d8c46ed6f8d2",
+            "3f34225b450a",
+            "018cb9555b9d",
+            "c1142d5cbde2",
+            "c3c3774ee08b",
+            "880cd92eb52b",
+            "8286a83aaa40",
+            "505376c370d9"
+          ]
+        },
+        {
+          "slug": "login",
+          "title": "로그인",
+          "status": "modified",
+          "url": "next/ko/login.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/login/login.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "3d59587365d4"
+          ]
+        },
+        {
+          "slug": "start",
+          "title": "시작하기",
+          "status": "modified",
+          "url": "next/ko/start.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/start/start.md",
+          "counts": {
+            "added": 3,
+            "modified": 2,
+            "removed": 5,
+            "images": 1,
+            "total": 10
+          },
+          "fingerprints": [
+            "39780a758dcd",
+            "70bfcb14f904",
+            "d6b59b60ae97",
+            "fd4d03336b21",
+            "887dde2929cd",
+            "d63c41c26886",
+            "14972ab94674",
+            "21a10ff59ed1",
+            "6d6b803552df",
+            "246d1bdf4300"
+          ]
+        },
+        {
+          "slug": "user_settings",
+          "title": "사용자 설정",
+          "status": "modified",
+          "url": "next/ko/user_settings.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/user_settings/user_settings.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 1,
+            "images": 0,
+            "total": 3
+          },
+          "fingerprints": [
+            "358aafa276e8",
+            "4a78995dcefb",
+            "f689c3eb41bb"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 4,
+        "changes": 48,
+        "added": 22,
+        "modified": 9,
+        "removed": 17,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "dashboard",
+          "title": "แดชบอร์ด",
+          "status": "modified",
+          "url": "next/th/dashboard.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/dashboard/dashboard.md",
+          "counts": {
+            "added": 20,
+            "modified": 4,
+            "removed": 12,
+            "images": 0,
+            "total": 36
+          },
+          "fingerprints": [
+            "576f8122de4e",
+            "56d8d1e0580e",
+            "712e4292b882",
+            "dc1ecee4ce70",
+            "d1a58b765223",
+            "eec91be9e9dc",
+            "ddf3cce817c6",
+            "780f55a3e604",
+            "0d014ebfd004",
+            "5b80bda401d3",
+            "0f2ed299a42d",
+            "3aad58c85fbd",
+            "748c3f1fb71a",
+            "f3500b4e292f",
+            "62a1e2f848d5",
+            "94a47d440ed6",
+            "784b080a0afc",
+            "775b0d2f7d56",
+            "37dad448b9cf",
+            "9f624bfe1b07",
+            "8f420016e20e",
+            "eeeaa06f3ef3",
+            "4a2cf9c06f49",
+            "0d997569f308",
+            "455493790647",
+            "2b8039f1df22",
+            "9e15987ec08f",
+            "efd862676fee",
+            "8d4436e42ff4",
+            "20c4798f680c",
+            "9b5348f63b1d",
+            "d1af87713917",
+            "8b46308fa38a",
+            "d7e2b8603811",
+            "024217d0ff86",
+            "06b1147315fe"
+          ]
+        },
+        {
+          "slug": "login",
+          "title": "การเข้าสู่ระบบ",
+          "status": "modified",
+          "url": "next/th/login.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/login/login.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "3d8b9bd6d79e"
+          ]
+        },
+        {
+          "slug": "start",
+          "title": "การดำเนินการเริ่มต้น",
+          "status": "modified",
+          "url": "next/th/start.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/start/start.md",
+          "counts": {
+            "added": 2,
+            "modified": 3,
+            "removed": 4,
+            "images": 1,
+            "total": 9
+          },
+          "fingerprints": [
+            "e571bac8af2c",
+            "eeb6d863c842",
+            "7ea454310c89",
+            "7d1464a95ec6",
+            "7add407bded9",
+            "5630db27bed7",
+            "abd5c8d59b3b",
+            "cf12b7443261",
+            "3bc0c472c5b9"
+          ]
+        },
+        {
+          "slug": "user_settings",
+          "title": "ตั้งค่าผู้ใช้",
+          "status": "modified",
+          "url": "next/th/user_settings.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/user_settings/user_settings.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 1,
+            "images": 0,
+            "total": 2
+          },
+          "fingerprints": [
+            "b3046b74c728",
+            "1770fa41c6b4"
+          ]
+        }
+      ]
+    }
+  }
+}
