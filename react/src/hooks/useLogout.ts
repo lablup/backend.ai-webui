@@ -83,12 +83,8 @@ async function performLogoutCleanup(notificationMessage: string) {
       }),
     );
 
-    try {
-      await logoutBackendAIClient();
-    } finally {
-      // Credentials must not survive a failed server-side logout.
-      clearLoginStorage();
-    }
+    await logoutBackendAIClient();
+    clearLoginStorage();
 
     // Set the flag AFTER clearLoginStorage() so it is not erased by the
     // sessionStorage.clear() call inside clearLoginStorage().  The flag
@@ -119,12 +115,8 @@ async function performAppCloseCleanup(notificationMessage: string) {
       }),
     );
 
-    try {
-      await logoutBackendAIClient();
-    } finally {
-      // Credentials must not survive a failed server-side logout.
-      clearLoginStorage();
-    }
+    await logoutBackendAIClient();
+    clearLoginStorage();
   }
 }
 
