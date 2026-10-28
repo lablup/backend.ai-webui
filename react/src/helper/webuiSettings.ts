@@ -26,7 +26,8 @@ export type WebUISettingGroup =
   | 'storage'
   | 'menu'
   | 'downloads'
-  | 'account';
+  | 'account'
+  | 'diagnostics';
 
 export interface WebUISettingDefinition {
   /** App-config key, equal to the `config.toml` key unless noted. */
@@ -61,6 +62,8 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
     def('enableInteractiveLoginAccountSwitch', 'public', 'boolean', 'login'),
     def('singleSignOnVendors', 'public', 'stringList', 'login'),
     def('ssoRealmName', 'public', 'string', 'login'),
+    // Also anonymous: the diagnostics surfaces run on the login page too.
+    def('debug', 'public', 'boolean', 'diagnostics'),
 
     // Session launcher.
     def(
@@ -148,6 +151,7 @@ export const WEBUI_SETTING_GROUPS: ReadonlyArray<WebUISettingGroup> = [
   'menu',
   'downloads',
   'account',
+  'diagnostics',
 ];
 
 export type WebUISettingsDocument = Record<string, unknown>;
