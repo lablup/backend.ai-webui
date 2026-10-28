@@ -403,6 +403,7 @@ function createWindow() {
     };
     nfs.readFile(path.join(es6Path, 'config.toml'), 'utf-8', (err, data) => {
       console.log('Running on build-resource debug mode...');
+      allowInvalidCertificates = false;
       if (err) {
         console.log('No configuration file found.');
         loadFallbackIndex();
@@ -425,7 +426,9 @@ function createWindow() {
           config.server.webServerURL != '""'
         ) {
           mainURL = config.server.webServerURL;
-          mainWindow.loadURL(mainURL);
+          mainWindow.loadURL(mainURL).catch((loadErr) => {
+            console.error(`Failed to load ${mainURL}:`, loadErr);
+          });
         } else {
           loadFallbackIndex();
         }
@@ -588,12 +591,9 @@ app.on('ready', () => {
     // Remove trailing slash that browsers may add
     const filePath = request.url.replace('es6://', '').replace(/\/$/, '');
     const fullPath = npjoin(es6Path, filePath);
-    // Confine the resolved path to the app/ directory: `path.join` collapses
-    // `..` segments, so a crafted URL could otherwise escape into the
-    // parent directories.
-    const resolvedPath = path.resolve(fullPath);
-    if (!resolvedPath.startsWith(es6Path + path.sep)) {
-      return { error: -2 };
+    // `path.join` collapses `..`, so confine the result to app/.
+    if (!fullPath.startsWith(es6Path + path.sep)) {
+      return new Response(null, { status: 403 });
     }
     try {
       const data = await fs.readFile(fullPath);
@@ -607,7 +607,7 @@ app.on('ready', () => {
       });
     } catch (err) {
       console.error('Error reading file:', err);
-      return { error: -2 };
+      return new Response(null, { status: 404 });
     }
   });
   createWindow();
@@ -618,8 +618,7 @@ app.on('window-all-closed', function () {
   if (mainWindow) {
     mainWindow.webContents.send('app-close-window');
   } else if (process.platform !== 'darwin') {
-    // All windows are already gone (e.g. the prevented 'close' never
-    // re-showed a window) — quit like the default Electron behavior.
+    // Default Electron behavior once no window is left.
     app.quit();
   }
 });
