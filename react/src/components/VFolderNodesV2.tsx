@@ -33,7 +33,6 @@ import QuotaPerStorageVolumePanelCard, {
 import SharedFolderPermissionInfoModalV2 from './SharedFolderPermissionInfoModalV2';
 import VFolderDeployModal, { VFolderDeployQuery } from './VFolderDeployModal';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
-import VFolderPermissionCellV2 from './VFolderPermissionCellV2';
 import { Badge } from '@lablup/ui-common/Badge';
 import { Link } from '@lablup/ui-common/Link';
 import { HStack, VStack } from '@lablup/ui-common/Stack';
@@ -606,7 +605,6 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
           ...BAIEntityLabelTokensFragment
           ...BAIEntityLabelSettingModalFragment
         }
-        ...VFolderPermissionCellV2Fragment
         ...VFolderNodeIdenticonV2Fragment
         ...SharedFolderPermissionInfoModalV2Fragment
         ...InviteFolderSettingModalFragment
@@ -799,13 +797,6 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
               <VFolderHostCell host={host} />
             ),
             sorter: isEnableSorter('host'),
-          },
-          {
-            key: 'permissions',
-            title: t('data.folders.MountPermission'),
-            render: (_perm: string, vfolder) => {
-              return <VFolderPermissionCellV2 vfolderFrgmt={vfolder} />;
-            },
           },
           {
             key: 'ownership_type',
