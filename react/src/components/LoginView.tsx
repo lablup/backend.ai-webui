@@ -1431,6 +1431,9 @@ const LoginView: React.FC<{
           <BAIFlex gap="xs" justify="end">
             <Button
               onClick={() => {
+                // Drop a Retry still in flight, or its failure reopens this dialog over the form.
+                loginAttemptRef.current += 1;
+                probedSessionRef.current = null;
                 open();
                 notification(t('error.CannotConnectToServer'));
               }}
