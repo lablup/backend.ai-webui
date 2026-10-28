@@ -62,6 +62,14 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
     def('enableInteractiveLoginAccountSwitch', 'public', 'boolean', 'login'),
     def('singleSignOnVendors', 'public', 'stringList', 'login'),
     def('ssoRealmName', 'public', 'string', 'login'),
+    def(
+      'loginAttemptLimit',
+      'public',
+      'number',
+      'login',
+      'login_attempt_limit',
+    ),
+    def('loginBlockTime', 'public', 'number', 'login', 'login_block_time'),
     // Also anonymous: the diagnostics surfaces run on the login page too.
     def('debug', 'public', 'boolean', 'diagnostics'),
 

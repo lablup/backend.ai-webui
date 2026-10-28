@@ -43,6 +43,14 @@ export const useWebUISettingLabels = (): {
         title: t('webuiSettings.SsoRealmName'),
         description: t('webuiSettings.DescSsoRealmName'),
       },
+      loginAttemptLimit: {
+        title: t('webuiSettings.LoginAttemptLimit'),
+        description: t('webuiSettings.DescLoginAttemptLimit'),
+      },
+      loginBlockTime: {
+        title: t('webuiSettings.LoginBlockTime'),
+        description: t('webuiSettings.DescLoginBlockTime'),
+      },
       debug: {
         title: t('webuiSettings.Debug'),
         description: t('webuiSettings.DescDebug'),
