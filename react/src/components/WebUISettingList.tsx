@@ -19,6 +19,7 @@ import {
   useUpdatePublicDomainAppConfig,
 } from '../hooks/useAppConfig';
 import { useRawConfig } from '../hooks/useWebUIConfig';
+import PluginPathListInput from './PluginPathListInput';
 import type { SettingItemProps } from './SettingItem';
 import SettingList, { type SettingGroup } from './SettingList';
 import { useWebUISettingLabels } from './WebUISettingLabels';
@@ -220,21 +221,28 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
           ),
         };
       case 'stringList': {
-        const joined = (current as Array<string>).join(', ');
+        const list = current as Array<string>;
+        const joined = list.join(', ');
         return {
           ...base,
           type: 'custom',
           // Same reference when equal so the "changed" dot stays off.
           defaultValue: fileValue,
           value: _.isEqual(current, fileValue) ? fileValue : current,
-          children: (
-            <BAIUncontrolledInput
-              key={joined}
-              defaultValue={joined}
-              onCommit={(raw) => setValue(definition, parseStringList(raw))}
-              style={{ maxWidth: 480 }}
-            />
-          ),
+          children:
+            definition.key === 'pluginPage' ? (
+              <PluginPathListInput
+                value={list}
+                onChange={(paths) => setValue(definition, paths)}
+              />
+            ) : (
+              <BAIUncontrolledInput
+                key={joined}
+                defaultValue={joined}
+                onCommit={(raw) => setValue(definition, parseStringList(raw))}
+                style={{ maxWidth: 480 }}
+              />
+            ),
         };
       }
     }

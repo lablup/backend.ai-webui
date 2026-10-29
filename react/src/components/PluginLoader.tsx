@@ -13,6 +13,7 @@
  * 5. Updates Jotai plugin state atoms for navigation menu integration
  * 6. Manages plugin active/inactive state based on the current route
  */
+import { pluginPathName, resolvePluginScriptUrl } from '../helper/pluginPath';
 import { useCurrentMenuKey } from '../hooks/useRouteScope';
 import { configLoadedState, loginConfigState } from '../hooks/useWebUIConfig';
 import {
@@ -84,21 +85,16 @@ function PluginLoader() {
       };
 
       const pluginLoaderQueue: Promise<void>[] = pluginNames.map(
-        async (page) => {
-          // Sanitize the plugin name to prevent path traversal attacks.
-          // Only allow alphanumeric characters, hyphens, and underscores.
-          const sanitizedPage = page.replace(/[^a-zA-Z0-9_-]/g, '');
-          if (!sanitizedPage || sanitizedPage !== page) {
+        async (path) => {
+          const pluginUrl = resolvePluginScriptUrl(path, apiEndpoint);
+          if (!pluginUrl) {
             logger.warn(
-              `Invalid plugin name "${page}": must contain only alphanumeric characters, hyphens, and underscores`,
+              `Invalid plugin path "${path}": use /-separated segments of letters, digits, "-" and "_"`,
             );
             return;
           }
-
-          const pluginUrl =
-            (globalThis as Record<string, unknown>).isElectron && apiEndpoint
-              ? `${apiEndpoint}/dist/plugins/${sanitizedPage}.js`
-              : `/dist/plugins/${sanitizedPage}.js`;
+          // The file name is the custom element and the page route.
+          const page = pluginPathName(path);
 
           try {
             // `@vite-ignore` = Vite's equivalent of webpack's `webpackIgnore`.
@@ -145,7 +141,7 @@ function PluginLoader() {
             };
             plugins.page.push(pluginPageData);
           } catch (error) {
-            logger.warn(`Failed to load plugin "${page}":`, error);
+            logger.warn(`Failed to load plugin "${path}":`, error);
           }
         },
       );

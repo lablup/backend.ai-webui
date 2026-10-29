@@ -56,6 +56,7 @@ import {
   loginWithSAML,
   probeManager,
 } from '../helper/loginSessionAuth';
+import { resolvePluginScriptUrl } from '../helper/pluginPath';
 import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
 import { useLoginOrchestration } from '../hooks/useLoginOrchestration';
 import {
@@ -287,25 +288,13 @@ const LoginView: React.FC<{
     }
   }
 
-  // Load login plugin when config is ready.
-  // Mirrors `PluginLoader.tsx`'s URL resolution so login plugins follow
-  // the same deployment model as page plugins: the file is served by the
-  // backend WebServer (or a Vite/static host that mounts `/dist/plugins/`).
-  // No build-time bundling — plugins can be deployed independently of the
-  // WebUI bundle.
+  // Load the login plugin once config is ready; it is served from
+  // `/dist/plugins/` like page plugins, never bundled.
   useEffect(() => {
     if (!isConfigLoaded || !loginPlugin) return;
 
-    // Sanitize the plugin name to prevent path traversal attacks.
-    // Only allow alphanumeric characters, hyphens, and underscores.
-    const sanitizedPlugin = loginPlugin.replace(/[^a-zA-Z0-9_-]/g, '');
-    if (!sanitizedPlugin || sanitizedPlugin !== loginPlugin) return;
-
-    const isElectronEnv = (globalThis as Record<string, unknown>).isElectron;
-    const pluginUrl =
-      isElectronEnv && apiEndpoint
-        ? `${apiEndpoint}/dist/plugins/${sanitizedPlugin}.js`
-        : `/dist/plugins/${sanitizedPlugin}.js`;
+    const pluginUrl = resolvePluginScriptUrl(loginPlugin, apiEndpoint);
+    if (!pluginUrl) return;
 
     // `@vite-ignore` opts out of Vite's static analysis. The URL is an
     // absolute path (no relative `..` traversal), so esbuild's
