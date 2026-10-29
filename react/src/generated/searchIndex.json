@@ -4025,7 +4025,6 @@
         "data.folders.FolderDeletedForever",
         "data.folders.FolderRestored",
         "data.folders.FolderUsage",
-        "data.folders.FolderVisibleToProjectMembers",
         "data.folders.InviteUsers",
         "data.folders.KickOut",
         "data.folders.KickOutConfirm",

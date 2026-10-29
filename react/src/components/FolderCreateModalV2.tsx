@@ -55,7 +55,7 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const MODEL_STORE_PROJECT_NAME = 'model-store';
-const SKIP_SHARED_FOLDER_CONFIRM_KEY = 'skip_shared_project_folder_confirm';
+const SKIP_PROJECT_FOLDER_CONFIRM_KEY = 'skip_project_folder_confirm';
 const FOLDER_NAME_MAX_LENGTH = 64;
 const MODAL_WIDTH = 650;
 
@@ -168,7 +168,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
         : undefined;
 
   const skipSharedFolderConfirm = !!useMyAppConfig<boolean>(
-    SKIP_SHARED_FOLDER_CONFIRM_KEY,
+    SKIP_PROJECT_FOLDER_CONFIRM_KEY,
   );
   const updateMyUserAppConfig = useUpdateMyUserAppConfig();
   const refetchMyAppConfig = useRefetchMyAppConfig();
@@ -745,7 +745,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
           try {
             if (dontAskAgain) {
               // A failed preference write must not block the creation.
-              await updateMyUserAppConfig(SKIP_SHARED_FOLDER_CONFIRM_KEY, true)
+              await updateMyUserAppConfig(SKIP_PROJECT_FOLDER_CONFIRM_KEY, true)
                 .then(() => refetchMyAppConfig())
                 .catch((error) => logger.error(error));
             }
