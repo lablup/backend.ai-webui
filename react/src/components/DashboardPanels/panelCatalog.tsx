@@ -476,7 +476,7 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     requires: SUPERADMIN_ONLY,
     kind: 'custom',
     Component: FailedLoginsPanel,
-    defaultSize: size(4, 3),
+    defaultSize: size(2, 3),
     minSize: size(2, 3),
     settings: ['range'],
     defaultHidden: true,
