@@ -317,7 +317,6 @@ session ของ Backend.AI โดยใช้คีย์ของคุณเ
 **เปิดใช้งาน**
 
 ![](../images/experimental_features.png)
-<!-- TODO: Recapture without the removed "Command palette" row (#10546) -->
 
 - **เอเจนต์ AI**: เปิดใช้งานฟีเจอร์เอเจนต์ AI ซึ่งให้ความสามารถ AI แบบ
   เอเจนต์ภายใน WebUI เมื่อเปิดใช้งาน ฟังก์ชันเอเจนต์ AI จะพร้อมใช้งาน
