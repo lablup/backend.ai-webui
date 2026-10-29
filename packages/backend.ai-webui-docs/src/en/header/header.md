@@ -16,7 +16,7 @@ The top bar includes various features that support use of the WebUI.
 
 Users can switch between projects using the project selector provided in the top bar.
 By default, the project that the user currently belongs to is selected.
-Your own personal project is listed as **My Project** rather than under its name.
+You can access your personal project by selecting **My Project**.
 Since each project may have different resource policies, switching projects may also change the available resource policies.
 
 The selector lists the projects you can access. If you open an address that names a
