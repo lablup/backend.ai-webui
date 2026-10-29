@@ -850,7 +850,7 @@
       "Last1Hour": "Ultima ora",
       "Last24Hours": "Ultime 24 ore",
       "Last7Days": "Ultimi 7 giorni",
-      "ResourceGroups": "Gruppi di risorse",
+      "ResourceGroup": "Gruppo di risorse",
       "ResourceGroupsDescription": "Se non ne selezioni nessuno: {{default}}",
       "TimeRange": "Intervallo di tempo"
     }

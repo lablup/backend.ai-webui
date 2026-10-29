@@ -26,14 +26,14 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
       value,
       onChange,
     }: {
-      value?: Array<string>;
-      onChange?: (value: Array<string>) => void;
+      value?: string | null;
+      onChange?: (value: string | undefined) => void;
     }) => (
       <>
-        <output data-testid="resource-groups-value">
+        <output data-testid="resource-group-value">
           {JSON.stringify(value ?? null)}
         </output>
-        <button type="button" onClick={() => onChange?.(['g2'])}>
+        <button type="button" onClick={() => onChange?.('g2')}>
           pick g2
         </button>
       </>
@@ -58,22 +58,30 @@ const renderModal = (
   );
 
 describe('PanelSettingsModal', () => {
-  it('shows the saved resource groups in the select', async () => {
+  it('shows the saved resource group in the select', async () => {
     renderModal({ resourceGroups: ['g1'] }, vi.fn());
 
-    expect(
-      await screen.findByTestId('resource-groups-value'),
-    ).toHaveTextContent('["g1"]');
+    expect(await screen.findByTestId('resource-group-value')).toHaveTextContent(
+      '"g1"',
+    );
   });
 
-  it('submits the resource groups picked in the select', async () => {
+  it('shows the first group of an older multi-group setting', async () => {
+    renderModal({ resourceGroups: ['g3', 'g1'] }, vi.fn());
+
+    expect(await screen.findByTestId('resource-group-value')).toHaveTextContent(
+      '"g3"',
+    );
+  });
+
+  it('submits the resource group picked in the select', async () => {
     const user = userEvent.setup();
     const onSubmit = vi.fn();
     renderModal({ resourceGroups: ['g1'] }, onSubmit);
 
     await user.click(await screen.findByRole('button', { name: 'pick g2' }));
-    expect(screen.getByTestId('resource-groups-value')).toHaveTextContent(
-      '["g2"]',
+    expect(screen.getByTestId('resource-group-value')).toHaveTextContent(
+      '"g2"',
     );
     await user.click(screen.getByRole('button', { name: 'button.Save' }));
 

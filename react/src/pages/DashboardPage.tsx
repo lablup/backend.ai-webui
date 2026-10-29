@@ -10,7 +10,6 @@ import {
 } from '../components/DashboardPanels/DashboardRefreshContext';
 import {
   pageQueryFragments,
-  pageQueryRefresh,
   type PageQueryFragment,
 } from '../components/DashboardPanels/pageQuery';
 import { PANEL_CATALOG } from '../components/DashboardPanels/panelCatalog';
@@ -35,15 +34,7 @@ const DashboardPageContent: React.FC = () => {
 
   // The cards that still read this query refresh with it on the dashboard timer.
   const renderedKeys = useRenderedPanelKeys('project', PANEL_CATALOG);
-  const pageQueryRefreshMin = pageQueryRefresh(
-    renderedKeys,
-    PANEL_CATALOG,
-    '15s',
-  );
-  const { fetchKey } = useDashboardFetchKey(
-    'page-query',
-    pageQueryRefreshMin ?? '15s',
-  );
+  const { fetchKey } = useDashboardFetchKey('page-query');
   // Deferred so a refresh suspends in the background instead of dropping the
   // whole page into the route fallback (FR-3386).
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -53,9 +44,7 @@ const DashboardPageContent: React.FC = () => {
   const includes = (fragment: PageQueryFragment) =>
     deferredFragmentsKey.split(',').includes(fragment);
   // With no card reading the query, a tick has nothing to refresh.
-  const queryFetchKey = pageQueryRefreshMin
-    ? deferredFetchKey
-    : INITIAL_FETCH_KEY;
+  const queryFetchKey = fragmentsKey ? deferredFetchKey : INITIAL_FETCH_KEY;
   const isRefetching =
     fetchKey !== deferredFetchKey || fragmentsKey !== deferredFragmentsKey;
 

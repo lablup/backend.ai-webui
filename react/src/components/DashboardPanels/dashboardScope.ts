@@ -31,11 +31,10 @@ export const resolveDashboardScope = ({
 };
 
 /**
- * The resource groups a card that reads one resource group at a time shows,
- * one row each: its own setting, or the header's current group.
+ * The one resource group a card reads: its own setting (the first group of an
+ * older multi-group setting), else the header's current group.
  */
-export const resourceGroupRows = (
+export const cardResourceGroup = (
   setting: ReadonlyArray<string> | undefined,
   currentResourceGroup: string | null | undefined,
-): Array<string> =>
-  setting?.length ? _.uniq(setting) : _.compact([currentResourceGroup]);
+): string | null => setting?.[0] || currentResourceGroup || null;

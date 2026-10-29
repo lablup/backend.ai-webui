@@ -10,7 +10,6 @@ import {
 } from '../components/DashboardPanels/DashboardRefreshContext';
 import {
   pageQueryFragments,
-  pageQueryRefresh,
   type PageQueryFragment,
 } from '../components/DashboardPanels/pageQuery';
 import { PANEL_CATALOG } from '../components/DashboardPanels/panelCatalog';
@@ -46,15 +45,7 @@ const AdminDashboardPageContent: React.FC<AdminDashboardPageProps> = ({
   const isSuperAdmin = useCurrentUserRole() === 'superadmin';
 
   const renderedKeys = useRenderedPanelKeys(page, PANEL_CATALOG);
-  const pageQueryRefreshMin = pageQueryRefresh(
-    renderedKeys,
-    PANEL_CATALOG,
-    '30s',
-  );
-  const { fetchKey } = useDashboardFetchKey(
-    'page-query',
-    pageQueryRefreshMin ?? '30s',
-  );
+  const { fetchKey } = useDashboardFetchKey('page-query');
   const deferredFetchKey = useDeferredValue(fetchKey);
   // Deferred so adding a card fetches its fragment without suspending the page.
   const fragmentsKey = pageQueryFragments(renderedKeys).join(',');
@@ -62,9 +53,7 @@ const AdminDashboardPageContent: React.FC<AdminDashboardPageProps> = ({
   const includes = (fragment: PageQueryFragment) =>
     deferredFragmentsKey.split(',').includes(fragment);
   // With no card reading the query, a tick has nothing to refresh.
-  const queryFetchKey = pageQueryRefreshMin
-    ? deferredFetchKey
-    : INITIAL_FETCH_KEY;
+  const queryFetchKey = fragmentsKey ? deferredFetchKey : INITIAL_FETCH_KEY;
   const isRefetching =
     fetchKey !== deferredFetchKey || fragmentsKey !== deferredFragmentsKey;
 
