@@ -2774,6 +2774,33 @@
     "SharedMemory": "Shared Memory",
     "Updated": "Resource preset updated"
   },
+  "retentionPolicy": {
+    "Category": "Category",
+    "CategoryRequired": "Select a category.",
+    "CreatePolicy": "Create Policy",
+    "DataRetention": "Data Retention",
+    "DeletePolicy": "Delete Retention Policy",
+    "Description": "Set how long each category of data is kept. Only categories with an enabled policy have data past its retention period cleaned up.",
+    "EditPolicy": "Edit Policy",
+    "OnePolicyPerCategory": "Only one policy can exist per category.",
+    "PolicyAlreadyExistsView": "A policy already exists for this category. <viewLink>View</viewLink>",
+    "RetentionPeriodDays": "Retention Period (Days)",
+    "RetentionPeriodRequired": "Enter a retention period of at least 1 day.",
+    "RetentionPolicy": "Retention Policy",
+    "SuccessfullyCreated": "Retention policy created.",
+    "SuccessfullyDeleted": "Retention policy deleted.",
+    "SuccessfullyUpdated": "Retention policy updated.",
+    "categories": {
+      "DEPLOYMENTS": "Deployments",
+      "LOGIN": "Login History",
+      "LOGS": "Logs",
+      "RECONCILE_HISTORY": "Reconcile History",
+      "ROLES_INVITATIONS": "Roles & Invitations",
+      "SESSIONS": "Sessions",
+      "USAGE_BUCKETS": "Usage Buckets",
+      "USAGE_RECORDS": "Usage Records"
+    }
+  },
   "route": {
     "CreatedAt": "Created At",
     "ErrorCode": "Error Code",

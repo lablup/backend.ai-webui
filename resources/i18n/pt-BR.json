@@ -2787,6 +2787,33 @@
     "SharedMemory": "Memória compartilhada",
     "Updated": "Predefinição de recurso atualizada"
   },
+  "retentionPolicy": {
+    "Category": "Categoria",
+    "CategoryRequired": "Selecione uma categoria.",
+    "CreatePolicy": "Criar política",
+    "DataRetention": "Retenção de dados",
+    "DeletePolicy": "Excluir política de retenção",
+    "Description": "Defina por quanto tempo os dados de cada categoria são mantidos. Os dados que ultrapassam o período de retenção só são limpos nas categorias com uma política habilitada.",
+    "EditPolicy": "Editar política",
+    "OnePolicyPerCategory": "Só pode existir uma política por categoria.",
+    "PolicyAlreadyExistsView": "Já existe uma política para esta categoria. <viewLink>Ver</viewLink>",
+    "RetentionPeriodDays": "Período de retenção (dias)",
+    "RetentionPeriodRequired": "Insira um período de retenção de pelo menos 1 dia.",
+    "RetentionPolicy": "Política de retenção",
+    "SuccessfullyCreated": "Política de retenção criada.",
+    "SuccessfullyDeleted": "Política de retenção excluída.",
+    "SuccessfullyUpdated": "Política de retenção atualizada.",
+    "categories": {
+      "DEPLOYMENTS": "Implantações",
+      "LOGIN": "Histórico de login",
+      "LOGS": "Logs",
+      "RECONCILE_HISTORY": "Histórico de reconciliação",
+      "ROLES_INVITATIONS": "Funções e convites",
+      "SESSIONS": "Sessões",
+      "USAGE_BUCKETS": "Agregados de uso",
+      "USAGE_RECORDS": "Registros de uso"
+    }
+  },
   "route": {
     "CreatedAt": "Criado em",
     "ErrorCode": "Código de erro",

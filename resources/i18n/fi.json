@@ -2787,6 +2787,33 @@
     "SharedMemory": "Jaettu muisti",
     "Updated": "Resurssien esiasetus päivitetty"
   },
+  "retentionPolicy": {
+    "Category": "Luokka",
+    "CategoryRequired": "Valitse luokka.",
+    "CreatePolicy": "Luo käytäntö",
+    "DataRetention": "Tietojen säilytys",
+    "DeletePolicy": "Poista säilytyskäytäntö",
+    "Description": "Määritä, kuinka kauan kunkin luokan tietoja säilytetään. Säilytysajan ylittäneet tiedot siivotaan vain luokista, joiden käytäntö on käytössä.",
+    "EditPolicy": "Muokkaa käytäntöä",
+    "OnePolicyPerCategory": "Kullakin luokalla voi olla vain yksi käytäntö.",
+    "PolicyAlreadyExistsView": "Tälle luokalle on jo käytäntö. <viewLink>Näytä</viewLink>",
+    "RetentionPeriodDays": "Säilytysaika (päivää)",
+    "RetentionPeriodRequired": "Anna vähintään 1 päivän säilytysaika.",
+    "RetentionPolicy": "Säilytyskäytäntö",
+    "SuccessfullyCreated": "Säilytyskäytäntö luotu.",
+    "SuccessfullyDeleted": "Säilytyskäytäntö poistettu.",
+    "SuccessfullyUpdated": "Säilytyskäytäntö päivitetty.",
+    "categories": {
+      "DEPLOYMENTS": "Käyttöönotot",
+      "LOGIN": "Kirjautumishistoria",
+      "LOGS": "Lokit",
+      "RECONCILE_HISTORY": "Täsmäytyshistoria",
+      "ROLES_INVITATIONS": "Roolit ja kutsut",
+      "SESSIONS": "Istunnot",
+      "USAGE_BUCKETS": "Käyttökoosteet",
+      "USAGE_RECORDS": "Käyttötietueet"
+    }
+  },
   "route": {
     "CreatedAt": "Luotu jhk",
     "ErrorCode": "Virhekoodi",
