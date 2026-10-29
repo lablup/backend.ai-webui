@@ -89,9 +89,16 @@ interface UseLoginOrchestrationOptions {
 
   /**
    * Called to check if a session login exists on the server.
-   * Equivalent to the old loginPanel.check_login().
+   * Equivalent to the old loginPanel.check_login(). Resolves to
+   * `'unreachable'` when the manager could not be reached to tell.
    */
-  onCheckLogin: () => Promise<boolean>;
+  onCheckLogin: () => Promise<boolean | 'unreachable'>;
+
+  /**
+   * Called when `onCheckLogin` could not reach the manager; `retry` runs the
+   * check again.
+   */
+  onServerUnreachable: (retry: () => Promise<void>) => void;
 
   /**
    * Called to log out the current session on the server.
@@ -121,6 +128,7 @@ export function useLoginOrchestration({
   onOpen,
   onBlock,
   onCheckLogin,
+  onServerUnreachable,
   onLogoutSession,
   apiEndpoint,
   connectionMode,
@@ -176,24 +184,31 @@ export function useLoginOrchestration({
 
       if (autoLogout === true && tabcount.tabsCounter === 1 && !reloaded) {
         // Auto-logout scenario: single tab, fresh navigation, auto_logout enabled
-        const isLoggedIn = await onCheckLogin();
-        const currentTime = Date.now() / 1000;
-        const lastCloseTime = backendaiOptions.get(
-          'last_window_close_time',
-          currentTime,
-        );
+        const checkAndDecide = async (): Promise<void> => {
+          const isLoggedIn = await onCheckLogin();
+          if (isLoggedIn === 'unreachable') {
+            onServerUnreachable(checkAndDecide);
+            return;
+          }
+          const currentTime = Date.now() / 1000;
+          const lastCloseTime = backendaiOptions.get(
+            'last_window_close_time',
+            currentTime,
+          );
 
-        if (isLoggedIn && currentTime - lastCloseTime > 3.0) {
-          // Stale session: logged in but window was closed more than 3s ago
-          await onLogoutSession();
-          onOpen();
-        } else if (isLoggedIn) {
-          // Recently closed window - try to re-login silently
-          onLogin(false);
-        } else {
-          // Not logged in, show login panel
-          onOpen();
-        }
+          if (isLoggedIn && currentTime - lastCloseTime > 3.0) {
+            // Stale session: logged in but window was closed more than 3s ago
+            await onLogoutSession();
+            onOpen();
+          } else if (isLoggedIn) {
+            // Recently closed window - try to re-login silently
+            onLogin(false);
+          } else {
+            // Not logged in, show login panel
+            onOpen();
+          }
+        };
+        await checkAndDecide();
       } else {
         // Normal flow: attempt silent login
         onLogin(false);

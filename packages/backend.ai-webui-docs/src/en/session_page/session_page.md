@@ -42,7 +42,7 @@ You can filter sessions by type — `All`, `Interactive`, `Batch`, `Inference`, 
 The personal Sessions page shows only the sessions of the project selected with the project selector in the top bar — its address is
 `/project/<project name>/session` — and it always shows only your own sessions, regardless of your role.
 To view and manage sessions across all users in a project, use the **Sessions** page under
-**Admin Settings** in the sidebar.
+**Project Settings** in the sidebar.
 :::
 
 By default, you can view the following columns: session name, status, allocated resources (AI Accelerators, CPU, Memory),

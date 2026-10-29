@@ -327,11 +327,12 @@ describe('VFolderNodes deploy row action disable-with-tooltip contract (FR-3423)
       }),
     );
 
-    // The reason is folded into the menu row's label ("title — reason"): a
-    // disabled row swallows hover, so it has to be visible without one.
-    const deployItem = await screen.findByText(
-      'modelService.DeployAsService — data.folders.CannotDeployFromAdminMenu',
-    );
+    // The menu row keeps its plain title; the reason is a tooltip on hover.
+    const deployItem = await screen.findByText('modelService.DeployAsService');
+    await user.hover(deployItem);
+    expect(
+      await screen.findByText('data.folders.CannotDeployFromAdminMenu'),
+    ).toBeInTheDocument();
 
     fireEvent.click(deployItem);
     expect(mockDeployModalOpen).not.toHaveBeenCalledWith(

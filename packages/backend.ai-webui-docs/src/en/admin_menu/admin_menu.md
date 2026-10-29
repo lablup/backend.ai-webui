@@ -6,7 +6,7 @@ navTitle: Admin Features
 
 # Admin Features
 
-Logging in with an admin account adds an **Admin Settings** menu at the top of the sidebar. Selecting it switches the sidebar to show only the administration menus. User information registered in Backend.AI is listed under the **Users** menu. A super-admin can see all users' information, and create or deactivate users.
+Superadmins land on the administration pages right after logging in, and move between them and the user pages with **Switch to Admin Console** and **Switch to User Console** in the user menu. While you are on these pages, the sidebar lists only the administration menus. User information registered in Backend.AI is listed under the **Users** menu. A super-admin can see all users' information, and create or deactivate users.
 
 ![](../images/admin_user_page.png)
 
@@ -569,7 +569,7 @@ Backend.AI lets administrators define reusable **Prometheus query presets** that
 The presets are managed from the **Prometheus Preset** tab on the Admin Deployments page (`/admin/deployments?tab=prometheus-preset`).
 
 :::note[Superadmin only: live preview in the Auto Scaling Rule editor]
-When a superadmin opens the Auto Scaling Rule editor for a deployment, sets **Metric Source** to `Prometheus`, and selects a preset, a live **Current value** preview appears below the preset selector showing the latest metric value from Prometheus. This preview is only visible to superadmin accounts — regular users and domain admins do not see it.
+When a superadmin opens the Auto Scaling Rule editor for a deployment, sets **Metric Source** to `Prometheus`, and selects a preset, a live **Current value** preview appears below the preset selector showing the latest metric value from Prometheus. This preview is only visible to superadmin accounts.
 :::
 
 ![](../images/admin_prometheus_preset_list.png)
@@ -1060,7 +1060,7 @@ to `FAIR_SHARE`. To configure the scheduler type for a resource group, refer to 
 [Manage resource group](#manage-resource-group) section.
 :::
 
-To access this feature, click the **Scheduler** menu item under **Admin Settings** in the sidebar.
+To access this feature, click the **Scheduler** menu item in the sidebar of the administration pages.
 The page displays a Fair Share Setting tab with a 4-step drill-down interface.
 
 ![](../images/fair_share_resource_group_page.png)
