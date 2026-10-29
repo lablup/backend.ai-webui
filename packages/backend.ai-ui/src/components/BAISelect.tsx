@@ -96,11 +96,13 @@
  anywhere the tag-pill look is worth the extra trigger height.
 
  PILOT-DECISION — **`label` is required by Astryx and defaults to hidden.**
- No antd call site passes one. The wrapper accepts `label` and otherwise
+ No antd call site passes one. The wrapper accepts `label`; otherwise a
+ labelled `Form.Item` names it, and outside one the wrapper
  derives an accessible name from `placeholder` (which every call site does
  pass: 28 of 64) before falling back to the translated generic — the same
  policy `BAIButton` / `BAICheckbox` / `BAIUncontrolledInput` use here.
 */
+import { FormItemInputContext } from '../form-engine';
 import { nodeToAccessibleLabel } from '../helper/astryxLabel';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIMultiSelector from './BAIMultiSelector';
@@ -500,8 +502,14 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
     emitAutoSelection();
   }, [autoSelectedValue]);
 
+  // Inside a labelled `Form.Item`, ui-common names the control from the item;
+  // the placeholder fallback would override that name.
+  const itemLabel = React.useContext(FormItemInputContext).label;
   const accessibleLabel =
-    label ?? nodeToAccessibleLabel(placeholder) ?? t('general.Select');
+    label ||
+    (itemLabel
+      ? undefined
+      : nodeToAccessibleLabel(placeholder) || t('general.Select'));
 
   const singleValue = toOptionKey(value ?? defaultValue);
   const resolvedSingleValue =
@@ -540,7 +548,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
       ghost && 'bai-select-ghost',
       richTriggerNode !== undefined && 'bai-select-rich-trigger',
     ),
-    'aria-label': accessibleLabel || t('general.Select'),
+    'aria-label': accessibleLabel,
     placeholder:
       typeof placeholder === 'string'
         ? placeholder
