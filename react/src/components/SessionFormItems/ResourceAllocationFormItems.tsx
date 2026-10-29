@@ -33,7 +33,9 @@ import {
   ImageEnvironmentFormInput,
 } from '../ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from '../InputNumberWithSlider';
-import ResourcePresetSelect from '../ResourcePresetSelect';
+import ResourcePresetSelect, {
+  getUnavailableSlotNames,
+} from '../ResourcePresetSelect';
 import RemainingMark from './RemainingMark';
 import SharedMemoryFormItems from './SharedMemoryFormItems';
 // FRONTIER (ticket 17): the launcher's form-visual core. The Form ENGINE and
@@ -702,6 +704,38 @@ const ResourceAllocationFormItems: React.FC<
     },
   );
 
+  // The first allocatable preset, else minimum-required (or none when custom
+  // allocation is off).
+  const selectFallbackPreset = useEventNotStable(() => {
+    const firstAllocatablePreset = _.sortBy(
+      _.filter(sessionPresets, (preset) =>
+        allocatablePresetIds.includes(preset.id),
+      ),
+      'name',
+    )[0];
+    if (enableResourcePresets && firstAllocatablePreset) {
+      form.setFieldsValue({
+        allocationPreset: firstAllocatablePreset.id,
+      });
+      updateResourceFieldsBasedOnPreset(firstAllocatablePreset.id);
+    } else if (baiClient._config.allowCustomResourceAllocation) {
+      form.setFieldValue('allocationPreset', 'minimum-required');
+    } else {
+      form.setFieldValue('allocationPreset', null);
+    }
+  });
+
+  // A preset kept across a resource-group change (or restored from the URL) may
+  // need a slot the new group lacks; pick again instead of launching without it.
+  useEffect(() => {
+    if (
+      presetUnavailableReasons[currentAllocationPreset]?.type ===
+      'slotNotInResourceGroup'
+    ) {
+      selectFallbackPreset();
+    }
+  }, [currentAllocationPreset, presetUnavailableReasons, selectFallbackPreset]);
+
   // This effect is
   // - for auto selecting the preset right after initialling the form and resourceSlots are loaded
   // - ensuring accelerator type is valid when related data is changed
@@ -719,30 +753,10 @@ const ResourceAllocationFormItems: React.FC<
         )
       ) {
         // if the current preset is custom or minimum-required, do nothing.
-      } else {
-        const firstAllocatablePreset = _.sortBy(
-          _.filter(sessionPresets, (preset) =>
-            allocatablePresetIds.includes(preset.id),
-          ),
-          'name',
-        )[0];
-        if (
-          allocatablePresetIds.includes(form.getFieldValue('allocationPreset'))
-        ) {
-          // if the current preset is available in the current resource group, do nothing.
-        } else if (enableResourcePresets && firstAllocatablePreset) {
-          form.setFieldsValue({
-            allocationPreset: firstAllocatablePreset.id,
-          });
-          updateResourceFieldsBasedOnPreset(firstAllocatablePreset.id);
-        } else {
-          // if the current preset is not available in the current resource group, set to "minimum-required".
-          if (baiClient._config.allowCustomResourceAllocation) {
-            form.setFieldValue('allocationPreset', 'minimum-required');
-          } else {
-            form.setFieldValue('allocationPreset', null);
-          }
-        }
+      } else if (
+        !allocatablePresetIds.includes(form.getFieldValue('allocationPreset'))
+      ) {
+        selectFallbackPreset();
       }
       ensureValidAcceleratorType();
       form
@@ -759,11 +773,9 @@ const ResourceAllocationFormItems: React.FC<
     sessionPresets,
     resourceSlotsInRG,
     form,
-    enableResourcePresets,
     // below are functions wrapped by useEventNotStable
     ensureValidAcceleratorType,
-    updateResourceFieldsBasedOnPreset,
-    baiClient._config.allowCustomResourceAllocation,
+    selectFallbackPreset,
   ]);
 
   // This effect is for auto updating the resource fields when minimum-required preset is selected
@@ -1932,13 +1944,7 @@ export const getPresetUnavailableReason = (
 ): PresetUnavailableReason | undefined => {
   const slots = preset.resource_slots as Record<string, string | undefined>;
   if (slotsInResourceGroup) {
-    const missing = _.filter(
-      _.keys(slots),
-      (key) =>
-        key !== 'shmem' &&
-        (parseFloat(slots[key] ?? '') || 0) > 0 &&
-        !slotsInResourceGroup.includes(key),
-    );
+    const missing = getUnavailableSlotNames(slots, slotsInResourceGroup);
     if (missing.length > 0) {
       return { type: 'slotNotInResourceGroup', slots: missing };
     }

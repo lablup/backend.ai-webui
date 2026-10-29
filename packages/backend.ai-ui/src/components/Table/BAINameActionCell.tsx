@@ -15,6 +15,7 @@ import {
 import { Popover } from '@lablup/ui-common/Popover';
 import { HStack, VStack } from '@lablup/ui-common/Stack';
 import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { useTheme } from '@lablup/ui-common/theme';
 import classNames from 'classnames';
 import { EllipsisVertical } from 'lucide-react';
@@ -350,12 +351,15 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
   const toMenuItem = (
     action: BAINameActionCellAction,
   ): DropdownMenuItemData => ({
-    // FR-3423: a disabled action must still explain itself once it overflows
-    // into this menu. The reason is folded into the label text rather than a
-    // tooltip, which a disabled menu row swallows.
-    label: disabledReason(action.disabled)
-      ? `${action.title} — ${disabledReason(action.disabled)}`
-      : action.title,
+    // A disabled action still explains itself in the menu, as a hover tooltip
+    // on the label (a disabled row does not block pointer events).
+    label: disabledReason(action.disabled) ? (
+      <Tooltip content={disabledReason(action.disabled)} placement="end">
+        <span>{action.title}</span>
+      </Tooltip>
+    ) : (
+      action.title
+    ),
     variant: action.type === 'danger' ? 'destructive' : 'default',
     // Both rows use the same wrapper so the icon box is identical; only the
     // default one needs a colour, a danger row inherits `--color-error`.

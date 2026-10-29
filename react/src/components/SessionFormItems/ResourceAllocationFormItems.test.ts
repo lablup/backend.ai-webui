@@ -8,6 +8,7 @@ import {
   ResourcePreset,
 } from '../../hooks/useResourceLimitAndRemaining';
 import { Image } from '../ImageEnvironmentSelectFormItems';
+import { getUnavailableSlotNames } from '../ResourcePresetSelect';
 import {
   AUTOMATIC_DEFAULT_SHMEM,
   getPresetUnavailableReason,
@@ -230,6 +231,23 @@ describe('getPresetUnavailableReason', () => {
       { type: 'exceedsLimit', slots: ['mem'] },
       undefined,
     ]);
+  });
+});
+
+describe('getUnavailableSlotNames', () => {
+  it('lists non-zero slots missing from the available ones, ignoring shmem', () => {
+    expect(
+      getUnavailableSlotNames(
+        {
+          cpu: '1',
+          mem: '2g',
+          shmem: '1g',
+          'cuda.shares': '0.5',
+          'cuda.device': 0,
+        },
+        ['cpu', 'mem'],
+      ),
+    ).toEqual(['cuda.shares']);
   });
 });
 

@@ -46,6 +46,24 @@ export interface PresetOptionType extends SelectorOptionData {
 }
 
 /**
+ * Slots the preset requests (non-zero) that `availableSlotNames` lacks;
+ * shmem is never a slot of its own.
+ */
+export const getUnavailableSlotNames = (
+  resourceSlots: Record<string, unknown> | null | undefined,
+  availableSlotNames: string[],
+): string[] =>
+  _.keys(
+    _.pickBy(
+      resourceSlots,
+      (value, key) =>
+        key !== 'shmem' &&
+        !availableSlotNames.includes(key) &&
+        (_.toNumber(value) || 0) !== 0,
+    ),
+  );
+
+/**
  * PILOT-DECISION: the props the single call site passes, not antd
  * `SelectProps`; the Form injects `value`.
  */
@@ -119,7 +137,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     const reason = presetUnavailableReasons?.[preset.id];
     switch (reason?.type) {
       case 'slotNotInResourceGroup':
-        return t('resourcePreset.SlotNotInResourceGroup', {
+        return t('resourcePreset.RequiresSlotsNotInResourceGroup', {
           slots: slotNames(reason.slots),
         });
       case 'imageAccelerator':
