@@ -8,7 +8,6 @@ import ResourceUsageBars from '../memberCards/ResourceUsageBars';
 import { toLimitUsageRows } from '../memberCards/memberCardData';
 import type { PanelComponentProps } from '../types';
 import { Text } from '@lablup/ui-common/Text';
-import { BAIFlex } from 'backend.ai-ui';
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -74,13 +73,10 @@ const ResourceGroupCapacityPanel: React.FC<PanelComponentProps> = ({
         !vars.resourceGroup ? (
           <Text type="supporting">{t('dashboard.card.NoResourceGroup')}</Text>
         ) : (
-          <BAIFlex direction="column" align="stretch" gap="sm">
-            <Text weight="semibold">{vars.resourceGroup}</Text>
-            <ResourceGroupCapacity
-              resourceGroupName={vars.resourceGroup}
-              fetchKey={key}
-            />
-          </BAIFlex>
+          <ResourceGroupCapacity
+            resourceGroupName={vars.resourceGroup}
+            fetchKey={key}
+          />
         )
       }
     </MemberCard>

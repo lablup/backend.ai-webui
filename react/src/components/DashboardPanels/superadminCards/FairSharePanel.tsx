@@ -169,17 +169,11 @@ const FairSharePanel: React.FC<PanelComponentProps> = ({
         cardScope.kind !== 'domain' ? null : !vars.resourceGroup ? (
           <Text type="supporting">{t('dashboard.card.NoResourceGroup')}</Text>
         ) : (
-          <BAIFlex direction="column" align="stretch" gap="sm">
-            <BAIFlex direction="row" align="baseline" gap="xs">
-              <Text type="supporting">{`${t('general.ResourceGroup')}:`}</Text>
-              <Text weight="semibold">{vars.resourceGroup}</Text>
-            </BAIFlex>
-            <ResourceGroupFairShares
-              resourceGroupName={vars.resourceGroup}
-              domainName={cardScope.domainName}
-              fetchKey={key}
-            />
-          </BAIFlex>
+          <ResourceGroupFairShares
+            resourceGroupName={vars.resourceGroup}
+            domainName={cardScope.domainName}
+            fetchKey={key}
+          />
         )
       }
     </ScopedCard>

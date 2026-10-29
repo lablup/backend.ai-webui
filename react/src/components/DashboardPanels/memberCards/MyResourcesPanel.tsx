@@ -8,7 +8,6 @@ import MemberCard, { NoProjectText, mineProjectId } from './MemberCard';
 import ResourceUsageBars from './ResourceUsageBars';
 import { toUsageRows } from './memberCardData';
 import { Text } from '@lablup/ui-common/Text';
-import { BAIFlex } from 'backend.ai-ui';
 import React, { useDeferredValue } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -84,14 +83,11 @@ const MyResourcesPanel: React.FC<PanelComponentProps> = ({
         ) : !resourceGroupName ? (
           <Text type="supporting">{t('dashboard.card.NoResourceGroup')}</Text>
         ) : (
-          <BAIFlex direction="column" align="stretch" gap="sm">
-            <Text weight="semibold">{resourceGroupName}</Text>
-            <MyResourcesInResourceGroup
-              projectId={projectId}
-              resourceGroupName={resourceGroupName}
-              fetchKey={key}
-            />
-          </BAIFlex>
+          <MyResourcesInResourceGroup
+            projectId={projectId}
+            resourceGroupName={resourceGroupName}
+            fetchKey={key}
+          />
         )
       }
     </MemberCard>

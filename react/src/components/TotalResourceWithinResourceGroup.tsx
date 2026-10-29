@@ -28,7 +28,6 @@ import {
   BAISegmentedControl,
   BAISegmentedControlItem,
   useIsInBAIBoardItem,
-  BAIText,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
@@ -172,7 +171,7 @@ interface TotalResourceWithinResourceGroupProps extends BAIFlexProps {
   extra?: ReactNode;
   /** Fixes the resource group (the parent query's); without it the header's group and a picker are used. */
   resourceGroup?: string;
-  /** Draws the fixed resource group's name over its statistics instead of a title row, for a host that owns the card header. */
+  /** Drops the title row, for a host that owns the card header and its resource group picker. */
   asSection?: boolean;
 }
 
@@ -445,9 +444,7 @@ const TotalResourceWithinResourceGroup: React.FC<
       }}
       {..._.omit(props, ['style'])}
     >
-      {asSection ? (
-        <BAIText strong>{resourceGroup}</BAIText>
-      ) : (
+      {asSection ? null : (
         <BAIBoardItemTitle
           title={
             <BAIFlex gap={'xs'} wrap="wrap" align="center">
