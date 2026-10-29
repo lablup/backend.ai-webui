@@ -8,6 +8,7 @@ import {
   ResourcePreset,
 } from '../../hooks/useResourceLimitAndRemaining';
 import { Image } from '../ImageEnvironmentSelectFormItems';
+import { getUnavailableSlotNames } from '../ResourcePresetSelect';
 import {
   AUTOMATIC_DEFAULT_SHMEM,
   getAllocatablePresetIds,
@@ -204,6 +205,51 @@ describe('getAllocatablePresetIds', () => {
     );
     // Only compare with resource limits
     expect(result).toEqual(['id-cpu1_mem2g']);
+  });
+
+  it('should exclude presets requesting a slot the resource group lacks', () => {
+    const result = getAllocatablePresetIds(
+      presets,
+      { cpu: {}, mem: {}, accelerators: {} },
+      undefined,
+      ['cpu', 'mem'],
+    );
+    expect(result).toEqual(['id-cpu1_mem2g']);
+  });
+
+  it('should keep presets whose missing slot is zero', () => {
+    const result = getAllocatablePresetIds(
+      [
+        {
+          id: 'id-cuda_zero',
+          name: 'id-cuda_zero',
+          resource_slots: { cpu: '1', mem: '2GB', 'cuda.shares': '0' },
+          shared_memory: '1GB',
+          allocatable: true,
+        },
+      ],
+      { cpu: {}, mem: {}, accelerators: {} },
+      undefined,
+      ['cpu', 'mem'],
+    );
+    expect(result).toEqual(['id-cuda_zero']);
+  });
+});
+
+describe('getUnavailableSlotNames', () => {
+  it('lists non-zero slots missing from the available ones, ignoring shmem', () => {
+    expect(
+      getUnavailableSlotNames(
+        {
+          cpu: '1',
+          mem: '2g',
+          shmem: '1g',
+          'cuda.shares': '0.5',
+          'cuda.device': 0,
+        },
+        ['cpu', 'mem'],
+      ),
+    ).toEqual(['cuda.shares']);
   });
 });
 

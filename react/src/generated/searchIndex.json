@@ -5342,6 +5342,7 @@
         "resourcePreset.ExceedsAllocatableResources",
         "resourcePreset.OnlyAvailableInResourceGroup",
         "resourcePreset.PresetOnlyAvailableInResourceGroup",
+        "resourcePreset.RequiresSlotsNotInResourceGroup",
         "resourcePreset.ResourcePreset",
         "resourcePreset.ResourcePresets",
         "resourcePreset.SHMEMShouldBeSmallerThanMemory",
