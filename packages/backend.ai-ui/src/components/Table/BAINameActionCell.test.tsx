@@ -240,4 +240,18 @@ describe('BAINameActionCell — minTitleWidth reserves width for the title', () 
     expect(screen.queryByRole('button', { name: /Delete/ })).toBeNull();
     expect(screen.getAllByRole('button')).toHaveLength(1);
   });
+  it('keeps a lone action as its own button rather than a More button of the same width (#10502)', () => {
+    render(
+      <BAINameActionCell
+        title="-"
+        minTitleWidth={NARROW_CELL_WIDTH}
+        actions={[{ key: 'edit-labels', title: 'Edit labels' }]}
+      />,
+    );
+
+    expect(
+      screen.getByRole('button', { name: /Edit labels/ }),
+    ).toBeInTheDocument();
+    expect(screen.getAllByRole('button')).toHaveLength(1);
+  });
 });
