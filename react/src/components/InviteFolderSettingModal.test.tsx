@@ -484,7 +484,7 @@ describe('InviteFolderSettingModal (#10295)', () => {
       // The check found an open share: the notice shows it as a read-only
       // row and nothing is sent until the inviter agrees.
       expect(
-        await screen.findByText('data.folders.ShareAlreadyExists'),
+        await screen.findByText('data.folders.OverwriteInvitation'),
       ).toBeInTheDocument();
       const noticeTable = screen.getByTestId('existing-share-table');
       expect(noticeTable).toHaveTextContent('user3@example.com');

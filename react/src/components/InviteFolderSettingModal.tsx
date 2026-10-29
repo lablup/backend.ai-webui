@@ -58,12 +58,7 @@ import {
   BAISelector,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import {
-  CircleXIcon,
-  MailXIcon,
-  PencilIcon,
-  TriangleAlertIcon,
-} from 'lucide-react';
+import { CircleXIcon, MailXIcon, PencilIcon } from 'lucide-react';
 import React, {
   Suspense,
   useDeferredValue,
@@ -278,15 +273,7 @@ const ExistingShareNoticeModal: React.FC<{
   return (
     <BAIModal
       open={open}
-      headerContent={
-        <HStack gap={2} align="center">
-          <TriangleAlertIcon
-            size="1em"
-            style={{ color: 'var(--color-warning)' }}
-          />
-          {t('data.folders.ShareAlreadyExists')}
-        </HStack>
-      }
+      title={t('data.folders.OverwriteInvitation')}
       okText={t('button.Overwrite')}
       cancelText={t('button.Cancel')}
       onOk={onOk}
@@ -297,7 +284,7 @@ const ExistingShareNoticeModal: React.FC<{
         <BAIAlert
           type="warning"
           showIcon
-          title={t('data.folders.ShareAlreadyExistsDesc', { email })}
+          title={t('data.folders.OverwriteInvitationDesc', { email })}
         />
         <BAITable<ShareRow>
           bordered
