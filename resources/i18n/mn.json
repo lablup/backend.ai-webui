@@ -2478,6 +2478,7 @@
   "projectSelect": {
     "AskAdminForProjectAccess": "Администратораасаа төсөлд хандах эрх олгохыг хүсээрэй.",
     "GoToProject": "{{project}} руу очих",
+    "MyProject": "Миний төсөл",
     "NoAccessibleProjects": "Боломжтой төсөл байхгүй байна.",
     "Personal": "Хувийн",
     "PersonalProjectCannotBeRemoved": "Хэрэглэгчид оноогдсон хувийн төслийг хасах боломжгүй.",

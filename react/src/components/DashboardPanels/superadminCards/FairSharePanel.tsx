@@ -6,6 +6,7 @@ import type {
   FairSharePanelQuery,
   FairSharePanelQuery$data,
 } from '../../../__generated__/FairSharePanelQuery.graphql';
+import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
 import ScopedCard from '../cards/ScopedCard';
 import type { PanelComponentProps } from '../types';
 import { Divider } from '@lablup/ui-common/Divider';
@@ -26,8 +27,6 @@ type FairShareRow = NonNullable<
   >['node']
 >;
 
-const PAGE_SIZE = 5;
-
 // The Fair Share page's number format.
 const fixed = (value: unknown, digits: number) =>
   value === null || value === undefined
@@ -41,12 +40,25 @@ const ResourceGroupFairShares: React.FC<{
 }> = ({ resourceGroupName, domainName, fetchKey }) => {
   'use memo';
   const { t } = useTranslation();
-  const variables = useDeferredValue({ resourceGroupName, domainName });
+  const {
+    baiPaginationOption,
+    tablePaginationOption,
+    setTablePaginationOption,
+  } = useBAIPaginationOptionState({ current: 1, pageSize: 5 });
+  const variables = {
+    resourceGroupName,
+    domainName,
+    limit: baiPaginationOption.limit,
+    offset: baiPaginationOption.offset,
+  };
+  const deferredVariables = useDeferredValue(variables);
   const data = useLazyLoadQuery<FairSharePanelQuery>(
     graphql`
       query FairSharePanelQuery(
         $resourceGroupName: String!
         $domainName: String!
+        $limit: Int!
+        $offset: Int!
       ) {
         projects: rgProjectFairShares(
           scope: {
@@ -54,7 +66,8 @@ const ResourceGroupFairShares: React.FC<{
             domainName: $domainName
           }
           orderBy: [{ field: FAIR_SHARE_FACTOR, direction: ASC }]
-          limit: 50
+          limit: $limit
+          offset: $offset
         ) {
           count
           edges {
@@ -78,7 +91,7 @@ const ResourceGroupFairShares: React.FC<{
         }
       }
     `,
-    variables,
+    deferredVariables,
     { fetchPolicy: 'store-and-network', fetchKey },
   );
   return (
@@ -88,6 +101,7 @@ const ResourceGroupFairShares: React.FC<{
       dataSource={filterOutNullAndUndefined(
         data.projects?.edges.map((edge) => edge?.node),
       )}
+      loading={deferredVariables !== variables}
       scroll={{ x: 'max-content' }}
       columns={[
         {
@@ -122,7 +136,14 @@ const ResourceGroupFairShares: React.FC<{
           ),
         },
       ]}
-      pagination={{ pageSize: PAGE_SIZE, showSizeChanger: false }}
+      pagination={{
+        pageSize: tablePaginationOption.pageSize,
+        current: tablePaginationOption.current,
+        total: data.projects?.count ?? 0,
+        showSizeChanger: false,
+        onChange: (current, pageSize) =>
+          setTablePaginationOption({ current, pageSize }),
+      }}
     />
   );
 };

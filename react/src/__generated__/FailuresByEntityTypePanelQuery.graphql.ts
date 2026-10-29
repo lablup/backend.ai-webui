@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<aacaf48d21b47b1cebeec340575c24f5>>
+ * @generated SignedSource<<dc1ed9af810f4f6ffab38794447f6c03>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -158,144 +158,142 @@ v9 = [
     "storageKey": null
   }
 ],
-v10 = [
-  {
-    "alias": "session",
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "filter",
-        "variableName": "session"
-      },
-      (v8/*: any*/)
-    ],
-    "concreteType": "AuditLogV2Connection",
-    "kind": "LinkedField",
-    "name": "adminAuditLogsV2",
-    "plural": false,
-    "selections": (v9/*: any*/),
-    "storageKey": null
-  },
-  {
-    "alias": "vfolder",
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "filter",
-        "variableName": "vfolder"
-      },
-      (v8/*: any*/)
-    ],
-    "concreteType": "AuditLogV2Connection",
-    "kind": "LinkedField",
-    "name": "adminAuditLogsV2",
-    "plural": false,
-    "selections": (v9/*: any*/),
-    "storageKey": null
-  },
-  {
-    "alias": "deployment",
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "filter",
-        "variableName": "deployment"
-      },
-      (v8/*: any*/)
-    ],
-    "concreteType": "AuditLogV2Connection",
-    "kind": "LinkedField",
-    "name": "adminAuditLogsV2",
-    "plural": false,
-    "selections": (v9/*: any*/),
-    "storageKey": null
-  },
-  {
-    "alias": "user",
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "filter",
-        "variableName": "user"
-      },
-      (v8/*: any*/)
-    ],
-    "concreteType": "AuditLogV2Connection",
-    "kind": "LinkedField",
-    "name": "adminAuditLogsV2",
-    "plural": false,
-    "selections": (v9/*: any*/),
-    "storageKey": null
-  },
-  {
-    "alias": "project",
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "filter",
-        "variableName": "project"
-      },
-      (v8/*: any*/)
-    ],
-    "concreteType": "AuditLogV2Connection",
-    "kind": "LinkedField",
-    "name": "adminAuditLogsV2",
-    "plural": false,
-    "selections": (v9/*: any*/),
-    "storageKey": null
-  },
-  {
-    "alias": "resourceGroup",
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "filter",
-        "variableName": "resourceGroup"
-      },
-      (v8/*: any*/)
-    ],
-    "concreteType": "AuditLogV2Connection",
-    "kind": "LinkedField",
-    "name": "adminAuditLogsV2",
-    "plural": false,
-    "selections": (v9/*: any*/),
-    "storageKey": null
-  },
-  {
-    "alias": "artifactRegistry",
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "filter",
-        "variableName": "artifactRegistry"
-      },
-      (v8/*: any*/)
-    ],
-    "concreteType": "AuditLogV2Connection",
-    "kind": "LinkedField",
-    "name": "adminAuditLogsV2",
-    "plural": false,
-    "selections": (v9/*: any*/),
-    "storageKey": null
-  },
-  {
-    "alias": "other",
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "filter",
-        "variableName": "other"
-      },
-      (v8/*: any*/)
-    ],
-    "concreteType": "AuditLogV2Connection",
-    "kind": "LinkedField",
-    "name": "adminAuditLogsV2",
-    "plural": false,
-    "selections": (v9/*: any*/),
-    "storageKey": null
-  }
-];
+v10 = {
+  "alias": "session",
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "filter",
+      "variableName": "session"
+    },
+    (v8/*: any*/)
+  ],
+  "concreteType": "AuditLogV2Connection",
+  "kind": "LinkedField",
+  "name": "adminAuditLogsV2",
+  "plural": false,
+  "selections": (v9/*: any*/),
+  "storageKey": null
+},
+v11 = {
+  "alias": "vfolder",
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "filter",
+      "variableName": "vfolder"
+    },
+    (v8/*: any*/)
+  ],
+  "concreteType": "AuditLogV2Connection",
+  "kind": "LinkedField",
+  "name": "adminAuditLogsV2",
+  "plural": false,
+  "selections": (v9/*: any*/),
+  "storageKey": null
+},
+v12 = {
+  "alias": "deployment",
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "filter",
+      "variableName": "deployment"
+    },
+    (v8/*: any*/)
+  ],
+  "concreteType": "AuditLogV2Connection",
+  "kind": "LinkedField",
+  "name": "adminAuditLogsV2",
+  "plural": false,
+  "selections": (v9/*: any*/),
+  "storageKey": null
+},
+v13 = {
+  "alias": "user",
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "filter",
+      "variableName": "user"
+    },
+    (v8/*: any*/)
+  ],
+  "concreteType": "AuditLogV2Connection",
+  "kind": "LinkedField",
+  "name": "adminAuditLogsV2",
+  "plural": false,
+  "selections": (v9/*: any*/),
+  "storageKey": null
+},
+v14 = {
+  "alias": "project",
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "filter",
+      "variableName": "project"
+    },
+    (v8/*: any*/)
+  ],
+  "concreteType": "AuditLogV2Connection",
+  "kind": "LinkedField",
+  "name": "adminAuditLogsV2",
+  "plural": false,
+  "selections": (v9/*: any*/),
+  "storageKey": null
+},
+v15 = {
+  "alias": "resourceGroup",
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "filter",
+      "variableName": "resourceGroup"
+    },
+    (v8/*: any*/)
+  ],
+  "concreteType": "AuditLogV2Connection",
+  "kind": "LinkedField",
+  "name": "adminAuditLogsV2",
+  "plural": false,
+  "selections": (v9/*: any*/),
+  "storageKey": null
+},
+v16 = {
+  "alias": "artifactRegistry",
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "filter",
+      "variableName": "artifactRegistry"
+    },
+    (v8/*: any*/)
+  ],
+  "concreteType": "AuditLogV2Connection",
+  "kind": "LinkedField",
+  "name": "adminAuditLogsV2",
+  "plural": false,
+  "selections": (v9/*: any*/),
+  "storageKey": null
+},
+v17 = {
+  "alias": "other",
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "filter",
+      "variableName": "other"
+    },
+    (v8/*: any*/)
+  ],
+  "concreteType": "AuditLogV2Connection",
+  "kind": "LinkedField",
+  "name": "adminAuditLogsV2",
+  "plural": false,
+  "selections": (v9/*: any*/),
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": [
@@ -311,7 +309,48 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "FailuresByEntityTypePanelQuery",
-    "selections": (v10/*: any*/),
+    "selections": [
+      {
+        "kind": "CatchField",
+        "field": (v10/*: any*/),
+        "to": "NULL"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v11/*: any*/),
+        "to": "NULL"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v12/*: any*/),
+        "to": "NULL"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v13/*: any*/),
+        "to": "NULL"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v14/*: any*/),
+        "to": "NULL"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v15/*: any*/),
+        "to": "NULL"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v16/*: any*/),
+        "to": "NULL"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v17/*: any*/),
+        "to": "NULL"
+      }
+    ],
     "type": "Query",
     "abstractKey": null
   },
@@ -329,7 +368,16 @@ return {
     ],
     "kind": "Operation",
     "name": "FailuresByEntityTypePanelQuery",
-    "selections": (v10/*: any*/)
+    "selections": [
+      (v10/*: any*/),
+      (v11/*: any*/),
+      (v12/*: any*/),
+      (v13/*: any*/),
+      (v14/*: any*/),
+      (v15/*: any*/),
+      (v16/*: any*/),
+      (v17/*: any*/)
+    ]
   },
   "params": {
     "cacheID": "14d39fcdab768680c1dd5621434eff30",
@@ -342,6 +390,6 @@ return {
 };
 })();
 
-(node as any).hash = "5854c01f3136ec05e8c0aa4214ad09cd";
+(node as any).hash = "7bbb51446bb1baaaa4e67c050670e846";
 
 export default node;

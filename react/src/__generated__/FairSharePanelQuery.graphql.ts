@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0c53d2f7fc55a6c2cac3b18aad5454c3>>
+ * @generated SignedSource<<7a7eb602542cad23dee7d152ef504a69>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,6 +11,8 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type FairSharePanelQuery$variables = {
   domainName: string;
+  limit: number;
+  offset: number;
   resourceGroupName: string;
 };
 export type FairSharePanelQuery$data = {
@@ -50,13 +52,28 @@ var v0 = {
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
+  "name": "limit"
+},
+v2 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "offset"
+},
+v3 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
   "name": "resourceGroupName"
 },
-v2 = [
+v4 = [
   {
-    "kind": "Literal",
+    "kind": "Variable",
     "name": "limit",
-    "value": 50
+    "variableName": "limit"
+  },
+  {
+    "kind": "Variable",
+    "name": "offset",
+    "variableName": "offset"
   },
   {
     "kind": "Literal",
@@ -85,21 +102,21 @@ v2 = [
     "name": "scope"
   }
 ],
-v3 = {
+v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "count",
   "storageKey": null
 },
-v4 = {
+v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v5 = {
+v7 = {
   "alias": null,
   "args": null,
   "concreteType": "FairShareSpec",
@@ -124,7 +141,7 @@ v5 = {
   ],
   "storageKey": null
 },
-v6 = {
+v8 = {
   "alias": null,
   "args": null,
   "concreteType": "FairShareCalculationSnapshot",
@@ -149,7 +166,7 @@ v6 = {
   ],
   "storageKey": null
 },
-v7 = {
+v9 = {
   "alias": null,
   "args": null,
   "concreteType": "ProjectBasicInfo",
@@ -171,7 +188,9 @@ return {
   "fragment": {
     "argumentDefinitions": [
       (v0/*: any*/),
-      (v1/*: any*/)
+      (v1/*: any*/),
+      (v2/*: any*/),
+      (v3/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
@@ -179,13 +198,13 @@ return {
     "selections": [
       {
         "alias": "projects",
-        "args": (v2/*: any*/),
+        "args": (v4/*: any*/),
         "concreteType": "ProjectFairShareConnection",
         "kind": "LinkedField",
         "name": "rgProjectFairShares",
         "plural": false,
         "selections": [
-          (v3/*: any*/),
+          (v5/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -202,9 +221,9 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v4/*: any*/),
-                  (v5/*: any*/),
                   (v6/*: any*/),
+                  (v7/*: any*/),
+                  (v8/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -213,7 +232,7 @@ return {
                     "name": "project",
                     "plural": false,
                     "selections": [
-                      (v7/*: any*/)
+                      (v9/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -233,21 +252,23 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
+      (v3/*: any*/),
+      (v0/*: any*/),
       (v1/*: any*/),
-      (v0/*: any*/)
+      (v2/*: any*/)
     ],
     "kind": "Operation",
     "name": "FairSharePanelQuery",
     "selections": [
       {
         "alias": "projects",
-        "args": (v2/*: any*/),
+        "args": (v4/*: any*/),
         "concreteType": "ProjectFairShareConnection",
         "kind": "LinkedField",
         "name": "rgProjectFairShares",
         "plural": false,
         "selections": [
-          (v3/*: any*/),
+          (v5/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -264,9 +285,9 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v4/*: any*/),
-                  (v5/*: any*/),
                   (v6/*: any*/),
+                  (v7/*: any*/),
+                  (v8/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -275,8 +296,8 @@ return {
                     "name": "project",
                     "plural": false,
                     "selections": [
-                      (v7/*: any*/),
-                      (v4/*: any*/)
+                      (v9/*: any*/),
+                      (v6/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -292,16 +313,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "abc6d2bf26f319fdaa1abd0253b2a537",
+    "cacheID": "33642177b4ef9ffed24035f0b475db83",
     "id": null,
     "metadata": {},
     "name": "FairSharePanelQuery",
     "operationKind": "query",
-    "text": "query FairSharePanelQuery(\n  $resourceGroupName: String!\n  $domainName: String!\n) {\n  projects: rgProjectFairShares(scope: {resourceGroupName: $resourceGroupName, domainName: $domainName}, orderBy: [{field: FAIR_SHARE_FACTOR, direction: ASC}], limit: 50) {\n    count\n    edges {\n      node {\n        id\n        spec {\n          weight\n          usesDefault\n        }\n        calculationSnapshot {\n          fairShareFactor\n          normalizedUsage\n        }\n        project {\n          basicInfo {\n            name\n          }\n          id\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query FairSharePanelQuery(\n  $resourceGroupName: String!\n  $domainName: String!\n  $limit: Int!\n  $offset: Int!\n) {\n  projects: rgProjectFairShares(scope: {resourceGroupName: $resourceGroupName, domainName: $domainName}, orderBy: [{field: FAIR_SHARE_FACTOR, direction: ASC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        spec {\n          weight\n          usesDefault\n        }\n        calculationSnapshot {\n          fairShareFactor\n          normalizedUsage\n        }\n        project {\n          basicInfo {\n            name\n          }\n          id\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "f40cdc142a9d929d07a847a0b03dfa0c";
+(node as any).hash = "b68cd943be2d8724c883ac3267da7567";
 
 export default node;

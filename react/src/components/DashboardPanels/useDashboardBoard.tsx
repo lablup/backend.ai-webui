@@ -15,11 +15,9 @@ import {
   panelTitleKey,
   removePanel,
   resetBoard,
-  sanitizeBoard,
-  seedBoard,
+  resolveBoard,
   siderEntries,
   sizeOf,
-  syncBoard,
   toBoardLayout,
   toLegacyPanel,
   updatePanel,
@@ -185,11 +183,7 @@ export const useDashboardBoard = ({
     catalog.map((definition) => [definition.key, definition]),
   );
 
-  const board = syncBoard(
-    sanitizeBoard(storedBoard, catalog, page) ?? seedBoard(catalog, page),
-    catalog,
-    page,
-  );
+  const board = resolveBoard(storedBoard, catalog, page);
 
   const isRenderable = (panel: PersistedPanelV2) => {
     const entry = visibleByKey.get(panel.key);

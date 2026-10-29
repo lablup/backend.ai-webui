@@ -36,31 +36,31 @@ const EntityTypeFailures: React.FC<{
         $artifactRegistry: AuditLogFilter!
         $other: AuditLogFilter!
       ) {
-        session: adminAuditLogsV2(filter: $session, limit: 1) {
+        session: adminAuditLogsV2(filter: $session, limit: 1) @catch(to: NULL) {
           count
         }
-        vfolder: adminAuditLogsV2(filter: $vfolder, limit: 1) {
+        vfolder: adminAuditLogsV2(filter: $vfolder, limit: 1) @catch(to: NULL) {
           count
         }
-        deployment: adminAuditLogsV2(filter: $deployment, limit: 1) {
+        deployment: adminAuditLogsV2(filter: $deployment, limit: 1)
+          @catch(to: NULL) {
           count
         }
-        user: adminAuditLogsV2(filter: $user, limit: 1) {
+        user: adminAuditLogsV2(filter: $user, limit: 1) @catch(to: NULL) {
           count
         }
-        project: adminAuditLogsV2(filter: $project, limit: 1) {
+        project: adminAuditLogsV2(filter: $project, limit: 1) @catch(to: NULL) {
           count
         }
-        resourceGroup: adminAuditLogsV2(filter: $resourceGroup, limit: 1) {
+        resourceGroup: adminAuditLogsV2(filter: $resourceGroup, limit: 1)
+          @catch(to: NULL) {
           count
         }
-        artifactRegistry: adminAuditLogsV2(
-          filter: $artifactRegistry
-          limit: 1
-        ) {
+        artifactRegistry: adminAuditLogsV2(filter: $artifactRegistry, limit: 1)
+          @catch(to: NULL) {
           count
         }
-        other: adminAuditLogsV2(filter: $other, limit: 1) {
+        other: adminAuditLogsV2(filter: $other, limit: 1) @catch(to: NULL) {
           count
         }
       }

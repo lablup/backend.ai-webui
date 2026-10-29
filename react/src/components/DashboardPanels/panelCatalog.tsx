@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import AgentStats from '../AgentStats';
 import QuotaPerStorageVolumeDashboardItem from '../QuotaPerStorageVolumeDashboardItem';
 import { useDashboardRefreshQuery } from './DashboardRefreshContext';
 import AuditLogPanel from './cards/AuditLogPanel';
@@ -27,6 +26,7 @@ import {
 } from './memberCards/StartActionPanels';
 import ResourceGroupCapacityPanel from './projectAdminCards/ResourceGroupCapacityPanel';
 import { resourceKeys, resourceRegistry } from './resourceRegistry';
+import AgentStatsPanel from './superadminCards/AgentStatsPanel';
 import AgentsPanel from './superadminCards/AgentsPanel';
 import ContainerRegistriesPanel from './superadminCards/ContainerRegistriesPanel';
 import FailuresByEntityTypePanel from './superadminCards/FailuresByEntityTypePanel';
@@ -63,15 +63,6 @@ const QuotaPerStorageVolumePanel: React.FC<PanelComponentProps> = () => {
       </Suspense>
     </BAIBoardItemErrorBoundary>
   );
-};
-
-const AgentStatsPanel: React.FC<PanelComponentProps> = ({ queryRefs }) => {
-  'use memo';
-  return queryRefs.agentStatsQueryRef ? (
-    <Suspense fallback={<BAISkeleton />}>
-      <AgentStats queryRef={queryRefs.agentStatsQueryRef} />
-    </Suspense>
-  ) : null;
 };
 
 /** A card's list page, labelled by the destination menu of each page it opens from. */
