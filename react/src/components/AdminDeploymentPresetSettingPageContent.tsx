@@ -1048,7 +1048,14 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                             {...rest}
                             name={[name, 'name']}
                             style={{ marginBottom: 0 }}
-                            rules={[{ required: true, message: '' }]}
+                            rules={[
+                              {
+                                required: true,
+                                message: t(
+                                  'adminDeploymentPreset.ResourceOptNameRequired',
+                                ),
+                              },
+                            ]}
                             validateTrigger={['onChange', 'onBlur']}
                           >
                             <BAITextInput
@@ -1068,7 +1075,14 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                             {...rest}
                             name={[name, 'value']}
                             style={{ marginBottom: 0 }}
-                            rules={[{ required: true, message: '' }]}
+                            rules={[
+                              {
+                                required: true,
+                                message: t(
+                                  'session.launcher.EnvironmentVariableValueRequired',
+                                ),
+                              },
+                            ]}
                             validateTrigger={['onChange', 'onBlur']}
                           >
                             <BAITextInput
