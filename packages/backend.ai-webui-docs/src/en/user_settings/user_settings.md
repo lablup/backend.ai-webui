@@ -328,7 +328,6 @@ Access new experimental features early -- these may change or be removed in
 future updates. Each feature is turned on with its **Enabled** checkbox.
 
 ![](../images/experimental_features.png)
-<!-- TODO: Recapture without the removed "Command palette" row (#10546) -->
 
 - **AI Agents**: Enable the AI Agents feature, which provides agent-based AI
   capabilities within the WebUI. When turned on, AI agent functionality becomes
