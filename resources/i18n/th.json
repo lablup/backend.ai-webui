@@ -2378,6 +2378,7 @@
   "projectSelect": {
     "AskAdminForProjectAccess": "โปรดติดต่อผู้ดูแลระบบเพื่อขอสิทธิ์เข้าถึงโปรเจกต์",
     "GoToProject": "ไปยัง {{project}}",
+    "MyProject": "โปรเจกต์ของฉัน",
     "NoAccessibleProjects": "ไม่มีโปรเจกต์ที่สามารถเข้าถึงได้",
     "Personal": "ส่วนตัว",
     "PersonalProjectCannotBeRemoved": "ไม่สามารถนำโปรเจกต์ส่วนตัวที่กำหนดให้กับผู้ใช้ออกได้",

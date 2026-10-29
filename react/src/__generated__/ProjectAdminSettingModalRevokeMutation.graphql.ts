@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<67fbd487a1f68b631e0deef950ab233b>>
+ * @generated SignedSource<<31bc2fbf033459fbf526b7bb5a05a311>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,9 +17,9 @@ export type ProjectAdminSettingModalRevokeMutation$variables = {
   input: RevokeRoleInput;
 };
 export type ProjectAdminSettingModalRevokeMutation$data = {
-  readonly adminRevokeRole: {
+  readonly revokeRole: {
     readonly id: string;
-  } | null | undefined;
+  };
 };
 export type ProjectAdminSettingModalRevokeMutation = {
   response: ProjectAdminSettingModalRevokeMutation$data;
@@ -46,7 +46,7 @@ v1 = [
     ],
     "concreteType": "RoleAssignment",
     "kind": "LinkedField",
-    "name": "adminRevokeRole",
+    "name": "revokeRole",
     "plural": false,
     "selections": [
       {
@@ -78,16 +78,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "2e131e9fdff9e117e2008ff193485547",
+    "cacheID": "cb283c47ea1d27079569926088ae539b",
     "id": null,
     "metadata": {},
     "name": "ProjectAdminSettingModalRevokeMutation",
     "operationKind": "mutation",
-    "text": "mutation ProjectAdminSettingModalRevokeMutation(\n  $input: RevokeRoleInput!\n) {\n  adminRevokeRole(input: $input) {\n    id\n  }\n}\n"
+    "text": "mutation ProjectAdminSettingModalRevokeMutation(\n  $input: RevokeRoleInput!\n) {\n  revokeRole(input: $input) {\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "4e35cbdc2a87f596043fd9daef274019";
+(node as any).hash = "652c9dd7b345204f4ef9a9ed244eeb55";
 
 export default node;

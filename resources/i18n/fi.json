@@ -2386,6 +2386,7 @@
   "projectSelect": {
     "AskAdminForProjectAccess": "Pyydä järjestelmänvalvojaa myöntämään sinulle pääsy projektiin.",
     "GoToProject": "Siirry projektiin {{project}}",
+    "MyProject": "Oma projekti",
     "NoAccessibleProjects": "Ei saatavilla olevia projekteja.",
     "Personal": "Henkilökohtainen",
     "PersonalProjectCannotBeRemoved": "Käyttäjälle määritettyä henkilökohtaista projektia ei voi poistaa.",
