@@ -7,10 +7,9 @@ import MemberCard from '../memberCards/MemberCard';
 import ResourceUsageBars from '../memberCards/ResourceUsageBars';
 import { toLimitUsageRows } from '../memberCards/memberCardData';
 import type { PanelComponentProps } from '../types';
-import { Divider } from '@lablup/ui-common/Divider';
 import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex } from 'backend.ai-ui';
-import React, { Fragment, useDeferredValue } from 'react';
+import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -58,7 +57,7 @@ const ResourceGroupCapacity: React.FC<{
   );
 };
 
-/** Used against capacity in each of the card's resource groups (the header's group by default). */
+/** Used against capacity in the card's resource group (the header's group by default). */
 const ResourceGroupCapacityPanel: React.FC<PanelComponentProps> = ({
   vars,
   fetchKey,
@@ -72,20 +71,15 @@ const ResourceGroupCapacityPanel: React.FC<PanelComponentProps> = ({
       fetchKey={fetchKey}
     >
       {(key) =>
-        vars.resourceGroups.length === 0 ? (
+        !vars.resourceGroup ? (
           <Text type="supporting">{t('dashboard.card.NoResourceGroup')}</Text>
         ) : (
           <BAIFlex direction="column" align="stretch" gap="sm">
-            {vars.resourceGroups.map((resourceGroupName, index) => (
-              <Fragment key={resourceGroupName}>
-                {index > 0 ? <Divider /> : null}
-                <Text weight="semibold">{resourceGroupName}</Text>
-                <ResourceGroupCapacity
-                  resourceGroupName={resourceGroupName}
-                  fetchKey={key}
-                />
-              </Fragment>
-            ))}
+            <Text weight="semibold">{vars.resourceGroup}</Text>
+            <ResourceGroupCapacity
+              resourceGroupName={vars.resourceGroup}
+              fetchKey={key}
+            />
           </BAIFlex>
         )
       }

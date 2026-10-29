@@ -40,62 +40,55 @@ describe('refresh choices', () => {
 });
 
 describe('RefreshScheduler', () => {
-  it('refreshes a subscriber on a tick only after its minimum interval', () => {
+  it('refreshes every visible subscriber on each tick', () => {
     const scheduler = new RefreshScheduler();
-    const fast = vi.fn();
-    const slow = vi.fn();
-    scheduler.register('fast', { minMs: 5_000, refresh: fast });
-    scheduler.register('slow', { minMs: 15_000, refresh: slow });
+    const first = vi.fn();
+    const second = vi.fn();
+    scheduler.register('first', { refresh: first });
+    scheduler.register('second', { refresh: second });
 
-    vi.advanceTimersByTime(5_000);
+    vi.advanceTimersByTime(1_000);
     scheduler.tick();
-    expect(fast).toHaveBeenCalledTimes(1);
-    expect(slow).not.toHaveBeenCalled();
+    expect(first).toHaveBeenCalledTimes(1);
+    expect(second).toHaveBeenCalledTimes(1);
 
-    vi.advanceTimersByTime(10_000);
+    vi.advanceTimersByTime(1_000);
     scheduler.tick();
-    expect(fast).toHaveBeenCalledTimes(2);
-    expect(slow).toHaveBeenCalledTimes(1);
+    expect(first).toHaveBeenCalledTimes(2);
+    expect(second).toHaveBeenCalledTimes(2);
   });
 
   it('passes the refresh time to the subscriber', () => {
     const scheduler = new RefreshScheduler();
     const card = vi.fn();
-    scheduler.register('card', { minMs: 5_000, refresh: card });
+    scheduler.register('card', { refresh: card });
     vi.advanceTimersByTime(5_000);
     scheduler.tick();
     expect(card).toHaveBeenCalledWith(Date.now(), false);
   });
 
-  it('refreshes every subscriber by hand, whatever its minimum', () => {
+  it('refreshes every subscriber by hand, visible or not', () => {
     const scheduler = new RefreshScheduler();
-    const fast = vi.fn();
-    const slow = vi.fn();
+    const shown = vi.fn();
+    const offscreen = vi.fn();
     const ticked = vi.fn();
-    scheduler.register('fast', { minMs: 5_000, refresh: fast });
-    scheduler.register('slow', { minMs: 600_000, refresh: slow });
+    scheduler.register('shown', { refresh: shown });
+    scheduler.register('offscreen', { refresh: offscreen });
+    scheduler.setVisible('offscreen', false);
     scheduler.subscribe(ticked);
 
     vi.advanceTimersByTime(1_000);
     scheduler.refreshAll();
-    expect(fast).toHaveBeenCalledTimes(1);
-    expect(slow).toHaveBeenCalledWith(Date.now(), true);
+    expect(shown).toHaveBeenCalledWith(Date.now(), true);
+    expect(offscreen).toHaveBeenCalledWith(Date.now(), true);
     expect(ticked).toHaveBeenCalledTimes(1);
     expect(scheduler.getLastTickAt()).toBe(Date.now());
-
-    // The manual refresh restarts each minimum.
-    vi.advanceTimersByTime(3_000);
-    scheduler.tick();
-    expect(fast).toHaveBeenCalledTimes(1);
   });
 
   it('stops refreshing an unregistered subscriber', () => {
     const scheduler = new RefreshScheduler();
     const card = vi.fn();
-    const unregister = scheduler.register('card', {
-      minMs: 5_000,
-      refresh: card,
-    });
+    const unregister = scheduler.register('card', { refresh: card });
     unregister();
     vi.advanceTimersByTime(30_000);
     scheduler.tick();
@@ -103,27 +96,25 @@ describe('RefreshScheduler', () => {
     expect(card).not.toHaveBeenCalled();
   });
 
-  it('skips a hidden subscriber on a tick, but not on a manual refresh', () => {
+  it('skips a hidden subscriber on a tick', () => {
     const scheduler = new RefreshScheduler();
     const shown = vi.fn();
     const offscreen = vi.fn();
-    scheduler.register('shown', { minMs: 5_000, refresh: shown });
-    scheduler.register('offscreen', { minMs: 5_000, refresh: offscreen });
+    scheduler.register('shown', { refresh: shown });
+    scheduler.register('offscreen', { refresh: offscreen });
     scheduler.setVisible('offscreen', false);
 
     vi.advanceTimersByTime(5_000);
     scheduler.tick();
     expect(shown).toHaveBeenCalledTimes(1);
     expect(offscreen).not.toHaveBeenCalled();
-
-    scheduler.refreshAll();
-    expect(offscreen).toHaveBeenCalledTimes(1);
   });
 
-  it('refreshes a subscriber that comes back into view once it is due', () => {
+  it('refreshes a subscriber that comes back into view once its last refresh is older than the interval', () => {
     const scheduler = new RefreshScheduler();
+    scheduler.setIntervalMs(60_000);
     const card = vi.fn();
-    scheduler.register('card', { minMs: 60_000, refresh: card });
+    scheduler.register('card', { refresh: card });
     scheduler.setVisible('card', false);
 
     vi.advanceTimersByTime(30_000);
@@ -142,5 +133,17 @@ describe('RefreshScheduler', () => {
     vi.advanceTimersByTime(60_000);
     scheduler.setVisible('card', true);
     expect(card).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not refresh a returning subscriber while automatic refresh is off', () => {
+    const scheduler = new RefreshScheduler();
+    scheduler.setIntervalMs(null);
+    const card = vi.fn();
+    scheduler.register('card', { refresh: card });
+    scheduler.setVisible('card', false);
+
+    vi.advanceTimersByTime(600_000);
+    scheduler.setVisible('card', true);
+    expect(card).not.toHaveBeenCalled();
   });
 });

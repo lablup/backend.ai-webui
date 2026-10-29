@@ -68,7 +68,7 @@ const ResourceGroupTotal: React.FC<{
   );
 };
 
-/** The resource group totals: one header with the card's picker, then a section per resource group of the card's setting. */
+/** The totals of the card's resource group, under one header with the card's picker. */
 const ResourceGroupTotalPanel: React.FC<PanelComponentProps> = ({
   vars,
   fetchKey,
@@ -79,7 +79,7 @@ const ResourceGroupTotalPanel: React.FC<PanelComponentProps> = ({
   const { token } = useTheme();
   const isInBoard = useIsInBAIBoardItem();
   const [displayType, setDisplayType] = useState<'used' | 'free'>('used');
-  const resourceGroups = vars.resourceGroups;
+  const resourceGroup = vars.resourceGroup;
   return (
     <BAIBoardItemErrorBoundary
       title={t('webui.menu.TotalResourcesInResourceGroup')}
@@ -130,18 +130,16 @@ const ResourceGroupTotalPanel: React.FC<PanelComponentProps> = ({
             }
           />
         </BAIFlex>
-        <BAIFlex direction="column" align="stretch" gap="sm">
-          {resourceGroups.map((resourceGroup) => (
-            <Suspense key={resourceGroup} fallback={<BAISkeleton />}>
-              <ResourceGroupTotal
-                resourceGroup={resourceGroup}
-                fetchKey={fetchKey}
-                isRefetching={isRefetching}
-                displayType={displayType}
-              />
-            </Suspense>
-          ))}
-        </BAIFlex>
+        {resourceGroup ? (
+          <Suspense fallback={<BAISkeleton />}>
+            <ResourceGroupTotal
+              resourceGroup={resourceGroup}
+              fetchKey={fetchKey}
+              isRefetching={isRefetching}
+              displayType={displayType}
+            />
+          </Suspense>
+        ) : null}
       </BAIFlex>
     </BAIBoardItemErrorBoundary>
   );

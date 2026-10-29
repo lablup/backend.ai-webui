@@ -9,7 +9,6 @@ import type {
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
 import ScopedCard from '../cards/ScopedCard';
 import type { PanelComponentProps } from '../types';
-import { Divider } from '@lablup/ui-common/Divider';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAIFlex,
@@ -17,7 +16,7 @@ import {
   filterOutNullAndUndefined,
   toFixedFloorWithoutTrailingZeros,
 } from 'backend.ai-ui';
-import React, { Fragment, useDeferredValue } from 'react';
+import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -148,7 +147,7 @@ const ResourceGroupFairShares: React.FC<{
   );
 };
 
-/** Each project's fair share in the card's resource groups, the lowest factor (heaviest use) first. */
+/** Each project's fair share in the card's resource group, the lowest factor (heaviest use) first. */
 const FairSharePanel: React.FC<PanelComponentProps> = ({
   scope,
   vars,
@@ -167,25 +166,19 @@ const FairSharePanel: React.FC<PanelComponentProps> = ({
       heading={{ project: heading, domain: heading }}
     >
       {(cardScope, key) =>
-        cardScope.kind !== 'domain' ? null : vars.resourceGroups.length ===
-          0 ? (
+        cardScope.kind !== 'domain' ? null : !vars.resourceGroup ? (
           <Text type="supporting">{t('dashboard.card.NoResourceGroup')}</Text>
         ) : (
           <BAIFlex direction="column" align="stretch" gap="sm">
-            {vars.resourceGroups.map((resourceGroupName, index) => (
-              <Fragment key={resourceGroupName}>
-                {index > 0 ? <Divider /> : null}
-                <BAIFlex direction="row" align="baseline" gap="xs">
-                  <Text type="supporting">{`${t('general.ResourceGroup')}:`}</Text>
-                  <Text weight="semibold">{resourceGroupName}</Text>
-                </BAIFlex>
-                <ResourceGroupFairShares
-                  resourceGroupName={resourceGroupName}
-                  domainName={cardScope.domainName}
-                  fetchKey={key}
-                />
-              </Fragment>
-            ))}
+            <BAIFlex direction="row" align="baseline" gap="xs">
+              <Text type="supporting">{`${t('general.ResourceGroup')}:`}</Text>
+              <Text weight="semibold">{vars.resourceGroup}</Text>
+            </BAIFlex>
+            <ResourceGroupFairShares
+              resourceGroupName={vars.resourceGroup}
+              domainName={cardScope.domainName}
+              fetchKey={key}
+            />
           </BAIFlex>
         )
       }

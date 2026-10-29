@@ -29,9 +29,9 @@ import { resourceKeys, resourceRegistry } from './resourceRegistry';
 import AgentStatsPanel from './superadminCards/AgentStatsPanel';
 import AgentsPanel from './superadminCards/AgentsPanel';
 import ContainerRegistriesPanel from './superadminCards/ContainerRegistriesPanel';
+import FailedLoginsPanel from './superadminCards/FailedLoginsPanel';
 import FailuresByEntityTypePanel from './superadminCards/FailuresByEntityTypePanel';
 import FairSharePanel from './superadminCards/FairSharePanel';
-import KeypairsLoginsPanel from './superadminCards/KeypairsLoginsPanel';
 import ResourcePoliciesPanel from './superadminCards/ResourcePoliciesPanel';
 import SchedulingFailuresPanel from './superadminCards/SchedulingFailuresPanel';
 import TopProjectsUsagePanel from './superadminCards/TopProjectsUsagePanel';
@@ -52,7 +52,7 @@ import { useTranslation } from 'react-i18next';
 const QuotaPerStorageVolumePanel: React.FC<PanelComponentProps> = () => {
   'use memo';
   const { t } = useTranslation();
-  useDashboardRefreshQuery(['vhostInfo'], '5m');
+  useDashboardRefreshQuery(['vhostInfo']);
   return (
     <BAIBoardItemErrorBoundary
       title={t('data.QuotaPerStorageVolume')}
@@ -126,7 +126,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     kind: 'custom',
     Component: StartSessionPanel,
     ...START_SIZE,
-    refresh: { min: '10m' },
   },
   {
     key: 'start.batchSession',
@@ -137,7 +136,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     kind: 'custom',
     Component: StartBatchSessionPanel,
     ...START_SIZE,
-    refresh: { min: '10m' },
   },
   {
     key: 'start.folder',
@@ -148,7 +146,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     kind: 'custom',
     Component: CreateFolderPanel,
     ...START_SIZE,
-    refresh: { min: '10m' },
   },
   {
     key: 'start.deployment',
@@ -162,7 +159,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     kind: 'custom',
     Component: StartDeploymentPanel,
     ...START_SIZE,
-    refresh: { min: '10m' },
   },
   {
     key: 'start.url',
@@ -173,7 +169,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     kind: 'custom',
     Component: StartFromURLPanel,
     ...START_SIZE,
-    refresh: { min: '10m' },
   },
   {
     key: 'mySession',
@@ -185,7 +180,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     detailLink: RUNNING_SESSIONS,
     defaultSize: size(2, 2),
     minSize: size(2, 2),
-    refresh: { min: '15s' },
   },
   {
     key: 'myRecentSessions',
@@ -197,7 +191,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     detailLink: listLink('session', SESSIONS),
     defaultSize: size(4, 3),
     minSize: size(2, 2),
-    refresh: { min: '1m' },
   },
   {
     key: 'myResource',
@@ -208,7 +201,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: MyResourcesPanel,
     defaultSize: size(2, 3),
     minSize: size(2, 2),
-    refresh: { min: '30s' },
     settings: ['resourceGroup'],
   },
   {
@@ -220,7 +212,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: ResourcePresetsPanel,
     defaultSize: size(2, 3),
     minSize: size(2, 2),
-    refresh: { min: '30s' },
     settings: ['resourceGroup'],
     defaultHidden: true,
   },
@@ -240,7 +231,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: ResourceGroupTotalPanel,
     defaultSize: size(2, 2),
     minSize: size(2, 2),
-    refresh: { min: '30s' },
     settings: ['resourceGroup'],
   },
   // TODO(needs-backend): BA-8719 - re-add `folderStatus` (FoldersPanel) once
@@ -254,7 +244,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: QuotaPerStorageVolumePanel,
     defaultSize: size(2, 2),
     minSize: size(2, 2),
-    refresh: { min: '5m' },
   },
   {
     key: 'myDeployments',
@@ -267,7 +256,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     detailLink: listLink('deployments', { project: 'webui.menu.Deployments' }),
     defaultSize: size(2, 3),
     minSize: size(2, 2),
-    refresh: { min: '30s' },
   },
   {
     key: 'myActivity',
@@ -278,7 +266,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: AuditLogPanel,
     defaultSize: size(4, 3),
     minSize: size(2, 2),
-    refresh: { min: '1m' },
     settings: ['range'],
   },
 ];
@@ -315,7 +302,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     detailLink: RUNNING_SESSIONS,
     defaultSize: size(4, 3),
     minSize: size(2, 2),
-    refresh: { min: '15s' },
     ...adminOrder('projectSessionStatus'),
   },
   {
@@ -328,7 +314,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     detailLink: pendingSessionsLink,
     defaultSize: size(4, 3),
     minSize: size(2, 2),
-    refresh: { min: '15s' },
     settings: ['resourceGroup'],
     ...adminOrder('pendingSessions'),
   },
@@ -342,7 +327,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     detailLink: RUNNING_SESSIONS,
     defaultSize: size(4, 3),
     minSize: size(2, 2),
-    refresh: { min: '1m' },
     settings: ['range'],
     defaultHidden: ['admin'],
   },
@@ -355,7 +339,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: ResourceAllocationPanel,
     defaultSize: size(2, 2),
     minSize: size(2, 2),
-    refresh: { min: '30s' },
     defaultHidden: ['admin'],
   },
   {
@@ -372,7 +355,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     }),
     defaultSize: size(2, 3),
     minSize: size(2, 2),
-    refresh: { min: '30s' },
     defaultHidden: ['admin'],
   },
   {
@@ -388,7 +370,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     }),
     defaultSize: size(2, 2),
     minSize: size(2, 2),
-    refresh: { min: '5m' },
     defaultHidden: ['admin'],
   },
   {
@@ -404,7 +385,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     }),
     defaultSize: size(2, 2),
     minSize: size(2, 2),
-    refresh: { min: '5m' },
     defaultHidden: ['admin'],
   },
   {
@@ -416,7 +396,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: AuditLogPanel,
     defaultSize: size(4, 4),
     minSize: size(2, 3),
-    refresh: { min: '1m' },
     settings: ['range'],
     ...adminOrder('projectAuditLog'),
   },
@@ -429,7 +408,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: ResourceGroupCapacityPanel,
     defaultSize: size(4, 2),
     minSize: size(2, 2),
-    refresh: { min: '30s' },
     settings: ['resourceGroup'],
     defaultHidden: true,
   },
@@ -449,7 +427,6 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: SchedulingFailuresPanel,
     defaultSize: size(4, 4),
     minSize: size(2, 3),
-    refresh: { min: '1m' },
     settings: ['range'],
     ...adminOrder('schedulingFailures'),
   },
@@ -468,7 +445,6 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     ),
     defaultSize: size(4, 4),
     minSize: size(2, 3),
-    refresh: { min: '15s' },
     ...adminOrder('activeAgents'),
   },
   {
@@ -482,7 +458,6 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     detailLink: listLink('agent', { admin: 'webui.menu.Resources' }),
     defaultSize: size(2, 2),
     minSize: size(2, 2),
-    refresh: { min: '30s' },
     ...adminOrder('agentStats'),
   },
   {
@@ -495,7 +470,6 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: FailuresByEntityTypePanel,
     defaultSize: size(2, 3),
     minSize: size(2, 3),
-    refresh: { min: '1m' },
     settings: ['range'],
     ...adminOrder('failuresByEntityType'),
   },
@@ -509,7 +483,6 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: TopProjectsUsagePanel,
     defaultSize: size(4, 3),
     minSize: size(2, 3),
-    refresh: { min: '5m' },
     settings: ['resourceGroup'],
     ...adminOrder('topProjectsUsage'),
   },
@@ -524,7 +497,6 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     detailLink: listLink('scheduler', { admin: 'webui.menu.Scheduler' }),
     defaultSize: size(4, 3),
     minSize: size(2, 3),
-    refresh: { min: '5m' },
     settings: ['resourceGroup'],
     ...adminOrder('fairShare'),
   },
@@ -539,7 +511,6 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     detailLink: listLink('session', SESSIONS),
     defaultSize: size(4, 3),
     minSize: size(2, 2),
-    refresh: { min: '1m' },
     defaultHidden: true,
   },
   {
@@ -555,17 +526,16 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     }),
     defaultSize: size(2, 2),
     minSize: size(2, 2),
-    refresh: { min: '10m' },
     defaultHidden: true,
   },
   {
-    key: 'keypairsLogins',
+    key: 'failedLogins',
     page: ['admin'],
     group: 'users',
-    titleKey: 'dashboard.card.KeypairsAndLogins',
+    titleKey: 'dashboard.card.FailedLogins',
     requires: SUPERADMIN_ONLY,
     kind: 'custom',
-    Component: KeypairsLoginsPanel,
+    Component: FailedLoginsPanel,
     detailLink: listLink(
       'users',
       { admin: 'webui.menu.Users' },
@@ -573,7 +543,6 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     ),
     defaultSize: size(4, 3),
     minSize: size(2, 3),
-    refresh: { min: '1m' },
     settings: ['range'],
     defaultHidden: true,
   },
@@ -592,7 +561,6 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     ),
     defaultSize: size(4, 3),
     minSize: size(2, 2),
-    refresh: { min: '10m' },
     defaultHidden: true,
   },
 ];
@@ -635,7 +603,6 @@ const PRESET_PANELS: ReadonlyArray<PanelDefinition> = resourceKeys.map(
         stat: sizesOf('resourceCount'),
         grid: sizesOf('sessionResourceGrid'),
       },
-      refresh: { min: '1m' },
     };
   },
 );

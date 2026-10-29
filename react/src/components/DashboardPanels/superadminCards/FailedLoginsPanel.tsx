@@ -3,9 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type {
-  KeypairsLoginsPanelQuery,
+  FailedLoginsPanelQuery,
   LoginHistoryFilter,
-} from '../../../__generated__/KeypairsLoginsPanelQuery.graphql';
+} from '../../../__generated__/FailedLoginsPanelQuery.graphql';
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
 import ScopedCard from '../cards/ScopedCard';
 import StatRow from '../charts/StatRow';
@@ -22,7 +22,7 @@ import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-const failedLogins = (
+const failedLoginFilter = (
   domainName: string,
   window: DateTimeWindow,
 ): LoginHistoryFilter => ({
@@ -31,7 +31,7 @@ const failedLogins = (
   result: { in: [...LOGIN_FAILURE_RESULTS] },
 });
 
-const KeypairsAndLogins: React.FC<{
+const FailedLogins: React.FC<{
   domainName: string;
   timeRange: DateTimeWindow;
   fetchKey: string;
@@ -43,30 +43,21 @@ const KeypairsAndLogins: React.FC<{
     tablePaginationOption,
     setTablePaginationOption,
   } = useBAIPaginationOptionState({ current: 1, pageSize: 5 });
-  const variables: KeypairsLoginsPanelQuery['variables'] = {
-    failed: failedLogins(domainName, timeRange),
-    previousFailed: failedLogins(domainName, previousWindow(timeRange)),
+  const variables: FailedLoginsPanelQuery['variables'] = {
+    failed: failedLoginFilter(domainName, timeRange),
+    previousFailed: failedLoginFilter(domainName, previousWindow(timeRange)),
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
   };
   const deferredVariables = useDeferredValue(variables);
-  const data = useLazyLoadQuery<KeypairsLoginsPanelQuery>(
+  const data = useLazyLoadQuery<FailedLoginsPanelQuery>(
     graphql`
-      query KeypairsLoginsPanelQuery(
+      query FailedLoginsPanelQuery(
         $failed: LoginHistoryFilter!
         $previousFailed: LoginHistoryFilter!
         $limit: Int!
         $offset: Int!
       ) {
-        keypairs: adminKeypairsV2(limit: 1) {
-          count
-        }
-        inactiveKeypairs: adminKeypairsV2(
-          filter: { isActive: false }
-          limit: 1
-        ) {
-          count
-        }
         previousFailed: adminLoginHistoryV2(filter: $previousFailed, limit: 1) {
           count
         }
@@ -107,16 +98,6 @@ const KeypairsAndLogins: React.FC<{
     <BAIFlex direction="column" align="stretch" gap="sm">
       <StatRow
         items={[
-          {
-            key: 'keypairs',
-            label: t('dashboard.card.Keypairs'),
-            value: String(data.keypairs?.count ?? 0),
-          },
-          {
-            key: 'inactive',
-            label: t('dashboard.card.InactiveKeypairs'),
-            value: String(data.inactiveKeypairs?.count ?? 0),
-          },
           {
             key: 'failedLogins',
             label: t('dashboard.card.FailedLogins'),
@@ -161,8 +142,8 @@ const KeypairsAndLogins: React.FC<{
   );
 };
 
-/** Keypairs of the cluster, the inactive ones, and the domain's failed sign-ins in the card's range. */
-const KeypairsLoginsPanel: React.FC<PanelComponentProps> = ({
+/** The domain's failed sign-ins in the card's range, against the previous range. */
+const FailedLoginsPanel: React.FC<PanelComponentProps> = ({
   scope,
   vars,
   fetchKey,
@@ -170,8 +151,8 @@ const KeypairsLoginsPanel: React.FC<PanelComponentProps> = ({
   'use memo';
   const { t } = useTranslation();
   const heading = {
-    title: t('dashboard.card.KeypairsAndLogins'),
-    tooltip: t('dashboard.card.KeypairsAndLoginsTooltip'),
+    title: t('dashboard.card.FailedLogins'),
+    tooltip: t('dashboard.card.FailedLoginsTooltip'),
   };
   return (
     <ScopedCard
@@ -181,7 +162,7 @@ const KeypairsLoginsPanel: React.FC<PanelComponentProps> = ({
     >
       {(cardScope, key) =>
         cardScope.kind === 'domain' ? (
-          <KeypairsAndLogins
+          <FailedLogins
             domainName={cardScope.domainName}
             timeRange={vars.timeRange}
             fetchKey={key}
@@ -192,4 +173,4 @@ const KeypairsLoginsPanel: React.FC<PanelComponentProps> = ({
   );
 };
 
-export default KeypairsLoginsPanel;
+export default FailedLoginsPanel;

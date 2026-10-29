@@ -24,7 +24,7 @@ import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface SettingsFormValues {
-  resourceGroups?: Array<string>;
+  resourceGroup?: string | null;
   range?: string;
 }
 
@@ -41,7 +41,7 @@ export interface PanelSettingsModalProps {
   afterClose?: () => void;
 }
 
-/** Edits one card's own settings (resource groups, time range) in edit mode. */
+/** Edits one card's own settings (resource group, time range) in edit mode. */
 const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
   open,
   title,
@@ -75,11 +75,10 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
       onCancel={onRequestClose}
       afterClose={afterClose}
       onOk={() => {
-        const { resourceGroups = [], range = DEFAULT_RANGE } =
-          form.getFieldsValue();
+        const { resourceGroup, range = DEFAULT_RANGE } = form.getFieldsValue();
         const next: PanelSettings = {
-          ...(hasSetting(definition, 'resourceGroup') && resourceGroups.length
-            ? { resourceGroups }
+          ...(hasSetting(definition, 'resourceGroup') && resourceGroup
+            ? { resourceGroups: [resourceGroup] }
             : {}),
           ...(hasSetting(definition, 'range') && range !== DEFAULT_RANGE
             ? { range }
@@ -98,7 +97,7 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
           layout="vertical"
           preserve={false}
           initialValues={{
-            resourceGroups: settings?.resourceGroups ?? [],
+            resourceGroup: settings?.resourceGroups?.[0] ?? null,
             range: settings?.range ?? DEFAULT_RANGE,
           }}
         >
@@ -107,18 +106,17 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
             <Suspense
               fallback={
                 <BAIFormItem extra={resourceGroupsExtra}>
-                  <BAISelect mode="multiple" loading disabled />
+                  <BAISelect loading disabled />
                 </BAIFormItem>
               }
             >
               <BAIFormItem
-                name="resourceGroups"
+                name="resourceGroup"
                 // The selector renders its own field label.
                 extra={resourceGroupsExtra}
               >
                 <BAIScopedResourceGroupSelect
-                  multiple
-                  label={t('dashboard.settings.DefaultResourceGroups')}
+                  label={t('dashboard.settings.DefaultResourceGroup')}
                   placeholder={resourceGroupDefault}
                   scope={resourceGroupScope}
                   allowClear

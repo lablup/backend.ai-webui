@@ -312,13 +312,20 @@ export const resetBoard = (
   };
 };
 
+/** Catalog keys that were renamed, old to new, so stored boards keep the card. */
+export const RENAMED_PANEL_KEYS: Readonly<Record<string, string>> = {
+  keypairsLogins: 'failedLogins',
+};
+
+const renamedKey = (key: string) => RENAMED_PANEL_KEYS[key] ?? key;
+
 const isPositiveNumber = (value: unknown): value is number =>
   typeof value === 'number' && Number.isFinite(value) && value >= 1;
 
 /**
- * Validates a stored board against the catalog: unknown or off-page keys,
- * duplicate ids and malformed fields drop instead of crashing the route.
- * Returns null when nothing usable is stored.
+ * Validates a stored board against the catalog: renamed keys move to their
+ * new name, unknown or off-page keys, duplicate ids and malformed fields drop
+ * instead of crashing the route. Returns null when nothing usable is stored.
  */
 export const sanitizeBoard = (
   value: unknown,
@@ -336,7 +343,15 @@ export const sanitizeBoard = (
   const seenIds = new Set<string>();
   const sanitized = panels.flatMap((item): Array<PersistedPanelV2> => {
     if (!item || typeof item !== 'object') return [];
-    const panel = item as PersistedPanelV2;
+    const stored = item as PersistedPanelV2;
+    const panel =
+      typeof stored.key === 'string' && stored.key in RENAMED_PANEL_KEYS
+        ? {
+            ...stored,
+            key: renamedKey(stored.key),
+            id: stored.id === stored.key ? renamedKey(stored.key) : stored.id,
+          }
+        : stored;
     const definition =
       typeof panel.key === 'string' ? byKey.get(panel.key) : undefined;
     if (
@@ -368,7 +383,11 @@ export const sanitizeBoard = (
   return {
     panels: sanitized,
     knownKeys: Array.isArray(knownKeys)
-      ? knownKeys.filter((key): key is string => typeof key === 'string')
+      ? _.uniq(
+          knownKeys
+            .filter((key): key is string => typeof key === 'string')
+            .map(renamedKey),
+        )
       : [],
   };
 };

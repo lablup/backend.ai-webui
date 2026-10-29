@@ -267,7 +267,6 @@ export const useDashboardBoard = ({
         ? withHeaderSettings(
             <DashboardPanelContent
               panel={viewPanel}
-              definition={definition}
               isPageRefetching={isRefetching}
             >
               {(state) => (
@@ -307,7 +306,6 @@ export const useDashboardBoard = ({
       >
         <DashboardPanelContent
           panel={viewPanel}
-          definition={definition}
           isPageRefetching={isRefetching}
         >
           {({ fetchKey }) => (

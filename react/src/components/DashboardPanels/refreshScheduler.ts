@@ -2,10 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { RefreshInterval } from './types';
 import * as _ from 'lodash-es';
 
-/** Timer jitter tolerated when checking a subscriber's minimum interval. */
+/** Timer jitter tolerated when checking whether a card is due. */
 const TICK_TOLERANCE_MS = 500;
 
 /** The auto refresh choices, slowest last; `off` stops automatic refresh. */
@@ -46,8 +45,6 @@ export const REFRESH_DELAY_OPTIONS: ReadonlyArray<number> = _.compact(
 );
 
 export interface RefreshSubscriber {
-  /** The shortest gap between two automatic refreshes of this subscriber. */
-  minMs: number;
   /** Called with the refresh time; must start the refetch, not await it. */
   refresh: (at: number, manual: boolean) => void;
 }
@@ -56,13 +53,10 @@ export interface RefreshSchedulerOptions {
   now?: () => number;
 }
 
-export const refreshIntervalMs = (interval: RefreshInterval) =>
-  refreshToMs(interval) ?? 0;
-
 /**
  * The dashboard's refresh fan-out. The dashboard's refresh control calls
- * `tick` on its interval and `refreshAll` on a click; a tick refreshes only
- * the visible subscribers whose `minMs` has elapsed since their last refresh.
+ * `tick` on its interval and `refreshAll` on a click; a tick refreshes every
+ * visible subscriber, so the whole dashboard re-queries together.
  */
 export class RefreshScheduler {
   private readonly subscribers = new Map<string, RefreshSubscriber>();
@@ -71,13 +65,14 @@ export class RefreshScheduler {
   private readonly hidden = new Set<string>();
   private readonly now: () => number;
   private lastTickAt: number;
+  private intervalMs: number | null = null;
 
   constructor(options: RefreshSchedulerOptions = {}) {
     this.now = options.now ?? Date.now;
     this.lastTickAt = this.now();
   }
 
-  /** Adds a subscriber; its first automatic refresh waits a full `minMs`. */
+  /** Adds a subscriber; it counts as refreshed now, by its own first fetch. */
   register(id: string, subscriber: RefreshSubscriber): () => void {
     this.subscribers.set(id, subscriber);
     if (!this.lastRefreshAt.has(id)) this.lastRefreshAt.set(id, this.now());
@@ -89,11 +84,16 @@ export class RefreshScheduler {
     };
   }
 
-  /** Refreshes the visible subscribers that are due. */
+  /** The automatic refresh interval, or null when it is off. */
+  setIntervalMs(intervalMs: number | null) {
+    this.intervalMs = intervalMs;
+  }
+
+  /** Refreshes every visible subscriber. */
   tick() {
     const at = this.now();
     this.subscribers.forEach((subscriber, id) => {
-      if (!this.hidden.has(id)) this.refreshIfDue(id, subscriber, at);
+      if (!this.hidden.has(id)) this.refresh(id, subscriber, at, false);
     });
     this.markTicked(at);
   }
@@ -101,16 +101,16 @@ export class RefreshScheduler {
   /** Refreshes every subscriber now, visible or not. */
   refreshAll() {
     const at = this.now();
-    this.subscribers.forEach((subscriber, id) => {
-      this.lastRefreshAt.set(id, at);
-      subscriber.refresh(at, true);
-    });
+    this.subscribers.forEach((subscriber, id) =>
+      this.refresh(id, subscriber, at, true),
+    );
     this.markTicked(at);
   }
 
   /**
    * Ticks skip a hidden subscriber; one that comes back into view refreshes
-   * right away if it is due. Ids are visible until reported otherwise.
+   * right away if its last refresh is older than the interval. Ids are
+   * visible until reported otherwise.
    */
   setVisible(id: string, visible: boolean) {
     if (!visible) {
@@ -135,11 +135,21 @@ export class RefreshScheduler {
   }
 
   private refreshIfDue(id: string, subscriber: RefreshSubscriber, at: number) {
+    if (this.intervalMs === null) return;
     const last = this.lastRefreshAt.get(id) ?? 0;
-    if (at - last + TICK_TOLERANCE_MS >= subscriber.minMs) {
-      this.lastRefreshAt.set(id, at);
-      subscriber.refresh(at, false);
+    if (at - last + TICK_TOLERANCE_MS >= this.intervalMs) {
+      this.refresh(id, subscriber, at, false);
     }
+  }
+
+  private refresh(
+    id: string,
+    subscriber: RefreshSubscriber,
+    at: number,
+    manual: boolean,
+  ) {
+    this.lastRefreshAt.set(id, at);
+    subscriber.refresh(at, manual);
   }
 
   private markTicked(at: number) {
