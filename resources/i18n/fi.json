@@ -826,7 +826,7 @@
       "MyActivityTooltip": "Valitulla aikavälillä tekemäsi toiminnot tarkastuslokista.",
       "MyDeployments": "Omat käyttöönotot",
       "MyRecentSessions": "Viimeisimmät istuntoni",
-      "MyResourcesTooltip": "Mitä istuntosi käyttävät kussakin resurssiryhmässä verrattuna avainparin, projektin ja toimialueen alimpaan rajaan.",
+      "MyResourcesTooltip": "Mitä istuntosi käyttävät kortin resurssiryhmässä verrattuna avainparin, projektin ja toimialueen alimpaan rajaan.",
       "MySessionsTooltip": "Omat nykyiset istuntosi tässä projektissa tilan mukaan ja aktiiviset istuntotyypin mukaan.",
       "NoActiveSessions": "Ei aktiivisia istuntoja",
       "NoAllocation": "Resursseja ei ole varattu.",

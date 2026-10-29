@@ -826,7 +826,7 @@
       "MyActivityTooltip": "你在所选时间范围内执行的操作，来自审计日志。",
       "MyDeployments": "我的部署",
       "MyRecentSessions": "我最近的会话",
-      "MyResourcesTooltip": "你的会话在各资源组中的用量，对比密钥对、项目和域限制中最低的那一个。",
+      "MyResourcesTooltip": "你的会话在卡片资源组中的用量，对比密钥对、项目和域限制中最低的那一个。",
       "MySessionsTooltip": "您在此项目中的当前会话按状态显示，活动会话按会话类型显示。",
       "NoActiveSessions": "没有活动会话",
       "NoAllocation": "未分配资源。",

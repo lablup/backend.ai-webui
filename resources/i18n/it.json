@@ -826,7 +826,7 @@
       "MyActivityTooltip": "Azioni eseguite nell'intervallo selezionato, dal registro di controllo.",
       "MyDeployments": "I miei deployment",
       "MyRecentSessions": "Le mie sessioni recenti",
-      "MyResourcesTooltip": "Ciò che le tue sessioni usano in ogni gruppo di risorse, rispetto al limite più basso tra coppia di chiavi, progetto e dominio.",
+      "MyResourcesTooltip": "Ciò che le tue sessioni usano nel gruppo di risorse della scheda, rispetto al limite più basso tra coppia di chiavi, progetto e dominio.",
       "MySessionsTooltip": "Le sue sessioni attuali in questo progetto per stato e quelle attive per tipo di sessione.",
       "NoActiveSessions": "Nessuna sessione attiva",
       "NoAllocation": "Nessuna risorsa allocata.",

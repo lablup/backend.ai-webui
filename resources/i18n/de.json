@@ -826,7 +826,7 @@
       "MyActivityTooltip": "Aktionen, die Sie im gewählten Zeitraum ausgeführt haben, aus dem Audit-Log.",
       "MyDeployments": "Meine Deployments",
       "MyRecentSessions": "Meine letzten Sitzungen",
-      "MyResourcesTooltip": "Was Ihre Sitzungen in jeder Ressourcengruppe nutzen, gemessen am niedrigsten Limit aus Schlüsselpaar, Projekt und Domäne.",
+      "MyResourcesTooltip": "Was Ihre Sitzungen in der Ressourcengruppe der Karte nutzen, gemessen am niedrigsten Limit aus Schlüsselpaar, Projekt und Domäne.",
       "MySessionsTooltip": "Ihre aktuellen Sitzungen in diesem Projekt nach Status und die aktiven nach Sitzungstyp.",
       "NoActiveSessions": "Keine aktiven Sitzungen",
       "NoAllocation": "Keine Ressourcen zugewiesen.",
