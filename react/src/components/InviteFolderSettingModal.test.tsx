@@ -255,8 +255,8 @@ const operationNames = (environment: RelayMockEnvironment) =>
     .getAllOperations()
     .map((operation) => operation.request.node.params.name);
 
-// The accepted shares the pre-invite check finds for the picked recipient;
-// a test that wants the override notice fills it.
+// The open (pending or accepted) shares the pre-invite check finds for the
+// picked recipient; a test that wants the override notice fills it.
 let existingShareEdges: Array<{ node: { id: string } }> = [];
 const resolversFor = (operation: any) =>
   operation.request.node.params.name ===
@@ -424,7 +424,7 @@ describe('InviteFolderSettingModal (#10295)', () => {
     await user.click(
       screen.getByRole('button', { name: 'data.folders.Invite' }),
     );
-    // The pre-invite check for an accepted share answers first.
+    // The pre-invite check for an open share answers first.
     await resolvePendingQueries(environment);
 
     await waitFor(() =>
@@ -445,7 +445,7 @@ describe('InviteFolderSettingModal (#10295)', () => {
     ]);
   });
 
-  it('tells the inviter before an invite restates a share the recipient already accepted', async () => {
+  it('tells the inviter before an invite restates a share the recipient already holds', async () => {
     installPopoverMock();
     existingShareEdges = [{ node: { id: 'EntityShare:accepted' } }];
     try {
@@ -466,10 +466,10 @@ describe('InviteFolderSettingModal (#10295)', () => {
       );
       await resolvePendingQueries(environment);
 
-      // The check found an accepted share: the notice shows and nothing is
-      // sent until the inviter agrees.
+      // The check found an open share: the notice shows and nothing is sent
+      // until the inviter agrees.
       expect(
-        await screen.findByText('data.folders.ShareAlreadyAccepted'),
+        await screen.findByText('data.folders.ShareAlreadyExists'),
       ).toBeInTheDocument();
       expect(operationNames(environment)).not.toContain(
         'InviteFolderSettingModalCreateShareMutation',
@@ -546,7 +546,7 @@ describe('InviteFolderSettingModal (#10295)', () => {
     await user.click(
       screen.getByRole('button', { name: 'data.folders.Invite' }),
     );
-    // The pre-invite check for an accepted share answers first.
+    // The pre-invite check for an open share answers first.
     await resolvePendingQueries(environment);
 
     await waitFor(() =>

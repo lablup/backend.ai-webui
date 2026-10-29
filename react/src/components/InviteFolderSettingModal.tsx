@@ -154,8 +154,9 @@ const SetMountPolicyMutation = graphql`
   }
 `;
 
-// Asked before an invite: a share this recipient already accepted is what
-// `createEntityShare` would restate, so the inviter is told first.
+// Asked before an invite: an open share (pending or accepted) this recipient
+// already holds is what `createEntityShare` would restate, so the inviter is
+// told first.
 const ExistingShareQuery = graphql`
   query InviteFolderSettingModalExistingShareQuery(
     $scope: EntityShareScope!
@@ -325,7 +326,7 @@ const InviteFolderSettingModalBody: React.FC<{
               ],
             },
             filter: {
-              status: { equals: 'ACCEPTED' },
+              status: { in: ['PENDING', 'ACCEPTED'] },
               ...(inviteTarget.kind === 'user'
                 ? { recipientEntityId: { equals: inviteTarget.userId } }
                 : { recipientEmail: { equals: inviteTarget.email } }),
@@ -336,8 +337,8 @@ const InviteFolderSettingModalBody: React.FC<{
       if (!_.isEmpty(existing?.entityShares?.edges)) {
         const proceed = await new Promise<boolean>((resolve) =>
           modal.confirm({
-            title: t('data.folders.ShareAlreadyAccepted'),
-            content: t('data.folders.ShareAlreadyAcceptedDesc', {
+            title: t('data.folders.ShareAlreadyExists'),
+            content: t('data.folders.ShareAlreadyExistsDesc', {
               email: inviteTarget.email,
             }),
             okText: t('button.Overwrite'),
@@ -409,10 +410,10 @@ const InviteFolderSettingModalBody: React.FC<{
               <Suspense fallback={<BAISkeleton variant="input" width="100%" />}>
                 <div
                   ref={(node) => {
+                    // The ComplexSelector trigger is the popup button.
                     recipientTriggerRef.current =
-                      node?.querySelector<HTMLElement>(
-                        '[role="combobox"]:not(input)',
-                      ) ?? node;
+                      node?.querySelector<HTMLElement>('[aria-haspopup]') ??
+                      node;
                   }}
                 >
                   <BAIScopedUserSelect
