@@ -2,6 +2,7 @@
 // Tests for 401/404 page handling, blocklist, and inactiveList configurations
 import {
   forbiddenPageHeading,
+  getSideNavItem,
   loginAsAdmin,
   loginAsUser,
   modifyConfigToml,
@@ -9,30 +10,7 @@ import {
   notFoundPageHeading,
   webuiEndpoint,
 } from '../utils/test-util';
-import { test, expect, Page } from '@playwright/test';
-
-/**
- * Locates a top-level sidebar nav item by its visible label.
- *
- * Astryx `SideNavItem` (to-astryx ticket 24, `react/src/components/BAIMenu.tsx`)
- * renders an enabled item as a real `<a>` (role "link") and a *disabled* item
- * as a `<button disabled>` (role "button") — see
- * `@astryxdesign/core/SideNav/SideNavItem.tsx`'s `NavItemElement`
- * (`if (href && !isDisabled) <a> else <button disabled>`). There is no single
- * ARIA role that covers both states (antd's old `role="menuitem"` no longer
- * exists), so this matches either role, scoped to the sidebar landmark
- * (`<nav aria-label="Side navigation">`) to avoid colliding with same-named
- * links elsewhere on the page (e.g. the breadcrumb).
- */
-function getSideNavItem(
-  page: Page,
-  name: string | RegExp,
-): ReturnType<Page['getByRole']> {
-  const sideNav = page.getByRole('navigation', { name: 'Side navigation' });
-  return sideNav
-    .getByRole('link', { name, exact: typeof name === 'string' })
-    .or(sideNav.getByRole('button', { name, exact: typeof name === 'string' }));
-}
+import { test, expect } from '@playwright/test';
 
 test.describe(
   'Page Access Control - Config-Based Menu Management',

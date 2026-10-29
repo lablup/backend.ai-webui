@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-10-23
+> **Last Updated:** 2026-10-29
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 375 / 525 features covered (71%)**
+**Overall (in-scope routes): 399 / 554 features covered (72%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -54,7 +54,8 @@
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **525**  | **375** | **71%** |
+| System Settings          | `/admin/webui-settings`                          |    29    |   24    | 🔶 83%  |
+| **Total**                |                                                  | **554**  | **399** | **72%** |
 
 ---
 
@@ -1329,6 +1330,51 @@ is deliberately out of scope — operate above project scope — the header proj
 
 ---
 
+### 34. System Settings (`/admin/webui-settings`) — config.toml → app config (#10436)
+
+**Test files:** [`e2e/webui-settings/webui-settings.spec.ts`](webui-settings/webui-settings.spec.ts)
+
+**Helpers:** [`e2e/utils/webui-settings-util.ts`](utils/webui-settings-util.ts) — the row table mirroring `WEBUI_SETTING_DEFINITIONS`, `WebUISettingsApi` (snapshot / write / restore of the `settings` sub-key per scope), row and Apply helpers, `enablePublicSlice` for the anonymous `publicConfigByDomain` read.
+
+The spec writes the cluster-wide `settings` documents, so it runs sequentially (`test.describe.configure({ mode: 'default' })`), clears both documents around each test, and restores the pre-run snapshot in `afterAll`.
+
+| Feature                                                                          | Status | Test                                                                                                    |
+| -------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------- |
+| Every group renders for a superadmin                                             | ✅     | `superadmin sees every group and every row with its config.toml value as the default`                   |
+| Row inventory equals the definition table (`data-testid="webui-setting-<key>"`)  | ✅     | same test                                                                                               |
+| Each row shows the config.toml value as its default, no changed marker           | ✅     | same test                                                                                               |
+| Apply disabled while nothing changed                                             | ✅     | same test                                                                                               |
+| Domain admin sees no public-scope group (Sign-in, Diagnostics, Plugins)          | ✅     | `domain admin sees no public-scope group`                                                               |
+| Changed marker + per-row reset (checkbox row)                                    | ✅     | `a checkbox row shows the changed marker and resets to the file value`                                  |
+| Changed marker + per-row reset (number row)                                      | ✅     | `a number row shows the changed marker and resets to the file value`                                    |
+| Toolbar Reset discards every changed row                                         | ✅     | `the Reset button discards every changed row`                                                           |
+| Apply → confirmation → reload; rows stay marked; client reads the new values     | ✅     | `Apply confirms, reloads, saves only the changed keys and resetting them removes the document`          |
+| Only differing keys are saved; resetting them removes the `settings` sub-key     | ✅     | same test                                                                                               |
+| Superadmin saves a Sign-in row into the public document                          | ✅     | `superadmin saves a Sign-in row into the public document`                                               |
+| Leaving with unapplied changes asks for confirmation (Cancel / Discard)          | ✅     | `leaving the page with unapplied changes asks for confirmation`                                         |
+| `domainConfig.settings` overrides config.toml for every domain key after sign-in | ✅     | `a value in the domain document overrides config.toml for every domain key after sign-in`               |
+| Wrong-typed value / absent key keeps the file value (client and page)            | ✅     | `a wrong-typed value or an absent key keeps the config.toml value`                                      |
+| A key saved under the other scope is ignored                                     | ✅     | `a key saved under the other scope is ignored`                                                          |
+| Public document overrides the login page before sign-in (switch, SSO, debug)     | ✅     | `a value in the public document overrides config.toml on the login page before sign-in`                 |
+| Key absent from the public document keeps the login-page file value              | ✅     | `a key absent from the public document keeps the login page config.toml value`                          |
+| `hideAgents` → Agent Summary menu and launcher agent selector                    | ✅     | `hideAgents controls the Agent Summary menu and the launcher agent selector`                            |
+| `menuBlocklist` → sidebar item hidden, route 404                                 | ✅     | `menuBlocklist from the domain document hides a page from the sidebar and its route`                    |
+| `maxCPUCoresPerContainer` → session launcher CPU cap                             | ✅     | `maxCPUCoresPerContainer from the domain document caps the session launcher`                            |
+| `allowAppDownloadPanel` / `allowCLIDownloadPanel` → Downloads menu item          | ✅     | `download panel keys from the domain document remove the Downloads menu item`                           |
+| `enableModelFolders` → Models on the Data page                                   | ✅     | `enableModelFolders from the domain document removes Models from the Data page`                         |
+| `loginAttemptLimit` / `loginBlockTime` → login form blocked after the limit      | ✅     | `loginAttemptLimit from the public document blocks the login form after the limit`                      |
+| `pluginLogin` / `pluginPage` → login plugin and page plugin loaded               | ✅     | `plugin paths from the public document load the login plugin and the page plugin`                       |
+| Cleanup touches only the `settings` sub-key (`appearance`, `announcement` kept)  | ✅     | `clearing the settings sub-key leaves the other sub-keys of both documents untouched`                   |
+| Domain admin Apply writes `domainConfig.settings`                                | ❌     | the dev cluster's domain admin lacks `app_config_fragment` DOMAIN permissions (RBAC seed); not testable |
+| `autoLogout` (tab-close choreography)                                            | ❌     | -                                                                                                       |
+| App launcher keys (`openPortToPublic`, `allowPreferredPort`, `allowNonAuthTCP`)  | ❌     | need a running session                                                                                  |
+| Accelerator caps other than CPU (`maxCUDADevicesPerContainer`, …)                | ❌     | need the device in the resource group                                                                   |
+| `enableContainerCommit` → Request Container Commit button                        | ❌     | needs a running session                                                                                 |
+
+**Coverage: 🔶 24/29 features**
+
+---
+
 ## Visual Regression Tests
 
 Visual regression tests exist for most pages but only capture screenshots, not functional behavior.
@@ -1412,12 +1458,13 @@ These are core user workflows that affect the largest number of users.
 
 ### Shared Utilities
 
-| Utility             | Location                                                                                     | Purpose                                                                                                                |
-| ------------------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `test-util.ts`      | [`e2e/utils/test-util.ts`](utils/test-util.ts)                                               | Login, config modification, TOML helpers, route-error screen locators (`notFoundPageHeading` / `forbiddenPageHeading`) |
-| `test-util-antd.ts` | [`e2e/utils/test-util-antd.ts`](utils/test-util-antd.ts)                                     | Ant Design component interaction helpers                                                                               |
-| `SessionAPIHelper`  | [`e2e/utils/classes/session/SessionAPIHelper.ts`](utils/classes/session/SessionAPIHelper.ts) | Create and manage sessions via Backend.AI API                                                                          |
-| `admin-api.ts`      | [`e2e/utils/admin-api.ts`](utils/admin-api.ts)                                               | Admin GraphQL helpers: users, projects, deployments (`findDeploymentByName`, `setDeploymentTagsViaApi`, delete/sweep)  |
+| Utility                  | Location                                                                                     | Purpose                                                                                                                                                                                        |
+| ------------------------ | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `test-util.ts`           | [`e2e/utils/test-util.ts`](utils/test-util.ts)                                               | Login, config modification (`fetchConfigToml` / `modifyConfigToml`), TOML helpers, sidebar (`getSideNavItem`) and route-error screen locators (`notFoundPageHeading` / `forbiddenPageHeading`) |
+| `webui-settings-util.ts` | [`e2e/utils/webui-settings-util.ts`](utils/webui-settings-util.ts)                           | System Settings rows (`WEBUI_SETTING_ROWS`), `WebUISettingsApi` for the `settings` app-config documents (snapshot / write / restore), Apply and row helpers, `enablePublicSlice`               |
+| `test-util-antd.ts`      | [`e2e/utils/test-util-antd.ts`](utils/test-util-antd.ts)                                     | Ant Design component interaction helpers                                                                                                                                                       |
+| `SessionAPIHelper`       | [`e2e/utils/classes/session/SessionAPIHelper.ts`](utils/classes/session/SessionAPIHelper.ts) | Create and manage sessions via Backend.AI API                                                                                                                                                  |
+| `admin-api.ts`           | [`e2e/utils/admin-api.ts`](utils/admin-api.ts)                                               | Admin GraphQL helpers: users, projects, deployments (`findDeploymentByName`, `setDeploymentTagsViaApi`, delete/sweep)                                                                          |
 
 ### Page Object Models Needed
 
@@ -1472,6 +1519,7 @@ To efficiently build new E2E tests, these POMs should be created:
 | Global Search Palette (header)         |        ✅        |      ❌      |    -     |
 | Plugin System (config-based)           |        ✅        |      ❌      |    -     |
 | `/admin-serving?tab=auto-scaling-rule` |        🔶        |      ❌      |    -     |
+| `/admin/webui-settings`                |        🔶        |      ❌      |    -     |
 
 ---
 
