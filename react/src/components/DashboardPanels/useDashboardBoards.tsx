@@ -16,7 +16,7 @@ import {
   resolveBoards,
   type LocalBoardSources,
 } from './dashboardConfig';
-import { createDashboardWriter, withMigratedFlag } from './dashboardStore';
+import { applyPageUpdate, createDashboardWriter } from './dashboardStore';
 import type {
   DashboardConfig,
   DashboardModel,
@@ -155,7 +155,8 @@ export const useDashboardBoards = (
     activeBoard: activeBoardOf(config),
     template,
     update: (update) => {
-      const next = withMigratedFlag(update(config));
+      const next = applyPageUpdate(config, update);
+      if (!next) return;
       setOptimistic((prev) => ({ ...prev, [page]: next }));
       dashboardWriter.save(page, next).catch(() => {});
     },
