@@ -5,15 +5,21 @@
 import '../../../__test__/matchMedia.mock.js';
 import { ResourcePreset } from '../../hooks/useResourceLimitAndRemaining';
 import { Image } from '../ImageEnvironmentSelectFormItems';
-import { getPresetUnavailableReason } from '../ResourcePresetSelect';
+import {
+  getPresetUnavailableReason,
+  presetUnavailableReasonText,
+} from '../ResourcePresetSelect';
 import {
   applyRule,
   getSupportedAcceleratorTypes,
+  isAcceleratorTypeUnsupported,
+  matchesPreset,
   resolveAcceleratorType,
   ResourceValues,
   RuleContext,
   RulePatch,
 } from './resourceAllocationRules';
+import type { TFunction } from 'i18next';
 
 const GiB = 1024 ** 3;
 
@@ -269,16 +275,14 @@ describe('applyRule — user events', () => {
     });
   });
 
-  it('a shmem edit relabels custom only in free mode, and only off a preset that carries shmem', () => {
+  it('a shmem edit never changes the label, even off a preset that carries shmem', () => {
     const values = written(onGpuPreset(), { resource: { shmem: '512m' } });
     const event = {
       type: 'user.setResource',
       field: 'shmem',
       value: '512m',
     } as const;
-    expect(applyRule(values, event, makeCtx())).toEqual({
-      allocationPreset: 'custom',
-    });
+    expect(applyRule(values, event, makeCtx())).toEqual({});
     expect(applyRule(values, event, presetOnly())).toEqual({});
     const onCpuPreset = makeValues({
       resource: {
@@ -293,23 +297,21 @@ describe('applyRule — user events', () => {
     expect(applyRule(onCpuPreset, event, makeCtx())).toEqual({});
   });
 
-  it('turning automatic shmem on recomputes shmem; the label follows only in free mode', () => {
-    const values = makeValues({
-      resource: { ...makeValues().resource, mem: '8g', shmem: '2g' },
-      allocationPreset: 'p-gpu',
+  it('turning automatic shmem on recomputes shmem and keeps the preset label in both modes', () => {
+    const values = onGpuPreset({
+      resource: { ...onGpuPreset().resource, shmem: '2g' },
       enabledAutomaticShmem: true,
     });
     const event = { type: 'user.toggleAutoShmem', on: true } as const;
     expect(applyRule(values, event, makeCtx())).toEqual({
       resource: { shmem: '1g' },
-      allocationPreset: 'custom',
     });
     expect(applyRule(values, event, presetOnly())).toEqual({
       resource: { shmem: '1g' },
     });
   });
 
-  it('turning automatic shmem off writes nothing; the label follows the values, not the toggle', () => {
+  it('turning automatic shmem off writes nothing; the label follows the cpu / mem values, not the toggle', () => {
     const event = { type: 'user.toggleAutoShmem', on: false } as const;
     expect(applyRule(onGpuPreset(), event, makeCtx())).toEqual({});
     expect(applyRule(onGpuPreset(), event, presetOnly())).toEqual({});
@@ -653,6 +655,27 @@ describe('applyRule — data.changed', () => {
     expect(applyRule(values, dataChanged, presetOnly())).toEqual({});
   });
 
+  it("preset-only: a type the image dropped is the preset validator's, not a type switch or a type error", () => {
+    const ctx = presetOnly({ image: rocmOnlyImage });
+    expect(
+      applyRule(makeValues({ allocationPreset: 'p-gpu' }), dataChanged, ctx),
+    ).toEqual({});
+    expect(isAcceleratorTypeUnsupported('cuda.device', ctx)).toBe(false);
+    expect(
+      isAcceleratorTypeUnsupported(
+        'cuda.device',
+        makeCtx({ image: rocmOnlyImage }),
+      ),
+    ).toBe(true);
+    expect(isAcceleratorTypeUnsupported('cuda.device', makeCtx())).toBe(false);
+    expect(
+      isAcceleratorTypeUnsupported(
+        'cuda.device',
+        makeCtx({ image: undefined }),
+      ),
+    ).toBe(false);
+  });
+
   it('switches to the only accelerator type the image runs on and keeps the quantity', () => {
     const slots = {
       slotsInRG: ['cpu', 'mem', 'cuda.device', 'rocm.device'],
@@ -706,19 +729,92 @@ describe('applyRule — data.changed', () => {
     ).toEqual({});
   });
 
-  it('preset-only: custom and minimum-required from a URL fall back to the auto pick', () => {
+  it('preset-only: a restored custom on a preset takes that label without a value write; shmem does not count', () => {
+    expect(
+      applyRule(
+        onGpuPreset({ allocationPreset: 'custom' }),
+        dataChanged,
+        presetOnly(),
+      ),
+    ).toEqual({ allocationPreset: 'p-gpu' });
+    expect(
+      applyRule(
+        onGpuPreset({
+          resource: { ...onGpuPreset().resource, shmem: '64m' },
+          allocationPreset: 'custom',
+          enabledAutomaticShmem: true,
+        }),
+        dataChanged,
+        presetOnly(),
+      ),
+    ).toEqual({ allocationPreset: 'p-gpu' });
+  });
+
+  it('preset-only: a restored custom on no preset clears the label so the user picks; the values stay', () => {
+    expect(
+      applyRule(
+        makeValues({ allocationPreset: 'custom' }),
+        dataChanged,
+        presetOnly(),
+      ),
+    ).toEqual({ allocationPreset: null });
+    expect(
+      applyRule(
+        makeValues({ allocationPreset: 'custom' }),
+        dataChanged,
+        presetOnly({ presets: undefined }),
+      ),
+    ).toEqual({});
+  });
+
+  it('preset-only: a restored minimum-required applies the image minimum, then matches or clears', () => {
+    expect(
+      applyRule(
+        makeValues({ allocationPreset: 'minimum-required' }),
+        dataChanged,
+        presetOnly(),
+      ),
+    ).toEqual({
+      resource: { cpu: 1, mem: '1.25g' },
+      allocationPreset: null,
+    });
+    const onMinimum: ResourcePreset = {
+      id: 'p-min',
+      name: 'e-min',
+      resource_slots: { cpu: '1', mem: String(1.25 * GiB) },
+      shared_memory: null,
+      allocatable: true,
+    };
+    expect(
+      applyRule(
+        makeValues({ allocationPreset: 'minimum-required' }),
+        dataChanged,
+        presetOnly({ image: cpuImage, presets: [...presets, onMinimum] }),
+      ),
+    ).toEqual({
+      resource: { cpu: 1, mem: '1.25g', accelerator: 0 },
+      allocationPreset: 'p-min',
+    });
+  });
+
+  it('keepRestoredAllocation leaves a restored custom or minimum-required alone in both modes', () => {
     for (const label of ['custom', 'minimum-required']) {
+      const values = makeValues({ allocationPreset: label });
       expect(
         applyRule(
-          makeValues({ allocationPreset: label }),
+          values,
           dataChanged,
-          presetOnly(),
+          presetOnly({ keepRestoredAllocation: true }),
         ),
-      ).toEqual({
-        allocationPreset: 'p-cpu',
-        resource: { shmem: '1g', accelerator: 0 },
-      });
+      ).toEqual({});
     }
+    expect(
+      applyRule(
+        makeValues({ allocationPreset: 'custom' }),
+        dataChanged,
+        makeCtx({ keepRestoredAllocation: true }),
+      ),
+    ).toEqual({});
   });
 
   it('keeps a selected preset the group can serve', () => {
@@ -807,6 +903,80 @@ describe('applyRule — data.changed', () => {
     );
     expect(minimum.resource).toMatchObject(gpuImageMinimum);
     expect(applyRule(minimum, dataChanged, ctx)).toEqual({});
+  });
+});
+
+describe('matchesPreset', () => {
+  it('compares cpu, mem by size, accelerator type and amount; never shmem', () => {
+    const ctx = makeCtx();
+    const gpu = presets[0];
+    expect(matchesPreset(onGpuPreset().resource ?? {}, gpu, ctx)).toBe(true);
+    expect(
+      matchesPreset(
+        { ...onGpuPreset().resource, mem: '8192m', shmem: '64m' },
+        gpu,
+        ctx,
+      ),
+    ).toBe(true);
+    expect(matchesPreset({ ...onGpuPreset().resource, cpu: 5 }, gpu, ctx)).toBe(
+      false,
+    );
+    expect(
+      matchesPreset({ ...onGpuPreset().resource, accelerator: 1 }, gpu, ctx),
+    ).toBe(false);
+    expect(
+      matchesPreset(
+        { ...onGpuPreset().resource, acceleratorType: 'cuda.device' },
+        gpu,
+        ctx,
+      ),
+    ).toBe(false);
+    // A unified slot has no amount to compare.
+    expect(
+      matchesPreset(
+        { cpu: 2, mem: '4g', accelerator: 7, acceleratorType: 'cuda.unified' },
+        presets[2],
+        ctx,
+      ),
+    ).toBe(true);
+    // The group cannot serve the preset: no answer.
+    expect(
+      matchesPreset({ cpu: 1, mem: '2g' }, presets[3], ctx),
+    ).toBeUndefined();
+  });
+});
+
+describe('presetUnavailableReasonText', () => {
+  const t = ((key: string, options?: Record<string, unknown>) =>
+    `${key} ${JSON.stringify(options)}`) as unknown as TFunction;
+  const slotNameOf = (key: string) => key.toUpperCase();
+
+  it('names the preset in the scoped message only when given one', () => {
+    const scoped = { kind: 'scoped', resourceGroup: 'rg-b' } as const;
+    expect(presetUnavailableReasonText(scoped, t, slotNameOf, 'big')).toBe(
+      'resourcePreset.PresetOnlyAvailableInResourceGroup {"preset":"big","name":"rg-b"}',
+    );
+    expect(presetUnavailableReasonText(scoped, t, slotNameOf)).toBe(
+      'resourcePreset.OnlyAvailableInResourceGroup {"name":"rg-b"}',
+    );
+  });
+
+  it("maps the other reasons once, with the caller's slot names", () => {
+    expect(
+      presetUnavailableReasonText(
+        { kind: 'missing-slots', slots: ['rocm.device', 'tpu.device'] },
+        t,
+        slotNameOf,
+      ),
+    ).toBe(
+      'resourcePreset.RequiresSlotsNotInResourceGroup {"slots":"ROCM.DEVICE, TPU.DEVICE"}',
+    );
+    expect(
+      presetUnavailableReasonText({ kind: 'not-allocatable' }, t, slotNameOf),
+    ).toBe('resourcePreset.ExceedsAllocatableResources undefined');
+    expect(
+      presetUnavailableReasonText(undefined, t, slotNameOf),
+    ).toBeUndefined();
   });
 });
 

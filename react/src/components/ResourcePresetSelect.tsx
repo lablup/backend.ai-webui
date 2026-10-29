@@ -28,6 +28,7 @@ import {
   useUpdatableState,
   BAISelector,
 } from 'backend.ai-ui';
+import type { TFunction } from 'i18next';
 import * as _ from 'lodash-es';
 import { Info, SquarePen } from 'lucide-react';
 import React, { useEffect, useTransition, type CSSProperties } from 'react';
@@ -107,6 +108,34 @@ export const getPresetUnavailableReason = (
     return { kind: 'not-allocatable' };
   }
   return undefined;
+};
+
+/** The message for `reason`; `presetName` picks the wording that names the preset (the validator's) over the option's. */
+export const presetUnavailableReasonText = (
+  reason: PresetUnavailableReason | undefined,
+  t: TFunction,
+  slotNameOf: (key: string) => string,
+  presetName?: string,
+): string | undefined => {
+  switch (reason?.kind) {
+    case 'scoped':
+      return presetName
+        ? t('resourcePreset.PresetOnlyAvailableInResourceGroup', {
+            preset: presetName,
+            name: reason.resourceGroup,
+          })
+        : t('resourcePreset.OnlyAvailableInResourceGroup', {
+            name: reason.resourceGroup,
+          });
+    case 'missing-slots':
+      return t('resourcePreset.RequiresSlotsNotInResourceGroup', {
+        slots: reason.slots.map(slotNameOf).join(', '),
+      });
+    case 'not-allocatable':
+      return t('resourcePreset.ExceedsAllocatableResources');
+    default:
+      return undefined;
+  }
 };
 
 /**
@@ -200,25 +229,17 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     preset: ResourcePreset | null | undefined,
   ): string | undefined => {
     if (!preset) return undefined;
-    const reason = getPresetUnavailableReason(
-      { ...preset, resource_slots: JSON.parse(preset.resource_slots || '{}') },
-      { resourceGroup, slotsInRG: availableSlotNames, allocatablePresetIds },
+    return presetUnavailableReasonText(
+      getPresetUnavailableReason(
+        {
+          ...preset,
+          resource_slots: JSON.parse(preset.resource_slots || '{}'),
+        },
+        { resourceGroup, slotsInRG: availableSlotNames, allocatablePresetIds },
+      ),
+      t,
+      (key) => deviceMetaData?.[key]?.human_readable_name ?? key,
     );
-    switch (reason?.kind) {
-      case 'scoped':
-        return onlyInGroupText(reason.resourceGroup);
-      case 'missing-slots':
-        return t('resourcePreset.RequiresSlotsNotInResourceGroup', {
-          slots: _.map(
-            reason.slots,
-            (key) => deviceMetaData?.[key]?.human_readable_name ?? key,
-          ).join(', '),
-        });
-      case 'not-allocatable':
-        return t('resourcePreset.ExceedsAllocatableResources');
-      default:
-        return undefined;
-    }
   };
 
   const firstAvailablePreset = [...(resource_presets ?? [])]
