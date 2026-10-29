@@ -74,7 +74,7 @@ const useMineDeployments = (
               ) {
                 count
               }
-              ...BAIModelDeploymentNodesFragment
+              ...BAIModelDeploymentNodesFragment @arguments(withDetails: false)
             }
           }
         }
@@ -118,7 +118,7 @@ const useProjectDeployments = (
               ) {
                 count
               }
-              ...BAIModelDeploymentNodesFragment
+              ...BAIModelDeploymentNodesFragment @arguments(withDetails: false)
             }
           }
         }
