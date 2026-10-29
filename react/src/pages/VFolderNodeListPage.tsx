@@ -23,11 +23,13 @@ import { isDeletedCategory } from '../helper/vfolderStatus';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useIsPersonalProject } from '../hooks/useAccessibleProjects';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCreateActionArrival } from '../hooks/useCreateActionArrival';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
 import { toProjectContext } from '../types/projectContext';
+import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Link } from '@lablup/ui-common/Link';
@@ -137,6 +139,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const isLabelable = useIsLabelableEntityType('vfolder');
   const currentProject = useCurrentProjectValue();
   const projectContext = toProjectContext(currentProject);
+  const isPersonalProject = useIsPersonalProject(currentProject.id);
   const [currentUser] = useCurrentUserInfo();
   const baiClient = useSuspendedBackendaiClient();
   const [invitations] = useVFolderInvitations();
@@ -309,6 +312,11 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
 
   return (
     <VStack align="stretch" gap={5} {...props}>
+      <Banner
+        role="status"
+        status="info"
+        title={t('data.folders.FolderVisibleToProjectMembers')}
+      />
       <BAICard
         title={t('data.Folders')}
         extra={
@@ -524,7 +532,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             <VFolderNodesV2
               order={queryParams.order}
               loading={deferredQueryVariables !== queryVariables}
-              disableProjectFolderActions
               project={projectContext}
               vfoldersFrgmt={filterOutNullAndUndefined(
                 _.map(scopedVFoldersV2?.edges, 'node'),
@@ -590,6 +597,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
       <FolderCreateModalV2
         open={isOpenCreateModal}
         project={projectContext}
+        allowAutoMount={isPersonalProject}
         initialValues={{
           usage_mode:
             queryParams.mode === 'model'

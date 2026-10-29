@@ -92,13 +92,7 @@ test.describe(
       try {
         const page = await context.newPage();
         await loginAsUser(page, request);
-        await createVFolderAndVerify(
-          page,
-          testFolderName,
-          'general',
-          'user',
-          'rw',
-        );
+        await createVFolderAndVerify(page, testFolderName, 'general', 'rw');
 
         // openFolderExplorer already calls verifyFileExplorerLoaded().
         const modal = await openFolderExplorer(page, testFolderName);
