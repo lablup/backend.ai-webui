@@ -323,7 +323,7 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: SessionStatusPanel,
     detailLink: RUNNING_SESSIONS,
     defaultSize: size(4, 3),
-    minSize: size(2, 3),
+    minSize: size(2, 2),
     refresh: { min: '15s' },
     ...adminOrder('projectSessionStatus'),
   },
