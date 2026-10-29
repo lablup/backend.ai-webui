@@ -175,6 +175,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
   const [isSharedConfirmOpen, setIsSharedConfirmOpen] = useState(false);
   const [dontAskAgain, setDontAskAgain] = useState(false);
   const [isConfirmPending, setIsConfirmPending] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
 
   // The permission rule closes over `effectiveProject` (model-store read-only
   // lock), so re-validate only after the in-modal selection commits.
@@ -397,6 +398,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
               variant="primary"
               label={t('data.Create')}
               isDisabled={canCreateInSharedProject === false}
+              isLoading={isCreating}
               clickAction={async () => {
                 if (canCreateInSharedProject && !skipSharedFolderConfirm) {
                   // Ask only once the form is valid; inline errors show otherwise.
@@ -749,10 +751,16 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                 .then(() => refetchMyAppConfig())
                 .catch((error) => logger.error(error));
             }
-            setIsSharedConfirmOpen(false);
-            await handleOk();
           } finally {
             setIsConfirmPending(false);
+          }
+          setIsSharedConfirmOpen(false);
+          // The creation modal's Create button carries the loading state.
+          setIsCreating(true);
+          try {
+            await handleOk();
+          } finally {
+            setIsCreating(false);
           }
         }}
         {...({ 'data-testid': 'shared-folder-confirm-modal' } as object)}
