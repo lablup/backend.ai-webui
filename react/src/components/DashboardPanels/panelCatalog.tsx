@@ -68,7 +68,7 @@ const ActiveSessionsPanel: React.FC<PanelComponentProps> = ({ queryRefs }) => {
 const QuotaPerStorageVolumePanel: React.FC<PanelComponentProps> = () => {
   'use memo';
   const { t } = useTranslation();
-  useDashboardRefreshQuery(['vhostInfo'], '5m');
+  useDashboardRefreshQuery(['vhostInfo']);
   return (
     <BAIBoardItemErrorBoundary
       title={t('data.QuotaPerStorageVolume')}
@@ -136,7 +136,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     kind: 'custom',
     Component: StartSessionPanel,
     ...START_SIZE,
-    refresh: { min: '10m' },
   },
   {
     key: 'start.batchSession',
@@ -147,7 +146,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     kind: 'custom',
     Component: StartBatchSessionPanel,
     ...START_SIZE,
-    refresh: { min: '10m' },
   },
   {
     key: 'start.folder',
@@ -158,7 +156,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     kind: 'custom',
     Component: CreateFolderPanel,
     ...START_SIZE,
-    refresh: { min: '10m' },
   },
   {
     key: 'start.deployment',
@@ -172,7 +169,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     kind: 'custom',
     Component: StartDeploymentPanel,
     ...START_SIZE,
-    refresh: { min: '10m' },
   },
   {
     key: 'start.url',
@@ -183,7 +179,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     kind: 'custom',
     Component: StartFromURLPanel,
     ...START_SIZE,
-    refresh: { min: '10m' },
   },
   {
     key: 'mySession',
@@ -194,7 +189,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: MySessionsPanel,
     defaultSize: size(2, 2),
     minSize: size(2, 2),
-    refresh: { min: '15s' },
   },
   {
     key: 'activeSessions',
@@ -205,7 +199,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: ActiveSessionsPanel,
     defaultSize: size(2, 2),
     minSize: size(2, 2),
-    refresh: { min: '15s' },
   },
   {
     key: 'myRecentSessions',
@@ -216,7 +209,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: MyRecentSessionsPanel,
     defaultSize: size(4, 3),
     minSize: size(2, 2),
-    refresh: { min: '1m' },
   },
   {
     key: 'myResource',
@@ -227,7 +219,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: MyResourcesPanel,
     defaultSize: size(2, 3),
     minSize: size(2, 2),
-    refresh: { min: '30s' },
     settings: ['resourceGroup'],
   },
   {
@@ -239,7 +230,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: ResourcePresetsPanel,
     defaultSize: size(2, 3),
     minSize: size(2, 2),
-    refresh: { min: '30s' },
     settings: ['resourceGroup'],
     defaultHidden: true,
   },
@@ -259,7 +249,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: ResourceGroupTotalPanel,
     defaultSize: size(2, 2),
     minSize: size(2, 2),
-    refresh: { min: '30s' },
     settings: ['resourceGroup'],
   },
   // TODO(needs-backend): BA-8719 - re-add `folderStatus` (MyFoldersPanel) once
@@ -273,7 +262,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: QuotaPerStorageVolumePanel,
     defaultSize: size(2, 2),
     minSize: size(2, 2),
-    refresh: { min: '5m' },
   },
   {
     key: 'myDeployments',
@@ -285,7 +273,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: MyDeploymentsPanel,
     defaultSize: size(2, 3),
     minSize: size(2, 2),
-    refresh: { min: '30s' },
   },
   {
     key: 'myActivity',
@@ -296,7 +283,6 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: MyActivityPanel,
     defaultSize: size(4, 3),
     minSize: size(2, 2),
-    refresh: { min: '1m' },
     settings: ['range'],
   },
 ];
@@ -313,7 +299,6 @@ const ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: AgentStatsPanel,
     defaultSize: size(2, 2),
     minSize: size(2, 2),
-    refresh: { min: '30s' },
   },
   {
     key: 'activeAgents',
@@ -325,7 +310,6 @@ const ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: ActiveAgentsPanel,
     defaultSize: size(4, 4),
     minSize: size(4, 3),
-    refresh: { min: '15s' },
   },
   {
     key: 'recentlyCreatedSession',
@@ -336,7 +320,6 @@ const ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: RecentlyCreatedSessionPanel,
     defaultSize: size(4, 3),
     minSize: size(2, 2),
-    refresh: { min: '1m' },
   },
 ];
 
@@ -379,7 +362,6 @@ const PRESET_PANELS: ReadonlyArray<PanelDefinition> = resourceKeys.map(
         stat: sizesOf('resourceCount'),
         grid: sizesOf('sessionResourceGrid'),
       },
-      refresh: { min: '1m' },
     };
   },
 );

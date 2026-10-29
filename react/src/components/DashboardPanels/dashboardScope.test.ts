@@ -4,7 +4,7 @@
  */
 import {
   resolveDashboardScope,
-  resourceGroupRows,
+  cardResourceGroup,
   type ResolveDashboardScopeInput,
 } from './dashboardScope';
 
@@ -46,14 +46,15 @@ describe('resolveDashboardScope', () => {
   });
 });
 
-describe('resourceGroupRows', () => {
-  it('uses the card setting, one row per group', () => {
-    expect(resourceGroupRows(['a', 'b', 'a'], 'current')).toEqual(['a', 'b']);
+describe('cardResourceGroup', () => {
+  it('uses the card setting, the first group of an older multi-group one', () => {
+    expect(cardResourceGroup(['a'], 'current')).toBe('a');
+    expect(cardResourceGroup(['b', 'a'], 'current')).toBe('b');
   });
 
   it('falls back to the header resource group', () => {
-    expect(resourceGroupRows(undefined, 'current')).toEqual(['current']);
-    expect(resourceGroupRows([], 'current')).toEqual(['current']);
-    expect(resourceGroupRows(undefined, null)).toEqual([]);
+    expect(cardResourceGroup(undefined, 'current')).toBe('current');
+    expect(cardResourceGroup([], 'current')).toBe('current');
+    expect(cardResourceGroup(undefined, null)).toBeNull();
   });
 });

@@ -29,7 +29,6 @@ const card = (
   kind: 'custom',
   defaultSize: { columnSpan: 2, rowSpan: 2 },
   minSize: { columnSpan: 2, rowSpan: 2 },
-  refresh: { min: '30s' },
   ...extra,
 });
 
@@ -49,7 +48,6 @@ const sessionPreset: PanelDefinition = {
       minSize: { columnSpan: 1, rowSpan: 2 },
     },
   },
-  refresh: { min: '1m' },
 };
 
 const definitions: ReadonlyArray<PanelDefinition> = [
@@ -251,7 +249,7 @@ describe('sanitizeBoard', () => {
     });
   });
 
-  it('keeps only the settings a card declares, valid values only', () => {
+  it('keeps only the settings a card declares, valid values and the first resource group only', () => {
     const withSettings: ReadonlyArray<PanelDefinition> = [
       card('rg', { settings: ['resourceGroup'] }),
       card('range', { settings: ['range'] }),
@@ -292,7 +290,7 @@ describe('sanitizeBoard', () => {
         key: 'rg',
         columnSpan: 2,
         rowSpan: 2,
-        settings: { resourceGroups: ['g1', 'g2'] },
+        settings: { resourceGroups: ['g1'] },
       },
       { id: 'range', key: 'range', columnSpan: 2, rowSpan: 2 },
       { id: 'plain', key: 'plain', columnSpan: 2, rowSpan: 2 },

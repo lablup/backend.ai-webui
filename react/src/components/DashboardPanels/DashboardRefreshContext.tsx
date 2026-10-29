@@ -2,8 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { RefreshScheduler, refreshIntervalMs } from './refreshScheduler';
-import type { RefreshInterval } from './types';
+import { RefreshScheduler } from './refreshScheduler';
 import { type QueryKey, useQueryClient } from '@tanstack/react-query';
 import { INITIAL_FETCH_KEY } from 'backend.ai-ui';
 import React, {
@@ -47,13 +46,10 @@ export interface DashboardFetchState {
 export const panelRefreshId = (panelId: string) => `panel:${panelId}`;
 
 /**
- * A fetch key the scheduler bumps, in a transition, once `min` has elapsed
- * since the last bump. Outside a provider it stays at the initial key.
+ * A fetch key the scheduler bumps, in a transition, on every refresh of the
+ * dashboard. Outside a provider it stays at the initial key.
  */
-export const useDashboardFetchKey = (
-  id: string,
-  min: RefreshInterval,
-): DashboardFetchState => {
+export const useDashboardFetchKey = (id: string): DashboardFetchState => {
   'use memo';
   const scheduler = useDashboardRefreshScheduler();
   const [state, setState] = useState<DashboardFetchState>(() => ({
@@ -64,7 +60,6 @@ export const useDashboardFetchKey = (
   useEffect(() => {
     if (!scheduler) return;
     return scheduler.register(id, {
-      minMs: refreshIntervalMs(min),
       refresh: (at, manual) =>
         startTransition(() => {
           fetchKeySeq += 1;
@@ -76,15 +71,12 @@ export const useDashboardFetchKey = (
           }));
         }),
     });
-  }, [scheduler, id, min]);
+  }, [scheduler, id]);
   return state;
 };
 
 /** Refetches a TanStack query on the dashboard timer, like a card's fetch key. */
-export const useDashboardRefreshQuery = (
-  queryKey: QueryKey,
-  min: RefreshInterval,
-) => {
+export const useDashboardRefreshQuery = (queryKey: QueryKey) => {
   'use memo';
   const scheduler = useDashboardRefreshScheduler();
   const queryClient = useQueryClient();
@@ -95,10 +87,9 @@ export const useDashboardRefreshQuery = (
   useEffect(() => {
     if (!scheduler) return;
     return scheduler.register(id, {
-      minMs: refreshIntervalMs(min),
       refresh: () => refetch(),
     });
-  }, [scheduler, id, min]);
+  }, [scheduler, id]);
 };
 
 /**

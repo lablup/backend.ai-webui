@@ -878,7 +878,7 @@
       "Last1Hour": "最近 1 小时",
       "Last24Hours": "最近 24 小时",
       "Last7Days": "最近 7 天",
-      "ResourceGroups": "资源组",
+      "ResourceGroup": "资源组",
       "ResourceGroupsDescription": "未选择时：{{default}}",
       "TimeRange": "时间范围"
     }

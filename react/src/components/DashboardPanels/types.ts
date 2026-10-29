@@ -80,10 +80,6 @@ export const PANEL_GROUPS = [
 ] as const;
 export type PanelGroup = (typeof PANEL_GROUPS)[number];
 
-/** The dashboard refresh choices; `refresh.min` is the shortest gap between two refreshes of a panel. */
-export type RefreshInterval =
-  '5s' | '10s' | '15s' | '30s' | '1m' | '5m' | '10m';
-
 /** How a preset panel draws its rows. */
 export const VIZ_TYPES = ['table', 'stat', 'grid'] as const;
 export type Viz = (typeof VIZ_TYPES)[number];
@@ -126,7 +122,7 @@ export interface DashboardVars {
   currentProjectId: string | null;
   currentResourceGroup: string | null;
   /** The card's resource group setting, else the header's current group. */
-  resourceGroups: Array<string>;
+  resourceGroup: string | null;
 }
 
 /** The per-card settings a catalog entry can take, edited in edit mode. */
@@ -135,7 +131,10 @@ export type PanelSettingKind = (typeof PANEL_SETTING_KINDS)[number];
 
 /** A card's own settings; an absent field means the card's default. */
 export interface PanelSettings {
-  /** Resource group names; absent means the card's default group. */
+  /**
+   * The card's one resource group, stored as a one-item array; absent means the
+   * card's default group. Older boards may hold several: the first one is read.
+   */
   resourceGroups?: Array<string>;
   /** A relative range such as `now-24h`. */
   range?: string;
@@ -271,7 +270,6 @@ export interface PanelDefinition {
   sizeByViz?: Partial<
     Record<Viz, { defaultSize: PanelSize; minSize: PanelSize }>
   >;
-  refresh: { min: RefreshInterval };
   /** The settings the card reads; only these cards get a settings control. */
   settings?: ReadonlyArray<PanelSettingKind>;
   /** Like a BAITable column's `defaultHidden`: in the catalog, not on a new board. */

@@ -36,7 +36,7 @@ const AdminDashboardPageContent: React.FC<AdminDashboardPageProps> = ({
   const currentDomainName = useCurrentDomainValue();
   const isSuperAdmin = useCurrentUserRole() === 'superadmin';
 
-  const { fetchKey } = useDashboardFetchKey('page-query', '30s');
+  const { fetchKey } = useDashboardFetchKey('page-query');
   const deferredFetchKey = useDeferredValue(fetchKey);
   const isRefetching = fetchKey !== deferredFetchKey;
 
