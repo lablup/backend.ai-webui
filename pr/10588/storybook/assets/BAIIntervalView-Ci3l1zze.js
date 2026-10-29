@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-2s6bX4vc.js";import{_ as t,t as n}from"./hooks-BKuvs6Qg.js";import{n as r,t as i}from"./isUndefined-C6f2Xtkn.js";var a;function o(){return(o=e((()=>{n(),i(),a=({callback:e,render:n,delay:i,triggerKey:a})=>{let o=t(e,i,a);return r(n)?o:n(o)}})))()}export{o as n,a as t};

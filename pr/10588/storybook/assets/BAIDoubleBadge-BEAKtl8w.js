@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-2s6bX4vc.js";import{DoubleBadge as t}from"@lablup/ui-common/components/DoubleBadge";var n;function r(){return(r=e((()=>{n=t})))()}export{r as n,n as t};

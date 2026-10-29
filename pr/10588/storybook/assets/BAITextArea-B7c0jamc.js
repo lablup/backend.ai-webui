@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-2s6bX4vc.js";import{TextArea as t}from"@lablup/ui-common/TextArea";function n(){return(n=e((()=>{})))()}export{n,t};

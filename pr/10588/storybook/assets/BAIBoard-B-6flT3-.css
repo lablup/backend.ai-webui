@@ -1,1 +1,0 @@
-@layer components{.bai-board .uic-board-item:has([data-bai-board-item-status=error]){border-color:var(--color-error)}.bai-board .uic-board-item:has([data-bai-board-item-status=warning]){border-color:var(--color-warning)}}

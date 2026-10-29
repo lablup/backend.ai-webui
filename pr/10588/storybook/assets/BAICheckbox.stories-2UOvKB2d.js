@@ -1,7 +1,0 @@
-import{n as e}from"./rolldown-runtime-2s6bX4vc.js";import{n as t,r as n}from"./iframe-DR2sIF5r.js";import{n as r,t as i}from"./BAIFlex-CAz1t6J5.js";import{n as a,t as o}from"./BAIButton-C-o5ANgR.js";import{n as s,t as c}from"./BAICheckbox-CIGpkoyx.js";import{jsx as l,jsxs as u}from"react/jsx-runtime";var d,f,p,m,h;function g(){return(g=e((()=>{n(),a(),s(),r(),d={title:`Input/BAICheckbox`,component:c,parameters:{docs:{description:{component:"A Checkbox that renders the surrounding Form.Item error status (antd Checkbox ignores it). Painting only — clearing the field error is the caller's job, typically from `onChange`."}}}},f={args:{children:`Plain checkbox (no form)`}},p=()=>{let[e]=t.useForm();return l(t,{form:e,component:!1,children:u(i,{direction:`column`,align:`start`,gap:`sm`,children:[l(t.Item,{name:`agree`,valuePropName:`checked`,initialValue:!0,style:{marginBottom:0},children:l(c,{onChange:()=>e.setFields([{name:`agree`,errors:[]}]),children:`Toggle me to clear the error`})}),l(o,{onClick:()=>e.setFields([{name:`agree`,errors:[``]}]),children:`Mark field as error`})]})})},m={render:()=>l(p,{})},f.parameters={...f.parameters,docs:{...f.parameters?.docs,source:{originalSource:`{
-  args: {
-    children: 'Plain checkbox (no form)'
-  }
-}`,...f.parameters?.docs?.source}}},m.parameters={...m.parameters,docs:{...m.parameters?.docs,source:{originalSource:`{
-  render: () => <FormErrorExample />
-}`,...m.parameters?.docs?.source}}},h=[`Default`,`FormErrorStatus`]})))()}g();export{f as Default,m as FormErrorStatus,h as __namedExportsOrder,d as default};

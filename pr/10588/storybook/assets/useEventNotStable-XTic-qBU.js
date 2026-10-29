@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-2s6bX4vc.js";import{useCallback as t,useLayoutEffect as n,useRef as r}from"react";function i(e){let i=r(e);return n(()=>{i.current=e}),t((...e)=>{let t=i.current;return t(...e)},[])}function a(){return(a=e((()=>{})))()}export{i as n,a as t};
