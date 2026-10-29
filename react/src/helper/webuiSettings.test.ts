@@ -85,8 +85,6 @@ describe('applyWebUISettings', () => {
       allowChangeSigninMode: true,
       ssoRealmName: 'Corp',
       debug: true,
-      loginAttemptLimit: 5,
-      loginBlockTime: 600,
       autoLogout: true,
       pluginLogin: 'signup-cloud',
       pluginPage: ['test-plugin1', 'test-plugin2'],
@@ -96,11 +94,25 @@ describe('applyWebUISettings', () => {
     expect(next.change_signin_support).toBe(true);
     expect(next.ssoRealmName).toBe('Corp');
     expect(next.debug).toBe(true);
-    expect(next.login_attempt_limit).toBe(5);
-    expect(next.login_block_time).toBe(600);
     expect(next.autoLogout).toBe(true);
     expect(next.loginPlugin).toBe('signup-cloud');
     expect(next.pluginPages).toEqual(['test-plugin1', 'test-plugin2']);
+  });
+
+  it('keeps only the known SSO vendors', () => {
+    const next = applyWebUISettings(
+      state,
+      { singleSignOnVendors: ['openid', 'not-a-vendor', 'saml'] },
+      'public',
+    );
+    expect(next.singleSignOnVendors).toEqual(['openid', 'saml']);
+    expect(
+      buildWebUISettingsDocument(
+        'public',
+        { singleSignOnVendors: ['not-a-vendor'] },
+        state,
+      ),
+    ).toBeUndefined();
   });
 
   it('does not mutate the input state', () => {

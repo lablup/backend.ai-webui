@@ -43,14 +43,6 @@ export const useWebUISettingLabels = (): {
         title: t('webuiSettings.SsoRealmName'),
         description: t('webuiSettings.DescSsoRealmName'),
       },
-      loginAttemptLimit: {
-        title: t('webuiSettings.LoginAttemptLimit'),
-        description: t('webuiSettings.DescLoginAttemptLimit'),
-      },
-      loginBlockTime: {
-        title: t('webuiSettings.LoginBlockTime'),
-        description: t('webuiSettings.DescLoginBlockTime'),
-      },
       autoLogout: {
         title: t('webuiSettings.AutoLogout'),
         description: t('webuiSettings.DescAutoLogout'),
@@ -154,10 +146,6 @@ export const useWebUISettingLabels = (): {
       allowNonAuthTCP: {
         title: t('webuiSettings.AllowNonAuthTCP'),
         description: t('webuiSettings.DescAllowNonAuthTCP'),
-      },
-      eduAppNamePrefix: {
-        title: t('webuiSettings.EduAppNamePrefix'),
-        description: t('webuiSettings.DescEduAppNamePrefix'),
       },
       defaultImportEnvironment: {
         title: t('webuiSettings.DefaultImportEnvironment'),

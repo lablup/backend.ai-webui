@@ -744,7 +744,6 @@ type BackendAIConfig = {
   directoryBasedUsage: boolean;
   maxCountForPreopenPorts: number;
   pluginPages: string[];
-  eduAppNamePrefix: string;
   blockList: MenuKeys[];
   inactiveList: MenuKeys[];
   allowSignout: boolean;
