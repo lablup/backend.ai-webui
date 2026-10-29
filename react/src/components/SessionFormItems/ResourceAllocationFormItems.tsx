@@ -4,11 +4,7 @@
  */
 import { ResourceAllocationFormItemsQuery } from '../../__generated__/ResourceAllocationFormItemsQuery.graphql';
 import { Form, type Store } from '../../form-engine';
-import {
-  addNumberWithUnits,
-  compareNumberWithUnits,
-  convertToBinaryUnit,
-} from '../../helper';
+import { compareNumberWithUnits, convertToBinaryUnit } from '../../helper';
 import {
   getUnifiedSlotNameFromTag,
   isUnifiedAcceleratorSlot,
@@ -42,6 +38,8 @@ import {
   applyRule,
   getImageAcceleratorLimits,
   getSupportedAcceleratorTypes,
+  NON_ACCELERATOR_SLOTS,
+  type ResourceAllocationFormValue,
   RuleContext,
   RuleEvent,
 } from './resourceAllocationRules';
@@ -77,7 +75,12 @@ import React, {
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-export const AUTOMATIC_DEFAULT_SHMEM = '64m';
+export {
+  AUTOMATIC_DEFAULT_SHMEM,
+  getAutomaticShmem,
+  pickChangedResourceValues,
+  type ResourceAllocationFormValue,
+} from './resourceAllocationRules';
 export const RESOURCE_ALLOCATION_INITIAL_FORM_VALUES: DeepPartial<ResourceAllocationFormValue> =
   {
     resource: {
@@ -97,68 +100,11 @@ export const isMinOversMaxValue = (min: number, max: number) => {
   return min >= max;
 };
 
-/**
- * The shmem the automatic rule picks for a memory size `M_plus_S`: `1g` once
- * M+S reaches both 4G and the image's minimum memory + 1G, otherwise
- * `AUTOMATIC_DEFAULT_SHMEM`.
- */
-export const getAutomaticShmem = (M_plus_S: string, imageMinMem: string) => {
-  return compareNumberWithUnits(M_plus_S, '4g') >= 0 &&
-    compareNumberWithUnits(
-      M_plus_S,
-      addNumberWithUnits(imageMinMem, '1g') || '0b',
-    ) >= 0 &&
-    // if 1G < AUTOMATIC_DEFAULT_SHMEM, no need to apply 1G rule
-    compareNumberWithUnits('1g', AUTOMATIC_DEFAULT_SHMEM) > 0
-    ? '1g'
-    : AUTOMATIC_DEFAULT_SHMEM;
-};
-
-/**
- * The entries of `next` that differ from `current`; `mem` / `shmem` compare
- * by size, so `1g` and `1024m` count as unchanged. Automatic writes go
- * through this so re-running them settles instead of re-notifying the form
- * (FR-3985).
- */
-export const pickChangedResourceValues = <T extends Record<string, unknown>>(
-  next: T,
-  current: Record<string, unknown> | undefined,
-): Partial<T> =>
-  _.pickBy(next, (value, key) => {
-    const currentValue = current?.[key];
-    if (_.isEqual(value, currentValue)) return false;
-    if (
-      (key === 'mem' || key === 'shmem') &&
-      _.isString(value) &&
-      _.isString(currentValue)
-    ) {
-      return compareNumberWithUnits(value, currentValue) !== 0;
-    }
-    return true;
-  }) as Partial<T>;
-
 export {
   getUnifiedSlotNameFromTag,
   isUnifiedAcceleratorSlot,
   UNIFIED_SLOT_TAG_PREFIX,
 };
-
-export interface ResourceAllocationFormValue {
-  resource: {
-    cpu: number;
-    mem: string;
-    shmem?: string;
-    accelerator?: number;
-    acceleratorType?: string;
-  };
-  resourceGroup: string;
-  num_of_sessions?: number;
-  cluster_mode: 'single-node' | 'multi-node';
-  cluster_size: number;
-  enabledAutomaticShmem: boolean;
-  allocationPreset?: string;
-  agent?: string[] | string;
-}
 
 export type MergedResourceAllocationFormValue = ResourceAllocationFormValue &
   ImageEnvironmentFormInput;
@@ -370,12 +316,15 @@ const ResourceAllocationFormItems: React.FC<
     ? _.keys(resourceSlotsInRG)
     : undefined;
   const acceleratorSlotsInRG = resourceSlotsInRG
-    ? _.omitBy(resourceSlotsInRG, (_value, key) => {
-        if (['cpu', 'mem', 'shmem'].includes(key)) return true;
-        return false;
-      })
+    ? _.omitBy(resourceSlotsInRG, (_value, key) =>
+        NON_ACCELERATOR_SLOTS.includes(key),
+      )
     : undefined;
   const isManualImage = !_.isEmpty(currentEnvironmentManual);
+  const currentResourceValue = Form.useWatch(['resource'], {
+    form,
+    preserve: true,
+  });
 
   // `resourceLimits` is rebuilt on every render, so key the array by its
   // contents; a fresh identity would re-run the data effect each render.
@@ -431,21 +380,26 @@ const ResourceAllocationFormItems: React.FC<
   // Keyed by content: the query data is re-fetched per resource group.
   const slotNamesInRGKey = JSON.stringify(slotNamesInRG ?? null);
   const presetsKey = JSON.stringify(checkPresetInfo?.presets ?? null);
+  // Values written past the rules (a template restore, a revision prefill)
+  // still get the invariants; the rule's patch is empty once settled, so the
+  // effect's own writes re-fire it once and stop (the FR-3523 loop cannot form).
+  const resourceKey = JSON.stringify(currentResourceValue ?? null);
   // `useEventNotStable`, not `useEffectEvent`: measured on 2026-10-29, the
   // effect-event closure still saw the previous render's `ruleContext` here.
   const syncWithData = useEventNotStable(() => {
     if (runRule({ type: 'data.changed' })) validateResource();
   });
-  // Data keys only: a `resource` dependency re-fires on the effect's own writes (FR-3523).
   useEffect(() => {
     syncWithData();
   }, [
-    currentImage?.id,
+    currentImage,
     isManualImage,
     slotNamesInRGKey,
     presetsKey,
     allocatablePresetIdsKey,
     currentAllocationPreset,
+    resourceKey,
+    enableResourcePresets,
     mode,
     // stable identity (useEventNotStable); listed for exhaustive-deps
     syncWithData,
@@ -1475,11 +1429,8 @@ export const getAllocatablePresetIds = (
   // Slots the resource group's agents provide; `undefined` skips the check.
   slotNamesInRG?: string[],
 ) => {
-  const currentImageAcceleratorLimits = _.filter(
-    currentImage?.resource_limits,
-    (limit) =>
-      limit ? !_.includes(['cpu', 'mem', 'shmem'], limit.key) : false,
-  );
+  const currentImageAcceleratorLimits =
+    getImageAcceleratorLimits(currentImage) ?? [];
 
   const bySliderLimit = _.filter(presets, (preset) => {
     // A slot the group lacks is not "no limit": the session could never get it.

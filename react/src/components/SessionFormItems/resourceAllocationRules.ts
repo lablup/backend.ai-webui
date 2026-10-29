@@ -2,20 +2,78 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { convertToBinaryUnit } from '../../helper';
-import { isUnifiedAcceleratorSlot } from '../../helper/unifiedAcceleratorSlot';
 import {
+  addNumberWithUnits,
+  compareNumberWithUnits,
+  convertToBinaryUnit,
+} from '../../helper';
+import { isUnifiedAcceleratorSlot } from '../../helper/unifiedAcceleratorSlot';
+import type {
   MergedResourceLimits,
   ResourcePreset,
 } from '../../hooks/useResourceLimitAndRemaining';
-import { Image } from '../ImageEnvironmentSelectFormItems';
+import type { Image } from '../ImageEnvironmentSelectFormItems';
 import { getUnavailableSlotNames } from '../ResourcePresetSelect';
-import {
-  getAutomaticShmem,
-  pickChangedResourceValues,
-  ResourceAllocationFormValue,
-} from './ResourceAllocationFormItems';
 import * as _ from 'lodash-es';
+
+export interface ResourceAllocationFormValue {
+  resource: {
+    cpu: number;
+    mem: string;
+    shmem?: string;
+    accelerator?: number;
+    acceleratorType?: string;
+  };
+  resourceGroup: string;
+  num_of_sessions?: number;
+  cluster_mode: 'single-node' | 'multi-node';
+  cluster_size: number;
+  enabledAutomaticShmem: boolean;
+  allocationPreset?: string;
+  agent?: string[] | string;
+}
+
+export const AUTOMATIC_DEFAULT_SHMEM = '64m';
+
+/**
+ * The shmem the automatic rule picks for a memory size `M_plus_S`: `1g` once
+ * M+S reaches both 4G and the image's minimum memory + 1G, otherwise
+ * `AUTOMATIC_DEFAULT_SHMEM`.
+ */
+export const getAutomaticShmem = (M_plus_S: string, imageMinMem: string) => {
+  return compareNumberWithUnits(M_plus_S, '4g') >= 0 &&
+    compareNumberWithUnits(
+      M_plus_S,
+      addNumberWithUnits(imageMinMem, '1g') || '0b',
+    ) >= 0 &&
+    // if 1G < AUTOMATIC_DEFAULT_SHMEM, no need to apply 1G rule
+    compareNumberWithUnits('1g', AUTOMATIC_DEFAULT_SHMEM) > 0
+    ? '1g'
+    : AUTOMATIC_DEFAULT_SHMEM;
+};
+
+/**
+ * The entries of `next` that differ from `current`; `mem` / `shmem` compare
+ * by size, so `1g` and `1024m` count as unchanged. Automatic writes go
+ * through this so re-running them settles instead of re-notifying the form
+ * (FR-3985).
+ */
+export const pickChangedResourceValues = <T extends Record<string, unknown>>(
+  next: T,
+  current: Record<string, unknown> | undefined,
+): Partial<T> =>
+  _.pickBy(next, (value, key) => {
+    const currentValue = current?.[key];
+    if (_.isEqual(value, currentValue)) return false;
+    if (
+      (key === 'mem' || key === 'shmem') &&
+      _.isString(value) &&
+      _.isString(currentValue)
+    ) {
+      return compareNumberWithUnits(value, currentValue) !== 0;
+    }
+    return true;
+  }) as Partial<T>;
 
 // `free` = `allowCustomResourceAllocation`: the preset select offers custom /
 // minimum-required and the cpu / mem / accelerator items are visible.
@@ -81,7 +139,7 @@ interface Draft {
   enabledAutomaticShmem: boolean | undefined;
 }
 
-const NON_ACCELERATOR_SLOTS = ['cpu', 'mem', 'shmem'];
+export const NON_ACCELERATOR_SLOTS = ['cpu', 'mem', 'shmem'];
 
 export const getImageAcceleratorLimits = (image: Image | undefined) =>
   image
@@ -257,10 +315,10 @@ const applyDataChanged = (
     getUnavailableSlotNames(selectedPreset.resource_slots, ctx.slotsInRG ?? [])
       .length > 0
   ) {
-    // PR③: a preset the group cannot serve becomes a validator error instead of a re-pick (#10628).
+    // A preset the group cannot serve is re-picked (#10628).
     selectFallbackPreset(draft, ctx);
   }
-  // PR③: a type swap forced by the group does not mark the allocation `custom`.
+  // A type swap forced by the group leaves the preset label alone.
   draft.resource.acceleratorType = resolveAcceleratorType(
     draft.resource.acceleratorType,
     ctx.acceleratorSlotsInRG,
@@ -312,7 +370,7 @@ export const applyRule = (
           );
         }
       } else if (event.field === 'shmem') {
-        // PR③: in preset-only mode a shmem edit leaves the preset label as is.
+        // In preset-only mode a shmem edit leaves the preset label as is.
         if (ctx.mode === 'free') markCustom();
       } else {
         markCustom();
@@ -345,11 +403,9 @@ export const applyRule = (
         draft.enabledAutomaticShmem = true;
         applyMinimumRequired(draft, ctx);
       } else if (event.id !== 'custom') {
-        applyPreset(
-          draft,
-          _.find(ctx.presets, (preset) => preset.id === event.id),
-          ctx,
-        );
+        const preset = _.find(ctx.presets, (preset) => preset.id === event.id);
+        // An id the check-presets response lacks (a deferred group) writes nothing.
+        if (preset) applyPreset(draft, preset, ctx);
       }
       break;
     case 'data.changed':
