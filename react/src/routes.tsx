@@ -140,9 +140,6 @@ const AdminVFolderNodeListPage = React.lazy(
 const ProjectAdminUsersPage = React.lazy(
   () => import('./pages/ProjectAdminUsersPage'),
 );
-const ProjectAdminDataPage = React.lazy(
-  () => import('./pages/ProjectAdminDataPage'),
-);
 const ProjectAdminDeploymentsPage = React.lazy(
   () => import('./pages/ProjectAdminDeploymentsPage'),
 );
@@ -604,20 +601,11 @@ export const mainLayoutChildRoutes: RouteObject[] = [
             ],
           },
           {
+            // The project's folders are listed on its Data page.
             path: 'data',
-            Component: () => {
-              useSuspendedBackendaiClient();
-              return (
-                <Suspense fallback={<BAISkeleton rows={4} />}>
-                  <ProjectAdminDataPage />
-                </Suspense>
-              );
-            },
-            handle: {
-              scope: 'projectAdmin',
-              menuKey: 'project-data',
-              labelKey: 'webui.menu.Data',
-            },
+            Component: () => (
+              <ProjectScopedRedirect scope="project" featureKey="data" />
+            ),
           },
           {
             path: 'users',
@@ -1201,7 +1189,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   {
     path: '/project-data',
     Component: () => (
-      <ProjectScopedRedirect scope="projectAdmin" featureKey="data" />
+      <ProjectScopedRedirect scope="project" featureKey="data" />
     ),
     handle: { labelKey: 'webui.menu.Data' },
   },

@@ -13,10 +13,9 @@
  * (personal folders on /data) and as the admin (/admin-data), because different
  * specs create folders under different accounts:
  *   - vfolder-crud / file-* / type-selection (user) → personal folders on /data
- *   - type-selection project (admin) → project folders, created on /project-data
- *     but only DELETABLE from /admin-data (VFolderNodesV2 on /project-data does
- *     not expose trash/delete). /admin-data also lists every other admin-visible
- *     folder, so it doubles as a catch-all.
+ *   - type-selection project (admin) → project folders, swept from /admin-data,
+ *     which also lists every other admin-visible folder, so it doubles as a
+ *     catch-all.
  *
  * The pattern is the broad `/e2e-/i` (covering `e2e-test-*`, `e2e-mod-*`, the
  * dot-prefixed auto-mount folder, etc.). Broad matching is safe HERE — unlike in
@@ -151,8 +150,7 @@ test.describe('Global e2e cleanup', () => {
   }) => {
     await loginAsAdmin(page, request);
     // /admin-data (AdminVFolderNodeListPage) lists every vfolder visible to an
-    // admin — project folders (only deletable here, not on /project-data) plus
-    // any folder another sweep missed — using the same table component as /data.
+    // admin — project folders plus any folder another sweep missed — using the same table component as /data.
     await safeSweep(
       'admin /admin-data',
       (p) =>
