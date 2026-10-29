@@ -4288,7 +4288,7 @@
     "DescSystemSSHImage": "Image dùng để khởi chạy phiên tải lên SSH/SFTP từ trình khám phá thư mục.",
     "EnableContainerCommit": "Bật commit container",
     "EnableExtendLoginSession": "Bật gia hạn phiên đăng nhập",
-    "EnableInteractiveLoginAccountSwitch": "Cho phép chuyển tài khoản khi đăng nhập SSO",
+    "EnableInteractiveLoginAccountSwitch": "Cho phép đổi tài khoản khi đăng nhập SSO vào dịch vụ bên ngoài",
     "EnableModelFolders": "Bật thư mục mô hình",
     "EnableReservoir": "Bật Reservoir",
     "FasttrackEndpoint": "URL FastTrack",

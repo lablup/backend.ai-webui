@@ -4289,7 +4289,7 @@
     "DescSystemSSHImage": "폴더 탐색기에서 SSH/SFTP 업로드 세션을 띄울 때 사용하는 이미지입니다.",
     "EnableContainerCommit": "컨테이너 커밋 사용",
     "EnableExtendLoginSession": "로그인 세션 연장 사용",
-    "EnableInteractiveLoginAccountSwitch": "SSO 로그인 시 계정 전환 허용",
+    "EnableInteractiveLoginAccountSwitch": "외부 서비스에 SSO 로그인 시 계정 전환 허용",
     "EnableModelFolders": "모델 폴더 사용",
     "EnableReservoir": "Reservoir 사용",
     "FasttrackEndpoint": "FastTrack URL",

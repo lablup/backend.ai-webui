@@ -4289,7 +4289,7 @@
     "DescSystemSSHImage": "Obraz używany do uruchomienia sesji przesyłania SSH/SFTP z eksploratora folderów.",
     "EnableContainerCommit": "Włącz zatwierdzanie kontenera",
     "EnableExtendLoginSession": "Włącz przedłużanie sesji logowania",
-    "EnableInteractiveLoginAccountSwitch": "Zezwalaj na zmianę konta przy logowaniu SSO",
+    "EnableInteractiveLoginAccountSwitch": "Zezwól na zmianę konta przy logowaniu SSO do usługi zewnętrznej",
     "EnableModelFolders": "Włącz foldery modeli",
     "EnableReservoir": "Włącz Reservoir",
     "FasttrackEndpoint": "Adres URL FastTrack",

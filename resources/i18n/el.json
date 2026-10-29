@@ -4286,7 +4286,7 @@
     "DescSystemSSHImage": "Εικόνα που χρησιμοποιείται για την εκκίνηση της συνεδρίας μεταφόρτωσης SSH/SFTP από την εξερεύνηση φακέλων.",
     "EnableContainerCommit": "Ενεργοποίηση commit container",
     "EnableExtendLoginSession": "Ενεργοποίηση παράτασης συνεδρίας σύνδεσης",
-    "EnableInteractiveLoginAccountSwitch": "Να επιτρέπεται η αλλαγή λογαριασμού στη σύνδεση SSO",
+    "EnableInteractiveLoginAccountSwitch": "Να επιτρέπεται η αλλαγή λογαριασμού κατά τη σύνδεση SSO σε εξωτερική υπηρεσία",
     "EnableModelFolders": "Ενεργοποίηση φακέλων μοντέλων",
     "EnableReservoir": "Ενεργοποίηση Reservoir",
     "FasttrackEndpoint": "URL FastTrack",

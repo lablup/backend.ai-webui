@@ -4288,7 +4288,7 @@
     "DescSystemSSHImage": "Хавтасны хөтчөөс SSH/SFTP байршуулах session эхлүүлэхэд ашиглах имаж.",
     "EnableContainerCommit": "Контейнер commit хийхийг идэвхжүүлэх",
     "EnableExtendLoginSession": "Нэвтрэлтийн session сунгахыг идэвхжүүлэх",
-    "EnableInteractiveLoginAccountSwitch": "SSO нэвтрэлтийн үед бүртгэл солихыг зөвшөөрөх",
+    "EnableInteractiveLoginAccountSwitch": "Гадаад үйлчилгээнд SSO-оор нэвтрэхэд бүртгэл солихыг зөвшөөрөх",
     "EnableModelFolders": "Загварын хавтсуудыг идэвхжүүлэх",
     "EnableReservoir": "Reservoir-ийг идэвхжүүлэх",
     "FasttrackEndpoint": "FastTrack URL",

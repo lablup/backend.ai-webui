@@ -4286,7 +4286,7 @@
     "DescSystemSSHImage": "Klasör gezgininden SSH/SFTP yükleme oturumunu başlatmak için kullanılan imaj.",
     "EnableContainerCommit": "Konteyner kaydetmeyi (commit) etkinleştir",
     "EnableExtendLoginSession": "Oturum açma süresini uzatmayı etkinleştir",
-    "EnableInteractiveLoginAccountSwitch": "SSO girişinde hesap değiştirmeye izin ver",
+    "EnableInteractiveLoginAccountSwitch": "Harici bir hizmete SSO ile oturum açarken hesap değiştirmeye izin ver",
     "EnableModelFolders": "Model klasörlerini etkinleştir",
     "EnableReservoir": "Reservoir'ı etkinleştir",
     "FasttrackEndpoint": "FastTrack URL'si",

@@ -4286,7 +4286,7 @@
     "DescSystemSSHImage": "Imej yang digunakan untuk melancarkan sesi muat naik SSH/SFTP daripada penjelajah folder.",
     "EnableContainerCommit": "Dayakan commit bekas",
     "EnableExtendLoginSession": "Dayakan lanjutan sesi log masuk",
-    "EnableInteractiveLoginAccountSwitch": "Benarkan tukar akaun semasa log masuk SSO",
+    "EnableInteractiveLoginAccountSwitch": "Benarkan tukar akaun semasa log masuk SSO ke perkhidmatan luaran",
     "EnableModelFolders": "Dayakan folder model",
     "EnableReservoir": "Dayakan Reservoir",
     "FasttrackEndpoint": "URL FastTrack",

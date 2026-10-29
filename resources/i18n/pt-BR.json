@@ -4286,7 +4286,7 @@
     "DescSystemSSHImage": "Imagem usada para iniciar a sessão de upload por SSH/SFTP a partir do explorador de pastas.",
     "EnableContainerCommit": "Habilitar commit de contêineres",
     "EnableExtendLoginSession": "Habilitar extensão da sessão de login",
-    "EnableInteractiveLoginAccountSwitch": "Permitir troca de conta no login SSO",
+    "EnableInteractiveLoginAccountSwitch": "Permitir a troca de conta no login SSO em um serviço externo",
     "EnableModelFolders": "Habilitar pastas de modelos",
     "EnableReservoir": "Habilitar Reservoir",
     "FasttrackEndpoint": "URL do FastTrack",

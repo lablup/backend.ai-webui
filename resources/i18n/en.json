@@ -4271,7 +4271,7 @@
     "DescSystemSSHImage": "Image used to launch the SSH/SFTP upload session from the folder explorer.",
     "EnableContainerCommit": "Enable container commit",
     "EnableExtendLoginSession": "Enable login session extension",
-    "EnableInteractiveLoginAccountSwitch": "Allow account switch on SSO sign-in",
+    "EnableInteractiveLoginAccountSwitch": "Allow account switch on SSO sign-in to an external service",
     "EnableModelFolders": "Enable model folders",
     "EnableReservoir": "Enable Reservoir",
     "FasttrackEndpoint": "FastTrack URL",

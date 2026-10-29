@@ -4272,7 +4272,7 @@
     "DescSystemSSHImage": "อิมเมจที่ใช้เปิดเซสชันอัปโหลดผ่าน SSH/SFTP จากตัวสำรวจโฟลเดอร์",
     "EnableContainerCommit": "เปิดใช้งานการ commit คอนเทนเนอร์",
     "EnableExtendLoginSession": "เปิดใช้งานการขยายเวลาเซสชันการลงชื่อเข้าใช้",
-    "EnableInteractiveLoginAccountSwitch": "อนุญาตให้สลับบัญชีเมื่อลงชื่อเข้าใช้ด้วย SSO",
+    "EnableInteractiveLoginAccountSwitch": "อนุญาตให้สลับบัญชีเมื่อลงชื่อเข้าใช้บริการภายนอกด้วย SSO",
     "EnableModelFolders": "เปิดใช้งานโฟลเดอร์โมเดล",
     "EnableReservoir": "เปิดใช้งาน Reservoir",
     "FasttrackEndpoint": "URL ของ FastTrack",

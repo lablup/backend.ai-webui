@@ -4286,7 +4286,7 @@
     "DescSystemSSHImage": "Образ, используемый для запуска сессии загрузки по SSH/SFTP из проводника папок.",
     "EnableContainerCommit": "Включить сохранение контейнера",
     "EnableExtendLoginSession": "Включить продление сессии входа",
-    "EnableInteractiveLoginAccountSwitch": "Разрешить смену учётной записи при входе через SSO",
+    "EnableInteractiveLoginAccountSwitch": "Разрешить смену учётной записи при SSO-входе во внешний сервис",
     "EnableModelFolders": "Включить папки моделей",
     "EnableReservoir": "Включить Reservoir",
     "FasttrackEndpoint": "URL FastTrack",

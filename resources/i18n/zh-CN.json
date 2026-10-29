@@ -4288,7 +4288,7 @@
     "DescSystemSSHImage": "从文件夹浏览器启动 SSH/SFTP 上传会话时使用的镜像。",
     "EnableContainerCommit": "启用容器提交",
     "EnableExtendLoginSession": "启用登录会话延长",
-    "EnableInteractiveLoginAccountSwitch": "SSO 登录时允许切换账户",
+    "EnableInteractiveLoginAccountSwitch": "允许在 SSO 登录外部服务时切换账户",
     "EnableModelFolders": "启用模型文件夹",
     "EnableReservoir": "启用 Reservoir",
     "FasttrackEndpoint": "FastTrack URL",

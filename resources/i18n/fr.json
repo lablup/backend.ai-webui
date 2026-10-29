@@ -4289,7 +4289,7 @@
     "DescSystemSSHImage": "Image utilisée pour lancer la session de téléversement SSH/SFTP depuis l'explorateur de dossiers.",
     "EnableContainerCommit": "Activer le commit de conteneur",
     "EnableExtendLoginSession": "Activer la prolongation de la session de connexion",
-    "EnableInteractiveLoginAccountSwitch": "Autoriser le changement de compte lors de la connexion SSO",
+    "EnableInteractiveLoginAccountSwitch": "Autoriser le changement de compte lors de la connexion SSO à un service externe",
     "EnableModelFolders": "Activer les dossiers de modèles",
     "EnableReservoir": "Activer Reservoir",
     "FasttrackEndpoint": "URL FastTrack",

@@ -4288,7 +4288,7 @@
     "DescSystemSSHImage": "Image, mit dem die SSH/SFTP-Upload-Sitzung aus dem Ordner-Explorer gestartet wird.",
     "EnableContainerCommit": "Container-Commit aktivieren",
     "EnableExtendLoginSession": "Verlängerung der Anmeldesitzung aktivieren",
-    "EnableInteractiveLoginAccountSwitch": "Kontowechsel bei SSO-Anmeldung erlauben",
+    "EnableInteractiveLoginAccountSwitch": "Kontowechsel bei SSO-Anmeldung an einem externen Dienst erlauben",
     "EnableModelFolders": "Modellordner aktivieren",
     "EnableReservoir": "Reservoir aktivieren",
     "FasttrackEndpoint": "FastTrack-URL",

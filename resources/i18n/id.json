@@ -4290,7 +4290,7 @@
     "DescSystemSSHImage": "Image yang digunakan untuk meluncurkan sesi unggah SSH/SFTP dari penjelajah folder.",
     "EnableContainerCommit": "Aktifkan commit kontainer",
     "EnableExtendLoginSession": "Aktifkan perpanjangan sesi masuk",
-    "EnableInteractiveLoginAccountSwitch": "Izinkan ganti akun saat masuk dengan SSO",
+    "EnableInteractiveLoginAccountSwitch": "Izinkan ganti akun saat masuk SSO ke layanan eksternal",
     "EnableModelFolders": "Aktifkan folder model",
     "EnableReservoir": "Aktifkan Reservoir",
     "FasttrackEndpoint": "URL FastTrack",

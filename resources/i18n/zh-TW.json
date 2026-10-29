@@ -4290,7 +4290,7 @@
     "DescSystemSSHImage": "從資料夾瀏覽器啟動 SSH/SFTP 上傳會話時使用的映像檔。",
     "EnableContainerCommit": "啟用容器提交",
     "EnableExtendLoginSession": "啟用登入會話延長",
-    "EnableInteractiveLoginAccountSwitch": "SSO 登入時允許切換帳戶",
+    "EnableInteractiveLoginAccountSwitch": "允許在 SSO 登入外部服務時切換帳戶",
     "EnableModelFolders": "啟用模型資料夾",
     "EnableReservoir": "啟用 Reservoir",
     "FasttrackEndpoint": "FastTrack URL",

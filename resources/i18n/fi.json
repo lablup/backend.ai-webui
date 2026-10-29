@@ -4287,7 +4287,7 @@
     "DescSystemSSHImage": "Image, jolla SSH/SFTP-latausistunto käynnistetään kansioselaimesta.",
     "EnableContainerCommit": "Ota kontin commit käyttöön",
     "EnableExtendLoginSession": "Ota kirjautumisistunnon pidennys käyttöön",
-    "EnableInteractiveLoginAccountSwitch": "Salli tilin vaihto SSO-kirjautumisessa",
+    "EnableInteractiveLoginAccountSwitch": "Salli tilin vaihto SSO-kirjautumisessa ulkoiseen palveluun",
     "EnableModelFolders": "Ota mallikansiot käyttöön",
     "EnableReservoir": "Ota Reservoir käyttöön",
     "FasttrackEndpoint": "FastTrack-URL",

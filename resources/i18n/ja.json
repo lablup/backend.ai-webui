@@ -4288,7 +4288,7 @@
     "DescSystemSSHImage": "フォルダエクスプローラーから SSH/SFTP アップロードセッションを起動する際に使用するイメージです。",
     "EnableContainerCommit": "コンテナコミットを有効化",
     "EnableExtendLoginSession": "ログインセッションの延長を有効化",
-    "EnableInteractiveLoginAccountSwitch": "SSO ログイン時のアカウント切り替えを許可",
+    "EnableInteractiveLoginAccountSwitch": "外部サービスへの SSO サインイン時にアカウント切り替えを許可",
     "EnableModelFolders": "モデルフォルダを有効化",
     "EnableReservoir": "Reservoir を有効化",
     "FasttrackEndpoint": "FastTrack URL",
