@@ -183,10 +183,10 @@ export const resolveAcceleratorType = (
 
 /** What selecting `preset` writes: its slots the group has, in `g`, plus the shmem rule. */
 export const getPresetResourceFields = (
-  preset: ResourcePreset | undefined,
+  preset: ResourcePreset,
   ctx: RuleContext,
 ) => {
-  const slots = _.pick(preset?.resource_slots, ctx.slotsInRG ?? []);
+  const slots = _.pick(preset.resource_slots, ctx.slotsInRG ?? []);
   const acceleratorSlots: Record<string, string | undefined> = _.omit(
     slots,
     NON_ACCELERATOR_SLOTS,
@@ -197,12 +197,12 @@ export const getPresetResourceFields = (
   );
   const mem = convertToBinaryUnit(slots.mem || 0, 'g', 2)?.value;
   const hasPresetShmem =
-    !!preset?.shared_memory && Number(preset.shared_memory) > 0;
+    !!preset.shared_memory && Number(preset.shared_memory) > 0;
   const resource: ResourceFields = {
     cpu: parseInt(slots.cpu || '0') || 0,
     mem,
     shmem: hasPresetShmem
-      ? convertToBinaryUnit(preset?.shared_memory || 0, 'g', 2)?.value
+      ? convertToBinaryUnit(preset.shared_memory || 0, 'g', 2)?.value
       : getAutomaticShmem(mem || '0g', ctx.imageMinMem),
     accelerator: acceleratorType
       ? Number(acceleratorSlots[acceleratorType] || 0)
@@ -220,7 +220,10 @@ export const getMinimumRequiredResourceFields = (
   const { resourceLimits } = ctx;
   const currentType = values.resource?.acceleratorType;
   const minimum: ResourceFields = {
-    cpu: resourceLimits.cpu?.min,
+    // Omitted while the slots have not loaded, so the CPU field is not cleared.
+    ...(resourceLimits.cpu?.min === undefined
+      ? {}
+      : { cpu: resourceLimits.cpu.min }),
     mem:
       convertToBinaryUnit(
         (convertToBinaryUnit(resourceLimits.shmem?.min, 'm')?.number || 0) +
@@ -256,7 +259,7 @@ export const getMinimumRequiredResourceFields = (
 
 const applyPreset = (
   draft: Draft,
-  preset: ResourcePreset | undefined,
+  preset: ResourcePreset,
   ctx: RuleContext,
 ) => {
   const { resource, enabledAutomaticShmem } = getPresetResourceFields(

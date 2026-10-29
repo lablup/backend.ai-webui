@@ -307,6 +307,17 @@ describe('applyRule — user events', () => {
     });
   });
 
+  it('selecting an id the check-presets response lacks writes only the label', () => {
+    const values = makeValues({ allocationPreset: 'p-unknown' });
+    expect(
+      applyRule(
+        values,
+        { type: 'user.selectPreset', id: 'p-unknown' },
+        makeCtx(),
+      ),
+    ).toEqual({});
+  });
+
   it('selecting a unified-slot preset leaves the accelerator quantity empty', () => {
     const values = makeValues({ allocationPreset: 'p-unified' });
     expect(

@@ -380,9 +380,8 @@ const ResourceAllocationFormItems: React.FC<
   // Keyed by content: the query data is re-fetched per resource group.
   const slotNamesInRGKey = JSON.stringify(slotNamesInRG ?? null);
   const presetsKey = JSON.stringify(checkPresetInfo?.presets ?? null);
-  // Values written past the rules (a template restore, a revision prefill)
-  // still get the invariants; the rule's patch is empty once settled, so the
-  // effect's own writes re-fire it once and stop (the FR-3523 loop cannot form).
+  // Values written past the rules (a template restore) still get the
+  // invariants; the settled patch is empty, so the effect's own write stops it.
   const resourceKey = JSON.stringify(currentResourceValue ?? null);
   // `useEventNotStable`, not `useEffectEvent`: measured on 2026-10-29, the
   // effect-event closure still saw the previous render's `ruleContext` here.
@@ -1425,7 +1424,7 @@ export default MemoizedResourceAllocationFormItems;
 export const getAllocatablePresetIds = (
   presets: Array<ResourcePreset> | undefined,
   resourceLimits: MergedResourceLimits,
-  currentImage: Image,
+  currentImage: Image | undefined,
   // Slots the resource group's agents provide; `undefined` skips the check.
   slotNamesInRG?: string[],
 ) => {
@@ -1485,9 +1484,7 @@ export const getAllocatablePresetIds = (
   const byImageAcceleratorLimits = _.filter(presets, (preset) => {
     const acceleratorResourceOfPreset = _.omitBy(
       preset.resource_slots,
-      (_value, key) => {
-        if (['mem', 'cpu', 'shmem'].includes(key)) return true;
-      },
+      (_value, key) => NON_ACCELERATOR_SLOTS.includes(key),
     );
     if (currentImageAcceleratorLimits.length === 0) {
       // When current image doesn't require any accelerator,
