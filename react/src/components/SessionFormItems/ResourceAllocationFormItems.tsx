@@ -61,6 +61,7 @@ import {
   BAIProjectResourceGroupSelect,
   BAISegmentedControlItem,
   BAISelect,
+  useEventNotStable,
   useProjectResourceGroups,
   useUpdatableState,
   BAISegmentedControl,
@@ -71,7 +72,6 @@ import React, {
   Suspense,
   useDeferredValue,
   useEffect,
-  useEffectEvent,
   useTransition,
 } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -431,7 +431,9 @@ const ResourceAllocationFormItems: React.FC<
   // Keyed by content: the query data is re-fetched per resource group.
   const slotNamesInRGKey = JSON.stringify(slotNamesInRG ?? null);
   const presetsKey = JSON.stringify(checkPresetInfo?.presets ?? null);
-  const syncWithData = useEffectEvent(() => {
+  // `useEventNotStable`, not `useEffectEvent`: measured on 2026-10-29, the
+  // effect-event closure still saw the previous render's `ruleContext` here.
+  const syncWithData = useEventNotStable(() => {
     if (runRule({ type: 'data.changed' })) validateResource();
   });
   // Data keys only: a `resource` dependency re-fires on the effect's own writes (FR-3523).
@@ -445,6 +447,8 @@ const ResourceAllocationFormItems: React.FC<
     allocatablePresetIdsKey,
     currentAllocationPreset,
     mode,
+    // stable identity (useEventNotStable); listed for exhaustive-deps
+    syncWithData,
   ]);
 
   return (
