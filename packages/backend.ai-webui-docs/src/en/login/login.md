@@ -195,9 +195,7 @@ your system administrator.
 
 ### Menus available to your role
 
-The sidebar lists only the pages you are allowed to open. When you are a
-project admin of the selected project, it also shows a **Project Settings**
-entry.
+The sidebar lists only the pages you are allowed to open.
 
 Project-admin entries are evaluated against **the currently selected project**,
 not against your account as a whole. The project you are working in is
