@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="การจัดการ RBAC" />
   <meta name="twitter:description" content="การจัดการ RBAC (Role-Based Access Control) ช่วยให้ผู้ดูแลระบบระดับสูงสามารถกำหนดบทบาทที่มีสิทธิ์แบบละเอียดและมอบหมายให้กับผู้ใช้ได้ ด้วย RBAC…" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"การจัดการ RBAC","inLanguage":"th","description":"การจัดการ RBAC (Role-Based Access Control) ช่วยให้ผู้ดูแลระบบระดับสูงสามารถกำหนดบทบาทที่มีสิทธิ์แบบละเอียดและมอบหมายให้กับผู้ใช้ได้ ด้วย RBAC…","dateModified":"2026-10-23T13:03:52.000Z","url":"https://webui.docs.backend.ai/next/th/rbac_management.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"การจัดการ RBAC","inLanguage":"th","description":"การจัดการ RBAC (Role-Based Access Control) ช่วยให้ผู้ดูแลระบบระดับสูงสามารถกำหนดบทบาทที่มีสิทธิ์แบบละเอียดและมอบหมายให้กับผู้ใช้ได้ ด้วย RBAC…","dateModified":"2026-10-29T02:12:31.000Z","url":"https://webui.docs.backend.ai/next/th/rbac_management.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/rbac_management.html" />
   <link rel="alternate" hreflang="en" href="../en/rbac_management.html" />
   <link rel="alternate" hreflang="ja" href="../ja/rbac_management.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">คู่มือ</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (5b10064)">v26.10.0-alpha.1 (5b10064)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (7b0a0b2)">v26.10.0-alpha.1 (7b0a0b2)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ค้นหาเอกสาร...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -211,7 +211,7 @@
 <p><a id="rbac-management"></a></p>
 <h1 data-bai-block="0" id="rbac_management-การจดการ-rbac">การจัดการ RBAC<a class="hash-link" href="#rbac_management-การจดการ-rbac" aria-label="Direct link to การจัดการ RBAC">#</a></h1>
 <p data-bai-block="1">การจัดการ RBAC (Role-Based Access Control) ช่วยให้ผู้ดูแลระบบระดับสูงสามารถกำหนดบทบาทที่มีสิทธิ์แบบละเอียดและมอบหมายให้กับผู้ใช้ได้ ด้วย RBAC คุณสามารถควบคุมการดำเนินการที่ผู้ใช้เฉพาะสามารถทำได้กับทรัพยากรต่าง ๆ ในระบบ Backend.AI</p>
-<p data-bai-block="2">ในการเข้าถึงหน้าการจัดการ RBAC ให้คลิก <strong>การจัดการ RBAC</strong> ในส่วน <strong>การตั้งค่าผู้ดูแลระบบ</strong> ของเมนูแถบด้านข้าง</p>
+<p data-bai-block="2">ในการเข้าถึงหน้าการจัดการ RBAC ให้เลือก <strong>สลับไปยังคอนโซลผู้ดูแลระบบ</strong> ในเมนูผู้ใช้ จากนั้นคลิก <strong>การจัดการ RBAC</strong> ในแถบด้านข้าง</p>
 <p data-bai-block="3">หน้านี้มีสองแท็บ: <strong>บทบาท</strong> และ <strong>พรีเซ็ต</strong></p>
 <p><figure data-bai-block="4" class="doc-figure"><img src="./images/rbac_role_list_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 21.1</figcaption></figure>
 </p>
@@ -452,7 +452,7 @@
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/th/rbac_management/rbac_management.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> แก้ไขหน้านี้</a>
-  <span class="last-updated">อัปเดตล่าสุด 23 ต.ค. 2569</span>
+  <span class="last-updated">อัปเดตล่าสุด 29 ต.ค. 2569</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./project_admin.html">
