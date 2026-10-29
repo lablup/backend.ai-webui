@@ -4320,7 +4320,7 @@
     "PluginPage": "Διαδρομές πρόσθετων σελίδων",
     "ShowNonInstalledImages": "Εμφάνιση μη εγκατεστημένων εικόνων",
     "SingleSignOnVendors": "Να επιτρέπεται η σύνδεση SSO",
-    "SsoRealmName": "Όνομα realm OpenID",
+    "SsoRealmName": "Ετικέτα κουμπιού SSO OpenID",
     "StorageWarningThreshold": "Όριο προειδοποίησης χρήσης αποθηκευτικού χώρου",
     "SystemSSHImage": "Εικόνα SSH συστήματος",
     "group": {

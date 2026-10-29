@@ -4322,7 +4322,7 @@
     "PluginPage": "ページプラグインのパス",
     "ShowNonInstalledImages": "未インストールのイメージを表示",
     "SingleSignOnVendors": "SSO サインインを許可",
-    "SsoRealmName": "OpenID レルム名",
+    "SsoRealmName": "SSO OpenID ボタンのラベル",
     "StorageWarningThreshold": "ストレージ使用量の警告しきい値",
     "SystemSSHImage": "システム SSH イメージ",
     "group": {

@@ -4322,7 +4322,7 @@
     "PluginPage": "Đường dẫn plugin trang",
     "ShowNonInstalledImages": "Hiển thị image chưa cài đặt",
     "SingleSignOnVendors": "Cho phép đăng nhập SSO",
-    "SsoRealmName": "Tên realm OpenID",
+    "SsoRealmName": "Nhãn nút SSO OpenID",
     "StorageWarningThreshold": "Ngưỡng cảnh báo dung lượng lưu trữ",
     "SystemSSHImage": "Image SSH hệ thống",
     "group": {

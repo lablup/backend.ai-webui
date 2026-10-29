@@ -4320,7 +4320,7 @@
     "PluginPage": "Пути к плагинам страниц",
     "ShowNonInstalledImages": "Показывать неустановленные образы",
     "SingleSignOnVendors": "Разрешить вход через SSO",
-    "SsoRealmName": "Имя realm OpenID",
+    "SsoRealmName": "Подпись кнопки SSO OpenID",
     "StorageWarningThreshold": "Порог предупреждения об использовании хранилища",
     "SystemSSHImage": "Системный образ SSH",
     "group": {

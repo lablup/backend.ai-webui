@@ -4305,7 +4305,7 @@
     "PluginPage": "Page plugin paths",
     "ShowNonInstalledImages": "Show non-installed images",
     "SingleSignOnVendors": "Allow SSO sign-in",
-    "SsoRealmName": "OpenID realm name",
+    "SsoRealmName": "SSO OpenID button label",
     "StorageWarningThreshold": "Storage usage warning threshold",
     "SystemSSHImage": "System SSH image",
     "group": {

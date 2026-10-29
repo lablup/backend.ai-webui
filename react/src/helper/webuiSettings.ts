@@ -64,6 +64,7 @@ const def = (
 export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
   [
     // Read anonymously before login (publicConfigByDomain).
+    def('autoLogout', 'public', 'boolean', 'login'),
     def(
       'allowChangeSigninMode',
       'public',
@@ -79,7 +80,6 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
       options: SSO_VENDOR_OPTIONS,
     },
     def('ssoRealmName', 'public', 'string', 'login'),
-    def('autoLogout', 'public', 'boolean', 'login'),
     // Also anonymous: the diagnostics surfaces run on the login page too.
     def('debug', 'public', 'boolean', 'diagnostics'),
     {

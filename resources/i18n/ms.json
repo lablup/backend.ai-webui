@@ -4320,7 +4320,7 @@
     "PluginPage": "Laluan pemalam halaman",
     "ShowNonInstalledImages": "Tunjukkan imej yang belum dipasang",
     "SingleSignOnVendors": "Benarkan log masuk SSO",
-    "SsoRealmName": "Nama realm OpenID",
+    "SsoRealmName": "Label butang SSO OpenID",
     "StorageWarningThreshold": "Ambang amaran penggunaan storan",
     "SystemSSHImage": "Imej SSH sistem",
     "group": {

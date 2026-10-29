@@ -4322,7 +4322,7 @@
     "PluginPage": "Хуудасны нэмэлтүүдийн замууд",
     "ShowNonInstalledImages": "Суулгаагүй имажуудыг харуулах",
     "SingleSignOnVendors": "SSO нэвтрэлтийг зөвшөөрөх",
-    "SsoRealmName": "OpenID realm-ийн нэр",
+    "SsoRealmName": "SSO OpenID товчны шошго",
     "StorageWarningThreshold": "Хадгалах сангийн ашиглалтын анхааруулгын босго",
     "SystemSSHImage": "Системийн SSH имаж",
     "group": {

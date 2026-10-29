@@ -4323,7 +4323,7 @@
     "PluginPage": "페이지 플러그인 경로",
     "ShowNonInstalledImages": "미설치 이미지 표시",
     "SingleSignOnVendors": "SSO 로그인 허용",
-    "SsoRealmName": "OpenID 렐름 이름",
+    "SsoRealmName": "SSO OpenID 버튼 라벨 지정",
     "StorageWarningThreshold": "스토리지 사용량 경고 임계값",
     "SystemSSHImage": "시스템 SSH 이미지",
     "group": {

@@ -4320,7 +4320,7 @@
     "PluginPage": "Caminhos dos plugins de páginas",
     "ShowNonInstalledImages": "Mostrar imagens não instaladas",
     "SingleSignOnVendors": "Permitir login SSO",
-    "SsoRealmName": "Nome do realm OpenID",
+    "SsoRealmName": "Rótulo do botão SSO OpenID",
     "StorageWarningThreshold": "Limite de aviso de uso do armazenamento",
     "SystemSSHImage": "Imagem SSH do sistema",
     "group": {

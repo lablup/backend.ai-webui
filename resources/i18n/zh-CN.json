@@ -4322,7 +4322,7 @@
     "PluginPage": "页面插件路径",
     "ShowNonInstalledImages": "显示未安装的镜像",
     "SingleSignOnVendors": "允许 SSO 登录",
-    "SsoRealmName": "OpenID 领域名称",
+    "SsoRealmName": "SSO OpenID 按钮标签",
     "StorageWarningThreshold": "存储用量警告阈值",
     "SystemSSHImage": "系统 SSH 镜像",
     "group": {

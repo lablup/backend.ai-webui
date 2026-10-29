@@ -4322,7 +4322,7 @@
     "PluginPage": "Pfade der Seiten-Plugins",
     "ShowNonInstalledImages": "Nicht installierte Images anzeigen",
     "SingleSignOnVendors": "SSO-Anmeldung erlauben",
-    "SsoRealmName": "OpenID-Realm-Name",
+    "SsoRealmName": "Beschriftung der SSO-OpenID-Schaltfläche",
     "StorageWarningThreshold": "Warnschwelle für Speichernutzung",
     "SystemSSHImage": "System-SSH-Image",
     "group": {

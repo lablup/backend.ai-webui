@@ -4324,7 +4324,7 @@
     "PluginPage": "頁面外掛路徑",
     "ShowNonInstalledImages": "顯示未安裝的映像檔",
     "SingleSignOnVendors": "允許 SSO 登入",
-    "SsoRealmName": "OpenID 領域名稱",
+    "SsoRealmName": "SSO OpenID 按鈕標籤",
     "StorageWarningThreshold": "儲存空間用量警告閾值",
     "SystemSSHImage": "系統 SSH 映像檔",
     "group": {

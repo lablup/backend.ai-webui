@@ -4323,7 +4323,7 @@
     "PluginPage": "Ścieżki wtyczek stron",
     "ShowNonInstalledImages": "Pokazuj niezainstalowane obrazy",
     "SingleSignOnVendors": "Zezwól na logowanie SSO",
-    "SsoRealmName": "Nazwa realm OpenID",
+    "SsoRealmName": "Etykieta przycisku SSO OpenID",
     "StorageWarningThreshold": "Próg ostrzeżenia o użyciu pamięci masowej",
     "SystemSSHImage": "Systemowy obraz SSH",
     "group": {

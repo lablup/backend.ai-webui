@@ -4324,7 +4324,7 @@
     "PluginPage": "Jalur plugin halaman",
     "ShowNonInstalledImages": "Tampilkan image yang belum dipasang",
     "SingleSignOnVendors": "Izinkan masuk SSO",
-    "SsoRealmName": "Nama realm OpenID",
+    "SsoRealmName": "Label tombol SSO OpenID",
     "StorageWarningThreshold": "Ambang peringatan penggunaan penyimpanan",
     "SystemSSHImage": "Image SSH sistem",
     "group": {

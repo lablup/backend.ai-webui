@@ -4306,7 +4306,7 @@
     "PluginPage": "พาธปลั๊กอินหน้า",
     "ShowNonInstalledImages": "แสดงอิมเมจที่ยังไม่ได้ติดตั้ง",
     "SingleSignOnVendors": "อนุญาตการลงชื่อเข้าใช้ด้วย SSO",
-    "SsoRealmName": "ชื่อ realm ของ OpenID",
+    "SsoRealmName": "ป้ายกำกับปุ่ม SSO OpenID",
     "StorageWarningThreshold": "เกณฑ์เตือนการใช้พื้นที่จัดเก็บ",
     "SystemSSHImage": "อิมเมจ SSH ของระบบ",
     "group": {

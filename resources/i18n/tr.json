@@ -4320,7 +4320,7 @@
     "PluginPage": "Sayfa eklentisi yolları",
     "ShowNonInstalledImages": "Yüklenmemiş imajları göster",
     "SingleSignOnVendors": "SSO ile oturum açmaya izin ver",
-    "SsoRealmName": "OpenID realm adı",
+    "SsoRealmName": "SSO OpenID düğmesi etiketi",
     "StorageWarningThreshold": "Depolama kullanımı uyarı eşiği",
     "SystemSSHImage": "Sistem SSH imajı",
     "group": {

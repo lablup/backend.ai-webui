@@ -4321,7 +4321,7 @@
     "PluginPage": "Sivuliitännäisten polut",
     "ShowNonInstalledImages": "Näytä asentamattomat imaget",
     "SingleSignOnVendors": "Salli SSO-kirjautuminen",
-    "SsoRealmName": "OpenID-realmin nimi",
+    "SsoRealmName": "SSO OpenID -painikkeen teksti",
     "StorageWarningThreshold": "Tallennustilan käytön varoitusraja",
     "SystemSSHImage": "Järjestelmän SSH-image",
     "group": {
