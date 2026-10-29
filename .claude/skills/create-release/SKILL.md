@@ -1,6 +1,6 @@
 ---
 name: create-release
-description: Create a release branch, tag, and GitHub release for Backend.AI WebUI.
+description: Cut a Backend.AI WebUI release — tag an alpha straight from `main`, or cut/update the `MAJOR.MINOR` release branch for beta/rc/stable — create the GitHub release, and open the PR that moves `main` to its next version.
 argument-hint: "[26.4.0 | 26.4.0-alpha.1 | 26.4.0-beta.0]"
 model: sonnet
 disable-model-invocation: true
@@ -8,7 +8,26 @@ disable-model-invocation: true
 
 # Create Release
 
-Create a release branch, tag, and GitHub release for Backend.AI WebUI.
+Cut a Backend.AI WebUI release, create its GitHub release, and move `main` to the
+next version.
+
+## Release model
+
+| Release                            | Cut from                            | Release commit                    | `main` afterwards                    |
+| ---------------------------------- | ----------------------------------- | --------------------------------- | ------------------------------------ |
+| `X.Y.0-alpha.N`                    | `origin/main` HEAD, tagged as is    | none                              | bump PR to `X.Y.0-alpha.N+1`         |
+| `X.Y.0-beta.0` (first of the line) | new branch `X.Y` from `origin/main` | `release: vX.Y.0-beta.0` on `X.Y` | bump PR to the next line's `alpha.0` |
+| later beta / rc / stable / patch   | existing branch `X.Y`               | `release: v{VERSION}` on `X.Y`    | unchanged                            |
+
+- **Alphas are snapshots of `main`.** `main`'s `package.json` already holds the
+  next alpha version (the previous run's bump PR put it there), so the alpha tag
+  goes on `origin/main` HEAD with no commit and no release branch.
+- **The release branch starts at `beta.0`** (feature freeze). From then on fixes
+  reach it through `cherry-pick-to-release`, not by merging `main`.
+- The tagged commit's `version.json` / `index.html` build stamps can be stale:
+  the release build (`.github/workflows/package.yml`, `build_web`) runs
+  `make versiontag` itself, so the artifact carries the right version and build
+  number. Only `package.json` must hold the released version.
 
 ## Arguments
 
@@ -16,194 +35,168 @@ Create a release branch, tag, and GitHub release for Backend.AI WebUI.
 
 ### If Arguments Not Provided
 
-Automatically determine the next version:
-
-1. Read current version from root `package.json`
-2. Parse the version: extract `MAJOR.MINOR.PATCH` and any prerelease suffix
-3. Present options via `AskUserQuestion`:
-
-```
-AskUserQuestion({
-  questions: [{
-    question: "Which version do you want to release?",
-    header: "Release Version",
-    multiSelect: false,
-    options: [
-      { label: "MAJOR.MINOR.PATCH (Stable Release)", description: "Release as stable version" },
-      { label: "MAJOR.MINOR.PATCH-alpha.N (Alpha)", description: "Alpha pre-release for testing" },
-      { label: "MAJOR.MINOR.PATCH-beta.N (Beta)", description: "Beta pre-release for wider testing" },
-      { label: "MAJOR.MINOR.PATCH-rc.N (Release Candidate)", description: "Release candidate before stable" },
-      { label: "Custom version", description: "Enter a custom version string" }
-    ]
-  }]
-})
-```
-
-Adjust the option labels with actual computed versions based on the current version:
-- If current is `26.4.0-alpha.0`: suggest `26.4.0-alpha.1`, `26.4.0-beta.0`, `26.4.0-rc.0`, `26.4.0`
-- If current is `26.4.0`: suggest `26.4.1`, `26.5.0-alpha.0`, `26.5.0`, `27.0.0-alpha.0`
-- Increment the prerelease number if same type already exists
-
-If user selects "Custom version", ask them to type it.
+1. Read the version from `origin/main`'s root `package.json` (`git show origin/main:package.json`).
+2. Check whether its tag already exists (`git ls-remote --tags origin v{that version}`).
+3. Offer options via `AskUserQuestion`, labels filled with computed versions:
+   - `main` reads `26.4.0-alpha.2` with no `v26.4.0-alpha.2` tag → suggest
+     `26.4.0-alpha.2` (recommended), `26.4.0-beta.0`, custom.
+   - The tag already exists (the bump PR has not merged) → say so and suggest
+     merging the open bump PR first; the next alpha would otherwise repeat a version.
+   - Branch `X.Y` is on beta/rc → suggest the next `beta.N` / `rc.N` / stable `X.Y.0`.
+   - "다음 알파" / "next alpha" means the version `main` already reads.
 
 ## Process
 
 ### 1. Validate Prerequisites
 
-- Ensure current branch is `main` and working directory is clean (`git status`)
-- If not clean, warn the user and stop
-- Validate version format: `X.Y.Z` or `X.Y.Z-{alpha|beta|rc}.N`
+- Validate the version format: `X.Y.Z` or `X.Y.Z-{alpha|beta|rc}.N`.
+- `git fetch origin main --tags` and confirm `v{VERSION}` does not exist yet.
+- Do the work in a fresh worktree, not the user's checkout — their local `main`
+  may be stale and may hold untracked files:
+  ```bash
+  git worktree add .claude/worktrees/release-{VERSION} origin/main --detach
+  ```
+- Stage with `git add -u`, never `git add -A` — untracked scratch files must not
+  enter a release commit.
 
-### 2. Create Release Branch
+### 2a. Alpha — tag `main`
 
-Create a branch named `MAJOR.MINOR` (e.g., `26.4`) from `main`:
+1. Confirm `git show origin/main:package.json` reads exactly `{VERSION}`. If not,
+   stop: either the bump PR for this alpha has not merged, or the requested
+   version skips one. Report which.
+2. Tag and push:
+   ```bash
+   git tag v{VERSION} origin/main
+   git push origin v{VERSION}
+   ```
+3. `{TARGET}` for the GitHub release is `main`.
+
+### 2b. First beta (`X.Y.0-beta.0`) — create the release branch
+
+1. If `origin/X.Y` does not exist:
+   ```bash
+   git switch -c X.Y origin/main
+   ```
+   If it exists (an older run cut it at an alpha), check it out and merge
+   `origin/main`. Conflicts limited to `version.json` / `index.html` are build
+   stamps — take `origin/main`'s side; step 3 rewrites them. Any other conflict:
+   stop and report.
+2. Continue with step 3.
+
+### 2c. Later beta / rc / stable / patch — use the release branch
 
 ```bash
-git checkout -b 26.4
+git switch -c X.Y origin/X.Y   # or check out the existing local branch and pull
 ```
 
-If the branch already exists, check it out and merge the latest `main` into it:
+Do not merge `main` into it. Missing fixes are backported with
+`cherry-pick-to-release` before cutting. Continue with step 3.
+
+### 3. Release Commit (2b / 2c only)
+
+1. Set `version` in root `package.json` to `{VERSION}` with the Edit tool.
+2. `make versiontag` — propagates it to `version.json`, `index.html`,
+   `manifest.json`, `react/package.json`, `packages/backend.ai-ui/package.json`,
+   `packages/backend.ai-docs-toolkit/package.json`, `electron-app/package.json`.
+3. Commit, tag, push:
+   ```bash
+   git add -u
+   git commit -m "release: v{VERSION}"
+   git tag v{VERSION}
+   git push -u origin X.Y
+   git push origin v{VERSION}
+   ```
+4. `{TARGET}` for the GitHub release is `X.Y`.
+
+### 4. Create GitHub Release
+
+Base tag (`git tag --sort=-version:refname`, skipping the tag just created):
+
+- **Stable**: the most recent stable tag (no `-alpha` / `-beta` / `-rc`).
+- **Prerelease**: the most recent tag of any type.
 
 ```bash
-git fetch origin main
-git checkout 26.4
-git merge origin/main -m "chore: merge main into 26.4 for v{VERSION} release"
+gh release create v{VERSION} \
+  --title "v{VERSION}" \
+  --generate-notes \
+  --notes-start-tag {BASE_TAG} \
+  --target {TARGET} \
+  --prerelease            # alpha / beta / rc only
 ```
 
-Merge `origin/main`, not the local `main` — a stale local branch would cut the release short.
+As soon as it returns the URL, report it in a short standalone message
+(`✅ Release created: <url>`), then continue without waiting.
 
-If the merge has conflicts, warn the user and stop — do not force-resolve conflicts automatically.
+### 5. Bump `main` (alpha and first beta)
 
-### 3. Update Version in package.json
+`main` is protected, so the bump is a PR. Without it the next alpha would carry
+the version just released.
 
-Use the Edit tool to set the `version` field in root `/package.json` to the target version (e.g., `26.4.0` or `26.4.0-alpha.1`).
-
-### 4. Run `make versiontag`
-
-This propagates the version to all related files:
-- `version.json`
-- `index.html`
-- `manifest.json`
-- `react/package.json`
-- `packages/backend.ai-ui/package.json`
-- `electron-app/package.json`
+- After `X.Y.0-alpha.N` → `X.Y.0-alpha.N+1`, version files only (below).
+- After `X.Y.0-beta.0` → the next release line's `alpha.0` (`26.10` → `26.11.0-alpha.0`;
+  ask the user when the next line is not obvious, e.g. after `.12`). That bump
+  also refreshes dependencies: hand it to `/bump-alpha-version {NEXT}`, then
+  commit and open the PR the same way.
 
 ```bash
+git switch -c chore/bump-{NEXT} origin/main
+# set root package.json "version" to {NEXT} with the Edit tool
 make versiontag
+git add -u
+git commit -m "chore: bump to {NEXT}"
+git push -u origin chore/bump-{NEXT}
 ```
 
-### 5. Commit All Changes
+Version files are not a user flow: record the e2e-flow check
+(`bash .claude/scripts/require-e2e-flow.sh --record`) and open the PR as a draft
+with `gh pr create --draft --base main --title "chore: bump to {NEXT}"`, body:
 
-Stage all modified files and commit:
+```
+Bump main to {NEXT} after cutting release v{VERSION}.
 
-```bash
-git add -A
-git commit -m "release: v{VERSION}"
+Version files only: package.json, version.json, index.html, manifest.json, react, backend.ai-ui, electron-app, backend.ai-docs-toolkit.
+
+## E2E flow
+
+Result: no flow change
+Reason: version strings only; no UI or user flow changes.
 ```
 
-### 6. Create Version Tag
+For the `/bump-alpha-version` case, add the dependency changes to the body and
+replace the E2E flow section with what the e2e-flow skill reports. No dev server
+or walkthrough for a version-only bump — nothing changes on screen.
 
-```bash
-git tag v{VERSION}
-```
-
-### 7. Push Branch and Tag to Remote
-
-```bash
-git push -u origin {MAJOR.MINOR}
-git push origin v{VERSION}
-```
-
-### 8. Create GitHub Release
-
-Determine the base tag for auto-generated release notes:
-
-#### Base Tag Selection Logic
-
-1. List all tags sorted by version:
-   ```bash
-   git tag --sort=-version:refname
-   ```
-
-2. Determine the base tag:
-   - **If releasing a stable version** (e.g., `v26.4.0`):
-     - Find the most recent stable release tag (no `-alpha`, `-beta`, `-rc` suffix)
-     - Skip the tag we just created
-   - **If releasing a prerelease version** (e.g., `v26.4.0-alpha.1`):
-     - Find the most recent tag of ANY type (stable or prerelease)
-     - Skip the tag we just created
-     - Pick the latest one as the base
-
-3. Create the release:
-   ```bash
-   gh release create v{VERSION} \
-     --title "v{VERSION}" \
-     --generate-notes \
-     --notes-start-tag {BASE_TAG} \
-     --target {BRANCH}
-   ```
-
-   For prerelease versions (alpha/beta/rc), add `--prerelease` flag.
-
-4. **Immediately report the release link.** As soon as the `gh release create`
-   command returns the release URL, surface it to the user right away in a
-   short, standalone message (e.g. `✅ Release created: <url>`) — do not wait
-   until the final Output Summary. Then proceed to the next step without
-   pausing for confirmation.
-
-### 9. Improve Release Notes
-
-After the GitHub release is created, invoke the `/fw:release-note` skill to improve and format the release notes:
+### 6. Improve Release Notes
 
 ```
 /fw:release-note v{VERSION}
 ```
 
-This will:
-- Fetch the auto-generated release notes
-- Categorize and group changes with emojis
-- Add contextual descriptions
-- Ask for user confirmation before updating
-
 ## Output Summary
 
-After completion, provide:
-1. **Release Branch**: branch name that was created/used
-2. **Version**: the released version
-3. **Tag**: the git tag created
-4. **Base Tag**: the tag used as comparison base for release notes
-5. **GitHub Release URL**: link to the created release
+1. **Version / Tag**, and the commit or branch it points at
+2. **Base Tag** used for the notes
+3. **GitHub Release URL**
+4. **Bump PR** for `main` (alpha / first beta), or "none"
 
-## Example
+## Examples
 
 ```
-User: /create-release 26.4.0
+/create-release 26.4.0-alpha.2     (main reads 26.4.0-alpha.2)
+  tag v26.4.0-alpha.2 on origin/main → pre-release (base v26.4.0-alpha.1, target main)
+  → bump PR main → 26.4.0-alpha.3 → /fw:release-note
 
-1. Validates main branch is clean
-2. Creates branch 26.4
-3. Updates package.json to 26.4.0
-4. Runs make versiontag
-5. Commits: "release: v26.4.0"
-6. Tags: v26.4.0
-7. Pushes branch 26.4 and tag v26.4.0
-8. Creates GitHub release (base: v26.3.0)
-9. Runs /fw:release-note v26.4.0 to improve notes
+/create-release 26.4.0-beta.0
+  branch 26.4 from origin/main → release commit + tag → pre-release (target 26.4)
+  → /bump-alpha-version 26.5.0-alpha.0 → bump PR → /fw:release-note
 
-User: /create-release 26.4.0-beta.0
-
-1. Validates main branch is clean
-2. Branch 26.4 already exists → checks it out and merges main into 26.4
-3. Updates package.json to 26.4.0-beta.0
-4. Runs make versiontag
-5. Commits: "release: v26.4.0-beta.0"
-6. Tags: v26.4.0-beta.0
-7. Pushes branch 26.4 and tag v26.4.0-beta.0
-8. Creates GitHub pre-release (base: v26.4.0-alpha.1)
-9. Runs /fw:release-note v26.4.0-beta.0 to improve notes
+/create-release 26.4.0
+  branch 26.4 (fixes already cherry-picked) → release commit + tag
+  → release (base: last stable, target 26.4) → /fw:release-note
 ```
 
 ## Notes
 
-- This skill uses `git` directly for branch/tag operations (not `gh stack`) because release branches follow a different workflow than feature PRs
-- Stable versions are published releases; alpha/beta/rc versions are marked as pre-releases
-- Always confirm with the user before pushing to remote if anything looks unexpected
+- `git` is used directly (not `gh stack`): releases are not feature stacks.
+- Never push to `main` directly, never force-push a release branch or move a tag.
+- Confirm with the user before pushing if anything looks unexpected.
