@@ -64,7 +64,7 @@ describe('RefreshScheduler', () => {
     scheduler.register('card', { minMs: 5_000, refresh: card });
     vi.advanceTimersByTime(5_000);
     scheduler.tick();
-    expect(card).toHaveBeenCalledWith(Date.now());
+    expect(card).toHaveBeenCalledWith(Date.now(), false);
   });
 
   it('refreshes every subscriber by hand, whatever its minimum', () => {
@@ -79,7 +79,7 @@ describe('RefreshScheduler', () => {
     vi.advanceTimersByTime(1_000);
     scheduler.refreshAll();
     expect(fast).toHaveBeenCalledTimes(1);
-    expect(slow).toHaveBeenCalledTimes(1);
+    expect(slow).toHaveBeenCalledWith(Date.now(), true);
     expect(ticked).toHaveBeenCalledTimes(1);
     expect(scheduler.getLastTickAt()).toBe(Date.now());
 
@@ -101,5 +101,46 @@ describe('RefreshScheduler', () => {
     scheduler.tick();
     scheduler.refreshAll();
     expect(card).not.toHaveBeenCalled();
+  });
+
+  it('skips a hidden subscriber on a tick, but not on a manual refresh', () => {
+    const scheduler = new RefreshScheduler();
+    const shown = vi.fn();
+    const offscreen = vi.fn();
+    scheduler.register('shown', { minMs: 5_000, refresh: shown });
+    scheduler.register('offscreen', { minMs: 5_000, refresh: offscreen });
+    scheduler.setVisible('offscreen', false);
+
+    vi.advanceTimersByTime(5_000);
+    scheduler.tick();
+    expect(shown).toHaveBeenCalledTimes(1);
+    expect(offscreen).not.toHaveBeenCalled();
+
+    scheduler.refreshAll();
+    expect(offscreen).toHaveBeenCalledTimes(1);
+  });
+
+  it('refreshes a subscriber that comes back into view once it is due', () => {
+    const scheduler = new RefreshScheduler();
+    const card = vi.fn();
+    scheduler.register('card', { minMs: 60_000, refresh: card });
+    scheduler.setVisible('card', false);
+
+    vi.advanceTimersByTime(30_000);
+    scheduler.setVisible('card', true);
+    expect(card).not.toHaveBeenCalled();
+
+    scheduler.setVisible('card', false);
+    vi.advanceTimersByTime(90_000);
+    scheduler.tick();
+    expect(card).not.toHaveBeenCalled();
+    scheduler.setVisible('card', true);
+    expect(card).toHaveBeenCalledTimes(1);
+    expect(card).toHaveBeenCalledWith(Date.now(), false);
+
+    // Already visible: reporting it again refreshes nothing.
+    vi.advanceTimersByTime(60_000);
+    scheduler.setVisible('card', true);
+    expect(card).toHaveBeenCalledTimes(1);
   });
 });

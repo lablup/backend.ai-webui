@@ -9,6 +9,7 @@ import DashboardBoardTabs from './DashboardBoardTabs';
 import DashboardEditSider from './DashboardEditSider';
 import DashboardFilterBar from './DashboardFilterBar';
 import DashboardPanelModal from './DashboardPanelModal';
+import { useBoardItemVisibility } from './DashboardRefreshContext';
 import PanelSettingsModal from './PanelSettingsModal';
 import { boardSortsAtom } from './ResourceTablePanel';
 import type {
@@ -117,6 +118,10 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     : null;
 
   const filters = useDashboardFilters(page, boards, project);
+  useBoardItemVisibility(
+    boardContainerRef,
+    boardItems.map((item) => item.id),
+  );
 
   const scrollBoardEndIntoView = () => {
     // New panels append at the board's end; without this an add looks like a no-op.
