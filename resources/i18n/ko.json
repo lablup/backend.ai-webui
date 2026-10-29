@@ -1037,7 +1037,6 @@
       "Ownership": "소유",
       "Path": "경로",
       "Permission": "권한",
-      "ProjectAdminDataPageAlert": "프로젝트 관리자용 데이터 페이지에서는 프로젝트 폴더로 생성됩니다.",
       "ProjectFolderAlertDesc": "이 폴더는 프로젝트 구성원 모두에게 공유되는 폴더입니다. ",
       "ProjectFolderCreationHelp": "\"{{projectName}}\" 프로젝트 사용자가 접근할 수 있는 폴더가 생성됩니다.",
       "Rename": "이름 변경",

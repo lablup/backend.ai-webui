@@ -1037,7 +1037,6 @@
       "Ownership": "La possession",
       "Path": "Chemin de stockage",
       "Permission": "Autorisation",
-      "ProjectAdminDataPageAlert": "Sur la page Données de l’administrateur du projet, les dossiers sont créés en tant que dossiers de projet.",
       "ProjectFolderAlertDesc": "Ce dossier est partagé avec tous les membres du projet",
       "ProjectFolderCreationHelp": "Un dossier accessible par \"{{projectName}}\" Les utilisateurs du projet seront créés.",
       "Rename": "Renommer",

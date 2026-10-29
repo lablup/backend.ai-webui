@@ -1037,7 +1037,6 @@
       "Ownership": "Omistus",
       "Path": "Säilytyspolku",
       "Permission": "Lupa",
-      "ProjectAdminDataPageAlert": "Projektin järjestelmänvalvojan tiedot -sivulla kansiot luodaan projektikansioina.",
       "ProjectFolderAlertDesc": "Tämä kansio on jaettu kaikkien projektin jäsenten kanssa",
       "ProjectFolderCreationHelp": "Projektin käyttäjät luodaan kansioon, johon pääsee \"{{projectName}}\".",
       "Rename": "Nimeä uudelleen",

@@ -6,7 +6,7 @@
  * Backward-compatibility redirect shims for the scope-aware routing scheme.
  *
  * Old, project-less URLs (`/session`, `/deployments/:id`, `/admin-session`,
- * `/project-data`, `/credential`, ...) keep working by redirecting (`replace`)
+ * `/project-admin-users`, `/credential`, ...) keep working by redirecting (`replace`)
  * to their new canonical paths. This protects deep links, bookmarks, and the
  * external `react-navigate` event that Lit / electron shells dispatch.
  *

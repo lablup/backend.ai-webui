@@ -1037,7 +1037,6 @@
       "Ownership": "Proprietà",
       "Path": "Percorso di archiviazione",
       "Permission": "Autorizzazione",
-      "ProjectAdminDataPageAlert": "Nella pagina Dati Amministratore del Progetto le cartelle vengono create come cartelle di progetto.",
       "ProjectFolderAlertDesc": "Questa cartella è condivisa con tutti i membri del progetto",
       "ProjectFolderCreationHelp": "Verrà creata una cartella accessibile da \"{{projectName}}\". Gli utenti del progetto.",
       "Rename": "Rinominare",

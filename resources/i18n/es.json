@@ -1037,7 +1037,6 @@
       "Ownership": "Propiedad",
       "Path": "Ruta de almacenamiento",
       "Permission": "Permiso",
-      "ProjectAdminDataPageAlert": "En la página de Datos de Administrador del Proyecto las carpetas se crean como carpetas de proyecto.",
       "ProjectFolderAlertDesc": "Esta carpeta se comparte con todos los miembros del proyecto.",
       "ProjectFolderCreationHelp": "Se creará una carpeta accesible por los usuarios del proyecto \"{{projectName}}\".",
       "Rename": "Cambie el nombre de",

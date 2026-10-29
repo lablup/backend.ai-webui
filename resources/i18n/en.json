@@ -1024,7 +1024,6 @@
       "Ownership": "Ownership",
       "Path": "Path",
       "Permission": "Permission",
-      "ProjectAdminDataPageAlert": "Folders are created as project folders on the Project Admin Data page.",
       "ProjectFolderAlertDesc": "This folder is shared with all members of the project",
       "ProjectFolderCreationHelp": "A folder accessible by \"{{projectName}}\" project users will be created.",
       "Rename": "Rename",

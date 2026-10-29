@@ -79,8 +79,8 @@ const DEFAULT_ORDER = '-created_at';
 const statusCategoryValues = ['active', 'deleted'] as const;
 const modeValues = ['all', 'general', 'data', 'automount', 'model'] as const;
 
-// Module constants so each mode's filter keeps a stable identity (FR-3594);
-// see ProjectAdminDataPage, this page's V2 reference.
+// Module constants so each mode's filter keeps a stable identity; a fresh object
+// re-fires the deferred-value loading flash every render (FR-3594).
 const USAGE_MODE_FILTERS: Partial<
   Record<(typeof modeValues)[number], VFolderFilter>
 > = {

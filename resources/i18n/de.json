@@ -1037,7 +1037,6 @@
       "Ownership": "Eigentum",
       "Path": "Speicherpfad",
       "Permission": "Genehmigung",
-      "ProjectAdminDataPageAlert": "Auf der Projekt-Admin-Datenseite werden Ordner als Projekt-Ordner erstellt.",
       "ProjectFolderAlertDesc": "Dieser Ordner wird an alle Mitglieder des Projekts geteilt",
       "ProjectFolderCreationHelp": "Ein Ordner, der von \"{{projectName}}\" -Projektnutzern zugänglich ist, wird erstellt.",
       "Rename": "Umbenennen",

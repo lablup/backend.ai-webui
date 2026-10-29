@@ -1037,7 +1037,6 @@
       "Ownership": "Quyền sở hữu",
       "Path": "Đường dẫn lưu trữ",
       "Permission": "Sự cho phép",
-      "ProjectAdminDataPageAlert": "Trên trang Dữ liệu Quản trị Dự án, thư mục được tạo dưới dạng thư mục dự án.",
       "ProjectFolderAlertDesc": "Thư mục này được chia sẻ với tất cả các thành viên của dự án",
       "ProjectFolderCreationHelp": "Một thư mục có thể truy cập bằng \"{{projectName}}\" Người dùng dự án sẽ được tạo.",
       "Rename": "Đổi tên",

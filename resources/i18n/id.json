@@ -1037,7 +1037,6 @@
       "Ownership": "Kepemilikan",
       "Path": "Jalur penyimpanan",
       "Permission": "Izin",
-      "ProjectAdminDataPageAlert": "Di halaman Data Admin Proyek, folder dibuat sebagai folder proyek.",
       "ProjectFolderAlertDesc": "Folder ini dibagikan dengan semua anggota proyek",
       "ProjectFolderCreationHelp": "Folder yang dapat diakses oleh \"{{projectName}}\" pengguna proyek akan dibuat.",
       "Rename": "Ganti nama",
