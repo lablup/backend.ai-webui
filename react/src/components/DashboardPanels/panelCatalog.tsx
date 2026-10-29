@@ -304,7 +304,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: SessionStatusPanel,
     defaultSize: size(4, 3),
     minSize: size(2, 2),
-    refresh: { min: '15s' },
   },
   {
     key: 'pendingSessions',
@@ -315,7 +314,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: PendingSessionsPanel,
     defaultSize: size(4, 3),
     minSize: size(2, 2),
-    refresh: { min: '15s' },
   },
   {
     key: 'longRunningSessions',
@@ -326,7 +324,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: LongRunningSessionsPanel,
     defaultSize: size(4, 3),
     minSize: size(2, 2),
-    refresh: { min: '1m' },
     settings: ['range'],
   },
   {
@@ -338,7 +335,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: ProjectResourceAllocationPanel,
     defaultSize: size(2, 2),
     minSize: size(2, 2),
-    refresh: { min: '30s' },
   },
   {
     key: 'projectDeployments',
@@ -350,7 +346,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: DeploymentStatusPanel,
     defaultSize: size(2, 3),
     minSize: size(2, 2),
-    refresh: { min: '30s' },
   },
   {
     key: 'projectFolders',
@@ -361,7 +356,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: FoldersPanel,
     defaultSize: size(2, 2),
     minSize: size(2, 2),
-    refresh: { min: '5m' },
   },
   {
     key: 'projectUsers',
@@ -372,7 +366,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: ProjectUsersPanel,
     defaultSize: size(2, 2),
     minSize: size(2, 2),
-    refresh: { min: '5m' },
   },
   {
     key: 'projectAuditLog',
@@ -383,7 +376,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: AuditLogPanel,
     defaultSize: size(4, 4),
     minSize: size(2, 3),
-    refresh: { min: '1m' },
     settings: ['range'],
   },
   {
@@ -395,7 +387,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: ResourceGroupCapacityPanel,
     defaultSize: size(4, 2),
     minSize: size(2, 2),
-    refresh: { min: '30s' },
     settings: ['resourceGroup'],
     defaultHidden: true,
   },
