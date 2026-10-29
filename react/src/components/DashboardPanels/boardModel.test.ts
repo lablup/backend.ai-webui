@@ -241,6 +241,37 @@ describe('sanitizeBoard', () => {
     expect(sanitizeBoard({ panels: 'x' }, definitions, 'project')).toBeNull();
   });
 
+  it('moves a renamed catalog key to its new name, layout and settings kept', () => {
+    const sanitized = sanitizeBoard(
+      {
+        panels: [
+          {
+            id: 'keypairsLogins',
+            key: 'keypairsLogins',
+            columnSpan: 4,
+            rowSpan: 3,
+            settings: { range: 'now-7d' },
+          },
+        ],
+        knownKeys: ['keypairsLogins', 'failedLogins'],
+      },
+      [card('failedLogins', { page: ['admin'], settings: ['range'] })],
+      'admin',
+    );
+    expect(sanitized).toEqual({
+      panels: [
+        {
+          id: 'failedLogins',
+          key: 'failedLogins',
+          columnSpan: 4,
+          rowSpan: 3,
+          settings: { range: 'now-7d' },
+        },
+      ],
+      knownKeys: ['failedLogins'],
+    });
+  });
+
   it('drops unknown keys, off-page keys, duplicate ids and malformed panels', () => {
     const sanitized = sanitizeBoard(
       {

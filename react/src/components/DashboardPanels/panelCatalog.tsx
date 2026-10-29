@@ -29,9 +29,9 @@ import { resourceKeys, resourceRegistry } from './resourceRegistry';
 import AgentStatsPanel from './superadminCards/AgentStatsPanel';
 import AgentsPanel from './superadminCards/AgentsPanel';
 import ContainerRegistriesPanel from './superadminCards/ContainerRegistriesPanel';
+import FailedLoginsPanel from './superadminCards/FailedLoginsPanel';
 import FailuresByEntityTypePanel from './superadminCards/FailuresByEntityTypePanel';
 import FairSharePanel from './superadminCards/FairSharePanel';
-import KeypairsLoginsPanel from './superadminCards/KeypairsLoginsPanel';
 import ResourcePoliciesPanel from './superadminCards/ResourcePoliciesPanel';
 import SchedulingFailuresPanel from './superadminCards/SchedulingFailuresPanel';
 import TopProjectsUsagePanel from './superadminCards/TopProjectsUsagePanel';
@@ -267,7 +267,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: SessionStatusPanel,
     defaultSize: size(4, 3),
     minSize: size(2, 2),
-    refresh: { min: '15s' },
     ...adminOrder('projectSessionStatus'),
   },
   {
@@ -279,7 +278,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: PendingSessionsPanel,
     defaultSize: size(4, 3),
     minSize: size(2, 2),
-    refresh: { min: '15s' },
     settings: ['resourceGroup'],
     ...adminOrder('pendingSessions'),
   },
@@ -304,7 +302,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: ResourceAllocationPanel,
     defaultSize: size(2, 2),
     minSize: size(2, 2),
-    refresh: { min: '30s' },
     defaultHidden: ['admin'],
   },
   {
@@ -317,7 +314,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: DeploymentStatusPanel,
     defaultSize: size(2, 3),
     minSize: size(2, 2),
-    refresh: { min: '30s' },
     defaultHidden: ['admin'],
   },
   {
@@ -329,7 +325,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: FoldersPanel,
     defaultSize: size(2, 2),
     minSize: size(2, 2),
-    refresh: { min: '5m' },
     defaultHidden: ['admin'],
   },
   {
@@ -341,7 +336,6 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: UsersPanel,
     defaultSize: size(2, 2),
     minSize: size(2, 2),
-    refresh: { min: '5m' },
     defaultHidden: ['admin'],
   },
   {
@@ -384,7 +378,6 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: SchedulingFailuresPanel,
     defaultSize: size(4, 4),
     minSize: size(2, 3),
-    refresh: { min: '1m' },
     settings: ['range'],
     ...adminOrder('schedulingFailures'),
   },
@@ -398,7 +391,6 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: AgentsPanel,
     defaultSize: size(4, 4),
     minSize: size(2, 3),
-    refresh: { min: '15s' },
     ...adminOrder('activeAgents'),
   },
   {
@@ -411,7 +403,6 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: AgentStatsPanel,
     defaultSize: size(2, 2),
     minSize: size(2, 2),
-    refresh: { min: '30s' },
     ...adminOrder('agentStats'),
   },
   {
@@ -424,7 +415,6 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: FailuresByEntityTypePanel,
     defaultSize: size(2, 3),
     minSize: size(2, 3),
-    refresh: { min: '1m' },
     settings: ['range'],
     ...adminOrder('failuresByEntityType'),
   },
@@ -438,7 +428,6 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: TopProjectsUsagePanel,
     defaultSize: size(4, 3),
     minSize: size(2, 3),
-    refresh: { min: '5m' },
     settings: ['resourceGroup'],
     ...adminOrder('topProjectsUsage'),
   },
@@ -452,7 +441,6 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: FairSharePanel,
     defaultSize: size(4, 3),
     minSize: size(2, 3),
-    refresh: { min: '5m' },
     settings: ['resourceGroup'],
     ...adminOrder('fairShare'),
   },
@@ -466,7 +454,6 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: RecentSessionsPanel,
     defaultSize: size(4, 3),
     minSize: size(2, 2),
-    refresh: { min: '1m' },
     defaultHidden: true,
   },
   {
@@ -479,20 +466,18 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: ResourcePoliciesPanel,
     defaultSize: size(2, 2),
     minSize: size(2, 2),
-    refresh: { min: '10m' },
     defaultHidden: true,
   },
   {
-    key: 'keypairsLogins',
+    key: 'failedLogins',
     page: ['admin'],
     group: 'users',
-    titleKey: 'dashboard.card.KeypairsAndLogins',
+    titleKey: 'dashboard.card.FailedLogins',
     requires: SUPERADMIN_ONLY,
     kind: 'custom',
-    Component: KeypairsLoginsPanel,
+    Component: FailedLoginsPanel,
     defaultSize: size(4, 3),
     minSize: size(2, 3),
-    refresh: { min: '1m' },
     settings: ['range'],
     defaultHidden: true,
   },
@@ -506,7 +491,6 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: ContainerRegistriesPanel,
     defaultSize: size(4, 3),
     minSize: size(2, 2),
-    refresh: { min: '10m' },
     defaultHidden: true,
   },
 ];

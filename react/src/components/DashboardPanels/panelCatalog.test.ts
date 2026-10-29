@@ -165,7 +165,7 @@ describe('catalogFor on the real catalog', () => {
       'resourceGroupCapacity',
       'recentlyCreatedSession',
       'resourcePolicies',
-      'keypairsLogins',
+      'failedLogins',
       'containerRegistries',
     ];
     expect(board.knownKeys).toEqual(expect.arrayContaining(catalogOnly));
