@@ -76,19 +76,34 @@ let devtools;
 const manager = new ProxyManager();
 let mainURL;
 // Operator opt-in (`wsproxy.disableCertCheck`, bundled or user config): accept
-// invalid certificates in the main window without asking.
+// invalid certificates without asking.
 let allowInvalidCertificates = false;
+let nodeTlsCheckDisabledByConfig = false;
+// Only these are offered to the user; revoked, expired or weak certificates are refused.
+const TRUSTABLE_CERT_ERRORS = new Set([
+  'net::ERR_CERT_AUTHORITY_INVALID',
+  'net::ERR_CERT_COMMON_NAME_INVALID',
+]);
 const pendingCertPrompts = new Map();
+const refusedCerts = new Set();
+let trustedCerts;
 
 const trustedCertsPath = () =>
   path.join(app.getPath('userData'), 'trusted-certificates.json');
 
-function readTrustedCerts() {
-  try {
-    return JSON.parse(nfs.readFileSync(trustedCertsPath(), 'utf-8'));
-  } catch {
-    return {};
+function getTrustedCerts() {
+  if (!trustedCerts) {
+    try {
+      const parsed = JSON.parse(nfs.readFileSync(trustedCertsPath(), 'utf-8'));
+      trustedCerts =
+        parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+          ? parsed
+          : {};
+    } catch {
+      trustedCerts = {};
+    }
   }
+  return trustedCerts;
 }
 
 // The bundled config.toml sits inside app.asar; this one can be edited on site.
@@ -101,60 +116,93 @@ function readUserConfig() {
   }
 }
 
+function resetCertCheckOptIn() {
+  allowInvalidCertificates = false;
+  if (nodeTlsCheckDisabledByConfig) {
+    delete process.env.NODE_TLS_REJECT_UNAUTHORIZED;
+    nodeTlsCheckDisabledByConfig = false;
+  }
+}
+
 function applyCertCheckOptIn(config) {
   if (config?.wsproxy?.disableCertCheck == true) {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+    nodeTlsCheckDisabledByConfig = true;
     allowInvalidCertificates = true;
   }
 }
 
-function showMessage(options) {
-  return mainWindow && !mainWindow.isDestroyed()
-    ? dialog.showMessageBox(mainWindow, options)
+function showMessage(options, parent = mainWindow) {
+  return parent && !parent.isDestroyed()
+    ? dialog.showMessageBox(parent, options)
     : dialog.showMessageBox(options);
 }
 
 // Trust on first use: the user confirms a host's fingerprint once; a changed
 // fingerprint asks again with a warning. One dialog per host and certificate;
-// a refusal stays in the map until restart, so polling requests do not re-ask.
-function promptCertificateTrust(host, certificate, previous) {
+// a refusal holds until restart or reset, so polling requests do not re-ask.
+function promptCertificateTrust(host, certificate, previous, parent) {
   const key = `${host} ${certificate.fingerprint}`;
+  if (refusedCerts.has(key)) return Promise.resolve(false);
   if (!pendingCertPrompts.has(key)) {
-    const prompt = showMessage({
-      type: 'warning',
-      buttons: ['Cancel', previous ? 'Trust New Certificate' : 'Trust'],
-      defaultId: 0,
-      cancelId: 0,
-      message: previous
-        ? `The certificate of ${host} has changed.`
-        : `${host} uses a certificate that is not trusted.`,
-      detail: [
-        previous
-          ? 'The server may have renewed its certificate, or someone may be intercepting the connection. Trust it only if your administrator confirms the new fingerprint.'
-          : 'Trust it only if your administrator confirms this fingerprint.',
-        '',
-        `Issued to: ${certificate.subjectName}`,
-        `Issued by: ${certificate.issuerName}`,
-        `Fingerprint: ${certificate.fingerprint}`,
-      ].join('\n'),
-    })
+    const prompt = showMessage(
+      {
+        type: 'warning',
+        buttons: ['Cancel', previous ? 'Trust New Certificate' : 'Trust'],
+        defaultId: 0,
+        cancelId: 0,
+        message: previous
+          ? `The certificate of ${host} has changed.`
+          : `${host} uses a certificate that is not trusted.`,
+        detail: [
+          previous
+            ? 'The server may have renewed its certificate, or someone may be intercepting the connection. Trust it only if your administrator confirms the new fingerprint.'
+            : 'Trust it only if your administrator confirms this fingerprint.',
+          '',
+          `Issued to: ${certificate.subjectName}`,
+          `Issued by: ${certificate.issuerName}`,
+          `Valid until: ${new Date(certificate.validExpiry * 1000).toISOString()}${
+            certificate.validExpiry * 1000 < Date.now() ? ' (expired)' : ''
+          }`,
+          `Fingerprint: ${certificate.fingerprint}`,
+        ].join('\n'),
+      },
+      parent,
+    )
       .then(({ response }) => {
-        if (response !== 1) return false;
-        const trusted = readTrustedCerts();
-        trusted[host] = certificate.fingerprint;
-        nfs.writeFileSync(trustedCertsPath(), JSON.stringify(trusted, null, 2));
-        pendingCertPrompts.delete(key);
+        if (response !== 1) {
+          refusedCerts.add(key);
+          return false;
+        }
+        getTrustedCerts()[host] = certificate.fingerprint;
+        try {
+          nfs.writeFileSync(
+            trustedCertsPath(),
+            JSON.stringify(trustedCerts, null, 2),
+          );
+        } catch (err) {
+          console.error('Could not save the trusted certificate:', err);
+        }
         return true;
-      });
+      })
+      .finally(() => pendingCertPrompts.delete(key));
     pendingCertPrompts.set(key, prompt);
   }
   return pendingCertPrompts.get(key);
 }
 
 async function resetTrustedCertificates() {
-  const hosts = Object.keys(readTrustedCerts());
+  const hosts = [
+    ...new Set([
+      ...Object.keys(getTrustedCerts()),
+      ...[...refusedCerts].map((key) => key.split(' ')[0]),
+    ]),
+  ];
   if (hosts.length === 0) {
-    await showMessage({ type: 'info', message: 'No certificates are trusted.' });
+    await showMessage({
+      type: 'info',
+      message: 'No certificates are trusted or refused.',
+    });
     return;
   }
   const { response } = await showMessage({
@@ -162,7 +210,7 @@ async function resetTrustedCertificates() {
     buttons: ['Cancel', 'Reset and Restart'],
     defaultId: 0,
     cancelId: 0,
-    message: 'Forget the certificates you trusted?',
+    message: 'Forget the certificates you trusted or refused?',
     detail: `Backend.AI Desktop restarts and asks again on the next connection to:\n${hosts.join('\n')}`,
   });
   if (response !== 1) return;
@@ -502,7 +550,7 @@ function createWindow() {
     };
     nfs.readFile(path.join(es6Path, 'config.toml'), 'utf-8', (err, data) => {
       console.log('Running on build-resource debug mode...');
-      allowInvalidCertificates = false;
+      resetCertCheckOptIn();
       applyCertCheckOptIn(readUserConfig());
       if (err) {
         console.log('No configuration file found.');
@@ -665,7 +713,11 @@ app.on('ready', () => {
 
     // Files in app/ directory: HTML, JS bundles, config.toml, manifest.json, etc.
     // Files at root level: resources/, manifest/
-    if (!url.startsWith('app/') && !url.startsWith('resources/') && !url.startsWith('manifest/')) {
+    if (
+      !url.startsWith('app/') &&
+      !url.startsWith('resources/') &&
+      !url.startsWith('manifest/')
+    ) {
       url = path.join('app', url);
     }
 
@@ -726,29 +778,26 @@ app.on('activate', function () {
 app.on(
   'certificate-error',
   function (event, webContents, url, error, certificate, callback) {
-    // Popups and other windows never get an exception, so a page cannot
-    // lure the user into trusting an arbitrary host.
-    if (
-      !mainWindow ||
-      mainWindow.isDestroyed() ||
-      webContents !== mainWindow.webContents
-    ) {
-      callback(false);
-      return;
-    }
+    // Applies to every window, popups included: launched apps open in popups.
     event.preventDefault();
     if (allowInvalidCertificates) {
       callback(true);
       return;
     }
     const host = new URL(url).host;
-    const previous = readTrustedCerts()[host];
+    const previous = getTrustedCerts()[host];
     if (previous === certificate.fingerprint) {
       callback(true);
       return;
     }
-    promptCertificateTrust(host, certificate, previous).then(callback, () =>
-      callback(false),
+    if (!TRUSTABLE_CERT_ERRORS.has(error)) {
+      callback(false);
+      return;
+    }
+    const parent = BrowserWindow.fromWebContents(webContents) ?? mainWindow;
+    promptCertificateTrust(host, certificate, previous, parent).then(
+      callback,
+      () => callback(false),
     );
   },
 );
