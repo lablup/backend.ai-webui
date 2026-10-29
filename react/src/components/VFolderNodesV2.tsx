@@ -769,6 +769,8 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
             key: 'status',
             title: t('data.folders.Status'),
             dataIndex: 'vfolderStatus',
+            // `vfolderStatus` is a Relay alias; the server order field is STATUS.
+            sortKey: 'status',
             render: (status: string) => {
               return (
                 <Badge
