@@ -49,10 +49,10 @@ const MySessionPanel: React.FC<PanelComponentProps> = ({ queryRefs }) => {
   'use memo';
   const { t } = useTranslation();
   const userRole = useCurrentUserRole();
-  return (
+  return queryRefs.sessionCountQueryRef ? (
     <Suspense fallback={<InlineSkeleton />}>
       <SessionCountDashboardItem
-        queryRef={queryRefs.queryRef}
+        queryRef={queryRefs.sessionCountQueryRef}
         title={
           userRole === 'superadmin'
             ? t('session.ActiveSessions')
@@ -60,20 +60,20 @@ const MySessionPanel: React.FC<PanelComponentProps> = ({ queryRefs }) => {
         }
       />
     </Suspense>
-  );
+  ) : null;
 };
 
 const ActiveSessionsPanel: React.FC<PanelComponentProps> = ({ queryRefs }) => {
   'use memo';
   const { t } = useTranslation();
-  return (
+  return queryRefs.sessionCountQueryRef ? (
     <Suspense fallback={<InlineSkeleton />}>
       <SessionCountDashboardItem
-        queryRef={queryRefs.queryRef}
+        queryRef={queryRefs.sessionCountQueryRef}
         title={t('session.ActiveSessions')}
       />
     </Suspense>
-  );
+  ) : null;
 };
 
 const MyResourcePanel: React.FC<PanelComponentProps> = ({
@@ -198,9 +198,12 @@ const RecentlyCreatedSessionPanel: React.FC<PanelComponentProps> = ({
 }) => {
   'use memo';
   const project = useDashboardProject();
-  return (
-    <RecentlyCreatedSession queryRef={queryRefs.queryRef} project={project} />
-  );
+  return queryRefs.recentSessionsQueryRef ? (
+    <RecentlyCreatedSession
+      queryRef={queryRefs.recentSessionsQueryRef}
+      project={project}
+    />
+  ) : null;
 };
 
 const size = (columnSpan: number, rowSpan: number): PanelSize => ({

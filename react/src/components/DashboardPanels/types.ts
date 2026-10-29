@@ -212,9 +212,10 @@ export interface PanelCatalogContext {
 }
 
 /** Fragment keys of the page queries the built-in cards still read (until they get their own queries). */
+/** The page query's fragments; null when no card on the board reads one. */
 export interface DashboardPageQueryRefs {
-  queryRef: SessionCountDashboardItemFragment$key &
-    RecentlyCreatedSessionFragment$key;
+  sessionCountQueryRef?: SessionCountDashboardItemFragment$key | null;
+  recentSessionsQueryRef?: RecentlyCreatedSessionFragment$key | null;
   totalResourceQueryRef?: TotalResourceWithinResourceGroupFragment$key | null;
   agentStatsQueryRef?: AgentStatsFragment$key | null;
 }

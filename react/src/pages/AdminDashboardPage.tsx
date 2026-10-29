@@ -8,7 +8,13 @@ import {
   DashboardRefreshProvider,
   useDashboardFetchKey,
 } from '../components/DashboardPanels/DashboardRefreshContext';
+import {
+  pageQueryFragments,
+  pageQueryRefresh,
+  type PageQueryFragment,
+} from '../components/DashboardPanels/pageQuery';
 import { PANEL_CATALOG } from '../components/DashboardPanels/panelCatalog';
+import { useRenderedPanelKeys } from '../components/DashboardPanels/useDashboardBoard';
 import { useIsAvailableTotalResourceWithinResourceGroup } from '../components/TotalResourceWithinResourceGroup';
 import { useCurrentDomainValue } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
@@ -39,9 +45,28 @@ const AdminDashboardPageContent: React.FC<AdminDashboardPageProps> = ({
   const currentResourceGroup = useCurrentResourceGroupValue();
   const isSuperAdmin = useCurrentUserRole() === 'superadmin';
 
-  const { fetchKey } = useDashboardFetchKey('page-query', '30s');
+  const renderedKeys = useRenderedPanelKeys(page, PANEL_CATALOG);
+  const pageQueryRefreshMin = pageQueryRefresh(
+    renderedKeys,
+    PANEL_CATALOG,
+    '30s',
+  );
+  const { fetchKey } = useDashboardFetchKey(
+    'page-query',
+    pageQueryRefreshMin ?? '30s',
+  );
   const deferredFetchKey = useDeferredValue(fetchKey);
-  const isRefetching = fetchKey !== deferredFetchKey;
+  // Deferred so adding a card fetches its fragment without suspending the page.
+  const fragmentsKey = pageQueryFragments(renderedKeys).join(',');
+  const deferredFragmentsKey = useDeferredValue(fragmentsKey);
+  const includes = (fragment: PageQueryFragment) =>
+    deferredFragmentsKey.split(',').includes(fragment);
+  // With no card reading the query, a tick has nothing to refresh.
+  const queryFetchKey = pageQueryRefreshMin
+    ? deferredFetchKey
+    : INITIAL_FETCH_KEY;
+  const isRefetching =
+    fetchKey !== deferredFetchKey || fragmentsKey !== deferredFragmentsKey;
 
   const isAvailableTotalResourcePanel =
     useIsAvailableTotalResourceWithinResourceGroup();
@@ -56,9 +81,18 @@ const AdminDashboardPageContent: React.FC<AdminDashboardPageProps> = ({
         $agentNodeFilter: String!
         $aliveAgentFilter: String!
         $schedulableAgentFilter: String!
+        $withSessionCount: Boolean!
+        $withRecentSessions: Boolean!
+        $withAgentStats: Boolean!
       ) {
-        ...SessionCountDashboardItemFragment @arguments(scopeId: $scopeId)
-        ...RecentlyCreatedSessionFragment @arguments(scopeId: $scopeId)
+        ...SessionCountDashboardItemFragment
+          @include(if: $withSessionCount)
+          @alias
+          @arguments(scopeId: $scopeId)
+        ...RecentlyCreatedSessionFragment
+          @include(if: $withRecentSessions)
+          @alias
+          @arguments(scopeId: $scopeId)
         ...TotalResourceWithinResourceGroupFragment
           @skip(if: $skipTotalResourceWithinResourceGroup)
           @alias
@@ -68,7 +102,7 @@ const AdminDashboardPageContent: React.FC<AdminDashboardPageProps> = ({
             agentNodeFilter: $agentNodeFilter
           )
         ...AgentStatsFragment
-          @include(if: $isSuperAdmin)
+          @include(if: $withAgentStats)
           @alias
           @arguments(
             aliveAgentFilter: $aliveAgentFilter
@@ -81,18 +115,23 @@ const AdminDashboardPageContent: React.FC<AdminDashboardPageProps> = ({
         ? `project:${project.id}`
         : `domain:${currentDomainName}`,
       resourceGroup: currentResourceGroup || 'default',
-      skipTotalResourceWithinResourceGroup: !isAvailableTotalResourcePanel,
+      skipTotalResourceWithinResourceGroup:
+        !isAvailableTotalResourcePanel || !includes('totalResource'),
       isSuperAdmin,
       agentNodeFilter: `schedulable == true & status == "ALIVE" & scaling_group == "${currentResourceGroup}"`,
       aliveAgentFilter: 'status == "ALIVE"',
       schedulableAgentFilter: 'status == "ALIVE" & schedulable == true',
+      withSessionCount: includes('sessionCount'),
+      withRecentSessions: includes('recentSessions'),
+      // The catalog shows the agent stats card to superadmins only.
+      withAgentStats: isSuperAdmin && includes('agentStats'),
     },
     {
       fetchPolicy:
-        deferredFetchKey === INITIAL_FETCH_KEY
+        queryFetchKey === INITIAL_FETCH_KEY
           ? 'store-and-network'
           : 'network-only',
-      fetchKey: deferredFetchKey,
+      fetchKey: queryFetchKey,
     },
   );
 
@@ -103,7 +142,8 @@ const AdminDashboardPageContent: React.FC<AdminDashboardPageProps> = ({
       catalog={PANEL_CATALOG}
       isRefetching={isRefetching}
       queryRefs={{
-        queryRef,
+        sessionCountQueryRef: queryRef.SessionCountDashboardItemFragment,
+        recentSessionsQueryRef: queryRef.RecentlyCreatedSessionFragment,
         totalResourceQueryRef:
           queryRef.TotalResourceWithinResourceGroupFragment,
         agentStatsQueryRef: queryRef.AgentStatsFragment,

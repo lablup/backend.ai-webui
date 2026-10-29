@@ -470,3 +470,31 @@ export const toLegacyPanel = (
     },
   };
 };
+
+/** The stored board as the page shows it: sanitized, seeded when empty, synced with the catalog. */
+export const resolveBoard = (
+  stored: unknown,
+  definitions: ReadonlyArray<PanelDefinition>,
+  page: PanelPage,
+): DashboardBoard =>
+  syncBoard(
+    sanitizeBoard(stored, definitions, page) ?? seedBoard(definitions, page),
+    definitions,
+    page,
+  );
+
+/** The keys of the cards a board renders for this viewer: on the board, visible and not locked. */
+export const renderedPanelKeys = (
+  board: DashboardBoard,
+  definitions: ReadonlyArray<PanelDefinition>,
+  context: PanelCatalogContext,
+): Set<string> => {
+  const usable = new Set(
+    catalogFor(definitions, context)
+      .filter((entry) => !entry.locked)
+      .map((entry) => entry.definition.key),
+  );
+  return new Set(
+    board.panels.map((panel) => panel.key).filter((key) => usable.has(key)),
+  );
+};
