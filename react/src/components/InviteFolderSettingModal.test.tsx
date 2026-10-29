@@ -5,7 +5,6 @@
 import '../../__test__/matchMedia.mock.js';
 import '../../__test__/resizeObserver.mock.js';
 import type { InviteFolderSettingModalTestQuery } from '../__generated__/InviteFolderSettingModalTestQuery.graphql';
-import { BAIAppProvider } from '../app-shim';
 import InviteFolderSettingModal from './InviteFolderSettingModal';
 import '@testing-library/jest-dom';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
@@ -256,11 +255,14 @@ const operationNames = (environment: RelayMockEnvironment) =>
 
 // The open (pending or accepted) shares the pre-invite check finds for the
 // picked recipient; a test that wants the override notice fills it.
-let existingShareEdges: Array<{ node: { id: string } }> = [];
+let existingShareEdges: Array<{ node: Record<string, unknown> }> = [];
 const resolversFor = (operation: any) =>
   operation.request.node.params.name ===
   'InviteFolderSettingModalExistingShareQuery'
-    ? { EntityShareConnection: () => ({ edges: existingShareEdges }) }
+    ? {
+        ...RESOLVERS,
+        EntityShareConnection: () => ({ edges: existingShareEdges }),
+      }
     : RESOLVERS;
 
 // Resolves every pending query with the fixtures; mutations stay pending so
@@ -320,12 +322,9 @@ const renderModal = async () => {
   const environment = createMockEnvironment();
   render(
     <RelayEnvironmentProvider environment={environment}>
-      {/* Hosts the app-shim `modal.confirm` the override notice opens. */}
-      <BAIAppProvider>
-        <Suspense fallback={null}>
-          <Harness />
-        </Suspense>
-      </BAIAppProvider>
+      <Suspense fallback={null}>
+        <Harness />
+      </Suspense>
     </RelayEnvironmentProvider>,
   );
   // The harness query first, then the modal body's own query.
@@ -445,7 +444,25 @@ describe('InviteFolderSettingModal (#10295)', () => {
 
   it('tells the inviter before an invite restates a share the recipient already holds', async () => {
     installPopoverMock();
-    existingShareEdges = [{ node: { id: 'EntityShare:accepted' } }];
+    existingShareEdges = [
+      {
+        node: {
+          id: 'EntityShare:accepted-user3',
+          entityId: ACCEPTED_SHARE_ID,
+          recipientEntityType: 'user',
+          recipientEntityId: USER3_ID,
+          recipientEmail: null,
+          recipientEntity: {
+            __typename: 'UserV2',
+            id: btoa(`UserV2:${USER3_ID}`),
+            entityId: USER3_ID,
+            basicInfo: { email: 'user3@example.com' },
+          },
+          permissions: ['READ'],
+          status: 'ACCEPTED',
+        },
+      },
+    ];
     try {
       const user = userEvent.setup();
       const environment = await renderModal();
@@ -464,11 +481,20 @@ describe('InviteFolderSettingModal (#10295)', () => {
       );
       await resolvePendingQueries(environment);
 
-      // The check found an open share: the notice shows and nothing is sent
-      // until the inviter agrees.
+      // The check found an open share: the notice shows it as a read-only
+      // row and nothing is sent until the inviter agrees.
       expect(
         await screen.findByText('data.folders.ShareAlreadyExists'),
       ).toBeInTheDocument();
+      const noticeTable = screen.getByTestId('existing-share-table');
+      expect(noticeTable).toHaveTextContent('user3@example.com');
+      expect(noticeTable).toHaveTextContent('data.invitation.Accepted');
+      expect(noticeTable).toHaveTextContent(
+        'comp:BAIEntitySharePermissionSelector.ReadOnly',
+      );
+      expect(
+        within(noticeTable).queryByTestId('share-permission-cap'),
+      ).not.toBeInTheDocument();
       expect(operationNames(environment)).not.toContain(
         'InviteFolderSettingModalCreateShareMutation',
       );
