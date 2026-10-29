@@ -3,9 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { DEFAULT_BOARD_VARS } from './dashboardConfig';
-import { createDashboardWriter } from './dashboardStore';
+import { applyPageUpdate, createDashboardWriter } from './dashboardStore';
 import type { DashboardPageConfig, PanelPage } from './types';
 import { createWriteQueue, type WriteBatch } from './writeQueue';
+import * as _ from 'lodash-es';
 
 const DELAY = 800;
 
@@ -188,5 +189,29 @@ describe('createDashboardWriter', () => {
     upsert.pending[1].resolve();
     await done;
     expect(clearLocal).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('applyPageUpdate', () => {
+  const config = {
+    boards: [],
+    active: 'a',
+    migrated: true,
+  } as unknown as DashboardPageConfig;
+
+  it('returns null for an update that changes nothing', () => {
+    expect(applyPageUpdate(config, (current) => ({ ...current }))).toBeNull();
+    expect(
+      applyPageUpdate(_.omit(config, 'migrated'), (current) => current),
+    ).toBeNull();
+  });
+
+  it('returns the flagged config for a real change', () => {
+    expect(
+      applyPageUpdate(_.omit(config, 'migrated'), (current) => ({
+        ...current,
+        active: 'b',
+      })),
+    ).toEqual({ ...config, active: 'b' });
   });
 });
