@@ -79,6 +79,7 @@ export default defineConfig(({ mode }) => {
       target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14'],
       cssTarget: ['chrome111', 'edge111', 'firefox114', 'safari16.4', 'ios16.4'],
       rolldownOptions: {
+        plugins: [esmExternalRequirePlugin({ external: externalPatterns })],
         output: { comments: { legal: true } },
       },
       sourcemap: true,
@@ -86,7 +87,6 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: !isDevMode,
     },
     plugins: [
-      esmExternalRequirePlugin({ external: externalPatterns }),
       umdWithoutAmd(),
       react({ compiler: { compilationMode: 'annotation' } }),
       relay({
@@ -108,6 +108,13 @@ export default defineConfig(({ mode }) => {
         rollupTypes: false,
         insertTypesEntry: true,
         pathsToAliases: false,
+        afterDiagnostic(diagnostics) {
+          if (diagnostics.length > 0) {
+            throw new Error(
+              `vite-plugin-dts: ${diagnostics.length} declaration diagnostic(s)`,
+            );
+          }
+        },
         compilerOptions: {
           preserveSymlinks: false,
           rootDir: 'src',
