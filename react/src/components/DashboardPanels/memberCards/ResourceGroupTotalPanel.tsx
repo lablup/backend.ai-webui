@@ -7,7 +7,7 @@ import { useCurrentUserRole } from '../../../hooks/backendai';
 import TotalResourceWithinResourceGroup from '../../TotalResourceWithinResourceGroup';
 import type { PanelComponentProps } from '../types';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIBoardItemErrorBoundary, BAIFlex, BAISkeleton } from 'backend.ai-ui';
+import { BAIBoardItemErrorBoundary, BAISkeleton } from 'backend.ai-ui';
 import React, { Suspense, useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -53,7 +53,7 @@ const ResourceGroupTotal: React.FC<{
   );
 };
 
-/** The resource group totals, one block per resource group of the card's setting. */
+/** The totals of the card's resource group. */
 const ResourceGroupTotalPanel: React.FC<PanelComponentProps> = ({
   vars,
   fetchKey,
@@ -62,26 +62,23 @@ const ResourceGroupTotalPanel: React.FC<PanelComponentProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
-  const resourceGroups = vars.resourceGroups;
+  const resourceGroup = vars.resourceGroup;
   return (
     <BAIBoardItemErrorBoundary
       title={t('webui.menu.TotalResourcesInResourceGroup')}
       status="error"
     >
-      <BAIFlex direction="column" align="stretch" gap="sm">
-        {resourceGroups.map((resourceGroup) => (
-          <Suspense
-            key={resourceGroup}
-            fallback={<BAISkeleton style={{ padding: token('--spacing-5') }} />}
-          >
-            <ResourceGroupTotal
-              resourceGroup={resourceGroup}
-              fetchKey={fetchKey}
-              isRefetching={isRefetching}
-            />
-          </Suspense>
-        ))}
-      </BAIFlex>
+      {resourceGroup ? (
+        <Suspense
+          fallback={<BAISkeleton style={{ padding: token('--spacing-5') }} />}
+        >
+          <ResourceGroupTotal
+            resourceGroup={resourceGroup}
+            fetchKey={fetchKey}
+            isRefetching={isRefetching}
+          />
+        </Suspense>
+      ) : null}
     </BAIBoardItemErrorBoundary>
   );
 };

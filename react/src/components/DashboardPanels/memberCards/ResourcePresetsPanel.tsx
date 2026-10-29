@@ -7,11 +7,10 @@ import type { PanelComponentProps } from '../types';
 import MemberCard, { NoProjectText, mineProjectId } from './MemberCard';
 import { toPresetRows, type PresetRow } from './memberCardData';
 import { Badge } from '@lablup/ui-common/Badge';
-import { Divider } from '@lablup/ui-common/Divider';
 import { Table, type TableColumn } from '@lablup/ui-common/Table';
 import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex, BAIResourceNumberWithIcon } from 'backend.ai-ui';
-import React, { Fragment, useDeferredValue } from 'react';
+import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -91,7 +90,7 @@ const PresetAvailabilityTable: React.FC<{
   );
 };
 
-/** Which resource presets the viewer can launch now, per resource group of the card's setting. */
+/** Which resource presets the viewer can launch now in the card's resource group. */
 const ResourcePresetsPanel: React.FC<PanelComponentProps> = ({
   scope,
   vars,
@@ -100,7 +99,7 @@ const ResourcePresetsPanel: React.FC<PanelComponentProps> = ({
   'use memo';
   const { t } = useTranslation();
   const projectId = mineProjectId(scope);
-  const resourceGroups = vars.resourceGroups;
+  const resourceGroupName = vars.resourceGroup;
   return (
     <MemberCard
       title={t('dashboard.card.ResourcePresets')}
@@ -110,21 +109,16 @@ const ResourcePresetsPanel: React.FC<PanelComponentProps> = ({
       {(key) =>
         !projectId ? (
           <NoProjectText />
-        ) : resourceGroups.length === 0 ? (
+        ) : !resourceGroupName ? (
           <Text type="supporting">{t('dashboard.card.NoResourceGroup')}</Text>
         ) : (
           <BAIFlex direction="column" align="stretch" gap="sm">
-            {resourceGroups.map((resourceGroupName, index) => (
-              <Fragment key={resourceGroupName}>
-                {index > 0 ? <Divider /> : null}
-                <Text weight="semibold">{resourceGroupName}</Text>
-                <PresetAvailabilityTable
-                  projectId={projectId}
-                  resourceGroupName={resourceGroupName}
-                  fetchKey={key}
-                />
-              </Fragment>
-            ))}
+            <Text weight="semibold">{resourceGroupName}</Text>
+            <PresetAvailabilityTable
+              projectId={projectId}
+              resourceGroupName={resourceGroupName}
+              fetchKey={key}
+            />
           </BAIFlex>
         )
       }
