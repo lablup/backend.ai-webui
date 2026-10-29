@@ -601,13 +601,6 @@ export const mainLayoutChildRoutes: RouteObject[] = [
             ],
           },
           {
-            // The project's folders are listed on its Data page.
-            path: 'data',
-            Component: () => (
-              <ProjectScopedRedirect scope="project" featureKey="data" />
-            ),
-          },
-          {
             path: 'users',
             Component: () => {
               useSuspendedBackendaiClient();
@@ -1185,13 +1178,6 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       <ProjectScopedRedirect scope="projectAdmin" featureKey="session" />
     ),
     handle: { labelKey: 'webui.menu.ProjectSessions' },
-  },
-  {
-    path: '/project-data',
-    Component: () => (
-      <ProjectScopedRedirect scope="project" featureKey="data" />
-    ),
-    handle: { labelKey: 'webui.menu.Data' },
   },
   {
     path: '/project-admin-users',

@@ -114,8 +114,8 @@ const decodeSafe = (value: string): string => {
  *
  *   rewriteProjectNameInPath('/project/old/session', 'new')
  *     -> '/project/new/session'
- *   rewriteProjectNameInPath('/project/old/admin/data?x=1', 'new')
- *     -> '/project/new/admin/data?x=1'
+ *   rewriteProjectNameInPath('/project/old/admin/users?x=1', 'new')
+ *     -> '/project/new/admin/users?x=1'
  *
  * Non-project paths (e.g. `/admin/session`, `/usersettings`) are returned
  * unchanged. When `projectName` is falsy the original path is returned (we
