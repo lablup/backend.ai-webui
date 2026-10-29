@@ -106,14 +106,14 @@ Which API server a dev session talks to, and which test account it logs in with,
 - `e2e/envs/.env.playwright` — `E2E_WEBSERVER_ENDPOINT` and the `E2E_*_EMAIL` / `E2E_*_PASSWORD` pairs.
 - `config.toml` — the deployment switches the app reads at `/config.toml` (`resources.openPortToPublic`, `general.enableModelFolders`, …): `config.toml.sample` with its `[description]` placeholders disabled, the server's probed switches on top, then any `--set` overrides. Without this file Vite's SPA fallback answers `/config.toml` with `index.html` and every switch silently takes its default — `pnpm run dev` prints a warning when it is missing.
 
-| Command                                                   | Does                                                                                                |
-| --------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `pnpm run dev-env status`                                 | Where the catalog came from, when it was updated, counts, accounts without a password, probe health |
-| `pnpm run dev-env list [--json]`                          | Servers (with live/down status and manager version), accounts, tags and notes — never a password    |
-| `pnpm run dev-env config <server> [--all] [--json]`       | The server's probed `config.toml`: the manager-related switches, or every key with `--all`          |
-| `pnpm run dev-env get <server> <account> [--json]`        | One account, password included when the catalog has one                                             |
-| `pnpm run dev-env use <server> [account] [--no-password] [--set <section>.<key>=<value> …]` | Write all three files; `account` defaults to `user`; each `--set` overrides one switch in `config.toml` |
-| `pnpm run dev-env compat [--branch <name>] [--json]` | The manager compatibility policy for this branch: the supported floor line, every manager line from it up to the branch's own line with the servers on each, and the version gates at or below the floor (see below) |
+| Command                                                                                     | Does                                                                                                                                                                                                                 |
+| ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm run dev-env status`                                                                   | Where the catalog came from, when it was updated, counts, accounts without a password, probe health                                                                                                                  |
+| `pnpm run dev-env list [--json]`                                                            | Servers (with live/down status and manager version), accounts, tags and notes — never a password                                                                                                                     |
+| `pnpm run dev-env config <server> [--all] [--json]`                                         | The server's probed `config.toml`: the manager-related switches, or every key with `--all`                                                                                                                           |
+| `pnpm run dev-env get <server> <account> [--json]`                                          | One account, password included when the catalog has one                                                                                                                                                              |
+| `pnpm run dev-env use <server> [account] [--no-password] [--set <section>.<key>=<value> …]` | Write all three files; `account` defaults to `user`; each `--set` overrides one switch in `config.toml`                                                                                                              |
+| `pnpm run dev-env compat [--branch <name>] [--json]`                                        | The manager compatibility policy for this branch: the supported floor line, every manager line from it up to the branch's own line with the servers on each, and the version gates at or below the floor (see below) |
 
 `<account>` is a role (`user`, `project-admin`, `admin`) or an email. A role picks the first account with that role in the catalog's order; when others share it, `get` and `use` print `also: <emails> — pass the email to pick one`.
 
@@ -187,6 +187,28 @@ The build emits the overlay client as one chunk at `/review-overlay.js` and inje
 
 - **No `/__review/state`.** The build embeds the answer in the document instead, as `<script type="application/json" id="bai-review-state">`, with one extra field the endpoint never sends: `"host": "static"`. Blocks copied from such a build carry `pr=0` — a deployment is not a PR. (A fetch would not even have failed: Amplify rewrites every unknown path to `index.html` with a 200, so it would resolve to an HTML parse error on every boot.)
 - **No react-grab.** The app imports it behind `process.env.NODE_ENV === 'development'`, so a bundle has no fiber walk: pins carry no ⚛️ source stack, and the overlay's own hover/click picker takes over — bound to the same ⌘⌃C, and bound immediately rather than after the 20 s it otherwise spends waiting for react-grab to register. The anchor itself (selector, testid landmark, fractional rect, tag, text, note) is pure DOM and is unaffected, so pinning and deep-linking work exactly as they do in dev.
+
+## Product analytics in a build (`VITE_ANALYTICS_BUILD`)
+
+**Opt-in, off by default.** `VITE_ANALYTICS_BUILD=1` (or `true`) compiles the PostHog analytics component (`react/src/components/ProductAnalytics.tsx`) and `posthog-js` into the bundle as a lazily loaded chunk. Without it the build contains neither, and the output has no trace of PostHog (ADR 0017):
+
+```bash
+pnpm run build:react-only
+grep -rli posthog react/build   # prints nothing
+```
+
+An analytics build also needs the PostHog project key and API host. If either is missing, the app neither initialises the SDK nor sends a request:
+
+```bash
+VITE_ANALYTICS_BUILD=1 \
+VITE_POSTHOG_KEY=<project API key> \
+VITE_POSTHOG_HOST=https://posthog.example.com \
+pnpm run build
+```
+
+The same variables work in `.env.development.local` for a dev server. The SDK posts events to `VITE_POSTHOG_HOST` and loads its replay and exception-capture scripts from it, so the CSP of the server that hosts an analytics build must allow that host in `connect-src` (and in `script-src` unless the policy uses `'strict-dynamic'`). The Electron app reuses the web bundle, so it follows the same flag. What is collected and what is stripped is in ADR 0017.
+
+Per-domain opt-in through the domain app config is not part of this flag yet.
 
 ## CLI login (`/cli-login`)
 

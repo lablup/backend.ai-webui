@@ -57,6 +57,7 @@
     "nanoid": "^5.1.16",
     "nuqs": "^2.9.5",
     "p-queue": "^8.1.1",
+    "posthog-js": "^1.438.12",
     "prettier": "catalog:",
     "prism-react-renderer": "^2.4.1",
     "qrcode.react": "catalog:",

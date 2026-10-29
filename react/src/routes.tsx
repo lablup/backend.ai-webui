@@ -116,6 +116,11 @@ const SessionDetailAndContainerLogOpenerLegacy = React.lazy(
   () => import('./components/SessionDetailAndContainerLogOpenerLegacy'),
 );
 const ProjectPage = React.lazy(() => import('./pages/ProjectPage'));
+const ProductAnalytics =
+  import.meta.env.VITE_ANALYTICS_BUILD === '1' ||
+  import.meta.env.VITE_ANALYTICS_BUILD === 'true'
+    ? React.lazy(() => import('./components/ProductAnalytics'))
+    : null;
 
 const ChatPage = React.lazy(() => import('./pages/ChatPage'));
 
@@ -1701,6 +1706,13 @@ export const routes: RouteObject[] = [
             ) ? (
               <ErrorBoundaryWithNullFallback>
                 <DevReviewRouteLabel />
+              </ErrorBoundaryWithNullFallback>
+            ) : null}
+            {ProductAnalytics ? (
+              <ErrorBoundaryWithNullFallback>
+                <Suspense fallback={null}>
+                  <ProductAnalytics />
+                </Suspense>
               </ErrorBoundaryWithNullFallback>
             ) : null}
             <Suspense>
