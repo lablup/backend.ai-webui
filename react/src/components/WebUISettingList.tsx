@@ -106,9 +106,12 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
 
   // Set before the post-Apply reload so neither guard asks to confirm it.
   const isLeavingAfterApplyRef = useRef(false);
+  // Switching the page tab (`?tab=`) unmounts the draft as well.
   const blocker = useBlocker(
     ({ currentLocation, nextLocation }) =>
-      isDirty && currentLocation.pathname !== nextLocation.pathname,
+      isDirty &&
+      currentLocation.pathname + currentLocation.search !==
+        nextLocation.pathname + nextLocation.search,
   );
   const confirmLeave = useEffectEvent(() => {
     modal.confirm({
