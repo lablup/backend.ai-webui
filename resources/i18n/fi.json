@@ -1055,6 +1055,8 @@
       "SearchUser": "Hae käyttäjää",
       "SelectPermission": "Valitse lupa",
       "Serve": "Malli, joka palvelee",
+      "ShareAlreadyAccepted": "Jaettu jo käyttäjälle {{email}}",
+      "ShareAlreadyAcceptedDesc": "Tämä käyttäjä on jo hyväksynyt tämän kansion jaon. Uusi kutsu korvaa jaon käyttöoikeuden tässä valitulla.",
       "ShareFolder": "Jaa kansio",
       "SharePermission": "Jako-oikeus",
       "SharedFolderAlertDesc": "Tämä on ulkoisesti jaettu kansio.",

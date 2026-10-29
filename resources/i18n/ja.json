@@ -1055,6 +1055,8 @@
       "SearchUser": "ユーザーを検索",
       "SelectPermission": "権限を選択する",
       "Serve": "サービス",
+      "ShareAlreadyAccepted": "{{email}} とは既に共有されています",
+      "ShareAlreadyAcceptedDesc": "このユーザーはこのフォルダの共有を既に承諾しています。再度招待すると、既存の共有権限はここで選んだ権限に置き換えられます。",
       "ShareFolder": "フォルダの共有",
       "SharePermission": "共有権限",
       "SharedFolderAlertDesc": "これは外部共有フォルダーです。",

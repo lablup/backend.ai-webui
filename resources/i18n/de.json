@@ -1055,6 +1055,8 @@
       "SearchUser": "Benutzer suchen",
       "SelectPermission": "Berechtigung auswählen",
       "Serve": "Das Modell dient",
+      "ShareAlreadyAccepted": "Bereits mit {{email}} geteilt",
+      "ShareAlreadyAcceptedDesc": "Dieser Benutzer hat die Freigabe dieses Ordners bereits angenommen. Eine erneute Einladung ersetzt die Berechtigung dieser Freigabe durch die hier gewählte.",
       "ShareFolder": "Ordner teilen",
       "SharePermission": "Freigabeberechtigung",
       "SharedFolderAlertDesc": "Dies ist ein extern geteilter Ordner.",

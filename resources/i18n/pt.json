@@ -1055,6 +1055,8 @@
       "SearchUser": "Pesquisar utilizador",
       "SelectPermission": "Selecione a permissão",
       "Serve": "Serviço de modelo",
+      "ShareAlreadyAccepted": "Já partilhado com {{email}}",
+      "ShareAlreadyAcceptedDesc": "Este utilizador já aceitou uma partilha desta pasta. Convidar novamente substitui a permissão dessa partilha pela escolhida aqui.",
       "ShareFolder": "Partilhar pasta",
       "SharePermission": "Permissão de partilha",
       "SharedFolderAlertDesc": "Esta é uma pasta compartilhada externamente.",

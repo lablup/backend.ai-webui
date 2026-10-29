@@ -1055,6 +1055,8 @@
       "SearchUser": "Kullanıcı ara",
       "SelectPermission": "İzin seçin",
       "Serve": "Model servis",
+      "ShareAlreadyAccepted": "{{email}} ile zaten paylaşıldı",
+      "ShareAlreadyAcceptedDesc": "Bu kullanıcı bu klasörün paylaşımını zaten kabul etti. Yeniden davet etmek, o paylaşımın iznini burada seçilenle değiştirir.",
       "ShareFolder": "Paylaşım klasörü",
       "SharePermission": "Paylaşım izni",
       "SharedFolderAlertDesc": "Bu harici olarak paylaşılan bir klasördür.",

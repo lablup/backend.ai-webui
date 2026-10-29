@@ -5,6 +5,7 @@
 import '../../__test__/matchMedia.mock.js';
 import '../../__test__/resizeObserver.mock.js';
 import type { InviteFolderSettingModalTestQuery } from '../__generated__/InviteFolderSettingModalTestQuery.graphql';
+import { BAIAppProvider } from '../app-shim';
 import InviteFolderSettingModal from './InviteFolderSettingModal';
 import '@testing-library/jest-dom';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
@@ -254,6 +255,15 @@ const operationNames = (environment: RelayMockEnvironment) =>
     .getAllOperations()
     .map((operation) => operation.request.node.params.name);
 
+// The accepted shares the pre-invite check finds for the picked recipient;
+// a test that wants the override notice fills it.
+let existingShareEdges: Array<{ node: { id: string } }> = [];
+const resolversFor = (operation: any) =>
+  operation.request.node.params.name ===
+  'InviteFolderSettingModalExistingShareQuery'
+    ? { EntityShareConnection: () => ({ edges: existingShareEdges }) }
+    : RESOLVERS;
+
 // Resolves every pending query with the fixtures; mutations stay pending so
 // a test can read their variables first.
 const resolvePendingQueries = async (environment: RelayMockEnvironment) => {
@@ -262,7 +272,7 @@ const resolvePendingQueries = async (environment: RelayMockEnvironment) => {
       if (operation.request.node.params.operationKind === 'query') {
         environment.mock.resolve(
           operation,
-          MockPayloadGenerator.generate(operation, RESOLVERS),
+          MockPayloadGenerator.generate(operation, resolversFor(operation)),
         );
       }
     }
@@ -298,7 +308,7 @@ const findOptionResolvingQueries = (
         if (operation.request.node.params.operationKind === 'query') {
           environment.mock.resolve(
             operation,
-            MockPayloadGenerator.generate(operation, RESOLVERS),
+            MockPayloadGenerator.generate(operation, resolversFor(operation)),
           );
         }
       }
@@ -311,9 +321,12 @@ const renderModal = async () => {
   const environment = createMockEnvironment();
   render(
     <RelayEnvironmentProvider environment={environment}>
-      <Suspense fallback={null}>
-        <Harness />
-      </Suspense>
+      {/* Hosts the app-shim `modal.confirm` the override notice opens. */}
+      <BAIAppProvider>
+        <Suspense fallback={null}>
+          <Harness />
+        </Suspense>
+      </BAIAppProvider>
     </RelayEnvironmentProvider>,
   );
   // The harness query first, then the modal body's own query, then the
@@ -411,6 +424,8 @@ describe('InviteFolderSettingModal (#10295)', () => {
     await user.click(
       screen.getByRole('button', { name: 'data.folders.Invite' }),
     );
+    // The pre-invite check for an accepted share answers first.
+    await resolvePendingQueries(environment);
 
     await waitFor(() =>
       expect(operationNames(environment)).toContain(
@@ -428,6 +443,49 @@ describe('InviteFolderSettingModal (#10295)', () => {
       'SOFT_DELETE',
       'HARD_DELETE',
     ]);
+  });
+
+  it('tells the inviter before an invite restates a share the recipient already accepted', async () => {
+    installPopoverMock();
+    existingShareEdges = [{ node: { id: 'EntityShare:accepted' } }];
+    try {
+      const user = userEvent.setup();
+      const environment = await renderModal();
+
+      await user.click(screen.getByText('data.folders.SearchUser'));
+      await resolvePendingQueries(environment);
+      const searchBox = screen
+        .getAllByRole('combobox', h)
+        .find((el) => el.tagName === 'INPUT');
+      await user.type(searchBox!, 'user3@example.com');
+      await user.click(
+        await findOptionResolvingQueries(environment, /user3@example\.com/),
+      );
+      await user.click(
+        screen.getByRole('button', { name: 'data.folders.Invite' }),
+      );
+      await resolvePendingQueries(environment);
+
+      // The check found an accepted share: the notice shows and nothing is
+      // sent until the inviter agrees.
+      expect(
+        await screen.findByText('data.folders.ShareAlreadyAccepted'),
+      ).toBeInTheDocument();
+      expect(operationNames(environment)).not.toContain(
+        'InviteFolderSettingModalCreateShareMutation',
+      );
+      await user.click(
+        screen.getByRole('button', { name: 'button.Overwrite' }),
+      );
+
+      await waitFor(() =>
+        expect(operationNames(environment)).toContain(
+          'InviteFolderSettingModalCreateShareMutation',
+        ),
+      );
+    } finally {
+      existingShareEdges = [];
+    }
   });
 
   it('restates an accepted share with the picked cap, naming the recipient as the share does', async () => {
@@ -488,6 +546,8 @@ describe('InviteFolderSettingModal (#10295)', () => {
     await user.click(
       screen.getByRole('button', { name: 'data.folders.Invite' }),
     );
+    // The pre-invite check for an accepted share answers first.
+    await resolvePendingQueries(environment);
 
     await waitFor(() =>
       expect(operationNames(environment)).toContain(

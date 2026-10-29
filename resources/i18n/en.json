@@ -1042,6 +1042,8 @@
       "SearchUser": "Search user",
       "SelectPermission": "Select permission",
       "Serve": "Model serving",
+      "ShareAlreadyAccepted": "Already shared with {{email}}",
+      "ShareAlreadyAcceptedDesc": "This user has already accepted a share of this folder. Inviting again replaces that share's permission with the one picked here.",
       "ShareFolder": "Share Folder",
       "SharePermission": "Share permission",
       "SharedFolderAlertDesc": "This is an externally shared folder.",

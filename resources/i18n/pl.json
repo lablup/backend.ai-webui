@@ -1055,6 +1055,8 @@
       "SearchUser": "Szukaj użytkownika",
       "SelectPermission": "Wybierz uprawnienia",
       "Serve": "Model obsługujący",
+      "ShareAlreadyAccepted": "Już udostępniono dla {{email}}",
+      "ShareAlreadyAcceptedDesc": "Ten użytkownik już zaakceptował udostępnienie tego folderu. Ponowne zaproszenie zastąpi uprawnienie tego udostępnienia wybranym tutaj.",
       "ShareFolder": "Folder udostępniony",
       "SharePermission": "Uprawnienie udostępniania",
       "SharedFolderAlertDesc": "Jest to folder udostępniony zewnętrznie.",

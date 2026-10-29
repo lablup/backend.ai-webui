@@ -1051,6 +1051,8 @@
       "SearchUser": "ค้นหาผู้ใช้",
       "SelectPermission": "เลือกสิทธิ์",
       "Serve": "ให้บริการโมเดล",
+      "ShareAlreadyAccepted": "แชร์กับ {{email}} อยู่แล้ว",
+      "ShareAlreadyAcceptedDesc": "ผู้ใช้นี้ยอมรับการแชร์โฟลเดอร์นี้แล้ว การเชิญอีกครั้งจะแทนที่สิทธิ์ของการแชร์นั้นด้วยสิทธิ์ที่เลือกที่นี่",
       "ShareFolder": "แชร์โฟลเดอร์",
       "SharePermission": "สิทธิ์การแชร์",
       "SharedFolderAlertDesc": "นี่คือโฟลเดอร์ที่ใช้ร่วมกันภายนอก",

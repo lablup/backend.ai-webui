@@ -1055,6 +1055,8 @@
       "SearchUser": "Cari pengguna",
       "SelectPermission": "Pilih izin",
       "Serve": "Model penyajian",
+      "ShareAlreadyAccepted": "Sudah dibagikan ke {{email}}",
+      "ShareAlreadyAcceptedDesc": "Pengguna ini sudah menerima pembagian folder ini. Mengundang lagi akan mengganti izin pembagian tersebut dengan yang dipilih di sini.",
       "ShareFolder": "Folder berbagi",
       "SharePermission": "Izin berbagi",
       "SharedFolderAlertDesc": "Ini adalah folder bersama secara eksternal.",

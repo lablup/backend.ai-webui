@@ -1055,6 +1055,8 @@
       "SearchUser": "Cerca utente",
       "SelectPermission": "Seleziona il permesso",
       "Serve": "Modello di servizio",
+      "ShareAlreadyAccepted": "Già condiviso con {{email}}",
+      "ShareAlreadyAcceptedDesc": "Questo utente ha già accettato una condivisione di questa cartella. Un nuovo invito sostituisce il permesso di quella condivisione con quello scelto qui.",
       "ShareFolder": "Cartella di condivisione",
       "SharePermission": "Autorizzazione di condivisione",
       "SharedFolderAlertDesc": "Questa è una cartella condivisa esternamente.",

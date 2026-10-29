@@ -10,6 +10,7 @@
 */
 import { InviteFolderSettingModalCancelShareMutation } from '../__generated__/InviteFolderSettingModalCancelShareMutation.graphql';
 import { InviteFolderSettingModalCreateShareMutation } from '../__generated__/InviteFolderSettingModalCreateShareMutation.graphql';
+import { InviteFolderSettingModalExistingShareQuery } from '../__generated__/InviteFolderSettingModalExistingShareQuery.graphql';
 import { InviteFolderSettingModalFragment$key } from '../__generated__/InviteFolderSettingModalFragment.graphql';
 import { InviteFolderSettingModalQuery } from '../__generated__/InviteFolderSettingModalQuery.graphql';
 import { InviteFolderSettingModalRecipientsQuery } from '../__generated__/InviteFolderSettingModalRecipientsQuery.graphql';
@@ -57,9 +58,21 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleXIcon, MailXIcon, PencilIcon } from 'lucide-react';
-import React, { Suspense, useDeferredValue, useId, useState } from 'react';
+import React, {
+  Suspense,
+  useDeferredValue,
+  useId,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+import {
+  fetchQuery,
+  graphql,
+  useFragment,
+  useLazyLoadQuery,
+  useRelayEnvironment,
+} from 'react-relay';
 
 const VFOLDER_ENTITY_TYPE = 'vfolder';
 
@@ -136,6 +149,23 @@ const SetMountPolicyMutation = graphql`
         id
         userId
         permission
+      }
+    }
+  }
+`;
+
+// Asked before an invite: a share this recipient already accepted is what
+// `createEntityShare` would restate, so the inviter is told first.
+const ExistingShareQuery = graphql`
+  query InviteFolderSettingModalExistingShareQuery(
+    $scope: EntityShareScope!
+    $filter: EntityShareFilter
+  ) {
+    entityShares(scope: $scope, filter: $filter, limit: 1) {
+      edges {
+        node {
+          id
+        }
       }
     }
   }
@@ -242,14 +272,18 @@ const InviteFolderSettingModalBody: React.FC<{
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
+  const relayEnvironment = useRelayEnvironment();
   const [currentUser] = useCurrentUserInfo();
   const { accessibleProjects } = useAccessibleProjects();
   const memberProjectIds = _.compact(_.map(accessibleProjects, 'id'));
   const { options: mountLevelOptions, labelOf: mountLevelLabel } =
     useMountLevelLabels();
   const mountLevelInputId = useId();
+  // The recipient tooltip anchors on the select's trigger, not on the whole
+  // field, so it sits right above the input like the other tooltips.
+  const recipientTriggerRef = useRef<HTMLElement | null>(null);
 
   const [fetchKey, updateFetchKey] = useFetchKey();
 
@@ -280,6 +314,42 @@ const InviteFolderSettingModalBody: React.FC<{
     }
     setRecipientError(null);
     try {
+      const existing =
+        await fetchQuery<InviteFolderSettingModalExistingShareQuery>(
+          relayEnvironment,
+          ExistingShareQuery,
+          {
+            scope: {
+              target: [
+                { entityType: VFOLDER_ENTITY_TYPE, entityId: vfolderId },
+              ],
+            },
+            filter: {
+              status: { equals: 'ACCEPTED' },
+              ...(inviteTarget.kind === 'user'
+                ? { recipientEntityId: { equals: inviteTarget.userId } }
+                : { recipientEmail: { equals: inviteTarget.email } }),
+            },
+          },
+          { fetchPolicy: 'network-only' },
+        ).toPromise();
+      if (!_.isEmpty(existing?.entityShares?.edges)) {
+        const proceed = await new Promise<boolean>((resolve) =>
+          modal.confirm({
+            title: t('data.folders.ShareAlreadyAccepted'),
+            content: t('data.folders.ShareAlreadyAcceptedDesc', {
+              email: inviteTarget.email,
+            }),
+            okText: t('button.Overwrite'),
+            cancelText: t('button.Cancel'),
+            onOk: () => resolve(true),
+            onCancel: () => resolve(false),
+          }),
+        );
+        if (!proceed) {
+          return;
+        }
+      }
       // The offer is an entity share capped at the picked bits; the mount
       // level is a policy row, which an address without an account only
       // gets at the folder default once it has one.
@@ -337,11 +407,13 @@ const InviteFolderSettingModalBody: React.FC<{
           <HStack align="end" gap={2} width="100%">
             <StackItem size="fill">
               <Suspense fallback={<BAISkeleton variant="input" width="100%" />}>
-                <Tooltip
-                  content={recipient?.email}
-                  isEnabled={!!recipient?.email}
-                  placement="above"
-                  hasHoverIndication={false}
+                <div
+                  ref={(node) => {
+                    recipientTriggerRef.current =
+                      node?.querySelector<HTMLElement>(
+                        '[role="combobox"]:not(input)',
+                      ) ?? node;
+                  }}
                 >
                   <BAIScopedUserSelect
                     scope={{
@@ -375,7 +447,14 @@ const InviteFolderSettingModalBody: React.FC<{
                     status={recipientError ? { type: 'error' } : undefined}
                     width="100%"
                   />
-                </Tooltip>
+                </div>
+                <Tooltip
+                  anchorRef={recipientTriggerRef}
+                  content={recipient?.email}
+                  isEnabled={!!recipient?.email}
+                  placement="above"
+                  hasHoverIndication={false}
+                />
               </Suspense>
             </StackItem>
             <StackItem size="static">

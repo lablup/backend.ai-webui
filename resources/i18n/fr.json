@@ -1055,6 +1055,8 @@
       "SearchUser": "Rechercher un utilisateur",
       "SelectPermission": "Sélectionnez l'autorisation",
       "Serve": "Modèle en service",
+      "ShareAlreadyAccepted": "Déjà partagé avec {{email}}",
+      "ShareAlreadyAcceptedDesc": "Cet utilisateur a déjà accepté un partage de ce dossier. Une nouvelle invitation remplace la permission de ce partage par celle choisie ici.",
       "ShareFolder": "Dossier de partage",
       "SharePermission": "Autorisation de partage",
       "SharedFolderAlertDesc": "Il s'agit d'un dossier partagé externe.",

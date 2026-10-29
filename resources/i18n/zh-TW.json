@@ -1056,6 +1056,8 @@
       "SearchUser": "搜尋使用者",
       "SelectPermission": "選擇權限",
       "Serve": "服务模式",
+      "ShareAlreadyAccepted": "已與 {{email}} 共享",
+      "ShareAlreadyAcceptedDesc": "該使用者已接受此資料夾的共享。再次邀請會以此處選擇的權限取代現有的共享權限。",
       "ShareFolder": "共享文件夹",
       "SharePermission": "共享權限",
       "SharedFolderAlertDesc": "這是一個外部共享的文件夾。",
