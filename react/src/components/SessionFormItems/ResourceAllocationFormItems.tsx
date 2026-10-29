@@ -32,7 +32,9 @@ import {
   ImageEnvironmentFormInput,
 } from '../ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from '../InputNumberWithSlider';
-import ResourcePresetSelect from '../ResourcePresetSelect';
+import ResourcePresetSelect, {
+  getUnavailableSlotNames,
+} from '../ResourcePresetSelect';
 import RemainingMark from './RemainingMark';
 import SharedMemoryFormItems from './SharedMemoryFormItems';
 // FRONTIER (ticket 17): the launcher's form-visual core. The Form ENGINE and
@@ -440,6 +442,7 @@ const ResourceAllocationFormItems: React.FC<
       checkPresetInfo?.presets,
       resourceLimits,
       currentImage,
+      resourceSlotsInRG ? _.keys(resourceSlotsInRG) : undefined,
     ),
   );
   const allocatablePresetIds: string[] = JSON.parse(allocatablePresetIdsKey);
@@ -696,6 +699,51 @@ const ResourceAllocationFormItems: React.FC<
     },
   );
 
+  // The first allocatable preset, else minimum-required (or none when custom
+  // allocation is off).
+  const selectFallbackPreset = useEventNotStable(() => {
+    const firstAllocatablePreset = _.sortBy(
+      _.filter(checkPresetInfo?.presets, (preset) =>
+        allocatablePresetIds.includes(preset.id),
+      ),
+      'name',
+    )[0];
+    if (enableResourcePresets && firstAllocatablePreset) {
+      form.setFieldsValue({
+        allocationPreset: firstAllocatablePreset.id,
+      });
+      updateResourceFieldsBasedOnPreset(firstAllocatablePreset.id);
+    } else if (baiClient._config.allowCustomResourceAllocation) {
+      form.setFieldValue('allocationPreset', 'minimum-required');
+    } else {
+      form.setFieldValue('allocationPreset', null);
+    }
+  });
+
+  // A preset kept across a resource-group change (or restored from the URL) may
+  // need a slot the new group lacks; pick again instead of launching without it.
+  useEffect(() => {
+    if (_.isUndefined(resourceSlotsInRG)) return;
+    const selectedPreset = _.find(
+      checkPresetInfo?.presets,
+      (preset) => preset.id === currentAllocationPreset,
+    );
+    if (
+      selectedPreset &&
+      getUnavailableSlotNames(
+        selectedPreset.resource_slots,
+        _.keys(resourceSlotsInRG),
+      ).length > 0
+    ) {
+      selectFallbackPreset();
+    }
+  }, [
+    currentAllocationPreset,
+    resourceSlotsInRG,
+    checkPresetInfo?.presets,
+    selectFallbackPreset,
+  ]);
+
   // This effect is
   // - for auto selecting the preset right after initialling the form and resourceSlots are loaded
   // - ensuring accelerator type is valid when related data is changed
@@ -713,30 +761,10 @@ const ResourceAllocationFormItems: React.FC<
         )
       ) {
         // if the current preset is custom or minimum-required, do nothing.
-      } else {
-        const firstAllocatablePreset = _.sortBy(
-          _.filter(checkPresetInfo?.presets, (preset) =>
-            allocatablePresetIds.includes(preset.id),
-          ),
-          'name',
-        )[0];
-        if (
-          allocatablePresetIds.includes(form.getFieldValue('allocationPreset'))
-        ) {
-          // if the current preset is available in the current resource group, do nothing.
-        } else if (enableResourcePresets && firstAllocatablePreset) {
-          form.setFieldsValue({
-            allocationPreset: firstAllocatablePreset.id,
-          });
-          updateResourceFieldsBasedOnPreset(firstAllocatablePreset.id);
-        } else {
-          // if the current preset is not available in the current resource group, set to "minimum-required".
-          if (baiClient._config.allowCustomResourceAllocation) {
-            form.setFieldValue('allocationPreset', 'minimum-required');
-          } else {
-            form.setFieldValue('allocationPreset', null);
-          }
-        }
+      } else if (
+        !allocatablePresetIds.includes(form.getFieldValue('allocationPreset'))
+      ) {
+        selectFallbackPreset();
       }
       ensureValidAcceleratorType();
       form
@@ -753,11 +781,9 @@ const ResourceAllocationFormItems: React.FC<
     checkPresetInfo?.presets,
     resourceSlotsInRG,
     form,
-    enableResourcePresets,
     // below are functions wrapped by useEventNotStable
     ensureValidAcceleratorType,
-    updateResourceFieldsBasedOnPreset,
-    baiClient._config.allowCustomResourceAllocation,
+    selectFallbackPreset,
   ]);
 
   // This effect is for auto updating the resource fields when minimum-required preset is selected
@@ -866,6 +892,9 @@ const ResourceAllocationFormItems: React.FC<
               'name',
             )}
             resourceGroup={currentResourceGroupInForm}
+            availableSlotNames={
+              resourceSlotsInRG ? _.keys(resourceSlotsInRG) : undefined
+            }
           />
         </Form.Item>
       ) : null}
@@ -1857,6 +1886,8 @@ export const getAllocatablePresetIds = (
   presets: Array<ResourcePreset> | undefined,
   resourceLimits: MergedResourceLimits,
   currentImage: Image,
+  // Slots the resource group's agents provide; `undefined` skips the check.
+  slotNamesInRG?: string[],
 ) => {
   const currentImageAcceleratorLimits = _.filter(
     currentImage?.resource_limits,
@@ -1865,6 +1896,13 @@ export const getAllocatablePresetIds = (
   );
 
   const bySliderLimit = _.filter(presets, (preset) => {
+    // A slot the group lacks is not "no limit": the session could never get it.
+    if (
+      slotNamesInRG &&
+      getUnavailableSlotNames(preset.resource_slots, slotNamesInRG).length > 0
+    ) {
+      return false;
+    }
     // After allow pending session, we don't need to check allocatable field.
     // if (_.has(preset, 'allocatable')) {
     //   return !!preset.allocatable;
