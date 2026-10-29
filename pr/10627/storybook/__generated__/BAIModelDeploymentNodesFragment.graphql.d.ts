@@ -2,7 +2,7 @@ import { ReaderFragment, FragmentRefs } from 'relay-runtime';
 export type DeploymentStatus = "DEPLOYING" | "PENDING" | "READY" | "SCALING" | "STOPPED" | "STOPPING" | "%future added value";
 export type DeploymentStrategyType = "BLUE_GREEN" | "ROLLING" | "%future added value";
 export type BAIModelDeploymentNodesFragment$data = ReadonlyArray<{
-    readonly currentRevision: {
+    readonly currentRevision?: {
         readonly id: string;
         readonly modelMountConfig: {
             readonly vfolder: {
@@ -13,11 +13,11 @@ export type BAIModelDeploymentNodesFragment$data = ReadonlyArray<{
         readonly revisionNumber: number;
     } | null | undefined;
     readonly currentRevisionId: string | null | undefined;
-    readonly defaultDeploymentStrategy: {
+    readonly defaultDeploymentStrategy?: {
         readonly type: DeploymentStrategyType;
     };
     readonly entityId: string;
-    readonly entityLabels: {
+    readonly entityLabels?: {
         readonly " $fragmentSpreads": FragmentRefs<"BAIEntityLabelSettingModalFragment" | "BAIEntityLabelTokensFragment">;
     } | null | undefined;
     readonly id: string;
@@ -26,7 +26,7 @@ export type BAIModelDeploymentNodesFragment$data = ReadonlyArray<{
         readonly domainName: string;
         readonly name: string;
         readonly projectId: string;
-        readonly projectV2: {
+        readonly projectV2?: {
             readonly basicInfo: {
                 readonly name: string;
             };
@@ -36,18 +36,20 @@ export type BAIModelDeploymentNodesFragment$data = ReadonlyArray<{
         readonly status: DeploymentStatus;
         readonly updatedAt: string;
     };
-    readonly networkAccess: {
+    readonly networkAccess?: {
         readonly endpointUrl: string | null | undefined;
         readonly openToPublic: boolean;
         readonly preferredDomainName: string | null | undefined;
     };
+    readonly ownerInfo?: {
+        readonly " $fragmentSpreads": FragmentRefs<"BAIDeploymentOwnerInfo_deployment">;
+    } | null | undefined;
     readonly replicaState: {
         readonly desiredReplicaCount: number;
     };
     readonly runningReplicas: {
         readonly count: number;
     } | null | undefined;
-    readonly " $fragmentSpreads": FragmentRefs<"BAIDeploymentOwnerInfo_deployment">;
     readonly " $fragmentType": "BAIModelDeploymentNodesFragment";
 }>;
 export type BAIModelDeploymentNodesFragment$key = ReadonlyArray<{
