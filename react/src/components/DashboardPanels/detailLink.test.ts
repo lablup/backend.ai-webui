@@ -30,9 +30,9 @@ describe('card detail links', () => {
     );
   });
 
-  it('opens the pending tab with the first resource group on the superadmin page only', () => {
+  it('opens the pending tab with the card resource group on the superadmin page only', () => {
     expect(
-      hrefOf('pendingSessions', 'admin', { resourceGroups: ['rg-a', 'rg-b'] }),
+      hrefOf('pendingSessions', 'admin', { resourceGroups: ['rg-a'] }),
     ).toBe('/admin/session?tab=pending-sessions&resourceGroup=rg-a');
     expect(hrefOf('pendingSessions', 'admin')).toBe(
       '/admin/session?tab=pending-sessions',

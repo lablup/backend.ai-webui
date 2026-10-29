@@ -35,11 +35,17 @@ describe('effectivePanelSettings', () => {
     ).toEqual({ resourceGroups: ['a'], range: 'now-1h' });
     expect(
       effectivePanelSettings(
-        { resourceGroups: ['a', 'b'] },
+        { resourceGroups: ['a'] },
         { resourceGroups: ['c'] },
         BOTH,
       ),
     ).toEqual({ resourceGroups: ['c'] });
+  });
+
+  it('reads only the first group of an older multi-group setting', () => {
+    expect(
+      effectivePanelSettings({ resourceGroups: ['a', 'b'] }, undefined, BOTH),
+    ).toEqual({ resourceGroups: ['a'] });
   });
 
   it('treats an empty resource group pick as the card default', () => {
@@ -74,11 +80,18 @@ describe('overriddenSettings', () => {
     });
     expect(
       overriddenSettings(
-        { resourceGroups: ['b', 'a'] },
         { resourceGroups: ['a', 'b'] },
+        { resourceGroups: ['a'] },
         BOTH,
       ),
     ).toEqual({ resourceGroup: false, range: false });
+    expect(
+      overriddenSettings(
+        { resourceGroups: ['a'] },
+        { resourceGroups: ['b'] },
+        BOTH,
+      ),
+    ).toEqual({ resourceGroup: true, range: false });
   });
 });
 

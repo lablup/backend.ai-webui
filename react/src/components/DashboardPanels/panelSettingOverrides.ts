@@ -8,8 +8,9 @@ import { atom } from 'jotai';
 import * as _ from 'lodash-es';
 
 /**
- * A value picked in a card's header. `resourceGroups: []` is the card's
- * default group (the current one, or every group on a custom panel).
+ * A value picked in a card's header. `resourceGroups` holds one group; `[]`
+ * is the card's default group (the current one, or every group on a custom
+ * panel).
  */
 export interface PanelSettingOverride {
   resourceGroups?: Array<string>;
@@ -29,8 +30,8 @@ type SettingsOwner = Pick<PanelDefinition, 'settings'>;
 
 const rangeOf = (settings: PanelSettings | undefined) =>
   settings?.range ?? DEFAULT_RANGE;
-const resourceGroupsOf = (settings: PanelSettings | undefined) =>
-  settings?.resourceGroups ?? [];
+const resourceGroupOf = (settings: PanelSettings | undefined) =>
+  settings?.resourceGroups?.[0] ?? null;
 
 /** What the card reads: the header's value, else the saved setting; undefined when both are default. */
 export const effectivePanelSettings = (
@@ -39,7 +40,7 @@ export const effectivePanelSettings = (
   definition: SettingsOwner,
 ): PanelSettings | undefined => {
   const resourceGroups = hasSetting(definition, 'resourceGroup')
-    ? (override?.resourceGroups ?? saved?.resourceGroups)
+    ? (override?.resourceGroups ?? saved?.resourceGroups)?.slice(0, 1)
     : undefined;
   const range = hasSetting(definition, 'range')
     ? (override?.range ?? saved?.range)
@@ -61,10 +62,7 @@ export const overriddenSettings = (
   return {
     resourceGroup:
       hasSetting(definition, 'resourceGroup') &&
-      !_.isEqual(
-        _.sortBy(resourceGroupsOf(effective)),
-        _.sortBy(resourceGroupsOf(saved)),
-      ),
+      resourceGroupOf(effective) !== resourceGroupOf(saved),
     range:
       hasSetting(definition, 'range') && rangeOf(effective) !== rangeOf(saved),
   };

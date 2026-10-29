@@ -49,7 +49,7 @@ const PanelSettingsHeaderControls: React.FC = () => {
   if (!settings || !filters) return null;
   const { definition, saved, effective, overridden, onChange, onReset } =
     settings;
-  const resourceGroups = effective?.resourceGroups ?? [];
+  const resourceGroup = effective?.resourceGroups?.[0] ?? null;
   const savedRange = saved?.range;
   const defaultResourceGroupLabel =
     definition.kind === 'preset'
@@ -58,7 +58,7 @@ const PanelSettingsHeaderControls: React.FC = () => {
         t('dashboard.settings.CurrentResourceGroup'));
   const savedLabel = [
     hasSetting(definition, 'resourceGroup')
-      ? (saved?.resourceGroups?.join(', ') ?? defaultResourceGroupLabel)
+      ? (saved?.resourceGroups?.[0] ?? defaultResourceGroupLabel)
       : null,
     hasSetting(definition, 'range')
       ? t(
@@ -84,14 +84,9 @@ const PanelSettingsHeaderControls: React.FC = () => {
             label={t('general.ResourceGroup')}
             isLabelHidden
             scope={resourceGroupScopeOf(filters.scope)}
-            // A saved choice of several groups stays a label; the header picks one or the default.
-            value={resourceGroups.length === 1 ? resourceGroups[0] : null}
-            placeholder={
-              resourceGroups.length > 1
-                ? resourceGroups.join(', ')
-                : defaultResourceGroupLabel
-            }
-            allowClear={resourceGroups.length === 1}
+            value={resourceGroup}
+            placeholder={defaultResourceGroupLabel}
+            allowClear={!!resourceGroup}
             onChange={(value) =>
               onChange({
                 resourceGroups: typeof value === 'string' ? [value] : [],
