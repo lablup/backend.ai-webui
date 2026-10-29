@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { withinWindow } from '../timeRange';
 import {
   AUDIT_ENTITY_TYPES,
   byCpuUsage,
@@ -69,10 +70,7 @@ describe('entityTypeFailureFilters', () => {
 
   it('filters the window as two ANDed bounds and failures as ERROR or DENIED', () => {
     const { session } = entityTypeFailureFilters(window);
-    expect(session.AND).toEqual([
-      { createdAt: { after: window.after } },
-      { createdAt: { before: window.before } },
-    ]);
+    expect(session.AND).toEqual(withinWindow('createdAt', window).AND);
     expect(session.status).toEqual({ in: ['ERROR', 'DENIED'] });
   });
 });
