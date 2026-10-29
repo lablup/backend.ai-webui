@@ -1051,7 +1051,7 @@
       "Serve": "Modelo de servicio",
       "ShareFolder": "Compartir carpeta",
       "SharedFolderAlertDesc": "Esta es una carpeta compartida externamente.",
-      "SharedProjectFolderVisibleToMembers": "Las carpetas creadas en un proyecto de equipo son visibles para otros miembros. Para uso personal, cree la carpeta en su proyecto personal.",
+      "SharedProjectFolderVisibleToMembers": "Las carpetas de un proyecto general (que no es su proyecto personal) también pueden verlas los demás miembros del proyecto. Si la carpeta es solo para usted, créela en su proyecto personal.",
       "SharedUser": "Usuario compartido",
       "SharedUserDesc": "Solo los usuarios que aceptaron la invitación se muestran en la lista.\n\nLos usuarios que todavía están invitando no se muestran.",
       "Status": "Estado",

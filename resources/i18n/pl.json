@@ -1051,7 +1051,7 @@
       "Serve": "Model obsługujący",
       "ShareFolder": "Folder udostępniony",
       "SharedFolderAlertDesc": "Jest to folder udostępniony zewnętrznie.",
-      "SharedProjectFolderVisibleToMembers": "Foldery utworzone w projekcie zespołowym są widoczne dla innych członków. Folder do użytku osobistego utwórz w swoim projekcie osobistym.",
+      "SharedProjectFolderVisibleToMembers": "Foldery w projekcie ogólnym (innym niż Twój projekt osobisty) widzą także pozostali członkowie projektu. Jeśli folder jest tylko dla Ciebie, utwórz go w swoim projekcie osobistym.",
       "SharedUser": "Udostępniony użytkownik",
       "SharedUserDesc": "Tylko użytkownicy, którzy przyjęli zaproszenie, są wyświetlani na liście.\n\nUżytkownicy, którzy nadal są zapraszani, nie są wyświetlani.",
       "Status": "Status",

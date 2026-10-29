@@ -1051,7 +1051,7 @@
       "Serve": "服务模式",
       "ShareFolder": "共享文件夹",
       "SharedFolderAlertDesc": "这是一个外部共享的文件夹。",
-      "SharedProjectFolderVisibleToMembers": "在团队项目中创建的文件夹对其他成员可见。如需创建个人用途的文件夹，请在个人项目中创建。",
+      "SharedProjectFolderVisibleToMembers": "非个人项目的普通项目中的文件夹，该项目的其他成员也可以看到。如果文件夹仅供您自己使用，请在个人项目中创建。",
       "SharedUser": "共享用户",
       "SharedUserDesc": "列表中只有接受邀请的用户。\n\n仍未显示仍在邀请的用户。",
       "Status": "现状",

@@ -1051,7 +1051,7 @@
       "Serve": "Hidangan model",
       "ShareFolder": "Kongsi Folder",
       "SharedFolderAlertDesc": "Ini adalah folder yang dikongsi secara luaran.",
-      "SharedProjectFolderVisibleToMembers": "Folder yang dicipta dalam projek pasukan kelihatan kepada ahli lain. Untuk kegunaan peribadi, cipta folder dalam projek peribadi anda.",
+      "SharedProjectFolderVisibleToMembers": "Folder dalam projek umum (bukan projek peribadi anda) juga boleh dilihat oleh ahli lain projek tersebut. Jika folder itu hanya untuk anda, sila cipta dalam projek peribadi anda.",
       "SharedUser": "Pengguna Dikongsi",
       "SharedUserDesc": "Hanya pengguna yang menerima jemputan yang dipaparkan pada senarai.\n\nPengguna yang masih mengundang tidak dipaparkan.",
       "Status": "Status",

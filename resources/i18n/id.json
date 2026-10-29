@@ -1051,7 +1051,7 @@
       "Serve": "Model penyajian",
       "ShareFolder": "Folder berbagi",
       "SharedFolderAlertDesc": "Ini adalah folder bersama secara eksternal.",
-      "SharedProjectFolderVisibleToMembers": "Folder yang dibuat di proyek tim terlihat oleh anggota lain. Untuk keperluan pribadi, buat folder di proyek pribadi Anda.",
+      "SharedProjectFolderVisibleToMembers": "Folder di proyek umum (bukan proyek pribadi Anda) juga dapat dilihat oleh anggota lain proyek tersebut. Jika folder hanya untuk Anda, buatlah di proyek pribadi Anda.",
       "SharedUser": "Pengguna bersama",
       "SharedUserDesc": "Hanya pengguna yang menerima undangan yang ditampilkan dalam daftar.\n\nPengguna yang masih mengundang tidak ditampilkan.",
       "Status": "Status",

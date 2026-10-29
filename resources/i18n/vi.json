@@ -1051,7 +1051,7 @@
       "Serve": "Phục vụ người mẫu",
       "ShareFolder": "Chia sẻ thư mục",
       "SharedFolderAlertDesc": "Đây là một thư mục được chia sẻ bên ngoài.",
-      "SharedProjectFolderVisibleToMembers": "Thư mục tạo trong dự án nhóm sẽ hiển thị với các thành viên khác. Để dùng cho mục đích cá nhân, hãy tạo thư mục trong dự án cá nhân của bạn.",
+      "SharedProjectFolderVisibleToMembers": "Thư mục trong dự án chung (không phải dự án cá nhân của bạn) cũng hiển thị với các thành viên khác của dự án. Nếu thư mục chỉ dành cho bạn, hãy tạo nó trong dự án cá nhân của bạn.",
       "SharedUser": "Người dùng được chia sẻ",
       "SharedUserDesc": "Chỉ người dùng chấp nhận lời mời mới được hiển thị trong danh sách.\n\nNgười dùng vẫn đang mời không được hiển thị.",
       "Status": "Trạng thái",

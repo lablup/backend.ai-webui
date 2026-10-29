@@ -1051,7 +1051,7 @@
       "Serve": "Model servis",
       "ShareFolder": "Paylaşım klasörü",
       "SharedFolderAlertDesc": "Bu harici olarak paylaşılan bir klasördür.",
-      "SharedProjectFolderVisibleToMembers": "Bir takım projesinde oluşturulan klasörler diğer üyeler tarafından görülebilir. Kişisel kullanım için klasörü kişisel projenizde oluşturun.",
+      "SharedProjectFolderVisibleToMembers": "Genel bir projedeki (kişisel projeniz olmayan) klasörleri projenin diğer üyeleri de görebilir. Klasör yalnızca sizin içinse lütfen kişisel projenizde oluşturun.",
       "SharedUser": "Paylaşılan kullanıcı",
       "SharedUserDesc": "Listede yalnızca davetiyeyi kabul eden kullanıcılar görüntülenir.\n\nHala davet eden kullanıcılar görüntülenmiyor.",
       "Status": "Durum",

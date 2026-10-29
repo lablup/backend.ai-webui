@@ -276,7 +276,7 @@ describe('FolderCreateModalV2 project prop contract (ADR-0001)', () => {
     }
   });
 
-  it('shows the visibility notice and holds Create for a confirm in a team project', async () => {
+  it('shows the visibility notice and holds Create for a confirm in a general project', async () => {
     clientState.skipSharedConfirm = false;
     try {
       const user = userEvent.setup();

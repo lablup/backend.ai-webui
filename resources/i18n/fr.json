@@ -1051,7 +1051,7 @@
       "Serve": "Modèle en service",
       "ShareFolder": "Dossier de partage",
       "SharedFolderAlertDesc": "Il s'agit d'un dossier partagé externe.",
-      "SharedProjectFolderVisibleToMembers": "Les dossiers créés dans un projet d'équipe sont visibles par les autres membres. Pour un usage personnel, créez le dossier dans votre projet personnel.",
+      "SharedProjectFolderVisibleToMembers": "Les dossiers d'un projet général (autre que votre projet personnel) sont aussi visibles par les autres membres du projet. Si le dossier est réservé à votre usage, créez-le dans votre projet personnel.",
       "SharedUser": "Utilisateur partagé",
       "SharedUserDesc": "Seuls les utilisateurs qui ont accepté l'invitation sont affichés sur la liste.\n\nLes utilisateurs qui invitent encore ne sont pas affichés.",
       "Status": "Statut",

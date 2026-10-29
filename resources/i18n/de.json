@@ -1051,7 +1051,7 @@
       "Serve": "Das Modell dient",
       "ShareFolder": "Ordner teilen",
       "SharedFolderAlertDesc": "Dies ist ein extern geteilter Ordner.",
-      "SharedProjectFolderVisibleToMembers": "Ordner in einem Teamprojekt sind für andere Mitglieder sichtbar. Ordner für den persönlichen Gebrauch erstellen Sie bitte in Ihrem persönlichen Projekt.",
+      "SharedProjectFolderVisibleToMembers": "Ordner in einem allgemeinen Projekt (nicht Ihrem persönlichen Projekt) sind auch für die anderen Mitglieder des Projekts sichtbar. Wenn der Ordner nur für Sie ist, erstellen Sie ihn bitte in Ihrem persönlichen Projekt.",
       "SharedUser": "Freigegebener Benutzer",
       "SharedUserDesc": "Nur Benutzer, die die Einladung angenommen haben, werden in der Liste angezeigt.\n\nBenutzer, die noch einladend sind, werden nicht angezeigt.",
       "Status": "Status",

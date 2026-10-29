@@ -1051,7 +1051,7 @@
       "Serve": "서비스",
       "ShareFolder": "폴더 공유하기",
       "SharedFolderAlertDesc": "이 폴더는 다른 사용자가 공유한 폴더입니다.",
-      "SharedProjectFolderVisibleToMembers": "팀 프로젝트에서 폴더를 생성하면 다른 멤버에게도 보이게 됩니다. 개인 목적으로 폴더를 생성하시고 싶다면 개인 프로젝트에서 폴더를 생성해주세요.",
+      "SharedProjectFolderVisibleToMembers": "개인 프로젝트가 아닌 일반 프로젝트의 폴더는 해당 프로젝트의 다른 멤버도 볼 수 있습니다. 나만 사용할 폴더라면 개인 프로젝트에서 생성해 주세요.",
       "SharedUser": "공유된 사용자",
       "SharedUserDesc": "초대를 수락한 사용자만 목록에 표시됩니다.\n아직 초대가 진행 중인 사용자는 표시되지 않습니다.",
       "Status": "상태",

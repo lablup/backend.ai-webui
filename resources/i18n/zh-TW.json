@@ -1052,7 +1052,7 @@
       "Serve": "服务模式",
       "ShareFolder": "共享文件夹",
       "SharedFolderAlertDesc": "這是一個外部共享的文件夾。",
-      "SharedProjectFolderVisibleToMembers": "在團隊專案中建立的資料夾對其他成員可見。如需建立個人用途的資料夾，請在個人專案中建立。",
+      "SharedProjectFolderVisibleToMembers": "非個人專案的一般專案中的資料夾，該專案的其他成員也看得到。如果資料夾只供您自己使用，請在個人專案中建立。",
       "SharedUser": "共享用戶",
       "SharedUserDesc": "列表中只有接受邀請的用戶。\n\n仍未顯示仍在邀請的用戶。",
       "Status": "现状",

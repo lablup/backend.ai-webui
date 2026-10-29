@@ -1051,7 +1051,7 @@
       "Serve": "Malli, joka palvelee",
       "ShareFolder": "Jaa kansio",
       "SharedFolderAlertDesc": "Tämä on ulkoisesti jaettu kansio.",
-      "SharedProjectFolderVisibleToMembers": "Tiimiprojektissa luodut kansiot näkyvät muille jäsenille. Luo henkilökohtaiseen käyttöön tarkoitettu kansio henkilökohtaisessa projektissasi.",
+      "SharedProjectFolderVisibleToMembers": "Yleisen projektin (ei henkilökohtaisen projektisi) kansiot näkyvät myös projektin muille jäsenille. Jos kansio on vain sinua varten, luo se henkilökohtaisessa projektissasi.",
       "SharedUser": "Jaettu käyttäjä",
       "SharedUserDesc": "Vain kutsun hyväksyneet käyttäjät näytetään luettelossa.\n\nVielä kutsuvia käyttäjiä ei näytetä.",
       "Status": "Tila",

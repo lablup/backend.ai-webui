@@ -1051,7 +1051,7 @@
       "Serve": "サービス",
       "ShareFolder": "フォルダの共有",
       "SharedFolderAlertDesc": "これは外部共有フォルダーです。",
-      "SharedProjectFolderVisibleToMembers": "チームプロジェクトで作成したフォルダーは他のメンバーにも表示されます。個人用のフォルダーは個人プロジェクトで作成してください。",
+      "SharedProjectFolderVisibleToMembers": "個人プロジェクトではない一般プロジェクトのフォルダーは、そのプロジェクトの他のメンバーも閲覧できます。自分だけが使うフォルダーは個人プロジェクトで作成してください。",
       "SharedUser": "共有ユーザー",
       "SharedUserDesc": "招待状を受け入れたユーザーのみがリストに表示されます。\n\nまだ招待しているユーザーは表示されません。",
       "Status": "状態",

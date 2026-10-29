@@ -1051,7 +1051,7 @@
       "Serve": "Serviço de modelo",
       "ShareFolder": "Partilhar pasta",
       "SharedFolderAlertDesc": "Esta é uma pasta compartilhada externamente.",
-      "SharedProjectFolderVisibleToMembers": "As pastas criadas num projeto de equipa são visíveis para outros membros. Para uso pessoal, crie a pasta no seu projeto pessoal.",
+      "SharedProjectFolderVisibleToMembers": "As pastas de um projeto geral (que não é o seu projeto pessoal) também podem ser vistas pelos outros membros do projeto. Se a pasta for só para si, crie-a no seu projeto pessoal.",
       "SharedUser": "Usuário compartilhado",
       "SharedUserDesc": "Somente os usuários que aceitaram o convite são exibidos na lista.\n\nOs usuários que ainda estão convidativos não são exibidos.",
       "Status": "Estado",

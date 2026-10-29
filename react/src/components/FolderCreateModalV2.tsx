@@ -145,7 +145,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
   const effectiveProject = project ?? selectedProject;
 
   const { personalProject } = useAccessibleProjects();
-  // A team project's folders are visible to its members; the model-store
+  // A general project's folders are visible to its members; the model-store
   // admin flow is excluded.
   const isSharedTarget =
     !!effectiveProject &&

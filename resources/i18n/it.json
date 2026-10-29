@@ -1051,7 +1051,7 @@
       "Serve": "Modello di servizio",
       "ShareFolder": "Cartella di condivisione",
       "SharedFolderAlertDesc": "Questa è una cartella condivisa esternamente.",
-      "SharedProjectFolderVisibleToMembers": "Le cartelle create in un progetto di team sono visibili agli altri membri. Per uso personale, crea la cartella nel tuo progetto personale.",
+      "SharedProjectFolderVisibleToMembers": "Le cartelle di un progetto generale (non il tuo progetto personale) sono visibili anche agli altri membri del progetto. Se la cartella è solo per te, creala nel tuo progetto personale.",
       "SharedUser": "Utente condiviso",
       "SharedUserDesc": "Solo gli utenti che hanno accettato l'invito vengono visualizzati nell'elenco.\n\nGli utenti che sono ancora invitanti non vengono visualizzati.",
       "Status": "Stato",
