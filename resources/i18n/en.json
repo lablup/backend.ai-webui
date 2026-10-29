@@ -1038,7 +1038,7 @@
       "Serve": "Model serving",
       "ShareFolder": "Share Folder",
       "SharedFolderAlertDesc": "This is an externally shared folder.",
-      "SharedProjectFolderVisibleToMembers": "Folders in a general project (one that is not your personal project) can be seen by the project's other members. If the folder is just for you, please create it in your personal project.",
+      "SharedProjectFolderVisibleToMembers": "Folders in a general project (one that is not your personal project) can be seen by the project's other members. For personal use, please create the folder in your personal project.",
       "SharedUser": "Shared Users",
       "SharedUserDesc": "Only users who accepted the invitation are displayed on the list.\n\nUsers who are still inviting are not displayed.",
       "Status": "Status",
