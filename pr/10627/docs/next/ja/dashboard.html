@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="ダッシュボード" />
   <meta name="twitter:description" content="ダッシュボードはログイン後に最初に表示されるページです。現在のプロジェクトで自分が作成、所有しているセッション、リソース、フォルダー、デプロイ、最近のアクティビティをまとめて表示し、以前のスタートページにあった操作もここから始めます。すべてのカードは現在のプロジェクトで自分のものだけを集計します。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ダッシュボード","inLanguage":"ja","description":"ダッシュボードはログイン後に最初に表示されるページです。現在のプロジェクトで自分が作成、所有しているセッション、リソース、フォルダー、デプロイ、最近のアクティビティをまとめて表示し、以前のスタートページにあった操作もここから始めます。すべてのカードは現在のプロジェクトで自分のものだけを集計します。","dateModified":"2026-10-27T09:44:24.000Z","url":"https://webui.docs.backend.ai/next/ja/dashboard.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ダッシュボード","inLanguage":"ja","description":"ダッシュボードはログイン後に最初に表示されるページです。現在のプロジェクトで自分が作成、所有しているセッション、リソース、フォルダー、デプロイ、最近のアクティビティをまとめて表示し、以前のスタートページにあった操作もここから始めます。すべてのカードは現在のプロジェクトで自分のものだけを集計します。","dateModified":"2026-10-29T06:43:59.000Z","url":"https://webui.docs.backend.ai/next/ja/dashboard.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/dashboard.html" />
   <link rel="alternate" hreflang="en" href="../en/dashboard.html" />
   <link rel="alternate" hreflang="ja" href="../ja/dashboard.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (215f9a6)">v26.10.0-alpha.1 (215f9a6)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (1974172)">v26.10.0-alpha.1 (1974172)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -225,7 +225,7 @@
   現在のプロジェクトで最近作成した自分のセッションの一覧です。セッション名をクリックすると詳細ドロワーが開きます。</p>
 </li>
 <li data-bai-block="7"><p><strong>私の総リソース使用量:</strong>
-  カード設定のリソースグループごと(既定ではヘッダーで選択したリソースグループ)に、自分のセッションが使用しているリソースを、キーペア、プロジェクト、ドメインの上限のうち最も低い上限とあわせて表示します。</p>
+  カード設定のリソースグループ(既定ではヘッダーで選択したリソースグループ)で、自分のセッションが使用しているリソースを、キーペア、プロジェクト、ドメインの上限のうち最も低い上限とあわせて表示します。</p>
 </li>
 <li data-bai-block="8"><p><strong>リソースグループの総リソース:</strong>
   カード設定のリソースグループ(既定ではヘッダーで選択したリソースグループ)の使用量と空き容量を、グループ内のエージェントのデータを合算して表示します。</p>
@@ -273,14 +273,14 @@
 <p><a id="adding-and-removing-cards"></a></p>
 <h3 data-bai-block="23" id="dashboard-カードの追加と削除">カードの追加と削除<a class="hash-link" href="#dashboard-カードの追加と削除" aria-label="Direct link to カードの追加と削除">#</a></h3>
 <p data-bai-block="24">ダッシュボード右上の更新ボタンの横にある<strong>編集</strong>ボタンをクリックすると、ボードの右側に編集サイドバーが開き、<strong>閉じる</strong>をクリックすると再び非表示になります。サイドバーの<strong>カード</strong>一覧には、このダッシュボードに配置できるカードが種類ごとにまとめて表示され、上部の検索欄で絞り込めます。カードにチェックを入れるとボードに追加され、チェックを外すとボードから外れます。外したカードはいつでも再び追加できます。この環境で利用できないカードは、一覧に無効の状態で表示されます。</p>
-<p data-bai-block="25"><strong>リソースプリセット</strong>カードは、カード設定のリソースグループごと(既定ではヘッダーで選択したリソースグループ)に、各リソースプリセットがまだ割り当て可能な範囲に収まるかを表示します。新しいダッシュボードには配置されないため、<strong>カード</strong>一覧でチェックを入れて追加します。</p>
+<p data-bai-block="25"><strong>リソースプリセット</strong>カードは、カード設定のリソースグループ(既定ではヘッダーで選択したリソースグループ)で、各リソースプリセットがまだ割り当て可能な範囲に収まるかを表示します。新しいダッシュボードには配置されないため、<strong>カード</strong>一覧でチェックを入れて追加します。</p>
 <p><a id="card-settings"></a></p>
 <h3 data-bai-block="26" id="dashboard-カード設定">カード設定<a class="hash-link" href="#dashboard-カード設定" aria-label="Direct link to カード設定">#</a></h3>
 <p data-bai-block="27">一部のカードは、リソースグループや期間によって内容が変わります。編集サイドバーでは、このようなカードの名前の下に現在の設定と設定(スライダー)ボタンが表示されます。ボタンをクリックして次の項目を指定します。</p>
 <ul>
-<li data-bai-block="28"><strong>私の総リソース使用量</strong>、<strong>リソースプリセット</strong>、<strong>リソースグループの総リソース</strong>の<strong>リソースグループ</strong>: 選択したリソースグループごとにブロックを1つずつ表示します。何も選択しない場合は、ヘッダーで選択したリソースグループに従います。</li>
+<li data-bai-block="28"><strong>私の総リソース使用量</strong>、<strong>リソースプリセット</strong>、<strong>リソースグループの総リソース</strong>の<strong>リソースグループ</strong>: 選択した1つのリソースグループを表示します。何も選択しない場合は、ヘッダーで選択したリソースグループに従います。</li>
 <li data-bai-block="29"><strong>自分のアクティビティ</strong>の<strong>期間</strong>: <strong>過去1時間</strong>、<strong>過去24時間</strong>、<strong>過去7日間</strong>から選びます。</li>
-<li data-bai-block="30"><strong>セッション</strong>および<strong>デプロイ</strong>カスタムパネルの<strong>リソースグループ</strong>: 選択したリソースグループの行だけを表示します。何も選択しない場合は、すべてのリソースグループを表示します。</li>
+<li data-bai-block="30"><strong>セッション</strong>および<strong>デプロイ</strong>カスタムパネルの<strong>リソースグループ</strong>: 選択した1つのリソースグループの行だけを表示します。何も選択しない場合は、すべてのリソースグループを表示します。</li>
 </ul>
 <p data-bai-block="31">設定はボードとともに保存されます。リソースグループや期間によって内容が変わらないカードには設定ボタンがありません。</p>
 <p><a id="custom-panels"></a></p>
@@ -318,13 +318,13 @@
 
 <p><a id="automatic-refresh"></a></p>
 <h2 data-bai-block="49" id="dashboard-自動更新">自動更新<a class="hash-link" href="#dashboard-自動更新" aria-label="Direct link to 自動更新">#</a></h2>
-<p data-bai-block="50">ダッシュボード右上の更新ボタンが、このページで唯一の更新コントロールです。クリックするとすべてのカードを一度に再読み込みします。隣の矢印で自動更新の間隔(オフ、または5秒から10分、既定は30秒)を設定でき、この選択はボードとともに保存されます。フォルダー数のようにゆっくり変わるデータのカードは、選んだ間隔より低い頻度で更新されます。</p>
+<p data-bai-block="50">ダッシュボード右上の更新ボタンが、このページで唯一の更新コントロールです。クリックするとすべてのカードを一度に再読み込みします。隣の矢印で自動更新の間隔(オフ、または5秒から10分、既定は1分)を設定でき、この選択はボードとともに保存されます。自動更新では、画面に表示されているすべてのカードをまとめて再読み込みします。画面外にスクロールしたカードはスキップされ、再び表示されたときに選んだ間隔内に更新されていなければ、すぐに再読み込みします。</p>
 
 </section>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ja/dashboard/dashboard.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> このページを編集</a>
-  <span class="last-updated">最終更新日 2026年10月27日</span>
+  <span class="last-updated">最終更新日 2026年10月29日</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./start.html">

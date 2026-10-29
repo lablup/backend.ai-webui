@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Dashboard" />
   <meta name="twitter:description" content="The Dashboard is the first page you see after logging in. It summarizes your own sessions, resources, folders, deployments, and recent activity in the…" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Dashboard","inLanguage":"en","description":"The Dashboard is the first page you see after logging in. It summarizes your own sessions, resources, folders, deployments, and recent activity in the…","dateModified":"2026-10-27T09:44:24.000Z","url":"https://webui.docs.backend.ai/next/en/dashboard.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Dashboard","inLanguage":"en","description":"The Dashboard is the first page you see after logging in. It summarizes your own sessions, resources, folders, deployments, and recent activity in the…","dateModified":"2026-10-29T06:43:59.000Z","url":"https://webui.docs.backend.ai/next/en/dashboard.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/dashboard.html" />
   <link rel="alternate" hreflang="en" href="../en/dashboard.html" />
   <link rel="alternate" hreflang="ja" href="../ja/dashboard.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (215f9a6)">v26.10.0-alpha.1 (215f9a6)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.1 (1974172)">v26.10.0-alpha.1 (1974172)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -235,13 +235,13 @@ resource group or a time range keep their own setting; see
   to open its detail drawer.</p>
 </li>
 <li data-bai-block="7"><p><strong>My Total Resource Usage</strong>:
-  For each resource group in the card&#39;s setting (by default, the resource group
+  For the resource group in the card&#39;s setting (by default, the resource group
   chosen in the header), how much of each resource your sessions use against the
   lowest of your keypair, project, and domain limits.</p>
 </li>
 <li data-bai-block="8"><p><strong>Total Resources in Resource Group</strong>:
-  The used and free resources of the resource groups in the card&#39;s setting (by
-  default, the header&#39;s resource group), aggregated from their agents.</p>
+  The used and free resources of the resource group in the card&#39;s setting (by
+  default, the header&#39;s resource group), aggregated from its agents.</p>
 </li>
 </ul>
 <div class="admonition admonition-note">
@@ -306,7 +306,7 @@ grouped by kind, with a search box above it. Check a card to add it to the
 board and uncheck it to remove it; you can add it back at any time. A card that
 cannot be used in this environment is listed but disabled.</p>
 <p data-bai-block="25">The <strong>Resource Presets</strong> card, which shows whether each resource preset still
-fits in what you can allocate in each resource group in the card&#39;s setting (by
+fits in what you can allocate in the resource group in the card&#39;s setting (by
 default, the header&#39;s resource group), is not on a new dashboard. Check it in
 the <strong>Cards</strong> list to add it.</p>
 <p><a id="card-settings"></a></p>
@@ -315,13 +315,12 @@ the <strong>Cards</strong> list to add it.</p>
 card shows its current setting under its name and a settings (sliders) button.
 Click it to choose:</p>
 <ul>
-<li data-bai-block="28"><strong>Resource groups</strong> for <strong>My Total Resource Usage</strong>, <strong>Resource Presets</strong>, and
-<strong>Total Resources in Resource Group</strong>: the card shows one block per selected
-resource group. With none selected, it follows the resource group chosen in
-the header.</li>
+<li data-bai-block="28"><strong>Resource group</strong> for <strong>My Total Resource Usage</strong>, <strong>Resource Presets</strong>, and
+<strong>Total Resources in Resource Group</strong>: the card shows the selected resource
+group. With none selected, it follows the resource group chosen in the header.</li>
 <li data-bai-block="29"><strong>Time range</strong> for <strong>My Activity</strong>: the last hour, 24 hours, or 7 days.</li>
-<li data-bai-block="30"><strong>Resource groups</strong> for <strong>Sessions</strong> and <strong>Deployments</strong> custom panels: the
-panel lists only rows in those resource groups. With none selected, it lists
+<li data-bai-block="30"><strong>Resource group</strong> for <strong>Sessions</strong> and <strong>Deployments</strong> custom panels: the
+panel lists only rows in that resource group. With none selected, it lists
 every resource group.</li>
 </ul>
 <p data-bai-block="31">The setting is saved with your board. Cards that do not depend on a resource
@@ -391,15 +390,16 @@ query remains listed in the sidebar but is not shown on the board.</p>
 <p data-bai-block="50">The refresh button at the top right of the dashboard is the only refresh control
 on the page: click it to reload every card at once. The arrow next to it sets
 how often the dashboard refreshes by itself (off, or every 5 seconds to
-10 minutes; 30 seconds by default), and the choice is saved with your board.
-Cards whose data changes slowly, such as folder counts, refresh less often than
-the interval you choose.</p>
+10 minutes; 1 minute by default), and the choice is saved with your board. Each
+automatic refresh reloads every card on screen together. A card scrolled out of
+view is skipped, and reloads as soon as it comes back into view if it has not
+refreshed within the interval.</p>
 
 </section>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/en/dashboard/dashboard.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> Edit this page</a>
-  <span class="last-updated">Last updated on Oct 27, 2026</span>
+  <span class="last-updated">Last updated on Oct 29, 2026</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./start.html">
