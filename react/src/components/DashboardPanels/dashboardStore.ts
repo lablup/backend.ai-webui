@@ -4,6 +4,7 @@
  */
 import type { DashboardPageConfig, PanelPage } from './types';
 import { createWriteQueue, type WriteBatch } from './writeQueue';
+import * as _ from 'lodash-es';
 
 export const DASHBOARD_WRITE_DELAY_MS = 800;
 
@@ -28,6 +29,15 @@ export interface DashboardWriter {
 export const withMigratedFlag = (
   config: DashboardPageConfig,
 ): DashboardPageConfig => ({ ...config, migrated: true });
+
+/** The flagged config `update` produces, or null when it changes nothing worth a write. */
+export const applyPageUpdate = (
+  config: DashboardPageConfig,
+  update: (config: DashboardPageConfig) => DashboardPageConfig,
+): DashboardPageConfig | null => {
+  const next = withMigratedFlag(update(config));
+  return _.isEqual(next, withMigratedFlag(config)) ? null : next;
+};
 
 export const createDashboardWriter = ({
   write,
