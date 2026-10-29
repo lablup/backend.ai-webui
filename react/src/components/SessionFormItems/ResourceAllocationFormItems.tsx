@@ -1464,8 +1464,7 @@ const ResourceAllocationFormItems: React.FC<
 };
 
 // Not wrapped in `React.memo`: on React 19.2 a memo() fiber never republishes
-// its `useEffectEvent`s, and `Form.useWatch` is built on one (#10705). The
-// compiled launcher page keeps the element stable, so nothing is lost.
+// its `useEffectEvent`s, and `Form.useWatch` is built on one (#10705).
 export default ResourceAllocationFormItems;
 
 export const getAllocatablePresetIds = (

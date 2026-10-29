@@ -140,10 +140,13 @@ to a value it has already seen — the session launcher's accelerator bug
 - do not wrap a component that calls `useEffectEvent`, directly or through a
   hook such as `Form.useWatch`, in `React.memo()` without a compare function
   or in `forwardRef()`;
-- removing such a wrapper costs nothing when the rendering parent is compiled
-  (`'use memo'` and no compiler bailout): its JSX element is then referentially
-  stable, so the child bails out as before. A parent that is not compiled
-  re-renders the child on every render — check the parent before removing.
+- removing such a wrapper costs nothing when every rendering parent is
+  compiled: its JSX element is then referentially stable, so the child bails
+  out as before. Compiled means the parent body starts with `'use memo'` and
+  `pnpm --filter ./react exec eslint <parent file>` reports no React Compiler
+  diagnostic for it (a bailout leaves the parent uncompiled). A parent that is
+  not compiled re-renders the child on every render — check each parent
+  before removing.
 
 ## When NOT to use `useEffectEvent`
 
