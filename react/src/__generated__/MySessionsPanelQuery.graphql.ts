@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6a0f647ebd9e74bd7287b80d6fbb9be7>>
+ * @generated SignedSource<<b3630823b653a214cc586e0b06ee2d79>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -125,16 +125,12 @@ export type SessionV2NetworkTypeFilter = {
   notIn?: ReadonlyArray<SessionV2NetworkType> | null | undefined;
 };
 export type MySessionsPanelQuery$variables = {
-  all: SessionV2Filter;
   batch: SessionV2Filter;
   inference: SessionV2Filter;
   interactive: SessionV2Filter;
   system: SessionV2Filter;
 };
 export type MySessionsPanelQuery$data = {
-  readonly all: {
-    readonly count: number;
-  } | null | undefined;
   readonly batch: {
     readonly count: number;
   } | null | undefined;
@@ -157,34 +153,29 @@ const node: ConcreteRequest = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "all"
+  "name": "batch"
 },
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "batch"
+  "name": "inference"
 },
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "inference"
+  "name": "interactive"
 },
 v3 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "interactive"
-},
-v4 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
   "name": "system"
 },
-v5 = {
+v4 = {
   "kind": "Literal",
   "name": "limit",
   "value": 1
 },
-v6 = [
+v5 = [
   {
     "alias": null,
     "args": null,
@@ -193,7 +184,7 @@ v6 = [
     "storageKey": null
   }
 ],
-v7 = [
+v6 = [
   {
     "alias": "interactive",
     "args": [
@@ -202,13 +193,13 @@ v7 = [
         "name": "filter",
         "variableName": "interactive"
       },
-      (v5/*: any*/)
+      (v4/*: any*/)
     ],
     "concreteType": "SessionV2Connection",
     "kind": "LinkedField",
     "name": "mySessionsV2",
     "plural": false,
-    "selections": (v6/*: any*/),
+    "selections": (v5/*: any*/),
     "storageKey": null
   },
   {
@@ -219,13 +210,13 @@ v7 = [
         "name": "filter",
         "variableName": "batch"
       },
-      (v5/*: any*/)
+      (v4/*: any*/)
     ],
     "concreteType": "SessionV2Connection",
     "kind": "LinkedField",
     "name": "mySessionsV2",
     "plural": false,
-    "selections": (v6/*: any*/),
+    "selections": (v5/*: any*/),
     "storageKey": null
   },
   {
@@ -236,13 +227,13 @@ v7 = [
         "name": "filter",
         "variableName": "inference"
       },
-      (v5/*: any*/)
+      (v4/*: any*/)
     ],
     "concreteType": "SessionV2Connection",
     "kind": "LinkedField",
     "name": "mySessionsV2",
     "plural": false,
-    "selections": (v6/*: any*/),
+    "selections": (v5/*: any*/),
     "storageKey": null
   },
   {
@@ -253,30 +244,13 @@ v7 = [
         "name": "filter",
         "variableName": "system"
       },
-      (v5/*: any*/)
+      (v4/*: any*/)
     ],
     "concreteType": "SessionV2Connection",
     "kind": "LinkedField",
     "name": "mySessionsV2",
     "plural": false,
-    "selections": (v6/*: any*/),
-    "storageKey": null
-  },
-  {
-    "alias": "all",
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "filter",
-        "variableName": "all"
-      },
-      (v5/*: any*/)
-    ],
-    "concreteType": "SessionV2Connection",
-    "kind": "LinkedField",
-    "name": "mySessionsV2",
-    "plural": false,
-    "selections": (v6/*: any*/),
+    "selections": (v5/*: any*/),
     "storageKey": null
   }
 ];
@@ -286,40 +260,38 @@ return {
       (v0/*: any*/),
       (v1/*: any*/),
       (v2/*: any*/),
-      (v3/*: any*/),
-      (v4/*: any*/)
+      (v3/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
     "name": "MySessionsPanelQuery",
-    "selections": (v7/*: any*/),
+    "selections": (v6/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v3/*: any*/),
-      (v1/*: any*/),
       (v2/*: any*/),
-      (v4/*: any*/),
-      (v0/*: any*/)
+      (v0/*: any*/),
+      (v1/*: any*/),
+      (v3/*: any*/)
     ],
     "kind": "Operation",
     "name": "MySessionsPanelQuery",
-    "selections": (v7/*: any*/)
+    "selections": (v6/*: any*/)
   },
   "params": {
-    "cacheID": "22c3c489b84b762750a64dfafcfe9f7b",
+    "cacheID": "936ebc2252d4931d078751a3bcd81eb7",
     "id": null,
     "metadata": {},
     "name": "MySessionsPanelQuery",
     "operationKind": "query",
-    "text": "query MySessionsPanelQuery(\n  $interactive: SessionV2Filter!\n  $batch: SessionV2Filter!\n  $inference: SessionV2Filter!\n  $system: SessionV2Filter!\n  $all: SessionV2Filter!\n) {\n  interactive: mySessionsV2(filter: $interactive, limit: 1) {\n    count\n  }\n  batch: mySessionsV2(filter: $batch, limit: 1) {\n    count\n  }\n  inference: mySessionsV2(filter: $inference, limit: 1) {\n    count\n  }\n  system: mySessionsV2(filter: $system, limit: 1) {\n    count\n  }\n  all: mySessionsV2(filter: $all, limit: 1) {\n    count\n  }\n}\n"
+    "text": "query MySessionsPanelQuery(\n  $interactive: SessionV2Filter!\n  $batch: SessionV2Filter!\n  $inference: SessionV2Filter!\n  $system: SessionV2Filter!\n) {\n  interactive: mySessionsV2(filter: $interactive, limit: 1) {\n    count\n  }\n  batch: mySessionsV2(filter: $batch, limit: 1) {\n    count\n  }\n  inference: mySessionsV2(filter: $inference, limit: 1) {\n    count\n  }\n  system: mySessionsV2(filter: $system, limit: 1) {\n    count\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "786672522a1f76f7fc2d355c42bb6766";
+(node as any).hash = "97b4166210c19574ce35130c00163c33";
 
 export default node;

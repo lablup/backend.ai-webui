@@ -13,6 +13,7 @@ import type { PanelComponentProps } from '../types';
 import MemberCard, { NoProjectText, mineProjectId } from './MemberCard';
 import { toDonutRows } from './memberCardData';
 import { useSessionTypeLabel } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -40,10 +41,6 @@ const MySessionsDonut: React.FC<{ projectId: string; fetchKey: string }> = ({
     batch: typeFilter(projectId, 'BATCH'),
     inference: typeFilter(projectId, 'INFERENCE'),
     system: typeFilter(projectId, 'SYSTEM'),
-    all: {
-      projectId: { equals: projectId },
-      status: { in: [...ACTIVE_STATUSES] },
-    } satisfies SessionV2Filter,
   };
   const deferredVariables = useDeferredValue(variables);
   // Count aliases read only `count`; V2 connections reject `limit: 0`, so every card asks for 1 row.
@@ -54,7 +51,6 @@ const MySessionsDonut: React.FC<{ projectId: string; fetchKey: string }> = ({
         $batch: SessionV2Filter!
         $inference: SessionV2Filter!
         $system: SessionV2Filter!
-        $all: SessionV2Filter!
       ) {
         interactive: mySessionsV2(filter: $interactive, limit: 1) {
           count
@@ -68,47 +64,47 @@ const MySessionsDonut: React.FC<{ projectId: string; fetchKey: string }> = ({
         system: mySessionsV2(filter: $system, limit: 1) {
           count
         }
-        all: mySessionsV2(filter: $all, limit: 1) {
-          count
-        }
       }
     `,
     deferredVariables,
     { fetchPolicy: 'store-and-network', fetchKey },
   );
 
+  // The four types are all of `SessionV2Type`, so their sum is the active total.
+  const rows = toDonutRows([
+    {
+      key: 'INTERACTIVE',
+      label: sessionTypeLabel('INTERACTIVE'),
+      count: data.interactive?.count,
+    },
+    {
+      key: 'BATCH',
+      label: sessionTypeLabel('BATCH'),
+      count: data.batch?.count,
+    },
+    {
+      key: 'INFERENCE',
+      label: sessionTypeLabel('INFERENCE'),
+      count: data.inference?.count,
+    },
+    {
+      key: 'SYSTEM',
+      label: sessionTypeLabel('SYSTEM'),
+      count: data.system?.count,
+    },
+  ]);
+
   return (
     <DonutChart
       label={t('session.MySessions')}
       emptyText={t('dashboard.card.NoActiveSessions')}
-      total={data.all?.count}
+      total={_.sumBy(rows, 'value')}
       columnLabels={{
         name: t('session.SessionType'),
         value: t('dashboard.card.Count'),
         percent: t('dashboard.card.Share'),
       }}
-      rows={toDonutRows([
-        {
-          key: 'INTERACTIVE',
-          label: sessionTypeLabel('INTERACTIVE'),
-          count: data.interactive?.count,
-        },
-        {
-          key: 'BATCH',
-          label: sessionTypeLabel('BATCH'),
-          count: data.batch?.count,
-        },
-        {
-          key: 'INFERENCE',
-          label: sessionTypeLabel('INFERENCE'),
-          count: data.inference?.count,
-        },
-        {
-          key: 'SYSTEM',
-          label: sessionTypeLabel('SYSTEM'),
-          count: data.system?.count,
-        },
-      ])}
+      rows={rows}
     />
   );
 };
