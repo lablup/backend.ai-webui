@@ -949,9 +949,6 @@ importers:
       '@lexical/code':
         specifier: 0.46.0
         version: 0.46.0(typescript@6.0.3)
-      '@lexical/headless':
-        specifier: 0.46.0
-        version: 0.46.0(bufferutil@4.1.0)(typescript@6.0.3)(utf-8-validate@6.0.6)
       '@lexical/html':
         specifier: 0.46.0
         version: 0.46.0(typescript@6.0.3)
@@ -3512,14 +3509,6 @@ packages:
 
   '@lexical/hashtag@0.46.0':
     resolution: {integrity: sha512-6XiL5/KXyCxR+oD7fWjJL3enqsrkn4hgjEa13wAQrBZ5W+avFl/9Cd5bkwcXS+jPjmhk47+zYj76l6uuiFoMoQ==}
-    peerDependencies:
-      typescript: '>=5.2'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-
-  '@lexical/headless@0.46.0':
-    resolution: {integrity: sha512-I7TkYchbgEUsntH2TcDvGBVw/wiP2ARpFfuzVotCcmaujBioZG329UEMs7tNl6F3ApfuCOk55BFEU7DG9KgFgA==}
     peerDependencies:
       typescript: '>=5.2'
     peerDependenciesMeta:
@@ -13730,17 +13719,6 @@ snapshots:
     optionalDependencies:
       typescript: 6.0.3
 
-  '@lexical/headless@0.46.0(bufferutil@4.1.0)(typescript@6.0.3)(utf-8-validate@6.0.6)':
-    dependencies:
-      '@lexical/internal': 0.46.0(typescript@6.0.3)
-      happy-dom: 20.11.1(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      lexical: 0.46.0(typescript@6.0.3)
-    optionalDependencies:
-      typescript: 6.0.3
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
   '@lexical/history@0.46.0(typescript@6.0.3)':
     dependencies:
       '@lexical/extension': 0.46.0(typescript@6.0.3)
@@ -15156,11 +15134,13 @@ snapshots:
 
   '@types/unist@3.0.3': {}
 
-  '@types/whatwg-mimetype@3.0.2': {}
+  '@types/whatwg-mimetype@3.0.2':
+    optional: true
 
   '@types/ws@8.18.1':
     dependencies:
       '@types/node': 26.1.2
+    optional: true
 
   '@types/yargs-parser@21.0.3': {}
 
@@ -16510,6 +16490,7 @@ snapshots:
   buffer-image-size@0.6.4:
     dependencies:
       '@types/node': 26.1.2
+    optional: true
 
   buffer-xor@1.0.3: {}
 
@@ -18485,6 +18466,7 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+    optional: true
 
   has-bigints@1.1.0: {}
 
@@ -22901,7 +22883,8 @@ snapshots:
       - esbuild
       - uglify-js
 
-  whatwg-mimetype@3.0.0: {}
+  whatwg-mimetype@3.0.0:
+    optional: true
 
   whatwg-mimetype@5.0.0: {}
 
@@ -23264,7 +23247,6 @@ time:
   '@lablup/ui-common-cli@0.2.0-alpha.20.canary-20261024004224-2768d882e': '2026-10-24T00:46:42.998Z'
   '@lablup/ui-common@0.2.0-alpha.20.canary-20261024004224-2768d882e': '2026-10-24T00:49:50.124Z'
   '@lexical/code@0.46.0': '2026-06-26T04:53:10.477Z'
-  '@lexical/headless@0.46.0': '2026-06-26T04:53:54.941Z'
   '@lexical/html@0.46.0': '2026-06-26T04:54:04.106Z'
   '@lexical/link@0.46.0': '2026-06-26T04:54:13.503Z'
   '@lexical/list@0.46.0': '2026-06-26T04:54:18.946Z'
