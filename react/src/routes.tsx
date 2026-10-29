@@ -1005,7 +1005,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         },
       },
       {
-        path: 'webui-settings',
+        path: 'system-settings',
         element: (
           <Suspense fallback={<BAISkeleton rows={4} />}>
             <WebUISettingsPage />
@@ -1013,7 +1013,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         ),
         handle: {
           scope: 'admin',
-          menuKey: 'webui-settings',
+          menuKey: 'system-settings',
           access: 'admin',
           labelKey: 'webui.menu.SystemSettings',
         },

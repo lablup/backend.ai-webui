@@ -119,7 +119,7 @@ export const VALID_MENU_KEYS = [
   'branding',
   'rbac',
   'information',
-  'webui-settings',
+  'system-settings',
 ] as const;
 
 export type MenuKeys = (typeof VALID_MENU_KEYS)[number];
@@ -148,7 +148,7 @@ const ALL_ADMIN_PAGE_KEYS: ReadonlySet<string> = new Set([
   'branding',
   'rbac',
   'information',
-  'webui-settings',
+  'system-settings',
 ]);
 
 // Admin-category page keys reachable by a project admin (3-tier admin gating).
@@ -566,7 +566,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     createAdminMenuItem(
       t('webui.menu.SystemSettings'),
       <Settings2 style={{ color: token('--color-info') }} size="1em" />,
-      'webui-settings',
+      'system-settings',
       'admin-system',
     ),
   ]);
