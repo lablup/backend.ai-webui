@@ -2365,6 +2365,7 @@
   "projectSelect": {
     "AskAdminForProjectAccess": "Ask your administrator to grant you access to a project.",
     "GoToProject": "Go to {{project}}",
+    "MyProject": "My Project",
     "NoAccessibleProjects": "No accessible projects.",
     "Personal": "Personal",
     "PersonalProjectCannotBeRemoved": "The personal project assigned to the user cannot be removed.",

@@ -2378,6 +2378,7 @@
   "projectSelect": {
     "AskAdminForProjectAccess": "Ζητήστε από τον διαχειριστή σας να σας παραχωρήσει πρόσβαση σε ένα έργο.",
     "GoToProject": "Μετάβαση στο {{project}}",
+    "MyProject": "Το έργο μου",
     "NoAccessibleProjects": "Δεν υπάρχουν προσβάσιμα έργα.",
     "Personal": "Προσωπικό",
     "PersonalProjectCannotBeRemoved": "Το προσωπικό έργο που έχει ανατεθεί στον χρήστη δεν μπορεί να αφαιρεθεί.",
