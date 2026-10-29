@@ -91,17 +91,25 @@ let trustedCerts;
 const trustedCertsPath = () =>
   path.join(app.getPath('userData'), 'trusted-certificates.json');
 
+// host -> { fingerprint, certificate (PEM) }; the PEM lets the wsproxy pin the
+// same certificate for its Node TLS connections.
 function getTrustedCerts() {
   if (!trustedCerts) {
+    trustedCerts = {};
     try {
       const parsed = JSON.parse(nfs.readFileSync(trustedCertsPath(), 'utf-8'));
-      trustedCerts =
-        parsed && typeof parsed === 'object' && !Array.isArray(parsed)
-          ? parsed
-          : {};
+      for (const [host, pin] of Object.entries(parsed ?? {})) {
+        if (
+          typeof pin?.fingerprint === 'string' &&
+          typeof pin?.certificate === 'string'
+        ) {
+          trustedCerts[host] = pin;
+        }
+      }
     } catch {
-      trustedCerts = {};
+      // Missing or unreadable: nothing is trusted.
     }
+    manager.setTrustedCertificates?.(trustedCerts);
   }
   return trustedCerts;
 }
@@ -174,7 +182,10 @@ function promptCertificateTrust(host, certificate, previous, parent) {
           refusedCerts.add(key);
           return false;
         }
-        getTrustedCerts()[host] = certificate.fingerprint;
+        getTrustedCerts()[host] = {
+          fingerprint: certificate.fingerprint,
+          certificate: certificate.data,
+        };
         try {
           nfs.writeFileSync(
             trustedCertsPath(),
@@ -702,6 +713,7 @@ function setSameSitePolicy() {
 }
 
 app.on('ready', () => {
+  getTrustedCerts(); // hands the pins to the wsproxy before any session starts
   // Registering the 'file' protocol
   protocol.handle('file', async (request) => {
     let url = request.url.substr(7); // strip 'file://' from the URL
@@ -785,7 +797,7 @@ app.on(
       return;
     }
     const host = new URL(url).host;
-    const previous = getTrustedCerts()[host];
+    const previous = getTrustedCerts()[host]?.fingerprint;
     if (previous === certificate.fingerprint) {
       callback(true);
       return;
