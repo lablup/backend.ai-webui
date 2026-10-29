@@ -852,7 +852,7 @@
       "Last1Hour": "1 jam terakhir",
       "Last24Hours": "24 jam terakhir",
       "Last7Days": "7 hari terakhir",
-      "ResourceGroups": "Grup sumber daya",
+      "ResourceGroup": "Grup sumber daya",
       "ResourceGroupsDescription": "Jika tidak ada yang dipilih: {{default}}",
       "TimeRange": "Rentang waktu"
     }
