@@ -17,6 +17,7 @@ import { toDonutRows } from '../memberCards/memberCardData';
 import type { PanelComponentProps } from '../types';
 import ScopedCard from './ScopedCard';
 import { BAIFlex, useSessionTypeLabel } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -41,11 +42,8 @@ const SESSION_TYPES = [
   { key: 'system', type: 'SYSTEM' },
 ] as const satisfies ReadonlyArray<{ key: string; type: SessionV2Type }>;
 
-// `active` is every active session, the total the donut shows in its hole.
 type CountKey =
-  | (typeof STATUS_GROUPS)[number]['key']
-  | (typeof SESSION_TYPES)[number]['key']
-  | 'active';
+  (typeof STATUS_GROUPS)[number]['key'] | (typeof SESSION_TYPES)[number]['key'];
 
 type StatusCounts = Readonly<
   Record<CountKey, { readonly count: number } | null | undefined>
@@ -74,7 +72,6 @@ export const sessionCountFilters = (
     batch: activeOfType('BATCH'),
     inference: activeOfType('INFERENCE'),
     system: activeOfType('SYSTEM'),
-    active: withStatus(ACTIVE_STATUSES),
   };
 };
 
@@ -89,6 +86,14 @@ const SessionStatusView: React.FC<{ data: StatusCounts }> = ({ data }) => {
     running: 'RUNNING',
     terminating: 'TERMINATING',
   };
+  // Every session has one of the four types, so their sum is the active total.
+  const typeRows = toDonutRows(
+    SESSION_TYPES.map(({ key, type }) => ({
+      key: type,
+      label: sessionTypeLabel(type),
+      count: data[key]?.count,
+    })),
+  );
   return (
     <BAIFlex
       direction="column"
@@ -113,14 +118,8 @@ const SessionStatusView: React.FC<{ data: StatusCounts }> = ({ data }) => {
           value: t('dashboard.card.Count'),
           percent: t('dashboard.card.Share'),
         }}
-        total={data.active?.count}
-        rows={toDonutRows(
-          SESSION_TYPES.map(({ key, type }) => ({
-            key: type,
-            label: sessionTypeLabel(type),
-            count: data[key]?.count,
-          })),
-        )}
+        total={_.sumBy(typeRows, 'value')}
+        rows={typeRows}
       />
     </BAIFlex>
   );
@@ -145,7 +144,6 @@ const MineSessionCounts: React.FC<{ projectId: string; fetchKey: string }> = ({
         $batch: SessionV2Filter!
         $inference: SessionV2Filter!
         $system: SessionV2Filter!
-        $active: SessionV2Filter!
       ) {
         pending: mySessionsV2(filter: $pending, limit: 1) {
           count
@@ -169,9 +167,6 @@ const MineSessionCounts: React.FC<{ projectId: string; fetchKey: string }> = ({
           count
         }
         system: mySessionsV2(filter: $system, limit: 1) {
-          count
-        }
-        active: mySessionsV2(filter: $active, limit: 1) {
           count
         }
       }
@@ -200,7 +195,6 @@ const ProjectSessionCounts: React.FC<{
         $batch: SessionV2Filter!
         $inference: SessionV2Filter!
         $system: SessionV2Filter!
-        $active: SessionV2Filter!
       ) {
         pending: projectSessionsV2(
           scope: { projectId: $projectId }
@@ -254,13 +248,6 @@ const ProjectSessionCounts: React.FC<{
         system: projectSessionsV2(
           scope: { projectId: $projectId }
           filter: $system
-          limit: 1
-        ) {
-          count
-        }
-        active: projectSessionsV2(
-          scope: { projectId: $projectId }
-          filter: $active
           limit: 1
         ) {
           count
