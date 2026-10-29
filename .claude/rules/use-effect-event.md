@@ -28,7 +28,7 @@ inside an effect:
   available: `ahooks` is not a dependency of this repo.
 
 `useEffectEvent` solves all of these. It returns a stable function whose body
-always reads the *latest* values from the surrounding closure. The dep array
+always reads the _latest_ values from the surrounding closure. The dep array
 of the surrounding `useEffect` only needs the values that actually represent
 "things this effect should re-synchronize on."
 
@@ -40,7 +40,7 @@ of the surrounding `useEffect` only needs the values that actually represent
 2. The `useEffect` dep array should contain **only** the values the effect
    genuinely synchronizes against — typically 0–2 entries: primary inputs
    like a fetched ID, a query parameter, or `active`/`apiEndpoint` flags.
-   Helper callbacks, loggers, and parent props that you only *call* from
+   Helper callbacks, loggers, and parent props that you only _call_ from
    inside the effect must not appear in deps; move them into a
    `useEffectEvent` callback instead.
 3. Do **not** disable `react-hooks/exhaustive-deps` to omit deps. Either:
@@ -78,14 +78,14 @@ const Child: React.FC<{ data: Data; onLoaded: (d: Data) => void }> = ({
 useEffect(() => {
   if (data) onLoaded(data);
 }, [data, onLoaded]); // ← `onLoaded` re-fires the effect on every parent
-                      //   re-render; effect re-runs even when `data`
-                      //   hasn't changed
+//   re-render; effect re-runs even when `data`
+//   hasn't changed
 ```
 
 ### ✅ With `useEffectEvent`: precise deps, latest closure
 
 ```tsx
-import { useEffect, useEffectEvent } from 'react';
+import { useEffect, useEffectEvent } from "react";
 
 const Child: React.FC<{ data: Data; onLoaded: (d: Data) => void }> = ({
   data,
@@ -116,7 +116,7 @@ const onMount = useEffectEvent(() => {
 useEffect(() => {
   onMount();
 }, []); // ← only when mount key changes (and `key` prop on JSX
-        //   guarantees a fresh mount, not in-place updates)
+//   guarantees a fresh mount, not in-place updates)
 ```
 
 **StrictMode caveat**: empty-dep effects fire **twice** in dev StrictMode.
@@ -124,9 +124,24 @@ If the side effect is not idempotent (starts a network request, opens a
 window, etc.), guard with a `useRef` flag, or rely on the parent's `key`
 prop to remount cleanly so identity is the synchronization key.
 
+## React 19.2 trap: no `useEffectEvent` inside `memo()` / `forwardRef()`
+
+React 19.2.x republishes a `useEffectEvent` implementation only for plain
+function-component fibers; inside a `React.memo()` or `forwardRef()` component
+every effect event keeps its **first render's** closure for the component's
+whole life (react/react#34818, fixed in React 19.3 by react/react#34831).
+`Form.useWatch` is built on one, so a `memo()`-wrapped component that watches a
+field silently drops a change back to a value it has already seen — the session
+launcher's accelerator bug (#10705). Until React is on 19.3 (#10706):
+
+- do not wrap a component that calls `useEffectEvent`, directly or through a
+  hook such as `Form.useWatch`, in `React.memo()` or `forwardRef()`;
+- `'use memo'` already gives the component the compiler's memoization, so a
+  `React.memo()` wrapper buys little — remove it rather than working around it.
+
 ## When NOT to use `useEffectEvent`
 
-- **For values the effect *should* react to**. Example: a query parameter that,
+- **For values the effect _should_ react to**. Example: a query parameter that,
   when changed, must trigger a re-fetch. Keep these in deps.
 - **For event handlers passed to JSX** (`onClick`, `onChange`, etc.). The
   React Compiler under `'use memo'` already memoizes regular functions, so

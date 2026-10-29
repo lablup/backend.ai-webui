@@ -63,7 +63,6 @@ import {
   BAIProjectResourceGroupSelect,
   BAISegmentedControlItem,
   BAISelect,
-  useEventNotStable,
   useProjectResourceGroups,
   useUpdatableState,
   BAISegmentedControl,
@@ -74,6 +73,7 @@ import React, {
   Suspense,
   useDeferredValue,
   useEffect,
+  useEffectEvent,
   useTransition,
 } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -391,9 +391,7 @@ const ResourceAllocationFormItems: React.FC<
   // Values written past the rules (a template restore) still get the
   // invariants; the settled patch is empty, so the effect's own write stops it.
   const resourceKey = JSON.stringify(currentResourceValue ?? null);
-  // `useEventNotStable`, not `useEffectEvent`: measured on 2026-10-29, the
-  // effect-event closure still saw the previous render's `ruleContext` here.
-  const syncWithData = useEventNotStable(() => {
+  const syncWithData = useEffectEvent(() => {
     if (runRule({ type: 'data.changed' })) validateResource();
     // A group or image change can invalidate the preset or the accelerator type
     // without writing anything, and `dependencies` see only form fields.
@@ -419,8 +417,6 @@ const ResourceAllocationFormItems: React.FC<
     resourceKey,
     enableResourcePresets,
     mode,
-    // stable identity (useEventNotStable); listed for exhaustive-deps
-    syncWithData,
   ]);
 
   return (
@@ -1467,11 +1463,9 @@ const ResourceAllocationFormItems: React.FC<
   );
 };
 
-const MemoizedResourceAllocationFormItems = React.memo(
-  ResourceAllocationFormItems,
-);
-
-export default MemoizedResourceAllocationFormItems;
+// Not wrapped in `React.memo`: on React 19.2 a memo() fiber never republishes
+// its `useEffectEvent`s, and `Form.useWatch` is built on one (#10705).
+export default ResourceAllocationFormItems;
 
 export const getAllocatablePresetIds = (
   presets: Array<ResourcePreset> | undefined,
