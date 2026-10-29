@@ -44,6 +44,7 @@ const PrometheusCategorySelect: React.FC<BAISelectProps> = (props) => {
 
   return (
     <BAISelect
+      label={t('prometheusQueryPreset.Category')}
       allowClear
       placeholder={t('prometheusQueryPreset.NoCategory')}
       notFoundContent={t('prometheusQueryPreset.NoCategory')}
