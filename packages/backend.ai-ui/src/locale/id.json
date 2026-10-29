@@ -176,9 +176,9 @@
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Penyegaran otomatis",
-    "EveryHours": "{{count}}h",
-    "EveryMinutes": "{{count}}m",
-    "EverySeconds": "{{count}}s",
+    "EveryHours": "{{count}} h",
+    "EveryMinutes": "{{count}} min",
+    "EverySeconds": "{{count}} s",
     "LastUpdated": "Terakhir diperbarui",
     "Off": "Mati",
     "Refresh": "Segarkan"
@@ -319,7 +319,6 @@
     "RevisionNumber": "Revisi",
     "RevisionNumberTooltip": "Nomor revisi saat ini dari penerapan.",
     "StrategyType": "Strategi",
-    "Tags": "Tag",
     "UpdatedAt": "Diperbarui pada"
   },
   "comp:BAINameActionCell": {
@@ -558,12 +557,30 @@
     "To": "Status tujuan",
     "UpdatedAt": "Diperbarui pada"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Pilih Folder"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agen"
   },
   "comp:BAISessionClusterMode": {
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Lajang"
+  },
+  "comp:BAISessionScene": {
+    "FoundCount": "{{count}} ditemukan",
+    "Hero": "Milik saya",
+    "Measuring": "Mengukur",
+    "ResourceShare": "Porsi sumber daya",
+    "ShowAll": "Tampilkan semua",
+    "Utilization": "Pemanfaatan",
+    "mood": {
+      "Idle": "Menganggur",
+      "Leaving": "Menghentikan",
+      "Overheated": "Terlalu panas",
+      "Waiting": "Menunggu sumber daya",
+      "Working": "Bekerja"
+    }
   },
   "comp:BAISessionTypeToken": {
     "Batch": "Batch",
@@ -616,8 +633,6 @@
     "CreateFolder": "Buat folder penyimpanan baru",
     "DestinationPath": "Jalur kontainer (destination)",
     "Folders": "Folder",
-    "OwnerProject": "Proyek",
-    "OwnerUser": "Pengguna",
     "PathAndAliasTooltip": "Jalur di dalam container tempat folder akan di-mount. Kosongkan untuk menggunakan jalur default.",
     "Refresh": "Segarkan",
     "RemoveFolder": "Hapus",

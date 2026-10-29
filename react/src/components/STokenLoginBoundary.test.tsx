@@ -21,7 +21,10 @@
  * only available at runtime in the browser bundle.
  */
 import '../../__test__/matchMedia.mock.js';
-import { probeLoginSession } from '../helper/loginBootstrap';
+import {
+  LoginBootstrapIncompleteError,
+  probeLoginSession,
+} from '../helper/loginBootstrap';
 import {
   connectViaGQL,
   createBackendAIClient,
@@ -78,6 +81,7 @@ vi.mock('../helper/loginSessionAuth', () => ({
 vi.mock('../helper/loginBootstrap', () => ({
   __esModule: true,
   probeLoginSession: vi.fn().mockResolvedValue(null),
+  LoginBootstrapIncompleteError: class LoginBootstrapIncompleteError extends Error {},
 }));
 
 vi.mock('backend.ai-ui', async () => {
@@ -293,6 +297,23 @@ describe('STokenLoginBoundary', () => {
     expect(mockedConnectViaGQL.mock.calls[0][3]).toBe(bootstrap);
     expect(connectedEventCount).toBe(1);
     expect(onSuccess).toHaveBeenCalledTimes(1);
+  });
+
+  test('offers a retry instead of token_login when the live session has no user', async () => {
+    const incomplete = new LoginBootstrapIncompleteError('resolver failed');
+    mockedProbeLoginSession.mockRejectedValueOnce(incomplete);
+    const onError = vi.fn();
+    renderBoundary({ onError });
+
+    await waitFor(() => {
+      expect(onError).toHaveBeenCalledWith({
+        kind: 'account-unavailable',
+        cause: incomplete,
+      });
+    });
+    expect(mockedTokenLogin).not.toHaveBeenCalled();
+    expect(mockedConnectViaGQL).not.toHaveBeenCalled();
+    expect(connectedEventCount).toBe(0);
   });
 
   test('awaits the config.toml bootstrap before authenticating (FR-3128)', async () => {

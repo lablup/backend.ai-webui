@@ -319,7 +319,6 @@
     "RevisionNumber": "Ревизия",
     "RevisionNumberTooltip": "Текущий номер ревизии развёртывания.",
     "StrategyType": "Стратегия",
-    "Tags": "Теги",
     "UpdatedAt": "Обновлено"
   },
   "comp:BAINameActionCell": {
@@ -558,12 +557,30 @@
     "To": "Целевой статус",
     "UpdatedAt": "Обновлено"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Выбрать папку"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Агент"
   },
   "comp:BAISessionClusterMode": {
     "MultiNodeShort": "Мульти",
     "SingleNodeShort": "Одинокий"
+  },
+  "comp:BAISessionScene": {
+    "FoundCount": "Найдено: {{count}}",
+    "Hero": "Мои",
+    "Measuring": "Измеряется",
+    "ResourceShare": "Доля ресурсов",
+    "ShowAll": "Показать все",
+    "Utilization": "Загрузка",
+    "mood": {
+      "Idle": "Простаивает",
+      "Leaving": "Завершается",
+      "Overheated": "Перегрев",
+      "Waiting": "Ожидает ресурсы",
+      "Working": "Работает"
+    }
   },
   "comp:BAISessionTypeToken": {
     "Batch": "Пакетный",
@@ -616,8 +633,6 @@
     "CreateFolder": "Создать новую папку для хранения",
     "DestinationPath": "Путь в контейнере (destination)",
     "Folders": "Папки",
-    "OwnerProject": "Проект",
-    "OwnerUser": "Пользователь",
     "PathAndAliasTooltip": "Путь внутри контейнера, в который будет смонтирована папка. Оставьте пустым для использования пути по умолчанию.",
     "Refresh": "Обновить",
     "RemoveFolder": "Удалить",

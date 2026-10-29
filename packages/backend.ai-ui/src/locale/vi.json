@@ -176,9 +176,9 @@
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Tự động làm mới",
-    "EveryHours": "{{count}}h",
-    "EveryMinutes": "{{count}}m",
-    "EverySeconds": "{{count}}s",
+    "EveryHours": "{{count}} h",
+    "EveryMinutes": "{{count}} min",
+    "EverySeconds": "{{count}} s",
     "LastUpdated": "Cập nhật lần cuối",
     "Off": "Tắt",
     "Refresh": "Làm mới"
@@ -319,7 +319,6 @@
     "RevisionNumber": "Phiên bản",
     "RevisionNumberTooltip": "Số phiên bản hiện tại của triển khai.",
     "StrategyType": "Chiến lược",
-    "Tags": "Thẻ",
     "UpdatedAt": "Ngày cập nhật"
   },
   "comp:BAINameActionCell": {
@@ -558,12 +557,30 @@
     "To": "Trạng thái đích",
     "UpdatedAt": "Cập nhật lúc"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Chọn thư mục"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Đại lý"
   },
   "comp:BAISessionClusterMode": {
     "MultiNodeShort": "Đa",
     "SingleNodeShort": "Đơn"
+  },
+  "comp:BAISessionScene": {
+    "FoundCount": "Tìm thấy {{count}}",
+    "Hero": "Của tôi",
+    "Measuring": "Đang đo",
+    "ResourceShare": "Tỷ lệ tài nguyên",
+    "ShowAll": "Hiện tất cả",
+    "Utilization": "Mức sử dụng",
+    "mood": {
+      "Idle": "Nhàn rỗi",
+      "Leaving": "Đang kết thúc",
+      "Overheated": "Quá nóng",
+      "Waiting": "Đang chờ tài nguyên",
+      "Working": "Đang làm việc"
+    }
   },
   "comp:BAISessionTypeToken": {
     "Batch": "Hàng loạt",
@@ -616,8 +633,6 @@
     "CreateFolder": "Tạo một thư mục lưu trữ mới",
     "DestinationPath": "Đường dẫn container (destination)",
     "Folders": "Thư mục",
-    "OwnerProject": "Dự án",
-    "OwnerUser": "Người dùng",
     "PathAndAliasTooltip": "Đường dẫn bên trong container nơi thư mục sẽ được mount. Để trống để sử dụng đường dẫn mặc định.",
     "Refresh": "Làm tươi",
     "RemoveFolder": "Xóa",

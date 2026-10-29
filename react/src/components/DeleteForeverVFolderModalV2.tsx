@@ -11,7 +11,6 @@ import {
   type BAIColumnsType,
   BAIDeleteConfirmModal,
   type BAIDeleteConfirmModalProps,
-  toLocalId,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -58,6 +57,7 @@ const DeleteForeverVFolderModalV2: React.FC<
       fragment DeleteForeverVFolderModalV2Fragment on VFolder
       @relay(plural: true) {
         id
+        entityId
         metadata {
           name
         }
@@ -135,7 +135,7 @@ const DeleteForeverVFolderModalV2: React.FC<
             onRequestClose?.(false);
             return;
           }
-          const ids = _.map(purgeable, (vfolder) => toLocalId(vfolder.id));
+          const ids = _.map(purgeable, (vfolder) => vfolder.entityId);
           commitBulkPurgeMutation({
             variables: { input: { ids } },
             onCompleted: (data, errors) => {
@@ -154,7 +154,7 @@ const DeleteForeverVFolderModalV2: React.FC<
               // success with `failed` populated rather than as a top-level error.
               if (failed.length > 0) {
                 const nameByLocalId = _.fromPairs(
-                  _.map(purgeable, (v) => [toLocalId(v.id), v.metadata?.name]),
+                  _.map(purgeable, (v) => [v.entityId, v.metadata?.name]),
                 );
                 setFailureReport({
                   total: purgeable.length,

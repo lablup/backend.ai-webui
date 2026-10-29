@@ -17,7 +17,6 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
 import { useUnblockUserLogin } from '../hooks/useUnblockUserLogin';
-import BAIRadioGroup from './BAIRadioGroup';
 import BulkCreateUserFromCSVModal from './BulkCreateUserFromCSVModal';
 import PurgeUsersModal from './PurgeUsersModal';
 import UpdateUsersModal from './UpdateUsersModal';
@@ -35,12 +34,13 @@ import {
   BAIGraphQLFilterProperty,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
   BAISelectionLabel,
   BAIUnmountAfterClose,
   UserV2InList,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  toLocalId,
   useBAILogger,
   useToggle,
 } from 'backend.ai-ui';
@@ -68,13 +68,15 @@ import {
 
 export const AdminUserManagementQuery = graphql`
   query AdminUserManagementQuery(
+    $scope: UserScope!
     $filter: UserV2Filter
     $orderBy: [UserV2OrderBy!]
     $limit: Int
     $offset: Int
     $isNotSupportTotp: Boolean!
   ) {
-    adminUsersV2(
+    scopedUsersV2(
+      scope: $scope
       filter: $filter
       orderBy: $orderBy
       limit: $limit
@@ -109,7 +111,7 @@ interface AdminUserManagementProps {
 }
 
 type UserNode = NonNullable<
-  NonNullable<AdminUserManagementQuery$data['adminUsersV2']>['edges']
+  NonNullable<AdminUserManagementQuery$data['scopedUsersV2']>['edges']
 >[number];
 
 const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
@@ -167,7 +169,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   const { supportedFields, exportCSV } = useCSVExport('users');
   const unblockUserLogin = useUnblockUserLogin();
 
-  const { adminUsersV2 } = usePreloadedQuery<AdminUserManagementQueryType>(
+  const { scopedUsersV2 } = usePreloadedQuery<AdminUserManagementQueryType>(
     AdminUserManagementQuery,
     deferredQueryRef,
   );
@@ -196,11 +198,15 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   // The detail / edit modals are driven by the presence of this fragment rather
   // than by an id, so `open` follows whether a user is selected.
   const findUserNode = (id: string) =>
-    adminUsersV2?.edges?.find((edge) => edge?.node?.id === id)?.node ?? null;
+    scopedUsersV2?.edges?.find((edge) => edge?.node?.id === id)?.node ?? null;
+
+  // User management (create, edit, status, purge, unblock) is out of scope for the
+  // scoped migration and stays superadmin-only by design (ADR 0012).
+  const isSuperAdmin = bailClient.is_superadmin;
 
   const canActAs =
     bailClient.isManagerVersionCompatibleWith('26.9.0') &&
-    bailClient.is_superadmin &&
+    isSuperAdmin &&
     !globalThis.isElectron;
 
   const confirmActAs = (userId: string, email: string, name: string) => {
@@ -220,7 +226,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   const renderEmailWithActions = (__: unknown, record: UserV2InList) => {
     const email = record.basicInfo?.email ?? '';
     const isActive = record.status?.status === 'ACTIVE';
-    const userId = toLocalId(record.id);
+    const userId = record.entityId;
     return (
       <BAINameActionCell
         title={email}
@@ -234,7 +240,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
               setSelectedUserForInfoModal(findUserNode(record.id));
             },
           },
-          {
+          isSuperAdmin && {
             key: 'edit',
             title: t('button.Edit'),
             icon: <SquarePenIcon />,
@@ -242,7 +248,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
               setSelectedUserForSettingModal(findUserNode(record.id));
             },
           },
-          {
+          isSuperAdmin && {
             key: 'toggle-status',
             title: isActive
               ? t('credential.Deactivate')
@@ -272,7 +278,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
                   return new Promise<void>((resolve) => {
                     commitUpdateUserV2({
                       variables: {
-                        userId: toLocalId(record.id),
+                        userId: record.entityId,
                         input: { status: isActive ? 'INACTIVE' : 'ACTIVE' },
                       },
                       onCompleted: (_res, errors) => {
@@ -314,7 +320,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
                     '',
                 ),
             },
-          {
+          isSuperAdmin && {
             key: 'unblock-login',
             title: t('credential.UnblockLogin'),
             icon: <LockOpen />,
@@ -331,17 +337,18 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
                 }),
             },
           },
-          !isActive && {
-            key: 'purge',
-            title: t('credential.PermanentlyDelete'),
-            icon: <Trash2 size="1em" />,
-            type: 'danger' as const,
-            onClick: () => {
-              if (record?.id) {
-                setPurgeTargetId(record.id);
-              }
+          isSuperAdmin &&
+            !isActive && {
+              key: 'purge',
+              title: t('credential.PermanentlyDelete'),
+              icon: <Trash2 size="1em" />,
+              type: 'danger' as const,
+              onClick: () => {
+                if (record?.id) {
+                  setPurgeTargetId(record.id);
+                }
+              },
             },
-          },
         ])}
       />
     );
@@ -484,15 +491,15 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex justify="between" align="start" gap="xs" wrap="wrap">
         <BAIFlex direction="row" gap={'sm'} align="start" wrap="wrap">
-          <BAIRadioGroup
+          <BAISegmentedControl
             value={statusValue}
-            onChange={(e) => {
+            onChange={(value) => {
               onReload({
                 ...variables,
                 filter: {
                   ...propertyFilterValue,
                   status:
-                    e.target.value === 'ACTIVE'
+                    value === 'ACTIVE'
                       ? { equals: 'ACTIVE' }
                       : { notEquals: 'ACTIVE' },
                 },
@@ -500,18 +507,16 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
               });
               setSelectedUserList([]);
             }}
-            optionType="button"
-            options={[
-              {
-                label: t('general.Active'),
-                value: 'ACTIVE',
-              },
-              {
-                label: t('general.Inactive'),
-                value: 'INACTIVE',
-              },
-            ]}
-          />
+          >
+            <BAISegmentedControlItem
+              value="ACTIVE"
+              label={t('general.Active')}
+            />
+            <BAISegmentedControlItem
+              value="INACTIVE"
+              label={t('general.Inactive')}
+            />
+          </BAISegmentedControl>
           <BAIGraphQLPropertyFilter<UserV2Filter>
             filterProperties={filterProperties}
             value={
@@ -539,13 +544,15 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
                 count={selectedUserList.length}
                 onClearSelection={() => setSelectedUserList([])}
               />
-              <BAIButton
-                icon={
-                  <SquarePenIcon style={{ color: token('--color-info') }} />
-                }
-                onClick={toggleUpdateUsersModal}
-              />
-              {statusValue === 'INACTIVE' && (
+              {isSuperAdmin && (
+                <BAIButton
+                  icon={
+                    <SquarePenIcon style={{ color: token('--color-info') }} />
+                  }
+                  onClick={toggleUpdateUsersModal}
+                />
+              )}
+              {isSuperAdmin && statusValue === 'INACTIVE' && (
                 <BAIButton
                   icon={
                     <Trash2
@@ -564,67 +571,48 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
               onReload(variables, { fetchPolicy: 'network-only' });
             }}
           />
-          {/* ONE attached control, not two adjacent buttons.
-              `ButtonGroup` joins its children through CONTEXT, not through
-              wrappers or cloneElement: `ButtonGroupContext` tells each child
-              its position, and the child suppresses its own inner end-cap
-              radius and shared border accordingly (see `ButtonGroup.js` — "no
-              cloneElement or wrapper divs needed" — and `IS_LAST_ITEM` in
-              `Button.js`, which is why a trailing `[popover]` sibling does not
-              break the last-child detection).
-
-              Only Astryx `Button` / `IconButton` / `ToggleButton` read that
-              context. The primary action here was `BAIButton`, i.e. an antd
-              `Button` (`packages/backend.ai-ui/src/components/BAIButton.tsx`
-              wraps `antd`'s), which is invisible to the context and therefore
-              kept its own fully-rounded pill — the group rendered as a split
-              pair. `DropdownMenu` was already fine: it renders an Astryx
-              `Button` as its trigger, as a direct child.
-
-              So the fix is to make the primary child an Astryx `Button` too.
-              `variant="primary"` is the Astryx spelling of antd
-              `type="primary"`; `label` carries both the visible text and the
-              accessible name. */}
-          <ButtonGroup label={t('credential.CreateUser')}>
-            <Button
-              variant="primary"
-              icon={<PlusIcon size="1em" />}
-              label={t('credential.CreateUser')}
-              onClick={() => {
-                setOpenCreateModal(true);
-              }}
-            />
-            <DropdownMenu
-              button={{
-                label: t('button.More'),
-                variant: 'primary',
-                isIconOnly: true,
-                icon: <Ellipsis size="1em" />,
-              }}
-              hasChevron={false}
-              placement="below"
-              alignment="end"
-              items={[
-                {
-                  label: t('credential.BulkCreateUser'),
-                  onClick: () => {
-                    setOpenBulkCreateModal(true);
+          {isSuperAdmin && (
+            <ButtonGroup label={t('credential.CreateUser')}>
+              <Button
+                variant="primary"
+                icon={<PlusIcon size="1em" />}
+                label={t('credential.CreateUser')}
+                onClick={() => {
+                  setOpenCreateModal(true);
+                }}
+              />
+              <DropdownMenu
+                button={{
+                  label: t('button.More'),
+                  variant: 'primary',
+                  isIconOnly: true,
+                  icon: <Ellipsis size="1em" />,
+                }}
+                hasChevron={false}
+                placement="below"
+                alignment="end"
+                items={[
+                  {
+                    label: t('credential.BulkCreateUser'),
+                    onClick: () => {
+                      setOpenBulkCreateModal(true);
+                    },
                   },
-                },
-                {
-                  label: t('credential.BulkCreateUserFromCSV'),
-                  onClick: () => {
-                    setOpenBulkCreateCSVModal(true);
+                  {
+                    label: t('credential.BulkCreateUserFromCSV'),
+                    onClick: () => {
+                      setOpenBulkCreateCSVModal(true);
+                    },
                   },
-                },
-              ]}
-            />
-          </ButtonGroup>
+                ]}
+              />
+            </ButtonGroup>
+          )}
         </BAIFlex>
       </BAIFlex>
       <BAIAdminUserV2Table
         usersFrgmt={filterOutNullAndUndefined(
-          _.map(adminUsersV2?.edges, 'node'),
+          _.map(scopedUsersV2?.edges, 'node'),
         )}
         withProjects
         customizeColumns={(baseColumns) => {
@@ -647,7 +635,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
         }}
         pagination={{
           pageSize,
-          total: adminUsersV2?.count || 0,
+          total: scopedUsersV2?.count || 0,
           current,
           onChange: (nextCurrent, nextPageSize) => {
             if (_.isNumber(nextCurrent) && _.isNumber(nextPageSize)) {
@@ -663,7 +651,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
         rowSelection={{
           type: 'checkbox',
           onChange: (keys) => {
-            const userNodes = _.compact(adminUsersV2?.edges);
+            const userNodes = _.compact(scopedUsersV2?.edges);
             setSelectedUserList(() => {
               return userNodes.filter(
                 (edge) => edge.node && keys.includes(edge?.node.id),
@@ -786,7 +774,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
             setPurgeTargetId(null);
           }}
           usersFrgmt={filterOutNullAndUndefined(
-            adminUsersV2?.edges
+            scopedUsersV2?.edges
               ?.filter((edge) => edge?.node?.id === purgeTargetId)
               .map((edge) => edge?.node),
           )}

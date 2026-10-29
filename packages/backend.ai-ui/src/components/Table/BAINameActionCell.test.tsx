@@ -112,15 +112,18 @@ describe('BAINameActionCell — disabled carries its reason (FR-3722)', () => {
     expect(onConfirm).not.toHaveBeenCalled();
   });
 
-  it('the overflow-menu row folds the reason into its label and disables it', () => {
+  it('the overflow-menu row keeps its label plain, disables it and shows the reason on hover', async () => {
     renderAction({
       showInMenu: 'always',
       disabled: { reason: 'Not allowed' },
     });
 
-    const item = screen.getByText('Act — Not allowed');
-    expect(item).toBeInTheDocument();
+    const item = screen.getByText('Act');
     expect(item.closest('[aria-disabled="true"],[disabled]')).not.toBeNull();
+    expect(screen.queryByText(/Act — /)).not.toBeInTheDocument();
+
+    await userEvent.hover(item, { pointerEventsCheck: 0 });
+    expect(await screen.findByText('Not allowed')).toBeInTheDocument();
   });
 });
 
@@ -230,12 +233,11 @@ describe('BAINameActionCell — minTitleWidth reserves width for the title', () 
     expect(screen.getAllByRole('button')).toHaveLength(1);
   });
 
-  it('does not fold them in hover mode, where the actions cost the title nothing at rest', () => {
+  it('folds them in hover mode too, where the reserved width costs the title at rest (#10371)', () => {
     renderTwoActions(NARROW_CELL_WIDTH, 'hover');
 
-    expect(
-      screen.getByRole('button', { name: /Download/ }),
-    ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Delete/ })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Download/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Delete/ })).toBeNull();
+    expect(screen.getAllByRole('button')).toHaveLength(1);
   });
 });

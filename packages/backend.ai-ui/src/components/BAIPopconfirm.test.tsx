@@ -1,3 +1,4 @@
+import { loadBAILanguage } from '../locale';
 import BAIPopconfirm from './BAIPopconfirm';
 import { BAIConfigProvider } from './provider';
 import { Button } from '@lablup/ui-common/Button';
@@ -46,6 +47,8 @@ describe('BAIPopconfirm', () => {
 
   it('shows ui-common’s Korean labels under BAIConfigProvider', async () => {
     const { default: ko } = await import('../locale/ko_KR');
+    // BAIConfigProvider suspends until BUI's lazy `ko` catalog is in.
+    await loadBAILanguage('ko');
     render(
       <BAIConfigProvider locale={ko}>
         <BAIPopconfirm title="비활성화할까요?">

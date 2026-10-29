@@ -333,6 +333,40 @@ test.describe(
     );
 
     test(
+      'Superadmin can see and open the Scheduler page',
+      { tag: ['@401', '@permission', '@regression'] },
+      async ({ page, request }) => {
+        // 1. Login as superadmin user
+        await loginAsAdmin(page, request);
+
+        // 2. Open the Scheduler page from the admin-scope sidebar
+        await page.goto(`${webuiEndpoint}/admin/users`);
+        const schedulerMenuItem = getSideNavItem(page, 'Scheduler');
+        await expect(schedulerMenuItem).toBeVisible({ timeout: 15_000 });
+        await schedulerMenuItem.click();
+        await expect(page).toHaveURL(/\/admin\/scheduler/, {
+          timeout: 15_000,
+        });
+        // The Fair Share tab plus its first step prove the page body rendered
+        const fairShareTab = page
+          .getByRole('navigation', { name: 'Tabs' })
+          .getByRole('button', { name: 'Fair Share Setting' });
+        const resourceGroupStep = page.getByRole('button', {
+          name: 'Go to step 1: Resource Group',
+        });
+        await expect(fairShareTab).toBeVisible({ timeout: 15_000 });
+        await expect(resourceGroupStep).toBeVisible({ timeout: 15_000 });
+        await expect(forbiddenPageHeading(page)).toBeHidden();
+
+        // 3. Entering the canonical URL directly opens it as well
+        await page.goto(`${webuiEndpoint}/admin/scheduler`);
+        await expect(fairShareTab).toBeVisible({ timeout: 15_000 });
+        await expect(resourceGroupStep).toBeVisible({ timeout: 15_000 });
+        await expect(forbiddenPageHeading(page)).toBeHidden();
+      },
+    );
+
+    test(
       'Superadmin user can access all pages without 401 error',
       { tag: ['@401', '@permission'] },
       async ({ page, request }) => {

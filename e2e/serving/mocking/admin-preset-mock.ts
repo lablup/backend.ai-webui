@@ -16,8 +16,8 @@
  *       selected variant id; stubbed to the same node for determinism.
  *   - AdminDeploymentPresetSettingPageResourceSlotTypesQuery
  *       supplies cpu/mem resource slot type metadata for the Resources card.
- *   - BAIAdminImageSelectPaginatedQuery /
- *     BAIAdminImageSelectValueQuery
+ *   - BAIScopedImageSelectPaginatedQuery /
+ *     BAIScopedImageSelectValueQuery
  *       feed the Image select a single deterministic image.
  *   - AdminDeploymentPresetSettingPageCreateMutation
  *       returns a canned success shape and lets a spec capture the outgoing
@@ -33,7 +33,7 @@ export const MOCK_RUNTIME_VARIANT_UUID = '44444444-4444-4444-4444-444444444444';
 export const MOCK_IMAGE_UUID = '55555555-5555-5555-5555-555555555555';
 export const MOCK_CREATED_PRESET_UUID = '66666666-6666-6666-6666-666666666666';
 /**
- * Canonical name WITHOUT the `@<architecture>` suffix: BAIAdminImageSelect
+ * Canonical name WITHOUT the `@<architecture>` suffix: BAIScopedImageSelect
  * composes each option label as `${canonicalName}@${architecture}`, so a
  * canonical name that already embeds `@x86_64` would render doubled
  * (`...@x86_64@x86_64`) and no option would match the expected label.
@@ -62,6 +62,7 @@ function buildRuntimeVariantNode() {
   return {
     __typename: 'RuntimeVariant',
     id: btoa(`RuntimeVariant:${MOCK_RUNTIME_VARIANT_UUID}`),
+    entityId: MOCK_RUNTIME_VARIANT_UUID,
     name: 'custom',
     readsVfolderConfigFiles: true,
   };
@@ -132,6 +133,7 @@ function buildImageNode() {
   return {
     __typename: 'ImageV2',
     id: btoa(`ImageV2:${MOCK_IMAGE_UUID}`),
+    entityId: MOCK_IMAGE_UUID,
     identity: {
       canonicalName: MOCK_IMAGE_CANONICAL_NAME,
       architecture: MOCK_IMAGE_ARCHITECTURE,
@@ -145,16 +147,16 @@ function buildImageNode() {
 export function adminPresetImageSelectMocks() {
   const node = buildImageNode();
   return {
-    BAIAdminImageSelectPaginatedQuery: () => ({
-      adminImagesV2: { count: 1, edges: [{ node }] },
+    BAIScopedImageSelectPaginatedQuery: () => ({
+      scopedImagesV2: { count: 1, edges: [{ node }] },
     }),
     // The value query `@skip`s while nothing is selected (`skipSelected:
     // true`); return a null connection in that case so the empty selection
     // resolves cleanly.
-    BAIAdminImageSelectValueQuery: (variables: Record<string, any>) =>
+    BAIScopedImageSelectValueQuery: (variables: Record<string, any>) =>
       variables?.skipSelected
-        ? { adminImagesV2: null }
-        : { adminImagesV2: { edges: [{ node }] } },
+        ? { scopedImagesV2: null }
+        : { scopedImagesV2: { edges: [{ node }] } },
   };
 }
 
@@ -191,6 +193,7 @@ export function buildCreatedPreset(): Record<string, unknown> {
   return {
     __typename: 'DeploymentRevisionPreset',
     id: btoa(`DeploymentRevisionPreset:${MOCK_CREATED_PRESET_UUID}`),
+    entityId: MOCK_CREATED_PRESET_UUID,
     name: 'mock-created-preset',
     description: null,
     runtimeVariantId: btoa(`RuntimeVariant:${MOCK_RUNTIME_VARIANT_UUID}`),

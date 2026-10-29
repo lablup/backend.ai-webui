@@ -23,7 +23,6 @@ import {
   BAIGraphQLPropertyFilter,
   BAIRuntimeVariantSelect,
   type BAITableSettings,
-  toLocalId,
   useBAILogger,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
@@ -55,7 +54,6 @@ export const AdminDeploymentPresetQuery = graphql`
       count
       edges {
         node {
-          id
           name
           ...AdminDeploymentPresetTableFragment
         }
@@ -107,8 +105,8 @@ const AdminDeploymentPreset = ({
   const [commitDeletePreset] = useMutation<AdminDeploymentPresetDeleteMutation>(
     graphql`
       mutation AdminDeploymentPresetDeleteMutation($id: UUID!) {
-        adminDeleteDeploymentRevisionPreset(id: $id) {
-          id
+        purgeDeploymentRevisionPreset(id: $id) {
+          entityId
         }
       }
     `,
@@ -122,7 +120,7 @@ const AdminDeploymentPreset = ({
     webuiNavigate(
       buildPath(
         'admin',
-        `deployments/deployment-presets/${toLocalId(preset.id)}/edit`,
+        `deployments/deployment-presets/${preset.entityId}/edit`,
       ),
     );
   };
@@ -236,14 +234,14 @@ const AdminDeploymentPreset = ({
         requireConfirmInput
         items={
           deletingPreset
-            ? [{ key: deletingPreset.id, label: deletingPreset.name }]
+            ? [{ key: deletingPreset.entityId, label: deletingPreset.name }]
             : []
         }
         onOk={async () => {
           if (deletingPreset) {
             await new Promise<void>((resolve, reject) => {
               commitDeletePreset({
-                variables: { id: toLocalId(deletingPreset.id) },
+                variables: { id: deletingPreset.entityId },
                 onCompleted: (_data, errors) => {
                   if (errors && errors.length > 0) {
                     logger.error(errors[0]);

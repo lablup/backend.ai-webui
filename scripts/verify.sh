@@ -301,14 +301,8 @@ check_astryx_theme_built() {
   # The committed `astryx theme build` artifacts under
   # react/src/astryx-theme/built/ must match the theme source; `-c` recompiles
   # in memory and exits non-zero on drift. Rebuild procedure: built/index.ts.
-  # The theme source imports `backend.ai-ui`, which resolves to its dist, so a
-  # fresh worktree needs that package built once.
-  if [ ! -f packages/backend.ai-ui/dist/backend.ai-ui.js ]; then
-    note "backend.ai-ui dist missing — built it first (once per checkout)"
-    pnpm --filter backend.ai-ui run build > /dev/null || return 1
-  fi
-  # ui-common's dist imports .css, which Node cannot load; the stub empties them.
-  NODE_OPTIONS="--import=$PWD/scripts/astryx-theme-css-stub.mjs" \
+  # The condition resolves `backend.ai-ui/theme` to source (ADR 0013 §4).
+  NODE_OPTIONS="--conditions=@backend.ai/source" \
     bin react astryx theme build -c \
     src/astryx-theme/built/backendai-default.ts \
     -o src/astryx-theme/built/backendai-default-built.css
@@ -388,8 +382,10 @@ start_lane gate "Lint script coverage" node scripts/lint-ci-coverage-gate.mjs
 start_lane gate "Lint" check_lint
 start_lane gate "Format" check_format
 start_lane gate "TypeScript" bin react tsc --noEmit --incremental
-# The react lane reaches backend.ai-{ui,client} through tsconfig `paths`,
-# but nothing pulls in the agent CLI, so it gets its own lane.
+# The react lane sees only the backend.ai-ui files react imports (through the
+# `@backend.ai/source` export condition), and nothing pulls in the agent CLI,
+# so each gets its own lane.
+start_lane gate "TypeScript (backend.ai-ui)" bin packages/backend.ai-ui tsc --noEmit --incremental
 start_lane gate "TypeScript (agent-cli)" bin packages/backend.ai-agent-cli tsc --noEmit
 # The review overlay client is vendored by the Chrome extension (ADR 0008) and
 # built with narrower flags than react's. Deliberately the ROOT TypeScript
@@ -404,6 +400,9 @@ start_lane gate "Astryx integration (backend.ai-ui)" check_astryx_integration
 start_lane gate "ui-common agent blocks" check_ui_common_agents
 # ADR 0009's import ban in ESLint covers JS/TS only; this also sees CSS @import.
 start_lane gate "ui-common import mirror" node scripts/ui-common-codemod.mjs --check
+# A local tarball pin fails here; a PR preview only fails in CI (typecheck.yml),
+# so an unmerged ui-common change can still be verified end to end.
+start_lane gate "ui-common pin" node scripts/ui-common-pin.mjs --check --allow-preview
 start_lane gate "Cascade-layer order" check_layer_order
 # The bare-name Astryx patch keys used to trip a second core at install time;
 # with the patches gone (FR-4098) the lockfile is read instead (ADR 0009).

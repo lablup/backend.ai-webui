@@ -14,7 +14,7 @@ import { useProjectPath } from '../hooks/useRouteScope';
 import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
 import { MenuKeys } from '../hooks/useWebUIMenuItems';
 import { toProjectContext } from '../types/projectContext';
-import { SessionLauncherFormValue } from './SessionLauncherPage';
+import type { SessionLauncherFormValue } from './SessionLauncherPage';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   filterOutEmpty,

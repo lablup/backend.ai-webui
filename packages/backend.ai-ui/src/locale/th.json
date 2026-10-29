@@ -319,7 +319,6 @@
     "RevisionNumber": "ฉบับแก้ไข",
     "RevisionNumberTooltip": "หมายเลขฉบับแก้ไขปัจจุบันของการปรับใช้",
     "StrategyType": "กลยุทธ์",
-    "Tags": "แท็ก",
     "UpdatedAt": "วันที่อัปเดต"
   },
   "comp:BAINameActionCell": {
@@ -558,12 +557,30 @@
     "To": "สถานะปลายทาง",
     "UpdatedAt": "อัปเดตเมื่อ"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "เลือกโฟลเดอร์"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "ตัวแทน"
   },
   "comp:BAISessionClusterMode": {
     "MultiNodeShort": "หลาย",
     "SingleNodeShort": "เดี่ยว"
+  },
+  "comp:BAISessionScene": {
+    "FoundCount": "พบ {{count}} รายการ",
+    "Hero": "ของฉัน",
+    "Measuring": "กำลังวัด",
+    "ResourceShare": "สัดส่วนทรัพยากร",
+    "ShowAll": "แสดงทั้งหมด",
+    "Utilization": "การใช้งาน",
+    "mood": {
+      "Idle": "ว่าง",
+      "Leaving": "กำลังสิ้นสุด",
+      "Overheated": "ร้อนเกิน",
+      "Waiting": "รอทรัพยากร",
+      "Working": "กำลังทำงาน"
+    }
   },
   "comp:BAISessionTypeToken": {
     "Batch": "แบบแบตช์",
@@ -616,8 +633,6 @@
     "CreateFolder": "สร้างโฟลเดอร์จัดเก็บใหม่",
     "DestinationPath": "พาธในคอนเทนเนอร์ (destination)",
     "Folders": "โฟลเดอร์",
-    "OwnerProject": "โปรเจกต์",
-    "OwnerUser": "ผู้ใช้",
     "PathAndAliasTooltip": "พาธภายใน container ที่โฟลเดอร์จะถูก mount ปล่อยว่างเพื่อใช้พาธเริ่มต้น",
     "Refresh": "รีเฟรช",
     "RemoveFolder": "ลบ",

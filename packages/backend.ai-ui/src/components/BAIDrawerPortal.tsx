@@ -14,9 +14,9 @@
 */
 import '../styles/zIndexLadder';
 import './BAIDrawerPortal.css';
+import { Drawer, type DrawerProps } from '@lablup/ui-common/Drawer';
 import { MODAL_OPEN_ATTRIBUTE, useModalLevel } from '@lablup/ui-common/Modal';
 import { useFocusTrap, useScrollLock } from '@lablup/ui-common/hooks';
-import { Drawer, type DrawerProps } from '@lablup/ui-common/lab';
 import { dataAttr } from '@lablup/ui-common/naming';
 import { useThemeName } from '@lablup/ui-common/theme';
 import { mergeRefs } from '@lablup/ui-common/utils';

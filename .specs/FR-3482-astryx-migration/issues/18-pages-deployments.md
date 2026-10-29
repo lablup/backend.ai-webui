@@ -48,7 +48,8 @@
   deps + `pnpm-workspace.yaml` minimumReleaseAgeExclude + `react/src/index.css`에
   `@import '@astryxdesign/lab/lab.css'` (astryx-base 레이어드 시트).
   ⚠️ lab은 단일 배럴 export라 **lexical peer 11종**(lexical + @lexical/* @0.46.0
-  exact)이 dev-server 해석에 필요 — deps로 추가. `sideEffects:false`라 프로드
+  exact)이 dev-server 해석에 필요 — deps로 추가 (#10676·#10682에서 제거: lab
+  0.7.3-canary.cac3d8d부터 lexical을 참조하지 않음). `sideEffects:false`라 프로드
   번들에서는 미사용분(RichTextEditor 등)이 tree-shake됨. 사용 컴포넌트:
   Drawer(RevisionDetailDrawer) · Stepper/Step(PresetSettingPageContent) ·
   Tour/TourStep(PresetValidationTour).

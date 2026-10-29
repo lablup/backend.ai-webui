@@ -176,9 +176,9 @@
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Aggiornamento automatico",
-    "EveryHours": "{{count}}h",
-    "EveryMinutes": "{{count}}m",
-    "EverySeconds": "{{count}}s",
+    "EveryHours": "{{count}} h",
+    "EveryMinutes": "{{count}} min",
+    "EverySeconds": "{{count}} s",
     "LastUpdated": "Ultimo aggiornamento",
     "Off": "Disattivato",
     "Refresh": "Aggiorna"
@@ -319,7 +319,6 @@
     "RevisionNumber": "Revisione",
     "RevisionNumberTooltip": "Il numero di revisione corrente del deployment.",
     "StrategyType": "Strategia",
-    "Tags": "Tag",
     "UpdatedAt": "Aggiornato il"
   },
   "comp:BAINameActionCell": {
@@ -558,12 +557,30 @@
     "To": "Stato di destinazione",
     "UpdatedAt": "Aggiornato il"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Seleziona cartella"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agente"
   },
   "comp:BAISessionClusterMode": {
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Separare"
+  },
+  "comp:BAISessionScene": {
+    "FoundCount": "{{count}} trovato/i",
+    "Hero": "Mie",
+    "Measuring": "Misurazione in corso",
+    "ResourceShare": "Quota di risorse",
+    "ShowAll": "Mostra tutto",
+    "Utilization": "Utilizzo",
+    "mood": {
+      "Idle": "Inattiva",
+      "Leaving": "In chiusura",
+      "Overheated": "Surriscaldata",
+      "Waiting": "In attesa di risorse",
+      "Working": "Al lavoro"
+    }
   },
   "comp:BAISessionTypeToken": {
     "Batch": "Batch",
@@ -616,8 +633,6 @@
     "CreateFolder": "Crea una nuova cartella di archiviazione",
     "DestinationPath": "Percorso del container (destination)",
     "Folders": "cartelle",
-    "OwnerProject": "Progetto",
-    "OwnerUser": "Utente",
     "PathAndAliasTooltip": "Il percorso all'interno del container dove verrà montata la cartella. Lasciare vuoto per usare il percorso predefinito.",
     "Refresh": "ricaricare",
     "RemoveFolder": "Rimuovi",

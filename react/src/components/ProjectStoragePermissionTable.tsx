@@ -34,7 +34,6 @@ import {
   BAITable,
   BAIText,
   BAIUnmountAfterClose,
-  toLocalId,
   useFetchKey,
   type BAITableProps,
 } from 'backend.ai-ui';
@@ -186,6 +185,7 @@ const ProjectStoragePermissionTable: React.FC<
             edges {
               node {
                 id
+                entityId
                 basicInfo {
                   name
                 }
@@ -237,10 +237,6 @@ const ProjectStoragePermissionTable: React.FC<
     row: ProjectRow,
     newKeys: string[],
   ): Promise<{ ok: boolean; msg?: string | null }> => {
-    const gid = row.id ? toLocalId(row.id) : undefined;
-    if (!gid) {
-      return Promise.resolve({ ok: false });
-    }
     const payload = buildAllowedHostsPayloadFromV2(
       row.storage?.allowedVfolderHosts ?? [],
       storageHostId,
@@ -248,7 +244,10 @@ const ProjectStoragePermissionTable: React.FC<
     );
     return new Promise((resolve) => {
       commitModifyGroup({
-        variables: { gid, props: { allowed_vfolder_hosts: payload } },
+        variables: {
+          gid: row.entityId,
+          props: { allowed_vfolder_hosts: payload },
+        },
         onCompleted: (res, errors) =>
           resolve({
             ok: !errors?.length && !!res?.modify_group?.ok,
@@ -297,7 +296,7 @@ const ProjectStoragePermissionTable: React.FC<
   };
 
   const editingTargets: PermissionEditTarget[] = editingRows.map((row) => ({
-    id: row.id ? toLocalId(row.id) : '',
+    id: row.entityId,
     name: row.basicInfo?.name ?? '',
     enabled: enabledKeysOf(row),
   }));

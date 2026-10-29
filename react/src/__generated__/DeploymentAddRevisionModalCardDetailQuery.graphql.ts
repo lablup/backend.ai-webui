@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f0e7fbe0e1f3bf5e87661b3eab371e25>>
+ * @generated SignedSource<<585d0e77d35a2bfe052358792af4896f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -67,6 +67,13 @@ v5 = {
   "storageKey": null
 },
 v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "entityId",
+  "storageKey": null
+},
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -240,6 +247,7 @@ return {
             "plural": false,
             "selections": [
               (v2/*: any*/),
+              (v6/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -255,6 +263,7 @@ return {
             ],
             "storageKey": null
           },
+          (v6/*: any*/),
           {
             "alias": null,
             "args": [
@@ -296,6 +305,7 @@ return {
                     "plural": false,
                     "selections": [
                       (v2/*: any*/),
+                      (v6/*: any*/),
                       (v3/*: any*/),
                       {
                         "alias": null,
@@ -387,7 +397,7 @@ return {
                                 "name": "key",
                                 "storageKey": null
                               },
-                              (v6/*: any*/)
+                              (v7/*: any*/)
                             ],
                             "storageKey": null
                           }
@@ -441,7 +451,7 @@ return {
                             "plural": true,
                             "selections": [
                               (v3/*: any*/),
-                              (v6/*: any*/)
+                              (v7/*: any*/)
                             ],
                             "storageKey": null
                           }
@@ -521,7 +531,7 @@ return {
                             "name": "presetId",
                             "storageKey": null
                           },
-                          (v6/*: any*/)
+                          (v7/*: any*/)
                         ],
                         "storageKey": null
                       },
@@ -634,12 +644,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "c8d33d648d51f8d5617d5cdb894d5a32",
+    "cacheID": "629e20327f3c3e99eb42248fa3fecc6c",
     "id": null,
     "metadata": {},
     "name": "DeploymentAddRevisionModalCardDetailQuery",
     "operationKind": "query",
-    "text": "query DeploymentAddRevisionModalCardDetailQuery(\n  $id: UUID!\n) {\n  modelCardV2(id: $id) {\n    ...ModelCardDrawerFragment\n    id\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  image {\n    id\n    identity {\n      canonicalName\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      service {\n        healthCheck {\n          enable\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n    }\n  }\n}\n\nfragment ModelCardDeployModalFragment on ModelCardV2 {\n  id\n  availablePresets(orderBy: [{field: RANK, direction: \"ASC\"}], limit: 100) {\n    edges {\n      node {\n        id\n        name\n        runtimeVariantId\n        ...DeploymentPresetDetailModalFragment\n      }\n    }\n  }\n}\n\nfragment ModelCardDrawerFragment on ModelCardV2 {\n  id\n  name\n  metadata {\n    title\n    author\n    description\n    task\n    category\n    architecture\n    framework\n    label\n    license\n    modelVersion\n  }\n  minResource {\n    resourceType\n    quantity\n  }\n  readme\n  createdAt\n  updatedAt\n  vfolder {\n    id\n    metadata {\n      name\n    }\n    ...VFolderNodeIdenticonV2Fragment\n  }\n  ...ModelCardDeployModalFragment\n}\n\nfragment VFolderNodeIdenticonV2Fragment on VFolder {\n  id\n}\n"
+    "text": "query DeploymentAddRevisionModalCardDetailQuery(\n  $id: UUID!\n) {\n  modelCardV2(id: $id) {\n    ...ModelCardDrawerFragment\n    id\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  image {\n    id\n    identity {\n      canonicalName\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      service {\n        healthCheck {\n          enable\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n    }\n  }\n}\n\nfragment ModelCardDeployModalFragment on ModelCardV2 {\n  id\n  entityId\n  availablePresets(orderBy: [{field: RANK, direction: \"ASC\"}], limit: 100) {\n    edges {\n      node {\n        id\n        entityId\n        name\n        runtimeVariantId\n        ...DeploymentPresetDetailModalFragment\n      }\n    }\n  }\n}\n\nfragment ModelCardDrawerFragment on ModelCardV2 {\n  id\n  name\n  metadata {\n    title\n    author\n    description\n    task\n    category\n    architecture\n    framework\n    label\n    license\n    modelVersion\n  }\n  minResource {\n    resourceType\n    quantity\n  }\n  readme\n  createdAt\n  updatedAt\n  vfolder {\n    id\n    entityId\n    metadata {\n      name\n    }\n    ...VFolderNodeIdenticonV2Fragment\n  }\n  ...ModelCardDeployModalFragment\n}\n\nfragment VFolderNodeIdenticonV2Fragment on VFolder {\n  id\n}\n"
   }
 };
 })();

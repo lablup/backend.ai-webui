@@ -68,8 +68,10 @@ export class FolderExplorerModal {
   }
 
   async getCreateFolderButton(): Promise<Locator> {
+    // lucide icon + aria-label: no antd icon-name prefix in the name.
     const createButton = this.modal.getByRole('button', {
-      name: 'folder-add Create Folder',
+      name: 'Create Folder',
+      exact: true,
     });
     await expect(createButton).toBeVisible();
     await this.page.waitForTimeout(300);
@@ -78,9 +80,11 @@ export class FolderExplorerModal {
 
   async getCreateFileButton(): Promise<Locator> {
     const createFileButton = this.modal.getByRole('button', {
-      name: 'file-add Create File',
+      name: 'Create File',
+      exact: true,
     });
     await expect(createFileButton).toBeVisible();
+    await this.page.waitForTimeout(300);
     return createFileButton;
   }
 
@@ -94,8 +98,8 @@ export class FolderExplorerModal {
 
   async verifyFolderDetails(): Promise<void> {
     await expect(this.modal.getByText('Ownership')).toBeVisible();
-    await expect(this.modal.getByText('Mount Permission')).toBeVisible();
-    await expect(this.modal.getByText('Read & Write')).toBeVisible();
+    await expect(this.mountPermissionTerm()).toBeVisible();
+    await this.verifyPermission('Read & Write');
   }
 
   async verifyOwnership(): Promise<void> {
@@ -103,7 +107,13 @@ export class FolderExplorerModal {
   }
 
   async verifyMountPermission(): Promise<void> {
-    await expect(this.modal.getByText('Mount Permission')).toBeVisible();
+    await expect(this.mountPermissionTerm()).toBeVisible();
+  }
+
+  // The row's Selector also carries a hidden "Mount Permission" label, so
+  // match the MetadataList term rather than any text.
+  private mountPermissionTerm(): Locator {
+    return this.modal.getByRole('term').filter({ hasText: 'Mount Permission' });
   }
 
   async verifyErrorMessage(message: string): Promise<void> {

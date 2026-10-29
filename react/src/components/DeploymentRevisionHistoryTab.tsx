@@ -10,6 +10,7 @@ import {
 import type { DeploymentRevisionHistoryTab_deployment$key } from '../__generated__/DeploymentRevisionHistoryTab_deployment.graphql';
 import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
+import { useCurrentDomain } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
@@ -22,7 +23,7 @@ import { Link } from '@lablup/ui-common/Link';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIAdminImageSelect,
+  BAIScopedImageSelect,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -38,7 +39,6 @@ import {
   filterOutNullAndUndefined,
   isDeploymentInStoppedCategory,
   isValidUUID,
-  toLocalId,
   useBAILogger,
   useFetchKey,
   type BAIColumnType,
@@ -161,6 +161,7 @@ const DeploymentRevisionHistoryTab: React.FC<
     graphql`
       fragment DeploymentRevisionHistoryTab_deployment on ModelDeployment {
         id
+        entityId
         metadata {
           status
           projectId
@@ -174,6 +175,14 @@ const DeploymentRevisionHistoryTab: React.FC<
   // Derive the stopped-category guard from this component's own fragment
   // status rather than receiving it as a prop from the parent.
   const deploymentStatus = deployment?.metadata?.status;
+
+  // Images the deployment's project and public registries reach (ADR 0012).
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
+  const deploymentProjectId = deployment?.metadata?.projectId;
+  const imageFilterScope = deploymentProjectId
+    ? { project: [{ value: deploymentProjectId }], public: true }
+    : { ...domainScope, public: true };
 
   const parseRevisionFilter = (filter: string | null) => {
     if (!filter) return null;
@@ -237,6 +246,7 @@ const DeploymentRevisionHistoryTab: React.FC<
               edges {
                 node {
                   id
+                  fieldId
                   revisionNumber
                   createdAt
 
@@ -341,8 +351,8 @@ const DeploymentRevisionHistoryTab: React.FC<
       commitActivate({
         variables: {
           input: {
-            deploymentId: toLocalId(deployment.id),
-            revisionId: toLocalId(revision.id),
+            deploymentId: deployment.entityId,
+            revisionId: revision.fieldId,
           },
         },
         onCompleted: (_res, errors) => {
@@ -386,13 +396,8 @@ const DeploymentRevisionHistoryTab: React.FC<
       fixed: 'left',
       sorter: true,
       render: (_value, record) => {
-        // `currentRevisionId` and `deployingRevisionId` come back as raw
-        // UUIDs from the scalar fields, while `record.id` is the
-        // Strawberry global id (`ModelRevision:<uuid>` base64). Compare
-        // in the same shape so the disable check actually matches.
-        const recordLocalId = toLocalId(record.id);
-        const isCurrent = recordLocalId === currentRevisionId;
-        const isDeploying = recordLocalId === deployingRevisionId;
+        const isCurrent = record.fieldId === currentRevisionId;
+        const isDeploying = record.fieldId === deployingRevisionId;
         // The reason carries the disabled state — every branch that blocks
         // Apply names itself, so none of them can go silent.
         const deployDisabledReason =
@@ -425,7 +430,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                 </Link>
                 <BAIFlex gap={0} align="center">
                   {'('}
-                  <BAIId globalId={record.id} />
+                  <BAIId uuid={record.fieldId} />
                   {')'}
                 </BAIFlex>
                 {isCurrent ? (
@@ -619,7 +624,8 @@ const DeploymentRevisionHistoryTab: React.FC<
       fixedOperator: 'equals' as const,
       rule: uuidRule,
       renderInput: ({ onAddCondition, value, isDisabled }) => (
-        <BAIAdminImageSelect
+        <BAIScopedImageSelect
+          scope={imageFilterScope}
           label={t('deployment.Image')}
           isLabelHidden
           value={value}

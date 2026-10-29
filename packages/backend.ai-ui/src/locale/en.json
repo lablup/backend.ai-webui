@@ -176,9 +176,9 @@
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Auto Refresh",
-    "EveryHours": "{{count}}h",
-    "EveryMinutes": "{{count}}m",
-    "EverySeconds": "{{count}}s",
+    "EveryHours": "{{count}} h",
+    "EveryMinutes": "{{count}} min",
+    "EverySeconds": "{{count}} s",
     "LastUpdated": "Last Updated",
     "Off": "Off",
     "Refresh": "Refresh"
@@ -319,7 +319,6 @@
     "RevisionNumber": "Revision",
     "RevisionNumberTooltip": "The current revision number of the deployment.",
     "StrategyType": "Strategy",
-    "Tags": "Tags",
     "UpdatedAt": "Updated At"
   },
   "comp:BAINameActionCell": {
@@ -558,12 +557,30 @@
     "To": "To Status",
     "UpdatedAt": "Updated At"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Select Folder"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agent"
   },
   "comp:BAISessionClusterMode": {
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Single"
+  },
+  "comp:BAISessionScene": {
+    "FoundCount": "{{count}} found",
+    "Hero": "Yours",
+    "Measuring": "Measuring",
+    "ResourceShare": "Resource share",
+    "ShowAll": "Show all",
+    "Utilization": "Utilization",
+    "mood": {
+      "Idle": "Idle",
+      "Leaving": "Terminating",
+      "Overheated": "Overheated",
+      "Waiting": "Waiting for resources",
+      "Working": "Working"
+    }
   },
   "comp:BAISessionTypeToken": {
     "Batch": "Batch",
@@ -616,8 +633,6 @@
     "CreateFolder": "Create a new storage folder",
     "DestinationPath": "Container path (destination)",
     "Folders": "Folders",
-    "OwnerProject": "Project",
-    "OwnerUser": "User",
     "PathAndAliasTooltip": "The path inside the container where the folder will be mounted. Leave empty to use the default path.",
     "Refresh": "Refresh",
     "RemoveFolder": "Remove",

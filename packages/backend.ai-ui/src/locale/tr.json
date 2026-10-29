@@ -319,7 +319,6 @@
     "RevisionNumber": "Revizyon",
     "RevisionNumberTooltip": "Dağıtımın mevcut revizyon numarası.",
     "StrategyType": "Strateji",
-    "Tags": "Etiketler",
     "UpdatedAt": "Güncellenme Tarihi"
   },
   "comp:BAINameActionCell": {
@@ -558,12 +557,30 @@
     "To": "Hedef durum",
     "UpdatedAt": "Güncelleme Tarihi"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Klasör Seç"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Ajan"
   },
   "comp:BAISessionClusterMode": {
     "MultiNodeShort": "Çok",
     "SingleNodeShort": "Bekar"
+  },
+  "comp:BAISessionScene": {
+    "FoundCount": "{{count}} bulundu",
+    "Hero": "Benim",
+    "Measuring": "Ölçülüyor",
+    "ResourceShare": "Kaynak payı",
+    "ShowAll": "Tümünü göster",
+    "Utilization": "Kullanım",
+    "mood": {
+      "Idle": "Boşta",
+      "Leaving": "Sonlandırılıyor",
+      "Overheated": "Aşırı ısınmış",
+      "Waiting": "Kaynak bekliyor",
+      "Working": "Çalışıyor"
+    }
   },
   "comp:BAISessionTypeToken": {
     "Batch": "Toplu İş",
@@ -616,8 +633,6 @@
     "CreateFolder": "Yeni bir depolama klasörü oluşturun",
     "DestinationPath": "Konteyner yolu (destination)",
     "Folders": "klasörler",
-    "OwnerProject": "Proje",
-    "OwnerUser": "Kullanıcı",
     "PathAndAliasTooltip": "Klasörün bağlanacağı container içindeki yol. Varsayılan yolu kullanmak için boş bırakın.",
     "Refresh": "Yenile",
     "RemoveFolder": "Kaldır",

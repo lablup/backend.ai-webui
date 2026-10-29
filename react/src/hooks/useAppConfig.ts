@@ -273,6 +273,24 @@ export const useUpdateDomainAppConfig = () => {
 };
 
 /**
+ * Refetches the merged `userConfig` view so every `useMyAppConfig` reader
+ * picks up a write made with `useUpdateMyUserAppConfig`.
+ */
+export const useRefetchMyAppConfig = () => {
+  'use memo';
+  const relayEnv = useRelayEnvironment();
+
+  return async () => {
+    await fetchQuery<useAppConfigMyQuery>(
+      relayEnv,
+      myQuery,
+      { configNames: ['userConfig'] },
+      { fetchPolicy: 'network-only' },
+    ).toPromise();
+  };
+};
+
+/**
  * Setter for the current user's own `userConfig` fragment: re-reads the raw
  * USER-scope document (not the merged view) and replaces only `subKey`.
  * Post-login surfaces only.

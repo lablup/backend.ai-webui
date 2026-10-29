@@ -176,9 +176,9 @@
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Atualização automática",
-    "EveryHours": "{{count}}h",
-    "EveryMinutes": "{{count}}m",
-    "EverySeconds": "{{count}}s",
+    "EveryHours": "{{count}} h",
+    "EveryMinutes": "{{count}} min",
+    "EverySeconds": "{{count}} s",
     "LastUpdated": "Última atualização",
     "Off": "Desligado",
     "Refresh": "Atualizar"
@@ -325,7 +325,6 @@
     "RevisionNumber": "Revisão",
     "RevisionNumberTooltip": "O número de revisão atual do deployment.",
     "StrategyType": "Estratégia",
-    "Tags": "Tag",
     "UpdatedAt": "Atualizado em"
   },
   "comp:BAINameActionCell": {
@@ -564,12 +563,30 @@
     "To": "Status de destino",
     "UpdatedAt": "Atualizado em"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Selecionar pasta"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agente"
   },
   "comp:BAISessionClusterMode": {
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Solteiro"
+  },
+  "comp:BAISessionScene": {
+    "FoundCount": "{{count}} encontrado(s)",
+    "Hero": "Minhas",
+    "Measuring": "Medindo",
+    "ResourceShare": "Participação de recursos",
+    "ShowAll": "Mostrar tudo",
+    "Utilization": "Utilização",
+    "mood": {
+      "Idle": "Inativa",
+      "Leaving": "Encerrando",
+      "Overheated": "Superaquecida",
+      "Waiting": "Aguardando recursos",
+      "Working": "Trabalhando"
+    }
   },
   "comp:BAISessionTypeToken": {
     "Batch": "Lote",
@@ -622,8 +639,6 @@
     "CreateFolder": "Crie uma nova pasta de armazenamento",
     "DestinationPath": "Caminho do contêiner (destination)",
     "Folders": "Pastas",
-    "OwnerProject": "Projeto",
-    "OwnerUser": "Usuário",
     "PathAndAliasTooltip": "O caminho dentro do container onde a pasta será montada. Deixe em branco para usar o caminho padrão.",
     "Refresh": "Atualizar",
     "RemoveFolder": "Remover",

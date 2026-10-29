@@ -65,6 +65,9 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'json-summary'],
       reportsDirectory: 'coverage',
+      // Write the summary even when a test fails, so the report step shows the
+      // real failure instead of a missing-file error.
+      reportOnFailure: true,
       include: ['src/**/*.{ts,tsx}'],
       exclude: [
         'src/**/*.{test,spec}.{ts,tsx}',

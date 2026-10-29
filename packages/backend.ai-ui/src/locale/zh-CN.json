@@ -319,7 +319,6 @@
     "RevisionNumber": "修订版本",
     "RevisionNumberTooltip": "部署的当前修订版本号。",
     "StrategyType": "策略",
-    "Tags": "标签",
     "UpdatedAt": "更新时间"
   },
   "comp:BAINameActionCell": {
@@ -558,12 +557,30 @@
     "To": "目标状态",
     "UpdatedAt": "更新时间"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "选择文件夹"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "代理人"
   },
   "comp:BAISessionClusterMode": {
     "MultiNodeShort": "多",
     "SingleNodeShort": "单节点"
+  },
+  "comp:BAISessionScene": {
+    "FoundCount": "找到 {{count}} 个",
+    "Hero": "我的会话",
+    "Measuring": "测量中",
+    "ResourceShare": "资源占用",
+    "ShowAll": "显示全部",
+    "Utilization": "使用率",
+    "mood": {
+      "Idle": "空闲",
+      "Leaving": "终止中",
+      "Overheated": "过热",
+      "Waiting": "等待资源",
+      "Working": "工作中"
+    }
   },
   "comp:BAISessionTypeToken": {
     "Batch": "批处理",
@@ -616,8 +633,6 @@
     "CreateFolder": "创建一个新的存储文件夹",
     "DestinationPath": "容器路径 (destination)",
     "Folders": "文件夹",
-    "OwnerProject": "项目",
-    "OwnerUser": "用户",
     "PathAndAliasTooltip": "文件夹在容器内的挂载路径。留空则使用默认路径。",
     "Refresh": "刷新",
     "RemoveFolder": "移除",

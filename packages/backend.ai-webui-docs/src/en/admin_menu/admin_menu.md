@@ -6,7 +6,7 @@ navTitle: Admin Features
 
 # Admin Features
 
-Logging in with an admin account adds an **Admin Settings** menu at the top of the sidebar. Selecting it switches the sidebar to show only the administration menus. User information registered in Backend.AI is listed under the **Users** menu. A super-admin can see all users' information, and create or deactivate users.
+Superadmins land on the administration pages right after logging in, and move between them and the user pages with **Switch to Admin Console** and **Switch to User Console** in the user menu. While you are on these pages, the sidebar lists only the administration menus. User information registered in Backend.AI is listed under the **Users** menu. A super-admin can see all users' information, and create or deactivate users.
 
 ![](../images/admin_user_page.png)
 
@@ -401,7 +401,7 @@ The dialog contains the following fields:
   pick the account the new keypair belongs to. Because the account is chosen from the list, it is no
   longer possible to submit an address that does not belong to a real user.
 - **Resource Policy**: The keypair resource policy to apply to the new keypair.
-- **Rate Limit (for 15 min.)**: The maximum number of requests that can be sent to the Backend.AI server
+- **Rate Limit (for 15 min)**: The maximum number of requests that can be sent to the Backend.AI server
   in 15 minutes. For example, if set to 1000 and the keypair sends more than 1000 API requests in 15
   minutes, the server throws an error and does not accept the request. It is recommended to use the
   default value and increase it when the API request frequency goes up high according to the user's
@@ -462,6 +462,8 @@ The Admin Deployments page has up to four tabs:
 - **Model Store Management**: See the [Admin Model Store Management](#admin-model-store-management) section below.
 - **Prometheus Preset**: Lets administrators manage reusable Prometheus query presets. See the [Prometheus Query Presets](#prometheus-query-presets) section below.
 - **Deployment Presets**: Lets administrators manage reusable deployment presets that end users can apply when deploying a model. See the [Deployment Presets](#deployment-presets) section below.
+
+Each deployment's key-value labels appear in the **Labels** column. Use the row's **Edit labels** action to change them.
 
 :::note
 Each individual admin deployment has its own address under the Admin Deployments page,
@@ -567,7 +569,7 @@ Backend.AI lets administrators define reusable **Prometheus query presets** that
 The presets are managed from the **Prometheus Preset** tab on the Admin Deployments page (`/admin/deployments?tab=prometheus-preset`).
 
 :::note[Superadmin only: live preview in the Auto Scaling Rule editor]
-When a superadmin opens the Auto Scaling Rule editor for a deployment, sets **Metric Source** to `Prometheus`, and selects a preset, a live **Current value** preview appears below the preset selector showing the latest metric value from Prometheus. This preview is only visible to superadmin accounts — regular users and domain admins do not see it.
+When a superadmin opens the Auto Scaling Rule editor for a deployment, sets **Metric Source** to `Prometheus`, and selects a preset, a live **Current value** preview appears below the preset selector showing the latest metric value from Prometheus. This preview is only visible to superadmin accounts.
 :::
 
 ![](../images/admin_prometheus_preset_list.png)
@@ -833,7 +835,7 @@ About details of each option in resource policy dialog, see the description belo
 - Sessions
   - Cluster Size: Set the maximum limit for the number of multi-containers or
     multi-nodes that can be configured when creating a session.
-  - Session Lifetime (sec.): Limits the maximum lifetime of a compute session
+  - Session Lifetime (s): Limits the maximum lifetime of a compute session
     from the reservation in the active status, including `PENDING` and
     `RUNNING` statuses. After this time, the session will be force-terminated
     even if it is fully utilized. This will be useful to prevent the session
@@ -843,7 +845,7 @@ About details of each option in resource policy dialog, see the description belo
   - Concurrent Sessions: Maximum number of concurrent compute session per keypair.
     If this value is set to 3, for example, users bound to this resource policy
     cannot create more than 3 compute sessions simultaneously. (max value: 100)
-  - Idle timeout (sec.): Configurable period of time during which the user can
+  - Idle timeout (s): Configurable period of time during which the user can
     leave their session untouched. If there is no activity at all on a
     compute session for idle timeout, the session will be garbage collected
     and destroyed automatically. The criteria of the "idleness" can be
@@ -1058,7 +1060,7 @@ to `FAIR_SHARE`. To configure the scheduler type for a resource group, refer to 
 [Manage resource group](#manage-resource-group) section.
 :::
 
-To access this feature, click the **Scheduler** menu item under **Admin Settings** in the sidebar.
+To access this feature, click the **Scheduler** menu item in the sidebar of the administration pages.
 The page displays a Fair Share Setting tab with a 4-step drill-down interface.
 
 ![](../images/fair_share_resource_group_page.png)
@@ -1293,6 +1295,17 @@ you have chosen a project and a resource group. Images in your selection that ar
 are excluded from the request.
 
 ![=520px](../images/image_install_modal.png)
+
+Superadmins can register specific images without rescanning a whole registry. Click **Import Image**
+to open the **Import Image from Registry** dialog, enter one full image reference per line — tag
+included — under **Image references**, choose the **Architecture** to look up, review the
+**Images to import** list, and click **Import Image**. An NVIDIA NGC catalog container URL can be
+pasted in place of a reference.
+
+![=720px](../images/import_image_modal.png)
+
+Superadmins can also refresh a single image's metadata from its registry with the **Rescan** action
+in the image's row.
 
 You can change the minimum resource requirements for each image by clicking the
 **Edit** (pencil) action in the `Controls` panel, which opens the
@@ -1545,6 +1558,9 @@ On managers that do not support combined filter conditions, only one condition c
 
 The **Default** column marks the default resource group. At most one resource group carries the marker,
 and an agent that registers without a resolvable resource group name falls back to it.
+
+Each resource group's key-value labels appear in the **Labels** column. Use the row's **Edit labels**
+action to change them, or select several resource groups and click **Add labels** to label them in bulk.
 
 <a id="scheduling-methods"></a>
 
@@ -1878,7 +1894,8 @@ bar at the top of the page filters the list when you are looking for a specific 
 **Announcement**
 
 - **System announcement**: Click **Edit Announcement** to create or change the announcement banner shown
-  to every user at the top of every page. See the [System announcement](#system-announcement) section below.
+  to every user at the top of every page. See the
+  [System announcement](#system-announcement) section below.
 
 :::note
 We will continue to add other settings needed for management, such as
@@ -1889,9 +1906,9 @@ removing unused images or registering periodic maintenance schedules.
 
 ### System announcement
 
-Superadmins can publish a short message that every user sees as a banner at the top of every page — for
-example, a planned maintenance window. The announcement is written in Markdown and is managed entirely
-from the WebUI, whether or not one has been published before.
+Superadmins can publish a short message that every user sees as a banner at the top of
+every page — for example, a planned maintenance window. The announcement is written in Markdown and is
+managed entirely from the WebUI, whether or not one has been published before.
 
 Open the editor in either of two ways:
 
@@ -1902,20 +1919,22 @@ Open the editor in either of two ways:
 
 ![](../images/announcement_edit_modal.png)
 
-The **Edit Announcement** dialog is split into two panes:
+Enter a **Title** for the announcement — a short line of plain text that the banner always shows. The
+message below it is optional; readers see it when they expand the banner. You write it in two panes:
 
 - **Message**: A Markdown editor with a formatting toolbar. The toolbar provides Heading (H1–H3), Bold,
   Italic, Strikethrough, Quote, Code, Link, Image, Bullet List, and Numbered List. Each button applies
   to the current selection, or inserts a placeholder you can type over.
 - **Preview**: A live rendering of the message exactly as users will see it, updated as you type.
 
-The footer holds three actions:
+The footer holds four actions:
 
-- **Publish**: Saves the message and makes the banner visible to all users. The button stays disabled
-  while the message is empty, because an empty announcement cannot be published.
+- **Publish**: Saves the announcement and makes the banner visible to every user.
+- **Save as Draft**: An option in the **Publish** menu. It saves the announcement without showing it to
+  users, and the dialog marks a saved draft as a **Draft**.
 - **Cancel**: Closes the dialog without saving.
 - **Delete**: Removes the published announcement so the banner disappears for everyone. A confirmation
-  dialog appears first. The action is unavailable when nothing is currently published.
+  dialog appears first.
 
 <a id="detailed-information"></a>
 
@@ -2036,14 +2055,13 @@ The **Branding** page lets superadmins customize the visual identity of the WebU
 
 ![](../images/branding_page.png)
 
-:::warning
-The updated theme cannot be applied immediately from this page. To apply a customized theme, export the configuration as a JSON file and provide it to the support team.
-:::
+Your edits on this page are a draft: use `Preview` to check them, then click `Apply` to save the theme and apply it to every user.
 
 The toolbar provides:
 
+- `Apply`: Saves the current settings as the theme.
 - `Preview`: Opens a new window that previews the current theme changes.
-- `JSON Config`: Opens a modal where the theme configuration can be edited directly as JSON and exported.
+- `JSON Config`: Opens a modal where the theme configuration can be edited directly as JSON and exported. An imported file is loaded into the draft, which you then save with `Apply`.
 - A reset control that restores all branding settings to their defaults.
 - A search bar to filter the settings.
 
@@ -2053,7 +2071,3 @@ The settings are divided into the following groups:
 - **Logo CI**: Upload the main sidebar logo for light and dark mode, along with the collapsed-sidebar logo, and configure their display sizes.
 - **Detail Logo CI**: Upload the logos shown on the login page and in the About modal, for both light and dark mode, with configurable sizes.
 - **Font**: Select the font family used throughout the interface.
-
-:::note
-After uploading an image or changing a color, use `Preview` to see the result. Because the changes are not applied to the live service automatically, export the JSON configuration and contact support to roll it out.
-:::

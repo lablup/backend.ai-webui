@@ -32,7 +32,7 @@ export interface Translators {
 
 /**
  * `postProcess: []` bypasses the dev-only `copyableI18nKey` processor, which
- * returns JSX; the ranker needs plain strings in every environment.
+ * appends the key; the ranker needs plain strings in every environment.
  */
 export const toTranslator = (translate: TFunction): HitTranslator => {
   return (key: string) => {

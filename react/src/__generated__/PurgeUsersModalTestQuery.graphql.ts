@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d41ec8138a161ecb1de70253f91995b7>>
+ * @generated SignedSource<<0f497505035c5f4ca028b2d749b75835>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -125,6 +125,13 @@ return {
                   {
                     "alias": null,
                     "args": null,
+                    "kind": "ScalarField",
+                    "name": "entityId",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
                     "concreteType": "UserV2BasicInfo",
                     "kind": "LinkedField",
                     "name": "basicInfo",
@@ -152,12 +159,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "6e12fc26691999414e3851bc836a6c15",
+    "cacheID": "a12db620f4073271c0d41ceaa867a70e",
     "id": null,
     "metadata": {},
     "name": "PurgeUsersModalTestQuery",
     "operationKind": "query",
-    "text": "query PurgeUsersModalTestQuery {\n  adminUsersV2(limit: 1) {\n    edges {\n      node {\n        id\n        ...PurgeUsersModalFragment\n      }\n    }\n  }\n}\n\nfragment PurgeUsersModalFragment on UserV2 {\n  id\n  basicInfo {\n    email\n  }\n}\n"
+    "text": "query PurgeUsersModalTestQuery {\n  adminUsersV2(limit: 1) {\n    edges {\n      node {\n        id\n        ...PurgeUsersModalFragment\n      }\n    }\n  }\n}\n\nfragment PurgeUsersModalFragment on UserV2 {\n  id\n  entityId\n  basicInfo {\n    email\n  }\n}\n"
   }
 };
 })();

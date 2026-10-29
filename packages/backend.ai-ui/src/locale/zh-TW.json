@@ -319,7 +319,6 @@
     "RevisionNumber": "修訂版本",
     "RevisionNumberTooltip": "部署的目前修訂版本號碼。",
     "StrategyType": "策略",
-    "Tags": "標籤",
     "UpdatedAt": "更新時間"
   },
   "comp:BAINameActionCell": {
@@ -558,12 +557,30 @@
     "To": "目標狀態",
     "UpdatedAt": "更新時間"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "選擇資料夾"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "代理人"
   },
   "comp:BAISessionClusterMode": {
     "MultiNodeShort": "多",
     "SingleNodeShort": "單節點"
+  },
+  "comp:BAISessionScene": {
+    "FoundCount": "找到 {{count}} 個",
+    "Hero": "我的工作階段",
+    "Measuring": "測量中",
+    "ResourceShare": "資源占用",
+    "ShowAll": "顯示全部",
+    "Utilization": "使用率",
+    "mood": {
+      "Idle": "閒置",
+      "Leaving": "終止中",
+      "Overheated": "過熱",
+      "Waiting": "等待資源",
+      "Working": "工作中"
+    }
   },
   "comp:BAISessionTypeToken": {
     "Batch": "批次",
@@ -616,8 +633,6 @@
     "CreateFolder": "創建一個新的存儲文件夾",
     "DestinationPath": "容器路徑 (destination)",
     "Folders": "文件夾",
-    "OwnerProject": "專案",
-    "OwnerUser": "使用者",
     "PathAndAliasTooltip": "資料夾在容器內的掛載路徑。留空則使用預設路徑。",
     "Refresh": "刷新",
     "RemoveFolder": "移除",

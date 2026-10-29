@@ -12,9 +12,11 @@ import { RelayEnvironment } from '../RelayEnvironment';
 import { loginSessionAuthMyUserQuery } from '../__generated__/loginSessionAuthMyUserQuery.graphql';
 import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
 import { getActAsTarget } from './actAs';
-import type { LoginBootstrap } from './loginBootstrap';
+import {
+  LoginBootstrapIncompleteError,
+  type LoginBootstrap,
+} from './loginBootstrap';
 import { applyConfigToClient, type LoginConfigState } from './loginConfig';
-import { toLocalId } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { fetchQuery, graphql } from 'react-relay';
 
@@ -27,6 +29,7 @@ const myUserQuery = graphql`
   ) {
     myUserV2 {
       id
+      entityId
       basicInfo {
         email
         fullName
@@ -52,6 +55,7 @@ const myUserQuery = graphql`
         edges {
           node {
             id
+            entityId
             basicInfo {
               name
             }
@@ -66,6 +70,7 @@ const myUserQuery = graphql`
         edges {
           node {
             id
+            entityId
             basicInfo {
               name
             }
@@ -122,6 +127,52 @@ export function escapeLoginProbe(): boolean {
   return true;
 }
 
+const MOCK_MANAGER_KEY = 'backendaiwebui.dev.mockManager';
+const MOCK_MANAGER_MODES = ['down', '502', '504', 'timeout'] as const;
+type MockManagerMode = (typeof MOCK_MANAGER_MODES)[number];
+const MOCK_TIMEOUT_MS = 5000;
+
+/**
+ * Dev-only: `?mockManager=down|502|504|timeout` makes the reachability probe
+ * fail that way for this tab until `?mockManager=off`, to test outage screens.
+ */
+function readMockManagerMode(): MockManagerMode | null {
+  const param = new URLSearchParams(window.location.search).get('mockManager');
+  if (param === 'off') sessionStorage.removeItem(MOCK_MANAGER_KEY);
+  else if (MOCK_MANAGER_MODES.includes(param as MockManagerMode)) {
+    sessionStorage.setItem(MOCK_MANAGER_KEY, param as string);
+  }
+  const stored = sessionStorage.getItem(MOCK_MANAGER_KEY);
+  return MOCK_MANAGER_MODES.includes(stored as MockManagerMode)
+    ? (stored as MockManagerMode)
+    : null;
+}
+
+async function failAsMockedManager(
+  mode: MockManagerMode,
+  signal: AbortSignal,
+): Promise<never> {
+  if (mode === 'down') throw new TypeError('Failed to fetch');
+  if (mode === 'timeout') {
+    await new Promise<void>((resolve) => {
+      const timer = setTimeout(resolve, MOCK_TIMEOUT_MS);
+      signal.addEventListener('abort', () => {
+        clearTimeout(timer);
+        resolve();
+      });
+    });
+    throw Object.assign(new Error('Request timeout'), {
+      isError: true,
+      statusCode: 408,
+    });
+  }
+  const statusCode = Number(mode);
+  throw Object.assign(
+    new Error(statusCode === 502 ? 'Bad Gateway' : 'Gateway Timeout'),
+    { isError: true, statusCode },
+  );
+}
+
 /**
  * The login screen's reachability probe. In a dev build it runs under an
  * AbortController that `escapeLoginProbe` can fire; a caller-supplied signal
@@ -136,6 +187,8 @@ export async function probeManager(client: any): Promise<void> {
   const timer = setTimeout(() => controller.abort(), client.requestTimeout);
   activeProbe = controller;
   try {
+    const mockMode = readMockManagerMode();
+    if (mockMode) await failAsMockedManager(mockMode, controller.signal);
     await client.get_manager_version(controller.signal);
   } catch (err) {
     if (controller.signal.reason === LOGIN_PROBE_ESCAPED) {
@@ -207,18 +260,30 @@ export async function connectViaGQL(
         e?.statusCode === 403)
     )
       await client.logout().catch(() => {});
+    // Any other HTTP failure (a wrapped manager 5xx, a timeout) leaves the
+    // session live; the recovery dialog handles it.
+    const status = e?.statusCode;
+    if (
+      typeof status === 'number' &&
+      status >= 400 &&
+      status !== 401 &&
+      status !== 403
+    ) {
+      throw new LoginBootstrapIncompleteError(err);
+    }
     throw err;
   }
   if (isCancelled?.()) throw cancel();
+  // The session is live; the manager failed to resolve the user (an errors[]
+  // entry Relay hands back as null data). Not a reason to log out.
   if (!response?.myUserV2) {
-    if (!isActingAs) await client.logout();
-    throw new Error('User information is missing.');
+    throw new LoginBootstrapIncompleteError(response);
   }
   const me = response.myUserV2;
   const projects = _.uniqBy(
     _.map(
       [...(me.recentProject?.edges ?? []), ...(me.defaultProject?.edges ?? [])],
-      ({ node }) => ({ id: toLocalId(node.id), name: node.basicInfo.name }),
+      ({ node }) => ({ id: node.entityId, name: node.basicInfo.name }),
     ),
     'name',
   );
@@ -240,7 +305,7 @@ export async function connectViaGQL(
     me.organization.domainName ?? me.domain?.basicInfo.name ?? '';
 
   (globalThis as any).backendaiclient.email = me.basicInfo.email;
-  (globalThis as any).backendaiclient.user_uuid = toLocalId(me.id);
+  (globalThis as any).backendaiclient.user_uuid = me.entityId;
   (globalThis as any).backendaiclient.full_name = me.basicInfo.fullName;
   (globalThis as any).backendaiclient.is_admin = [
     'superadmin',

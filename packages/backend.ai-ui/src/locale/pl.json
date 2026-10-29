@@ -176,9 +176,9 @@
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Automatyczne odświeżanie",
-    "EveryHours": "{{count}}h",
-    "EveryMinutes": "{{count}}m",
-    "EverySeconds": "{{count}}s",
+    "EveryHours": "{{count}} h",
+    "EveryMinutes": "{{count}} min",
+    "EverySeconds": "{{count}} s",
     "LastUpdated": "Ostatnia aktualizacja",
     "Off": "Wyłączone",
     "Refresh": "Odśwież"
@@ -319,7 +319,6 @@
     "RevisionNumber": "Rewizja",
     "RevisionNumberTooltip": "Bieżący numer rewizji wdrożenia.",
     "StrategyType": "Strategia",
-    "Tags": "Tagi",
     "UpdatedAt": "Zaktualizowano"
   },
   "comp:BAINameActionCell": {
@@ -558,12 +557,30 @@
     "To": "Status docelowy",
     "UpdatedAt": "Zaktualizowano"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Wybierz folder"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agent"
   },
   "comp:BAISessionClusterMode": {
     "MultiNodeShort": "Wielo",
     "SingleNodeShort": "Pojedynczy"
+  },
+  "comp:BAISessionScene": {
+    "FoundCount": "Znaleziono: {{count}}",
+    "Hero": "Moje",
+    "Measuring": "Trwa pomiar",
+    "ResourceShare": "Udział zasobów",
+    "ShowAll": "Pokaż wszystko",
+    "Utilization": "Wykorzystanie",
+    "mood": {
+      "Idle": "Bezczynna",
+      "Leaving": "Kończy się",
+      "Overheated": "Przegrzana",
+      "Waiting": "Czeka na zasoby",
+      "Working": "Pracuje"
+    }
   },
   "comp:BAISessionTypeToken": {
     "Batch": "Wsadowa",
@@ -616,8 +633,6 @@
     "CreateFolder": "Utwórz nowy folder przechowywania",
     "DestinationPath": "Ścieżka w kontenerze (destination)",
     "Folders": "Foldery",
-    "OwnerProject": "Projekt",
-    "OwnerUser": "Użytkownik",
     "PathAndAliasTooltip": "Ścieżka wewnątrz kontenera, w której zostanie zamontowany folder. Pozostaw puste, aby użyć domyślnej ścieżki.",
     "Refresh": "Odświeżać",
     "RemoveFolder": "Usuń",

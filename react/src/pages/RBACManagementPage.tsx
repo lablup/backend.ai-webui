@@ -12,7 +12,6 @@ import {
 } from '../__generated__/RBACManagementPageQuery.graphql';
 import { RBACManagementPageScopeTypesQuery } from '../__generated__/RBACManagementPageScopeTypesQuery.graphql';
 import { App } from '../app-shim';
-import BAIRadioGroup from '../components/BAIRadioGroup';
 import RoleDetailDrawerV2 from '../components/RoleDetailDrawerV2';
 import RoleFormModal from '../components/RoleFormModal';
 import RoleNodes, {
@@ -35,12 +34,14 @@ import {
   type BAISelectProps,
   BAISkeleton,
   BAIUnmountAfterClose,
-  BAIUserSelect,
+  BAIAdminUserV2Select,
   filterOutEmpty,
   INITIAL_FETCH_KEY,
   useBAILogger,
   useFetchKey,
   useMutationWithPromise,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import { Trash2, BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
 import {
@@ -268,18 +269,22 @@ const RoleListTab: React.FC = () => {
             wrap="wrap"
             style={{ flexShrink: 1 }}
           >
-            <BAIRadioGroup
-              optionType="button"
+            <BAISegmentedControl
               value={queryParams.status}
-              onChange={(e) => {
-                setQueryParams({ status: e.target.value });
+              onChange={(value) => {
+                setQueryParams({ status: value as typeof queryParams.status });
                 setTablePaginationOption({ current: 1 });
               }}
-              options={[
-                { label: t('rbac.Active'), value: 'ACTIVE' },
-                { label: t('rbac.Inactive'), value: 'DELETED' },
-              ]}
-            />
+            >
+              <BAISegmentedControlItem
+                value="ACTIVE"
+                label={t('rbac.Active')}
+              />
+              <BAISegmentedControlItem
+                value="DELETED"
+                label={t('rbac.Inactive')}
+              />
+            </BAISegmentedControl>
             <BAIGraphQLPropertyFilter<RoleFilter>
               filterProperties={filterOutEmpty([
                 {
@@ -304,24 +309,26 @@ const RoleListTab: React.FC = () => {
                   type: 'uuid',
                   fixedOperator: 'equals',
                   renderInput: ({ onAddCondition, value, isDisabled }) => (
-                    <BAIUserSelect
-                      valuePropName="id"
-                      value={value}
-                      isDisabled={isDisabled}
-                      label={t('rbac.AssignedUser')}
-                      isLabelHidden
-                      onChange={(value, option) =>
-                        // The picker emits the user UUID; forward the option
-                        // label (email) so the condition tag stays readable
-                        // (P3C-1 keeps the 2nd argument on this sibling).
-                        onAddCondition(
-                          value as string | undefined,
-                          Array.isArray(option)
-                            ? option[0]?.label
-                            : option?.label,
-                        )
-                      }
-                    />
+                    <Suspense fallback={<BAISelect disabled loading />}>
+                      <BAIAdminUserV2Select
+                        valuePropName="id"
+                        value={value}
+                        isDisabled={isDisabled}
+                        label={t('rbac.AssignedUser')}
+                        isLabelHidden
+                        onChange={(value, option) =>
+                          // The picker emits the user UUID; forward the option
+                          // label (email) so the condition tag stays readable
+                          // (P3C-1 keeps the 2nd argument on this sibling).
+                          onAddCondition(
+                            value as string | undefined,
+                            Array.isArray(option)
+                              ? option[0]?.label
+                              : option?.label,
+                          )
+                        }
+                      />
+                    </Suspense>
                   ),
                 },
                 {

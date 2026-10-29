@@ -174,6 +174,7 @@ const useFolderExplorerQuery = (vfolderID: string) => {
           unmanagedPath
           host
           id
+          entityId
           metadata {
             name
           }
@@ -372,7 +373,7 @@ const FolderExplorerBody: React.FC<{
   };
 
   const { uploadStatus, uploadFiles } = useFileUploadManager(
-    vfolderNode?.id,
+    vfolderNode?.entityId,
     folderName || undefined,
   );
   // Polling to update fetchKey when there are pending uploads

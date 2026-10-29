@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<dc971586936628f58fc248e3e895d8f7>>
+ * @generated SignedSource<<0e360cdddc5ed95f3f55eaa4851b4c09>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -110,6 +110,7 @@ export type DeploymentAutoScalingCardListQuery$data = {
       readonly count: number;
       readonly edges: ReadonlyArray<{
         readonly node: {
+          readonly fieldId: string;
           readonly id: string;
           readonly metricName: string;
           readonly " $fragmentSpreads": FragmentRefs<"AutoScalingRuleEditorModalFragment" | "AutoScalingRuleListNodesFragment">;
@@ -196,6 +197,13 @@ v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
+  "name": "fieldId",
+  "storageKey": null
+},
+v10 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
   "name": "metricName",
   "storageKey": null
 };
@@ -247,6 +255,7 @@ return {
                     "selections": [
                       (v8/*: any*/),
                       (v9/*: any*/),
+                      (v10/*: any*/),
                       {
                         "args": null,
                         "kind": "FragmentSpread",
@@ -320,6 +329,7 @@ return {
                     "selections": [
                       (v8/*: any*/),
                       (v9/*: any*/),
+                      (v10/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -406,16 +416,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "41c9b35cb41550bd8f8cde32c8b21c1a",
+    "cacheID": "b80b085c82807c03234e71c5d226f805",
     "id": null,
     "metadata": {},
     "name": "DeploymentAutoScalingCardListQuery",
     "operationKind": "query",
-    "text": "query DeploymentAutoScalingCardListQuery(\n  $deploymentId: ID!\n  $offset: Int\n  $limit: Int\n  $orderBy: [AutoScalingRuleOrderBy!]\n  $filter: AutoScalingRuleFilter\n) {\n  deployment(id: $deploymentId) {\n    autoScalingRules(offset: $offset, limit: $limit, orderBy: $orderBy, filter: $filter) {\n      count\n      edges {\n        node {\n          id\n          metricName\n          ...AutoScalingRuleListNodesFragment\n          ...AutoScalingRuleEditorModalFragment\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment AutoScalingRuleEditorModalFragment on AutoScalingRule {\n  id\n  metricSource\n  metricName\n  minThreshold\n  maxThreshold\n  stepSize\n  timeWindow\n  minReplicas\n  maxReplicas\n  prometheusQueryPresetId\n}\n\nfragment AutoScalingRuleListNodesFragment on AutoScalingRule {\n  id\n  metricSource\n  metricName\n  minThreshold\n  maxThreshold\n  stepSize\n  timeWindow\n  minReplicas\n  maxReplicas\n  prometheusQueryPresetId\n  createdAt\n  lastTriggeredAt\n  ...AutoScalingRuleEditorModalFragment\n}\n"
+    "text": "query DeploymentAutoScalingCardListQuery(\n  $deploymentId: ID!\n  $offset: Int\n  $limit: Int\n  $orderBy: [AutoScalingRuleOrderBy!]\n  $filter: AutoScalingRuleFilter\n) {\n  deployment(id: $deploymentId) {\n    autoScalingRules(offset: $offset, limit: $limit, orderBy: $orderBy, filter: $filter) {\n      count\n      edges {\n        node {\n          id\n          fieldId\n          metricName\n          ...AutoScalingRuleListNodesFragment\n          ...AutoScalingRuleEditorModalFragment\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment AutoScalingRuleEditorModalFragment on AutoScalingRule {\n  id\n  fieldId\n  metricSource\n  metricName\n  minThreshold\n  maxThreshold\n  stepSize\n  timeWindow\n  minReplicas\n  maxReplicas\n  prometheusQueryPresetId\n}\n\nfragment AutoScalingRuleListNodesFragment on AutoScalingRule {\n  id\n  metricSource\n  metricName\n  minThreshold\n  maxThreshold\n  stepSize\n  timeWindow\n  minReplicas\n  maxReplicas\n  prometheusQueryPresetId\n  createdAt\n  lastTriggeredAt\n  ...AutoScalingRuleEditorModalFragment\n}\n"
   }
 };
 })();
 
-(node as any).hash = "56b6637e50dbda972f85edac73bc04b5";
+(node as any).hash = "5d3e89237ed9f0068ab20ae939f762de";
 
 export default node;

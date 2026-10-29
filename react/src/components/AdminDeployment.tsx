@@ -12,9 +12,12 @@ import type {
 import { App } from '../app-shim';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { buildPath } from '../helper/pathBuilder';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import {
+  useSuspendedBackendaiClient,
+  useWebUINavigate,
+  useCurrentDomain,
+} from '../hooks';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
-import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import DeploymentSettingModal from './DeploymentSettingModal';
 import { Link } from '@lablup/ui-common/Link';
@@ -22,7 +25,6 @@ import { Text } from '@lablup/ui-common/Text';
 import {
   BAIAdminProjectSelect,
   BAIDeleteConfirmModal,
-  BAIDeploymentTagTokens,
   BAIFlex,
   BAIGraphQLFilterProperty,
   BAIGraphQLPropertyFilter,
@@ -30,23 +32,25 @@ import {
   BAINameActionCell,
   type BAITableSettings,
   BAIUnmountAfterClose,
-  BAIUserSelect,
+  BAIScopedUserSelect,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
   availableDeploymentSorterKeys,
   DeploymentOrderValue,
   filterOutEmpty,
   filterOutNullAndUndefined,
   isDeploymentInStoppedCategory,
   isValidUUID,
-  toLocalId,
   useBAILogger,
   BAIEntityLabelSettingModal,
   toEntityLabelFilter,
   useIsLabelableEntityType,
   type ModelDeploymentNodeInList,
+  BAISelect,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Trash2, SquarePenIcon } from 'lucide-react';
-import { useDeferredValue, useState } from 'react';
+import { useDeferredValue, useState, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -75,6 +79,7 @@ export const AdminDeploymentQuery = graphql`
       edges {
         node {
           id
+          entityId
           ...BAIModelDeploymentNodesFragment
           ...DeploymentSettingModal_deployment
           metadata {
@@ -130,6 +135,8 @@ const AdminDeployment = ({
   tableSettings,
 }: AdminDeploymentProps) => {
   'use memo';
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
@@ -212,11 +219,6 @@ const AdminDeployment = ({
       type: 'string',
     },
     {
-      key: 'tags',
-      propertyLabel: t('deployment.filter.Tags'),
-      type: 'string',
-    },
-    {
       key: 'endpointUrl',
       propertyLabel: t('deployment.filter.EndpointUrl'),
       type: 'string',
@@ -273,21 +275,24 @@ const AdminDeployment = ({
       fixedOperator: 'equals' as const,
       rule: uuidRule,
       renderInput: ({ onAddCondition, value, isDisabled }) => (
-        <BAIUserSelect
-          valuePropName="id"
-          label={t('deployment.Owner')}
-          isLabelHidden
-          value={value}
-          isDisabled={isDisabled}
-          onChange={(next, option) =>
-            // The picker emits the user UUID; forward the option label
-            // (email) so the condition tag stays readable.
-            onAddCondition(
-              next as string | undefined,
-              Array.isArray(option) ? option[0]?.label : option?.label,
-            )
-          }
-        />
+        <Suspense fallback={<BAISelect disabled loading />}>
+          <BAIScopedUserSelect
+            scope={domainScope}
+            valuePropName="id"
+            label={t('deployment.Owner')}
+            isLabelHidden
+            value={value}
+            isDisabled={isDisabled}
+            onChange={(next, option) =>
+              // The picker emits the user UUID; forward the option label
+              // (email) so the condition tag stays readable.
+              onAddCondition(
+                next as string | undefined,
+                Array.isArray(option) ? option[0]?.label : option?.label,
+              )
+            }
+          />
+        </Suspense>
       ),
     },
     // `replicas.some.X` nests as ReplicaNestedFilter -> ReplicaFilter -> the
@@ -351,10 +356,10 @@ const AdminDeployment = ({
       <BAIFlex direction="column" align="stretch" gap="sm">
         <BAIFlex justify="between" wrap="wrap" gap="sm">
           <BAIFlex gap="sm" align="start" wrap="wrap" style={{ flexShrink: 1 }}>
-            <BAIRadioGroup
+            <BAISegmentedControl
               value={statusCategory}
-              onChange={(e) => {
-                const nextCategory = e.target.value as DeploymentStatusCategory;
+              onChange={(value) => {
+                const nextCategory = value as DeploymentStatusCategory;
                 onReload(
                   {
                     ...queryRef.variables,
@@ -367,14 +372,16 @@ const AdminDeployment = ({
                   { fetchPolicy: 'network-only' },
                 );
               }}
-              options={[
-                { label: t('deployment.Running'), value: 'running' },
-                {
-                  label: t('deployment.status.Terminated'),
-                  value: 'finished',
-                },
-              ]}
-            />
+            >
+              <BAISegmentedControlItem
+                value="running"
+                label={t('deployment.Running')}
+              />
+              <BAISegmentedControlItem
+                value="finished"
+                label={t('deployment.status.Terminated')}
+              />
+            </BAISegmentedControl>
             <BAIGraphQLPropertyFilter<DeploymentFilter>
               filterProperties={filterProperties}
               value={userFilter ?? undefined}
@@ -465,7 +472,6 @@ const AdminDeployment = ({
               'owner',
               'id',
               'endpointUrl',
-              'tags',
               'updatedAt',
               'openToPublic',
               'resourceGroup',
@@ -499,7 +505,7 @@ const AdminDeployment = ({
                             webUINavigate(
                               buildPath(
                                 'admin',
-                                `deployments/${toLocalId(record.id)}`,
+                                `deployments/${record.entityId}`,
                               ),
                             )
                           }
@@ -547,32 +553,6 @@ const AdminDeployment = ({
                         >{`#${revisionNumber}`}</Link>
                       );
                     },
-                  };
-                }
-                if (col.key === 'tags') {
-                  return {
-                    ...col,
-                    defaultHidden,
-                    render: (_value, record) => (
-                      <BAIDeploymentTagTokens
-                        metadataFrgmt={record.metadata}
-                        stopRowClick
-                        onTagClick={(tag) => {
-                          onReload(
-                            {
-                              ...queryRef.variables,
-                              filter: {
-                                tags: { iEquals: tag },
-                                ...statusCategoryFilterFor(statusCategory),
-                              },
-                              offset: 0,
-                            },
-                            { fetchPolicy: 'network-only' },
-                          );
-                        }}
-                        fallback={<Text color="secondary">-</Text>}
-                      />
-                    ),
                   };
                 }
                 return { ...col, defaultHidden };
@@ -637,7 +617,7 @@ const AdminDeployment = ({
           commitDeleteMutation({
             variables: {
               input: {
-                id: toLocalId(deletingDeployment.id) ?? deletingDeployment.id,
+                id: deletingDeployment.entityId,
               },
             },
             onCompleted: (_response, errors) => {

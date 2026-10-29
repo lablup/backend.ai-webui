@@ -9,6 +9,11 @@ import {
   compareNumberWithUnits,
   convertToBinaryUnit,
 } from '../../helper';
+import {
+  getUnifiedSlotNameFromTag,
+  isUnifiedAcceleratorSlot,
+  UNIFIED_SLOT_TAG_PREFIX,
+} from '../../helper/unifiedAcceleratorSlot';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import {
   useResourceSlots,
@@ -27,7 +32,9 @@ import {
   ImageEnvironmentFormInput,
 } from '../ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from '../InputNumberWithSlider';
-import ResourcePresetSelect from '../ResourcePresetSelect';
+import ResourcePresetSelect, {
+  getUnavailableSlotNames,
+} from '../ResourcePresetSelect';
 import RemainingMark from './RemainingMark';
 import SharedMemoryFormItems from './SharedMemoryFormItems';
 // FRONTIER (ticket 17): the launcher's form-visual core. The Form ENGINE and
@@ -35,7 +42,6 @@ import SharedMemoryFormItems from './SharedMemoryFormItems';
 // and every control and every piece of chrome below is Astryx now.
 import { Card } from '@lablup/ui-common/Card';
 import { IconButton } from '@lablup/ui-common/IconButton';
-import { SegmentedControl } from '@lablup/ui-common/SegmentedControl';
 import { VStack } from '@lablup/ui-common/Stack';
 import { useTheme } from '@lablup/ui-common/theme';
 import { spacingVars } from '@lablup/ui-common/theme/tokens.stylex';
@@ -50,6 +56,7 @@ import {
   useEventNotStable,
   useProjectResourceGroups,
   useUpdatableState,
+  BAISegmentedControl,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { RotateCw } from 'lucide-react';
@@ -123,41 +130,10 @@ export const pickChangedResourceValues = <T extends Record<string, unknown>>(
     return true;
   }) as Partial<T>;
 
-/**
- * Returns true when the given accelerator slot name represents a unified
- * memory architecture, where the accelerator memory and the host memory
- * share a single physical pool. Identified by a `.unified` suffix on the
- * slot name (e.g. `cuda.unified`).
- */
-export const isUnifiedAcceleratorSlot = (slotName?: string | null): boolean => {
-  return !!slotName && _.endsWith(slotName, '.unified');
-};
-
-/**
- * Prefix of the session `tag` that marks a session as using a unified-memory
- * accelerator slot (e.g. `unified-slot:cuda.unified`). This is a temporary
- * marker until the session model exposes unified-memory usage directly.
- */
-export const UNIFIED_SLOT_TAG_PREFIX = 'unified-slot:';
-
-/**
- * Extracts the unified-memory accelerator slot name from a session `tag`
- * (e.g. `unified-slot:cuda.unified` -> `cuda.unified`). Returns `undefined`
- * when the tag carries no unified-slot marker, or when the marked slot is not
- * actually a unified-memory slot (i.e. does not end with `.unified`) — this
- * guards the downstream UI, which assumes a genuine unified slot. The tag is
- * treated as a comma/whitespace-separated list so it stays correct even if
- * other markers are appended later.
- */
-export const getUnifiedSlotNameFromTag = (
-  tag?: string | null,
-): string | undefined => {
-  if (!tag) return undefined;
-  const token = tag
-    .split(/[,\s]+/)
-    .find((part) => part.startsWith(UNIFIED_SLOT_TAG_PREFIX));
-  const slotName = token?.slice(UNIFIED_SLOT_TAG_PREFIX.length);
-  return isUnifiedAcceleratorSlot(slotName) ? slotName : undefined;
+export {
+  getUnifiedSlotNameFromTag,
+  isUnifiedAcceleratorSlot,
+  UNIFIED_SLOT_TAG_PREFIX,
 };
 
 export interface ResourceAllocationFormValue {
@@ -238,8 +214,7 @@ const clusterModeSegmentedStyles = stylex.create({
 /**
  * Cluster-mode segmented control — the twin of the one in
  * `ClusterModeFormItems`, declared locally for the same reason: each option
- * carries a help tooltip that the shared `AstryxFormSegmented` option shape
- * does not model. The two `Form.Item` contracts are honoured inline.
+ * carries a help tooltip.
  */
 const ClusterModeSegmented: React.FC<{
   label: string;
@@ -252,8 +227,8 @@ const ClusterModeSegmented: React.FC<{
 }> = ({ label, onValueChange, items, value, onChange }) => {
   'use memo';
   return (
-    <SegmentedControl
-      label={label}
+    <BAISegmentedControl
+      aria-label={label}
       value={value ?? items[0]?.value ?? ''}
       xstyle={clusterModeSegmentedStyles.control}
       onChange={(next) => {
@@ -278,7 +253,7 @@ const ClusterModeSegmented: React.FC<{
           }
         />
       ))}
-    </SegmentedControl>
+    </BAISegmentedControl>
   );
 };
 
@@ -467,6 +442,7 @@ const ResourceAllocationFormItems: React.FC<
       checkPresetInfo?.presets,
       resourceLimits,
       currentImage,
+      resourceSlotsInRG ? _.keys(resourceSlotsInRG) : undefined,
     ),
   );
   const allocatablePresetIds: string[] = JSON.parse(allocatablePresetIdsKey);
@@ -723,6 +699,51 @@ const ResourceAllocationFormItems: React.FC<
     },
   );
 
+  // The first allocatable preset, else minimum-required (or none when custom
+  // allocation is off).
+  const selectFallbackPreset = useEventNotStable(() => {
+    const firstAllocatablePreset = _.sortBy(
+      _.filter(checkPresetInfo?.presets, (preset) =>
+        allocatablePresetIds.includes(preset.id),
+      ),
+      'name',
+    )[0];
+    if (enableResourcePresets && firstAllocatablePreset) {
+      form.setFieldsValue({
+        allocationPreset: firstAllocatablePreset.id,
+      });
+      updateResourceFieldsBasedOnPreset(firstAllocatablePreset.id);
+    } else if (baiClient._config.allowCustomResourceAllocation) {
+      form.setFieldValue('allocationPreset', 'minimum-required');
+    } else {
+      form.setFieldValue('allocationPreset', null);
+    }
+  });
+
+  // A preset kept across a resource-group change (or restored from the URL) may
+  // need a slot the new group lacks; pick again instead of launching without it.
+  useEffect(() => {
+    if (_.isUndefined(resourceSlotsInRG)) return;
+    const selectedPreset = _.find(
+      checkPresetInfo?.presets,
+      (preset) => preset.id === currentAllocationPreset,
+    );
+    if (
+      selectedPreset &&
+      getUnavailableSlotNames(
+        selectedPreset.resource_slots,
+        _.keys(resourceSlotsInRG),
+      ).length > 0
+    ) {
+      selectFallbackPreset();
+    }
+  }, [
+    currentAllocationPreset,
+    resourceSlotsInRG,
+    checkPresetInfo?.presets,
+    selectFallbackPreset,
+  ]);
+
   // This effect is
   // - for auto selecting the preset right after initialling the form and resourceSlots are loaded
   // - ensuring accelerator type is valid when related data is changed
@@ -740,30 +761,10 @@ const ResourceAllocationFormItems: React.FC<
         )
       ) {
         // if the current preset is custom or minimum-required, do nothing.
-      } else {
-        const firstAllocatablePreset = _.sortBy(
-          _.filter(checkPresetInfo?.presets, (preset) =>
-            allocatablePresetIds.includes(preset.id),
-          ),
-          'name',
-        )[0];
-        if (
-          allocatablePresetIds.includes(form.getFieldValue('allocationPreset'))
-        ) {
-          // if the current preset is available in the current resource group, do nothing.
-        } else if (enableResourcePresets && firstAllocatablePreset) {
-          form.setFieldsValue({
-            allocationPreset: firstAllocatablePreset.id,
-          });
-          updateResourceFieldsBasedOnPreset(firstAllocatablePreset.id);
-        } else {
-          // if the current preset is not available in the current resource group, set to "minimum-required".
-          if (baiClient._config.allowCustomResourceAllocation) {
-            form.setFieldValue('allocationPreset', 'minimum-required');
-          } else {
-            form.setFieldValue('allocationPreset', null);
-          }
-        }
+      } else if (
+        !allocatablePresetIds.includes(form.getFieldValue('allocationPreset'))
+      ) {
+        selectFallbackPreset();
       }
       ensureValidAcceleratorType();
       form
@@ -780,11 +781,9 @@ const ResourceAllocationFormItems: React.FC<
     checkPresetInfo?.presets,
     resourceSlotsInRG,
     form,
-    enableResourcePresets,
     // below are functions wrapped by useEventNotStable
     ensureValidAcceleratorType,
-    updateResourceFieldsBasedOnPreset,
-    baiClient._config.allowCustomResourceAllocation,
+    selectFallbackPreset,
   ]);
 
   // This effect is for auto updating the resource fields when minimum-required preset is selected
@@ -893,6 +892,9 @@ const ResourceAllocationFormItems: React.FC<
               'name',
             )}
             resourceGroup={currentResourceGroupInForm}
+            availableSlotNames={
+              resourceSlotsInRG ? _.keys(resourceSlotsInRG) : undefined
+            }
           />
         </Form.Item>
       ) : null}
@@ -1884,6 +1886,8 @@ export const getAllocatablePresetIds = (
   presets: Array<ResourcePreset> | undefined,
   resourceLimits: MergedResourceLimits,
   currentImage: Image,
+  // Slots the resource group's agents provide; `undefined` skips the check.
+  slotNamesInRG?: string[],
 ) => {
   const currentImageAcceleratorLimits = _.filter(
     currentImage?.resource_limits,
@@ -1892,6 +1896,13 @@ export const getAllocatablePresetIds = (
   );
 
   const bySliderLimit = _.filter(presets, (preset) => {
+    // A slot the group lacks is not "no limit": the session could never get it.
+    if (
+      slotNamesInRG &&
+      getUnavailableSlotNames(preset.resource_slots, slotNamesInRG).length > 0
+    ) {
+      return false;
+    }
     // After allow pending session, we don't need to check allocatable field.
     // if (_.has(preset, 'allocatable')) {
     //   return !!preset.allocatable;

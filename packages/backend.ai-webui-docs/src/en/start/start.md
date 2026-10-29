@@ -20,9 +20,8 @@ maintenance, updates, or usage guidelines.
 
 ![](../images/start_announcement_banner.png)
 
-A long announcement is shown collapsed, as a one-line summary of its first
-line. Click **See Details** on the banner to reveal the full announcement, and
-**Hide Details** to collapse it again.
+The banner shows the announcement's title. When the announcement has a message,
+click **See Details** to reveal it and **Hide Details** to collapse it again.
 
 Click the close icon to dismiss the banner. It stays hidden for the rest of the
 current browser session, and appears again when your administrator publishes a

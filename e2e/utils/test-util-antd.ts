@@ -61,7 +61,10 @@ export const getCardItemByCardTitle = (page: Page, title: string) => {
  *
  * Class set: `FormItemVisual` in `@lablup/ui-common/Form`.
  */
-export const getFormItemControlByLabel = (page: Page, label: string) => {
+export const getFormItemControlByLabel = (
+  page: Page,
+  label: string | RegExp,
+) => {
   return page
     .locator('.uic-form-item')
     .filter({

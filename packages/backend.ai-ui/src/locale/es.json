@@ -176,9 +176,9 @@
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Actualización automática",
-    "EveryHours": "{{count}}h",
-    "EveryMinutes": "{{count}}m",
-    "EverySeconds": "{{count}}s",
+    "EveryHours": "{{count}} h",
+    "EveryMinutes": "{{count}} min",
+    "EverySeconds": "{{count}} s",
     "LastUpdated": "Última actualización",
     "Off": "Desactivado",
     "Refresh": "Actualizar"
@@ -319,7 +319,6 @@
     "RevisionNumber": "Revisión",
     "RevisionNumberTooltip": "El número de revisión actual del despliegue.",
     "StrategyType": "Estrategia",
-    "Tags": "Etiquetas",
     "UpdatedAt": "Actualizado en"
   },
   "comp:BAINameActionCell": {
@@ -558,12 +557,30 @@
     "To": "Estado de destino",
     "UpdatedAt": "Actualizado el"
   },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Seleccionar carpeta"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agente"
   },
   "comp:BAISessionClusterMode": {
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Soltero"
+  },
+  "comp:BAISessionScene": {
+    "FoundCount": "{{count}} encontrado(s)",
+    "Hero": "Mías",
+    "Measuring": "Midiendo",
+    "ResourceShare": "Cuota de recursos",
+    "ShowAll": "Mostrar todo",
+    "Utilization": "Utilización",
+    "mood": {
+      "Idle": "Inactiva",
+      "Leaving": "Finalizando",
+      "Overheated": "Sobrecalentada",
+      "Waiting": "Esperando recursos",
+      "Working": "Trabajando"
+    }
   },
   "comp:BAISessionTypeToken": {
     "Batch": "Lote",
@@ -616,8 +633,6 @@
     "CreateFolder": "Crear una nueva carpeta de almacenamiento",
     "DestinationPath": "Ruta del contenedor (destination)",
     "Folders": "Carpetas",
-    "OwnerProject": "Proyecto",
-    "OwnerUser": "Usuario",
     "PathAndAliasTooltip": "La ruta dentro del contenedor donde se montará la carpeta. Déjelo vacío para usar la ruta predeterminada.",
     "Refresh": "Actualizar",
     "RemoveFolder": "Eliminar",

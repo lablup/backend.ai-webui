@@ -7,6 +7,7 @@ import {
   gqlAdmin,
   purgeUserViaApi,
 } from '../utils/admin-api';
+import { getE2EDomainName } from '../utils/e2e-scope';
 import { loginAsAdmin } from '../utils/test-util';
 import { navigateToUsersPage } from '../utils/user-profile-util';
 import { test, expect, type APIRequestContext, Page } from '@playwright/test';
@@ -61,6 +62,8 @@ test.describe(
       email = `e2e-many-proj-${runId}@lablup.com`;
       api = await createAdminApiContext();
       const adminApi = api;
+      // The admin's Users page lists only its own domain's users.
+      const domainName = await getE2EDomainName(adminApi);
       for (let i = 0; i < EXTRA_PROJECT_COUNT; i++) {
         const data = await gqlAdmin<{
           create_group: { ok: boolean; msg: string; group: { id: string } };
@@ -71,7 +74,7 @@ test.describe(
           }`,
           {
             name: `e2e-mp-${runId}-${String(i).padStart(2, '0')}`,
-            props: { domain_name: 'default' },
+            props: { domain_name: domainName },
           },
         );
         expect(data.create_group.ok, data.create_group.msg).toBe(true);
@@ -90,7 +93,7 @@ test.describe(
             username: `e2e-many-proj-${runId}`,
             password: `e2e-${randomBytes(12).toString('hex')}@Pw`,
             need_password_change: false,
-            domain_name: 'default',
+            domain_name: domainName,
             group_ids: projectIds,
           },
         },
