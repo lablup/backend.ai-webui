@@ -505,8 +505,10 @@ const ResourceAllocationFormItems: React.FC<
     syncUnifiedAcceleratorIfNeeded();
   });
 
-  // The `minimum-required` preset: cpu / mem to the image minimum, the
-  // accelerator to the image's first type the group has (0 when it needs none).
+  // The `minimum-required` preset: cpu / mem to the image minimum; the
+  // accelerator to the image minimum of the current type when the image lists
+  // it, else of the image's first type the group has (untouched when none is
+  // in the group, 0 when the image lists no accelerator).
   const updateResourceFieldsBasedOnImage = useEventNotStable(() => {
     const minimumResources: Partial<ResourceAllocationFormValue['resource']> = {
       cpu: resourceLimits.cpu?.min,
