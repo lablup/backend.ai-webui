@@ -42,6 +42,7 @@ import {
   useMutationWithPromise,
   BAISegmentedControl,
   BAISegmentedControlItem,
+  toEntityLabelFilter,
 } from 'backend.ai-ui';
 import { Trash2, BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
 import {
@@ -394,6 +395,10 @@ const RoleListTab: React.FC = () => {
           </BAIFlex>
         </BAIFlex>
         <RoleNodes
+          onLabelClick={(label) => {
+            setQueryParams({ filter: toEntityLabelFilter(label) });
+            setTablePaginationOption({ current: 1 });
+          }}
           rolesFrgmt={roleNodes}
           loading={deferredQueryVariables !== queryVariables}
           order={queryParams.order}

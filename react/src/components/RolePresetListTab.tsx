@@ -25,6 +25,7 @@ import {
   BAISegmentedControlItem,
   INITIAL_FETCH_KEY,
   useFetchKey,
+  toEntityLabelFilter,
 } from 'backend.ai-ui';
 import {
   parseAsJson,
@@ -183,6 +184,10 @@ const RolePresetListTab: React.FC = () => {
         />
       </BAIFlex>
       <RolePresetNodes
+        onLabelClick={(label) => {
+          setQueryParams({ filter: toEntityLabelFilter(label) });
+          setTablePaginationOption({ current: 1 });
+        }}
         rolePresetsFrgmt={rolePresetNodes}
         loading={deferredQueryVariables !== queryVariables}
         order={queryParams.order}

@@ -14,6 +14,7 @@ import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
 import { Token } from '@lablup/ui-common/Token';
 import {
+  type BAIEntityLabel,
   BAIColumnType,
   BAIDoubleToken,
   BAIEntityLabelTargetCell,
@@ -55,12 +56,15 @@ interface RoleNodesProps extends Omit<
   onChangeOrder?: (
     order: (typeof availableRoleSorterValues)[number] | null,
   ) => void;
+  /** Fired when a label token is clicked; the surface filters its list by it. */
+  onLabelClick?: (label: BAIEntityLabel) => void;
 }
 
 const RoleNodes: React.FC<RoleNodesProps> = ({
   rolesFrgmt,
   customizeColumns,
   onChangeOrder,
+  onLabelClick,
   ...tableProps
 }) => {
   'use memo';
@@ -249,6 +253,7 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
                 entityType="role"
                 entityId={record.entityId}
                 name={record.name}
+                onLabelClick={onLabelClick}
               />
             ),
           },
