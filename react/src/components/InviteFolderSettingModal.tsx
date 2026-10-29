@@ -377,11 +377,6 @@ const InviteFolderSettingModalBody: React.FC<{
                   />
                 </Tooltip>
               </Suspense>
-              {recipientError ? (
-                <BAIText type="danger" role="alert">
-                  {recipientError}
-                </BAIText>
-              ) : null}
             </StackItem>
             <StackItem size="static">
               <BAIEntitySharePermissionSelector
@@ -418,6 +413,11 @@ const InviteFolderSettingModalBody: React.FC<{
               </BAIButton>
             </StackItem>
           </HStack>
+          {recipientError ? (
+            <BAIText type="danger" size="sm" role="alert">
+              {recipientError}
+            </BAIText>
+          ) : null}
           {isEmailInvite && (
             <BAIText type="warning" size="sm">
               {t('data.folders.EmailInviteUsesSharedMountPermission', {
