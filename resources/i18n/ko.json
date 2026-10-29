@@ -1543,6 +1543,7 @@
   },
   "environment": {
     "Action": "동작",
+    "AddApp": "앱 추가",
     "Aliases": "별칭",
     "AllProjects": "전체 프로젝트",
     "AlreadyInstalledImage": "이미 설치된 이미지입니다.",

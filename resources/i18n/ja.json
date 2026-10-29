@@ -1543,6 +1543,7 @@
   },
   "environment": {
     "Action": "アクション",
+    "AddApp": "アプリを追加",
     "Aliases": "__NOT_TRANSLATED__",
     "AllProjects": "すべてのプロジェクト",
     "AlreadyInstalledImage": "すでにインストールされているイメージ",

@@ -1543,6 +1543,7 @@
   },
   "environment": {
     "Action": "Tindakan",
+    "AddApp": "Tambah aplikasi",
     "Aliases": "__NOT_TRANSLATED__",
     "AllProjects": "Semua projek",
     "AlreadyInstalledImage": "Imej sudah dipasang",

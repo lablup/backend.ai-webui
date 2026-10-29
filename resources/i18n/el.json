@@ -1543,6 +1543,7 @@
   },
   "environment": {
     "Action": "Δράση",
+    "AddApp": "Προσθήκη εφαρμογής",
     "Aliases": "__NOT_TRANSLATED__",
     "AllProjects": "Όλα τα έργα",
     "AlreadyInstalledImage": "Ήδη εγκατεστημένη εικόνα",

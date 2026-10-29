@@ -1543,6 +1543,7 @@
   },
   "environment": {
     "Action": "Aksiyon",
+    "AddApp": "Uygulama ekle",
     "Aliases": "__NOT_TRANSLATED__",
     "AllProjects": "Tüm projeler",
     "AlreadyInstalledImage": "Zaten yüklü görüntü",

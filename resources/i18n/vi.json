@@ -1543,6 +1543,7 @@
   },
   "environment": {
     "Action": "Hoạt động",
+    "AddApp": "Thêm ứng dụng",
     "Aliases": "__NOT_TRANSLATED__",
     "AllProjects": "Tất cả dự án",
     "AlreadyInstalledImage": "Hình ảnh đã được cài đặt",

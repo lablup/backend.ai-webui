@@ -1543,6 +1543,7 @@
   },
   "environment": {
     "Action": "行动",
+    "AddApp": "添加应用",
     "Aliases": "__NOT_TRANSLATED__",
     "AllProjects": "全部项目",
     "AlreadyInstalledImage": "已安装的图像",

@@ -1544,6 +1544,7 @@
   },
   "environment": {
     "Action": "行動",
+    "AddApp": "新增應用程式",
     "Aliases": "__NOT_TRANSLATED__",
     "AllProjects": "全部專案",
     "AlreadyInstalledImage": "已安装的图像",

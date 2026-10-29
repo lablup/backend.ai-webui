@@ -1543,6 +1543,7 @@
   },
   "environment": {
     "Action": "action",
+    "AddApp": "Ajouter une application",
     "Aliases": "__NOT_TRANSLATED__",
     "AllProjects": "Tous les projets",
     "AlreadyInstalledImage": "Image déjà installée",

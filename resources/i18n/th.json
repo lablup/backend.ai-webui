@@ -1539,6 +1539,7 @@
   },
   "environment": {
     "Action": "การดำเนินการ",
+    "AddApp": "เพิ่มแอป",
     "AllProjects": "ทุกโปรเจกต์",
     "AlreadyInstalledImage": "อิมเมจที่ติดตั้งแล้ว",
     "AppInfoDeleted": "ลบข้อมูลแอปสำเร็จแล้ว",
