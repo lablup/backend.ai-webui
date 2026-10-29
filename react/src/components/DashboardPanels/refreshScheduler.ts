@@ -49,7 +49,7 @@ export interface RefreshSubscriber {
   /** The shortest gap between two automatic refreshes of this subscriber. */
   minMs: number;
   /** Called with the refresh time; must start the refetch, not await it. */
-  refresh: (at: number) => void;
+  refresh: (at: number, manual: boolean) => void;
 }
 
 export interface RefreshSchedulerOptions {
@@ -62,12 +62,13 @@ export const refreshIntervalMs = (interval: RefreshInterval) =>
 /**
  * The dashboard's refresh fan-out. The dashboard's refresh control calls
  * `tick` on its interval and `refreshAll` on a click; a tick refreshes only
- * the subscribers whose `minMs` has elapsed since their last refresh.
+ * the visible subscribers whose `minMs` has elapsed since their last refresh.
  */
 export class RefreshScheduler {
   private readonly subscribers = new Map<string, RefreshSubscriber>();
   private readonly lastRefreshAt = new Map<string, number>();
   private readonly listeners = new Set<() => void>();
+  private readonly hidden = new Set<string>();
   private readonly now: () => number;
   private lastTickAt: number;
 
@@ -88,27 +89,37 @@ export class RefreshScheduler {
     };
   }
 
-  /** Refreshes the subscribers that are due. */
+  /** Refreshes the visible subscribers that are due. */
   tick() {
     const at = this.now();
     this.subscribers.forEach((subscriber, id) => {
-      const last = this.lastRefreshAt.get(id) ?? 0;
-      if (at - last + TICK_TOLERANCE_MS >= subscriber.minMs) {
-        this.lastRefreshAt.set(id, at);
-        subscriber.refresh(at);
-      }
+      if (!this.hidden.has(id)) this.refreshIfDue(id, subscriber, at);
     });
     this.markTicked(at);
   }
 
-  /** Refreshes every subscriber now. */
+  /** Refreshes every subscriber now, visible or not. */
   refreshAll() {
     const at = this.now();
     this.subscribers.forEach((subscriber, id) => {
       this.lastRefreshAt.set(id, at);
-      subscriber.refresh(at);
+      subscriber.refresh(at, true);
     });
     this.markTicked(at);
+  }
+
+  /**
+   * Ticks skip a hidden subscriber; one that comes back into view refreshes
+   * right away if it is due. Ids are visible until reported otherwise.
+   */
+  setVisible(id: string, visible: boolean) {
+    if (!visible) {
+      this.hidden.add(id);
+      return;
+    }
+    if (!this.hidden.delete(id)) return;
+    const subscriber = this.subscribers.get(id);
+    if (subscriber) this.refreshIfDue(id, subscriber, this.now());
   }
 
   getLastTickAt() {
@@ -121,6 +132,14 @@ export class RefreshScheduler {
     return () => {
       this.listeners.delete(listener);
     };
+  }
+
+  private refreshIfDue(id: string, subscriber: RefreshSubscriber, at: number) {
+    const last = this.lastRefreshAt.get(id) ?? 0;
+    if (at - last + TICK_TOLERANCE_MS >= subscriber.minMs) {
+      this.lastRefreshAt.set(id, at);
+      subscriber.refresh(at, false);
+    }
   }
 
   private markTicked(at: number) {
