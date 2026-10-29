@@ -317,7 +317,7 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     kind: 'custom',
     Component: SessionStatusPanel,
     defaultSize: size(4, 3),
-    minSize: size(2, 3),
+    minSize: size(2, 2),
     refresh: { min: '15s' },
   },
   {
