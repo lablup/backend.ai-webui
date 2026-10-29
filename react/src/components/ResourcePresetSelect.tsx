@@ -7,7 +7,11 @@ import {
   ResourcePresetSelectQuery$data,
 } from '../__generated__/ResourcePresetSelectQuery.graphql';
 import { localeCompare } from '../helper';
-import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
+import {
+  ResourceSlotName,
+  useDeviceMetaData,
+  useResourceSlots,
+} from '../hooks/backendai';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import type {
   SelectorOptionData,
@@ -45,6 +49,24 @@ export type ResourcePreset = NonNullable<
 >;
 
 /**
+ * Slots the preset requests (non-zero) that `availableSlotNames` lacks;
+ * shmem is never a slot of its own.
+ */
+export const getUnavailableSlotNames = (
+  resourceSlots: Record<string, unknown> | null | undefined,
+  availableSlotNames: string[],
+): string[] =>
+  _.keys(
+    _.pickBy(
+      resourceSlots,
+      (value, key) =>
+        key !== 'shmem' &&
+        !availableSlotNames.includes(key) &&
+        (_.toNumber(value) || 0) !== 0,
+    ),
+  );
+
+/**
  * PILOT-DECISION: the `extends Omit<SelectProps,'onChange'>` surface is
  * replaced by the props the single call site actually passes (P1 — grepped,
  * not guessed: `showCustom`, `showMinimumRequired`, `onChange`,
@@ -59,6 +81,8 @@ export interface ResourcePresetSelectProps {
   showMinimumRequired?: boolean;
   showCustom?: boolean;
   resourceGroup?: string;
+  /** Slots the resource group's agents provide; `undefined` while loading. */
+  availableSlotNames?: string[];
   /** Presets scoped to a resource group outside this list are not listed. */
   selectableResourceGroupNames?: string[];
   autoSelectDefault?: boolean;
@@ -70,6 +94,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   showCustom,
   showMinimumRequired,
   resourceGroup,
+  availableSlotNames,
   selectableResourceGroupNames,
   autoSelectDefault,
   disabled,
@@ -83,6 +108,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     leading: true,
   });
   const [resourceSlots] = useResourceSlots();
+  const { data: deviceMetaData } = useDeviceMetaData();
   const { t } = useTranslation();
   const { token } = useTheme();
   const [isPendingUpdate, _startTransition] = useTransition();
@@ -136,6 +162,20 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
       preset.scaling_group_name !== resourceGroup
     ) {
       return onlyInGroupText(preset.scaling_group_name);
+    }
+    const unavailableSlotNames = availableSlotNames
+      ? getUnavailableSlotNames(
+          JSON.parse(preset?.resource_slots || '{}'),
+          availableSlotNames,
+        )
+      : [];
+    if (unavailableSlotNames.length > 0) {
+      return t('resourcePreset.RequiresSlotsNotInResourceGroup', {
+        slots: _.map(
+          unavailableSlotNames,
+          (key) => deviceMetaData?.[key]?.human_readable_name ?? key,
+        ).join(', '),
+      });
     }
     if (
       allocatablePresetIds &&

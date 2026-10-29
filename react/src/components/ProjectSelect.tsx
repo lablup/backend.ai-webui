@@ -34,6 +34,9 @@ export interface ProjectSelectProps extends BAISelectProps {
   personalProject?: { id: string; name: string };
   /** Whether the personal project is a locked option. Defaults to true. */
   lockPersonalProject?: boolean;
+  /** Label the personal project "My Project" instead of its name; only for
+   * the signed-in user's own personal project. */
+  labelPersonalProjectAsMine?: boolean;
   'aria-label'?: string;
 }
 
@@ -44,6 +47,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
   lockedProjectTypes,
   personalProject,
   lockPersonalProject = true,
+  labelPersonalProjectAsMine,
   'aria-label': ariaLabel,
   ...selectProps
 }) => {
@@ -119,13 +123,16 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
         title: key,
         options: _.map(_.sortBy(value, 'name'), (project) => {
           const isAdmin = !!project?.id && projectAdminIds.includes(project.id);
-          const isLockedPersonal =
-            lockPersonalProject &&
-            !!personalProject &&
-            project?.id === personalProject.id;
+          const isPersonal =
+            !!personalProject && project?.id === personalProject.id;
+          const isLockedPersonal = lockPersonalProject && isPersonal;
+          const displayName =
+            labelPersonalProjectAsMine && isPersonal
+              ? t('projectSelect.MyProject')
+              : project?.name;
           const row = (
             <BAIFlex gap="xs" align="center">
-              <span>{project?.name}</span>
+              <span>{displayName}</span>
               {isAdmin && (
                 <BAIIconWithTooltip
                   content={t('projectSelect.ProjectAdminBadge')}
@@ -142,7 +149,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
             </BAIFlex>
           );
           return {
-            label: isAdmin ? row : project?.name,
+            label: isAdmin ? row : displayName,
             value: project?.id,
             projectId: project?.id,
             projectResourcePolicy: project?.resource_policy,
