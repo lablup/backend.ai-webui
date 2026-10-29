@@ -2,9 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { AuditLogPanelHistoryQuery } from '../../../__generated__/AuditLogPanelHistoryQuery.graphql';
 import type {
   AuditLogFilter,
   AuditLogPanelQuery,
+  AuditLogPanelQuery$data,
   AuditLogScope,
 } from '../../../__generated__/AuditLogPanelQuery.graphql';
 import { useSuspendedBackendaiClient } from '../../../hooks';
@@ -56,46 +58,22 @@ export const auditOutcomeFilter = (
       : { in: [...AUDIT_FAILURE_STATUSES] },
 });
 
-const AuditLogTable: React.FC<{
-  scope: AuditLogScope;
-  range: string;
-  timeRange: DateTimeWindow;
-  failuresOnly: boolean;
+type CountData = Parameters<typeof readSuccessFailure>[2];
+
+/** The counts that cannot change any more; refetched only when a bucket settles or on a manual refresh. */
+const AuditLogHistory: React.FC<{
+  variables: AuditLogPanelHistoryQuery['variables'];
   fetchKey: string;
-}> = ({ scope, range, timeRange, failuresOnly, fetchKey }) => {
+  children: (data: CountData) => React.ReactNode;
+}> = ({ variables, fetchKey, children }) => {
   'use memo';
-  const {
-    baiPaginationOption,
-    tablePaginationOption,
-    setTablePaginationOption,
-  } = useBAIPaginationOptionState({ current: 1, pageSize: 5 });
-  const { buckets, variables: countVariables } = successFailureVariables(
-    auditOutcomeFilter,
-    range,
-    timeRange,
-  );
-  const variables: AuditLogPanelQuery['variables'] = {
-    scope,
-    filter: {
-      ...withinWindow('createdAt', timeRange),
-      ...(failuresOnly ? FAILURES_ONLY_FILTER : {}),
-    },
-    limit: baiPaginationOption.limit,
-    offset: baiPaginationOption.offset,
-    ...countVariables,
-  };
-  const deferredVariables = useDeferredValue(variables);
-  const data = useLazyLoadQuery<AuditLogPanelQuery>(
+  const data = useLazyLoadQuery<AuditLogPanelHistoryQuery>(
     graphql`
-      query AuditLogPanelQuery(
+      query AuditLogPanelHistoryQuery(
         $scope: AuditLogScope!
-        $filter: AuditLogFilter!
-        $limit: Int!
-        $offset: Int!
-        $success: AuditLogFilter!
-        $failure: AuditLogFilter!
-        $previousSuccess: AuditLogFilter!
-        $previousFailure: AuditLogFilter!
+        $previousSuccess: AuditLogFilter
+        $previousFailure: AuditLogFilter
+        $previousOn: Boolean!
         $s0: AuditLogFilter
         $s0On: Boolean!
         $s1: AuditLogFilter
@@ -129,6 +107,132 @@ const AuditLogTable: React.FC<{
         $f7: AuditLogFilter
         $f7On: Boolean!
       ) {
+        previousSuccess: scopedAuditLogsV2(
+          scope: $scope
+          filter: $previousSuccess
+          limit: 1
+        ) @include(if: $previousOn) @catch(to: NULL) {
+          count
+        }
+        previousFailure: scopedAuditLogsV2(
+          scope: $scope
+          filter: $previousFailure
+          limit: 1
+        ) @include(if: $previousOn) @catch(to: NULL) {
+          count
+        }
+        s0: scopedAuditLogsV2(scope: $scope, filter: $s0, limit: 1)
+          @include(if: $s0On)
+          @catch(to: NULL) {
+          count
+        }
+        s1: scopedAuditLogsV2(scope: $scope, filter: $s1, limit: 1)
+          @include(if: $s1On)
+          @catch(to: NULL) {
+          count
+        }
+        s2: scopedAuditLogsV2(scope: $scope, filter: $s2, limit: 1)
+          @include(if: $s2On)
+          @catch(to: NULL) {
+          count
+        }
+        s3: scopedAuditLogsV2(scope: $scope, filter: $s3, limit: 1)
+          @include(if: $s3On)
+          @catch(to: NULL) {
+          count
+        }
+        s4: scopedAuditLogsV2(scope: $scope, filter: $s4, limit: 1)
+          @include(if: $s4On)
+          @catch(to: NULL) {
+          count
+        }
+        s5: scopedAuditLogsV2(scope: $scope, filter: $s5, limit: 1)
+          @include(if: $s5On)
+          @catch(to: NULL) {
+          count
+        }
+        s6: scopedAuditLogsV2(scope: $scope, filter: $s6, limit: 1)
+          @include(if: $s6On)
+          @catch(to: NULL) {
+          count
+        }
+        s7: scopedAuditLogsV2(scope: $scope, filter: $s7, limit: 1)
+          @include(if: $s7On)
+          @catch(to: NULL) {
+          count
+        }
+        f0: scopedAuditLogsV2(scope: $scope, filter: $f0, limit: 1)
+          @include(if: $f0On)
+          @catch(to: NULL) {
+          count
+        }
+        f1: scopedAuditLogsV2(scope: $scope, filter: $f1, limit: 1)
+          @include(if: $f1On)
+          @catch(to: NULL) {
+          count
+        }
+        f2: scopedAuditLogsV2(scope: $scope, filter: $f2, limit: 1)
+          @include(if: $f2On)
+          @catch(to: NULL) {
+          count
+        }
+        f3: scopedAuditLogsV2(scope: $scope, filter: $f3, limit: 1)
+          @include(if: $f3On)
+          @catch(to: NULL) {
+          count
+        }
+        f4: scopedAuditLogsV2(scope: $scope, filter: $f4, limit: 1)
+          @include(if: $f4On)
+          @catch(to: NULL) {
+          count
+        }
+        f5: scopedAuditLogsV2(scope: $scope, filter: $f5, limit: 1)
+          @include(if: $f5On)
+          @catch(to: NULL) {
+          count
+        }
+        f6: scopedAuditLogsV2(scope: $scope, filter: $f6, limit: 1)
+          @include(if: $f6On)
+          @catch(to: NULL) {
+          count
+        }
+        f7: scopedAuditLogsV2(scope: $scope, filter: $f7, limit: 1)
+          @include(if: $f7On)
+          @catch(to: NULL) {
+          count
+        }
+      }
+    `,
+    variables,
+    { fetchPolicy: 'store-and-network', fetchKey },
+  );
+  return children(data);
+};
+
+/** The list and the counts that still move, on the card's refresh. */
+const AuditLogLive: React.FC<{
+  variables: AuditLogPanelQuery['variables'];
+  fetchKey: string;
+  children: (data: AuditLogPanelQuery$data) => React.ReactNode;
+}> = ({ variables, fetchKey, children }) => {
+  'use memo';
+  const data = useLazyLoadQuery<AuditLogPanelQuery>(
+    graphql`
+      query AuditLogPanelQuery(
+        $scope: AuditLogScope!
+        $filter: AuditLogFilter!
+        $limit: Int!
+        $offset: Int!
+        $previousSuccess: AuditLogFilter
+        $previousFailure: AuditLogFilter
+        $previousOn: Boolean!
+        $liveS0: AuditLogFilter
+        $liveF0: AuditLogFilter
+        $live0On: Boolean!
+        $liveS1: AuditLogFilter
+        $liveF1: AuditLogFilter
+        $live1On: Boolean!
+      ) {
         logs: scopedAuditLogsV2(
           scope: $scope
           filter: $filter
@@ -143,106 +247,106 @@ const AuditLogTable: React.FC<{
             }
           }
         }
-        success: scopedAuditLogsV2(scope: $scope, filter: $success, limit: 1) {
-          count
-        }
-        failure: scopedAuditLogsV2(scope: $scope, filter: $failure, limit: 1) {
-          count
-        }
         previousSuccess: scopedAuditLogsV2(
           scope: $scope
           filter: $previousSuccess
           limit: 1
-        ) {
+        ) @include(if: $previousOn) @catch(to: NULL) {
           count
         }
         previousFailure: scopedAuditLogsV2(
           scope: $scope
           filter: $previousFailure
           limit: 1
-        ) {
+        ) @include(if: $previousOn) @catch(to: NULL) {
           count
         }
-        s0: scopedAuditLogsV2(scope: $scope, filter: $s0, limit: 1)
-          @include(if: $s0On) {
+        liveS0: scopedAuditLogsV2(scope: $scope, filter: $liveS0, limit: 1)
+          @include(if: $live0On)
+          @catch(to: NULL) {
           count
         }
-        s1: scopedAuditLogsV2(scope: $scope, filter: $s1, limit: 1)
-          @include(if: $s1On) {
+        liveF0: scopedAuditLogsV2(scope: $scope, filter: $liveF0, limit: 1)
+          @include(if: $live0On)
+          @catch(to: NULL) {
           count
         }
-        s2: scopedAuditLogsV2(scope: $scope, filter: $s2, limit: 1)
-          @include(if: $s2On) {
+        liveS1: scopedAuditLogsV2(scope: $scope, filter: $liveS1, limit: 1)
+          @include(if: $live1On)
+          @catch(to: NULL) {
           count
         }
-        s3: scopedAuditLogsV2(scope: $scope, filter: $s3, limit: 1)
-          @include(if: $s3On) {
-          count
-        }
-        s4: scopedAuditLogsV2(scope: $scope, filter: $s4, limit: 1)
-          @include(if: $s4On) {
-          count
-        }
-        s5: scopedAuditLogsV2(scope: $scope, filter: $s5, limit: 1)
-          @include(if: $s5On) {
-          count
-        }
-        s6: scopedAuditLogsV2(scope: $scope, filter: $s6, limit: 1)
-          @include(if: $s6On) {
-          count
-        }
-        s7: scopedAuditLogsV2(scope: $scope, filter: $s7, limit: 1)
-          @include(if: $s7On) {
-          count
-        }
-        f0: scopedAuditLogsV2(scope: $scope, filter: $f0, limit: 1)
-          @include(if: $f0On) {
-          count
-        }
-        f1: scopedAuditLogsV2(scope: $scope, filter: $f1, limit: 1)
-          @include(if: $f1On) {
-          count
-        }
-        f2: scopedAuditLogsV2(scope: $scope, filter: $f2, limit: 1)
-          @include(if: $f2On) {
-          count
-        }
-        f3: scopedAuditLogsV2(scope: $scope, filter: $f3, limit: 1)
-          @include(if: $f3On) {
-          count
-        }
-        f4: scopedAuditLogsV2(scope: $scope, filter: $f4, limit: 1)
-          @include(if: $f4On) {
-          count
-        }
-        f5: scopedAuditLogsV2(scope: $scope, filter: $f5, limit: 1)
-          @include(if: $f5On) {
-          count
-        }
-        f6: scopedAuditLogsV2(scope: $scope, filter: $f6, limit: 1)
-          @include(if: $f6On) {
-          count
-        }
-        f7: scopedAuditLogsV2(scope: $scope, filter: $f7, limit: 1)
-          @include(if: $f7On) {
+        liveF1: scopedAuditLogsV2(scope: $scope, filter: $liveF1, limit: 1)
+          @include(if: $live1On)
+          @catch(to: NULL) {
           count
         }
       }
     `,
-    deferredVariables,
+    variables,
     { fetchPolicy: 'store-and-network', fetchKey },
   );
-  const counts = readSuccessFailure(data, buckets.length, timeRange);
+  return children(data);
+};
 
-  return (
+const AuditLogTable: React.FC<{
+  scope: AuditLogScope;
+  range: string;
+  refreshedAt: number;
+  failuresOnly: boolean;
+  fetchKey: string;
+  manualFetchKey: string;
+}> = ({
+  scope,
+  range,
+  refreshedAt,
+  failuresOnly,
+  fetchKey,
+  manualFetchKey,
+}) => {
+  'use memo';
+  const {
+    baiPaginationOption,
+    tablePaginationOption,
+    setTablePaginationOption,
+  } = useBAIPaginationOptionState({ current: 1, pageSize: 5 });
+  const { plan, hasHistory, history, live } = successFailureVariables(
+    auditOutcomeFilter,
+    range,
+    refreshedAt,
+  );
+  const variables = {
+    plan,
+    hasHistory,
+    history: { scope, ...history },
+    live: {
+      scope,
+      filter: {
+        ...withinWindow('createdAt', plan.window),
+        ...(failuresOnly ? FAILURES_ONLY_FILTER : {}),
+      },
+      limit: baiPaginationOption.limit,
+      offset: baiPaginationOption.offset,
+      ...live,
+    },
+  };
+  const deferred = useDeferredValue(variables);
+
+  const renderLog = (
+    historyData: CountData | null,
+    data: AuditLogPanelQuery$data,
+  ) => (
     <BAIFlex direction="column" align="stretch" gap="sm">
-      <SuccessFailureStats counts={counts} buckets={buckets} />
+      <SuccessFailureStats
+        counts={readSuccessFailure(deferred.plan, historyData, data)}
+        buckets={deferred.plan.buckets}
+      />
       <BAIAuditLogNodes
         auditLogFrgmt={filterOutNullAndUndefined(
           data.logs?.edges.map((edge) => edge?.node),
         )}
         disableSorter
-        loading={deferredVariables !== variables}
+        loading={deferred !== variables}
         customizeColumns={(columns) =>
           columns
             .filter((column) => VISIBLE_COLUMNS.has(String(column.key)))
@@ -278,6 +382,27 @@ const AuditLogTable: React.FC<{
       />
     </BAIFlex>
   );
+
+  const withHistory = (
+    children: (data: CountData | null) => React.ReactNode,
+  ) =>
+    deferred.hasHistory ? (
+      <AuditLogHistory variables={deferred.history} fetchKey={manualFetchKey}>
+        {children}
+      </AuditLogHistory>
+    ) : (
+      children(null)
+    );
+
+  return (
+    <>
+      {/* A sibling, so the history request starts alongside the live one instead of after it. */}
+      {withHistory(() => null)}
+      <AuditLogLive variables={deferred.live} fetchKey={fetchKey}>
+        {(data) => withHistory((historyData) => renderLog(historyData, data))}
+      </AuditLogLive>
+    </>
+  );
 };
 
 /** Whose audit log a scope reads: the viewer's own actions, or a project and the entities in it. */
@@ -295,6 +420,7 @@ const AuditLogPanel: React.FC<PanelComponentProps> = ({
   scope,
   vars,
   fetchKey,
+  manualFetchKey,
   onChangeFilter,
 }) => {
   'use memo';
@@ -335,9 +461,10 @@ const AuditLogPanel: React.FC<PanelComponentProps> = ({
           key={String(failuresOnly)}
           scope={auditLogScope(cardScope, baiClient.user_uuid)}
           range={vars.range}
-          timeRange={vars.timeRange}
+          refreshedAt={vars.refreshedAt}
           failuresOnly={failuresOnly}
           fetchKey={key}
+          manualFetchKey={manualFetchKey}
         />
       )}
     </ScopedCard>
