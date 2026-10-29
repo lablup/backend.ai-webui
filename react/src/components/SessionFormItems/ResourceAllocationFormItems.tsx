@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ResourceAllocationFormItemsQuery } from '../../__generated__/ResourceAllocationFormItemsQuery.graphql';
-import { Form } from '../../form-engine';
+import { Form, type Store } from '../../form-engine';
 import {
   addNumberWithUnits,
   compareNumberWithUnits,
@@ -37,6 +37,14 @@ import ResourcePresetSelect, {
 } from '../ResourcePresetSelect';
 import RemainingMark from './RemainingMark';
 import SharedMemoryFormItems from './SharedMemoryFormItems';
+import {
+  AllocationMode,
+  applyRule,
+  getImageAcceleratorLimits,
+  getSupportedAcceleratorTypes,
+  RuleContext,
+  RuleEvent,
+} from './resourceAllocationRules';
 // FRONTIER (ticket 17): the launcher's form-visual core. The Form ENGINE and
 // `Form.Item` are self-hosted since ticket 34 (live again since ticket 35),
 // and every control and every piece of chrome below is Astryx now.
@@ -53,7 +61,6 @@ import {
   BAIProjectResourceGroupSelect,
   BAISegmentedControlItem,
   BAISelect,
-  useEventNotStable,
   useProjectResourceGroups,
   useUpdatableState,
   BAISegmentedControl,
@@ -64,7 +71,7 @@ import React, {
   Suspense,
   useDeferredValue,
   useEffect,
-  useMemo,
+  useEffectEvent,
   useTransition,
 } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -327,7 +334,6 @@ const ResourceAllocationFormItems: React.FC<
   const accessibleResourceGroupNames = _.compact(
     _.map(accessible_scaling_groups, (group) => group?.name),
   );
-  const currentResourceValue = Form.useWatch(['resource']);
   const currentImage = Form.useWatch(['environments', 'image'], {
     form,
     preserve: true,
@@ -360,396 +366,86 @@ const ResourceAllocationFormItems: React.FC<
   );
 
   // When undefined, it means that the resourceSlots are not loaded yet.
+  const slotNamesInRG = resourceSlotsInRG
+    ? _.keys(resourceSlotsInRG)
+    : undefined;
   const acceleratorSlotsInRG = resourceSlotsInRG
     ? _.omitBy(resourceSlotsInRG, (_value, key) => {
         if (['cpu', 'mem', 'shmem'].includes(key)) return true;
         return false;
       })
     : undefined;
-
-  // When undefined, it means that the image is not determined yet.
-  const currentImageAcceleratorLimits = useMemo(
-    () =>
-      currentImage
-        ? _.filter(currentImage?.resource_limits, (limit) =>
-            limit ? !_.includes(['cpu', 'mem', 'shmem'], limit.key) : false,
-          )
-        : undefined,
-    [currentImage],
-  );
-
-  // Get supported accelerator types in resource group by image
-  const supportedAcceleratorTypesInRGByImage = useMemo(() => {
-    if (
-      _.isUndefined(acceleratorSlotsInRG) ||
-      (_.isNil(currentImage) && _.isEmpty(currentEnvironmentManual))
-    ) {
-      return undefined;
-    }
-    return _.keys(acceleratorSlotsInRG).filter((acceleratorTypeName) => {
-      // '*' means all types of accelerators are supported
-      return (
-        _.includes(currentImage?.supported_accelerators, '*') ||
-        (currentImage?.supported_accelerators?.length === 1 &&
-          currentImage.supported_accelerators[0] === '') || // Before BA-2358, manage can return '' instead of '*'
-        _.some(
-          currentImage?.supported_accelerators,
-          (accPrefix) =>
-            accPrefix &&
-            acceleratorTypeName.split('.')[0].startsWith(accPrefix),
-        ) ||
-        !_.isEmpty(currentEnvironmentManual) // if manual image input is not empty, allow user to input any accelerator type
-      );
-    });
-  }, [currentImage, acceleratorSlotsInRG, currentEnvironmentManual]);
-
-  useEffect(() => {
-    // Read the store, not the watch: `useWatch` is `undefined` on the first
-    // render, which would overwrite a preset restored from the URL.
-    if (
-      !form.getFieldValue('resource') &&
-      form.getFieldValue('allocationPreset') !== 'custom'
-    ) {
-      form.setFieldsValue({
-        allocationPreset: 'auto-select',
-      });
-    }
-    // Write only on an actual change: `setFieldsValue` rebuilds `resource`,
-    // so `Form.useWatch(['resource'])` returns a new reference and re-triggers
-    // this effect. Unguarded, that self-feeding loop never settles and starves
-    // React's transition lanes, freezing every `useDeferredValue` on the page.
-    if (
-      supportedAcceleratorTypesInRGByImage?.length === 0 &&
-      // a unified slot keeps `accelerator` cleared instead
-      !isUnifiedAcceleratorSlot(currentResourceValue?.acceleratorType) &&
-      currentResourceValue?.accelerator !== 0
-    ) {
-      form.setFieldsValue({
-        resource: {
-          accelerator: 0,
-        },
-      });
-    }
-  }, [supportedAcceleratorTypesInRGByImage, form, currentResourceValue]);
+  const isManualImage = !_.isEmpty(currentEnvironmentManual);
 
   // `resourceLimits` is rebuilt on every render, so key the array by its
-  // contents; a fresh identity would re-run the auto-select effect each render.
+  // contents; a fresh identity would re-run the data effect each render.
   const allocatablePresetIdsKey = JSON.stringify(
     getAllocatablePresetIds(
       checkPresetInfo?.presets,
       resourceLimits,
       currentImage,
-      resourceSlotsInRG ? _.keys(resourceSlotsInRG) : undefined,
+      slotNamesInRG,
     ),
   );
   const allocatablePresetIds: string[] = JSON.parse(allocatablePresetIdsKey);
 
-  const runShmemAutomationRule = (M_plus_S: string) => {
-    const shmem = getAutomaticShmem(M_plus_S, currentImageMinM);
-    if (
-      !_.isEmpty(
-        pickChangedResourceValues(
-          { shmem },
-          { shmem: form.getFieldValue(['resource', 'shmem']) },
-        ),
-      )
-    ) {
-      form.setFieldValue(['resource', 'shmem'], shmem);
-    }
+  const mode: AllocationMode = baiClient._config.allowCustomResourceAllocation
+    ? 'free'
+    : 'preset-only';
+  const ruleContext: RuleContext = {
+    mode,
+    enableResourcePresets: !!enableResourcePresets,
+    image: currentImage,
+    manualImage: isManualImage,
+    slotsInRG: slotNamesInRG,
+    acceleratorSlotsInRG: _.keys(acceleratorSlotsInRG),
+    presets: checkPresetInfo?.presets,
+    allocatablePresetIds,
+    resourceLimits,
+    imageMinMem: currentImageMinM,
   };
+  // When undefined, it means that the image is not determined yet.
+  const currentImageAcceleratorLimits = getImageAcceleratorLimits(currentImage);
+  const supportedAcceleratorTypesInRGByImage =
+    getSupportedAcceleratorTypes(ruleContext);
 
-  // Centralized helper that CLEARS the `resource.accelerator` field whenever
-  // the active accelerator slot is a unified one. Unified-memory slots
-  // auto-allocate accelerator memory from the shared host pool, so the
-  // launcher neither sends nor displays an accelerator quantity. Call this
-  // from every code path that mutates `resource.mem` or
-  // `resource.acceleratorType`.
-  const syncUnifiedAcceleratorIfNeeded = useEventNotStable(() => {
-    const activeAcceleratorType = form.getFieldValue([
-      'resource',
-      'acceleratorType',
-    ]);
-    if (
-      !isUnifiedAcceleratorSlot(activeAcceleratorType) ||
-      _.isUndefined(form.getFieldValue(['resource', 'accelerator']))
-    ) {
-      return;
-    }
-    form.setFieldValue(['resource', 'accelerator'], undefined);
-  });
-
-  const ensureValidAcceleratorType = useEventNotStable(() => {
-    const currentAcceleratorType = form.getFieldValue([
-      'resource',
-      'acceleratorType',
-    ]);
-    // If the current accelerator type is not available,
-    // change accelerator type to the first supported accelerator
-    const nextAcceleratorType = acceleratorSlotsInRG?.[currentAcceleratorType]
-      ? currentAcceleratorType
-      : _.first(_.keys(acceleratorSlotsInRG));
-
-    const resolvedAcceleratorType =
-      nextAcceleratorType || currentAcceleratorType;
-    // Write only on an actual change — see the accelerator effect above for
-    // why an unconditional `setFieldsValue` here never settles.
-    if (resolvedAcceleratorType !== currentAcceleratorType) {
-      form.setFieldsValue({
-        resource: {
-          acceleratorType: resolvedAcceleratorType,
-        },
-      });
-    }
-    // The accelerator type may have changed; clear the accelerator field if
-    // the resolved type is a unified slot.
-    syncUnifiedAcceleratorIfNeeded();
-  });
-
-  // The `minimum-required` preset: cpu / mem to the image minimum; the
-  // accelerator to the image minimum of the current type when the image lists
-  // it, else of the image's first type the group has (untouched when none is
-  // in the group, 0 when the image lists no accelerator).
-  const updateResourceFieldsBasedOnImage = useEventNotStable(() => {
-    const minimumResources: Partial<ResourceAllocationFormValue['resource']> = {
-      cpu: resourceLimits.cpu?.min,
-      mem:
-        convertToBinaryUnit(
-          (convertToBinaryUnit(resourceLimits.shmem?.min, 'm')?.number || 0) +
-            (convertToBinaryUnit(resourceLimits.mem?.min, 'm')?.number || 0) +
-            'm',
-          'g',
-        )?.number + 'g', //to prevent loosing precision
-    };
-
-    // NOTE: accelerator value setting is done inside the conditional statement
-    if (
-      currentImageAcceleratorLimits &&
-      currentImageAcceleratorLimits.length > 0
-    ) {
-      if (
-        _.find(
-          currentImageAcceleratorLimits,
-          (limit) =>
-            limit?.key === form.getFieldValue(['resource', 'acceleratorType']),
-        )
-      ) {
-        // if current selected accelerator type is supported in the selected image,
-        minimumResources.acceleratorType = form.getFieldValue([
-          'resource',
-          'acceleratorType',
-        ]);
-        minimumResources.accelerator =
-          resourceLimits.accelerators[
-            form.getFieldValue(['resource', 'acceleratorType'])
-          ]?.min;
-      } else {
-        // if current selected accelerator type is not supported in the selected image,
-        // change accelerator type to the first supported accelerator type.
-        const nextImageSelectorType: string | undefined | null = // NOTE:
-          // filter from resourceSlots since resourceSlots and supported image could be non-identical.
-          // resourceSlots returns "all resources enable to allocate(including AI accelerator)"
-          // imageAcceleratorLimit returns "all resources that is supported in the selected image"
-          _.filter(currentImageAcceleratorLimits, (acceleratorInfo: any) =>
-            _.keys(resourceSlotsInRG).includes(acceleratorInfo?.key),
-          )[0]?.key;
-
-        if (nextImageSelectorType) {
-          minimumResources.accelerator =
-            resourceLimits.accelerators[nextImageSelectorType]?.min;
-          minimumResources.acceleratorType = nextImageSelectorType;
-        }
-      }
-    } else {
-      minimumResources.accelerator = 0;
-    }
-
-    // A unified slot keeps `accelerator` cleared (see
-    // `syncUnifiedAcceleratorIfNeeded`); writing the minimum first would
-    // flip it on every run.
-    const isUnifiedTarget = isUnifiedAcceleratorSlot(
-      minimumResources.acceleratorType ??
-        form.getFieldValue(['resource', 'acceleratorType']),
-    );
-    if (isUnifiedTarget) {
-      delete minimumResources.accelerator;
-    }
-    const changedResources = pickChangedResourceValues(
-      minimumResources,
-      form.getFieldValue('resource'),
-    );
-    if (!_.isEmpty(changedResources)) {
-      form.setFieldsValue({
-        resource: changedResources,
-      });
-    }
-
-    if (form.getFieldValue('enabledAutomaticShmem')) {
-      runShmemAutomationRule(form.getFieldValue(['resource', 'mem']) || '0g');
-    }
-    // mem and/or acceleratorType may have changed above; keep the
-    // accelerator field consistent for unified slots.
-    syncUnifiedAcceleratorIfNeeded();
+  // Writes what a rule decides and says whether anything was written.
+  const runRule = (
+    event: RuleEvent,
+    values = form.getFieldsValue(true),
+  ): boolean => {
+    const patch = applyRule(values, event, ruleContext);
+    if (_.isEmpty(patch)) return false;
+    // `allocationPreset: null` clears the select; the form type only knows `string | undefined`.
+    form.setFieldsValue(patch as Store);
+    return true;
+  };
+  const validateResource = () => {
     form
       .validateFields(['resource'], {
         recursive: true,
       })
       .catch(() => {});
+  };
+
+  // Keyed by content: the query data is re-fetched per resource group.
+  const slotNamesInRGKey = JSON.stringify(slotNamesInRG ?? null);
+  const presetsKey = JSON.stringify(checkPresetInfo?.presets ?? null);
+  const syncWithData = useEffectEvent(() => {
+    if (runRule({ type: 'data.changed' })) validateResource();
   });
-
-  const updateResourceFieldsBasedOnPreset = useEventNotStable(
-    (presetId: string) => {
-      const preset = _.find(
-        checkPresetInfo?.presets,
-        (preset) => preset.id === presetId,
-      );
-      const slots = _.pick(preset?.resource_slots, _.keys(resourceSlotsInRG));
-      const mem = convertToBinaryUnit(slots?.mem || 0, 'g', 2)?.value;
-      const acceleratorObj = _.omit(slots, ['cpu', 'mem', 'shmem']);
-
-      // Select the first matched AI accelerator type and value
-      const firstMatchedAcceleratorType = _.find(
-        _.keys(acceleratorSlotsInRG),
-        (value) => acceleratorObj[value] !== undefined,
-      );
-
-      let acceleratorSetting: {
-        acceleratorType?: string;
-        accelerator: number;
-      } = {
-        accelerator: 0,
-      };
-      if (firstMatchedAcceleratorType) {
-        acceleratorSetting = {
-          acceleratorType: firstMatchedAcceleratorType,
-          accelerator: Number(acceleratorObj[firstMatchedAcceleratorType] || 0),
-        };
-      }
-
-      // Check if preset has a specific shmem setting
-      const hasPresetShmem =
-        preset?.shared_memory && Number(preset.shared_memory) > 0;
-
-      form.setFieldsValue({
-        resource: {
-          // ...slots,
-          ...acceleratorSetting,
-          // transform to GB based on preset values
-          mem,
-          shmem: convertToBinaryUnit(preset?.shared_memory || 0, 'g', 2)?.value,
-          cpu: parseInt(slots?.cpu || '0') || 0,
-        },
-        enabledAutomaticShmem: !hasPresetShmem,
-      });
-
-      // Only run automatic shmem rule if preset doesn't have a specific shmem setting
-      if (!hasPresetShmem) {
-        runShmemAutomationRule(mem || '0g');
-      }
-      // mem and/or acceleratorType may have changed above; keep the
-      // accelerator field consistent for unified slots.
-      syncUnifiedAcceleratorIfNeeded();
-
-      form
-        .validateFields(['resource'], {
-          recursive: true,
-        })
-        .catch(() => {});
-    },
-  );
-
-  // The first allocatable preset, else minimum-required (or none when custom
-  // allocation is off).
-  const selectFallbackPreset = useEventNotStable(() => {
-    const firstAllocatablePreset = _.sortBy(
-      _.filter(checkPresetInfo?.presets, (preset) =>
-        allocatablePresetIds.includes(preset.id),
-      ),
-      'name',
-    )[0];
-    if (enableResourcePresets && firstAllocatablePreset) {
-      form.setFieldsValue({
-        allocationPreset: firstAllocatablePreset.id,
-      });
-      updateResourceFieldsBasedOnPreset(firstAllocatablePreset.id);
-    } else if (baiClient._config.allowCustomResourceAllocation) {
-      form.setFieldValue('allocationPreset', 'minimum-required');
-    } else {
-      form.setFieldValue('allocationPreset', null);
-    }
-  });
-
-  // A preset kept across a resource-group change (or restored from the URL) may
-  // need a slot the new group lacks; pick again instead of launching without it.
+  // Data keys only: a `resource` dependency re-fires on the effect's own writes (FR-3523).
   useEffect(() => {
-    if (_.isUndefined(resourceSlotsInRG)) return;
-    const selectedPreset = _.find(
-      checkPresetInfo?.presets,
-      (preset) => preset.id === currentAllocationPreset,
-    );
-    if (
-      selectedPreset &&
-      getUnavailableSlotNames(
-        selectedPreset.resource_slots,
-        _.keys(resourceSlotsInRG),
-      ).length > 0
-    ) {
-      selectFallbackPreset();
-    }
+    syncWithData();
   }, [
+    currentImage?.id,
+    isManualImage,
+    slotNamesInRGKey,
+    presetsKey,
+    allocatablePresetIdsKey,
     currentAllocationPreset,
-    resourceSlotsInRG,
-    checkPresetInfo?.presets,
-    selectFallbackPreset,
+    mode,
   ]);
-
-  // This effect is
-  // - for auto selecting the preset right after initialling the form and resourceSlots are loaded
-  // - ensuring accelerator type is valid when related data is changed
-  useEffect(() => {
-    // `auto-select` is the initial value of the form
-    // if resourceSlots is loaded, update the form based on the resourceSlots
-    if (
-      currentAllocationPreset === 'auto-select' &&
-      !_.isUndefined(resourceSlotsInRG)
-    ) {
-      if (
-        _.includes(
-          ['custom', 'minimum-required'],
-          form.getFieldValue('allocationPreset'),
-        )
-      ) {
-        // if the current preset is custom or minimum-required, do nothing.
-      } else if (
-        !allocatablePresetIds.includes(form.getFieldValue('allocationPreset'))
-      ) {
-        selectFallbackPreset();
-      }
-      ensureValidAcceleratorType();
-      form
-        .validateFields(['resource'], {
-          recursive: true,
-        })
-        .catch(() => {});
-    } else {
-      ensureValidAcceleratorType();
-    }
-  }, [
-    currentAllocationPreset,
-    allocatablePresetIds,
-    checkPresetInfo?.presets,
-    resourceSlotsInRG,
-    form,
-    // below are functions wrapped by useEventNotStable
-    ensureValidAcceleratorType,
-    selectFallbackPreset,
-  ]);
-
-  // This effect is for auto updating the resource fields when minimum-required preset is selected
-  useEffect(() => {
-    if (currentAllocationPreset === 'minimum-required') {
-      updateResourceFieldsBasedOnImage();
-    }
-  }, [currentImage, currentAllocationPreset, updateResourceFieldsBasedOnImage]);
 
   return (
     <>
@@ -820,29 +516,8 @@ const ResourceAllocationFormItems: React.FC<
               baiClient._config.allowCustomResourceAllocation
             }
             onChange={(value) => {
-              switch (value) {
-                case 'custom':
-                  break;
-                case 'minimum-required':
-                  form.setFieldValue('enabledAutomaticShmem', true);
-                  // updating resource fields based on preset is handled in useEffect because it has another dependency(image).
-                  break;
-                default: {
-                  // Check if the selected preset has a specific shmem setting
-                  const selectedPreset = _.find(
-                    checkPresetInfo?.presets,
-                    (preset) => preset.id === value,
-                  );
-                  const hasPresetShmem =
-                    selectedPreset?.shared_memory &&
-                    Number(selectedPreset.shared_memory) > 0;
-
-                  // If preset has specific shmem, disable automatic shmem; otherwise enable it
-                  form.setFieldValue('enabledAutomaticShmem', !hasPresetShmem);
-                  updateResourceFieldsBasedOnPreset(value);
-                  break;
-                }
-              }
+              runRule({ type: 'user.selectPreset', id: value });
+              if (value !== 'custom') validateResource();
             }}
             allocatablePresetIds={allocatablePresetIds}
             selectableResourceGroupNames={_.map(
@@ -968,8 +643,12 @@ const ResourceAllocationFormItems: React.FC<
                       min={resourceLimits.cpu?.min}
                       max={resourceLimits.cpu?.max}
                       step={1}
-                      onChange={() => {
-                        form.setFieldValue('allocationPreset', 'custom');
+                      onChange={(value) => {
+                        runRule({
+                          type: 'user.setResource',
+                          field: 'cpu',
+                          value,
+                        });
                       }}
                     />
                   </Form.Item>
@@ -1130,22 +809,11 @@ const ResourceAllocationFormItems: React.FC<
                                   : {}),
                               }}
                               onChange={(M_plus_S) => {
-                                form.setFieldValue(
-                                  'allocationPreset',
-                                  'custom',
-                                );
-                                if (
-                                  form.getFieldValue('enabledAutomaticShmem')
-                                ) {
-                                  runShmemAutomationRule(M_plus_S || '0g');
-                                }
-                                // When the active accelerator slot is a
-                                // unified-memory slot, accelerator memory is
-                                // auto-allocated from the shared host pool, so
-                                // clear any accelerator value at the source of
-                                // change to keep submit-time form state
-                                // consistent.
-                                syncUnifiedAcceleratorIfNeeded();
+                                runRule({
+                                  type: 'user.setResource',
+                                  field: 'mem',
+                                  value: M_plus_S,
+                                });
                               }}
                             />
                           </Form.Item>
@@ -1154,20 +822,15 @@ const ResourceAllocationFormItems: React.FC<
                     </Form.Item>
                     <SharedMemoryFormItems
                       min={resourceLimits.shmem?.min}
-                      onChangeResourceShmem={() => {
-                        if (baiClient._config.allowCustomResourceAllocation) {
-                          form.setFieldValue('allocationPreset', 'custom');
-                        }
+                      onChangeResourceShmem={(value) => {
+                        runRule({
+                          type: 'user.setResource',
+                          field: 'shmem',
+                          value,
+                        });
                       }}
                       onChangeAutomaticShmem={(checked) => {
-                        if (checked) {
-                          runShmemAutomationRule(
-                            form.getFieldValue(['resource', 'mem']) || '0g',
-                          );
-                        }
-                        if (baiClient._config.allowCustomResourceAllocation) {
-                          form.setFieldValue('allocationPreset', 'custom');
-                        }
+                        runRule({ type: 'user.toggleAutoShmem', on: checked });
                       }}
                     />
                   </Form.Item>
@@ -1481,8 +1144,12 @@ const ResourceAllocationFormItems: React.FC<
                                 ]?.max
                           }
                           step={currentAcceleratorStep}
-                          onChange={() => {
-                            form.setFieldValue('allocationPreset', 'custom');
+                          onChange={(value) => {
+                            runRule({
+                              type: 'user.setResource',
+                              field: 'accelerator',
+                              value,
+                            });
                           }}
                           inputNumberProps={{
                             addonAfter:
@@ -1528,45 +1195,11 @@ const ResourceAllocationFormItems: React.FC<
                                       },
                                     )}
                                     onChange={(nextType: string) => {
-                                      // Changing the slot type mutates the
-                                      // active allocation; the previously
-                                      // selected preset no longer matches.
-                                      form.setFieldValue(
-                                        'allocationPreset',
-                                        'custom',
-                                      );
-                                      // Keep the accelerator field consistent
-                                      // at the moment the slot type changes,
-                                      // rather than relying on a watcher
-                                      // effect that runs after render.
-                                      if (isUnifiedAcceleratorSlot(nextType)) {
-                                        // Switching INTO a unified slot: clear
-                                        // the accelerator field since unified
-                                        // memory is auto-allocated. Write
-                                        // acceleratorType first so the shared
-                                        // helper sees the new active slot when
-                                        // it reads from the form.
-                                        form.setFieldValue(
-                                          ['resource', 'acceleratorType'],
-                                          nextType,
-                                        );
-                                        syncUnifiedAcceleratorIfNeeded();
-                                      } else if (
-                                        isUnifiedAcceleratorSlot(
-                                          currentAcceleratorType,
-                                        )
-                                      ) {
-                                        // unified -> discrete: the empty
-                                        // unified value is not a device count,
-                                        // so start from the slot's min.
-                                        // discrete -> discrete keeps the value;
-                                        // the max rule flags it if too large.
-                                        form.setFieldValue(
-                                          ['resource', 'accelerator'],
-                                          resourceLimits.accelerators[nextType]
-                                            ?.min ?? 0,
-                                        );
-                                      }
+                                      runRule({
+                                        type: 'user.setAcceleratorType',
+                                        next: nextType,
+                                        prev: currentAcceleratorType,
+                                      });
                                     }}
                                   />
                                 </Form.Item>
