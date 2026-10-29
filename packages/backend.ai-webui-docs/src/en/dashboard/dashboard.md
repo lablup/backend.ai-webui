@@ -32,13 +32,13 @@ A new dashboard shows the following cards:
     to open its detail drawer.
 
 - **My Total Resource Usage**:
-    For each resource group in the card's setting (by default, the resource group
+    For the resource group in the card's setting (by default, the resource group
     chosen in the header), how much of each resource your sessions use against the
     lowest of your keypair, project, and domain limits.
 
 - **Total Resources in Resource Group**:
-    The used and free resources of the resource groups in the card's setting (by
-    default, the header's resource group), aggregated from their agents.
+    The used and free resources of the resource group in the card's setting (by
+    default, the header's resource group), aggregated from its agents.
 
 :::note
 The **Total Resources in Resource Group** card is not shown to regular users when
@@ -99,7 +99,7 @@ board and uncheck it to remove it; you can add it back at any time. A card that
 cannot be used in this environment is listed but disabled.
 
 The **Resource Presets** card, which shows whether each resource preset still
-fits in what you can allocate in each resource group in the card's setting (by
+fits in what you can allocate in the resource group in the card's setting (by
 default, the header's resource group), is not on a new dashboard. Check it in
 the **Cards** list to add it.
 
@@ -111,13 +111,12 @@ Some cards read a resource group or a time range. In the edit sidebar, such a
 card shows its current setting under its name and a settings (sliders) button.
 Click it to choose:
 
-- **Resource groups** for **My Total Resource Usage**, **Resource Presets**, and
-  **Total Resources in Resource Group**: the card shows one block per selected
-  resource group. With none selected, it follows the resource group chosen in
-  the header.
+- **Resource group** for **My Total Resource Usage**, **Resource Presets**, and
+  **Total Resources in Resource Group**: the card shows the selected resource
+  group. With none selected, it follows the resource group chosen in the header.
 - **Time range** for **My Activity**: the last hour, 24 hours, or 7 days.
-- **Resource groups** for **Sessions** and **Deployments** custom panels: the
-  panel lists only rows in those resource groups. With none selected, it lists
+- **Resource group** for **Sessions** and **Deployments** custom panels: the
+  panel lists only rows in that resource group. With none selected, it lists
   every resource group.
 
 The setting is saved with your board. Cards that do not depend on a resource
@@ -188,6 +187,7 @@ query remains listed in the sidebar but is not shown on the board.
 The refresh button at the top right of the dashboard is the only refresh control
 on the page: click it to reload every card at once. The arrow next to it sets
 how often the dashboard refreshes by itself (off, or every 5 seconds to
-10 minutes; 30 seconds by default), and the choice is saved with your board.
-Cards whose data changes slowly, such as folder counts, refresh less often than
-the interval you choose.
+10 minutes; 1 minute by default), and the choice is saved with your board. Each
+automatic refresh reloads every card on screen together. A card scrolled out of
+view is skipped, and reloads as soon as it comes back into view if it has not
+refreshed within the interval.

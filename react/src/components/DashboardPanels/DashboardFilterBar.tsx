@@ -14,7 +14,7 @@ import {
 } from './refreshScheduler';
 import type { DashboardFilters } from './useDashboardFilters';
 import { BAIFetchKeyButton, BAIFlex } from 'backend.ai-ui';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 export interface DashboardFilterBarProps {
   filters: DashboardFilters;
@@ -36,6 +36,10 @@ const DashboardFilterBar: React.FC<DashboardFilterBarProps> = ({
   'use memo';
   const scheduler = useDashboardRefreshScheduler();
   const lastRefreshAt = useDashboardLastRefreshAt();
+  const refreshMs = refreshToMs(filters.refresh);
+  useEffect(() => {
+    scheduler?.setIntervalMs(refreshMs);
+  }, [scheduler, refreshMs]);
 
   return (
     <BAIFlex
@@ -60,7 +64,7 @@ const DashboardFilterBar: React.FC<DashboardFilterBarProps> = ({
           lastLoadTime={
             lastRefreshAt === null ? undefined : new Date(lastRefreshAt)
           }
-          autoUpdateDelay={refreshToMs(filters.refresh)}
+          autoUpdateDelay={refreshMs}
           autoUpdateDelayOptions={REFRESH_DELAY_OPTIONS}
           onChangeAutoUpdateDelay={(delayMs) =>
             filters.setRefresh(msToRefresh(delayMs))

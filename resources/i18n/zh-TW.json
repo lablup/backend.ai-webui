@@ -904,7 +904,7 @@
       "Last1Hour": "最近 1 小時",
       "Last24Hours": "最近 24 小時",
       "Last7Days": "最近 7 天",
-      "ResourceGroups": "資源群組",
+      "ResourceGroup": "資源群組",
       "ResourceGroupsDescription": "未選擇時：{{default}}",
       "TimeRange": "時間範圍"
     }

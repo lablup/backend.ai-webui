@@ -904,7 +904,7 @@
       "Last1Hour": "1 giờ qua",
       "Last24Hours": "24 giờ qua",
       "Last7Days": "7 ngày qua",
-      "ResourceGroups": "Nhóm tài nguyên",
+      "ResourceGroup": "Nhóm tài nguyên",
       "ResourceGroupsDescription": "Nếu không chọn: {{default}}",
       "TimeRange": "Khoảng thời gian"
     }

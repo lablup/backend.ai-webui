@@ -904,7 +904,7 @@
       "Last1Hour": "Сүүлийн 1 цаг",
       "Last24Hours": "Сүүлийн 24 цаг",
       "Last7Days": "Сүүлийн 7 хоног",
-      "ResourceGroups": "Нөөцийн бүлгүүд",
+      "ResourceGroup": "Нөөцийн бүлэг",
       "ResourceGroupsDescription": "Сонгоогүй бол: {{default}}",
       "TimeRange": "Хугацааны муж"
     }

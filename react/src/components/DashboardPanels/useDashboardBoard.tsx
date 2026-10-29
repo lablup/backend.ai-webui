@@ -206,11 +206,7 @@ export const useDashboardBoard = ({
     if (definition.kind === 'custom') {
       const Component = definition.Component;
       return Component ? (
-        <DashboardPanelContent
-          panel={panel}
-          definition={definition}
-          isPageRefetching={isRefetching}
-        >
+        <DashboardPanelContent panel={panel} isPageRefetching={isRefetching}>
           {(state) => (
             <Component
               panel={panel}
@@ -237,11 +233,7 @@ export const useDashboardBoard = ({
         title={resolvePanelTitle(legacyPanel.descriptor, t)}
         status="error"
       >
-        <DashboardPanelContent
-          panel={panel}
-          definition={definition}
-          isPageRefetching={isRefetching}
-        >
+        <DashboardPanelContent panel={panel} isPageRefetching={isRefetching}>
           {({ fetchKey }) => (
             <Panel
               descriptor={legacyPanel.descriptor}

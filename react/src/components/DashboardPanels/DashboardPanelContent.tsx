@@ -7,15 +7,10 @@ import {
   useDashboardFetchKey,
   useDashboardRefreshScheduler,
 } from './DashboardRefreshContext';
-import { resourceGroupRows } from './dashboardScope';
+import { cardResourceGroup } from './dashboardScope';
 import { DEFAULT_RANGE } from './panelSettings';
 import { rangeToDateTimeFilter } from './timeRange';
-import type {
-  DashboardScope,
-  DashboardVars,
-  PanelDefinition,
-  PersistedPanelV2,
-} from './types';
+import type { DashboardScope, DashboardVars, PersistedPanelV2 } from './types';
 import { useDashboardFilterContext } from './useDashboardFilters';
 import React, { useDeferredValue } from 'react';
 
@@ -30,7 +25,6 @@ export interface DashboardPanelState {
 
 export interface DashboardPanelContentProps {
   panel: PersistedPanelV2;
-  definition: PanelDefinition;
   /** The page query is refetching (the cards that still read it). */
   isPageRefetching: boolean;
   children: (state: DashboardPanelState) => React.ReactNode;
@@ -39,7 +33,6 @@ export interface DashboardPanelContentProps {
 /** Hands one card the page scope, its own settings resolved, and its own fetch key. */
 const DashboardPanelContent: React.FC<DashboardPanelContentProps> = ({
   panel,
-  definition,
   isPageRefetching,
   children,
 }) => {
@@ -48,7 +41,6 @@ const DashboardPanelContent: React.FC<DashboardPanelContentProps> = ({
   const scheduler = useDashboardRefreshScheduler();
   const { fetchKey, manualFetchKey, refreshedAt } = useDashboardFetchKey(
     panelRefreshId(panel.id),
-    definition.refresh.min,
   );
   // Deferred so a refresh suspends in the background instead of flashing the skeleton.
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -67,7 +59,7 @@ const DashboardPanelContent: React.FC<DashboardPanelContentProps> = ({
       refreshedAt,
       currentProjectId: filters?.currentProjectId ?? null,
       currentResourceGroup,
-      resourceGroups: resourceGroupRows(
+      resourceGroup: cardResourceGroup(
         panel.settings?.resourceGroups,
         currentResourceGroup,
       ),

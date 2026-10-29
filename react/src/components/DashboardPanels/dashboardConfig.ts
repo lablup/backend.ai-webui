@@ -30,7 +30,7 @@ export const PANEL_PAGES: ReadonlyArray<PanelPage> = [
 export const DEFAULT_BOARD_ID = 'default';
 
 export const DEFAULT_BOARD_VARS: DashboardBoardVars = {
-  refresh: '30s',
+  refresh: '1m',
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>

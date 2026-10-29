@@ -904,7 +904,7 @@
       "Last1Hour": "Τελευταία 1 ώρα",
       "Last24Hours": "Τελευταίες 24 ώρες",
       "Last7Days": "Τελευταίες 7 ημέρες",
-      "ResourceGroups": "Ομάδες πόρων",
+      "ResourceGroup": "Ομάδα πόρων",
       "ResourceGroupsDescription": "Χωρίς επιλογή: {{default}}",
       "TimeRange": "Χρονικό διάστημα"
     }
