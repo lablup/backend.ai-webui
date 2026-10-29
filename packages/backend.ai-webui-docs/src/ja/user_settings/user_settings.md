@@ -318,7 +318,6 @@ Backend.AI WebUIは、プライベートリポジトリへのアクセスなど�
 削除される可能性があります。各機能は**有効**チェックボックスでオンにします。
 
 ![](../images/experimental_features.png)
-<!-- TODO: Recapture without the removed "Command palette" row (#10546) -->
 
 - **AIエージェント**: AIエージェント機能を有効にします。この機能はWebUI内で
   エージェントベースのAI機能を提供します。有効にすると、セッションでAI
