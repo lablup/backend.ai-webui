@@ -1132,20 +1132,8 @@ export default defineConfig(({ command, mode }) => {
         },
       }),
 
-      // Service worker generation (build only). Mirrors the options used
-      // by craco's workbox-webpack-plugin GenerateSW call in
-      // craco.config.cjs:390-400.
-      //
-      // Run `tsc --noEmit` in a worker so type errors surface in the dev
-      // terminal and as a browser overlay during `vite dev`. Vite itself
-      // only strips types via Oxc, so without this plugin type
-      // errors are visible only in the IDE or via `scripts/verify.sh`.
-      // `tsconfigPath` pins the checker to the consumer's tsconfig (which has
-      // the `paths` workaround for pnpm-global-virtual-store type resolution —
-      // see FR-2925). During dev it is the derived `tsconfig.checker.json`
-      // that excludes the pnpm store from the watch program (FR-3214) — see
-      // `resolveCheckerTsconfigPath` above; for `vite build` it is the plain
-      // base tsconfig.
+      // Type errors in the dev terminal and browser overlay; Vite only strips
+      // types. The tsconfig choice is `resolveCheckerTsconfigPath` (FR-3214).
       ...(runTypeChecker
         ? [
             checker({
