@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const tls = require('tls');
 
 // host -> { fingerprint: 'sha256/<base64 of DER>', certificate: PEM }, as
 // Backend.AI Desktop pins them after the user trusts a self-signed endpoint.
@@ -15,8 +16,9 @@ function fingerprintOf(rawDer) {
 }
 
 // TLS options for a WebSocket URL whose host the user pinned: the pinned
-// certificate is the only trust anchor and its fingerprint must match, so the
-// handshake fails before any header (session cookie) is sent to another server.
+// certificate is trusted in addition to the default roots, so a server that later
+// moves to a publicly valid certificate still passes the normal checks. Anything
+// else fails the handshake before a header (session cookie) is sent.
 function pinnedTlsOptions(url) {
   let host;
   try {
@@ -29,14 +31,12 @@ function pinnedTlsOptions(url) {
   const pin = pins[host];
   if (!pin || typeof pin.certificate !== 'string') return {};
   return {
-    ca: pin.certificate,
+    ca: [...tls.rootCertificates, pin.certificate],
     allowPartialTrustChain: true,
-    checkServerIdentity: (_hostname, cert) =>
+    checkServerIdentity: (hostname, cert) =>
       fingerprintOf(cert.raw) === pin.fingerprint
         ? undefined
-        : new Error(
-            `The certificate of ${host} does not match the trusted one`,
-          ),
+        : tls.checkServerIdentity(hostname, cert),
   };
 }
 

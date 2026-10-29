@@ -109,7 +109,13 @@ function getTrustedCerts() {
     } catch {
       // Missing or unreadable: nothing is trusted.
     }
-    manager.setTrustedCertificates?.(trustedCerts);
+    if (typeof manager.setTrustedCertificates === 'function') {
+      manager.setTrustedCertificates(trustedCerts);
+    } else {
+      console.warn(
+        'The bundled wsproxy cannot pin trusted certificates; rebuild it (make compile_wsproxy).',
+      );
+    }
   }
   return trustedCerts;
 }
@@ -173,6 +179,12 @@ function promptCertificateTrust(host, certificate, previous, parent) {
             certificate.validExpiry * 1000 < Date.now() ? ' (expired)' : ''
           }`,
           `Fingerprint: ${certificate.fingerprint}`,
+          ...(certificate.validExpiry * 1000 < Date.now()
+            ? [
+                '',
+                'This certificate has expired: terminal and app connections will still fail until it is renewed, unless your administrator sets wsproxy.disableCertCheck.',
+              ]
+            : []),
         ].join('\n'),
       },
       parent,

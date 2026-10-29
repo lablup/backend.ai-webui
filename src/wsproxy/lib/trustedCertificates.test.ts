@@ -1,5 +1,6 @@
 import { X509Certificate } from 'node:crypto';
 import { createRequire } from 'node:module';
+import tls from 'node:tls';
 import { afterEach, describe, expect, it } from 'vitest';
 
 const require = createRequire(import.meta.url);
@@ -65,16 +66,31 @@ describe('wsproxy trusted certificate pinning', () => {
     expect(pinnedTlsOptions('not a url')).toEqual({});
   });
 
-  it('pins the stored certificate and accepts only its fingerprint', () => {
+  it('trusts the pinned certificate on top of the default roots', () => {
     setTrustedCertificates({ 'bai.local:8090': pinA });
     const options = pinnedTlsOptions('wss://bai.local:8090/stream');
-    expect(options.ca).toBe(PEM_A);
+    expect(options.ca).toEqual([...tls.rootCertificates, PEM_A]);
     expect(options.allowPartialTrustChain).toBe(true);
+    // The pinned certificate is accepted even though its name does not match.
     expect(
       options.checkServerIdentity('bai.local', { raw: rawOf(PEM_A) }),
     ).toBeUndefined();
+  });
+
+  it('holds any other certificate to the normal hostname check', () => {
+    setTrustedCertificates({ 'bai.local:8090': pinA });
+    const { checkServerIdentity } = pinnedTlsOptions('wss://bai.local:8090/');
+    const other = (name: string) => ({
+      raw: rawOf(PEM_B),
+      subject: { CN: name },
+      subjectaltname: `DNS:${name}`,
+    });
+    // e.g. the server moved to a publicly valid certificate for its own name
     expect(
-      options.checkServerIdentity('bai.local', { raw: rawOf(PEM_B) }),
+      checkServerIdentity('bai.local', other('bai.local')),
+    ).toBeUndefined();
+    expect(
+      checkServerIdentity('bai.local', other('evil.example')),
     ).toBeInstanceOf(Error);
   });
 
