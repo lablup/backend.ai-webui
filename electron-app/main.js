@@ -75,11 +75,102 @@ let mainContent;
 let devtools;
 const manager = new ProxyManager();
 let mainURL;
-// Set to true only when config.toml explicitly opts into
-// `wsproxy.disableCertCheck` — the certificate-error handler must not
-// accept invalid certificates otherwise (any network MITM could otherwise
-// serve the whole UI and capture the user's API keys).
+// Operator opt-in (`wsproxy.disableCertCheck`, bundled or user config): accept
+// invalid certificates in the main window without asking.
 let allowInvalidCertificates = false;
+const pendingCertPrompts = new Map();
+
+const trustedCertsPath = () =>
+  path.join(app.getPath('userData'), 'trusted-certificates.json');
+
+function readTrustedCerts() {
+  try {
+    return JSON.parse(nfs.readFileSync(trustedCertsPath(), 'utf-8'));
+  } catch {
+    return {};
+  }
+}
+
+// The bundled config.toml sits inside app.asar; this one can be edited on site.
+function readUserConfig() {
+  try {
+    const file = path.join(app.getPath('userData'), 'config.toml');
+    return toml(nfs.readFileSync(file, 'utf-8'));
+  } catch {
+    return {};
+  }
+}
+
+function applyCertCheckOptIn(config) {
+  if (config?.wsproxy?.disableCertCheck == true) {
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+    allowInvalidCertificates = true;
+  }
+}
+
+function showMessage(options) {
+  return mainWindow && !mainWindow.isDestroyed()
+    ? dialog.showMessageBox(mainWindow, options)
+    : dialog.showMessageBox(options);
+}
+
+// Trust on first use: the user confirms a host's fingerprint once; a changed
+// fingerprint asks again with a warning. One dialog per host and certificate;
+// a refusal stays in the map until restart, so polling requests do not re-ask.
+function promptCertificateTrust(host, certificate, previous) {
+  const key = `${host} ${certificate.fingerprint}`;
+  if (!pendingCertPrompts.has(key)) {
+    const prompt = showMessage({
+      type: 'warning',
+      buttons: ['Cancel', previous ? 'Trust New Certificate' : 'Trust'],
+      defaultId: 0,
+      cancelId: 0,
+      message: previous
+        ? `The certificate of ${host} has changed.`
+        : `${host} uses a certificate that is not trusted.`,
+      detail: [
+        previous
+          ? 'The server may have renewed its certificate, or someone may be intercepting the connection. Trust it only if your administrator confirms the new fingerprint.'
+          : 'Trust it only if your administrator confirms this fingerprint.',
+        '',
+        `Issued to: ${certificate.subjectName}`,
+        `Issued by: ${certificate.issuerName}`,
+        `Fingerprint: ${certificate.fingerprint}`,
+      ].join('\n'),
+    })
+      .then(({ response }) => {
+        if (response !== 1) return false;
+        const trusted = readTrustedCerts();
+        trusted[host] = certificate.fingerprint;
+        nfs.writeFileSync(trustedCertsPath(), JSON.stringify(trusted, null, 2));
+        pendingCertPrompts.delete(key);
+        return true;
+      });
+    pendingCertPrompts.set(key, prompt);
+  }
+  return pendingCertPrompts.get(key);
+}
+
+async function resetTrustedCertificates() {
+  const hosts = Object.keys(readTrustedCerts());
+  if (hosts.length === 0) {
+    await showMessage({ type: 'info', message: 'No certificates are trusted.' });
+    return;
+  }
+  const { response } = await showMessage({
+    type: 'question',
+    buttons: ['Cancel', 'Reset and Restart'],
+    defaultId: 0,
+    cancelId: 0,
+    message: 'Forget the certificates you trusted?',
+    detail: `Backend.AI Desktop restarts and asks again on the next connection to:\n${hosts.join('\n')}`,
+  });
+  if (response !== 1) return;
+  nfs.rmSync(trustedCertsPath(), { force: true });
+  // Chromium remembers accepted certificates for the session; only a restart forgets them.
+  app.relaunch();
+  app.exit(0);
+}
 
 app.once('ready', function () {
   let template;
@@ -128,6 +219,10 @@ app.once('ready', function () {
               );
               console.log('Re-connected to proxy: ' + proxyUrl);
             },
+          },
+          {
+            label: 'Reset Trusted Certificates…',
+            click: resetTrustedCertificates,
           },
           {
             type: 'separator',
@@ -298,6 +393,10 @@ app.once('ready', function () {
             },
           },
           {
+            label: 'Reset Trusted Certificates…',
+            click: resetTrustedCertificates,
+          },
+          {
             type: 'separator',
           },
           {
@@ -404,6 +503,7 @@ function createWindow() {
     nfs.readFile(path.join(es6Path, 'config.toml'), 'utf-8', (err, data) => {
       console.log('Running on build-resource debug mode...');
       allowInvalidCertificates = false;
+      applyCertCheckOptIn(readUserConfig());
       if (err) {
         console.log('No configuration file found.');
         loadFallbackIndex();
@@ -411,14 +511,7 @@ function createWindow() {
       }
       try {
         const config = toml(data);
-        if (
-          'wsproxy' in config &&
-          'disableCertCheck' in config.wsproxy &&
-          config.wsproxy.disableCertCheck == true
-        ) {
-          process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-          allowInvalidCertificates = true;
-        }
+        applyCertCheckOptIn(config);
         if (
           'server' in config &&
           'webServerURL' in config.server &&
@@ -633,16 +726,30 @@ app.on('activate', function () {
 app.on(
   'certificate-error',
   function (event, webContents, url, error, certificate, callback) {
-    // Accept invalid certificates only when the operator explicitly opted in
-    // via `wsproxy.disableCertCheck` in config.toml. Otherwise keep Chromium's
-    // default behavior (reject and show the standard error page) so a MITM
-    // cannot present a self-signed cert for the Backend.AI endpoint.
-    if (allowInvalidCertificates) {
-      event.preventDefault();
-      callback(true);
-    } else {
+    // Popups and other windows never get an exception, so a page cannot
+    // lure the user into trusting an arbitrary host.
+    if (
+      !mainWindow ||
+      mainWindow.isDestroyed() ||
+      webContents !== mainWindow.webContents
+    ) {
       callback(false);
+      return;
     }
+    event.preventDefault();
+    if (allowInvalidCertificates) {
+      callback(true);
+      return;
+    }
+    const host = new URL(url).host;
+    const previous = readTrustedCerts()[host];
+    if (previous === certificate.fingerprint) {
+      callback(true);
+      return;
+    }
+    promptCertificateTrust(host, certificate, previous).then(callback, () =>
+      callback(false),
+    );
   },
 );
 // Let windows without node integration
