@@ -2352,6 +2352,7 @@
   "projectSelect": {
     "AskAdminForProjectAccess": "管理者にプロジェクトへのアクセス権を依頼してください。",
     "GoToProject": "{{project}} へ移動",
+    "MyProject": "マイプロジェクト",
     "NoAccessibleProjects": "アクセス可能なプロジェクトがありません。",
     "Personal": "個人",
     "PersonalProjectCannotBeRemoved": "ユーザーに割り当てられた個人プロジェクトは削除できません。",
