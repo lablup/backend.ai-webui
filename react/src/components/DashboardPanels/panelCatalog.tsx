@@ -541,7 +541,7 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
       { admin: 'webui.menu.Users' },
       { tab: 'credentials' },
     ),
-    defaultSize: size(4, 3),
+    defaultSize: size(2, 3),
     minSize: size(2, 3),
     settings: ['range'],
     defaultHidden: true,
