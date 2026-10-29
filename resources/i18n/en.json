@@ -4194,7 +4194,6 @@
     }
   },
   "webuiSettings": {
-    "AddPluginPath": "Add plugin path",
     "AllowAnonymousChangePassword": "Allow password reset",
     "AllowAppDownloadPanel": "Show desktop app downloads",
     "AllowCLIDownloadPanel": "Show CLI downloads",
@@ -4263,7 +4262,7 @@
     "DescMenuInactivelist": "Menu keys to disable in the sidebar, separated by commas. They stay visible but cannot be selected.",
     "DescOpenPortToPublic": "Offer the public option in the session app dialog so anyone on the network can reach the application.",
     "DescPluginLogin": "Relative path of the plugin file used on the login page.",
-    "DescPluginPage": "Relative paths of the plugin files that add page menus.",
+    "DescPluginPage": "Relative paths of the plugin files that add page menus. Separate several with commas.",
     "DescShowNonInstalledImages": "Show every environment image on the session creation page, whether or not an agent has installed it.",
     "DescSingleSignOnVendors": "The SSO sign-in buttons shown on the login page. The feature may be unavailable depending on whether the manager plugin is installed.",
     "DescSsoRealmName": "Name shown on the OpenID sign-in button. Leave blank to show \"OpenID\".",
@@ -4299,8 +4298,6 @@
     "MenuBlocklist": "Hide menus",
     "MenuInactivelist": "Disable menus",
     "OpenPortToPublic": "Allow public app access",
-    "PluginFileName": "File name",
-    "PluginFolderPath": "Folder path",
     "PluginLogin": "Login plugin path",
     "PluginPage": "Page plugin paths",
     "ShowNonInstalledImages": "Show non-installed images",

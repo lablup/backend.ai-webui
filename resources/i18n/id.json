@@ -4213,7 +4213,6 @@
     }
   },
   "webuiSettings": {
-    "AddPluginPath": "Tambah jalur plugin",
     "AllowAnonymousChangePassword": "Izinkan pengaturan ulang kata sandi",
     "AllowAppDownloadPanel": "Tampilkan unduhan aplikasi desktop",
     "AllowCLIDownloadPanel": "Tampilkan unduhan CLI",
@@ -4282,7 +4281,7 @@
     "DescMenuInactivelist": "Kunci menu yang dinonaktifkan di bilah sisi, dipisahkan koma. Menu tetap terlihat tetapi tidak dapat dipilih.",
     "DescOpenPortToPublic": "Menawarkan opsi publik di dialog aplikasi sesi sehingga siapa pun di jaringan dapat mengakses aplikasi.",
     "DescPluginLogin": "Jalur relatif berkas plugin yang digunakan di halaman login.",
-    "DescPluginPage": "Jalur relatif berkas plugin yang menambahkan menu halaman.",
+    "DescPluginPage": "Jalur relatif file plugin yang menambahkan menu halaman. Pisahkan beberapa jalur dengan koma.",
     "DescShowNonInstalledImages": "Menampilkan semua image lingkungan di halaman pembuatan sesi, terlepas dari apakah agen telah memasangnya.",
     "DescSingleSignOnVendors": "Tombol masuk SSO yang ditampilkan di halaman masuk. Fitur ini mungkin tidak tersedia tergantung apakah plugin manager terpasang.",
     "DescSsoRealmName": "Nama yang ditampilkan pada tombol masuk OpenID. Biarkan kosong untuk menampilkan \"OpenID\".",
@@ -4318,8 +4317,6 @@
     "MenuBlocklist": "Sembunyikan menu",
     "MenuInactivelist": "Nonaktifkan menu",
     "OpenPortToPublic": "Izinkan akses aplikasi publik",
-    "PluginFileName": "Nama berkas",
-    "PluginFolderPath": "Jalur folder",
     "PluginLogin": "Jalur plugin login",
     "PluginPage": "Jalur plugin halaman",
     "ShowNonInstalledImages": "Tampilkan image yang belum dipasang",

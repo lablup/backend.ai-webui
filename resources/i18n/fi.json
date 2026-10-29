@@ -4210,7 +4210,6 @@
     }
   },
   "webuiSettings": {
-    "AddPluginPath": "Lisää liitännäisen polku",
     "AllowAnonymousChangePassword": "Salli salasanan nollaus",
     "AllowAppDownloadPanel": "Näytä työpöytäsovelluksen lataukset",
     "AllowCLIDownloadPanel": "Näytä CLI-lataukset",
@@ -4279,7 +4278,7 @@
     "DescMenuInactivelist": "Pilkuilla erotetut valikkoavaimet, jotka poistetaan käytöstä sivupalkissa. Ne pysyvät näkyvissä, mutta niitä ei voi valita.",
     "DescOpenPortToPublic": "Tarjoaa istunnon sovellusikkunassa julkisen vaihtoehdon, jolloin kuka tahansa verkossa voi käyttää sovellusta.",
     "DescPluginLogin": "Kirjautumissivulla käytettävän liitännäistiedoston suhteellinen polku.",
-    "DescPluginPage": "Sivuvalikoita lisäävien liitännäistiedostojen suhteelliset polut.",
+    "DescPluginPage": "Sivuvalikkoja lisäävien liitännäistiedostojen suhteelliset polut. Erota useat pilkuilla.",
     "DescShowNonInstalledImages": "Näyttää istunnon luontisivulla kaikki ympäristöimaget riippumatta siitä, onko agentti asentanut ne.",
     "DescSingleSignOnVendors": "Kirjautumissivulla näytettävät SSO-kirjautumispainikkeet. Toiminto voi olla poissa käytöstä sen mukaan, onko managerin liitännäinen asennettu.",
     "DescSsoRealmName": "OpenID-kirjautumispainikkeessa näytettävä nimi. Jätä tyhjäksi, jos haluat näyttää tekstin ”OpenID”.",
@@ -4315,8 +4314,6 @@
     "MenuBlocklist": "Piilota valikot",
     "MenuInactivelist": "Poista valikot käytöstä",
     "OpenPortToPublic": "Salli sovellusten julkinen käyttö",
-    "PluginFileName": "Tiedostonimi",
-    "PluginFolderPath": "Kansion polku",
     "PluginLogin": "Kirjautumisliitännäisen polku",
     "PluginPage": "Sivuliitännäisten polut",
     "ShowNonInstalledImages": "Näytä asentamattomat imaget",

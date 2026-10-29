@@ -4212,7 +4212,6 @@
     }
   },
   "webuiSettings": {
-    "AddPluginPath": "플러그인 경로 추가",
     "AllowAnonymousChangePassword": "비밀번호 재설정 허용",
     "AllowAppDownloadPanel": "데스크톱 앱 다운로드 표시",
     "AllowCLIDownloadPanel": "CLI 다운로드 표시",
@@ -4281,7 +4280,7 @@
     "DescMenuInactivelist": "메뉴 사이드바에서 비활성화할 메뉴 키를 설정합니다. 메뉴 사이드바에는 표시되지만 선택이 불가능하게 설정됩니다. 쉼표로 구분됩니다.",
     "DescOpenPortToPublic": "세션 앱 다이얼로그에 공개 옵션을 제공해 네트워크 내 모든 사용자가 애플리케이션에 접근할 수 있도록 설정합니다.",
     "DescPluginLogin": "로그인 페이지에 사용되는 플러그인 파일의 상대 경로입니다.",
-    "DescPluginPage": "페이지 메뉴를 추가하는 플러그인 파일의 상대 경로입니다.",
+    "DescPluginPage": "페이지 메뉴를 추가하는 플러그인 파일의 상대 경로입니다. 여러 개는 쉼표로 구분합니다.",
     "DescShowNonInstalledImages": "세션 생성 페이지에서 에이전트 설치 여부와 관계없이 모든 환경 이미지를 표시합니다.",
     "DescSingleSignOnVendors": "로그인 페이지에 표시할 SSO 로그인 버튼입니다. 매니저 플러그인 설치 여부에 따라 기능이 비활성화 될 수 있습니다.",
     "DescSsoRealmName": "OpenID 로그인 버튼에 표시할 이름입니다. 비워 두면 \"OpenID\"로 표시됩니다.",
@@ -4317,8 +4316,6 @@
     "MenuBlocklist": "메뉴 숨기기",
     "MenuInactivelist": "메뉴 비활성화",
     "OpenPortToPublic": "앱 외부 공개 허용",
-    "PluginFileName": "파일 명",
-    "PluginFolderPath": "폴더 경로",
     "PluginLogin": "로그인 플러그인 경로",
     "PluginPage": "페이지 플러그인 경로",
     "ShowNonInstalledImages": "미설치 이미지 표시",

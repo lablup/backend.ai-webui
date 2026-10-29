@@ -4209,7 +4209,6 @@
     }
   },
   "webuiSettings": {
-    "AddPluginPath": "Tambah laluan pemalam",
     "AllowAnonymousChangePassword": "Benarkan tetapan semula kata laluan",
     "AllowAppDownloadPanel": "Tunjukkan muat turun aplikasi desktop",
     "AllowCLIDownloadPanel": "Tunjukkan muat turun CLI",
@@ -4278,7 +4277,7 @@
     "DescMenuInactivelist": "Kunci menu yang dinyahaktifkan dalam bar sisi, dipisahkan dengan koma. Menu kekal kelihatan tetapi tidak boleh dipilih.",
     "DescOpenPortToPublic": "Tawarkan pilihan awam dalam dialog aplikasi sesi supaya sesiapa sahaja dalam rangkaian boleh mencapai aplikasi tersebut.",
     "DescPluginLogin": "Laluan relatif fail pemalam yang digunakan pada halaman log masuk.",
-    "DescPluginPage": "Laluan relatif fail pemalam yang menambah menu halaman.",
+    "DescPluginPage": "Laluan relatif fail pemalam yang menambah menu halaman. Asingkan beberapa laluan dengan koma.",
     "DescShowNonInstalledImages": "Tunjukkan semua imej persekitaran pada halaman penciptaan sesi, sama ada ejen telah memasangnya atau tidak.",
     "DescSingleSignOnVendors": "Butang log masuk SSO yang dipaparkan pada halaman log masuk. Ciri ini mungkin tidak tersedia bergantung pada sama ada pemalam manager dipasang.",
     "DescSsoRealmName": "Nama yang ditunjukkan pada butang log masuk OpenID. Biarkan kosong untuk menunjukkan \"OpenID\".",
@@ -4314,8 +4313,6 @@
     "MenuBlocklist": "Sembunyikan menu",
     "MenuInactivelist": "Nyahaktifkan menu",
     "OpenPortToPublic": "Benarkan akses awam kepada aplikasi",
-    "PluginFileName": "Nama fail",
-    "PluginFolderPath": "Laluan folder",
     "PluginLogin": "Laluan pemalam log masuk",
     "PluginPage": "Laluan pemalam halaman",
     "ShowNonInstalledImages": "Tunjukkan imej yang belum dipasang",

@@ -4211,7 +4211,6 @@
     }
   },
   "webuiSettings": {
-    "AddPluginPath": "Thêm đường dẫn plugin",
     "AllowAnonymousChangePassword": "Cho phép đặt lại mật khẩu",
     "AllowAppDownloadPanel": "Hiển thị tải xuống ứng dụng máy tính",
     "AllowCLIDownloadPanel": "Hiển thị tải xuống CLI",
@@ -4280,7 +4279,7 @@
     "DescMenuInactivelist": "Các khóa menu cần vô hiệu hóa trên thanh bên, phân tách bằng dấu phẩy. Chúng vẫn hiển thị nhưng không thể chọn.",
     "DescOpenPortToPublic": "Cung cấp tùy chọn công khai trong hộp thoại ứng dụng của phiên để bất kỳ ai trong mạng cũng có thể truy cập ứng dụng.",
     "DescPluginLogin": "Đường dẫn tương đối của tệp plugin dùng trên trang đăng nhập.",
-    "DescPluginPage": "Đường dẫn tương đối của các tệp plugin thêm menu trang.",
+    "DescPluginPage": "Đường dẫn tương đối của các tệp plugin thêm menu trang. Phân tách nhiều đường dẫn bằng dấu phẩy.",
     "DescShowNonInstalledImages": "Hiển thị mọi image môi trường trên trang tạo phiên, bất kể agent đã cài đặt hay chưa.",
     "DescSingleSignOnVendors": "Các nút đăng nhập SSO hiển thị trên trang đăng nhập. Tính năng có thể không khả dụng tùy thuộc vào việc plugin của manager đã được cài đặt hay chưa.",
     "DescSsoRealmName": "Tên hiển thị trên nút đăng nhập OpenID. Để trống để hiển thị \"OpenID\".",
@@ -4316,8 +4315,6 @@
     "MenuBlocklist": "Ẩn menu",
     "MenuInactivelist": "Vô hiệu hóa menu",
     "OpenPortToPublic": "Cho phép truy cập ứng dụng công khai",
-    "PluginFileName": "Tên tệp",
-    "PluginFolderPath": "Đường dẫn thư mục",
     "PluginLogin": "Đường dẫn plugin đăng nhập",
     "PluginPage": "Đường dẫn plugin trang",
     "ShowNonInstalledImages": "Hiển thị image chưa cài đặt",

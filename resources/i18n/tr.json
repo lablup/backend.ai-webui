@@ -4209,7 +4209,6 @@
     }
   },
   "webuiSettings": {
-    "AddPluginPath": "Eklenti yolu ekle",
     "AllowAnonymousChangePassword": "Parola sıfırlamaya izin ver",
     "AllowAppDownloadPanel": "Masaüstü uygulaması indirmelerini göster",
     "AllowCLIDownloadPanel": "CLI indirmelerini göster",
@@ -4278,7 +4277,7 @@
     "DescMenuInactivelist": "Kenar çubuğunda devre dışı bırakılacak menü anahtarları, virgülle ayrılmış. Görünür kalırlar ancak seçilemezler.",
     "DescOpenPortToPublic": "Oturum uygulama iletişim kutusunda herkese açık seçeneğini sunar; böylece ağdaki herkes uygulamaya erişebilir.",
     "DescPluginLogin": "Giriş sayfasında kullanılan eklenti dosyasının göreli yolu.",
-    "DescPluginPage": "Sayfa menüleri ekleyen eklenti dosyalarının göreli yolları.",
+    "DescPluginPage": "Sayfa menüleri ekleyen eklenti dosyalarının göreli yolları. Birden fazlasını virgülle ayırın.",
     "DescShowNonInstalledImages": "Bir aracı tarafından kurulmuş olsun ya da olmasın, oturum oluşturma sayfasında tüm ortam imajlarını gösterir.",
     "DescSingleSignOnVendors": "Oturum açma sayfasında gösterilen SSO oturum açma düğmeleri. Yönetici eklentisinin kurulu olup olmamasına bağlı olarak özellik kullanılamayabilir.",
     "DescSsoRealmName": "OpenID oturum açma düğmesinde gösterilen ad. \"OpenID\" göstermek için boş bırakın.",
@@ -4314,8 +4313,6 @@
     "MenuBlocklist": "Menüleri gizle",
     "MenuInactivelist": "Menüleri devre dışı bırak",
     "OpenPortToPublic": "Uygulamalara herkese açık erişime izin ver",
-    "PluginFileName": "Dosya adı",
-    "PluginFolderPath": "Klasör yolu",
     "PluginLogin": "Giriş eklentisi yolu",
     "PluginPage": "Sayfa eklentisi yolları",
     "ShowNonInstalledImages": "Yüklenmemiş imajları göster",

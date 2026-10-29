@@ -4209,7 +4209,6 @@
     }
   },
   "webuiSettings": {
-    "AddPluginPath": "Adicionar caminho de plugin",
     "AllowAnonymousChangePassword": "Permitir redefinição de senha",
     "AllowAppDownloadPanel": "Mostrar downloads do aplicativo desktop",
     "AllowCLIDownloadPanel": "Mostrar downloads da CLI",
@@ -4278,7 +4277,7 @@
     "DescMenuInactivelist": "Chaves de menu a desativar na barra lateral, separadas por vírgula. Elas continuam visíveis, mas não podem ser selecionadas.",
     "DescOpenPortToPublic": "Oferece a opção pública na caixa de diálogo de aplicativos da sessão para que qualquer pessoa na rede possa acessar o aplicativo.",
     "DescPluginLogin": "Caminho relativo do arquivo de plugin usado na página de login.",
-    "DescPluginPage": "Caminhos relativos dos arquivos de plugin que adicionam menus de páginas.",
+    "DescPluginPage": "Caminhos relativos dos arquivos de plugin que adicionam menus de página. Separe vários com vírgulas.",
     "DescShowNonInstalledImages": "Mostra todas as imagens de ambiente na página de criação de sessões, tenham sido instaladas por um agente ou não.",
     "DescSingleSignOnVendors": "Os botões de login SSO exibidos na página de login. O recurso pode ficar indisponível dependendo de o plugin do manager estar instalado.",
     "DescSsoRealmName": "Nome mostrado no botão de login OpenID. Deixe em branco para mostrar \"OpenID\".",
@@ -4314,8 +4313,6 @@
     "MenuBlocklist": "Ocultar menus",
     "MenuInactivelist": "Desativar menus",
     "OpenPortToPublic": "Permitir acesso público aos aplicativos",
-    "PluginFileName": "Nome do arquivo",
-    "PluginFolderPath": "Caminho da pasta",
     "PluginLogin": "Caminho do plugin de login",
     "PluginPage": "Caminhos dos plugins de páginas",
     "ShowNonInstalledImages": "Mostrar imagens não instaladas",

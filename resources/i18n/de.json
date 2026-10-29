@@ -4211,7 +4211,6 @@
     }
   },
   "webuiSettings": {
-    "AddPluginPath": "Plugin-Pfad hinzufügen",
     "AllowAnonymousChangePassword": "Zurücksetzen des Passworts erlauben",
     "AllowAppDownloadPanel": "Desktop-App-Downloads anzeigen",
     "AllowCLIDownloadPanel": "CLI-Downloads anzeigen",
@@ -4280,7 +4279,7 @@
     "DescMenuInactivelist": "Durch Kommas getrennte Menüschlüssel, die in der Seitenleiste deaktiviert werden. Sie bleiben sichtbar, können aber nicht ausgewählt werden.",
     "DescOpenPortToPublic": "Bietet im Sitzungs-App-Dialog die Option „öffentlich“ an, sodass jeder im Netzwerk die Anwendung erreichen kann.",
     "DescPluginLogin": "Relativer Pfad der Plugin-Datei, die auf der Anmeldeseite verwendet wird.",
-    "DescPluginPage": "Relative Pfade der Plugin-Dateien, die Seitenmenüs hinzufügen.",
+    "DescPluginPage": "Relative Pfade der Plugin-Dateien, die Seitenmenüs hinzufügen. Mehrere durch Kommas trennen.",
     "DescShowNonInstalledImages": "Zeigt auf der Seite zur Sitzungserstellung alle Umgebungs-Images an, unabhängig davon, ob ein Agent sie installiert hat.",
     "DescSingleSignOnVendors": "Die SSO-Anmeldeschaltflächen auf der Anmeldeseite. Je nachdem, ob das Manager-Plugin installiert ist, kann die Funktion nicht verfügbar sein.",
     "DescSsoRealmName": "Name, der auf der OpenID-Anmeldeschaltfläche angezeigt wird. Leer lassen, um „OpenID“ anzuzeigen.",
@@ -4316,8 +4315,6 @@
     "MenuBlocklist": "Menüs ausblenden",
     "MenuInactivelist": "Menüs deaktivieren",
     "OpenPortToPublic": "Öffentlichen App-Zugriff erlauben",
-    "PluginFileName": "Dateiname",
-    "PluginFolderPath": "Ordnerpfad",
     "PluginLogin": "Pfad des Anmelde-Plugins",
     "PluginPage": "Pfade der Seiten-Plugins",
     "ShowNonInstalledImages": "Nicht installierte Images anzeigen",

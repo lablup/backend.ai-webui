@@ -4211,7 +4211,6 @@
     }
   },
   "webuiSettings": {
-    "AddPluginPath": "添加插件路径",
     "AllowAnonymousChangePassword": "允许重置密码",
     "AllowAppDownloadPanel": "显示桌面应用下载",
     "AllowCLIDownloadPanel": "显示 CLI 下载",
@@ -4280,7 +4279,7 @@
     "DescMenuInactivelist": "要在侧边栏中禁用的菜单键，以逗号分隔。这些菜单仍会显示，但无法选择。",
     "DescOpenPortToPublic": "在会话应用对话框中提供公开选项，使网络内的任何人都能访问该应用程序。",
     "DescPluginLogin": "登录页面所用插件文件的相对路径。",
-    "DescPluginPage": "添加页面菜单的插件文件的相对路径。",
+    "DescPluginPage": "添加页面菜单的插件文件的相对路径。多个路径以逗号分隔。",
     "DescShowNonInstalledImages": "在会话创建页面上显示所有环境镜像，无论代理是否已安装它们。",
     "DescSingleSignOnVendors": "登录页面上显示的 SSO 登录按钮。根据管理器插件是否安装，该功能可能不可用。",
     "DescSsoRealmName": "显示在 OpenID 登录按钮上的名称。留空则显示“OpenID”。",
@@ -4316,8 +4315,6 @@
     "MenuBlocklist": "隐藏菜单",
     "MenuInactivelist": "禁用菜单",
     "OpenPortToPublic": "允许公开访问应用",
-    "PluginFileName": "文件名",
-    "PluginFolderPath": "文件夹路径",
     "PluginLogin": "登录插件路径",
     "PluginPage": "页面插件路径",
     "ShowNonInstalledImages": "显示未安装的镜像",

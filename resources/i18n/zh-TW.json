@@ -4213,7 +4213,6 @@
     }
   },
   "webuiSettings": {
-    "AddPluginPath": "新增外掛路徑",
     "AllowAnonymousChangePassword": "允許重設密碼",
     "AllowAppDownloadPanel": "顯示桌面應用程式下載",
     "AllowCLIDownloadPanel": "顯示 CLI 下載",
@@ -4282,7 +4281,7 @@
     "DescMenuInactivelist": "要在側邊欄停用的選單鍵，以逗號分隔。這些選單仍會顯示，但無法選取。",
     "DescOpenPortToPublic": "在會話應用程式對話方塊中提供公開選項，讓網路內的任何人都能存取該應用程式。",
     "DescPluginLogin": "登入頁面所用外掛檔案的相對路徑。",
-    "DescPluginPage": "新增頁面選單的外掛檔案的相對路徑。",
+    "DescPluginPage": "新增頁面選單的外掛檔案相對路徑。多個路徑以逗號分隔。",
     "DescShowNonInstalledImages": "在會話建立頁面上顯示所有環境映像檔，無論代理程式是否已安裝。",
     "DescSingleSignOnVendors": "登入頁面上顯示的 SSO 登入按鈕。視管理器外掛是否安裝而定，此功能可能無法使用。",
     "DescSsoRealmName": "顯示在 OpenID 登入按鈕上的名稱。留空則顯示「OpenID」。",
@@ -4318,8 +4317,6 @@
     "MenuBlocklist": "隱藏選單",
     "MenuInactivelist": "停用選單",
     "OpenPortToPublic": "允許公開存取應用程式",
-    "PluginFileName": "檔案名稱",
-    "PluginFolderPath": "資料夾路徑",
     "PluginLogin": "登入外掛路徑",
     "PluginPage": "頁面外掛路徑",
     "ShowNonInstalledImages": "顯示未安裝的映像檔",

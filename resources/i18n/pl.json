@@ -4212,7 +4212,6 @@
     }
   },
   "webuiSettings": {
-    "AddPluginPath": "Dodaj ścieżkę wtyczki",
     "AllowAnonymousChangePassword": "Zezwalaj na resetowanie hasła",
     "AllowAppDownloadPanel": "Pokazuj pobieranie aplikacji desktopowej",
     "AllowCLIDownloadPanel": "Pokazuj pobieranie CLI",
@@ -4281,7 +4280,7 @@
     "DescMenuInactivelist": "Rozdzielone przecinkami klucze menu do wyłączenia na pasku bocznym. Pozostają widoczne, ale nie można ich wybrać.",
     "DescOpenPortToPublic": "Udostępnia w oknie aplikacji sesji opcję publiczną, dzięki której każdy w sieci może dotrzeć do aplikacji.",
     "DescPluginLogin": "Względna ścieżka pliku wtyczki używanej na stronie logowania.",
-    "DescPluginPage": "Względne ścieżki plików wtyczek dodających menu stron.",
+    "DescPluginPage": "Względne ścieżki plików wtyczek dodających menu stron. Kilka ścieżek rozdziel przecinkami.",
     "DescShowNonInstalledImages": "Pokazuje na stronie tworzenia sesji wszystkie obrazy środowisk niezależnie od tego, czy agent je zainstalował.",
     "DescSingleSignOnVendors": "Przyciski logowania SSO wyświetlane na stronie logowania. Funkcja może być niedostępna w zależności od tego, czy wtyczka managera jest zainstalowana.",
     "DescSsoRealmName": "Nazwa wyświetlana na przycisku logowania OpenID. Pozostaw puste, aby wyświetlać „OpenID”.",
@@ -4317,8 +4316,6 @@
     "MenuBlocklist": "Ukryj menu",
     "MenuInactivelist": "Wyłącz menu",
     "OpenPortToPublic": "Zezwalaj na publiczny dostęp do aplikacji",
-    "PluginFileName": "Nazwa pliku",
-    "PluginFolderPath": "Ścieżka folderu",
     "PluginLogin": "Ścieżka wtyczki logowania",
     "PluginPage": "Ścieżki wtyczek stron",
     "ShowNonInstalledImages": "Pokazuj niezainstalowane obrazy",

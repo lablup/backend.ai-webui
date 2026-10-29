@@ -4211,7 +4211,6 @@
     }
   },
   "webuiSettings": {
-    "AddPluginPath": "Adicionar caminho de plugin",
     "AllowAnonymousChangePassword": "Permitir a reposição da palavra-passe",
     "AllowAppDownloadPanel": "Mostrar downloads da aplicação de ambiente de trabalho",
     "AllowCLIDownloadPanel": "Mostrar downloads da CLI",
@@ -4280,7 +4279,7 @@
     "DescMenuInactivelist": "Chaves de menu a desativar na barra lateral, separadas por vírgulas. Continuam visíveis, mas não podem ser selecionadas.",
     "DescOpenPortToPublic": "Oferece a opção pública na caixa de diálogo de aplicações da sessão para que qualquer pessoa na rede possa aceder à aplicação.",
     "DescPluginLogin": "Caminho relativo do ficheiro de plugin usado na página de início de sessão.",
-    "DescPluginPage": "Caminhos relativos dos ficheiros de plugin que adicionam menus de páginas.",
+    "DescPluginPage": "Caminhos relativos dos ficheiros de plugin que adicionam menus de página. Separe vários com vírgulas.",
     "DescShowNonInstalledImages": "Mostra todas as imagens de ambiente na página de criação de sessões, quer um agente as tenha instalado ou não.",
     "DescSingleSignOnVendors": "Os botões de início de sessão SSO apresentados na página de início de sessão. A funcionalidade pode ficar indisponível consoante o plugin do manager esteja instalado.",
     "DescSsoRealmName": "Nome mostrado no botão de início de sessão OpenID. Deixe em branco para mostrar \"OpenID\".",
@@ -4316,8 +4315,6 @@
     "MenuBlocklist": "Ocultar menus",
     "MenuInactivelist": "Desativar menus",
     "OpenPortToPublic": "Permitir acesso público às aplicações",
-    "PluginFileName": "Nome do ficheiro",
-    "PluginFolderPath": "Caminho da pasta",
     "PluginLogin": "Caminho do plugin de início de sessão",
     "PluginPage": "Caminhos dos plugins de páginas",
     "ShowNonInstalledImages": "Mostrar imagens não instaladas",

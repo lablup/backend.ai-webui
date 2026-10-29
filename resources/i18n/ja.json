@@ -4211,7 +4211,6 @@
     }
   },
   "webuiSettings": {
-    "AddPluginPath": "プラグインのパスを追加",
     "AllowAnonymousChangePassword": "パスワードの再設定を許可",
     "AllowAppDownloadPanel": "デスクトップアプリのダウンロードを表示",
     "AllowCLIDownloadPanel": "CLI のダウンロードを表示",
@@ -4280,7 +4279,7 @@
     "DescMenuInactivelist": "サイドバーで無効化するメニューキーをカンマ区切りで指定します。表示はされますが選択できなくなります。",
     "DescOpenPortToPublic": "セッションアプリダイアログに公開オプションを表示し、ネットワーク内の誰もがアプリケーションにアクセスできるようにします。",
     "DescPluginLogin": "ログインページで使用するプラグインファイルの相対パスです。",
-    "DescPluginPage": "ページメニューを追加するプラグインファイルの相対パスです。",
+    "DescPluginPage": "ページメニューを追加するプラグインファイルの相対パスです。複数ある場合はコンマで区切ります。",
     "DescShowNonInstalledImages": "エージェントへのインストール有無にかかわらず、セッション作成ページにすべての環境イメージを表示します。",
     "DescSingleSignOnVendors": "ログインページに表示する SSO サインインボタンです。マネージャープラグインのインストール状況によっては機能が無効になることがあります。",
     "DescSsoRealmName": "OpenID ログインボタンに表示する名前です。空欄の場合は「OpenID」と表示されます。",
@@ -4316,8 +4315,6 @@
     "MenuBlocklist": "メニューを非表示",
     "MenuInactivelist": "メニューを無効化",
     "OpenPortToPublic": "アプリの外部公開を許可",
-    "PluginFileName": "ファイル名",
-    "PluginFolderPath": "フォルダーパス",
     "PluginLogin": "ログインプラグインのパス",
     "PluginPage": "ページプラグインのパス",
     "ShowNonInstalledImages": "未インストールのイメージを表示",

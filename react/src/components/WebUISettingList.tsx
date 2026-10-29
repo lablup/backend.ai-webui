@@ -19,7 +19,7 @@ import {
   useUpdatePublicDomainAppConfig,
 } from '../hooks/useAppConfig';
 import { useRawConfig } from '../hooks/useWebUIConfig';
-import PluginPathListInput from './PluginPathListInput';
+import PluginPathInput from './PluginPathInput';
 import type { SettingItemProps } from './SettingItem';
 import SettingList, { type SettingGroup } from './SettingList';
 import { useWebUISettingLabels } from './WebUISettingLabels';
@@ -211,14 +211,21 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
           type: 'custom',
           defaultValue: fileValue,
           value: current,
-          children: (
-            <BAIUncontrolledInput
-              key={String(current)}
-              defaultValue={String(current ?? '')}
-              onCommit={(raw) => setValue(definition, raw.trim())}
-              style={{ maxWidth: 480 }}
-            />
-          ),
+          children:
+            definition.key === 'pluginLogin' ? (
+              <PluginPathInput
+                aria-label={label.title}
+                value={String(current ?? '')}
+                onChange={(path) => setValue(definition, path)}
+              />
+            ) : (
+              <BAIUncontrolledInput
+                key={String(current)}
+                defaultValue={String(current ?? '')}
+                onCommit={(raw) => setValue(definition, raw.trim())}
+                style={{ maxWidth: 480 }}
+              />
+            ),
         };
       case 'stringList': {
         const list = current as Array<string>;
@@ -241,7 +248,9 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
               onChange={(values) => setValue(definition, values)}
             />
           ) : definition.key === 'pluginPage' ? (
-            <PluginPathListInput
+            <PluginPathInput
+              multiple
+              aria-label={label.title}
               value={list}
               onChange={(paths) => setValue(definition, paths)}
             />
