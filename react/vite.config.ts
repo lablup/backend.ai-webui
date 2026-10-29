@@ -30,6 +30,7 @@ import {
   join,
   relative,
   resolve,
+  sep,
 } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
@@ -418,6 +419,18 @@ function devAssetsReloadPlugin(): Plugin {
   };
 }
 
+function resolveUnder(root: string, encodedPath: string): string | null {
+  let decoded: string;
+  try {
+    decoded = decodeURIComponent(encodedPath);
+  } catch {
+    return null;
+  }
+  if (decoded.includes('\0')) return null;
+  const filePath = resolve(root, `.${sep}${decoded}`);
+  return filePath.startsWith(resolve(root) + sep) ? filePath : null;
+}
+
 function projectRootStaticPlugin(
   devCspHeaders: Record<string, string>,
 ): Plugin {
@@ -454,15 +467,23 @@ function projectRootStaticPlugin(
           return;
         }
 
-        // 2. Serve legacy static assets from projectRoot (mirrors craco
-        //    devServer.static block).
-        const isStaticPrefix = STATIC_PREFIXES_FROM_ROOT.some((p) =>
+        // 2. Serve legacy static assets from projectRoot.
+        const staticPrefix = STATIC_PREFIXES_FROM_ROOT.find((p) =>
           url.startsWith(p),
         );
         const isStaticFile = STATIC_FILES_FROM_ROOT.has(url);
-        if (isStaticPrefix || isStaticFile) {
-          const filePath = join(projectRoot, url);
-          if (!filePath.startsWith(projectRoot)) return next();
+        if (staticPrefix || isStaticFile) {
+          const filePath = staticPrefix
+            ? resolveUnder(
+                join(projectRoot, staticPrefix),
+                url.slice(staticPrefix.length),
+              )
+            : join(projectRoot, url);
+          if (!filePath) {
+            res.statusCode = 403;
+            res.end();
+            return;
+          }
           if (existsSync(filePath) && statSync(filePath).isFile()) {
             const mime =
               MIME[extname(filePath).toLowerCase()] ??
@@ -649,11 +670,15 @@ function monacoStaticPlugin(): Plugin {
         const url = req.url.split('?')[0];
         if (!url.startsWith(URL_PREFIX)) return next();
 
-        const rel = url.slice(URL_PREFIX.length);
-        const filePath = join(monacoRoot, rel);
-        // Path-traversal guard: `join` normalizes `..`, so prefix comparison
-        // catches any URL that escapes `monacoRoot`.
-        if (!filePath.startsWith(monacoRoot)) return next();
+        const filePath = resolveUnder(
+          monacoRoot,
+          url.slice(URL_PREFIX.length),
+        );
+        if (!filePath) {
+          res.statusCode = 403;
+          res.end();
+          return;
+        }
         if (!existsSync(filePath) || !statSync(filePath).isFile()) {
           return next();
         }
