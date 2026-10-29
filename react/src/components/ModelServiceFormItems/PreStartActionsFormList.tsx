@@ -52,7 +52,14 @@ const PreStartActionsFormList: React.FC<PreStartActionsFormListProps> = ({
                     {...rest}
                     name={[name, 'action']}
                     style={{ marginBottom: 0 }}
-                    rules={[{ required: true, message: '' }]}
+                    rules={[
+                      {
+                        required: true,
+                        message: t(
+                          'adminDeploymentPreset.modelDef.ActionRequired',
+                        ),
+                      },
+                    ]}
                     validateTrigger={['onChange', 'onBlur']}
                   >
                     <BAITextInput
@@ -74,14 +81,21 @@ const PreStartActionsFormList: React.FC<PreStartActionsFormListProps> = ({
                     name={[name, 'args']}
                     style={{ marginBottom: 0 }}
                     rules={[
-                      { required: true, message: '' },
+                      {
+                        required: true,
+                        message: t(
+                          'adminDeploymentPreset.modelDef.ArgsRequired',
+                        ),
+                      },
                       {
                         validator: async (_, v) => {
                           if (!v) return;
                           try {
                             JSON.parse(v);
                           } catch {
-                            return Promise.reject('');
+                            return Promise.reject(
+                              t('general.InvalidJSONFormat'),
+                            );
                           }
                         },
                       },
