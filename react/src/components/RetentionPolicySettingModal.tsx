@@ -281,6 +281,7 @@ const RetentionPolicySettingModal: React.FC<
           ]}
         >
           <BAINumberInput
+            width="100%"
             aria-label={t('retentionPolicy.RetentionPeriodDays')}
             min={1}
             step={1}
