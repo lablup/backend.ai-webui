@@ -38,7 +38,20 @@ export interface WebUISettingDefinition {
   group: WebUISettingGroup;
   /** The `LoginConfigState` field the key overrides. */
   field: keyof LoginConfigState;
+  /** For a `stringList`: the only values the WebUI acts on; others are dropped. */
+  options?: ReadonlyArray<{ value: string; label: string }>;
+  /** For a `number`: the unit shown after the input. */
+  unit?: string;
 }
+
+/** The SSO vendors the login form renders a button for. */
+export const SSO_VENDOR_OPTIONS: ReadonlyArray<{
+  value: string;
+  label: string;
+}> = [
+  { value: 'saml', label: 'SAML' },
+  { value: 'openid', label: 'OpenID' },
+];
 
 const def = (
   key: string,
@@ -61,19 +74,18 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
     def('allowAnonymousChangePassword', 'public', 'boolean', 'login'),
     def('allowSignupWithoutConfirmation', 'public', 'boolean', 'login'),
     def('enableInteractiveLoginAccountSwitch', 'public', 'boolean', 'login'),
-    def('singleSignOnVendors', 'public', 'stringList', 'login'),
+    {
+      ...def('singleSignOnVendors', 'public', 'stringList', 'login'),
+      options: SSO_VENDOR_OPTIONS,
+    },
     def('ssoRealmName', 'public', 'string', 'login'),
-    def(
-      'loginAttemptLimit',
-      'public',
-      'number',
-      'login',
-      'login_attempt_limit',
-    ),
-    def('loginBlockTime', 'public', 'number', 'login', 'login_block_time'),
     def('autoLogout', 'public', 'boolean', 'login'),
     // Also anonymous: the diagnostics surfaces run on the login page too.
     def('debug', 'public', 'boolean', 'diagnostics'),
+    {
+      ...def('storageWarningThreshold', 'domain', 'number', 'diagnostics'),
+      unit: '%',
+    },
     // Plugin scripts are loaded at bootstrap, before sign-in, so both keys
     // are anonymous too.
     def('pluginLogin', 'public', 'string', 'plugins', 'loginPlugin'),
@@ -98,8 +110,14 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
     def('enableContainerCommit', 'domain', 'boolean', 'session'),
     def('maxCountForPreopenPorts', 'domain', 'number', 'session'),
     def('maxCPUCoresPerContainer', 'domain', 'number', 'session'),
-    def('maxMemoryPerContainer', 'domain', 'number', 'session'),
-    def('maxShmPerContainer', 'domain', 'number', 'session'),
+    {
+      ...def('maxMemoryPerContainer', 'domain', 'number', 'session'),
+      unit: 'GiB',
+    },
+    {
+      ...def('maxShmPerContainer', 'domain', 'number', 'session'),
+      unit: 'GiB',
+    },
     def('maxCUDADevicesPerContainer', 'domain', 'number', 'session'),
     def('maxCUDASharesPerContainer', 'domain', 'number', 'session'),
     def('maxROCMDevicesPerContainer', 'domain', 'number', 'session'),
@@ -111,12 +129,12 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
     def('maxWarboyDevicesPerContainer', 'domain', 'number', 'session'),
     def('maxRNGDDevicesPerContainer', 'domain', 'number', 'session'),
     def('maxHyperaccelLPUDevicesPerContainer', 'domain', 'number', 'session'),
+    def('showNonInstalledImages', 'domain', 'boolean', 'session'),
 
     // App launcher.
     def('openPortToPublic', 'domain', 'boolean', 'appLauncher'),
     def('allowPreferredPort', 'domain', 'boolean', 'appLauncher'),
     def('allowNonAuthTCP', 'domain', 'boolean', 'appLauncher'),
-    def('eduAppNamePrefix', 'domain', 'string', 'appLauncher'),
 
     // Images.
     def(
@@ -128,13 +146,14 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
     ),
     def('systemSSHImage', 'domain', 'string', 'environments'),
     def('defaultFileBrowserImage', 'domain', 'string', 'environments'),
-    def('showNonInstalledImages', 'domain', 'boolean', 'environments'),
 
     // Folders and uploads.
     def('isDirectorySizeVisible', 'domain', 'boolean', 'storage'),
     def('enableModelFolders', 'domain', 'boolean', 'storage'),
-    def('maxFileUploadSize', 'domain', 'number', 'storage'),
-    def('storageWarningThreshold', 'domain', 'number', 'storage'),
+    {
+      ...def('maxFileUploadSize', 'domain', 'number', 'storage'),
+      unit: 'Bytes',
+    },
 
     // Sidebar.
     def('menuBlocklist', 'domain', 'stringList', 'menu', 'blockList'),
@@ -171,6 +190,15 @@ export const WEBUI_SETTING_GROUPS: ReadonlyArray<WebUISettingGroup> = [
 
 export type WebUISettingsDocument = Record<string, unknown>;
 
+/** A list value with only the entries the definition's `options` allow. */
+export const restrictToOptions = (
+  definition: WebUISettingDefinition,
+  value: unknown,
+): unknown =>
+  definition.options && Array.isArray(value)
+    ? value.filter((v) => definition.options!.some((o) => o.value === v))
+    : value;
+
 export const isValidWebUISettingValue = (
   type: WebUISettingType,
   value: unknown,
@@ -202,14 +230,10 @@ export const applyWebUISettings = (
   }
   const settings = doc as WebUISettingsDocument;
   const next = { ...state };
-  for (const {
-    key,
-    type,
-    field,
-    scope: defScope,
-  } of WEBUI_SETTING_DEFINITIONS) {
+  for (const definition of WEBUI_SETTING_DEFINITIONS) {
+    const { key, type, field, scope: defScope } = definition;
     if (defScope !== scope || !(key in settings)) continue;
-    const value = settings[key];
+    const value = restrictToOptions(definition, settings[key]);
     if (isValidWebUISettingValue(type, value)) {
       (next as Record<string, unknown>)[field] = value;
     }
@@ -236,7 +260,7 @@ export const buildWebUISettingsDocument = (
   const doc: WebUISettingsDocument = {};
   for (const definition of WEBUI_SETTING_DEFINITIONS) {
     if (definition.scope !== scope || !(definition.key in draft)) continue;
-    const value = draft[definition.key];
+    const value = restrictToOptions(definition, draft[definition.key]);
     if (
       isValidWebUISettingValue(definition.type, value) &&
       !_.isEqual(value, readWebUISettingFromState(fileState, definition))
