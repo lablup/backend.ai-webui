@@ -122,6 +122,8 @@ export interface DashboardVars {
    * next one. Filter with `withinWindow`, never as one `DateTimeFilter`.
    */
   timeRange: { after: string; before: string };
+  /** The card's last refresh time, the `now` behind `timeRange`. */
+  refreshedAt: number;
   /** The header's project and resource group, for cards that read one of each. */
   currentProjectId: string | null;
   currentResourceGroup: string | null;
@@ -225,6 +227,8 @@ export interface PanelComponentProps {
   scope: DashboardScope;
   vars: DashboardVars;
   fetchKey: string;
+  /** Changes only on a manual refresh, for data that cannot change by itself. */
+  manualFetchKey: string;
   isRefetching: boolean;
   queryRefs: DashboardPageQueryRefs;
   /** Refreshes every card now. */

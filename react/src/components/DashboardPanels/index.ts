@@ -39,7 +39,7 @@ export {
 export { DEFAULT_PANEL_LAYOUTS, createPanel } from './defaults';
 export { resourceRegistry, resourceKeys } from './resourceRegistry';
 export { resolveDashboardScope, resourceGroupRows } from './dashboardScope';
-export { bucketize, rangeToDateTimeFilter, withinWindow } from './timeRange';
+export { planBuckets, rangeToDateTimeFilter, withinWindow } from './timeRange';
 export {
   DashboardRefreshProvider,
   useDashboardFetchKey,

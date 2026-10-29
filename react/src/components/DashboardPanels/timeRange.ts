@@ -121,37 +121,106 @@ const bucketCountFor = (durationMs: number) => {
   return Math.max(1, Math.min(MAX_BUCKETS, Math.floor(durationMs / MINUTE)));
 };
 
+/** `settled` buckets keep the same window and count across refreshes; `future` ones have not started. */
+export type BucketState = 'settled' | 'live' | 'future';
+
+export interface BucketPlan {
+  /** The range the buckets partition exactly, as of `now`. */
+  window: DateTimeWindow;
+  /** Contiguous, oldest first, at most {@link MAX_BUCKETS}. */
+  buckets: Array<DateTimeWindow>;
+  states: Array<BucketState>;
+  /** The window does not move with `now` (a custom range). */
+  fixed: boolean;
+}
+
+/** `time` floored to a multiple of `step` in local time, so day buckets start at local midnight. */
+const alignDown = (time: number, step: number, offset: number) =>
+  Math.floor((time + offset) / step) * step - offset;
+
 /**
- * Splits the range into at most {@link MAX_BUCKETS} contiguous windows, oldest
- * first, for charts whose every bucket is a manager-counted alias.
+ * Splits the range into contiguous buckets for charts whose every bucket is a
+ * manager-counted alias. A relative range's inner edges sit on fixed multiples
+ * of the step, so only its first (trimmed) and last (in progress) buckets
+ * change between refreshes; a custom range is split equally.
  */
-export const bucketize = (
-  range: string,
-  now: number,
-): Array<DateTimeWindow> => {
-  const { from, to } =
-    windowMs(range, now) ?? windowMs(DEFAULT_TIME_RANGE, now)!;
+export const planBuckets = (range: string, now: number): BucketPlan => {
+  const effective = isValidTimeRange(range) ? range : DEFAULT_TIME_RANGE;
+  const parsed = parseTimeRange(effective)!;
+  const { from, to } = windowMs(effective, now)!;
+  const toWindow = (edges: Array<number>) =>
+    edges.slice(0, -1).map((edge, index) => ({
+      after: new Date(edge).toISOString(),
+      before: new Date(edges[index + 1]).toISOString(),
+    }));
+  const window = {
+    after: new Date(from).toISOString(),
+    before: new Date(to).toISOString(),
+  };
+
+  if (parsed.kind === 'relative') {
+    // The trimmed first bucket adds one, so the steps stay one under the cap.
+    const count = Math.min(bucketCountFor(to - from), MAX_BUCKETS - 1);
+    const step = Math.ceil((to - from) / count / MINUTE) * MINUTE;
+    const offset = -new Date(now).getTimezoneOffset() * MINUTE;
+    const edges = [from];
+    for (
+      let edge = alignDown(from, step, offset) + step;
+      edge < to;
+      edge += step
+    )
+      edges.push(edge);
+    edges.push(to);
+    const buckets = toWindow(edges);
+    return {
+      window,
+      buckets,
+      states: buckets.map((_bucket, index) =>
+        index === 0 || index === buckets.length - 1 ? 'live' : 'settled',
+      ),
+      fixed: false,
+    };
+  }
+
   const count = bucketCountFor(to - from);
   const step = (to - from) / count;
-  const edges = Array.from({ length: count + 1 }, (_unused, index) =>
-    index === count ? to : Math.round(from + step * index),
+  const buckets = toWindow(
+    Array.from({ length: count + 1 }, (_unused, index) =>
+      index === count ? to : Math.round(from + step * index),
+    ),
   );
-  return edges.slice(0, -1).map((edge, index) => ({
-    after: new Date(edge).toISOString(),
-    before: new Date(edges[index + 1]).toISOString(),
-  }));
+  return {
+    window,
+    buckets,
+    states: buckets.map((bucket) =>
+      new Date(bucket.before).getTime() <= now
+        ? 'settled'
+        : new Date(bucket.after).getTime() >= now
+          ? 'future'
+          : 'live',
+    ),
+    fixed: true,
+  };
 };
+
+/** One microsecond before `iso`, the manager's timestamp resolution. */
+const microsecondBefore = (iso: string) =>
+  new Date(new Date(iso).getTime() - 1).toISOString().replace(/Z$/, '999Z');
 
 /**
  * `field` within `window`, as two ANDed bounds: given both `after` and `before`
- * in one `DateTimeFilter`, manager 26.10.0a3 applies only `before`.
+ * in one `DateTimeFilter`, manager 26.10.0a3 applies only `before`. Both manager
+ * bounds are exclusive, so `after` moves back 1µs to keep the window's start.
  */
 export const withinWindow = <TField extends string>(
   field: TField,
   window: DateTimeWindow,
 ): { AND: Array<Record<TField, { after?: string; before?: string }>> } => ({
   AND: [
-    { [field]: { after: window.after } } as Record<TField, { after: string }>,
+    { [field]: { after: microsecondBefore(window.after) } } as Record<
+      TField,
+      { after: string }
+    >,
     { [field]: { before: window.before } } as Record<
       TField,
       { before: string }

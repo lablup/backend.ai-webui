@@ -37,9 +37,14 @@ export const useDashboardRefreshScheduler = () => use(DashboardRefreshContext);
 
 export interface DashboardFetchState {
   fetchKey: string;
+  /** Changes only on a manual refresh, for data that cannot change by itself. */
+  manualFetchKey: string;
   /** When the key last changed; the stable `now` for range filters. */
   refreshedAt: number;
 }
+
+/** The scheduler id of a board card, matched to its board item by {@link useBoardItemVisibility}. */
+export const panelRefreshId = (panelId: string) => `panel:${panelId}`;
 
 /**
  * A fetch key the scheduler bumps, in a transition, once `min` has elapsed
@@ -53,19 +58,22 @@ export const useDashboardFetchKey = (
   const scheduler = useDashboardRefreshScheduler();
   const [state, setState] = useState<DashboardFetchState>(() => ({
     fetchKey: INITIAL_FETCH_KEY,
+    manualFetchKey: INITIAL_FETCH_KEY,
     refreshedAt: Date.now(),
   }));
   useEffect(() => {
     if (!scheduler) return;
     return scheduler.register(id, {
       minMs: refreshIntervalMs(min),
-      refresh: (at) =>
+      refresh: (at, manual) =>
         startTransition(() => {
           fetchKeySeq += 1;
-          setState({
-            fetchKey: `${new Date(at).toISOString()}#${fetchKeySeq}`,
+          const fetchKey = `${new Date(at).toISOString()}#${fetchKeySeq}`;
+          setState((previous) => ({
+            fetchKey,
+            manualFetchKey: manual ? fetchKey : previous.manualFetchKey,
             refreshedAt: at,
-          });
+          }));
         }),
     });
   }, [scheduler, id, min]);
@@ -91,6 +99,33 @@ export const useDashboardRefreshQuery = (
       refresh: () => refetch(),
     });
   }, [scheduler, id, min]);
+};
+
+/**
+ * Reports which board items inside `containerRef` are on screen, so an
+ * automatic refresh skips the cards scrolled out of view.
+ */
+export const useBoardItemVisibility = (
+  containerRef: React.RefObject<HTMLElement | null>,
+  itemIds: ReadonlyArray<string>,
+) => {
+  const scheduler = useDashboardRefreshScheduler();
+  const idsKey = itemIds.join('\n');
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!scheduler || !container || typeof IntersectionObserver === 'undefined')
+      return;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const id = (entry.target as HTMLElement).dataset.boardItemId;
+        if (id) scheduler.setVisible(panelRefreshId(id), entry.isIntersecting);
+      });
+    });
+    container
+      .querySelectorAll<HTMLElement>('[data-board-item-id]')
+      .forEach((element) => observer.observe(element));
+    return () => observer.disconnect();
+  }, [scheduler, containerRef, idsKey]);
 };
 
 const noopSubscribe = () => () => {};
