@@ -160,6 +160,7 @@ const WebUIHeaderProjectSelect: React.FC = () => {
         domain={currentDomainName}
         personalProject={personalProject}
         lockPersonalProject={false}
+        labelPersonalProjectAsMine
         value={
           isProjectChanging
             ? optimisticProjectId

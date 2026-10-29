@@ -2391,6 +2391,7 @@
   "projectSelect": {
     "AskAdminForProjectAccess": "Minta administrator Anda untuk memberikan akses ke sebuah proyek.",
     "GoToProject": "Buka {{project}}",
+    "MyProject": "Proyek Saya",
     "NoAccessibleProjects": "Tidak ada proyek yang dapat diakses.",
     "Personal": "Pribadi",
     "PersonalProjectCannotBeRemoved": "Proyek pribadi yang ditetapkan untuk pengguna tidak dapat dihapus.",
