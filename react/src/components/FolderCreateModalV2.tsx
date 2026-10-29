@@ -17,6 +17,7 @@ import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
 import {
+  useMyAppConfig,
   useRefetchMyAppConfig,
   useUpdateMyUserAppConfig,
 } from '../hooks/useAppConfig';
@@ -166,9 +167,9 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
         ? createPermission?.canCreate
         : undefined;
 
-  // TODO(#10501): temporarily ignored while the confirm is being tested; restore
-  // `!!useMyAppConfig<boolean>(SKIP_PROJECT_FOLDER_CONFIRM_KEY)` before merge.
-  const skipSharedFolderConfirm = false;
+  const skipSharedFolderConfirm = !!useMyAppConfig<boolean>(
+    SKIP_PROJECT_FOLDER_CONFIRM_KEY,
+  );
   const updateMyUserAppConfig = useUpdateMyUserAppConfig();
   const refetchMyAppConfig = useRefetchMyAppConfig();
   const [isSharedConfirmOpen, setIsSharedConfirmOpen] = useState(false);
