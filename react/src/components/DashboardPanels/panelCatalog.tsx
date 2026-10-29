@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import AgentStats from '../AgentStats';
 import QuotaPerStorageVolumeDashboardItem from '../QuotaPerStorageVolumeDashboardItem';
 import { useDashboardRefreshQuery } from './DashboardRefreshContext';
 import AuditLogPanel from './cards/AuditLogPanel';
@@ -27,6 +26,7 @@ import {
 } from './memberCards/StartActionPanels';
 import ResourceGroupCapacityPanel from './projectAdminCards/ResourceGroupCapacityPanel';
 import { resourceKeys, resourceRegistry } from './resourceRegistry';
+import AgentStatsPanel from './superadminCards/AgentStatsPanel';
 import AgentsPanel from './superadminCards/AgentsPanel';
 import ContainerRegistriesPanel from './superadminCards/ContainerRegistriesPanel';
 import FailuresByEntityTypePanel from './superadminCards/FailuresByEntityTypePanel';
@@ -50,12 +50,6 @@ import { useTranslation } from 'react-i18next';
 // Cards that predate the catalog, each wrapped as its page wrapped it; the
 // rest live in `cards/` (shared by pages), `memberCards/` and `superadminCards/`.
 
-const InlineSkeleton: React.FC = () => {
-  'use memo';
-  const { token } = useTheme();
-  return <BAISkeleton style={{ padding: `0px ${token('--spacing-5')}` }} />;
-};
-
 const PaddedSkeleton: React.FC = () => {
   'use memo';
   const { token } = useTheme();
@@ -76,15 +70,6 @@ const QuotaPerStorageVolumePanel: React.FC<PanelComponentProps> = () => {
       </Suspense>
     </BAIBoardItemErrorBoundary>
   );
-};
-
-const AgentStatsPanel: React.FC<PanelComponentProps> = ({ queryRefs }) => {
-  'use memo';
-  return queryRefs.agentStatsQueryRef ? (
-    <Suspense fallback={<InlineSkeleton />}>
-      <AgentStats queryRef={queryRefs.agentStatsQueryRef} />
-    </Suspense>
-  ) : null;
 };
 
 const size = (columnSpan: number, rowSpan: number): PanelSize => ({

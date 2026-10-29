@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { AgentStatsFragment$key } from '../../__generated__/AgentStatsFragment.graphql';
 import type { SessionGridViewParams } from '../../helper/sessionResourceGridData';
 import type { UserRole } from '../../helper/userRole';
 import type { MenuKeys } from '../../hooks/useWebUIMenuItems';
@@ -210,10 +209,8 @@ export interface PanelCatalogContext {
   config: PanelCatalogConfig;
 }
 
-/** Fragment keys of the admin page query the agent statistics card still reads. */
-export interface DashboardPageQueryRefs {
-  agentStatsQueryRef?: AgentStatsFragment$key | null;
-}
+/** Fragment keys a page query hands its cards; every card now runs its own query. */
+export type DashboardPageQueryRefs = Record<string, never>;
 
 export interface PanelComponentProps {
   panel: PersistedPanelV2;
