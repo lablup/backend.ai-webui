@@ -845,7 +845,7 @@
       "ResourceAllocation": "Κατανομή πόρων",
       "ResourceAllocationTooltip": "Τι χρησιμοποιούν οι συνεδρίες του έργου σε σχέση με το όριο του έργου.",
       "ResourceGroupCapacity": "Ομάδες πόρων και χωρητικότητα",
-      "ResourceGroupCapacityTooltip": "Χρήση σε σχέση με τη χωρητικότητα κάθε ομάδας πόρων στις ρυθμίσεις της κάρτας.",
+      "ResourceGroupCapacityTooltip": "Χρήση σε σχέση με τη χωρητικότητα της ομάδας πόρων στις ρυθμίσεις της κάρτας.",
       "ResourcePresets": "Προεπιλογές πόρων",
       "ResourcePresetsTooltip": "Αν κάθε προεπιλογή πόρων χωρά σε όσα μπορείτε ακόμη να εκχωρήσετε στην ομάδα πόρων.",
       "Resources": "Πόροι",

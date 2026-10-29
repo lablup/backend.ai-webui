@@ -832,7 +832,7 @@
       "ResourceAllocation": "Resource Allocation",
       "ResourceAllocationTooltip": "What the project's sessions use against the project's own limit.",
       "ResourceGroupCapacity": "Resource Groups and Capacity",
-      "ResourceGroupCapacityTooltip": "What is used against the capacity of each resource group in the card's settings.",
+      "ResourceGroupCapacityTooltip": "What is used against the capacity of the resource group in the card's settings.",
       "ResourcePresets": "Resource Presets",
       "ResourcePresetsTooltip": "Whether each resource preset fits in what you can still allocate in the resource group.",
       "Resources": "Resources",

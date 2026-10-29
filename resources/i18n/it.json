@@ -845,7 +845,7 @@
       "ResourceAllocation": "Allocazione delle risorse",
       "ResourceAllocationTooltip": "Ciò che usano le sessioni del progetto rispetto al limite del progetto.",
       "ResourceGroupCapacity": "Gruppi di risorse e capacità",
-      "ResourceGroupCapacityTooltip": "L'utilizzo rispetto alla capacità di ogni gruppo di risorse nelle impostazioni della scheda.",
+      "ResourceGroupCapacityTooltip": "L'utilizzo rispetto alla capacità del gruppo di risorse nelle impostazioni della scheda.",
       "ResourcePresets": "Preset di risorse",
       "ResourcePresetsTooltip": "Indica se ogni preset rientra in ciò che puoi ancora allocare nel gruppo di risorse.",
       "Resources": "Risorse",

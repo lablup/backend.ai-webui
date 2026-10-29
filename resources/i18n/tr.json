@@ -845,7 +845,7 @@
       "ResourceAllocation": "Kaynak Tahsisi",
       "ResourceAllocationTooltip": "Projenin oturumlarının, projenin sınırına göre kullandığı kaynaklar.",
       "ResourceGroupCapacity": "Kaynak Grupları ve Kapasite",
-      "ResourceGroupCapacityTooltip": "Kartın ayarlarındaki her kaynak grubunun kapasitesine göre kullanım.",
+      "ResourceGroupCapacityTooltip": "Kartın ayarlarındaki kaynak grubunun kapasitesine göre kullanım.",
       "ResourcePresets": "Kaynak ön ayarları",
       "ResourcePresetsTooltip": "Her kaynak ön ayarının, kaynak grubunda hâlâ ayırabileceğiniz miktara sığıp sığmadığı.",
       "Resources": "Kaynaklar",

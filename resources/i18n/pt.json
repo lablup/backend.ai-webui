@@ -845,7 +845,7 @@
       "ResourceAllocation": "Alocação de recursos",
       "ResourceAllocationTooltip": "O que as sessões do projeto usam face ao limite do projeto.",
       "ResourceGroupCapacity": "Grupos de recursos e capacidade",
-      "ResourceGroupCapacityTooltip": "A utilização face à capacidade de cada grupo de recursos das definições do cartão.",
+      "ResourceGroupCapacityTooltip": "A utilização face à capacidade do grupo de recursos das definições do cartão.",
       "ResourcePresets": "Predefinições de recursos",
       "ResourcePresetsTooltip": "Se cada predefinição cabe no que ainda pode alocar no grupo de recursos.",
       "Resources": "Recursos",

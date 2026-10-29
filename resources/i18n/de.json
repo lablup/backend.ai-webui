@@ -845,7 +845,7 @@
       "ResourceAllocation": "Ressourcenzuweisung",
       "ResourceAllocationTooltip": "Was die Sitzungen des Projekts gegenüber dem Projektlimit belegen.",
       "ResourceGroupCapacity": "Ressourcengruppen und Kapazität",
-      "ResourceGroupCapacityTooltip": "Belegung gegenüber der Kapazität jeder Ressourcengruppe in den Einstellungen der Karte.",
+      "ResourceGroupCapacityTooltip": "Belegung gegenüber der Kapazität der Ressourcengruppe in den Einstellungen der Karte.",
       "ResourcePresets": "Ressourcen-Presets",
       "ResourcePresetsTooltip": "Ob jedes Ressourcen-Preset in das passt, was Sie in der Ressourcengruppe noch zuweisen können.",
       "Resources": "Ressourcen",

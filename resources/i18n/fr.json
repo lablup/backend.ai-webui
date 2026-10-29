@@ -845,7 +845,7 @@
       "ResourceAllocation": "Allocation des ressources",
       "ResourceAllocationTooltip": "Ce qu'utilisent les sessions du projet par rapport à la limite du projet.",
       "ResourceGroupCapacity": "Groupes de ressources et capacité",
-      "ResourceGroupCapacityTooltip": "L'utilisation par rapport à la capacité de chaque groupe de ressources des paramètres de la carte.",
+      "ResourceGroupCapacityTooltip": "L'utilisation par rapport à la capacité du groupe de ressources des paramètres de la carte.",
       "ResourcePresets": "Préréglages de ressources",
       "ResourcePresetsTooltip": "Indique si chaque préréglage tient dans ce que vous pouvez encore allouer dans le groupe de ressources.",
       "Resources": "Ressources",

@@ -845,7 +845,7 @@
       "ResourceAllocation": "Przydział zasobów",
       "ResourceAllocationTooltip": "Ile zużywają sesje projektu w odniesieniu do limitu projektu.",
       "ResourceGroupCapacity": "Grupy zasobów i pojemność",
-      "ResourceGroupCapacityTooltip": "Wykorzystanie w odniesieniu do pojemności każdej grupy zasobów z ustawień karty.",
+      "ResourceGroupCapacityTooltip": "Wykorzystanie w odniesieniu do pojemności grupy zasobów z ustawień karty.",
       "ResourcePresets": "Ustawienia zasobów",
       "ResourcePresetsTooltip": "Czy każde ustawienie zasobów mieści się w tym, co możesz jeszcze przydzielić w grupie zasobów.",
       "Resources": "Zasoby",

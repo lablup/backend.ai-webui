@@ -845,7 +845,7 @@
       "ResourceAllocation": "Peruntukan Sumber",
       "ResourceAllocationTooltip": "Apa yang digunakan oleh sesi projek berbanding had projek.",
       "ResourceGroupCapacity": "Kumpulan Sumber dan Kapasiti",
-      "ResourceGroupCapacityTooltip": "Penggunaan berbanding kapasiti setiap kumpulan sumber dalam tetapan kad.",
+      "ResourceGroupCapacityTooltip": "Penggunaan berbanding kapasiti kumpulan sumber dalam tetapan kad.",
       "ResourcePresets": "Pratetap Sumber",
       "ResourcePresetsTooltip": "Sama ada setiap pratetap sumber muat dalam apa yang masih boleh anda peruntukkan dalam kumpulan sumber.",
       "Resources": "Sumber",

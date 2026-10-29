@@ -845,7 +845,7 @@
       "ResourceAllocation": "자원 할당",
       "ResourceAllocationTooltip": "프로젝트 세션이 쓰는 자원을 프로젝트 한도와 함께 보여 줍니다.",
       "ResourceGroupCapacity": "자원 그룹과 용량",
-      "ResourceGroupCapacityTooltip": "카드 설정의 자원 그룹마다 용량 대비 사용량을 보여 줍니다.",
+      "ResourceGroupCapacityTooltip": "카드 설정의 자원 그룹에서 용량 대비 사용량을 보여 줍니다.",
       "ResourcePresets": "리소스 프리셋",
       "ResourcePresetsTooltip": "각 리소스 프리셋이 자원 그룹에서 아직 할당할 수 있는 자원 안에 들어가는지 보여 줍니다.",
       "Resources": "자원",

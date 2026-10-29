@@ -845,7 +845,7 @@
       "ResourceAllocation": "Phân bổ tài nguyên",
       "ResourceAllocationTooltip": "Tài nguyên mà các phiên của dự án sử dụng so với giới hạn của dự án.",
       "ResourceGroupCapacity": "Nhóm tài nguyên và dung lượng",
-      "ResourceGroupCapacityTooltip": "Mức sử dụng so với dung lượng của từng nhóm tài nguyên trong cài đặt của thẻ.",
+      "ResourceGroupCapacityTooltip": "Mức sử dụng so với dung lượng của nhóm tài nguyên trong cài đặt của thẻ.",
       "ResourcePresets": "Cấu hình tài nguyên đặt sẵn",
       "ResourcePresetsTooltip": "Mỗi cấu hình đặt sẵn có vừa với lượng bạn còn có thể cấp phát trong nhóm tài nguyên hay không.",
       "Resources": "Tài nguyên",

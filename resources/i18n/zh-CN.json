@@ -845,7 +845,7 @@
       "ResourceAllocation": "资源分配",
       "ResourceAllocationTooltip": "项目会话使用的资源，对照项目的上限。",
       "ResourceGroupCapacity": "资源组与容量",
-      "ResourceGroupCapacityTooltip": "卡片设置中各资源组容量对应的使用量。",
+      "ResourceGroupCapacityTooltip": "卡片设置中资源组容量对应的使用量。",
       "ResourcePresets": "资源预设",
       "ResourcePresetsTooltip": "每个资源预设是否在你于该资源组中仍可分配的范围内。",
       "Resources": "资源",

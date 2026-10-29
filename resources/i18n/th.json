@@ -842,7 +842,7 @@
       "ResourceAllocation": "การจัดสรรทรัพยากร",
       "ResourceAllocationTooltip": "ทรัพยากรที่เซสชันของโปรเจกต์ใช้ เทียบกับขีดจำกัดของโปรเจกต์",
       "ResourceGroupCapacity": "กลุ่มทรัพยากรและความจุ",
-      "ResourceGroupCapacityTooltip": "การใช้งานเทียบกับความจุของแต่ละกลุ่มทรัพยากรในการตั้งค่าของการ์ด",
+      "ResourceGroupCapacityTooltip": "การใช้งานเทียบกับความจุของกลุ่มทรัพยากรในการตั้งค่าของการ์ด",
       "ResourcePresets": "พรีเซ็ตทรัพยากร",
       "ResourcePresetsTooltip": "แต่ละพรีเซ็ตทรัพยากรพอดีกับทรัพยากรที่คุณยังจัดสรรได้ในกลุ่มทรัพยากรหรือไม่",
       "Resources": "ทรัพยากร",

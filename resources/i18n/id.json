@@ -845,7 +845,7 @@
       "ResourceAllocation": "Alokasi Sumber Daya",
       "ResourceAllocationTooltip": "Apa yang digunakan sesi proyek dibandingkan dengan batas proyek.",
       "ResourceGroupCapacity": "Grup Sumber Daya dan Kapasitas",
-      "ResourceGroupCapacityTooltip": "Penggunaan dibandingkan kapasitas tiap grup sumber daya dalam pengaturan kartu.",
+      "ResourceGroupCapacityTooltip": "Penggunaan dibandingkan kapasitas grup sumber daya dalam pengaturan kartu.",
       "ResourcePresets": "Preset Sumber Daya",
       "ResourcePresetsTooltip": "Apakah setiap preset sumber daya muat dalam yang masih dapat Anda alokasikan di grup sumber daya.",
       "Resources": "Sumber daya",

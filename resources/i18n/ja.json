@@ -845,7 +845,7 @@
       "ResourceAllocation": "リソース割り当て",
       "ResourceAllocationTooltip": "プロジェクトのセッションが使うリソースを、プロジェクトの上限とともに表示します。",
       "ResourceGroupCapacity": "リソースグループと容量",
-      "ResourceGroupCapacityTooltip": "カード設定の各リソースグループについて、容量に対する使用量を表示します。",
+      "ResourceGroupCapacityTooltip": "カード設定のリソースグループについて、容量に対する使用量を表示します。",
       "ResourcePresets": "リソースプリセット",
       "ResourcePresetsTooltip": "各リソースプリセットが、リソースグループでまだ割り当て可能な範囲に収まるかを表示します。",
       "Resources": "リソース",

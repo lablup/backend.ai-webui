@@ -845,7 +845,7 @@
       "ResourceAllocation": "Resurssien varaus",
       "ResourceAllocationTooltip": "Mitä projektin istunnot käyttävät suhteessa projektin rajaan.",
       "ResourceGroupCapacity": "Resurssiryhmät ja kapasiteetti",
-      "ResourceGroupCapacityTooltip": "Käyttö suhteessa kunkin kortin asetuksissa olevan resurssiryhmän kapasiteettiin.",
+      "ResourceGroupCapacityTooltip": "Käyttö suhteessa kortin asetuksissa olevan resurssiryhmän kapasiteettiin.",
       "ResourcePresets": "Resurssiesiasetukset",
       "ResourcePresetsTooltip": "Mahtuuko kukin resurssiesiasetus siihen, mitä voit vielä varata resurssiryhmässä.",
       "Resources": "Resurssit",
