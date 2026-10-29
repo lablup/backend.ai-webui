@@ -2,7 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { MAX_BUCKETS, bucketize, type DateTimeWindow } from './timeRange';
+import {
+  MAX_BUCKETS,
+  planBuckets,
+  type BucketPlan,
+  type DateTimeWindow,
+} from './timeRange';
 import * as _ from 'lodash-es';
 
 type BucketIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
@@ -14,11 +19,11 @@ export type BucketAliasVariables<TPrefix extends string, TFilter> = {
 
 /**
  * Query variables for up to {@link MAX_BUCKETS} bucket count aliases named
- * `<prefix>0..7`; the aliases past the buckets are switched off.
+ * `<prefix>0..7`; a missing or null bucket switches its alias off.
  */
 export const bucketVariables = <TPrefix extends string, TFilter>(
   prefix: TPrefix,
-  buckets: ReadonlyArray<DateTimeWindow>,
+  buckets: ReadonlyArray<DateTimeWindow | null>,
   makeFilter: (window: DateTimeWindow) => TFilter,
 ): BucketAliasVariables<TPrefix, TFilter> =>
   Object.fromEntries(
@@ -32,16 +37,6 @@ export const bucketVariables = <TPrefix extends string, TFilter>(
   ) as BucketAliasVariables<TPrefix, TFilter>;
 
 type CountAlias = { readonly count: number } | null | undefined;
-
-/** The bucket counts the aliases returned, oldest first; a skipped alias reads 0. */
-export const bucketCounts = (
-  data: Readonly<Record<string, CountAlias>>,
-  prefix: string,
-  bucketCount: number,
-): Array<number> =>
-  _.range(Math.min(bucketCount, MAX_BUCKETS)).map(
-    (index) => data[`${prefix}${index}`]?.count ?? 0,
-  );
 
 /** The window of the same length that ends where `window` starts. */
 export const previousWindow = (window: DateTimeWindow): DateTimeWindow => {
@@ -90,41 +85,88 @@ export const failureSentiment = (
 
 export type Outcome = 'success' | 'failure';
 
-export type SuccessFailureVariables<TFilter> = {
-  success: TFilter;
-  failure: TFilter;
-  previousSuccess: TFilter;
-  previousFailure: TFilter;
-} & BucketAliasVariables<'s', TFilter> &
-  BucketAliasVariables<'f', TFilter>;
+type PreviousVariables<TFilter> = {
+  previousSuccess: TFilter | null;
+  previousFailure: TFilter | null;
+  previousOn: boolean;
+};
+
+/** Counts that cannot change any more: the settled buckets, and a fixed range's previous range. */
+export type HistoryVariables<TFilter> = BucketAliasVariables<'s', TFilter> &
+  BucketAliasVariables<'f', TFilter> &
+  PreviousVariables<TFilter>;
+
+type LiveSlot = 0 | 1;
+
+/** Counts that still move: up to two live buckets, and a relative range's previous range. */
+export type LiveVariables<TFilter> = {
+  [K in `live${'S' | 'F'}${LiveSlot}`]: TFilter | null;
+} & { [K in `live${LiveSlot}On`]: boolean } & PreviousVariables<TFilter>;
+
+const LIVE_SLOTS: ReadonlyArray<LiveSlot> = [0, 1];
+
+/** Which live slot reads each bucket, `undefined` for the others. */
+const liveSlots = (plan: BucketPlan): Array<LiveSlot | undefined> => {
+  let next = 0;
+  return plan.states.map((state) =>
+    state === 'live' ? LIVE_SLOTS[next++] : undefined,
+  );
+};
 
 /**
- * Variables of a success/failure count query: `success`, `failure`,
- * `previousSuccess`, `previousFailure`, and the bucket aliases `s0..7` / `f0..7`.
+ * Variables of a success/failure count split in two queries: `history`, whose
+ * counts cannot change and which runs only when `hasHistory`, and `live`, which
+ * runs on every refresh. The range's totals are the sums of its buckets.
  */
 export const successFailureVariables = <TFilter>(
   makeFilter: (outcome: Outcome, window: DateTimeWindow) => TFilter,
   range: string,
-  timeRange: DateTimeWindow,
+  now: number,
 ): {
-  buckets: Array<DateTimeWindow>;
-  variables: SuccessFailureVariables<TFilter>;
+  plan: BucketPlan;
+  hasHistory: boolean;
+  history: HistoryVariables<TFilter>;
+  live: LiveVariables<TFilter>;
 } => {
-  const buckets = bucketize(range, new Date(timeRange.before).getTime());
-  const previous = previousWindow(timeRange);
+  const plan = planBuckets(range, now);
+  const previous = previousWindow(plan.window);
+  const previousVariables = (on: boolean): PreviousVariables<TFilter> => ({
+    previousSuccess: on ? makeFilter('success', previous) : null,
+    previousFailure: on ? makeFilter('failure', previous) : null,
+    previousOn: on,
+  });
+  const settled = plan.buckets.map((bucket, index) =>
+    plan.states[index] === 'settled' ? bucket : null,
+  );
+  const slots = liveSlots(plan);
+  const liveBuckets = LIVE_SLOTS.map((slot) => {
+    const index = slots.indexOf(slot);
+    return index >= 0 ? plan.buckets[index] : null;
+  });
   return {
-    buckets,
-    variables: {
-      ...bucketVariables('s', buckets, (window) =>
+    plan,
+    hasHistory: plan.fixed || settled.some(Boolean),
+    history: {
+      ...bucketVariables('s', settled, (window) =>
         makeFilter('success', window),
       ),
-      ...bucketVariables('f', buckets, (window) =>
+      ...bucketVariables('f', settled, (window) =>
         makeFilter('failure', window),
       ),
-      success: makeFilter('success', timeRange),
-      failure: makeFilter('failure', timeRange),
-      previousSuccess: makeFilter('success', previous),
-      previousFailure: makeFilter('failure', previous),
+      ...previousVariables(plan.fixed),
+    },
+    live: {
+      ...(Object.fromEntries(
+        LIVE_SLOTS.flatMap((slot) => {
+          const window = liveBuckets[slot];
+          return [
+            [`liveS${slot}`, window ? makeFilter('success', window) : null],
+            [`liveF${slot}`, window ? makeFilter('failure', window) : null],
+            [`live${slot}On`, !!window],
+          ];
+        }),
+      ) as Omit<LiveVariables<TFilter>, keyof PreviousVariables<TFilter>>),
+      ...previousVariables(!plan.fixed),
     },
   };
 };
@@ -138,28 +180,45 @@ export interface SuccessFailureCounts {
   failureTrend: Array<number>;
 }
 
-/** Reads the aliases {@link successFailureVariables} asked for. */
+type CountData = Readonly<Record<string, CountAlias>>;
+
+/**
+ * Reads the two queries {@link successFailureVariables} planned. A failed or
+ * skipped count reads 0, in its bucket and in the totals summed from them.
+ */
 export const readSuccessFailure = (
-  data: Readonly<Record<string, CountAlias>>,
-  bucketCount: number,
-  timeRange?: DateTimeWindow,
+  plan: BucketPlan,
+  history: CountData | null,
+  live: CountData,
 ): SuccessFailureCounts => {
-  const success = data.success?.count ?? 0;
-  const failure = data.failure?.count ?? 0;
+  const slots = liveSlots(plan);
+  const trend = (historyPrefix: 's' | 'f', livePrefix: 'liveS' | 'liveF') =>
+    plan.states.map((state, index) =>
+      state === 'settled'
+        ? (history?.[`${historyPrefix}${index}`]?.count ?? 0)
+        : state === 'live'
+          ? (live[`${livePrefix}${slots[index]}`]?.count ?? 0)
+          : 0,
+    );
+  const successTrend = trend('s', 'liveS');
+  const failureTrend = trend('f', 'liveF');
+  const success = _.sum(successTrend);
+  const failure = _.sum(failureTrend);
+  const previous = plan.fixed ? history : live;
   return {
     success,
     failure,
     successDelta: countDelta(
       success,
-      data.previousSuccess?.count ?? 0,
-      timeRange,
+      previous?.previousSuccess?.count ?? 0,
+      plan.window,
     ),
     failureDelta: countDelta(
       failure,
-      data.previousFailure?.count ?? 0,
-      timeRange,
+      previous?.previousFailure?.count ?? 0,
+      plan.window,
     ),
-    successTrend: bucketCounts(data, 's', bucketCount),
-    failureTrend: bucketCounts(data, 'f', bucketCount),
+    successTrend,
+    failureTrend,
   };
 };

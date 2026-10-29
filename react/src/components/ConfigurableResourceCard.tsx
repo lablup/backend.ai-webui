@@ -51,6 +51,7 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
   const isAvailableTotalResourcePanel =
     useIsAvailableTotalResourceWithinResourceGroup();
   const currentResourceGroup = useCurrentResourceGroupValue();
+  const currentPanelType: ResourcePanelType = selectedPanelType || 'MyResource';
 
   const queryRefForTotalResource =
     useLazyLoadQuery<ConfigurableResourceCardQuery>(
@@ -74,15 +75,15 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
         agentNodeFilter: `schedulable == true & status == "ALIVE" & scaling_group == "${currentResourceGroup}"`,
       },
       {
-        // if TotalResourceWithinResourceGroup is not available, do not fetch the query
-        fetchPolicy: isAvailableTotalResourcePanel
-          ? 'network-only'
-          : 'store-only',
+        // The agent scan runs only while the total panel is the one shown.
+        fetchPolicy:
+          isAvailableTotalResourcePanel &&
+          currentPanelType === 'TotalResourceWithinResourceGroup'
+            ? 'network-only'
+            : 'store-only',
         fetchKey: fetchKey,
       },
     );
-
-  const currentPanelType: ResourcePanelType = selectedPanelType || 'MyResource';
 
   const panelOptions = filterOutEmpty([
     {

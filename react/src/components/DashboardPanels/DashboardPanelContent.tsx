@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
+  panelRefreshId,
   useDashboardFetchKey,
   useDashboardRefreshScheduler,
 } from './DashboardRefreshContext';
@@ -22,6 +23,7 @@ export interface DashboardPanelState {
   scope: DashboardScope;
   vars: DashboardVars;
   fetchKey: string;
+  manualFetchKey: string;
   isRefetching: boolean;
   onRefresh: () => void;
 }
@@ -44,12 +46,13 @@ const DashboardPanelContent: React.FC<DashboardPanelContentProps> = ({
   'use memo';
   const filters = useDashboardFilterContext();
   const scheduler = useDashboardRefreshScheduler();
-  const { fetchKey, refreshedAt } = useDashboardFetchKey(
-    `panel:${panel.id}`,
+  const { fetchKey, manualFetchKey, refreshedAt } = useDashboardFetchKey(
+    panelRefreshId(panel.id),
     definition.refresh.min,
   );
   // Deferred so a refresh suspends in the background instead of flashing the skeleton.
   const deferredFetchKey = useDeferredValue(fetchKey);
+  const deferredManualFetchKey = useDeferredValue(manualFetchKey);
   const range = panel.settings?.range ?? DEFAULT_RANGE;
   const currentResourceGroup = filters?.currentResourceGroup ?? null;
 
@@ -61,6 +64,7 @@ const DashboardPanelContent: React.FC<DashboardPanelContentProps> = ({
     vars: {
       range,
       timeRange: rangeToDateTimeFilter(range, refreshedAt),
+      refreshedAt,
       currentProjectId: filters?.currentProjectId ?? null,
       currentResourceGroup,
       resourceGroups: resourceGroupRows(
@@ -69,6 +73,7 @@ const DashboardPanelContent: React.FC<DashboardPanelContentProps> = ({
       ),
     },
     fetchKey: deferredFetchKey,
+    manualFetchKey: deferredManualFetchKey,
     isRefetching: isPageRefetching || fetchKey !== deferredFetchKey,
     onRefresh: () => scheduler?.refreshAll(),
   });
