@@ -3085,6 +3085,7 @@
       "AIAccelerator": "Akselerator AI",
       "Accelerator": "Akselerator",
       "AcceleratorDedicatedImages": "Image khusus akselerator",
+      "AcceleratorTypeNotSupportedByImage": "Image yang dipilih tidak mendukung {{type}}",
       "AddEnvironmentVariable": "Menambahkan variabel lingkungan",
       "AddingKernelToSocketQueue": "Menambahkan kernel ke antrian soket...",
       "AdvancedSettings": "Pengaturan Lanjutan",

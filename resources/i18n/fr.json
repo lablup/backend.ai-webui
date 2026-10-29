@@ -3085,6 +3085,7 @@
       "AIAccelerator": "Accélérateur d'IA",
       "Accelerator": "Accélérateur",
       "AcceleratorDedicatedImages": "Images dédiées aux accélérateurs",
+      "AcceleratorTypeNotSupportedByImage": "L'image sélectionnée ne prend pas en charge {{type}}",
       "AddEnvironmentVariable": "Ajouter des variables d'environnement",
       "AddingKernelToSocketQueue": "Ajout du noyau à la file d'attente des sockets...",
       "AdvancedSettings": "Paramètres avancés",

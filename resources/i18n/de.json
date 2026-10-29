@@ -3084,6 +3084,7 @@
       "AIAccelerator": "KI-Beschleuniger",
       "Accelerator": "Beschleuniger",
       "AcceleratorDedicatedImages": "Beschleunigerspezifische Images",
+      "AcceleratorTypeNotSupportedByImage": "Das ausgewählte Image unterstützt {{type}} nicht",
       "AddEnvironmentVariable": "Umgebungsvariablen hinzufügen",
       "AddingKernelToSocketQueue": "Kernel zur Socket-Warteschlange hinzugefügt...",
       "AdvancedSettings": "Erweiterte Einstellungen",

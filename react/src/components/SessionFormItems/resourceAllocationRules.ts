@@ -172,14 +172,48 @@ export const getSupportedAcceleratorTypes = (
   );
 };
 
-/** The current type when the resource group has it, else the group's first accelerator slot. */
+/** The current type when the group has it, else the group's first slot the image supports, else its first slot. */
 export const resolveAcceleratorType = (
   current: string | undefined,
   acceleratorSlotsInRG: string[],
+  supportedTypes?: string[],
 ) =>
   (current && acceleratorSlotsInRG.includes(current)
     ? current
-    : _.first(acceleratorSlotsInRG)) || current;
+    : (_.first(supportedTypes) ?? _.first(acceleratorSlotsInRG))) || current;
+
+const setAcceleratorType = (
+  draft: Draft,
+  next: string,
+  prev: string | undefined,
+  ctx: RuleContext,
+) => {
+  draft.resource.acceleratorType = next;
+  if (isUnifiedAcceleratorSlot(next)) {
+    draft.resource.accelerator = undefined;
+  } else if (isUnifiedAcceleratorSlot(prev)) {
+    // The empty unified value is not a device count; start from the slot's min.
+    draft.resource.accelerator =
+      ctx.resourceLimits.accelerators[next]?.min ?? 0;
+  }
+};
+
+/** The image dropped the current type and the group has exactly one it runs on; several is a validator error. */
+const switchToOnlySupportedType = (
+  draft: Draft,
+  supportedTypes: string[] | undefined,
+  ctx: RuleContext,
+) => {
+  const current = draft.resource.acceleratorType;
+  if (
+    !current ||
+    supportedTypes?.length !== 1 ||
+    supportedTypes.includes(current)
+  ) {
+    return;
+  }
+  setAcceleratorType(draft, supportedTypes[0], current, ctx);
+};
 
 /** What selecting `preset` writes: its slots the group has, in `g`, plus the shmem rule. */
 export const getPresetResourceFields = (
@@ -303,32 +337,119 @@ const applyDataChanged = (
   values: ResourceValues,
   ctx: RuleContext,
 ) => {
+  if (
+    ctx.mode === 'preset-only' &&
+    (draft.allocationPreset === 'custom' ||
+      draft.allocationPreset === 'minimum-required')
+  ) {
+    // A URL or template label this mode does not offer.
+    draft.allocationPreset = 'auto-select';
+  }
   // `auto-select` is the initial value; a form restored without `resource` starts there too.
   if (!values.resource && draft.allocationPreset !== 'custom') {
     draft.allocationPreset = 'auto-select';
   }
-  const selectedPreset = _.find(
-    ctx.presets,
-    (preset) => preset.id === draft.allocationPreset,
-  );
   if (draft.allocationPreset === 'auto-select') {
     selectFallbackPreset(draft, ctx);
-  } else if (
-    selectedPreset &&
-    getUnavailableSlotNames(selectedPreset.resource_slots, ctx.slotsInRG ?? [])
-      .length > 0
-  ) {
-    // A preset the group cannot serve is re-picked (#10628).
-    selectFallbackPreset(draft, ctx);
   }
-  // A type swap forced by the group leaves the preset label alone.
+  // A selected preset the group cannot serve stays for its validator (#10628).
+  // In preset-only mode the values are the preset's: no type swap below.
+  if (ctx.mode !== 'free') return;
+  const supportedTypes = getSupportedAcceleratorTypes(ctx);
   draft.resource.acceleratorType = resolveAcceleratorType(
     draft.resource.acceleratorType,
     ctx.acceleratorSlotsInRG,
+    supportedTypes,
   );
+  switchToOnlySupportedType(draft, supportedTypes, ctx);
   if (draft.allocationPreset === 'minimum-required') {
     applyMinimumRequired(draft, ctx);
   }
+};
+
+/** Whether `resource` holds what `fields` would write: sizes by value, a unified slot by type only. */
+const matchesFields = (
+  resource: ResourceFields,
+  fields: ResourceFields,
+): boolean =>
+  _.every(_.omitBy(fields, _.isUndefined), (expected, key) => {
+    const actual = resource[key as keyof ResourceFields];
+    if (key === 'mem' || key === 'shmem') {
+      return (
+        _.isString(expected) &&
+        _.isString(actual) &&
+        compareNumberWithUnits(expected, actual) === 0
+      );
+    }
+    if (key === 'accelerator') {
+      return (
+        isUnifiedAcceleratorSlot(
+          fields.acceleratorType ?? resource.acceleratorType,
+        ) || (expected ?? 0) === (actual ?? 0)
+      );
+    }
+    return expected === actual;
+  });
+
+/** The fields a form holds while "on" `preset`; undefined when the group cannot serve it. */
+const presetFieldsToMatch = (preset: ResourcePreset, ctx: RuleContext) => {
+  if (
+    getUnavailableSlotNames(preset.resource_slots, ctx.slotsInRG ?? []).length >
+    0
+  ) {
+    return undefined;
+  }
+  const { resource, enabledAutomaticShmem } = getPresetResourceFields(
+    preset,
+    ctx,
+  );
+  // Only a preset that carries shmem pins it.
+  if (enabledAutomaticShmem) delete resource.shmem;
+  return resource;
+};
+
+/**
+ * In free mode the label follows the values: a preset or the minimum whose
+ * values were edited reads `custom`, and a value edit that lands on an
+ * allocatable preset reads that preset. A preset the group cannot serve, or
+ * one the check-presets response lacks (scoped to another group), keeps its
+ * label for the preset validator. Preset-only mode has no `custom`.
+ */
+export const deriveAllocationPreset = (
+  values: ResourceValues,
+  ctx: RuleContext,
+  { valueEdited = false } = {},
+): string | null | undefined => {
+  const label = values.allocationPreset;
+  if (ctx.mode !== 'free' || !label || _.isUndefined(ctx.slotsInRG)) {
+    return label;
+  }
+  const resource = values.resource ?? {};
+  if (label === 'custom') {
+    if (!valueEdited || !ctx.enableResourcePresets) return label;
+    const landedOn = _.sortBy(
+      _.filter(ctx.presets, (preset) =>
+        ctx.allocatablePresetIds.includes(preset.id),
+      ),
+      'name',
+    ).find((preset) => {
+      const fields = presetFieldsToMatch(preset, ctx);
+      return !!fields && matchesFields(resource, fields);
+    });
+    return landedOn?.id ?? label;
+  }
+  if (label === 'minimum-required') {
+    return matchesFields(
+      resource,
+      getMinimumRequiredResourceFields(values, ctx),
+    )
+      ? label
+      : 'custom';
+  }
+  const preset = _.find(ctx.presets, (preset) => preset.id === label);
+  const fields = preset && presetFieldsToMatch(preset, ctx);
+  if (!fields) return label;
+  return matchesFields(resource, fields) ? label : 'custom';
 };
 
 const diff = (values: ResourceValues, draft: Draft): RulePatch => {
@@ -358,25 +479,13 @@ export const applyRule = (
     allocationPreset: values.allocationPreset,
     enabledAutomaticShmem: values.enabledAutomaticShmem,
   };
-  const markCustom = () => {
-    draft.allocationPreset = 'custom';
-  };
-
   switch (event.type) {
     case 'user.setResource':
-      if (event.field === 'mem') {
-        markCustom();
-        if (draft.enabledAutomaticShmem) {
-          draft.resource.shmem = getAutomaticShmem(
-            event.value || '0g',
-            ctx.imageMinMem,
-          );
-        }
-      } else if (event.field === 'shmem') {
-        // In preset-only mode a shmem edit leaves the preset label as is.
-        if (ctx.mode === 'free') markCustom();
-      } else {
-        markCustom();
+      if (event.field === 'mem' && draft.enabledAutomaticShmem) {
+        draft.resource.shmem = getAutomaticShmem(
+          event.value || '0g',
+          ctx.imageMinMem,
+        );
       }
       break;
     case 'user.toggleAutoShmem':
@@ -387,18 +496,9 @@ export const applyRule = (
           ctx.imageMinMem,
         );
       }
-      if (ctx.mode === 'free') markCustom();
       break;
     case 'user.setAcceleratorType':
-      markCustom();
-      draft.resource.acceleratorType = event.next;
-      if (isUnifiedAcceleratorSlot(event.next)) {
-        draft.resource.accelerator = undefined;
-      } else if (isUnifiedAcceleratorSlot(event.prev)) {
-        // The empty unified value is not a device count; start from the slot's min.
-        draft.resource.accelerator =
-          ctx.resourceLimits.accelerators[event.next]?.min ?? 0;
-      }
+      setAcceleratorType(draft, event.next, event.prev, ctx);
       break;
     case 'user.selectPreset':
       draft.allocationPreset = event.id;
@@ -417,9 +517,10 @@ export const applyRule = (
       break;
   }
 
-  // Invariants every path keeps: no accelerator the image cannot use, and a
-  // unified slot never carries a quantity.
+  // Invariants: in free mode no accelerator the image cannot use (preset-only
+  // leaves the preset's value to its validator); a unified slot never carries a quantity.
   if (
+    ctx.mode === 'free' &&
     getSupportedAcceleratorTypes(ctx)?.length === 0 &&
     !isUnifiedAcceleratorSlot(draft.resource.acceleratorType) &&
     draft.resource.accelerator !== 0
@@ -432,5 +533,9 @@ export const applyRule = (
   ) {
     draft.resource.accelerator = undefined;
   }
+  draft.allocationPreset = deriveAllocationPreset(draft, ctx, {
+    valueEdited:
+      event.type.startsWith('user.') && event.type !== 'user.selectPreset',
+  });
   return diff(values, draft);
 };

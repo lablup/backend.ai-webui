@@ -5,6 +5,7 @@
 import '../../../__test__/matchMedia.mock.js';
 import { ResourcePreset } from '../../hooks/useResourceLimitAndRemaining';
 import { Image } from '../ImageEnvironmentSelectFormItems';
+import { getPresetUnavailableReason } from '../ResourcePresetSelect';
 import {
   applyRule,
   getSupportedAcceleratorTypes,
@@ -140,25 +141,73 @@ const gpuImageMinimum = {
   acceleratorType: 'cuda.device',
 };
 
+// A form exactly on `p-gpu`.
+const onGpuPreset = (overrides: Partial<ResourceValues> = {}): ResourceValues =>
+  makeValues({
+    resource: {
+      cpu: 4,
+      mem: '8g',
+      shmem: '1g',
+      accelerator: 2,
+      acceleratorType: 'cuda.shares',
+    },
+    allocationPreset: 'p-gpu',
+    enabledAutomaticShmem: false,
+    ...overrides,
+  });
+
+const dataChanged = { type: 'data.changed' } as const;
+
 describe('applyRule — user events', () => {
-  it('cpu and accelerator edits only relabel the allocation custom, in both modes', () => {
+  it('a cpu or accelerator edit off the preset relabels custom in free mode only', () => {
     const values = makeValues({ allocationPreset: 'p-gpu' });
-    for (const ctx of [makeCtx(), presetOnly()]) {
-      expect(
-        applyRule(
-          values,
-          { type: 'user.setResource', field: 'cpu', value: 3 },
-          ctx,
-        ),
-      ).toEqual({ allocationPreset: 'custom' });
-      expect(
-        applyRule(
-          values,
-          { type: 'user.setResource', field: 'accelerator', value: 2 },
-          ctx,
-        ),
-      ).toEqual({ allocationPreset: 'custom' });
+    for (const event of [
+      { type: 'user.setResource', field: 'cpu', value: 3 } as const,
+      { type: 'user.setResource', field: 'accelerator', value: 2 } as const,
+    ]) {
+      expect(applyRule(values, event, makeCtx())).toEqual({
+        allocationPreset: 'custom',
+      });
+      expect(applyRule(values, event, presetOnly())).toEqual({});
     }
+  });
+
+  it('the label follows the values: off the preset reads custom, back on it reads the preset', () => {
+    const ctx = makeCtx();
+    const edited = written(onGpuPreset(), { resource: { cpu: 5 } });
+    const off = applyRule(
+      edited,
+      { type: 'user.setResource', field: 'cpu', value: 5 },
+      ctx,
+    );
+    expect(off).toEqual({ allocationPreset: 'custom' });
+    const back = written(written(edited, off), { resource: { cpu: 4 } });
+    expect(
+      applyRule(
+        back,
+        { type: 'user.setResource', field: 'cpu', value: 4 },
+        ctx,
+      ),
+    ).toEqual({ allocationPreset: 'p-gpu' });
+    // Only a value edit relabels custom; choosing custom on preset values holds.
+    expect(applyRule(back, dataChanged, ctx)).toEqual({});
+    expect(
+      applyRule(back, { type: 'user.selectPreset', id: 'custom' }, ctx),
+    ).toEqual({});
+  });
+
+  it('a value edit off the image minimum relabels minimum-required custom', () => {
+    const values = makeValues({
+      resource: { ...gpuImageMinimum, shmem: '64m', cpu: 2 },
+      allocationPreset: 'minimum-required',
+    });
+    expect(
+      applyRule(
+        values,
+        { type: 'user.setResource', field: 'cpu', value: 2 },
+        makeCtx(),
+      ),
+    ).toEqual({ allocationPreset: 'custom' });
   });
 
   it('a mem edit recomputes shmem while automatic shmem is on', () => {
@@ -194,7 +243,7 @@ describe('applyRule — user events', () => {
         { type: 'user.setResource', field: 'mem', value: '8g' },
         presetOnly(),
       ),
-    ).toEqual({ allocationPreset: 'custom' });
+    ).toEqual({});
   });
 
   it('a mem edit clears a quantity left on a unified slot', () => {
@@ -220,8 +269,8 @@ describe('applyRule — user events', () => {
     });
   });
 
-  it('a shmem edit relabels custom only in free mode', () => {
-    const values = makeValues({ allocationPreset: 'p-gpu' });
+  it('a shmem edit relabels custom only in free mode, and only off a preset that carries shmem', () => {
+    const values = written(onGpuPreset(), { resource: { shmem: '512m' } });
     const event = {
       type: 'user.setResource',
       field: 'shmem',
@@ -231,6 +280,17 @@ describe('applyRule — user events', () => {
       allocationPreset: 'custom',
     });
     expect(applyRule(values, event, presetOnly())).toEqual({});
+    const onCpuPreset = makeValues({
+      resource: {
+        cpu: 2,
+        mem: '4g',
+        shmem: '512m',
+        accelerator: 0,
+        acceleratorType: 'cuda.device',
+      },
+      allocationPreset: 'p-cpu',
+    });
+    expect(applyRule(onCpuPreset, event, makeCtx())).toEqual({});
   });
 
   it('turning automatic shmem on recomputes shmem; the label follows only in free mode', () => {
@@ -249,16 +309,17 @@ describe('applyRule — user events', () => {
     });
   });
 
-  it('turning automatic shmem off writes nothing but the free-mode label', () => {
-    const values = makeValues({
-      allocationPreset: 'p-gpu',
-      enabledAutomaticShmem: false,
-    });
+  it('turning automatic shmem off writes nothing; the label follows the values, not the toggle', () => {
     const event = { type: 'user.toggleAutoShmem', on: false } as const;
-    expect(applyRule(values, event, makeCtx())).toEqual({
-      allocationPreset: 'custom',
-    });
-    expect(applyRule(values, event, presetOnly())).toEqual({});
+    expect(applyRule(onGpuPreset(), event, makeCtx())).toEqual({});
+    expect(applyRule(onGpuPreset(), event, presetOnly())).toEqual({});
+    expect(
+      applyRule(
+        makeValues({ allocationPreset: 'p-gpu', enabledAutomaticShmem: false }),
+        event,
+        makeCtx(),
+      ),
+    ).toEqual({ allocationPreset: 'custom' });
   });
 
   it('selecting a preset applies its slots and turns automatic shmem off when it carries shmem', () => {
@@ -444,9 +505,21 @@ describe('applyRule — user events', () => {
           next: 'cuda.shares',
           prev: 'cuda.unified',
         },
-        makeCtx({ resourceLimits: { accelerators: {} } }),
+        makeCtx({ resourceLimits: { accelerators: {} }, presets: [] }),
       ),
     ).toEqual({ resource: { accelerator: 0 } });
+    // Landing at 0 on the values of `p-cpu` reads that preset (A1).
+    expect(
+      applyRule(
+        values,
+        {
+          type: 'user.setAcceleratorType',
+          next: 'cuda.shares',
+          prev: 'cuda.unified',
+        },
+        makeCtx({ resourceLimits: { accelerators: {} } }),
+      ),
+    ).toEqual({ resource: { accelerator: 0 }, allocationPreset: 'p-cpu' });
   });
 
   it('switching between discrete types keeps the quantity', () => {
@@ -473,8 +546,6 @@ describe('applyRule — user events', () => {
 });
 
 describe('applyRule — data.changed', () => {
-  const dataChanged = { type: 'data.changed' } as const;
-
   it('writes nothing before the slots of the resource group are known', () => {
     expect(
       applyRule(
@@ -485,10 +556,17 @@ describe('applyRule — data.changed', () => {
     ).toEqual({});
   });
 
-  it('zeroes the accelerator when the image runs on none of the group types', () => {
+  it('zeroes the accelerator when the image runs on none of the group types, in free mode', () => {
     expect(
       applyRule(makeValues(), dataChanged, makeCtx({ image: rocmOnlyImage })),
     ).toEqual({ resource: { accelerator: 0 } });
+    expect(
+      applyRule(
+        makeValues({ allocationPreset: 'p-gpu' }),
+        dataChanged,
+        presetOnly({ image: rocmOnlyImage }),
+      ),
+    ).toEqual({});
     const unified = makeValues({
       resource: {
         ...makeValues().resource,
@@ -546,13 +624,14 @@ describe('applyRule — data.changed', () => {
     });
   });
 
-  it('moves an accelerator type the group lacks to its first slot without relabelling', () => {
+  it('moves an accelerator type the group lacks to its first slot; the free-mode label follows', () => {
     const values = makeValues({
       resource: { ...makeValues().resource, acceleratorType: 'rocm.device' },
       allocationPreset: 'p-gpu',
     });
     expect(applyRule(values, dataChanged, makeCtx())).toEqual({
       resource: { acceleratorType: 'cuda.shares' },
+      allocationPreset: 'custom',
     });
     expect(
       applyRule(
@@ -568,12 +647,78 @@ describe('applyRule — data.changed', () => {
     });
   });
 
-  it('re-picks when the selected preset needs a slot the group lacks (#10628)', () => {
+  it('keeps a preset that needs a slot the group lacks for its validator (#10628)', () => {
     const values = makeValues({ allocationPreset: 'p-rocm' });
-    expect(applyRule(values, dataChanged, makeCtx())).toEqual({
-      allocationPreset: 'p-cpu',
-      resource: { shmem: '1g', accelerator: 0 },
+    expect(applyRule(values, dataChanged, makeCtx())).toEqual({});
+    expect(applyRule(values, dataChanged, presetOnly())).toEqual({});
+  });
+
+  it('switches to the only accelerator type the image runs on and keeps the quantity', () => {
+    const slots = {
+      slotsInRG: ['cpu', 'mem', 'cuda.device', 'rocm.device'],
+      acceleratorSlotsInRG: ['cuda.device', 'rocm.device'],
+    };
+    const values = makeValues({
+      resource: { ...makeValues().resource, acceleratorType: 'rocm.device' },
     });
+    expect(applyRule(values, dataChanged, makeCtx(slots))).toEqual({
+      resource: { acceleratorType: 'cuda.device' },
+    });
+    expect(
+      applyRule(
+        { ...values, allocationPreset: 'p-gpu' },
+        dataChanged,
+        presetOnly(slots),
+      ),
+    ).toEqual({});
+  });
+
+  it('leaves a type the image dropped alone when several remain (validator case)', () => {
+    const values = makeValues({
+      resource: { ...makeValues().resource, acceleratorType: 'rocm.device' },
+    });
+    expect(
+      applyRule(
+        values,
+        dataChanged,
+        makeCtx({
+          slotsInRG: [
+            'cpu',
+            'mem',
+            'cuda.device',
+            'cuda.shares',
+            'rocm.device',
+          ],
+          acceleratorSlotsInRG: ['cuda.device', 'cuda.shares', 'rocm.device'],
+        }),
+      ),
+    ).toEqual({});
+  });
+
+  it('preset-only: a group change writes resource values only through the preset', () => {
+    const values = makeValues({
+      resource: { ...makeValues().resource, acceleratorType: 'rocm.device' },
+      allocationPreset: 'p-gpu',
+    });
+    expect(applyRule(values, dataChanged, presetOnly())).toEqual({});
+    expect(
+      applyRule(values, dataChanged, presetOnly({ image: rocmOnlyImage })),
+    ).toEqual({});
+  });
+
+  it('preset-only: custom and minimum-required from a URL fall back to the auto pick', () => {
+    for (const label of ['custom', 'minimum-required']) {
+      expect(
+        applyRule(
+          makeValues({ allocationPreset: label }),
+          dataChanged,
+          presetOnly(),
+        ),
+      ).toEqual({
+        allocationPreset: 'p-cpu',
+        resource: { shmem: '1g', accelerator: 0 },
+      });
+    }
   });
 
   it('keeps a selected preset the group can serve', () => {
@@ -623,7 +768,6 @@ describe('applyRule — data.changed', () => {
         makeValues({ allocationPreset: 'auto-select' }),
         presetOnly({ allocatablePresetIds: [] }),
       ],
-      [makeValues({ allocationPreset: 'p-rocm' }), makeCtx()],
       [
         makeValues({
           resource: {
@@ -636,6 +780,7 @@ describe('applyRule — data.changed', () => {
       ],
       [makeValues(), makeCtx({ image: rocmOnlyImage })],
       [{ enabledAutomaticShmem: true }, makeCtx()],
+      [makeValues({ allocationPreset: 'custom' }), presetOnly()],
     ];
     for (const [values, ctx] of starts) {
       const first = applyRule(values, dataChanged, ctx);
@@ -698,12 +843,69 @@ describe('getSupportedAcceleratorTypes', () => {
 });
 
 describe('resolveAcceleratorType', () => {
-  it('keeps a type the group has, else takes the first slot, else keeps the current', () => {
+  it('keeps a type the group has, else takes the first supported slot, else the first, else the current', () => {
     const slots = ['cuda.shares', 'cuda.device'];
     expect(resolveAcceleratorType('cuda.device', slots)).toBe('cuda.device');
     expect(resolveAcceleratorType('rocm.device', slots)).toBe('cuda.shares');
+    expect(resolveAcceleratorType('rocm.device', slots, ['cuda.device'])).toBe(
+      'cuda.device',
+    );
+    expect(resolveAcceleratorType('rocm.device', slots, [])).toBe(
+      'cuda.shares',
+    );
     expect(resolveAcceleratorType(undefined, slots)).toBe('cuda.shares');
     expect(resolveAcceleratorType('rocm.device', [])).toBe('rocm.device');
     expect(resolveAcceleratorType(undefined, [])).toBeUndefined();
+  });
+});
+
+describe('getPresetUnavailableReason', () => {
+  const scope = {
+    resourceGroup: 'rg-a',
+    slotsInRG,
+    allocatablePresetIds: ['p-gpu', 'p-cpu'],
+  };
+  const rocmPreset = presets[3];
+
+  it('reports a preset scoped to another group before anything else', () => {
+    expect(
+      getPresetUnavailableReason(
+        { ...rocmPreset, scaling_group_name: 'rg-b' },
+        scope,
+      ),
+    ).toEqual({ kind: 'scoped', resourceGroup: 'rg-b' });
+    expect(
+      getPresetUnavailableReason(
+        { ...presets[0], scaling_group_name: 'rg-a' },
+        scope,
+      ),
+    ).toBeUndefined();
+  });
+
+  it('reports the slots the group lacks', () => {
+    expect(getPresetUnavailableReason(rocmPreset, scope)).toEqual({
+      kind: 'missing-slots',
+      slots: ['rocm.device'],
+    });
+  });
+
+  it('reports a preset the limits or the image rule out', () => {
+    expect(getPresetUnavailableReason(presets[2], scope)).toEqual({
+      kind: 'not-allocatable',
+    });
+    expect(getPresetUnavailableReason(presets[0], scope)).toBeUndefined();
+  });
+
+  it('skips the checks whose data is not known yet', () => {
+    expect(
+      getPresetUnavailableReason(rocmPreset, {
+        resourceGroup: 'rg-a',
+        slotsInRG: undefined,
+        allocatablePresetIds: undefined,
+      }),
+    ).toBeUndefined();
+    expect(
+      getPresetUnavailableReason({ id: 'p-gpu' }, { resourceGroup: 'rg-a' }),
+    ).toBeUndefined();
   });
 });

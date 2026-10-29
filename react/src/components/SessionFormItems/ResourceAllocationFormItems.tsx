@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ResourceAllocationFormItemsQuery } from '../../__generated__/ResourceAllocationFormItemsQuery.graphql';
-import { Form, type Store } from '../../form-engine';
+import { Form, type NamePath, type Store } from '../../form-engine';
 import { compareNumberWithUnits, convertToBinaryUnit } from '../../helper';
 import {
   getUnifiedSlotNameFromTag,
@@ -29,6 +29,7 @@ import {
 } from '../ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from '../InputNumberWithSlider';
 import ResourcePresetSelect, {
+  getPresetUnavailableReason,
   getUnavailableSlotNames,
 } from '../ResourcePresetSelect';
 import RemainingMark from './RemainingMark';
@@ -387,6 +388,11 @@ const ResourceAllocationFormItems: React.FC<
   // effect-event closure still saw the previous render's `ruleContext` here.
   const syncWithData = useEventNotStable(() => {
     if (runRule({ type: 'data.changed' })) validateResource();
+    // A group or image change can invalidate the preset or the accelerator type
+    // without writing anything, and `dependencies` see only form fields.
+    const names: NamePath[] = [['resource', 'acceleratorType']];
+    if (form.getFieldValue('allocationPreset')) names.push('allocationPreset');
+    form.validateFields(names).catch(() => {});
   });
   useEffect(() => {
     syncWithData();
@@ -441,27 +447,54 @@ const ResourceAllocationFormItems: React.FC<
               required: true,
             },
             ({ getFieldValue }) => ({
-              // Changing the resource group keeps the chosen preset; flag a
-              // preset scoped to another group instead of swapping it. Re-run
-              // from the resource-group select's `onChange`.
+              // A group or image change keeps the chosen preset and reports why
+              // it no longer fits, never re-picks (#10628). Re-run from the
+              // resource-group select's `onChange` and from the data effect.
               validator: async (_rule, value: string) => {
                 const preset = _.find(
                   resource_presets,
                   (preset) => preset?.id === value,
                 );
-                const presetGroup = preset?.scaling_group_name;
-                const resourceGroup = getFieldValue('resourceGroup');
-                if (
-                  presetGroup &&
-                  resourceGroup &&
-                  presetGroup !== resourceGroup
-                ) {
-                  return Promise.reject(
-                    t('resourcePreset.PresetOnlyAvailableInResourceGroup', {
-                      preset: preset?.name,
-                      name: presetGroup,
-                    }),
-                  );
+                if (!preset) return;
+                const reason = getPresetUnavailableReason(
+                  {
+                    ...preset,
+                    resource_slots: _.find(
+                      checkPresetInfo?.presets,
+                      (checked) => checked.id === value,
+                    )?.resource_slots,
+                  },
+                  {
+                    resourceGroup: getFieldValue('resourceGroup'),
+                    slotsInRG: slotNamesInRG,
+                    allocatablePresetIds: checkPresetInfo?.presets
+                      ? allocatablePresetIds
+                      : undefined,
+                  },
+                );
+                switch (reason?.kind) {
+                  case 'scoped':
+                    return Promise.reject(
+                      t('resourcePreset.PresetOnlyAvailableInResourceGroup', {
+                        preset: preset.name,
+                        name: reason.resourceGroup,
+                      }),
+                    );
+                  case 'missing-slots':
+                    return Promise.reject(
+                      t('resourcePreset.RequiresSlotsNotInResourceGroup', {
+                        slots: _.map(
+                          reason.slots,
+                          (key) =>
+                            mergedResourceSlots?.[key]?.human_readable_name ??
+                            key,
+                        ).join(', '),
+                      }),
+                    );
+                  case 'not-allocatable':
+                    return Promise.reject(
+                      t('resourcePreset.ExceedsAllocatableResources'),
+                    );
                 }
               },
             }),
@@ -1118,6 +1151,35 @@ const ResourceAllocationFormItems: React.FC<
                                   initialValue={_.first(
                                     _.keys(acceleratorSlotsInRG),
                                   )}
+                                  // Several supported types leave the choice to
+                                  // the user; the data effect re-runs this.
+                                  rules={[
+                                    {
+                                      validator: async (
+                                        _rule,
+                                        value: string,
+                                      ) => {
+                                        if (
+                                          value &&
+                                          supportedAcceleratorTypesInRGByImage &&
+                                          !supportedAcceleratorTypesInRGByImage.includes(
+                                            value,
+                                          )
+                                        ) {
+                                          return Promise.reject(
+                                            t(
+                                              'session.launcher.AcceleratorTypeNotSupportedByImage',
+                                              {
+                                                type:
+                                                  mergedResourceSlots?.[value]
+                                                    ?.display_unit || value,
+                                              },
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    },
+                                  ]}
                                 >
                                   <BAISelect
                                     // In an InputGroup the trigger resolves to

@@ -3082,6 +3082,7 @@
       "AIAccelerator": "Επιταχυντής AI",
       "Accelerator": "Επιταχυντής",
       "AcceleratorDedicatedImages": "Εικόνες αποκλειστικές για επιταχυντές",
+      "AcceleratorTypeNotSupportedByImage": "Η επιλεγμένη εικόνα δεν υποστηρίζει {{type}}",
       "AddEnvironmentVariable": "Προσθήκη μεταβλητών περιβάλλοντος",
       "AddingKernelToSocketQueue": "Προσθήκη πυρήνα στην ουρά υποδοχής ...",
       "AdvancedSettings": "Σύνθετες ρυθμίσεις",

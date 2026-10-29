@@ -3082,6 +3082,7 @@
       "AIAccelerator": "Yapay Zeka Hızlandırıcı",
       "Accelerator": "Gaz pedalı",
       "AcceleratorDedicatedImages": "Hızlandırıcıya özel imajlar",
+      "AcceleratorTypeNotSupportedByImage": "Seçilen imaj {{type}} türünü desteklemiyor",
       "AddEnvironmentVariable": "Ortam değişkenleri ekleme",
       "AddingKernelToSocketQueue": "Soket kuyruğuna çekirdek ekleniyor...",
       "AdvancedSettings": "Gelişmiş Ayarlar",
