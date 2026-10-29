@@ -97,35 +97,38 @@ const SharedFolderPermissionInfoModalV2: React.FC<
     );
 
   // `leaveEntityShare` takes the share, not the folder, so the recipient's
-  // accepted share of this folder is looked up first. The status is matched
-  // on the client: the deployed manager rejects the `filter` argument's shape.
+  // accepted share of this folder is looked up first.
   const leaveFolder = useTanMutation({
     mutationFn: async ({ folderId }: { folderId: string }) => {
       const data =
         await fetchQuery<SharedFolderPermissionInfoModalV2MySharesQuery>(
           relayEnvironment,
           graphql`
-            query SharedFolderPermissionInfoModalV2MySharesQuery {
-              myEntityShares(sides: [RECIPIENT], limit: 100) {
+            query SharedFolderPermissionInfoModalV2MySharesQuery(
+              $folderId: UUID!
+            ) {
+              myEntityShares(
+                sides: [RECIPIENT]
+                filter: {
+                  targetEntityId: { equals: $folderId }
+                  status: { equals: ACCEPTED }
+                }
+                limit: 1
+              ) {
                 edges {
                   node {
                     entityId
                     targetEntityType
-                    targetEntityId
-                    status
                   }
                 }
               }
             }
           `,
-          {},
+          { folderId },
           { fetchPolicy: 'network-only' },
         ).toPromise();
       const share = data?.myEntityShares?.edges.find(
-        ({ node }) =>
-          node.targetEntityType === VFOLDER_ENTITY_TYPE &&
-          node.targetEntityId === folderId &&
-          node.status === 'ACCEPTED',
+        ({ node }) => node.targetEntityType === VFOLDER_ENTITY_TYPE,
       )?.node;
       if (!share) {
         throw new Error(t('data.invitation.AcceptedShareNotFound'));

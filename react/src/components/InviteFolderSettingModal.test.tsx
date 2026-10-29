@@ -17,7 +17,6 @@ import {
   useLazyLoadQuery,
 } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
-import type { MockResolverContext } from 'relay-test-utils/lib/RelayMockPayloadGenerator';
 import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockEnvironment';
 
 /**
@@ -106,30 +105,44 @@ const RESOLVERS = {
           recipientEntityType: 'user',
           recipientEntityId: USER2_ID,
           recipientEmail: 'user2@example.com',
+          recipientEntity: {
+            __typename: 'UserV2',
+            id: btoa(`UserV2:${USER2_ID}`),
+            entityId: USER2_ID,
+            basicInfo: { email: 'user2@example.com' },
+          },
           permissions: ['READ'],
           status: 'ACCEPTED',
         },
       },
       {
-        // An e-mail invite: no user until it is accepted.
+        // An e-mail invite to an address without an account: no user node.
         node: {
           id: 'EntityShare:pending',
           entityId: PENDING_SHARE_ID,
           recipientEntityType: null,
           recipientEntityId: null,
           recipientEmail: 'nobody@example.com',
+          recipientEntity: null,
           permissions: ['READ', 'UPDATE', 'SOFT_DELETE'],
           status: 'PENDING',
         },
       },
       {
-        // A user-id invite: no address until it is accepted.
+        // A user-id invite: no address until it is accepted; the recipient
+        // node names the person.
         node: {
           id: 'EntityShare:pending-user',
           entityId: PENDING_USER_SHARE_ID,
           recipientEntityType: 'user',
           recipientEntityId: USER3_ID,
           recipientEmail: null,
+          recipientEntity: {
+            __typename: 'UserV2',
+            id: btoa(`UserV2:${USER3_ID}`),
+            entityId: USER3_ID,
+            basicInfo: { email: 'user3@example.com' },
+          },
           permissions: ['READ'],
           status: 'PENDING',
         },
@@ -141,6 +154,7 @@ const RESOLVERS = {
           recipientEntityType: null,
           recipientEntityId: null,
           recipientEmail: 'old@example.com',
+          recipientEntity: null,
           permissions: ['READ'],
           status: 'REVOKED',
         },
@@ -150,24 +164,9 @@ const RESOLVERS = {
   VFolderMountPoliciesPayload: () => ({
     items: [{ id: 'policy-1', userId: USER2_ID, permission: 'READ_WRITE' }],
   }),
-  // The recipients query asks for the unnamed users by id; the select's
-  // search queries get an empty page.
-  UserV2Connection: (context: MockResolverContext) => ({
-    edges: (
-      (context.args?.filter as { uuid?: { in?: Array<string> } } | undefined)
-        ?.uuid?.in ?? []
-    ).includes(USER3_ID)
-      ? [
-          {
-            node: {
-              id: btoa(`UserV2:${USER3_ID}`),
-              entityId: USER3_ID,
-              basicInfo: { email: 'user3@example.com' },
-            },
-          },
-        ]
-      : [],
-  }),
+  // The select's search queries get an empty page, so a typed address is
+  // offered as an e-mail invite.
+  UserV2Connection: () => ({ edges: [] }),
 };
 
 const Harness: React.FC<{ onRequestClose?: () => void }> = ({
@@ -329,8 +328,7 @@ const renderModal = async () => {
       </BAIAppProvider>
     </RelayEnvironmentProvider>,
   );
-  // The harness query first, then the modal body's own query, then the
-  // recipients query it issues for the user-id share.
+  // The harness query first, then the modal body's own query.
   await resolvePendingQueries(environment);
   await resolvePendingQueries(environment);
   await resolvePendingQueries(environment);
@@ -381,8 +379,8 @@ describe('InviteFolderSettingModal (#10295)', () => {
     expect(
       screen.getByText('nobody@example.com').closest('tr'),
     ).toHaveTextContent('data.ReadOnly');
-    // A share sent to a user id has no address of its own; it comes from
-    // the recipients query. Without a policy row it also shows the default.
+    // A share sent to a user id has no address of its own; the recipient
+    // node names the person. Without a policy row it also shows the default.
     expect(
       screen.getByText('user3@example.com').closest('tr'),
     ).toHaveTextContent('data.ReadOnly');

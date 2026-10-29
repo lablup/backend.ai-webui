@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<45efcd5f992a9c0b5f8565fe4bbe968b>>
+ * @generated SignedSource<<1f0f47acd5622c5adf2eb44c2d26953d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -37,6 +37,12 @@ export type InviteFolderSettingModalQuery$data = {
         readonly id: string;
         readonly permissions: ReadonlyArray<PermissionBit>;
         readonly recipientEmail: string | null | undefined;
+        readonly recipientEntity: {
+          readonly basicInfo?: {
+            readonly email: string;
+          };
+          readonly entityId?: string;
+        } | null | undefined;
         readonly recipientEntityId: string | null | undefined;
         readonly recipientEntityType: string | null | undefined;
         readonly status: EntityShareStatus;
@@ -67,144 +73,138 @@ v1 = {
   "kind": "LocalArgument",
   "name": "vfolderId"
 },
-v2 = {
+v2 = [
+  {
+    "kind": "Literal",
+    "name": "limit",
+    "value": 100
+  },
+  {
+    "kind": "Variable",
+    "name": "scope",
+    "variableName": "scope"
+  }
+],
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v3 = [
-  {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Literal",
-        "name": "limit",
-        "value": 100
-      },
-      {
-        "kind": "Variable",
-        "name": "scope",
-        "variableName": "scope"
-      }
-    ],
-    "concreteType": "EntityShareConnection",
-    "kind": "LinkedField",
-    "name": "entityShares",
-    "plural": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "EntityShareEdge",
-        "kind": "LinkedField",
-        "name": "edges",
-        "plural": true,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "EntityShare",
-            "kind": "LinkedField",
-            "name": "node",
-            "plural": false,
-            "selections": [
-              (v2/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "entityId",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "recipientEntityType",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "recipientEntityId",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "recipientEmail",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "status",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "permissions",
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
-  },
-  {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "vfolderId",
-        "variableName": "vfolderId"
-      }
-    ],
-    "concreteType": "VFolderMountPoliciesPayload",
-    "kind": "LinkedField",
-    "name": "vfolderMountPolicies",
-    "plural": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "VFolderMountPolicy",
-        "kind": "LinkedField",
-        "name": "items",
-        "plural": true,
-        "selections": [
-          (v2/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "userId",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "permission",
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
-  }
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "entityId",
+  "storageKey": null
+},
+v5 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "recipientEntityType",
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "recipientEntityId",
+  "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "recipientEmail",
+  "storageKey": null
+},
+v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "status",
+  "storageKey": null
+},
+v9 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "permissions",
+  "storageKey": null
+},
+v10 = {
+  "kind": "InlineFragment",
+  "selections": [
+    (v4/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "UserV2BasicInfo",
+      "kind": "LinkedField",
+      "name": "basicInfo",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "email",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    }
+  ],
+  "type": "UserV2",
+  "abstractKey": null
+},
+v11 = {
+  "alias": null,
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "vfolderId",
+      "variableName": "vfolderId"
+    }
+  ],
+  "concreteType": "VFolderMountPoliciesPayload",
+  "kind": "LinkedField",
+  "name": "vfolderMountPolicies",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "VFolderMountPolicy",
+      "kind": "LinkedField",
+      "name": "items",
+      "plural": true,
+      "selections": [
+        (v3/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "userId",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "permission",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v12 = [
+  (v3/*: any*/)
 ];
 return {
   "fragment": {
@@ -215,7 +215,65 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "InviteFolderSettingModalQuery",
-    "selections": (v3/*: any*/),
+    "selections": [
+      {
+        "alias": null,
+        "args": (v2/*: any*/),
+        "concreteType": "EntityShareConnection",
+        "kind": "LinkedField",
+        "name": "entityShares",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "EntityShareEdge",
+            "kind": "LinkedField",
+            "name": "edges",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "EntityShare",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  (v3/*: any*/),
+                  (v4/*: any*/),
+                  (v5/*: any*/),
+                  (v6/*: any*/),
+                  (v7/*: any*/),
+                  (v8/*: any*/),
+                  (v9/*: any*/),
+                  {
+                    "kind": "CatchField",
+                    "field": {
+                      "alias": null,
+                      "args": null,
+                      "concreteType": null,
+                      "kind": "LinkedField",
+                      "name": "recipientEntity",
+                      "plural": false,
+                      "selections": [
+                        (v10/*: any*/)
+                      ],
+                      "storageKey": null
+                    },
+                    "to": "NULL"
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      },
+      (v11/*: any*/)
+    ],
     "type": "Query",
     "abstractKey": null
   },
@@ -227,19 +285,92 @@ return {
     ],
     "kind": "Operation",
     "name": "InviteFolderSettingModalQuery",
-    "selections": (v3/*: any*/)
+    "selections": [
+      {
+        "alias": null,
+        "args": (v2/*: any*/),
+        "concreteType": "EntityShareConnection",
+        "kind": "LinkedField",
+        "name": "entityShares",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "EntityShareEdge",
+            "kind": "LinkedField",
+            "name": "edges",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "EntityShare",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  (v3/*: any*/),
+                  (v4/*: any*/),
+                  (v5/*: any*/),
+                  (v6/*: any*/),
+                  (v7/*: any*/),
+                  (v8/*: any*/),
+                  (v9/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": null,
+                    "kind": "LinkedField",
+                    "name": "recipientEntity",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "__typename",
+                        "storageKey": null
+                      },
+                      (v10/*: any*/),
+                      {
+                        "kind": "InlineFragment",
+                        "selections": (v12/*: any*/),
+                        "type": "Node",
+                        "abstractKey": "__isNode"
+                      },
+                      {
+                        "kind": "InlineFragment",
+                        "selections": (v12/*: any*/),
+                        "type": "ArtifactRegistry",
+                        "abstractKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      },
+      (v11/*: any*/)
+    ]
   },
   "params": {
-    "cacheID": "fe0d2b1ae0057017ada83abca1f64b0a",
+    "cacheID": "f1b625bd7517f2854795df9579554f2f",
     "id": null,
     "metadata": {},
     "name": "InviteFolderSettingModalQuery",
     "operationKind": "query",
-    "text": "query InviteFolderSettingModalQuery(\n  $vfolderId: UUID!\n  $scope: EntityShareScope!\n) {\n  entityShares(scope: $scope, limit: 100) {\n    edges {\n      node {\n        id\n        entityId\n        recipientEntityType\n        recipientEntityId\n        recipientEmail\n        status\n        permissions\n      }\n    }\n  }\n  vfolderMountPolicies(vfolderId: $vfolderId) {\n    items {\n      id\n      userId\n      permission\n    }\n  }\n}\n"
+    "text": "query InviteFolderSettingModalQuery(\n  $vfolderId: UUID!\n  $scope: EntityShareScope!\n) {\n  entityShares(scope: $scope, limit: 100) {\n    edges {\n      node {\n        id\n        entityId\n        recipientEntityType\n        recipientEntityId\n        recipientEmail\n        status\n        permissions\n        recipientEntity {\n          __typename\n          ... on UserV2 {\n            entityId\n            basicInfo {\n              email\n            }\n          }\n          ... on Node {\n            __isNode: __typename\n            id\n          }\n          ... on ArtifactRegistry {\n            id\n          }\n        }\n      }\n    }\n  }\n  vfolderMountPolicies(vfolderId: $vfolderId) {\n    items {\n      id\n      userId\n      permission\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "50786d29c17100414eafdf1d53350138";
+(node as any).hash = "8de0b6c20dd9b8ca3c27eb1c5d2f1e31";
 
 export default node;

@@ -13,7 +13,6 @@ import { InviteFolderSettingModalCreateShareMutation } from '../__generated__/In
 import { InviteFolderSettingModalExistingShareQuery } from '../__generated__/InviteFolderSettingModalExistingShareQuery.graphql';
 import { InviteFolderSettingModalFragment$key } from '../__generated__/InviteFolderSettingModalFragment.graphql';
 import { InviteFolderSettingModalQuery } from '../__generated__/InviteFolderSettingModalQuery.graphql';
-import { InviteFolderSettingModalRecipientsQuery } from '../__generated__/InviteFolderSettingModalRecipientsQuery.graphql';
 import { InviteFolderSettingModalRevokeShareMutation } from '../__generated__/InviteFolderSettingModalRevokeShareMutation.graphql';
 import { InviteFolderSettingModalSetMountPolicyMutation } from '../__generated__/InviteFolderSettingModalSetMountPolicyMutation.graphql';
 import { InviteFolderSettingModalUnsetMountPolicyMutation } from '../__generated__/InviteFolderSettingModalUnsetMountPolicyMutation.graphql';
@@ -519,7 +518,6 @@ const InviteFolderSettingModalBody: React.FC<{
           <SharedUserTable
             vfolderId={vfolderId}
             defaultMountLevel={defaultMountLevel}
-            memberProjectIds={memberProjectIds}
             fetchKey={fetchKey}
             updateFetchKey={updateFetchKey}
           />
@@ -596,16 +594,9 @@ const FolderInfoSection: React.FC<{
 const SharedUserTable: React.FC<{
   vfolderId: string;
   defaultMountLevel: MountLevel;
-  memberProjectIds: Array<string>;
   fetchKey: string;
   updateFetchKey: () => void;
-}> = ({
-  vfolderId,
-  defaultMountLevel,
-  memberProjectIds,
-  fetchKey,
-  updateFetchKey,
-}) => {
+}> = ({ vfolderId, defaultMountLevel, fetchKey, updateFetchKey }) => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -633,6 +624,16 @@ const SharedUserTable: React.FC<{
                 recipientEmail
                 status
                 permissions
+                # The person the offer goes to, when the caller may read them;
+                # an address resolves to the user holding it.
+                recipientEntity @catch(to: NULL) {
+                  ... on UserV2 {
+                    entityId
+                    basicInfo {
+                      email
+                    }
+                  }
+                }
               }
             }
           }
@@ -669,63 +670,17 @@ const SharedUserTable: React.FC<{
       ? (share.recipientEntityId ?? null)
       : null;
 
-  // A share sent to a user id carries no e-mail until it is accepted; look the
-  // address up among the users the caller's projects reach.
-  const unnamedUserIds = _.compact(
-    _.map(
-      _.filter(openShares, (share) => !share.recipientEmail),
-      recipientUserId,
-    ),
-  );
-  const { scopedUsersV2: recipientUsers } =
-    useLazyLoadQuery<InviteFolderSettingModalRecipientsQuery>(
-      graphql`
-        query InviteFolderSettingModalRecipientsQuery(
-          $scope: UserScope!
-          $filter: UserV2Filter
-          $limit: Int!
-          $skip: Boolean!
-        ) {
-          scopedUsersV2(scope: $scope, filter: $filter, limit: $limit)
-            @skip(if: $skip) {
-            edges {
-              node {
-                entityId
-                basicInfo {
-                  email
-                }
-              }
-            }
-          }
-        }
-      `,
-      {
-        scope: { project: _.map(memberProjectIds, (value) => ({ value })) },
-        filter: unnamedUserIds.length ? { uuid: { in: unnamedUserIds } } : null,
-        limit: Math.max(unnamedUserIds.length, 1),
-        skip: unnamedUserIds.length === 0,
-      },
-      {
-        fetchPolicy: unnamedUserIds.length ? 'store-or-network' : 'store-only',
-        fetchKey: deferredFetchKey,
-      },
-    );
-  const emailByUserId = _.fromPairs(
-    _.map(recipientUsers?.edges, (edge) => [
-      edge.node.entityId,
-      edge.node.basicInfo.email,
-    ]),
-  );
   const policyByUserId = _.keyBy(vfolderMountPolicies?.items, 'userId');
 
   const rows: Array<ShareRow> = _.sortBy(
     _.map(openShares, (share) => {
       const userId = recipientUserId(share);
+      // The recipient node names the person; the address the offer was sent
+      // to is the fallback, and a share naming neither is an unknown user.
       const email =
+        share.recipientEntity?.basicInfo?.email ??
         share.recipientEmail ??
-        (userId ? emailByUserId[userId] : null) ??
-        userId ??
-        share.entityId;
+        t('data.invitation.UnknownUser');
       return {
         shareId: share.entityId,
         email,
