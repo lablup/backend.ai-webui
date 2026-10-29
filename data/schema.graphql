@@ -14326,7 +14326,7 @@ type Mutation
   adminAssignRole(input: AssignRoleInput!): RoleAssignment @join__field(graph: STRAWBERRY)
 
   """Added in 26.3.0. Revoke a role from a user (admin only)."""
-  adminRevokeRole(input: RevokeRoleInput!): RoleAssignment @join__field(graph: STRAWBERRY)
+  adminRevokeRole(input: RevokeRoleInput!): RoleAssignment @join__field(graph: STRAWBERRY) @deprecated(reason: "Deprecated since 26.10.0. Use `revokeRole`.")
 
   """Added in 26.3.0. Bulk assign a role to multiple users (admin only)."""
   adminBulkAssignRole(input: BulkAssignRoleInput!): BulkAssignRolePayload @join__field(graph: STRAWBERRY)
@@ -14348,6 +14348,9 @@ type Mutation
   Added in 26.4.4. Replace one role's entire scoped-permission set (admin only).
   """
   adminReplaceRolePermissions(input: ReplaceRolePermissionsInput!): ReplaceRolePermissionsPayload @join__field(graph: STRAWBERRY)
+
+  """Added in 26.10.0. Revoke a role from a user."""
+  revokeRole(input: RevokeRoleInput!): RoleAssignment! @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.4.4. Create role invitations by email. Deprecated since 26.9.0.
