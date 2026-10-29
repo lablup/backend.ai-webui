@@ -9,15 +9,15 @@ import { useTranslation } from 'react-i18next';
 
 /**
  * Clears all Backend.AI login-related localStorage keys and sessionStorage.
+ * Settings keys (`backendaiwebui.settings`, theme, lang, …) survive.
  */
 function clearLoginStorage() {
-  const keys = Object.keys(localStorage);
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
-    if (/^(BackendAIWebUI\.login\.)/.test(key)) {
+  const loginRelated = /^backendaiwebui\.(login\.|appproxy-permit-key)/i;
+  Object.keys(localStorage)
+    .filter((key) => loginRelated.test(key))
+    .forEach((key) => {
       localStorage.removeItem(key);
-    }
-  }
+    });
   sessionStorage.clear();
 }
 
