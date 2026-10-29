@@ -7,7 +7,7 @@
 - `react/`는 workspace package `backend.ai-ui`(BUI)를 build된 `dist/`가 아니라 `packages/backend.ai-ui/src`의 source로 읽는다.
 - BUI `package.json`의 `exports`가 유일한 원천이다. `"."`, `"./locale/*"`, `"./theme"`는 맨 앞에 [export condition](#용어) `@backend.ai/source`를 두고 그 condition이 source 파일을 가리킨다. `types`와 `import`는 `dist/`를 그대로 가리키므로 npm 소비자는 바뀌지 않는다.
 - `react/`의 세 resolver(TypeScript, Vite, Vitest)는 그 condition을 켜기만 하고, `backend.ai-ui`를 위한 `paths`·`include`·`alias`는 두지 않는다.
-- Node가 직접 실행하는 `astryx theme build`는 BUI를 theme token만 담은 subpath `backend.ai-ui/theme`로 import하고, `--conditions=@backend.ai/source`로 그 source를 읽는다. 이 source는 transform 없이 Node가 읽으므로 `dist/` build가 필요 없다.
+- Node가 직접 실행하는 `astryx theme build`는 BUI를 theme token만 담은 subpath `backend.ai-ui/theme`로 import하고, `--conditions=@backend.ai/source`로 resolve한 그 source 경로를 jiti에 `JITI_ALIAS`로 넘겨 읽는다. 이 source는 transform 없이 Node가 읽으므로 `dist/` build가 필요 없다.
 
 ## Context
 
@@ -36,7 +36,7 @@ flowchart LR
   buitsc -- "BUI tsconfig include" --> srcdir
   vite -- "@backend.ai/source 켬" --> src
   vitest -- "@backend.ai/source 켬" --> src
-  verify -- "NODE_OPTIONS로 condition을 켜고 실행" --> node
+  verify -- "condition으로 resolve한 경로를 JITI_ALIAS로 넘겨 실행" --> node
   node -- "@backend.ai/source 켬, src/theme/index.ts만" --> src
   npm -- "condition 없음" --> dist
 ```
@@ -83,7 +83,7 @@ flowchart LR
 ### 4. Node 도구는 Node가 읽는 subpath로만 BUI를 import한다
 
 - **Theme recipe import**: `astryx theme build`가 jiti로 읽는 theme recipe(`react/src/astryx-theme/backendAiTheme.ts`)는 BUI를 `backend.ai-ui/theme`로만 import한다. recipe가 barrel `backend.ai-ui`를 import하면 Node가 `graphql` tag와 JSX가 든 source를 읽게 되어 build가 실패한다.
-- **Condition in Node**: Node가 실행하는 도구는 `NODE_OPTIONS="--conditions=@backend.ai/source"`로 condition을 켠다. `scripts/verify.sh`의 `check_astryx_theme_built`와 `react/src/astryx-theme/built/index.ts`에 적힌 재생성 절차가 그렇게 실행한다. condition이 없으면 Node는 `dist/theme.js`를 읽으므로, `dist/`가 없으면 resolve에 실패하고 오래되었으면 낡은 값으로 검사한다.
+- **Condition in Node**: Node가 실행하는 도구는 `node --conditions=@backend.ai/source`의 `require.resolve('backend.ai-ui/theme')`로 source 경로를 얻는다. `astryx theme build`가 theme을 읽는 jiti는 Node의 `--conditions`를 따르지 않고 `node`·`import` condition으로 먼저 resolve하므로, 그 경로를 `JITI_ALIAS`로 넘긴다. `scripts/verify.sh`의 `check_astryx_theme_built`와 `react/src/astryx-theme/built/index.ts`에 적힌 재생성 절차가 그렇게 실행한다. alias가 없으면 jiti는 `dist/theme.js`가 있을 때 그것을 읽으므로, 오래된 `dist/`로 낡은 값을 검사한다.
 - **Loadable subpath only**: BUI의 다른 code가 필요한 Node 도구를 더하는 PR은 Relay·JSX·CSS·svg transform 없이 Node가 읽을 수 있는 source만 담은 subpath를 BUI에 더하고, 그 subpath로 import한다. Node 도구는 barrel을 import하지 않는다.
 - **No dist build**: `scripts/verify.sh`와 CI는 Node 도구 앞에서 BUI를 build하지 않는다. `astryx theme build`는 `verify.sh`에서만 돌고 CI workflow는 돌리지 않는다.
 
