@@ -163,7 +163,6 @@
     "KeyRequired": "キーを入力してください。",
     "Label": "ラベル",
     "LabelsSaved": "ラベルを保存しました。",
-    "RemoveLabel": "ラベルを削除",
     "Save": "保存",
     "SomeLabelsFailed": "{{count}}件のラベル変更に失敗しました",
     "Target": "対象",

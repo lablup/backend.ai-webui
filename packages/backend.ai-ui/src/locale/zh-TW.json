@@ -163,7 +163,6 @@
     "KeyRequired": "請輸入鍵。",
     "Label": "標籤",
     "LabelsSaved": "標籤已儲存。",
-    "RemoveLabel": "刪除標籤",
     "Save": "儲存",
     "SomeLabelsFailed": "{{count}} 項標籤變更失敗",
     "Target": "對象",

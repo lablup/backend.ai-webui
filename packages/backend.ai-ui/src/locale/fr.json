@@ -163,7 +163,6 @@
     "KeyRequired": "Saisissez une clé.",
     "Label": "Libellé",
     "LabelsSaved": "Libellés enregistrés.",
-    "RemoveLabel": "Supprimer le libellé",
     "Save": "Enregistrer",
     "SomeLabelsFailed": "{{count}} modifications de libellés ont échoué",
     "Target": "Cible",

@@ -6,15 +6,13 @@ import { Form, type FormInstance } from '../../form-engine';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import type { BAILabelableEntityType } from '../../hooks/useLabelableEntityTypes';
 import BAIBulkErrorModal from '../BAIBulkErrorModal';
+import BAIDynamicList from '../BAIDynamicList';
 import BAIFlex from '../BAIFlex';
 import BAIModal, { type BAIModalProps } from '../BAIModal';
 import BAITextInput from '../BAITextInput';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import { formatEntityLabel } from './BAIEntityLabelTokens';
-import { Button } from '@lablup/ui-common/Button';
-import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
-import { PlusIcon, Trash2 } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
@@ -240,6 +238,7 @@ const BAIEntityLabelSettingModalContent = ({
               })
             : t('comp:BAIEntityLabelSettingModal.EditLabels')
         }
+        width={720}
         {...modalProps}
         open={modalProps.open && failures.length === 0}
         okText={t('comp:BAIEntityLabelSettingModal.Save')}
@@ -272,104 +271,94 @@ const BAIEntityLabelSettingModalContent = ({
           >
             <Form.List name="labels">
               {(fields, { add, remove }) => (
-                <BAIFlex direction="column" gap="xs" align="stretch">
-                  {fields.map(({ key, name, ...restField }) => (
-                    <BAIFlex
-                      key={key}
-                      direction="row"
-                      align="baseline"
-                      gap="xs"
-                    >
-                      <Form.Item
-                        {...restField}
-                        name={[name, 'key']}
-                        style={{ marginBottom: 0, flex: 1 }}
-                        rules={[
-                          {
-                            required: true,
-                            message: t(
-                              'comp:BAIEntityLabelSettingModal.KeyRequired',
-                            ),
-                          },
-                          {
-                            max: LABEL_MAX_LENGTH,
-                            message: t(
-                              'comp:BAIEntityLabelSettingModal.TooLong',
-                              { max: LABEL_MAX_LENGTH },
-                            ),
-                          },
-                          ({ getFieldValue }) => ({
-                            validator(_rule, labelKey) {
-                              const keys = (
-                                getFieldValue(
-                                  'labels',
-                                ) as LabelFormValues['labels']
-                              ).map((row) => row?.key);
-                              return labelKey &&
-                                keys.filter((k) => k === labelKey).length > 1
-                                ? Promise.reject(
-                                    t(
-                                      'comp:BAIEntityLabelSettingModal.KeyMustBeUnique',
-                                    ),
-                                  )
-                                : Promise.resolve();
+                <BAIDynamicList
+                  items={fields}
+                  getItemKey={(field) => field.key}
+                  onAdd={() => add()}
+                  onRemove={(field) => remove(field.name)}
+                  addLabel={t('comp:BAIEntityLabelSettingModal.AddLabel')}
+                  columns={[
+                    {
+                      key: 'key',
+                      header: t('comp:BAIEntityLabelSettingModal.Key'),
+                      render: ({ key: _key, name, ...restField }, index) => (
+                        <Form.Item
+                          {...restField}
+                          name={[name, 'key']}
+                          style={{ marginBottom: 0 }}
+                          rules={[
+                            {
+                              required: true,
+                              message: t(
+                                'comp:BAIEntityLabelSettingModal.KeyRequired',
+                              ),
                             },
-                          }),
-                        ]}
-                      >
-                        <BAITextInput
-                          aria-label={t('comp:BAIEntityLabelSettingModal.Key')}
-                          placeholder={t('comp:BAIEntityLabelSettingModal.Key')}
-                        />
-                      </Form.Item>
-                      <Form.Item
-                        {...restField}
-                        name={[name, 'value']}
-                        style={{ marginBottom: 0, flex: 1 }}
-                        rules={[
-                          {
-                            required: true,
-                            message: t(
-                              'comp:BAIEntityLabelSettingModal.ValueRequired',
-                            ),
-                          },
-                          {
-                            max: LABEL_MAX_LENGTH,
-                            message: t(
-                              'comp:BAIEntityLabelSettingModal.TooLong',
-                              { max: LABEL_MAX_LENGTH },
-                            ),
-                          },
-                        ]}
-                      >
-                        <BAITextInput
-                          aria-label={t(
-                            'comp:BAIEntityLabelSettingModal.Value',
-                          )}
-                          placeholder={t(
-                            'comp:BAIEntityLabelSettingModal.Value',
-                          )}
-                        />
-                      </Form.Item>
-                      <IconButton
-                        variant="ghost"
-                        label={t('comp:BAIEntityLabelSettingModal.RemoveLabel')}
-                        tooltip={t(
-                          'comp:BAIEntityLabelSettingModal.RemoveLabel',
-                        )}
-                        icon={<Trash2 size="1em" />}
-                        onClick={() => remove(name)}
-                      />
-                    </BAIFlex>
-                  ))}
-                  <Button
-                    variant="secondary"
-                    width="100%"
-                    icon={<PlusIcon />}
-                    label={t('comp:BAIEntityLabelSettingModal.AddLabel')}
-                    onClick={() => add()}
-                  />
-                </BAIFlex>
+                            {
+                              max: LABEL_MAX_LENGTH,
+                              message: t(
+                                'comp:BAIEntityLabelSettingModal.TooLong',
+                                { max: LABEL_MAX_LENGTH },
+                              ),
+                            },
+                            ({ getFieldValue }) => ({
+                              validator(_rule, labelKey) {
+                                const keys = (
+                                  getFieldValue(
+                                    'labels',
+                                  ) as LabelFormValues['labels']
+                                ).map((row) => row?.key);
+                                return labelKey &&
+                                  keys.filter((k) => k === labelKey).length > 1
+                                  ? Promise.reject(
+                                      t(
+                                        'comp:BAIEntityLabelSettingModal.KeyMustBeUnique',
+                                      ),
+                                    )
+                                  : Promise.resolve();
+                              },
+                            }),
+                          ]}
+                          validateTrigger={['onChange', 'onBlur']}
+                        >
+                          <BAITextInput
+                            aria-label={`${t('comp:BAIEntityLabelSettingModal.Key')} ${index + 1}`}
+                          />
+                        </Form.Item>
+                      ),
+                    },
+                    {
+                      key: 'value',
+                      header: t('comp:BAIEntityLabelSettingModal.Value'),
+                      render: ({ key: _key, name, ...restField }, index) => (
+                        <Form.Item
+                          {...restField}
+                          name={[name, 'value']}
+                          style={{ marginBottom: 0 }}
+                          rules={[
+                            {
+                              required: true,
+                              message: t(
+                                'comp:BAIEntityLabelSettingModal.ValueRequired',
+                              ),
+                            },
+                            {
+                              max: LABEL_MAX_LENGTH,
+                              message: t(
+                                'comp:BAIEntityLabelSettingModal.TooLong',
+                                { max: LABEL_MAX_LENGTH },
+                              ),
+                            },
+                          ]}
+                          validateTrigger={['onChange', 'onBlur']}
+                        >
+                          <BAITextInput
+                            aria-label={`${t('comp:BAIEntityLabelSettingModal.Value')} ${index + 1}`}
+                          />
+                        </Form.Item>
+                      ),
+                    },
+                  ]}
+                />
               )}
             </Form.List>
           </Form>

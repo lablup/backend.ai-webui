@@ -19,8 +19,8 @@ import {
 import { useBAILogger } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIAlert from '../BAIAlert';
-import BAIButton from '../BAIButton';
 import BAICheckboxInput from '../BAICheckboxInput';
+import BAIDynamicList from '../BAIDynamicList';
 import BAIFlex from '../BAIFlex';
 import BAIModal, { BAIModalProps } from '../BAIModal';
 import BAINumberInput from '../BAINumberInput';
@@ -29,7 +29,6 @@ import BAITextArea from '../BAITextArea';
 import BAITextInput from '../BAITextInput';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import BAIRuntimeVariantSelect from './BAIRuntimeVariantSelect';
-import { PlusIcon, Trash2 } from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { graphql, useFragment, useMutation } from 'react-relay';
 import { PayloadError } from 'relay-runtime';
@@ -486,6 +485,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
 
   return (
     <BAIModal
+      width={720}
       {...baiModalProps}
       title={
         preset
@@ -1007,6 +1007,9 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
             {uiType === 'SELECT' ? (
               <Form.List
                 name="choices"
+                // Removing the last row is a step, not an error; the
+                // at-least-one rule runs on save.
+                validateTrigger={false}
                 rules={[
                   {
                     validator: async (_, choices) => {
@@ -1029,75 +1032,88 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                       'comp:BAIRuntimeVariantPresetSettingModal.Choices',
                     )}
                   >
-                    <BAIFlex direction="column" align="stretch" gap="xs">
-                      {fields.map(({ key, name, ...restField }) => (
-                        <BAIFlex key={key} gap="xs" align="start">
-                          <Form.Item
-                            {...restField}
-                            name={[name, 'value']}
-                            style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
-                            rules={[
-                              {
-                                required: true,
-                                message: t(
-                                  'comp:BAIRuntimeVariantPresetSettingModal.ChoiceValueRequired',
-                                ),
-                              },
-                            ]}
-                          >
-                            <BAITextInput
-                              aria-label={t(
-                                'comp:BAIRuntimeVariantPresetSettingModal.ChoiceValue',
-                              )}
-                              placeholder={t(
-                                'comp:BAIRuntimeVariantPresetSettingModal.ChoiceValuePlaceholder',
-                              )}
-                            />
-                          </Form.Item>
-                          <Form.Item
-                            {...restField}
-                            name={[name, 'label']}
-                            style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
-                            rules={[
-                              {
-                                required: true,
-                                message: t(
-                                  'comp:BAIRuntimeVariantPresetSettingModal.ChoiceLabelRequired',
-                                ),
-                              },
-                            ]}
-                          >
-                            <BAITextInput
-                              aria-label={t(
-                                'comp:BAIRuntimeVariantPresetSettingModal.ChoiceLabel',
-                              )}
-                              placeholder={t(
-                                'comp:BAIRuntimeVariantPresetSettingModal.ChoiceLabelPlaceholder',
-                              )}
-                            />
-                          </Form.Item>
-                          <BAIButton
-                            type="text"
-                            danger
-                            icon={<Trash2 />}
-                            aria-label={t('general.button.Delete')}
-                            style={{ flexShrink: 0 }}
-                            onClick={() => remove(name)}
-                          />
-                        </BAIFlex>
-                      ))}
-                      <BAIButton
-                        type="dashed"
-                        icon={<PlusIcon />}
-                        onClick={() => add()}
-                        block
-                      >
-                        {t(
-                          'comp:BAIRuntimeVariantPresetSettingModal.AddChoice',
-                        )}
-                      </BAIButton>
-                      <Form.ErrorList errors={errors} />
-                    </BAIFlex>
+                    <BAIDynamicList
+                      items={fields}
+                      getItemKey={(field) => field.key}
+                      onAdd={() => {
+                        add();
+                        // A failed save's message clears once a row fixes it.
+                        if (errors.length > 0) {
+                          form.validateFields(['choices']).catch(() => {});
+                        }
+                      }}
+                      onRemove={(field) => remove(field.name)}
+                      addLabel={t(
+                        'comp:BAIRuntimeVariantPresetSettingModal.AddChoice',
+                      )}
+                      columns={[
+                        {
+                          key: 'value',
+                          header: t(
+                            'comp:BAIRuntimeVariantPresetSettingModal.ChoiceValue',
+                          ),
+                          render: (
+                            { key: _key, name, ...restField },
+                            index,
+                          ) => (
+                            <Form.Item
+                              {...restField}
+                              name={[name, 'value']}
+                              style={{ marginBottom: 0 }}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: t(
+                                    'comp:BAIRuntimeVariantPresetSettingModal.ChoiceValueRequired',
+                                  ),
+                                },
+                              ]}
+                              validateTrigger={['onChange', 'onBlur']}
+                            >
+                              <BAITextInput
+                                aria-label={`${t('comp:BAIRuntimeVariantPresetSettingModal.ChoiceValue')} ${index + 1}`}
+                                placeholder={t(
+                                  'comp:BAIRuntimeVariantPresetSettingModal.ChoiceValuePlaceholder',
+                                )}
+                              />
+                            </Form.Item>
+                          ),
+                        },
+                        {
+                          key: 'label',
+                          header: t(
+                            'comp:BAIRuntimeVariantPresetSettingModal.ChoiceLabel',
+                          ),
+                          render: (
+                            { key: _key, name, ...restField },
+                            index,
+                          ) => (
+                            <Form.Item
+                              {...restField}
+                              name={[name, 'label']}
+                              style={{ marginBottom: 0 }}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: t(
+                                    'comp:BAIRuntimeVariantPresetSettingModal.ChoiceLabelRequired',
+                                  ),
+                                },
+                              ]}
+                              validateTrigger={['onChange', 'onBlur']}
+                            >
+                              <BAITextInput
+                                aria-label={`${t('comp:BAIRuntimeVariantPresetSettingModal.ChoiceLabel')} ${index + 1}`}
+                                placeholder={t(
+                                  'comp:BAIRuntimeVariantPresetSettingModal.ChoiceLabelPlaceholder',
+                                )}
+                              />
+                            </Form.Item>
+                          ),
+                        },
+                      ]}
+                    />
+                    <Form.ErrorList errors={errors} />
                   </Form.Item>
                 )}
               </Form.List>

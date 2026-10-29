@@ -163,7 +163,6 @@
     "KeyRequired": "Inserisci una chiave.",
     "Label": "Etichetta",
     "LabelsSaved": "Etichette salvate.",
-    "RemoveLabel": "Rimuovi etichetta",
     "Save": "Salva",
     "SomeLabelsFailed": "{{count}} modifiche alle etichette non riuscite",
     "Target": "Destinazione",

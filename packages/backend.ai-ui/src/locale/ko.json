@@ -163,7 +163,6 @@
     "KeyRequired": "키를 입력하세요.",
     "Label": "라벨",
     "LabelsSaved": "라벨을 저장했습니다.",
-    "RemoveLabel": "라벨 삭제",
     "Save": "저장",
     "SomeLabelsFailed": "라벨 변경 {{count}}건 실패",
     "Target": "대상",

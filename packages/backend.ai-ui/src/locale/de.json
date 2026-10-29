@@ -163,7 +163,6 @@
     "KeyRequired": "Geben Sie einen Schlüssel ein.",
     "Label": "Label",
     "LabelsSaved": "Labels gespeichert.",
-    "RemoveLabel": "Label entfernen",
     "Save": "Speichern",
     "SomeLabelsFailed": "{{count}} Labeländerungen fehlgeschlagen",
     "Target": "Ziel",
