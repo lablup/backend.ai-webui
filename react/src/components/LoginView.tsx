@@ -70,7 +70,13 @@ import { jotaiStore } from './DefaultProviders';
 import LoginFormPanel, { type EndpointHistoryEntry } from './LoginFormPanel';
 import { Button } from '@lablup/ui-common/Button';
 import { Text } from '@lablup/ui-common/Text';
-import { BAIAlert, BAIFlex, BAIModal, useBAILogger } from 'backend.ai-ui';
+import {
+  BAIAlert,
+  BAIButton,
+  BAIFlex,
+  BAIModal,
+  useBAILogger,
+} from 'backend.ai-ui';
 import i18n from 'i18next';
 import { useAtomValue, useSetAtom } from 'jotai';
 import React, {
@@ -85,6 +91,21 @@ import { useTranslation } from 'react-i18next';
 type ConnectionMode = 'SESSION' | 'API';
 
 const STORED_API_ENDPOINT_KEY = 'backendaiwebui.api_endpoint';
+
+// Logged-out: turn the splash into the login backdrop (keep the weave +
+// version/copyright metadata, hide the loader); the login modals render above
+// it. Older index.html shells without __enterLoginBackdrop get full dismissal.
+function enterLoginBackdrop() {
+  const splashApi = globalThis as unknown as {
+    __enterLoginBackdrop?: () => void;
+    __dismissSplash?: () => void;
+  };
+  if (typeof splashApi.__enterLoginBackdrop === 'function') {
+    splashApi.__enterLoginBackdrop();
+  } else {
+    splashApi.__dismissSplash?.();
+  }
+}
 
 const LoginView: React.FC<{
   /**
@@ -164,6 +185,11 @@ const LoginView: React.FC<{
   // form would only get "already logged in" back, so offer retry / log out.
   const [sessionLoadError, setSessionLoadError] = useState<string | null>(null);
   const [isSessionLogoutFailed, setIsSessionLogoutFailed] = useState(false);
+  // A silent login could not reach the manager, so whether the session is
+  // live is unknown; offer retry instead of a login form that looks logged out.
+  const [serverUnreachableRetry, setServerUnreachableRetry] = useState<
+    (() => Promise<void>) | null
+  >(null);
   const [loginError, setLoginError] = useState<{
     message: string;
     description?: string;
@@ -357,19 +383,8 @@ const LoginView: React.FC<{
     }
     setIsLoginPanelOpen(true);
     setIsBlockPanelOpen(false);
-    // Logged-out: turn the splash into the login backdrop (keep the weave +
-    // version/copyright metadata, hide the loader). The login modal renders
-    // above it. Fall back to full dismissal on older index.html shells that
-    // don't expose __enterLoginBackdrop.
-    const splashApi = globalThis as unknown as {
-      __enterLoginBackdrop?: () => void;
-      __dismissSplash?: () => void;
-    };
-    if (typeof splashApi.__enterLoginBackdrop === 'function') {
-      splashApi.__enterLoginBackdrop();
-    } else {
-      splashApi.__dismissSplash?.();
-    }
+    setServerUnreachableRetry(null);
+    enterLoginBackdrop();
 
     const urlParams = new URLSearchParams(window.location.search);
     const tokenParam = urlParams.get('token');
@@ -393,6 +408,7 @@ const LoginView: React.FC<{
     }
     setIsLoginPanelOpen(false);
     setIsBlockPanelOpen(false);
+    setServerUnreachableRetry(null);
     setLoginError(null);
   }, []);
 
@@ -429,7 +445,20 @@ const LoginView: React.FC<{
     setIsLoginPanelOpen(false);
     setIsLoading(false);
     setIsSessionLogoutFailed(false);
+    setServerUnreachableRetry(null);
     setSessionLoadError(err.message);
+  };
+
+  const showServerUnreachable = (retry: () => Promise<void>) => {
+    if (blockTimerRef.current) {
+      clearTimeout(blockTimerRef.current);
+      blockTimerRef.current = null;
+    }
+    setIsBlockPanelOpen(false);
+    setIsLoginPanelOpen(false);
+    setIsLoading(false);
+    enterLoginBackdrop();
+    setServerUnreachableRetry(() => retry);
   };
 
   const clearSavedLoginInfo = useCallback(() => {
@@ -814,6 +843,12 @@ const LoginView: React.FC<{
         await probeManager(client);
       } catch (err: unknown) {
         if (isCancelled()) return;
+        if (!showError && !(err instanceof LoginProbeCancelledError)) {
+          showServerUnreachable(async () => {
+            await connectUsingSessionRef.current?.(false, ep);
+          });
+          return;
+        }
         setIsBlockPanelOpen(false);
         open();
         setIsLoading(false);
@@ -1074,7 +1109,7 @@ const LoginView: React.FC<{
 
   // Check if a session login exists on the server.
   // Used by the orchestration hook as `onCheckLogin`.
-  const checkLogin = useCallback(async (): Promise<boolean> => {
+  const checkLogin = useCallback(async (): Promise<boolean | 'unreachable'> => {
     const ep = resolveEndpoint();
     if ((globalThis as Record<string, unknown>).isElectron) {
       await loadConfigFromWebServer(ep);
@@ -1084,11 +1119,17 @@ const LoginView: React.FC<{
       const { client } = createBackendAIClient('', '', ep, 'SESSION');
       clientRef.current = client;
       const attempt = loginAttemptRef.current;
+      const sessionProbe = probeLoginSession(client);
+      // Awaited only once the manager answers; keep its rejection handled.
+      sessionProbe.catch(() => {});
       try {
-        const [, bootstrap] = await Promise.all([
-          probeManager(client),
-          probeLoginSession(client),
-        ]);
+        await probeManager(client);
+      } catch (err) {
+        if (attempt !== loginAttemptRef.current) return false;
+        return err instanceof LoginProbeCancelledError ? false : 'unreachable';
+      }
+      try {
+        const bootstrap = await sessionProbe;
         if (attempt !== loginAttemptRef.current) return false;
         probedSessionRef.current = bootstrap
           ? { endpoint: ep, client, bootstrap }
@@ -1118,6 +1159,7 @@ const LoginView: React.FC<{
     onOpen: open,
     onBlock: block,
     onCheckLogin: checkLogin,
+    onServerUnreachable: showServerUnreachable,
     onLogoutSession: logoutSession,
     apiEndpoint,
     connectionMode: effectiveConnectionMode,
@@ -1380,6 +1422,44 @@ const LoginView: React.FC<{
             <BAIAlert type="error" showIcon title={t('error.UnknownError')} />
           ) : null}
         </BAIFlex>
+      </BAIModal>
+
+      <BAIModal
+        open={serverUnreachableRetry !== null}
+        title={t('login.CannotReachServer')}
+        footer={
+          <BAIFlex gap="xs" justify="end">
+            <Button
+              onClick={() => {
+                // Drop a Retry still in flight, or its failure reopens this dialog over the form.
+                loginAttemptRef.current += 1;
+                probedSessionRef.current = null;
+                open();
+                notification(t('error.CannotConnectToServer'));
+              }}
+              label={t('login.GoToLogin')}
+            />
+            <BAIButton
+              type="primary"
+              action={async () => {
+                try {
+                  await serverUnreachableRetry?.();
+                } catch (err) {
+                  logger.error('[LoginView] retry after unreachable', err);
+                  open();
+                }
+              }}
+            >
+              {t('button.Retry')}
+            </BAIButton>
+          </BAIFlex>
+        }
+        closable={false}
+        mask={{ closable: false }}
+      >
+        <Text as="p" display="block" style={{ margin: 0 }}>
+          {t('login.CannotReachServerDesc')}
+        </Text>
       </BAIModal>
     </>
   );

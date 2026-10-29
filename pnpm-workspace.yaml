@@ -117,10 +117,10 @@ minimumReleaseAgeExclude:
   # 2026-10-23. Remove after 2026-10-30.
   - "@yao-pkg/pkg@6.24.0"
   - "@yao-pkg/pkg-fetch@3.6.7"
-  # Electron 44.9.3: the newest release of the 44 line (41 is EOL), published
-  # 2026-10-21. Remove after 2026-10-28, or when the line moves to the first
-  # 44.9.x that bundles Node 24.22.1.
-  - "electron@44.9.3"
+  # Electron 44.10.0: the first 44.x release bundling Node 24.22.1 (October
+  # 2026 Node.js security release), published 2026-10-27. Remove after
+  # 2026-11-03.
+  - "electron@44.10.0"
   # handlebars 4.7.10: published 2026-10-05, inside the 7-day window at
   # adoption time. It is the first release patching two critical advisories
   # in 4.7.9 (GHSA-8r5x-fm3f-whwj, GHSA-p8wg-vrv2-v86f) that fail the

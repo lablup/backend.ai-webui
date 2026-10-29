@@ -305,7 +305,6 @@ Backend.AI WebUI는 사설 저장소 접근 등 유연성을 제공하기 위해
 변경되거나 제거될 수 있습니다. 각 기능은 **활성화** 체크박스로 켤 수 있습니다.
 
 ![](../images/experimental_features.png)
-<!-- TODO: Recapture without the removed "Command palette" row (#10546) -->
 
 - **AI 에이전트**: AI 에이전트 기능을 활성화합니다. 이 기능은 WebUI 내에서
   에이전트 기반 AI 기능을 제공합니다. 활성화하면 세션에서 AI 에이전트 기능을
