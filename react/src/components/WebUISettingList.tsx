@@ -26,9 +26,8 @@ import { useWebUISettingLabels } from './WebUISettingLabels';
 import { Button } from '@lablup/ui-common/Button';
 import {
   BAIAlert,
-  BAICheckboxList,
-  BAICheckboxListItem,
   BAIFlex,
+  BAIMultiSelector,
   BAIModal,
   BAINumberInput,
   BAIUncontrolledInput,
@@ -226,20 +225,16 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
           defaultValue: fileValue,
           value: _.isEqual(current, fileValue) ? fileValue : current,
           children: definition.options ? (
-            <BAICheckboxList
+            <BAIMultiSelector
               aria-label={label.title}
-              density="compact"
+              width={320}
+              options={definition.options.map((option) => ({
+                value: option.value,
+                label: option.label,
+              }))}
               value={list}
               onChange={(values) => setValue(definition, values)}
-            >
-              {definition.options.map((option) => (
-                <BAICheckboxListItem
-                  key={option.value}
-                  value={option.value}
-                  label={option.label}
-                />
-              ))}
-            </BAICheckboxList>
+            />
           ) : definition.key === 'pluginPage' ? (
             <PluginPathListInput
               value={list}
