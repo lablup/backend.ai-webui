@@ -12,7 +12,6 @@
     "@dicebear/shapes": "^9.4.2",
     "@lablup/ui-common": "catalog:",
     "@lexical/code": "0.46.0",
-    "@lexical/headless": "0.46.0",
     "@lexical/html": "0.46.0",
     "@lexical/link": "0.46.0",
     "@lexical/list": "0.46.0",
