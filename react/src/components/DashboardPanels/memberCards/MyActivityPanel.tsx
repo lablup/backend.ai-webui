@@ -56,6 +56,7 @@ const MyActivityTable: React.FC<{
       ...createdAt,
       status: { in: [...AUDIT_FAILURE_STATUSES] },
     },
+    failuresOnly,
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
   };
@@ -66,6 +67,7 @@ const MyActivityTable: React.FC<{
         $scope: AuditLogScope!
         $filter: AuditLogFilter!
         $failureFilter: AuditLogFilter!
+        $failuresOnly: Boolean!
         $limit: Int!
         $offset: Int!
       ) {
@@ -83,11 +85,12 @@ const MyActivityTable: React.FC<{
             }
           }
         }
+        # Read only for the "N failures" link, which failures-only mode hides.
         failures: scopedAuditLogsV2(
           scope: $scope
           filter: $failureFilter
           limit: 1
-        ) {
+        ) @skip(if: $failuresOnly) {
           count
         }
       }

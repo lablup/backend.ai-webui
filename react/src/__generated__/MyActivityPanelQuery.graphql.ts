@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4fd882e4242f83e6c2daf4a0ec1c4510>>
+ * @generated SignedSource<<3659a212ccf9b89a0f7474fd3813fb8c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -76,13 +76,14 @@ export type UUIDFilter = {
 };
 export type MyActivityPanelQuery$variables = {
   failureFilter: AuditLogFilter;
+  failuresOnly: boolean;
   filter: AuditLogFilter;
   limit: number;
   offset: number;
   scope: AuditLogScope;
 };
 export type MyActivityPanelQuery$data = {
-  readonly failures: {
+  readonly failures?: {
     readonly count: number;
   } | null | undefined;
   readonly logs: {
@@ -108,29 +109,34 @@ var v0 = {
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "filter"
+  "name": "failuresOnly"
 },
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "limit"
+  "name": "filter"
 },
 v3 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "offset"
+  "name": "limit"
 },
 v4 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "scope"
+  "name": "offset"
 },
 v5 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "scope"
+},
+v6 = {
   "kind": "Variable",
   "name": "scope",
   "variableName": "scope"
 },
-v6 = [
+v7 = [
   {
     "kind": "Variable",
     "name": "filter",
@@ -156,47 +162,54 @@ v6 = [
       }
     ]
   },
-  (v5/*: any*/)
+  (v6/*: any*/)
 ],
-v7 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "count",
   "storageKey": null
 },
-v8 = {
-  "alias": "failures",
-  "args": [
-    {
-      "kind": "Variable",
-      "name": "filter",
-      "variableName": "failureFilter"
-    },
-    {
-      "kind": "Literal",
-      "name": "limit",
-      "value": 1
-    },
-    (v5/*: any*/)
-  ],
-  "concreteType": "AuditLogV2Connection",
-  "kind": "LinkedField",
-  "name": "scopedAuditLogsV2",
-  "plural": false,
-  "selections": [
-    (v7/*: any*/)
-  ],
-  "storageKey": null
-},
 v9 = {
+  "condition": "failuresOnly",
+  "kind": "Condition",
+  "passingValue": false,
+  "selections": [
+    {
+      "alias": "failures",
+      "args": [
+        {
+          "kind": "Variable",
+          "name": "filter",
+          "variableName": "failureFilter"
+        },
+        {
+          "kind": "Literal",
+          "name": "limit",
+          "value": 1
+        },
+        (v6/*: any*/)
+      ],
+      "concreteType": "AuditLogV2Connection",
+      "kind": "LinkedField",
+      "name": "scopedAuditLogsV2",
+      "plural": false,
+      "selections": [
+        (v8/*: any*/)
+      ],
+      "storageKey": null
+    }
+  ]
+},
+v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v10 = {
+v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -210,7 +223,8 @@ return {
       (v1/*: any*/),
       (v2/*: any*/),
       (v3/*: any*/),
-      (v4/*: any*/)
+      (v4/*: any*/),
+      (v5/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
@@ -218,13 +232,13 @@ return {
     "selections": [
       {
         "alias": "logs",
-        "args": (v6/*: any*/),
+        "args": (v7/*: any*/),
         "concreteType": "AuditLogV2Connection",
         "kind": "LinkedField",
         "name": "scopedAuditLogsV2",
         "plural": false,
         "selections": [
-          (v7/*: any*/),
+          (v8/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -255,7 +269,7 @@ return {
         ],
         "storageKey": null
       },
-      (v8/*: any*/)
+      (v9/*: any*/)
     ],
     "type": "Query",
     "abstractKey": null
@@ -263,24 +277,25 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v4/*: any*/),
-      (v1/*: any*/),
-      (v0/*: any*/),
+      (v5/*: any*/),
       (v2/*: any*/),
-      (v3/*: any*/)
+      (v0/*: any*/),
+      (v1/*: any*/),
+      (v3/*: any*/),
+      (v4/*: any*/)
     ],
     "kind": "Operation",
     "name": "MyActivityPanelQuery",
     "selections": [
       {
         "alias": "logs",
-        "args": (v6/*: any*/),
+        "args": (v7/*: any*/),
         "concreteType": "AuditLogV2Connection",
         "kind": "LinkedField",
         "name": "scopedAuditLogsV2",
         "plural": false,
         "selections": [
-          (v7/*: any*/),
+          (v8/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -297,7 +312,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v9/*: any*/),
+                  (v10/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -354,7 +369,7 @@ return {
                     "name": "entityType",
                     "storageKey": null
                   },
-                  (v10/*: any*/),
+                  (v11/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -377,8 +392,8 @@ return {
                     "name": "user",
                     "plural": false,
                     "selections": [
-                      (v9/*: any*/),
                       (v10/*: any*/),
+                      (v11/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -409,20 +424,20 @@ return {
         ],
         "storageKey": null
       },
-      (v8/*: any*/)
+      (v9/*: any*/)
     ]
   },
   "params": {
-    "cacheID": "04361065c74c6fe58d00f966ed5c4023",
+    "cacheID": "125e0fee558e01e1b0abd2a087e96444",
     "id": null,
     "metadata": {},
     "name": "MyActivityPanelQuery",
     "operationKind": "query",
-    "text": "query MyActivityPanelQuery(\n  $scope: AuditLogScope!\n  $filter: AuditLogFilter!\n  $failureFilter: AuditLogFilter!\n  $limit: Int!\n  $offset: Int!\n) {\n  logs: scopedAuditLogsV2(scope: $scope, filter: $filter, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAIAuditLogNodesFragment\n        id\n      }\n    }\n  }\n  failures: scopedAuditLogsV2(scope: $scope, filter: $failureFilter, limit: 1) {\n    count\n  }\n}\n\nfragment BAIAuditLogNodesFragment on AuditLogV2 {\n  id\n  createdAt\n  operation\n  status\n  description\n  duration\n  requestId\n  actionId\n  entityType\n  entityId\n  triggeredBy\n  clientIp @since(version: \"26.9.0\")\n  user {\n    id\n    entityId\n    basicInfo {\n      email\n    }\n  }\n}\n"
+    "text": "query MyActivityPanelQuery(\n  $scope: AuditLogScope!\n  $filter: AuditLogFilter!\n  $failureFilter: AuditLogFilter!\n  $failuresOnly: Boolean!\n  $limit: Int!\n  $offset: Int!\n) {\n  logs: scopedAuditLogsV2(scope: $scope, filter: $filter, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAIAuditLogNodesFragment\n        id\n      }\n    }\n  }\n  failures: scopedAuditLogsV2(scope: $scope, filter: $failureFilter, limit: 1) @skip(if: $failuresOnly) {\n    count\n  }\n}\n\nfragment BAIAuditLogNodesFragment on AuditLogV2 {\n  id\n  createdAt\n  operation\n  status\n  description\n  duration\n  requestId\n  actionId\n  entityType\n  entityId\n  triggeredBy\n  clientIp @since(version: \"26.9.0\")\n  user {\n    id\n    entityId\n    basicInfo {\n      email\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "f7c4885ac7b7f7dae96e2b7742557e02";
+(node as any).hash = "4eedf878e15734688f44f45fd569276a";
 
 export default node;
