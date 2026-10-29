@@ -85,7 +85,6 @@ export interface LoginConfigState {
   allowCustomResourceAllocation: boolean;
   allowThemeMode: boolean;
   isDirectorySizeVisible: boolean;
-  eduAppNamePrefix: string;
   enableImportFromHuggingFace: boolean;
   enableExtendLoginSession: boolean;
   enableInteractiveLoginAccountSwitch: boolean;
@@ -163,7 +162,6 @@ export function getDefaultLoginConfig(): LoginConfigState {
     allowCustomResourceAllocation: true,
     allowThemeMode: false,
     isDirectorySizeVisible: false,
-    eduAppNamePrefix: '',
     enableImportFromHuggingFace: false,
     enableExtendLoginSession: false,
     enableInteractiveLoginAccountSwitch: true,
@@ -443,12 +441,6 @@ export function refreshConfigFromToml(config: any): LoginConfigState {
     defaultValue: false,
     value: g?.isDirectorySizeVisible,
   }) as boolean;
-
-  state.eduAppNamePrefix = getConfigValueByExists(g, {
-    valueType: 'string',
-    defaultValue: '',
-    value: g?.eduAppNamePrefix,
-  }) as string;
 
   state.enableImportFromHuggingFace = getConfigValueByExists(g, {
     valueType: 'boolean',
@@ -749,6 +741,5 @@ export function applyConfigToClient(cfg: LoginConfigState): void {
   client._config.inactiveList = cfg.inactiveList;
   client._config.allowSignout = cfg.allow_signout;
   client._config.enableReservoir = cfg.enableReservoir;
-  client._config.eduAppNamePrefix = cfg.eduAppNamePrefix;
   client.ready = true;
 }

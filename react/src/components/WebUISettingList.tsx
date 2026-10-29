@@ -24,11 +24,13 @@ import type { SettingItemProps } from './SettingItem';
 import SettingList, { type SettingGroup } from './SettingList';
 import { useWebUISettingLabels } from './WebUISettingLabels';
 import { Button } from '@lablup/ui-common/Button';
-import { Text } from '@lablup/ui-common/Text';
 import {
   BAIAlert,
+  BAICheckboxList,
+  BAICheckboxListItem,
   BAIFlex,
   BAIModal,
+  BAINumberInput,
   BAIUncontrolledInput,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
@@ -188,20 +190,14 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
           defaultValue: fileValue,
           value: current,
           children: (
-            <BAIUncontrolledInput
-              key={String(current)}
-              type="number"
-              defaultValue={String(current)}
-              onCommit={(raw) => {
-                const parsed = Number(raw);
-                setValue(
-                  definition,
-                  raw.trim() === '' || !Number.isFinite(parsed)
-                    ? undefined
-                    : parsed,
-                );
-              }}
-              style={{ maxWidth: 240 }}
+            <BAINumberInput
+              aria-label={label.title}
+              width={240}
+              value={current as number}
+              units={definition.unit}
+              onChange={(value) =>
+                setValue(definition, value === null ? undefined : value)
+              }
             />
           ),
         };
@@ -229,20 +225,34 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
           // Same reference when equal so the "changed" dot stays off.
           defaultValue: fileValue,
           value: _.isEqual(current, fileValue) ? fileValue : current,
-          children:
-            definition.key === 'pluginPage' ? (
-              <PluginPathListInput
-                value={list}
-                onChange={(paths) => setValue(definition, paths)}
-              />
-            ) : (
-              <BAIUncontrolledInput
-                key={joined}
-                defaultValue={joined}
-                onCommit={(raw) => setValue(definition, parseStringList(raw))}
-                style={{ maxWidth: 480 }}
-              />
-            ),
+          children: definition.options ? (
+            <BAICheckboxList
+              aria-label={label.title}
+              density="compact"
+              value={list}
+              onChange={(values) => setValue(definition, values)}
+            >
+              {definition.options.map((option) => (
+                <BAICheckboxListItem
+                  key={option.value}
+                  value={option.value}
+                  label={option.label}
+                />
+              ))}
+            </BAICheckboxList>
+          ) : definition.key === 'pluginPage' ? (
+            <PluginPathListInput
+              value={list}
+              onChange={(paths) => setValue(definition, paths)}
+            />
+          ) : (
+            <BAIUncontrolledInput
+              key={joined}
+              defaultValue={joined}
+              onCommit={(raw) => setValue(definition, parseStringList(raw))}
+              style={{ maxWidth: 480 }}
+            />
+          ),
         };
       }
     }
@@ -260,9 +270,6 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
         {
           'data-testid': `webui-settings-group-${group}`,
           title: labels.groups[group],
-          description: definitions.some((d) => d.scope === 'public') ? (
-            <Text color="secondary">{t('webuiSettings.PublicGroupDesc')}</Text>
-          ) : undefined,
           settingItems: definitions.map(toSettingItem),
         },
       ];
