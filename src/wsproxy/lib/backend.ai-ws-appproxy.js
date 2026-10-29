@@ -5,6 +5,7 @@ const ai = require('backend.ai-client');
 const bind = require('./bindStream');
 const htmldeco = require('./htmldeco');
 const { HttpsProxyAgent } = require('https-proxy-agent');
+const { pinnedTlsOptions } = require('./trustedCertificates');
 /*
 const i18next = require('i18next');
 const i18next_backend = require('i18next-sync-fs-backend');
@@ -159,11 +160,13 @@ module.exports = proxy = class Proxy extends ai.backend.Client {
           agent: agent,
           headers: optionalHeaders,
           perMessageDeflate: false,
+          ...pinnedTlsOptions(url),
         });
       } else {
         ws = new WebSocket(url, {
           headers: optionalHeaders,
           perMessageDeflate: false,
+          ...pinnedTlsOptions(url),
         });
       }
       ws.on('open', () => {
