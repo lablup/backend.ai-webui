@@ -505,8 +505,8 @@ const ResourceAllocationFormItems: React.FC<
     syncUnifiedAcceleratorIfNeeded();
   });
 
-  // Sets every resource field to the image's minimum (the `minimum-required`
-  // preset).
+  // The `minimum-required` preset: cpu / mem to the image minimum, the
+  // accelerator to the image's first type the group has (0 when it needs none).
   const updateResourceFieldsBasedOnImage = useEventNotStable(() => {
     const minimumResources: Partial<ResourceAllocationFormValue['resource']> = {
       cpu: resourceLimits.cpu?.min,
@@ -579,17 +579,6 @@ const ResourceAllocationFormItems: React.FC<
       form.setFieldsValue({
         resource: changedResources,
       });
-    }
-
-    // set to 0 when currentImage doesn't support any AI accelerator
-    if (
-      currentImage &&
-      currentImageAcceleratorLimits &&
-      currentImageAcceleratorLimits.length === 0 &&
-      !isUnifiedTarget &&
-      form.getFieldValue(['resource', 'accelerator']) !== 0
-    ) {
-      form.setFieldValue(['resource', 'accelerator'], 0);
     }
 
     if (form.getFieldValue('enabledAutomaticShmem')) {
