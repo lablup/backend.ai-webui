@@ -12,9 +12,8 @@
  * run — a cleanup hiccup must not turn a green suite red. It sweeps as the user
  * (personal folders on /data) and as the admin (/admin-data), because different
  * specs create folders under different accounts:
- *   - vfolder-crud / file-* / type-selection (user) → personal folders on /data
- *   - type-selection project (admin) → project folders, swept from /admin-data,
- *     which also lists every other admin-visible folder, so it doubles as a
+ *   - vfolder-crud / file-* (user) → folders on /data
+ *   - admin → /admin-data lists every admin-visible folder, so it doubles as a
  *     catch-all.
  *
  * The pattern is the broad `/e2e-/i` (covering `e2e-test-*`, `e2e-mod-*`, the
