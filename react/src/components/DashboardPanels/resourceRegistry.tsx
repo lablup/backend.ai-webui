@@ -148,9 +148,8 @@ const deploymentConfig: ResourceConfig<
   labelKey: 'webui.menu.Deployments',
   defaultOrder: '-createdAt',
   kind: 'deploymentNodes',
-  // `myDeployments` narrowed to the current project, exactly as the user-facing
-  // DeploymentListPage does. The project-scoped `projectDeployments` field is
-  // what the project-ADMIN page uses, so it is not the regular-member path.
+  // `myDeployments` narrowed to the current project. A `project` scope is what
+  // the project-ADMIN page uses, so it is not the regular-member path.
   query: graphql`
     query resourceRegistryDeploymentQuery(
       $filter: DeploymentFilter

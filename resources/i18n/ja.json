@@ -1037,7 +1037,6 @@
       "Ownership": "所有",
       "Path": "ストレージパス",
       "Permission": "許可",
-      "ProjectAdminDataPageAlert": "プロジェクト管理者用データページではプロジェクトフォルダーとして作成されます。",
       "ProjectFolderAlertDesc": "このフォルダはプロジェクトのすべてのメンバーと共有されます",
       "ProjectFolderCreationHelp": "「{{projectName}}」プロジェクトユーザーが作成できるフォルダーが作成されます。",
       "Rename": "名前を変更",

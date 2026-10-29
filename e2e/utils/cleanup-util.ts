@@ -211,10 +211,8 @@ async function firstActionableVFolderName(
  * data page. Choose `dataPath` to match where the folder is DELETABLE:
  *   - `data`        — personal folders (the regular user data page);
  *   - `admin-data`  — project folders and any folder visible to an admin
- *                     (`AdminVFolderNodeListPage`). Project folders are created
- *                     on `/project-data` but can only be deleted from
- *                     `/admin-data`, which shares the same table component as
- *                     `/data`.
+ *                     (`AdminVFolderNodeListPage`), which shares the same table
+ *                     component as `/data`.
  *
  * Phase 1: Active tab — move each match to Trash and delete it forever.
  * Phase 2: Trash tab — delete forever any remaining orphans (folders a previous,
@@ -356,7 +354,7 @@ export async function cleanupVFolderSafely(
   }
 
   // Fallback B: folder may still be in Active — sweep it out by exact name on
-  // the same data page it was created on (project folders live on project-data).
+  // the given data page.
   try {
     const escaped = folderName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     await sweepVFolders(page, new RegExp(escaped, 'i'), dataPath);

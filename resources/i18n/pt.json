@@ -1037,7 +1037,6 @@
       "Ownership": "Propriedade",
       "Path": "Caminho de armazenamento",
       "Permission": "Permissão",
-      "ProjectAdminDataPageAlert": "Na página Dados do Administrador do Projeto, as pastas são criadas como pastas de projeto.",
       "ProjectFolderAlertDesc": "Esta pasta é compartilhada com todos os membros do projeto",
       "ProjectFolderCreationHelp": "Uma pasta acessível por \"{{projectName}}\" \"os usuários do projeto serão criados.",
       "Rename": "Renomear",

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7b149bbc50d24b308e7916d0847f32cb>>
+ * @generated SignedSource<<4514499ace3cf1231691346d053a1cb2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,6 +17,14 @@ export type ReplicaHealthStatus = "DEGRADED" | "HEALTHY" | "NOT_CHECKED" | "UNHE
 export type ReplicaStatus = "FAILED_TO_START" | "PROVISIONING" | "RUNNING" | "TERMINATED" | "TERMINATING" | "%future added value";
 export type ScalingState = "SCALING" | "STABLE" | "%future added value";
 export type TrafficStatus = "ACTIVE" | "INACTIVE" | "%future added value";
+export type DeploymentSearchScope = {
+  domain?: ReadonlyArray<UUIDScope> | null | undefined;
+  project?: ReadonlyArray<UUIDScope> | null | undefined;
+  user?: ReadonlyArray<UUIDScope> | null | undefined;
+};
+export type UUIDScope = {
+  value: string;
+};
 export type DeploymentFilter = {
   AND?: ReadonlyArray<DeploymentFilter> | null | undefined;
   NOT?: ReadonlyArray<DeploymentFilter> | null | undefined;
@@ -159,10 +167,10 @@ export type ProjectAdminDeploymentsPageQuery$variables = {
   limit?: number | null | undefined;
   offset?: number | null | undefined;
   orderBy?: ReadonlyArray<DeploymentOrderBy> | null | undefined;
-  projectId: string;
+  scope: DeploymentSearchScope;
 };
 export type ProjectAdminDeploymentsPageQuery$data = {
-  readonly projectDeployments: {
+  readonly scopedDeployments: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -211,7 +219,7 @@ v3 = {
 v4 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "projectId"
+  "name": "scope"
 },
 v5 = [
   {
@@ -235,15 +243,9 @@ v5 = [
     "variableName": "orderBy"
   },
   {
-    "fields": [
-      {
-        "kind": "Variable",
-        "name": "projectId",
-        "variableName": "projectId"
-      }
-    ],
-    "kind": "ObjectValue",
-    "name": "scope"
+    "kind": "Variable",
+    "name": "scope",
+    "variableName": "scope"
   }
 ],
 v6 = {
@@ -376,7 +378,7 @@ return {
         "args": (v5/*: any*/),
         "concreteType": "ModelDeploymentConnection",
         "kind": "LinkedField",
-        "name": "projectDeployments",
+        "name": "scopedDeployments",
         "plural": false,
         "selections": [
           (v6/*: any*/),
@@ -469,7 +471,7 @@ return {
         "args": (v5/*: any*/),
         "concreteType": "ModelDeploymentConnection",
         "kind": "LinkedField",
-        "name": "projectDeployments",
+        "name": "scopedDeployments",
         "plural": false,
         "selections": [
           (v6/*: any*/),
@@ -1224,16 +1226,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "971e7c2b5c1e92919ee06a44c4e9806e",
+    "cacheID": "bf7bc5cc097f97814f88aff468f34fbb",
     "id": null,
     "metadata": {},
     "name": "ProjectAdminDeploymentsPageQuery",
     "operationKind": "query",
-    "text": "query ProjectAdminDeploymentsPageQuery(\n  $projectId: UUID!\n  $filter: DeploymentFilter\n  $orderBy: [DeploymentOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  projectDeployments(scope: {projectId: $projectId}, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        ...BAIModelDeploymentNodesFragment\n        ...DeploymentSettingModal_deployment\n        metadata {\n          name\n          status\n        }\n        currentRevision {\n          id\n          revisionNumber\n          ...DeploymentRevisionDetail_revision\n        }\n      }\n    }\n  }\n}\n\nfragment BAIDeploymentOwnerInfo_deployment on ModelDeployment {\n  id\n  creator {\n    id\n    basicInfo {\n      email\n      username\n      fullName\n    }\n  }\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment BAIModelDeploymentNodesFragment on ModelDeployment {\n  id\n  entityId\n  currentRevisionId\n  metadata {\n    projectId\n    domainName\n    name\n    status\n    createdAt\n    updatedAt\n    resourceGroupName\n    projectV2 {\n      basicInfo {\n        name\n      }\n      id\n    }\n  }\n  networkAccess {\n    endpointUrl\n    preferredDomainName\n    openToPublic\n  }\n  defaultDeploymentStrategy {\n    type\n  }\n  replicaState {\n    desiredReplicaCount\n  }\n  runningReplicas: replicas(filter: {status: {equals: RUNNING}}) {\n    count\n  }\n  currentRevision {\n    id\n    revisionNumber\n    modelMountConfig {\n      vfolder {\n        id\n        name\n      }\n    }\n  }\n  entityLabels(limit: 100) {\n    ...BAIEntityLabelTokensFragment\n    ...BAIEntityLabelSettingModalFragment\n  }\n  ...BAIDeploymentOwnerInfo_deployment\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  fieldId\n  revisionNumber\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    inferenceRuntimeConfig\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n    runtimeVariantPresetValues {\n      presetId\n      value\n      preset {\n        name\n        displayName\n        targetSpec {\n          key\n        }\n        id\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    subpath\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n    ...BAIImageNodeSimpleTagV2Fragment\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        command @since(version: \"26.7.0\")\n        startCommand\n        shell\n        port\n        preStartActions {\n          action\n          args\n        }\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n}\n\nfragment DeploymentSettingModal_deployment on ModelDeployment {\n  id\n  entityId\n  metadata {\n    name\n    tags\n    resourceGroupName\n  }\n  networkAccess {\n    openToPublic\n  }\n  replicaState {\n    desiredReplicaCount\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n"
+    "text": "query ProjectAdminDeploymentsPageQuery(\n  $scope: DeploymentSearchScope!\n  $filter: DeploymentFilter\n  $orderBy: [DeploymentOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  scopedDeployments(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        ...BAIModelDeploymentNodesFragment\n        ...DeploymentSettingModal_deployment\n        metadata {\n          name\n          status\n        }\n        currentRevision {\n          id\n          revisionNumber\n          ...DeploymentRevisionDetail_revision\n        }\n      }\n    }\n  }\n}\n\nfragment BAIDeploymentOwnerInfo_deployment on ModelDeployment {\n  id\n  creator {\n    id\n    basicInfo {\n      email\n      username\n      fullName\n    }\n  }\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment BAIModelDeploymentNodesFragment on ModelDeployment {\n  id\n  entityId\n  currentRevisionId\n  metadata {\n    projectId\n    domainName\n    name\n    status\n    createdAt\n    updatedAt\n    resourceGroupName\n    projectV2 {\n      basicInfo {\n        name\n      }\n      id\n    }\n  }\n  networkAccess {\n    endpointUrl\n    preferredDomainName\n    openToPublic\n  }\n  defaultDeploymentStrategy {\n    type\n  }\n  replicaState {\n    desiredReplicaCount\n  }\n  runningReplicas: replicas(filter: {status: {equals: RUNNING}}) {\n    count\n  }\n  currentRevision {\n    id\n    revisionNumber\n    modelMountConfig {\n      vfolder {\n        id\n        name\n      }\n    }\n  }\n  entityLabels(limit: 100) {\n    ...BAIEntityLabelTokensFragment\n    ...BAIEntityLabelSettingModalFragment\n  }\n  ...BAIDeploymentOwnerInfo_deployment\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  fieldId\n  revisionNumber\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    inferenceRuntimeConfig\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n    runtimeVariantPresetValues {\n      presetId\n      value\n      preset {\n        name\n        displayName\n        targetSpec {\n          key\n        }\n        id\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    subpath\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n    ...BAIImageNodeSimpleTagV2Fragment\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        command @since(version: \"26.7.0\")\n        startCommand\n        shell\n        port\n        preStartActions {\n          action\n          args\n        }\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n}\n\nfragment DeploymentSettingModal_deployment on ModelDeployment {\n  id\n  entityId\n  metadata {\n    name\n    tags\n    resourceGroupName\n  }\n  networkAccess {\n    openToPublic\n  }\n  replicaState {\n    desiredReplicaCount\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n"
   }
 };
 })();
 
-(node as any).hash = "e252fb97e4abec2e8e1bd26d423dc617";
+(node as any).hash = "ceffac8d26939ee1620ead56f58b960c";
 
 export default node;

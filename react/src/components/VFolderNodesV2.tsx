@@ -122,9 +122,7 @@ interface VFolderNameCellProps {
    * string as its tooltip. The component never infers on its own when
    * deployment should be blocked — the page decides and supplies the
    * reason (mirrors `FolderExplorerHeaderV2`'s `noProjectTooltip`,
-   * FR-3412). Absent by default, so every current caller
-   * (`ProjectAdminDataPage`, always project-scoped) keeps today's behavior
-   * unchanged. Mirrors `VFolderNodes` (V1, FR-3423).
+   * FR-3412). Mirrors `VFolderNodes` (V1, FR-3423).
    */
   noDeployTooltip?: string;
 }
@@ -454,9 +452,6 @@ interface VFolderNodesV2Props extends Omit<
   /**
    * Forwarded to each row's name cell (FR-3423). When set, the "Deploy as
    * service" row action renders disabled with this string as its tooltip.
-   * No current caller passes this — `ProjectAdminDataPage` is always
-   * project-scoped — added for API parity with `VFolderNodes` (V1) so a
-   * future admin-oversight caller of V2 gets the same treatment for free.
    */
   noDeployTooltip?: string;
 }

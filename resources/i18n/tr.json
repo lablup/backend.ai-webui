@@ -1037,7 +1037,6 @@
       "Ownership": "Mülkiyet",
       "Path": "Depolama yolu",
       "Permission": "izin",
-      "ProjectAdminDataPageAlert": "Proje Yönetici Veri sayfasında klasörler proje klasörü olarak oluşturulur.",
       "ProjectFolderAlertDesc": "Bu klasör projenin tüm üyeleriyle paylaşılıyor",
       "ProjectFolderCreationHelp": "\"{{projectName}}\" proje kullanıcıları tarafından erişilebilen bir klasör oluşturulacaktır.",
       "Rename": "Adını değiştirmek",

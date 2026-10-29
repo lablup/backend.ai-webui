@@ -29,7 +29,7 @@ export type RouteScope = 'project' | 'projectAdmin' | 'admin';
 /**
  * A scope-relative feature key (the feature portion of a route, e.g.
  * 'session', 'deployments', 'data', 'users'). This is distinct from the legacy
- * "menu key" (e.g. 'admin-session', 'project-data') which encodes the scope in
+ * "menu key" (e.g. 'admin-session', 'project-admin-users') which encodes the scope in
  * its name.
  */
 export type FeatureKey = string;
@@ -108,7 +108,6 @@ export const MENU_KEY_TO_SCOPE_FEATURE: Record<string, ScopeFeature> = {
     scope: 'projectAdmin',
     featureKey: 'deployments',
   },
-  'project-data': { scope: 'projectAdmin', featureKey: 'data' },
   'project-admin-users': { scope: 'projectAdmin', featureKey: 'users' },
 
   // --- all other adminMenu (ALL_ADMIN_PAGE_KEYS): global admin scope ---

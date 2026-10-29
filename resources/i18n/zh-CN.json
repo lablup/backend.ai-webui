@@ -1037,7 +1037,6 @@
       "Ownership": "所有权",
       "Path": "存储路径",
       "Permission": "允许",
-      "ProjectAdminDataPageAlert": "在项目管理员数据页面，文件夹将创建为项目文件夹。",
       "ProjectFolderAlertDesc": "该文件夹与项目的所有成员共享",
       "ProjectFolderCreationHelp": "将创建一个可以通过“{{projectName}}”项目用户访问的文件夹。",
       "Rename": "改名",
