@@ -139,20 +139,21 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
   const [isApplyConfirmOpen, setIsApplyConfirmOpen] = useState(false);
   const [isApplying, setIsApplying] = useState(false);
 
-  const applySettings = async () => {
+  // Writes both scopes from `next` and reloads; the reloaded page runs the
+  // merge again, which is the feedback.
+  const persist = async (next: WebUISettingsDocument) => {
     setIsApplying(true);
     try {
       await updateDomainAppConfig(
         WEBUI_SETTINGS_CONFIG_KEY,
-        buildWebUISettingsDocument('domain', draft, fileState),
+        buildWebUISettingsDocument('domain', next, fileState),
       );
       if (canEditPublic) {
         await updatePublicDomainAppConfig(
           WEBUI_SETTINGS_CONFIG_KEY,
-          buildWebUISettingsDocument('public', draft, fileState),
+          buildWebUISettingsDocument('public', next, fileState),
         );
       }
-      // The reloaded page runs the merge again; that is the feedback.
       isLeavingAfterApplyRef.current = true;
       window.location.reload();
     } catch (error) {
@@ -160,6 +161,10 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
       setIsApplying(false);
     }
   };
+  const applySettings = () => persist(draft);
+  // Reset-all is already confirmed by SettingList's modal, so it applies at
+  // once; a per-row reset only edits the draft and still needs Apply.
+  const resetAll = () => persist({});
 
   const toSettingItem = (
     definition: WebUISettingDefinition,
@@ -278,7 +283,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
         showSearchBar
         showChangedOptionFilter
         showResetButton
-        onReset={() => setDraft({})}
+        onReset={resetAll}
         primaryButton={
           <Button
             variant="primary"
