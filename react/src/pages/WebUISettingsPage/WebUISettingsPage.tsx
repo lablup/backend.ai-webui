@@ -4,15 +4,22 @@
  */
 import BAIErrorBoundary from '../../components/BAIErrorBoundary';
 import { WEBUI_SETTINGS_CONFIG_KEY } from '../../helper/webuiSettings';
+import { useSuspendedBackendaiClient, useTabQuerySnapshot } from '../../hooks';
+import ConfigurationsSettingList from '../ConfigurationsPage/components/ConfigurationsSettingList';
 import {
   useDomainAppConfig,
   useRawPublicDomainAppConfig,
 } from '../../hooks/useAppConfig';
 import WebUISettingList from './components/WebUISettingList';
 import { BAICard, BAIFlex, BAISkeleton } from 'backend.ai-ui';
-import { parseAsStringLiteral, useQueryState } from 'nuqs';
+import { parseAsStringLiteral } from 'nuqs';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
+
+const tabParser = parseAsStringLiteral([
+  'settings',
+  'configurations',
+]).withDefault('settings');
 
 /** Reads both saved documents: the public (pre-login) slice and the domain one. */
 const SavedWebUISettingList: React.FC = () => {
@@ -32,21 +39,46 @@ const SavedWebUISettingList: React.FC = () => {
 const WebUISettingsPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-  const [curTabKey] = useQueryState(
-    'tab',
-    parseAsStringLiteral(['settings']).withDefault('settings'),
-  );
+  const baiClient = useSuspendedBackendaiClient();
+  const { currentTab, onTabChange } = useTabQuerySnapshot(tabParser);
+
+  // The Configurations tab replaced the `settings` sidebar entry (#10684), so
+  // the menu block/inactive lists keyed on `settings` still govern it.
+  const hiddenMenuKeys = [
+    ...(baiClient._config.blockList ?? []),
+    ...(baiClient._config.inactiveList ?? []),
+  ];
+  const canOpenConfigurations = !hiddenMenuKeys.includes('settings');
+  const activeTab = canOpenConfigurations ? currentTab : 'settings';
 
   return (
     <BAICard
-      activeTabKey={curTabKey}
-      tabList={[{ key: 'settings', label: t('webui.menu.SystemSettings') }]}
+      activeTabKey={activeTab}
+      onTabChange={onTabChange}
+      tabList={[
+        { key: 'settings', label: t('webui.menu.SystemSettings') },
+        ...(canOpenConfigurations
+          ? [
+              {
+                key: 'configurations',
+                label: t('webui.menu.Configurations'),
+              },
+            ]
+          : []),
+      ]}
     >
       <BAIFlex direction="column" align="stretch" gap="md">
         <Suspense fallback={<BAISkeleton />}>
-          <BAIErrorBoundary>
-            <SavedWebUISettingList />
-          </BAIErrorBoundary>
+          {activeTab === 'settings' && (
+            <BAIErrorBoundary>
+              <SavedWebUISettingList />
+            </BAIErrorBoundary>
+          )}
+          {activeTab === 'configurations' && (
+            <BAIErrorBoundary>
+              <ConfigurationsSettingList />
+            </BAIErrorBoundary>
+          )}
         </Suspense>
       </BAIFlex>
     </BAICard>
