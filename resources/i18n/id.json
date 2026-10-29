@@ -820,7 +820,7 @@
       "MyActivityTooltip": "Tindakan yang Anda lakukan dalam rentang yang dipilih, dari log audit.",
       "MyDeployments": "Deployment Saya",
       "MyRecentSessions": "Sesi Terbaru Saya",
-      "MyResourcesTooltip": "Yang digunakan sesi Anda di setiap grup sumber daya, dibandingkan batas terendah dari keypair, proyek, dan domain Anda.",
+      "MyResourcesTooltip": "Yang digunakan sesi Anda di grup sumber daya kartu, dibandingkan batas terendah dari keypair, proyek, dan domain Anda.",
       "MySessionsTooltip": "Sesi aktif Anda di proyek ini, menurut jenis sesi.",
       "NoActiveSessions": "Tidak ada sesi aktif",
       "NoAllocation": "Tidak ada sumber daya yang dialokasikan.",

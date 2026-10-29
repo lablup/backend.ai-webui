@@ -820,7 +820,7 @@
       "MyActivityTooltip": "你在所選時間範圍內執行的操作，來自稽核日誌。",
       "MyDeployments": "我的部署",
       "MyRecentSessions": "我最近的工作階段",
-      "MyResourcesTooltip": "你的工作階段在各資源群組中的用量，對比金鑰對、專案和網域限制中最低的那一個。",
+      "MyResourcesTooltip": "你的工作階段在卡片資源群組中的用量，對比金鑰對、專案和網域限制中最低的那一個。",
       "MySessionsTooltip": "你在此專案中的作用中工作階段，依工作階段類型統計。",
       "NoActiveSessions": "沒有作用中的工作階段",
       "NoAllocation": "未分配資源。",

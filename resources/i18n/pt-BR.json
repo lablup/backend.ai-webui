@@ -820,7 +820,7 @@
       "MyActivityTooltip": "Ações que você realizou no período selecionado, do log de auditoria.",
       "MyDeployments": "Minhas implantações",
       "MyRecentSessions": "Minhas sessões recentes",
-      "MyResourcesTooltip": "O que suas sessões usam em cada grupo de recursos, comparado ao menor limite entre seu par de chaves, projeto e domínio.",
+      "MyResourcesTooltip": "O que suas sessões usam no grupo de recursos do cartão, comparado ao menor limite entre seu par de chaves, projeto e domínio.",
       "MySessionsTooltip": "Suas sessões ativas neste projeto, por tipo de sessão.",
       "NoActiveSessions": "Nenhuma sessão ativa",
       "NoAllocation": "Nenhum recurso alocado.",
