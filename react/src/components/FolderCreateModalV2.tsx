@@ -399,7 +399,12 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
               isDisabled={canCreateInSharedProject === false}
               clickAction={async () => {
                 if (canCreateInSharedProject && !skipSharedFolderConfirm) {
-                  setIsSharedConfirmOpen(true);
+                  // Ask only once the form is valid; inline errors show otherwise.
+                  const isValid = await formRef.current
+                    ?.validateFields()
+                    .then(() => true)
+                    .catch(() => false);
+                  if (isValid) setIsSharedConfirmOpen(true);
                   return;
                 }
                 await handleOk();
