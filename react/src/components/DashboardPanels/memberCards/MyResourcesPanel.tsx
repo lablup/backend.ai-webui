@@ -7,10 +7,9 @@ import type { PanelComponentProps } from '../types';
 import MemberCard, { NoProjectText, mineProjectId } from './MemberCard';
 import ResourceUsageBars from './ResourceUsageBars';
 import { toUsageRows } from './memberCardData';
-import { Divider } from '@lablup/ui-common/Divider';
 import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex } from 'backend.ai-ui';
-import React, { Fragment, useDeferredValue } from 'react';
+import React, { useDeferredValue } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -63,7 +62,7 @@ export const MyResourcesInResourceGroup: React.FC<{
   );
 };
 
-/** The viewer's used-vs-limit per slot, one block per resource group of the card's setting. */
+/** The viewer's used-vs-limit per slot in the card's resource group. */
 const MyResourcesPanel: React.FC<PanelComponentProps> = ({
   scope,
   vars,
@@ -72,7 +71,7 @@ const MyResourcesPanel: React.FC<PanelComponentProps> = ({
   'use memo';
   const { t } = useTranslation();
   const projectId = mineProjectId(scope);
-  const resourceGroups = vars.resourceGroups;
+  const resourceGroupName = vars.resourceGroup;
   return (
     <MemberCard
       title={t('webui.menu.MyResources')}
@@ -82,21 +81,16 @@ const MyResourcesPanel: React.FC<PanelComponentProps> = ({
       {(key) =>
         !projectId ? (
           <NoProjectText />
-        ) : resourceGroups.length === 0 ? (
+        ) : !resourceGroupName ? (
           <Text type="supporting">{t('dashboard.card.NoResourceGroup')}</Text>
         ) : (
           <BAIFlex direction="column" align="stretch" gap="sm">
-            {resourceGroups.map((resourceGroupName, index) => (
-              <Fragment key={resourceGroupName}>
-                {index > 0 ? <Divider /> : null}
-                <Text weight="semibold">{resourceGroupName}</Text>
-                <MyResourcesInResourceGroup
-                  projectId={projectId}
-                  resourceGroupName={resourceGroupName}
-                  fetchKey={key}
-                />
-              </Fragment>
-            ))}
+            <Text weight="semibold">{resourceGroupName}</Text>
+            <MyResourcesInResourceGroup
+              projectId={projectId}
+              resourceGroupName={resourceGroupName}
+              fetchKey={key}
+            />
           </BAIFlex>
         )
       }

@@ -936,7 +936,7 @@
       "Last1Hour": "Последний час",
       "Last24Hours": "Последние 24 часа",
       "Last7Days": "Последние 7 дней",
-      "ResourceGroups": "Группы ресурсов",
+      "ResourceGroup": "Группа ресурсов",
       "ResourceGroupsDescription": "Если ничего не выбрано: {{default}}",
       "TimeRange": "Период"
     }

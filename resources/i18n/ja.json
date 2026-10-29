@@ -936,7 +936,7 @@
       "Last1Hour": "過去1時間",
       "Last24Hours": "過去24時間",
       "Last7Days": "過去7日間",
-      "ResourceGroups": "リソースグループ",
+      "ResourceGroup": "リソースグループ",
       "ResourceGroupsDescription": "未選択の場合: {{default}}",
       "TimeRange": "期間"
     }

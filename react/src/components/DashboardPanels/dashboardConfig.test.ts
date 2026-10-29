@@ -34,7 +34,6 @@ const card = (
   kind: 'custom',
   defaultSize: { columnSpan: 2, rowSpan: 2 },
   minSize: { columnSpan: 2, rowSpan: 2 },
-  refresh: { min: '30s' },
   ...extra,
 });
 
@@ -48,7 +47,6 @@ const sessionPreset: PanelDefinition = {
   viz: 'table',
   defaultSize: { columnSpan: 2, rowSpan: 3 },
   minSize: { columnSpan: 2, rowSpan: 3 },
-  refresh: { min: '1m' },
 };
 
 const definitions: ReadonlyArray<PanelDefinition> = [
@@ -247,7 +245,7 @@ describe('sanitizeDashboardConfig', () => {
       definitions,
     );
     const model = sanitized.admin!.boards[0];
-    expect(model.vars).toEqual({ refresh: DEFAULT_BOARD_VARS.refresh });
+    expect(model.vars).toEqual({ refresh: '1m' });
     expect(model).not.toHaveProperty('pinned');
   });
 
@@ -286,7 +284,7 @@ describe('resolveBoards', () => {
         publicTemplates: {
           project: {
             title: 'Team',
-            vars: { refresh: '1m' },
+            vars: { refresh: '5m' },
             panels: [{ id: 'a', key: 'a' }],
           },
         },
@@ -299,7 +297,7 @@ describe('resolveBoards', () => {
     expect(resolved.config.active).toBe(DEFAULT_BOARD_ID);
     const [migrated] = resolved.config.boards;
     expect(migrated.title).toBe('Team');
-    expect(migrated.vars.refresh).toBe('1m');
+    expect(migrated.vars.refresh).toBe('5m');
     expect(keysOf(migrated)).toEqual(['b']);
   });
 

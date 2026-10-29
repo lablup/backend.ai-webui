@@ -28,7 +28,8 @@ export const hasSetting = (
 
 /**
  * The stored settings the definition still declares, malformed values
- * dropped; undefined when nothing is left.
+ * dropped and a multi-group setting cut to its first group; undefined when
+ * nothing is left.
  */
 export const sanitizePanelSettings = (
   value: unknown,
@@ -37,13 +38,15 @@ export const sanitizePanelSettings = (
   if (!value || typeof value !== 'object') return undefined;
   const { resourceGroups, range } = value as Record<string, unknown>;
   const settings: PanelSettings = {};
+  const resourceGroup = Array.isArray(resourceGroups)
+    ? resourceGroups[0]
+    : undefined;
   if (
     hasSetting(definition, 'resourceGroup') &&
-    Array.isArray(resourceGroups) &&
-    resourceGroups.length > 0 &&
-    resourceGroups.every((name) => typeof name === 'string' && name)
+    typeof resourceGroup === 'string' &&
+    resourceGroup
   ) {
-    settings.resourceGroups = _.uniq(resourceGroups as Array<string>);
+    settings.resourceGroups = [resourceGroup];
   }
   if (hasSetting(definition, 'range') && isRangePreset(range)) {
     settings.range = range;
@@ -57,7 +60,7 @@ export const panelSettingsParts = (
   t: TFunction,
 ): string[] =>
   _.compact([
-    settings?.resourceGroups?.join(', '),
+    settings?.resourceGroups?.[0],
     settings?.range && isRangePreset(settings.range)
       ? t(RANGE_LABEL_KEYS[settings.range])
       : undefined,
