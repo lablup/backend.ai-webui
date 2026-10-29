@@ -33,15 +33,14 @@ vi.mock('react-i18next', () => ({
   },
 }));
 
-// Super-admins skip the per-project permission query, so the mutation is the
-// only operation in most tests; the permission test turns this off.
+// Most tests target the caller's personal project, which needs no permission
+// query or confirm, so the mutation is the only operation.
 const clientState = vi.hoisted(() => ({
   isSuperadmin: true,
-  skipSharedConfirm: true,
+  personalProjectId: 'fixed-project-id',
 }));
 
 vi.mock('../hooks/useAppConfig', () => ({
-  useMyAppConfig: () => clientState.skipSharedConfirm,
   useRefetchMyAppConfig: () => () => Promise.resolve(),
   useUpdateMyUserAppConfig: () => () => Promise.resolve(),
 }));
@@ -65,7 +64,7 @@ vi.mock('../hooks', async (importOriginal) => {
 
 vi.mock('../hooks/useAccessibleProjects', () => ({
   useAccessibleProjects: () => ({
-    personalProject: { id: 'personal-project-id', name: 'me' },
+    personalProject: { id: clientState.personalProjectId, name: 'me' },
   }),
 }));
 
@@ -244,8 +243,8 @@ describe('FolderCreateModalV2 project prop contract (ADR-0001)', () => {
     clientState.isSuperadmin = false;
     try {
       const { environment } = renderModal({
-        id: 'fixed-project-id',
-        name: 'fixed-project-name',
+        id: 'general-project-id',
+        name: 'general-project-name',
       });
 
       await waitFor(() => {
@@ -255,7 +254,7 @@ describe('FolderCreateModalV2 project prop contract (ADR-0001)', () => {
       expect(operation.request.node.params.name).toBe(
         'FolderCreateModalV2PermissionQuery',
       );
-      expect(operation.request.variables.projectId).toBe('fixed-project-id');
+      expect(operation.request.variables.projectId).toBe('general-project-id');
       environment.mock.resolveMostRecentOperation({
         data: { myScopePermissions: { item: { permissions: ['READ'] } } },
       });
@@ -277,26 +276,21 @@ describe('FolderCreateModalV2 project prop contract (ADR-0001)', () => {
   });
 
   it('shows the visibility notice and holds Create for a confirm in a general project', async () => {
-    clientState.skipSharedConfirm = false;
-    try {
-      const user = userEvent.setup();
-      const { environment } = renderModal({
-        id: 'fixed-project-id',
-        name: 'fixed-project-name',
-      });
+    const user = userEvent.setup();
+    const { environment } = renderModal({
+      id: 'general-project-id',
+      name: 'general-project-name',
+    });
 
-      expect(
-        screen.getByText('data.folders.SharedProjectFolderVisibleToMembers'),
-      ).toBeInTheDocument();
-      await fillFolderNameAndSubmit(user, 'contract-folder');
+    expect(
+      screen.getByText('data.folders.SharedProjectFolderVisibleToMembers'),
+    ).toBeInTheDocument();
+    await fillFolderNameAndSubmit(user, 'contract-folder');
 
-      // The confirm step stands between Create and the mutation. jsdom does
-      // not open a second Modal after mount, so the dialog itself is not read.
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      expect(environment.mock.getAllOperations()).toHaveLength(0);
-    } finally {
-      clientState.skipSharedConfirm = true;
-    }
+    // The confirm step stands between Create and the mutation. jsdom does
+    // not open a second Modal after mount, so the dialog itself is not read.
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    expect(environment.mock.getAllOperations()).toHaveLength(0);
   });
 
   it('ignores a caller `initialValues.group` that disagrees with the `project` prop', async () => {
@@ -364,20 +358,26 @@ describe('FolderCreateModalV2 project prop contract (ADR-0001)', () => {
   });
 
   it('targets exactly the project chosen in the in-modal selector when `project` is null', async () => {
-    const user = userEvent.setup();
-    const { environment } = renderModal(null);
+    // The chosen project is the caller's own, so no confirm stands in between.
+    clientState.personalProjectId = 'chosen-project-id';
+    try {
+      const user = userEvent.setup();
+      const { environment } = renderModal(null);
 
-    await user.click(screen.getByTestId('mock-project-select'));
-    await fillFolderNameAndSubmit(user, 'contract-folder');
+      await user.click(screen.getByTestId('mock-project-select'));
+      await fillFolderNameAndSubmit(user, 'contract-folder');
 
-    await waitFor(() => {
-      expect(environment.mock.getAllOperations()).toHaveLength(1);
-    });
-    const operation = environment.mock.getMostRecentOperation();
-    expect(operation.request.node.params.name).toBe(
-      'FolderCreateModalV2ProjectMutation',
-    );
-    // The mutation carries exactly the project chosen inside the modal.
-    expect(operation.request.variables.projectId).toBe('chosen-project-id');
+      await waitFor(() => {
+        expect(environment.mock.getAllOperations()).toHaveLength(1);
+      });
+      const operation = environment.mock.getMostRecentOperation();
+      expect(operation.request.node.params.name).toBe(
+        'FolderCreateModalV2ProjectMutation',
+      );
+      // The mutation carries exactly the project chosen inside the modal.
+      expect(operation.request.variables.projectId).toBe('chosen-project-id');
+    } finally {
+      clientState.personalProjectId = 'fixed-project-id';
+    }
   });
 });
