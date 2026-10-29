@@ -842,7 +842,7 @@
       "Last1Hour": "1 jam lepas",
       "Last24Hours": "24 jam lepas",
       "Last7Days": "7 hari lepas",
-      "ResourceGroups": "Kumpulan sumber",
+      "ResourceGroup": "Kumpulan sumber",
       "ResourceGroupsDescription": "Jika tiada yang dipilih: {{default}}",
       "TimeRange": "Julat masa"
     }

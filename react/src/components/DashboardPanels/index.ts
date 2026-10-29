@@ -53,7 +53,6 @@ export type {
   PanelType,
   PersistedPanel,
   PersistedPanelV2,
-  RefreshInterval,
   ResourceConfig,
   ResourceConnectionResult,
   ResourceKey,

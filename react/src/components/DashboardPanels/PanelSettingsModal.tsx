@@ -18,7 +18,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface SettingsFormValues {
-  resourceGroups?: Array<string>;
+  resourceGroup?: string | null;
   range?: string;
 }
 
@@ -33,7 +33,7 @@ export interface PanelSettingsModalProps {
   afterClose?: () => void;
 }
 
-/** Edits one card's own settings (resource groups, time range) in edit mode. */
+/** Edits one card's own settings (resource group, time range) in edit mode. */
 const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
   open,
   title,
@@ -61,11 +61,10 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
       onCancel={onRequestClose}
       afterClose={afterClose}
       onOk={() => {
-        const { resourceGroups = [], range = DEFAULT_RANGE } =
-          form.getFieldsValue();
+        const { resourceGroup, range = DEFAULT_RANGE } = form.getFieldsValue();
         const next: PanelSettings = {
-          ...(hasSetting(definition, 'resourceGroup') && resourceGroups.length
-            ? { resourceGroups }
+          ...(hasSetting(definition, 'resourceGroup') && resourceGroup
+            ? { resourceGroups: [resourceGroup] }
             : {}),
           ...(hasSetting(definition, 'range') && range !== DEFAULT_RANGE
             ? { range }
@@ -80,21 +79,20 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
         layout="vertical"
         preserve={false}
         initialValues={{
-          resourceGroups: settings?.resourceGroups ?? [],
+          resourceGroup: settings?.resourceGroups?.[0] ?? null,
           range: settings?.range ?? DEFAULT_RANGE,
         }}
       >
         {hasSetting(definition, 'resourceGroup') ? (
           <BAIFormItem
-            name="resourceGroups"
-            label={t('dashboard.settings.ResourceGroups')}
+            name="resourceGroup"
+            label={t('dashboard.settings.ResourceGroup')}
             extra={t('dashboard.settings.ResourceGroupsDescription', {
               default: resourceGroupDefault,
             })}
           >
             <BAISelect
-              mode="multiple"
-              label={t('dashboard.settings.ResourceGroups')}
+              label={t('dashboard.settings.ResourceGroup')}
               placeholder={resourceGroupDefault}
               options={_.map(nonSftpResourceGroups, (group) => ({
                 value: group.name,
