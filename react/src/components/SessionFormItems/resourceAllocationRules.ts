@@ -184,6 +184,17 @@ export const resolveAcceleratorType = (
     ? current
     : (_.first(supportedTypes) ?? _.first(acceleratorSlotsInRG))) || current;
 
+const PSEUDO_PRESET_IDS = ['custom', 'minimum-required', 'auto-select'];
+
+/** D2 protects a preset's values; `custom`, `minimum-required`, `auto-select` and no label are not a preset. */
+export const isPresetId = (label: string | null | undefined): label is string =>
+  !!label && !PSEUDO_PRESET_IDS.includes(label);
+
+/** Free values follow the image and the group; a preset's values are its validator's (#10628). */
+const hasFreeValues = (draft: Draft, ctx: RuleContext) =>
+  ctx.mode === 'free' || !isPresetId(draft.allocationPreset);
+
+/** The one writer of `acceleratorType`: a user choice and a data-forced swap alike. */
 const setAcceleratorType = (
   draft: Draft,
   next: string,
@@ -200,33 +211,35 @@ const setAcceleratorType = (
   }
 };
 
-/** The accelerator-type validator's question; preset-only hides the type select, so its preset validator is the surface. */
-export const isAcceleratorTypeUnsupported = (
-  value: string | undefined,
-  ctx: RuleContext,
-  supportedTypes = getSupportedAcceleratorTypes(ctx),
-) =>
-  ctx.mode === 'free' &&
-  !!value &&
-  !!supportedTypes &&
-  !supportedTypes.includes(value);
-
-/** The image dropped the current type and the group has exactly one it runs on; several is a validator error. */
-const switchToOnlySupportedType = (
+/** A type the group lacks moves to its first slot; one the image dropped moves to the only type it runs on (several is a validator error). */
+const syncAcceleratorType = (
   draft: Draft,
   supportedTypes: string[] | undefined,
   ctx: RuleContext,
 ) => {
   const current = draft.resource.acceleratorType;
-  if (
-    !current ||
-    supportedTypes?.length !== 1 ||
-    supportedTypes.includes(current)
-  ) {
-    return;
+  let next = resolveAcceleratorType(
+    current,
+    ctx.acceleratorSlotsInRG,
+    supportedTypes,
+  );
+  if (next && supportedTypes?.length === 1 && !supportedTypes.includes(next)) {
+    next = supportedTypes[0];
   }
-  setAcceleratorType(draft, supportedTypes[0], current, ctx);
+  if (next && next !== current) setAcceleratorType(draft, next, current, ctx);
 };
+
+/** The accelerator-type validator's question; a preset's type in preset-only mode is the preset validator's. */
+export const isAcceleratorTypeUnsupported = (
+  value: string | undefined,
+  allocationPreset: string | null | undefined,
+  ctx: RuleContext,
+  supportedTypes = getSupportedAcceleratorTypes(ctx),
+) =>
+  (ctx.mode === 'free' || !isPresetId(allocationPreset)) &&
+  !!value &&
+  !!supportedTypes &&
+  !supportedTypes.includes(value);
 
 /** What selecting `preset` writes: its slots the group has, in `g`, plus the shmem rule. */
 export const getPresetResourceFields = (
@@ -327,12 +340,15 @@ const applyMinimumRequired = (draft: Draft, ctx: RuleContext) => {
   }
 };
 
+const getAllocatablePresets = (ctx: RuleContext) =>
+  _.filter(ctx.presets, (preset) =>
+    ctx.allocatablePresetIds.includes(preset.id),
+  );
+
 /** The first allocatable preset by name, else minimum-required (free) or none (preset-only). */
 const selectFallbackPreset = (draft: Draft, ctx: RuleContext) => {
   const firstAllocatablePreset = _.sortBy(
-    _.filter(ctx.presets, (preset) =>
-      ctx.allocatablePresetIds.includes(preset.id),
-    ),
+    getAllocatablePresets(ctx),
     'name',
   )[0];
   if (ctx.enableResourcePresets && firstAllocatablePreset) {
@@ -345,7 +361,7 @@ const selectFallbackPreset = (draft: Draft, ctx: RuleContext) => {
   }
 };
 
-/** Preset-only has no `custom` / `minimum-required`: a restored label becomes the preset the values are on, or none, so the user picks. */
+/** Preset-only has no `custom` / `minimum-required`: a restored label becomes the allocatable preset the values are on, or none, so the user picks. */
 const relabelRestoredAllocation = (draft: Draft, ctx: RuleContext) => {
   if (ctx.keepRestoredAllocation || _.isUndefined(ctx.presets)) return;
   if (draft.allocationPreset === 'minimum-required') {
@@ -354,7 +370,7 @@ const relabelRestoredAllocation = (draft: Draft, ctx: RuleContext) => {
     return;
   }
   draft.allocationPreset =
-    findPresetOn(draft.resource, ctx.presets, ctx)?.id ?? null;
+    findPresetOn(draft.resource, getAllocatablePresets(ctx), ctx)?.id ?? null;
 };
 
 const applyDataChanged = (
@@ -370,19 +386,10 @@ const applyDataChanged = (
   if (draft.allocationPreset === 'auto-select') {
     selectFallbackPreset(draft, ctx);
   }
-  // A selected preset the group cannot serve stays for its validator (#10628).
-  // In preset-only mode the values are the preset's: no type swap below.
-  if (ctx.mode !== 'free') {
-    relabelRestoredAllocation(draft, ctx);
-    return;
-  }
-  draft.resource.acceleratorType = resolveAcceleratorType(
-    draft.resource.acceleratorType,
-    ctx.acceleratorSlotsInRG,
-    supportedTypes,
-  );
-  switchToOnlySupportedType(draft, supportedTypes, ctx);
-  if (draft.allocationPreset === 'minimum-required') {
+  if (ctx.mode !== 'free') relabelRestoredAllocation(draft, ctx);
+  if (!hasFreeValues(draft, ctx)) return;
+  syncAcceleratorType(draft, supportedTypes, ctx);
+  if (ctx.mode === 'free' && draft.allocationPreset === 'minimum-required') {
     applyMinimumRequired(draft, ctx);
   }
 };
@@ -463,13 +470,7 @@ export const deriveAllocationPreset = (
   const resource = values.resource ?? {};
   if (label === 'custom') {
     if (!valueEdited || !ctx.enableResourcePresets) return label;
-    const landedOn = findPresetOn(
-      resource,
-      _.filter(ctx.presets, (preset) =>
-        ctx.allocatablePresetIds.includes(preset.id),
-      ),
-      ctx,
-    );
+    const landedOn = findPresetOn(resource, getAllocatablePresets(ctx), ctx);
     return landedOn?.id ?? label;
   }
   if (label === 'minimum-required') {
@@ -551,10 +552,10 @@ export const applyRule = (
       break;
   }
 
-  // Invariants: in free mode no accelerator the image cannot use (preset-only
-  // leaves the preset's value to its validator); a unified slot never carries a quantity.
+  // Invariants: free values carry no accelerator the image cannot use (a
+  // preset's value is its validator's); a unified slot never carries a quantity.
   if (
-    ctx.mode === 'free' &&
+    hasFreeValues(draft, ctx) &&
     supportedTypes?.length === 0 &&
     !isUnifiedAcceleratorSlot(draft.resource.acceleratorType) &&
     draft.resource.accelerator !== 0
@@ -567,9 +568,11 @@ export const applyRule = (
   ) {
     draft.resource.accelerator = undefined;
   }
+  // shmem is a setting: its edit and the automatic toggle never move the label.
   draft.allocationPreset = deriveAllocationPreset(draft, ctx, {
     valueEdited:
-      event.type.startsWith('user.') && event.type !== 'user.selectPreset',
+      event.type === 'user.setAcceleratorType' ||
+      (event.type === 'user.setResource' && event.field !== 'shmem'),
   });
   return diff(values, draft);
 };

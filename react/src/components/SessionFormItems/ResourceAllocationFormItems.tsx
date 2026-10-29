@@ -41,6 +41,7 @@ import {
   getImageAcceleratorLimits,
   getSupportedAcceleratorTypes,
   isAcceleratorTypeUnsupported,
+  isPresetId,
   NON_ACCELERATOR_SLOTS,
   type ResourceAllocationFormValue,
   RuleContext,
@@ -397,8 +398,11 @@ const ResourceAllocationFormItems: React.FC<
     // A group or image change can invalidate the preset or the accelerator type
     // without writing anything, and `dependencies` see only form fields.
     const names: NamePath[] = [];
-    if (mode === 'free') names.push(['resource', 'acceleratorType']);
-    if (form.getFieldValue('allocationPreset')) names.push('allocationPreset');
+    const label = form.getFieldValue('allocationPreset');
+    if (mode === 'free' || !isPresetId(label)) {
+      names.push(['resource', 'acceleratorType']);
+    }
+    if (label) names.push('allocationPreset');
     if (names.length > 0) form.validateFields(names).catch(() => {});
   });
   // The preset validator's data follows the deferred group; re-validate once it lands.
@@ -457,18 +461,18 @@ const ResourceAllocationFormItems: React.FC<
                   (preset) => preset?.id === value,
                 );
                 if (!preset) return;
+                // An id the deferred group's check-presets response lacks
+                // gets only the scope check, not `not-allocatable`.
+                const checked = _.find(
+                  checkPresetInfo?.presets,
+                  (checked) => checked.id === value,
+                );
                 const reason = getPresetUnavailableReason(
-                  {
-                    ...preset,
-                    resource_slots: _.find(
-                      checkPresetInfo?.presets,
-                      (checked) => checked.id === value,
-                    )?.resource_slots,
-                  },
+                  { ...preset, resource_slots: checked?.resource_slots },
                   {
                     resourceGroup: getFieldValue('resourceGroup'),
-                    slotsInRG: slotNamesInRG,
-                    allocatablePresetIds: checkPresetInfo?.presets
+                    slotsInRG: checked ? slotNamesInRG : undefined,
+                    allocatablePresetIds: checked
                       ? allocatablePresetIds
                       : undefined,
                   },
@@ -1147,6 +1151,7 @@ const ResourceAllocationFormItems: React.FC<
                                         if (
                                           isAcceleratorTypeUnsupported(
                                             value,
+                                            currentAllocationPreset,
                                             ruleContext,
                                             supportedAcceleratorTypesInRGByImage,
                                           )
