@@ -32,7 +32,7 @@ export const DEFAULT_BOARD_VARS: DashboardBoardVars = {
   project: 'all',
   rg: 'all',
   range: 'now-24h',
-  refresh: '30s',
+  refresh: '1m',
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
