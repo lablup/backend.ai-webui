@@ -852,7 +852,7 @@
       "Last1Hour": "최근 1시간",
       "Last24Hours": "최근 24시간",
       "Last7Days": "최근 7일",
-      "ResourceGroups": "자원 그룹",
+      "ResourceGroup": "자원 그룹",
       "ResourceGroupsDescription": "선택하지 않으면: {{default}}",
       "TimeRange": "기간"
     }

@@ -852,7 +852,7 @@
       "Last1Hour": "Viimeinen tunti",
       "Last24Hours": "Viimeiset 24 tuntia",
       "Last7Days": "Viimeiset 7 päivää",
-      "ResourceGroups": "Resurssiryhmät",
+      "ResourceGroup": "Resurssiryhmä",
       "ResourceGroupsDescription": "Jos mitään ei valita: {{default}}",
       "TimeRange": "Aikaväli"
     }

@@ -839,7 +839,7 @@
       "Last1Hour": "Last 1 hour",
       "Last24Hours": "Last 24 hours",
       "Last7Days": "Last 7 days",
-      "ResourceGroups": "Resource groups",
+      "ResourceGroup": "Resource group",
       "ResourceGroupsDescription": "If none is selected: {{default}}",
       "TimeRange": "Time range"
     }
