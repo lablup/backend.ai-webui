@@ -118,6 +118,8 @@ const comboboxStyles = stylex.create({
 
 interface EnvVarNameInputProps {
   /** Injected by `Form.Item`. */
+  id?: string;
+  /** Injected by `Form.Item`. */
   value?: string;
   /**
    * Injected by `Form.Item`, composed with the caller's own `onChange` (the
@@ -150,6 +152,7 @@ interface EnvVarNameInputProps {
  * string stays the single source of truth for both typing and picking.
  */
 const EnvVarNameInput: React.FC<EnvVarNameInputProps> = ({
+  id,
   value,
   onChange,
   onBlur,
@@ -254,6 +257,7 @@ const EnvVarNameInput: React.FC<EnvVarNameInputProps> = ({
         ref={(el) => {
           inputElRef.current = el;
         }}
+        id={id}
         type="text"
         value={value ?? ''}
         onChange={(next) => {
