@@ -30,6 +30,7 @@ import { HStack, StackItem, VStack } from '@lablup/ui-common/Stack';
 import { Heading } from '@lablup/ui-common/Text';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
+  BAIAlert,
   BAIBadge,
   BAIButton,
   BAIEntitySharePermissionSelector,
@@ -57,7 +58,12 @@ import {
   BAISelector,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { CircleXIcon, MailXIcon, PencilIcon } from 'lucide-react';
+import {
+  CircleXIcon,
+  MailXIcon,
+  PencilIcon,
+  TriangleAlertIcon,
+} from 'lucide-react';
 import React, {
   Suspense,
   useDeferredValue,
@@ -272,7 +278,15 @@ const ExistingShareNoticeModal: React.FC<{
   return (
     <BAIModal
       open={open}
-      title={t('data.folders.ShareAlreadyExists')}
+      headerContent={
+        <HStack gap={2} align="center">
+          <TriangleAlertIcon
+            size="1em"
+            style={{ color: 'var(--color-warning)' }}
+          />
+          {t('data.folders.ShareAlreadyExists')}
+        </HStack>
+      }
       okText={t('button.Overwrite')}
       cancelText={t('button.Cancel')}
       onOk={onOk}
@@ -280,7 +294,11 @@ const ExistingShareNoticeModal: React.FC<{
       width={720}
     >
       <VStack gap={4} align="stretch">
-        <BAIText>{t('data.folders.ShareAlreadyExistsDesc', { email })}</BAIText>
+        <BAIAlert
+          type="warning"
+          showIcon
+          title={t('data.folders.ShareAlreadyExistsDesc', { email })}
+        />
         <BAITable<ShareRow>
           bordered
           pagination={false}
