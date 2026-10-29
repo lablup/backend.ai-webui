@@ -34,10 +34,14 @@ next version.
   `electron-app/package.json` without re-stamping it, so every file
   `make versiontag` writes must already read `{VERSION}`.
 
-**Version files** (what `make versiontag` writes): `package.json`,
-`version.json`, `index.html`, `manifest.json`, `react/package.json`,
-`packages/backend.ai-ui/package.json`,
+**Version files**: root `package.json` (the source, set by hand) and what
+`make versiontag` writes from it — `version.json`, `index.html`,
+`manifest.json`, `react/package.json`, `packages/backend.ai-ui/package.json`,
 `packages/backend.ai-docs-toolkit/package.json`, `electron-app/package.json`.
+
+**Shell state does not survive between Bash tool calls.** The `$WT`, `$BWT`,
+`$BASE_TAG` below are placeholders: substitute the literal value in every
+command, or set and use a variable within one call.
 
 ## Arguments
 
@@ -49,15 +53,16 @@ next version.
 
 1. `git fetch origin main --tags`, then read the version from
    `git show origin/main:package.json`.
-2. Look up what exists for that line: `git tag -l 'vX.Y.*'` and
-   `git ls-remote --heads origin X.Y`.
+2. Look up what exists for **main's line** (`git tag -l 'vX.Y.*'`) and for
+   every **frozen line still in progress** — a line with a beta/rc tag and no
+   stable `vX.Y.0` yet (usually the previous line after its `rc.0`).
 3. Offer options via `AskUserQuestion`, labels filled with computed versions:
    - `main` reads `X.Y.0-alpha.N`, its tag does not exist, and the line is not
      frozen (step 1) → `X.Y.0-alpha.N` (recommended), `X.Y.0-rc.0`, custom.
    - The tag already exists → say the bump PR has not merged yet and offer
      only the freeze / custom options; another alpha would repeat a version.
-   - The line is frozen → the next `rc.N` / `beta.N`, stable `X.Y.0`, or a
-     patch `X.Y.Z+1`.
+   - Each frozen line in progress → its next `rc.N` (or `beta.N`) and stable
+     `X.Y.0`. A released line takes a patch `X.Y.Z+1` only when asked.
 
 ## Process
 
@@ -74,7 +79,9 @@ next version.
   - **frozen** = any tag `vX.Y.0-beta.*`, `vX.Y.0-rc.*` or `vX.Y.0` exists.
   - alpha on a frozen line → stop: `main` already carries the next line's
     work, so an `X.Y` alpha would publish it under the wrong line.
-  - non-alpha on a line that is not frozen → **first freeze** (2b).
+  - non-alpha on a line that is not frozen → **first freeze** (2b). `origin/main`
+    must still be on line `X.Y` (its `package.json` reads `X.Y.0-…`); if it
+    already moved to a later line, stop — branching would ship that line's work.
   - non-alpha on a frozen line → **later release** (2c).
 - Never run in the user's checkout and never `git switch` a local `X.Y`
   branch: it may be checked out in another worktree. Each step that needs a
@@ -87,8 +94,8 @@ No worktree needed.
 
 1. Every version file on `origin/main` must read `{VERSION}`:
    ```bash
-   git grep -n '"version": \|packageVersion' origin/main -- package.json manifest.json \
-     react/package.json packages/backend.ai-ui/package.json \
+   git grep -n '"version": \|packageVersion\|"package": ' origin/main -- package.json \
+     version.json manifest.json react/package.json packages/backend.ai-ui/package.json \
      packages/backend.ai-docs-toolkit/package.json electron-app/package.json index.html
    ```
    If not, stop: the bump PR for this alpha has not merged, or the requested
@@ -138,20 +145,27 @@ Do not merge `main`. Missing fixes are backported with
    git tag v{VERSION}
    git push --atomic origin HEAD:refs/heads/X.Y v{VERSION}
    ```
-   A rejected push (someone merged a backport meanwhile): delete the local tag,
-   remove the worktree, and start again from step 1. Never force-push.
+   Rejected as non-fast-forward (a backport merged meanwhile): delete the local
+   tag, remove the worktree, and start again from step 1 — **once**. Any other
+   rejection (branch protection, permissions), or a second one: stop and report
+   the error. Never force-push.
 4. `cd` back and `git worktree remove "$WT"`. `{TARGET}` is `X.Y`.
 
 ### 4. Create GitHub Release
 
-Base tag = the nearest earlier tag **by version**, so another line's tags never
-qualify (`versionsort.suffix=-` sorts `X.Y.0-rc.N` before `X.Y.0`):
+Base tag = the nearest earlier tag **by version**, so a later line's tags (e.g.
+next-line alphas on `main`) never qualify; `versionsort.suffix=-` sorts
+`X.Y.0-rc.N` before `X.Y.0`. A line's first release takes the previous line's
+last tag, which may sit on its release branch — its notes can then repeat
+backports already shipped there; trim them in step 6. Run in one call:
 
 ```bash
 PRIOR=$(git -c versionsort.suffix=- tag -l 'v[0-9]*' --sort=version:refname \
   | sed -n "/^v{VERSION}\$/q;p")
-BASE_TAG=$(tail -1 <<<"$PRIOR")                                        # prerelease
-BASE_TAG=$(grep -vE -- '-(alpha|beta|rc)\.' <<<"$PRIOR" | tail -1)     # stable
+case "{VERSION}" in
+  *-alpha.*|*-beta.*|*-rc.*) tail -1 <<<"$PRIOR" ;;                     # prerelease
+  *) grep -vE -- '-(alpha|beta|rc)\.' <<<"$PRIOR" | tail -1 ;;          # stable
+esac
 ```
 
 Prerelease (alpha / beta / rc):
@@ -162,11 +176,13 @@ gh release create v{VERSION} --title "v{VERSION}" --generate-notes \
 ```
 
 Stable — **no `--prerelease`** (a stable published as a prerelease is not
-marked Latest, and the docs-archive workflow skips it):
+marked Latest, and the docs-archive workflow skips it). A patch on an older
+line, when a higher stable tag already exists, adds `--latest=false` so it does
+not take Latest from the newer line:
 
 ```bash
 gh release create v{VERSION} --title "v{VERSION}" --generate-notes \
-  --notes-start-tag "$BASE_TAG" --target {TARGET}
+  --notes-start-tag "$BASE_TAG" --target {TARGET}           # [--latest=false]
 ```
 
 As soon as it returns the URL, report it in a short standalone message
@@ -198,8 +214,19 @@ Then, in `$BWT`:
 ```bash
 git add -u
 git commit -m "chore: bump to {NEXT}"
-bash .claude/scripts/require-e2e-flow.sh --record   # version bump: no user flow
 git push -u origin chore/bump-{NEXT}
+```
+
+Before `gh pr create`: the `require-e2e-flow` hook reads the branch from the
+**session's** cwd, not from a `cd` inside the command, so switch the session
+into `$BWT` first (`EnterWorktree` with `path`). Then record the e2e-flow check:
+
+- alpha bump (version files only) →
+  `bash .claude/scripts/require-e2e-flow.sh --record`;
+- dependency-refresh bump → run the `e2e-flow` skill; a dependency bump can
+  change a user flow, and its report becomes the PR body's E2E flow section.
+
+```bash
 gh pr create --draft --base main --title "chore: bump to {NEXT}" --body-file <body>
 ```
 
