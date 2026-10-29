@@ -5,9 +5,11 @@ import {
   reviewOverlayBuildPlugin,
 } from './vite-plugins/review-overlay/index';
 import { findStalePrebundle } from './vite-plugins/stale-prebundle';
+import { umdWithoutAmd } from './vite-plugins/umd-without-amd';
 import stylexVite from '@stylexjs/unplugin/vite';
 import react from '@vitejs/plugin-react';
 import compression from 'compression';
+import { Features } from 'lightningcss';
 import { execSync } from 'node:child_process';
 import {
   createReadStream,
@@ -844,6 +846,7 @@ export default defineConfig(({ command, mode }) => {
     optimizeDeps: {
       // Vite keys the cache on the lockfile hash only; see stale-prebundle.ts.
       force: stalePrebundle !== null,
+      rolldownOptions: { plugins: [umdWithoutAmd()] },
       // Tell Vite exactly which files to scan for dependency optimization.
       // Without this, Vite crawls from `root` following all imports, which
       // pulled in stale legacy Lit plugins under scripts/temp-releases/ on
@@ -1007,6 +1010,7 @@ export default defineConfig(({ command, mode }) => {
       // every downstream middleware's writes (see comment on the plugin).
       devCompressionPlugin(),
       devLinkedDepSourcemapPlugin(),
+      umdWithoutAmd(),
       monacoStaticPlugin(),
       projectRootStaticPlugin(devCspHeaders),
       cspBundleNoncePlugin(),
@@ -1173,8 +1177,14 @@ export default defineConfig(({ command, mode }) => {
         : []),
     ],
 
+    css: {
+      lightningcss: { exclude: Features.LightDark },
+    },
+
     build: {
       outDir: resolve(__dirname, 'build'),
+      target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14'],
+      cssTarget: ['chrome111', 'edge111', 'firefox114', 'safari16.4', 'ios16.4'],
       emptyOutDir: true,
       sourcemap: true,
       // Suppress the warning about chunk size; the app is large and this
@@ -1182,6 +1192,7 @@ export default defineConfig(({ command, mode }) => {
       chunkSizeWarningLimit: 2000,
       rolldownOptions: {
         output: {
+          comments: { legal: true },
           // Per-function packages shared by many lazy pages otherwise become
           // one ~1 KB chunk per function (29 lodash-es + 13 lucide chunks on
           // the login page, measured 2026-10-22); both are mostly in the boot

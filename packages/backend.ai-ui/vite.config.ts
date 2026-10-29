@@ -1,9 +1,15 @@
 import packageJson from './package.json' with { type: 'json' };
 import react from '@vitejs/plugin-react';
 import glob from 'fast-glob';
+import { Features } from 'lightningcss';
 import { basename, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { defineConfig, esmExternalRequirePlugin } from 'vite';
+import {
+  defineConfig,
+  esmExternalRequirePlugin,
+  transformWithOxc,
+  type Plugin,
+} from 'vite';
 import dts from 'vite-plugin-dts';
 import relay from 'vite-plugin-relay-lite';
 import svgr from 'vite-plugin-svgr';
@@ -23,6 +29,19 @@ const externalPatterns = [
   // directly must not bundle a second copy of it.
   /^@astryxdesign\//,
 ];
+
+const umdWithoutAmd = (): Plugin => ({
+  name: 'bai-umd-without-amd',
+  transform: {
+    filter: { id: /[\\/]node_modules[\\/]/, code: /\bdefine\.amd\b/ },
+    async handler(code, id) {
+      const result = await transformWithOxc(code, id, {
+        define: { define: 'undefined' },
+      });
+      return { code: result.code, map: result.map };
+    },
+  },
+});
 
 export default defineConfig(({ mode }) => {
   const isDevMode = mode === 'development';
@@ -49,10 +68,18 @@ export default defineConfig(({ mode }) => {
         './__generated__': resolve(__dirname, 'src/__generated__'),
       },
     },
+    css: {
+      lightningcss: { exclude: Features.LightDark },
+    },
     build: {
       lib: {
         entry: entries,
         formats: ['es'],
+      },
+      target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14'],
+      cssTarget: ['chrome111', 'edge111', 'firefox114', 'safari16.4', 'ios16.4'],
+      rolldownOptions: {
+        output: { comments: { legal: true } },
       },
       sourcemap: true,
       outDir: 'dist',
@@ -60,6 +87,7 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       esmExternalRequirePlugin({ external: externalPatterns }),
+      umdWithoutAmd(),
       react({ compiler: { compilationMode: 'annotation' } }),
       relay({
         module: 'esmodule',

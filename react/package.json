@@ -148,6 +148,7 @@
     "eslint-plugin-relay": "^2.0.0",
     "globals": "catalog:",
     "jsdom": "^29.1.1",
+    "lightningcss": "^1.33.0",
     "oxc-transform-react": "^0.152.0",
     "oxc-transform-relay": "^0.154.0",
     "prop-types": "^15.8.1",

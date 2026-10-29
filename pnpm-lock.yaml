@@ -853,6 +853,9 @@ importers:
       jsonc-eslint-parser:
         specifier: 'catalog:'
         version: 2.4.2
+      lightningcss:
+        specifier: ^1.33.0
+        version: 1.33.0
       oxc-transform-react:
         specifier: ^0.152.0
         version: 0.152.0
@@ -1259,6 +1262,9 @@ importers:
       jsdom:
         specifier: ^29.1.1
         version: 29.1.1
+      lightningcss:
+        specifier: ^1.33.0
+        version: 1.33.0
       oxc-transform-react:
         specifier: ^0.152.0
         version: 0.152.0
@@ -23046,6 +23052,7 @@ time:
   jsdom@29.1.1: '2026-04-30T08:52:48.353Z'
   jsonc-eslint-parser@2.4.2: '2025-12-07T09:11:57.763Z'
   katex@0.16.47: '2026-05-16T07:48:35.236Z'
+  lightningcss@1.33.0: '2026-07-20T05:11:09.509Z'
   lint-staged@15.5.2: '2025-05-06T10:11:25.711Z'
   lodash-es@4.18.1: '2026-04-01T21:04:15.518Z'
   lodash@4.18.1: '2026-04-01T21:01:20.458Z'
