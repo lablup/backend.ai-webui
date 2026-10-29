@@ -7,6 +7,7 @@ import type {
   AdminDeploymentPresetTableFragment$key,
 } from '../__generated__/AdminDeploymentPresetTableFragment.graphql';
 import {
+  type BAIEntityLabel,
   BAIColumnType,
   BAIEntityLabelTargetCell,
   BAIFlex,
@@ -57,6 +58,8 @@ interface AdminDeploymentPresetTableProps extends Omit<
   onChangeOrder?: (
     order: (typeof availablePresetSorterValues)[number] | null,
   ) => void;
+  /** Fired when a label token is clicked; the surface filters its list by it. */
+  onLabelClick?: (label: BAIEntityLabel) => void;
 }
 
 const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
@@ -66,6 +69,7 @@ const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
   onEdit,
   onDelete,
   onChangeOrder,
+  onLabelClick,
   ...tableProps
 }) => {
   'use memo';
@@ -276,6 +280,7 @@ const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
             entityType="deployment_preset"
             entityId={record.entityId}
             name={record.name}
+            onLabelClick={onLabelClick}
           />
         ),
       },

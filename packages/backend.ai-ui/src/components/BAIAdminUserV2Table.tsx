@@ -1,4 +1,5 @@
 import {
+  type BAIEntityLabel,
   BAIColumnType,
   BAIEntityLabelTargetCell,
   BAIFlex,
@@ -62,6 +63,8 @@ interface BAIAdminUserV2TableProps extends Omit<
   onChangeOrder?: (
     order: (typeof availableUserV2SorterValues)[number] | null,
   ) => void;
+  /** Fired when a label token is clicked; the surface filters its list by it. */
+  onLabelClick?: (label: BAIEntityLabel) => void;
 }
 
 const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
@@ -70,6 +73,7 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
   disableSorter,
   withProjects,
   onChangeOrder,
+  onLabelClick,
   ...tableProps
 }) => {
   'use memo';
@@ -386,6 +390,7 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
               entityType="user"
               entityId={record.entityId}
               name={record.basicInfo?.email ?? undefined}
+              onLabelClick={onLabelClick}
             />
           ) : (
             '-'

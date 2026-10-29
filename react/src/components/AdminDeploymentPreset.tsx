@@ -25,6 +25,7 @@ import {
   type BAITableSettings,
   useBAILogger,
   filterOutNullAndUndefined,
+  toEntityLabelFilter,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
@@ -192,6 +193,16 @@ const AdminDeploymentPreset = ({
         </BAIFlex>
       </BAIFlex>
       <AdminDeploymentPresetTable
+        onLabelClick={(label) => {
+          onReload(
+            {
+              ...queryRef.variables,
+              filter: toEntityLabelFilter(label),
+              offset: 0,
+            },
+            { fetchPolicy: 'network-only' },
+          );
+        }}
         presetsFrgmt={filterOutNullAndUndefined(
           _.map(deploymentRevisionPresets?.edges, 'node'),
         )}

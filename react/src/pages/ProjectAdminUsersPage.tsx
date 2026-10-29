@@ -24,6 +24,7 @@ import {
   useFetchKey,
   BAISegmentedControl,
   BAISegmentedControlItem,
+  toEntityLabelFilter,
 } from 'backend.ai-ui';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { Suspense, useDeferredValue } from 'react';
@@ -196,6 +197,10 @@ const ProjectAdminUsersContent: React.FC<ProjectAdminUsersContentProps> = ({
         />
       </BAIFlex>
       <BAIAdminUserV2Table
+        onLabelClick={(label) => {
+          setQueryParams({ filter: toEntityLabelFilter(label) });
+          setTablePaginationOption({ current: 1 });
+        }}
         usersFrgmt={userNodes}
         customizeColumns={(baseColumns) =>
           // The TOTP columns are meaningless when the manager has no TOTP

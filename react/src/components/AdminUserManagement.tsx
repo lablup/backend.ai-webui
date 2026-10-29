@@ -43,6 +43,7 @@ import {
   filterOutNullAndUndefined,
   useBAILogger,
   useToggle,
+  toEntityLabelFilter,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
@@ -611,6 +612,17 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
         </BAIFlex>
       </BAIFlex>
       <BAIAdminUserV2Table
+        onLabelClick={(label) => {
+          onReload({
+            ...variables,
+            filter: {
+              ...toEntityLabelFilter(label),
+              status: variables.filter?.status,
+            },
+            offset: 0,
+          });
+          setSelectedUserList([]);
+        }}
         usersFrgmt={filterOutNullAndUndefined(
           _.map(scopedUsersV2?.edges, 'node'),
         )}

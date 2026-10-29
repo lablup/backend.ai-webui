@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<73b600af095063551fa094fa497f09d9>>
+ * @generated SignedSource<<daad5550b5eab2ebb2e72dadcb43be90>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -39,6 +39,7 @@ export type UserV2Filter = {
   fullName?: StringFilter | null | undefined;
   integrationName?: StringFilter | null | undefined;
   keypairs?: UserKeypairNestedFilter | null | undefined;
+  labels?: EntityLabelNestedFilter | null | undefined;
   modifiedAt?: DateTimeFilter | null | undefined;
   needPasswordChange?: boolean | null | undefined;
   project?: UserProjectNestedFilter | null | undefined;
@@ -145,6 +146,22 @@ export type UserDomainNestedFilter = {
 export type UserProjectNestedFilter = {
   isActive?: boolean | null | undefined;
   name?: StringFilter | null | undefined;
+};
+export type EntityLabelNestedFilter = {
+  every?: EntityLabelFilter | null | undefined;
+  exists?: boolean | null | undefined;
+  none?: EntityLabelFilter | null | undefined;
+  some?: EntityLabelFilter | null | undefined;
+};
+export type EntityLabelFilter = {
+  AND?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  NOT?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
+  key?: StringFilter | null | undefined;
+  value?: StringFilter | null | undefined;
 };
 export type UserV2OrderBy = {
   direction?: OrderDirection;
