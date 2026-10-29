@@ -35,7 +35,16 @@ vi.mock('react-i18next', () => ({
 
 // Super-admins skip the per-project permission query, so the mutation is the
 // only operation in most tests; the permission test turns this off.
-const clientState = vi.hoisted(() => ({ isSuperadmin: true }));
+const clientState = vi.hoisted(() => ({
+  isSuperadmin: true,
+  skipSharedConfirm: true,
+}));
+
+vi.mock('../hooks/useAppConfig', () => ({
+  useMyAppConfig: () => clientState.skipSharedConfirm,
+  useRefetchMyAppConfig: () => () => Promise.resolve(),
+  useUpdateMyUserAppConfig: () => () => Promise.resolve(),
+}));
 
 vi.mock('../hooks', async (importOriginal) => {
   const originalModule = await importOriginal<typeof import('../hooks')>();
@@ -253,7 +262,7 @@ describe('FolderCreateModalV2 project prop contract (ADR-0001)', () => {
 
       expect(
         await screen.findByText(
-          'data.folders.FolderCreationInPersonalProjectOnly',
+          'data.folders.NoPermissionToCreateFolderInProject',
         ),
       ).toBeInTheDocument();
       expect(
@@ -264,6 +273,29 @@ describe('FolderCreateModalV2 project prop contract (ADR-0001)', () => {
       });
     } finally {
       clientState.isSuperadmin = true;
+    }
+  });
+
+  it('shows the visibility notice and holds Create for a confirm in a team project', async () => {
+    clientState.skipSharedConfirm = false;
+    try {
+      const user = userEvent.setup();
+      const { environment } = renderModal({
+        id: 'fixed-project-id',
+        name: 'fixed-project-name',
+      });
+
+      expect(
+        screen.getByText('data.folders.SharedProjectFolderVisibleToMembers'),
+      ).toBeInTheDocument();
+      await fillFolderNameAndSubmit(user, 'contract-folder');
+
+      // The confirm step stands between Create and the mutation. jsdom does
+      // not open a second Modal after mount, so the dialog itself is not read.
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      expect(environment.mock.getAllOperations()).toHaveLength(0);
+    } finally {
+      clientState.skipSharedConfirm = true;
     }
   });
 

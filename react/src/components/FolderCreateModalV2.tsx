@@ -16,6 +16,11 @@ import { Form, FormInstance } from '../form-engine';
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
+import {
+  useMyAppConfig,
+  useRefetchMyAppConfig,
+  useUpdateMyUserAppConfig,
+} from '../hooks/useAppConfig';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { ProjectContext, ProjectContextOrNull } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
@@ -36,6 +41,8 @@ import {
   useBAILogger,
   useErrorMessageResolver,
   useMutationWithPromise,
+  BAICheckboxInput,
+  BAIText,
   BAIRadioList,
   BAIRadioListItem,
   BAISwitch,
@@ -48,6 +55,7 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const MODEL_STORE_PROJECT_NAME = 'model-store';
+const SKIP_SHARED_FOLDER_CONFIRM_KEY = 'skip_shared_project_folder_confirm';
 const FOLDER_NAME_MAX_LENGTH = 64;
 const MODAL_WIDTH = 650;
 
@@ -137,19 +145,36 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
   const effectiveProject = project ?? selectedProject;
 
   const { personalProject } = useAccessibleProjects();
-  const isPersonalTarget =
-    !!effectiveProject && effectiveProject.id === personalProject?.id;
+  // A team project's folders are visible to its members; the model-store
+  // admin flow is excluded.
+  const isSharedTarget =
+    !!effectiveProject &&
+    effectiveProject.id !== personalProject?.id &&
+    folderType !== 'model_project';
   // Super-admins are not governed by project roles, so the check is skipped.
   const shouldCheckCreatePermission =
-    !isPersonalTarget && !baiClient?.is_superadmin;
+    isSharedTarget && !baiClient?.is_superadmin;
   const [createPermission, setCreatePermission] = useState<{
     projectId: string;
     canCreate: boolean;
   } | null>(null);
-  const isCreateBlocked =
-    shouldCheckCreatePermission &&
-    createPermission?.projectId === effectiveProject?.id &&
-    createPermission?.canCreate === false;
+  // `undefined` until known, and for targets that need no notice.
+  const canCreateInSharedProject: boolean | undefined = !isSharedTarget
+    ? undefined
+    : !shouldCheckCreatePermission
+      ? true
+      : createPermission?.projectId === effectiveProject?.id
+        ? createPermission?.canCreate
+        : undefined;
+
+  const skipSharedFolderConfirm = !!useMyAppConfig<boolean>(
+    SKIP_SHARED_FOLDER_CONFIRM_KEY,
+  );
+  const updateMyUserAppConfig = useUpdateMyUserAppConfig();
+  const refetchMyAppConfig = useRefetchMyAppConfig();
+  const [isSharedConfirmOpen, setIsSharedConfirmOpen] = useState(false);
+  const [dontAskAgain, setDontAskAgain] = useState(false);
+  const [isConfirmPending, setIsConfirmPending] = useState(false);
 
   // The permission rule closes over `effectiveProject` (model-store read-only
   // lock), so re-validate only after the in-modal selection commits.
@@ -350,331 +375,409 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
   };
 
   return (
-    <BAIModal
-      isOpen={modalProps.open}
-      onOpenChange={(next) => {
-        if (!next) onRequestClose();
-      }}
-      title={t('data.CreateANewStorageFolder')}
-      maskClosable={false}
-      unmountOnClose
-      footer={
-        <HStack justify="end" gap={2}>
-          <Button
-            variant="secondary"
-            label={t('button.Cancel')}
-            onClick={() => {
-              onRequestClose();
-            }}
-          />
-          <Button
-            variant="primary"
-            label={t('data.Create')}
-            isDisabled={isCreateBlocked}
-            clickAction={async () => {
-              await handleOk();
-            }}
-            {...({ 'data-testid': 'create-folder-button' } as object)}
-          />
-        </HStack>
-      }
-      width={MODAL_WIDTH}
-      {...modalProps}
-      afterOpenChange={(nowOpen) => {
-        if (!nowOpen) return;
-        // The modal is destroyed on close, which clears the form; keep the
-        // tracked in-modal project selection in sync with it.
-        setSelectedProject(null);
-        if (initialValidate) {
-          formRef.current?.validateFields();
+    <>
+      <BAIModal
+        isOpen={modalProps.open}
+        onOpenChange={(next) => {
+          if (!next) onRequestClose();
+        }}
+        title={t('data.CreateANewStorageFolder')}
+        maskClosable={false}
+        unmountOnClose
+        footer={
+          <HStack justify="end" gap={2}>
+            <Button
+              variant="secondary"
+              label={t('button.Cancel')}
+              onClick={() => {
+                onRequestClose();
+              }}
+            />
+            <Button
+              variant="primary"
+              label={t('data.Create')}
+              isDisabled={canCreateInSharedProject === false}
+              clickAction={async () => {
+                if (canCreateInSharedProject && !skipSharedFolderConfirm) {
+                  setIsSharedConfirmOpen(true);
+                  return;
+                }
+                await handleOk();
+              }}
+              {...({ 'data-testid': 'create-folder-button' } as object)}
+            />
+          </HStack>
         }
-      }}
-    >
-      {shouldCheckCreatePermission && effectiveProject ? (
-        <Suspense fallback={null}>
-          <FolderCreatePermissionNotice
-            projectId={effectiveProject.id}
-            personalProjectName={personalProject?.name}
-            onResolved={(canCreate) =>
-              setCreatePermission({ projectId: effectiveProject.id, canCreate })
-            }
-          />
-        </Suspense>
-      ) : null}
-      {alertMessage ? (
-        <div style={{ marginBottom: token('--spacing-5') }}>
-          <Banner
-            role="alert"
-            status="warning"
-            title={alertMessage}
-            container="section"
-          />
-        </div>
-      ) : null}
-
-      <VStack
-        align="stretch"
-        style={{
-          paddingLeft: token('--spacing-5'),
-          paddingRight: token('--spacing-5'),
-          paddingTop: alertMessage ? 0 : token('--spacing-5'),
+        width={MODAL_WIDTH}
+        {...modalProps}
+        afterOpenChange={(nowOpen) => {
+          if (!nowOpen) return;
+          // The modal is destroyed on close, which clears the form; keep the
+          // tracked in-modal project selection in sync with it.
+          setSelectedProject(null);
+          if (initialValidate) {
+            formRef.current?.validateFields();
+          }
         }}
       >
-        <Form
-          ref={formRef}
-          initialValues={mergedInitialValues}
-          labelCol={{ span: 8 }}
-          // Without this the engine default (`text-align: end`) bunches the
-          // labels against the control column. Measurements: QA-FINDINGS Q-26.
-          labelAlign="left"
-        >
-          {project === null && (
-            <>
-              <BAIFormItem
-                label={t('data.folders.TargetProject')}
-                name={'group'}
-                layout="horizontal"
-                required
-                rules={[
-                  {
-                    required: true,
-                    message: t('data.folders.TargetProjectRequired'),
-                  },
-                ]}
-              >
-                {/* The Suspense boundary swallows BAIFormItem's injected
-                    props, so the field value is written explicitly. */}
-                <Suspense fallback={<BAISelect loading disabled />}>
-                  <ProjectSelectForAdminPage
-                    data-testid="folder-create-project-select"
-                    domain={baiClient._config.domainName}
-                    onSelectProject={(projectInfo) => {
-                      setSelectedProject({
-                        id: projectInfo.projectId,
-                        name: projectInfo.projectName,
-                      });
-                      formRef.current?.setFieldValue(
-                        'group',
-                        projectInfo.projectId,
+        {shouldCheckCreatePermission && effectiveProject ? (
+          <Suspense fallback={null}>
+            <FolderCreatePermissionCheck
+              projectId={effectiveProject.id}
+              onResolved={(canCreate) =>
+                setCreatePermission({
+                  projectId: effectiveProject.id,
+                  canCreate,
+                })
+              }
+            />
+          </Suspense>
+        ) : null}
+        {canCreateInSharedProject !== undefined ? (
+          <div style={{ marginBottom: token('--spacing-5') }}>
+            <Banner
+              role="status"
+              status={canCreateInSharedProject ? 'info' : 'warning'}
+              title={
+                canCreateInSharedProject
+                  ? t('data.folders.SharedProjectFolderVisibleToMembers')
+                  : t('data.folders.NoPermissionToCreateFolderInProject')
+              }
+              container="section"
+              endContent={
+                !canCreateInSharedProject && personalProject?.name ? (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    label={t('data.folders.FolderCreationOpenPersonalProject')}
+                    onClick={() => {
+                      window.open(
+                        buildPath('project', 'data', personalProject.name),
+                        '_blank',
+                        'noopener,noreferrer',
                       );
-                      formRef.current?.validateFields(['group']);
                     }}
                   />
-                </Suspense>
-              </BAIFormItem>
-              {/* Match the 24px bottom margin form items carry (FR-3441). */}
-              <Divider style={{ marginBottom: token('--spacing-6') }} />
-            </>
-          )}
-          <BAIFormItem
-            label={t('data.Foldername')}
-            name={'name'}
-            layout="horizontal"
-            // required check is handled in the name validator
-            required
-            rules={[
-              {
-                pattern: /^[a-zA-Z0-9-_.]+$/,
-                message: t('data.AllowsLettersNumbersAnd-_Dot'),
-              },
-              {
-                max: FOLDER_NAME_MAX_LENGTH,
-                message: t('data.FolderNameTooLong'),
-              },
-              ({ getFieldValue }) => ({
-                validator(_rule, value) {
-                  if (_.isEmpty(value)) {
-                    return Promise.reject(
-                      new Error(t('data.FolderNameRequired')),
-                    );
-                  }
-                  if (
-                    getFieldValue('usage_mode') === 'automount' &&
-                    !_.startsWith(value, '.')
-                  ) {
-                    return Promise.reject(
-                      new Error(t('data.AutomountFolderNameMustStartWithDot')),
-                    );
-                  }
-                  if (
-                    getFieldValue('usage_mode') !== 'automount' &&
-                    _.startsWith(value, '.')
-                  ) {
-                    return Promise.reject(
-                      new Error(t('data.DotPrefixReservedForAutomount')),
-                    );
-                  }
-                  return Promise.resolve();
-                },
-              }),
-            ]}
-          >
-            <BAITextInput
-              aria-label={t('data.Foldername')}
-              placeholder={t('maxLength.64chars')}
+                ) : undefined
+              }
             />
-          </BAIFormItem>
+          </div>
+        ) : null}
+        {alertMessage ? (
+          <div style={{ marginBottom: token('--spacing-5') }}>
+            <Banner
+              role="alert"
+              status="warning"
+              title={alertMessage}
+              container="section"
+            />
+          </div>
+        ) : null}
 
-          <BAIFormItem
-            label={t('data.UsageMode')}
-            name={'usage_mode'}
-            layout="horizontal"
-            required
+        <VStack
+          align="stretch"
+          style={{
+            paddingLeft: token('--spacing-5'),
+            paddingRight: token('--spacing-5'),
+            paddingTop: alertMessage ? 0 : token('--spacing-5'),
+          }}
+        >
+          <Form
+            ref={formRef}
+            initialValues={mergedInitialValues}
+            labelCol={{ span: 8 }}
+            // Without this the engine default (`text-align: end`) bunches the
+            // labels against the control column. Measurements: QA-FINDINGS Q-26.
+            labelAlign="left"
           >
-            <BAIRadioList
-              aria-label={t('data.UsageMode')}
-              disabled={isFolderTypeLocked}
-              orientation="horizontal"
-              onChange={() => {
-                // Only validate name field if it has a value to prevent
-                // excessive validation
-                if (formRef.current?.getFieldValue('name')) {
-                  formRef.current.validateFields(['name']);
-                }
-              }}
-            >
-              <BAIRadioListItem
-                value="general"
-                label={t('data.General')}
-                data-testid="general-usage-mode"
-              />
-              <BAIRadioListItem
-                value="model"
-                label={t('data.Models')}
-                data-testid="model-usage-mode"
-              />
-              {allowAutoMount && (
-                <BAIRadioListItem
-                  value="automount"
-                  label={t('data.AutoMount')}
-                  data-testid="automount-usage-mode"
-                  endContent={
-                    <BAIQuestionIconWithTooltip
-                      title={t('data.AutomountFolderCreationDesc')}
-                    />
-                  }
-                />
-              )}
-            </BAIRadioList>
-          </BAIFormItem>
-
-          <BAIFormItem
-            label={t('data.folders.Location')}
-            name={'host'}
-            layout="horizontal"
-            required
-          >
-            <Suspense fallback={<BAISelect loading disabled />}>
-              <StorageSelect
-                onChange={(value) => {
-                  formRef.current?.setFieldValue('host', value);
-                }}
-                showUsageStatus
-                autoSelectType="usage"
-                showSearch
-              />
-            </Suspense>
-          </BAIFormItem>
-          {project !== null && <Form.Item hidden name={'group'} />}
-
-          <Form.Item dependencies={['usage_mode']} noStyle required>
-            {({ getFieldValue }) => {
-              // Model folders of the model-store project are read-only
-              // (FR-1290); the manager does not enforce it. Mirrored in
-              // VFolderNodeDescriptionV2.
-              const shouldDisableRWPermission =
-                getFieldValue('usage_mode') === 'model' && isModelStoreProject;
-
-              return (
+            {project === null && (
+              <>
                 <BAIFormItem
-                  label={t('data.folders.MountPermission')}
-                  name={'permission'}
+                  label={t('data.folders.TargetProject')}
+                  name={'group'}
                   layout="horizontal"
                   required
-                  dependencies={['usage_mode']}
                   rules={[
                     {
-                      validator: (__, value) =>
-                        shouldDisableRWPermission && value === 'rw'
-                          ? Promise.reject(
-                              new Error(
-                                t(
-                                  'data.folders.ModelProjectFolderRestrictedToReadOnly',
-                                ),
-                              ),
-                            )
-                          : Promise.resolve(),
+                      required: true,
+                      message: t('data.folders.TargetProjectRequired'),
                     },
                   ]}
                 >
-                  <BAIRadioList
-                    aria-label={t('data.folders.MountPermission')}
-                    disabled={isFolderTypeLocked}
-                    orientation="horizontal"
-                  >
-                    <BAIRadioListItem
-                      value="rw"
-                      label={t('data.ReadWrite')}
-                      data-testid="rw-permission"
-                      isDisabled={shouldDisableRWPermission}
-                      endContent={
-                        !isFolderTypeLocked && shouldDisableRWPermission ? (
-                          <BAIIconWithTooltip
-                            content={t(
-                              'data.folders.ModelProjectFolderRestrictedToReadOnly',
-                            )}
-                            focusable={false}
-                            icon={<TriangleAlertIcon />}
-                          />
-                        ) : undefined
-                      }
+                  {/* The Suspense boundary swallows BAIFormItem's injected
+                    props, so the field value is written explicitly. */}
+                  <Suspense fallback={<BAISelect loading disabled />}>
+                    <ProjectSelectForAdminPage
+                      data-testid="folder-create-project-select"
+                      domain={baiClient._config.domainName}
+                      onSelectProject={(projectInfo) => {
+                        setSelectedProject({
+                          id: projectInfo.projectId,
+                          name: projectInfo.projectName,
+                        });
+                        formRef.current?.setFieldValue(
+                          'group',
+                          projectInfo.projectId,
+                        );
+                        formRef.current?.validateFields(['group']);
+                      }}
                     />
-                    <BAIRadioListItem
-                      value="ro"
-                      label={t('data.ReadOnly')}
-                      data-testid="ro-permission"
-                    />
-                  </BAIRadioList>
+                  </Suspense>
                 </BAIFormItem>
-              );
-            }}
-          </Form.Item>
+                {/* Match the 24px bottom margin form items carry (FR-3441). */}
+                <Divider style={{ marginBottom: token('--spacing-6') }} />
+              </>
+            )}
+            <BAIFormItem
+              label={t('data.Foldername')}
+              name={'name'}
+              layout="horizontal"
+              // required check is handled in the name validator
+              required
+              rules={[
+                {
+                  pattern: /^[a-zA-Z0-9-_.]+$/,
+                  message: t('data.AllowsLettersNumbersAnd-_Dot'),
+                },
+                {
+                  max: FOLDER_NAME_MAX_LENGTH,
+                  message: t('data.FolderNameTooLong'),
+                },
+                ({ getFieldValue }) => ({
+                  validator(_rule, value) {
+                    if (_.isEmpty(value)) {
+                      return Promise.reject(
+                        new Error(t('data.FolderNameRequired')),
+                      );
+                    }
+                    if (
+                      getFieldValue('usage_mode') === 'automount' &&
+                      !_.startsWith(value, '.')
+                    ) {
+                      return Promise.reject(
+                        new Error(
+                          t('data.AutomountFolderNameMustStartWithDot'),
+                        ),
+                      );
+                    }
+                    if (
+                      getFieldValue('usage_mode') !== 'automount' &&
+                      _.startsWith(value, '.')
+                    ) {
+                      return Promise.reject(
+                        new Error(t('data.DotPrefixReservedForAutomount')),
+                      );
+                    }
+                    return Promise.resolve();
+                  },
+                }),
+              ]}
+            >
+              <BAITextInput
+                aria-label={t('data.Foldername')}
+                placeholder={t('maxLength.64chars')}
+              />
+            </BAIFormItem>
 
-          <Form.Item dependencies={['usage_mode']} noStyle>
-            {({ getFieldValue }) => {
-              return (
-                getFieldValue('usage_mode') === 'model' && (
-                  <>
-                    <BAIFormItem
-                      label={t('data.folders.Cloneable')}
-                      name={'cloneable'}
-                      layout="horizontal"
+            <BAIFormItem
+              label={t('data.UsageMode')}
+              name={'usage_mode'}
+              layout="horizontal"
+              required
+            >
+              <BAIRadioList
+                aria-label={t('data.UsageMode')}
+                disabled={isFolderTypeLocked}
+                orientation="horizontal"
+                onChange={() => {
+                  // Only validate name field if it has a value to prevent
+                  // excessive validation
+                  if (formRef.current?.getFieldValue('name')) {
+                    formRef.current.validateFields(['name']);
+                  }
+                }}
+              >
+                <BAIRadioListItem
+                  value="general"
+                  label={t('data.General')}
+                  data-testid="general-usage-mode"
+                />
+                <BAIRadioListItem
+                  value="model"
+                  label={t('data.Models')}
+                  data-testid="model-usage-mode"
+                />
+                {allowAutoMount && (
+                  <BAIRadioListItem
+                    value="automount"
+                    label={t('data.AutoMount')}
+                    data-testid="automount-usage-mode"
+                    endContent={
+                      <BAIQuestionIconWithTooltip
+                        title={t('data.AutomountFolderCreationDesc')}
+                      />
+                    }
+                  />
+                )}
+              </BAIRadioList>
+            </BAIFormItem>
+
+            <BAIFormItem
+              label={t('data.folders.Location')}
+              name={'host'}
+              layout="horizontal"
+              required
+            >
+              <Suspense fallback={<BAISelect loading disabled />}>
+                <StorageSelect
+                  onChange={(value) => {
+                    formRef.current?.setFieldValue('host', value);
+                  }}
+                  showUsageStatus
+                  autoSelectType="usage"
+                  showSearch
+                />
+              </Suspense>
+            </BAIFormItem>
+            {project !== null && <Form.Item hidden name={'group'} />}
+
+            <Form.Item dependencies={['usage_mode']} noStyle required>
+              {({ getFieldValue }) => {
+                // Model folders of the model-store project are read-only
+                // (FR-1290); the manager does not enforce it. Mirrored in
+                // VFolderNodeDescriptionV2.
+                const shouldDisableRWPermission =
+                  getFieldValue('usage_mode') === 'model' &&
+                  isModelStoreProject;
+
+                return (
+                  <BAIFormItem
+                    label={t('data.folders.MountPermission')}
+                    name={'permission'}
+                    layout="horizontal"
+                    required
+                    dependencies={['usage_mode']}
+                    rules={[
+                      {
+                        validator: (__, value) =>
+                          shouldDisableRWPermission && value === 'rw'
+                            ? Promise.reject(
+                                new Error(
+                                  t(
+                                    'data.folders.ModelProjectFolderRestrictedToReadOnly',
+                                  ),
+                                ),
+                              )
+                            : Promise.resolve(),
+                      },
+                    ]}
+                  >
+                    <BAIRadioList
+                      aria-label={t('data.folders.MountPermission')}
+                      disabled={isFolderTypeLocked}
+                      orientation="horizontal"
                     >
-                      <BAISwitch aria-label={t('data.folders.Cloneable')} />
-                    </BAIFormItem>
-                  </>
-                )
-              );
-            }}
-          </Form.Item>
-        </Form>
-      </VStack>
-    </BAIModal>
+                      <BAIRadioListItem
+                        value="rw"
+                        label={t('data.ReadWrite')}
+                        data-testid="rw-permission"
+                        isDisabled={shouldDisableRWPermission}
+                        endContent={
+                          !isFolderTypeLocked && shouldDisableRWPermission ? (
+                            <BAIIconWithTooltip
+                              content={t(
+                                'data.folders.ModelProjectFolderRestrictedToReadOnly',
+                              )}
+                              focusable={false}
+                              icon={<TriangleAlertIcon />}
+                            />
+                          ) : undefined
+                        }
+                      />
+                      <BAIRadioListItem
+                        value="ro"
+                        label={t('data.ReadOnly')}
+                        data-testid="ro-permission"
+                      />
+                    </BAIRadioList>
+                  </BAIFormItem>
+                );
+              }}
+            </Form.Item>
+
+            <Form.Item dependencies={['usage_mode']} noStyle>
+              {({ getFieldValue }) => {
+                return (
+                  getFieldValue('usage_mode') === 'model' && (
+                    <>
+                      <BAIFormItem
+                        label={t('data.folders.Cloneable')}
+                        name={'cloneable'}
+                        layout="horizontal"
+                      >
+                        <BAISwitch aria-label={t('data.folders.Cloneable')} />
+                      </BAIFormItem>
+                    </>
+                  )
+                );
+              }}
+            </Form.Item>
+          </Form>
+        </VStack>
+      </BAIModal>
+      <BAIModal
+        open={isSharedConfirmOpen}
+        title={t('data.CreateANewStorageFolder')}
+        okText={t('data.Create')}
+        confirmLoading={isConfirmPending}
+        unmountOnClose
+        onCancel={() => {
+          setIsSharedConfirmOpen(false);
+          setDontAskAgain(false);
+        }}
+        onOk={async () => {
+          setIsConfirmPending(true);
+          try {
+            if (dontAskAgain) {
+              // A failed preference write must not block the creation.
+              await updateMyUserAppConfig(SKIP_SHARED_FOLDER_CONFIRM_KEY, true)
+                .then(() => refetchMyAppConfig())
+                .catch((error) => logger.error(error));
+            }
+            setIsSharedConfirmOpen(false);
+            await handleOk();
+          } finally {
+            setIsConfirmPending(false);
+          }
+        }}
+        {...({ 'data-testid': 'shared-folder-confirm-modal' } as object)}
+      >
+        <VStack align="stretch" gap={3}>
+          <BAIText>
+            {t('data.folders.ConfirmCreateFolderVisibleToMembers')}
+          </BAIText>
+          <BAICheckboxInput
+            value={dontAskAgain}
+            onChange={(checked) => setDontAskAgain(!!checked)}
+          >
+            {t('data.folders.DontAskAgain')}
+          </BAICheckboxInput>
+        </VStack>
+      </BAIModal>
+    </>
   );
 };
 
-interface FolderCreatePermissionNoticeProps {
+interface FolderCreatePermissionCheckProps {
   projectId: string;
-  personalProjectName?: string;
   onResolved: (canCreate: boolean) => void;
 }
 
-const FolderCreatePermissionNotice: React.FC<
-  FolderCreatePermissionNoticeProps
-> = ({ projectId, personalProjectName, onResolved }) => {
+/** Reports whether the caller holds CREATE on vfolders in the project. */
+const FolderCreatePermissionCheck: React.FC<
+  FolderCreatePermissionCheckProps
+> = ({ projectId, onResolved }) => {
   'use memo';
-  const { t } = useTranslation();
-  const { token } = useTheme();
 
   const { myScopePermissions } =
     useLazyLoadQuery<FolderCreateModalV2PermissionQuery>(
@@ -705,33 +808,7 @@ const FolderCreatePermissionNotice: React.FC<
     reportResolved();
   }, [projectId, canCreate]);
 
-  if (canCreate) return null;
-  return (
-    <div style={{ marginBottom: token('--spacing-5') }}>
-      <Banner
-        role="status"
-        status="info"
-        title={t('data.folders.FolderCreationInPersonalProjectOnly')}
-        container="section"
-        endContent={
-          personalProjectName ? (
-            <Button
-              variant="secondary"
-              size="sm"
-              label={t('data.folders.FolderCreationOpenPersonalProject')}
-              onClick={() => {
-                window.open(
-                  buildPath('project', 'data', personalProjectName),
-                  '_blank',
-                  'noopener,noreferrer',
-                );
-              }}
-            />
-          ) : undefined
-        }
-      />
-    </div>
-  );
+  return null;
 };
 
 export default FolderCreateModalV2;
