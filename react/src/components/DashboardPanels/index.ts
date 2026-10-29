@@ -38,7 +38,7 @@ export {
 } from './panelRegistry';
 export { DEFAULT_PANEL_LAYOUTS, createPanel } from './defaults';
 export { resourceRegistry, resourceKeys } from './resourceRegistry';
-export { resolveDashboardScope, resourceGroupRows } from './dashboardScope';
+export { cardResourceGroup, resolveDashboardScope } from './dashboardScope';
 export { planBuckets, rangeToDateTimeFilter, withinWindow } from './timeRange';
 export {
   DashboardRefreshProvider,

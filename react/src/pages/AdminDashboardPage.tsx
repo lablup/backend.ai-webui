@@ -26,7 +26,7 @@ const AdminDashboardPageContent: React.FC = () => {
   const currentResourceGroup = useCurrentResourceGroupValue();
   const userRole = useCurrentUserRole();
 
-  const { fetchKey } = useDashboardFetchKey('page-query', '30s');
+  const { fetchKey } = useDashboardFetchKey('page-query');
   const deferredFetchKey = useDeferredValue(fetchKey);
   const isRefetching = fetchKey !== deferredFetchKey;
 

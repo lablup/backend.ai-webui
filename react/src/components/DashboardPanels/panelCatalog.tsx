@@ -146,7 +146,7 @@ const FolderStatusPanel: React.FC<PanelComponentProps> = ({ fetchKey }) => {
 const QuotaPerStorageVolumePanel: React.FC<PanelComponentProps> = () => {
   'use memo';
   const { t } = useTranslation();
-  useDashboardRefreshQuery(['vhostInfo'], '5m');
+  useDashboardRefreshQuery(['vhostInfo']);
   return (
     <BAIBoardItemErrorBoundary
       title={t('data.QuotaPerStorageVolume')}

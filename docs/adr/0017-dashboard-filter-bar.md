@@ -7,7 +7,7 @@
 - 대시보드 page의 [대시보드 바](#용어)는 보드 탭과 자동 새로고침 control 하나만 둔다. 바는 언제 다시 읽을지만 정하고, 무엇을 읽을지는 정하지 않는다.
 - 카드가 읽는 범위는 page가 정한다. 일반 사용자 page는 헤더 프로젝트에서 자기 데이터, 프로젝트 관리자 page는 URL 경로의 프로젝트, superadmin page는 현재 도메인 전체다. superadmin도 도메인을 고르지 않는다([ADR 0012](0012-scoped-search-fields-in-place-of-admin-fields.md)).
 - 자원 그룹과 기간은 [카드 설정](#용어)이다. 자원 그룹이나 기간에 따라 값이 달라지는 카드만 설정을 갖고, 편집 모드에서 그 카드에만 설정 control이 보인다. 바에는 일부 카드만 따르는 전역 filter가 없다.
-- 자동 새로고침은 page마다 하나다. 바의 refresh control이 간격마다 tick을 보내고, tick은 카드 정의의 `refresh.min`이 지난 카드만 다시 읽는다. control을 누르면 모든 카드를 바로 다시 읽는다. 카드에는 자기 refresh 버튼이 없다.
+- 자동 새로고침은 page마다 하나다. 바의 refresh control이 간격(기본 1분)마다 tick을 보내고, tick은 화면에 보이는 모든 카드를 함께 다시 읽는다. 카드마다 정한 최소 간격은 없다. control을 누르면 모든 카드를 바로 다시 읽는다. 카드에는 자기 refresh 버튼이 없다.
 - 카드가 보여 주는 합계와 시간별 개수는 매니저가 계산한 값만 쓴다. 한 프로젝트나 한 자원 그룹 단위로만 값을 주는 field는 행으로 나눠 보여 주고, 클라이언트는 값을 더하지 않는다.
 
 ## Context
@@ -35,7 +35,7 @@ flowchart LR
   bar -- "간격마다 tick(), 클릭하면 refreshAll()" --> sched
   hook -- "scope, 헤더 프로젝트와 자원 그룹" --> content
   board -- "panel.settings" --> content
-  sched -- "refresh.min이 지난 카드의 fetchKey" --> content
+  sched -- "보이는 모든 카드의 fetchKey" --> content
   sched -- "refetchQueries(queryKey)" --> tan
 ```
 
@@ -45,12 +45,14 @@ flowchart LR
 sequenceDiagram
   participant C as BAIFetchKeyButton
   participant T as RefreshScheduler
-  participant A as 카드 A refresh.min 15s
-  participant B as 카드 B refresh.min 5m
-  Note over C: 간격 30s
-  C->>T: 30s 지남, onChange isAuto true, tick()
-  T->>A: 15s 지남, fetchKey 갱신
-  T--xB: 5m 안 지남, 건너뜀
+  participant A as 카드 A 화면 안
+  participant B as 카드 B 화면 밖
+  Note over C: 간격 1m
+  C->>T: 1m 지남, onChange isAuto true, tick()
+  T->>A: fetchKey 갱신
+  T--xB: 화면 밖, 건너뜀
+  Note over B: 스크롤로 다시 보임
+  T->>B: 마지막 refresh가 1m보다 오래됨, fetchKey 갱신
   C->>T: 사용자가 누름, onChange isAuto false, refreshAll()
   T->>A: fetchKey 갱신
   T->>B: fetchKey 갱신
@@ -61,7 +63,7 @@ sequenceDiagram
 ### 1. 바는 보드 탭과 refresh control만 둔다
 
 - **Bar layout**: `DashboardFilterBar`(`react/src/components/DashboardPanels/DashboardFilterBar.tsx`)는 한 줄에 보드 탭(`projectAdmin`, `admin` page의 `DashboardBoardTabs`)을 왼쪽에, `BAIFetchKeyButton` 하나와 그 바로 뒤의 편집 토글(`DashboardEditToggleButton`, refresh control과 같은 크기의 secondary 버튼)을 오른쪽에 그린다. 편집 진입점은 세 page 모두 이 자리 하나이고, breadcrumb에는 두지 않는다. `project` page는 탭이 없어 refresh control과 편집 토글만 보인다.
-- **Refresh control**: `BAIFetchKeyButton`에 `autoUpdateDelay`와 `onChangeAutoUpdateDelay`를 넘겨 간격 dropdown을 연다. 선택지는 끔, 5초, 10초, 15초, 30초, 1분, 5분, 10분(`REFRESH_OPTIONS`, `refreshScheduler.ts`)이고 기본은 30초다. 고른 간격은 열린 보드의 `vars.refresh`에 저장한다.
+- **Refresh control**: `BAIFetchKeyButton`에 `autoUpdateDelay`와 `onChangeAutoUpdateDelay`를 넘겨 간격 dropdown을 연다. 선택지는 끔, 5초, 10초, 15초, 30초, 1분, 5분, 10분(`REFRESH_OPTIONS`, `refreshScheduler.ts`)이고 기본은 1분이다. 고른 간격은 열린 보드의 `vars.refresh`에 저장한다.
 - **No pickers**: 바에는 프로젝트, 자원 그룹, 기간 control이 없다. 도메인 control도 없다.
 - **No URL state**: 바의 값은 URL query에 쓰지 않는다. 남은 값이 새로고침 간격 하나뿐이라 링크로 나눌 이유가 없다.
 
@@ -76,16 +78,16 @@ sequenceDiagram
 | `projects` | `admin`        | `projectIds: 'all'`, `domain`: 현재 도메인       |
 
 - **Current domain**: `useDashboardFilters`가 `useCurrentDomain()`의 `{ id, name }`을 `domain`으로 넘긴다.
-- **Board vars**: 보드의 `vars`(`DashboardBoardVars`)는 `{ refresh }` 하나다. `sanitizeBoardVars`는 예전 보드에 남은 `project`, `rg`, `range`를 버리고, `REFRESH_OPTIONS`에 없는 `refresh`를 `30s`로 바꾼다.
+- **Board vars**: 보드의 `vars`(`DashboardBoardVars`)는 `{ refresh }` 하나다. `sanitizeBoardVars`는 예전 보드에 남은 `project`, `rg`, `range`를 버리고, `REFRESH_OPTIONS`에 없는 `refresh`를 `1m`으로 바꾼다. 이미 간격을 고른 보드는 그 값을 유지한다.
 
 ### 3. 자원 그룹과 기간은 카드 설정이다
 
-- **Declared settings**: `PanelDefinition.settings`가 카드가 읽는 설정(`resourceGroup`, `range`)을 적는다. 값은 보드 패널의 `PersistedPanelV2.settings`(`{ resourceGroups?: string[]; range?: string }`)에 저장한다. `sanitizeBoard`는 카드 정의가 적지 않은 설정을 버린다.
+- **Declared settings**: `PanelDefinition.settings`가 카드가 읽는 설정(`resourceGroup`, `range`)을 적는다. 값은 보드 패널의 `PersistedPanelV2.settings`(`{ resourceGroups?: string[]; range?: string }`)에 저장한다. 카드는 자원 그룹을 하나만 갖고, `resourceGroups`는 항목 하나인 배열로 저장한다. `sanitizeBoard`는 카드 정의가 적지 않은 설정을 버리고, 예전 보드에 남은 여러 자원 그룹은 첫 번째만 남긴다.
 - **Edit mode only**: 편집 모드의 사이드 패널은 보드에 있는 카드 중 설정을 적은 카드에만 설정 버튼과 지금 값을 보여 주고, 버튼은 `PanelSettingsModal`을 연다. 설정을 적지 않은 카드는 control이 없다.
-- **Resource group choices**: `PanelSettingsModal`은 자원 그룹을 `BAIScopedResourceGroupSelect`로 고른다. 선택지는 page의 프로젝트(`scope: { project }`)에서, superadmin page에서는 현재 도메인(`scope: { domain }`)에서 읽는다.
+- **Resource group choices**: `PanelSettingsModal`은 자원 그룹 하나를 `BAIScopedResourceGroupSelect`로 고른다. 선택지는 page의 프로젝트(`scope: { project }`)에서, superadmin page에서는 현재 도메인(`scope: { domain }`)에서 읽는다.
 - **Defaults**: 자원 그룹 설정이 비어 있으면 고정 카드는 헤더의 현재 자원 그룹을, 사용자 정의 패널은 모든 자원 그룹을 읽는다. 기간 설정의 기본은 최근 24시간(`DEFAULT_RANGE`, `panelSettings.ts`)이고, 선택지는 최근 1시간, 24시간, 7일이다.
-- **Card state**: `DashboardPanelContent`가 설정을 풀어 `vars`(`DashboardVars`)로 넘긴다. `range`, 카드의 마지막 refresh 시각으로 고정한 `timeRange`, `resourceGroups`(설정 또는 헤더 자원 그룹), `currentProjectId`, `currentResourceGroup`이다.
-- **Single resource group cards**: 자원 그룹 하나만 받는 field를 읽는 카드는 `resourceGroupRows(settings.resourceGroups, currentResourceGroup)`로 자원 그룹마다 한 행을 그린다.
+- **Card state**: `DashboardPanelContent`가 설정을 풀어 `vars`(`DashboardVars`)로 넘긴다. `range`, 카드의 마지막 refresh 시각으로 고정한 `timeRange`, `resourceGroup`(설정 또는 헤더 자원 그룹), `currentProjectId`, `currentResourceGroup`이다.
+- **Single resource group cards**: 자원 그룹 하나만 받는 field를 읽는 카드는 `cardResourceGroup(settings.resourceGroups, currentResourceGroup)`이 정한 자원 그룹 하나만 읽는다. 자원 그룹마다 요청을 나누지 않는다.
 - **Custom panels**: data source가 자원 그룹으로 좁힐 수 있으면(`ResourceConfig.supportsResourceGroup`) 사용자 정의 패널도 자원 그룹 설정을 갖는다. 세션은 minilang filter에 `scaling_group == ...`를 붙이고, 배포는 `resourceGroup: { in }`을 쓴다. 폴더 패널은 설정이 없다.
 
 ### 4. 기간은 두 bound의 AND로 거른다
@@ -97,8 +99,9 @@ sequenceDiagram
 
 - **Scheduler**: `DashboardRefreshProvider`가 page마다 `RefreshScheduler`(`refreshScheduler.ts`)를 하나 만든다. scheduler는 timer를 갖지 않는다.
 - **Ticks**: `BAIFetchKeyButton`이 간격마다 `onChange(key, { isAuto: true })`를 부르면 바가 `tick()`을, 사용자가 누르면(`isAuto: false`) `refreshAll()`을 부른다. 버튼은 숨겨진 탭에서 간격을 멈춘다.
-- **Subscribers**: 카드는 `useDashboardFetchKey('panel:<id>', refresh.min)`, 카드가 아직 읽는 page query는 `useDashboardFetchKey('page-query', …)`, TanStack query는 `useDashboardRefreshQuery(queryKey, min)`으로 scheduler에 등록한다.
-- **Per-card minimum**: `tick()`은 마지막 refresh 뒤 `minMs`가 지난 구독자만 다시 읽는다. 500ms까지 이른 tick도 지난 것으로 친다. `refreshAll()`은 모든 구독자를 바로 다시 읽고 각자의 minimum을 다시 센다.
+- **Subscribers**: 카드는 `useDashboardFetchKey('panel:<id>')`, 카드가 아직 읽는 page query는 `useDashboardFetchKey('page-query')`, TanStack query는 `useDashboardRefreshQuery(queryKey)`로 scheduler에 등록한다.
+- **One cadence**: `tick()`은 화면에 보이는 모든 구독자를 다시 읽는다. 카드 정의에는 refresh 간격이 없어 대시보드 전체가 함께 다시 읽힌다. `refreshAll()`은 화면 밖 구독자까지 모든 구독자를 바로 다시 읽는다.
+- **Off-screen cards**: `useBoardItemVisibility`가 화면 밖 카드를 scheduler에 알리면 `tick()`은 그 카드를 건너뛴다. 카드가 다시 보이면 마지막 refresh가 지금 간격(`setIntervalMs`, 바가 넘긴다)보다 오래됐을 때 바로 다시 읽는다. 500ms까지 이른 값도 지난 것으로 친다. 간격이 끔이면 다시 읽지 않는다.
 - **No card buttons**: 카드와 사용자 정의 패널의 머리에는 refresh 버튼이 없다(`PanelFrame`). 대시보드 밖에서도 쓰는 카드 component는 `hideRefreshButton`으로 버튼을 숨긴다.
 - **No suspense flash**: `useDashboardFetchKey`는 fetch key를 `startTransition` 안에서 바꾸고, 카드와 page는 `useDeferredValue`를 거친 key로 query를 다시 읽는다.
 
@@ -117,6 +120,7 @@ sequenceDiagram
 
 - **Global filter bar**: 보드 위에 프로젝트, 자원 그룹, 기간 picker를 두고 모든 카드가 따르게 한다. 보드의 범위가 한 줄에 보인다. 기각한다. 지금 상태를 보여 주는 카드는 기간을, 자원 그룹과 무관한 카드는 자원 그룹을 따를 수 없어 바의 값 일부를 조용히 무시하고, 사용자는 어느 카드가 어느 값을 따르는지 알 수 없다.
 - **Per-card refresh**: 카드마다 refresh 버튼을 둔다. 카드 하나만 다시 읽을 수 있다. 기각한다. 같은 화면에 refresh control이 여러 개면 무엇이 무엇을 다시 읽는지 모호하고, 페이지의 refresh와 겹친다.
+- **Per-card minimum**: 카드 정의마다 최소 refresh 간격(`refresh.min`)을 두고 tick은 그 간격이 지난 카드만 다시 읽는다. 느리게 바뀌는 데이터를 덜 요청한다. 기각한다(2026-10-29). 같은 화면의 카드가 서로 다른 시각의 값을 보여 주고, 바의 간격이 어느 카드를 다시 읽는지 사용자가 알 수 없다.
 - **Domain picker**: superadmin 바에 도메인 multi-select를 둔다. 기각한다. [ADR 0012](0012-scoped-search-fields-in-place-of-admin-fields.md)가 모든 역할의 읽기를 현재 도메인의 `scoped*` field로 정했다.
 - **Scheduler timer**: scheduler가 자기 timer로 tick하고 버튼은 간격만 고른다. 기각한다. `BAIFetchKeyButton`은 간격을 고르면 자기 timer를 돌리므로 timer가 둘이 되고, 버튼의 countdown과 실제 refresh가 어긋난다.
 - **Client-side sums**: 프로젝트마다 받은 값을 브라우저에서 더한다. 기각한다. 권한 때문에 빠진 프로젝트를 클라이언트가 알 수 없어 합계가 틀리고, 요청 수가 프로젝트 수만큼 늘어난다.
@@ -130,7 +134,7 @@ sequenceDiagram
 
 ## 출처
 
-- #10422 (epic), #10582, #9839, #7843, 2026-10-26 회의.
+- #10422 (epic), #10582, #9839, #7843, 2026-10-26 회의, 2026-10-29 결정(카드 하나의 refresh 주기, 기본 1분, 카드마다 자원 그룹 하나).
 - #10422의 role-based dashboard 제안(기간과 갱신, 저장과 마이그레이션).
 
 관련: [ADR 0012](0012-scoped-search-fields-in-place-of-admin-fields.md), [ADR 0016](0016-dashboard-boards-in-manager-app-config.md).
@@ -144,4 +148,3 @@ sequenceDiagram
 | 보드          | 카드 배치와 설정을 담아 저장한 대시보드 한 장이다. `DashboardModel`이며 [ADR 0016](0016-dashboard-boards-in-manager-app-config.md)가 정의한다. |
 | fetch key     | Relay `useLazyLoadQuery`의 `fetchKey` 옵션에 넘기는 문자열이다. 값이 바뀌면 query가 서버에서 다시 읽힌다.                                      |
 | count alias   | 같은 connection field를 한 GraphQL 요청 안에서 filter만 달리해 여러 번 부르고, 각 결과의 `count`만 이름을 붙여 읽는 방식이다.                  |
-| `refresh.min` | `PanelDefinition`이 정하는 카드의 최소 refresh 간격이다. 바의 간격이 이보다 짧아도 카드는 이 간격보다 자주 다시 읽지 않는다.                   |
