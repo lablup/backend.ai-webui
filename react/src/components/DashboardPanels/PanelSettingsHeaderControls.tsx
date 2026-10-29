@@ -14,6 +14,7 @@ import {
 import type { PanelDefinition, PanelSettings } from './types';
 import { useDashboardFilterContext } from './useDashboardFilters';
 import { IconButton } from '@lablup/ui-common/IconButton';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIFlex,
   BAIScopedResourceGroupSelect,
@@ -78,37 +79,47 @@ const PanelSettingsHeaderControls: React.FC = () => {
     <BAIFlex align="center" gap="xxs" data-testid="panel-header-settings">
       {hasSetting(definition, 'resourceGroup') ? (
         <Suspense fallback={null}>
-          <BAIScopedResourceGroupSelect
-            size="sm"
-            variant={overridden.resourceGroup ? 'secondary' : 'ghost'}
-            label={t('general.ResourceGroup')}
-            isLabelHidden
-            scope={resourceGroupScopeOf(filters.scope)}
-            value={resourceGroup}
-            placeholder={defaultResourceGroupLabel}
-            allowClear={!!resourceGroup}
-            onChange={(value) =>
-              onChange({
-                resourceGroups: typeof value === 'string' ? [value] : [],
-              })
-            }
-          />
+          <Tooltip
+            content={t('general.ResourceGroup')}
+            hasHoverIndication={false}
+          >
+            <BAIScopedResourceGroupSelect
+              size="sm"
+              variant={overridden.resourceGroup ? 'secondary' : 'ghost'}
+              label={t('general.ResourceGroup')}
+              isLabelHidden
+              scope={resourceGroupScopeOf(filters.scope)}
+              value={resourceGroup}
+              placeholder={defaultResourceGroupLabel}
+              allowClear={!!resourceGroup}
+              onChange={(value) =>
+                onChange({
+                  resourceGroups: typeof value === 'string' ? [value] : [],
+                })
+              }
+            />
+          </Tooltip>
         </Suspense>
       ) : null}
       {hasSetting(definition, 'range') ? (
-        <BAISelector
-          size="sm"
-          variant={overridden.range ? 'secondary' : 'ghost'}
-          aria-label={t('dashboard.settings.TimeRange')}
-          options={RANGE_PRESETS.map((preset) => ({
-            value: preset,
-            label: t(RANGE_LABEL_KEYS[preset]),
-          }))}
-          value={effective?.range ?? DEFAULT_RANGE}
-          onChange={(value) => {
-            if (value) onChange({ range: value });
-          }}
-        />
+        <Tooltip
+          content={t('dashboard.settings.TimeRange')}
+          hasHoverIndication={false}
+        >
+          <BAISelector
+            size="sm"
+            variant={overridden.range ? 'secondary' : 'ghost'}
+            aria-label={t('dashboard.settings.TimeRange')}
+            options={RANGE_PRESETS.map((preset) => ({
+              value: preset,
+              label: t(RANGE_LABEL_KEYS[preset]),
+            }))}
+            value={effective?.range ?? DEFAULT_RANGE}
+            onChange={(value) => {
+              if (value) onChange({ range: value });
+            }}
+          />
+        </Tooltip>
       ) : null}
       {overridden.resourceGroup || overridden.range ? (
         <IconButton
