@@ -145,6 +145,20 @@ describe('EnvVarFormList suggested variables', () => {
   });
 });
 
+describe('EnvVarFormList field ids', () => {
+  it('gives each name input its form field id', async () => {
+    const user = userEvent.setup();
+    render(<Harness />);
+
+    await user.click(screen.getByRole('button', { name: ADD_LABEL }));
+    await user.click(screen.getByRole('button', { name: ADD_LABEL }));
+
+    expect(
+      screen.getAllByLabelText(VARIABLE_LABEL).map((input) => input.id),
+    ).toEqual(['environ_0_variable', 'environ_1_variable']);
+  });
+});
+
 describe('EnvVarFormList cross-row validation', () => {
   it('leaves empty sibling rows alone while another row is typed into', async () => {
     const user = userEvent.setup();
