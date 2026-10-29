@@ -2474,6 +2474,7 @@
   "projectSelect": {
     "AskAdminForProjectAccess": "관리자에게 프로젝트 접근 권한을 요청하세요.",
     "GoToProject": "{{project}}로 이동",
+    "MyProject": "내 프로젝트",
     "NoAccessibleProjects": "선택 가능한 프로젝트가 없습니다.",
     "Personal": "개인",
     "PersonalProjectCannotBeRemoved": "사용자에 할당된 개인 프로젝트는 제거가 불가능 합니다.",

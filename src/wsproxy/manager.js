@@ -5,6 +5,7 @@ Backend.AI Webapp proxy for Web UI
 (C) Copyright 2016-2021 Lablup Inc.
 */
 // Backend.AI Websocket proxy server for local runtime environment / app.
+const { setTrustedCertificates } = require('./lib/trustedCertificates');
 const express = require('express'),
   EventEmitter = require('events'),
   cors = require('cors');
@@ -729,6 +730,11 @@ class Manager extends EventEmitter {
 
       res.redirect('http://' + this.proxyBaseHost + ':' + port + path);
     });
+  }
+
+  // Desktop hands over the certificates the user trusted on first use.
+  setTrustedCertificates(map) {
+    setTrustedCertificates(map);
   }
 
   start() {

@@ -2472,6 +2472,7 @@
   "projectSelect": {
     "AskAdminForProjectAccess": "Yöneticinizden bir projeye erişim izni vermesini isteyin.",
     "GoToProject": "{{project}} projesine git",
+    "MyProject": "Projem",
     "NoAccessibleProjects": "Erişilebilir proje bulunmuyor.",
     "Personal": "Kişisel",
     "PersonalProjectCannotBeRemoved": "Kullanıcıya atanan kişisel proje kaldırılamaz.",
