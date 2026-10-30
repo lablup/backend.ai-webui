@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5adad86985e5ec5dad7fc295fbd9879d>>
+ * @generated SignedSource<<32091dbe6db670527c201d943ec51c81>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,7 +13,7 @@ export type RoleStatus = "ACTIVE" | "DELETED" | "INACTIVE" | "%future added valu
 export type UpdateRoleInput = {
   autoAssign?: boolean | null | undefined;
   description?: string | null | undefined;
-  id: string;
+  id?: string | null | undefined;
   name?: string | null | undefined;
   status?: RoleStatus | null | undefined;
 };

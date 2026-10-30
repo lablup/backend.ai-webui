@@ -443,10 +443,10 @@ test.describe(
       // Pre-Start Actions — add one row.
       await page.getByRole('button', { name: 'Add Pre-Start Action' }).click();
       await page
-        .getByRole('textbox', { name: 'Action', exact: true })
+        .getByRole('textbox', { name: 'Action 1', exact: true })
         .fill('warm_cache');
       await page
-        .getByRole('textbox', { name: 'Args (JSON)', exact: true })
+        .getByRole('textbox', { name: 'Args (JSON) 1', exact: true })
         .fill('{"size": 128}');
 
       // Deployment Defaults — replicaCount is required with no default.
@@ -680,10 +680,10 @@ test.describe(
 
       await page.getByRole('button', { name: 'Add Pre-Start Action' }).click();
       await page
-        .getByRole('textbox', { name: 'Action', exact: true })
+        .getByRole('textbox', { name: 'Action 1', exact: true })
         .fill('warm_cache');
       await page
-        .getByRole('textbox', { name: 'Args (JSON)', exact: true })
+        .getByRole('textbox', { name: 'Args (JSON) 1', exact: true })
         .fill('{"size": 128}');
 
       await page.getByText('Skip to Review', { exact: true }).click();

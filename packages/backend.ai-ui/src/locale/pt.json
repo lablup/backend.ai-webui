@@ -183,7 +183,6 @@
     "KeyRequired": "Introduza uma chave.",
     "Label": "Rótulo",
     "LabelsSaved": "Rótulos guardados.",
-    "RemoveLabel": "Remover rótulo",
     "Save": "Guardar",
     "SomeLabelsFailed": "{{count}} alterações de rótulos falharam",
     "Target": "Destino",
@@ -193,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Rótulo"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Criar",
+    "Custom": "Personalizado",
+    "FullAccess": "Acesso total",
+    "HardDelete": "Eliminar permanentemente",
+    "Read": "Ler",
+    "ReadAndWrite": "Leitura e escrita",
+    "ReadOnly": "Apenas leitura",
+    "SoftDelete": "Eliminar",
+    "Update": "Atualizar"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Atualização automática",
@@ -577,6 +587,9 @@
     "Result": "Resultado",
     "To": "Estado de destino",
     "UpdatedAt": "Atualizado em"
+  },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Convidar por e-mail"
   },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "Selecionar pasta"

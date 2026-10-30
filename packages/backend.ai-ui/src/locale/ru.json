@@ -183,7 +183,6 @@
     "KeyRequired": "Введите ключ.",
     "Label": "Метка",
     "LabelsSaved": "Метки сохранены.",
-    "RemoveLabel": "Удалить метку",
     "Save": "Сохранить",
     "SomeLabelsFailed": "Не удалось применить изменений меток: {{count}}",
     "Target": "Объект",
@@ -193,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Метка"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Создать",
+    "Custom": "Пользовательский",
+    "FullAccess": "Полный доступ",
+    "HardDelete": "Удалить безвозвратно",
+    "Read": "Читать",
+    "ReadAndWrite": "Чтение и запись",
+    "ReadOnly": "Только чтение",
+    "SoftDelete": "Удалить",
+    "Update": "Обновить"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Автообновление",
@@ -577,6 +587,9 @@
     "Result": "Результат",
     "To": "Целевой статус",
     "UpdatedAt": "Обновлено"
+  },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Пригласить по электронной почте"
   },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "Выбрать папку"

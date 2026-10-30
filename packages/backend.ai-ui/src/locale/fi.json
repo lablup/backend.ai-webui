@@ -183,7 +183,6 @@
     "KeyRequired": "Anna avain.",
     "Label": "Tunniste",
     "LabelsSaved": "Tunnisteet tallennettu.",
-    "RemoveLabel": "Poista tunniste",
     "Save": "Tallenna",
     "SomeLabelsFailed": "{{count}} tunnistemuutosta epäonnistui",
     "Target": "Kohde",
@@ -193,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Tunniste"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Luo",
+    "Custom": "Mukautettu",
+    "FullAccess": "Täydet oikeudet",
+    "HardDelete": "Poista pysyvästi",
+    "Read": "Lue",
+    "ReadAndWrite": "Luku ja kirjoitus",
+    "ReadOnly": "Vain luku",
+    "SoftDelete": "Poista",
+    "Update": "Päivitä"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Automaattinen päivitys",
@@ -577,6 +587,9 @@
     "Result": "Tulos",
     "To": "Kohdetila",
     "UpdatedAt": "Päivitetty"
+  },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Kutsu sähköpostilla"
   },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "Valitse kansio"

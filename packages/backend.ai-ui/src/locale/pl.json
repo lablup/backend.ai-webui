@@ -183,7 +183,6 @@
     "KeyRequired": "Wprowadź klucz.",
     "Label": "Etykieta",
     "LabelsSaved": "Etykiety zapisane.",
-    "RemoveLabel": "Usuń etykietę",
     "Save": "Zapisz",
     "SomeLabelsFailed": "Nie powiodło się {{count}} zmian etykiet",
     "Target": "Cel",
@@ -193,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Etykieta"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Utwórz",
+    "Custom": "Niestandardowy",
+    "FullAccess": "Pełny dostęp",
+    "HardDelete": "Usuń trwale",
+    "Read": "Odczyt",
+    "ReadAndWrite": "Odczyt i zapis",
+    "ReadOnly": "Tylko odczyt",
+    "SoftDelete": "Usuń",
+    "Update": "Aktualizuj"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Automatyczne odświeżanie",
@@ -577,6 +587,9 @@
     "Result": "Wynik",
     "To": "Status docelowy",
     "UpdatedAt": "Zaktualizowano"
+  },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Zaproś przez e-mail"
   },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "Wybierz folder"

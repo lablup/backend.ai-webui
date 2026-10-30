@@ -183,7 +183,6 @@
     "KeyRequired": "Εισαγάγετε κλειδί.",
     "Label": "Ετικέτα",
     "LabelsSaved": "Οι ετικέτες αποθηκεύτηκαν.",
-    "RemoveLabel": "Αφαίρεση ετικέτας",
     "Save": "Αποθήκευση",
     "SomeLabelsFailed": "Απέτυχαν {{count}} αλλαγές ετικετών",
     "Target": "Στόχος",
@@ -193,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Ετικέτα"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Δημιουργία",
+    "Custom": "Προσαρμοσμένο",
+    "FullAccess": "Πλήρης πρόσβαση",
+    "HardDelete": "Μόνιμη διαγραφή",
+    "Read": "Ανάγνωση",
+    "ReadAndWrite": "Ανάγνωση και εγγραφή",
+    "ReadOnly": "Μόνο ανάγνωση",
+    "SoftDelete": "Διαγραφή",
+    "Update": "Επεξεργασία"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Αυτόματη ανανέωση",
@@ -577,6 +587,9 @@
     "Result": "Αποτέλεσμα",
     "To": "Κατάσταση προορισμού",
     "UpdatedAt": "Ενημερώθηκε στις"
+  },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Πρόσκληση μέσω e-mail"
   },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "Επιλογή φακέλου"

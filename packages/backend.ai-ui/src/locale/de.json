@@ -183,7 +183,6 @@
     "KeyRequired": "Geben Sie einen Schlüssel ein.",
     "Label": "Label",
     "LabelsSaved": "Labels gespeichert.",
-    "RemoveLabel": "Label entfernen",
     "Save": "Speichern",
     "SomeLabelsFailed": "{{count}} Labeländerungen fehlgeschlagen",
     "Target": "Ziel",
@@ -193,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Label"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Erstellen",
+    "Custom": "Benutzerdefiniert",
+    "FullAccess": "Vollzugriff",
+    "HardDelete": "Endgültig löschen",
+    "Read": "Lesen",
+    "ReadAndWrite": "Lesen und Schreiben",
+    "ReadOnly": "Nur Lesen",
+    "SoftDelete": "Löschen",
+    "Update": "Bearbeiten"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Automatische Aktualisierung",
@@ -577,6 +587,9 @@
     "Result": "Ergebnis",
     "To": "Zielstatus",
     "UpdatedAt": "Aktualisiert am"
+  },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Per E-Mail einladen"
   },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "Ordner auswählen"

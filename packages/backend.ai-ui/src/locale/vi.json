@@ -183,7 +183,6 @@
     "KeyRequired": "Nhập khóa.",
     "Label": "Nhãn",
     "LabelsSaved": "Đã lưu nhãn.",
-    "RemoveLabel": "Xóa nhãn",
     "Save": "Lưu",
     "SomeLabelsFailed": "{{count}} thay đổi nhãn thất bại",
     "Target": "Đối tượng",
@@ -193,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Nhãn"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Tạo",
+    "Custom": "Tùy chỉnh",
+    "FullAccess": "Toàn quyền",
+    "HardDelete": "Xóa vĩnh viễn",
+    "Read": "Đọc",
+    "ReadAndWrite": "Đọc và ghi",
+    "ReadOnly": "Chỉ đọc",
+    "SoftDelete": "Xóa",
+    "Update": "Cập nhật"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Tự động làm mới",
@@ -577,6 +587,9 @@
     "Result": "Kết quả",
     "To": "Trạng thái đích",
     "UpdatedAt": "Cập nhật lúc"
+  },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Mời qua e-mail"
   },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "Chọn thư mục"

@@ -183,7 +183,6 @@
     "KeyRequired": "กรุณาป้อนคีย์",
     "Label": "ป้ายกำกับ",
     "LabelsSaved": "บันทึกป้ายกำกับแล้ว",
-    "RemoveLabel": "ลบป้ายกำกับ",
     "Save": "บันทึก",
     "SomeLabelsFailed": "การเปลี่ยนป้ายกำกับล้มเหลว {{count}} รายการ",
     "Target": "เป้าหมาย",
@@ -193,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "ป้ายกำกับ"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "สร้าง",
+    "Custom": "กำหนดเอง",
+    "FullAccess": "สิทธิ์เข้าถึงทั้งหมด",
+    "HardDelete": "ลบถาวร",
+    "Read": "อ่าน",
+    "ReadAndWrite": "อ่านและเขียน",
+    "ReadOnly": "อ่านอย่างเดียว",
+    "SoftDelete": "ลบ",
+    "Update": "แก้ไข"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "รีเฟรชอัตโนมัติ",
@@ -577,6 +587,9 @@
     "Result": "ผลลัพธ์",
     "To": "สถานะปลายทาง",
     "UpdatedAt": "อัปเดตเมื่อ"
+  },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "เชิญทางอีเมล"
   },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "เลือกโฟลเดอร์"

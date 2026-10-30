@@ -183,7 +183,6 @@
     "KeyRequired": "Masukkan kunci.",
     "Label": "Label",
     "LabelsSaved": "Label disimpan.",
-    "RemoveLabel": "Hapus label",
     "Save": "Simpan",
     "SomeLabelsFailed": "{{count}} perubahan label gagal",
     "Target": "Target",
@@ -193,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Label"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Buat",
+    "Custom": "Kustom",
+    "FullAccess": "Akses penuh",
+    "HardDelete": "Hapus permanen",
+    "Read": "Baca",
+    "ReadAndWrite": "Baca dan tulis",
+    "ReadOnly": "Hanya baca",
+    "SoftDelete": "Hapus",
+    "Update": "Perbarui"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Penyegaran otomatis",
@@ -577,6 +587,9 @@
     "Result": "Hasil",
     "To": "Status tujuan",
     "UpdatedAt": "Diperbarui pada"
+  },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Undang melalui e-mail"
   },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "Pilih Folder"

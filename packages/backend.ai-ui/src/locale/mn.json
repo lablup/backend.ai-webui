@@ -183,7 +183,6 @@
     "KeyRequired": "Түлхүүр оруулна уу.",
     "Label": "Шошго",
     "LabelsSaved": "Шошго хадгалагдлаа.",
-    "RemoveLabel": "Шошго устгах",
     "Save": "Хадгалах",
     "SomeLabelsFailed": "{{count}} шошгоны өөрчлөлт амжилтгүй",
     "Target": "Зорилт",
@@ -193,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Шошго"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Үүсгэх",
+    "Custom": "Тохируулсан",
+    "FullAccess": "Бүрэн хандалт",
+    "HardDelete": "Бүрмөсөн устгах",
+    "Read": "Унших",
+    "ReadAndWrite": "Унших ба бичих",
+    "ReadOnly": "Зөвхөн унших",
+    "SoftDelete": "Устгах",
+    "Update": "Засварлах"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Автоматаар сэргээх",
@@ -577,6 +587,9 @@
     "Result": "Үр дүн",
     "To": "Зорилтот төлөв",
     "UpdatedAt": "Шинэчлэгдсэн огноо"
+  },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "И-мэйлээр урих"
   },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "Хавтас сонгох"

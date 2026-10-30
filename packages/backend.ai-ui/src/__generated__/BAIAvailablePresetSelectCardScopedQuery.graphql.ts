@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<20cdcfce1f5af7e669b527f11a276373>>
+ * @generated SignedSource<<5e6a57ed001611c194ee17e54a2e8cfb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,6 +13,7 @@ export type DeploymentRevisionPresetFilter = {
   AND?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
   NOT?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
   OR?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   id?: UUIDFilter | null | undefined;
   name?: StringFilter | null | undefined;
   runtimeVariantId?: UUIDFilter | null | undefined;

@@ -183,7 +183,6 @@
     "KeyRequired": "Enter a key.",
     "Label": "Label",
     "LabelsSaved": "Labels saved.",
-    "RemoveLabel": "Remove label",
     "Save": "Save",
     "SomeLabelsFailed": "{{count}} label changes failed",
     "Target": "Target",
@@ -193,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Labels"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Create",
+    "Custom": "Custom",
+    "FullAccess": "Full access",
+    "HardDelete": "Hard delete",
+    "Read": "Read",
+    "ReadAndWrite": "Read & write",
+    "ReadOnly": "Read only",
+    "SoftDelete": "Soft delete",
+    "Update": "Update"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Auto Refresh",
@@ -577,6 +587,9 @@
     "Result": "Result",
     "To": "To Status",
     "UpdatedAt": "Updated At"
+  },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Invite by e-mail"
   },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "Select Folder"
