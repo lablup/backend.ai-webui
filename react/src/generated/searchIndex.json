@@ -1909,7 +1909,18 @@
       "scope": "admin",
       "path": "/admin/maintenance",
       "labelKey": "webui.menu.Maintenance",
-      "tabs": [],
+      "tabs": [
+        {
+          "param": "tab",
+          "key": "maintenance",
+          "labelKey": "webui.menu.Maintenance"
+        },
+        {
+          "param": "tab",
+          "key": "retention-policy",
+          "labelKey": "retentionPolicy.DataRetention"
+        }
+      ],
       "settings": [
         {
           "key": "maintenance.MatchDatabase",
@@ -1944,6 +1955,7 @@
         "dialog.ask.DoYouWantToResetChanges",
         "dialog.warning.CannotBeUndone",
         "general.All",
+        "general.ErrorOccurred",
         "maintenance.RecalculateUsage",
         "maintenance.Recalculating",
         "maintenance.RecalculationFailed",
@@ -1952,6 +1964,20 @@
         "maintenance.RescanImageFinished",
         "maintenance.RescanImageScanning",
         "maintenance.RescanImages",
+        "retentionPolicy.Category",
+        "retentionPolicy.CategoryRequired",
+        "retentionPolicy.CreatePolicy",
+        "retentionPolicy.DeletePolicy",
+        "retentionPolicy.Description",
+        "retentionPolicy.EditPolicy",
+        "retentionPolicy.OnePolicyPerCategory",
+        "retentionPolicy.PolicyAlreadyExistsView",
+        "retentionPolicy.RetentionPeriodDays",
+        "retentionPolicy.RetentionPeriodRequired",
+        "retentionPolicy.RetentionPolicy",
+        "retentionPolicy.SuccessfullyCreated",
+        "retentionPolicy.SuccessfullyDeleted",
+        "retentionPolicy.SuccessfullyUpdated",
         "settings.ChangedFromDefault",
         "settings.NoChangesToDisplay",
         "settings.SearchPlaceholder",

@@ -2853,6 +2853,33 @@
     "SharedMemory": "Mémoire partagée",
     "Updated": "Préréglage de ressource mis à jour"
   },
+  "retentionPolicy": {
+    "Category": "Catégorie",
+    "CategoryRequired": "Sélectionnez une catégorie.",
+    "CreatePolicy": "Créer une politique",
+    "DataRetention": "Conservation des données",
+    "DeletePolicy": "Supprimer la politique de conservation",
+    "Description": "Définissez la durée de conservation des données de chaque catégorie. Les données ayant dépassé leur durée de conservation ne sont nettoyées que pour les catégories dont la politique est activée.",
+    "EditPolicy": "Modifier la politique",
+    "OnePolicyPerCategory": "Une seule politique peut exister par catégorie.",
+    "PolicyAlreadyExistsView": "Une politique existe déjà pour cette catégorie. <viewLink>Afficher</viewLink>",
+    "RetentionPeriodDays": "Durée de conservation (jours)",
+    "RetentionPeriodRequired": "Saisissez une durée de conservation d'au moins 1 jour.",
+    "RetentionPolicy": "Politique de conservation",
+    "SuccessfullyCreated": "Politique de conservation créée.",
+    "SuccessfullyDeleted": "Politique de conservation supprimée.",
+    "SuccessfullyUpdated": "Politique de conservation mise à jour.",
+    "categories": {
+      "DEPLOYMENTS": "Déploiements",
+      "LOGIN": "Historique de connexion",
+      "LOGS": "Journaux",
+      "RECONCILE_HISTORY": "Historique de réconciliation",
+      "ROLES_INVITATIONS": "Rôles et invitations",
+      "SESSIONS": "Sessions",
+      "USAGE_BUCKETS": "Agrégats d'utilisation",
+      "USAGE_RECORDS": "Enregistrements d'utilisation"
+    }
+  },
   "route": {
     "CreatedAt": "Créé à",
     "ErrorCode": "Code d'erreur",
