@@ -190,7 +190,20 @@ export const useDashboardBoard = ({
     return !!entry && !entry.locked;
   };
 
-  const removeById = (id: string) => save(removePanel(board, id));
+  // A removed card's header pick goes with it, so a re-added card starts from its saved settings.
+  const clearOverrides = (panelIds: ReadonlyArray<string> | 'all') =>
+    setSettingOverrides((prev) =>
+      _.omitBy(prev, (_override, key) =>
+        panelIds === 'all'
+          ? key.startsWith(overrideKeyOf(boards.activeBoard.id, ''))
+          : panelIds.some((id) => key === overrideKey(id)),
+      ),
+    );
+
+  const removeById = (id: string) => {
+    clearOverrides([id]);
+    save(removePanel(board, id));
+  };
 
   const addCustomPanel = (input: PanelInput) => {
     const panel = createPanel(input);
@@ -222,6 +235,7 @@ export const useDashboardBoard = ({
       if (!definition) return current;
       return active ? addPanel(current, definition) : removePanel(current, key);
     }, board);
+    if (!active) clearOverrides(keys);
     if (next !== board) save(next);
   };
 
@@ -366,7 +380,10 @@ export const useDashboardBoard = ({
       save(updatePanel(board, id, { settings }));
       setOverride(id, undefined);
     },
-    resetLayout: () => save(resetBoard(board, catalog, page, template)),
+    resetLayout: () => {
+      clearOverrides('all');
+      save(resetBoard(board, catalog, page, template));
+    },
     boards,
   };
 };
