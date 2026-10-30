@@ -14,7 +14,7 @@ import {
   getActAsTarget,
 } from './helper/actAs';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
-import { applyDevServerTitle } from './helper/devServerTitle';
+import { updateDocumentTitle } from './helper/documentTitle';
 import { ThemeModeProvider } from './hooks/useThemeMode';
 import { Provider as JotaiProvider } from 'jotai';
 import React from 'react';
@@ -81,7 +81,7 @@ loadCustomThemeConfig();
 
 // In dev, distinguish multiple dev-server tabs by prefixing the tab title with
 // the Portless app name injected via VITE_DEV_SERVER_NAME (no-op in production).
-applyDevServerTitle();
+updateDocumentTitle();
 
 // Must run before any client is created: it decides whether this tab acts as another user.
 adoptActAsHandoff();

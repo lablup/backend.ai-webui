@@ -10,6 +10,7 @@
  * keeps the super-admin view. The opener hands the target over through a
  * one-time nonce in `localStorage`, so a crafted link alone cannot turn it on.
  */
+import { updateDocumentTitle } from './documentTitle';
 import { generateUUID } from './uuid';
 
 export interface ActAsTarget {
@@ -133,10 +134,7 @@ export const adoptActAsHandoff = () => {
 };
 
 export const applyActAsTitle = (target: ActAsTarget) => {
-  const prefix = `[${target.name || target.email}] `;
-  if (!document.title.startsWith(prefix)) {
-    document.title = `${prefix}${document.title}`;
-  }
+  updateDocumentTitle({ actAsName: target.name || target.email });
 };
 
 /** Leaves act-as: closes the tab, or falls back to the super-admin view. */

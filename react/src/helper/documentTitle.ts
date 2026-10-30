@@ -2,31 +2,49 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { applyDevServerTitle, devServerTitlePrefix } from './devServerTitle';
+import { devServerTitlePrefix } from './devServerTitle';
 
 const FALLBACK_BASE_TITLE = 'Backend.AI';
 
-// index.html's <title>, read once at import — before any route rewrites it.
-const initialTitle = typeof document !== 'undefined' ? document.title : '';
+// index.html's <title>, read at import: only this module writes it afterwards.
+const baseTitle =
+  (typeof document !== 'undefined' ? document.title : '') ||
+  FALLBACK_BASE_TITLE;
 
-/** The app name every tab title ends with, without the dev-server prefix. */
-export const getBaseDocumentTitle = (): string => {
-  const prefix = devServerTitlePrefix();
-  const title =
-    prefix && initialTitle.startsWith(prefix)
-      ? initialTitle.slice(prefix.length)
-      : initialTitle;
-  return title || FALLBACK_BASE_TITLE;
-};
+export interface DocumentTitleParts {
+  pageLabel?: string;
+  actAsName?: string;
+  attentionCount?: number;
+}
 
 /** `Sessions · Backend.AI`, or just the base title when there is no label. */
 export const formatDocumentTitle = (
   pageLabel: string | undefined,
-  baseTitle: string = getBaseDocumentTitle(),
-): string => (pageLabel ? `${pageLabel} · ${baseTitle}` : baseTitle);
+  base: string = baseTitle,
+): string => (pageLabel ? `${pageLabel} · ${base}` : base);
 
-/** Sets the tab title for a page; the dev-server prefix is re-applied on top. */
+/** `(2) [Alice] [fr-4073] Sessions · Backend.AI`; every part is optional. */
+export const composeDocumentTitle = ({
+  pageLabel,
+  actAsName,
+  attentionCount = 0,
+}: DocumentTitleParts): string => {
+  const badge = attentionCount > 0 ? `(${attentionCount}) ` : '';
+  const actAs = actAsName ? `[${actAsName}] ` : '';
+  return `${badge}${actAs}${devServerTitlePrefix()}${formatDocumentTitle(pageLabel)}`;
+};
+
+let currentParts: DocumentTitleParts = {};
+
+/**
+ * The only writer of `document.title`. Each caller owns one part, so the
+ * parts survive one another's writes in any order.
+ */
+export const updateDocumentTitle = (parts: DocumentTitleParts = {}) => {
+  currentParts = { ...currentParts, ...parts };
+  document.title = composeDocumentTitle(currentParts);
+};
+
 export const applyRouteDocumentTitle = (pageLabel: string | undefined) => {
-  document.title = formatDocumentTitle(pageLabel);
-  applyDevServerTitle();
+  updateDocumentTitle({ pageLabel });
 };

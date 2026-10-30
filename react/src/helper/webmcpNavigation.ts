@@ -21,8 +21,9 @@ const notAllowed = (message: string): NavigationTarget => ({
 /**
  * Resolves `bai_navigate`'s `path` to an in-app location. Only the
  * `/project/<name>/…` and `/admin/…` subtrees are reachable, which keeps out
- * routes that act on arrival (`/applauncher`, `/interactive-login`, …). A
- * flat menu path such as `/session?x=1` is rebased onto the active project,
+ * routes that act on arrival (`/applauncher`, `/interactive-login`, …), and
+ * `sToken` is refused on every path because `STokenGuard` logs in on arrival.
+ * A flat menu path such as `/session?x=1` is rebased onto the active project,
  * as the in-app links do.
  */
 export const resolveAppPath = (
@@ -45,8 +46,16 @@ export const resolveAppPath = (
   } catch {
     return notAllowed('"path" is not a valid URL path.');
   }
-  if (url.origin !== origin) {
+  // `/.//host` passes the raw check above and normalizes to a protocol-relative path.
+  if (url.origin !== origin || url.pathname.startsWith('//')) {
     return notAllowed('"path" must stay on this origin.');
+  }
+  if (
+    Array.from(url.searchParams.keys()).some(
+      (key) => key.toLowerCase() === 'stoken',
+    )
+  ) {
+    return notAllowed('"path" must not carry a login token.');
   }
 
   const segments = url.pathname.split('/').filter(Boolean);
@@ -75,11 +84,36 @@ export const resolveAppPath = (
   return { ok: true, to: `${pathname}${url.search}${url.hash}` };
 };
 
+// These pages query on mount and popstate only, so a router navigation to the
+// same path leaves their list stale (#10265).
+const DOCUMENT_RELOAD_PATHS: ReadonlyArray<string> = [
+  '/admin/users',
+  '/admin/resource-policy',
+];
+
+const withoutTrailingSlash = (pathname: string) =>
+  pathname.replace(/\/+$/, '') || '/';
+
+/** Whether opening `to` from `current` takes a document load, not a router navigation. */
+export const needsDocumentReload = (
+  to: string,
+  current: Pick<Location, 'origin' | 'pathname' | 'search'>,
+): boolean => {
+  const target = new URL(to, current.origin);
+  const pathname = withoutTrailingSlash(target.pathname);
+  return (
+    DOCUMENT_RELOAD_PATHS.includes(pathname) &&
+    pathname === withoutTrailingSlash(current.pathname) &&
+    target.search !== current.search
+  );
+};
+
 /** Collects the searchParams of a location; repeated keys become arrays. */
 export const searchParamsToRecord = (
   search: string,
 ): Record<string, string | Array<string>> => {
-  const record: Record<string, string | Array<string>> = {};
+  // No prototype: `constructor` must read as absent and `__proto__` as a plain key.
+  const record: Record<string, string | Array<string>> = Object.create(null);
   new URLSearchParams(search).forEach((value, key) => {
     const existing = record[key];
     record[key] =
@@ -107,9 +141,7 @@ export const readMainHeading = (root: ParentNode = document): string | null => {
     if (element.checkVisibility && !element.checkVisibility()) continue;
     const text = element.textContent?.trim();
     if (!text) continue;
-    const level =
-      Number(element.getAttribute('aria-level')) ||
-      Number(element.tagName.slice(1));
+    const level = Number(element.tagName.slice(1));
     if (level < bestLevel) {
       bestLevel = level;
       bestText = text;

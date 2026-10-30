@@ -48,6 +48,21 @@ vi.mock('../hooks/useWebUIMenuItems', async (importOriginal) => ({
       { key: 'my-plugin', labelText: 'Plugin', to: '/my-plugin' },
     ],
     adminMenu: [],
+    groupedProjectAdminMenu: [
+      {
+        type: 'group',
+        name: 'admin-operations',
+        labelText: 'Operations',
+        children: [
+          {
+            key: 'project-data',
+            labelText: 'Project Data',
+            to: '/project/default/admin/data',
+          },
+        ],
+      },
+      { key: 'data', labelText: 'Data', to: '/project/default/data' },
+    ],
   }),
 }));
 
@@ -156,7 +171,7 @@ describe('WebMCPGlobalTools', () => {
     const navigateTool = toolNamed('bai_navigate');
 
     expect(navigateTool.inputSchema.properties.page).toMatchObject({
-      enum: ['session', 'data'],
+      enum: ['session', 'data', 'project-data'],
     });
     await expect(navigateTool.execute({ page: 123 })).resolves.toMatchObject({
       error: { code: 'invalid_input' },
@@ -238,6 +253,42 @@ describe('createNavigateTool on the same path', () => {
       ),
     );
     expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('reloads despite a trailing slash on the target', async () => {
+    const reloadDocument = vi.fn();
+    window.history.replaceState({}, '', '/admin/users');
+    const tool = createNavigateTool({
+      pages: [],
+      activeProjectName: 'default',
+      navigate: vi.fn(),
+      reloadDocument,
+      settleMs: 0,
+    });
+
+    await expect(
+      tool.execute({ path: '/admin/users/?tab=credentials' }),
+    ).resolves.toMatchObject({ reloaded: true });
+    await waitFor(() => expect(reloadDocument).toHaveBeenCalled());
+  });
+
+  it('uses the router on a page that reacts to the search itself', async () => {
+    const navigate = vi.fn();
+    const reloadDocument = vi.fn();
+    window.history.replaceState({}, '', '/project/default/data');
+    const tool = createNavigateTool({
+      pages: [],
+      activeProjectName: 'default',
+      navigate,
+      reloadDocument,
+      settleMs: 0,
+    });
+
+    await expect(
+      tool.execute({ path: '/project/default/data?filter=x' }),
+    ).resolves.not.toHaveProperty('reloaded');
+    expect(navigate).toHaveBeenCalledWith('/project/default/data?filter=x');
+    expect(reloadDocument).not.toHaveBeenCalled();
   });
 });
 
