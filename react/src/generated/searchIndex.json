@@ -3111,6 +3111,8 @@
         "webuiSettings.OpenPortToPublic",
         "webuiSettings.PluginLogin",
         "webuiSettings.PluginPage",
+        "webuiSettings.ResetAllSettings",
+        "webuiSettings.ResetAllSettingsDesc",
         "webuiSettings.ShowNonInstalledImages",
         "webuiSettings.SingleSignOnVendors",
         "webuiSettings.SsoRealmName",
