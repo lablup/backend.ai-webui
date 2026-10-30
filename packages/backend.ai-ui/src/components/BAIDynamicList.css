@@ -27,11 +27,14 @@
   font-weight: var(--font-weight-normal);
 }
 
-/* As wide as the minus icon, so the gap to the inputs is the column gap and
-   the icon's edge lines up with the full-width Add button. */
-.bai-dynamic-list__remove-slot,
+/* A small square, centred on the input line, so the hover fill surrounds
+   the minus icon and its edge lines up with the full-width Add button. */
+.bai-dynamic-list__remove-slot {
+  inline-size: var(--size-element-sm);
+}
+
 .bai-dynamic-list__remove {
-  inline-size: var(--spacing-4);
-  min-inline-size: 0;
-  padding-inline: 0;
+  margin-block-start: calc(
+    (var(--size-element-md) - var(--size-element-sm)) / 2
+  );
 }
