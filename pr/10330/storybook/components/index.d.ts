@@ -108,6 +108,8 @@ export { default as BAIKeypairResourcePolicyV2Table, availableKeypairResourcePol
 export type { BAIKeypairResourcePolicyV2TableProps, KeypairResourcePolicyV2InList, } from './BAIKeypairResourcePolicyV2Table';
 export { default as BAIProjectResourcePolicyV2Table, availableProjectResourcePolicySorterValues, availableProjectResourcePolicyExportFields, } from './BAIProjectResourcePolicyV2Table';
 export type { BAIProjectResourcePolicyV2TableProps, ProjectResourcePolicyV2InList, } from './BAIProjectResourcePolicyV2Table';
+export { default as BAIAdminRetentionPolicyTable, availableRetentionPolicySorterValues, } from './BAIAdminRetentionPolicyTable';
+export type { BAIAdminRetentionPolicyTableProps, RetentionPolicyInList, } from './BAIAdminRetentionPolicyTable';
 export type { BAIUncontrolledInputProps } from './BAIUncontrolledInput';
 export { default as BAIUncontrolledInput } from './BAIUncontrolledInput';
 export { default as BAITokenList } from './BAITokenList';
