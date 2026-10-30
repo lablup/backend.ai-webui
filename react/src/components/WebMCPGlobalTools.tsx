@@ -96,16 +96,18 @@ export const createNavigateTool = ({
   pages,
   activeProjectName,
   navigate,
+  reloadDocument = (to) => window.location.assign(to),
   settleMs = NAVIGATION_SETTLE_MS,
 }: {
   pages: ReadonlyArray<NavigablePage>;
   activeProjectName: string | undefined;
   navigate: (to: string) => void;
+  reloadDocument?: (to: string) => void;
   settleMs?: number;
 }): WebMCPTool => ({
   name: 'bai_navigate',
   description:
-    'Open a page in this Backend.AI WebUI tab. Pass exactly one of "page" (a menu key the user can access) or "path" (an app path under /project/<name>/ or /admin/; a flat menu path such as /session?x=1 opens in the current project). Only navigates — never submits or deletes anything. Returns the resulting path and tab title.',
+    'Open a page in this Backend.AI WebUI tab. Pass exactly one of "page" (a menu key the user can access) or "path" (an app path under /project/<name>/ or /admin/; a flat menu path such as /session?x=1 opens in the current project). Only navigates — never submits or deletes anything. Returns the resulting path and tab title; with reloaded: true the page is reloading, so wait for it and list the tools again.',
   inputSchema: {
     type: 'object',
     properties: {
@@ -147,6 +149,17 @@ export const createNavigateTool = ({
       );
       if (!target.ok) return webMCPError(target.code, target.message);
       to = target.to;
+    }
+    // Tab-holding admin pages query only on mount, so a same-path change needs
+    // a document load, as in-app links there do (#10265).
+    const current = window.location;
+    const target = new URL(to, current.origin);
+    if (
+      target.pathname === current.pathname &&
+      target.search !== current.search
+    ) {
+      window.setTimeout(() => reloadDocument(to), settleMs);
+      return { path: to, title: document.title, reloaded: true };
     }
     navigate(to);
     // Lets the router commit and `RouteDocumentTitle` update before answering.
