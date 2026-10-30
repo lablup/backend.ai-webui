@@ -7,6 +7,7 @@
 // documents around each test, and restores whatever the deployment held
 // before the run. Other specs that sign in while one of these tests holds an
 // override see that override; keep the write→assert→clear window short.
+import { SessionAPIHelper } from '../utils/classes/session/SessionAPIHelper';
 import {
   getSideNavItem,
   loginAsAdmin,
@@ -49,6 +50,7 @@ import {
 import {
   test,
   expect,
+  request as apiRequest,
   type APIRequestContext,
   type Browser,
   type Page,
@@ -779,5 +781,486 @@ test.describe(
       expect(await api.readRawDocument('public')).toEqual(publicBefore);
       expect(await api.readRawDocument('domain')).toEqual(domainBefore);
     });
+  },
+);
+
+// ===========================================================================
+// 5. Effects, per page: one document carries every key the page reads, so
+//    one sign-in verifies them all. The precedence group already proves that
+//    each document key reaches `_config`; these tests prove what each
+//    `_config` value does on screen.
+// ===========================================================================
+
+const PYTHON_IMAGE = 'cr.backend.ai/multiarch/python:3.9-ubuntu20.04@x86_64';
+const STABLE_IMAGE = 'cr.backend.ai/stable/python:3.9-ubuntu20.04@x86_64';
+
+/** `formValues` of the session launcher URL the page navigated to. */
+function launcherFormValues(page: Page): Record<string, any> {
+  const raw = new URL(page.url()).searchParams.get('formValues');
+  return raw ? JSON.parse(raw) : {};
+}
+
+test.describe(
+  'System Settings - Effects per page',
+  { tag: ['@regression', '@config', '@webui-settings', '@integration'] },
+  () => {
+    test('sidebar, header and Downloads keys from the domain document', async ({
+      browser,
+      request,
+    }) => {
+      await api.writeSettings('domain', {
+        menuInactivelist: ['dashboard'],
+        enableReservoir: true,
+        fasttrackEndpoint: 'https://example.com/fasttrack',
+        allowSignout: true,
+        enableExtendLoginSession: true,
+        allowAppDownloadPanel: true,
+        allowCLIDownloadPanel: true,
+        cliDownloadUrl: '',
+      });
+
+      const page = await signInAsAdminInNewContext(browser, request);
+      await navigateTo(page, 'start');
+      await expect(getSideNavItem(page, 'Dashboard')).toBeDisabled();
+      await expect(getSideNavItem(page, /FastTrack/)).toBeVisible();
+      await expect(page.getByTestId('button-leave-service')).toBeVisible();
+      await expect(
+        page.getByRole('button', { name: 'Extend login session' }),
+      ).toBeVisible();
+
+      await page.getByTestId('user-dropdown-button').click();
+      await page.getByRole('menuitem', { name: 'Downloads' }).click();
+      const downloads = page.getByRole('dialog', { name: 'Downloads' });
+      await expect(downloads).toBeVisible();
+      await expect(
+        downloads.getByRole('button', { name: 'Desktop App' }),
+      ).toBeVisible();
+      await downloads.getByRole('button', { name: 'CLI' }).click();
+      await expect(downloads.getByText('Install via pip')).toBeVisible();
+      // An empty CLI download URL hides the standalone-executable section.
+      await expect(
+        downloads.getByText('Download standalone executable'),
+      ).toHaveCount(0);
+      await page.keyboard.press('Escape');
+
+      await navigateTo(page, 'admin/users');
+      await expect(getSideNavItem(page, 'Reservoir')).toBeVisible();
+      await page.context().close();
+    });
+
+    test('maskUserInfo and enableInteractiveLoginAccountSwitch on the interactive-login page', async ({
+      browser,
+      request,
+    }) => {
+      await api.writeSettings('domain', {
+        maskUserInfo: true,
+        enableInteractiveLoginAccountSwitch: false,
+      });
+
+      const page = await signInAsAdminInNewContext(browser, request);
+      await navigateTo(
+        page,
+        'interactive-login?callback=https://example.com&name=Test',
+      );
+      // The name is masked from its third character on.
+      await expect(
+        page.getByText(/Would you like to sign in with \S{2}\*{3,}/),
+      ).toBeVisible({ timeout: 30_000 });
+      await expect(
+        page.getByRole('button', { name: 'Sign in with a different account' }),
+      ).toHaveCount(0);
+      await page.context().close();
+    });
+
+    test('allowThemeMode shows the theme family row in user settings', async ({
+      browser,
+      request,
+    }) => {
+      await api.writeSettings('domain', { allowThemeMode: true });
+
+      const page = await signInAsAdminInNewContext(browser, request);
+      await navigateTo(page, 'usersettings');
+      await expect(page.getByTestId('items-theme-mode')).toBeVisible({
+        timeout: 30_000,
+      });
+      await expect(page.getByTestId('items-theme-family')).toBeVisible();
+      await page.context().close();
+    });
+
+    test('session launcher keys from the domain document', async ({
+      browser,
+      request,
+    }) => {
+      await api.writeSettings('domain', {
+        allowManualImageNameForSession: true,
+        allowCustomResourceAllocation: true,
+        maxMemoryPerContainer: 2,
+        maxCountForPreopenPorts: 1,
+        defaultSessionEnvironment: STABLE_IMAGE,
+        showNonInstalledImages: true,
+      });
+
+      const page = await signInAsAdminInNewContext(browser, request);
+      const imageQuery = page.waitForRequest(
+        (req) =>
+          req.method() === 'POST' &&
+          (req.postData() ?? '').includes(
+            'ImageEnvironmentSelectFormItemsQuery',
+          ),
+      );
+      await navigateTo(page, 'session/start?step=1');
+      await expect(
+        page.getByRole('button', { name: 'Resource Presets' }),
+      ).toBeVisible({ timeout: 30_000 });
+
+      await test.step('showNonInstalledImages drops the installed filter', async () => {
+        const variables = (await imageQuery).postDataJSON().variables;
+        expect(variables.installed ?? null).toBeNull();
+      });
+      await test.step('defaultSessionEnvironment prefills the environment', async () => {
+        await expect
+          .poll(() => launcherFormValues(page).environments?.version)
+          .toBe(STABLE_IMAGE);
+      });
+      await test.step('allowManualImageNameForSession shows the manual image input', async () => {
+        await expect(
+          page.getByRole('textbox', { name: 'Image Name (Manual)' }),
+        ).toBeVisible();
+      });
+      await test.step('allowCustomResourceAllocation offers custom allocation and maxMemoryPerContainer caps the memory slider', async () => {
+        await page.getByRole('button', { name: 'Resource Presets' }).click();
+        await expect(
+          page.getByRole('option', { name: 'Custom allocation' }),
+        ).toBeVisible();
+        await page.keyboard.press('Escape');
+        await expect(
+          page.getByRole('slider', { name: 'Amount' }),
+        ).toHaveAttribute('aria-valuemax', '2');
+      });
+      await test.step('maxCountForPreopenPorts rejects a second port', async () => {
+        await navigateTo(page, 'session/start?step=3');
+        const ports = page.getByRole('combobox', { name: 'Preopen Ports' });
+        await expect(ports).toBeVisible({ timeout: 30_000 });
+        await ports.fill('3000');
+        await ports.press('Enter');
+        await ports.fill('3001');
+        await ports.press('Enter');
+        await expect(
+          page.getByText('You can set up to 1 preopen port.'),
+        ).toBeVisible();
+      });
+      await page.context().close();
+    });
+
+    test('allowCustomResourceAllocation off hides custom allocation and showNonInstalledImages off filters installed images', async ({
+      browser,
+      request,
+    }) => {
+      await api.writeSettings('domain', {
+        allowCustomResourceAllocation: false,
+        showNonInstalledImages: false,
+      });
+
+      const page = await signInAsAdminInNewContext(browser, request);
+      const imageQuery = page.waitForRequest(
+        (req) =>
+          req.method() === 'POST' &&
+          (req.postData() ?? '').includes(
+            'ImageEnvironmentSelectFormItemsQuery',
+          ),
+      );
+      await navigateTo(page, 'session/start?step=1');
+      await expect(
+        page.getByRole('button', { name: 'Resource Presets' }),
+      ).toBeVisible({ timeout: 30_000 });
+      expect((await imageQuery).postDataJSON().variables.installed).toBe(true);
+      await page.getByRole('button', { name: 'Resource Presets' }).click();
+      await expect(page.getByRole('option').first()).toBeVisible();
+      await expect(
+        page.getByRole('option', { name: 'Custom allocation' }),
+      ).toHaveCount(0);
+      await page.keyboard.press('Escape');
+      await page.context().close();
+    });
+
+    test('folder explorer keys from the domain document', async ({
+      browser,
+      request,
+    }) => {
+      await api.writeSettings('domain', {
+        isDirectorySizeVisible: true,
+        maxFileUploadSize: 1,
+        systemSSHImage: PYTHON_IMAGE,
+        defaultFileBrowserImage: PYTHON_IMAGE,
+        allowManualImageNameForSession: true,
+      });
+
+      const page = await signInAsAdminInNewContext(browser, request);
+      const folderName = `e2e-settings-${Date.now().toString(36)}`;
+      // Session creation is intercepted: only the request body matters here.
+      await page.route('**/func/session', (route) =>
+        route.request().method() === 'POST'
+          ? route.fulfill({
+              status: 400,
+              contentType: 'application/json',
+              body: '{"title":"e2e-intercepted"}',
+            })
+          : route.continue(),
+      );
+      const sessionPost = (type: string) =>
+        page.waitForRequest(
+          (req) =>
+            req.method() === 'POST' &&
+            req.url().endsWith('/func/session') &&
+            req.postDataJSON()?.type === type,
+        );
+      let folderId: string | undefined;
+      try {
+        folderId = await page.evaluate(async (name) => {
+          const client = (globalThis as any).backendaiclient;
+          // The create call needs an explicit host; use the deployment's default.
+          const { default: host } = await client.vfolder.list_hosts();
+          const created = await client.vfolder.create(
+            name,
+            host,
+            '',
+            'general',
+            'rw',
+            false,
+          );
+          return created?.id as string;
+        }, folderName);
+        await navigateTo(page, 'start');
+        await navigateTo(page, 'data');
+        await page
+          .getByRole('row', { name: new RegExp(folderName) })
+          .getByText(folderName)
+          .first()
+          .click();
+        const explorer = page
+          .getByRole('dialog')
+          .filter({ has: page.getByRole('heading', { name: folderName }) });
+        await expect(explorer).toBeVisible({ timeout: 30_000 });
+
+        await test.step('isDirectorySizeVisible shows a size for a directory row', async () => {
+          await explorer.getByRole('button', { name: 'Create Folder' }).click();
+          const dialog = page.getByRole('dialog', {
+            name: 'Create a new folder',
+          });
+          await dialog
+            .getByRole('textbox', { name: 'Folder Name' })
+            .fill('subdir');
+          await dialog
+            .getByRole('button', { name: 'Create', exact: true })
+            .click();
+          const row = explorer.getByRole('row', { name: /subdir/ });
+          await expect(row).toBeVisible({ timeout: 30_000 });
+          await expect(row.getByRole('cell').nth(2)).toHaveText(/\d/);
+        });
+
+        await test.step('maxFileUploadSize rejects a larger file before any request', async () => {
+          await page
+            .locator('input[type=file]:not([webkitdirectory])')
+            .first()
+            .setInputFiles({
+              name: 'e2e-two-bytes.txt',
+              mimeType: 'text/plain',
+              buffer: Buffer.from('ab'),
+            });
+          await expect(
+            page
+              .locator('[data-testid="bai-notification-stack"]')
+              .getByText('File size exceeds upload size limit.'),
+          ).toBeVisible();
+        });
+
+        await test.step('systemSSHImage is the image of the SFTP session request', async () => {
+          const [req] = await Promise.all([
+            sessionPost('system'),
+            explorer.getByRole('button', { name: 'Run SFTP server' }).click(),
+          ]);
+          const body = req.postDataJSON();
+          expect(`${body.lang}@${body.architecture}`).toBe(PYTHON_IMAGE);
+          // The intercepted request fails; close its error dialog, not the explorer.
+          const failure = page
+            .getByRole('alertdialog')
+            .or(page.getByRole('dialog'))
+            .filter({ hasText: 'Failed to create SFTP session' });
+          // The footer "Close" (text), not the header × (aria-label "Close").
+          await failure
+            .getByRole('button', { name: 'Close', exact: true })
+            .and(page.locator('button:not([aria-label])'))
+            .click();
+          await expect(failure).toBeHidden();
+          await expect(explorer).toBeVisible();
+        });
+
+        await test.step('defaultFileBrowserImage is the image of the file browser session request', async () => {
+          const [req] = await Promise.all([
+            sessionPost('interactive'),
+            explorer
+              .getByRole('button', { name: 'Execute filebrowser' })
+              .click(),
+          ]);
+          const body = req.postDataJSON();
+          expect(`${body.lang}@${body.architecture}`).toBe(PYTHON_IMAGE);
+          await page.keyboard.press('Escape');
+        });
+      } finally {
+        if (folderId) {
+          await page
+            .evaluate(
+              (id) =>
+                (globalThis as any).backendaiclient.vfolder.delete_by_id(id),
+              folderId,
+            )
+            .catch(() => {
+              /* the global cleanup sweeps e2e-* folders */
+            });
+        }
+        await page.context().close();
+      }
+    });
+
+    test('defaultImportEnvironment is the environment of an imported notebook', async ({
+      browser,
+      request,
+    }) => {
+      await api.writeSettings('domain', {
+        defaultImportEnvironment: STABLE_IMAGE,
+      });
+
+      const page = await signInAsAdminInNewContext(browser, request);
+      await navigateTo(page, 'start');
+      await page.getByRole('button', { name: 'Start Now' }).last().click();
+      const modal = page.getByRole('dialog', { name: 'Start From URL' });
+      await expect(modal).toBeVisible();
+      await modal
+        .getByRole('textbox', { name: 'Notebook URL' })
+        .fill('https://github.com/lablup/e2e/blob/main/notebook.ipynb');
+      await modal.getByRole('button', { name: 'Start with options' }).click();
+      await page.getByRole('menuitem', { name: 'Start with options' }).click();
+      await expect(page).toHaveURL(/\/session\/start/);
+      expect(launcherFormValues(page).environments?.version).toBe(STABLE_IMAGE);
+      await page.context().close();
+    });
+
+    test('storageWarningThreshold from the domain document turns the diagnostics warning on', async ({
+      browser,
+      request,
+    }) => {
+      await api.writeSettings('domain', { storageWarningThreshold: 0 });
+
+      const page = await signInAsAdminInNewContext(browser, request);
+      await navigateTo(page, 'admin/diagnostics');
+      await expect(page.getByText('Storage Volume High Usage')).toBeVisible({
+        timeout: 60_000,
+      });
+      await page.context().close();
+    });
+
+    test('allowSignupWithoutConfirmation from the public document controls the invitation token field', async ({
+      page,
+      request,
+    }) => {
+      // config.toml enables sign-up without confirmation; the document turns
+      // it off, which brings the invitation token back.
+      await api.writeSettings('public', {
+        allowSignupWithoutConfirmation: false,
+      });
+      await enablePublicSlice(page, request, api.domainName);
+      await openLoginPage(page);
+      await page.getByText('Sign up', { exact: true }).click();
+      const dialog = page.getByRole('dialog', {
+        name: 'Sign up (Beta invitation only)',
+      });
+      await expect(dialog).toBeVisible();
+      await expect(
+        dialog.getByRole('textbox', { name: 'Invitation Token' }),
+      ).toBeVisible();
+    });
+  },
+);
+
+// ===========================================================================
+// 6. Keys read from a running session's actions and app launcher
+// ===========================================================================
+
+test.describe(
+  'System Settings - Effects on a running session',
+  { tag: ['@regression', '@config', '@webui-settings', '@integration'] },
+  () => {
+    const sessionName = `e2e-settings-session-${Date.now().toString(36)}`;
+    let sessionRequest: APIRequestContext;
+
+    test.beforeAll(async ({ browser }) => {
+      test.setTimeout(300_000);
+      sessionRequest = await apiRequest.newContext();
+      const page = await signInAsAdminInNewContext(browser, sessionRequest);
+      const helper = new SessionAPIHelper(page);
+      await helper.create({ sessionType: 'interactive', sessionName });
+      await helper.waitForStatus(sessionName, ['RUNNING'], 240_000);
+      await page.context().close();
+    });
+
+    test.afterAll(async ({ browser }) => {
+      const page = await signInAsAdminInNewContext(browser, sessionRequest);
+      await new SessionAPIHelper(page).terminate(sessionName).catch(() => {});
+      await page.context().close();
+      await sessionRequest.dispose();
+    });
+
+    /** Opens the session's detail drawer and returns it. */
+    async function openSessionDrawer(page: Page) {
+      await navigateTo(page, 'session');
+      const row = page.getByRole('row', { name: new RegExp(sessionName) });
+      await expect(row).toBeVisible({ timeout: 30_000 });
+      await row.getByText(sessionName).first().click();
+      const drawer = page.getByRole('dialog').filter({
+        has: page.getByRole('button', { name: 'Terminate Session' }),
+      });
+      await expect(drawer).toBeVisible({ timeout: 30_000 });
+      return drawer;
+    }
+
+    for (const enabled of [true, false]) {
+      test(`app launcher and commit controls follow the domain document (${enabled ? 'all on' : 'all off'})`, async ({
+        browser,
+        request,
+      }) => {
+        await api.writeSettings('domain', {
+          openPortToPublic: enabled,
+          allowPreferredPort: enabled,
+          allowNonAuthTCP: enabled,
+          enableContainerCommit: enabled,
+        });
+
+        const page = await signInAsAdminInNewContext(browser, request);
+        const drawer = await openSessionDrawer(page);
+        const commit = drawer.getByRole('button', {
+          name: 'Request Container Commit',
+        });
+        await expect(commit).toHaveCount(enabled ? 1 : 0);
+
+        await drawer.getByRole('button', { name: 'See App Dialog' }).click();
+        const launcher = page.getByTestId('app-launcher-modal');
+        await expect(launcher).toBeVisible({ timeout: 30_000 });
+        await expect(
+          launcher.getByRole('button', { name: 'Console' }),
+        ).toBeVisible();
+        const expectedCount = enabled ? 1 : 0;
+        await expect(
+          launcher.getByRole('checkbox', { name: 'Open app to public' }),
+        ).toHaveCount(expectedCount);
+        await expect(
+          launcher.getByRole('checkbox', { name: 'Try preferred port' }),
+        ).toHaveCount(expectedCount);
+        // `allowNonAuthTCP` gates the sshd (SSH / SFTP) app tile.
+        await expect(
+          launcher.getByRole('button', { name: 'SSH / SFTP' }),
+        ).toHaveCount(expectedCount);
+        await page.context().close();
+      });
+    }
   },
 );
