@@ -1074,11 +1074,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           ? 'single-node'
           : 'multi-node',
       cluster_size: rev.clusterConfig?.size ?? 1,
-      // Keep `ResourceAllocationFormItems`' auto-preset effect from
-      // clobbering the prefilled resource values. That effect runs when
-      // `allocationPreset === 'auto-select'` (the default) and rewrites
-      // cpu/mem to the first allocatable preset's values, which would
-      // erase the cpu/mem we set just below.
+      // `custom` keeps the auto pick off these values; `keepRestoredAllocation`
+      // on `ResourceAllocationFormItems` keeps them when custom allocation is off.
       allocationPreset: 'custom',
       resource: {
         cpu: cpuSlot ? Number(cpuSlot.quantity) : 0,
@@ -2512,6 +2509,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 project={deploymentProject}
                 enableResourcePresets
                 hideResourceGroupFormItem
+                keepRestoredAllocation
               />
             </Suspense>
           ) : null}
