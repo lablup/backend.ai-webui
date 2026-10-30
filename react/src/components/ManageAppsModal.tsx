@@ -182,10 +182,11 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
             {(fields, { add, remove }) => (
               <BAIDynamicList
                 items={fields}
-                getItemKey={(field) => field.key}
-                onAdd={() => add()}
+                addButton={{
+                  onClick: () => add(),
+                  label: t('environment.AddApp'),
+                }}
                 onRemove={(field) => remove(field.name)}
-                addLabel={t('environment.AddApp')}
                 disabled={!image}
                 columns={[
                   {
