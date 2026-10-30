@@ -32,12 +32,11 @@ export class SessionDetailPage extends BasePage {
 
   async verifyPageLoaded(): Promise<void> {
     // Wait for the session type tab list as a reliable page-ready indicator.
-    // The tab nav (All / Interactive / Batch / Inference / Upload Sessions) is
+    // The tab strip (All / Interactive / Batch / Inference / Upload Sessions) is
     // always rendered, even when no sessions exist or the data API returns an
-    // error. `BAITabList` / Astryx `TabList` renders a `nav[aria-label="Tabs"]`
-    // of plain `<button>`s — `role="tablist"` is never emitted.
-    const tabNav = this.page.getByRole('navigation', { name: 'Tabs' });
-    await this.waitForVisible(tabNav, 10000);
+    // error. `BAITabs` renders it as a `tablist`.
+    const tabStrip = this.page.getByRole('tablist', { name: 'Tabs' });
+    await this.waitForVisible(tabStrip, 10000);
   }
 
   /**

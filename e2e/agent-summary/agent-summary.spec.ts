@@ -18,8 +18,8 @@ test.describe(
       await navigateTo(page, 'agent-summary');
 
       // Verify Agent Summary tab is selected. `BAITabList` / Astryx `TabList`
-      // renders a `nav[aria-label="Tabs"]` of plain `<button>`s — `role="tab"`
-      // is never emitted — and marks the active one with `aria-current="true"`.
+      // renders a `nav[aria-label="Tabs"]` of plain `<button>`s — no
+      // `role="tab"` — and marks the active one with `aria-current="true"`.
       const agentSummaryTab = page
         .getByRole('navigation', { name: 'Tabs' })
         .getByRole('button', { name: 'Agent Summary' });

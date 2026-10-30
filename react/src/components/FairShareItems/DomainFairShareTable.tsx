@@ -288,6 +288,7 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
       columns={columns}
       rowSelection={{
         type: 'checkbox',
+        getRowLabel: (row) => row.domainName,
         onChange: (selectedRowKeys) => {
           onRowSelect(selectedRowKeys, domain || []);
         },

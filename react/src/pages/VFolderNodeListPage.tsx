@@ -348,7 +348,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               >
                 {`${t('data.invitation.PendingInvitations')} (${invitations.length})`}
               </Link>
-            ) : undefined
+            ) : null
           }
           items={(
             [

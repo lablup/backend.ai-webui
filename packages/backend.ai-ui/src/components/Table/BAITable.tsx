@@ -218,22 +218,13 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
 }: BAITableProps<RecordType>): React.ReactElement => {
   'use memo';
   const { t } = useBAIi18n();
-  const keyOf = (record: RecordType) =>
-    String(
-      typeof rowKey === 'function'
-        ? rowKey(record)
-        : (record as AnyRecord)[rowKey],
-    );
-  const positionByKey = new Map(
-    _.map(dataSource ?? [], (record, index) => [keyOf(record), index]),
-  );
   // Never the row key: it is often an opaque global id, long and meaningless
   // to assistive tech and agents reading the accessibility tree.
   const rowLabelOf = (record: RecordType) =>
     rowSelection?.getRowLabel?.(record) ||
     String(
       t('comp:BAITable.RowNumber', {
-        number: (positionByKey.get(keyOf(record)) ?? 0) + 1,
+        number: _.indexOf(dataSource, record) + 1,
       }),
     );
 

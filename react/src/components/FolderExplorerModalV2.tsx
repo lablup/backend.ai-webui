@@ -532,9 +532,9 @@ const FolderExplorerBody: React.FC<{
   // antd's `Tabs` reserved `token.margin` (16px) under the tab bar
   // (`.ant-tabs-nav { margin: 0 0 16px }`) and this call site added
   // `styles.content.paddingBottom = token.paddingContentVertical` (12px).
-  // `BAITabs` renders the active panel bare, so both gutters have to be
-  // restored around the panel content — scoped here rather than in the shared
-  // wrapper, whose other five call sites were signed off flush.
+  // `BAITabs` adds no padding around the active panel, so both gutters have to
+  // be restored around the panel content — scoped here rather than in the
+  // shared wrapper, whose other five call sites were signed off flush.
   const infoPanelPanelStyle: React.CSSProperties = {
     paddingBlockStart: 'var(--spacing-4)',
     paddingBlockEnd: 'var(--spacing-3)',

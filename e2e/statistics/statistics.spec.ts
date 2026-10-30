@@ -3,7 +3,7 @@ import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import test, { expect, Page } from '@playwright/test';
 
 // `role="tab"` is never emitted unless `TabList` is given `role="tablist"`,
-// which this app never does. The active tab carries `aria-current="true"`.
+// which only `BAITabs` does. The active tab carries `aria-current="true"`.
 function statisticsTab(page: Page, name: string) {
   return page
     .getByRole('navigation', { name: 'Tabs' })

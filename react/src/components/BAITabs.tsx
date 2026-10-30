@@ -13,8 +13,8 @@ import React, { useId } from 'react';
  *
  * Every call site switches a view in place, so the strip speaks the WAI-ARIA
  * tabs pattern (`tablist` / `tab` + `aria-selected`) rather than `navigation`.
- * The exception is a strip with `tabBarExtraContent`: a tablist may own only
- * tabs, so that strip stays a `navigation` landmark.
+ * The exception is a strip that passes `tabBarExtraContent`, even as `null`: a
+ * tablist may own only tabs, so that strip stays a `navigation` landmark.
  */
 export interface BAITabItem {
   key: string;
@@ -39,7 +39,10 @@ export interface BAITabsProps {
    * Astryx's underlined strip.
    */
   type?: 'line' | 'card';
-  /** antd's trailing tab-bar slot; forwarded to `BAITabList`. */
+  /**
+   * antd's trailing tab-bar slot; forwarded to `BAITabList`. Pass `null`, not
+   * `undefined`, while it is empty: the strip's role must not depend on content.
+   */
   tabBarExtraContent?: React.ReactNode;
   /**
    * Id of the element the caller renders the active tab's content in, when
@@ -81,7 +84,7 @@ const BAITabs: React.FC<BAITabsProps> = ({
 
   const generatedPanelId = useId();
   const panelId = externalPanelId ?? generatedPanelId;
-  const isTabList = !tabBarExtraContent;
+  const isTabList = tabBarExtraContent === undefined;
   const rendersOwnPanel = isTabList && !externalPanelId && activePanel != null;
   // `aria-controls` must point at an element that exists.
   const hasPanel = isTabList && (!!externalPanelId || rendersOwnPanel);

@@ -83,4 +83,26 @@ describe('BAITabs', () => {
     expect(screen.queryByRole('tablist')).not.toBeInTheDocument();
     expect(screen.getByRole('navigation')).toBeInTheDocument();
   });
+
+  it('keeps the navigation role when the trailing content empties to null', () => {
+    const renderStrip = (extra: React.ReactNode) => (
+      <BAITabs
+        activeKey="a"
+        items={[{ key: 'a', label: 'Alpha' }]}
+        tabBarExtraContent={extra}
+      />
+    );
+    const { rerender } = render(
+      renderStrip(<a href="#invites">Invitations</a>),
+    );
+    const strip = screen.getByRole('navigation');
+
+    rerender(renderStrip(null));
+
+    expect(screen.queryByRole('tablist')).not.toBeInTheDocument();
+    expect(screen.getByRole('navigation')).toBe(strip);
+    expect(screen.getByRole('button', { name: 'Alpha' })).not.toHaveAttribute(
+      'aria-controls',
+    );
+  });
 });

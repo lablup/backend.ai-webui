@@ -7,7 +7,7 @@ import test, { expect, Page } from '@playwright/test';
 // `BAICard`'s `tabList` renders a `nav[aria-label="Tabs"]` of plain
 // `<button>`s (BAITabList / Astryx `TabList`), not ARIA `tab` elements —
 // `role="tab"` is never emitted unless `TabList` is given `role="tablist"`,
-// which this app never does (see registry.spec.ts's identical pattern).
+// which only `BAITabs` does (see registry.spec.ts's identical pattern).
 // The role list lives on the "Roles" tab (renamed from "RBAC Management" when
 // the Presets tab was added, #9924).
 function rbacPageTab(page: Page, name: 'Roles' | 'Presets') {

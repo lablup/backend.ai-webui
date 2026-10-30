@@ -1,8 +1,6 @@
 /*
- Accessible names agents and screen readers read off the table (FR-4078):
- row checkboxes are named after the row, never its (often opaque) key, and a
- column header's name is its title — not the sort button plus the resize
- separator's value.
+ Row checkboxes are named after the row, never its (often opaque) key, so
+ agents and screen readers do not read a global id off the table (FR-4078).
 */
 import BAITable from './BAITable';
 import type { BAIColumnsType } from './tableTypes';
@@ -19,8 +17,7 @@ const ROWS: Array<Row> = [
 ];
 
 const COLUMNS: BAIColumnsType<Row> = [
-  { key: 'name', dataIndex: 'name', title: 'Session Name', sorter: true },
-  { key: 'id', dataIndex: 'id', title: <span>Session ID</span> },
+  { key: 'name', dataIndex: 'name', title: 'Session Name' },
 ];
 
 describe('BAITable accessible names', () => {
@@ -43,6 +40,24 @@ describe('BAITable accessible names', () => {
     expect(
       screen.queryByRole('checkbox', { name: /Q29tcHV0/ }),
     ).not.toBeInTheDocument();
+  });
+
+  it('keeps positions distinct when rows have no row key value', () => {
+    render(
+      <BAITable<Partial<Row>>
+        rowKey="id"
+        dataSource={[{ name: 'alpha' }, { name: 'beta' }]}
+        columns={[{ key: 'name', dataIndex: 'name', title: 'Session Name' }]}
+        rowSelection={{ selectedRowKeys: [], onChange: () => {} }}
+      />,
+    );
+
+    expect(
+      screen.getByRole('checkbox', { name: 'Select row 1' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('checkbox', { name: 'Select row 2' }),
+    ).toBeInTheDocument();
   });
 
   it('names row checkboxes after the row when getRowLabel is given', () => {

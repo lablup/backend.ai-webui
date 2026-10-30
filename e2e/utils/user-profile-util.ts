@@ -10,7 +10,7 @@ import { expect, type Page, type Locator } from '@playwright/test';
  *
  * `BAICard`'s `tabList` renders a `nav[aria-label="Tabs"]` of plain
  * `<button>`s (BAITabList / Astryx `TabList`); `role="tab"` is never emitted
- * unless `TabList` is given `role="tablist"`, which this app never does.
+ * unless `TabList` is given `role="tablist"`, which only `BAITabs` does.
  */
 export function usersTabButton(page: Page): Locator {
   return page

@@ -241,10 +241,10 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
   const showDesktopApp = baiClient?._config?.allowAppDownloadPanel;
   const showCLI = baiClient?._config?.allowCLIDownloadPanel;
 
-  // `BAITabs` renders the strip and the active panel as bare siblings, so the
-  // gap under the underline has to come from the panel itself; adding it in
-  // `BAITabs` would break the card-type call sites whose panel is continuous
-  // with the active tab.
+  // `BAITabs` adds no padding around the active panel, so the gap under the
+  // underline has to come from the panel itself; adding it in `BAITabs` would
+  // break the card-type call sites whose panel is continuous with the active
+  // tab.
   const tabItems = filterOutEmpty([
     showDesktopApp && {
       key: 'desktop',
@@ -276,8 +276,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
     >
       {/* antd `Tabs items` (with `children` panels) -> `BAITabs`, the
           frontier wrapper that keeps the antd-shaped `items` contract and
-          renders the active panel itself (Astryx `TabList` is navigation
-          only). */}
+          renders the active panel itself (Astryx `TabList` renders none). */}
       {/* `type="line"`: this modal used a PLAIN antd `Tabs` on `main`, i.e. the
           underlined strip — not the card tabs `BAITabs` now defaults to. */}
       <BAITabs items={tabItems} type="line" />

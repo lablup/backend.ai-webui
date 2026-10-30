@@ -52,7 +52,7 @@ test.describe.serial(
       // `BAICard`'s `tabList` renders a `nav[aria-label="Tabs"]` of plain
       // `<button>`s (BAITabList / Astryx `TabList`), not ARIA `tab` elements —
       // `role="tab"` is never emitted unless `TabList` is given `role="tablist"`,
-      // which this app never does (see registry.spec.ts's identical pattern).
+      // which only `BAITabs` does (see registry.spec.ts's identical pattern).
       await expect(usersTabButton(page)).toBeVisible();
 
       // 3. Create the test user
