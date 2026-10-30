@@ -74,6 +74,7 @@ const QuickSessionCreateButton: React.FC<QuickSessionCreateButtonProps> = ({
           onClick={() => webuiNavigate(buildProjectPath('session/start'))}
         />
         <DropdownMenu
+          data-testid="session-start-more-button"
           button={{
             label: t('button.More'),
             variant: 'primary',
