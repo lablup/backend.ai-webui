@@ -19,16 +19,19 @@ export interface BAIDynamicListColumn<T> {
   render: (item: T, index: number) => React.ReactNode;
 }
 
-export interface BAIDynamicListProps<T> extends Omit<
+export interface BAIDynamicListAddButton {
+  onClick: () => void;
+  label: string;
+}
+
+export interface BAIDynamicListProps<T extends { key: React.Key }> extends Omit<
   React.HTMLAttributes<HTMLDivElement>,
   'children'
 > {
   columns: BAIDynamicListColumn<T>[];
   items: T[];
-  getItemKey: (item: T, index: number) => React.Key;
-  onAdd: () => void;
   onRemove: (item: T, index: number) => void;
-  addLabel: string;
+  addButton: BAIDynamicListAddButton;
   disabled?: boolean;
   maxItems?: number;
 }
@@ -40,13 +43,11 @@ const toTrack = (width: number | string | undefined) =>
  * Rows of the same fields with Add and Remove actions. It owns no form state:
  * each column's `render` returns the cell, `Form.Item` included.
  */
-const BAIDynamicList = <T,>({
+const BAIDynamicList = <T extends { key: React.Key }>({
   columns,
   items,
-  getItemKey,
-  onAdd,
   onRemove,
-  addLabel,
+  addButton,
   disabled,
   maxItems,
   className,
@@ -83,7 +84,7 @@ const BAIDynamicList = <T,>({
       )}
       {_.map(items, (item, index) => (
         <div
-          key={getItemKey(item, index)}
+          key={item.key}
           className="bai-dynamic-list__row"
           style={{ gridTemplateColumns }}
           data-bai-dynamic-list-row={index}
@@ -109,12 +110,12 @@ const BAIDynamicList = <T,>({
       ))}
       <Button
         variant="secondary"
-        label={addLabel}
+        label={addButton.label}
         icon={<PlusIcon size="1em" />}
         isDisabled={
           disabled || (maxItems !== undefined && items.length >= maxItems)
         }
-        onClick={onAdd}
+        onClick={addButton.onClick}
       />
     </div>
   );

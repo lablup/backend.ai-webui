@@ -23,10 +23,11 @@ const meta: Meta<typeof BAIDynamicList> = {
   argTypes: {
     columns: { control: false, description: 'One entry per field.' },
     items: { control: false, description: 'The rows.' },
-    getItemKey: { control: false },
-    onAdd: { action: 'add' },
     onRemove: { action: 'remove' },
-    addLabel: { control: 'text', description: 'Text of the Add action.' },
+    addButton: {
+      control: false,
+      description: 'The Add action: `onClick` and `label`.',
+    },
     disabled: { control: 'boolean' },
     maxItems: { control: 'number' },
   },
@@ -35,7 +36,7 @@ const meta: Meta<typeof BAIDynamicList> = {
 export default meta;
 type Story = StoryObj<typeof BAIDynamicList>;
 
-type Row = { id: number; name: string; value: string };
+type Row = { key: number; name: string; value: string };
 
 const PlainList = ({
   initial,
@@ -47,17 +48,24 @@ const PlainList = ({
   disabled?: boolean;
 }) => {
   const [rows, setRows] = useState(initial);
-  const update = (id: number, patch: Partial<Row>) =>
-    setRows((prev) => prev.map((r) => (r.id === id ? { ...r, ...patch } : r)));
+  const update = (key: number, patch: Partial<Row>) =>
+    setRows((prev) =>
+      prev.map((r) => (r.key === key ? { ...r, ...patch } : r)),
+    );
   return (
     <BAIDynamicList<Row>
       items={rows}
-      getItemKey={(row) => row.id}
-      onAdd={() =>
-        setRows((prev) => [...prev, { id: Date.now(), name: '', value: '' }])
+      onRemove={(row) =>
+        setRows((prev) => prev.filter((r) => r.key !== row.key))
       }
-      onRemove={(row) => setRows((prev) => prev.filter((r) => r.id !== row.id))}
-      addLabel="Add label"
+      addButton={{
+        onClick: () =>
+          setRows((prev) => [
+            ...prev,
+            { key: Date.now(), name: '', value: '' },
+          ]),
+        label: 'Add label',
+      }}
       maxItems={maxItems}
       disabled={disabled}
       columns={[
@@ -70,7 +78,7 @@ const PlainList = ({
               placeholder="e.g., team"
               value={row.name}
               disabled={disabled}
-              onChange={(name) => update(row.id, { name })}
+              onChange={(name) => update(row.key, { name })}
             />
           ),
         },
@@ -83,7 +91,7 @@ const PlainList = ({
               placeholder="e.g., frontend"
               value={row.value}
               disabled={disabled}
-              onChange={(value) => update(row.id, { value })}
+              onChange={(value) => update(row.key, { value })}
             />
           ),
         },
@@ -96,8 +104,8 @@ export const Basic: Story = {
   render: () => (
     <PlainList
       initial={[
-        { id: 1, name: 'team', value: 'frontend' },
-        { id: 2, name: 'stage', value: 'dev' },
+        { key: 1, name: 'team', value: 'frontend' },
+        { key: 2, name: 'stage', value: 'dev' },
       ]}
     />
   ),
@@ -147,10 +155,11 @@ const EnvVarForm = ({ validateOnMount }: { validateOnMount?: boolean }) => {
           <>
             <BAIDynamicList
               items={fields}
-              getItemKey={(field) => field.key}
-              onAdd={() => add()}
               onRemove={(field) => remove(field.name)}
-              addLabel="Add environment variables"
+              addButton={{
+                onClick: () => add(),
+                label: 'Add environment variables',
+              }}
               columns={[
                 {
                   key: 'variable',
@@ -240,16 +249,17 @@ export const ValidationErrors: Story = {
 
 export const ColumnWidths: Story = {
   render: () => {
-    const [rows, setRows] = useState([{ id: 1 }]);
+    const [rows, setRows] = useState([{ key: 1 }]);
     return (
-      <BAIDynamicList<{ id: number }>
+      <BAIDynamicList<{ key: number }>
         items={rows}
-        getItemKey={(row) => row.id}
-        onAdd={() => setRows((prev) => [...prev, { id: Date.now() }])}
         onRemove={(row) =>
-          setRows((prev) => prev.filter((r) => r.id !== row.id))
+          setRows((prev) => prev.filter((r) => r.key !== row.key))
         }
-        addLabel="Add Pre-Start Action"
+        addButton={{
+          onClick: () => setRows((prev) => [...prev, { key: Date.now() }]),
+          label: 'Add Pre-Start Action',
+        }}
         columns={[
           {
             key: 'action',
@@ -291,13 +301,13 @@ export const MaxItemsAndDisabled: Story = {
     <BAIFlex direction="column" align="stretch" gap="lg">
       <PlainList
         initial={[
-          { id: 1, name: 'team', value: 'frontend' },
-          { id: 2, name: 'stage', value: 'dev' },
+          { key: 1, name: 'team', value: 'frontend' },
+          { key: 2, name: 'stage', value: 'dev' },
         ]}
         maxItems={2}
       />
       <PlainList
-        initial={[{ id: 1, name: 'team', value: 'frontend' }]}
+        initial={[{ key: 1, name: 'team', value: 'frontend' }]}
         disabled
       />
     </BAIFlex>

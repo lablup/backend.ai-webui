@@ -494,10 +494,12 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
         <>
           <BAIDynamicList
             items={fields}
-            getItemKey={(field) => field.key}
-            onAdd={() => add()}
+
             onRemove={(field) => remove(field.name)}
-            addLabel={t('session.launcher.AddEnvironmentVariable')}
+            addButton={{
+              onClick: () => add(),
+              label: t('session.launcher.AddEnvironmentVariable'),
+            }}
             columns={[
               {
                 key: 'variable',

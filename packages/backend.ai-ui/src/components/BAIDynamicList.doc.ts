@@ -45,20 +45,9 @@ export const docs = {
     },
     {
       name: 'items',
-      type: 'T[]',
-      description: 'The rows.',
-      required: true,
-    },
-    {
-      name: 'getItemKey',
-      type: '(item: T, index: number) => React.Key',
-      description: 'Stable React key of a row.',
-      required: true,
-    },
-    {
-      name: 'onAdd',
-      type: '() => void',
-      description: 'Called by the Add action.',
+      type: 'T[] (T extends { key: React.Key })',
+      description:
+        'The rows. Each carries its own stable `key`; `Form.List` fields already do.',
       required: true,
     },
     {
@@ -68,10 +57,10 @@ export const docs = {
       required: true,
     },
     {
-      name: 'addLabel',
-      type: 'string',
+      name: 'addButton',
+      type: '{ onClick: () => void; label: string }',
       description:
-        'Text of the Add action, such as "Add environment variables".',
+        'The Add action: its handler and its text, such as "Add environment variables".',
       required: true,
     },
     {
@@ -94,10 +83,11 @@ export const docs = {
     <>
       <BAIDynamicList
         items={fields}
-        getItemKey={(field) => field.key}
-        onAdd={() => add()}
         onRemove={(field) => remove(field.name)}
-        addLabel={t('session.launcher.AddEnvironmentVariable')}
+        addButton={{
+          onClick: () => add(),
+          label: t('session.launcher.AddEnvironmentVariable'),
+        }}
         columns={[
           {
             key: 'variable',
