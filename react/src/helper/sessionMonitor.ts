@@ -242,11 +242,6 @@ export const summarizeSessions = (
 };
 
 /** Prefixes `(N) ` to the title, replacing any earlier badge; N=0 strips it. */
-export const applyAttentionTitleBadge = (title: string, count: number) => {
-  const base = title.replace(/^\(\d+\) /, '');
-  return count > 0 ? `(${count}) ${base}` : base;
-};
-
 export type AlertedRecords = Record<string, number>;
 
 export const alertRecordKey = (sessionId: string, thresholdSec: number) =>

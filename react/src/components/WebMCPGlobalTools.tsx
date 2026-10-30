@@ -5,6 +5,7 @@
 import { maskString } from '../helper';
 import {
   isNavigableMenuKey,
+  needsDocumentReload,
   readMainHeading,
   resolveAppPath,
   searchParamsToRecord,
@@ -26,6 +27,7 @@ import {
   type WebMCPInputSchema,
   type WebMCPTool,
 } from 'backend.ai-ui';
+import _ from 'lodash';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -150,14 +152,7 @@ export const createNavigateTool = ({
       if (!target.ok) return webMCPError(target.code, target.message);
       to = target.to;
     }
-    // Tab-holding admin pages query only on mount, so a same-path change needs
-    // a document load, as in-app links there do (#10265).
-    const current = window.location;
-    const target = new URL(to, current.origin);
-    if (
-      target.pathname === current.pathname &&
-      target.search !== current.search
-    ) {
+    if (needsDocumentReload(to, window.location)) {
       window.setTimeout(() => reloadDocument(to), settleMs);
       return { path: to, title: document.title, reloaded: true };
     }
@@ -176,14 +171,23 @@ const WebMCPGlobalToolsRegistrar: React.FC = () => {
   // Sanctioned global reader (ADR 0001): bai_whoami reports the ambient project.
   const currentProject = useCurrentProjectValue();
   const activeProjectName = useActiveProjectName();
-  const { generalMenu, adminMenu } = useWebUIMenuItems();
+  const { generalMenu, adminMenu, groupedProjectAdminMenu } =
+    useWebUIMenuItems();
   const menuKey = useCurrentMenuKey();
   const scope = useRouteScope();
   const label = useCurrentRouteLabel();
   const location = useLocation();
   const navigate = useWebUINavigate();
 
-  const pages: Array<NavigablePage> = [...generalMenu, ...adminMenu]
+  // `adminMenu` leaves project-admin pages out for domain and super admins,
+  // who can still open them.
+  const projectAdminPages = groupedProjectAdminMenu.flatMap((item) =>
+    item && 'children' in item ? item.children : [item],
+  );
+  const pages: Array<NavigablePage> = _.uniqBy(
+    [...generalMenu, ...adminMenu, ...projectAdminPages],
+    'key',
+  )
     .filter((item) => item.to && !item.disabled && isNavigableMenuKey(item.key))
     .map((item) => ({
       key: item.key,
@@ -220,7 +224,6 @@ const WebMCPGlobalToolsRegistrar: React.FC = () => {
       activeProjectName,
       navigate: (to) => navigate(to),
     }),
-    [activeProjectName],
   );
 
   return null;

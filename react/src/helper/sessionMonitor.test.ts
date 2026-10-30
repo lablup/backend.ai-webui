@@ -1,5 +1,4 @@
 import {
-  applyAttentionTitleBadge,
   buildSessionMonitorDefaultCondition,
   getNearestIdleCheck,
   pickDueAlerts,
@@ -164,18 +163,6 @@ describe('sumOccupiedSlots', () => {
         null,
       ]),
     ).toEqual({ cpu: 6, mem: 1073741824, 'cuda.shares': 1.5 });
-  });
-});
-
-describe('applyAttentionTitleBadge', () => {
-  it('prefixes, replaces and strips the badge', () => {
-    expect(applyAttentionTitleBadge('Backend.AI', 2)).toBe('(2) Backend.AI');
-    expect(applyAttentionTitleBadge('(2) Backend.AI', 3)).toBe(
-      '(3) Backend.AI',
-    );
-    expect(applyAttentionTitleBadge('(3) [dev] Backend.AI', 0)).toBe(
-      '[dev] Backend.AI',
-    );
   });
 });
 

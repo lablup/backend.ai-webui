@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { updateDocumentTitle } from '../../helper/documentTitle';
 import {
-  applyAttentionTitleBadge,
   pickDueAlerts,
   readAlertedRecords,
   SESSION_MONITOR_POLL_INTERVAL_MS,
@@ -120,13 +120,8 @@ const ScopedSessionMonitorWatcher: React.FC<{ scope: SessionMonitorScope }> = ({
   }, [summary, setSummary]);
 
   useEffect(() => {
-    document.title = applyAttentionTitleBadge(
-      document.title,
-      summary.attentionCount,
-    );
-    return () => {
-      document.title = applyAttentionTitleBadge(document.title, 0);
-    };
+    updateDocumentTitle({ attentionCount: summary.attentionCount });
+    return () => updateDocumentTitle({ attentionCount: 0 });
   }, [summary.attentionCount]);
 
   const raiseDueAlerts = useEffectEvent((current: SessionMonitorEntry[]) => {

@@ -4,6 +4,7 @@
  */
 import {
   isNavigableMenuKey,
+  needsDocumentReload,
   readMainHeading,
   resolveAppPath,
   searchParamsToRecord,
@@ -62,6 +63,8 @@ describe('resolveAppPath', () => {
     'javascript:alert(1)',
     'session',
     '/\\evil.example.com',
+    '/.//evil.example.com/admin/x',
+    '/admin/..//evil.example.com',
     '/applauncher?app=jupyter',
     '/interactive-login',
     '/logout',
@@ -72,6 +75,62 @@ describe('resolveAppPath', () => {
       ok: false,
       code: 'path_not_allowed',
     });
+  });
+});
+
+describe('resolveAppPath login tokens', () => {
+  it.each([
+    '/admin/users?sToken=abc',
+    '/admin/users?stoken=abc',
+    '/admin/users?STOKEN=abc',
+    '/session?x=1&s%54oken=abc',
+  ])('refuses %s', (path) => {
+    expect(resolveAppPath(path, 'default', ORIGIN)).toMatchObject({
+      ok: false,
+      code: 'path_not_allowed',
+    });
+  });
+});
+
+describe('needsDocumentReload', () => {
+  const on = (pathname: string, search = '') => ({
+    origin: ORIGIN,
+    pathname,
+    search,
+  });
+
+  it('reloads the listed pages when only the search changes', () => {
+    expect(needsDocumentReload('/admin/users?tab=x', on('/admin/users'))).toBe(
+      true,
+    );
+    expect(
+      needsDocumentReload(
+        '/admin/resource-policy?tab=user',
+        on('/admin/resource-policy', '?tab=keypair'),
+      ),
+    ).toBe(true);
+  });
+
+  it('ignores a trailing slash on either side', () => {
+    expect(needsDocumentReload('/admin/users/?tab=x', on('/admin/users'))).toBe(
+      true,
+    );
+    expect(needsDocumentReload('/admin/users?tab=x', on('/admin/users/'))).toBe(
+      true,
+    );
+  });
+
+  it('leaves every other page to the router', () => {
+    expect(
+      needsDocumentReload('/project/a/data?filter=y', on('/project/a/data')),
+    ).toBe(false);
+  });
+
+  it('needs no reload for the same search or another path', () => {
+    expect(
+      needsDocumentReload('/admin/users?tab=x', on('/admin/users', '?tab=x')),
+    ).toBe(false);
+    expect(needsDocumentReload('/admin/users', on('/admin/agent'))).toBe(false);
   });
 });
 
@@ -93,6 +152,16 @@ describe('searchParamsToRecord', () => {
     });
     expect(searchParamsToRecord('')).toEqual({});
   });
+
+  it('keeps keys named after Object.prototype members', () => {
+    expect(
+      JSON.parse(
+        JSON.stringify(
+          searchParamsToRecord('?constructor=x&__proto__=z&toString=y'),
+        ),
+      ),
+    ).toEqual(JSON.parse('{"constructor":"x","__proto__":"z","toString":"y"}'));
+  });
 });
 
 describe('readMainHeading', () => {
@@ -103,7 +172,6 @@ describe('readMainHeading', () => {
       <nav><h2>Menu</h2></nav>
       <h5>Card title</h5>
       <h3>  Sessions  </h3>
-      <div role="heading" aria-level="2"></div>
     `;
     expect(readMainHeading(root)).toBe('Sessions');
   });
