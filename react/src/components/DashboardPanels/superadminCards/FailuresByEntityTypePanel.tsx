@@ -95,7 +95,7 @@ const EntityTypeFailures: React.FC<{
   );
 };
 
-/** Audit log entries of the whole cluster that ended in an error or were denied, per entity type. */
+/** Audit log entries of the whole cluster (not the domain, ADR 0018) that ended in an error or were denied, per entity type. */
 const FailuresByEntityTypePanel: React.FC<PanelComponentProps> = ({
   scope,
   vars,
