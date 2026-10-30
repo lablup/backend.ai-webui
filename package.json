@@ -1,7 +1,7 @@
 {
   "name": "backend.ai-webui",
   "productName": "Backend.AI Desktop",
-  "version": "26.10.0-alpha.1",
+  "version": "26.10.0-alpha.2",
   "repository": "https://github.com/lablup/backend.ai-webui.git",
   "author": "Lablup Inc. <contact@lablup.com>",
   "license": "LGPL-3.0-or-later",
@@ -83,7 +83,7 @@
     "concurrently": "^8.2.2",
     "cors": "^2.8.6",
     "e2e": "0.17.0",
-    "electron": "^44.9.3",
+    "electron": "^44.10.0",
     "eslint": "catalog:",
     "eslint-config-bai": "workspace:*",
     "eslint-config-google": "^0.14.0",
