@@ -67,6 +67,18 @@ describe('BAIBoard', () => {
     expect(shell('Alpha')).toHaveClass('uic-board-item--bordered');
   });
 
+  it('lets a custom renderItem replace the default content', () => {
+    render(
+      <BAIBoard
+        items={items}
+        renderItem={(item) => <h5>Custom {item.id}</h5>}
+        onItemsChange={() => {}}
+      />,
+    );
+    expect(screen.getByRole('heading', { name: 'Custom a' })).toBeVisible();
+    expect(screen.queryByRole('heading', { name: 'Alpha' })).toBeNull();
+  });
+
   it('wraps a committed change as { detail } with the items in their new order', async () => {
     const onItemsChange = vi.fn();
     render(<BAIBoard items={items} movable onItemsChange={onItemsChange} />);

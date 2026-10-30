@@ -17,7 +17,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The dashboard grid: ui-common `Board` behind the prop names the Backend.AI dashboards were written against. Each item carries its content in `data.content`, which the board draws as the item body; it renders the surface, border and handles around it. `movable`, `resizable` and `bordered` map onto the ui-common `isMovable`, `isResizable` and `variant` props, and `onItemsChange` receives `{ detail }` with the whole board in its new order, so the dashboards persist `event.detail.items` (minus `data`) and pass it back as `items`. Items keep the shape the dashboards have always persisted (`id`, `rowSpan`, `columnSpan`, `columnOffset`, `definition`, `data`), so a layout stored in local storage keeps rendering. An item whose content renders a `BAIBoardItemErrorBoundary` fallback gets an error or warning border from the `data-bai-board-item-status` attribute.',
+      'The dashboard grid: ui-common `Board` behind the prop names the Backend.AI dashboards were written against. Each item carries its content in `data.content`, which the default `renderItem` draws; the board renders the surface, border and handles around it. `movable`, `resizable` and `bordered` map onto the ui-common `isMovable`, `isResizable` and `variant` props, and `onItemsChange` receives `{ detail }` with the whole board in its new order, so the dashboards persist `event.detail.items` (minus `data`) and pass it back as `items`. Items keep the shape the dashboards have always persisted (`id`, `rowSpan`, `columnSpan`, `columnOffset`, `definition`, `data`), so a layout stored in local storage keeps rendering. An item whose content renders a `BAIBoardItemErrorBoundary` fallback gets an error or warning border from the `data-bai-board-item-status` attribute.',
     bestPractices: [
       {
         guidance: true,
@@ -50,6 +50,12 @@ export const docs = {
       description:
         'Called after a move, resize or removal with `detail.items` (the whole board in its new order) and the `movedItem`, `resizedItem` or `removedItem`.',
       required: true,
+    },
+    {
+      name: 'renderItem',
+      type: '(item: BAIBoardItem<T>, actions: { removeItem: () => void }) => React.ReactNode',
+      description: 'The content of an item.',
+      default: '(item) => item.data?.content',
     },
     {
       name: 'movable',

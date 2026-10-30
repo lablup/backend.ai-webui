@@ -38,6 +38,7 @@ const meta: Meta<typeof BAIBoard> = {
     },
     items: { control: false },
     onItemsChange: { control: false },
+    renderItem: { control: false },
   },
 };
 
