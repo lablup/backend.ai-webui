@@ -2036,20 +2036,10 @@
           "descriptionKeys": [
             "maintenance.DescRescanImageList"
           ]
-        },
-        {
-          "key": "maintenance.SystemAnnouncement",
-          "groupKey": "maintenance.Announcement",
-          "groupId": "maintenance-announcement",
-          "descriptionKeys": [
-            "maintenance.DescSystemAnnouncement"
-          ]
         }
       ],
       "keys": [
-        "button.Publish",
         "button.Reset",
-        "button.SaveAsDraft",
         "clientIpMasking.CreatePolicy",
         "clientIpMasking.DefaultPrefix",
         "clientIpMasking.DeletePolicy",
@@ -2066,7 +2056,6 @@
         "clientIpMasking.SuccessfullySaved",
         "clientIpMasking.Target",
         "clientIpMasking.TargetRequired",
-        "dialog.ask.DoYouWantToDelete",
         "dialog.ask.DoYouWantToResetChanges",
         "dialog.warning.CannotBeUndone",
         "general.All",
@@ -2101,23 +2090,6 @@
         "settings.NoChangesToDisplay",
         "settings.SearchPlaceholder",
         "settings.ShowOnlyChanged",
-        "summary.AnnouncementDeleted",
-        "summary.AnnouncementDraft",
-        "summary.AnnouncementMessage",
-        "summary.AnnouncementPreview",
-        "summary.AnnouncementTitle",
-        "summary.AnnouncementUpdated",
-        "summary.EditAnnouncement",
-        "summary.MarkdownBold",
-        "summary.MarkdownBulletList",
-        "summary.MarkdownCode",
-        "summary.MarkdownHeading",
-        "summary.MarkdownImage",
-        "summary.MarkdownItalic",
-        "summary.MarkdownLink",
-        "summary.MarkdownNumberedList",
-        "summary.MarkdownQuote",
-        "summary.MarkdownStrikethrough",
         "webui.menu.GoBack",
         "webui.menu.Settings"
       ]
@@ -2826,6 +2798,16 @@
       ],
       "settings": [
         {
+          "key": "maintenance.SystemAnnouncement",
+          "tab": "configurations",
+          "groupKey": "maintenance.Announcement",
+          "groupId": "webui-settings-group-announcement",
+          "testId": "system-announcement",
+          "descriptionKeys": [
+            "maintenance.DescSystemAnnouncement"
+          ]
+        },
+        {
           "key": "settings.ATOMMaxSupport",
           "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
@@ -2984,9 +2966,12 @@
       ],
       "keys": [
         "button.Discard",
+        "button.Publish",
         "button.Reset",
+        "button.SaveAsDraft",
         "data.ModelStore",
         "data.explorer.ValueRequired",
+        "dialog.ask.DoYouWantToDelete",
         "dialog.ask.DoYouWantToResetChanges",
         "dialog.warning.CannotBeUndone",
         "general.All",
@@ -3012,6 +2997,23 @@
         "settings.image.Digest",
         "settings.image.None",
         "settings.image.Tag",
+        "summary.AnnouncementDeleted",
+        "summary.AnnouncementDraft",
+        "summary.AnnouncementMessage",
+        "summary.AnnouncementPreview",
+        "summary.AnnouncementTitle",
+        "summary.AnnouncementUpdated",
+        "summary.EditAnnouncement",
+        "summary.MarkdownBold",
+        "summary.MarkdownBulletList",
+        "summary.MarkdownCode",
+        "summary.MarkdownHeading",
+        "summary.MarkdownImage",
+        "summary.MarkdownItalic",
+        "summary.MarkdownLink",
+        "summary.MarkdownNumberedList",
+        "summary.MarkdownQuote",
+        "summary.MarkdownStrikethrough",
         "webui.menu.AIAgents",
         "webui.menu.AgentSummary",
         "webui.menu.Branding",
