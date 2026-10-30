@@ -83,7 +83,7 @@ export type AdminMenuGroupName =
  */
 export const VALID_MENU_KEYS = [
   // generalMenu keys
-  'start', // alias to dashboard: the retired Start page, kept for old links and configs
+  'start', // alias to dashboard (the retired Start page); blocking it hides the dashboard's Start cards
   'dashboard',
   'summary', // alias to dashboard for backward compatibility
   'session',

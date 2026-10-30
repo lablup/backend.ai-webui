@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e975a9913f8baf982a2b4ba7c0d5b6d0>>
+ * @generated SignedSource<<e1adb7d5a3d2fc1523d0562e1cd7ee65>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,6 +13,14 @@ export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type VFolderOperationStatus = "CLONING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
 export type VFolderOrderField = "CREATED_AT" | "HOST" | "NAME" | "STATUS" | "USAGE_MODE" | "%future added value";
 export type VFolderUsageMode = "DATA" | "GENERAL" | "MODEL" | "%future added value";
+export type VFolderScope = {
+  domain?: ReadonlyArray<UUIDScope> | null | undefined;
+  project?: ReadonlyArray<UUIDScope> | null | undefined;
+  user?: ReadonlyArray<UUIDScope> | null | undefined;
+};
+export type UUIDScope = {
+  value: string;
+};
 export type VFolderFilter = {
   AND?: ReadonlyArray<VFolderFilter> | null | undefined;
   NOT?: ReadonlyArray<VFolderFilter> | null | undefined;
@@ -78,6 +86,7 @@ export type EntityLabelFilter = {
   OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
   entityId?: UUIDFilter | null | undefined;
   entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   key?: StringFilter | null | undefined;
   value?: StringFilter | null | undefined;
 };
@@ -96,9 +105,10 @@ export type resourceRegistryVfolderQuery$variables = {
   limit?: number | null | undefined;
   offset?: number | null | undefined;
   orderBy?: ReadonlyArray<VFolderOrderBy> | null | undefined;
+  scope: VFolderScope;
 };
 export type resourceRegistryVfolderQuery$data = {
-  readonly adminVfoldersV2: {
+  readonly scopedVFoldersV2: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -140,7 +150,12 @@ v3 = {
   "kind": "LocalArgument",
   "name": "orderBy"
 },
-v4 = [
+v4 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "scope"
+},
+v5 = [
   {
     "alias": null,
     "args": [
@@ -163,11 +178,16 @@ v4 = [
         "kind": "Variable",
         "name": "orderBy",
         "variableName": "orderBy"
+      },
+      {
+        "kind": "Variable",
+        "name": "scope",
+        "variableName": "scope"
       }
     ],
     "concreteType": "VFolderConnection",
     "kind": "LinkedField",
-    "name": "adminVfoldersV2",
+    "name": "scopedVFoldersV2",
     "plural": false,
     "selections": [
       {
@@ -262,18 +282,20 @@ return {
       (v0/*: any*/),
       (v1/*: any*/),
       (v2/*: any*/),
-      (v3/*: any*/)
+      (v3/*: any*/),
+      (v4/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
     "name": "resourceRegistryVfolderQuery",
-    "selections": (v4/*: any*/),
+    "selections": (v5/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
+      (v4/*: any*/),
       (v0/*: any*/),
       (v3/*: any*/),
       (v1/*: any*/),
@@ -281,19 +303,19 @@ return {
     ],
     "kind": "Operation",
     "name": "resourceRegistryVfolderQuery",
-    "selections": (v4/*: any*/)
+    "selections": (v5/*: any*/)
   },
   "params": {
-    "cacheID": "0bf78ebbd78040d6acf4915a3b7744cc",
+    "cacheID": "3ccdd2aea81f152b2c8c52ac225cbd2c",
     "id": null,
     "metadata": {},
     "name": "resourceRegistryVfolderQuery",
     "operationKind": "query",
-    "text": "query resourceRegistryVfolderQuery(\n  $filter: VFolderFilter\n  $orderBy: [VFolderOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminVfoldersV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        host\n        status\n        metadata {\n          name\n          usageMode\n          createdAt\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query resourceRegistryVfolderQuery(\n  $scope: VFolderScope!\n  $filter: VFolderFilter\n  $orderBy: [VFolderOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  scopedVFoldersV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        host\n        status\n        metadata {\n          name\n          usageMode\n          createdAt\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "f0f996cac5aac86ee5907d16f7b69a3c";
+(node as any).hash = "3e2f23f454823fee247c4d8cb64ca51a";
 
 export default node;

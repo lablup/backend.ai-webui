@@ -19,6 +19,8 @@ export interface MemberCardProps {
   extra?: React.ReactNode;
   /** The card's fetch key from the dashboard timer. */
   fetchKey: string;
+  /** Values besides the fetch key whose change retries a failed card, such as its resource group. */
+  resetKeys?: Array<unknown>;
   /** The card body, given the card's fetch key. */
   children: (fetchKey: string) => React.ReactNode;
 }
@@ -29,11 +31,16 @@ const MemberCard: React.FC<MemberCardProps> = ({
   tooltip,
   extra,
   fetchKey,
+  resetKeys = [],
   children,
 }) => {
   'use memo';
   return (
-    <BAIBoardItemErrorBoundary title={title} status="error">
+    <BAIBoardItemErrorBoundary
+      title={title}
+      status="error"
+      resetKeys={[fetchKey, ...resetKeys]}
+    >
       <PanelFrame title={title} tooltip={tooltip} extra={extra}>
         <Suspense fallback={<BAISkeleton />}>{children(fetchKey)}</Suspense>
       </PanelFrame>

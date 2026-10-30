@@ -189,8 +189,6 @@ export interface DashboardModel extends DashboardBoard {
 export interface DashboardPageConfig {
   boards: Array<DashboardModel>;
   active: string;
-  /** Set on every write, so the localStorage migration never runs again. */
-  migrated?: true;
 }
 
 /** `userConfig.dashboard`. */
@@ -247,8 +245,11 @@ export interface PanelDefinition {
   superadminTitleKey?: string;
   requires?: {
     role?: 'projectAdmin' | 'superadmin';
-    /** `import` is a blockList key of its own, though it has no menu item. */
-    menuKey?: MenuKeys | 'import';
+    /**
+     * Any of these in `blockList` / `inactiveList` drops the entry. `import` is
+     * a blockList key of its own, though it has no menu item.
+     */
+    menuKey?: MenuKeys | 'import' | ReadonlyArray<MenuKeys | 'import'>;
     /** True drops the entry for this viewer: not listed and not rendered. */
     hidden?: (
       config: PanelCatalogConfig,
@@ -288,6 +289,9 @@ export interface ResourceQueryArgs {
   /** The page's project; `null` on the superadmin page, which reads the current domain. */
   projectId: string | null;
   domainName: string;
+  domainId: string;
+  /** The viewer, when the page reads only the viewer's own rows (the member page). */
+  ownerId: string | null;
 }
 
 /** Normalized connection slice the executor renders. */

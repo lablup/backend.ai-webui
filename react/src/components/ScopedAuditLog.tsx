@@ -116,15 +116,22 @@ const ScopedAuditLog = ({
           filterProperties={[
             {
               key: 'status',
-              propertyLabel: t('auditLog.Status'),
+              propertyLabel: t('auditLog.Result'),
               type: 'enum',
               strictSelection: true,
               options: [
-                { label: 'SUCCESS', value: 'SUCCESS' },
-                { label: 'ERROR', value: 'ERROR' },
-                { label: 'RUNNING', value: 'RUNNING' },
-                { label: 'UNKNOWN', value: 'UNKNOWN' },
+                { label: t('auditLog.ResultSuccess'), value: 'SUCCESS' },
+                { label: t('auditLog.ResultFailed'), value: 'ERROR' },
+                { label: t('auditLog.ResultDenied'), value: 'DENIED' },
+                { label: t('auditLog.ResultRunning'), value: 'RUNNING' },
+                { label: t('auditLog.ResultUnknown'), value: 'UNKNOWN' },
               ],
+            },
+            {
+              key: 'actionName',
+              propertyLabel: t('auditLog.Action'),
+              type: 'string',
+              fixedOperator: 'contains',
             },
             {
               key: 'operation',

@@ -16,7 +16,7 @@ Backend.AI WebUI เป็นเว็บหรือแอปที่ให้
 - [การติดตั้ง](installation/installation.md)
 - [การเข้าสู่ระบบ](login/login.md)
 - [แถบด้านบน](header/header.md)
-- [การดำเนินการเริ่มต้น](start/start.md)
+- [เริ่มต้น](start/start.md)
 - [แดชบอร์ด](dashboard/dashboard.md)
 - [โฟลเดอร์จัดเก็บ](vfolder/vfolder.md)
 - [หน้าเซสชัน](session_page/session_page.md)

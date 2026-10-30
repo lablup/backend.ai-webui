@@ -218,6 +218,13 @@ export default [
                 'Project-agnostic surfaces have no ambient project context (ADR-0001, docs/adr/0001-explicit-project-prop-contract.md). ' +
                 'Pass an explicit `project` prop (or `null` + in-modal selection) instead of reading the ambient current project.',
             },
+            // The global FR-3428 ban, repeated because this block replaces the global options.
+            {
+              group: ['**/useCurrentProject'],
+              importNames: ['useSetCurrentProject'],
+              message:
+                "Use 'useSwitchProject' from 'src/hooks/useRouteScope' instead — the URL owns the current project on project-scoped routes (FR-3055/FR-3428).",
+            },
           ],
           paths: [
             {

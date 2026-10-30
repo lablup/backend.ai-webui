@@ -5,8 +5,9 @@
 import type { ResourceGroupTotalPanelQuery } from '../../../__generated__/ResourceGroupTotalPanelQuery.graphql';
 import { useCurrentUserRole } from '../../../hooks/backendai';
 import TotalResourceWithinResourceGroup from '../../TotalResourceWithinResourceGroup';
+import PanelFrame from '../PanelFrame';
 import type { PanelComponentProps } from '../types';
-import { useTheme } from '@lablup/ui-common/theme';
+import { Text } from '@lablup/ui-common/Text';
 import { BAIBoardItemErrorBoundary, BAISkeleton } from 'backend.ai-ui';
 import React, { Suspense, useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -61,16 +62,22 @@ const ResourceGroupTotalPanel: React.FC<PanelComponentProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = useTheme();
+  const title = t('webui.menu.TotalResourcesInResourceGroup');
   const resourceGroup = vars.resourceGroup;
   return (
     <BAIBoardItemErrorBoundary
-      title={t('webui.menu.TotalResourcesInResourceGroup')}
+      title={title}
       status="error"
+      resetKeys={[fetchKey, resourceGroup]}
     >
       {resourceGroup ? (
+        // The fallback keeps the title up while the totals load.
         <Suspense
-          fallback={<BAISkeleton style={{ padding: token('--spacing-5') }} />}
+          fallback={
+            <PanelFrame title={title}>
+              <BAISkeleton />
+            </PanelFrame>
+          }
         >
           <ResourceGroupTotal
             resourceGroup={resourceGroup}
@@ -78,7 +85,11 @@ const ResourceGroupTotalPanel: React.FC<PanelComponentProps> = ({
             isRefetching={isRefetching}
           />
         </Suspense>
-      ) : null}
+      ) : (
+        <PanelFrame title={title}>
+          <Text type="supporting">{t('dashboard.card.NoResourceGroup')}</Text>
+        </PanelFrame>
+      )}
     </BAIBoardItemErrorBoundary>
   );
 };

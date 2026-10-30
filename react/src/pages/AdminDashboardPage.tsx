@@ -37,9 +37,9 @@ const AdminDashboardPageContent: React.FC<AdminDashboardPageProps> = ({
   const currentDomainName = useCurrentDomainValue();
   const isSuperAdmin = useCurrentUserRole() === 'superadmin';
 
-  const { fetchKey } = useDashboardFetchKey('page-query');
+  const { fetchKey, isPending: isRefetching } =
+    useDashboardFetchKey('page-query');
   const deferredFetchKey = useDeferredValue(fetchKey);
-  const isRefetching = fetchKey !== deferredFetchKey;
 
   const queryRef = useLazyLoadQuery<AdminDashboardPageQuery>(
     graphql`
@@ -98,10 +98,13 @@ const AdminDashboardPageContent: React.FC<AdminDashboardPageProps> = ({
   );
 };
 
-const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ page }) => (
-  <DashboardRefreshProvider>
-    <AdminDashboardPageContent page={page} />
-  </DashboardRefreshProvider>
-);
+const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ page }) => {
+  'use memo';
+  return (
+    <DashboardRefreshProvider>
+      <AdminDashboardPageContent page={page} />
+    </DashboardRefreshProvider>
+  );
+};
 
 export default AdminDashboardPage;

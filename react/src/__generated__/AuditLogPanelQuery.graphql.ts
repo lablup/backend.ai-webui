@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4b3914668ae96ed56d05dd2ebfd61da8>>
+ * @generated SignedSource<<52b956ae190ce9b43feff21d37f566e9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,6 +10,7 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
+export type AuditLogActionKind = "BULK" | "GLOBAL" | "LOOKUP" | "MEMBERSHIP" | "RELATION" | "SCOPE" | "SINGLE_ENTITY" | "%future added value";
 export type AuditLogStatus = "DENIED" | "ERROR" | "RUNNING" | "SUCCESS" | "UNKNOWN" | "%future added value";
 export type AuditLogScope = {
   entity?: ReadonlyArray<EntityTypeScope> | null | undefined;
@@ -27,11 +28,18 @@ export type AuditLogFilter = {
   NOT?: ReadonlyArray<AuditLogFilter> | null | undefined;
   OR?: ReadonlyArray<AuditLogFilter> | null | undefined;
   actedAs?: UUIDFilter | null | undefined;
+  actionId?: UUIDFilter | null | undefined;
+  actionKind?: AuditLogActionKindFilter | null | undefined;
+  actionName?: StringFilter | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
   entityId?: StringFilter | null | undefined;
   entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
+  lookupKey?: StringFilter | null | undefined;
+  lookupKind?: StringFilter | null | undefined;
   operation?: StringFilter | null | undefined;
   status?: AuditLogStatusFilter | null | undefined;
+  targetEntityId?: UUIDFilter | null | undefined;
   triggeredBy?: StringFilter | null | undefined;
 };
 export type StringFilter = {
@@ -56,6 +64,12 @@ export type StringFilter = {
   notStartsWith?: string | null | undefined;
   startsWith?: string | null | undefined;
 };
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
+};
 export type AuditLogStatusFilter = {
   equals?: AuditLogStatus | null | undefined;
   in?: ReadonlyArray<AuditLogStatus> | null | undefined;
@@ -68,11 +82,11 @@ export type DateTimeFilter = {
   equals?: string | null | undefined;
   notEquals?: string | null | undefined;
 };
-export type UUIDFilter = {
-  equals?: string | null | undefined;
-  in?: ReadonlyArray<string> | null | undefined;
-  notEquals?: string | null | undefined;
-  notIn?: ReadonlyArray<string> | null | undefined;
+export type AuditLogActionKindFilter = {
+  equals?: AuditLogActionKind | null | undefined;
+  in?: ReadonlyArray<AuditLogActionKind> | null | undefined;
+  notEquals?: AuditLogActionKind | null | undefined;
+  notIn?: ReadonlyArray<AuditLogActionKind> | null | undefined;
 };
 export type AuditLogPanelQuery$variables = {
   filter: AuditLogFilter;
@@ -350,13 +364,6 @@ v24 = {
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
-},
-v25 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "entityId",
-  "storageKey": null
 };
 return {
   "fragment": {
@@ -530,6 +537,13 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
+                    "name": "actionName",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "operation",
                     "storageKey": null
                   },
@@ -575,7 +589,13 @@ return {
                     "name": "entityType",
                     "storageKey": null
                   },
-                  (v25/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "targetEntityId",
+                    "storageKey": null
+                  },
                   {
                     "alias": null,
                     "args": null,
@@ -599,7 +619,13 @@ return {
                     "plural": false,
                     "selections": [
                       (v24/*: any*/),
-                      (v25/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "entityId",
+                        "storageKey": null
+                      },
                       {
                         "alias": null,
                         "args": null,
@@ -660,12 +686,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "25101e9e0093f4bf11d6dc0986bd343c",
+    "cacheID": "8fc989c25e2c6d5febb981b1b84f34af",
     "id": null,
     "metadata": {},
     "name": "AuditLogPanelQuery",
     "operationKind": "query",
-    "text": "query AuditLogPanelQuery(\n  $scope: AuditLogScope!\n  $filter: AuditLogFilter!\n  $limit: Int!\n  $offset: Int!\n  $previousSuccess: AuditLogFilter\n  $previousFailure: AuditLogFilter\n  $previousOn: Boolean!\n  $liveS0: AuditLogFilter\n  $liveF0: AuditLogFilter\n  $live0On: Boolean!\n  $liveS1: AuditLogFilter\n  $liveF1: AuditLogFilter\n  $live1On: Boolean!\n) {\n  logs: scopedAuditLogsV2(scope: $scope, filter: $filter, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAIAuditLogNodesFragment\n        id\n      }\n    }\n  }\n  previousSuccess: scopedAuditLogsV2(scope: $scope, filter: $previousSuccess, limit: 1) @include(if: $previousOn) {\n    count\n  }\n  previousFailure: scopedAuditLogsV2(scope: $scope, filter: $previousFailure, limit: 1) @include(if: $previousOn) {\n    count\n  }\n  liveS0: scopedAuditLogsV2(scope: $scope, filter: $liveS0, limit: 1) @include(if: $live0On) {\n    count\n  }\n  liveF0: scopedAuditLogsV2(scope: $scope, filter: $liveF0, limit: 1) @include(if: $live0On) {\n    count\n  }\n  liveS1: scopedAuditLogsV2(scope: $scope, filter: $liveS1, limit: 1) @include(if: $live1On) {\n    count\n  }\n  liveF1: scopedAuditLogsV2(scope: $scope, filter: $liveF1, limit: 1) @include(if: $live1On) {\n    count\n  }\n}\n\nfragment BAIAuditLogNodesFragment on AuditLogV2 {\n  id\n  createdAt\n  operation\n  status\n  description\n  duration\n  requestId\n  actionId\n  entityType\n  entityId\n  triggeredBy\n  clientIp @since(version: \"26.9.0\")\n  user {\n    id\n    entityId\n    basicInfo {\n      email\n    }\n  }\n}\n"
+    "text": "query AuditLogPanelQuery(\n  $scope: AuditLogScope!\n  $filter: AuditLogFilter!\n  $limit: Int!\n  $offset: Int!\n  $previousSuccess: AuditLogFilter\n  $previousFailure: AuditLogFilter\n  $previousOn: Boolean!\n  $liveS0: AuditLogFilter\n  $liveF0: AuditLogFilter\n  $live0On: Boolean!\n  $liveS1: AuditLogFilter\n  $liveF1: AuditLogFilter\n  $live1On: Boolean!\n) {\n  logs: scopedAuditLogsV2(scope: $scope, filter: $filter, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAIAuditLogNodesFragment\n        id\n      }\n    }\n  }\n  previousSuccess: scopedAuditLogsV2(scope: $scope, filter: $previousSuccess, limit: 1) @include(if: $previousOn) {\n    count\n  }\n  previousFailure: scopedAuditLogsV2(scope: $scope, filter: $previousFailure, limit: 1) @include(if: $previousOn) {\n    count\n  }\n  liveS0: scopedAuditLogsV2(scope: $scope, filter: $liveS0, limit: 1) @include(if: $live0On) {\n    count\n  }\n  liveF0: scopedAuditLogsV2(scope: $scope, filter: $liveF0, limit: 1) @include(if: $live0On) {\n    count\n  }\n  liveS1: scopedAuditLogsV2(scope: $scope, filter: $liveS1, limit: 1) @include(if: $live1On) {\n    count\n  }\n  liveF1: scopedAuditLogsV2(scope: $scope, filter: $liveF1, limit: 1) @include(if: $live1On) {\n    count\n  }\n}\n\nfragment BAIAuditLogNodesFragment on AuditLogV2 {\n  id\n  createdAt\n  actionName\n  operation\n  status\n  description\n  duration\n  requestId\n  actionId\n  entityType\n  targetEntityId\n  triggeredBy\n  clientIp @since(version: \"26.9.0\")\n  user {\n    id\n    entityId\n    basicInfo {\n      email\n    }\n  }\n}\n"
   }
 };
 })();

@@ -7,7 +7,7 @@
 - 전역 검색 palette가 읽는 인덱스 `react/src/generated/searchIndex.json`은 `react/scripts/build-search-index.mjs`가 `react/src/routes.tsx`와 각 route가 렌더하는 module의 i18n key에서 만들며, git에 커밋된다.
 - 커밋된 파일이 유일한 원천이다. production build(`react/package.json`의 `build:only`)는 이 파일을 그대로 번들하고 다시 만들지 않는다.
 - 커밋본이 source와 어긋난 상태([drift](#용어))는 두 게이트가 잡는다. `scripts/verify.sh`의 "Search index" 단계와 `.github/workflows/typecheck.yml`의 "Check for drift in the search index" step은 둘 다 인덱스를 다시 만든 뒤 `git status`에 그 파일이 dirty로 뜨면 실패한다.
-- 이 파일의 merge conflict는 손으로 합치지 않는다. `.claude/rules/search-index-conflicts.md`대로 어느 한쪽을 취한 뒤 다시 만든다.
+- 이 파일의 merge conflict는 손으로 합치지 않는다. 구조적 merge driver(`scripts/merge-search-index.mjs`)가 먼저 entry 단위로 합치고, 그 결과는 잠정적이라 재생성과 비교해 다르면 알린다. driver가 풀지 못한 conflict는 `.claude/rules/search-index-conflicts.md`대로 어느 한쪽을 취한 뒤 다시 만든다.
 - 추출기는 `EXTERNAL_PREFIXES`에 걸리는 `packages/backend.ai-ui/`에 아예 들어가지 않으므로 BUI의 locale key는 색인하지 않는다.
 
 ## Context
@@ -48,11 +48,11 @@ flowchart LR
 - **Version field**: JSON의 `version`은 추출기의 `INDEX_VERSION`이고 `generatedFrom`은 추출기의 `GENERATED_FROM`, 즉 입력 파일 `react/src/routes.tsx`다. shape가 바뀌면 `INDEX_VERSION`과 `searchIndex.types.ts`의 타입을 같은 PR에서 함께 올린다.
 - **Generated marks**: 세 파일이 이 산출물을 생성물로 표시한다.
 
-| 파일 | 하는 일 |
-|---|---|
-| `.gitattributes` | `linguist-generated=true`로 표시해 GitHub diff에서 접는다. |
-| `.prettierignore` | 포맷 대상에서 뺀다. |
-| `.claude/rules/review-ignored-paths.md` | 리뷰 대상에서 빼고 `routes.tsx`와 추출기를 보게 한다. |
+| 파일                                    | 하는 일                                                    |
+| --------------------------------------- | ---------------------------------------------------------- |
+| `.gitattributes`                        | `linguist-generated=true`로 표시해 GitHub diff에서 접는다. |
+| `.prettierignore`                       | 포맷 대상에서 뺀다.                                        |
+| `.claude/rules/review-ignored-paths.md` | 리뷰 대상에서 빼고 `routes.tsx`와 추출기를 보게 한다.      |
 
 ### 2. build는 커밋본을 그대로 쓴다
 
@@ -72,9 +72,12 @@ flowchart LR
 - **Fatal check**: 추출기는 인덱스에 든 key 중 `resources/i18n/en.json`에 없는 것이 있으면 파일을 쓰기 전에 exit 1로 끝난다. 오타 난 key가 palette에 raw key로 보이는 일을 막는다.
 - **Allowlist**: 일부러 비워 둔 key는 추출기의 `KNOWN_MISSING_KEYS`에 이유와 함께 적는다. 지금은 비어 있다.
 
-### 5. conflict는 다시 만들어서 푼다
+### 5. conflict는 구조적 merge driver가 먼저 풀고, 최종 판정은 재생성이다
 
-- **Conflict resolution**: `.claude/rules/search-index-conflicts.md`가 절차를 정한다. 개발자는 어느 한쪽을 취하고 `pnpm run search-index`를 실행한 뒤 stage한다.
+- **Merge driver**: `.gitattributes`가 이 파일에 `merge=search-index`를 지정하고, `scripts/merge-search-index.mjs`가 base·ours·theirs 세 인덱스를 `path`로 entry를 맞춰 3-way로 합친다. `keys`와 `descriptionKeys`는 집합으로, `tabs`(`param=key`)와 `settings`(group과 key)는 member 단위로 합친다. 정렬과 직렬화는 추출기와 같은 `react/scripts/search-index-format.mjs`를 쓴다. 이 module은 의존성이 없어서 `node_modules`가 없거나 추출기 자체가 conflict 중이어도 driver가 돈다.
+- **Fallback**: `version`이 다르거나, 양쪽이 같은 scalar·tab·setting을 다르게 바꿨거나, 한쪽이 지운 entry를 다른 쪽이 바꿨거나, JSON이 아니면 driver는 git의 일반 conflict marker를 남기고 exit 1로 끝난다. 그때는 `.claude/rules/search-index-conflicts.md`대로 어느 한쪽을 취하고 `pnpm run search-index`를 실행한 뒤 stage한다.
+- **Provisional result**: 인덱스는 세 인덱스가 아니라 합쳐진 source의 함수다. `keyPlacement`는 소유한 page 수로 key를 배치하므로 driver가 남긴 key가 재생성 후에는 빠질 수 있다. 그래서 driver는 성공할 때 git dir 아래 `search-index-merge/pending`에 marker를 남기고, `scripts/search-index-merge-check.mjs`가 marker가 있을 때만 임시 파일로 재생성해 `HEAD`의 인덱스와 비교한 뒤 다르면 branch 이름과 `pnpm run search-index`를 출력한다. 이 검사는 working tree를 건드리지 않고 실패하지도 않는다. 놓친 것은 결정 3의 drift 게이트 두 곳이 잡는다.
+- **Registration**: git은 driver를 tree가 아니라 git config에 두므로, root `package.json`의 `prepare`가 `scripts/register-merge-drivers.mjs`로 `merge.search-index.driver`를 등록한다. 등록하지 않은 checkout과 GitHub의 server-side merge에서는 종전대로 line merge가 동작한다. `verify.sh`의 report-only lane "Merge drivers"가 `.gitattributes`에 선언됐지만 git config에 없는 driver를 보여 준다.
 
 ## 대안과 기각 사유
 
@@ -95,10 +98,11 @@ flowchart LR
 - Jira: FR-3558 (global search palette). GitHub: #8811의 리뷰(2026-09-09), `react/package.json:99`와 review body의 (1)번 질문.
 - 결정일: 2026-09-09.
 - 수정: 2026-09-15, FR-3925 (#9645) — dev 서버 시작 시 재생성 항목을 뺐다.
+- 수정: 2026-10-30, #10716 — 결정 5에 구조적 merge driver와 잠정 결과 검사를 더했다. 재생성이 최종 판정이라는 점은 그대로다.
 - 관련: `.claude/rules/search-index-conflicts.md`, `.claude/rules/review-ignored-paths.md`. 이웃한 ADR은 없다.
 
 ## 용어
 
-| 용어 | 뜻 |
-|---|---|
+| 용어  | 뜻                                                                                                                                         |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | drift | 커밋된 산출물과 지금 source에서 새로 만든 산출물이 다른 상태다. `verify.sh`와 `typecheck.yml`은 다시 만든 뒤 `git status`로 이것을 잡는다. |
