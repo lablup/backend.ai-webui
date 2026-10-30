@@ -399,6 +399,7 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
         page={current}
         pageSize={pageSize}
         total={keypair_list?.total_count}
+        pending={isPending}
         viewParams={{
           tab: 'credentials',
           activeType,

@@ -14,7 +14,6 @@ import {
   type PageToolRow,
   type ViewParamValue,
 } from '../helper/webmcpPageTools';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import { filterOutNullAndUndefined, useBAIWebMCPActive } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -25,15 +24,13 @@ import { useLocation } from 'react-router-dom';
 const ROLE_DETAIL_PARAM = 'roleDetail';
 
 /** `RoleNodes` columns that render a reported field. */
-export const roleToolColumns = (
-  supportsAutoAssign: boolean,
-): Array<PageToolColumn> => [
+export const ROLE_TOOL_COLUMNS: ReadonlyArray<PageToolColumn> = [
   { key: 'name', fields: ['name'] },
   { key: 'description', fields: ['description'] },
   { key: 'scope', fields: ['scopeType'] },
   { key: 'scopeId', fields: ['scopeId'] },
   { key: 'source', fields: ['source'] },
-  { key: 'autoAssign', fields: ['autoAssign'], absent: !supportsAutoAssign },
+  { key: 'autoAssign', fields: ['autoAssign'] },
   { key: 'createdAt', fields: ['createdAt'] },
   { key: 'updatedAt', fields: ['updatedAt'] },
 ];
@@ -43,8 +40,12 @@ export interface WebMCPRoleListToolsProps {
   page: number;
   pageSize: number;
   total?: number | null;
+  /** The rows are still those of the previous view. */
+  pending?: boolean;
   /** The list's URL params (`status`, `filter`, `order`). */
   viewParams: Readonly<Record<string, ViewParamValue>>;
+  /** Global id of the role whose detail drawer is open. */
+  selectedRoleId?: string | null;
 }
 
 const RoleListToolsRegistrar: React.FC<WebMCPRoleListToolsProps> = ({
@@ -52,10 +53,11 @@ const RoleListToolsRegistrar: React.FC<WebMCPRoleListToolsProps> = ({
   page,
   pageSize,
   total,
+  pending,
   viewParams,
+  selectedRoleId,
 }) => {
   'use memo';
-  const baiClient = useSuspendedBackendaiClient();
   const [hiddenColumnKeys] = useHiddenColumnKeysSetting('RoleList');
   const { pathname, search } = useLocation();
 
@@ -63,67 +65,59 @@ const RoleListToolsRegistrar: React.FC<WebMCPRoleListToolsProps> = ({
     graphql`
       fragment WebMCPRoleListToolsFragment on Role @relay(plural: true) {
         id
+        entityId
         name
         description
         source
         status
-        autoAssign @since(version: "26.4.4")
+        autoAssign
         createdAt
         updatedAt
-        scopes(first: 3) @deprecatedSince(version: "26.9.0") {
-          count
-          edges {
-            node {
-              scopeType
-              scopeId
-            }
-          }
-        }
-        scopeType @since(version: "26.9.0")
-        scopeId @since(version: "26.9.0")
+        scopeType
+        scopeId
       }
     `,
     rolesFrgmt,
   );
 
-  const rows: Array<PageToolRow> = _.map(
-    filterOutNullAndUndefined(roles),
-    (role) => {
-      // Managers before 26.9.0 answer a scopes connection; its first is shown.
-      const firstScope = role.scopes?.edges?.[0]?.node;
-      return {
-        id: role.id,
-        name: role.name ?? null,
-        description: role.description ?? null,
-        scopeType: role.scopeType ?? firstScope?.scopeType ?? null,
-        scopeId: role.scopeId ?? firstScope?.scopeId ?? null,
-        source: role.source ?? null,
-        status: role.status ?? null,
-        autoAssign: role.autoAssign ?? null,
-        createdAt: role.createdAt ?? null,
-        updatedAt: role.updatedAt ?? null,
-      };
-    },
-  );
+  const nodes = filterOutNullAndUndefined(roles);
+  const rows: Array<PageToolRow> = _.map(nodes, (role) => ({
+    id: role.entityId,
+    name: role.name ?? null,
+    description: role.description ?? null,
+    scopeType: role.scopeType ?? null,
+    scopeId: role.scopeId ?? null,
+    source: role.source ?? null,
+    status: role.status ?? null,
+    autoAssign: role.autoAssign ?? null,
+    createdAt: role.createdAt ?? null,
+    updatedAt: role.updatedAt ?? null,
+  }));
   const list = visibleRowsResult({
     rows,
-    columns: roleToolColumns(baiClient.supports('role-auto-assign')),
+    columns: ROLE_TOOL_COLUMNS,
     columnOverrides: overridesFromHiddenKeys(hiddenColumnKeys),
     page,
     pageSize,
     total,
+    pending,
   });
-  const openedId = new URLSearchParams(search).get(ROLE_DETAIL_PARAM);
+  // The URL and the drawer key on the global id; agents only ever see the UUID.
+  const openedId = _.find(nodes, { id: selectedRoleId ?? '' })?.entityId;
 
   usePageReadTools({
     noun: 'role',
     plural: 'roles',
     rowFields:
-      'Row fields: id (role id), name, description, scopeType, scopeId, source, status, autoAssign, createdAt, updatedAt.',
+      'Row fields: id (role UUID), name, description, scopeType, scopeId, source, status, autoAssign, createdAt, updatedAt.',
     currentMeaning: 'the role whose detail drawer is open',
     readRows: () => list,
     readViewState: () =>
-      viewStateResult(pathname, { ...viewParams, current: page, pageSize }),
+      viewStateResult(
+        pathname,
+        { ...viewParams, current: page, pageSize },
+        pending,
+      ),
     readCurrent: () =>
       openedItem(
         list.rows,
@@ -132,7 +126,7 @@ const RoleListToolsRegistrar: React.FC<WebMCPRoleListToolsProps> = ({
           pathname,
           search,
           ROLE_DETAIL_PARAM,
-          openedId ?? '',
+          selectedRoleId ?? '',
         ),
       ),
   });

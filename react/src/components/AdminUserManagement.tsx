@@ -620,6 +620,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
         page={current}
         pageSize={pageSize}
         total={scopedUsersV2?.count}
+        pending={isPending}
         viewParams={{
           tab: 'users',
           status: statusValue,

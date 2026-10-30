@@ -402,6 +402,7 @@ const RoleListTab: React.FC = () => {
           page={tablePaginationOption.current}
           pageSize={tablePaginationOption.pageSize}
           total={queryRef.adminRoles?.count}
+          pending={deferredQueryVariables !== queryVariables}
           viewParams={{
             status: queryParams.status,
             filter: _.isEmpty(queryParams.filter)
@@ -409,6 +410,7 @@ const RoleListTab: React.FC = () => {
               : JSON.stringify(queryParams.filter),
             order: queryParams.order,
           }}
+          selectedRoleId={selectedRole?.id}
         />
         <RoleNodes
           rolesFrgmt={roleNodes}

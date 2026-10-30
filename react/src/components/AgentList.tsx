@@ -328,6 +328,7 @@ const AgentList: React.FC<AgentListProps> = ({
           page={tablePaginationOption.current}
           pageSize={tablePaginationOption.pageSize}
           total={agent_nodes?.count}
+          pending={deferredQueryVariables !== queryVariables}
           viewParams={{ tab: 'agents', ...queryParams }}
           openedAgentId={currentAgentInfo?.id}
         />

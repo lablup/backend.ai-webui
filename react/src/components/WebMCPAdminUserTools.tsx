@@ -44,6 +44,8 @@ export interface WebMCPAdminUserToolsProps {
   page: number;
   pageSize: number;
   total?: number | null;
+  /** The rows are still those of the previous view. */
+  pending?: boolean;
   /** The Users tab's URL params (`tab`, `status`, `filter`, `order`). */
   viewParams: Readonly<Record<string, ViewParamValue>>;
   /** Relay id of the user whose detail or edit modal is open. */
@@ -56,6 +58,7 @@ const AdminUserToolsRegistrar: React.FC<WebMCPAdminUserToolsProps> = ({
   page,
   pageSize,
   total,
+  pending,
   viewParams,
   openedUserId,
 }) => {
@@ -114,6 +117,7 @@ const AdminUserToolsRegistrar: React.FC<WebMCPAdminUserToolsProps> = ({
     page,
     pageSize,
     total,
+    pending,
   });
   const openedId = openedUserId
     ? (toLocalId(openedUserId) ?? openedUserId)
@@ -128,7 +132,11 @@ const AdminUserToolsRegistrar: React.FC<WebMCPAdminUserToolsProps> = ({
       'the user whose detail or edit modal is open; users have no deep link, so path is null',
     readRows: () => list,
     readViewState: () =>
-      viewStateResult(pathname, { ...viewParams, current: page, pageSize }),
+      viewStateResult(
+        pathname,
+        { ...viewParams, current: page, pageSize },
+        pending,
+      ),
     readCurrent: () => openedItem(list.rows, openedId, null),
   });
 
@@ -166,6 +174,8 @@ export interface WebMCPAdminKeypairToolsProps {
   page: number;
   pageSize: number;
   total?: number | null;
+  /** The rows are still those of the previous view. */
+  pending?: boolean;
   /** The Credentials tab's URL params (`tab`, `activeType`, `filter`, `order`). */
   viewParams: Readonly<Record<string, ViewParamValue>>;
   /** Access key of the keypair whose info or edit modal is open. */
@@ -177,6 +187,7 @@ const AdminKeypairToolsRegistrar: React.FC<WebMCPAdminKeypairToolsProps> = ({
   page,
   pageSize,
   total,
+  pending,
   viewParams,
   openedAccessKey,
 }) => {
@@ -199,7 +210,7 @@ const AdminKeypairToolsRegistrar: React.FC<WebMCPAdminKeypairToolsProps> = ({
       concurrencyUsed: keypair.concurrency_used ?? null,
     }),
   );
-  const list = visibleRowsResult({ rows, page, pageSize, total });
+  const list = visibleRowsResult({ rows, page, pageSize, total, pending });
 
   usePageReadTools({
     noun: 'keypair',
@@ -210,7 +221,11 @@ const AdminKeypairToolsRegistrar: React.FC<WebMCPAdminKeypairToolsProps> = ({
       'the keypair whose info or edit modal is open; keypairs have no deep link, so path is null',
     readRows: () => list,
     readViewState: () =>
-      viewStateResult(pathname, { ...viewParams, current: page, pageSize }),
+      viewStateResult(
+        pathname,
+        { ...viewParams, current: page, pageSize },
+        pending,
+      ),
     readCurrent: () => openedItem(list.rows, openedAccessKey, null),
   });
 

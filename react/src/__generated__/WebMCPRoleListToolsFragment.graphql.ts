@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5a8edb8182de298e673d355a9b729521>>
+ * @generated SignedSource<<3fad8ae686d46b77d90817e825bb3a20>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,19 +16,11 @@ export type WebMCPRoleListToolsFragment$data = ReadonlyArray<{
   readonly autoAssign: boolean;
   readonly createdAt: string;
   readonly description: string | null | undefined;
+  readonly entityId: string;
   readonly id: string;
   readonly name: string;
   readonly scopeId: string;
   readonly scopeType: string;
-  readonly scopes: {
-    readonly count: number;
-    readonly edges: ReadonlyArray<{
-      readonly node: {
-        readonly scopeId: string;
-        readonly scopeType: string;
-      };
-    }>;
-  } | null | undefined;
   readonly source: RoleSource;
   readonly status: RoleStatus;
   readonly updatedAt: string;
@@ -39,22 +31,7 @@ export type WebMCPRoleListToolsFragment$key = ReadonlyArray<{
   readonly " $fragmentSpreads": FragmentRefs<"WebMCPRoleListToolsFragment">;
 }>;
 
-const node: ReaderFragment = (function(){
-var v0 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "scopeType",
-  "storageKey": null
-},
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "scopeId",
-  "storageKey": null
-};
-return {
+const node: ReaderFragment = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": {
@@ -67,6 +44,13 @@ return {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
       "storageKey": null
     },
     {
@@ -120,60 +104,23 @@ return {
     },
     {
       "alias": null,
-      "args": [
-        {
-          "kind": "Literal",
-          "name": "first",
-          "value": 3
-        }
-      ],
-      "concreteType": "EntityConnection",
-      "kind": "LinkedField",
-      "name": "scopes",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "count",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "EntityRefEdge",
-          "kind": "LinkedField",
-          "name": "edges",
-          "plural": true,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "EntityRef",
-              "kind": "LinkedField",
-              "name": "node",
-              "plural": false,
-              "selections": [
-                (v0/*: any*/),
-                (v1/*: any*/)
-              ],
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        }
-      ],
-      "storageKey": "scopes(first:3)"
+      "args": null,
+      "kind": "ScalarField",
+      "name": "scopeType",
+      "storageKey": null
     },
-    (v0/*: any*/),
-    (v1/*: any*/)
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "scopeId",
+      "storageKey": null
+    }
   ],
   "type": "Role",
   "abstractKey": null
 };
-})();
 
-(node as any).hash = "db6e688145800faac030c9fcc6d74cb1";
+(node as any).hash = "485d5f8fb4a0a450d5557a4de0a78628";
 
 export default node;

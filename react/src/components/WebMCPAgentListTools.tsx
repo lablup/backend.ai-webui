@@ -14,6 +14,7 @@ import {
 } from '../helper/webmcpPageTools';
 import {
   filterOutNullAndUndefined,
+  toLocalId,
   useBAIWebMCPActive,
   type BAITableColumnOverrideRecord,
 } from 'backend.ai-ui';
@@ -56,6 +57,8 @@ export interface WebMCPAgentListToolsProps {
   page: number;
   pageSize: number;
   total?: number | null;
+  /** The rows are still those of the previous view. */
+  pending?: boolean;
   /** The list's URL params (`tab`, `status`, `filter`, `order`). */
   viewParams: Readonly<Record<string, ViewParamValue>>;
   /** Relay id of the agent whose detail drawer is open. */
@@ -68,6 +71,7 @@ const AgentListToolsRegistrar: React.FC<WebMCPAgentListToolsProps> = ({
   page,
   pageSize,
   total,
+  pending,
   viewParams,
   openedAgentId,
 }) => {
@@ -117,9 +121,11 @@ const AgentListToolsRegistrar: React.FC<WebMCPAgentListToolsProps> = ({
     page,
     pageSize,
     total,
+    pending,
   });
   const openedRowId = openedAgentId
     ? (_.find(nodes, (agent) => agent.id === openedAgentId)?.row_id ??
+      toLocalId(openedAgentId) ??
       openedAgentId)
     : null;
 
@@ -132,7 +138,11 @@ const AgentListToolsRegistrar: React.FC<WebMCPAgentListToolsProps> = ({
       'the agent whose detail drawer is open; agents have no deep link, so path is null',
     readRows: () => list,
     readViewState: () =>
-      viewStateResult(pathname, { ...viewParams, current: page, pageSize }),
+      viewStateResult(
+        pathname,
+        { ...viewParams, current: page, pageSize },
+        pending,
+      ),
     readCurrent: () => openedItem(list.rows, openedRowId, null),
   });
 
