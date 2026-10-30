@@ -60,6 +60,8 @@ export const auditOutcomeFilter = (
 
 type CountData = Parameters<typeof readSuccessFailure>[2];
 
+// TODO(needs-backend): BA-8746 - one count grouped by time bucket and status would
+// replace the per-bucket success/failure aliases in both queries below.
 /** The counts that cannot change any more; refetched only when a bucket settles or on a manual refresh. */
 const AuditLogHistory: React.FC<{
   variables: AuditLogPanelHistoryQuery['variables'];
