@@ -37,14 +37,13 @@ export const DEPLOYMENT_TOOL_COLUMNS: ReadonlyArray<PageToolColumn> = [
   { key: 'model', fields: ['modelFolder'] },
   { key: 'createdAt', fields: ['createdAt'] },
   { key: 'endpointUrl', fields: ['endpointUrl'], defaultHidden: true },
-  { key: 'tags', fields: ['tags'], defaultHidden: true },
   { key: 'updatedAt', fields: ['updatedAt'], defaultHidden: true },
   { key: 'openToPublic', fields: ['openToPublic'], defaultHidden: true },
   { key: 'resourceGroup', fields: ['resourceGroup'], defaultHidden: true },
 ];
 
 const DEPLOYMENT_ROW_FIELDS =
-  'Row fields: id (deployment UUID), name, revisionNumber, status, runningReplicas, desiredReplicas, modelFolder, createdAt, endpointUrl, tags, updatedAt, openToPublic, resourceGroup.';
+  'Row fields: id (deployment UUID), name, revisionNumber, status, runningReplicas, desiredReplicas, modelFolder, createdAt, endpointUrl, updatedAt, openToPublic, resourceGroup.';
 
 /** `/deployments/<id>` next to the list's own path. */
 const detailPath = (listPathname: string, id: string): string =>
@@ -56,6 +55,8 @@ export interface WebMCPDeploymentListToolsProps {
   page: number;
   pageSize: number;
   total?: number | null;
+  /** The rows are still those of the previous view. */
+  pending?: boolean;
   /** The list's URL params (`statusCategory`, `filter`, `order`). */
   viewParams: Readonly<Record<string, ViewParamValue>>;
   /** Global id of the deployment whose settings modal is open. */
@@ -70,6 +71,7 @@ const DeploymentListToolsRegistrar: React.FC<
   page,
   pageSize,
   total,
+  pending,
   viewParams,
   editingDeploymentId,
 }) => {
@@ -84,7 +86,6 @@ const DeploymentListToolsRegistrar: React.FC<
         metadata {
           name
           status
-          tags
           createdAt
           updatedAt
           resourceGroupName
@@ -99,7 +100,7 @@ const DeploymentListToolsRegistrar: React.FC<
         runningReplicas: replicas(filter: { status: { equals: RUNNING } }) {
           count
         }
-        currentRevision @since(version: "26.4.3") {
+        currentRevision {
           revisionNumber
           modelMountConfig {
             vfolder {
@@ -125,7 +126,6 @@ const DeploymentListToolsRegistrar: React.FC<
         deployment.currentRevision?.modelMountConfig?.vfolder?.name ?? null,
       createdAt: deployment.metadata?.createdAt ?? null,
       endpointUrl: deployment.networkAccess?.endpointUrl ?? null,
-      tags: deployment.metadata?.tags ?? [],
       updatedAt: deployment.metadata?.updatedAt ?? null,
       openToPublic: deployment.networkAccess?.openToPublic ?? null,
       resourceGroup: deployment.metadata?.resourceGroupName ?? null,
@@ -138,6 +138,7 @@ const DeploymentListToolsRegistrar: React.FC<
     page,
     pageSize,
     total,
+    pending,
   });
   const openedId = editingDeploymentId
     ? (toLocalId(editingDeploymentId) ?? editingDeploymentId)
@@ -151,7 +152,11 @@ const DeploymentListToolsRegistrar: React.FC<
       'on the list, the deployment whose settings modal is open; path opens its detail page',
     readRows: () => list,
     readViewState: () =>
-      viewStateResult(pathname, { ...viewParams, current: page, pageSize }),
+      viewStateResult(
+        pathname,
+        { ...viewParams, current: page, pageSize },
+        pending,
+      ),
     readCurrent: () =>
       openedItem(list.rows, openedId, detailPath(pathname, openedId ?? '')),
   });

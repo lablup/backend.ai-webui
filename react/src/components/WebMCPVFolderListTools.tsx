@@ -14,6 +14,7 @@ import {
   type ViewParamValue,
 } from '../helper/webmcpPageTools';
 import {
+  convertToUUID,
   filterOutNullAndUndefined,
   useBAIWebMCPActive,
   type BAITableColumnOverrideRecord,
@@ -32,7 +33,6 @@ export const VFOLDER_TOOL_COLUMNS: ReadonlyArray<PageToolColumn> = [
   { key: 'name', fields: ['name'], required: true },
   { key: 'status', fields: ['status'] },
   { key: 'host', fields: ['host'] },
-  { key: 'permissions', fields: ['permission'] },
   { key: 'ownership_type', fields: ['ownershipType'] },
   { key: 'owner', fields: ['owner'] },
   { key: 'usage_mode', fields: ['usageMode'], defaultHidden: true },
@@ -54,6 +54,8 @@ export interface WebMCPVFolderListToolsProps {
   page: number;
   pageSize: number;
   total?: number | null;
+  /** The rows are still those of the previous view. */
+  pending?: boolean;
   /** The list's URL params (`statusCategory`, `mode`, `filter`, `order`). */
   viewParams: Readonly<Record<string, ViewParamValue>>;
 }
@@ -64,6 +66,7 @@ const VFolderListToolsRegistrar: React.FC<WebMCPVFolderListToolsProps> = ({
   page,
   pageSize,
   total,
+  pending,
   viewParams,
 }) => {
   'use memo';
@@ -89,7 +92,6 @@ const VFolderListToolsRegistrar: React.FC<WebMCPVFolderListToolsProps> = ({
           cloneable
         }
         accessControl {
-          permission
           ownershipType
         }
         ownership {
@@ -116,7 +118,6 @@ const VFolderListToolsRegistrar: React.FC<WebMCPVFolderListToolsProps> = ({
       name: vfolder.metadata?.name ?? null,
       status: vfolder.vfolderStatus ?? null,
       host: vfolder.host ?? null,
-      permission: vfolder.accessControl?.permission ?? null,
       ownershipType: vfolder.accessControl?.ownershipType ?? null,
       owner:
         (vfolder.accessControl?.ownershipType === 'USER'
@@ -137,6 +138,7 @@ const VFolderListToolsRegistrar: React.FC<WebMCPVFolderListToolsProps> = ({
     page,
     pageSize,
     total,
+    pending,
   });
   const params = new URLSearchParams(search);
   const openedId = params.get(FOLDER_PARAM);
@@ -146,16 +148,20 @@ const VFolderListToolsRegistrar: React.FC<WebMCPVFolderListToolsProps> = ({
     noun: 'vfolder',
     plural: 'folders',
     rowFields:
-      'Row fields: id (folder UUID), name, status, host, permission, ownershipType (USER or GROUP), owner, usageMode, numFiles, usageBytes, cloneable, lastUsed, createdAt.',
+      'Row fields: id (folder UUID), name, status, host, ownershipType (USER or GROUP), owner, usageMode, numFiles, usageBytes, cloneable, lastUsed, createdAt.',
     currentMeaning:
       'the folder open in the file explorer, with folderPath being the directory shown inside it',
     readRows: () => list,
     readViewState: () =>
-      viewStateResult(pathname, { ...viewParams, current: page, pageSize }),
+      viewStateResult(
+        pathname,
+        { ...viewParams, current: page, pageSize },
+        pending,
+      ),
     readCurrent: () => {
       const opened = openedItem(
         list.rows,
-        openedId,
+        openedId && convertToUUID(openedId),
         pathWithSearchParam(pathname, search, FOLDER_PARAM, openedId ?? ''),
         sameFolderId,
       );

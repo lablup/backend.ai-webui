@@ -25,6 +25,8 @@ export interface WebMCPModelCardListToolsProps {
   page: number;
   pageSize: number;
   total?: number | null;
+  /** The cards are still those of the previous view. */
+  pending?: boolean;
   /** The store's URL params (`filter`, `sort`). */
   viewParams: Readonly<Record<string, ViewParamValue>>;
 }
@@ -34,6 +36,7 @@ const ModelCardListToolsRegistrar: React.FC<WebMCPModelCardListToolsProps> = ({
   page,
   pageSize,
   total,
+  pending,
   viewParams,
 }) => {
   'use memo';
@@ -57,31 +60,33 @@ const ModelCardListToolsRegistrar: React.FC<WebMCPModelCardListToolsProps> = ({
     modelCardsFrgmt,
   );
 
-  // The store is a card grid with no column settings: every field is shown.
+  // Mirrors `ModelCardV2Card`: one title and one relative time per card.
   const rows: Array<PageToolRow> = _.map(
     filterOutNullAndUndefined(modelCards),
     (card) => ({
       id: card.entityId,
-      name: card.name ?? null,
-      title: card.metadata?.title ?? null,
+      title: card.metadata?.title || card.name || null,
       task: card.metadata?.task ?? null,
       author: card.metadata?.author ?? null,
-      createdAt: card.createdAt ?? null,
-      updatedAt: card.updatedAt ?? null,
+      updatedAt: card.updatedAt ?? card.createdAt ?? null,
     }),
   );
-  const list = visibleRowsResult({ rows, page, pageSize, total });
+  const list = visibleRowsResult({ rows, page, pageSize, total, pending });
   const openedId = new URLSearchParams(search).get(MODEL_CARD_PARAM);
 
   usePageReadTools({
     noun: 'model_card',
     plural: 'model cards',
     rowFields:
-      'Row fields: id (model card UUID), name, title, task, author, createdAt, updatedAt.',
+      'Row fields: id (model card UUID), title (the name when the card has no title), task, author, updatedAt (the creation time when never updated).',
     currentMeaning: 'the model card whose drawer is open',
     readRows: () => list,
     readViewState: () =>
-      viewStateResult(pathname, { ...viewParams, current: page, pageSize }),
+      viewStateResult(
+        pathname,
+        { ...viewParams, current: page, pageSize },
+        pending,
+      ),
     readCurrent: () =>
       openedItem(
         list.rows,

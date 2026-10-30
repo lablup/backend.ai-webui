@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3697d958c54139c2acc1231bfcb67129>>
+ * @generated SignedSource<<48e172f5efc5efe9965f89a8f8bc3e5a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -26,7 +26,6 @@ export type WebMCPDeploymentTools_deployments$data = ReadonlyArray<{
     readonly name: string;
     readonly resourceGroupName: string;
     readonly status: DeploymentStatus;
-    readonly tags: ReadonlyArray<string>;
     readonly updatedAt: string;
   };
   readonly networkAccess: {
@@ -83,13 +82,6 @@ return {
           "args": null,
           "kind": "ScalarField",
           "name": "status",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "tags",
           "storageKey": null
         },
         {
@@ -234,6 +226,6 @@ return {
 };
 })();
 
-(node as any).hash = "0560e7cdee176dc44ca1ef25d30a0f9f";
+(node as any).hash = "bb05bbcd519f8ea60c24f2249f929259";
 
 export default node;

@@ -50,6 +50,8 @@ export interface WebMCPSessionListToolsProps {
   page: number;
   pageSize: number;
   total?: number | null;
+  /** The rows are still those of the previous view. */
+  pending?: boolean;
   /** The list's URL params (`type`, `statusCategory`, `filter`, `order`, …). */
   viewParams: Readonly<Record<string, ViewParamValue>>;
 }
@@ -60,6 +62,7 @@ const SessionListToolsRegistrar: React.FC<WebMCPSessionListToolsProps> = ({
   page,
   pageSize,
   total,
+  pending,
   viewParams,
 }) => {
   'use memo';
@@ -114,6 +117,7 @@ const SessionListToolsRegistrar: React.FC<WebMCPSessionListToolsProps> = ({
     page,
     pageSize,
     total,
+    pending,
   });
   const openedId = new URLSearchParams(search).get(SESSION_DETAIL_PARAM);
 
@@ -125,7 +129,11 @@ const SessionListToolsRegistrar: React.FC<WebMCPSessionListToolsProps> = ({
     currentMeaning: 'the session whose detail drawer is open',
     readRows: () => list,
     readViewState: () =>
-      viewStateResult(pathname, { ...viewParams, current: page, pageSize }),
+      viewStateResult(
+        pathname,
+        { ...viewParams, current: page, pageSize },
+        pending,
+      ),
     readCurrent: () =>
       openedItem(
         list.rows,

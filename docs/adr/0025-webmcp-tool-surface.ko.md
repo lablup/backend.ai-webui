@@ -74,6 +74,7 @@ flowchart LR
 
 - **Noun**: `<noun>`은 snake_case 단수형이고, schema의 resource 이름을 쓴다(`session`, `vfolder`, `deployment`, `model_card`).
 - **App shell tools**: 특정 page에 속하지 않는 tool은 짧은 동사구로 이름을 짓는다. FR-4073이 `bai_whoami`, `bai_get_current_page`, `bai_navigate`를 app shell에 둔다.
+- **Pending**: page가 새 page나 filter를 아직 불러오는 동안 화면의 행은 이전 결과다. 그동안 `bai_list_visible_<noun>`과 `bai_get_<noun>_filter`의 결과에는 `pending: true`가 붙고, agent는 다시 부른다.
 - **Unique names**: tool 작성자는 같은 이름의 tool이 두 component에서 동시에 mount되지 않도록 등록 위치를 고른다. 브라우저가 중복 이름을 거절하면 `useWebMCPTool`은 `useBAILogger`로 경고만 남긴다. 이름에 project나 tab을 넣어 중복을 피하지 않는다.
 
 ### 4. tool은 읽기, 이동, form 채우기만 한다
