@@ -2877,6 +2877,33 @@
     "SharedMemory": "Общая память",
     "Updated": "Предустановка ресурса обновлена"
   },
+  "retentionPolicy": {
+    "Category": "Категория",
+    "CategoryRequired": "Выберите категорию.",
+    "CreatePolicy": "Создать политику",
+    "DataRetention": "Хранение данных",
+    "DeletePolicy": "Удалить политику хранения",
+    "Description": "Задайте, как долго хранятся данные каждой категории. Данные с истёкшим сроком хранения очищаются только в категориях с включённой политикой.",
+    "EditPolicy": "Изменить политику",
+    "OnePolicyPerCategory": "Для каждой категории может существовать только одна политика.",
+    "PolicyAlreadyExistsView": "Для этой категории уже есть политика. <viewLink>Просмотреть</viewLink>",
+    "RetentionPeriodDays": "Срок хранения (дни)",
+    "RetentionPeriodRequired": "Введите срок хранения не менее 1 дня.",
+    "RetentionPolicy": "Политика хранения",
+    "SuccessfullyCreated": "Политика хранения создана.",
+    "SuccessfullyDeleted": "Политика хранения удалена.",
+    "SuccessfullyUpdated": "Политика хранения обновлена.",
+    "categories": {
+      "DEPLOYMENTS": "Развёртывания",
+      "LOGIN": "История входов",
+      "LOGS": "Журналы",
+      "RECONCILE_HISTORY": "История согласования",
+      "ROLES_INVITATIONS": "Роли и приглашения",
+      "SESSIONS": "Сеансы",
+      "USAGE_BUCKETS": "Сводки использования",
+      "USAGE_RECORDS": "Записи использования"
+    }
+  },
   "route": {
     "CreatedAt": "Создан в",
     "ErrorCode": "Код ошибки",
