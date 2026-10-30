@@ -7,13 +7,17 @@ export interface BAIDynamicListColumn<T> {
     width?: number | string;
     render: (item: T, index: number) => React.ReactNode;
 }
-export interface BAIDynamicListProps<T> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+export interface BAIDynamicListAddButton {
+    onClick: () => void;
+    label: string;
+}
+export interface BAIDynamicListProps<T extends {
+    key: React.Key;
+}> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
     columns: BAIDynamicListColumn<T>[];
     items: T[];
-    getItemKey: (item: T, index: number) => React.Key;
-    onAdd: () => void;
     onRemove: (item: T, index: number) => void;
-    addLabel: string;
+    addButton: BAIDynamicListAddButton;
     disabled?: boolean;
     maxItems?: number;
 }
@@ -21,5 +25,7 @@ export interface BAIDynamicListProps<T> extends Omit<React.HTMLAttributes<HTMLDi
  * Rows of the same fields with Add and Remove actions. It owns no form state:
  * each column's `render` returns the cell, `Form.Item` included.
  */
-declare const BAIDynamicList: <T>({ columns, items, getItemKey, onAdd, onRemove, addLabel, disabled, maxItems, className, ...divProps }: BAIDynamicListProps<T>) => React.JSX.Element;
+declare const BAIDynamicList: <T extends {
+    key: React.Key;
+}>({ columns, items, onRemove, addButton, disabled, maxItems, className, ...divProps }: BAIDynamicListProps<T>) => React.JSX.Element;
 export default BAIDynamicList;
