@@ -3084,6 +3084,7 @@
       "AIAccelerator": "人工智能加速器",
       "Accelerator": "加速器",
       "AcceleratorDedicatedImages": "加速器专用镜像",
+      "AcceleratorTypeNotSupportedByImage": "所选镜像不支持 {{type}}",
       "AddEnvironmentVariable": "添加环境变量",
       "AddingKernelToSocketQueue": "将内核添加到套接字队列...",
       "AdvancedSettings": "高级设置",

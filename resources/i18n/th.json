@@ -3068,6 +3068,7 @@
       "AIAccelerator": "ตัวเร่ง AI",
       "Accelerator": "ตัวเร่งความเร็ว",
       "AcceleratorDedicatedImages": "อิมเมจเฉพาะสำหรับตัวเร่ง",
+      "AcceleratorTypeNotSupportedByImage": "อิมเมจที่เลือกไม่รองรับ {{type}}",
       "AddEnvironmentVariable": "เพิ่มตัวแปรสภาพแวดล้อม",
       "AddingKernelToSocketQueue": "กำลังเพิ่มเคอร์เนลเข้าคิวซ็อกเก็ต...",
       "AdvancedSettings": "การตั้งค่าขั้นสูง",

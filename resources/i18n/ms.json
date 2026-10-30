@@ -3082,6 +3082,7 @@
       "AIAccelerator": "Pemecut AI",
       "Accelerator": "Pemecut",
       "AcceleratorDedicatedImages": "Imej khusus pemecut",
+      "AcceleratorTypeNotSupportedByImage": "Imej yang dipilih tidak menyokong {{type}}",
       "AddEnvironmentVariable": "Tambah pembolehubah persekitaran",
       "AddingKernelToSocketQueue": "Menambah kernel ke soket barisan ...",
       "AdvancedSettings": "Tetapan Lanjutan",

@@ -3083,6 +3083,7 @@
       "AIAccelerator": "AI хурдасгуур",
       "Accelerator": "Хурдасгагч",
       "AcceleratorDedicatedImages": "Хурдасгуурт зориулсан image-үүд",
+      "AcceleratorTypeNotSupportedByImage": "Сонгосон дүрс {{type}}-г дэмжихгүй байна",
       "AddEnvironmentVariable": "Орчны хувьсагчдыг нэмнэ үү",
       "AddingKernelToSocketQueue": "Цөмийг сокет дараалалд нэмж оруулах ...",
       "AdvancedSettings": "Нарийвчилсан тохиргоо",

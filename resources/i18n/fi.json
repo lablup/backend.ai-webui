@@ -3082,6 +3082,7 @@
       "AIAccelerator": "AI-kiihdyttämö",
       "Accelerator": "Kiihdytin",
       "AcceleratorDedicatedImages": "Kiihdytinkohtaiset kuvat",
+      "AcceleratorTypeNotSupportedByImage": "Valittu kuva ei tue {{type}}",
       "AddEnvironmentVariable": "Lisää ympäristömuuttujia",
       "AddingKernelToSocketQueue": "Ytimen lisääminen socket-jonoon...",
       "AdvancedSettings": "Lisäasetukset",

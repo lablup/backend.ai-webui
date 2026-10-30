@@ -3084,6 +3084,7 @@
       "AIAccelerator": "AIアクセラレータ",
       "Accelerator": "アクセル",
       "AcceleratorDedicatedImages": "アクセラレータ専用イメージ",
+      "AcceleratorTypeNotSupportedByImage": "選択したイメージは {{type}} をサポートしていません",
       "AddEnvironmentVariable": "環境変数の追加",
       "AddingKernelToSocketQueue": "カーネルをソケットキューに追加しています...",
       "AdvancedSettings": "詳細設定",

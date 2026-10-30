@@ -3084,6 +3084,7 @@
       "AIAccelerator": "AI 가속기",
       "Accelerator": "가속기",
       "AcceleratorDedicatedImages": "가속기 전용 이미지",
+      "AcceleratorTypeNotSupportedByImage": "선택한 이미지는 {{type}}을(를) 지원하지 않습니다",
       "AddEnvironmentVariable": "환경 변수 추가",
       "AddingKernelToSocketQueue": "커널을 소켓 큐에 추가합니다...",
       "AdvancedSettings": "고급 설정",

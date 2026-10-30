@@ -3084,6 +3084,7 @@
       "AIAccelerator": "Máy gia tốc AI",
       "Accelerator": "Máy gia tốc",
       "AcceleratorDedicatedImages": "Image dành riêng cho bộ tăng tốc",
+      "AcceleratorTypeNotSupportedByImage": "Image đã chọn không hỗ trợ {{type}}",
       "AddEnvironmentVariable": "Thêm biến môi trường",
       "AddingKernelToSocketQueue": "Thêm hạt nhân vào hàng đợi socket ...",
       "AdvancedSettings": "Cài đặt nâng cao",

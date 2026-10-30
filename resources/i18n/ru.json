@@ -3082,6 +3082,7 @@
       "AIAccelerator": "Ускоритель искусственного интеллекта",
       "Accelerator": "Ускоритель",
       "AcceleratorDedicatedImages": "Образы для ускорителей",
+      "AcceleratorTypeNotSupportedByImage": "Выбранный образ не поддерживает {{type}}",
       "AddEnvironmentVariable": "Добавьте переменные окружения",
       "AddingKernelToSocketQueue": "Добавление ядра в очередь сокетов ...",
       "AdvancedSettings": "Расширенные настройки",
