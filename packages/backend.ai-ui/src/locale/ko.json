@@ -576,6 +576,9 @@
     "To": "이후 상태",
     "UpdatedAt": "수정일"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "이메일로 초대"
+  },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "폴더를 선택해주세요"
   },

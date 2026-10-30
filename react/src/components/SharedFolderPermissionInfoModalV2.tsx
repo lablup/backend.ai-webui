@@ -1,16 +1,11 @@
 /**
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
-
- Ticket 16 — converted to Astryx; see `SharedFolderPermissionInfoModal.tsx`
- for the conversion notes (Descriptions→MetadataList with `bordered` dropped,
- Alert→Banner, Popconfirm→BAIPopconfirm, icon-only button→IconButton
- with a real accessible name). The table crossed to the Astryx engine in
- ticket 30-D.
 */
 import { SharedFolderPermissionInfoModalV2Fragment$key } from '../__generated__/SharedFolderPermissionInfoModalV2Fragment.graphql';
+import { SharedFolderPermissionInfoModalV2LeaveMutation } from '../__generated__/SharedFolderPermissionInfoModalV2LeaveMutation.graphql';
+import { SharedFolderPermissionInfoModalV2MySharesQuery } from '../__generated__/SharedFolderPermissionInfoModalV2MySharesQuery.graphql';
 import { App } from '../app-shim';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import VFolderPermissionCellV2 from './VFolderPermissionCellV2';
@@ -28,10 +23,18 @@ import {
   type BAIModalProps,
   BAIText,
   useErrorMessageResolver,
+  useMutationWithPromise,
 } from 'backend.ai-ui';
 import { UserIcon, UsersIcon, LogOutIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment } from 'react-relay';
+import {
+  fetchQuery,
+  graphql,
+  useFragment,
+  useRelayEnvironment,
+} from 'react-relay';
+
+const VFOLDER_ENTITY_TYPE = 'vfolder';
 
 interface SharedFolderPermissionInfoModalV2Props extends Omit<
   BAIModalProps,
@@ -52,7 +55,7 @@ const SharedFolderPermissionInfoModalV2: React.FC<
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
   const [currentUser] = useCurrentUserInfo();
-  const baiClient = useSuspendedBackendaiClient();
+  const relayEnvironment = useRelayEnvironment();
 
   const vfolder = useFragment(
     graphql`
@@ -79,9 +82,55 @@ const SharedFolderPermissionInfoModalV2: React.FC<
     vfolderFrgmt,
   );
 
+  const leaveShare =
+    useMutationWithPromise<SharedFolderPermissionInfoModalV2LeaveMutation>(
+      graphql`
+        mutation SharedFolderPermissionInfoModalV2LeaveMutation($id: UUID!) {
+          leaveEntityShare(id: $id) {
+            share {
+              id
+              status
+            }
+          }
+        }
+      `,
+    );
+
+  // `leaveEntityShare` takes the share, not the folder, so the recipient's
+  // accepted share of this folder is looked up first. The status is matched
+  // on the client: the deployed manager rejects the `filter` argument's shape.
   const leaveFolder = useTanMutation({
-    mutationFn: ({ folderId }: { folderId: string }) => {
-      return baiClient.vfolder.leave_invited(folderId);
+    mutationFn: async ({ folderId }: { folderId: string }) => {
+      const data =
+        await fetchQuery<SharedFolderPermissionInfoModalV2MySharesQuery>(
+          relayEnvironment,
+          graphql`
+            query SharedFolderPermissionInfoModalV2MySharesQuery {
+              myEntityShares(sides: [RECIPIENT], limit: 100) {
+                edges {
+                  node {
+                    entityId
+                    targetEntityType
+                    targetEntityId
+                    status
+                  }
+                }
+              }
+            }
+          `,
+          {},
+          { fetchPolicy: 'network-only' },
+        ).toPromise();
+      const share = data?.myEntityShares?.edges.find(
+        ({ node }) =>
+          node.targetEntityType === VFOLDER_ENTITY_TYPE &&
+          node.targetEntityId === folderId &&
+          node.status === 'ACCEPTED',
+      )?.node;
+      if (!share) {
+        throw new Error(t('data.invitation.AcceptedShareNotFound'));
+      }
+      return leaveShare({ id: share.entityId });
     },
   });
 

@@ -3,10 +3,14 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { backendaiClientPromise, useSuspendedBackendaiClient } from '.';
+import { useVFolderInvitationsAcceptMutation } from '../__generated__/useVFolderInvitationsAcceptMutation.graphql';
+import { useVFolderInvitationsRejectMutation } from '../__generated__/useVFolderInvitationsRejectMutation.graphql';
 import { mutationOptions } from './backendai';
 import { useTanMutation } from './reactQueryAlias';
+import { useMutationWithPromise } from 'backend.ai-ui';
 import { useAtom } from 'jotai';
 import { atomWithDefault } from 'jotai/utils';
+import { graphql } from 'react-relay';
 
 export interface InvitationItem {
   id: string;
@@ -23,6 +27,10 @@ export interface InvitationItem {
   perm: string;
 }
 
+// TODO(needs-backend): the list stays on the legacy REST call because
+// `myEntityShares` carries neither the folder name nor the sharer's e-mail;
+// switch it over once EntityShare exposes them. An invitation `id` is the
+// share's `entityId`, which the accept/reject mutations below already take.
 const vFolderInvitationsAtom = atomWithDefault<
   InvitationItem[] | Promise<InvitationItem[]>
 >(async () => {
@@ -43,9 +51,32 @@ export const useVFolderInvitations = () => {
     setInvitations(data.invitations as InvitationItem[]);
   };
 
+  const acceptShare =
+    useMutationWithPromise<useVFolderInvitationsAcceptMutation>(graphql`
+      mutation useVFolderInvitationsAcceptMutation($id: UUID!) {
+        acceptEntityShare(id: $id) {
+          share {
+            id
+            status
+          }
+        }
+      }
+    `);
+  const rejectShare =
+    useMutationWithPromise<useVFolderInvitationsRejectMutation>(graphql`
+      mutation useVFolderInvitationsRejectMutation($id: UUID!) {
+        rejectEntityShare(id: $id) {
+          share {
+            id
+            status
+          }
+        }
+      }
+    `);
+
   const mutationToAcceptInvitation = useTanMutation({
     mutationFn: (values: { inv_id: string }) => {
-      return baiClient.vfolder.accept_invitation(values.inv_id);
+      return acceptShare({ id: values.inv_id });
     },
     onSuccess: () => {
       updateInvitations();
@@ -54,7 +85,7 @@ export const useVFolderInvitations = () => {
 
   const mutationToRejectInvitation = useTanMutation({
     mutationFn: (values: { inv_id: string }) => {
-      return baiClient.vfolder.delete_invitation(values.inv_id);
+      return rejectShare({ id: values.inv_id });
     },
     onSuccess: () => {
       updateInvitations();

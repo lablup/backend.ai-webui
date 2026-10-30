@@ -60,7 +60,7 @@ vi.mock('../hooks/useCurrentProject', async (importOriginal) => {
 });
 
 // Probe for the destination project of in-modal folder creation.
-vi.mock('./FolderCreateModalV2', async () => {
+vi.mock('./FolderCreateModal', async () => {
   const React = await import('react');
   return {
     default: (props: any) =>

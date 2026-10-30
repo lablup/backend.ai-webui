@@ -576,6 +576,9 @@
     "To": "Kohdetila",
     "UpdatedAt": "Päivitetty"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Kutsu sähköpostilla"
+  },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "Valitse kansio"
   },

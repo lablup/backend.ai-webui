@@ -120,16 +120,10 @@ const FolderInvitationResponseModal: React.FC<
                   open: true,
                 });
               } catch (e: any) {
-                if (
-                  e?.statusCode === 409 ||
-                  e?.error_code === 'vfolder_create_already-exists'
-                ) {
-                  message.error(t('data.FolderAlreadyExists'));
-                  return;
-                }
                 message.error(
                   getErrorMessage(
-                    e.message || t('data.invitation.FailedToAcceptInvitation'),
+                    _.get(_.castArray(e)[0], 'message') ||
+                      t('data.invitation.FailedToAcceptInvitation'),
                   ),
                 );
               }
@@ -147,7 +141,7 @@ const FolderInvitationResponseModal: React.FC<
               } catch (e: any) {
                 message.error(
                   getErrorMessage(
-                    e?.message ||
+                    _.get(_.castArray(e)[0], 'message') ||
                       t('data.invitation.FailedToDeclineInvitation'),
                   ),
                 );

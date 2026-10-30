@@ -576,6 +576,9 @@
     "To": "Estado de destino",
     "UpdatedAt": "Atualizado em"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Convidar por e-mail"
+  },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "Selecionar pasta"
   },

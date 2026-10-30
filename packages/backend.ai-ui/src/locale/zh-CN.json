@@ -576,6 +576,9 @@
     "To": "目标状态",
     "UpdatedAt": "更新时间"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "通过电子邮件邀请"
+  },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "选择文件夹"
   },

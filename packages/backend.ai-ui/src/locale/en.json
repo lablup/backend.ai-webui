@@ -576,6 +576,9 @@
     "To": "To Status",
     "UpdatedAt": "Updated At"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Invite by e-mail"
+  },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "Select Folder"
   },

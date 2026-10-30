@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2c1cd4d48a19bacbfa35cd9f3ce2bc43>>
+ * @generated SignedSource<<ac63d8f4d978d5c4a90442a190719991>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,19 +14,19 @@ export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_D
 export type VFolderOperationStatus = "CLONING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
 export type VFolderOwnershipType = "GROUP" | "USER" | "%future added value";
 export type VFolderUsageMode = "DATA" | "GENERAL" | "MODEL" | "%future added value";
-export type CreateVFolderV2Input = {
+export type CreateVFolderInScopeInput = {
   cloneable?: boolean;
   host?: string | null | undefined;
   name: string;
-  permission?: string;
-  projectId?: string | null | undefined;
-  usageMode?: string;
+  permission?: VFolderMountPermission;
+  usageMode?: VFolderUsageMode;
 };
-export type FolderCreateModalV2Mutation$variables = {
-  input: CreateVFolderV2Input;
+export type FolderCreateModalProjectMutation$variables = {
+  input: CreateVFolderInScopeInput;
+  projectId: string;
 };
-export type FolderCreateModalV2Mutation$data = {
-  readonly createVfolderV2: {
+export type FolderCreateModalProjectMutation$data = {
+  readonly createVFolderInProject: {
     readonly vfolder: {
       readonly accessControl: {
         readonly ownershipType: VFolderOwnershipType;
@@ -53,62 +53,70 @@ export type FolderCreateModalV2Mutation$data = {
     };
   } | null | undefined;
 };
-export type FolderCreateModalV2Mutation = {
-  response: FolderCreateModalV2Mutation$data;
-  variables: FolderCreateModalV2Mutation$variables;
+export type FolderCreateModalProjectMutation = {
+  response: FolderCreateModalProjectMutation$data;
+  variables: FolderCreateModalProjectMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = [
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "input"
-  }
-],
-v1 = [
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "input"
+},
+v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "projectId"
+},
+v2 = [
   {
     "kind": "Variable",
     "name": "input",
     "variableName": "input"
+  },
+  {
+    "kind": "Variable",
+    "name": "projectId",
+    "variableName": "projectId"
   }
 ],
-v2 = {
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v3 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "entityId",
   "storageKey": null
 },
-v4 = {
+v5 = {
   "alias": "vfolderStatus",
   "args": null,
   "kind": "ScalarField",
   "name": "status",
   "storageKey": null
 },
-v5 = {
+v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "host",
   "storageKey": null
 },
-v6 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v7 = {
+v8 = {
   "alias": null,
   "args": null,
   "concreteType": "VFolderMetadataInfo",
@@ -116,7 +124,7 @@ v7 = {
   "name": "metadata",
   "plural": false,
   "selections": [
-    (v6/*: any*/),
+    (v7/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -141,7 +149,7 @@ v7 = {
   ],
   "storageKey": null
 },
-v8 = {
+v9 = {
   "alias": null,
   "args": null,
   "concreteType": "VFolderAccessControlInfo",
@@ -166,7 +174,7 @@ v8 = {
   ],
   "storageKey": null
 },
-v9 = {
+v10 = {
   "alias": null,
   "args": null,
   "concreteType": "VFolderOwnershipInfo",
@@ -198,21 +206,21 @@ v9 = {
   ],
   "storageKey": null
 },
-v10 = {
+v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "__typename",
   "storageKey": null
 },
-v11 = {
+v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "status",
   "storageKey": null
 },
-v12 = {
+v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -221,17 +229,20 @@ v12 = {
 };
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/)
+    ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "FolderCreateModalV2Mutation",
+    "name": "FolderCreateModalProjectMutation",
     "selections": [
       {
         "alias": null,
-        "args": (v1/*: any*/),
+        "args": (v2/*: any*/),
         "concreteType": "CreateVFolderV2Payload",
         "kind": "LinkedField",
-        "name": "createVfolderV2",
+        "name": "createVFolderInProject",
         "plural": false,
         "selections": [
           {
@@ -242,13 +253,13 @@ return {
             "name": "vfolder",
             "plural": false,
             "selections": [
-              (v2/*: any*/),
               (v3/*: any*/),
               (v4/*: any*/),
               (v5/*: any*/),
-              (v7/*: any*/),
+              (v6/*: any*/),
               (v8/*: any*/),
               (v9/*: any*/),
+              (v10/*: any*/),
               {
                 "fragment": {
                   "kind": "InlineFragment",
@@ -277,16 +288,19 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v1/*: any*/),
+      (v0/*: any*/)
+    ],
     "kind": "Operation",
-    "name": "FolderCreateModalV2Mutation",
+    "name": "FolderCreateModalProjectMutation",
     "selections": [
       {
         "alias": null,
-        "args": (v1/*: any*/),
+        "args": (v2/*: any*/),
         "concreteType": "CreateVFolderV2Payload",
         "kind": "LinkedField",
-        "name": "createVfolderV2",
+        "name": "createVFolderInProject",
         "plural": false,
         "selections": [
           {
@@ -297,23 +311,23 @@ return {
             "name": "vfolder",
             "plural": false,
             "selections": [
-              (v2/*: any*/),
               (v3/*: any*/),
               (v4/*: any*/),
               (v5/*: any*/),
-              (v7/*: any*/),
+              (v6/*: any*/),
               (v8/*: any*/),
               (v9/*: any*/),
+              (v10/*: any*/),
               {
                 "kind": "InlineFragment",
                 "selections": [
                   {
                     "kind": "InlineFragment",
                     "selections": [
-                      (v10/*: any*/),
                       (v11/*: any*/),
-                      (v6/*: any*/),
                       (v12/*: any*/),
+                      (v7/*: any*/),
+                      (v13/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -415,8 +429,8 @@ return {
                                     "name": "agent_id",
                                     "storageKey": null
                                   },
-                                  (v2/*: any*/),
-                                  (v12/*: any*/),
+                                  (v3/*: any*/),
+                                  (v13/*: any*/),
                                   {
                                     "alias": null,
                                     "args": null,
@@ -438,7 +452,7 @@ return {
                                     "name": "cluster_hostname",
                                     "storageKey": null
                                   },
-                                  (v11/*: any*/)
+                                  (v12/*: any*/)
                                 ],
                                 "storageKey": null
                               }
@@ -479,8 +493,8 @@ return {
                                 "name": "node",
                                 "plural": false,
                                 "selections": [
-                                  (v6/*: any*/),
-                                  (v2/*: any*/)
+                                  (v7/*: any*/),
+                                  (v3/*: any*/)
                                 ],
                                 "storageKey": null
                               }
@@ -511,7 +525,7 @@ return {
                   {
                     "kind": "InlineFragment",
                     "selections": [
-                      (v10/*: any*/)
+                      (v11/*: any*/)
                     ],
                     "type": "VFolder",
                     "abstractKey": null
@@ -519,10 +533,10 @@ return {
                   {
                     "kind": "InlineFragment",
                     "selections": [
-                      (v10/*: any*/),
                       (v11/*: any*/),
                       (v12/*: any*/),
-                      (v6/*: any*/)
+                      (v13/*: any*/),
+                      (v7/*: any*/)
                     ],
                     "type": "VirtualFolderNode",
                     "abstractKey": null
@@ -540,16 +554,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "1948e3e1ae75124978e1a4e435a49a31",
+    "cacheID": "7c55826b566b7f0947031349a552a024",
     "id": null,
     "metadata": {},
-    "name": "FolderCreateModalV2Mutation",
+    "name": "FolderCreateModalProjectMutation",
     "operationKind": "mutation",
-    "text": "mutation FolderCreateModalV2Mutation(\n  $input: CreateVFolderV2Input!\n) {\n  createVfolderV2(input: $input) {\n    vfolder {\n      id\n      entityId\n      vfolderStatus: status\n      host\n      metadata {\n        name\n        usageMode\n        quotaScopeId\n        cloneable\n      }\n      accessControl {\n        permission\n        ownershipType\n      }\n      ownership {\n        userId\n        projectId\n        creatorEmail\n      }\n      ...BAINodeNotificationItemFragment\n    }\n  }\n}\n\nfragment AppLaunchConfirmationModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  ...useBackendAIAppLauncherFragment\n}\n\nfragment AppLauncherModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  service_ports\n  access_key\n  ...useBackendAIAppLauncherFragment\n  ...SFTPConnectionInfoModalFragment\n  ...TensorboardPathModalFragment\n  ...AppLaunchConfirmationModalFragment\n}\n\nfragment BAIComputeSessionNodeNotificationItemFragment on ComputeSessionNode {\n  id\n  name\n  status\n  status_info\n  status_data\n  ...SessionActionButtonsFragment\n  ...SessionStatusBadgeFragment\n}\n\nfragment BAINodeNotificationItemFragment on Node {\n  __isNode: __typename\n  ... on ComputeSessionNode {\n    __typename\n    status\n    name\n    row_id\n    ...BAIComputeSessionNodeNotificationItemFragment\n  }\n  ... on VFolder {\n    __typename\n    ...BAIVirtualFolderNodeNotificationItemV2Fragment\n  }\n  ... on VirtualFolderNode {\n    __typename\n    status\n    ...BAIVirtualFolderNodeNotificationItemFragment\n  }\n  id\n}\n\nfragment BAIVirtualFolderNodeNotificationItemFragment on VirtualFolderNode {\n  row_id\n  id\n  name\n  status\n}\n\nfragment BAIVirtualFolderNodeNotificationItemV2Fragment on VFolder {\n  id\n  entityId\n  metadata {\n    name\n  }\n}\n\nfragment ContainerCommitModalFragment on ComputeSessionNode {\n  id\n  name\n  row_id\n}\n\nfragment ContainerLogModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  status\n  access_key\n  kernel_nodes {\n    edges {\n      node {\n        id\n        row_id\n        container_id\n        cluster_idx\n        cluster_role\n        cluster_hostname\n      }\n    }\n  }\n}\n\nfragment SFTPConnectionInfoModalFragment on ComputeSessionNode {\n  row_id\n  vfolder_nodes {\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n\nfragment SessionActionButtonsFragment on ComputeSessionNode {\n  id\n  name\n  row_id\n  type\n  status\n  access_key\n  service_ports\n  commit_status\n  user_id\n  ...TerminateSessionModalFragment\n  ...ContainerLogModalFragment\n  ...ContainerCommitModalFragment\n  ...AppLauncherModalFragment\n  ...SFTPConnectionInfoModalFragment\n  ...useBackendAIAppLauncherFragment\n}\n\nfragment SessionStatusBadgeFragment on ComputeSessionNode {\n  id\n  status\n  status_info\n  queue_position\n  cluster_size\n  kernel_nodes {\n    edges {\n      node {\n        id\n        status\n      }\n    }\n  }\n}\n\nfragment TensorboardPathModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  ...useBackendAIAppLauncherFragment\n}\n\nfragment TerminateSessionModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  scaling_group\n  access_key\n  project_id\n  kernel_nodes {\n    edges {\n      node {\n        container_id\n        agent_id\n        id\n      }\n    }\n  }\n}\n\nfragment useBackendAIAppLauncherFragment on ComputeSessionNode {\n  name\n  row_id\n  vfolder_mounts\n  scaling_group\n  project_id\n  service_ports\n}\n"
+    "text": "mutation FolderCreateModalProjectMutation(\n  $projectId: UUID!\n  $input: CreateVFolderInScopeInput!\n) {\n  createVFolderInProject(projectId: $projectId, input: $input) {\n    vfolder {\n      id\n      entityId\n      vfolderStatus: status\n      host\n      metadata {\n        name\n        usageMode\n        quotaScopeId\n        cloneable\n      }\n      accessControl {\n        permission\n        ownershipType\n      }\n      ownership {\n        userId\n        projectId\n        creatorEmail\n      }\n      ...BAINodeNotificationItemFragment\n    }\n  }\n}\n\nfragment AppLaunchConfirmationModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  ...useBackendAIAppLauncherFragment\n}\n\nfragment AppLauncherModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  service_ports\n  access_key\n  ...useBackendAIAppLauncherFragment\n  ...SFTPConnectionInfoModalFragment\n  ...TensorboardPathModalFragment\n  ...AppLaunchConfirmationModalFragment\n}\n\nfragment BAIComputeSessionNodeNotificationItemFragment on ComputeSessionNode {\n  id\n  name\n  status\n  status_info\n  status_data\n  ...SessionActionButtonsFragment\n  ...SessionStatusBadgeFragment\n}\n\nfragment BAINodeNotificationItemFragment on Node {\n  __isNode: __typename\n  ... on ComputeSessionNode {\n    __typename\n    status\n    name\n    row_id\n    ...BAIComputeSessionNodeNotificationItemFragment\n  }\n  ... on VFolder {\n    __typename\n    ...BAIVirtualFolderNodeNotificationItemV2Fragment\n  }\n  ... on VirtualFolderNode {\n    __typename\n    status\n    ...BAIVirtualFolderNodeNotificationItemFragment\n  }\n  id\n}\n\nfragment BAIVirtualFolderNodeNotificationItemFragment on VirtualFolderNode {\n  row_id\n  id\n  name\n  status\n}\n\nfragment BAIVirtualFolderNodeNotificationItemV2Fragment on VFolder {\n  id\n  entityId\n  metadata {\n    name\n  }\n}\n\nfragment ContainerCommitModalFragment on ComputeSessionNode {\n  id\n  name\n  row_id\n}\n\nfragment ContainerLogModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  status\n  access_key\n  kernel_nodes {\n    edges {\n      node {\n        id\n        row_id\n        container_id\n        cluster_idx\n        cluster_role\n        cluster_hostname\n      }\n    }\n  }\n}\n\nfragment SFTPConnectionInfoModalFragment on ComputeSessionNode {\n  row_id\n  vfolder_nodes {\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n\nfragment SessionActionButtonsFragment on ComputeSessionNode {\n  id\n  name\n  row_id\n  type\n  status\n  access_key\n  service_ports\n  commit_status\n  user_id\n  ...TerminateSessionModalFragment\n  ...ContainerLogModalFragment\n  ...ContainerCommitModalFragment\n  ...AppLauncherModalFragment\n  ...SFTPConnectionInfoModalFragment\n  ...useBackendAIAppLauncherFragment\n}\n\nfragment SessionStatusBadgeFragment on ComputeSessionNode {\n  id\n  status\n  status_info\n  queue_position\n  cluster_size\n  kernel_nodes {\n    edges {\n      node {\n        id\n        status\n      }\n    }\n  }\n}\n\nfragment TensorboardPathModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  ...useBackendAIAppLauncherFragment\n}\n\nfragment TerminateSessionModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  scaling_group\n  access_key\n  project_id\n  kernel_nodes {\n    edges {\n      node {\n        container_id\n        agent_id\n        id\n      }\n    }\n  }\n}\n\nfragment useBackendAIAppLauncherFragment on ComputeSessionNode {\n  name\n  row_id\n  vfolder_mounts\n  scaling_group\n  project_id\n  service_ports\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0a18c7890a957cd2945b8f7f947bd96c";
+(node as any).hash = "b957b5b5e9481ee28c655e04b441eb44";
 
 export default node;

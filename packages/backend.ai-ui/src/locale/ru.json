@@ -576,6 +576,9 @@
     "To": "Целевой статус",
     "UpdatedAt": "Обновлено"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Пригласить по электронной почте"
+  },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "Выбрать папку"
   },

@@ -576,6 +576,9 @@
     "To": "遷移先ステータス",
     "UpdatedAt": "更新日時"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "メールで招待"
+  },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "フォルダを選択"
   },
