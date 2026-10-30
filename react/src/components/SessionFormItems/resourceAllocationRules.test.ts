@@ -580,6 +580,33 @@ describe('applyRule — data.changed', () => {
     ).toEqual({ resource: { shmem: AUTOMATIC_DEFAULT_SHMEM } });
   });
 
+  it('waits for the image before sizing a restored shmem', () => {
+    const restored = makeValues({
+      resource: {
+        cpu: 2,
+        mem: '4g',
+        shmem: '0g',
+        accelerator: 0,
+        acceleratorType: 'cuda.device',
+      },
+    });
+
+    expect(
+      applyRule(
+        restored,
+        dataChanged,
+        makeCtx({ image: undefined, imageMinMem: '0g' }),
+      ),
+    ).not.toHaveProperty('resource.shmem');
+    expect(
+      applyRule(
+        restored,
+        dataChanged,
+        makeCtx({ image: undefined, manualImage: true, imageMinMem: '0g' }),
+      ),
+    ).toMatchObject({ resource: { shmem: '1g' } });
+  });
+
   it('leaves shmem alone when it is set, manual, or there is no memory yet', () => {
     expect(applyRule(makeValues(), dataChanged, makeCtx())).toEqual({});
     expect(

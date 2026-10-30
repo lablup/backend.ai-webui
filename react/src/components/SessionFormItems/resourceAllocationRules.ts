@@ -403,7 +403,10 @@ const applyDataChanged = (
     applyMinimumRequired(draft, ctx);
   }
   // Amounts restored as `custom` (a URL prefill) skip the event that sizes shmem.
+  // Without an image `imageMinMem` is a placeholder, and a size written from it
+  // is never corrected.
   if (
+    (ctx.image || ctx.manualImage) &&
     draft.allocationPreset === 'custom' &&
     draft.enabledAutomaticShmem &&
     compareNumberWithUnits(draft.resource.mem || '0g', '0g') > 0 &&

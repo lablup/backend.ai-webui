@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { AGENT_PREFILL_PARAM } from '../helper/webmcpSessionPrefill';
+import { AGENT_PREFILL_PARAM } from '../helper/webmcpConstants';
 import { useWebUILocation } from '../hooks';
 import { BAIAlert } from 'backend.ai-ui';
 import React, { useState } from 'react';

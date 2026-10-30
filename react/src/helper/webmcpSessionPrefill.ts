@@ -12,9 +12,6 @@ import { parseImageString, removeArchitectureFromImageFullName } from './index';
 import type { VFolderMountConfigValue, WebMCPInputSchema } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 
-/** Search param marking a launcher URL opened by `bai_prepare_session`. */
-export const AGENT_PREFILL_PARAM = 'agentPrefill';
-
 /** More names than the lookup can answer for reliably. */
 export const MAX_PREFILL_FOLDERS = 50;
 
@@ -119,9 +116,17 @@ export interface MountableFolder {
   name: string;
 }
 
+export interface FolderLookup {
+  folders: ReadonlyArray<MountableFolder>;
+  /** The result page came back full, so `folders` may miss matches. */
+  truncated: boolean;
+}
+
 export interface SessionPrefillContext {
   /** The mountable folders matching the requested names. */
   folders: ReadonlyArray<MountableFolder>;
+  /** Uniqueness cannot be trusted, so no folder name is resolved. */
+  foldersTruncated?: boolean;
   allowCustomResourceAllocation: boolean;
 }
 
@@ -162,10 +167,10 @@ export const parseFolderNames = (raw: string): Array<string> =>
 const resolveFolders = (
   raw: string,
   folders: ReadonlyArray<MountableFolder>,
-): { mounts: Array<VFolderMountConfigValue>; rejected: Array<string> } => {
+): { mounts: Array<VFolderMountConfigValue>; problems: Array<string> } => {
   const names = parseFolderNames(raw);
   const mounts: Array<VFolderMountConfigValue> = [];
-  const rejected: Array<string> = [];
+  const problems: Array<string> = [];
   for (const name of names) {
     const matches = folders.filter((folder) => folder.name === name);
     if (matches.length === 1) {
@@ -175,11 +180,17 @@ const resolveFolders = (
         mountDestination: '',
         subpath: '',
       });
+    } else if (matches.length > 1) {
+      problems.push(
+        `"${name}" matches ${matches.length} folders, and a name cannot tell them apart. The user has to pick one in the launcher's Data & Storage step.`,
+      );
     } else {
-      rejected.push(name);
+      problems.push(
+        `"${name}" is not a mountable folder in this project. Pick one the launcher's Data & Storage step lists.`,
+      );
     }
   }
-  return { mounts, rejected };
+  return { mounts, problems };
 };
 
 /**
@@ -197,9 +208,12 @@ export const buildSessionPrefill = (
   const reject = (field: string, reason: string) =>
     rejected.push({ field, reason });
 
+  // The type decides what every other field means, so nothing is filled without it.
   if (input.sessionType === 'batch' && input.startupCommand === undefined) {
     reject('sessionType', 'A batch session needs a startupCommand.');
-  } else if (input.sessionType !== undefined) {
+    return { formValues, applied, rejected, unverified };
+  }
+  if (input.sessionType !== undefined) {
     formValues.sessionType = input.sessionType;
     applied.sessionType = input.sessionType;
   }
@@ -293,17 +307,16 @@ export const buildSessionPrefill = (
     parseFolderNames(input.folders).length > MAX_PREFILL_FOLDERS
   ) {
     reject('folders', `Give at most ${MAX_PREFILL_FOLDERS} folders.`);
-  } else if (input.folders !== undefined) {
-    const { mounts, rejected: missing } = resolveFolders(
-      input.folders,
-      context.folders,
-    );
-    missing.forEach((name) =>
+  } else if (input.folders !== undefined && context.foldersTruncated) {
+    parseFolderNames(input.folders).forEach((name) =>
       reject(
         'folders',
-        `"${name}" is not a single mountable folder in this project. Pick one the launcher's Data & Storage step lists.`,
+        `"${name}" could not be checked because too many folders match the requested names. Give fewer names.`,
       ),
     );
+  } else if (input.folders !== undefined) {
+    const { mounts, problems } = resolveFolders(input.folders, context.folders);
+    problems.forEach((problem) => reject('folders', problem));
     if (mounts.length > 0) {
       formValues.vfolderMounts = mounts;
       applied.folders = mounts.map((mount) => mount.name);

@@ -34,7 +34,7 @@ import SessionTemplateModal from '../components/SessionTemplateModal';
 import { Form, type FormInstance } from '../form-engine';
 import { formatDuration } from '../helper';
 import { normalizeLegacyMountFields } from '../helper/vfolderMounts';
-import { AGENT_PREFILL_PARAM } from '../helper/webmcpSessionPrefill';
+import { AGENT_PREFILL_PARAM } from '../helper/webmcpConstants';
 import {
   useSuspendedBackendaiClient,
   useWebUILocation,

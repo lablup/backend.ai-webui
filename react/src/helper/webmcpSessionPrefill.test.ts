@@ -112,10 +112,31 @@ describe('buildSessionPrefill', () => {
     ]);
   });
 
-  it('rejects a batch session without a startup command', () => {
-    const result = buildSessionPrefill({ sessionType: 'batch' }, context);
+  it('fills nothing for a batch session without a startup command', () => {
+    const result = buildSessionPrefill(
+      {
+        sessionType: 'batch',
+        sessionName: 'nightly-job',
+        cpu: 4,
+        memoryGiB: 8,
+      },
+      context,
+    );
     expect(result.formValues).toEqual({});
+    expect(result.applied).toEqual({});
     expect(result.rejected.map((r) => r.field)).toEqual(['sessionType']);
+  });
+
+  it('resolves no folder from a truncated lookup', () => {
+    const result = buildSessionPrefill(
+      { folders: 'data,models' },
+      { ...context, foldersTruncated: true },
+    );
+    expect(result.formValues).toEqual({});
+    expect(result.rejected).toEqual([
+      { field: 'folders', reason: expect.stringContaining('"data"') },
+      { field: 'folders', reason: expect.stringContaining('"models"') },
+    ]);
   });
 
   it('refuses more folders than the lookup answers for', () => {
@@ -141,8 +162,8 @@ describe('buildSessionPrefill', () => {
     expect(result.formValues.vfolderMounts).toHaveLength(1);
     expect(result.applied.folders).toEqual(['data']);
     expect(result.rejected.map((r) => r.reason)).toEqual([
-      expect.stringContaining('"missing"'),
-      expect.stringContaining('"dup"'),
+      expect.stringContaining('"missing" is not a mountable folder'),
+      expect.stringContaining('"dup" matches 2 folders'),
       expect.stringContaining('".local"'),
     ]);
   });

@@ -5,8 +5,11 @@
 import SessionLauncherWebMCPTool, {
   createPrepareSessionTool,
   LAUNCHER_REVIEW_STEP,
+  PREPARE_SESSION_LINK_TOO_LONG,
   PREPARE_SESSION_NEXT_STEP,
+  PREPARE_SESSION_NO_INPUT,
   PREPARE_SESSION_NOTHING_FILLED,
+  PREPARE_SESSION_PARTLY_FILLED,
   WEBUI_URL_SOFT_LIMIT,
 } from './SessionLauncherWebMCPTool';
 import toolSource from './SessionLauncherWebMCPTool.tsx?raw';
@@ -39,8 +42,12 @@ const makeTool = (
 ) => {
   const openLauncher = vi.fn<(search: string) => void>();
   const tool = createPrepareSessionTool({
-    findFolders: async (names) =>
-      names.includes('data') ? [{ vfolderId: 'uuid-data', name: 'data' }] : [],
+    findFolders: async (names) => ({
+      folders: names.includes('data')
+        ? [{ vfolderId: 'uuid-data', name: 'data' }]
+        : [],
+      truncated: false,
+    }),
     allowCustomResourceAllocation: true,
     openLauncher,
     readEnvironment,
@@ -142,6 +149,31 @@ describe('createPrepareSessionTool', () => {
           reason: expect.stringContaining(`selected "${VERSION}"`),
         },
       ],
+      nextStep: PREPARE_SESSION_PARTLY_FILLED,
+    });
+  });
+
+  it('says the form was replaced when only an image was asked for and it missed', async () => {
+    const { tool, openLauncher } = makeTool();
+    const result = (await tool.execute({
+      image: 'cr.backend.ai/x/missing:1',
+    })) as { nextStep: string };
+
+    expect(openLauncher).toHaveBeenCalledTimes(1);
+    expect(result.nextStep).toContain('was replaced');
+    expect(result.nextStep).not.toContain('Give webui_url');
+  });
+
+  it('asks to fix or report rejected fields instead of handing the link over', async () => {
+    const { tool } = makeTool();
+    const result = await tool.execute({
+      sessionName: 'agent-prefill-demo',
+      folders: 'missing',
+    });
+    expect(result).toMatchObject({
+      applied: { sessionName: 'agent-prefill-demo' },
+      rejected: [{ field: 'folders' }],
+      nextStep: PREPARE_SESSION_PARTLY_FILLED,
     });
   });
 
@@ -174,7 +206,7 @@ describe('createPrepareSessionTool', () => {
   it('stops polling at the deadline whatever the timers do', async () => {
     const readEnvironment = vi.fn(() => null);
     const tool = createPrepareSessionTool({
-      findFolders: async () => [],
+      findFolders: async () => ({ folders: [], truncated: false }),
       allowCustomResourceAllocation: true,
       openLauncher: vi.fn(),
       readEnvironment,
@@ -202,6 +234,56 @@ describe('createPrepareSessionTool', () => {
     });
   });
 
+  it('has its own answer for a call with no fields', async () => {
+    const { tool, openLauncher } = makeTool();
+    await expect(tool.execute({})).resolves.toMatchObject({
+      path: null,
+      webui_url: null,
+      rejected: [],
+      nextStep: PREPARE_SESSION_NO_INPUT,
+    });
+    expect(openLauncher).not.toHaveBeenCalled();
+  });
+
+  it('stops the whole prefill on a batch session without a command', async () => {
+    const { tool, openLauncher } = makeTool();
+    await expect(
+      tool.execute({
+        sessionType: 'batch',
+        sessionName: 'nightly-job',
+        cpu: 4,
+      }),
+    ).resolves.toMatchObject({
+      path: null,
+      applied: {},
+      rejected: [{ field: 'sessionType' }],
+      nextStep: PREPARE_SESSION_NOTHING_FILLED,
+    });
+    expect(openLauncher).not.toHaveBeenCalled();
+  });
+
+  it('rejects every folder name when the lookup came back full', async () => {
+    const tool = createPrepareSessionTool({
+      findFolders: async () => ({
+        folders: [{ vfolderId: 'uuid-data', name: 'data' }],
+        truncated: true,
+      }),
+      allowCustomResourceAllocation: true,
+      openLauncher: vi.fn(),
+      readEnvironment: () => null,
+    });
+    await expect(tool.execute({ folders: 'data' })).resolves.toMatchObject({
+      path: null,
+      applied: {},
+      rejected: [
+        {
+          field: 'folders',
+          reason: expect.stringContaining('could not be checked'),
+        },
+      ],
+    });
+  });
+
   it('flags a hand-off link that is too long for a server', async () => {
     const { tool } = makeTool();
     const result = await tool.execute({
@@ -211,7 +293,11 @@ describe('createPrepareSessionTool', () => {
     expect((result as { webui_url: string }).webui_url.length).toBeGreaterThan(
       WEBUI_URL_SOFT_LIMIT,
     );
-    expect(result).toMatchObject({ unverified: [{ field: 'webui_url' }] });
+    expect(result).toMatchObject({
+      warnings: [{ field: 'webui_url' }],
+      nextStep: PREPARE_SESSION_LINK_TOO_LONG,
+    });
+    expect(result).not.toHaveProperty('unverified');
   });
 
   it('stops, without pulling the tab back, when the page changes during the lookup', async () => {
@@ -220,7 +306,7 @@ describe('createPrepareSessionTool', () => {
     const tool = createPrepareSessionTool({
       findFolders: async () => {
         window.history.replaceState({}, '', '/project/default/data');
-        return [];
+        return { folders: [], truncated: false };
       },
       allowCustomResourceAllocation: true,
       openLauncher,
@@ -337,6 +423,35 @@ describe('SessionLauncherWebMCPTool', () => {
       new URLSearchParams(openLauncher.mock.calls[0][0]).get('formValues')!,
     );
     expect(formValues.vfolderMounts[0].vfolderId).toBe('uuid-data');
+  });
+
+  it('does not trust a lookup page that came back full', async () => {
+    const openLauncher = vi.fn();
+    const environment = renderTool(openLauncher);
+    await waitFor(() => expect(registerTool).toHaveBeenCalledTimes(1));
+
+    environment.mock.queueOperationResolver(() => ({
+      data: {
+        scopedVFoldersV2: {
+          edges: Array.from({ length: 100 }, (_, index) =>
+            folderNode(`uuid-${index}`, `folder-${index}`),
+          ),
+        },
+      },
+    }));
+
+    await expect(
+      registerTool.mock.calls[0][0].execute({ folders: 'folder-1' }),
+    ).resolves.toMatchObject({
+      path: null,
+      rejected: [
+        {
+          field: 'folders',
+          reason: expect.stringContaining('could not be checked'),
+        },
+      ],
+    });
+    expect(openLauncher).not.toHaveBeenCalled();
   });
 
   it('refuses invalid input before navigating', async () => {
