@@ -1,4 +1,4 @@
-import { default as React } from '../../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.2.8/01dc110d7f872a8caacc052aa0e86f46609c662315b6d5b76a7913331f487dd1/node_modules/react';
+import { default as React } from '../../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.3.1/389d2ab16b7e9a891f1811154c26db12b2fd74e8cb0d60e295d30c107a842d5d/node_modules/react';
 import { LinkProps } from 'react-router-dom';
 export interface BAINameActionCellAction {
     /** Unique key for React rendering and overflow tracking */
@@ -109,11 +109,10 @@ export interface BAINameActionCellProps {
     minVisibleActions?: number;
     /**
      * Width (px) the title keeps before an action may claim space; actions that
-     * no longer fit fold into the more menu. `showActions="always"` only —
-     * hover mode collapses its actions to zero width at rest, so nothing
-     * competes for the title there. The default suits an identifier a few
-     * characters of which already identify the row; raise it where the title is
-     * long and the cell narrow (FR-3926).
+     * no longer fit fold into the more menu. Applies in both modes: hover mode
+     * reserves the actions' width at rest too (#10371). The default suits an
+     * identifier a few characters of which already identify the row; raise it
+     * where the title is long and the cell narrow (FR-3926).
      */
     minTitleWidth?: number;
     /** Disable the overflow More (…) button. Individual menu items remain visible. */

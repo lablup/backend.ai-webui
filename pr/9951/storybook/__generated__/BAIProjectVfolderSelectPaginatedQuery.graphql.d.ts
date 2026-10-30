@@ -7,6 +7,7 @@ export type VFolderFilter = {
     OR?: ReadonlyArray<VFolderFilter> | null | undefined;
     cloneable?: boolean | null | undefined;
     createdAt?: DateTimeFilter | null | undefined;
+    entityId?: UUIDFilter | null | undefined;
     host?: StringFilter | null | undefined;
     labels?: EntityLabelNestedFilter | null | undefined;
     name?: StringFilter | null | undefined;
@@ -65,6 +66,7 @@ export type EntityLabelFilter = {
     OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
     entityId?: UUIDFilter | null | undefined;
     entityType?: StringFilter | null | undefined;
+    fieldId?: UUIDFilter | null | undefined;
     key?: StringFilter | null | undefined;
     value?: StringFilter | null | undefined;
 };
@@ -85,6 +87,7 @@ export type BAIProjectVfolderSelectPaginatedQuery$data = {
         readonly count: number;
         readonly edges: ReadonlyArray<{
             readonly node: {
+                readonly entityId: string;
                 readonly id: string;
                 readonly metadata: {
                     readonly name: string;

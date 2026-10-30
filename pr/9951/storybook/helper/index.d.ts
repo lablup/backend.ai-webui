@@ -1,6 +1,7 @@
 import { default as Big } from 'big.js';
 export * from './astryxTagVariant';
 export * from './combineFilters';
+export * from './durationFormatter';
 export * from './runtimeVariantPresetUI';
 export * from './vfolderHostPermission';
 /** The manager's "no limit" sentinel for count fields; rendered as ∞. */
@@ -117,7 +118,7 @@ export declare function addNumberWithUnits(size1: string, size2: string, targetU
 export declare function subNumberWithUnits(size1: string, size2: string, targetUnit?: InputSizeUnit): string | undefined;
 export declare function divideNumberWithUnits(size1: string, size2: string, targetUnit?: InputSizeUnit): string | undefined;
 export declare const localeCompare: (a?: string | null, b?: string | null) => number;
-type KnownGlobalIdType = 'VirtualFolderNode' | 'ComputeSessionNode' | 'GroupNode' | 'UserNode' | 'ProjectNode' | 'ModelDeployment' | 'ImageV2';
+type KnownGlobalIdType = 'VirtualFolderNode' | 'VFolder' | 'ComputeSessionNode' | 'GroupNode' | 'UserNode' | 'ProjectNode' | 'ModelDeployment' | 'ImageV2';
 export declare const toGlobalId: (type: KnownGlobalIdType, id: string) => string;
 export declare const toLocalId: (globalId: string) => string;
 /**
@@ -223,3 +224,8 @@ export declare const DOWNLOAD_PROBE_TIMEOUT_MS = 15000;
  * Rejects with a {@link DownloadFailedError} when the download did not start.
  */
 export declare const initiateDownload: (downloadURL: string, fileName: string) => Promise<void>;
+/**
+ * A CSS length token (`'8px'`, `'0.5rem'`) as a pixel number, for props that
+ * take numbers. Astryx 0.7 declares `--spacing-*` in rem.
+ */
+export declare const cssLengthToPx: (length: string) => number;

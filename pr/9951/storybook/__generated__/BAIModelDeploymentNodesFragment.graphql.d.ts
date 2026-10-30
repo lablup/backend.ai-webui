@@ -16,6 +16,10 @@ export type BAIModelDeploymentNodesFragment$data = ReadonlyArray<{
     readonly defaultDeploymentStrategy: {
         readonly type: DeploymentStrategyType;
     };
+    readonly entityId: string;
+    readonly entityLabels: {
+        readonly " $fragmentSpreads": FragmentRefs<"BAIEntityLabelSettingModalFragment" | "BAIEntityLabelTokensFragment">;
+    } | null | undefined;
     readonly id: string;
     readonly metadata: {
         readonly createdAt: string;
@@ -30,9 +34,7 @@ export type BAIModelDeploymentNodesFragment$data = ReadonlyArray<{
         } | null | undefined;
         readonly resourceGroupName: string;
         readonly status: DeploymentStatus;
-        readonly tags: ReadonlyArray<string>;
         readonly updatedAt: string;
-        readonly " $fragmentSpreads": FragmentRefs<"BAIDeploymentTagTokens_metadata">;
     };
     readonly networkAccess: {
         readonly endpointUrl: string | null | undefined;

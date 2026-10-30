@@ -1,4 +1,4 @@
-import { default as React, CSSProperties, ReactNode } from '../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.2.8/01dc110d7f872a8caacc052aa0e86f46609c662315b6d5b76a7913331f487dd1/node_modules/react';
+import { default as React, CSSProperties, ReactNode } from '../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.3.1/389d2ab16b7e9a891f1811154c26db12b2fd74e8cb0d60e295d30c107a842d5d/node_modules/react';
 /** antd `DefaultOptionType`, restated locally. */
 export interface BAISelectOption {
     value?: string | number | null;
@@ -52,8 +52,9 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
     style?: CSSProperties;
     autoFocus?: boolean;
     tabIndex?: number;
-    /** Visible accessible name; derived from `placeholder` when absent. */
+    /** Accessible name (`aria-label`); derived from `placeholder` when absent. */
     label?: string;
+    /** Accepted and inert: ui-common's controls never render their own label. */
     isLabelHidden?: boolean;
     /**
      * Accepted and inert on Astryx — each names an antd popup mechanism the
@@ -98,6 +99,7 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
     children?: ReactNode;
     ghost?: boolean;
     autoSelectOption?: boolean | ((options: Array<OptionType> | undefined) => ValueType);
+    /** Accepted and inert: ui-common's controls take no `labelTooltip`. */
     tooltip?: string;
     atBottomThreshold?: number;
     atBottomStateChange?: (atBottom: boolean) => void;
@@ -108,7 +110,7 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
     searchAction?: (value: string) => Promise<void>;
     [key: `data-${string}`]: string | undefined;
 }
-declare function BAISelect<ValueType = any, OptionType = BAISelectOption>({ ref: _ref, autoSelectOption, ghost, tooltip, atBottomThreshold: _atBottomThreshold, atBottomStateChange: _atBottomStateChange, bottomLoading: _bottomLoading, header, footer, endReached: _endReached, searchAction: _searchAction, options, value, defaultValue, onChange, onSelect, placeholder, mode, disabled, loading, allowClear, showSearch, status, size, optionRender, triggerDisplay, maxBadges, children, className, style, label, isLabelHidden, popupMatchSelectWidth: _popupMatchSelectWidth, popupRender: _popupRender, notFoundContent: _notFoundContent, suffixIcon: _suffixIcon, labelRender: _labelRender, maxTagCount: _maxTagCount, maxTagPlaceholder: _maxTagPlaceholder, optionLabelProp, filterOption: _filterOption, defaultActiveFirstOption: _defaultActiveFirstOption, open: _open, onOpenChange: _onOpenChange, title: _title, ...restProps }: BAISelectProps<ValueType, OptionType>): React.ReactElement;
+declare function BAISelect<ValueType = any, OptionType = BAISelectOption>({ ref: _ref, autoSelectOption, ghost, tooltip: _tooltip, atBottomThreshold: _atBottomThreshold, atBottomStateChange: _atBottomStateChange, bottomLoading: _bottomLoading, header, footer, endReached: _endReached, searchAction: _searchAction, options, value, defaultValue, onChange, onSelect, placeholder, mode, disabled, loading, allowClear, showSearch, status, size, optionRender, triggerDisplay, maxBadges, children, className, style, label, isLabelHidden: _isLabelHidden, popupMatchSelectWidth: _popupMatchSelectWidth, popupRender: _popupRender, notFoundContent: _notFoundContent, suffixIcon: _suffixIcon, labelRender: _labelRender, maxTagCount: _maxTagCount, maxTagPlaceholder: _maxTagPlaceholder, optionLabelProp, filterOption: _filterOption, defaultActiveFirstOption: _defaultActiveFirstOption, open: _open, onOpenChange: _onOpenChange, title: _title, ...restProps }: BAISelectProps<ValueType, OptionType>): React.ReactElement;
 /**
  * Carrier element for the `<Select.Option>` children API, replacing antd's
  * (phase 3, wave 3).
