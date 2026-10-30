@@ -34,6 +34,8 @@ export interface PanelSettingsModalProps {
   settings?: PanelSettings;
   /** The resource groups the setting offers: the page's projects, else the current domain. */
   resourceGroupScope: BAIScopedResourceGroupSelectProps['scope'];
+  /** Resource groups the setting never offers (the SFTP-only ones). */
+  excludedResourceGroups?: ReadonlyArray<string>;
   onSubmit: (settings: PanelSettings | undefined) => void;
   onRequestClose: () => void;
   afterClose?: () => void;
@@ -46,6 +48,7 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
   definition,
   settings,
   resourceGroupScope,
+  excludedResourceGroups,
   onSubmit,
   onRequestClose,
   afterClose,
@@ -72,8 +75,10 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
       okText={t('button.Save')}
       onCancel={onRequestClose}
       afterClose={afterClose}
-      onOk={() => {
-        const { resourceGroup, range = DEFAULT_RANGE } = form.getFieldsValue();
+      onOk={async () => {
+        const values = await form.validateFields().catch(() => undefined);
+        if (!values) return;
+        const { resourceGroup, range = DEFAULT_RANGE } = values;
         const next: PanelSettings = {
           ...(hasSetting(definition, 'resourceGroup') && resourceGroup
             ? { resourceGroups: [resourceGroup] }
@@ -113,6 +118,11 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
                 label={t('dashboard.settings.ResourceGroup')}
                 placeholder={resourceGroupDefault}
                 scope={resourceGroupScope}
+                filter={
+                  _.isEmpty(excludedResourceGroups)
+                    ? undefined
+                    : { name: { notIn: [...(excludedResourceGroups ?? [])] } }
+                }
                 allowClear
               />
             </BAIFormItem>

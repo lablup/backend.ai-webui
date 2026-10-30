@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useCurrentDomain } from '../../hooks';
+import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useCurrentResourceGroupValue } from '../../hooks/useCurrentProject';
 import type { ProjectContextOrNull } from '../../types/projectContext';
 import { activeBoardOf, updateBoard } from './dashboardConfig';
@@ -38,7 +39,7 @@ export const useDashboardFilters = (
 ): DashboardFilters => {
   'use memo';
   const currentDomain = useCurrentDomain();
-  const currentResourceGroup = useCurrentResourceGroupValue();
+  const currentResourceGroup = useCurrentResourceGroupValue() ?? null;
   const urlProjectId = project?.id ?? null;
   const storedRefresh = activeBoardOf(boards.config).vars.refresh;
 
@@ -55,7 +56,7 @@ export const useDashboardFilters = (
       ),
     project,
     currentProjectId: urlProjectId,
-    currentResourceGroup: currentResourceGroup ?? null,
+    currentResourceGroup,
   };
 };
 
@@ -75,10 +76,17 @@ export const useDashboardFilterContext = () => use(DashboardFilterContext);
 export const useDashboardProject = (): ProjectContextOrNull =>
   use(DashboardFilterContext)?.project ?? null;
 
-/** The scope arguments of a custom panel's query: the page's project, else the current domain. */
+/** The scope arguments of a custom panel's query: the viewer's own rows on the member page, else the page's project, else the current domain. */
 export const useDashboardQueryScope = () => {
   'use memo';
-  const project = useDashboardProject();
+  const filters = use(DashboardFilterContext);
+  const project = filters?.project ?? null;
   const currentDomain = useCurrentDomain();
-  return { projectId: project?.id ?? null, domainName: currentDomain.name };
+  const [currentUser] = useCurrentUserInfo();
+  return {
+    projectId: project?.id ?? null,
+    domainName: currentDomain.name,
+    domainId: currentDomain.id,
+    ownerId: filters?.scope.kind === 'mine' ? (currentUser.uuid ?? null) : null,
+  };
 };

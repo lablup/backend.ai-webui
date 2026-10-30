@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useResourceGroupsForCurrentProject } from '../../hooks/useCurrentProject';
 import type { ProjectContextOrNull } from '../../types/projectContext';
 import { dashboardEditModeAtom } from '../dashboardEditModeAtom';
 import DashboardBoardSection from './DashboardBoardSection';
@@ -74,7 +75,10 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     open: boolean;
     panel?: PersistedPanel;
   }>({ open: false });
+  // The id outlives `open` until after-close, so the closing modal keeps its content.
   const [settingsPanelId, setSettingsPanelId] = useState<string | null>(null);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const { sftpResourceGroups } = useResourceGroupsForCurrentProject();
   const boardContainerRef = useRef<HTMLDivElement>(null);
 
   // The edit-mode atom is global: close it when leaving the page, but not when a
@@ -118,10 +122,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     : null;
 
   const filters = useDashboardFilters(page, boards, project);
-  useBoardItemVisibility(
-    boardContainerRef,
-    boardItems.map((item) => item.id),
-  );
+  useBoardItemVisibility(boardContainerRef);
 
   const scrollBoardEndIntoView = () => {
     // New panels append at the board's end; without this an add looks like a no-op.
@@ -185,7 +186,10 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
             onRemove={removePanel}
             onResetLayout={resetLayout}
             settingsTargetOf={settingsTargetOf}
-            onRequestSettings={setSettingsPanelId}
+            onRequestSettings={(panelId) => {
+              setSettingsPanelId(panelId);
+              setIsSettingsOpen(true);
+            }}
             boardSection={
               page !== 'project' ? (
                 <DashboardBoardSection
@@ -199,16 +203,18 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
         ) : null}
         <BAIUnmountAfterClose>
           <PanelSettingsModal
-            open={!!settingsTarget}
+            open={isSettingsOpen && !!settingsTarget}
             title={settingsTarget?.title ?? ''}
             definition={settingsTarget?.definition ?? { kind: 'custom' }}
             settings={settingsTarget?.settings}
             resourceGroupScope={resourceGroupScopeOf(filters.scope)}
+            excludedResourceGroups={_.compact(sftpResourceGroups)}
             onSubmit={(settings) => {
               if (settingsPanelId)
                 updatePanelSettings(settingsPanelId, settings);
             }}
-            onRequestClose={() => setSettingsPanelId(null)}
+            onRequestClose={() => setIsSettingsOpen(false)}
+            afterClose={() => setSettingsPanelId(null)}
           />
         </BAIUnmountAfterClose>
         {/* Unmounted after the close animation, so each open starts fresh: two

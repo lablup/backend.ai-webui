@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b3630823b653a214cc586e0b06ee2d79>>
+ * @generated SignedSource<<14f911decbbf550397cdf6dafd2b00fd>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -22,6 +22,7 @@ export type SessionV2Filter = {
   clusterSize?: IntFilter | null | undefined;
   creationId?: StringFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   id?: UUIDFilter | null | undefined;
   isPreemptible?: boolean | null | undefined;
   jobPriority?: IntFilter | null | undefined;
@@ -32,8 +33,10 @@ export type SessionV2Filter = {
   priority?: IntFilter | null | undefined;
   projectId?: UUIDFilter | null | undefined;
   replicaId?: UUIDFilter | null | undefined;
+  requestedStartsAt?: DateTimeFilter | null | undefined;
   resourceGroupName?: StringFilter | null | undefined;
   result?: SessionV2ResultFilter | null | undefined;
+  sessionGroupId?: UUIDFilter | null | undefined;
   sessionType?: SessionV2TypeFilter | null | undefined;
   startsAt?: DateTimeFilter | null | undefined;
   status?: SessionV2StatusFilter | null | undefined;
@@ -89,6 +92,7 @@ export type EntityLabelFilter = {
   OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
   entityId?: UUIDFilter | null | undefined;
   entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   key?: StringFilter | null | undefined;
   value?: StringFilter | null | undefined;
 };

@@ -22,6 +22,7 @@ import {
   BAIText,
   BAITextInput,
 } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import { Plus, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -64,21 +65,27 @@ const DashboardBoardSection: React.FC<DashboardBoardSectionProps> = ({
     setDraft(undefined);
   };
   const addNewBoard = () => {
-    update((current) =>
-      addBoard(
+    const id = generateUUID();
+    update((current) => {
+      // The first number no board's title uses; n boards leave one of n + 1 free.
+      const titles = new Set(current.boards.map(titleOf));
+      const count = current.boards.length;
+      const number =
+        _.range(count + 1, 2 * count + 2).find(
+          (candidate) =>
+            !titles.has(
+              t('dashboard.boards.NewBoardTitle', { number: candidate }),
+            ),
+        ) ?? count + 1;
+      return addBoard(
         current,
         createEmptyBoard(
-          {
-            id: generateUUID(),
-            title: t('dashboard.boards.NewBoardTitle', {
-              number: current.boards.length + 1,
-            }),
-          },
+          { id, title: t('dashboard.boards.NewBoardTitle', { number }) },
           catalog,
           page,
         ),
-      ),
-    );
+      );
+    });
   };
 
   return (

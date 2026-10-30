@@ -63,7 +63,7 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
   };
 });
 
-vi.mock('./FolderCreateModalV2', async () => {
+vi.mock('./FolderCreateModal', async () => {
   const React = await import('react');
   return {
     default: (props: any) =>

@@ -466,12 +466,26 @@ test.describe(
           .locator('xpath=ancestor::*[.//button[@aria-label="Delete"]][1]')
           .getByRole('button', { name: 'Delete' })
           .click();
+        // The board hides the panel before the debounced write: wait for the
+        // upsert that no longer carries it, so the context does not close first.
+        const deletePersisted = page.waitForResponse(
+          (response) => {
+            const body = response.request().postData() ?? '';
+            return (
+              body.includes('useAppConfigMyUpsertMutation') &&
+              !body.includes(panelTitle) &&
+              response.ok()
+            );
+          },
+          { timeout: WIDGET_TIMEOUT },
+        );
         await page
           .getByRole('button', { name: 'Confirm', exact: true })
           .click();
         await expect(
           page.locator('.uic-board-item').filter({ hasText: panelTitle }),
         ).toHaveCount(0);
+        await deletePersisted;
       });
     });
   },

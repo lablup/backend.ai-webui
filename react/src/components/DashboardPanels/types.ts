@@ -188,8 +188,6 @@ export interface DashboardModel extends DashboardBoard {
 export interface DashboardPageConfig {
   boards: Array<DashboardModel>;
   active: string;
-  /** Set on every write, so the localStorage migration never runs again. */
-  migrated?: true;
 }
 
 /** `userConfig.dashboard`. */
@@ -290,6 +288,9 @@ export interface ResourceQueryArgs {
   /** The page's project; `null` on the superadmin page, which reads the current domain. */
   projectId: string | null;
   domainName: string;
+  domainId: string;
+  /** The viewer, when the page reads only the viewer's own rows (the member page). */
+  ownerId: string | null;
 }
 
 /** Normalized connection slice the executor renders. */
