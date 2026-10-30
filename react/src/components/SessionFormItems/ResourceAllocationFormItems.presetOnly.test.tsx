@@ -17,6 +17,7 @@ import {
   screen,
   waitFor,
 } from '@testing-library/react';
+import * as _ from 'lodash-es';
 import { Suspense } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
@@ -171,21 +172,36 @@ const renderRestored = ({
   enableResourcePresets?: boolean;
 }) => {
   const environment = createMockEnvironment();
-  environment.mock.queueOperationResolver((operation) =>
-    MockPayloadGenerator.generate(operation, {
-      ScalingGroup: () => ({
-        name: 'mock-rg',
-        is_active: true,
-        accelerator_quantum_size: null,
-        resource_allocation_limit_for_sessions: null,
+  // One resolver per query: the resource group, then the preset availability.
+  _.times(2, () =>
+    environment.mock.queueOperationResolver((operation) =>
+      MockPayloadGenerator.generate(operation, {
+        ScalingGroup: () => ({
+          name: 'mock-rg',
+          is_active: true,
+          accelerator_quantum_size: null,
+          resource_allocation_limit_for_sessions: null,
+        }),
+        ResourcePreset: () => ({
+          id: PRESET_ID,
+          name: 'cuda-preset',
+          scaling_group_name: null,
+          resource_slots: '{"cpu":"1","mem":"1g","cuda.device":"1"}',
+        }),
+        PresetAvailabilityV2: () => ({
+          id: PRESET_ID,
+          name: 'cuda-preset',
+          resourceGroupName: null,
+          available: true,
+          sharedMemory: null,
+          resourceSlots: [
+            { resourceType: 'cpu', quantity: '1' },
+            { resourceType: 'mem', quantity: '1073741824' },
+            { resourceType: 'cuda.device', quantity: '1' },
+          ],
+        }),
       }),
-      ResourcePreset: () => ({
-        id: PRESET_ID,
-        name: 'cuda-preset',
-        scaling_group_name: null,
-        resource_slots: '{"cpu":"1","mem":"1g","cuda.device":"1"}',
-      }),
-    }),
+    ),
   );
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
