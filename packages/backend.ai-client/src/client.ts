@@ -485,7 +485,8 @@ export class Client {
         type: errorType,
         requestUrl: rqst.uri,
         requestMethod: rqst.method,
-        requestParameters: rqst.body,
+        // Re-thrown to consumers that may log it, so redact like the debug log.
+        requestParameters: redactRequestParameters(rqst.body),
         statusCode: respOverlay.status,
         statusText: respOverlay.statusText,
         title: errorTitle,
