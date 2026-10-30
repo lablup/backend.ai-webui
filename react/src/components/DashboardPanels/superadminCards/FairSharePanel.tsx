@@ -170,6 +170,8 @@ const FairSharePanel: React.FC<PanelComponentProps> = ({
           <Text type="supporting">{t('dashboard.card.NoResourceGroup')}</Text>
         ) : (
           <ResourceGroupFairShares
+            // A new resource group or domain starts again from the first page.
+            key={`${vars.resourceGroup}:${cardScope.domainName}`}
             resourceGroupName={vars.resourceGroup}
             domainName={cardScope.domainName}
             fetchKey={key}
