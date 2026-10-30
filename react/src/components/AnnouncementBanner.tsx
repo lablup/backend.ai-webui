@@ -3,8 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
-  DOMAIN_ANNOUNCEMENT_CONFIG_KEY,
-  DomainAnnouncement,
+  readDomainAnnouncement,
   isAnnouncementCollapsible,
   isAnnouncementVisible,
   summarizeAnnouncementTitle,
@@ -51,9 +50,7 @@ const AnnouncementBanner: React.FC = () => {
   // own toggle sits at the far end of the header, away from the text it
   // reveals.
   const [isExpanded, { toggle: toggleExpanded }] = useToggle(false);
-  const announcement = useDomainAppConfig<DomainAnnouncement>(
-    DOMAIN_ANNOUNCEMENT_CONFIG_KEY,
-  );
+  const announcement = readDomainAnnouncement(useDomainAppConfig('settings'));
   const [dismissedKey, setDismissedKey] = useSessionStorageState<
     string | undefined
   >('backendaiwebui.dismissed_announcement');
