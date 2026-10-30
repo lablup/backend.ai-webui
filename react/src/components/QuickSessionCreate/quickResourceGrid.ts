@@ -56,6 +56,18 @@ export const getDefaultUnit = (
   );
 };
 
+/** The default unit, lowered so a non-zero amount fills at least one cell. */
+export const getInitialUnit = (
+  kind: QuickSlotKind,
+  steps: number[],
+  limit: number | undefined,
+  amount: number,
+): number => {
+  const unit = getDefaultUnit(kind, steps, limit);
+  if (amount <= 0 || amount + EPSILON >= unit) return unit;
+  return _.findLast(steps, (step) => step <= amount + EPSILON) ?? steps[0];
+};
+
 export interface QuickGridCells {
   columns: number;
   totalCells: number;

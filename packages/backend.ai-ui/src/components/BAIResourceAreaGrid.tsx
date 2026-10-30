@@ -155,7 +155,6 @@ const BAIResourceAreaGrid: React.FC<BAIResourceAreaGridProps> = ({
     if (!target) return;
     event.preventDefault();
     event.currentTarget.setPointerCapture?.(event.pointerId);
-    event.currentTarget.focus({ preventScroll: true });
     setIsDragging(true);
     // Pressing the bottom-right selected cell shrinks the selection.
     if (shape && target.rows === shape.rows && target.cols === shape.cols) {

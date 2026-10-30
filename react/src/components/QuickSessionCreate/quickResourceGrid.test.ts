@@ -2,6 +2,7 @@ import {
   amountToCells,
   getDefaultUnit,
   getGridCells,
+  getInitialUnit,
   getQuickSlotKind,
   getUnitSteps,
   roundAmountToUnit,
@@ -32,6 +33,14 @@ describe('quickResourceGrid', () => {
     expect(getDefaultUnit('mem', [0.25, 1, 4, 16, 64], 10000)).toBe(64);
     expect(getDefaultUnit('shares', [0.1, 1, 4], 3)).toBe(0.1);
     expect(getDefaultUnit('shares', [0.1, 1, 4], undefined)).toBe(1);
+  });
+
+  it('lowers the initial unit so a small amount still fills a cell', () => {
+    const memSteps = [0.25, 1, 4, 16, 64];
+    expect(getInitialUnit('mem', memSteps, 64, 1)).toBe(1);
+    expect(getInitialUnit('mem', memSteps, 64, 0.5)).toBe(0.25);
+    expect(getInitialUnit('mem', memSteps, 64, 8)).toBe(4);
+    expect(getInitialUnit('mem', memSteps, 64, 0)).toBe(4);
   });
 
   it('derives the card cells from limit, remaining and minimum', () => {

@@ -19,7 +19,7 @@ import {
 } from '../SessionFormItems/resourceAllocationRules';
 import {
   amountToCells,
-  getDefaultUnit,
+  getInitialUnit,
   getGridCells,
   getQuickSlotKind,
   getUnitSteps,
@@ -101,7 +101,7 @@ const ResourceGridCard: React.FC<ResourceGridCardProps> = ({
   const unit =
     pickedUnit && steps.includes(pickedUnit)
       ? pickedUnit
-      : getDefaultUnit(kind, steps, max);
+      : getInitialUnit(kind, steps, max, amount);
   const cells = getGridCells({ kind, unit, min, max, remaining });
   const isShort = cells.availableCells < cells.minCells;
   const isDisabled = disabled || isShort || cells.totalCells === 0;
@@ -152,7 +152,11 @@ const ResourceGridCard: React.FC<ResourceGridCardProps> = ({
             value={amountToCells(amount, unit)}
             color={KIND_COLOR[kind]}
             disabled={isDisabled}
-            onChange={(count) => onAmountChange(_.round(count * unit, 6))}
+            onChange={(count) => {
+              // Keep the lattice still for the rest of the drag.
+              if (!pickedUnit) setPickedUnit(unit);
+              onAmountChange(_.round(count * unit, 6));
+            }}
           />
           <BAIFlex direction="column" align="start" gap="xxs">
             <BAINumberInput

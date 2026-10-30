@@ -79,7 +79,6 @@ const QuickSessionCreateButton: React.FC<QuickSessionCreateButtonProps> = ({
             variant: 'primary',
             isIconOnly: true,
             icon: <Ellipsis size="1em" />,
-            'data-testid': 'session-start-more-button',
           }}
           hasChevron={false}
           placement="below"
