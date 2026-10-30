@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c8e8844b1ea71717903f069dd41b6b9b>>
+ * @generated SignedSource<<ba57f8f1adc0523127f0c4470ef9c2a8>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -24,6 +24,7 @@ export type UserV2Filter = {
   domainId?: UUIDFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
   email?: StringFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   fullName?: StringFilter | null | undefined;
   integrationName?: StringFilter | null | undefined;
   keypairs?: UserKeypairNestedFilter | null | undefined;
@@ -118,6 +119,7 @@ export type KeypairFilter = {
   OR?: ReadonlyArray<KeypairFilter> | null | undefined;
   accessKey?: StringFilter | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   isActive?: boolean | null | undefined;
   isAdmin?: boolean | null | undefined;
   isDefault?: boolean | null | undefined;
@@ -145,6 +147,7 @@ export type BAIAdminUserV2SelectValueQuery$data = {
         readonly basicInfo: {
           readonly email: string;
         };
+        readonly entityId: string;
         readonly id: string;
       };
     }>;
@@ -222,6 +225,13 @@ v3 = [
                   {
                     "alias": null,
                     "args": null,
+                    "kind": "ScalarField",
+                    "name": "entityId",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
                     "concreteType": "UserV2BasicInfo",
                     "kind": "LinkedField",
                     "name": "basicInfo",
@@ -275,16 +285,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "0a609f6f54a1625212fe62168903b81c",
+    "cacheID": "61cb5dc45fcae42e7aad0e471b20a661",
     "id": null,
     "metadata": {},
     "name": "BAIAdminUserV2SelectValueQuery",
     "operationKind": "query",
-    "text": "query BAIAdminUserV2SelectValueQuery(\n  $selectedFilter: UserV2Filter\n  $limit: Int!\n  $skipSelected: Boolean!\n) {\n  adminUsersV2(filter: $selectedFilter, limit: $limit) @skip(if: $skipSelected) {\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIAdminUserV2SelectValueQuery(\n  $selectedFilter: UserV2Filter\n  $limit: Int!\n  $skipSelected: Boolean!\n) {\n  adminUsersV2(filter: $selectedFilter, limit: $limit) @skip(if: $skipSelected) {\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          email\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "77a6ea8cc05760ecebb6a139b466b99f";
+(node as any).hash = "d22655746aecaf91c90c662fb52bffde";
 
 export default node;

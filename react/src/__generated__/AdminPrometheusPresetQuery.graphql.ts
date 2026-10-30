@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b9c38cf8eee58b45d734c85c1c8f5647>>
+ * @generated SignedSource<<0bbb707e5b753b622d878ef6a0860663>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,6 +17,7 @@ export type QueryDefinitionFilter = {
   NOT?: ReadonlyArray<QueryDefinitionFilter> | null | undefined;
   OR?: ReadonlyArray<QueryDefinitionFilter> | null | undefined;
   categoryId?: UUIDFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   name?: StringFilter | null | undefined;
 };
 export type StringFilter = {
@@ -230,6 +231,13 @@ return {
                 "plural": false,
                 "selections": [
                   (v6/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "entityId",
+                    "storageKey": null
+                  },
                   (v7/*: any*/),
                   {
                     "alias": null,
@@ -337,12 +345,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d064a958630b5e99af03c7761685f600",
+    "cacheID": "5bd68de7d416ef671b2cc8b8424059ca",
     "id": null,
     "metadata": {},
     "name": "AdminPrometheusPresetQuery",
     "operationKind": "query",
-    "text": "query AdminPrometheusPresetQuery(\n  $offset: Int\n  $limit: Int\n  $filter: QueryDefinitionFilter\n  $orderBy: [QueryDefinitionOrderBy!]\n) {\n  prometheusQueryPresets(offset: $offset, limit: $limit, filter: $filter, orderBy: $orderBy) {\n    count\n    edges {\n      node {\n        id\n        ...PrometheusQueryPresetTableFragment\n      }\n    }\n  }\n}\n\nfragment PrometheusQueryPresetEditorModalFragment on QueryDefinition {\n  id\n  name\n  description\n  categoryId\n  metricName\n  queryTemplate\n  timeWindow\n  options {\n    filterLabels\n    groupLabels\n  }\n}\n\nfragment PrometheusQueryPresetTableFragment on QueryDefinition {\n  id\n  name\n  description\n  rank\n  categoryId\n  metricName\n  queryTemplate\n  timeWindow\n  options {\n    filterLabels\n    groupLabels\n  }\n  createdAt\n  updatedAt\n  category {\n    id\n    name\n  }\n  ...PrometheusQueryPresetEditorModalFragment\n}\n"
+    "text": "query AdminPrometheusPresetQuery(\n  $offset: Int\n  $limit: Int\n  $filter: QueryDefinitionFilter\n  $orderBy: [QueryDefinitionOrderBy!]\n) {\n  prometheusQueryPresets(offset: $offset, limit: $limit, filter: $filter, orderBy: $orderBy) {\n    count\n    edges {\n      node {\n        id\n        ...PrometheusQueryPresetTableFragment\n      }\n    }\n  }\n}\n\nfragment PrometheusQueryPresetEditorModalFragment on QueryDefinition {\n  id\n  entityId\n  name\n  description\n  categoryId\n  metricName\n  queryTemplate\n  timeWindow\n  options {\n    filterLabels\n    groupLabels\n  }\n}\n\nfragment PrometheusQueryPresetTableFragment on QueryDefinition {\n  id\n  entityId\n  name\n  description\n  rank\n  categoryId\n  metricName\n  queryTemplate\n  timeWindow\n  options {\n    filterLabels\n    groupLabels\n  }\n  createdAt\n  updatedAt\n  category {\n    id\n    name\n  }\n  ...PrometheusQueryPresetEditorModalFragment\n}\n"
   }
 };
 })();

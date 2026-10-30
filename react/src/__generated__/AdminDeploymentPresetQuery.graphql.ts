@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e001b455e4752173e2342446c0f3cd90>>
+ * @generated SignedSource<<41ea30e3de2faf8fb21abe34eb4fbf7f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,6 +15,7 @@ export type DeploymentRevisionPresetFilter = {
   AND?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
   NOT?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
   OR?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   id?: UUIDFilter | null | undefined;
   name?: StringFilter | null | undefined;
   runtimeVariantId?: UUIDFilter | null | undefined;
@@ -62,7 +63,6 @@ export type AdminDeploymentPresetQuery$data = {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly id: string;
         readonly name: string;
         readonly " $fragmentSpreads": FragmentRefs<"AdminDeploymentPresetTableFragment">;
       };
@@ -128,14 +128,14 @@ v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "id",
+  "name": "name",
   "storageKey": null
 },
 v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "id",
   "storageKey": null
 };
 return {
@@ -176,7 +176,6 @@ return {
                 "plural": false,
                 "selections": [
                   (v6/*: any*/),
-                  (v7/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -232,7 +231,13 @@ return {
                 "plural": false,
                 "selections": [
                   (v6/*: any*/),
-                  (v7/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "entityId",
+                    "storageKey": null
+                  },
                   {
                     "alias": null,
                     "args": null,
@@ -262,8 +267,8 @@ return {
                     "name": "runtimeVariant",
                     "plural": false,
                     "selections": [
-                      (v6/*: any*/),
-                      (v7/*: any*/)
+                      (v7/*: any*/),
+                      (v6/*: any*/)
                     ],
                     "storageKey": null
                   },
@@ -325,7 +330,7 @@ return {
                     "name": "image",
                     "plural": false,
                     "selections": [
-                      (v6/*: any*/),
+                      (v7/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -406,7 +411,8 @@ return {
                     "kind": "ScalarField",
                     "name": "updatedAt",
                     "storageKey": null
-                  }
+                  },
+                  (v7/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -419,16 +425,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e18b75e3ebc13826681fed6b4f0eafdf",
+    "cacheID": "e672119d776bdc085194def664ff1310",
     "id": null,
     "metadata": {},
     "name": "AdminDeploymentPresetQuery",
     "operationKind": "query",
-    "text": "query AdminDeploymentPresetQuery(\n  $filter: DeploymentRevisionPresetFilter\n  $orderBy: [DeploymentRevisionPresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  deploymentRevisionPresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        name\n        ...AdminDeploymentPresetTableFragment\n      }\n    }\n  }\n}\n\nfragment AdminDeploymentPresetTableFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  rank\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n  }\n  image {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n  deploymentDefaults {\n    replicaCount\n    deploymentStrategy\n    openToPublic\n    revisionHistoryLimit\n  }\n  createdAt\n  updatedAt\n}\n"
+    "text": "query AdminDeploymentPresetQuery(\n  $filter: DeploymentRevisionPresetFilter\n  $orderBy: [DeploymentRevisionPresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  deploymentRevisionPresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        name\n        ...AdminDeploymentPresetTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment AdminDeploymentPresetTableFragment on DeploymentRevisionPreset {\n  entityId\n  name\n  description\n  rank\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n  }\n  image {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n  deploymentDefaults {\n    replicaCount\n    deploymentStrategy\n    openToPublic\n    revisionHistoryLimit\n  }\n  createdAt\n  updatedAt\n}\n"
   }
 };
 })();
 
-(node as any).hash = "1000908b843d647fc0cb73e6ed4c0da2";
+(node as any).hash = "eb9a73433ea11478a740b284cd3c97fa";
 
 export default node;

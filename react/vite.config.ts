@@ -1,10 +1,15 @@
+import { chunkReport } from './vite-plugins/chunk-report';
+import { relay } from './vite-plugins/relay';
 import {
   devReviewOverlayPlugin,
   reviewOverlayBuildPlugin,
 } from './vite-plugins/review-overlay/index';
+import { findStalePrebundle } from './vite-plugins/stale-prebundle';
+import { umdWithoutAmd } from './vite-plugins/umd-without-amd';
 import stylexVite from '@stylexjs/unplugin/vite';
 import react from '@vitejs/plugin-react';
 import compression from 'compression';
+import { Features } from 'lightningcss';
 import { execSync } from 'node:child_process';
 import {
   createReadStream,
@@ -25,9 +30,16 @@ import {
   join,
   relative,
   resolve,
+  sep,
 } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { defineConfig, loadEnv, normalizePath, type Plugin } from 'vite';
+import {
+  defaultClientConditions,
+  defineConfig,
+  loadEnv,
+  normalizePath,
+  type Plugin,
+} from 'vite';
 import checker from 'vite-plugin-checker';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -160,10 +172,10 @@ const isDevTypecheckEnabled = process.env.VITE_DEV_TYPECHECK === 'on';
 
 // `vite-plugin-node-polyfills` injects bare-specifier imports of its own shim
 // paths (`vite-plugin-node-polyfills/shims/{buffer,global,process}`) during
-// production build via `@rollup/plugin-inject`. With
+// production build via Rolldown's `transform.inject`. With
 // `enableGlobalVirtualStore: true` (pnpm-workspace.yaml) the importer of those
 // injected statements lives under `~/Library/pnpm/store/v11/links/...`, and
-// Rollup's walk-up resolution from there cannot reach the plugin in the
+// Rolldown's walk-up resolution from there cannot reach the plugin in the
 // project tree. Pre-resolving each shim's absolute entry via Node's require
 // once and aliasing makes resolution independent of importer location.
 const polyfillShimAlias = (name: 'buffer' | 'global' | 'process') => ({
@@ -407,6 +419,18 @@ function devAssetsReloadPlugin(): Plugin {
   };
 }
 
+function resolveUnder(root: string, encodedPath: string): string | null {
+  let decoded: string;
+  try {
+    decoded = decodeURIComponent(encodedPath);
+  } catch {
+    return null;
+  }
+  if (decoded.includes('\0')) return null;
+  const filePath = resolve(root, `.${sep}${decoded}`);
+  return filePath.startsWith(resolve(root) + sep) ? filePath : null;
+}
+
 function projectRootStaticPlugin(
   devCspHeaders: Record<string, string>,
 ): Plugin {
@@ -437,25 +461,29 @@ function projectRootStaticPlugin(
         //    client script injection).
         if (url === '/' || url === '/index.html') {
           let html = readFileSync(rootIndexHtml, 'utf-8');
-          html = await server.transformIndexHtml(
-            req.url,
-            html,
-            req.originalUrl,
-          );
+          html = await server.transformIndexHtml(url, html, req.originalUrl);
           res.setHeader('Content-Type', 'text/html; charset=utf-8');
           res.end(html);
           return;
         }
 
-        // 2. Serve legacy static assets from projectRoot (mirrors craco
-        //    devServer.static block).
-        const isStaticPrefix = STATIC_PREFIXES_FROM_ROOT.some((p) =>
+        // 2. Serve legacy static assets from projectRoot.
+        const staticPrefix = STATIC_PREFIXES_FROM_ROOT.find((p) =>
           url.startsWith(p),
         );
         const isStaticFile = STATIC_FILES_FROM_ROOT.has(url);
-        if (isStaticPrefix || isStaticFile) {
-          const filePath = join(projectRoot, url);
-          if (!filePath.startsWith(projectRoot)) return next();
+        if (staticPrefix || isStaticFile) {
+          const filePath = staticPrefix
+            ? resolveUnder(
+                join(projectRoot, staticPrefix),
+                url.slice(staticPrefix.length),
+              )
+            : join(projectRoot, url);
+          if (!filePath) {
+            res.statusCode = 403;
+            res.end();
+            return;
+          }
           if (existsSync(filePath) && statSync(filePath).isFile()) {
             const mime =
               MIME[extname(filePath).toLowerCase()] ??
@@ -613,6 +641,22 @@ function devCompressionPlugin(): Plugin {
   };
 }
 
+function devLinkedDepSourcemapPlugin(): Plugin {
+  return {
+    name: 'bai-dev-linked-dep-sourcemap',
+    apply: 'serve',
+    enforce: 'post',
+    transform(code, id) {
+      if (!this.environment.depsOptimizer?.isOptimizedDepFile(id)) return;
+      const file = basename(id.split('?')[0]);
+      return {
+        code: `${code}\n//# sourceMappingURL=${file}.map`,
+        map: { mappings: '' },
+      };
+    },
+  };
+}
+
 function monacoStaticPlugin(): Plugin {
   const monacoRoot = resolve(__dirname, 'node_modules/monaco-editor/min/vs');
   const URL_PREFIX = '/resources/monaco/vs/';
@@ -626,11 +670,15 @@ function monacoStaticPlugin(): Plugin {
         const url = req.url.split('?')[0];
         if (!url.startsWith(URL_PREFIX)) return next();
 
-        const rel = url.slice(URL_PREFIX.length);
-        const filePath = join(monacoRoot, rel);
-        // Path-traversal guard: `join` normalizes `..`, so prefix comparison
-        // catches any URL that escapes `monacoRoot`.
-        if (!filePath.startsWith(monacoRoot)) return next();
+        const filePath = resolveUnder(
+          monacoRoot,
+          url.slice(URL_PREFIX.length),
+        );
+        if (!filePath) {
+          res.statusCode = 403;
+          res.end();
+          return;
+        }
         if (!existsSync(filePath) || !statSync(filePath).isFile()) {
           return next();
         }
@@ -693,6 +741,29 @@ export default defineConfig(({ command, mode }) => {
     );
   }
 
+  const cacheDir = resolve(__dirname, 'node_modules/.vite');
+  const stalePrebundle =
+    command === 'serve'
+      ? findStalePrebundle(cacheDir, (name) => {
+          try {
+            return JSON.parse(
+              readFileSync(
+                resolve(__dirname, 'node_modules', name, 'package.json'),
+                'utf8',
+              ),
+            ).version;
+          } catch {
+            return undefined;
+          }
+        })
+      : null;
+  if (stalePrebundle) {
+    console.warn(
+      `[vite] the dependency pre-bundle has ${stalePrebundle.name}@${stalePrebundle.cached}, ` +
+        `but ${stalePrebundle.installed} is installed; re-optimizing every dependency (#10341).`,
+    );
+  }
+
   // Comma-separated list of additional hostnames to whitelist for the dev
   // server's host check (Vite 6 default-blocks anything outside localhost
   // since CVE-2025-30208). Example for SwitchHosts users:
@@ -713,13 +784,17 @@ export default defineConfig(({ command, mode }) => {
   // (per FR-2612 policy: one build, post-patch — never a second `vite build`).
   return {
     base: '/',
+    experimental: {
+      renderBuiltUrl: (_filename, { hostType }) =>
+        hostType === 'js' ? { relative: true } : undefined,
+    },
     // Keep root at `react/` so pnpm's react/react-dom installed in
     // react/node_modules resolve correctly. Static assets from projectRoot
     // are handled by projectRootStaticPlugin above.
     root: __dirname,
     publicDir: false,
     envDir: projectRoot,
-    cacheDir: resolve(__dirname, 'node_modules/.vite'),
+    cacheDir,
 
     resolve: {
       // Force a single instance of shared singletons across the monorepo.
@@ -738,6 +813,8 @@ export default defineConfig(({ command, mode }) => {
         'i18next',
         'react-i18next',
       ],
+      // Replaces Vite's defaults, hence the spread (ADR 0013).
+      conditions: ['@backend.ai/source', ...defaultClientConditions],
       // Array form lets us mix regex aliases (for `src/` baseUrl imports) with
       // the workspace-package aliases. `find` is matched against the import
       // source; `replacement` replaces the match.
@@ -746,16 +823,6 @@ export default defineConfig(({ command, mode }) => {
         // react/. Replicate that here — regex form ensures we only rewrite
         // imports that start with `src/`, not ones like `backend.ai-ui/src/`.
         { find: /^src\//, replacement: reactSrc + '/' },
-
-        // backend.ai-ui workspace package, dev-aliased to source so HMR
-        // tracks it without a BUI rebuild. `locale/*` is the published
-        // export-map alias for dist/locale/* and gets the same treatment.
-        { find: /^backend\.ai-ui\/dist(\/|$)/, replacement: buiSrc + '$1' },
-        {
-          find: /^backend\.ai-ui\/locale(\/|$)/,
-          replacement: buiSrc + '/locale$1',
-        },
-        { find: /^backend\.ai-ui$/, replacement: buiSrc },
 
         // backend.ai-client workspace package, dev-aliased to source so HMR
         // tracks the SDK without rebuilding tsup output.
@@ -802,6 +869,9 @@ export default defineConfig(({ command, mode }) => {
     },
 
     optimizeDeps: {
+      // Vite keys the cache on the lockfile hash only; see stale-prebundle.ts.
+      force: stalePrebundle !== null,
+      rolldownOptions: { plugins: [umdWithoutAmd()] },
       // Tell Vite exactly which files to scan for dependency optimization.
       // Without this, Vite crawls from `root` following all imports, which
       // pulled in stale legacy Lit plugins under scripts/temp-releases/ on
@@ -870,12 +940,8 @@ export default defineConfig(({ command, mode }) => {
       open: false,
       allowedHosts: allowedHosts,
       fs: {
-        // Allow Vite to read files from the whole monorepo so that the
-        // alias to `../dist/lib/...` and `../packages/backend.ai-ui/src`
-        // resolves without FS sandbox 403s. Additionally allow the pnpm
-        // global virtual store root (resolved dynamically above) so that
-        // dependencies hard-linked outside the repo can be served — see
-        // `resolvePnpmStorePath` for the full rationale.
+        // The whole monorepo (workspace package sources) and the pnpm global
+        // store — see `resolvePnpmStorePath`.
         allow: [projectRoot, ...(pnpmStorePath ? [pnpmStorePath] : [])],
       },
       watch: {
@@ -968,6 +1034,8 @@ export default defineConfig(({ command, mode }) => {
       // Compression must come first so its res.write/res.end hooks wrap
       // every downstream middleware's writes (see comment on the plugin).
       devCompressionPlugin(),
+      devLinkedDepSourcemapPlugin(),
+      umdWithoutAmd(),
       monacoStaticPlugin(),
       projectRootStaticPlugin(devCspHeaders),
       cspBundleNoncePlugin(),
@@ -983,14 +1051,8 @@ export default defineConfig(({ command, mode }) => {
       // inert (and so a byte-identical bundle) without it.
       reviewOverlayBuildPlugin(),
 
-      // StyleX compiler for Astryx `xstyle` authoring (to-astryx ticket 01),
-      // wired DIRECTLY via `@stylexjs/unplugin` (sole peer: `unplugin` — no
-      // vite peer) instead of `@astryxdesign/build/vite`, which declares peer
-      // `vite ^8`. The plugin sets `enforce: 'pre'` internally, so StyleX
-      // sees raw TSX ahead of @vitejs/plugin-react, and the React Compiler /
-      // babel-plugin-relay see StyleX-compiled output. It only processes
-      // files that literally import `@stylexjs/stylex`, so Astryx's
-      // precompiled dist/ is never re-transformed.
+      // StyleX compiler for Astryx `xstyle` authoring. It, relay() and the
+      // React Compiler in react() are `enforce: 'pre'`, so it must stay first.
       stylexVite({
         // Unlayered output: StyleX's own `:not(#\#)` priority ladder orders
         // rules inside the sheet, and unlayered CSS outranks every named
@@ -1031,27 +1093,11 @@ export default defineConfig(({ command, mode }) => {
         },
       },
 
-      react({
-        babel: (id) => {
-          const isBUI = id.startsWith(buiSrc);
-          const isReactSrc = id.startsWith(reactSrc);
-          const plugins: Array<string | [string, unknown]> = [
-            ['babel-plugin-react-compiler', { compilationMode: 'annotation' }],
-          ];
-          if (isBUI) {
-            plugins.push([
-              'babel-plugin-relay',
-              { artifactDirectory: buiArtifactDir },
-            ]);
-          } else if (isReactSrc) {
-            plugins.push([
-              'babel-plugin-relay',
-              { artifactDirectory: reactArtifactDir },
-            ]);
-          }
-          return { plugins };
-        },
-      }),
+      relay([
+        { srcDir: buiSrc, artifactDirectory: buiArtifactDir },
+        { srcDir: reactSrc, artifactDirectory: reactArtifactDir },
+      ]),
+      react({ compiler: { compilationMode: 'annotation' } }),
 
       svgr({
         include: '**/*.svg?react',
@@ -1070,7 +1116,7 @@ export default defineConfig(({ command, mode }) => {
           //   shims_buffer` also *imports* it (via the injected prelude),
           //   and the import lands in the same chunk before the export is
           //   initialized → TDZ on first browser load. `'build'` scopes
-          //   the injection to the production rollup build only.
+          //   the injection to the production build only.
           //
           // Why this is safe to do here:
           //   No app code under `react/src` or `packages/backend.ai-ui/src`
@@ -1086,20 +1132,8 @@ export default defineConfig(({ command, mode }) => {
         },
       }),
 
-      // Service worker generation (build only). Mirrors the options used
-      // by craco's workbox-webpack-plugin GenerateSW call in
-      // craco.config.cjs:390-400.
-      //
-      // Run `tsc --noEmit` in a worker so type errors surface in the dev
-      // terminal and as a browser overlay during `vite dev`. Vite itself
-      // only strips types via esbuild, so without this plugin type
-      // errors are visible only in the IDE or via `scripts/verify.sh`.
-      // `tsconfigPath` pins the checker to the consumer's tsconfig (which has
-      // the `paths` workaround for pnpm-global-virtual-store type resolution —
-      // see FR-2925). During dev it is the derived `tsconfig.checker.json`
-      // that excludes the pnpm store from the watch program (FR-3214) — see
-      // `resolveCheckerTsconfigPath` above; for `vite build` it is the plain
-      // base tsconfig.
+      // Type errors in the dev terminal and browser overlay; Vite only strips
+      // types. The tsconfig choice is `resolveCheckerTsconfigPath` (FR-3214).
       ...(runTypeChecker
         ? [
             checker({
@@ -1150,15 +1184,39 @@ export default defineConfig(({ command, mode }) => {
           navigateFallback: null,
         },
       }),
+
+      ...(process.env.VITE_CHUNK_REPORT
+        ? [chunkReport(resolve(process.env.VITE_CHUNK_REPORT))]
+        : []),
     ],
+
+    css: {
+      lightningcss: { exclude: Features.LightDark },
+    },
 
     build: {
       outDir: resolve(__dirname, 'build'),
+      target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14'],
+      cssTarget: ['chrome111', 'edge111', 'firefox114', 'safari16.4', 'ios16.4'],
       emptyOutDir: true,
       sourcemap: true,
       // Suppress the warning about chunk size; the app is large and this
       // matches the existing craco/webpack threshold expectation.
       chunkSizeWarningLimit: 2000,
+      rolldownOptions: {
+        output: {
+          comments: { legal: true },
+          // Per-function packages shared by many lazy pages otherwise become
+          // one ~1 KB chunk per function (29 lodash-es + 13 lucide chunks on
+          // the login page, measured 2026-10-22); both are mostly in the boot
+          // path already, so one chunk each costs no extra bytes.
+          manualChunks(id) {
+            if (/\/node_modules\/lodash-es\//.test(id)) return 'lodash';
+            if (/\/node_modules\/lucide-react\//.test(id)) return 'icons';
+            return undefined;
+          },
+        },
+      },
     },
   };
 });

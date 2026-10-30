@@ -72,10 +72,11 @@ const WebUIHeaderProjectSelect: React.FC = () => {
   // Checked against the selector's own accessible-project source (FR-3388) so
   // this can never disagree with what the selector renders.
   const activeProjectName = useActiveProjectName();
-  const { accessibleProjects } = useAccessibleProjects();
-  const accessibleProjectNames = _.compact(
-    _.map(accessibleProjects, (project) => project?.name),
-  );
+  const { accessibleProjects, personalProject } = useAccessibleProjects();
+  const accessibleProjectNames = _.compact([
+    ..._.map(accessibleProjects, (project) => project?.name),
+    personalProject?.name,
+  ]);
   // A router-owned 404 outside any project context (e.g. an invalid scope
   // prefix like `/admi/...`) corresponds to no project at all — show the
   // selector placeholder there too. Scoped 404s under a valid
@@ -134,7 +135,7 @@ const WebUIHeaderProjectSelect: React.FC = () => {
       {/* Same reversed-band context as the rest of the header — see
           `WebUIHeader.tsx`. */}
       <MediaTheme mode={bandMediaMode}>
-        {gridBreakpoint.sm && (
+        {gridBreakpoint.lg && (
           <Text type="large" weight="semibold">
             {t('webui.menu.Project')}
           </Text>
@@ -145,7 +146,7 @@ const WebUIHeaderProjectSelect: React.FC = () => {
         ghost
         popupMatchSelectWidth={false}
         style={{
-          minWidth: 100,
+          minWidth: gridBreakpoint.sm ? 100 : 64,
           maxWidth: gridBreakpoint.lg ? undefined : 150,
           // Lands on the Selector TRIGGER, re-declaring the band wash the
           // theme's `field` entry neutralises for the popup panel below it
@@ -157,6 +158,9 @@ const WebUIHeaderProjectSelect: React.FC = () => {
         className="non-draggable"
         showSearch
         domain={currentDomainName}
+        personalProject={personalProject}
+        lockPersonalProject={false}
+        labelPersonalProjectAsMine
         value={
           isProjectChanging
             ? optimisticProjectId

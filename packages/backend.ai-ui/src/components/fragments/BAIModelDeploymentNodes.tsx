@@ -20,7 +20,6 @@ import {
   BAITableProps,
 } from '../Table';
 import BAIDeploymentOwnerInfo from './BAIDeploymentOwnerInfo';
-import BAIDeploymentTagTokens from './BAIDeploymentTagTokens';
 import BAIEntityLabelCell from './BAIEntityLabelCell';
 import type { BAIEntityLabel } from './BAIEntityLabelTokens';
 import { Link } from '@lablup/ui-common/Link';
@@ -41,7 +40,7 @@ export type ModelDeploymentNodeInList = NonNullable<
  * (see `AdminDeploymentPresetTable`). A sortable column's `dataIndex` matches
  * an entry here, and callers bridge these strings to the server
  * `DeploymentOrderField` enum with the shared `convertToOrderBy` helper
- * (`createdAt` → `CREATED_AT`, `tag` → `TAG`, …). `updatedAt` is
+ * (`createdAt` → `CREATED_AT`, `resourceGroup` → `RESOURCE_GROUP`, …). `updatedAt` is
  * intentionally omitted because the server enum does not include it.
  */
 export const availableDeploymentSorterKeys = [
@@ -49,7 +48,7 @@ export const availableDeploymentSorterKeys = [
   'createdAt',
   'project',
   'resourceGroup',
-  'tag',
+  'desiredReplicas',
 ] as const;
 
 export type DeploymentSorterKey =
@@ -111,7 +110,6 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
           domainName
           name
           status
-          tags
           createdAt
           updatedAt
           resourceGroupName
@@ -121,7 +119,6 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
             }
             id
           }
-          ...BAIDeploymentTagTokens_metadata
         }
         networkAccess {
           endpointUrl
@@ -211,6 +208,8 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
       },
       {
         key: 'replicaSummary',
+        dataIndex: 'desiredReplicas',
+        sorter: isEnableSorter('desiredReplicas'),
         title: (
           <BAIFlex gap="xxs" align="center">
             {t('comp:BAIModelDeploymentNodes.ReplicaSummary')}
@@ -259,6 +258,8 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         key: 'replicas',
         title: t('comp:BAIModelDeploymentNodes.Replicas'),
         defaultHidden: true,
+        dataIndex: 'desiredReplicas',
+        sorter: isEnableSorter('desiredReplicas'),
         render: (__, record) => {
           const desired = record.replicaState?.desiredReplicaCount;
           if (!_.isNumber(desired)) {
@@ -271,21 +272,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         key: 'id',
         title: t('comp:BAIModelDeploymentNodes.DeploymentID'),
         defaultHidden: true,
-        render: (__, record) => <BAIId globalId={record.id} copyable />,
-      },
-      {
-        key: 'tags',
-        title: t('comp:BAIModelDeploymentNodes.Tags'),
-        defaultHidden: true,
-        dataIndex: 'tag',
-        sorter: isEnableSorter('tag'),
-        render: (__, record) => (
-          <BAIDeploymentTagTokens
-            metadataFrgmt={record.metadata}
-            stopRowClick
-            fallback={<Text color="secondary">-</Text>}
-          />
-        ),
+        render: (__, record) => <BAIId uuid={record.entityId} copyable />,
       },
       {
         key: 'projectId',

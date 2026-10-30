@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-10-14
+> **Last Updated:** 2026-10-23
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 364 / 514 features covered (71%)**
+**Overall (in-scope routes): 375 / 525 features covered (71%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -20,26 +20,26 @@
 | Change Password          | `/change-password`                               |    9     |    9    | ✅ 100% |
 | Start Page               | `/start`                                         |    8     |    6    | 🔶 75%  |
 | Dashboard                | `/dashboard`                                     |    11    |    9    | 🔶 82%  |
-| Session List             | `/session`                                       |    24    |   16    | 🔶 67%  |
+| Session List             | `/session`                                       |    26    |   18    | 🔶 69%  |
 | Session Launcher         | `/session/start`                                 |    13    |    3    | 🔶 23%  |
 | Serving                  | `/serving`                                       |    7     |    2    | 🔶 29%  |
 | Endpoint Detail          | `/serving/:serviceId`                            |    19    |    8    | 🔶 42%  |
 | Service Launcher         | `/service/start`                                 |    5     |    1    | 🔶 20%  |
-| VFolder / Data           | `/data`                                          |    49    |   36    | 🔶 73%  |
+| VFolder / Data           | `/data`                                          |    51    |   38    | 🔶 75%  |
 | Model Store              | `/model-store`                                   |    6     |    6    | ✅ 100% |
 | Admin Model Store        | `/admin-model-store`                             |    28    |   28    | ✅ 100% |
 | Storage Host             | `/storage-settings/:hostname`                    |    3     |    0    |  ❌ 0%  |
 | My Environment           | `/my-environment`                                |    2     |    2    | ✅ 100% |
-| Environment              | `/environment`                                   |    27    |   21    | 🔶 78%  |
+| Environment              | `/environment`                                   |    29    |   23    | 🔶 79%  |
 | Configurations           | `/settings`                                      |    11    |    9    | 🔶 82%  |
 | Resources                | `/agent-summary`, `/agent`                       |    10    |    3    | 🔶 30%  |
 | Resource Policy          | `/resource-policy`                               |    13    |   10    | 🔶 77%  |
 | User Credentials         | `/credential`                                    |    25    |   18    | 🔶 72%  |
-| Maintenance              | `/maintenance`                                   |    3     |    2    | 🔶 67%  |
+| Maintenance              | `/maintenance`                                   |    5     |    4    | 🔶 80%  |
 | User Settings            | `/usersettings`                                  |    10    |    1    | 🔶 10%  |
 | Project                  | `/project`                                       |    6     |    5    | 🔶 83%  |
 | Statistics               | `/statistics`                                    |    2     |    2    | ✅ 100% |
-| Scheduler                | `/scheduler`                                     |    6     |    0    |  ❌ 0%  |
+| Scheduler                | `/scheduler`                                     |    7     |    1    | 🔶 14%  |
 | Information              | `/information`                                   |    2     |    2    | ✅ 100% |
 | Reservoir                | `/reservoir`, `/reservoir/:artifactId`           |    18    |    0    |  ❌ 0%  |
 | Branding                 | `/branding`                                      |    14    |    0    |  ❌ 0%  |
@@ -49,12 +49,12 @@
 | Plugin System            | (config-based)                                   |    12    |   12    | ✅ 100% |
 | RBAC Management          | `/rbac`                                          |    23    |   22    | 🔶 96%  |
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule`           |    33    |   32    | 🔶 97%  |
-| Deployments              | `/deployments`, `/deployments/:id`               |    21    |   18    | 🔶 86%  |
+| Deployments              | `/deployments`, `/deployments/:id`               |    23    |   20    | 🔶 87%  |
 | Admin Deployment Preset  | `/admin/deployments/deployment-presets/new`      |    5     |    5    | ✅ 100% |
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **515**  | **365** | **71%** |
+| **Total**                |                                                  | **525**  | **375** | **71%** |
 
 ---
 
@@ -216,8 +216,10 @@
 | Batch terminate → TerminateSessionModal                  | ❌     | -                                                                                                                                                    |
 | Scheduling history modal → SessionSchedulingHistoryModal | ✅     | `Admin can see the scheduling history button` + 18 more tests                                                                                        |
 | Resource policy warnings                                 | 🚧     | Skipped: `superadmin to modify keypair resource policy`                                                                                              |
+| Header session monitor chip (experimental setting)       | ✅     | `User can enable the session monitor and see their unfinished session count in the header`                                                           |
+| Session monitor popover → SessionDetailDrawer            | ✅     | `User can open a watched session in the detail drawer from the session monitor popover` (via mocked GraphQL)                                         |
 
-**Coverage: 🔶 16/24 features**
+**Coverage: 🔶 18/26 features**
 
 ---
 
@@ -309,7 +311,7 @@
 
 **Test files:**
 
-- [`e2e/serving/add-revision-manual-image.spec.ts`](serving/add-revision-manual-image.spec.ts) (integration; requires a live backend with an existing deployment)
+- [`e2e/serving/add-revision-manual-image.spec.ts`](serving/add-revision-manual-image.spec.ts) (integration; requires a live backend with an existing deployment; the #10038 Additional Mounts test provisions its own deployment and folders)
 - [`e2e/serving/add-revision-command-shell.spec.ts`](serving/add-revision-command-shell.spec.ts) (hybrid mock — real deployment shell + live model folder, modal-internal GraphQL stubbed; FR-3205)
 - [`e2e/serving/add-revision-runtime-defaults.spec.ts`](serving/add-revision-runtime-defaults.spec.ts) (hybrid mock — real deployment shell, runtime-variant / defaults GraphQL stubbed; FR-3342)
 
@@ -335,11 +337,12 @@
 | Model Definition File Path hidden for a non-config-reading variant (FR-3342)                                                                                                                                                       | ✅     | asserted inside `… default-command note for a non-config-reading variant (vllm)`                                                      |
 | Old-manager name-based `readsVfolderConfigFiles` fallback, reachable from a fresh variant select — `BAIRuntimeVariantSelect` resolves the omitted flag via `?? name === 'custom'` before the modal ever sees `undefined` (FR-3342) | ✅     | `Admin sees the custom service config for an old-manager variant (readsVfolderConfigFiles omitted, name === custom)`                  |
 | Health Check on with every detail field blank: fields optional, Path / Max Retries / Startup Grace Period placeholders from the model definition, the rest from manager defaults, mutation sends only `{ enable: true }` (#10223)  | ✅     | `Admin can add a revision with health check enabled and detail fields left blank`                                                     |
+| Additional Mounts folder select: a general folder is listed, model folders (including the picked one) are not, the pick shows as a source → mount path row, and the added revision carries the mount (#10038)                      | ✅     | `Admin can add a revision that mounts an additional general folder`                                                                   |
 | Old-manager name-based `readsVfolderConfigFiles` fallback via the "Load current revision" prefill path                                                                                                                             | ⏸️     | deferred — needs a full `DeploymentDetailPageQuery` mock with a `currentRevision` whose variant name is `custom` and the flag omitted |
 | Command prefill suppressed when the source revision's variant does not read config files (FR-3342)                                                                                                                                 | ⏸️     | same prefill path as the row above — needs the deferred `DeploymentDetailPageQuery` mock                                              |
 | `definitionPath` sent as null for a non-config-reading variant (FR-3342)                                                                                                                                                           | ⏸️     | submit-path guard; the field is unreachable in the UI for those variants, so only the mutation payload shows it                       |
 
-**Coverage: ✅ 16 features (FR-3278 regression guard + FR-3205 Start Command redesign + FR-3342 runtime-variant defaults + #10223 optional health-check fields); 3 deferred**
+**Coverage: ✅ 17 features (FR-3278 regression guard + FR-3205 Start Command redesign + FR-3342 runtime-variant defaults + #10223 optional health-check fields + #10038 Additional Mounts folder select); 3 deferred**
 
 > The FR-3205 preset-side change (the Admin Deployment Preset form no longer coerces
 > Basic mode's `shell` to the client default) has its own suite — see
@@ -437,6 +440,8 @@
 | Type selection: Project enabled for general                              | ✅     | `Project radio is enabled when usage mode is general`                                                                                  |
 | Type selection: User-only for regular user                               | ✅     | `Regular user sees only User-type radio (no Project radio)`                                                                            |
 | Type selection: Both types for admin                                     | ✅     | `Admin sees both User-type and Project-type radios`                                                                                    |
+| Edit labels (Labels column hover action) and filter by clicking a label  | ✅     | `User can edit labels on a folder and filter the list by a label`                                                                      |
+| Bulk add labels to selected folders                                      | ✅     | `User can add labels to multiple selected folders`                                                                                     |
 | Active/Deleted tab switching                                             | ❌     | -                                                                                                                                      |
 | Usage mode filtering (general/pipeline/automount/model)                  | ❌     | -                                                                                                                                      |
 | Property filtering (name, status, location)                              | ❌     | -                                                                                                                                      |
@@ -449,7 +454,7 @@
 | Shared folder permission → SharedFolderPermissionInfoModal               | ❌     | -                                                                                                                                      |
 | File download                                                            | ❌     | -                                                                                                                                      |
 
-**Coverage: 🔶 34/47 features (includes 1 skipped)**
+**Coverage: 🔶 36/49 features (includes 1 skipped)**
 
 ---
 
@@ -551,7 +556,7 @@
 
 #### Images Tab
 
-**Row actions:** `ImageInstallModal`, `ManageAppsModal`, `ManageImageResourceLimitModal`
+**Row actions:** `ImageInstallModal`, `ManageAppsModal`, `ManageImageResourceLimitModal`, Rescan (superadmin, ALIVE rows)
 **Filter:** `BAIPropertyFilter` (Name, Architecture, Status, Type, Registry)
 
 | Feature                                              | Status | Test                                                                        |
@@ -560,6 +565,8 @@
 | Image resource limit → ManageImageResourceLimitModal | ✅     | `user can modify image resource limit`                                      |
 | Image app management → ManageAppsModal               | ✅     | `user can manage apps`                                                      |
 | Image installation → ImageInstallModal               | 🚧     | Skipped: `user can install image`                                           |
+| Rescan a single ALIVE image (row action)             | ✅     | `Superadmin can rescan a single ALIVE image from the Images list`           |
+| Rescan hidden on non-ALIVE rows                      | ✅     | `Superadmin cannot see the Rescan button on a non-ALIVE image row`          |
 | BAIPropertyFilter UI rendering                       | ✅     | `Admin can see the BAIPropertyFilter on the Images tab`                     |
 | Filter by name (free text)                           | ✅     | `Admin can filter images by name using a text value`                        |
 | Filter by architecture (strict selection)            | ✅     | `Admin can filter images by architecture using strict selection`            |
@@ -600,7 +607,7 @@
 | Enable/disable registry toggle                 | ✅     | `Registry Control Operations` suite                            |
 | Registry filtering / search                    | ✅     | `Registry Filtering` suite                                     |
 
-**Coverage: 🔶 21/27 features**
+**Coverage: 🔶 23/29 features**
 
 ---
 
@@ -781,13 +788,15 @@
 
 **Test files:** [`e2e/maintenance/maintenance.spec.ts`](maintenance/maintenance.spec.ts)
 
-| Feature                   | Status | Test                                 |
-| ------------------------- | ------ | ------------------------------------ |
-| Recalculate usage         | ✅     | `click the Recalculate Usage button` |
-| Rescan images             | ✅     | `click the Rescan Images button`     |
-| Other maintenance actions | ❌     | -                                    |
+| Feature                     | Status | Test                                                                   |
+| --------------------------- | ------ | ---------------------------------------------------------------------- |
+| Recalculate usage           | ✅     | `click the Recalculate Usage button`                                   |
+| Rescan images               | ✅     | `click the Rescan Images button`                                       |
+| Publish system announcement | ✅     | `Admin can publish a system announcement with a title`                 |
+| Save announcement as draft  | ✅     | `Admin can save an announcement as a draft without showing the banner` |
+| Other maintenance actions   | ❌     | -                                                                      |
 
-**Coverage: 🔶 2/3 features**
+**Coverage: 🔶 4/5 features**
 
 ---
 
@@ -861,22 +870,23 @@
 
 ### 22. Scheduler (`/scheduler`)
 
-**Test files:** None
+**Test files:** [`e2e/config/page-access-control.spec.ts`](config/page-access-control.spec.ts)
 
 **Primary action:** Refresh (auto-update 7s)
 **Resource group selector:** `SharedResourceGroupSelectForCurrentProject`
 **Table link:** Session name → `SessionDetailAndContainerLogOpenerLegacy` drawer
 
-| Feature                                   | Status | Test |
-| ----------------------------------------- | ------ | ---- |
-| Pending session list rendering            | ❌     | -    |
-| Resource group filtering                  | ❌     | -    |
-| Session name click → SessionDetail drawer | ❌     | -    |
-| Auto-refresh (7s interval)                | ❌     | -    |
-| Pagination and page size                  | ❌     | -    |
-| Column visibility settings                | ❌     | -    |
+| Feature                                       | Status | Test                                             |
+| --------------------------------------------- | ------ | ------------------------------------------------ |
+| Superadmin opens it from the menu and the URL | ✅     | `Superadmin can see and open the Scheduler page` |
+| Pending session list rendering                | ❌     | -                                                |
+| Resource group filtering                      | ❌     | -                                                |
+| Session name click → SessionDetail drawer     | ❌     | -                                                |
+| Auto-refresh (7s interval)                    | ❌     | -                                                |
+| Pagination and page size                      | ❌     | -                                                |
+| Column visibility settings                    | ❌     | -                                                |
 
-**Coverage: ❌ 0/6 features**
+**Coverage: 🔶 1/7 features**
 
 ---
 
@@ -1201,17 +1211,19 @@ External portals (LMS) open these routes with a signed `sToken` plus the app and
 
 #### List Page
 
-| Feature                                                                   | Status | Test                                                                     |
-| ------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------ |
-| List columns, Running/Terminated toggle, reload & Create controls         | ✅     | `Admin can view the deployments list with expected columns and controls` |
-| Create deployment (defaults, auto-redirect) + typed-name permanent delete | ✅     | `Admin can create a new deployment and permanently delete it`            |
+| Feature                                                                                   | Status | Test                                                                          |
+| ----------------------------------------------------------------------------------------- | ------ | ----------------------------------------------------------------------------- |
+| List columns, Serving/Paused/Terminated tabs with help tooltips, reload & Create controls | ✅     | `Admin can view the deployments list with expected columns and controls`      |
+| Zero Desired Replicas lists under Paused (not Serving), tab kept in URL across reload     | ✅     | `Admin can find a deployment with zero Desired Replicas under the Paused tab` |
+| Create deployment (defaults, auto-redirect) + typed-name permanent delete                 | ✅     | `Admin can create a new deployment and permanently delete it`                 |
 
 #### Admin List — Filters (`/admin/deployments`)
 
-| Feature                                                          | Status | Test                                             |
-| ---------------------------------------------------------------- | ------ | ------------------------------------------------ |
-| Owner filter (`createdUserId`) shows the owner email, not a UUID | ✅     | `Admin can filter deployments by owner`          |
-| Tags-column click filters by the exact tag (`iEquals`)           | ✅     | `Admin can filter deployments by clicking a tag` |
+| Feature                                                              | Status | Test                                             |
+| -------------------------------------------------------------------- | ------ | ------------------------------------------------ |
+| Owner filter (`createdUserId`) shows the owner email, not a UUID     | ✅     | `Admin can filter deployments by owner`          |
+| Tags-column click filters by the exact tag (`iEquals`)               | ✅     | `Admin can filter deployments by clicking a tag` |
+| Edit labels, filter by Label key / Label value, label on detail card | ✅     | `Admin can filter deployments by label`          |
 
 #### Detail Page
 
@@ -1247,7 +1259,7 @@ External portals (LMS) open these routes with a signed `sToken` plus the app and
 | Replica scheduling completion (Lifecycle leaves Pending → replica scheduled)       | ❌     | Deferred — measured ~40s–20min+ on the shared cluster; out of scope for webui e2e                                        |
 | Revision rollback / promote from Revision History                                  | ❌     | -                                                                                                                        |
 
-**Coverage: 🔶 15/19 features (4 deferred to backend-surface testing or future work)**
+**Coverage: 🔶 17/21 features (4 deferred to backend-surface testing or future work)**
 
 ---
 
@@ -1372,7 +1384,7 @@ These are core user workflows that affect the largest number of users.
 | 9   | **Environment - Presets** (`/environment`)                          | 4 uncovered features for Resource Presets tab. Each with CRUD modals.                                      | Medium               |
 | 10  | **Resources - Resource Groups** (`/agent`)                          | 5 uncovered features with 3 modals (create/edit/info). Agent drawer also untested.                         | Medium               |
 | 11  | **Model Store** (`/model-store`)                                    | Browse/search models. ModelCardModal for detail. Read-only interface.                                      | Low                  |
-| 12  | **Scheduler** (`/scheduler`)                                        | 6 features. Pending session queue monitoring. Admin tool.                                                  | Low                  |
+| 12  | **Scheduler** (`/scheduler`)                                        | 6 uncovered features. Pending session queue monitoring. Superadmin access control is covered.              | Low                  |
 | 13  | **Branding** (`/branding`)                                          | 14 features. Theme/logo customization. Admin tool.                                                         | Medium               |
 | 14  | **Storage Host Settings** (`/storage-settings/:hostname`)           | Niche admin feature.                                                                                       | Low                  |
 | 15  | **Chat** (`/chat/:id?`)                                             | ✅ Covered. Mock-based tests for chat UI, history, multi-pane, sync.                                       | -                    |
@@ -1450,7 +1462,7 @@ To efficiently build new E2E tests, these POMs should be created:
 | `/project`                             |        🔶        |      ❌      |    -     |
 | `/statistics`                          |        ✅        |      ❌      |    -     |
 | `/usersettings`                        |        🔶        |      ❌      |  **P2**  |
-| `/scheduler`                           |        ❌        |      ❌      |    P3    |
+| `/scheduler`                           |        🔶        |      ❌      |    P3    |
 | `/information`                         |        ✅        |      ✅      |    -     |
 | `/reservoir`                           |        ❌        |      ❌      |    P2    |
 | `/branding`                            |        ❌        |      ❌      |    P3    |

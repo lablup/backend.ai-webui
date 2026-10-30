@@ -31,7 +31,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Disable an action with `disabled: { reason }` rather than a bare `true` — the reason becomes the button tooltip and is appended to the label once the action overflows into the more menu. `true` disables it silently, which the type makes a deliberate choice.',
+          'Disable an action with `disabled: { reason }` rather than a bare `true` — the reason becomes the button tooltip and stays a tooltip on the label of the menu row once the action overflows into the more menu. `true` disables it silently, which the type makes a deliberate choice.',
       },
       {
         guidance: true,
@@ -104,7 +104,7 @@ export const docs = {
       name: 'minTitleWidth',
       type: 'number',
       description:
-        'Width (px) the title keeps before an action may claim space; actions that no longer fit fold into the more menu. Applies to `showActions="always"` only — hover mode collapses its actions to zero width at rest, so nothing competes for the title there. Raise it where the title is long and the cell is narrow — the file explorer passes 120 so a file name stays readable.',
+        'Width (px) the title keeps before an action may claim space; actions that no longer fit fold into the more menu. Applies in both modes — hover mode reserves the width of its actions at rest too, so the column does not change width on hover. Raise it where the title is long and the cell is narrow — the file explorer passes 120 so a file name stays readable.',
       default: '40',
     },
     {

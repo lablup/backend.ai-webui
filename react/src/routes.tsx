@@ -30,6 +30,7 @@ import {
 } from './hooks/useAutoDiagnostics';
 import { useBAISettingUserState } from './hooks/useBAISetting';
 import { useCurrentProjectValue } from './hooks/useCurrentProject';
+import { useEffectiveAdminRole } from './hooks/useCurrentUserProjectRoles';
 import { LogoutEventHandler } from './hooks/useLogout';
 import { useActiveProjectName } from './hooks/useRouteScope';
 import { useSToken } from './hooks/useSToken';
@@ -39,11 +40,8 @@ import {
 } from './hooks/useWebUIMenuItems';
 import { pluginApiEndpointState } from './hooks/useWebUIPluginState';
 import { AdminRedirect, ProjectScopedRedirect } from './legacyRedirects';
-// High priority to import the component
-import ComputeSessionListPage from './pages/ComputeSessionListPage';
 import Page404 from './pages/Page404';
 import UnknownRoutePage from './pages/UnknownRoutePage';
-import VFolderNodeListPage from './pages/VFolderNodeListPage';
 import { toProjectContext } from './types/projectContext';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAISkeleton, BAIFlex, BAICard } from 'backend.ai-ui';
@@ -53,7 +51,12 @@ import React, { Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RouteObject, useParams } from 'react-router-dom';
 
-const LoginViewLazy = React.lazy(() => import('./components/LoginView'));
+const ComputeSessionListPage = React.lazy(
+  () => import('./pages/ComputeSessionListPage'),
+);
+const VFolderNodeListPage = React.lazy(
+  () => import('./pages/VFolderNodeListPage'),
+);
 
 const Information = React.lazy(() => import('./components/Information'));
 const StartPage = React.lazy(() => import('./pages/StartPage'));
@@ -164,6 +167,23 @@ const DefaultMenuRedirect: React.FC = () => {
   return <WebUINavigate to={defaultMenuPath} replace />;
 };
 
+/** The app root: a superadmin lands on the system admin pages. */
+const RootRedirect: React.FC = () => {
+  'use memo';
+  const { defaultMenuPath, firstAvailableAdminMenuItem } = useWebUIMenuItems();
+  const isSuperAdmin = useEffectiveAdminRole() === 'superadmin';
+  return (
+    <WebUINavigate
+      to={
+        isSuperAdmin && firstAvailableAdminMenuItem
+          ? getPathFromMenuKey(firstAvailableAdminMenuItem.key)
+          : defaultMenuPath
+      }
+      replace
+    />
+  );
+};
+
 /**
  * Index redirect for the bare scope roots `/admin` and
  * `/project/:name/admin`: send the user to the first menu item valid in that
@@ -230,17 +250,17 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   {
     // Redirect to first available menu when accessing root path
     index: true,
-    Component: DefaultMenuRedirect,
+    Component: RootRedirect,
   },
   {
     //for electron dev mode
     path: '/build/electron-app/app/index.html',
-    Component: DefaultMenuRedirect,
+    Component: RootRedirect,
   },
   {
     //for electron prod mode
     path: '/app/index.html',
-    Component: DefaultMenuRedirect,
+    Component: RootRedirect,
   },
   // --- New scope-aware subtrees ---
   // Project scope subtree: `/project/:projectName/*` (general user menu) plus
@@ -1690,7 +1710,7 @@ export const routes: RouteObject[] = [
             </Suspense>
             <Suspense>
               <ErrorBoundaryWithNullFallback>
-                <LoginViewLazy />
+                <LoginView />
               </ErrorBoundaryWithNullFallback>
               <ErrorBoundaryWithNullFallback>
                 <FolderExplorerOpener />

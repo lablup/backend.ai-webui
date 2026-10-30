@@ -38,6 +38,26 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Выберите группу ресурсов"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "Цель политики",
+    "CreatedAt": "Дата создания",
+    "Disabled": "Отключено",
+    "Enabled": "Включено",
+    "LastSweptAt": "Последняя очистка",
+    "NotSweptYet": "Ещё не выполнялась",
+    "RetentionPeriodDays": "Срок хранения (дни)",
+    "UpdatedAt": "Обновлено",
+    "categories": {
+      "DEPLOYMENTS": "Развёртывания",
+      "LOGIN": "История входов",
+      "LOGS": "Журналы",
+      "RECONCILE_HISTORY": "История согласования",
+      "ROLES_INVITATIONS": "Роли и приглашения",
+      "SESSIONS": "Сеансы",
+      "USAGE_BUCKETS": "Сводки использования",
+      "USAGE_RECORDS": "Записи использования"
+    }
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Выберите сеанс"
   },
@@ -163,7 +183,6 @@
     "KeyRequired": "Введите ключ.",
     "Label": "Метка",
     "LabelsSaved": "Метки сохранены.",
-    "RemoveLabel": "Удалить метку",
     "Save": "Сохранить",
     "SomeLabelsFailed": "Не удалось применить изменений меток: {{count}}",
     "Target": "Объект",
@@ -173,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Метка"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Создать",
+    "Custom": "Пользовательский",
+    "FullAccess": "Полный доступ",
+    "HardDelete": "Удалить безвозвратно",
+    "Read": "Читать",
+    "ReadAndWrite": "Чтение и запись",
+    "ReadOnly": "Только чтение",
+    "SoftDelete": "Удалить",
+    "Update": "Обновить"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Автообновление",
@@ -319,7 +349,6 @@
     "RevisionNumber": "Ревизия",
     "RevisionNumberTooltip": "Текущий номер ревизии развёртывания.",
     "StrategyType": "Стратегия",
-    "Tags": "Теги",
     "UpdatedAt": "Обновлено"
   },
   "comp:BAINameActionCell": {
@@ -558,12 +587,33 @@
     "To": "Целевой статус",
     "UpdatedAt": "Обновлено"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Пригласить по электронной почте"
+  },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Выбрать папку"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Агент"
   },
   "comp:BAISessionClusterMode": {
     "MultiNodeShort": "Мульти",
     "SingleNodeShort": "Одинокий"
+  },
+  "comp:BAISessionScene": {
+    "FoundCount": "Найдено: {{count}}",
+    "Hero": "Мои",
+    "Measuring": "Измеряется",
+    "ResourceShare": "Доля ресурсов",
+    "ShowAll": "Показать все",
+    "Utilization": "Загрузка",
+    "mood": {
+      "Idle": "Простаивает",
+      "Leaving": "Завершается",
+      "Overheated": "Перегрев",
+      "Waiting": "Ожидает ресурсы",
+      "Working": "Работает"
+    }
   },
   "comp:BAISessionTypeToken": {
     "Batch": "Пакетный",
@@ -616,8 +666,6 @@
     "CreateFolder": "Создать новую папку для хранения",
     "DestinationPath": "Путь в контейнере (destination)",
     "Folders": "Папки",
-    "OwnerProject": "Проект",
-    "OwnerUser": "Пользователь",
     "PathAndAliasTooltip": "Путь внутри контейнера, в который будет смонтирована папка. Оставьте пустым для использования пути по умолчанию.",
     "Refresh": "Обновить",
     "RemoveFolder": "Удалить",

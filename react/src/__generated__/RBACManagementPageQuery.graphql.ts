@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<82b3d0c8e42eec7d53bd26fce972322d>>
+ * @generated SignedSource<<c48dabf53382400549c35753134dbc13>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -21,6 +21,7 @@ export type RoleFilter = {
   NOT?: ReadonlyArray<RoleFilter> | null | undefined;
   OR?: ReadonlyArray<RoleFilter> | null | undefined;
   assignedUser?: RoleUserNestedFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   mappedScope?: RoleMappedScopeNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;
   permissions?: RolePermissionNestedFilter | null | undefined;
@@ -92,6 +93,7 @@ export type PermissionFilter = {
   OR?: ReadonlyArray<PermissionFilter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
   entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   permission?: PermissionBitFilter | null | undefined;
   roleId?: UUIDFilter | null | undefined;
   scopeId?: StringFilter | null | undefined;

@@ -7,7 +7,7 @@ import {
   dimLayerOf,
   renderScrollTable,
   rootOf,
-} from './BAITable.scrollTestFixtures';
+} from './BAITable.scroll.fixtures';
 
 describe('BAITable scroll.x', () => {
   it.each([

@@ -38,6 +38,26 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Select resource group"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "Policy Target",
+    "CreatedAt": "Created At",
+    "Disabled": "Disabled",
+    "Enabled": "Enabled",
+    "LastSweptAt": "Last Cleanup",
+    "NotSweptYet": "Not run yet",
+    "RetentionPeriodDays": "Retention Period (Days)",
+    "UpdatedAt": "Updated At",
+    "categories": {
+      "DEPLOYMENTS": "Deployments",
+      "LOGIN": "Login History",
+      "LOGS": "Logs",
+      "RECONCILE_HISTORY": "Reconcile History",
+      "ROLES_INVITATIONS": "Roles & Invitations",
+      "SESSIONS": "Sessions",
+      "USAGE_BUCKETS": "Usage Buckets",
+      "USAGE_RECORDS": "Usage Records"
+    }
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Select Session"
   },
@@ -163,7 +183,6 @@
     "KeyRequired": "Enter a key.",
     "Label": "Label",
     "LabelsSaved": "Labels saved.",
-    "RemoveLabel": "Remove label",
     "Save": "Save",
     "SomeLabelsFailed": "{{count}} label changes failed",
     "Target": "Target",
@@ -174,11 +193,22 @@
   "comp:BAIEntityLabelTokens": {
     "Labels": "Labels"
   },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Create",
+    "Custom": "Custom",
+    "FullAccess": "Full access",
+    "HardDelete": "Hard delete",
+    "Read": "Read",
+    "ReadAndWrite": "Read & write",
+    "ReadOnly": "Read only",
+    "SoftDelete": "Soft delete",
+    "Update": "Update"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Auto Refresh",
-    "EveryHours": "{{count}}h",
-    "EveryMinutes": "{{count}}m",
-    "EverySeconds": "{{count}}s",
+    "EveryHours": "{{count}} h",
+    "EveryMinutes": "{{count}} min",
+    "EverySeconds": "{{count}} s",
     "LastUpdated": "Last Updated",
     "Off": "Off",
     "Refresh": "Refresh"
@@ -319,7 +349,6 @@
     "RevisionNumber": "Revision",
     "RevisionNumberTooltip": "The current revision number of the deployment.",
     "StrategyType": "Strategy",
-    "Tags": "Tags",
     "UpdatedAt": "Updated At"
   },
   "comp:BAINameActionCell": {
@@ -558,12 +587,33 @@
     "To": "To Status",
     "UpdatedAt": "Updated At"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Invite by e-mail"
+  },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Select Folder"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agent"
   },
   "comp:BAISessionClusterMode": {
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Single"
+  },
+  "comp:BAISessionScene": {
+    "FoundCount": "{{count}} found",
+    "Hero": "Yours",
+    "Measuring": "Measuring",
+    "ResourceShare": "Resource share",
+    "ShowAll": "Show all",
+    "Utilization": "Utilization",
+    "mood": {
+      "Idle": "Idle",
+      "Leaving": "Terminating",
+      "Overheated": "Overheated",
+      "Waiting": "Waiting for resources",
+      "Working": "Working"
+    }
   },
   "comp:BAISessionTypeToken": {
     "Batch": "Batch",
@@ -616,8 +666,6 @@
     "CreateFolder": "Create a new storage folder",
     "DestinationPath": "Container path (destination)",
     "Folders": "Folders",
-    "OwnerProject": "Project",
-    "OwnerUser": "User",
     "PathAndAliasTooltip": "The path inside the container where the folder will be mounted. Leave empty to use the default path.",
     "Refresh": "Refresh",
     "RemoveFolder": "Remove",

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8dc5a9b661bfc9acd5de5dd304e5f389>>
+ * @generated SignedSource<<bd0f95101229167313fa12e86ab3747a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,6 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type BAIDeactivateArtifactsModalArtifactsFragment$data = ReadonlyArray<{
+  readonly entityId: string;
   readonly id: string;
   readonly name: string;
   readonly " $fragmentType": "BAIDeactivateArtifactsModalArtifactsFragment";
@@ -39,6 +40,13 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "name",
       "storageKey": null
     }
@@ -47,6 +55,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "26ee1b9a7472e661b724e54fd20b19a2";
+(node as any).hash = "dc9ed8e2de13dae6ba39bd5450666daa";
 
 export default node;

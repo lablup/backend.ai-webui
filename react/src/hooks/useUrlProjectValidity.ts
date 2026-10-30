@@ -44,7 +44,12 @@ export interface UrlProjectValidity {
  */
 export const useUrlProjectValidity = (): UrlProjectValidity => {
   'use memo';
-  const { accessibleProjects } = useAccessibleProjects();
+  const { accessibleProjects: memberProjects, personalProject } =
+    useAccessibleProjects();
+  const accessibleProjects =
+    personalProject && !_.some(memberProjects, { id: personalProject.id })
+      ? [...(memberProjects ?? []), personalProject]
+      : memberProjects;
   const matches = useMatches();
 
   let urlProjectName: string | undefined;

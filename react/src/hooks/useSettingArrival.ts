@@ -35,7 +35,7 @@ export const useSettingArrival = (
     SETTING_ARRIVAL_PARAM,
   );
   // `postProcess: []` bypasses the dev-only `copyableI18nKey` processor, which
-  // returns JSX; an unknown key resolves to itself and simply never matches.
+  // appends the key; an unknown key resolves to itself and simply never matches.
   const requestedTitle = settingKey
     ? t(settingKey, { postProcess: [] })
     : undefined;

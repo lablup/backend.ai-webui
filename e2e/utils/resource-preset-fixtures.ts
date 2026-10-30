@@ -1,13 +1,14 @@
 import { gqlAdmin } from './admin-api';
+import { getE2EDomainName } from './e2e-scope';
 import type { APIRequestContext } from '@playwright/test';
 
 /**
  * Admin-API fixtures for resource-group-scoped resource presets (FR-4067).
  *
  * A preset name is unique only within a resource group, so the fixture builds
- * one name three times — global, scoped to `default`, and scoped to a
- * throwaway resource group associated with the `default` domain so the
- * session launcher offers it.
+ * one name three times — global, scoped to the `default` resource group, and
+ * scoped to a throwaway resource group associated with the e2e domain
+ * (`getE2EDomainName`) so the session launcher offers it.
  */
 export interface ScopedPresetFixture {
   presetName: string;
@@ -32,9 +33,10 @@ export async function createScopedPresetFixture(
   api: APIRequestContext,
   {
     baseResourceGroup = 'default',
-    domain = 'default',
+    domain: domainOverride,
   }: { baseResourceGroup?: string; domain?: string } = {},
 ): Promise<ScopedPresetFixture> {
+  const domain = domainOverride ?? (await getE2EDomainName(api));
   const suffix = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
   const fixture: ScopedPresetFixture = {
     presetName: `e2e-rp-${suffix}`,

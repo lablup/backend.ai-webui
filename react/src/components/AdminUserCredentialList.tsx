@@ -10,7 +10,7 @@ import {
 } from '../__generated__/AdminUserCredentialListQuery.graphql';
 import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSettingModalFragment.graphql';
 import { App } from '../app-shim';
-import BAIRadioGroup from './BAIRadioGroup';
+import { useSuspendedBackendaiClient } from '../hooks';
 import KeypairInfoModal from './KeypairInfoModal';
 import KeypairSettingModal from './KeypairSettingModal';
 import { Text } from '@lablup/ui-common/Text';
@@ -23,6 +23,8 @@ import {
   BAIFlex,
   BAINameActionCell,
   BAIPropertyFilter,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
   BAISelectionLabel,
   BAITable,
   BAIText,
@@ -117,6 +119,9 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
   const { token } = useTheme();
   const { message, modal } = App.useApp();
   const { logger } = useBAILogger();
+  // Keypair management is out of scope for the scoped migration and stays
+  // superadmin-only by design (ADR 0012).
+  const isSuperAdmin = useSuspendedBackendaiClient().is_superadmin;
 
   const [keypairSettingModalFrgmt, setKeypairSettingModalFrgmt] =
     useState<KeypairSettingModalFragment$key | null>(null);
@@ -249,28 +254,26 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex justify="between" align="start" gap="xs" wrap="wrap">
         <BAIFlex gap={'sm'} align="start">
-          <BAIRadioGroup
+          <BAISegmentedControl
             value={activeType}
             onChange={(value) => {
               onReload({
                 ...variables,
-                is_active: value.target.value === 'active',
+                is_active: value === 'active',
                 offset: 0,
               });
               setSelectedKeypairs([]);
             }}
-            optionType="button"
-            options={[
-              {
-                label: t('general.Active'),
-                value: 'active',
-              },
-              {
-                label: t('general.Inactive'),
-                value: 'inactive',
-              },
-            ]}
-          />
+          >
+            <BAISegmentedControlItem
+              value="active"
+              label={t('general.Active')}
+            />
+            <BAISegmentedControlItem
+              value="inactive"
+              label={t('general.Inactive')}
+            />
+          </BAISegmentedControl>
           <BAIPropertyFilter
             filterProperties={[
               {
@@ -343,7 +346,7 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
           />
         </BAIFlex>
         <BAIFlex gap={'xs'}>
-          {selectedKeypairs.length > 0 && (
+          {isSuperAdmin && selectedKeypairs.length > 0 && (
             <BAIFlex gap="xs">
               <BAISelectionLabel
                 count={selectedKeypairs.length}
@@ -377,15 +380,17 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
               icon={<RotateCw size="1em" />}
             />
           </Tooltip>
-          <BAIButton
-            type="primary"
-            icon={<PlusIcon />}
-            onClick={() => {
-              setOpenUserKeypairSettingModal(true);
-            }}
-          >
-            {t('credential.AddCredential')}
-          </BAIButton>
+          {isSuperAdmin && (
+            <BAIButton
+              type="primary"
+              icon={<PlusIcon />}
+              onClick={() => {
+                setOpenUserKeypairSettingModal(true);
+              }}
+            >
+              {t('credential.AddCredential')}
+            </BAIButton>
+          )}
         </BAIFlex>
       </BAIFlex>
       <BAITable<Keypair>
@@ -396,20 +401,24 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
         // desktop widths. Restores what the antd file carried pre-migration.
         scroll={{ x: 'max-content' }}
         dataSource={filterOutNullAndUndefined(keypair_list?.items)}
-        rowSelection={{
-          type: 'checkbox',
-          selectedRowKeys: _.compact(
-            selectedKeypairs.map((keypair) => keypair.id),
-          ),
-          onChange: (keys) => {
-            const items = filterOutNullAndUndefined(keypair_list?.items);
-            setSelectedKeypairs(
-              items.filter(
-                (keypair) => keypair.id && keys.includes(keypair.id),
-              ),
-            );
-          },
-        }}
+        rowSelection={
+          isSuperAdmin
+            ? {
+                type: 'checkbox',
+                selectedRowKeys: _.compact(
+                  selectedKeypairs.map((keypair) => keypair.id),
+                ),
+                onChange: (keys) => {
+                  const items = filterOutNullAndUndefined(keypair_list?.items);
+                  setSelectedKeypairs(
+                    items.filter(
+                      (keypair) => keypair.id && keys.includes(keypair.id),
+                    ),
+                  );
+                },
+              }
+            : undefined
+        }
         columns={filterOutEmpty([
           {
             key: 'userID',
@@ -563,7 +572,11 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
                 <BAINameActionCell
                   title={record.user_id}
                   showActions="always"
-                  actions={actions}
+                  actions={
+                    isSuperAdmin
+                      ? actions
+                      : actions.filter((action) => action.key === 'info')
+                  }
                 />
               );
             },
@@ -606,7 +619,9 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
             title: t('credential.KeyAge'),
             dataIndex: 'created_at',
             render: (createdAt) => {
-              return `${dayjs().diff(createdAt, 'day')}${t('credential.Days')}`;
+              return t('credential.Days', {
+                value: dayjs().diff(createdAt, 'day'),
+              });
             },
             sorter: true,
           },

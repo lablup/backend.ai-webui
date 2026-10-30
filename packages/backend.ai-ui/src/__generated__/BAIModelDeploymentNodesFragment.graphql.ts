@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<cf059b72311515e83a439a5e5a315212>>
+ * @generated SignedSource<<db7ac952a38632622361ed9a9c44ddbd>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -45,9 +45,7 @@ export type BAIModelDeploymentNodesFragment$data = ReadonlyArray<{
     } | null | undefined;
     readonly resourceGroupName: string;
     readonly status: DeploymentStatus;
-    readonly tags: ReadonlyArray<string>;
     readonly updatedAt: string;
-    readonly " $fragmentSpreads": FragmentRefs<"BAIDeploymentTagTokens_metadata">;
   };
   readonly networkAccess: {
     readonly endpointUrl: string | null | undefined;
@@ -140,13 +138,6 @@ return {
           "alias": null,
           "args": null,
           "kind": "ScalarField",
-          "name": "tags",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
           "name": "createdAt",
           "storageKey": null
         },
@@ -187,11 +178,6 @@ return {
             (v0/*: any*/)
           ],
           "storageKey": null
-        },
-        {
-          "args": null,
-          "kind": "FragmentSpread",
-          "name": "BAIDeploymentTagTokens_metadata"
         }
       ],
       "storageKey": null
@@ -373,6 +359,6 @@ return {
 };
 })();
 
-(node as any).hash = "be3fa722d198ff1854ec34ab5a499dc6";
+(node as any).hash = "f210ad96eb1180cc8676de514209b77f";
 
 export default node;

@@ -38,6 +38,26 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "リソースグループを選択"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "ポリシー対象",
+    "CreatedAt": "作成日",
+    "Disabled": "無効",
+    "Enabled": "有効",
+    "LastSweptAt": "最終クリーンアップ",
+    "NotSweptYet": "未実行",
+    "RetentionPeriodDays": "保持期間（日）",
+    "UpdatedAt": "更新日時",
+    "categories": {
+      "DEPLOYMENTS": "デプロイメント",
+      "LOGIN": "ログイン履歴",
+      "LOGS": "ログ",
+      "RECONCILE_HISTORY": "調整履歴",
+      "ROLES_INVITATIONS": "ロールと招待",
+      "SESSIONS": "セッション",
+      "USAGE_BUCKETS": "使用量バケット",
+      "USAGE_RECORDS": "使用量記録"
+    }
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "セッションを選択"
   },
@@ -163,7 +183,6 @@
     "KeyRequired": "キーを入力してください。",
     "Label": "ラベル",
     "LabelsSaved": "ラベルを保存しました。",
-    "RemoveLabel": "ラベルを削除",
     "Save": "保存",
     "SomeLabelsFailed": "{{count}}件のラベル変更に失敗しました",
     "Target": "対象",
@@ -173,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "ラベル"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "作成",
+    "Custom": "カスタム",
+    "FullAccess": "フルアクセス",
+    "HardDelete": "完全削除",
+    "Read": "読み取り",
+    "ReadAndWrite": "読み書き",
+    "ReadOnly": "読み取り専用",
+    "SoftDelete": "削除",
+    "Update": "更新"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "自動更新",
@@ -319,7 +349,6 @@
     "RevisionNumber": "リビジョン",
     "RevisionNumberTooltip": "デプロイメントの現在のリビジョン番号。",
     "StrategyType": "戦略",
-    "Tags": "タグ",
     "UpdatedAt": "更新日時"
   },
   "comp:BAINameActionCell": {
@@ -558,12 +587,33 @@
     "To": "遷移先ステータス",
     "UpdatedAt": "更新日時"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "メールで招待"
+  },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "フォルダを選択"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "エージェント"
   },
   "comp:BAISessionClusterMode": {
     "MultiNodeShort": "マルチ",
     "SingleNodeShort": "シングル"
+  },
+  "comp:BAISessionScene": {
+    "FoundCount": "{{count}}件発見",
+    "Hero": "自分のセッション",
+    "Measuring": "測定中",
+    "ResourceShare": "リソース占有",
+    "ShowAll": "すべて表示",
+    "Utilization": "使用率",
+    "mood": {
+      "Idle": "アイドル",
+      "Leaving": "終了中",
+      "Overheated": "過熱",
+      "Waiting": "リソース待ち",
+      "Working": "作業中"
+    }
   },
   "comp:BAISessionTypeToken": {
     "Batch": "バッチ",
@@ -616,8 +666,6 @@
     "CreateFolder": "新規ストレージフォルダー作成",
     "DestinationPath": "コンテナのパス (destination)",
     "Folders": "フォルダー",
-    "OwnerProject": "プロジェクト",
-    "OwnerUser": "ユーザー",
     "PathAndAliasTooltip": "コンテナ内でフォルダがマウントされるパスです。デフォルトのパスを使用する場合は空欄にしてください。",
     "Refresh": "更新",
     "RemoveFolder": "削除",

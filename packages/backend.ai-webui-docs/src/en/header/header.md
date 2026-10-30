@@ -16,6 +16,7 @@ The top bar includes various features that support use of the WebUI.
 
 Users can switch between projects using the project selector provided in the top bar.
 By default, the project that the user currently belongs to is selected.
+You can access your personal project by selecting **My Project**.
 Since each project may have different resource policies, switching projects may also change the available resource policies.
 
 The selector lists the projects you can access. If you open an address that names a
@@ -69,13 +70,6 @@ extension and it has been enabled in the system configuration.
 The magnifier button opens the search palette, which lets you jump to any page,
 page tab, or setting item without leaving the keyboard.
 
-:::note
-The search palette is an experimental feature and is turned off by default. The
-**Search** button appears in the top bar, and its shortcut works, only while the
-**Command palette** item under **Experimental features** on the User Settings
-page is enabled.
-:::
-
 Click the button, or press `Ctrl-K` (`Cmd-K` on macOS), to open the palette. The
 shortcut works even while the cursor is in an input field.
 
@@ -98,6 +92,26 @@ The palette also offers quick actions in three groups.
 
 Before you type anything, the results you opened most recently are listed at the
 top under `Recent`.
+
+<a id="session-monitor"></a>
+
+## Session monitor
+
+The session monitor shows the number of sessions you watch, on every page. Click
+it to open the list of those sessions, where the monitor's settings let you
+choose what it watches.
+
+:::note
+The session monitor is an experimental feature and is turned off by default. It
+appears in the top bar only while the **Session monitor** item under
+**Experimental features** on the User Settings page is enabled.
+:::
+
+![=618px](../images/session_monitor_popover.png)
+
+When the idle-termination item is turned on in those settings, you also receive
+a notification 30 and 10 minutes before an idle check terminates one of your
+sessions.
 
 <a id="notification"></a>
 
@@ -146,7 +160,7 @@ small screens.
 
 Click the user icon on the right side of the top bar to see the user menu.
 
-![=177px](../images/user_drop_down.png)
+![=212px](../images/user_drop_down.png)
 
 At the top of the dropdown, the following user information is displayed for
 reference. These items are not clickable.
@@ -157,6 +171,8 @@ reference. These items are not clickable.
 
 Below the user information, the following action items are available.
 
+- `Switch to Admin Console` / `Switch to User Console`: For superadmins, moves
+  between the user pages and the administration pages.
 - `About Backend.AI`: Displays information such as the version of Backend.AI WebUI,
   license type, etc.
 - `My Account`: Check and update information of the current logged-in user.

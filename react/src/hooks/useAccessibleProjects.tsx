@@ -5,7 +5,6 @@
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '.';
 import { useAccessibleProjectsQuery } from '../__generated__/useAccessibleProjectsQuery.graphql';
 import { useCurrentUserRole } from './backendai';
-import { toLocalId } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import type { FetchPolicy } from 'relay-runtime';
@@ -30,7 +29,8 @@ interface UseAccessibleProjectsOptions {
  * enter" (FR-3388). This is exactly the data the header's `ProjectSelect`
  * renders: active projects of the domain (GENERAL + MODEL_STORE, unless an
  * admin's config blocklist hides the model store) intersected with the
- * user's project membership.
+ * user's project membership. The user's own personal project, which the
+ * domain list never contains, is returned separately as `personalProject`.
  *
  * URL project validation (`useUrlProjectValidity`) and the header's
  * unselected-state check consume this hook instead of the login-time
@@ -70,6 +70,11 @@ export const useAccessibleProjects = (
             edges {
               node {
                 id
+                entityId
+                basicInfo {
+                  name
+                  type
+                }
               }
             }
           }
@@ -91,11 +96,24 @@ export const useAccessibleProjects = (
 
   // Membership filter: only projects the user actually belongs to.
   const memberProjectIds = new Set(
-    _.map(myUserV2?.projects?.edges, (edge) => toLocalId(edge.node.id)),
+    _.map(myUserV2?.projects?.edges, (edge) => edge.node.entityId),
   );
   const accessibleProjects = groups?.filter(
     (project) => !!project?.id && memberProjectIds.has(project.id),
   );
 
-  return { groups, accessibleProjects };
+  // Read from the membership list rather than adding PERSONAL to the `groups`
+  // type filter, which older managers reject.
+  const personalProjectNode = _.find(
+    myUserV2?.projects?.edges,
+    (edge) => edge?.node?.basicInfo?.type === 'PERSONAL',
+  )?.node;
+  const personalProject = personalProjectNode
+    ? {
+        id: personalProjectNode.entityId,
+        name: personalProjectNode.basicInfo.name,
+      }
+    : undefined;
+
+  return { groups, accessibleProjects, personalProject };
 };

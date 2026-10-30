@@ -78,10 +78,10 @@ jobs:
       # Lanes:
       #   root       — root tsconfig.json covers src/** (client library +
       #                wsproxy); its `noEmit` is unset, hence the explicit flag.
-      #   react      — also pulls in ../packages/backend.ai-{ui,client}/src via
-      #                `paths`, so this lane catches a BUI change breaking the
-      #                app. Excludes BUI's tests/stories (the backend.ai-ui
-      #                lane covers those).
+      #   react      — also type-checks the backend.ai-ui source files the app
+      #                imports (`@backend.ai/source` export condition) and
+      #                ../packages/backend.ai-client/src (`paths`), so this
+      #                lane catches a BUI change breaking the app.
       #   backend.ai-ui / backend.ai-client / backend.ai-agent-cli /
       #   backend.ai-docs-toolkit — each package's own tsconfig.
       #   client-*   — the backend.ai-client package checks that used to live
@@ -133,3 +133,8 @@ jobs:
       - name: Check for a second @astryxdesign/core
         if: ${{ !cancelled() }}
         run: node scripts/migration-gates/single-astryx-core-gate.mjs
+      # A pin to a lablup/ui-common PR preview (or a local build) verifies an
+      # unmerged change; it fails here until repinned to a canary or release.
+      - name: Check the ui-common pin is released
+        if: ${{ !cancelled() }}
+        run: node scripts/ui-common-pin.mjs --check

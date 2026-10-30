@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5fd6870ef26d378b7b9fa31282e72ef6>>
+ * @generated SignedSource<<e0bc8986f7a13ea3688f81228fb30cfb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,6 +20,8 @@ export type RolePresetFilter = {
   OR?: ReadonlyArray<RolePresetFilter> | null | undefined;
   autoAssign?: boolean | null | undefined;
   deleted?: boolean | null | undefined;
+  deletedAt?: NullableDateTimeFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   id?: UUIDFilter | null | undefined;
   name?: StringFilter | null | undefined;
   permissions?: RolePresetPermissionNestedFilter | null | undefined;
@@ -53,6 +55,13 @@ export type StringFilter = {
   notStartsWith?: string | null | undefined;
   startsWith?: string | null | undefined;
 };
+export type NullableDateTimeFilter = {
+  after?: string | null | undefined;
+  before?: string | null | undefined;
+  equals?: string | null | undefined;
+  isNull?: boolean | null | undefined;
+  notEquals?: string | null | undefined;
+};
 export type RolePresetPermissionNestedFilter = {
   every?: RolePermissionPresetFilter | null | undefined;
   exists?: boolean | null | undefined;
@@ -65,6 +74,7 @@ export type RolePermissionPresetFilter = {
   OR?: ReadonlyArray<RolePermissionPresetFilter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
   entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   operation?: OperationTypeFilter | null | undefined;
   permission?: PermissionBitFilter | null | undefined;
   rolePresetId?: UUIDFilter | null | undefined;
@@ -321,6 +331,13 @@ return {
                     "kind": "ScalarField",
                     "name": "deleted",
                     "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "entityId",
+                    "storageKey": null
                   }
                 ],
                 "storageKey": null
@@ -334,12 +351,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "12186c8019e3eb51a39007790613ee06",
+    "cacheID": "280c30a810de21d9a04d44e273b2fe86",
     "id": null,
     "metadata": {},
     "name": "RolePresetListTabQuery",
     "operationKind": "query",
-    "text": "query RolePresetListTabQuery(\n  $filter: RolePresetFilter\n  $orderBy: [RolePresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminRolePresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...RolePresetNodesFragment\n        ...RolePresetDetailDrawerFragment\n      }\n    }\n  }\n}\n\nfragment RolePresetDetailDrawerFragment on RolePreset {\n  id\n  name\n  scopeType\n  autoAssign\n  deleted\n  createdAt\n  updatedAt\n  ...RolePresetPermissionTableFragment\n}\n\nfragment RolePresetNodesFragment on RolePreset {\n  id\n  name\n  scopeType\n  autoAssign\n  createdAt\n  updatedAt\n  permissionPresets {\n    count\n  }\n}\n\nfragment RolePresetPermissionTableFragment on RolePreset {\n  id\n  scopeType\n}\n"
+    "text": "query RolePresetListTabQuery(\n  $filter: RolePresetFilter\n  $orderBy: [RolePresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminRolePresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...RolePresetNodesFragment\n        ...RolePresetDetailDrawerFragment\n      }\n    }\n  }\n}\n\nfragment RolePresetDetailDrawerFragment on RolePreset {\n  id\n  name\n  scopeType\n  autoAssign\n  deleted\n  createdAt\n  updatedAt\n  ...RolePresetPermissionTableFragment\n}\n\nfragment RolePresetNodesFragment on RolePreset {\n  id\n  name\n  scopeType\n  autoAssign\n  createdAt\n  updatedAt\n  permissionPresets {\n    count\n  }\n}\n\nfragment RolePresetPermissionTableFragment on RolePreset {\n  id\n  entityId\n  scopeType\n}\n"
   }
 };
 })();

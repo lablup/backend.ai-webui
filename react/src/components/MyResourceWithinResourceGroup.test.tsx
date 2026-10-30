@@ -34,12 +34,6 @@ vi.mock('antd', () => ({
   },
 }));
 
-// Only `useControllableValue` is pinned; the rest of `backend.ai-ui` stays real.
-vi.mock('backend.ai-ui', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('backend.ai-ui')>()),
-  useControllableValue: () => ['free', vi.fn()],
-}));
-
 vi.mock('../hooks/useCurrentProject', () => ({
   useCurrentProjectValue: () => ({ name: 'test-project' }),
   useCurrentResourceGroupValue: () => 'default',
@@ -168,6 +162,7 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
   const isoDate = new Date().toISOString();
   return {
     ...originalModule,
+    useControllableValue: () => ['free', vi.fn()],
     useFetchKey: () => [isoDate, vi.fn(), isoDate],
     convertToNumber: (value: any) => parseFloat(value) || 0,
     processMemoryValue: (value: any) => {

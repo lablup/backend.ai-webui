@@ -38,6 +38,26 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Ressourcengruppe auswählen"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "Richtlinienziel",
+    "CreatedAt": "Erstellungsdatum",
+    "Disabled": "Deaktiviert",
+    "Enabled": "aktiviert",
+    "LastSweptAt": "Letzte Bereinigung",
+    "NotSweptYet": "Noch nicht ausgeführt",
+    "RetentionPeriodDays": "Aufbewahrungsdauer (Tage)",
+    "UpdatedAt": "Aktualisiert am",
+    "categories": {
+      "DEPLOYMENTS": "Bereitstellungen",
+      "LOGIN": "Anmeldeverlauf",
+      "LOGS": "Protokolle",
+      "RECONCILE_HISTORY": "Abgleichsverlauf",
+      "ROLES_INVITATIONS": "Rollen & Einladungen",
+      "SESSIONS": "Sitzungen",
+      "USAGE_BUCKETS": "Nutzungs-Buckets",
+      "USAGE_RECORDS": "Nutzungsdatensätze"
+    }
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Sitzung auswählen"
   },
@@ -163,7 +183,6 @@
     "KeyRequired": "Geben Sie einen Schlüssel ein.",
     "Label": "Label",
     "LabelsSaved": "Labels gespeichert.",
-    "RemoveLabel": "Label entfernen",
     "Save": "Speichern",
     "SomeLabelsFailed": "{{count}} Labeländerungen fehlgeschlagen",
     "Target": "Ziel",
@@ -174,11 +193,22 @@
   "comp:BAIEntityLabelTokens": {
     "Labels": "Label"
   },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Erstellen",
+    "Custom": "Benutzerdefiniert",
+    "FullAccess": "Vollzugriff",
+    "HardDelete": "Endgültig löschen",
+    "Read": "Lesen",
+    "ReadAndWrite": "Lesen und Schreiben",
+    "ReadOnly": "Nur Lesen",
+    "SoftDelete": "Löschen",
+    "Update": "Bearbeiten"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Automatische Aktualisierung",
-    "EveryHours": "{{count}}h",
-    "EveryMinutes": "{{count}}m",
-    "EverySeconds": "{{count}}s",
+    "EveryHours": "{{count}} h",
+    "EveryMinutes": "{{count}} min",
+    "EverySeconds": "{{count}} s",
     "LastUpdated": "Zuletzt aktualisiert",
     "Off": "Aus",
     "Refresh": "Aktualisieren"
@@ -319,7 +349,6 @@
     "RevisionNumber": "Revision",
     "RevisionNumberTooltip": "Die aktuelle Revisionsnummer des Deployments.",
     "StrategyType": "Strategie",
-    "Tags": "Stichworte",
     "UpdatedAt": "Aktualisiert am"
   },
   "comp:BAINameActionCell": {
@@ -558,12 +587,33 @@
     "To": "Zielstatus",
     "UpdatedAt": "Aktualisiert am"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Per E-Mail einladen"
+  },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Ordner auswählen"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agent"
   },
   "comp:BAISessionClusterMode": {
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Einzel"
+  },
+  "comp:BAISessionScene": {
+    "FoundCount": "{{count}} gefunden",
+    "Hero": "Meine",
+    "Measuring": "Wird gemessen",
+    "ResourceShare": "Ressourcenanteil",
+    "ShowAll": "Alle anzeigen",
+    "Utilization": "Auslastung",
+    "mood": {
+      "Idle": "Inaktiv",
+      "Leaving": "Wird beendet",
+      "Overheated": "Überhitzt",
+      "Waiting": "Wartet auf Ressourcen",
+      "Working": "Arbeitet"
+    }
   },
   "comp:BAISessionTypeToken": {
     "Batch": "Batch",
@@ -616,8 +666,6 @@
     "CreateFolder": "Erstellen Sie einen neuen Speicherordner",
     "DestinationPath": "Container-Pfad (destination)",
     "Folders": "Ordner",
-    "OwnerProject": "Projekt",
-    "OwnerUser": "Benutzer",
     "PathAndAliasTooltip": "Der Pfad im Container, in den der Ordner eingehängt wird. Leer lassen, um den Standardpfad zu verwenden.",
     "Refresh": "Aktualisierung",
     "RemoveFolder": "Entfernen",

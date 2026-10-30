@@ -38,6 +38,26 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Pilih kumpulan sumber"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "Sasaran dasar",
+    "CreatedAt": "Tarikh dicipta",
+    "Disabled": "Dilumpuhkan",
+    "Enabled": "Diaktifkan",
+    "LastSweptAt": "Pembersihan terakhir",
+    "NotSweptYet": "Belum dijalankan",
+    "RetentionPeriodDays": "Tempoh pengekalan (hari)",
+    "UpdatedAt": "Dikemas Kini Pada",
+    "categories": {
+      "DEPLOYMENTS": "Penggunaan",
+      "LOGIN": "Sejarah log masuk",
+      "LOGS": "Log",
+      "RECONCILE_HISTORY": "Sejarah penyelarasan",
+      "ROLES_INVITATIONS": "Peranan & jemputan",
+      "SESSIONS": "Sesi",
+      "USAGE_BUCKETS": "Agregat penggunaan",
+      "USAGE_RECORDS": "Rekod penggunaan"
+    }
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Pilih sesi"
   },
@@ -163,7 +183,6 @@
     "KeyRequired": "Masukkan kunci.",
     "Label": "Label",
     "LabelsSaved": "Label disimpan.",
-    "RemoveLabel": "Buang label",
     "Save": "Simpan",
     "SomeLabelsFailed": "{{count}} perubahan label gagal",
     "Target": "Sasaran",
@@ -174,11 +193,22 @@
   "comp:BAIEntityLabelTokens": {
     "Labels": "Label"
   },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Cipta",
+    "Custom": "Tersuai",
+    "FullAccess": "Akses penuh",
+    "HardDelete": "Padam kekal",
+    "Read": "Baca",
+    "ReadAndWrite": "Baca dan tulis",
+    "ReadOnly": "Baca sahaja",
+    "SoftDelete": "Padam",
+    "Update": "Kemas kini"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Segar semula automatik",
-    "EveryHours": "{{count}}h",
-    "EveryMinutes": "{{count}}m",
-    "EverySeconds": "{{count}}s",
+    "EveryHours": "{{count}} h",
+    "EveryMinutes": "{{count}} min",
+    "EverySeconds": "{{count}} s",
     "LastUpdated": "Dikemaskini terakhir",
     "Off": "Mati",
     "Refresh": "Segarkan"
@@ -319,7 +349,6 @@
     "RevisionNumber": "Semakan",
     "RevisionNumberTooltip": "Nombor semakan semasa penggunaan.",
     "StrategyType": "Strategi",
-    "Tags": "Tag",
     "UpdatedAt": "Dikemas kini pada"
   },
   "comp:BAINameActionCell": {
@@ -558,12 +587,33 @@
     "To": "Status sasaran",
     "UpdatedAt": "Dikemas kini pada"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Jemput melalui e-mel"
+  },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Pilih Folder"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Ejen"
   },
   "comp:BAISessionClusterMode": {
     "MultiNodeShort": "MULTI",
     "SingleNodeShort": "Bujang"
+  },
+  "comp:BAISessionScene": {
+    "FoundCount": "{{count}} ditemui",
+    "Hero": "Saya",
+    "Measuring": "Mengukur",
+    "ResourceShare": "Bahagian sumber",
+    "ShowAll": "Tunjuk semua",
+    "Utilization": "Penggunaan",
+    "mood": {
+      "Idle": "Melahu",
+      "Leaving": "Menamatkan",
+      "Overheated": "Terlampau panas",
+      "Waiting": "Menunggu sumber",
+      "Working": "Bekerja"
+    }
   },
   "comp:BAISessionTypeToken": {
     "Batch": "Kelompok",
@@ -616,8 +666,6 @@
     "CreateFolder": "Buat folder storan baru",
     "DestinationPath": "Laluan kontena (destination)",
     "Folders": "Folder",
-    "OwnerProject": "Projek",
-    "OwnerUser": "Pengguna",
     "PathAndAliasTooltip": "Laluan di dalam container tempat folder akan di-mount. Biarkan kosong untuk menggunakan laluan lalai.",
     "Refresh": "Segarkan",
     "RemoveFolder": "Buang",

@@ -38,6 +38,26 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Sélectionner un groupe de ressources"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "Cible de la politique",
+    "CreatedAt": "Date de création",
+    "Disabled": "Désactivé",
+    "Enabled": "Activée",
+    "LastSweptAt": "Dernier nettoyage",
+    "NotSweptYet": "Pas encore exécuté",
+    "RetentionPeriodDays": "Durée de conservation (jours)",
+    "UpdatedAt": "Mis à jour le",
+    "categories": {
+      "DEPLOYMENTS": "Déploiements",
+      "LOGIN": "Historique de connexion",
+      "LOGS": "Journaux",
+      "RECONCILE_HISTORY": "Historique de réconciliation",
+      "ROLES_INVITATIONS": "Rôles et invitations",
+      "SESSIONS": "Sessions",
+      "USAGE_BUCKETS": "Agrégats d'utilisation",
+      "USAGE_RECORDS": "Enregistrements d'utilisation"
+    }
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Sélectionner une session"
   },
@@ -163,7 +183,6 @@
     "KeyRequired": "Saisissez une clé.",
     "Label": "Libellé",
     "LabelsSaved": "Libellés enregistrés.",
-    "RemoveLabel": "Supprimer le libellé",
     "Save": "Enregistrer",
     "SomeLabelsFailed": "{{count}} modifications de libellés ont échoué",
     "Target": "Cible",
@@ -174,11 +193,22 @@
   "comp:BAIEntityLabelTokens": {
     "Labels": "Libellé"
   },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Créer",
+    "Custom": "Personnalisé",
+    "FullAccess": "Accès complet",
+    "HardDelete": "Supprimer définitivement",
+    "Read": "Lire",
+    "ReadAndWrite": "Lecture et écriture",
+    "ReadOnly": "Lecture seule",
+    "SoftDelete": "Supprimer",
+    "Update": "Modifier"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Actualisation automatique",
-    "EveryHours": "{{count}}h",
-    "EveryMinutes": "{{count}}m",
-    "EverySeconds": "{{count}}s",
+    "EveryHours": "{{count}} h",
+    "EveryMinutes": "{{count}} min",
+    "EverySeconds": "{{count}} s",
     "LastUpdated": "Dernière mise à jour",
     "Off": "Désactivé",
     "Refresh": "Rafraîchir"
@@ -319,7 +349,6 @@
     "RevisionNumber": "Révision",
     "RevisionNumberTooltip": "Le numéro de révision actuel du déploiement.",
     "StrategyType": "Stratégie",
-    "Tags": "Tags",
     "UpdatedAt": "Mis à jour le"
   },
   "comp:BAINameActionCell": {
@@ -558,12 +587,33 @@
     "To": "Statut de destination",
     "UpdatedAt": "Mis à jour le"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Inviter par e-mail"
+  },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Sélectionner un dossier"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agent"
   },
   "comp:BAISessionClusterMode": {
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Célibataire"
+  },
+  "comp:BAISessionScene": {
+    "FoundCount": "{{count}} trouvé(s)",
+    "Hero": "Les miennes",
+    "Measuring": "Mesure en cours",
+    "ResourceShare": "Part des ressources",
+    "ShowAll": "Tout afficher",
+    "Utilization": "Utilisation",
+    "mood": {
+      "Idle": "Inactive",
+      "Leaving": "En cours d'arrêt",
+      "Overheated": "En surchauffe",
+      "Waiting": "En attente de ressources",
+      "Working": "En travail"
+    }
   },
   "comp:BAISessionTypeToken": {
     "Batch": "Lot",
@@ -616,8 +666,6 @@
     "CreateFolder": "Créer un nouveau dossier de stockage",
     "DestinationPath": "Chemin du conteneur (destination)",
     "Folders": "Dossiers",
-    "OwnerProject": "Projet",
-    "OwnerUser": "Utilisateur",
     "PathAndAliasTooltip": "Le chemin à l'intérieur du conteneur où le dossier sera monté. Laissez vide pour utiliser le chemin par défaut.",
     "Refresh": "Rafraîchir",
     "RemoveFolder": "Supprimer",

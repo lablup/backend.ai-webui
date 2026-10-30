@@ -93,6 +93,7 @@ interface StopSpec {
   id: string;
   testid: string;
   path?: string;
+  query?: string;
   /** The stop's element lives inside a dialog, so it resolves only in one. */
   dlg?: true;
   via?: string;
@@ -105,6 +106,7 @@ const anchorFor = (spec: StopSpec): AnchorV3 => ({
   v: 3,
   s: `[data-testid="${spec.testid}"]`,
   p: spec.path ?? '/',
+  ...(spec.query ? { q: spec.query } : {}),
   tag: 'button',
   txt: spec.testid,
   ...(spec.check === undefined
@@ -268,6 +270,26 @@ describe('the navigator', () => {
 
     expect(seen).toEqual(['/session/start']);
     expect(pillText()).toContain('2 / 3');
+  });
+
+  it('reloads for a stop on the same path, where the router would keep the page mounted', async () => {
+    const seen: string[] = [];
+    window.__BAI_REVIEW__ = { navigate: (to) => seen.push(to) };
+    const hash = [
+      await part({ id: A, testid: 'upload', check: 'Upload is renamed' }),
+      await part({
+        id: B,
+        testid: 'create',
+        query: 'tab=credentials',
+        check: 'The other tab lists credentials',
+      }),
+    ].join('&');
+    await bootOn(hash);
+
+    act('next')?.click();
+
+    expect(seen).toEqual([]);
+    expect(sessionStorage.getItem(WALKTHROUGH_FOCUS_KEY)).toBe(B);
   });
 
   it('takes every mark and attribute off on exit', async () => {
@@ -583,6 +605,15 @@ describe('what the reader gives back', () => {
     node<HTMLTextAreaElement>('[data-pact="comment"]')?.focus();
     press('KeyN');
     expect(pillText()).toContain('1 / 2');
+
+    // So is one typed into the composer the review chord opens.
+    const composer = node<HTMLTextAreaElement>('.compose textarea');
+    expect(composer).toBeTruthy();
+    composer?.focus();
+    press('KeyN');
+    press('KeyV');
+    expect(pillText()).toContain('1 / 2');
+    expect(pillText()).toContain('1 viewed');
   });
 });
 

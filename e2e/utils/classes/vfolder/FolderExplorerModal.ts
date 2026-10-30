@@ -29,17 +29,6 @@ export class FolderExplorerModal {
     ).toBeVisible();
   }
 
-  async verifyPermission(
-    permission: 'Read & Write' | 'Read only',
-  ): Promise<void> {
-    // Scope to the selector's trigger: its option list is also in the DOM.
-    await expect(
-      this.modal
-        .getByRole('combobox', { name: 'Mount Permission' })
-        .getByText(permission, { exact: true }),
-    ).toBeVisible();
-  }
-
   async verifyFileExplorerLoaded(): Promise<void> {
     await expect(
       this.modal.getByRole('columnheader', { name: 'Name' }),
@@ -68,8 +57,10 @@ export class FolderExplorerModal {
   }
 
   async getCreateFolderButton(): Promise<Locator> {
+    // lucide icon + aria-label: no antd icon-name prefix in the name.
     const createButton = this.modal.getByRole('button', {
-      name: 'folder-add Create Folder',
+      name: 'Create Folder',
+      exact: true,
     });
     await expect(createButton).toBeVisible();
     await this.page.waitForTimeout(300);
@@ -78,9 +69,11 @@ export class FolderExplorerModal {
 
   async getCreateFileButton(): Promise<Locator> {
     const createFileButton = this.modal.getByRole('button', {
-      name: 'file-add Create File',
+      name: 'Create File',
+      exact: true,
     });
     await expect(createFileButton).toBeVisible();
+    await this.page.waitForTimeout(300);
     return createFileButton;
   }
 
@@ -92,18 +85,17 @@ export class FolderExplorerModal {
     return fileBrowserButton;
   }
 
+  // The description list carries no mount permission row since #10647; the
+  // folder's default mount permission is shown and edited in the share modal.
   async verifyFolderDetails(): Promise<void> {
     await expect(this.modal.getByText('Ownership')).toBeVisible();
-    await expect(this.modal.getByText('Mount Permission')).toBeVisible();
-    await expect(this.modal.getByText('Read & Write')).toBeVisible();
+    await expect(
+      this.modal.getByRole('term').filter({ hasText: 'Mount Permission' }),
+    ).toHaveCount(0);
   }
 
   async verifyOwnership(): Promise<void> {
     await expect(this.modal.getByText('Ownership')).toBeVisible();
-  }
-
-  async verifyMountPermission(): Promise<void> {
-    await expect(this.modal.getByText('Mount Permission')).toBeVisible();
   }
 
   async verifyErrorMessage(message: string): Promise<void> {
@@ -118,32 +110,6 @@ export class FolderExplorerModal {
     const closeButton = this.modal.getByRole('button', { name: 'Close' });
     await expect(closeButton).toBeVisible();
     return closeButton;
-  }
-
-  async changePermission(
-    targetLabel: 'Read only' | 'Read & Write',
-  ): Promise<void> {
-    // Find the Description row that contains "Mount Permission" label,
-    // then locate the Select within that row
-    const permissionRow = this.modal
-      .locator('.ant-descriptions-row')
-      .filter({ hasText: 'Mount Permission' });
-    await expect(permissionRow).toBeVisible({ timeout: 10000 });
-
-    const permissionSelect = permissionRow.locator('.ant-select');
-    await permissionSelect.click();
-
-    // Wait for dropdown to appear and select the target option
-    const dropdown = this.page.locator('.ant-select-dropdown').last();
-    await expect(dropdown).toBeVisible();
-    await dropdown.getByText(targetLabel, { exact: true }).click();
-
-    // Verify success message
-    const notification = this.page.getByRole('alert').filter({
-      hasText: /Permission updated/i,
-    });
-    await expect(notification).toBeVisible({ timeout: 10000 });
-    await expect(notification).toBeHidden({ timeout: 10000 });
   }
 
   async verifyFileVisible(fileName: string): Promise<void> {

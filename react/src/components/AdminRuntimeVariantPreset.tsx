@@ -26,7 +26,6 @@ import {
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
   isValidUUID,
-  toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -298,7 +297,7 @@ const AdminRuntimeVariantPreset = ({
         onOk={() => {
           if (!deletingPreset) return;
           commitDeletePreset({
-            variables: { id: toLocalId(deletingPreset.id) },
+            variables: { id: deletingPreset.entityId },
             onCompleted: (_data, errors) => {
               if (errors && errors.length > 0) {
                 logger.error(errors[0]);

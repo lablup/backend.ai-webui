@@ -125,6 +125,12 @@ export const docs = {
         'Disables the whole group — field, stepper and unit selector — and turns off the keyboard ladder and unit-letter handling.',
     },
     {
+      name: 'hasClear',
+      type: 'boolean',
+      description:
+        'Shows a clear button in the number field (Astryx `NumberInput.hasClear`). Clearing, or emptying the text, emits `undefined`.',
+    },
+    {
       name: 'placeholder',
       type: 'string',
       description:

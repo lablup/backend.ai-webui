@@ -15,6 +15,7 @@ import {
 import { Popover } from '@lablup/ui-common/Popover';
 import { HStack, VStack } from '@lablup/ui-common/Stack';
 import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { useTheme } from '@lablup/ui-common/theme';
 import classNames from 'classnames';
 import { EllipsisVertical } from 'lucide-react';
@@ -128,11 +129,10 @@ export interface BAINameActionCellProps {
   minVisibleActions?: number;
   /**
    * Width (px) the title keeps before an action may claim space; actions that
-   * no longer fit fold into the more menu. `showActions="always"` only —
-   * hover mode collapses its actions to zero width at rest, so nothing
-   * competes for the title there. The default suits an identifier a few
-   * characters of which already identify the row; raise it where the title is
-   * long and the cell narrow (FR-3926).
+   * no longer fit fold into the more menu. Applies in both modes: hover mode
+   * reserves the actions' width at rest too (#10371). The default suits an
+   * identifier a few characters of which already identify the row; raise it
+   * where the title is long and the cell narrow (FR-3926).
    */
   minTitleWidth?: number;
   /** Disable the overflow More (…) button. Individual menu items remain visible. */
@@ -219,6 +219,7 @@ const ConfirmPopoverButton: React.FC<{
       }
     >
       <BAIButton
+        data-testid={`bai-name-action-${action.key}`}
         type="text"
         size="small"
         icon={action.icon}
@@ -283,12 +284,8 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
       // Account for the more button which is always shown when menuOnlyActions exist
       const moreButtonReserve =
         menuOnlyActions.length > 0 ? MORE_BUTTON_WIDTH + ACTIONS_GAP : 0;
-      // Hover mode keeps the whole width: its action group is `max-width: 0`
-      // until the row is hovered, so the title never competes with it at rest.
       const availableWidth =
-        (showActions === 'hover'
-          ? containerWidth
-          : containerWidth - minTitleReserve) - moreButtonReserve;
+        containerWidth - minTitleReserve - moreButtonReserve;
 
       if (availableWidth <= 0) {
         setVisibleCount(Math.max(0, minVisibleActions));
@@ -355,12 +352,15 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
   const toMenuItem = (
     action: BAINameActionCellAction,
   ): DropdownMenuItemData => ({
-    // FR-3423: a disabled action must still explain itself once it overflows
-    // into this menu. The reason is folded into the label text rather than a
-    // tooltip, which a disabled menu row swallows.
-    label: disabledReason(action.disabled)
-      ? `${action.title} — ${disabledReason(action.disabled)}`
-      : action.title,
+    // A disabled action still explains itself in the menu, as a hover tooltip
+    // on the label (a disabled row does not block pointer events).
+    label: disabledReason(action.disabled) ? (
+      <Tooltip content={disabledReason(action.disabled)} placement="end">
+        <span>{action.title}</span>
+      </Tooltip>
+    ) : (
+      action.title
+    ),
     variant: action.type === 'danger' ? 'destructive' : 'default',
     // Both rows use the same wrapper so the icon box is identical; only the
     // default one needs a colour, a danger row inherits `--color-error`.
@@ -543,6 +543,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
             return (
               <BAIButton
                 key={action.key}
+                data-testid={`bai-name-action-${action.key}`}
                 type="text"
                 size="small"
                 icon={action.icon}

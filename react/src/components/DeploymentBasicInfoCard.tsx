@@ -36,9 +36,7 @@ import {
   BAIUnmountAfterClose,
   BAIBooleanToken,
   isDeploymentInStoppedCategory,
-  safeDecodeUuid,
   toEntityLabelFilter,
-  toLocalId,
   useBAILogger,
   useIsLabelableEntityType,
 } from 'backend.ai-ui';
@@ -123,9 +121,9 @@ const DeploymentOverviewContent: React.FC<{
         )}
       </MetadataListItem>
       <MetadataListItem label={t('deployment.DeploymentId')}>
-        {deployment?.id ? (
+        {deployment?.entityId ? (
           <BAIId
-            globalId={deployment.id}
+            uuid={deployment.entityId}
             copyable
             ellipsis={false}
             style={{ maxWidth: 'none' }}
@@ -164,21 +162,6 @@ const DeploymentOverviewContent: React.FC<{
       <MetadataListItem label={t('deployment.Tags')}>
         <BAIDeploymentTagTokens
           metadataFrgmt={deployment?.metadata ?? null}
-          onTagClick={(tag) => {
-            // Stay within the same deployment-list URL space the user came
-            // from (admin / project-admin / user `deployments`) so breadcrumb /
-            // back navigation remain coherent — see FR-2847 (admin) and
-            // FR-2930 (project admin) for the per-scope detail-route precedent.
-            // The current scope (from the route handle) plus the active project
-            // name yield the correct scope-aware list path via `useProjectPath`.
-            const targetPathname = buildProjectPath('deployments');
-            webuiNavigate({
-              pathname: targetPathname,
-              search: new URLSearchParams({
-                filter: JSON.stringify({ tags: { iEquals: tag } }),
-              }).toString(),
-            });
-          }}
           fallback={renderFallback()}
         />
       </MetadataListItem>
@@ -286,11 +269,11 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
   const listPath = buildProjectPath('deployments');
 
   const handleDelete = () => {
-    if (!deployment?.id) return;
+    if (!deployment?.entityId) return;
     commitDeleteMutation({
       variables: {
         input: {
-          id: toLocalId(deployment.id) ?? deployment.id,
+          id: deployment.entityId,
         },
       },
       onCompleted: (_response, errors) => {
@@ -374,17 +357,13 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
         <DeploymentOverviewContent
           deployment={deployment}
           onClickSchedulingHistoryAction={
-            deployment?.id
+            deployment?.entityId
               ? async () => {
                   // Render-as-you-fetch: start the request in the open event.
-                  const rawId = deployment.id;
-                  if (!rawId) {
-                    return;
-                  }
                   loadDeploymentHistoryQuery(
                     {
                       scope: {
-                        deploymentId: safeDecodeUuid(rawId) ?? rawId,
+                        deploymentId: deployment.entityId,
                       },
                       orderBy: [{ field: 'UPDATED_AT', direction: 'DESC' }],
                       limit: 10,

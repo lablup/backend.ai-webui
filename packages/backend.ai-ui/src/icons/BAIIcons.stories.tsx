@@ -1,7 +1,7 @@
 import BAIFlex from '../components/BAIFlex';
 import BAIText from '../components/BAIText';
+import BAITextInput from '../components/BAITextInput';
 import * as Icons from './index';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { useTheme } from '@lablup/ui-common/theme';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import React, { useState } from 'react';
@@ -66,9 +66,8 @@ const IconsOverview: React.FC = () => {
 
   return (
     <BAIFlex direction="column" gap="lg">
-      <TextInput
-        label="Search icons"
-        isLabelHidden
+      <BAITextInput
+        aria-label="Search icons"
         placeholder="Search icons..."
         value={filter}
         onChange={setFilter}

@@ -38,6 +38,26 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Selecionar grupo de recursos"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "Alvo da política",
+    "CreatedAt": "Data de criação",
+    "Disabled": "Desativado",
+    "Enabled": "Habilitado",
+    "LastSweptAt": "Última limpeza",
+    "NotSweptYet": "Ainda não executado",
+    "RetentionPeriodDays": "Período de retenção (dias)",
+    "UpdatedAt": "Atualizado em",
+    "categories": {
+      "DEPLOYMENTS": "Implantações",
+      "LOGIN": "Histórico de login",
+      "LOGS": "Logs",
+      "RECONCILE_HISTORY": "Histórico de reconciliação",
+      "ROLES_INVITATIONS": "Funções e convites",
+      "SESSIONS": "Sessões",
+      "USAGE_BUCKETS": "Agregados de uso",
+      "USAGE_RECORDS": "Registros de uso"
+    }
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Selecionar sessão"
   },
@@ -163,7 +183,6 @@
     "KeyRequired": "Insira uma chave.",
     "Label": "Rótulo",
     "LabelsSaved": "Rótulos salvos.",
-    "RemoveLabel": "Remover rótulo",
     "Save": "Salvar",
     "SomeLabelsFailed": "{{count}} alterações de rótulos falharam",
     "Target": "Destino",
@@ -174,11 +193,22 @@
   "comp:BAIEntityLabelTokens": {
     "Labels": "Rótulo"
   },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Criar",
+    "Custom": "Personalizado",
+    "FullAccess": "Acesso total",
+    "HardDelete": "Excluir permanentemente",
+    "Read": "Ler",
+    "ReadAndWrite": "Leitura e escrita",
+    "ReadOnly": "Somente leitura",
+    "SoftDelete": "Excluir",
+    "Update": "Atualizar"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Atualização automática",
-    "EveryHours": "{{count}}h",
-    "EveryMinutes": "{{count}}m",
-    "EverySeconds": "{{count}}s",
+    "EveryHours": "{{count}} h",
+    "EveryMinutes": "{{count}} min",
+    "EverySeconds": "{{count}} s",
     "LastUpdated": "Última atualização",
     "Off": "Desligado",
     "Refresh": "Atualizar"
@@ -325,7 +355,6 @@
     "RevisionNumber": "Revisão",
     "RevisionNumberTooltip": "O número de revisão atual do deployment.",
     "StrategyType": "Estratégia",
-    "Tags": "Tag",
     "UpdatedAt": "Atualizado em"
   },
   "comp:BAINameActionCell": {
@@ -564,12 +593,33 @@
     "To": "Status de destino",
     "UpdatedAt": "Atualizado em"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Convidar por e-mail"
+  },
+  "comp:BAIScopedVFolderSelect": {
+    "SelectFolder": "Selecionar pasta"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agente"
   },
   "comp:BAISessionClusterMode": {
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Solteiro"
+  },
+  "comp:BAISessionScene": {
+    "FoundCount": "{{count}} encontrado(s)",
+    "Hero": "Minhas",
+    "Measuring": "Medindo",
+    "ResourceShare": "Participação de recursos",
+    "ShowAll": "Mostrar tudo",
+    "Utilization": "Utilização",
+    "mood": {
+      "Idle": "Inativa",
+      "Leaving": "Encerrando",
+      "Overheated": "Superaquecida",
+      "Waiting": "Aguardando recursos",
+      "Working": "Trabalhando"
+    }
   },
   "comp:BAISessionTypeToken": {
     "Batch": "Lote",
@@ -622,8 +672,6 @@
     "CreateFolder": "Crie uma nova pasta de armazenamento",
     "DestinationPath": "Caminho do contêiner (destination)",
     "Folders": "Pastas",
-    "OwnerProject": "Projeto",
-    "OwnerUser": "Usuário",
     "PathAndAliasTooltip": "O caminho dentro do container onde a pasta será montada. Deixe em branco para usar o caminho padrão.",
     "Refresh": "Atualizar",
     "RemoveFolder": "Remover",

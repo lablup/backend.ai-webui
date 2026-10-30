@@ -55,26 +55,31 @@ async function openCreateModalWithRequiredFields(
       const modal = page.getByRole('dialog');
       await expect(modal).toBeVisible();
 
-      // Runtime Variant is a paginated combobox — pick the first option.
-      const runtimeVariantSelect = modal.getByRole('combobox', {
+      // Runtime Variant is a `BAIComplexSelect`: a button trigger named by
+      // the field label opening a `role="dialog"` popup of options.
+      const runtimeVariantSelect = modal.getByRole('button', {
         name: 'Runtime Variant',
+        exact: true,
       });
       await expect(runtimeVariantSelect).toBeVisible({ timeout: 30000 });
       await runtimeVariantSelect.click();
-      const variantOption = page.getByRole('option').first();
+      const variantPopup = page.getByRole('dialog', {
+        name: 'Runtime Variant',
+        exact: true,
+      });
+      const variantOption = variantPopup.getByRole('option').first();
       await expect(variantOption).toBeVisible({ timeout: 15000 });
       await variantOption.click();
+      await expect(variantPopup).toBeHidden({ timeout: 10000 });
 
-      await modal
-        .getByRole('textbox', { name: 'Name', exact: true })
-        .fill(name);
-      await modal.getByRole('textbox', { name: 'Key' }).fill(key);
+      // Astryx 0.7.0 doubles a Form.Item input's accessible name ("Name
+      // Name"), so match by label rather than by role name.
+      await modal.getByLabel('Name', { exact: true }).fill(name);
+      await modal.getByLabel('Key', { exact: true }).fill(key);
       // Confirm the modal (and its filled Name) survived the fill — if a
       // reload happened, this will already have failed or `modal` will no
       // longer be attached.
-      await expect(
-        modal.getByRole('textbox', { name: 'Name', exact: true }),
-      ).toHaveValue(name);
+      await expect(modal.getByLabel('Name', { exact: true })).toHaveValue(name);
 
       return modal;
     } catch (err) {
@@ -89,7 +94,7 @@ async function selectValueType(
   modal: ReturnType<Page['getByRole']>,
   label: string,
 ): Promise<void> {
-  await modal.getByRole('combobox', { name: /^Value Type/ }).click();
+  await modal.getByRole('button', { name: /^Value Type/ }).click();
   await page.getByRole('option', { name: label, exact: true }).click();
 }
 
@@ -158,14 +163,12 @@ test.describe(
         `E2E_KEY_${Date.now()}`,
       );
 
+      await modal.getByLabel('Category', { exact: true }).fill('e2e_category');
       await modal
-        .getByRole('combobox', { name: /^Category/ })
-        .fill('e2e_category');
-      await modal
-        .getByRole('textbox', { name: /^Display Name/ })
+        .getByLabel('Display Name', { exact: true })
         .fill('E2E Display Name');
 
-      await modal.getByRole('combobox', { name: /^UI Type/ }).click();
+      await modal.getByRole('button', { name: /^UI Type/ }).click();
       await page.getByRole('option', { name: 'Select', exact: true }).click();
 
       await modal.getByRole('button', { name: /Add Choice/i }).click();
@@ -179,7 +182,7 @@ test.describe(
       await labelRows.nth(1).fill('BF16');
 
       // Exercise the remove flow too, not just add: a temporary third row
-      // is added, filled, then removed via its own row Delete button. This
+      // is added, filled, then removed via its own row Remove button. This
       // verifies the row count drops back to 2 and the remaining rows keep
       // their own values (i.e. `remove()` targets the right Form.List index)
       // — a broken remove handler wouldn't fail any test without this.
@@ -188,8 +191,8 @@ test.describe(
       await labelRows.nth(2).fill('INT8');
       await expect(choiceRows).toHaveCount(3);
       await modal
-        .getByRole('button', { name: 'Delete', exact: true })
-        .last()
+        .getByRole('button', { name: 'Remove', exact: true })
+        .nth(2)
         .click();
       await expect(choiceRows).toHaveCount(2);
       await expect(choiceRows.nth(0)).toHaveValue('fp16');
@@ -198,7 +201,7 @@ test.describe(
       await modal.getByRole('button', { name: 'Create' }).click();
 
       await expect(
-        page.getByText('Runtime parameter has been created.'),
+        page.getByText('Runtime parameter has been created.').first(),
       ).toBeVisible({ timeout: 60000 });
       await expect(modal).toBeHidden({ timeout: 30000 });
 
@@ -225,7 +228,7 @@ test.describe(
       // defaults to String — declare the type before picking the control.
       await selectValueType(page, modal, 'Integer');
 
-      await modal.getByRole('combobox', { name: /^UI Type/ }).click();
+      await modal.getByRole('button', { name: /^UI Type/ }).click();
       await page.getByRole('option', { name: 'Slider', exact: true }).click();
 
       await modal.getByRole('spinbutton', { name: 'Minimum' }).fill('0');
@@ -235,7 +238,7 @@ test.describe(
       await modal.getByRole('button', { name: 'Create' }).click();
 
       await expect(
-        page.getByText('Runtime parameter has been created.'),
+        page.getByText('Runtime parameter has been created.').first(),
       ).toBeVisible({ timeout: 60000 });
       await expect(modal).toBeHidden({ timeout: 30000 });
 
@@ -286,7 +289,7 @@ test.describe(
       // defaults to String — declare the type before picking the control.
       await selectValueType(page, modal, 'Integer');
 
-      await modal.getByRole('combobox', { name: /^UI Type/ }).click();
+      await modal.getByRole('button', { name: /^UI Type/ }).click();
       await page.getByRole('option', { name: 'Slider', exact: true }).click();
 
       await modal.getByRole('button', { name: 'Create' }).click();
@@ -322,7 +325,7 @@ test.describe(
       // defaults to String — declare the type before picking the control.
       await selectValueType(page, modal, 'Integer');
 
-      await modal.getByRole('combobox', { name: /^UI Type/ }).click();
+      await modal.getByRole('button', { name: /^UI Type/ }).click();
       await page.getByRole('option', { name: 'Slider', exact: true }).click();
 
       await modal.getByRole('spinbutton', { name: 'Minimum' }).fill('0');
@@ -381,13 +384,11 @@ test.describe(
         `E2E_KEY_${Date.now()}`,
       );
 
+      await modal.getByLabel('Category', { exact: true }).fill('e2e_category');
       await modal
-        .getByRole('combobox', { name: /^Category/ })
-        .fill('e2e_category');
-      await modal
-        .getByRole('textbox', { name: /^Display Name/ })
+        .getByLabel('Display Name', { exact: true })
         .fill('E2E Display Name');
-      await modal.getByRole('combobox', { name: /^UI Type/ }).click();
+      await modal.getByRole('button', { name: /^UI Type/ }).click();
       await page.getByRole('option', { name: 'Select', exact: true }).click();
       // Two choice rows, not one — a bug that only mishandles the second
       // (or later) `Form.List` row wouldn't be caught by asserting `.first()`
@@ -402,7 +403,7 @@ test.describe(
       await createLabelRows.nth(1).fill('BF16');
       await modal.getByRole('button', { name: 'Create' }).click();
       await expect(
-        page.getByText('Runtime parameter has been created.'),
+        page.getByText('Runtime parameter has been created.').first(),
       ).toBeVisible({ timeout: 60000 });
       await expect(modal).toBeHidden({ timeout: 30000 });
 
@@ -416,10 +417,10 @@ test.describe(
       await expect(editModal).toContainText('Edit Parameter');
 
       await expect(
-        editModal.getByRole('combobox', { name: /^Category/ }),
+        editModal.getByLabel('Category', { exact: true }),
       ).toHaveValue('e2e_category');
       await expect(
-        editModal.getByRole('textbox', { name: /^Display Name/ }),
+        editModal.getByLabel('Display Name', { exact: true }),
       ).toHaveValue('E2E Display Name');
 
       // The regression this covers: row count used to be right but the

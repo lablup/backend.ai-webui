@@ -1,3 +1,4 @@
+import { relay } from './vite-plugins/relay';
 import stylexVite from '@stylexjs/unplugin/vite';
 import react from '@vitejs/plugin-react';
 import { dirname, resolve } from 'node:path';
@@ -19,8 +20,7 @@ const reactArtifactDir = resolve(reactSrc, '__generated__');
  * dev-server middlewares, `transformIndexHtml` hooks, PWA generation, and
  * other things that either do not apply in a test runner or would slow it
  * down. What we share with vite.config.ts is the TRANSFORM pipeline — the
- * `@vitejs/plugin-react` configuration with `babel-plugin-relay`
- * (per-directory artifactDirectory) and `babel-plugin-react-compiler`.
+ * Relay plugin (per-directory artifactDirectory) and the React Compiler.
  *
  * The intent is that a single source file produces the same transformed
  * code under both `vite:dev` and `vitest`, so tests and the running app
@@ -28,20 +28,14 @@ const reactArtifactDir = resolve(reactSrc, '__generated__');
  * optimisations are active in tests too).
  */
 export default defineConfig({
+  ssr: { resolve: { conditions: ['@backend.ai/source'] } },
   resolve: {
+    conditions: ['@backend.ai/source'],
     alias: [
       // Mirror the `src/` baseUrl import in tsconfig.json so
       // `import 'src/hooks/foo'` resolves under Vitest too.
       { find: /^src\//, replacement: reactSrc + '/' },
-      // Workspace package alias (dev-source path, matching the Jest
-      // moduleNameMapper entry for `backend.ai-ui`).
-      { find: /^backend\.ai-ui\/dist(\/|$)/, replacement: buiSrc + '$1' },
-      // The `./locale/*` subpath export points at `dist/`, which CI never
-      // builds before running this suite — resolve it to source instead.
-      { find: /^backend\.ai-ui\/locale\//, replacement: buiSrc + '/locale/' },
-      { find: /^backend\.ai-ui$/, replacement: buiSrc },
       // `backend.ai-client` is mocked in tests (see __test__/backendAiClient.mock.js).
-      // The Jest moduleNameMapper handled this explicitly; we use an alias instead.
       {
         find: /^backend\.ai-client$/,
         replacement: resolve(__dirname, '__test__/backendAiClient.mock.js'),
@@ -67,9 +61,7 @@ export default defineConfig({
     // (ticket 01). Without it, any module that calls `stylex.create()` at
     // import time throws "Unexpected 'stylex.create' call at runtime", which
     // took out 10 test files that merely import a component using `xstyle`
-    // (ticket 30). The plugin declares `enforce: 'pre'` itself, so it sees raw
-    // TSX ahead of @vitejs/plugin-react regardless of position here, and it
-    // only touches files that literally import `@stylexjs/stylex`.
+    // (ticket 30). It must stay ahead of relay() and react(): all are `enforce: 'pre'`.
     //
     // `cssInjectionTarget` is intentionally omitted: vitest aliases every CSS
     // specifier to `__test__/rawCss.mock.js`, so nothing consumes the emitted
@@ -79,27 +71,11 @@ export default defineConfig({
       // Same anchor as the app build so generated class names match.
       unstable_moduleResolution: { type: 'commonJS', rootDir: projectRoot },
     }),
-    react({
-      babel: (id) => {
-        const isBUI = id.startsWith(buiSrc);
-        const isReactSrc = id.startsWith(reactSrc);
-        const plugins: Array<string | [string, unknown]> = [
-          ['babel-plugin-react-compiler', { compilationMode: 'annotation' }],
-        ];
-        if (isBUI) {
-          plugins.push([
-            'babel-plugin-relay',
-            { artifactDirectory: buiArtifactDir },
-          ]);
-        } else if (isReactSrc) {
-          plugins.push([
-            'babel-plugin-relay',
-            { artifactDirectory: reactArtifactDir },
-          ]);
-        }
-        return { plugins };
-      },
-    }),
+    relay([
+      { srcDir: buiSrc, artifactDirectory: buiArtifactDir },
+      { srcDir: reactSrc, artifactDirectory: reactArtifactDir },
+    ]),
+    react({ compiler: { compilationMode: 'annotation' } }),
     svgr({ include: '**/*.svg?react' }),
   ],
 

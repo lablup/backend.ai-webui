@@ -1,5 +1,8 @@
 import { expect, unique } from "e2e";
 import { test } from "../utils/cleanup";
+import { findRunnableImage } from "../utils/session-image";
+
+const resourceGroup = "default";
 
 test(
   "the agent launches an interactive session that reaches RUNNING",
@@ -8,9 +11,20 @@ test(
     const name = `e2e-agent-${Date.now()}`;
     sessionsToCleanup.push(name);
 
-    await app.open("/session/start");
+    // Seed the environment through the launcher's own `formValues` link: its
+    // default is the first accelerator-dedicated image, which only GPU agents
+    // have, so a session on it never runs in the CPU group used below.
+    const image = await findRunnableImage(app, browser, resourceGroup);
+    await app.open(
+      `/session/start?formValues=${encodeURIComponent(
+        JSON.stringify({ environments: image }),
+      )}`,
+    );
     // The form renders after the app shell; acting earlier trips the loop guard.
-    await expect(screen.getByRole("textbox", "Session Name")).toBeVisible({
+    // Two labels point at this input: the form item's visible "Session Name
+    // (optional)" and the control's own hidden "Session Name". The browser
+    // joins them into one accessible name, so match the name's start.
+    await expect(screen.getByRole("textbox", /^Session Name\b/)).toBeVisible({
       timeout: 30_000,
     });
 
@@ -24,7 +38,7 @@ test(
 
     await agent.act(
       'Select {group} in the "Resource Group" field and {preset} in the "Resource Presets" field',
-      { params: { group: "default", preset: "Minimum requirements" } },
+      { params: { group: resourceGroup, preset: "Minimum requirements" } },
     );
     await expect(screen.getByRole("button", /^Resource Presets/)).toHaveText(
       /Minimum requirements/,

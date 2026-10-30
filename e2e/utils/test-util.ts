@@ -115,6 +115,23 @@ export const webServerEndpoint =
 export const isLocalEnvironment =
   webuiEndpoint.includes('127.0.0.1') || webuiEndpoint.includes('localhost');
 
+/**
+ * Remember `endpoint` as the last-used API endpoint before the app loads, so
+ * the login page probes it and attempts the silent `/server/login` on load.
+ * A dev server gets this from `VITE_DEFAULT_API_ENDPOINT`; a production build
+ * with an empty `apiEndpoint` has no endpoint until one is stored.
+ */
+export async function seedStoredApiEndpoint(
+  page: Page,
+  endpoint: string = webServerEndpoint,
+) {
+  await page.addInitScript((ep) => {
+    if (localStorage.getItem('backendaiwebui.api_endpoint') === null) {
+      localStorage.setItem('backendaiwebui.api_endpoint', ep);
+    }
+  }, endpoint);
+}
+
 export async function login(
   page: Page,
   request: APIRequestContext,
@@ -414,6 +431,34 @@ export async function fillOutVaadinGridCellFilter(
 }
 
 /**
+ * Astryx 0.7.0 (#7339, picked up in #10327) forwards `PowerSearch`'s
+ * `data-testid` through its `Tokenizer` onto the typeahead's combobox
+ * `<input>` itself instead of the field root, so the test id element no
+ * longer contains the tokens or the combobox. The tokens sit next to the
+ * input inside the field's `role="group"` (labelled by the control, e.g.
+ * "Search filters"). Return the test id element plus that enclosing group, so
+ * scoping through it works whether the test id lands on the root (before
+ * 0.7.0) or on the input (0.7.0+).
+ */
+function getPowerSearchScope(page: Page, testId: string = 'vfolder-filter') {
+  const testIdElement = page.getByTestId(testId);
+  return testIdElement.or(
+    page.getByRole('group').filter({ has: testIdElement }),
+  );
+}
+
+/**
+ * The PowerSearch typeahead (`role="combobox"`) of the `BAIPropertyFilter` /
+ * `BAIGraphQLPropertyFilter` with `testId`; see `getPowerSearchScope`.
+ */
+export function getPowerSearchInput(
+  page: Page,
+  testId: string = 'vfolder-filter',
+) {
+  return getPowerSearchScope(page, testId).getByRole('combobox').first();
+}
+
+/**
  * `BAIPropertyFilter` / `BAIGraphQLPropertyFilter` (to-astryx ticket 28) are
  * built on Astryx `PowerSearch`. A committed filter is a token whose remove
  * control carries `aria-label="Remove {label}"`
@@ -425,9 +470,9 @@ export async function fillOutVaadinGridCellFilter(
  */
 export async function removeSearchButton(page: Page, folderName: string) {
   try {
-    const removeButton = page
-      .getByTestId('vfolder-filter')
-      .getByRole('button', { name: `Remove Name: contains ${folderName}` });
+    const removeButton = getPowerSearchScope(page).getByRole('button', {
+      name: `Remove Name: contains ${folderName}`,
+    });
 
     // Only try to click if the filter token exists
     if (await removeButton.isVisible({ timeout: 1000 })) {
@@ -443,9 +488,9 @@ export async function clearAllFilters(page: Page) {
   try {
     // Every token's remove button carries an aria-label starting with
     // "Remove " (see `removeSearchButton` above).
-    const filterChips = page
-      .getByTestId('vfolder-filter')
-      .getByRole('button', { name: /^Remove / });
+    const filterChips = getPowerSearchScope(page).getByRole('button', {
+      name: /^Remove /,
+    });
 
     // Get count of filter chips
     const count = await filterChips.count();
@@ -470,11 +515,9 @@ export async function clearAllFilters(page: Page) {
  * `BAIGraphQLPropertyFilter` component (to-astryx ticket 28 rebuilt both on
  * Astryx `PowerSearch`: a single typeahead that, for a field with no
  * pre-filled value, opens an edit popover (Field/Operator/Value) on
- * selection — `PowerSearch.tsx` `handleTokenizerChange`). The `data-testid`
- * lands on `PowerSearch`'s own root (`data-testid={testId}`,
- * `PowerSearch.tsx`), which contains exactly one `role="combobox"` (the
- * typeahead), so scoping through it stays unambiguous regardless of any
- * per-page `label` override.
+ * selection — `PowerSearch.tsx` `handleTokenizerChange`). The typeahead is
+ * found through `testId` (`getPowerSearchInput`), so it stays unambiguous
+ * regardless of any per-page `label` override.
  * @param page - Playwright Page object
  * @param propertyName - Name of the property to filter by (e.g., 'Name', 'Status')
  * @param searchValue - Value to search for
@@ -486,10 +529,8 @@ export async function selectPropertyFilter(
   searchValue: string,
   testId: string = 'vfolder-filter',
 ) {
-  const filterContainer = page.getByTestId(testId);
-
   // Open the typeahead and pick the field.
-  const searchBar = filterContainer.getByRole('combobox').first();
+  const searchBar = getPowerSearchInput(page, testId);
   await searchBar.click();
   await page.getByRole('option', { name: propertyName, exact: true }).click();
 
@@ -633,7 +674,6 @@ export async function createVFolderAndVerify(
   folderName: string,
   usageMode: 'general' | 'model' = 'general',
   type: 'user' | 'project' = 'user',
-  permission: 'rw' | 'ro' = 'rw',
 ) {
   await navigateTo(page, 'data');
   // VFolderNodeListPage's BAICard extra renders a single "Create Folder" button.
@@ -662,13 +702,8 @@ export async function createVFolderAndVerify(
     );
   }
 
-  // Select permission
-  if (permission === 'rw') {
-    await (await modal.getReadWritePermissionRadio()).click();
-  } else if (permission === 'ro') {
-    await (await modal.getReadOnlyPermissionRadio()).click();
-  }
-
+  // No mount permission step: every new folder is created read-only for
+  // shared users (#10647); the default is changed from the share modal.
   await (await modal.getCreateButton()).click();
   // Wait for the creation modal to close before verifying
   await expect(
@@ -1036,12 +1071,9 @@ export async function acceptAllInvitationAndVerifySpecificFolder(
 }
 
 /**
- * Leave a shared (invited) vfolder via SharedFolderPermissionInfoModal.
- *
- * Regression guard for FR-2978: VFolder.leave_invited used to send `null`
- * as the request body, which the manager's BodyParam[LeaveVFolderReq] rejected
- * with a 400. Driving the full UI flow here ensures the client sends a valid
- * JSON body end-to-end.
+ * Leave a shared (invited) vfolder via SharedFolderPermissionInfoModal, which
+ * looks the recipient's share up in `myEntityShares` and calls
+ * `leaveEntityShare` on it.
  *
  * Caller must already be logged in as the invitee and have accepted the
  * invitation (see acceptAllInvitationAndVerifySpecificFolder).

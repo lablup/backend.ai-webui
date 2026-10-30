@@ -80,13 +80,7 @@ test.describe(
 
     test('User can upload a file to a subdirectory', async ({ page }) => {
       // 1. Create a VFolder with Read & Write permissions
-      await createVFolderAndVerify(
-        page,
-        testFolderName,
-        'general',
-        'user',
-        'rw',
-      );
+      await createVFolderAndVerify(page, testFolderName);
 
       // 2. Open the VFolder in FolderExplorerModal
       const modal = await openFolderExplorer(page, testFolderName);
@@ -112,27 +106,24 @@ test.describe(
       // Verify the subfolder appears in the file table (this implicitly waits for folder creation)
       await modal.verifyFileVisible(subfolderName);
 
-      // 5. Navigate into the newly created folder by clicking the folder name link
-      // inside the Name cell. Clicking the cell itself only triggers row selection
-      // (onRow handler); the actual navigation is on the Typography.Text element
-      // wrapping the folder icon + name (BAIFileExplorer's onClick handler).
-      const folderNameCell = page
-        .getByRole('dialog')
-        .first()
-        .getByRole('cell')
-        .filter({ hasText: subfolderName })
-        .first();
-      await expect(folderNameCell).toBeVisible({ timeout: 10000 });
-      await folderNameCell.getByText(subfolderName).click();
+      // 5. Navigate into the newly created folder. Clicking the cell itself
+      // only selects the row; the folder name renders as a button that
+      // navigates into it.
+      const explorerDialog = page.getByRole('dialog').first();
+      const folderNameButton = explorerDialog.getByRole('button', {
+        name: subfolderName,
+        exact: true,
+      });
+      await expect(folderNameButton).toBeVisible({ timeout: 10000 });
+      await folderNameButton.click();
 
       // 6. Verify breadcrumb shows the subdirectory path (waits for navigation)
-      await expect(
-        page
-          .getByRole('dialog')
-          .first()
-          .locator('.ant-breadcrumb')
-          .getByText(subfolderName),
-      ).toBeVisible({ timeout: 10000 });
+      const breadcrumb = explorerDialog.getByRole('navigation', {
+        name: 'Path',
+      });
+      await expect(breadcrumb.getByText(subfolderName)).toBeVisible({
+        timeout: 10000,
+      });
 
       // 7. Upload a file via Upload button
       const uploadButton = await modal.getUploadButton();
@@ -149,14 +140,8 @@ test.describe(
       const fileName = path.basename(testFilePath);
       await modal.verifyFileVisible(fileName);
 
-      // 9. Navigate back to root (click home in breadcrumb)
-      // The breadcrumb has a home icon at the beginning; scope to the dialog
-      // to avoid matching the page-level breadcrumb.
-      const breadcrumb = page
-        .getByRole('dialog')
-        .first()
-        .locator('.ant-breadcrumb');
-      await breadcrumb.locator('a').first().click();
+      // 9. Navigate back to root (click the home item, first in the breadcrumb)
+      await breadcrumb.getByRole('listitem').first().click();
 
       // 10. Verify navigation back to root by checking subfolder is visible again
       await modal.verifyFileVisible(subfolderName);
