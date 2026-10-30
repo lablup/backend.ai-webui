@@ -10,6 +10,7 @@ export type BAIAdminProjectSelectValueQuery$data = {
                 readonly basicInfo: {
                     readonly name: string;
                 };
+                readonly entityId: string;
                 readonly id: string;
             };
         }>;
