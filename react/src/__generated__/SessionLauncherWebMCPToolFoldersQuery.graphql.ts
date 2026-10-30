@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<279e2a34ff6b783196e973375e387ec6>>
+ * @generated SignedSource<<005b3c78a1af009946d7c6b11240217d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,8 +9,10 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
 export type VFolderOperationStatus = "CLONING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
+export type VFolderOrderField = "CREATED_AT" | "HOST" | "NAME" | "STATUS" | "USAGE_MODE" | "%future added value";
 export type VFolderUsageMode = "DATA" | "GENERAL" | "MODEL" | "%future added value";
 export type VFolderScope = {
   domain?: ReadonlyArray<UUIDScope> | null | undefined;
@@ -95,9 +97,14 @@ export type UUIDFilter = {
   notEquals?: string | null | undefined;
   notIn?: ReadonlyArray<string> | null | undefined;
 };
+export type VFolderOrderBy = {
+  direction?: OrderDirection;
+  field?: VFolderOrderField;
+};
 export type SessionLauncherWebMCPToolFoldersQuery$variables = {
   filter?: VFolderFilter | null | undefined;
   limit: number;
+  orderBy?: ReadonlyArray<VFolderOrderBy> | null | undefined;
   scope: VFolderScope;
 };
 export type SessionLauncherWebMCPToolFoldersQuery$data = {
@@ -134,9 +141,14 @@ v1 = {
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
+  "name": "orderBy"
+},
+v3 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
   "name": "scope"
 },
-v3 = [
+v4 = [
   {
     "kind": "Variable",
     "name": "filter",
@@ -149,18 +161,23 @@ v3 = [
   },
   {
     "kind": "Variable",
+    "name": "orderBy",
+    "variableName": "orderBy"
+  },
+  {
+    "kind": "Variable",
     "name": "scope",
     "variableName": "scope"
   }
 ],
-v4 = {
+v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "entityId",
   "storageKey": null
 },
-v5 = {
+v6 = {
   "alias": null,
   "args": null,
   "concreteType": "VFolderAccessControlInfo",
@@ -178,7 +195,7 @@ v5 = {
   ],
   "storageKey": null
 },
-v6 = {
+v7 = {
   "alias": null,
   "args": null,
   "concreteType": "VFolderMetadataInfo",
@@ -201,7 +218,8 @@ return {
     "argumentDefinitions": [
       (v0/*: any*/),
       (v1/*: any*/),
-      (v2/*: any*/)
+      (v2/*: any*/),
+      (v3/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
@@ -209,7 +227,7 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v3/*: any*/),
+        "args": (v4/*: any*/),
         "concreteType": "VFolderConnection",
         "kind": "LinkedField",
         "name": "scopedVFoldersV2",
@@ -231,9 +249,9 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v4/*: any*/),
                   (v5/*: any*/),
-                  (v6/*: any*/)
+                  (v6/*: any*/),
+                  (v7/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -250,8 +268,9 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v2/*: any*/),
+      (v3/*: any*/),
       (v0/*: any*/),
+      (v2/*: any*/),
       (v1/*: any*/)
     ],
     "kind": "Operation",
@@ -259,7 +278,7 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v3/*: any*/),
+        "args": (v4/*: any*/),
         "concreteType": "VFolderConnection",
         "kind": "LinkedField",
         "name": "scopedVFoldersV2",
@@ -281,9 +300,9 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v4/*: any*/),
                   (v5/*: any*/),
                   (v6/*: any*/),
+                  (v7/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -303,16 +322,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "a95abce57b2b1c7a47b80d7328b19954",
+    "cacheID": "433d46d6963b3f6b7fc7c3965d86fae2",
     "id": null,
     "metadata": {},
     "name": "SessionLauncherWebMCPToolFoldersQuery",
     "operationKind": "query",
-    "text": "query SessionLauncherWebMCPToolFoldersQuery(\n  $scope: VFolderScope!\n  $filter: VFolderFilter\n  $limit: Int!\n) {\n  scopedVFoldersV2(scope: $scope, filter: $filter, limit: $limit) {\n    edges {\n      node {\n        entityId\n        accessControl {\n          permission\n        }\n        metadata {\n          name\n        }\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query SessionLauncherWebMCPToolFoldersQuery(\n  $scope: VFolderScope!\n  $filter: VFolderFilter\n  $orderBy: [VFolderOrderBy!]\n  $limit: Int!\n) {\n  scopedVFoldersV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit) {\n    edges {\n      node {\n        entityId\n        accessControl {\n          permission\n        }\n        metadata {\n          name\n        }\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "e94bf10d57a5ad5aefd79a8a5b98d23d";
+(node as any).hash = "495f743f2434a233e0737b7ddb883ffe";
 
 export default node;

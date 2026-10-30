@@ -72,7 +72,15 @@ describe('buildSessionPrefill', () => {
         },
       ],
     });
+    expect(result.formValues.resource).not.toHaveProperty('shmem');
     expect(result.rejected).toEqual([]);
+    expect(result.unverified.map((item) => item.field)).toEqual([
+      'accelerator',
+      'acceleratorType',
+      'clusterSize',
+    ]);
+    expect(result.applied).not.toHaveProperty('accelerator');
+    expect(result.applied).not.toHaveProperty('clusterSize');
     // The image is confirmed only after the launcher resolves it.
     expect(result.applied).not.toHaveProperty('image');
     expect(result.applied).toMatchObject({
@@ -88,6 +96,7 @@ describe('buildSessionPrefill', () => {
       formValues: {},
       applied: {},
       rejected: [],
+      unverified: [],
     });
   });
 
@@ -100,6 +109,21 @@ describe('buildSessionPrefill', () => {
     expect(result.formValues).not.toHaveProperty('sessionName');
     expect(result.rejected).toEqual([
       { field: 'sessionName', reason: expect.stringContaining(reason) },
+    ]);
+  });
+
+  it('rejects a batch session without a startup command', () => {
+    const result = buildSessionPrefill({ sessionType: 'batch' }, context);
+    expect(result.formValues).toEqual({});
+    expect(result.rejected.map((r) => r.field)).toEqual(['sessionType']);
+  });
+
+  it('refuses more folders than the lookup answers for', () => {
+    const folders = Array.from({ length: 51 }, (_, i) => `f${i}`).join(',');
+    const result = buildSessionPrefill({ folders }, context);
+    expect(result.formValues).toEqual({});
+    expect(result.rejected).toEqual([
+      { field: 'folders', reason: expect.stringContaining('at most 50') },
     ]);
   });
 

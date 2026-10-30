@@ -402,6 +402,18 @@ const applyDataChanged = (
   if (ctx.mode === 'free' && draft.allocationPreset === 'minimum-required') {
     applyMinimumRequired(draft, ctx);
   }
+  // Amounts restored as `custom` (a URL prefill) skip the event that sizes shmem.
+  if (
+    draft.allocationPreset === 'custom' &&
+    draft.enabledAutomaticShmem &&
+    compareNumberWithUnits(draft.resource.mem || '0g', '0g') > 0 &&
+    compareNumberWithUnits(draft.resource.shmem || '0g', '0g') === 0
+  ) {
+    draft.resource.shmem = getAutomaticShmem(
+      draft.resource.mem as string,
+      ctx.imageMinMem,
+    );
+  }
 };
 
 /** Whether `resource` holds what `fields` would write: sizes by value, a unified slot by type only. */

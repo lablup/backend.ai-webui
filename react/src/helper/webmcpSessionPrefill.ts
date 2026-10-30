@@ -2,6 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { NON_ACCELERATOR_SLOTS } from '../components/SessionFormItems/resourceAllocationRules';
+import {
+  findSessionNameProblem,
+  type SessionNameProblem,
+} from '../hooks/useValidateSessionName';
 import type { SessionLauncherFormValue } from '../pages/SessionLauncherPage';
 import { parseImageString, removeArchitectureFromImageFullName } from './index';
 import type { VFolderMountConfigValue, WebMCPInputSchema } from 'backend.ai-ui';
@@ -9,6 +14,9 @@ import * as _ from 'lodash-es';
 
 /** Search param marking a launcher URL opened by `bai_prepare_session`. */
 export const AGENT_PREFILL_PARAM = 'agentPrefill';
+
+/** More names than the lookup can answer for reliably. */
+export const MAX_PREFILL_FOLDERS = 50;
 
 export const PREPARE_SESSION_INPUT_SCHEMA: WebMCPInputSchema = {
   type: 'object',
@@ -29,7 +37,8 @@ export const PREPARE_SESSION_INPUT_SCHEMA: WebMCPInputSchema = {
       type: 'string',
       minLength: 1,
       maxLength: 4096,
-      description: 'The command a batch session runs. Batch only.',
+      description:
+        'The command a batch session runs. Required with sessionType "batch", refused otherwise.',
     },
     image: {
       type: 'string',
@@ -71,13 +80,15 @@ export const PREPARE_SESSION_INPUT_SCHEMA: WebMCPInputSchema = {
       type: 'integer',
       minimum: 1,
       maximum: 1024,
+      description:
+        'Containers in the session. Given alone it implies clusterMode "multi-node", the launcher default. Not checked against the user\'s limit here, so it comes back in unverified.',
     },
     folders: {
       type: 'string',
       minLength: 1,
       maxLength: 4096,
       description:
-        'Comma-separated names of storage folders to mount, as the launcher lists them.',
+        'Comma-separated names of at most 50 storage folders to mount, as the launcher lists them.',
     },
   },
   additionalProperties: false,
@@ -116,25 +127,25 @@ export interface SessionPrefillContext {
 
 export interface SessionPrefill {
   formValues: DeepPartial<SessionLauncherFormValue>;
+  /** Set verbatim, or read back from the form. */
   applied: Record<string, unknown>;
   rejected: Array<PrefillRejection>;
+  /** Written to the form, but its rules or the server may change them. */
+  unverified: Array<PrefillRejection>;
 }
 
-const RESOURCE_FIELDS = [
-  'cpu',
-  'memoryGiB',
-  'accelerator',
-  'acceleratorType',
-] as const;
+const ACCELERATOR_FIELDS = ['accelerator', 'acceleratorType'] as const;
+const RESOURCE_FIELDS = ['cpu', 'memoryGiB', ...ACCELERATOR_FIELDS] as const;
 
-/** The launcher's session name rules (`useValidateSessionName`). */
+const SESSION_NAME_PROBLEMS: Record<SessionNameProblem, string> = {
+  start: 'must start with a letter, digit or "_"',
+  end: 'must end with a letter, digit or "_"',
+  characters: 'may contain only letters, digits, "_", "-" and "."',
+};
+
 export const sessionNameProblem = (name: string): string | null => {
-  if (!/^\w/.test(name)) return 'must start with a letter, digit or "_"';
-  if (!/\w$/.test(name)) return 'must end with a letter, digit or "_"';
-  if (!/^[\w.-]*$/.test(name)) {
-    return 'may contain only letters, digits, "_", "-" and "."';
-  }
-  return null;
+  const problem = findSessionNameProblem(name);
+  return problem && SESSION_NAME_PROBLEMS[problem];
 };
 
 const ACCELERATOR_TYPE_PATTERN = /^[a-z][a-z0-9_-]*\.[a-z0-9_.-]+$/i;
@@ -182,10 +193,13 @@ export const buildSessionPrefill = (
   const formValues: DeepPartial<SessionLauncherFormValue> = {};
   const applied: Record<string, unknown> = {};
   const rejected: Array<PrefillRejection> = [];
+  const unverified: Array<PrefillRejection> = [];
   const reject = (field: string, reason: string) =>
     rejected.push({ field, reason });
 
-  if (input.sessionType !== undefined) {
+  if (input.sessionType === 'batch' && input.startupCommand === undefined) {
+    reject('sessionType', 'A batch session needs a startupCommand.');
+  } else if (input.sessionType !== undefined) {
     formValues.sessionType = input.sessionType;
     applied.sessionType = input.sessionType;
   }
@@ -231,7 +245,7 @@ export const buildSessionPrefill = (
     } else if (
       input.acceleratorType !== undefined &&
       (!ACCELERATOR_TYPE_PATTERN.test(input.acceleratorType) ||
-        ['cpu', 'mem', 'shmem'].includes(input.acceleratorType.split('.')[0]))
+        NON_ACCELERATOR_SLOTS.includes(input.acceleratorType.split('.')[0]))
     ) {
       rejectResources(
         'acceleratorType must be an accelerator slot name such as "cuda.device".',
@@ -248,9 +262,16 @@ export const buildSessionPrefill = (
           acceleratorType: input.acceleratorType,
         }),
       };
-      givenResourceFields.forEach((field) => {
-        applied[field] = input[field];
-      });
+      applied.cpu = input.cpu;
+      applied.memoryGiB = input.memoryGiB;
+      ACCELERATOR_FIELDS.filter((field) => input[field] !== undefined).forEach(
+        (field) =>
+          unverified.push({
+            field,
+            reason:
+              'The launcher adjusts accelerators to the image and resource group; check its Resource allocation step.',
+          }),
+      );
     }
   }
 
@@ -260,10 +281,19 @@ export const buildSessionPrefill = (
   }
   if (input.clusterSize !== undefined) {
     formValues.cluster_size = input.clusterSize;
-    applied.clusterSize = input.clusterSize;
+    unverified.push({
+      field: 'clusterSize',
+      reason:
+        "The user's cluster size limit is not known here; the server checks it at launch.",
+    });
   }
 
-  if (input.folders !== undefined) {
+  if (
+    input.folders !== undefined &&
+    parseFolderNames(input.folders).length > MAX_PREFILL_FOLDERS
+  ) {
+    reject('folders', `Give at most ${MAX_PREFILL_FOLDERS} folders.`);
+  } else if (input.folders !== undefined) {
     const { mounts, rejected: missing } = resolveFolders(
       input.folders,
       context.folders,
@@ -280,7 +310,7 @@ export const buildSessionPrefill = (
     }
   }
 
-  return { formValues, applied, rejected };
+  return { formValues, applied, rejected, unverified };
 };
 
 /** The image the launcher settled on, read back from its form. */
