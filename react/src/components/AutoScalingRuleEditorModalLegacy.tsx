@@ -362,12 +362,6 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
                   rules={[{ required: true }]}
                   noStyle
                 >
-                  {/* PILOT-DECISION: antd `Select` with a ReactNode option
-                      label + `optionLabelProp="selectedLabel"` -> `Selector`.
-                      Astryx option labels are STRINGS (P2/P26-3) and there is
-                      no `optionLabelProp`, so the two-part row collapses to one
-                      string, `"<label> (<value>)"`, which carries both pieces
-                      the node did. `style={{width:100}}` -> `width={100}`. */}
                   <BAISelect
                     showSearch={false}
                     aria-label={t('autoScalingRule.Comparator')}

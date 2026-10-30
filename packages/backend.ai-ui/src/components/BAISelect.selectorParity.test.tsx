@@ -72,4 +72,17 @@ describe('BAISelect as the single select', () => {
     await userEvent.click(screen.getByRole('button', { name: /clear/i }));
     expect(onChange).toHaveBeenCalledWith(undefined, undefined);
   });
+
+  it('shows no clear button while nothing is selected', () => {
+    render(
+      <BAISelect
+        aria-label="Policy"
+        allowClear
+        options={[{ label: 'Alpha', value: 'a' }]}
+      />,
+    );
+    expect(
+      screen.queryByRole('button', { name: /clear/i }),
+    ).not.toBeInTheDocument();
+  });
 });

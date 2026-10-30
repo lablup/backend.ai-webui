@@ -41,9 +41,6 @@ const DesktopAppDownloadTab: React.FC = () => {
     // dropped: MetadataList lays out label/value rows without a grid frame.
     <BAIMetadataList columns="single">
       <MetadataListItem label={t('summary.OS')}>
-        {/* antd `Select` with `Select.Option` children -> `Selector` with an
-            `options` array; `label` is required and hidden because the
-            metadata row already prints it. */}
         <BAISelect
           showSearch={false}
           aria-label={t('summary.OS')}

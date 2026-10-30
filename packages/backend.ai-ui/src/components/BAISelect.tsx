@@ -610,7 +610,8 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
     <Selector
       {...shared}
       options={optionsWithSlots}
-      hasClear={allowClear}
+      // `Selector` shows the clear button for any non-null value, `''` included.
+      hasClear={allowClear && resolvedSingleValue !== ''}
       renderValue={labelRender}
       // `autoSelectOption` is honoured without the antd layout effect: when
       // nothing is selected the resolved first (or caller-chosen) option is

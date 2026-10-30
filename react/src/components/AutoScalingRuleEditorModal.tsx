@@ -321,14 +321,6 @@ const AutoScalingRuleEditorModalContent: React.FC<{
       {/* Prometheus Preset (PROMETHEUS only) */}
       {isPrometheus && (
         <>
-          {/* antd `showSearch.filterOption` -> `hasSearch`: Astryx `Selector`
-              filters on the option label itself, which is exactly what the
-              predicate did.
-              PILOT-DECISION: the per-option `description` line under each
-              preset name is DROPPED (P26-3 / MAPPING §3.1 — Astryx option data
-              carries `value`/`label`/`icon` only, and rich option rows need the
-              ComplexSelector track this static list does not warrant). The
-              category grouping survives as a Selector `section`. */}
           <Form.Item
             label={`${t('autoScalingRule.MetricName')} (${t('autoScalingRule.PrometheusPreset')})`}
             name="prometheusQueryPresetId"
