@@ -105,6 +105,10 @@ inherited call sites needed no edit when their internals were rebuilt on Astryx.
 - Export the "one row" type so consumers don't re-derive it:
   `export type UserNodeInList = NonNullable<BAIUserNodesFragment$data[number]>;`
 - Pagination argument modes are mutually exclusive — see `.claude/rules/graphql-pagination.md`.
+- **Local ids**: when a type exposes `entityId` (or `fieldId` when it has no `entityId`),
+  select it and use it for values, filters, mutation inputs and React keys. Do not add new
+  `toLocalId(node.id)`, `row_id` or nested `{ id }` decoding for such a type (#10494).
+  A type with neither field keeps the existing approach.
 - `@since` / `@sinceMultiple` / `@deprecatedSince` / `@deprecatedSinceMultiple` /
   `@skipOnClient` in `graphql` tags are
   **client-side** directives defined in `data/client-directives.graphql` and stripped at
