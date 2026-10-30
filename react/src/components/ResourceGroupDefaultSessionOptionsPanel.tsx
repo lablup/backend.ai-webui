@@ -195,6 +195,15 @@ const ResourceGroupDefaultSessionOptionsPanelContent: React.FC<
               </BAIFlex>
             )}
           </MetadataListItem>
+          <MetadataListItem label={t('adminDeploymentPreset.BootstrapScript')}>
+            {spec?.bootstrapScript ? (
+              <Text type="code" maxLines={3}>
+                {spec.bootstrapScript}
+              </Text>
+            ) : (
+              '-'
+            )}
+          </MetadataListItem>
           <MetadataListItem
             label={t('session.launcher.BatchJobTimeoutDuration')}
           >
@@ -209,15 +218,6 @@ const ResourceGroupDefaultSessionOptionsPanelContent: React.FC<
             {spec?.startupCommand ? (
               <Text type="code" maxLines={3}>
                 {spec.startupCommand}
-              </Text>
-            ) : (
-              '-'
-            )}
-          </MetadataListItem>
-          <MetadataListItem label={t('adminDeploymentPreset.BootstrapScript')}>
-            {spec?.bootstrapScript ? (
-              <Text type="code" maxLines={3}>
-                {spec.bootstrapScript}
               </Text>
             ) : (
               '-'
