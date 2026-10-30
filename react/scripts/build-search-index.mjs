@@ -139,7 +139,7 @@ const SETTING_TAB_OVERRIDES = {
   '/usersettings': 'general',
   // `ConfigurationsSettingList` renders its `<SettingList>` in its own file;
   // `WebUISettingList` builds its groups from a table, so it yields none.
-  '/admin/webui-settings': 'configurations',
+  '/admin/system-settings': 'configurations',
 };
 
 const TAB_OVERRIDES = {

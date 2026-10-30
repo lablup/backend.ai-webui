@@ -911,7 +911,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         path: 'settings',
         element: (
           <WebUINavigate
-            to="/admin/webui-settings?tab=configurations"
+            to="/admin/system-settings?tab=configurations"
             replace
           />
         ),

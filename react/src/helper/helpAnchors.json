@@ -74,7 +74,7 @@
       "anchor": "storages"
     },
     {
-      "path": "webui-settings",
+      "path": "system-settings",
       "tab": "configurations",
       "docPage": "admin_menu.html",
       "anchor": "system-settings"

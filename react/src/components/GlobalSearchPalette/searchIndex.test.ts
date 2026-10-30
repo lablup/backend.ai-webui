@@ -30,7 +30,7 @@ const INVENTORY = {
  * - `summary` / `job` are backward-compatibility aliases of `dashboard` /
  *   `session`, which are indexed under those names.
  * - `pipeline` is rendered by the FastTrack plugin, not by `routes.tsx`.
- * - `settings` only redirects to the Configurations tab of `webui-settings`
+ * - `settings` only redirects to the Configurations tab of `system-settings`
  *   (#10684), which is indexed under that key.
  * (`/logs` is likewise route-less, but it is not a menu key.)
  */
