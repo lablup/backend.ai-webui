@@ -1266,7 +1266,7 @@
     "Overview": "Resumen",
     "Owner": "Propietario",
     "Paused": "En pausa",
-    "PausedTooltip": "Implementaciones no finalizadas con 0 réplicas deseadas, por lo que no atienden solicitudes. El estado indica si usted lo estableció en 0 o si una regla de escalado automático lo redujo. Vuelven a En servicio cuando las réplicas deseadas son 1 o más.",
+    "PausedTooltip": "Implementaciones no finalizadas con 0 réplicas deseadas, por lo que no atienden solicitudes. La columna «Ciclo de vida» indica si usted lo estableció en 0 o si una regla de escalado automático lo redujo. Vuelven a En servicio cuando las réplicas deseadas son 1 o más.",
     "Phase": "Fase",
     "PresetMode": "Modo Preset",
     "Private": "Privado",

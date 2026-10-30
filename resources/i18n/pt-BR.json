@@ -1266,7 +1266,7 @@
     "Overview": "Visão geral",
     "Owner": "Proprietário",
     "Paused": "Pausado",
-    "PausedTooltip": "Implantações não encerradas com 0 réplicas desejadas, portanto não atendem solicitações. O status mostra se você definiu 0 ou se uma regra de escalonamento automático reduziu o valor. Elas voltam a atender quando as réplicas desejadas são 1 ou mais.",
+    "PausedTooltip": "Implantações não encerradas com 0 réplicas desejadas, portanto não atendem solicitações. A coluna Ciclo de vida mostra se você definiu 0 ou se uma regra de escalonamento automático reduziu o valor. Elas voltam a atender quando as réplicas desejadas são 1 ou mais.",
     "Phase": "Fase",
     "PresetMode": "Modo Preset",
     "Private": "Privado",

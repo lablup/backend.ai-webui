@@ -1266,7 +1266,7 @@
     "Overview": "Yleiskatsaus",
     "Owner": "Omistaja",
     "Paused": "Keskeytetty",
-    "PausedTooltip": "Päättymättömät käyttöönotot, joiden haluttu replikamäärä on 0, joten ne eivät käsittele pyyntöjä. Tila näyttää, asetitko arvon 0 itse vai pienensikö automaattisen skaalauksen sääntö sen. Ne palaavat palvelemaan, kun haluttu replikamäärä on vähintään 1.",
+    "PausedTooltip": "Päättymättömät käyttöönotot, joiden haluttu replikamäärä on 0, joten ne eivät käsittele pyyntöjä. Elinkaari-sarake näyttää, asetitko arvon 0 itse vai pienensikö automaattisen skaalauksen sääntö sen. Ne palaavat palvelemaan, kun haluttu replikamäärä on vähintään 1.",
     "Phase": "Vaihe",
     "PresetMode": "Mallitila",
     "Private": "Yksityinen",

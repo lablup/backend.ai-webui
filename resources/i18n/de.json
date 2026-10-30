@@ -1266,7 +1266,7 @@
     "Overview": "Übersicht",
     "Owner": "Eigentümer",
     "Paused": "Pausiert",
-    "PausedTooltip": "Nicht beendete Bereitstellungen mit 0 gewünschten Replikaten, die daher keine Anfragen bearbeiten. Der Status zeigt, ob Sie den Wert auf 0 gesetzt haben oder eine Auto-Scaling-Regel auf 0 reduziert hat. Bei 1 oder mehr gewünschten Replikaten wechseln sie zurück zu „Aktiv“.",
+    "PausedTooltip": "Nicht beendete Bereitstellungen mit 0 gewünschten Replikaten, die daher keine Anfragen bearbeiten. Die Spalte „Lebenszyklus“ zeigt, ob Sie den Wert auf 0 gesetzt haben oder eine Auto-Scaling-Regel auf 0 reduziert hat. Bei 1 oder mehr gewünschten Replikaten wechseln sie zurück zu „Aktiv“.",
     "Phase": "Phase",
     "PresetMode": "Preset-Modus",
     "Private": "Privat",

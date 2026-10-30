@@ -1266,7 +1266,7 @@
     "Overview": "Genel Bakış",
     "Owner": "Sahibi",
     "Paused": "Duraklatıldı",
-    "PausedTooltip": "Sonlandırılmamış ancak istenen replika sayısı 0 olduğu için istekleri işlemeyen dağıtımlar. Durum, değeri sizin mi 0 yaptığınızı yoksa bir otomatik ölçekleme kuralının mı düşürdüğünü gösterir. İstenen replika sayısı 1 veya daha fazla olduğunda yeniden hizmete döner.",
+    "PausedTooltip": "Sonlandırılmamış ancak istenen replika sayısı 0 olduğu için istekleri işlemeyen dağıtımlar. Yaşam Döngüsü sütunu, değeri sizin mi 0 yaptığınızı yoksa bir otomatik ölçekleme kuralının mı düşürdüğünü gösterir. İstenen replika sayısı 1 veya daha fazla olduğunda yeniden hizmete döner.",
     "Phase": "Aşama",
     "PresetMode": "Ön Ayar Modu",
     "Private": "Özel",

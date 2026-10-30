@@ -1253,7 +1253,7 @@
     "Overview": "Overview",
     "Owner": "Owner",
     "Paused": "Paused",
-    "PausedTooltip": "Deployments that are not terminated but have Desired Replicas at 0, so they do not handle requests. The status shows whether you set it to 0 or an auto-scaling rule scaled it down. They move back to Serving when Desired Replicas is 1 or more.",
+    "PausedTooltip": "Deployments that are not terminated but have Desired Replicas at 0, so they do not handle requests. The Lifecycle column shows whether you set it to 0 or an auto-scaling rule scaled it down. They move back to Serving when Desired Replicas is 1 or more.",
     "Phase": "Phase",
     "PresetMode": "Preset Mode",
     "Private": "Private",

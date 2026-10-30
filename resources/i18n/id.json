@@ -1266,7 +1266,7 @@
     "Overview": "Ikhtisar",
     "Owner": "Pemilik",
     "Paused": "Dijeda",
-    "PausedTooltip": "Deployment yang belum dihentikan tetapi jumlah replika yang diinginkan 0, sehingga tidak menangani permintaan. Status menunjukkan apakah Anda mengaturnya ke 0 atau aturan penskalaan otomatis menurunkannya. Deployment kembali melayani saat jumlah replika yang diinginkan 1 atau lebih.",
+    "PausedTooltip": "Deployment yang belum dihentikan tetapi jumlah replika yang diinginkan 0, sehingga tidak menangani permintaan. Kolom Siklus Hidup menunjukkan apakah Anda mengaturnya ke 0 atau aturan penskalaan otomatis menurunkannya. Deployment kembali melayani saat jumlah replika yang diinginkan 1 atau lebih.",
     "Phase": "Tahap",
     "PresetMode": "Mode Preset",
     "Private": "Privat",

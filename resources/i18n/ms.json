@@ -1266,7 +1266,7 @@
     "Overview": "Gambaran Keseluruhan",
     "Owner": "Pemilik",
     "Paused": "Dijeda",
-    "PausedTooltip": "Penggunaan yang belum ditamatkan tetapi bilangan replika yang dikehendaki ialah 0, jadi ia tidak mengendalikan permintaan. Status menunjukkan sama ada anda menetapkannya kepada 0 atau peraturan penskalaan automatik mengurangkannya. Ia kembali berkhidmat apabila bilangan replika yang dikehendaki 1 atau lebih.",
+    "PausedTooltip": "Penggunaan yang belum ditamatkan tetapi bilangan replika yang dikehendaki ialah 0, jadi ia tidak mengendalikan permintaan. Lajur Kitaran Hayat menunjukkan sama ada anda menetapkannya kepada 0 atau peraturan penskalaan automatik mengurangkannya. Ia kembali berkhidmat apabila bilangan replika yang dikehendaki 1 atau lebih.",
     "Phase": "Fasa",
     "PresetMode": "Mod Praset",
     "Private": "Peribadi",

@@ -42,6 +42,12 @@ describe('deploymentStatusCategoryOf', () => {
     }
   });
 
+  it('reads a filter saved before the Paused tab as Serving', () => {
+    expect(deploymentStatusCategoryOf({ status: { notIn: ['STOPPED'] } })).toBe(
+      'serving',
+    );
+  });
+
   it('falls back to Serving for a filter with no scope', () => {
     expect(deploymentStatusCategoryOf(undefined)).toBe('serving');
     expect(deploymentStatusCategoryOf({ name: { contains: 'x' } })).toBe(

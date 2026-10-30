@@ -1266,7 +1266,7 @@
     "Overview": "Panoramica",
     "Owner": "Proprietario",
     "Paused": "In pausa",
-    "PausedTooltip": "Distribuzioni non terminate con 0 repliche desiderate, quindi non gestiscono richieste. Lo stato indica se l'hai impostato a 0 tu o se una regola di scalabilità automatica lo ha ridotto. Tornano in servizio quando le repliche desiderate sono 1 o più.",
+    "PausedTooltip": "Distribuzioni non terminate con 0 repliche desiderate, quindi non gestiscono richieste. La colonna «Ciclo di vita» indica se l'hai impostato a 0 tu o se una regola di scalabilità automatica lo ha ridotto. Tornano in servizio quando le repliche desiderate sono 1 o più.",
     "Phase": "Fase",
     "PresetMode": "Modalità Preset",
     "Private": "Privato",

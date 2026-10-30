@@ -6,14 +6,12 @@ import type {
   DeploymentFilter,
   DeploymentStatus,
 } from '../__generated__/DeploymentListPageQuery.graphql';
-import { Text } from '@lablup/ui-common/Text';
-import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIFlex,
+  BAIQuestionIconWithTooltip,
   BAISegmentedControl,
   BAISegmentedControlItem,
 } from 'backend.ai-ui';
-import { CircleHelp } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -52,11 +50,8 @@ export const deploymentStatusCategoryOf = (
 const renderTabLabel = (label: string, help: string) => (
   <BAIFlex gap="xxs" align="center">
     {label}
-    <Tooltip content={help}>
-      <Text color="placeholder" style={{ cursor: 'help' }}>
-        <CircleHelp size="1em" />
-      </Text>
-    </Tooltip>
+    {/* Not focusable: the trigger sits inside the segment's own button. */}
+    <BAIQuestionIconWithTooltip title={help} focusable={false} />
   </BAIFlex>
 );
 

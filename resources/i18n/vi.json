@@ -1266,7 +1266,7 @@
     "Overview": "Tổng quan",
     "Owner": "Chủ sở hữu",
     "Paused": "Tạm dừng",
-    "PausedTooltip": "Các triển khai chưa kết thúc nhưng có số bản sao mong muốn là 0 nên không xử lý yêu cầu. Trạng thái cho biết bạn tự đặt về 0 hay quy tắc tự động mở rộng quy mô đã giảm xuống 0. Chúng trở lại phục vụ khi số bản sao mong muốn từ 1 trở lên.",
+    "PausedTooltip": "Các triển khai chưa kết thúc nhưng có số bản sao mong muốn là 0 nên không xử lý yêu cầu. Cột Vòng đời cho biết bạn tự đặt về 0 hay quy tắc tự động mở rộng quy mô đã giảm xuống 0. Chúng trở lại phục vụ khi số bản sao mong muốn từ 1 trở lên.",
     "Phase": "Giai đoạn",
     "PresetMode": "Chế độ Preset",
     "Private": "Riêng tư",

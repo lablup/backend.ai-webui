@@ -1266,7 +1266,7 @@
     "Overview": "Aperçu",
     "Owner": "Propriétaire",
     "Paused": "En pause",
-    "PausedTooltip": "Déploiements non terminés dont le nombre de réplicas souhaité est 0 : ils ne traitent aucune requête. Le statut indique si vous l'avez réglé sur 0 ou si une règle de mise à l'échelle automatique l'a réduit. Ils repassent en service lorsque le nombre de réplicas souhaité est d'au moins 1.",
+    "PausedTooltip": "Déploiements non terminés dont le nombre de réplicas souhaité est 0 : ils ne traitent aucune requête. La colonne « Cycle de vie » indique si vous l'avez réglé sur 0 ou si une règle de mise à l'échelle automatique l'a réduit. Ils repassent en service lorsque le nombre de réplicas souhaité est d'au moins 1.",
     "Phase": "Phase",
     "PresetMode": "Mode Preset",
     "Private": "Privé",

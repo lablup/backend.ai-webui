@@ -1266,7 +1266,7 @@
     "Overview": "Przegląd",
     "Owner": "Właściciel",
     "Paused": "Wstrzymane",
-    "PausedTooltip": "Niezakończone wdrożenia z liczbą żądanych replik równą 0, które nie obsługują żądań. Status pokazuje, czy ustawiono 0 ręcznie, czy reguła autoskalowania zmniejszyła liczbę do 0. Wracają do obsługi, gdy żądana liczba replik wynosi co najmniej 1.",
+    "PausedTooltip": "Niezakończone wdrożenia z liczbą żądanych replik równą 0, które nie obsługują żądań. Kolumna „Cykl życia” pokazuje, czy ustawiono 0 ręcznie, czy reguła autoskalowania zmniejszyła liczbę do 0. Wracają do obsługi, gdy żądana liczba replik wynosi co najmniej 1.",
     "Phase": "Faza",
     "PresetMode": "Tryb presetu",
     "Private": "Prywatne",
