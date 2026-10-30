@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { buildPath, MENU_KEY_TO_SCOPE_FEATURE } from './pathBuilder';
-import { AGENT_PREFILL_PARAM } from './webmcpSessionPrefill';
+import { AGENT_PREFILL_PARAM } from './webmcpConstants';
 
 export type NavigationTarget =
   { ok: true; to: string } | { ok: false; code: string; message: string };

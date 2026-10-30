@@ -4,14 +4,14 @@
  */
 import type { SessionLauncherWebMCPToolFoldersQuery } from '../__generated__/SessionLauncherWebMCPToolFoldersQuery.graphql';
 import { generateUUID } from '../helper/uuid';
+import { AGENT_PREFILL_PARAM } from '../helper/webmcpConstants';
 import {
-  AGENT_PREFILL_PARAM,
   buildSessionPrefill,
   isRequestedImage,
   MAX_PREFILL_FOLDERS,
   parseFolderNames,
   PREPARE_SESSION_INPUT_SCHEMA,
-  type MountableFolder,
+  type FolderLookup,
   type PrepareSessionInput,
   type ResolvedEnvironment,
 } from '../helper/webmcpSessionPrefill';
@@ -39,14 +39,21 @@ export const PREPARE_SESSION_NEXT_STEP =
 export const PREPARE_SESSION_NOTHING_FILLED =
   'Nothing could be filled, so the launcher was left as it was. Fix the rejected fields and call again.';
 
+export const PREPARE_SESSION_NO_INPUT =
+  'No field to fill was given, so the launcher was left as it was. Pass at least one field.';
+
+export const PREPARE_SESSION_PARTLY_FILLED =
+  'The launcher form in this tab was replaced, but not everything was applied (see rejected; a rejected image means the launcher selected another one). Fix the rejected fields and call again, or tell the user what was not applied. Nothing has been started.';
+
+export const PREPARE_SESSION_LINK_TOO_LONG =
+  'webui_url is long enough that a server may refuse it (see warnings). Shorten startupCommand or mount fewer folders and call again, or tell the user the link may fail to open. Nothing has been started.';
+
 // Below the 8 KB request line of default aiohttp and nginx; not measured on a deployment.
 export const WEBUI_URL_SOFT_LIMIT = 6000;
 
 export interface PrepareSessionToolDeps {
   /** Looks the requested names up among the folders this user can mount here. */
-  findFolders: (
-    names: ReadonlyArray<string>,
-  ) => Promise<ReadonlyArray<MountableFolder>>;
+  findFolders: (names: ReadonlyArray<string>) => Promise<FolderLookup>;
   allowCustomResourceAllocation: boolean;
   /** Navigates this tab to the launcher with the given `?search`. */
   openLauncher: (search: string) => void;
@@ -70,7 +77,7 @@ export const createPrepareSessionTool = ({
 }: PrepareSessionToolDeps): WebMCPTool => ({
   name: 'bai_prepare_session',
   description:
-    'Fill the session launcher form in this tab for the user to review. Reopens the launcher with the given values on its review step and marks the form as filled by an AI agent. Does NOT start the session and never submits: the user reviews the form and presses Launch. Returns { path, webui_url, applied, rejected: [{ field, reason }], nextStep, unverified? }; webui_url reopens the same prefilled form in any browser signed in as this user. applied holds values set as given or read back from the form; unverified holds values written to the form that its rules or the server may still change, so tell the user to check them. When nothing can be filled the launcher is left alone and path and webui_url are null. Omitted fields keep the launcher defaults; the launcher auto-selects a resource preset when no amounts are given.',
+    'Fill the session launcher form in this tab for the user to review. Reopens the launcher with the given values on its review step and marks the form as filled by an AI agent. Does NOT start the session and never submits: the user reviews the form and presses Launch. Returns { path, webui_url, applied, rejected: [{ field, reason }], nextStep, unverified?, warnings? }; webui_url reopens the same prefilled form in any browser signed in as this user. applied holds values set as given or read back from the form; unverified holds values written to the form that its rules or the server may still change, so tell the user to check them; warnings holds problems with the webui_url link itself. nextStep says what to do with the result: hand webui_url over only when it says so. When nothing can be filled the launcher is left alone and path and webui_url are null. Omitted fields keep the launcher defaults; the launcher auto-selects a resource preset when no amounts are given.',
   inputSchema: PREPARE_SESSION_INPUT_SCHEMA,
   annotations: { untrustedContentHint: true },
   execute: async (input) => {
@@ -78,10 +85,10 @@ export const createPrepareSessionTool = ({
     // The launcher's own browser path, so a router basename is kept.
     const launcherPathname = window.location.pathname;
     const folderNames = parseFolderNames(request.folders ?? '');
-    const folders =
+    const { folders, truncated } =
       folderNames.length > 0 && folderNames.length <= MAX_PREFILL_FOLDERS
         ? await findFolders(folderNames)
-        : [];
+        : { folders: [], truncated: false };
     // `execute` outlives the tool's unmount, and `openLauncher` would pull the tab back.
     if (window.location.pathname !== launcherPathname) {
       return webMCPError(
@@ -91,7 +98,7 @@ export const createPrepareSessionTool = ({
     }
     const { formValues, applied, rejected, unverified } = buildSessionPrefill(
       request,
-      { folders, allowCustomResourceAllocation },
+      { folders, foldersTruncated: truncated, allowCustomResourceAllocation },
     );
     if (_.isEmpty(formValues)) {
       return {
@@ -99,7 +106,10 @@ export const createPrepareSessionTool = ({
         webui_url: null,
         applied,
         rejected,
-        nextStep: PREPARE_SESSION_NOTHING_FILLED,
+        nextStep:
+          rejected.length > 0
+            ? PREPARE_SESSION_NOTHING_FILLED
+            : PREPARE_SESSION_NO_INPUT,
       };
     }
 
@@ -143,12 +153,7 @@ export const createPrepareSessionTool = ({
     }
 
     const webuiUrl = new URL(path, window.location.origin).href;
-    if (webuiUrl.length > WEBUI_URL_SOFT_LIMIT) {
-      unverified.push({
-        field: 'webui_url',
-        reason: `This link is ${webuiUrl.length} characters long and a server may refuse it. Shorten startupCommand or mount fewer folders.`,
-      });
-    }
+    const isLinkTooLong = webuiUrl.length > WEBUI_URL_SOFT_LIMIT;
 
     return {
       path,
@@ -156,7 +161,20 @@ export const createPrepareSessionTool = ({
       applied,
       rejected,
       ...(unverified.length > 0 && { unverified }),
-      nextStep: PREPARE_SESSION_NEXT_STEP,
+      ...(isLinkTooLong && {
+        warnings: [
+          {
+            field: 'webui_url',
+            reason: `This link is ${webuiUrl.length} characters long and a server may refuse it.`,
+          },
+        ],
+      }),
+      nextStep:
+        rejected.length > 0
+          ? PREPARE_SESSION_PARTLY_FILLED
+          : isLinkTooLong
+            ? PREPARE_SESSION_LINK_TOO_LONG
+            : PREPARE_SESSION_NEXT_STEP,
     };
   },
 });
@@ -229,15 +247,20 @@ const SessionLauncherWebMCPTool: React.FC<SessionLauncherWebMCPToolProps> = ({
       },
       { fetchPolicy: 'network-only' },
     ).toPromise();
-    // Dotfile folders mount on their own, and NONE cannot be mounted.
-    return _.compact(
-      _.map(result?.scopedVFoldersV2?.edges, ({ node }) =>
-        isAutoMountFolderName(node.metadata.name) ||
-        node.accessControl.permission === 'NONE'
-          ? null
-          : { vfolderId: node.entityId, name: node.metadata.name },
+    const edges = result?.scopedVFoldersV2?.edges ?? [];
+    return {
+      // One name can match several rows, so a full page can hide a second match.
+      truncated: edges.length >= FOLDER_LOOKUP_LIMIT,
+      // Dotfile folders mount on their own, and NONE cannot be mounted.
+      folders: _.compact(
+        _.map(edges, ({ node }) =>
+          isAutoMountFolderName(node.metadata.name) ||
+          node.accessControl.permission === 'NONE'
+            ? null
+            : { vfolderId: node.entityId, name: node.metadata.name },
+        ),
       ),
-    );
+    };
   };
 
   useWebMCPTool(

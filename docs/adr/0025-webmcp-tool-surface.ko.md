@@ -90,6 +90,8 @@ flowchart LR
 - **Hand-off by link**: agent는 보통 사용자가 볼 수 없는 자기 browser에서 일한다. 그래서 `bai_prepare_<noun>`은 채운 form을 그대로 여는 `webui_url`을 돌려주고, 사용자는 그 link를 자기 browser에서 열어 확인한 뒤 직접 submit한다. form 상태는 URL에 담고, 비밀 값은 담지 않는다.
 - **Agent-filled marker**: `bai_prepare_<noun>`이 연 form의 URL에는 `agentPrefill` parameter가 붙고, page는 그 parameter가 있을 때 "AI agent가 채운 form이니 확인 후 submit하라"는 알림을 보여준다. `bai_navigate`는 form 상태 parameter(`formValues`)를 담은 경로를 거절한다(`use_prepare_tool`). 그래야 알림 없이 채워진 form이 생기지 않는다.
 - **Applied and unverified**: `bai_prepare_<noun>`의 `applied`에는 입력 그대로 들어간 값과 form에서 다시 읽어 확인한 값만 둔다. form의 규칙이나 server가 바꿀 수 있는 값은 `unverified`에 둔다. 채울 값이 하나도 없으면 form을 열지 않는다.
+- **Link warnings**: `webui_url`이 6000자를 넘으면 `warnings: [{ field, reason }]`에 그 사실을 담는다. form 값에 대한 말이 아니라 link 자체의 문제이므로 `unverified`와 나눈다. 6000은 aiohttp와 nginx의 기본 8 KB request line 아래로 잡은 값이고, 실제 배포에서 재지는 않았다.
+- **Next step**: `nextStep`은 결과로 무엇을 할지 말한다. `rejected`가 있으면 필드를 고쳐 다시 부르거나 적용되지 않은 값을 사용자에게 알리라고 하고, link를 넘기라고 하지 않는다. `rejected`에 image가 있으면 form은 이미 launcher가 고른 다른 image로 바뀐 상태이므로 이 문구가 그 사실도 함께 말한다.
 - **No extra data**: tool은 자기를 등록한 component가 화면에 그리는 data만 돌려준다. 권한 때문에 화면에 없는 field를 tool을 위해 더 가져오지 않는다.
 - **No login by URL**: `bai_navigate`는 `sToken`이나 `stoken` parameter가 붙은 경로를 거절한다(`path_not_allowed`). 이 parameter는 도착하는 것만으로 login을 시작하기 때문이다.
 
