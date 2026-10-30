@@ -38,6 +38,26 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "자원 그룹을 선택해주세요"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "정책 대상",
+    "CreatedAt": "생성일",
+    "Disabled": "비활성화",
+    "Enabled": "활성화",
+    "LastSweptAt": "마지막 정리",
+    "NotSweptYet": "아직 실행되지 않음",
+    "RetentionPeriodDays": "보존 기간 (일)",
+    "UpdatedAt": "수정일",
+    "categories": {
+      "DEPLOYMENTS": "배포",
+      "LOGIN": "로그인 기록",
+      "LOGS": "로그",
+      "RECONCILE_HISTORY": "조정 기록",
+      "ROLES_INVITATIONS": "역할 및 초대",
+      "SESSIONS": "세션",
+      "USAGE_BUCKETS": "사용량 집계",
+      "USAGE_RECORDS": "사용량 기록"
+    }
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "세션을 선택해주세요"
   },
@@ -163,7 +183,6 @@
     "KeyRequired": "키를 입력하세요.",
     "Label": "라벨",
     "LabelsSaved": "라벨을 저장했습니다.",
-    "RemoveLabel": "라벨 삭제",
     "Save": "저장",
     "SomeLabelsFailed": "라벨 변경 {{count}}건 실패",
     "Target": "대상",
@@ -173,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "라벨"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "생성",
+    "Custom": "사용자 정의",
+    "FullAccess": "전체 권한",
+    "HardDelete": "영구 삭제",
+    "Read": "읽기",
+    "ReadAndWrite": "읽기 및 쓰기",
+    "ReadOnly": "읽기 전용",
+    "SoftDelete": "삭제",
+    "Update": "수정"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "자동 새로고침",
@@ -556,6 +586,9 @@
     "Result": "결과",
     "To": "이후 상태",
     "UpdatedAt": "수정일"
+  },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "이메일로 초대"
   },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "폴더를 선택해주세요"

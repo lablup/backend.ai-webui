@@ -21,7 +21,10 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useSuspenseTanQuery, useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
+import {
+  useCurrentUserProjectRoles,
+  useEffectiveAdminRole,
+} from '../hooks/useCurrentUserProjectRoles';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { ProjectContextOrNull } from '../types/projectContext';
 import DeleteForeverVFolderModalV2 from './DeleteForeverVFolderModalV2';
@@ -33,7 +36,6 @@ import QuotaPerStorageVolumePanelCard, {
 import SharedFolderPermissionInfoModalV2 from './SharedFolderPermissionInfoModalV2';
 import VFolderDeployModal, { VFolderDeployQuery } from './VFolderDeployModal';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
-import VFolderPermissionCellV2 from './VFolderPermissionCellV2';
 import { Badge } from '@lablup/ui-common/Badge';
 import { Link } from '@lablup/ui-common/Link';
 import { HStack, VStack } from '@lablup/ui-common/Stack';
@@ -518,7 +520,10 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [currentUser] = useCurrentUserInfo();
-  const [inviteFolderId, setInviteFolderId] = useState<string | null>(null);
+  const { isSuperAdmin, projectAdminIds } = useCurrentUserProjectRoles();
+  const [inviteVFolder, setInviteVFolder] = useState<VFolderNodeInList | null>(
+    null,
+  );
   const { getErrorMessage } = useErrorMessageResolver();
   const navigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
@@ -604,9 +609,9 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
           ...BAIEntityLabelTokensFragment
           ...BAIEntityLabelSettingModalFragment
         }
-        ...VFolderPermissionCellV2Fragment
         ...VFolderNodeIdenticonV2Fragment
         ...SharedFolderPermissionInfoModalV2Fragment
+        ...InviteFolderSettingModalFragment
         ...DeleteForeverVFolderModalV2Fragment
         ...BAINodeNotificationItemFragment @alias(as: "notificationFrgmt")
       }
@@ -696,8 +701,17 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
                   noDeployTooltip={noDeployTooltip}
                   disableProjectFolderActions={disableProjectFolderActions}
                   onShare={() => {
-                    vfolder?.ownership?.userId === currentUser?.uuid
-                      ? setInviteFolderId(vfolder.entityId)
+                    // Whoever may edit the folder's sharing (its owner, a
+                    // superadmin, an admin of its project) gets the share
+                    // modal; a recipient sees their own share.
+                    const ownership = vfolder?.ownership;
+                    const canManageShares =
+                      ownership?.userId === currentUser?.uuid ||
+                      isSuperAdmin ||
+                      (!!ownership?.projectId &&
+                        projectAdminIds.includes(ownership.projectId));
+                    canManageShares
+                      ? setInviteVFolder(vfolder)
                       : setCurrentSharedVFolder(vfolder);
                   }}
                   onDelete={() => {
@@ -769,6 +783,8 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
             key: 'status',
             title: t('data.folders.Status'),
             dataIndex: 'vfolderStatus',
+            // `vfolderStatus` is a Relay alias; the server order field is STATUS.
+            sortKey: 'status',
             render: (status: string) => {
               return (
                 <Badge
@@ -794,13 +810,6 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
               <VFolderHostCell host={host} />
             ),
             sorter: isEnableSorter('host'),
-          },
-          {
-            key: 'permissions',
-            title: t('data.folders.MountPermission'),
-            render: (_perm: string, vfolder) => {
-              return <VFolderPermissionCellV2 vfolderFrgmt={vfolder} />;
-            },
           },
           {
             key: 'ownership_type',
@@ -963,13 +972,15 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
           setPurgingVFolders([]);
         }}
       />
-      <InviteFolderSettingModal
-        onRequestClose={() => {
-          setInviteFolderId(null);
-        }}
-        vfolderId={inviteFolderId}
-        open={!!inviteFolderId}
-      />
+      <BAIUnmountAfterClose>
+        <InviteFolderSettingModal
+          onRequestClose={() => {
+            setInviteVFolder(null);
+          }}
+          vfolderFrgmt={inviteVFolder}
+          open={!!inviteVFolder}
+        />
+      </BAIUnmountAfterClose>
       <SharedFolderPermissionInfoModalV2
         vfolderFrgmt={currentSharedVFolder}
         open={!!currentSharedVFolder}

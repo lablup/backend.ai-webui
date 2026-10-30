@@ -38,6 +38,26 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "选择资源组"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "策略对象",
+    "CreatedAt": "创建日期",
+    "Disabled": "已禁用",
+    "Enabled": "启用",
+    "LastSweptAt": "上次清理",
+    "NotSweptYet": "尚未运行",
+    "RetentionPeriodDays": "保留期限（天）",
+    "UpdatedAt": "更新时间",
+    "categories": {
+      "DEPLOYMENTS": "部署",
+      "LOGIN": "登录历史",
+      "LOGS": "日志",
+      "RECONCILE_HISTORY": "协调历史",
+      "ROLES_INVITATIONS": "角色与邀请",
+      "SESSIONS": "会话",
+      "USAGE_BUCKETS": "使用量汇总",
+      "USAGE_RECORDS": "使用记录"
+    }
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "选择会话"
   },
@@ -163,7 +183,6 @@
     "KeyRequired": "请输入键。",
     "Label": "标签",
     "LabelsSaved": "标签已保存。",
-    "RemoveLabel": "删除标签",
     "Save": "保存",
     "SomeLabelsFailed": "{{count}} 项标签更改失败",
     "Target": "对象",
@@ -173,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "标签"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "创建",
+    "Custom": "自定义",
+    "FullAccess": "完全访问",
+    "HardDelete": "永久删除",
+    "Read": "读取",
+    "ReadAndWrite": "读写",
+    "ReadOnly": "只读",
+    "SoftDelete": "删除",
+    "Update": "修改"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "自动刷新",
@@ -556,6 +586,9 @@
     "Result": "结果",
     "To": "目标状态",
     "UpdatedAt": "更新时间"
+  },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "通过电子邮件邀请"
   },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "选择文件夹"

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7836dcd3a5c5e97e54e442eff1b0e08f>>
+ * @generated SignedSource<<2396be948b5be159c5459b8b7c21fb33>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,6 +19,7 @@ export type LoginHistoryFilter = {
   OR?: ReadonlyArray<LoginHistoryFilter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   result?: LoginHistoryResultFilter | null | undefined;
 };
 export type StringFilter = {
@@ -54,6 +55,12 @@ export type DateTimeFilter = {
   before?: string | null | undefined;
   equals?: string | null | undefined;
   notEquals?: string | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
 };
 export type LoginHistoryOrderBy = {
   direction?: OrderDirection;

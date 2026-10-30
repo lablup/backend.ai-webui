@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<261bf2472907843bfdf5511197fb8426>>
+ * @generated SignedSource<<c1a72d275003e6cdfdff5f6f56a3239c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -23,6 +23,7 @@ export type RouteHistoryFilter = {
   createdAt?: DateTimeFilter | null | undefined;
   deploymentId?: UUIDFilter | null | undefined;
   errorCode?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   fromStatus?: ReadonlyArray<string> | null | undefined;
   id?: UUIDFilter | null | undefined;
   message?: StringFilter | null | undefined;
