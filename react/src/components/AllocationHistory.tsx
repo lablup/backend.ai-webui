@@ -10,7 +10,7 @@ import {
   useUpdatableState,
   BAIFlex,
   BAIFetchKeyButton,
-  BAISelector,
+  BAISelect,
 } from 'backend.ai-ui';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Suspense, useTransition } from 'react';
@@ -62,7 +62,8 @@ const AllocationHistory: React.FC = () => {
               `Form.Item` label the only one rendered (flip recipe).
               `popupMatchSelectWidth={false}` has no destination — Astryx sizes
               its popup to the trigger. */}
-          <BAISelector
+          <BAISelect
+            showSearch={false}
             aria-label={t('statistics.SelectPeriod')}
             options={periodOptions}
             value={selectedPeriod}

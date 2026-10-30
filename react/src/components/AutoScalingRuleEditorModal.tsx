@@ -18,14 +18,14 @@ import {
 import { useCurrentUserRole } from '../hooks/backendai';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import PrometheusQueryTemplatePreview from './PrometheusQueryTemplatePreview';
-import type { SelectorOptionType } from '@lablup/ui-common/Selector';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAINumberInput,
   BAISegmentedControl,
   BAISegmentedControlItem,
-  BAISelector,
+  BAISelect,
+  type BAISelectOption,
   BAITextInput,
   BAIFlex,
   BAIModal,
@@ -177,7 +177,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
 
   // Group presets by category name for optgroup display.
   // Presets without a category are shown in a flat list at the end.
-  const presetOptions: SelectorOptionType[] = React.useMemo(() => {
+  const presetOptions: BAISelectOption[] = React.useMemo(() => {
     const sorted = _.orderBy(presetNodes, ['rank'], ['asc']);
     const withCategory = sorted.filter((p) => p.category?.name);
     const withoutCategory = sorted.filter((p) => !p.category?.name);
@@ -189,8 +189,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
 
     const grouped = _.groupBy(withCategory, (p) => p.category!.name);
     const groupOptions = Object.entries(grouped).map(([catName, presets]) => ({
-      type: 'section' as const,
-      title: catName,
+      label: catName,
       options: presets.map(toOption),
     }));
 
@@ -253,7 +252,8 @@ const AutoScalingRuleEditorModalContent: React.FC<{
         tooltip={t('autoScalingRule.MetricSourceTooltip')}
         rules={[{ required: true }]}
       >
-        <BAISelector
+        <BAISelect
+          showSearch={false}
           aria-label={t('autoScalingRule.MetricSource')}
           onChange={(value) => {
             if (!value) return;
@@ -348,7 +348,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
               ) : undefined
             }
           >
-            <BAISelector
+            <BAISelect
               aria-label={t('autoScalingRule.PrometheusPreset')}
               onChange={(value) => {
                 setSelectedPresetId(value ?? undefined);
@@ -371,9 +371,8 @@ const AutoScalingRuleEditorModalContent: React.FC<{
                 }
               }}
               placeholder={t('autoScalingRule.SelectPrometheusPreset')}
-              hasSearch
               options={presetOptions}
-              hasClear
+              allowClear
             />
           </Form.Item>
         </>

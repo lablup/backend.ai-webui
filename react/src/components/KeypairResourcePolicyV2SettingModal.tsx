@@ -33,7 +33,7 @@ import {
   BAIModal,
   BAIModalProps,
   BAINumberInput,
-  BAISelector,
+  BAISelect,
   BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -380,7 +380,8 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
           }
           name="default_for_unspecified"
         >
-          <BAISelector
+          <BAISelect
+            showSearch={false}
             aria-label={t('resourcePolicy.DefaultForUnspecified')}
             options={[
               { label: 'UNLIMITED', value: 'UNLIMITED' },

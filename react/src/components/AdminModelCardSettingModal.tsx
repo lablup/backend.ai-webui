@@ -22,7 +22,7 @@ import {
   type BAIProjectVfolderSelectRef,
   convertToUUID,
   useBAILogger,
-  BAISelector,
+  BAISelect,
   BAITagsInput,
   BAITextArea,
   BAITextInput,
@@ -495,7 +495,8 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                 },
               ]}
             >
-              <BAISelector
+              <BAISelect
+                showSearch={false}
                 aria-label={t('adminModelCard.AccessLevel')}
                 options={[
                   {

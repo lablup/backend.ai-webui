@@ -9,7 +9,6 @@ import type {
 import { CATALOG_FETCH_LIMIT } from '../../helper/const-vars';
 import WebUILink from '../WebUILink';
 import { Code } from '@lablup/ui-common/Code';
-import type { SelectorOptionData } from '@lablup/ui-common/Selector';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAIFlex,
@@ -17,7 +16,8 @@ import {
   filterOutNullAndUndefined,
   toGlobalId,
   useControllableValue,
-  BAISelector,
+  BAISelect,
+  type BAISelectOption,
   BAITextInput,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -122,17 +122,12 @@ const DeploymentTokenSelectWithQuery: React.FC<
   // native tooltip (FR-3341).
   const validTokens = getValidTokenOptions(deployment);
   const noExpirationLabel = t('deployment.accessToken.NoExpiration');
-  // PILOT-DECISION: antd `Select.options[].label` accepted a `ReactNode`
-  // (a two-line token-tail + expiry row). Astryx `Selector`'s `label` is a
-  // required `string` (P2) — kept as the searchable/fallback text, with the
-  // rich two-line row moved to `renderOption` (MAPPING.md §3.1's "everything
-  // else" branch). The hover tooltip (full issued -> expiry timestamp) has
-  // no destination on a Selector option row and is dropped.
-  const selectOptions: SelectorOptionData[] = validTokens.map((item) => ({
+  // `label` stays the plain searchable text; the rich row is `optionRender`.
+  const selectOptions: BAISelectOption[] = validTokens.map((item) => ({
     value: item.token,
     label: `…${item.token.slice(-6)}`,
   }));
-  const renderTokenOption = (option: SelectorOptionData) => {
+  const renderTokenOption = (option: BAISelectOption) => {
     const item = validTokens.find((v) => v.token === option.value);
     if (!item) return option.label;
     return (
@@ -167,20 +162,20 @@ const DeploymentTokenSelectWithQuery: React.FC<
   // Tokens — a convenient shortcut shown regardless of whether tokens exist.
   return (
     <BAIFlex gap="xs" align="center">
-      <BAISelector
+      <BAISelect
+        showSearch={false}
         aria-label={t('chatui.SelectToken')}
         placeholder={t('chatui.SelectToken')}
         // Fixed width so the token field looks the same across panel sizes
         // instead of following CustomModelForm's responsive 100%/200px width,
         // while still shrinking to fit narrow screens (maxWidth + minWidth 0).
-        controlStyle={{ ...style, minWidth: 0 }}
-        width={220}
+        style={{ ...style, width: 220, minWidth: 0 }}
         options={selectOptions}
-        renderOption={renderTokenOption}
+        optionRender={({ data }) => renderTokenOption(data)}
         value={controllableValue || undefined}
         onChange={(v) => setControllableValue(v)}
         disabled={props.disabled}
-        isLoading={loading}
+        loading={loading}
       />
       <WebUILink
         to={`/deployments/${deploymentId}#access-tokens`}

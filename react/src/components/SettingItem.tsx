@@ -12,7 +12,7 @@ import {
   BAICheckboxInput,
   BAIFlex,
   BAIModal,
-  BAISelector,
+  BAISelect,
   useToggle,
 } from 'backend.ai-ui';
 import { t } from 'i18next';
@@ -227,14 +227,14 @@ const SettingItem: React.FC<SettingItemProps> = ({
               {description}
             </Text>
           )}
-          <BAISelector
+          <BAISelect
             aria-label={title}
             options={selectProps?.options ?? []}
-            hasSearch={selectProps?.hasSearch}
+            showSearch={!!selectProps?.hasSearch}
             disabled={selectProps?.disabled}
-            isLoading={selectProps?.loading}
+            loading={selectProps?.loading}
             value={value}
-            width="fit-content"
+            style={{ width: 'fit-content' }}
             onChange={(nextValue) => onChange?.(nextValue)}
           />
         </BAIFlex>

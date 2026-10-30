@@ -13,10 +13,7 @@ import {
   useResourceSlots,
 } from '../hooks/backendai';
 import useControllableState_deprecated from '../hooks/useControllableState';
-import type {
-  SelectorOptionData,
-  SelectorOptionType,
-} from '@lablup/ui-common/Selector';
+import type { SelectorOptionData } from '@lablup/ui-common/Selector';
 import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { useTheme } from '@lablup/ui-common/theme';
@@ -26,7 +23,8 @@ import {
   BAIResourceNumberWithIcon,
   useThrottleFn,
   useUpdatableState,
-  BAISelector,
+  BAISelect,
+  type BAISelectOption,
 } from 'backend.ai-ui';
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash-es';
@@ -259,11 +257,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoSelectDefault, firstAvailablePresetId]);
 
-  // PILOT-DECISION: antd `optionLabelProp="selectedLabel"` let an option carry
-  // a rich `label` node for the popup and a plain string for the trigger.
-  // Astryx `Selector` splits that natively — `label` IS the plain string (P2,
-  // required), and the rich row moves into `renderOption` — so the parallel
-  // `selectedLabel` field disappears rather than being emulated.
+  // `label` stays the plain string; the rich row is `optionRender`.
   const presetOptions: PresetOptionType[] = _.map(
     resource_presets,
     (preset) => {
@@ -281,7 +275,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     .sort((a, b) => (a.disabled === b.disabled ? 0 : a.disabled ? 1 : -1))
     .sort((a, b) => localeCompare(a.label, b.label));
 
-  const renderResourceRow = (option: SelectorOptionData) => {
+  const renderResourceRow = (option: BAISelectOption) => {
     if (option.value === 'minimum-required') {
       return (
         <BAIFlex gap={'xs'}>
@@ -368,7 +362,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     );
   };
 
-  const options: SelectorOptionType[] = [
+  const options: BAISelectOption[] = [
     ...(showCustom
       ? [
           {
@@ -386,17 +380,10 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
           },
         ]
       : []),
-    // antd `Select.OptGroup` → Astryx `{type: 'section'}` (a native option
-    // kind, MAPPING §3.1 notwithstanding — `Selector` grew sections in 0.3.0).
-    // QA-FINDINGS Q-40: the section title was the hardcoded English string
-    // 'Preset'. `modelStore.Preset` is that exact word and is already
-    // translated in all 21 locale files, so it is reused rather than adding a
-    // 21-file duplicate of a single word. The namespace is inherited, not
-    // ideal — if this string ever needs to diverge from the model-store one,
-    // that is the moment to give it its own key.
+    // `modelStore.Preset` is reused for the same word; give this group its own
+    // key if the two ever need to differ.
     {
-      type: 'section' as const,
-      title: t('modelStore.Preset'),
+      label: t('modelStore.Preset'),
       options: presetOptions,
     },
   ];
@@ -412,21 +399,14 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
         updateFetchKeyUnderTransition();
       }}
     >
-      <BAISelector
-        // QA-FINDINGS Q-40: `session.launcher.ResourcePresets` does not exist
-        // in any locale file, so i18next fell through and Astryx rendered the
-        // RAW KEY as this Selector's accessible name.
-        // `resourcePreset.ResourcePresets` is the same string and is present in
-        // all 21 locales.
+      <BAISelect
         aria-label={t('resourcePreset.ResourcePresets')}
-        isLoading={isPendingUpdate}
+        loading={isPendingUpdate}
         disabled={disabled}
-        controlStyle={style}
-        width="100%"
-        hasSearch
+        style={{ width: '100%', ...style }}
         options={options}
-        renderOption={renderResourceRow}
-        renderValue={renderSelectedValue}
+        optionRender={({ data }) => renderResourceRow(data)}
+        labelRender={renderSelectedValue}
         value={controllableValue ?? ''}
         onChange={(next) =>
           setControllableValue(

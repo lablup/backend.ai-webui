@@ -70,7 +70,7 @@ import {
   BAINumberInput,
   BAIRadioList,
   BAIRadioListItem,
-  BAISelector,
+  BAISelect,
   BAISwitch,
   BAITextArea,
   BAITextInput,
@@ -971,12 +971,13 @@ const SessionLauncherPage = () => {
                                           {/* The accessible name repeats the
                                                 group's own label: there is no
                                                 localized "Unit" string (P8). */}
-                                          <BAISelector
+                                          <BAISelect
+                                            showSearch={false}
                                             aria-label={t(
                                               'session.launcher.BatchJobTimeoutDuration',
                                             )}
                                             disabled={disabled}
-                                            width={100}
+                                            style={{ width: 100 }}
                                             options={[
                                               {
                                                 label: t('time.Sec'),
@@ -1027,7 +1028,8 @@ const SessionLauncherPage = () => {
                     >
                       {/* Optionless placeholder left behind when the model
                           folder select was removed from this step. */}
-                      <BAISelector
+                      <BAISelect
+                        showSearch={false}
                         aria-label={t('session.launcher.ModelStorageToMount')}
                         options={[]}
                       />

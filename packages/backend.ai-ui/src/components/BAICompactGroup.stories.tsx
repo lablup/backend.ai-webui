@@ -1,6 +1,6 @@
 import { Form } from '../form-engine';
 import BAICompactGroup from './BAICompactGroup';
-import BAISelector from './BAISelector';
+import BAISelect from './BAISelect';
 import BAITextInput from './BAITextInput';
 import { Button } from '@lablup/ui-common/Button';
 import { HStack } from '@lablup/ui-common/HStack';
@@ -261,16 +261,16 @@ export const ThreeMembers: Story = {
             width="100%"
             placeholder="optional"
           />
-          <BAISelector
+          <BAISelect
             aria-label="Domain"
             value={domain}
             onChange={setDomain}
             options={sampleDomains}
-            width="100%"
-            // Astryx requires `hasClear` whenever the value may be null. It
-            // also renders the clear affordance INSIDE the field, which is the
-            // nesting the stylesheet's button rule has to step around.
-            hasClear
+            style={{ width: '100%' }}
+            showSearch={false}
+            // Astryx renders the clear affordance INSIDE the field, which is
+            // the nesting the stylesheet's button rule has to step around.
+            allowClear
           />
         </BAICompactGroup>
       );
