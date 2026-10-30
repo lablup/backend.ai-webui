@@ -46,6 +46,7 @@ const shell = (children: ReactNode, enabled = true) => (
 
 beforeEach(() => {
   vi.clearAllMocks();
+  window.history.replaceState({}, '', '/admin/users?tab=users');
   Object.defineProperty(document, 'modelContext', {
     configurable: true,
     get: modelContextGetter,
