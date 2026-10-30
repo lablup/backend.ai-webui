@@ -592,6 +592,7 @@
     "InviteByEmail": "透過電子郵件邀請"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "您沒有掛載此資料夾的權限。",
     "SelectFolder": "選擇資料夾"
   },
   "comp:BAISessionAgentIds": {
@@ -667,7 +668,6 @@
     "CreateFolder": "創建一個新的存儲文件夾",
     "DestinationPath": "容器路徑 (destination)",
     "Folders": "文件夾",
-    "NoMountPermission": "您沒有掛載此資料夾的權限。",
     "PathAndAliasTooltip": "資料夾在容器內的掛載路徑。留空則使用預設路徑。",
     "Refresh": "刷新",
     "RemoveFolder": "移除",

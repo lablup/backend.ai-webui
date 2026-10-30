@@ -592,6 +592,7 @@
     "InviteByEmail": "Invita tramite e-mail"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Non hai l'autorizzazione per montare questa cartella.",
     "SelectFolder": "Seleziona cartella"
   },
   "comp:BAISessionAgentIds": {
@@ -667,7 +668,6 @@
     "CreateFolder": "Crea una nuova cartella di archiviazione",
     "DestinationPath": "Percorso del container (destination)",
     "Folders": "cartelle",
-    "NoMountPermission": "Non hai l'autorizzazione per montare questa cartella.",
     "PathAndAliasTooltip": "Il percorso all'interno del container dove verrà montata la cartella. Lasciare vuoto per usare il percorso predefinito.",
     "Refresh": "ricaricare",
     "RemoveFolder": "Rimuovi",

@@ -592,6 +592,7 @@
     "InviteByEmail": "Invitar por correo electrónico"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "No tiene permiso para montar esta carpeta.",
     "SelectFolder": "Seleccionar carpeta"
   },
   "comp:BAISessionAgentIds": {
@@ -667,7 +668,6 @@
     "CreateFolder": "Crear una nueva carpeta de almacenamiento",
     "DestinationPath": "Ruta del contenedor (destination)",
     "Folders": "Carpetas",
-    "NoMountPermission": "No tiene permiso para montar esta carpeta.",
     "PathAndAliasTooltip": "La ruta dentro del contenedor donde se montará la carpeta. Déjelo vacío para usar la ruta predeterminada.",
     "Refresh": "Actualizar",
     "RemoveFolder": "Eliminar",

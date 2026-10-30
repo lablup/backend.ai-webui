@@ -592,6 +592,7 @@
     "InviteByEmail": "Jemput melalui e-mel"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Anda tidak mempunyai kebenaran untuk melekapkan folder ini.",
     "SelectFolder": "Pilih Folder"
   },
   "comp:BAISessionAgentIds": {
@@ -667,7 +668,6 @@
     "CreateFolder": "Buat folder storan baru",
     "DestinationPath": "Laluan kontena (destination)",
     "Folders": "Folder",
-    "NoMountPermission": "Anda tidak mempunyai kebenaran untuk melekapkan folder ini.",
     "PathAndAliasTooltip": "Laluan di dalam container tempat folder akan di-mount. Biarkan kosong untuk menggunakan laluan lalai.",
     "Refresh": "Segarkan",
     "RemoveFolder": "Buang",

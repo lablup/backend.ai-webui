@@ -592,6 +592,7 @@
     "InviteByEmail": "通过电子邮件邀请"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "您没有挂载此文件夹的权限。",
     "SelectFolder": "选择文件夹"
   },
   "comp:BAISessionAgentIds": {
@@ -667,7 +668,6 @@
     "CreateFolder": "创建一个新的存储文件夹",
     "DestinationPath": "容器路径 (destination)",
     "Folders": "文件夹",
-    "NoMountPermission": "您没有挂载此文件夹的权限。",
     "PathAndAliasTooltip": "文件夹在容器内的挂载路径。留空则使用默认路径。",
     "Refresh": "刷新",
     "RemoveFolder": "移除",

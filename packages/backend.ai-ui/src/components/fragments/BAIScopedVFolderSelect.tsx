@@ -45,9 +45,9 @@ export interface ScopedVFolderSummary {
 }
 
 export interface ScopedVFolderResolution {
-  /** Selected folders the scope and `filter` reach and `getFolderDisabled` allows. */
+  /** Selected folders the scope and `filter` reach and `disableUnmountable` allows. */
   resolved: Array<ScopedVFolderSummary>;
-  /** Selected ids the scope and `filter` do not reach, or `getFolderDisabled` rejects. */
+  /** Selected ids the scope and `filter` do not reach, or `disableUnmountable` rejects. */
   unresolved: Array<string>;
 }
 
@@ -80,12 +80,10 @@ export interface BAIScopedVFolderSelectProps extends Omit<
   /** ANDed onto the options only; a selected folder it excludes stays selected. */
   optionFilter?: VFolderFilter;
   /**
-   * A truthy result lists the option disabled (with `reason` under its label)
-   * and reports a matching selection unresolved.
+   * Lists a folder the caller cannot mount (mount level NONE) disabled, with
+   * the reason, and reports a matching selection unresolved.
    */
-  getFolderDisabled?: (
-    folder: ScopedVFolderSummary,
-  ) => boolean | { reason: string };
+  disableUnmountable?: boolean;
   /** Labels for selected ids the scope and `filter` do not reach. */
   fallbackLabels?: Record<string, string>;
   /** Fires once the selected ids are looked up, and again whenever the outcome changes. */
@@ -168,7 +166,7 @@ const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps> = ({
   scope,
   filter,
   optionFilter,
-  getFolderDisabled,
+  disableUnmountable = false,
   fallbackLabels,
   onResolve,
   multiple = false,
@@ -314,8 +312,11 @@ const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps> = ({
     _.map(selectedFolders?.edges, (edge) => toSummary(edge.node)),
     'entityId',
   );
+  // The server refuses to mount a folder whose mount level is NONE.
+  const isUnmountable = (folder: ScopedVFolderSummary) =>
+    disableUnmountable && folder.permission === 'NONE';
   const isReachable = (id: string) =>
-    !!summaryById[id] && !getFolderDisabled?.(summaryById[id]);
+    !!summaryById[id] && !isUnmountable(summaryById[id]);
   const resolution: ScopedVFolderResolution = {
     resolved: _.map(_.filter(lookupIds, isReachable), (id) => summaryById[id]),
     unresolved: _.reject(lookupIds, isReachable),
@@ -332,7 +333,9 @@ const BAIScopedVFolderSelect: React.FC<BAIScopedVFolderSelectProps> = ({
   const options = _.map(paginationData, (folder) => ({
     value: folder.entityId,
     label: folder.metadata.name,
-    disabled: getFolderDisabled?.(toSummary(folder)) ?? false,
+    disabled: isUnmountable(toSummary(folder))
+      ? { reason: t('comp:BAIScopedVFolderSelect.NoMountPermission') }
+      : false,
     icon: (
       <BAIVFolderIdenticon
         vfolderId={folder.entityId}

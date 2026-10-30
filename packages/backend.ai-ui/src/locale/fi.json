@@ -592,6 +592,7 @@
     "InviteByEmail": "Kutsu sähköpostilla"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Sinulla ei ole oikeutta liittää tätä kansiota.",
     "SelectFolder": "Valitse kansio"
   },
   "comp:BAISessionAgentIds": {
@@ -667,7 +668,6 @@
     "CreateFolder": "Luo uusi tallennuskansio",
     "DestinationPath": "Kontin polku (destination)",
     "Folders": "Kansiot",
-    "NoMountPermission": "Sinulla ei ole oikeutta liittää tätä kansiota.",
     "PathAndAliasTooltip": "Polku säilön sisällä, johon kansio liitetään. Jätä tyhjäksi käyttääksesi oletuspolkua.",
     "Refresh": "Päivitä",
     "RemoveFolder": "Poista",

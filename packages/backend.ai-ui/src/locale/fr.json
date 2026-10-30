@@ -592,6 +592,7 @@
     "InviteByEmail": "Inviter par e-mail"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Vous n'avez pas l'autorisation de monter ce dossier.",
     "SelectFolder": "Sélectionner un dossier"
   },
   "comp:BAISessionAgentIds": {
@@ -667,7 +668,6 @@
     "CreateFolder": "Créer un nouveau dossier de stockage",
     "DestinationPath": "Chemin du conteneur (destination)",
     "Folders": "Dossiers",
-    "NoMountPermission": "Vous n'avez pas l'autorisation de monter ce dossier.",
     "PathAndAliasTooltip": "Le chemin à l'intérieur du conteneur où le dossier sera monté. Laissez vide pour utiliser le chemin par défaut.",
     "Refresh": "Rafraîchir",
     "RemoveFolder": "Supprimer",

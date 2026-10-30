@@ -592,6 +592,7 @@
     "InviteByEmail": "Πρόσκληση μέσω e-mail"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Δεν έχετε δικαίωμα προσάρτησης αυτού του φακέλου.",
     "SelectFolder": "Επιλογή φακέλου"
   },
   "comp:BAISessionAgentIds": {
@@ -667,7 +668,6 @@
     "CreateFolder": "Δημιουργήστε έναν νέο φάκελο αποθήκευσης",
     "DestinationPath": "Διαδρομή container (destination)",
     "Folders": "Φάκελοι",
-    "NoMountPermission": "Δεν έχετε δικαίωμα προσάρτησης αυτού του φακέλου.",
     "PathAndAliasTooltip": "Η διαδρομή εντός του container όπου θα προσαρτηθεί ο φάκελος. Αφήστε κενό για να χρησιμοποιηθεί η προεπιλεγμένη διαδρομή.",
     "Refresh": "Φρεσκάρω",
     "RemoveFolder": "Αφαίρεση",

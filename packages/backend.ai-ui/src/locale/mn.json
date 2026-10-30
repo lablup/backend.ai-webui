@@ -592,6 +592,7 @@
     "InviteByEmail": "И-мэйлээр урих"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Танд энэ хавтсыг холбох эрх байхгүй байна.",
     "SelectFolder": "Хавтас сонгох"
   },
   "comp:BAISessionAgentIds": {
@@ -667,7 +668,6 @@
     "CreateFolder": "Шинэ хадгалах фолдер үүсгэх",
     "DestinationPath": "Контейнерийн зам (destination)",
     "Folders": "Фолдерууд",
-    "NoMountPermission": "Танд энэ хавтсыг холбох эрх байхгүй байна.",
     "PathAndAliasTooltip": "Хавтасыг контейнер дотор маунт хийх зам. Анхдагч замыг ашиглахын тулд хоосон үлдээнэ үү.",
     "Refresh": "Сэргээх",
     "RemoveFolder": "Хасах",

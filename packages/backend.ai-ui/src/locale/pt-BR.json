@@ -598,6 +598,7 @@
     "InviteByEmail": "Convidar por e-mail"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Você não tem permissão para montar esta pasta.",
     "SelectFolder": "Selecionar pasta"
   },
   "comp:BAISessionAgentIds": {
@@ -673,7 +674,6 @@
     "CreateFolder": "Crie uma nova pasta de armazenamento",
     "DestinationPath": "Caminho do contêiner (destination)",
     "Folders": "Pastas",
-    "NoMountPermission": "Você não tem permissão para montar esta pasta.",
     "PathAndAliasTooltip": "O caminho dentro do container onde a pasta será montada. Deixe em branco para usar o caminho padrão.",
     "Refresh": "Atualizar",
     "RemoveFolder": "Remover",

@@ -592,6 +592,7 @@
     "InviteByEmail": "Undang melalui e-mail"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Anda tidak memiliki izin untuk me-mount folder ini.",
     "SelectFolder": "Pilih Folder"
   },
   "comp:BAISessionAgentIds": {
@@ -667,7 +668,6 @@
     "CreateFolder": "Buat folder penyimpanan baru",
     "DestinationPath": "Jalur kontainer (destination)",
     "Folders": "Folder",
-    "NoMountPermission": "Anda tidak memiliki izin untuk me-mount folder ini.",
     "PathAndAliasTooltip": "Jalur di dalam container tempat folder akan di-mount. Kosongkan untuk menggunakan jalur default.",
     "Refresh": "Segarkan",
     "RemoveFolder": "Hapus",

@@ -592,6 +592,7 @@
     "InviteByEmail": "メールで招待"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "このフォルダーをマウントする権限がありません。",
     "SelectFolder": "フォルダを選択"
   },
   "comp:BAISessionAgentIds": {
@@ -667,7 +668,6 @@
     "CreateFolder": "新規ストレージフォルダー作成",
     "DestinationPath": "コンテナのパス (destination)",
     "Folders": "フォルダー",
-    "NoMountPermission": "このフォルダーをマウントする権限がありません。",
     "PathAndAliasTooltip": "コンテナ内でフォルダがマウントされるパスです。デフォルトのパスを使用する場合は空欄にしてください。",
     "Refresh": "更新",
     "RemoveFolder": "削除",

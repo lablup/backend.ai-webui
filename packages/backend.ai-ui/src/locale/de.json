@@ -592,6 +592,7 @@
     "InviteByEmail": "Per E-Mail einladen"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Sie haben keine Berechtigung, diesen Ordner einzuhängen.",
     "SelectFolder": "Ordner auswählen"
   },
   "comp:BAISessionAgentIds": {
@@ -667,7 +668,6 @@
     "CreateFolder": "Erstellen Sie einen neuen Speicherordner",
     "DestinationPath": "Container-Pfad (destination)",
     "Folders": "Ordner",
-    "NoMountPermission": "Sie haben keine Berechtigung, diesen Ordner einzuhängen.",
     "PathAndAliasTooltip": "Der Pfad im Container, in den der Ordner eingehängt wird. Leer lassen, um den Standardpfad zu verwenden.",
     "Refresh": "Aktualisierung",
     "RemoveFolder": "Entfernen",

@@ -592,6 +592,7 @@
     "InviteByEmail": "Zaproś przez e-mail"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Nie masz uprawnień do zamontowania tego folderu.",
     "SelectFolder": "Wybierz folder"
   },
   "comp:BAISessionAgentIds": {
@@ -667,7 +668,6 @@
     "CreateFolder": "Utwórz nowy folder przechowywania",
     "DestinationPath": "Ścieżka w kontenerze (destination)",
     "Folders": "Foldery",
-    "NoMountPermission": "Nie masz uprawnień do zamontowania tego folderu.",
     "PathAndAliasTooltip": "Ścieżka wewnątrz kontenera, w której zostanie zamontowany folder. Pozostaw puste, aby użyć domyślnej ścieżki.",
     "Refresh": "Odświeżać",
     "RemoveFolder": "Usuń",

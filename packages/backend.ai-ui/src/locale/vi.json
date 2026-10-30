@@ -592,6 +592,7 @@
     "InviteByEmail": "Mời qua e-mail"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Bạn không có quyền gắn thư mục này.",
     "SelectFolder": "Chọn thư mục"
   },
   "comp:BAISessionAgentIds": {
@@ -667,7 +668,6 @@
     "CreateFolder": "Tạo một thư mục lưu trữ mới",
     "DestinationPath": "Đường dẫn container (destination)",
     "Folders": "Thư mục",
-    "NoMountPermission": "Bạn không có quyền gắn thư mục này.",
     "PathAndAliasTooltip": "Đường dẫn bên trong container nơi thư mục sẽ được mount. Để trống để sử dụng đường dẫn mặc định.",
     "Refresh": "Làm tươi",
     "RemoveFolder": "Xóa",
