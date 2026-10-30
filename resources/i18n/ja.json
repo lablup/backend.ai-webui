@@ -4317,6 +4317,8 @@
     "OpenPortToPublic": "アプリの外部公開を許可",
     "PluginLogin": "ログインプラグインのパス",
     "PluginPage": "ページプラグインのパス",
+    "ResetAllSettings": "システム設定をすべて初期化しますか？",
+    "ResetAllSettingsDesc": "{{domain}} ドメインでこのページから保存した値はすべて削除され、各項目は config.toml の値に戻ります。初期化後、ページを再読み込みします。",
     "ShowNonInstalledImages": "未インストールのイメージを表示",
     "SingleSignOnVendors": "SSO サインインを許可",
     "SsoRealmName": "SSO OpenID ボタンのラベル",

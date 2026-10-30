@@ -14,6 +14,7 @@ import {
   type WebUISettingDefinition,
   type WebUISettingsDocument,
 } from '../helper/webuiSettings';
+import { useCurrentDomainValue } from '../hooks';
 import {
   useUpdateDomainAppConfig,
   useUpdatePublicDomainAppConfig,
@@ -26,6 +27,8 @@ import { useWebUISettingLabels } from './WebUISettingLabels';
 import { Button } from '@lablup/ui-common/Button';
 import {
   BAIAlert,
+  BAIButton,
+  BAIDeleteConfirmModal,
   BAIFlex,
   BAIMultiSelector,
   BAIModal,
@@ -34,7 +37,7 @@ import {
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { CircleAlert } from 'lucide-react';
+import { CircleAlert, Redo2 } from 'lucide-react';
 import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useBlocker } from 'react-router-dom';
@@ -162,9 +165,10 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
     }
   };
   const applySettings = () => persist(draft);
-  // Reset-all is already confirmed by SettingList's modal, so it applies at
-  // once; a per-row reset only edits the draft and still needs Apply.
-  const resetAll = () => persist({});
+  // Reset-all deletes the saved documents (irreversible), so it is confirmed
+  // by a typed word; a per-row reset only edits the draft and needs Apply.
+  const domainName = useCurrentDomainValue();
+  const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
 
   const toSettingItem = (
     definition: WebUISettingDefinition,
@@ -291,8 +295,15 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
         settingGroups={settingGroups}
         showSearchBar
         showChangedOptionFilter
-        showResetButton
-        onReset={resetAll}
+        extraButton={
+          <BAIButton
+            danger
+            icon={<Redo2 size="1em" />}
+            onClick={() => setIsResetConfirmOpen(true)}
+          >
+            {t('button.Reset')}
+          </BAIButton>
+        }
         primaryButton={
           <Button
             variant="primary"
@@ -323,6 +334,20 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
           title={t('webuiSettings.ApplySettingsDesc')}
         />
       </BAIModal>
+      <BAIDeleteConfirmModal
+        open={isResetConfirmOpen}
+        title={t('webuiSettings.ResetAllSettings')}
+        description={t('webuiSettings.ResetAllSettingsDesc', {
+          domain: domainName,
+        })}
+        items={[{ key: domainName, label: domainName }]}
+        requireConfirmInput
+        confirmText={t('button.Reset')}
+        okText={t('button.Reset')}
+        confirmLoading={isApplying}
+        onOk={() => persist({})}
+        onCancel={() => setIsResetConfirmOpen(false)}
+      />
     </>
   );
 };

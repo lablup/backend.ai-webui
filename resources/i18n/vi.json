@@ -4317,6 +4317,8 @@
     "OpenPortToPublic": "Cho phép truy cập ứng dụng công khai",
     "PluginLogin": "Đường dẫn plugin đăng nhập",
     "PluginPage": "Đường dẫn plugin trang",
+    "ResetAllSettings": "Đặt lại toàn bộ Cài đặt hệ thống?",
+    "ResetAllSettingsDesc": "Mọi giá trị đã lưu trên trang này cho miền {{domain}} sẽ bị xóa và mỗi dòng trở về giá trị trong config.toml. Trang sẽ tải lại sau khi đặt lại.",
     "ShowNonInstalledImages": "Hiển thị image chưa cài đặt",
     "SingleSignOnVendors": "Cho phép đăng nhập SSO",
     "SsoRealmName": "Nhãn nút SSO OpenID",

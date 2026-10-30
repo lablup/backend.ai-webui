@@ -4315,6 +4315,8 @@
     "OpenPortToPublic": "Benarkan akses awam kepada aplikasi",
     "PluginLogin": "Laluan pemalam log masuk",
     "PluginPage": "Laluan pemalam halaman",
+    "ResetAllSettings": "Tetapkan semula semua Tetapan Sistem?",
+    "ResetAllSettingsDesc": "Semua nilai yang disimpan pada halaman ini untuk domain {{domain}} dipadam dan setiap baris kembali kepada nilai config.toml. Halaman dimuat semula selepas tetapan semula.",
     "ShowNonInstalledImages": "Tunjukkan imej yang belum dipasang",
     "SingleSignOnVendors": "Benarkan log masuk SSO",
     "SsoRealmName": "Label butang SSO OpenID",

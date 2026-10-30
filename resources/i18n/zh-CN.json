@@ -4317,6 +4317,8 @@
     "OpenPortToPublic": "允许公开访问应用",
     "PluginLogin": "登录插件路径",
     "PluginPage": "页面插件路径",
+    "ResetAllSettings": "重置所有系统设置？",
+    "ResetAllSettingsDesc": "通过此页面为 {{domain}} 域保存的所有值都将被删除，每一项都将恢复为 config.toml 中的值。重置后页面将重新加载。",
     "ShowNonInstalledImages": "显示未安装的镜像",
     "SingleSignOnVendors": "允许 SSO 登录",
     "SsoRealmName": "SSO OpenID 按钮标签",

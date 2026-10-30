@@ -4318,6 +4318,8 @@
     "OpenPortToPublic": "앱 외부 공개 허용",
     "PluginLogin": "로그인 플러그인 경로",
     "PluginPage": "페이지 플러그인 경로",
+    "ResetAllSettings": "시스템 설정을 모두 초기화할까요?",
+    "ResetAllSettingsDesc": "{{domain}} 도메인에 이 페이지로 저장한 값이 모두 삭제되고, 각 항목은 config.toml 값으로 돌아갑니다. 초기화 후 페이지를 다시 불러옵니다.",
     "ShowNonInstalledImages": "미설치 이미지 표시",
     "SingleSignOnVendors": "SSO 로그인 허용",
     "SsoRealmName": "SSO OpenID 버튼 라벨 지정",

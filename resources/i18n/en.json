@@ -4300,6 +4300,8 @@
     "OpenPortToPublic": "Allow public app access",
     "PluginLogin": "Login plugin path",
     "PluginPage": "Page plugin paths",
+    "ResetAllSettings": "Reset all System Settings?",
+    "ResetAllSettingsDesc": "Every value saved on this page for the {{domain}} domain is deleted and each row returns to its config.toml value. The page reloads after the reset.",
     "ShowNonInstalledImages": "Show non-installed images",
     "SingleSignOnVendors": "Allow SSO sign-in",
     "SsoRealmName": "SSO OpenID button label",

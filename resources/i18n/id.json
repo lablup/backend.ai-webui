@@ -4319,6 +4319,8 @@
     "OpenPortToPublic": "Izinkan akses aplikasi publik",
     "PluginLogin": "Jalur plugin login",
     "PluginPage": "Jalur plugin halaman",
+    "ResetAllSettings": "Atur ulang semua Pengaturan Sistem?",
+    "ResetAllSettingsDesc": "Semua nilai yang disimpan di halaman ini untuk domain {{domain}} dihapus dan setiap baris kembali ke nilai config.toml-nya. Halaman dimuat ulang setelah pengaturan ulang.",
     "ShowNonInstalledImages": "Tampilkan image yang belum dipasang",
     "SingleSignOnVendors": "Izinkan masuk SSO",
     "SsoRealmName": "Label tombol SSO OpenID",

@@ -4317,6 +4317,8 @@
     "OpenPortToPublic": "Аппад нийтийн хандалтыг зөвшөөрөх",
     "PluginLogin": "Нэвтрэх нэмэлтийн зам",
     "PluginPage": "Хуудасны нэмэлтүүдийн замууд",
+    "ResetAllSettings": "Системийн бүх тохиргоог дахин тохируулах уу?",
+    "ResetAllSettingsDesc": "{{domain}} домэйнд энэ хуудсаар хадгалсан бүх утга устаж, мөр бүр config.toml-ийн утга руугаа буцна. Дахин тохируулсны дараа хуудас дахин ачаалагдана.",
     "ShowNonInstalledImages": "Суулгаагүй имажуудыг харуулах",
     "SingleSignOnVendors": "SSO нэвтрэлтийг зөвшөөрөх",
     "SsoRealmName": "SSO OpenID товчны шошго",

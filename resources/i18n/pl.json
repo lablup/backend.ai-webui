@@ -4318,6 +4318,8 @@
     "OpenPortToPublic": "Zezwalaj na publiczny dostęp do aplikacji",
     "PluginLogin": "Ścieżka wtyczki logowania",
     "PluginPage": "Ścieżki wtyczek stron",
+    "ResetAllSettings": "Zresetować wszystkie ustawienia systemowe?",
+    "ResetAllSettingsDesc": "Wszystkie wartości zapisane na tej stronie dla domeny {{domain}} zostaną usunięte, a każdy wiersz wróci do wartości z config.toml. Po zresetowaniu strona zostanie przeładowana.",
     "ShowNonInstalledImages": "Pokazuj niezainstalowane obrazy",
     "SingleSignOnVendors": "Zezwól na logowanie SSO",
     "SsoRealmName": "Etykieta przycisku SSO OpenID",

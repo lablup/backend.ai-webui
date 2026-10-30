@@ -4315,6 +4315,8 @@
     "OpenPortToPublic": "Permitir acceso público a las aplicaciones",
     "PluginLogin": "Ruta del plugin de inicio de sesión",
     "PluginPage": "Rutas de los plugins de páginas",
+    "ResetAllSettings": "¿Restablecer toda la configuración del sistema?",
+    "ResetAllSettingsDesc": "Se eliminan todos los valores guardados en esta página para el dominio {{domain}} y cada fila vuelve a su valor de config.toml. La página se recarga después del restablecimiento.",
     "ShowNonInstalledImages": "Mostrar imágenes no instaladas",
     "SingleSignOnVendors": "Permitir inicio de sesión SSO",
     "SsoRealmName": "Etiqueta del botón SSO OpenID",

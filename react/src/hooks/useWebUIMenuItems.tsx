@@ -282,8 +282,12 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   const baiClient = useSuspendedBackendaiClient();
   const isHideAgents = baiClient?._config?.hideAgents ?? true;
   const fasttrackEndpoint = baiClient?._config?.fasttrackEndpoint ?? null;
-  const blockList = baiClient?._config?.blockList ?? null;
-  const inactiveList = baiClient?._config?.inactiveList ?? null;
+  // System Settings is where both lists are edited, so it can never be
+  // hidden or disabled by them (that would lock the admin out of undoing it).
+  const withoutSystemSettings = (list?: Array<string> | null) =>
+    list ? _.without(list, 'system-settings') : null;
+  const blockList = withoutSystemSettings(baiClient?._config?.blockList);
+  const inactiveList = withoutSystemSettings(baiClient?._config?.inactiveList);
   const { token } = useTheme();
 
   const [experimentalAIAgents] = useBAISettingUserState(

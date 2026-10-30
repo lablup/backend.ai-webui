@@ -4301,6 +4301,8 @@
     "OpenPortToPublic": "อนุญาตการเข้าถึงแอปแบบสาธารณะ",
     "PluginLogin": "พาธปลั๊กอินเข้าสู่ระบบ",
     "PluginPage": "พาธปลั๊กอินหน้า",
+    "ResetAllSettings": "รีเซ็ตการตั้งค่าระบบทั้งหมดหรือไม่",
+    "ResetAllSettingsDesc": "ค่าทั้งหมดที่บันทึกในหน้านี้สำหรับโดเมน {{domain}} จะถูกลบ และทุกรายการจะกลับไปใช้ค่าจาก config.toml หน้าจะโหลดใหม่หลังรีเซ็ต",
     "ShowNonInstalledImages": "แสดงอิมเมจที่ยังไม่ได้ติดตั้ง",
     "SingleSignOnVendors": "อนุญาตการลงชื่อเข้าใช้ด้วย SSO",
     "SsoRealmName": "ป้ายกำกับปุ่ม SSO OpenID",

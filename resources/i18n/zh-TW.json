@@ -4319,6 +4319,8 @@
     "OpenPortToPublic": "允許公開存取應用程式",
     "PluginLogin": "登入外掛路徑",
     "PluginPage": "頁面外掛路徑",
+    "ResetAllSettings": "重置所有系統設定？",
+    "ResetAllSettingsDesc": "透過此頁面為 {{domain}} 網域儲存的所有值都會被刪除，每一項都會恢復為 config.toml 中的值。重置後頁面會重新載入。",
     "ShowNonInstalledImages": "顯示未安裝的映像檔",
     "SingleSignOnVendors": "允許 SSO 登入",
     "SsoRealmName": "SSO OpenID 按鈕標籤",

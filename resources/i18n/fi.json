@@ -4316,6 +4316,8 @@
     "OpenPortToPublic": "Salli sovellusten julkinen käyttö",
     "PluginLogin": "Kirjautumisliitännäisen polku",
     "PluginPage": "Sivuliitännäisten polut",
+    "ResetAllSettings": "Nollataanko kaikki järjestelmäasetukset?",
+    "ResetAllSettingsDesc": "Kaikki tällä sivulla toimialueelle {{domain}} tallennetut arvot poistetaan, ja jokainen rivi palaa config.toml-arvoonsa. Sivu ladataan uudelleen nollauksen jälkeen.",
     "ShowNonInstalledImages": "Näytä asentamattomat imaget",
     "SingleSignOnVendors": "Salli SSO-kirjautuminen",
     "SsoRealmName": "SSO OpenID -painikkeen teksti",
