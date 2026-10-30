@@ -40,7 +40,7 @@ import {
   applyRule,
   getImageAcceleratorLimits,
   getSupportedAcceleratorTypes,
-  isAcceleratorTypeUnsupported,
+  acceleratorTypeErrorTarget,
   NON_ACCELERATOR_SLOTS,
   type ResourceAllocationFormValue,
   RuleContext,
@@ -396,8 +396,11 @@ const ResourceAllocationFormItems: React.FC<
     // without writing anything, and `dependencies` see only form fields.
     const names: NamePath[] = [];
     const label = form.getFieldValue('allocationPreset');
-    // The type item is hidden in preset-only mode; its error goes to the preset item.
-    if (mode === 'free') names.push(['resource', 'acceleratorType']);
+    // In preset-only mode the type item is hidden; with a preset item its
+    // error goes there instead (`acceleratorTypeErrorTarget`).
+    if (mode === 'free' || !enableResourcePresets) {
+      names.push(['resource', 'acceleratorType']);
+    }
     if (label) names.push('allocationPreset');
     if (names.length > 0) form.validateFields(names).catch(() => {});
   });
@@ -459,17 +462,18 @@ const ResourceAllocationFormItems: React.FC<
                   // type item is hidden, so its D3 error shows here instead.
                   const type = getFieldValue(['resource', 'acceleratorType']);
                   if (
-                    mode === 'preset-only' &&
-                    isAcceleratorTypeUnsupported(
+                    acceleratorTypeErrorTarget(
                       type,
                       value,
                       ruleContext,
                       supportedAcceleratorTypesInRGByImage,
-                    )
+                    ) === 'preset'
                   ) {
                     return Promise.reject(
                       t('session.launcher.AcceleratorTypeNotSupportedByImage', {
-                        type: mergedResourceSlots?.[type]?.display_unit || type,
+                        type:
+                          mergedResourceSlots?.[type]?.human_readable_name ||
+                          type,
                       }),
                     );
                   }
@@ -1163,13 +1167,12 @@ const ResourceAllocationFormItems: React.FC<
                                         value: string,
                                       ) => {
                                         if (
-                                          mode === 'free' &&
-                                          isAcceleratorTypeUnsupported(
+                                          acceleratorTypeErrorTarget(
                                             value,
                                             currentAllocationPreset,
                                             ruleContext,
                                             supportedAcceleratorTypesInRGByImage,
-                                          )
+                                          ) === 'type'
                                         ) {
                                           return Promise.reject(
                                             t(

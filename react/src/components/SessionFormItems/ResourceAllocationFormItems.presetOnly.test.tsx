@@ -10,14 +10,15 @@ import ResourceAllocationFormItems, {
 } from './ResourceAllocationFormItems';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import { Suspense } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
 
-// In preset-only mode the accelerator-type item is hidden, so the D3 error
-// (the image supports several accelerator types, none of them the current
-// one) must surface on the visible Resource Presets item instead (#10710).
+// Where the "image does not support this accelerator type" error lands. In
+// preset-only mode the accelerator-type item is hidden, so for values that
+// are not a preset's the error must surface on the visible Resource Presets
+// item instead (#10710); the other states must raise no type error at all.
 
 vi.mock('react-i18next', async () => {
   const React = await import('react');
@@ -126,8 +127,7 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
   };
 });
 
-// Runs on ROCm or TPU, never on CUDA: two supported types, so no auto switch.
-const image: Image = {
+const makeImage = (supported_accelerators: string[]): Image => ({
   id: 'image-1',
   namespace: 'image',
   digest: 'digest',
@@ -144,10 +144,24 @@ const image: Image = {
   base_image_name: undefined,
   tags: undefined,
   version: undefined,
-  supported_accelerators: ['rocm', 'tpu'],
-};
+  supported_accelerators,
+});
+// Runs on ROCm or TPU, never on CUDA: two supported types, so no auto switch.
+const rocmOrTpuImage = makeImage(['rocm', 'tpu']);
+// Runs on no accelerator type the group has: R3 zeroes the accelerator.
+const cpuOnlyImage = makeImage([]);
 
-const renderRestoredCustom = () => {
+const PRESET_ID = 'preset-cuda';
+
+const renderRestored = ({
+  label,
+  image,
+  enableResourcePresets = true,
+}: {
+  label: string | null;
+  image: Image;
+  enableResourcePresets?: boolean;
+}) => {
   const environment = createMockEnvironment();
   environment.mock.queueOperationResolver((operation) =>
     MockPayloadGenerator.generate(operation, {
@@ -156,6 +170,12 @@ const renderRestoredCustom = () => {
         is_active: true,
         accelerator_quantum_size: null,
         resource_allocation_limit_for_sessions: null,
+      }),
+      ResourcePreset: () => ({
+        id: PRESET_ID,
+        name: 'cuda-preset',
+        scaling_group_name: null,
+        resource_slots: '{"cpu":"1","mem":"1g","cuda.device":"1"}',
       }),
     }),
   );
@@ -170,7 +190,7 @@ const renderRestoredCustom = () => {
             initialValues={{
               ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
               resourceGroup: 'mock-rg',
-              allocationPreset: 'custom',
+              allocationPreset: label,
               environments: { image },
               resource: {
                 cpu: 1,
@@ -183,7 +203,7 @@ const renderRestoredCustom = () => {
           >
             <ResourceAllocationFormItems
               project={{ id: 'project-id', name: 'project-name' }}
-              enableResourcePresets
+              enableResourcePresets={enableResourcePresets}
               keepRestoredAllocation
             />
           </Form>
@@ -195,30 +215,71 @@ const renderRestoredCustom = () => {
 
 const ERROR_KEY = 'session.launcher.AcceleratorTypeNotSupportedByImage';
 
-describe('ResourceAllocationFormItems: unsupported accelerator type of a restored custom allocation', () => {
-  it('preset-only: the error shows once, on the visible Resource Presets item', async () => {
-    allowCustomResourceAllocation = false;
-    renderRestoredCustom();
-    const errors = await screen.findAllByText(ERROR_KEY);
-    expect(errors).toHaveLength(1);
-    // Resource Presets is the visible item; the type item sits in a hidden card.
-    const presetItem = screen
-      .getByText('resourcePreset.ResourcePresets')
-      .closest('[data-uic-field-item="allocationPreset"]');
-    expect(presetItem).not.toBeNull();
-    expect(presetItem).toContainElement(errors[0]);
+// The validators run from the data effect after mount; give every trigger
+// (and the MessageChannel-batched watcher) time to land before counting.
+const settle = () =>
+  act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 300));
   });
 
-  it('free mode: the error shows on the accelerator-type item, not on Resource Presets', async () => {
-    allowCustomResourceAllocation = true;
-    renderRestoredCustom();
-    const errors = await screen.findAllByText(ERROR_KEY);
+const itemOf = (element: HTMLElement) =>
+  element.closest('[data-uic-field-item]')?.getAttribute('data-uic-field-item');
+
+const expectOneErrorOn = async (item: string) => {
+  await screen.findByText(ERROR_KEY);
+  await settle();
+  await waitFor(() => {
+    const errors = screen.getAllByText(ERROR_KEY);
     expect(errors).toHaveLength(1);
-    const presetItem = screen
-      .getByText('resourcePreset.ResourcePresets')
-      .closest('[data-uic-field-item="allocationPreset"]');
-    await waitFor(() => {
-      expect(presetItem).not.toContainElement(errors[0]);
+    expect(itemOf(errors[0])).toBe(item);
+  });
+};
+
+const expectNoTypeError = async () => {
+  await screen.findByTestId('mock-resource-group-select');
+  await settle();
+  expect(screen.queryAllByText(ERROR_KEY)).toHaveLength(0);
+};
+
+describe('where an accelerator type the image does not support is reported', () => {
+  describe('preset-only mode', () => {
+    beforeEach(() => {
+      allowCustomResourceAllocation = false;
     });
+
+    it('a restored custom allocation: once, on the visible Resource Presets item', async () => {
+      renderRestored({ label: 'custom', image: rocmOrTpuImage });
+      await expectOneErrorOn('allocationPreset');
+    });
+
+    it("a preset's own values: no type error (the preset validator owns them)", async () => {
+      renderRestored({ label: PRESET_ID, image: rocmOrTpuImage });
+      await expectNoTypeError();
+    });
+
+    it('an empty label: no type error (`required` covers the empty pick)', async () => {
+      renderRestored({ label: null, image: rocmOrTpuImage });
+      await expectNoTypeError();
+    });
+
+    it('an image that runs on no group type: no type error (the accelerator is zeroed instead)', async () => {
+      renderRestored({ label: 'custom', image: cpuOnlyImage });
+      await expectNoTypeError();
+    });
+
+    it('without a preset item: on the (hidden) accelerator item that holds the type select, as before', async () => {
+      renderRestored({
+        label: 'custom',
+        image: rocmOrTpuImage,
+        enableResourcePresets: false,
+      });
+      await expectOneErrorOn('resource_accelerator');
+    });
+  });
+
+  it('free mode: once, on the accelerator item that holds the type select', async () => {
+    allowCustomResourceAllocation = true;
+    renderRestored({ label: 'custom', image: rocmOrTpuImage });
+    await expectOneErrorOn('resource_accelerator');
   });
 });
