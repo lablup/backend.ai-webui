@@ -27,7 +27,7 @@ export interface WebMCPModelCardListToolsProps {
   total?: number | null;
   /** The cards are still those of the previous view. */
   pending?: boolean;
-  /** The store's URL params (`filter`, `sort`). */
+  /** The store's URL params (`filter`, `sort`, `current`, `pageSize`). */
   viewParams: Readonly<Record<string, ViewParamValue>>;
 }
 
@@ -81,12 +81,7 @@ const ModelCardListToolsRegistrar: React.FC<WebMCPModelCardListToolsProps> = ({
       'Row fields: id (model card UUID), title (the name when the card has no title), task, author, updatedAt (the creation time when never updated).',
     currentMeaning: 'the model card whose drawer is open',
     readRows: () => list,
-    readViewState: () =>
-      viewStateResult(
-        pathname,
-        { ...viewParams, current: page, pageSize },
-        pending,
-      ),
+    readViewState: () => viewStateResult(pathname, viewParams, pending),
     readCurrent: () =>
       openedItem(
         list.rows,

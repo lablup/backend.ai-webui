@@ -84,6 +84,7 @@ const renderTools = ({
   search?: string;
   columnOverrides?: BAITableColumnOverrideRecord;
 } = {}) => {
+  window.history.replaceState({}, '', `/project/default/session${search}`);
   const environment = createMockEnvironment();
   environment.mock.queueOperationResolver((operation) =>
     MockPayloadGenerator.generate(operation, {
@@ -191,6 +192,40 @@ describe('WebMCPSessionListTools', () => {
       pageSize: 10,
       total: 12,
     });
+  });
+
+  it('flags every read while the URL is ahead of the rendered view', async () => {
+    renderTools({ search: `?sessionDetail=${SESSION_A}` });
+    await waitFor(() => expect(registerTool).toHaveBeenCalledTimes(3));
+
+    await expect(
+      toolNamed('bai_list_visible_session').execute({}),
+    ).resolves.not.toHaveProperty('pending');
+    await expect(
+      toolNamed('bai_get_current_session').execute({}),
+    ).resolves.not.toHaveProperty('pending');
+
+    // What a same-page `bai_navigate` leaves while its transition is suspended.
+    window.history.replaceState({}, '', '/project/default/session?current=3');
+
+    await expect(
+      toolNamed('bai_list_visible_session').execute({}),
+    ).resolves.toMatchObject({ pending: true });
+    await expect(
+      toolNamed('bai_get_session_filter').execute({}),
+    ).resolves.toMatchObject({ pending: true });
+    await expect(
+      toolNamed('bai_get_current_session').execute({}),
+    ).resolves.toMatchObject({ pending: true, current: { id: SESSION_A } });
+  });
+
+  it('does not take an encoding difference for a lagging view', async () => {
+    renderTools({ search: '?filter=name+ilike+한글' });
+    await waitFor(() => expect(registerTool).toHaveBeenCalledTimes(3));
+
+    await expect(
+      toolNamed('bai_list_visible_session').execute({}),
+    ).resolves.not.toHaveProperty('pending');
   });
 
   it('follows the user column settings', async () => {
