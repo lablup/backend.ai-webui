@@ -33,7 +33,6 @@ import {
   BAIAuditLogNodes,
   BAIFlex,
   BAISwitch,
-  BAIText,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
 import React, { useDeferredValue } from 'react';
@@ -43,7 +42,7 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 const VISIBLE_COLUMNS = new Set([
   'createdAt',
   'triggeredBy',
-  'operation',
+  'actionName',
   'entityType',
   'status',
   'description',
@@ -597,27 +596,7 @@ const AuditLogTable: React.FC<{
                 VISIBLE_COLUMNS.has(String(column.key)) &&
                 !(hideTriggeredBy && column.key === 'triggeredBy'),
             )
-            .map((column) => ({
-              ...column,
-              defaultHidden: false,
-              ...(column.key === 'description' && {
-                render: (
-                  _value: unknown,
-                  record: { description?: string | null },
-                ) =>
-                  record.description ? (
-                    <BAIText
-                      copyable
-                      ellipsis={{ tooltip: true }}
-                      style={{ width: '100%' }}
-                    >
-                      {record.description}
-                    </BAIText>
-                  ) : (
-                    '-'
-                  ),
-              }),
-            }))
+            .map((column) => ({ ...column, defaultHidden: false }))
         }
         pagination={{
           pageSize: tablePaginationOption.pageSize,

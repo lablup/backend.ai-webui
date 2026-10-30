@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
 import type { CardScope } from '../cardScope';
 import type { DateTimeWindow } from '../timeRange';
 import type { PanelComponentProps } from '../types';
@@ -14,10 +13,12 @@ import {
   BAISessionNodesV2,
   type SessionV2InList,
 } from 'backend.ai-ui';
-import React, { useDeferredValue } from 'react';
+import dayjs from 'dayjs';
+import * as _ from 'lodash-es';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-const PAGE_SIZE = 5;
+const ROW_LIMIT = 5;
 const BASE_COLUMNS = [
   'name',
   'owner',
@@ -26,8 +27,9 @@ const BASE_COLUMNS = [
   'cpu',
   'mem',
 ];
-// Oldest first.
-const ORDER_BY = [{ field: 'STARTS_AT' as const, direction: 'ASC' as const }];
+const FILTER = { status: { in: ['RUNNING' as const] } };
+// Oldest first, so the sessions past the threshold are a prefix of the list.
+const ORDER_BY = [{ field: 'CREATED_AT' as const, direction: 'ASC' as const }];
 
 const LongRunningSessionTable: React.FC<{
   scope: CardScope;
@@ -36,38 +38,27 @@ const LongRunningSessionTable: React.FC<{
 }> = ({ scope, timeRange, fetchKey }) => {
   'use memo';
   const openSessionDetail = useOpenSessionDetail();
-  const {
-    baiPaginationOption,
-    tablePaginationOption,
-    setTablePaginationOption,
-  } = useBAIPaginationOptionState({ current: 1, pageSize: PAGE_SIZE });
-  // Running longer than the card's range: started before the range began. One bound only.
-  const filter = {
-    status: { in: ['RUNNING' as const] },
-    startsAt: { before: timeRange.after },
-  };
-  const deferredFilter = useDeferredValue(filter);
-  const deferredOffset = useDeferredValue(baiPaginationOption.offset);
-  const deferredLimit = useDeferredValue(baiPaginationOption.limit);
+  // Running longer than the card's range: created before the range began.
+  const threshold = dayjs(timeRange.after);
 
   return (
     <SessionList
       scope={scope}
-      filter={deferredFilter}
+      filter={FILTER}
       orderBy={ORDER_BY}
-      limit={deferredLimit}
-      offset={deferredOffset}
+      limit={ROW_LIMIT}
+      offset={0}
       fetchKey={fetchKey}
     >
-      {({ count, rows }) => (
+      {({ rows }) => (
         <BAISessionNodesV2
-          sessionsFrgmt={rows}
+          sessionsFrgmt={_.takeWhile(
+            rows,
+            (row) =>
+              !!row.lifecycle.createdAt &&
+              dayjs(row.lifecycle.createdAt).isBefore(threshold),
+          )}
           disableSorter
-          loading={
-            deferredOffset !== baiPaginationOption.offset ||
-            deferredLimit !== baiPaginationOption.limit ||
-            deferredFilter !== filter
-          }
           customizeColumns={(columns) =>
             columns
               .filter((column) =>
@@ -95,20 +86,14 @@ const LongRunningSessionTable: React.FC<{
                   : { ...column, defaultHidden: false },
               )
           }
-          pagination={{
-            pageSize: tablePaginationOption.pageSize,
-            current: tablePaginationOption.current,
-            total: count,
-            onChange: (current, pageSize) =>
-              setTablePaginationOption({ current, pageSize }),
-          }}
+          pagination={false}
         />
       )}
     </SessionList>
   );
 };
 
-/** Running sessions in the page's scope that started before the card's range, oldest first. */
+/** Running sessions in the page's scope created before the card's range, oldest first. */
 const LongRunningSessionsPanel: React.FC<PanelComponentProps> = ({
   scope,
   vars,
