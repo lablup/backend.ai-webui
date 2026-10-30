@@ -721,6 +721,14 @@ async function main() {
     ignoreHTTPSErrors: true,
     viewport: { width: 1440, height: 900 },
   });
+  // A fresh origin would show a superadmin AdminViewSwitchTour's intro modal over every page.
+  await context.addInitScript(() => {
+    for (const name of [
+      "has_opened_tour_back_to_user_view",
+      "has_opened_tour_back_to_admin_settings",
+    ])
+      localStorage.setItem(`backendaiwebui.settings.user.${name}`, "true");
+  });
   const page = await context.newPage();
   try {
     await login(page, base, endpoint, env);
