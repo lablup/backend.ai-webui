@@ -95,7 +95,7 @@ const ModelCardListToolsRegistrar: React.FC<WebMCPModelCardListToolsProps> = ({
 
 /**
  * `bai_list_visible_model_card`, `bai_get_model_card_filter` and
- * `bai_get_current_model_card` for the model store (ADR 0011).
+ * `bai_get_current_model_card` for the model store (ADR 0017).
  */
 const WebMCPModelCardListTools: React.FC<WebMCPModelCardListToolsProps> = (
   props,
