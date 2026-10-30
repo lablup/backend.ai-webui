@@ -617,7 +617,11 @@ export function rowCheckbox(rowLocator: Locator): Locator {
 
 /** The text/number input of a string or number row. */
 export function rowInput(rowLocator: Locator): Locator {
-  return rowLocator.getByRole('spinbutton').or(rowLocator.getByRole('textbox'));
+  // A plugin path row also renders the fixed `/dist/plugins` root as a
+  // disabled textbox; only the editable input is the row's value.
+  return rowLocator
+    .getByRole('spinbutton')
+    .or(rowLocator.getByRole('textbox', { disabled: false }));
 }
 
 /** Types `value` into an uncontrolled row input and commits it (Enter). */
