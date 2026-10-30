@@ -31,13 +31,14 @@ const RecentSessionsTable: React.FC<{ scope: CardScope; fetchKey: string }> = ({
     setTablePaginationOption,
   } = useBAIPaginationOptionState({ current: 1, pageSize: PAGE_SIZE });
   const deferredOffset = useDeferredValue(baiPaginationOption.offset);
+  const deferredLimit = useDeferredValue(baiPaginationOption.limit);
 
   return (
     <SessionList
       scope={scope}
       filter={{}}
       orderBy={ORDER_BY}
-      limit={baiPaginationOption.limit}
+      limit={deferredLimit}
       offset={deferredOffset}
       fetchKey={fetchKey}
     >
@@ -45,20 +46,26 @@ const RecentSessionsTable: React.FC<{ scope: CardScope; fetchKey: string }> = ({
         <BAISessionNodesV2
           sessionsFrgmt={rows}
           disableSorter
-          loading={deferredOffset !== baiPaginationOption.offset}
+          loading={
+            deferredOffset !== baiPaginationOption.offset ||
+            deferredLimit !== baiPaginationOption.limit
+          }
           customizeColumns={(columns) =>
             columns.map((column) =>
               column.key === 'name'
                 ? {
                     ...column,
-                    render: (_value, session) => (
-                      <BAILink
-                        type="hover"
-                        onClick={() => openSessionDetail(session.entityId)}
-                      >
-                        {session.metadata?.name ?? '-'}
-                      </BAILink>
-                    ),
+                    render: (_value, session) =>
+                      openSessionDetail ? (
+                        <BAILink
+                          type="hover"
+                          onClick={() => openSessionDetail(session.entityId)}
+                        >
+                          {session.metadata?.name ?? '-'}
+                        </BAILink>
+                      ) : (
+                        (session.metadata?.name ?? '-')
+                      ),
                   }
                 : column,
             )

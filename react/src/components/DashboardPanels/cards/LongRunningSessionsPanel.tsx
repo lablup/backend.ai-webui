@@ -48,13 +48,14 @@ const LongRunningSessionTable: React.FC<{
   };
   const deferredFilter = useDeferredValue(filter);
   const deferredOffset = useDeferredValue(baiPaginationOption.offset);
+  const deferredLimit = useDeferredValue(baiPaginationOption.limit);
 
   return (
     <SessionList
       scope={scope}
       filter={deferredFilter}
       orderBy={ORDER_BY}
-      limit={baiPaginationOption.limit}
+      limit={deferredLimit}
       offset={deferredOffset}
       fetchKey={fetchKey}
     >
@@ -64,6 +65,7 @@ const LongRunningSessionTable: React.FC<{
           disableSorter
           loading={
             deferredOffset !== baiPaginationOption.offset ||
+            deferredLimit !== baiPaginationOption.limit ||
             deferredFilter !== filter
           }
           customizeColumns={(columns) =>
@@ -74,14 +76,17 @@ const LongRunningSessionTable: React.FC<{
                   ? {
                       ...column,
                       defaultHidden: false,
-                      render: (_value: unknown, session: SessionV2InList) => (
-                        <BAILink
-                          type="hover"
-                          onClick={() => openSessionDetail(session.entityId)}
-                        >
-                          {session.metadata?.name ?? '-'}
-                        </BAILink>
-                      ),
+                      render: (_value: unknown, session: SessionV2InList) =>
+                        openSessionDetail ? (
+                          <BAILink
+                            type="hover"
+                            onClick={() => openSessionDetail(session.entityId)}
+                          >
+                            {session.metadata?.name ?? '-'}
+                          </BAILink>
+                        ) : (
+                          (session.metadata?.name ?? '-')
+                        ),
                     }
                   : { ...column, defaultHidden: false },
               )

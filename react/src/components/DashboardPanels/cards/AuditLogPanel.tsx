@@ -293,6 +293,8 @@ const AuditLogLive: React.FC<{
 
 const AuditLogTable: React.FC<{
   scope: AuditLogScope;
+  /** The viewer's own actions: every row's actor is the viewer, so the column is left out. */
+  hideTriggeredBy: boolean;
   range: string;
   refreshedAt: number;
   failuresOnly: boolean;
@@ -300,6 +302,7 @@ const AuditLogTable: React.FC<{
   manualFetchKey: string;
 }> = ({
   scope,
+  hideTriggeredBy,
   range,
   refreshedAt,
   failuresOnly,
@@ -351,7 +354,11 @@ const AuditLogTable: React.FC<{
         loading={deferred !== variables}
         customizeColumns={(columns) =>
           columns
-            .filter((column) => VISIBLE_COLUMNS.has(String(column.key)))
+            .filter(
+              (column) =>
+                VISIBLE_COLUMNS.has(String(column.key)) &&
+                !(hideTriggeredBy && column.key === 'triggeredBy'),
+            )
             .map((column) => ({
               ...column,
               defaultHidden: false,
@@ -462,6 +469,7 @@ const AuditLogPanel: React.FC<PanelComponentProps> = ({
           // A new filter starts on the first page.
           key={String(failuresOnly)}
           scope={auditLogScope(cardScope, baiClient.user_uuid)}
+          hideTriggeredBy={cardScope.kind === 'mine'}
           range={vars.range}
           refreshedAt={vars.refreshedAt}
           failuresOnly={failuresOnly}
