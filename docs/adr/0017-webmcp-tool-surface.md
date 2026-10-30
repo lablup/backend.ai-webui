@@ -134,7 +134,7 @@ flowchart LR
 
 ### 8. data를 가진 component가 등록하고, unmount가 등록을 푼다
 
-- **Owner**: tool은 그 data나 그 form의 열림 상태를 이미 가진 component가 `useWebMCPTool(tool)`로 등록한다. `bai_prepare_<noun>`은 form을 여는 state를 가진 page component가 등록한다. component는 tool 때문에 새 query를 보내지 않는다.
+- **Owner**: tool은 그 data나 그 form의 열림 상태를 이미 가진 component가 `useWebMCPTool(tool)`로 등록한다. `bai_prepare_<noun>`은 form을 여는 state를 가진 page component가 등록한다. component는 tool을 등록하려고 새 query를 보내지 않는다. 예외는 하나다. `bai_prepare_<noun>`은 agent가 이름으로 준 참조(예: mount할 folder)를 호출 시점에 읽기 전용 query로 찾을 수 있다. 등록만으로는 요청이 나가지 않고, 입력한 이름과 사용자가 그 form에서 고를 수 있는 범위로 조건을 좁힌다.
 - **Lifetime**: `useWebMCPTool`은 등록할 때 만든 `AbortController`를 unmount 때 abort한다. route가 바뀌면 이전 page의 tool이 사라지고 새 page의 tool이 등록된다.
 - **Re-registration**: `name`, `description`, `inputSchema`, `annotations` 중 하나가 바뀌면 `useWebMCPTool`은 이전 등록을 abort하고 다시 등록한다.
 - **Latest closure**: 브라우저는 effect가 끝난 한참 뒤에 `execute`를 부르므로 `useWebMCPTool`은 BUI의 `useEventNotStable`로 안정적인 `execute`를 만든다(`useEffectEvent`는 effect 안에서만 안전하다). 이 hook은 layout effect에서 최신 closure로 바꾸므로 `execute`는 항상 최신 render의 값을 읽고, 값만 바뀌어서는 다시 등록되지 않는다.
