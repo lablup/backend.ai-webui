@@ -66,7 +66,8 @@ export const toHandlerOptionsFormValue = (
   })),
 });
 
-// A cleared number input is `null`; the manager reads `null` as "unbounded".
+// A cleared number input is `null`: unbounded in `default`, the default's
+// value in a `byHandler` entry (manager `resolve()`).
 export const toHandlerOptionsInput = (value?: HandlerOptionsFormValue) => ({
   default: {
     timeoutSec: value?.default?.timeoutSec ?? null,
@@ -124,8 +125,11 @@ export const HandlerOptionsFormFields: React.FC<{
       description: option.description,
     }));
   };
+  // A blank row has yet to claim a name, so it counts as taken.
   const hasUnchosenName =
-    _.size(_.intersection(chosenNames, knownNames)) < _.size(knownNames);
+    _.size(
+      _.filter(chosenNames, (name) => !name || _.includes(knownNames, name)),
+    ) < _.size(knownNames);
 
   // A stored spec may still carry the same handler twice.
   const validateUniqueHandler = (_rule: unknown, handlerName: string) => {
@@ -178,7 +182,7 @@ export const HandlerOptionsFormFields: React.FC<{
             aria-label={t('resourceGroup.DefaultTimeout')}
             units={t('resourceGroup.TimeoutSeconds')}
             placeholder={unlimited}
-            min={0}
+            min={1}
             isIntegerOnly
           />
         </BAIFormItem>
@@ -259,7 +263,7 @@ export const HandlerOptionsFormFields: React.FC<{
                       aria-label={t('resourceGroup.Timeout')}
                       placeholder={timeoutPlaceholder}
                       units={t('resourceGroup.TimeoutSecondsShort')}
-                      min={0}
+                      min={1}
                       isIntegerOnly
                     />
                   </Form.Item>

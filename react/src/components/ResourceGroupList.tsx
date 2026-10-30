@@ -211,6 +211,13 @@ const ResourceGroupList: React.FC = () => {
   const drawerResourceGroup = drawerResourceGroupName
     ? _.find(resourceGroups, { name: drawerResourceGroupName })
     : null;
+  // Last group the drawer showed, so it keeps its content while closing even
+  // when the group has just left the list.
+  const [shownResourceGroup, setShownResourceGroup] =
+    useState<typeof drawerResourceGroup>(null);
+  if (drawerResourceGroup && drawerResourceGroup !== shownResourceGroup) {
+    setShownResourceGroup(drawerResourceGroup);
+  }
   // Close for good when the group leaves the list, so it cannot reopen later.
   if (isDrawerOpen && !drawerResourceGroup) {
     setIsDrawerOpen(false);
@@ -662,8 +669,8 @@ const ResourceGroupList: React.FC = () => {
       />
       <BAIUnmountAfterClose>
         <ResourceGroupDetailDrawer
-          open={isDrawerOpen && !!drawerResourceGroup}
-          resourceGroupFrgmt={drawerResourceGroup}
+          open={isDrawerOpen}
+          resourceGroupFrgmt={drawerResourceGroup ?? shownResourceGroup}
           onRequestClose={() => setIsDrawerOpen(false)}
           onRequestRefetch={() => {
             startRefetchTransition(() => {
