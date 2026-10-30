@@ -345,9 +345,15 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "Ação",
     "AuditLog": "Registro de auditoria",
     "Operation": "Operação",
-    "Status": "Status",
+    "Result": "Resultado",
+    "ResultDenied": "Negado",
+    "ResultFailed": "Falhou",
+    "ResultRunning": "Em andamento",
+    "ResultSuccess": "Sucesso",
+    "ResultUnknown": "Desconhecido",
     "Time": "Hora",
     "TriggeredBy": "Acionado por",
     "TriggeredByFilterPlaceholder": "Procura por ID"

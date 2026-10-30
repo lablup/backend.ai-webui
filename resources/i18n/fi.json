@@ -345,9 +345,15 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "Toiminnon nimi",
     "AuditLog": "Tarkastusloki",
     "Operation": "Toiminto",
-    "Status": "Tila",
+    "Result": "Tulos",
+    "ResultDenied": "Estetty",
+    "ResultFailed": "Epäonnistui",
+    "ResultRunning": "Käynnissä",
+    "ResultSuccess": "Onnistui",
+    "ResultUnknown": "Tuntematon",
     "Time": "Aika",
     "TriggeredBy": "Käynnistänyt",
     "TriggeredByFilterPlaceholder": "Hae ID:llä"

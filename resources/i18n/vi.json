@@ -345,9 +345,15 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "Hành động",
     "AuditLog": "Nhật ký kiểm tra",
     "Operation": "Thao tác",
-    "Status": "Trạng thái",
+    "Result": "Kết quả",
+    "ResultDenied": "Bị từ chối",
+    "ResultFailed": "Thất bại",
+    "ResultRunning": "Đang thực hiện",
+    "ResultSuccess": "Thành công",
+    "ResultUnknown": "Không xác định",
     "Time": "Thời gian",
     "TriggeredBy": "Thực hiện bởi",
     "TriggeredByFilterPlaceholder": "Tìm kiếm theo ID"

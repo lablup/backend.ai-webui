@@ -345,9 +345,15 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "Action": "Ενέργεια",
     "AuditLog": "Καταγραφή ελέγχου",
     "Operation": "Λειτουργία",
-    "Status": "Κατάσταση",
+    "Result": "Αποτέλεσμα",
+    "ResultDenied": "Απορρίφθηκε",
+    "ResultFailed": "Απέτυχε",
+    "ResultRunning": "Σε εξέλιξη",
+    "ResultSuccess": "Επιτυχία",
+    "ResultUnknown": "Άγνωστο",
     "Time": "Ώρα",
     "TriggeredBy": "Ενεργοποιήθηκε από",
     "TriggeredByFilterPlaceholder": "Αναζήτηση με ID"
