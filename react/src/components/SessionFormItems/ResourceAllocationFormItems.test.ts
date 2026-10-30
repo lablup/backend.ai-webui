@@ -11,7 +11,7 @@ import { Image } from '../ImageEnvironmentSelectFormItems';
 import { getUnavailableSlotNames } from '../ResourcePresetSelect';
 import {
   AUTOMATIC_DEFAULT_SHMEM,
-  getPresetUnavailableReason,
+  getAllocatablePresetIds,
   getAutomaticShmem,
   getUnifiedSlotNameFromTag,
   isUnifiedAcceleratorSlot,
@@ -82,7 +82,7 @@ describe('getUnifiedSlotNameFromTag', () => {
   });
 });
 
-describe('getPresetUnavailableReason', () => {
+describe('getAllocatablePresetIds', () => {
   const presets: Array<ResourcePreset> = [
     {
       id: 'id-cuda_shares_prest_10',
@@ -130,107 +130,109 @@ describe('getPresetUnavailableReason', () => {
     supported_accelerators: undefined,
   };
 
-  const reasonsOf = (
-    list: Array<ResourcePreset>,
-    limits: MergedResourceLimits,
-    image: Image,
-    slotsInResourceGroup?: string[],
-  ) =>
-    list.map((preset) =>
-      getPresetUnavailableReason(preset, limits, image, slotsInResourceGroup),
+  it('should return presets when currentImage has accelerator limits', () => {
+    const result = getAllocatablePresetIds(
+      presets,
+      resourceLimits_cpu4_mem8g_cudashares1,
+      image_has_cuda_shares_min1_max1,
     );
+    //  must compare the preset's resource slots with the resource limits even `check-preset` result has allocatable.
+    expect(result).toEqual(['id-cuda_shares_prest_1']);
+  });
 
-  it('checks the image, then the limits, and never what is free right now', () => {
-    expect(
-      reasonsOf(
-        presets,
-        resourceLimits_cpu4_mem8g_cudashares1,
-        image_has_cuda_shares_min1_max1,
-      ),
-    ).toEqual([
-      { type: 'exceedsLimit', slots: ['cuda.shares'] },
-      // Fits the image and the limits; launches as pending when nothing is free.
-      undefined,
-      { type: 'imageAccelerator' },
+  it('should return empty array when no presets match', () => {
+    const noMatchPresets: Array<ResourcePreset> = [
+      {
+        id: 'id-preset4',
+        name: 'preset4',
+        allocatable: false,
+        shared_memory: '1GB',
+        resource_slots: { cpu: '10', mem: '16GB', 'not_existed.device': '5' },
+      },
+    ];
+    const result = getAllocatablePresetIds(
+      noMatchPresets,
+      resourceLimits_cpu4_mem8g_cudashares1,
+      image_has_cuda_shares_min1_max1,
+    );
+    expect(result).toEqual([]);
+  });
+
+  it('should handle empty presets array', () => {
+    const result = getAllocatablePresetIds(
+      [],
+      resourceLimits_cpu4_mem8g_cudashares1,
+      image_has_cuda_shares_min1_max1,
+    );
+    expect(result).toEqual([]);
+  });
+
+  it('should handle empty resourceLimits', () => {
+    const result = getAllocatablePresetIds(
+      presets,
+      {
+        cpu: {},
+        mem: {},
+        accelerators: {},
+      },
+      image_has_cuda_shares_min1_max1,
+    );
+    // Only presets that have cuda.shares minimum 1 should be returned.
+    expect(result).toEqual([
+      'id-cuda_shares_prest_10',
+      'id-cuda_shares_prest_1',
     ]);
   });
 
-  it('names a slot the resource group does not offer before anything else', () => {
-    const preset: ResourcePreset = {
-      id: 'id-preset4',
-      name: 'preset4',
-      allocatable: false,
-      shared_memory: '1GB',
-      resource_slots: { cpu: '10', mem: '16GB', 'not_existed.device': '5' },
-    };
-    expect(
-      reasonsOf(
-        [preset],
-        resourceLimits_cpu4_mem8g_cudashares1,
-        image_has_cuda_shares_min1_max1,
-        ['cpu', 'mem', 'cuda.shares'],
-      ),
-    ).toEqual([
-      { type: 'slotNotInResourceGroup', slots: ['not_existed.device'] },
-    ]);
-    // While the group's slots are loading, the next check answers.
-    expect(
-      reasonsOf(
-        [preset],
-        resourceLimits_cpu4_mem8g_cudashares1,
-        image_has_cuda_shares_min1_max1,
-      ),
-    ).toEqual([{ type: 'imageAccelerator' }]);
-  });
-
-  it('ignores a zero-quantity slot the resource group does not offer', () => {
-    const preset: ResourcePreset = {
-      id: 'id-zero',
-      name: 'zero',
-      allocatable: true,
-      shared_memory: null,
-      resource_slots: { cpu: '1', mem: '2GB', 'rocm.device': '0' },
-    };
-    expect(
-      reasonsOf([preset], resourceLimits_cpu4_mem8g_cudashares1, undefined, [
-        'cpu',
-        'mem',
-      ]),
-    ).toEqual([undefined]);
-  });
-
-  it('treats a slot with no limit as unlimited', () => {
-    expect(
-      reasonsOf(
-        presets,
-        { cpu: {}, mem: {}, accelerators: {} },
-        image_has_cuda_shares_min1_max1,
-      ),
-    ).toEqual([undefined, undefined, { type: 'imageAccelerator' }]);
-  });
-
-  it('skips the image check without an image', () => {
-    expect(
-      reasonsOf(presets, resourceLimits_cpu4_mem8g_cudashares1, undefined),
-    ).toEqual([
-      { type: 'exceedsLimit', slots: ['cuda.shares'] },
+  it('should handle empty image', () => {
+    const result = getAllocatablePresetIds(
+      presets,
+      resourceLimits_cpu4_mem8g_cudashares1,
       undefined,
-      undefined,
-    ]);
+    );
+    // Only compare with resource limits
+    expect(result).toEqual(['id-cuda_shares_prest_1', 'id-cpu1_mem2g']);
   });
 
-  it('lists every slot over its limit', () => {
-    expect(
-      reasonsOf(
-        presets,
-        { ...resourceLimits_cpu4_mem8g_cudashares1, mem: { max: '2GB' } },
-        undefined,
-      ),
-    ).toEqual([
-      { type: 'exceedsLimit', slots: ['mem', 'cuda.shares'] },
-      { type: 'exceedsLimit', slots: ['mem'] },
+  it('should handle empty image and small mem limit', () => {
+    const result = getAllocatablePresetIds(
+      presets,
+      {
+        ...resourceLimits_cpu4_mem8g_cudashares1,
+        mem: { max: '2GB' },
+      },
       undefined,
-    ]);
+    );
+    // Only compare with resource limits
+    expect(result).toEqual(['id-cpu1_mem2g']);
+  });
+
+  it('should exclude presets requesting a slot the resource group lacks', () => {
+    const result = getAllocatablePresetIds(
+      presets,
+      { cpu: {}, mem: {}, accelerators: {} },
+      undefined,
+      ['cpu', 'mem'],
+    );
+    expect(result).toEqual(['id-cpu1_mem2g']);
+  });
+
+  it('should keep presets whose missing slot is zero', () => {
+    const result = getAllocatablePresetIds(
+      [
+        {
+          id: 'id-cuda_zero',
+          name: 'id-cuda_zero',
+          resource_slots: { cpu: '1', mem: '2GB', 'cuda.shares': '0' },
+          shared_memory: '1GB',
+          allocatable: true,
+        },
+      ],
+      { cpu: {}, mem: {}, accelerators: {} },
+      undefined,
+      ['cpu', 'mem'],
+    );
+    expect(result).toEqual(['id-cuda_zero']);
   });
 });
 

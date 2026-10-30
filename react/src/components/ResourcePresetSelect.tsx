@@ -3,13 +3,16 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { localeCompare } from '../helper';
-import { useResourceSlotsDetails } from '../hooks/backendai';
+import {
+  ResourceSlotName,
+  useDeviceMetaData,
+  useResourceSlots,
+} from '../hooks/backendai';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import {
   type SessionResourcePreset,
   useSessionResourcePresets,
 } from '../hooks/useSessionResourcePresets';
-import type { PresetUnavailableReason } from './SessionFormItems/ResourceAllocationFormItems';
 import type {
   SelectorOptionData,
   SelectorOptionType,
@@ -25,14 +28,10 @@ import {
   useUpdatableState,
   BAISelector,
 } from 'backend.ai-ui';
+import type { TFunction } from 'i18next';
 import * as _ from 'lodash-es';
 import { Info, SquarePen } from 'lucide-react';
-import React, {
-  useDeferredValue,
-  useEffect,
-  useTransition,
-  type CSSProperties,
-} from 'react';
+import React, { useEffect, useTransition, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 
 /**
@@ -63,31 +62,105 @@ export const getUnavailableSlotNames = (
     ),
   );
 
+export type PresetUnavailableReason =
+  | { kind: 'scoped'; resourceGroup: string }
+  | { kind: 'missing-slots'; slots: string[] }
+  | { kind: 'not-allocatable' };
+
 /**
- * PILOT-DECISION: the props the single call site passes, not antd
- * `SelectProps`; the Form injects `value`.
+ * Why `preset` cannot be used in the resource group; undefined means it can.
+ * An undefined scope part is not known yet and skips its check.
+ */
+export const getPresetUnavailableReason = (
+  preset: {
+    id?: string | null;
+    scaling_group_name?: string | null;
+    resource_slots?: Record<string, unknown> | null;
+  },
+  scope: {
+    resourceGroup?: string | null;
+    slotsInRG?: string[];
+    allocatablePresetIds?: string[];
+  },
+): PresetUnavailableReason | undefined => {
+  if (
+    scope.resourceGroup &&
+    preset.scaling_group_name &&
+    preset.scaling_group_name !== scope.resourceGroup
+  ) {
+    return { kind: 'scoped', resourceGroup: preset.scaling_group_name };
+  }
+  const slots = scope.slotsInRG
+    ? getUnavailableSlotNames(preset.resource_slots, scope.slotsInRG)
+    : [];
+  if (slots.length > 0) return { kind: 'missing-slots', slots };
+  if (
+    scope.allocatablePresetIds &&
+    !scope.allocatablePresetIds.includes(preset.id ?? '')
+  ) {
+    return { kind: 'not-allocatable' };
+  }
+  return undefined;
+};
+
+/** The message for `reason`; `presetName` picks the wording that names the preset (the validator's) over the option's. */
+export const presetUnavailableReasonText = (
+  reason: PresetUnavailableReason | undefined,
+  t: TFunction,
+  slotNameOf: (key: string) => string,
+  presetName?: string,
+): string | undefined => {
+  switch (reason?.kind) {
+    case 'scoped':
+      return presetName
+        ? t('resourcePreset.PresetOnlyAvailableInResourceGroup', {
+            preset: presetName,
+            name: reason.resourceGroup,
+          })
+        : t('resourcePreset.OnlyAvailableInResourceGroup', {
+            name: reason.resourceGroup,
+          });
+    case 'missing-slots':
+      return t('resourcePreset.RequiresSlotsNotInResourceGroup', {
+        slots: reason.slots.map(slotNameOf).join(', '),
+      });
+    case 'not-allocatable':
+      return t('resourcePreset.ExceedsAllocatableResources');
+    default:
+      return undefined;
+  }
+};
+
+/**
+ * PILOT-DECISION: the `extends Omit<SelectProps,'onChange'>` surface is
+ * replaced by the props the single call site actually passes (P1 — grepped,
+ * not guessed: `showCustom`, `showMinimumRequired`, `onChange`,
+ * `allocatablePresetIds`, `resourceGroup`; the Form injects `value`), plus
+ * the usual disabled/loading/style trio.
  */
 export interface ResourcePresetSelectProps {
   /** Injected by `Form.Item`. */
   value?: string;
   onChange?: (value: string, options: PresetOptionType) => void;
   projectId: string;
-  /** Lists this group's presets and the global ones; none while unset. */
-  resourceGroup?: string;
-  /** A preset with a reason is disabled and shows it; all are pickable when unset. */
-  presetUnavailableReasons?: Record<string, PresetUnavailableReason | null>;
+  allocatablePresetIds?: string[];
   showMinimumRequired?: boolean;
   showCustom?: boolean;
+  /** Lists this group's presets and the global ones; none while unset. */
+  resourceGroup?: string;
+  /** Slots the resource group's agents provide; `undefined` while loading. */
+  availableSlotNames?: string[];
   autoSelectDefault?: boolean;
   disabled?: boolean;
   style?: CSSProperties;
 }
 const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   projectId,
-  resourceGroup,
-  presetUnavailableReasons,
+  allocatablePresetIds,
   showCustom,
   showMinimumRequired,
+  resourceGroup,
+  availableSlotNames,
   autoSelectDefault,
   disabled,
   style,
@@ -99,9 +172,8 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     trailing: false,
     leading: true,
   });
-  const { mergedResourceSlots } = useResourceSlotsDetails(
-    resourceGroup || undefined,
-  );
+  const [resourceSlots] = useResourceSlots();
+  const { data: deviceMetaData } = useDeviceMetaData();
   const { t } = useTranslation();
   const { token } = useTheme();
   const [isPendingUpdate, _startTransition] = useTransition();
@@ -113,11 +185,9 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     });
   };
 
-  // Deferred so a group switch keeps the select on screen while it loads.
-  const deferredResourceGroup = useDeferredValue(resourceGroup);
   const resource_presets = useSessionResourcePresets({
     projectId,
-    resourceGroupName: deferredResourceGroup,
+    resourceGroupName: resourceGroup,
     fetchKey,
     fetchPolicy: fetchKey === 'first' ? 'store-and-network' : 'network-only',
   });
@@ -125,30 +195,18 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   const onlyInGroupText = (name: string) =>
     t('resourcePreset.OnlyAvailableInResourceGroup', { name });
 
-  const slotNames = (slots: string[]) =>
-    slots
-      .map((slot) => mergedResourceSlots?.[slot]?.human_readable_name ?? slot)
-      .join(', ');
-
   // Why a preset cannot be picked right now; `undefined` means it can.
   const disabledReasonOf = (
     preset: SessionResourcePreset,
   ): string | undefined => {
-    const reason = presetUnavailableReasons?.[preset.id];
-    switch (reason?.type) {
-      case 'slotNotInResourceGroup':
-        return t('resourcePreset.RequiresSlotsNotInResourceGroup', {
-          slots: slotNames(reason.slots),
-        });
-      case 'imageAccelerator':
-        return t('resourcePreset.ImageAcceleratorMismatch');
-      case 'exceedsLimit':
-        return t('resourcePreset.ExceedsResourceLimit', {
-          slots: slotNames(reason.slots),
-        });
-      default:
-        return undefined;
-    }
+    return presetUnavailableReasonText(
+      getPresetUnavailableReason(
+        { ...preset, scaling_group_name: preset.resource_group_name },
+        { resourceGroup, slotsInRG: availableSlotNames, allocatablePresetIds },
+      ),
+      t,
+      (key) => deviceMetaData?.[key]?.human_readable_name ?? key,
+    );
   };
 
   const firstAvailablePreset = resource_presets
@@ -209,7 +267,9 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     const preset = presetOption?.preset;
     if (!preset) return option.label;
     const disabledReason = disabledReasonOf(preset);
-    const slotsInfo = preset.resource_slots;
+    const slotsInfo = preset.resource_slots as {
+      [key in ResourceSlotName]: string;
+    };
     return (
       <BAIFlex direction="row" justify="between" gap={'xs'} style={{ flex: 1 }}>
         <BAIFlex direction="row" gap={'xs'} align="center">
@@ -228,23 +288,27 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
           ) : null}
         </BAIFlex>
         <BAIFlex direction="row" gap={'xxs'}>
-          {/* Every slot the preset requests, including one the box has not registered. */}
-          {_.map(slotsInfo, (slot, key) => {
-            return (
-              <BAIResourceNumberWithIcon
-                key={key}
-                // @ts-ignore
-                type={key}
-                value={slot}
-                hideTooltip
-                opts={
-                  key === 'mem' && preset.shared_memory
-                    ? { shmem: Number(preset.shared_memory) }
-                    : {}
-                }
-              />
-            );
-          })}
+          {_.map(
+            _.omitBy(slotsInfo, (_slot, key) =>
+              _.isEmpty(resourceSlots[key as ResourceSlotName]),
+            ),
+            (slot, key) => {
+              return (
+                <BAIResourceNumberWithIcon
+                  key={key}
+                  // @ts-ignore
+                  type={key}
+                  value={slot}
+                  hideTooltip
+                  opts={
+                    key === 'mem' && preset.shared_memory
+                      ? { shmem: Number(preset.shared_memory) }
+                      : {}
+                  }
+                />
+              );
+            },
+          )}
         </BAIFlex>
       </BAIFlex>
     );
