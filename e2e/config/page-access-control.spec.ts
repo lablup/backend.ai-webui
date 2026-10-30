@@ -387,7 +387,7 @@ test.describe(
 
         // 9. Verify the page really renders (not 401)
         await expect(page).toHaveURL(
-          /\/admin\/webui-settings\?tab=configurations/,
+          /\/admin\/system-settings\?tab=configurations/,
           { timeout: 15_000 },
         );
         await expect(breadcrumb).toBeVisible({ timeout: 15_000 });

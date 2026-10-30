@@ -2830,7 +2830,8 @@
           "descriptionKeys": [
             "settings.DescATOMMaxSupport",
             "settings.RequireATOMMaxPlugin"
-          ]
+          ],
+          "tab": "configurations"
         },
         {
           "key": "settings.ATOMPlusSupport",
@@ -2839,7 +2840,8 @@
           "descriptionKeys": [
             "settings.DescATOMPlusSupport",
             "settings.RequireATOMPlusPlugin"
-          ]
+          ],
+          "tab": "configurations"
         },
         {
           "key": "settings.ATOMSupport",
@@ -2848,7 +2850,8 @@
           "descriptionKeys": [
             "settings.DescATOMSupport",
             "settings.RequireATOMPlugin"
-          ]
+          ],
+          "tab": "configurations"
         },
         {
           "key": "settings.FractionalGPU",
@@ -2857,7 +2860,8 @@
           "descriptionKeys": [
             "settings.DescFractionalGPU",
             "settings.RequireFGPUPlugin"
-          ]
+          ],
+          "tab": "configurations"
         },
         {
           "key": "settings.Gaudi2Support",
@@ -2866,7 +2870,8 @@
           "descriptionKeys": [
             "settings.DescGaudi2Support",
             "settings.RequireGaudi2Plugin"
-          ]
+          ],
+          "tab": "configurations"
         },
         {
           "key": "settings.HyperaccelLPUSupport",
@@ -2875,7 +2880,8 @@
           "descriptionKeys": [
             "settings.DescHyperaccelLPUSupport",
             "settings.RequireHyperaccelLPUPlugin"
-          ]
+          ],
+          "tab": "configurations"
         },
         {
           "key": "settings.IPUSupport",
@@ -2884,7 +2890,8 @@
           "descriptionKeys": [
             "settings.DescIPUSupport",
             "settings.RequireTPUPlugin"
-          ]
+          ],
+          "tab": "configurations"
         },
         {
           "key": "settings.ImagePullBehavior",
@@ -2892,7 +2899,8 @@
           "groupId": "settings-general",
           "descriptionKeys": [
             "settings.DescImagePullBehavior"
-          ]
+          ],
+          "tab": "configurations"
         },
         {
           "key": "settings.OpenSourceCudaGPUSupport",
@@ -2901,7 +2909,8 @@
           "descriptionKeys": [
             "settings.CUDAGPUdisabledByFGPUsupport",
             "settings.DescCudaGPUSupport"
-          ]
+          ],
+          "tab": "configurations"
         },
         {
           "key": "settings.OverlayNetwork",
@@ -2909,7 +2918,8 @@
           "groupId": "settings-general",
           "descriptionKeys": [
             "settings.OverlayNetworkConfiguration"
-          ]
+          ],
+          "tab": "configurations"
         },
         {
           "key": "settings.RNGDSupport",
@@ -2918,7 +2928,8 @@
           "descriptionKeys": [
             "settings.DescRNGDSupport",
             "settings.RequireRNGDPlugin"
-          ]
+          ],
+          "tab": "configurations"
         },
         {
           "key": "settings.ROCMGPUSupport",
@@ -2926,7 +2937,8 @@
           "groupId": "settings-plugins",
           "descriptionKeys": [
             "settings.DescRocmGPUSupport"
-          ]
+          ],
+          "tab": "configurations"
         },
         {
           "key": "settings.Rebel100Support",
@@ -2943,7 +2955,8 @@
           "groupId": "settings-general",
           "descriptionKeys": [
             "settings.SchedulerConfiguration"
-          ]
+          ],
+          "tab": "configurations"
         },
         {
           "key": "settings.TPU",
@@ -2952,7 +2965,8 @@
           "descriptionKeys": [
             "settings.DescTPU",
             "settings.RequireTPUPlugin"
-          ]
+          ],
+          "tab": "configurations"
         },
         {
           "key": "settings.WarboySupport",
@@ -2961,7 +2975,8 @@
           "descriptionKeys": [
             "settings.DescWarboySupport",
             "settings.RequireWarboyPlugin"
-          ]
+          ],
+          "tab": "configurations"
         }
       ],
       "keys": [
