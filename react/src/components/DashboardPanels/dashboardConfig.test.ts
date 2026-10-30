@@ -8,7 +8,6 @@ import {
   DEFAULT_BOARD_VARS,
   addBoard,
   createEmptyBoard,
-  migrateLocalStorage,
   removeBoard,
   renameBoard,
   resetActiveBoard,
@@ -71,7 +70,6 @@ const board = (
   ...extra,
 });
 
-const noLocal = {};
 const noTemplates = {};
 
 describe('resolveTemplate', () => {
@@ -134,65 +132,6 @@ describe('resolveTemplate', () => {
   });
 });
 
-describe('migrateLocalStorage', () => {
-  it('prefers the dashboard_board.<page> key over the legacy keys', () => {
-    const migrated = migrateLocalStorage(
-      {
-        board: { panels: [{ id: 'b', key: 'b' }], knownKeys: ['a', 'b'] },
-        layout: [{ id: 'a', columnSpan: 3, rowSpan: 2 }],
-      },
-      definitions,
-      'project',
-    );
-    expect(keysOf(migrated!)).toEqual(['b']);
-  });
-
-  it('builds the project board from the legacy layout and custom panels', () => {
-    const migrated = migrateLocalStorage(
-      {
-        layout: [
-          { id: 'a', columnSpan: 3, rowSpan: 2 },
-          { id: 'p1', columnSpan: 4, rowSpan: 3 },
-        ],
-        customPanels: [
-          {
-            id: 'p1',
-            panelType: 'resourceTable',
-            descriptor: { resourceType: 'session', title: 'Mine' },
-          },
-        ],
-      },
-      definitions,
-      'project',
-    );
-    expect(migrated?.panels).toEqual([
-      { id: 'a', key: 'a', columnSpan: 3, rowSpan: 2 },
-      expect.objectContaining({
-        id: 'p1',
-        key: 'resource.session',
-        title: 'Mine',
-        columnSpan: 4,
-        rowSpan: 3,
-      }),
-    ]);
-  });
-
-  it('reads admin_dashboard_board_items only for the admin page', () => {
-    const sources = { adminLayout: [{ id: 'b', columnSpan: 2, rowSpan: 2 }] };
-    expect(keysOf(migrateLocalStorage(sources, definitions, 'admin')!)).toEqual(
-      ['b'],
-    );
-    expect(migrateLocalStorage(sources, definitions, 'project')).toBeNull();
-    expect(
-      migrateLocalStorage(sources, definitions, 'projectAdmin'),
-    ).toBeNull();
-  });
-
-  it('returns null when the browser kept nothing', () => {
-    expect(migrateLocalStorage({}, definitions, 'project')).toBeNull();
-  });
-});
-
 describe('sanitizeDashboardConfig', () => {
   it('drops malformed pages, boards and panels and repairs active', () => {
     const sanitized = sanitizeDashboardConfig(
@@ -220,7 +159,7 @@ describe('sanitizeDashboardConfig', () => {
     expect(sanitized.project?.boards.map((item) => item.id)).toEqual(['one']);
     expect(keysOf(sanitized.project!.boards[0])).toEqual(['a']);
     expect(sanitized.project?.active).toBe('one');
-    expect(sanitized.project?.migrated).toBe(true);
+    expect(sanitized.project).not.toHaveProperty('migrated');
   });
 
   it('defaults vars and drops the retired pins', () => {
@@ -255,31 +194,23 @@ describe('sanitizeDashboardConfig', () => {
 });
 
 describe('resolveBoards', () => {
-  const localBoard = {
-    board: { panels: [{ id: 'b', key: 'b' }], knownKeys: ['a', 'b', 'c'] },
-  };
-
-  it('uses the stored config and plans no migration, even with a local board', () => {
+  it('uses the stored config when there is one', () => {
     const stored: DashboardPageConfig = {
       boards: [board('saved')],
       active: 'saved',
-      migrated: true,
     };
     const resolved = resolveBoards({
       stored,
-      local: localBoard,
       templates: noTemplates,
       definitions,
       page: 'project',
     });
-    expect(resolved.migration).toBeNull();
     expect(resolved.config.boards.map((item) => item.id)).toEqual(['saved']);
   });
 
-  it('migrates a local board onto the template frame, flagged, when nothing is stored', () => {
+  it('starts from the template when nothing is stored', () => {
     const resolved = resolveBoards({
       stored: undefined,
-      local: localBoard,
       templates: {
         publicTemplates: {
           project: {
@@ -292,45 +223,10 @@ describe('resolveBoards', () => {
       definitions,
       page: 'project',
     });
-    expect(resolved.migration).toBe(resolved.config);
-    expect(resolved.config.migrated).toBe(true);
-    expect(resolved.config.active).toBe(DEFAULT_BOARD_ID);
-    const [migrated] = resolved.config.boards;
-    expect(migrated.title).toBe('Team');
-    expect(migrated.vars.refresh).toBe('5m');
-    expect(keysOf(migrated)).toEqual(['b']);
-  });
-
-  it('shows the template without writing it when there is nothing to migrate', () => {
-    const resolved = resolveBoards({
-      stored: undefined,
-      local: noLocal,
-      templates: noTemplates,
-      definitions,
-      page: 'admin',
-    });
-    expect(resolved.migration).toBeNull();
     expect(resolved.config.boards).toEqual([resolved.template]);
-    expect(resolved.config.migrated).toBeUndefined();
-  });
-
-  it('runs the migration once: the written config resolves without one', () => {
-    const first = resolveBoards({
-      stored: undefined,
-      local: localBoard,
-      templates: noTemplates,
-      definitions,
-      page: 'project',
-    });
-    const second = resolveBoards({
-      stored: JSON.parse(JSON.stringify(first.migration)),
-      local: localBoard,
-      templates: noTemplates,
-      definitions,
-      page: 'project',
-    });
-    expect(second.migration).toBeNull();
-    expect(second.config).toEqual(first.config);
+    expect(resolved.config.active).toBe(DEFAULT_BOARD_ID);
+    expect(resolved.template.title).toBe('Team');
+    expect(keysOf(resolved.template)).toEqual(['a']);
   });
 });
 

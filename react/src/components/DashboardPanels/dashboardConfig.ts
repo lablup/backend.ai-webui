@@ -2,14 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
-  migrateLegacyBoard,
-  resetBoard,
-  sanitizeBoard,
-  seedBoard,
-} from './boardModel';
+import { resetBoard, sanitizeBoard, seedBoard } from './boardModel';
 import type {
-  DashboardBoard,
   DashboardBoardVars,
   DashboardConfig,
   DashboardModel,
@@ -98,7 +92,6 @@ export const sanitizeDashboardPageConfig = (
       typeof value.active === 'string' && seenIds.has(value.active)
         ? value.active
         : boards[0].id,
-    ...(value.migrated === true ? { migrated: true as const } : {}),
   };
 };
 
@@ -169,82 +162,31 @@ export const resolveTemplate = (
   return defaultBoardModel(definitions, page);
 };
 
-/** The localStorage values a page's board can be migrated from. */
-export interface LocalBoardSources {
-  /** `dashboard_board.<page>`, written by the localStorage store of #10580. */
-  board?: unknown;
-  /** `dashboard_board_items`, the project page's pre-catalog layout. */
-  layout?: unknown;
-  /** `admin_dashboard_board_items`. */
-  adminLayout?: unknown;
-  /** `custom_dashboard_panels`, the project page's custom panels. */
-  customPanels?: unknown;
-}
-
-/** The board this browser kept for `page`, newest key first. Null when it kept none. */
-export const migrateLocalStorage = (
-  { board, layout, adminLayout, customPanels }: LocalBoardSources,
-  definitions: ReadonlyArray<PanelDefinition>,
-  page: PanelPage,
-): DashboardBoard | null => {
-  const stored = sanitizeBoard(board, definitions, page);
-  if (stored) return stored;
-  const legacy =
-    page === 'project'
-      ? migrateLegacyBoard({ layout, customPanels })
-      : page === 'admin'
-        ? migrateLegacyBoard({ layout: adminLayout, customPanels: [] })
-        : null;
-  return sanitizeBoard(legacy, definitions, page);
-};
-
 export interface ResolvedBoards {
   config: DashboardPageConfig;
   template: DashboardModel;
-  /** The page config to upsert once, built from localStorage; null when there is nothing to migrate. */
-  migration: DashboardPageConfig | null;
 }
 
 /**
- * One page's boards: the stored config when there is one, else this browser's
- * localStorage board on the template's frame (to be upserted), else the
- * template alone, which is written only when the user first edits it.
+ * One page's boards: the stored config when there is one, else the template
+ * alone, which is written only when the user first edits it.
  */
 export const resolveBoards = ({
   stored,
-  local,
   templates,
   definitions,
   page,
 }: {
   stored: unknown;
-  local: LocalBoardSources;
   templates: DashboardTemplateSources;
   definitions: ReadonlyArray<PanelDefinition>;
   page: PanelPage;
 }): ResolvedBoards => {
   const template = resolveTemplate(templates, definitions, page);
   const storedConfig = sanitizeDashboardPageConfig(stored, definitions, page);
-  if (storedConfig) return { config: storedConfig, template, migration: null };
-  const localBoard = migrateLocalStorage(local, definitions, page);
-  if (localBoard) {
-    const config: DashboardPageConfig = {
-      boards: [
-        {
-          ...template,
-          panels: localBoard.panels,
-          knownKeys: localBoard.knownKeys,
-        },
-      ],
-      active: template.id,
-      migrated: true,
-    };
-    return { config, template, migration: config };
-  }
   return {
-    config: { boards: [template], active: template.id },
+    config: storedConfig ?? { boards: [template], active: template.id },
     template,
-    migration: null,
   };
 };
 

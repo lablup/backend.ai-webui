@@ -16,7 +16,6 @@ export {
   addPanel,
   applyLayout,
   catalogFor,
-  migrateLegacyBoard,
   panelTitleKey,
   removePanel,
   resetBoard,

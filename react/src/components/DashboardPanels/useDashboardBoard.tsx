@@ -26,7 +26,7 @@ import {
   updatePanel,
   type CatalogEntry,
 } from './boardModel';
-import { activeBoardOf, updateBoard } from './dashboardConfig';
+import { updateBoard } from './dashboardConfig';
 import { createPanel, panelConfigFromInput } from './defaults';
 import { effectivePanelType, panelRegistry } from './panelRegistry';
 import { availableResourceKeys, resolvePanelTitle } from './resourceRegistry';
@@ -71,7 +71,7 @@ export const useAppConfigBoardStore: BoardStore = (page, catalog) => {
     board: boards.activeBoard,
     save: (board) =>
       boards.update((config) =>
-        updateBoard(config, activeBoardOf(config).id, (active) => ({
+        updateBoard(config, boards.activeBoard.id, (active) => ({
           ...active,
           panels: board.panels,
           knownKeys: board.knownKeys,

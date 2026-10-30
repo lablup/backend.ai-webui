@@ -3,12 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { mergeHiddenLayoutEntries, type BoardLayoutEntry } from './boardLayout';
-import {
-  DEFAULT_PANEL_LAYOUTS,
-  PANEL_TYPE_TO_VIZ,
-  VIZ_TO_PANEL_TYPE,
-  presetKey,
-} from './defaults';
+import { VIZ_TO_PANEL_TYPE } from './defaults';
 import { sanitizePanelSettings } from './panelSettings';
 import {
   PANEL_TYPES,
@@ -375,74 +370,6 @@ export const sanitizePanels = (value: unknown): Array<PersistedPanel> => {
         typeof panel.descriptor.title === 'string')
     );
   });
-};
-
-const presetPanelFromLegacy = (
-  panel: PersistedPanel,
-  entry?: BoardLayoutEntry,
-): PersistedPanelV2 => {
-  const layout = DEFAULT_PANEL_LAYOUTS[panel.panelType];
-  return {
-    id: panel.id,
-    key: presetKey(panel.descriptor.resourceType),
-    viz: PANEL_TYPE_TO_VIZ[panel.panelType],
-    title: panel.descriptor.title,
-    filter: panel.descriptor.filter ?? null,
-    order: panel.descriptor.order ?? null,
-    gridView: panel.descriptor.gridView ?? null,
-    columnSpan: entry?.columnSpan ?? layout.columnSpan ?? 2,
-    rowSpan: entry?.rowSpan ?? layout.rowSpan ?? 2,
-    ...(entry?.columnOffset ? { columnOffset: { ...entry.columnOffset } } : {}),
-  };
-};
-
-/**
- * Builds a board from the pre-catalog localStorage values: the unified layout
- * list (`dashboard_board_items` / `admin_dashboard_board_items`) and the custom
- * panels. Layout ids become the known keys, so built-in cards a release added
- * since are still appended. Null when neither value holds anything.
- */
-export const migrateLegacyBoard = ({
-  layout,
-  customPanels,
-}: {
-  layout: unknown;
-  customPanels: unknown;
-}): DashboardBoard | null => {
-  const entries = Array.isArray(layout)
-    ? layout.filter(
-        (entry): entry is BoardLayoutEntry =>
-          !!entry && typeof entry === 'object' && typeof entry.id === 'string',
-      )
-    : [];
-  const legacyPanels = sanitizePanels(customPanels);
-  if (entries.length === 0 && legacyPanels.length === 0) return null;
-  const legacyById = new Map(legacyPanels.map((panel) => [panel.id, panel]));
-  const layoutIds = new Set(entries.map((entry) => entry.id));
-  return {
-    panels: [
-      ...entries.map((entry) => {
-        const legacy = legacyById.get(entry.id);
-        if (legacy) return presetPanelFromLegacy(legacy, entry);
-        return {
-          id: entry.id,
-          key: entry.id,
-          // sanitizeBoard replaces a missing span with the catalog default.
-          columnSpan: entry.columnSpan ?? 0,
-          rowSpan: entry.rowSpan ?? 0,
-          ...(entry.columnOffset
-            ? { columnOffset: { ...entry.columnOffset } }
-            : {}),
-        };
-      }),
-      ...legacyPanels
-        .filter((panel) => !layoutIds.has(panel.id))
-        .map((panel) => presetPanelFromLegacy(panel)),
-    ],
-    knownKeys: entries
-      .filter((entry) => !legacyById.has(entry.id))
-      .map((entry) => entry.id),
-  };
 };
 
 /** The custom-panel shape the panel modal and the sider read. */
