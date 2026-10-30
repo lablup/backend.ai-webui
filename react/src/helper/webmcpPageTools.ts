@@ -48,6 +48,8 @@ export interface VisibleRowsResult {
   page: number;
   pageSize: number;
   total: number | null;
+  /** The page is loading a new view, so `rows` still belong to the previous one. */
+  pending?: true;
 }
 
 export const visibleRowsResult = ({
@@ -57,6 +59,7 @@ export const visibleRowsResult = ({
   page,
   pageSize,
   total,
+  pending,
 }: {
   rows: ReadonlyArray<PageToolRow>;
   columns?: ReadonlyArray<PageToolColumn>;
@@ -64,6 +67,7 @@ export const visibleRowsResult = ({
   page: number;
   pageSize: number;
   total?: number | null;
+  pending?: boolean;
 }): VisibleRowsResult => {
   const hidden = columns ? hiddenRowFields(columns, columnOverrides) : [];
   const visible = _.map(rows, (row) => pruneRow(row, hidden));
@@ -73,6 +77,7 @@ export const visibleRowsResult = ({
     page,
     pageSize,
     total: total ?? null,
+    ...(pending ? { pending: true as const } : {}),
   };
 };
 
@@ -83,12 +88,15 @@ export interface ViewStateResult {
   path: string;
   /** The page's own URL params, exactly as they appear in `path`. */
   searchParams: Record<string, string>;
+  /** The rows on screen do not reflect this view yet. */
+  pending?: true;
 }
 
 /** Serializes a page's URL state. Nil and empty values are left out. */
 export const viewStateResult = (
   pathname: string,
   params: Readonly<Record<string, ViewParamValue>>,
+  pending = false,
 ): ViewStateResult => {
   const searchParams: Record<string, string> = {};
   _.forEach(params, (value, key) => {
@@ -96,7 +104,11 @@ export const viewStateResult = (
     searchParams[key] = String(value);
   });
   const search = new URLSearchParams(searchParams).toString();
-  return { path: search ? `${pathname}?${search}` : pathname, searchParams };
+  return {
+    path: search ? `${pathname}?${search}` : pathname,
+    searchParams,
+    ...(pending ? { pending: true as const } : {}),
+  };
 };
 
 /** `search` with `key` set to `value`, appended to `pathname`. */
@@ -164,7 +176,7 @@ export const createListVisibleTool = ({
   'noun' | 'plural' | 'rowFields' | 'readRows'
 >): WebMCPTool => ({
   name: listVisibleToolName(noun),
-  description: `The ${plural} rendered on the current page of this Backend.AI WebUI list, in the current sort order, limited to the columns the user shows. Returns {rows, count, page, pageSize, total}; total counts every match across pages. ${rowFields} Call ${filterToolName(noun)} for the filter that produced them.`,
+  description: `The ${plural} rendered on the current page of this Backend.AI WebUI list, in the current sort order, limited to the columns the user shows. Returns {rows, count, page, pageSize, total}; total counts every match across pages. With pending: true the page is still loading the requested view and rows belong to the previous one, so call again. ${rowFields} Call ${filterToolName(noun)} for the filter that produced them.`,
   inputSchema: NO_INPUT,
   annotations: READ_ANNOTATIONS,
   execute: () => readRows(),
@@ -179,7 +191,7 @@ export const createViewStateTool = ({
   'noun' | 'plural' | 'readViewState'
 >): WebMCPTool => ({
   name: filterToolName(noun),
-  description: `The filter, sort, tab and pagination of this ${plural} list as the page's URL params. Returns {path, searchParams}; bai_navigate {"path": path} reopens this exact view.`,
+  description: `The filter, sort, tab and pagination of this ${plural} list as the page's URL params. Returns {path, searchParams}; bai_navigate {"path": path} reopens this exact view. With pending: true the rows on screen do not reflect this view yet.`,
   inputSchema: NO_INPUT,
   annotations: READ_ANNOTATIONS,
   execute: () => readViewState(),

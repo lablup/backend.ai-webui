@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c0f0daf9f4da3f306c6c54c4ffac30db>>
+ * @generated SignedSource<<7b16dbf69d3c0283b24bde46c86da3cf>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,6 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
-export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
 export type VFolderOperationStatus = "CLONING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
 export type VFolderOwnershipType = "GROUP" | "USER" | "%future added value";
 export type VFolderUsageMode = "DATA" | "GENERAL" | "MODEL" | "%future added value";
@@ -17,7 +16,6 @@ import { FragmentRefs } from "relay-runtime";
 export type WebMCPVFolderListToolsFragment$data = ReadonlyArray<{
   readonly accessControl: {
     readonly ownershipType: VFolderOwnershipType;
-    readonly permission: VFolderMountPermission;
   };
   readonly entityId: string;
   readonly host: string;
@@ -179,13 +177,6 @@ return {
           "alias": null,
           "args": null,
           "kind": "ScalarField",
-          "name": "permission",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
           "name": "ownershipType",
           "storageKey": null
         }
@@ -261,6 +252,6 @@ return {
 };
 })();
 
-(node as any).hash = "3f55935f80d53412d83272838c7b3d77";
+(node as any).hash = "13dc2202728cbda4bf684786bba2e834";
 
 export default node;

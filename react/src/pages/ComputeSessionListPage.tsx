@@ -600,6 +600,7 @@ const ComputeSessionListPage = () => {
                 page={tablePaginationOption.current}
                 pageSize={tablePaginationOption.pageSize}
                 total={compute_session_nodes?.count}
+                pending={deferredQueryVariables !== queryVariables}
                 viewParams={_.omit(queryParams, 'view')}
               />
               <SessionNodes

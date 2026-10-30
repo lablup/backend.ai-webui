@@ -330,6 +330,7 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
           page={tablePaginationOption.current}
           pageSize={tablePaginationOption.pageSize}
           total={total}
+          pending={deferredQueryVariables !== queryVariables}
           viewParams={{
             statusCategory: queryParams.statusCategory,
             filter: _.isEmpty(queryParams.filter)
@@ -337,7 +338,7 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
               : JSON.stringify(queryParams.filter),
             order: queryParams.order,
           }}
-          editingDeploymentId={editingDeploymentId}
+          editingDeploymentId={pageProject ? editingDeployment?.id : null}
         />
         <BAIModelDeploymentNodes
           onEditLabels={isLabelable ? setLabelingDeployment : undefined}

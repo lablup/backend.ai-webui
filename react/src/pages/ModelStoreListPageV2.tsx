@@ -202,6 +202,8 @@ const ModelCardV2Grid: React.FC<{
   offset: number;
   onTotalChange: (total: number) => void;
   onCardClick?: (id: string) => void;
+  /** The grid still shows the previous view; reported by the WebMCP tools. */
+  pending: boolean;
   /** The store's URL params, reported by the WebMCP tools. */
   viewParams: { filter: string | null; sort: string };
 }> = ({
@@ -215,6 +217,7 @@ const ModelCardV2Grid: React.FC<{
   offset,
   onTotalChange,
   onCardClick,
+  pending,
   viewParams,
 }) => {
   'use memo';
@@ -293,6 +296,7 @@ const ModelCardV2Grid: React.FC<{
       page={pageSize > 0 ? Math.floor(offset / pageSize) + 1 : 1}
       pageSize={pageSize}
       total={total}
+      pending={pending}
       viewParams={viewParams}
     />
   );
@@ -517,6 +521,7 @@ const ModelStoreListPageV2: React.FC = () => {
           onCardClick={(id) => {
             setQueryParams({ modelCard: id });
           }}
+          pending={isPendingPage || isPendingSort || isPendingFilter}
           viewParams={{
             filter: filter ? JSON.stringify(filter) : null,
             sort: queryParams.sort,

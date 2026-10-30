@@ -98,6 +98,25 @@ describe('visibleRowsResult', () => {
   });
 });
 
+describe('pending', () => {
+  it('flags rows while the page loads a new view, and only then', () => {
+    expect(
+      visibleRowsResult({ rows: [ROW], page: 2, pageSize: 5, pending: true }),
+    ).toMatchObject({ page: 2, pending: true });
+    expect(
+      visibleRowsResult({ rows: [ROW], page: 2, pageSize: 5, pending: false }),
+    ).not.toHaveProperty('pending');
+  });
+
+  it('flags the view state the same way', () => {
+    expect(viewStateResult('/p', { a: 1 }, true)).toMatchObject({
+      path: '/p?a=1',
+      pending: true,
+    });
+    expect(viewStateResult('/p', { a: 1 })).not.toHaveProperty('pending');
+  });
+});
+
 describe('viewStateResult', () => {
   it('serializes the params into a path bai_navigate can reopen', () => {
     expect(

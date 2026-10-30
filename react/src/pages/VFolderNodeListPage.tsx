@@ -530,6 +530,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             page={tablePaginationOption.current}
             pageSize={tablePaginationOption.pageSize}
             total={scopedVFoldersV2?.count}
+            pending={deferredQueryVariables !== queryVariables}
             viewParams={{
               ...queryParams,
               filter: queryParams.filter
