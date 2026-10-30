@@ -43,11 +43,6 @@ export const VFOLDER_TOOL_COLUMNS: ReadonlyArray<PageToolColumn> = [
   { key: 'created_at', fields: ['createdAt'], defaultHidden: true },
 ];
 
-/** The explorer puts the folder id in the URL without dashes. */
-const sameFolderId = (row: PageToolRow, id: string): boolean =>
-  row.id.replaceAll('-', '').toLowerCase() ===
-  id.replaceAll('-', '').toLowerCase();
-
 export interface WebMCPVFolderListToolsProps {
   vfoldersFrgmt: WebMCPVFolderListToolsFragment$key;
   columnOverrides?: BAITableColumnOverrideRecord | null;
@@ -159,11 +154,11 @@ const VFolderListToolsRegistrar: React.FC<WebMCPVFolderListToolsProps> = ({
         pending,
       ),
     readCurrent: () => {
+      // The explorer puts the folder id in the URL without dashes.
       const opened = openedItem(
         list.rows,
-        openedId && convertToUUID(openedId),
+        openedId && convertToUUID(openedId).toLowerCase(),
         pathWithSearchParam(pathname, search, FOLDER_PARAM, openedId ?? ''),
-        sameFolderId,
       );
       return opened && { ...opened, folderPath: folderPath ?? null };
     },

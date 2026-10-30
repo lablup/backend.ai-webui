@@ -180,12 +180,6 @@ describe('openedItem', () => {
       path: '/x?d=b',
     });
   });
-
-  it('uses the given matcher', () => {
-    expect(
-      openedItem([ROW], 'A', '/x', (row, id) => row.id === id.toLowerCase()),
-    ).toMatchObject({ id: 'a', name: 'alpha' });
-  });
 });
 
 describe('tool builders', () => {

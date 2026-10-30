@@ -10,6 +10,7 @@ import {
   type WebMCPTool,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { useLocation } from 'react-router-dom';
 
 /** One rendered row: `id` identifies it, the other keys are visible columns. */
 export type PageToolRow = { id: string } & Record<string, unknown>;
@@ -131,17 +132,22 @@ export const openedItem = (
   rows: ReadonlyArray<PageToolRow>,
   openedId: string | null | undefined,
   path: string,
-  matches: (row: PageToolRow, id: string) => boolean = (row, id) =>
-    row.id === id,
 ): (PageToolRow & { path: string }) | null => {
   if (!openedId) return null;
-  const row = _.find(rows, (candidate) => matches(candidate, openedId));
+  const row = _.find(rows, { id: openedId });
   return { ...(row ?? { id: openedId }), path };
 };
 
 export const listVisibleToolName = (noun: string) => `bai_list_visible_${noun}`;
 export const filterToolName = (noun: string) => `bai_get_${noun}_filter`;
 export const currentToolName = (noun: string) => `bai_get_current_${noun}`;
+
+const markPending = <T extends object>(result: T, pending: boolean): T =>
+  pending ? { ...result, pending: true as const } : result;
+
+// The router keeps the search it was given; `window.location` percent-encodes it.
+const sameSearch = (a: string, b: string): boolean =>
+  new URLSearchParams(a).toString() === new URLSearchParams(b).toString();
 
 const NO_INPUT: WebMCPInputSchema = {
   type: 'object',
@@ -201,15 +207,15 @@ export const createCurrentItemTool = ({
   noun,
   currentMeaning,
   readCurrent,
-}: Pick<
-  PageReadToolsConfig,
-  'noun' | 'currentMeaning' | 'readCurrent'
->): WebMCPTool => ({
+  readPending = () => false,
+}: Pick<PageReadToolsConfig, 'noun' | 'currentMeaning' | 'readCurrent'> & {
+  readPending?: () => boolean;
+}): WebMCPTool => ({
   name: currentToolName(noun),
-  description: `The ${noun} currently open in this Backend.AI WebUI tab: ${currentMeaning}. Returns {current: {id, …row fields, path}} where path is the in-app path that reopens it, or {current: null} when nothing is open.`,
+  description: `The ${noun} currently open in this Backend.AI WebUI tab: ${currentMeaning}. Returns {current: {id, …row fields, path}} where path is the in-app path that reopens it, or {current: null} when nothing is open. With pending: true the page is still loading the requested view and this answer may be out of date, so call again.`,
   inputSchema: NO_INPUT,
   annotations: READ_ANNOTATIONS,
-  execute: () => ({ current: readCurrent() }),
+  execute: () => markPending({ current: readCurrent() }, readPending()),
 });
 
 /**
@@ -217,7 +223,29 @@ export const createCurrentItemTool = ({
  * `bai_get_current_<noun>` while the caller is mounted.
  */
 export const usePageReadTools = (config: PageReadToolsConfig): void => {
-  useWebMCPTool(createListVisibleTool(config));
-  useWebMCPTool(createViewStateTool(config));
-  useWebMCPTool(createCurrentItemTool(config));
+  'use memo';
+  const { search } = useLocation();
+
+  // A `bai_navigate` reaches the page in a transition, where `useDeferredValue`
+  // does not defer: the old tree stays committed, so only the URL shows the lag.
+  const isBehindUrl = () => !sameSearch(search, window.location.search);
+
+  useWebMCPTool(
+    createListVisibleTool({
+      ...config,
+      readRows: () => markPending(config.readRows(), isBehindUrl()),
+    }),
+  );
+  useWebMCPTool(
+    createViewStateTool({
+      ...config,
+      readViewState: () => markPending(config.readViewState(), isBehindUrl()),
+    }),
+  );
+  useWebMCPTool(
+    createCurrentItemTool({
+      ...config,
+      readPending: () => isBehindUrl() || config.readRows().pending === true,
+    }),
+  );
 };

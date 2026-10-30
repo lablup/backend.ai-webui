@@ -205,7 +205,12 @@ const ModelCardV2Grid: React.FC<{
   /** The grid still shows the previous view; reported by the WebMCP tools. */
   pending: boolean;
   /** The store's URL params, reported by the WebMCP tools. */
-  viewParams: { filter: string | null; sort: string };
+  viewParams: {
+    filter: string | null;
+    sort: string;
+    current: number;
+    pageSize: number;
+  };
 }> = ({
   projectId,
   filter,
@@ -525,6 +530,8 @@ const ModelStoreListPageV2: React.FC = () => {
           viewParams={{
             filter: filter ? JSON.stringify(filter) : null,
             sort: queryParams.sort,
+            current: tablePaginationOption.current,
+            pageSize: tablePaginationOption.pageSize,
           }}
         />
       </div>
