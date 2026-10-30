@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-sJBDdmOt.js";import{t}from"./react-D0Ex1IVc.js";function n(e){let t=(0,r.useRef)(e);return(0,r.useLayoutEffect)(()=>{t.current=e}),(0,r.useCallback)((...e)=>{let n=t.current;return n(...e)},[])}var r;function i(){return(i=e((()=>{r=t()})))()}export{n,i as t};
