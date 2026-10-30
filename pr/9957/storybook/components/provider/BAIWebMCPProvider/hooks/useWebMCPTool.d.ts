@@ -14,8 +14,8 @@ export declare const useBAIWebMCPActive: () => boolean;
  *   exposes the API. `null` registers nothing.
  * - The tool re-registers when its name, description, schema or annotations
  *   change. `execute` always runs against the latest render's closure.
- * - Bad input, thrown errors and results that cannot be serialized come back
- *   as `{ error: { code, message } }`.
+ * - Bad input, thrown errors, results that cannot be serialized and calls after
+ *   the registration ended come back as `{ error: { code, message } }`.
  */
 declare const useWebMCPTool: (tool: WebMCPTool | null) => void;
 export default useWebMCPTool;
