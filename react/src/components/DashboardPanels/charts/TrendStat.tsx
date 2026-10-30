@@ -6,7 +6,6 @@ import { previousWindow, type CountDelta } from '../countAliases';
 import type { DateTimeWindow } from '../timeRange';
 import { formatBucketSpan } from './bucketSpan';
 import { Text } from '@lablup/ui-common/Text';
-import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   Chart,
   ChartArea,
@@ -126,29 +125,14 @@ const TrendStat: React.FC<TrendStatProps> = ({
     </BAIFlex>
   ) : undefined;
 
-  if (!deltaExplanation) {
-    return <Stat size="md" {...statProps} delta={statDelta} media={media} />;
-  }
-  // The sparkline keeps its own point tooltip, so it sits outside the stat's.
   return (
-    <BAIFlex direction="column" align="stretch" gap="xs">
-      {/* Anchored to the text's own width so the tooltip opens beside the number, not mid-card. */}
-      <Tooltip
-        content={deltaExplanation}
-        placement="end"
-        hasHoverIndication={false}
-      >
-        <Stat
-          size="md"
-          {...statProps}
-          delta={statDelta}
-          media={undefined}
-          tabIndex={0}
-          style={{ alignSelf: 'flex-start', width: 'fit-content' }}
-        />
-      </Tooltip>
-      {media}
-    </BAIFlex>
+    <Stat
+      size="md"
+      {...statProps}
+      delta={statDelta}
+      deltaTooltip={deltaExplanation}
+      media={media}
+    />
   );
 };
 
