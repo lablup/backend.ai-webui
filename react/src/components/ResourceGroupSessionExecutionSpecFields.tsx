@@ -129,8 +129,7 @@ export const toSessionExecutionSpecFormValue = (
     isBatchSession: !(
       _.isEmpty(info?.startsAt) &&
       _.isNil(info?.batchTimeoutSec) &&
-      _.isEmpty(info?.startupCommand) &&
-      _.isEmpty(info?.bootstrapScript)
+      _.isEmpty(info?.startupCommand)
     ),
     startsAtEnabled: !_.isEmpty(info?.startsAt),
     startsAt: info?.startsAt ?? null,
@@ -181,7 +180,7 @@ export const toKernelExecutionSpecInput = (
       ? { shmem: { expr: value!.shmem! } }
       : null,
     startupCommand: isBatch ? blankToNull(value?.startupCommand) : null,
-    bootstrapScript: isBatch ? blankToNull(value?.bootstrapScript) : null,
+    bootstrapScript: blankToNull(value?.bootstrapScript),
     startsAt:
       isBatch && value?.startsAtEnabled ? blankToNull(value.startsAt) : null,
     batchTimeoutSec,
@@ -519,6 +518,17 @@ export const SessionExecutionSpecFormFields: React.FC<{
           ]}
         />
       </BAIFormItem>
+      {/* Runs for every session type, so it does not sit behind the batch box. */}
+      <BAIFormItem
+        label={t('adminDeploymentPreset.BootstrapScript')}
+        name={[name, 'bootstrapScript']}
+      >
+        <BAITextArea
+          aria-label={t('adminDeploymentPreset.BootstrapScript')}
+          placeholder={t('adminDeploymentPreset.BootstrapScriptPlaceholder')}
+          rows={3}
+        />
+      </BAIFormItem>
       <BAIFormItem
         name={[name, 'isBatchSession']}
         valuePropName="checked"
@@ -619,23 +629,11 @@ export const SessionExecutionSpecFormFields: React.FC<{
           <BAIFormItem
             label={t('session.launcher.StartUpCommand')}
             name={[name, 'startupCommand']}
+            style={{ marginBottom: 0 }}
           >
             <BAITextArea
               aria-label={t('session.launcher.StartUpCommand')}
               rows={2}
-            />
-          </BAIFormItem>
-          <BAIFormItem
-            label={t('adminDeploymentPreset.BootstrapScript')}
-            name={[name, 'bootstrapScript']}
-            style={{ marginBottom: 0 }}
-          >
-            <BAITextArea
-              aria-label={t('adminDeploymentPreset.BootstrapScript')}
-              placeholder={t(
-                'adminDeploymentPreset.BootstrapScriptPlaceholder',
-              )}
-              rows={3}
             />
           </BAIFormItem>
         </>

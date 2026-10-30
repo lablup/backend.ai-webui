@@ -183,6 +183,7 @@ export type {
   BAIScopedUserSelectProps,
   BAIScopedUserSelectFilter,
   BAIScopedUserSelectRef,
+  BAIScopedUserSelectOption,
   ScopedUserNode,
 } from './BAIScopedUserSelect';
 export { default as BAIScopedResourceGroupSelect } from './BAIScopedResourceGroupSelect';

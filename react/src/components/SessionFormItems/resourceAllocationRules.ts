@@ -229,17 +229,27 @@ const syncAcceleratorType = (
   if (next && next !== current) setAcceleratorType(draft, next, current, ctx);
 };
 
-/** The accelerator-type validator's question; a preset's type in preset-only mode is the preset validator's. */
-export const isAcceleratorTypeUnsupported = (
+// Which item reports an accelerator type the image does not support, if any
+// (ADR 0016 §4: free → the type item, preset-only pseudo label → the preset item).
+export const acceleratorTypeErrorTarget = (
   value: string | undefined,
   allocationPreset: string | null | undefined,
   ctx: RuleContext,
   supportedTypes = getSupportedAcceleratorTypes(ctx),
-) =>
-  (ctx.mode === 'free' || !isPresetId(allocationPreset)) &&
-  !!value &&
-  !!supportedTypes &&
-  !supportedTypes.includes(value);
+): 'type' | 'preset' | undefined => {
+  if (
+    !value ||
+    !supportedTypes ||
+    supportedTypes.length === 0 ||
+    supportedTypes.includes(value)
+  ) {
+    return undefined;
+  }
+  if (ctx.mode === 'free' || !ctx.enableResourcePresets) return 'type';
+  return allocationPreset && !isPresetId(allocationPreset)
+    ? 'preset'
+    : undefined;
+};
 
 /** What selecting `preset` writes: its slots the group has, in `g`, plus the shmem rule. */
 export const getPresetResourceFields = (

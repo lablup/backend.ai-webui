@@ -14,10 +14,22 @@
  *   node scripts/build-search-index.mjs --out FILE # write elsewhere (tests)
  *   node scripts/build-search-index.mjs --routes   # route candidates as JSON
  */
+import {
+  GENERATED_FROM,
+  INDEX_VERSION,
+  byString,
+  compareEntries,
+  compareSettings,
+  compareTabs,
+  serialize,
+  tabId,
+} from './search-index-format.mjs';
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+export { serialize };
 
 // ---------------------------------------------------------------------------
 // CONFIG
@@ -29,9 +41,6 @@ const SRC = path.join(REACT_DIR, 'src');
 const ROUTES_FILE = path.join(SRC, 'routes.tsx');
 const EN_JSON = path.join(ROOT, 'resources/i18n/en.json');
 const OUT_FILE = path.join(SRC, 'generated/searchIndex.json');
-
-const INDEX_VERSION = 1;
-const GENERATED_FROM = 'react/src/routes.tsx';
 
 /** Transitive walk depth. Infinity = follow every value import. */
 const MAX_DEPTH = Infinity;
@@ -191,7 +200,6 @@ const { transformWithOxc } = await import(require_.resolve('vite'));
 
 // POSIX-normalized: every CONFIG constant compares with `/` separators.
 const rel = (f) => path.relative(ROOT, f).split(path.sep).join('/');
-const byString = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 
 // ---------------------------------------------------------------------------
 // module resolution
@@ -816,7 +824,7 @@ export function parseRoutes() {
   if (!rootArr) throw new Error('routes.tsx: `routes` array not found');
   walkArray(rootArr, '', {});
 
-  candidates.sort((a, b) => byString(a.path, b.path));
+  candidates.sort(compareEntries);
   return candidates;
 }
 
@@ -1000,13 +1008,11 @@ export async function buildEntries() {
 function dedupeTabs(tabs) {
   const m = new Map();
   for (const t of tabs) {
-    const id = `${t.param}=${t.key}`;
+    const id = tabId(t);
     const prev = m.get(id);
     if (!prev || t.depth < prev.depth) m.set(id, t);
   }
-  return [...m.values()].sort((a, b) =>
-    byString(`${a.param}=${a.key}`, `${b.param}=${b.key}`),
-  );
+  return [...m.values()].sort(compareTabs);
 }
 
 /** Keyed by key+group: the same title can legitimately appear in two groups. */
@@ -1017,10 +1023,7 @@ function dedupeSettings(settings) {
     const prev = m.get(id);
     if (!prev || s.depth < prev.depth) m.set(id, s);
   }
-  return [...m.values()].sort(
-    (a, b) =>
-      byString(a.key, b.key) || byString(a.groupId ?? '', b.groupId ?? ''),
-  );
+  return [...m.values()].sort(compareSettings);
 }
 
 function applySettingTabOverride(routePath, settings) {
@@ -1032,15 +1035,13 @@ function applySettingTabOverride(routePath, settings) {
 function applyTabOverrides(routePath, tabs) {
   const extra = TAB_OVERRIDES[routePath];
   if (!extra) return tabs;
-  const m = new Map(tabs.map((t) => [`${t.param}=${t.key}`, t]));
+  const m = new Map(tabs.map((t) => [tabId(t), t]));
   for (const t of extra)
-    m.set(`${t.param}=${t.key}`, {
+    m.set(tabId(t), {
       ...t,
       primary: TAB_PARAMS.includes(t.param),
     });
-  return [...m.values()].sort((a, b) =>
-    byString(`${a.param}=${a.key}`, `${b.param}=${b.key}`),
-  );
+  return [...m.values()].sort(compareTabs);
 }
 
 /**
@@ -1130,8 +1131,6 @@ export function toIndex(built) {
   });
   return { version: INDEX_VERSION, generatedFrom: GENERATED_FROM, entries };
 }
-
-export const serialize = (index) => JSON.stringify(index, null, 2) + '\n';
 
 // ---------------------------------------------------------------------------
 // i18n key hygiene
