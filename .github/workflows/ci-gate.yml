@@ -19,10 +19,8 @@ permissions:
 jobs:
   ci-gate:
     name: ci-gate
-    # A draft cannot merge; `ready_for_review` runs the gate when it can.
-    if: ${{ !github.event.pull_request.draft }}
     runs-on: ubuntu-latest
-    timeout-minutes: 75
+    timeout-minutes: 80
     env:
       GH_TOKEN: ${{ github.token }}
       REPO: ${{ github.repository }}
@@ -35,7 +33,7 @@ jobs:
           # A transient API error retries instead of failing the required check.
           api() {
             local attempt
-            for attempt in 1 2 3 4 5; do
+            for attempt in 1 2 3; do
               gh api "$@" && return 0
               sleep $((attempt * 10))
             done
@@ -53,18 +51,23 @@ jobs:
           # Workflows triggered by the same push register a moment after this one.
           sleep 30
           deadline=$(( $(date +%s) + 70 * 60 ))
+          previous=
           while :; do
             if runs=$(latest_runs) && status=$(api "repos/$REPO/commits/$SHA/status"); then
               open=$(jq '[.[] | select(.status != "completed")] | length' <<<"$runs")
               status_open=$(jq 'if .total_count > 0 and .state == "pending" then 1 else 0 end' <<<"$status")
+              snapshot=$(jq -c '[.[] | [.id, .status]] | sort' <<<"$runs")
               echo "open: workflow runs=$open commit statuses pending=$status_open"
-              if [ "$open" -eq 0 ] && [ "$status_open" -eq 0 ]; then
+              # Settled = nothing open in two polls in a row over the same runs, so a
+              # workflow that registers late is still waited for.
+              if [ "$open" -eq 0 ] && [ "$status_open" -eq 0 ] && [ "$snapshot" = "$previous" ]; then
                 # Judge from the same snapshot that showed nothing open.
                 failed=$(jq -r '.[]
                   | select(.conclusion as $c | ["success","skipped","neutral"] | index($c) | not)
                   | "\(.name): \(.conclusion)"' <<<"$runs")
                 if jq -e '.total_count > 0 and (.state == "failure" or .state == "error")' <<<"$status" >/dev/null; then
-                  failed+=$'\n'"commit status: $(jq -r .state <<<"$status")"
+                  contexts=$(jq -r '.statuses[] | select(.state == "failure" or .state == "error") | "\(.context): \(.state)"' <<<"$status")
+                  failed+=$'\n'"${contexts:-commit status: $(jq -r .state <<<"$status")}"
                 fi
                 if [ -n "${failed//$'\n'/}" ]; then
                   while IFS= read -r line; do
@@ -77,6 +80,7 @@ jobs:
                 echo "every pull_request workflow on $SHA passed or was skipped"
                 exit 0
               fi
+              previous=$snapshot
             else
               echo "::warning title=ci-gate::GitHub API unavailable, retrying"
             fi
