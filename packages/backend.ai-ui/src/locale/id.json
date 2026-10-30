@@ -39,7 +39,7 @@
     "PlaceHolder": "Pilih grup sumber daya"
   },
   "comp:BAIAdminRetentionPolicyTable": {
-    "Category": "Kategori",
+    "Category": "Target kebijakan",
     "CreatedAt": "Tanggal dibuat",
     "Disabled": "Nonaktif",
     "Enabled": "Diaktifkan",

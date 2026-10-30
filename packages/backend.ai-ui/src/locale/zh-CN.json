@@ -39,7 +39,7 @@
     "PlaceHolder": "选择资源组"
   },
   "comp:BAIAdminRetentionPolicyTable": {
-    "Category": "类别",
+    "Category": "策略对象",
     "CreatedAt": "创建日期",
     "Disabled": "已禁用",
     "Enabled": "启用",

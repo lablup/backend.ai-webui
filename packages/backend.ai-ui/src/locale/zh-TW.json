@@ -39,7 +39,7 @@
     "PlaceHolder": "選擇資源群組"
   },
   "comp:BAIAdminRetentionPolicyTable": {
-    "Category": "類別",
+    "Category": "政策對象",
     "CreatedAt": "建立日期",
     "Disabled": "已停用",
     "Enabled": "啟用",

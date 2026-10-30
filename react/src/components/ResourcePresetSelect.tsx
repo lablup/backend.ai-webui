@@ -28,6 +28,7 @@ import {
   useUpdatableState,
   BAISelector,
 } from 'backend.ai-ui';
+import type { TFunction } from 'i18next';
 import * as _ from 'lodash-es';
 import { Info, SquarePen } from 'lucide-react';
 import React, { useEffect, useTransition, type CSSProperties } from 'react';
@@ -67,6 +68,75 @@ export const getUnavailableSlotNames = (
         (_.toNumber(value) || 0) !== 0,
     ),
   );
+
+export type PresetUnavailableReason =
+  | { kind: 'scoped'; resourceGroup: string }
+  | { kind: 'missing-slots'; slots: string[] }
+  | { kind: 'not-allocatable' };
+
+/**
+ * Why `preset` cannot be used in the resource group; undefined means it can.
+ * An undefined scope part is not known yet and skips its check.
+ */
+export const getPresetUnavailableReason = (
+  preset: {
+    id?: string | null;
+    scaling_group_name?: string | null;
+    resource_slots?: Record<string, unknown> | null;
+  },
+  scope: {
+    resourceGroup?: string | null;
+    slotsInRG?: string[];
+    allocatablePresetIds?: string[];
+  },
+): PresetUnavailableReason | undefined => {
+  if (
+    scope.resourceGroup &&
+    preset.scaling_group_name &&
+    preset.scaling_group_name !== scope.resourceGroup
+  ) {
+    return { kind: 'scoped', resourceGroup: preset.scaling_group_name };
+  }
+  const slots = scope.slotsInRG
+    ? getUnavailableSlotNames(preset.resource_slots, scope.slotsInRG)
+    : [];
+  if (slots.length > 0) return { kind: 'missing-slots', slots };
+  if (
+    scope.allocatablePresetIds &&
+    !scope.allocatablePresetIds.includes(preset.id ?? '')
+  ) {
+    return { kind: 'not-allocatable' };
+  }
+  return undefined;
+};
+
+/** The message for `reason`; `presetName` picks the wording that names the preset (the validator's) over the option's. */
+export const presetUnavailableReasonText = (
+  reason: PresetUnavailableReason | undefined,
+  t: TFunction,
+  slotNameOf: (key: string) => string,
+  presetName?: string,
+): string | undefined => {
+  switch (reason?.kind) {
+    case 'scoped':
+      return presetName
+        ? t('resourcePreset.PresetOnlyAvailableInResourceGroup', {
+            preset: presetName,
+            name: reason.resourceGroup,
+          })
+        : t('resourcePreset.OnlyAvailableInResourceGroup', {
+            name: reason.resourceGroup,
+          });
+    case 'missing-slots':
+      return t('resourcePreset.RequiresSlotsNotInResourceGroup', {
+        slots: reason.slots.map(slotNameOf).join(', '),
+      });
+    case 'not-allocatable':
+      return t('resourcePreset.ExceedsAllocatableResources');
+    default:
+      return undefined;
+  }
+};
 
 /**
  * PILOT-DECISION: the `extends Omit<SelectProps,'onChange'>` surface is
@@ -158,33 +228,18 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   const disabledReasonOf = (
     preset: ResourcePreset | null | undefined,
   ): string | undefined => {
-    if (
-      resourceGroup &&
-      preset?.scaling_group_name &&
-      preset.scaling_group_name !== resourceGroup
-    ) {
-      return onlyInGroupText(preset.scaling_group_name);
-    }
-    const unavailableSlotNames = availableSlotNames
-      ? getUnavailableSlotNames(
-          JSON.parse(preset?.resource_slots || '{}'),
-          availableSlotNames,
-        )
-      : [];
-    if (unavailableSlotNames.length > 0) {
-      return t('resourcePreset.RequiresSlotsNotInResourceGroup', {
-        slots: _.map(
-          unavailableSlotNames,
-          (key) => deviceMetaData?.[key]?.human_readable_name ?? key,
-        ).join(', '),
-      });
-    }
-    if (
-      allocatablePresetIds &&
-      !allocatablePresetIds.includes(preset?.id ?? '')
-    )
-      return t('resourcePreset.ExceedsAllocatableResources');
-    return undefined;
+    if (!preset) return undefined;
+    return presetUnavailableReasonText(
+      getPresetUnavailableReason(
+        {
+          ...preset,
+          resource_slots: JSON.parse(preset.resource_slots || '{}'),
+        },
+        { resourceGroup, slotsInRG: availableSlotNames, allocatablePresetIds },
+      ),
+      t,
+      (key) => deviceMetaData?.[key]?.human_readable_name ?? key,
+    );
   };
 
   const firstAvailablePreset = [...(resource_presets ?? [])]
