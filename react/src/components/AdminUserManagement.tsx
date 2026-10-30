@@ -44,6 +44,8 @@ import {
   useBAILogger,
   useToggle,
   toEntityLabelFilter,
+  entityLabelFilterProperties,
+  useIsLabelableEntityType,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
@@ -124,6 +126,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   const { logger } = useBAILogger();
   const { t } = useTranslation();
   const { token } = useTheme();
+  const isLabelable = useIsLabelableEntityType('user');
 
   const bailClient = useSuspendedBackendaiClient();
   const { message, modal } = App.useApp();
@@ -486,7 +489,26 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
       ],
     },
     ...extendedFilterProperties,
+    ...(isLabelable
+      ? entityLabelFilterProperties({
+          key: t('entityLabel.LabelKey'),
+          value: t('entityLabel.LabelValue'),
+        })
+      : []),
   ]);
+
+  // The property filter and a label-token click both land here.
+  const applyPropertyFilter = (value: UserV2Filter | undefined) => {
+    onReload({
+      ...variables,
+      filter: {
+        ...(value ?? {}),
+        status: variables.filter?.status,
+      },
+      offset: 0,
+    });
+    setSelectedUserList([]);
+  };
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
@@ -525,17 +547,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
                 ? undefined
                 : (propertyFilterValue as UserV2Filter)
             }
-            onChange={(value) => {
-              onReload({
-                ...variables,
-                filter: {
-                  ...(value ?? {}),
-                  status: variables.filter?.status,
-                },
-                offset: 0,
-              });
-              setSelectedUserList([]);
-            }}
+            onChange={applyPropertyFilter}
           />
         </BAIFlex>
         <BAIFlex gap="xs">
@@ -612,17 +624,9 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
         </BAIFlex>
       </BAIFlex>
       <BAIAdminUserV2Table
-        onLabelClick={(label) => {
-          onReload({
-            ...variables,
-            filter: {
-              ...toEntityLabelFilter(label),
-              status: variables.filter?.status,
-            },
-            offset: 0,
-          });
-          setSelectedUserList([]);
-        }}
+        onLabelClick={(label) =>
+          applyPropertyFilter(toEntityLabelFilter(label))
+        }
         usersFrgmt={filterOutNullAndUndefined(
           _.map(scopedUsersV2?.edges, 'node'),
         )}

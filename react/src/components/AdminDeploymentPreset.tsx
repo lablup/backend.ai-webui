@@ -26,6 +26,8 @@ import {
   useBAILogger,
   filterOutNullAndUndefined,
   toEntityLabelFilter,
+  entityLabelFilterProperties,
+  useIsLabelableEntityType,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
@@ -89,6 +91,14 @@ const AdminDeploymentPreset = ({
     useState<DeploymentPresetNodeInList | null>(null);
 
   const filter = queryRef.variables.filter ?? undefined;
+  const isLabelable = useIsLabelableEntityType('deployment_preset');
+  // The property filter and a label-token click both land here.
+  const applyFilter = (value: DeploymentRevisionPresetFilter | undefined) => {
+    onReload(
+      { ...queryRef.variables, filter: value ?? undefined, offset: 0 },
+      { fetchPolicy: 'network-only' },
+    );
+  };
   const order = convertFirstOrderByToString(queryRef.variables.orderBy);
   const pageSize = queryRef.variables.limit ?? 10;
   const offset = queryRef.variables.offset ?? 0;
@@ -162,18 +172,15 @@ const AdminDeploymentPreset = ({
                   />
                 ),
               },
+              ...(isLabelable
+                ? entityLabelFilterProperties({
+                    key: t('entityLabel.LabelKey'),
+                    value: t('entityLabel.LabelValue'),
+                  })
+                : []),
             ]}
             value={filter as DeploymentRevisionPresetFilter | undefined}
-            onChange={(value) => {
-              onReload(
-                {
-                  ...queryRef.variables,
-                  filter: value ?? undefined,
-                  offset: 0,
-                },
-                { fetchPolicy: 'network-only' },
-              );
-            }}
+            onChange={applyFilter}
           />
         </BAIFlex>
         <BAIFlex gap={'xs'}>
@@ -193,16 +200,7 @@ const AdminDeploymentPreset = ({
         </BAIFlex>
       </BAIFlex>
       <AdminDeploymentPresetTable
-        onLabelClick={(label) => {
-          onReload(
-            {
-              ...queryRef.variables,
-              filter: toEntityLabelFilter(label),
-              offset: 0,
-            },
-            { fetchPolicy: 'network-only' },
-          );
-        }}
+        onLabelClick={(label) => applyFilter(toEntityLabelFilter(label))}
         presetsFrgmt={filterOutNullAndUndefined(
           _.map(deploymentRevisionPresets?.edges, 'node'),
         )}
