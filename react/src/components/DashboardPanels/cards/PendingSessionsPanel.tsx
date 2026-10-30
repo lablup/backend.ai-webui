@@ -267,8 +267,8 @@ const PendingSessionTable: React.FC<{
 
 /** Pending sessions in the page's scope, longest waiting first, with the scheduler's last message. */
 const PendingSessionsPanel: React.FC<PanelComponentProps> = ({
-  panel,
   scope,
+  vars,
   fetchKey,
 }) => {
   'use memo';
@@ -291,7 +291,7 @@ const PendingSessionsPanel: React.FC<PanelComponentProps> = ({
       {(cardScope, key) => (
         <PendingSessionTable
           scope={cardScope}
-          resourceGroups={panel.settings?.resourceGroups}
+          resourceGroups={vars.resourceGroup ? [vars.resourceGroup] : undefined}
           fetchKey={key}
         />
       )}
