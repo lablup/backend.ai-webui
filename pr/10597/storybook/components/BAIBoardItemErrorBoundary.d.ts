@@ -4,6 +4,8 @@ interface BAIBoardItemErrorBoundaryProps extends PropsWithChildren {
     title?: BAIBoardItemTitleProps['title'];
     status?: 'warning' | 'error';
     style?: React.CSSProperties;
+    /** A change in any of these clears a caught error and renders the children again. */
+    resetKeys?: Array<unknown>;
 }
 declare const BAIBoardItemErrorBoundary: React.FC<BAIBoardItemErrorBoundaryProps>;
 export default BAIBoardItemErrorBoundary;
