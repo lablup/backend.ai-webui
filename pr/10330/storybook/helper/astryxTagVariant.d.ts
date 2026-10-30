@@ -192,6 +192,11 @@ export declare const STATUS_BADGE_VARIANT: {
         readonly SYSTEM: "neutral";
         readonly CUSTOM: "success";
     };
+    /** Resource group active state (ResourceGroupDetailDrawer). */
+    readonly resourceGroup: {
+        readonly ACTIVE: "success";
+        readonly INACTIVE: "neutral";
+    };
     /** Cloud platform / region category colors (AgentList, StorageProxyList). */
     readonly cloudPlatform: {
         readonly aws: "orange";
