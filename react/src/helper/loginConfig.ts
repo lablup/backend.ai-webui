@@ -218,7 +218,6 @@ export function refreshConfigFromToml(config: any): LoginConfigState {
     defaultValue: false,
     value: g?.debug,
   }) as boolean;
-  syncDebugFlag(state);
 
   state.signup_support = getConfigValueByExists(g, {
     valueType: 'boolean',

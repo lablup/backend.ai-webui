@@ -460,6 +460,7 @@ export function useUpdateRawConfig(): (config: RawTomlConfig) => void {
     setRawConfig(config);
     const { autoLogout, proxyUrl, loginPlugin, loginConfig } =
       processConfig(config);
+    syncDebugFlag(loginConfig);
     setLoginConfig(loginConfig);
     setAutoLogout(autoLogout);
     setProxyUrl(proxyUrl);

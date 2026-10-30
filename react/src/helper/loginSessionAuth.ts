@@ -560,8 +560,13 @@ export async function loadConfigFromWebServer(
       loginPluginState,
       resolveAutoLogout,
     } = await import('../hooks/useWebUIConfig');
+    // `mergedConfig` keeps this page's own endpoint (the webserver's was
+    // stripped above); the public slice belongs to the server being joined.
     const publicSlice = await fetchPublicDomainConfigOnce(
-      resolvePublicConfigTarget(mergedConfig),
+      resolvePublicConfigTarget({
+        ...mergedConfig,
+        general: { ...mergedConfig.general, apiEndpoint },
+      }),
     );
     const effectiveLoginConfig = applyWebUISettings(
       refreshConfigFromToml(mergedConfig),
