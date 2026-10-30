@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-sJBDdmOt.js";import{n as t,r as n}from"./layerScopedContext-DT08imY6.js";var r;function i(){return(i=e((()=>{n(),r=t({direction:`vertical`}),r.displayName=`FormLayoutContext`})))()}export{i as n,r as t};
