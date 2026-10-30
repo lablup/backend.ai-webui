@@ -108,8 +108,9 @@
   max-width: none;
 }
 
-/* Astryx `Tab` only swaps the cursor for `aria-disabled`; mute the label too. */
-.bai-card__tabs [aria-disabled='true'] {
+/* Astryx `Tab` only swaps the cursor for `aria-disabled`; mute the label too.
+   `[data-tab-value]` keeps a disabled control in the extra slot out of it. */
+.bai-card__tabs [data-tab-value][aria-disabled='true'] {
   color: var(--color-text-disabled);
 }
 
