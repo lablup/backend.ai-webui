@@ -1,7 +1,7 @@
 # The single required status check on `main`. Most workflows here use
 # `paths:` filters, and a required check that never starts blocks a PR as
-# "Expected — Waiting", so instead this job runs on every PR, waits for
-# whatever else was triggered on the head commit, and fails if any of it failed.
+# "Expected — Waiting", so instead this job runs on every PR, waits for the
+# `pull_request` workflows triggered on the head commit, and fails if any failed.
 name: CI gate
 
 on:
@@ -14,61 +14,75 @@ concurrency:
 
 permissions:
   actions: read
-  checks: read
   statuses: read
 
 jobs:
   ci-gate:
     name: ci-gate
+    # A draft cannot merge; `ready_for_review` runs the gate when it can.
+    if: ${{ !github.event.pull_request.draft }}
     runs-on: ubuntu-latest
     timeout-minutes: 75
     env:
       GH_TOKEN: ${{ github.token }}
       REPO: ${{ github.repository }}
       SHA: ${{ github.event.pull_request.head.sha }}
-      SELF_RUN_ID: ${{ github.run_id }}
     steps:
-      - name: Wait for the other checks on the head commit
+      - name: Wait for the pull_request workflows on the head commit
         run: |
-          set -euo pipefail
+          set -uo pipefail
+          SELF=.github/workflows/ci-gate.yml
+          # A transient API error retries instead of failing the required check.
+          api() {
+            local attempt
+            for attempt in 1 2 3 4 5; do
+              gh api "$@" && return 0
+              sleep $((attempt * 10))
+            done
+            return 1
+          }
+          # Latest run per workflow file: a run superseded on the same commit
+          # (cancelled by a newer one) does not count.
+          latest_runs() {
+            api --paginate "repos/$REPO/actions/runs?head_sha=$SHA&event=pull_request&per_page=100" \
+              --jq '.workflow_runs[]' \
+              | jq -s --arg self "$SELF" '
+                  [.[] | select((.path | split("@")[0]) != $self)]
+                  | group_by(.path) | map(max_by(.created_at))'
+          }
           # Workflows triggered by the same push register a moment after this one.
           sleep 30
           deadline=$(( $(date +%s) + 70 * 60 ))
           while :; do
-            runs_open=$(gh api --paginate "repos/$REPO/actions/runs?head_sha=$SHA&per_page=100" \
-              --jq "[.workflow_runs[] | select(.id != $SELF_RUN_ID and .status != \"completed\")] | length" \
-              | awk '{s+=$1} END {print s+0}')
-            checks_open=$(gh api --paginate "repos/$REPO/commits/$SHA/check-runs?filter=latest&per_page=100" \
-              --jq '[.check_runs[] | select(.name != "ci-gate" and .status != "completed")] | length' \
-              | awk '{s+=$1} END {print s+0}')
-            statuses=$(gh api "repos/$REPO/commits/$SHA/status" --jq '"\(.total_count) \(.state)"')
-            statuses_open=0
-            if [ "${statuses% *}" != 0 ] && [ "${statuses#* }" = pending ]; then statuses_open=1; fi
-            echo "open: workflow runs=$runs_open check runs=$checks_open statuses pending=$statuses_open"
-            if [ "$runs_open" -eq 0 ] && [ "$checks_open" -eq 0 ] && [ "$statuses_open" -eq 0 ]; then
-              break
+            if runs=$(latest_runs) && status=$(api "repos/$REPO/commits/$SHA/status"); then
+              open=$(jq '[.[] | select(.status != "completed")] | length' <<<"$runs")
+              status_open=$(jq 'if .total_count > 0 and .state == "pending" then 1 else 0 end' <<<"$status")
+              echo "open: workflow runs=$open commit statuses pending=$status_open"
+              if [ "$open" -eq 0 ] && [ "$status_open" -eq 0 ]; then
+                # Judge from the same snapshot that showed nothing open.
+                failed=$(jq -r '.[]
+                  | select(.conclusion as $c | ["success","skipped","neutral"] | index($c) | not)
+                  | "\(.name): \(.conclusion)"' <<<"$runs")
+                if jq -e '.total_count > 0 and (.state == "failure" or .state == "error")' <<<"$status" >/dev/null; then
+                  failed+=$'\n'"commit status: $(jq -r .state <<<"$status")"
+                fi
+                if [ -n "${failed//$'\n'/}" ]; then
+                  while IFS= read -r line; do
+                    [ -n "$line" ] || continue
+                    line=${line//%/%25}; line=${line//$'\r'/%0D}
+                    echo "::error title=ci-gate::$line"
+                  done <<<"$failed"
+                  exit 1
+                fi
+                echo "every pull_request workflow on $SHA passed or was skipped"
+                exit 0
+              fi
+            else
+              echo "::warning title=ci-gate::GitHub API unavailable, retrying"
             fi
             if [ "$(date +%s)" -ge "$deadline" ]; then
-              echo "::error title=ci-gate::other checks did not finish within 70 minutes"
+              echo "::error title=ci-gate::other workflows did not finish within 70 minutes"
               exit 1
             fi
-            sleep 30
+            sleep 45
           done
-
-      - name: Fail if any of them failed
-        run: |
-          set -euo pipefail
-          failed=$(gh api --paginate "repos/$REPO/commits/$SHA/check-runs?filter=latest&per_page=100" \
-            --jq '.check_runs[]
-              | select(.name != "ci-gate")
-              | select(.conclusion as $c | ["failure","cancelled","timed_out","action_required","startup_failure"] | index($c))
-              | "\(.name): \(.conclusion)"')
-          failed_statuses=$(gh api "repos/$REPO/commits/$SHA/status" \
-            --jq '.statuses[] | select(.state == "failure" or .state == "error") | "\(.context): \(.state)"')
-          if [ -n "$failed$failed_statuses" ]; then
-            printf '%s\n' "$failed" "$failed_statuses" | sed '/^$/d' | while read -r line; do
-              echo "::error title=ci-gate::$line"
-            done
-            exit 1
-          fi
-          echo "every other check on $SHA passed or was skipped"
