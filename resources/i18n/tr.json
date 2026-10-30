@@ -2815,6 +2815,33 @@
     "SharedMemory": "Paylaşılan Bellek",
     "Updated": "Kaynak ön ayarı güncellendi"
   },
+  "retentionPolicy": {
+    "Category": "Kategori",
+    "CategoryRequired": "Bir kategori seçin.",
+    "CreatePolicy": "Politika oluştur",
+    "DataRetention": "Veri saklama",
+    "DeletePolicy": "Saklama politikasını sil",
+    "Description": "Her kategorideki verilerin ne kadar süre saklanacağını belirleyin. Saklama süresi dolan veriler yalnızca politikası etkin olan kategorilerde temizlenir.",
+    "EditPolicy": "Politikayı düzenle",
+    "OnePolicyPerCategory": "Her kategori için yalnızca bir politika olabilir.",
+    "PolicyAlreadyExistsView": "Bu kategori için zaten bir politika var. <viewLink>Görüntüle</viewLink>",
+    "RetentionPeriodDays": "Saklama süresi (gün)",
+    "RetentionPeriodRequired": "En az 1 günlük bir saklama süresi girin.",
+    "RetentionPolicy": "Saklama politikası",
+    "SuccessfullyCreated": "Saklama politikası oluşturuldu.",
+    "SuccessfullyDeleted": "Saklama politikası silindi.",
+    "SuccessfullyUpdated": "Saklama politikası güncellendi.",
+    "categories": {
+      "DEPLOYMENTS": "Dağıtımlar",
+      "LOGIN": "Oturum açma geçmişi",
+      "LOGS": "Günlükler",
+      "RECONCILE_HISTORY": "Uzlaştırma geçmişi",
+      "ROLES_INVITATIONS": "Roller ve davetler",
+      "SESSIONS": "Oturumlar",
+      "USAGE_BUCKETS": "Kullanım toplamları",
+      "USAGE_RECORDS": "Kullanım kayıtları"
+    }
+  },
   "route": {
     "CreatedAt": "Yaratılmış",
     "ErrorCode": "Hata Kodu",

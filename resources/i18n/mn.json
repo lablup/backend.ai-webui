@@ -2816,6 +2816,33 @@
     "SharedMemory": "Хуваалцсан санах ой",
     "Updated": "Нөөцийн урьдчилан тохируулалтыг шинэчилсэн"
   },
+  "retentionPolicy": {
+    "Category": "Ангилал",
+    "CategoryRequired": "Ангилал сонгоно уу.",
+    "CreatePolicy": "Бодлого үүсгэх",
+    "DataRetention": "Өгөгдөл хадгалалт",
+    "DeletePolicy": "Хадгалах бодлогыг устгах",
+    "Description": "Ангилал бүрийн өгөгдлийг хэр удаан хадгалахыг тохируулна. Хадгалах хугацаа нь дууссан өгөгдлийг зөвхөн бодлого нь идэвхжсэн ангиллаас цэвэрлэнэ.",
+    "EditPolicy": "Бодлого засах",
+    "OnePolicyPerCategory": "Ангилал бүрт зөвхөн нэг бодлого байж болно.",
+    "PolicyAlreadyExistsView": "Энэ ангилалд бодлого аль хэдийн байна. <viewLink>Харах</viewLink>",
+    "RetentionPeriodDays": "Хадгалах хугацаа (өдөр)",
+    "RetentionPeriodRequired": "Хамгийн багадаа 1 өдрийн хадгалах хугацаа оруулна уу.",
+    "RetentionPolicy": "Хадгалах бодлого",
+    "SuccessfullyCreated": "Хадгалах бодлого үүсгэлээ.",
+    "SuccessfullyDeleted": "Хадгалах бодлогыг устгалаа.",
+    "SuccessfullyUpdated": "Хадгалах бодлогыг шинэчиллээ.",
+    "categories": {
+      "DEPLOYMENTS": "Байршуулалт",
+      "LOGIN": "Нэвтрэлтийн түүх",
+      "LOGS": "Лог",
+      "RECONCILE_HISTORY": "Тохируулгын түүх",
+      "ROLES_INVITATIONS": "Үүрэг ба урилга",
+      "SESSIONS": "Сешн",
+      "USAGE_BUCKETS": "Ашиглалтын нэгтгэл",
+      "USAGE_RECORDS": "Ашиглалтын бичлэг"
+    }
+  },
   "route": {
     "CreatedAt": "Бүтэмж дээр бүтсэн",
     "ErrorCode": "Алдааны код",
