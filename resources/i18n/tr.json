@@ -2507,6 +2507,7 @@
     "UserAssignmentsPartialFailureDescription": "Bazı kullanıcı atamaları başarısız oldu. Lütfen öğeleri kontrol edin.",
     "UserNotAssigned": "Kullanıcı bu role atanmamış.",
     "UserRevoked": "Kullanıcı rolden başarıyla kaldırıldı.",
+    "UsersAlreadyAssignedSkipped": "Bu role zaten sahip olan {{count}} kullanıcı atlandı: {{names}}",
     "UsersAssigned": "Kullanıcılar role başarıyla atandı.",
     "ViewPresets": "Ön Ayarları Görüntüle",
     "operations": {

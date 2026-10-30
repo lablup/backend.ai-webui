@@ -2509,6 +2509,7 @@
     "UserAssignmentsPartialFailureDescription": "Một số phân công người dùng không thành công. Vui lòng kiểm tra các mục.",
     "UserNotAssigned": "Người dùng chưa được phân công cho vai trò này.",
     "UserRevoked": "Người dùng đã được xóa khỏi vai trò thành công.",
+    "UsersAlreadyAssignedSkipped": "Đã bỏ qua {{count}} người dùng đã có vai trò này: {{names}}",
     "UsersAssigned": "Người dùng đã được phân công cho vai trò thành công.",
     "ViewPresets": "Xem mẫu thiết lập",
     "operations": {

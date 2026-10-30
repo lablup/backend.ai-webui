@@ -2509,6 +2509,7 @@
     "UserAssignmentsPartialFailureDescription": "Algumas atribuições de utilizadores falharam. Verifique os itens.",
     "UserNotAssigned": "O utilizador não está atribuído a esta função.",
     "UserRevoked": "Utilizador removido da função com sucesso.",
+    "UsersAlreadyAssignedSkipped": "Ignorados {{count}} utilizador(es) que já têm esta função: {{names}}",
     "UsersAssigned": "Utilizadores atribuídos à função com sucesso.",
     "ViewPresets": "Ver predefinições",
     "operations": {

@@ -2511,6 +2511,7 @@
     "UserAssignmentsPartialFailureDescription": "部分使用者指派失敗。請檢查相關項目。",
     "UserNotAssigned": "使用者未分配到此角色。",
     "UserRevoked": "使用者已成功從角色中移除。",
+    "UsersAlreadyAssignedSkipped": "已略過 {{count}} 位已擁有此角色的使用者：{{names}}",
     "UsersAssigned": "使用者已成功分配到角色。",
     "ViewPresets": "查看預設",
     "operations": {

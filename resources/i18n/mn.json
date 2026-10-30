@@ -2508,6 +2508,7 @@
     "UserAssignmentsPartialFailureDescription": "Зарим хэрэглэгчийн оноолт амжилтгүй боллоо. Холбогдох зүйлсийг шалгана уу.",
     "UserNotAssigned": "Хэрэглэгч энэ үүрэгт оноогдоогүй байна.",
     "UserRevoked": "Хэрэглэгч үүргээс амжилттай хасагдлаа.",
+    "UsersAlreadyAssignedSkipped": "Энэ үүрэг аль хэдийн оноогдсон {{count}} хэрэглэгчийг алгассан: {{names}}",
     "UsersAssigned": "Хэрэглэгчид үүрэгт амжилттай оноогдлоо.",
     "ViewPresets": "Урьдчилсан тохиргоо харах",
     "operations": {

@@ -2509,6 +2509,7 @@
     "UserAssignmentsPartialFailureDescription": "Certaines affectations d'utilisateurs ont échoué. Veuillez vérifier les éléments.",
     "UserNotAssigned": "L'utilisateur n'est pas attribué à ce rôle.",
     "UserRevoked": "Utilisateur retiré du rôle avec succès.",
+    "UsersAlreadyAssignedSkipped": "{{count}} utilisateur(s) ayant déjà ce rôle ignoré(s) : {{names}}",
     "UsersAssigned": "Utilisateurs attribués au rôle avec succès.",
     "ViewPresets": "Voir les préréglages",
     "operations": {

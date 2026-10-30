@@ -2509,6 +2509,7 @@
     "UserAssignmentsPartialFailureDescription": "一部のユーザー割り当てに失敗しました。項目を確認してください。",
     "UserNotAssigned": "ユーザーはこのロールに割り当てられていません。",
     "UserRevoked": "ユーザーがロールから正常に削除されました。",
+    "UsersAlreadyAssignedSkipped": "すでにこのロールを持つユーザー{{count}}人はスキップしました: {{names}}",
     "UsersAssigned": "ユーザーがロールに正常に割り当てられました。",
     "ViewPresets": "プリセットを確認",
     "operations": {

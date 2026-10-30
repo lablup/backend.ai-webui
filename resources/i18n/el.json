@@ -2507,6 +2507,7 @@
     "UserAssignmentsPartialFailureDescription": "Ορισμένες αναθέσεις χρηστών απέτυχαν. Ελέγξτε τα στοιχεία.",
     "UserNotAssigned": "Ο χρήστης δεν είναι ανατεθειμένος σε αυτόν τον ρόλο.",
     "UserRevoked": "Ο χρήστης αφαιρέθηκε επιτυχώς από τον ρόλο.",
+    "UsersAlreadyAssignedSkipped": "Παραλείφθηκαν {{count}} χρήστες που έχουν ήδη αυτόν τον ρόλο: {{names}}",
     "UsersAssigned": "Οι χρήστες ανατέθηκαν επιτυχώς στον ρόλο.",
     "ViewPresets": "Προβολή προεπιλογών",
     "operations": {
