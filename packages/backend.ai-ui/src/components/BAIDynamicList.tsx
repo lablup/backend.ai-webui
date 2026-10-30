@@ -99,6 +99,7 @@ const BAIDynamicList = <T extends { key: React.Key }>({
             </div>
           ))}
           <IconButton
+            className="bai-dynamic-list__remove"
             variant="ghost"
             label={removeLabel}
             tooltip={removeLabel}
