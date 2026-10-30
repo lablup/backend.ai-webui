@@ -7,7 +7,7 @@ export type WriteBatch<K extends string, V> = ReadonlyMap<K, V>;
 
 export interface WriteQueue<K extends string, V> {
   /**
-   * Queues `value` under `key`, replacing an unwritten value for the same key.
+   * Queues `value` under `key`, combined with an unwritten value for the same key.
    * Resolves when a write carrying it (or a later value for the key) succeeds.
    */
   schedule: (
@@ -32,9 +32,12 @@ interface Waiter {
 export const createWriteQueue = <K extends string, V>({
   write,
   delay,
+  combine = (_previous, next) => next,
 }: {
   write: (batch: WriteBatch<K, V>) => Promise<void>;
   delay: number;
+  /** Merges a queued value with a newer one for the same key; the newer wins by default. */
+  combine?: (previous: V, next: V) => V;
 }): WriteQueue<K, V> => {
   let pending = new Map<K, V>();
   let waiters: Array<Waiter> = [];
@@ -63,7 +66,11 @@ export const createWriteQueue = <K extends string, V>({
 
   const schedule: WriteQueue<K, V>['schedule'] = (key, value, options) =>
     new Promise<void>((resolve, reject) => {
-      pending.set(key, value);
+      const previous = pending.get(key);
+      pending.set(
+        key,
+        previous === undefined ? value : combine(previous, value),
+      );
       waiters.push({ resolve, reject });
       if (timer) clearTimeout(timer);
       if (options?.immediate) {

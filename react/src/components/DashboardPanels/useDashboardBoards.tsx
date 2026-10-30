@@ -10,13 +10,12 @@ import {
   useRefetchMyAppConfig,
   useUpdateMyUserAppConfig,
 } from '../../hooks/useAppConfig';
-import { useBAISettingUserState } from '../../hooks/useBAISetting';
+import { activeBoardOf, resolveBoards } from './dashboardConfig';
 import {
-  activeBoardOf,
-  resolveBoards,
-  type LocalBoardSources,
-} from './dashboardConfig';
-import { applyPageUpdate, createDashboardWriter } from './dashboardStore';
+  applyPageUpdate,
+  createDashboardWriter,
+  type PageWrite,
+} from './dashboardStore';
 import type {
   DashboardConfig,
   DashboardModel,
@@ -34,7 +33,7 @@ import { useEffect } from 'react';
 const optimisticDashboardAtom = atom<DashboardConfig>({});
 
 type DashboardWrite = (
-  batch: WriteBatch<PanelPage, DashboardPageConfig>,
+  batch: WriteBatch<PanelPage, PageWrite>,
 ) => Promise<void>;
 
 // Set by the mounted board, which owns the Relay environment and the jotai store.
@@ -53,15 +52,14 @@ export interface DashboardBoardsState {
   activeBoard: DashboardModel;
   /** What a new board and "Reset layout" start from. */
   template: DashboardModel;
-  /** Applies `update` to the page's boards: shown at once, written after the debounce. */
+  /** Applies `update` to the page's boards at once; the write replays it on the server's value. */
   update: (
     update: (config: DashboardPageConfig) => DashboardPageConfig,
   ) => void;
 }
 
 /**
- * One page's boards in `userConfig.dashboard`, falling back to this browser's
- * localStorage board (migrated once) and then to the role template.
+ * One page's boards in `userConfig.dashboard`, falling back to the role template.
  *
  * Only this hook writes `userConfig.dashboard`, and only into the USER
  * fragment: the read is deep-merged across scopes, which mixes board arrays.
@@ -81,48 +79,23 @@ export const useDashboardBoards = (
   const optimistic = useAtomValue(optimisticDashboardAtom);
   const setOptimistic = useSetAtom(optimisticDashboardAtom);
 
-  const [localBoard, setLocalBoard] = useBAISettingUserState(
-    `dashboard_board.${page}`,
+  const resolve = (stored: unknown) =>
+    resolveBoards({
+      stored,
+      templates: { domainTemplates, publicTemplates },
+      definitions,
+      page,
+    });
+  const { config, template } = resolve(
+    optimistic[page] ?? storedDashboard?.[page],
   );
-  const [legacyLayout, setLegacyLayout] = useBAISettingUserState(
-    'dashboard_board_items',
-  );
-  const [legacyAdminLayout, setLegacyAdminLayout] = useBAISettingUserState(
-    'admin_dashboard_board_items',
-  );
-  const [legacyCustomPanels, setLegacyCustomPanels] = useBAISettingUserState(
-    'custom_dashboard_panels',
-  );
-  const local: LocalBoardSources = {
-    board: localBoard,
-    layout: legacyLayout,
-    adminLayout: legacyAdminLayout,
-    customPanels: legacyCustomPanels,
-  };
-  const clearLocal = () => {
-    setLocalBoard(undefined);
-    if (page === 'project') {
-      setLegacyLayout(undefined);
-      setLegacyCustomPanels(undefined);
-    } else if (page === 'admin') {
-      setLegacyAdminLayout(undefined);
-    }
-  };
-
-  const { config, template, migration } = resolveBoards({
-    stored: optimistic[page] ?? storedDashboard?.[page],
-    local,
-    templates: { domainTemplates, publicTemplates },
-    definitions,
-    page,
-  });
 
   // An optimistic value is dropped once its own write settles; a newer one stays.
   const settle =
-    (batch: WriteBatch<PanelPage, DashboardPageConfig>) =>
+    (batch: WriteBatch<PanelPage, PageWrite>) =>
     (prev: DashboardConfig): DashboardConfig => {
       let next = prev;
-      batch.forEach((written, writtenPage) => {
+      batch.forEach(({ optimistic: written }, writtenPage) => {
         if (next[writtenPage] === written) next = _.omit(next, writtenPage);
       });
       return next;
@@ -131,24 +104,41 @@ export const useDashboardBoards = (
   useEffect(() => {
     currentWrite = async (batch) => {
       try {
-        for (const [writtenPage, written] of batch) {
-          await updateMyUserAppConfig(['dashboard', writtenPage], written);
+        for (const [writtenPage, { update, resolve: resolveStored }] of batch) {
+          // Replayed on the value the server holds now, so edits made elsewhere survive.
+          await updateMyUserAppConfig(
+            ['dashboard', writtenPage],
+            (stored: unknown) => update(resolveStored(stored)),
+          );
         }
-        await refetchMyAppConfig();
-        setOptimistic(settle(batch));
       } catch (error) {
         setOptimistic(settle(batch));
         message.error(getErrorMessage(error));
         throw error;
       }
+      // The write landed: a failed refetch keeps the optimistic copy rather than a stale one.
+      await refetchMyAppConfig().then(
+        () => setOptimistic(settle(batch)),
+        () => {},
+      );
     };
   });
 
   useEffect(() => {
-    if (!migration) return;
-    const started = dashboardWriter.migrate(page, migration, clearLocal);
-    if (started) setOptimistic((prev) => ({ ...prev, [page]: migration }));
-  });
+    const flushWhenHidden = () => {
+      if (document.visibilityState === 'hidden') dashboardWriter.flush();
+    };
+    const flush = () => {
+      dashboardWriter.flush();
+    };
+    document.addEventListener('visibilitychange', flushWhenHidden);
+    window.addEventListener('pagehide', flush);
+    return () => {
+      document.removeEventListener('visibilitychange', flushWhenHidden);
+      window.removeEventListener('pagehide', flush);
+      flush();
+    };
+  }, []);
 
   return {
     config,
@@ -158,7 +148,13 @@ export const useDashboardBoards = (
       const next = applyPageUpdate(config, update);
       if (!next) return;
       setOptimistic((prev) => ({ ...prev, [page]: next }));
-      dashboardWriter.save(page, next).catch(() => {});
+      dashboardWriter
+        .save(page, {
+          update,
+          resolve: (stored) => resolve(stored).config,
+          optimistic: next,
+        })
+        .catch(() => {});
     },
   };
 };

@@ -146,4 +146,26 @@ describe('RefreshScheduler', () => {
     scheduler.setVisible('card', true);
     expect(card).not.toHaveBeenCalled();
   });
+
+  it('skips a subscriber on a tick while its previous refresh is in flight', () => {
+    const scheduler = new RefreshScheduler();
+    const slow = vi.fn();
+    const fast = vi.fn();
+    scheduler.register('slow', { refresh: slow });
+    scheduler.register('fast', { refresh: fast });
+    const listener = vi.fn();
+    scheduler.subscribe(listener);
+
+    scheduler.setPending('slow', true);
+    expect(scheduler.isRefreshing()).toBe(true);
+    expect(listener).toHaveBeenCalledTimes(1);
+    scheduler.tick();
+    expect(slow).not.toHaveBeenCalled();
+    expect(fast).toHaveBeenCalledTimes(1);
+
+    scheduler.setPending('slow', false);
+    expect(scheduler.isRefreshing()).toBe(false);
+    scheduler.tick();
+    expect(slow).toHaveBeenCalledTimes(1);
+  });
 });

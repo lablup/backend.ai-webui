@@ -34,7 +34,7 @@ const DashboardPageContent: React.FC = () => {
 
   // The cards that still read this query refresh with it on the dashboard timer.
   const renderedKeys = useRenderedPanelKeys('project', PANEL_CATALOG);
-  const { fetchKey } = useDashboardFetchKey('page-query');
+  const { fetchKey, isPending } = useDashboardFetchKey('page-query');
   // Deferred so a refresh suspends in the background instead of dropping the
   // whole page into the route fallback (FR-3386).
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -45,8 +45,7 @@ const DashboardPageContent: React.FC = () => {
     deferredFragmentsKey.split(',').includes(fragment);
   // With no card reading the query, a tick has nothing to refresh.
   const queryFetchKey = fragmentsKey ? deferredFetchKey : INITIAL_FETCH_KEY;
-  const isRefetching =
-    fetchKey !== deferredFetchKey || fragmentsKey !== deferredFragmentsKey;
+  const isRefetching = isPending || fragmentsKey !== deferredFragmentsKey;
 
   const isAvailableTotalResourcePanel =
     useIsAvailableTotalResourceWithinResourceGroup();
@@ -115,10 +114,13 @@ const DashboardPageContent: React.FC = () => {
   );
 };
 
-const DashboardPage: React.FC = () => (
-  <DashboardRefreshProvider>
-    <DashboardPageContent />
-  </DashboardRefreshProvider>
-);
+const DashboardPage: React.FC = () => {
+  'use memo';
+  return (
+    <DashboardRefreshProvider>
+      <DashboardPageContent />
+    </DashboardRefreshProvider>
+  );
+};
 
 export default DashboardPage;

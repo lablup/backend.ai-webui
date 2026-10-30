@@ -45,7 +45,7 @@ const AdminDashboardPageContent: React.FC<AdminDashboardPageProps> = ({
   const isSuperAdmin = useCurrentUserRole() === 'superadmin';
 
   const renderedKeys = useRenderedPanelKeys(page, PANEL_CATALOG);
-  const { fetchKey } = useDashboardFetchKey('page-query');
+  const { fetchKey, isPending } = useDashboardFetchKey('page-query');
   const deferredFetchKey = useDeferredValue(fetchKey);
   // Deferred so adding a card fetches its fragment without suspending the page.
   const fragmentsKey = pageQueryFragments(renderedKeys).join(',');
@@ -54,8 +54,7 @@ const AdminDashboardPageContent: React.FC<AdminDashboardPageProps> = ({
     deferredFragmentsKey.split(',').includes(fragment);
   // With no card reading the query, a tick has nothing to refresh.
   const queryFetchKey = fragmentsKey ? deferredFetchKey : INITIAL_FETCH_KEY;
-  const isRefetching =
-    fetchKey !== deferredFetchKey || fragmentsKey !== deferredFragmentsKey;
+  const isRefetching = isPending || fragmentsKey !== deferredFragmentsKey;
 
   const isAvailableTotalResourcePanel =
     useIsAvailableTotalResourceWithinResourceGroup();
@@ -141,10 +140,13 @@ const AdminDashboardPageContent: React.FC<AdminDashboardPageProps> = ({
   );
 };
 
-const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ page }) => (
-  <DashboardRefreshProvider>
-    <AdminDashboardPageContent page={page} />
-  </DashboardRefreshProvider>
-);
+const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ page }) => {
+  'use memo';
+  return (
+    <DashboardRefreshProvider>
+      <AdminDashboardPageContent page={page} />
+    </DashboardRefreshProvider>
+  );
+};
 
 export default AdminDashboardPage;
