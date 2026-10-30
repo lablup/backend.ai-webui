@@ -13,7 +13,6 @@ import {
   acceleratorTypeErrorTarget,
   applyRule,
   getSupportedAcceleratorTypes,
-  isAcceleratorTypeUnsupported,
   matchesPreset,
   resolveAcceleratorType,
   ResourceValues,
@@ -683,8 +682,8 @@ describe('applyRule — data.changed', () => {
     expect(
       applyRule(makeValues({ allocationPreset: 'p-gpu' }), dataChanged, ctx),
     ).toEqual({});
-    expect(isAcceleratorTypeUnsupported('cuda.device', 'p-gpu', ctx)).toBe(
-      false,
+    expect(acceleratorTypeErrorTarget('cuda.device', 'p-gpu', ctx)).toBe(
+      undefined,
     );
     // No group type runs the image: R3 zeroes the accelerator, no type error.
     expect(acceleratorTypeErrorTarget('cuda.device', 'custom', ctx)).toBe(

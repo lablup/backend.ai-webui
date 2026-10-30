@@ -10,7 +10,13 @@ import ResourceAllocationFormItems, {
 } from './ResourceAllocationFormItems';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
-import { act, render, screen, waitFor } from '@testing-library/react';
+import {
+  act,
+  render,
+  renderHook,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import { Suspense } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
@@ -127,6 +133,8 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
   };
 });
 
+type FormInstance = ReturnType<typeof Form.useForm>[0];
+
 const makeImage = (supported_accelerators: string[]): Image => ({
   id: 'image-1',
   namespace: 'image',
@@ -182,11 +190,14 @@ const renderRestored = ({
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
+  const { result } = renderHook(() => Form.useForm()[0]);
+  const form = result.current;
   render(
     <RelayEnvironmentProvider environment={environment}>
       <QueryClientProvider client={queryClient}>
         <Suspense fallback={null}>
           <Form
+            form={form}
             initialValues={{
               ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
               resourceGroup: 'mock-rg',
@@ -211,23 +222,27 @@ const renderRestored = ({
       </QueryClientProvider>
     </RelayEnvironmentProvider>,
   );
+  return form;
 };
 
 const ERROR_KEY = 'session.launcher.AcceleratorTypeNotSupportedByImage';
-
-// The validators run from the data effect after mount; give every trigger
-// (and the MessageChannel-batched watcher) time to land before counting.
-const settle = () =>
-  act(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 300));
-  });
+const ITEMS = ['allocationPreset', ['resource', 'acceleratorType']];
 
 const itemOf = (element: HTMLElement) =>
   element.closest('[data-uic-field-item]')?.getAttribute('data-uic-field-item');
 
-const expectOneErrorOn = async (item: string) => {
-  await screen.findByText(ERROR_KEY);
-  await settle();
+// Wait for the data to land, then validate both items explicitly so the
+// assertions follow a completed validation, not a timer.
+const validate = async (form: FormInstance) => {
+  await screen.findByTestId('mock-resource-group-select');
+  await waitFor(() => expect(form.getFieldValue('resourceGroup')).toBeTruthy());
+  await act(async () => {
+    await form.validateFields(ITEMS).catch(() => {});
+  });
+};
+
+const expectOneErrorOn = async (form: FormInstance, item: string) => {
+  await validate(form);
   await waitFor(() => {
     const errors = screen.getAllByText(ERROR_KEY);
     expect(errors).toHaveLength(1);
@@ -235,9 +250,8 @@ const expectOneErrorOn = async (item: string) => {
   });
 };
 
-const expectNoTypeError = async () => {
-  await screen.findByTestId('mock-resource-group-select');
-  await settle();
+const expectNoTypeError = async (form: FormInstance) => {
+  await validate(form);
   expect(screen.queryAllByText(ERROR_KEY)).toHaveLength(0);
 };
 
@@ -248,38 +262,40 @@ describe('where an accelerator type the image does not support is reported', () 
     });
 
     it('a restored custom allocation: once, on the visible Resource Presets item', async () => {
-      renderRestored({ label: 'custom', image: rocmOrTpuImage });
-      await expectOneErrorOn('allocationPreset');
+      const form = renderRestored({ label: 'custom', image: rocmOrTpuImage });
+      await expectOneErrorOn(form, 'allocationPreset');
     });
 
     it("a preset's own values: no type error (the preset validator owns them)", async () => {
-      renderRestored({ label: PRESET_ID, image: rocmOrTpuImage });
-      await expectNoTypeError();
+      const form = renderRestored({ label: PRESET_ID, image: rocmOrTpuImage });
+      await expectNoTypeError(form);
     });
 
     it('an empty label: no type error (`required` covers the empty pick)', async () => {
-      renderRestored({ label: null, image: rocmOrTpuImage });
-      await expectNoTypeError();
+      const form = renderRestored({ label: null, image: rocmOrTpuImage });
+      await expectNoTypeError(form);
+      // The empty pick itself is what `required` reports.
+      expect(form.getFieldError('allocationPreset')).toHaveLength(1);
     });
 
     it('an image that runs on no group type: no type error (the accelerator is zeroed instead)', async () => {
-      renderRestored({ label: 'custom', image: cpuOnlyImage });
-      await expectNoTypeError();
+      const form = renderRestored({ label: 'custom', image: cpuOnlyImage });
+      await expectNoTypeError(form);
     });
 
     it('without a preset item: on the (hidden) accelerator item that holds the type select, as before', async () => {
-      renderRestored({
+      const form = renderRestored({
         label: 'custom',
         image: rocmOrTpuImage,
         enableResourcePresets: false,
       });
-      await expectOneErrorOn('resource_accelerator');
+      await expectOneErrorOn(form, 'resource_accelerator');
     });
   });
 
   it('free mode: once, on the accelerator item that holds the type select', async () => {
     allowCustomResourceAllocation = true;
-    renderRestored({ label: 'custom', image: rocmOrTpuImage });
-    await expectOneErrorOn('resource_accelerator');
+    const form = renderRestored({ label: 'custom', image: rocmOrTpuImage });
+    await expectOneErrorOn(form, 'resource_accelerator');
   });
 });

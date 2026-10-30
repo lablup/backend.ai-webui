@@ -229,14 +229,8 @@ const syncAcceleratorType = (
   if (next && next !== current) setAcceleratorType(draft, next, current, ctx);
 };
 
-/**
- * Which item reports an accelerator type the image does not support, or
- * `undefined` when nothing does: no type, no image/group data, zero supported
- * types (R3 zeroes the accelerator instead), a preset's own type in preset-only
- * mode (the preset validator's), or an empty label (`required` covers it).
- * `'type'` is the accelerator-type item (free mode, or no preset item to use);
- * `'preset'` is the visible `allocationPreset` item (#10710).
- */
+// Which item reports an accelerator type the image does not support, if any
+// (ADR 0016 §4: free → the type item, preset-only pseudo label → the preset item).
 export const acceleratorTypeErrorTarget = (
   value: string | undefined,
   allocationPreset: string | null | undefined,
@@ -256,16 +250,6 @@ export const acceleratorTypeErrorTarget = (
     ? 'preset'
     : undefined;
 };
-
-/** Whether any item reports the accelerator type; see `acceleratorTypeErrorTarget`. */
-export const isAcceleratorTypeUnsupported = (
-  value: string | undefined,
-  allocationPreset: string | null | undefined,
-  ctx: RuleContext,
-  supportedTypes = getSupportedAcceleratorTypes(ctx),
-) =>
-  acceleratorTypeErrorTarget(value, allocationPreset, ctx, supportedTypes) !==
-  undefined;
 
 /** What selecting `preset` writes: its slots the group has, in `g`, plus the shmem rule. */
 export const getPresetResourceFields = (

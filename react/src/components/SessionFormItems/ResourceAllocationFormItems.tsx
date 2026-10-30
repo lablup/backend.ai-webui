@@ -1180,7 +1180,8 @@ const ResourceAllocationFormItems: React.FC<
                                               {
                                                 type:
                                                   mergedResourceSlots?.[value]
-                                                    ?.display_unit || value,
+                                                    ?.human_readable_name ||
+                                                  value,
                                               },
                                             ),
                                           );
