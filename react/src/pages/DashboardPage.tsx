@@ -27,11 +27,11 @@ const DashboardPageContent: React.FC = () => {
   const userRole = useCurrentUserRole();
 
   // The cards that still read this query refresh with it on the dashboard timer.
-  const { fetchKey } = useDashboardFetchKey('page-query');
+  const { fetchKey, isPending: isRefetching } =
+    useDashboardFetchKey('page-query');
   // Deferred so a refresh suspends in the background instead of dropping the
   // whole page into the route fallback (FR-3386).
   const deferredFetchKey = useDeferredValue(fetchKey);
-  const isRefetching = fetchKey !== deferredFetchKey;
 
   const isAvailableTotalResourcePanel =
     useIsAvailableTotalResourceWithinResourceGroup();
@@ -99,10 +99,13 @@ const DashboardPageContent: React.FC = () => {
   );
 };
 
-const DashboardPage: React.FC = () => (
-  <DashboardRefreshProvider>
-    <DashboardPageContent />
-  </DashboardRefreshProvider>
-);
+const DashboardPage: React.FC = () => {
+  'use memo';
+  return (
+    <DashboardRefreshProvider>
+      <DashboardPageContent />
+    </DashboardRefreshProvider>
+  );
+};
 
 export default DashboardPage;

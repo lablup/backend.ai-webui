@@ -26,9 +26,9 @@ const AdminDashboardPageContent: React.FC = () => {
   const currentResourceGroup = useCurrentResourceGroupValue();
   const userRole = useCurrentUserRole();
 
-  const { fetchKey } = useDashboardFetchKey('page-query');
+  const { fetchKey, isPending: isRefetching } =
+    useDashboardFetchKey('page-query');
   const deferredFetchKey = useDeferredValue(fetchKey);
-  const isRefetching = fetchKey !== deferredFetchKey;
 
   const isAvailableTotalResourcePanel =
     useIsAvailableTotalResourceWithinResourceGroup();
@@ -94,10 +94,13 @@ const AdminDashboardPageContent: React.FC = () => {
   );
 };
 
-const AdminDashboardPage: React.FC = () => (
-  <DashboardRefreshProvider>
-    <AdminDashboardPageContent />
-  </DashboardRefreshProvider>
-);
+const AdminDashboardPage: React.FC = () => {
+  'use memo';
+  return (
+    <DashboardRefreshProvider>
+      <AdminDashboardPageContent />
+    </DashboardRefreshProvider>
+  );
+};
 
 export default AdminDashboardPage;

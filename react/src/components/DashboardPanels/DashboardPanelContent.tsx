@@ -39,9 +39,8 @@ const DashboardPanelContent: React.FC<DashboardPanelContentProps> = ({
   'use memo';
   const filters = useDashboardFilterContext();
   const scheduler = useDashboardRefreshScheduler();
-  const { fetchKey, manualFetchKey, refreshedAt } = useDashboardFetchKey(
-    panelRefreshId(panel.id),
-  );
+  const { fetchKey, manualFetchKey, refreshedAt, isPending } =
+    useDashboardFetchKey(panelRefreshId(panel.id));
   // Deferred so a refresh suspends in the background instead of flashing the skeleton.
   const deferredFetchKey = useDeferredValue(fetchKey);
   const deferredManualFetchKey = useDeferredValue(manualFetchKey);
@@ -66,7 +65,7 @@ const DashboardPanelContent: React.FC<DashboardPanelContentProps> = ({
     },
     fetchKey: deferredFetchKey,
     manualFetchKey: deferredManualFetchKey,
-    isRefetching: isPageRefetching || fetchKey !== deferredFetchKey,
+    isRefetching: isPageRefetching || isPending,
     onRefresh: () => scheduler?.refreshAll(),
   });
 };

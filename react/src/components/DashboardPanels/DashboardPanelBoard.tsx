@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useResourceGroupsForCurrentProject } from '../../hooks/useCurrentProject';
 import { dashboardEditModeAtom } from '../dashboardEditModeAtom';
 import DashboardBoardSection from './DashboardBoardSection';
 import DashboardBoardTabs from './DashboardBoardTabs';
@@ -73,6 +74,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
   // The id outlives `open` until after-close, so the closing modal keeps its content.
   const [settingsPanelId, setSettingsPanelId] = useState<string | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const { sftpResourceGroups } = useResourceGroupsForCurrentProject();
   const boardContainerRef = useRef<HTMLDivElement>(null);
 
   // The edit-mode atom is global: close it when leaving the page, but not when a
@@ -116,10 +118,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     : null;
 
   const filters = useDashboardFilters(page, boards);
-  useBoardItemVisibility(
-    boardContainerRef,
-    boardItems.map((item) => item.id),
-  );
+  useBoardItemVisibility(boardContainerRef);
 
   const scrollBoardEndIntoView = () => {
     // New panels append at the board's end; without this an add looks like a no-op.
@@ -197,6 +196,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
           definition={settingsTarget?.definition ?? { kind: 'custom' }}
           settings={settingsTarget?.settings}
           resourceGroupScope={resourceGroupScopeOf(filters.scope)}
+          excludedResourceGroups={_.compact(sftpResourceGroups)}
           onSubmit={(settings) => {
             if (settingsPanelId) updatePanelSettings(settingsPanelId, settings);
           }}
