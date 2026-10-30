@@ -1035,10 +1035,11 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 {(fields, { add, remove }) => (
                   <BAIDynamicList
                     items={fields}
-                    getItemKey={(field) => field.key}
-                    onAdd={() => add()}
+                    addButton={{
+                      onClick: () => add(),
+                      label: t('adminDeploymentPreset.AddResourceOpt'),
+                    }}
                     onRemove={(field) => remove(field.name)}
-                    addLabel={t('adminDeploymentPreset.AddResourceOpt')}
                     columns={[
                       {
                         key: 'name',
