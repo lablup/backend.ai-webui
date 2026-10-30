@@ -12,6 +12,7 @@ import {
   getSideNavItem,
   loginAsAdmin,
   loginAsDomainAdmin,
+  modifyConfigToml,
   notFoundPageHeading,
   navigateTo,
 } from '../utils/test-util';
@@ -817,12 +818,19 @@ test.describe(
       browser,
       request,
     }) => {
-      await api.writeSettings('domain', {
-        maskUserInfo: true,
+      // `enableInteractiveLoginAccountSwitch` is public-scope; the file turns it
+      // on so the document's `false` is a real override.
+      await api.writeSettings('domain', { maskUserInfo: true });
+      await api.writeSettings('public', {
         enableInteractiveLoginAccountSwitch: false,
       });
 
-      const page = await signInAsAdminInNewContext(browser, request);
+      const page = await (await browser.newContext()).newPage();
+      await modifyConfigToml(page, request, {
+        general: { enableInteractiveLoginAccountSwitch: true },
+      });
+      await enablePublicSlice(page, request, api.domainName);
+      await signInAsAdmin(page, request);
       await navigateTo(
         page,
         'interactive-login?callback=https://example.com&name=Test',
@@ -1128,10 +1136,13 @@ test.describe(
       page,
       request,
     }) => {
-      // config.toml enables sign-up without confirmation; the document turns
-      // it off, which brings the invitation token back.
+      // The file enables sign-up without confirmation; the document turns it
+      // off, which brings the invitation token back.
       await api.writeSettings('public', {
         allowSignupWithoutConfirmation: false,
+      });
+      await modifyConfigToml(page, request, {
+        general: { signupSupport: true, allowSignupWithoutConfirmation: true },
       });
       await enablePublicSlice(page, request, api.domainName);
       await openLoginPage(page);
