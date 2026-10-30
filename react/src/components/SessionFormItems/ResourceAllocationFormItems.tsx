@@ -41,7 +41,6 @@ import {
   getImageAcceleratorLimits,
   getSupportedAcceleratorTypes,
   isAcceleratorTypeUnsupported,
-  isPresetId,
   NON_ACCELERATOR_SLOTS,
   type ResourceAllocationFormValue,
   RuleContext,
@@ -397,9 +396,8 @@ const ResourceAllocationFormItems: React.FC<
     // without writing anything, and `dependencies` see only form fields.
     const names: NamePath[] = [];
     const label = form.getFieldValue('allocationPreset');
-    if (mode === 'free' || !isPresetId(label)) {
-      names.push(['resource', 'acceleratorType']);
-    }
+    // The type item is hidden in preset-only mode; its error goes to the preset item.
+    if (mode === 'free') names.push(['resource', 'acceleratorType']);
     if (label) names.push('allocationPreset');
     if (names.length > 0) form.validateFields(names).catch(() => {});
   });
@@ -456,7 +454,27 @@ const ResourceAllocationFormItems: React.FC<
                   resource_presets,
                   (preset) => preset?.id === value,
                 );
-                if (!preset) return;
+                if (!preset) {
+                  // Values that are not a preset's, in preset-only mode: the
+                  // type item is hidden, so its D3 error shows here instead.
+                  const type = getFieldValue(['resource', 'acceleratorType']);
+                  if (
+                    mode === 'preset-only' &&
+                    isAcceleratorTypeUnsupported(
+                      type,
+                      value,
+                      ruleContext,
+                      supportedAcceleratorTypesInRGByImage,
+                    )
+                  ) {
+                    return Promise.reject(
+                      t('session.launcher.AcceleratorTypeNotSupportedByImage', {
+                        type: mergedResourceSlots?.[type]?.display_unit || type,
+                      }),
+                    );
+                  }
+                  return;
+                }
                 // An id the deferred group's check-presets response lacks
                 // gets only the scope check, not `not-allocatable`.
                 const checked = _.find(
@@ -1145,6 +1163,7 @@ const ResourceAllocationFormItems: React.FC<
                                         value: string,
                                       ) => {
                                         if (
+                                          mode === 'free' &&
                                           isAcceleratorTypeUnsupported(
                                             value,
                                             currentAllocationPreset,
