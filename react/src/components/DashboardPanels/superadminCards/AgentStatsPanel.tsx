@@ -5,8 +5,9 @@
 import type { AgentStatsPanelQuery } from '../../../__generated__/AgentStatsPanelQuery.graphql';
 import AgentStats from '../../AgentStats';
 import type { PanelComponentProps } from '../types';
-import { BAISkeleton } from 'backend.ai-ui';
+import { BAIBoardItemErrorBoundary, BAISkeleton } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
+import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const AgentStatsContent: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
@@ -36,10 +37,17 @@ const AgentStatsContent: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
 /** The cluster's total resources and agent counts, fetched only while the card is on the board. */
 const AgentStatsPanel: React.FC<PanelComponentProps> = ({ fetchKey }) => {
   'use memo';
+  const { t } = useTranslation();
   return (
-    <Suspense fallback={<BAISkeleton />}>
-      <AgentStatsContent fetchKey={fetchKey} />
-    </Suspense>
+    <BAIBoardItemErrorBoundary
+      title={t('agentStats.AgentStats')}
+      status="error"
+      resetKeys={[fetchKey]}
+    >
+      <Suspense fallback={<BAISkeleton />}>
+        <AgentStatsContent fetchKey={fetchKey} />
+      </Suspense>
+    </BAIBoardItemErrorBoundary>
   );
 };
 
