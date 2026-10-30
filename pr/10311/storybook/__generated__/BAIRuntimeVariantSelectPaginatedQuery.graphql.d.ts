@@ -3,6 +3,7 @@ export type RuntimeVariantFilter = {
     AND?: ReadonlyArray<RuntimeVariantFilter> | null | undefined;
     NOT?: ReadonlyArray<RuntimeVariantFilter> | null | undefined;
     OR?: ReadonlyArray<RuntimeVariantFilter> | null | undefined;
+    entityId?: UUIDFilter | null | undefined;
     name?: StringFilter | null | undefined;
 };
 export type StringFilter = {
@@ -26,6 +27,12 @@ export type StringFilter = {
     notIn?: ReadonlyArray<string> | null | undefined;
     notStartsWith?: string | null | undefined;
     startsWith?: string | null | undefined;
+};
+export type UUIDFilter = {
+    equals?: string | null | undefined;
+    in?: ReadonlyArray<string> | null | undefined;
+    notEquals?: string | null | undefined;
+    notIn?: ReadonlyArray<string> | null | undefined;
 };
 export type BAIRuntimeVariantSelectPaginatedQuery$variables = {
     filter?: RuntimeVariantFilter | null | undefined;
