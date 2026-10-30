@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3edea0ee1dea3eca8dee7432e5e20aca>>
+ * @generated SignedSource<<d9c545d3143bee37cce2627325a62b4a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,7 +16,6 @@ export type RoleDetailDrawerContentV2Fragment$data = {
   readonly autoAssign: boolean;
   readonly createdAt: string;
   readonly description: string | null | undefined;
-  readonly entityId: string;
   readonly id: string;
   readonly name: string;
   readonly rolePresetId: string | null | undefined;
@@ -68,13 +67,6 @@ return {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "entityId",
       "storageKey": null
     },
     (v0/*: any*/),
@@ -313,6 +305,6 @@ return {
 };
 })();
 
-(node as any).hash = "c09b05518571bb06999e16016f24b3b0";
+(node as any).hash = "aa9296cfbced8c7b58f219747a301a82";
 
 export default node;
