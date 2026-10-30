@@ -1,0 +1,1 @@
+import{r as o}from"./iframe-p5w4bNPH.js";import{F as s}from"./FormLayoutContext-JNBw0O9F.js";function i({isRequired:e=!1,isOptional:r=!1}){const{defaultOptionality:t}=o.use(s);return!r&&(e||t==="required")}export{i as u};
