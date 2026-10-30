@@ -39,7 +39,7 @@
     "PlaceHolder": "자원 그룹을 선택해주세요"
   },
   "comp:BAIAdminRetentionPolicyTable": {
-    "Category": "종류",
+    "Category": "정책 대상",
     "CreatedAt": "생성일",
     "Disabled": "비활성화",
     "Enabled": "활성화",

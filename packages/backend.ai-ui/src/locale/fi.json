@@ -39,7 +39,7 @@
     "PlaceHolder": "Valitse resurssiryhmä"
   },
   "comp:BAIAdminRetentionPolicyTable": {
-    "Category": "Luokka",
+    "Category": "Käytännön kohde",
     "CreatedAt": "Luontipäivä",
     "Disabled": "Poistettu käytöstä",
     "Enabled": "Käytössä",

@@ -301,8 +301,10 @@ check_astryx_theme_built() {
   # The committed `astryx theme build` artifacts under
   # react/src/astryx-theme/built/ must match the theme source; `-c` recompiles
   # in memory and exits non-zero on drift. Rebuild procedure: built/index.ts.
-  # The condition resolves `backend.ai-ui/theme` to source (ADR 0013 §4).
-  NODE_OPTIONS="--conditions=@backend.ai/source" \
+  # jiti ignores --conditions, so alias the subpath to what it resolves to (ADR 0013 §4).
+  local theme
+  theme=$(cd react && node --conditions=@backend.ai/source -p "require.resolve('backend.ai-ui/theme')") || return 1
+  JITI_ALIAS="{\"backend.ai-ui/theme\":\"$theme\"}" \
     bin react astryx theme build -c \
     src/astryx-theme/built/backendai-default.ts \
     -o src/astryx-theme/built/backendai-default-built.css
