@@ -34,7 +34,6 @@ catalog:
   "@types/relay-runtime": ^19.0.3
   "@types/relay-test-utils": ^19.0.0
   babel-jest: ^30.3.0
-  babel-plugin-react-compiler: ^1.0.0
   big.js: ^7.0.1
   classnames: ^2.5.1
   dayjs: ^1.11.21
