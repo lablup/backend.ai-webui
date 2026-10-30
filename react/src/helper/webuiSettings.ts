@@ -13,6 +13,8 @@ import * as _ from 'lodash-es';
  * not carry.
  */
 export const WEBUI_SETTINGS_CONFIG_KEY = 'settings';
+/** `WebUISettingsPage`'s `?tab=` default; kept a literal there for the search-index extractor. */
+export const WEBUI_SETTINGS_DEFAULT_TAB = 'settings';
 
 export type WebUISettingScope = 'public' | 'domain';
 export type WebUISettingType = 'boolean' | 'number' | 'string' | 'stringList';
