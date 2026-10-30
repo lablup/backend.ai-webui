@@ -7,7 +7,7 @@ import './BAIDynamicList.css';
 import { Button } from '@lablup/ui-common/Button';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import * as _ from 'lodash-es';
-import { PlusIcon, XIcon } from 'lucide-react';
+import { CircleMinus, PlusIcon } from 'lucide-react';
 import React from 'react';
 
 export interface BAIDynamicListColumn<T> {
@@ -102,7 +102,7 @@ const BAIDynamicList = <T extends { key: React.Key }>({
             variant="ghost"
             label={removeLabel}
             tooltip={removeLabel}
-            icon={<XIcon size="1em" />}
+            icon={<CircleMinus size="1em" />}
             isDisabled={disabled}
             onClick={() => onRemove(item, index)}
           />
@@ -112,6 +112,7 @@ const BAIDynamicList = <T extends { key: React.Key }>({
         variant="secondary"
         label={addButton.label}
         icon={<PlusIcon size="1em" />}
+        width="100%"
         isDisabled={
           disabled || (maxItems !== undefined && items.length >= maxItems)
         }

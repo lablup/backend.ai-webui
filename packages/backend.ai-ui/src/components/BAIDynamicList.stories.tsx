@@ -113,7 +113,7 @@ export const Basic: Story = {
     docs: {
       description: {
         story:
-          'Two rows held in component state, no form. The headers show once; Add appends a row and each X removes its own.',
+          'Two rows held in component state, no form. The headers show once; Add appends a row and each minus button removes its own.',
       },
     },
   },
@@ -241,7 +241,7 @@ export const ValidationErrors: Story = {
     docs: {
       description: {
         story:
-          'Two rows share a name and the third is empty. Each message sits under its own cell, so only those rows grow and the X stays on the input line.',
+          'Two rows share a name and the third is empty. Each message sits under its own cell, so only those rows grow and the minus button stays on the input line.',
       },
     },
   },
