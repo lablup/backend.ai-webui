@@ -75,6 +75,9 @@ const MineSessions: React.FC<
           edges {
             node {
               entityId
+              lifecycle {
+                createdAt
+              }
               ...BAISessionNodesV2Fragment
             }
           }
@@ -119,6 +122,9 @@ const ProjectSessions: React.FC<
           edges {
             node {
               entityId
+              lifecycle {
+                createdAt
+              }
               ...BAISessionNodesV2Fragment
             }
           }
