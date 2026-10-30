@@ -255,6 +255,7 @@ const TotalResourceWithinResourceGroup: React.FC<
     Exclude<TotalResourceWithinResourceGroupProps['displayType'], undefined>
   >(props, {
     defaultValue: 'free',
+    valuePropName: 'displayType',
     trigger: 'onDisplayTypeChange',
     defaultValuePropName: 'defaultDisplayType',
   });
@@ -442,7 +443,12 @@ const TotalResourceWithinResourceGroup: React.FC<
             }),
         ...props.style,
       }}
-      {..._.omit(props, ['style'])}
+      {..._.omit(props, [
+        'style',
+        'displayType',
+        'defaultDisplayType',
+        'onDisplayTypeChange',
+      ])}
     >
       {asSection ? null : (
         <BAIBoardItemTitle

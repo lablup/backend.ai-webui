@@ -8,6 +8,7 @@ import TotalResourceWithinResourceGroup from '../../TotalResourceWithinResourceG
 import PanelSettingsHeaderControls from '../PanelSettingsHeaderControls';
 import type { PanelComponentProps } from '../types';
 import { Heading } from '@lablup/ui-common/Heading';
+import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIBoardItemErrorBoundary,
@@ -82,8 +83,17 @@ const ResourceGroupTotalPanel: React.FC<PanelComponentProps> = ({
   const resourceGroup = vars.resourceGroup;
   return (
     <BAIBoardItemErrorBoundary
-      title={t('webui.menu.TotalResourcesInResourceGroup')}
+      // The failed state keeps the header picks, so a pick that broke the card can be undone.
+      title={
+        <BAIFlex align="center" gap="xs" wrap="wrap">
+          <Heading level={5}>
+            {t('webui.menu.TotalResourcesInResourceGroup')}
+          </Heading>
+          <PanelSettingsHeaderControls />
+        </BAIFlex>
+      }
       status="error"
+      resetKeys={[fetchKey, resourceGroup]}
     >
       <BAIFlex direction="column" align="stretch">
         <BAIFlex
@@ -139,7 +149,9 @@ const ResourceGroupTotalPanel: React.FC<PanelComponentProps> = ({
               displayType={displayType}
             />
           </Suspense>
-        ) : null}
+        ) : (
+          <Text type="supporting">{t('dashboard.card.NoResourceGroup')}</Text>
+        )}
       </BAIFlex>
     </BAIBoardItemErrorBoundary>
   );
