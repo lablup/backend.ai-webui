@@ -77,28 +77,25 @@ Your customized layout is automatically saved and persists across browser
 sessions. The layout is stored per user, so each user can have their own
 preferred arrangement. To discard your arrangement and restore the default
 one, click the **Reset layout** button at the bottom of the edit sidebar and
-confirm. Resetting the layout also puts back the default cards you removed,
-and does not remove your custom panels.
+confirm. Resetting the layout does not remove your custom panels.
 
 :::tip
 When the WebUI is updated with new dashboard panels, those panels will
 automatically appear on your dashboard even if you have a saved custom layout.
 :::
 
-<a id="adding-and-removing-cards"></a>
-
-### Adding and Removing Cards
-
-Click the **Edit** button at the top right of the page to open the edit
-sidebar beside the board, and **Close** to hide it again. Its **Cards** list
-shows every card you can place on this dashboard, grouped by kind, with a
-search box above it. Check a card to add it to the board and uncheck it to
-remove it; you can add it back at any time. A card that cannot be used in
-this environment is listed but disabled.
-
 ### Custom Panels
 
-The **Custom panels** section of the edit sidebar lists your custom panels. A
+:::note[Experimental feature]
+The entire custom-panel feature is hidden until you turn on **Custom dashboard
+panels** in the [Experimental features](#experimental-features) section of the
+User Settings page. If you turn the feature off later, your existing custom
+panels are hidden — not deleted — and reappear with their saved board
+positions once you turn it back on.
+:::
+
+Click the **Edit** button at the top right of the page to open the custom-panel
+sidebar, and **Close** to hide it again. The sidebar lists your custom panels. A
 custom panel shows a data source you select, narrowed by a condition you define.
 The panel itself shows only a title and its data, so
 give the panel a title that describes its condition.
