@@ -201,7 +201,7 @@ test.describe(
       const roFolderName = 'e2e-test-file-create-ro-' + new Date().getTime();
 
       // Create a read-only vfolder
-      await createVFolderAndVerify(page, roFolderName, 'general', 'user', 'ro');
+      await createVFolderAndVerify(page, roFolderName, 'general', 'ro');
 
       // Open the folder explorer
       const modal = await openFolderExplorer(page, roFolderName);

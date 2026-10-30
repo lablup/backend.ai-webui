@@ -616,7 +616,6 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
           // ADR-0001: no ambient project context on the admin Data page — the
           // modal renders its own required project selector.
           project={null}
-          folderType="project"
           alertMessage={t('data.folders.AdminDataPageAlert')}
           onRequestClose={(result) => {
             toggleCreateModal();

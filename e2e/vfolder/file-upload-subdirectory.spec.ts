@@ -80,13 +80,7 @@ test.describe(
 
     test('User can upload a file to a subdirectory', async ({ page }) => {
       // 1. Create a VFolder with Read & Write permissions
-      await createVFolderAndVerify(
-        page,
-        testFolderName,
-        'general',
-        'user',
-        'rw',
-      );
+      await createVFolderAndVerify(page, testFolderName, 'general', 'rw');
 
       // 2. Open the VFolder in FolderExplorerModal
       const modal = await openFolderExplorer(page, testFolderName);

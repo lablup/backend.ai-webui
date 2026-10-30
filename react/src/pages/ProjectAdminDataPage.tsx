@@ -22,6 +22,7 @@ import VFolderNodesV2, {
 import { convertToOrderBy, handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useIsPersonalProject } from '../hooks/useAccessibleProjects';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { ProjectContext, toProjectContext } from '../types/projectContext';
@@ -119,6 +120,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
   const { t } = useTranslation();
   const isLabelable = useIsLabelableEntityType('vfolder');
   const baiClient = useSuspendedBackendaiClient();
+  const isPersonalProject = useIsPersonalProject(project.id);
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.ProjectAdminDataPage',
@@ -560,7 +562,9 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
       <FolderCreateModalV2
         open={isOpenCreateModal}
         project={project}
-        folderType="project"
+        // The manager rejects dot-prefixed project folders, so AutoMount is
+        // offered only for the admin's own personal project.
+        allowAutoMount={isPersonalProject}
         alertMessage={t('data.folders.ProjectAdminDataPageAlert')}
         onRequestClose={(result) => {
           toggleCreateModal();
