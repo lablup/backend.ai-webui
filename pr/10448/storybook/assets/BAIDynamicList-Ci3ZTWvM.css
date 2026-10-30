@@ -1,4 +1,0 @@
-/**
- @license
- Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
-*/.bai-dynamic-list{display:flex;flex-direction:column;align-items:flex-start;gap:var(--spacing-2);width:100%}.bai-dynamic-list__row{display:grid;align-items:start;column-gap:var(--spacing-2);width:100%}.bai-dynamic-list__cell{min-width:0}.bai-dynamic-list__header{color:var(--color-text-secondary);font-weight:var(--font-weight-normal)}.bai-dynamic-list__remove-slot{width:var(--size-element-md)}
