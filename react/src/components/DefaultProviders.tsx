@@ -378,7 +378,7 @@ export const DefaultProvidersForReactRoot: React.FC<{
                       <Suspense>
                         {/* <BrowserRouter> */}
                         {/* <RoutingEventHandler /> */}
-                        {/* WebMCP tool gate, ADR 0011. */}
+                        {/* WebMCP tool gate, ADR 0017. */}
                         <BAIWebMCPProvider enabled={enableWebMCP}>
                           {children}
                         </BAIWebMCPProvider>

@@ -17,7 +17,7 @@ export const docs = {
   ],
   usage: {
     description:
-      "Carries the host's runtime gate for WebMCP tools. `useWebMCPTool` registers a tool through `document.modelContext.registerTool` only when this provider is `enabled` and the browser implements the API; otherwise it never touches `document.modelContext`. Tools read, navigate or fill forms — they never submit a create or confirm action and never expose a destructive one (docs/adr/0011-webmcp-tool-surface.md).",
+      "Carries the host's runtime gate for WebMCP tools. `useWebMCPTool` registers a tool through `document.modelContext.registerTool` only when this provider is `enabled` and the browser implements the API; otherwise it never touches `document.modelContext`. Tools read, navigate or fill forms — they never submit a create or confirm action and never expose a destructive one (docs/adr/0017-webmcp-tool-surface.md).",
     bestPractices: [
       {
         guidance: true,
