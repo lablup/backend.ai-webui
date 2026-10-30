@@ -820,7 +820,7 @@
       "MyActivityTooltip": "Seçilen aralıkta yaptığınız işlemler, denetim günlüğünden.",
       "MyDeployments": "Dağıtımlarım",
       "MyRecentSessions": "Son oturumlarım",
-      "MyResourcesTooltip": "Oturumlarınızın kartın kaynak grubunda kullandığı miktar, anahtar çifti, proje ve alan adı sınırlarının en düşüğüne göre.",
+      "MyResourcesTooltip": "Oturumlarınızın tüm kaynak gruplarında ve projelerde kullandığı kaynaklar. Sınır, bu kullanım ile kartın kaynak grubunda hâlâ ayırabileceğiniz miktar ve anahtar çifti, proje ve alan sınırlarınızın hâlâ izin verdiği miktardan küçük olanın toplamıdır.",
       "MySessionsTooltip": "Bu projedeki etkin oturumlarınız, oturum türüne göre.",
       "NoActiveSessions": "Etkin oturum yok",
       "NoAllocation": "Ayrılmış kaynak yok.",

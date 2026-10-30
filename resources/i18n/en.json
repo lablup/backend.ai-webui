@@ -807,7 +807,7 @@
       "MyActivityTooltip": "Actions you performed in the selected range, from the audit log.",
       "MyDeployments": "My Deployments",
       "MyRecentSessions": "My Recent Sessions",
-      "MyResourcesTooltip": "What your sessions use in the card's resource group, against the lowest of your keypair, project and domain limits.",
+      "MyResourcesTooltip": "What your sessions use across all resource groups and projects. The limit is that usage plus the smaller of what you can still allocate in the card's resource group and under your keypair, project and domain limits.",
       "MySessionsTooltip": "Your active sessions in this project, by session type.",
       "NoActiveSessions": "No active sessions",
       "NoAllocation": "No resources are allocated.",

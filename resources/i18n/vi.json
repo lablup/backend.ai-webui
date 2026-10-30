@@ -820,7 +820,7 @@
       "MyActivityTooltip": "Các thao tác bạn đã thực hiện trong khoảng đã chọn, lấy từ nhật ký kiểm tra.",
       "MyDeployments": "Triển khai của tôi",
       "MyRecentSessions": "Phiên gần đây của tôi",
-      "MyResourcesTooltip": "Lượng tài nguyên các phiên của bạn dùng trong nhóm tài nguyên của thẻ, so với giới hạn thấp nhất của cặp khóa, dự án và miền.",
+      "MyResourcesTooltip": "Tài nguyên mà các phiên của bạn đang dùng trên mọi nhóm tài nguyên và dự án. Giới hạn là mức sử dụng đó cộng với giá trị nhỏ hơn giữa lượng bạn còn có thể cấp phát trong nhóm tài nguyên của thẻ và lượng mà giới hạn cặp khóa, dự án và miền của bạn còn cho phép.",
       "MySessionsTooltip": "Các phiên đang hoạt động của bạn trong dự án này, theo loại phiên.",
       "NoActiveSessions": "Không có phiên đang hoạt động",
       "NoAllocation": "Chưa cấp phát tài nguyên nào.",
