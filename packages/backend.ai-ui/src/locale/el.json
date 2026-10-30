@@ -39,7 +39,7 @@
     "PlaceHolder": "Επιλέξτε ομάδα πόρων"
   },
   "comp:BAIAdminRetentionPolicyTable": {
-    "Category": "Κατηγορία",
+    "Category": "Στόχος πολιτικής",
     "CreatedAt": "Ημερομηνία δημιουργίας",
     "Disabled": "Απενεργοποιημένο",
     "Enabled": "Ενεργοποιήθηκε",

@@ -7,7 +7,7 @@ paths:
 
 # React Compiler Memoization Rule
 
-This project runs **React 19.2** with **`babel-plugin-react-compiler` in annotation mode**. The compiler owns memoization. Add the `'use memo'` directive to each component and hook body, and write plain values and plain functions.
+This project runs **React 19** (the exact version is the `react` pin in `pnpm-workspace.yaml`) with the **React Compiler in annotation mode** (Oxc, through `@vitejs/plugin-react`). The compiler owns memoization. Add the `'use memo'` directive to each component and hook body, and write plain values and plain functions.
 
 ## Why
 

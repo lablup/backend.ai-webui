@@ -28,7 +28,7 @@ export interface DashboardFilters {
 /**
  * One dashboard page's shared state: the scope every card reads, from the
  * page alone, and the active board's refresh interval. Resource groups and
- * time ranges are each card's own settings (ADR 0017).
+ * time ranges are each card's own settings (ADR 0018).
  */
 export const useDashboardFilters = (
   page: PanelPage,

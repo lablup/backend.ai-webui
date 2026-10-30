@@ -39,7 +39,7 @@
     "PlaceHolder": "Seleccionar grupo de recursos"
   },
   "comp:BAIAdminRetentionPolicyTable": {
-    "Category": "Categoría",
+    "Category": "Destino de la política",
     "CreatedAt": "Fecha de creación",
     "Disabled": "Desactivado",
     "Enabled": "Activado",
