@@ -10,15 +10,17 @@ Usage: scripts/webmcp-smoke.sh [options] <webui-url>
 
 Opens <webui-url> in an agent-browser session and checks that the WebUI's
 app-shell WebMCP tools (bai_whoami, bai_get_current_page, bai_navigate) are
-registered and answer: bai_get_current_page returns a path, and bai_navigate
-rejects an unknown key with invalid_input.
+registered and answer: bai_whoami and bai_get_current_page return without an
+error, and bai_navigate rejects an unknown key with invalid_input. It never
+navigates.
 
 Options:
   --session <name>  agent-browser session to use (default: $AGENT_BROWSER_SESSION).
                     It must already be logged in to the WebUI, unless --auth is given.
   --auth <name>     Log in first with this agent-browser auth-vault profile
                     (created with `agent-browser auth save <name> --url <webui-url>
-                    --username <email> --password-stdin`).
+                    --username <email> --password-stdin`). Skipped when the session
+                    is already logged in.
   --timeout <sec>   How long to wait for login and tool registration (default: 20).
   --close           Close the session when done (default: leave it open).
   -h, --help        Show this help.
@@ -34,7 +36,7 @@ Exit codes:
   1  a tool check failed
   2  usage error, or agent-browser could not open the page
   3  not logged in: the global tools register only after login
-  4  enableWebMCP is not true in the WebUI's config.toml
+  4  the deployment does not serve enableWebMCP = true in /config.toml
   5  the browser has no WebMCP (an attached --cdp browser, or --no-webmcp)
 EOF
 }
@@ -45,11 +47,20 @@ TIMEOUT=20
 CLOSE=0
 URL=""
 
+# `shift 2` on a last argument shifts nothing, so the loop would never end.
+need_value() {
+  if [ "$2" -lt 2 ]; then
+    echo "$1 needs a value." >&2
+    usage >&2
+    exit 2
+  fi
+}
+
 while [ $# -gt 0 ]; do
   case "$1" in
-    --session) SESSION="${2:-}"; shift 2 ;;
-    --auth) AUTH="${2:-}"; shift 2 ;;
-    --timeout) TIMEOUT="${2:-}"; shift 2 ;;
+    --session) need_value "$1" "$#"; SESSION="$2"; shift 2 ;;
+    --auth) need_value "$1" "$#"; AUTH="$2"; shift 2 ;;
+    --timeout) need_value "$1" "$#"; TIMEOUT="$2"; shift 2 ;;
     --close) CLOSE=1; shift ;;
     -h | --help) usage; exit 0 ;;
     -*) echo "Unknown option: $1" >&2; usage >&2; exit 2 ;;
@@ -126,6 +137,7 @@ diagnose() {
 skip_tool_checks() {
   local reason="$1" tool
   for tool in "${TOOLS[@]}"; do row "tool.$tool" SKIP "$reason"; done
+  row "invoke.bai_whoami" SKIP "$reason"
   row "invoke.bai_get_current_page" SKIP "$reason"
   row "invoke.bai_navigate(invalid)" SKIP "$reason"
 }
@@ -152,21 +164,35 @@ report() {
   exit "$EXIT_CODE"
 }
 
+AUTH_FAILED=0
+report_auth_failure() {
+  if [ "$AUTH_FAILED" -eq 1 ]; then
+    row "auth.login" FAIL "agent-browser auth login $AUTH failed"
+    diagnose "auth_failed — check the profile with 'agent-browser auth show $AUTH'; the WebUI login form also needs its API endpoint preset (config.toml apiEndpoint)." 3
+  fi
+}
+
+READY_JS='globalThis.backendaiclient?.ready === true'
+
 echo "webmcp-smoke: $URL (session: $SESSION)"
 
 # --- 1. Open the page -------------------------------------------------------
+# A logged-in tab shows no login form, so `auth login` fails on it: only a
+# session that stays logged out below counts as an auth failure.
 if [ -n "$AUTH" ]; then
-  if ab auth login "$AUTH" >/dev/null 2>&1; then
+  if [ "$(page_js "$READY_JS")" = true ]; then
+    row "auth.login" SKIP "session already logged in"
+  elif ab auth login "$AUTH" >/dev/null 2>&1; then
     row "auth.login" PASS "auth-vault profile '$AUTH'"
   else
-    row "auth.login" FAIL "agent-browser auth login $AUTH failed"
-    diagnose "auth_failed — check the profile with 'agent-browser auth show $AUTH'; the WebUI login form also needs its API endpoint preset (config.toml apiEndpoint)." 3
+    AUTH_FAILED=1
   fi
 fi
 
 open_json="$(ab --json open "$URL" 2>/dev/null)"
 if [ "$(printf '%s' "$open_json" | jget 'd.success')" != true ]; then
   row "page.open" FAIL "$(printf '%s' "$open_json" | jget 'd.error' | head -c 160)"
+  report_auth_failure
   diagnose "open_failed — agent-browser could not load the page. For a Portless dev server set AGENT_BROWSER_IGNORE_HTTPS_ERRORS=1 and close the session so it relaunches." 2
   skip_tool_checks "page did not open"
   report
@@ -192,24 +218,31 @@ else
 fi
 
 # --- 3. Is the WebUI configured to register tools? ---------------------------
-# Same relative path the app itself fetches (react/src/hooks/useWebUIConfig.ts).
-config_state="$(page_js 'fetch(new URL("../../config.toml", location.href), { cache: "no-store" })
-  .then((r) => (r.ok ? r.text() : ""))
-  .then((t) => {
-    const m = t.match(/^\s*enableWebMCP\s*=\s*(true|false)\b/m);
-    return m ? m[1] : "unset";
+# The app's relative fetch resolves against <base href>, not the page URL
+# (react/src/hooks/useWebUIConfig.ts). Step 4 reads what the app computed.
+WEBMCP_DISABLED_HINT="webmcp_disabled — the deployment must serve enableWebMCP = true under [general] in /config.toml. A Backend.AI webserver renders that file from its own template, which has no such key today; a WebUI served from a static config.toml can set it."
+config_state="$(page_js 'fetch(new URL("../../config.toml", document.baseURI), { cache: "no-store" })
+  .then((r) => {
+    if (!r.ok) return "unreadable";
+    return r.text().then((t) => {
+      const general = t.split(/^\s*\[/m).find((s) => s.startsWith("general]")) ?? "";
+      const m = general.match(/^\s*enableWebMCP\s*=\s*(true|false)\b/m);
+      return m ? m[1] : "unset";
+    });
   })
   .catch(() => "unreadable")')"
-case "$config_state" in
+case "${config_state:-unreadable}" in
   true) row "config.enableWebMCP" PASS "true" ;;
+  unreadable) row "config.enableWebMCP" SKIP "/config.toml is unreadable; checked after login" ;;
   *)
     webmcp_ok=0
-    row "config.enableWebMCP" FAIL "${config_state:-unreadable} (config.toml [general])"
-    diagnose "webmcp_disabled — set enableWebMCP = true under [general] in the WebUI's config.toml and reload. With it off the WebUI never registers a tool." 4
+    row "config.enableWebMCP" FAIL "$config_state (/config.toml [general])"
+    diagnose "$WEBMCP_DISABLED_HINT" 4
     ;;
 esac
 
 if [ "$webmcp_ok" -eq 0 ]; then
+  report_auth_failure
   row "session.login" SKIP "WebMCP is unavailable"
   skip_tool_checks "WebMCP is unavailable"
   report
@@ -217,12 +250,26 @@ fi
 
 # --- 4. Logged in? ------------------------------------------------------------
 timeout_ms=$((TIMEOUT * 1000))
-if ab wait --fn 'globalThis.backendaiclient?.ready === true' --timeout "$timeout_ms" >/dev/null 2>&1; then
+if ab wait --fn "$READY_JS" --timeout "$timeout_ms" >/dev/null 2>&1; then
+  if [ "$AUTH_FAILED" -eq 1 ]; then
+    row "auth.login" SKIP "no login form: session already logged in"
+  fi
   row "session.login" PASS "backendaiclient ready"
 else
+  report_auth_failure
   row "session.login" FAIL "not logged in after ${TIMEOUT}s"
   diagnose "not_logged_in — WebMCP works (browser and config are fine), but the WebUI registers its global tools only after login. Log in within session '$SESSION', or pass --auth <vault-name>." 3
   skip_tool_checks "needs login"
+  report
+fi
+
+client_config="$(page_js 'globalThis.backendaiclient?._config?.enableWebMCP')"
+if [ "$client_config" = true ]; then
+  row "config.client" PASS "backendaiclient._config.enableWebMCP"
+else
+  row "config.client" FAIL "backendaiclient._config.enableWebMCP is ${client_config:-unset}"
+  diagnose "$WEBMCP_DISABLED_HINT" 4
+  skip_tool_checks "WebMCP is unavailable"
   report
 fi
 
@@ -235,7 +282,8 @@ while :; do
   for tool in "${missing[@]}"; do
     case " $names " in *" $tool "*) ;; *) still+=("$tool") ;; esac
   done
-  missing=("${still[@]}")
+  # The `+` form: an empty array expansion is unbound under set -u on bash < 4.4.
+  missing=(${still[@]+"${still[@]}"})
   if [ "${#missing[@]}" -eq 0 ] || [ "$SECONDS" -ge "$deadline" ]; then break; fi
   sleep 1
 done
@@ -247,7 +295,7 @@ if [ "${#missing[@]}" -gt 0 ]; then
     .catch(() => "")')"
 fi
 for tool in "${TOOLS[@]}"; do
-  case " ${missing[*]} " in
+  case " ${missing[*]:-} " in
     *" $tool "*)
       case " $in_page " in
         *" $tool "*)
@@ -265,6 +313,13 @@ done
 invoke() {
   ab --json webmcp invoke "$1" --params "$2" 2>/dev/null
 }
+
+whoami_json="$(invoke bai_whoami '{}')"
+if [ "$(printf '%s' "$whoami_json" | jget 'd.success && d.data.status === "completed" && !d.data.output.error')" = true ]; then
+  row "invoke.bai_whoami" PASS "role=$(printf '%s' "$whoami_json" | jget 'd.data.output.role')"
+else
+  row "invoke.bai_whoami" FAIL "$(printf '%s' "$whoami_json" | jget 'd.success ? d.data.output : (d.code || d.error)' | head -c 160)"
+fi
 
 page_json="$(invoke bai_get_current_page '{}')"
 page_path="$(printf '%s' "$page_json" | jget 'd.success && d.data.status === "completed" && !d.data.output.error && typeof d.data.output.path === "string" ? d.data.output.path : undefined')"
