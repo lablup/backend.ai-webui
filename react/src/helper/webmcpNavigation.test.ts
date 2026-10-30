@@ -109,6 +109,27 @@ describe('needsDocumentReload', () => {
         on('/admin/resource-policy', '?tab=keypair'),
       ),
     ).toBe(true);
+    expect(
+      needsDocumentReload(
+        '/admin/maintenance?tab=retention-policy',
+        on('/admin/maintenance'),
+      ),
+    ).toBe(true);
+    expect(
+      needsDocumentReload(
+        '/admin/deployments?tab=prometheus-preset',
+        on('/admin/deployments', '?tab=deployments'),
+      ),
+    ).toBe(true);
+  });
+
+  it('compares paths the way the router matches them', () => {
+    expect(needsDocumentReload('/admin/Users?tab=x', on('/admin/users'))).toBe(
+      true,
+    );
+    expect(needsDocumentReload('/admin/users?tab=x', on('/ADMIN/users'))).toBe(
+      true,
+    );
   });
 
   it('ignores a trailing slash on either side', () => {

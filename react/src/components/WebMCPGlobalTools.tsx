@@ -27,7 +27,7 @@ import {
   type WebMCPInputSchema,
   type WebMCPTool,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 

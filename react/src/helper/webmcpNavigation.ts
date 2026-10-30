@@ -84,15 +84,19 @@ export const resolveAppPath = (
   return { ok: true, to: `${pathname}${url.search}${url.hash}` };
 };
 
-// These pages query on mount and popstate only, so a router navigation to the
-// same path leaves their list stale (#10265).
+// These pages load a tab's query on mount and popstate at most, so a router
+// navigation to the same path leaves it stale (#10265). A new page using
+// `useQueryLoader` that way or `useBrowserPopstateEffect` belongs here.
 const DOCUMENT_RELOAD_PATHS: ReadonlyArray<string> = [
-  '/admin/users',
-  '/admin/resource-policy',
+  buildPath('admin', 'users'),
+  buildPath('admin', 'resource-policy'),
+  buildPath('admin', 'maintenance'),
+  buildPath('admin', 'deployments'),
 ];
 
-const withoutTrailingSlash = (pathname: string) =>
-  pathname.replace(/\/+$/, '') || '/';
+// The router matches paths case-insensitively and ignores a trailing slash.
+const routeIdentity = (pathname: string) =>
+  pathname.replace(/\/+$/, '').toLowerCase() || '/';
 
 /** Whether opening `to` from `current` takes a document load, not a router navigation. */
 export const needsDocumentReload = (
@@ -100,10 +104,10 @@ export const needsDocumentReload = (
   current: Pick<Location, 'origin' | 'pathname' | 'search'>,
 ): boolean => {
   const target = new URL(to, current.origin);
-  const pathname = withoutTrailingSlash(target.pathname);
+  const pathname = routeIdentity(target.pathname);
   return (
     DOCUMENT_RELOAD_PATHS.includes(pathname) &&
-    pathname === withoutTrailingSlash(current.pathname) &&
+    pathname === routeIdentity(current.pathname) &&
     target.search !== current.search
   );
 };
