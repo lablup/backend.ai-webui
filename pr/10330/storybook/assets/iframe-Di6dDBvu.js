@@ -1,1 +1,0 @@
-import{t as e}from"./iframe-CKTMan_J.js";e();
