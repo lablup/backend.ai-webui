@@ -1010,6 +1010,7 @@
       "FolderUsing": "menggunakan",
       "Invite": "Jemput",
       "InviteByEmail": "Jemput melalui e-mel",
+      "InviteSentMountPermissionFailed": "Jemputan telah dihantar, tetapi penetapan kebenaran lekap gagal, jadi kebenaran lekap lalai folder ({{permission}}) digunakan.",
       "InviteUsers": "Jemput pengguna",
       "KickOut": "Berhenti berkongsi",
       "KickOutConfirm": "Berhenti berkongsi dengan {{email}}?",

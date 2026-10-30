@@ -1010,6 +1010,7 @@
       "FolderUsing": "Utilisation",
       "Invite": "Inviter",
       "InviteByEmail": "Inviter par e-mail",
+      "InviteSentMountPermissionFailed": "L'invitation a été envoyée, mais la définition de la permission de montage a échoué ; la permission de montage par défaut du dossier ({{permission}}) s'applique.",
       "InviteUsers": "Inviter l'utilisateur",
       "KickOut": "Arrêter de partager",
       "KickOutConfirm": "Ne plus partager avec {{email}} ?",

@@ -1010,6 +1010,7 @@
       "FolderUsing": "Verwendung von",
       "Invite": "Einladen",
       "InviteByEmail": "Per E-Mail einladen",
+      "InviteSentMountPermissionFailed": "Die Einladung wurde gesendet, aber die Mount-Berechtigung konnte nicht gesetzt werden; es gilt die Standard-Mount-Berechtigung des Ordners ({{permission}}).",
       "InviteUsers": "Benutzer einladen",
       "KickOut": "Hör auf zu teilen",
       "KickOutConfirm": "Nicht mehr mit {{email}} teilen?",

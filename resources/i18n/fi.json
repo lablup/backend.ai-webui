@@ -1010,6 +1010,7 @@
       "FolderUsing": "Käyttämällä",
       "Invite": "Kutsu",
       "InviteByEmail": "Kutsu sähköpostitse",
+      "InviteSentMountPermissionFailed": "Kutsu lähetettiin, mutta liitosoikeuden asettaminen epäonnistui; kansion oletusliitosoikeus ({{permission}}) on voimassa.",
       "InviteUsers": "Kutsua käyttäjää",
       "KickOut": "Lopeta jakaminen",
       "KickOutConfirm": "Lopeta jakaminen {{email}} kanssa?",

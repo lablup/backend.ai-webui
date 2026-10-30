@@ -5,6 +5,7 @@
 import '../../__test__/matchMedia.mock.js';
 import '../../__test__/resizeObserver.mock.js';
 import type { InviteFolderSettingModalTestQuery } from '../__generated__/InviteFolderSettingModalTestQuery.graphql';
+import { BAIAppProvider } from '../app-shim';
 import InviteFolderSettingModal from './InviteFolderSettingModal';
 import '@testing-library/jest-dom';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
@@ -16,6 +17,7 @@ import {
   useLazyLoadQuery,
 } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
+import type { MockResolverContext } from 'relay-test-utils/lib/RelayMockPayloadGenerator';
 import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockEnvironment';
 
 /**
@@ -161,11 +163,27 @@ const RESOLVERS = {
     ],
   }),
   VFolderMountPoliciesPayload: () => ({
-    items: [{ id: 'policy-1', userId: USER2_ID, permission: 'READ_WRITE' }],
+    items: [
+      { id: 'policy-1', userId: USER2_ID, permission: 'READ_WRITE' },
+      // The user-id invite wrote its policy row when it was sent.
+      { id: 'policy-3', userId: USER3_ID, permission: 'READ_ONLY' },
+    ],
   }),
-  // The select's search queries get an empty page, so a typed address is
+  // The select's search finds user3 by address; any other typed address is
   // offered as an e-mail invite.
-  UserV2Connection: () => ({ edges: [] }),
+  UserV2Connection: (context: MockResolverContext) => ({
+    edges: JSON.stringify(context.args ?? {}).includes('user3')
+      ? [
+          {
+            node: {
+              id: btoa(`UserV2:${USER3_ID}`),
+              entityId: USER3_ID,
+              basicInfo: { email: 'user3@example.com' },
+            },
+          },
+        ]
+      : [],
+  }),
 };
 
 const Harness: React.FC<{ onRequestClose?: () => void }> = ({
@@ -322,9 +340,12 @@ const renderModal = async () => {
   const environment = createMockEnvironment();
   render(
     <RelayEnvironmentProvider environment={environment}>
-      <Suspense fallback={null}>
-        <Harness />
-      </Suspense>
+      {/* Hosts the app-shim toasts the invite flow reports through. */}
+      <BAIAppProvider>
+        <Suspense fallback={null}>
+          <Harness />
+        </Suspense>
+      </BAIAppProvider>
     </RelayEnvironmentProvider>,
   );
   // The harness query first, then the modal body's own query.
@@ -379,7 +400,7 @@ describe('InviteFolderSettingModal (#10295)', () => {
       screen.getByText('nobody@example.com').closest('tr'),
     ).toHaveTextContent('data.ReadOnly');
     // A share sent to a user id has no address of its own; the recipient
-    // node names the person. Without a policy row it also shows the default.
+    // node names the person. Its READ_ONLY policy row sets the level.
     expect(
       screen.getByText('user3@example.com').closest('tr'),
     ).toHaveTextContent('data.ReadOnly');
@@ -695,7 +716,102 @@ describe('InviteFolderSettingModal (#10295)', () => {
     ).toEqual({ vfolderId: VFOLDER_ID, input: { userId: USER2_ID } });
   });
 
-  it('cancels a pending invitation', async () => {
+  it('keeps the share and tells the owner when the mount level fails to apply', async () => {
+    installPopoverMock();
+    const user = userEvent.setup();
+    const environment = await renderModal();
+    const listQueries = () =>
+      operationNames(environment).filter(
+        (name) => name === 'InviteFolderSettingModalQuery',
+      ).length;
+    const listQueriesBefore = listQueries();
+
+    await user.click(screen.getByText('data.folders.SearchUser'));
+    await resolvePendingQueries(environment);
+    const searchBox = screen
+      .getAllByRole('combobox', h)
+      .find((el) => el.tagName === 'INPUT');
+    await user.type(searchBox!, 'user3');
+    await user.click(
+      await findOptionResolvingQueries(environment, /user3@example\.com/),
+    );
+    await user.click(
+      screen.getByRole('button', { name: 'data.folders.Invite' }),
+    );
+    await resolvePendingQueries(environment);
+    await waitFor(() =>
+      expect(operationNames(environment)).toContain(
+        'InviteFolderSettingModalCreateShareMutation',
+      ),
+    );
+    await resolveMutation(
+      environment,
+      'InviteFolderSettingModalCreateShareMutation',
+    );
+    await waitFor(() =>
+      expect(operationNames(environment)).toContain(
+        'InviteFolderSettingModalSetMountPolicyMutation',
+      ),
+    );
+    const policyOperation = environment.mock
+      .getAllOperations()
+      .find(
+        (candidate) =>
+          candidate.request.node.params.name ===
+          'InviteFolderSettingModalSetMountPolicyMutation',
+      );
+    await act(async () => {
+      environment.mock.reject(policyOperation!, new Error('policy refused'));
+    });
+
+    // The share was sent at the folder default: the owner is told which
+    // level applies and the list refetches so the new row shows.
+    expect(
+      await screen.findByText('data.folders.InviteSentMountPermissionFailed'),
+    ).toBeInTheDocument();
+    await waitFor(() =>
+      expect(listQueries()).toBeGreaterThan(listQueriesBefore),
+    );
+  });
+
+  it('cancels a pending user invite and drops the mount policy it wrote', async () => {
+    const user = userEvent.setup();
+    const environment = await renderModal();
+
+    await user.click(
+      screen.getAllByRole('button', {
+        name: 'data.folders.CancelInvitation',
+      })[1],
+    );
+    await user.click(
+      await screen.findByRole('button', { name: 'button.Confirm' }),
+    );
+
+    await waitFor(() =>
+      expect(operationNames(environment)).toContain(
+        'InviteFolderSettingModalCancelShareMutation',
+      ),
+    );
+    expect(
+      await resolveMutation(
+        environment,
+        'InviteFolderSettingModalCancelShareMutation',
+      ),
+    ).toEqual({ id: PENDING_USER_SHARE_ID });
+    await waitFor(() =>
+      expect(operationNames(environment)).toContain(
+        'InviteFolderSettingModalUnsetMountPolicyMutation',
+      ),
+    );
+    expect(
+      await resolveMutation(
+        environment,
+        'InviteFolderSettingModalUnsetMountPolicyMutation',
+      ),
+    ).toEqual({ vfolderId: VFOLDER_ID, input: { userId: USER3_ID } });
+  });
+
+  it('cancels a pending e-mail invitation', async () => {
     const user = userEvent.setup();
     const environment = await renderModal();
 

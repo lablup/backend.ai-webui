@@ -1010,6 +1010,7 @@
       "FolderUsing": "Utilizar",
       "Invite": "Convidar",
       "InviteByEmail": "Convidar por e-mail",
+      "InviteSentMountPermissionFailed": "O convite foi enviado, mas a definição da permissão de montagem falhou; aplica-se a permissão de montagem padrão da pasta ({{permission}}).",
       "InviteUsers": "Convite o usuário",
       "KickOut": "Pare de compartilhar",
       "KickOutConfirm": "Deixar de partilhar com {{email}}?",

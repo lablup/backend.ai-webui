@@ -1006,6 +1006,7 @@
       "FolderUsing": "กำลังใช้",
       "Invite": "เชิญ",
       "InviteByEmail": "เชิญทางอีเมล",
+      "InviteSentMountPermissionFailed": "ส่งคำเชิญแล้ว แต่ตั้งค่าสิทธิ์การเมาต์ไม่สำเร็จ จึงใช้สิทธิ์การเมาต์เริ่มต้นของโฟลเดอร์ ({{permission}})",
       "InviteUsers": "เชิญผู้ใช้",
       "KickOut": "หยุดการแบ่งปัน",
       "KickOutConfirm": "หยุดการแบ่งปันกับ {{email}}?",

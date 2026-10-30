@@ -1010,6 +1010,7 @@
       "FolderUsing": "사용량",
       "Invite": "초대",
       "InviteByEmail": "이메일로 초대",
+      "InviteSentMountPermissionFailed": "초대는 보냈지만 마운트 권한 설정에 실패해 폴더의 기본 마운트 권한({{permission}})으로 설정되었습니다.",
       "InviteUsers": "사용자 초대",
       "KickOut": "공유 중지",
       "KickOutConfirm": "{{email}}과(와)의 공유를 중지하시겠습니까?",

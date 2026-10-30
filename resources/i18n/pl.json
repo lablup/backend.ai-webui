@@ -1010,6 +1010,7 @@
       "FolderUsing": "Korzystanie z",
       "Invite": "Zaproś",
       "InviteByEmail": "Zaproś przez e-mail",
+      "InviteSentMountPermissionFailed": "Zaproszenie zostało wysłane, ale ustawienie uprawnienia montowania nie powiodło się; obowiązuje domyślne uprawnienie montowania folderu ({{permission}}).",
       "InviteUsers": "Zaproś użytkownika",
       "KickOut": "Przestań dzielić się",
       "KickOutConfirm": "Przestać udostępniać {{email}}?",

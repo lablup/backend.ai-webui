@@ -1010,6 +1010,7 @@
       "FolderUsing": "使用量",
       "Invite": "招待",
       "InviteByEmail": "メールで招待",
+      "InviteSentMountPermissionFailed": "招待は送信されましたが、マウント権限の設定に失敗したため、フォルダの既定のマウント権限（{{permission}}）が適用されます。",
       "InviteUsers": "ユーザーを招待します",
       "KickOut": "共有を停止します",
       "KickOutConfirm": "{{email}}との共有を停止しますか？",

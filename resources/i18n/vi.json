@@ -1010,6 +1010,7 @@
       "FolderUsing": "sử dụng",
       "Invite": "Mời",
       "InviteByEmail": "Mời qua e-mail",
+      "InviteSentMountPermissionFailed": "Lời mời đã được gửi, nhưng đặt quyền mount thất bại nên áp dụng quyền mount mặc định của thư mục ({{permission}}).",
       "InviteUsers": "Mời người dùng",
       "KickOut": "Ngừng chia sẻ",
       "KickOutConfirm": "Dừng chia sẻ với {{email}}?",

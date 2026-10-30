@@ -997,6 +997,7 @@
       "FolderUsing": "Using",
       "Invite": "Invite",
       "InviteByEmail": "Invite by e-mail",
+      "InviteSentMountPermissionFailed": "The invitation was sent, but setting the mount permission failed, so the folder's default mount permission ({{permission}}) applies.",
       "InviteUsers": "Invite User",
       "KickOut": "Stop sharing",
       "KickOutConfirm": "Stop sharing with {{email}}?",

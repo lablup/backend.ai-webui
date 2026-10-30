@@ -1010,6 +1010,7 @@
       "FolderUsing": "Kullanma",
       "Invite": "Davet et",
       "InviteByEmail": "E-posta ile davet et",
+      "InviteSentMountPermissionFailed": "Davet gönderildi, ancak bağlama izni ayarlanamadı; klasörün varsayılan bağlama izni ({{permission}}) geçerlidir.",
       "InviteUsers": "Kullanıcıyı davet et",
       "KickOut": "Paylaşmayı Durdur",
       "KickOutConfirm": "{{email}} ile paylaşmayı keser misiniz?",

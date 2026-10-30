@@ -1010,6 +1010,7 @@
       "FolderUsing": "使用",
       "Invite": "邀请",
       "InviteByEmail": "通过电子邮件邀请",
+      "InviteSentMountPermissionFailed": "邀请已发送，但设置挂载权限失败，因此应用文件夹的默认挂载权限（{{permission}}）。",
       "InviteUsers": "邀请用户",
       "KickOut": "停止共享",
       "KickOutConfirm": "停止与 {{email}} 共享？",

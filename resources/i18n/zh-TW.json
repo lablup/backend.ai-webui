@@ -1010,6 +1010,7 @@
       "FolderUsing": "使用",
       "Invite": "邀請",
       "InviteByEmail": "透過電子郵件邀請",
+      "InviteSentMountPermissionFailed": "邀請已送出，但設定掛載權限失敗，因此套用資料夾的預設掛載權限（{{permission}}）。",
       "InviteUsers": "邀請用戶",
       "KickOut": "停止共享",
       "KickOutConfirm": "停止与 {{email}} 共享？",

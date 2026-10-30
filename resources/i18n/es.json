@@ -1010,6 +1010,7 @@
       "FolderUsing": "Utilizando",
       "Invite": "Invitar",
       "InviteByEmail": "Invitar por correo electrónico",
+      "InviteSentMountPermissionFailed": "La invitación se envió, pero no se pudo establecer el permiso de montaje; se aplica el permiso de montaje predeterminado de la carpeta ({{permission}}).",
       "InviteUsers": "Invitar al usuario",
       "KickOut": "Dejar de compartir",
       "KickOutConfirm": "¿Dejar de compartir con {{email}}?",

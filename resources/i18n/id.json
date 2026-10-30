@@ -1010,6 +1010,7 @@
       "FolderUsing": "Menggunakan",
       "Invite": "Undang",
       "InviteByEmail": "Undang melalui e-mail",
+      "InviteSentMountPermissionFailed": "Undangan terkirim, tetapi pengaturan izin mount gagal, sehingga izin mount bawaan folder ({{permission}}) berlaku.",
       "InviteUsers": "Undang Pengguna",
       "KickOut": "Berhenti berbagi",
       "KickOutConfirm": "Berhenti berbagi dengan {{email}}?",

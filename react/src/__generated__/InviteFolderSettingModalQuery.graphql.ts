@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1f0f47acd5622c5adf2eb44c2d26953d>>
+ * @generated SignedSource<<6e32ec31f7d043b59db9e247827581bb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -74,6 +74,18 @@ v1 = {
   "name": "vfolderId"
 },
 v2 = [
+  {
+    "kind": "Literal",
+    "name": "filter",
+    "value": {
+      "status": {
+        "in": [
+          "PENDING",
+          "ACCEPTED"
+        ]
+      }
+    }
+  },
   {
     "kind": "Literal",
     "name": "limit",
@@ -361,16 +373,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "f1b625bd7517f2854795df9579554f2f",
+    "cacheID": "263f60ed3a4b85e2ee48ef9403c55f4f",
     "id": null,
     "metadata": {},
     "name": "InviteFolderSettingModalQuery",
     "operationKind": "query",
-    "text": "query InviteFolderSettingModalQuery(\n  $vfolderId: UUID!\n  $scope: EntityShareScope!\n) {\n  entityShares(scope: $scope, limit: 100) {\n    edges {\n      node {\n        id\n        entityId\n        recipientEntityType\n        recipientEntityId\n        recipientEmail\n        status\n        permissions\n        recipientEntity {\n          __typename\n          ... on UserV2 {\n            entityId\n            basicInfo {\n              email\n            }\n          }\n          ... on Node {\n            __isNode: __typename\n            id\n          }\n          ... on ArtifactRegistry {\n            id\n          }\n        }\n      }\n    }\n  }\n  vfolderMountPolicies(vfolderId: $vfolderId) {\n    items {\n      id\n      userId\n      permission\n    }\n  }\n}\n"
+    "text": "query InviteFolderSettingModalQuery(\n  $vfolderId: UUID!\n  $scope: EntityShareScope!\n) {\n  entityShares(scope: $scope, filter: {status: {in: [PENDING, ACCEPTED]}}, limit: 100) {\n    edges {\n      node {\n        id\n        entityId\n        recipientEntityType\n        recipientEntityId\n        recipientEmail\n        status\n        permissions\n        recipientEntity {\n          __typename\n          ... on UserV2 {\n            entityId\n            basicInfo {\n              email\n            }\n          }\n          ... on Node {\n            __isNode: __typename\n            id\n          }\n          ... on ArtifactRegistry {\n            id\n          }\n        }\n      }\n    }\n  }\n  vfolderMountPolicies(vfolderId: $vfolderId) {\n    items {\n      id\n      userId\n      permission\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "8de0b6c20dd9b8ca3c27eb1c5d2f1e31";
+(node as any).hash = "d6c1735e79d681f0bff037b984ee0d4a";
 
 export default node;

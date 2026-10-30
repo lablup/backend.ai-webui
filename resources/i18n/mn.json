@@ -1010,6 +1010,7 @@
       "FolderUsing": "Ашиглаж байна",
       "Invite": "Урих",
       "InviteByEmail": "И-мэйлээр урих",
+      "InviteSentMountPermissionFailed": "Урилга илгээгдсэн ч mount эрхийг тохируулж чадсангүй тул хавтасны анхдагч mount эрх ({{permission}}) үйлчилнэ.",
       "InviteUsers": "Урих хэрэглэгч",
       "KickOut": "Хуваалцах гэж",
       "KickOutConfirm": "{{Имэйл}} -тай хуваалцахаа болих уу?",

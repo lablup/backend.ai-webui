@@ -537,13 +537,25 @@ const InviteFolderSettingModalBody: React.FC<{
         },
       });
       if (inviteTarget.kind === 'user') {
-        await setMountPolicy({
-          vfolderId,
-          input: {
-            userId: inviteTarget.userId,
-            permission: toMountPermission(mountLevel),
-          },
-        });
+        try {
+          await setMountPolicy({
+            vfolderId,
+            input: {
+              userId: inviteTarget.userId,
+              permission: toMountPermission(mountLevel),
+            },
+          });
+        } catch {
+          // The share exists at the folder default now; show it and say so.
+          message.warning(
+            t('data.folders.InviteSentMountPermissionFailed', {
+              permission: mountLevelLabel(defaultMountLevel),
+            }),
+          );
+          setRecipient(null);
+          updateFetchKey();
+          return;
+        }
       }
       message.success(t('data.invitation.Invited'));
       setRecipient(null);
@@ -791,7 +803,11 @@ const SharedUserTable: React.FC<{
           $vfolderId: UUID!
           $scope: EntityShareScope!
         ) {
-          entityShares(scope: $scope, limit: 100) {
+          entityShares(
+            scope: $scope
+            filter: { status: { in: [PENDING, ACCEPTED] } }
+            limit: 100
+          ) {
             edges {
               node {
                 id
@@ -944,6 +960,11 @@ const SharedUserTable: React.FC<{
   const handleCancelInvitation = async (row: ShareRow) => {
     try {
       await cancelShare({ id: row.shareId });
+      // The invite wrote the policy row; left behind it would outrank the
+      // folder default the next time this user is shared the folder.
+      if (row.userId && policyByUserId[row.userId]) {
+        await unsetMountPolicy({ vfolderId, input: { userId: row.userId } });
+      }
       message.success(t('data.invitation.InvitationCanceled'));
       updateFetchKey();
     } catch (error) {
