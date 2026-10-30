@@ -39,10 +39,11 @@ const PreStartActionsFormList: React.FC<PreStartActionsFormListProps> = ({
         {(fields, { add, remove }) => (
           <BAIDynamicList
             items={fields}
-            getItemKey={(field) => field.key}
-            onAdd={() => add({ action: '', args: '{}' })}
+            addButton={{
+              onClick: () => add({ action: '', args: '{}' }),
+              label: t('adminDeploymentPreset.modelDef.AddPreStartAction'),
+            }}
             onRemove={(field) => remove(field.name)}
-            addLabel={t('adminDeploymentPreset.modelDef.AddPreStartAction')}
             columns={[
               {
                 key: 'action',
