@@ -2419,6 +2419,7 @@
     "UserAssignmentsPartialFailureDescription": "Einige Benutzerzuweisungen sind fehlgeschlagen. Bitte überprüfen Sie die Einträge.",
     "UserNotAssigned": "Benutzer ist dieser Rolle nicht zugewiesen.",
     "UserRevoked": "Benutzer wurde erfolgreich aus der Rolle entfernt.",
+    "UsersAlreadyAssignedSkipped": "{{count}} Benutzer übersprungen, die diese Rolle bereits haben: {{names}}",
     "UsersAssigned": "Benutzer wurden der Rolle erfolgreich zugewiesen.",
     "ViewPresets": "Voreinstellungen anzeigen",
     "operations": {

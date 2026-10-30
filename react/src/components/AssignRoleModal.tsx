@@ -34,11 +34,16 @@ interface FailedAssignment {
   message: string;
 }
 
+// `BulkAssignRoleError` carries no reason code, so "already holds the role" is
+// recognised by the manager's message; anything unrecognised stays a failure.
+const ALREADY_ASSIGNED_MESSAGE = /is already assigned to user/;
+const MAX_SKIPPED_NAMES = 3;
+
 /**
- * Assigns users to a role via `adminBulkAssignRole` (FR-3357). On failure the
- * modal stays open with only the failed users selected (error border) and
- * `BAIBulkErrorModal` lists each of them. A user already holding the role
- * comes back in `failed`; any other refusal rejects the whole request.
+ * Assigns users to a role via `adminBulkAssignRole` (FR-3357). Users who
+ * already hold the role are skipped with an info toast. On failure the modal
+ * stays open with only the failed users selected (error border) and
+ * `BAIBulkErrorModal` lists each of them.
  */
 const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
   roleId,
@@ -87,6 +92,18 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
   const userLabelOf = (userId: string) =>
     userLabelsRef.current.get(userId) ?? userId;
 
+  const notifySkipped = (userIds: string[]) => {
+    const labels = userIds.map(userLabelOf);
+    const shown = labels.slice(0, MAX_SKIPPED_NAMES).join(', ');
+    const rest = labels.length - MAX_SKIPPED_NAMES;
+    message.info(
+      t('rbac.UsersAlreadyAssignedSkipped', {
+        count: labels.length,
+        names: rest > 0 ? `${shown} +${rest}` : shown,
+      }),
+    );
+  };
+
   // Keep only the failed users selected so the next Assign retries them.
   const markFailures = (failures: FailedAssignment[]) => {
     const failedIds = failures.map((failure) => failure.key);
@@ -110,13 +127,22 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
           ...(projectId ? { projectId } : {}),
         },
       });
-      const failed = result.adminBulkAssignRole?.failed ?? [];
+      const [skipped, failed] = _.partition(
+        result.adminBulkAssignRole?.failed ?? [],
+        (failure) => ALREADY_ASSIGNED_MESSAGE.test(failure.message),
+      );
+      const hasAssigned = !_.isEmpty(result.adminBulkAssignRole?.assigned);
+      if (!_.isEmpty(skipped)) {
+        notifySkipped(skipped.map((failure) => failure.userId));
+      }
       if (_.isEmpty(failed)) {
-        message.success(t('rbac.UsersAssigned'));
-        onRequestClose(true);
+        if (hasAssigned) {
+          message.success(t('rbac.UsersAssigned'));
+        }
+        onRequestClose(hasAssigned);
         return;
       }
-      if (!_.isEmpty(result.adminBulkAssignRole?.assigned)) {
+      if (hasAssigned) {
         setHasAssignedAny(true);
       }
       failed.forEach((failure) =>

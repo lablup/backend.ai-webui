@@ -2417,6 +2417,7 @@
     "UserAssignmentsPartialFailureDescription": "Beberapa penetapan pengguna gagal. Sila semak item berkenaan.",
     "UserNotAssigned": "Pengguna tidak ditugaskan kepada peranan ini.",
     "UserRevoked": "Pengguna berjaya dialih keluar daripada peranan.",
+    "UsersAlreadyAssignedSkipped": "Melangkau {{count}} pengguna yang sudah mempunyai peranan ini: {{names}}",
     "UsersAssigned": "Pengguna berjaya ditugaskan kepada peranan.",
     "ViewPresets": "Lihat Pratetap",
     "operations": {

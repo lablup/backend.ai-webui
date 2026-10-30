@@ -2419,6 +2419,7 @@
     "UserAssignmentsPartialFailureDescription": "Niektóre przypisania użytkowników nie powiodły się. Sprawdź pozycje.",
     "UserNotAssigned": "Użytkownik nie jest przypisany do tej roli.",
     "UserRevoked": "Użytkownik został pomyślnie usunięty z roli.",
+    "UsersAlreadyAssignedSkipped": "Pominięto użytkowników, którzy mają już tę rolę ({{count}}): {{names}}",
     "UsersAssigned": "Użytkownicy zostali pomyślnie przypisani do roli.",
     "ViewPresets": "Wyświetl ustawienia wstępne",
     "operations": {

@@ -2417,6 +2417,7 @@
     "UserAssignmentsPartialFailureDescription": "Osa käyttäjämäärityksistä epäonnistui. Tarkista kohteet.",
     "UserNotAssigned": "Käyttäjää ei ole määritetty tähän rooliin.",
     "UserRevoked": "Käyttäjä poistettu roolista onnistuneesti.",
+    "UsersAlreadyAssignedSkipped": "Ohitettiin {{count}} käyttäjää, joilla tämä rooli on jo: {{names}}",
     "UsersAssigned": "Käyttäjät määritetty rooliin onnistuneesti.",
     "ViewPresets": "Näytä esiasetukset",
     "operations": {

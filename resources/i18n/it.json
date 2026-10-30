@@ -2417,6 +2417,7 @@
     "UserAssignmentsPartialFailureDescription": "Alcune assegnazioni utente non sono riuscite. Controlla gli elementi.",
     "UserNotAssigned": "L'utente non è assegnato a questo ruolo.",
     "UserRevoked": "Utente rimosso dal ruolo con successo.",
+    "UsersAlreadyAssignedSkipped": "Saltati {{count}} utenti che hanno già questo ruolo: {{names}}",
     "UsersAssigned": "Utenti assegnati al ruolo con successo.",
     "ViewPresets": "Visualizza preimpostazioni",
     "operations": {

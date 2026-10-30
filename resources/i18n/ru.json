@@ -2417,6 +2417,7 @@
     "UserAssignmentsPartialFailureDescription": "Не удалось применить некоторые назначения пользователей. Проверьте элементы.",
     "UserNotAssigned": "Пользователь не назначен на эту роль.",
     "UserRevoked": "Пользователь успешно удалён из роли.",
+    "UsersAlreadyAssignedSkipped": "Пропущены пользователи, у которых уже есть эта роль ({{count}}): {{names}}",
     "UsersAssigned": "Пользователи успешно назначены на роль.",
     "ViewPresets": "Просмотреть пресеты",
     "operations": {

@@ -2420,6 +2420,7 @@
     "UserAssignmentsPartialFailureDescription": "Beberapa penetapan pengguna gagal. Silakan periksa itemnya.",
     "UserNotAssigned": "Pengguna tidak ditetapkan ke peran ini.",
     "UserRevoked": "Pengguna berhasil dihapus dari peran.",
+    "UsersAlreadyAssignedSkipped": "Melewati {{count}} pengguna yang sudah memiliki peran ini: {{names}}",
     "UsersAssigned": "Pengguna berhasil ditetapkan ke peran.",
     "ViewPresets": "Lihat Preset",
     "operations": {

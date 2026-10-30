@@ -2419,6 +2419,7 @@
     "UserAssignmentsPartialFailureDescription": "일부 사용자 할당에 실패했습니다. 항목을 확인해주세요.",
     "UserNotAssigned": "사용자가 이 역할에 할당되어 있지 않습니다.",
     "UserRevoked": "사용자가 역할에서 제거되었습니다.",
+    "UsersAlreadyAssignedSkipped": "이미 이 역할을 가진 사용자 {{count}}명은 건너뛰었습니다: {{names}}",
     "UsersAssigned": "사용자들이 역할에 할당되었습니다.",
     "ViewPresets": "프리셋 확인",
     "operations": {

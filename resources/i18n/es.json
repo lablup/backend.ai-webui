@@ -2417,6 +2417,7 @@
     "UserAssignmentsPartialFailureDescription": "Algunas asignaciones de usuarios han fallado. Compruebe los elementos.",
     "UserNotAssigned": "El usuario no está asignado a este rol.",
     "UserRevoked": "Usuario eliminado del rol correctamente.",
+    "UsersAlreadyAssignedSkipped": "Se omitieron {{count}} usuario(s) que ya tienen este rol: {{names}}",
     "UsersAssigned": "Usuarios asignados al rol correctamente.",
     "ViewPresets": "Ver preajustes",
     "operations": {

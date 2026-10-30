@@ -1963,6 +1963,7 @@
         "rbac.UnsavedPermissionChanges",
         "rbac.UserAssignmentsPartialFailureDescription",
         "rbac.UserRevoked",
+        "rbac.UsersAlreadyAssignedSkipped",
         "rbac.UsersAssigned",
         "rbac.ViewPresets",
         "table.SettingTable"
