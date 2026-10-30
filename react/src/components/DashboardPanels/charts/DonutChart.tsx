@@ -37,18 +37,19 @@ const styles = stylex.create({
   name: { flex: 1, minWidth: 0 },
   // Long names truncate rather than widen the legend.
   nameText: { maxWidth: 200 },
-  number: { minWidth: '3.5em', textAlign: 'end' },
-  percent: { minWidth: '4.5em', textAlign: 'end' },
+  number: { minWidth: '2.5em', textAlign: 'end' },
+  percent: { minWidth: '3.5em', textAlign: 'end' },
 });
 
 /** One legend line: name, count and share, divided from the next like table rows. */
-const LegendLine: React.FC<{ height: number; children: React.ReactNode }> = ({
-  height,
-  children,
-}) => (
+const LegendLine: React.FC<{
+  height: number;
+  isCompact?: boolean;
+  children: React.ReactNode;
+}> = ({ height, isCompact, children }) => (
   <BAIFlex
     align="center"
-    gap="md"
+    gap={isCompact ? 'xs' : 'md'}
     wrap="nowrap"
     style={{
       height,
@@ -270,7 +271,11 @@ const DonutChart: React.FC<DonutChartProps> = ({
         gap="md"
         aria-label={label}
         role="group"
-        style={{ flex: 'none', maxWidth: '100%' }}
+        style={
+          density.columns === 2
+            ? { flex: 'none', width: '100%' }
+            : { flex: 'none', maxWidth: '100%' }
+        }
       >
         {_.chunk(
           legendRows,
@@ -280,10 +285,18 @@ const DonutChart: React.FC<DonutChartProps> = ({
             key={columnIndex}
             direction="column"
             align="stretch"
-            style={{ width: 'max-content', maxWidth: '100%' }}
+            // Two columns share the card's width; one column sizes to its lines.
+            style={
+              density.columns === 2
+                ? { flex: '1 1 0', minWidth: 0 }
+                : { width: 'max-content', maxWidth: '100%' }
+            }
           >
             {density.hasHeader && (
-              <LegendLine height={density.rowHeight}>
+              <LegendLine
+                height={density.rowHeight}
+                isCompact={density.columns === 2}
+              >
                 <Text size="sm" weight="semibold" xstyle={styles.name}>
                   {columnLabels.name}
                 </Text>
@@ -296,7 +309,11 @@ const DonutChart: React.FC<DonutChartProps> = ({
               </LegendLine>
             )}
             {columnRows.map((row) => (
-              <LegendLine key={row.key} height={density.rowHeight}>
+              <LegendLine
+                key={row.key}
+                height={density.rowHeight}
+                isCompact={density.columns === 2}
+              >
                 <BAIFlex
                   gap="xs"
                   align="center"
