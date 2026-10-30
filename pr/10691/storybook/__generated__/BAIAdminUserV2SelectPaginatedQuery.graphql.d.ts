@@ -16,6 +16,7 @@ export type UserV2Filter = {
     domainId?: UUIDFilter | null | undefined;
     domainName?: StringFilter | null | undefined;
     email?: StringFilter | null | undefined;
+    entityId?: UUIDFilter | null | undefined;
     fullName?: StringFilter | null | undefined;
     integrationName?: StringFilter | null | undefined;
     keypairs?: UserKeypairNestedFilter | null | undefined;
@@ -111,6 +112,7 @@ export type KeypairFilter = {
     OR?: ReadonlyArray<KeypairFilter> | null | undefined;
     accessKey?: StringFilter | null | undefined;
     createdAt?: DateTimeFilter | null | undefined;
+    fieldId?: UUIDFilter | null | undefined;
     isActive?: boolean | null | undefined;
     isAdmin?: boolean | null | undefined;
     isDefault?: boolean | null | undefined;
@@ -138,6 +140,7 @@ export type EntityLabelFilter = {
     OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
     entityId?: UUIDFilter | null | undefined;
     entityType?: StringFilter | null | undefined;
+    fieldId?: UUIDFilter | null | undefined;
     key?: StringFilter | null | undefined;
     value?: StringFilter | null | undefined;
 };

@@ -3,6 +3,7 @@ export type DeploymentRevisionPresetFilter = {
     AND?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
     NOT?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
     OR?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
+    entityId?: UUIDFilter | null | undefined;
     id?: UUIDFilter | null | undefined;
     labels?: EntityLabelNestedFilter | null | undefined;
     name?: StringFilter | null | undefined;
@@ -48,6 +49,7 @@ export type EntityLabelFilter = {
     OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
     entityId?: UUIDFilter | null | undefined;
     entityType?: StringFilter | null | undefined;
+    fieldId?: UUIDFilter | null | undefined;
     key?: StringFilter | null | undefined;
     value?: StringFilter | null | undefined;
 };

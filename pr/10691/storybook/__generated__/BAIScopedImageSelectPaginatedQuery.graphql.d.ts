@@ -10,6 +10,9 @@ export type ImageV2Filter = {
     architecture?: StringFilter | null | undefined;
     configDigest?: StringFilter | null | undefined;
     createdAt?: DateTimeFilter | null | undefined;
+    creatorId?: UUIDFilter | null | undefined;
+    customized?: boolean | null | undefined;
+    entityId?: UUIDFilter | null | undefined;
     id?: UUIDFilter | null | undefined;
     image?: StringFilter | null | undefined;
     isLocal?: boolean | null | undefined;
@@ -93,6 +96,7 @@ export type EntityLabelFilter = {
     OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
     entityId?: UUIDFilter | null | undefined;
     entityType?: StringFilter | null | undefined;
+    fieldId?: UUIDFilter | null | undefined;
     key?: StringFilter | null | undefined;
     value?: StringFilter | null | undefined;
 };
