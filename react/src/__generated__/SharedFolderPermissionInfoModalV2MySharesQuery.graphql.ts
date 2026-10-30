@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<68c639ebc8c749dfafaf37eaf5228842>>
+ * @generated SignedSource<<d5a1935124c0eabdc877477f92c8b30a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,15 +9,14 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type EntityShareStatus = "ACCEPTED" | "CANCELED" | "PENDING" | "REJECTED" | "REVOKED" | "%future added value";
-export type SharedFolderPermissionInfoModalV2MySharesQuery$variables = Record<PropertyKey, never>;
+export type SharedFolderPermissionInfoModalV2MySharesQuery$variables = {
+  folderId: string;
+};
 export type SharedFolderPermissionInfoModalV2MySharesQuery$data = {
   readonly myEntityShares: {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly entityId: string;
-        readonly status: EntityShareStatus;
-        readonly targetEntityId: string;
         readonly targetEntityType: string;
       };
     }>;
@@ -31,9 +30,40 @@ export type SharedFolderPermissionInfoModalV2MySharesQuery = {
 const node: ConcreteRequest = (function(){
 var v0 = [
   {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "folderId"
+  }
+],
+v1 = [
+  {
+    "fields": [
+      {
+        "kind": "Literal",
+        "name": "status",
+        "value": {
+          "equals": "ACCEPTED"
+        }
+      },
+      {
+        "fields": [
+          {
+            "kind": "Variable",
+            "name": "equals",
+            "variableName": "folderId"
+          }
+        ],
+        "kind": "ObjectValue",
+        "name": "targetEntityId"
+      }
+    ],
+    "kind": "ObjectValue",
+    "name": "filter"
+  },
+  {
     "kind": "Literal",
     "name": "limit",
-    "value": 100
+    "value": 1
   },
   {
     "kind": "Literal",
@@ -43,44 +73,30 @@ var v0 = [
     ]
   }
 ],
-v1 = {
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "entityId",
   "storageKey": null
 },
-v2 = {
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "targetEntityType",
   "storageKey": null
-},
-v3 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "targetEntityId",
-  "storageKey": null
-},
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "status",
-  "storageKey": null
 };
 return {
   "fragment": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "SharedFolderPermissionInfoModalV2MySharesQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v0/*: any*/),
+        "args": (v1/*: any*/),
         "concreteType": "EntityShareConnection",
         "kind": "LinkedField",
         "name": "myEntityShares",
@@ -102,10 +118,8 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v1/*: any*/),
                   (v2/*: any*/),
-                  (v3/*: any*/),
-                  (v4/*: any*/)
+                  (v3/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -113,7 +127,7 @@ return {
             "storageKey": null
           }
         ],
-        "storageKey": "myEntityShares(limit:100,sides:[\"RECIPIENT\"])"
+        "storageKey": null
       }
     ],
     "type": "Query",
@@ -121,13 +135,13 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "SharedFolderPermissionInfoModalV2MySharesQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v0/*: any*/),
+        "args": (v1/*: any*/),
         "concreteType": "EntityShareConnection",
         "kind": "LinkedField",
         "name": "myEntityShares",
@@ -149,10 +163,8 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v1/*: any*/),
                   (v2/*: any*/),
                   (v3/*: any*/),
-                  (v4/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -167,21 +179,21 @@ return {
             "storageKey": null
           }
         ],
-        "storageKey": "myEntityShares(limit:100,sides:[\"RECIPIENT\"])"
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "610a7e07258becd8d67bdbe67f750182",
+    "cacheID": "6daa6cbc47e235462ddcd6d9328fcbd9",
     "id": null,
     "metadata": {},
     "name": "SharedFolderPermissionInfoModalV2MySharesQuery",
     "operationKind": "query",
-    "text": "query SharedFolderPermissionInfoModalV2MySharesQuery {\n  myEntityShares(sides: [RECIPIENT], limit: 100) {\n    edges {\n      node {\n        entityId\n        targetEntityType\n        targetEntityId\n        status\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query SharedFolderPermissionInfoModalV2MySharesQuery(\n  $folderId: UUID!\n) {\n  myEntityShares(sides: [RECIPIENT], filter: {targetEntityId: {equals: $folderId}, status: {equals: ACCEPTED}}, limit: 1) {\n    edges {\n      node {\n        entityId\n        targetEntityType\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "1a58a35ee6f04d81eda6ada80f0f15de";
+(node as any).hash = "9645a99dee5b81706eb008acd26b397a";
 
 export default node;

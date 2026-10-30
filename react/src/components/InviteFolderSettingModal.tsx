@@ -2,14 +2,17 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- Share modal on the 26.9 model: an invite is an entity share, the invitee's
- mount level is a vfolder mount policy.
+ Share modal on the 26.9 model: an invite is an entity share capped at the
+ bits the share permission selector picks, the invitee's mount level is a
+ vfolder mount policy — two axes, two controls. The folder's own default
+ mount permission is edited from the Folder Info section (#10647). See the
+ TODO(needs-backend) on `handleInvite`.
 */
 import { InviteFolderSettingModalCancelShareMutation } from '../__generated__/InviteFolderSettingModalCancelShareMutation.graphql';
 import { InviteFolderSettingModalCreateShareMutation } from '../__generated__/InviteFolderSettingModalCreateShareMutation.graphql';
+import { InviteFolderSettingModalExistingShareQuery } from '../__generated__/InviteFolderSettingModalExistingShareQuery.graphql';
 import { InviteFolderSettingModalFragment$key } from '../__generated__/InviteFolderSettingModalFragment.graphql';
 import { InviteFolderSettingModalQuery } from '../__generated__/InviteFolderSettingModalQuery.graphql';
-import { InviteFolderSettingModalRecipientsQuery } from '../__generated__/InviteFolderSettingModalRecipientsQuery.graphql';
 import { InviteFolderSettingModalRevokeShareMutation } from '../__generated__/InviteFolderSettingModalRevokeShareMutation.graphql';
 import { InviteFolderSettingModalSetMountPolicyMutation } from '../__generated__/InviteFolderSettingModalSetMountPolicyMutation.graphql';
 import { InviteFolderSettingModalUnsetMountPolicyMutation } from '../__generated__/InviteFolderSettingModalUnsetMountPolicyMutation.graphql';
@@ -17,15 +20,26 @@ import { App } from '../app-shim';
 import { localeCompare } from '../helper';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
+import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
+import FolderDefaultMountPermissionModal, {
+  type FolderMountLevel,
+} from './FolderDefaultMountPermissionModal';
+import { Button } from '@lablup/ui-common/Button';
 import { Field } from '@lablup/ui-common/Field';
 import { HStack, StackItem, VStack } from '@lablup/ui-common/Stack';
 import { Heading } from '@lablup/ui-common/Text';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
+  BAIAlert,
   BAIBadge,
   BAIButton,
+  BAIEntitySharePermissionSelector,
+  type BAIEntitySharePermissionBit,
+  type BAIEntitySharePermissionPreset,
   BAIModal,
   type BAIModalProps,
+  BAIMetadataList,
+  BAIMetadataListItem,
   BAINameActionCell,
   type BAINameActionCellAction,
   BAIQuestionIconWithTooltip,
@@ -33,22 +47,36 @@ import {
   BAISkeleton,
   BAITable,
   BAIText,
+  ENTITY_SHARE_PERMISSION_PRESETS,
   INITIAL_FETCH_KEY,
-  toLocalId,
+  normalizeEntitySharePermissionBits,
+  useEntitySharePermissionLabels,
   useErrorMessageResolver,
   useFetchKey,
   useMutationWithPromise,
   BAISelector,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { CircleXIcon, MailXIcon } from 'lucide-react';
-import React, { Suspense, useDeferredValue, useId, useState } from 'react';
+import { CircleXIcon, MailXIcon, PencilIcon } from 'lucide-react';
+import React, {
+  Suspense,
+  useDeferredValue,
+  useId,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+import {
+  fetchQuery,
+  graphql,
+  useFragment,
+  useLazyLoadQuery,
+  useRelayEnvironment,
+} from 'react-relay';
 
 const VFOLDER_ENTITY_TYPE = 'vfolder';
 
-type MountLevel = 'ro' | 'rw';
+type MountLevel = FolderMountLevel;
 
 type RecipientData =
   | { kind: 'user'; userId: string; email: string }
@@ -60,7 +88,72 @@ interface ShareRow {
   status: 'PENDING' | 'ACCEPTED';
   userId: string | null;
   mountLevel: MountLevel;
+  permissions: ReadonlyArray<string>;
+  /** How the offer named its recipient; a restated offer must name them the same way. */
+  recipient: { userId: string } | { projectId: string } | { email: string };
 }
+
+/** A share node as the list and the pre-invite check both read it. */
+interface ShareNodeLike {
+  entityId: string;
+  status: string;
+  permissions: ReadonlyArray<string>;
+  recipientEntityType?: string | null;
+  recipientEntityId?: string | null;
+  recipientEmail?: string | null;
+  recipientEntity?: { basicInfo?: { email: string } | null } | null;
+}
+
+const recipientUserIdOf = (share: ShareNodeLike) =>
+  share.recipientEntityType === 'user'
+    ? (share.recipientEntityId ?? null)
+    : null;
+
+/** The open shares as table rows: accepted first, then by address. */
+const toShareRows = (
+  shares: ReadonlyArray<ShareNodeLike>,
+  policies: ReadonlyArray<{ userId: string; permission: string }> | undefined,
+  defaultMountLevel: MountLevel,
+  unknownUserLabel: string,
+): Array<ShareRow> => {
+  const policyByUserId = _.keyBy(policies, 'userId');
+  return _.sortBy(
+    _.map(
+      _.filter(
+        shares,
+        (share) => share.status === 'PENDING' || share.status === 'ACCEPTED',
+      ),
+      (share) => {
+        const userId = recipientUserIdOf(share);
+        // The recipient node names the person; the address the offer was
+        // sent to is the fallback, and a share naming neither is unknown.
+        const email =
+          share.recipientEntity?.basicInfo?.email ??
+          share.recipientEmail ??
+          unknownUserLabel;
+        return {
+          shareId: share.entityId,
+          email,
+          status: share.status === 'ACCEPTED' ? 'ACCEPTED' : 'PENDING',
+          userId,
+          permissions: share.permissions,
+          recipient: userId
+            ? { userId }
+            : share.recipientEntityType?.toLowerCase() === 'project' &&
+                share.recipientEntityId
+              ? { projectId: share.recipientEntityId }
+              : { email },
+          // No policy row (an address without an account yet) means the
+          // folder's shared mount permission; the cap never decides the level.
+          mountLevel:
+            toMountLevel(userId ? policyByUserId[userId]?.permission : null) ??
+            defaultMountLevel,
+        } satisfies ShareRow;
+      },
+    ),
+    [(row) => (row.status === 'ACCEPTED' ? 0 : 1), (row) => row.email],
+  );
+};
 
 const toMountLevel = (permission?: string | null): MountLevel | null =>
   permission === 'READ_ONLY' || permission === 'ro'
@@ -74,6 +167,19 @@ const toMountLevel = (permission?: string | null): MountLevel | null =>
 
 const toMountPermission = (level: MountLevel) =>
   level === 'ro' ? 'READ_ONLY' : 'READ_WRITE';
+
+// The share permission starts from the preset that mirrors the mount level;
+// the two stay independent once the user touches either.
+const SHARE_PRESET_BY_MOUNT_LEVEL: Record<
+  MountLevel,
+  BAIEntitySharePermissionPreset
+> = { ro: 'READ_ONLY', rw: 'READ_WRITE' };
+
+const sharePresetBits = (level: MountLevel) =>
+  _.find(
+    ENTITY_SHARE_PERMISSION_PRESETS,
+    (preset) => preset.key === SHARE_PRESET_BY_MOUNT_LEVEL[level],
+  )?.bits ?? [];
 
 const resolveErrorMessage = (error: unknown, fallback: string) => {
   const errorMessage =
@@ -110,6 +216,137 @@ const SetMountPolicyMutation = graphql`
   }
 `;
 
+// Asked before an invite: an open share (pending or accepted) this recipient
+// already holds is what `createEntityShare` would restate, so the inviter is
+// told first.
+const ExistingShareQuery = graphql`
+  query InviteFolderSettingModalExistingShareQuery(
+    $vfolderId: UUID!
+    $scope: EntityShareScope!
+    $filter: EntityShareFilter
+  ) {
+    entityShares(scope: $scope, filter: $filter, limit: 10) {
+      edges {
+        node {
+          id
+          entityId
+          recipientEntityType
+          recipientEntityId
+          recipientEmail
+          status
+          permissions
+          recipientEntity @catch(to: NULL) {
+            ... on UserV2 {
+              entityId
+              basicInfo {
+                email
+              }
+            }
+          }
+        }
+      }
+    }
+    vfolderMountPolicies(vfolderId: $vfolderId) {
+      items {
+        id
+        userId
+        permission
+      }
+    }
+  }
+`;
+
+// The notice before an invite that would restate an open share: the same
+// rows the share table shows, read-only, under the question.
+const ExistingShareNoticeModal: React.FC<{
+  open: boolean;
+  email: string;
+  rows: Array<ShareRow>;
+  onOk: () => void;
+  onCancel: () => void;
+}> = ({ open, email, rows, onOk, onCancel }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { labelOf: mountLevelLabel } = useMountLevelLabels();
+  const { summary } = useEntitySharePermissionLabels();
+  return (
+    <BAIModal
+      open={open}
+      title={t('data.folders.OverwriteInvitation')}
+      okText={t('button.Overwrite')}
+      cancelText={t('button.Cancel')}
+      onOk={onOk}
+      onCancel={onCancel}
+      width={720}
+    >
+      <VStack gap={4} align="stretch">
+        <BAIAlert
+          type="warning"
+          showIcon
+          title={t('data.folders.OverwriteInvitationDesc', { email })}
+        />
+        <BAITable<ShareRow>
+          bordered
+          pagination={false}
+          dataSource={rows}
+          rowKey="shareId"
+          data-testid="existing-share-table"
+          columns={[
+            {
+              title: t('data.explorer.InviteeEmail'),
+              dataIndex: 'email',
+            },
+            {
+              title: t('general.Status'),
+              dataIndex: 'status',
+              render: (status: ShareRow['status']) =>
+                status === 'ACCEPTED' ? (
+                  <BAIBadge
+                    color="success"
+                    text={t('data.invitation.Accepted')}
+                  />
+                ) : (
+                  <BAIBadge
+                    color="warning"
+                    text={t('data.invitation.Pending')}
+                  />
+                ),
+            },
+            {
+              title: t('data.folders.SharePermission'),
+              dataIndex: 'permissions',
+              render: (permissions: ShareRow['permissions']) =>
+                summary(permissions),
+            },
+            {
+              title: t('data.folders.MountPermission'),
+              dataIndex: 'mountLevel',
+              render: (level: ShareRow['mountLevel']) => mountLevelLabel(level),
+            },
+          ]}
+        />
+      </VStack>
+    </BAIModal>
+  );
+};
+
+const CreateShareMutation = graphql`
+  mutation InviteFolderSettingModalCreateShareMutation(
+    $input: CreateEntityShareInput!
+  ) {
+    createEntityShare(input: $input) {
+      share {
+        id
+        entityId
+        recipientEmail
+        status
+        # Selected so the listed row follows the restated cap at once.
+        permissions
+      }
+    }
+  }
+`;
+
 interface InviteFolderSettingModalProps extends Omit<
   BAIModalProps,
   'isOpen' | 'onOpenChange'
@@ -130,8 +367,18 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
     graphql`
       fragment InviteFolderSettingModalFragment on VFolder {
         id
+        entityId
+        metadata {
+          name
+          usageMode
+        }
         accessControl {
           permission
+          ownershipType
+        }
+        ownership {
+          userId
+          projectId
         }
       }
     `,
@@ -148,14 +395,22 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
       title={t('data.explorer.ShareFolder')}
       maskClosable={false}
       footer={null}
-      width={640}
+      width={720}
     >
       {baiModalProps.open && vfolder ? (
         <InviteFolderSettingModalBody
-          vfolderId={toLocalId(vfolder.id)}
+          vfolderId={vfolder.entityId}
+          folderName={vfolder.metadata?.name ?? ''}
           defaultMountLevel={
             toMountLevel(vfolder.accessControl?.permission) ?? 'ro'
           }
+          // Model project folders stay read-only (FR-1290).
+          restrictToReadOnly={
+            vfolder.metadata?.usageMode === 'MODEL' &&
+            vfolder.accessControl?.ownershipType === 'GROUP'
+          }
+          ownerUserId={vfolder.ownership?.userId ?? null}
+          ownerProjectId={vfolder.ownership?.projectId ?? null}
         />
       ) : null}
     </BAIModal>
@@ -164,44 +419,59 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
 
 const InviteFolderSettingModalBody: React.FC<{
   vfolderId: string;
+  folderName: string;
   defaultMountLevel: MountLevel;
-}> = ({ vfolderId, defaultMountLevel }) => {
+  restrictToReadOnly: boolean;
+  ownerUserId: string | null;
+  ownerProjectId: string | null;
+}> = ({
+  vfolderId,
+  folderName,
+  defaultMountLevel,
+  restrictToReadOnly,
+  ownerUserId,
+  ownerProjectId,
+}) => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
+  const relayEnvironment = useRelayEnvironment();
   const [currentUser] = useCurrentUserInfo();
   const { accessibleProjects } = useAccessibleProjects();
   const memberProjectIds = _.compact(_.map(accessibleProjects, 'id'));
   const { options: mountLevelOptions, labelOf: mountLevelLabel } =
     useMountLevelLabels();
   const mountLevelInputId = useId();
+  // The recipient tooltip anchors on the select's trigger, not on the whole
+  // field, so it sits right above the input like the other tooltips.
+  const recipientTriggerRef = useRef<HTMLElement | null>(null);
 
   const [fetchKey, updateFetchKey] = useFetchKey();
 
   const [recipient, setRecipient] = useState<RecipientData | null>(null);
+  // The open shares the pre-invite check found, shown until the inviter
+  // answers the override question.
+  const [existingNotice, setExistingNotice] = useState<{
+    email: string;
+    rows: Array<ShareRow>;
+    resolve: (proceed: boolean) => void;
+  } | null>(null);
   const [mountLevel, setMountLevel] = useState<MountLevel>(defaultMountLevel);
+  const [permissionBits, setPermissionBits] = useState<
+    Array<BAIEntitySharePermissionBit>
+  >([...sharePresetBits(defaultMountLevel)]);
   const [recipientError, setRecipientError] = useState<string | null>(null);
+  const [isDefaultMountModalOpen, setIsDefaultMountModalOpen] = useState(false);
 
   const setMountPolicy =
     useMutationWithPromise<InviteFolderSettingModalSetMountPolicyMutation>(
       SetMountPolicyMutation,
     );
   const createShare =
-    useMutationWithPromise<InviteFolderSettingModalCreateShareMutation>(graphql`
-      mutation InviteFolderSettingModalCreateShareMutation(
-        $input: CreateEntityShareInput!
-      ) {
-        createEntityShare(input: $input) {
-          share {
-            id
-            entityId
-            recipientEmail
-            status
-          }
-        }
-      }
-    `);
+    useMutationWithPromise<InviteFolderSettingModalCreateShareMutation>(
+      CreateShareMutation,
+    );
 
   const inviteTarget = recipient;
   const isEmailInvite = inviteTarget?.kind === 'email';
@@ -213,13 +483,50 @@ const InviteFolderSettingModalBody: React.FC<{
     }
     setRecipientError(null);
     try {
-      // The offer is an entity share capped like the legacy invite was; the
-      // mount level is a policy row, which an address without an account
-      // only gets at the folder default once it has one.
+      const existing =
+        await fetchQuery<InviteFolderSettingModalExistingShareQuery>(
+          relayEnvironment,
+          ExistingShareQuery,
+          {
+            vfolderId,
+            scope: {
+              target: [
+                { entityType: VFOLDER_ENTITY_TYPE, entityId: vfolderId },
+              ],
+            },
+            filter: {
+              status: { in: ['PENDING', 'ACCEPTED'] },
+              ...(inviteTarget.kind === 'user'
+                ? { recipientEntityId: { equals: inviteTarget.userId } }
+                : { recipientEmail: { equals: inviteTarget.email } }),
+            },
+          },
+          { fetchPolicy: 'network-only' },
+        ).toPromise();
+      const existingRows = toShareRows(
+        _.map(existing?.entityShares?.edges, 'node'),
+        existing?.vfolderMountPolicies?.items,
+        defaultMountLevel,
+        t('data.invitation.UnknownUser'),
+      );
+      if (existingRows.length > 0) {
+        const proceed = await new Promise<boolean>((resolve) =>
+          setExistingNotice({
+            email: inviteTarget.email,
+            rows: existingRows,
+            resolve,
+          }),
+        );
+        setExistingNotice(null);
+        if (!proceed) {
+          return;
+        }
+      }
+      // The offer is an entity share capped at the picked bits; the mount
+      // level is a policy row, which an address without an account only
+      // gets at the folder default once it has one.
       // TODO(needs-backend): the manager rejects the OneOf `recipient` input
       // with one key set (BA-8482), so the invite fails until that lands.
-      const level =
-        inviteTarget.kind === 'user' ? mountLevel : defaultMountLevel;
       await createShare({
         input: {
           targetEntityType: VFOLDER_ENTITY_TYPE,
@@ -228,18 +535,29 @@ const InviteFolderSettingModalBody: React.FC<{
             inviteTarget.kind === 'user'
               ? { userId: inviteTarget.userId }
               : { email: inviteTarget.email },
-          permissions:
-            level === 'ro' ? ['READ'] : ['READ', 'UPDATE', 'SOFT_DELETE'],
+          permissions: permissionBits,
         },
       });
       if (inviteTarget.kind === 'user') {
-        await setMountPolicy({
-          vfolderId,
-          input: {
-            userId: inviteTarget.userId,
-            permission: toMountPermission(mountLevel),
-          },
-        });
+        try {
+          await setMountPolicy({
+            vfolderId,
+            input: {
+              userId: inviteTarget.userId,
+              permission: toMountPermission(mountLevel),
+            },
+          });
+        } catch {
+          // The share exists at the folder default now; show it and say so.
+          message.warning(
+            t('data.folders.InviteSentMountPermissionFailed', {
+              permission: mountLevelLabel(defaultMountLevel),
+            }),
+          );
+          setRecipient(null);
+          updateFetchKey();
+          return;
+        }
       }
       message.success(t('data.invitation.Invited'));
       setRecipient(null);
@@ -251,17 +569,42 @@ const InviteFolderSettingModalBody: React.FC<{
 
   return (
     <VStack gap={6} align="stretch">
+      <Suspense fallback={<BAISkeleton />}>
+        <FolderInfoSection
+          folderName={folderName}
+          defaultMountLevel={defaultMountLevel}
+          ownerUserId={ownerUserId}
+          ownerProjectId={ownerProjectId}
+          onEdit={() => setIsDefaultMountModalOpen(true)}
+        />
+      </Suspense>
+      <ExistingShareNoticeModal
+        open={!!existingNotice}
+        email={existingNotice?.email ?? ''}
+        rows={existingNotice?.rows ?? []}
+        onOk={() => existingNotice?.resolve(true)}
+        onCancel={() => existingNotice?.resolve(false)}
+      />
+      <FolderDefaultMountPermissionModal
+        open={isDefaultMountModalOpen}
+        vfolderId={vfolderId}
+        mountLevel={defaultMountLevel}
+        restrictToReadOnly={restrictToReadOnly}
+        onRequestClose={() => setIsDefaultMountModalOpen(false)}
+      />
       <VStack gap={3} align="stretch">
         <Heading level={5}>{t('data.folders.InviteUsers')}</Heading>
         <VStack gap={1} align="stretch">
           <HStack align="end" gap={2} width="100%">
             <StackItem size="fill">
               <Suspense fallback={<BAISkeleton variant="input" width="100%" />}>
-                <Tooltip
-                  content={recipient?.email}
-                  isEnabled={!!recipient?.email}
-                  placement="above"
-                  hasHoverIndication={false}
+                <div
+                  ref={(node) => {
+                    // The ComplexSelector trigger is the popup button.
+                    recipientTriggerRef.current =
+                      node?.querySelector<HTMLElement>('[aria-haspopup]') ??
+                      node;
+                  }}
                 >
                   <BAIScopedUserSelect
                     scope={{
@@ -292,15 +635,27 @@ const InviteFolderSettingModalBody: React.FC<{
                       );
                       setRecipientError(null);
                     }}
-                    status={
-                      recipientError
-                        ? { type: 'error', message: recipientError }
-                        : undefined
-                    }
+                    status={recipientError ? { type: 'error' } : undefined}
                     width="100%"
                   />
-                </Tooltip>
+                </div>
+                <Tooltip
+                  anchorRef={recipientTriggerRef}
+                  content={recipient?.email}
+                  isEnabled={!!recipient?.email}
+                  placement="above"
+                  hasHoverIndication={false}
+                />
               </Suspense>
+            </StackItem>
+            <StackItem size="static">
+              <BAIEntitySharePermissionSelector
+                label={t('data.folders.SharePermission')}
+                width={170}
+                value={permissionBits}
+                onChange={(bits) => setPermissionBits(bits)}
+                data-testid="share-permission-selector"
+              />
             </StackItem>
             <StackItem size="static">
               <Field
@@ -314,7 +669,9 @@ const InviteFolderSettingModalBody: React.FC<{
                   placement="below"
                   width={150}
                   options={mountLevelOptions}
-                  value={mountLevel}
+                  // An e-mail invite gets the folder default, so the disabled
+                  // selector shows that value rather than the last pick.
+                  value={isEmailInvite ? defaultMountLevel : mountLevel}
                   onChange={(next) => setMountLevel(next as MountLevel)}
                   disabled={isEmailInvite}
                 />
@@ -326,6 +683,11 @@ const InviteFolderSettingModalBody: React.FC<{
               </BAIButton>
             </StackItem>
           </HStack>
+          {recipientError ? (
+            <BAIText type="danger" size="sm" role="alert">
+              {recipientError}
+            </BAIText>
+          ) : null}
           {isEmailInvite && (
             <BAIText type="warning" size="sm">
               {t('data.folders.EmailInviteUsesSharedMountPermission', {
@@ -347,7 +709,6 @@ const InviteFolderSettingModalBody: React.FC<{
           <SharedUserTable
             vfolderId={vfolderId}
             defaultMountLevel={defaultMountLevel}
-            memberProjectIds={memberProjectIds}
             fetchKey={fetchKey}
             updateFetchKey={updateFetchKey}
           />
@@ -357,22 +718,80 @@ const InviteFolderSettingModalBody: React.FC<{
   );
 };
 
-const SharedUserTable: React.FC<{
-  vfolderId: string;
+// The folder's own info: its name and how a shared user mounts it by default.
+// Editing is for the owner, a superadmin or an admin of the owning project;
+// domain admins have no per-project ownership rights.
+const FolderInfoSection: React.FC<{
+  folderName: string;
   defaultMountLevel: MountLevel;
-  memberProjectIds: Array<string>;
-  fetchKey: string;
-  updateFetchKey: () => void;
+  ownerUserId: string | null;
+  ownerProjectId: string | null;
+  onEdit: () => void;
 }> = ({
-  vfolderId,
+  folderName,
   defaultMountLevel,
-  memberProjectIds,
-  fetchKey,
-  updateFetchKey,
+  ownerUserId,
+  ownerProjectId,
+  onEdit,
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const [currentUser] = useCurrentUserInfo();
+  const { isSuperAdmin, projectAdminIds } = useCurrentUserProjectRoles();
+  const { labelOf: mountLevelLabel } = useMountLevelLabels();
+
+  const canEdit =
+    (!!ownerUserId && ownerUserId === currentUser?.uuid) ||
+    isSuperAdmin ||
+    (!!ownerProjectId && projectAdminIds.includes(ownerProjectId));
+
+  return (
+    <VStack gap={3} align="stretch">
+      <HStack justify="between" align="center">
+        <Heading level={5}>{t('data.FolderInfo')}</Heading>
+        {canEdit && (
+          <Button
+            variant="secondary"
+            icon={<PencilIcon size="1em" />}
+            label={t('button.Edit')}
+            onClick={onEdit}
+            data-testid="edit-default-mount-permission"
+          />
+        )}
+      </HStack>
+      <BAIMetadataList columns={2} bordered size="small">
+        <BAIMetadataListItem label={t('data.folders.Name')}>
+          {folderName}
+        </BAIMetadataListItem>
+        <BAIMetadataListItem
+          label={
+            <HStack gap={1} align="center">
+              {t('data.folders.DefaultMountPermission')}
+              <BAIQuestionIconWithTooltip
+                title={t('data.folders.SharedMountPermissionDesc')}
+              />
+            </HStack>
+          }
+        >
+          <BAIText data-testid="default-mount-permission">
+            {mountLevelLabel(defaultMountLevel)}
+          </BAIText>
+        </BAIMetadataListItem>
+      </BAIMetadataList>
+    </VStack>
+  );
+};
+
+const SharedUserTable: React.FC<{
+  vfolderId: string;
+  defaultMountLevel: MountLevel;
+  fetchKey: string;
+  updateFetchKey: () => void;
+}> = ({ vfolderId, defaultMountLevel, fetchKey, updateFetchKey }) => {
+  'use memo';
+  const { t } = useTranslation();
   const { message } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
   const { options: mountLevelOptions, labelOf: mountLevelLabel } =
     useMountLevelLabels();
 
@@ -386,7 +805,11 @@ const SharedUserTable: React.FC<{
           $vfolderId: UUID!
           $scope: EntityShareScope!
         ) {
-          entityShares(scope: $scope, limit: 100) {
+          entityShares(
+            scope: $scope
+            filter: { status: { in: [PENDING, ACCEPTED] } }
+            limit: 100
+          ) {
             edges {
               node {
                 id
@@ -395,6 +818,17 @@ const SharedUserTable: React.FC<{
                 recipientEntityId
                 recipientEmail
                 status
+                permissions
+                # The person the offer goes to, when the caller may read them;
+                # an address resolves to the user holding it.
+                recipientEntity @catch(to: NULL) {
+                  ... on UserV2 {
+                    entityId
+                    basicInfo {
+                      email
+                    }
+                  }
+                }
               }
             }
           }
@@ -422,89 +856,21 @@ const SharedUserTable: React.FC<{
       },
     );
 
-  const openShares = _.filter(
-    _.map(entityShares?.edges, 'node'),
-    (share) => share.status === 'PENDING' || share.status === 'ACCEPTED',
-  );
-  const recipientUserId = (share: (typeof openShares)[number]) =>
-    share.recipientEntityType === 'user'
-      ? (share.recipientEntityId ?? null)
-      : null;
-
-  // A share sent to a user id carries no e-mail until it is accepted; look the
-  // address up among the users the caller's projects reach.
-  const unnamedUserIds = _.compact(
-    _.map(
-      _.filter(openShares, (share) => !share.recipientEmail),
-      recipientUserId,
-    ),
-  );
-  const { scopedUsersV2: recipientUsers } =
-    useLazyLoadQuery<InviteFolderSettingModalRecipientsQuery>(
-      graphql`
-        query InviteFolderSettingModalRecipientsQuery(
-          $scope: UserScope!
-          $filter: UserV2Filter
-          $limit: Int!
-          $skip: Boolean!
-        ) {
-          scopedUsersV2(scope: $scope, filter: $filter, limit: $limit)
-            @skip(if: $skip) {
-            edges {
-              node {
-                entityId
-                basicInfo {
-                  email
-                }
-              }
-            }
-          }
-        }
-      `,
-      {
-        scope: { project: _.map(memberProjectIds, (value) => ({ value })) },
-        filter: unnamedUserIds.length ? { uuid: { in: unnamedUserIds } } : null,
-        limit: Math.max(unnamedUserIds.length, 1),
-        skip: unnamedUserIds.length === 0,
-      },
-      {
-        fetchPolicy: unnamedUserIds.length ? 'store-or-network' : 'store-only',
-        fetchKey: deferredFetchKey,
-      },
-    );
-  const emailByUserId = _.fromPairs(
-    _.map(recipientUsers?.edges, (edge) => [
-      edge.node.entityId,
-      edge.node.basicInfo.email,
-    ]),
-  );
   const policyByUserId = _.keyBy(vfolderMountPolicies?.items, 'userId');
-
-  const rows: Array<ShareRow> = _.sortBy(
-    _.map(openShares, (share) => {
-      const userId = recipientUserId(share);
-      return {
-        shareId: share.entityId,
-        email:
-          share.recipientEmail ??
-          (userId ? emailByUserId[userId] : null) ??
-          userId ??
-          share.entityId,
-        status: share.status === 'ACCEPTED' ? 'ACCEPTED' : 'PENDING',
-        userId,
-        // No policy row (an address without an account yet) means the folder's
-        // shared mount permission; the share's cap never decides the level.
-        mountLevel:
-          toMountLevel(userId ? policyByUserId[userId]?.permission : null) ??
-          defaultMountLevel,
-      };
-    }),
-    [(row) => (row.status === 'ACCEPTED' ? 0 : 1), (row) => row.email],
+  const rows = toShareRows(
+    _.map(entityShares?.edges, 'node'),
+    vfolderMountPolicies?.items,
+    defaultMountLevel,
+    t('data.invitation.UnknownUser'),
   );
 
   const setMountPolicy =
     useMutationWithPromise<InviteFolderSettingModalSetMountPolicyMutation>(
       SetMountPolicyMutation,
+    );
+  const createShare =
+    useMutationWithPromise<InviteFolderSettingModalCreateShareMutation>(
+      CreateShareMutation,
     );
   const unsetMountPolicy =
     useMutationWithPromise<InviteFolderSettingModalUnsetMountPolicyMutation>(
@@ -544,6 +910,38 @@ const SharedUserTable: React.FC<{
       }
     `);
 
+  // The manager has no update mutation for a share: offering again to the
+  // same recipient restates what the standing share lends, accepted or not.
+  const handleChangeSharePermission = async (
+    row: ShareRow,
+    bits: Array<BAIEntitySharePermissionBit>,
+  ) => {
+    // Restating a pending share rewrites its sharer and expiry; the same
+    // bits are not worth that.
+    if (
+      _.isEqual(
+        normalizeEntitySharePermissionBits(bits),
+        normalizeEntitySharePermissionBits(row.permissions),
+      )
+    ) {
+      return;
+    }
+    try {
+      await createShare({
+        input: {
+          targetEntityType: VFOLDER_ENTITY_TYPE,
+          targetEntityId: vfolderId,
+          recipient: row.recipient,
+          permissions: bits,
+        },
+      });
+      message.success(t('data.permission.PermissionModified'));
+      updateFetchKey();
+    } catch (error) {
+      message.error(getErrorMessage(error));
+    }
+  };
+
   const handleChangeMountLevel = async (row: ShareRow, level: MountLevel) => {
     if (!row.userId) return;
     try {
@@ -574,6 +972,11 @@ const SharedUserTable: React.FC<{
   const handleCancelInvitation = async (row: ShareRow) => {
     try {
       await cancelShare({ id: row.shareId });
+      // The invite wrote the policy row; left behind it would outrank the
+      // folder default the next time this user is shared the folder.
+      if (row.userId && policyByUserId[row.userId]) {
+        await unsetMountPolicy({ vfolderId, input: { userId: row.userId } });
+      }
       message.success(t('data.invitation.InvitationCanceled'));
       updateFetchKey();
     } catch (error) {
@@ -648,10 +1051,27 @@ const SharedUserTable: React.FC<{
             ),
         },
         {
+          title: t('data.folders.SharePermission'),
+          dataIndex: 'permissions',
+          render: (permissions: ShareRow['permissions'], row) => (
+            <BAIEntitySharePermissionSelector
+              label={t('data.folders.SharePermission')}
+              isLabelHidden
+              width={150}
+              value={normalizeEntitySharePermissionBits(permissions)}
+              onChange={(bits) => handleChangeSharePermission(row, bits)}
+              data-testid="share-permission-cap"
+            />
+          ),
+        },
+        {
           title: t('data.folders.MountPermission'),
           dataIndex: 'mountLevel',
+          // A mount policy row is keyed by user id, so a share sent to an
+          // account is editable before it is accepted; an e-mail invite gets
+          // its user id on acceptance.
           render: (level: ShareRow['mountLevel'], row) =>
-            row.status === 'ACCEPTED' && row.userId ? (
+            row.userId ? (
               <BAISelector
                 aria-label={t('data.folders.MountPermission')}
                 placement="below"

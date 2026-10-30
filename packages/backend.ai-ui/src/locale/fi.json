@@ -193,6 +193,17 @@
   "comp:BAIEntityLabelTokens": {
     "Labels": "Tunniste"
   },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Luo",
+    "Custom": "Mukautettu",
+    "FullAccess": "Täydet oikeudet",
+    "HardDelete": "Poista pysyvästi",
+    "Read": "Lue",
+    "ReadAndWrite": "Luku ja kirjoitus",
+    "ReadOnly": "Vain luku",
+    "SoftDelete": "Poista",
+    "Update": "Päivitä"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Automaattinen päivitys",
     "EveryHours": "{{count}} h",

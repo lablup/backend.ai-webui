@@ -142,26 +142,6 @@ test.describe(
         ).toBeChecked();
         await (await folderCreationModal.getCreateButton()).click();
       });
-      test('User can create Read & Write vFolder', async ({ page }) => {
-        const folderCreationModal = new FolderCreationModal(page);
-        await folderCreationModal.modalToBeVisible();
-        await folderCreationModal.fillFolderName(creationFolderName);
-        await (await folderCreationModal.getReadWritePermissionRadio()).check();
-        await expect(
-          await folderCreationModal.getReadWritePermissionRadio(),
-        ).toBeChecked();
-        await (await folderCreationModal.getCreateButton()).click();
-      });
-      test('User can create Read Only vFolder', async ({ page }) => {
-        const folderCreationModal = new FolderCreationModal(page);
-        await folderCreationModal.modalToBeVisible();
-        await folderCreationModal.fillFolderName(creationFolderName);
-        await (await folderCreationModal.getReadOnlyPermissionRadio()).check();
-        await expect(
-          await folderCreationModal.getReadOnlyPermissionRadio(),
-        ).toBeChecked();
-        await (await folderCreationModal.getCreateButton()).click();
-      });
     });
     // Auto Mount uses a dedicated folder name (dot-prefixed) that is independent.
     // Not serial: single test — no ordering dependency.

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1ed5ba92326d14cefa5c6865c0603928>>
+ * @generated SignedSource<<9246ed8c78c1ac46e002596d9d9452c8>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -89,6 +89,38 @@ return {
           {
             "alias": null,
             "args": null,
+            "kind": "ScalarField",
+            "name": "entityId",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "VFolderMetadataInfo",
+            "kind": "LinkedField",
+            "name": "metadata",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "name",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "usageMode",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
             "concreteType": "VFolderAccessControlInfo",
             "kind": "LinkedField",
             "name": "accessControl",
@@ -100,6 +132,38 @@ return {
                 "kind": "ScalarField",
                 "name": "permission",
                 "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "ownershipType",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "VFolderOwnershipInfo",
+            "kind": "LinkedField",
+            "name": "ownership",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "userId",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "projectId",
+                "storageKey": null
               }
             ],
             "storageKey": null
@@ -110,12 +174,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "7400991565e77732ec77f4fc6bc34192",
+    "cacheID": "bb8eac24958a2268ce68b3307c48caba",
     "id": null,
     "metadata": {},
     "name": "InviteFolderSettingModalTestQuery",
     "operationKind": "query",
-    "text": "query InviteFolderSettingModalTestQuery(\n  $vfolderId: UUID!\n) {\n  vfolderV2(vfolderId: $vfolderId) {\n    ...InviteFolderSettingModalFragment\n    id\n  }\n}\n\nfragment InviteFolderSettingModalFragment on VFolder {\n  id\n  accessControl {\n    permission\n  }\n}\n"
+    "text": "query InviteFolderSettingModalTestQuery(\n  $vfolderId: UUID!\n) {\n  vfolderV2(vfolderId: $vfolderId) {\n    ...InviteFolderSettingModalFragment\n    id\n  }\n}\n\nfragment InviteFolderSettingModalFragment on VFolder {\n  id\n  entityId\n  metadata {\n    name\n    usageMode\n  }\n  accessControl {\n    permission\n    ownershipType\n  }\n  ownership {\n    userId\n    projectId\n  }\n}\n"
   }
 };
 })();

@@ -193,6 +193,17 @@
   "comp:BAIEntityLabelTokens": {
     "Labels": "라벨"
   },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "생성",
+    "Custom": "사용자 정의",
+    "FullAccess": "전체 권한",
+    "HardDelete": "영구 삭제",
+    "Read": "읽기",
+    "ReadAndWrite": "읽기 및 쓰기",
+    "ReadOnly": "읽기 전용",
+    "SoftDelete": "삭제",
+    "Update": "수정"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "자동 새로고침",
     "EveryHours": "{{count}}시간",

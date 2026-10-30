@@ -193,6 +193,17 @@
   "comp:BAIEntityLabelTokens": {
     "Labels": "Label"
   },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Buat",
+    "Custom": "Kustom",
+    "FullAccess": "Akses penuh",
+    "HardDelete": "Hapus permanen",
+    "Read": "Baca",
+    "ReadAndWrite": "Baca dan tulis",
+    "ReadOnly": "Hanya baca",
+    "SoftDelete": "Hapus",
+    "Update": "Perbarui"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Penyegaran otomatis",
     "EveryHours": "{{count}} h",

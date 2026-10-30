@@ -193,6 +193,17 @@
   "comp:BAIEntityLabelTokens": {
     "Labels": "Ετικέτα"
   },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Δημιουργία",
+    "Custom": "Προσαρμοσμένο",
+    "FullAccess": "Πλήρης πρόσβαση",
+    "HardDelete": "Μόνιμη διαγραφή",
+    "Read": "Ανάγνωση",
+    "ReadAndWrite": "Ανάγνωση και εγγραφή",
+    "ReadOnly": "Μόνο ανάγνωση",
+    "SoftDelete": "Διαγραφή",
+    "Update": "Επεξεργασία"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Αυτόματη ανανέωση",
     "EveryHours": "{{count}}ω",

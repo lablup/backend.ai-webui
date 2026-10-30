@@ -193,6 +193,17 @@
   "comp:BAIEntityLabelTokens": {
     "Labels": "Шошго"
   },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Үүсгэх",
+    "Custom": "Тохируулсан",
+    "FullAccess": "Бүрэн хандалт",
+    "HardDelete": "Бүрмөсөн устгах",
+    "Read": "Унших",
+    "ReadAndWrite": "Унших ба бичих",
+    "ReadOnly": "Зөвхөн унших",
+    "SoftDelete": "Устгах",
+    "Update": "Засварлах"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Автоматаар сэргээх",
     "EveryHours": "{{count}}ц",

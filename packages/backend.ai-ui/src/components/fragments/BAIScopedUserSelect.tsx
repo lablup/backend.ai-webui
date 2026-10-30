@@ -334,6 +334,9 @@ const BAIScopedUserSelect: React.FC<BAIScopedUserSelectProps> = ({
           multiple ? keys : keys[0],
           multiple ? picked : picked[0],
         );
+        // A single pick closes the panel; the typed text must not come back
+        // in the search box when it opens again.
+        if (!multiple) setSearchStr('');
       }}
       searchValue={searchStr}
       onSearch={setSearchStr}
