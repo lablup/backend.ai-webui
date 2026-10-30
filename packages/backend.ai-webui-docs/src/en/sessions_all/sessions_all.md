@@ -563,9 +563,8 @@ The Audit Log table includes the following columns:
   or `-` when it was not recorded
 - **Operation**: The type of action performed (for example, session creation, termination, or
   resource change)
-- **Action**: The name of the action that wrote the record
-- **Result**: The outcome of the action (**Success**, **Failed**, **Denied**, **Running**, or
-  **Unknown**). **Denied** means the action was deliberately rejected by policy rather than
+- **Status**: The outcome of the action (`SUCCESS`, `ERROR`, `RUNNING`, `DENIED`, or
+  `UNKNOWN`). `DENIED` means the action was deliberately rejected by policy rather than
   having failed with an error
 - **Time**: When the action occurred
 
@@ -573,9 +572,8 @@ The Audit Log table includes the following columns:
 
 Use the filter bar above the table to narrow down the log entries:
 
-- **Result**: Filter by action outcome (**Success**, **Failed**, **Denied**, **Running**, **Unknown**)
+- **Status**: Filter by action outcome (`SUCCESS`, `ERROR`, `RUNNING`, `UNKNOWN`)
 - **Operation**: Search by operation name or keyword
-- **Action**: Search by action name or keyword
 - **Triggered By**: Search by actor ID
 - **Time**: Filter by a date-range picker
 
