@@ -872,7 +872,7 @@
       "Unhealthy": "Unhealthy",
       "Unlimited": "Unlimited",
       "UsageOnDay": "Usage on {{day}}",
-      "UsageRowsCapped": "Showing the {{shown}} newest of {{total}} rows.",
+      "UsageRowsCapped": "Ranked from {{shown}} of the day's {{total}} rows.",
       "ViewAll": "View all",
       "ViewIn": "View in {{name}}",
       "VsPreviousRange": "vs. previous range",

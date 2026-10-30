@@ -885,7 +885,7 @@
       "Unhealthy": "Fehlerhaft",
       "Unlimited": "Unbegrenzt",
       "UsageOnDay": "Nutzung am {{day}}",
-      "UsageRowsCapped": "Die {{shown}} neuesten von {{total}} Zeilen werden angezeigt.",
+      "UsageRowsCapped": "Rangfolge aus {{shown}} von {{total}} Zeilen des Tages.",
       "ViewAll": "Alle anzeigen",
       "ViewIn": "In {{name}} anzeigen",
       "VsPreviousRange": "ggü. vorherigem Zeitraum",

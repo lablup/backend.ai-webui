@@ -885,7 +885,7 @@
       "Unhealthy": "Com problemas",
       "Unlimited": "Ilimitado",
       "UsageOnDay": "Utilização em {{day}}",
-      "UsageRowsCapped": "A mostrar as {{shown}} linhas mais recentes de {{total}}.",
+      "UsageRowsCapped": "Classificado a partir de {{shown}} das {{total}} linhas do dia.",
       "ViewAll": "Ver tudo",
       "ViewIn": "Ver em {{name}}",
       "VsPreviousRange": "vs. período anterior",

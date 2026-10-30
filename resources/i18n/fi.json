@@ -885,7 +885,7 @@
       "Unhealthy": "Ongelmia",
       "Unlimited": "Rajoittamaton",
       "UsageOnDay": "Käyttö {{day}}",
-      "UsageRowsCapped": "Näytetään {{total}} rivistä {{shown}} uusinta.",
+      "UsageRowsCapped": "Järjestetty päivän {{total}} rivistä {{shown}} rivin perusteella.",
       "ViewAll": "Näytä kaikki",
       "ViewIn": "Näytä kohteessa {{name}}",
       "VsPreviousRange": "verrattuna edelliseen aikaväliin",

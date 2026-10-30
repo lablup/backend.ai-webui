@@ -18,6 +18,7 @@ import {
 } from './superadminCardData';
 import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex, BAITable, filterOutNullAndUndefined } from 'backend.ai-ui';
+import _ from 'lodash';
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -28,8 +29,9 @@ type BucketRow = NonNullable<
   >['node']
 >;
 
-// Projects × resource groups of one day stay well under this on 26.10.
-const ROW_LIMIT = 200;
+const PAGE_SIZE = 200;
+// The most buckets of one day read before ranking; past it the card says so.
+const ROW_LIMIT = 5000;
 
 type UsageFilter = TopProjectsUsagePanelQuery['variables']['filter'];
 
@@ -86,34 +88,44 @@ const LatestUsageDay: React.FC<{
   return (
     <BAIFlex direction="column" align="stretch" gap="xs">
       <Text type="supporting">{t('dashboard.card.UsageOnDay', { day })}</Text>
-      <ProjectUsageTable
+      <ProjectUsagePage
         filter={{ ...filter, periodStart: { equals: day } }}
         fetchKey={fetchKey}
+        offset={0}
+        collected={[]}
       />
     </BAIFlex>
   );
 };
 
-const ProjectUsageTable: React.FC<{
+/**
+ * One page of the day's buckets. The manager orders them by period start
+ * only, so every bucket of the day is read, page by page, before ranking.
+ */
+const ProjectUsagePage: React.FC<{
   filter: UsageFilter;
   fetchKey: string;
-}> = ({ filter, fetchKey }) => {
+  offset: number;
+  collected: ReadonlyArray<BucketRow>;
+}> = ({ filter, fetchKey, offset, collected }) => {
   'use memo';
-  const { t } = useTranslation();
   const variables = useDeferredValue<TopProjectsUsagePanelQuery['variables']>({
     filter,
-    limit: ROW_LIMIT,
+    limit: PAGE_SIZE,
+    offset,
   });
   const data = useLazyLoadQuery<TopProjectsUsagePanelQuery>(
     graphql`
       query TopProjectsUsagePanelQuery(
         $filter: ProjectUsageBucketFilter!
         $limit: Int!
+        $offset: Int!
       ) {
         buckets: adminProjectUsageBuckets(
           filter: $filter
           orderBy: [{ field: PERIOD_START, direction: DESC }]
           limit: $limit
+          offset: $offset
         ) {
           count
           edges {
@@ -139,17 +151,38 @@ const ProjectUsageTable: React.FC<{
     variables,
     { fetchPolicy: 'store-and-network', fetchKey },
   );
-  const rows = byCpuUsage(
-    filterOutNullAndUndefined(data.buckets?.edges.map((edge) => edge?.node)),
+  const page = filterOutNullAndUndefined(
+    data.buckets?.edges.map((edge) => edge?.node),
   );
+  // Rows tied on period start can repeat across offset pages.
+  const rows = _.uniqBy([...collected, ...page], 'id');
   const total = data.buckets?.count ?? 0;
+  const nextOffset = offset + PAGE_SIZE;
+  if (page.length === PAGE_SIZE && nextOffset < Math.min(total, ROW_LIMIT)) {
+    return (
+      <ProjectUsagePage
+        filter={filter}
+        fetchKey={fetchKey}
+        offset={nextOffset}
+        collected={rows}
+      />
+    );
+  }
+  return <ProjectUsageTable rows={byCpuUsage(rows)} total={total} />;
+};
 
+const ProjectUsageTable: React.FC<{
+  rows: ReadonlyArray<BucketRow>;
+  total: number;
+}> = ({ rows, total }) => {
+  'use memo';
+  const { t } = useTranslation();
   return (
     <BAIFlex direction="column" align="stretch" gap="xs">
       <BAITable<BucketRow>
         size="small"
         rowKey="id"
-        dataSource={rows}
+        dataSource={[...rows]}
         scroll={{ x: 'max-content' }}
         columns={[
           {
@@ -194,8 +227,8 @@ const ProjectUsageTable: React.FC<{
 
 /** The domain's projects by their usage on the latest recorded day, the heaviest first. */
 const TopProjectsUsagePanel: React.FC<PanelComponentProps> = ({
-  panel,
   scope,
+  vars,
   fetchKey,
 }) => {
   'use memo';
@@ -214,7 +247,9 @@ const TopProjectsUsagePanel: React.FC<PanelComponentProps> = ({
         cardScope.kind === 'domain' ? (
           <LatestUsageDay
             domainName={cardScope.domainName}
-            resourceGroups={panel.settings?.resourceGroups}
+            resourceGroups={
+              vars.resourceGroup ? [vars.resourceGroup] : undefined
+            }
             fetchKey={key}
           />
         ) : null

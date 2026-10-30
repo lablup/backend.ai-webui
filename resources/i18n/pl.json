@@ -885,7 +885,7 @@
       "Unhealthy": "Niesprawny",
       "Unlimited": "Bez limitu",
       "UsageOnDay": "Wykorzystanie z dnia {{day}}",
-      "UsageRowsCapped": "Wyświetlane są {{shown}} najnowsze z {{total}} wierszy.",
+      "UsageRowsCapped": "Ranking z {{shown}} spośród {{total}} wierszy z tego dnia.",
       "ViewAll": "Pokaż wszystko",
       "ViewIn": "Pokaż w: {{name}}",
       "VsPreviousRange": "w porównaniu z poprzednim okresem",

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<afb558fe873e9ceedc58feb2c34d9a04>>
+ * @generated SignedSource<<83d24deb1b8a620ba0f5c983a8832d08>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -56,6 +56,7 @@ export type DateFilter = {
 export type TopProjectsUsagePanelQuery$variables = {
   filter: ProjectUsageBucketFilter;
   limit: number;
+  offset: number;
 };
 export type TopProjectsUsagePanelQuery$data = {
   readonly buckets: {
@@ -95,6 +96,11 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "limit"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "offset"
   }
 ],
 v1 = [
@@ -107,6 +113,11 @@ v1 = [
     "kind": "Variable",
     "name": "limit",
     "variableName": "limit"
+  },
+  {
+    "kind": "Variable",
+    "name": "offset",
+    "variableName": "offset"
   },
   {
     "kind": "Literal",
@@ -313,16 +324,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d7c52eddaeaa4fb0e8fcdf708ce7e00f",
+    "cacheID": "99f667fd0ca9bd54723d0e40f0a46ec4",
     "id": null,
     "metadata": {},
     "name": "TopProjectsUsagePanelQuery",
     "operationKind": "query",
-    "text": "query TopProjectsUsagePanelQuery(\n  $filter: ProjectUsageBucketFilter!\n  $limit: Int!\n) {\n  buckets: adminProjectUsageBuckets(filter: $filter, orderBy: [{field: PERIOD_START, direction: DESC}], limit: $limit) {\n    count\n    edges {\n      node {\n        id\n        resourceGroupName\n        resourceUsage {\n          entries {\n            resourceType\n            quantity\n          }\n        }\n        project {\n          basicInfo {\n            name\n          }\n          id\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query TopProjectsUsagePanelQuery(\n  $filter: ProjectUsageBucketFilter!\n  $limit: Int!\n  $offset: Int!\n) {\n  buckets: adminProjectUsageBuckets(filter: $filter, orderBy: [{field: PERIOD_START, direction: DESC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        resourceGroupName\n        resourceUsage {\n          entries {\n            resourceType\n            quantity\n          }\n        }\n        project {\n          basicInfo {\n            name\n          }\n          id\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "c6c005852082805d01fe0af0728137bc";
+(node as any).hash = "97c7874899df8e35fdd5f6e5ad6bc8b9";
 
 export default node;

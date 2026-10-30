@@ -885,7 +885,7 @@
       "Unhealthy": "異常",
       "Unlimited": "無限制",
       "UsageOnDay": "{{day}} 的使用量",
-      "UsageRowsCapped": "顯示 {{total}} 列中最新的 {{shown}} 列。",
+      "UsageRowsCapped": "根據當天 {{total}} 列中的 {{shown}} 列排名。",
       "ViewAll": "查看全部",
       "ViewIn": "在{{name}}中檢視",
       "VsPreviousRange": "與上一時間範圍相比",

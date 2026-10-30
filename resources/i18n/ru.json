@@ -885,7 +885,7 @@
       "Unhealthy": "Неисправно",
       "Unlimited": "Без ограничений",
       "UsageOnDay": "Использование за {{day}}",
-      "UsageRowsCapped": "Показаны {{shown}} новейших из {{total}} строк.",
+      "UsageRowsCapped": "Рейтинг составлен по {{shown}} из {{total}} строк за день.",
       "ViewAll": "Показать все",
       "ViewIn": "Открыть в разделе «{{name}}»",
       "VsPreviousRange": "по сравнению с предыдущим периодом",

@@ -885,7 +885,7 @@
       "Unhealthy": "異常",
       "Unlimited": "無制限",
       "UsageOnDay": "{{day}} の使用量",
-      "UsageRowsCapped": "{{total}} 行のうち新しい {{shown}} 行を表示しています。",
+      "UsageRowsCapped": "その日の {{total}} 行のうち {{shown}} 行から順位を付けています。",
       "ViewAll": "すべて表示",
       "ViewIn": "{{name}}で表示",
       "VsPreviousRange": "前の期間との比較",

@@ -885,7 +885,7 @@
       "Unhealthy": "Sağlıksız",
       "Unlimited": "Sınırsız",
       "UsageOnDay": "{{day}} kullanımı",
-      "UsageRowsCapped": "{{total}} satırdan en yeni {{shown}} tanesi gösteriliyor.",
+      "UsageRowsCapped": "Günün {{total}} satırından {{shown}} tanesine göre sıralandı.",
       "ViewAll": "Tümünü görüntüle",
       "ViewIn": "{{name}} içinde görüntüle",
       "VsPreviousRange": "önceki aralığa göre",

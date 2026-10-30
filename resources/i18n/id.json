@@ -885,7 +885,7 @@
       "Unhealthy": "Tidak sehat",
       "Unlimited": "Tidak terbatas",
       "UsageOnDay": "Penggunaan pada {{day}}",
-      "UsageRowsCapped": "Menampilkan {{shown}} baris terbaru dari {{total}}.",
+      "UsageRowsCapped": "Diperingkat dari {{shown}} dari {{total}} baris hari itu.",
       "ViewAll": "Lihat semua",
       "ViewIn": "Lihat di {{name}}",
       "VsPreviousRange": "vs. rentang sebelumnya",

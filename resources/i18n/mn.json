@@ -885,7 +885,7 @@
       "Unhealthy": "Хэвийн бус",
       "Unlimited": "Хязгааргүй",
       "UsageOnDay": "{{day}}-ний хэрэглээ",
-      "UsageRowsCapped": "{{total}} мөрөөс хамгийн шинэ {{shown}}-ийг харуулж байна.",
+      "UsageRowsCapped": "Тухайн өдрийн {{total}} мөрөөс {{shown}} мөрөөр эрэмбэлсэн.",
       "ViewAll": "Бүгдийг харах",
       "ViewIn": "{{name}} хэсэгт харах",
       "VsPreviousRange": "өмнөх хугацаатай харьцуулахад",

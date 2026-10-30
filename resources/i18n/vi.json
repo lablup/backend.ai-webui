@@ -885,7 +885,7 @@
       "Unhealthy": "Có lỗi",
       "Unlimited": "Không giới hạn",
       "UsageOnDay": "Mức sử dụng ngày {{day}}",
-      "UsageRowsCapped": "Đang hiển thị {{shown}} hàng mới nhất trong {{total}}.",
+      "UsageRowsCapped": "Xếp hạng từ {{shown}} trong số {{total}} hàng của ngày.",
       "ViewAll": "Xem tất cả",
       "ViewIn": "Xem trong {{name}}",
       "VsPreviousRange": "so với khoảng trước",

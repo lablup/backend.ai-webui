@@ -882,7 +882,7 @@
       "Unhealthy": "ผิดปกติ",
       "Unlimited": "ไม่จำกัด",
       "UsageOnDay": "การใช้งานวันที่ {{day}}",
-      "UsageRowsCapped": "แสดง {{shown}} แถวล่าสุดจาก {{total}} แถว",
+      "UsageRowsCapped": "จัดอันดับจาก {{shown}} แถวจากทั้งหมด {{total}} แถวของวันนั้น",
       "ViewAll": "ดูทั้งหมด",
       "ViewIn": "ดูใน {{name}}",
       "VsPreviousRange": "เทียบกับช่วงก่อนหน้า",
