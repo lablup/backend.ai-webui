@@ -17,7 +17,7 @@ The latest versions of this document can be found from sites below:
 - [Installation](installation/installation.md)
 - [Login](login/login.md)
 - [Top Bar](header/header.md)
-- [Start Actions](start/start.md)
+- [Start](start/start.md)
 - [Dashboard](dashboard/dashboard.md)
 - [Storage Folders](vfolder/vfolder.md)
 - [Session Page](session_page/session_page.md)

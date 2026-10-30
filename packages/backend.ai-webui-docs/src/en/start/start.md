@@ -1,21 +1,20 @@
 ---
-navTitle: Start Actions
+navTitle: Start
 ---
 
-<a id="start-page"></a>
+# Start Page
 
-# Start Actions
+The Start page provides quick access to frequently used WebUI features through
+action cards. Each card represents a common workflow such as creating storage
+folders, launching sessions, deploying models, or importing projects from
+external URLs.
 
-The actions of the former Start page are now cards on the
-[Dashboard](#dashboard): creating storage folders, launching sessions,
-deploying models, and importing projects from external URLs. The Start menu
-was removed; old `/start` links open the Dashboard, and import links such as
-`/start?type=url&data=...` still open the **Start From URL** dialog.
+![](../images/start_page.png)
 
 ## Announcement banner
 
 If your system administrator has published an announcement, it appears as a
-banner at the top of every page. The announcement
+banner at the top of every page, not only the Start page. The announcement
 supports Markdown formatting and may contain important notices about system
 maintenance, updates, or usage guidelines.
 
@@ -34,7 +33,7 @@ details, refer to the [System announcement](#system-announcement) section.
 
 ## Action cards
 
-The Dashboard shows the following action cards by default, in the **Get started** group of the card list:
+The Start page displays the following action cards by default:
 
 - **Create New Storage Folder**: Create a storage folder and upload files. This
   is an essential first step for training models or providing external services.
@@ -184,6 +183,10 @@ to download and consume the storage quota of the target folder.
 
 ## Customizing card layout
 
-Action cards are Dashboard cards: move or resize them like any other card, and
-add or remove them from the **Cards** list of the edit sidebar. For details,
-refer to [Adding and Removing Cards](#adding-and-removing-cards).
+You can rearrange the action cards on the Start page by dragging and dropping
+them. Each card has a drag handle at the top-left corner that you can grab to
+move the card to a different position.
+
+Your customized card arrangement is automatically saved and persists across
+browser sessions. The layout is stored per user, so each user can have their
+own preferred arrangement.

@@ -149,7 +149,7 @@ and consider changing your password.
 :::
 
 After logging in, you can check the information of the current resource usage on
-the Dashboard.
+the Start page.
 
 By clicking the user icon in the upper-right corner, you will see the user menu.
 You can log out by selecting the `Log Out` menu item.
@@ -194,10 +194,6 @@ your system administrator.
 <a id="menus-available-to-your-role"></a>
 
 ### Menus available to your role
-
-The sidebar lists only the pages you are allowed to open. Every user sees the
-general menu groups; the **Administration** groups appear in addition for
-superadmins and domain admins.
 
 Project-admin entries are evaluated against **the currently selected project**,
 not against your account as a whole. The project you are working in is
