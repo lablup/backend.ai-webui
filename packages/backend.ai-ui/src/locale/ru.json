@@ -183,7 +183,6 @@
     "KeyRequired": "Введите ключ.",
     "Label": "Метка",
     "LabelsSaved": "Метки сохранены.",
-    "RemoveLabel": "Удалить метку",
     "Save": "Сохранить",
     "SomeLabelsFailed": "Не удалось применить изменений меток: {{count}}",
     "Target": "Объект",

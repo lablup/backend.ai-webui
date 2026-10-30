@@ -183,7 +183,6 @@
     "KeyRequired": "Insira uma chave.",
     "Label": "Rótulo",
     "LabelsSaved": "Rótulos salvos.",
-    "RemoveLabel": "Remover rótulo",
     "Save": "Salvar",
     "SomeLabelsFailed": "{{count}} alterações de rótulos falharam",
     "Target": "Destino",

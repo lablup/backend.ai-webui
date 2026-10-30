@@ -183,7 +183,6 @@
     "KeyRequired": "Introduzca una clave.",
     "Label": "Etiqueta",
     "LabelsSaved": "Etiquetas guardadas.",
-    "RemoveLabel": "Quitar etiqueta",
     "Save": "Guardar",
     "SomeLabelsFailed": "Fallaron {{count}} cambios de etiquetas",
     "Target": "Destino",

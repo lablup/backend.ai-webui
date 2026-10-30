@@ -183,7 +183,6 @@
     "KeyRequired": "Anna avain.",
     "Label": "Tunniste",
     "LabelsSaved": "Tunnisteet tallennettu.",
-    "RemoveLabel": "Poista tunniste",
     "Save": "Tallenna",
     "SomeLabelsFailed": "{{count}} tunnistemuutosta epäonnistui",
     "Target": "Kohde",
