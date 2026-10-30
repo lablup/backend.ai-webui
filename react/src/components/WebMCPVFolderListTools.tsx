@@ -72,7 +72,7 @@ const VFolderListToolsRegistrar: React.FC<WebMCPVFolderListToolsProps> = ({
   const vfolders = useFragment(
     graphql`
       fragment WebMCPVFolderListToolsFragment on VFolder @relay(plural: true) {
-        id
+        entityId
         vfolderStatus: status
         host
         usage {
@@ -112,7 +112,7 @@ const VFolderListToolsRegistrar: React.FC<WebMCPVFolderListToolsProps> = ({
   const rows: Array<PageToolRow> = _.map(
     filterOutNullAndUndefined(vfolders),
     (vfolder) => ({
-      id: vfolder.id ?? '',
+      id: vfolder.entityId,
       name: vfolder.metadata?.name ?? null,
       status: vfolder.vfolderStatus ?? null,
       host: vfolder.host ?? null,

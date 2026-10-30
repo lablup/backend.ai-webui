@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<37dae79105ebca62d76840dc8cbad825>>
+ * @generated SignedSource<<c0f0daf9f4da3f306c6c54c4ffac30db>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,8 +19,8 @@ export type WebMCPVFolderListToolsFragment$data = ReadonlyArray<{
     readonly ownershipType: VFolderOwnershipType;
     readonly permission: VFolderMountPermission;
   };
+  readonly entityId: string;
   readonly host: string;
-  readonly id: string;
   readonly metadata: {
     readonly cloneable: boolean;
     readonly createdAt: string;
@@ -74,7 +74,7 @@ return {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "id",
+      "name": "entityId",
       "storageKey": null
     },
     {
@@ -261,6 +261,6 @@ return {
 };
 })();
 
-(node as any).hash = "100e068c7dd0088183f14427893d6570";
+(node as any).hash = "3f55935f80d53412d83272838c7b3d77";
 
 export default node;
