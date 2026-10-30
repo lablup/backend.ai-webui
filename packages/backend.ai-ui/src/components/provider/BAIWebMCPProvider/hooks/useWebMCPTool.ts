@@ -1,4 +1,5 @@
 import useBAILogger from '../../../../hooks/useBAILogger';
+import { useEventNotStable } from '../../../../hooks/useEventNotStable';
 import { BAIWebMCPContext } from '../context';
 import type {
   WebMCPModelContext,
@@ -10,9 +11,13 @@ import {
   webMCPError,
   webMCPInvalidInput,
 } from '../validateWebMCPInput';
-import { use, useEffect, useEffectEvent, useRef } from 'react';
+import { use, useEffect, useEffectEvent } from 'react';
 
-export type WebMCPToolDep = string | number | boolean | null | undefined;
+// The client and Relay layer reject with plain objects, not `Error`s.
+const errorMessage = (error: unknown): string => {
+  const message = (error as { message?: unknown } | null | undefined)?.message;
+  return typeof message === 'string' ? message : String(error);
+};
 
 /** `document.modelContext` when the browser implements WebMCP, else `undefined`. */
 export const getWebMCPModelContext = (): WebMCPModelContext | undefined => {
@@ -41,15 +46,12 @@ export const useBAIWebMCPActive = (): boolean => {
  *
  * - Nothing happens unless `BAIWebMCPProvider` is `enabled` and the browser
  *   exposes the API. `null` registers nothing.
- * - The tool re-registers when its name, description, schema, annotations or
- *   `deps` change. `execute` always runs against the latest render's closure.
- * - Input is validated against `inputSchema` before `execute` sees it; bad
- *   input and thrown errors come back as `{ error: { code, message } }`.
+ * - The tool re-registers when its name, description, schema or annotations
+ *   change. `execute` always runs against the latest render's closure.
+ * - Bad input, thrown errors and results that cannot be serialized come back
+ *   as `{ error: { code, message } }`.
  */
-const useWebMCPTool = (
-  tool: WebMCPTool | null,
-  deps: ReadonlyArray<WebMCPToolDep> = [],
-): void => {
+const useWebMCPTool = (tool: WebMCPTool | null): void => {
   'use memo';
   const { enabled } = use(BAIWebMCPContext);
   const { logger } = useBAILogger();
@@ -61,59 +63,54 @@ const useWebMCPTool = (
           tool.description,
           tool.inputSchema,
           tool.annotations ?? null,
-          deps,
         ])
       : null;
 
-  // The browser calls `execute` long after the effect ran, so the latest tool
-  // is read from a ref: `useEffectEvent` is only safe inside effects.
-  const latestTool = useRef(tool);
-  useEffect(() => {
-    latestTool.current = tool;
+  // The browser calls this long after any effect ran, which rules out
+  // `useEffectEvent`; the layout-effect refresh closes the post-commit gap.
+  const execute = useEventNotStable(async (input: unknown) => {
+    if (!tool) {
+      return webMCPError('tool_unavailable', 'This tool is not available.');
+    }
+    try {
+      const parsed = validateWebMCPInput(tool.inputSchema, input);
+      if (!parsed.ok) return webMCPInvalidInput(parsed.issues);
+      const result = await tool.execute(parsed.value);
+      // The platform stringifies the result after this returns.
+      JSON.stringify(result);
+      return result;
+    } catch (error) {
+      return webMCPError('execution_failed', errorMessage(error));
+    }
   });
 
-  const reportRegisterError = useEffectEvent((error: unknown) => {
-    logger.warn('[WebMCP] registerTool failed', error);
+  const register = useEffectEvent((signal: AbortSignal) => {
+    const modelContext = getWebMCPModelContext();
+    if (!modelContext || !tool) return;
+
+    const descriptor: WebMCPToolDescriptor = {
+      name: tool.name,
+      description: tool.description,
+      inputSchema: tool.inputSchema,
+      ...(tool.annotations ? { annotations: tool.annotations } : {}),
+      execute,
+    };
+    const reportFailure = (error: unknown) => {
+      logger.warn('[WebMCP] registerTool failed', error);
+    };
+    try {
+      Promise.resolve(modelContext.registerTool(descriptor, { signal })).catch(
+        reportFailure,
+      );
+    } catch (error) {
+      reportFailure(error);
+    }
   });
 
   useEffect(() => {
     if (registrationKey === null) return;
-    const modelContext = getWebMCPModelContext();
-    const definition = latestTool.current;
-    if (!modelContext || !definition) return;
-
     const controller = new AbortController();
-    const descriptor: WebMCPToolDescriptor = {
-      name: definition.name,
-      description: definition.description,
-      inputSchema: definition.inputSchema,
-      ...(definition.annotations
-        ? { annotations: definition.annotations }
-        : {}),
-      execute: async (input) => {
-        const current = latestTool.current;
-        if (!current) {
-          return webMCPError('tool_unavailable', 'This tool is not available.');
-        }
-        const parsed = validateWebMCPInput(current.inputSchema, input);
-        if (!parsed.ok) return webMCPInvalidInput(parsed.issues);
-        try {
-          return await current.execute(parsed.value);
-        } catch (error) {
-          return webMCPError(
-            'execution_failed',
-            error instanceof Error ? error.message : String(error),
-          );
-        }
-      },
-    };
-    try {
-      Promise.resolve(
-        modelContext.registerTool(descriptor, { signal: controller.signal }),
-      ).catch(reportRegisterError);
-    } catch (error) {
-      reportRegisterError(error);
-    }
+    register(controller.signal);
     return () => controller.abort();
   }, [registrationKey]);
 };

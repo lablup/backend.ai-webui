@@ -19,4 +19,13 @@ describe('refreshConfigFromToml — enableWebMCP', () => {
       refreshConfigFromToml({ general: { enableWebMCP: false } }).enableWebMCP,
     ).toBe(false);
   });
+
+  it('stays off for a quoted value', () => {
+    for (const quoted of ['false', 'true']) {
+      expect(
+        refreshConfigFromToml({ general: { enableWebMCP: quoted } })
+          .enableWebMCP,
+      ).toBe(false);
+    }
+  });
 });

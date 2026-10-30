@@ -59,13 +59,13 @@ const checkProperty = (
 /**
  * Checks tool input against a flat `WebMCPInputSchema`. Browsers do not
  * enforce `inputSchema`, so every tool runs its input through this first.
- * `undefined`/`null` input counts as `{}`; a JSON string is parsed.
+ * A JSON string is parsed first; `undefined`/`null` then count as `{}`.
  */
 export const validateWebMCPInput = (
   schema: WebMCPInputSchema,
   input: unknown,
 ): WebMCPInputValidation => {
-  let candidate: unknown = input ?? {};
+  let candidate: unknown = input;
   if (typeof candidate === 'string') {
     try {
       candidate = JSON.parse(candidate);
@@ -76,6 +76,7 @@ export const validateWebMCPInput = (
       };
     }
   }
+  candidate ??= {};
   if (!isPlainObject(candidate)) {
     return { ok: false, issues: [{ path: '', message: 'must be an object' }] };
   }
@@ -94,9 +95,7 @@ export const validateWebMCPInput = (
       ? schema.properties[key]
       : undefined;
     if (!propertySchema) {
-      if (schema.additionalProperties === false) {
-        issues.push({ path: key, message: 'is not an accepted property' });
-      }
+      issues.push({ path: key, message: 'is not an accepted property' });
       continue;
     }
     if (value === undefined) continue;

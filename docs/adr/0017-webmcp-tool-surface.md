@@ -58,7 +58,7 @@ flowchart LR
 
 ### 2. 설정과 feature detection이 모두 켜져야 등록한다
 
-- **Config key**: 설정 이름은 `config.toml`의 `[general] enableWebMCP`이고 기본값은 `false`다. `react/src/helper/loginConfig.ts`의 `refreshConfigFromToml`이 이 값을 `LoginConfigState.enableWebMCP`로 읽고, `applyConfigToClient`가 로그인 때 `baiClient._config.enableWebMCP`에 복사한다. `config.toml.sample`에 설명이 있다.
+- **Config key**: 설정 이름은 `config.toml`의 `[general] enableWebMCP`이고 기본값은 `false`다. `react/src/helper/loginConfig.ts`의 `refreshConfigFromToml`이 이 값을 `LoginConfigState.enableWebMCP`로 읽는다. 값이 boolean `true`일 때만 켜지고, 따옴표로 감싼 문자열은 꺼짐이다. `applyConfigToClient`가 로그인 때 `baiClient._config.enableWebMCP`에 복사한다. `config.toml.sample`에 설명이 있다.
 - **Provider**: `DefaultProvidersForReactRoot`가 `useLoginConfig()?.enableWebMCP`를 `BAIWebMCPProvider`의 `enabled` prop으로 넘긴다. provider가 없는 tree에서 `enabled`는 `false`다.
 - **Check order**: `useWebMCPTool`은 `enabled`가 `false`이면 `document.modelContext`를 읽지 않는다. `enabled`가 `true`이면 `document.modelContext`를 읽어 API가 있는지 확인하고, 없으면 아무것도 등록하지 않는다.
 - **Active check**: tool이 쓸 data를 얻으려고 query나 계산을 해야 하는 component는 `useBAIWebMCPActive()`가 `false`일 때 그 hook을 부르지 않는다. `useBAIWebMCPActive()`는 위 두 조건을 같은 순서로 확인한다.
@@ -101,16 +101,16 @@ flowchart LR
 | `minLength`·`maxLength` | 문자열 길이 |
 | `additionalProperties: false` | 선언하지 않은 key가 없는지 |
 
-- **Input forms**: `undefined`와 `null` 입력은 `{}`로 보고, 문자열 입력은 JSON으로 parse한다.
+- **Input forms**: 문자열 입력은 먼저 JSON으로 parse한다. `undefined`, `null`, 그리고 parse 결과가 `null`인 입력은 `{}`로 본다.
 - **Always on**: `useWebMCPTool`이 `execute`를 부르기 전에 항상 검사한다. 여러 property 사이의 규칙(예: 둘 중 하나만)은 tool의 `execute`가 직접 확인한다.
-- **Closed schemas**: tool 작성자는 모든 `inputSchema`에 `additionalProperties: false`를 둔다. 그래야 agent가 잘못 쓴 key가 조용히 무시되지 않고 error로 돌아간다.
+- **Closed schemas**: `WebMCPInputSchema` 타입이 `additionalProperties: false`를 필수로 요구한다. 그래야 agent가 잘못 쓴 key가 조용히 무시되지 않고 error로 돌아간다.
 
 ### 6. 실패는 구조화된 error로 돌려준다
 
 | `code` | 누가 돌려주는가 | 언제 |
 |---|---|---|
 | `invalid_input` | `useWebMCPTool` | `validateWebMCPInput`이 거절했다. `issues: [{ path, message }]`가 붙는다 |
-| `execution_failed` | `useWebMCPTool` | `execute`가 예외를 던졌다 |
+| `execution_failed` | `useWebMCPTool` | 입력 검사나 `execute`가 예외를 던졌거나 반환값을 JSON으로 바꿀 수 없다. `message`에는 예외의 `message`를 담고, client와 Relay가 던지는 plain object도 같다 |
 | `tool_unavailable` | `useWebMCPTool` | 등록된 뒤 component가 `null` tool을 넘기게 되었다 |
 | 그 밖의 snake_case 문자열 | tool의 `execute` | tool이 자기 규칙으로 거절했다. `webMCPError(code, message)`로 만든다 |
 
@@ -123,16 +123,16 @@ flowchart LR
 |---|---|
 | `readOnlyHint: true` | 읽기만 하는 tool. 이동과 form 채우기 tool은 달지 않는다 |
 | `untrustedContentHint: true` | 이름, email, 설명, project 이름처럼 사용자가 쓴 text를 반환값에 담는 tool |
-| `consequentialHint` | 쓰지 않는다. 4항 때문에 되돌릴 수 없는 결과를 내는 tool이 없다 |
+| `consequentialHint` | 쓰지 않는다. 4항 때문에 되돌릴 수 없는 결과를 내는 tool이 없고, `WebMCPToolAnnotations` 타입에도 없다 |
 
 - **Description is page content**: agent는 tool의 `description`도 page가 보낸 신뢰할 수 없는 내용으로 받는다. tool 작성자는 `description`에 사용자가 쓴 data를 넣지 않는다.
 
 ### 8. data를 가진 component가 등록하고, unmount가 등록을 푼다
 
-- **Owner**: tool은 그 data나 그 form의 열림 상태를 이미 가진 component가 `useWebMCPTool(tool, deps)`로 등록한다. `bai_prepare_<noun>`은 form을 여는 state를 가진 page component가 등록한다. component는 tool 때문에 새 query를 보내지 않는다.
+- **Owner**: tool은 그 data나 그 form의 열림 상태를 이미 가진 component가 `useWebMCPTool(tool)`로 등록한다. `bai_prepare_<noun>`은 form을 여는 state를 가진 page component가 등록한다. component는 tool 때문에 새 query를 보내지 않는다.
 - **Lifetime**: `useWebMCPTool`은 등록할 때 만든 `AbortController`를 unmount 때 abort한다. route가 바뀌면 이전 page의 tool이 사라지고 새 page의 tool이 등록된다.
-- **Re-registration**: `name`, `description`, `inputSchema`, `annotations`, `deps`(원시값 배열) 중 하나가 바뀌면 `useWebMCPTool`은 이전 등록을 abort하고 다시 등록한다.
-- **Latest closure**: 브라우저는 effect가 끝난 한참 뒤에 `execute`를 부르므로 `useWebMCPTool`은 최신 tool을 ref에 담아 두고 거기서 읽는다(`useEffectEvent`는 effect 안에서만 안전하다). 그래서 `execute`는 항상 최신 render의 값을 읽고, 값만 바뀌는 closure는 `deps`에 넣지 않는다.
+- **Re-registration**: `name`, `description`, `inputSchema`, `annotations` 중 하나가 바뀌면 `useWebMCPTool`은 이전 등록을 abort하고 다시 등록한다.
+- **Latest closure**: 브라우저는 effect가 끝난 한참 뒤에 `execute`를 부르므로 `useWebMCPTool`은 BUI의 `useEventNotStable`로 안정적인 `execute`를 만든다(`useEffectEvent`는 effect 안에서만 안전하다). 이 hook은 layout effect에서 최신 closure로 바꾸므로 `execute`는 항상 최신 render의 값을 읽고, 값만 바뀌어서는 다시 등록되지 않는다.
 - **Not ready**: 아직 준비되지 않은 tool은 component가 `null`을 넘겨 등록하지 않는다.
 
 ## 대안과 기각 사유
