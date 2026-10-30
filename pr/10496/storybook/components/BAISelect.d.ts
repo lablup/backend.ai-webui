@@ -1,12 +1,11 @@
+import { SelectorOptionData } from '@lablup/ui-common/Selector';
 import { default as React, CSSProperties, ReactNode } from '../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.3.1/389d2ab16b7e9a891f1811154c26db12b2fd74e8cb0d60e295d30c107a842d5d/node_modules/react';
 /** antd `DefaultOptionType`, restated locally. */
 export interface BAISelectOption {
     value?: string | number | null;
     label?: ReactNode;
     /** `{ reason }` also puts a glyph at the end of the row whose tooltip says why. */
-    disabled?: boolean | {
-        reason: string;
-    };
+    disabled?: SelectorOptionData['disabled'];
     title?: string;
     [key: string]: any;
 }
