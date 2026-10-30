@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'Rows of the same fields with an Add action below them and a Remove action on each row, for lists such as environment variables, labels or ports. It shows the column headers once above the first row and knows nothing about forms: each column’s `render(item, index)` returns the cell, so the caller wraps the control in its own `Form.Item` with its rules and `validateTrigger`, and a failed rule shows its message under that cell. Cells are top-aligned, so a message lengthens only its own row.',
+      'Rows of the same fields with a full-width Add action below them and a minus-icon Remove action on each row, for lists such as environment variables, labels or ports. It shows the column headers once above the first row and knows nothing about forms: each column’s `render(item, index)` returns the cell, so the caller wraps the control in its own `Form.Item` with its rules and `validateTrigger`, and a failed rule shows its message under that cell. Cells are top-aligned, so a message lengthens only its own row.',
     bestPractices: [
       {
         guidance: true,
