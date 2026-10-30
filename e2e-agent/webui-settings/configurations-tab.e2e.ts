@@ -10,7 +10,7 @@ test(
   "the superadmin opens Configurations from the System Settings page",
   draft,
   async ({ app, agent }) => {
-    await app.open("/admin/webui-settings");
+    await app.open("/admin/system-settings");
     await agent.act('Open the "Configurations" tab');
     await agent.act(
       'Open the "Scheduler" settings and read the current scheduler type',
