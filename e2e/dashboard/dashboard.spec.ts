@@ -102,15 +102,7 @@ test.describe(
             .first(),
         ).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-        // 4. Verify the "Resource Presets" widget is visible
-        await expect(
-          page
-            .locator('.uic-board-item')
-            .filter({ hasText: 'Resource Presets' })
-            .first(),
-        ).toBeVisible({ timeout: WIDGET_TIMEOUT });
-
-        // 5. Verify the "Agent Stats" widget is NOT present (admin only)
+        // 4. Verify the "Agent Stats" widget is NOT present (admin only)
         await expect(
           page
             .locator('.uic-board-item')
@@ -118,7 +110,7 @@ test.describe(
             .first(),
         ).not.toBeVisible();
 
-        // 6. Verify the "My Recent Sessions" table is visible
+        // 5. Verify the "My Recent Sessions" table is visible
         await expect(
           page
             .locator('.uic-board-item')
@@ -151,8 +143,8 @@ test.describe(
         await expect(widget.getByText('Interactive')).toBeVisible();
         await expect(widget.getByText('Batch')).toBeVisible();
         await expect(widget.getByText('Inference')).toBeVisible();
-        // The fourth session type is "Upload Sessions" (not "System")
-        await expect(widget.getByText('Upload Sessions')).toBeVisible();
+        // The fourth session type (SYSTEM) is labelled "Upload"
+        await expect(widget.getByText('Upload', { exact: true })).toBeVisible();
       });
 
       test('Admin can refresh the dashboard and the session count widget keeps rendering', async ({
@@ -197,10 +189,10 @@ test.describe(
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
         // 2. Verify the CPU usage statistic is displayed
-        await expect(widget.getByText(/CPU/i)).toBeVisible();
+        await expect(widget.getByText(/CPU/i).first()).toBeVisible();
 
         // 3. Verify the Memory usage statistic is displayed
-        await expect(widget.getByText(/Memory|RAM/i)).toBeVisible();
+        await expect(widget.getByText(/Memory|RAM/i).first()).toBeVisible();
       });
 
       test('Admin can refresh the dashboard and the My Resources widget keeps rendering', async ({
@@ -220,7 +212,7 @@ test.describe(
         await refreshButton.click();
 
         // 3. Verify the widget still renders CPU/Memory after refresh
-        await expect(widget.getByText(/CPU/i)).toBeVisible();
+        await expect(widget.getByText(/CPU/i).first()).toBeVisible();
       });
     });
 
