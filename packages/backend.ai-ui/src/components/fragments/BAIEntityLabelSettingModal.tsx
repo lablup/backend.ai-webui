@@ -273,10 +273,11 @@ const BAIEntityLabelSettingModalContent = ({
               {(fields, { add, remove }) => (
                 <BAIDynamicList
                   items={fields}
-                  getItemKey={(field) => field.key}
-                  onAdd={() => add()}
+                  addButton={{
+                    onClick: () => add(),
+                    label: t('comp:BAIEntityLabelSettingModal.AddLabel'),
+                  }}
                   onRemove={(field) => remove(field.name)}
-                  addLabel={t('comp:BAIEntityLabelSettingModal.AddLabel')}
                   columns={[
                     {
                       key: 'key',

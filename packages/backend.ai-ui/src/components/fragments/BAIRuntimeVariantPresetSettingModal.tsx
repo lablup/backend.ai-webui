@@ -1034,18 +1034,19 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                   >
                     <BAIDynamicList
                       items={fields}
-                      getItemKey={(field) => field.key}
-                      onAdd={() => {
-                        add();
-                        // A failed save's message clears once a row fixes it.
-                        if (errors.length > 0) {
-                          form.validateFields(['choices']).catch(() => {});
-                        }
+                      addButton={{
+                        onClick: () => {
+                          add();
+                          // A failed save's message clears once a row fixes it.
+                          if (errors.length > 0) {
+                            form.validateFields(['choices']).catch(() => {});
+                          }
+                        },
+                        label: t(
+                          'comp:BAIRuntimeVariantPresetSettingModal.AddChoice',
+                        ),
                       }}
                       onRemove={(field) => remove(field.name)}
-                      addLabel={t(
-                        'comp:BAIRuntimeVariantPresetSettingModal.AddChoice',
-                      )}
                       columns={[
                         {
                           key: 'value',
