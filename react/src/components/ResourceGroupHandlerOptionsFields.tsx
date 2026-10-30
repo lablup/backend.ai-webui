@@ -15,6 +15,7 @@ import {
   BAINumberInput,
   BAISelector,
   BAITable,
+  BAIText,
   type BAIColumnsType,
   useBAIBreakpoint,
 } from 'backend.ai-ui';
@@ -339,16 +340,29 @@ const HandlerOverridesTable: React.FC<{
       key: 'timeoutSec',
       title: t('resourceGroup.Timeout'),
       dataIndex: 'timeoutSec',
-      // A null override field falls back to the default (manager `resolve()`).
+      // A null override field falls back to the default (manager `resolve()`),
+      // shown muted like the edit form's placeholder.
       render: (value: HandlerOverrideRow['timeoutSec']) =>
-        formatSeconds(value ?? fallback?.timeoutSec, unlimited, seconds),
+        _.isNil(value) ? (
+          <BAIText type="secondary">
+            {formatSeconds(fallback?.timeoutSec, unlimited, seconds)}
+          </BAIText>
+        ) : (
+          formatSeconds(value, unlimited, seconds)
+        ),
     },
     {
       key: 'maxRetryCount',
       title: t('modelService.MaxRetries'),
       dataIndex: 'maxRetryCount',
       render: (value: HandlerOverrideRow['maxRetryCount']) =>
-        value ?? fallback?.maxRetryCount ?? unlimited,
+        _.isNil(value) ? (
+          <BAIText type="secondary">
+            {fallback?.maxRetryCount ?? unlimited}
+          </BAIText>
+        ) : (
+          value
+        ),
     },
   ];
 
