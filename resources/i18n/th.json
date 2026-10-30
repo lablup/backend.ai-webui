@@ -2894,6 +2894,33 @@
     "SharedMemory": "หน่วยความจำที่ใช้ร่วมกัน",
     "Updated": "อัปเดตค่าที่กำหนดไว้ล่วงหน้าของทรัพยากรแล้ว"
   },
+  "retentionPolicy": {
+    "Category": "หมวดหมู่",
+    "CategoryRequired": "เลือกหมวดหมู่",
+    "CreatePolicy": "สร้างนโยบาย",
+    "DataRetention": "การเก็บรักษาข้อมูล",
+    "DeletePolicy": "ลบนโยบายการเก็บรักษา",
+    "Description": "กำหนดระยะเวลาเก็บรักษาข้อมูลของแต่ละหมวดหมู่ ข้อมูลที่เกินระยะเวลาเก็บรักษาจะถูกล้างเฉพาะหมวดหมู่ที่เปิดใช้งานนโยบายเท่านั้น",
+    "EditPolicy": "แก้ไขนโยบาย",
+    "OnePolicyPerCategory": "แต่ละหมวดหมู่มีนโยบายได้เพียงหนึ่งนโยบาย",
+    "PolicyAlreadyExistsView": "หมวดหมู่นี้มีนโยบายอยู่แล้ว <viewLink>ดู</viewLink>",
+    "RetentionPeriodDays": "ระยะเวลาเก็บรักษา (วัน)",
+    "RetentionPeriodRequired": "ป้อนระยะเวลาเก็บรักษาอย่างน้อย 1 วัน",
+    "RetentionPolicy": "นโยบายการเก็บรักษา",
+    "SuccessfullyCreated": "สร้างนโยบายการเก็บรักษาแล้ว",
+    "SuccessfullyDeleted": "ลบนโยบายการเก็บรักษาแล้ว",
+    "SuccessfullyUpdated": "อัปเดตนโยบายการเก็บรักษาแล้ว",
+    "categories": {
+      "DEPLOYMENTS": "การปรับใช้",
+      "LOGIN": "ประวัติการเข้าสู่ระบบ",
+      "LOGS": "บันทึก",
+      "RECONCILE_HISTORY": "ประวัติการกระทบยอด",
+      "ROLES_INVITATIONS": "บทบาทและคำเชิญ",
+      "SESSIONS": "เซสชัน",
+      "USAGE_BUCKETS": "ข้อมูลรวมการใช้งาน",
+      "USAGE_RECORDS": "บันทึกการใช้งาน"
+    }
+  },
   "route": {
     "CreatedAt": "สร้างขึ้นที่",
     "ErrorCode": "รหัสข้อผิดพลาด",

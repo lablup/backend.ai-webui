@@ -2908,6 +2908,33 @@
     "SharedMemory": "共有メモリ",
     "Updated": "リソースプリセットが更新されました"
   },
+  "retentionPolicy": {
+    "Category": "種類",
+    "CategoryRequired": "種類を選択してください。",
+    "CreatePolicy": "ポリシーを作成",
+    "DataRetention": "データ保持",
+    "DeletePolicy": "保持ポリシーを削除",
+    "Description": "種類ごとにデータを保持する期間を設定します。ポリシーが有効な種類のみ、保持期間を過ぎたデータがクリーンアップされます。",
+    "EditPolicy": "ポリシーを編集",
+    "OnePolicyPerCategory": "ポリシーは種類ごとに1つだけ作成できます。",
+    "PolicyAlreadyExistsView": "この種類にはすでにポリシーがあります。<viewLink>確認</viewLink>",
+    "RetentionPeriodDays": "保持期間（日）",
+    "RetentionPeriodRequired": "1日以上の保持期間を入力してください。",
+    "RetentionPolicy": "保持ポリシー",
+    "SuccessfullyCreated": "保持ポリシーを作成しました。",
+    "SuccessfullyDeleted": "保持ポリシーを削除しました。",
+    "SuccessfullyUpdated": "保持ポリシーを更新しました。",
+    "categories": {
+      "DEPLOYMENTS": "デプロイメント",
+      "LOGIN": "ログイン履歴",
+      "LOGS": "ログ",
+      "RECONCILE_HISTORY": "調整履歴",
+      "ROLES_INVITATIONS": "ロールと招待",
+      "SESSIONS": "セッション",
+      "USAGE_BUCKETS": "使用量バケット",
+      "USAGE_RECORDS": "使用量記録"
+    }
+  },
   "route": {
     "CreatedAt": "で作成されました",
     "ErrorCode": "エラーコード",

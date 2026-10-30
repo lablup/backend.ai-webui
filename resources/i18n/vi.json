@@ -2908,6 +2908,33 @@
     "SharedMemory": "Bộ nhớ chia sẻ",
     "Updated": "Đã cập nhật cài đặt trước tài nguyên"
   },
+  "retentionPolicy": {
+    "Category": "Danh mục",
+    "CategoryRequired": "Hãy chọn một danh mục.",
+    "CreatePolicy": "Tạo chính sách",
+    "DataRetention": "Lưu giữ dữ liệu",
+    "DeletePolicy": "Xóa chính sách lưu giữ",
+    "Description": "Đặt thời gian lưu giữ dữ liệu cho từng danh mục. Dữ liệu quá thời gian lưu giữ chỉ được dọn dẹp ở các danh mục có chính sách đã bật.",
+    "EditPolicy": "Sửa chính sách",
+    "OnePolicyPerCategory": "Mỗi danh mục chỉ có thể có một chính sách.",
+    "PolicyAlreadyExistsView": "Danh mục này đã có chính sách. <viewLink>Xem</viewLink>",
+    "RetentionPeriodDays": "Thời gian lưu giữ (ngày)",
+    "RetentionPeriodRequired": "Nhập thời gian lưu giữ ít nhất 1 ngày.",
+    "RetentionPolicy": "Chính sách lưu giữ",
+    "SuccessfullyCreated": "Đã tạo chính sách lưu giữ.",
+    "SuccessfullyDeleted": "Đã xóa chính sách lưu giữ.",
+    "SuccessfullyUpdated": "Đã cập nhật chính sách lưu giữ.",
+    "categories": {
+      "DEPLOYMENTS": "Triển khai",
+      "LOGIN": "Lịch sử đăng nhập",
+      "LOGS": "Nhật ký",
+      "RECONCILE_HISTORY": "Lịch sử đối soát",
+      "ROLES_INVITATIONS": "Vai trò và lời mời",
+      "SESSIONS": "Phiên",
+      "USAGE_BUCKETS": "Tổng hợp sử dụng",
+      "USAGE_RECORDS": "Bản ghi sử dụng"
+    }
+  },
   "route": {
     "CreatedAt": "Được tạo ra tại",
     "ErrorCode": "Mã lỗi",
