@@ -43,13 +43,15 @@ const WebUISettingsPage: React.FC = () => {
   const { currentTab, onTabChange } = useTabQuerySnapshot(tabParser);
 
   // The Configurations tab replaced the `settings` sidebar entry (#10684), so
-  // the menu block/inactive lists keyed on `settings` still govern it.
-  const hiddenMenuKeys = [
-    ...(baiClient._config.blockList ?? []),
-    ...(baiClient._config.inactiveList ?? []),
-  ];
-  const canOpenConfigurations = !hiddenMenuKeys.includes('settings');
-  const activeTab = canOpenConfigurations ? currentTab : 'settings';
+  // the menu lists keyed on `settings` still govern it: blocked hides the
+  // tab, inactive shows it disabled but keeps the URL reachable.
+  const showsConfigurations = !(baiClient._config.blockList ?? []).includes(
+    'settings',
+  );
+  const isConfigurationsInactive = (
+    baiClient._config.inactiveList ?? []
+  ).includes('settings');
+  const activeTab = showsConfigurations ? currentTab : 'settings';
 
   return (
     <BAICard
@@ -57,11 +59,12 @@ const WebUISettingsPage: React.FC = () => {
       onTabChange={onTabChange}
       tabList={[
         { key: 'settings', label: t('webui.menu.SystemSettings') },
-        ...(canOpenConfigurations
+        ...(showsConfigurations
           ? [
               {
                 key: 'configurations',
                 label: t('webui.menu.Configurations'),
+                disabled: isConfigurationsInactive,
               },
             ]
           : []),
