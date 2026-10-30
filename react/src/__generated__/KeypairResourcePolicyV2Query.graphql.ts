@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5b4437ed4ea90a59a08ccbaa4ee96f43>>
+ * @generated SignedSource<<93cf9ec0641cb81ded0ca898229cd719>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,6 +17,7 @@ export type KeypairResourcePolicyV2Filter = {
   NOT?: ReadonlyArray<KeypairResourcePolicyV2Filter> | null | undefined;
   OR?: ReadonlyArray<KeypairResourcePolicyV2Filter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   idleTimeout?: IntFilter | null | undefined;
   keypair?: KeypairResourcePolicyKeypairNestedFilter | null | undefined;
   maxConcurrentSessions?: IntFilter | null | undefined;
