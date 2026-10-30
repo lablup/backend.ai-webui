@@ -183,7 +183,6 @@
     "KeyRequired": "Введите ключ.",
     "Label": "Метка",
     "LabelsSaved": "Метки сохранены.",
-    "RemoveLabel": "Удалить метку",
     "Save": "Сохранить",
     "SomeLabelsFailed": "Не удалось применить изменений меток: {{count}}",
     "Target": "Объект",
@@ -193,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Метка"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Создать",
+    "Custom": "Пользовательский",
+    "FullAccess": "Полный доступ",
+    "HardDelete": "Удалить безвозвратно",
+    "Read": "Читать",
+    "ReadAndWrite": "Чтение и запись",
+    "ReadOnly": "Только чтение",
+    "SoftDelete": "Удалить",
+    "Update": "Обновить"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Автообновление",
@@ -578,7 +588,11 @@
     "To": "Целевой статус",
     "UpdatedAt": "Обновлено"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Пригласить по электронной почте"
+  },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "У вас нет прав на монтирование этой папки.",
     "SelectFolder": "Выбрать папку"
   },
   "comp:BAISessionAgentIds": {
@@ -654,7 +668,6 @@
     "CreateFolder": "Создать новую папку для хранения",
     "DestinationPath": "Путь в контейнере (destination)",
     "Folders": "Папки",
-    "NoMountPermission": "У вас нет прав на монтирование этой папки.",
     "PathAndAliasTooltip": "Путь внутри контейнера, в который будет смонтирована папка. Оставьте пустым для использования пути по умолчанию.",
     "Refresh": "Обновить",
     "RemoveFolder": "Удалить",

@@ -10,7 +10,6 @@
 import './BAIBoard.css';
 import {
   Board,
-  useIsInBoardItem,
   type BoardItem,
   type BoardItemsChangeDetail,
   type BoardProps,
@@ -92,6 +91,4 @@ const BAIBoard = <T extends BAIBoardDataType = BAIBoardDataType>({
 
 BAIBoard.displayName = 'BAIBoard';
 
-/** Whether the caller renders inside a `BAIBoard` item, whose board pads it. */
-export const useIsInBAIBoardItem = useIsInBoardItem;
 export default BAIBoard;

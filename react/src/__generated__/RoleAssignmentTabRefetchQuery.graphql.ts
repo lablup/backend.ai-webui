@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f9868cb92fe5d410eb65d70d8447008c>>
+ * @generated SignedSource<<14b61cdb649f9a1d474460b239a1ab7e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -27,6 +27,7 @@ export type UserV2Filter = {
   domainId?: UUIDFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
   email?: StringFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   fullName?: StringFilter | null | undefined;
   integrationName?: StringFilter | null | undefined;
   keypairs?: UserKeypairNestedFilter | null | undefined;
@@ -121,6 +122,7 @@ export type KeypairFilter = {
   OR?: ReadonlyArray<KeypairFilter> | null | undefined;
   accessKey?: StringFilter | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   isActive?: boolean | null | undefined;
   isAdmin?: boolean | null | undefined;
   isDefault?: boolean | null | undefined;

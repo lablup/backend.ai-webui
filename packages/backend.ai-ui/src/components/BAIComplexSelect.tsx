@@ -42,7 +42,7 @@ export interface BAIComplexSelectOption {
   /** Trailing content (tokens, meta). */
   extra?: React.ReactNode;
   /** `{ reason }` also puts a glyph at the end of the row whose tooltip says why. */
-  disabled?: boolean | { reason: string };
+  disabled?: PagedSelectorOption['isDisabled'];
 }
 
 /** PagedSelector props this adapter renames or owns. */

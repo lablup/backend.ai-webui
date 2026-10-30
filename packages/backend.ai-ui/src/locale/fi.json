@@ -183,7 +183,6 @@
     "KeyRequired": "Anna avain.",
     "Label": "Tunniste",
     "LabelsSaved": "Tunnisteet tallennettu.",
-    "RemoveLabel": "Poista tunniste",
     "Save": "Tallenna",
     "SomeLabelsFailed": "{{count}} tunnistemuutosta epäonnistui",
     "Target": "Kohde",
@@ -193,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Tunniste"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Luo",
+    "Custom": "Mukautettu",
+    "FullAccess": "Täydet oikeudet",
+    "HardDelete": "Poista pysyvästi",
+    "Read": "Lue",
+    "ReadAndWrite": "Luku ja kirjoitus",
+    "ReadOnly": "Vain luku",
+    "SoftDelete": "Poista",
+    "Update": "Päivitä"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Automaattinen päivitys",
@@ -578,7 +588,11 @@
     "To": "Kohdetila",
     "UpdatedAt": "Päivitetty"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Kutsu sähköpostilla"
+  },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Sinulla ei ole oikeutta liittää tätä kansiota.",
     "SelectFolder": "Valitse kansio"
   },
   "comp:BAISessionAgentIds": {
@@ -654,7 +668,6 @@
     "CreateFolder": "Luo uusi tallennuskansio",
     "DestinationPath": "Kontin polku (destination)",
     "Folders": "Kansiot",
-    "NoMountPermission": "Sinulla ei ole oikeutta liittää tätä kansiota.",
     "PathAndAliasTooltip": "Polku säilön sisällä, johon kansio liitetään. Jätä tyhjäksi käyttääksesi oletuspolkua.",
     "Refresh": "Päivitä",
     "RemoveFolder": "Poista",

@@ -183,7 +183,6 @@
     "KeyRequired": "Masukkan kunci.",
     "Label": "Label",
     "LabelsSaved": "Label disimpan.",
-    "RemoveLabel": "Buang label",
     "Save": "Simpan",
     "SomeLabelsFailed": "{{count}} perubahan label gagal",
     "Target": "Sasaran",
@@ -193,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Label"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Cipta",
+    "Custom": "Tersuai",
+    "FullAccess": "Akses penuh",
+    "HardDelete": "Padam kekal",
+    "Read": "Baca",
+    "ReadAndWrite": "Baca dan tulis",
+    "ReadOnly": "Baca sahaja",
+    "SoftDelete": "Padam",
+    "Update": "Kemas kini"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Segar semula automatik",
@@ -578,7 +588,11 @@
     "To": "Status sasaran",
     "UpdatedAt": "Dikemas kini pada"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Jemput melalui e-mel"
+  },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Anda tidak mempunyai kebenaran untuk melekapkan folder ini.",
     "SelectFolder": "Pilih Folder"
   },
   "comp:BAISessionAgentIds": {
@@ -654,7 +668,6 @@
     "CreateFolder": "Buat folder storan baru",
     "DestinationPath": "Laluan kontena (destination)",
     "Folders": "Folder",
-    "NoMountPermission": "Anda tidak mempunyai kebenaran untuk melekapkan folder ini.",
     "PathAndAliasTooltip": "Laluan di dalam container tempat folder akan di-mount. Biarkan kosong untuk menggunakan laluan lalai.",
     "Refresh": "Segarkan",
     "RemoveFolder": "Buang",

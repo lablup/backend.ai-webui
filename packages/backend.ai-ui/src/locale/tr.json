@@ -183,7 +183,6 @@
     "KeyRequired": "Bir anahtar girin.",
     "Label": "Etiket",
     "LabelsSaved": "Etiketler kaydedildi.",
-    "RemoveLabel": "Etiketi kaldır",
     "Save": "Kaydet",
     "SomeLabelsFailed": "{{count}} etiket değişikliği başarısız oldu",
     "Target": "Hedef",
@@ -193,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Etiket"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Oluştur",
+    "Custom": "Özel",
+    "FullAccess": "Tam erişim",
+    "HardDelete": "Kalıcı olarak sil",
+    "Read": "Oku",
+    "ReadAndWrite": "Okuma ve yazma",
+    "ReadOnly": "Salt okunur",
+    "SoftDelete": "Sil",
+    "Update": "Güncelle"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Otomatik yenileme",
@@ -578,7 +588,11 @@
     "To": "Hedef durum",
     "UpdatedAt": "Güncelleme Tarihi"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "E-posta ile davet et"
+  },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Bu klasörü bağlama izniniz yok.",
     "SelectFolder": "Klasör Seç"
   },
   "comp:BAISessionAgentIds": {
@@ -654,7 +668,6 @@
     "CreateFolder": "Yeni bir depolama klasörü oluşturun",
     "DestinationPath": "Konteyner yolu (destination)",
     "Folders": "klasörler",
-    "NoMountPermission": "Bu klasörü bağlama izniniz yok.",
     "PathAndAliasTooltip": "Klasörün bağlanacağı container içindeki yol. Varsayılan yolu kullanmak için boş bırakın.",
     "Refresh": "Yenile",
     "RemoveFolder": "Kaldır",

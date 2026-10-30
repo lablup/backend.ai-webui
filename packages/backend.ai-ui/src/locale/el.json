@@ -183,7 +183,6 @@
     "KeyRequired": "Εισαγάγετε κλειδί.",
     "Label": "Ετικέτα",
     "LabelsSaved": "Οι ετικέτες αποθηκεύτηκαν.",
-    "RemoveLabel": "Αφαίρεση ετικέτας",
     "Save": "Αποθήκευση",
     "SomeLabelsFailed": "Απέτυχαν {{count}} αλλαγές ετικετών",
     "Target": "Στόχος",
@@ -193,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Ετικέτα"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Δημιουργία",
+    "Custom": "Προσαρμοσμένο",
+    "FullAccess": "Πλήρης πρόσβαση",
+    "HardDelete": "Μόνιμη διαγραφή",
+    "Read": "Ανάγνωση",
+    "ReadAndWrite": "Ανάγνωση και εγγραφή",
+    "ReadOnly": "Μόνο ανάγνωση",
+    "SoftDelete": "Διαγραφή",
+    "Update": "Επεξεργασία"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Αυτόματη ανανέωση",
@@ -578,7 +588,11 @@
     "To": "Κατάσταση προορισμού",
     "UpdatedAt": "Ενημερώθηκε στις"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Πρόσκληση μέσω e-mail"
+  },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Δεν έχετε δικαίωμα προσάρτησης αυτού του φακέλου.",
     "SelectFolder": "Επιλογή φακέλου"
   },
   "comp:BAISessionAgentIds": {
@@ -654,7 +668,6 @@
     "CreateFolder": "Δημιουργήστε έναν νέο φάκελο αποθήκευσης",
     "DestinationPath": "Διαδρομή container (destination)",
     "Folders": "Φάκελοι",
-    "NoMountPermission": "Δεν έχετε δικαίωμα προσάρτησης αυτού του φακέλου.",
     "PathAndAliasTooltip": "Η διαδρομή εντός του container όπου θα προσαρτηθεί ο φάκελος. Αφήστε κενό για να χρησιμοποιηθεί η προεπιλεγμένη διαδρομή.",
     "Refresh": "Φρεσκάρω",
     "RemoveFolder": "Αφαίρεση",

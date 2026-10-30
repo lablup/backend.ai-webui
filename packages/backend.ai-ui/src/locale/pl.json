@@ -183,7 +183,6 @@
     "KeyRequired": "Wprowadź klucz.",
     "Label": "Etykieta",
     "LabelsSaved": "Etykiety zapisane.",
-    "RemoveLabel": "Usuń etykietę",
     "Save": "Zapisz",
     "SomeLabelsFailed": "Nie powiodło się {{count}} zmian etykiet",
     "Target": "Cel",
@@ -193,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Etykieta"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Utwórz",
+    "Custom": "Niestandardowy",
+    "FullAccess": "Pełny dostęp",
+    "HardDelete": "Usuń trwale",
+    "Read": "Odczyt",
+    "ReadAndWrite": "Odczyt i zapis",
+    "ReadOnly": "Tylko odczyt",
+    "SoftDelete": "Usuń",
+    "Update": "Aktualizuj"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Automatyczne odświeżanie",
@@ -578,7 +588,11 @@
     "To": "Status docelowy",
     "UpdatedAt": "Zaktualizowano"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Zaproś przez e-mail"
+  },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Nie masz uprawnień do zamontowania tego folderu.",
     "SelectFolder": "Wybierz folder"
   },
   "comp:BAISessionAgentIds": {
@@ -654,7 +668,6 @@
     "CreateFolder": "Utwórz nowy folder przechowywania",
     "DestinationPath": "Ścieżka w kontenerze (destination)",
     "Folders": "Foldery",
-    "NoMountPermission": "Nie masz uprawnień do zamontowania tego folderu.",
     "PathAndAliasTooltip": "Ścieżka wewnątrz kontenera, w której zostanie zamontowany folder. Pozostaw puste, aby użyć domyślnej ścieżki.",
     "Refresh": "Odświeżać",
     "RemoveFolder": "Usuń",

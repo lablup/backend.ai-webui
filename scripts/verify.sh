@@ -423,6 +423,9 @@ start_lane report "Astryx token gate (report-only; bar is no NEW findings)" \
   check_token_gate_report
 start_lane report "Compat floor (report-only; the floor is in the team dev catalog, ADR 0011)" \
   check_compat_floor_report
+# A `merge=` driver missing from git config does nothing, silently.
+start_lane report "Merge drivers (report-only)" \
+  node scripts/register-merge-drivers.mjs --check
 
 if [ -n "${VERIFY_TESTS:-}" ]; then
   start_lane gate "Vitest (react)" vitest_lane react

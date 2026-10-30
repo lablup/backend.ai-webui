@@ -19,7 +19,7 @@ const meta: Meta<typeof BAIBoard> = {
     docs: {
       description: {
         component:
-          'BAIBoard renders dashboard panels on a grid the user can rearrange. Each item draws its `data.content` as the description, and the `BAIBoardItemTitle` in it as the title row; the board is controlled, so what `onItemsChange` reports is passed back as `items`.',
+          'BAIBoard renders dashboard panels on a grid the user can rearrange. Each item draws its `data.content`; the board is controlled, so what `onItemsChange` reports is passed back as `items`.',
       },
     },
   },
@@ -45,9 +45,12 @@ export default meta;
 
 type Story = StoryObj<typeof BAIBoard>;
 
-// The board pads the item; its BAIBoardItemTitle renders in the item's title row.
 const panel = (title: string, body: string) => (
-  <BAIFlex direction="column" align="stretch">
+  <BAIFlex
+    direction="column"
+    align="stretch"
+    style={{ paddingInline: 'var(--spacing-8)', height: '100%' }}
+  >
     <BAIBoardItemTitle title={title} />
     <Text>{body}</Text>
   </BAIFlex>

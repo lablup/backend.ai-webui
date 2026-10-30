@@ -120,7 +120,7 @@ export interface BAISelectOption {
   value?: string | number | null;
   label?: ReactNode;
   /** `{ reason }` also puts a glyph at the end of the row whose tooltip says why. */
-  disabled?: boolean | { reason: string };
+  disabled?: SelectorOptionData['disabled'];
   title?: string;
   // antd's `DefaultOptionType` carried an open index signature and call sites
   // read arbitrary keys off it (`option.data.description`,

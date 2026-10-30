@@ -183,7 +183,6 @@
     "KeyRequired": "Introduza uma chave.",
     "Label": "Rótulo",
     "LabelsSaved": "Rótulos guardados.",
-    "RemoveLabel": "Remover rótulo",
     "Save": "Guardar",
     "SomeLabelsFailed": "{{count}} alterações de rótulos falharam",
     "Target": "Destino",
@@ -193,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Rótulo"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Criar",
+    "Custom": "Personalizado",
+    "FullAccess": "Acesso total",
+    "HardDelete": "Eliminar permanentemente",
+    "Read": "Ler",
+    "ReadAndWrite": "Leitura e escrita",
+    "ReadOnly": "Apenas leitura",
+    "SoftDelete": "Eliminar",
+    "Update": "Atualizar"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Atualização automática",
@@ -578,7 +588,11 @@
     "To": "Estado de destino",
     "UpdatedAt": "Atualizado em"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Convidar por e-mail"
+  },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Não tem permissão para montar esta pasta.",
     "SelectFolder": "Selecionar pasta"
   },
   "comp:BAISessionAgentIds": {
@@ -654,7 +668,6 @@
     "CreateFolder": "Crie uma nova pasta de armazenamento",
     "DestinationPath": "Caminho do contentor (destination)",
     "Folders": "Pastas",
-    "NoMountPermission": "Não tem permissão para montar esta pasta.",
     "PathAndAliasTooltip": "O caminho dentro do contentor onde a pasta será montada. Deixe em branco para usar o caminho predefinido.",
     "Refresh": "Atualizar",
     "RemoveFolder": "Remover",

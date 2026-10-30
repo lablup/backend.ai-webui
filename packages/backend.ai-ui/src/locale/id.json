@@ -183,7 +183,6 @@
     "KeyRequired": "Masukkan kunci.",
     "Label": "Label",
     "LabelsSaved": "Label disimpan.",
-    "RemoveLabel": "Hapus label",
     "Save": "Simpan",
     "SomeLabelsFailed": "{{count}} perubahan label gagal",
     "Target": "Target",
@@ -193,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Label"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Buat",
+    "Custom": "Kustom",
+    "FullAccess": "Akses penuh",
+    "HardDelete": "Hapus permanen",
+    "Read": "Baca",
+    "ReadAndWrite": "Baca dan tulis",
+    "ReadOnly": "Hanya baca",
+    "SoftDelete": "Hapus",
+    "Update": "Perbarui"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Penyegaran otomatis",
@@ -578,7 +588,11 @@
     "To": "Status tujuan",
     "UpdatedAt": "Diperbarui pada"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Undang melalui e-mail"
+  },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Anda tidak memiliki izin untuk me-mount folder ini.",
     "SelectFolder": "Pilih Folder"
   },
   "comp:BAISessionAgentIds": {
@@ -654,7 +668,6 @@
     "CreateFolder": "Buat folder penyimpanan baru",
     "DestinationPath": "Jalur kontainer (destination)",
     "Folders": "Folder",
-    "NoMountPermission": "Anda tidak memiliki izin untuk me-mount folder ini.",
     "PathAndAliasTooltip": "Jalur di dalam container tempat folder akan di-mount. Kosongkan untuk menggunakan jalur default.",
     "Refresh": "Segarkan",
     "RemoveFolder": "Hapus",

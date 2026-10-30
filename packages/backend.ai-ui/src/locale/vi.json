@@ -183,7 +183,6 @@
     "KeyRequired": "Nhập khóa.",
     "Label": "Nhãn",
     "LabelsSaved": "Đã lưu nhãn.",
-    "RemoveLabel": "Xóa nhãn",
     "Save": "Lưu",
     "SomeLabelsFailed": "{{count}} thay đổi nhãn thất bại",
     "Target": "Đối tượng",
@@ -193,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Nhãn"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Tạo",
+    "Custom": "Tùy chỉnh",
+    "FullAccess": "Toàn quyền",
+    "HardDelete": "Xóa vĩnh viễn",
+    "Read": "Đọc",
+    "ReadAndWrite": "Đọc và ghi",
+    "ReadOnly": "Chỉ đọc",
+    "SoftDelete": "Xóa",
+    "Update": "Cập nhật"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Tự động làm mới",
@@ -578,7 +588,11 @@
     "To": "Trạng thái đích",
     "UpdatedAt": "Cập nhật lúc"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Mời qua e-mail"
+  },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Bạn không có quyền gắn thư mục này.",
     "SelectFolder": "Chọn thư mục"
   },
   "comp:BAISessionAgentIds": {
@@ -654,7 +668,6 @@
     "CreateFolder": "Tạo một thư mục lưu trữ mới",
     "DestinationPath": "Đường dẫn container (destination)",
     "Folders": "Thư mục",
-    "NoMountPermission": "Bạn không có quyền gắn thư mục này.",
     "PathAndAliasTooltip": "Đường dẫn bên trong container nơi thư mục sẽ được mount. Để trống để sử dụng đường dẫn mặc định.",
     "Refresh": "Làm tươi",
     "RemoveFolder": "Xóa",

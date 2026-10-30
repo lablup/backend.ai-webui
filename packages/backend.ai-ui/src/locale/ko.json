@@ -183,7 +183,6 @@
     "KeyRequired": "키를 입력하세요.",
     "Label": "라벨",
     "LabelsSaved": "라벨을 저장했습니다.",
-    "RemoveLabel": "라벨 삭제",
     "Save": "저장",
     "SomeLabelsFailed": "라벨 변경 {{count}}건 실패",
     "Target": "대상",
@@ -193,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "라벨"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "생성",
+    "Custom": "사용자 정의",
+    "FullAccess": "전체 권한",
+    "HardDelete": "영구 삭제",
+    "Read": "읽기",
+    "ReadAndWrite": "읽기 및 쓰기",
+    "ReadOnly": "읽기 전용",
+    "SoftDelete": "삭제",
+    "Update": "수정"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "자동 새로고침",
@@ -578,7 +588,11 @@
     "To": "이후 상태",
     "UpdatedAt": "수정일"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "이메일로 초대"
+  },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "이 폴더를 마운트할 권한이 없습니다.",
     "SelectFolder": "폴더를 선택해주세요"
   },
   "comp:BAISessionAgentIds": {
@@ -654,7 +668,6 @@
     "CreateFolder": "새 폴더 추가",
     "DestinationPath": "컨테이너 경로 (destination)",
     "Folders": "폴더",
-    "NoMountPermission": "이 폴더를 마운트할 권한이 없습니다.",
     "PathAndAliasTooltip": "폴더가 컨테이너 내부에 마운트될 경로입니다. 비워두면 기본 경로가 사용됩니다.",
     "Refresh": "새로고침",
     "RemoveFolder": "제거",

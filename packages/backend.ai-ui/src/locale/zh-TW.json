@@ -183,7 +183,6 @@
     "KeyRequired": "請輸入鍵。",
     "Label": "標籤",
     "LabelsSaved": "標籤已儲存。",
-    "RemoveLabel": "刪除標籤",
     "Save": "儲存",
     "SomeLabelsFailed": "{{count}} 項標籤變更失敗",
     "Target": "對象",
@@ -193,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "標籤"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "建立",
+    "Custom": "自訂",
+    "FullAccess": "完整存取",
+    "HardDelete": "永久刪除",
+    "Read": "讀取",
+    "ReadAndWrite": "讀寫",
+    "ReadOnly": "唯讀",
+    "SoftDelete": "刪除",
+    "Update": "修改"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "自動重新整理",
@@ -578,7 +588,11 @@
     "To": "目標狀態",
     "UpdatedAt": "更新時間"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "透過電子郵件邀請"
+  },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "您沒有掛載此資料夾的權限。",
     "SelectFolder": "選擇資料夾"
   },
   "comp:BAISessionAgentIds": {
@@ -654,7 +668,6 @@
     "CreateFolder": "創建一個新的存儲文件夾",
     "DestinationPath": "容器路徑 (destination)",
     "Folders": "文件夾",
-    "NoMountPermission": "您沒有掛載此資料夾的權限。",
     "PathAndAliasTooltip": "資料夾在容器內的掛載路徑。留空則使用預設路徑。",
     "Refresh": "刷新",
     "RemoveFolder": "移除",

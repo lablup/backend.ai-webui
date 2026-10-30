@@ -8,12 +8,14 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import BAIFormItem from './BAIFormItem';
 import { Banner } from '@lablup/ui-common/Banner';
-import { Button } from '@lablup/ui-common/Button';
-import { IconButton } from '@lablup/ui-common/IconButton';
-import { Text } from '@lablup/ui-common/Text';
-import { BAIFlex, BAIModal, BAIModalProps, BAITextInput } from 'backend.ai-ui';
+import {
+  BAIDynamicList,
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  BAITextInput,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { Trash, PlusIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -161,63 +163,65 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
       onCancel={() => onRequestClose(false)}
       confirmLoading={isInFlightModifyImageInput}
       title={t('environment.ManageApps')}
+      width={800}
       {...baiModalProps}
     >
-      {/* antd Alert type="info" -> Astryx Banner status="info"; `showIcon` is
-          dropped (Banner shows its icon by default — MAPPING.md §4). The
-          marginBottom token becomes BAIFlex column gaps. */}
       <BAIFlex direction="column" align="stretch" gap="md">
         <Banner
           role="status"
           status="info"
           title={t('environment.AppPortsApplyToNewSessionsOnly')}
         />
-        <BAIFlex direction="row" style={{ width: '100%' }}>
-          <BAIFlex style={{ width: '32%' }}>
-            <Text weight="semibold">{t('environment.AppName')}</Text>
-          </BAIFlex>
-          <BAIFlex style={{ width: '32%' }}>
-            <Text weight="semibold">{t('environment.Protocol')}</Text>
-          </BAIFlex>
-          <BAIFlex style={{ width: '32%' }}>
-            <Text weight="semibold">{t('environment.Port')}</Text>
-          </BAIFlex>
-          <BAIFlex></BAIFlex>
-        </BAIFlex>
-      </BAIFlex>
-      <Form
-        ref={formRef}
-        layout="vertical"
-        autoComplete="off"
-        initialValues={{ apps: servicePorts }}
-      >
-        <BAIFlex direction="column">
+        <Form
+          ref={formRef}
+          layout="vertical"
+          autoComplete="off"
+          initialValues={{ apps: servicePorts }}
+        >
           <Form.List name="apps">
             {(fields, { add, remove }) => (
-              <BAIFlex direction="column" style={{ width: '100%' }}>
-                {_.map(fields, (field, index) => (
-                  <BAIFormItem>
-                    <BAIFlex direction="row" key={field.key} gap={'xs'}>
+              <BAIDynamicList
+                items={fields}
+                addButton={{
+                  onClick: () => add(),
+                  label: t('environment.AddApp'),
+                }}
+                onRemove={(field) => remove(field.name)}
+                disabled={!image}
+                columns={[
+                  {
+                    key: 'app',
+                    header: t('environment.AppName'),
+                    render: ({ key: _key, ...field }, index) => (
                       <BAIFormItem
                         {...field}
                         name={[field.name, 'app']}
-                        noStyle
+                        style={{ marginBottom: 0 }}
                         rules={[
                           {
                             required: true,
                             message: t('environment.AppNameMustNotBeEmpty'),
                           },
                         ]}
+                        validateTrigger={['onChange', 'onBlur']}
                       >
                         <BAITextInput
-                          aria-label={t('environment.AppName')}
-                          placeholder={t('environment.AppName')}
+                          aria-label={`${t('environment.AppName')} ${index + 1}`}
+                          placeholder={t('general.Example', {
+                            value: 'jupyter',
+                          })}
                         />
                       </BAIFormItem>
+                    ),
+                  },
+                  {
+                    key: 'protocol',
+                    header: t('environment.Protocol'),
+                    render: ({ key: _key, ...field }, index) => (
                       <BAIFormItem
                         {...field}
                         name={[field.name, 'protocol']}
-                        noStyle
+                        style={{ marginBottom: 0 }}
                         rules={[
                           {
                             pattern: /^(http|tcp|pty|preopen)$/,
@@ -227,17 +231,23 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                             ),
                           },
                         ]}
+                        validateTrigger={['onChange', 'onBlur']}
                       >
                         <BAITextInput
-                          aria-label={t('environment.Protocol')}
-                          placeholder={t('environment.Protocol')}
+                          aria-label={`${t('environment.Protocol')} ${index + 1}`}
+                          placeholder={t('general.Example', { value: 'http' })}
                         />
                       </BAIFormItem>
+                    ),
+                  },
+                  {
+                    key: 'port',
+                    header: t('environment.Port'),
+                    render: ({ key: _key, ...field }, index) => (
                       <BAIFormItem
                         {...field}
                         name={[field.name, 'port']}
-                        noStyle
-                        required
+                        style={{ marginBottom: 0 }}
                         rules={[
                           {
                             validator: (_rules, rawValue) => {
@@ -285,42 +295,21 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                             },
                           },
                         ]}
+                        validateTrigger={['onChange', 'onBlur']}
                       >
                         <BAITextInput
-                          aria-label={t('environment.Port')}
-                          placeholder={t('environment.Port')}
+                          aria-label={`${t('environment.Port')} ${index + 1}`}
+                          placeholder={t('general.Example', { value: '8888' })}
                         />
                       </BAIFormItem>
-                      {/* PILOT-DECISION: antd `type="text" danger` -> ghost
-                          IconButton; the red tint is dropped (closed variant
-                          enum, P5/P11). The first-row marginTop nudge against
-                          antd's label offset is obsolete and dropped. */}
-                      <IconButton
-                        variant="ghost"
-                        label={t('button.Delete')}
-                        tooltip={t('button.Delete')}
-                        onClick={() => remove(field.name)}
-                        icon={<Trash size="1em" />}
-                      />
-                    </BAIFlex>
-                  </BAIFormItem>
-                ))}
-                {/* PILOT-DECISION: antd `type="dashed"` has no Astryx
-                    equivalent -> `variant="secondary"` (MAPPING.md §3.3);
-                    `block` -> width="100%". */}
-                <Button
-                  variant="secondary"
-                  onClick={() => add()}
-                  width="100%"
-                  icon={<PlusIcon />}
-                  isDisabled={!image}
-                  label={t('button.Add')}
-                />
-              </BAIFlex>
+                    ),
+                  },
+                ]}
+              />
             )}
           </Form.List>
-        </BAIFlex>
-      </Form>
+        </Form>
+      </BAIFlex>
     </BAIModal>
   );
 };

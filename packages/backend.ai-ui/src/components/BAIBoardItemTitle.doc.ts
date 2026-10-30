@@ -1,7 +1,7 @@
 import type { ComponentDoc } from '@astryxdesign/cli/authoring';
 
-// Unstamped: the stamped schema has no multi-component variant.
 export const docs = {
+  type: 'component',
   name: 'BAIBoardItemTitle',
   displayName: 'BAI Board Item Title',
   category: 'Layout',
@@ -11,11 +11,12 @@ export const docs = {
     'board item',
     'dashboard',
     'title bar',
+    'sticky header',
     'card title',
   ],
   usage: {
     description:
-      'The header row of a dashboard board item: a title on the leading edge, an optional help tooltip beside it, and an action slot pushed to the trailing edge. It is ui-common `BoardItemTitle`. Inside a `BAIBoard` item it renders into the item title row, which the board pads and keeps above the scrolling body; elsewhere it renders where it stands. A string `title` is rendered as a level-5 heading; anything else is rendered as given, which is how panels put a heading next to an inline control such as a resource-group selector. Use it for the panel sections that make up a dashboard board — `BAICard` remains the container for standalone cards.',
+      'The header row of a dashboard board item: a title on the leading edge, an optional help tooltip beside it, and an action slot pushed to the trailing edge. It is ui-common `BoardItemTitle`, a row that sticks to the top of its scroll container and paints the container background behind itself, so a long panel body scrolls under the title instead of past it. A string `title` is rendered as a level-5 heading; anything else is rendered as given, which is how panels put a heading next to an inline control such as a resource-group selector. Use it for the panel sections that make up a dashboard board — `BAICard` remains the container for standalone cards.',
     bestPractices: [
       {
         guidance: true,
@@ -35,49 +36,46 @@ export const docs = {
       {
         guidance: false,
         description:
+          'Overriding `position` or `top` through `style`; the sticky behaviour is the reason the component exists, and the z-index is tuned to sit above table fixed columns and below the app header.',
+      },
+      {
+        guidance: false,
+        description:
           'Building a parallel header row above a panel when this component already renders one.',
       },
     ],
   },
-  components: [
+  props: [
     {
-      name: 'BAIBoardItemTitle',
-      displayName: 'BAI Board Item Title',
+      name: 'title',
+      type: 'React.ReactNode | string',
       description:
-        'The header row: title, optional help tooltip, and the trailing action slot.',
-      props: [
-        {
-          name: 'title',
-          type: 'React.ReactNode | string',
-          description:
-            'Panel title. A string renders as a level-5 heading; a node is rendered as given, for a heading paired with an inline control.',
-          required: true,
-        },
-        {
-          name: 'tooltip',
-          type: 'React.ReactNode',
-          description:
-            'Explanatory content shown from a question-mark icon next to the title. Nothing is rendered when it is omitted.',
-        },
-        {
-          name: 'tooltipIcon',
-          type: 'React.ReactNode',
-          description:
-            'Glyph of the help tooltip. Defaults to the lucide CircleHelp question mark.',
-        },
-        {
-          name: 'extra',
-          type: 'React.ReactNode',
-          description:
-            'Trailing action slot, right-aligned and wrapping. Holds refresh buttons, view toggles, and other panel-scoped controls.',
-        },
-        {
-          name: 'inline',
-          type: 'boolean',
-          description:
-            'Inside a `BAIBoard` item, keep this title in the body instead of the item header row, for a second titled section of the same item.',
-        },
-      ],
+        'Panel title. A string renders as a level-5 heading; a node is rendered as given, for a heading paired with an inline control.',
+      required: true,
+    },
+    {
+      name: 'tooltip',
+      type: 'React.ReactNode',
+      description:
+        'Explanatory content shown from a question-mark icon next to the title. Nothing is rendered when it is omitted.',
+    },
+    {
+      name: 'tooltipIcon',
+      type: 'React.ReactNode',
+      description:
+        'Glyph of the help tooltip. Defaults to the lucide CircleHelp question mark.',
+    },
+    {
+      name: 'extra',
+      type: 'React.ReactNode',
+      description:
+        'Trailing action slot, right-aligned and wrapping. Holds refresh buttons, view toggles, and other panel-scoped controls.',
+    },
+    {
+      name: 'style',
+      type: 'React.CSSProperties',
+      description:
+        'Inline style merged over the header row defaults, applied after them — mainly for padding adjustments in a panel with its own rhythm.',
     },
   ],
   examples: [

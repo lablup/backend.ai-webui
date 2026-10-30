@@ -183,7 +183,6 @@
     "KeyRequired": "Inserisci una chiave.",
     "Label": "Etichetta",
     "LabelsSaved": "Etichette salvate.",
-    "RemoveLabel": "Rimuovi etichetta",
     "Save": "Salva",
     "SomeLabelsFailed": "{{count}} modifiche alle etichette non riuscite",
     "Target": "Destinazione",
@@ -193,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Etichetta"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Crea",
+    "Custom": "Personalizzato",
+    "FullAccess": "Accesso completo",
+    "HardDelete": "Elimina definitivamente",
+    "Read": "Leggi",
+    "ReadAndWrite": "Lettura e scrittura",
+    "ReadOnly": "Sola lettura",
+    "SoftDelete": "Elimina",
+    "Update": "Aggiorna"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Aggiornamento automatico",
@@ -578,7 +588,11 @@
     "To": "Stato di destinazione",
     "UpdatedAt": "Aggiornato il"
   },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Invita tramite e-mail"
+  },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Non hai l'autorizzazione per montare questa cartella.",
     "SelectFolder": "Seleziona cartella"
   },
   "comp:BAISessionAgentIds": {
@@ -654,7 +668,6 @@
     "CreateFolder": "Crea una nuova cartella di archiviazione",
     "DestinationPath": "Percorso del container (destination)",
     "Folders": "cartelle",
-    "NoMountPermission": "Non hai l'autorizzazione per montare questa cartella.",
     "PathAndAliasTooltip": "Il percorso all'interno del container dove verrà montata la cartella. Lasciare vuoto per usare il percorso predefinito.",
     "Refresh": "ricaricare",
     "RemoveFolder": "Rimuovi",
