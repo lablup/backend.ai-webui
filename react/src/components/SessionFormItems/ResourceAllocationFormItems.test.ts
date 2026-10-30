@@ -9,7 +9,7 @@ import {
 } from '../../hooks/useResourceLimitAndRemaining';
 import { Image } from '../ImageEnvironmentSelectFormItems';
 import { getUnavailableSlotNames } from '../ResourcePresetSelect';
-import ResourceAllocationFormItems, {
+import {
   AUTOMATIC_DEFAULT_SHMEM,
   getAllocatablePresetIds,
   getAutomaticShmem,
@@ -17,15 +17,6 @@ import ResourceAllocationFormItems, {
   isUnifiedAcceleratorSlot,
   pickChangedResourceValues,
 } from './ResourceAllocationFormItems';
-
-describe('ResourceAllocationFormItems export', () => {
-  // React 19.2 never republishes a `useEffectEvent` inside a memo() fiber, and
-  // `Form.useWatch` is built on one: a `React.memo` wrapper here drops a field
-  // change back to a value it has seen (#10705).
-  it('is a plain function component, not a React.memo wrapper', () => {
-    expect(typeof ResourceAllocationFormItems).toBe('function');
-  });
-});
 
 describe('isUnifiedAcceleratorSlot', () => {
   it('returns true for slot names ending with .unified', () => {
