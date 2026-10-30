@@ -3,14 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { DonutRow } from '../memberCards/memberCardData';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableHeaderCell,
-  TableRow,
-} from '@lablup/ui-common/Table';
 import { Text } from '@lablup/ui-common/Text';
 import {
   RadialChart,
@@ -35,19 +27,37 @@ const RING_HALO = 16;
 const LEGEND_WIDTH_GUESS = 224;
 // The `lg` gap between the ring and the legend.
 const LEGEND_GAP = 24;
-// Row heights of the balanced and compact Table densities, divider included.
+// Legend line heights, divider included.
 const ROW_HEIGHT = 37;
 const COMPACT_ROW_HEIGHT = 29;
 // The hole's share of the ring's radius, for the filled and the empty ring alike.
 const DONUT_INNER_RADIUS = 0.6;
 
 const styles = stylex.create({
-  // Shrink to the content rather than the Table's default full width.
-  legend: { width: 'auto', whiteSpace: 'nowrap' },
+  name: { flex: 1, minWidth: 0 },
   // Long names truncate rather than widen the legend.
   nameText: { maxWidth: 200 },
-  number: { textAlign: 'end' },
+  number: { minWidth: '3.5em', textAlign: 'end' },
+  percent: { minWidth: '4.5em', textAlign: 'end' },
 });
+
+/** One legend line: name, count and share, divided from the next like table rows. */
+const LegendLine: React.FC<{ height: number; children: React.ReactNode }> = ({
+  height,
+  children,
+}) => (
+  <BAIFlex
+    align="center"
+    gap="md"
+    wrap="nowrap"
+    style={{
+      height,
+      borderBottom: '1px solid var(--color-border)',
+    }}
+  >
+    {children}
+  </BAIFlex>
+);
 
 interface LegendRow extends Record<string, unknown> {
   key: string;
@@ -266,52 +276,53 @@ const DonutChart: React.FC<DonutChartProps> = ({
           legendRows,
           Math.max(1, Math.ceil(legendRows.length / density.columns)),
         ).map((columnRows, columnIndex) => (
-          <Table
+          <BAIFlex
             key={columnIndex}
-            density={density.rowHeight === ROW_HEIGHT ? 'balanced' : 'compact'}
-            dividers="rows"
-            xstyle={styles.legend}
+            direction="column"
+            align="stretch"
+            style={{ width: 'max-content', maxWidth: '100%' }}
           >
             {density.hasHeader && (
-              <TableHeader>
-                <TableRow>
-                  <TableHeaderCell>{columnLabels.name}</TableHeaderCell>
-                  <TableHeaderCell xstyle={styles.number}>
-                    {columnLabels.value}
-                  </TableHeaderCell>
-                  <TableHeaderCell xstyle={styles.number}>
-                    {columnLabels.percent}
-                  </TableHeaderCell>
-                </TableRow>
-              </TableHeader>
+              <LegendLine height={density.rowHeight}>
+                <Text size="sm" weight="semibold" xstyle={styles.name}>
+                  {columnLabels.name}
+                </Text>
+                <Text size="sm" weight="semibold" xstyle={styles.number}>
+                  {columnLabels.value}
+                </Text>
+                <Text size="sm" weight="semibold" xstyle={styles.percent}>
+                  {columnLabels.percent}
+                </Text>
+              </LegendLine>
             )}
-            <TableBody>
-              {columnRows.map((row) => (
-                <TableRow key={row.key}>
-                  <TableCell>
-                    <BAIFlex gap="xs" align="center" wrap="nowrap">
-                      {/* The swatch takes the slice's data colour, which no token carries. */}
-                      <Circle
-                        size={12}
-                        fill={row.color}
-                        color={row.color}
-                        aria-hidden
-                      />
-                      <Text maxLines={1} xstyle={styles.nameText}>
-                        {row.label}
-                      </Text>
-                    </BAIFlex>
-                  </TableCell>
-                  <TableCell xstyle={styles.number}>
-                    <Text hasTabularNumbers>{row.value.toLocaleString()}</Text>
-                  </TableCell>
-                  <TableCell xstyle={styles.number}>
-                    <Text hasTabularNumbers>{`${row.percent}%`}</Text>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+            {columnRows.map((row) => (
+              <LegendLine key={row.key} height={density.rowHeight}>
+                <BAIFlex
+                  gap="xs"
+                  align="center"
+                  wrap="nowrap"
+                  style={{ flex: 1, minWidth: 0 }}
+                >
+                  {/* The swatch takes the slice's data colour, which no token carries. */}
+                  <Circle
+                    size={12}
+                    fill={row.color}
+                    color={row.color}
+                    aria-hidden
+                  />
+                  <Text maxLines={1} xstyle={styles.nameText}>
+                    {row.label}
+                  </Text>
+                </BAIFlex>
+                <Text hasTabularNumbers xstyle={styles.number}>
+                  {row.value.toLocaleString()}
+                </Text>
+                <Text hasTabularNumbers xstyle={styles.percent}>
+                  {`${row.percent}%`}
+                </Text>
+              </LegendLine>
+            ))}
+          </BAIFlex>
         ))}
       </BAIFlex>
     </BAIFlex>
