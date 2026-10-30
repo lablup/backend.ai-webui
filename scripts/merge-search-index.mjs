@@ -7,7 +7,7 @@
  * Merges the three index versions entry by entry (matched by `path`) and
  * writes the result into %A. The result is provisional: the index is a
  * function of the merged source, not of the three indexes, so on success the
- * driver leaves a marker that `scripts/check-search-index-drift.mjs` (husky
+ * driver leaves a marker that `scripts/search-index-merge-check.mjs` (husky
  * post-merge / post-rewrite) reads to say whether `pnpm run search-index` is
  * needed. Anything it cannot merge falls back to git's own line conflict.
  */
