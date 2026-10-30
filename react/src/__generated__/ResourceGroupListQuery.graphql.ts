@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<33549c8fc8f4532ca22d17532d3f4d3a>>
+ * @generated SignedSource<<ab69ad0065136d9979c98a687bcd8b4b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -105,6 +105,7 @@ export type ResourceGroupListQuery$data = {
           readonly isDefault: boolean;
           readonly isPublic: boolean;
         };
+        readonly " $fragmentSpreads": FragmentRefs<"ResourceGroupDetailDrawerFragment">;
       };
     }>;
   } | null | undefined;
@@ -349,7 +350,12 @@ return {
                   (v10/*: any*/),
                   (v11/*: any*/),
                   (v12/*: any*/),
-                  (v13/*: any*/)
+                  (v13/*: any*/),
+                  {
+                    "args": null,
+                    "kind": "FragmentSpread",
+                    "name": "ResourceGroupDetailDrawerFragment"
+                  }
                 ],
                 "storageKey": null
               }
@@ -473,16 +479,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "b1219c0c7b1ad6daf08bc660310a05e8",
+    "cacheID": "918480b5874a4e7c12687198b157abce",
     "id": null,
     "metadata": {},
     "name": "ResourceGroupListQuery",
     "operationKind": "query",
-    "text": "query ResourceGroupListQuery(\n  $limit: Int\n  $offset: Int\n  $filter: ResourceGroupFilter\n  $orderBy: [ResourceGroupOrderBy!]\n) {\n  adminResourceGroups(limit: $limit, offset: $offset, filter: $filter, orderBy: $orderBy) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        name\n        entityLabels(limit: 100) {\n          ...BAIEntityLabelTokensFragment\n          ...BAIEntityLabelSettingModalFragment\n        }\n        status {\n          isActive\n          isPublic\n          isDefault\n        }\n        metadata {\n          description\n          createdAt\n        }\n        network {\n          wsproxyAddr\n        }\n        scheduler {\n          type\n        }\n      }\n    }\n  }\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n"
+    "text": "query ResourceGroupListQuery(\n  $limit: Int\n  $offset: Int\n  $filter: ResourceGroupFilter\n  $orderBy: [ResourceGroupOrderBy!]\n) {\n  adminResourceGroups(limit: $limit, offset: $offset, filter: $filter, orderBy: $orderBy) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        name\n        entityLabels(limit: 100) {\n          ...BAIEntityLabelTokensFragment\n          ...BAIEntityLabelSettingModalFragment\n        }\n        status {\n          isActive\n          isPublic\n          isDefault\n        }\n        metadata {\n          description\n          createdAt\n        }\n        network {\n          wsproxyAddr\n        }\n        scheduler {\n          type\n        }\n        ...ResourceGroupDetailDrawerFragment\n      }\n    }\n  }\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment ResourceGroupDetailDrawerFragment on ResourceGroup {\n  name\n  status {\n    isActive\n    isPublic\n  }\n  metadata {\n    description\n    createdAt\n  }\n  network {\n    wsproxyAddr\n  }\n  scheduler {\n    type\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0114d4c2ef354742276d0429fc339489";
+(node as any).hash = "f608be51ab1449c0a52494c949e40ba5";
 
 export default node;
