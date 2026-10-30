@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6b707264b04d52b5dd1ee4f36ac2b00c>>
+ * @generated SignedSource<<d6ecf1bdd8fe199ef3cd1f63ad0ed677>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -22,6 +22,7 @@ export type SessionSchedulingHistoryFilter = {
   OR?: ReadonlyArray<SessionSchedulingHistoryFilter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
   errorCode?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   fromStatus?: ReadonlyArray<string> | null | undefined;
   id?: UUIDFilter | null | undefined;
   message?: StringFilter | null | undefined;

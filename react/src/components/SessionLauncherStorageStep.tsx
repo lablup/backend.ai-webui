@@ -7,7 +7,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useMountableStorageHosts } from '../hooks/useMountableStorageHosts';
 import type { SessionLauncherFormValue } from '../pages/SessionLauncherPage';
 import type { ProjectContext } from '../types/projectContext';
-import FolderCreateModalV2 from './FolderCreateModalV2';
+import FolderCreateModal from './FolderCreateModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import {
   BAIVFolderMountConfigInput,
@@ -59,7 +59,7 @@ const SessionLauncherStorageStep: React.FC<{
           />
         </Form.Item>
       </Form.Item>
-      <FolderCreateModalV2
+      <FolderCreateModal
         open={isCreateModalOpen}
         project={project}
         onRequestClose={(response) => {

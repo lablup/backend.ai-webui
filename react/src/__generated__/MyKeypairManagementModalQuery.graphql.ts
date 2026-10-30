@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<296ee6e481828c2869b896d4678bb076>>
+ * @generated SignedSource<<1ff22dbc35dfd83acfcdf6f57c13ac9a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,6 +17,7 @@ export type KeypairFilter = {
   OR?: ReadonlyArray<KeypairFilter> | null | undefined;
   accessKey?: StringFilter | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   isActive?: boolean | null | undefined;
   isAdmin?: boolean | null | undefined;
   isDefault?: boolean | null | undefined;

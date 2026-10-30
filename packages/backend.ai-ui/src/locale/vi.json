@@ -38,6 +38,26 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Chọn nhóm tài nguyên"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "Đối tượng chính sách",
+    "CreatedAt": "Ngày tạo",
+    "Disabled": "Đã tắt",
+    "Enabled": "Đã bật",
+    "LastSweptAt": "Lần dọn dẹp gần nhất",
+    "NotSweptYet": "Chưa chạy",
+    "RetentionPeriodDays": "Thời gian lưu giữ (ngày)",
+    "UpdatedAt": "Cập nhật lúc",
+    "categories": {
+      "DEPLOYMENTS": "Triển khai",
+      "LOGIN": "Lịch sử đăng nhập",
+      "LOGS": "Nhật ký",
+      "RECONCILE_HISTORY": "Lịch sử đối soát",
+      "ROLES_INVITATIONS": "Vai trò và lời mời",
+      "SESSIONS": "Phiên",
+      "USAGE_BUCKETS": "Tổng hợp sử dụng",
+      "USAGE_RECORDS": "Bản ghi sử dụng"
+    }
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Chọn phiên"
   },
@@ -166,7 +186,6 @@
     "KeyRequired": "Nhập khóa.",
     "Label": "Nhãn",
     "LabelsSaved": "Đã lưu nhãn.",
-    "RemoveLabel": "Xóa nhãn",
     "Save": "Lưu",
     "SomeLabelsFailed": "{{count}} thay đổi nhãn thất bại",
     "Target": "Đối tượng",
@@ -176,6 +195,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Nhãn"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Tạo",
+    "Custom": "Tùy chỉnh",
+    "FullAccess": "Toàn quyền",
+    "HardDelete": "Xóa vĩnh viễn",
+    "Read": "Đọc",
+    "ReadAndWrite": "Đọc và ghi",
+    "ReadOnly": "Chỉ đọc",
+    "SoftDelete": "Xóa",
+    "Update": "Cập nhật"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Tự động làm mới",
@@ -559,6 +589,9 @@
     "Result": "Kết quả",
     "To": "Trạng thái đích",
     "UpdatedAt": "Cập nhật lúc"
+  },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Mời qua e-mail"
   },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "Chọn thư mục"

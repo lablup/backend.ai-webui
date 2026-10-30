@@ -11,7 +11,7 @@ import { readFile, stat } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
-import { transformWithEsbuild, type Plugin } from 'vite';
+import { transformWithOxc, type Plugin } from 'vite';
 
 /**
  * FR-3811 — dev-only review overlay, write side. Serves the Shadow-DOM picker
@@ -191,12 +191,14 @@ export function devReviewOverlayPlugin(): Plugin {
       return hit.code;
     }
     const source = await readFile(file, 'utf-8');
-    const { code } = await transformWithEsbuild(source, file, {
-      loader: 'ts',
-      format: 'esm',
+    const result = await transformWithOxc(source, file, {
+      lang: 'ts',
       target: 'es2020',
-      sourcemap: 'inline',
+      sourcemap: true,
     });
+    const code = result.map
+      ? `${result.code}\n//# sourceMappingURL=data:application/json;base64,${Buffer.from(JSON.stringify(result.map)).toString('base64')}\n`
+      : result.code;
     transformed.set(file, { mtimeMs: info.mtimeMs, size: info.size, code });
     return code;
   }

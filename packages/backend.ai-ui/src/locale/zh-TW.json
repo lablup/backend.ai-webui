@@ -38,6 +38,26 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "選擇資源群組"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "政策對象",
+    "CreatedAt": "建立日期",
+    "Disabled": "已停用",
+    "Enabled": "啟用",
+    "LastSweptAt": "上次清理",
+    "NotSweptYet": "尚未執行",
+    "RetentionPeriodDays": "保留期限（天）",
+    "UpdatedAt": "更新時間",
+    "categories": {
+      "DEPLOYMENTS": "部署",
+      "LOGIN": "登入記錄",
+      "LOGS": "日誌",
+      "RECONCILE_HISTORY": "協調記錄",
+      "ROLES_INVITATIONS": "角色與邀請",
+      "SESSIONS": "工作階段",
+      "USAGE_BUCKETS": "使用量彙總",
+      "USAGE_RECORDS": "使用記錄"
+    }
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "選擇工作階段"
   },
@@ -166,7 +186,6 @@
     "KeyRequired": "請輸入鍵。",
     "Label": "標籤",
     "LabelsSaved": "標籤已儲存。",
-    "RemoveLabel": "刪除標籤",
     "Save": "儲存",
     "SomeLabelsFailed": "{{count}} 項標籤變更失敗",
     "Target": "對象",
@@ -176,6 +195,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "標籤"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "建立",
+    "Custom": "自訂",
+    "FullAccess": "完整存取",
+    "HardDelete": "永久刪除",
+    "Read": "讀取",
+    "ReadAndWrite": "讀寫",
+    "ReadOnly": "唯讀",
+    "SoftDelete": "刪除",
+    "Update": "修改"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "自動重新整理",
@@ -559,6 +589,9 @@
     "Result": "結果",
     "To": "目標狀態",
     "UpdatedAt": "更新時間"
+  },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "透過電子郵件邀請"
   },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "選擇資料夾"

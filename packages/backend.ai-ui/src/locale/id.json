@@ -38,6 +38,26 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Pilih grup sumber daya"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "Target kebijakan",
+    "CreatedAt": "Tanggal dibuat",
+    "Disabled": "Nonaktif",
+    "Enabled": "Diaktifkan",
+    "LastSweptAt": "Pembersihan terakhir",
+    "NotSweptYet": "Belum dijalankan",
+    "RetentionPeriodDays": "Periode retensi (hari)",
+    "UpdatedAt": "Diperbarui Pada",
+    "categories": {
+      "DEPLOYMENTS": "Deployment",
+      "LOGIN": "Riwayat login",
+      "LOGS": "Log",
+      "RECONCILE_HISTORY": "Riwayat rekonsiliasi",
+      "ROLES_INVITATIONS": "Peran & undangan",
+      "SESSIONS": "Sesi",
+      "USAGE_BUCKETS": "Agregat penggunaan",
+      "USAGE_RECORDS": "Catatan penggunaan"
+    }
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Pilih sesi"
   },
@@ -166,7 +186,6 @@
     "KeyRequired": "Masukkan kunci.",
     "Label": "Label",
     "LabelsSaved": "Label disimpan.",
-    "RemoveLabel": "Hapus label",
     "Save": "Simpan",
     "SomeLabelsFailed": "{{count}} perubahan label gagal",
     "Target": "Target",
@@ -176,6 +195,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Label"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Buat",
+    "Custom": "Kustom",
+    "FullAccess": "Akses penuh",
+    "HardDelete": "Hapus permanen",
+    "Read": "Baca",
+    "ReadAndWrite": "Baca dan tulis",
+    "ReadOnly": "Hanya baca",
+    "SoftDelete": "Hapus",
+    "Update": "Perbarui"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Penyegaran otomatis",
@@ -559,6 +589,9 @@
     "Result": "Hasil",
     "To": "Status tujuan",
     "UpdatedAt": "Diperbarui pada"
+  },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Undang melalui e-mail"
   },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "Pilih Folder"

@@ -38,6 +38,26 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Выберите группу ресурсов"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "Цель политики",
+    "CreatedAt": "Дата создания",
+    "Disabled": "Отключено",
+    "Enabled": "Включено",
+    "LastSweptAt": "Последняя очистка",
+    "NotSweptYet": "Ещё не выполнялась",
+    "RetentionPeriodDays": "Срок хранения (дни)",
+    "UpdatedAt": "Обновлено",
+    "categories": {
+      "DEPLOYMENTS": "Развёртывания",
+      "LOGIN": "История входов",
+      "LOGS": "Журналы",
+      "RECONCILE_HISTORY": "История согласования",
+      "ROLES_INVITATIONS": "Роли и приглашения",
+      "SESSIONS": "Сеансы",
+      "USAGE_BUCKETS": "Сводки использования",
+      "USAGE_RECORDS": "Записи использования"
+    }
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Выберите сеанс"
   },
@@ -166,7 +186,6 @@
     "KeyRequired": "Введите ключ.",
     "Label": "Метка",
     "LabelsSaved": "Метки сохранены.",
-    "RemoveLabel": "Удалить метку",
     "Save": "Сохранить",
     "SomeLabelsFailed": "Не удалось применить изменений меток: {{count}}",
     "Target": "Объект",
@@ -176,6 +195,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Метка"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Создать",
+    "Custom": "Пользовательский",
+    "FullAccess": "Полный доступ",
+    "HardDelete": "Удалить безвозвратно",
+    "Read": "Читать",
+    "ReadAndWrite": "Чтение и запись",
+    "ReadOnly": "Только чтение",
+    "SoftDelete": "Удалить",
+    "Update": "Обновить"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Автообновление",
@@ -559,6 +589,9 @@
     "Result": "Результат",
     "To": "Целевой статус",
     "UpdatedAt": "Обновлено"
+  },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Пригласить по электронной почте"
   },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "Выбрать папку"

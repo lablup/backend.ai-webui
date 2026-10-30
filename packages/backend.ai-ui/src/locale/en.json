@@ -38,6 +38,26 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Select resource group"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "Policy Target",
+    "CreatedAt": "Created At",
+    "Disabled": "Disabled",
+    "Enabled": "Enabled",
+    "LastSweptAt": "Last Cleanup",
+    "NotSweptYet": "Not run yet",
+    "RetentionPeriodDays": "Retention Period (Days)",
+    "UpdatedAt": "Updated At",
+    "categories": {
+      "DEPLOYMENTS": "Deployments",
+      "LOGIN": "Login History",
+      "LOGS": "Logs",
+      "RECONCILE_HISTORY": "Reconcile History",
+      "ROLES_INVITATIONS": "Roles & Invitations",
+      "SESSIONS": "Sessions",
+      "USAGE_BUCKETS": "Usage Buckets",
+      "USAGE_RECORDS": "Usage Records"
+    }
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Select Session"
   },
@@ -166,7 +186,6 @@
     "KeyRequired": "Enter a key.",
     "Label": "Label",
     "LabelsSaved": "Labels saved.",
-    "RemoveLabel": "Remove label",
     "Save": "Save",
     "SomeLabelsFailed": "{{count}} label changes failed",
     "Target": "Target",
@@ -176,6 +195,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Labels"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Create",
+    "Custom": "Custom",
+    "FullAccess": "Full access",
+    "HardDelete": "Hard delete",
+    "Read": "Read",
+    "ReadAndWrite": "Read & write",
+    "ReadOnly": "Read only",
+    "SoftDelete": "Soft delete",
+    "Update": "Update"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Auto Refresh",
@@ -559,6 +589,9 @@
     "Result": "Result",
     "To": "To Status",
     "UpdatedAt": "Updated At"
+  },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Invite by e-mail"
   },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "Select Folder"

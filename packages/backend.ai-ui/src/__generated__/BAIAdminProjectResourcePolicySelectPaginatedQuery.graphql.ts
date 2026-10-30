@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<cea300eba80445df594be98d37df4b4a>>
+ * @generated SignedSource<<00d2abac46524ed72f1ff1828900d8a8>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,6 +14,7 @@ export type ProjectResourcePolicyV2Filter = {
   NOT?: ReadonlyArray<ProjectResourcePolicyV2Filter> | null | undefined;
   OR?: ReadonlyArray<ProjectResourcePolicyV2Filter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   maxNetworkCount?: IntFilter | null | undefined;
   maxQuotaScopeSize?: IntFilter | null | undefined;
   maxVfolderCount?: IntFilter | null | undefined;
@@ -54,6 +55,12 @@ export type IntFilter = {
   lessThan?: number | null | undefined;
   lessThanOrEqual?: number | null | undefined;
   notEquals?: number | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
 };
 export type BAIAdminProjectResourcePolicySelectPaginatedQuery$variables = {
   filter?: ProjectResourcePolicyV2Filter | null | undefined;

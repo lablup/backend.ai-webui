@@ -38,6 +38,26 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Ressourcengruppe auswählen"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "Richtlinienziel",
+    "CreatedAt": "Erstellungsdatum",
+    "Disabled": "Deaktiviert",
+    "Enabled": "aktiviert",
+    "LastSweptAt": "Letzte Bereinigung",
+    "NotSweptYet": "Noch nicht ausgeführt",
+    "RetentionPeriodDays": "Aufbewahrungsdauer (Tage)",
+    "UpdatedAt": "Aktualisiert am",
+    "categories": {
+      "DEPLOYMENTS": "Bereitstellungen",
+      "LOGIN": "Anmeldeverlauf",
+      "LOGS": "Protokolle",
+      "RECONCILE_HISTORY": "Abgleichsverlauf",
+      "ROLES_INVITATIONS": "Rollen & Einladungen",
+      "SESSIONS": "Sitzungen",
+      "USAGE_BUCKETS": "Nutzungs-Buckets",
+      "USAGE_RECORDS": "Nutzungsdatensätze"
+    }
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Sitzung auswählen"
   },
@@ -166,7 +186,6 @@
     "KeyRequired": "Geben Sie einen Schlüssel ein.",
     "Label": "Label",
     "LabelsSaved": "Labels gespeichert.",
-    "RemoveLabel": "Label entfernen",
     "Save": "Speichern",
     "SomeLabelsFailed": "{{count}} Labeländerungen fehlgeschlagen",
     "Target": "Ziel",
@@ -176,6 +195,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Label"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Erstellen",
+    "Custom": "Benutzerdefiniert",
+    "FullAccess": "Vollzugriff",
+    "HardDelete": "Endgültig löschen",
+    "Read": "Lesen",
+    "ReadAndWrite": "Lesen und Schreiben",
+    "ReadOnly": "Nur Lesen",
+    "SoftDelete": "Löschen",
+    "Update": "Bearbeiten"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Automatische Aktualisierung",
@@ -559,6 +589,9 @@
     "Result": "Ergebnis",
     "To": "Zielstatus",
     "UpdatedAt": "Aktualisiert am"
+  },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Per E-Mail einladen"
   },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "Ordner auswählen"

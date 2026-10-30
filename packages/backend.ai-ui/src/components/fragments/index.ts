@@ -181,6 +181,7 @@ export type {
   BAIScopedUserSelectProps,
   BAIScopedUserSelectFilter,
   BAIScopedUserSelectRef,
+  BAIScopedUserSelectOption,
   ScopedUserNode,
 } from './BAIScopedUserSelect';
 export { default as BAIAdminUserV2Select } from './BAIAdminUserV2Select';

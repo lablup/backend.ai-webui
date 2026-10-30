@@ -38,6 +38,26 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Valitse resurssiryhmä"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "Käytännön kohde",
+    "CreatedAt": "Luontipäivä",
+    "Disabled": "Poistettu käytöstä",
+    "Enabled": "Käytössä",
+    "LastSweptAt": "Viimeisin siivous",
+    "NotSweptYet": "Ei vielä ajettu",
+    "RetentionPeriodDays": "Säilytysaika (päivää)",
+    "UpdatedAt": "Päivitetty",
+    "categories": {
+      "DEPLOYMENTS": "Käyttöönotot",
+      "LOGIN": "Kirjautumishistoria",
+      "LOGS": "Lokit",
+      "RECONCILE_HISTORY": "Täsmäytyshistoria",
+      "ROLES_INVITATIONS": "Roolit ja kutsut",
+      "SESSIONS": "Istunnot",
+      "USAGE_BUCKETS": "Käyttökoosteet",
+      "USAGE_RECORDS": "Käyttötietueet"
+    }
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Valitse istunto"
   },
@@ -166,7 +186,6 @@
     "KeyRequired": "Anna avain.",
     "Label": "Tunniste",
     "LabelsSaved": "Tunnisteet tallennettu.",
-    "RemoveLabel": "Poista tunniste",
     "Save": "Tallenna",
     "SomeLabelsFailed": "{{count}} tunnistemuutosta epäonnistui",
     "Target": "Kohde",
@@ -176,6 +195,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Tunniste"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Luo",
+    "Custom": "Mukautettu",
+    "FullAccess": "Täydet oikeudet",
+    "HardDelete": "Poista pysyvästi",
+    "Read": "Lue",
+    "ReadAndWrite": "Luku ja kirjoitus",
+    "ReadOnly": "Vain luku",
+    "SoftDelete": "Poista",
+    "Update": "Päivitä"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Automaattinen päivitys",
@@ -559,6 +589,9 @@
     "Result": "Tulos",
     "To": "Kohdetila",
     "UpdatedAt": "Päivitetty"
+  },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Kutsu sähköpostilla"
   },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "Valitse kansio"

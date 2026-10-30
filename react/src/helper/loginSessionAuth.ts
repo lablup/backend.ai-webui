@@ -127,6 +127,52 @@ export function escapeLoginProbe(): boolean {
   return true;
 }
 
+const MOCK_MANAGER_KEY = 'backendaiwebui.dev.mockManager';
+const MOCK_MANAGER_MODES = ['down', '502', '504', 'timeout'] as const;
+type MockManagerMode = (typeof MOCK_MANAGER_MODES)[number];
+const MOCK_TIMEOUT_MS = 5000;
+
+/**
+ * Dev-only: `?mockManager=down|502|504|timeout` makes the reachability probe
+ * fail that way for this tab until `?mockManager=off`, to test outage screens.
+ */
+function readMockManagerMode(): MockManagerMode | null {
+  const param = new URLSearchParams(window.location.search).get('mockManager');
+  if (param === 'off') sessionStorage.removeItem(MOCK_MANAGER_KEY);
+  else if (MOCK_MANAGER_MODES.includes(param as MockManagerMode)) {
+    sessionStorage.setItem(MOCK_MANAGER_KEY, param as string);
+  }
+  const stored = sessionStorage.getItem(MOCK_MANAGER_KEY);
+  return MOCK_MANAGER_MODES.includes(stored as MockManagerMode)
+    ? (stored as MockManagerMode)
+    : null;
+}
+
+async function failAsMockedManager(
+  mode: MockManagerMode,
+  signal: AbortSignal,
+): Promise<never> {
+  if (mode === 'down') throw new TypeError('Failed to fetch');
+  if (mode === 'timeout') {
+    await new Promise<void>((resolve) => {
+      const timer = setTimeout(resolve, MOCK_TIMEOUT_MS);
+      signal.addEventListener('abort', () => {
+        clearTimeout(timer);
+        resolve();
+      });
+    });
+    throw Object.assign(new Error('Request timeout'), {
+      isError: true,
+      statusCode: 408,
+    });
+  }
+  const statusCode = Number(mode);
+  throw Object.assign(
+    new Error(statusCode === 502 ? 'Bad Gateway' : 'Gateway Timeout'),
+    { isError: true, statusCode },
+  );
+}
+
 /**
  * The login screen's reachability probe. In a dev build it runs under an
  * AbortController that `escapeLoginProbe` can fire; a caller-supplied signal
@@ -141,6 +187,8 @@ export async function probeManager(client: any): Promise<void> {
   const timer = setTimeout(() => controller.abort(), client.requestTimeout);
   activeProbe = controller;
   try {
+    const mockMode = readMockManagerMode();
+    if (mockMode) await failAsMockedManager(mockMode, controller.signal);
     await client.get_manager_version(controller.signal);
   } catch (err) {
     if (controller.signal.reason === LOGIN_PROBE_ESCAPED) {
