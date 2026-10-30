@@ -213,6 +213,34 @@ describe('createNavigateTool', () => {
   });
 });
 
+describe('createNavigateTool on the same path', () => {
+  it('reloads the document when only the search changes', async () => {
+    const navigate = vi.fn();
+    const reloadDocument = vi.fn();
+    window.history.replaceState({}, '', '/admin/users');
+    const tool = createNavigateTool({
+      pages: [],
+      activeProjectName: 'default',
+      navigate,
+      reloadDocument,
+      settleMs: 0,
+    });
+
+    await expect(
+      tool.execute({ path: '/admin/users?tab=credentials' }),
+    ).resolves.toMatchObject({
+      path: '/admin/users?tab=credentials',
+      reloaded: true,
+    });
+    await waitFor(() =>
+      expect(reloadDocument).toHaveBeenCalledWith(
+        '/admin/users?tab=credentials',
+      ),
+    );
+    expect(navigate).not.toHaveBeenCalled();
+  });
+});
+
 describe('displayedEmail', () => {
   it('returns the email unchanged when masking is off', () => {
     expect(displayedEmail('admin@lablup.com', false)).toBe('admin@lablup.com');
