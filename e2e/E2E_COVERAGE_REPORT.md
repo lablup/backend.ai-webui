@@ -35,7 +35,7 @@
 | Resources                | `/agent-summary`, `/agent`                       |    10    |    3    | 🔶 30%  |
 | Resource Policy          | `/resource-policy`                               |    13    |   10    | 🔶 77%  |
 | User Credentials         | `/credential`                                    |    25    |   18    | 🔶 72%  |
-| Maintenance              | `/maintenance`                                   |    5     |    4    | 🔶 80%  |
+| Maintenance              | `/maintenance`                                   |    3     |    2    | 🔶 67%  |
 | User Settings            | `/usersettings`                                  |    10    |    1    | 🔶 10%  |
 | Project                  | `/project`                                       |    6     |    5    | 🔶 83%  |
 | Statistics               | `/statistics`                                    |    2     |    2    | ✅ 100% |
@@ -789,15 +789,13 @@
 
 **Test files:** [`e2e/maintenance/maintenance.spec.ts`](maintenance/maintenance.spec.ts)
 
-| Feature                     | Status | Test                                                                   |
-| --------------------------- | ------ | ---------------------------------------------------------------------- |
-| Recalculate usage           | ✅     | `click the Recalculate Usage button`                                   |
-| Rescan images               | ✅     | `click the Rescan Images button`                                       |
-| Publish system announcement | ✅     | `Admin can publish a system announcement with a title`                 |
-| Save announcement as draft  | ✅     | `Admin can save an announcement as a draft without showing the banner` |
-| Other maintenance actions   | ❌     | -                                                                      |
+| Feature                   | Status | Test                                 |
+| ------------------------- | ------ | ------------------------------------ |
+| Recalculate usage         | ✅     | `click the Recalculate Usage button` |
+| Rescan images             | ✅     | `click the Rescan Images button`     |
+| Other maintenance actions | ❌     | -                                    |
 
-**Coverage: 🔶 4/5 features**
+**Coverage: 🔶 2/3 features** (the system announcement moved to System Settings in #10713)
 
 ---
 

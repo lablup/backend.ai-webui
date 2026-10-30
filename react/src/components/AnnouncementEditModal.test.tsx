@@ -23,7 +23,9 @@ vi.mock('react-i18next', () => ({
 // what it guards is the SECOND one, where the data is in hand and Monaco's lazy
 // chunk is still loading.
 vi.mock('../hooks/useAppConfig', () => ({
-  useDomainAppConfig: () => ({ enabled: true, title: 'hello', body: 'world' }),
+  useDomainAppConfig: () => ({
+    announcement: { enabled: true, title: 'hello', body: 'world' },
+  }),
   useUpdateDomainAppConfig: () => async () => undefined,
 }));
 
