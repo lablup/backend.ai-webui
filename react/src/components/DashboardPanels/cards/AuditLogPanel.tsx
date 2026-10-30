@@ -68,6 +68,8 @@ type HistoryVariables = Omit<
 type LiveData = AuditLogPanelScopedQuery$data;
 type CountData = Parameters<typeof readSuccessFailure>[2];
 
+// TODO(needs-backend): BA-8746 - one count grouped by time bucket and status would
+// replace the per-bucket success/failure aliases in the four queries below.
 interface QueryProps<TVariables, TData> {
   variables: TVariables;
   fetchKey: string;

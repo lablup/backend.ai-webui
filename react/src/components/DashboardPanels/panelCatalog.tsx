@@ -289,7 +289,7 @@ const adminOrder = (key: keyof typeof ADMIN_ORDER) => ({
 
 /**
  * The admin pages' cards, in the order the project admin board places them.
- * A card on both pages is one component that reads the page's scope (ADR 0017).
+ * A card on both pages is one component that reads the page's scope (ADR 0018).
  */
 const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
   {

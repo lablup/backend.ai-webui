@@ -17,6 +17,8 @@ import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
+// TODO(needs-backend): BA-8746 - a failure count grouped by entity type would replace
+// the per-type aliases below.
 const EntityTypeFailures: React.FC<{
   timeRange: DateTimeWindow;
   fetchKey: string;
