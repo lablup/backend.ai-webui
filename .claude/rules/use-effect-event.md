@@ -124,30 +124,6 @@ If the side effect is not idempotent (starts a network request, opens a
 window, etc.), guard with a `useRef` flag, or rely on the parent's `key`
 prop to remount cleanly so identity is the synchronization key.
 
-## React 19.2 trap: no `useEffectEvent` inside `memo()` / `forwardRef()`
-
-React 19.2.x republishes a `useEffectEvent` implementation only for plain
-function-component fibers. Inside a `React.memo(Comp)` without a compare
-function (a `SimpleMemoComponent` fiber) or a `forwardRef()` component, every
-effect event keeps its **first render's** closure for the component's whole
-life (facebook/react#34818, fixed in React 19.3 by facebook/react#34831).
-`memo(Comp, areEqual)` is not affected: it renders `Comp` in a child
-function-component fiber. `Form.useWatch` is built on an effect event, so a
-`memo()`-wrapped component that watches a field silently drops a change back
-to a value it has already seen — the session launcher's accelerator bug
-(#10705). Until React is on 19.3 (#10706):
-
-- do not wrap a component that calls `useEffectEvent`, directly or through a
-  hook such as `Form.useWatch`, in `React.memo()` without a compare function
-  or in `forwardRef()`;
-- removing such a wrapper costs nothing when every rendering parent is
-  compiled: its JSX element is then referentially stable, so the child bails
-  out as before. Compiled means the parent body starts with `'use memo'` and
-  `pnpm --filter ./react exec eslint <parent file>` reports no React Compiler
-  diagnostic for it (a bailout leaves the parent uncompiled). A parent that is
-  not compiled re-renders the child on every render — check each parent
-  before removing.
-
 ## When NOT to use `useEffectEvent`
 
 - **For values the effect *should* react to**. Example: a query parameter that,
@@ -171,8 +147,6 @@ After editing a file that uses `useEffect`, ensure:
   to drop a callback dep — convert to `useEffectEvent` instead.
 - `bash scripts/verify.sh` passes; `react-hooks/exhaustive-deps` lint should be
   satisfied without disable comments.
-- No `useEffectEvent` (or `Form.useWatch`) runs inside a `React.memo()` /
-  `forwardRef()` component while React is 19.2 (the trap above).
 
 ## Related
 

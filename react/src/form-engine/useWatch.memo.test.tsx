@@ -14,12 +14,10 @@ import React from 'react';
 import { describe, expect, it } from 'vitest';
 
 // `Form.useWatch` compares the incoming value against its state inside a
-// `useEffectEvent`. React 19.2 never republishes that event inside a memo()
-// fiber, so a change back to a value the watcher has seen is dropped (#10705).
-// On 19.2 the memo case asserts the drop; on a newer React it asserts the
-// round trip, which is the signal to retire the memo constraint in
-// `.claude/rules/use-effect-event.md` (#10706).
-const REACT_HAS_THE_MEMO_TRAP = React.version.startsWith('19.2.');
+// `useEffectEvent`. React 19.2 never republished that event inside a memo()
+// fiber, so a change back to a value the watcher had seen was dropped
+// (#10705, facebook/react#34818); React 19.3 fixed it. The memo case keeps
+// that path covered.
 
 type FormInstance = ReturnType<typeof Form.useForm>[0];
 
@@ -28,11 +26,14 @@ const Watcher: React.FC<{ form: FormInstance }> = ({ form }) => {
   return <output data-testid="watched">{String(value)}</output>;
 };
 const MemoWatcher = React.memo(Watcher);
+const ForwardRefWatcher = React.forwardRef<HTMLElement, { form: FormInstance }>(
+  (props) => <Watcher {...props} />,
+);
 
-const Harness: React.FC<{ W: typeof Watcher; form: FormInstance }> = ({
-  W,
-  form,
-}) => (
+const Harness: React.FC<{
+  W: React.ComponentType<{ form: FormInstance }>;
+  form: FormInstance;
+}> = ({ W, form }) => (
   <Form form={form} initialValues={{ rg: 'a' }}>
     <Form.Item name="rg">
       <input data-testid="rg" />
@@ -41,52 +42,29 @@ const Harness: React.FC<{ W: typeof Watcher; form: FormInstance }> = ({
   </Form>
 );
 
-const mount = (W: typeof Watcher) => {
+const mount = (W: React.ComponentType<{ form: FormInstance }>) => {
   const { result } = renderHook(() => Form.useForm()[0]);
   render(<Harness W={W} form={result.current} />);
   return result.current;
 };
 
-const watched = () => screen.getByTestId('watched').textContent;
 const expectWatched = (value: string) =>
-  waitFor(() => expect(watched()).toBe(value));
+  waitFor(() => expect(screen.getByTestId('watched').textContent).toBe(value));
 
-// The watcher center notifies through a MessageChannel task; a drop has no
-// event to wait for, so give that task time to run before asserting.
-const settle = () =>
-  act(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 50));
-  });
+const roundTrip = async (W: React.ComponentType<{ form: FormInstance }>) => {
+  const form = mount(W);
+  await expectWatched('a');
+  act(() => form.setFieldValue('rg', 'b'));
+  await expectWatched('b');
+  act(() => form.setFieldValue('rg', 'a'));
+  await expectWatched('a');
+};
 
 describe('Form.useWatch returning to a value it has seen', () => {
-  it('follows a → b → a in a plain function component', async () => {
-    const form = mount(Watcher);
-    await expectWatched('a');
-    act(() => form.setFieldValue('rg', 'b'));
-    await expectWatched('b');
-    act(() => form.setFieldValue('rg', 'a'));
-    await expectWatched('a');
-  });
+  it('follows a → b → a in a plain function component', () =>
+    roundTrip(Watcher));
 
-  it(
-    REACT_HAS_THE_MEMO_TRAP
-      ? 'drops the return to a inside React.memo on React 19.2 (#10705)'
-      : 'follows a → b → a inside React.memo (React ≥ 19.3; retire the memo constraint, #10706)',
-    async () => {
-      const form = mount(MemoWatcher);
-      await expectWatched('a');
-      act(() => form.setFieldValue('rg', 'b'));
-      await expectWatched('b');
-      act(() => form.setFieldValue('rg', 'a'));
-      if (REACT_HAS_THE_MEMO_TRAP) {
-        await settle();
-        expect(
-          watched(),
-          'React 19.2 drops this change; if it now follows, React moved past 19.2 — retire the memo constraint in .claude/rules/use-effect-event.md (#10706)',
-        ).toBe('b');
-      } else {
-        await expectWatched('a');
-      }
-    },
-  );
+  it('follows a → b → a inside React.memo', () => roundTrip(MemoWatcher));
+
+  it('follows a → b → a inside forwardRef', () => roundTrip(ForwardRefWatcher));
 });
