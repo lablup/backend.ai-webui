@@ -183,7 +183,6 @@
     "KeyRequired": "Bir anahtar girin.",
     "Label": "Etiket",
     "LabelsSaved": "Etiketler kaydedildi.",
-    "RemoveLabel": "Etiketi kaldır",
     "Save": "Kaydet",
     "SomeLabelsFailed": "{{count}} etiket değişikliği başarısız oldu",
     "Target": "Hedef",

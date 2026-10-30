@@ -183,7 +183,6 @@
     "KeyRequired": "请输入键。",
     "Label": "标签",
     "LabelsSaved": "标签已保存。",
-    "RemoveLabel": "删除标签",
     "Save": "保存",
     "SomeLabelsFailed": "{{count}} 项标签更改失败",
     "Target": "对象",
