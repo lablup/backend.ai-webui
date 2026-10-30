@@ -161,7 +161,7 @@ const DeploymentListToolsRegistrar: React.FC<
 
 /**
  * `bai_list_visible_deployment`, `bai_get_deployment_filter` and
- * `bai_get_current_deployment` for the deployment list (ADR 0011).
+ * `bai_get_current_deployment` for the deployment list (ADR 0017).
  */
 const WebMCPDeploymentListTools: React.FC<WebMCPDeploymentListToolsProps> = (
   props,
