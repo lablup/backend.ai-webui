@@ -110,8 +110,8 @@ flowchart LR
 | `code` | 누가 돌려주는가 | 언제 |
 |---|---|---|
 | `invalid_input` | `useWebMCPTool` | `validateWebMCPInput`이 거절했다. `issues: [{ path, message }]`가 붙는다 |
-| `execution_failed` | `useWebMCPTool` | 입력 검사나 `execute`가 예외를 던졌거나 반환값을 JSON으로 바꿀 수 없다. `message`에는 예외의 `message`를 담고, client와 Relay가 던지는 plain object도 같다 |
-| `tool_unavailable` | `useWebMCPTool` | 등록된 뒤 component가 `null` tool을 넘기게 되었다 |
+| `execution_failed` | `useWebMCPTool` | 입력 검사나 `execute`가 예외를 던졌거나, 반환값을 JSON으로 바꿀 수 없거나, 바꾼 결과가 `undefined`다. `message`에는 예외나 client와 Relay가 던지는 plain object의 `message`, `msg`, `title` 중 처음 나온 문자열을 담고, 셋 다 없으면 고정된 문구를 담는다 |
+| `tool_unavailable` | `useWebMCPTool` | 등록이 끝난 뒤의 호출이다. component가 `null` tool을 넘기게 되었거나, unmount되었거나, gate가 꺼졌다 |
 | 그 밖의 snake_case 문자열 | tool의 `execute` | tool이 자기 규칙으로 거절했다. `webMCPError(code, message)`로 만든다 |
 
 - **Shape**: 모든 error는 `{ error: { code, message, issues? } }`이다(`WebMCPErrorResult`).
