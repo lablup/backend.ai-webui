@@ -3,14 +3,12 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ResourceGroupListDeleteMutation } from '../__generated__/ResourceGroupListDeleteMutation.graphql';
-import { ResourceGroupListInfoModalQuery } from '../__generated__/ResourceGroupListInfoModalQuery.graphql';
 import {
   ResourceGroupFilter,
   ResourceGroupListQuery,
   ResourceGroupListQuery$data,
   ResourceGroupOrderBy,
 } from '../__generated__/ResourceGroupListQuery.graphql';
-import { ResourceGroupListSettingModalQuery } from '../__generated__/ResourceGroupListSettingModalQuery.graphql';
 import { ResourceGroupListUpdateMutation } from '../__generated__/ResourceGroupListUpdateMutation.graphql';
 import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
@@ -18,8 +16,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useSFTPProxyResourceGroupsQuery } from '../hooks/useSFTPResourceGroups';
-import BAIRadioGroup from './BAIRadioGroup';
-import ResourceGroupInfoModal from './ResourceGroupInfoModal';
+import ResourceGroupDetailDrawer from './ResourceGroupDetailDrawer';
 import ResourceGroupSettingModal from './ResourceGroupSettingModal';
 import UpdateResourceGroupsModal from './UpdateResourceGroupsModal';
 import { IconButton } from '@lablup/ui-common/IconButton';
@@ -34,6 +31,8 @@ import {
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
   BAIQuestionIconWithTooltip,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
   BAISelectionLabel,
   BAITable,
   BAIUnmountAfterClose,
@@ -52,20 +51,13 @@ import * as _ from 'lodash-es';
 import {
   BanIcon,
   Check,
-  Info,
   PlusIcon,
   SquarePenIcon,
   Trash2,
   UndoIcon,
   X,
 } from 'lucide-react';
-import React, {
-  Suspense,
-  useDeferredValue,
-  useEffect,
-  useState,
-  useTransition,
-} from 'react';
+import React, { useDeferredValue, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 import { PayloadError } from 'relay-runtime';
@@ -87,86 +79,6 @@ type ResourceGroupNode = NonNullable<
   >['node']
 >;
 
-/**
- * The modals still read the graphene `ScalingGroup` (it carries `driver`,
- * `driver_opts`, `scheduler_opts` and `wsproxy_api_token`, none of which the
- * strawberry `ResourceGroup` exposes), so they load their own row by name.
- */
-const ResourceGroupInfoModalWithQuery: React.FC<{
-  resourceGroupName: string;
-  open: boolean;
-  onRequestClose: () => void;
-}> = ({ resourceGroupName, onRequestClose, ...modalProps }) => {
-  'use memo';
-  const { scaling_group } = useLazyLoadQuery<ResourceGroupListInfoModalQuery>(
-    graphql`
-      query ResourceGroupListInfoModalQuery($name: String!) {
-        scaling_group(name: $name) {
-          ...ResourceGroupInfoModalFragment
-        }
-      }
-    `,
-    { name: resourceGroupName },
-    { fetchPolicy: 'store-and-network' },
-  );
-
-  // A row deleted between the list query and this lookup comes back null;
-  // rendering it would show an all-blank modal, so close instead.
-  useEffect(() => {
-    if (!scaling_group) {
-      onRequestClose();
-    }
-  }, [scaling_group, onRequestClose]);
-
-  return scaling_group ? (
-    <ResourceGroupInfoModal
-      resourceGroupFrgmt={scaling_group}
-      onRequestClose={onRequestClose}
-      {...modalProps}
-    />
-  ) : null;
-};
-
-const ResourceGroupSettingModalWithQuery: React.FC<{
-  resourceGroupName: string;
-  open: boolean;
-  onRequestClose: (success: boolean) => void;
-}> = ({ resourceGroupName, onRequestClose, ...modalProps }) => {
-  'use memo';
-  const { scaling_group } =
-    useLazyLoadQuery<ResourceGroupListSettingModalQuery>(
-      graphql`
-        query ResourceGroupListSettingModalQuery($name: String!) {
-          scaling_group(name: $name) {
-            ...ResourceGroupSettingModalFragment
-          }
-        }
-      `,
-      { name: resourceGroupName },
-      // `modify_scaling_group` returns only `ok`/`msg`, so the cached
-      // `ScalingGroup` keeps its pre-edit values; the form reads
-      // `initialValues` once at mount, so a cached first render would stick.
-      { fetchPolicy: 'network-only' },
-    );
-
-  // `ResourceGroupSettingModal` reads a null fragment as "create mode", so a
-  // row deleted between the list query and this lookup would turn Edit into a
-  // blank Create form. Close instead.
-  useEffect(() => {
-    if (!scaling_group) {
-      onRequestClose(false);
-    }
-  }, [scaling_group, onRequestClose]);
-
-  return scaling_group ? (
-    <ResourceGroupSettingModal
-      resourceGroupFrgmt={scaling_group}
-      onRequestClose={onRequestClose}
-      {...modalProps}
-    />
-  ) : null;
-};
-
 const ResourceGroupList: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
@@ -179,13 +91,14 @@ const ResourceGroupList: React.FC = () => {
   const [activeType, setActiveType] = useState<'active' | 'inactive'>('active');
   const [
     openCreateModal,
-    { setRight: openSettingModal, setLeft: hideSettingModal },
+    { setRight: openCreateSettingModal, setLeft: hideCreateSettingModal },
   ] = useToggle(false);
-  const [openInfoModal, { setRight: showInfoModal, setLeft: hideInfoModal }] =
-    useToggle(false);
   const [openSFTPModal, setOpenSFTPModal] = useState(false);
-  const [infoModalName, setInfoModalName] = useState<string>();
-  const [settingModalName, setSettingModalName] = useState<string>();
+  const [drawerResourceGroupName, setDrawerResourceGroupName] = useState<
+    string | null
+  >(null);
+  // Kept apart from the name so the drawer keeps its content while closing.
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedResourceGroupName, setSelectedResourceGroupName] =
     useState<string>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -239,8 +152,7 @@ const ResourceGroupList: React.FC = () => {
   const isRefetching = queryVariables !== deferredQueryVariables;
 
   // `driver` / `driver_opts` are deliberately absent from the strawberry
-  // `ResourceGroup`, so the Driver column is gone (its value is always
-  // "static"); the Info modal still shows both via its own graphene query.
+  // `ResourceGroup`, so there is no Driver column (its value is always "static").
   const { adminResourceGroups } = useLazyLoadQuery<ResourceGroupListQuery>(
     graphql`
       query ResourceGroupListQuery(
@@ -280,6 +192,7 @@ const ResourceGroupList: React.FC = () => {
               scheduler {
                 type
               }
+              ...ResourceGroupDetailDrawerFragment
             }
           }
         }
@@ -295,6 +208,20 @@ const ResourceGroupList: React.FC = () => {
   const resourceGroups = filterOutNullAndUndefined(
     _.map(adminResourceGroups?.edges, 'node'),
   );
+  const drawerResourceGroup = drawerResourceGroupName
+    ? _.find(resourceGroups, { name: drawerResourceGroupName })
+    : null;
+  // Last group the drawer showed, so it keeps its content while closing even
+  // when the group has just left the list.
+  const [shownResourceGroup, setShownResourceGroup] =
+    useState<typeof drawerResourceGroup>(null);
+  if (drawerResourceGroup && drawerResourceGroup !== shownResourceGroup) {
+    setShownResourceGroup(drawerResourceGroup);
+  }
+  // Close for good when the group leaves the list, so it cannot reopen later.
+  if (isDrawerOpen && !drawerResourceGroup) {
+    setIsDrawerOpen(false);
+  }
 
   const [commitUpdateResourceGroup] =
     useMutation<ResourceGroupListUpdateMutation>(graphql`
@@ -326,9 +253,8 @@ const ResourceGroupList: React.FC = () => {
       <X style={{ color: token('--color-text-secondary') }} size="1em" />
     );
 
-  const closeSettingModal = (success: boolean) => {
-    hideSettingModal();
-    setSettingModalName(undefined);
+  const closeCreateSettingModal = (success: boolean) => {
+    hideCreateSettingModal();
     if (success) {
       startRefetchTransition(() => {
         updateFetchKey();
@@ -345,26 +271,12 @@ const ResourceGroupList: React.FC = () => {
       render: (name: string, record: ResourceGroupNode) => (
         <BAINameActionCell
           title={name}
+          onTitleClick={() => {
+            setDrawerResourceGroupName(record.name);
+            setIsDrawerOpen(true);
+          }}
           showActions="always"
           actions={[
-            {
-              key: 'info',
-              title: t('button.Info'),
-              icon: <Info size="1em" />,
-              onClick: () => {
-                setInfoModalName(record.name);
-                showInfoModal();
-              },
-            },
-            {
-              key: 'edit',
-              title: t('button.Edit'),
-              icon: <SquarePenIcon />,
-              onClick: () => {
-                setSettingModalName(record.name);
-                openSettingModal();
-              },
-            },
             {
               key: 'activate-deactivate',
               title: record.status.isActive
@@ -533,25 +445,23 @@ const ResourceGroupList: React.FC = () => {
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex justify="between" gap="sm" align="start" wrap="wrap">
         <BAIFlex gap="sm" align="start" wrap="wrap" style={{ flexShrink: 1 }}>
-          <BAIRadioGroup
+          <BAISegmentedControl
             value={activeType}
             onChange={(value) => {
-              setActiveType(value.target.value);
+              setActiveType(value as typeof activeType);
               setTablePaginationOption({ current: 1 });
               setSelectedRowKeys([]);
             }}
-            optionType="button"
-            options={[
-              {
-                label: t('general.Active'),
-                value: 'active',
-              },
-              {
-                label: t('general.Inactive'),
-                value: 'inactive',
-              },
-            ]}
-          />
+          >
+            <BAISegmentedControlItem
+              value="active"
+              label={t('general.Active')}
+            />
+            <BAISegmentedControlItem
+              value="inactive"
+              label={t('general.Inactive')}
+            />
+          </BAISegmentedControl>
           <BAIGraphQLPropertyFilter<ResourceGroupFilter>
             singleCondition={!supportsSubFilter}
             filterProperties={[
@@ -639,7 +549,7 @@ const ResourceGroupList: React.FC = () => {
           <BAIButton
             type="primary"
             icon={<PlusIcon />}
-            onClick={() => openSettingModal()}
+            onClick={() => openCreateSettingModal()}
           >
             {t('resourceGroup.CreateResourceGroup')}
           </BAIButton>
@@ -753,32 +663,22 @@ const ResourceGroupList: React.FC = () => {
           setSelectedResourceGroupName(undefined);
         }}
       />
-      {infoModalName ? (
-        <Suspense fallback={null}>
-          <ResourceGroupInfoModalWithQuery
-            resourceGroupName={infoModalName}
-            open={openInfoModal}
-            onRequestClose={() => {
-              hideInfoModal();
-              setInfoModalName(undefined);
-            }}
-          />
-        </Suspense>
-      ) : null}
-      {settingModalName ? (
-        <Suspense fallback={null}>
-          <ResourceGroupSettingModalWithQuery
-            resourceGroupName={settingModalName}
-            open={openCreateModal}
-            onRequestClose={closeSettingModal}
-          />
-        </Suspense>
-      ) : (
-        <ResourceGroupSettingModal
-          open={openCreateModal}
-          onRequestClose={closeSettingModal}
+      <ResourceGroupSettingModal
+        open={openCreateModal}
+        onRequestClose={closeCreateSettingModal}
+      />
+      <BAIUnmountAfterClose>
+        <ResourceGroupDetailDrawer
+          open={isDrawerOpen}
+          resourceGroupFrgmt={drawerResourceGroup ?? shownResourceGroup}
+          onRequestClose={() => setIsDrawerOpen(false)}
+          onRequestRefetch={() => {
+            startRefetchTransition(() => {
+              updateFetchKey();
+            });
+          }}
         />
-      )}
+      </BAIUnmountAfterClose>
       <BAIUnmountAfterClose>
         <UpdateResourceGroupsModal
           open={openSFTPModal}

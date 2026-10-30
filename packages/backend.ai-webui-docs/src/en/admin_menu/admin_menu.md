@@ -6,7 +6,7 @@ navTitle: Admin Features
 
 # Admin Features
 
-Logging in with an admin account adds an **Admin Settings** menu at the top of the sidebar. Selecting it switches the sidebar to show only the administration menus. User information registered in Backend.AI is listed under the **Users** menu. A super-admin can see all users' information, and create or deactivate users.
+Superadmins land on the administration pages right after logging in, and move between them and the user pages with **Switch to Admin Console** and **Switch to User Console** in the user menu. While you are on these pages, the sidebar lists only the administration menus. User information registered in Backend.AI is listed under the **Users** menu. A super-admin can see all users' information, and create or deactivate users.
 
 ![](../images/admin_user_page.png)
 
@@ -401,7 +401,7 @@ The dialog contains the following fields:
   pick the account the new keypair belongs to. Because the account is chosen from the list, it is no
   longer possible to submit an address that does not belong to a real user.
 - **Resource Policy**: The keypair resource policy to apply to the new keypair.
-- **Rate Limit (for 15 min.)**: The maximum number of requests that can be sent to the Backend.AI server
+- **Rate Limit (for 15 min)**: The maximum number of requests that can be sent to the Backend.AI server
   in 15 minutes. For example, if set to 1000 and the keypair sends more than 1000 API requests in 15
   minutes, the server throws an error and does not accept the request. It is recommended to use the
   default value and increase it when the API request frequency goes up high according to the user's
@@ -482,14 +482,15 @@ When you open a deployment from the Admin Deployments page, the **Revisions** ca
 The **Audit Log** tab tracks all action history for the deployment. Each entry includes:
 
 - **Time**: The timestamp when the action was performed.
+- **Action**: The name of the action that wrote the record.
 - **Operation**: The type of action performed.
-- **Status**: The result of the operation.
-- **Description**: Additional details about the operation.
+- **Result**: The outcome of the operation: **Success**, **Failed**, **Denied**, **Running**, or **Unknown**.
+- **Description**: The error or denial details, shown only when the result is **Failed** or **Denied**; other rows show `-`.
 - **Duration**: The time taken to complete the operation.
 - **Triggered By**: The user who initiated the action.
 - **Client IP**: The IP address the action was requested from, shown exactly as the server reports it. It may be partially masked by the administrator's client IP masking policy, or `-` when it was not recorded.
 
-You can filter entries by **Status**, **Operation**, **Triggered By**, and a **Time** date-range picker.
+You can filter entries by **Result**, **Action**, **Operation**, **Triggered By**, and a **Time** date-range picker.
 
 <a id="admin-model-store-management"></a>
 
@@ -569,7 +570,7 @@ Backend.AI lets administrators define reusable **Prometheus query presets** that
 The presets are managed from the **Prometheus Preset** tab on the Admin Deployments page (`/admin/deployments?tab=prometheus-preset`).
 
 :::note[Superadmin only: live preview in the Auto Scaling Rule editor]
-When a superadmin opens the Auto Scaling Rule editor for a deployment, sets **Metric Source** to `Prometheus`, and selects a preset, a live **Current value** preview appears below the preset selector showing the latest metric value from Prometheus. This preview is only visible to superadmin accounts — regular users and domain admins do not see it.
+When a superadmin opens the Auto Scaling Rule editor for a deployment, sets **Metric Source** to `Prometheus`, and selects a preset, a live **Current value** preview appears below the preset selector showing the latest metric value from Prometheus. This preview is only visible to superadmin accounts.
 :::
 
 ![](../images/admin_prometheus_preset_list.png)
@@ -835,7 +836,7 @@ About details of each option in resource policy dialog, see the description belo
 - Sessions
   - Cluster Size: Set the maximum limit for the number of multi-containers or
     multi-nodes that can be configured when creating a session.
-  - Session Lifetime (sec.): Limits the maximum lifetime of a compute session
+  - Session Lifetime (s): Limits the maximum lifetime of a compute session
     from the reservation in the active status, including `PENDING` and
     `RUNNING` statuses. After this time, the session will be force-terminated
     even if it is fully utilized. This will be useful to prevent the session
@@ -845,7 +846,7 @@ About details of each option in resource policy dialog, see the description belo
   - Concurrent Sessions: Maximum number of concurrent compute session per keypair.
     If this value is set to 3, for example, users bound to this resource policy
     cannot create more than 3 compute sessions simultaneously. (max value: 100)
-  - Idle timeout (sec.): Configurable period of time during which the user can
+  - Idle timeout (s): Configurable period of time during which the user can
     leave their session untouched. If there is no activity at all on a
     compute session for idle timeout, the session will be garbage collected
     and destroyed automatically. The criteria of the "idleness" can be
@@ -1060,7 +1061,7 @@ to `FAIR_SHARE`. To configure the scheduler type for a resource group, refer to 
 [Manage resource group](#manage-resource-group) section.
 :::
 
-To access this feature, click the **Scheduler** menu item under **Admin Settings** in the sidebar.
+To access this feature, click the **Scheduler** menu item in the sidebar of the administration pages.
 The page displays a Fair Share Setting tab with a 4-step drill-down interface.
 
 ![](../images/fair_share_resource_group_page.png)
@@ -1295,6 +1296,17 @@ you have chosen a project and a resource group. Images in your selection that ar
 are excluded from the request.
 
 ![=520px](../images/image_install_modal.png)
+
+Superadmins can register specific images without rescanning a whole registry. Click **Import Image**
+to open the **Import Image from Registry** dialog, enter one full image reference per line — tag
+included — under **Image references**, choose the **Architecture** to look up, review the
+**Images to import** list, and click **Import Image**. An NVIDIA NGC catalog container URL can be
+pasted in place of a reference.
+
+![=720px](../images/import_image_modal.png)
+
+Superadmins can also refresh a single image's metadata from its registry with the **Rescan** action
+in the image's row.
 
 You can change the minimum resource requirements for each image by clicking the
 **Edit** (pencil) action in the `Controls` panel, which opens the
@@ -1924,6 +1936,27 @@ The footer holds four actions:
 - **Cancel**: Closes the dialog without saving.
 - **Delete**: Removes the published announcement so the banner disappears for everyone. A confirmation
   dialog appears first.
+
+<a id="data-retention"></a>
+
+### Data retention
+
+Superadmins can control how long Backend.AI keeps each category of data on the **Data Retention** tab of the
+Maintenance page. Only categories with an enabled policy have data past its retention period cleaned up.
+
+Each row of the list is the policy for one category and shows its **Category**, **Retention Period (Days)**,
+whether it is **Enabled**, and the **Last Cleanup** time (or "Not run yet"). The **Created At** and **Updated At** columns
+can be shown from the table settings. The
+available categories are Logs, Login History, Reconcile History, Roles & Invitations, Deployments, Sessions,
+Usage Records, and Usage Buckets. The list can be sorted by **Category**, **Last Cleanup**, or **Created At**.
+
+- **Create Policy**: Click **Create Policy**, choose a category, enter a retention period of at least 1 day,
+  and choose whether the policy is enabled. Only one policy can exist per category; creating a policy for a
+  category that already has one fails with an error, so edit the existing policy instead.
+- **Edit**: Use the edit action in the row to change the category, the retention period, or the enabled
+  setting. Moving the policy to a category that already has a policy fails with an error.
+- **Delete**: Use the delete action in the row. Because the policy is removed permanently, you must type
+  the category name shown in the dialog before the delete button is enabled.
 
 <a id="detailed-information"></a>
 

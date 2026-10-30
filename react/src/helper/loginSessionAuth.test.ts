@@ -4,7 +4,10 @@
  */
 import { RelayEnvironment } from '../RelayEnvironment';
 import myUserQueryNode from '../__generated__/loginSessionAuthMyUserQuery.graphql';
-import type { LoginBootstrap } from './loginBootstrap';
+import {
+  LoginBootstrapIncompleteError,
+  type LoginBootstrap,
+} from './loginBootstrap';
 import { getDefaultLoginConfig } from './loginConfig';
 import {
   LoginAttemptCancelledError,
@@ -34,11 +37,17 @@ const DOMAIN_UUID = '22222222-2222-4222-8222-222222222222';
 const PROJECT_A = '33333333-3333-4333-8333-333333333333';
 const PROJECT_B = '44444444-4444-4444-8444-444444444444';
 
-type Edges = Array<{ node: { id: string; basicInfo: { name: string } } }>;
+type Edges = Array<{
+  node: { id: string; entityId: string; basicInfo: { name: string } };
+}>;
 
 const edges = (nodes: Array<[string, string]>): Edges =>
   nodes.map(([uuid, name]) => ({
-    node: { id: globalId('ProjectV2', uuid), basicInfo: { name } },
+    node: {
+      id: globalId('ProjectV2', uuid),
+      entityId: uuid,
+      basicInfo: { name },
+    },
   }));
 
 const meWith = (
@@ -54,6 +63,7 @@ const meWith = (
 ) => ({
   myUserV2: {
     id: globalId('UserV2', USER_UUID),
+    entityId: USER_UUID,
     basicInfo: { email: 'me@example.com', fullName: 'Me' },
     organization: {
       domainName: 'domainName' in overrides ? overrides.domainName : 'default',
@@ -227,14 +237,20 @@ describe('connectViaGQL', () => {
     expect(g.backendaiclient.current_group).toBe('alpha');
   });
 
-  test('logs out and throws when the session has no user', async () => {
-    queueResponses([{ myUserV2: null }]);
+  test('keeps the session when the manager fails to resolve the user', async () => {
+    environment.mock.queueOperationResolver(
+      () =>
+        ({
+          data: { myUserV2: null },
+          errors: [{ message: 'database is unavailable', path: ['myUserV2'] }],
+        }) as any,
+    );
     const client = makeClient();
 
-    await expect(connectViaGQL(client, cfg, [])).rejects.toThrow(
-      'User information is missing.',
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBeInstanceOf(
+      LoginBootstrapIncompleteError,
     );
-    expect(client.logout).toHaveBeenCalledTimes(1);
+    expect(client.logout).not.toHaveBeenCalled();
   });
 
   test('records the endpoint in the history, keeping the five most recent', async () => {
@@ -366,7 +382,9 @@ describe('connectViaGQL — myUserV2 query rejects (FR-3998)', () => {
     rejectWith(timeout);
     const client = makeClient();
 
-    await expect(connectViaGQL(client, cfg, [])).rejects.toBe(timeout);
+    const result = connectViaGQL(client, cfg, []);
+    await expect(result).rejects.toBeInstanceOf(LoginBootstrapIncompleteError);
+    await expect(result).rejects.toMatchObject({ cause: timeout });
     expect(client.logout).not.toHaveBeenCalled();
   });
 
@@ -467,8 +485,8 @@ describe('connectViaGQL — act-as tab (FR-4111)', () => {
     queueResponses([{ myUserV2: null }]);
     const client = actAsClient();
 
-    await expect(connectViaGQL(client, cfg, [])).rejects.toThrow(
-      'User information is missing.',
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBeInstanceOf(
+      LoginBootstrapIncompleteError,
     );
     expect(client.logout).not.toHaveBeenCalled();
   });

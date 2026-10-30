@@ -6,6 +6,7 @@ import {
   SessionActionButtonsFragment$data,
   SessionActionButtonsFragment$key,
 } from '../../__generated__/SessionActionButtonsFragment.graphql';
+import { isNotYetAllocatedSession } from '../../helper/sessionResourceGridData';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useSuspendedAppTemplateConfig } from '../../hooks/useAppTemplate';
@@ -13,7 +14,7 @@ import { useBackendAIAppLauncher } from '../../hooks/useBackendAIAppLauncher';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import AppLauncherModal from './AppLauncherModal';
 import ContainerCommitModal from './ContainerCommitModal';
-import ContainerLogModal from './ContainerLogModal';
+import ContainerLogModal from './ContainerLogModalLazy';
 import SFTPConnectionInfoModal from './SFTPConnectionInfoModal';
 import TerminateSessionModal from './TerminateSessionModal';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
@@ -188,6 +189,8 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
   const isSftpDisabled = !session || !isActive(session) || !isOwner;
   const isContainerCommitDisabled = session?.status !== 'RUNNING' || !isOwner;
   const isTerminateDisabled = !session || !isActive(session);
+  const isLogDisabled =
+    !session || isNotYetAllocatedSession(session.status ?? '');
 
   const launchApp = () => {
     if (!primaryAppOption?.appName) return;
@@ -303,6 +306,8 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
             key="logs"
             data-testid="session-container-logs-button"
             size={astryxSize}
+            variant={variantWhenEnabled(isLogDisabled, 'secondary')}
+            isDisabled={isLogDisabled}
             icon={<BAISessionLogIcon />}
             label={t('session.SeeContainerLogs')}
             tooltip={t('session.SeeContainerLogs')}

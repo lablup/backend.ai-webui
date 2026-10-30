@@ -1,3 +1,4 @@
+import { loadBAILanguage } from '../locale';
 import BAISelectionLabel from './BAISelectionLabel';
 import { BAIConfigProvider } from './provider';
 import '@testing-library/jest-dom';
@@ -19,6 +20,8 @@ describe('BAISelectionLabel', () => {
 
   it('shows the Korean strings from ui-common’s catalog under ko_KR', async () => {
     const { default: ko } = await import('../locale/ko_KR');
+    // BAIConfigProvider suspends until BUI's lazy `ko` catalog is in.
+    await loadBAILanguage('ko');
     render(
       <BAIConfigProvider locale={ko}>
         <BAISelectionLabel count={5} onClearSelection={() => {}} />

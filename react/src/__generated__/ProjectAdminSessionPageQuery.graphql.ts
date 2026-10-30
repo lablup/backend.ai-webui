@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9cda583a1036557d9b1daa2d7238b922>>
+ * @generated SignedSource<<91307ac969191317e84bd71ee641b418>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,7 +12,7 @@ import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type SessionV2NetworkType = "HOST" | "PERSISTENT" | "VOLATILE" | "%future added value";
-export type SessionV2OrderField = "ACCESS_KEY" | "BATCH_TIMEOUT" | "CLUSTER_SIZE" | "CREATED_AT" | "CREATION_ID" | "DOMAIN_NAME" | "ID" | "IS_PREEMPTIBLE" | "JOB_PRIORITY" | "NAME" | "NETWORK_ID" | "NETWORK_TYPE" | "PRIORITY" | "PROJECT_ID" | "REPLICA_ID" | "RESOURCE_GROUP_NAME" | "RESULT" | "SESSION_TYPE" | "STARTS_AT" | "STATUS" | "TAG" | "TERMINATED_AT" | "TIER" | "USER_ID" | "USE_HOST_NETWORK" | "%future added value";
+export type SessionV2OrderField = "ACCESS_KEY" | "BATCH_TIMEOUT" | "CLUSTER_SIZE" | "CREATED_AT" | "CREATION_ID" | "DOMAIN_NAME" | "ID" | "IS_PREEMPTIBLE" | "JOB_PRIORITY" | "NAME" | "NETWORK_ID" | "NETWORK_TYPE" | "PRIORITY" | "PROJECT_ID" | "REPLICA_ID" | "REQUESTED_STARTS_AT" | "RESOURCE_GROUP_NAME" | "RESULT" | "SESSION_GROUP_ID" | "SESSION_TYPE" | "STARTS_AT" | "STATUS" | "TAG" | "TERMINATED_AT" | "TIER" | "USER_ID" | "USE_HOST_NETWORK" | "%future added value";
 export type SessionV2Result = "FAILURE" | "SUCCESS" | "UNDEFINED" | "%future added value";
 export type SessionV2Status = "CANCELLED" | "CREATING" | "DEPRIORITIZING" | "PENDING" | "PREEMPTED" | "PREPARED" | "PREPARING" | "RESCHEDULING" | "RESERVED" | "RUNNING" | "SCHEDULED" | "TERMINATED" | "TERMINATING" | "%future added value";
 export type SessionV2Type = "BATCH" | "INFERENCE" | "INTERACTIVE" | "SYSTEM" | "%future added value";
@@ -25,6 +25,7 @@ export type SessionV2Filter = {
   clusterSize?: IntFilter | null | undefined;
   creationId?: StringFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   id?: UUIDFilter | null | undefined;
   isPreemptible?: boolean | null | undefined;
   jobPriority?: IntFilter | null | undefined;
@@ -35,8 +36,10 @@ export type SessionV2Filter = {
   priority?: IntFilter | null | undefined;
   projectId?: UUIDFilter | null | undefined;
   replicaId?: UUIDFilter | null | undefined;
+  requestedStartsAt?: DateTimeFilter | null | undefined;
   resourceGroupName?: StringFilter | null | undefined;
   result?: SessionV2ResultFilter | null | undefined;
+  sessionGroupId?: UUIDFilter | null | undefined;
   sessionType?: SessionV2TypeFilter | null | undefined;
   startsAt?: DateTimeFilter | null | undefined;
   status?: SessionV2StatusFilter | null | undefined;
@@ -92,6 +95,7 @@ export type EntityLabelFilter = {
   OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
   entityId?: UUIDFilter | null | undefined;
   entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   key?: StringFilter | null | undefined;
   value?: StringFilter | null | undefined;
 };
@@ -793,12 +797,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "a2f21dd364247b8fc9c3ddeb08a03304",
+    "cacheID": "34c9d9ad1370e504253cc173852247e6",
     "id": null,
     "metadata": {},
     "name": "ProjectAdminSessionPageQuery",
     "operationKind": "query",
-    "text": "query ProjectAdminSessionPageQuery(\n  $projectId: UUID!\n  $filter: SessionV2Filter\n  $orderBy: [SessionV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  scopedSessionsV2(scope: {project: [{value: $projectId}]}, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        metadata {\n          name\n        }\n        ...BAISessionNodesV2Fragment\n        ...TerminateSessionModalForProjectAdminFragment\n      }\n    }\n  }\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment BAISessionClusterModeV2Fragment on SessionV2MetadataInfo {\n  clusterMode\n  clusterSize\n}\n\nfragment BAISessionNodesV2Fragment on SessionV2 {\n  id\n  entityId\n  project {\n    id\n    basicInfo {\n      name\n    }\n  }\n  metadata {\n    name\n    ...BAISessionTypeTokenV2Fragment\n    ...BAISessionClusterModeV2Fragment\n  }\n  lifecycle {\n    status\n    createdAt\n    terminatedAt\n  }\n  resource {\n    resourceGroupName\n    allocation {\n      requested {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n      used {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n    }\n  }\n  images {\n    edges {\n      node {\n        id\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n  entityLabels(limit: 100) {\n    ...BAIEntityLabelTokensFragment\n    ...BAIEntityLabelSettingModalFragment\n  }\n}\n\nfragment BAISessionTypeTokenV2Fragment on SessionV2MetadataInfo {\n  sessionType\n}\n\nfragment TerminateSessionModalForProjectAdminFragment on SessionV2 {\n  id\n  metadata {\n    name\n  }\n  kernels {\n    edges {\n      node {\n        id\n        resource {\n          agentId\n          containerId\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ProjectAdminSessionPageQuery(\n  $projectId: UUID!\n  $filter: SessionV2Filter\n  $orderBy: [SessionV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  scopedSessionsV2(scope: {project: [{value: $projectId}]}, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        metadata {\n          name\n        }\n        ...BAISessionNodesV2Fragment\n        ...TerminateSessionModalForProjectAdminFragment\n      }\n    }\n  }\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment BAISessionClusterModeV2Fragment on SessionV2MetadataInfo {\n  clusterMode\n  clusterSize\n}\n\nfragment BAISessionNodesV2Fragment on SessionV2 {\n  id\n  entityId\n  project {\n    id\n    basicInfo {\n      name\n    }\n  }\n  metadata {\n    name\n    ...BAISessionTypeTokenV2Fragment\n    ...BAISessionClusterModeV2Fragment\n  }\n  lifecycle {\n    status\n    createdAt\n    terminatedAt\n  }\n  resource {\n    resourceGroupName\n    allocation {\n      requested {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n      used {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n    }\n  }\n  images {\n    edges {\n      node {\n        id\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n  entityLabels(limit: 100) {\n    ...BAIEntityLabelTokensFragment\n    ...BAIEntityLabelSettingModalFragment\n  }\n}\n\nfragment BAISessionTypeTokenV2Fragment on SessionV2MetadataInfo {\n  sessionType\n}\n\nfragment TerminateSessionModalForProjectAdminFragment on SessionV2 {\n  id\n  entityId\n  metadata {\n    name\n  }\n  kernels {\n    edges {\n      node {\n        id\n        resource {\n          agentId\n          containerId\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();

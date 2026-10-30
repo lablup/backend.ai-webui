@@ -7,7 +7,6 @@ import SettingItem, { SettingItemProps } from './SettingItem';
 import { Badge } from '@lablup/ui-common/Badge';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { Divider } from '@lablup/ui-common/Divider';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
 import { Heading } from '@lablup/ui-common/Heading';
@@ -15,7 +14,6 @@ import { Icon } from '@lablup/ui-common/Icon';
 import { Layout, LayoutContent, LayoutPanel } from '@lablup/ui-common/Layout';
 import { List, ListItem } from '@lablup/ui-common/List';
 import { Text } from '@lablup/ui-common/Text';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { Toolbar } from '@lablup/ui-common/Toolbar';
 import {
   BAIButton,
@@ -23,6 +21,8 @@ import {
   BAIModal,
   useBAIBreakpoint,
   useToggle,
+  BAICheckboxInput,
+  BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { ArrowLeft, ChevronRight, Redo2, Search } from 'lucide-react';
@@ -310,9 +310,8 @@ const SettingList: React.FC<SettingPageProps> = ({
             // not expose (its `style` lands on the inner control), so the
             // "take the remainder" basis has to be set from a wrapper.
             <BAIFlex style={{ flex: 1, minWidth: 0 }}>
-              <TextInput
-                label={t('settings.SearchPlaceholder')}
-                isLabelHidden
+              <BAITextInput
+                aria-label={t('settings.SearchPlaceholder')}
                 startIcon={Search}
                 placeholder={t('settings.SearchPlaceholder')}
                 onChange={(nextValue) => setSearchValue(nextValue)}
@@ -329,11 +328,12 @@ const SettingList: React.FC<SettingPageProps> = ({
             </BAIFlex>
           )}
           {!!showChangedOptionFilter && (
-            <CheckboxInput
-              label={t('settings.ShowOnlyChanged')}
+            <BAICheckboxInput
               value={changedOptionFilter}
               onChange={(checked) => setChangedOptionFilter(checked)}
-            />
+            >
+              {t('settings.ShowOnlyChanged')}
+            </BAICheckboxInput>
           )}
           {extraButton}
           {!!showResetButton && (

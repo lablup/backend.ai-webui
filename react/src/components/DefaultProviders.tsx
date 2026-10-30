@@ -9,9 +9,12 @@ import { RelayEnvironment } from '../RelayEnvironment';
 import { BAIAppProvider } from '../app-shim';
 import AstryxBrandTheme from '../astryx-theme/AstryxBrandTheme';
 import { FormConfigProvider } from '../form-engine';
-import { backendaiOptions } from '../global-stores';
-import { buiLanguages } from '../helper/bui-language';
-import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
+import {
+  getLoadedBuiLocale,
+  loadBuiLocale,
+  preloadBuiLocale,
+} from '../helper/bui-language';
+import { resolveStoredLanguage } from '../helper/storedLanguage';
 import {
   backendaiClientPromise,
   createAnonymousBackendaiClient,
@@ -30,26 +33,6 @@ import {
   useUpdateEffect,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import 'dayjs/locale/de';
-import 'dayjs/locale/el';
-import 'dayjs/locale/es';
-import 'dayjs/locale/fi';
-import 'dayjs/locale/fr';
-import 'dayjs/locale/id';
-import 'dayjs/locale/it';
-import 'dayjs/locale/ja';
-import 'dayjs/locale/ko';
-import 'dayjs/locale/mn';
-import 'dayjs/locale/ms';
-import 'dayjs/locale/pl';
-import 'dayjs/locale/pt';
-import 'dayjs/locale/pt-br';
-import 'dayjs/locale/ru';
-import 'dayjs/locale/th';
-import 'dayjs/locale/tr';
-import 'dayjs/locale/vi';
-import 'dayjs/locale/zh-cn';
-import 'dayjs/locale/zh-tw';
 import duration from 'dayjs/plugin/duration';
 import localeData from 'dayjs/plugin/localeData';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
@@ -63,6 +46,8 @@ import { createStore } from 'jotai';
 import React, {
   ReactNode,
   Suspense,
+  startTransition,
+  use,
   useEffect,
   useLayoutEffect,
   useState,
@@ -95,24 +80,6 @@ if (typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent('langChanged', { detail: { lang } }));
   };
 }
-
-// Stored-language candidates for `resolveInitialLanguage`, in precedence
-// order. `BackendAISettingsStore` seeds its in-memory options with
-// `'general.language': 'en'`, so `get('language', …, 'general')` alone cannot
-// tell "a language was persisted on a previous visit" apart from "fresh store
-// default" — and treating the seed as an explicit choice would disable
-// browser-language detection entirely (the FR-2981 bug). So:
-//   1. `user.selected_language` — the user's explicit settings-page choice.
-//      Unseeded; `get()` returns null when the user never chose.
-//   2. `general.language` — the last resolved language, but only when the
-//      localStorage key actually exists (i.e. it was persisted, not seeded).
-const getStoredLanguageCandidates = (): Array<string | null | undefined> => [
-  backendaiOptions?.get('selected_language'),
-  typeof localStorage !== 'undefined' &&
-  localStorage.getItem('backendaiwebui.settings.general.language') !== null
-    ? backendaiOptions?.get('language', undefined, 'general')
-    : undefined,
-];
 
 i18n
   .use(initReactI18next) // passes i18n down to react-i18next
@@ -153,7 +120,7 @@ i18n
     // page) render in the user's browser language even when nothing has been
     // persisted yet (e.g. private / incognito browsing). See
     // `helper/resolveInitialLanguage.ts` for the supported-language list.
-    lng: resolveInitialLanguage(...getStoredLanguageCandidates()),
+    lng: resolveStoredLanguage(),
     fallbackLng: 'en',
     interpolation: {
       escapeValue: false, // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
@@ -208,9 +175,7 @@ export const useCurrentLanguage = () => {
   // back to 'default' right after init — undoing the browser-language
   // detection on the login screen — and set `dayjs.locale('default')` /
   // `<html lang="default">` along the way.
-  const [lang, _setLang] = useState(
-    resolveInitialLanguage(...getStoredLanguageCandidates()),
-  );
+  const [lang, _setLang] = useState<string>(resolveStoredLanguage);
   const { i18n } = useTranslation();
 
   useEffect(() => {
@@ -226,9 +191,11 @@ export const useCurrentLanguage = () => {
   useEffect(() => {
     const handler = (e: Event) => {
       //@ts-ignore
-      _setLang(e?.detail?.lang);
-      //@ts-ignore
       const lang: string = e?.detail?.lang || 'en';
+      preloadBuiLocale(lang);
+      // A transition keeps the current UI on screen while the new BUI locale
+      // chunk loads, instead of falling back to the root Suspense boundary.
+      startTransition(() => _setLang(lang));
       i18n?.changeLanguage(lang);
       // For changing locale globally, use dayjs.locale instead of dayjs().locale
       dayjs.locale(lang);
@@ -303,8 +270,9 @@ export const DefaultProvidersForReactRoot: React.FC<{
   const { t } = useTranslation();
   const { token } = useTheme();
 
-  const currentLocale =
-    buiLanguages[lang as keyof typeof buiLanguages] ?? buiLanguages['en'];
+  // Non-`en` locales are lazy chunks; `loadBuiLocale` caches one promise per
+  // language, so `use` suspends on the same object across renders.
+  const currentLocale = getLoadedBuiLocale(lang) ?? use(loadBuiLocale(lang));
 
   return (
     <>

@@ -14,9 +14,9 @@
  (`src/styles/zIndexLadder.ts`): it stacks over the explorer body, not the window.
 */
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
+import BAIFileInput from '../../BAIFileInput';
 import './DragAndDrop.css';
 import type { RcFile } from './hooks';
-import { FileInput } from '@lablup/ui-common/FileInput';
 import { useRef } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -59,17 +59,16 @@ const DragAndDrop: React.FC<DragAndDropProps> = ({
         backdropFilter: 'blur(4px)',
       }}
     >
-      <FileInput
+      <BAIFileInput
         mode="dropzone"
         // `FileInput` spreads unknown props onto its hidden <input>, so a
         // data-testid cannot reach the drop area — `controlClassName` can, and both
         // e2e and `DragAndDrop.css` need a repo-owned handle on it (never an
         // `astryx-*` class).
         controlClassName="bai-file-explorer-dropzone"
-        // The caption has to live INSIDE the drop area: `label` / `description`
-        // render above it in the Field, on top of the explorer title (FR-3575).
-        label={t('comp:FileExplorer.DragAndDropDesc')}
-        isLabelHidden
+        // The caption lives INSIDE the drop area (`placeholder`), not above it
+        // on top of the explorer title (FR-3575).
+        aria-label={t('comp:FileExplorer.DragAndDropDesc')}
         placeholder={t('comp:FileExplorer.DragAndDropDesc')}
         isMultiple
         value={null}

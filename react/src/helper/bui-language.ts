@@ -2,65 +2,79 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-// Per-language `BAILocale` modules from the BUI package, keyed by language
-// code. `BAIConfigProvider` consumes these via the `locale` prop — `lang`
-// drives BUI's i18next instance / dayjs / Astryx's locale, and
-// `astryxLocale` carries the Astryx chrome-string catalog (the same flow
-// that carried `antdLocale` in the antd era).
-//
-// BUI's own translation JSONs are NOT re-exported here. BUI components
-// access them via BUI's internal i18next instance (`useBAIi18n` /
-// `BAITrans`), so the host has no reason to hold a second copy. See
-// FR-2986 / packages/backend.ai-ui/src/hooks/useBAIi18n.ts.
+// Per-language `BAILocale` modules from BUI for `BAIConfigProvider`'s `locale`
+// prop. `en` is bundled for first paint; every other language is its own chunk.
 import type { SupportedLanguage } from './resolveInitialLanguage';
+import { resolveStoredLanguage } from './storedLanguage';
 import type { BAILocale } from 'backend.ai-ui';
-import de_DE from 'backend.ai-ui/locale/de_DE';
-import el_GR from 'backend.ai-ui/locale/el_GR';
 import en_US from 'backend.ai-ui/locale/en_US';
-import es_ES from 'backend.ai-ui/locale/es_ES';
-import fi_FI from 'backend.ai-ui/locale/fi_FI';
-import fr_FR from 'backend.ai-ui/locale/fr_FR';
-import id_ID from 'backend.ai-ui/locale/id_ID';
-import it_IT from 'backend.ai-ui/locale/it_IT';
-import ja_JP from 'backend.ai-ui/locale/ja_JP';
-import ko_KR from 'backend.ai-ui/locale/ko_KR';
-import mn_MN from 'backend.ai-ui/locale/mn_MN';
-import ms_MY from 'backend.ai-ui/locale/ms_MY';
-import pl_PL from 'backend.ai-ui/locale/pl_PL';
-import pt_BR from 'backend.ai-ui/locale/pt_BR';
-import pt_PT from 'backend.ai-ui/locale/pt_PT';
-import ru_RU from 'backend.ai-ui/locale/ru_RU';
-import th_TH from 'backend.ai-ui/locale/th_TH';
-import tr_TR from 'backend.ai-ui/locale/tr_TR';
-import vi_VN from 'backend.ai-ui/locale/vi_VN';
-import zh_CN from 'backend.ai-ui/locale/zh_CN';
-import zh_TW from 'backend.ai-ui/locale/zh_TW';
 
-// languages which are supported by backend.ai-ui.
-// The `satisfies` clause below is a compile-time guard that keeps this map
-// in exact two-way sync with `SUPPORTED_LANGUAGES` in
-// `helper/resolveInitialLanguage.ts` (a missing key or an extra key is a
-// type error).
-export const buiLanguages = {
-  de: de_DE,
-  el: el_GR,
-  en: en_US,
-  es: es_ES,
-  fi: fi_FI,
-  fr: fr_FR,
-  id: id_ID,
-  it: it_IT,
-  ja: ja_JP,
-  ko: ko_KR,
-  mn: mn_MN,
-  ms: ms_MY,
-  pl: pl_PL,
-  'pt-BR': pt_BR,
-  pt: pt_PT,
-  ru: ru_RU,
-  th: th_TH,
-  tr: tr_TR,
-  vi: vi_VN,
-  'zh-CN': zh_CN,
-  'zh-TW': zh_TW,
-} satisfies Record<SupportedLanguage, BAILocale>;
+type LocaleModule = { default: BAILocale };
+
+// `satisfies` keeps this map in two-way sync with `SUPPORTED_LANGUAGES`:
+// a missing or extra key is a type error. Specifiers must stay literal.
+export const buiLocaleLoaders = {
+  de: () => import('backend.ai-ui/locale/de_DE'),
+  el: () => import('backend.ai-ui/locale/el_GR'),
+  en: () => Promise.resolve({ default: en_US }),
+  es: () => import('backend.ai-ui/locale/es_ES'),
+  fi: () => import('backend.ai-ui/locale/fi_FI'),
+  fr: () => import('backend.ai-ui/locale/fr_FR'),
+  id: () => import('backend.ai-ui/locale/id_ID'),
+  it: () => import('backend.ai-ui/locale/it_IT'),
+  ja: () => import('backend.ai-ui/locale/ja_JP'),
+  ko: () => import('backend.ai-ui/locale/ko_KR'),
+  mn: () => import('backend.ai-ui/locale/mn_MN'),
+  ms: () => import('backend.ai-ui/locale/ms_MY'),
+  pl: () => import('backend.ai-ui/locale/pl_PL'),
+  'pt-BR': () => import('backend.ai-ui/locale/pt_BR'),
+  pt: () => import('backend.ai-ui/locale/pt_PT'),
+  ru: () => import('backend.ai-ui/locale/ru_RU'),
+  th: () => import('backend.ai-ui/locale/th_TH'),
+  tr: () => import('backend.ai-ui/locale/tr_TR'),
+  vi: () => import('backend.ai-ui/locale/vi_VN'),
+  'zh-CN': () => import('backend.ai-ui/locale/zh_CN'),
+  'zh-TW': () => import('backend.ai-ui/locale/zh_TW'),
+} satisfies Record<SupportedLanguage, () => Promise<LocaleModule>>;
+
+const isLoadableLanguage = (
+  lang: string,
+): lang is keyof typeof buiLocaleLoaders =>
+  Object.prototype.hasOwnProperty.call(buiLocaleLoaders, lang);
+
+const loadedLocales = new Map<string, BAILocale>([['en', en_US]]);
+const pendingLocales = new Map<string, Promise<BAILocale>>([
+  ['en', Promise.resolve(en_US)],
+]);
+
+/** The locale for `lang` if it has already loaded; `en` always has. */
+export const getLoadedBuiLocale = (lang: string): BAILocale | undefined =>
+  loadedLocales.get(lang);
+
+/**
+ * Loads the locale for `lang`, falling back to `en` for an unsupported code or
+ * a failed chunk. One promise per language, so React's `use()` can suspend on it.
+ */
+export const loadBuiLocale = (lang: string): Promise<BAILocale> => {
+  const cached = pendingLocales.get(lang);
+  if (cached) return cached;
+  const pending = (
+    isLoadableLanguage(lang)
+      ? buiLocaleLoaders[lang]().then((mod) => mod.default)
+      : Promise.resolve(en_US)
+  )
+    .catch(() => en_US)
+    .then((locale) => {
+      loadedLocales.set(lang, locale);
+      return locale;
+    });
+  pendingLocales.set(lang, pending);
+  return pending;
+};
+
+export const preloadBuiLocale = (lang: string): void => {
+  void loadBuiLocale(lang);
+};
+
+// Start the stored language's chunk in parallel with the host catalog fetch.
+preloadBuiLocale(resolveStoredLanguage());

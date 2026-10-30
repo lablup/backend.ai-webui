@@ -310,6 +310,7 @@ test.describe(
               id: Buffer.from(
                 `AccessToken:00000000-0000-4000-8000-${String(i).padStart(12, '0')}`,
               ).toString('base64'),
+              fieldId: `00000000-0000-4000-8000-${String(i).padStart(12, '0')}`,
               token: mockTokenValue(i),
               createdAt: new Date(now - i * 60_000).toISOString(),
               expiresAt: new Date(now + 7 * 86_400_000).toISOString(),

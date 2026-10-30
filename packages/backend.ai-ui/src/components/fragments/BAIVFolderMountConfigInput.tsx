@@ -16,6 +16,7 @@ import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
 import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
 import BAIText from '../BAIText';
+import BAITextInput from '../BAITextInput';
 import BAIVFolderIdenticon from '../BAIVFolderIdenticon';
 import BAIVFolderPathPicker from '../baiClient/FileExplorer/BAIVFolderPathPicker';
 import BAIScopedVFolderSelect, {
@@ -24,7 +25,6 @@ import BAIScopedVFolderSelect, {
 } from './BAIScopedVFolderSelect';
 import './BAIVFolderMountConfigInput.css';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { useTheme } from '@lablup/ui-common/theme';
@@ -570,13 +570,12 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                     }
                     style={{ marginBottom: 0, minWidth: 0 }}
                   >
-                    <TextInput
-                      label={t(
+                    <BAITextInput
+                      aria-label={t(
                         'comp:BAIVFolderMountConfigInput.AliasPlaceholder',
                       )}
-                      isLabelHidden
                       hasClear
-                      isDisabled={disabled}
+                      disabled={disabled}
                       placeholder={status.mountDestination}
                       value={aliasInput}
                       onChange={(next) =>

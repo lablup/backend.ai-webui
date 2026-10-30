@@ -12,11 +12,11 @@ import {
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import { App } from '../app-shim';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
-import BAIRadioGroup from '../components/BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDetailDrawer';
 import DeploymentSettingModal from '../components/DeploymentSettingModal';
 import { convertToOrderBy } from '../helper';
 import { useWebUINavigate } from '../hooks';
+import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCreateActionArrival } from '../hooks/useCreateActionArrival';
@@ -26,6 +26,7 @@ import { toProjectContext } from '../types/projectContext';
 import { Button } from '@lablup/ui-common/Button';
 import { Link } from '@lablup/ui-common/Link';
 import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAISkeleton,
   BAICard,
@@ -41,7 +42,6 @@ import {
   availableDeploymentSorterValues,
   filterOutNullAndUndefined,
   isDeploymentInStoppedCategory,
-  toLocalId,
   useBAILogger,
   useFetchKey,
   useToggle,
@@ -49,15 +49,28 @@ import {
   toEntityLabelFilter,
   useIsLabelableEntityType,
   type ModelDeploymentNodeInList,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { Trash2, SquarePenIcon } from 'lucide-react';
+import { CircleHelp, Trash2, SquarePenIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
-type DeploymentStatusCategory = 'running' | 'finished';
+type DeploymentStatusCategory = 'serving' | 'paused' | 'finished';
+
+const renderTabLabel = (label: string, help: string) => (
+  <BAIFlex gap="xxs" align="center">
+    {label}
+    <Tooltip content={help}>
+      <Text color="placeholder" style={{ cursor: 'help' }}>
+        <CircleHelp size="1em" />
+      </Text>
+    </Tooltip>
+  </BAIFlex>
+);
 
 interface DeploymentListPageContentProps {
   /** Owned by the page so the trigger can live in the card's `extra` slot. */
@@ -103,9 +116,10 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
       ),
       order: parseAsStringLiteral(availableDeploymentSorterValues),
       statusCategory: parseAsStringLiteral<DeploymentStatusCategory>([
-        'running',
+        'serving',
+        'paused',
         'finished',
-      ]).withDefault('running'),
+      ]).withDefault('serving'),
     },
     { history: 'replace' },
   );
@@ -116,6 +130,7 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
 
   const [fetchKey, updateFetchKey] = useFetchKey();
 
+  const [currentUser] = useCurrentUserInfo();
   const currentProject = useCurrentProjectValue();
   const pageProject = toProjectContext(currentProject);
 
@@ -124,11 +139,18 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
   const statusCategoryFilter: DeploymentFilter =
     queryParams.statusCategory === 'finished'
       ? { status: { in: finishedStatuses } }
-      : { status: { notIn: finishedStatuses } };
+      : {
+          status: { notIn: finishedStatuses },
+          desiredReplicas:
+            queryParams.statusCategory === 'serving'
+              ? { greaterThanOrEqual: 1 }
+              : { equals: 0 },
+        };
   const projectFilter: DeploymentFilter = currentProject.id
     ? { projectId: { equals: currentProject.id } }
     : {};
   const queryVariables = {
+    scope: { user: [{ value: currentUser.uuid }] },
     filter: {
       ...(queryParams.filter ?? {}),
       ...statusCategoryFilter,
@@ -142,15 +164,17 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const { myDeployments } = useLazyLoadQuery<DeploymentListPageQuery>(
+  const { scopedDeployments } = useLazyLoadQuery<DeploymentListPageQuery>(
     graphql`
       query DeploymentListPageQuery(
+        $scope: DeploymentSearchScope!
         $filter: DeploymentFilter
         $orderBy: [DeploymentOrderBy!]
         $limit: Int
         $offset: Int
       ) {
-        myDeployments(
+        scopedDeployments(
+          scope: $scope
           filter: $filter
           orderBy: $orderBy
           limit: $limit
@@ -160,6 +184,7 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
           edges {
             node {
               id
+              entityId
               ...BAIModelDeploymentNodesFragment
               ...DeploymentSettingModal_deployment
               metadata {
@@ -187,9 +212,9 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
   );
 
   const deploymentNodes = filterOutNullAndUndefined(
-    _.map(myDeployments?.edges, 'node'),
+    _.map(scopedDeployments?.edges, 'node'),
   );
-  const total = myDeployments?.count ?? 0;
+  const total = scopedDeployments?.count ?? 0;
   const editingDeployment =
     editingDeploymentId == null
       ? null
@@ -250,20 +275,34 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
       <BAIFlex direction="column" align="stretch" gap="sm">
         <BAIFlex justify="between" wrap="wrap" gap="sm">
           <BAIFlex gap="sm" align="start" wrap="wrap" style={{ flexShrink: 1 }}>
-            <BAIRadioGroup
+            <BAISegmentedControl
               value={queryParams.statusCategory}
-              onChange={(e) => {
-                setQueryParams({ statusCategory: e.target.value });
+              onChange={(value) => {
+                setQueryParams({
+                  statusCategory: value as typeof queryParams.statusCategory,
+                });
                 setTablePaginationOption({ current: 1 });
               }}
-              options={[
-                { label: t('deployment.Running'), value: 'running' },
-                {
-                  label: t('deployment.status.Terminated'),
-                  value: 'finished',
-                },
-              ]}
-            />
+            >
+              <BAISegmentedControlItem
+                value="serving"
+                label={renderTabLabel(
+                  t('deployment.Serving'),
+                  t('deployment.ServingTooltip'),
+                )}
+              />
+              <BAISegmentedControlItem
+                value="paused"
+                label={renderTabLabel(
+                  t('deployment.Paused'),
+                  t('deployment.PausedTooltip'),
+                )}
+              />
+              <BAISegmentedControlItem
+                value="finished"
+                label={t('deployment.status.Terminated')}
+              />
+            </BAISegmentedControl>
             <BAIGraphQLPropertyFilter<DeploymentFilter>
               filterProperties={filterProperties}
               value={queryParams.filter ?? undefined}
@@ -351,7 +390,7 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
                           title={record.metadata?.name ?? '-'}
                           onTitleClick={() =>
                             webuiNavigate(
-                              `${buildProjectPath('deployments')}/${toLocalId(record.id)}`,
+                              `${buildProjectPath('deployments')}/${record.entityId}`,
                             )
                           }
                           copyable
@@ -470,7 +509,7 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
           commitDeleteMutation({
             variables: {
               input: {
-                id: toLocalId(deletingDeployment.id) ?? deletingDeployment.id,
+                id: deletingDeployment.entityId,
               },
             },
             onCompleted: (_response, errors) => {

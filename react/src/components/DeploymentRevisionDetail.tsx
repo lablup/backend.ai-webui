@@ -66,6 +66,7 @@ const DeploymentRevisionDetail: React.FC<{
     graphql`
       fragment DeploymentRevisionDetail_revision on ModelRevision {
         id
+        fieldId
         revisionNumber
         createdAt
         clusterConfig {
@@ -229,7 +230,7 @@ const DeploymentRevisionDetail: React.FC<{
                 {revision.id ? (
                   <BAIFlex gap={0} align="center">
                     {'('}
-                    <BAIId globalId={revision.id} />
+                    <BAIId uuid={revision.fieldId} />
                     {')'}
                   </BAIFlex>
                 ) : null}
@@ -268,7 +269,7 @@ const DeploymentRevisionDetail: React.FC<{
       label: t('modelService.RevisionID'),
       children: revision.id ? (
         <BAIFlex gap="xs" align="center">
-          <BAIId globalId={revision.id} style={{ maxWidth: '100%' }} />
+          <BAIId uuid={revision.fieldId} style={{ maxWidth: '100%' }} />
           {status === 'current' && (
             <Badge variant="success" label={t('deployment.Current')} />
           )}

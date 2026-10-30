@@ -182,6 +182,14 @@ A JSON file — `{"stops": [...]}` or a bare array — one object per stop:
   `/project/<name>/data`). `mint.mjs` prepends the base the app lands on.
   A page outside the project scope — the admin pages under `/admin/…` —
   says `"scope": "app"` and is opened as written.
+  The link carries the project either way: each stop records the page path
+  it was minted on (`anchor.p`), after any redirect, and the set link opens
+  it. Project names differ per backend (the shared test box has `default`,
+  staging only `frontend-default`), and the minting login can land on
+  another project than expected. To pin one, write `"scope": "app"` with
+  the full path, `/project/frontend-default/deployments`. A project-less
+  flat route (`/deployments`) does not help: the app redirects to the
+  current project before the anchor is recorded.
 - `via` — the steps that reveal the element, replayed in order. At most 8,
   each exactly one of:
   - `{"click": {"text": "…"}}` (exact visible text) or `{"click": {"tid": "…"}}`;
@@ -292,6 +300,15 @@ contains it; a server behind the sha exits 3.
 checkout, then this one) — never print or commit it. `--dry-run` resolves
 everything and launches no browser — without `--manifest`, for the one
 question section 1a starts with.
+
+Which backend: the one reviewers will sign in to, since the link's project
+must exist there (section 3, `route`). The PR's dev server pre-fills one
+backend and signs in by itself, so boot it on the same backend
+(`pnpm run dev-env use <server> <account>`, then restart the server) and
+pass that backend as `--endpoint`. `mint.mjs` signs in with
+`E2E_ADMIN_EMAIL` / `E2E_ADMIN_PASSWORD`; a catalog server without an admin
+entry (staging) needs an `--env-file` holding the account to use. Say in the
+PR which backend and project the walkthrough assumes.
 
 A translated stop carries the element's text (`txt`) per language, since
 every resolution tier ANDs it: `mint.mjs` replays the stop once in each

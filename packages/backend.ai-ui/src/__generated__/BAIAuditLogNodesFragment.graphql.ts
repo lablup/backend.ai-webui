@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a118ed5d7aa9d84d77cfc9316dee3fc0>>
+ * @generated SignedSource<<cf9afd7afb30b3a1bcabb0e385708324>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,21 +13,23 @@ export type AuditLogStatus = "DENIED" | "ERROR" | "RUNNING" | "SUCCESS" | "UNKNO
 import { FragmentRefs } from "relay-runtime";
 export type BAIAuditLogNodesFragment$data = ReadonlyArray<{
   readonly actionId: string;
+  readonly actionName: string;
   readonly clientIp: string | null | undefined;
   readonly createdAt: string;
   readonly description: string;
   readonly duration: string | null | undefined;
-  readonly entityId: string | null | undefined;
   readonly entityType: string | null | undefined;
   readonly id: string;
   readonly operation: string;
   readonly requestId: string | null | undefined;
   readonly status: AuditLogStatus;
+  readonly targetEntityId: string | null | undefined;
   readonly triggeredBy: string | null | undefined;
   readonly user: {
     readonly basicInfo: {
       readonly email: string;
     };
+    readonly entityId: string;
     readonly id: string;
   } | null | undefined;
   readonly " $fragmentType": "BAIAuditLogNodesFragment";
@@ -59,6 +61,13 @@ return {
       "args": null,
       "kind": "ScalarField",
       "name": "createdAt",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "actionName",
       "storageKey": null
     },
     {
@@ -114,7 +123,7 @@ return {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "entityId",
+      "name": "targetEntityId",
       "storageKey": null
     },
     {
@@ -143,6 +152,13 @@ return {
         {
           "alias": null,
           "args": null,
+          "kind": "ScalarField",
+          "name": "entityId",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
           "concreteType": "UserV2BasicInfo",
           "kind": "LinkedField",
           "name": "basicInfo",
@@ -167,6 +183,6 @@ return {
 };
 })();
 
-(node as any).hash = "58223a12073484572c69f4644340b796";
+(node as any).hash = "234037cbd18a67f6864d16b6e07d2cd3";
 
 export default node;

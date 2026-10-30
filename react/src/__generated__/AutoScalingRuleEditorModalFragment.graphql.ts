@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d6a85f1a8f51405f2699328200588f22>>
+ * @generated SignedSource<<89129d2b670b15b6ea58bea865d05bee>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,7 @@ import { ReaderFragment } from 'relay-runtime';
 export type AutoScalingMetricSource = "INFERENCE_FRAMEWORK" | "KERNEL" | "PROMETHEUS" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type AutoScalingRuleEditorModalFragment$data = {
+  readonly fieldId: string;
   readonly id: string;
   readonly maxReplicas: number | null | undefined;
   readonly maxThreshold: any | null | undefined;
@@ -40,6 +41,13 @@ const node: ReaderFragment = {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "fieldId",
       "storageKey": null
     },
     {
@@ -110,6 +118,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "9dff1f6ce3b17626029eee3484220a7d";
+(node as any).hash = "034a6cbc400bc15f52f3a1d62ff130b6";
 
 export default node;

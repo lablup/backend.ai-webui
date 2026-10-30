@@ -10,11 +10,10 @@ import type {
 } from '../__generated__/ProjectAdminDataPageQuery.graphql';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
-import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import DeleteForeverVFolderModalV2 from '../components/DeleteForeverVFolderModalV2';
 import DeleteVFolderModalV2 from '../components/DeleteVFolderModalV2';
-import FolderCreateModalV2 from '../components/FolderCreateModalV2';
+import FolderCreateModal from '../components/FolderCreateModal';
 import RestoreVFolderModalV2 from '../components/RestoreVFolderModalV2';
 import VFolderNodesV2, {
   VFolderNodeInList,
@@ -47,6 +46,8 @@ import {
   useToggle,
   toEntityLabelFilter,
   useIsLabelableEntityType,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon, RotateCcwIcon, Trash2Icon, TrashIcon } from 'lucide-react';
@@ -313,15 +314,15 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
       <VStack align="stretch" gap={3}>
         <HStack justify="between" wrap="wrap" gap={3}>
           <HStack gap={3} align="start" style={{ flexShrink: 1 }} wrap="wrap">
-            <BAIRadioGroup
-              optionType="button"
+            <BAISegmentedControl
               value={queryParams.mode}
-              onChange={(e) => {
-                setQuery({ mode: e.target.value });
+              onChange={(value) => {
+                setQuery({ mode: value as typeof queryParams.mode });
                 setTablePaginationOption({ current: 1 });
                 setSelectedFolderList([]);
               }}
-              options={filterOutEmpty([
+            >
+              {filterOutEmpty([
                 { label: t('data.All'), value: 'all' },
                 { label: t('data.General'), value: 'general' },
                 baiClient?._config?.fasttrackEndpoint && {
@@ -333,8 +334,14 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
                   label: t('data.Models'),
                   value: 'model',
                 },
-              ])}
-            />
+              ]).map((option) => (
+                <BAISegmentedControlItem
+                  key={option.value}
+                  value={option.value}
+                  label={option.label}
+                />
+              ))}
+            </BAISegmentedControl>
             <BAIGraphQLPropertyFilter<VFolderFilter>
               data-testid="vfolder-filter"
               // TODO(needs-backend): V2 `VFolderFilter` does not expose
@@ -550,7 +557,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
           toggleDeleteForeverModal();
         }}
       />
-      <FolderCreateModalV2
+      <FolderCreateModal
         open={isOpenCreateModal}
         project={project}
         folderType="project"

@@ -53,8 +53,8 @@
  options are the server's resource-group list, so a hand-typed name was never a
  valid selection there in the first place. Routing it to `MultiSelector` keeps
  multi-select, keeps `allowClear`, and drops an affordance that could only
- produce an invalid value. The genuine free-entry sites already moved to the
- shared `Tokenizer` adapter in wave 1 (`AstryxFormTagsInput`, P3C-7).
+ produce an invalid value. The genuine free-entry sites use ui-common's
+ `TagsInput`.
 
  PILOT-DECISION — **`searchAction` is accepted and inert.** It ran a
  caller-supplied async search in a transition and surfaced it as `loading`.
@@ -103,10 +103,10 @@
 */
 import { nodeToAccessibleLabel } from '../helper/astryxLabel';
 import { useBAIi18n } from '../hooks/useBAIi18n';
+import BAIMultiSelector from './BAIMultiSelector';
 import './BAISelect.css';
-import { MultiSelector } from '@lablup/ui-common/MultiSelector';
+import BAISelector from './BAISelector';
 import {
-  Selector,
   type SelectorOptionData,
   type SelectorOptionType,
 } from '@lablup/ui-common/Selector';
@@ -177,8 +177,9 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
   style?: CSSProperties;
   autoFocus?: boolean;
   tabIndex?: number;
-  /** Visible accessible name; derived from `placeholder` when absent. */
+  /** Accessible name (`aria-label`); derived from `placeholder` when absent. */
   label?: string;
+  /** Accepted and inert: ui-common's controls never render their own label. */
   isLabelHidden?: boolean;
   /**
    * Accepted and inert on Astryx — each names an antd popup mechanism the
@@ -226,6 +227,7 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
   ghost?: boolean;
   autoSelectOption?:
     boolean | ((options: Array<OptionType> | undefined) => ValueType);
+  /** Accepted and inert: ui-common's controls take no `labelTooltip`. */
   tooltip?: string;
   atBottomThreshold?: number;
   atBottomStateChange?: (atBottom: boolean) => void;
@@ -244,7 +246,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   ref: _ref,
   autoSelectOption,
   ghost,
-  tooltip,
+  tooltip: _tooltip,
   atBottomThreshold: _atBottomThreshold,
   atBottomStateChange: _atBottomStateChange,
   bottomLoading: _bottomLoading,
@@ -272,7 +274,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   className,
   style,
   label,
-  isLabelHidden,
+  isLabelHidden: _isLabelHidden,
   // Accepted and inert — the antd popup mechanisms Astryx owns internally.
   popupMatchSelectWidth: _popupMatchSelectWidth,
   popupRender: _popupRender,
@@ -538,17 +540,12 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
       ghost && 'bai-select-ghost',
       richTriggerNode !== undefined && 'bai-select-rich-trigger',
     ),
-    label: accessibleLabel || t('general.Select'),
-    isLabelHidden: isLabelHidden ?? label === undefined,
-    // `tooltip` was an antd `Tooltip` WRAPPING the whole control; Astryx
-    // fields carry their own `labelTooltip`, which is the same information
-    // attached to the field rather than to a wrapper element.
-    labelTooltip: tooltip || undefined,
+    'aria-label': accessibleLabel || t('general.Select'),
     placeholder:
       typeof placeholder === 'string'
         ? placeholder
         : nodeToAccessibleLabel(placeholder) || undefined,
-    isDisabled: disabled,
+    disabled,
     isLoading: loading,
     // RESTORED (input-parity pass): antd's `composedShowSearch` returned
     // `baseShowSearch ?? true`, so a `BAISelect` that says nothing about
@@ -558,8 +555,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
     // `general.Search` is also BAIComplexSelect's panel-search key, so the two
     // select engines' panels cannot drift apart (FR-3603).
     searchPlaceholder: t('general.Search'),
-    status:
-      status === 'error' || status === 'warning' ? { type: status } : undefined,
+    status: status === 'error' || status === 'warning' ? status : undefined,
     size:
       size === 'small'
         ? ('sm' as const)
@@ -578,7 +574,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
         ? (defaultValue as Array<unknown>).map(toOptionKey)
         : [];
     return (
-      <MultiSelector
+      <BAIMultiSelector
         {...shared}
         options={optionsWithSlots}
         value={selected}
@@ -600,7 +596,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   }
 
   return (
-    <Selector
+    <BAISelector
       // QA-FINDINGS Q-34 — `placement` is the documented opt-out from
       // Astryx's selected-item overlay, and every search-less `BAISelect`
       // needs it. `Selector` computes

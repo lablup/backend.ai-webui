@@ -40,17 +40,8 @@ import RuntimeParameterFormSection, {
   RUNTIME_PARAMS_NAMESPACE,
   type RuntimeParameterValues,
 } from './RuntimeParameterFormSection';
-import {
-  AstryxFormCheckbox,
-  AstryxFormNumberInput,
-  AstryxFormSelector,
-  AstryxFormSwitch,
-  AstryxFormTextArea,
-  AstryxFormTextInput,
-} from './astryxFormControls';
 import './collapsible-section.css';
 import { Button } from '@lablup/ui-common/Button';
-import { Selector } from '@lablup/ui-common/Selector';
 import { Step, Stepper } from '@lablup/ui-common/Stepper';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
@@ -61,13 +52,19 @@ import {
   BAISkeleton,
   useBAIBreakpoint,
   useDebounceFn,
+  BAICheckboxInput,
+  BAIDynamicList,
+  BAINumberInput,
+  BAISelector,
+  BAISwitch,
+  BAITextArea,
+  BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
   ChevronLeft,
   ChevronRight,
   ChevronsRight,
-  CircleMinus,
   PlusIcon,
 } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
@@ -144,10 +141,9 @@ const ImageSelectField: React.FC<{
   return (
     <Suspense
       fallback={
-        <Selector
-          label={t('general.Loading')}
-          isLabelHidden
-          isDisabled
+        <BAISelector
+          aria-label={t('general.Loading')}
+          disabled
           options={[]}
           placeholder={t('general.Loading')}
           width="100%"
@@ -846,8 +842,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 },
               ]}
             >
-              <AstryxFormTextInput
-                label={t('adminDeploymentPreset.Name')}
+              <BAITextInput
+                aria-label={t('adminDeploymentPreset.Name')}
                 placeholder={t('adminDeploymentPreset.NamePlaceholder')}
               />
             </BAIFormItem>
@@ -855,8 +851,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               name="description"
               label={t('adminDeploymentPreset.Description')}
             >
-              <AstryxFormTextArea
-                label={t('adminDeploymentPreset.Description')}
+              <BAITextArea
+                aria-label={t('adminDeploymentPreset.Description')}
                 rows={2}
                 placeholder={t('adminDeploymentPreset.DescriptionPlaceholder')}
               />
@@ -875,8 +871,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               {/* PILOT-DECISION: antd's custom `showSearch.filterOption`
                   (case-insensitive label match) dropped — Astryx Selector's
                   built-in `hasSearch` filtering covers the same UX. */}
-              <AstryxFormSelector
-                label={t('adminDeploymentPreset.Runtime')}
+              <BAISelector
+                aria-label={t('adminDeploymentPreset.Runtime')}
                 options={runtimeVariantOptions}
                 placeholder={t('adminDeploymentPreset.SelectRuntimeVariant')}
                 hasSearch
@@ -1037,58 +1033,70 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             >
               <Form.List name="resourceOpts">
                 {(fields, { add, remove }) => (
-                  <BAIFlex direction="column" gap="xs" align="stretch">
-                    {fields.map(({ key, name, ...rest }) => (
-                      <BAIFlex
-                        key={key}
-                        direction="row"
-                        align="baseline"
-                        gap="xs"
-                      >
-                        <BAIFormItem
-                          {...rest}
-                          name={[name, 'name']}
-                          style={{ marginBottom: 0, flex: 1 }}
-                          rules={[{ required: true, message: '' }]}
-                        >
-                          {/* PILOT-DECISION: antd `AutoComplete` (free text +
-                              one 'shmem' suggestion) has no Astryx equivalent;
-                              converted to a plain text input — the placeholder
-                              already shows the same example. */}
-                          <AstryxFormTextInput
-                            label={t('adminDeploymentPreset.ResourceOpts')}
-                            placeholder={t('general.Example', {
-                              value: 'shmem',
-                            })}
-                          />
-                        </BAIFormItem>
-                        <BAIFormItem
-                          {...rest}
-                          name={[name, 'value']}
-                          style={{ marginBottom: 0, flex: 1 }}
-                          rules={[{ required: true, message: '' }]}
-                        >
-                          <AstryxFormTextInput
-                            label={t(
-                              'session.launcher.EnvironmentVariableValue',
-                            )}
-                            placeholder={t('general.Example', { value: '64m' })}
-                          />
-                        </BAIFormItem>
-                        <CircleMinus size="1em" onClick={() => remove(name)} />
-                      </BAIFlex>
-                    ))}
-                    <BAIFormItem noStyle>
-                      <BAIButton
-                        type="dashed"
-                        onClick={() => add()}
-                        icon={<PlusIcon />}
-                        block
-                      >
-                        {t('adminDeploymentPreset.AddResourceOpt')}
-                      </BAIButton>
-                    </BAIFormItem>
-                  </BAIFlex>
+                  <BAIDynamicList
+                    items={fields}
+                    addButton={{
+                      onClick: () => add(),
+                      label: t('adminDeploymentPreset.AddResourceOpt'),
+                    }}
+                    onRemove={(field) => remove(field.name)}
+                    columns={[
+                      {
+                        key: 'name',
+                        header: t('adminDeploymentPreset.Name'),
+                        render: ({ key: _key, name, ...rest }, index) => (
+                          <BAIFormItem
+                            {...rest}
+                            name={[name, 'name']}
+                            style={{ marginBottom: 0 }}
+                            rules={[
+                              {
+                                required: true,
+                                message: t(
+                                  'adminDeploymentPreset.ResourceOptNameRequired',
+                                ),
+                              },
+                            ]}
+                            validateTrigger={['onChange', 'onBlur']}
+                          >
+                            <BAITextInput
+                              aria-label={`${t('adminDeploymentPreset.Name')} ${index + 1}`}
+                              placeholder={t('general.Example', {
+                                value: 'shmem',
+                              })}
+                            />
+                          </BAIFormItem>
+                        ),
+                      },
+                      {
+                        key: 'value',
+                        header: t('session.launcher.EnvironmentVariableValue'),
+                        render: ({ key: _key, name, ...rest }, index) => (
+                          <BAIFormItem
+                            {...rest}
+                            name={[name, 'value']}
+                            style={{ marginBottom: 0 }}
+                            rules={[
+                              {
+                                required: true,
+                                message: t(
+                                  'session.launcher.EnvironmentVariableValueRequired',
+                                ),
+                              },
+                            ]}
+                            validateTrigger={['onChange', 'onBlur']}
+                          >
+                            <BAITextInput
+                              aria-label={`${t('session.launcher.EnvironmentVariableValue')} ${index + 1}`}
+                              placeholder={t('general.Example', {
+                                value: '64m',
+                              })}
+                            />
+                          </BAIFormItem>
+                        ),
+                      },
+                    ]}
+                  />
                 )}
               </Form.List>
             </BAIFormItem>
@@ -1125,8 +1133,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   },
                 ]}
               >
-                <AstryxFormSelector
-                  label={t('adminDeploymentPreset.ClusterMode')}
+                <BAISelector
+                  aria-label={t('adminDeploymentPreset.ClusterMode')}
                   placeholder={t('adminDeploymentPreset.SelectClusterMode')}
                   options={[
                     {
@@ -1152,8 +1160,9 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   },
                 ]}
               >
-                <AstryxFormNumberInput
-                  label={t('adminDeploymentPreset.ClusterSize')}
+                <BAINumberInput
+                  width="100%"
+                  aria-label={t('adminDeploymentPreset.ClusterSize')}
                   min={1}
                   placeholder={t(
                     'adminDeploymentPreset.ClusterSizePlaceholder',
@@ -1185,8 +1194,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 </BAIFlex>
               }
             >
-              <AstryxFormTextArea
-                label={t('adminDeploymentPreset.StartupCommand')}
+              <BAITextArea
+                aria-label={t('adminDeploymentPreset.StartupCommand')}
                 rows={2}
                 placeholder={t(
                   'adminDeploymentPreset.StartupCommandPlaceholder',
@@ -1197,8 +1206,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               name="bootstrapScript"
               label={t('adminDeploymentPreset.BootstrapScript')}
             >
-              <AstryxFormTextArea
-                label={t('adminDeploymentPreset.BootstrapScript')}
+              <BAITextArea
+                aria-label={t('adminDeploymentPreset.BootstrapScript')}
                 rows={3}
                 placeholder={t(
                   'adminDeploymentPreset.BootstrapScriptPlaceholder',
@@ -1232,8 +1241,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 valuePropName="checked"
                 noStyle
               >
-                <AstryxFormSwitch
-                  label={t('adminDeploymentPreset.ModelDefinition')}
+                <BAISwitch
+                  aria-label={t('adminDeploymentPreset.ModelDefinition')}
                 />
               </BAIFormItem>
             }
@@ -1273,8 +1282,9 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 style={{ flex: 1, minWidth: 120 }}
                 rules={[{ required: true }]}
               >
-                <AstryxFormNumberInput
-                  label={t('adminDeploymentPreset.Replicas')}
+                <BAINumberInput
+                  width="100%"
+                  aria-label={t('adminDeploymentPreset.Replicas')}
                   min={1}
                   placeholder={t('adminDeploymentPreset.ReplicasPlaceholder')}
                 />
@@ -1285,8 +1295,9 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 tooltip={t('adminDeploymentPreset.RevisionHistoryLimitTooltip')}
                 style={{ flex: 1, minWidth: 120 }}
               >
-                <AstryxFormNumberInput
-                  label={t('adminDeploymentPreset.RevisionHistoryLimit')}
+                <BAINumberInput
+                  width="100%"
+                  aria-label={t('adminDeploymentPreset.RevisionHistoryLimit')}
                   min={1}
                   placeholder={t(
                     'adminDeploymentPreset.RevisionHistoryLimitPlaceholder',
@@ -1299,9 +1310,9 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               valuePropName="checked"
               tooltip={t('adminDeploymentPreset.OpenToPublicTooltip')}
             >
-              <AstryxFormCheckbox
-                label={t('adminDeploymentPreset.OpenToPublic')}
-              />
+              <BAICheckboxInput>
+                {t('adminDeploymentPreset.OpenToPublic')}
+              </BAICheckboxInput>
             </BAIFormItem>
           </BAICard>
 

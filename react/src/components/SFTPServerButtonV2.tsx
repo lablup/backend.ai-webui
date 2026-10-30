@@ -27,7 +27,6 @@ import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIButton,
   BAIButtonProps,
-  toLocalId,
   useBAILogger,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
@@ -139,6 +138,7 @@ const SFTPServerButtonWithProject: React.FC<
     graphql`
       fragment SFTPServerButtonV2Fragment on VFolder {
         id
+        entityId
         host
         metadata {
           name
@@ -173,7 +173,7 @@ const SFTPServerButtonWithProject: React.FC<
 
   // Helper to create launcher value for SFTP session
   const createSftpLauncherValue = (): StartSessionWithDefaultValue => ({
-    sessionName: `sftp-${toLocalId(vfolderNode?.id || '')}`,
+    sessionName: `sftp-${vfolderNode.entityId}`,
     sessionType: 'system',
     ...(baiClient._config?.systemSSHImage &&
     baiClient._config?.allow_manual_image_name_for_session
@@ -191,7 +191,7 @@ const SFTPServerButtonWithProject: React.FC<
     cluster_size: 1,
     vfolderMounts: [
       {
-        vfolderId: toLocalId(vfolderNode?.id || ''),
+        vfolderId: vfolderNode.entityId,
         name: vfolderNode?.metadata.name,
       },
     ],
@@ -240,7 +240,7 @@ const SFTPServerButtonWithProject: React.FC<
                   // set notification key for handling duplicate session creation
                   upsertSessionNotification(results.fulfilled, [
                     {
-                      key: `sftp-${toLocalId(vfolderNode?.id || '')}`,
+                      key: `sftp-${vfolderNode.entityId}`,
                     },
                   ]);
                 }
