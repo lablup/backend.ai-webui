@@ -1,0 +1,50 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+*/
+@layer components {
+  .bai-resource-area-grid {
+    --bai-area-grid-cell: calc(var(--spacing-4) + var(--spacing-1));
+    --bai-area-grid-fill: var(--color-accent);
+    display: inline-grid;
+    gap: var(--spacing-0-5);
+    padding: var(--spacing-0-5);
+    border-radius: var(--radius-inner);
+    touch-action: none;
+    user-select: none;
+    cursor: pointer;
+    outline: none;
+  }
+  .bai-resource-area-grid:focus-visible {
+    box-shadow: 0 0 0 var(--border-width) var(--color-accent);
+  }
+  .bai-resource-area-grid--disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  .bai-resource-area-grid__cell {
+    width: var(--bai-area-grid-cell);
+    height: var(--bai-area-grid-cell);
+    border-radius: var(--radius-inner);
+    border: var(--border-width) solid var(--color-border);
+    background: var(--color-background-muted);
+    transition: background-color 80ms;
+  }
+  .bai-resource-area-grid__cell--selected {
+    background: var(--bai-area-grid-fill);
+    border-color: var(--bai-area-grid-fill);
+  }
+  .bai-resource-area-grid__cell--unavailable {
+    background: repeating-linear-gradient(
+      135deg,
+      var(--color-border) 0 var(--border-width),
+      transparent var(--border-width) calc(var(--border-width) * 4)
+    );
+    cursor: not-allowed;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bai-resource-area-grid__cell {
+      transition: none;
+    }
+  }
+}

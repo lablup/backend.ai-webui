@@ -3364,6 +3364,25 @@
       "Version": "Sürüm",
       "YouCanStartWithHistory": "Bunlar en son oluşturduğunuz oturum kayıtlarıdır. Yeni bir oturum başlatmak için bir oturum adına tıklayın."
     },
+    "quickCreate": {
+      "AcceleratorType": "Hızlandırıcı türü",
+      "AutoAllocated": "Otomatik ayrılır",
+      "CellUnit": "Hücre birimi",
+      "ContinueInLauncher": "Tam başlatıcıda devam et",
+      "NameAndEnvironment": "Ad ve ortam",
+      "NoFolder": "Klasör yok",
+      "NotEnoughResource": "İmajın asgarisini karşılamaya yetecek {{name}} kalmadı.",
+      "OpenLauncher": "Tam başlatıcıyı aç",
+      "PerContainer": "{{count}} konteyner",
+      "PresetOnly": "Gelişmiş Ayarlar'da bir kaynak ön ayarı seçin.",
+      "QuickCreate": "Hızlı oluştur",
+      "Remaining": "{{amount}} kaldı",
+      "Resources": "Kaynaklar",
+      "ShmemIncluded": "{{size}} paylaşılan bellek dahil",
+      "StartFromHistory": "\"{{name}}\" ile başla",
+      "Summary": "Özet",
+      "Title": "Hızlı Oturum Oluştur"
+    },
     "resourceGrid": {
       "AtLeastPercent": "≥ {{value}}%",
       "GridMode": "Izgara modu",

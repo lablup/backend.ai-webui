@@ -3368,6 +3368,25 @@
       "Version": "Versi",
       "YouCanStartWithHistory": "Ini adalah catatan sesi yang baru saja Anda buat. Klik nama sesi untuk memulai sesi baru."
     },
+    "quickCreate": {
+      "AcceleratorType": "Jenis akselerator",
+      "AutoAllocated": "Dialokasikan otomatis",
+      "CellUnit": "Satuan sel",
+      "ContinueInLauncher": "Lanjutkan di peluncur lengkap",
+      "NameAndEnvironment": "Nama dan lingkungan",
+      "NoFolder": "Tanpa folder",
+      "NotEnoughResource": "{{name}} yang tersisa tidak cukup untuk minimum image.",
+      "OpenLauncher": "Buka peluncur lengkap",
+      "PerContainer": "{{count}} kontainer",
+      "PresetOnly": "Pilih preset sumber daya di Pengaturan Lanjutan.",
+      "QuickCreate": "Buat cepat",
+      "Remaining": "Sisa {{amount}}",
+      "Resources": "Sumber daya",
+      "ShmemIncluded": "Termasuk {{size}} memori bersama",
+      "StartFromHistory": "Mulai dari \"{{name}}\"",
+      "Summary": "Ringkasan",
+      "Title": "Buat Sesi Cepat"
+    },
     "resourceGrid": {
       "AtLeastPercent": "≥ {{value}}%",
       "GridMode": "Mode grid",

@@ -3366,6 +3366,25 @@
       "Version": "バージョン",
       "YouCanStartWithHistory": "これらは最近作成されたセッション記録です。セッション名をクリックすると、新しいセッションが開始されます。"
     },
+    "quickCreate": {
+      "AcceleratorType": "アクセラレータの種類",
+      "AutoAllocated": "自動割り当て",
+      "CellUnit": "セル単位",
+      "ContinueInLauncher": "フルランチャーで続ける",
+      "NameAndEnvironment": "名前と環境",
+      "NoFolder": "フォルダなし",
+      "NotEnoughResource": "イメージの最小要件を満たす{{name}}が残っていません。",
+      "OpenLauncher": "フルランチャーを開く",
+      "PerContainer": "コンテナ{{count}}個",
+      "PresetOnly": "詳細設定でリソースプリセットを選択してください。",
+      "QuickCreate": "簡易作成",
+      "Remaining": "残り{{amount}}",
+      "Resources": "リソース",
+      "ShmemIncluded": "共有メモリ{{size}}を含む",
+      "StartFromHistory": "「{{name}}」から開始",
+      "Summary": "概要",
+      "Title": "セッションの簡易作成"
+    },
     "resourceGrid": {
       "AtLeastPercent": "≥ {{value}}%",
       "GridMode": "グリッドモード",

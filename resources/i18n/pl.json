@@ -3367,6 +3367,25 @@
       "Version": "Wersja",
       "YouCanStartWithHistory": "Są to ostatnio utworzone rekordy sesji. Kliknij nazwę sesji, aby rozpocząć nową sesję."
     },
+    "quickCreate": {
+      "AcceleratorType": "Typ akceleratora",
+      "AutoAllocated": "Przydzielane automatycznie",
+      "CellUnit": "Jednostka komórki",
+      "ContinueInLauncher": "Kontynuuj w pełnym kreatorze",
+      "NameAndEnvironment": "Nazwa i środowisko",
+      "NoFolder": "Brak folderu",
+      "NotEnoughResource": "Za mało {{name}}, aby spełnić minimum obrazu.",
+      "OpenLauncher": "Otwórz pełny kreator",
+      "PerContainer": "Kontenery: {{count}}",
+      "PresetOnly": "Wybierz ustawienie wstępne zasobów w Ustawieniach zaawansowanych.",
+      "QuickCreate": "Szybkie tworzenie",
+      "Remaining": "Pozostało {{amount}}",
+      "Resources": "Zasoby",
+      "ShmemIncluded": "Zawiera {{size}} pamięci współdzielonej",
+      "StartFromHistory": "Zacznij od „{{name}}”",
+      "Summary": "Podsumowanie",
+      "Title": "Szybkie tworzenie sesji"
+    },
     "resourceGrid": {
       "AtLeastPercent": "≥ {{value}}%",
       "GridMode": "Tryb siatki",

@@ -3351,6 +3351,25 @@
       "Version": "Version",
       "YouCanStartWithHistory": "These are your recently created session records. Click a session name to start a new session."
     },
+    "quickCreate": {
+      "AcceleratorType": "Accelerator type",
+      "AutoAllocated": "Allocated automatically",
+      "CellUnit": "Cell unit",
+      "ContinueInLauncher": "Continue in full launcher",
+      "NameAndEnvironment": "Name and environment",
+      "NoFolder": "No folder",
+      "NotEnoughResource": "Not enough {{name}} left to meet the image's minimum.",
+      "OpenLauncher": "Open full launcher",
+      "PerContainer": "{{count}} containers",
+      "PresetOnly": "Choose a resource preset in Advanced Settings.",
+      "QuickCreate": "Quick create",
+      "Remaining": "{{amount}} left",
+      "Resources": "Resources",
+      "ShmemIncluded": "Includes {{size}} of shared memory",
+      "StartFromHistory": "Start from \"{{name}}\"",
+      "Summary": "Summary",
+      "Title": "Quick Create Session"
+    },
     "resourceGrid": {
       "AtLeastPercent": "≥ {{value}}%",
       "GridMode": "Grid mode",

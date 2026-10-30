@@ -3364,6 +3364,25 @@
       "Version": "Версия",
       "YouCanStartWithHistory": "Это записи ваших недавно созданных сеансов. Щелкните имя сеанса, чтобы начать новый сеанс."
     },
+    "quickCreate": {
+      "AcceleratorType": "Тип ускорителя",
+      "AutoAllocated": "Выделяется автоматически",
+      "CellUnit": "Единица ячейки",
+      "ContinueInLauncher": "Продолжить в полном мастере запуска",
+      "NameAndEnvironment": "Имя и окружение",
+      "NoFolder": "Нет папки",
+      "NotEnoughResource": "Недостаточно {{name}} для минимума образа.",
+      "OpenLauncher": "Открыть полный мастер запуска",
+      "PerContainer": "Контейнеров: {{count}}",
+      "PresetOnly": "Выберите пресет ресурсов в расширенных настройках.",
+      "QuickCreate": "Быстрое создание",
+      "Remaining": "Осталось {{amount}}",
+      "Resources": "Ресурсы",
+      "ShmemIncluded": "Включает {{size}} общей памяти",
+      "StartFromHistory": "Начать с «{{name}}»",
+      "Summary": "Сводка",
+      "Title": "Быстрое создание сеанса"
+    },
     "resourceGrid": {
       "AtLeastPercent": "≥ {{value}}%",
       "GridMode": "Режим сетки",
