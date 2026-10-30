@@ -39,7 +39,7 @@
     "PlaceHolder": "Pilih kumpulan sumber"
   },
   "comp:BAIAdminRetentionPolicyTable": {
-    "Category": "Kategori",
+    "Category": "Sasaran dasar",
     "CreatedAt": "Tarikh dicipta",
     "Disabled": "Dilumpuhkan",
     "Enabled": "Diaktifkan",
