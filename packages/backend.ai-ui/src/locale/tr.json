@@ -38,6 +38,26 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Kaynak grubunu seçin"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "Politika hedefi",
+    "CreatedAt": "Oluşturulma Tarihi",
+    "Disabled": "Devre Dışı",
+    "Enabled": "Etkin",
+    "LastSweptAt": "Son temizlik",
+    "NotSweptYet": "Henüz çalıştırılmadı",
+    "RetentionPeriodDays": "Saklama süresi (gün)",
+    "UpdatedAt": "Güncellenme Tarihi",
+    "categories": {
+      "DEPLOYMENTS": "Dağıtımlar",
+      "LOGIN": "Oturum açma geçmişi",
+      "LOGS": "Günlükler",
+      "RECONCILE_HISTORY": "Uzlaştırma geçmişi",
+      "ROLES_INVITATIONS": "Roller ve davetler",
+      "SESSIONS": "Oturumlar",
+      "USAGE_BUCKETS": "Kullanım toplamları",
+      "USAGE_RECORDS": "Kullanım kayıtları"
+    }
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Oturum seçin"
   },

@@ -38,6 +38,26 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "자원 그룹을 선택해주세요"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "정책 대상",
+    "CreatedAt": "생성일",
+    "Disabled": "비활성화",
+    "Enabled": "활성화",
+    "LastSweptAt": "마지막 정리",
+    "NotSweptYet": "아직 실행되지 않음",
+    "RetentionPeriodDays": "보존 기간 (일)",
+    "UpdatedAt": "수정일",
+    "categories": {
+      "DEPLOYMENTS": "배포",
+      "LOGIN": "로그인 기록",
+      "LOGS": "로그",
+      "RECONCILE_HISTORY": "조정 기록",
+      "ROLES_INVITATIONS": "역할 및 초대",
+      "SESSIONS": "세션",
+      "USAGE_BUCKETS": "사용량 집계",
+      "USAGE_RECORDS": "사용량 기록"
+    }
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "세션을 선택해주세요"
   },

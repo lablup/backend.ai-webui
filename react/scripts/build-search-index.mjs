@@ -187,7 +187,7 @@ assertConfiguredPaths();
 // ---------------------------------------------------------------------------
 const require_ = createRequire(path.join(REACT_DIR, 'package.json'));
 const ts = require_('typescript');
-const { transformWithEsbuild } = await import(require_.resolve('vite'));
+const { transformWithOxc } = await import(require_.resolve('vite'));
 
 // POSIX-normalized: every CONFIG constant compares with `/` separators.
 const rel = (f) => path.relative(ROOT, f).split(path.sep).join('/');
@@ -248,7 +248,7 @@ const isExternal = (f) => {
 const fileCache = new Map();
 const sfCache = new Map();
 let transformMs = 0;
-/** Files whose import edges were dropped: esbuild / the import scan failed. */
+/** Files whose import edges were dropped: Oxc / the import scan failed. */
 let transformFailures = 0;
 let scanFailures = 0;
 
@@ -269,18 +269,18 @@ async function analyzeFile(file) {
   if (fileCache.has(file)) return fileCache.get(file);
   const src = fs.readFileSync(file, 'utf8');
 
-  // Value imports only: esbuild drops type-only imports and unused bindings,
+  // Value imports only: Oxc drops type-only imports and unused bindings,
   // which is exactly the graph Vite bundles.
   const t0 = Date.now();
   let code = src;
   try {
-    ({ code } = await transformWithEsbuild(src, file, {
-      loader: file.endsWith('x') ? 'tsx' : 'ts',
-      jsx: 'automatic',
+    ({ code } = await transformWithOxc(src, file, {
+      lang: file.endsWith('x') ? 'tsx' : 'ts',
+      jsx: { runtime: 'automatic' },
       sourcemap: false,
-      target: 'esnext',
     }));
-  } catch {
+  } catch (error) {
+    if (!Array.isArray(error?.errors)) throw error;
     // Raw source is still scanned, but its import list is now approximate.
     transformFailures++;
   }
@@ -1236,7 +1236,7 @@ async function main(argv) {
 
   if (transformFailures || scanFailures)
     console.warn(
-      `warning: import graph incomplete — esbuild failed on ${transformFailures} ` +
+      `warning: import graph incomplete — Oxc failed on ${transformFailures} ` +
         `file(s) and the import scan on ${scanFailures}; their edges were dropped, ` +
         'so pages rendering through them index thinner than they are',
     );

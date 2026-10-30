@@ -6,7 +6,7 @@ navTitle: Admin Features
 
 # Admin Features
 
-Logging in with an admin account adds an **Admin Settings** menu at the top of the sidebar. Selecting it switches the sidebar to show only the administration menus. User information registered in Backend.AI is listed under the **Users** menu. A super-admin can see all users' information, and create or deactivate users.
+Superadmins land on the administration pages right after logging in, and move between them and the user pages with **Switch to Admin Console** and **Switch to User Console** in the user menu. While you are on these pages, the sidebar lists only the administration menus. User information registered in Backend.AI is listed under the **Users** menu. A super-admin can see all users' information, and create or deactivate users.
 
 ![](../images/admin_user_page.png)
 
@@ -569,7 +569,7 @@ Backend.AI lets administrators define reusable **Prometheus query presets** that
 The presets are managed from the **Prometheus Preset** tab on the Admin Deployments page (`/admin/deployments?tab=prometheus-preset`).
 
 :::note[Superadmin only: live preview in the Auto Scaling Rule editor]
-When a superadmin opens the Auto Scaling Rule editor for a deployment, sets **Metric Source** to `Prometheus`, and selects a preset, a live **Current value** preview appears below the preset selector showing the latest metric value from Prometheus. This preview is only visible to superadmin accounts — regular users and domain admins do not see it.
+When a superadmin opens the Auto Scaling Rule editor for a deployment, sets **Metric Source** to `Prometheus`, and selects a preset, a live **Current value** preview appears below the preset selector showing the latest metric value from Prometheus. This preview is only visible to superadmin accounts.
 :::
 
 ![](../images/admin_prometheus_preset_list.png)
@@ -1060,7 +1060,7 @@ to `FAIR_SHARE`. To configure the scheduler type for a resource group, refer to 
 [Manage resource group](#manage-resource-group) section.
 :::
 
-To access this feature, click the **Scheduler** menu item under **Admin Settings** in the sidebar.
+To access this feature, click the **Scheduler** menu item in the sidebar of the administration pages.
 The page displays a Fair Share Setting tab with a 4-step drill-down interface.
 
 ![](../images/fair_share_resource_group_page.png)
@@ -1935,6 +1935,27 @@ The footer holds four actions:
 - **Cancel**: Closes the dialog without saving.
 - **Delete**: Removes the published announcement so the banner disappears for everyone. A confirmation
   dialog appears first.
+
+<a id="data-retention"></a>
+
+### Data retention
+
+Superadmins can control how long Backend.AI keeps each category of data on the **Data Retention** tab of the
+Maintenance page. Only categories with an enabled policy have data past its retention period cleaned up.
+
+Each row of the list is the policy for one category and shows its **Category**, **Retention Period (Days)**,
+whether it is **Enabled**, and the **Last Cleanup** time (or "Not run yet"). The **Created At** and **Updated At** columns
+can be shown from the table settings. The
+available categories are Logs, Login History, Reconcile History, Roles & Invitations, Deployments, Sessions,
+Usage Records, and Usage Buckets. The list can be sorted by **Category**, **Last Cleanup**, or **Created At**.
+
+- **Create Policy**: Click **Create Policy**, choose a category, enter a retention period of at least 1 day,
+  and choose whether the policy is enabled. Only one policy can exist per category; creating a policy for a
+  category that already has one fails with an error, so edit the existing policy instead.
+- **Edit**: Use the edit action in the row to change the category, the retention period, or the enabled
+  setting. Moving the policy to a category that already has a policy fails with an error.
+- **Delete**: Use the delete action in the row. Because the policy is removed permanently, you must type
+  the category name shown in the dialog before the delete button is enabled.
 
 <a id="detailed-information"></a>
 
