@@ -42,13 +42,17 @@ import AdminRuntimeVariantPreset, {
   AdminRuntimeVariantPresetQuery,
 } from '../components/AdminRuntimeVariantPreset';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
-import { deploymentStatusCategoryFilter } from '../components/DeploymentStatusCategoryControl';
+import {
+  deploymentStatusCategoryFilter,
+  deploymentStatusCategoryOf,
+} from '../components/DeploymentStatusCategoryControl';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { useCurrentDomainValue } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { BAISkeleton } from 'backend.ai-ui';
 import { BAICard, type BAICardProps } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import {
   parseAsJson,
   parseAsString,
@@ -91,10 +95,6 @@ type DeploymentTabQueryParams = {
 const AdminDeploymentPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-
-  // The deployments tab owns `status` and `desiredReplicas` through its
-  // Serving / Paused / Terminated toggle; a first load falls back to Serving.
-  const deploymentRunningFilter = deploymentStatusCategoryFilter('serving');
 
   // A single `{ tab, filter, order }` URL state is shared by every tab, plus a
   // single pagination state. Only the active tab's values are ever present in
@@ -310,11 +310,14 @@ const AdminDeploymentPage: React.FC = () => {
           const urlFilter = params.filter as DeploymentFilter | null;
           loadDeploymentQuery(
             {
-              // A link from elsewhere (e.g. a tag on the detail page) carries
-              // no `status`, so it starts in the Serving scope.
-              filter: urlFilter?.status
-                ? urlFilter
-                : { ...urlFilter, ...deploymentRunningFilter },
+              // The tab owns `status` and `desiredReplicas`: a link from
+              // elsewhere, or one saved before the Paused tab, is rescoped.
+              filter: {
+                ..._.omit(urlFilter, ['status', 'desiredReplicas']),
+                ...deploymentStatusCategoryFilter(
+                  deploymentStatusCategoryOf(urlFilter),
+                ),
+              },
               // `loadTab` runs before the tab mounts, so a URL-supplied
               // sorter the table does not know is dropped here.
               orderBy: convertToOrderBy<DeploymentOrderBy>(
