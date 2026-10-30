@@ -39,7 +39,7 @@
     "PlaceHolder": "Wybierz grupę zasobów"
   },
   "comp:BAIAdminRetentionPolicyTable": {
-    "Category": "Kategoria",
+    "Category": "Cel zasady",
     "CreatedAt": "Data utworzenia",
     "Disabled": "Wyłączone",
     "Enabled": "Włączone",
