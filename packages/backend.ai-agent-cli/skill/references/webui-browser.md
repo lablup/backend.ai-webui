@@ -91,6 +91,8 @@ agent-browser webmcp invoke <tool> --params '{"key":"value"}'
 - **Navigate with `bai_navigate`** (`{"page":"<menu key>"}` or
   `{"path":"/..."}`); its schema lists the menu keys this account can open.
   `agent-browser pushstate <path>` is the fallback for a path the tool refuses.
+  When the result says `"reloaded": true`, the page is loading again: the tools
+  disappear for a moment, so repeat the `wait --fn` above before you list them.
 - **Fall back to the page itself** when no tool covers the step:
   `agent-browser snapshot -i` gives the accessibility tree with `@ref`s to
   `click` / `fill`. Tools come first because they return structured data and
