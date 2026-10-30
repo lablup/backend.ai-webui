@@ -35,7 +35,7 @@ Exit codes:
   0  every check passed
   1  a tool check failed
   2  usage error, or agent-browser could not open the page
-  3  not logged in: the global tools register only after login
+  3  not logged in, or --auth failed: the global tools register only after login
   4  the deployment does not serve enableWebMCP = true in /config.toml
   5  the browser has no WebMCP (an attached --cdp browser, or --no-webmcp)
 EOF
@@ -164,40 +164,28 @@ report() {
   exit "$EXIT_CODE"
 }
 
-AUTH_FAILED=0
-report_auth_failure() {
-  if [ "$AUTH_FAILED" -eq 1 ]; then
-    row "auth.login" FAIL "agent-browser auth login $AUTH failed"
-    diagnose "auth_failed — check the profile with 'agent-browser auth show $AUTH'; the WebUI login form also needs its API endpoint preset (config.toml apiEndpoint)." 3
-  fi
+READY_JS='globalThis.backendaiclient?.ready === true'
+
+wait_ready() {
+  ab wait --fn "$READY_JS" --timeout "$1" >/dev/null 2>&1
 }
 
-READY_JS='globalThis.backendaiclient?.ready === true'
+open_page() {
+  local open_json
+  open_json="$(ab --json open "$URL" 2>/dev/null)"
+  if [ "$(printf '%s' "$open_json" | jget 'd.success')" != true ]; then
+    row "page.open" FAIL "$(printf '%s' "$open_json" | jget 'd.error' | head -c 160)"
+    diagnose "open_failed — agent-browser could not load the page. For a Portless dev server set AGENT_BROWSER_IGNORE_HTTPS_ERRORS=1 and close the session so it relaunches." 2
+    skip_tool_checks "page did not open"
+    report
+  fi
+  ab wait --load load >/dev/null 2>&1
+}
 
 echo "webmcp-smoke: $URL (session: $SESSION)"
 
 # --- 1. Open the page -------------------------------------------------------
-# A logged-in tab shows no login form, so `auth login` fails on it: only a
-# session that stays logged out below counts as an auth failure.
-if [ -n "$AUTH" ]; then
-  if [ "$(page_js "$READY_JS")" = true ]; then
-    row "auth.login" SKIP "session already logged in"
-  elif ab auth login "$AUTH" >/dev/null 2>&1; then
-    row "auth.login" PASS "auth-vault profile '$AUTH'"
-  else
-    AUTH_FAILED=1
-  fi
-fi
-
-open_json="$(ab --json open "$URL" 2>/dev/null)"
-if [ "$(printf '%s' "$open_json" | jget 'd.success')" != true ]; then
-  row "page.open" FAIL "$(printf '%s' "$open_json" | jget 'd.error' | head -c 160)"
-  report_auth_failure
-  diagnose "open_failed — agent-browser could not load the page. For a Portless dev server set AGENT_BROWSER_IGNORE_HTTPS_ERRORS=1 and close the session so it relaunches." 2
-  skip_tool_checks "page did not open"
-  report
-fi
-ab wait --load load >/dev/null 2>&1
+open_page
 row "page.open" PASS "$(page_js 'location.href')"
 
 # --- 2. Does the browser expose WebMCP? --------------------------------------
@@ -219,7 +207,8 @@ fi
 
 # --- 3. Is the WebUI configured to register tools? ---------------------------
 # The app's relative fetch resolves against <base href>, not the page URL
-# (react/src/hooks/useWebUIConfig.ts). Step 4 reads what the app computed.
+# (react/src/hooks/useWebUIConfig.ts). Only an explicit false stops here: login
+# can merge the webserver's config, so the registered tools have the last word.
 WEBMCP_DISABLED_HINT="webmcp_disabled — the deployment must serve enableWebMCP = true under [general] in /config.toml. A Backend.AI webserver renders that file from its own template, which has no such key today; a WebUI served from a static config.toml can set it."
 config_state="$(page_js 'fetch(new URL("../../config.toml", document.baseURI), { cache: "no-store" })
   .then((r) => {
@@ -233,16 +222,16 @@ config_state="$(page_js 'fetch(new URL("../../config.toml", document.baseURI), {
   .catch(() => "unreadable")')"
 case "${config_state:-unreadable}" in
   true) row "config.enableWebMCP" PASS "true" ;;
-  unreadable) row "config.enableWebMCP" SKIP "/config.toml is unreadable; checked after login" ;;
-  *)
+  false)
     webmcp_ok=0
-    row "config.enableWebMCP" FAIL "$config_state (/config.toml [general])"
+    row "config.enableWebMCP" FAIL "false (/config.toml [general])"
     diagnose "$WEBMCP_DISABLED_HINT" 4
     ;;
+  *) row "config.enableWebMCP" SKIP "${config_state:-unreadable} in /config.toml; decided by the tool checks" ;;
 esac
 
 if [ "$webmcp_ok" -eq 0 ]; then
-  report_auth_failure
+  if [ -n "$AUTH" ]; then row "auth.login" SKIP "WebMCP is unavailable"; fi
   row "session.login" SKIP "WebMCP is unavailable"
   skip_tool_checks "WebMCP is unavailable"
   report
@@ -250,26 +239,34 @@ fi
 
 # --- 4. Logged in? ------------------------------------------------------------
 timeout_ms=$((TIMEOUT * 1000))
-if ab wait --fn "$READY_JS" --timeout "$timeout_ms" >/dev/null 2>&1; then
-  if [ "$AUTH_FAILED" -eq 1 ]; then
-    row "auth.login" SKIP "no login form: session already logged in"
+logged_in=0
+if [ -n "$AUTH" ]; then
+  # A logged-in page shows no login form, so `auth login` fails on it. The grace
+  # period lets a kept session restore itself first.
+  grace_ms=5000
+  if [ "$timeout_ms" -lt "$grace_ms" ]; then grace_ms="$timeout_ms"; fi
+  if wait_ready "$grace_ms"; then
+    row "auth.login" SKIP "session already logged in"
+    logged_in=1
+  elif ab auth login "$AUTH" >/dev/null 2>&1; then
+    row "auth.login" PASS "auth-vault profile '$AUTH'"
+    # `auth login` lands on the profile's URL, which may not be this page.
+    open_page
+  else
+    row "auth.login" FAIL "agent-browser auth login $AUTH failed"
+    row "session.login" SKIP "login failed"
+    diagnose "auth_failed — check the profile with 'agent-browser auth show $AUTH'; the WebUI login form also needs its API endpoint preset (config.toml apiEndpoint)." 3
+    skip_tool_checks "needs login"
+    report
   fi
+fi
+
+if [ "$logged_in" -eq 1 ] || wait_ready "$timeout_ms"; then
   row "session.login" PASS "backendaiclient ready"
 else
-  report_auth_failure
   row "session.login" FAIL "not logged in after ${TIMEOUT}s"
   diagnose "not_logged_in — WebMCP works (browser and config are fine), but the WebUI registers its global tools only after login. Log in within session '$SESSION', or pass --auth <vault-name>." 3
   skip_tool_checks "needs login"
-  report
-fi
-
-client_config="$(page_js 'globalThis.backendaiclient?._config?.enableWebMCP')"
-if [ "$client_config" = true ]; then
-  row "config.client" PASS "backendaiclient._config.enableWebMCP"
-else
-  row "config.client" FAIL "backendaiclient._config.enableWebMCP is ${client_config:-unset}"
-  diagnose "$WEBMCP_DISABLED_HINT" 4
-  skip_tool_checks "WebMCP is unavailable"
   report
 fi
 
@@ -308,6 +305,13 @@ for tool in "${TOOLS[@]}"; do
     *) row "tool.$tool" PASS "listed" ;;
   esac
 done
+if [ "${#missing[@]}" -gt 0 ] && [ -z "$DIAGNOSIS" ]; then
+  client_config="$(page_js 'globalThis.backendaiclient?._config?.enableWebMCP')"
+  if [ "$client_config" != true ]; then
+    row "config.client" FAIL "backendaiclient._config.enableWebMCP is ${client_config:-unset}"
+    diagnose "$WEBMCP_DISABLED_HINT" 4
+  fi
+fi
 
 # --- 6. Invoke them ------------------------------------------------------------
 invoke() {
