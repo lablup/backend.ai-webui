@@ -12,6 +12,7 @@ import {
 import {
   acceleratorTypeErrorTarget,
   applyRule,
+  AUTOMATIC_DEFAULT_SHMEM,
   getSupportedAcceleratorTypes,
   matchesPreset,
   resolveAcceleratorType,
@@ -555,6 +556,65 @@ describe('applyRule — user events', () => {
 });
 
 describe('applyRule — data.changed', () => {
+  it('sizes automatic shmem for custom amounts restored without it', () => {
+    const restored = (mem: string) =>
+      makeValues({
+        resource: {
+          cpu: 2,
+          mem,
+          shmem: '0g',
+          accelerator: 0,
+          acceleratorType: 'cuda.device',
+        },
+      });
+
+    expect(applyRule(restored('16g'), dataChanged, makeCtx())).toEqual({
+      resource: { shmem: '1g' },
+    });
+    expect(applyRule(restored('2g'), dataChanged, makeCtx())).toEqual({
+      resource: { shmem: AUTOMATIC_DEFAULT_SHMEM },
+    });
+    // The same rule a typed amount gets: the image minimum counts.
+    expect(
+      applyRule(restored('4g'), dataChanged, makeCtx({ imageMinMem: '8g' })),
+    ).toEqual({ resource: { shmem: AUTOMATIC_DEFAULT_SHMEM } });
+  });
+
+  it('leaves shmem alone when it is set, manual, or there is no memory yet', () => {
+    expect(applyRule(makeValues(), dataChanged, makeCtx())).toEqual({});
+    expect(
+      applyRule(
+        makeValues({
+          resource: {
+            cpu: 2,
+            mem: '16g',
+            shmem: '0g',
+            accelerator: 0,
+            acceleratorType: 'cuda.device',
+          },
+          enabledAutomaticShmem: false,
+        }),
+        dataChanged,
+        makeCtx(),
+      ),
+    ).toEqual({});
+    expect(
+      applyRule(
+        makeValues({
+          resource: {
+            cpu: 0,
+            mem: '0g',
+            shmem: '0g',
+            accelerator: 0,
+            acceleratorType: 'cuda.device',
+          },
+        }),
+        dataChanged,
+        makeCtx(),
+      ),
+    ).toEqual({});
+  });
+
   it('writes nothing before the slots of the resource group are known', () => {
     expect(
       applyRule(

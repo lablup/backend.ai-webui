@@ -6,6 +6,8 @@ import SessionLauncherWebMCPTool, {
   createPrepareSessionTool,
   LAUNCHER_REVIEW_STEP,
   PREPARE_SESSION_NEXT_STEP,
+  PREPARE_SESSION_NOTHING_FILLED,
+  WEBUI_URL_SOFT_LIMIT,
 } from './SessionLauncherWebMCPTool';
 import toolSource from './SessionLauncherWebMCPTool.tsx?raw';
 import { render, waitFor } from '@testing-library/react';
@@ -29,7 +31,9 @@ vi.mock('../hooks/useMountableStorageHosts', () => ({
 const VERSION = 'cr.backend.ai/stable/python:3.9-ubuntu20.04@x86_64';
 
 const makeTool = (
-  readEnvironment: (id: string) => { version?: string } | null = () => ({
+  readEnvironment: (
+    id: string,
+  ) => { version?: string; manual?: string } | null = () => ({
     version: VERSION,
   }),
 ) => {
@@ -60,7 +64,9 @@ describe('createPrepareSessionTool', () => {
     expect(openLauncher).toHaveBeenCalledTimes(1);
     const search = searchOf(openLauncher);
     expect(search.get('step')).toBe(String(LAUNCHER_REVIEW_STEP));
-    expect(search.get('agentPrefill')).toMatch(/^\w{8}$/);
+    expect(search.get('agentPrefill')).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
+    );
     expect(JSON.parse(search.get('formValues')!)).toEqual({
       sessionName: 'agent-prefill-demo',
       vfolderMounts: [
@@ -146,6 +152,86 @@ describe('createPrepareSessionTool', () => {
       rejected: [],
       unverified: [{ field: 'image' }],
     });
+  });
+
+  it('reports a manual image fallback as unverified, not applied', async () => {
+    const { tool } = makeTool(() => ({ manual: 'cr.example.com/x/typo:1' }));
+    const result = await tool.execute({ image: 'cr.example.com/x/typo:1' });
+    expect(result).toMatchObject({
+      applied: {},
+      rejected: [],
+      unverified: [{ field: 'image' }],
+    });
+  });
+
+  it('does not poll the form unless an image was requested', async () => {
+    const readEnvironment = vi.fn(() => ({ version: VERSION }));
+    const { tool } = makeTool(readEnvironment);
+    await tool.execute({ sessionName: 'agent-prefill-demo' });
+    expect(readEnvironment).not.toHaveBeenCalled();
+  });
+
+  it('stops polling at the deadline whatever the timers do', async () => {
+    const readEnvironment = vi.fn(() => null);
+    const tool = createPrepareSessionTool({
+      findFolders: async () => [],
+      allowCustomResourceAllocation: true,
+      openLauncher: vi.fn(),
+      readEnvironment,
+      pollMs: 1,
+      timeoutMs: 0,
+    });
+    const result = await tool.execute({ image: VERSION });
+    expect(readEnvironment).not.toHaveBeenCalled();
+    expect(result).toMatchObject({ unverified: [{ field: 'image' }] });
+  });
+
+  it('leaves the launcher alone when nothing can be filled', async () => {
+    const { tool, openLauncher } = makeTool();
+    const result = await tool.execute({
+      sessionName: '-bad-name',
+      folders: 'missing',
+    });
+    expect(openLauncher).not.toHaveBeenCalled();
+    expect(result).toMatchObject({
+      path: null,
+      webui_url: null,
+      applied: {},
+      rejected: [{ field: 'sessionName' }, { field: 'folders' }],
+      nextStep: PREPARE_SESSION_NOTHING_FILLED,
+    });
+  });
+
+  it('flags a hand-off link that is too long for a server', async () => {
+    const { tool } = makeTool();
+    const result = await tool.execute({
+      sessionType: 'batch',
+      startupCommand: '"/'.repeat(2000),
+    });
+    expect((result as { webui_url: string }).webui_url.length).toBeGreaterThan(
+      WEBUI_URL_SOFT_LIMIT,
+    );
+    expect(result).toMatchObject({ unverified: [{ field: 'webui_url' }] });
+  });
+
+  it('stops, without pulling the tab back, when the page changes during the lookup', async () => {
+    const launcherUrl = window.location.href;
+    const openLauncher = vi.fn();
+    const tool = createPrepareSessionTool({
+      findFolders: async () => {
+        window.history.replaceState({}, '', '/project/default/data');
+        return [];
+      },
+      allowCustomResourceAllocation: true,
+      openLauncher,
+      readEnvironment: () => null,
+    });
+
+    await expect(tool.execute({ folders: 'data' })).resolves.toMatchObject({
+      error: { code: 'launcher_closed' },
+    });
+    expect(openLauncher).not.toHaveBeenCalled();
+    window.history.replaceState({}, '', launcherUrl);
   });
 
   it('is not read-only and flags echoed user text as untrusted', () => {
@@ -246,6 +332,7 @@ describe('SessionLauncherWebMCPTool', () => {
     expect(JSON.stringify(variables.filter)).toContain(
       '"host":{"in":["local:volume1"]}',
     );
+    expect(variables.orderBy).toEqual([{ field: 'NAME', direction: 'ASC' }]);
     const formValues = JSON.parse(
       new URLSearchParams(openLauncher.mock.calls[0][0]).get('formValues')!,
     );
