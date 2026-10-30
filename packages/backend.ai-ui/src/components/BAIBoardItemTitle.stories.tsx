@@ -8,7 +8,7 @@ import { Settings, RotateCw } from 'lucide-react';
 
 /**
  * BAIBoardItemTitle is a header component designed for board items, featuring a title, optional tooltip, and extra content area.
- * Inside a BAIBoard item it renders into the item title row.
+ * It provides a consistent sticky header layout with proper spacing and styling.
  */
 const meta: Meta<typeof BAIBoardItemTitle> = {
   title: 'Board/BAIBoardItemTitle',
@@ -19,7 +19,7 @@ const meta: Meta<typeof BAIBoardItemTitle> = {
     docs: {
       description: {
         component:
-          'BAIBoardItemTitle is the title row of a board item; inside a BAIBoard item it renders into the row the board pads. It provides a consistent layout with a title, optional tooltip, and extra content area.',
+          'BAIBoardItemTitle is a sticky header component designed for board items. It provides a consistent layout with a title, optional tooltip, and extra content area.',
       },
     },
   },

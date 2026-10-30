@@ -4381,7 +4381,6 @@
         "data.folders.FileRenamed",
         "data.folders.MaxFiles",
         "data.folders.MaxSize",
-        "data.folders.ModelProjectFolderRestrictedToReadOnly",
         "data.folders.MountPermission",
         "data.folders.NoMountPermission",
         "data.folders.OpenAFolder",
