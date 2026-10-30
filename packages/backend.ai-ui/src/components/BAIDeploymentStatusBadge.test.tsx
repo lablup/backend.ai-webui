@@ -116,7 +116,11 @@ describe('getDeploymentPauseCause', () => {
   it.each([
     ...DEPLOYMENT_STOPPED_CATEGORY_STATUSES,
     ...DEPLOYMENT_IN_PROGRESS_STATUSES,
-  ])('leaves a %s deployment to its own status badge', (status) => {
+    'UNHEALTHY',
+    'DEGRADED',
+    'NOT_CHECKED',
+    'PENDING',
+  ] as const)('leaves a %s deployment to its own status badge', (status) => {
     expect(
       getDeploymentPauseCause(status, {
         replicaCount: 0,
