@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import FolderCreateModalV2 from './FolderCreateModalV2';
+import FolderCreateModal from './FolderCreateModal';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -93,7 +93,7 @@ vi.mock('./StorageSelect', async () => {
 
 // The in-modal project selector is mocked to a button that reports a fixed
 // choice through the same `onSelectProject` surface the real component uses.
-// The contract under test is FolderCreateModalV2's (selector rendered or not,
+// The contract under test is FolderCreateModal's (selector rendered or not,
 // chosen project reaching the mutation) — not the selector's internals.
 vi.mock('./ProjectSelectForAdminPage', async () => {
   const React = await import('react');
@@ -126,7 +126,7 @@ const renderModal = (
   const environment: RelayMockEnvironment = createMockEnvironment();
   render(
     <RelayEnvironmentProvider environment={environment}>
-      <FolderCreateModalV2
+      <FolderCreateModal
         open
         project={project}
         folderType="project"
@@ -146,7 +146,7 @@ const fillFolderNameAndSubmit = async (
   await user.click(screen.getByTestId('create-folder-button'));
 };
 
-describe('FolderCreateModalV2 project prop contract (ADR-0001)', () => {
+describe('FolderCreateModal project prop contract (ADR-0001)', () => {
   it('renders no project selector and targets exactly the given project when `project` is non-null', async () => {
     const user = userEvent.setup();
     const { environment } = renderModal({
@@ -164,7 +164,7 @@ describe('FolderCreateModalV2 project prop contract (ADR-0001)', () => {
     });
     const operation = environment.mock.getMostRecentOperation();
     expect(operation.request.node.params.name).toBe(
-      'FolderCreateModalV2ProjectMutation',
+      'FolderCreateModalProjectMutation',
     );
     // The mutation carries exactly the project passed by the page.
     expect(operation.request.variables.projectId).toBe('fixed-project-id');
@@ -247,7 +247,7 @@ describe('FolderCreateModalV2 project prop contract (ADR-0001)', () => {
     });
     const operation = environment.mock.getMostRecentOperation();
     expect(operation.request.node.params.name).toBe(
-      'FolderCreateModalV2ProjectMutation',
+      'FolderCreateModalProjectMutation',
     );
     // The mutation carries exactly the project chosen inside the modal.
     expect(operation.request.variables.projectId).toBe('chosen-project-id');

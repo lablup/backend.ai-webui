@@ -49,8 +49,9 @@ test.describe(
       test.setTimeout(120000);
       const rwFolderName = 'e2e-test-folder-rw-' + new Date().getTime();
 
-      // 1. Create a VFolder with Read & Write permissions
-      await createVFolderAndVerify(page, rwFolderName, 'general', 'user', 'rw');
+      // 1. Create a VFolder; its owner always mounts it read & write, whatever
+      //    the shared-user default is (#10647 creates every folder read-only).
+      await createVFolderAndVerify(page, rwFolderName);
 
       // 2. Open the VFolder in FolderExplorerModal
       const modal = await openFolderExplorer(page, rwFolderName);
@@ -61,8 +62,8 @@ test.describe(
       // 4. Verify file explorer loads without errors
       await modal.verifyFileExplorerLoaded();
 
-      // 5. Verify Read & Write permission is displayed in folder details
-      await modal.verifyPermission('Read & Write');
+      // 5. The description list no longer carries a mount permission row.
+      await modal.verifyFolderDetails();
 
       // 6. Verify upload functionality is available (Write permission)
       const uploadButton = await modal.getUploadButton();
@@ -88,32 +89,28 @@ test.describe(
       test.setTimeout(120000);
       const roFolderName = 'e2e-test-folder-ro-' + new Date().getTime();
 
-      // 1. Create a VFolder with Read Only permissions
-      await createVFolderAndVerify(page, roFolderName, 'general', 'user', 'ro');
+      // 1. Create a VFolder: new folders are read-only for shared users
+      //    (#10647), so no permission choice is made here.
+      await createVFolderAndVerify(page, roFolderName);
 
-      // 2. Verify folder shows "Read only" in the table
+      // 2. Open the VFolder in FolderExplorerModal (the list has no mount
+      //    permission column any more)
       await navigateTo(page, 'data');
-      const folderRow = page.getByRole('row', {
-        name: new RegExp(roFolderName),
-      });
-      await expect(folderRow.getByText('Read only').first()).toBeVisible();
-
-      // 3. Open the VFolder in FolderExplorerModal
       const modal = await openFolderExplorer(page, roFolderName);
 
-      // 4. Verify modal opens successfully
+      // 3. Verify modal opens successfully
       await modal.verifyFolderName(roFolderName);
 
-      // 5. Verify "Read only" mount permission is displayed in folder details
-      await modal.verifyPermission('Read only');
+      // 4. The description list no longer carries a mount permission row.
+      await modal.verifyFolderDetails();
 
-      // 6. Verify file explorer loads
+      // 5. Verify file explorer loads
       await modal.verifyFileExplorerLoaded();
 
-      // 7. Close modal
+      // 6. Close modal
       await modal.close();
 
-      // 8. Cleanup
+      // 7. Cleanup
       await moveToTrashAndVerify(page, roFolderName, 'data', {
         skipTrashVerify: true,
       });

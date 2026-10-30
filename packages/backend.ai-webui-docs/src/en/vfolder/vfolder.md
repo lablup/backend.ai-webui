@@ -149,14 +149,15 @@ The **Audit Log** tab in the right panel shows a chronological list of all opera
 The audit log shows the following columns, in order:
 
 - **Time**: When the operation occurred.
+- **Action**: The name of the action that wrote the record.
 - **Operation**: The type of action (for example, create, update, or delete).
-- **Status**: The result of the operation (for example, SUCCESS or ERROR).
-- **Description**: Additional details about the operation.
+- **Result**: The outcome of the operation: **Success**, **Failed** (shown in red), **Denied**, **Running**, or **Unknown**.
+- **Description**: The error or denial details, shown only when the result is **Failed** or **Denied**; other rows show `-`.
 - **Duration**: How long the operation took.
 - **Triggered By**: The user who performed the operation, shown in "email (id)" format.
 - **Client IP**: The IP address the operation was requested from, shown exactly as the server reports it. It may be partially masked by the administrator's client IP masking policy, or `-` when it was not recorded.
 
-You can filter the log by **Time**, **Operation**, **Status**, and **Triggered By**.
+You can filter the log by **Time**, **Action**, **Operation**, **Result**, and **Triggered By**.
 
 ## Rename folder
 

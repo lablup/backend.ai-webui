@@ -4,7 +4,7 @@
  */
 import { AstryxSecondaryTheme } from '../astryx-theme';
 import ActionItemContent from '../components/ActionItemContent';
-import FolderCreateModalV2 from '../components/FolderCreateModalV2';
+import FolderCreateModal from '../components/FolderCreateModal';
 import StartFromURLModal from '../components/StartFromURLModal';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
@@ -308,7 +308,7 @@ const StartPage: React.FC = () => {
         <BAIAlert type="info" description={t('start.NoStartItems')} showIcon />
       )}
       <BAIUnmountAfterClose>
-        <FolderCreateModalV2
+        <FolderCreateModal
           open={isOpenCreateModal}
           project={toProjectContext(currentProject)}
           onRequestClose={(response) => {

@@ -15,6 +15,7 @@ import {
   BAINumberInput,
   BAISelector,
   BAITable,
+  BAIText,
   type BAIColumnsType,
   useBAIBreakpoint,
 } from 'backend.ai-ui';
@@ -66,7 +67,8 @@ export const toHandlerOptionsFormValue = (
   })),
 });
 
-// A cleared number input is `null`; the manager reads `null` as "unbounded".
+// A cleared number input is `null`: unbounded in `default`, the default's
+// value in a `byHandler` entry (manager `resolve()`).
 export const toHandlerOptionsInput = (value?: HandlerOptionsFormValue) => ({
   default: {
     timeoutSec: value?.default?.timeoutSec ?? null,
@@ -104,22 +106,31 @@ export const HandlerOptionsFormFields: React.FC<{
   // One override per handler: the manager rejects a duplicate name, so a
   // name chosen in another row leaves this row's list.
   const chosenNames = _.map(byHandler, (entry) => entry?.handlerName);
-  const optionsForRow = (rowIndex: number) =>
-    _.map(
-      _.reject(
+  const knownNames = _.map(handlerNameOptions, 'value');
+  const optionsForRow = (rowIndex: number) => {
+    const ownName = chosenNames[rowIndex];
+    // A stored name the list does not know still shows as this row's value.
+    const ownUnknown: Array<HandlerNameOption> =
+      ownName && !_.includes(knownNames, ownName) ? [{ value: ownName }] : [];
+    const rowOptions: Array<HandlerNameOption> = [
+      ..._.reject(
         handlerNameOptions,
         (option) =>
-          _.includes(chosenNames, option.value) &&
-          chosenNames[rowIndex] !== option.value,
+          _.includes(chosenNames, option.value) && ownName !== option.value,
       ),
-      (option) => ({
-        value: option.value,
-        label: option.value,
-        description: option.description,
-      }),
-    );
+      ...ownUnknown,
+    ];
+    return rowOptions.map((option) => ({
+      value: option.value,
+      label: option.value,
+      description: option.description,
+    }));
+  };
+  // A blank row has yet to claim a name, so it counts as taken.
   const hasUnchosenName =
-    _.size(_.compact(chosenNames)) < _.size(handlerNameOptions);
+    _.size(
+      _.filter(chosenNames, (name) => !name || _.includes(knownNames, name)),
+    ) < _.size(knownNames);
 
   // A stored spec may still carry the same handler twice.
   const validateUniqueHandler = (_rule: unknown, handlerName: string) => {
@@ -172,7 +183,7 @@ export const HandlerOptionsFormFields: React.FC<{
             aria-label={t('resourceGroup.DefaultTimeout')}
             units={t('resourceGroup.TimeoutSeconds')}
             placeholder={unlimited}
-            min={0}
+            min={1}
             isIntegerOnly
           />
         </BAIFormItem>
@@ -253,7 +264,7 @@ export const HandlerOptionsFormFields: React.FC<{
                       aria-label={t('resourceGroup.Timeout')}
                       placeholder={timeoutPlaceholder}
                       units={t('resourceGroup.TimeoutSecondsShort')}
-                      min={0}
+                      min={1}
                       isIntegerOnly
                     />
                   </Form.Item>
@@ -312,7 +323,8 @@ type HandlerOverrideRow = HandlerOptionsInfo['byHandler'][number];
 
 const HandlerOverridesTable: React.FC<{
   byHandler: HandlerOptionsInfo['byHandler'] | null | undefined;
-}> = ({ byHandler }) => {
+  fallback: HandlerOptionsInfo['default'] | null | undefined;
+}> = ({ byHandler, fallback }) => {
   'use memo';
   const { t } = useTranslation();
   const unlimited = t('resourcePolicy.Unlimited');
@@ -328,15 +340,29 @@ const HandlerOverridesTable: React.FC<{
       key: 'timeoutSec',
       title: t('resourceGroup.Timeout'),
       dataIndex: 'timeoutSec',
+      // A null override field falls back to the default (manager `resolve()`),
+      // shown muted like the edit form's placeholder.
       render: (value: HandlerOverrideRow['timeoutSec']) =>
-        formatSeconds(value, unlimited, seconds),
+        _.isNil(value) ? (
+          <BAIText type="secondary">
+            {formatSeconds(fallback?.timeoutSec, unlimited, seconds)}
+          </BAIText>
+        ) : (
+          formatSeconds(value, unlimited, seconds)
+        ),
     },
     {
       key: 'maxRetryCount',
       title: t('modelService.MaxRetries'),
       dataIndex: 'maxRetryCount',
       render: (value: HandlerOverrideRow['maxRetryCount']) =>
-        value ?? unlimited,
+        _.isNil(value) ? (
+          <BAIText type="secondary">
+            {fallback?.maxRetryCount ?? unlimited}
+          </BAIText>
+        ) : (
+          value
+        ),
     },
   ];
 
@@ -379,7 +405,10 @@ export const HandlerOptionsDescription: React.FC<{
       {/* Full width, label on top like the two-column list above it. */}
       <BAIMetadataList columns={1} label={{ position: 'top' }}>
         <MetadataListItem label={t('resourceGroup.HandlerOverrides')}>
-          <HandlerOverridesTable byHandler={handlerOptions?.byHandler} />
+          <HandlerOverridesTable
+            byHandler={handlerOptions?.byHandler}
+            fallback={handlerOptions?.default}
+          />
         </MetadataListItem>
       </BAIMetadataList>
     </BAIFlex>
