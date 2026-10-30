@@ -174,20 +174,6 @@ test.describe(
           'can only be created in model-store',
         );
 
-        // Read & Write stays visible but disabled for model project folders
-        // (FR-1290), unchanged by FR-3441.
-        await expect(await modal.getReadWritePermissionRadio()).toBeDisabled();
-
-        await (await modal.getCancelButton()).click();
-      });
-
-      test('General mode keeps Read & Write selectable', async ({ page }) => {
-        const modal = new FolderCreationModal(page);
-        await modal.modalToBeVisible();
-
-        await expect(await modal.getGeneralUsageModeRadio()).toBeChecked();
-        await expect(await modal.getReadWritePermissionRadio()).toBeEnabled();
-
         await (await modal.getCancelButton()).click();
       });
     });

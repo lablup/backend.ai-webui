@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2c0ec345997c1d106356d76a04907a54>>
+ * @generated SignedSource<<805201ec07f8b34173ab50da2ed6aa1a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,6 +14,7 @@ export type RuntimeVariantFilter = {
   AND?: ReadonlyArray<RuntimeVariantFilter> | null | undefined;
   NOT?: ReadonlyArray<RuntimeVariantFilter> | null | undefined;
   OR?: ReadonlyArray<RuntimeVariantFilter> | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   name?: StringFilter | null | undefined;
 };
 export type StringFilter = {
@@ -37,6 +38,12 @@ export type StringFilter = {
   notIn?: ReadonlyArray<string> | null | undefined;
   notStartsWith?: string | null | undefined;
   startsWith?: string | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
 };
 export type useRuntimeParameterSchemaVariantsQuery$variables = {
   filter?: RuntimeVariantFilter | null | undefined;

@@ -38,6 +38,26 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Ресурсын бүлэг сонгох"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "Бодлогын объект",
+    "CreatedAt": "Үүсгэсэн огноо",
+    "Disabled": "Идэвхгүй",
+    "Enabled": "Идэвхжсэн",
+    "LastSweptAt": "Сүүлийн цэвэрлэгээ",
+    "NotSweptYet": "Хараахан ажиллаагүй",
+    "RetentionPeriodDays": "Хадгалах хугацаа (өдөр)",
+    "UpdatedAt": "Шинэчлэгдсэн огноо",
+    "categories": {
+      "DEPLOYMENTS": "Байршуулалт",
+      "LOGIN": "Нэвтрэлтийн түүх",
+      "LOGS": "Лог",
+      "RECONCILE_HISTORY": "Тохируулгын түүх",
+      "ROLES_INVITATIONS": "Үүрэг ба урилга",
+      "SESSIONS": "Сешн",
+      "USAGE_BUCKETS": "Ашиглалтын нэгтгэл",
+      "USAGE_RECORDS": "Ашиглалтын бичлэг"
+    }
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Сесс сонгох"
   },
@@ -163,7 +183,6 @@
     "KeyRequired": "Түлхүүр оруулна уу.",
     "Label": "Шошго",
     "LabelsSaved": "Шошго хадгалагдлаа.",
-    "RemoveLabel": "Шошго устгах",
     "Save": "Хадгалах",
     "SomeLabelsFailed": "{{count}} шошгоны өөрчлөлт амжилтгүй",
     "Target": "Зорилт",
@@ -173,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Шошго"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Үүсгэх",
+    "Custom": "Тохируулсан",
+    "FullAccess": "Бүрэн хандалт",
+    "HardDelete": "Бүрмөсөн устгах",
+    "Read": "Унших",
+    "ReadAndWrite": "Унших ба бичих",
+    "ReadOnly": "Зөвхөн унших",
+    "SoftDelete": "Устгах",
+    "Update": "Засварлах"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Автоматаар сэргээх",
@@ -556,6 +586,9 @@
     "Result": "Үр дүн",
     "To": "Зорилтот төлөв",
     "UpdatedAt": "Шинэчлэгдсэн огноо"
+  },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "И-мэйлээр урих"
   },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "Хавтас сонгох"

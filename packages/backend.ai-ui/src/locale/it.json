@@ -38,6 +38,26 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Seleziona gruppo di risorse"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "Destinazione del criterio",
+    "CreatedAt": "Data di creazione",
+    "Disabled": "Disabilitato",
+    "Enabled": "Abilitato",
+    "LastSweptAt": "Ultima pulizia",
+    "NotSweptYet": "Non ancora eseguito",
+    "RetentionPeriodDays": "Periodo di conservazione (giorni)",
+    "UpdatedAt": "Aggiornato il",
+    "categories": {
+      "DEPLOYMENTS": "Distribuzioni",
+      "LOGIN": "Cronologia accessi",
+      "LOGS": "Log",
+      "RECONCILE_HISTORY": "Cronologia riconciliazione",
+      "ROLES_INVITATIONS": "Ruoli e inviti",
+      "SESSIONS": "Sessioni",
+      "USAGE_BUCKETS": "Aggregati di utilizzo",
+      "USAGE_RECORDS": "Record di utilizzo"
+    }
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Seleziona sessione"
   },
@@ -163,7 +183,6 @@
     "KeyRequired": "Inserisci una chiave.",
     "Label": "Etichetta",
     "LabelsSaved": "Etichette salvate.",
-    "RemoveLabel": "Rimuovi etichetta",
     "Save": "Salva",
     "SomeLabelsFailed": "{{count}} modifiche alle etichette non riuscite",
     "Target": "Destinazione",
@@ -173,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "Etichetta"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "Crea",
+    "Custom": "Personalizzato",
+    "FullAccess": "Accesso completo",
+    "HardDelete": "Elimina definitivamente",
+    "Read": "Leggi",
+    "ReadAndWrite": "Lettura e scrittura",
+    "ReadOnly": "Sola lettura",
+    "SoftDelete": "Elimina",
+    "Update": "Aggiorna"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Aggiornamento automatico",
@@ -556,6 +586,9 @@
     "Result": "Risultato",
     "To": "Stato di destinazione",
     "UpdatedAt": "Aggiornato il"
+  },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "Invita tramite e-mail"
   },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "Seleziona cartella"

@@ -15,6 +15,11 @@ export { default as BAIBulkEditFormItem } from './BAIBulkEditFormItem';
 export type { BAIBulkEditFormItemProps } from './BAIBulkEditFormItem';
 export { default as BAIFlex } from './BAIFlex';
 export type { BAIFlexProps } from './BAIFlex';
+export { default as BAIDynamicList } from './BAIDynamicList';
+export type {
+  BAIDynamicListColumn,
+  BAIDynamicListProps,
+} from './BAIDynamicList';
 export { default as BAICard } from './BAICard';
 export type { BAICardProps, BAICardTabItem } from './BAICard';
 export { default as BAITabList } from './BAITabList';
@@ -86,6 +91,20 @@ export type {
   BAIComplexSelectValue,
   BAILabeledValue,
 } from './BAIComplexSelect';
+export { default as BAIEntitySharePermissionSelector } from './BAIEntitySharePermissionSelector';
+export {
+  ENTITY_SHARE_PERMISSION_BITS,
+  ENTITY_SHARE_PERMISSION_PRESETS,
+  normalizeEntitySharePermissionBits,
+  toEntitySharePermissionChoice,
+  useEntitySharePermissionLabels,
+} from './BAIEntitySharePermissionSelector';
+export type {
+  BAIEntitySharePermissionBit,
+  BAIEntitySharePermissionChoice,
+  BAIEntitySharePermissionPreset,
+  BAIEntitySharePermissionSelectorProps,
+} from './BAIEntitySharePermissionSelector';
 export { default as BAINotificationItem } from './BAINotificationItem';
 export type { BAINotificationItemProps } from './BAINotificationItem';
 export { default as BAIModal } from './BAIModal';
@@ -194,6 +213,14 @@ export type {
   BAIProjectResourcePolicyV2TableProps,
   ProjectResourcePolicyV2InList,
 } from './BAIProjectResourcePolicyV2Table';
+export {
+  default as BAIAdminRetentionPolicyTable,
+  availableRetentionPolicySorterValues,
+} from './BAIAdminRetentionPolicyTable';
+export type {
+  BAIAdminRetentionPolicyTableProps,
+  RetentionPolicyInList,
+} from './BAIAdminRetentionPolicyTable';
 export type { BAIUncontrolledInputProps } from './BAIUncontrolledInput';
 export { default as BAIUncontrolledInput } from './BAIUncontrolledInput';
 export { default as BAITokenList } from './BAITokenList';

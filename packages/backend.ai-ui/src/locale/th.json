@@ -38,6 +38,26 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "เลือกกลุ่มทรัพยากร"
   },
+  "comp:BAIAdminRetentionPolicyTable": {
+    "Category": "เป้าหมายของนโยบาย",
+    "CreatedAt": "วันที่สร้าง",
+    "Disabled": "ปิดใช้งาน",
+    "Enabled": "เปิดใช้งาน",
+    "LastSweptAt": "การล้างครั้งล่าสุด",
+    "NotSweptYet": "ยังไม่ได้ทำงาน",
+    "RetentionPeriodDays": "ระยะเวลาเก็บรักษา (วัน)",
+    "UpdatedAt": "อัปเดตเมื่อ",
+    "categories": {
+      "DEPLOYMENTS": "การปรับใช้",
+      "LOGIN": "ประวัติการเข้าสู่ระบบ",
+      "LOGS": "บันทึก",
+      "RECONCILE_HISTORY": "ประวัติการกระทบยอด",
+      "ROLES_INVITATIONS": "บทบาทและคำเชิญ",
+      "SESSIONS": "เซสชัน",
+      "USAGE_BUCKETS": "ข้อมูลรวมการใช้งาน",
+      "USAGE_RECORDS": "บันทึกการใช้งาน"
+    }
+  },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "เลือกเซสชัน"
   },
@@ -163,7 +183,6 @@
     "KeyRequired": "กรุณาป้อนคีย์",
     "Label": "ป้ายกำกับ",
     "LabelsSaved": "บันทึกป้ายกำกับแล้ว",
-    "RemoveLabel": "ลบป้ายกำกับ",
     "Save": "บันทึก",
     "SomeLabelsFailed": "การเปลี่ยนป้ายกำกับล้มเหลว {{count}} รายการ",
     "Target": "เป้าหมาย",
@@ -173,6 +192,17 @@
   },
   "comp:BAIEntityLabelTokens": {
     "Labels": "ป้ายกำกับ"
+  },
+  "comp:BAIEntitySharePermissionSelector": {
+    "Create": "สร้าง",
+    "Custom": "กำหนดเอง",
+    "FullAccess": "สิทธิ์เข้าถึงทั้งหมด",
+    "HardDelete": "ลบถาวร",
+    "Read": "อ่าน",
+    "ReadAndWrite": "อ่านและเขียน",
+    "ReadOnly": "อ่านอย่างเดียว",
+    "SoftDelete": "ลบ",
+    "Update": "แก้ไข"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "รีเฟรชอัตโนมัติ",
@@ -556,6 +586,9 @@
     "Result": "ผลลัพธ์",
     "To": "สถานะปลายทาง",
     "UpdatedAt": "อัปเดตเมื่อ"
+  },
+  "comp:BAIScopedUserSelect": {
+    "InviteByEmail": "เชิญทางอีเมล"
   },
   "comp:BAIScopedVFolderSelect": {
     "SelectFolder": "เลือกโฟลเดอร์"

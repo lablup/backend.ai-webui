@@ -4,8 +4,7 @@
  */
 import { Form } from '../../form-engine';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIButton, BAIFlex, BAITextInput } from 'backend.ai-ui';
-import { CircleMinus, PlusIcon } from 'lucide-react';
+import { BAIDynamicList, BAITextInput } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -38,62 +37,81 @@ const PreStartActionsFormList: React.FC<PreStartActionsFormListProps> = ({
     >
       <Form.List name={[...namePrefix, 'preStartActions']}>
         {(fields, { add, remove }) => (
-          <BAIFlex direction="column" gap="xs" align="stretch">
-            {fields.map(({ key, name, ...rest }) => (
-              <BAIFlex key={key} direction="row" align="baseline" gap="xs">
-                <Form.Item
-                  {...rest}
-                  name={[name, 'action']}
-                  style={{ marginBottom: 0, flex: 1 }}
-                  rules={[{ required: true, message: '' }]}
-                >
-                  {/* Aria-only label; `Form.Item` renders no visible one
-                      for these in-row fields. */}
-                  <BAITextInput
-                    aria-label={t('adminDeploymentPreset.modelDef.Action')}
-                    placeholder={t(
-                      'adminDeploymentPreset.modelDef.ActionPlaceholder',
-                    )}
-                  />
-                </Form.Item>
-                <Form.Item
-                  {...rest}
-                  name={[name, 'args']}
-                  style={{ marginBottom: 0, flex: 2 }}
-                  rules={[
-                    { required: true, message: '' },
-                    {
-                      validator: async (_, v) => {
-                        if (!v) return;
-                        try {
-                          JSON.parse(v);
-                        } catch {
-                          return Promise.reject('');
-                        }
+          <BAIDynamicList
+            items={fields}
+            addButton={{
+              onClick: () => add({ action: '', args: '{}' }),
+              label: t('adminDeploymentPreset.modelDef.AddPreStartAction'),
+            }}
+            onRemove={(field) => remove(field.name)}
+            columns={[
+              {
+                key: 'action',
+                header: t('adminDeploymentPreset.modelDef.Action'),
+                render: ({ key: _key, name, ...rest }, index) => (
+                  <Form.Item
+                    {...rest}
+                    name={[name, 'action']}
+                    style={{ marginBottom: 0 }}
+                    rules={[
+                      {
+                        required: true,
+                        message: t(
+                          'adminDeploymentPreset.modelDef.ActionRequired',
+                        ),
                       },
-                    },
-                  ]}
-                >
-                  <BAITextInput
-                    aria-label={t('adminDeploymentPreset.modelDef.Args')}
-                    placeholder={t('general.Example', { value: '{}' })}
-                  />
-                </Form.Item>
-                {/* antd MinusCircleOutlined → lucide CircleMinus. */}
-                <CircleMinus size="1em" onClick={() => remove(name)} />
-              </BAIFlex>
-            ))}
-            <Form.Item noStyle>
-              <BAIButton
-                type="dashed"
-                onClick={() => add({ action: '', args: '{}' })}
-                icon={<PlusIcon />}
-                block
-              >
-                {t('adminDeploymentPreset.modelDef.AddPreStartAction')}
-              </BAIButton>
-            </Form.Item>
-          </BAIFlex>
+                    ]}
+                    validateTrigger={['onChange', 'onBlur']}
+                  >
+                    <BAITextInput
+                      aria-label={`${t('adminDeploymentPreset.modelDef.Action')} ${index + 1}`}
+                      placeholder={t(
+                        'adminDeploymentPreset.modelDef.ActionPlaceholder',
+                      )}
+                    />
+                  </Form.Item>
+                ),
+              },
+              {
+                key: 'args',
+                header: t('adminDeploymentPreset.modelDef.Args'),
+                width: 2,
+                render: ({ key: _key, name, ...rest }, index) => (
+                  <Form.Item
+                    {...rest}
+                    name={[name, 'args']}
+                    style={{ marginBottom: 0 }}
+                    rules={[
+                      {
+                        required: true,
+                        message: t(
+                          'adminDeploymentPreset.modelDef.ArgsRequired',
+                        ),
+                      },
+                      {
+                        validator: async (_, v) => {
+                          if (!v) return;
+                          try {
+                            JSON.parse(v);
+                          } catch {
+                            return Promise.reject(
+                              t('general.InvalidJSONFormat'),
+                            );
+                          }
+                        },
+                      },
+                    ]}
+                    validateTrigger={['onChange', 'onBlur']}
+                  >
+                    <BAITextInput
+                      aria-label={`${t('adminDeploymentPreset.modelDef.Args')} ${index + 1}`}
+                      placeholder={t('general.Example', { value: '{}' })}
+                    />
+                  </Form.Item>
+                ),
+              },
+            ]}
+          />
         )}
       </Form.List>
     </Form.Item>
