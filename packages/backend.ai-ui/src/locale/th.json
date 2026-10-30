@@ -39,7 +39,7 @@
     "PlaceHolder": "เลือกกลุ่มทรัพยากร"
   },
   "comp:BAIAdminRetentionPolicyTable": {
-    "Category": "หมวดหมู่",
+    "Category": "เป้าหมายของนโยบาย",
     "CreatedAt": "วันที่สร้าง",
     "Disabled": "ปิดใช้งาน",
     "Enabled": "เปิดใช้งาน",
