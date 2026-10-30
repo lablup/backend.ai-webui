@@ -193,6 +193,59 @@ describe('useWebMCPTool', () => {
     });
   });
 
+  it.each([
+    ['msg', { msg: 'bad request' }, 'bad request'],
+    ['title', { title: 'Forbidden' }, 'Forbidden'],
+    ['message before msg', { message: 'first', msg: 'second' }, 'first'],
+    ['a string', 'plain text', 'plain text'],
+  ])('reads the failure text from %s', async (_label, rejection, message) => {
+    renderHook(
+      () =>
+        useWebMCPTool(makeTool({ execute: () => Promise.reject(rejection) })),
+      { wrapper: gate(true) },
+    );
+
+    await expect(descriptorOf(0).execute({})).resolves.toEqual({
+      error: { code: 'execution_failed', message },
+    });
+  });
+
+  it.each([
+    ['an object without text', { message: undefined, code: 500 }],
+    ['undefined', undefined],
+    ['a prototype-less object', Object.create(null)],
+    [
+      'a throwing getter',
+      {
+        get message() {
+          throw new Error('nope');
+        },
+      },
+    ],
+  ])('stays structured when rejected with %s', async (_label, rejection) => {
+    renderHook(
+      () =>
+        useWebMCPTool(makeTool({ execute: () => Promise.reject(rejection) })),
+      { wrapper: gate(true) },
+    );
+
+    const result = (await descriptorOf(0).execute({})) as {
+      error: { code: string; message: string };
+    };
+    expect(result.error.code).toBe('execution_failed');
+    expect(result.error.message).toBe('The tool failed without a message.');
+  });
+
+  it('reports a result that serializes to undefined as a failure', async () => {
+    renderHook(() => useWebMCPTool(makeTool({ execute: () => undefined })), {
+      wrapper: gate(true),
+    });
+
+    await expect(descriptorOf(0).execute({})).resolves.toMatchObject({
+      error: { code: 'execution_failed' },
+    });
+  });
+
   it('reports a result that cannot be serialized as a structured error', async () => {
     const cycle: Record<string, unknown> = {};
     cycle.self = cycle;
@@ -231,6 +284,52 @@ describe('useWebMCPTool', () => {
     await expect(descriptorOf(0).execute({})).resolves.toMatchObject({
       error: { code: 'tool_unavailable' },
     });
+  });
+
+  it('answers tool_unavailable after unmount without running the tool', async () => {
+    const execute = vi.fn(() => 'ran');
+    const { unmount } = renderHook(() => useWebMCPTool(makeTool({ execute })), {
+      wrapper: gate(true),
+    });
+
+    unmount();
+
+    await expect(descriptorOf(0).execute({})).resolves.toMatchObject({
+      error: { code: 'tool_unavailable' },
+    });
+    expect(execute).not.toHaveBeenCalled();
+  });
+
+  it('answers tool_unavailable after the gate turns off', async () => {
+    const execute = vi.fn(() => 'ran');
+    let enabled = true;
+    const Wrapper = ({ children }: { children: ReactNode }) => (
+      <BAIWebMCPProvider enabled={enabled}>{children}</BAIWebMCPProvider>
+    );
+    const { rerender } = renderHook(
+      () => useWebMCPTool(makeTool({ execute })),
+      { wrapper: Wrapper },
+    );
+
+    enabled = false;
+    rerender();
+
+    await expect(descriptorOf(0).execute({})).resolves.toMatchObject({
+      error: { code: 'tool_unavailable' },
+    });
+    expect(execute).not.toHaveBeenCalled();
+  });
+
+  it('still runs after a re-registration', async () => {
+    const { rerender } = renderHook(
+      ({ description }: { description: string }) =>
+        useWebMCPTool(makeTool({ description, execute: () => 'ran' })),
+      { wrapper: gate(true), initialProps: { description: 'one' } },
+    );
+
+    rerender({ description: 'two' });
+
+    await expect(descriptorOf(1).execute({})).resolves.toBe('ran');
   });
 
   it('runs execute against the latest render', async () => {
