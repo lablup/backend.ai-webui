@@ -36,8 +36,12 @@ const USER_GLOBAL_ID = btoa(`UserV2:${USER_UUID}`);
 const toolNamed = (name: string) =>
   registerTool.mock.calls.map(([tool]) => tool).find((t) => t.name === name)!;
 
-const shell = (children: ReactNode, enabled = true) => (
-  <MemoryRouter initialEntries={['/admin/users?tab=users']}>
+const shell = (
+  children: ReactNode,
+  enabled = true,
+  entry = '/admin/users?tab=users',
+) => (
+  <MemoryRouter initialEntries={[entry]}>
     <BAIWebMCPProvider enabled={enabled}>
       <Suspense fallback={null}>{children}</Suspense>
     </BAIWebMCPProvider>
@@ -217,8 +221,10 @@ describe('WebMCPAdminKeypairTools', () => {
     concurrency_used: 1,
   };
 
-  const renderKeypairs = (openedAccessKey?: string) =>
-    render(
+  const renderKeypairs = (openedAccessKey?: string) => {
+    const entry = '/admin/users?tab=credentials';
+    window.history.replaceState({}, '', entry);
+    return render(
       shell(
         <WebMCPAdminKeypairTools
           keypairs={[KEYPAIR, null]}
@@ -228,8 +234,11 @@ describe('WebMCPAdminKeypairTools', () => {
           viewParams={{ tab: 'credentials', activeType: 'active' }}
           openedAccessKey={openedAccessKey}
         />,
+        true,
+        entry,
       ),
     );
+  };
 
   it('lists every rendered keypair, keyed by access key', async () => {
     renderKeypairs();
