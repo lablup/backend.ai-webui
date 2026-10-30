@@ -136,10 +136,12 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
         notifySkipped(skipped.map((failure) => failure.userId));
       }
       if (_.isEmpty(failed)) {
-        if (hasAssigned) {
+        // Only a save where every user was skipped changed nothing.
+        const changedNothing = !hasAssigned && !_.isEmpty(skipped);
+        if (!changedNothing) {
           message.success(t('rbac.UsersAssigned'));
         }
-        onRequestClose(hasAssigned);
+        onRequestClose(!changedNothing || hasAssignedAny);
         return;
       }
       if (hasAssigned) {
