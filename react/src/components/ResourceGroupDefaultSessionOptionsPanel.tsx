@@ -7,13 +7,13 @@ import { ResourceGroupDefaultSessionOptionsPanelImageQuery } from '../__generate
 import { ResourceGroupDefaultSessionOptionsPanelQuery } from '../__generated__/ResourceGroupDefaultSessionOptionsPanelQuery.graphql';
 import { ResourceGroupDefaultSessionOptionsPanel_options$key } from '../__generated__/ResourceGroupDefaultSessionOptionsPanel_options.graphql';
 import { formatDuration } from '../helper';
-import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
 import ResourceGroupDefaultSessionOptionsModal, {
   ResourceGroupDefaultSessionOptionsSection,
 } from './ResourceGroupDefaultSessionOptionsModal';
 import { HandlerOptionsDescription } from './ResourceGroupHandlerOptionsFields';
 import ResourceGroupOptionsSection from './ResourceGroupOptionsSection';
 import { normalizeShmemExpr } from './ResourceGroupSessionExecutionSpecFields';
+import { ResourceNumbersOfSession } from './ResourceNumbersOfSession';
 import { ResourceAllocationFormValue } from './SessionFormItems/ResourceAllocationFormItems';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';

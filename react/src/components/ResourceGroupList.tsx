@@ -97,6 +97,8 @@ const ResourceGroupList: React.FC = () => {
   const [drawerResourceGroupName, setDrawerResourceGroupName] = useState<
     string | null
   >(null);
+  // Kept apart from the name so the drawer keeps its content while closing.
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedResourceGroupName, setSelectedResourceGroupName] =
     useState<string>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -209,6 +211,10 @@ const ResourceGroupList: React.FC = () => {
   const drawerResourceGroup = drawerResourceGroupName
     ? _.find(resourceGroups, { name: drawerResourceGroupName })
     : null;
+  // Close for good when the group leaves the list, so it cannot reopen later.
+  if (isDrawerOpen && !drawerResourceGroup) {
+    setIsDrawerOpen(false);
+  }
 
   const [commitUpdateResourceGroup] =
     useMutation<ResourceGroupListUpdateMutation>(graphql`
@@ -258,7 +264,10 @@ const ResourceGroupList: React.FC = () => {
       render: (name: string, record: ResourceGroupNode) => (
         <BAINameActionCell
           title={name}
-          onTitleClick={() => setDrawerResourceGroupName(record.name)}
+          onTitleClick={() => {
+            setDrawerResourceGroupName(record.name);
+            setIsDrawerOpen(true);
+          }}
           showActions="always"
           actions={[
             {
@@ -653,9 +662,9 @@ const ResourceGroupList: React.FC = () => {
       />
       <BAIUnmountAfterClose>
         <ResourceGroupDetailDrawer
-          open={!!drawerResourceGroup}
+          open={isDrawerOpen && !!drawerResourceGroup}
           resourceGroupFrgmt={drawerResourceGroup}
-          onRequestClose={() => setDrawerResourceGroupName(null)}
+          onRequestClose={() => setIsDrawerOpen(false)}
           onRequestRefetch={() => {
             startRefetchTransition(() => {
               updateFetchKey();
