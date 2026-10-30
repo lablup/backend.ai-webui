@@ -39,7 +39,7 @@
     "PlaceHolder": "Seleziona gruppo di risorse"
   },
   "comp:BAIAdminRetentionPolicyTable": {
-    "Category": "Categoria",
+    "Category": "Destinazione del criterio",
     "CreatedAt": "Data di creazione",
     "Disabled": "Disabilitato",
     "Enabled": "Abilitato",

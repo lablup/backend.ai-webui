@@ -39,7 +39,7 @@
     "PlaceHolder": "リソースグループを選択"
   },
   "comp:BAIAdminRetentionPolicyTable": {
-    "Category": "種類",
+    "Category": "ポリシー対象",
     "CreatedAt": "作成日",
     "Disabled": "無効",
     "Enabled": "有効",

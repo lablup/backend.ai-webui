@@ -11,12 +11,13 @@ import { RetentionPolicySettingModalFragment$key } from '../__generated__/Retent
 import { RetentionPolicySettingModalUpdateMutation } from '../__generated__/RetentionPolicySettingModalUpdateMutation.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
-import { AstryxFormNumberInput, AstryxFormSwitch } from './astryxFormControls';
 import {
   BAILink,
   BAIModal,
   BAIModalProps,
+  BAINumberInput,
   BAISelect,
+  BAISwitch,
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -279,8 +280,9 @@ const RetentionPolicySettingModal: React.FC<
             },
           ]}
         >
-          <AstryxFormNumberInput
-            label={t('retentionPolicy.RetentionPeriodDays')}
+          <BAINumberInput
+            width="100%"
+            aria-label={t('retentionPolicy.RetentionPeriodDays')}
             min={1}
             step={1}
             isIntegerOnly
@@ -292,7 +294,7 @@ const RetentionPolicySettingModal: React.FC<
           valuePropName="checked"
           required
         >
-          <AstryxFormSwitch label={t('general.Enabled')} />
+          <BAISwitch aria-label={t('general.Enabled')} />
         </Form.Item>
       </Form>
     </BAIModal>

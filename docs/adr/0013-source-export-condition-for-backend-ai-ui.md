@@ -7,7 +7,7 @@
 - `react/`는 workspace package `backend.ai-ui`(BUI)를 build된 `dist/`가 아니라 `packages/backend.ai-ui/src`의 source로 읽는다.
 - BUI `package.json`의 `exports`가 유일한 원천이다. `"."`, `"./locale/*"`, `"./theme"`는 맨 앞에 [export condition](#용어) `@backend.ai/source`를 두고 그 condition이 source 파일을 가리킨다. `types`와 `import`는 `dist/`를 그대로 가리키므로 npm 소비자는 바뀌지 않는다.
 - `react/`의 세 resolver(TypeScript, Vite, Vitest)는 그 condition을 켜기만 하고, `backend.ai-ui`를 위한 `paths`·`include`·`alias`는 두지 않는다.
-- Node가 직접 실행하는 `astryx theme build`는 BUI를 theme token만 담은 subpath `backend.ai-ui/theme`로 import하고, `--conditions=@backend.ai/source`로 그 source를 읽는다. 이 source는 transform 없이 Node가 읽으므로 `dist/` build가 필요 없다.
+- Node가 직접 실행하는 `astryx theme build`는 BUI를 theme token만 담은 subpath `backend.ai-ui/theme`로 import하고, `--conditions=@backend.ai/source`로 resolve한 그 source 경로를 jiti에 `JITI_ALIAS`로 넘겨 읽는다. 이 source는 transform 없이 Node가 읽으므로 `dist/` build가 필요 없다.
 
 ## Context
 
@@ -36,7 +36,7 @@ flowchart LR
   buitsc -- "BUI tsconfig include" --> srcdir
   vite -- "@backend.ai/source 켬" --> src
   vitest -- "@backend.ai/source 켬" --> src
-  verify -- "NODE_OPTIONS로 condition을 켜고 실행" --> node
+  verify -- "condition으로 resolve한 경로를 JITI_ALIAS로 넘겨 실행" --> node
   node -- "@backend.ai/source 켬, src/theme/index.ts만" --> src
   npm -- "condition 없음" --> dist
 ```
@@ -70,7 +70,7 @@ flowchart LR
 
 - **Keep Vite defaults**: Vite 6는 `resolve.conditions`를 설정하면 기본값을 대신하므로 `vite.config.ts`는 `vite`의 `defaultClientConditions`를 뒤에 펼친다. Vitest는 설정값 뒤에 자기 기본값(`node`, `development|production`)을 붙이므로 `vitest.config.ts`는 condition만 적는다. 거기서 `defaultClientConditions`를 펼치면 `module`과 `browser`가 더해져 test가 package의 browser build를 고른다.
 - **No redirects**: `react/`의 config는 `backend.ai-ui`를 위한 `paths`, `include`, `resolve.alias`를 두지 않는다. `backend.ai-client`의 `paths`와 alias는 이 결정의 범위 밖이다.
-- **buiSrc stays**: 두 Vite config의 `buiSrc` 상수는 resolve에 쓰이지 않고, `@vitejs/plugin-react`의 babel 설정이 BUI 파일에 BUI의 Relay `artifactDirectory`를 주는 판정에 남는다.
+- **buiSrc stays**: 두 Vite config의 `buiSrc` 상수는 resolve에 쓰이지 않고, `react/vite-plugins/relay.ts`의 `relay()` plugin이 BUI 파일에 BUI의 Relay `artifactDirectory`를 주는 판정에 남는다.
 - **SSR environment too**: Vite 6의 top-level `resolve.conditions`는 client environment에만 적용된다. Vitest는 `--changed`의 test 선택(import 추적)과 `@vitest-environment node` test를 ssr environment에서 처리하므로, `react/vitest.config.ts`는 `ssr.resolve.conditions`에도 `@backend.ai/source`를 둔다. 빠지면 그 단계에서 BUI가 `dist/`로 resolve되어, BUI만 바꾼 branch의 `vitest --changed`가 관련 react test를 하나도 고르지 않는다.
 - **Import surface**: `react/eslint.config.js`의 `no-restricted-imports`는 `backend.ai-ui/*`를 막고 `backend.ai-ui/locale`과 `backend.ai-ui/theme`만 허용한다.
 
@@ -83,7 +83,7 @@ flowchart LR
 ### 4. Node 도구는 Node가 읽는 subpath로만 BUI를 import한다
 
 - **Theme recipe import**: `astryx theme build`가 jiti로 읽는 theme recipe(`react/src/astryx-theme/backendAiTheme.ts`)는 BUI를 `backend.ai-ui/theme`로만 import한다. recipe가 barrel `backend.ai-ui`를 import하면 Node가 `graphql` tag와 JSX가 든 source를 읽게 되어 build가 실패한다.
-- **Condition in Node**: Node가 실행하는 도구는 `NODE_OPTIONS="--conditions=@backend.ai/source"`로 condition을 켠다. `scripts/verify.sh`의 `check_astryx_theme_built`와 `react/src/astryx-theme/built/index.ts`에 적힌 재생성 절차가 그렇게 실행한다. condition이 없으면 Node는 `dist/theme.js`를 읽으므로, `dist/`가 없으면 resolve에 실패하고 오래되었으면 낡은 값으로 검사한다.
+- **Condition in Node**: Node가 실행하는 도구는 `node --conditions=@backend.ai/source`의 `require.resolve('backend.ai-ui/theme')`로 source 경로를 얻는다. `astryx theme build`가 theme을 읽는 jiti는 Node의 `--conditions`를 따르지 않고 `node`·`import` condition으로 먼저 resolve하므로, 그 경로를 `JITI_ALIAS`로 넘긴다. `scripts/verify.sh`의 `check_astryx_theme_built`와 `react/src/astryx-theme/built/index.ts`에 적힌 재생성 절차가 그렇게 실행한다. alias가 없으면 jiti는 `dist/theme.js`가 있을 때 그것을 읽으므로, 오래된 `dist/`로 낡은 값을 검사한다.
 - **Loadable subpath only**: BUI의 다른 code가 필요한 Node 도구를 더하는 PR은 Relay·JSX·CSS·svg transform 없이 Node가 읽을 수 있는 source만 담은 subpath를 BUI에 더하고, 그 subpath로 import한다. Node 도구는 barrel을 import하지 않는다.
 - **No dist build**: `scripts/verify.sh`와 CI는 Node 도구 앞에서 BUI를 build하지 않는다. `astryx theme build`는 `verify.sh`에서만 돌고 CI workflow는 돌리지 않는다.
 
