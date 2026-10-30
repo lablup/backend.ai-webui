@@ -105,6 +105,7 @@ const ResourcePresetsPanel: React.FC<PanelComponentProps> = ({
       title={t('dashboard.card.ResourcePresets')}
       tooltip={t('dashboard.card.ResourcePresetsTooltip')}
       fetchKey={fetchKey}
+      resetKeys={[projectId, resourceGroupName]}
     >
       {(key) =>
         !projectId ? (

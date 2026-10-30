@@ -12,6 +12,8 @@ interface BAIBoardItemErrorBoundaryProps extends PropsWithChildren {
   title?: BAIBoardItemTitleProps['title'];
   status?: 'warning' | 'error';
   style?: React.CSSProperties;
+  /** A change in any of these clears a caught error and renders the children again. */
+  resetKeys?: Array<unknown>;
 }
 
 const BAIBoardItemErrorBoundary: React.FC<BAIBoardItemErrorBoundaryProps> = ({
@@ -19,6 +21,7 @@ const BAIBoardItemErrorBoundary: React.FC<BAIBoardItemErrorBoundaryProps> = ({
   status = 'error',
   children,
   style,
+  resetKeys,
 }) => {
   const { t } = useBAIi18n();
   const { token } = useTheme();
@@ -52,6 +55,7 @@ const BAIBoardItemErrorBoundary: React.FC<BAIBoardItemErrorBoundaryProps> = ({
           </div>
         );
       }}
+      resetKeys={resetKeys}
     >
       {children}
     </ErrorBoundary>

@@ -76,6 +76,7 @@ const MyResourcesPanel: React.FC<PanelComponentProps> = ({
       title={t('webui.menu.MyResources')}
       tooltip={<Trans i18nKey="dashboard.card.MyResourcesTooltip" />}
       fetchKey={fetchKey}
+      resetKeys={[projectId, resourceGroupName]}
     >
       {(key) =>
         !projectId ? (
