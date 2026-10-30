@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 409 / 565 features covered (72%)**
+**Overall (in-scope routes): 408 / 563 features covered (72%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -54,8 +54,8 @@
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| System Settings          | `/admin/webui-settings`                          |    40    |   34    | 🔶 85%  |
-| **Total**                |                                                  | **565**  | **409** | **72%** |
+| System Settings          | `/admin/system-settings`                         |    38    |   33    | 🔶 87%  |
+| **Total**                |                                                  | **563**  | **408** | **72%** |
 
 ---
 
@@ -1330,7 +1330,7 @@ is deliberately out of scope — operate above project scope — the header proj
 
 ---
 
-### 34. System Settings (`/admin/webui-settings`) — config.toml → app config (#10436)
+### 34. System Settings (`/admin/system-settings`) — config.toml → app config (#10436)
 
 **Test files:** [`e2e/webui-settings/webui-settings.spec.ts`](webui-settings/webui-settings.spec.ts)
 
@@ -1344,10 +1344,10 @@ The spec writes the cluster-wide `settings` documents, so it runs sequentially (
 | Row inventory equals the definition table (`data-testid="webui-setting-<key>"`)                                                                                                                              | ✅     | same test                                                                                                                                                             |
 | Each row shows the config.toml value as its default, no changed marker                                                                                                                                       | ✅     | same test                                                                                                                                                             |
 | Apply disabled while nothing changed                                                                                                                                                                         | ✅     | same test                                                                                                                                                             |
-| Domain admin sees no public-scope group (Sign-in, Diagnostics, Plugins)                                                                                                                                      | ✅     | `domain admin sees no public-scope group`                                                                                                                             |
+| Domain admin sees no public-scope group (Sign-in, Plugins)                                                                                                                                                   | ✅     | `domain admin sees no public-scope group`                                                                                                                             |
 | Changed marker + per-row reset (checkbox row)                                                                                                                                                                | ✅     | `a checkbox row shows the changed marker and resets to the file value`                                                                                                |
 | Changed marker + per-row reset (number row)                                                                                                                                                                  | ✅     | `a number row shows the changed marker and resets to the file value`                                                                                                  |
-| Toolbar Reset discards every changed row                                                                                                                                                                     | ✅     | `the Reset button discards every changed row`                                                                                                                         |
+| Toolbar Reset saves and reloads at once                                                                                                                                                                      | ✅     | `the Reset button discards every change at once and reloads`                                                                                                          |
 | Apply → confirmation → reload; rows stay marked; client reads the new values                                                                                                                                 | ✅     | `Apply confirms, reloads, saves only the changed keys and resetting them removes the document`                                                                        |
 | Only differing keys are saved; resetting them removes the `settings` sub-key                                                                                                                                 | ✅     | same test                                                                                                                                                             |
 | Superadmin saves a Sign-in row into the public document                                                                                                                                                      | ✅     | `superadmin saves a Sign-in row into the public document`                                                                                                             |
@@ -1362,7 +1362,6 @@ The spec writes the cluster-wide `settings` documents, so it runs sequentially (
 | `maxCPUCoresPerContainer` → session launcher CPU cap                                                                                                                                                         | ✅     | `maxCPUCoresPerContainer from the domain document caps the session launcher`                                                                                          |
 | `allowAppDownloadPanel` / `allowCLIDownloadPanel` → Downloads menu item                                                                                                                                      | ✅     | `download panel keys from the domain document remove the Downloads menu item`                                                                                         |
 | `enableModelFolders` → Models on the Data page                                                                                                                                                               | ✅     | `enableModelFolders from the domain document removes Models from the Data page`                                                                                       |
-| `loginAttemptLimit` / `loginBlockTime` → login form blocked after the limit                                                                                                                                  | ✅     | `loginAttemptLimit from the public document blocks the login form after the limit`                                                                                    |
 | `pluginLogin` / `pluginPage` → login plugin and page plugin loaded                                                                                                                                           | ✅     | `plugin paths from the public document load the login plugin and the page plugin`                                                                                     |
 | Cleanup touches only the `settings` sub-key (`appearance`, `announcement` kept)                                                                                                                              | ✅     | `clearing the settings sub-key leaves the other sub-keys of both documents untouched`                                                                                 |
 | Domain admin Apply writes `domainConfig.settings`                                                                                                                                                            | ❌     | the dev cluster's domain admin lacks `app_config_fragment` DOMAIN permissions (RBAC seed); not testable                                                               |
@@ -1379,10 +1378,9 @@ The spec writes the cluster-wide `settings` documents, so it runs sequentially (
 | `enableContainerCommit` → Request Container Commit button of a running session                                                                                                                               | ✅     | same test                                                                                                                                                             |
 | `appDownloadUrl` → Desktop App download URL                                                                                                                                                                  | 🔶     | the tab is asserted; the URL goes through `window.open` and is not                                                                                                    |
 | `maxShmPerContainer` → launcher shmem cap                                                                                                                                                                    | ❌     | nothing reads it today; #10709 wires it up                                                                                                                            |
-| `eduAppNamePrefix` → sToken edu app launcher prefix                                                                                                                                                          | ❌     | no on-screen element; belongs in the mock-driven `edu-applauncher-stoken.spec.ts`                                                                                     |
 | Accelerator caps other than CPU (`maxCUDADevicesPerContainer`, …)                                                                                                                                            | ❌     | need the device in the resource group                                                                                                                                 |
 
-**Coverage: 🔶 34/40 features**
+**Coverage: 🔶 33/38 features**
 
 ---
 
@@ -1530,7 +1528,7 @@ To efficiently build new E2E tests, these POMs should be created:
 | Global Search Palette (header)         |        ✅        |      ❌      |    -     |
 | Plugin System (config-based)           |        ✅        |      ❌      |    -     |
 | `/admin-serving?tab=auto-scaling-rule` |        🔶        |      ❌      |    -     |
-| `/admin/webui-settings`                |        🔶        |      ❌      |    -     |
+| `/admin/system-settings`               |        🔶        |      ❌      |    -     |
 
 ---
 

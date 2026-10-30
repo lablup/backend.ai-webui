@@ -14,8 +14,6 @@ import {
   loginAsDomainAdmin,
   notFoundPageHeading,
   navigateTo,
-  webServerEndpoint,
-  userInfo,
 } from '../utils/test-util';
 import {
   allSettingRows,
@@ -27,7 +25,7 @@ import {
   enablePublicSlice,
   openLoginPage,
   openWebUISettings,
-  PUBLIC_GROUPS,
+  PUBLIC_ONLY_GROUPS,
   readClientConfig,
   readClientConfigForRows,
   readConfigToml,
@@ -183,11 +181,11 @@ test.describe(
       await loginAsDomainAdmin(page, request);
       await openWebUISettings(page);
 
-      for (const group of PUBLIC_GROUPS) {
+      for (const group of PUBLIC_ONLY_GROUPS) {
         await expect(settingGroup(page, group)).toHaveCount(0);
       }
       for (const group of WEBUI_SETTING_GROUPS.filter(
-        (g) => !PUBLIC_GROUPS.includes(g),
+        (g) => !PUBLIC_ONLY_GROUPS.includes(g),
       )) {
         await expect(settingGroup(page, group)).toBeVisible();
       }
@@ -236,7 +234,7 @@ test.describe(
       await expect(changedMarker(row)).toHaveCount(0);
     });
 
-    test('the Reset button discards every changed row', async ({
+    test('the Reset button discards every change at once and reloads', async ({
       page,
       request,
     }) => {
@@ -254,8 +252,15 @@ test.describe(
       const dialog = page
         .getByRole('dialog')
         .filter({ hasText: 'Do you want to reset your changes?' });
-      await dialog.getByRole('button', { name: 'Reset', exact: true }).click();
-      await expect(dialog).toBeHidden();
+      // Reset-all is confirmed by this dialog, so it saves and reloads at once.
+      await Promise.all([
+        page.waitForEvent('load'),
+        dialog.getByRole('button', { name: 'Reset', exact: true }).click(),
+      ]);
+      await waitForClientReady(page);
+      await expect(settingGroup(page, 'session')).toBeVisible({
+        timeout: 30_000,
+      });
 
       await expect(changedMarker(checkboxRow)).toHaveCount(0);
       await expect(changedMarker(textRow)).toHaveCount(0);
@@ -357,7 +362,7 @@ test.describe(
 
       await dialog.getByRole('button', { name: 'Cancel' }).click();
       await expect(dialog).toBeHidden();
-      await expect(page).toHaveURL(/\/admin\/webui-settings/);
+      await expect(page).toHaveURL(/\/admin\/system-settings/);
       await expect(changedMarker(row)).toBeVisible();
 
       await getSideNavItem(page, 'Information').click();
@@ -676,46 +681,6 @@ test.describe(
       });
       await expect(page.getByRole('radio', { name: 'Models' })).toHaveCount(0);
       await page.context().close();
-    });
-
-    test('loginAttemptLimit from the public document blocks the login form after the limit', async ({
-      page,
-      request,
-    }) => {
-      await api.writeSettings('public', {
-        loginAttemptLimit: 1,
-        loginBlockTime: 600,
-      });
-      await enablePublicSlice(page, request, api.domainName);
-      await openLoginPage(page);
-
-      // A deliberately failing sign-in, so the shared helper does not apply.
-      await page.getByLabel('Email or Username').fill(userInfo.admin.email);
-      await page.getByLabel('Password').fill('e2e-wrong-password');
-      const endpointInput = page.getByRole('textbox', {
-        name: 'Endpoint',
-        exact: true,
-      });
-      if (await endpointInput.isVisible().catch(() => false)) {
-        await endpointInput.fill(webServerEndpoint);
-      }
-      const loginButton = page.getByRole('button', {
-        name: 'Login',
-        exact: true,
-      });
-
-      await loginButton.click();
-      await expect(page.getByRole('alert').first()).toBeVisible({
-        timeout: 30_000,
-      });
-
-      // The second attempt reaches the browser-side limit and sends nothing.
-      await loginButton.click();
-      await expect(
-        page.getByText(
-          'There were too many login attempts. Login attempts have been blocked for a while.',
-        ),
-      ).toBeVisible();
     });
 
     test('plugin paths from the public document load the login plugin and the page plugin', async ({
