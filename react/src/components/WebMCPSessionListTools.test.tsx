@@ -220,7 +220,7 @@ describe('WebMCPSessionListTools', () => {
   });
 
   it('does not take an encoding difference for a lagging view', async () => {
-    renderTools({ search: '?filter=name+ilike+한글' });
+    renderTools({ search: '?filter=name+ilike+"%25train%25"' });
     await waitFor(() => expect(registerTool).toHaveBeenCalledTimes(3));
 
     await expect(

@@ -149,6 +149,22 @@ const markPending = <T extends object>(result: T, pending: boolean): T =>
 const sameSearch = (a: string, b: string): boolean =>
   new URLSearchParams(a).toString() === new URLSearchParams(b).toString();
 
+/**
+ * Whether a URL param disagrees with the view the page rendered. Only params the
+ * URL names are compared, because a page also reports defaults it leaves out of
+ * the URL, so a param removed from the URL goes unnoticed.
+ */
+export const viewLagsUrl = (
+  searchParams: Readonly<Record<string, string>>,
+  urlSearch: string,
+): boolean => {
+  const url = new URLSearchParams(urlSearch);
+  return _.some(
+    searchParams,
+    (value, key) => url.has(key) && url.get(key) !== value,
+  );
+};
+
 const NO_INPUT: WebMCPInputSchema = {
   type: 'object',
   properties: {},
@@ -226,9 +242,11 @@ export const usePageReadTools = (config: PageReadToolsConfig): void => {
   'use memo';
   const { search } = useLocation();
 
-  // A `bai_navigate` reaches the page in a transition, where `useDeferredValue`
-  // does not defer: the old tree stays committed, so only the URL shows the lag.
-  const isBehindUrl = () => !sameSearch(search, window.location.search);
+  // After a `bai_navigate` the router's search can move first while nuqs state,
+  // and so `useDeferredValue`, holds the old view until the response arrives.
+  const isBehindUrl = () =>
+    !sameSearch(search, window.location.search) ||
+    viewLagsUrl(config.readViewState().searchParams, window.location.search);
 
   useWebMCPTool(
     createListVisibleTool({

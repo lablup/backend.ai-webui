@@ -10,6 +10,7 @@ import {
   openedItem,
   pathWithSearchParam,
   pruneRow,
+  viewLagsUrl,
   viewStateResult,
   visibleRowsResult,
   type PageToolColumn,
@@ -114,6 +115,25 @@ describe('pending', () => {
       pending: true,
     });
     expect(viewStateResult('/p', { a: 1 })).not.toHaveProperty('pending');
+  });
+});
+
+describe('viewLagsUrl', () => {
+  const VIEW = { statusCategory: 'running', current: '1', type: 'all' };
+
+  it('reports a URL param the rendered view does not match yet', () => {
+    expect(viewLagsUrl(VIEW, '?statusCategory=finished&current=1')).toBe(true);
+  });
+
+  it('accepts a settled view, its defaults and params it does not own', () => {
+    expect(viewLagsUrl(VIEW, '?statusCategory=running&current=1')).toBe(false);
+    expect(viewLagsUrl(VIEW, '?current=1&sessionDetail=abc')).toBe(false);
+    expect(viewLagsUrl(VIEW, '')).toBe(false);
+  });
+
+  it('compares decoded values', () => {
+    expect(viewLagsUrl({ filter: 'a b' }, '?filter=a%20b')).toBe(false);
+    expect(viewLagsUrl({ filter: 'a b' }, '?filter=a+b')).toBe(false);
   });
 });
 
