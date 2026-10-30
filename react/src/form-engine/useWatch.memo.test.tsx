@@ -15,9 +15,9 @@ import { describe, expect, it } from 'vitest';
 
 // `Form.useWatch` compares the incoming value against its state inside a
 // `useEffectEvent`. React 19.2 never republished that event inside a memo()
-// fiber, so a change back to a value the watcher had seen was dropped
-// (#10705, facebook/react#34818); React 19.3 fixed it. The memo case keeps
-// that path covered.
+// or forwardRef() fiber, so a change back to a value the watcher had seen was
+// dropped (#10705, facebook/react#34818); React 19.3 fixed it. The memo and
+// forwardRef cases run the hook in those fibers to keep the path covered.
 
 type FormInstance = ReturnType<typeof Form.useForm>[0];
 
@@ -26,9 +26,18 @@ const Watcher: React.FC<{ form: FormInstance }> = ({ form }) => {
   return <output data-testid="watched">{String(value)}</output>;
 };
 const MemoWatcher = React.memo(Watcher);
-const ForwardRefWatcher = React.forwardRef<HTMLElement, { form: FormInstance }>(
-  (props) => <Watcher {...props} />,
-);
+// The hook must run in the forwardRef fiber itself, not in a child.
+const ForwardRefWatcher = React.forwardRef<
+  HTMLOutputElement,
+  { form: FormInstance }
+>(function ForwardRefWatcher({ form }, ref) {
+  const value = Form.useWatch(['rg'], { form, preserve: true });
+  return (
+    <output ref={ref} data-testid="watched">
+      {String(value)}
+    </output>
+  );
+});
 
 const Harness: React.FC<{
   W: React.ComponentType<{ form: FormInstance }>;

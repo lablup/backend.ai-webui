@@ -1211,9 +1211,6 @@ importers:
       '@types/react-relay':
         specifier: 'catalog:'
         version: 18.2.1
-      '@types/react-test-renderer':
-        specifier: ^19.1.0
-        version: 19.1.0
       '@types/relay-runtime':
         specifier: 'catalog:'
         version: 19.0.3
@@ -1277,9 +1274,6 @@ importers:
       react-grab:
         specifier: ^0.1.50
         version: 0.1.50(react@19.3.1)
-      react-test-renderer:
-        specifier: ^19.3.1
-        version: 19.3.1(react@19.3.1)
       relay-compiler:
         specifier: 'catalog:'
         version: 20.1.1
@@ -4796,9 +4790,6 @@ packages:
 
   '@types/react-relay@18.2.1':
     resolution: {integrity: sha512-KgmFapsxAylhxcFfaAv5GZZJhTHnDvV8IDZVsUm5afpJUvgZC1Y68ssfOGsFfiFY/2EhxHM/YPfpdKbfmF3Ecg==}
-
-  '@types/react-test-renderer@19.1.0':
-    resolution: {integrity: sha512-XD0WZrHqjNrxA/MaR9O22w/RNidWR9YZmBdRGI7wcnWGrv/3dA8wKCJ8m63Sn+tLJhcjmuhOi629N66W6kgWzQ==}
 
   '@types/react@19.3.0':
     resolution: {integrity: sha512-N0rFCuH9YoxG9/m61l9MfpJKfmLOVU0em7ipIz6TRgSSkvReLB9vL85GB+yr8Bs5leqpvg96JSwF4ZS1s4viQg==}
@@ -9307,9 +9298,6 @@ packages:
   react-is@19.2.8:
     resolution: {integrity: sha512-s5un28nYxKJw5gvUHyW5PCC28CvBqLu9r3cWgzHT4Vo/5fqqkFcdRYsGcKf50WMPpjjFZS5d76fn3YCo2njKwQ==}
 
-  react-is@19.3.1:
-    resolution: {integrity: sha512-RRieF6IyxQBkcK6pP8xOHprLTPW6QjRkbGdImtqNme+/hYVwCZkLQLdlZGOhUqXwkS9IEynaGvPJtv6XB/cz0Q==}
-
   react-markdown@10.1.0:
     resolution: {integrity: sha512-qKxVopLT/TyA6BX3Ue5NwabOsAzm0Q7kAPwq6L+wWDwisYs7R8vZ0nRXqq6rkueboxpkjvLGU9fWifiX/ZZFxQ==}
     peerDependencies:
@@ -9343,11 +9331,6 @@ packages:
   react-string-replace@1.1.1:
     resolution: {integrity: sha512-26TUbLzLfHQ5jO5N7y3Mx88eeKo0Ml0UjCQuX4BMfOd/JX+enQqlKpL1CZnmjeBRvQE8TR+ds9j1rqx9CxhKHQ==}
     engines: {node: '>=0.12.0'}
-
-  react-test-renderer@19.3.1:
-    resolution: {integrity: sha512-YcNewwmnZMd0wTb2nkb4hQ58NmX/u1hW2OJsNpen8CnV+jNkmEjYd1R6wJrOMSgb8bIF5HAJv4iL+S3PwNptOA==}
-    peerDependencies:
-      react: ^19.3.1
 
   react-transition-group@4.4.5:
     resolution: {integrity: sha512-pZcd1MCJoiKiBR2NRxeCRg13uCXbydPnmB4EOeRrY7480qNWO8IIgQG6zlDkm6uRMsURXPuKq0GWtiM59a5Q6g==}
@@ -14791,10 +14774,6 @@ snapshots:
     dependencies:
       '@types/react': 19.3.0
       '@types/relay-runtime': 19.0.3
-
-  '@types/react-test-renderer@19.1.0':
-    dependencies:
-      '@types/react': 19.3.0
 
   '@types/react@19.3.0':
     dependencies:
@@ -20627,8 +20606,6 @@ snapshots:
 
   react-is@19.2.8: {}
 
-  react-is@19.3.1: {}
-
   react-markdown@10.1.0(@types/react@19.3.0)(react@19.3.1)(supports-color@8.1.1):
     dependencies:
       '@types/hast': 3.0.5
@@ -20679,12 +20656,6 @@ snapshots:
       react-transition-group: 4.4.5(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
 
   react-string-replace@1.1.1: {}
-
-  react-test-renderer@19.3.1(react@19.3.1):
-    dependencies:
-      react: 19.3.1
-      react-is: 19.3.1
-      scheduler: 0.28.0
 
   react-transition-group@4.4.5(react-dom@19.3.1(react@19.3.1))(react@19.3.1):
     dependencies:
@@ -22992,7 +22963,6 @@ time:
   '@types/react-copy-to-clipboard@5.0.7': '2023-11-07T14:00:52.335Z'
   '@types/react-dom@19.3.0': '2026-09-09T18:07:51.886Z'
   '@types/react-relay@18.2.1': '2025-05-06T17:35:51.682Z'
-  '@types/react-test-renderer@19.1.0': '2025-04-02T07:33:46.626Z'
   '@types/react@19.3.0': '2026-09-09T18:08:49.750Z'
   '@types/relay-runtime@19.0.3': '2025-09-29T19:02:30.562Z'
   '@types/relay-test-utils@19.0.0': '2025-05-13T21:02:25.809Z'
@@ -23091,7 +23061,6 @@ time:
   react-markdown@10.1.0: '2025-03-07T10:32:53.222Z'
   react-relay@20.1.1: '2025-08-06T23:52:26.678Z'
   react-router-dom@6.30.6: '2026-08-18T14:56:52.880Z'
-  react-test-renderer@19.3.1: '2026-10-14T16:52:11.825Z'
   react-virtuoso@4.18.11: '2026-07-17T08:39:53.813Z'
   react@19.3.1: '2026-10-14T16:47:15.290Z'
   recharts@2.15.4: '2025-06-20T21:43:56.808Z'
