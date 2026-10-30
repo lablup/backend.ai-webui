@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useCurrentDomain } from '../../hooks';
+import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useCurrentResourceGroupValue } from '../../hooks/useCurrentProject';
 import type { ProjectContextOrNull } from '../../types/projectContext';
 import { activeBoardOf, updateBoard } from './dashboardConfig';
@@ -10,6 +11,7 @@ import { resolveDashboardScope } from './dashboardScope';
 import { isRefreshOption, type RefreshOption } from './refreshScheduler';
 import type { DashboardScope, PanelPage } from './types';
 import type { DashboardBoardsState } from './useDashboardBoards';
+import { atom, useAtomValue } from 'jotai';
 import { createContext, use } from 'react';
 
 export interface DashboardFilters {
@@ -25,6 +27,22 @@ export interface DashboardFilters {
   currentResourceGroup: string | null;
 }
 
+/** The superadmin page's resource group: its route hides the header project, so it keeps its own. */
+export const superadminResourceGroupAtom = atom<string | null>(null);
+
+/**
+ * The resource group a page's cards read by default: the header's, except on
+ * the superadmin page, which starts from it but chooses among the whole domain.
+ */
+export const usePageResourceGroup = (page: PanelPage): string | null => {
+  'use memo';
+  const headerResourceGroup = useCurrentResourceGroupValue() ?? null;
+  const superadminResourceGroup = useAtomValue(superadminResourceGroupAtom);
+  return page === 'admin'
+    ? (superadminResourceGroup ?? headerResourceGroup)
+    : headerResourceGroup;
+};
+
 /**
  * One dashboard page's shared state: the scope every card reads, from the
  * page alone, and the active board's refresh interval. Resource groups and
@@ -38,7 +56,7 @@ export const useDashboardFilters = (
 ): DashboardFilters => {
   'use memo';
   const currentDomain = useCurrentDomain();
-  const currentResourceGroup = useCurrentResourceGroupValue();
+  const currentResourceGroup = usePageResourceGroup(page);
   const urlProjectId = project?.id ?? null;
   const storedRefresh = activeBoardOf(boards.config).vars.refresh;
 
@@ -55,7 +73,7 @@ export const useDashboardFilters = (
       ),
     project,
     currentProjectId: urlProjectId,
-    currentResourceGroup: currentResourceGroup ?? null,
+    currentResourceGroup,
   };
 };
 
@@ -75,10 +93,17 @@ export const useDashboardFilterContext = () => use(DashboardFilterContext);
 export const useDashboardProject = (): ProjectContextOrNull =>
   use(DashboardFilterContext)?.project ?? null;
 
-/** The scope arguments of a custom panel's query: the page's project, else the current domain. */
+/** The scope arguments of a custom panel's query: the viewer's own rows on the member page, else the page's project, else the current domain. */
 export const useDashboardQueryScope = () => {
   'use memo';
-  const project = useDashboardProject();
+  const filters = use(DashboardFilterContext);
+  const project = filters?.project ?? null;
   const currentDomain = useCurrentDomain();
-  return { projectId: project?.id ?? null, domainName: currentDomain.name };
+  const [currentUser] = useCurrentUserInfo();
+  return {
+    projectId: project?.id ?? null,
+    domainName: currentDomain.name,
+    domainId: currentDomain.id,
+    ownerId: filters?.scope.kind === 'mine' ? (currentUser.uuid ?? null) : null,
+  };
 };

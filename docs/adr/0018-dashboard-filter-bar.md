@@ -87,6 +87,7 @@ sequenceDiagram
 - **Edit mode only**: 편집 모드의 사이드 패널은 보드에 있는 카드 중 설정을 적은 카드에만 설정 버튼과 지금 값을 보여 주고, 버튼은 `PanelSettingsModal`을 연다. 설정을 적지 않은 카드는 control이 없다.
 - **Resource group choices**: `PanelSettingsModal`은 자원 그룹 하나를 `BAIScopedResourceGroupSelect`로 고른다. 선택지는 page의 프로젝트(`scope: { project }`)에서, superadmin page에서는 현재 도메인(`scope: { domain }`)에서 읽는다.
 - **Defaults**: 자원 그룹 설정이 비어 있으면 고정 카드는 헤더의 현재 자원 그룹을, 사용자 정의 패널은 모든 자원 그룹을 읽는다. 기간 설정의 기본은 최근 24시간(`DEFAULT_RANGE`, `panelSettings.ts`)이고, 선택지는 최근 1시간, 24시간, 7일이다.
+- **Superadmin resource group**: `/admin/dashboard` route는 헤더 프로젝트 selector를 그리지 않으므로, superadmin page의 기본 자원 그룹은 page가 따로 둔다(`superadminResourceGroupAtom`, `usePageResourceGroup`). 처음 값은 숨은 현재 프로젝트의 자원 그룹이고, Total Resources 카드의 picker는 현재 도메인의 자원 그룹을 모두 보여 준다.
 - **Card state**: `DashboardPanelContent`가 설정을 풀어 `vars`(`DashboardVars`)로 넘긴다. `range`, 카드의 마지막 refresh 시각으로 고정한 `timeRange`, `resourceGroup`(설정 또는 헤더 자원 그룹), `currentProjectId`, `currentResourceGroup`이다.
 - **Single resource group cards**: 자원 그룹 하나만 받는 field를 읽는 카드는 `cardResourceGroup(settings.resourceGroups, currentResourceGroup)`이 정한 자원 그룹 하나만 읽는다. 자원 그룹마다 요청을 나누지 않는다.
 - **Custom panels**: data source가 자원 그룹으로 좁힐 수 있으면(`ResourceConfig.supportsResourceGroup`) 사용자 정의 패널도 자원 그룹 설정을 갖는다. 세션은 minilang filter에 `scaling_group == ...`를 붙이고, 배포는 `resourceGroup: { in }`을 쓴다. 폴더 패널은 설정이 없다.

@@ -168,6 +168,9 @@ interface TotalResourceWithinResourceGroupProps extends BAIFlexProps {
   displayType?: 'used' | 'free';
   onDisplayTypeChange?: (type: 'used' | 'free') => void;
   extra?: ReactNode;
+  /** Overrides the header's resource group, with `resourceGroupSelect` as its picker. */
+  resourceGroup?: string;
+  resourceGroupSelect?: ReactNode;
 }
 
 export const useIsAvailableTotalResourceWithinResourceGroup = () => {
@@ -181,11 +184,20 @@ export const useIsAvailableTotalResourceWithinResourceGroup = () => {
 
 const TotalResourceWithinResourceGroup: React.FC<
   TotalResourceWithinResourceGroupProps
-> = ({ queryRef, refetching, hideRefreshButton, extra, ...props }) => {
+> = ({
+  queryRef,
+  refetching,
+  hideRefreshButton,
+  extra,
+  resourceGroup,
+  resourceGroupSelect,
+  ...props
+}) => {
   'use memo';
   const { t } = useTranslation();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
-  const currentResourceGroup = useCurrentResourceGroupValue();
+  const headerResourceGroup = useCurrentResourceGroupValue();
+  const currentResourceGroup = resourceGroup ?? headerResourceGroup;
   const deferredSelectedResourceGroup = useDeferredValue(currentResourceGroup);
   const userRole = useCurrentUserRole();
   const { token } = useTheme();
@@ -431,14 +443,16 @@ const TotalResourceWithinResourceGroup: React.FC<
                 fontWeightStrong). 16px is heading-5 on the restored antd type
                 ramp; `level={3}` tracked the same 16px under Astryx's own. */}
             <Heading level={5}>{t('webui.menu.TotalResourcesIn')}</Heading>
-            <SharedResourceGroupSelectForCurrentProject
-              size="small"
-              showSearch
-              style={{ minWidth: 100 }}
-              loading={currentResourceGroup !== deferredSelectedResourceGroup}
-              popupMatchSelectWidth={false}
-              tooltip={t('general.ResourceGroup')}
-            />
+            {resourceGroupSelect ?? (
+              <SharedResourceGroupSelectForCurrentProject
+                size="small"
+                showSearch
+                style={{ minWidth: 100 }}
+                loading={currentResourceGroup !== deferredSelectedResourceGroup}
+                popupMatchSelectWidth={false}
+                tooltip={t('general.ResourceGroup')}
+              />
+            )}
           </BAIFlex>
         }
         tooltip={t('webui.menu.TotalResourcesInResourceGroupDescription')}

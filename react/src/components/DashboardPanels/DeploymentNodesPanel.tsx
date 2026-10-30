@@ -71,7 +71,7 @@ export const DeploymentNodesPanelContent: React.FC<{
     deferredVariables,
     { fetchPolicy: 'store-and-network', fetchKey: deferredFetchKey },
   );
-  const connection = data.myDeployments;
+  const connection = data.scopedDeployments;
   const deployments = filterOutNullAndUndefined(
     connection?.edges.map((e) => e?.node),
   );

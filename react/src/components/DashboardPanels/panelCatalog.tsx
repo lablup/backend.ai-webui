@@ -24,10 +24,19 @@ import type {
   PanelSize,
   PanelType,
 } from './types';
-import { useDashboardProject } from './useDashboardFilters';
+import {
+  superadminResourceGroupAtom,
+  useDashboardFilterContext,
+  useDashboardProject,
+} from './useDashboardFilters';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIBoardItemErrorBoundary, BAISkeleton } from 'backend.ai-ui';
-import React, { Suspense } from 'react';
+import {
+  BAIBoardItemErrorBoundary,
+  BAIScopedResourceGroupSelect,
+  BAISkeleton,
+} from 'backend.ai-ui';
+import { useSetAtom } from 'jotai';
+import React, { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // The built-in cards as catalog components, each wrapped exactly as the pages
@@ -161,13 +170,43 @@ const QuotaPerStorageVolumePanel: React.FC<PanelComponentProps> = () => {
 const TotalResourceWithinResourceGroupPanel: React.FC<PanelComponentProps> = ({
   queryRefs,
   isRefetching,
+  scope,
 }) => {
   'use memo';
+  const { t } = useTranslation();
+  const filters = useDashboardFilterContext();
+  const setSuperadminResourceGroup = useSetAtom(superadminResourceGroupAtom);
+  const [isPending, startTransition] = useTransition();
+  // The superadmin page has no header project: its picker lists the whole domain.
+  const domainScope =
+    scope.kind === 'projects' && scope.projectIds === 'all'
+      ? scope.domain
+      : null;
   return queryRefs.totalResourceQueryRef ? (
     <TotalResourceWithinResourceGroup
       queryRef={queryRefs.totalResourceQueryRef}
-      refetching={isRefetching}
+      refetching={isRefetching || isPending}
       hideRefreshButton
+      {...(domainScope
+        ? {
+            resourceGroup: filters?.currentResourceGroup ?? undefined,
+            resourceGroupSelect: (
+              <BAIScopedResourceGroupSelect
+                label={t('general.ResourceGroup')}
+                isLabelHidden
+                scope={{ domain: [{ value: domainScope.id }] }}
+                value={filters?.currentResourceGroup ?? null}
+                onChange={(value) =>
+                  startTransition(() =>
+                    setSuperadminResourceGroup(
+                      typeof value === 'string' ? value : null,
+                    ),
+                  )
+                }
+              />
+            ),
+          }
+        : {})}
     />
   ) : null;
 };

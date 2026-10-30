@@ -210,7 +210,6 @@ export interface PanelCatalogContext {
   config: PanelCatalogConfig;
 }
 
-/** Fragment keys of the page queries the built-in cards still read (until they get their own queries). */
 /** The page query's fragments; null when no card on the board reads one. */
 export interface DashboardPageQueryRefs {
   sessionCountQueryRef?: SessionCountDashboardItemFragment$key | null;
@@ -279,6 +278,9 @@ export interface ResourceQueryArgs {
   /** The page's project; `null` on the superadmin page, which reads the current domain. */
   projectId: string | null;
   domainName: string;
+  domainId: string;
+  /** The viewer, when the page reads only the viewer's own rows (the member page). */
+  ownerId: string | null;
 }
 
 /** Normalized connection slice the executor renders. */

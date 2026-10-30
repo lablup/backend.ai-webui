@@ -14,10 +14,10 @@ import {
 } from '../components/DashboardPanels/pageQuery';
 import { PANEL_CATALOG } from '../components/DashboardPanels/panelCatalog';
 import { useRenderedPanelKeys } from '../components/DashboardPanels/useDashboardBoard';
+import { usePageResourceGroup } from '../components/DashboardPanels/useDashboardFilters';
 import { useIsAvailableTotalResourceWithinResourceGroup } from '../components/TotalResourceWithinResourceGroup';
 import { useCurrentDomainValue } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
-import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import { useUrlProjectValidity } from '../hooks/useUrlProjectValidity';
 import type { ProjectContextOrNull } from '../types/projectContext';
 import { INITIAL_FETCH_KEY } from 'backend.ai-ui';
@@ -41,7 +41,7 @@ const AdminDashboardPageContent: React.FC<AdminDashboardPageProps> = ({
       ? { id: resolvedId, name: urlProjectName }
       : null;
   const currentDomainName = useCurrentDomainValue();
-  const currentResourceGroup = useCurrentResourceGroupValue();
+  const currentResourceGroup = usePageResourceGroup(page);
   const isSuperAdmin = useCurrentUserRole() === 'superadmin';
 
   const renderedKeys = useRenderedPanelKeys(page, PANEL_CATALOG);
