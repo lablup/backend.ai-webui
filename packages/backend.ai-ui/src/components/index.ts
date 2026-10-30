@@ -15,6 +15,11 @@ export { default as BAIBulkEditFormItem } from './BAIBulkEditFormItem';
 export type { BAIBulkEditFormItemProps } from './BAIBulkEditFormItem';
 export { default as BAIFlex } from './BAIFlex';
 export type { BAIFlexProps } from './BAIFlex';
+export { default as BAIDynamicList } from './BAIDynamicList';
+export type {
+  BAIDynamicListColumn,
+  BAIDynamicListProps,
+} from './BAIDynamicList';
 export { default as BAICard } from './BAICard';
 export type { BAICardProps, BAICardTabItem } from './BAICard';
 export { default as BAITabList } from './BAITabList';
