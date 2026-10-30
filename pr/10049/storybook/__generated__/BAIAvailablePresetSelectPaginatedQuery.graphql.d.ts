@@ -3,6 +3,7 @@ export type DeploymentRevisionPresetFilter = {
     AND?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
     NOT?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
     OR?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
+    entityId?: UUIDFilter | null | undefined;
     id?: UUIDFilter | null | undefined;
     name?: StringFilter | null | undefined;
     runtimeVariantId?: UUIDFilter | null | undefined;
