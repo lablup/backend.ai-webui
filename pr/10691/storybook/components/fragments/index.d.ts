@@ -43,7 +43,7 @@ export { default as BAIEntityLabelBulkEditButton } from './BAIEntityLabelBulkEdi
 export type { BAIEntityLabelBulkEditButtonProps } from './BAIEntityLabelBulkEditButton';
 export { default as BAIEntityLabelSettingModal } from './BAIEntityLabelSettingModal';
 export type { BAIEntityLabelSettingModalProps, BAIEntityLabelSettingModalTarget, } from './BAIEntityLabelSettingModal';
-export { default as BAIEntityLabelTokens, formatEntityLabel, toEntityLabelFilter, } from './BAIEntityLabelTokens';
+export { default as BAIEntityLabelTokens, entityLabelFilterProperties, formatEntityLabel, toEntityLabelFilter, } from './BAIEntityLabelTokens';
 export type { BAIEntityLabel, BAIEntityLabelTokensProps, } from './BAIEntityLabelTokens';
 export { default as BAIEntityLabelCell } from './BAIEntityLabelCell';
 export type { BAIEntityLabelCellProps } from './BAIEntityLabelCell';
