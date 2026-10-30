@@ -9,7 +9,7 @@ export type WebMCPInputValidation = {
 /**
  * Checks tool input against a flat `WebMCPInputSchema`. Browsers do not
  * enforce `inputSchema`, so every tool runs its input through this first.
- * `undefined`/`null` input counts as `{}`; a JSON string is parsed.
+ * A JSON string is parsed first; `undefined`/`null` then count as `{}`.
  */
 export declare const validateWebMCPInput: (schema: WebMCPInputSchema, input: unknown) => WebMCPInputValidation;
 /** The structured error a tool returns instead of throwing. */
