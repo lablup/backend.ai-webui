@@ -128,7 +128,7 @@ export const Uncontrolled: Story = {
     },
   },
   args: {
-    defaultValue: ['READ', 'UPDATE', 'SOFT_DELETE'],
+    defaultValue: ['CREATE', 'READ', 'UPDATE', 'SOFT_DELETE'],
   },
 };
 

@@ -78,7 +78,12 @@ export const toInvitationItems = (
 // (added in 26.10.0, lablup/backend.ai#15609).
 const invitationsQuery = graphql`
   query useVFolderInvitationsQuery {
-    myEntityShares(sides: [RECIPIENT], limit: 100) {
+    myEntityShares(
+      sides: [RECIPIENT]
+      filter: { status: { equals: PENDING } }
+      orderBy: [{ field: CREATED_AT, direction: "DESC" }]
+      limit: 100
+    ) {
       edges {
         node {
           entityId

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<eff4d78c2e53d7a30bcc35a33e79aa4d>>
+ * @generated SignedSource<<b6e116ede23347fa91f05e1bdf9d8d57>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -30,6 +30,7 @@ export type InviteFolderSettingModalCreateShareMutation$data = {
     readonly share: {
       readonly entityId: string;
       readonly id: string;
+      readonly permissions: ReadonlyArray<PermissionBit>;
       readonly recipientEmail: string | null | undefined;
       readonly status: EntityShareStatus;
     };
@@ -98,6 +99,13 @@ v1 = [
             "kind": "ScalarField",
             "name": "status",
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "permissions",
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -124,16 +132,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "6065896c47204e84f82eed2501d7b14e",
+    "cacheID": "932c04f71d5b8ded117909fc6e1ad5ff",
     "id": null,
     "metadata": {},
     "name": "InviteFolderSettingModalCreateShareMutation",
     "operationKind": "mutation",
-    "text": "mutation InviteFolderSettingModalCreateShareMutation(\n  $input: CreateEntityShareInput!\n) {\n  createEntityShare(input: $input) {\n    share {\n      id\n      entityId\n      recipientEmail\n      status\n    }\n  }\n}\n"
+    "text": "mutation InviteFolderSettingModalCreateShareMutation(\n  $input: CreateEntityShareInput!\n) {\n  createEntityShare(input: $input) {\n    share {\n      id\n      entityId\n      recipientEmail\n      status\n      permissions\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "7415e2ddb3d0796a92891c5d2002fd56";
+(node as any).hash = "a93bc72f9a89e3ee638de41690443996";
 
 export default node;

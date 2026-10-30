@@ -26,7 +26,6 @@ import {
   filterOutEmpty,
   badgeVariantForStatus,
   BAIText,
-  toLocalId,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -107,6 +106,7 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
     graphql`
       fragment VFolderNodeDescriptionV2Fragment on VFolder {
         id
+        entityId
         host
         status
         unmanagedPath
@@ -200,7 +200,7 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
         <ErrorBoundaryWithNullFallback>
           <Suspense fallback={<BAISkeleton variant="input" size="small" />}>
             <MyMountPermission
-              vfolderId={toLocalId(vfolderNode.id)}
+              vfolderId={vfolderNode.entityId}
               defaultPermission={vfolderNode.accessControl.permission}
             />
           </Suspense>

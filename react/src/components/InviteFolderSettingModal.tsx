@@ -51,7 +51,6 @@ import {
   INITIAL_FETCH_KEY,
   normalizeEntitySharePermissionBits,
   useEntitySharePermissionLabels,
-  toLocalId,
   useErrorMessageResolver,
   useFetchKey,
   useMutationWithPromise,
@@ -341,6 +340,8 @@ const CreateShareMutation = graphql`
         entityId
         recipientEmail
         status
+        # Selected so the listed row follows the restated cap at once.
+        permissions
       }
     }
   }
@@ -366,6 +367,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
     graphql`
       fragment InviteFolderSettingModalFragment on VFolder {
         id
+        entityId
         metadata {
           name
           usageMode
@@ -397,7 +399,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
     >
       {baiModalProps.open && vfolder ? (
         <InviteFolderSettingModalBody
-          vfolderId={toLocalId(vfolder.id)}
+          vfolderId={vfolder.entityId}
           folderName={vfolder.metadata?.name ?? ''}
           defaultMountLevel={
             toMountLevel(vfolder.accessControl?.permission) ?? 'ro'
@@ -914,6 +916,16 @@ const SharedUserTable: React.FC<{
     row: ShareRow,
     bits: Array<BAIEntitySharePermissionBit>,
   ) => {
+    // Restating a pending share rewrites its sharer and expiry; the same
+    // bits are not worth that.
+    if (
+      _.isEqual(
+        normalizeEntitySharePermissionBits(bits),
+        normalizeEntitySharePermissionBits(row.permissions),
+      )
+    ) {
+      return;
+    }
     try {
       await createShare({
         input: {

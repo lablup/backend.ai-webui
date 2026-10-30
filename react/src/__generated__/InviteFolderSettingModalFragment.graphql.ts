@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<094ce7abff3c0e1e84b5567cf5fc7654>>
+ * @generated SignedSource<<39d13484470c939538412603ddee7dea>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,6 +18,7 @@ export type InviteFolderSettingModalFragment$data = {
     readonly ownershipType: VFolderOwnershipType;
     readonly permission: VFolderMountPermission;
   };
+  readonly entityId: string;
   readonly id: string;
   readonly metadata: {
     readonly name: string;
@@ -45,6 +46,13 @@ const node: ReaderFragment = {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
       "storageKey": null
     },
     {
@@ -127,6 +135,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "a7034d843574f84ec83fbcc016ceedec";
+(node as any).hash = "583df6570d22cdf406def0550b274443";
 
 export default node;

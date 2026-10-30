@@ -19,9 +19,6 @@ test(
     await agent.act(
       'Enter a folder name, keep the "General" usage mode and press "Create"',
     );
-    await agent.act(
-      'Find the new folder in the list and read its "Read only" mount permission',
-    );
     await agent.act("Open the new folder from its name link");
     await agent.act(
       'Read the folder details, which list "Ownership" and no mount permission row, then press "Close"',

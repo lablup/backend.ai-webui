@@ -5,9 +5,8 @@
  Edits the folder's default mount permission: the level a shared user mounts
  the folder at unless a mount policy of their own says otherwise (#10647).
 */
-import { FolderDefaultMountPermissionModalRefreshQuery } from '../__generated__/FolderDefaultMountPermissionModalRefreshQuery.graphql';
+import { FolderDefaultMountPermissionModalUpdateMutation } from '../__generated__/FolderDefaultMountPermissionModalUpdateMutation.graphql';
 import { App } from '../app-shim';
-import { useBaiSignedRequestWithPromise } from '../helper';
 import { Field } from '@lablup/ui-common/Field';
 import { HStack } from '@lablup/ui-common/Stack';
 import {
@@ -16,10 +15,11 @@ import {
   BAIQuestionIconWithTooltip,
   BAISelector,
   useErrorMessageResolver,
+  useMutationWithPromise,
 } from 'backend.ai-ui';
 import React, { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay';
+import { graphql } from 'react-relay';
 
 export type FolderMountLevel = 'ro' | 'rw';
 
@@ -50,8 +50,26 @@ const FolderDefaultMountPermissionModal: React.FC<
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
-  const relayEnv = useRelayEnvironment();
-  const request = useBaiSignedRequestWithPromise();
+  // The payload carries the folder, so every fragment on it follows the
+  // new value from the store without a re-read.
+  const updateFolder =
+    useMutationWithPromise<FolderDefaultMountPermissionModalUpdateMutation>(
+      graphql`
+        mutation FolderDefaultMountPermissionModalUpdateMutation(
+          $vfolderId: UUID!
+          $input: UpdateVFolderV2Input!
+        ) {
+          updateVfolderV2(vfolderId: $vfolderId, input: $input) {
+            vfolder {
+              id
+              accessControl {
+                permission
+              }
+            }
+          }
+        }
+      `,
+    );
   const inputId = useId();
 
   const [picked, setPicked] = useState<FolderMountLevel | null>(null);
@@ -65,32 +83,10 @@ const FolderDefaultMountPermissionModal: React.FC<
     }
     setIsSaving(true);
     try {
-      // TODO(needs-backend): the V2 schema has no mutation for the folder's
-      // mount permission, so the legacy update-options endpoint still owns it.
-      await request({
-        method: 'POST',
-        url: `/folders/${vfolderId}/update-options`,
-        body: { permission: value },
+      await updateFolder({
+        vfolderId,
+        input: { permission: value === 'rw' ? 'READ_WRITE' : 'READ_ONLY' },
       });
-      // Re-read the record so every fragment on this folder sees the new value.
-      await fetchQuery<FolderDefaultMountPermissionModalRefreshQuery>(
-        relayEnv,
-        graphql`
-          query FolderDefaultMountPermissionModalRefreshQuery(
-            $vfolderId: UUID!
-          ) {
-            vfolderV2(vfolderId: $vfolderId) {
-              id
-              accessControl {
-                permission
-              }
-            }
-          }
-        `,
-        { vfolderId },
-      )
-        .toPromise()
-        .catch(() => {});
       message.success(t('data.permission.PermissionModified'));
       document.dispatchEvent(new CustomEvent('backend-ai-folder-updated'));
       onRequestClose();

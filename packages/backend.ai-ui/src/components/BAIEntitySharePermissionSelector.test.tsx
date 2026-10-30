@@ -62,7 +62,12 @@ describe('toEntitySharePermissionChoice', () => {
   it('matches a preset as a set, whatever the order', () => {
     expect(toEntitySharePermissionChoice(['READ'])).toBe('READ_ONLY');
     expect(
-      toEntitySharePermissionChoice(['SOFT_DELETE', 'READ', 'UPDATE']),
+      toEntitySharePermissionChoice([
+        'SOFT_DELETE',
+        'READ',
+        'CREATE',
+        'UPDATE',
+      ]),
     ).toBe('READ_WRITE');
     expect(
       toEntitySharePermissionChoice([
@@ -99,7 +104,7 @@ describe('BAIEntitySharePermissionSelector', () => {
     rerender(
       <BAIEntitySharePermissionSelector
         label="Permission"
-        value={['READ', 'UPDATE', 'SOFT_DELETE']}
+        value={['CREATE', 'READ', 'UPDATE', 'SOFT_DELETE']}
       />,
     );
     expect(trigger()).toHaveTextContent('Read & write');
@@ -152,7 +157,7 @@ describe('BAIEntitySharePermissionSelector', () => {
     await user.click(trigger());
     await user.click(presetRows()[1]);
     expect(onChange).toHaveBeenCalledWith(
-      ['READ', 'UPDATE', 'SOFT_DELETE'],
+      ['CREATE', 'READ', 'UPDATE', 'SOFT_DELETE'],
       'READ_WRITE',
     );
 
@@ -214,7 +219,7 @@ describe('BAIEntitySharePermissionSelector', () => {
     render(
       <BAIEntitySharePermissionSelector
         label="Permission"
-        value={['READ', 'UPDATE']}
+        value={['CREATE', 'READ', 'UPDATE']}
         onChange={onChange}
       />,
     );
@@ -222,7 +227,7 @@ describe('BAIEntitySharePermissionSelector', () => {
     await user.click(customRow());
     await user.click(bitRows()[3]); // Soft delete
     expect(onChange).toHaveBeenCalledWith(
-      ['READ', 'UPDATE', 'SOFT_DELETE'],
+      ['CREATE', 'READ', 'UPDATE', 'SOFT_DELETE'],
       'READ_WRITE',
     );
   });
@@ -252,7 +257,7 @@ describe('BAIEntitySharePermissionSelector', () => {
     render(
       <BAIEntitySharePermissionSelector
         label="Permission"
-        defaultValue={['READ', 'UPDATE', 'SOFT_DELETE']}
+        defaultValue={['CREATE', 'READ', 'UPDATE', 'SOFT_DELETE']}
         onChange={onChange}
       />,
     );

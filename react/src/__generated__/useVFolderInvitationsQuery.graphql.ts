@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<755d0e3070ced7d8d98d7cef5db9567f>>
+ * @generated SignedSource<<df3e8a87970fde1c72f4a5deceb2a8e1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -50,8 +50,27 @@ const node: ConcreteRequest = (function(){
 var v0 = [
   {
     "kind": "Literal",
+    "name": "filter",
+    "value": {
+      "status": {
+        "equals": "PENDING"
+      }
+    }
+  },
+  {
+    "kind": "Literal",
     "name": "limit",
     "value": 100
+  },
+  {
+    "kind": "Literal",
+    "name": "orderBy",
+    "value": [
+      {
+        "direction": "DESC",
+        "field": "CREATED_AT"
+      }
+    ]
   },
   {
     "kind": "Literal",
@@ -232,7 +251,7 @@ return {
             "storageKey": null
           }
         ],
-        "storageKey": "myEntityShares(limit:100,sides:[\"RECIPIENT\"])"
+        "storageKey": "myEntityShares(filter:{\"status\":{\"equals\":\"PENDING\"}},limit:100,orderBy:[{\"direction\":\"DESC\",\"field\":\"CREATED_AT\"}],sides:[\"RECIPIENT\"])"
       }
     ],
     "type": "Query",
@@ -320,21 +339,21 @@ return {
             "storageKey": null
           }
         ],
-        "storageKey": "myEntityShares(limit:100,sides:[\"RECIPIENT\"])"
+        "storageKey": "myEntityShares(filter:{\"status\":{\"equals\":\"PENDING\"}},limit:100,orderBy:[{\"direction\":\"DESC\",\"field\":\"CREATED_AT\"}],sides:[\"RECIPIENT\"])"
       }
     ]
   },
   "params": {
-    "cacheID": "b06b7360da0157977199af2ad4d83e64",
+    "cacheID": "59c30f2ab8d4319c9061ce34e21d7f28",
     "id": null,
     "metadata": {},
     "name": "useVFolderInvitationsQuery",
     "operationKind": "query",
-    "text": "query useVFolderInvitationsQuery {\n  myEntityShares(sides: [RECIPIENT], limit: 100) {\n    edges {\n      node {\n        entityId\n        status\n        permissions\n        targetEntityType\n        targetEntityId\n        createdAt\n        sharer {\n          basicInfo {\n            email\n          }\n          id\n        }\n        targetEntity {\n          __typename\n          ... on VFolder {\n            metadata {\n              name\n            }\n          }\n          ... on Node {\n            __isNode: __typename\n            id\n          }\n          ... on ArtifactRegistry {\n            id\n          }\n        }\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query useVFolderInvitationsQuery {\n  myEntityShares(sides: [RECIPIENT], filter: {status: {equals: PENDING}}, orderBy: [{field: CREATED_AT, direction: \"DESC\"}], limit: 100) {\n    edges {\n      node {\n        entityId\n        status\n        permissions\n        targetEntityType\n        targetEntityId\n        createdAt\n        sharer {\n          basicInfo {\n            email\n          }\n          id\n        }\n        targetEntity {\n          __typename\n          ... on VFolder {\n            metadata {\n              name\n            }\n          }\n          ... on Node {\n            __isNode: __typename\n            id\n          }\n          ... on ArtifactRegistry {\n            id\n          }\n        }\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "1466e2760f087b3b904f30a5e0a0ee4d";
+(node as any).hash = "cfc89c0bad7f355cdb962928b147a345";
 
 export default node;

@@ -46,7 +46,8 @@ export const ENTITY_SHARE_PERMISSION_PRESETS: ReadonlyArray<{
     key: 'FULL_ACCESS',
     bits: ['CREATE', 'READ', 'UPDATE', 'SOFT_DELETE', 'HARD_DELETE'],
   },
-  { key: 'READ_WRITE', bits: ['READ', 'UPDATE', 'SOFT_DELETE'] },
+  // CREATE is in: the manager checks upload and mkdir against it.
+  { key: 'READ_WRITE', bits: ['CREATE', 'READ', 'UPDATE', 'SOFT_DELETE'] },
   { key: 'READ_ONLY', bits: ['READ'] },
 ];
 

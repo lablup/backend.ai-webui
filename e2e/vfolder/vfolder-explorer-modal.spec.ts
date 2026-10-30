@@ -93,29 +93,24 @@ test.describe(
       //    (#10647), so no permission choice is made here.
       await createVFolderAndVerify(page, roFolderName);
 
-      // 2. Verify folder shows "Read only" in the table
+      // 2. Open the VFolder in FolderExplorerModal (the list has no mount
+      //    permission column any more)
       await navigateTo(page, 'data');
-      const folderRow = page.getByRole('row', {
-        name: new RegExp(roFolderName),
-      });
-      await expect(folderRow.getByText('Read only').first()).toBeVisible();
-
-      // 3. Open the VFolder in FolderExplorerModal
       const modal = await openFolderExplorer(page, roFolderName);
 
-      // 4. Verify modal opens successfully
+      // 3. Verify modal opens successfully
       await modal.verifyFolderName(roFolderName);
 
-      // 5. The description list no longer carries a mount permission row.
+      // 4. The description list no longer carries a mount permission row.
       await modal.verifyFolderDetails();
 
-      // 6. Verify file explorer loads
+      // 5. Verify file explorer loads
       await modal.verifyFileExplorerLoaded();
 
-      // 7. Close modal
+      // 6. Close modal
       await modal.close();
 
-      // 8. Cleanup
+      // 7. Cleanup
       await moveToTrashAndVerify(page, roFolderName, 'data', {
         skipTrashVerify: true,
       });

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e707bfb667038a2be71f103a1db41981>>
+ * @generated SignedSource<<9246ed8c78c1ac46e002596d9d9452c8>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -89,6 +89,13 @@ return {
           {
             "alias": null,
             "args": null,
+            "kind": "ScalarField",
+            "name": "entityId",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
             "concreteType": "VFolderMetadataInfo",
             "kind": "LinkedField",
             "name": "metadata",
@@ -167,12 +174,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e9b1b81f1fc0f49665532af974b2855c",
+    "cacheID": "bb8eac24958a2268ce68b3307c48caba",
     "id": null,
     "metadata": {},
     "name": "InviteFolderSettingModalTestQuery",
     "operationKind": "query",
-    "text": "query InviteFolderSettingModalTestQuery(\n  $vfolderId: UUID!\n) {\n  vfolderV2(vfolderId: $vfolderId) {\n    ...InviteFolderSettingModalFragment\n    id\n  }\n}\n\nfragment InviteFolderSettingModalFragment on VFolder {\n  id\n  metadata {\n    name\n    usageMode\n  }\n  accessControl {\n    permission\n    ownershipType\n  }\n  ownership {\n    userId\n    projectId\n  }\n}\n"
+    "text": "query InviteFolderSettingModalTestQuery(\n  $vfolderId: UUID!\n) {\n  vfolderV2(vfolderId: $vfolderId) {\n    ...InviteFolderSettingModalFragment\n    id\n  }\n}\n\nfragment InviteFolderSettingModalFragment on VFolder {\n  id\n  entityId\n  metadata {\n    name\n    usageMode\n  }\n  accessControl {\n    permission\n    ownershipType\n  }\n  ownership {\n    userId\n    projectId\n  }\n}\n"
   }
 };
 })();

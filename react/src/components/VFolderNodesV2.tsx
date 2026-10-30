@@ -21,7 +21,10 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useSuspenseTanQuery, useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
+import {
+  useCurrentUserProjectRoles,
+  useEffectiveAdminRole,
+} from '../hooks/useCurrentUserProjectRoles';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { ProjectContextOrNull } from '../types/projectContext';
 import DeleteForeverVFolderModalV2 from './DeleteForeverVFolderModalV2';
@@ -517,6 +520,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [currentUser] = useCurrentUserInfo();
+  const { isSuperAdmin, projectAdminIds } = useCurrentUserProjectRoles();
   const [inviteVFolder, setInviteVFolder] = useState<VFolderNodeInList | null>(
     null,
   );
@@ -697,7 +701,16 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
                   noDeployTooltip={noDeployTooltip}
                   disableProjectFolderActions={disableProjectFolderActions}
                   onShare={() => {
-                    vfolder?.ownership?.userId === currentUser?.uuid
+                    // Whoever may edit the folder's sharing (its owner, a
+                    // superadmin, an admin of its project) gets the share
+                    // modal; a recipient sees their own share.
+                    const ownership = vfolder?.ownership;
+                    const canManageShares =
+                      ownership?.userId === currentUser?.uuid ||
+                      isSuperAdmin ||
+                      (!!ownership?.projectId &&
+                        projectAdminIds.includes(ownership.projectId));
+                    canManageShares
                       ? setInviteVFolder(vfolder)
                       : setCurrentSharedVFolder(vfolder);
                   }}

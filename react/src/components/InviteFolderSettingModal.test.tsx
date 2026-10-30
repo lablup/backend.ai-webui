@@ -91,6 +91,7 @@ const PENDING_USER_SHARE_ID = '01a12f7f-3c1e-7a4b-9d02-5e6f7a8b9c0d';
 const RESOLVERS = {
   VFolder: () => ({
     id: VFOLDER_GLOBAL_ID,
+    entityId: VFOLDER_ID,
     metadata: { name: 'team-datasets', usageMode: 'GENERAL' },
     accessControl: { permission: 'READ_ONLY', ownershipType: 'USER' },
     // The current user owns the folder, so the settings card offers Edit.
@@ -125,7 +126,7 @@ const RESOLVERS = {
           recipientEntityId: null,
           recipientEmail: 'nobody@example.com',
           recipientEntity: null,
-          permissions: ['READ', 'UPDATE', 'SOFT_DELETE'],
+          permissions: ['CREATE', 'READ', 'UPDATE', 'SOFT_DELETE'],
           status: 'PENDING',
         },
       },
@@ -564,7 +565,7 @@ describe('InviteFolderSettingModal (#10295)', () => {
       targetEntityType: 'vfolder',
       targetEntityId: VFOLDER_ID,
       recipient: { userId: USER2_ID },
-      permissions: ['READ', 'UPDATE', 'SOFT_DELETE'],
+      permissions: ['CREATE', 'READ', 'UPDATE', 'SOFT_DELETE'],
     });
   });
 
@@ -641,34 +642,32 @@ describe('InviteFolderSettingModal (#10295)', () => {
     expect(saveButton).toBeEnabled();
     await user.click(saveButton);
 
-    // The legacy update-options endpoint still owns the folder permission.
-    await waitFor(() =>
-      expect(mockRequest).toHaveBeenCalledWith({
-        method: 'POST',
-        url: `/folders/${VFOLDER_ID}/update-options`,
-        body: { permission: 'rw' },
-      }),
-    );
-    // Then the folder record is re-read, and the card follows the store.
+    // `updateVfolderV2` answers with the folder, and the card follows the
+    // store.
     await waitFor(() =>
       expect(operationNames(environment)).toContain(
-        'FolderDefaultMountPermissionModalRefreshQuery',
+        'FolderDefaultMountPermissionModalUpdateMutation',
       ),
     );
-    const refresh = environment.mock
+    const update = environment.mock
       .getAllOperations()
       .find(
         (operation) =>
           operation.request.node.params.name ===
-          'FolderDefaultMountPermissionModalRefreshQuery',
+          'FolderDefaultMountPermissionModalUpdateMutation',
       )!;
+    expect(update.request.variables).toEqual({
+      vfolderId: VFOLDER_ID,
+      input: { permission: 'READ_WRITE' },
+    });
     await act(async () => {
       environment.mock.resolve(
-        refresh,
-        MockPayloadGenerator.generate(refresh, {
+        update,
+        MockPayloadGenerator.generate(update, {
           ...RESOLVERS,
           VFolder: () => ({
             id: VFOLDER_GLOBAL_ID,
+            entityId: VFOLDER_ID,
             accessControl: { permission: 'READ_WRITE', ownershipType: 'USER' },
           }),
         }),
