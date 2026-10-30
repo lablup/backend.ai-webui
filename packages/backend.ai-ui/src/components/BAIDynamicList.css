@@ -27,14 +27,6 @@
   font-weight: var(--font-weight-normal);
 }
 
-/* A small square, centred on the input line, so the hover fill surrounds
-   the minus icon and its edge lines up with the full-width Add button. */
 .bai-dynamic-list__remove-slot {
-  inline-size: var(--size-element-sm);
-}
-
-.bai-dynamic-list__remove {
-  margin-block-start: calc(
-    (var(--size-element-md) - var(--size-element-sm)) / 2
-  );
+  width: var(--size-element-md);
 }
