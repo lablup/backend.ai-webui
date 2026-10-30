@@ -63,7 +63,7 @@ const PendingReasons: React.FC<{
           scope_id: $scopeId
           filter: $filter
           first: $first
-        ) @skip(if: $skip) {
+        ) @skip(if: $skip) @catch(to: RESULT) {
           edges {
             node {
               row_id
@@ -82,10 +82,12 @@ const PendingReasons: React.FC<{
     },
     { fetchPolicy: 'store-and-network', fetchKey },
   );
+  // A failed lookup leaves every reason unknown instead of failing the card.
+  const connection = data.compute_session_nodes;
   return children(
     Object.fromEntries(
       filterOutNullAndUndefined(
-        data.compute_session_nodes?.edges.map((edge) => edge?.node),
+        connection?.ok ? connection.value?.edges.map((edge) => edge?.node) : [],
       ).map((node) => [
         String(node.row_id),
         pendingReason(node.status_info, node.status_data),
@@ -177,13 +179,14 @@ const PendingSessionTable: React.FC<{
     setTablePaginationOption,
   } = useBAIPaginationOptionState({ current: 1, pageSize: PAGE_SIZE });
   const deferredOffset = useDeferredValue(baiPaginationOption.offset);
+  const deferredLimit = useDeferredValue(baiPaginationOption.limit);
 
   return (
     <SessionList
       scope={scope}
       filter={inResourceGroups(PENDING_FILTER, resourceGroups)}
       orderBy={ORDER_BY}
-      limit={baiPaginationOption.limit}
+      limit={deferredLimit}
       offset={deferredOffset}
       fetchKey={fetchKey}
     >
@@ -197,7 +200,10 @@ const PendingSessionTable: React.FC<{
             <BAISessionNodesV2
               sessionsFrgmt={rows}
               disableSorter
-              loading={deferredOffset !== baiPaginationOption.offset}
+              loading={
+                deferredOffset !== baiPaginationOption.offset ||
+                deferredLimit !== baiPaginationOption.limit
+              }
               customizeColumns={(columns) => [
                 ...columns
                   .filter((column) => visibleColumns.has(String(column.key)))
@@ -209,16 +215,19 @@ const PendingSessionTable: React.FC<{
                           render: (
                             _value: unknown,
                             session: SessionV2InList,
-                          ) => (
-                            <BAILink
-                              type="hover"
-                              onClick={() =>
-                                openSessionDetail(session.entityId)
-                              }
-                            >
-                              {session.metadata?.name ?? '-'}
-                            </BAILink>
-                          ),
+                          ) =>
+                            openSessionDetail ? (
+                              <BAILink
+                                type="hover"
+                                onClick={() =>
+                                  openSessionDetail(session.entityId)
+                                }
+                              >
+                                {session.metadata?.name ?? '-'}
+                              </BAILink>
+                            ) : (
+                              (session.metadata?.name ?? '-')
+                            ),
                         }
                       : column.key === 'elapsedTime'
                         ? {
@@ -232,6 +241,8 @@ const PendingSessionTable: React.FC<{
                   key: 'reason',
                   title: t('dashboard.card.Reason'),
                   render: (_value: unknown, session: SessionV2InList) => {
+                    // Absent: the lookup did not return the session (failed, or not readable).
+                    if (!(session.entityId in reasons)) return '-';
                     const reason = reasons[session.entityId];
                     return reason ? (
                       <BAIText ellipsis={{ tooltip: reason }}>{reason}</BAIText>

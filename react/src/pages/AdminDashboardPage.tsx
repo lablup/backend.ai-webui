@@ -35,16 +35,22 @@ const AdminDashboardPageContent: React.FC<AdminDashboardPageProps> = ({
         isRefetching={false}
         queryRefs={{}}
       />
-      {/* Session names in the cards open the drawer through `sessionDetail`. */}
-      <SessionDetailAndContainerLogOpenerLegacy project={project} />
+      {/* TODO(FR-2944): open the session detail here once a v2 detail flow exists; the v1
+          compute_session_node path gives a project admin no rights on other members' sessions. */}
+      {page === 'admin' ? (
+        <SessionDetailAndContainerLogOpenerLegacy project={project} />
+      ) : null}
     </>
   );
 };
 
-const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ page }) => (
-  <DashboardRefreshProvider>
-    <AdminDashboardPageContent page={page} />
-  </DashboardRefreshProvider>
-);
+const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ page }) => {
+  'use memo';
+  return (
+    <DashboardRefreshProvider>
+      <AdminDashboardPageContent page={page} />
+    </DashboardRefreshProvider>
+  );
+};
 
 export default AdminDashboardPage;

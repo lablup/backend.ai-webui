@@ -170,7 +170,8 @@ const SchedulingFailures: React.FC<{
               title: t('session.SessionName'),
               render: (_value: unknown, history: { id: string }) => {
                 const session = rowById.get(history.id)?.session;
-                return session ? (
+                if (!session) return '-';
+                return openSessionDetail ? (
                   <BAILink
                     type="hover"
                     onClick={() => openSessionDetail(session.entityId)}
@@ -178,7 +179,7 @@ const SchedulingFailures: React.FC<{
                     {session.metadata.name}
                   </BAILink>
                 ) : (
-                  '-'
+                  session.metadata.name
                 );
               },
             },

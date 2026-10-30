@@ -8,58 +8,58 @@ import * as _ from 'lodash-es';
 
 export const DASHBOARD_WRITE_DELAY_MS = 800;
 
+export type PageConfigUpdate = (
+  config: DashboardPageConfig,
+) => DashboardPageConfig;
+
+/** One page's queued change, replayed on the server value at write time. */
+export interface PageWrite {
+  /** The edits made since the last write, oldest first. */
+  update: PageConfigUpdate;
+  /** Turns the stored value (possibly absent or corrupt) into a page config. */
+  resolve: (stored: unknown) => DashboardPageConfig;
+  /** What the screen shows for the page until the write settles. */
+  optimistic: DashboardPageConfig;
+}
+
 export interface DashboardWriter {
-  /** Queues a page's boards behind the debounce. Rejects when the write fails. */
-  save: (page: PanelPage, config: DashboardPageConfig) => Promise<void>;
-  /**
-   * Upserts the board migrated from localStorage (already flagged by
-   * `resolveBoards`) at most once per page, and
-   * calls `clearLocal` only after the upsert succeeded. Null when the page
-   * already started its migration.
-   */
-  migrate: (
-    page: PanelPage,
-    migration: DashboardPageConfig,
-    clearLocal: () => void,
-  ) => Promise<void> | null;
+  /** Queues a page's change behind the debounce. Rejects when the write fails. */
+  save: (page: PanelPage, write: PageWrite) => Promise<void>;
   flush: () => Promise<void>;
 }
 
-/** Every written page config carries the flag, so the migration never runs again. */
-export const withMigratedFlag = (
-  config: DashboardPageConfig,
-): DashboardPageConfig => ({ ...config, migrated: true });
-
-/** The flagged config `update` produces, or null when it changes nothing worth a write. */
+/** The config `update` produces, or null when it changes nothing worth a write. */
 export const applyPageUpdate = (
   config: DashboardPageConfig,
-  update: (config: DashboardPageConfig) => DashboardPageConfig,
+  update: PageConfigUpdate,
 ): DashboardPageConfig | null => {
-  const next = withMigratedFlag(update(config));
-  return _.isEqual(next, withMigratedFlag(config)) ? null : next;
+  const next = update(config);
+  return _.isEqual(next, config) ? null : next;
 };
+
+/** A newer change on top of a queued one: both updates run, the newer screen state wins. */
+export const combinePageWrites = (
+  previous: PageWrite,
+  next: PageWrite,
+): PageWrite => ({
+  ...next,
+  update: (config) => next.update(previous.update(config)),
+});
 
 export const createDashboardWriter = ({
   write,
   delay = DASHBOARD_WRITE_DELAY_MS,
 }: {
-  write: (batch: WriteBatch<PanelPage, DashboardPageConfig>) => Promise<void>;
+  write: (batch: WriteBatch<PanelPage, PageWrite>) => Promise<void>;
   delay?: number;
 }): DashboardWriter => {
-  const queue = createWriteQueue<PanelPage, DashboardPageConfig>({
+  const queue = createWriteQueue<PanelPage, PageWrite>({
     write,
     delay,
+    combine: combinePageWrites,
   });
-  const startedMigrations = new Set<PanelPage>();
   return {
-    save: (page, config) => queue.schedule(page, config),
-    migrate: (page, migration, clearLocal) => {
-      if (startedMigrations.has(page)) return null;
-      startedMigrations.add(page);
-      return queue
-        .schedule(page, migration, { immediate: true })
-        .then(clearLocal, () => {});
-    },
+    save: (page, pageWrite) => queue.schedule(page, pageWrite),
     flush: queue.flush,
   };
 };

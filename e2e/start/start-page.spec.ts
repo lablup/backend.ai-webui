@@ -256,7 +256,7 @@ test.describe(
         await expect(page).toHaveURL(/sessionType.*batch|batch.*sessionType/);
       });
 
-      test('Admin can navigate to the Deployments page from the "Start Deployment" card', async ({
+      test('Admin can open the Create Deployment modal from the "Start Deployment" card', async ({
         page,
       }) => {
         const startPage = new StartPage(page);
@@ -279,9 +279,11 @@ test.describe(
         // from "Start Service").
         await startPage.getCreateDeploymentButton(card).click();
 
-        // 3. Verify the URL changes to /deployments (this card no longer
-        // routes through /service/start).
-        await expect(page).toHaveURL(/\/deployments/);
+        // 3. The card opens the Create Deployment modal in place of navigating.
+        await expect(
+          page.getByRole('dialog').filter({ hasText: 'Create Deployment' }),
+        ).toBeVisible();
+        await expect(page).not.toHaveURL(/\/deployments/);
       });
     });
 

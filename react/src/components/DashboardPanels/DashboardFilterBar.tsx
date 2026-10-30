@@ -4,6 +4,7 @@
  */
 import DashboardEditToggleButton from '../DashboardEditToggleButton';
 import {
+  useDashboardIsRefreshing,
   useDashboardLastRefreshAt,
   useDashboardRefreshScheduler,
 } from './DashboardRefreshContext';
@@ -36,6 +37,8 @@ const DashboardFilterBar: React.FC<DashboardFilterBarProps> = ({
   'use memo';
   const scheduler = useDashboardRefreshScheduler();
   const lastRefreshAt = useDashboardLastRefreshAt();
+  // While a card is still loading the button spins and holds the next tick back.
+  const isCardRefreshing = useDashboardIsRefreshing();
   const refreshMs = refreshToMs(filters.refresh);
   useEffect(() => {
     scheduler?.setIntervalMs(refreshMs);
@@ -58,7 +61,7 @@ const DashboardFilterBar: React.FC<DashboardFilterBarProps> = ({
       </BAIFlex>
       <BAIFlex direction="row" align="center" gap="xs">
         <BAIFetchKeyButton
-          loading={isRefetching}
+          loading={isRefetching || isCardRefreshing}
           value=""
           showLastLoadTime
           lastLoadTime={

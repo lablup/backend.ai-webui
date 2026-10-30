@@ -63,6 +63,7 @@ export class RefreshScheduler {
   private readonly lastRefreshAt = new Map<string, number>();
   private readonly listeners = new Set<() => void>();
   private readonly hidden = new Set<string>();
+  private readonly pending = new Set<string>();
   private readonly now: () => number;
   private lastTickAt: number;
   private intervalMs: number | null = null;
@@ -89,11 +90,13 @@ export class RefreshScheduler {
     this.intervalMs = intervalMs;
   }
 
-  /** Refreshes every visible subscriber. */
+  /** Refreshes every visible subscriber whose previous refresh has finished. */
   tick() {
     const at = this.now();
     this.subscribers.forEach((subscriber, id) => {
-      if (!this.hidden.has(id)) this.refresh(id, subscriber, at, false);
+      if (!this.hidden.has(id) && !this.pending.has(id)) {
+        this.refresh(id, subscriber, at, false);
+      }
     });
     this.markTicked(at);
   }
@@ -122,11 +125,23 @@ export class RefreshScheduler {
     if (subscriber) this.refreshIfDue(id, subscriber, this.now());
   }
 
+  /** Marks a subscriber's refresh as in flight until reported otherwise. */
+  setPending(id: string, pending: boolean) {
+    if (pending === this.pending.has(id)) return;
+    if (pending) this.pending.add(id);
+    else this.pending.delete(id);
+    this.notify();
+  }
+
+  isRefreshing() {
+    return this.pending.size > 0;
+  }
+
   getLastTickAt() {
     return this.lastTickAt;
   }
 
-  /** Notifies after every tick or manual refresh. */
+  /** Notifies after every tick or manual refresh, and when the in-flight state changes. */
   subscribe(listener: () => void): () => void {
     this.listeners.add(listener);
     return () => {
@@ -154,6 +169,10 @@ export class RefreshScheduler {
 
   private markTicked(at: number) {
     this.lastTickAt = at;
+    this.notify();
+  }
+
+  private notify() {
     this.listeners.forEach((listener) => listener());
   }
 }

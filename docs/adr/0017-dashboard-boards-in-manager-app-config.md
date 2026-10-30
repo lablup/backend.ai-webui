@@ -7,7 +7,8 @@
 - 대시보드 page의 보드는 [panel catalog](#용어)의 key와 배치만 담은 JSON이다. 카드 하나하나는 `panelCatalog.tsx`의 `PanelDefinition`이 정의하고, 보드는 그 key를 `PersistedPanelV2` 목록으로 가리킨다.
 - 사용자의 보드는 매니저 app config `userConfig`의 `dashboard` key에 page마다 `{ boards, active }`로 저장한다. 기본 보드([role template](#용어))는 `domainConfig.dashboardTemplates`, 그다음 `publicConfigByDomain[<domain>].dashboardTemplates`, 그다음 코드의 기본값 순서로 고른다.
 - `userConfig.dashboard`는 사용자 자신의 [USER fragment](#용어)에만, `useDashboardBoards` 한 곳에서만 쓴다. template은 이 key에 두지 않는다.
-- 브라우저 localStorage에 있던 보드는 page마다 한 번 `userConfig.dashboard`로 옮기고, upsert가 성공한 뒤에만 localStorage key를 지운다.
+- 브라우저 localStorage에 있던 보드는 옮기지 않는다. 저장된 보드가 없는 page는 role template에서 시작한다.
+- 쓰기는 이 탭이 캐시한 값이 아니라 서버가 지금 가진 값 위에 변경을 다시 적용한다.
 - 사용자 정의 패널은 실험 기능 flag 없이 catalog의 `kind: 'preset'` 항목으로 늘 켜져 있다.
 
 ## Context
@@ -30,19 +31,16 @@ flowchart LR
     domain["domainConfig<br/>dashboardTemplates"]
     public["publicConfigByDomain.domain<br/>dashboardTemplates"]
   end
-  local["localStorage<br/>dashboard_board.page, legacy keys"]
   hook["useDashboardBoards<br/>resolveBoards, optimistic atom"]
   queue["dashboardWriter<br/>debounce 800ms, 한 번에 하나"]
   board["DashboardPanelBoard<br/>useDashboardBoard, DashboardBoardTabs,<br/>DashboardBoardSection"]
   user -- "useMyAppConfig merged view" --> hook
   domain -- "useDomainAppConfig" --> hook
   public -- "usePublicDomainAppConfig" --> hook
-  local -- "보드가 저장되기 전 한 번 읽기" --> hook
   hook -- "active board, template, update" --> board
   board -- "update(config => next)" --> hook
-  hook -- "page config" --> queue
-  queue -- "useUpdateMyUserAppConfig dashboard.page" --> user
-  queue -- "migration upsert 성공 후 삭제" --> local
+  hook -- "update 함수, optimistic 값" --> queue
+  queue -- "useUpdateMyUserAppConfig dashboard.page<br/>다시 읽은 값 위에 update 적용" --> user
 ```
 
 ### 쓰기 상태
@@ -53,6 +51,7 @@ stateDiagram-v2
   Server --> Pending: update가 atom에 page config를 넣음
   Pending --> Pending: 800ms 안의 update가 값을 바꿈
   Pending --> Server: upsert와 refetch 성공, atom 값이 쓴 값과 같아 지움
+  Pending --> Pending: upsert 성공, refetch 실패, atom 값을 남김
   Pending --> Server: upsert 실패, atom을 지우고 오류 message
 ```
 
@@ -77,11 +76,10 @@ stateDiagram-v2
 
 - **Key shape**: `userConfig.dashboard`는 `DashboardConfig`(`Partial<Record<PanelPage, DashboardPageConfig>>`)이다. `project`, `projectAdmin`, `admin` key가 모두 아래 `DashboardPageConfig` 모양을 갖는다.
 
-| field      | type               | 뜻                                         |
-| ---------- | ------------------ | ------------------------------------------ |
-| `boards`   | `DashboardModel[]` | page의 보드. 하나 이상                     |
-| `active`   | `string`           | 열려 있는 보드의 id                        |
-| `migrated` | `true` (optional)  | 이 page config가 한 번이라도 쓰였다는 표시 |
+| field    | type               | 뜻                     |
+| -------- | ------------------ | ---------------------- |
+| `boards` | `DashboardModel[]` | page의 보드. 하나 이상 |
+| `active` | `string`           | 열려 있는 보드의 id    |
 
 - **Read path**: `useDashboardBoards(page, catalog)`(`useDashboardBoards.tsx`)가 `useMyAppConfig('dashboard')`의 page 값을 `sanitizeDashboardPageConfig`로 검사한다. 남는 보드가 없으면 저장값이 없는 것으로 본다.
 - **Single writer**: `userConfig.dashboard`는 `useDashboardBoards`만 `useUpdateMyUserAppConfig(['dashboard', page], …)`로 쓴다. 다른 scope의 `userConfig`에 `dashboard` key를 쓰는 코드는 두지 않는다.
@@ -96,15 +94,15 @@ stateDiagram-v2
 
 ### 4. 쓰기는 debounce하고 한 번에 하나만 보낸다
 
-- **Optimistic state**: `update`는 다음 page config를 jotai atom `optimisticDashboardAtom`에 바로 넣어 화면에 보여 주고, 쓰기를 queue에 넣는다. 쓰기와 `useRefetchMyAppConfig`가 끝나면 atom의 값이 그 쓰기의 값과 같을 때만 지운다. 쓰기가 실패하면 atom을 지워 서버 값으로 돌아가고 오류 message를 띄운다.
-- **Write queue**: `createWriteQueue`(`writeQueue.ts`)가 800ms(`DASHBOARD_WRITE_DELAY_MS`) 안에 들어온 값을 page마다 마지막 값 하나로 합치고, 앞선 쓰기가 끝난 뒤에만 다음 쓰기를 시작한다. 앱 전체에 queue는 `useDashboardBoards.tsx`의 module 하나다. 끌기와 크기 바꾸기는 이벤트마다 쓰기를 보내지 않는다.
-- **Migrated flag**: 모든 쓰기는 page config에 `migrated: true`를 붙인다.
+- **Optimistic state**: `update`는 다음 page config를 jotai atom `optimisticDashboardAtom`에 바로 넣어 화면에 보여 주고, update 함수를 queue에 넣는다. 쓰기와 `useRefetchMyAppConfig`가 끝나면 atom의 값이 그 쓰기가 보여 준 값과 같을 때만 지운다. 쓰기가 실패하면 atom을 지워 서버 값으로 돌아가고 오류 message를 띄운다. 쓰기는 성공하고 refetch만 실패하면 atom을 남긴다.
+- **Replay on the server value**: 쓰기는 page config 값을 보내지 않는다. `useUpdateMyUserAppConfig`가 USER fragment 원본을 다시 읽으면, 그 `dashboard.<page>` 값을 `resolveBoards`로 page config로 만들고 queue에 쌓인 update 함수를 순서대로 적용한 결과를 upsert한다. 다른 탭이나 기기가 저장한 보드와 이름은 이 탭의 변경과 겹치지 않는 한 남는다. 그래서 update 함수는 config만 보고 결과를 정해야 한다. 새 보드의 id 같은 값은 함수 밖에서 정한다.
+- **Write queue**: `createWriteQueue`(`writeQueue.ts`)가 800ms(`DASHBOARD_WRITE_DELAY_MS`) 안에 들어온 update를 page마다 하나로 이어 붙이고(`combinePageWrites`), 앞선 쓰기가 끝난 뒤에만 다음 쓰기를 시작한다. 앱 전체에 queue는 `useDashboardBoards.tsx`의 module 하나다. 끌기와 크기 바꾸기는 이벤트마다 쓰기를 보내지 않는다.
+- **Flush**: 탭이 숨겨질 때(`visibilitychange`가 `hidden`), `pagehide`, 보드가 unmount될 때 queue를 debounce 없이 바로 보낸다.
 
-### 5. localStorage 보드는 한 번 옮긴다
+### 5. localStorage 보드는 옮기지 않는다
 
-- **Source order**: `migrateLocalStorage`가 `dashboard_board.<page>`를 먼저 읽고, 없으면 `project` page는 `dashboard_board_items`와 `custom_dashboard_panels`를, `admin` page는 `admin_dashboard_board_items`를 `migrateLegacyBoard`로 바꾼다. `projectAdmin` page는 #10580 이전의 key가 없어 `dashboard_board.projectAdmin`만 읽는다. `start_page_board_items`는 Start page의 카드라 옮기지 않는다.
-- **When**: `resolveBoards`는 page에 저장된 config가 없고 localStorage 보드가 있을 때만 migration을 만든다. 보드는 template의 id, 이름, 필터 값 위에 localStorage의 `panels`와 `knownKeys`를 얹은 것이다.
-- **Once**: `dashboardWriter.migrate`가 page마다 session에 한 번만 즉시 upsert하고, 성공한 뒤에만 그 page의 localStorage key를 지운다. 실패하면 localStorage는 남고 화면은 localStorage 보드를 계속 보여 주며, 다음 load에서 다시 시도한다. 저장된 config가 있는 page는 다른 브라우저에 localStorage 보드가 남아 있어도 옮기지 않는다.
+- **No migration**: `dashboard_board.<page>`, `dashboard_board_items`, `admin_dashboard_board_items`, `custom_dashboard_panels`는 읽지 않는다. 저장된 보드가 없는 page는 role template을 보여 주고, 사용자가 처음 고칠 때 쓴다.
+- **Why**: 이 localStorage key는 계정이 아니라 브라우저에 묶여 있다. 한 브라우저를 여러 계정이 쓰면, 업그레이드 뒤 대시보드를 먼저 연 계정이 다른 계정의 보드와 사용자 정의 패널을 자기 `userConfig`로 가져가고, 원래 주인은 그 값을 잃는다.
 
 ### 6. 사용자 정의 패널에는 실험 기능 flag가 없다
 
@@ -114,6 +112,8 @@ stateDiagram-v2
 
 - **Templates inside userConfig**: template을 PUBLIC·DOMAIN scope의 `userConfig.dashboard`에 두어 deep-merge로 기본값을 내려준다. 읽는 hook이 하나로 끝난다. 기각한다. deep-merge가 template의 보드 배열과 사용자의 보드 배열을 섞어, 사용자가 지우거나 고친 보드가 template 값과 합쳐진다.
 - **Keep localStorage**: 보드를 localStorage에 둔다. 매니저 왕복이 없다. 기각한다. 브라우저와 기기마다 보드가 다르고, 관리자가 role template을 내려줄 길이 없다.
+- **Migrate localStorage once**: page마다 한 번 localStorage 보드를 `userConfig.dashboard`로 옮긴다. 사용자가 꾸민 배치가 남는다. 기각한다. key가 브라우저 단위라 어느 계정의 보드인지 알 수 없다.
+- **Write the cached value**: 이 탭이 계산한 page config를 그대로 upsert한다. 구현이 단순하다. 기각한다. 오래 열어 둔 탭에서 탭을 한 번 누르기만 해도 다른 기기가 저장한 보드가 사라진다.
 - **Write per event**: 끌기와 크기 바꾸기마다 바로 upsert한다. 구현이 단순하다. 기각한다. 끌기 한 번이 수십 번의 문서 전체 upsert가 되고, 동시에 나간 upsert가 서로의 변경을 지운다.
 - **Dedicated config name**: `dashboard`라는 새 app config 문서를 allow-list에 등록한다. deep-merge 규칙을 따로 정할 수 있다. 기각한다. 매니저의 allow-list 등록이 필요하고, 이미 등록된 세 문서로 충분하다.
 
@@ -121,7 +121,9 @@ stateDiagram-v2
 
 - **Cross-device boards**: 같은 계정은 어느 브라우저와 기기에서나 같은 보드를 본다.
 - **Admin-provided defaults**: superadmin은 template key를 써서 설치나 도메인의 기본 보드를 바꿀 수 있다. 이미 보드를 저장한 사용자는 "기본 배치로 초기화"를 누를 때 새 template을 받는다.
-- **Write latency**: 보드 변경은 최대 800ms 뒤에 서버로 간다. 그 사이에 탭을 닫으면 마지막 변경이 저장되지 않는다.
+- **Write latency**: 보드 변경은 최대 800ms 뒤에 서버로 간다. 탭을 숨기거나 닫으면 바로 보내지만, 브라우저가 페이지를 내리기 전에 요청이 끝난다는 보장은 없다.
+- **Lost local boards**: 업그레이드 전 localStorage에 보드를 꾸며 둔 사용자는 template부터 다시 시작한다.
+- **Same-board edits**: 두 기기가 같은 보드의 패널을 동시에 고치면, 나중에 쓴 쪽의 패널 목록이 남는다. replay는 보드 단위까지만 변경을 나눈다.
 - **Shared queue scope**: queue는 대시보드 쓰기만 줄 세운다. `useRecentSessionHistory`처럼 `userConfig`의 다른 key를 쓰는 기능과 동시에 upsert하면 USER fragment 문서를 두고 경합할 수 있다.
 - **Vars without consumer**: `vars`는 저장되지만, 필터 바(#10582)가 생기기 전까지 카드의 데이터 범위를 바꾸지 않는다.
 - **No pinned projects**: 보드에 프로젝트를 고정하는 field는 두지 않는다. 예전에 저장된 `pinned`는 `sanitizeDashboardModel`이 버린다.

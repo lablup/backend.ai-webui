@@ -193,7 +193,7 @@ describe('catalogFor on the real catalog', () => {
     const entries = catalogFor(PANEL_CATALOG, {
       page: 'project',
       role: 'user',
-      config: { blockList: ['import'], inactiveList: ['job'] },
+      config: { blockList: ['import'], inactiveList: ['session'] },
     });
     const keys = entries.map(({ definition }) => definition.key);
     expect(keys).not.toContain('start.url');
@@ -204,6 +204,16 @@ describe('catalogFor on the real catalog', () => {
       entries.find(({ definition }) => definition.key === 'start.deployment')
         ?.locked,
     ).toBe(true);
+  });
+
+  it('drops every Start item when the retired Start page is blocked', () => {
+    const keys = keysFor({
+      page: 'project',
+      role: 'user',
+      config: { blockList: ['start'], enableModelFolders: true },
+    });
+    expect(keys.filter((key) => key.startsWith('start.'))).toEqual([]);
+    expect(keys).toContain('mySession');
   });
 
   it('hides the resource group total from a regular user and locks it for an admin when agents are hidden', () => {

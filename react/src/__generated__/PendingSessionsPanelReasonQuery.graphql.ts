@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f5175f2c7bd1ab3220f34df721a908c3>>
+ * @generated SignedSource<<ea488334eb263514a7711d2238d5c077>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+import { Result } from "relay-runtime";
 export type PendingSessionsPanelReasonQuery$variables = {
   filter: string;
   first: number;
@@ -16,7 +17,7 @@ export type PendingSessionsPanelReasonQuery$variables = {
   skip: boolean;
 };
 export type PendingSessionsPanelReasonQuery$data = {
-  readonly compute_session_nodes?: {
+  readonly compute_session_nodes?: Result<{
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly row_id: string | null | undefined;
@@ -24,7 +25,7 @@ export type PendingSessionsPanelReasonQuery$data = {
         readonly status_info: string | null | undefined;
       } | null | undefined;
     } | null | undefined>;
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type PendingSessionsPanelReasonQuery = {
   response: PendingSessionsPanelReasonQuery$data;
@@ -108,40 +109,44 @@ return {
         "passingValue": false,
         "selections": [
           {
-            "alias": null,
-            "args": (v4/*: any*/),
-            "concreteType": "ComputeSessionConnection",
-            "kind": "LinkedField",
-            "name": "compute_session_nodes",
-            "plural": false,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "ComputeSessionEdge",
-                "kind": "LinkedField",
-                "name": "edges",
-                "plural": true,
-                "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "ComputeSessionNode",
-                    "kind": "LinkedField",
-                    "name": "node",
-                    "plural": false,
-                    "selections": [
-                      (v5/*: any*/),
-                      (v6/*: any*/),
-                      (v7/*: any*/)
-                    ],
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
+            "kind": "CatchField",
+            "field": {
+              "alias": null,
+              "args": (v4/*: any*/),
+              "concreteType": "ComputeSessionConnection",
+              "kind": "LinkedField",
+              "name": "compute_session_nodes",
+              "plural": false,
+              "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "ComputeSessionEdge",
+                  "kind": "LinkedField",
+                  "name": "edges",
+                  "plural": true,
+                  "selections": [
+                    {
+                      "alias": null,
+                      "args": null,
+                      "concreteType": "ComputeSessionNode",
+                      "kind": "LinkedField",
+                      "name": "node",
+                      "plural": false,
+                      "selections": [
+                        (v5/*: any*/),
+                        (v6/*: any*/),
+                        (v7/*: any*/)
+                      ],
+                      "storageKey": null
+                    }
+                  ],
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            },
+            "to": "RESULT"
           }
         ]
       }
@@ -223,6 +228,6 @@ return {
 };
 })();
 
-(node as any).hash = "77bdc38b0ac9715c9f068ca54cd08559";
+(node as any).hash = "87d450d91d070233597f8b853892e447";
 
 export default node;

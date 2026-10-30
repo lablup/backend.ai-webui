@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<90fc2cf0f27bc4e2bf451a0f41d447fd>>
+ * @generated SignedSource<<ebe894c0a1aee869a8482bc60d6a8166>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,6 +14,7 @@ export type ProjectUsageBucketFilter = {
   NOT?: ReadonlyArray<ProjectUsageBucketFilter> | null | undefined;
   OR?: ReadonlyArray<ProjectUsageBucketFilter> | null | undefined;
   domainName?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   periodEnd?: DateFilter | null | undefined;
   periodStart?: DateFilter | null | undefined;
   projectId?: UUIDFilter | null | undefined;

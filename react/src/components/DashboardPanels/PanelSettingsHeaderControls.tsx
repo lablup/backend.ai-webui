@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useResourceGroupsForCurrentProject } from '../../hooks/useCurrentProject';
 import { resourceGroupScopeOf } from './dashboardScope';
 import type { PanelSettingOverride } from './panelSettingOverrides';
 import {
@@ -20,6 +21,7 @@ import {
   BAIScopedResourceGroupSelect,
   BAISelector,
 } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import { RotateCcw } from 'lucide-react';
 import React, { Suspense, createContext, use } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -47,6 +49,8 @@ const PanelSettingsHeaderControls: React.FC = () => {
   const { t } = useTranslation();
   const settings = use(PanelHeaderSettingsContext);
   const filters = useDashboardFilterContext();
+  const { sftpResourceGroups } = useResourceGroupsForCurrentProject();
+  const excludedResourceGroups = _.compact(sftpResourceGroups);
   if (!settings || !filters) return null;
   const { definition, saved, effective, overridden, onChange, onReset } =
     settings;
@@ -89,6 +93,11 @@ const PanelSettingsHeaderControls: React.FC = () => {
               label={t('general.ResourceGroup')}
               isLabelHidden
               scope={resourceGroupScopeOf(filters.scope)}
+              filter={
+                _.isEmpty(excludedResourceGroups)
+                  ? undefined
+                  : { name: { notIn: excludedResourceGroups } }
+              }
               value={resourceGroup}
               placeholder={defaultResourceGroupLabel}
               allowClear={!!resourceGroup}

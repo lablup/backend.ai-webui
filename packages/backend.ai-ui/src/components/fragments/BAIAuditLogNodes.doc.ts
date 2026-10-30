@@ -8,7 +8,7 @@ export const docs = {
   keywords: ['audit', 'log', 'history', 'activity', 'event', 'table', 'trail'],
   usage: {
     description:
-      'The shared audit-log table used by the session, vfolder and model-deployment detail surfaces. It reads the plural Relay fragment `BAIAuditLogNodesFragment` on `AuditLogV2`, so the caller spreads that fragment on each audit-log node in its own query and passes the array as `auditLogFrgmt`; null and undefined entries are dropped and rows are keyed by `id`. Up to eleven columns are built internally — time, operation, status (a BAIAuditLogStatusBadge), description, duration, triggered-by and client IP are visible by default, while entity type, entity id, request id and action id ship as `defaultHidden`. The client IP column is rendered only when the connected manager is 26.9.0 or later, so the component must sit under BAIClientProvider; the value is shown exactly as the manager returns it, since the server applies the client IP masking policy, so the cell may hold a masked address or `-` when the policy records none. Filtering, pagination and refetch stay in the consuming surface; the component renders BAITable with resizing on and size "small", and every BAITable prop except `dataSource`, `columns` and `onChangeOrder` passes through.',
+      'The shared audit-log table used by the session, vfolder and model-deployment detail surfaces. It reads the plural Relay fragment `BAIAuditLogNodesFragment` on `AuditLogV2`, so the caller spreads that fragment on each audit-log node in its own query and passes the array as `auditLogFrgmt`; null and undefined entries are dropped and rows are keyed by `id`. Up to twelve columns are built internally — time, action (the action name translated through `comp:BAIAuditLogNodes.ActionName_<actionName>`, or the raw name when no key exists), operation, result (the `status` field shown as a translated outcome through `comp:BAIAuditLogNodes.Result*` — `SUCCESS` as Success, `ERROR` as Failed in red, `DENIED` as Denied, `UNKNOWN` as Unknown, `RUNNING` as Running — or the raw value for anything else; the column key stays `status`, matching the `STATUS` order field), description (shown only on `ERROR` and `DENIED` rows, `-` otherwise), duration (the timedelta string the manager sends, parsed by `parseTimedelta` and shown compactly by `formatCompactDuration` — `123 ms`, `1.23 s`, `1 h 2 min 3 s` — or the raw string when it does not parse), triggered-by and client IP are visible by default, while entity type, entity id, request id and action id ship as `defaultHidden`. The client IP column is rendered only when the connected manager is 26.9.0 or later, so the component must sit under BAIClientProvider; the value is shown exactly as the manager returns it, since the server applies the client IP masking policy, so the cell may hold a masked address or `-` when the policy records none. Filtering, pagination and refetch stay in the consuming surface; the component renders BAITable with resizing on and size "small", and every BAITable prop except `dataSource`, `columns` and `onChangeOrder` passes through.',
     bestPractices: [
       {
         guidance: true,
@@ -28,7 +28,7 @@ export const docs = {
       {
         guidance: false,
         description:
-          'Expect duration, description or the id columns to sort — only time, operation and status carry a sorter.',
+          'Expect duration, description or the id columns to sort — only time, action, operation and result carry a sorter.',
       },
       {
         guidance: false,
@@ -49,7 +49,7 @@ export const docs = {
       name: 'disableSorter',
       type: 'boolean',
       description:
-        'Strips the `sorter` flag from every base column, making the time, operation and status headers non-sortable.',
+        'Strips the `sorter` flag from every base column, making the time, action, operation and result headers non-sortable.',
     },
     {
       name: 'customizeColumns',
@@ -61,7 +61,7 @@ export const docs = {
       name: 'onChangeOrder',
       type: '(order: (typeof availableAuditLogSorterValues)[number] | null) => void',
       description:
-        'Called with the active sort key ("createdAt", "operation", "status", or their "-" prefixed descending form), or null when sorting is cleared.',
+        'Called with the active sort key ("createdAt", "actionName", "operation", "status", or their "-" prefixed descending form), or null when sorting is cleared. `convertToOrderBy` maps "actionName" to the `ACTION_NAME` order field.',
     },
   ],
   examples: [

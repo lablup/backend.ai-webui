@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7e2a3664d04d7366a8881327561ac8ae>>
+ * @generated SignedSource<<fec6ad002bc1d9f302e6a295e6b279f8>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,6 +17,7 @@ export type LoginHistoryFilter = {
   OR?: ReadonlyArray<LoginHistoryFilter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   result?: LoginHistoryResultFilter | null | undefined;
 };
 export type StringFilter = {
@@ -52,6 +53,12 @@ export type DateTimeFilter = {
   before?: string | null | undefined;
   equals?: string | null | undefined;
   notEquals?: string | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
 };
 export type FailedLoginsPanelQuery$variables = {
   failed: LoginHistoryFilter;

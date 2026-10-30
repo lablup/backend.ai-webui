@@ -35,11 +35,16 @@ interface FailedAssignment {
   message: string;
 }
 
+// `BulkAssignRoleError` carries no reason code, so "already holds the role" is
+// recognised by the manager's message; anything unrecognised stays a failure.
+const ALREADY_ASSIGNED_MESSAGE = /is already assigned to user/;
+const MAX_SKIPPED_NAMES = 3;
+
 /**
- * Assigns users to a role via `adminBulkAssignRole` (FR-3357). A refused user
- * rejects the whole request, so on failure the modal stays open with every
- * selected user still selected (marked with an error border) and the shared
- * `BAIBulkErrorModal` lists each of them — pressing Assign again retries.
+ * Assigns users to a role via `adminBulkAssignRole` (FR-3357). Users who
+ * already hold the role are skipped with an info toast. On failure the modal
+ * stays open with only the failed users selected (error border) and
+ * `BAIBulkErrorModal` lists each of them.
  */
 const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
   roleId,
@@ -59,6 +64,9 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
   const [failedAssignments, setFailedAssignments] = useState<
     FailedAssignment[]
   >([]);
+  // Some assignments reached the backend, so the parent must refetch on
+  // close even if the user then cancels.
+  const [hasAssignedAny, setHasAssignedAny] = useState(false);
   // Labels of every user selected so far, for failure rows — the options
   // list only holds the current search results, so failed users may no
   // longer be in it when the failure arrives.
@@ -74,6 +82,10 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
             grantedBy
             grantedAt
           }
+          failed {
+            userId
+            message
+          }
         }
       }
     `);
@@ -81,27 +93,75 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
   const userLabelOf = (userId: string) =>
     userLabelsRef.current.get(userId) ?? userId;
 
+  const notifySkipped = (userIds: string[]) => {
+    const labels = userIds.map(userLabelOf);
+    const shown = labels.slice(0, MAX_SKIPPED_NAMES).join(', ');
+    const rest = labels.length - MAX_SKIPPED_NAMES;
+    message.info(
+      t('rbac.UsersAlreadyAssignedSkipped', {
+        count: labels.length,
+        names: rest > 0 ? `${shown} +${rest}` : shown,
+      }),
+    );
+  };
+
+  // Keep only the failed users selected so the next Assign retries them.
+  const markFailures = (failures: FailedAssignment[]) => {
+    const failedIds = failures.map((failure) => failure.key);
+    setSelectedUserIds(failedIds);
+    formRef.current?.setFieldsValue({ userIds: failedIds });
+    // Empty-string error: error status (red border) without printing a
+    // message under the select — details live in the error modal. Changing
+    // the selection revalidates the `required` rule and clears it.
+    formRef.current?.setFields([{ name: 'userIds', errors: [''] }]);
+    message.error(t('rbac.UserAssignmentsPartialFailureDescription'));
+    setFailedAssignments(failures);
+  };
+
   const handleAssign = async () => {
     setIsAssigning(true);
     try {
-      await bulkAssignRole({
+      const result = await bulkAssignRole({
         input: {
           userIds: selectedUserIds,
           roleId,
           ...(projectId ? { projectId } : {}),
         },
       });
-      message.success(t('rbac.UsersAssigned'));
-      onRequestClose(true);
+      const [skipped, failed] = _.partition(
+        result.adminBulkAssignRole?.failed ?? [],
+        (failure) => ALREADY_ASSIGNED_MESSAGE.test(failure.message),
+      );
+      const hasAssigned = !_.isEmpty(result.adminBulkAssignRole?.assigned);
+      if (!_.isEmpty(skipped)) {
+        notifySkipped(skipped.map((failure) => failure.userId));
+      }
+      if (_.isEmpty(failed)) {
+        // Only a save where every user was skipped changed nothing.
+        const changedNothing = !hasAssigned && !_.isEmpty(skipped);
+        if (!changedNothing) {
+          message.success(t('rbac.UsersAssigned'));
+        }
+        onRequestClose(!changedNothing || hasAssignedAny);
+        return;
+      }
+      if (hasAssigned) {
+        setHasAssignedAny(true);
+      }
+      failed.forEach((failure) =>
+        logger.error('Failed to assign user', failure.message),
+      );
+      markFailures(
+        failed.map((failure) => ({
+          key: failure.userId,
+          userLabel: userLabelOf(failure.userId),
+          message: failure.message,
+        })),
+      );
     } catch (error) {
       // A rejected request counts every requested user as failed.
       logger.error('Failed to bulk assign role', error);
-      // Empty-string error: error status (red border) without printing a
-      // message under the select — details live in the error modal. Changing
-      // the selection revalidates the `required` rule and clears it.
-      formRef.current?.setFields([{ name: 'userIds', errors: [''] }]);
-      message.error(t('rbac.UserAssignmentsPartialFailureDescription'));
-      setFailedAssignments(
+      markFailures(
         selectedUserIds.map((userId) => ({
           key: userId,
           userLabel: userLabelOf(userId),
@@ -147,7 +207,7 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
             logger.debug(e);
           });
       }}
-      onCancel={() => onRequestClose(false)}
+      onCancel={() => onRequestClose(hasAssignedAny)}
       {...baiModalProps}
     >
       <Form ref={formRef} layout="vertical">
@@ -183,7 +243,7 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
         </Suspense>
       </Form>
       {/* Per-user errors of a failed assignment (FR-3357). The assign modal
-          (and the selection) stays open behind it for a retry. */}
+          (and the failed selection) stays open behind it. */}
       <BAIBulkErrorModal<FailedAssignment>
         open={!_.isEmpty(failedAssignments)}
         alertDescription={t('rbac.UserAssignmentsPartialFailureDescription')}

@@ -3,7 +3,14 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { DonutRow } from '../memberCards/memberCardData';
-import './charts.css';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableHeaderCell,
+  TableRow,
+} from '@lablup/ui-common/Table';
 import { Text } from '@lablup/ui-common/Text';
 import {
   RadialChart,
@@ -12,8 +19,10 @@ import {
   useChartColors,
 } from '@lablup/ui-common/lab';
 import useResizeObserver from '@react-hook/resize-observer';
+import * as stylex from '@stylexjs/stylex';
 import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
+import { Circle } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 
 const RING_MIN = 64;
@@ -26,10 +35,19 @@ const RING_HALO = 16;
 const LEGEND_WIDTH_GUESS = 224;
 // The `lg` gap between the ring and the legend.
 const LEGEND_GAP = 24;
-const ROW_HEIGHT = 32;
-const COMPACT_ROW_HEIGHT = 24;
+// Row heights of the balanced and compact Table densities, divider included.
+const ROW_HEIGHT = 37;
+const COMPACT_ROW_HEIGHT = 29;
 // The hole's share of the ring's radius, for the filled and the empty ring alike.
 const DONUT_INNER_RADIUS = 0.6;
+
+const styles = stylex.create({
+  // Shrink to the content rather than the Table's default full width.
+  legend: { width: 'auto', whiteSpace: 'nowrap' },
+  // Long names truncate rather than widen the legend.
+  nameText: { maxWidth: 200 },
+  number: { textAlign: 'end' },
+});
 
 interface LegendRow extends Record<string, unknown> {
   key: string;
@@ -187,9 +205,9 @@ const DonutChart: React.FC<DonutChartProps> = ({
                 }}
               >
                 {_.isNumber(total) ? (
-                  <span className="bai-donut-total">
+                  <Text size="xl" weight="semibold" hasTabularNumbers>
                     {total.toLocaleString()}
-                  </span>
+                  </Text>
                 ) : null}
               </BAIFlex>
             </BAIFlex>
@@ -224,61 +242,78 @@ const DonutChart: React.FC<DonutChartProps> = ({
                   strokeWidth={(ring / 2) * (1 - DONUT_INNER_RADIUS)}
                 />
               </svg>
-              <span className="bai-donut-total bai-donut-total--empty">0</span>
+              <Text
+                size="xl"
+                weight="semibold"
+                color="secondary"
+                hasTabularNumbers
+              >
+                0
+              </Text>
             </BAIFlex>
           )}
         </BAIFlex>
       )}
-      {/* Numeric columns take their content's width; only the name truncates. */}
-      <div
+      <BAIFlex
         ref={legendRef}
-        role="table"
+        align="start"
+        gap="md"
         aria-label={label}
-        className={
-          density.columns === 2
-            ? 'bai-donut-legend bai-donut-legend--two-columns'
-            : 'bai-donut-legend'
-        }
+        role="group"
+        style={{ flex: 'none', maxWidth: '100%' }}
       >
-        {density.hasHeader && (
-          <div
-            role="row"
-            className="bai-donut-legend__row bai-donut-legend__head"
-            style={{ height: density.rowHeight }}
+        {_.chunk(
+          legendRows,
+          Math.max(1, Math.ceil(legendRows.length / density.columns)),
+        ).map((columnRows, columnIndex) => (
+          <Table
+            key={columnIndex}
+            density={density.rowHeight === ROW_HEIGHT ? 'balanced' : 'compact'}
+            dividers="rows"
+            xstyle={styles.legend}
           >
-            <span role="columnheader">{columnLabels.name}</span>
-            <span role="columnheader" className="bai-donut-legend__number">
-              {columnLabels.value}
-            </span>
-            <span role="columnheader" className="bai-donut-legend__number">
-              {columnLabels.percent}
-            </span>
-          </div>
-        )}
-        {legendRows.map((row) => (
-          <div
-            key={row.key}
-            role="row"
-            className="bai-donut-legend__row"
-            style={{ height: density.rowHeight }}
-          >
-            <span role="cell" className="bai-donut-legend__name">
-              {/* The swatch takes the slice's data colour, which no token carries. */}
-              <span
-                className="bai-dashboard-chart-swatch"
-                style={{ backgroundColor: row.color }}
-              />
-              <Text maxLines={1}>{row.label}</Text>
-            </span>
-            <span role="cell" className="bai-donut-legend__number">
-              {row.value.toLocaleString()}
-            </span>
-            <span role="cell" className="bai-donut-legend__number">
-              {`${row.percent}%`}
-            </span>
-          </div>
+            {density.hasHeader && (
+              <TableHeader>
+                <TableRow>
+                  <TableHeaderCell>{columnLabels.name}</TableHeaderCell>
+                  <TableHeaderCell xstyle={styles.number}>
+                    {columnLabels.value}
+                  </TableHeaderCell>
+                  <TableHeaderCell xstyle={styles.number}>
+                    {columnLabels.percent}
+                  </TableHeaderCell>
+                </TableRow>
+              </TableHeader>
+            )}
+            <TableBody>
+              {columnRows.map((row) => (
+                <TableRow key={row.key}>
+                  <TableCell>
+                    <BAIFlex gap="xs" align="center" wrap="nowrap">
+                      {/* The swatch takes the slice's data colour, which no token carries. */}
+                      <Circle
+                        size={12}
+                        fill={row.color}
+                        color={row.color}
+                        aria-hidden
+                      />
+                      <Text maxLines={1} xstyle={styles.nameText}>
+                        {row.label}
+                      </Text>
+                    </BAIFlex>
+                  </TableCell>
+                  <TableCell xstyle={styles.number}>
+                    <Text hasTabularNumbers>{row.value.toLocaleString()}</Text>
+                  </TableCell>
+                  <TableCell xstyle={styles.number}>
+                    <Text hasTabularNumbers>{`${row.percent}%`}</Text>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         ))}
-      </div>
+      </BAIFlex>
     </BAIFlex>
   );
 };

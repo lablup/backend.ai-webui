@@ -7,7 +7,6 @@ import {
   applyLayout,
   catalogFor,
   siderEntries,
-  migrateLegacyBoard,
   removePanel,
   resetBoard,
   sanitizeBoard,
@@ -381,46 +380,20 @@ describe('catalogFor', () => {
   });
 });
 
-describe('migrateLegacyBoard', () => {
-  const legacyPanel: PersistedPanel = {
-    id: 'session-1',
-    panelType: 'resourceCount',
-    descriptor: {
-      resourceType: 'session',
-      title: 'Running',
-      filter: 'status == "RUNNING"',
-      order: null,
-    },
-  };
-
-  it('returns null when nothing legacy is stored', () => {
+describe('toLegacyPanel', () => {
+  it('turns a stored preset panel into the modal shape', () => {
+    const legacyPanel: PersistedPanel = {
+      id: 'session-1',
+      panelType: 'resourceCount',
+      descriptor: {
+        resourceType: 'session',
+        title: 'Running',
+        filter: 'status == "RUNNING"',
+        order: null,
+      },
+    };
     expect(
-      migrateLegacyBoard({ layout: undefined, customPanels: undefined }),
-    ).toBeNull();
-    expect(migrateLegacyBoard({ layout: [], customPanels: [] })).toBeNull();
-    expect(
-      migrateLegacyBoard({ layout: 'undefined', customPanels: null }),
-    ).toBeNull();
-  });
-
-  it('keeps the stored order and geometry of built-in and custom panels', () => {
-    const board = migrateLegacyBoard({
-      layout: [
-        { id: 'b', columnSpan: 3, rowSpan: 2, columnOffset: { 4: 1 } },
-        { id: 'session-1', columnSpan: 2, rowSpan: 4 },
-        { id: 'a', columnSpan: 2, rowSpan: 2 },
-      ],
-      customPanels: [legacyPanel],
-    });
-    expect(board).toEqual({
-      panels: [
-        {
-          id: 'b',
-          key: 'b',
-          columnSpan: 3,
-          rowSpan: 2,
-          columnOffset: { 4: 1 },
-        },
+      toLegacyPanel(
         {
           id: 'session-1',
           key: 'resource.session',
@@ -432,32 +405,9 @@ describe('migrateLegacyBoard', () => {
           columnSpan: 2,
           rowSpan: 4,
         },
-        { id: 'a', key: 'a', columnSpan: 2, rowSpan: 2 },
-      ],
-      knownKeys: ['b', 'a'],
-    });
-  });
-
-  it('appends custom panels the layout never saw, and lets a sync add unseen cards', () => {
-    const board = migrateLegacyBoard({
-      layout: [{ id: 'a', columnSpan: 2, rowSpan: 2 }],
-      customPanels: [legacyPanel],
-    })!;
-    expect(ids(board)).toEqual(['a', 'session-1']);
-    const synced = syncBoard(
-      sanitizeBoard(board, definitions, 'project')!,
-      definitions,
-      'project',
-    );
-    expect(ids(synced)).toEqual(['a', 'session-1', 'b']);
-  });
-
-  it('round-trips a migrated custom panel back to the modal shape', () => {
-    const board = migrateLegacyBoard({
-      layout: [],
-      customPanels: [legacyPanel],
-    })!;
-    expect(toLegacyPanel(board.panels[0], sessionPreset)).toEqual({
+        sessionPreset,
+      ),
+    ).toEqual({
       ...legacyPanel,
       descriptor: {
         ...legacyPanel.descriptor,

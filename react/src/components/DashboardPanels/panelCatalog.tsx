@@ -114,6 +114,7 @@ const ALL_PAGES: ReadonlyArray<PanelPage> = [
   'admin',
 ];
 
+// Each Start card also carries the retired Start page's menu key, which still hides them all.
 const START_SIZE = { defaultSize: size(1, 2), minSize: size(1, 2) };
 /** The member page's cards and the shared ones, in the order a new board places them. */
 const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
@@ -122,7 +123,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     page: ['project'],
     group: 'start',
     titleKey: 'start.StartSession',
-    requires: { menuKey: 'job' },
+    requires: { menuKey: ['session', 'start'] },
     kind: 'custom',
     Component: StartSessionPanel,
     ...START_SIZE,
@@ -132,7 +133,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     page: ['project'],
     group: 'start',
     titleKey: 'start.StartBatchSession',
-    requires: { menuKey: 'job' },
+    requires: { menuKey: ['session', 'start'] },
     kind: 'custom',
     Component: StartBatchSessionPanel,
     ...START_SIZE,
@@ -142,7 +143,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     page: ['project'],
     group: 'start',
     titleKey: 'start.CreateFolder',
-    requires: { menuKey: 'data' },
+    requires: { menuKey: ['data', 'start'] },
     kind: 'custom',
     Component: CreateFolderPanel,
     ...START_SIZE,
@@ -153,7 +154,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     group: 'start',
     titleKey: 'start.StartDeployment',
     requires: {
-      menuKey: 'deployments',
+      menuKey: ['deployments', 'start'],
       config: (config) => !!config.enableModelFolders,
     },
     kind: 'custom',
@@ -165,7 +166,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     page: ['project'],
     group: 'start',
     titleKey: 'start.StartFromURL',
-    requires: { menuKey: 'import' },
+    requires: { menuKey: ['import', 'start'] },
     kind: 'custom',
     Component: StartFromURLPanel,
     ...START_SIZE,

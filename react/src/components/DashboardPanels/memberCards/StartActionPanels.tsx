@@ -6,7 +6,7 @@ import { useWebUINavigate } from '../../../hooks';
 import { useProjectPath } from '../../../hooks/useRouteScope';
 import type { SessionLauncherFormValue } from '../../../pages/SessionLauncherPage';
 import DeploymentSettingModal from '../../DeploymentSettingModal';
-import FolderCreateModalV2 from '../../FolderCreateModalV2';
+import FolderCreateModal from '../../FolderCreateModal';
 import StartFromURLModal from '../../StartFromURLModal';
 import PanelFrame from '../PanelFrame';
 import type { PanelComponentProps } from '../types';
@@ -114,7 +114,7 @@ export const CreateFolderPanel: React.FC<PanelComponentProps> = () => {
         onClick={() => setIsOpen(true)}
       />
       <BAIUnmountAfterClose>
-        <FolderCreateModalV2
+        <FolderCreateModal
           open={isOpen}
           project={project}
           onRequestClose={(response) => {

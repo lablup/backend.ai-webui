@@ -3,10 +3,13 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { DEFAULT_BOARD_VARS } from './dashboardConfig';
-import { applyPageUpdate, createDashboardWriter } from './dashboardStore';
+import {
+  applyPageUpdate,
+  createDashboardWriter,
+  type PageWrite,
+} from './dashboardStore';
 import type { DashboardPageConfig, PanelPage } from './types';
 import { createWriteQueue, type WriteBatch } from './writeQueue';
-import * as _ from 'lodash-es';
 
 const DELAY = 800;
 
@@ -94,6 +97,19 @@ describe('createWriteQueue', () => {
     await expect(flushed).resolves.toBeUndefined();
   });
 
+  it('combines values for a key with the given function', async () => {
+    const upsert = fakeUpsert();
+    const queue = createWriteQueue<string, Array<number>>({
+      write: upsert.write,
+      delay: DELAY,
+      combine: (previous, next) => [...previous, ...next],
+    });
+    queue.schedule('project', [1]);
+    queue.schedule('project', [2]);
+    await vi.advanceTimersByTimeAsync(DELAY);
+    expect(upsert.calls).toEqual([{ project: [1, 2] }]);
+  });
+
   it('rejects the waiters of a failed write and still runs the next one', async () => {
     const upsert = fakeUpsert();
     const queue = createWriteQueue({ write: upsert.write, delay: DELAY });
@@ -111,7 +127,10 @@ describe('createWriteQueue', () => {
 });
 
 describe('createDashboardWriter', () => {
-  const pageConfig = (title: string): DashboardPageConfig => ({
+  const pageConfig = (
+    title: string,
+    active = 'default',
+  ): DashboardPageConfig => ({
     boards: [
       {
         id: 'default',
@@ -121,74 +140,85 @@ describe('createDashboardWriter', () => {
         knownKeys: [],
       },
     ],
-    active: 'default',
-    migrated: true,
+    active,
   });
 
   const setup = () => {
-    const upsert = fakeUpsert();
+    const batches: Array<WriteBatch<PanelPage, PageWrite>> = [];
+    const pending: Array<ReturnType<typeof deferred>> = [];
     const writer = createDashboardWriter({
-      write: upsert.write as (
-        batch: WriteBatch<PanelPage, DashboardPageConfig>,
-      ) => Promise<void>,
+      write: (batch) => {
+        batches.push(batch);
+        const next = deferred();
+        pending.push(next);
+        return next.promise;
+      },
       delay: DELAY,
     });
-    return { upsert, writer };
+    return { batches, pending, writer };
   };
 
-  it('clears localStorage only after the migration upsert succeeded', async () => {
-    const { upsert, writer } = setup();
-    const clearLocal = vi.fn();
-    const migration = pageConfig('migrated');
-    const done = writer.migrate('project', migration, clearLocal);
-    await flushMicrotasks();
-    expect(upsert.calls).toEqual([{ project: migration }]);
-    expect(clearLocal).not.toHaveBeenCalled();
-
-    upsert.pending[0].resolve();
-    await done;
-    expect(clearLocal).toHaveBeenCalledTimes(1);
+  const pageWrite = (
+    update: PageWrite['update'],
+    optimistic: DashboardPageConfig,
+  ): PageWrite => ({
+    update,
+    resolve: (stored) => (stored as DashboardPageConfig) ?? pageConfig(''),
+    optimistic,
   });
 
-  it('keeps localStorage when the migration upsert fails', async () => {
-    const { upsert, writer } = setup();
-    const clearLocal = vi.fn();
-    const done = writer.migrate('project', pageConfig('migrated'), clearLocal);
-    await flushMicrotasks();
-    upsert.pending[0].reject(new Error('denied'));
-    await done;
-    expect(clearLocal).not.toHaveBeenCalled();
-  });
-
-  it('starts a page migration once, even after a failure', async () => {
-    const { upsert, writer } = setup();
-    const clearLocal = vi.fn();
-    const first = writer.migrate('admin', pageConfig('a'), clearLocal);
-    await flushMicrotasks();
-    upsert.pending[0].reject(new Error('denied'));
-    await first;
-    expect(writer.migrate('admin', pageConfig('b'), clearLocal)).toBeNull();
-    expect(
-      writer.migrate('project', pageConfig('c'), clearLocal),
-    ).not.toBeNull();
-  });
-
-  it('lets an edit made during the migration supersede it without losing the clear', async () => {
-    const { upsert, writer } = setup();
-    const clearLocal = vi.fn();
-    writer.save('admin', pageConfig('other page'));
-    writer.save('admin', pageConfig('other page 2'));
+  it('replays every queued edit, oldest first, on the value read at write time', async () => {
+    const { batches, writer } = setup();
+    const renamed = pageConfig('renamed');
+    writer.save(
+      'admin',
+      pageWrite(
+        (config) => ({
+          ...config,
+          boards: config.boards.map((board) => ({
+            ...board,
+            title: 'renamed',
+          })),
+        }),
+        renamed,
+      ),
+    );
+    const selected = { ...renamed, active: 'other' };
+    writer.save(
+      'admin',
+      pageWrite((config) => ({ ...config, active: 'other' }), selected),
+    );
     await vi.advanceTimersByTimeAsync(DELAY);
-    const done = writer.migrate('project', pageConfig('migrated'), clearLocal);
-    const edited = pageConfig('edited');
-    writer.save('project', edited);
-    await vi.advanceTimersByTimeAsync(DELAY);
-    upsert.pending[0].resolve();
+
+    const write = batches[0].get('admin')!;
+    expect(write.optimistic).toBe(selected);
+    // Another device saved a second board meanwhile; both edits land on top of it.
+    const server: DashboardPageConfig = {
+      ...pageConfig('server'),
+      boards: [
+        ...pageConfig('server').boards,
+        { ...pageConfig('x').boards[0], id: 'other' },
+      ],
+    };
+    const written = write.update(write.resolve(server));
+    expect(written.active).toBe('other');
+    expect(written.boards.map((board) => [board.id, board.title])).toEqual([
+      ['default', 'renamed'],
+      ['other', 'renamed'],
+    ]);
+  });
+
+  it('flush writes a queued edit without waiting for the debounce', async () => {
+    const { batches, pending, writer } = setup();
+    writer.save(
+      'project',
+      pageWrite((config) => config, pageConfig('a')),
+    );
+    const flushed = writer.flush();
     await flushMicrotasks();
-    expect(upsert.calls[1]).toEqual({ project: edited });
-    upsert.pending[1].resolve();
-    await done;
-    expect(clearLocal).toHaveBeenCalledTimes(1);
+    expect(batches).toHaveLength(1);
+    pending[0].resolve();
+    await expect(flushed).resolves.toBeUndefined();
   });
 });
 
@@ -196,19 +226,16 @@ describe('applyPageUpdate', () => {
   const config = {
     boards: [],
     active: 'a',
-    migrated: true,
   } as unknown as DashboardPageConfig;
 
   it('returns null for an update that changes nothing', () => {
     expect(applyPageUpdate(config, (current) => ({ ...current }))).toBeNull();
-    expect(
-      applyPageUpdate(_.omit(config, 'migrated'), (current) => current),
-    ).toBeNull();
+    expect(applyPageUpdate(config, (current) => current)).toBeNull();
   });
 
-  it('returns the flagged config for a real change', () => {
+  it('returns the updated config for a real change', () => {
     expect(
-      applyPageUpdate(_.omit(config, 'migrated'), (current) => ({
+      applyPageUpdate(config, (current) => ({
         ...current,
         active: 'b',
       })),

@@ -8,7 +8,7 @@
 - 카드가 읽는 범위는 page가 정한다. 일반 사용자 page는 헤더 프로젝트에서 자기 데이터, 프로젝트 관리자 page는 URL 경로의 프로젝트, superadmin page는 현재 도메인 전체다. superadmin도 도메인을 고르지 않는다([ADR 0012](0012-scoped-search-fields-in-place-of-admin-fields.md)).
 - 자원 그룹과 기간은 [카드 설정](#용어)이다. 자원 그룹이나 기간에 따라 값이 달라지는 카드만 설정을 갖고, 편집 모드에서 그 카드에만 설정 control이 보인다. 바에는 일부 카드만 따르는 전역 filter가 없다.
 - 자동 새로고침은 page마다 하나다. 바의 refresh control이 간격(기본 1분)마다 tick을 보내고, tick은 화면에 보이는 모든 카드를 함께 다시 읽는다. 카드마다 정한 최소 간격은 없다. control을 누르면 모든 카드를 바로 다시 읽는다. 카드에는 자기 refresh 버튼이 없다.
-- 카드가 보여 주는 합계와 시간별 개수는 매니저가 계산한 값만 쓴다. 한 프로젝트나 한 자원 그룹 단위로만 값을 주는 field는 행으로 나눠 보여 주고, 클라이언트는 값을 더하지 않는다.
+- 카드가 보여 주는 시간별 개수는 매니저가 계산한 count만 쓴다. 기간 전체의 합계는 그 카드가 읽은 bucket count를 더한 값이다. 한 프로젝트나 한 자원 그룹 단위로만 값을 주는 field는 행으로 나눠 보여 주고, 클라이언트는 프로젝트나 자원 그룹 사이의 값을 더하지 않는다.
 
 ## Context
 
@@ -87,6 +87,7 @@ sequenceDiagram
 - **Edit mode only**: 편집 모드의 사이드 패널은 보드에 있는 카드 중 설정을 적은 카드에만 설정 버튼과 지금 값을 보여 주고, 버튼은 `PanelSettingsModal`을 연다. 설정을 적지 않은 카드는 control이 없다.
 - **Resource group choices**: `PanelSettingsModal`은 자원 그룹 하나를 `BAIScopedResourceGroupSelect`로 고른다. 선택지는 page의 프로젝트(`scope: { project }`)에서, superadmin page에서는 현재 도메인(`scope: { domain }`)에서 읽는다.
 - **Defaults**: 자원 그룹 설정이 비어 있으면 고정 카드는 헤더의 현재 자원 그룹을, 사용자 정의 패널은 모든 자원 그룹을 읽는다. 기간 설정의 기본은 최근 24시간(`DEFAULT_RANGE`, `panelSettings.ts`)이고, 선택지는 최근 1시간, 24시간, 7일이다.
+- **Superadmin resource group**: `/admin/dashboard` route는 헤더 프로젝트 selector를 그리지 않으므로, superadmin page의 기본 자원 그룹은 page가 따로 둔다(`superadminResourceGroupAtom`, `usePageResourceGroup`). 처음 값은 숨은 현재 프로젝트의 자원 그룹이고, Total Resources 카드의 picker는 현재 도메인의 자원 그룹을 모두 보여 준다.
 - **Card state**: `DashboardPanelContent`가 설정을 풀어 `vars`(`DashboardVars`)로 넘긴다. `range`, 카드의 마지막 refresh 시각으로 고정한 `timeRange`, `resourceGroup`(설정 또는 헤더 자원 그룹), `currentProjectId`, `currentResourceGroup`이다.
 - **Single resource group cards**: 자원 그룹 하나만 받는 field를 읽는 카드는 `cardResourceGroup(settings.resourceGroups, currentResourceGroup)`이 정한 자원 그룹 하나만 읽는다. 자원 그룹마다 요청을 나누지 않는다.
 - **Custom panels**: data source가 자원 그룹으로 좁힐 수 있으면(`ResourceConfig.supportsResourceGroup`) 사용자 정의 패널도 자원 그룹 설정을 갖는다. 세션은 minilang filter에 `scaling_group == ...`를 붙이고, 배포는 `resourceGroup: { in }`을 쓴다. 폴더 패널은 설정이 없다.
@@ -104,14 +105,17 @@ sequenceDiagram
 - **One cadence**: `tick()`은 화면에 보이는 모든 구독자를 다시 읽는다. 카드 정의에는 refresh 간격이 없어 대시보드 전체가 함께 다시 읽힌다. `refreshAll()`은 화면 밖 구독자까지 모든 구독자를 바로 다시 읽는다.
 - **Off-screen cards**: `useBoardItemVisibility`가 화면 밖 카드를 scheduler에 알리면 `tick()`은 그 카드를 건너뛴다. 카드가 다시 보이면 마지막 refresh가 지금 간격(`setIntervalMs`, 바가 넘긴다)보다 오래됐을 때 바로 다시 읽는다. 500ms까지 이른 값도 지난 것으로 친다. 간격이 끔이면 다시 읽지 않는다.
 - **No card buttons**: 카드와 사용자 정의 패널의 머리에는 refresh 버튼이 없다(`PanelFrame`). 대시보드 밖에서도 쓰는 카드 component는 `hideRefreshButton`으로 버튼을 숨긴다.
-- **No suspense flash**: `useDashboardFetchKey`는 fetch key를 `startTransition` 안에서 바꾸고, 카드와 page는 `useDeferredValue`를 거친 key로 query를 다시 읽는다.
+- **No suspense flash**: `useDashboardFetchKey`는 fetch key를 `useTransition`의 transition 안에서 바꾸고, 카드와 page는 그 key로 query를 다시 읽는다. 새 query가 suspend하는 동안 화면은 이전 값을 그대로 보여 준다.
+- **In-flight refresh**: transition이 끝나지 않은 구독자는 `isPending`이고 scheduler에 `setPending`으로 알린다. 바의 refresh 버튼은 구독자 하나라도 진행 중이면 loading을 보이며 다음 간격을 시작하지 않고, `tick()`은 진행 중인 구독자를 건너뛴다.
+- **Observed as mounted**: `useBoardItemVisibility`는 `MutationObserver`로 board에 새로 붙는 `[data-board-item-id]` 요소를 그때그때 관찰한다. board는 폭을 잰 뒤에야 item을 그리므로 첫 render에서 한 번 찾는 것으로는 부족하다.
 
-### 6. 합계와 시간별 개수는 매니저가 계산한다
+### 6. 시간별 개수는 매니저가 세고, 합계는 그 개수를 더한다
 
 - **Count aliases**: 상태별 개수 같은 값을 그리는 카드는 한 요청 안에서 filter를 달리한 connection의 `count`를 [count alias](#용어)로 읽는다.
-- **Buckets**: 시간별 개수를 그리는 카드는 `bucketize(range, now)`가 만든 8개 이하의 연속 구간마다 count alias 하나를 읽는다. 1시간과 24시간은 6개, 7일은 하루씩 7개다.
+- **Buckets**: 시간별 개수를 그리는 카드는 `planBuckets(range, now)`(`timeRange.ts`)가 만든 8개 이하의 연속 구간마다 count alias 하나를 읽는다. 상대 기간은 단위 경계(1시간은 10분, 24시간은 4시간, 7일은 하루)에 맞춘 구간에 `now`에 맞춰 잘린 첫 구간이 하나 더 붙는다. 그래서 1시간과 24시간은 7개, 7일은 하루씩 8개이고, `now`가 경계와 정확히 맞을 때만 하나 적다. 사용자 지정 기간은 같은 길이로 나눈다.
+- **Totals from buckets**: 기간 전체의 합계(감사 로그의 성공 수와 실패 수 같은 값)는 같은 카드가 읽은 bucket count를 더한다. bucket이 window를 빈틈과 겹침 없이 나누므로 합은 window의 count와 같고, 합계용 alias를 따로 읽지 않는다.
 - **Usage buckets**: 사용량 추이 카드는 매니저의 `usageBuckets`가 준 구간을 그대로 그린다.
-- **Rows, not sums**: 프로젝트 하나나 자원 그룹 하나 단위로만 값을 주는 field를 읽는 카드는 프로젝트나 자원 그룹마다 한 행을 그린다. 클라이언트는 여러 응답의 값을 더하지 않는다.
+- **Rows, not sums**: 프로젝트 하나나 자원 그룹 하나 단위로만 값을 주는 field를 읽는 카드는 프로젝트나 자원 그룹마다 한 행을 그린다. 클라이언트는 프로젝트나 자원 그룹마다 받은 응답의 값을 더하지 않는다.
 
 ### 7. 역할이 달라도 카드는 하나다
 
@@ -142,10 +146,10 @@ sequenceDiagram
 
 ## 용어
 
-| 용어          | 뜻                                                                                                                                             |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| 대시보드 바   | 대시보드 보드 위의 한 줄이다. 보드 탭과 자동 새로고침 control을 담고 `DashboardFilterBar`가 그린다.                                            |
-| 카드 설정     | 카드 하나가 보드에 저장하는 자원 그룹과 기간 값이다. `PersistedPanelV2.settings`이며, 카드 정의가 `settings`로 적은 것만 갖는다.               |
-| 보드          | 카드 배치와 설정을 담아 저장한 대시보드 한 장이다. `DashboardModel`이며 [ADR 0017](0017-dashboard-boards-in-manager-app-config.md)가 정의한다. |
-| fetch key     | Relay `useLazyLoadQuery`의 `fetchKey` 옵션에 넘기는 문자열이다. 값이 바뀌면 query가 서버에서 다시 읽힌다.                                      |
-| count alias   | 같은 connection field를 한 GraphQL 요청 안에서 filter만 달리해 여러 번 부르고, 각 결과의 `count`만 이름을 붙여 읽는 방식이다.                  |
+| 용어        | 뜻                                                                                                                                             |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| 대시보드 바 | 대시보드 보드 위의 한 줄이다. 보드 탭과 자동 새로고침 control을 담고 `DashboardFilterBar`가 그린다.                                            |
+| 카드 설정   | 카드 하나가 보드에 저장하는 자원 그룹과 기간 값이다. `PersistedPanelV2.settings`이며, 카드 정의가 `settings`로 적은 것만 갖는다.               |
+| 보드        | 카드 배치와 설정을 담아 저장한 대시보드 한 장이다. `DashboardModel`이며 [ADR 0017](0017-dashboard-boards-in-manager-app-config.md)가 정의한다. |
+| fetch key   | Relay `useLazyLoadQuery`의 `fetchKey` 옵션에 넘기는 문자열이다. 값이 바뀌면 query가 서버에서 다시 읽힌다.                                      |
+| count alias | 같은 connection field를 한 GraphQL 요청 안에서 filter만 달리해 여러 번 부르고, 각 결과의 `count`만 이름을 붙여 읽는 방식이다.                  |

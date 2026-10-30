@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b76d14d0ece569c87bdf65826bd47011>>
+ * @generated SignedSource<<57dddb8b298236ce8a325f3c09d1736e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,7 +14,7 @@ export type CreateVFolderV2Input = {
   cloneable?: boolean;
   host?: string | null | undefined;
   name: string;
-  permission?: string;
+  permission?: string | null | undefined;
   projectId?: string | null | undefined;
   usageMode?: string;
 };

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fedeac7e61925eadea1ed07970150bb1>>
+ * @generated SignedSource<<cf9afd7afb30b3a1bcabb0e385708324>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,16 +13,17 @@ export type AuditLogStatus = "DENIED" | "ERROR" | "RUNNING" | "SUCCESS" | "UNKNO
 import { FragmentRefs } from "relay-runtime";
 export type BAIAuditLogNodesFragment$data = ReadonlyArray<{
   readonly actionId: string;
+  readonly actionName: string;
   readonly clientIp: string | null | undefined;
   readonly createdAt: string;
   readonly description: string;
   readonly duration: string | null | undefined;
-  readonly entityId: string | null | undefined;
   readonly entityType: string | null | undefined;
   readonly id: string;
   readonly operation: string;
   readonly requestId: string | null | undefined;
   readonly status: AuditLogStatus;
+  readonly targetEntityId: string | null | undefined;
   readonly triggeredBy: string | null | undefined;
   readonly user: {
     readonly basicInfo: {
@@ -45,13 +46,6 @@ var v0 = {
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
-},
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "entityId",
-  "storageKey": null
 };
 return {
   "argumentDefinitions": [],
@@ -67,6 +61,13 @@ return {
       "args": null,
       "kind": "ScalarField",
       "name": "createdAt",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "actionName",
       "storageKey": null
     },
     {
@@ -118,7 +119,13 @@ return {
       "name": "entityType",
       "storageKey": null
     },
-    (v1/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "targetEntityId",
+      "storageKey": null
+    },
     {
       "alias": null,
       "args": null,
@@ -142,7 +149,13 @@ return {
       "plural": false,
       "selections": [
         (v0/*: any*/),
-        (v1/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "entityId",
+          "storageKey": null
+        },
         {
           "alias": null,
           "args": null,
@@ -170,6 +183,6 @@ return {
 };
 })();
 
-(node as any).hash = "9fce850f98a6482bc7b42adaa2ba1353";
+(node as any).hash = "234037cbd18a67f6864d16b6e07d2cd3";
 
 export default node;
