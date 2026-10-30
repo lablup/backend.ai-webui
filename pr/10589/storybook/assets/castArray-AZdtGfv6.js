@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-sJBDdmOt.js";import{n as t,t as n}from"./isArray-BUM1roHa.js";function r(){if(!arguments.length)return[];var e=arguments[0];return t(e)?e:[e]}function i(){return(i=e((()=>{n()})))()}export{i as n,r as t};
