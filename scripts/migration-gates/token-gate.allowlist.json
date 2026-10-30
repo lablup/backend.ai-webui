@@ -5,10 +5,6 @@
     {
       "name": "--modal-z",
       "reason": "ui-common's modal level stack (useModalLevel in @lablup/ui-common/Modal) writes it inline on each open portal root when it claims a level; BAIDrawerPortal.css reads it with the ladder's modal base as the fallback for a root that has not claimed one yet."
-    },
-    {
-      "name": "--board-item-padding-top",
-      "reason": "ui-common Board's documented padding knob: its itemPadding prop writes it on the board root, and --spacing-5 is Board's own default. BAIBoard.css reads it to pad an item whose content has no title row."
     }
   ]
 }
