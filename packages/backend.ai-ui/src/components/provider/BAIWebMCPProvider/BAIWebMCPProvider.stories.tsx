@@ -43,7 +43,7 @@ const meta: Meta<typeof BAIWebMCPProvider> = {
     docs: {
       description: {
         component:
-          'Runtime gate for `useWebMCPTool` (ADR 0011). Open this story in a browser that implements WebMCP (Chrome with `--enable-features=WebMCPTesting`) to call `bai_story_echo`.',
+          'Runtime gate for `useWebMCPTool` (ADR 0017). Open this story in a browser that implements WebMCP (Chrome with `--enable-features=WebMCPTesting`) to call `bai_story_echo`.',
       },
     },
   },
