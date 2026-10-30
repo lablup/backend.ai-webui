@@ -92,7 +92,7 @@ const SessionListToolsRegistrar: React.FC<WebMCPSessionListToolsProps> = ({
         domain_name
         project_id
         agent_ids
-        owner @since(version: "25.13.0") {
+        owner {
           email
         }
       }
@@ -122,9 +122,7 @@ const SessionListToolsRegistrar: React.FC<WebMCPSessionListToolsProps> = ({
     rows,
     columns: sessionToolColumns({
       showAgents: userRole === 'superadmin' || !baiClient._config?.hideAgents,
-      showOwner:
-        userRole === 'superadmin' &&
-        !!baiClient.isManagerVersionCompatibleWith?.('25.13.0'),
+      showOwner: userRole === 'superadmin',
     }),
     columnOverrides,
     page,

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<145b6f6208d5e342ba44f7afe7120a21>>
+ * @generated SignedSource<<9aa8fcf17a7ce8ded3c7807684699ce9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -259,7 +259,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "cf93dfd407cbcd138833a53b72ec39cb",
+    "cacheID": "fbafe42226d637427b971a28af49e340",
     "id": null,
     "metadata": {
       "relayTestingSelectionTypeInfo": {
@@ -311,7 +311,7 @@ return {
     },
     "name": "WebMCPSessionListToolsTestQuery",
     "operationKind": "query",
-    "text": "query WebMCPSessionListToolsTestQuery {\n  compute_session_nodes(first: 10) {\n    edges {\n      node {\n        ...WebMCPSessionListToolsFragment\n        id\n      }\n    }\n  }\n}\n\nfragment WebMCPSessionListToolsFragment on ComputeSessionNode {\n  row_id\n  name\n  status\n  status_info\n  result\n  type\n  scaling_group\n  created_at\n  terminated_at\n  domain_name\n  project_id\n  agent_ids\n  owner @since(version: \"25.13.0\") {\n    email\n    id\n  }\n}\n"
+    "text": "query WebMCPSessionListToolsTestQuery {\n  compute_session_nodes(first: 10) {\n    edges {\n      node {\n        ...WebMCPSessionListToolsFragment\n        id\n      }\n    }\n  }\n}\n\nfragment WebMCPSessionListToolsFragment on ComputeSessionNode {\n  row_id\n  name\n  status\n  status_info\n  result\n  type\n  scaling_group\n  created_at\n  terminated_at\n  domain_name\n  project_id\n  agent_ids\n  owner {\n    email\n    id\n  }\n}\n"
   }
 };
 })();
