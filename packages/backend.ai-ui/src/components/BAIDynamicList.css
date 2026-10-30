@@ -27,6 +27,11 @@
   font-weight: var(--font-weight-normal);
 }
 
-.bai-dynamic-list__remove-slot {
-  width: var(--size-element-md);
+/* As wide as the minus icon, so the gap to the inputs is the column gap and
+   the icon's edge lines up with the full-width Add button. */
+.bai-dynamic-list__remove-slot,
+.bai-dynamic-list__remove {
+  inline-size: var(--spacing-4);
+  min-inline-size: 0;
+  padding-inline: 0;
 }
