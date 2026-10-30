@@ -170,7 +170,6 @@ interface ResourceAllocationFormItemsProps {
   enableAgentSelect?: boolean;
   enableResourcePresets?: boolean;
   showRemainingWarning?: boolean;
-  forceImageMinValues?: boolean;
   hideClusterFormItems?: boolean;
   /**
    * Opt-in: when the form field has no value, auto-select the project's
@@ -212,9 +211,8 @@ const clusterModeSegmentedStyles = stylex.create({
 });
 
 /**
- * Cluster-mode segmented control — the twin of the one in
- * `ClusterModeFormItems`, declared locally for the same reason: each option
- * carries a help tooltip.
+ * Cluster-mode segmented control, local because each option carries a help
+ * tooltip.
  */
 const ClusterModeSegmented: React.FC<{
   label: string;
@@ -263,7 +261,6 @@ const ResourceAllocationFormItems: React.FC<
   project,
   enableAgentSelect = false,
   enableResourcePresets,
-  forceImageMinValues = false,
   showRemainingWarning = false,
   hideClusterFormItems = false,
   autoSelectFirstResourceGroup = false,
@@ -508,135 +505,96 @@ const ResourceAllocationFormItems: React.FC<
     syncUnifiedAcceleratorIfNeeded();
   });
 
-  const updateResourceFieldsBasedOnImage = useEventNotStable(
-    (force?: boolean) => {
-      // when image changed, set value of resources to min value only if it's larger than current value
-      const minimumResources: Partial<ResourceAllocationFormValue['resource']> =
-        {
-          cpu: resourceLimits.cpu?.min,
-          mem:
-            convertToBinaryUnit(
-              (convertToBinaryUnit(resourceLimits.shmem?.min, 'm')?.number ||
-                0) +
-                (convertToBinaryUnit(resourceLimits.mem?.min, 'm')?.number ||
-                  0) +
-                'm',
-              'g',
-            )?.number + 'g', //to prevent loosing precision
-        };
+  // The `minimum-required` preset: cpu / mem to the image minimum; the
+  // accelerator to the image minimum of the current type when the image lists
+  // it, else of the image's first type the group has (untouched when none is
+  // in the group, 0 when the image lists no accelerator).
+  const updateResourceFieldsBasedOnImage = useEventNotStable(() => {
+    const minimumResources: Partial<ResourceAllocationFormValue['resource']> = {
+      cpu: resourceLimits.cpu?.min,
+      mem:
+        convertToBinaryUnit(
+          (convertToBinaryUnit(resourceLimits.shmem?.min, 'm')?.number || 0) +
+            (convertToBinaryUnit(resourceLimits.mem?.min, 'm')?.number || 0) +
+            'm',
+          'g',
+        )?.number + 'g', //to prevent loosing precision
+    };
 
-      // NOTE: accelerator value setting is done inside the conditional statement
+    // NOTE: accelerator value setting is done inside the conditional statement
+    if (
+      currentImageAcceleratorLimits &&
+      currentImageAcceleratorLimits.length > 0
+    ) {
       if (
-        currentImageAcceleratorLimits &&
-        currentImageAcceleratorLimits.length > 0
+        _.find(
+          currentImageAcceleratorLimits,
+          (limit) =>
+            limit?.key === form.getFieldValue(['resource', 'acceleratorType']),
+        )
       ) {
-        if (
-          _.find(
-            currentImageAcceleratorLimits,
-            (limit) =>
-              limit?.key ===
-              form.getFieldValue(['resource', 'acceleratorType']),
-          )
-        ) {
-          // if current selected accelerator type is supported in the selected image,
-          minimumResources.acceleratorType = form.getFieldValue([
-            'resource',
-            'acceleratorType',
-          ]);
-          minimumResources.accelerator =
-            resourceLimits.accelerators[
-              form.getFieldValue(['resource', 'acceleratorType'])
-            ]?.min;
-        } else {
-          // if current selected accelerator type is not supported in the selected image,
-          // change accelerator type to the first supported accelerator type.
-          const nextImageSelectorType: string | undefined | null = // NOTE:
-            // filter from resourceSlots since resourceSlots and supported image could be non-identical.
-            // resourceSlots returns "all resources enable to allocate(including AI accelerator)"
-            // imageAcceleratorLimit returns "all resources that is supported in the selected image"
-            _.filter(currentImageAcceleratorLimits, (acceleratorInfo: any) =>
-              _.keys(resourceSlotsInRG).includes(acceleratorInfo?.key),
-            )[0]?.key;
-
-          if (nextImageSelectorType) {
-            minimumResources.accelerator =
-              resourceLimits.accelerators[nextImageSelectorType]?.min;
-            minimumResources.acceleratorType = nextImageSelectorType;
-          }
-        }
+        // if current selected accelerator type is supported in the selected image,
+        minimumResources.acceleratorType = form.getFieldValue([
+          'resource',
+          'acceleratorType',
+        ]);
+        minimumResources.accelerator =
+          resourceLimits.accelerators[
+            form.getFieldValue(['resource', 'acceleratorType'])
+          ]?.min;
       } else {
-        minimumResources.accelerator = 0;
-      }
+        // if current selected accelerator type is not supported in the selected image,
+        // change accelerator type to the first supported accelerator type.
+        const nextImageSelectorType: string | undefined | null = // NOTE:
+          // filter from resourceSlots since resourceSlots and supported image could be non-identical.
+          // resourceSlots returns "all resources enable to allocate(including AI accelerator)"
+          // imageAcceleratorLimit returns "all resources that is supported in the selected image"
+          _.filter(currentImageAcceleratorLimits, (acceleratorInfo: any) =>
+            _.keys(resourceSlotsInRG).includes(acceleratorInfo?.key),
+          )[0]?.key;
 
-      if (!forceImageMinValues && !force) {
-        // delete keys that is not less than current value
-        (['cpu', 'accelerator'] as const).forEach((key) => {
-          const minNum = minimumResources[key];
-          if (
-            _.isNumber(minNum) &&
-            minNum < form.getFieldValue(['resource', key])
-          ) {
-            delete minimumResources[key];
-          }
-        });
-        (['mem', 'shmem'] as const).forEach((key) => {
-          const minNumStr = minimumResources[key];
-          if (
-            _.isString(minNumStr) &&
-            compareNumberWithUnits(
-              minNumStr,
-              form.getFieldValue(['resource', key]),
-            ) < 0
-          ) {
-            delete minimumResources[key];
-          }
-        });
+        if (nextImageSelectorType) {
+          minimumResources.accelerator =
+            resourceLimits.accelerators[nextImageSelectorType]?.min;
+          minimumResources.acceleratorType = nextImageSelectorType;
+        }
       }
+    } else {
+      minimumResources.accelerator = 0;
+    }
 
-      // A unified slot keeps `accelerator` cleared (see
-      // `syncUnifiedAcceleratorIfNeeded`); writing the minimum first would
-      // flip it on every run.
-      const isUnifiedTarget = isUnifiedAcceleratorSlot(
-        minimumResources.acceleratorType ??
-          form.getFieldValue(['resource', 'acceleratorType']),
-      );
-      if (isUnifiedTarget) {
-        delete minimumResources.accelerator;
-      }
-      const changedResources = pickChangedResourceValues(
-        minimumResources,
-        form.getFieldValue('resource'),
-      );
-      if (!_.isEmpty(changedResources)) {
-        form.setFieldsValue({
-          resource: changedResources,
-        });
-      }
+    // A unified slot keeps `accelerator` cleared (see
+    // `syncUnifiedAcceleratorIfNeeded`); writing the minimum first would
+    // flip it on every run.
+    const isUnifiedTarget = isUnifiedAcceleratorSlot(
+      minimumResources.acceleratorType ??
+        form.getFieldValue(['resource', 'acceleratorType']),
+    );
+    if (isUnifiedTarget) {
+      delete minimumResources.accelerator;
+    }
+    const changedResources = pickChangedResourceValues(
+      minimumResources,
+      form.getFieldValue('resource'),
+    );
+    if (!_.isEmpty(changedResources)) {
+      form.setFieldsValue({
+        resource: changedResources,
+      });
+    }
 
-      // set to 0 when currentImage doesn't support any AI accelerator
-      if (
-        currentImage &&
-        currentImageAcceleratorLimits &&
-        currentImageAcceleratorLimits.length === 0 &&
-        !isUnifiedTarget &&
-        form.getFieldValue(['resource', 'accelerator']) !== 0
-      ) {
-        form.setFieldValue(['resource', 'accelerator'], 0);
-      }
-
-      if (form.getFieldValue('enabledAutomaticShmem')) {
-        runShmemAutomationRule(form.getFieldValue(['resource', 'mem']) || '0g');
-      }
-      // mem and/or acceleratorType may have changed above; keep the
-      // accelerator field consistent for unified slots.
-      syncUnifiedAcceleratorIfNeeded();
-      form
-        .validateFields(['resource'], {
-          recursive: true,
-        })
-        .catch(() => {});
-    },
-  );
+    if (form.getFieldValue('enabledAutomaticShmem')) {
+      runShmemAutomationRule(form.getFieldValue(['resource', 'mem']) || '0g');
+    }
+    // mem and/or acceleratorType may have changed above; keep the
+    // accelerator field consistent for unified slots.
+    syncUnifiedAcceleratorIfNeeded();
+    form
+      .validateFields(['resource'], {
+        recursive: true,
+      })
+      .catch(() => {});
+  });
 
   const updateResourceFieldsBasedOnPreset = useEventNotStable(
     (presetId: string) => {
@@ -789,7 +747,7 @@ const ResourceAllocationFormItems: React.FC<
   // This effect is for auto updating the resource fields when minimum-required preset is selected
   useEffect(() => {
     if (currentAllocationPreset === 'minimum-required') {
-      updateResourceFieldsBasedOnImage(true);
+      updateResourceFieldsBasedOnImage();
     }
   }, [currentImage, currentAllocationPreset, updateResourceFieldsBasedOnImage]);
 
@@ -1598,20 +1556,11 @@ const ResourceAllocationFormItems: React.FC<
                                           currentAcceleratorType,
                                         )
                                       ) {
-                                        // Switching OUT of a unified slot
-                                        // into a discrete one: reset to the
-                                        // discrete slot's min so the empty
-                                        // unified-mode value does not bleed
-                                        // through as a device count.
-                                        //
-                                        // Discrete-to-discrete switches are
-                                        // intentionally NOT reset here:
-                                        // ensureValidAcceleratorType clamps
-                                        // the existing value if it falls
-                                        // outside the new slot's range, so
-                                        // the user's current allocation is
-                                        // preserved across discrete slot
-                                        // changes.
+                                        // unified -> discrete: the empty
+                                        // unified value is not a device count,
+                                        // so start from the slot's min.
+                                        // discrete -> discrete keeps the value;
+                                        // the max rule flags it if too large.
                                         form.setFieldValue(
                                           ['resource', 'accelerator'],
                                           resourceLimits.accelerators[nextType]
