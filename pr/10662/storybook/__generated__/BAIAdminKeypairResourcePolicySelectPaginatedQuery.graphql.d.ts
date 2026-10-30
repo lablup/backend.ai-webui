@@ -4,6 +4,7 @@ export type KeypairResourcePolicyV2Filter = {
     NOT?: ReadonlyArray<KeypairResourcePolicyV2Filter> | null | undefined;
     OR?: ReadonlyArray<KeypairResourcePolicyV2Filter> | null | undefined;
     createdAt?: DateTimeFilter | null | undefined;
+    entityId?: UUIDFilter | null | undefined;
     idleTimeout?: IntFilter | null | undefined;
     keypair?: KeypairResourcePolicyKeypairNestedFilter | null | undefined;
     maxConcurrentSessions?: IntFilter | null | undefined;
