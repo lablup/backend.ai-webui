@@ -518,7 +518,8 @@ const ResourceAllocationFormItems: React.FC<
             }}
             projectId={project.id}
             allocatablePresetIds={allocatablePresetIds}
-            resourceGroup={currentResourceGroupInForm}
+            // Deferred, as for `sessionPresets`: one request, and no page fallback on a group change.
+            resourceGroup={deferredResourceGroup || undefined}
             availableSlotNames={
               resourceSlotsInRG ? _.keys(resourceSlotsInRG) : undefined
             }
