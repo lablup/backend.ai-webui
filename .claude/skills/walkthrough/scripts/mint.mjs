@@ -10,7 +10,7 @@
  *
  *   mint.mjs --manifest <path> [--app <name>] [--endpoint <url>] [--sha <sha>]
  *            [--pr <n>] [--repo <owner/repo>] [--env-file <path>]
- *            [--report <path>] [--settle <ms>] [--dry-run]
+ *            [--report <path>] [--settle <ms>] [--keep-tours] [--dry-run]
  *
  * Without `--pr` the PR is the current branch's and the app is the name
  * `dev-server` claims for it. With `--pr <n>` the PR is looked up on GitHub
@@ -70,6 +70,7 @@ function parseArgs(argv) {
     report: "",
     settle: "",
     dryRun: false,
+    keepTours: false,
   };
   const names = {
     "--manifest": "manifest",
@@ -86,6 +87,10 @@ function parseArgs(argv) {
     const arg = argv[i];
     if (arg === "--dry-run") {
       flags.dryRun = true;
+      continue;
+    }
+    if (arg === "--keep-tours") {
+      flags.keepTours = true;
       continue;
     }
     const name = names[arg];
@@ -721,14 +726,17 @@ async function main() {
     ignoreHTTPSErrors: true,
     viewport: { width: 1440, height: 900 },
   });
-  // A fresh origin would show a superadmin AdminViewSwitchTour's intro modal over every page.
-  await context.addInitScript(() => {
-    for (const name of [
-      "has_opened_tour_back_to_user_view",
-      "has_opened_tour_back_to_admin_settings",
-    ])
-      localStorage.setItem(`backendaiwebui.settings.user.${name}`, "true");
-  });
+  // A fresh origin shows a superadmin AdminViewSwitchTour: the intro modal on
+  // admin pages, the spotlight on project pages. `--keep-tours` is for a PR on the tour.
+  if (!flags.keepTours)
+    await context.addInitScript((origin) => {
+      if (location.origin !== origin) return;
+      for (const name of [
+        "has_opened_tour_back_to_user_view",
+        "has_opened_tour_back_to_admin_settings",
+      ])
+        localStorage.setItem(`backendaiwebui.settings.user.${name}`, "true");
+    }, new URL(base).origin);
   const page = await context.newPage();
   try {
     await login(page, base, endpoint, env);
