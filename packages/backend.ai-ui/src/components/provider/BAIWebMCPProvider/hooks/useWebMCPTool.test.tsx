@@ -1,6 +1,6 @@
 import BAIWebMCPProvider from '../BAIWebMCPProvider';
 import type { WebMCPTool, WebMCPToolDescriptor } from '../types';
-import useWebMCPTool, { type WebMCPToolDep } from './useWebMCPTool';
+import useWebMCPTool from './useWebMCPTool';
 import { renderHook } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -97,21 +97,6 @@ describe('useWebMCPTool', () => {
     expect(signalOf(0).aborted).toBe(true);
   });
 
-  it('re-registers when deps change and aborts the previous registration', () => {
-    const { rerender } = renderHook(
-      ({ dep }: { dep: WebMCPToolDep }) => useWebMCPTool(makeTool(), [dep]),
-      { wrapper: gate(true), initialProps: { dep: 'a' as WebMCPToolDep } },
-    );
-
-    rerender({ dep: 'a' });
-    expect(registerTool).toHaveBeenCalledTimes(1);
-
-    rerender({ dep: 'b' });
-    expect(registerTool).toHaveBeenCalledTimes(2);
-    expect(signalOf(0).aborted).toBe(true);
-    expect(signalOf(1).aborted).toBe(false);
-  });
-
   it('re-registers when the definition changes, not when only execute does', () => {
     const { rerender } = renderHook(
       ({ description, value }: { description: string; value: number }) =>
@@ -188,6 +173,63 @@ describe('useWebMCPTool', () => {
 
     await expect(descriptorOf(0).execute({})).resolves.toEqual({
       error: { code: 'execution_failed', message: 'boom' },
+    });
+  });
+
+  it('reads the message off a plain-object rejection', async () => {
+    renderHook(
+      () =>
+        useWebMCPTool(
+          makeTool({
+            execute: () =>
+              Promise.reject({ isError: true, message: 'quota exceeded' }),
+          }),
+        ),
+      { wrapper: gate(true) },
+    );
+
+    await expect(descriptorOf(0).execute({})).resolves.toEqual({
+      error: { code: 'execution_failed', message: 'quota exceeded' },
+    });
+  });
+
+  it('reports a result that cannot be serialized as a structured error', async () => {
+    const cycle: Record<string, unknown> = {};
+    cycle.self = cycle;
+    renderHook(() => useWebMCPTool(makeTool({ execute: () => cycle })), {
+      wrapper: gate(true),
+    });
+
+    await expect(descriptorOf(0).execute({})).resolves.toMatchObject({
+      error: { code: 'execution_failed' },
+    });
+  });
+
+  it('reports a validator failure as a structured error', async () => {
+    const malformed = {
+      type: 'object',
+      additionalProperties: false,
+    } as unknown as WebMCPTool['inputSchema'];
+    renderHook(() => useWebMCPTool(makeTool({ inputSchema: malformed })), {
+      wrapper: gate(true),
+    });
+
+    await expect(descriptorOf(0).execute({ count: 1 })).resolves.toMatchObject({
+      error: { code: 'execution_failed' },
+    });
+  });
+
+  it('answers tool_unavailable once the component passes null', async () => {
+    const { rerender } = renderHook(
+      ({ ready }: { ready: boolean }) =>
+        useWebMCPTool(ready ? makeTool() : null),
+      { wrapper: gate(true), initialProps: { ready: true } },
+    );
+
+    rerender({ ready: false });
+
+    await expect(descriptorOf(0).execute({})).resolves.toMatchObject({
+      error: { code: 'tool_unavailable' },
     });
   });
 

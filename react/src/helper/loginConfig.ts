@@ -464,11 +464,8 @@ export function refreshConfigFromToml(config: any): LoginConfigState {
     value: g?.enableReservoir,
   }) as boolean;
 
-  state.enableWebMCP = getConfigValueByExists(g, {
-    valueType: 'boolean',
-    defaultValue: false,
-    value: g?.enableWebMCP,
-  }) as boolean;
+  // Strict: this gate exposes the page to agents, and a quoted "false" is truthy.
+  state.enableWebMCP = g?.enableWebMCP === true;
 
   // -- wsproxy section --
   state.proxy_url = getConfigValueByExists(w, {

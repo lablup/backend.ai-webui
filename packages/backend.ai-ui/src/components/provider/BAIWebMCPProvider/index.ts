@@ -7,7 +7,6 @@ export {
   getWebMCPModelContext,
   useBAIWebMCPActive,
 } from './hooks/useWebMCPTool';
-export type { WebMCPToolDep } from './hooks/useWebMCPTool';
 export {
   validateWebMCPInput,
   webMCPError,

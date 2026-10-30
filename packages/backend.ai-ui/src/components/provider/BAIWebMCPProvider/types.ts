@@ -31,14 +31,13 @@ export interface WebMCPInputSchema {
   type: 'object';
   properties: Record<string, WebMCPPropertySchema>;
   required?: ReadonlyArray<string>;
-  additionalProperties?: boolean;
+  additionalProperties: false;
 }
 
 export interface WebMCPToolAnnotations {
   readOnlyHint?: boolean;
   /** The result carries user-authored text (names, emails, descriptions). */
   untrustedContentHint?: boolean;
-  consequentialHint?: boolean;
 }
 
 /** A tool as `useWebMCPTool` accepts it. `execute` receives validated input. */

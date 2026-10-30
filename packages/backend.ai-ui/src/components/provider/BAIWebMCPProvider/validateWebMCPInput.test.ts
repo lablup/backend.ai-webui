@@ -36,13 +36,18 @@ describe('validateWebMCPInput', () => {
     });
   });
 
-  it('treats undefined and null input as an empty object', () => {
-    const empty: WebMCPInputSchema = { type: 'object', properties: {} };
+  it('treats undefined, null and the JSON string null as an empty object', () => {
+    const empty: WebMCPInputSchema = {
+      type: 'object',
+      properties: {},
+      additionalProperties: false,
+    };
     expect(validateWebMCPInput(empty, undefined)).toEqual({
       ok: true,
       value: {},
     });
     expect(validateWebMCPInput(empty, null)).toEqual({ ok: true, value: {} });
+    expect(validateWebMCPInput(empty, 'null')).toEqual({ ok: true, value: {} });
   });
 
   it('rejects non-object input', () => {
@@ -105,17 +110,11 @@ describe('validateWebMCPInput', () => {
     );
   });
 
-  it('rejects unknown properties only when additionalProperties is false', () => {
+  it('rejects undeclared properties', () => {
     expect(validateWebMCPInput(schema, { page: 'data', extra: 1 })).toEqual({
       ok: false,
       issues: [{ path: 'extra', message: 'is not an accepted property' }],
     });
-    expect(
-      validateWebMCPInput(
-        { ...schema, additionalProperties: undefined },
-        { page: 'data', extra: 1 },
-      ).ok,
-    ).toBe(true);
   });
 
   it('does not treat inherited keys as declared properties', () => {
