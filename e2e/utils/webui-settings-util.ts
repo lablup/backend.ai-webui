@@ -1,5 +1,5 @@
 /**
- * Helpers for the System Settings page (`/admin/webui-settings`) and the
+ * Helpers for the System Settings page (`/admin/system-settings`) and the
  * `settings` app-config documents behind it (#10436).
  *
  * The page edits one flat `settings` sub-key in two documents:
@@ -75,6 +75,7 @@ const row = (
  */
 export const WEBUI_SETTING_ROWS: ReadonlyArray<WebUISettingRow> = [
   // Public scope — read before sign-in.
+  row('autoLogout', 'public', 'boolean', 'login', undefined, null),
   row('allowChangeSigninMode', 'public', 'boolean', 'login', undefined, null),
   row(
     'allowAnonymousChangePassword',
@@ -95,10 +96,11 @@ export const WEBUI_SETTING_ROWS: ReadonlyArray<WebUISettingRow> = [
   row('enableInteractiveLoginAccountSwitch', 'public', 'boolean', 'login'),
   row('singleSignOnVendors', 'public', 'stringList', 'login'),
   row('ssoRealmName', 'public', 'string', 'login'),
-  row('loginAttemptLimit', 'public', 'number', 'login', undefined, null),
-  row('loginBlockTime', 'public', 'number', 'login', undefined, null),
-  row('autoLogout', 'public', 'boolean', 'login', undefined, null),
   row('debug', 'public', 'boolean', 'diagnostics', undefined, null),
+  row('storageWarningThreshold', 'domain', 'number', 'diagnostics', [
+    'resources',
+    'storageWarningThreshold',
+  ]),
   row('pluginLogin', 'public', 'string', 'plugins', ['plugin', 'login'], null),
   row(
     'pluginPage',
@@ -185,6 +187,10 @@ export const WEBUI_SETTING_ROWS: ReadonlyArray<WebUISettingRow> = [
     'resources',
     'maxHyperaccelLPUDevicesPerContainer',
   ]),
+  row('showNonInstalledImages', 'domain', 'boolean', 'session', [
+    'environments',
+    'showNonInstalledImages',
+  ]),
 
   // App launcher.
   row('openPortToPublic', 'domain', 'boolean', 'appLauncher', [
@@ -199,7 +205,6 @@ export const WEBUI_SETTING_ROWS: ReadonlyArray<WebUISettingRow> = [
     'resources',
     'allowNonAuthTCP',
   ]),
-  row('eduAppNamePrefix', 'domain', 'string', 'appLauncher'),
 
   // Images.
   row(
@@ -212,10 +217,6 @@ export const WEBUI_SETTING_ROWS: ReadonlyArray<WebUISettingRow> = [
   ),
   row('systemSSHImage', 'domain', 'string', 'environments'),
   row('defaultFileBrowserImage', 'domain', 'string', 'environments'),
-  row('showNonInstalledImages', 'domain', 'boolean', 'environments', [
-    'environments',
-    'showNonInstalledImages',
-  ]),
 
   // Folders and uploads.
   row('isDirectorySizeVisible', 'domain', 'boolean', 'storage'),
@@ -223,10 +224,6 @@ export const WEBUI_SETTING_ROWS: ReadonlyArray<WebUISettingRow> = [
   row('maxFileUploadSize', 'domain', 'number', 'storage', [
     'resources',
     'maxFileUploadSize',
-  ]),
-  row('storageWarningThreshold', 'domain', 'number', 'storage', [
-    'resources',
-    'storageWarningThreshold',
   ]),
 
   // Sidebar.
@@ -286,11 +283,13 @@ export const WEBUI_SETTING_GROUPS: ReadonlyArray<WebUISettingGroup> = [
   'plugins',
 ];
 
-export const PUBLIC_GROUPS: ReadonlyArray<WebUISettingGroup> = [
-  'login',
-  'diagnostics',
-  'plugins',
-];
+/** Groups that hold only public keys; a domain admin does not see them. */
+export const PUBLIC_ONLY_GROUPS: ReadonlyArray<WebUISettingGroup> =
+  WEBUI_SETTING_GROUPS.filter((group) =>
+    WEBUI_SETTING_ROWS.filter((r) => r.group === group).every(
+      (r) => r.scope === 'public',
+    ),
+  );
 
 export const rowByKey = (key: string): WebUISettingRow => {
   const found = WEBUI_SETTING_ROWS.find((r) => r.key === key);
@@ -570,7 +569,7 @@ export async function openLoginPage(page: Page) {
 // Page helpers
 // ---------------------------------------------------------------------------
 
-export const WEBUI_SETTINGS_PATH = 'admin/webui-settings';
+export const WEBUI_SETTINGS_PATH = 'admin/system-settings';
 
 /**
  * Marks the superadmin view-switch tour (`AdminViewSwitchTour`) as already
