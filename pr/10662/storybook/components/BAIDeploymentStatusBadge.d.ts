@@ -28,8 +28,8 @@ export declare const DEPLOYMENT_IN_PROGRESS_STATUSES: readonly ["DEPLOYING", "SC
 export declare const isDeploymentInProgress: (status: BAIDeploymentStatus | "%future added value" | null | undefined) => boolean;
 export type DeploymentPauseCause = 'user' | 'autoScaling';
 /**
- * Why a live, settled deployment runs no replicas, or `null` when it is not
- * paused. Autoscaling changes only `desiredReplicaCount`, so a user-set
+ * Why a ready deployment runs no replicas, or `null` when it is not paused.
+ * Autoscaling changes only `desiredReplicaCount`, so a user-set
  * `replicaCount` above zero means an autoscaling rule paused it.
  */
 export declare const getDeploymentPauseCause: (status: BAIDeploymentStatus | "%future added value" | null | undefined, replicaState: {
