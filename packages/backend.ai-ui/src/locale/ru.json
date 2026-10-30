@@ -39,7 +39,7 @@
     "PlaceHolder": "Выберите группу ресурсов"
   },
   "comp:BAIAdminRetentionPolicyTable": {
-    "Category": "Категория",
+    "Category": "Цель политики",
     "CreatedAt": "Дата создания",
     "Disabled": "Отключено",
     "Enabled": "Включено",

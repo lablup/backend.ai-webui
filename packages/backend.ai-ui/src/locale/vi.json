@@ -39,7 +39,7 @@
     "PlaceHolder": "Chọn nhóm tài nguyên"
   },
   "comp:BAIAdminRetentionPolicyTable": {
-    "Category": "Danh mục",
+    "Category": "Đối tượng chính sách",
     "CreatedAt": "Ngày tạo",
     "Disabled": "Đã tắt",
     "Enabled": "Đã bật",

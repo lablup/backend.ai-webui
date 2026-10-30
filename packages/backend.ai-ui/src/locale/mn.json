@@ -39,7 +39,7 @@
     "PlaceHolder": "Ресурсын бүлэг сонгох"
   },
   "comp:BAIAdminRetentionPolicyTable": {
-    "Category": "Ангилал",
+    "Category": "Бодлогын объект",
     "CreatedAt": "Үүсгэсэн огноо",
     "Disabled": "Идэвхгүй",
     "Enabled": "Идэвхжсэн",

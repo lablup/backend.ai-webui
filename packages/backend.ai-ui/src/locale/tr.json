@@ -39,7 +39,7 @@
     "PlaceHolder": "Kaynak grubunu seçin"
   },
   "comp:BAIAdminRetentionPolicyTable": {
-    "Category": "Kategori",
+    "Category": "Politika hedefi",
     "CreatedAt": "Oluşturulma Tarihi",
     "Disabled": "Devre Dışı",
     "Enabled": "Etkin",
