@@ -22,6 +22,17 @@ describe('bootstrap script outside the batch session toggle', () => {
     expect(toSessionExecutionSpecFormValue(spec).isBatchSession).toBe(false);
   });
 
+  it.each([
+    { startupCommand: 'python train.py' },
+    { startsAt: '2026-11-01T00:00:00Z' },
+    { batchTimeoutSec: 3600 },
+  ])('opens the batch box for a stored batch field (%o)', (batchField) => {
+    expect(
+      toSessionExecutionSpecFormValue({ ...spec, ...batchField })
+        .isBatchSession,
+    ).toBe(true);
+  });
+
   it('keeps the bootstrap script when the batch box is unticked', () => {
     const value = toSessionExecutionSpecFormValue({
       ...spec,
