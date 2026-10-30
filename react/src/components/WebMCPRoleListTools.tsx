@@ -92,6 +92,7 @@ const RoleListToolsRegistrar: React.FC<WebMCPRoleListToolsProps> = ({
     autoAssign: role.autoAssign ?? null,
     createdAt: role.createdAt ?? null,
     updatedAt: role.updatedAt ?? null,
+    path: pathWithSearchParam(pathname, search, ROLE_DETAIL_PARAM, role.id),
   }));
   const list = visibleRowsResult({
     rows,
@@ -102,14 +103,15 @@ const RoleListToolsRegistrar: React.FC<WebMCPRoleListToolsProps> = ({
     total,
     pending,
   });
-  // The URL and the drawer key on the global id; agents only ever see the UUID.
+  // The URL and the drawer key on the global id: rows report the UUID as `id`
+  // and carry the global id only inside `path`.
   const openedId = _.find(nodes, { id: selectedRoleId ?? '' })?.entityId;
 
   usePageReadTools({
     noun: 'role',
     plural: 'roles',
     rowFields:
-      'Row fields: id (role UUID), name, description, scopeType, scopeId, source, status, autoAssign, createdAt, updatedAt.',
+      'Row fields: id (role UUID), name, description, scopeType, scopeId, source, status, autoAssign, createdAt, updatedAt, path (pass it to bai_navigate to open the role).',
     currentMeaning: 'the role whose detail drawer is open',
     readRows: () => list,
     readViewState: () =>

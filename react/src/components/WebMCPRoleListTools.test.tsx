@@ -72,6 +72,7 @@ const renderTools = ({
   selectedRoleId?: string;
   pending?: boolean;
 } = {}) => {
+  window.history.replaceState({}, '', `/admin/rbac${search}`);
   const environment = createMockEnvironment();
   environment.mock.queueOperationResolver((operation) =>
     MockPayloadGenerator.generate(operation, {
@@ -180,8 +181,33 @@ describe('WebMCPRoleListTools', () => {
     });
   });
 
+  it('gives each row a path that opens the role, keeping the view', async () => {
+    renderTools({ search: '?filter=x' });
+    await waitFor(() => expect(registerTool).toHaveBeenCalledTimes(3));
+
+    await expect(
+      toolNamed('bai_list_visible_role').execute({}),
+    ).resolves.toMatchObject({
+      rows: [
+        {
+          id: ROLE_UUID,
+          path: `/admin/rbac?filter=x&roleDetail=${ROLE_GLOBAL_ID}`,
+        },
+      ],
+    });
+  });
+
   it('answers null when the URL names a role whose drawer is closed', async () => {
-    renderTools({ search: '?roleDetail=g-role-elsewhere' });
+    renderTools({ search: `?roleDetail=${ROLE_GLOBAL_ID}` });
+    await waitFor(() => expect(registerTool).toHaveBeenCalledTimes(3));
+
+    await expect(
+      toolNamed('bai_get_current_role').execute({}),
+    ).resolves.toEqual({ current: null });
+  });
+
+  it('answers null for a role that is not among the rows', async () => {
+    renderTools({ selectedRoleId: 'g-role-elsewhere' });
     await waitFor(() => expect(registerTool).toHaveBeenCalledTimes(3));
 
     await expect(
@@ -190,7 +216,7 @@ describe('WebMCPRoleListTools', () => {
   });
 
   it('flags results while the page loads a new view', async () => {
-    renderTools({ pending: true });
+    renderTools({ pending: true, selectedRoleId: ROLE_GLOBAL_ID });
     await waitFor(() => expect(registerTool).toHaveBeenCalledTimes(3));
 
     await expect(
@@ -199,5 +225,8 @@ describe('WebMCPRoleListTools', () => {
     await expect(
       toolNamed('bai_get_role_filter').execute({}),
     ).resolves.toMatchObject({ pending: true });
+    await expect(
+      toolNamed('bai_get_current_role').execute({}),
+    ).resolves.toMatchObject({ pending: true, current: { id: ROLE_UUID } });
   });
 });
