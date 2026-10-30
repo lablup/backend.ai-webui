@@ -1546,6 +1546,7 @@
   },
   "environment": {
     "Action": "Үйлдэл",
+    "AddApp": "Апп нэмэх",
     "Aliases": "__NOT_TRANSLATED__",
     "AllProjects": "Бүх төсөл",
     "AlreadyInstalledImage": "Аль хэдийн суулгасан зураг",

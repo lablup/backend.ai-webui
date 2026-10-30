@@ -1546,6 +1546,7 @@
   },
   "environment": {
     "Action": "Tindakan",
+    "AddApp": "Tambah aplikasi",
     "Aliases": "__NOT_TRANSLATED__",
     "AllProjects": "Semua proyek",
     "AlreadyInstalledImage": "Gambar yang sudah terpasang",

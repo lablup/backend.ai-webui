@@ -1546,6 +1546,7 @@
   },
   "environment": {
     "Action": "Действие",
+    "AddApp": "Добавить приложение",
     "Aliases": "__NOT_TRANSLATED__",
     "AllProjects": "Все проекты",
     "AlreadyInstalledImage": "Уже установленный образ",

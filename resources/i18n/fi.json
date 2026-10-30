@@ -1546,6 +1546,7 @@
   },
   "environment": {
     "Action": "Toiminta",
+    "AddApp": "Lisää sovellus",
     "Aliases": "__NOT_TRANSLATED__",
     "AllProjects": "Kaikki projektit",
     "AlreadyInstalledImage": "Jo asennettu kuva",

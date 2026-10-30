@@ -1533,6 +1533,7 @@
   },
   "environment": {
     "Action": "Action",
+    "AddApp": "Add app",
     "Aliases": "Aliases",
     "AllProjects": "All projects",
     "AlreadyInstalledImage": "Already installed image",
