@@ -15,7 +15,10 @@ vi.mock('react-i18next', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-i18next')>();
   return {
     ...actual,
-    useTranslation: () => ({ t: (key: string) => key }),
+    useTranslation: () => ({
+      t: (key: string, options?: { number?: number }) =>
+        options?.number ? `${key} ${options.number}` : key,
+    }),
   };
 });
 
@@ -120,6 +123,23 @@ describe('DashboardBoardSection', () => {
     expect(latest.config.boards).toHaveLength(2);
     expect(latest.config.active).toBe(latest.config.boards[1].id);
     expect(latest.config.boards[1].panels).toEqual([]);
+  });
+
+  it('numbers a new board past the titles still in use', async () => {
+    const user = userEvent.setup();
+    const latest = renderSection({
+      boards: [
+        board('default', ''),
+        board('three', 'dashboard.boards.NewBoardTitle 3'),
+      ],
+      active: 'default',
+    });
+
+    await user.click(screen.getByTestId('dashboard-board-add'));
+
+    expect(latest.config.boards[2].title).toBe(
+      'dashboard.boards.NewBoardTitle 4',
+    );
   });
 
   it('cannot delete the last board', async () => {

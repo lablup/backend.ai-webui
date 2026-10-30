@@ -70,7 +70,9 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     open: boolean;
     panel?: PersistedPanel;
   }>({ open: false });
+  // The id outlives `open` until after-close, so the closing modal keeps its content.
   const [settingsPanelId, setSettingsPanelId] = useState<string | null>(null);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const boardContainerRef = useRef<HTMLDivElement>(null);
 
   // The edit-mode atom is global: close it when leaving the page, but not when a
@@ -173,7 +175,10 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
           onRemove={removePanel}
           onResetLayout={resetLayout}
           settingsTargetOf={settingsTargetOf}
-          onRequestSettings={setSettingsPanelId}
+          onRequestSettings={(panelId) => {
+            setSettingsPanelId(panelId);
+            setIsSettingsOpen(true);
+          }}
           boardSection={
             boards && page !== 'project' ? (
               <DashboardBoardSection
@@ -187,7 +192,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
       ) : null}
       <BAIUnmountAfterClose>
         <PanelSettingsModal
-          open={!!settingsTarget}
+          open={isSettingsOpen && !!settingsTarget}
           title={settingsTarget?.title ?? ''}
           definition={settingsTarget?.definition ?? { kind: 'custom' }}
           settings={settingsTarget?.settings}
@@ -195,7 +200,8 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
           onSubmit={(settings) => {
             if (settingsPanelId) updatePanelSettings(settingsPanelId, settings);
           }}
-          onRequestClose={() => setSettingsPanelId(null)}
+          onRequestClose={() => setIsSettingsOpen(false)}
+          afterClose={() => setSettingsPanelId(null)}
         />
       </BAIUnmountAfterClose>
       {/* Unmounted after the close animation, so each open starts fresh: two

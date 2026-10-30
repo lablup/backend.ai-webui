@@ -272,7 +272,10 @@ export const useUpdateDomainAppConfig = () => {
   const upsert =
     useMutationWithPromise<useAppConfigUpsertMutation>(upsertMutation);
 
-  return async (subKey: string | Array<string>, nextValue: unknown) => {
+  return async (
+    subKey: string | Array<string>,
+    nextValue: unknown | ((current: unknown) => unknown),
+  ) => {
     const raw = await fetchQuery<useAppConfigDomainRawQuery>(
       relayEnv,
       domainRawQuery,
@@ -288,7 +291,13 @@ export const useUpdateDomainAppConfig = () => {
         items: [
           {
             configName: 'domainConfig',
-            config: applySubKey(rawDoc, _.toPath(subKey), nextValue),
+            config: applySubKey(
+              rawDoc,
+              _.toPath(subKey),
+              typeof nextValue === 'function'
+                ? nextValue(_.get(rawDoc, subKey))
+                : nextValue,
+            ),
           },
         ],
       },
@@ -323,7 +332,8 @@ export const useRefetchMyAppConfig = () => {
 
 /**
  * Setter for the current user's own `userConfig` fragment: re-reads the raw
- * USER-scope document (not the merged view) and replaces only `subKey`.
+ * USER-scope document (not the merged view) and replaces only `subKey`. A
+ * function `nextValue` receives the re-read value at `subKey`.
  * Post-login surfaces only.
  */
 export const useUpdateMyUserAppConfig = () => {
@@ -332,7 +342,10 @@ export const useUpdateMyUserAppConfig = () => {
   const upsert =
     useMutationWithPromise<useAppConfigMyUpsertMutation>(myUpsertMutation);
 
-  return async (subKey: string | Array<string>, nextValue: unknown) => {
+  return async (
+    subKey: string | Array<string>,
+    nextValue: unknown | ((current: unknown) => unknown),
+  ) => {
     const raw = await fetchQuery<useAppConfigUserRawQuery>(
       relayEnv,
       userRawQuery,
@@ -347,7 +360,13 @@ export const useUpdateMyUserAppConfig = () => {
         items: [
           {
             configName: 'userConfig',
-            config: applySubKey(rawDoc, _.toPath(subKey), nextValue),
+            config: applySubKey(
+              rawDoc,
+              _.toPath(subKey),
+              typeof nextValue === 'function'
+                ? nextValue(_.get(rawDoc, subKey))
+                : nextValue,
+            ),
           },
         ],
       },

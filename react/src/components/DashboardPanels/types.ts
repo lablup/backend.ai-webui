@@ -190,8 +190,6 @@ export interface DashboardModel extends DashboardBoard {
 export interface DashboardPageConfig {
   boards: Array<DashboardModel>;
   active: string;
-  /** Set on every write, so the localStorage migration never runs again. */
-  migrated?: true;
 }
 
 /** `userConfig.dashboard`. */
