@@ -59,10 +59,9 @@ export const catalogFor = (
         definition.page.includes(page) &&
         meetsRole(definition.requires?.role, role) &&
         !definition.requires?.hidden?.(config, role) &&
-        !(
-          definition.requires?.menuKey &&
-          disabledMenus.has(definition.requires.menuKey)
-        ),
+        !([] as ReadonlyArray<string>)
+          .concat(definition.requires?.menuKey ?? [])
+          .some((menuKey) => disabledMenus.has(menuKey)),
     )
     .map((definition) => ({
       definition,
