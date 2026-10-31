@@ -191,15 +191,16 @@ const ModelCardSelect: React.FC<ModelCardSelectProps> = ({
       if (!item?.entityId) return null;
       const key = item.entityId;
       cardByKey[key] = item;
-      // Cards with no compatible preset cannot be deployed — disable them,
-      // mirroring the dimmed cards on the Model Store list page.
+      // Cards with no compatible preset cannot be deployed, as on the Model Store list page.
       const hasNoPresets = item.availablePresets?.count === 0;
       return {
         // P26-3: `label` must be a string (trigger text + accessible name);
         // the brand icon rides in the `extra` slot.
         label: item.metadata?.title || item.name || key,
         value: key,
-        disabled: hasNoPresets,
+        disabled: hasNoPresets
+          ? { reason: t('modelStore.NoCompatiblePreset') }
+          : false,
         extra: item.name ? <ModelBrandIcon modelName={item.name} /> : undefined,
       };
     }),

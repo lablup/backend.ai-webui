@@ -1389,6 +1389,7 @@
     "TextPlaceholderExample": "z. B. Wert eingeben",
     "TextPlaceholderLabel": "Eingabe-Platzhalter",
     "UIType": "UI-Typ",
+    "UITypeCannotRenderSelectedValueType": "Dieser UI-Typ kann den ausgewählten Werttyp nicht darstellen.",
     "UITypeCheckbox": "Kontrollkästchen",
     "UITypeIncompatibleWithValueType": "Der ausgewählte UI-Typ kann diesen Werttyp nicht darstellen.",
     "UITypeNumberInput": "Zahleneingabe",
@@ -1454,6 +1455,7 @@
     "InviteByEmail": "Per E-Mail einladen"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Sie haben keine Berechtigung, diesen Ordner einzuhängen.",
     "SelectFolder": "Ordner auswählen"
   },
   "comp:BAISessionAgentIds": {

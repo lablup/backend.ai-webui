@@ -783,7 +783,13 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
           <BAISelect
             options={valueTypeOptions.map((option) => ({
               ...option,
-              disabled: !isValueTypeAllowed(option.value),
+              disabled: isValueTypeAllowed(option.value)
+                ? false
+                : {
+                    reason: t(
+                      'comp:BAIRuntimeVariantPresetSettingModal.UITypeIncompatibleWithValueType',
+                    ),
+                  },
             }))}
           />
         </Form.Item>
@@ -817,7 +823,13 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                 allowClear
                 options={uiTypeOptions.map((option) => ({
                   ...option,
-                  disabled: !isUITypeAllowed(option.value),
+                  disabled: isUITypeAllowed(option.value)
+                    ? false
+                    : {
+                        reason: t(
+                          'comp:BAIRuntimeVariantPresetSettingModal.UITypeCannotRenderSelectedValueType',
+                        ),
+                      },
                 }))}
               />
             </Form.Item>

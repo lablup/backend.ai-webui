@@ -418,8 +418,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
               filter,
             ]),
           }}
-          // The server refuses to mount a folder whose mount level is NONE.
-          isFolderDisabled={(folder) => folder.permission === 'NONE'}
+          disableUnmountable
           value={mountConfigs.map((entry) => entry.vfolderId)}
           fallbackLabels={_.fromPairs(
             _.compact(

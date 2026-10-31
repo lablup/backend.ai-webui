@@ -86,7 +86,7 @@ export const docs = {
       name: 'options',
       type: 'Array<BAIComplexSelectOption>',
       description:
-        'The currently loaded rows. Each carries a string `value` and `label`, plus optional `labelContent`, `icon` (a leading visual centered on the row), `description`, `extra` and `disabled`.',
+        'The currently loaded rows. Each carries a string `value` and `label`, plus optional `labelContent`, `icon` (a leading visual centered on the row), `description`, `extra` and `disabled`. `disabled` is `boolean | { reason: string }`: the object form also puts a glyph at the end of the row whose tooltip carries the reason, so the row keeps its height.',
       default: '[]',
     },
     {

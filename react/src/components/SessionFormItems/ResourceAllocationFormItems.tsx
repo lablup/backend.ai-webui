@@ -1215,10 +1215,16 @@ const ResourceAllocationFormItems: React.FC<
                                           label:
                                             mergedResourceSlots?.[name]
                                               ?.display_unit || 'UNIT',
-                                          disabled: !_.includes(
+                                          disabled: _.includes(
                                             supportedAcceleratorTypesInRGByImage,
                                             name,
-                                          ),
+                                          )
+                                            ? false
+                                            : {
+                                                reason: t(
+                                                  'session.launcher.AcceleratorNotSupportedByImage',
+                                                ),
+                                              },
                                         };
                                       },
                                     )}

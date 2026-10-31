@@ -188,3 +188,70 @@ export const Disabled: Story = {
     isDisabled: true,
   },
 };
+
+const noMount = { reason: "You don't have permission to mount this folder." };
+
+export const DisabledOptionReason: Story = {
+  name: 'Disabled Option With Reason',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`disabled: { reason }` dims the option and puts a glyph at its end whose tooltip says why; a bare `true` disables it silently.',
+      },
+    },
+  },
+  render: (args) => {
+    const [value, setValue] = useState<BAIComplexSelectValue>([]);
+    return (
+      <BAIComplexSelect
+        {...args}
+        multiple
+        selectionMark="checkbox"
+        options={[
+          {
+            value: 'datasets',
+            label: 'datasets',
+            description: 'general · local:volume1',
+          },
+          {
+            value: 'shared-models',
+            label: 'shared-models',
+            description: 'model · local:volume1',
+            disabled: noMount,
+          },
+          {
+            value: 'notebooks',
+            label: 'notebooks',
+            description: 'general · local:volume2',
+          },
+          {
+            value: 'team-logs',
+            label: 'team-logs',
+            description: 'general · local:volume2',
+            disabled: noMount,
+          },
+          {
+            value: 'checkpoints',
+            label: 'checkpoints',
+            description: 'general · local:volume1',
+            disabled: noMount,
+          },
+          {
+            value: 'archive',
+            label: 'archive',
+            description: 'general · local:volume2',
+            disabled: true,
+          },
+        ]}
+        value={value}
+        onChange={setValue}
+      />
+    );
+  },
+  args: {
+    label: 'Folders',
+    placeholder: 'Select Folder',
+    width: 360,
+  },
+};

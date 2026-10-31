@@ -119,7 +119,8 @@ import type { CSSProperties, ReactNode } from 'react';
 export interface BAISelectOption {
   value?: string | number | null;
   label?: ReactNode;
-  disabled?: boolean;
+  /** `{ reason }` also puts a glyph at the end of the row whose tooltip says why. */
+  disabled?: SelectorOptionData['disabled'];
   title?: string;
   // antd's `DefaultOptionType` carried an open index signature and call sites
   // read arbitrary keys off it (`option.data.description`,
@@ -315,7 +316,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
         const childProps = child.props as {
           value?: unknown;
           label?: ReactNode;
-          disabled?: boolean;
+          disabled?: BAISelectOption['disabled'];
           filterValue?: string;
           children?: ReactNode;
         };
@@ -646,7 +647,8 @@ export interface BAISelectOptionProps {
    * live in props the text flattener cannot reach (FR-3544).
    */
   label?: string;
-  disabled?: boolean;
+  /** `{ reason }` also puts a glyph at the end of the row whose tooltip says why. */
+  disabled?: BAISelectOption['disabled'];
   /**
    * Accepted and IGNORED, for antd's `optionFilterProp="filterValue"` call
    * sites. Search matches the option's visible text only — Astryx renders the

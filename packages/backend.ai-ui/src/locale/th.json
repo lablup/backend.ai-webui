@@ -1389,6 +1389,7 @@
     "TextPlaceholderExample": "เช่น กรอกค่า",
     "TextPlaceholderLabel": "ข้อความตัวอย่างในช่องกรอก",
     "UIType": "ประเภท UI",
+    "UITypeCannotRenderSelectedValueType": "ประเภท UI นี้แสดงประเภทค่าที่เลือกไม่ได้",
     "UITypeCheckbox": "ช่องทำเครื่องหมาย",
     "UITypeIncompatibleWithValueType": "ประเภท UI ที่เลือกไม่สามารถแสดงประเภทค่านี้ได้",
     "UITypeNumberInput": "ช่องกรอกตัวเลข",
@@ -1454,6 +1455,7 @@
     "InviteByEmail": "เชิญทางอีเมล"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "คุณไม่มีสิทธิ์เมานต์โฟลเดอร์นี้",
     "SelectFolder": "เลือกโฟลเดอร์"
   },
   "comp:BAISessionAgentIds": {

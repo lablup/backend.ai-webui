@@ -1389,6 +1389,7 @@
     "TextPlaceholderExample": "np. Wprowadź wartość",
     "TextPlaceholderLabel": "Tekst zastępczy pola",
     "UIType": "Typ interfejsu",
+    "UITypeCannotRenderSelectedValueType": "Ten typ interfejsu nie może wyświetlić wybranego typu wartości.",
     "UITypeCheckbox": "Pole wyboru",
     "UITypeIncompatibleWithValueType": "Wybrany typ interfejsu nie może wyświetlić tego typu wartości.",
     "UITypeNumberInput": "Pole liczbowe",
@@ -1454,6 +1455,7 @@
     "InviteByEmail": "Zaproś przez e-mail"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Nie masz uprawnień do zamontowania tego folderu.",
     "SelectFolder": "Wybierz folder"
   },
   "comp:BAISessionAgentIds": {

@@ -1389,6 +1389,7 @@
     "TextPlaceholderExample": "例如：請輸入值",
     "TextPlaceholderLabel": "輸入佔位文字",
     "UIType": "UI 類型",
+    "UITypeCannotRenderSelectedValueType": "此 UI 類型無法呈現所選的值類型。",
     "UITypeCheckbox": "核取方塊",
     "UITypeIncompatibleWithValueType": "所選 UI 類型無法呈現此值類型。",
     "UITypeNumberInput": "數字輸入框",
@@ -1454,6 +1455,7 @@
     "InviteByEmail": "透過電子郵件邀請"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "您沒有掛載此資料夾的權限。",
     "SelectFolder": "選擇資料夾"
   },
   "comp:BAISessionAgentIds": {

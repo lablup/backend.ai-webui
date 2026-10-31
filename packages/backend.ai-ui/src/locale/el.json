@@ -1389,6 +1389,7 @@
     "TextPlaceholderExample": "π.χ., Εισαγάγετε μια τιμή",
     "TextPlaceholderLabel": "Placeholder Εισαγωγής",
     "UIType": "Τύπος UI",
+    "UITypeCannotRenderSelectedValueType": "Αυτός ο τύπος UI δεν μπορεί να αποδώσει τον επιλεγμένο τύπο τιμής.",
     "UITypeCheckbox": "Πλαίσιο Ελέγχου",
     "UITypeIncompatibleWithValueType": "Ο επιλεγμένος τύπος διεπαφής δεν μπορεί να εμφανίσει αυτόν τον τύπο τιμής.",
     "UITypeNumberInput": "Αριθμητική Εισαγωγή",
@@ -1454,6 +1455,7 @@
     "InviteByEmail": "Πρόσκληση μέσω e-mail"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Δεν έχετε δικαίωμα προσάρτησης αυτού του φακέλου.",
     "SelectFolder": "Επιλογή φακέλου"
   },
   "comp:BAISessionAgentIds": {
