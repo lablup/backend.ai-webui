@@ -65,32 +65,30 @@ Parse the directory name to derive a slug for the GIF filename:
 
 ## Uploading GIFs to GitHub PR
 
-GIFs stay out of git (`e2e/recordings/` is in `.gitignore`). Upload them through the
-PR page's own attachment control via Chrome DevTools MCP — that is what yields
-`github.com/user-attachments` CDN URLs; `gh` and release assets do not. The GIF table
+GIFs stay out of git (`e2e/recordings/` is in `.gitignore`). Upload them with
+`gh pr edit --attach` (GitHub CLI 2.99.0 or later, push access required). The GIF table
 goes in the PR body, not a comment.
 
-The workflow:
+1. Write the existing PR body plus the table below to `e2e/recordings/pr-body.md`
+2. Run `gh pr edit {PR_NUMBER} --body-file e2e/recordings/pr-body.md --attach e2e/recordings/{slug}.gif`, one `--attach` per GIF (up to 50 per command)
 
-1. Navigate to the PR page via `mcp__chrome-devtools__navigate_page`
-2. Enter edit mode on the PR body (click "Show options" → "Edit comment")
-3. Upload GIFs via the "Attach files" button (`mcp__chrome-devtools__upload_file`) to get CDN URLs
-4. Extract CDN URLs (`github.com/user-attachments/assets/...`) from the textarea
-5. If uploads went to the comment textarea, extract URLs and clear it
-6. Set the PR body textarea content (preserve existing body + append GIF table) using `nativeInputValueSetter`
-7. Submit via the "Update comment" button on the PR body form
+`gh` uploads each file and rewrites its Markdown reference to a
+`github.com/user-attachments/assets/{uuid}` URL. It does not rewrite HTML `<img src>` or
+`<video src>`, so use Markdown image syntax.
 
-This produces persistent GitHub CDN URLs that render correctly in markdown. The user must be logged into GitHub in Chrome for this to work.
+If `ffmpeg` is unavailable, attach the `.webm` instead of a GIF: the same
+`![name](./video.webm)` reference plays as a video, also inside a table cell.
 
-See `.claude/agents/playwright-e2e-pr-updater.md` for the full step-by-step Chrome DevTools upload workflow.
+See `.claude/agents/playwright-e2e-pr-updater.md` for the full workflow.
 
 ## Output Format
 
-Return a markdown table suitable for embedding in a PR description:
+Return a markdown table suitable for embedding in a PR description, with paths relative to
+the body file:
 
 ```markdown
 | Test | Recording |
 |------|-----------|
-| Admin can see the BAIPropertyFilter | ![](https://github.com/user-attachments/assets/{uuid}) |
-| Admin can filter by name | ![](https://github.com/user-attachments/assets/{uuid}) |
+| Admin can see the BAIPropertyFilter | ![Admin can see the BAIPropertyFilter](./admin-can-see-the-baipropertyfilter.gif) |
+| Admin can filter by name | ![Admin can filter by name](./admin-can-filter-by-name.gif) |
 ```
