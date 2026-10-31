@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6e32ec31f7d043b59db9e247827581bb>>
+ * @generated SignedSource<<0a603cc27001fce84a9e050d91a73d38>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -38,10 +38,20 @@ export type InviteFolderSettingModalQuery$data = {
         readonly permissions: ReadonlyArray<PermissionBit>;
         readonly recipientEmail: string | null | undefined;
         readonly recipientEntity: {
-          readonly basicInfo?: {
+          readonly __typename: "ProjectV2";
+          readonly basicInfo: {
+            readonly name: string;
+          };
+        } | {
+          readonly __typename: "UserV2";
+          readonly basicInfo: {
             readonly email: string;
           };
-          readonly entityId?: string;
+          readonly entityId: string;
+        } | {
+          // This will never be '%other', but we need some
+          // value in case none of the concrete values match.
+          readonly __typename: "%other";
         } | null | undefined;
         readonly recipientEntityId: string | null | undefined;
         readonly recipientEntityType: string | null | undefined;
@@ -147,6 +157,13 @@ v9 = {
   "storageKey": null
 },
 v10 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "__typename",
+  "storageKey": null
+},
+v11 = {
   "kind": "InlineFragment",
   "selections": [
     (v4/*: any*/),
@@ -172,7 +189,32 @@ v10 = {
   "type": "UserV2",
   "abstractKey": null
 },
-v11 = {
+v12 = {
+  "kind": "InlineFragment",
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "ProjectBasicInfo",
+      "kind": "LinkedField",
+      "name": "basicInfo",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "name",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    }
+  ],
+  "type": "ProjectV2",
+  "abstractKey": null
+},
+v13 = {
   "alias": null,
   "args": [
     {
@@ -215,7 +257,7 @@ v11 = {
   ],
   "storageKey": null
 },
-v12 = [
+v14 = [
   (v3/*: any*/)
 ];
 return {
@@ -269,7 +311,9 @@ return {
                       "name": "recipientEntity",
                       "plural": false,
                       "selections": [
-                        (v10/*: any*/)
+                        (v10/*: any*/),
+                        (v11/*: any*/),
+                        (v12/*: any*/)
                       ],
                       "storageKey": null
                     },
@@ -284,7 +328,7 @@ return {
         ],
         "storageKey": null
       },
-      (v11/*: any*/)
+      (v13/*: any*/)
     ],
     "type": "Query",
     "abstractKey": null
@@ -337,23 +381,18 @@ return {
                     "name": "recipientEntity",
                     "plural": false,
                     "selections": [
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "__typename",
-                        "storageKey": null
-                      },
                       (v10/*: any*/),
+                      (v11/*: any*/),
+                      (v12/*: any*/),
                       {
                         "kind": "InlineFragment",
-                        "selections": (v12/*: any*/),
+                        "selections": (v14/*: any*/),
                         "type": "Node",
                         "abstractKey": "__isNode"
                       },
                       {
                         "kind": "InlineFragment",
-                        "selections": (v12/*: any*/),
+                        "selections": (v14/*: any*/),
                         "type": "ArtifactRegistry",
                         "abstractKey": null
                       }
@@ -369,20 +408,20 @@ return {
         ],
         "storageKey": null
       },
-      (v11/*: any*/)
+      (v13/*: any*/)
     ]
   },
   "params": {
-    "cacheID": "263f60ed3a4b85e2ee48ef9403c55f4f",
+    "cacheID": "c9db3d2323ed3c06afad6dc25b3704fb",
     "id": null,
     "metadata": {},
     "name": "InviteFolderSettingModalQuery",
     "operationKind": "query",
-    "text": "query InviteFolderSettingModalQuery(\n  $vfolderId: UUID!\n  $scope: EntityShareScope!\n) {\n  entityShares(scope: $scope, filter: {status: {in: [PENDING, ACCEPTED]}}, limit: 100) {\n    edges {\n      node {\n        id\n        entityId\n        recipientEntityType\n        recipientEntityId\n        recipientEmail\n        status\n        permissions\n        recipientEntity {\n          __typename\n          ... on UserV2 {\n            entityId\n            basicInfo {\n              email\n            }\n          }\n          ... on Node {\n            __isNode: __typename\n            id\n          }\n          ... on ArtifactRegistry {\n            id\n          }\n        }\n      }\n    }\n  }\n  vfolderMountPolicies(vfolderId: $vfolderId) {\n    items {\n      id\n      userId\n      permission\n    }\n  }\n}\n"
+    "text": "query InviteFolderSettingModalQuery(\n  $vfolderId: UUID!\n  $scope: EntityShareScope!\n) {\n  entityShares(scope: $scope, filter: {status: {in: [PENDING, ACCEPTED]}}, limit: 100) {\n    edges {\n      node {\n        id\n        entityId\n        recipientEntityType\n        recipientEntityId\n        recipientEmail\n        status\n        permissions\n        recipientEntity {\n          __typename\n          ... on UserV2 {\n            entityId\n            basicInfo {\n              email\n            }\n          }\n          ... on ProjectV2 {\n            basicInfo {\n              name\n            }\n          }\n          ... on Node {\n            __isNode: __typename\n            id\n          }\n          ... on ArtifactRegistry {\n            id\n          }\n        }\n      }\n    }\n  }\n  vfolderMountPolicies(vfolderId: $vfolderId) {\n    items {\n      id\n      userId\n      permission\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d6c1735e79d681f0bff037b984ee0d4a";
+(node as any).hash = "30725a9c7909cb29df0aa2eb5f79bbfc";
 
 export default node;
