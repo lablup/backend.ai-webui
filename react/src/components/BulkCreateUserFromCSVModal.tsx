@@ -37,7 +37,6 @@ import {
 import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import { passwordPattern } from './LoginFormPanel';
 import ProjectSelect from './ProjectSelect';
-import UserResourcePolicySelect from './UserResourcePolicySelect';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
 import { Heading } from '@lablup/ui-common/Heading';
 import { Text } from '@lablup/ui-common/Text';
@@ -46,6 +45,7 @@ import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { VStack } from '@lablup/ui-common/VStack';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
+  BAIAdminUserResourcePolicySelect,
   BAIAlert,
   BAIButton,
   BAIFlex,
@@ -1208,7 +1208,9 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
               style={{ marginBottom: token('--spacing-3') }}
             >
               <Suspense fallback={<BAISkeleton />}>
-                <UserResourcePolicySelect
+                <BAIAdminUserResourcePolicySelect
+                  label={t('credential.UserResourcePolicy')}
+                  isLabelHidden
                   value={globalDefaults.resourcePolicy}
                   onChange={(v) =>
                     setGlobalDefaults((prev) => ({
@@ -1219,7 +1221,6 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                     }))
                   }
                   placeholder={t('credential.NoDefaultPlaceholder')}
-                  style={{ width: '100%' }}
                 />
               </Suspense>
             </BAIFormItem>

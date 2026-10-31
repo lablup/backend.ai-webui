@@ -29,11 +29,11 @@
     "FailedToActivateArtifacts": "Eserleri etkinleştiremedi.",
     "SuccessfullyActivated": "Başarıyla etkinleştirilmiş eserler."
   },
-  "comp:BAIAdminKeypairResourcePolicySelect": {
-    "SelectKeypairResourcePolicy": "Keypair kaynak politikası seçin"
-  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Model hizmeti seçin"
+  },
+  "comp:BAIAdminProjectResourcePolicySelect": {
+    "SelectProjectResourcePolicy": "Proje kaynak politikası seçin"
   },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Kaynak grubunu seçin"
@@ -60,6 +60,9 @@
   },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Oturum seçin"
+  },
+  "comp:BAIAdminUserResourcePolicySelect": {
+    "SelectUserResourcePolicy": "Kullanıcı kaynak politikası seçin"
   },
   "comp:BAIArtifactDescriptions": {
     "Description": "Tanım",

@@ -29,11 +29,11 @@ import {
 import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import ProjectSelect from './ProjectSelect';
 import TOTPActivateModal from './TOTPActivateModalLazy';
-import UserResourcePolicySelect from './UserResourcePolicySelect';
 import { Text } from '@lablup/ui-common/Text';
 import type { SearchSource, SearchableItem } from '@lablup/ui-common/Typeahead';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
+  BAIAdminUserResourcePolicySelect,
   BAICheckboxInput,
   BAINumberInput,
   BAISelector,
@@ -1098,7 +1098,10 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             label={t('resourcePolicy.ResourcePolicy')}
             rules={[{ required: !user }]}
           >
-            <UserResourcePolicySelect />
+            <BAIAdminUserResourcePolicySelect
+              label={t('resourcePolicy.ResourcePolicy')}
+              isLabelHidden
+            />
           </BAIFormItem>
           <Suspense
             fallback={

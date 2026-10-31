@@ -114,8 +114,6 @@ export { default as BAIDomainSelectV2 } from './BAIDomainSelectV2';
 export type { BAIDomainSelectV2Props } from './BAIDomainSelectV2';
 export { default as BAIProjectSettingModal } from './BAIProjectSettingModal';
 export type { BAIProjectSettingModalFragmentKey } from './BAIProjectSettingModal';
-export { default as BAIProjectResourcePolicySelect } from './BAIProjectResourcePolicySelect';
-export type { BAIProjectResourcePolicySelectProps } from './BAIProjectResourcePolicySelect';
 export { default as BAIScopedResourceGroupSelect } from './BAIScopedResourceGroupSelect';
 export type { BAIScopedResourceGroupSelectProps } from './BAIScopedResourceGroupSelect';
 export { useScopedResourceGroupNames } from './BAIScopedResourceGroupSelect';
@@ -211,6 +209,18 @@ export type {
   BAIAdminKeypairResourcePolicySelectRef,
   AstryxAdminKeypairResourcePolicyNode,
 } from './BAIAdminKeypairResourcePolicySelect';
+export { default as BAIAdminProjectResourcePolicySelect } from './BAIAdminProjectResourcePolicySelect';
+export type {
+  BAIAdminProjectResourcePolicySelectProps,
+  BAIAdminProjectResourcePolicySelectRef,
+  AdminProjectResourcePolicyNode,
+} from './BAIAdminProjectResourcePolicySelect';
+export { default as BAIAdminUserResourcePolicySelect } from './BAIAdminUserResourcePolicySelect';
+export type {
+  BAIAdminUserResourcePolicySelectProps,
+  BAIAdminUserResourcePolicySelectRef,
+  AdminUserResourcePolicyNode,
+} from './BAIAdminUserResourcePolicySelect';
 export { default as BAIAdminModelServiceSelect } from './BAIAdminModelServiceSelect';
 export type {
   BAIAdminModelServiceSelectProps,

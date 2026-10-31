@@ -29,11 +29,11 @@
     "FailedToActivateArtifacts": "Nie udało się aktywować artefaktów.",
     "SuccessfullyActivated": "Pomyślnie aktywowane artefakty."
   },
-  "comp:BAIAdminKeypairResourcePolicySelect": {
-    "SelectKeypairResourcePolicy": "Wybierz politykę zasobów keypair"
-  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Wybierz usługę modelu"
+  },
+  "comp:BAIAdminProjectResourcePolicySelect": {
+    "SelectProjectResourcePolicy": "Wybierz politykę zasobów projektu"
   },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Wybierz grupę zasobów"
@@ -60,6 +60,9 @@
   },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Wybierz sesję"
+  },
+  "comp:BAIAdminUserResourcePolicySelect": {
+    "SelectUserResourcePolicy": "Wybierz politykę zasobów użytkownika"
   },
   "comp:BAIArtifactDescriptions": {
     "Description": "Opis",

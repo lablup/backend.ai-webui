@@ -9,9 +9,9 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { useCurrentDomain } from '../hooks';
 import BAIFormItem from './BAIFormItem';
-import KeypairResourcePolicySelect from './KeypairResourcePolicySelect';
 import { Grid, GridSpan } from '@lablup/ui-common/Grid';
 import {
+  BAIAdminKeypairResourcePolicySelect,
   BAIModal,
   type BAIModalProps,
   BAISelect,
@@ -198,10 +198,9 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
             per MAPPING.md §3.9 (gutter 16px = spacing step 4). */}
         <Grid columns={24} gap={4}>
           <GridSpan columns={12}>
-            {/* Same Suspense shape as the user field: `KeypairResourcePolicySelect`
-                is the direct child of `BAIFormItem` (auto value/onChange binding),
-                and the fallback mirrors the same `BAIFormItem` so the field and its
-                required rule stay registered while the query loads. */}
+            {/* The select is the direct child of `BAIFormItem` (auto value/onChange
+                binding); the fallback mirrors the same `BAIFormItem` so the field
+                and its required rule stay registered while the query loads. */}
             <Suspense
               fallback={
                 <BAIFormItem
@@ -226,7 +225,10 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
                   },
                 ]}
               >
-                <KeypairResourcePolicySelect />
+                <BAIAdminKeypairResourcePolicySelect
+                  label={t('credential.ResourcePolicy')}
+                  isLabelHidden
+                />
               </BAIFormItem>
             </Suspense>
           </GridSpan>

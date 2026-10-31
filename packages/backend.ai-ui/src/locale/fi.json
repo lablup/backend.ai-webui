@@ -29,11 +29,11 @@
     "FailedToActivateArtifacts": "Artefaktien aktivointi epäonnistui.",
     "SuccessfullyActivated": "Onnistuneesti aktivoidut esineet."
   },
-  "comp:BAIAdminKeypairResourcePolicySelect": {
-    "SelectKeypairResourcePolicy": "Valitse avainparin resurssikäytäntö"
-  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Valitse mallipalvelu"
+  },
+  "comp:BAIAdminProjectResourcePolicySelect": {
+    "SelectProjectResourcePolicy": "Valitse projektin resurssikäytäntö"
   },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Valitse resurssiryhmä"
@@ -60,6 +60,9 @@
   },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Valitse istunto"
+  },
+  "comp:BAIAdminUserResourcePolicySelect": {
+    "SelectUserResourcePolicy": "Valitse käyttäjän resurssikäytäntö"
   },
   "comp:BAIArtifactDescriptions": {
     "Description": "Kuvaus",

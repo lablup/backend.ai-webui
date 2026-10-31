@@ -29,11 +29,11 @@
     "FailedToActivateArtifacts": "Олдворуудыг идэвхжүүлж чадсангүй.",
     "SuccessfullyActivated": "Амжилттай идэвхжүүлсэн олдворууд."
   },
-  "comp:BAIAdminKeypairResourcePolicySelect": {
-    "SelectKeypairResourcePolicy": "Keypair нөөцийн бодлого сонгох"
-  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Моделийн үйлчилгээ сонгох"
+  },
+  "comp:BAIAdminProjectResourcePolicySelect": {
+    "SelectProjectResourcePolicy": "Төслийн нөөцийн бодлого сонгох"
   },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Ресурсын бүлэг сонгох"
@@ -60,6 +60,9 @@
   },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Сесс сонгох"
+  },
+  "comp:BAIAdminUserResourcePolicySelect": {
+    "SelectUserResourcePolicy": "Хэрэглэгчийн нөөцийн бодлого сонгох"
   },
   "comp:BAIArtifactDescriptions": {
     "Description": "Тодорхойлолт / төрөл анги",

@@ -1,5 +1,5 @@
 import {
-  BAIProjectResourcePolicySelect,
+  BAIAdminProjectResourcePolicySelect,
   BAIScopedResourceGroupSelect,
 } from '.';
 import {
@@ -454,7 +454,10 @@ const BAIProjectSettingModal = ({
           label={t('comp:BAIProjectSettingModal.ProjectResourcePolicy')}
           name="resource_policy"
         >
-          <BAIProjectResourcePolicySelect />
+          <BAIAdminProjectResourcePolicySelect
+            label={t('comp:BAIProjectSettingModal.ProjectResourcePolicy')}
+            isLabelHidden
+          />
         </Form.Item>
         <Form.Item
           label={t('comp:BAIProjectSettingModal.AllowedResourceGroups')}
