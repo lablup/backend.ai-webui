@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e27b39e3f5619b6fa12cbc51ccb66143>>
+ * @generated SignedSource<<61dda78153f83dd6f7f89193b11174cb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -21,9 +21,6 @@ export type ImportArtifactRevisionToFolderModalTestQuery$data = {
       }>;
     } | null | undefined;
   } | null | undefined;
-  readonly groups: ReadonlyArray<{
-    readonly " $fragmentSpreads": FragmentRefs<"ImportArtifactRevisionToFolderModalModelStoreProjectsFragment">;
-  } | null | undefined> | null | undefined;
 };
 export type ImportArtifactRevisionToFolderModalTestQuery = {
   response: ImportArtifactRevisionToFolderModalTestQuery$data;
@@ -34,39 +31,25 @@ const node: ConcreteRequest = (function(){
 var v0 = [
   {
     "kind": "Literal",
-    "name": "is_active",
-    "value": true
-  },
-  {
-    "kind": "Literal",
-    "name": "type",
-    "value": [
-      "MODEL_STORE"
-    ]
-  }
-],
-v1 = [
-  {
-    "kind": "Literal",
     "name": "id",
     "value": "test-artifact-id"
   }
 ],
-v2 = [
+v1 = [
   {
     "kind": "Literal",
     "name": "limit",
     "value": 1
   }
 ],
-v3 = {
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v4 = {
+v3 = {
   "enumValues": null,
   "nullable": false,
   "plural": false,
@@ -82,22 +65,6 @@ return {
       {
         "alias": null,
         "args": (v0/*: any*/),
-        "concreteType": "Group",
-        "kind": "LinkedField",
-        "name": "groups",
-        "plural": true,
-        "selections": [
-          {
-            "args": null,
-            "kind": "FragmentSpread",
-            "name": "ImportArtifactRevisionToFolderModalModelStoreProjectsFragment"
-          }
-        ],
-        "storageKey": "groups(is_active:true,type:[\"MODEL_STORE\"])"
-      },
-      {
-        "alias": null,
-        "args": (v1/*: any*/),
         "concreteType": "Artifact",
         "kind": "LinkedField",
         "name": "artifact",
@@ -105,7 +72,7 @@ return {
         "selections": [
           {
             "alias": null,
-            "args": (v2/*: any*/),
+            "args": (v1/*: any*/),
             "concreteType": "ArtifactRevisionConnection",
             "kind": "LinkedField",
             "name": "revisions",
@@ -157,25 +124,6 @@ return {
       {
         "alias": null,
         "args": (v0/*: any*/),
-        "concreteType": "Group",
-        "kind": "LinkedField",
-        "name": "groups",
-        "plural": true,
-        "selections": [
-          (v3/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "name",
-            "storageKey": null
-          }
-        ],
-        "storageKey": "groups(is_active:true,type:[\"MODEL_STORE\"])"
-      },
-      {
-        "alias": null,
-        "args": (v1/*: any*/),
         "concreteType": "Artifact",
         "kind": "LinkedField",
         "name": "artifact",
@@ -183,7 +131,7 @@ return {
         "selections": [
           {
             "alias": null,
-            "args": (v2/*: any*/),
+            "args": (v1/*: any*/),
             "concreteType": "ArtifactRevisionConnection",
             "kind": "LinkedField",
             "name": "revisions",
@@ -205,7 +153,7 @@ return {
                     "name": "node",
                     "plural": false,
                     "selections": [
-                      (v3/*: any*/),
+                      (v2/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -222,14 +170,14 @@ return {
             ],
             "storageKey": "revisions(limit:1)"
           },
-          (v3/*: any*/)
+          (v2/*: any*/)
         ],
         "storageKey": "artifact(id:\"test-artifact-id\")"
       }
     ]
   },
   "params": {
-    "cacheID": "f802abfba7a2e5433d5e9e19d68438b2",
+    "cacheID": "b66a4745bf05ea30c99b86fb6c0752d4",
     "id": null,
     "metadata": {
       "relayTestingSelectionTypeInfo": {
@@ -239,7 +187,7 @@ return {
           "plural": false,
           "type": "Artifact"
         },
-        "artifact.id": (v4/*: any*/),
+        "artifact.id": (v3/*: any*/),
         "artifact.revisions": {
           "enumValues": null,
           "nullable": true,
@@ -264,34 +212,16 @@ return {
           "plural": false,
           "type": "UUID"
         },
-        "artifact.revisions.edges.node.id": (v4/*: any*/),
-        "groups": {
-          "enumValues": null,
-          "nullable": true,
-          "plural": true,
-          "type": "Group"
-        },
-        "groups.id": {
-          "enumValues": null,
-          "nullable": true,
-          "plural": false,
-          "type": "UUID"
-        },
-        "groups.name": {
-          "enumValues": null,
-          "nullable": true,
-          "plural": false,
-          "type": "String"
-        }
+        "artifact.revisions.edges.node.id": (v3/*: any*/)
       }
     },
     "name": "ImportArtifactRevisionToFolderModalTestQuery",
     "operationKind": "query",
-    "text": "query ImportArtifactRevisionToFolderModalTestQuery {\n  groups(is_active: true, type: [\"MODEL_STORE\"]) {\n    ...ImportArtifactRevisionToFolderModalModelStoreProjectsFragment\n  }\n  artifact(id: \"test-artifact-id\") {\n    revisions(limit: 1) {\n      edges {\n        node {\n          ...ImportArtifactRevisionToFolderModalArtifactRevisionFragment\n          id\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment ImportArtifactRevisionToFolderModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  fieldId\n}\n\nfragment ImportArtifactRevisionToFolderModalModelStoreProjectsFragment on Group {\n  id\n  name\n}\n"
+    "text": "query ImportArtifactRevisionToFolderModalTestQuery {\n  artifact(id: \"test-artifact-id\") {\n    revisions(limit: 1) {\n      edges {\n        node {\n          ...ImportArtifactRevisionToFolderModalArtifactRevisionFragment\n          id\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment ImportArtifactRevisionToFolderModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  fieldId\n}\n"
   }
 };
 })();
 
-(node as any).hash = "9ea242f369a7dbc93817a32f5ff0a8b7";
+(node as any).hash = "600331dd5f235d9b6927069186cf2a72";
 
 export default node;

@@ -1,7 +1,6 @@
 import type { ProjectResourceGroupAlertFragment$key } from '../../__generated__/ProjectResourceGroupAlertFragment.graphql';
 import type { ProjectResourceGroupAlertQuery } from '../../__generated__/ProjectResourceGroupAlertQuery.graphql';
 import { Banner } from '@lablup/ui-common/Banner';
-import * as _ from 'lodash-es';
 import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
@@ -22,38 +21,40 @@ const ProjectResourceGroupAlert: React.FC<ProjectResourceGroupAlertProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-
-  const { projectId, domainName, resourceGroupName } = useFragment(
+  const { projectId, resourceGroupName } = useFragment(
     graphql`
       fragment ProjectResourceGroupAlertFragment on ProjectFairShare {
         projectId
-        domainName
         resourceGroupName
       }
     `,
     projectFairShareFrgmt,
   );
 
-  const { group } = useLazyLoadQuery<ProjectResourceGroupAlertQuery>(
+  const { projectV2 } = useLazyLoadQuery<ProjectResourceGroupAlertQuery>(
     graphql`
       query ProjectResourceGroupAlertQuery(
         $projectId: UUID!
-        $domainName: String
+        $resourceGroupName: String!
       ) {
-        group(id: $projectId, domain_name: $domainName) {
-          scaling_groups
+        projectV2(projectId: $projectId) {
+          resourceGroups(filter: { name: { equals: $resourceGroupName } })
+            @since(version: "26.9.0a1") {
+            count
+          }
         }
       }
     `,
-    { projectId, domainName },
+    { projectId, resourceGroupName },
     {
       fetchPolicy: isModalOpen ? 'network-only' : 'store-only',
     },
   );
 
-  const scalingGroups = group?.scaling_groups ?? [];
+  // `resourceGroups` is stripped before 26.9.0a1; an unknown answer raises no warning.
+  const isAllowed = (projectV2?.resourceGroups?.count ?? 1) > 0;
 
-  if (!resourceGroupName || _.includes(scalingGroups, resourceGroupName)) {
+  if (!resourceGroupName || isAllowed) {
     return null;
   }
 

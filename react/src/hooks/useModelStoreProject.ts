@@ -2,27 +2,45 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useSuspendedBackendaiClient, useCurrentDomainValue } from '.';
+import {
+  useSuspendedBackendaiClient,
+  useCurrentDomainValue,
+  useCurrentDomain,
+} from '.';
 import { useModelStoreProjectQuery } from '../__generated__/useModelStoreProjectQuery.graphql';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 /**
- * Returns the id and name of the caller's active MODEL_STORE project, or nulls
- * when the domain has none. Assumes one model store per domain (ADR 0006 pair:
- * 26.9.0a1+ reads the caller's memberships, older managers read the domain).
+ * Returns the id and name of the active MODEL_STORE project in the current
+ * domain, or nulls when there is none. Assumes one model store per domain.
+ * `'user'` scopes `scopedProjectsV2` to the caller's memberships; `'admin'` to
+ * the current domain (domain admin or higher), for admin pages (ADR 0012).
  */
-export const useModelStoreProject = () => {
+export const useModelStoreProject = (scope: 'user' | 'admin' = 'user') => {
   const baiClient = useSuspendedBackendaiClient();
   const domainName = useCurrentDomainValue();
-  const userId: string = baiClient.user_uuid;
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
+  const projectScope =
+    scope === 'admin'
+      ? domainScope
+      : { user: [{ value: baiClient.user_uuid as string }] };
 
   const data = useLazyLoadQuery<useModelStoreProjectQuery>(
     graphql`
-      query useModelStoreProjectQuery($userId: UUID!, $domainName: String!) {
+      query useModelStoreProjectQuery(
+        $scope: ProjectScope!
+        $domainName: String!
+      ) {
         scopedProjectsV2(
-          scope: { user: [{ value: $userId }] }
-          filter: { type: { equals: MODEL_STORE }, isActive: true }
-        ) @since(version: "26.9.0a1") @catch(to: RESULT) {
+          scope: $scope
+          filter: {
+            type: { equals: MODEL_STORE }
+            isActive: true
+            domainName: { equals: $domainName }
+          }
+          limit: 1
+        ) @catch(to: RESULT) {
           edges {
             node {
               id
@@ -33,37 +51,17 @@ export const useModelStoreProject = () => {
             }
           }
         }
-        domainV2(domainName: $domainName)
-          @deprecatedSince(version: "26.9.0a1")
-          @catch(to: RESULT) {
-          projects(filter: { type: { equals: MODEL_STORE }, isActive: true }) {
-            edges {
-              node {
-                id
-                entityId
-                basicInfo {
-                  name
-                }
-              }
-            }
-          }
-        }
       }
     `,
-    { userId, domainName },
+    { scope: projectScope, domainName },
     {
       fetchPolicy: 'store-or-network',
     },
   );
 
+  const projects = data.scopedProjectsV2;
   const modelStoreProject =
-    (data.scopedProjectsV2?.ok === true
-      ? data.scopedProjectsV2.value?.edges?.[0]?.node
-      : null) ??
-    (data.domainV2?.ok === true
-      ? data.domainV2.value?.projects?.edges?.[0]?.node
-      : null) ??
-    null;
+    projects?.ok === true ? (projects.value?.edges?.[0]?.node ?? null) : null;
 
   return {
     id: modelStoreProject?.entityId ?? null,
