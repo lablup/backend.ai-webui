@@ -3364,6 +3364,25 @@
       "Version": "Versio",
       "YouCanStartWithHistory": "Nämä ovat äskettäin luotuja istuntotietueita. Aloita uusi istunto napsauttamalla istunnon nimeä."
     },
+    "quickCreate": {
+      "AcceleratorType": "Kiihdyttimen tyyppi",
+      "AutoAllocated": "Varataan automaattisesti",
+      "CellUnit": "Solun yksikkö",
+      "ContinueInLauncher": "Jatka täydessä käynnistimessä",
+      "NameAndEnvironment": "Nimi ja ympäristö",
+      "NoFolder": "Ei kansiota",
+      "NotEnoughResource": "{{name}} ei riitä levykuvan vähimmäisvaatimukseen.",
+      "OpenLauncher": "Avaa täysi käynnistin",
+      "PerContainer": "{{count}} konttia",
+      "PresetOnly": "Valitse resurssiesiasetus lisäasetuksista.",
+      "QuickCreate": "Pikaluonti",
+      "Remaining": "{{amount}} jäljellä",
+      "Resources": "Resurssit",
+      "ShmemIncluded": "Sisältää {{size}} jaettua muistia",
+      "StartFromHistory": "Aloita kohteesta \"{{name}}\"",
+      "Summary": "Yhteenveto",
+      "Title": "Luo istunto nopeasti"
+    },
     "resourceGrid": {
       "AtLeastPercent": "≥ {{value}}%",
       "GridMode": "Ruudukkotila",

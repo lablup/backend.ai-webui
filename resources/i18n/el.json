@@ -3364,6 +3364,25 @@
       "Version": "Εκδοχή",
       "YouCanStartWithHistory": "Αυτές είναι οι εγγραφές συνόδου που δημιουργήσατε πρόσφατα. Κάντε κλικ σε ένα όνομα συνεδρίας για να ξεκινήσετε μια νέα συνεδρία."
     },
+    "quickCreate": {
+      "AcceleratorType": "Τύπος επιταχυντή",
+      "AutoAllocated": "Αυτόματη κατανομή",
+      "CellUnit": "Μονάδα κελιού",
+      "ContinueInLauncher": "Συνέχεια στον πλήρη εκκινητή",
+      "NameAndEnvironment": "Όνομα και περιβάλλον",
+      "NoFolder": "Χωρίς φάκελο",
+      "NotEnoughResource": "Δεν απομένει αρκετό {{name}} για το ελάχιστο της εικόνας.",
+      "OpenLauncher": "Άνοιγμα πλήρους εκκινητή",
+      "PerContainer": "{{count}} κοντέινερ",
+      "PresetOnly": "Επιλέξτε προεπιλογή πόρων στις Σύνθετες ρυθμίσεις.",
+      "QuickCreate": "Γρήγορη δημιουργία",
+      "Remaining": "Απομένουν {{amount}}",
+      "Resources": "Πόροι",
+      "ShmemIncluded": "Περιλαμβάνει {{size}} κοινόχρηστης μνήμης",
+      "StartFromHistory": "Έναρξη από «{{name}}»",
+      "Summary": "Σύνοψη",
+      "Title": "Γρήγορη δημιουργία συνεδρίας"
+    },
     "resourceGrid": {
       "AtLeastPercent": "≥ {{value}}%",
       "GridMode": "Λειτουργία πλέγματος",

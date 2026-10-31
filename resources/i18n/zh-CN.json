@@ -3366,6 +3366,25 @@
       "Version": "版本",
       "YouCanStartWithHistory": "这些是您最近创建的会话记录。点击会话名称即可开始新的会话。"
     },
+    "quickCreate": {
+      "AcceleratorType": "加速器类型",
+      "AutoAllocated": "自动分配",
+      "CellUnit": "单元格单位",
+      "ContinueInLauncher": "在完整启动器中继续",
+      "NameAndEnvironment": "名称和环境",
+      "NoFolder": "无文件夹",
+      "NotEnoughResource": "剩余的{{name}}不足以满足镜像的最低要求。",
+      "OpenLauncher": "打开完整启动器",
+      "PerContainer": "{{count}} 个容器",
+      "PresetOnly": "请在高级设置中选择资源预设。",
+      "QuickCreate": "快速创建",
+      "Remaining": "剩余 {{amount}}",
+      "Resources": "资源",
+      "ShmemIncluded": "包含 {{size}} 共享内存",
+      "StartFromHistory": "从“{{name}}”开始",
+      "Summary": "摘要",
+      "Title": "快速创建会话"
+    },
     "resourceGrid": {
       "AtLeastPercent": "≥ {{value}}%",
       "GridMode": "网格模式",

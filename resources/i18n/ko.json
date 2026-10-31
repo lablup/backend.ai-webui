@@ -3367,6 +3367,25 @@
       "Version": "버전",
       "YouCanStartWithHistory": "최근 생성된 세션 기록입니다. 세션 이름을 클릭하면 새 세션을 시작할 수 있습니다."
     },
+    "quickCreate": {
+      "AcceleratorType": "가속기 종류",
+      "AutoAllocated": "자동 할당",
+      "CellUnit": "칸 단위",
+      "ContinueInLauncher": "전체 런처에서 계속",
+      "NameAndEnvironment": "이름과 환경",
+      "NoFolder": "폴더 없음",
+      "NotEnoughResource": "이미지 최솟값을 채울 만큼 {{name}}이(가) 남아 있지 않습니다.",
+      "OpenLauncher": "전체 런처 열기",
+      "PerContainer": "컨테이너 {{count}}개",
+      "PresetOnly": "고급 설정에서 리소스 프리셋을 고르세요.",
+      "QuickCreate": "간편 생성",
+      "Remaining": "{{amount}} 남음",
+      "Resources": "자원",
+      "ShmemIncluded": "공유 메모리 {{size}} 포함",
+      "StartFromHistory": "\"{{name}}\"(으)로 시작",
+      "Summary": "요약",
+      "Title": "세션 간편 생성"
+    },
     "resourceGrid": {
       "AtLeastPercent": "≥ {{value}}%",
       "GridMode": "그리드 모드",

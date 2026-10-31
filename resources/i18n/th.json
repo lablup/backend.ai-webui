@@ -3350,6 +3350,25 @@
       "Version": "เวอร์ชัน",
       "YouCanStartWithHistory": "นี่คือบันทึกเซสชันที่คุณสร้างขึ้นเมื่อเร็ว ๆ นี้ \nคลิกชื่อเซสชันเพื่อเริ่มเซสชันใหม่"
     },
+    "quickCreate": {
+      "AcceleratorType": "ประเภทตัวเร่ง",
+      "AutoAllocated": "จัดสรรอัตโนมัติ",
+      "CellUnit": "หน่วยช่อง",
+      "ContinueInLauncher": "ทำต่อในตัวเปิดเต็มรูปแบบ",
+      "NameAndEnvironment": "ชื่อและสภาพแวดล้อม",
+      "NoFolder": "ไม่มีโฟลเดอร์",
+      "NotEnoughResource": "{{name}} ที่เหลือไม่พอสำหรับขั้นต่ำของอิมเมจ",
+      "OpenLauncher": "เปิดตัวเปิดเต็มรูปแบบ",
+      "PerContainer": "{{count}} คอนเทนเนอร์",
+      "PresetOnly": "เลือกพรีเซ็ตทรัพยากรในการตั้งค่าขั้นสูง",
+      "QuickCreate": "สร้างด่วน",
+      "Remaining": "เหลือ {{amount}}",
+      "Resources": "ทรัพยากร",
+      "ShmemIncluded": "รวมหน่วยความจำที่ใช้ร่วมกัน {{size}}",
+      "StartFromHistory": "เริ่มจาก \"{{name}}\"",
+      "Summary": "สรุป",
+      "Title": "สร้างเซสชันด่วน"
+    },
     "resourceGrid": {
       "AtLeastPercent": "≥ {{value}}%",
       "GridMode": "โหมดกริด",

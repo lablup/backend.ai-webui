@@ -3366,6 +3366,25 @@
       "Version": "Хувилбар",
       "YouCanStartWithHistory": "Эдгээр нь таны саяхан бүтээсэн сешний бүртгэл юм. \nШинэ хуралдаан эхлэхийн тулд хуралдааны нэр дээр дарна уу."
     },
+    "quickCreate": {
+      "AcceleratorType": "Хурдасгуурын төрөл",
+      "AutoAllocated": "Автоматаар хуваарилна",
+      "CellUnit": "Нүдний нэгж",
+      "ContinueInLauncher": "Бүрэн эхлүүлэгчид үргэлжлүүлэх",
+      "NameAndEnvironment": "Нэр ба орчин",
+      "NoFolder": "Хавтас байхгүй",
+      "NotEnoughResource": "Зургийн доод хэмжээг хангах {{name}} үлдээгүй байна.",
+      "OpenLauncher": "Бүрэн эхлүүлэгчийг нээх",
+      "PerContainer": "{{count}} контейнер",
+      "PresetOnly": "Нарийвчилсан тохиргооноос нөөцийн урьдчилсан тохиргоо сонгоно уу.",
+      "QuickCreate": "Хурдан үүсгэх",
+      "Remaining": "{{amount}} үлдсэн",
+      "Resources": "Нөөц",
+      "ShmemIncluded": "{{size}} хуваалцсан санах ой багтсан",
+      "StartFromHistory": "\"{{name}}\"-ээс эхлэх",
+      "Summary": "Хураангуй",
+      "Title": "Сешн хурдан үүсгэх"
+    },
     "resourceGrid": {
       "AtLeastPercent": "≥ {{value}}%",
       "GridMode": "Торон горим",

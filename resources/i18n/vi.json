@@ -3366,6 +3366,25 @@
       "Version": "Phiên bản",
       "YouCanStartWithHistory": "Đây là hồ sơ phiên được tạo gần đây của bạn. \nNhấp vào tên phiên để bắt đầu một phiên mới."
     },
+    "quickCreate": {
+      "AcceleratorType": "Loại bộ tăng tốc",
+      "AutoAllocated": "Phân bổ tự động",
+      "CellUnit": "Đơn vị ô",
+      "ContinueInLauncher": "Tiếp tục trong trình khởi chạy đầy đủ",
+      "NameAndEnvironment": "Tên và môi trường",
+      "NoFolder": "Không có thư mục",
+      "NotEnoughResource": "Không còn đủ {{name}} cho mức tối thiểu của image.",
+      "OpenLauncher": "Mở trình khởi chạy đầy đủ",
+      "PerContainer": "{{count}} container",
+      "PresetOnly": "Chọn cấu hình tài nguyên trong Cài đặt nâng cao.",
+      "QuickCreate": "Tạo nhanh",
+      "Remaining": "Còn {{amount}}",
+      "Resources": "Tài nguyên",
+      "ShmemIncluded": "Bao gồm {{size}} bộ nhớ dùng chung",
+      "StartFromHistory": "Bắt đầu từ \"{{name}}\"",
+      "Summary": "Tóm tắt",
+      "Title": "Tạo phiên nhanh"
+    },
     "resourceGrid": {
       "AtLeastPercent": "≥ {{value}}%",
       "GridMode": "Chế độ lưới",

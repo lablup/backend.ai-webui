@@ -2,10 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { App } from '../app-shim';
-import DatePickerISO from '../components/DatePickerISO';
 import EnvVarFormList, {
-  sanitizeSensitiveEnv,
   EnvVarFormListValue,
 } from '../components/EnvVarFormList';
 import ImageEnvironmentSelectFormItems, {
@@ -17,6 +14,8 @@ import PortSelectFormItem, {
   PortSelectFormValues,
 } from '../components/PortSelectFormItem';
 import { ResourceNumbersOfSession } from '../components/ResourceNumbersOfSession';
+import BatchSessionFormItems from '../components/SessionFormItems/BatchSessionFormItems';
+import HPCOptimizationFormItems from '../components/SessionFormItems/HPCOptimizationFormItems';
 import ResourceAllocationFormItems, {
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
   ResourceAllocationFormValue,
@@ -30,52 +29,40 @@ import SessionNameFormItem, {
 } from '../components/SessionNameFormItem';
 import SessionTemplateModal from '../components/SessionTemplateModal';
 import { Form } from '../form-engine';
-import { formatDuration } from '../helper';
 import { normalizeLegacyMountFields } from '../helper/vfolderMounts';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
-  useCurrentProjectValue,
-  useCurrentResourceGroupState,
-} from '../hooks/useCurrentProject';
-import { useRecentSessionHistory } from '../hooks/useRecentSessionHistory';
+  toShareableFormValues,
+  useLaunchSession,
+} from '../hooks/useLaunchSession';
 import { useStartSession } from '../hooks/useStartSession';
 import { toProjectContext } from '../types/projectContext';
 import { Button } from '@lablup/ui-common/Button';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
 import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
-import { Grid as AstryxGrid } from '@lablup/ui-common/Grid';
 import { Heading } from '@lablup/ui-common/Heading';
-import { InputGroup } from '@lablup/ui-common/InputGroup';
 import { Step, Stepper } from '@lablup/ui-common/Stepper';
-import { Text } from '@lablup/ui-common/Text';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
-import { useTheme } from '@lablup/ui-common/theme';
 import type { SessionResources as ClientSessionResources } from 'backend.ai-client';
 import {
   BAIPopconfirm,
   BAICard,
   BAIFlex,
-  BAIIntervalView,
   BAIUnmountAfterClose,
   type VFolderMountConfigValue,
   filterOutEmpty,
   generateRandomString,
   useBAILogger,
   useDebounceFn,
-  useErrorMessageResolver,
   useToggle,
   useUpdatableState,
   useBAIBreakpoint,
-  BAICheckboxInput,
-  BAINumberInput,
   BAIRadioList,
   BAIRadioListItem,
   BAISelector,
-  BAISwitch,
-  BAITextArea,
   BAITextInput,
 } from 'backend.ai-ui';
-import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
 import * as _ from 'lodash-es';
 import {
@@ -101,7 +88,7 @@ import React, {
   useState,
 } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
 type SessionLauncherFormData = Omit<
@@ -226,13 +213,10 @@ const StepCard: React.FC<{
 };
 
 const SessionLauncherPage = () => {
-  const app = App.useApp();
   const { logger } = useBAILogger();
-  const { getErrorMessage } = useErrorMessageResolver();
 
   const mainContentDivRef = useAtomValue(mainContentDivRefState);
   const baiClient = useSuspendedBackendaiClient();
-  const [, setCurrentGlobalResourceGroup] = useCurrentResourceGroupState();
   // ADR-0001 (FR-3411): pages are the only readers of the ambient current
   // project; ResourceAllocationFormItems takes it as an explicit required
   // prop. The throw preserves the exact previous behavior — the form
@@ -244,8 +228,8 @@ const SessionLauncherPage = () => {
     throw new Error('Project ID is required for ResourceAllocationFormItems');
   }
 
-  const { startSession, defaultFormValues, upsertSessionNotification } =
-    useStartSession();
+  const { defaultFormValues } = useStartSession();
+  const { launch } = useLaunchSession();
   const StepParam = parseAsInteger.withDefault(0);
   // Migrate at the parser so every reader of `formValuesFromQueryParams` sees
   // `vfolderMounts`, never the legacy mount fields.
@@ -282,25 +266,14 @@ const SessionLauncherPage = () => {
 
   const [isOpenTemplateModal, { toggle: toggleIsOpenTemplateModal }] =
     useToggle();
-  const [, { push: pushSessionHistory }] = useRecentSessionHistory();
 
   const { run: syncFormToURLWithDebounce } = useDebounceFn(
     () => {
       // To sync the latest form values to URL,
       // 'trailing' is set to true, and get the form values here."
-      // eslint-disable-next-line react-hooks/immutability -- forward reference to a later declaration kept as-is
-      const currentValue = form.getFieldsValue();
       setQuery({
-        formValues: _.assign(
-          _.omit(form.getFieldsValue(), [
-            'environments.image',
-            'environments.customizedTag',
-            'envvars',
-          ]),
-          {
-            envvars: sanitizeSensitiveEnv(currentValue.envvars),
-          },
-        ),
+        // eslint-disable-next-line react-hooks/immutability -- forward reference to a later declaration kept as-is
+        formValues: toShareableFormValues(form.getFieldsValue()),
       });
     },
     {
@@ -318,7 +291,6 @@ const SessionLauncherPage = () => {
       { history: 'push' },
     );
   };
-  const { token } = useTheme();
 
   const { t } = useTranslation();
 
@@ -475,73 +447,11 @@ const SessionLauncherPage = () => {
       return;
     }
 
-    if (_.isEmpty(values.vfolderMounts)) {
-      const isConfirmed = await app.modal.confirm({
-        title: t('session.launcher.NoFolderMounted'),
-        content: (
-          <>
-            {t('session.launcher.HomeDirectoryDeletionDialog')}
-            <br />
-            <br />
-            {t('session.launcher.LaunchConfirmationDialog')}
-            <br />
-            <br />
-            {t('dialog.ask.DoYouWantToProceed')}
-          </>
-        ),
-        okText: t('session.launcher.Start'),
-        closable: true,
-      });
-      if (!isConfirmed) return;
-    }
-
-    await startSession({ ...values, num_of_sessions: numOfSessions })
-      .then((results) => {
-        // After sending a create request, navigate to job page and set current resource group
-        if (results?.fulfilled && results.fulfilled.length > 0) {
-          // Do not await here to speed up the navigation
-          upsertSessionNotification(results.fulfilled);
-          setCurrentGlobalResourceGroup(values.resourceGroup);
-          pushSessionHistory({
-            params: usedSearchParams,
-            name: results.fulfilled[0].value.sessionName,
-          });
-          webuiNavigate(redirectTo || '/job');
-        }
-
-        // If there are any failed session creations, show the first error message
-        if (results?.rejected && results.rejected.length > 0) {
-          const error = results.rejected[0].reason;
-          if (error?.error_code === 'session_create_already-exists') {
-            app.modal.error({
-              title: t('session.launcher.SessionAlreadyExists'),
-            });
-          } else if (
-            error?.error_code === 'storage_access_forbidden' ||
-            error?.error_code === 'vfolder_access_forbidden'
-          ) {
-            app.modal.error({
-              title: t('session.launcher.StorageAccessForbidden'),
-              content: getErrorMessage(error),
-            });
-          } else if (error?.error_code === 'vfolder_read_not-found') {
-            app.modal.error({
-              title: t('session.launcher.VFolderNotFound'),
-              content: getErrorMessage(error),
-            });
-          } else {
-            app.modal.error({
-              title: error?.title,
-              content: getErrorMessage(error),
-            });
-          }
-        }
-      })
-      .catch((error) => {
-        // Unexpected error in `then` of allSettled
-        logger.error('Unexpected error during session creation:', error);
-        app.message.error(t('error.UnexpectedError'));
-      });
+    await launch(values, {
+      numOfSessions,
+      history: { params: usedSearchParams },
+      onSuccess: () => webuiNavigate(redirectTo || '/job'),
+    });
   };
 
   return (
@@ -637,380 +547,7 @@ const SessionLauncherPage = () => {
                     title={t('session.launcher.BatchModeConfig')}
                     hidden={currentStepKey !== 'sessionType'}
                   >
-                    <Form.Item
-                      label={t('session.launcher.StartUpCommand')}
-                      name={['batch', 'command']}
-                      rules={[
-                        {
-                          required: true,
-                          type: 'string',
-                        },
-                      ]}
-                    >
-                      {/* antd `autoSize` has no destination — Astryx `TextArea`
-                          takes a fixed `rows`. */}
-                      <BAITextArea
-                        aria-label={t('session.launcher.StartUpCommand')}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      noStyle
-                      dependencies={[['batch', 'scheduleDate']]}
-                    >
-                      {() => {
-                        const scheduleDate = form.getFieldValue([
-                          'batch',
-                          'scheduleDate',
-                        ]);
-                        return (
-                          <BAIIntervalView
-                            delay={1000}
-                            callback={() => {
-                              const scheduleDate = form.getFieldValue([
-                                'batch',
-                                'scheduleDate',
-                              ]);
-                              if (scheduleDate) {
-                                if (dayjs(scheduleDate).isBefore(dayjs())) {
-                                  if (
-                                    form.getFieldError([
-                                      'batch',
-                                      'scheduleDate',
-                                    ]).length === 0
-                                  ) {
-                                    form.validateFields([
-                                      ['batch', 'scheduleDate'],
-                                    ]);
-                                  }
-                                  return undefined;
-                                } else {
-                                  return dayjs(scheduleDate).fromNow();
-                                }
-                              } else {
-                                return undefined;
-                              }
-                            }}
-                            triggerKey={scheduleDate ? scheduleDate : 'none'}
-                            render={(time) => {
-                              return (
-                                <Form.Item
-                                  label={t('session.launcher.SessionStartTime')}
-                                  extra={time}
-                                >
-                                  <BAIFlex direction="row" gap={'xs'}>
-                                    <Form.Item
-                                      noStyle
-                                      name={['batch', 'enabled']}
-                                      valuePropName="checked"
-                                    >
-                                      <BAICheckboxInput
-                                        onChange={(checked) => {
-                                          if (
-                                            checked &&
-                                            _.isEmpty(
-                                              form.getFieldValue([
-                                                'batch',
-                                                'scheduleDate',
-                                              ]),
-                                            )
-                                          ) {
-                                            form.setFieldValue(
-                                              ['batch', 'scheduleDate'],
-                                              dayjs()
-                                                .add(2, 'minutes')
-                                                .toISOString(),
-                                            );
-                                          } else if (checked === false) {
-                                            form.setFieldValue(
-                                              ['batch', 'scheduleDate'],
-                                              undefined,
-                                            );
-                                          }
-                                          form.validateFields([
-                                            ['batch', 'scheduleDate'],
-                                          ]);
-                                        }}
-                                      >
-                                        {t('session.launcher.Enable')}
-                                      </BAICheckboxInput>
-                                    </Form.Item>
-                                    <Form.Item
-                                      noStyle
-                                      // dependencies={[['batch', 'enabled']]}
-                                      shouldUpdate={(prev, next) => {
-                                        return (
-                                          // @ts-ignore
-                                          prev.batch?.enabled !==
-                                          next.batch?.enabled
-                                        );
-                                      }}
-                                    >
-                                      {() => {
-                                        const disabled =
-                                          form.getFieldValue('batch')
-                                            ?.enabled !== true;
-                                        return (
-                                          <>
-                                            <Form.Item
-                                              name={['batch', 'scheduleDate']}
-                                              noStyle
-                                              rules={[
-                                                {
-                                                  // required: true,
-                                                  validator: async (
-                                                    _rule,
-                                                    value,
-                                                  ) => {
-                                                    if (
-                                                      value &&
-                                                      dayjs(value).isBefore(
-                                                        dayjs(),
-                                                      )
-                                                    ) {
-                                                      return Promise.reject(
-                                                        t(
-                                                          'session.launcher.StartTimeMustBeInTheFuture',
-                                                        ),
-                                                      );
-                                                    }
-                                                    return Promise.resolve();
-                                                  },
-                                                },
-                                              ]}
-                                            >
-                                              <DatePickerISO
-                                                disabled={disabled}
-                                                showTime
-                                                localFormat
-                                                disabledDate={(value) => {
-                                                  return value.isBefore(
-                                                    dayjs().startOf('day'),
-                                                  );
-                                                }}
-                                              />
-                                            </Form.Item>
-                                            {/* <Form.Item
-                                              noStyle
-                                              name={['batch', 'scheduleTime']}
-                                            >
-                                              <TimePicker disabled={disabled} />
-                                            </Form.Item> */}
-                                          </>
-                                        );
-                                      }}
-                                    </Form.Item>
-                                  </BAIFlex>
-                                </Form.Item>
-                              );
-                            }}
-                          />
-                        );
-                      }}
-                    </Form.Item>
-
-                    <Form.Item
-                      noStyle
-                      dependencies={[
-                        ['batch', 'timeoutEnabled'],
-                        ['batch', 'timeoutUnit'],
-                      ]}
-                    >
-                      {() => {
-                        const timeout = form.getFieldValue([
-                          'batch',
-                          'timeout',
-                        ]);
-                        const unit = form.getFieldValue([
-                          'batch',
-                          'timeoutUnit',
-                        ]);
-
-                        const timeDuration = dayjs.duration(
-                          timeout,
-                          unit ?? 's',
-                        );
-
-                        const formattedDuration = formatDuration(
-                          timeDuration,
-                          t,
-                        );
-
-                        const durationText =
-                          !_.isNull(timeout) && _.toFinite(timeout) > 0
-                            ? formattedDuration
-                            : null;
-                        return (
-                          <Form.Item
-                            label={t(
-                              'session.launcher.BatchJobTimeoutDuration',
-                            )}
-                            tooltip={t(
-                              'session.launcher.BatchJobTimeoutDurationDesc',
-                            )}
-                            // extra={durationText}
-                            help={durationText}
-                          >
-                            <BAIFlex direction="row" gap={'xs'}>
-                              <Form.Item
-                                noStyle
-                                name={['batch', 'timeoutEnabled']}
-                                valuePropName="checked"
-                              >
-                                <BAICheckboxInput
-                                  onChange={(checked) => {
-                                    if (checked === false) {
-                                      form.setFieldValue(
-                                        ['batch', 'timeout'],
-                                        undefined,
-                                      );
-                                    }
-                                    form.validateFields([['batch', 'timeout']]);
-                                  }}
-                                >
-                                  {t('session.launcher.Enable')}
-                                </BAICheckboxInput>
-                              </Form.Item>
-                              <Form.Item
-                                noStyle
-                                dependencies={[['batch', 'timeoutEnabled']]}
-                              >
-                                {() => {
-                                  const disabled =
-                                    form.getFieldValue([
-                                      'batch',
-                                      'timeoutEnabled',
-                                    ]) !== true;
-                                  return (
-                                    <>
-                                      {/* antd `Space.Compact` (weld the
-                                            number field and its unit select
-                                            into one control) -> Astryx
-                                            `InputGroup`, the documented
-                                            destination for the input flavour
-                                            of Compact (MAPPING §"Space"). */}
-                                      <InputGroup
-                                        label={t(
-                                          'session.launcher.BatchJobTimeoutDuration',
-                                        )}
-                                        // `BAIFormItem` already renders the
-                                        // visible label above; without this
-                                        // the group printed it a second time
-                                        // inside the field (measured).
-                                        isLabelHidden
-                                      >
-                                        <Form.Item
-                                          name={['batch', 'timeout']}
-                                          label={t(
-                                            'session.launcher.BatchJobTimeoutDuration',
-                                          )}
-                                          noStyle
-                                          dependencies={[
-                                            ['batch', 'timeoutEnabled'],
-                                          ]}
-                                          rules={[
-                                            {
-                                              min: 0,
-                                              type: 'number',
-                                              message: t(
-                                                'error.AllowsPositiveNumberOnly',
-                                              ),
-                                            },
-                                            {
-                                              required: !disabled,
-                                            },
-                                          ]}
-                                        >
-                                          {/* The form engine composes this
-                                                `onChange` after its own. */}
-                                          <BAINumberInput
-                                            width="100%"
-                                            aria-label={t(
-                                              'session.launcher.BatchJobTimeoutDuration',
-                                            )}
-                                            disabled={disabled}
-                                            min={1}
-                                            onChange={() => {
-                                              form.validateFields([
-                                                ['batch', 'timeoutUnit'],
-                                              ]);
-                                            }}
-                                          />
-                                        </Form.Item>
-                                        <Form.Item
-                                          noStyle
-                                          name={['batch', 'timeoutUnit']}
-                                          dependencies={[
-                                            ['batch', 'timeout'],
-                                            ['batch', 'timeoutEnabled'],
-                                          ]}
-                                          rules={[
-                                            ({ getFieldValue }) => ({
-                                              validator() {
-                                                const timeout = getFieldValue([
-                                                  'batch',
-                                                  'timeout',
-                                                ]);
-                                                const timeoutEnabled =
-                                                  getFieldValue([
-                                                    'batch',
-                                                    'timeoutEnabled',
-                                                  ]);
-                                                if (
-                                                  timeoutEnabled === true &&
-                                                  (timeout === undefined ||
-                                                    timeout === null ||
-                                                    timeout < 1)
-                                                ) {
-                                                  return Promise.reject();
-                                                }
-                                                return Promise.resolve();
-                                              },
-                                            }),
-                                          ]}
-                                        >
-                                          {/* The accessible name repeats the
-                                                group's own label: there is no
-                                                localized "Unit" string (P8). */}
-                                          <BAISelector
-                                            aria-label={t(
-                                              'session.launcher.BatchJobTimeoutDuration',
-                                            )}
-                                            disabled={disabled}
-                                            width={100}
-                                            options={[
-                                              {
-                                                label: t('time.Sec'),
-                                                value: 's',
-                                              },
-                                              {
-                                                label: t('time.Min'),
-                                                value: 'm',
-                                              },
-                                              {
-                                                label: t('time.Hour'),
-                                                value: 'h',
-                                              },
-                                              {
-                                                label: t('time.Day'),
-                                                value: 'd',
-                                              },
-                                              {
-                                                label: t('time.Week'),
-                                                value: 'w',
-                                              },
-                                            ]}
-                                          />
-                                        </Form.Item>
-                                      </InputGroup>
-                                    </>
-                                  );
-                                }}
-                              </Form.Item>
-                            </BAIFlex>
-                          </Form.Item>
-                        );
-                      }}
-                    </Form.Item>
+                    <BatchSessionFormItems />
                   </StepCard>
                 )}
 
@@ -1074,153 +611,7 @@ const SessionLauncherPage = () => {
                   title={t('session.launcher.HPCOptimization')}
                   hidden={currentStepKey !== 'environment'}
                 >
-                  <Form.Item noStyle>
-                    <BAIFlex direction="row" gap={'sm'}>
-                      <Text>
-                        {t('session.launcher.SwitchOpenMPoptimization')}
-                      </Text>
-                      <Form.Item
-                        label={t('session.launcher.SwitchOpenMPoptimization')}
-                        name={['hpcOptimization', 'autoEnabled']}
-                        valuePropName="checked"
-                        required
-                        noStyle
-                      >
-                        {/* antd `checkedChildren`/`unCheckedChildren` have no
-                            Astryx destination and are DROPPED; the `Text`
-                            above names the toggle. */}
-                        <BAISwitch
-                          aria-label={t(
-                            'session.launcher.SwitchOpenMPoptimization',
-                          )}
-                          onChange={(checked) => {
-                            if (checked) {
-                              form.setFieldsValue({
-                                hpcOptimization: {
-                                  autoEnabled: true,
-                                  OMP_NUM_THREADS: undefined,
-                                  OPENBLAS_NUM_THREADS: undefined,
-                                },
-                              });
-                            } else {
-                              form.setFieldsValue({
-                                hpcOptimization: {
-                                  autoEnabled: false,
-                                  OMP_NUM_THREADS: '1',
-                                  OPENBLAS_NUM_THREADS: '1',
-                                },
-                              });
-                            }
-                          }}
-                        />
-                      </Form.Item>
-                    </BAIFlex>
-                  </Form.Item>
-                  <Form.Item
-                    noStyle
-                    shouldUpdate={(prev, next) => {
-                      return (
-                        prev.hpcOptimization?.autoEnabled !==
-                        next.hpcOptimization?.autoEnabled
-                      );
-                    }}
-                  >
-                    {() => {
-                      const enabled = form.getFieldValue([
-                        'hpcOptimization',
-                        'autoEnabled',
-                      ]);
-                      return (
-                        // Responsive policy R1 (ticket 14): antd
-                        // `Row gutter` + `Col xs={24} sm={12}` -> Astryx Grid
-                        // (2-up from 576px -> minWidth 280, max 2).
-                        // W2A-17: a `Grid` child defaults to `min-width: auto`,
-                        // so a 100%-wide field pushes its track past the
-                        // container. `width="100%"` on the grid plus
-                        // `minWidth: 0` on every direct child is the standing
-                        // fix (it also replaces the `flex: 1` these items
-                        // carried over from their old `Col` wrappers, which a
-                        // grid item ignores).
-                        <AstryxGrid
-                          columns={{ minWidth: 280, max: 2 }}
-                          gap={4}
-                          width="100%"
-                          style={{
-                            display: enabled ? 'none' : undefined,
-                            marginTop: token('--spacing-5'),
-                          }}
-                        >
-                          <Form.Item
-                            style={{ minWidth: 0 }}
-                            label={t('session.launcher.NumOpenMPthreads')}
-                            name={['hpcOptimization', 'OMP_NUM_THREADS']}
-                            // antd `InputNumber stringMode` kept the stored
-                            // value a STRING; these two fields are spread
-                            // straight into the session's `environ` dict
-                            // (`useStartSession`), where a number would be an
-                            // invalid env value. Astryx's `NumberInput` emits
-                            // `number | null`, so the string contract moves to
-                            // the item's own `getValueFromEvent`.
-                            getValueFromEvent={(value) =>
-                              _.isNil(value) ? value : String(value)
-                            }
-                            tooltip={
-                              <>
-                                {t('session.launcher.OpenMPOptimization')}
-                                <Trans
-                                  i18nKey={
-                                    'session.launcher.DescOpenMPOptimization'
-                                  }
-                                />
-                              </>
-                            }
-                            required
-                          >
-                            <BAINumberInput
-                              width="100%"
-                              aria-label={t(
-                                'session.launcher.NumOpenMPthreads',
-                              )}
-                              min={1}
-                              max={1000}
-                              step={1}
-                              isIntegerOnly
-                            />
-                          </Form.Item>
-                          <Form.Item
-                            style={{ minWidth: 0 }}
-                            label={t('session.launcher.NumOpenBLASthreads')}
-                            name={['hpcOptimization', 'OPENBLAS_NUM_THREADS']}
-                            getValueFromEvent={(value) =>
-                              _.isNil(value) ? value : String(value)
-                            }
-                            tooltip={
-                              <>
-                                {t('session.launcher.OpenMPOptimization')}
-                                <Trans
-                                  i18nKey={
-                                    'session.launcher.DescOpenMPOptimization'
-                                  }
-                                />
-                              </>
-                            }
-                            required
-                          >
-                            <BAINumberInput
-                              width="100%"
-                              aria-label={t(
-                                'session.launcher.NumOpenBLASthreads',
-                              )}
-                              min={1}
-                              max={1000}
-                              step={1}
-                              isIntegerOnly
-                            />
-                          </Form.Item>
-                        </AstryxGrid>
-                      );
-                    }}
-                  </Form.Item>
+                  <HPCOptimizationFormItems />
                 </StepCard>
                 {/* Step Start*/}
                 <StepCard

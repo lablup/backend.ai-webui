@@ -3366,6 +3366,25 @@
       "Version": "Ausführung",
       "YouCanStartWithHistory": "Dies sind Ihre kürzlich erstellten Sitzungsaufzeichnungen. Klicken Sie auf einen Sitzungsnamen, um eine neue Sitzung zu starten."
     },
+    "quickCreate": {
+      "AcceleratorType": "Beschleunigertyp",
+      "AutoAllocated": "Automatisch zugewiesen",
+      "CellUnit": "Zelleneinheit",
+      "ContinueInLauncher": "Im vollständigen Launcher fortfahren",
+      "NameAndEnvironment": "Name und Umgebung",
+      "NoFolder": "Kein Ordner",
+      "NotEnoughResource": "Es ist nicht genug {{name}} übrig, um das Minimum des Images zu erfüllen.",
+      "OpenLauncher": "Vollständigen Launcher öffnen",
+      "PerContainer": "{{count}} Container",
+      "PresetOnly": "Wählen Sie in den erweiterten Einstellungen eine Ressourcenvorlage.",
+      "QuickCreate": "Schnell erstellen",
+      "Remaining": "{{amount}} übrig",
+      "Resources": "Ressourcen",
+      "ShmemIncluded": "Enthält {{size}} gemeinsamen Speicher",
+      "StartFromHistory": "Mit „{{name}}“ starten",
+      "Summary": "Zusammenfassung",
+      "Title": "Sitzung schnell erstellen"
+    },
     "resourceGrid": {
       "AtLeastPercent": "≥ {{value}}%",
       "GridMode": "Rastermodus",

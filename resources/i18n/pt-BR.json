@@ -3364,6 +3364,25 @@
       "Version": "Versão",
       "YouCanStartWithHistory": "Estes são os registos de sessão criados recentemente. Clique no nome de uma sessão para iniciar uma nova sessão."
     },
+    "quickCreate": {
+      "AcceleratorType": "Tipo de acelerador",
+      "AutoAllocated": "Alocado automaticamente",
+      "CellUnit": "Unidade de célula",
+      "ContinueInLauncher": "Continuar no inicializador completo",
+      "NameAndEnvironment": "Nome e ambiente",
+      "NoFolder": "Nenhuma pasta",
+      "NotEnoughResource": "Não resta {{name}} suficiente para o mínimo da imagem.",
+      "OpenLauncher": "Abrir o inicializador completo",
+      "PerContainer": "{{count}} contêineres",
+      "PresetOnly": "Escolha uma predefinição de recursos em Configurações avançadas.",
+      "QuickCreate": "Criação rápida",
+      "Remaining": "{{amount}} restante",
+      "Resources": "Recursos",
+      "ShmemIncluded": "Inclui {{size}} de memória compartilhada",
+      "StartFromHistory": "Iniciar a partir de \"{{name}}\"",
+      "Summary": "Resumo",
+      "Title": "Criar sessão rapidamente"
+    },
     "resourceGrid": {
       "AtLeastPercent": "≥ {{value}}%",
       "GridMode": "Modo grade",

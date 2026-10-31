@@ -3364,6 +3364,25 @@
       "Version": "Versi",
       "YouCanStartWithHistory": "Ini adalah rekod sesi yang anda baru -baru ini. \nKlik nama sesi untuk memulakan sesi baru."
     },
+    "quickCreate": {
+      "AcceleratorType": "Jenis pemecut",
+      "AutoAllocated": "Diperuntukkan secara automatik",
+      "CellUnit": "Unit sel",
+      "ContinueInLauncher": "Teruskan dalam pelancar penuh",
+      "NameAndEnvironment": "Nama dan persekitaran",
+      "NoFolder": "Tiada folder",
+      "NotEnoughResource": "{{name}} yang tinggal tidak mencukupi untuk minimum imej.",
+      "OpenLauncher": "Buka pelancar penuh",
+      "PerContainer": "{{count}} bekas",
+      "PresetOnly": "Pilih pratetap sumber dalam Tetapan Lanjutan.",
+      "QuickCreate": "Cipta pantas",
+      "Remaining": "Baki {{amount}}",
+      "Resources": "Sumber",
+      "ShmemIncluded": "Termasuk {{size}} memori kongsi",
+      "StartFromHistory": "Mula daripada \"{{name}}\"",
+      "Summary": "Ringkasan",
+      "Title": "Cipta Sesi Pantas"
+    },
     "resourceGrid": {
       "AtLeastPercent": "≥ {{value}}%",
       "GridMode": "Mod grid",

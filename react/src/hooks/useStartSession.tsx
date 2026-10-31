@@ -339,7 +339,14 @@ export const useStartSession = () => {
         )
         .catch((err: any) => {
           if (err?.message?.includes('The session already exists')) {
-            throw new Error(t('session.launcher.SessionAlreadyExists'));
+            // Keep the code, so callers can tell this failure apart.
+            throw Object.assign(
+              new Error(t('session.launcher.SessionAlreadyExists')),
+              {
+                error_code: 'session_create_already-exists',
+                title: t('session.launcher.SessionAlreadyExists'),
+              },
+            );
           } else {
             throw err;
           }

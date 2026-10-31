@@ -13,6 +13,7 @@ import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAITabs from '../components/BAITabs';
 import TerminateSessionModal from '../components/ComputeSessionNodeItems/TerminateSessionModal';
 import ConfigurableResourceCard from '../components/ConfigurableResourceCard';
+import QuickSessionCreateButton from '../components/QuickSessionCreate/QuickSessionCreateButton';
 import SessionNodes, {
   availableSessionSorterValues,
 } from '../components/SessionNodes';
@@ -26,6 +27,7 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
+import { toProjectContext } from '../types/projectContext';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
 import { Grid, GridSpan } from '@lablup/ui-common/Grid';
@@ -92,6 +94,7 @@ const styles = stylex.create({
 const ComputeSessionListPage = () => {
   'use memo';
   const currentProject = useCurrentProjectValue();
+  const currentProjectContext = toProjectContext(currentProject);
 
   const [currentUser] = useCurrentUserInfo();
 
@@ -395,9 +398,30 @@ const ComputeSessionListPage = () => {
         variant="borderless"
         title={t('webui.menu.Sessions')}
         extra={
-          <BAILink to={buildProjectPath('session/start')}>
-            <Button variant="primary" label={t('start.button.StartSession')} />
-          </BAILink>
+          <Suspense
+            fallback={
+              <BAILink to={buildProjectPath('session/start')}>
+                <Button
+                  variant="primary"
+                  label={t('start.button.StartSession')}
+                />
+              </BAILink>
+            }
+          >
+            {currentProjectContext ? (
+              <QuickSessionCreateButton
+                project={currentProjectContext}
+                onLaunched={() => updateFetchKey()}
+              />
+            ) : (
+              <BAILink to={buildProjectPath('session/start')}>
+                <Button
+                  variant="primary"
+                  label={t('start.button.StartSession')}
+                />
+              </BAILink>
+            )}
+          </Suspense>
         }
         styles={{
           header: {
