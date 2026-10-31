@@ -381,6 +381,22 @@ export async function logout(page: Page) {
 }
 
 /**
+ * A top-level sidebar nav item by its visible label. Astryx `SideNavItem`
+ * renders an enabled item as `<a>` (role "link") and a disabled one as
+ * `<button disabled>` (role "button"), so both roles are matched, scoped to
+ * the sidebar landmark to avoid same-named links elsewhere (breadcrumb).
+ */
+export function getSideNavItem(
+  page: Page,
+  name: string | RegExp,
+): ReturnType<Page['getByRole']> {
+  const sideNav = page.getByRole('navigation', { name: 'Side navigation' });
+  return sideNav
+    .getByRole('link', { name, exact: typeof name === 'string' })
+    .or(sideNav.getByRole('button', { name, exact: typeof name === 'string' }));
+}
+
+/**
  * Locator for the route-level "not found" screen (FR-3279/FR-3383).
  * The legacy image-based Page404 (`<img alt="404 Not Found">`) was replaced by
  * the shared RouteErrorContent composition, which renders the i18n heading
@@ -1354,6 +1370,56 @@ function deduplicateTomlKeys(tomlStr: string): string {
 // Store the accumulated config modifications in a WeakMap keyed by page
 const configCache = new WeakMap<Page, any>();
 
+/**
+ * The deployment's real `config.toml`, parsed. Fetched from a throwaway
+ * browser context (bypasses bot protection and never touches the page's own
+ * route handlers). `undefined` when the server could not be reached.
+ */
+export async function fetchConfigToml(
+  page: Page,
+): Promise<Record<string, any> | undefined> {
+  const browser = page.context().browser();
+  if (!browser) {
+    throw new Error('Browser instance not available');
+  }
+
+  const tempContext = await browser.newContext();
+  const tempPage = await tempContext.newPage();
+
+  const maxRetries = 3;
+  let lastError: unknown = null;
+  let config: Record<string, any> | undefined;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      await tempPage.goto(webuiEndpoint, { waitUntil: 'commit' });
+      const configToml = await tempPage.evaluate(async () => {
+        const res = await fetch('/config.toml', { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.text();
+      });
+      // @iarna/toml throws on duplicate keys; the app's parser keeps the last
+      // occurrence, so match that before parsing.
+      config = TOML.parse(deduplicateTomlKeys(configToml));
+      break;
+    } catch (error) {
+      lastError = error;
+      if (attempt < maxRetries) {
+        await tempPage.waitForTimeout(500);
+      }
+    }
+  }
+
+  await tempContext.close();
+
+  if (!config) {
+    console.warn(
+      `Failed to fetch config.toml from ${webuiEndpoint} after ${maxRetries} attempts: ${lastError}.`,
+    );
+  }
+  return config;
+}
+
 export async function modifyConfigToml(
   page: Page,
   _request: APIRequestContext,
@@ -1363,59 +1429,10 @@ export async function modifyConfigToml(
   let config = configCache.get(page);
 
   if (!config) {
-    // First time: Use a completely separate browser context to fetch original config
-    // This prevents any cache pollution between the fetch and the main test
-    const browser = page.context().browser();
-    if (!browser) {
-      throw new Error('Browser instance not available');
-    }
-
-    const tempContext = await browser.newContext();
-    const tempPage = await tempContext.newPage();
-
-    const maxRetries = 3;
-    let lastError: unknown = null;
-
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      try {
-        // Navigate temp page to fetch config
-        await tempPage.goto(webuiEndpoint, { waitUntil: 'commit' });
-
-        // Fetch config.toml from within the browser context (bypasses bot protection)
-        const configToml = await tempPage.evaluate(async () => {
-          const res = await fetch('/config.toml', { cache: 'no-store' });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          return res.text();
-        });
-        // Deduplicate keys within each TOML section before parsing.
-        // @iarna/toml throws on duplicate keys; the production app (smol-toml) may not.
-        // When duplicate keys exist in config.toml, keep the last occurrence of each key.
-        const deduplicatedToml = deduplicateTomlKeys(configToml);
-        config = TOML.parse(deduplicatedToml);
-        break; // Success, exit retry loop
-      } catch (error) {
-        lastError = error;
-        if (attempt < maxRetries) {
-          // Wait briefly before retrying
-          await tempPage.waitForTimeout(500);
-        }
-      }
-    }
-
-    // Close temp context entirely
-    await tempContext.close();
-
-    if (!config) {
-      // Fallback: use an empty config object so the requested changes can still be
-      // applied and served via route interception. This makes login resilient when
-      // the server cannot be reached at the configured webuiEndpoint (e.g., when
-      // running tests via the Playwright MCP tool without the env var set).
-      console.warn(
-        `Failed to fetch config.toml from ${webuiEndpoint} after ${maxRetries} attempts: ${lastError}. ` +
-          `Using empty base config — only explicitly requested keys will be set.`,
-      );
-      config = {};
-    }
+    // Fallback to an empty base so the requested keys are still served via
+    // route interception when the server cannot be reached (e.g. the
+    // Playwright MCP tool without the env var set).
+    config = (await fetchConfigToml(page)) ?? {};
   }
 
   // Deep merge the new configuration into the existing config
