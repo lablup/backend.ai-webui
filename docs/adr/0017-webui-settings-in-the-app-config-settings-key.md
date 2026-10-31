@@ -86,13 +86,14 @@ flowchart LR
 
 - **Entry shape**: 정의표의 항목(`WebUISettingDefinition`)은 `key`, `scope`, `type`(`boolean`, `number`, `string`, `stringList`), `group`, `field`(`keyof LoginConfigState`), 그리고 선택 필드 `options`, `unit`을 가진다.
 - **Single source**: 화면(`WebUISettingList`), 병합(`applyWebUISettings`), 저장(`buildWebUISettingsDocument`)은 이 표만 읽는다.
+- **Keys outside the table**: `settings`에는 정의표에 없는 키도 산다. 지금은 시스템 공지(`settings.announcement`, #10713) 하나다. 화면은 이 키로 변경 여부를 판정하지 않는다(`ownedWebUISettings`). Apply와 Reset은 저장 시점의 원본에서 이 키를 그대로 옮겨 쓴다(`withForeignWebUISettings`). 쓰기 hook은 `(current) => next` 함수를 받아 원본 값에 적용한다.
 - **Adding a setting**: 새 설정은 `LoginConfigState` 필드, `refreshConfigFromToml`의 파일 해석, `applyConfigToClient`의 `_config` 복사, 정의표 한 줄, `WebUISettingLabels.ts`의 문구를 함께 더한다.
 
 ### 5. 편집 권한과 안전장치
 
 - **Who sees what**: 페이지 라우트는 `access: 'admin'`이다. superadmin은 두 스코프를 모두 보고 저장한다. 도메인 관리자는 DOMAIN 키만 본다(`WebUISettingList`의 `canEditPublic=false`).
 - **Who may write**: 저장 가능 여부는 manager의 RBAC가 정한다. PUBLIC 문서는 superadmin만 쓸 수 있다. 도메인 관리자의 DOMAIN 저장은 그 역할에 `app_config_fragment` 권한이 있을 때 성공하고, 없으면 오류를 보인다.
-- **Reset**: 툴바의 Reset은 보이는 스코프의 `settings` 서브키를 지운다. 되돌릴 수 없으므로 `BAIDeleteConfirmModal`에 버튼 이름(`button.Reset`)을 입력해야 실행된다.
+- **Reset**: 툴바의 Reset은 보이는 스코프의 `settings`에서 정의표의 키를 지운다. 되돌릴 수 없으므로 `BAIDeleteConfirmModal`에 버튼 이름(`button.Reset`)을 입력해야 실행된다.
 - **Self-hiding**: `menuBlocklist`/`menuInactivelist`의 `system-settings`는 무시한다(`useWebUIMenuItems`). 이 페이지를 숨기면 같은 화면에서 되돌릴 수 없다.
 
 ## 대안과 기각 사유

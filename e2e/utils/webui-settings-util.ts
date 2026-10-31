@@ -9,9 +9,10 @@
  *
  * Both documents are cluster-wide, so a spec that writes them must run its
  * tests sequentially and restore what it found (`WebUISettingsApi.snapshot`
- * / `restore`). Other sub-keys of the same documents (`appearance`,
- * `announcement`, …) belong to other features and are never touched: every
- * write is a read-modify-write of the `settings` sub-key alone.
+ * / `restore`). Other sub-keys of the same documents (`appearance`, …) belong
+ * to other features and are never touched: every write is a read-modify-write
+ * of the `settings` sub-key alone, and inside it every key no row owns
+ * (`settings.announcement`, #10713) is carried over as read.
  */
 import { createAccountApiContext, gqlAdmin } from './admin-api';
 import {
@@ -270,6 +271,8 @@ export const WEBUI_SETTING_ROWS: ReadonlyArray<WebUISettingRow> = [
   row('enableExtendLoginSession', 'domain', 'boolean', 'account'),
 ];
 
+const ROW_KEYS = new Set(WEBUI_SETTING_ROWS.map((row) => row.key));
+
 export const WEBUI_SETTING_GROUPS: ReadonlyArray<WebUISettingGroup> = [
   'login',
   'session',
@@ -444,25 +447,42 @@ export class WebUISettingsApi {
     return data.scopedAppConfigFragmentsByNames?.[0]?.config ?? {};
   }
 
-  /** The saved `settings` document of `scope`, or `undefined` when absent. */
+  /**
+   * The saved settings of `scope` (the keys a row owns), or `undefined` when
+   * none is saved.
+   */
   async readSettings(
     scope: WebUISettingScope,
   ): Promise<SettingsDocument | undefined> {
     const doc = await this.readRawDocument(scope);
     const settings = getPath(doc, this.settingsPath(scope));
-    return isPlainObject(settings) ? (settings as SettingsDocument) : undefined;
+    if (!isPlainObject(settings)) return undefined;
+    const rest = Object.fromEntries(
+      Object.entries(settings).filter(([key]) => ROW_KEYS.has(key)),
+    );
+    return Object.keys(rest).length > 0
+      ? (rest as SettingsDocument)
+      : undefined;
   }
 
   /**
-   * Replaces the `settings` sub-key of `scope` with `settings`; `undefined`
-   * removes it. Every other sub-key of the document is written back as read.
+   * Replaces the row-owned keys of `scope` with `settings`; keys no row owns
+   * (the announcement) and every other sub-key are written back as read.
    */
   async writeSettings(
     scope: WebUISettingScope,
     settings: SettingsDocument | undefined,
   ): Promise<void> {
     const doc = structuredClone(await this.readRawDocument(scope));
-    setPath(doc, this.settingsPath(scope), settings);
+    const current = getPath(doc, this.settingsPath(scope));
+    const foreign = isPlainObject(current)
+      ? Object.fromEntries(
+          Object.entries(current).filter(([key]) => !ROW_KEYS.has(key)),
+        )
+      : {};
+    const merged = { ...foreign, ...(settings ?? {}) };
+    const next = Object.keys(merged).length > 0 ? merged : undefined;
+    setPath(doc, this.settingsPath(scope), next);
     const result = await gqlAdmin<{
       scopedUpsertAppConfigFragments: {
         failed: Array<{ configName: string; message: string }>;
@@ -495,7 +515,7 @@ export class WebUISettingsApi {
     await this.writeSettings('domain', snapshot.domain);
   }
 
-  /** Removes the `settings` sub-key from both documents (file values only). */
+  /** Removes every row-owned key from both documents (file values only). */
   async clear(): Promise<void> {
     await this.writeSettings('public', undefined);
     await this.writeSettings('domain', undefined);

@@ -4,11 +4,9 @@
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import AnnouncementEditModal from './AnnouncementEditModal';
 import SettingList, { SettingGroup } from './SettingList';
 import { Button } from '@lablup/ui-common/Button';
-import { BAIUnmountAfterClose } from 'backend.ai-ui';
-import { Redo2, SquarePenIcon } from 'lucide-react';
+import { Redo2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -16,7 +14,6 @@ const MaintenanceSettingList = () => {
   'use memo';
   const [isRecalculating, setIsRecalculating] = useState(false);
   const [isRescanning, setIsRescanning] = useState(false);
-  const [isAnnouncementModalOpen, setIsAnnouncementModalOpen] = useState(false);
 
   const { t } = useTranslation();
   const { upsertNotification } = useSetBAINotification();
@@ -136,38 +133,9 @@ const MaintenanceSettingList = () => {
         },
       ],
     },
-    {
-      'data-testid': 'maintenance-announcement',
-      title: t('maintenance.Announcement'),
-      settingItems: [
-        {
-          type: 'custom',
-          title: t('maintenance.SystemAnnouncement'),
-          description: t('maintenance.DescSystemAnnouncement'),
-          children: (
-            <Button
-              icon={<SquarePenIcon size="1em" />}
-              onClick={() => setIsAnnouncementModalOpen(true)}
-              label={t('summary.EditAnnouncement')}
-            />
-          ),
-          showResetButton: false,
-        },
-      ],
-    },
   ];
 
-  return (
-    <>
-      <SettingList settingGroups={settingGroupList} showSearchBar />
-      <BAIUnmountAfterClose>
-        <AnnouncementEditModal
-          open={isAnnouncementModalOpen}
-          onRequestClose={() => setIsAnnouncementModalOpen(false)}
-        />
-      </BAIUnmountAfterClose>
-    </>
-  );
+  return <SettingList settingGroups={settingGroupList} showSearchBar />;
 };
 
 export default MaintenanceSettingList;

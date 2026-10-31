@@ -8,6 +8,8 @@ import {
   buildWebUISettingsDocument,
   fetchDomainWebUISettings,
   WEBUI_SETTING_DEFINITIONS,
+  withForeignWebUISettings,
+  ownedWebUISettings,
 } from './webuiSettings';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -194,5 +196,35 @@ describe('fetchDomainWebUISettings', () => {
     ).resolves.toBeUndefined();
     expect(warn).toHaveBeenCalledTimes(1);
     warn.mockRestore();
+  });
+});
+
+describe('withForeignWebUISettings', () => {
+  const announcement = { enabled: true, title: 'hi' };
+  it('keeps keys no definition owns and drops the ones it does', () => {
+    expect(
+      withForeignWebUISettings(
+        { hideAgents: true, announcement },
+        { maxCPUCoresPerContainer: 2 },
+      ),
+    ).toEqual({ announcement, maxCPUCoresPerContainer: 2 });
+  });
+  it('is undefined when neither side leaves a key', () => {
+    expect(
+      withForeignWebUISettings({ hideAgents: true }, undefined),
+    ).toBeUndefined();
+    expect(withForeignWebUISettings(undefined, undefined)).toBeUndefined();
+    expect(withForeignWebUISettings('x', undefined)).toBeUndefined();
+  });
+});
+
+describe('ownedWebUISettings', () => {
+  it('keeps only the keys a definition owns', () => {
+    expect(
+      ownedWebUISettings({
+        hideAgents: true,
+        announcement: { enabled: true, title: 'hi' },
+      }),
+    ).toEqual({ hideAgents: true });
   });
 });

@@ -7,6 +7,8 @@ import {
   isAnnouncementCollapsible,
   isAnnouncementVisible,
   summarizeAnnouncementTitle,
+  readDomainAnnouncement,
+  withAnnouncement,
 } from './announcement';
 import { describe, expect, it } from 'vitest';
 
@@ -67,5 +69,36 @@ describe('isAnnouncementVisible', () => {
     expect(isAnnouncementVisible({ enabled: true, title: 'Notice' })).toBe(
       true,
     );
+  });
+});
+
+describe('readDomainAnnouncement', () => {
+  const announcement = { enabled: true, title: 'hi' };
+  it('reads the announcement of a settings document', () => {
+    expect(readDomainAnnouncement({ announcement, hideAgents: true })).toEqual(
+      announcement,
+    );
+  });
+  it('is undefined for a missing or malformed value', () => {
+    expect(readDomainAnnouncement(undefined)).toBeUndefined();
+    expect(readDomainAnnouncement({ announcement: 'x' })).toBeUndefined();
+    expect(readDomainAnnouncement({ announcement: [] })).toBeUndefined();
+  });
+});
+
+describe('withAnnouncement', () => {
+  const announcement = { enabled: true, title: 'hi' };
+  it('sets the announcement and keeps the other keys', () => {
+    expect(withAnnouncement({ hideAgents: true }, announcement)).toEqual({
+      hideAgents: true,
+      announcement,
+    });
+  });
+  it('removes the sub-key when the announcement was the only key', () => {
+    expect(withAnnouncement({ announcement }, undefined)).toBeUndefined();
+    expect(withAnnouncement(undefined, undefined)).toBeUndefined();
+    expect(
+      withAnnouncement({ announcement, hideAgents: true }, undefined),
+    ).toEqual({ hideAgents: true });
   });
 });

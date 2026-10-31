@@ -13,6 +13,8 @@ import {
   WEBUI_SETTINGS_CONFIG_KEY,
   type WebUISettingDefinition,
   type WebUISettingsDocument,
+  ownedWebUISettings,
+  withForeignWebUISettings,
   WEBUI_SETTINGS_DEFAULT_TAB,
 } from '../helper/webuiSettings';
 import { useCurrentDomainValue } from '../hooks';
@@ -21,6 +23,7 @@ import {
   useUpdatePublicDomainAppConfig,
 } from '../hooks/useAppConfig';
 import { useRawConfig } from '../hooks/useWebUIConfig';
+import AnnouncementEditModal from './AnnouncementEditModal';
 import PluginPathInput from './PluginPathInput';
 import type { SettingItemProps } from './SettingItem';
 import SettingList, { type SettingGroup } from './SettingList';
@@ -36,9 +39,10 @@ import {
   BAINumberInput,
   BAIUncontrolledInput,
   useErrorMessageResolver,
+  BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { CircleAlert, Redo2 } from 'lucide-react';
+import { CircleAlert, Redo2, SquarePenIcon } from 'lucide-react';
 import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useBlocker } from 'react-router-dom';
@@ -79,10 +83,12 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
   const updatePublicDomainAppConfig = useUpdatePublicDomainAppConfig();
 
   const fileState = refreshConfigFromToml(rawConfig);
-  const saved: WebUISettingsDocument = {
+  // Only the keys a definition owns: the announcement beside them is saved by
+  // its own modal and must not make the page dirty.
+  const saved: WebUISettingsDocument = ownedWebUISettings({
     ...(canEditPublic ? savedPublicSettings : undefined),
     ...savedDomainSettings,
-  };
+  });
   const [draft, setDraft] = useState<WebUISettingsDocument>(saved);
   const isDirty = !_.isEqual(draft, saved);
 
@@ -156,12 +162,20 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
     try {
       await updateDomainAppConfig(
         WEBUI_SETTINGS_CONFIG_KEY,
-        buildWebUISettingsDocument('domain', next, fileState),
+        (current: unknown) =>
+          withForeignWebUISettings(
+            current,
+            buildWebUISettingsDocument('domain', next, fileState),
+          ),
       );
       if (canEditPublic) {
         await updatePublicDomainAppConfig(
           WEBUI_SETTINGS_CONFIG_KEY,
-          buildWebUISettingsDocument('public', next, fileState),
+          (current: unknown) =>
+            withForeignWebUISettings(
+              current,
+              buildWebUISettingsDocument('public', next, fileState),
+            ),
         );
       }
       isLeavingAfterApplyRef.current = true;
@@ -278,6 +292,34 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
     }
   };
 
+  const [isAnnouncementModalOpen, setIsAnnouncementModalOpen] = useState(false);
+  // The announcement is edited through its own modal and saved on its own,
+  // so its row takes no part in the draft; superadmins only (#10713).
+  const announcementGroup: Array<SettingGroup> = canEditPublic
+    ? [
+        {
+          'data-testid': 'webui-settings-group-announcement',
+          title: t('maintenance.Announcement'),
+          settingItems: [
+            {
+              'data-testid': 'system-announcement',
+              type: 'custom',
+              title: t('maintenance.SystemAnnouncement'),
+              description: t('maintenance.DescSystemAnnouncement'),
+              children: (
+                <Button
+                  icon={<SquarePenIcon size="1em" />}
+                  onClick={() => setIsAnnouncementModalOpen(true)}
+                  label={t('summary.EditAnnouncement')}
+                />
+              ),
+              showResetButton: false,
+            },
+          ],
+        },
+      ]
+    : [];
+
   const settingGroups: Array<SettingGroup> = WEBUI_SETTING_GROUPS.flatMap(
     (group) => {
       const definitions = WEBUI_SETTING_DEFINITIONS.filter(
@@ -299,7 +341,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
   return (
     <>
       <SettingList
-        settingGroups={settingGroups}
+        settingGroups={[...settingGroups, ...announcementGroup]}
         showSearchBar
         showChangedOptionFilter
         extraButton={
@@ -355,6 +397,12 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
         onOk={() => persist({})}
         onCancel={() => setIsResetConfirmOpen(false)}
       />
+      <BAIUnmountAfterClose>
+        <AnnouncementEditModal
+          open={isAnnouncementModalOpen}
+          onRequestClose={() => setIsAnnouncementModalOpen(false)}
+        />
+      </BAIUnmountAfterClose>
     </>
   );
 };
