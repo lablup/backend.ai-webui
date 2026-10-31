@@ -42,6 +42,9 @@ import {
   useMutationWithPromise,
   BAISegmentedControl,
   BAISegmentedControlItem,
+  toEntityLabelFilter,
+  entityLabelFilterProperties,
+  useIsLabelableEntityType,
 } from 'backend.ai-ui';
 import { Trash2, BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
 import {
@@ -94,6 +97,7 @@ const RoleListTab: React.FC = () => {
   'use memo';
 
   const { t } = useTranslation();
+  const isLabelable = useIsLabelableEntityType('role');
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -113,6 +117,12 @@ const RoleListTab: React.FC = () => {
       history: 'replace',
     },
   );
+
+  // The property filter and a label-token click both land here.
+  const applyFilter = (value: RoleFilter | undefined) => {
+    setQueryParams({ filter: value ?? null });
+    setTablePaginationOption({ current: 1 });
+  };
 
   const [fetchKey, updateFetchKey] = useFetchKey();
 
@@ -365,12 +375,15 @@ const RoleListTab: React.FC = () => {
                   type: 'uuid',
                   fixedOperator: 'equals',
                 },
+                ...(isLabelable
+                  ? entityLabelFilterProperties({
+                      key: t('entityLabel.LabelKey'),
+                      value: t('entityLabel.LabelValue'),
+                    })
+                  : []),
               ])}
               value={queryParams.filter ?? undefined}
-              onChange={(value) => {
-                setQueryParams({ filter: value ?? null });
-                setTablePaginationOption({ current: 1 });
-              }}
+              onChange={applyFilter}
             />
           </BAIFlex>
           <BAIFlex gap={'xs'}>
@@ -394,6 +407,7 @@ const RoleListTab: React.FC = () => {
           </BAIFlex>
         </BAIFlex>
         <RoleNodes
+          onLabelClick={(label) => applyFilter(toEntityLabelFilter(label))}
           rolesFrgmt={roleNodes}
           loading={deferredQueryVariables !== queryVariables}
           order={queryParams.order}

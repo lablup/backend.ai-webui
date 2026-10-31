@@ -12,6 +12,7 @@ import TableColumnsSettingModal from './TableColumnsSettingModal';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Token } from '@lablup/ui-common/Token';
 import {
+  type BAIEntityLabel,
   BAIColumnType,
   BAIEntityLabelTargetCell,
   BAITable,
@@ -55,12 +56,15 @@ interface RolePresetNodesProps extends Omit<
   onChangeOrder?: (
     order: (typeof availableRolePresetSorterValues)[number] | null,
   ) => void;
+  /** Fired when a label token is clicked; the surface filters its list by it. */
+  onLabelClick?: (label: BAIEntityLabel) => void;
 }
 
 const RolePresetNodes: React.FC<RolePresetNodesProps> = ({
   rolePresetsFrgmt,
   customizeColumns,
   onChangeOrder,
+  onLabelClick,
   ...tableProps
 }) => {
   'use memo';
@@ -153,6 +157,7 @@ const RolePresetNodes: React.FC<RolePresetNodesProps> = ({
                 entityType="role_preset"
                 entityId={record.entityId}
                 name={record.name ?? undefined}
+                onLabelClick={onLabelClick}
               />
             ),
           },

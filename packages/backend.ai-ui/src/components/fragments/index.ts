@@ -79,6 +79,7 @@ export type {
 } from './BAIEntityLabelSettingModal';
 export {
   default as BAIEntityLabelTokens,
+  entityLabelFilterProperties,
   formatEntityLabel,
   toEntityLabelFilter,
 } from './BAIEntityLabelTokens';

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<809b7dc79a144c5fdda6b816b9f098b5>>
+ * @generated SignedSource<<f7d5bae2ddafbf4cef8877808307bf0d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -23,6 +23,7 @@ export type RolePresetFilter = {
   deletedAt?: NullableDateTimeFilter | null | undefined;
   entityId?: UUIDFilter | null | undefined;
   id?: UUIDFilter | null | undefined;
+  labels?: EntityLabelNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;
   permissions?: RolePresetPermissionNestedFilter | null | undefined;
   scopeType?: StringFilter | null | undefined;
@@ -96,6 +97,22 @@ export type DateTimeFilter = {
   before?: string | null | undefined;
   equals?: string | null | undefined;
   notEquals?: string | null | undefined;
+};
+export type EntityLabelNestedFilter = {
+  every?: EntityLabelFilter | null | undefined;
+  exists?: boolean | null | undefined;
+  none?: EntityLabelFilter | null | undefined;
+  some?: EntityLabelFilter | null | undefined;
+};
+export type EntityLabelFilter = {
+  AND?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  NOT?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
+  key?: StringFilter | null | undefined;
+  value?: StringFilter | null | undefined;
 };
 export type RolePresetOrderBy = {
   direction?: OrderDirection;

@@ -24,6 +24,9 @@ import {
   useFetchKey,
   BAISegmentedControl,
   BAISegmentedControlItem,
+  toEntityLabelFilter,
+  entityLabelFilterProperties,
+  useIsLabelableEntityType,
 } from 'backend.ai-ui';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { Suspense, useDeferredValue } from 'react';
@@ -41,6 +44,7 @@ const ProjectAdminUsersContent: React.FC<ProjectAdminUsersContentProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const isLabelable = useIsLabelableEntityType('user');
 
   const {
     baiPaginationOption,
@@ -61,6 +65,12 @@ const ProjectAdminUsersContent: React.FC<ProjectAdminUsersContentProps> = ({
       history: 'replace',
     },
   );
+
+  // The property filter and a label-token click both land here.
+  const applyFilter = (value: UserV2Filter | undefined) => {
+    setQueryParams({ filter: value ?? null });
+    setTablePaginationOption({ current: 1 });
+  };
 
   const [fetchKey, updateFetchKey] = useFetchKey();
   const { isTOTPSupported } = useTOTPSupported();
@@ -180,12 +190,15 @@ const ProjectAdminUsersContent: React.FC<ProjectAdminUsersContentProps> = ({
                 propertyLabel: t('general.CreatedAt'),
                 type: 'datetime',
               },
+              ...(isLabelable
+                ? entityLabelFilterProperties({
+                    key: t('entityLabel.LabelKey'),
+                    value: t('entityLabel.LabelValue'),
+                  })
+                : []),
             ]}
             value={queryParams.filter ?? undefined}
-            onChange={(value) => {
-              setQueryParams({ filter: value ?? null });
-              setTablePaginationOption({ current: 1 });
-            }}
+            onChange={applyFilter}
           />
         </BAIFlex>
         <AutoUpdateFetchKeyButton
@@ -196,6 +209,7 @@ const ProjectAdminUsersContent: React.FC<ProjectAdminUsersContentProps> = ({
         />
       </BAIFlex>
       <BAIAdminUserV2Table
+        onLabelClick={(label) => applyFilter(toEntityLabelFilter(label))}
         usersFrgmt={userNodes}
         customizeColumns={(baseColumns) =>
           // The TOTP columns are meaningless when the manager has no TOTP
