@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5538a695db1b5de4d93ffe926c97406f>>
+ * @generated SignedSource<<afd55156db94a8890715ea7720aa4d07>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -508,12 +508,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "5fa909cf4e4336ea33c35a9de10ab9fb",
+    "cacheID": "b4cf2b3b2d48cb666f90cc0f9b54116a",
     "id": null,
     "metadata": {},
     "name": "VFolderDeployModalQuery",
     "operationKind": "query",
-    "text": "query VFolderDeployModalQuery {\n  deploymentRevisionPresets(orderBy: [{field: RANK, direction: \"ASC\"}], limit: 100) {\n    edges {\n      node {\n        id\n        entityId\n        name\n        runtimeVariantId\n        ...DeploymentPresetDetailModalFragment\n      }\n    }\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  image {\n    id\n    identity {\n      canonicalName\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      service {\n        healthCheck {\n          enable\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query VFolderDeployModalQuery {\n  deploymentRevisionPresets(orderBy: [{field: RANK, direction: \"ASC\"}], limit: 100) {\n    edges {\n      node {\n        id\n        entityId\n        name\n        runtimeVariantId\n        ...DeploymentPresetDetailModalFragment\n      }\n    }\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  entityId\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  image {\n    id\n    identity {\n      canonicalName\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      service {\n        healthCheck {\n          enable\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();

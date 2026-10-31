@@ -10,6 +10,7 @@
  (#10647), not here.
 */
 import { VFolderNodeDescriptionV2Fragment$key } from '../__generated__/VFolderNodeDescriptionV2Fragment.graphql';
+import { VFolderNodeDescriptionV2LabelsRefreshQuery } from '../__generated__/VFolderNodeDescriptionV2LabelsRefreshQuery.graphql';
 import { VFolderNodeDescriptionV2MountPolicyQuery } from '../__generated__/VFolderNodeDescriptionV2MountPolicyQuery.graphql';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useVirtualFolderPathV2 } from '../hooks/useVirtualFolderNodePathV2';
@@ -20,12 +21,15 @@ import { Badge } from '@lablup/ui-common/Badge';
 import { HStack } from '@lablup/ui-common/Stack';
 import { Text } from '@lablup/ui-common/Text';
 import {
+  BAIEntityLabelCell,
+  BAIEntityLabelSettingModal,
   BAIMetadataList,
   BAIMetadataListItem,
   BAISkeleton,
   filterOutEmpty,
   badgeVariantForStatus,
   BAIText,
+  useIsLabelableEntityType,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -35,9 +39,15 @@ import {
   UserIcon,
   UsersIcon,
 } from 'lucide-react';
-import React, { Suspense } from 'react';
+import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+import {
+  fetchQuery,
+  graphql,
+  useFragment,
+  useLazyLoadQuery,
+  useRelayEnvironment,
+} from 'react-relay';
 
 // `VFolderMountPermission`, read as a string: RW_DELETE folds into read &
 // write and NONE (or an unknown value) is no mount permission.
@@ -110,6 +120,11 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
         host
         status
         unmanagedPath
+        permissions @since(version: "26.9.0rc1")
+        entityLabels(limit: 100) {
+          ...BAIEntityLabelTokensFragment
+          ...BAIEntityLabelSettingModalFragment
+        }
         metadata {
           name
           usageMode
@@ -150,6 +165,28 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
   );
 
   const { vfolderPath } = useVirtualFolderPathV2(vfolderNode);
+
+  const relayEnv = useRelayEnvironment();
+  const isLabelable = useIsLabelableEntityType('vfolder');
+  const [isLabelModalOpen, setIsLabelModalOpen] = useState(false);
+  const refreshLabels = () =>
+    fetchQuery<VFolderNodeDescriptionV2LabelsRefreshQuery>(
+      relayEnv,
+      graphql`
+        query VFolderNodeDescriptionV2LabelsRefreshQuery($vfolderId: UUID!) {
+          vfolderV2(vfolderId: $vfolderId) {
+            id
+            entityLabels(limit: 100) {
+              ...BAIEntityLabelTokensFragment
+              ...BAIEntityLabelSettingModalFragment
+            }
+          }
+        }
+      `,
+      { vfolderId: vfolderNode.entityId },
+    )
+      .toPromise()
+      .catch(() => {});
 
   const items = filterOutEmpty([
     !vfolderNode?.unmanagedPath && {
@@ -285,16 +322,52 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
         ? dayjs(vfolderNode.metadata.createdAt).format('lll')
         : '-',
     },
+    // Tokens are display-only here: the explorer opens over any page, so
+    // there is no single list to filter.
+    isLabelable && {
+      key: 'labels',
+      label: t('entityLabel.Labels'),
+      children: (
+        <BAIEntityLabelCell
+          entityLabelsFrgmt={vfolderNode.entityLabels}
+          onEdit={() => setIsLabelModalOpen(true)}
+          editDisabledReason={
+            _.includes(vfolderNode.permissions, 'UPDATE')
+              ? undefined
+              : t('entityLabel.NoPermissionToEditLabels')
+          }
+        />
+      ),
+    },
   ]);
 
   return (
-    <BAIMetadataList columns="single" {...props}>
-      {items.map((item) => (
-        <BAIMetadataListItem key={item.key} label={item.label}>
-          {item.children}
-        </BAIMetadataListItem>
-      ))}
-    </BAIMetadataList>
+    <>
+      <BAIMetadataList columns="single" {...props}>
+        {items.map((item) => (
+          <BAIMetadataListItem key={item.key} label={item.label}>
+            {item.children}
+          </BAIMetadataListItem>
+        ))}
+      </BAIMetadataList>
+      {isLabelable && (
+        <BAIEntityLabelSettingModal
+          open={isLabelModalOpen}
+          entityType="vfolder"
+          targets={[
+            {
+              entityId: vfolderNode.entityId,
+              name: vfolderNode.metadata?.name ?? undefined,
+            },
+          ]}
+          entityLabelsFrgmt={vfolderNode.entityLabels}
+          onRequestClose={(success) => {
+            setIsLabelModalOpen(false);
+            if (success) void refreshLabels();
+          }}
+        />
+      )}
+    </>
   );
 };
 

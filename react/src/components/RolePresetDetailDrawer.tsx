@@ -14,6 +14,7 @@ import {
   BAICard,
   BAIDrawer,
   type BAIDrawerProps,
+  BAIEntityLabelTargetCell,
   BAIFetchKeyButton,
   BAIFlex,
   BAIMetadataList,
@@ -22,6 +23,7 @@ import {
   tokenColorForTagColor,
   useFetchKey,
   useBAIBreakpoint,
+  useIsLabelableEntityType,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { Suspense, useState, useTransition } from 'react';
@@ -48,6 +50,7 @@ const RolePresetDetailDrawer: React.FC<RolePresetDetailDrawerProps> = ({
   const [isPendingReload, startReloadTransition] = useTransition();
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [activeTab, setActiveTab] = useState('permissions');
+  const isLabelable = useIsLabelableEntityType('role_preset');
 
   // Keeps the last preset painted through the exit animation (same as RoleDetailDrawerV2).
   const [lastRolePresetFrgmt, setLastRolePresetFrgmt] =
@@ -67,6 +70,7 @@ const RolePresetDetailDrawer: React.FC<RolePresetDetailDrawerProps> = ({
       fragment RolePresetDetailDrawerFragment on RolePreset
       @refetchable(queryName: "RolePresetDetailDrawerRefetchQuery") {
         id
+        entityId
         name
         scopeType
         autoAssign
@@ -145,6 +149,15 @@ const RolePresetDetailDrawer: React.FC<RolePresetDetailDrawerProps> = ({
               <MetadataListItem label={t('general.UpdatedAt')}>
                 {dayjs(rolePreset.updatedAt).format('YYYY-MM-DD HH:mm:ss')}
               </MetadataListItem>
+              {isLabelable && (
+                <MetadataListItem label={t('entityLabel.Labels')}>
+                  <BAIEntityLabelTargetCell
+                    entityType="role_preset"
+                    entityId={rolePreset.entityId}
+                    name={rolePreset.name}
+                  />
+                </MetadataListItem>
+              )}
             </BAIMetadataList>
           </BAICard>
           <BAIFlex direction="column" gap="sm" align="stretch">

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ab69ad0065136d9979c98a687bcd8b4b>>
+ * @generated SignedSource<<4821cc792add53e891462ad7d2aacd92>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -479,12 +479,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "918480b5874a4e7c12687198b157abce",
+    "cacheID": "d4b0a4f803627be6e293cc7b4c2ff92c",
     "id": null,
     "metadata": {},
     "name": "ResourceGroupListQuery",
     "operationKind": "query",
-    "text": "query ResourceGroupListQuery(\n  $limit: Int\n  $offset: Int\n  $filter: ResourceGroupFilter\n  $orderBy: [ResourceGroupOrderBy!]\n) {\n  adminResourceGroups(limit: $limit, offset: $offset, filter: $filter, orderBy: $orderBy) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        name\n        entityLabels(limit: 100) {\n          ...BAIEntityLabelTokensFragment\n          ...BAIEntityLabelSettingModalFragment\n        }\n        status {\n          isActive\n          isPublic\n          isDefault\n        }\n        metadata {\n          description\n          createdAt\n        }\n        network {\n          wsproxyAddr\n        }\n        scheduler {\n          type\n        }\n        ...ResourceGroupDetailDrawerFragment\n      }\n    }\n  }\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment ResourceGroupDetailDrawerFragment on ResourceGroup {\n  name\n  status {\n    isActive\n    isPublic\n  }\n  metadata {\n    description\n    createdAt\n  }\n  network {\n    wsproxyAddr\n  }\n  scheduler {\n    type\n  }\n}\n"
+    "text": "query ResourceGroupListQuery(\n  $limit: Int\n  $offset: Int\n  $filter: ResourceGroupFilter\n  $orderBy: [ResourceGroupOrderBy!]\n) {\n  adminResourceGroups(limit: $limit, offset: $offset, filter: $filter, orderBy: $orderBy) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        name\n        entityLabels(limit: 100) {\n          ...BAIEntityLabelTokensFragment\n          ...BAIEntityLabelSettingModalFragment\n        }\n        status {\n          isActive\n          isPublic\n          isDefault\n        }\n        metadata {\n          description\n          createdAt\n        }\n        network {\n          wsproxyAddr\n        }\n        scheduler {\n          type\n        }\n        ...ResourceGroupDetailDrawerFragment\n      }\n    }\n  }\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment ResourceGroupDetailDrawerFragment on ResourceGroup {\n  name\n  status {\n    isActive\n    isPublic\n  }\n  metadata {\n    description\n    createdAt\n  }\n  network {\n    wsproxyAddr\n  }\n  scheduler {\n    type\n  }\n  entityLabels(limit: 100) {\n    ...BAIEntityLabelTokensFragment\n  }\n}\n"
   }
 };
 })();

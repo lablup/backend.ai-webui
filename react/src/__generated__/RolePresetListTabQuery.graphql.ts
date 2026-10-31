@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e0bc8986f7a13ea3688f81228fb30cfb>>
+ * @generated SignedSource<<809b7dc79a144c5fdda6b816b9f098b5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -282,6 +282,13 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
+                    "name": "entityId",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "name",
                     "storageKey": null
                   },
@@ -331,13 +338,6 @@ return {
                     "kind": "ScalarField",
                     "name": "deleted",
                     "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "entityId",
-                    "storageKey": null
                   }
                 ],
                 "storageKey": null
@@ -351,12 +351,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "280c30a810de21d9a04d44e273b2fe86",
+    "cacheID": "b0e6410c3e7e1c712b7bf55cccfe1ca7",
     "id": null,
     "metadata": {},
     "name": "RolePresetListTabQuery",
     "operationKind": "query",
-    "text": "query RolePresetListTabQuery(\n  $filter: RolePresetFilter\n  $orderBy: [RolePresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminRolePresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...RolePresetNodesFragment\n        ...RolePresetDetailDrawerFragment\n      }\n    }\n  }\n}\n\nfragment RolePresetDetailDrawerFragment on RolePreset {\n  id\n  name\n  scopeType\n  autoAssign\n  deleted\n  createdAt\n  updatedAt\n  ...RolePresetPermissionTableFragment\n}\n\nfragment RolePresetNodesFragment on RolePreset {\n  id\n  name\n  scopeType\n  autoAssign\n  createdAt\n  updatedAt\n  permissionPresets {\n    count\n  }\n}\n\nfragment RolePresetPermissionTableFragment on RolePreset {\n  id\n  entityId\n  scopeType\n}\n"
+    "text": "query RolePresetListTabQuery(\n  $filter: RolePresetFilter\n  $orderBy: [RolePresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminRolePresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...RolePresetNodesFragment\n        ...RolePresetDetailDrawerFragment\n      }\n    }\n  }\n}\n\nfragment RolePresetDetailDrawerFragment on RolePreset {\n  id\n  entityId\n  name\n  scopeType\n  autoAssign\n  deleted\n  createdAt\n  updatedAt\n  ...RolePresetPermissionTableFragment\n}\n\nfragment RolePresetNodesFragment on RolePreset {\n  id\n  entityId\n  name\n  scopeType\n  autoAssign\n  createdAt\n  updatedAt\n  permissionPresets {\n    count\n  }\n}\n\nfragment RolePresetPermissionTableFragment on RolePreset {\n  id\n  entityId\n  scopeType\n}\n"
   }
 };
 })();
