@@ -87,6 +87,11 @@ flowchart LR
 
 - **Enforced by the tool list**: WebUI는 submit이나 삭제를 부르는 `execute`를 만들지 않는 것으로 이 규칙을 지킨다. agent가 UI의 승인 버튼을 누를 수 있어도, tool을 불러서는 그 action이 일어나지 않는다.
 - **Prepare description**: `bai_prepare_<noun>`의 `description`은 form을 submit하지 않으며 submit은 사람이 한다고 적는다.
+- **Hand-off by link**: agent는 보통 사용자가 볼 수 없는 자기 browser에서 일한다. 그래서 `bai_prepare_<noun>`은 채운 form을 그대로 여는 `webui_url`을 돌려주고, 사용자는 그 link를 자기 browser에서 열어 확인한 뒤 직접 submit한다. form 상태는 URL에 담고, 비밀 값은 담지 않는다.
+- **Agent-filled marker**: `bai_prepare_<noun>`이 연 form의 URL에는 `agentPrefill` parameter가 붙고, page는 그 parameter가 있을 때 "AI agent가 채운 form이니 확인 후 submit하라"는 알림을 보여준다. `bai_navigate`는 form 상태 parameter(`formValues`)를 담은 경로를 거절한다(`use_prepare_tool`). 그래야 알림 없이 채워진 form이 생기지 않는다.
+- **Applied and unverified**: `bai_prepare_<noun>`의 `applied`에는 입력 그대로 들어간 값과 form에서 다시 읽어 확인한 값만 둔다. form의 규칙이나 server가 바꿀 수 있는 값은 `unverified`에 둔다. 채울 값이 하나도 없으면 form을 열지 않는다.
+- **Link warnings**: `webui_url`이 6000자를 넘으면 `warnings: [{ field, reason }]`에 그 사실을 담는다. form 값에 대한 말이 아니라 link 자체의 문제이므로 `unverified`와 나눈다. 6000은 aiohttp와 nginx의 기본 8 KB request line 아래로 잡은 값이고, 실제 배포에서 재지는 않았다.
+- **Next step**: `nextStep`은 결과로 무엇을 할지 말한다. `rejected`가 있으면 필드를 고쳐 다시 부르거나 적용되지 않은 값을 사용자에게 알리라고 하고, link를 넘기라고 하지 않는다. `rejected`에 image가 있으면 form은 이미 launcher가 고른 다른 image로 바뀐 상태이므로 이 문구가 그 사실도 함께 말한다.
 - **No extra data**: tool은 자기를 등록한 component가 화면에 그리는 data만 돌려준다. 권한 때문에 화면에 없는 field를 tool을 위해 더 가져오지 않는다.
 - **No login by URL**: `bai_navigate`는 `sToken`이나 `stoken` parameter가 붙은 경로를 거절한다(`path_not_allowed`). 이 parameter는 도착하는 것만으로 login을 시작하기 때문이다.
 
@@ -118,6 +123,7 @@ flowchart LR
 
 - **Shape**: 모든 error는 `{ error: { code, message, issues? } }`이다(`WebMCPErrorResult`).
 - **Success shape**: 성공한 호출은 camelCase key를 가진 JSON object 하나를 돌려준다.
+- **Link key**: 사람에게 건넬 절대 URL은 `webui_url` key에 담는다. `bai-agent` CLI의 query 결과 행이 같은 이름을 쓰므로, agent는 CLI와 browser 어느 쪽에서 받았든 같은 key를 사용자에게 건넨다. camelCase 규칙의 유일한 예외다.
 
 ### 7. annotation은 정해진 조건에서만 단다
 
@@ -131,7 +137,7 @@ flowchart LR
 
 ### 8. data를 가진 component가 등록하고, unmount가 등록을 푼다
 
-- **Owner**: tool은 그 data나 그 form의 열림 상태를 이미 가진 component가 `useWebMCPTool(tool)`로 등록한다. `bai_prepare_<noun>`은 form을 여는 state를 가진 page component가 등록한다. component는 tool 때문에 새 query를 보내지 않는다.
+- **Owner**: tool은 그 data나 그 form의 열림 상태를 이미 가진 component가 `useWebMCPTool(tool)`로 등록한다. `bai_prepare_<noun>`은 form을 여는 state를 가진 page component가 등록한다. component는 tool을 등록하려고 새 query를 보내지 않는다. 예외는 하나다. `bai_prepare_<noun>`은 agent가 이름으로 준 참조(예: mount할 folder)를 호출 시점에 읽기 전용 query로 찾을 수 있다. 등록만으로는 요청이 나가지 않고, 입력한 이름과 사용자가 그 form에서 고를 수 있는 범위로 조건을 좁힌다.
 - **Lifetime**: `useWebMCPTool`은 등록할 때 만든 `AbortController`를 unmount 때 abort한다. route가 바뀌면 이전 page의 tool이 사라지고 새 page의 tool이 등록된다.
 - **Re-registration**: `name`, `description`, `inputSchema`, `annotations` 중 하나가 바뀌면 `useWebMCPTool`은 이전 등록을 abort하고 다시 등록한다.
 - **Latest closure**: 브라우저는 effect가 끝난 한참 뒤에 `execute`를 부르므로 `useWebMCPTool`은 BUI의 `useEventNotStable`로 안정적인 `execute`를 만든다(`useEffectEvent`는 effect 안에서만 안전하다). 이 hook은 layout effect에서 최신 closure로 바꾸므로 `execute`는 항상 최신 render의 값을 읽고, 값만 바뀌어서는 다시 등록되지 않는다.
