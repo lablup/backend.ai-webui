@@ -13,9 +13,10 @@ import DashboardPanelModal from './DashboardPanelModal';
 import { useBoardItemVisibility } from './DashboardRefreshContext';
 import PanelSettingsModal from './PanelSettingsModal';
 import { boardSortsAtom } from './ResourceTablePanel';
+import { resourceGroupScopeOf } from './dashboardScope';
+import { panelSettingOverridesAtom } from './panelSettingOverrides';
 import type {
   DashboardPageQueryRefs,
-  DashboardScope,
   PanelDefinition,
   PanelPage,
   PersistedPanel,
@@ -25,25 +26,11 @@ import {
   DashboardFilterContext,
   useDashboardFilters,
 } from './useDashboardFilters';
-import {
-  BAIBoard,
-  BAIFlex,
-  BAIUnmountAfterClose,
-  type BAIScopedResourceGroupSelectProps,
-} from 'backend.ai-ui';
+import { useResetOnLeavingPath } from './useResetOnLeavingPath';
+import { BAIBoard, BAIFlex, BAIUnmountAfterClose } from 'backend.ai-ui';
 import { useAtom, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
-import React, { useEffect, useRef, useState } from 'react';
-
-/** The resource groups a card's setting can pick from: the page's projects, else the domain's. */
-const resourceGroupScopeOf = (
-  scope: DashboardScope,
-): BAIScopedResourceGroupSelectProps['scope'] =>
-  scope.kind === 'mine'
-    ? { project: scope.projectId ? [{ value: scope.projectId }] : [] }
-    : scope.projectIds === 'all'
-      ? { domain: [{ value: scope.domain.id }] }
-      : { project: scope.projectIds.map((value) => ({ value })) };
+import React, { useRef, useState } from 'react';
 
 export interface DashboardPanelBoardProps {
   page: PanelPage;
@@ -71,6 +58,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
   'use memo';
   const [editMode, setEditMode] = useAtom(dashboardEditModeAtom);
   const setBoardSorts = useSetAtom(boardSortsAtom);
+  const setSettingOverrides = useSetAtom(panelSettingOverridesAtom);
   const [panelModalState, setPanelModalState] = useState<{
     open: boolean;
     panel?: PersistedPanel;
@@ -81,17 +69,13 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
   const { sftpResourceGroups } = useResourceGroupsForCurrentProject();
   const boardContainerRef = useRef<HTMLDivElement>(null);
 
-  // The edit-mode atom is global: close it when leaving the page, but not when a
+  // These atoms are global: clear them when leaving the page, but not when a
   // suspending query remounts the board on the same path (that would drop an early click).
-  useEffect(() => {
-    const mountedPath = window.location.pathname;
-    return () => {
-      if (window.location.pathname !== mountedPath) {
-        setEditMode(false);
-        setBoardSorts({});
-      }
-    };
-  }, [setEditMode, setBoardSorts]);
+  useResetOnLeavingPath(() => {
+    setEditMode(false);
+    setBoardSorts({});
+    setSettingOverrides({});
+  });
 
   const {
     boardItems,
@@ -166,7 +150,9 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
               // what it reported, or it snaps back.
               onItemsChange={(event) => {
                 onLayoutChange(
-                  _.map(event.detail.items, (item) => _.omit(item, 'data')),
+                  _.map(event.detail.items, (item) =>
+                    _.omit(item, ['data', 'title', 'description']),
+                  ),
                 );
               }}
             />

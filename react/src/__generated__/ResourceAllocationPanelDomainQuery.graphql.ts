@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5d5d1277f18bb93d0a5558c2d5635a92>>
+ * @generated SignedSource<<d43438301c2e003871371a2951560121>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,12 +9,12 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type ProjectResourceAllocationPanelQuery$variables = {
-  projectId: string;
+export type ResourceAllocationPanelDomainQuery$variables = {
+  domainName: string;
 };
-export type ProjectResourceAllocationPanelQuery$data = {
-  readonly projectResourceAllocationV2: {
-    readonly project: {
+export type ResourceAllocationPanelDomainQuery$data = {
+  readonly adminDomainResourceAllocationV2: {
+    readonly domain: {
       readonly limits: ReadonlyArray<{
         readonly quantity: any | null | undefined;
         readonly resourceType: string;
@@ -27,9 +27,9 @@ export type ProjectResourceAllocationPanelQuery$data = {
     };
   } | null | undefined;
 };
-export type ProjectResourceAllocationPanelQuery = {
-  response: ProjectResourceAllocationPanelQuery$data;
-  variables: ProjectResourceAllocationPanelQuery$variables;
+export type ResourceAllocationPanelDomainQuery = {
+  response: ResourceAllocationPanelDomainQuery$data;
+  variables: ResourceAllocationPanelDomainQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -37,7 +37,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "projectId"
+    "name": "domainName"
   }
 ],
 v1 = {
@@ -60,13 +60,13 @@ v3 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "projectId",
-        "variableName": "projectId"
+        "name": "domainName",
+        "variableName": "domainName"
       }
     ],
-    "concreteType": "ProjectResourceAllocationV2",
+    "concreteType": "DomainResourceAllocationV2",
     "kind": "LinkedField",
-    "name": "projectResourceAllocationV2",
+    "name": "adminDomainResourceAllocationV2",
     "plural": false,
     "selections": [
       {
@@ -74,7 +74,7 @@ v3 = [
         "args": null,
         "concreteType": "ScopeResourceUsageV2",
         "kind": "LinkedField",
-        "name": "project",
+        "name": "domain",
         "plural": false,
         "selections": [
           {
@@ -122,7 +122,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "ProjectResourceAllocationPanelQuery",
+    "name": "ResourceAllocationPanelDomainQuery",
     "selections": (v3/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -131,20 +131,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "ProjectResourceAllocationPanelQuery",
+    "name": "ResourceAllocationPanelDomainQuery",
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "368a14784dfca3b82262d7fe9192b3c0",
+    "cacheID": "59bafb5f609dd9651569b6a20cc066da",
     "id": null,
     "metadata": {},
-    "name": "ProjectResourceAllocationPanelQuery",
+    "name": "ResourceAllocationPanelDomainQuery",
     "operationKind": "query",
-    "text": "query ProjectResourceAllocationPanelQuery(\n  $projectId: UUID!\n) {\n  projectResourceAllocationV2(projectId: $projectId) {\n    project {\n      limits {\n        resourceType\n        quantity\n        unlimited\n      }\n      used {\n        resourceType\n        quantity\n      }\n    }\n  }\n}\n"
+    "text": "query ResourceAllocationPanelDomainQuery(\n  $domainName: String!\n) {\n  adminDomainResourceAllocationV2(domainName: $domainName) {\n    domain {\n      limits {\n        resourceType\n        quantity\n        unlimited\n      }\n      used {\n        resourceType\n        quantity\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "bb3f4cbffdccecfb1f21a7ddb96b44cc";
+(node as any).hash = "bd7ac4fd20b26db86ffa415e4550578e";
 
 export default node;

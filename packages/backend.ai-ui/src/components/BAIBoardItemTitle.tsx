@@ -3,9 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  Adapter over ui-common `BoardItemTitle` (FR-4054): keeps `extra` and the
- CircleHelp tooltip glyph. `style` and other div attributes reach the row. The
- sticky row's z-index is ui-common's default 50: above a table's fixed columns,
- below `BAI_Z_INDEX.appHeader`.
+ CircleHelp tooltip glyph. In an untitled `BAIBoard` item, the first one renders
+ in the item's header row (ui-common `Board`); `inline` keeps it in the body.
 */
 import {
   BoardItemTitle,

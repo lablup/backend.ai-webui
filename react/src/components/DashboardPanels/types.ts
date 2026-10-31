@@ -2,12 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { AgentStatsFragment$key } from '../../__generated__/AgentStatsFragment.graphql';
-import type { RecentlyCreatedSessionFragment$key } from '../../__generated__/RecentlyCreatedSessionFragment.graphql';
-import type { SessionCountDashboardItemFragment$key } from '../../__generated__/SessionCountDashboardItemFragment.graphql';
 import type { SessionGridViewParams } from '../../helper/sessionResourceGridData';
 import type { UserRole } from '../../helper/userRole';
 import type { MenuKeys } from '../../hooks/useWebUIMenuItems';
+import type { PanelDetailLink, PanelDetailLinkContext } from './detailLink';
 import type {
   BAIColumnsType,
   BAIGraphQLFilterProperty,
@@ -211,12 +209,8 @@ export interface PanelCatalogContext {
   config: PanelCatalogConfig;
 }
 
-/** Fragment keys of the admin page query the built-in admin cards still read. */
-export interface DashboardPageQueryRefs {
-  queryRef?: SessionCountDashboardItemFragment$key &
-    RecentlyCreatedSessionFragment$key;
-  agentStatsQueryRef?: AgentStatsFragment$key | null;
-}
+/** Fragment keys a page query hands its cards; every card now runs its own query. */
+export type DashboardPageQueryRefs = Record<string, never>;
 
 export interface PanelComponentProps {
   panel: PersistedPanelV2;
@@ -274,8 +268,12 @@ export interface PanelDefinition {
   >;
   /** The settings the card reads; only these cards get a settings control. */
   settings?: ReadonlyArray<PanelSettingKind>;
-  /** Like a BAITable column's `defaultHidden`: in the catalog, not on a new board. */
-  defaultHidden?: boolean;
+  /** Like a BAITable column's `defaultHidden`: in the catalog, not on a new board; a page list limits it to those pages. */
+  defaultHidden?: boolean | ReadonlyArray<PanelPage>;
+  /** Where a new board of the page places the card; cards without one follow, in catalog order. */
+  order?: Partial<Record<PanelPage, number>>;
+  /** The list page behind the card, opened from its header; null on a page that has none. */
+  detailLink?: (context: PanelDetailLinkContext) => PanelDetailLink | null;
 }
 
 /** Inputs the generic executor hands to a resource's `buildVariables`. */

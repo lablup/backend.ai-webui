@@ -11,7 +11,9 @@ import {
   hasSetting,
 } from './panelSettings';
 import type { PanelDefinition, PanelSettings } from './types';
+import { Text } from '@lablup/ui-common/Text';
 import {
+  BAIFlex,
   BAIModal,
   BAIScopedResourceGroupSelect,
   BAISelect,
@@ -71,7 +73,7 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
   return (
     <BAIModal
       open={open}
-      title={t('dashboard.settings.CardSettingsOf', { name: title })}
+      title={t('dashboard.settings.DefaultSettingsOf', { name: title })}
       okText={t('button.Save')}
       onCancel={onRequestClose}
       afterClose={afterClose}
@@ -91,59 +93,64 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
         onRequestClose();
       }}
     >
-      <Form
-        form={form}
-        layout="vertical"
-        preserve={false}
-        initialValues={{
-          resourceGroup: settings?.resourceGroups?.[0] ?? null,
-          range: settings?.range ?? DEFAULT_RANGE,
-        }}
-      >
-        {hasSetting(definition, 'resourceGroup') ? (
-          // Form.Item binds value/onChange to its direct child, so Suspense stays outside it.
-          <Suspense
-            fallback={
-              <BAIFormItem extra={resourceGroupsExtra}>
-                <BAISelect loading disabled />
-              </BAIFormItem>
-            }
-          >
-            <BAIFormItem
-              name="resourceGroup"
-              // The selector renders its own field label.
-              extra={resourceGroupsExtra}
+      <BAIFlex direction="column" align="stretch" gap="md">
+        <Text type="supporting">
+          {t('dashboard.settings.DefaultSettingsHelp')}
+        </Text>
+        <Form
+          form={form}
+          layout="vertical"
+          preserve={false}
+          initialValues={{
+            resourceGroup: settings?.resourceGroups?.[0] ?? null,
+            range: settings?.range ?? DEFAULT_RANGE,
+          }}
+        >
+          {hasSetting(definition, 'resourceGroup') ? (
+            // Form.Item binds value/onChange to its direct child, so Suspense stays outside it.
+            <Suspense
+              fallback={
+                <BAIFormItem extra={resourceGroupsExtra}>
+                  <BAISelect loading disabled />
+                </BAIFormItem>
+              }
             >
-              <BAIScopedResourceGroupSelect
-                label={t('dashboard.settings.ResourceGroup')}
-                placeholder={resourceGroupDefault}
-                scope={resourceGroupScope}
-                filter={
-                  _.isEmpty(excludedResourceGroups)
-                    ? undefined
-                    : { name: { notIn: [...(excludedResourceGroups ?? [])] } }
-                }
-                allowClear
+              <BAIFormItem
+                name="resourceGroup"
+                // The selector renders its own field label.
+                extra={resourceGroupsExtra}
+              >
+                <BAIScopedResourceGroupSelect
+                  label={t('dashboard.settings.DefaultResourceGroup')}
+                  placeholder={resourceGroupDefault}
+                  scope={resourceGroupScope}
+                  filter={
+                    _.isEmpty(excludedResourceGroups)
+                      ? undefined
+                      : { name: { notIn: [...(excludedResourceGroups ?? [])] } }
+                  }
+                  allowClear
+                />
+              </BAIFormItem>
+            </Suspense>
+          ) : null}
+          {hasSetting(definition, 'range') ? (
+            <BAIFormItem
+              name="range"
+              label={t('dashboard.settings.DefaultTimeRange')}
+              rules={[{ required: true }]}
+            >
+              <BAISelect
+                label={t('dashboard.settings.DefaultTimeRange')}
+                options={RANGE_PRESETS.map((preset) => ({
+                  value: preset,
+                  label: t(RANGE_LABEL_KEYS[preset]),
+                }))}
               />
             </BAIFormItem>
-          </Suspense>
-        ) : null}
-        {hasSetting(definition, 'range') ? (
-          <BAIFormItem
-            name="range"
-            label={t('dashboard.settings.TimeRange')}
-            rules={[{ required: true }]}
-          >
-            <BAISelect
-              label={t('dashboard.settings.TimeRange')}
-              options={RANGE_PRESETS.map((preset) => ({
-                value: preset,
-                label: t(RANGE_LABEL_KEYS[preset]),
-              }))}
-            />
-          </BAIFormItem>
-        ) : null}
-      </Form>
+          ) : null}
+        </Form>
+      </BAIFlex>
     </BAIModal>
   );
 };

@@ -7,7 +7,7 @@ import type { DateTimeWindow } from '../timeRange';
 import type { PanelComponentProps } from '../types';
 import { useOpenSessionDetail } from '../useOpenSessionDetail';
 import ScopedCard from './ScopedCard';
-import SessionList from './SessionList';
+import SessionList, { crossProjectColumns } from './SessionList';
 import {
   BAILink,
   BAISessionNodesV2,
@@ -19,14 +19,14 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 const ROW_LIMIT = 5;
-const VISIBLE_COLUMNS = new Set([
+const BASE_COLUMNS = [
   'name',
   'owner',
   'elapsedTime',
   'accelerator',
   'cpu',
   'mem',
-]);
+];
 const FILTER = { status: { in: ['RUNNING' as const] } };
 // Oldest first, so the sessions past the threshold are a prefix of the list.
 const ORDER_BY = [{ field: 'CREATED_AT' as const, direction: 'ASC' as const }];
@@ -61,7 +61,11 @@ const LongRunningSessionTable: React.FC<{
           disableSorter
           customizeColumns={(columns) =>
             columns
-              .filter((column) => VISIBLE_COLUMNS.has(String(column.key)))
+              .filter((column) =>
+                [...BASE_COLUMNS, ...crossProjectColumns(scope)].includes(
+                  String(column.key),
+                ),
+              )
               .map((column) =>
                 column.key === 'name'
                   ? {
@@ -105,6 +109,10 @@ const LongRunningSessionsPanel: React.FC<PanelComponentProps> = ({
         project: {
           title: t('dashboard.card.LongRunningSessions'),
           tooltip: t('dashboard.card.LongRunningSessionsTooltip'),
+        },
+        domain: {
+          title: t('dashboard.card.LongRunningSessions'),
+          tooltip: t('dashboard.card.DomainLongRunningSessionsTooltip'),
         },
       }}
     >

@@ -113,14 +113,11 @@ const ResourcePresetsPanel: React.FC<PanelComponentProps> = ({
         ) : !resourceGroupName ? (
           <Text type="supporting">{t('dashboard.card.NoResourceGroup')}</Text>
         ) : (
-          <BAIFlex direction="column" align="stretch" gap="sm">
-            <Text weight="semibold">{resourceGroupName}</Text>
-            <PresetAvailabilityTable
-              projectId={projectId}
-              resourceGroupName={resourceGroupName}
-              fetchKey={key}
-            />
-          </BAIFlex>
+          <PresetAvailabilityTable
+            projectId={projectId}
+            resourceGroupName={resourceGroupName}
+            fetchKey={key}
+          />
         )
       }
     </MemberCard>

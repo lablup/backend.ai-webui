@@ -5,11 +5,23 @@
 import type { ResourceGroupTotalPanelQuery } from '../../../__generated__/ResourceGroupTotalPanelQuery.graphql';
 import { useCurrentUserRole } from '../../../hooks/backendai';
 import TotalResourceWithinResourceGroup from '../../TotalResourceWithinResourceGroup';
-import PanelFrame from '../PanelFrame';
+import PanelSettingsHeaderControls from '../PanelSettingsHeaderControls';
 import type { PanelComponentProps } from '../types';
+import { Heading } from '@lablup/ui-common/Heading';
 import { Text } from '@lablup/ui-common/Text';
-import { BAIBoardItemErrorBoundary, BAISkeleton } from 'backend.ai-ui';
-import React, { Suspense, useDeferredValue } from 'react';
+import { useTheme } from '@lablup/ui-common/theme';
+import {
+  BAIBoardItemErrorBoundary,
+  BAIBoardItemTitle,
+  BAIFlex,
+  BAIIconWithTooltip,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
+  BAISkeleton,
+  useIsInBAIBoardItem,
+} from 'backend.ai-ui';
+import { CircleHelp } from 'lucide-react';
+import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -17,7 +29,8 @@ const ResourceGroupTotal: React.FC<{
   resourceGroup: string;
   fetchKey: string;
   isRefetching: boolean;
-}> = ({ resourceGroup, fetchKey, isRefetching }) => {
+  displayType: 'used' | 'free';
+}> = ({ resourceGroup, fetchKey, isRefetching, displayType }) => {
   'use memo';
   const isSuperAdmin = useCurrentUserRole() === 'superadmin';
   const variables = {
@@ -50,11 +63,13 @@ const ResourceGroupTotal: React.FC<{
       resourceGroup={deferredVariables.resourceGroup}
       refetching={isRefetching || deferredVariables !== variables}
       hideRefreshButton
+      asSection
+      displayType={displayType}
     />
   );
 };
 
-/** The totals of the card's resource group. */
+/** The totals of the card's resource group, under one header with the card's picker. */
 const ResourceGroupTotalPanel: React.FC<PanelComponentProps> = ({
   vars,
   fetchKey,
@@ -62,34 +77,82 @@ const ResourceGroupTotalPanel: React.FC<PanelComponentProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const title = t('webui.menu.TotalResourcesInResourceGroup');
+  const { token } = useTheme();
+  const isInBoard = useIsInBAIBoardItem();
+  const [displayType, setDisplayType] = useState<'used' | 'free'>('used');
   const resourceGroup = vars.resourceGroup;
   return (
     <BAIBoardItemErrorBoundary
-      title={title}
+      // The failed state keeps the header picks, so a pick that broke the card can be undone.
+      title={
+        <BAIFlex align="center" gap="xs" wrap="wrap">
+          <Heading level={5}>
+            {t('webui.menu.TotalResourcesInResourceGroup')}
+          </Heading>
+          <PanelSettingsHeaderControls />
+        </BAIFlex>
+      }
       status="error"
       resetKeys={[fetchKey, resourceGroup]}
     >
-      {resourceGroup ? (
-        // The fallback keeps the title up while the totals load.
-        <Suspense
-          fallback={
-            <PanelFrame title={title}>
-              <BAISkeleton />
-            </PanelFrame>
+      <BAIFlex direction="column" align="stretch">
+        <BAIFlex
+          direction="column"
+          align="stretch"
+          // On a board the board pads the item.
+          style={
+            isInBoard ? undefined : { paddingInline: token('--spacing-8') }
           }
         >
-          <ResourceGroupTotal
-            resourceGroup={resourceGroup}
-            fetchKey={fetchKey}
-            isRefetching={isRefetching}
+          <BAIBoardItemTitle
+            title={
+              <BAIFlex align="center" gap="xs" wrap="wrap">
+                <Heading level={5}>
+                  {t('webui.menu.TotalResourcesInResourceGroup')}
+                </Heading>
+                <BAIIconWithTooltip
+                  icon={<CircleHelp size="1em" />}
+                  content={t(
+                    'webui.menu.TotalResourcesInResourceGroupDescription',
+                  )}
+                />
+                <PanelSettingsHeaderControls />
+              </BAIFlex>
+            }
+            extra={
+              <BAISegmentedControl
+                size="sm"
+                aria-label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
+                value={displayType}
+                onChange={(value) =>
+                  setDisplayType(value === 'free' ? 'free' : 'used')
+                }
+              >
+                <BAISegmentedControlItem
+                  value="used"
+                  label={t('dashboard.Used')}
+                />
+                <BAISegmentedControlItem
+                  value="free"
+                  label={t('dashboard.Free')}
+                />
+              </BAISegmentedControl>
+            }
           />
-        </Suspense>
-      ) : (
-        <PanelFrame title={title}>
+        </BAIFlex>
+        {resourceGroup ? (
+          <Suspense fallback={<BAISkeleton />}>
+            <ResourceGroupTotal
+              resourceGroup={resourceGroup}
+              fetchKey={fetchKey}
+              isRefetching={isRefetching}
+              displayType={displayType}
+            />
+          </Suspense>
+        ) : (
           <Text type="supporting">{t('dashboard.card.NoResourceGroup')}</Text>
-        </PanelFrame>
-      )}
+        )}
+      </BAIFlex>
     </BAIBoardItemErrorBoundary>
   );
 };

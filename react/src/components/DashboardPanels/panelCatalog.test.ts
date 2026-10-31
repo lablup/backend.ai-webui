@@ -99,11 +99,16 @@ describe('PANEL_CATALOG', () => {
     [
       'admin',
       [
-        'activeSessions',
-        'totalResourceWithinResourceGroup',
-        'agentStats',
+        'projectSessionStatus',
+        'pendingSessions',
+        'schedulingFailures',
         'activeAgents',
-        'recentlyCreatedSession',
+        'agentStats',
+        'failuresByEntityType',
+        'projectAuditLog',
+        'topProjectsUsage',
+        'fairShare',
+        'totalResourceWithinResourceGroup',
       ],
     ],
   ])('seeds the %s board with its default cards', (page, keys) => {
@@ -149,11 +154,39 @@ describe('catalogFor on the real catalog', () => {
     );
   });
 
+  it('offers the catalog-only superadmin cards without placing them', () => {
+    const board = seedBoard(PANEL_CATALOG, 'admin');
+    const catalogOnly = [
+      'longRunningSessions',
+      'projectResourceAllocation',
+      'projectDeployments',
+      'projectFolders',
+      'projectUsers',
+      'resourceGroupCapacity',
+      'recentlyCreatedSession',
+      'resourcePolicies',
+      'failedLogins',
+      'containerRegistries',
+    ];
+    expect(board.knownKeys).toEqual(expect.arrayContaining(catalogOnly));
+    const placed = board.panels.map((panel) => panel.id);
+    for (const key of catalogOnly) expect(placed).not.toContain(key);
+  });
+
+  it('places the shared admin cards on the project admin board but keeps their catalog-only ones off the superadmin board', () => {
+    const projectAdmin = seedBoard(PANEL_CATALOG, 'projectAdmin').panels.map(
+      (panel) => panel.id,
+    );
+    expect(projectAdmin).toEqual(
+      expect.arrayContaining(['projectUsers', 'projectFolders']),
+    );
+  });
+
   it('keeps cluster and project-wide cards off the member dashboard, even for a superadmin', () => {
     const keys = keysFor({ page: 'project', role: 'superadmin', config: {} });
     expect(keys).not.toContain('agentStats');
     expect(keys).not.toContain('activeAgents');
-    expect(keys).not.toContain('activeSessions');
+    expect(keys).not.toContain('projectSessionStatus');
   });
 
   it('drops a Start item whose menu is blocked and locks the deployment one without model folders', () => {

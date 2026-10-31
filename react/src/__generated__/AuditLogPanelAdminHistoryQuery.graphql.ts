@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2d69095c22a3999fe03718a244fe19d1>>
+ * @generated SignedSource<<de5f61ab66d2b8e97eb789ddcbc264d7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,17 +11,6 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type AuditLogActionKind = "BULK" | "GLOBAL" | "LOOKUP" | "MEMBERSHIP" | "RELATION" | "SCOPE" | "SINGLE_ENTITY" | "%future added value";
 export type AuditLogStatus = "DENIED" | "ERROR" | "RUNNING" | "SUCCESS" | "UNKNOWN" | "%future added value";
-export type AuditLogScope = {
-  entity?: ReadonlyArray<EntityTypeScope> | null | undefined;
-  triggeredUser?: ReadonlyArray<UUIDScope> | null | undefined;
-};
-export type EntityTypeScope = {
-  entityId: string;
-  entityType: string;
-};
-export type UUIDScope = {
-  value: string;
-};
 export type AuditLogFilter = {
   AND?: ReadonlyArray<AuditLogFilter> | null | undefined;
   NOT?: ReadonlyArray<AuditLogFilter> | null | undefined;
@@ -87,7 +76,7 @@ export type AuditLogActionKindFilter = {
   notEquals?: AuditLogActionKind | null | undefined;
   notIn?: ReadonlyArray<AuditLogActionKind> | null | undefined;
 };
-export type AuditLogPanelHistoryQuery$variables = {
+export type AuditLogPanelAdminHistoryQuery$variables = {
   f0?: AuditLogFilter | null | undefined;
   f0On: boolean;
   f1?: AuditLogFilter | null | undefined;
@@ -123,9 +112,8 @@ export type AuditLogPanelHistoryQuery$variables = {
   s6On: boolean;
   s7?: AuditLogFilter | null | undefined;
   s7On: boolean;
-  scope: AuditLogScope;
 };
-export type AuditLogPanelHistoryQuery$data = {
+export type AuditLogPanelAdminHistoryQuery$data = {
   readonly f0?: {
     readonly count: number;
   } | null | undefined;
@@ -181,9 +169,9 @@ export type AuditLogPanelHistoryQuery$data = {
     readonly count: number;
   } | null | undefined;
 };
-export type AuditLogPanelHistoryQuery = {
-  response: AuditLogPanelHistoryQuery$data;
-  variables: AuditLogPanelHistoryQuery$variables;
+export type AuditLogPanelAdminHistoryQuery = {
+  response: AuditLogPanelAdminHistoryQuery$data;
+  variables: AuditLogPanelAdminHistoryQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -363,21 +351,11 @@ v34 = {
   "name": "s7On"
 },
 v35 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "scope"
-},
-v36 = {
   "kind": "Literal",
   "name": "limit",
   "value": 1
 },
-v37 = {
-  "kind": "Variable",
-  "name": "scope",
-  "variableName": "scope"
-},
-v38 = [
+v36 = [
   {
     "alias": null,
     "args": null,
@@ -386,7 +364,7 @@ v38 = [
     "storageKey": null
   }
 ],
-v39 = {
+v37 = {
   "alias": "previousSuccess",
   "args": [
     {
@@ -394,17 +372,16 @@ v39 = {
       "name": "filter",
       "variableName": "previousSuccess"
     },
-    (v36/*: any*/),
-    (v37/*: any*/)
+    (v35/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "scopedAuditLogsV2",
+  "name": "adminAuditLogsV2",
   "plural": false,
-  "selections": (v38/*: any*/),
+  "selections": (v36/*: any*/),
   "storageKey": null
 },
-v40 = {
+v38 = {
   "alias": "previousFailure",
   "args": [
     {
@@ -412,17 +389,16 @@ v40 = {
       "name": "filter",
       "variableName": "previousFailure"
     },
-    (v36/*: any*/),
-    (v37/*: any*/)
+    (v35/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "scopedAuditLogsV2",
+  "name": "adminAuditLogsV2",
   "plural": false,
-  "selections": (v38/*: any*/),
+  "selections": (v36/*: any*/),
   "storageKey": null
 },
-v41 = {
+v39 = {
   "alias": "s0",
   "args": [
     {
@@ -430,17 +406,16 @@ v41 = {
       "name": "filter",
       "variableName": "s0"
     },
-    (v36/*: any*/),
-    (v37/*: any*/)
+    (v35/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "scopedAuditLogsV2",
+  "name": "adminAuditLogsV2",
   "plural": false,
-  "selections": (v38/*: any*/),
+  "selections": (v36/*: any*/),
   "storageKey": null
 },
-v42 = {
+v40 = {
   "alias": "s1",
   "args": [
     {
@@ -448,17 +423,16 @@ v42 = {
       "name": "filter",
       "variableName": "s1"
     },
-    (v36/*: any*/),
-    (v37/*: any*/)
+    (v35/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "scopedAuditLogsV2",
+  "name": "adminAuditLogsV2",
   "plural": false,
-  "selections": (v38/*: any*/),
+  "selections": (v36/*: any*/),
   "storageKey": null
 },
-v43 = {
+v41 = {
   "alias": "s2",
   "args": [
     {
@@ -466,17 +440,16 @@ v43 = {
       "name": "filter",
       "variableName": "s2"
     },
-    (v36/*: any*/),
-    (v37/*: any*/)
+    (v35/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "scopedAuditLogsV2",
+  "name": "adminAuditLogsV2",
   "plural": false,
-  "selections": (v38/*: any*/),
+  "selections": (v36/*: any*/),
   "storageKey": null
 },
-v44 = {
+v42 = {
   "alias": "s3",
   "args": [
     {
@@ -484,17 +457,16 @@ v44 = {
       "name": "filter",
       "variableName": "s3"
     },
-    (v36/*: any*/),
-    (v37/*: any*/)
+    (v35/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "scopedAuditLogsV2",
+  "name": "adminAuditLogsV2",
   "plural": false,
-  "selections": (v38/*: any*/),
+  "selections": (v36/*: any*/),
   "storageKey": null
 },
-v45 = {
+v43 = {
   "alias": "s4",
   "args": [
     {
@@ -502,17 +474,16 @@ v45 = {
       "name": "filter",
       "variableName": "s4"
     },
-    (v36/*: any*/),
-    (v37/*: any*/)
+    (v35/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "scopedAuditLogsV2",
+  "name": "adminAuditLogsV2",
   "plural": false,
-  "selections": (v38/*: any*/),
+  "selections": (v36/*: any*/),
   "storageKey": null
 },
-v46 = {
+v44 = {
   "alias": "s5",
   "args": [
     {
@@ -520,17 +491,16 @@ v46 = {
       "name": "filter",
       "variableName": "s5"
     },
-    (v36/*: any*/),
-    (v37/*: any*/)
+    (v35/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "scopedAuditLogsV2",
+  "name": "adminAuditLogsV2",
   "plural": false,
-  "selections": (v38/*: any*/),
+  "selections": (v36/*: any*/),
   "storageKey": null
 },
-v47 = {
+v45 = {
   "alias": "s6",
   "args": [
     {
@@ -538,17 +508,16 @@ v47 = {
       "name": "filter",
       "variableName": "s6"
     },
-    (v36/*: any*/),
-    (v37/*: any*/)
+    (v35/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "scopedAuditLogsV2",
+  "name": "adminAuditLogsV2",
   "plural": false,
-  "selections": (v38/*: any*/),
+  "selections": (v36/*: any*/),
   "storageKey": null
 },
-v48 = {
+v46 = {
   "alias": "s7",
   "args": [
     {
@@ -556,17 +525,16 @@ v48 = {
       "name": "filter",
       "variableName": "s7"
     },
-    (v36/*: any*/),
-    (v37/*: any*/)
+    (v35/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "scopedAuditLogsV2",
+  "name": "adminAuditLogsV2",
   "plural": false,
-  "selections": (v38/*: any*/),
+  "selections": (v36/*: any*/),
   "storageKey": null
 },
-v49 = {
+v47 = {
   "alias": "f0",
   "args": [
     {
@@ -574,17 +542,16 @@ v49 = {
       "name": "filter",
       "variableName": "f0"
     },
-    (v36/*: any*/),
-    (v37/*: any*/)
+    (v35/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "scopedAuditLogsV2",
+  "name": "adminAuditLogsV2",
   "plural": false,
-  "selections": (v38/*: any*/),
+  "selections": (v36/*: any*/),
   "storageKey": null
 },
-v50 = {
+v48 = {
   "alias": "f1",
   "args": [
     {
@@ -592,17 +559,16 @@ v50 = {
       "name": "filter",
       "variableName": "f1"
     },
-    (v36/*: any*/),
-    (v37/*: any*/)
+    (v35/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "scopedAuditLogsV2",
+  "name": "adminAuditLogsV2",
   "plural": false,
-  "selections": (v38/*: any*/),
+  "selections": (v36/*: any*/),
   "storageKey": null
 },
-v51 = {
+v49 = {
   "alias": "f2",
   "args": [
     {
@@ -610,17 +576,16 @@ v51 = {
       "name": "filter",
       "variableName": "f2"
     },
-    (v36/*: any*/),
-    (v37/*: any*/)
+    (v35/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "scopedAuditLogsV2",
+  "name": "adminAuditLogsV2",
   "plural": false,
-  "selections": (v38/*: any*/),
+  "selections": (v36/*: any*/),
   "storageKey": null
 },
-v52 = {
+v50 = {
   "alias": "f3",
   "args": [
     {
@@ -628,17 +593,16 @@ v52 = {
       "name": "filter",
       "variableName": "f3"
     },
-    (v36/*: any*/),
-    (v37/*: any*/)
+    (v35/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "scopedAuditLogsV2",
+  "name": "adminAuditLogsV2",
   "plural": false,
-  "selections": (v38/*: any*/),
+  "selections": (v36/*: any*/),
   "storageKey": null
 },
-v53 = {
+v51 = {
   "alias": "f4",
   "args": [
     {
@@ -646,17 +610,16 @@ v53 = {
       "name": "filter",
       "variableName": "f4"
     },
-    (v36/*: any*/),
-    (v37/*: any*/)
+    (v35/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "scopedAuditLogsV2",
+  "name": "adminAuditLogsV2",
   "plural": false,
-  "selections": (v38/*: any*/),
+  "selections": (v36/*: any*/),
   "storageKey": null
 },
-v54 = {
+v52 = {
   "alias": "f5",
   "args": [
     {
@@ -664,17 +627,16 @@ v54 = {
       "name": "filter",
       "variableName": "f5"
     },
-    (v36/*: any*/),
-    (v37/*: any*/)
+    (v35/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "scopedAuditLogsV2",
+  "name": "adminAuditLogsV2",
   "plural": false,
-  "selections": (v38/*: any*/),
+  "selections": (v36/*: any*/),
   "storageKey": null
 },
-v55 = {
+v53 = {
   "alias": "f6",
   "args": [
     {
@@ -682,17 +644,16 @@ v55 = {
       "name": "filter",
       "variableName": "f6"
     },
-    (v36/*: any*/),
-    (v37/*: any*/)
+    (v35/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "scopedAuditLogsV2",
+  "name": "adminAuditLogsV2",
   "plural": false,
-  "selections": (v38/*: any*/),
+  "selections": (v36/*: any*/),
   "storageKey": null
 },
-v56 = {
+v54 = {
   "alias": "f7",
   "args": [
     {
@@ -700,14 +661,13 @@ v56 = {
       "name": "filter",
       "variableName": "f7"
     },
-    (v36/*: any*/),
-    (v37/*: any*/)
+    (v35/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "scopedAuditLogsV2",
+  "name": "adminAuditLogsV2",
   "plural": false,
-  "selections": (v38/*: any*/),
+  "selections": (v36/*: any*/),
   "storageKey": null
 };
 return {
@@ -747,12 +707,11 @@ return {
       (v31/*: any*/),
       (v32/*: any*/),
       (v33/*: any*/),
-      (v34/*: any*/),
-      (v35/*: any*/)
+      (v34/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "AuditLogPanelHistoryQuery",
+    "name": "AuditLogPanelAdminHistoryQuery",
     "selections": [
       {
         "condition": "previousOn",
@@ -761,12 +720,12 @@ return {
         "selections": [
           {
             "kind": "CatchField",
-            "field": (v39/*: any*/),
+            "field": (v37/*: any*/),
             "to": "NULL"
           },
           {
             "kind": "CatchField",
-            "field": (v40/*: any*/),
+            "field": (v38/*: any*/),
             "to": "NULL"
           }
         ]
@@ -778,7 +737,7 @@ return {
         "selections": [
           {
             "kind": "CatchField",
-            "field": (v41/*: any*/),
+            "field": (v39/*: any*/),
             "to": "NULL"
           }
         ]
@@ -790,7 +749,7 @@ return {
         "selections": [
           {
             "kind": "CatchField",
-            "field": (v42/*: any*/),
+            "field": (v40/*: any*/),
             "to": "NULL"
           }
         ]
@@ -802,7 +761,7 @@ return {
         "selections": [
           {
             "kind": "CatchField",
-            "field": (v43/*: any*/),
+            "field": (v41/*: any*/),
             "to": "NULL"
           }
         ]
@@ -814,7 +773,7 @@ return {
         "selections": [
           {
             "kind": "CatchField",
-            "field": (v44/*: any*/),
+            "field": (v42/*: any*/),
             "to": "NULL"
           }
         ]
@@ -826,7 +785,7 @@ return {
         "selections": [
           {
             "kind": "CatchField",
-            "field": (v45/*: any*/),
+            "field": (v43/*: any*/),
             "to": "NULL"
           }
         ]
@@ -838,7 +797,7 @@ return {
         "selections": [
           {
             "kind": "CatchField",
-            "field": (v46/*: any*/),
+            "field": (v44/*: any*/),
             "to": "NULL"
           }
         ]
@@ -850,7 +809,7 @@ return {
         "selections": [
           {
             "kind": "CatchField",
-            "field": (v47/*: any*/),
+            "field": (v45/*: any*/),
             "to": "NULL"
           }
         ]
@@ -862,7 +821,7 @@ return {
         "selections": [
           {
             "kind": "CatchField",
-            "field": (v48/*: any*/),
+            "field": (v46/*: any*/),
             "to": "NULL"
           }
         ]
@@ -874,7 +833,7 @@ return {
         "selections": [
           {
             "kind": "CatchField",
-            "field": (v49/*: any*/),
+            "field": (v47/*: any*/),
             "to": "NULL"
           }
         ]
@@ -886,7 +845,7 @@ return {
         "selections": [
           {
             "kind": "CatchField",
-            "field": (v50/*: any*/),
+            "field": (v48/*: any*/),
             "to": "NULL"
           }
         ]
@@ -898,7 +857,7 @@ return {
         "selections": [
           {
             "kind": "CatchField",
-            "field": (v51/*: any*/),
+            "field": (v49/*: any*/),
             "to": "NULL"
           }
         ]
@@ -910,7 +869,7 @@ return {
         "selections": [
           {
             "kind": "CatchField",
-            "field": (v52/*: any*/),
+            "field": (v50/*: any*/),
             "to": "NULL"
           }
         ]
@@ -922,7 +881,7 @@ return {
         "selections": [
           {
             "kind": "CatchField",
-            "field": (v53/*: any*/),
+            "field": (v51/*: any*/),
             "to": "NULL"
           }
         ]
@@ -934,7 +893,7 @@ return {
         "selections": [
           {
             "kind": "CatchField",
-            "field": (v54/*: any*/),
+            "field": (v52/*: any*/),
             "to": "NULL"
           }
         ]
@@ -946,7 +905,7 @@ return {
         "selections": [
           {
             "kind": "CatchField",
-            "field": (v55/*: any*/),
+            "field": (v53/*: any*/),
             "to": "NULL"
           }
         ]
@@ -958,7 +917,7 @@ return {
         "selections": [
           {
             "kind": "CatchField",
-            "field": (v56/*: any*/),
+            "field": (v54/*: any*/),
             "to": "NULL"
           }
         ]
@@ -970,7 +929,6 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v35/*: any*/),
       (v18/*: any*/),
       (v16/*: any*/),
       (v17/*: any*/),
@@ -1008,15 +966,15 @@ return {
       (v15/*: any*/)
     ],
     "kind": "Operation",
-    "name": "AuditLogPanelHistoryQuery",
+    "name": "AuditLogPanelAdminHistoryQuery",
     "selections": [
       {
         "condition": "previousOn",
         "kind": "Condition",
         "passingValue": true,
         "selections": [
-          (v39/*: any*/),
-          (v40/*: any*/)
+          (v37/*: any*/),
+          (v38/*: any*/)
         ]
       },
       {
@@ -1024,7 +982,7 @@ return {
         "kind": "Condition",
         "passingValue": true,
         "selections": [
-          (v41/*: any*/)
+          (v39/*: any*/)
         ]
       },
       {
@@ -1032,7 +990,7 @@ return {
         "kind": "Condition",
         "passingValue": true,
         "selections": [
-          (v42/*: any*/)
+          (v40/*: any*/)
         ]
       },
       {
@@ -1040,7 +998,7 @@ return {
         "kind": "Condition",
         "passingValue": true,
         "selections": [
-          (v43/*: any*/)
+          (v41/*: any*/)
         ]
       },
       {
@@ -1048,7 +1006,7 @@ return {
         "kind": "Condition",
         "passingValue": true,
         "selections": [
-          (v44/*: any*/)
+          (v42/*: any*/)
         ]
       },
       {
@@ -1056,7 +1014,7 @@ return {
         "kind": "Condition",
         "passingValue": true,
         "selections": [
-          (v45/*: any*/)
+          (v43/*: any*/)
         ]
       },
       {
@@ -1064,7 +1022,7 @@ return {
         "kind": "Condition",
         "passingValue": true,
         "selections": [
-          (v46/*: any*/)
+          (v44/*: any*/)
         ]
       },
       {
@@ -1072,7 +1030,7 @@ return {
         "kind": "Condition",
         "passingValue": true,
         "selections": [
-          (v47/*: any*/)
+          (v45/*: any*/)
         ]
       },
       {
@@ -1080,7 +1038,7 @@ return {
         "kind": "Condition",
         "passingValue": true,
         "selections": [
-          (v48/*: any*/)
+          (v46/*: any*/)
         ]
       },
       {
@@ -1088,7 +1046,7 @@ return {
         "kind": "Condition",
         "passingValue": true,
         "selections": [
-          (v49/*: any*/)
+          (v47/*: any*/)
         ]
       },
       {
@@ -1096,7 +1054,7 @@ return {
         "kind": "Condition",
         "passingValue": true,
         "selections": [
-          (v50/*: any*/)
+          (v48/*: any*/)
         ]
       },
       {
@@ -1104,7 +1062,7 @@ return {
         "kind": "Condition",
         "passingValue": true,
         "selections": [
-          (v51/*: any*/)
+          (v49/*: any*/)
         ]
       },
       {
@@ -1112,7 +1070,7 @@ return {
         "kind": "Condition",
         "passingValue": true,
         "selections": [
-          (v52/*: any*/)
+          (v50/*: any*/)
         ]
       },
       {
@@ -1120,7 +1078,7 @@ return {
         "kind": "Condition",
         "passingValue": true,
         "selections": [
-          (v53/*: any*/)
+          (v51/*: any*/)
         ]
       },
       {
@@ -1128,7 +1086,7 @@ return {
         "kind": "Condition",
         "passingValue": true,
         "selections": [
-          (v54/*: any*/)
+          (v52/*: any*/)
         ]
       },
       {
@@ -1136,7 +1094,7 @@ return {
         "kind": "Condition",
         "passingValue": true,
         "selections": [
-          (v55/*: any*/)
+          (v53/*: any*/)
         ]
       },
       {
@@ -1144,22 +1102,22 @@ return {
         "kind": "Condition",
         "passingValue": true,
         "selections": [
-          (v56/*: any*/)
+          (v54/*: any*/)
         ]
       }
     ]
   },
   "params": {
-    "cacheID": "72d3ff96df4692db00e0c91ab72fb5d4",
+    "cacheID": "c4392ff6777a9593782b0d1645f65b18",
     "id": null,
     "metadata": {},
-    "name": "AuditLogPanelHistoryQuery",
+    "name": "AuditLogPanelAdminHistoryQuery",
     "operationKind": "query",
-    "text": "query AuditLogPanelHistoryQuery(\n  $scope: AuditLogScope!\n  $previousSuccess: AuditLogFilter\n  $previousFailure: AuditLogFilter\n  $previousOn: Boolean!\n  $s0: AuditLogFilter\n  $s0On: Boolean!\n  $s1: AuditLogFilter\n  $s1On: Boolean!\n  $s2: AuditLogFilter\n  $s2On: Boolean!\n  $s3: AuditLogFilter\n  $s3On: Boolean!\n  $s4: AuditLogFilter\n  $s4On: Boolean!\n  $s5: AuditLogFilter\n  $s5On: Boolean!\n  $s6: AuditLogFilter\n  $s6On: Boolean!\n  $s7: AuditLogFilter\n  $s7On: Boolean!\n  $f0: AuditLogFilter\n  $f0On: Boolean!\n  $f1: AuditLogFilter\n  $f1On: Boolean!\n  $f2: AuditLogFilter\n  $f2On: Boolean!\n  $f3: AuditLogFilter\n  $f3On: Boolean!\n  $f4: AuditLogFilter\n  $f4On: Boolean!\n  $f5: AuditLogFilter\n  $f5On: Boolean!\n  $f6: AuditLogFilter\n  $f6On: Boolean!\n  $f7: AuditLogFilter\n  $f7On: Boolean!\n) {\n  previousSuccess: scopedAuditLogsV2(scope: $scope, filter: $previousSuccess, limit: 1) @include(if: $previousOn) {\n    count\n  }\n  previousFailure: scopedAuditLogsV2(scope: $scope, filter: $previousFailure, limit: 1) @include(if: $previousOn) {\n    count\n  }\n  s0: scopedAuditLogsV2(scope: $scope, filter: $s0, limit: 1) @include(if: $s0On) {\n    count\n  }\n  s1: scopedAuditLogsV2(scope: $scope, filter: $s1, limit: 1) @include(if: $s1On) {\n    count\n  }\n  s2: scopedAuditLogsV2(scope: $scope, filter: $s2, limit: 1) @include(if: $s2On) {\n    count\n  }\n  s3: scopedAuditLogsV2(scope: $scope, filter: $s3, limit: 1) @include(if: $s3On) {\n    count\n  }\n  s4: scopedAuditLogsV2(scope: $scope, filter: $s4, limit: 1) @include(if: $s4On) {\n    count\n  }\n  s5: scopedAuditLogsV2(scope: $scope, filter: $s5, limit: 1) @include(if: $s5On) {\n    count\n  }\n  s6: scopedAuditLogsV2(scope: $scope, filter: $s6, limit: 1) @include(if: $s6On) {\n    count\n  }\n  s7: scopedAuditLogsV2(scope: $scope, filter: $s7, limit: 1) @include(if: $s7On) {\n    count\n  }\n  f0: scopedAuditLogsV2(scope: $scope, filter: $f0, limit: 1) @include(if: $f0On) {\n    count\n  }\n  f1: scopedAuditLogsV2(scope: $scope, filter: $f1, limit: 1) @include(if: $f1On) {\n    count\n  }\n  f2: scopedAuditLogsV2(scope: $scope, filter: $f2, limit: 1) @include(if: $f2On) {\n    count\n  }\n  f3: scopedAuditLogsV2(scope: $scope, filter: $f3, limit: 1) @include(if: $f3On) {\n    count\n  }\n  f4: scopedAuditLogsV2(scope: $scope, filter: $f4, limit: 1) @include(if: $f4On) {\n    count\n  }\n  f5: scopedAuditLogsV2(scope: $scope, filter: $f5, limit: 1) @include(if: $f5On) {\n    count\n  }\n  f6: scopedAuditLogsV2(scope: $scope, filter: $f6, limit: 1) @include(if: $f6On) {\n    count\n  }\n  f7: scopedAuditLogsV2(scope: $scope, filter: $f7, limit: 1) @include(if: $f7On) {\n    count\n  }\n}\n"
+    "text": "query AuditLogPanelAdminHistoryQuery(\n  $previousSuccess: AuditLogFilter\n  $previousFailure: AuditLogFilter\n  $previousOn: Boolean!\n  $s0: AuditLogFilter\n  $s0On: Boolean!\n  $s1: AuditLogFilter\n  $s1On: Boolean!\n  $s2: AuditLogFilter\n  $s2On: Boolean!\n  $s3: AuditLogFilter\n  $s3On: Boolean!\n  $s4: AuditLogFilter\n  $s4On: Boolean!\n  $s5: AuditLogFilter\n  $s5On: Boolean!\n  $s6: AuditLogFilter\n  $s6On: Boolean!\n  $s7: AuditLogFilter\n  $s7On: Boolean!\n  $f0: AuditLogFilter\n  $f0On: Boolean!\n  $f1: AuditLogFilter\n  $f1On: Boolean!\n  $f2: AuditLogFilter\n  $f2On: Boolean!\n  $f3: AuditLogFilter\n  $f3On: Boolean!\n  $f4: AuditLogFilter\n  $f4On: Boolean!\n  $f5: AuditLogFilter\n  $f5On: Boolean!\n  $f6: AuditLogFilter\n  $f6On: Boolean!\n  $f7: AuditLogFilter\n  $f7On: Boolean!\n) {\n  previousSuccess: adminAuditLogsV2(filter: $previousSuccess, limit: 1) @include(if: $previousOn) {\n    count\n  }\n  previousFailure: adminAuditLogsV2(filter: $previousFailure, limit: 1) @include(if: $previousOn) {\n    count\n  }\n  s0: adminAuditLogsV2(filter: $s0, limit: 1) @include(if: $s0On) {\n    count\n  }\n  s1: adminAuditLogsV2(filter: $s1, limit: 1) @include(if: $s1On) {\n    count\n  }\n  s2: adminAuditLogsV2(filter: $s2, limit: 1) @include(if: $s2On) {\n    count\n  }\n  s3: adminAuditLogsV2(filter: $s3, limit: 1) @include(if: $s3On) {\n    count\n  }\n  s4: adminAuditLogsV2(filter: $s4, limit: 1) @include(if: $s4On) {\n    count\n  }\n  s5: adminAuditLogsV2(filter: $s5, limit: 1) @include(if: $s5On) {\n    count\n  }\n  s6: adminAuditLogsV2(filter: $s6, limit: 1) @include(if: $s6On) {\n    count\n  }\n  s7: adminAuditLogsV2(filter: $s7, limit: 1) @include(if: $s7On) {\n    count\n  }\n  f0: adminAuditLogsV2(filter: $f0, limit: 1) @include(if: $f0On) {\n    count\n  }\n  f1: adminAuditLogsV2(filter: $f1, limit: 1) @include(if: $f1On) {\n    count\n  }\n  f2: adminAuditLogsV2(filter: $f2, limit: 1) @include(if: $f2On) {\n    count\n  }\n  f3: adminAuditLogsV2(filter: $f3, limit: 1) @include(if: $f3On) {\n    count\n  }\n  f4: adminAuditLogsV2(filter: $f4, limit: 1) @include(if: $f4On) {\n    count\n  }\n  f5: adminAuditLogsV2(filter: $f5, limit: 1) @include(if: $f5On) {\n    count\n  }\n  f6: adminAuditLogsV2(filter: $f6, limit: 1) @include(if: $f6On) {\n    count\n  }\n  f7: adminAuditLogsV2(filter: $f7, limit: 1) @include(if: $f7On) {\n    count\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "7e1accae7c4c94b08354173bcf467e12";
+(node as any).hash = "034cb746b9694497c24f09e744ae87bf";
 
 export default node;

@@ -27,7 +27,6 @@
  `expandedRowRender` rows span the table; `loading` dims without a spinner.
  Row virtualization is deferred by a product decision (2026-08-07).
 */
-import './BAITable.css';
 import {
   flattenColumns,
   sortKeyOf,

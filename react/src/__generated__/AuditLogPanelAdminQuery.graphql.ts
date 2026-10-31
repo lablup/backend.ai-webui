@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<52b956ae190ce9b43feff21d37f566e9>>
+ * @generated SignedSource<<c30cc1fa7628a3d1c418d0892bde050d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,17 +12,6 @@ import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type AuditLogActionKind = "BULK" | "GLOBAL" | "LOOKUP" | "MEMBERSHIP" | "RELATION" | "SCOPE" | "SINGLE_ENTITY" | "%future added value";
 export type AuditLogStatus = "DENIED" | "ERROR" | "RUNNING" | "SUCCESS" | "UNKNOWN" | "%future added value";
-export type AuditLogScope = {
-  entity?: ReadonlyArray<EntityTypeScope> | null | undefined;
-  triggeredUser?: ReadonlyArray<UUIDScope> | null | undefined;
-};
-export type EntityTypeScope = {
-  entityId: string;
-  entityType: string;
-};
-export type UUIDScope = {
-  value: string;
-};
 export type AuditLogFilter = {
   AND?: ReadonlyArray<AuditLogFilter> | null | undefined;
   NOT?: ReadonlyArray<AuditLogFilter> | null | undefined;
@@ -88,7 +77,7 @@ export type AuditLogActionKindFilter = {
   notEquals?: AuditLogActionKind | null | undefined;
   notIn?: ReadonlyArray<AuditLogActionKind> | null | undefined;
 };
-export type AuditLogPanelQuery$variables = {
+export type AuditLogPanelAdminQuery$variables = {
   filter: AuditLogFilter;
   limit: number;
   live0On: boolean;
@@ -101,9 +90,8 @@ export type AuditLogPanelQuery$variables = {
   previousFailure?: AuditLogFilter | null | undefined;
   previousOn: boolean;
   previousSuccess?: AuditLogFilter | null | undefined;
-  scope: AuditLogScope;
 };
-export type AuditLogPanelQuery$data = {
+export type AuditLogPanelAdminQuery$data = {
   readonly liveF0?: {
     readonly count: number;
   } | null | undefined;
@@ -131,9 +119,9 @@ export type AuditLogPanelQuery$data = {
     readonly count: number;
   } | null | undefined;
 };
-export type AuditLogPanelQuery = {
-  response: AuditLogPanelQuery$data;
-  variables: AuditLogPanelQuery$variables;
+export type AuditLogPanelAdminQuery = {
+  response: AuditLogPanelAdminQuery$data;
+  variables: AuditLogPanelAdminQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -197,17 +185,7 @@ v11 = {
   "kind": "LocalArgument",
   "name": "previousSuccess"
 },
-v12 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "scope"
-},
-v13 = {
-  "kind": "Variable",
-  "name": "scope",
-  "variableName": "scope"
-},
-v14 = [
+v12 = [
   {
     "kind": "Variable",
     "name": "filter",
@@ -232,25 +210,24 @@ v14 = [
         "field": "CREATED_AT"
       }
     ]
-  },
-  (v13/*: any*/)
+  }
 ],
-v15 = {
+v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "count",
   "storageKey": null
 },
-v16 = {
+v14 = {
   "kind": "Literal",
   "name": "limit",
   "value": 1
 },
-v17 = [
-  (v15/*: any*/)
+v15 = [
+  (v13/*: any*/)
 ],
-v18 = {
+v16 = {
   "alias": "previousSuccess",
   "args": [
     {
@@ -258,17 +235,16 @@ v18 = {
       "name": "filter",
       "variableName": "previousSuccess"
     },
-    (v16/*: any*/),
-    (v13/*: any*/)
+    (v14/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "scopedAuditLogsV2",
+  "name": "adminAuditLogsV2",
   "plural": false,
-  "selections": (v17/*: any*/),
+  "selections": (v15/*: any*/),
   "storageKey": null
 },
-v19 = {
+v17 = {
   "alias": "previousFailure",
   "args": [
     {
@@ -276,17 +252,16 @@ v19 = {
       "name": "filter",
       "variableName": "previousFailure"
     },
-    (v16/*: any*/),
-    (v13/*: any*/)
+    (v14/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "scopedAuditLogsV2",
+  "name": "adminAuditLogsV2",
   "plural": false,
-  "selections": (v17/*: any*/),
+  "selections": (v15/*: any*/),
   "storageKey": null
 },
-v20 = {
+v18 = {
   "alias": "liveS0",
   "args": [
     {
@@ -294,17 +269,16 @@ v20 = {
       "name": "filter",
       "variableName": "liveS0"
     },
-    (v16/*: any*/),
-    (v13/*: any*/)
+    (v14/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "scopedAuditLogsV2",
+  "name": "adminAuditLogsV2",
   "plural": false,
-  "selections": (v17/*: any*/),
+  "selections": (v15/*: any*/),
   "storageKey": null
 },
-v21 = {
+v19 = {
   "alias": "liveF0",
   "args": [
     {
@@ -312,17 +286,16 @@ v21 = {
       "name": "filter",
       "variableName": "liveF0"
     },
-    (v16/*: any*/),
-    (v13/*: any*/)
+    (v14/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "scopedAuditLogsV2",
+  "name": "adminAuditLogsV2",
   "plural": false,
-  "selections": (v17/*: any*/),
+  "selections": (v15/*: any*/),
   "storageKey": null
 },
-v22 = {
+v20 = {
   "alias": "liveS1",
   "args": [
     {
@@ -330,17 +303,16 @@ v22 = {
       "name": "filter",
       "variableName": "liveS1"
     },
-    (v16/*: any*/),
-    (v13/*: any*/)
+    (v14/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "scopedAuditLogsV2",
+  "name": "adminAuditLogsV2",
   "plural": false,
-  "selections": (v17/*: any*/),
+  "selections": (v15/*: any*/),
   "storageKey": null
 },
-v23 = {
+v21 = {
   "alias": "liveF1",
   "args": [
     {
@@ -348,17 +320,16 @@ v23 = {
       "name": "filter",
       "variableName": "liveF1"
     },
-    (v16/*: any*/),
-    (v13/*: any*/)
+    (v14/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "scopedAuditLogsV2",
+  "name": "adminAuditLogsV2",
   "plural": false,
-  "selections": (v17/*: any*/),
+  "selections": (v15/*: any*/),
   "storageKey": null
 },
-v24 = {
+v22 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -379,22 +350,21 @@ return {
       (v8/*: any*/),
       (v9/*: any*/),
       (v10/*: any*/),
-      (v11/*: any*/),
-      (v12/*: any*/)
+      (v11/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "AuditLogPanelQuery",
+    "name": "AuditLogPanelAdminQuery",
     "selections": [
       {
         "alias": "logs",
-        "args": (v14/*: any*/),
+        "args": (v12/*: any*/),
         "concreteType": "AuditLogV2Connection",
         "kind": "LinkedField",
-        "name": "scopedAuditLogsV2",
+        "name": "adminAuditLogsV2",
         "plural": false,
         "selections": [
-          (v15/*: any*/),
+          (v13/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -432,6 +402,23 @@ return {
         "selections": [
           {
             "kind": "CatchField",
+            "field": (v16/*: any*/),
+            "to": "NULL"
+          },
+          {
+            "kind": "CatchField",
+            "field": (v17/*: any*/),
+            "to": "NULL"
+          }
+        ]
+      },
+      {
+        "condition": "live0On",
+        "kind": "Condition",
+        "passingValue": true,
+        "selections": [
+          {
+            "kind": "CatchField",
             "field": (v18/*: any*/),
             "to": "NULL"
           },
@@ -443,7 +430,7 @@ return {
         ]
       },
       {
-        "condition": "live0On",
+        "condition": "live1On",
         "kind": "Condition",
         "passingValue": true,
         "selections": [
@@ -458,23 +445,6 @@ return {
             "to": "NULL"
           }
         ]
-      },
-      {
-        "condition": "live1On",
-        "kind": "Condition",
-        "passingValue": true,
-        "selections": [
-          {
-            "kind": "CatchField",
-            "field": (v22/*: any*/),
-            "to": "NULL"
-          },
-          {
-            "kind": "CatchField",
-            "field": (v23/*: any*/),
-            "to": "NULL"
-          }
-        ]
       }
     ],
     "type": "Query",
@@ -483,7 +453,6 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v12/*: any*/),
       (v0/*: any*/),
       (v1/*: any*/),
       (v8/*: any*/),
@@ -498,17 +467,17 @@ return {
       (v3/*: any*/)
     ],
     "kind": "Operation",
-    "name": "AuditLogPanelQuery",
+    "name": "AuditLogPanelAdminQuery",
     "selections": [
       {
         "alias": "logs",
-        "args": (v14/*: any*/),
+        "args": (v12/*: any*/),
         "concreteType": "AuditLogV2Connection",
         "kind": "LinkedField",
-        "name": "scopedAuditLogsV2",
+        "name": "adminAuditLogsV2",
         "plural": false,
         "selections": [
-          (v15/*: any*/),
+          (v13/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -525,7 +494,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v24/*: any*/),
+                  (v22/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -618,7 +587,7 @@ return {
                     "name": "user",
                     "plural": false,
                     "selections": [
-                      (v24/*: any*/),
+                      (v22/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -661,8 +630,8 @@ return {
         "kind": "Condition",
         "passingValue": true,
         "selections": [
-          (v18/*: any*/),
-          (v19/*: any*/)
+          (v16/*: any*/),
+          (v17/*: any*/)
         ]
       },
       {
@@ -670,8 +639,8 @@ return {
         "kind": "Condition",
         "passingValue": true,
         "selections": [
-          (v20/*: any*/),
-          (v21/*: any*/)
+          (v18/*: any*/),
+          (v19/*: any*/)
         ]
       },
       {
@@ -679,23 +648,23 @@ return {
         "kind": "Condition",
         "passingValue": true,
         "selections": [
-          (v22/*: any*/),
-          (v23/*: any*/)
+          (v20/*: any*/),
+          (v21/*: any*/)
         ]
       }
     ]
   },
   "params": {
-    "cacheID": "8fc989c25e2c6d5febb981b1b84f34af",
+    "cacheID": "d4c78a3b05abc7813db7c829a51147b4",
     "id": null,
     "metadata": {},
-    "name": "AuditLogPanelQuery",
+    "name": "AuditLogPanelAdminQuery",
     "operationKind": "query",
-    "text": "query AuditLogPanelQuery(\n  $scope: AuditLogScope!\n  $filter: AuditLogFilter!\n  $limit: Int!\n  $offset: Int!\n  $previousSuccess: AuditLogFilter\n  $previousFailure: AuditLogFilter\n  $previousOn: Boolean!\n  $liveS0: AuditLogFilter\n  $liveF0: AuditLogFilter\n  $live0On: Boolean!\n  $liveS1: AuditLogFilter\n  $liveF1: AuditLogFilter\n  $live1On: Boolean!\n) {\n  logs: scopedAuditLogsV2(scope: $scope, filter: $filter, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAIAuditLogNodesFragment\n        id\n      }\n    }\n  }\n  previousSuccess: scopedAuditLogsV2(scope: $scope, filter: $previousSuccess, limit: 1) @include(if: $previousOn) {\n    count\n  }\n  previousFailure: scopedAuditLogsV2(scope: $scope, filter: $previousFailure, limit: 1) @include(if: $previousOn) {\n    count\n  }\n  liveS0: scopedAuditLogsV2(scope: $scope, filter: $liveS0, limit: 1) @include(if: $live0On) {\n    count\n  }\n  liveF0: scopedAuditLogsV2(scope: $scope, filter: $liveF0, limit: 1) @include(if: $live0On) {\n    count\n  }\n  liveS1: scopedAuditLogsV2(scope: $scope, filter: $liveS1, limit: 1) @include(if: $live1On) {\n    count\n  }\n  liveF1: scopedAuditLogsV2(scope: $scope, filter: $liveF1, limit: 1) @include(if: $live1On) {\n    count\n  }\n}\n\nfragment BAIAuditLogNodesFragment on AuditLogV2 {\n  id\n  createdAt\n  actionName\n  operation\n  status\n  description\n  duration\n  requestId\n  actionId\n  entityType\n  targetEntityId\n  triggeredBy\n  clientIp @since(version: \"26.9.0\")\n  user {\n    id\n    entityId\n    basicInfo {\n      email\n    }\n  }\n}\n"
+    "text": "query AuditLogPanelAdminQuery(\n  $filter: AuditLogFilter!\n  $limit: Int!\n  $offset: Int!\n  $previousSuccess: AuditLogFilter\n  $previousFailure: AuditLogFilter\n  $previousOn: Boolean!\n  $liveS0: AuditLogFilter\n  $liveF0: AuditLogFilter\n  $live0On: Boolean!\n  $liveS1: AuditLogFilter\n  $liveF1: AuditLogFilter\n  $live1On: Boolean!\n) {\n  logs: adminAuditLogsV2(filter: $filter, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAIAuditLogNodesFragment\n        id\n      }\n    }\n  }\n  previousSuccess: adminAuditLogsV2(filter: $previousSuccess, limit: 1) @include(if: $previousOn) {\n    count\n  }\n  previousFailure: adminAuditLogsV2(filter: $previousFailure, limit: 1) @include(if: $previousOn) {\n    count\n  }\n  liveS0: adminAuditLogsV2(filter: $liveS0, limit: 1) @include(if: $live0On) {\n    count\n  }\n  liveF0: adminAuditLogsV2(filter: $liveF0, limit: 1) @include(if: $live0On) {\n    count\n  }\n  liveS1: adminAuditLogsV2(filter: $liveS1, limit: 1) @include(if: $live1On) {\n    count\n  }\n  liveF1: adminAuditLogsV2(filter: $liveF1, limit: 1) @include(if: $live1On) {\n    count\n  }\n}\n\nfragment BAIAuditLogNodesFragment on AuditLogV2 {\n  id\n  createdAt\n  actionName\n  operation\n  status\n  description\n  duration\n  requestId\n  actionId\n  entityType\n  targetEntityId\n  triggeredBy\n  clientIp @since(version: \"26.9.0\")\n  user {\n    id\n    entityId\n    basicInfo {\n      email\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "041b85220a4d9a1ecb105f32b0981364";
+(node as any).hash = "16312e0e2c4af5cee8e77daa9011879a";
 
 export default node;

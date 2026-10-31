@@ -2,13 +2,15 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { AuditLogPanelHistoryQuery } from '../../../__generated__/AuditLogPanelHistoryQuery.graphql';
+import type { AuditLogPanelAdminHistoryQuery } from '../../../__generated__/AuditLogPanelAdminHistoryQuery.graphql';
+import type { AuditLogPanelAdminQuery } from '../../../__generated__/AuditLogPanelAdminQuery.graphql';
+import type { AuditLogPanelScopedHistoryQuery } from '../../../__generated__/AuditLogPanelScopedHistoryQuery.graphql';
 import type {
   AuditLogFilter,
-  AuditLogPanelQuery,
-  AuditLogPanelQuery$data,
+  AuditLogPanelScopedQuery,
+  AuditLogPanelScopedQuery$data,
   AuditLogScope,
-} from '../../../__generated__/AuditLogPanelQuery.graphql';
+} from '../../../__generated__/AuditLogPanelScopedQuery.graphql';
 import { useSuspendedBackendaiClient } from '../../../hooks';
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
 import type { CardScope } from '../cardScope';
@@ -57,20 +59,49 @@ export const auditOutcomeFilter = (
       : { in: [...AUDIT_FAILURE_STATUSES] },
 });
 
+type LiveVariables = Omit<AuditLogPanelScopedQuery['variables'], 'scope'>;
+type HistoryVariables = Omit<
+  AuditLogPanelScopedHistoryQuery['variables'],
+  'scope'
+>;
+type LiveData = AuditLogPanelScopedQuery$data;
 type CountData = Parameters<typeof readSuccessFailure>[2];
 
 // TODO(needs-backend): BA-8746 - one count grouped by time bucket and status would
-// replace the per-bucket success/failure aliases in both queries below.
-/** The counts that cannot change any more; refetched only when a bucket settles or on a manual refresh. */
-const AuditLogHistory: React.FC<{
-  variables: AuditLogPanelHistoryQuery['variables'];
+// replace the per-bucket success/failure aliases in the four queries below.
+interface QueryProps<TVariables, TData> {
+  variables: TVariables;
   fetchKey: string;
-  children: (data: CountData) => React.ReactNode;
-}> = ({ variables, fetchKey, children }) => {
+  children: (data: TData) => React.ReactNode;
+}
+
+/**
+ * Whose audit log a scope reads: the viewer's own actions, or a project and
+ * the entities in it. Null on the superadmin page, which reads
+ * `adminAuditLogsV2`: a domain entity scope leaves out the sessions, folders
+ * and deployments in it (checked on manager 26.10; ADR 0018).
+ */
+export const auditLogScope = (
+  scope: CardScope,
+  userId: string,
+): AuditLogScope | null => {
+  switch (scope.kind) {
+    case 'mine':
+      return { triggeredUser: [{ value: userId }] };
+    case 'project':
+      return projectAuditScope(scope.projectId);
+    case 'domain':
+      return null;
+  }
+};
+
+const ScopedAuditLogHistory: React.FC<
+  QueryProps<HistoryVariables, CountData> & { scope: AuditLogScope }
+> = ({ scope, variables, fetchKey, children }) => {
   'use memo';
-  const data = useLazyLoadQuery<AuditLogPanelHistoryQuery>(
+  const data = useLazyLoadQuery<AuditLogPanelScopedHistoryQuery>(
     graphql`
-      query AuditLogPanelHistoryQuery(
+      query AuditLogPanelScopedHistoryQuery(
         $scope: AuditLogScope!
         $previousSuccess: AuditLogFilter
         $previousFailure: AuditLogFilter
@@ -204,22 +235,160 @@ const AuditLogHistory: React.FC<{
         }
       }
     `,
+    { scope, ...variables },
+    { fetchPolicy: 'store-and-network', fetchKey },
+  );
+  return children(data);
+};
+
+const AdminAuditLogHistory: React.FC<
+  QueryProps<HistoryVariables, CountData>
+> = ({ variables, fetchKey, children }) => {
+  'use memo';
+  const data = useLazyLoadQuery<AuditLogPanelAdminHistoryQuery>(
+    graphql`
+      query AuditLogPanelAdminHistoryQuery(
+        $previousSuccess: AuditLogFilter
+        $previousFailure: AuditLogFilter
+        $previousOn: Boolean!
+        $s0: AuditLogFilter
+        $s0On: Boolean!
+        $s1: AuditLogFilter
+        $s1On: Boolean!
+        $s2: AuditLogFilter
+        $s2On: Boolean!
+        $s3: AuditLogFilter
+        $s3On: Boolean!
+        $s4: AuditLogFilter
+        $s4On: Boolean!
+        $s5: AuditLogFilter
+        $s5On: Boolean!
+        $s6: AuditLogFilter
+        $s6On: Boolean!
+        $s7: AuditLogFilter
+        $s7On: Boolean!
+        $f0: AuditLogFilter
+        $f0On: Boolean!
+        $f1: AuditLogFilter
+        $f1On: Boolean!
+        $f2: AuditLogFilter
+        $f2On: Boolean!
+        $f3: AuditLogFilter
+        $f3On: Boolean!
+        $f4: AuditLogFilter
+        $f4On: Boolean!
+        $f5: AuditLogFilter
+        $f5On: Boolean!
+        $f6: AuditLogFilter
+        $f6On: Boolean!
+        $f7: AuditLogFilter
+        $f7On: Boolean!
+      ) {
+        previousSuccess: adminAuditLogsV2(filter: $previousSuccess, limit: 1)
+          @include(if: $previousOn)
+          @catch(to: NULL) {
+          count
+        }
+        previousFailure: adminAuditLogsV2(filter: $previousFailure, limit: 1)
+          @include(if: $previousOn)
+          @catch(to: NULL) {
+          count
+        }
+        s0: adminAuditLogsV2(filter: $s0, limit: 1)
+          @include(if: $s0On)
+          @catch(to: NULL) {
+          count
+        }
+        s1: adminAuditLogsV2(filter: $s1, limit: 1)
+          @include(if: $s1On)
+          @catch(to: NULL) {
+          count
+        }
+        s2: adminAuditLogsV2(filter: $s2, limit: 1)
+          @include(if: $s2On)
+          @catch(to: NULL) {
+          count
+        }
+        s3: adminAuditLogsV2(filter: $s3, limit: 1)
+          @include(if: $s3On)
+          @catch(to: NULL) {
+          count
+        }
+        s4: adminAuditLogsV2(filter: $s4, limit: 1)
+          @include(if: $s4On)
+          @catch(to: NULL) {
+          count
+        }
+        s5: adminAuditLogsV2(filter: $s5, limit: 1)
+          @include(if: $s5On)
+          @catch(to: NULL) {
+          count
+        }
+        s6: adminAuditLogsV2(filter: $s6, limit: 1)
+          @include(if: $s6On)
+          @catch(to: NULL) {
+          count
+        }
+        s7: adminAuditLogsV2(filter: $s7, limit: 1)
+          @include(if: $s7On)
+          @catch(to: NULL) {
+          count
+        }
+        f0: adminAuditLogsV2(filter: $f0, limit: 1)
+          @include(if: $f0On)
+          @catch(to: NULL) {
+          count
+        }
+        f1: adminAuditLogsV2(filter: $f1, limit: 1)
+          @include(if: $f1On)
+          @catch(to: NULL) {
+          count
+        }
+        f2: adminAuditLogsV2(filter: $f2, limit: 1)
+          @include(if: $f2On)
+          @catch(to: NULL) {
+          count
+        }
+        f3: adminAuditLogsV2(filter: $f3, limit: 1)
+          @include(if: $f3On)
+          @catch(to: NULL) {
+          count
+        }
+        f4: adminAuditLogsV2(filter: $f4, limit: 1)
+          @include(if: $f4On)
+          @catch(to: NULL) {
+          count
+        }
+        f5: adminAuditLogsV2(filter: $f5, limit: 1)
+          @include(if: $f5On)
+          @catch(to: NULL) {
+          count
+        }
+        f6: adminAuditLogsV2(filter: $f6, limit: 1)
+          @include(if: $f6On)
+          @catch(to: NULL) {
+          count
+        }
+        f7: adminAuditLogsV2(filter: $f7, limit: 1)
+          @include(if: $f7On)
+          @catch(to: NULL) {
+          count
+        }
+      }
+    `,
     variables,
     { fetchPolicy: 'store-and-network', fetchKey },
   );
   return children(data);
 };
 
-/** The list and the counts that still move, on the card's refresh. */
-const AuditLogLive: React.FC<{
-  variables: AuditLogPanelQuery['variables'];
-  fetchKey: string;
-  children: (data: AuditLogPanelQuery$data) => React.ReactNode;
-}> = ({ variables, fetchKey, children }) => {
+const ScopedAuditLog: React.FC<
+  QueryProps<LiveVariables, LiveData> & { scope: AuditLogScope }
+> = ({ scope, variables, fetchKey, children }) => {
   'use memo';
-  const data = useLazyLoadQuery<AuditLogPanelQuery>(
+  const data = useLazyLoadQuery<AuditLogPanelScopedQuery>(
     graphql`
-      query AuditLogPanelQuery(
+      query AuditLogPanelScopedQuery(
         $scope: AuditLogScope!
         $filter: AuditLogFilter!
         $limit: Int!
@@ -284,6 +453,79 @@ const AuditLogLive: React.FC<{
         }
       }
     `,
+    { scope, ...variables },
+    { fetchPolicy: 'store-and-network', fetchKey },
+  );
+  return children(data);
+};
+
+const AdminAuditLog: React.FC<QueryProps<LiveVariables, LiveData>> = ({
+  variables,
+  fetchKey,
+  children,
+}) => {
+  'use memo';
+  const data = useLazyLoadQuery<AuditLogPanelAdminQuery>(
+    graphql`
+      query AuditLogPanelAdminQuery(
+        $filter: AuditLogFilter!
+        $limit: Int!
+        $offset: Int!
+        $previousSuccess: AuditLogFilter
+        $previousFailure: AuditLogFilter
+        $previousOn: Boolean!
+        $liveS0: AuditLogFilter
+        $liveF0: AuditLogFilter
+        $live0On: Boolean!
+        $liveS1: AuditLogFilter
+        $liveF1: AuditLogFilter
+        $live1On: Boolean!
+      ) {
+        logs: adminAuditLogsV2(
+          filter: $filter
+          orderBy: [{ field: CREATED_AT, direction: DESC }]
+          limit: $limit
+          offset: $offset
+        ) {
+          count
+          edges {
+            node {
+              ...BAIAuditLogNodesFragment
+            }
+          }
+        }
+        previousSuccess: adminAuditLogsV2(filter: $previousSuccess, limit: 1)
+          @include(if: $previousOn)
+          @catch(to: NULL) {
+          count
+        }
+        previousFailure: adminAuditLogsV2(filter: $previousFailure, limit: 1)
+          @include(if: $previousOn)
+          @catch(to: NULL) {
+          count
+        }
+        liveS0: adminAuditLogsV2(filter: $liveS0, limit: 1)
+          @include(if: $live0On)
+          @catch(to: NULL) {
+          count
+        }
+        liveF0: adminAuditLogsV2(filter: $liveF0, limit: 1)
+          @include(if: $live0On)
+          @catch(to: NULL) {
+          count
+        }
+        liveS1: adminAuditLogsV2(filter: $liveS1, limit: 1)
+          @include(if: $live1On)
+          @catch(to: NULL) {
+          count
+        }
+        liveF1: adminAuditLogsV2(filter: $liveF1, limit: 1)
+          @include(if: $live1On)
+          @catch(to: NULL) {
+          count
+        }
+      }
+    `,
     variables,
     { fetchPolicy: 'store-and-network', fetchKey },
   );
@@ -291,7 +533,7 @@ const AuditLogLive: React.FC<{
 };
 
 const AuditLogTable: React.FC<{
-  scope: AuditLogScope;
+  scope: AuditLogScope | null;
   /** The viewer's own actions: every row's actor is the viewer, so the column is left out. */
   hideTriggeredBy: boolean;
   range: string;
@@ -322,9 +564,8 @@ const AuditLogTable: React.FC<{
   const variables = {
     plan,
     hasHistory,
-    history: { scope, ...history },
+    history,
     live: {
-      scope,
       filter: {
         ...withinWindow('createdAt', plan.window),
         ...(failuresOnly ? FAILURES_ONLY_FILTER : {}),
@@ -336,10 +577,7 @@ const AuditLogTable: React.FC<{
   };
   const deferred = useDeferredValue(variables);
 
-  const renderLog = (
-    historyData: CountData | null,
-    data: AuditLogPanelQuery$data,
-  ) => (
+  const renderLog = (historyData: CountData | null, data: LiveData) => (
     <BAIFlex direction="column" align="stretch" gap="sm">
       <SuccessFailureStats
         counts={readSuccessFailure(deferred.plan, historyData, data)}
@@ -374,33 +612,45 @@ const AuditLogTable: React.FC<{
   const withHistory = (
     children: (data: CountData | null) => React.ReactNode,
   ) =>
-    deferred.hasHistory ? (
-      <AuditLogHistory variables={deferred.history} fetchKey={manualFetchKey}>
-        {children}
-      </AuditLogHistory>
-    ) : (
+    !deferred.hasHistory ? (
       children(null)
+    ) : scope ? (
+      <ScopedAuditLogHistory
+        scope={scope}
+        variables={deferred.history}
+        fetchKey={manualFetchKey}
+      >
+        {children}
+      </ScopedAuditLogHistory>
+    ) : (
+      <AdminAuditLogHistory
+        variables={deferred.history}
+        fetchKey={manualFetchKey}
+      >
+        {children}
+      </AdminAuditLogHistory>
     );
 
   return (
     <>
       {/* A sibling, so the history request starts alongside the live one instead of after it. */}
       {withHistory(() => null)}
-      <AuditLogLive variables={deferred.live} fetchKey={fetchKey}>
-        {(data) => withHistory((historyData) => renderLog(historyData, data))}
-      </AuditLogLive>
+      {scope ? (
+        <ScopedAuditLog
+          scope={scope}
+          variables={deferred.live}
+          fetchKey={fetchKey}
+        >
+          {(data) => withHistory((historyData) => renderLog(historyData, data))}
+        </ScopedAuditLog>
+      ) : (
+        <AdminAuditLog variables={deferred.live} fetchKey={fetchKey}>
+          {(data) => withHistory((historyData) => renderLog(historyData, data))}
+        </AdminAuditLog>
+      )}
     </>
   );
 };
-
-/** Whose audit log a scope reads: the viewer's own actions, or a project and the entities in it. */
-export const auditLogScope = (
-  scope: CardScope,
-  userId: string,
-): AuditLogScope =>
-  scope.kind === 'mine'
-    ? { triggeredUser: [{ value: userId }] }
-    : projectAuditScope(scope.projectId);
 
 /** The audit log in the page's scope over the card's range; "failures only" is saved on the board. */
 const AuditLogPanel: React.FC<PanelComponentProps> = ({
@@ -430,6 +680,10 @@ const AuditLogPanel: React.FC<PanelComponentProps> = ({
         project: {
           title: t('auditLog.AuditLog'),
           tooltip: t('dashboard.card.ProjectAuditLogTooltip'),
+        },
+        domain: {
+          title: t('auditLog.AuditLog'),
+          tooltip: t('dashboard.card.ClusterAuditLogTooltip'),
         },
       }}
       extra={

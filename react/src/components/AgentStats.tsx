@@ -4,6 +4,7 @@
  */
 import { AgentStatsFragment$key } from '../__generated__/AgentStatsFragment.graphql';
 import { useResourceSlotsDetails } from '../hooks/backendai';
+import PanelDetailLinkButton from './DashboardPanels/PanelDetailLinkButton';
 import { Heading } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
@@ -18,6 +19,7 @@ import {
   useControllableValue,
   BAISegmentedControl,
   BAISegmentedControlItem,
+  useIsInBAIBoardItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { ReactNode } from 'react';
@@ -39,6 +41,7 @@ const AgentStats: React.FC<AgentStatsProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
+  const isInBoard = useIsInBAIBoardItem();
 
   const [displayType, setDisplayType] = useControllableValue<
     Exclude<AgentStatsProps['displayType'], undefined>
@@ -172,8 +175,13 @@ const AgentStats: React.FC<AgentStatsProps> = ({
       direction="column"
       align="stretch"
       style={{
-        paddingInline: token('--spacing-8'),
-        paddingBottom: token('--spacing-4'),
+        // On a board the board pads the item.
+        ...(isInBoard
+          ? {}
+          : {
+              paddingInline: token('--spacing-8'),
+              paddingBottom: token('--spacing-4'),
+            }),
         ...props.style,
       }}
       {..._.omit(props, ['style'])}
@@ -221,6 +229,7 @@ const AgentStats: React.FC<AgentStatsProps> = ({
                 label={t('dashboard.Free')}
               />
             </BAISegmentedControl>
+            <PanelDetailLinkButton />
             {extra}
           </BAIFlex>
         }
