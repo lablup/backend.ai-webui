@@ -15508,6 +15508,11 @@ type Mutation
   partialBulkPurgeModelCardsV2(input: PartialBulkPurgeModelCardsInput!): PartialBulkModelCardsPayload! @join__field(graph: STRAWBERRY)
 
   """
+  Added in 26.10.0. Update a model card. Only provided fields will be updated.
+  """
+  updateModelCardV2(input: UpdateModelCardV2Input!): UpdateModelCardPayload! @join__field(graph: STRAWBERRY)
+
+  """
   Added in 26.4.2. Scan a MODEL_STORE project and upsert model cards from vfolder model-definition.yaml files.
   """
   scanProjectModelCardsV2(projectId: UUID!): ScanProjectModelCardsV2Payload @join__field(graph: STRAWBERRY)
