@@ -29,7 +29,7 @@ gh pr view --json number,title,body,headRefName 2>/dev/null
 
 If no PR exists yet, inform the user and stop.
 
-Check `gh --version` before recording: `--attach` needs 2.99.0 or newer. If it is older, ask the user to upgrade it instead of running the tests.
+Check these before recording, and ask the user to fix them instead of running the tests: `gh --version` must be 2.99.0 or newer, and `gh repo view --json viewerPermission -q .viewerPermission` must be `WRITE`, `MAINTAIN` or `ADMIN`.
 
 ### Step 2: Record GIFs via Playwright
 
@@ -81,13 +81,13 @@ Map each GIF file to its test name for the table.
 
 **The GIF table goes in the PR body, never in a comment.**
 
-1. Read the current body just before writing it, since someone may have edited it during the run:
+1. Read the current body just before writing it, since someone may have edited it during the run. Stop if this fails or the file is empty: step 3 replaces the whole body with it.
 
    ```bash
    gh pr view {PR_NUMBER} --json body -q .body > e2e/recordings/pr-body.md
    ```
 
-2. Add the table below to that file. If the body already has the markers, replace only what is between them; otherwise append the block. Reference each GIF with Markdown image syntax and the same path you pass to `--attach`. `gh` rewrites these references to uploaded URLs. It leaves HTML `<img src>` and `<video src>` alone, so do not use them.
+2. Add the table below to that file. If the body already has the markers, replace only what is between them; otherwise append the block. An unmarked `## Test Recordings` section from an older run is replaced once with the marked block, up to the next heading, `**Label:**` line or HTML comment. Reference each GIF with Markdown image syntax and the same path you pass to `--attach`. `gh` rewrites these references to uploaded URLs. It leaves HTML `<img src>` and `<video src>` alone, so do not use them.
 
    ```markdown
    <!-- e2e-recordings -->
@@ -99,7 +99,7 @@ Map each GIF file to its test name for the table.
    <!-- /e2e-recordings -->
    ```
 
-3. From the repository root, upload and save in one command, with one `--attach` per GIF:
+3. From the repository root, upload and save in one command, with one `--attach` per GIF, up to 50:
 
    ```bash
    gh pr edit {PR_NUMBER} --body-file e2e/recordings/pr-body.md \
@@ -107,19 +107,21 @@ Map each GIF file to its test name for the table.
      --attach e2e/recordings/{slug-2}.gif
    ```
 
-**More than 50 GIFs, or an upload failed.** One command takes up to 50 files. On a failure `gh` exits non-zero, stops at that file and does not try the later ones.
+**More than 50 GIFs, or an upload failed.** On a failure `gh` exits non-zero, stops at that file and does not try the later ones. Read the saved body, then:
 
-- If nothing uploaded, nothing was saved: fix the cause and re-run step 3.
-- Otherwise the body is saved with the URLs so far. Run `gh pr edit {PR_NUMBER} --attach <path>` for every GIF the saved body still references by local path, with no body flag: a body flag would write local references back over the saved URLs. Attachments cannot be deleted, so do not re-run step 3.
+- No table in it: nothing was saved. Fix the cause and repeat from step 1. Any uploads from the failed run cannot be recovered or deleted.
+- Table with local paths: from the repository root, run `gh pr edit {PR_NUMBER} --attach <path>` for the remaining GIFs, up to 50 at a time, with no body flag: a body flag would write local references back over the saved URLs. A file the server refuses every time stays in the way, so read the saved body, drop its row, save with `--body-file` and no `--attach`, continue, and report it.
 
 ### Step 6: Verify the PR body
 
 ```bash
 gh pr view {PR_NUMBER} --json body -q .body > e2e/recordings/pr-body-saved.md
-grep -c '](e2e/recordings/' e2e/recordings/pr-body-saved.md
+sed -n '/<!-- e2e-recordings -->/,/<!-- \/e2e-recordings -->/p' e2e/recordings/pr-body-saved.md > e2e/recordings/pr-table.md
+grep -c 'user-attachments/assets' e2e/recordings/pr-table.md
+grep -c '](e2e/recordings/' e2e/recordings/pr-table.md
 ```
 
-`gh pr view` must succeed and the count must be 0: every reference was rewritten.
+`gh pr view` must succeed, the first count must equal the number of GIFs, and the second must print 0 (`grep` then exits 1, which is the expected result here).
 
 ### Step 7: Report completion
 

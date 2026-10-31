@@ -68,12 +68,12 @@ Parse the directory name to derive a slug for the GIF filename:
 
 GIFs stay out of git (`e2e/recordings/` is in `.gitignore`). Attach them with
 `gh pr edit --attach`, following Steps 5-6 of `.claude/agents/playwright-e2e-pr-updater.md`:
-the table goes in the PR body, and each reference is the same path you pass to `--attach`,
-as saved under `outputDir`.
+the table goes in the PR body, and each reference is the same path you pass to `--attach`.
+Those steps assume the default `outputDir`.
 
-If `ffmpeg` is unavailable, attach the videos instead of GIFs. Copy each
-`test-results/{dir}/video.webm` to `e2e/recordings/{slug}.webm` first, since every recording
-has the same basename. `![name](e2e/recordings/{slug}.webm)` plays as a video, also inside a
+If `ffmpeg` is unavailable, attach the videos instead of GIFs. Run
+`mkdir -p e2e/recordings` and copy each `test-results/{dir}/video.webm` to
+`e2e/recordings/{slug}.webm` first, since every recording has the same basename. `![name](e2e/recordings/{slug}.webm)` plays as a video, also inside a
 table cell.
 
 ## Output Format
