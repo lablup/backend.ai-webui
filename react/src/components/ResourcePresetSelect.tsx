@@ -2,10 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
-  ResourcePresetSelectQuery,
-  ResourcePresetSelectQuery$data,
-} from '../__generated__/ResourcePresetSelectQuery.graphql';
 import { localeCompare } from '../helper';
 import {
   ResourceSlotName,
@@ -13,6 +9,10 @@ import {
   useResourceSlots,
 } from '../hooks/backendai';
 import useControllableState_deprecated from '../hooks/useControllableState';
+import {
+  type SessionResourcePreset,
+  useSessionResourcePresets,
+} from '../hooks/useSessionResourcePresets';
 import type {
   SelectorOptionData,
   SelectorOptionType,
@@ -33,7 +33,6 @@ import * as _ from 'lodash-es';
 import { Info, SquarePen } from 'lucide-react';
 import React, { useEffect, useTransition, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
 
 /**
  * The option shape this component hands back through `onChange`. It used to be
@@ -42,12 +41,8 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
  * (`SessionFormItems/ResourceAllocationFormItems`) reads nothing but the value.
  */
 export interface PresetOptionType extends SelectorOptionData {
-  preset?: ResourcePreset;
+  preset?: SessionResourcePreset;
 }
-
-export type ResourcePreset = NonNullable<
-  NonNullable<ResourcePresetSelectQuery$data['resource_presets']>[number]
->;
 
 /**
  * Slots the preset requests (non-zero) that `availableSlotNames` lacks;
@@ -147,25 +142,25 @@ export interface ResourcePresetSelectProps {
   /** Injected by `Form.Item`. */
   value?: string;
   onChange?: (value: string, options: PresetOptionType) => void;
+  projectId: string;
   allocatablePresetIds?: string[];
   showMinimumRequired?: boolean;
   showCustom?: boolean;
+  /** Lists this group's presets and the global ones; none while unset. */
   resourceGroup?: string;
   /** Slots the resource group's agents provide; `undefined` while loading. */
   availableSlotNames?: string[];
-  /** Presets scoped to a resource group outside this list are not listed. */
-  selectableResourceGroupNames?: string[];
   autoSelectDefault?: boolean;
   disabled?: boolean;
   style?: CSSProperties;
 }
 const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
+  projectId,
   allocatablePresetIds,
   showCustom,
   showMinimumRequired,
   resourceGroup,
   availableSlotNames,
-  selectableResourceGroupNames,
   autoSelectDefault,
   disabled,
   style,
@@ -190,49 +185,23 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     });
   };
 
-  const { resource_presets: allResourcePresets } =
-    useLazyLoadQuery<ResourcePresetSelectQuery>(
-      graphql`
-        query ResourcePresetSelectQuery {
-          resource_presets {
-            id
-            name
-            resource_slots
-            shared_memory
-            scaling_group_name
-          }
-        }
-      `,
-      {},
-      {
-        fetchKey: fetchKey,
-        fetchPolicy:
-          fetchKey === 'first' ? 'store-and-network' : 'network-only',
-      },
-    );
-
-  const resource_presets = _.filter(
-    allResourcePresets,
-    (preset) =>
-      !preset?.scaling_group_name ||
-      !selectableResourceGroupNames ||
-      selectableResourceGroupNames.includes(preset.scaling_group_name),
-  );
+  const resource_presets = useSessionResourcePresets({
+    projectId,
+    resourceGroupName: resourceGroup,
+    fetchKey,
+    fetchPolicy: fetchKey === 'first' ? 'store-and-network' : 'network-only',
+  });
 
   const onlyInGroupText = (name: string) =>
     t('resourcePreset.OnlyAvailableInResourceGroup', { name });
 
   // Why a preset cannot be picked right now; `undefined` means it can.
   const disabledReasonOf = (
-    preset: ResourcePreset | null | undefined,
+    preset: SessionResourcePreset,
   ): string | undefined => {
-    if (!preset) return undefined;
     return presetUnavailableReasonText(
       getPresetUnavailableReason(
-        {
-          ...preset,
-          resource_slots: JSON.parse(preset.resource_slots || '{}'),
-        },
+        { ...preset, scaling_group_name: preset.resource_group_name },
         { resourceGroup, slotsInRG: availableSlotNames, allocatablePresetIds },
       ),
       t,
@@ -240,11 +209,9 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     );
   };
 
-  const firstAvailablePreset = [...(resource_presets ?? [])]
-    .filter(
-      (p): p is NonNullable<typeof p> => p != null && !disabledReasonOf(p),
-    )
-    .sort((a, b) => localeCompare(a.name ?? '', b.name ?? ''))[0];
+  const firstAvailablePreset = resource_presets
+    .filter((p) => !disabledReasonOf(p))
+    .sort((a, b) => localeCompare(a.name, b.name))[0];
   const firstAvailablePresetId = firstAvailablePreset?.id;
 
   useEffect(() => {
@@ -268,10 +235,10 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
       const disabledReason = disabledReasonOf(preset);
       return {
         // Names repeat across resource groups; the id is the option's key.
-        value: preset?.id ?? '',
-        label: preset?.name ?? '',
+        value: preset.id,
+        label: preset.name,
         disabled: disabledReason ? { reason: disabledReason } : false,
-        preset: preset ?? undefined,
+        preset,
       };
     },
   )
@@ -300,22 +267,22 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     const preset = presetOption?.preset;
     if (!preset) return option.label;
     const disabledReason = disabledReasonOf(preset);
-    const slotsInfo: {
+    const slotsInfo = preset.resource_slots as {
       [key in ResourceSlotName]: string;
-    } = JSON.parse(preset.resource_slots || '{}');
+    };
     return (
       <BAIFlex direction="row" justify="between" gap={'xs'} style={{ flex: 1 }}>
         <BAIFlex direction="row" gap={'xs'} align="center">
           {preset.name}
-          {preset.scaling_group_name ? (
+          {preset.resource_group_name ? (
             // Global presets carry no mark; the token names the group this
             // one belongs to, so same-named rows tell apart. A disabled row
             // already explains itself, so the token stays quiet there.
             disabledReason ? (
-              <Token label={preset.scaling_group_name} size="sm" />
+              <Token label={preset.resource_group_name} size="sm" />
             ) : (
-              <Tooltip content={onlyInGroupText(preset.scaling_group_name)}>
-                <Token label={preset.scaling_group_name} size="sm" />
+              <Tooltip content={onlyInGroupText(preset.resource_group_name)}>
+                <Token label={preset.resource_group_name} size="sm" />
               </Tooltip>
             )
           ) : null}
@@ -350,7 +317,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   // The closed trigger keeps the group token, so two same-named presets read apart.
   const renderSelectedValue = (option: SelectorOptionData) => {
     const groupName = presetOptions.find((o) => o.value === option.value)
-      ?.preset?.scaling_group_name;
+      ?.preset?.resource_group_name;
     return groupName ? (
       <BAIFlex direction="row" gap={'xs'} align="center">
         {option.label}

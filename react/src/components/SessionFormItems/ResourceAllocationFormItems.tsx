@@ -21,6 +21,7 @@ import {
   ResourcePreset,
   useResourceLimitAndRemaining,
 } from '../../hooks/useResourceLimitAndRemaining';
+import { useSessionResourcePresets } from '../../hooks/useSessionResourcePresets';
 import { ProjectContext } from '../../types/projectContext';
 import AgentSelect from '../AgentSelect';
 import {
@@ -62,7 +63,6 @@ import {
   BAIProjectResourceGroupSelect,
   BAISegmentedControlItem,
   BAISelect,
-  useProjectResourceGroups,
   useUpdatableState,
   BAISegmentedControl,
 } from 'backend.ai-ui';
@@ -274,11 +274,6 @@ const ResourceAllocationFormItems: React.FC<
     accessible_scaling_groups,
     (group) => group?.name === currentResourceGroupInForm,
   );
-  // The groups the resource-group select offers; presets of any other group are hidden.
-  const { resourceGroups: selectableResourceGroups } = useProjectResourceGroups(
-    project.name,
-    { includeSFTPResourceGroups },
-  );
   // Names of the resource groups accessible to the PASSED project. Handed to
   // `useResourceLimitAndRemaining` so its "is this resource group valid?"
   // guard is keyed off the `project` prop instead of the ambient current
@@ -302,7 +297,7 @@ const ResourceAllocationFormItems: React.FC<
   // The preset check suspends per resource group; deferring the group keeps the
   // launcher on screen while a group's first check loads, not a page fallback.
   const deferredResourceGroup = useDeferredValue(currentResourceGroupInForm);
-  const [{ currentImageMinM, remaining, resourceLimits, checkPresetInfo }] =
+  const [{ currentImageMinM, remaining, resourceLimits }] =
     useResourceLimitAndRemaining({
       currentProjectName: project.name,
       currentResourceGroup: deferredResourceGroup || undefined, // global currentResourceGroup can be null
@@ -310,6 +305,11 @@ const ResourceAllocationFormItems: React.FC<
       currentImage: currentImage,
       accessibleResourceGroupNames,
     });
+  // Shares its request with `ResourcePresetSelect`, which reads the same query.
+  const sessionPresets = useSessionResourcePresets({
+    projectId: project.id,
+    resourceGroupName: deferredResourceGroup,
+  });
 
   const [resourceSlots] = useResourceSlots();
 
@@ -336,7 +336,7 @@ const ResourceAllocationFormItems: React.FC<
   // contents; a fresh identity would re-run the data effect each render.
   const allocatablePresetIdsKey = JSON.stringify(
     getAllocatablePresetIds(
-      checkPresetInfo?.presets,
+      sessionPresets,
       resourceLimits,
       currentImage,
       slotNamesInRG,
@@ -354,7 +354,7 @@ const ResourceAllocationFormItems: React.FC<
     manualImage: isManualImage,
     slotsInRG: slotNamesInRG,
     acceleratorSlotsInRG: _.keys(acceleratorSlotsInRG),
-    presets: checkPresetInfo?.presets,
+    presets: sessionPresets,
     allocatablePresetIds,
     resourceLimits,
     imageMinMem: currentImageMinM,
@@ -386,7 +386,7 @@ const ResourceAllocationFormItems: React.FC<
 
   // Keyed by content: the query data is re-fetched per resource group.
   const slotNamesInRGKey = JSON.stringify(slotNamesInRG ?? null);
-  const presetsKey = JSON.stringify(checkPresetInfo?.presets ?? null);
+  const presetsKey = JSON.stringify(sessionPresets);
   // Values written past the rules (a template restore) still get the
   // invariants; the settled patch is empty, so the effect's own write stops it.
   const resourceKey = JSON.stringify(currentResourceValue ?? null);
@@ -479,10 +479,10 @@ const ResourceAllocationFormItems: React.FC<
                   }
                   return;
                 }
-                // An id the deferred group's check-presets response lacks
+                // An id the deferred group's preset availability lacks
                 // gets only the scope check, not `not-allocatable`.
                 const checked = _.find(
-                  checkPresetInfo?.presets,
+                  sessionPresets,
                   (checked) => checked.id === value,
                 );
                 const reason = getPresetUnavailableReason(
@@ -516,12 +516,10 @@ const ResourceAllocationFormItems: React.FC<
               runRule({ type: 'user.selectPreset', id: value });
               if (value !== 'custom') validateResource();
             }}
+            projectId={project.id}
             allocatablePresetIds={allocatablePresetIds}
-            selectableResourceGroupNames={_.map(
-              selectableResourceGroups,
-              'name',
-            )}
-            resourceGroup={currentResourceGroupInForm}
+            // Deferred, as for `sessionPresets`: one request, and no page fallback on a group change.
+            resourceGroup={deferredResourceGroup || undefined}
             availableSlotNames={
               resourceSlotsInRG ? _.keys(resourceSlotsInRG) : undefined
             }
