@@ -301,6 +301,9 @@ checkout, then this one) — never print or commit it. `--dry-run` resolves
 everything and launches no browser — without `--manifest`, for the one
 question section 1a starts with.
 
+mint marks the superadmin view-switch tour as seen, so it never covers a
+stop; pass `--keep-tours` when the PR changes that tour and a stop shows it.
+
 Which backend: the one reviewers will sign in to, since the link's project
 must exist there (section 3, `route`). The PR's dev server pre-fills one
 backend and signs in by itself, so boot it on the same backend
