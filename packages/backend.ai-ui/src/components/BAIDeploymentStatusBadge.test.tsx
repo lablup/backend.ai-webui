@@ -1,6 +1,7 @@
 import BAIDeploymentStatusBadge, {
   DEPLOYMENT_IN_PROGRESS_STATUSES,
   DEPLOYMENT_STOPPED_CATEGORY_STATUSES,
+  getDeploymentPauseCause,
   isDeploymentInProgress,
   isDeploymentInStoppedCategory,
 } from './BAIDeploymentStatusBadge';
@@ -81,5 +82,55 @@ describe('isDeploymentInProgress', () => {
     expect(isDeploymentInProgress(null)).toBe(false);
     expect(isDeploymentInProgress(undefined)).toBe(false);
     expect(isDeploymentInProgress('%future added value')).toBe(false);
+  });
+});
+
+describe('getDeploymentPauseCause', () => {
+  it('blames the user when the count they set is 0', () => {
+    expect(
+      getDeploymentPauseCause('READY', {
+        replicaCount: 0,
+        desiredReplicaCount: 0,
+      }),
+    ).toBe('user');
+  });
+
+  it('blames autoscaling when the count they set is above 0', () => {
+    expect(
+      getDeploymentPauseCause('HEALTHY', {
+        replicaCount: 2,
+        desiredReplicaCount: 0,
+      }),
+    ).toBe('autoScaling');
+  });
+
+  it('is not paused while the desired count is above 0', () => {
+    expect(
+      getDeploymentPauseCause('READY', {
+        replicaCount: 0,
+        desiredReplicaCount: 1,
+      }),
+    ).toBeNull();
+  });
+
+  it.each([
+    ...DEPLOYMENT_STOPPED_CATEGORY_STATUSES,
+    ...DEPLOYMENT_IN_PROGRESS_STATUSES,
+    'UNHEALTHY',
+    'DEGRADED',
+    'NOT_CHECKED',
+    'PENDING',
+  ] as const)('leaves a %s deployment to its own status badge', (status) => {
+    expect(
+      getDeploymentPauseCause(status, {
+        replicaCount: 0,
+        desiredReplicaCount: 0,
+      }),
+    ).toBeNull();
+  });
+
+  it('is not paused without a status or a replica state', () => {
+    expect(getDeploymentPauseCause(null, undefined)).toBeNull();
+    expect(getDeploymentPauseCause('READY', null)).toBeNull();
   });
 });

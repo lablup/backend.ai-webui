@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r28-default-brand-h1g2o6r8 theme — built by `pnpm exec astryx theme build`
+ * bai-r29-default-brand-h1g2o6r8 theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR28DefaultBrandH1g2o6r8Theme } from './bai-r28-default-brand-h1g2o6r8';
- *   import './bai-r28-default-brand-h1g2o6r8.css';
+ *   import { baiR29DefaultBrandH1g2o6r8Theme } from './bai-r29-default-brand-h1g2o6r8';
+ *   import './bai-r29-default-brand-h1g2o6r8.css';
  */
-export const baiR28DefaultBrandH1g2o6r8Theme = {
-  name: 'bai-r28-default-brand-h1g2o6r8',
+export const baiR29DefaultBrandH1g2o6r8Theme = {
+  name: 'bai-r29-default-brand-h1g2o6r8',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
@@ -242,7 +242,7 @@ export const baiR28DefaultBrandH1g2o6r8Theme = {
     "--astryx-theme-neutral-color-destructive-overlay-hover": "neutral",
     "--astryx-theme-neutral-color-destructive-overlay-pressed": "neutral"
   },
-  __localTokenLineage: ["neutral","bai-r28-default-brand-h1g2o6r8"],
+  __localTokenLineage: ["neutral","bai-r29-default-brand-h1g2o6r8"],
   components: {
     "heading": {
       "level:1": {
@@ -384,7 +384,7 @@ export const baiR28DefaultBrandH1g2o6r8Theme = {
         "backgroundColor": "var(--color-background-gray)",
         "color": "var(--color-text-gray)",
         "--color-text-primary": "var(--color-text-gray)",
-        "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-gray)"
+        "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-emphasized)"
       },
       "variant:success": {
         "backgroundColor": "var(--color-background-teal)",

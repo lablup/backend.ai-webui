@@ -63,7 +63,7 @@ import {
 export { ANTD_ALIGN_TOKENS };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 28;
+export const THEME_NAME_REV = 29;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -780,7 +780,12 @@ const BADGE_TINTED = {
         {
           backgroundColor: `var(--color-background-${hue})`,
           [text]: `var(--color-text-${hue})`,
-          boxShadow: badgeOutline(hue),
+          // The gray border is darker than the gray fill in dark mode, which
+          // hid a neutral badge's edge, and the seam inside a DoubleBadge.
+          boxShadow:
+            variant === 'neutral'
+              ? 'inset 0 0 0 var(--border-width) var(--color-border-emphasized)'
+              : badgeOutline(hue),
         },
       ]),
     ),

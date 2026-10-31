@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<16b91e02e08e4dd19c0ca3360cf44d39>>
+ * @generated SignedSource<<62ff9050dd16210606418146dfaa330f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -23,6 +23,7 @@ export type DeploymentSettingModal_deployment$data = {
   };
   readonly replicaState: {
     readonly desiredReplicaCount: number;
+    readonly replicaCount: number;
   };
   readonly " $fragmentType": "DeploymentSettingModal_deployment";
 };
@@ -113,6 +114,13 @@ const node: ReaderFragment = {
           "alias": null,
           "args": null,
           "kind": "ScalarField",
+          "name": "replicaCount",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "desiredReplicaCount",
           "storageKey": null
         }
@@ -124,6 +132,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "78b531394e485e424c17104e2819d63c";
+(node as any).hash = "a3f99682153765330fcecce302611463";
 
 export default node;
