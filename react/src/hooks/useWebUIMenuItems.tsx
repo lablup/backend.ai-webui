@@ -45,7 +45,6 @@ import {
   FileCheck,
   FileUser,
   Settings2,
-  SlidersHorizontal,
   Wrench,
   Info,
   Plug,
@@ -524,16 +523,6 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
         t('webui.menu.Resources'),
         <HardDrive style={{ color: token('--color-info') }} size="1em" />,
         'agent',
-        'admin-infrastructure',
-      ),
-    isSuperAdmin &&
-      createAdminMenuItem(
-        t('webui.menu.Configurations'),
-        <SlidersHorizontal
-          style={{ color: token('--color-info') }}
-          size="1em"
-        />,
-        'settings',
         'admin-infrastructure',
       ),
     isSuperAdmin &&

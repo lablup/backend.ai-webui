@@ -13,6 +13,7 @@ import {
   WEBUI_SETTINGS_CONFIG_KEY,
   type WebUISettingDefinition,
   type WebUISettingsDocument,
+  WEBUI_SETTINGS_DEFAULT_TAB,
 } from '../helper/webuiSettings';
 import { useCurrentDomainValue } from '../hooks';
 import {
@@ -106,9 +107,15 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
 
   // Set before the post-Apply reload so neither guard asks to confirm it.
   const isLeavingAfterApplyRef = useRef(false);
+  // A `?tab=` switch unmounts the draft too; other query changes (the
+  // user-settings modal, a palette deep link) keep it mounted.
+  const tabOf = (search: string) =>
+    new URLSearchParams(search).get('tab') ?? WEBUI_SETTINGS_DEFAULT_TAB;
   const blocker = useBlocker(
     ({ currentLocation, nextLocation }) =>
-      isDirty && currentLocation.pathname !== nextLocation.pathname,
+      isDirty &&
+      (currentLocation.pathname !== nextLocation.pathname ||
+        tabOf(currentLocation.search) !== tabOf(nextLocation.search)),
   );
   const confirmLeave = useEffectEvent(() => {
     modal.confirm({

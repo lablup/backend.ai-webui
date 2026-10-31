@@ -383,13 +383,15 @@ test.describe(
         await expect(breadcrumb).toBeVisible({ timeout: 15_000 });
         await expect(forbiddenPageHeading(page)).toBeHidden();
 
-        // 8. Navigate to /settings (superadmin page; shim → /admin/settings)
+        // 8. Navigate to /settings (superadmin page; shim → /admin/settings →
+        //    the Configurations tab of System Settings)
         await page.goto(`${webuiEndpoint}/settings`);
 
         // 9. Verify the page really renders (not 401)
-        await expect(page).toHaveURL(/\/admin\/settings/, {
-          timeout: 15_000,
-        });
+        await expect(page).toHaveURL(
+          /\/admin\/system-settings\?tab=configurations/,
+          { timeout: 15_000 },
+        );
         await expect(breadcrumb).toBeVisible({ timeout: 15_000 });
         await expect(forbiddenPageHeading(page)).toBeHidden();
 

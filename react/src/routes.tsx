@@ -109,9 +109,6 @@ const AgentSummaryPage = React.lazy(() => import('./pages/AgentSummaryPage'));
 const MaintenancePage = React.lazy(() => import('./pages/MaintenancePage'));
 const DiagnosticsPage = React.lazy(() => import('./pages/DiagnosticsPage'));
 const StatisticsPage = React.lazy(() => import('./pages/StatisticsPage'));
-const ConfigurationsPage = React.lazy(
-  () => import('./pages/ConfigurationsPage'),
-);
 const SessionDetailAndContainerLogOpenerLegacy = React.lazy(
   () => import('./components/SessionDetailAndContainerLogOpenerLegacy'),
 );
@@ -909,17 +906,19 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         },
       },
       {
+        // Configurations lives in the System Settings page (#10684); the
+        // old URL keeps its menu key so the block list and 401 still apply.
         path: 'settings',
         element: (
-          <Suspense fallback={<BAISkeleton rows={4} />}>
-            <ConfigurationsPage />
-          </Suspense>
+          <WebUINavigate
+            to="/admin/system-settings?tab=configurations"
+            replace
+          />
         ),
         handle: {
           scope: 'admin',
           menuKey: 'settings',
           access: 'superadmin',
-          labelKey: 'webui.menu.Configurations',
         },
       },
       {

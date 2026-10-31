@@ -678,5 +678,27 @@ describe('BAICard', () => {
       );
       expect(container.querySelector('.bai-card')).toBeInTheDocument();
     });
+
+    it('should keep a disabled tab visible and never select it', async () => {
+      const onTabChange = vi.fn();
+      render(
+        <BAICard
+          tabList={[
+            { key: 'tab1', label: 'Tab 1' },
+            { key: 'tab2', label: 'Tab 2', disabled: true },
+          ]}
+          activeTabKey="tab1"
+          onTabChange={onTabChange}
+        >
+          Content
+        </BAICard>,
+      );
+      const disabledTab = screen.getByRole('button', { name: 'Tab 2' });
+      expect(disabledTab).toHaveAttribute('aria-disabled', 'true');
+      await userEvent.click(disabledTab);
+      expect(onTabChange).not.toHaveBeenCalled();
+      await userEvent.click(screen.getByRole('button', { name: 'Tab 1' }));
+      expect(onTabChange).toHaveBeenCalledWith('tab1');
+    });
   });
 });
