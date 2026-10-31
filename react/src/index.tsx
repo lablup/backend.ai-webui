@@ -14,7 +14,7 @@ import {
   getActAsTarget,
 } from './helper/actAs';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
-import { applyDevServerTitle } from './helper/devServerTitle';
+import { updateDocumentTitle } from './helper/documentTitle';
 import { ThemeModeProvider } from './hooks/useThemeMode';
 import { Provider as JotaiProvider } from 'jotai';
 import React from 'react';
@@ -79,9 +79,9 @@ loadCustomThemeConfig();
 // like any other component — and Astryx injects no runtime <style>, so there
 // is no nonce to plumb.
 
-// In dev, distinguish multiple dev-server tabs by prefixing the tab title with
-// the Portless app name injected via VITE_DEV_SERVER_NAME (no-op in production).
-applyDevServerTitle();
+// Writes the first title, before any route or session state exists; it carries
+// the Portless app name in dev.
+updateDocumentTitle();
 
 // Must run before any client is created: it decides whether this tab acts as another user.
 adoptActAsHandoff();
