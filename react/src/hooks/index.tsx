@@ -720,12 +720,14 @@ type BackendAIConfig = {
   maxTPUDevicesPerContainer: number;
   maxIPUDevicesPerContainer: number;
   maxATOMDevicesPerContainer: number;
-  maxATOMPlusDevicesPerContainer: number;
+  maxATOMPLUSDevicesPerContainer: number;
+  maxHyperaccelLPUDevicesPerContainer: number;
   maxGaudi2DevicesPerContainer: number;
   maxWarboyDevicesPerContainer: number;
   maxRNGDDevicesPerContainer: number;
   maxShmPerContainer: number;
   maxFileUploadSize: number;
+  storageWarningThreshold: number;
   allow_image_list: string[];
   maskUserInfo: boolean;
   singleSignOnVendors: string[];
@@ -742,7 +744,7 @@ type BackendAIConfig = {
   force2FA: boolean;
   directoryBasedUsage: boolean;
   maxCountForPreopenPorts: number;
-  pluginPages: string;
+  pluginPages: string[];
   blockList: MenuKeys[];
   inactiveList: MenuKeys[];
   allowSignout: boolean;

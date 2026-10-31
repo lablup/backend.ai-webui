@@ -176,7 +176,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
           align="start"
           style={{ width: '100%' }}
         >
-          {description}
+          {description && <Text display="block">{description}</Text>}
           {children}
         </BAIFlex>
       )}

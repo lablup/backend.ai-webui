@@ -127,6 +127,7 @@ const ReservoirArtifactDetailPage = React.lazy(
 
 const SchedulerPage = React.lazy(() => import('./pages/SchedulerPage'));
 const BrandingPage = React.lazy(() => import('./pages/BrandingPage'));
+const WebUISettingsPage = React.lazy(() => import('./pages/WebUISettingsPage'));
 const RBACManagementPage = React.lazy(
   () => import('./pages/RBACManagementPage'),
 );
@@ -975,6 +976,20 @@ export const mainLayoutChildRoutes: RouteObject[] = [
           menuKey: 'branding',
           access: 'superadmin',
           labelKey: 'webui.menu.Branding',
+        },
+      },
+      {
+        path: 'system-settings',
+        element: (
+          <Suspense fallback={<BAISkeleton rows={4} />}>
+            <WebUISettingsPage />
+          </Suspense>
+        ),
+        handle: {
+          scope: 'admin',
+          menuKey: 'system-settings',
+          access: 'admin',
+          labelKey: 'webui.menu.SystemSettings',
         },
       },
       {

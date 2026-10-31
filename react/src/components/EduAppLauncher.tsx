@@ -276,8 +276,6 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   ) => {
     logger.info('[_createEduSession] start', { resources });
 
-    const eduAppNamePrefix = g.backendaiclient._config.eduAppNamePrefix || '';
-
     const statusList = [
       'RUNNING',
       'RESTARTING',
@@ -331,20 +329,16 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
     }
 
     const requestedApp = extraParams.app || 'jupyter';
-    let parsedAppName = requestedApp;
+    const parsedAppName = requestedApp;
     const sessionTemplateName =
       extraParams.session_template ||
       extraParams.sessionTemplate ||
       requestedApp;
 
-    if (eduAppNamePrefix !== '' && requestedApp.startsWith(eduAppNamePrefix)) {
-      parsedAppName = requestedApp.slice(eduAppNamePrefix.length);
-    }
     logger.info('[_createEduSession] parsed url params', {
       requestedApp,
       parsedAppName,
       sessionTemplateName,
-      eduAppNamePrefix,
     });
 
     logger.info('[_createEduSession] step 2: sessionTemplate.list');

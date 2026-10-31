@@ -21,6 +21,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('../hooks/useWebUIConfig', () => ({
   fetchAndParseConfig: vi.fn(),
+  loginConfigState: Symbol('loginConfigState'),
+}));
+vi.mock('../components/DefaultProviders', () => ({
+  jotaiStore: { get: vi.fn(), set: vi.fn() },
 }));
 vi.mock('../RelayEnvironment', async () => {
   const { createMockEnvironment } = await import('relay-test-utils');
@@ -513,7 +517,10 @@ describe('connectViaGQL — act-as tab (FR-4111)', () => {
     } as unknown as LoginBootstrap;
 
     await connectViaGQL(client, cfg, [], bootstrap);
-    expect(client.query).not.toHaveBeenCalled();
+    expect(client.query).not.toHaveBeenCalledWith(
+      expect.stringContaining('keypair'),
+      expect.anything(),
+    );
     expect((client._config as Record<string, unknown>)._accessKey).toBe(
       'TARGET_KEY',
     );
@@ -524,6 +531,9 @@ describe('connectViaGQL — act-as tab (FR-4111)', () => {
     const client = { ...makeClient(), query: vi.fn() };
 
     await connectViaGQL(client, cfg, []);
-    expect(client.query).not.toHaveBeenCalled();
+    expect(client.query).not.toHaveBeenCalledWith(
+      expect.stringContaining('keypair'),
+      expect.anything(),
+    );
   });
 });

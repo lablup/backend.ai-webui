@@ -15,8 +15,17 @@
 import {
   getDefaultLoginConfig,
   refreshConfigFromToml,
+  syncDebugFlag,
   type LoginConfigState,
 } from '../helper/loginConfig';
+import {
+  fetchPublicDomainConfigOnce,
+  resolvePublicConfigTarget,
+} from '../helper/publicAppConfig';
+import {
+  applyWebUISettings,
+  WEBUI_SETTINGS_CONFIG_KEY,
+} from '../helper/webuiSettings';
 import { useBAILogger } from 'backend.ai-ui';
 import { atom, useAtomValue, useSetAtom, useStore } from 'jotai';
 import type { createStore } from 'jotai';
@@ -210,6 +219,22 @@ export function fetchAppConfigOnce(): Promise<ConfigFetchResult> {
 }
 
 /**
+ * The user's own choice (user settings, kept in `backendaioptions`) wins over
+ * the configured default, whether that default came from the file or from
+ * the public app config.
+ */
+export function resolveAutoLogout(
+  cfg: Pick<LoginConfigState, 'autoLogout'>,
+): boolean {
+  const options = (globalThis as Record<string, unknown>).backendaioptions as
+    { get: (key: string, defaultValue?: unknown) => unknown } | undefined;
+  const stored = options ? options.get('auto_logout') : null;
+  return stored === null || stored === undefined
+    ? cfg.autoLogout
+    : Boolean(stored);
+}
+
+/**
  * Process the raw config to extract config values and set global state.
  * This replaces the Lit shell's loadConfig() method.
  */
@@ -219,27 +244,6 @@ function processConfig(config: RawTomlConfig): {
   loginPlugin: string;
   loginConfig: LoginConfigState;
 } {
-  // Auto-logout setting
-  let autoLogout = false;
-  const storedAutoLogout = (globalThis as Record<string, unknown>)
-    .backendaioptions
-    ? (
-        (globalThis as Record<string, unknown>).backendaioptions as {
-          get: (key: string, defaultValue?: unknown) => unknown;
-        }
-      ).get('auto_logout')
-    : null;
-
-  if (
-    storedAutoLogout === null &&
-    config.general !== undefined &&
-    'autoLogout' in config.general
-  ) {
-    autoLogout = config.general.autoLogout as boolean;
-  } else {
-    autoLogout = (storedAutoLogout as boolean) ?? false;
-  }
-
   // Package edition and license info
   let edition = 'Open Source';
   let validUntil = '';
@@ -260,19 +264,13 @@ function processConfig(config: RawTomlConfig): {
     proxyUrl = config.wsproxy.proxyURL ?? '';
   }
 
-  // Login plugin
-  let loginPlugin = '';
-  if (config.plugin !== undefined && 'login' in config.plugin) {
-    loginPlugin = config.plugin.login ?? '';
-  }
-
   // Derive the full LoginConfigState from the raw config
   const loginConfig = refreshConfigFromToml(config);
 
   return {
-    autoLogout,
+    autoLogout: resolveAutoLogout(loginConfig),
     proxyUrl,
-    loginPlugin,
+    loginPlugin: loginConfig.loginPlugin,
     loginConfig,
   };
 }
@@ -337,14 +335,24 @@ export function initializeConfigOnce(
 
       store.set(rawConfigState, result.config);
 
-      const { autoLogout, proxyUrl, loginPlugin, loginConfig } = processConfig(
-        result.config,
-      );
+      const { proxyUrl, loginConfig } = processConfig(result.config);
 
-      store.set(loginConfigState, loginConfig);
-      store.set(autoLogoutState, autoLogout);
+      // The domain's public `settings` slice overrides the file for the keys
+      // the login page needs before sign-in (#10436); the file is the
+      // fallback for everything it does not carry.
+      const publicSlice = await fetchPublicDomainConfigOnce(
+        resolvePublicConfigTarget(result.config),
+      );
+      const effectiveLoginConfig = applyWebUISettings(
+        loginConfig,
+        publicSlice?.[WEBUI_SETTINGS_CONFIG_KEY],
+        'public',
+      );
+      syncDebugFlag(effectiveLoginConfig);
+      store.set(loginConfigState, effectiveLoginConfig);
+      store.set(autoLogoutState, resolveAutoLogout(effectiveLoginConfig));
       store.set(proxyUrlState, proxyUrl);
-      store.set(loginPluginState, loginPlugin);
+      store.set(loginPluginState, effectiveLoginConfig.loginPlugin);
 
       store.set(configLoadedState, true);
     })().catch((error) => {
@@ -452,6 +460,7 @@ export function useUpdateRawConfig(): (config: RawTomlConfig) => void {
     setRawConfig(config);
     const { autoLogout, proxyUrl, loginPlugin, loginConfig } =
       processConfig(config);
+    syncDebugFlag(loginConfig);
     setLoginConfig(loginConfig);
     setAutoLogout(autoLogout);
     setProxyUrl(proxyUrl);
