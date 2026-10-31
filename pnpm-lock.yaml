@@ -1013,8 +1013,8 @@ importers:
         specifier: 'catalog:'
         version: 25.10.10(typescript@6.0.3)
       i18next-http-backend:
-        specifier: ^3.0.6
-        version: 3.0.6
+        specifier: ^4.0.5
+        version: 4.0.5
       jotai:
         specifier: ^2.20.2
         version: 2.20.2(@babel/core@7.29.7(supports-color@8.1.1))(@babel/template@7.29.7)(@types/react@19.3.0)(react@19.3.1)
@@ -6069,9 +6069,6 @@ packages:
   cross-fetch@3.2.0:
     resolution: {integrity: sha512-Q+xVJLoGOeIMXZmbUK4HYk+69cQH6LudR0Vu/pRm2YlU/hDV9CiS0gKUMaWY5f2NeUH9C1nV3bsTlCo0FsTV1Q==}
 
-  cross-fetch@4.1.0:
-    resolution: {integrity: sha512-uKm5PU+MHTootlWEY+mZ4vvXoCn4fLQxT9dSc1sXVMSFkINTJVN8cAQROpwcKm8bJ/c7rgZVIBWzH5T78sNZZw==}
-
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
     engines: {node: '>= 8'}
@@ -7343,8 +7340,9 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  i18next-http-backend@3.0.6:
-    resolution: {integrity: sha512-mBOqy8993jtqAoj6XaI1XeC/8/9v6EPS+681ziegrPvTB0DoaCY7PpTS0SpY56qLMoS4OI1TZEM2Zf59zNh05w==}
+  i18next-http-backend@4.0.5:
+    resolution: {integrity: sha512-0uXq24ZAVFwbA0MGija0AZYBcs8iA+wbC//UiDyZwPC3/wZfyD20LgGxvjMOqf9o3/pDJ05ZLIlB4U3+AdA9AQ==}
+    engines: {node: '>=18'}
 
   i18next-scanner@4.6.0:
     resolution: {integrity: sha512-I/xKcwKfii3L3is3bUvfaIU0QA/wYhpZnjppfrzyb61QQddxkcpspASEtmfnxSYvE6yIaAxDlIxg0EHV7mxssg==}
@@ -16555,12 +16553,6 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  cross-fetch@4.1.0:
-    dependencies:
-      node-fetch: 2.7.0
-    transitivePeerDependencies:
-      - encoding
-
   cross-spawn@7.0.6:
     dependencies:
       path-key: 3.1.1
@@ -18287,11 +18279,7 @@ snapshots:
 
   husky@9.1.7: {}
 
-  i18next-http-backend@3.0.6:
-    dependencies:
-      cross-fetch: 4.1.0
-    transitivePeerDependencies:
-      - encoding
+  i18next-http-backend@4.0.5: {}
 
   i18next-scanner@4.6.0(typescript@5.5.4):
     dependencies:
@@ -23018,7 +23006,7 @@ time:
   handlebars@4.7.10: '2026-10-05T22:37:37.837Z'
   https-proxy-agent@7.0.6: '2024-12-07T03:32:09.302Z'
   husky@9.1.7: '2024-11-18T15:28:26.026Z'
-  i18next-http-backend@3.0.6: '2026-04-23T15:39:30.348Z'
+  i18next-http-backend@4.0.5: '2026-10-23T20:07:21.197Z'
   i18next-scanner@4.6.0: '2024-10-14T15:28:16.940Z'
   i18next@25.10.10: '2026-03-26T13:00:50.625Z'
   jotai-effect@2.4.1: '2026-07-20T23:14:54.605Z'
