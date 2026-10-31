@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<163c0f18ceefe2133564d2dcddee6733>>
+ * @generated SignedSource<<8e9fb7235757bc4397984ccb3cebb5e2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -98,15 +98,28 @@ export type ModelCardV2OrderBy = {
   direction?: string;
   field: ModelCardV2OrderField;
 };
+export type ModelCardScope = {
+  domain?: ReadonlyArray<UUIDScope> | null | undefined;
+  project?: ReadonlyArray<UUIDScope> | null | undefined;
+  user?: ReadonlyArray<UUIDScope> | null | undefined;
+};
+export type UUIDScope = {
+  value: string;
+};
 export type AdminModelCardQuery$variables = {
   domainName?: string | null | undefined;
   filter?: ModelCardV2Filter | null | undefined;
   limit?: number | null | undefined;
   offset?: number | null | undefined;
   orderBy?: ReadonlyArray<ModelCardV2OrderBy> | null | undefined;
+  scope: ModelCardScope;
 };
 export type AdminModelCardQuery$data = {
-  readonly adminModelCardsV2: {
+  readonly groups: ReadonlyArray<{
+    readonly id: string | null | undefined;
+    readonly name: string | null | undefined;
+  } | null | undefined> | null | undefined;
+  readonly scopedModelCardsV2: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -140,10 +153,6 @@ export type AdminModelCardQuery$data = {
       };
     }>;
   } | null | undefined;
-  readonly groups: ReadonlyArray<{
-    readonly id: string | null | undefined;
-    readonly name: string | null | undefined;
-  } | null | undefined> | null | undefined;
 };
 export type AdminModelCardQuery = {
   response: AdminModelCardQuery$data;
@@ -176,7 +185,12 @@ v4 = {
   "kind": "LocalArgument",
   "name": "orderBy"
 },
-v5 = [
+v5 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "scope"
+},
+v6 = [
   {
     "kind": "Variable",
     "name": "filter",
@@ -196,64 +210,69 @@ v5 = [
     "kind": "Variable",
     "name": "orderBy",
     "variableName": "orderBy"
+  },
+  {
+    "kind": "Variable",
+    "name": "scope",
+    "variableName": "scope"
   }
 ],
-v6 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "count",
   "storageKey": null
 },
-v7 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v8 = {
+v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "entityId",
   "storageKey": null
 },
-v9 = {
+v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v10 = {
+v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "vfolderId",
   "storageKey": null
 },
-v11 = [
-  (v9/*: any*/)
+v12 = [
+  (v10/*: any*/)
 ],
-v12 = {
+v13 = {
   "alias": null,
   "args": null,
   "concreteType": "VFolderMetadataInfo",
   "kind": "LinkedField",
   "name": "metadata",
   "plural": false,
-  "selections": (v11/*: any*/),
+  "selections": (v12/*: any*/),
   "storageKey": null
 },
-v13 = {
+v14 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "projectId",
   "storageKey": null
 },
-v14 = {
+v15 = {
   "alias": null,
   "args": null,
   "concreteType": "ProjectV2",
@@ -261,7 +280,7 @@ v14 = {
   "name": "project",
   "plural": false,
   "selections": [
-    (v7/*: any*/),
+    (v8/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -269,55 +288,55 @@ v14 = {
       "kind": "LinkedField",
       "name": "basicInfo",
       "plural": false,
-      "selections": (v11/*: any*/),
+      "selections": (v12/*: any*/),
       "storageKey": null
     }
   ],
-  "storageKey": null
-},
-v15 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "accessLevel",
   "storageKey": null
 },
 v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "createdAt",
+  "name": "accessLevel",
   "storageKey": null
 },
 v17 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "updatedAt",
+  "name": "createdAt",
   "storageKey": null
 },
 v18 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "title",
+  "name": "updatedAt",
   "storageKey": null
 },
 v19 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "category",
+  "name": "title",
   "storageKey": null
 },
 v20 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "task",
+  "name": "category",
   "storageKey": null
 },
 v21 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "task",
+  "storageKey": null
+},
+v22 = {
   "alias": null,
   "args": [
     {
@@ -343,8 +362,8 @@ v21 = {
   "name": "groups",
   "plural": true,
   "selections": [
-    (v7/*: any*/),
-    (v9/*: any*/)
+    (v8/*: any*/),
+    (v10/*: any*/)
   ],
   "storageKey": null
 };
@@ -355,7 +374,8 @@ return {
       (v1/*: any*/),
       (v2/*: any*/),
       (v3/*: any*/),
-      (v4/*: any*/)
+      (v4/*: any*/),
+      (v5/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
@@ -363,13 +383,13 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v5/*: any*/),
+        "args": (v6/*: any*/),
         "concreteType": "ModelCardV2Connection",
         "kind": "LinkedField",
-        "name": "adminModelCardsV2",
+        "name": "scopedModelCardsV2",
         "plural": false,
         "selections": [
-          (v6/*: any*/),
+          (v7/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -386,10 +406,10 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v7/*: any*/),
                   (v8/*: any*/),
                   (v9/*: any*/),
                   (v10/*: any*/),
+                  (v11/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -398,8 +418,8 @@ return {
                     "name": "vfolder",
                     "plural": false,
                     "selections": [
-                      (v7/*: any*/),
-                      (v12/*: any*/),
+                      (v8/*: any*/),
+                      (v13/*: any*/),
                       {
                         "args": null,
                         "kind": "FragmentSpread",
@@ -408,11 +428,11 @@ return {
                     ],
                     "storageKey": null
                   },
-                  (v13/*: any*/),
                   (v14/*: any*/),
                   (v15/*: any*/),
                   (v16/*: any*/),
                   (v17/*: any*/),
+                  (v18/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -421,9 +441,9 @@ return {
                     "name": "metadata",
                     "plural": false,
                     "selections": [
-                      (v18/*: any*/),
                       (v19/*: any*/),
-                      (v20/*: any*/)
+                      (v20/*: any*/),
+                      (v21/*: any*/)
                     ],
                     "storageKey": null
                   },
@@ -441,7 +461,7 @@ return {
         ],
         "storageKey": null
       },
-      (v21/*: any*/)
+      (v22/*: any*/)
     ],
     "type": "Query",
     "abstractKey": null
@@ -453,20 +473,21 @@ return {
       (v4/*: any*/),
       (v2/*: any*/),
       (v3/*: any*/),
-      (v0/*: any*/)
+      (v0/*: any*/),
+      (v5/*: any*/)
     ],
     "kind": "Operation",
     "name": "AdminModelCardQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v5/*: any*/),
+        "args": (v6/*: any*/),
         "concreteType": "ModelCardV2Connection",
         "kind": "LinkedField",
-        "name": "adminModelCardsV2",
+        "name": "scopedModelCardsV2",
         "plural": false,
         "selections": [
-          (v6/*: any*/),
+          (v7/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -483,10 +504,10 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v7/*: any*/),
                   (v8/*: any*/),
                   (v9/*: any*/),
                   (v10/*: any*/),
+                  (v11/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -495,16 +516,16 @@ return {
                     "name": "vfolder",
                     "plural": false,
                     "selections": [
-                      (v7/*: any*/),
-                      (v12/*: any*/)
+                      (v8/*: any*/),
+                      (v13/*: any*/)
                     ],
                     "storageKey": null
                   },
-                  (v13/*: any*/),
                   (v14/*: any*/),
                   (v15/*: any*/),
                   (v16/*: any*/),
                   (v17/*: any*/),
+                  (v18/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -513,9 +534,9 @@ return {
                     "name": "metadata",
                     "plural": false,
                     "selections": [
-                      (v18/*: any*/),
                       (v19/*: any*/),
                       (v20/*: any*/),
+                      (v21/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -584,20 +605,20 @@ return {
         ],
         "storageKey": null
       },
-      (v21/*: any*/)
+      (v22/*: any*/)
     ]
   },
   "params": {
-    "cacheID": "5eb7d8e97196b80b15e578c3e8f9acdc",
+    "cacheID": "b08bf790bc74323052a211b6b2e5adcd",
     "id": null,
     "metadata": {},
     "name": "AdminModelCardQuery",
     "operationKind": "query",
-    "text": "query AdminModelCardQuery(\n  $filter: ModelCardV2Filter\n  $orderBy: [ModelCardV2OrderBy!]\n  $limit: Int\n  $offset: Int\n  $domainName: String\n) {\n  adminModelCardsV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        name\n        vfolderId\n        vfolder {\n          id\n          metadata {\n            name\n          }\n          ...VFolderNodeIdenticonV2Fragment\n        }\n        projectId\n        project {\n          id\n          basicInfo {\n            name\n          }\n        }\n        accessLevel\n        createdAt\n        updatedAt\n        metadata {\n          title\n          category\n          task\n        }\n        ...AdminModelCardSettingModalFragment\n      }\n    }\n  }\n  groups(domain_name: $domainName, is_active: true, type: [\"MODEL_STORE\"]) {\n    id\n    name\n  }\n}\n\nfragment AdminModelCardSettingModalFragment on ModelCardV2 {\n  id\n  entityId\n  name\n  vfolderId\n  vfolder {\n    metadata {\n      name\n    }\n    ...VFolderNodeIdenticonV2Fragment\n    id\n  }\n  projectId\n  readme\n  accessLevel\n  metadata {\n    author\n    title\n    modelVersion\n    description\n    task\n    category\n    architecture\n    framework\n    label\n    license\n  }\n}\n\nfragment VFolderNodeIdenticonV2Fragment on VFolder {\n  id\n}\n"
+    "text": "query AdminModelCardQuery(\n  $filter: ModelCardV2Filter\n  $orderBy: [ModelCardV2OrderBy!]\n  $limit: Int\n  $offset: Int\n  $domainName: String\n  $scope: ModelCardScope!\n) {\n  scopedModelCardsV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        name\n        vfolderId\n        vfolder {\n          id\n          metadata {\n            name\n          }\n          ...VFolderNodeIdenticonV2Fragment\n        }\n        projectId\n        project {\n          id\n          basicInfo {\n            name\n          }\n        }\n        accessLevel\n        createdAt\n        updatedAt\n        metadata {\n          title\n          category\n          task\n        }\n        ...AdminModelCardSettingModalFragment\n      }\n    }\n  }\n  groups(domain_name: $domainName, is_active: true, type: [\"MODEL_STORE\"]) {\n    id\n    name\n  }\n}\n\nfragment AdminModelCardSettingModalFragment on ModelCardV2 {\n  id\n  entityId\n  name\n  vfolderId\n  vfolder {\n    metadata {\n      name\n    }\n    ...VFolderNodeIdenticonV2Fragment\n    id\n  }\n  projectId\n  readme\n  accessLevel\n  metadata {\n    author\n    title\n    modelVersion\n    description\n    task\n    category\n    architecture\n    framework\n    label\n    license\n  }\n}\n\nfragment VFolderNodeIdenticonV2Fragment on VFolder {\n  id\n}\n"
   }
 };
 })();
 
-(node as any).hash = "8cf2da2e1293cede23effbf20393118b";
+(node as any).hash = "dc68a8d0b6d3ccaf5dd077de3e417255";
 
 export default node;

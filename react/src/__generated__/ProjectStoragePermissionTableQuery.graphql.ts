@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<adda953c468416474d5df4595f51274d>>
+ * @generated SignedSource<<e3ae7e7851978fe2ef9c01a2cf1679af>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,6 +13,14 @@ export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type ProjectTypeV2 = "GENERAL" | "MODEL_STORE" | "PERSONAL" | "%future added value";
 export type ProjectV2OrderField = "CREATED_AT" | "DESCRIPTION" | "DOMAIN_NAME" | "ID" | "INTEGRATION_NAME" | "IS_ACTIVE" | "MODIFIED_AT" | "NAME" | "TYPE" | "USER_EMAIL" | "USER_USERNAME" | "%future added value";
 export type VFolderHostPermissionV2 = "CREATE_VFOLDER" | "DELETE_VFOLDER" | "DOWNLOAD_FILE" | "INVITE_OTHERS" | "MODIFY_VFOLDER" | "MOUNT_IN_SESSION" | "SET_USER_PERM" | "UPLOAD_FILE" | "%future added value";
+export type ProjectScope = {
+  domain?: ReadonlyArray<UUIDScope> | null | undefined;
+  resourceGroup?: ReadonlyArray<UUIDScope> | null | undefined;
+  user?: ReadonlyArray<UUIDScope> | null | undefined;
+};
+export type UUIDScope = {
+  value: string;
+};
 export type ProjectV2Filter = {
   AND?: ReadonlyArray<ProjectV2Filter> | null | undefined;
   NOT?: ReadonlyArray<ProjectV2Filter> | null | undefined;
@@ -85,15 +93,15 @@ export type ProjectV2OrderBy = {
   field?: ProjectV2OrderField;
 };
 export type ProjectStoragePermissionTableQuery$variables = {
-  domainName: string;
   filter?: ProjectV2Filter | null | undefined;
   limit?: number | null | undefined;
   offset?: number | null | undefined;
   orderBy?: ReadonlyArray<ProjectV2OrderBy> | null | undefined;
+  scope: ProjectScope;
   skip: boolean;
 };
 export type ProjectStoragePermissionTableQuery$data = {
-  readonly domainProjectsV2?: {
+  readonly scopedProjectsV2?: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -121,27 +129,27 @@ const node: ConcreteRequest = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "domainName"
+  "name": "filter"
 },
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "filter"
+  "name": "limit"
 },
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "limit"
+  "name": "offset"
 },
 v3 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "offset"
+  "name": "orderBy"
 },
 v4 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "orderBy"
+  "name": "scope"
 },
 v5 = {
   "defaultValue": null,
@@ -178,20 +186,14 @@ v6 = [
             "variableName": "orderBy"
           },
           {
-            "fields": [
-              {
-                "kind": "Variable",
-                "name": "domainName",
-                "variableName": "domainName"
-              }
-            ],
-            "kind": "ObjectValue",
-            "name": "scope"
+            "kind": "Variable",
+            "name": "scope",
+            "variableName": "scope"
           }
         ],
         "concreteType": "ProjectV2Connection",
         "kind": "LinkedField",
-        "name": "domainProjectsV2",
+        "name": "scopedProjectsV2",
         "plural": false,
         "selections": [
           {
@@ -317,28 +319,28 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v0/*: any*/),
+      (v4/*: any*/),
       (v5/*: any*/),
-      (v2/*: any*/),
-      (v3/*: any*/),
       (v1/*: any*/),
-      (v4/*: any*/)
+      (v2/*: any*/),
+      (v0/*: any*/),
+      (v3/*: any*/)
     ],
     "kind": "Operation",
     "name": "ProjectStoragePermissionTableQuery",
     "selections": (v6/*: any*/)
   },
   "params": {
-    "cacheID": "4d2114fa633e4c87cec370cf3c4bc4a4",
+    "cacheID": "98f3d32ed4c7805e8d2ccb22f5142dd8",
     "id": null,
     "metadata": {},
     "name": "ProjectStoragePermissionTableQuery",
     "operationKind": "query",
-    "text": "query ProjectStoragePermissionTableQuery(\n  $domainName: String!\n  $skip: Boolean!\n  $limit: Int\n  $offset: Int\n  $filter: ProjectV2Filter\n  $orderBy: [ProjectV2OrderBy!]\n) {\n  domainProjectsV2(scope: {domainName: $domainName}, limit: $limit, offset: $offset, filter: $filter, orderBy: $orderBy) @skip(if: $skip) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          name\n        }\n        storage {\n          allowedVfolderHosts {\n            host\n            permissions\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ProjectStoragePermissionTableQuery(\n  $scope: ProjectScope!\n  $skip: Boolean!\n  $limit: Int\n  $offset: Int\n  $filter: ProjectV2Filter\n  $orderBy: [ProjectV2OrderBy!]\n) {\n  scopedProjectsV2(scope: $scope, limit: $limit, offset: $offset, filter: $filter, orderBy: $orderBy) @skip(if: $skip) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          name\n        }\n        storage {\n          allowedVfolderHosts {\n            host\n            permissions\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "a076975258ec8a33449a2375f9645f21";
+(node as any).hash = "6b0bb998646a61e53ef9ad10dc92826e";
 
 export default node;

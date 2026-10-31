@@ -8,7 +8,7 @@ import { useCurrentDomain } from '../hooks';
 import QuotaScopeTable from './QuotaScopeTable';
 import {
   BAISkeleton,
-  BAIAdminProjectSelect,
+  BAIScopedProjectSelect,
   BAIFlex,
   BAIScopedUserSelect,
   BAISegmentedControl,
@@ -78,7 +78,8 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
           />
         </BAISegmentedControl>
         {currentSettingType === 'project' ? (
-          <BAIAdminProjectSelect
+          <BAIScopedProjectSelect
+            scope={domainScope}
             // The adjacent radio group already prints "For Project", so the
             // field's accessible name reuses it and stays visually hidden.
             label={t('storageHost.ForProject')}

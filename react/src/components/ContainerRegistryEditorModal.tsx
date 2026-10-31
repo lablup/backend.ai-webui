@@ -7,13 +7,13 @@ import { ContainerRegistryEditorModalFragment$key } from '../__generated__/Conta
 import { ContainerRegistryEditorModalModifyRegistryMutation } from '../__generated__/ContainerRegistryEditorModalModifyRegistryMutation.graphql';
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient, useCurrentDomain } from '../hooks';
 import BAICodeEditor from './BAICodeEditor';
 import BAIFormItem from './BAIFormItem';
 import HiddenFormItem from './HiddenFormItem';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIAdminProjectSelect,
+  BAIScopedProjectSelect,
   BAIFlex,
   BAIModal,
   BAIModalProps,
@@ -91,6 +91,8 @@ const ContainerRegistryEditorModal: React.FC<
   ContainerRegistryEditorModalProps
 > = ({ containerRegistryFrgmt = null, onOk, initialValues, ...modalProps }) => {
   'use memo';
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
   const { t } = useTranslation();
   const { token } = useTheme();
   const { message, modal } = App.useApp();
@@ -587,7 +589,8 @@ const ContainerRegistryEditorModal: React.FC<
                   name="allowed_group_ids"
                   label={t('registry.AllowedProjects')}
                 >
-                  <BAIAdminProjectSelect
+                  <BAIScopedProjectSelect
+                    scope={domainScope}
                     label={t('registry.AllowedProjects')}
                     isLabelHidden
                     multiple

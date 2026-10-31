@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<dbf19b5ec456d21fce8a6f61653620bc>>
+ * @generated SignedSource<<9dbd5c619042373052bde52d8689f8bb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,12 +9,21 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type BAIAdminProjectSelectValueQuery$variables = {
+export type ProjectScope = {
+  domain?: ReadonlyArray<UUIDScope> | null | undefined;
+  resourceGroup?: ReadonlyArray<UUIDScope> | null | undefined;
+  user?: ReadonlyArray<UUIDScope> | null | undefined;
+};
+export type UUIDScope = {
+  value: string;
+};
+export type BAIScopedProjectSelectValueQuery$variables = {
   projectIds: ReadonlyArray<string>;
+  scope: ProjectScope;
   skipSelected: boolean;
 };
-export type BAIAdminProjectSelectValueQuery$data = {
-  readonly adminProjectsV2?: {
+export type BAIScopedProjectSelectValueQuery$data = {
+  readonly scopedProjectsV2?: {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly basicInfo: {
@@ -26,9 +35,9 @@ export type BAIAdminProjectSelectValueQuery$data = {
     }>;
   } | null | undefined;
 };
-export type BAIAdminProjectSelectValueQuery = {
-  response: BAIAdminProjectSelectValueQuery$data;
-  variables: BAIAdminProjectSelectValueQuery$variables;
+export type BAIScopedProjectSelectValueQuery = {
+  response: BAIScopedProjectSelectValueQuery$data;
+  variables: BAIScopedProjectSelectValueQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -37,6 +46,11 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "projectIds"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "scope"
   },
   {
     "defaultValue": null,
@@ -74,11 +88,16 @@ v1 = [
             "kind": "Literal",
             "name": "limit",
             "value": 100
+          },
+          {
+            "kind": "Variable",
+            "name": "scope",
+            "variableName": "scope"
           }
         ],
         "concreteType": "ProjectV2Connection",
         "kind": "LinkedField",
-        "name": "adminProjectsV2",
+        "name": "scopedProjectsV2",
         "plural": false,
         "selections": [
           {
@@ -146,7 +165,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "BAIAdminProjectSelectValueQuery",
+    "name": "BAIScopedProjectSelectValueQuery",
     "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -155,20 +174,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "BAIAdminProjectSelectValueQuery",
+    "name": "BAIScopedProjectSelectValueQuery",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "70891ecbabe030e69ff125083dbeb5fb",
+    "cacheID": "39a24aea0a6224a55ebe1862b4295d46",
     "id": null,
     "metadata": {},
-    "name": "BAIAdminProjectSelectValueQuery",
+    "name": "BAIScopedProjectSelectValueQuery",
     "operationKind": "query",
-    "text": "query BAIAdminProjectSelectValueQuery(\n  $projectIds: [UUID!]!\n  $skipSelected: Boolean!\n) {\n  adminProjectsV2(filter: {id: {in: $projectIds}}, limit: 100) @skip(if: $skipSelected) {\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIScopedProjectSelectValueQuery(\n  $projectIds: [UUID!]!\n  $scope: ProjectScope!\n  $skipSelected: Boolean!\n) {\n  scopedProjectsV2(scope: $scope, filter: {id: {in: $projectIds}}, limit: 100) @skip(if: $skipSelected) {\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "a8a20e02a8297224ff6315d1721dba57";
+(node as any).hash = "8cc00372f7578932897f1cbe2dc0e25d";
 
 export default node;

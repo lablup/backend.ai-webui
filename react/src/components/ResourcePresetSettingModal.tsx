@@ -9,14 +9,15 @@ import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { convertToBinaryUnit } from '../helper';
 import { reasonMessage } from '../helper/mutationError';
+import { useCurrentDomain } from '../hooks';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import BAIFormItem from './BAIFormItem';
 import {
   BAIDynamicUnitInputNumber,
   BAIModal,
   BAIModalProps,
-  BAIResourceGroupSelect,
-  BAIResourceGroupSelectProps,
+  BAIScopedResourceGroupSelect,
+  BAIScopedResourceGroupSelectProps,
   BAISelect,
   BAINumberInput,
   BAITextInput,
@@ -28,21 +29,21 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 /**
- * Resource groups a preset may be bound to, listed at ADMIN scope — no project
- * involved. A resource preset has no project dimension in the manager
- * (`resource_presets` has no group column; its only relation is to one
- * `ScalingGroupRow`, and a null `scaling_group_name` means the preset is
- * global), so the options must not be narrowed by any project.
- * `BAIResourceGroupSelect` lists `adminResourceGroups` unfiltered, which is
- * exactly that list. Spreading `props` keeps the value/onChange pair
- * `BAIFormItem` injects into its direct child from being swallowed by the
- * Suspense boundary.
+ * Resource groups of the current domain a preset may be bound to (ADR 0012).
+ * Spreading `props` keeps the value/onChange pair `BAIFormItem` injects into its
+ * direct child from being swallowed by the Suspense boundary.
  */
-const ResourceGroupSelect: React.FC<BAIResourceGroupSelectProps> = (props) => {
+const ResourceGroupSelect: React.FC<
+  Omit<BAIScopedResourceGroupSelectProps, 'scope'>
+> = (props) => {
   'use memo';
+  const { id: currentDomainId } = useCurrentDomain();
   return (
     <Suspense fallback={<BAISelect {...props} loading disabled />}>
-      <BAIResourceGroupSelect {...props} />
+      <BAIScopedResourceGroupSelect
+        scope={{ domain: [{ value: currentDomainId }] }}
+        {...props}
+      />
     </Suspense>
   );
 };

@@ -14,7 +14,7 @@ import { useCurrentDomain } from '../hooks';
 import {
   BAIAdminContainerRegistrySelect,
   BAIAdminModelServiceSelect,
-  BAIAdminProjectSelect,
+  BAIScopedProjectSelect,
   BAIAdminResourceGroupSelect,
   BAIAdminSessionSelect,
   BAIFlex,
@@ -120,6 +120,7 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   ...selectProps
 }) => {
   'use memo';
+  const { id: currentDomainId } = useCurrentDomain();
   const { t } = useTranslation();
   const scopeType = rawScopeType?.toUpperCase();
   // The surrounding `Form.Item` already prints "Scope ID", so the Astryx
@@ -141,7 +142,10 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   if (scopeType === 'PROJECT') {
     return (
       <Suspense fallback={fallback}>
-        <BAIAdminProjectSelect {...branchProps} />
+        <BAIScopedProjectSelect
+          scope={{ domain: [{ value: currentDomainId }] }}
+          {...branchProps}
+        />
       </Suspense>
     );
   }

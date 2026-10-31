@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a6cb76653b149c0d06d6ec8bba0b85df>>
+ * @generated SignedSource<<469bf42d62fc9b61a2c6519d9d1f7100>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -77,13 +77,22 @@ export type ProjectUserNestedFilter = {
   isActive?: boolean | null | undefined;
   username?: StringFilter | null | undefined;
 };
-export type BAIAdminProjectSelectPaginatedQuery$variables = {
+export type ProjectScope = {
+  domain?: ReadonlyArray<UUIDScope> | null | undefined;
+  resourceGroup?: ReadonlyArray<UUIDScope> | null | undefined;
+  user?: ReadonlyArray<UUIDScope> | null | undefined;
+};
+export type UUIDScope = {
+  value: string;
+};
+export type BAIScopedProjectSelectPaginatedQuery$variables = {
   filter?: ProjectV2Filter | null | undefined;
   limit: number;
   offset: number;
+  scope: ProjectScope;
 };
-export type BAIAdminProjectSelectPaginatedQuery$data = {
-  readonly adminProjectsV2: {
+export type BAIScopedProjectSelectPaginatedQuery$data = {
+  readonly scopedProjectsV2: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -96,9 +105,9 @@ export type BAIAdminProjectSelectPaginatedQuery$data = {
     }>;
   } | null | undefined;
 };
-export type BAIAdminProjectSelectPaginatedQuery = {
-  response: BAIAdminProjectSelectPaginatedQuery$data;
-  variables: BAIAdminProjectSelectPaginatedQuery$variables;
+export type BAIScopedProjectSelectPaginatedQuery = {
+  response: BAIScopedProjectSelectPaginatedQuery$data;
+  variables: BAIScopedProjectSelectPaginatedQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -117,7 +126,12 @@ v2 = {
   "kind": "LocalArgument",
   "name": "offset"
 },
-v3 = [
+v3 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "scope"
+},
+v4 = [
   {
     "alias": null,
     "args": [
@@ -145,11 +159,16 @@ v3 = [
             "field": "NAME"
           }
         ]
+      },
+      {
+        "kind": "Variable",
+        "name": "scope",
+        "variableName": "scope"
       }
     ],
     "concreteType": "ProjectV2Connection",
     "kind": "LinkedField",
-    "name": "adminProjectsV2",
+    "name": "scopedProjectsV2",
     "plural": false,
     "selections": [
       {
@@ -222,12 +241,13 @@ return {
     "argumentDefinitions": [
       (v0/*: any*/),
       (v1/*: any*/),
-      (v2/*: any*/)
+      (v2/*: any*/),
+      (v3/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "BAIAdminProjectSelectPaginatedQuery",
-    "selections": (v3/*: any*/),
+    "name": "BAIScopedProjectSelectPaginatedQuery",
+    "selections": (v4/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -236,23 +256,24 @@ return {
     "argumentDefinitions": [
       (v2/*: any*/),
       (v1/*: any*/),
-      (v0/*: any*/)
+      (v0/*: any*/),
+      (v3/*: any*/)
     ],
     "kind": "Operation",
-    "name": "BAIAdminProjectSelectPaginatedQuery",
-    "selections": (v3/*: any*/)
+    "name": "BAIScopedProjectSelectPaginatedQuery",
+    "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "bd5f606eca9f7bda49cfb3391b17c896",
+    "cacheID": "f6696f8ebce09d554ba04441adb6434e",
     "id": null,
     "metadata": {},
-    "name": "BAIAdminProjectSelectPaginatedQuery",
+    "name": "BAIScopedProjectSelectPaginatedQuery",
     "operationKind": "query",
-    "text": "query BAIAdminProjectSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: ProjectV2Filter\n) {\n  adminProjectsV2(offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: NAME, direction: ASC}]) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIScopedProjectSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: ProjectV2Filter\n  $scope: ProjectScope!\n) {\n  scopedProjectsV2(scope: $scope, offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: NAME, direction: ASC}]) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "4d29b458f841bf78afbcccaae9a3fa62";
+(node as any).hash = "8c538a262d1d500601748fe6431e144a";
 
 export default node;

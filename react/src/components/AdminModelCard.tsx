@@ -17,7 +17,7 @@ import {
   handleRowSelectionChange,
 } from '../helper';
 import { buildPath } from '../helper/pathBuilder';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient, useCurrentDomain } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import AdminModelCardSettingModal from './AdminModelCardSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -27,7 +27,7 @@ import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIAdminProjectSelect,
+  BAIScopedProjectSelect,
   BAIAlert,
   BAIButton,
   BAIColumnType,
@@ -64,7 +64,7 @@ import {
 } from 'react-relay';
 
 type ModelCardNode = NonNullableNodeOnEdges<
-  AdminModelCardQuery$data['adminModelCardsV2']
+  AdminModelCardQuery$data['scopedModelCardsV2']
 >;
 
 const availableModelCardSorterKeys = [
@@ -90,8 +90,10 @@ export const AdminModelCardQuery = graphql`
     $limit: Int
     $offset: Int
     $domainName: String
+    $scope: ModelCardScope!
   ) {
-    adminModelCardsV2(
+    scopedModelCardsV2(
+      scope: $scope
       filter: $filter
       orderBy: $orderBy
       limit: $limit
@@ -155,6 +157,8 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   tableSettings,
 }) => {
   'use memo';
+  const { id: currentDomainId } = useCurrentDomain();
+  const domainScope = { domain: [{ value: currentDomainId }] };
 
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -187,7 +191,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   const deferredQueryRef = useDeferredValue(queryRef);
   const isRefetching = deferredQueryRef !== queryRef;
 
-  const { adminModelCardsV2, groups } =
+  const { scopedModelCardsV2, groups } =
     usePreloadedQuery<AdminModelCardQueryType>(
       AdminModelCardQuery,
       deferredQueryRef,
@@ -240,7 +244,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
     setIsSettingModalOpen(true);
   };
 
-  const modelCards = adminModelCardsV2?.edges?.map((edge) => edge?.node) ?? [];
+  const modelCards = scopedModelCardsV2?.edges?.map((edge) => edge?.node) ?? [];
 
   const editingModelCard = editingModelCardId
     ? modelCards.find((mc) => mc?.id === editingModelCardId)
@@ -401,7 +405,8 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                   validate: (value) => isValidUUID(value),
                 },
                 renderInput: ({ onAddCondition, value, isDisabled }) => (
-                  <BAIAdminProjectSelect
+                  <BAIScopedProjectSelect
+                    scope={domainScope}
                     label={t('adminModelCard.Project')}
                     isLabelHidden
                     // A model card belongs to a MODEL_STORE project (see the
@@ -543,7 +548,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
         pagination={{
           pageSize,
           current,
-          total: adminModelCardsV2?.count ?? 0,
+          total: scopedModelCardsV2?.count ?? 0,
           onChange: (nextCurrent, nextPageSize) => {
             onReload(
               {
