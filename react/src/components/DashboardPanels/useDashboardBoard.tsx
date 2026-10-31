@@ -15,7 +15,6 @@ import {
   applyLayout,
   catalogFor,
   panelTitleKey,
-  migrateLegacyBoard,
   removePanel,
   resetBoard,
   sanitizeBoard,
@@ -27,6 +26,7 @@ import {
   updatePanel,
   type CatalogEntry,
 } from './boardModel';
+import { updateBoard } from './dashboardConfig';
 import { createPanel, panelConfigFromInput } from './defaults';
 import { effectivePanelType, panelRegistry } from './panelRegistry';
 import { availableResourceKeys, resolvePanelTitle } from './resourceRegistry';
@@ -42,52 +42,47 @@ import type {
   PersistedPanelV2,
   ResourceKey,
 } from './types';
+import {
+  useDashboardBoards,
+  type DashboardBoardsState,
+} from './useDashboardBoards';
 import { BAIBoardItemErrorBoundary, type BAIBoardItem } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 
 /** Where a board is kept. The next storage backend replaces `useBoardStore`, nothing else. */
-export type BoardStore = (page: PanelPage) => {
+export type BoardStore = (
+  page: PanelPage,
+  catalog: ReadonlyArray<PanelDefinition>,
+) => {
   /** The stored board, unsanitized; null when nothing is stored. */
   board: unknown;
   save: (board: DashboardBoard) => void;
+  /** What "Reset layout" restores; the code default when absent. */
+  template?: DashboardBoard;
+  /** The page's boards, for the board tabs. */
+  boards?: DashboardBoardsState;
 };
 
-const BOARD_SETTING_KEYS = {
-  project: 'dashboard_board.project',
-  projectAdmin: 'dashboard_board.projectAdmin',
-  admin: 'dashboard_board.admin',
-} as const;
-
-/**
- * Keeps each page's board in localStorage. Until a page's board is first saved
- * it is read from the pre-catalog keys, so existing layouts carry over.
- */
-export const useLocalStorageBoardStore: BoardStore = (page) => {
+/** Keeps the page's active board in `userConfig.dashboard` (manager app config). */
+export const useAppConfigBoardStore: BoardStore = (page, catalog) => {
   'use memo';
-  const [stored, setStored] = useBAISettingUserState(BOARD_SETTING_KEYS[page]);
-  const [legacyLayout] = useBAISettingUserState('dashboard_board_items');
-  const [legacyAdminLayout] = useBAISettingUserState(
-    'admin_dashboard_board_items',
-  );
-  const [legacyCustomPanels] = useBAISettingUserState(
-    'custom_dashboard_panels',
-  );
-  const legacyBoard =
-    page === 'project'
-      ? migrateLegacyBoard({
-          layout: legacyLayout,
-          customPanels: legacyCustomPanels,
-        })
-      : page === 'admin'
-        ? migrateLegacyBoard({ layout: legacyAdminLayout, customPanels: [] })
-        : null;
+  const boards = useDashboardBoards(page, catalog);
   return {
-    board: stored ?? legacyBoard,
-    save: (board) => setStored(board),
+    board: boards.activeBoard,
+    save: (board) =>
+      boards.update((config) =>
+        updateBoard(config, boards.activeBoard.id, (active) => ({
+          ...active,
+          panels: board.panels,
+          knownKeys: board.knownKeys,
+        })),
+      ),
+    template: boards.template,
+    boards,
   };
 };
 
-const useBoardStore: BoardStore = useLocalStorageBoardStore;
+const useBoardStore: BoardStore = useAppConfigBoardStore;
 
 export interface UseDashboardBoardOptions {
   page: PanelPage;
@@ -123,6 +118,8 @@ export interface UseDashboardBoardResult {
     id: string,
     settings: PanelSettings | undefined,
   ) => void;
+  /** The page's boards, when the store keeps more than one. */
+  boards?: DashboardBoardsState;
 }
 
 export interface PanelSettingsTarget {
@@ -150,7 +147,12 @@ export const useDashboardBoard = ({
   const [gridEnabled] = useBAISettingUserState(
     'experimental_session_resource_grid',
   );
-  const { board: storedBoard, save } = useBoardStore(page);
+  const {
+    board: storedBoard,
+    save,
+    template,
+    boards,
+  } = useBoardStore(page, catalog);
 
   const config: PanelCatalogConfig = {
     blockList: baiClient?._config?.blockList ?? [],
@@ -284,7 +286,6 @@ export const useDashboardBoard = ({
     addCustomPanel,
     updateCustomPanel,
     removePanel: removeById,
-    resetLayout: () => save(resetBoard(board, catalog, page)),
     settingsTargetOf: (id) => {
       const panel = board.panels.find((item) => item.id === id);
       const definition = panel ? definitionByKey.get(panel.key) : undefined;
@@ -300,5 +301,7 @@ export const useDashboardBoard = ({
     },
     updatePanelSettings: (id, settings) =>
       save(updatePanel(board, id, { settings })),
+    resetLayout: () => save(resetBoard(board, catalog, page, template)),
+    boards,
   };
 };

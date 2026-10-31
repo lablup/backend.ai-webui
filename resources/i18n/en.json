@@ -793,6 +793,16 @@
     "Edit": "Edit",
     "Free": "Free",
     "Used": "Used",
+    "boards": {
+      "BoardName": "Board name",
+      "BoardNameRequired": "Enter a board name",
+      "Boards": "Boards",
+      "CannotDeleteLastBoard": "The last board cannot be deleted",
+      "DefaultBoard": "Default",
+      "DeleteBoard": "Delete board",
+      "NewBoard": "New board",
+      "NewBoardTitle": "Board {{number}}"
+    },
     "catalog": {
       "group": {
         "Activity": "Activity",

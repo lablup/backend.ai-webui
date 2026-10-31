@@ -806,6 +806,16 @@
     "Edit": "Muokkaa",
     "Free": "Ilmainen",
     "Used": "Käytetty",
+    "boards": {
+      "BoardName": "Taulun nimi",
+      "BoardNameRequired": "Anna taulun nimi",
+      "Boards": "Taulut",
+      "CannotDeleteLastBoard": "Viimeistä taulua ei voi poistaa",
+      "DefaultBoard": "Oletus",
+      "DeleteBoard": "Poista taulu",
+      "NewBoard": "Uusi taulu",
+      "NewBoardTitle": "Taulu {{number}}"
+    },
     "catalog": {
       "group": {
         "Activity": "Toiminta",

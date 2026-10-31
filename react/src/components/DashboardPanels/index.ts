@@ -3,10 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 export { default as DashboardPanelBoard } from './DashboardPanelBoard';
-export {
-  useDashboardBoard,
-  useLocalStorageBoardStore,
-} from './useDashboardBoard';
+export { useAppConfigBoardStore, useDashboardBoard } from './useDashboardBoard';
+export { useDashboardBoards } from './useDashboardBoards';
+export type { DashboardBoardsState } from './useDashboardBoards';
 export type {
   BoardStore,
   UseDashboardBoardOptions,
@@ -17,7 +16,6 @@ export {
   addPanel,
   applyLayout,
   catalogFor,
-  migrateLegacyBoard,
   panelTitleKey,
   removePanel,
   resetBoard,
@@ -41,6 +39,11 @@ export { DEFAULT_PANEL_LAYOUTS, createPanel } from './defaults';
 export { resourceRegistry, resourceKeys } from './resourceRegistry';
 export type {
   DashboardBoard,
+  DashboardBoardVars,
+  DashboardConfig,
+  DashboardModel,
+  DashboardPageConfig,
+  DashboardTemplates,
   DashboardPageQueryRefs,
   DashboardScope,
   DashboardVars,

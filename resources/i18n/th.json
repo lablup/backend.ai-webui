@@ -803,6 +803,16 @@
     "Edit": "แก้ไข",
     "Free": "ฟรี",
     "Used": "ใช้แล้ว",
+    "boards": {
+      "BoardName": "ชื่อบอร์ด",
+      "BoardNameRequired": "ป้อนชื่อบอร์ด",
+      "Boards": "บอร์ด",
+      "CannotDeleteLastBoard": "ไม่สามารถลบบอร์ดสุดท้ายได้",
+      "DefaultBoard": "ค่าเริ่มต้น",
+      "DeleteBoard": "ลบบอร์ด",
+      "NewBoard": "บอร์ดใหม่",
+      "NewBoardTitle": "บอร์ด {{number}}"
+    },
     "catalog": {
       "group": {
         "Activity": "กิจกรรม",

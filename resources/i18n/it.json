@@ -806,6 +806,16 @@
     "Edit": "Modifica",
     "Free": "Gratuito",
     "Used": "Usato",
+    "boards": {
+      "BoardName": "Nome della bacheca",
+      "BoardNameRequired": "Inserisci un nome per la bacheca",
+      "Boards": "Bacheche",
+      "CannotDeleteLastBoard": "L'ultima bacheca non può essere eliminata",
+      "DefaultBoard": "Predefinita",
+      "DeleteBoard": "Elimina bacheca",
+      "NewBoard": "Nuova bacheca",
+      "NewBoardTitle": "Bacheca {{number}}"
+    },
     "catalog": {
       "group": {
         "Activity": "Attività",

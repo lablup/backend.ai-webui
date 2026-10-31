@@ -806,6 +806,16 @@
     "Edit": "Chỉnh sửa",
     "Free": "Miễn phí",
     "Used": "Đã sử dụng",
+    "boards": {
+      "BoardName": "Tên bảng",
+      "BoardNameRequired": "Nhập tên bảng",
+      "Boards": "Bảng",
+      "CannotDeleteLastBoard": "Không thể xóa bảng cuối cùng",
+      "DefaultBoard": "Mặc định",
+      "DeleteBoard": "Xóa bảng",
+      "NewBoard": "Bảng mới",
+      "NewBoardTitle": "Bảng {{number}}"
+    },
     "catalog": {
       "group": {
         "Activity": "Hoạt động",

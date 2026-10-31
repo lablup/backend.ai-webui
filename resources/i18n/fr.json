@@ -806,6 +806,16 @@
     "Edit": "Éditer",
     "Free": "Gratuit",
     "Used": "Utilisé",
+    "boards": {
+      "BoardName": "Nom du tableau",
+      "BoardNameRequired": "Saisissez un nom de tableau",
+      "Boards": "Tableaux",
+      "CannotDeleteLastBoard": "Le dernier tableau ne peut pas être supprimé",
+      "DefaultBoard": "Par défaut",
+      "DeleteBoard": "Supprimer le tableau",
+      "NewBoard": "Nouveau tableau",
+      "NewBoardTitle": "Tableau {{number}}"
+    },
     "catalog": {
       "group": {
         "Activity": "Activité",

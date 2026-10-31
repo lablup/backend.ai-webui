@@ -806,6 +806,16 @@
     "Edit": "Editar",
     "Free": "Livre",
     "Used": "Usado",
+    "boards": {
+      "BoardName": "Nome do painel",
+      "BoardNameRequired": "Introduza um nome para o painel",
+      "Boards": "Painéis",
+      "CannotDeleteLastBoard": "O último painel não pode ser eliminado",
+      "DefaultBoard": "Predefinido",
+      "DeleteBoard": "Eliminar painel",
+      "NewBoard": "Novo painel",
+      "NewBoardTitle": "Painel {{number}}"
+    },
     "catalog": {
       "group": {
         "Activity": "Atividade",

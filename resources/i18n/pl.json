@@ -806,6 +806,16 @@
     "Edit": "Edytuj",
     "Free": "Bezpłatny",
     "Used": "Używany",
+    "boards": {
+      "BoardName": "Nazwa tablicy",
+      "BoardNameRequired": "Wprowadź nazwę tablicy",
+      "Boards": "Tablice",
+      "CannotDeleteLastBoard": "Nie można usunąć ostatniej tablicy",
+      "DefaultBoard": "Domyślna",
+      "DeleteBoard": "Usuń tablicę",
+      "NewBoard": "Nowa tablica",
+      "NewBoardTitle": "Tablica {{number}}"
+    },
     "catalog": {
       "group": {
         "Activity": "Aktywność",

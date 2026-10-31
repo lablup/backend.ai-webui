@@ -806,6 +806,16 @@
     "Edit": "Bearbeiten",
     "Free": "Frei",
     "Used": "Gebraucht",
+    "boards": {
+      "BoardName": "Board-Name",
+      "BoardNameRequired": "Geben Sie einen Board-Namen ein",
+      "Boards": "Boards",
+      "CannotDeleteLastBoard": "Das letzte Board kann nicht gelöscht werden",
+      "DefaultBoard": "Standard",
+      "DeleteBoard": "Board löschen",
+      "NewBoard": "Neues Board",
+      "NewBoardTitle": "Board {{number}}"
+    },
     "catalog": {
       "group": {
         "Activity": "Aktivität",

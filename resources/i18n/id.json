@@ -806,6 +806,16 @@
     "Edit": "Sunting",
     "Free": "Bebas",
     "Used": "Digunakan",
+    "boards": {
+      "BoardName": "Nama papan",
+      "BoardNameRequired": "Masukkan nama papan",
+      "Boards": "Papan",
+      "CannotDeleteLastBoard": "Papan terakhir tidak dapat dihapus",
+      "DefaultBoard": "Bawaan",
+      "DeleteBoard": "Hapus papan",
+      "NewBoard": "Papan baru",
+      "NewBoardTitle": "Papan {{number}}"
+    },
     "catalog": {
       "group": {
         "Activity": "Aktivitas",

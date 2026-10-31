@@ -806,6 +806,16 @@
     "Edit": "Edit",
     "Free": "Percuma",
     "Used": "digunakan",
+    "boards": {
+      "BoardName": "Nama papan",
+      "BoardNameRequired": "Masukkan nama papan",
+      "Boards": "Papan",
+      "CannotDeleteLastBoard": "Papan terakhir tidak boleh dipadam",
+      "DefaultBoard": "Lalai",
+      "DeleteBoard": "Padam papan",
+      "NewBoard": "Papan baharu",
+      "NewBoardTitle": "Papan {{number}}"
+    },
     "catalog": {
       "group": {
         "Activity": "Aktiviti",

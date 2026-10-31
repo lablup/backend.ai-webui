@@ -806,6 +806,16 @@
     "Edit": "Düzenle",
     "Free": "Özgür",
     "Used": "Kullanılmış",
+    "boards": {
+      "BoardName": "Pano adı",
+      "BoardNameRequired": "Bir pano adı girin",
+      "Boards": "Panolar",
+      "CannotDeleteLastBoard": "Son pano silinemez",
+      "DefaultBoard": "Varsayılan",
+      "DeleteBoard": "Panoyu sil",
+      "NewBoard": "Yeni pano",
+      "NewBoardTitle": "Pano {{number}}"
+    },
     "catalog": {
       "group": {
         "Activity": "Etkinlik",

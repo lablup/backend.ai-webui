@@ -806,6 +806,16 @@
     "Edit": "Засах",
     "Free": "Үнэгүй",
     "Used": "Ашиг ашиглагдсан",
+    "boards": {
+      "BoardName": "Самбарын нэр",
+      "BoardNameRequired": "Самбарын нэр оруулна уу",
+      "Boards": "Самбарууд",
+      "CannotDeleteLastBoard": "Сүүлийн самбарыг устгах боломжгүй",
+      "DefaultBoard": "Үндсэн",
+      "DeleteBoard": "Самбар устгах",
+      "NewBoard": "Шинэ самбар",
+      "NewBoardTitle": "Самбар {{number}}"
+    },
     "catalog": {
       "group": {
         "Activity": "Үйл ажиллагаа",

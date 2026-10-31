@@ -806,6 +806,16 @@
     "Edit": "Editar",
     "Free": "Gratis",
     "Used": "Usado",
+    "boards": {
+      "BoardName": "Nombre del tablero",
+      "BoardNameRequired": "Introduzca un nombre de tablero",
+      "Boards": "Tableros",
+      "CannotDeleteLastBoard": "No se puede eliminar el último tablero",
+      "DefaultBoard": "Predeterminado",
+      "DeleteBoard": "Eliminar tablero",
+      "NewBoard": "Nuevo tablero",
+      "NewBoardTitle": "Tablero {{number}}"
+    },
     "catalog": {
       "group": {
         "Activity": "Actividad",

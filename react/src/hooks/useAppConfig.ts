@@ -6,6 +6,7 @@ import { useCurrentDomain, useCurrentDomainValue } from '.';
 import { useAppConfigDomainRawQuery } from '../__generated__/useAppConfigDomainRawQuery.graphql';
 import { useAppConfigMyQuery } from '../__generated__/useAppConfigMyQuery.graphql';
 import { useAppConfigMyUpsertMutation } from '../__generated__/useAppConfigMyUpsertMutation.graphql';
+import { useAppConfigPublicQuery } from '../__generated__/useAppConfigPublicQuery.graphql';
 import { useAppConfigPublicRawQuery } from '../__generated__/useAppConfigPublicRawQuery.graphql';
 import { useAppConfigUpsertMutation } from '../__generated__/useAppConfigUpsertMutation.graphql';
 import { useAppConfigUserRawQuery } from '../__generated__/useAppConfigUserRawQuery.graphql';
@@ -31,6 +32,15 @@ export type AppConfigDocument = Record<string, any>;
 const myQuery = graphql`
   query useAppConfigMyQuery($configNames: [String!]!) {
     myAppConfigs(configNames: $configNames) {
+      configName
+      config
+    }
+  }
+`;
+
+const publicQuery = graphql`
+  query useAppConfigPublicQuery($configNames: [String!]!) {
+    publicAppConfigs(configNames: $configNames) {
       configName
       config
     }
@@ -180,6 +190,27 @@ export const useDomainAppConfig = <T = AppConfigDocument>(
 };
 
 /**
+ * The current domain's slice of `publicConfigByDomain`, the installation-wide
+ * document every user can read. Read only. Suspends; post-login surfaces
+ * inside `RelayEnvironmentProvider` only (the pre-login theme read is REST).
+ */
+export const usePublicDomainAppConfig = <T = AppConfigDocument>(
+  subKey?: string | Array<string>,
+): T | undefined => {
+  'use memo';
+  const currentDomainName = useCurrentDomainValue();
+  const data = useLazyLoadQuery<useAppConfigPublicQuery>(publicQuery, {
+    configNames: ['publicConfigByDomain'],
+  });
+  const doc = data.publicAppConfigs.find(
+    (c) => c.configName === 'publicConfigByDomain',
+  )?.config as AppConfigDocument | undefined;
+  const slice = _.get(doc, [currentDomainName]) as
+    AppConfigDocument | undefined;
+  return (subKey === undefined ? slice : _.get(slice, subKey)) as T | undefined;
+};
+
+/**
  * Superadmin setter for ONE domain's slice of `publicConfigByDomain`:
  * re-reads the raw public document and replaces only `[domainName, ...subKey]`
  * so other domains' slices survive the whole-document write. Post-login admin
@@ -241,7 +272,10 @@ export const useUpdateDomainAppConfig = () => {
   const upsert =
     useMutationWithPromise<useAppConfigUpsertMutation>(upsertMutation);
 
-  return async (subKey: string | Array<string>, nextValue: unknown) => {
+  return async (
+    subKey: string | Array<string>,
+    nextValue: unknown | ((current: unknown) => unknown),
+  ) => {
     const raw = await fetchQuery<useAppConfigDomainRawQuery>(
       relayEnv,
       domainRawQuery,
@@ -257,7 +291,13 @@ export const useUpdateDomainAppConfig = () => {
         items: [
           {
             configName: 'domainConfig',
-            config: applySubKey(rawDoc, _.toPath(subKey), nextValue),
+            config: applySubKey(
+              rawDoc,
+              _.toPath(subKey),
+              typeof nextValue === 'function'
+                ? nextValue(_.get(rawDoc, subKey))
+                : nextValue,
+            ),
           },
         ],
       },
@@ -292,7 +332,8 @@ export const useRefetchMyAppConfig = () => {
 
 /**
  * Setter for the current user's own `userConfig` fragment: re-reads the raw
- * USER-scope document (not the merged view) and replaces only `subKey`.
+ * USER-scope document (not the merged view) and replaces only `subKey`. A
+ * function `nextValue` receives the re-read value at `subKey`.
  * Post-login surfaces only.
  */
 export const useUpdateMyUserAppConfig = () => {
@@ -301,7 +342,10 @@ export const useUpdateMyUserAppConfig = () => {
   const upsert =
     useMutationWithPromise<useAppConfigMyUpsertMutation>(myUpsertMutation);
 
-  return async (subKey: string | Array<string>, nextValue: unknown) => {
+  return async (
+    subKey: string | Array<string>,
+    nextValue: unknown | ((current: unknown) => unknown),
+  ) => {
     const raw = await fetchQuery<useAppConfigUserRawQuery>(
       relayEnv,
       userRawQuery,
@@ -316,7 +360,13 @@ export const useUpdateMyUserAppConfig = () => {
         items: [
           {
             configName: 'userConfig',
-            config: applySubKey(rawDoc, _.toPath(subKey), nextValue),
+            config: applySubKey(
+              rawDoc,
+              _.toPath(subKey),
+              typeof nextValue === 'function'
+                ? nextValue(_.get(rawDoc, subKey))
+                : nextValue,
+            ),
           },
         ],
       },

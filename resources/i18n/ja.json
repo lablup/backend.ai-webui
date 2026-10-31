@@ -806,6 +806,16 @@
     "Edit": "編集",
     "Free": "無料",
     "Used": "使用済み",
+    "boards": {
+      "BoardName": "ボード名",
+      "BoardNameRequired": "ボード名を入力してください",
+      "Boards": "ボード",
+      "CannotDeleteLastBoard": "最後のボードは削除できません",
+      "DefaultBoard": "デフォルト",
+      "DeleteBoard": "ボードを削除",
+      "NewBoard": "新しいボード",
+      "NewBoardTitle": "ボード {{number}}"
+    },
     "catalog": {
       "group": {
         "Activity": "アクティビティ",

@@ -806,6 +806,16 @@
     "Edit": "编辑",
     "Free": "自由的",
     "Used": "用过的",
+    "boards": {
+      "BoardName": "看板名称",
+      "BoardNameRequired": "请输入看板名称",
+      "Boards": "看板",
+      "CannotDeleteLastBoard": "无法删除最后一个看板",
+      "DefaultBoard": "默认",
+      "DeleteBoard": "删除看板",
+      "NewBoard": "新建看板",
+      "NewBoardTitle": "看板 {{number}}"
+    },
     "catalog": {
       "group": {
         "Activity": "活动",

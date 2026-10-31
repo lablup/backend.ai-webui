@@ -806,6 +806,16 @@
     "Edit": "Επεξεργασία",
     "Free": "Δωρεάν",
     "Used": "Μεταχειρισμένος",
+    "boards": {
+      "BoardName": "Όνομα πίνακα",
+      "BoardNameRequired": "Εισαγάγετε όνομα πίνακα",
+      "Boards": "Πίνακες",
+      "CannotDeleteLastBoard": "Ο τελευταίος πίνακας δεν μπορεί να διαγραφεί",
+      "DefaultBoard": "Προεπιλογή",
+      "DeleteBoard": "Διαγραφή πίνακα",
+      "NewBoard": "Νέος πίνακας",
+      "NewBoardTitle": "Πίνακας {{number}}"
+    },
     "catalog": {
       "group": {
         "Activity": "Δραστηριότητα",

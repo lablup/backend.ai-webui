@@ -806,6 +806,16 @@
     "Edit": "Редактировать",
     "Free": "Бесплатно",
     "Used": "Использовал",
+    "boards": {
+      "BoardName": "Название доски",
+      "BoardNameRequired": "Введите название доски",
+      "Boards": "Доски",
+      "CannotDeleteLastBoard": "Последнюю доску нельзя удалить",
+      "DefaultBoard": "По умолчанию",
+      "DeleteBoard": "Удалить доску",
+      "NewBoard": "Новая доска",
+      "NewBoardTitle": "Доска {{number}}"
+    },
     "catalog": {
       "group": {
         "Activity": "Активность",
