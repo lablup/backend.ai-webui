@@ -24,7 +24,7 @@ import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAISegmentedControl,
   BAISegmentedControlItem,
-  BAISelector,
+  BAISelect,
   BAITextInput,
   BAIBoardItemErrorBoundary,
   BAIFlex,
@@ -215,7 +215,8 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
             ]}
             style={{ flex: 1, minWidth: 180 }}
           >
-            <BAISelector
+            <BAISelect
+              showSearch={false}
               aria-label={t('dashboard.panelModal.DataSource')}
               options={resourceOptions.map((key) => ({
                 value: key,

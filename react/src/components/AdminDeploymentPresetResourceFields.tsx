@@ -11,7 +11,7 @@ import {
   BAIFlex,
   BAINumberInput,
   type BAINumberInputProps,
-  BAISelector,
+  BAISelect,
   BAITextInput,
 } from 'backend.ai-ui';
 import { CircleMinus } from 'lucide-react';
@@ -102,12 +102,9 @@ export const ResourceSlotRow: React.FC<{
         style={{ marginBottom: 0, flex: 1 }}
         rules={[{ required: true, message: '' }]}
       >
-        {/* PILOT-DECISION: antd's custom `showSearch.filterOption` dropped —
-            Astryx Selector's built-in `hasSearch` filtering covers it. */}
-        <BAISelector
+        <BAISelect
           aria-label={t('adminDeploymentPreset.ResourceSlots')}
           options={slotOptions}
-          hasSearch
         />
       </BAIFormItem>
       <BAIFormItem

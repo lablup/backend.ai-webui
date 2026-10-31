@@ -33,7 +33,7 @@ import {
   BAIModal,
   BAIModalProps,
   BAINumberInput,
-  BAISelector,
+  BAISelect,
   BAISwitch,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -288,7 +288,8 @@ const ResourceGroupDefaultSessionOptionsModal: React.FC<
                   rules={[{ required: true }]}
                   style={{ marginBottom: 0 }}
                 >
-                  <BAISelector
+                  <BAISelect
+                    showSearch={false}
                     aria-label={t('resourceGroup.FailurePolicy')}
                     options={[
                       {
@@ -317,7 +318,8 @@ const ResourceGroupDefaultSessionOptionsModal: React.FC<
                   rules={[{ required: true }]}
                   style={{ marginBottom: 0 }}
                 >
-                  <BAISelector
+                  <BAISelect
+                    showSearch={false}
                     aria-label={t('resourceGroup.AgentSelectionPolicy')}
                     options={[
                       {

@@ -4422,7 +4422,6 @@
         "modelStore.RelativeTime",
         "modelStore.ResourceGroup",
         "modelStore.ResourceGroupTooltip",
-        "modelStore.Sort",
         "modelStore.SortByCreatedAtAsc",
         "modelStore.SortByCreatedAtDesc",
         "modelStore.SortByNameAsc",

@@ -56,7 +56,7 @@ import {
   filterOutNullAndUndefined,
   BAISegmentedControl,
   BAISegmentedControlItem,
-  BAISelector,
+  BAISelect,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { Duration } from 'dayjs/plugin/duration';
@@ -594,11 +594,12 @@ const SessionResourceGrid = ({
               )}
             </>
           ) : (
-            <BAISelector
+            <BAISelect
+              showSearch={false}
               aria-label={t('session.resourceGrid.Metric')}
-              size="sm"
-              width={180}
-              options={metricOptions}
+              size="small"
+              style={{ width: 180 }}
+              options={metricOptions.map((value) => ({ value, label: value }))}
               value={metric}
               placeholder={t('session.resourceGrid.NoLiveMetrics')}
               disabled={metricOptions.length === 0}

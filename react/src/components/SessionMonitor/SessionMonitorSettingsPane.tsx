@@ -26,7 +26,6 @@ import {
   BAISelect,
   type FilterProperty,
   BAICheckboxInput,
-  BAISelector,
 } from 'backend.ai-ui';
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash-es';
@@ -163,9 +162,10 @@ const SessionMonitorSettingsPane: React.FC<{
       </Text>
       <BAIFlex direction="column" align="stretch" gap="xs">
         <Text>{t('sessionMonitor.settings.SortBy')}</Text>
-        <BAISelector
+        <BAISelect
+          showSearch={false}
           aria-label={t('sessionMonitor.settings.SortBy')}
-          size="sm"
+          size="small"
           options={sortOptions}
           value={sort ?? 'deadline'}
           onChange={(value) => setSort(value as SessionMonitorSort)}
@@ -173,10 +173,14 @@ const SessionMonitorSettingsPane: React.FC<{
       </BAIFlex>
       <BAIFlex direction="column" align="stretch" gap="xs">
         <Text>{t('sessionMonitor.settings.RowsShown')}</Text>
-        <BAISelector
+        <BAISelect
+          showSearch={false}
           aria-label={t('sessionMonitor.settings.RowsShown')}
-          size="sm"
-          options={SESSION_MONITOR_ROW_OPTIONS.map((n) => String(n))}
+          size="small"
+          options={SESSION_MONITOR_ROW_OPTIONS.map((n) => ({
+            value: String(n),
+            label: String(n),
+          }))}
           value={String(rows ?? SESSION_MONITOR_VISIBLE_LIMIT)}
           onChange={(value) => setRows(Number(value))}
         />

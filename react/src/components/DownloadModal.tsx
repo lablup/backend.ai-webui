@@ -22,7 +22,7 @@ import {
   BAIModal,
   BAIModalProps,
   filterOutEmpty,
-  BAISelector,
+  BAISelect,
 } from 'backend.ai-ui';
 import { map, toUpper } from 'lodash-es';
 import { Download } from 'lucide-react';
@@ -41,14 +41,10 @@ const DesktopAppDownloadTab: React.FC = () => {
     // dropped: MetadataList lays out label/value rows without a grid frame.
     <BAIMetadataList columns="single">
       <MetadataListItem label={t('summary.OS')}>
-        {/* antd `Select` with `Select.Option` children -> `Selector` with an
-            `options` array; `label` is required and hidden because the
-            metadata row already prints it. */}
-        <BAISelector
+        <BAISelect
+          showSearch={false}
           aria-label={t('summary.OS')}
           value={selectedOS}
-          // Astryx `Selector` commits a plain `string`; the hook's setter is
-          // typed on the OS literal union, so the narrowing happens here.
           onChange={(value) => setSelectedOS(value as typeof selectedOS)}
           options={map(OS, (os) => ({ value: os, label: os }))}
         />
@@ -154,7 +150,8 @@ const CLIDownloadTab: React.FC = () => {
             <Text weight="semibold">{t('summary.CLIDownloadExecutable')}</Text>
             <BAIMetadataList columns="single">
               <MetadataListItem label={t('summary.OS')}>
-                <BAISelector
+                <BAISelect
+                  showSearch={false}
                   aria-label={t('summary.OS')}
                   value={selectedOS}
                   onChange={(value) =>

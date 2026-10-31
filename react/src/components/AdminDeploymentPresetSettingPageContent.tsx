@@ -55,7 +55,7 @@ import {
   BAICheckboxInput,
   BAIDynamicList,
   BAINumberInput,
-  BAISelector,
+  BAISelect,
   BAISwitch,
   BAITextArea,
   BAITextInput,
@@ -141,12 +141,13 @@ const ImageSelectField: React.FC<{
   return (
     <Suspense
       fallback={
-        <BAISelector
+        <BAISelect
           aria-label={t('general.Loading')}
           disabled
           options={[]}
           placeholder={t('general.Loading')}
-          width="100%"
+          style={{ width: '100%' }}
+          showSearch={false}
         />
       }
     >
@@ -868,14 +869,10 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 },
               ]}
             >
-              {/* PILOT-DECISION: antd's custom `showSearch.filterOption`
-                  (case-insensitive label match) dropped — Astryx Selector's
-                  built-in `hasSearch` filtering covers the same UX. */}
-              <BAISelector
+              <BAISelect
                 aria-label={t('adminDeploymentPreset.Runtime')}
                 options={runtimeVariantOptions}
                 placeholder={t('adminDeploymentPreset.SelectRuntimeVariant')}
-                hasSearch
               />
             </BAIFormItem>
 
@@ -1133,7 +1130,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   },
                 ]}
               >
-                <BAISelector
+                <BAISelect
+                  showSearch={false}
                   aria-label={t('adminDeploymentPreset.ClusterMode')}
                   placeholder={t('adminDeploymentPreset.SelectClusterMode')}
                   options={[
