@@ -13,6 +13,7 @@ Record Playwright e2e tests as GIF animations, one GIF per test case.
 ## Prerequisites
 
 - `ffmpeg` must be on `PATH` (`command -v ffmpeg`)
+- `gh` 2.99.0 or newer with push access, to attach the recordings to a PR
 - Playwright dev server must be running. The endpoint is read from `e2e/envs/.env.playwright` (`E2E_WEBUI_ENDPOINT`). Do NOT hardcode the port — it varies per environment.
 
 ## How It Works
@@ -65,30 +66,25 @@ Parse the directory name to derive a slug for the GIF filename:
 
 ## Uploading GIFs to GitHub PR
 
-GIFs stay out of git (`e2e/recordings/` is in `.gitignore`). Upload them with
-`gh pr edit --attach` (GitHub CLI 2.99.0 or later, push access required). The GIF table
-goes in the PR body, not a comment.
+GIFs stay out of git (`e2e/recordings/` is in `.gitignore`). Attach them with
+`gh pr edit --attach`, following Steps 5-6 of `.claude/agents/playwright-e2e-pr-updater.md`:
+the table goes in the PR body, and each reference is the same path you pass to `--attach`,
+as saved under `outputDir`.
 
-1. Write the existing PR body plus the table below to `e2e/recordings/pr-body.md`
-2. Run `gh pr edit {PR_NUMBER} --body-file e2e/recordings/pr-body.md --attach e2e/recordings/{slug}.gif`, one `--attach` per GIF (up to 50 per command)
-
-`gh` uploads each file and rewrites its Markdown reference to a
-`github.com/user-attachments/assets/{uuid}` URL. It does not rewrite HTML `<img src>` or
-`<video src>`, so use Markdown image syntax.
-
-If `ffmpeg` is unavailable, attach the `.webm` instead of a GIF: the same
-`![name](./video.webm)` reference plays as a video, also inside a table cell.
-
-See `.claude/agents/playwright-e2e-pr-updater.md` for the full workflow.
+If `ffmpeg` is unavailable, attach the videos instead of GIFs. Copy each
+`test-results/{dir}/video.webm` to `e2e/recordings/{slug}.webm` first, since every recording
+has the same basename. `![name](e2e/recordings/{slug}.webm)` plays as a video, also inside a
+table cell.
 
 ## Output Format
 
-Return a markdown table suitable for embedding in a PR description, with paths relative to
-the body file:
+Return a markdown table suitable for embedding in a PR description. Before the upload it
+holds the local paths. After the upload, return the table from the saved PR body, since the
+local paths render nowhere else:
 
 ```markdown
 | Test | Recording |
 |------|-----------|
-| Admin can see the BAIPropertyFilter | ![Admin can see the BAIPropertyFilter](./admin-can-see-the-baipropertyfilter.gif) |
-| Admin can filter by name | ![Admin can filter by name](./admin-can-filter-by-name.gif) |
+| Admin can see the BAIPropertyFilter | ![Admin can see the BAIPropertyFilter](https://github.com/user-attachments/assets/{uuid}) |
+| Admin can filter by name | ![Admin can filter by name](https://github.com/user-attachments/assets/{uuid}) |
 ```

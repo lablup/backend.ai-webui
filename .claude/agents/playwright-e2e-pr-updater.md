@@ -28,7 +28,8 @@ gh pr view --json number,title,body,headRefName 2>/dev/null
 ```
 
 If no PR exists yet, inform the user and stop.
-Save the existing PR body — it must be preserved when updating.
+
+Check `gh --version` before recording: `--attach` needs 2.99.0 or newer. If it is older, ask the user to upgrade it instead of running the tests.
 
 ### Step 2: Record GIFs via Playwright
 
@@ -80,21 +81,25 @@ Map each GIF file to its test name for the table.
 
 **The GIF table goes in the PR body, never in a comment.**
 
-1. Write the new body to `e2e/recordings/pr-body.md`: the existing PR body, then the table
-   below. If the body already has a `## Test Recordings` section, replace only that section.
-   Reference each GIF with Markdown image syntax and a path relative to the body file.
-   `gh` rewrites these references to uploaded URLs. It leaves HTML `<img src>` and
-   `<video src>` alone, so do not use them.
+1. Read the current body just before writing it, since someone may have edited it during the run:
+
+   ```bash
+   gh pr view {PR_NUMBER} --json body -q .body > e2e/recordings/pr-body.md
+   ```
+
+2. Add the table below to that file. If the body already has the markers, replace only what is between them; otherwise append the block. Reference each GIF with Markdown image syntax and the same path you pass to `--attach`. `gh` rewrites these references to uploaded URLs. It leaves HTML `<img src>` and `<video src>` alone, so do not use them.
 
    ```markdown
+   <!-- e2e-recordings -->
    ## Test Recordings
 
    | Test | Recording |
    |------|-----------|
-   | {test-name} | ![{test-name}](./{slug}.gif) |
+   | {test-name} | ![{test-name}](e2e/recordings/{slug}.gif) |
+   <!-- /e2e-recordings -->
    ```
 
-2. Upload and save in one command, with one `--attach` per GIF:
+3. From the repository root, upload and save in one command, with one `--attach` per GIF:
 
    ```bash
    gh pr edit {PR_NUMBER} --body-file e2e/recordings/pr-body.md \
@@ -102,18 +107,19 @@ Map each GIF file to its test name for the table.
      --attach e2e/recordings/{slug-2}.gif
    ```
 
-One command takes up to 50 files. If some uploads fail, `gh` still saves the body with the
-ones that succeeded and exits non-zero. Attach only the files that failed on the retry, so
-the others are not uploaded twice.
+**More than 50 GIFs, or an upload failed.** One command takes up to 50 files. On a failure `gh` exits non-zero, stops at that file and does not try the later ones.
+
+- If nothing uploaded, nothing was saved: fix the cause and re-run step 3.
+- Otherwise the body is saved with the URLs so far. Run `gh pr edit {PR_NUMBER} --attach <path>` for every GIF the saved body still references by local path, with no body flag: a body flag would write local references back over the saved URLs. Attachments cannot be deleted, so do not re-run step 3.
 
 ### Step 6: Verify the PR body
 
 ```bash
-gh pr view {PR_NUMBER} --json body -q .body | grep -c 'user-attachments/assets'
+gh pr view {PR_NUMBER} --json body -q .body > e2e/recordings/pr-body-saved.md
+grep -c '](e2e/recordings/' e2e/recordings/pr-body-saved.md
 ```
 
-The count must equal the number of GIFs, and the body must contain no `./{slug}.gif`
-reference.
+`gh pr view` must succeed and the count must be 0: every reference was rewritten.
 
 ### Step 7: Report completion
 
@@ -124,5 +130,4 @@ Print the PR URL and a summary of what was done.
 - If `ffmpeg` is not on `PATH`, locate it with `which ffmpeg` (e.g. `/opt/homebrew/bin/ffmpeg` on macOS)
 - Skipped tests produce no video — omit them from the table
 - If a GIF exceeds 10 MB, reduce fps to 5 or scale to 720px
-- `gh` older than 2.99.0 rejects `--attach`; ask the user to upgrade it
-- Attaching needs push access to the repository
+- Attaching needs push access to the repository. OAuth and classic personal access tokens work; a GitHub App token depends on the server accepting that App
