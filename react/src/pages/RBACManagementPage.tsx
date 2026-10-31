@@ -19,6 +19,7 @@ import RoleNodes, {
   availableRoleSorterValues,
 } from '../components/RoleNodes';
 import RolePresetListTab from '../components/RolePresetListTab';
+import WebMCPRoleListTools from '../components/WebMCPRoleListTools';
 import { convertToOrderBy } from '../helper';
 import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -36,6 +37,7 @@ import {
   BAIUnmountAfterClose,
   BAIAdminUserV2Select,
   filterOutEmpty,
+  filterOutNullAndUndefined,
   INITIAL_FETCH_KEY,
   useBAILogger,
   useFetchKey,
@@ -43,6 +45,7 @@ import {
   BAISegmentedControl,
   BAISegmentedControlItem,
 } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import { Trash2, BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
 import {
   parseAsJson,
@@ -148,6 +151,7 @@ const RoleListTab: React.FC = () => {
             node {
               id
               ...RoleNodesFragment
+              ...WebMCPRoleListToolsFragment
               ...RoleDetailDrawerV2Fragment
             }
           }
@@ -393,6 +397,21 @@ const RoleListTab: React.FC = () => {
             </BAIButton>
           </BAIFlex>
         </BAIFlex>
+        <WebMCPRoleListTools
+          rolesFrgmt={filterOutNullAndUndefined(roleNodes)}
+          page={tablePaginationOption.current}
+          pageSize={tablePaginationOption.pageSize}
+          total={queryRef.adminRoles?.count}
+          pending={deferredQueryVariables !== queryVariables}
+          viewParams={{
+            status: queryParams.status,
+            filter: _.isEmpty(queryParams.filter)
+              ? null
+              : JSON.stringify(queryParams.filter),
+            order: queryParams.order,
+          }}
+          selectedRoleId={selectedRole?.id}
+        />
         <RoleNodes
           rolesFrgmt={roleNodes}
           loading={deferredQueryVariables !== queryVariables}

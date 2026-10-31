@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ccafb2bdb14c1545987ec580dd3eaafc>>
+ * @generated SignedSource<<ba816a698b83952cbedd5a717c83f3e5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -25,7 +25,7 @@ export type AgentListQuery$data = {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly id: string;
-        readonly " $fragmentSpreads": FragmentRefs<"AgentDetailDrawerFragment" | "AgentDetailModalFragment" | "BAIAgentTableFragment">;
+        readonly " $fragmentSpreads": FragmentRefs<"AgentDetailDrawerFragment" | "AgentDetailModalFragment" | "BAIAgentTableFragment" | "WebMCPAgentListToolsFragment">;
       } | null | undefined;
     } | null | undefined>;
   } | null | undefined;
@@ -166,6 +166,11 @@ return {
                     "args": null,
                     "kind": "FragmentSpread",
                     "name": "BAIAgentTableFragment"
+                  },
+                  {
+                    "args": null,
+                    "kind": "FragmentSpread",
+                    "name": "WebMCPAgentListToolsFragment"
                   },
                   {
                     "args": null,
@@ -369,16 +374,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d3a10220fd05480ea78f23be43f9c6a2",
+    "cacheID": "ec15fe2aad03bf448929909f2bfcfbbd",
     "id": null,
     "metadata": {},
     "name": "AgentListQuery",
     "operationKind": "query",
-    "text": "query AgentListQuery(\n  $filter: String\n  $order: String\n  $offset: Int\n  $first: Int\n  $before: String\n  $after: String\n  $last: Int\n) {\n  agent_nodes(filter: $filter, order: $order, offset: $offset, first: $first, after: $after, before: $before, last: $last) {\n    edges {\n      node {\n        id\n        ...BAIAgentTableFragment\n        ...AgentDetailModalFragment\n        ...AgentDetailDrawerFragment\n      }\n    }\n    count\n  }\n}\n\nfragment AgentActionButtonsFragment on AgentNode {\n  status\n  ...AgentSettingModalFragment\n  ...AgentLifeCycleControlModalFragment\n}\n\nfragment AgentComputePluginsFragment on AgentNode {\n  compute_plugins\n  available_slots\n}\n\nfragment AgentDetailDrawerContentFragment on AgentNode {\n  id\n  row_id\n  addr\n  status\n  status_changed\n  schedulable\n  first_contact\n  region\n  scaling_group\n  ...AgentStatusBadgeFragment\n  ...AgentComputePluginsFragment\n  ...AgentResourcesFragment\n  ...AgentActionButtonsFragment\n}\n\nfragment AgentDetailDrawerFragment on Node {\n  __isNode: __typename\n  ... on AgentNode {\n    id\n    ...AgentDetailDrawerContentFragment\n  }\n  id\n}\n\nfragment AgentDetailModalFragment on AgentNode {\n  id\n  live_stat\n  available_slots\n  occupied_slots\n}\n\nfragment AgentLifeCycleControlModalFragment on AgentNode {\n  id\n  status\n  status_changed\n}\n\nfragment AgentResourcesFragment on AgentNode {\n  occupied_slots\n  available_slots\n  live_stat\n  gpu_alloc_map\n  ...AgentDetailModalFragment\n}\n\nfragment AgentSettingModalFragment on AgentNode {\n  id\n  scaling_group\n  schedulable\n}\n\nfragment AgentStatusBadgeFragment on AgentNode {\n  status\n  status_changed\n  version\n}\n\nfragment BAIAgentTableFragment on AgentNode {\n  id\n  row_id\n  addr\n  region\n  architecture\n  first_contact\n  occupied_slots\n  available_slots\n  live_stat\n  status\n  scaling_group\n  compute_plugins\n  version\n  schedulable\n  lost_at\n}\n"
+    "text": "query AgentListQuery(\n  $filter: String\n  $order: String\n  $offset: Int\n  $first: Int\n  $before: String\n  $after: String\n  $last: Int\n) {\n  agent_nodes(filter: $filter, order: $order, offset: $offset, first: $first, after: $after, before: $before, last: $last) {\n    edges {\n      node {\n        id\n        ...BAIAgentTableFragment\n        ...WebMCPAgentListToolsFragment\n        ...AgentDetailModalFragment\n        ...AgentDetailDrawerFragment\n      }\n    }\n    count\n  }\n}\n\nfragment AgentActionButtonsFragment on AgentNode {\n  status\n  ...AgentSettingModalFragment\n  ...AgentLifeCycleControlModalFragment\n}\n\nfragment AgentComputePluginsFragment on AgentNode {\n  compute_plugins\n  available_slots\n}\n\nfragment AgentDetailDrawerContentFragment on AgentNode {\n  id\n  row_id\n  addr\n  status\n  status_changed\n  schedulable\n  first_contact\n  region\n  scaling_group\n  ...AgentStatusBadgeFragment\n  ...AgentComputePluginsFragment\n  ...AgentResourcesFragment\n  ...AgentActionButtonsFragment\n}\n\nfragment AgentDetailDrawerFragment on Node {\n  __isNode: __typename\n  ... on AgentNode {\n    id\n    ...AgentDetailDrawerContentFragment\n  }\n  id\n}\n\nfragment AgentDetailModalFragment on AgentNode {\n  id\n  live_stat\n  available_slots\n  occupied_slots\n}\n\nfragment AgentLifeCycleControlModalFragment on AgentNode {\n  id\n  status\n  status_changed\n}\n\nfragment AgentResourcesFragment on AgentNode {\n  occupied_slots\n  available_slots\n  live_stat\n  gpu_alloc_map\n  ...AgentDetailModalFragment\n}\n\nfragment AgentSettingModalFragment on AgentNode {\n  id\n  scaling_group\n  schedulable\n}\n\nfragment AgentStatusBadgeFragment on AgentNode {\n  status\n  status_changed\n  version\n}\n\nfragment BAIAgentTableFragment on AgentNode {\n  id\n  row_id\n  addr\n  region\n  architecture\n  first_contact\n  occupied_slots\n  available_slots\n  live_stat\n  status\n  scaling_group\n  compute_plugins\n  version\n  schedulable\n  lost_at\n}\n\nfragment WebMCPAgentListToolsFragment on AgentNode {\n  id\n  row_id\n  addr\n  region\n  architecture\n  version\n  first_contact\n  lost_at\n  occupied_slots\n  available_slots\n  scaling_group\n  status\n  schedulable\n}\n"
   }
 };
 })();
 
-(node as any).hash = "704a2d36c0fc813bd9e20af19b2e57ae";
+(node as any).hash = "e33069f5debfd340767583240ca687b6";
 
 export default node;

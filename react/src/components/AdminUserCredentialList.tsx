@@ -13,6 +13,7 @@ import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import KeypairInfoModal from './KeypairInfoModal';
 import KeypairSettingModal from './KeypairSettingModal';
+import { WebMCPAdminKeypairTools } from './WebMCPAdminUserTools';
 import { Text } from '@lablup/ui-common/Text';
 import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
@@ -393,6 +394,23 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
           )}
         </BAIFlex>
       </BAIFlex>
+      <WebMCPAdminKeypairTools
+        keypairs={filterOutNullAndUndefined(keypair_list?.items)}
+        page={current}
+        pageSize={pageSize}
+        total={keypair_list?.total_count}
+        pending={isPending}
+        viewParams={{
+          tab: 'credentials',
+          activeType,
+          filter: variables.filter,
+          order: variables.order,
+        }}
+        openedAccessKey={_.get(
+          keypairInfoModalFrgmt ?? keypairSettingModalFrgmt,
+          'access_key',
+        )}
+      />
       <BAITable<Keypair>
         rowKey={'id'}
         loading={isPending}
