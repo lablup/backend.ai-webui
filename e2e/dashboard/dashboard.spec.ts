@@ -384,6 +384,39 @@ test.describe(
         ).toBeVisible();
       });
 
+      test('Admin can refresh every card from the dashboard bar', async ({
+        page,
+        request,
+      }) => {
+        await loginAsAdmin(page, request);
+        await navigateTo(page, 'summary');
+        const widget = page
+          .locator('.uic-board-item')
+          .filter({ hasText: 'Active Sessions' })
+          .first();
+        await expect(widget.getByText('Interactive')).toBeVisible({
+          timeout: WIDGET_TIMEOUT,
+        });
+
+        // The cards carry no refresh button of their own; the bar's one control refreshes them all.
+        await expect(
+          widget.getByRole('button', { name: 'Refresh', exact: true }),
+        ).toHaveCount(0);
+        await page
+          .getByTestId('dashboard-filter-bar')
+          .getByRole('button', { name: 'Refresh', exact: true })
+          .click();
+
+        await expect(widget.getByText('Interactive')).toBeVisible();
+        await expect(
+          page
+            .locator('.uic-board-item')
+            .filter({ hasText: 'My Total Resource Usage' })
+            .first()
+            .getByText(/CPU/i),
+        ).toBeVisible();
+      });
+
       test('Admin can open and close the dashboard edit sider', async ({
         page,
         request,
@@ -395,16 +428,16 @@ test.describe(
           page.getByRole('heading', { name: 'Active Sessions' }),
         ).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-        // 2. The edit toggle lives in the breadcrumb bar and opens the sider that
-        //    manages custom panels (it does NOT gate dragging).
-        const breadcrumb = page.getByTestId('webui-breadcrumb');
-        await breadcrumb.getByRole('button', { name: 'Edit' }).click();
+        // 2. The edit toggle sits in the dashboard bar beside the refresh
+        //    control and opens the sider (it does NOT gate dragging).
+        const dashboardBar = page.getByTestId('dashboard-filter-bar');
+        await dashboardBar.getByRole('button', { name: 'Edit' }).click();
         await expect(
           page.getByRole('button', { name: 'Add', exact: true }),
         ).toBeVisible();
 
         // 3. Closing it hides the sider again
-        await breadcrumb.getByRole('button', { name: 'Close' }).click();
+        await dashboardBar.getByRole('button', { name: 'Close' }).click();
         await expect(
           page.getByRole('button', { name: 'Add', exact: true }),
         ).not.toBeVisible();
@@ -421,7 +454,7 @@ test.describe(
           page.getByRole('heading', { name: 'Active Sessions' }),
         ).toBeVisible({ timeout: WIDGET_TIMEOUT });
         await page
-          .getByTestId('webui-breadcrumb')
+          .getByTestId('dashboard-filter-bar')
           .getByRole('button', { name: 'Edit' })
           .click();
 

@@ -5,10 +5,7 @@
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
-import {
-  useCurrentProjectValue,
-  useCurrentResourceGroupValue,
-} from '../../hooks/useCurrentProject';
+import DashboardPanelContent from './DashboardPanelContent';
 import type { BoardLayoutEntry } from './boardLayout';
 import {
   addPanel,
@@ -59,8 +56,8 @@ export type BoardStore = (
   save: (board: DashboardBoard) => void;
   /** What "Reset layout" restores; the code default when absent. */
   template?: DashboardBoard;
-  /** The page's boards, for the board tabs. */
-  boards?: DashboardBoardsState;
+  /** The page's boards, for the board tabs and the refresh interval. */
+  boards: DashboardBoardsState;
 };
 
 /** Keeps the page's active board in `userConfig.dashboard` (manager app config). */
@@ -86,10 +83,9 @@ const useBoardStore: BoardStore = useAppConfigBoardStore;
 
 export interface UseDashboardBoardOptions {
   page: PanelPage;
-  fetchKey: string;
+  /** The page query is refetching. */
   isRefetching: boolean;
   queryRefs: DashboardPageQueryRefs;
-  onRefresh: () => void;
   /** Opens the panel modal pre-filled with a custom panel. */
   onRequestEditCustomPanel: (panel: PersistedPanel) => void;
   catalog: ReadonlyArray<PanelDefinition>;
@@ -118,8 +114,7 @@ export interface UseDashboardBoardResult {
     id: string,
     settings: PanelSettings | undefined,
   ) => void;
-  /** The page's boards, when the store keeps more than one. */
-  boards?: DashboardBoardsState;
+  boards: DashboardBoardsState;
 }
 
 export interface PanelSettingsTarget {
@@ -131,10 +126,8 @@ export interface PanelSettingsTarget {
 /** One page's board: the catalog resolved for the viewer, the stored layout, and the content per panel. */
 export const useDashboardBoard = ({
   page,
-  fetchKey,
   isRefetching,
   queryRefs,
-  onRefresh,
   onRequestEditCustomPanel,
   catalog,
 }: UseDashboardBoardOptions): UseDashboardBoardResult => {
@@ -142,8 +135,6 @@ export const useDashboardBoard = ({
   const { t } = useTranslation();
   const role = useCurrentUserRole();
   const baiClient = useSuspendedBackendaiClient();
-  const currentProject = useCurrentProjectValue();
-  const currentResourceGroup = useCurrentResourceGroupValue();
   const [gridEnabled] = useBAISettingUserState(
     'experimental_session_resource_grid',
   );
@@ -219,18 +210,11 @@ export const useDashboardBoard = ({
     if (definition.kind === 'custom') {
       const Component = definition.Component;
       return Component ? (
-        <Component
-          panel={panel}
-          scope={{ type: 'project', projectId: currentProject.id ?? null }}
-          vars={{
-            projectId: currentProject.id ?? null,
-            resourceGroup: currentResourceGroup ?? null,
-          }}
-          fetchKey={fetchKey}
-          isRefetching={isRefetching}
-          queryRefs={queryRefs}
-          onRefresh={onRefresh}
-        />
+        <DashboardPanelContent panel={panel} isPageRefetching={isRefetching}>
+          {(state) => (
+            <Component panel={panel} queryRefs={queryRefs} {...state} />
+          )}
+        </DashboardPanelContent>
       ) : null;
     }
     const legacyPanel = toLegacyPanel(panel, definition);
@@ -246,13 +230,17 @@ export const useDashboardBoard = ({
         title={resolvePanelTitle(legacyPanel.descriptor, t)}
         status="error"
       >
-        <Panel
-          descriptor={legacyPanel.descriptor}
-          fetchKey={fetchKey}
-          panelId={panel.id}
-          onEdit={() => onRequestEditCustomPanel(legacyPanel)}
-          onRemove={() => removeById(panel.id)}
-        />
+        <DashboardPanelContent panel={panel} isPageRefetching={isRefetching}>
+          {({ fetchKey }) => (
+            <Panel
+              descriptor={legacyPanel.descriptor}
+              fetchKey={fetchKey}
+              panelId={panel.id}
+              onEdit={() => onRequestEditCustomPanel(legacyPanel)}
+              onRemove={() => removeById(panel.id)}
+            />
+          )}
+        </DashboardPanelContent>
       </BAIBoardItemErrorBoundary>
     );
   };

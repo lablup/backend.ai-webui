@@ -86,14 +86,46 @@ export type PanelGroup = (typeof PANEL_GROUPS)[number];
 export const VIZ_TYPES = ['table', 'stat', 'grid'] as const;
 export type Viz = (typeof VIZ_TYPES)[number];
 
-/** Placeholder until the filter bar lands: every board follows the header's project and resource group. */
-export interface DashboardVars {
-  projectId: string | null;
-  resourceGroup: string | null;
+/** The current domain: `id` for `scoped*` scopes, `name` for fields keyed by name. */
+export interface DashboardDomain {
+  id: string;
+  name: string;
 }
 
-/** Placeholder for the request range a board resolves from the viewer's admin level. */
-export type DashboardScope = { type: 'project'; projectId: string | null };
+/**
+ * Whose data every card on a board reads, from the page alone. `mine` is the
+ * member page: the viewer's own data in the header project. `projects` is an
+ * admin page; `projectIds` is `'all'` only on the superadmin page, meaning
+ * every project of `domain` (ADR 0012).
+ */
+export type DashboardScope =
+  | {
+      kind: 'mine';
+      projectId: string | null;
+    }
+  | {
+      kind: 'projects';
+      projectIds: Array<string> | 'all';
+      domain: DashboardDomain;
+    };
+
+/** What a card reads besides its scope: its own settings, resolved. */
+export interface DashboardVars {
+  /** The card's range setting, `now-24h` by default. */
+  range: string;
+  /**
+   * `range` resolved at the card's last refresh, so it stays stable until the
+   * next one. Filter with `withinWindow`, never as one `DateTimeFilter`.
+   */
+  timeRange: { after: string; before: string };
+  /** The card's last refresh time, the `now` behind `timeRange`. */
+  refreshedAt: number;
+  /** The header's project and resource group, for cards that read one of each. */
+  currentProjectId: string | null;
+  currentResourceGroup: string | null;
+  /** The card's resource group setting, else the header's current group. */
+  resourceGroup: string | null;
+}
 
 /** The per-card settings a catalog entry can take, edited in edit mode. */
 export const PANEL_SETTING_KINDS = ['resourceGroup', 'range'] as const;
@@ -140,15 +172,13 @@ export interface DashboardBoard {
   knownKeys: Array<string>;
 }
 
-/** A board's last filter-bar values, `'all'` meaning no restriction. */
+/** A board's dashboard-level values. */
 export interface DashboardBoardVars {
-  project: Array<string> | 'all';
-  rg: Array<string> | 'all';
-  range: string;
+  /** The auto refresh interval (`30s`, `5m`), or `off`. */
   refresh: string;
 }
 
-/** One saved board: its panels plus the filter values it opens with. */
+/** One saved board: its panels plus the refresh interval it opens with. */
 export interface DashboardModel extends DashboardBoard {
   id: string;
   /** Empty for the default board, which the tabs label generically. */
@@ -194,9 +224,11 @@ export interface PanelComponentProps {
   scope: DashboardScope;
   vars: DashboardVars;
   fetchKey: string;
+  /** Changes only on a manual refresh, for data that cannot change by itself. */
+  manualFetchKey: string;
   isRefetching: boolean;
   queryRefs: DashboardPageQueryRefs;
-  /** Asks the page to refetch every panel. */
+  /** Refreshes every card now. */
   onRefresh: () => void;
   onEdit?: () => void;
   onRemove?: () => void;

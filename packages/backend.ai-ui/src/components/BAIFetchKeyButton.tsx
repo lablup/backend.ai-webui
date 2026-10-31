@@ -62,7 +62,8 @@ export interface BAIFetchKeyButtonProps extends Omit<
    */
   autoUpdateDelay?: number | null;
   size?: BAIButtonProps['size'];
-  onChange: (fetchKey: string) => void;
+  /** `isAuto` tells an interval refresh from a click on the button. */
+  onChange: (fetchKey: string, info: { isAuto: boolean }) => void;
   hidden?: boolean;
   pauseWhenHidden?: boolean;
   /**
@@ -213,13 +214,13 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
   // animation never drifts out of sync with the real reload — each refresh,
   // whichever triggered it, resets both clocks together.
   const [cycleKey, setCycleKey] = useState(0);
-  const triggerRefresh = () => {
-    onChange(new Date().toISOString());
+  const triggerRefresh = (isAuto: boolean) => {
+    onChange(new Date().toISOString(), { isAuto });
     setCycleKey((key) => key + 1);
   };
 
   useInterval(
-    triggerRefresh,
+    () => triggerRefresh(true),
     // only start auto-updating after the previous loading is false(done).
     loading ? null : selectedDelay,
     pauseWhenHidden,
@@ -305,7 +306,7 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
       loading={displayLoading}
       size={size}
       icon={<RotateCw size="1em" />}
-      onClick={triggerRefresh}
+      onClick={() => triggerRefresh(false)}
       {...buttonProps}
     />
   );

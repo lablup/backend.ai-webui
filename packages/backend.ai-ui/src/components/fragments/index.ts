@@ -186,6 +186,11 @@ export type {
   BAIScopedUserSelectOption,
   ScopedUserNode,
 } from './BAIScopedUserSelect';
+export { default as BAIScopedResourceGroupSelect } from './BAIScopedResourceGroupSelect';
+export type {
+  BAIScopedResourceGroupSelectProps,
+  BAIScopedResourceGroupSelectFilter,
+} from './BAIScopedResourceGroupSelect';
 export { default as BAIAdminUserV2Select } from './BAIAdminUserV2Select';
 export type {
   BAIAdminUserV2SelectProps,

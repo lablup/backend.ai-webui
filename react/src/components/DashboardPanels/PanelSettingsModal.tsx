@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { Form } from '../../form-engine';
-import { useResourceGroupsForCurrentProject } from '../../hooks/useCurrentProject';
 import BAIFormItem from '../BAIFormItem';
 import {
   DEFAULT_RANGE,
@@ -12,9 +11,14 @@ import {
   hasSetting,
 } from './panelSettings';
 import type { PanelDefinition, PanelSettings } from './types';
-import { BAIModal, BAISelect } from 'backend.ai-ui';
+import {
+  BAIModal,
+  BAIScopedResourceGroupSelect,
+  BAISelect,
+  type BAIScopedResourceGroupSelectProps,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface SettingsFormValues {
@@ -28,6 +32,10 @@ export interface PanelSettingsModalProps {
   title: string;
   definition: Pick<PanelDefinition, 'settings' | 'kind'>;
   settings?: PanelSettings;
+  /** The resource groups the setting offers: the page's projects, else the current domain. */
+  resourceGroupScope: BAIScopedResourceGroupSelectProps['scope'];
+  /** Resource groups the setting never offers (the SFTP-only ones). */
+  excludedResourceGroups?: ReadonlyArray<string>;
   onSubmit: (settings: PanelSettings | undefined) => void;
   onRequestClose: () => void;
   afterClose?: () => void;
@@ -39,6 +47,8 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
   title,
   definition,
   settings,
+  resourceGroupScope,
+  excludedResourceGroups,
   onSubmit,
   onRequestClose,
   afterClose,
@@ -46,12 +56,17 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
   'use memo';
   const { t } = useTranslation();
   const [form] = Form.useForm<SettingsFormValues>();
-  const { nonSftpResourceGroups } = useResourceGroupsForCurrentProject();
   // A custom panel reads every resource group by default; a built-in card reads the header's.
   const resourceGroupDefault =
     definition.kind === 'preset'
       ? t('dashboard.settings.AllResourceGroups')
       : t('dashboard.settings.CurrentResourceGroup');
+  const resourceGroupsExtra = t(
+    'dashboard.settings.ResourceGroupsDescription',
+    {
+      default: resourceGroupDefault,
+    },
+  );
 
   return (
     <BAIModal
@@ -60,8 +75,10 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
       okText={t('button.Save')}
       onCancel={onRequestClose}
       afterClose={afterClose}
-      onOk={() => {
-        const { resourceGroup, range = DEFAULT_RANGE } = form.getFieldsValue();
+      onOk={async () => {
+        const values = await form.validateFields().catch(() => undefined);
+        if (!values) return;
+        const { resourceGroup, range = DEFAULT_RANGE } = values;
         const next: PanelSettings = {
           ...(hasSetting(definition, 'resourceGroup') && resourceGroup
             ? { resourceGroups: [resourceGroup] }
@@ -84,26 +101,39 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
         }}
       >
         {hasSetting(definition, 'resourceGroup') ? (
-          <BAIFormItem
-            name="resourceGroup"
-            label={t('dashboard.settings.ResourceGroup')}
-            extra={t('dashboard.settings.ResourceGroupsDescription', {
-              default: resourceGroupDefault,
-            })}
+          // Form.Item binds value/onChange to its direct child, so Suspense stays outside it.
+          <Suspense
+            fallback={
+              <BAIFormItem extra={resourceGroupsExtra}>
+                <BAISelect loading disabled />
+              </BAIFormItem>
+            }
           >
-            <BAISelect
-              label={t('dashboard.settings.ResourceGroup')}
-              placeholder={resourceGroupDefault}
-              options={_.map(nonSftpResourceGroups, (group) => ({
-                value: group.name,
-                label: group.name,
-              }))}
-              allowClear
-            />
-          </BAIFormItem>
+            <BAIFormItem
+              name="resourceGroup"
+              // The selector renders its own field label.
+              extra={resourceGroupsExtra}
+            >
+              <BAIScopedResourceGroupSelect
+                label={t('dashboard.settings.ResourceGroup')}
+                placeholder={resourceGroupDefault}
+                scope={resourceGroupScope}
+                filter={
+                  _.isEmpty(excludedResourceGroups)
+                    ? undefined
+                    : { name: { notIn: [...(excludedResourceGroups ?? [])] } }
+                }
+                allowClear
+              />
+            </BAIFormItem>
+          </Suspense>
         ) : null}
         {hasSetting(definition, 'range') ? (
-          <BAIFormItem name="range" label={t('dashboard.settings.TimeRange')}>
+          <BAIFormItem
+            name="range"
+            label={t('dashboard.settings.TimeRange')}
+            rules={[{ required: true }]}
+          >
             <BAISelect
               label={t('dashboard.settings.TimeRange')}
               options={RANGE_PRESETS.map((preset) => ({

@@ -10,8 +10,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 /**
- * Breadcrumb-bar toggle for {@link dashboardEditModeAtom}: "Edit" opens the
- * edit sider, "Close" hides it. Teleported via `breadcrumbExtraAtom`.
+ * The dashboard bar's toggle for {@link dashboardEditModeAtom}: "Edit" opens
+ * the edit sider, "Close" hides it. Sized like the refresh control beside it.
  */
 const DashboardEditToggleButton: React.FC = () => {
   'use memo';
@@ -21,7 +21,6 @@ const DashboardEditToggleButton: React.FC = () => {
   return (
     <Button
       variant="secondary"
-      size="sm"
       icon={<SquarePenIcon size="1em" />}
       label={editMode ? t('button.Close') : t('dashboard.Edit')}
       onClick={() => setEditMode((prev) => !prev)}

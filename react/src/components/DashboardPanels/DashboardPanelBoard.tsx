@@ -2,52 +2,70 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import DashboardEditToggleButton from '../DashboardEditToggleButton';
-import { breadcrumbExtraAtom } from '../breadcrumbExtraAtom';
+import { useResourceGroupsForCurrentProject } from '../../hooks/useCurrentProject';
 import { dashboardEditModeAtom } from '../dashboardEditModeAtom';
 import DashboardBoardSection from './DashboardBoardSection';
 import DashboardBoardTabs from './DashboardBoardTabs';
 import DashboardEditSider from './DashboardEditSider';
+import DashboardFilterBar from './DashboardFilterBar';
 import DashboardPanelModal from './DashboardPanelModal';
+import { useBoardItemVisibility } from './DashboardRefreshContext';
 import PanelSettingsModal from './PanelSettingsModal';
 import { boardSortsAtom } from './ResourceTablePanel';
 import type {
   DashboardPageQueryRefs,
+  DashboardScope,
   PanelDefinition,
   PanelPage,
   PersistedPanel,
 } from './types';
 import { useDashboardBoard } from './useDashboardBoard';
-import { BAIBoard, BAIFlex, BAIUnmountAfterClose } from 'backend.ai-ui';
+import {
+  DashboardFilterContext,
+  useDashboardFilters,
+} from './useDashboardFilters';
+import {
+  BAIBoard,
+  BAIFlex,
+  BAIUnmountAfterClose,
+  type BAIScopedResourceGroupSelectProps,
+} from 'backend.ai-ui';
 import { useAtom, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
 import React, { useEffect, useRef, useState } from 'react';
 
+/** The resource groups a card's setting can pick from: the page's projects, else the domain's. */
+const resourceGroupScopeOf = (
+  scope: DashboardScope,
+): BAIScopedResourceGroupSelectProps['scope'] =>
+  scope.kind === 'mine'
+    ? { project: scope.projectId ? [{ value: scope.projectId }] : [] }
+    : scope.projectIds === 'all'
+      ? { domain: [{ value: scope.domain.id }] }
+      : { project: scope.projectIds.map((value) => ({ value })) };
+
 export interface DashboardPanelBoardProps {
   page: PanelPage;
   catalog: ReadonlyArray<PanelDefinition>;
-  fetchKey: string;
+  /** The page query is refetching. */
   isRefetching: boolean;
   queryRefs: DashboardPageQueryRefs;
-  onRefresh: () => void;
 }
 
 /**
- * A dashboard page's board. Moving and resizing work at all times; edit mode
- * opens the sider that adds and removes cards and manages custom panels. The
- * admin pages keep several boards behind tabs; the member page keeps one.
+ * A dashboard page's board under the dashboard bar (board tabs and refresh). Moving and resizing work at
+ * all times; edit mode opens the sider that adds and removes cards and
+ * manages custom panels. The admin pages keep several boards behind tabs; the
+ * member page keeps one. Mount it inside a `DashboardRefreshProvider`.
  */
 const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
   page,
   catalog,
-  fetchKey,
   isRefetching,
   queryRefs,
-  onRefresh,
 }) => {
   'use memo';
   const [editMode, setEditMode] = useAtom(dashboardEditModeAtom);
-  const setBreadcrumbExtra = useSetAtom(breadcrumbExtraAtom);
   const setBoardSorts = useSetAtom(boardSortsAtom);
   const [panelModalState, setPanelModalState] = useState<{
     open: boolean;
@@ -56,21 +74,20 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
   // The id outlives `open` until after-close, so the closing modal keeps its content.
   const [settingsPanelId, setSettingsPanelId] = useState<string | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const { sftpResourceGroups } = useResourceGroupsForCurrentProject();
   const boardContainerRef = useRef<HTMLDivElement>(null);
 
   // The edit-mode atom is global: close it when leaving the page, but not when a
   // suspending query remounts the board on the same path (that would drop an early click).
   useEffect(() => {
     const mountedPath = window.location.pathname;
-    setBreadcrumbExtra(<DashboardEditToggleButton />);
     return () => {
-      setBreadcrumbExtra(null);
       if (window.location.pathname !== mountedPath) {
         setEditMode(false);
         setBoardSorts({});
       }
     };
-  }, [setBreadcrumbExtra, setEditMode, setBoardSorts]);
+  }, [setEditMode, setBoardSorts]);
 
   const {
     boardItems,
@@ -91,16 +108,17 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
   } = useDashboardBoard({
     page,
     catalog,
-    fetchKey,
     isRefetching,
     queryRefs,
-    onRefresh,
     onRequestEditCustomPanel: (panel) =>
       setPanelModalState({ open: true, panel }),
   });
   const settingsTarget = settingsPanelId
     ? settingsTargetOf(settingsPanelId)
     : null;
+
+  const filters = useDashboardFilters(page, boards);
+  useBoardItemVisibility(boardContainerRef);
 
   const scrollBoardEndIntoView = () => {
     // New panels append at the board's end; without this an add looks like a no-op.
@@ -116,22 +134,30 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     <BAIFlex direction="row" align="stretch" gap="lg" style={{ width: '100%' }}>
       <div ref={boardContainerRef} style={{ flex: 1, minWidth: 0 }}>
         <BAIFlex direction="column" align="stretch" gap="md">
-          {boards && page !== 'project' ? (
-            <DashboardBoardTabs boards={boards} />
-          ) : null}
-          <BAIBoard
-            movable
-            resizable
-            bordered
-            items={boardItems}
-            // The board is controlled: the next render must hand back exactly
-            // what it reported, or it snaps back.
-            onItemsChange={(event) => {
-              onLayoutChange(
-                _.map(event.detail.items, (item) => _.omit(item, 'data')),
-              );
+          <DashboardFilterBar filters={filters} isRefetching={isRefetching}>
+            {page !== 'project' ? <DashboardBoardTabs boards={boards} /> : null}
+          </DashboardFilterBar>
+          <DashboardFilterContext
+            value={{
+              scope: filters.scope,
+              currentProjectId: filters.currentProjectId,
+              currentResourceGroup: filters.currentResourceGroup,
             }}
-          />
+          >
+            <BAIBoard
+              movable
+              resizable
+              bordered
+              items={boardItems}
+              // The board is controlled: the next render must hand back exactly
+              // what it reported, or it snaps back.
+              onItemsChange={(event) => {
+                onLayoutChange(
+                  _.map(event.detail.items, (item) => _.omit(item, 'data')),
+                );
+              }}
+            />
+          </DashboardFilterContext>
         </BAIFlex>
       </div>
       {editMode ? (
@@ -169,6 +195,8 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
           title={settingsTarget?.title ?? ''}
           definition={settingsTarget?.definition ?? { kind: 'custom' }}
           settings={settingsTarget?.settings}
+          resourceGroupScope={resourceGroupScopeOf(filters.scope)}
+          excludedResourceGroups={_.compact(sftpResourceGroups)}
           onSubmit={(settings) => {
             if (settingsPanelId) updatePanelSettings(settingsPanelId, settings);
           }}

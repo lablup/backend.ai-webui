@@ -4,6 +4,10 @@
  */
 import { AdminDashboardPageQuery } from '../__generated__/AdminDashboardPageQuery.graphql';
 import DashboardPanelBoard from '../components/DashboardPanels/DashboardPanelBoard';
+import {
+  DashboardRefreshProvider,
+  useDashboardFetchKey,
+} from '../components/DashboardPanels/DashboardRefreshContext';
 import { PANEL_CATALOG } from '../components/DashboardPanels/panelCatalog';
 import { useIsAvailableTotalResourceWithinResourceGroup } from '../components/TotalResourceWithinResourceGroup';
 import { useCurrentUserRole } from '../hooks/backendai';
@@ -11,20 +15,20 @@ import {
   useCurrentProjectValue,
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
-import { INITIAL_FETCH_KEY, useFetchKey, useInterval } from 'backend.ai-ui';
+import { INITIAL_FETCH_KEY } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { useTransition } from 'react';
+import { useDeferredValue } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-const AdminDashboardPage: React.FC = () => {
+const AdminDashboardPageContent: React.FC = () => {
   'use memo';
   const currentProject = useCurrentProjectValue();
   const currentResourceGroup = useCurrentResourceGroupValue();
   const userRole = useCurrentUserRole();
 
-  const [fetchKey, updateFetchKey] = useFetchKey();
-  const [isPendingIntervalRefetch, startIntervalRefetchTransition] =
-    useTransition();
+  const { fetchKey, isPending: isRefetching } =
+    useDashboardFetchKey('page-query');
+  const deferredFetchKey = useDeferredValue(fetchKey);
 
   const isAvailableTotalResourcePanel =
     useIsAvailableTotalResourceWithinResourceGroup();
@@ -68,31 +72,34 @@ const AdminDashboardPage: React.FC = () => {
     },
     {
       fetchPolicy:
-        fetchKey === INITIAL_FETCH_KEY ? 'store-and-network' : 'network-only',
-      fetchKey,
+        deferredFetchKey === INITIAL_FETCH_KEY
+          ? 'store-and-network'
+          : 'network-only',
+      fetchKey: deferredFetchKey,
     },
   );
-
-  useInterval(() => {
-    startIntervalRefetchTransition(() => {
-      updateFetchKey();
-    });
-  }, 30_000);
 
   return (
     <DashboardPanelBoard
       page="admin"
       catalog={PANEL_CATALOG}
-      fetchKey={fetchKey}
-      isRefetching={isPendingIntervalRefetch}
+      isRefetching={isRefetching}
       queryRefs={{
         queryRef,
         totalResourceQueryRef:
           queryRef.TotalResourceWithinResourceGroupFragment,
         agentStatsQueryRef: queryRef,
       }}
-      onRefresh={() => updateFetchKey()}
     />
+  );
+};
+
+const AdminDashboardPage: React.FC = () => {
+  'use memo';
+  return (
+    <DashboardRefreshProvider>
+      <AdminDashboardPageContent />
+    </DashboardRefreshProvider>
   );
 };
 

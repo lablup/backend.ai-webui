@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { resetBoard, sanitizeBoard, seedBoard } from './boardModel';
+import { isRefreshOption } from './refreshScheduler';
 import type {
   DashboardBoardVars,
   DashboardConfig,
@@ -23,31 +24,22 @@ export const PANEL_PAGES: ReadonlyArray<PanelPage> = [
 export const DEFAULT_BOARD_ID = 'default';
 
 export const DEFAULT_BOARD_VARS: DashboardBoardVars = {
-  project: 'all',
-  rg: 'all',
-  range: 'now-24h',
   refresh: '1m',
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   !!value && typeof value === 'object' && !Array.isArray(value);
 
-const isStringArray = (value: unknown): value is Array<string> =>
-  Array.isArray(value) && value.every((item) => typeof item === 'string');
-
-const sanitizeScopeVar = (value: unknown): Array<string> | 'all' =>
-  isStringArray(value) ? _.uniq(value) : 'all';
-
 const nonEmptyString = (value: unknown, fallback: string) =>
   typeof value === 'string' && value ? value : fallback;
 
+/** Keeps only the values the dashboard still reads; older `project`, `rg` and `range` drop. */
 export const sanitizeBoardVars = (value: unknown): DashboardBoardVars => {
   const vars = isRecord(value) ? value : {};
   return {
-    project: sanitizeScopeVar(vars.project),
-    rg: sanitizeScopeVar(vars.rg),
-    range: nonEmptyString(vars.range, DEFAULT_BOARD_VARS.range),
-    refresh: nonEmptyString(vars.refresh, DEFAULT_BOARD_VARS.refresh),
+    refresh: isRefreshOption(vars.refresh)
+      ? vars.refresh
+      : DEFAULT_BOARD_VARS.refresh,
   };
 };
 
