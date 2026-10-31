@@ -14,6 +14,7 @@ import { App } from '../app-shim';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDetailDrawer';
 import DeploymentSettingModal from '../components/DeploymentSettingModal';
+import WebMCPDeploymentListTools from '../components/WebMCPDeploymentTools';
 import { convertToOrderBy } from '../helper';
 import { useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
@@ -187,6 +188,7 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
               entityId
               ...BAIModelDeploymentNodesFragment
               ...DeploymentSettingModal_deployment
+              ...WebMCPDeploymentTools_deployments
               metadata {
                 name
                 status
@@ -322,6 +324,22 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
             />
           </BAIFlex>
         </BAIFlex>
+        <WebMCPDeploymentListTools
+          deploymentsFrgmt={deploymentNodes}
+          columnOverrides={columnOverrides}
+          page={tablePaginationOption.current}
+          pageSize={tablePaginationOption.pageSize}
+          total={total}
+          pending={deferredQueryVariables !== queryVariables}
+          viewParams={{
+            statusCategory: queryParams.statusCategory,
+            filter: _.isEmpty(queryParams.filter)
+              ? null
+              : JSON.stringify(queryParams.filter),
+            order: queryParams.order,
+          }}
+          editingDeploymentId={pageProject ? editingDeployment?.id : null}
+        />
         <BAIModelDeploymentNodes
           onEditLabels={isLabelable ? setLabelingDeployment : undefined}
           onLabelClick={(label) => {
