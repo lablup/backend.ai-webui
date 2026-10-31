@@ -586,6 +586,7 @@ const ResourceGroupList: React.FC = () => {
             ? {
                 type: 'checkbox',
                 selectedRowKeys,
+                getRowLabel: (group) => group.name,
                 onChange: (keys) => setSelectedRowKeys(keys),
               }
             : undefined

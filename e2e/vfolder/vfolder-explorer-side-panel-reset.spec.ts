@@ -29,14 +29,13 @@ const openFolderExplorer = async (page: Page, folderName: string) => {
   return modal;
 };
 
-// The side panel's tab strip is a nav landmark: tabs are buttons and the
-// selected one carries `aria-current="true"`.
+// The side panel's tab strip is a tablist; the selected tab has `aria-selected`.
 const getSidePanelTab = (page: Page, name: 'Metadata' | 'Audit Log') =>
   page
     .getByRole('dialog')
     .first()
-    .getByRole('navigation', { name: 'Tabs' })
-    .getByRole('button', { name, exact: true });
+    .getByRole('tablist')
+    .getByRole('tab', { name, exact: true });
 
 test.describe(
   'FolderExplorerModal - Side Panel',
@@ -89,12 +88,12 @@ test.describe(
       // 1. The first folder's side panel opens on Metadata; switch to Audit Log.
       const firstModal = await openFolderExplorer(page, firstFolder);
       await expect(getSidePanelTab(page, 'Metadata')).toHaveAttribute(
-        'aria-current',
+        'aria-selected',
         'true',
       );
       await getSidePanelTab(page, 'Audit Log').click();
       await expect(getSidePanelTab(page, 'Audit Log')).toHaveAttribute(
-        'aria-current',
+        'aria-selected',
         'true',
       );
       await firstModal.close();
@@ -102,11 +101,11 @@ test.describe(
       // 2. Opening a different folder starts the side panel over on Metadata.
       await openFolderExplorer(page, secondFolder);
       await expect(getSidePanelTab(page, 'Metadata')).toHaveAttribute(
-        'aria-current',
+        'aria-selected',
         'true',
       );
       await expect(getSidePanelTab(page, 'Audit Log')).not.toHaveAttribute(
-        'aria-current',
+        'aria-selected',
         'true',
       );
     });

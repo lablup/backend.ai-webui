@@ -10,7 +10,7 @@ import { test, expect, Page } from '@playwright/test';
 // `BAICard`'s `tabList` renders a `nav[aria-label="Tabs"]` of plain
 // `<button>`s (BAITabList / Astryx `TabList`), not ARIA `tab` elements —
 // `role="tab"` is never emitted unless `TabList` is given `role="tablist"`,
-// which this app never does. The active tab carries `aria-current="true"`.
+// which only `BAITabs` does. The active tab carries `aria-current="true"`.
 function prometheusPresetTab(page: Page) {
   return page
     .getByRole('navigation', { name: 'Tabs' })

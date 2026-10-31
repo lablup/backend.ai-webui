@@ -961,6 +961,12 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
             : []),
         ]}
         {...tableProps}
+        rowSelection={
+          tableProps.rowSelection && {
+            getRowLabel: (vfolder) => vfolder.metadata?.name ?? '',
+            ...tableProps.rowSelection,
+          }
+        }
       />
       <DeleteForeverVFolderModalV2
         vfolderFrgmts={purgingVFolders}

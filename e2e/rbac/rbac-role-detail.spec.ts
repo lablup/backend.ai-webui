@@ -321,9 +321,9 @@ test.describe(
       // accessible name "RBAC Role Info") rather than an antd Drawer.
       const drawer = roleDrawer(page);
       await expect(drawer).toBeVisible({ timeout: 10000 });
-      // `BAITabs`/`BAITabList` renders tab items as plain `<button>`s inside
-      // a `navigation "Tabs"` landmark, not `role="tab"` (see
-      // `start-page.spec.ts`). The active tab carries `aria-current="true"`.
+      // `BAITabList` renders tab items as plain `<button>`s inside a
+      // `navigation "Tabs"` landmark, not `role="tab"`. The active tab carries
+      // `aria-current="true"`.
       const tabs = drawer.getByRole('navigation', { name: 'Tabs' });
 
       // 4. Verify two tabs are visible: "Permissions" and "Role Assignments".

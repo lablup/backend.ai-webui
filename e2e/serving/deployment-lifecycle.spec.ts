@@ -63,7 +63,7 @@ import { getFormItemControlByLabel } from '../utils/test-util-antd';
 import { test, expect, Page } from '@playwright/test';
 
 // `role="tab"` is never emitted unless `TabList` is given `role="tablist"`,
-// which this app never does. DeploymentRevisionCard's tab bar renders as
+// which only `BAITabs` does. DeploymentRevisionCard's tab bar renders as
 // `nav[aria-label="Tabs"]` containing plain buttons instead.
 function revisionTabBar(page: Page) {
   return page.getByRole('navigation', { name: 'Tabs' });

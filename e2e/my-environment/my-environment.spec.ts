@@ -19,8 +19,7 @@ test.describe(
 
       // Verify Images tab is selected by default. `BAITabList` / Astryx
       // `TabList` renders a `nav[aria-label="Tabs"]` of plain `<button>`s —
-      // `role="tab"` is never emitted — and marks the active one with
-      // `aria-current="true"`.
+      // no `role="tab"` — and marks the active one with `aria-current="true"`.
       const imagesTab = page
         .getByRole('navigation', { name: 'Tabs' })
         .getByRole('button', { name: 'Images' });

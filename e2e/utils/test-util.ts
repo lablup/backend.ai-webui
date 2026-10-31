@@ -652,9 +652,10 @@ export async function verifyVFolder(
   // folder exists, which joins the tab's accessible name ("Active 3") — so a
   // whole-string name match fails exactly when there is something to clean
   // up. Match on the label prefix instead (all tab sites below do the same).
-  // The Active/Trash tabs currently render as BUTTONS (not role=tab)
-  // whose accessible name is the label doubled plus the count Badge
-  // ("ActiveActive27") — accept either role, match the label prefix.
+  // On /data the Active/Trash tabs render as BUTTONS (not role=tab), while
+  // the admin pages render tabs. The accessible name is the label doubled
+  // plus the count Badge ("ActiveActive27") — accept either role, match the
+  // label prefix.
   await page
     .getByRole('tab', { name: new RegExp(`^${statusTab}`) })
     .or(page.getByRole('button', { name: new RegExp(`^${statusTab}`) }))

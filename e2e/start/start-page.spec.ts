@@ -315,26 +315,22 @@ test.describe(
           .filter({ hasText: 'Start From URL' });
         await expect(modal).toBeVisible();
 
-        // 3. Verify three tabs are visible. `BAITabs`/`BAITabList` renders
-        // Astryx `TabList` items as plain `<button>`s (class `astryx-tab`)
-        // inside a `navigation "Tabs"` landmark, not `role="tab"` — scope
-        // through that landmark to avoid matching the modal's other buttons.
-        const tabs = modal.getByRole('navigation', { name: 'Tabs' });
+        // 3. Verify three tabs are visible.
+        const tabs = modal.getByRole('tablist');
         await expect(
-          tabs.getByRole('button', { name: /Import Notebook/i }),
+          tabs.getByRole('tab', { name: /Import Notebook/i }),
         ).toBeVisible();
         await expect(
-          tabs.getByRole('button', { name: /Import GitHub Repository/i }),
+          tabs.getByRole('tab', { name: /Import GitHub Repository/i }),
         ).toBeVisible();
         await expect(
-          tabs.getByRole('button', { name: /Import GitLab Repository/i }),
+          tabs.getByRole('tab', { name: /Import GitLab Repository/i }),
         ).toBeVisible();
 
-        // 4. Verify the "Import Notebook" tab is active by default. The
-        // active tab carries `aria-current="true"` (no `aria-selected`).
+        // 4. Verify the "Import Notebook" tab is active by default.
         await expect(
-          tabs.getByRole('button', { name: /Import Notebook/i }),
-        ).toHaveAttribute('aria-current', 'true');
+          tabs.getByRole('tab', { name: /Import Notebook/i }),
+        ).toHaveAttribute('aria-selected', 'true');
 
         // 5. Close the modal
         await page
@@ -356,35 +352,35 @@ test.describe(
           .getByRole('dialog')
           .filter({ hasText: 'Start From URL' });
         await expect(modal).toBeVisible();
-        const tabs = modal.getByRole('navigation', { name: 'Tabs' });
+        const tabs = modal.getByRole('tablist');
 
         // 2. Click the "Import GitHub Repository" tab
         await tabs
-          .getByRole('button', { name: /Import GitHub Repository/i })
+          .getByRole('tab', { name: /Import GitHub Repository/i })
           .click();
 
         // 3. Verify the GitHub tab is active
         await expect(
-          tabs.getByRole('button', { name: /GitHub/i }),
-        ).toHaveAttribute('aria-current', 'true');
+          tabs.getByRole('tab', { name: /GitHub/i }),
+        ).toHaveAttribute('aria-selected', 'true');
 
         // 4. Click the "Import GitLab Repository" tab
         await tabs
-          .getByRole('button', { name: /Import GitLab Repository/i })
+          .getByRole('tab', { name: /Import GitLab Repository/i })
           .click();
 
         // 5. Verify the GitLab tab is active
         await expect(
-          tabs.getByRole('button', { name: /GitLab/i }),
-        ).toHaveAttribute('aria-current', 'true');
+          tabs.getByRole('tab', { name: /GitLab/i }),
+        ).toHaveAttribute('aria-selected', 'true');
 
         // 6. Click the "Import Notebook" tab to return to default
-        await tabs.getByRole('button', { name: /Import Notebook/i }).click();
+        await tabs.getByRole('tab', { name: /Import Notebook/i }).click();
 
         // 7. Verify the notebook tab is active
         await expect(
-          tabs.getByRole('button', { name: /Import Notebook/i }),
-        ).toHaveAttribute('aria-current', 'true');
+          tabs.getByRole('tab', { name: /Import Notebook/i }),
+        ).toHaveAttribute('aria-selected', 'true');
 
         // 8. Close the modal
         await page
@@ -414,10 +410,10 @@ test.describe(
         await expect(modal).toBeVisible({ timeout: 20000 });
 
         // 3. Verify the "Import Notebook" tab is active
-        const tabs = modal.getByRole('navigation', { name: 'Tabs' });
+        const tabs = modal.getByRole('tablist');
         await expect(
-          tabs.getByRole('button', { name: /Import Notebook/i }),
-        ).toHaveAttribute('aria-current', 'true');
+          tabs.getByRole('tab', { name: /Import Notebook/i }),
+        ).toHaveAttribute('aria-selected', 'true');
 
         // 4. Verify the URL input field is pre-filled with the notebook URL
         const urlInput = page.getByRole('dialog').getByRole('textbox').first();

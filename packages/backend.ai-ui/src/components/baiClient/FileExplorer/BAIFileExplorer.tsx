@@ -449,6 +449,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
               : {
                   type: 'checkbox',
                   selectedRowKeys: _.map(selectedItems, 'name'),
+                  getRowLabel: (file) => file.name,
                   onChange: (selectedRowKeys) => {
                     setSelectedItems(
                       files?.items?.filter((file) =>

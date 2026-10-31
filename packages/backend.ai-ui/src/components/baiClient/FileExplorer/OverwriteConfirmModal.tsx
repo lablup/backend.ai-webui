@@ -107,6 +107,7 @@ const OverwriteConfirmModal: React.FC<OverwriteConfirmModalProps> = ({
           rowSelection={{
             type: 'checkbox',
             selectedRowKeys: overwritingNames,
+            getRowLabel: (entry) => entry.name,
             onChange: (selectedRowKeys) =>
               setOverwritingNames(_.map(selectedRowKeys, String)),
           }}

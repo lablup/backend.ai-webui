@@ -76,7 +76,7 @@ async function addProvisionedRevision(
   fixtures: DeploymentFixtures,
 ): Promise<void> {
   // `BAITabList` / Astryx `TabList` renders a `nav[aria-label="Tabs"]` of
-  // plain `<button>`s — `role="tablist"` is never emitted.
+  // plain `<button>`s unless given `role="tablist"`, which only `BAITabs` does.
   await page
     .getByRole('navigation', { name: 'Tabs' })
     .getByRole('button', { name: 'Add Revision' })
