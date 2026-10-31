@@ -806,13 +806,28 @@
     "Edit": "Muokkaa",
     "Free": "Ilmainen",
     "Used": "Käytetty",
+    "catalog": {
+      "group": {
+        "Activity": "Toiminta",
+        "Deployments": "Käyttöönotot",
+        "Other": "Muut",
+        "Resources": "Resurssit",
+        "Sessions": "Istunnot",
+        "Start": "Aloitus"
+      }
+    },
     "editSider": {
+      "Cards": "Kortit",
       "Empty": "Ei vielä mukautettuja paneeleja",
       "GridDisabled": "Ruudukkonäkymä pois (Kokeelliset ominaisuudet)",
+      "NoMatchingCards": "Ei vastaavia kortteja",
       "RequiresSuperadmin": "Vain superadmin-käyttäjille",
       "ResetLayout": "Palauta asettelu",
       "ResetLayoutDescription": "Palauttaa paneelien oletusjärjestyksen. Mukautetut paneelit säilytetään.",
-      "Title": "Mukautetut paneelit"
+      "SearchCards": "Hae kortteja",
+      "SelectAll": "Valitse kaikki",
+      "Title": "Mukautetut paneelit",
+      "Unavailable": "Ei käytettävissä tässä ympäristössä"
     },
     "panelModal": {
       "AddPanel": "Lisää paneeli",
@@ -826,6 +841,19 @@
       "Table": "Taulukko",
       "TitleDescription": "Näytetään paneelin otsikkona - kuvaa sillä ehto.",
       "TitleOptional": "Otsikko (valinnainen)"
+    },
+    "settings": {
+      "AllResourceGroups": "Kaikki resurssiryhmät",
+      "CardSettings": "Kortin asetukset",
+      "CardSettingsOf": "{{name}}: asetukset",
+      "CurrentResourceGroup": "Nykyinen resurssiryhmä",
+      "DefaultSettings": "Oletusasetukset",
+      "Last1Hour": "Viimeinen tunti",
+      "Last24Hours": "Viimeiset 24 tuntia",
+      "Last7Days": "Viimeiset 7 päivää",
+      "ResourceGroup": "Resurssiryhmä",
+      "ResourceGroupsDescription": "Jos mitään ei valita: {{default}}",
+      "TimeRange": "Aikaväli"
     }
   },
   "data": {
@@ -3893,7 +3921,6 @@
     "ClearSSHKeypairInput": "Kirjoitettu SSH-avainpari poistetaan. Haluatko varmasti jatkaa?",
     "ConfigFilename": "Konfigurointitiedoston nimi",
     "CurrentSSHPublicKey": "Nykyinen julkinen avain",
-    "CustomDashboardPanels": "Mukautetut koontinäytön paneelit",
     "DarkMode": "Tumma tila",
     "DarkTheme": "Tumma tila",
     "Default": "Laiminlyönti",

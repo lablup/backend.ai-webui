@@ -4,29 +4,21 @@
  */
 import PanelEditControls from './PanelEditControls';
 import { useTheme } from '@lablup/ui-common/theme';
-import {
-  BAIBoardItemTitle,
-  BAIFetchKeyButton,
-  BAIFlex,
-  useFetchKey,
-} from 'backend.ai-ui';
-import React, { useTransition } from 'react';
+import { BAIBoardItemTitle, BAIFlex } from 'backend.ai-ui';
+import React from 'react';
 
 export interface PanelFrameProps {
   title: string;
   onEdit?: () => void;
   onRemove?: () => void;
-  /**
-   * Body, given a panel-local refresh key that changes when the panel's own
-   * refresh button is pressed. Combine it with the board's `fetchKey`.
-   */
-  children: (localFetchKey: string) => React.ReactNode;
+  children: React.ReactNode;
 }
 
 /**
  * The shared custom-panel shell, matching the built-in board items: the same
- * horizontal inset, a sticky title row carrying the refresh button (plus the
- * edit/remove controls while the board is in edit mode), and a scrollable body.
+ * horizontal inset, a sticky title row (with the edit/remove controls while
+ * the board is in edit mode), and a scrollable body. The dashboard's own
+ * refresh control refreshes it.
  */
 const PanelFrame: React.FC<PanelFrameProps> = ({
   title,
@@ -36,8 +28,6 @@ const PanelFrame: React.FC<PanelFrameProps> = ({
 }) => {
   'use memo';
   const { token } = useTheme();
-  const [localFetchKey, updateLocalFetchKey] = useFetchKey();
-  const [isPendingRefetch, startRefetchTransition] = useTransition();
 
   return (
     <BAIFlex
@@ -48,25 +38,11 @@ const PanelFrame: React.FC<PanelFrameProps> = ({
       <BAIBoardItemTitle
         title={title}
         extra={
-          <BAIFlex align="center" gap="xxs">
-            <BAIFetchKeyButton
-              size="small"
-              loading={isPendingRefetch}
-              value=""
-              onChange={() => {
-                startRefetchTransition(() => {
-                  updateLocalFetchKey();
-                });
-              }}
-              type="text"
-              style={{ backgroundColor: 'transparent' }}
-            />
-            <PanelEditControls
-              title={title}
-              onEdit={onEdit}
-              onRemove={onRemove}
-            />
-          </BAIFlex>
+          <PanelEditControls
+            title={title}
+            onEdit={onEdit}
+            onRemove={onRemove}
+          />
         }
       />
       <BAIFlex
@@ -79,7 +55,7 @@ const PanelFrame: React.FC<PanelFrameProps> = ({
           marginBottom: token('--spacing-4'),
         }}
       >
-        {children(localFetchKey)}
+        {children}
       </BAIFlex>
     </BAIFlex>
   );

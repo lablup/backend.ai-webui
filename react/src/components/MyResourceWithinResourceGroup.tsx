@@ -32,6 +32,8 @@ import { useTranslation } from 'react-i18next';
 interface MyResourceWithinResourceGroupProps extends BAIFlexProps {
   fetchKey?: string;
   refetching?: boolean;
+  /** Hides the card's own refresh button, for hosts that refresh it themselves. */
+  hideRefreshButton?: boolean;
   displayType?: 'used' | 'free';
   onDisplayTypeChange?: (type: 'used' | 'free') => void;
   extra?: ReactNode;
@@ -39,7 +41,7 @@ interface MyResourceWithinResourceGroupProps extends BAIFlexProps {
 
 const MyResourceWithinResourceGroup: React.FC<
   MyResourceWithinResourceGroupProps
-> = ({ fetchKey, refetching, extra, ...props }) => {
+> = ({ fetchKey, refetching, hideRefreshButton, extra, ...props }) => {
   const { t } = useTranslation();
   const { token } = useTheme();
 
@@ -239,6 +241,7 @@ const MyResourceWithinResourceGroup: React.FC<
               />
             </BAISegmentedControl>
             <BAIFetchKeyButton
+              hidden={hideRefreshButton}
               size="small"
               loading={isPending || refetching}
               value=""

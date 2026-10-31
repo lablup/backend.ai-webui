@@ -806,13 +806,28 @@
     "Edit": "Düzenle",
     "Free": "Özgür",
     "Used": "Kullanılmış",
+    "catalog": {
+      "group": {
+        "Activity": "Etkinlik",
+        "Deployments": "Dağıtımlar",
+        "Other": "Diğer",
+        "Resources": "Kaynaklar",
+        "Sessions": "Oturumlar",
+        "Start": "Başlarken"
+      }
+    },
     "editSider": {
+      "Cards": "Kartlar",
       "Empty": "Henüz özel panel yok",
       "GridDisabled": "Izgara görünümü kapalı (Deneysel özellikler)",
+      "NoMatchingCards": "Eşleşen kart yok",
       "RequiresSuperadmin": "Yalnızca süper yönetici",
       "ResetLayout": "Düzeni sıfırla",
       "ResetLayoutDescription": "Varsayılan panel düzenini geri yükler. Özel paneller korunur.",
-      "Title": "Özel paneller"
+      "SearchCards": "Kart ara",
+      "SelectAll": "Tümünü Seç",
+      "Title": "Özel paneller",
+      "Unavailable": "Bu ortamda kullanılamaz"
     },
     "panelModal": {
       "AddPanel": "Panel ekle",
@@ -826,6 +841,19 @@
       "Table": "Tablo",
       "TitleDescription": "Panel başlığı olarak gösterilir - koşulu açıklamak için kullanın.",
       "TitleOptional": "Başlık (isteğe bağlı)"
+    },
+    "settings": {
+      "AllResourceGroups": "Tüm kaynak grupları",
+      "CardSettings": "Kart ayarları",
+      "CardSettingsOf": "{{name}} ayarları",
+      "CurrentResourceGroup": "Geçerli kaynak grubu",
+      "DefaultSettings": "Varsayılan ayarlar",
+      "Last1Hour": "Son 1 saat",
+      "Last24Hours": "Son 24 saat",
+      "Last7Days": "Son 7 gün",
+      "ResourceGroup": "Kaynak grubu",
+      "ResourceGroupsDescription": "Hiçbiri seçilmezse: {{default}}",
+      "TimeRange": "Zaman aralığı"
     }
   },
   "data": {
@@ -3893,7 +3921,6 @@
     "ClearSSHKeypairInput": "Yazılı SSH Anahtar Çifti kaldırılacaktır. Devam etmek istediğine emin misin?",
     "ConfigFilename": "Yapılandırma dosyası adı",
     "CurrentSSHPublicKey": "Geçerli ortak anahtar",
-    "CustomDashboardPanels": "Özel kontrol paneli panelleri",
     "DarkMode": "Karanlık Mod",
     "DarkTheme": "Karanlık Mod",
     "Default": "Varsayılan",

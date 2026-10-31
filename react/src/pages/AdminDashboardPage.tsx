@@ -3,39 +3,21 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { AdminDashboardPageQuery } from '../__generated__/AdminDashboardPageQuery.graphql';
-import ActiveAgents from '../components/ActiveAgents';
-import AgentStats from '../components/AgentStats';
-import RecentlyCreatedSession from '../components/RecentlyCreatedSession';
-import SessionCountDashboardItem from '../components/SessionCountDashboardItem';
-import TotalResourceWithinResourceGroup, {
-  useIsAvailableTotalResourceWithinResourceGroup,
-} from '../components/TotalResourceWithinResourceGroup';
+import DashboardPanelBoard from '../components/DashboardPanels/DashboardPanelBoard';
+import { PANEL_CATALOG } from '../components/DashboardPanels/panelCatalog';
+import { useIsAvailableTotalResourceWithinResourceGroup } from '../components/TotalResourceWithinResourceGroup';
 import { useCurrentUserRole } from '../hooks/backendai';
-import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
   useCurrentProjectValue,
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
-import { toProjectContext } from '../types/projectContext';
-import { useTheme } from '@lablup/ui-common/theme';
-import {
-  BAISkeleton,
-  filterOutEmpty,
-  INITIAL_FETCH_KEY,
-  useFetchKey,
-  useInterval,
-  BAIBoard,
-  type BAIBoardItem,
-} from 'backend.ai-ui';
+import { INITIAL_FETCH_KEY, useFetchKey, useInterval } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { Suspense, useTransition } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTransition } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const AdminDashboardPage: React.FC = () => {
-  const { token } = useTheme();
-  const { t } = useTranslation();
-
+  'use memo';
   const currentProject = useCurrentProjectValue();
   const currentResourceGroup = useCurrentResourceGroupValue();
   const userRole = useCurrentUserRole();
@@ -43,9 +25,6 @@ const AdminDashboardPage: React.FC = () => {
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [isPendingIntervalRefetch, startIntervalRefetchTransition] =
     useTransition();
-
-  const [localStorageBoardItems, setLocalStorageBoardItems] =
-    useBAISettingUserState('admin_dashboard_board_items');
 
   const isAvailableTotalResourcePanel =
     useIsAvailableTotalResourceWithinResourceGroup();
@@ -100,152 +79,19 @@ const AdminDashboardPage: React.FC = () => {
     });
   }, 30_000);
 
-  const initialBoardItems: Array<BAIBoardItem> = filterOutEmpty([
-    {
-      id: 'activeSessions',
-      rowSpan: 2,
-      columnSpan: 2,
-      definition: {
-        minRowSpan: 2,
-        minColumnSpan: 2,
-      },
-      data: {
-        content: (
-          <Suspense
-            fallback={
-              <BAISkeleton style={{ padding: `0px ${token('--spacing-5')}` }} />
-            }
-          >
-            <SessionCountDashboardItem
-              queryRef={queryRef}
-              isRefetching={isPendingIntervalRefetch}
-              title={t('session.ActiveSessions')}
-            />
-          </Suspense>
-        ),
-      },
-    },
-    isAvailableTotalResourcePanel && {
-      id: 'totalResourceWithinResourceGroup',
-      rowSpan: 2,
-      columnSpan: 2,
-      definition: {
-        minRowSpan: 2,
-        minColumnSpan: 2,
-      },
-      data: {
-        content: queryRef.TotalResourceWithinResourceGroupFragment && (
-          <TotalResourceWithinResourceGroup
-            queryRef={queryRef.TotalResourceWithinResourceGroupFragment}
-            refetching={isPendingIntervalRefetch}
-          />
-        ),
-      },
-    },
-    {
-      id: 'agentStats',
-      rowSpan: 2,
-      columnSpan: 2,
-      definition: {
-        minRowSpan: 2,
-        minColumnSpan: 2,
-      },
-      data: {
-        content: (
-          <Suspense
-            fallback={
-              <BAISkeleton style={{ padding: `0px ${token('--spacing-5')}` }} />
-            }
-          >
-            <AgentStats
-              queryRef={queryRef}
-              isRefetching={isPendingIntervalRefetch}
-            />
-          </Suspense>
-        ),
-      },
-    },
-    {
-      id: 'activeAgents',
-      rowSpan: 4,
-      columnSpan: 4,
-      definition: {
-        minRowSpan: 3,
-        minColumnSpan: 4,
-      },
-      data: {
-        content: (
-          <Suspense
-            fallback={
-              <BAISkeleton style={{ padding: `0px ${token('--spacing-5')}` }} />
-            }
-          >
-            <ActiveAgents
-              fetchKey={fetchKey}
-              onChangeFetchKey={() => updateFetchKey()}
-            />
-          </Suspense>
-        ),
-      },
-    },
-    {
-      id: 'recentlyCreatedSession',
-      rowSpan: 3,
-      columnSpan: 4,
-      definition: {
-        minRowSpan: 2,
-        minColumnSpan: 2,
-      },
-      data: {
-        content: (
-          <RecentlyCreatedSession
-            queryRef={queryRef}
-            isRefetching={isPendingIntervalRefetch}
-            // /admin-dashboard is out of FR-3407 scope (page is unused) and
-            // its session list is still ambient-project-scoped (`scopeId`
-            // above) — keep the exact current behavior by passing the
-            // narrowed ambient project (ADR-0001 page-level narrowing).
-            project={toProjectContext(currentProject)}
-          />
-        ),
-      },
-    },
-  ]);
-
-  // TODO: Issue occurs when newly added items in new webui version are not saved in localStorage
-  // and thus not displayed on screen.
-  // Opted-out items should also be stored separately in localStorage, and newly added items
-  // should be included in initialBoardItems.
-  const newlyAddedItems = _.filter(
-    initialBoardItems,
-    (item) =>
-      !_.find(
-        localStorageBoardItems,
-        (itemInStorage) => itemInStorage.id === item.id,
-      ),
-  );
-  const localstorageBoardItemsWithData = filterOutEmpty(
-    _.map(localStorageBoardItems, (item) => {
-      const matchedData = _.find(
-        initialBoardItems,
-        (initialItem) => initialItem.id === item.id,
-      )?.data;
-      return matchedData ? { ...item, data: matchedData } : undefined;
-    }),
-  );
-  const boardItems = [...localstorageBoardItemsWithData, ...newlyAddedItems];
   return (
-    <BAIBoard
-      movable
-      resizable
-      bordered
-      items={boardItems}
-      onItemsChange={(event) => {
-        const changedItems = [...event.detail.items];
-        setLocalStorageBoardItems(
-          _.map(changedItems, (item) => _.omit(item, 'data')),
-        );
+    <DashboardPanelBoard
+      page="admin"
+      catalog={PANEL_CATALOG}
+      fetchKey={fetchKey}
+      isRefetching={isPendingIntervalRefetch}
+      queryRefs={{
+        queryRef,
+        totalResourceQueryRef:
+          queryRef.TotalResourceWithinResourceGroupFragment,
+        agentStatsQueryRef: queryRef,
       }}
+      onRefresh={() => updateFetchKey()}
     />
   );
 };

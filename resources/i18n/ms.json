@@ -806,13 +806,28 @@
     "Edit": "Edit",
     "Free": "Percuma",
     "Used": "digunakan",
+    "catalog": {
+      "group": {
+        "Activity": "Aktiviti",
+        "Deployments": "Penggunaan",
+        "Other": "Lain-lain",
+        "Resources": "Sumber",
+        "Sessions": "Sesi",
+        "Start": "Bermula"
+      }
+    },
     "editSider": {
+      "Cards": "Kad",
       "Empty": "Belum ada panel tersuai",
       "GridDisabled": "Paparan grid dimatikan (Ciri eksperimen)",
+      "NoMatchingCards": "Tiada kad yang sepadan",
       "RequiresSuperadmin": "Superadmin sahaja",
       "ResetLayout": "Tetapkan semula susun atur",
       "ResetLayoutDescription": "Memulihkan susun atur panel lalai. Panel tersuai akan dikekalkan.",
-      "Title": "Panel tersuai"
+      "SearchCards": "Cari kad",
+      "SelectAll": "Pilih Semua",
+      "Title": "Panel tersuai",
+      "Unavailable": "Tidak tersedia dalam persekitaran ini"
     },
     "panelModal": {
       "AddPanel": "Tambah panel",
@@ -826,6 +841,19 @@
       "Table": "Jadual",
       "TitleDescription": "Dipaparkan sebagai tajuk panel - gunakannya untuk menerangkan syarat.",
       "TitleOptional": "Tajuk (pilihan)"
+    },
+    "settings": {
+      "AllResourceGroups": "Semua kumpulan sumber",
+      "CardSettings": "Tetapan kad",
+      "CardSettingsOf": "Tetapan {{name}}",
+      "CurrentResourceGroup": "Kumpulan sumber semasa",
+      "DefaultSettings": "Tetapan lalai",
+      "Last1Hour": "1 jam lepas",
+      "Last24Hours": "24 jam lepas",
+      "Last7Days": "7 hari lepas",
+      "ResourceGroup": "Kumpulan sumber",
+      "ResourceGroupsDescription": "Jika tiada yang dipilih: {{default}}",
+      "TimeRange": "Julat masa"
     }
   },
   "data": {
@@ -3893,7 +3921,6 @@
     "ClearSSHKeypairInput": "Pad Kekunci SSH yang ditulis akan dikeluarkan. Adakah anda pasti mahu meneruskan?",
     "ConfigFilename": "Konfigurasi nama fail",
     "CurrentSSHPublicKey": "Kunci awam semasa",
-    "CustomDashboardPanels": "Panel papan pemuka tersuai",
     "DarkMode": "Mod Gelap",
     "DarkTheme": "Mod Gelap",
     "Default": "Lalai",

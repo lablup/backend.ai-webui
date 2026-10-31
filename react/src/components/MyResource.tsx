@@ -27,12 +27,15 @@ import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 interface MyResourceProps extends BAIFlexProps {
   fetchKey?: string;
   refetching?: boolean;
+  /** Hides the card's own refresh button, for hosts that refresh it themselves. */
+  hideRefreshButton?: boolean;
   extra?: ReactNode;
 }
 
 const MyResource: React.FC<MyResourceProps> = ({
   fetchKey,
   refetching,
+  hideRefreshButton,
   extra,
   ...props
 }) => {
@@ -61,6 +64,7 @@ const MyResource: React.FC<MyResourceProps> = ({
         extra={
           <BAIFlex gap={'xs'}>
             <BAIFetchKeyButton
+              hidden={hideRefreshButton}
               size="small"
               loading={isPending || refetching}
               value=""

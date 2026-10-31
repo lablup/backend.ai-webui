@@ -806,13 +806,28 @@
     "Edit": "編輯",
     "Free": "自由的",
     "Used": "用過的",
+    "catalog": {
+      "group": {
+        "Activity": "活動",
+        "Deployments": "部署",
+        "Other": "其他",
+        "Resources": "資源",
+        "Sessions": "工作階段",
+        "Start": "開始使用"
+      }
+    },
     "editSider": {
+      "Cards": "卡片",
       "Empty": "尚無自訂面板",
       "GridDisabled": "網格檢視已關閉（實驗性功能）",
+      "NoMatchingCards": "沒有符合的卡片",
       "RequiresSuperadmin": "僅限超級管理員",
       "ResetLayout": "重置佈局",
       "ResetLayoutDescription": "將面板佈局恢復為預設設定。自訂面板將被保留。",
-      "Title": "自訂面板"
+      "SearchCards": "搜尋卡片",
+      "SelectAll": "全選",
+      "Title": "自訂面板",
+      "Unavailable": "此環境中無法使用"
     },
     "panelModal": {
       "AddPanel": "新增面板",
@@ -826,6 +841,19 @@
       "Table": "表格",
       "TitleDescription": "顯示為面板標題 - 建議用於描述篩選條件。",
       "TitleOptional": "標題（選填）"
+    },
+    "settings": {
+      "AllResourceGroups": "所有資源群組",
+      "CardSettings": "卡片設定",
+      "CardSettingsOf": "{{name}} 設定",
+      "CurrentResourceGroup": "目前資源群組",
+      "DefaultSettings": "預設設定",
+      "Last1Hour": "最近 1 小時",
+      "Last24Hours": "最近 24 小時",
+      "Last7Days": "最近 7 天",
+      "ResourceGroup": "資源群組",
+      "ResourceGroupsDescription": "未選擇時：{{default}}",
+      "TimeRange": "時間範圍"
     }
   },
   "data": {
@@ -3897,7 +3925,6 @@
     "ClearSSHKeypairInput": "書面 SSH 密鑰對將被刪除。你確定你要繼續嗎？",
     "ConfigFilename": "配置文件名",
     "CurrentSSHPublicKey": "當前公鑰",
-    "CustomDashboardPanels": "自訂儀表板面板",
     "DarkMode": "深色模式",
     "DarkTheme": "深色模式",
     "Default": "預設",

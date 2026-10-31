@@ -806,13 +806,28 @@
     "Edit": "Edytuj",
     "Free": "Bezpłatny",
     "Used": "Używany",
+    "catalog": {
+      "group": {
+        "Activity": "Aktywność",
+        "Deployments": "Wdrożenia",
+        "Other": "Inne",
+        "Resources": "Zasoby",
+        "Sessions": "Sesje",
+        "Start": "Pierwsze kroki"
+      }
+    },
     "editSider": {
+      "Cards": "Karty",
       "Empty": "Brak paneli niestandardowych",
       "GridDisabled": "Widok siatki wyłączony (Funkcje eksperymentalne)",
+      "NoMatchingCards": "Brak pasujących kart",
       "RequiresSuperadmin": "Tylko superadministrator",
       "ResetLayout": "Resetuj układ",
       "ResetLayoutDescription": "Przywraca domyślny układ paneli. Panele niestandardowe zostaną zachowane.",
-      "Title": "Panele niestandardowe"
+      "SearchCards": "Szukaj kart",
+      "SelectAll": "Zaznacz wszystkie",
+      "Title": "Panele niestandardowe",
+      "Unavailable": "Niedostępne w tym środowisku"
     },
     "panelModal": {
       "AddPanel": "Dodaj panel",
@@ -826,6 +841,19 @@
       "Table": "Tabela",
       "TitleDescription": "Wyświetlany jako nagłówek panelu - użyj go do opisania warunku.",
       "TitleOptional": "Tytuł (opcjonalnie)"
+    },
+    "settings": {
+      "AllResourceGroups": "Wszystkie grupy zasobów",
+      "CardSettings": "Ustawienia karty",
+      "CardSettingsOf": "Ustawienia: {{name}}",
+      "CurrentResourceGroup": "Bieżąca grupa zasobów",
+      "DefaultSettings": "Ustawienia domyślne",
+      "Last1Hour": "Ostatnia godzina",
+      "Last24Hours": "Ostatnie 24 godziny",
+      "Last7Days": "Ostatnie 7 dni",
+      "ResourceGroup": "Grupa zasobów",
+      "ResourceGroupsDescription": "Jeśli nic nie wybrano: {{default}}",
+      "TimeRange": "Zakres czasu"
     }
   },
   "data": {
@@ -3896,7 +3924,6 @@
     "ClearSSHKeypairInput": "Zapisana para kluczy SSH zostanie usunięta. Jesteś pewien, że chcesz kontynuować?",
     "ConfigFilename": "Nazwa pliku konfiguracyjnego",
     "CurrentSSHPublicKey": "Aktualny klucz publiczny",
-    "CustomDashboardPanels": "Niestandardowe panele pulpitu",
     "DarkMode": "Tryb ciemny",
     "DarkTheme": "Tryb ciemny",
     "Default": "Domyślny",

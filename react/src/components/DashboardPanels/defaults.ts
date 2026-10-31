@@ -4,16 +4,18 @@
  */
 import { DEFAULT_SESSION_GRID_VIEW } from '../../helper/sessionResourceGridData';
 import { generateUUID } from '../../helper/uuid';
-import type { PanelInput, PanelType, PersistedPanel } from './types';
+import type {
+  PanelInput,
+  PanelType,
+  PersistedPanelV2,
+  ResourceKey,
+  Viz,
+} from './types';
 import type { BAIBoardItem } from 'backend.ai-ui';
 
-/** No seeded custom panels — panels exist only when added through the modal. */
-export const DEFAULT_PANELS: ReadonlyArray<PersistedPanel> = [];
-
 /**
- * Seed layout per panel kind for its first appearance on the board. Tables
- * match the built-in panels' minColumnSpan 2 so they never collapse to one
- * column; count stats are compact.
+ * Seed layout per panel kind. Tables shrink to the built-in cards' 2×2 (the body scrolls);
+ * the grid's value is breadth, so it seeds full width like `activeAgents`.
  */
 export const DEFAULT_PANEL_LAYOUTS: Record<
   PanelType,
@@ -22,16 +24,13 @@ export const DEFAULT_PANEL_LAYOUTS: Record<
   resourceTable: {
     rowSpan: 3,
     columnSpan: 2,
-    definition: { minRowSpan: 3, minColumnSpan: 2 },
+    definition: { minRowSpan: 2, minColumnSpan: 2 },
   },
   resourceCount: {
     rowSpan: 2,
     columnSpan: 1,
     definition: { minRowSpan: 2, minColumnSpan: 1 },
   },
-  // The grid's value is breadth (many sessions side by side) and its content
-  // grows unbounded, so it seeds full width like the built-in `activeAgents`.
-  // The lattice reflows to the measured width, so it may still be shrunk.
   sessionResourceGrid: {
     rowSpan: 4,
     columnSpan: 4,
@@ -39,21 +38,44 @@ export const DEFAULT_PANEL_LAYOUTS: Record<
   },
 };
 
-export const createPanel = (input: PanelInput): PersistedPanel => ({
-  // A UUID (not Date.now) — a double-submit in the same millisecond must still
-  // yield distinct ids, or removePanel(id) deletes both. generateUUID, not
-  // crypto.randomUUID: the latter is absent on plain-HTTP origins.
+export const VIZ_TO_PANEL_TYPE: Record<Viz, PanelType> = {
+  table: 'resourceTable',
+  stat: 'resourceCount',
+  grid: 'sessionResourceGrid',
+};
+
+export const PANEL_TYPE_TO_VIZ: Record<PanelType, Viz> = {
+  resourceTable: 'table',
+  resourceCount: 'stat',
+  sessionResourceGrid: 'grid',
+};
+
+/** Catalog key of the preset that lists `source`. */
+export const presetKey = (source: ResourceKey) => `resource.${source}`;
+
+/** The size a panel of `panelType` takes when it first lands on the board. */
+export const defaultSizeOf = (panelType: PanelType) => ({
+  columnSpan: DEFAULT_PANEL_LAYOUTS[panelType].columnSpan ?? 2,
+  rowSpan: DEFAULT_PANEL_LAYOUTS[panelType].rowSpan ?? 2,
+});
+
+/** The panel-config fields of a modal submission; layout fields are left to the caller. */
+export const panelConfigFromInput = (input: PanelInput) => ({
+  key: presetKey(input.resourceType),
+  viz: PANEL_TYPE_TO_VIZ[input.panelType],
+  title: input.title,
+  filter: input.filter ?? null,
+  order: input.order ?? null,
+  gridView:
+    input.panelType === 'sessionResourceGrid'
+      ? (input.gridView ?? DEFAULT_SESSION_GRID_VIEW)
+      : null,
+});
+
+export const createPanel = (input: PanelInput): PersistedPanelV2 => ({
+  // generateUUID, not Date.now (a double submit must still yield two ids) nor
+  // crypto.randomUUID (absent on plain-HTTP origins).
   id: `${input.resourceType}-${generateUUID()}`,
-  panelType: input.panelType,
-  descriptor: {
-    resourceType: input.resourceType,
-    title: input.title,
-    filter: input.filter ?? null,
-    order: input.order ?? null,
-    // Only grid panels carry view settings; other kinds keep the field null.
-    gridView:
-      input.panelType === 'sessionResourceGrid'
-        ? (input.gridView ?? DEFAULT_SESSION_GRID_VIEW)
-        : null,
-  },
+  ...panelConfigFromInput(input),
+  ...defaultSizeOf(input.panelType),
 });

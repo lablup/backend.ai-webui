@@ -806,13 +806,28 @@
     "Edit": "Редактировать",
     "Free": "Бесплатно",
     "Used": "Использовал",
+    "catalog": {
+      "group": {
+        "Activity": "Активность",
+        "Deployments": "Развертывания",
+        "Other": "Прочее",
+        "Resources": "Ресурсы",
+        "Sessions": "Сеансы",
+        "Start": "Начало работы"
+      }
+    },
     "editSider": {
+      "Cards": "Карточки",
       "Empty": "Пользовательских панелей пока нет",
       "GridDisabled": "Вид сетки выключен (Экспериментальные функции)",
+      "NoMatchingCards": "Нет подходящих карточек",
       "RequiresSuperadmin": "Только для суперадминистраторов",
       "ResetLayout": "Сбросить расположение",
       "ResetLayoutDescription": "Восстанавливает расположение панелей по умолчанию. Пользовательские панели сохраняются.",
-      "Title": "Пользовательские панели"
+      "SearchCards": "Поиск карточек",
+      "SelectAll": "Выбрать все",
+      "Title": "Пользовательские панели",
+      "Unavailable": "Недоступно в этой среде"
     },
     "panelModal": {
       "AddPanel": "Добавить панель",
@@ -826,6 +841,19 @@
       "Table": "Таблица",
       "TitleDescription": "Отображается как заголовок панели - используйте его для описания условия.",
       "TitleOptional": "Заголовок (необязательно)"
+    },
+    "settings": {
+      "AllResourceGroups": "Все группы ресурсов",
+      "CardSettings": "Настройки карточки",
+      "CardSettingsOf": "Настройки: {{name}}",
+      "CurrentResourceGroup": "Текущая группа ресурсов",
+      "DefaultSettings": "Настройки по умолчанию",
+      "Last1Hour": "Последний час",
+      "Last24Hours": "Последние 24 часа",
+      "Last7Days": "Последние 7 дней",
+      "ResourceGroup": "Группа ресурсов",
+      "ResourceGroupsDescription": "Если ничего не выбрано: {{default}}",
+      "TimeRange": "Период"
     }
   },
   "data": {
@@ -3893,7 +3921,6 @@
     "ClearSSHKeypairInput": "Записанная пара ключей SSH будет удалена. Вы уверены что хотите продолжить?",
     "ConfigFilename": "Имя файла конфигурации",
     "CurrentSSHPublicKey": "Текущий открытый ключ",
-    "CustomDashboardPanels": "Пользовательские панели информационной панели",
     "DarkMode": "Темный режим",
     "DarkTheme": "Тёмный режим",
     "Default": "По умолчанию",

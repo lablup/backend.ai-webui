@@ -806,13 +806,28 @@
     "Edit": "Modifica",
     "Free": "Gratuito",
     "Used": "Usato",
+    "catalog": {
+      "group": {
+        "Activity": "Attività",
+        "Deployments": "Distribuzioni",
+        "Other": "Altro",
+        "Resources": "Risorse",
+        "Sessions": "Sessioni",
+        "Start": "Per iniziare"
+      }
+    },
     "editSider": {
+      "Cards": "Schede",
       "Empty": "Non ci sono ancora pannelli personalizzati",
       "GridDisabled": "Vista a griglia disattivata (Funzionalità sperimentali)",
+      "NoMatchingCards": "Nessuna scheda corrispondente",
       "RequiresSuperadmin": "Solo superamministratori",
       "ResetLayout": "Reimposta layout",
       "ResetLayoutDescription": "Ripristina la disposizione predefinita dei pannelli. I pannelli personalizzati vengono mantenuti.",
-      "Title": "Pannelli personalizzati"
+      "SearchCards": "Cerca schede",
+      "SelectAll": "Seleziona tutto",
+      "Title": "Pannelli personalizzati",
+      "Unavailable": "Non disponibile in questo ambiente"
     },
     "panelModal": {
       "AddPanel": "Aggiungi pannello",
@@ -826,6 +841,19 @@
       "Table": "Tabella",
       "TitleDescription": "Mostrato come intestazione del pannello - usalo per descrivere la condizione.",
       "TitleOptional": "Titolo (facoltativo)"
+    },
+    "settings": {
+      "AllResourceGroups": "Tutti i gruppi di risorse",
+      "CardSettings": "Impostazioni della scheda",
+      "CardSettingsOf": "Impostazioni di {{name}}",
+      "CurrentResourceGroup": "Gruppo di risorse corrente",
+      "DefaultSettings": "Impostazioni predefinite",
+      "Last1Hour": "Ultima ora",
+      "Last24Hours": "Ultime 24 ore",
+      "Last7Days": "Ultimi 7 giorni",
+      "ResourceGroup": "Gruppo di risorse",
+      "ResourceGroupsDescription": "Se non ne selezioni nessuno: {{default}}",
+      "TimeRange": "Intervallo di tempo"
     }
   },
   "data": {
@@ -3893,7 +3921,6 @@
     "ClearSSHKeypairInput": "La coppia di chiavi SSH scritta verrà rimossa. Sei sicuro di voler continuare?",
     "ConfigFilename": "Nome del file di configurazione",
     "CurrentSSHPublicKey": "Chiave pubblica attuale",
-    "CustomDashboardPanels": "Pannelli dashboard personalizzati",
     "DarkMode": "Modalità scura",
     "DarkTheme": "Modalità scura",
     "Default": "Predefinito",

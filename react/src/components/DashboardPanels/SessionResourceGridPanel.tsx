@@ -7,8 +7,8 @@ import { useWebUINavigate } from '../../hooks';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import SessionResourceGrid from '../SessionResourceGrid';
 import PanelFrame from './PanelFrame';
-import type { PanelComponentProps } from './panelRegistry';
-import { resolvePanelTitle } from './resourceRegistry';
+import type { PanelKindProps } from './panelRegistry';
+import { resolvePanelTitle, withResourceGroupClause } from './resourceRegistry';
 import type { PanelDescriptor } from './types';
 import { BAISkeleton } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
@@ -16,14 +16,11 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
 /**
- * Session resource grid as a board panel (FR-3570 is experimental; the gate
- * lives in `useCustomPanels`/the modal, not here). The grid's five view
- * settings come from the descriptor and are edited only in the panel modal, so
- * the panel renders no toolbar — a locked board can be read without ever
- * mutating panel config, and multiple grid panels cannot fight over the URL
- * query-state the grid otherwise keeps its settings in.
+ * Session resource grid as a board panel (FR-3570; the gate lives in
+ * `useDashboardBoard` and the modal). Its view settings come from the
+ * descriptor, so it renders no toolbar and grid panels never fight over the URL.
  */
-const SessionResourceGridPanel: React.FC<PanelComponentProps> = ({
+const SessionResourceGridPanel: React.FC<PanelKindProps> = ({
   descriptor,
   fetchKey,
   onEdit,
@@ -35,18 +32,16 @@ const SessionResourceGridPanel: React.FC<PanelComponentProps> = ({
 
   return (
     <PanelFrame title={title} onEdit={onEdit} onRemove={onRemove}>
-      {(localFetchKey) => (
-        <Suspense fallback={<BAISkeleton />}>
-          {/* Keyed by the query-shaping config so a condition edit resets the
+      <Suspense fallback={<BAISkeleton />}>
+        {/* Keyed by the query-shaping config so a condition edit resets the
               grid and retries out of a stuck error state; `fetchKey` is out of
               the key so a periodic refresh doesn't flash the skeleton. */}
-          <SessionResourceGridContent
-            key={`${JSON.stringify(descriptor.filter ?? null)}:${descriptor.order ?? ''}`}
-            descriptor={descriptor}
-            fetchKey={`${fetchKey ?? ''}:${localFetchKey}`}
-          />
-        </Suspense>
-      )}
+        <SessionResourceGridContent
+          key={`${JSON.stringify(descriptor.filter ?? null)}:${descriptor.order ?? ''}`}
+          descriptor={descriptor}
+          fetchKey={fetchKey}
+        />
+      </Suspense>
     </PanelFrame>
   );
 };
@@ -72,7 +67,12 @@ export const SessionResourceGridContent: React.FC<{
     <SessionResourceGrid
       // The session resource's condition is the sessions page's own minilang
       // filter string, which is exactly what this grid takes.
-      filter={typeof descriptor.filter === 'string' ? descriptor.filter : null}
+      filter={
+        withResourceGroupClause(
+          typeof descriptor.filter === 'string' ? descriptor.filter : null,
+          descriptor.resourceGroups,
+        ) ?? null
+      }
       order={descriptor.order ?? null}
       projectId={currentProject.id ?? null}
       fetchKey={fetchKey ?? ''}
