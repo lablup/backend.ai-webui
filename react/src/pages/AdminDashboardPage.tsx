@@ -9,6 +9,7 @@ import {
   useDashboardFetchKey,
 } from '../components/DashboardPanels/DashboardRefreshContext';
 import { PANEL_CATALOG } from '../components/DashboardPanels/panelCatalog';
+import SessionDetailAndContainerLogOpenerLegacy from '../components/SessionDetailAndContainerLogOpenerLegacy';
 import { useCurrentDomainValue } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useUrlProjectValidity } from '../hooks/useUrlProjectValidity';
@@ -77,16 +78,23 @@ const AdminDashboardPageContent: React.FC<AdminDashboardPageProps> = ({
   );
 
   return (
-    <DashboardPanelBoard
-      page={page}
-      project={project}
-      catalog={PANEL_CATALOG}
-      isRefetching={isRefetching}
-      queryRefs={{
-        queryRef,
-        agentStatsQueryRef: queryRef.AgentStatsFragment,
-      }}
-    />
+    <>
+      <DashboardPanelBoard
+        page={page}
+        project={project}
+        catalog={PANEL_CATALOG}
+        isRefetching={isRefetching}
+        queryRefs={{
+          queryRef,
+          agentStatsQueryRef: queryRef.AgentStatsFragment,
+        }}
+      />
+      {/* TODO(FR-2944): open the session detail here once a v2 detail flow exists; the v1
+          compute_session_node path gives a project admin no rights on other members' sessions. */}
+      {page === 'admin' ? (
+        <SessionDetailAndContainerLogOpenerLegacy project={project} />
+      ) : null}
+    </>
   );
 };
 

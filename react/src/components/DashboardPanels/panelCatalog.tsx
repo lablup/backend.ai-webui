@@ -8,12 +8,15 @@ import QuotaPerStorageVolumeDashboardItem from '../QuotaPerStorageVolumeDashboar
 import RecentlyCreatedSession from '../RecentlyCreatedSession';
 import SessionCountDashboardItem from '../SessionCountDashboardItem';
 import { useDashboardRefreshQuery } from './DashboardRefreshContext';
+import AuditLogPanel from './cards/AuditLogPanel';
+import DeploymentStatusPanel from './cards/DeploymentStatusPanel';
+import FoldersPanel from './cards/FoldersPanel';
+import LongRunningSessionsPanel from './cards/LongRunningSessionsPanel';
+import PendingSessionsPanel from './cards/PendingSessionsPanel';
+import RecentSessionsPanel from './cards/RecentSessionsPanel';
+import SessionStatusPanel from './cards/SessionStatusPanel';
 import { DEFAULT_PANEL_LAYOUTS, presetKey } from './defaults';
-import MyActivityPanel from './memberCards/MyActivityPanel';
-import MyDeploymentsPanel from './memberCards/MyDeploymentsPanel';
-import MyRecentSessionsPanel from './memberCards/MyRecentSessionsPanel';
 import MyResourcesPanel from './memberCards/MyResourcesPanel';
-import MySessionsPanel from './memberCards/MySessionsPanel';
 import ResourceGroupTotalPanel from './memberCards/ResourceGroupTotalPanel';
 import ResourcePresetsPanel from './memberCards/ResourcePresetsPanel';
 import {
@@ -23,6 +26,9 @@ import {
   StartFromURLPanel,
   StartSessionPanel,
 } from './memberCards/StartActionPanels';
+import ProjectResourceAllocationPanel from './projectAdminCards/ProjectResourceAllocationPanel';
+import ProjectUsersPanel from './projectAdminCards/ProjectUsersPanel';
+import ResourceGroupCapacityPanel from './projectAdminCards/ResourceGroupCapacityPanel';
 import { resourceKeys, resourceRegistry } from './resourceRegistry';
 import type {
   PanelComponentProps,
@@ -187,13 +193,13 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     group: 'session',
     titleKey: 'session.MySessions',
     kind: 'custom',
-    Component: MySessionsPanel,
+    Component: SessionStatusPanel,
     defaultSize: size(2, 2),
     minSize: size(2, 2),
   },
   {
     key: 'activeSessions',
-    page: ['projectAdmin', 'admin'],
+    page: ['admin'],
     group: 'session',
     titleKey: 'session.ActiveSessions',
     kind: 'custom',
@@ -207,7 +213,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     group: 'session',
     titleKey: 'dashboard.card.MyRecentSessions',
     kind: 'custom',
-    Component: MyRecentSessionsPanel,
+    Component: RecentSessionsPanel,
     defaultSize: size(4, 3),
     minSize: size(2, 2),
   },
@@ -252,7 +258,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     minSize: size(2, 2),
     settings: ['resourceGroup'],
   },
-  // TODO(needs-backend): BA-8719 - re-add `folderStatus` (MyFoldersPanel) once
+  // TODO(needs-backend): BA-8719 - re-add `folderStatus` (FoldersPanel) once
   // the folders a user owns can be counted apart from those shared with them.
   {
     key: 'quotaPerStorageVolume',
@@ -271,7 +277,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'dashboard.card.MyDeployments',
     requires: { menuKey: 'deployments' },
     kind: 'custom',
-    Component: MyDeploymentsPanel,
+    Component: DeploymentStatusPanel,
     defaultSize: size(2, 3),
     minSize: size(2, 2),
   },
@@ -281,10 +287,109 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     group: 'activity',
     titleKey: 'dashboard.card.MyActivity',
     kind: 'custom',
-    Component: MyActivityPanel,
+    Component: AuditLogPanel,
     defaultSize: size(4, 3),
     minSize: size(2, 2),
     settings: ['range'],
+  },
+];
+
+/** The project admin page's cards, in the order its default board places them. */
+const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
+  {
+    key: 'projectSessionStatus',
+    page: ['projectAdmin'],
+    group: 'session',
+    titleKey: 'dashboard.card.SessionStatus',
+    kind: 'custom',
+    Component: SessionStatusPanel,
+    defaultSize: size(4, 3),
+    minSize: size(2, 2),
+  },
+  {
+    key: 'pendingSessions',
+    page: ['projectAdmin'],
+    group: 'session',
+    titleKey: 'dashboard.card.PendingSessions',
+    kind: 'custom',
+    Component: PendingSessionsPanel,
+    defaultSize: size(4, 3),
+    minSize: size(2, 2),
+  },
+  {
+    key: 'longRunningSessions',
+    page: ['projectAdmin'],
+    group: 'session',
+    titleKey: 'dashboard.card.LongRunningSessions',
+    kind: 'custom',
+    Component: LongRunningSessionsPanel,
+    defaultSize: size(4, 3),
+    minSize: size(2, 2),
+    settings: ['range'],
+  },
+  {
+    key: 'projectResourceAllocation',
+    page: ['projectAdmin'],
+    group: 'resource',
+    titleKey: 'dashboard.card.ResourceAllocation',
+    kind: 'custom',
+    Component: ProjectResourceAllocationPanel,
+    defaultSize: size(2, 2),
+    minSize: size(2, 2),
+  },
+  {
+    key: 'projectDeployments',
+    page: ['projectAdmin'],
+    group: 'deployment',
+    titleKey: 'dashboard.card.DeploymentStatus',
+    requires: { menuKey: 'deployments' },
+    kind: 'custom',
+    Component: DeploymentStatusPanel,
+    defaultSize: size(2, 3),
+    minSize: size(2, 2),
+  },
+  {
+    key: 'projectFolders',
+    page: ['projectAdmin'],
+    group: 'resource',
+    titleKey: 'general.Folders',
+    kind: 'custom',
+    Component: FoldersPanel,
+    defaultSize: size(2, 2),
+    minSize: size(2, 2),
+  },
+  {
+    key: 'projectUsers',
+    page: ['projectAdmin'],
+    group: 'users',
+    titleKey: 'webui.menu.Users',
+    kind: 'custom',
+    Component: ProjectUsersPanel,
+    defaultSize: size(2, 2),
+    minSize: size(2, 2),
+  },
+  {
+    key: 'projectAuditLog',
+    page: ['projectAdmin'],
+    group: 'activity',
+    titleKey: 'auditLog.AuditLog',
+    kind: 'custom',
+    Component: AuditLogPanel,
+    defaultSize: size(4, 4),
+    minSize: size(2, 3),
+    settings: ['range'],
+  },
+  {
+    key: 'resourceGroupCapacity',
+    page: ['projectAdmin'],
+    group: 'resource',
+    titleKey: 'dashboard.card.ResourceGroupCapacity',
+    kind: 'custom',
+    Component: ResourceGroupCapacityPanel,
+    defaultSize: size(4, 2),
+    minSize: size(2, 2),
+    settings: ['resourceGroup'],
+    defaultHidden: true,
   },
 ];
 
@@ -369,6 +474,7 @@ const PRESET_PANELS: ReadonlyArray<PanelDefinition> = resourceKeys.map(
 
 export const PANEL_CATALOG: ReadonlyArray<PanelDefinition> = [
   ...MEMBER_PANELS,
+  ...PROJECT_ADMIN_PANELS,
   ...ADMIN_PANELS,
   ...PRESET_PANELS,
 ];

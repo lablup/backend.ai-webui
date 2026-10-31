@@ -1,0 +1,20 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+/* Unlayered, like BAISubStepNodes.css whose rules it narrows. The attempts sit
+   in a row of the sessions table: containment keeps their width out of that
+   table's column sizing, and the sub-step message takes the space that is left. */
+.bai-pending-attempts,
+.bai-pending-attempts .bai-substep-panel {
+  contain: inline-size;
+}
+
+.bai-pending-attempts .bai-substep-table {
+  min-width: 0;
+}
+
+.bai-pending-attempts .bai-substep-table td:last-child {
+  width: 100%;
+  max-width: 0;
+}

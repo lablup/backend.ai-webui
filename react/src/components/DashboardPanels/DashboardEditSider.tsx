@@ -54,6 +54,7 @@ const GROUP_LABEL_KEYS: Record<PanelGroup, string> = {
   session: 'dashboard.catalog.group.Sessions',
   resource: 'dashboard.catalog.group.Resources',
   deployment: 'dashboard.catalog.group.Deployments',
+  users: 'dashboard.catalog.group.Users',
   activity: 'dashboard.catalog.group.Activity',
   other: 'dashboard.catalog.group.Other',
 };

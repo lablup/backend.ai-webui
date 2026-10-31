@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<14f911decbbf550397cdf6dafd2b00fd>>
+ * @generated SignedSource<<d9bf2bfdd8fef527728b779faf644e61>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -128,13 +128,18 @@ export type SessionV2NetworkTypeFilter = {
   notEquals?: SessionV2NetworkType | null | undefined;
   notIn?: ReadonlyArray<SessionV2NetworkType> | null | undefined;
 };
-export type MySessionsPanelQuery$variables = {
+export type SessionStatusPanelProjectQuery$variables = {
   batch: SessionV2Filter;
   inference: SessionV2Filter;
   interactive: SessionV2Filter;
+  pending: SessionV2Filter;
+  projectId: string;
+  running: SessionV2Filter;
+  starting: SessionV2Filter;
   system: SessionV2Filter;
+  terminating: SessionV2Filter;
 };
-export type MySessionsPanelQuery$data = {
+export type SessionStatusPanelProjectQuery$data = {
   readonly batch: {
     readonly count: number;
   } | null | undefined;
@@ -144,13 +149,25 @@ export type MySessionsPanelQuery$data = {
   readonly interactive: {
     readonly count: number;
   } | null | undefined;
+  readonly pending: {
+    readonly count: number;
+  } | null | undefined;
+  readonly running: {
+    readonly count: number;
+  } | null | undefined;
+  readonly starting: {
+    readonly count: number;
+  } | null | undefined;
   readonly system: {
     readonly count: number;
   } | null | undefined;
+  readonly terminating: {
+    readonly count: number;
+  } | null | undefined;
 };
-export type MySessionsPanelQuery = {
-  response: MySessionsPanelQuery$data;
-  variables: MySessionsPanelQuery$variables;
+export type SessionStatusPanelProjectQuery = {
+  response: SessionStatusPanelProjectQuery$data;
+  variables: SessionStatusPanelProjectQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -172,14 +189,50 @@ v2 = {
 v3 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "system"
+  "name": "pending"
 },
 v4 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "projectId"
+},
+v5 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "running"
+},
+v6 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "starting"
+},
+v7 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "system"
+},
+v8 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "terminating"
+},
+v9 = {
   "kind": "Literal",
   "name": "limit",
   "value": 1
 },
-v5 = [
+v10 = {
+  "fields": [
+    {
+      "kind": "Variable",
+      "name": "projectId",
+      "variableName": "projectId"
+    }
+  ],
+  "kind": "ObjectValue",
+  "name": "scope"
+},
+v11 = [
   {
     "alias": null,
     "args": null,
@@ -188,7 +241,79 @@ v5 = [
     "storageKey": null
   }
 ],
-v6 = [
+v12 = [
+  {
+    "alias": "pending",
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "filter",
+        "variableName": "pending"
+      },
+      (v9/*: any*/),
+      (v10/*: any*/)
+    ],
+    "concreteType": "SessionV2Connection",
+    "kind": "LinkedField",
+    "name": "projectSessionsV2",
+    "plural": false,
+    "selections": (v11/*: any*/),
+    "storageKey": null
+  },
+  {
+    "alias": "starting",
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "filter",
+        "variableName": "starting"
+      },
+      (v9/*: any*/),
+      (v10/*: any*/)
+    ],
+    "concreteType": "SessionV2Connection",
+    "kind": "LinkedField",
+    "name": "projectSessionsV2",
+    "plural": false,
+    "selections": (v11/*: any*/),
+    "storageKey": null
+  },
+  {
+    "alias": "running",
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "filter",
+        "variableName": "running"
+      },
+      (v9/*: any*/),
+      (v10/*: any*/)
+    ],
+    "concreteType": "SessionV2Connection",
+    "kind": "LinkedField",
+    "name": "projectSessionsV2",
+    "plural": false,
+    "selections": (v11/*: any*/),
+    "storageKey": null
+  },
+  {
+    "alias": "terminating",
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "filter",
+        "variableName": "terminating"
+      },
+      (v9/*: any*/),
+      (v10/*: any*/)
+    ],
+    "concreteType": "SessionV2Connection",
+    "kind": "LinkedField",
+    "name": "projectSessionsV2",
+    "plural": false,
+    "selections": (v11/*: any*/),
+    "storageKey": null
+  },
   {
     "alias": "interactive",
     "args": [
@@ -197,13 +322,14 @@ v6 = [
         "name": "filter",
         "variableName": "interactive"
       },
-      (v4/*: any*/)
+      (v9/*: any*/),
+      (v10/*: any*/)
     ],
     "concreteType": "SessionV2Connection",
     "kind": "LinkedField",
-    "name": "mySessionsV2",
+    "name": "projectSessionsV2",
     "plural": false,
-    "selections": (v5/*: any*/),
+    "selections": (v11/*: any*/),
     "storageKey": null
   },
   {
@@ -214,13 +340,14 @@ v6 = [
         "name": "filter",
         "variableName": "batch"
       },
-      (v4/*: any*/)
+      (v9/*: any*/),
+      (v10/*: any*/)
     ],
     "concreteType": "SessionV2Connection",
     "kind": "LinkedField",
-    "name": "mySessionsV2",
+    "name": "projectSessionsV2",
     "plural": false,
-    "selections": (v5/*: any*/),
+    "selections": (v11/*: any*/),
     "storageKey": null
   },
   {
@@ -231,13 +358,14 @@ v6 = [
         "name": "filter",
         "variableName": "inference"
       },
-      (v4/*: any*/)
+      (v9/*: any*/),
+      (v10/*: any*/)
     ],
     "concreteType": "SessionV2Connection",
     "kind": "LinkedField",
-    "name": "mySessionsV2",
+    "name": "projectSessionsV2",
     "plural": false,
-    "selections": (v5/*: any*/),
+    "selections": (v11/*: any*/),
     "storageKey": null
   },
   {
@@ -248,13 +376,14 @@ v6 = [
         "name": "filter",
         "variableName": "system"
       },
-      (v4/*: any*/)
+      (v9/*: any*/),
+      (v10/*: any*/)
     ],
     "concreteType": "SessionV2Connection",
     "kind": "LinkedField",
-    "name": "mySessionsV2",
+    "name": "projectSessionsV2",
     "plural": false,
-    "selections": (v5/*: any*/),
+    "selections": (v11/*: any*/),
     "storageKey": null
   }
 ];
@@ -264,38 +393,48 @@ return {
       (v0/*: any*/),
       (v1/*: any*/),
       (v2/*: any*/),
-      (v3/*: any*/)
+      (v3/*: any*/),
+      (v4/*: any*/),
+      (v5/*: any*/),
+      (v6/*: any*/),
+      (v7/*: any*/),
+      (v8/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "MySessionsPanelQuery",
-    "selections": (v6/*: any*/),
+    "name": "SessionStatusPanelProjectQuery",
+    "selections": (v12/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
+      (v4/*: any*/),
+      (v3/*: any*/),
+      (v6/*: any*/),
+      (v5/*: any*/),
+      (v8/*: any*/),
       (v2/*: any*/),
       (v0/*: any*/),
       (v1/*: any*/),
-      (v3/*: any*/)
+      (v7/*: any*/)
     ],
     "kind": "Operation",
-    "name": "MySessionsPanelQuery",
-    "selections": (v6/*: any*/)
+    "name": "SessionStatusPanelProjectQuery",
+    "selections": (v12/*: any*/)
   },
   "params": {
-    "cacheID": "936ebc2252d4931d078751a3bcd81eb7",
+    "cacheID": "50a46b2118ebb15acc99c7a021dbb97e",
     "id": null,
     "metadata": {},
-    "name": "MySessionsPanelQuery",
+    "name": "SessionStatusPanelProjectQuery",
     "operationKind": "query",
-    "text": "query MySessionsPanelQuery(\n  $interactive: SessionV2Filter!\n  $batch: SessionV2Filter!\n  $inference: SessionV2Filter!\n  $system: SessionV2Filter!\n) {\n  interactive: mySessionsV2(filter: $interactive, limit: 1) {\n    count\n  }\n  batch: mySessionsV2(filter: $batch, limit: 1) {\n    count\n  }\n  inference: mySessionsV2(filter: $inference, limit: 1) {\n    count\n  }\n  system: mySessionsV2(filter: $system, limit: 1) {\n    count\n  }\n}\n"
+    "text": "query SessionStatusPanelProjectQuery(\n  $projectId: UUID!\n  $pending: SessionV2Filter!\n  $starting: SessionV2Filter!\n  $running: SessionV2Filter!\n  $terminating: SessionV2Filter!\n  $interactive: SessionV2Filter!\n  $batch: SessionV2Filter!\n  $inference: SessionV2Filter!\n  $system: SessionV2Filter!\n) {\n  pending: projectSessionsV2(scope: {projectId: $projectId}, filter: $pending, limit: 1) {\n    count\n  }\n  starting: projectSessionsV2(scope: {projectId: $projectId}, filter: $starting, limit: 1) {\n    count\n  }\n  running: projectSessionsV2(scope: {projectId: $projectId}, filter: $running, limit: 1) {\n    count\n  }\n  terminating: projectSessionsV2(scope: {projectId: $projectId}, filter: $terminating, limit: 1) {\n    count\n  }\n  interactive: projectSessionsV2(scope: {projectId: $projectId}, filter: $interactive, limit: 1) {\n    count\n  }\n  batch: projectSessionsV2(scope: {projectId: $projectId}, filter: $batch, limit: 1) {\n    count\n  }\n  inference: projectSessionsV2(scope: {projectId: $projectId}, filter: $inference, limit: 1) {\n    count\n  }\n  system: projectSessionsV2(scope: {projectId: $projectId}, filter: $system, limit: 1) {\n    count\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "97b4166210c19574ce35130c00163c33";
+(node as any).hash = "3278051049c114e9f9e2792810791655";
 
 export default node;

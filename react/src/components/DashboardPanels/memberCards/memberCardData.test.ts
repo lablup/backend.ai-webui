@@ -6,6 +6,7 @@ import {
   FAILURES_ONLY_FILTER,
   isFailuresOnlyFilter,
   toDonutRows,
+  toLimitUsageRows,
   toPresetRows,
   toUsageRows,
 } from './memberCardData';
@@ -111,6 +112,31 @@ describe('toUsageRows', () => {
     ).toEqual([{ resourceType: 'cpu', used: 2, limit: null }]);
   });
 });
+
+describe('toLimitUsageRows', () => {
+  it("reads the scope's own used against its own limits, unlimited as null", () => {
+    expect(
+      toLimitUsageRows({
+        limits: [
+          { resourceType: 'mem', quantity: null, unlimited: true },
+          { resourceType: 'cuda.device', quantity: '4', unlimited: false },
+          { resourceType: 'cpu', quantity: '16', unlimited: false },
+          { resourceType: 'tpu', quantity: '0', unlimited: false },
+        ],
+        used: [
+          { resourceType: 'cpu', quantity: '11.000000' },
+          { resourceType: 'mem', quantity: '2048' },
+        ],
+      }),
+    ).toEqual([
+      { resourceType: 'cpu', used: 11, limit: 16 },
+      { resourceType: 'mem', used: 2048, limit: null },
+      { resourceType: 'cuda.device', used: 0, limit: 4 },
+    ]);
+    expect(toLimitUsageRows(null)).toEqual([]);
+  });
+});
+
 describe('toPresetRows', () => {
   it('keeps availability and drops zero-quantity slots', () => {
     expect(

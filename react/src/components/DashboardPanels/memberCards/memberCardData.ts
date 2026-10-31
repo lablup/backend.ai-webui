@@ -96,6 +96,47 @@ export const toUsageRows = (
   });
 };
 
+/**
+ * Used-vs-limit rows from a `ScopeResourceUsageV2` (`projectResourceAllocationV2`)
+ * or a resource group's used against its capacity, slots ordered as in {@link toUsageRows}.
+ */
+export const toLimitUsageRows = (
+  usage:
+    | {
+        readonly limits: ReadonlyArray<LimitEntry>;
+        readonly used: ReadonlyArray<QuantityEntry>;
+      }
+    | null
+    | undefined,
+  slotOrder: ReadonlyArray<string> = ['cpu', 'mem'],
+): Array<UsageRow> => {
+  if (!usage) return [];
+  const used = new Map(
+    usage.used.map((entry) => [entry.resourceType, toNumber(entry.quantity)]),
+  );
+  const limits = new Map(
+    usage.limits.map((entry) => [entry.resourceType, entry]),
+  );
+  const ordered = _.sortBy(_.uniq([...limits.keys(), ...used.keys()]), [
+    (slot) => {
+      const index = slotOrder.indexOf(slot);
+      return index === -1 ? slotOrder.length : index;
+    },
+    (slot) => slot,
+  ]);
+  return ordered.flatMap((resourceType) => {
+    const usedQuantity = used.get(resourceType) ?? 0;
+    const entry = limits.get(resourceType);
+    const limit =
+      !entry || entry.unlimited || entry.quantity == null
+        ? null
+        : toNumber(entry.quantity);
+    return limit === 0 && usedQuantity === 0
+      ? []
+      : [{ resourceType, used: usedQuantity, limit }];
+  });
+};
+
 /** One preset row of the presets card. */
 export interface PresetRow {
   id: string;
