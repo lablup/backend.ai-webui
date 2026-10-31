@@ -5,7 +5,7 @@
 > 낯선 용어는 문서 맨 아래 [용어](#용어)에 모아 두었다.
 
 - WebUI는 AI agent가 열린 tab을 읽고 조작할 수 있도록 [WebMCP](#용어) [tool](#용어)을 등록한다. 등록 경로는 브라우저가 구현한 `document.modelContext.registerTool` 하나이고, [polyfill](#용어)·[relay](#용어)·`@mcp-b/*` package·새 runtime npm dependency는 쓰지 않는다.
-- tool은 production build에도 들어간다. `config.toml`의 `[general] enableWebMCP`가 `true`이고 브라우저에 `document.modelContext`가 있을 때만 등록된다. 설정이 꺼져 있으면 WebUI 코드는 `document.modelContext`를 읽지도 않는다.
+- tool은 production build에도 들어간다. `config.toml`의 `[general] enableWebMCP`는 기본으로 켜져 있고, 브라우저에 `document.modelContext`가 있을 때만 등록된다. 설정이 꺼져 있으면 WebUI 코드는 `document.modelContext`를 읽지도 않는다.
 - tool이 하는 일은 읽기, 이동, form 채우기 세 가지다. WebUI는 생성·확인 action을 submit하는 tool과 삭제·종료 같은 destructive action을 여는 tool을 만들지 않는다.
 - tool 이름은 `bai_`로 시작한다. page에 속한 tool은 `bai_list_visible_<noun>`, `bai_get_current_<noun>`, `bai_get_<noun>_filter`, `bai_prepare_<noun>` 네 모양 중 하나를 쓴다.
 - 브라우저는 `inputSchema`를 강제하지 않는다. 그래서 BUI의 `useWebMCPTool`이 모든 입력을 `validateWebMCPInput`으로 검사하고, 잘못된 입력에는 예외 대신 `{ error: { code, message, issues } }`를 돌려준다.
@@ -58,7 +58,7 @@ flowchart LR
 
 ### 2. 설정과 feature detection이 모두 켜져야 등록한다
 
-- **Config key**: 설정 이름은 `config.toml`의 `[general] enableWebMCP`이고 기본값은 `false`다. `react/src/helper/loginConfig.ts`의 `refreshConfigFromToml`이 이 값을 `LoginConfigState.enableWebMCP`로 읽는다. 값이 boolean `true`일 때만 켜지고, 따옴표로 감싼 문자열은 꺼짐이다. `applyConfigToClient`가 로그인 때 `baiClient._config.enableWebMCP`에 복사한다. `config.toml.sample`에 설명이 있다.
+- **Config key**: 설정 이름은 `config.toml`의 `[general] enableWebMCP`이고 기본값은 `true`다. Backend.AI webserver는 고정 template으로 `/config.toml`을 만들어 이 key를 넘기지 못하므로, 기본을 켜 두어야 webserver 배포에서도 tool을 쓸 수 있다. `react/src/helper/loginConfig.ts`의 `refreshConfigFromToml`이 이 값을 `LoginConfigState.enableWebMCP`로 읽는다. key가 없거나 값이 boolean `true`이면 켜지고, `false`와 따옴표로 감싼 문자열은 꺼짐이다. `applyConfigToClient`가 로그인 때 `baiClient._config.enableWebMCP`에 복사한다. `config.toml.sample`에 설명이 있다.
 - **Provider**: `DefaultProvidersForReactRoot`가 `useLoginConfig()?.enableWebMCP`를 `BAIWebMCPProvider`의 `enabled` prop으로 넘긴다. provider가 없는 tree에서 `enabled`는 `false`다.
 - **Check order**: `useWebMCPTool`은 `enabled`가 `false`이면 `document.modelContext`를 읽지 않는다. `enabled`가 `true`이면 `document.modelContext`를 읽어 API가 있는지 확인하고, 없으면 아무것도 등록하지 않는다.
 - **Active check**: tool이 쓸 data를 얻으려고 query나 계산을 해야 하는 component는 `useBAIWebMCPActive()`가 `false`일 때 그 hook을 부르지 않는다. `useBAIWebMCPActive()`는 위 두 조건을 같은 순서로 확인한다.
@@ -144,10 +144,10 @@ flowchart LR
 
 ## Consequences
 
-- **Off by default**: `enableWebMCP`를 켜지 않은 배포에서 `useWebMCPTool`은 context를 읽고 effect에서 바로 돌아간다. 브라우저 API에는 닿지 않는다.
+- **On by default**: key가 없는 배포도 tool을 등록하지만, WebMCP를 구현한 브라우저에서만 보인다. 끄려면 정적 `config.toml`에 `enableWebMCP = false`를 쓴다. webserver가 만드는 `/config.toml`에는 이 key가 없어서 webserver 배포는 지금 끌 수 없고, 끄는 경로가 필요해지면 webserver template에 key를 더한다. 꺼진 배포에서 `useWebMCPTool`은 context를 읽고 effect에서 바로 돌아가며 브라우저 API에는 닿지 않는다.
 - **Browser support**: WebMCP를 구현한 브라우저에서만 tool이 보인다. 지금은 origin trial이나 feature flag를 켠 Chrome이다.
 - **Writes stay manual**: agent가 form을 채워도 submit은 사람이 누른다. 사람 없이 끝나는 쓰기 자동화는 이 tool들로 만들 수 없다.
-- **Plugin risk**: `config.toml`의 `[plugin]`이 불러오는 제3자 JavaScript도 같은 page에서 `document.modelContext.registerTool`을 부를 수 있다. 이 ADR의 규칙은 WebUI 저장소의 코드에만 적용된다. `enableWebMCP`를 켜는 운영자가 plugin이 등록하는 tool을 확인한다.
+- **Plugin risk**: `config.toml`의 `[plugin]`이 불러오는 제3자 JavaScript도 같은 page에서 `document.modelContext.registerTool`을 부를 수 있다. 이 ADR의 규칙은 WebUI 저장소의 코드에만 적용된다. 운영자가 plugin이 등록하는 tool을 확인한다.
 - **Flat inputs only**: 복잡한 입력이 필요한 tool은 입력을 여러 개의 평평한 property로 나누거나 tool을 나눈다.
 
 ## 출처

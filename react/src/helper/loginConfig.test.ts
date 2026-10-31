@@ -5,10 +5,10 @@
 import { getDefaultLoginConfig, refreshConfigFromToml } from './loginConfig';
 
 describe('refreshConfigFromToml — enableWebMCP', () => {
-  it('defaults to false', () => {
-    expect(getDefaultLoginConfig().enableWebMCP).toBe(false);
-    expect(refreshConfigFromToml({ general: {} }).enableWebMCP).toBe(false);
-    expect(refreshConfigFromToml(null).enableWebMCP).toBe(false);
+  it('defaults to true', () => {
+    expect(getDefaultLoginConfig().enableWebMCP).toBe(true);
+    expect(refreshConfigFromToml({ general: {} }).enableWebMCP).toBe(true);
+    expect(refreshConfigFromToml(null).enableWebMCP).toBe(true);
   });
 
   it('reads [general] enableWebMCP', () => {
