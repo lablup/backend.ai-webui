@@ -6,10 +6,10 @@ import type { resourceRegistryDeploymentQuery } from '../../__generated__/resour
 import { useWebUINavigate } from '../../hooks';
 import { useBAIPaginationOptionState } from '../../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
-import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { useProjectPath } from '../../hooks/useRouteScope';
 import { resourceRegistry } from './resourceRegistry';
 import type { PanelDescriptor } from './types';
+import { useDashboardQueryScope } from './useDashboardFilters';
 import {
   BAIModelDeploymentNodes,
   filterOutNullAndUndefined,
@@ -40,7 +40,7 @@ export const DeploymentNodesPanelContent: React.FC<{
   disableNavigation?: boolean;
 }> = ({ descriptor, fetchKey, onChangeOrder, disableNavigation }) => {
   'use memo';
-  const currentProject = useCurrentProjectValue();
+  const queryScope = useDashboardQueryScope();
   const webUINavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
   const config = resourceRegistry.deployment;
@@ -61,7 +61,7 @@ export const DeploymentNodesPanelContent: React.FC<{
     order,
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
-    projectId: currentProject.id ?? '',
+    ...queryScope,
     resourceGroups: descriptor.resourceGroups,
   });
   const deferredVariables = useDeferredValue(variables);
@@ -71,7 +71,7 @@ export const DeploymentNodesPanelContent: React.FC<{
     deferredVariables,
     { fetchPolicy: 'store-and-network', fetchKey: deferredFetchKey },
   );
-  const connection = data.myDeployments;
+  const connection = data.scopedDeployments;
   const deployments = filterOutNullAndUndefined(
     connection?.edges.map((e) => e?.node),
   );

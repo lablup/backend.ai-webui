@@ -831,13 +831,11 @@
       "Empty": "Aucun panneau personnalisé pour le moment",
       "GridDisabled": "Vue en grille désactivée (Fonctionnalités expérimentales)",
       "NoMatchingCards": "Aucune carte correspondante",
-      "RequiresSuperadmin": "Réservé aux superadministrateurs",
       "ResetLayout": "Réinitialiser la disposition",
       "ResetLayoutDescription": "Restaure la disposition par défaut des panneaux. Les panneaux personnalisés sont conservés.",
       "SearchCards": "Rechercher des cartes",
       "SelectAll": "Tout sélectionner",
-      "Title": "Panneaux personnalisés",
-      "Unavailable": "Indisponible dans cet environnement"
+      "Title": "Panneaux personnalisés"
     },
     "panelModal": {
       "AddPanel": "Ajouter un panneau",
@@ -4092,7 +4090,6 @@
       "AIAccelerator": "Accélérateur d'IA",
       "AIAgents": "Agents d'intelligence artificielle",
       "AboutBackendAI": "À propos de Backend.AI",
-      "AdminDashboard": "Tableau de bord administratif",
       "AdminDeployments": "Déploiements administrateur",
       "AdminSettings": "Paramètres d'administration",
       "Administration": "Administration",

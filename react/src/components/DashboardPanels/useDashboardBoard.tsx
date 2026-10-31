@@ -13,11 +13,11 @@ import {
   catalogFor,
   panelTitleKey,
   removePanel,
+  renderedPanelKeys,
   resetBoard,
-  sanitizeBoard,
-  seedBoard,
+  resolveBoard,
+  siderEntries,
   sizeOf,
-  syncBoard,
   toBoardLayout,
   toLegacyPanel,
   updatePanel,
@@ -81,6 +81,31 @@ export const useAppConfigBoardStore: BoardStore = (page, catalog) => {
 
 const useBoardStore: BoardStore = useAppConfigBoardStore;
 
+const useCatalogConfig = (): PanelCatalogConfig => {
+  const baiClient = useSuspendedBackendaiClient();
+  return {
+    blockList: baiClient?._config?.blockList ?? [],
+    inactiveList: baiClient?._config?.inactiveList ?? [],
+    hideAgents: !!baiClient?._config?.hideAgents,
+  };
+};
+
+/** The keys of the cards the page's active board renders, for the page query's fragments. */
+export const useRenderedPanelKeys = (
+  page: PanelPage,
+  catalog: ReadonlyArray<PanelDefinition>,
+): Set<string> => {
+  'use memo';
+  const role = useCurrentUserRole();
+  const config = useCatalogConfig();
+  const { board } = useBoardStore(page, catalog);
+  return renderedPanelKeys(resolveBoard(board, catalog, page), catalog, {
+    page,
+    role,
+    config,
+  });
+};
+
 export interface UseDashboardBoardOptions {
   page: PanelPage;
   /** The page query is refetching. */
@@ -134,7 +159,7 @@ export const useDashboardBoard = ({
   'use memo';
   const { t } = useTranslation();
   const role = useCurrentUserRole();
-  const baiClient = useSuspendedBackendaiClient();
+  const config = useCatalogConfig();
   const [gridEnabled] = useBAISettingUserState(
     'experimental_session_resource_grid',
   );
@@ -145,11 +170,6 @@ export const useDashboardBoard = ({
     boards,
   } = useBoardStore(page, catalog);
 
-  const config: PanelCatalogConfig = {
-    blockList: baiClient?._config?.blockList ?? [],
-    inactiveList: baiClient?._config?.inactiveList ?? [],
-    hideAgents: !!baiClient?._config?.hideAgents,
-  };
   const visibleEntries = catalogFor(catalog, { page, role, config });
   const visibleByKey = new Map(
     visibleEntries.map((entry) => [entry.definition.key, entry]),
@@ -158,11 +178,7 @@ export const useDashboardBoard = ({
     catalog.map((definition) => [definition.key, definition]),
   );
 
-  const board = syncBoard(
-    sanitizeBoard(storedBoard, catalog, page) ?? seedBoard(catalog, page),
-    catalog,
-    page,
-  );
+  const board = resolveBoard(storedBoard, catalog, page);
 
   const isRenderable = (panel: PersistedPanelV2) => {
     const entry = visibleByKey.get(panel.key);
@@ -263,9 +279,7 @@ export const useDashboardBoard = ({
   return {
     boardItems,
     onLayoutChange: (reported) => save(applyLayout(board, reported)),
-    catalogEntries: visibleEntries.filter(
-      (entry) => entry.definition.kind === 'custom',
-    ),
+    catalogEntries: siderEntries(visibleEntries),
     activeKeys: new Set(board.panels.map((panel) => panel.key)),
     setPanelsActive,
     customPanels,

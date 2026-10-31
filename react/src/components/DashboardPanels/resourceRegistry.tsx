@@ -48,27 +48,42 @@ type SessionNode = NonNullable<
   >['node']
 >;
 type DeploymentNode = NonNullable<
-  resourceRegistryDeploymentQuery['response']['myDeployments']
+  resourceRegistryDeploymentQuery['response']['scopedDeployments']
 >['edges'][number]['node'];
 type VfolderNode = NonNullable<
-  resourceRegistryVfolderQuery['response']['adminVfoldersV2']
+  resourceRegistryVfolderQuery['response']['scopedVFoldersV2']
 >['edges'][number]['node'];
 
 const formatDate = (value?: string | null) =>
   value ? dayjs(value).format('lll') : '-';
 
-// Offset-pagination variables shared by the unscoped admin connections; the
-// project-scoped session query adds `scope` itself.
+/** The `scoped*` scope of a card: the viewer's own rows, else the page's project, else the current domain. */
+const searchScopeOf = ({
+  ownerId,
+  projectId,
+  domainId,
+}: Pick<ResourceQueryArgs, 'ownerId' | 'projectId' | 'domainId'>) =>
+  ownerId
+    ? { user: [{ value: ownerId }] }
+    : projectId
+      ? { project: [{ value: projectId }] }
+      : { domain: [{ value: domainId }] };
+
+// Offset-pagination variables shared by the scoped V2 connections.
 const makeOffsetVariables =
   <Q extends OperationType>(): ResourceConfig<Q, unknown>['buildVariables'] =>
-  ({ filter, order, limit, offset }: ResourceQueryArgs) =>
+  (args: ResourceQueryArgs) =>
     ({
+      scope: searchScopeOf(args),
       // V2 filters are GraphQLFilter objects; a (session-style) string never
       // reaches a V2 resource, but guard anyway.
-      filter: typeof filter === 'string' ? undefined : (filter ?? undefined),
-      orderBy: convertToOrderBy(order ?? null),
-      limit,
-      offset,
+      filter:
+        typeof args.filter === 'string'
+          ? undefined
+          : (args.filter ?? undefined),
+      orderBy: convertToOrderBy(args.order ?? null),
+      limit: args.limit,
+      offset: args.offset,
     }) as Q['variables'];
 
 // Normalize a V2 offset connection ({ count, edges { node } }) to the panel's rows.
@@ -144,8 +159,9 @@ const sessionConfig: ResourceConfig<resourceRegistrySessionQuery, SessionNode> =
       offset,
       projectId,
       resourceGroups,
+      domainName,
     }) => ({
-      scopeId: `project:${projectId}`,
+      scopeId: projectId ? `project:${projectId}` : `domain:${domainName}`,
       first: limit,
       offset,
       filter: withResourceGroupClause(
@@ -176,17 +192,18 @@ const deploymentConfig: ResourceConfig<
   labelKey: 'webui.menu.Deployments',
   defaultOrder: '-createdAt',
   kind: 'deploymentNodes',
-  // `myDeployments` narrowed to the current project, exactly as the user-facing
-  // DeploymentListPage does. The project-scoped `projectDeployments` field is
-  // what the project-ADMIN page uses, so it is not the regular-member path.
+  // The member page reads the viewer's own deployments in its project, as the
+  // user-facing DeploymentListPage does; admin pages read the project or domain.
   query: graphql`
     query resourceRegistryDeploymentQuery(
+      $scope: DeploymentSearchScope!
       $filter: DeploymentFilter
       $orderBy: [DeploymentOrderBy!]
       $limit: Int
       $offset: Int
     ) {
-      myDeployments(
+      scopedDeployments(
+        scope: $scope
         filter: $filter
         orderBy: $orderBy
         limit: $limit
@@ -224,7 +241,10 @@ const deploymentConfig: ResourceConfig<
     offset,
     projectId,
     resourceGroups,
+    ownerId,
+    domainId,
   }) => ({
+    scope: searchScopeOf({ ownerId, projectId, domainId }),
     filter: {
       ...(typeof filter === 'string' ? {} : (filter ?? {})),
       ...(projectId ? { projectId: { equals: projectId } } : {}),
@@ -236,7 +256,7 @@ const deploymentConfig: ResourceConfig<
     limit,
     offset,
   }),
-  selectConnection: (data) => selectOffsetConnection(data.myDeployments),
+  selectConnection: (data) => selectOffsetConnection(data.scopedDeployments),
 };
 
 const vfolderConfig: ResourceConfig<resourceRegistryVfolderQuery, VfolderNode> =
@@ -247,12 +267,14 @@ const vfolderConfig: ResourceConfig<resourceRegistryVfolderQuery, VfolderNode> =
     minRole: 'superadmin',
     query: graphql`
       query resourceRegistryVfolderQuery(
+        $scope: VFolderScope!
         $filter: VFolderFilter
         $orderBy: [VFolderOrderBy!]
         $limit: Int
         $offset: Int
       ) {
-        adminVfoldersV2(
+        scopedVFoldersV2(
+          scope: $scope
           filter: $filter
           orderBy: $orderBy
           limit: $limit
@@ -319,7 +341,7 @@ const vfolderConfig: ResourceConfig<resourceRegistryVfolderQuery, VfolderNode> =
       },
     ],
     buildVariables: makeOffsetVariables<resourceRegistryVfolderQuery>(),
-    selectConnection: (data) => selectOffsetConnection(data.adminVfoldersV2),
+    selectConnection: (data) => selectOffsetConnection(data.scopedVFoldersV2),
   };
 
 export const resourceRegistry: {

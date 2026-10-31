@@ -11,7 +11,12 @@
  * - MENU_KEY_TO_SCOPE_FEATURE covers every VALID_MENU_KEYS entry
  */
 import { VALID_MENU_KEYS } from '../hooks/useWebUIMenuItems';
-import { buildPath, MENU_KEY_TO_SCOPE_FEATURE } from './pathBuilder';
+import {
+  buildPath,
+  featureKeyInScope,
+  MENU_KEY_TO_SCOPE_FEATURE,
+  resolveMenuKeyScopeFeature,
+} from './pathBuilder';
 
 describe('buildPath', () => {
   it('builds admin paths without a project name', () => {
@@ -140,5 +145,44 @@ describe('MENU_KEY_TO_SCOPE_FEATURE', () => {
     expect(MENU_KEY_TO_SCOPE_FEATURE['job']).toEqual(
       MENU_KEY_TO_SCOPE_FEATURE['session'],
     );
+  });
+});
+
+describe('resolveMenuKeyScopeFeature', () => {
+  it('gives a project admin the project-admin dashboard', () => {
+    expect(
+      resolveMenuKeyScopeFeature('admin-dashboard', 'currentProjectAdmin'),
+    ).toEqual({ scope: 'projectAdmin', featureKey: 'dashboard' });
+  });
+
+  it.each(['superadmin', 'domainAdmin', 'none', undefined] as const)(
+    'gives %s the superadmin dashboard',
+    (role) => {
+      expect(resolveMenuKeyScopeFeature('admin-dashboard', role)).toEqual({
+        scope: 'admin',
+        featureKey: 'dashboard',
+      });
+    },
+  );
+
+  it('leaves keys with one route unchanged', () => {
+    expect(
+      resolveMenuKeyScopeFeature('admin-session', 'currentProjectAdmin'),
+    ).toEqual(MENU_KEY_TO_SCOPE_FEATURE['admin-session']);
+  });
+});
+
+describe('featureKeyInScope', () => {
+  it('finds the admin dashboard in both admin scopes and not in the project scope', () => {
+    expect(featureKeyInScope('admin-dashboard', 'admin')).toBe('dashboard');
+    expect(featureKeyInScope('admin-dashboard', 'projectAdmin')).toBe(
+      'dashboard',
+    );
+    expect(featureKeyInScope('admin-dashboard', 'project')).toBeUndefined();
+  });
+
+  it('matches the single route of other keys', () => {
+    expect(featureKeyInScope('session', 'project')).toBe('session');
+    expect(featureKeyInScope('session', 'projectAdmin')).toBeUndefined();
   });
 });

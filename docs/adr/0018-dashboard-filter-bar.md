@@ -77,6 +77,7 @@ sequenceDiagram
 | `projects` | `projectAdmin` | `projectIds`: URL 경로의 프로젝트 하나, `domain` |
 | `projects` | `admin`        | `projectIds: 'all'`, `domain`: 현재 도메인       |
 
+- **Page project**: page가 `DashboardPanelBoard`에 `project`(`ProjectContextOrNull`)를 넘긴다. 일반 사용자 page는 page의 현재 프로젝트, 프로젝트 관리자 page는 URL 경로의 프로젝트, superadmin page는 `null`이다. 카드와 패널 modal은 `DashboardFilterContext`에서 `useDashboardProject`로 읽고, 사용자 정의 패널 query는 `useDashboardQueryScope`가 주는 프로젝트를, 그것이 `null`이면 현재 도메인을 범위로 쓴다(ADR 0001).
 - **Current domain**: `useDashboardFilters`가 `useCurrentDomain()`의 `{ id, name }`을 `domain`으로 넘긴다.
 - **Audit log exception**: superadmin page에서 감사 로그를 읽는 카드는 현재 도메인의 scoped query 대신 cluster 전체의 `adminAuditLogsV2`를 읽는다. 도메인 entity scope로 읽은 감사 로그에는 그 도메인 안의 세션, 폴더, 배포 기록이 빠지기 때문이다(26.10 매니저에서 확인). [ADR 0012](0012-scoped-search-fields-in-place-of-admin-fields.md)의 scoped field 규칙에 대한 예외이고, 이 카드에만 적용한다. 다중 도메인 cluster에서는 이 카드만 다른 도메인의 기록까지 센다.
 - **Board vars**: 보드의 `vars`(`DashboardBoardVars`)는 `{ refresh }` 하나다. `sanitizeBoardVars`는 예전 보드에 남은 `project`, `rg`, `range`를 버리고, `REFRESH_OPTIONS`에 없는 `refresh`를 `1m`으로 바꾼다. 이미 간격을 고른 보드는 그 값을 유지한다.
@@ -88,6 +89,7 @@ sequenceDiagram
 - **Header pickers in view mode**: 설정을 적은 카드는 보기 모드에서도 머리의 제목 옆에 자원 그룹 picker와 기간 picker를 그린다(`PanelSettingsHeaderControls`). 각 picker는 hover하면 무엇을 고르는지(자원 그룹, 기간) tooltip으로 알린다. 머리에서 고른 값은 저장하지 않고 메모리(`panelSettingOverridesAtom`)에만 두어, 자동 새로고침 동안 유지되고 page를 떠나거나 다시 읽으면 저장된 기본값으로 돌아간다. 저장된 값과 다르면 picker가 강조되고, 옆의 되돌리기 버튼이 저장된 값으로 돌린다.
 - **Resource group choices**: `PanelSettingsModal`과 머리의 picker는 자원 그룹 하나를 `BAIScopedResourceGroupSelect`로 고른다. 선택지는 page의 프로젝트(`scope: { project }`)에서, superadmin page에서는 현재 도메인(`scope: { domain }`)에서 읽고, SFTP 전용 자원 그룹은 뺀다.
 - **Defaults**: 자원 그룹 설정이 비어 있으면 고정 카드는 헤더의 현재 자원 그룹을, 사용자 정의 패널은 모든 자원 그룹을 읽는다. 기간 설정의 기본은 최근 24시간(`DEFAULT_RANGE`, `panelSettings.ts`)이고, 선택지는 최근 1시간, 24시간, 7일이다.
+- **Superadmin resource group**: `/admin/dashboard` route는 헤더 프로젝트 selector를 그리지 않으므로, superadmin page의 기본 자원 그룹은 page가 따로 둔다(`superadminResourceGroupAtom`, `usePageResourceGroup`). 처음 값은 숨은 현재 프로젝트의 자원 그룹이고, Total Resources 카드의 picker는 현재 도메인의 자원 그룹을 모두 보여 준다.
 - **Card state**: `DashboardPanelContent`가 머리에서 고른 값, 없으면 저장된 설정을 풀어 `vars`(`DashboardVars`)로 넘긴다. `range`, 카드의 마지막 refresh 시각으로 고정한 `timeRange`, `resourceGroup`(설정 또는 헤더 자원 그룹), `currentProjectId`, `currentResourceGroup`이다.
 - **Single resource group cards**: 자원 그룹 하나만 받는 field를 읽는 카드는 `cardResourceGroup(settings.resourceGroups, currentResourceGroup)`이 정한 자원 그룹 하나만 읽는다. 자원 그룹마다 요청을 나누지 않는다.
 - **Custom panels**: data source가 자원 그룹으로 좁힐 수 있으면(`ResourceConfig.supportsResourceGroup`) 사용자 정의 패널도 자원 그룹 설정을 갖는다. 세션은 minilang filter에 `scaling_group == ...`를 붙이고, 배포는 `resourceGroup: { in }`을 쓴다. 폴더 패널은 설정이 없다.

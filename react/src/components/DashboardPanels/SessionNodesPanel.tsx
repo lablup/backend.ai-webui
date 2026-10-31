@@ -6,10 +6,10 @@ import type { resourceRegistrySessionQuery } from '../../__generated__/resourceR
 import { useWebUINavigate } from '../../hooks';
 import { useBAIPaginationOptionState } from '../../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
-import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import SessionNodes from '../SessionNodes';
 import { resourceRegistry } from './resourceRegistry';
 import type { PanelDescriptor } from './types';
+import { useDashboardQueryScope } from './useDashboardFilters';
 import { filterOutNullAndUndefined } from 'backend.ai-ui';
 import React, { useDeferredValue } from 'react';
 import { useLazyLoadQuery } from 'react-relay';
@@ -30,7 +30,7 @@ export const SessionNodesPanelContent: React.FC<{
   disableSessionDetail?: boolean;
 }> = ({ descriptor, fetchKey, onChangeOrder, disableSessionDetail }) => {
   'use memo';
-  const currentProject = useCurrentProjectValue();
+  const queryScope = useDashboardQueryScope();
   const webUINavigate = useWebUINavigate();
   const location = useLocation();
   const config = resourceRegistry.session;
@@ -51,7 +51,7 @@ export const SessionNodesPanelContent: React.FC<{
     order,
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
-    projectId: currentProject.id ?? '',
+    ...queryScope,
     resourceGroups: descriptor.resourceGroups,
   });
   const deferredVariables = useDeferredValue(variables);

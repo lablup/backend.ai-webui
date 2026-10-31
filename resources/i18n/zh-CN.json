@@ -831,13 +831,11 @@
       "Empty": "暂无自定义面板",
       "GridDisabled": "网格视图已关闭（实验性功能）",
       "NoMatchingCards": "没有匹配的卡片",
-      "RequiresSuperadmin": "仅限超级管理员",
       "ResetLayout": "重置布局",
       "ResetLayoutDescription": "将面板布局恢复为默认设置。自定义面板将被保留。",
       "SearchCards": "搜索卡片",
       "SelectAll": "全选",
-      "Title": "自定义面板",
-      "Unavailable": "此环境中不可用"
+      "Title": "自定义面板"
     },
     "panelModal": {
       "AddPanel": "添加面板",
@@ -4091,7 +4089,6 @@
       "AIAccelerator": "人工智能加速器",
       "AIAgents": "人工智能代理",
       "AboutBackendAI": "关于后端.AI",
-      "AdminDashboard": "管理仪表板",
       "AdminDeployments": "管理员部署",
       "AdminSettings": "管理员设置",
       "Administration": "行政",

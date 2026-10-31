@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4b0ec07ea6494ddeb45501ecf1152b88>>
+ * @generated SignedSource<<e32fc589e4ab4f1326233d9770fdc8ce>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,6 +17,14 @@ export type ReplicaHealthStatus = "DEGRADED" | "HEALTHY" | "NOT_CHECKED" | "UNHE
 export type ReplicaStatus = "FAILED_TO_START" | "PROVISIONING" | "RUNNING" | "TERMINATED" | "TERMINATING" | "%future added value";
 export type ScalingState = "SCALING" | "STABLE" | "%future added value";
 export type TrafficStatus = "ACTIVE" | "INACTIVE" | "%future added value";
+export type DeploymentSearchScope = {
+  domain?: ReadonlyArray<UUIDScope> | null | undefined;
+  project?: ReadonlyArray<UUIDScope> | null | undefined;
+  user?: ReadonlyArray<UUIDScope> | null | undefined;
+};
+export type UUIDScope = {
+  value: string;
+};
 export type DeploymentFilter = {
   AND?: ReadonlyArray<DeploymentFilter> | null | undefined;
   NOT?: ReadonlyArray<DeploymentFilter> | null | undefined;
@@ -160,9 +168,10 @@ export type resourceRegistryDeploymentQuery$variables = {
   limit?: number | null | undefined;
   offset?: number | null | undefined;
   orderBy?: ReadonlyArray<DeploymentOrderBy> | null | undefined;
+  scope: DeploymentSearchScope;
 };
 export type resourceRegistryDeploymentQuery$data = {
-  readonly myDeployments: {
+  readonly scopedDeployments: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -198,7 +207,12 @@ v3 = {
   "kind": "LocalArgument",
   "name": "orderBy"
 },
-v4 = [
+v4 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "scope"
+},
+v5 = [
   {
     "kind": "Variable",
     "name": "filter",
@@ -218,23 +232,28 @@ v4 = [
     "kind": "Variable",
     "name": "orderBy",
     "variableName": "orderBy"
+  },
+  {
+    "kind": "Variable",
+    "name": "scope",
+    "variableName": "scope"
   }
 ],
-v5 = {
+v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "count",
   "storageKey": null
 },
-v6 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v7 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -247,7 +266,8 @@ return {
       (v0/*: any*/),
       (v1/*: any*/),
       (v2/*: any*/),
-      (v3/*: any*/)
+      (v3/*: any*/),
+      (v4/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
@@ -255,13 +275,13 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v4/*: any*/),
+        "args": (v5/*: any*/),
         "concreteType": "ModelDeploymentConnection",
         "kind": "LinkedField",
-        "name": "myDeployments",
+        "name": "scopedDeployments",
         "plural": false,
         "selections": [
-          (v5/*: any*/),
+          (v6/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -278,7 +298,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v6/*: any*/),
+                  (v7/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -300,6 +320,7 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
+      (v4/*: any*/),
       (v0/*: any*/),
       (v3/*: any*/),
       (v1/*: any*/),
@@ -310,13 +331,13 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v4/*: any*/),
+        "args": (v5/*: any*/),
         "concreteType": "ModelDeploymentConnection",
         "kind": "LinkedField",
-        "name": "myDeployments",
+        "name": "scopedDeployments",
         "plural": false,
         "selections": [
-          (v5/*: any*/),
+          (v6/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -333,7 +354,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v6/*: any*/),
+                  (v7/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -370,7 +391,7 @@ return {
                         "name": "domainName",
                         "storageKey": null
                       },
-                      (v7/*: any*/),
+                      (v8/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -415,11 +436,11 @@ return {
                             "name": "basicInfo",
                             "plural": false,
                             "selections": [
-                              (v7/*: any*/)
+                              (v8/*: any*/)
                             ],
                             "storageKey": null
                           },
-                          (v6/*: any*/)
+                          (v7/*: any*/)
                         ],
                         "storageKey": null
                       }
@@ -512,7 +533,7 @@ return {
                     "name": "replicas",
                     "plural": false,
                     "selections": [
-                      (v5/*: any*/)
+                      (v6/*: any*/)
                     ],
                     "storageKey": "replicas(filter:{\"status\":{\"equals\":\"RUNNING\"}})"
                   },
@@ -524,7 +545,7 @@ return {
                     "name": "currentRevision",
                     "plural": false,
                     "selections": [
-                      (v6/*: any*/),
+                      (v7/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -548,8 +569,8 @@ return {
                             "name": "vfolder",
                             "plural": false,
                             "selections": [
-                              (v6/*: any*/),
-                              (v7/*: any*/)
+                              (v7/*: any*/),
+                              (v8/*: any*/)
                             ],
                             "storageKey": null
                           }
@@ -603,7 +624,7 @@ return {
                                 "name": "value",
                                 "storageKey": null
                               },
-                              (v6/*: any*/),
+                              (v7/*: any*/),
                               {
                                 "alias": null,
                                 "args": null,
@@ -628,7 +649,7 @@ return {
                     "name": "creator",
                     "plural": false,
                     "selections": [
-                      (v6/*: any*/),
+                      (v7/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -676,16 +697,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e525fd5db2492670c9ec19704b6f693a",
+    "cacheID": "97407326bdba8ee1d06ec314bc602118",
     "id": null,
     "metadata": {},
     "name": "resourceRegistryDeploymentQuery",
     "operationKind": "query",
-    "text": "query resourceRegistryDeploymentQuery(\n  $filter: DeploymentFilter\n  $orderBy: [DeploymentOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  myDeployments(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...BAIModelDeploymentNodesFragment\n      }\n    }\n  }\n}\n\nfragment BAIDeploymentOwnerInfo_deployment on ModelDeployment {\n  id\n  creator {\n    id\n    basicInfo {\n      email\n      username\n      fullName\n    }\n  }\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIModelDeploymentNodesFragment on ModelDeployment {\n  id\n  entityId\n  currentRevisionId\n  metadata {\n    projectId\n    domainName\n    name\n    status\n    createdAt\n    updatedAt\n    resourceGroupName\n    projectV2 {\n      basicInfo {\n        name\n      }\n      id\n    }\n  }\n  networkAccess {\n    endpointUrl\n    preferredDomainName\n    openToPublic\n  }\n  defaultDeploymentStrategy {\n    type\n  }\n  replicaState {\n    desiredReplicaCount\n  }\n  runningReplicas: replicas(filter: {status: {equals: RUNNING}}) {\n    count\n  }\n  currentRevision {\n    id\n    revisionNumber\n    modelMountConfig {\n      vfolder {\n        id\n        name\n      }\n    }\n  }\n  entityLabels(limit: 100) {\n    ...BAIEntityLabelTokensFragment\n    ...BAIEntityLabelSettingModalFragment\n  }\n  ...BAIDeploymentOwnerInfo_deployment\n}\n"
+    "text": "query resourceRegistryDeploymentQuery(\n  $scope: DeploymentSearchScope!\n  $filter: DeploymentFilter\n  $orderBy: [DeploymentOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  scopedDeployments(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...BAIModelDeploymentNodesFragment\n      }\n    }\n  }\n}\n\nfragment BAIDeploymentOwnerInfo_deployment on ModelDeployment {\n  id\n  creator {\n    id\n    basicInfo {\n      email\n      username\n      fullName\n    }\n  }\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIModelDeploymentNodesFragment on ModelDeployment {\n  id\n  entityId\n  currentRevisionId\n  metadata {\n    projectId\n    domainName\n    name\n    status\n    createdAt\n    updatedAt\n    resourceGroupName\n    projectV2 {\n      basicInfo {\n        name\n      }\n      id\n    }\n  }\n  networkAccess {\n    endpointUrl\n    preferredDomainName\n    openToPublic\n  }\n  defaultDeploymentStrategy {\n    type\n  }\n  replicaState {\n    desiredReplicaCount\n  }\n  runningReplicas: replicas(filter: {status: {equals: RUNNING}}) {\n    count\n  }\n  currentRevision {\n    id\n    revisionNumber\n    modelMountConfig {\n      vfolder {\n        id\n        name\n      }\n    }\n  }\n  entityLabels(limit: 100) {\n    ...BAIEntityLabelTokensFragment\n    ...BAIEntityLabelSettingModalFragment\n  }\n  ...BAIDeploymentOwnerInfo_deployment\n}\n"
   }
 };
 })();
 
-(node as any).hash = "4e7a525297dc8b70a0c7765c072ffe4b";
+(node as any).hash = "6deefdd913ebf0273d62851ddd31eb17";
 
 export default node;

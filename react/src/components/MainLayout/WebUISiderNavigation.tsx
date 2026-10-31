@@ -5,14 +5,8 @@
 import { AstryxAdminTheme } from '../../astryx-theme';
 import { useBackToUserView } from '../../hooks/useBackToUserView';
 import { useRouteAccessDecision } from '../../hooks/useRouteAccess';
-import {
-  useActiveProjectName,
-  useCurrentMenuKey,
-} from '../../hooks/useRouteScope';
-import {
-  getPathFromMenuKey,
-  useWebUIMenuItems,
-} from '../../hooks/useWebUIMenuItems';
+import { useCurrentMenuKey } from '../../hooks/useRouteScope';
+import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
 import BAIMenu from '../BAIMenu';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { HStack } from '@lablup/ui-common/Stack';
@@ -46,9 +40,6 @@ const WebUISiderNavigation: React.FC<WebUISiderNavigationProps> = ({
   // `/project/:name/<feature>` and `/admin/<feature>` URL shapes where the
   // first pathname segment is the scope prefix, not the feature key.
   const currentMenuKey = useCurrentMenuKey();
-  // Active project NAME (URL `:projectName` if present, else current project
-  // atom), for the scope-aware Project Settings link.
-  const activeProjectName = useActiveProjectName();
 
   const {
     groupedGeneralMenu,
@@ -140,10 +131,7 @@ const WebUISiderNavigation: React.FC<WebUISiderNavigationProps> = ({
               // System admin pages are entered from the user menu instead.
               key: 'project-settings',
               labelText: t('webui.menu.ProjectSettings'),
-              to: getPathFromMenuKey(
-                firstAvailableProjectAdminMenuItem.key,
-                activeProjectName,
-              ),
+              to: firstAvailableProjectAdminMenuItem.to,
               icon: <ShieldUserIcon style={{ color: token('--color-info') }} />,
             },
             ...groupedGeneralMenu,

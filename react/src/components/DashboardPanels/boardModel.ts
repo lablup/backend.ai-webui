@@ -66,6 +66,12 @@ export const catalogFor = (
     }));
 };
 
+/** What the edit sider offers: single-instance cards the viewer can use, never a locked one. */
+export const siderEntries = (entries: ReadonlyArray<CatalogEntry>) =>
+  entries.filter(
+    (entry) => entry.definition.kind === 'custom' && !entry.locked,
+  );
+
 export const panelTitleKey = (
   definition: PanelDefinition,
   role: PanelCatalogContext['role'],
@@ -390,4 +396,32 @@ export const toLegacyPanel = (
       resourceGroups: panel.settings?.resourceGroups ?? null,
     },
   };
+};
+
+/** The stored board as the page shows it: sanitized, seeded when empty, synced with the catalog. */
+export const resolveBoard = (
+  stored: unknown,
+  definitions: ReadonlyArray<PanelDefinition>,
+  page: PanelPage,
+): DashboardBoard =>
+  syncBoard(
+    sanitizeBoard(stored, definitions, page) ?? seedBoard(definitions, page),
+    definitions,
+    page,
+  );
+
+/** The keys of the cards a board renders for this viewer: on the board, visible and not locked. */
+export const renderedPanelKeys = (
+  board: DashboardBoard,
+  definitions: ReadonlyArray<PanelDefinition>,
+  context: PanelCatalogContext,
+): Set<string> => {
+  const usable = new Set(
+    catalogFor(definitions, context)
+      .filter((entry) => !entry.locked)
+      .map((entry) => entry.definition.key),
+  );
+  return new Set(
+    board.panels.map((panel) => panel.key).filter((key) => usable.has(key)),
+  );
 };

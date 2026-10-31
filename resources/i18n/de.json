@@ -831,13 +831,11 @@
       "Empty": "Noch keine benutzerdefinierten Panels",
       "GridDisabled": "Rasteransicht aus (Experimentelle Funktionen)",
       "NoMatchingCards": "Keine passenden Karten",
-      "RequiresSuperadmin": "Nur für Superadmins",
       "ResetLayout": "Layout zurücksetzen",
       "ResetLayoutDescription": "Stellt die Standardanordnung der Panels wieder her. Benutzerdefinierte Panels bleiben erhalten.",
       "SearchCards": "Karten suchen",
       "SelectAll": "Alle auswählen",
-      "Title": "Benutzerdefinierte Panels",
-      "Unavailable": "In dieser Umgebung nicht verfügbar"
+      "Title": "Benutzerdefinierte Panels"
     },
     "panelModal": {
       "AddPanel": "Panel hinzufügen",
@@ -4091,7 +4089,6 @@
       "AIAccelerator": "KI-Beschleuniger",
       "AIAgents": "AI-Agenten",
       "AboutBackendAI": "Über Backend.AI",
-      "AdminDashboard": "Admin -Dashboard",
       "AdminDeployments": "Admin-Bereitstellungen",
       "AdminSettings": "Admin-Einstellungen",
       "Administration": "Verwaltung",

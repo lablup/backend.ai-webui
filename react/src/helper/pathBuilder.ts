@@ -115,6 +115,7 @@ export const MENU_KEY_TO_SCOPE_FEATURE: Record<string, ScopeFeature> = {
   'admin-session': { scope: 'admin', featureKey: 'session' },
   'admin-deployments': { scope: 'admin', featureKey: 'deployments' },
   'admin-data': { scope: 'admin', featureKey: 'data' },
+  // Superadmin route; project admins resolve through PROJECT_ADMIN_MENU_KEY_ROUTES.
   'admin-dashboard': { scope: 'admin', featureKey: 'dashboard' },
   credential: { scope: 'admin', featureKey: 'users' },
   environment: { scope: 'admin', featureKey: 'environment' },
@@ -130,3 +131,40 @@ export const MENU_KEY_TO_SCOPE_FEATURE: Record<string, ScopeFeature> = {
   branding: { scope: 'admin', featureKey: 'branding' },
   information: { scope: 'admin', featureKey: 'information' },
 };
+
+/**
+ * Admin menu keys that also have a project-admin route. One menu entry leads
+ * a project admin here and everyone else to the `MENU_KEY_TO_SCOPE_FEATURE` route.
+ */
+export const PROJECT_ADMIN_MENU_KEY_ROUTES: Readonly<
+  Record<string, ScopeFeature>
+> = {
+  'admin-dashboard': { scope: 'projectAdmin', featureKey: 'dashboard' },
+};
+
+/** The viewer's admin role, as `useEffectiveAdminRole` reports it. */
+export type MenuAdminRole =
+  'superadmin' | 'domainAdmin' | 'currentProjectAdmin' | 'none';
+
+/**
+ * The route a menu key leads the viewer to. Superadmin wins over project
+ * admin, so only a viewer whose highest role is project admin of the current
+ * project gets the project-admin route of a key that has both.
+ */
+export const resolveMenuKeyScopeFeature = (
+  key: string,
+  adminRole?: MenuAdminRole,
+): ScopeFeature | undefined =>
+  (adminRole === 'currentProjectAdmin'
+    ? PROJECT_ADMIN_MENU_KEY_ROUTES[key]
+    : undefined) ?? MENU_KEY_TO_SCOPE_FEATURE[key];
+
+/** The feature key `menuKey` has in `scope`, or `undefined` when it has no route there. */
+export const featureKeyInScope = (
+  menuKey: string,
+  scope: RouteScope,
+): FeatureKey | undefined =>
+  [
+    MENU_KEY_TO_SCOPE_FEATURE[menuKey],
+    PROJECT_ADMIN_MENU_KEY_ROUTES[menuKey],
+  ].find((scopeFeature) => scopeFeature?.scope === scope)?.featureKey;

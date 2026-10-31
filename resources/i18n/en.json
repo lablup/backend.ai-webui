@@ -818,13 +818,11 @@
       "Empty": "No custom panels yet",
       "GridDisabled": "Grid view off (Experimental features)",
       "NoMatchingCards": "No matching cards",
-      "RequiresSuperadmin": "Superadmin only",
       "ResetLayout": "Reset layout",
       "ResetLayoutDescription": "Restores the default panel arrangement. Custom panels are kept.",
       "SearchCards": "Search cards",
       "SelectAll": "Select all",
-      "Title": "Custom panels",
-      "Unavailable": "Not available in this environment"
+      "Title": "Custom panels"
     },
     "panelModal": {
       "AddPanel": "Add panel",
@@ -4076,7 +4074,6 @@
       "AIAccelerator": "AI Accelerator",
       "AIAgents": "AI Agents",
       "AboutBackendAI": "About Backend.AI",
-      "AdminDashboard": "Admin Dashboard",
       "AdminDeployments": "Admin Deployments",
       "AdminSettings": "Admin Settings",
       "Administration": "Administration",

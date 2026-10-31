@@ -77,7 +77,6 @@ export const PANEL_GROUPS = [
   'resource',
   'deployment',
   'activity',
-  'superadmin',
   'other',
 ] as const;
 export type PanelGroup = (typeof PANEL_GROUPS)[number];
@@ -211,10 +210,10 @@ export interface PanelCatalogContext {
   config: PanelCatalogConfig;
 }
 
-/** Fragment keys of the page queries the built-in cards still read (until they get their own queries). */
+/** The page query's fragments; null when no card on the board reads one. */
 export interface DashboardPageQueryRefs {
-  queryRef: SessionCountDashboardItemFragment$key &
-    RecentlyCreatedSessionFragment$key;
+  sessionCountQueryRef?: SessionCountDashboardItemFragment$key | null;
+  recentSessionsQueryRef?: RecentlyCreatedSessionFragment$key | null;
   totalResourceQueryRef?: TotalResourceWithinResourceGroupFragment$key | null;
   agentStatsQueryRef?: AgentStatsFragment$key | null;
 }
@@ -276,8 +275,12 @@ export interface ResourceQueryArgs {
   offset: number;
   /** Restricts the rows to these resource groups; absent or empty means all. */
   resourceGroups?: ReadonlyArray<string> | null;
-  /** Ambient project scope (ADR-0001) for project-scoped connections. */
-  projectId: string;
+  /** The page's project; `null` on the superadmin page, which reads the current domain. */
+  projectId: string | null;
+  domainName: string;
+  domainId: string;
+  /** The viewer, when the page reads only the viewer's own rows (the member page). */
+  ownerId: string | null;
 }
 
 /** Normalized connection slice the executor renders. */

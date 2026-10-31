@@ -831,13 +831,11 @@
       "Empty": "Brak paneli niestandardowych",
       "GridDisabled": "Widok siatki wyłączony (Funkcje eksperymentalne)",
       "NoMatchingCards": "Brak pasujących kart",
-      "RequiresSuperadmin": "Tylko superadministrator",
       "ResetLayout": "Resetuj układ",
       "ResetLayoutDescription": "Przywraca domyślny układ paneli. Panele niestandardowe zostaną zachowane.",
       "SearchCards": "Szukaj kart",
       "SelectAll": "Zaznacz wszystkie",
-      "Title": "Panele niestandardowe",
-      "Unavailable": "Niedostępne w tym środowisku"
+      "Title": "Panele niestandardowe"
     },
     "panelModal": {
       "AddPanel": "Dodaj panel",
@@ -4092,7 +4090,6 @@
       "AIAccelerator": "Akcelerator AI",
       "AIAgents": "Agenci AI",
       "AboutBackendAI": "O Backend.AI",
-      "AdminDashboard": "Pulpit nawigacyjny administratora",
       "AdminDeployments": "Wdrożenia administratora",
       "AdminSettings": "Ustawienia admina",
       "Administration": "Administracja",

@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useResourceGroupsForCurrentProject } from '../../hooks/useCurrentProject';
+import type { ProjectContextOrNull } from '../../types/projectContext';
 import { dashboardEditModeAtom } from '../dashboardEditModeAtom';
 import DashboardBoardSection from './DashboardBoardSection';
 import DashboardBoardTabs from './DashboardBoardTabs';
@@ -46,6 +47,8 @@ const resourceGroupScopeOf = (
 
 export interface DashboardPanelBoardProps {
   page: PanelPage;
+  /** The project in the URL path; `null` on the superadmin page (ADR 0001). */
+  project: ProjectContextOrNull;
   catalog: ReadonlyArray<PanelDefinition>;
   /** The page query is refetching. */
   isRefetching: boolean;
@@ -60,6 +63,7 @@ export interface DashboardPanelBoardProps {
  */
 const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
   page,
+  project,
   catalog,
   isRefetching,
   queryRefs,
@@ -117,7 +121,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     ? settingsTargetOf(settingsPanelId)
     : null;
 
-  const filters = useDashboardFilters(page, boards);
+  const filters = useDashboardFilters(page, boards, project);
   useBoardItemVisibility(boardContainerRef);
 
   const scrollBoardEndIntoView = () => {
@@ -131,19 +135,28 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
   };
 
   return (
-    <BAIFlex direction="row" align="stretch" gap="lg" style={{ width: '100%' }}>
-      <div ref={boardContainerRef} style={{ flex: 1, minWidth: 0 }}>
-        <BAIFlex direction="column" align="stretch" gap="md">
-          <DashboardFilterBar filters={filters} isRefetching={isRefetching}>
-            {page !== 'project' ? <DashboardBoardTabs boards={boards} /> : null}
-          </DashboardFilterBar>
-          <DashboardFilterContext
-            value={{
-              scope: filters.scope,
-              currentProjectId: filters.currentProjectId,
-              currentResourceGroup: filters.currentResourceGroup,
-            }}
-          >
+    // The provider also covers the panel modal, whose previews read the page's project.
+    <DashboardFilterContext
+      value={{
+        scope: filters.scope,
+        project: filters.project,
+        currentProjectId: filters.currentProjectId,
+        currentResourceGroup: filters.currentResourceGroup,
+      }}
+    >
+      <BAIFlex
+        direction="row"
+        align="stretch"
+        gap="lg"
+        style={{ width: '100%' }}
+      >
+        <div ref={boardContainerRef} style={{ flex: 1, minWidth: 0 }}>
+          <BAIFlex direction="column" align="stretch" gap="md">
+            <DashboardFilterBar filters={filters} isRefetching={isRefetching}>
+              {page !== 'project' ? (
+                <DashboardBoardTabs boards={boards} />
+              ) : null}
+            </DashboardFilterBar>
             <BAIBoard
               movable
               resizable
@@ -157,73 +170,74 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
                 );
               }}
             />
-          </DashboardFilterContext>
-        </BAIFlex>
-      </div>
-      {editMode ? (
-        <DashboardEditSider
-          catalogEntries={catalogEntries}
-          activeKeys={activeKeys}
-          onTogglePanels={(keys, active) => {
-            setPanelsActive(keys, active);
-            if (active) scrollBoardEndIntoView();
-          }}
-          panels={customPanels}
-          onRequestAdd={() => setPanelModalState({ open: true })}
-          onRequestEdit={(panel) => setPanelModalState({ open: true, panel })}
-          onRemove={removePanel}
-          onResetLayout={resetLayout}
-          settingsTargetOf={settingsTargetOf}
-          onRequestSettings={(panelId) => {
-            setSettingsPanelId(panelId);
-            setIsSettingsOpen(true);
-          }}
-          boardSection={
-            boards && page !== 'project' ? (
-              <DashboardBoardSection
-                page={page}
-                boards={boards}
-                catalog={catalog}
-              />
-            ) : undefined
-          }
-        />
-      ) : null}
-      <BAIUnmountAfterClose>
-        <PanelSettingsModal
-          open={isSettingsOpen && !!settingsTarget}
-          title={settingsTarget?.title ?? ''}
-          definition={settingsTarget?.definition ?? { kind: 'custom' }}
-          settings={settingsTarget?.settings}
-          resourceGroupScope={resourceGroupScopeOf(filters.scope)}
-          excludedResourceGroups={_.compact(sftpResourceGroups)}
-          onSubmit={(settings) => {
-            if (settingsPanelId) updatePanelSettings(settingsPanelId, settings);
-          }}
-          onRequestClose={() => setIsSettingsOpen(false)}
-          afterClose={() => setSettingsPanelId(null)}
-        />
-      </BAIUnmountAfterClose>
-      {/* Unmounted after the close animation, so each open starts fresh: two
-          consecutive Adds would otherwise share the preview-driven state. */}
-      <BAIUnmountAfterClose>
-        <DashboardPanelModal
-          open={panelModalState.open}
-          initialPanel={panelModalState.panel}
-          availableResources={availableResources}
-          gridEnabled={gridEnabled}
-          onRequestClose={() => setPanelModalState({ open: false })}
-          onSubmit={(input) => {
-            if (panelModalState.panel) {
-              updateCustomPanel(panelModalState.panel.id, input);
-            } else {
-              addCustomPanel(input);
-              scrollBoardEndIntoView();
+          </BAIFlex>
+        </div>
+        {editMode ? (
+          <DashboardEditSider
+            catalogEntries={catalogEntries}
+            activeKeys={activeKeys}
+            onTogglePanels={(keys, active) => {
+              setPanelsActive(keys, active);
+              if (active) scrollBoardEndIntoView();
+            }}
+            panels={customPanels}
+            onRequestAdd={() => setPanelModalState({ open: true })}
+            onRequestEdit={(panel) => setPanelModalState({ open: true, panel })}
+            onRemove={removePanel}
+            onResetLayout={resetLayout}
+            settingsTargetOf={settingsTargetOf}
+            onRequestSettings={(panelId) => {
+              setSettingsPanelId(panelId);
+              setIsSettingsOpen(true);
+            }}
+            boardSection={
+              page !== 'project' ? (
+                <DashboardBoardSection
+                  page={page}
+                  boards={boards}
+                  catalog={catalog}
+                />
+              ) : undefined
             }
-          }}
-        />
-      </BAIUnmountAfterClose>
-    </BAIFlex>
+          />
+        ) : null}
+        <BAIUnmountAfterClose>
+          <PanelSettingsModal
+            open={isSettingsOpen && !!settingsTarget}
+            title={settingsTarget?.title ?? ''}
+            definition={settingsTarget?.definition ?? { kind: 'custom' }}
+            settings={settingsTarget?.settings}
+            resourceGroupScope={resourceGroupScopeOf(filters.scope)}
+            excludedResourceGroups={_.compact(sftpResourceGroups)}
+            onSubmit={(settings) => {
+              if (settingsPanelId)
+                updatePanelSettings(settingsPanelId, settings);
+            }}
+            onRequestClose={() => setIsSettingsOpen(false)}
+            afterClose={() => setSettingsPanelId(null)}
+          />
+        </BAIUnmountAfterClose>
+        {/* Unmounted after the close animation, so each open starts fresh: two
+          consecutive Adds would otherwise share the preview-driven state. */}
+        <BAIUnmountAfterClose>
+          <DashboardPanelModal
+            open={panelModalState.open}
+            initialPanel={panelModalState.panel}
+            availableResources={availableResources}
+            gridEnabled={gridEnabled}
+            onRequestClose={() => setPanelModalState({ open: false })}
+            onSubmit={(input) => {
+              if (panelModalState.panel) {
+                updateCustomPanel(panelModalState.panel.id, input);
+              } else {
+                addCustomPanel(input);
+                scrollBoardEndIntoView();
+              }
+            }}
+          />
+        </BAIUnmountAfterClose>
+      </BAIFlex>
+    </DashboardFilterContext>
   );
 };
 

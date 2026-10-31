@@ -174,11 +174,7 @@ const RootRedirect: React.FC = () => {
   const isSuperAdmin = useEffectiveAdminRole() === 'superadmin';
   return (
     <WebUINavigate
-      to={
-        isSuperAdmin && firstAvailableAdminMenuItem
-          ? getPathFromMenuKey(firstAvailableAdminMenuItem.key)
-          : defaultMenuPath
-      }
+      to={(isSuperAdmin && firstAvailableAdminMenuItem?.to) || defaultMenuPath}
       replace
     />
   );
@@ -216,6 +212,7 @@ const ScopeIndexRedirect: React.FC<{ scope: 'admin' | 'projectAdmin' }> = ({
             ? getPathFromMenuKey(
                 firstAvailableProjectAdminMenuKey,
                 activeProjectName,
+                'currentProjectAdmin',
               )
             : defaultMenuPath
         }
@@ -230,16 +227,19 @@ const ScopeIndexRedirect: React.FC<{ scope: 'admin' | 'projectAdmin' }> = ({
   // fallback only.
   return (
     <WebUINavigate
-      to={
-        firstAvailableAdminMenuItem?.key
-          ? getPathFromMenuKey(
-              firstAvailableAdminMenuItem.key,
-              activeProjectName,
-            )
-          : defaultMenuPath
-      }
+      to={firstAvailableAdminMenuItem?.to ?? defaultMenuPath}
       replace
     />
+  );
+};
+
+/** Legacy `/admin-dashboard`: superadmins go to `/admin/dashboard`, others to the project admin one. */
+const AdminDashboardRedirect: React.FC = () => {
+  'use memo';
+  return useEffectiveAdminRole() === 'superadmin' ? (
+    <AdminRedirect featureKey="dashboard" />
+  ) : (
+    <ProjectScopedRedirect scope="projectAdmin" featureKey="dashboard" />
   );
 };
 
@@ -550,6 +550,22 @@ export const mainLayoutChildRoutes: RouteObject[] = [
             Component: UnknownRoutePage,
           },
           {
+            // Domain admins reach it by URL through the subtree default; the menu hides it.
+            path: 'dashboard',
+            Component: () => (
+              <BAIErrorBoundary>
+                <Suspense fallback={<BAISkeleton rows={4} />}>
+                  <AdminDashboardPage page="projectAdmin" />
+                </Suspense>
+              </BAIErrorBoundary>
+            ),
+            handle: {
+              scope: 'projectAdmin',
+              menuKey: 'admin-dashboard',
+              labelKey: 'webui.menu.Dashboard',
+            },
+          },
+          {
             path: 'session',
             Component: () => {
               useSuspendedBackendaiClient();
@@ -767,20 +783,18 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       },
       {
         path: 'dashboard',
-        Component: () => {
-          return (
-            <BAIErrorBoundary>
-              <Suspense fallback={<BAISkeleton rows={4} />}>
-                <AdminDashboardPage />
-              </Suspense>
-            </BAIErrorBoundary>
-          );
-        },
+        Component: () => (
+          <BAIErrorBoundary>
+            <Suspense fallback={<BAISkeleton rows={4} />}>
+              <AdminDashboardPage page="admin" />
+            </Suspense>
+          </BAIErrorBoundary>
+        ),
         handle: {
           scope: 'admin',
           menuKey: 'admin-dashboard',
           access: 'superadmin',
-          labelKey: 'webui.menu.AdminDashboard',
+          labelKey: 'webui.menu.Dashboard',
         },
       },
       {
@@ -1310,8 +1324,8 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   },
   {
     path: '/admin-dashboard',
-    Component: () => <AdminRedirect featureKey="dashboard" />,
-    handle: { labelKey: 'webui.menu.AdminDashboard' },
+    Component: AdminDashboardRedirect,
+    handle: { labelKey: 'webui.menu.Dashboard' },
   },
   {
     path: '/credential',

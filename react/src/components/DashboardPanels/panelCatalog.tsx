@@ -4,9 +4,7 @@
  */
 import { useWebUINavigate } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
-import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { useProjectPath } from '../../hooks/useRouteScope';
-import { toProjectContext } from '../../types/projectContext';
 import ActiveAgents from '../ActiveAgents';
 import AgentStats from '../AgentStats';
 import MyResource from '../MyResource';
@@ -26,9 +24,19 @@ import type {
   PanelSize,
   PanelType,
 } from './types';
+import {
+  superadminResourceGroupAtom,
+  useDashboardFilterContext,
+  useDashboardProject,
+} from './useDashboardFilters';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIBoardItemErrorBoundary, BAISkeleton } from 'backend.ai-ui';
-import React, { Suspense } from 'react';
+import {
+  BAIBoardItemErrorBoundary,
+  BAIScopedResourceGroupSelect,
+  BAISkeleton,
+} from 'backend.ai-ui';
+import { useSetAtom } from 'jotai';
+import React, { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // The built-in cards as catalog components, each wrapped exactly as the pages
@@ -50,10 +58,10 @@ const MySessionPanel: React.FC<PanelComponentProps> = ({ queryRefs }) => {
   'use memo';
   const { t } = useTranslation();
   const userRole = useCurrentUserRole();
-  return (
+  return queryRefs.sessionCountQueryRef ? (
     <Suspense fallback={<InlineSkeleton />}>
       <SessionCountDashboardItem
-        queryRef={queryRefs.queryRef}
+        queryRef={queryRefs.sessionCountQueryRef}
         title={
           userRole === 'superadmin'
             ? t('session.ActiveSessions')
@@ -61,20 +69,20 @@ const MySessionPanel: React.FC<PanelComponentProps> = ({ queryRefs }) => {
         }
       />
     </Suspense>
-  );
+  ) : null;
 };
 
 const ActiveSessionsPanel: React.FC<PanelComponentProps> = ({ queryRefs }) => {
   'use memo';
   const { t } = useTranslation();
-  return (
+  return queryRefs.sessionCountQueryRef ? (
     <Suspense fallback={<InlineSkeleton />}>
       <SessionCountDashboardItem
-        queryRef={queryRefs.queryRef}
+        queryRef={queryRefs.sessionCountQueryRef}
         title={t('session.ActiveSessions')}
       />
     </Suspense>
-  );
+  ) : null;
 };
 
 const MyResourcePanel: React.FC<PanelComponentProps> = ({
@@ -162,13 +170,43 @@ const QuotaPerStorageVolumePanel: React.FC<PanelComponentProps> = () => {
 const TotalResourceWithinResourceGroupPanel: React.FC<PanelComponentProps> = ({
   queryRefs,
   isRefetching,
+  scope,
 }) => {
   'use memo';
+  const { t } = useTranslation();
+  const filters = useDashboardFilterContext();
+  const setSuperadminResourceGroup = useSetAtom(superadminResourceGroupAtom);
+  const [isPending, startTransition] = useTransition();
+  // The superadmin page has no header project: its picker lists the whole domain.
+  const domainScope =
+    scope.kind === 'projects' && scope.projectIds === 'all'
+      ? scope.domain
+      : null;
   return queryRefs.totalResourceQueryRef ? (
     <TotalResourceWithinResourceGroup
       queryRef={queryRefs.totalResourceQueryRef}
-      refetching={isRefetching}
+      refetching={isRefetching || isPending}
       hideRefreshButton
+      {...(domainScope
+        ? {
+            resourceGroup: filters?.currentResourceGroup ?? undefined,
+            resourceGroupSelect: (
+              <BAIScopedResourceGroupSelect
+                label={t('general.ResourceGroup')}
+                isLabelHidden
+                scope={{ domain: [{ value: domainScope.id }] }}
+                value={filters?.currentResourceGroup ?? null}
+                onChange={(value) =>
+                  startTransition(() =>
+                    setSuperadminResourceGroup(
+                      typeof value === 'string' ? value : null,
+                    ),
+                  )
+                }
+              />
+            ),
+          }
+        : {})}
     />
   ) : null;
 };
@@ -198,14 +236,13 @@ const RecentlyCreatedSessionPanel: React.FC<PanelComponentProps> = ({
   queryRefs,
 }) => {
   'use memo';
-  const currentProject = useCurrentProjectValue();
-  return (
+  const project = useDashboardProject();
+  return queryRefs.recentSessionsQueryRef ? (
     <RecentlyCreatedSession
-      queryRef={queryRefs.queryRef}
-      // The dashboards are project-scoped (ADR-0001 page-level narrowing).
-      project={toProjectContext(currentProject)}
+      queryRef={queryRefs.recentSessionsQueryRef}
+      project={project}
     />
-  );
+  ) : null;
 };
 
 const size = (columnSpan: number, rowSpan: number): PanelSize => ({
@@ -234,7 +271,7 @@ const BUILTIN_PANELS: ReadonlyArray<PanelDefinition> = [
   },
   {
     key: 'activeSessions',
-    page: ['admin'],
+    page: ['projectAdmin', 'admin'],
     group: 'session',
     titleKey: 'session.ActiveSessions',
     kind: 'custom',
@@ -298,8 +335,8 @@ const BUILTIN_PANELS: ReadonlyArray<PanelDefinition> = [
   },
   {
     key: 'agentStats',
-    page: ['project', 'admin'],
-    group: 'superadmin',
+    page: ['admin'],
+    group: 'resource',
     titleKey: 'agentStats.AgentStats',
     requires: { role: 'superadmin' },
     kind: 'custom',
@@ -309,8 +346,8 @@ const BUILTIN_PANELS: ReadonlyArray<PanelDefinition> = [
   },
   {
     key: 'activeAgents',
-    page: ['project', 'admin'],
-    group: 'superadmin',
+    page: ['admin'],
+    group: 'resource',
     titleKey: 'activeAgent.ActiveAgents',
     requires: { role: 'superadmin' },
     kind: 'custom',

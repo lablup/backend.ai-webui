@@ -177,7 +177,11 @@ const UserDropdownMenu: React.FC<{
             icon: <ArrowLeftRight size="1em" />,
             onClick: () => {
               webuiNavigate(
-                getPathFromMenuKey(systemAdminMenuItem.key, activeProjectName),
+                systemAdminMenuItem.to ??
+                  getPathFromMenuKey(
+                    systemAdminMenuItem.key,
+                    activeProjectName,
+                  ),
               );
             },
           }),

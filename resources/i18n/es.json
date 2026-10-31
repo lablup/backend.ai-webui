@@ -831,13 +831,11 @@
       "Empty": "Aún no hay paneles personalizados",
       "GridDisabled": "Vista de cuadrícula desactivada (Funciones experimentales)",
       "NoMatchingCards": "No hay tarjetas que coincidan",
-      "RequiresSuperadmin": "Solo superadministradores",
       "ResetLayout": "Restablecer diseño",
       "ResetLayoutDescription": "Restaura la disposición predeterminada de los paneles. Los paneles personalizados se conservan.",
       "SearchCards": "Buscar tarjetas",
       "SelectAll": "Seleccionar todo",
-      "Title": "Paneles personalizados",
-      "Unavailable": "No disponible en este entorno"
+      "Title": "Paneles personalizados"
     },
     "panelModal": {
       "AddPanel": "Añadir panel",
@@ -4089,7 +4087,6 @@
       "AIAccelerator": "Acelerador de IA",
       "AIAgents": "Agentes de IA",
       "AboutBackendAI": "Acerca de Backend.AI",
-      "AdminDashboard": "Tablero de administración",
       "AdminDeployments": "Despliegues de administrador",
       "AdminSettings": "Ajustes de administrador",
       "Administration": "Administración",

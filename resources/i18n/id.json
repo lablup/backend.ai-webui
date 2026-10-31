@@ -831,13 +831,11 @@
       "Empty": "Belum ada panel kustom",
       "GridDisabled": "Tampilan kisi nonaktif (Fitur eksperimental)",
       "NoMatchingCards": "Tidak ada kartu yang cocok",
-      "RequiresSuperadmin": "Hanya superadmin",
       "ResetLayout": "Atur ulang tata letak",
       "ResetLayoutDescription": "Mengembalikan susunan panel ke pengaturan default. Panel kustom tetap dipertahankan.",
       "SearchCards": "Cari kartu",
       "SelectAll": "Pilih Semua",
-      "Title": "Panel kustom",
-      "Unavailable": "Tidak tersedia di lingkungan ini"
+      "Title": "Panel kustom"
     },
     "panelModal": {
       "AddPanel": "Tambah panel",
@@ -4093,7 +4091,6 @@
       "AIAccelerator": "Akselerator AI",
       "AIAgents": "Agen AI",
       "AboutBackendAI": "Tentang Backend.AI",
-      "AdminDashboard": "Dasbor Admin",
       "AdminDeployments": "Penerapan Admin",
       "AdminSettings": "Pengaturan Admin",
       "Administration": "Administrasi",
