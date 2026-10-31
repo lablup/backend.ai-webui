@@ -36,7 +36,7 @@ Exit codes:
   1  a tool check failed
   2  usage error, or agent-browser could not open the page
   3  not logged in, or --auth failed: the global tools register only after login
-  4  the deployment does not serve enableWebMCP = true in /config.toml
+  4  the deployment serves enableWebMCP = false in /config.toml
   5  the browser has no WebMCP (an attached --cdp browser, or --no-webmcp)
 EOF
 }
@@ -209,19 +209,21 @@ fi
 # The app's relative fetch resolves against <base href>, not the page URL
 # (react/src/hooks/useWebUIConfig.ts). Only an explicit false stops here: login
 # can merge the webserver's config, so the registered tools have the last word.
-WEBMCP_DISABLED_HINT="webmcp_disabled — the deployment must serve enableWebMCP = true under [general] in /config.toml. A Backend.AI webserver renders that file from its own template, which has no such key today; a WebUI served from a static config.toml can set it."
+WEBMCP_DISABLED_HINT="webmcp_disabled — the deployment turned the tools off with enableWebMCP = false under [general] in /config.toml. Remove the key or set it to true."
 config_state="$(page_js 'fetch(new URL("../../config.toml", document.baseURI), { cache: "no-store" })
   .then((r) => {
     if (!r.ok) return "unreadable";
     return r.text().then((t) => {
       const general = t.split(/^\s*\[/m).find((s) => s.startsWith("general]")) ?? "";
-      const m = general.match(/^\s*enableWebMCP\s*=\s*(true|false)\b/m);
-      return m ? m[1] : "unset";
+      const m = general.match(/^\s*enableWebMCP\s*=\s*([^\s#]+)/m);
+      if (!m) return "unset";
+      return m[1] === "true" || m[1] === "false" ? m[1] : "other";
     });
   })
   .catch(() => "unreadable")')"
 case "${config_state:-unreadable}" in
   true) row "config.enableWebMCP" PASS "true" ;;
+  unset) row "config.enableWebMCP" PASS "unset (on by default)" ;;
   false)
     webmcp_ok=0
     row "config.enableWebMCP" FAIL "false (/config.toml [general])"
@@ -307,8 +309,8 @@ for tool in "${TOOLS[@]}"; do
 done
 if [ "${#missing[@]}" -gt 0 ] && [ -z "$DIAGNOSIS" ]; then
   client_config="$(page_js 'globalThis.backendaiclient?._config?.enableWebMCP')"
-  if [ "$client_config" != true ]; then
-    row "config.client" FAIL "backendaiclient._config.enableWebMCP is ${client_config:-unset}"
+  if [ "$client_config" = false ]; then
+    row "config.client" FAIL "backendaiclient._config.enableWebMCP is false"
     diagnose "$WEBMCP_DISABLED_HINT" 4
   fi
 fi

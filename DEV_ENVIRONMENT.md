@@ -203,7 +203,7 @@ The CLI derives the WebUI origin from this checkout's branch the same way `scrip
 
 ## WebMCP smoke check (`scripts/webmcp-smoke.sh`)
 
-With `enableWebMCP = true` under `[general]` in `config.toml`, the WebUI registers WebMCP tools an agent in [agent-browser](https://agent-browser.dev) can call (ADR 0017; the agent-facing guide is `packages/backend.ai-agent-cli/skill/references/webui-browser.md`). The smoke script checks the app-shell tools against a running WebUI:
+Unless `config.toml` sets `enableWebMCP = false` under `[general]`, the WebUI registers WebMCP tools an agent in [agent-browser](https://agent-browser.dev) can call (ADR 0017; the agent-facing guide is `packages/backend.ai-agent-cli/skill/references/webui-browser.md`). The smoke script checks the app-shell tools against a running WebUI:
 
 ```bash
 export AGENT_BROWSER_SESSION=webmcp-smoke

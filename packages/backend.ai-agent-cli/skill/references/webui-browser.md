@@ -35,13 +35,10 @@ agent-browser skills get core --full
 
 ## Prerequisites
 
-- **The deployment must serve `enableWebMCP = true`** under `[general]` in its
-  `/config.toml`. It is off by default, and with it off the page registers no
-  tool at all. A Backend.AI webserver renders `/config.toml` from its own
-  template, and **today's webserver template has no `enableWebMCP` key**, so a
-  webserver-served deployment cannot turn the tools on through its configuration.
-  A WebUI served from a static `config.toml`, such as a dev server, can. Nothing
-  on your side changes this; tell the user who operates the WebUI.
+- **The deployment must not turn WebMCP off.** The tools are on by default. A
+  deployment stops them with `enableWebMCP = false` under `[general]` in its
+  `/config.toml`, and then the page registers no tool at all. Nothing on your
+  side changes this; tell the user who operates the WebUI.
 - **agent-browser launches its own Chrome.** WebMCP is on by default in the
   Chrome agent-browser starts. A browser you attach to (`--cdp`,
   `--auto-connect`) does not give you page tools (`webmcp_unsupported`), and
@@ -258,7 +255,7 @@ never navigates. Its `DIAGNOSIS` line says why a run stopped:
 | `open_failed`         | 2    | The page did not load, often the dev server's certificate.               |
 | `auth_failed`         | 3    | `--auth` could not log in: a bad profile, or no preset API endpoint.     |
 | `not_logged_in`       | 3    | The session is logged out, and no `--auth` was given or it did not take. |
-| `webmcp_disabled`     | 4    | The deployment does not serve `enableWebMCP = true`.                     |
+| `webmcp_disabled`     | 4    | The deployment serves `enableWebMCP = false`.                            |
 | `browser_unsupported` | 5    | This Chrome gives no page tools (`--cdp`, `--no-webmcp`).                |
 
 `--help` lists its options.
