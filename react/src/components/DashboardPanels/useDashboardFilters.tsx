@@ -11,7 +11,6 @@ import { resolveDashboardScope } from './dashboardScope';
 import { isRefreshOption, type RefreshOption } from './refreshScheduler';
 import type { DashboardScope, PanelPage } from './types';
 import type { DashboardBoardsState } from './useDashboardBoards';
-import { atom, useAtomValue } from 'jotai';
 import { createContext, use } from 'react';
 
 export interface DashboardFilters {
@@ -27,22 +26,6 @@ export interface DashboardFilters {
   currentResourceGroup: string | null;
 }
 
-/** The superadmin page's resource group: its route hides the header project, so it keeps its own. */
-export const superadminResourceGroupAtom = atom<string | null>(null);
-
-/**
- * The resource group a page's cards read by default: the header's, except on
- * the superadmin page, which starts from it but chooses among the whole domain.
- */
-export const usePageResourceGroup = (page: PanelPage): string | null => {
-  'use memo';
-  const headerResourceGroup = useCurrentResourceGroupValue() ?? null;
-  const superadminResourceGroup = useAtomValue(superadminResourceGroupAtom);
-  return page === 'admin'
-    ? (superadminResourceGroup ?? headerResourceGroup)
-    : headerResourceGroup;
-};
-
 /**
  * One dashboard page's shared state: the scope every card reads, from the
  * page alone, and the active board's refresh interval. Resource groups and
@@ -56,7 +39,7 @@ export const useDashboardFilters = (
 ): DashboardFilters => {
   'use memo';
   const currentDomain = useCurrentDomain();
-  const currentResourceGroup = usePageResourceGroup(page);
+  const currentResourceGroup = useCurrentResourceGroupValue() ?? null;
   const urlProjectId = project?.id ?? null;
   const storedRefresh = activeBoardOf(boards.config).vars.refresh;
 

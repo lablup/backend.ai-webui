@@ -182,6 +182,7 @@ export type { ThrottleOptions } from './useThrottleFn';
 export { default as useToggle } from './useToggle';
 export type { UseToggleActions } from './useToggle';
 export { default as useUpdateEffect } from './useUpdateEffect';
+export { default as useSessionTypeLabel } from './useSessionTypeLabel';
 // `useBAIi18n` is intentionally NOT re-exported from the package's public
 // surface — it is an internal implementation detail of how BUI components
 // bind to BUI's own i18next instance (see ../hooks/useBAIi18n.ts and the

@@ -17,7 +17,7 @@ export const docs = {
   hidden: true,
   usage: {
     description:
-      'The error boundary that contains one dashboard board panel. While the children render, it adds nothing to the tree. When a child throws, it swaps the panel body for a BAIBoardItemTitle carrying the same title plus a BAIAlertIconWithTooltip explaining that something went wrong, so a failed panel keeps its slot and its heading on the board instead of collapsing the grid or taking the page down with it. It is a react-error-boundary ErrorBoundary underneath and exposes no reset affordance, so retrying means remounting it — the dashboard does that by keying it on the panel kind and descriptor.',
+      'The error boundary that contains one dashboard board panel. While the children render, it adds nothing to the tree. When a child throws, it swaps the panel body for a BAIBoardItemTitle carrying the same title plus a BAIAlertIconWithTooltip explaining that something went wrong, so a failed panel keeps its slot and its heading on the board instead of collapsing the grid or taking the page down with it. It is a react-error-boundary ErrorBoundary underneath with no retry button: it renders the children again when one of its `resetKeys` changes (a refresh tick, a changed filter), or when it is remounted — the dashboard keys it on the panel kind and descriptor.',
     bestPractices: [
       {
         guidance: true,

@@ -1,0 +1,142 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import * as _ from 'lodash-es';
+
+/** One donut slice and its legend row. */
+export interface DonutRow {
+  key: string;
+  label: string;
+  value: number;
+  /** Share of the total, 0-100; 0 for every row when the total is 0. */
+  percent: number;
+}
+
+/** Legend rows for manager-counted slices, in the given order. */
+export const toDonutRows = (
+  slices: ReadonlyArray<{ key: string; label: string; count?: number | null }>,
+): Array<DonutRow> => {
+  const values = slices.map((slice) => Math.max(0, slice.count ?? 0));
+  const total = _.sum(values);
+  return slices.map((slice, index) => ({
+    key: slice.key,
+    label: slice.label,
+    value: values[index],
+    percent: total > 0 ? Math.round((values[index] / total) * 100) : 0,
+  }));
+};
+
+type QuantityEntry = {
+  readonly resourceType: string;
+  readonly quantity?: unknown;
+};
+type LimitEntry = QuantityEntry & { readonly unlimited: boolean };
+
+/** One slot of the viewer's allocation in one resource group. */
+export interface UsageRow {
+  resourceType: string;
+  used: number;
+  /** `used` plus what the manager says is still assignable; null when unlimited. */
+  limit: number | null;
+}
+
+const toNumber = (value: unknown) => {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : 0;
+};
+
+const remainingOf = (entry: LimitEntry | undefined) =>
+  !entry || entry.unlimited || entry.quantity == null
+    ? null
+    : toNumber(entry.quantity);
+
+/**
+ * Used-vs-limit rows: `used` plus the smallest of the `assignables` per slot
+ * (a slot no list limits is unlimited). Slots follow `slotOrder`, then the
+ * rest alphabetically; with `dropEmpty`, a slot with nothing used and nothing
+ * assignable is left out.
+ */
+export const toUsageRows = (
+  used: ReadonlyArray<QuantityEntry>,
+  assignables: ReadonlyArray<ReadonlyArray<LimitEntry>>,
+  {
+    slotOrder = ['cpu', 'mem'],
+    dropEmpty = true,
+  }: { slotOrder?: ReadonlyArray<string>; dropEmpty?: boolean } = {},
+): Array<UsageRow> => {
+  const usedBySlot = new Map(
+    used.map((entry) => [entry.resourceType, toNumber(entry.quantity)]),
+  );
+  const assignableBySlot = assignables.map(
+    (list) => new Map(list.map((entry) => [entry.resourceType, entry])),
+  );
+  const slots = _.uniq([
+    ...assignableBySlot.flatMap((bySlot) => [...bySlot.keys()]),
+    ...usedBySlot.keys(),
+  ]);
+  const ordered = _.sortBy(slots, [
+    (slot) => {
+      const index = slotOrder.indexOf(slot);
+      return index === -1 ? slotOrder.length : index;
+    },
+    (slot) => slot,
+  ]);
+  return ordered.flatMap((resourceType) => {
+    const usedQuantity = usedBySlot.get(resourceType) ?? 0;
+    const remainders = assignableBySlot
+      .map((bySlot) => remainingOf(bySlot.get(resourceType)))
+      .filter((value): value is number => value !== null);
+    const limit = remainders.length
+      ? usedQuantity + Math.min(...remainders)
+      : null;
+    return dropEmpty && limit === 0 && usedQuantity === 0
+      ? []
+      : [{ resourceType, used: usedQuantity, limit }];
+  });
+};
+
+/** One preset row of the presets card. */
+export interface PresetRow {
+  id: string;
+  name: string;
+  slots: Array<{ resourceType: string; quantity: string }>;
+  available: boolean;
+}
+
+/** Preset rows from `checkPresetAvailabilityV2`, slots with a zero quantity left out. */
+export const toPresetRows = (
+  payload:
+    | {
+        readonly presets: ReadonlyArray<{
+          readonly id: string;
+          readonly name: string;
+          readonly available: boolean;
+          readonly resourceSlots: ReadonlyArray<QuantityEntry>;
+        }>;
+      }
+    | null
+    | undefined,
+): Array<PresetRow> =>
+  (payload?.presets ?? []).map((preset) => ({
+    id: preset.id,
+    name: preset.name,
+    available: preset.available,
+    slots: preset.resourceSlots
+      .filter((slot) => toNumber(slot.quantity) > 0)
+      .map((slot) => ({
+        resourceType: slot.resourceType,
+        quantity: String(slot.quantity),
+      })),
+  }));
+
+/** `AuditLogStatus` has no FAILURE: a failed action is recorded as ERROR or DENIED. */
+export const AUDIT_FAILURE_STATUSES = ['ERROR', 'DENIED'] as const;
+
+/** The activity card's saved filter while "failures only" is on. */
+export const FAILURES_ONLY_FILTER = {
+  status: { in: [...AUDIT_FAILURE_STATUSES] },
+};
+
+export const isFailuresOnlyFilter = (filter: unknown): boolean =>
+  _.isEqual(filter, FAILURES_ONLY_FILTER);

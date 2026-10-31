@@ -58,10 +58,10 @@ test.describe(
       await loginAsAdmin(page, request);
     });
 
-    test('should redirect to the Summary', async ({ page }) => {
-      await expect(page).toHaveURL(/\/start/);
+    test('should redirect to the Dashboard', async ({ page }) => {
+      await expect(page).toHaveURL(/\/dashboard/);
       await expect(
-        page.getByTestId('webui-breadcrumb').getByText('Start'),
+        page.getByTestId('webui-breadcrumb').getByText('Dashboard'),
       ).toBeVisible();
     });
   },
@@ -85,9 +85,9 @@ test.describe(
       await fillEndpoint(page, webServerEndpoint + '/');
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
-      await expect(page).toHaveURL(/\/start/, { timeout: 15_000 });
+      await expect(page).toHaveURL(/\/dashboard/, { timeout: 15_000 });
       await expect(
-        page.getByTestId('webui-breadcrumb').getByText('Start'),
+        page.getByTestId('webui-breadcrumb').getByText('Dashboard'),
       ).toBeVisible();
     });
 
@@ -99,9 +99,9 @@ test.describe(
       await fillEndpoint(page, webServerEndpoint + '///');
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
-      await expect(page).toHaveURL(/\/start/, { timeout: 15_000 });
+      await expect(page).toHaveURL(/\/dashboard/, { timeout: 15_000 });
       await expect(
-        page.getByTestId('webui-breadcrumb').getByText('Start'),
+        page.getByTestId('webui-breadcrumb').getByText('Dashboard'),
       ).toBeVisible();
     });
 

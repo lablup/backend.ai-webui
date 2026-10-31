@@ -69,13 +69,18 @@ describe('PANEL_CATALOG', () => {
     [
       'project',
       [
+        'start.session',
+        'start.batchSession',
+        'start.folder',
+        'start.deployment',
+        'start.url',
         'mySession',
+        'myRecentSessions',
         'myResource',
-        'myResourceWithinResourceGroup',
-        'folderStatus',
-        'quotaPerStorageVolume',
         'totalResourceWithinResourceGroup',
-        'recentlyCreatedSession',
+        'quotaPerStorageVolume',
+        'myDeployments',
+        'myActivity',
       ],
     ],
     ['projectAdmin', ['activeSessions']],
@@ -89,7 +94,7 @@ describe('PANEL_CATALOG', () => {
         'recentlyCreatedSession',
       ],
     ],
-  ])('seeds the %s board with the cards it hard-coded before', (page, keys) => {
+  ])('seeds the %s board with its default cards', (page, keys) => {
     expect(
       seedBoard(PANEL_CATALOG, page).panels.map((panel) => panel.id),
     ).toEqual(keys);
@@ -104,6 +109,12 @@ describe('catalogFor on the real catalog', () => {
     expect(keys).not.toContain('resource.vfolder');
     expect(keys).toEqual(
       expect.arrayContaining(['mySession', 'resource.session']),
+    );
+  });
+
+  it('keeps Resource Presets in the member catalog though a new board leaves it out', () => {
+    expect(keysFor({ page: 'project', role: 'user', config: {} })).toContain(
+      'resourcePresets',
     );
   });
 
@@ -124,8 +135,35 @@ describe('catalogFor on the real catalog', () => {
     expect(keys).not.toContain('activeSessions');
   });
 
-  it('locks the resource group total for a non-superadmin when agents are hidden', () => {
-    const entry = (role: 'user' | 'superadmin') =>
+  it('drops a Start item whose menu is blocked and locks the deployment one without model folders', () => {
+    const entries = catalogFor(PANEL_CATALOG, {
+      page: 'project',
+      role: 'user',
+      config: { blockList: ['import'], inactiveList: ['session'] },
+    });
+    const keys = entries.map(({ definition }) => definition.key);
+    expect(keys).not.toContain('start.url');
+    expect(keys).not.toContain('start.session');
+    expect(keys).not.toContain('start.batchSession');
+    expect(keys).toContain('start.folder');
+    expect(
+      entries.find(({ definition }) => definition.key === 'start.deployment')
+        ?.locked,
+    ).toBe(true);
+  });
+
+  it('drops every Start item when the retired Start page is blocked', () => {
+    const keys = keysFor({
+      page: 'project',
+      role: 'user',
+      config: { blockList: ['start'], enableModelFolders: true },
+    });
+    expect(keys.filter((key) => key.startsWith('start.'))).toEqual([]);
+    expect(keys).toContain('mySession');
+  });
+
+  it('hides the resource group total from a regular user and locks it for an admin when agents are hidden', () => {
+    const entry = (role: 'user' | 'admin' | 'superadmin') =>
       catalogFor(PANEL_CATALOG, {
         page: 'project',
         role,
@@ -134,7 +172,23 @@ describe('catalogFor on the real catalog', () => {
         ({ definition }) =>
           definition.key === 'totalResourceWithinResourceGroup',
       );
-    expect(entry('user')?.locked).toBe(true);
+    expect(entry('user')).toBeUndefined();
+    expect(entry('admin')?.locked).toBe(true);
     expect(entry('superadmin')?.locked).toBe(false);
+  });
+
+  it('gives a settings control only to cards that read a resource group or a range', () => {
+    const settingsOf = (key: string) =>
+      PANEL_CATALOG.find((definition) => definition.key === key)?.settings;
+    expect(settingsOf('myResource')).toEqual(['resourceGroup']);
+    expect(settingsOf('resourcePresets')).toEqual(['resourceGroup']);
+    expect(settingsOf('totalResourceWithinResourceGroup')).toEqual([
+      'resourceGroup',
+    ]);
+    expect(settingsOf('myActivity')).toEqual(['range']);
+    expect(settingsOf('resource.session')).toEqual(['resourceGroup']);
+    expect(settingsOf('resource.deployment')).toEqual(['resourceGroup']);
+    expect(settingsOf('resource.vfolder')).toBeUndefined();
+    expect(settingsOf('mySession')).toBeUndefined();
   });
 });

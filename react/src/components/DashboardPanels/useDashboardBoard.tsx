@@ -13,7 +13,6 @@ import {
   catalogFor,
   panelTitleKey,
   removePanel,
-  renderedPanelKeys,
   resetBoard,
   resolveBoard,
   siderEntries,
@@ -81,31 +80,6 @@ export const useAppConfigBoardStore: BoardStore = (page, catalog) => {
 
 const useBoardStore: BoardStore = useAppConfigBoardStore;
 
-const useCatalogConfig = (): PanelCatalogConfig => {
-  const baiClient = useSuspendedBackendaiClient();
-  return {
-    blockList: baiClient?._config?.blockList ?? [],
-    inactiveList: baiClient?._config?.inactiveList ?? [],
-    hideAgents: !!baiClient?._config?.hideAgents,
-  };
-};
-
-/** The keys of the cards the page's active board renders, for the page query's fragments. */
-export const useRenderedPanelKeys = (
-  page: PanelPage,
-  catalog: ReadonlyArray<PanelDefinition>,
-): Set<string> => {
-  'use memo';
-  const role = useCurrentUserRole();
-  const config = useCatalogConfig();
-  const { board } = useBoardStore(page, catalog);
-  return renderedPanelKeys(resolveBoard(board, catalog, page), catalog, {
-    page,
-    role,
-    config,
-  });
-};
-
 export interface UseDashboardBoardOptions {
   page: PanelPage;
   /** The page query is refetching. */
@@ -159,7 +133,7 @@ export const useDashboardBoard = ({
   'use memo';
   const { t } = useTranslation();
   const role = useCurrentUserRole();
-  const config = useCatalogConfig();
+  const baiClient = useSuspendedBackendaiClient();
   const [gridEnabled] = useBAISettingUserState(
     'experimental_session_resource_grid',
   );
@@ -170,6 +144,12 @@ export const useDashboardBoard = ({
     boards,
   } = useBoardStore(page, catalog);
 
+  const config: PanelCatalogConfig = {
+    blockList: baiClient?._config?.blockList ?? [],
+    inactiveList: baiClient?._config?.inactiveList ?? [],
+    hideAgents: !!baiClient?._config?.hideAgents,
+    enableModelFolders: !!baiClient?._config?.enableModelFolders,
+  };
   const visibleEntries = catalogFor(catalog, { page, role, config });
   const visibleByKey = new Map(
     visibleEntries.map((entry) => [entry.definition.key, entry]),
@@ -228,7 +208,14 @@ export const useDashboardBoard = ({
       return Component ? (
         <DashboardPanelContent panel={panel} isPageRefetching={isRefetching}>
           {(state) => (
-            <Component panel={panel} queryRefs={queryRefs} {...state} />
+            <Component
+              panel={panel}
+              queryRefs={queryRefs}
+              onChangeFilter={(filter) =>
+                save(updatePanel(board, panel.id, { filter }))
+              }
+              {...state}
+            />
           )}
         </DashboardPanelContent>
       ) : null;

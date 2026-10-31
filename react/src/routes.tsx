@@ -39,7 +39,11 @@ import {
   getPathFromMenuKey,
 } from './hooks/useWebUIMenuItems';
 import { pluginApiEndpointState } from './hooks/useWebUIPluginState';
-import { AdminRedirect, ProjectScopedRedirect } from './legacyRedirects';
+import {
+  AdminRedirect,
+  ProjectScopedRedirect,
+  ProjectStartRedirect,
+} from './legacyRedirects';
 import Page404 from './pages/Page404';
 import UnknownRoutePage from './pages/UnknownRoutePage';
 import { toProjectContext } from './types/projectContext';
@@ -59,7 +63,6 @@ const VFolderNodeListPage = React.lazy(
 );
 
 const Information = React.lazy(() => import('./components/Information'));
-const StartPage = React.lazy(() => import('./pages/StartPage'));
 // Astryx/StyleX foundation probe (to-astryx ticket 01).
 const AstryxStylexProbePage = React.lazy(
   () => import('./pages/AstryxStylexProbePage'),
@@ -293,17 +296,10 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         handle: { hideBreadcrumb: true },
       },
       {
+        // The Start page is retired; its actions are dashboard cards.
         path: 'start',
-        element: (
-          <Suspense fallback={<BAISkeleton rows={4} />}>
-            <StartPage />
-          </Suspense>
-        ),
-        handle: {
-          scope: 'project',
-          menuKey: 'start',
-          labelKey: 'webui.menu.Start',
-        },
+        Component: ProjectStartRedirect,
+        handle: { scope: 'project' },
       },
       {
         path: 'dashboard',
@@ -524,7 +520,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
               <AIAgentPage />
             </Suspense>
           ) : (
-            <WebUINavigate to={'/start'} replace />
+            <WebUINavigate to={'/dashboard'} replace />
           );
         },
         handle: {
@@ -1014,14 +1010,14 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   //
   // Class A (static admin): no runtime project needed.
   // Class B (runtime project): inject the current project NAME via
-  // `useActiveProjectName()`; fall back to `/start` when none is resolvable.
+  // `useActiveProjectName()`; render the "no accessible projects" notice when none is resolvable.
   // --- Class B: user (project) scope ---
   {
     path: '/start',
     Component: () => (
-      <ProjectScopedRedirect scope="project" featureKey="start" />
+      <ProjectScopedRedirect scope="project" featureKey="dashboard" />
     ),
-    handle: { labelKey: 'webui.menu.Start' },
+    handle: { labelKey: 'webui.menu.Dashboard' },
   },
   {
     path: '/dashboard',
@@ -1191,17 +1187,17 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     ),
     handle: { labelKey: 'webui.menu.AIAgents' },
   },
-  // legacy aliases that historically pointed at /start
+  // legacy aliases that historically pointed at /start; the dashboard opens their import links
   {
     path: '/import',
     Component: () => (
-      <ProjectScopedRedirect scope="project" featureKey="start" />
+      <ProjectScopedRedirect scope="project" featureKey="dashboard" />
     ),
   },
   {
     path: '/github',
     Component: () => (
-      <ProjectScopedRedirect scope="project" featureKey="start" />
+      <ProjectScopedRedirect scope="project" featureKey="dashboard" />
     ),
   },
   // --- Class B: project-admin scope ---

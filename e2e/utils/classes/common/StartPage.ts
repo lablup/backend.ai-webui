@@ -1,6 +1,7 @@
 import { getMenuItem } from '../../test-util-antd';
 import { Locator, Page } from '@playwright/test';
 
+/** The Start actions, now cards on the member dashboard (the Start page is retired). */
 export class StartPage {
   private readonly page: Page;
 
@@ -14,7 +15,7 @@ export class StartPage {
     if (await goBackButton.isVisible()) {
       await goBackButton.click();
     }
-    await getMenuItem(this.page, 'Start').click();
+    await getMenuItem(this.page, 'Dashboard').click();
   }
 
   private getCardByTitle(title: string) {

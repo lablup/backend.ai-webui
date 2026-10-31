@@ -41,7 +41,6 @@ export interface UserSettings {
   pinnedSessionHistory?: Array<SessionHistory>;
   recentSearchHits?: Array<RecentSearchHit>;
   start_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
-  start_page_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   experimental_ai_agents?: boolean;
   experimental_import_from_huggingface?: boolean;
   experimental_session_resource_grid?: boolean;

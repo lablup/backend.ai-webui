@@ -88,7 +88,7 @@ describe('MENU_KEY_TO_SCOPE_FEATURE', () => {
     });
     expect(MENU_KEY_TO_SCOPE_FEATURE['start']).toEqual({
       scope: 'project',
-      featureKey: 'start',
+      featureKey: 'dashboard',
     });
     expect(MENU_KEY_TO_SCOPE_FEATURE['chat']).toEqual({
       scope: 'project',
