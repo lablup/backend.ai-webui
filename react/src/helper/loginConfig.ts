@@ -91,6 +91,7 @@ export interface LoginConfigState {
   enableInteractiveLoginAccountSwitch: boolean;
   enableModelFolders: boolean;
   enableReservoir: boolean;
+  enableWebMCP: boolean;
   showNonInstalledImages: boolean;
   proxy_url: string;
   openPortToPublic: boolean;
@@ -161,6 +162,7 @@ export function getDefaultLoginConfig(): LoginConfigState {
     enableInteractiveLoginAccountSwitch: true,
     enableModelFolders: true,
     enableReservoir: false,
+    enableWebMCP: true,
     showNonInstalledImages: false,
     proxy_url: 'http://127.0.0.1:5050/',
     openPortToPublic: false,
@@ -462,6 +464,10 @@ export function refreshConfigFromToml(config: any): LoginConfigState {
     value: g?.enableReservoir,
   }) as boolean;
 
+  // Strict: this gate exposes the page to agents, and a quoted "false" is truthy.
+  // On when absent: the webserver's config.toml template cannot carry this key.
+  state.enableWebMCP = g?.enableWebMCP === undefined || g.enableWebMCP === true;
+
   // -- wsproxy section --
   state.proxy_url = getConfigValueByExists(w, {
     valueType: 'string',
@@ -682,5 +688,6 @@ export function applyConfigToClient(cfg: LoginConfigState): void {
   client._config.inactiveList = cfg.inactiveList;
   client._config.allowSignout = cfg.allow_signout;
   client._config.enableReservoir = cfg.enableReservoir;
+  client._config.enableWebMCP = cfg.enableWebMCP;
   client.ready = true;
 }
