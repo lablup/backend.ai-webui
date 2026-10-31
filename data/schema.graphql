@@ -15450,6 +15450,11 @@ type Mutation
   """
   partialBulkPurgeRuntimeVariantPresets(input: PartialBulkPurgeRuntimeVariantPresetsInput!): PartialBulkRuntimeVariantPresetsPayload! @join__field(graph: STRAWBERRY)
 
+  """
+  Added in 26.10.0. Update a runtime variant preset. Only provided fields will be updated.
+  """
+  updateRuntimeVariantPreset(input: UpdateRuntimeVariantPresetInput!): UpdateRuntimeVariantPresetPayload! @join__field(graph: STRAWBERRY)
+
   """Added in 26.4.2. Create a deployment revision preset (admin only)."""
   adminCreateDeploymentRevisionPreset(input: CreateDeploymentRevisionPresetInput!): CreateDeploymentRevisionPresetPayload @join__field(graph: STRAWBERRY)
 
