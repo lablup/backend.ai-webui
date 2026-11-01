@@ -1,6 +1,10 @@
 // FR-4119: admin pages list the signed-in admin's domain (the WebUI assumes a
 // single domain); the project-admin session page lists the project's members.
-import { createAdminApiContext, gqlAdmin } from '../utils/admin-api';
+import {
+  createAdminApiContext,
+  createProjectViaApi,
+  gqlAdmin,
+} from '../utils/admin-api';
 import {
   loginAsAdmin,
   loginAsUser,
@@ -180,18 +184,10 @@ test.describe(
       /** Creates the project, adds two members and makes the first its admin. */
       async function seedProject() {
         api = await createAdminApiContext();
-        const created = await gqlAdmin<{
-          create_group: { group: { id: string } };
-        }>(
-          api,
-          `mutation ($name: String!) {
-            create_group(name: $name, props: { domain_name: "default" }) {
-              group { id }
-            }
-          }`,
-          { name: projectName },
-        );
-        projectId = created.create_group.group.id;
+        // In the members' domain: the e2e accounts are not in `default` everywhere.
+        projectId = await createProjectViaApi(api, projectName, {
+          memberEmails: [userInfo.user.email, userInfo.user2.email],
+        });
 
         const { adminUsersV2 } = await gqlAdmin<{
           adminUsersV2: {
@@ -216,13 +212,6 @@ test.describe(
         );
         projectAdminId = idByEmail[userInfo.user.email];
         memberIds = Object.values(idByEmail);
-        await gqlAdmin(
-          api,
-          `mutation ($gid: UUID!, $uids: [String]) {
-            modify_group(gid: $gid, props: { user_update_mode: "add", user_uuids: $uids }) { ok }
-          }`,
-          { gid: projectId, uids: memberIds },
-        );
 
         // The project's own admin role, as 'Set Project Admin' grants it on 26.9.
         const { adminRoles } = await gqlAdmin<{
@@ -246,13 +235,20 @@ test.describe(
           },
         );
         roleId = toRawUUID(adminRoles.edges[0].node.id);
-        await gqlAdmin(
+        const { adminBulkAssignRole } = await gqlAdmin<{
+          adminBulkAssignRole: { failed: Array<{ message: string }> };
+        }>(
           api,
           `mutation ($input: BulkAssignRoleInput!) {
             adminBulkAssignRole(input: $input) { failed { message } }
           }`,
           { input: { roleId, userIds: [projectAdminId], projectId } },
         );
+        if (adminBulkAssignRole.failed.length > 0) {
+          throw new Error(
+            `adminBulkAssignRole failed: ${adminBulkAssignRole.failed.map((f) => f.message).join('; ')}`,
+          );
+        }
       }
 
       test.afterAll(async () => {
