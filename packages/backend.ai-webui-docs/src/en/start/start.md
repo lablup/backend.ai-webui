@@ -154,10 +154,10 @@ Experimental features may change or be removed in future updates.
    with write permission are listed — the download session writes into the
    folder, so folders you can only mount read-only are excluded. The buttons
    next to the selector let you open the selected folder, create a new model
-   folder, and refresh the list. When creating a new folder here, set its
-   mount permission to read & write: a folder created with read-only mount
-   permission cannot receive the download, and a warning tells you to create
-   one with read & write mount permission instead.
+   folder, and refresh the list. A folder created from this dialog is
+   read-only, so it cannot receive the download: change its **Default mount
+   permission** to **Read & Write** from the folder's **Share Folder** modal
+   (**Folder Info** → **Edit**) before selecting it here.
 5. Click **Download Model To Folder**.
 
 The dialog closes and Backend.AI starts a batch session that performs the
