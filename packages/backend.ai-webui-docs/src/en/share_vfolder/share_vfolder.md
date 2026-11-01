@@ -38,13 +38,15 @@ name in the list.
 
 ![](../images/share_button_on_list.png)
 
-A Share Folder modal opens. In the **Invite User** section, enter User B's
-email address and select the desired permission level from the **Permission**
-dropdown. If you choose `Read only`, User B will be able to only view the
-folder but not modify it. If you select `Read & Write`, User B will be able to
-both view and modify the folder. Click the `Add` button to send the invitation.
+A Share Folder modal opens. In the **Invite User** section, select User B in
+the user selector, or choose **Invite by e-mail** to invite an address that
+does not have an account yet. Set **Share permission** and
+**Mount Permission**, then click **Invite**. **Share permission** is what the
+share lets the user do with the folder, and **Mount Permission** is how the
+folder is mounted into the user's sessions.
 
 ![=550px](../images/send_vfolder_invitation.png)
+<!-- TODO(screenshot): /data -> folder Share action - recapture the Share Folder modal showing the Folder Info section and the Email / Share permission / Mount Permission / Invite row. -->
 
 Switch back to User B's account and go to the Data page. When invitations are
 waiting for a response, a **Pending invitations** link appears at the top right
@@ -56,15 +58,16 @@ Clicking the link opens the **Invited Folders** modal, where pending folder
 invitations can be accepted or declined.
 
 ![=520px](../images/invitation_accept.png)
+<!-- TODO(screenshot): User B's /data -> pending invitations link - recapture the Invited Folders modal showing Folder name / From / Folder share permission. -->
 
 Go to the Data page and check that the `tests` folder is displayed in
 the list. If you don't see it on the list, try refreshing your browser page.
 Since you have accepted the invitation, you can now view the contents of User
 A's `tests` folder in User B account. Unlike folders created by User B,
-the shared folder shows User A's email address in the Owner column. You
-can also see the `Read only` mark displayed in the Mount Permission column.
+the shared folder shows User A's email address in the Owner column.
 
 ![](../images/test_vfolder_listed_in_B.png)
+<!-- TODO(screenshot): User B's /data after accepting - recapture the folder list, which no longer has a Mount Permission column. -->
 
 Let's navigate inside the `tests` folder by clicking its name in the list. You
 can check the `hello.txt` and `myfolder` that you checked in the User A's
@@ -101,15 +104,19 @@ For details, go to [sharing a project storage folder with project members](#shar
 ## Adjust permission for shared folders
 
 You can modify the permissions of shared users from the Share Folder modal.
-The **Shared Users** section displays a table listing all users who have accepted
-the invitation. Each row shows the invitee's email address and a permission
-dropdown. Click the permission dropdown in a user's row to change their access
-level:
+The **Shared Users** table lists both the users who have accepted the
+invitation and the invitations that are still waiting for an answer. Change a
+listed user's **Share permission** or **Mount Permission** in their row:
 
 - **Read only**: The invited user has read-only access to the folder.
 - **Read & Write**: The invited user has read and write access to the folder, including creating, modifying, and deleting files and folders within it.
 
 ![=566px](../images/modify_perm.png)
+<!-- TODO(screenshot): /data -> folder Share action - recapture the Shared Users table with the Accepted / Pending status and the Share permission / Mount Permission columns. -->
+
+The **Folder Info** section of the modal shows the folder's
+**Default mount permission**. Click **Edit** there to change it: a shared user
+who has no individual mount permission is given this permission.
 
 :::note
 Renaming the folder itself is available only for the owner, even if the user has been
@@ -123,12 +130,13 @@ include renaming the folder.
 
 To stop sharing a folder as the inviter, open the Share Folder modal by
 clicking the share button next to the folder's name in the folder list. In the
-**Shared Users** table, click the stop sharing icon (red close circle) next to
-the permission dropdown in the row of the user you want to remove. A
-confirmation dialog will appear asking you to confirm. Click `Confirm` to
-revoke the user's access.
+**Shared Users** table, click the **Stop sharing** action in the row of the
+user you want to remove. A confirmation dialog will appear asking you to
+confirm. Click `Confirm` to revoke the user's access. An invitation that is
+still waiting for an answer is withdrawn with **Cancel invitation** instead.
 
 ![=652px](../images/modify_permission_and_stop_sharing.png)
+<!-- TODO(screenshot): /data -> folder Share action - recapture a Shared Users row with its Stop sharing confirmation. -->
 
 If access to a shared folder is no longer needed as an invitee, click the share
 button next to the folder in the folder list to open the Shared Folder
