@@ -826,7 +826,7 @@ test.describe(
 
 // Retention policies are server-global, one per category, and nightly seeds all
 // eight. Each run frees one *disabled* category (so no data sweep changes) and
-// restores it afterwards; repeats take different categories to stay parallel-safe.
+// restores it afterwards; each repeat takes its own category to stay parallel-safe.
 const RETENTION_TEST_CATEGORIES = [
   { value: 'RECONCILE_HISTORY', label: 'Reconcile History' },
   { value: 'USAGE_BUCKETS', label: 'Usage Buckets' },
@@ -874,10 +874,12 @@ test.describe(
       page,
       request,
     }) => {
-      const category =
-        RETENTION_TEST_CATEGORIES[
-          test.info().repeatEachIndex % RETENTION_TEST_CATEGORIES.length
-        ];
+      const { repeatEachIndex } = test.info();
+      test.skip(
+        repeatEachIndex >= RETENTION_TEST_CATEGORIES.length,
+        'Each repeat needs a category of its own',
+      );
+      const category = RETENTION_TEST_CATEGORIES[repeatEachIndex];
       const api = await createAdminApiContext();
       let original: RetentionPolicySnapshot | null = null;
       // Cleanup only touches the category once this run owns it, so a
