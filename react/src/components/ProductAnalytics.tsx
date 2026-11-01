@@ -13,6 +13,8 @@ const URL_PROPERTY_KEYS = [
   '$referrer',
   '$initial_current_url',
   '$initial_referrer',
+  '$session_entry_url',
+  '$session_entry_referrer',
 ];
 const EXCEPTION_DEDUPE_WINDOW_MS = 5 * 60 * 1000;
 
@@ -63,19 +65,23 @@ const isDuplicateException = (event: CaptureResult) => {
   return false;
 };
 
-const identifyCurrentUser = () => {
+const registerPlatform = () => {
+  posthog.register({ platform: globalThis.isElectron ? 'electron' : 'web' });
+};
+
+// Account identifiers stay in the browser; only the role is registered (ADR 0017).
+const syncUserRoleProperty = () => {
   const client = globalThis.backendaiclient;
-  const userId: string | undefined = client?.user_uuid;
-  if (!client || !userId) return;
-  if (posthog._isIdentified() && posthog.get_distinct_id() !== userId) {
-    posthog.reset();
+  if (!client?.user_uuid) {
+    posthog.unregister('role');
+    return;
   }
   const role: UserRole = client.is_superadmin
     ? 'superadmin'
     : client.is_admin
       ? 'admin'
       : 'user';
-  posthog.identify(userId, { role, domain: client._config?.domainName });
+  posthog.register({ role });
 };
 
 const ProductAnalytics: React.FC = () => {
@@ -91,6 +97,7 @@ const ProductAnalytics: React.FC = () => {
     posthog.init(apiKey, {
       api_host: apiHost,
       persistence: 'localStorage',
+      person_profiles: 'never',
       capture_pageview: 'history_change',
       capture_pageleave: true,
       autocapture: true,
@@ -113,7 +120,7 @@ const ProductAnalytics: React.FC = () => {
         return event;
       },
     });
-    posthog.register({ platform: globalThis.isElectron ? 'electron' : 'web' });
+    registerPlatform();
 
     logger.use({
       afterLog: (context) => {
@@ -129,9 +136,12 @@ const ProductAnalytics: React.FC = () => {
       },
     });
 
-    identifyCurrentUser();
-    document.addEventListener('backend-ai-connected', identifyCurrentUser);
-    document.addEventListener('backend-ai-logout', () => posthog.reset());
+    syncUserRoleProperty();
+    document.addEventListener('backend-ai-connected', syncUserRoleProperty);
+    document.addEventListener('backend-ai-logout', () => {
+      posthog.reset();
+      registerPlatform();
+    });
   });
 
   useEffect(() => {

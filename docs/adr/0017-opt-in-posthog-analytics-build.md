@@ -39,7 +39,7 @@ flowchart TD
   boundary -- "error, metadata.context.errorBoundary.componentStack" --> logger
   logger -- "afterLog(context)" --> pa
   doc -- "backend-ai-connected, backend-ai-logout" --> pa
-  pa -- "identify, reset, captureException" --> sdk
+  pa -- "register, unregister, reset, captureException" --> sdk
   sdk -- "event batch" --> server
 ```
 
@@ -74,6 +74,7 @@ flowchart TD
 | option                            | 값                                              | 이유                                                |
 | --------------------------------- | ----------------------------------------------- | --------------------------------------------------- |
 | `persistence`                     | `'localStorage'`                                | Electron의 `file://`에서는 cookie가 동작하지 않는다 |
+| `person_profiles`                 | `'never'`                                       | person profile을 만들지 않고 `identify`를 무시한다  |
 | `capture_pageview`                | `'history_change'`                              | SPA route 전환마다 pageview를 남긴다                |
 | `capture_pageleave`               | `true`                                          | 화면별 체류 시간을 계산한다                         |
 | `autocapture`                     | `true`                                          | click을 수집한다                                    |
@@ -88,10 +89,12 @@ flowchart TD
 
 ### 5. Privacy defaults
 
-- **URL query and fragment**: `before_send`가 `properties`, `$set`, `$set_once`의 `$current_url`, `$referrer`, `$initial_current_url`, `$initial_referrer`에서 `?`나 `#`부터 뒤를 지운다. query에는 이름과 id가 실릴 수 있다.
+- **URL query and fragment**: `before_send`가 `properties`, `$set`, `$set_once`의 `$current_url`, `$referrer`, `$initial_current_url`, `$initial_referrer`, `$session_entry_url`, `$session_entry_referrer`에서 `?`나 `#`부터 뒤를 지운다. query에는 이름과 id가 실릴 수 있다.
 - **Secrets**: SDK는 password input을 수집하지 않는다. autocapture는 input 값을 보내지 않고 replay는 input을 가리므로, access key·secret key·SSH key·token 입력 칸에 `ph-no-capture`를 따로 달지 않는다.
-- **Identity payload**: `ProductAnalytics`는 `posthog.identify(user_uuid, { role, domain })`만 부르고 email과 이름은 보내지 않는다. 값은 `globalThis.backendaiclient`에서 읽는다. `role`은 `is_superadmin`과 `is_admin`으로 정한 `superadmin`·`admin`·`user` 중 하나이고, `domain`은 `_config.domainName`이다.
-- **Identity timing**: `ProductAnalytics`는 시작할 때와 `backend-ai-connected` event마다 identify한다. `posthog._isIdentified()`가 참이고 distinct id가 다른 사용자이면 먼저 `posthog.reset()`을 부른다. `backend-ai-logout` event에서도 `posthog.reset()`을 부른다.
+- **Anonymous identity**: account UUID와 domain은 browser 밖으로 나가면 안 된다. 그래서 `ProductAnalytics`는 `posthog.identify`를 부르지 않고 SDK가 만든 무작위 anonymous distinct id만 쓴다.
+- **Role property**: `ProductAnalytics`가 등록하는 사용자 값은 super property `role` 하나다. `role`은 `globalThis.backendaiclient`의 `is_superadmin`과 `is_admin`으로 정한 `superadmin`·`admin`·`user` 중 하나다. `user_uuid`는 로그인 여부를 확인할 때만 읽고, `user_uuid`, `_config.domainName`, email, 이름은 property로 등록하지 않는다.
+- **Role timing**: `ProductAnalytics`는 시작할 때와 `backend-ai-connected` event마다 `role`을 맞춘다. 로그인 전이면 이전 page에서 저장된 `role`을 `posthog.unregister('role')`로 지운다.
+- **Logout**: `backend-ai-logout` event에서 `posthog.reset()`으로 distinct id와 `role`을 지워 다음 계정으로 넘기지 않는다. reset은 `platform`도 지우므로 바로 다시 등록한다.
 
 ### 6. Logger plugin dispatch in production
 
@@ -109,6 +112,7 @@ flowchart TD
 - **Runtime flag only**: 모든 build에 SDK를 넣고 설정으로만 켜는 방식은 build를 하나로 유지한다. self-hosted build에 tracking code가 남으므로 기각했다.
 - **Domain app config now**: `domainConfig.analytics`로 domain마다 켜는 방식은 다시 build하지 않고 설정을 바꿀 수 있다. `useDomainAppConfig`는 로그인 뒤에만 읽을 수 있어 로그인 화면을 수집하지 못하므로 지금은 기각하고 후속 작업으로 남겼다.
 - **Static import behind the flag**: `ProductAnalytics`를 정적으로 import하고 JSX만 flag로 감싸는 방식은 코드가 짧다. Rollup이 module을 남길 수 있고 초기 bundle이 커지므로 기각했다.
+- **Identify by user UUID**: `posthog.identify(user_uuid, { role, domain })`는 기기를 넘나드는 사용자별 분석을 가능하게 한다. account UUID와 domain이 browser를 떠나므로 기각했다.
 - **Bundled SDK extensions**: `posthog-js/dist/module.full.no-external`은 replay와 exception 확장을 bundle에 넣어 외부 script를 받지 않는다. 문서화된 entry가 아니고 chunk가 두 배 이상 커져 기각했다.
 
 ## Consequences
@@ -117,14 +121,16 @@ flowchart TD
 - **Rebuild to configure**: key나 host를 바꾸려면 배포하는 쪽이 다시 build해야 한다.
 - **Plugin cost in production**: plugin이 하나라도 붙으면 production에서도 모든 log 호출이 `LogContext`를 만든다. plugin이 없는 기본 build에서 `logging()`의 비용은 이전과 같다.
 - **Duplicate dev console line**: 개발 환경에서는 `BAIErrorBoundary`가 잡은 render error를 React와 `useBAILogger`가 한 번씩 console에 찍는다.
-- **Path segments stay**: `before_send`는 URL path를 건드리지 않으므로 project 이름 같은 path segment는 event에 남는다.
+- **Anonymous users only**: 같은 사람도 browser가 다르면 다른 user로 세고, 기기를 넘나드는 사용자별 funnel은 만들 수 없다. 로그아웃도 distinct id를 새로 만들므로 같은 browser에서 다시 로그인하면 다른 user로 센다. person property와 cohort는 쓸 수 없고, role별 분석은 event property로 한다.
+- **Rendered values can still be captured**: autocapture의 `$el_text`와 `$elements_chain`(text, `href`, `data-row-key` 같은 attribute), replay의 화면 text, error message에는 화면이나 서버 응답에 있는 email, domain, UUID가 실릴 수 있다. `identify`를 없앤 것만으로는 막지 못하므로 별도 조치가 필요하다.
+- **Path segments stay**: `before_send`는 URL path를 건드리지 않으므로 project 이름과 deployment id 같은 path segment는 event에 남는다.
 - **Minified stack traces**: `ProductAnalytics`는 source map을 PostHog에 올리지 않는다. PostHog가 build의 source map을 찾지 못하면 error의 stack trace는 minify된 위치를 가리킨다.
 
 ## 출처
 
 - GitHub: #10567.
 - PostHog [JavaScript library config](https://posthog.com/docs/libraries/js/config), [self-host](https://posthog.com/docs/self-host).
-- 결정일: 2026-10-27.
+- 결정일: 2026-10-27. 익명 identity로 변경: 2026-11-01.
 - 관련: `DEV_ENVIRONMENT.md`의 "Review overlay in a build (`VITE_REVIEW_OVERLAY_BUILD`)" 절(같은 방식의 build-time opt-in).
 
 ## 용어
