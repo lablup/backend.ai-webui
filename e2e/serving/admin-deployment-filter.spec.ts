@@ -45,12 +45,22 @@ async function applyOwnerFilter(page: Page, email: string): Promise<void> {
   await page
     .getByRole('option', { name: new RegExp(`^${escapeForRegExp(email)}`) })
     .click();
+  const refetch = page.waitForResponse(
+    (response) =>
+      (response.request().postData() ?? '').includes('AdminDeploymentQuery'),
+    { timeout: 20000 },
+  );
   await page.getByRole('button', { name: 'Apply', exact: true }).click();
   await expect(page).toHaveURL(/createdUserId/);
+  await refetch;
   // Committing hands focus back to the search bar, which reopens the field
   // typeahead over the table; close it so it does not cover the rows.
   await page.keyboard.press('Escape');
   await expect(typeahead).toBeHidden();
+  // The grid keeps the previous rows while the deferred refetch renders.
+  await expect(
+    page.locator('.uic-data-grid__body[aria-busy="true"]'),
+  ).toHaveCount(0, { timeout: 20000 });
 }
 
 // Adds a free-text condition from the PowerSearch typeahead; its edit popover
