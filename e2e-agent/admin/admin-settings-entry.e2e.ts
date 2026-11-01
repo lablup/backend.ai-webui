@@ -156,7 +156,11 @@ test(
     await app.open("/start");
     const selector = screen.getByRole("button", "Select Project");
     await expect(selector).toBeVisible({ timeout: 30_000 });
-    await expect.poll(() => currentProjectName(browser)).toBeTruthy();
+    await expect
+      .poll(() => currentProjectName(browser), { timeout: 30_000 })
+      .toBeTruthy();
+    // Starting on another project keeps the switch below observable.
+    expect(await currentProjectName(browser)).not.toBe(project);
 
     await agent.act(
       'Open the "Select Project" selector in the header and choose the {project} project marked "Project Admin"',
