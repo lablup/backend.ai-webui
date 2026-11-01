@@ -868,148 +868,162 @@ async function deleteRetentionPolicy(api: APIRequestContext, id: string) {
 
 test.describe(
   'Maintenance - Data Retention Policy',
-  { tag: ['@regression', '@config', '@functional'] },
+  { tag: ['@regression', '@functional'] },
   () => {
-    test(
-      'Superadmin can create, edit and delete a data retention policy',
-      { tag: ['@regression'] },
-      async ({ page, request }) => {
-        const category =
-          RETENTION_TEST_CATEGORIES[
-            test.info().repeatEachIndex % RETENTION_TEST_CATEGORIES.length
-          ];
-        const api = await createAdminApiContext();
-        let original: RetentionPolicySnapshot | null = null;
+    test('Superadmin can create, edit and delete a data retention policy', async ({
+      page,
+      request,
+    }) => {
+      const category =
+        RETENTION_TEST_CATEGORIES[
+          test.info().repeatEachIndex % RETENTION_TEST_CATEGORIES.length
+        ];
+      const api = await createAdminApiContext();
+      let original: RetentionPolicySnapshot | null = null;
+      // Cleanup only touches the category once this run owns it, so a
+      // concurrent run on the same server never loses its policy to us.
+      let freedOriginal = false;
+      let createdViaUi = false;
+      try {
+        original = await findRetentionPolicy(api, category.value);
+        test.skip(
+          !!original?.enabled,
+          `${category.value} has an enabled retention policy; not touching it`,
+        );
+        if (original) {
+          await deleteRetentionPolicy(api, original.entityId);
+          freedOriginal = true;
+        }
+
+        // Keep the superadmin view-switch intro tour from covering the page.
+        await page.addInitScript(() => {
+          localStorage.setItem(
+            'backendaiwebui.settings.user.has_opened_tour_back_to_user_view',
+            'true',
+          );
+          localStorage.setItem(
+            'backendaiwebui.settings.user.has_opened_tour_back_to_admin_settings',
+            'true',
+          );
+        });
+        await loginAsAdmin(page, request);
+        await navigateTo(page, 'admin/maintenance?tab=retention-policy');
+
+        const notifications = page.getByRole('region', {
+          name: 'Notifications',
+        });
+        const policyRow = page
+          .getByRole('row')
+          .filter({ has: page.getByText(category.label, { exact: true }) });
+
+        // Create
+        await page.getByRole('button', { name: 'Create Policy' }).click();
+        const createModal = page.getByRole('dialog', {
+          name: 'Create Policy',
+        });
+        await expect(createModal).toBeVisible();
+        await createModal
+          .getByRole('button', { name: 'Policy Target' })
+          .click();
+        await page
+          .getByRole('option', { name: category.label, exact: true })
+          .click();
+        await createModal
+          .getByRole('spinbutton', { name: 'Retention Period (Days)' })
+          .fill('30');
+        const enabledSwitch = createModal.getByRole('switch', {
+          name: 'Enabled',
+        });
+        await expect(enabledSwitch).toBeChecked();
+        await enabledSwitch.click();
+        await expect(enabledSwitch).not.toBeChecked();
+        await createModal
+          .getByRole('button', { name: 'Create', exact: true })
+          .click();
+        await expect(
+          notifications.getByText('Retention policy created.'),
+        ).toBeVisible();
+        createdViaUi = true;
+        await expect(createModal).toBeHidden();
+        await expect(policyRow).toBeVisible();
+        await expect(policyRow.getByRole('cell').nth(1)).toHaveText('30');
+        await expect(policyRow).toContainText('Disabled');
+
+        // Edit
+        await policyRow.getByRole('button', { name: 'Edit' }).click();
+        const editModal = page.getByRole('dialog', { name: 'Edit Policy' });
+        await expect(editModal).toBeVisible();
+        const daysInput = editModal.getByRole('spinbutton', {
+          name: 'Retention Period (Days)',
+        });
+        await expect(daysInput).toHaveValue('30');
+        await daysInput.fill('45');
+        await editModal
+          .getByRole('button', { name: 'Save', exact: true })
+          .click();
+        await expect(
+          notifications.getByText('Retention policy updated.'),
+        ).toBeVisible();
+        await expect(editModal).toBeHidden();
+        await expect(policyRow.getByRole('cell').nth(1)).toHaveText('45');
+
+        // Delete — the button stays disabled until the target name is typed
+        await policyRow.getByRole('button', { name: 'Delete' }).click();
+        const deleteModal = page.getByRole('dialog', {
+          name: 'Delete Retention Policy',
+        });
+        await expect(deleteModal).toBeVisible();
+        const confirmDelete = deleteModal.getByRole('button', {
+          name: 'Delete',
+          exact: true,
+        });
+        await expect(confirmDelete).toBeDisabled();
+        await deleteModal
+          .getByRole('textbox', {
+            name: `Type ${category.label} to confirm.`,
+          })
+          .fill(category.label);
+        await expect(confirmDelete).toBeEnabled();
+        await confirmDelete.click();
+        await expect(
+          notifications.getByText('Retention policy deleted.'),
+        ).toBeVisible();
+        await expect(deleteModal).toBeHidden();
+        await expect(policyRow).toHaveCount(0);
+      } finally {
+        // Drop whatever the UI left behind, then put the seeded policy back.
+        let cleanupError: unknown;
         try {
-          original = await findRetentionPolicy(api, category.value);
-          test.skip(
-            !!original?.enabled,
-            `${category.value} has an enabled retention policy; not touching it`,
-          );
-          if (original) {
-            await deleteRetentionPolicy(api, original.entityId);
+          if (freedOriginal || createdViaUi) {
+            const leftover = await findRetentionPolicy(api, category.value);
+            if (leftover) {
+              await deleteRetentionPolicy(api, leftover.entityId);
+            }
           }
-
-          // Keep the superadmin view-switch intro tour from covering the page.
-          await page.addInitScript(() => {
-            localStorage.setItem(
-              'backendaiwebui.settings.user.has_opened_tour_back_to_user_view',
-              'true',
-            );
-            localStorage.setItem(
-              'backendaiwebui.settings.user.has_opened_tour_back_to_admin_settings',
-              'true',
-            );
-          });
-          await loginAsAdmin(page, request);
-          await navigateTo(page, 'admin/maintenance?tab=retention-policy');
-
-          const notifications = page.getByRole('region', {
-            name: 'Notifications',
-          });
-          const policyRow = page
-            .getByRole('row')
-            .filter({ has: page.getByText(category.label, { exact: true }) });
-
-          // Create
-          await page.getByRole('button', { name: 'Create Policy' }).click();
-          const createModal = page.getByRole('dialog', {
-            name: 'Create Policy',
-          });
-          await expect(createModal).toBeVisible();
-          await createModal
-            .getByRole('button', { name: 'Policy Target' })
-            .click();
-          await page
-            .getByRole('option', { name: category.label, exact: true })
-            .click();
-          await createModal
-            .getByRole('spinbutton', { name: 'Retention Period (Days)' })
-            .fill('30');
-          const enabledSwitch = createModal.getByRole('switch', {
-            name: 'Enabled',
-          });
-          await expect(enabledSwitch).toBeChecked();
-          await enabledSwitch.click();
-          await expect(enabledSwitch).not.toBeChecked();
-          await createModal
-            .getByRole('button', { name: 'Create', exact: true })
-            .click();
-          await expect(
-            notifications.getByText('Retention policy created.'),
-          ).toBeVisible();
-          await expect(createModal).toBeHidden();
-          await expect(policyRow).toBeVisible();
-          await expect(policyRow.getByRole('cell').nth(1)).toHaveText('30');
-          await expect(policyRow).toContainText('Disabled');
-
-          // Edit
-          await policyRow.getByRole('button', { name: 'Edit' }).click();
-          const editModal = page.getByRole('dialog', { name: 'Edit Policy' });
-          await expect(editModal).toBeVisible();
-          const daysInput = editModal.getByRole('spinbutton', {
-            name: 'Retention Period (Days)',
-          });
-          await expect(daysInput).toHaveValue('30');
-          await daysInput.fill('45');
-          await editModal
-            .getByRole('button', { name: 'Save', exact: true })
-            .click();
-          await expect(
-            notifications.getByText('Retention policy updated.'),
-          ).toBeVisible();
-          await expect(editModal).toBeHidden();
-          await expect(policyRow.getByRole('cell').nth(1)).toHaveText('45');
-
-          // Delete — the button stays disabled until the target name is typed
-          await policyRow.getByRole('button', { name: 'Delete' }).click();
-          const deleteModal = page.getByRole('dialog', {
-            name: 'Delete Retention Policy',
-          });
-          await expect(deleteModal).toBeVisible();
-          const confirmDelete = deleteModal.getByRole('button', {
-            name: 'Delete',
-            exact: true,
-          });
-          await expect(confirmDelete).toBeDisabled();
-          await deleteModal
-            .getByRole('textbox', {
-              name: `Type ${category.label} to confirm.`,
-            })
-            .fill(category.label);
-          await expect(confirmDelete).toBeEnabled();
-          await confirmDelete.click();
-          await expect(
-            notifications.getByText('Retention policy deleted.'),
-          ).toBeVisible();
-          await expect(deleteModal).toBeHidden();
-          await expect(policyRow).toHaveCount(0);
-        } finally {
-          // Drop whatever the UI left behind, then put the seeded policy back.
-          const leftover = await findRetentionPolicy(api, category.value).catch(
-            () => null,
-          );
-          if (leftover && leftover.entityId !== original?.entityId) {
-            await deleteRetentionPolicy(api, leftover.entityId).catch(() => {});
-          }
-          if (original && !original.enabled) {
+          if (freedOriginal && original) {
             await gqlAdmin(
               api,
               `mutation ($input: CreateRetentionPolicyInput!) {
-                adminCreateRetentionPolicy(input: $input) { policy { id } }
-              }`,
+                  adminCreateRetentionPolicy(input: $input) { policy { id } }
+                }`,
               {
                 input: {
                   category: category.value,
                   retentionPeriodDays: original.retentionPeriodDays,
-                  enabled: false,
+                  enabled: original.enabled,
                 },
               },
-            ).catch(() => {});
+            );
           }
-          await api.dispose();
+        } catch (error) {
+          cleanupError = error;
         }
-      },
-    );
+        await api.dispose();
+        // Surface a failed restore instead of silently losing a seeded policy.
+        expect
+          .soft(cleanupError, 'retention policy cleanup/restore failed')
+          .toBeUndefined();
+      }
+    });
   },
 );
