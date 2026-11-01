@@ -46,6 +46,7 @@ export interface UserSettings {
   experimental_custom_dashboard_panels?: boolean;
   experimental_import_from_huggingface?: boolean;
   experimental_session_resource_grid?: boolean;
+  experimental_resource_grid_launcher?: boolean;
   /** Header session monitor (chip, polling, idle alerts); default off. */
   experimental_session_monitor?: boolean;
   extra_ai_agents?: Array<AgentProfile>;

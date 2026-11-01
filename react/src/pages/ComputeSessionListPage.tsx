@@ -14,6 +14,7 @@ import BAITabs from '../components/BAITabs';
 import TerminateSessionModal from '../components/ComputeSessionNodeItems/TerminateSessionModal';
 import ConfigurableResourceCard from '../components/ConfigurableResourceCard';
 import QuickSessionCreateButton from '../components/QuickSessionCreate/QuickSessionCreateButton';
+import ResourceGridLaunchBar from '../components/QuickSessionCreate/ResourceGridLaunchBar';
 import SessionNodes, {
   availableSessionSorterValues,
 } from '../components/SessionNodes';
@@ -95,6 +96,9 @@ const ComputeSessionListPage = () => {
   'use memo';
   const currentProject = useCurrentProjectValue();
   const currentProjectContext = toProjectContext(currentProject);
+  const [isResourceGridLauncher] = useBAISettingUserState(
+    'experimental_resource_grid_launcher',
+  );
 
   const [currentUser] = useCurrentUserInfo();
 
@@ -383,6 +387,11 @@ const ComputeSessionListPage = () => {
               }
             >
               <ConfigurableResourceCard
+                resourceGridProject={
+                  isResourceGridLauncher
+                    ? (currentProjectContext ?? undefined)
+                    : undefined
+                }
                 style={{
                   width: '100%',
                   height: '100%',
@@ -741,6 +750,12 @@ const ComputeSessionListPage = () => {
           }
         }}
       />
+      {isResourceGridLauncher && currentProjectContext && (
+        <ResourceGridLaunchBar
+          project={currentProjectContext}
+          onLaunched={() => updateFetchKey()}
+        />
+      )}
     </BAIFlex>
   );
 };

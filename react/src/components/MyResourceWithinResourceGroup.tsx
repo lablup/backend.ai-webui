@@ -8,6 +8,8 @@ import {
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
+import type { ProjectContext } from '../types/projectContext';
+import ResourceGridPicker from './QuickSessionCreate/ResourceGridPicker';
 import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
 import { Heading } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
@@ -26,7 +28,13 @@ import {
   BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { ReactNode, useDeferredValue, useMemo, useTransition } from 'react';
+import {
+  ReactNode,
+  Suspense,
+  useDeferredValue,
+  useMemo,
+  useTransition,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface MyResourceWithinResourceGroupProps extends BAIFlexProps {
@@ -35,11 +43,13 @@ interface MyResourceWithinResourceGroupProps extends BAIFlexProps {
   displayType?: 'used' | 'free';
   onDisplayTypeChange?: (type: 'used' | 'free') => void;
   extra?: ReactNode;
+  /** Replaces the numbers with the drag-select resource grid for this project. */
+  resourceGridProject?: ProjectContext;
 }
 
 const MyResourceWithinResourceGroup: React.FC<
   MyResourceWithinResourceGroupProps
-> = ({ fetchKey, refetching, extra, ...props }) => {
+> = ({ fetchKey, refetching, extra, resourceGridProject, ...props }) => {
   const { t } = useTranslation();
   const { token } = useTheme();
 
@@ -215,29 +225,31 @@ const MyResourceWithinResourceGroup: React.FC<
           <BAIFlex gap={'xs'}>
             {/* PILOT-DECISION: SegmentedControl.label is aria-only and required;
                 composed from the two option labels to avoid new i18n keys. */}
-            <BAISegmentedControl
-              size="sm"
-              aria-label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
-              value={displayType}
-              onChange={(v) =>
-                v &&
-                setDisplayType(
-                  v as Exclude<
-                    MyResourceWithinResourceGroupProps['displayType'],
-                    undefined
-                  >,
-                )
-              }
-            >
-              <BAISegmentedControlItem
-                value="used"
-                label={t('dashboard.Used')}
-              />
-              <BAISegmentedControlItem
-                value="free"
-                label={t('dashboard.Free')}
-              />
-            </BAISegmentedControl>
+            {!resourceGridProject && (
+              <BAISegmentedControl
+                size="sm"
+                aria-label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
+                value={displayType}
+                onChange={(v) =>
+                  v &&
+                  setDisplayType(
+                    v as Exclude<
+                      MyResourceWithinResourceGroupProps['displayType'],
+                      undefined
+                    >,
+                  )
+                }
+              >
+                <BAISegmentedControlItem
+                  value="used"
+                  label={t('dashboard.Used')}
+                />
+                <BAISegmentedControlItem
+                  value="free"
+                  label={t('dashboard.Free')}
+                />
+              </BAISegmentedControl>
+            )}
             <BAIFetchKeyButton
               size="small"
               loading={isPending || refetching}
@@ -254,7 +266,15 @@ const MyResourceWithinResourceGroup: React.FC<
           </BAIFlex>
         }
       />
-      {resourceSlotsDetails.isLoading ? (
+      {resourceGridProject ? (
+        <Suspense fallback={<BAISkeleton rows={3} />}>
+          <ResourceGridPicker
+            project={resourceGridProject}
+            resourceGroup={deferredCurrentResourceGroup}
+            fetchKey={`${fetchKey}${internalFetchKey}`}
+          />
+        </Suspense>
+      ) : resourceSlotsDetails.isLoading ? (
         // `data-testid` anchor for e2e (`dashboard.spec.ts`): Astryx
         // `Skeleton` renders `aria-hidden="true"` with no default class, so
         // there is no other stable "still loading" selector.

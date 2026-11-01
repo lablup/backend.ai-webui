@@ -87,6 +87,30 @@ describe('BAIResourceAreaGrid', () => {
     expect(onChange).toHaveBeenLastCalledWith(1);
   });
 
+  it('draws occupied runs above the selectable cells', () => {
+    const { container } = render(
+      <BAIResourceAreaGrid
+        columns={4}
+        totalCells={8}
+        value={2}
+        aria-label="CPU"
+        occupiedGroups={[
+          { key: 'a', label: 'session-a', cells: 3, color: 'red' },
+          { key: 'b', label: 'session-b', cells: 1, color: 'blue' },
+        ]}
+      />,
+    );
+    const occupied = container.querySelectorAll(
+      '.bai-resource-area-grid__cell--occupied',
+    );
+    expect(occupied).toHaveLength(4);
+    expect(occupied[3]).toHaveAttribute('title', 'session-b');
+    expect(screen.getByRole('slider', { name: 'CPU' })).toHaveAttribute(
+      'aria-valuenow',
+      '2',
+    );
+  });
+
   it('ignores input when disabled', () => {
     const onChange = vi.fn();
     render(

@@ -81,6 +81,12 @@ export const docs = {
       default: "'var(--color-accent)'",
     },
     {
+      name: 'occupiedGroups',
+      type: 'Array<{ key: string; label: string; cells: number; color: string }>',
+      description:
+        'Cells already taken, drawn read-only above the selectable cells as one run per group (a session), each hovering its `label`. Hidden from assistive tech, so state the amounts in text next to the grid.',
+    },
+    {
       name: 'disabled',
       type: 'boolean',
       description: 'Ignores pointer and keyboard input and dims the grid.',

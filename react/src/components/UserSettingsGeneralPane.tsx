@@ -102,6 +102,10 @@ const UserSettingsGeneralPane = () => {
   ] = useBAISettingUserState('experimental_import_from_huggingface');
   const [experimentalSessionResourceGrid, setExperimentalSessionResourceGrid] =
     useBAISettingUserState('experimental_session_resource_grid');
+  const [
+    experimentalResourceGridLauncher,
+    setExperimentalResourceGridLauncher,
+  ] = useBAISettingUserState('experimental_resource_grid_launcher');
   const [experimentalSessionMonitor, setExperimentalSessionMonitor] =
     useBAISettingUserState('experimental_session_monitor');
   const [shellInfo, setShellInfo] = useState<ShellScriptType>('bootstrap');
@@ -456,6 +460,15 @@ const UserSettingsGeneralPane = () => {
           defaultValue: false,
           value: experimentalSessionResourceGrid,
           onChange: setExperimentalSessionResourceGrid,
+        },
+        {
+          'data-testid': 'items-experimental-resource-grid-launcher',
+          type: 'checkbox',
+          title: t('userSettings.ResourceGridLauncher'),
+          description: t('userSettings.DescResourceGridLauncher'),
+          defaultValue: false,
+          value: experimentalResourceGridLauncher,
+          onChange: setExperimentalResourceGridLauncher,
         },
         {
           'data-testid': 'items-experimental-session-monitor',

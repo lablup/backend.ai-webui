@@ -274,6 +274,7 @@ export type { StorageUsageBadgeProps } from './StorageUsageBadge';
 export { default as BAIBoardItemErrorBoundary } from './BAIBoardItemErrorBoundary';
 export { default as BAIResourceAreaGrid } from './BAIResourceAreaGrid';
 export type {
+  AreaGridOccupiedGroup,
   AreaGridShape,
   BAIResourceAreaGridProps,
 } from './BAIResourceAreaGrid';

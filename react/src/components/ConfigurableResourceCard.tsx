@@ -6,6 +6,7 @@ import { ConfigurableResourceCardQuery } from '../__generated__/ConfigurableReso
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
+import type { ProjectContext } from '../types/projectContext';
 import MyResource from './MyResource';
 import MyResourceWithinResourceGroup from './MyResourceWithinResourceGroup';
 import TotalResourceWithinResourceGroup, {
@@ -35,10 +36,13 @@ export type ResourcePanelType =
 
 interface ConfigurableResourceCardProps extends BAICardProps {
   fetchKey?: string;
+  /** Draws "My resources in resource group" as the drag-select grid for this project. */
+  resourceGridProject?: ProjectContext;
 }
 
 const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
   fetchKey,
+  resourceGridProject,
   ...props
 }) => {
   const { token } = useTheme();
@@ -82,7 +86,11 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
       },
     );
 
-  const currentPanelType: ResourcePanelType = selectedPanelType || 'MyResource';
+  // The grid lives in the resource-group panel, so it replaces the default one.
+  const currentPanelType: ResourcePanelType =
+    resourceGridProject && (selectedPanelType ?? 'MyResource') === 'MyResource'
+      ? 'MyResourceWithinResourceGroup'
+      : selectedPanelType || 'MyResource';
 
   const panelOptions = filterOutEmpty([
     {
@@ -154,7 +162,12 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
 
     switch (currentPanelType) {
       case 'MyResourceWithinResourceGroup':
-        return <MyResourceWithinResourceGroup {...commonProps} />;
+        return (
+          <MyResourceWithinResourceGroup
+            {...commonProps}
+            resourceGridProject={resourceGridProject}
+          />
+        );
       case 'TotalResourceWithinResourceGroup':
         return (
           isAvailableTotalResourcePanel && (

@@ -3921,6 +3921,15 @@
         "session.launcher.SettingUpProxyForApp",
         "session.launcher.SharedMemory",
         "session.launcher.SingleNode",
+        "session.quickCreate.AcceleratorType",
+        "session.quickCreate.AutoAllocated",
+        "session.quickCreate.CellUnit",
+        "session.quickCreate.InUse",
+        "session.quickCreate.NotEnoughResource",
+        "session.quickCreate.PresetOnly",
+        "session.quickCreate.Remaining",
+        "session.quickCreate.Selected",
+        "session.quickCreate.ShmemIncluded",
         "session.resourceGrid.AtLeastPercent",
         "session.resourceGrid.GridMode",
         "session.resourceGrid.GridView",
@@ -4793,7 +4802,9 @@
         "session.quickCreate.AcceleratorType",
         "session.quickCreate.AutoAllocated",
         "session.quickCreate.CellUnit",
+        "session.quickCreate.ClearSelection",
         "session.quickCreate.ContinueInLauncher",
+        "session.quickCreate.InUse",
         "session.quickCreate.NameAndEnvironment",
         "session.quickCreate.NoFolder",
         "session.quickCreate.NotEnoughResource",
@@ -4803,8 +4814,10 @@
         "session.quickCreate.QuickCreate",
         "session.quickCreate.Remaining",
         "session.quickCreate.Resources",
+        "session.quickCreate.Selected",
         "session.quickCreate.ShmemIncluded",
         "session.quickCreate.StartFromHistory",
+        "session.quickCreate.StartWithSelection",
         "session.quickCreate.Summary",
         "session.quickCreate.Title",
         "session.resourceGrid.AtLeastPercent",
@@ -5448,6 +5461,16 @@
           "testId": "items-my-keypair-info",
           "descriptionKeys": [
             "userSettings.DescMyKeypairInfo"
+          ]
+        },
+        {
+          "key": "userSettings.ResourceGridLauncher",
+          "tab": "general",
+          "groupKey": "userSettings.ExperimentalFeatures",
+          "groupId": "group-experimental-features",
+          "testId": "items-experimental-resource-grid-launcher",
+          "descriptionKeys": [
+            "userSettings.DescResourceGridLauncher"
           ]
         },
         {

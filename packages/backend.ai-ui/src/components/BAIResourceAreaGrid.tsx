@@ -99,6 +99,20 @@ export interface BAIResourceAreaGridProps extends Omit<
   /** Fill of the selected cells, a CSS colour or `var()`. */
   color?: string;
   disabled?: boolean;
+  /**
+   * Cells already taken, drawn read-only above the selectable cells, one run
+   * per group (a session). `label` is the hover title; the caller states the
+   * amounts in text, since these cells are hidden from assistive tech.
+   */
+  occupiedGroups?: Array<AreaGridOccupiedGroup>;
+}
+
+export interface AreaGridOccupiedGroup {
+  key: string;
+  label: string;
+  cells: number;
+  /** A CSS colour or `var()`. */
+  color: string;
 }
 
 const BAIResourceAreaGrid: React.FC<BAIResourceAreaGridProps> = ({
@@ -110,6 +124,7 @@ const BAIResourceAreaGrid: React.FC<BAIResourceAreaGridProps> = ({
   onChange,
   color,
   disabled,
+  occupiedGroups,
   className,
   style,
   ...divProps
@@ -229,7 +244,7 @@ const BAIResourceAreaGrid: React.FC<BAIResourceAreaGridProps> = ({
   const maxShape = areaShapeAtMost(Infinity, bounds);
   const selectedCount = shape ? shape.rows * shape.cols : 0;
 
-  return (
+  const slider = (
     <div
       role="slider"
       tabIndex={disabled ? -1 : 0}
@@ -279,6 +294,35 @@ const BAIResourceAreaGrid: React.FC<BAIResourceAreaGridProps> = ({
           />
         );
       })}
+    </div>
+  );
+
+  if (!occupiedGroups?.length) return slider;
+  return (
+    <div className="bai-resource-area-grid-stack">
+      <div
+        aria-hidden
+        className="bai-resource-area-grid bai-resource-area-grid--occupied"
+        style={{
+          gridTemplateColumns: `repeat(${Math.max(1, columns)}, var(--bai-area-grid-cell))`,
+        }}
+      >
+        {occupiedGroups?.flatMap((group) =>
+          Array.from({ length: Math.max(0, group.cells) }, (_unused, i) => (
+            <span
+              key={`${group.key}-${i}`}
+              title={group.label}
+              className="bai-resource-area-grid__cell bai-resource-area-grid__cell--occupied"
+              style={
+                {
+                  '--bai-area-grid-occupied': group.color,
+                } as React.CSSProperties
+              }
+            />
+          )),
+        )}
+      </div>
+      {slider}
     </div>
   );
 };

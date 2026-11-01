@@ -42,6 +42,19 @@
     );
     cursor: not-allowed;
   }
+  .bai-resource-area-grid-stack {
+    display: inline-flex;
+    flex-direction: column;
+    gap: var(--spacing-1);
+  }
+  .bai-resource-area-grid--occupied {
+    cursor: default;
+  }
+  .bai-resource-area-grid__cell--occupied {
+    background: var(--bai-area-grid-occupied);
+    border-color: var(--bai-area-grid-occupied);
+    opacity: 0.55;
+  }
   @media (prefers-reduced-motion: reduce) {
     .bai-resource-area-grid__cell {
       transition: none;

@@ -58,7 +58,7 @@ const finiteOrUndefined = (value: number | undefined) =>
 
 export const formatQuickAmount = (kind: QuickSlotKind, amount: number) => {
   if (kind !== 'mem') return `${_.round(amount, 2)}`;
-  return amount < 1
+  return amount > 0 && amount < 1
     ? `${_.round(amount * 1024)} MiB`
     : `${_.round(amount, 2)} GiB`;
 };
@@ -104,6 +104,9 @@ const ResourceGridCard: React.FC<ResourceGridCardProps> = ({
       : getInitialUnit(kind, steps, max, amount);
   const cells = getGridCells({ kind, unit, min, max, remaining });
   const isShort = cells.availableCells < cells.minCells;
+  // In MiB mode the number box speaks MiB too; the form keeps GiB.
+  const isMiB = kind === 'mem' && unit < 1;
+  const inputScale = isMiB ? 1024 : 1;
   const isDisabled = disabled || isShort || cells.totalCells === 0;
   const format = (value: number) =>
     `${formatQuickAmount(kind, value)}${kind === 'mem' || !unitLabel ? '' : ` ${unitLabel}`}`;
@@ -132,7 +135,7 @@ const ResourceGridCard: React.FC<ResourceGridCardProps> = ({
                 <BAISegmentedControlItem
                   key={step}
                   value={String(step)}
-                  label={formatQuickAmount(kind, step)}
+                  label={step < 1 ? 'MiB' : 'GiB'}
                 />
               ))}
             </BAISegmentedControl>
@@ -161,15 +164,15 @@ const ResourceGridCard: React.FC<ResourceGridCardProps> = ({
           <BAIFlex direction="column" align="start" gap="xxs">
             <BAINumberInput
               aria-label={_.isString(title) ? title : slotName}
-              value={amount}
-              min={min ?? 0}
-              max={max ?? null}
-              step={kind === 'mem' ? 0.25 : kind === 'shares' ? steps[0] : 1}
-              units={kind === 'mem' ? 'GiB' : unitLabel}
+              value={_.round(amount * inputScale, 6)}
+              min={(min ?? 0) * inputScale}
+              max={max === undefined ? null : max * inputScale}
+              step={isMiB ? 256 : kind === 'mem' ? 0.25 : steps[0]}
+              units={kind === 'mem' ? (isMiB ? 'MiB' : 'GiB') : unitLabel}
               width={140}
               disabled={isDisabled}
               onChange={(value) => {
-                if (_.isNumber(value)) onAmountChange(value);
+                if (_.isNumber(value)) onAmountChange(value / inputScale);
               }}
             />
             {remaining !== undefined && (

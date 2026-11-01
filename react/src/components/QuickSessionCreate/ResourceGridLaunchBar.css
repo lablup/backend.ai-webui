@@ -1,0 +1,23 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+*/
+@layer components {
+  /* Below the app header (100) and every modal; context-local, off the ladder. */
+  .resource-grid-launch-bar {
+    position: fixed;
+    bottom: var(--spacing-6);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    max-width: calc(100vw - var(--spacing-8));
+    padding: var(--spacing-2) var(--spacing-2) var(--spacing-2) var(--spacing-4);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-full);
+    background: var(--color-background-card);
+    box-shadow: var(--shadow-high);
+  }
+}

@@ -4,7 +4,7 @@
  */
 import * as _ from 'lodash-es';
 
-/** How a resource slot is drawn on the quick-create grid (#10733). */
+/** How a resource slot is drawn on the resource grids (#10733, revised in #10741). */
 export type QuickSlotKind = 'cpu' | 'mem' | 'shares' | 'count';
 
 export const QUICK_GRID_COLUMNS = 8;
@@ -20,7 +20,10 @@ export const getQuickSlotKind = (
   return 'count';
 };
 
-/** Memory steps are GiB; every other kind uses the slot's own unit. */
+/** A memory cell in MiB mode; every other unit is the slot's own (memory: GiB). */
+export const MEM_MIB_UNIT = 0.25;
+
+/** Only memory switches units (MiB / GiB); other slots draw one fixed unit per cell. */
 export const getUnitSteps = (
   kind: QuickSlotKind,
   quantumSize?: number | null,
@@ -28,31 +31,30 @@ export const getUnitSteps = (
   switch (kind) {
     case 'cpu':
     case 'count':
-      return [1, 4, 16];
+      return [1];
     case 'mem':
-      return [0.25, 1, 4, 16, 64];
-    case 'shares': {
-      const quantum = quantumSize && quantumSize > 0 ? quantumSize : 0.1;
-      return _.sortBy(_.uniq([quantum, 1, 4]));
-    }
+      return [MEM_MIB_UNIT, 1];
+    case 'shares':
+      return [quantumSize && quantumSize > 0 ? quantumSize : 0.1];
   }
 };
 
-export const getCellCap = (kind: QuickSlotKind) => (kind === 'cpu' ? 64 : 32);
+/** MiB mode is capped small; a larger amount switches to GiB. */
+export const getCellCap = (kind: QuickSlotKind, unit: number) =>
+  kind === 'mem' && unit < 1 ? 32 : 128;
 
-/** The smallest step whose cap covers `limit`; memory starts at 1 GiB. */
+/** The smallest step whose cap covers `limit`; GiB when the limit is unknown. */
 export const getDefaultUnit = (
   kind: QuickSlotKind,
   steps: number[],
   limit: number | undefined,
 ): number => {
-  const candidates = kind === 'mem' ? steps.filter((s) => s >= 1) : steps;
   if (limit === undefined || !_.isFinite(limit)) {
-    return _.includes(candidates, 1) ? 1 : candidates[0];
+    return _.includes(steps, 1) ? 1 : steps[0];
   }
   return (
-    candidates.find((step) => step * getCellCap(kind) >= limit - EPSILON) ??
-    _.last(candidates)!
+    steps.find((step) => step * getCellCap(kind, step) >= limit - EPSILON) ??
+    _.last(steps)!
   );
 };
 
@@ -88,7 +90,7 @@ export const getGridCells = ({
   max?: number;
   remaining?: number;
 }): QuickGridCells => {
-  const cap = getCellCap(kind);
+  const cap = getCellCap(kind, unit);
   const limitCells =
     max === undefined || !_.isFinite(max)
       ? cap
@@ -103,7 +105,13 @@ export const getGridCells = ({
         );
   const minCells = min && min > 0 ? Math.ceil(min / unit - EPSILON) : 0;
   return {
-    columns: Math.max(1, Math.min(QUICK_GRID_COLUMNS, totalCells)),
+    columns: Math.max(
+      1,
+      Math.min(
+        totalCells > 64 ? QUICK_GRID_COLUMNS * 2 : QUICK_GRID_COLUMNS,
+        totalCells,
+      ),
+    ),
     totalCells,
     availableCells,
     minCells,
