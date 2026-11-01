@@ -11,8 +11,8 @@ Backend.AI supports dedicated storage to preserve user's files. Since the files
 and directories of a compute session are deleted upon session termination, it is
 recommended to save them in a storage folder. List of storage folders can be
 found by selecting the Data page on the sidebar. You can see the information
-such as the folder name and ID, the storage host name where the folder is located
-(Location), and folder access rights (Permission).
+such as the folder name and ID and the storage host name where the folder is
+located (Location).
 
 
 ![](../images/data_page.png)
@@ -56,8 +56,9 @@ The meaning of each field in the creation dialog is as follows.
    * Auto Mount: Folders automatically mounted when a session is created. If selected, the folder name must start with a dot ('.').
 
 - **Location**: Select the storage host where the folder will be created. If there are multiple hosts, choose one. An indicator will show if there is enough available space.
-- **Mount Permission**: The mount permission applied when the folder is mounted into a compute session. **Read & Write** allows writing to the folder inside sessions; **Read only** prevents it.
 - **Cloneable**: Shown only when you select usage mode to "Model". Select whether the vfolder you are creating should be cloneable.
+
+A new folder is created with **Read only** as its default mount permission. To change it, use the folder's **Share Folder** modal (see [Adjust permission for shared folders](#adjust-permission-for-shared-folders)).
 
 :::note
 Folders created from the Data page are always **User folders**. **Project folders** are created by administrators from the admin Data pages.
