@@ -99,8 +99,10 @@
  No antd call site passes one. The wrapper accepts `label` and otherwise
  derives an accessible name from `placeholder` (which every call site does
  pass: 28 of 64) before falling back to the translated generic — the same
- policy `BAIButton` / `BAICheckbox` / `BAIUncontrolledInput` use here.
+ policy `BAIButton` / `BAICheckbox` / `BAIUncontrolledInput` use here. Inside a
+ labelled `Form.Item` neither fallback is sent, so the item's label names it.
 */
+import { FormItemInputContext } from '../form-engine';
 import { nodeToAccessibleLabel } from '../helper/astryxLabel';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIMultiSelector from './BAIMultiSelector';
@@ -292,6 +294,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   ...restProps
 }: BAISelectProps<ValueType, OptionType>): React.ReactElement {
   const { t } = useBAIi18n();
+  const { label: formItemLabel } = React.use(FormItemInputContext);
 
   // antd's OTHER option API: `<Select.Option>` / `<Select.OptGroup>` children.
   // Astryx's `Selector` is `options`-driven only, so the element tree is
@@ -500,8 +503,13 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
     emitAutoSelection();
   }, [autoSelectedValue]);
 
+  // An explicit `aria-label` outranks the enclosing Form.Item's label in
+  // ui-common, so the placeholder fallback applies only to an unlabelled field.
   const accessibleLabel =
-    label ?? nodeToAccessibleLabel(placeholder) ?? t('general.Select');
+    label ||
+    (formItemLabel
+      ? undefined
+      : nodeToAccessibleLabel(placeholder) || t('general.Select'));
 
   const singleValue = toOptionKey(value ?? defaultValue);
   const resolvedSingleValue =
@@ -540,7 +548,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
       ghost && 'bai-select-ghost',
       richTriggerNode !== undefined && 'bai-select-rich-trigger',
     ),
-    'aria-label': accessibleLabel || t('general.Select'),
+    'aria-label': accessibleLabel,
     placeholder:
       typeof placeholder === 'string'
         ? placeholder

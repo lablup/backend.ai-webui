@@ -19,16 +19,18 @@ const onlyAvailableIn = (group: string) =>
 const presetOnlyAvailableIn = (preset: string, group: string) =>
   `The "${preset}" preset is only available in the "${group}" resource group. Please select a different resource group.`;
 
+// The Selector trigger is named by its Form.Item label.
+const resourceGroupTrigger = (page: Page) =>
+  page.getByRole('button', { name: 'Resource Group', exact: true });
+
 const openResourceAllocationStep = async (page: Page) => {
   await navigateTo(page, 'session/start');
   await page.getByRole('button', { name: 'Next' }).click();
-  await expect(
-    page.getByRole('button', { name: 'Resource Group Select' }),
-  ).toBeVisible({ timeout: 20000 });
+  await expect(resourceGroupTrigger(page)).toBeVisible({ timeout: 20000 });
 };
 
 const selectResourceGroup = async (page: Page, group: string) => {
-  const trigger = page.getByRole('button', { name: 'Resource Group Select' });
+  const trigger = resourceGroupTrigger(page);
   await trigger.click();
   await page.getByRole('option', { name: group, exact: true }).click();
   await expect(trigger).toHaveText(group);
