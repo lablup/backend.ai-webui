@@ -104,6 +104,10 @@ async function openResourceGroupDrawer(page: Page, name: string) {
     );
   });
   await navigateTo(page, 'agent?tab=resourceGroup');
+  // The list pages at 10 groups; a bare search term filters it by name.
+  const searchFilter = page.getByRole('combobox', { name: 'Search filters' });
+  await searchFilter.fill(name);
+  await searchFilter.press('Enter');
   await page.getByRole('button', { name, exact: true }).click();
   const drawer = page.getByRole('dialog', { name: 'Resource Group Info' });
   await expect(drawer).toBeVisible();
@@ -113,11 +117,20 @@ async function openResourceGroupDrawer(page: Page, name: string) {
 
 test.describe(
   'Resource Group Detail Drawer',
-  { tag: ['@regression', '@agent-summary'] },
+  {
+    tag: [
+      '@regression',
+      '@agent-summary',
+      '@functional',
+      '@requires-manager-v26.4',
+    ],
+  },
   () => {
     let resourceGroupName: string;
+    let created = false;
 
     test.beforeEach(async () => {
+      created = false;
       resourceGroupName = `${RESOURCE_GROUP_PREFIX}${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
       const api = await createAdminApiContext();
       try {
@@ -126,19 +139,31 @@ test.describe(
           new RegExp(`^${RESOURCE_GROUP_PREFIX}`),
         );
         await createResourceGroupViaApi(api, resourceGroupName);
+        created = true;
       } finally {
         await api.dispose();
       }
     });
 
+    // Best-effort: a leftover group is swept by the next run's beforeEach.
     test.afterEach(async () => {
-      const api = await createAdminApiContext();
+      if (!created) return;
       try {
-        expect
-          .soft(await deleteResourceGroupViaApi(api, resourceGroupName))
-          .toBe(true);
-      } finally {
-        await api.dispose();
+        const api = await createAdminApiContext();
+        try {
+          if (!(await deleteResourceGroupViaApi(api, resourceGroupName))) {
+            console.warn(
+              `[agent-summary] could not delete resource group ${resourceGroupName}`,
+            );
+          }
+        } finally {
+          await api.dispose().catch(() => {});
+        }
+      } catch (error) {
+        console.warn(
+          `[agent-summary] resource group cleanup failed for ${resourceGroupName}:`,
+          error,
+        );
       }
     });
 
@@ -190,6 +215,7 @@ test.describe(
         .filter({
           has: page.getByRole('heading', { name: 'Scheduler Options' }),
         });
+      // 10 is the manager's default priority for a new resource group.
       await expect(
         schedulerSection.getByText('10', { exact: true }),
       ).toBeVisible();
