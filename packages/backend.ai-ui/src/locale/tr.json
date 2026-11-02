@@ -1389,6 +1389,7 @@
     "TextPlaceholderExample": "örn. Bir değer girin",
     "TextPlaceholderLabel": "Giriş Yer Tutucusu",
     "UIType": "UI Türü",
+    "UITypeCannotRenderSelectedValueType": "Bu UI türü seçilen değer türünü gösteremez.",
     "UITypeCheckbox": "Onay Kutusu",
     "UITypeIncompatibleWithValueType": "Seçilen arayüz türü bu değer türünü gösteremez.",
     "UITypeNumberInput": "Sayı Girişi",
@@ -1454,6 +1455,7 @@
     "InviteByEmail": "E-posta ile davet et"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Bu klasörü bağlama izniniz yok.",
     "SelectFolder": "Klasör Seç"
   },
   "comp:BAISessionAgentIds": {

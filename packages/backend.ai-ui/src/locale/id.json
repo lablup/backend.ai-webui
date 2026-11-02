@@ -1389,6 +1389,7 @@
     "TextPlaceholderExample": "mis. Masukkan nilai",
     "TextPlaceholderLabel": "Placeholder Input",
     "UIType": "Tipe UI",
+    "UITypeCannotRenderSelectedValueType": "Tipe UI ini tidak dapat menampilkan tipe nilai yang dipilih.",
     "UITypeCheckbox": "Kotak Centang",
     "UITypeIncompatibleWithValueType": "Tipe antarmuka yang dipilih tidak dapat menampilkan tipe nilai ini.",
     "UITypeNumberInput": "Input Angka",
@@ -1454,6 +1455,7 @@
     "InviteByEmail": "Undang melalui e-mail"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Anda tidak memiliki izin untuk me-mount folder ini.",
     "SelectFolder": "Pilih Folder"
   },
   "comp:BAISessionAgentIds": {

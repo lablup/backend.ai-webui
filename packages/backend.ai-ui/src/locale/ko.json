@@ -1389,6 +1389,7 @@
     "TextPlaceholderExample": "예: 값을 입력하세요",
     "TextPlaceholderLabel": "입력 플레이스홀더",
     "UIType": "UI 유형",
+    "UITypeCannotRenderSelectedValueType": "이 UI 타입은 선택한 값 타입을 표시할 수 없습니다.",
     "UITypeCheckbox": "체크박스",
     "UITypeIncompatibleWithValueType": "선택한 UI 유형은 이 값 유형을 표시할 수 없습니다.",
     "UITypeNumberInput": "숫자 입력",
@@ -1454,6 +1455,7 @@
     "InviteByEmail": "이메일로 초대"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "이 폴더를 마운트할 권한이 없습니다.",
     "SelectFolder": "폴더를 선택해주세요"
   },
   "comp:BAISessionAgentIds": {

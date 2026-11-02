@@ -1389,6 +1389,7 @@
     "TextPlaceholderExample": "例如：请输入值",
     "TextPlaceholderLabel": "输入占位符",
     "UIType": "UI 类型",
+    "UITypeCannotRenderSelectedValueType": "此 UI 类型无法呈现所选值类型。",
     "UITypeCheckbox": "复选框",
     "UITypeIncompatibleWithValueType": "所选 UI 类型无法呈现此值类型。",
     "UITypeNumberInput": "数字输入框",
@@ -1454,6 +1455,7 @@
     "InviteByEmail": "通过电子邮件邀请"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "您没有挂载此文件夹的权限。",
     "SelectFolder": "选择文件夹"
   },
   "comp:BAISessionAgentIds": {

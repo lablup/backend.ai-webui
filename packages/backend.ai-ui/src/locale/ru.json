@@ -1389,6 +1389,7 @@
     "TextPlaceholderExample": "например, Введите значение",
     "TextPlaceholderLabel": "Плейсхолдер поля ввода",
     "UIType": "Тип интерфейса",
+    "UITypeCannotRenderSelectedValueType": "Этот тип интерфейса не может отобразить выбранный тип значения.",
     "UITypeCheckbox": "Флажок",
     "UITypeIncompatibleWithValueType": "Выбранный тип интерфейса не может отобразить этот тип значения.",
     "UITypeNumberInput": "Числовое поле",
@@ -1454,6 +1455,7 @@
     "InviteByEmail": "Пригласить по электронной почте"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "У вас нет прав на монтирование этой папки.",
     "SelectFolder": "Выбрать папку"
   },
   "comp:BAISessionAgentIds": {

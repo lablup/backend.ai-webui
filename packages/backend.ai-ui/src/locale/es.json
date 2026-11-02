@@ -1389,6 +1389,7 @@
     "TextPlaceholderExample": "ej. Introduzca un valor",
     "TextPlaceholderLabel": "Marcador de Posición de Entrada",
     "UIType": "Tipo de UI",
+    "UITypeCannotRenderSelectedValueType": "Este tipo de UI no puede mostrar el tipo de valor seleccionado.",
     "UITypeCheckbox": "Casilla de Verificación",
     "UITypeIncompatibleWithValueType": "El tipo de interfaz seleccionado no puede representar este tipo de valor.",
     "UITypeNumberInput": "Entrada Numérica",
@@ -1454,6 +1455,7 @@
     "InviteByEmail": "Invitar por correo electrónico"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "No tiene permiso para montar esta carpeta.",
     "SelectFolder": "Seleccionar carpeta"
   },
   "comp:BAISessionAgentIds": {

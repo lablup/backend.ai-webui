@@ -1389,6 +1389,7 @@
     "TextPlaceholderExample": "例: 値を入力してください",
     "TextPlaceholderLabel": "入力プレースホルダー",
     "UIType": "UIタイプ",
+    "UITypeCannotRenderSelectedValueType": "このUIタイプでは選択した値タイプを表示できません。",
     "UITypeCheckbox": "チェックボックス",
     "UITypeIncompatibleWithValueType": "選択した UI タイプではこの値の型を表示できません。",
     "UITypeNumberInput": "数値入力",
@@ -1454,6 +1455,7 @@
     "InviteByEmail": "メールで招待"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "このフォルダーをマウントする権限がありません。",
     "SelectFolder": "フォルダを選択"
   },
   "comp:BAISessionAgentIds": {

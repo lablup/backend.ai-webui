@@ -1389,6 +1389,7 @@
     "TextPlaceholderExample": "esim. Anna arvo",
     "TextPlaceholderLabel": "Syötteen paikkamerkki",
     "UIType": "Käyttöliittymätyyppi",
+    "UITypeCannotRenderSelectedValueType": "Tämä UI-tyyppi ei voi näyttää valittua arvotyyppiä.",
     "UITypeCheckbox": "Valintaruutu",
     "UITypeIncompatibleWithValueType": "Valittu käyttöliittymätyyppi ei voi näyttää tätä arvotyyppiä.",
     "UITypeNumberInput": "Numerosyöte",
@@ -1454,6 +1455,7 @@
     "InviteByEmail": "Kutsu sähköpostilla"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Sinulla ei ole oikeutta liittää tätä kansiota.",
     "SelectFolder": "Valitse kansio"
   },
   "comp:BAISessionAgentIds": {

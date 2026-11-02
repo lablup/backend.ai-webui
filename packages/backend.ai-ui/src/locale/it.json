@@ -1389,6 +1389,7 @@
     "TextPlaceholderExample": "es. Inserisci un valore",
     "TextPlaceholderLabel": "Segnaposto di Input",
     "UIType": "Tipo di UI",
+    "UITypeCannotRenderSelectedValueType": "Questo tipo di UI non può visualizzare il tipo di valore selezionato.",
     "UITypeCheckbox": "Casella di Controllo",
     "UITypeIncompatibleWithValueType": "Il tipo di interfaccia selezionato non può rappresentare questo tipo di valore.",
     "UITypeNumberInput": "Input Numerico",
@@ -1454,6 +1455,7 @@
     "InviteByEmail": "Invita tramite e-mail"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Non hai l'autorizzazione per montare questa cartella.",
     "SelectFolder": "Seleziona cartella"
   },
   "comp:BAISessionAgentIds": {

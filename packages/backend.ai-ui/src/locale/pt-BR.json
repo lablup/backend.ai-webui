@@ -1395,6 +1395,7 @@
     "TextPlaceholderExample": "ex. Digite um valor",
     "TextPlaceholderLabel": "Texto de Espaço Reservado",
     "UIType": "Tipo de UI",
+    "UITypeCannotRenderSelectedValueType": "Este tipo de UI não pode exibir o tipo de valor selecionado.",
     "UITypeCheckbox": "Caixa de Seleção",
     "UITypeIncompatibleWithValueType": "O tipo de interface selecionado não consegue exibir este tipo de valor.",
     "UITypeNumberInput": "Entrada Numérica",
@@ -1460,6 +1461,7 @@
     "InviteByEmail": "Convidar por e-mail"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Você não tem permissão para montar esta pasta.",
     "SelectFolder": "Selecionar pasta"
   },
   "comp:BAISessionAgentIds": {

@@ -1389,6 +1389,7 @@
     "TextPlaceholderExample": "жн: Утга оруулна уу",
     "TextPlaceholderLabel": "Оролтын түр бичвэр",
     "UIType": "UI төрөл",
+    "UITypeCannotRenderSelectedValueType": "Энэ UI төрөл сонгосон утгын төрлийг харуулж чадахгүй.",
     "UITypeCheckbox": "Чекбокс",
     "UITypeIncompatibleWithValueType": "Сонгосон UI төрөл энэ утгын төрлийг харуулж чадахгүй.",
     "UITypeNumberInput": "Тооны оролт",
@@ -1454,6 +1455,7 @@
     "InviteByEmail": "И-мэйлээр урих"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Танд энэ хавтсыг холбох эрх байхгүй байна.",
     "SelectFolder": "Хавтас сонгох"
   },
   "comp:BAISessionAgentIds": {

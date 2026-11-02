@@ -9,10 +9,9 @@
 import '../../__test__/matchMedia.mock.js';
 import '../../__test__/resizeObserver.mock.js';
 import ProjectSelect from './ProjectSelect';
-import { Tooltip } from '@lablup/ui-common/Tooltip';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
-import { isValidElement, type ReactElement, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 const captured = vi.hoisted(() => ({ options: undefined as unknown }));
@@ -107,23 +106,12 @@ describe('ProjectSelect personalProject', () => {
     );
     expect(personalGroup?.options).toHaveLength(1);
     const personal = personalGroup?.options[0];
+    // The select draws the reason under the row; the label stays the name.
     expect(personal).toMatchObject({
       value: 'project-personal',
-      disabled: true,
+      label: 'seungwon',
+      disabled: { reason: 'projectSelect.PersonalProjectCannotBeRemoved' },
     });
-
-    // The whole label is the tooltip trigger; no lock glyph beside the name.
-    const label = personal?.label as ReactElement<{
-      content: ReactNode;
-      children: ReactNode;
-    }>;
-    expect(isValidElement(label) && label.type).toBe(Tooltip);
-    expect(label.props.content).toBe(
-      'projectSelect.PersonalProjectCannotBeRemoved',
-    );
-    const { container } = render(<>{label.props.children}</>);
-    expect(container.textContent).toBe('seungwon');
-    expect(container.querySelector('svg')).toBeNull();
 
     const general = groupsJson[0].options[0];
     expect(general).toMatchObject({ disabled: false, label: 'coredev' });
@@ -158,7 +146,7 @@ describe('ProjectSelect personalProject', () => {
     ).not.toContain('project-personal');
   });
 
-  it('locks a MODEL_STORE option without the personal tooltip', () => {
+  it('locks a MODEL_STORE option with its own reason', () => {
     renderSelect({
       value: ['project-general', 'project-model-store'],
       lockedProjectTypes: ['MODEL_STORE'],
@@ -167,8 +155,10 @@ describe('ProjectSelect personalProject', () => {
     const modelStore = readGroups()
       .flatMap((group) => group.options)
       .find((option) => option.value === 'project-model-store');
-    // A plain string label, so no tooltip wraps it.
-    expect(modelStore).toMatchObject({ disabled: true, label: 'model-store' });
+    expect(modelStore).toMatchObject({
+      label: 'model-store',
+      disabled: { reason: 'projectSelect.LockedProjectCannotBeRemoved' },
+    });
   });
 
   it('does not duplicate a personal project that is already an option', () => {
