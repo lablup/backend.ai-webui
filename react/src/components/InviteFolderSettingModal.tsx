@@ -4,9 +4,10 @@
 
  Share modal on the 26.9 model: an invite is an entity share capped at the
  bits the share permission selector picks, the invitee's mount level is a
- vfolder mount policy — two axes, two controls. The folder's own default
- mount permission is edited from the Folder Info section (#10647). See the
- TODO(needs-backend) on `handleInvite`.
+ vfolder mount policy — two axes, two controls. A share can go to a project
+ (#10659); its members mount at the folder default, as mount policies are
+ per user. The folder's own default mount permission is edited from the
+ Folder Info section (#10647). See the TODO(needs-backend) on `handleInvite`.
 */
 import { InviteFolderSettingModalCancelShareMutation } from '../__generated__/InviteFolderSettingModalCancelShareMutation.graphql';
 import { InviteFolderSettingModalCreateShareMutation } from '../__generated__/InviteFolderSettingModalCreateShareMutation.graphql';
@@ -28,6 +29,7 @@ import { Button } from '@lablup/ui-common/Button';
 import { Field } from '@lablup/ui-common/Field';
 import { HStack, StackItem, VStack } from '@lablup/ui-common/Stack';
 import { Heading } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIAlert,
@@ -44,6 +46,8 @@ import {
   type BAINameActionCellAction,
   BAIQuestionIconWithTooltip,
   BAIScopedUserSelect,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
   BAISkeleton,
   BAITable,
   BAIText,
@@ -78,13 +82,18 @@ const VFOLDER_ENTITY_TYPE = 'vfolder';
 
 type MountLevel = FolderMountLevel;
 
+type RecipientKind = 'user' | 'project';
+
 type RecipientData =
   | { kind: 'user'; userId: string; email: string }
-  | { kind: 'email'; email: string };
+  | { kind: 'email'; email: string }
+  | { kind: 'project'; projectId: string; name: string };
 
 interface ShareRow {
   shareId: string;
-  email: string;
+  kind: RecipientKind;
+  /** The address of a user recipient, the name of a project recipient. */
+  name: string;
   status: 'PENDING' | 'ACCEPTED';
   userId: string | null;
   mountLevel: MountLevel;
@@ -101,7 +110,11 @@ interface ShareNodeLike {
   recipientEntityType?: string | null;
   recipientEntityId?: string | null;
   recipientEmail?: string | null;
-  recipientEntity?: { basicInfo?: { email: string } | null } | null;
+  recipientEntity?:
+    | { __typename: 'UserV2'; basicInfo?: { email: string } | null }
+    | { __typename: 'ProjectV2'; basicInfo?: { name: string } | null }
+    | { __typename: string }
+    | null;
 }
 
 const recipientUserIdOf = (share: ShareNodeLike) =>
@@ -109,12 +122,18 @@ const recipientUserIdOf = (share: ShareNodeLike) =>
     ? (share.recipientEntityId ?? null)
     : null;
 
-/** The open shares as table rows: accepted first, then by address. */
+const recipientProjectIdOf = (share: ShareNodeLike) =>
+  share.recipientEntityType?.toLowerCase() === 'project'
+    ? (share.recipientEntityId ?? null)
+    : null;
+
+/** The open shares as table rows: accepted first, then by name. */
 const toShareRows = (
   shares: ReadonlyArray<ShareNodeLike>,
   policies: ReadonlyArray<{ userId: string; permission: string }> | undefined,
   defaultMountLevel: MountLevel,
   unknownUserLabel: string,
+  projectNameById: Record<string, string>,
 ): Array<ShareRow> => {
   const policyByUserId = _.keyBy(policies, 'userId');
   return _.sortBy(
@@ -125,33 +144,45 @@ const toShareRows = (
       ),
       (share) => {
         const userId = recipientUserIdOf(share);
-        // The recipient node names the person; the address the offer was
-        // sent to is the fallback, and a share naming neither is unknown.
-        const email =
-          share.recipientEntity?.basicInfo?.email ??
-          share.recipientEmail ??
-          unknownUserLabel;
+        const projectId = recipientProjectIdOf(share);
+        const entity = share.recipientEntity;
+        // The recipient node names the person or project; the address the
+        // offer was sent to is the fallback, and a share naming neither is
+        // unknown. A project the caller may not read is named from their
+        // own project list, else by its id.
+        const name = projectId
+          ? (entity?.__typename === 'ProjectV2' &&
+              'basicInfo' in entity &&
+              entity.basicInfo?.name) ||
+            projectNameById[projectId] ||
+            projectId
+          : (entity?.__typename === 'UserV2' &&
+              'basicInfo' in entity &&
+              entity.basicInfo?.email) ||
+            share.recipientEmail ||
+            unknownUserLabel;
         return {
           shareId: share.entityId,
-          email,
+          kind: projectId ? 'project' : 'user',
+          name,
           status: share.status === 'ACCEPTED' ? 'ACCEPTED' : 'PENDING',
           userId,
           permissions: share.permissions,
           recipient: userId
             ? { userId }
-            : share.recipientEntityType?.toLowerCase() === 'project' &&
-                share.recipientEntityId
-              ? { projectId: share.recipientEntityId }
-              : { email },
-          // No policy row (an address without an account yet) means the
-          // folder's shared mount permission; the cap never decides the level.
+            : projectId
+              ? { projectId }
+              : { email: name },
+          // A mount policy is per user; a project's members and an address
+          // without an account get the folder's shared mount permission, and
+          // the share's cap never decides the level.
           mountLevel:
             toMountLevel(userId ? policyByUserId[userId]?.permission : null) ??
             defaultMountLevel,
         } satisfies ShareRow;
       },
     ),
-    [(row) => (row.status === 'ACCEPTED' ? 0 : 1), (row) => row.email],
+    [(row) => (row.status === 'ACCEPTED' ? 0 : 1), (row) => row.name],
   );
 };
 
@@ -236,10 +267,16 @@ const ExistingShareQuery = graphql`
           status
           permissions
           recipientEntity @catch(to: NULL) {
+            __typename
             ... on UserV2 {
               entityId
               basicInfo {
                 email
+              }
+            }
+            ... on ProjectV2 {
+              basicInfo {
+                name
               }
             }
           }
@@ -293,8 +330,11 @@ const ExistingShareNoticeModal: React.FC<{
           data-testid="existing-share-table"
           columns={[
             {
-              title: t('data.explorer.InviteeEmail'),
-              dataIndex: 'email',
+              title: t('data.folders.Recipient'),
+              dataIndex: 'name',
+              render: (name: string, row) => (
+                <RecipientCell name={name} kind={row.kind} />
+              ),
             },
             {
               title: t('general.Status'),
@@ -321,12 +361,30 @@ const ExistingShareNoticeModal: React.FC<{
             {
               title: t('data.folders.MountPermission'),
               dataIndex: 'mountLevel',
-              render: (level: ShareRow['mountLevel']) => mountLevelLabel(level),
+              render: (level: ShareRow['mountLevel'], row) =>
+                row.kind === 'project' ? '-' : mountLevelLabel(level),
             },
           ]}
         />
       </VStack>
     </BAIModal>
+  );
+};
+
+// A recipient's name with a token saying whether it is a user or a project.
+const RecipientCell: React.FC<{ name: string; kind: RecipientKind }> = ({
+  name,
+  kind,
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  return (
+    <HStack gap={2} align="center">
+      <BAIText>{name}</BAIText>
+      <Token
+        label={kind === 'project' ? t('general.Project') : t('general.User')}
+      />
+    </HStack>
   );
 };
 
@@ -440,15 +498,32 @@ const InviteFolderSettingModalBody: React.FC<{
   const [currentUser] = useCurrentUserInfo();
   const { accessibleProjects } = useAccessibleProjects();
   const memberProjectIds = _.compact(_.map(accessibleProjects, 'id'));
+  // A folder cannot be offered to the project that owns it.
+  const projectOptions = _.compact(
+    _.map(accessibleProjects, (project) =>
+      project?.id && project.id !== ownerProjectId
+        ? { value: project.id, label: project.name ?? project.id }
+        : null,
+    ),
+  );
+  const projectNameById: Record<string, string> = _.fromPairs(
+    _.compact(
+      _.map(accessibleProjects, (project) =>
+        project?.id && project.name ? [project.id, project.name] : null,
+      ),
+    ),
+  );
   const { options: mountLevelOptions, labelOf: mountLevelLabel } =
     useMountLevelLabels();
   const mountLevelInputId = useId();
+  const projectInputId = useId();
   // The recipient tooltip anchors on the select's trigger, not on the whole
   // field, so it sits right above the input like the other tooltips.
   const recipientTriggerRef = useRef<HTMLElement | null>(null);
 
   const [fetchKey, updateFetchKey] = useFetchKey();
 
+  const [recipientKind, setRecipientKind] = useState<RecipientKind>('user');
   const [recipient, setRecipient] = useState<RecipientData | null>(null);
   // The open shares the pre-invite check found, shown until the inviter
   // answers the override question.
@@ -475,10 +550,26 @@ const InviteFolderSettingModalBody: React.FC<{
 
   const inviteTarget = recipient;
   const isEmailInvite = inviteTarget?.kind === 'email';
+  const isProjectInvite = recipientKind === 'project';
+  const recipientEmail =
+    inviteTarget && inviteTarget.kind !== 'project' ? inviteTarget.email : null;
+  // A mount policy is per user: an address without an account and a project's
+  // members get the folder default.
+  const mountsAtDefault = isEmailInvite || isProjectInvite;
+
+  const handleRecipientKindChange = (next: RecipientKind) => {
+    setRecipientKind(next);
+    setRecipient(null);
+    setRecipientError(null);
+  };
 
   const handleInvite = async () => {
     if (!inviteTarget) {
-      setRecipientError(t('data.InvalidEmail'));
+      setRecipientError(
+        isProjectInvite
+          ? t('data.folders.SelectProjectToShare')
+          : t('data.InvalidEmail'),
+      );
       return;
     }
     setRecipientError(null);
@@ -498,7 +589,9 @@ const InviteFolderSettingModalBody: React.FC<{
               status: { in: ['PENDING', 'ACCEPTED'] },
               ...(inviteTarget.kind === 'user'
                 ? { recipientEntityId: { equals: inviteTarget.userId } }
-                : { recipientEmail: { equals: inviteTarget.email } }),
+                : inviteTarget.kind === 'project'
+                  ? { recipientEntityId: { equals: inviteTarget.projectId } }
+                  : { recipientEmail: { equals: inviteTarget.email } }),
             },
           },
           { fetchPolicy: 'network-only' },
@@ -508,11 +601,15 @@ const InviteFolderSettingModalBody: React.FC<{
         existing?.vfolderMountPolicies?.items,
         defaultMountLevel,
         t('data.invitation.UnknownUser'),
+        projectNameById,
       );
       if (existingRows.length > 0) {
         const proceed = await new Promise<boolean>((resolve) =>
           setExistingNotice({
-            email: inviteTarget.email,
+            email:
+              inviteTarget.kind === 'project'
+                ? inviteTarget.name
+                : inviteTarget.email,
             rows: existingRows,
             resolve,
           }),
@@ -534,7 +631,9 @@ const InviteFolderSettingModalBody: React.FC<{
           recipient:
             inviteTarget.kind === 'user'
               ? { userId: inviteTarget.userId }
-              : { email: inviteTarget.email },
+              : inviteTarget.kind === 'project'
+                ? { projectId: inviteTarget.projectId }
+                : { email: inviteTarget.email },
           permissions: permissionBits,
         },
       });
@@ -594,59 +693,115 @@ const InviteFolderSettingModalBody: React.FC<{
       />
       <VStack gap={3} align="stretch">
         <Heading level={5}>{t('data.folders.InviteUsers')}</Heading>
+        <BAISegmentedControl
+          value={recipientKind}
+          onChange={(next) => handleRecipientKindChange(next as RecipientKind)}
+          aria-label={t('data.folders.RecipientKind')}
+          data-testid="recipient-kind"
+        >
+          <BAISegmentedControlItem
+            value="user"
+            label={t('data.folders.ShareWithUser')}
+          />
+          <BAISegmentedControlItem
+            value="project"
+            label={t('data.folders.ShareWithProject')}
+          />
+        </BAISegmentedControl>
         <VStack gap={1} align="stretch">
           <HStack align="end" gap={2} width="100%">
             <StackItem size="fill">
-              <Suspense fallback={<BAISkeleton variant="input" width="100%" />}>
-                <div
-                  ref={(node) => {
-                    // The ComplexSelector trigger is the popup button.
-                    recipientTriggerRef.current =
-                      node?.querySelector<HTMLElement>('[aria-haspopup]') ??
-                      node;
-                  }}
+              {/* TODO(needs-backend): BA-8736 — a project share cannot be
+                  accepted yet; the manager answers offers in the user scope only. */}
+              {isProjectInvite ? (
+                <Field
+                  label={t('general.Project')}
+                  inputID={projectInputId}
+                  status={recipientError ? { type: 'error' } : undefined}
                 >
-                  <BAIScopedUserSelect
-                    scope={{
-                      project: _.map(memberProjectIds, (value) => ({ value })),
-                    }}
-                    allowCustomSelect
-                    allowClear
-                    filter={
-                      currentUser?.email
-                        ? { email: { notEquals: currentUser.email } }
+                  <BAISelector
+                    id={projectInputId}
+                    aria-label={t('general.Project')}
+                    placement="below"
+                    width="100%"
+                    options={projectOptions}
+                    placeholder={t('data.folders.SelectProjectToShare')}
+                    value={
+                      recipient?.kind === 'project'
+                        ? recipient.projectId
                         : undefined
                     }
-                    label={t('general.E-Mail')}
-                    placeholder={t('data.folders.SearchUser')}
-                    value={recipient?.email ?? null}
-                    onChange={(_value, option) => {
-                      const picked = _.castArray(option ?? [])[0];
+                    onChange={(next) => {
                       setRecipient(
-                        !picked
-                          ? null
-                          : picked.userId
-                            ? {
-                                kind: 'user',
-                                userId: picked.userId,
-                                email: picked.value,
-                              }
-                            : { kind: 'email', email: picked.value },
+                        next
+                          ? {
+                              kind: 'project',
+                              projectId: next,
+                              name: projectNameById[next] ?? next,
+                            }
+                          : null,
                       );
                       setRecipientError(null);
                     }}
-                    status={recipientError ? { type: 'error' } : undefined}
-                    width="100%"
+                    data-testid="share-project-select"
                   />
-                </div>
-                <Tooltip
-                  anchorRef={recipientTriggerRef}
-                  content={recipient?.email}
-                  isEnabled={!!recipient?.email}
-                  placement="above"
-                  hasHoverIndication={false}
-                />
-              </Suspense>
+                </Field>
+              ) : (
+                <Suspense
+                  fallback={<BAISkeleton variant="input" width="100%" />}
+                >
+                  <div
+                    ref={(node) => {
+                      // The ComplexSelector trigger is the popup button.
+                      recipientTriggerRef.current =
+                        node?.querySelector<HTMLElement>('[aria-haspopup]') ??
+                        node;
+                    }}
+                  >
+                    <BAIScopedUserSelect
+                      scope={{
+                        project: _.map(memberProjectIds, (value) => ({
+                          value,
+                        })),
+                      }}
+                      allowCustomSelect
+                      allowClear
+                      filter={
+                        currentUser?.email
+                          ? { email: { notEquals: currentUser.email } }
+                          : undefined
+                      }
+                      label={t('general.E-Mail')}
+                      placeholder={t('data.folders.SearchUser')}
+                      value={recipientEmail}
+                      onChange={(_value, option) => {
+                        const picked = _.castArray(option ?? [])[0];
+                        setRecipient(
+                          !picked
+                            ? null
+                            : picked.userId
+                              ? {
+                                  kind: 'user',
+                                  userId: picked.userId,
+                                  email: picked.value,
+                                }
+                              : { kind: 'email', email: picked.value },
+                        );
+                        setRecipientError(null);
+                      }}
+                      status={recipientError ? { type: 'error' } : undefined}
+                      width="100%"
+                    />
+                  </div>
+                  <Tooltip
+                    anchorRef={recipientTriggerRef}
+                    content={recipientEmail}
+                    isEnabled={!!recipientEmail}
+                    placement="above"
+                    hasHoverIndication={false}
+                  />
+                </Suspense>
+              )}
             </StackItem>
             <StackItem size="static">
               <BAIEntitySharePermissionSelector
@@ -661,7 +816,7 @@ const InviteFolderSettingModalBody: React.FC<{
               <Field
                 label={t('data.folders.MountPermission')}
                 inputID={mountLevelInputId}
-                isDisabled={isEmailInvite}
+                isDisabled={mountsAtDefault}
               >
                 <BAISelector
                   id={mountLevelInputId}
@@ -669,11 +824,11 @@ const InviteFolderSettingModalBody: React.FC<{
                   placement="below"
                   width={150}
                   options={mountLevelOptions}
-                  // An e-mail invite gets the folder default, so the disabled
-                  // selector shows that value rather than the last pick.
-                  value={isEmailInvite ? defaultMountLevel : mountLevel}
+                  // The disabled selector shows the folder default the
+                  // recipient gets rather than the last pick.
+                  value={mountsAtDefault ? defaultMountLevel : mountLevel}
                   onChange={(next) => setMountLevel(next as MountLevel)}
-                  disabled={isEmailInvite}
+                  disabled={mountsAtDefault}
                 />
               </Field>
             </StackItem>
@@ -695,6 +850,13 @@ const InviteFolderSettingModalBody: React.FC<{
               })}
             </BAIText>
           )}
+          {isProjectInvite && (
+            <BAIText type="secondary" size="sm">
+              {t('data.folders.ProjectInviteUsesSharedMountPermission', {
+                permission: mountLevelLabel(defaultMountLevel),
+              })}
+            </BAIText>
+          )}
         </VStack>
       </VStack>
 
@@ -709,6 +871,7 @@ const InviteFolderSettingModalBody: React.FC<{
           <SharedUserTable
             vfolderId={vfolderId}
             defaultMountLevel={defaultMountLevel}
+            projectNameById={projectNameById}
             fetchKey={fetchKey}
             updateFetchKey={updateFetchKey}
           />
@@ -785,9 +948,17 @@ const FolderInfoSection: React.FC<{
 const SharedUserTable: React.FC<{
   vfolderId: string;
   defaultMountLevel: MountLevel;
+  /** Names of the caller's projects, for a project recipient the share cannot name. */
+  projectNameById: Record<string, string>;
   fetchKey: string;
   updateFetchKey: () => void;
-}> = ({ vfolderId, defaultMountLevel, fetchKey, updateFetchKey }) => {
+}> = ({
+  vfolderId,
+  defaultMountLevel,
+  projectNameById,
+  fetchKey,
+  updateFetchKey,
+}) => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -819,13 +990,19 @@ const SharedUserTable: React.FC<{
                 recipientEmail
                 status
                 permissions
-                # The person the offer goes to, when the caller may read them;
-                # an address resolves to the user holding it.
+                # The person or project the offer goes to, when the caller may
+                # read it; an address resolves to the user holding it.
                 recipientEntity @catch(to: NULL) {
+                  __typename
                   ... on UserV2 {
                     entityId
                     basicInfo {
                       email
+                    }
+                  }
+                  ... on ProjectV2 {
+                    basicInfo {
+                      name
                     }
                   }
                 }
@@ -862,6 +1039,7 @@ const SharedUserTable: React.FC<{
     vfolderMountPolicies?.items,
     defaultMountLevel,
     t('data.invitation.UnknownUser'),
+    projectNameById,
   );
 
   const setMountPolicy =
@@ -993,7 +1171,7 @@ const SharedUserTable: React.FC<{
             icon: <CircleXIcon />,
             type: 'danger',
             popConfirm: {
-              title: t('data.folders.KickOutConfirm', { email: row.email }),
+              title: t('data.folders.KickOutConfirm', { email: row.name }),
               okText: t('button.Confirm'),
               cancelText: t('button.Cancel'),
               okButtonProps: { danger: true },
@@ -1009,7 +1187,7 @@ const SharedUserTable: React.FC<{
             type: 'danger',
             popConfirm: {
               title: t('data.folders.CancelInvitationConfirm', {
-                email: row.email,
+                email: row.name,
               }),
               okText: t('button.Confirm'),
               cancelText: t('button.Cancel'),
@@ -1029,12 +1207,12 @@ const SharedUserTable: React.FC<{
       rowKey="shareId"
       columns={[
         {
-          title: t('data.explorer.InviteeEmail'),
-          dataIndex: 'email',
-          sorter: (a, b) => localeCompare(a.email, b.email),
-          render: (email: string, row) => (
+          title: t('data.folders.Recipient'),
+          dataIndex: 'name',
+          sorter: (a, b) => localeCompare(a.name, b.name),
+          render: (name: string, row) => (
             <BAINameActionCell
-              title={email}
+              title={<RecipientCell name={name} kind={row.kind} />}
               showActions="always"
               actions={rowActions(row)}
             />
@@ -1071,7 +1249,9 @@ const SharedUserTable: React.FC<{
           // account is editable before it is accepted; an e-mail invite gets
           // its user id on acceptance.
           render: (level: ShareRow['mountLevel'], row) =>
-            row.userId ? (
+            row.kind === 'project' ? (
+              '-'
+            ) : row.userId ? (
               <BAISelector
                 aria-label={t('data.folders.MountPermission')}
                 placement="below"

@@ -29,6 +29,8 @@ import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockE
  * listed share shows its own cap in a selector that restates the share.
  * #10647: the folder's default mount permission sits in a Folder Info section
  * above the invite form and is edited in its own modal.
+ * #10659: a share can go to a project, named by its project node in the
+ * list, with the cap restated by project id and no mount policy.
  * `t` is identity-mapped (for BUI's `useBAIi18n` too), so the assertions read
  * as i18n keys.
  */
@@ -65,7 +67,7 @@ vi.mock('../hooks/useCurrentUserProjectRoles', () => ({
 vi.mock('../hooks/useAccessibleProjects', () => ({
   useAccessibleProjects: () => ({
     groups: [],
-    accessibleProjects: [{ id: 'project-1' }],
+    accessibleProjects: [{ id: 'project-1', name: 'team-alpha' }],
   }),
 }));
 
@@ -87,6 +89,8 @@ const USER3_ID = '4f13d193-f646-425a-a340-270c4d2b9860';
 const ACCEPTED_SHARE_ID = '01a12f7d-182a-70cc-9a19-78f0fd6f01a4';
 const PENDING_SHARE_ID = '01a12f7e-0644-75be-8e76-b2ab727ce7ac';
 const PENDING_USER_SHARE_ID = '01a12f7f-3c1e-7a4b-9d02-5e6f7a8b9c0d';
+const PROJECT2_ID = '7c2f0a1e-9b3d-4e5f-8a6b-1c2d3e4f5a6b';
+const PENDING_PROJECT_SHARE_ID = '01a12f80-5d2e-7b6c-8e01-2f3a4b5c6d7e';
 
 const RESOLVERS = {
   VFolder: () => ({
@@ -146,6 +150,22 @@ const RESOLVERS = {
             basicInfo: { email: 'user3@example.com' },
           },
           permissions: ['READ'],
+          status: 'PENDING',
+        },
+      },
+      {
+        // A project invite (#10659): named by the project node the share resolves.
+        node: {
+          id: 'EntityShare:pending-project',
+          entityId: PENDING_PROJECT_SHARE_ID,
+          recipientEntityType: 'project',
+          recipientEntityId: PROJECT2_ID,
+          recipientEmail: null,
+          recipientEntity: {
+            __typename: 'ProjectV2',
+            basicInfo: { name: 'team-beta' },
+          },
+          permissions: ['CREATE', 'READ', 'UPDATE', 'SOFT_DELETE'],
           status: 'PENDING',
         },
       },
@@ -384,7 +404,7 @@ describe('InviteFolderSettingModal (#10295)', () => {
     expect(screen.getByText('nobody@example.com')).toBeInTheDocument();
     expect(screen.queryByText('old@example.com')).not.toBeInTheDocument();
     expect(screen.getByText('data.invitation.Accepted')).toBeInTheDocument();
-    expect(screen.getAllByText('data.invitation.Pending')).toHaveLength(2);
+    expect(screen.getAllByText('data.invitation.Pending')).toHaveLength(3);
     // The settings card shows the folder and its default mount permission.
     expect(screen.getByText('team-datasets')).toBeInTheDocument();
     expect(screen.getByTestId('default-mount-permission')).toHaveTextContent(
@@ -540,7 +560,7 @@ describe('InviteFolderSettingModal (#10295)', () => {
     const environment = await renderModal();
 
     const cells = screen.getAllByTestId('share-permission-cap');
-    expect(cells).toHaveLength(3);
+    expect(cells).toHaveLength(4);
     const acceptedCell = cells.find((cell) =>
       cell.closest('tr')?.textContent?.includes('user2@example.com'),
     );
@@ -613,6 +633,119 @@ describe('InviteFolderSettingModal (#10295)', () => {
     expect(operationNames(environment)).not.toContain(
       'InviteFolderSettingModalSetMountPolicyMutation',
     );
+  });
+
+  it('invites a project as an entity share with the picked cap and no mount policy (#10659)', async () => {
+    installPopoverMock();
+    const user = userEvent.setup();
+    const environment = await renderModal();
+
+    await user.click(screen.getByText('data.folders.ShareWithProject'));
+    // The project kind swaps the recipient field for a project picker and
+    // pins the mount permission to the folder default.
+    expect(screen.queryByText('data.folders.SearchUser')).toBeNull();
+    expect(
+      screen.getByText('data.folders.ProjectInviteUsesSharedMountPermission'),
+    ).toBeInTheDocument();
+    // The invite row's selector comes before the per-row ones in the table.
+    expect(
+      screen.getAllByRole('combobox', {
+        name: 'data.folders.MountPermission',
+      })[0].outerHTML,
+    ).toMatch(/disabled/);
+
+    await user.click(screen.getByRole('combobox', { name: 'general.Project' }));
+    await user.click(screen.getByRole('option', { name: 'team-alpha', ...h }));
+    await user.click(
+      screen.getByRole('button', { name: 'data.folders.Invite' }),
+    );
+    // The pre-invite check looks the project up by its id and finds nothing.
+    await waitFor(() =>
+      expect(operationNames(environment)).toContain(
+        'InviteFolderSettingModalExistingShareQuery',
+      ),
+    );
+    const check = environment.mock
+      .getAllOperations()
+      .find(
+        (operation) =>
+          operation.request.node.params.name ===
+          'InviteFolderSettingModalExistingShareQuery',
+      );
+    expect(check?.request.variables.filter).toEqual({
+      status: { in: ['PENDING', 'ACCEPTED'] },
+      recipientEntityId: { equals: 'project-1' },
+    });
+    await resolvePendingQueries(environment);
+
+    await waitFor(() =>
+      expect(operationNames(environment)).toContain(
+        'InviteFolderSettingModalCreateShareMutation',
+      ),
+    );
+    const variables = await resolveMutation(
+      environment,
+      'InviteFolderSettingModalCreateShareMutation',
+    );
+    expect(variables.input).toEqual({
+      targetEntityType: 'vfolder',
+      targetEntityId: VFOLDER_ID,
+      recipient: { projectId: 'project-1' },
+      permissions: ['READ'],
+    });
+    // The picker clears once the offer is made; no policy row is written.
+    await waitFor(() =>
+      expect(
+        screen.getByRole('combobox', { name: 'general.Project' }),
+      ).toHaveTextContent('data.folders.SelectProjectToShare'),
+    );
+    expect(operationNames(environment)).not.toContain(
+      'InviteFolderSettingModalSetMountPolicyMutation',
+    );
+  });
+
+  it('names a project recipient by its project and restates its cap with the project id (#10659)', async () => {
+    installPopoverMock();
+    const user = userEvent.setup();
+    const environment = await renderModal();
+
+    const projectRow = screen.getByText('team-beta').closest('tr')!;
+    expect(projectRow).toHaveTextContent('general.Project');
+    expect(projectRow).toHaveTextContent('data.invitation.Pending');
+    expect(projectRow).toHaveTextContent(
+      'comp:BAIEntitySharePermissionSelector.ReadAndWrite',
+    );
+    // No mount level for a project: its members mount at the folder default.
+    expect(projectRow).not.toHaveTextContent('data.ReadOnly');
+    expect(
+      within(projectRow).queryByRole('combobox', {
+        name: 'data.folders.MountPermission',
+      }),
+    ).toBeNull();
+    // A user row carries the user token.
+    expect(
+      screen.getByText('user2@example.com').closest('tr'),
+    ).toHaveTextContent('general.User');
+
+    await user.click(within(projectRow).getByTestId('share-permission-cap'));
+    await user.click(
+      presetItem('comp:BAIEntitySharePermissionSelector.ReadOnly'),
+    );
+    await waitFor(() =>
+      expect(operationNames(environment)).toContain(
+        'InviteFolderSettingModalCreateShareMutation',
+      ),
+    );
+    const variables = await resolveMutation(
+      environment,
+      'InviteFolderSettingModalCreateShareMutation',
+    );
+    expect(variables.input).toEqual({
+      targetEntityType: 'vfolder',
+      targetEntityId: VFOLDER_ID,
+      recipient: { projectId: PROJECT2_ID },
+      permissions: ['READ'],
+    });
   });
 
   it('edits the folder default mount permission from the Folder Info section (#10647)', async () => {
@@ -778,9 +911,10 @@ describe('InviteFolderSettingModal (#10295)', () => {
     const environment = await renderModal();
 
     await user.click(
-      screen.getAllByRole('button', {
-        name: 'data.folders.CancelInvitation',
-      })[1],
+      within(screen.getByText('user3@example.com').closest('tr')!).getByRole(
+        'button',
+        { name: 'data.folders.CancelInvitation' },
+      ),
     );
     await user.click(
       await screen.findByRole('button', { name: 'button.Confirm' }),
