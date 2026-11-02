@@ -119,7 +119,7 @@ export async function findNotInstalledEnvironment(browser: Browser) {
   const { images, imageInfo } = (await browser.evaluate(async () => {
     const client = (globalThis as any).backendaiclient;
     const data = await client.query(
-      `query { images { name namespace registry tag architecture installed labels { key value } } }`,
+      `query { images { name namespace registry tag architecture installed supported_accelerators labels { key value } } }`,
       {},
     );
     const metadata = await fetch("/resources/image_metadata.json")
@@ -127,8 +127,16 @@ export async function findNotInstalledEnvironment(browser: Browser) {
       .catch(() => ({}));
     return { images: data.images, imageInfo: metadata.imageInfo ?? {} };
   })) as {
-    images: Array<ImageRow & { installed: boolean | null }>;
-    imageInfo: Record<string, { name?: string }>;
+    images: Array<
+      ImageRow & {
+        installed: boolean | null;
+        supported_accelerators: string[] | null;
+      }
+    >;
+    imageInfo: Record<
+      string,
+      { name?: string; label?: Array<{ tag?: string }> }
+    >;
   };
 
   const groups = new Map<string, typeof images>();
@@ -140,10 +148,24 @@ export async function findNotInstalledEnvironment(browser: Browser) {
     const segments = environment.split("/");
     return imageInfo[segments[2]]?.name ?? segments[segments.length - 1];
   };
+  // Everything the launcher option of an installed environment is searched by:
+  // path, display name, metadata tags and accelerators.
   const installedLabels = [...groups]
     .filter(([, group]) => group.some((image) => image.installed))
-    .map(([environment]) =>
-      `${environment} ${displayName(environment)}`.toLowerCase(),
+    .map(([environment, group]) =>
+      [
+        environment,
+        displayName(environment),
+        ...(imageInfo[environment.split("/")[2]]?.label ?? []).map(
+          (label) => label.tag ?? "",
+        ),
+        ...group.flatMap((image) => [
+          ...(image.supported_accelerators ?? []),
+          ...(image.labels ?? []).map((label) => label.value),
+        ]),
+      ]
+        .join(" ")
+        .toLowerCase(),
     );
   const isPrivate = (image: ImageRow) =>
     image.labels?.some(

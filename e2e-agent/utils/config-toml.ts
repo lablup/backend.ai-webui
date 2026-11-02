@@ -9,6 +9,9 @@ export type ConfigTomlOverrides = Record<
 const tomlValue = (value: string | boolean) =>
   typeof value === "boolean" ? String(value) : JSON.stringify(value);
 
+const escapeRegExp = (text: string) =>
+  text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 /** Sets each key in its `[section]`, replacing the key's existing lines. */
 export function applyConfigTomlOverrides(
   text: string,
@@ -16,7 +19,9 @@ export function applyConfigTomlOverrides(
 ) {
   let lines = text.split("\n");
   for (const [section, entries] of Object.entries(overrides)) {
-    const header = lines.findIndex((line) => line.trim() === `[${section}]`);
+    const header = lines.findIndex((line) =>
+      new RegExp(`^\\s*\\[${escapeRegExp(section)}\\]\\s*(#.*)?$`).test(line),
+    );
     if (header === -1) {
       lines.push("", `[${section}]`);
       for (const [key, value] of Object.entries(entries)) {
@@ -31,7 +36,9 @@ export function applyConfigTomlOverrides(
       .slice(header + 1, end)
       .filter(
         (line) =>
-          !keys.some((key) => new RegExp(`^\\s*${key}\\s*=`).test(line)),
+          !keys.some((key) =>
+            new RegExp(`^\\s*${escapeRegExp(key)}\\s*=`).test(line),
+          ),
       );
     lines = [
       ...lines.slice(0, header + 1),
@@ -65,6 +72,7 @@ export async function overrideConfigToml(
     }
     const original = await originals.get(url);
     if (original === null || original === undefined) {
+      console.log(`[config-toml] could not read ${url}; serving it unpatched`);
       await route.continue();
       return;
     }
