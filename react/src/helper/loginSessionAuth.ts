@@ -552,8 +552,7 @@ export async function loadConfigFromWebServer(
     jotaiStore.set(rawConfigState, mergedConfig);
 
     // Re-process the merged config
-    const { refreshConfigFromToml, syncDebugFlag } =
-      await import('./loginConfig');
+    const { refreshConfigFromToml } = await import('./loginConfig');
     const { loginConfigState, autoLogoutState, loginPluginState } =
       await import('../hooks/useWebUIConfig');
     // `mergedConfig` keeps this page's own endpoint (the webserver's was
@@ -569,7 +568,6 @@ export async function loadConfigFromWebServer(
       publicSlice?.[WEBUI_SETTINGS_CONFIG_KEY],
       'public',
     );
-    syncDebugFlag(effectiveLoginConfig);
     jotaiStore.set(loginConfigState, effectiveLoginConfig);
     jotaiStore.set(autoLogoutState, effectiveLoginConfig.autoLogout);
     jotaiStore.set(loginPluginState, effectiveLoginConfig.loginPlugin);

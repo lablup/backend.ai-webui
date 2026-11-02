@@ -15,7 +15,6 @@
 import {
   getDefaultLoginConfig,
   refreshConfigFromToml,
-  syncDebugFlag,
   type LoginConfigState,
 } from '../helper/loginConfig';
 import {
@@ -27,7 +26,7 @@ import {
   WEBUI_SETTINGS_CONFIG_KEY,
 } from '../helper/webuiSettings';
 import { useBAILogger } from 'backend.ai-ui';
-import { atom, useAtomValue, useSetAtom, useStore } from 'jotai';
+import { atom, useAtomValue, useStore } from 'jotai';
 import type { createStore } from 'jotai';
 import { useEffect } from 'react';
 import { parse as toml } from 'smol-toml';
@@ -332,7 +331,6 @@ export function initializeConfigOnce(
         publicSlice?.[WEBUI_SETTINGS_CONFIG_KEY],
         'public',
       );
-      syncDebugFlag(effectiveLoginConfig);
       store.set(loginConfigState, effectiveLoginConfig);
       store.set(autoLogoutState, effectiveLoginConfig.autoLogout);
       store.set(proxyUrlState, proxyUrl);
@@ -426,30 +424,6 @@ export function useProxyUrl(): string {
  */
 export function useConfigParseError(): unknown | null {
   return useAtomValue(configParseErrorState);
-}
-
-/**
- * Hook to update the raw config (e.g., after Electron webserver config merge).
- * Returns a setter that re-processes config after updating.
- */
-export function useUpdateRawConfig(): (config: RawTomlConfig) => void {
-  'use memo';
-  const setRawConfig = useSetAtom(rawConfigState);
-  const setLoginConfig = useSetAtom(loginConfigState);
-  const setAutoLogout = useSetAtom(autoLogoutState);
-  const setProxyUrl = useSetAtom(proxyUrlState);
-  const setLoginPlugin = useSetAtom(loginPluginState);
-
-  return (config: RawTomlConfig) => {
-    setRawConfig(config);
-    const { autoLogout, proxyUrl, loginPlugin, loginConfig } =
-      processConfig(config);
-    syncDebugFlag(loginConfig);
-    setLoginConfig(loginConfig);
-    setAutoLogout(autoLogout);
-    setProxyUrl(proxyUrl);
-    setLoginPlugin(loginPlugin);
-  };
 }
 
 /**
