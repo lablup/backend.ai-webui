@@ -11,6 +11,7 @@ import {
   UserSettingModal,
 } from '../utils/classes/user/UserSettingModal';
 import { getE2EDomainName } from '../utils/e2e-scope';
+import { skipUnlessManagerVersion } from '../utils/feature-gate-util';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import test, {
   expect,
@@ -997,7 +998,7 @@ const SKIP_NEWCOMER_EMAIL = `e2e-rbac-newcomer-${SKIP_FIXTURE_RUN_ID}@lablup.com
 
 test.describe(
   'RBAC Role Assignments - users already holding the role',
-  { tag: ['@rbac', '@regression', '@functional', '@requires-manager-v26.9'] },
+  { tag: ['@rbac', '@regression', '@functional', '@requires-manager-v26.10'] },
   () => {
     let roleName: string;
     let roleToCleanup: string | undefined;
@@ -1007,7 +1008,9 @@ test.describe(
       try {
         const domainName = await getE2EDomainName(api);
         for (const email of [SKIP_HOLDER_EMAIL, SKIP_NEWCOMER_EMAIL]) {
-          await gqlAdmin(
+          const created = await gqlAdmin<{
+            create_user: { ok: boolean; msg: string };
+          }>(
             api,
             `mutation($email: String!, $props: UserInput!) {
               create_user(email: $email, props: $props) { ok msg }
@@ -1022,6 +1025,7 @@ test.describe(
               },
             },
           );
+          expect(created.create_user.ok, created.create_user.msg).toBe(true);
         }
       } finally {
         await api.dispose();
@@ -1058,6 +1062,11 @@ test.describe(
         }
       });
       await loginAsAdmin(page, request);
+      await skipUnlessManagerVersion(
+        page,
+        '26.10.0a2',
+        'Already-held users come back in adminBulkAssignRole.failed from manager >= 26.10.0a2 (lablup/backend.ai#15653, #10406)',
+      );
       roleName = `e2e-skip-role-${Date.now().toString(36)}${randomUUID().slice(0, 4)}`;
       roleToCleanup = roleName;
       await navigateTo(page, 'rbac');
@@ -1071,7 +1080,7 @@ test.describe(
         await cleanupTestRole(page, roleToCleanup);
       } catch (error) {
         console.warn(
-          `[rbac-role-detail] failed to purge role ${roleName}:`,
+          `[rbac-role-detail] failed to purge role ${roleToCleanup}:`,
           error,
         );
       } finally {
@@ -1095,6 +1104,10 @@ test.describe(
       await expect(
         drawer.getByRole('row').filter({ hasText: SKIP_HOLDER_EMAIL }),
       ).toBeVisible({ timeout: 10000 });
+      // The mixed assignment below shows the same success toast.
+      await expect(
+        toast(page, /Users assigned to role successfully/i),
+      ).toBeHidden({ timeout: 10000 });
 
       // Assign the holder again together with the newcomer.
       await drawer.getByRole('button', { name: 'Add User' }).click();
@@ -1112,8 +1125,10 @@ test.describe(
       ).toBeVisible();
       await expect(assignModal).toBeHidden();
       await expect(
-        page.getByText('Some user assignments failed. Please check the items.'),
-      ).toBeHidden();
+        page
+          .getByRole('status')
+          .filter({ hasText: /Some user assignments failed/ }),
+      ).toHaveCount(0);
 
       await expect(
         drawer.getByRole('row').filter({ hasText: SKIP_NEWCOMER_EMAIL }),
