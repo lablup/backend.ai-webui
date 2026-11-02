@@ -58,7 +58,7 @@ The meaning of each field in the creation dialog is as follows.
 - **Location**: Select the storage host where the folder will be created. If there are multiple hosts, choose one. An indicator will show if there is enough available space.
 - **Cloneable**: Shown only when you select usage mode to "Model". Select whether the vfolder you are creating should be cloneable.
 
-A new folder is created with **Read only** as its default mount permission. To change it, use the folder's **Share Folder** modal (see [Adjust permission for shared folders](#adjust-permission-for-shared-folders)).
+A new folder's **Default mount permission** is **Read only**. To change it, click **Edit** in the **Folder Info** section of the folder's Share Folder modal (see [Adjust permission for shared folders](#adjust-permission-for-shared-folders)).
 
 :::note
 Folders created from the Data page are always **User folders**. **Project folders** are created by administrators from the admin Data pages.
