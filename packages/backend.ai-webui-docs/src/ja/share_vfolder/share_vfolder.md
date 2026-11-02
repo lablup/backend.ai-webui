@@ -30,10 +30,9 @@ navTitle: ストレージフォルダの共有
 
 ![](../images/share_button_on_list.png)
 
-フォルダの共有モーダルが開きます。**ユーザーを招待します**セクションで、ユーザー選択からユーザーBを選択します。まだアカウントを持たないアドレスを招待する場合は、**メールで招待**を選択します。**共有権限**と**マウント許可**を設定し、**招待**をクリックします。**共有権限**は共有によってそのユーザーがフォルダに対して行える操作であり、**マウント許可**はそのフォルダがユーザーのセッションにマウントされる方法です。
+フォルダの共有モーダルが開きます。**ユーザーを招待します**セクションで、ユーザー選択からユーザーBを選択し、**共有権限**と**マウント許可**を設定して**招待**をクリックします。**共有権限**は共有によってそのユーザーがフォルダに対して行える操作であり、**マウント許可**はそのフォルダがユーザーのセッションにマウントされる方法です。まだアカウントを持たないアドレスは、**メールで招待**で招待します。
 
-![=550px](../images/send_vfolder_invitation.png)
-<!-- TODO(screenshot): /data -> folder Share action - recapture the Share Folder modal showing the Folder Info section and the Email / Share permission / Mount Permission / Invite row. -->
+![=720px](../images/send_vfolder_invitation.png)
 
 ユーザーBのアカウントに切り替え、データページに移動します。応答待ちの招待がある場合、フォルダリスト上部の右側に**保留中の招待**リンクが表示され、保留中の招待の件数が表示されます。
 
@@ -42,12 +41,11 @@ navTitle: ストレージフォルダの共有
 リンクをクリックすると**招待されたフォルダー**モーダルが開き、保留中のフォルダ招待を承諾または辞退できます。
 
 ![=520px](../images/invitation_accept.png)
-<!-- TODO(screenshot): User B's /data -> pending invitations link - recapture the Invited Folders modal showing Folder name / From / Folder share permission. -->
 
 データページに移動し、`tests`フォルダがリストに表示されていることを確認します。リストに表示されない場合は、ブラウザページを更新してみてください。招待を承諾したので、ユーザーBのアカウントでユーザーAの`tests`フォルダの内容を確認できるようになりました。ユーザーBが作成したフォルダとは異なり、共有フォルダにはオーナー列にユーザーAのメールアドレスが表示されます。
 
 ![](../images/test_vfolder_listed_in_B.png)
-<!-- TODO(screenshot): User B's /data after accepting - recapture the folder list, which no longer has a Mount Permission column. -->
+<!-- TODO(screenshot): User B's /data after accepting - the folder list as the invitee, with User A in the Owner column and no Mount Permission column. Not captured: the capture backend admits no second (non-admin) account, so this image still shows the retired Mount Permission column. -->
 
 リストで`tests`フォルダ名をクリックして、フォルダ内に移動しましょう。ユーザーAのアカウントで確認した`hello.txt`と`myfolder`を再び確認できます。ユーザーAが`読み取り専用`で共有したため、フォルダーエクスプローラーでは書き込み系の操作が無効化されます。**アップロード**、**フォルダー作成**、**消去**の各ボタンと、項目名の隣にある**Rename**ボタンは使用できず、ユーザーBはフォルダの内容の閲覧とダウンロードのみ行えます。
 
@@ -74,13 +72,9 @@ Backend.AIはプロジェクトメンバーへのプロジェクトフォルダ�
 
 フォルダの共有モーダルから共有ユーザーの権限を変更できます。**共有ユーザー**テーブルには、招待を承諾したユーザーと、まだ回答を待っている招待の両方が表示されます。ユーザーの行で**共有権限**または**マウント許可**を変更します。
 
-- **読み取り専用**: 招待されたユーザーはフォルダへの読み取り専用アクセス権を持ちます。
-- **読み書き可能**: 招待されたユーザーはフォルダへの読み書き権限を持ち、フォルダ内のファイルやフォルダの作成・変更・削除を行えます。
+![=760px](../images/modify_perm.png)
 
-![=566px](../images/modify_perm.png)
-<!-- TODO(screenshot): /data -> folder Share action - recapture the Shared Users table with the Accepted / Pending status and the Share permission / Mount Permission columns. -->
-
-モーダルの**フォルダー情報**セクションには、フォルダの**デフォルトのマウント権限**が表示されます。ここで**編集**をクリックすると変更できます。個別のマウント権限が設定されていない共有ユーザーには、この権限が適用されます。
+モーダルの**フォルダー情報**セクションには、フォルダの**デフォルトのマウント権限**が表示されます。**編集**をクリックすると変更できます。
 
 :::note
 読み書き可能権限が付与されている場合でも、フォルダ自体の名前変更は所有者のみが行えます。読み書き可能権限にはフォルダの名前変更機能は含まれません。
@@ -92,8 +86,7 @@ Backend.AIはプロジェクトメンバーへのプロジェクトフォルダ�
 
 招待者としてフォルダの共有を停止するには、フォルダリストで該当フォルダ名の横にある共有ボタンをクリックして、フォルダの共有モーダルを開きます。**共有ユーザー**テーブルで、アクセスを取り消すユーザーの行にある**共有を停止します**をクリックします。確認ダイアログが表示されたら、`確認`ボタンをクリックしてそのユーザーのアクセスを取り消します。まだ回答を待っている招待は、代わりに**招待を取り消す**で取り消します。
 
-![=681px](../images/modify_permission_and_stop_sharing.png)
-<!-- TODO(screenshot): /data -> folder Share action - recapture a Shared Users row with its Stop sharing confirmation. -->
+![=760px](../images/modify_permission_and_stop_sharing.png)
 
 招待されたユーザーとして共有フォルダへのアクセスが不要になった場合は、フォルダリストで該当フォルダの共有ボタンをクリックして、共有フォルダ権限モーダルを開きます。権限テーブルの**制御**列にある退出アイコンをクリックして、共有フォルダから退出します。操作が完了する前に確認ダイアログが表示されます。
 
