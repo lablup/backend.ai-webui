@@ -53,7 +53,7 @@ The meaning of each field in the creation dialog is as follows.
 
    * General: Defines a folder for storing various data in a general-purpose manner.
    * Models: Defines a folder specialized for model serving and management. If this mode is selected, it is also possible to toggle the folder's copy availability.
-   * Auto Mount: Folders automatically mounted when a session is created. If selected, the folder name must start with a dot ('.').
+   * Auto Mount: Folders automatically mounted when a session is created. If selected, the folder name must start with a dot ('.'). This mode is offered only in your personal project.
 
 - **Location**: Select the storage host where the folder will be created. If there are multiple hosts, choose one. An indicator will show if there is enough available space.
 - **Cloneable**: Shown only when you select usage mode to "Model". Select whether the vfolder you are creating should be cloneable.
@@ -61,7 +61,7 @@ The meaning of each field in the creation dialog is as follows.
 A new folder's **Default mount permission** is **Read only**. To change it, click **Edit** in the **Folder Info** section of the folder's Share Folder modal (see [Adjust permission for shared folders](#adjust-permission-for-shared-folders)).
 
 :::note
-Folders created from the Data page are always **User folders**. **Project folders** are created by administrators from the admin Data pages.
+A folder created from the Data page belongs to the currently selected project, so the project's other members can see it. To create a folder for yourself only, switch to your personal project first.
 :::
 
 The folders created here can be [mounted](#session-mounts) when creating a compute session. Folders are mounted
