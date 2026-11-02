@@ -188,6 +188,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   const resource_presets = useSessionResourcePresets({
     projectId,
     resourceGroupName: resourceGroup,
+    skip: !resourceGroup,
     fetchKey,
     fetchPolicy: fetchKey === 'first' ? 'store-and-network' : 'network-only',
   });

@@ -309,6 +309,7 @@ const ResourceAllocationFormItems: React.FC<
   const sessionPresets = useSessionResourcePresets({
     projectId: project.id,
     resourceGroupName: deferredResourceGroup,
+    skip: !deferredResourceGroup,
   });
 
   const [resourceSlots] = useResourceSlots();

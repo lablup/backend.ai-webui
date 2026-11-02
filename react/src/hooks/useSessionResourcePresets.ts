@@ -15,15 +15,18 @@ export interface SessionResourcePreset extends ResourcePreset {
 /**
  * The presets a session can launch with in `resourceGroupName` (global ones
  * included), from `checkPresetAvailabilityV2`. `allocatable` carries `available`.
+ * Pass `skip` while the resource group is not known yet; it returns `[]` then.
  */
 export const useSessionResourcePresets = ({
   projectId,
   resourceGroupName,
+  skip,
   fetchKey,
   fetchPolicy = 'store-or-network',
 }: {
   projectId: string;
   resourceGroupName?: string | null;
+  skip: boolean;
   fetchKey?: string | number;
   fetchPolicy?: FetchPolicy;
 }): SessionResourcePreset[] => {
@@ -63,7 +66,7 @@ export const useSessionResourcePresets = ({
       {
         projectId,
         resourceGroupName: resourceGroupName ?? '',
-        skip: !resourceGroupName,
+        skip,
       },
       { fetchKey, fetchPolicy },
     );
