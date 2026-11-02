@@ -14,7 +14,7 @@ export function scopedAuditLogMockResponse(variables: Record<string, any>) {
       actionName: 'create_from_params',
       operation: 'create_from_params',
       status: 'SUCCESS',
-      description: null,
+      description: '',
       offsetMs: 0,
     },
     {
@@ -28,7 +28,7 @@ export function scopedAuditLogMockResponse(variables: Record<string, any>) {
       actionName: 'destroy_session',
       operation: 'destroy_session',
       status: 'SUCCESS',
-      description: null,
+      description: '',
       offsetMs: 120_000,
     },
   ].map((record, index) => ({
@@ -40,8 +40,8 @@ export function scopedAuditLogMockResponse(variables: Record<string, any>) {
     status: record.status,
     description: record.description,
     duration: '0:00:00.123456',
-    requestId: `mock-request-00${index + 1}`,
-    actionId: `mock-action-00${index + 1}`,
+    requestId: `00000000-0000-4000-8000-00000000010${index + 1}`,
+    actionId: `00000000-0000-4000-8000-00000000020${index + 1}`,
     entityType: 'session',
     targetEntityId: 'mock-session-uuid-001',
     triggeredBy: null,
