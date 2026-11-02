@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-10-23
+> **Last Updated:** 2026-11-03
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 375 / 525 features covered (71%)**
+**Overall (in-scope routes): 376 / 526 features covered (71%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -47,14 +47,14 @@
 | Edu App Launcher         | `/applauncher`, `/edu-applauncher`               |    8     |    5    | 🔶 63%  |
 | Chat                     | `/chat/:id?`                                     |    7     |    7    | ✅ 100% |
 | Plugin System            | (config-based)                                   |    12    |   12    | ✅ 100% |
-| RBAC Management          | `/rbac`                                          |    23    |   22    | 🔶 96%  |
+| RBAC Management          | `/rbac`                                          |    24    |   23    | 🔶 96%  |
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule`           |    33    |   32    | 🔶 97%  |
 | Deployments              | `/deployments`, `/deployments/:id`               |    23    |   20    | 🔶 87%  |
 | Admin Deployment Preset  | `/admin/deployments/deployment-presets/new`      |    5     |    5    | ✅ 100% |
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **525**  | **375** | **71%** |
+| **Total**                |                                                  | **526**  | **376** | **71%** |
 
 ---
 
@@ -1092,33 +1092,34 @@ External portals (LMS) open these routes with a signed `sToken` plus the app and
 
 **Test files:** [`e2e/rbac/rbac-role-list.spec.ts`](rbac/rbac-role-list.spec.ts), [`e2e/rbac/rbac-role-crud.spec.ts`](rbac/rbac-role-crud.spec.ts), [`e2e/rbac/rbac-role-detail.spec.ts`](rbac/rbac-role-detail.spec.ts)
 
-| Feature                                            | Status | Test                                                                                  |
-| -------------------------------------------------- | ------ | ------------------------------------------------------------------------------------- |
-| Display RBAC management page with role list table  | ✅     | `Superadmin can view the RBAC management page with role list table`                   |
-| Switch between Active/Inactive role filters        | ✅     | `Superadmin can switch to Inactive roles filter and back to Active`                   |
-| Search for a role by name using property filter    | ✅     | `Superadmin can search for a role by name using the property filter`                  |
-| Filter roles by Source (SYSTEM or CUSTOM)          | 🚧     | `Superadmin can filter roles by Source (SYSTEM or CUSTOM)`                            |
-| Empty state when no roles match search             | ✅     | `Superadmin sees empty state message when no roles match the search`                  |
-| Sort role list by Role Name column                 | ✅     | `Superadmin can sort role list by Role Name column`                                   |
-| Refresh role list using refresh button             | ✅     | `Superadmin can refresh the role list using the refresh button`                       |
-| Create a new custom role with name and description | ✅     | `Superadmin can create a new custom role with name and description`                   |
-| Edit a custom role name and description via drawer | ✅     | `Superadmin can edit a custom role name and description via drawer`                   |
-| System role edit button absent                     | ✅     | `Superadmin cannot edit a system role name or description (edit button absent)`       |
-| Deactivate (soft-delete) an active custom role     | ✅     | `Superadmin can delete (soft-delete) an active custom role`                           |
-| Activate (restore) a soft-deleted role             | ✅     | `Superadmin can activate (restore) a soft-deleted role`                               |
-| Purge (hard-delete) a soft-deleted role            | ✅     | `Superadmin can purge (hard-delete) a soft-deleted role`                              |
-| Open role detail drawer by clicking role name      | ✅     | `Superadmin can open the role detail drawer by clicking a role name`                  |
-| Drawer shows Role Assignments and Permissions tabs | ✅     | `Drawer shows "Role Assignments" and "Permissions" tabs`                              |
-| Close role detail drawer                           | ✅     | `Superadmin can close the role detail drawer`                                         |
-| Add a permission to a role                         | ✅     | `Superadmin can add a permission to a role`                                           |
-| Delete a permission from a role                    | ✅     | `Superadmin can delete a permission from a role`                                      |
-| Empty state in Permissions tab                     | ✅     | `Superadmin sees empty state in Permissions tab when role has no permissions`         |
-| Assign a user to a role                            | ✅     | `Superadmin can assign a user to a role`                                              |
-| Revoke a user from a role                          | ✅     | `Superadmin can revoke a single user from a role`                                     |
-| Empty state in Role Assignments tab                | ✅     | `Superadmin sees empty state in Role Assignments tab when role has no users`          |
-| System role View Presets link opens its own preset | ✅     | `Superadmin can open exactly the preset of a system role from the role detail drawer` |
+| Feature                                            | Status | Test                                                                                     |
+| -------------------------------------------------- | ------ | ---------------------------------------------------------------------------------------- |
+| Display RBAC management page with role list table  | ✅     | `Superadmin can view the RBAC management page with role list table`                      |
+| Switch between Active/Inactive role filters        | ✅     | `Superadmin can switch to Inactive roles filter and back to Active`                      |
+| Search for a role by name using property filter    | ✅     | `Superadmin can search for a role by name using the property filter`                     |
+| Filter roles by Source (SYSTEM or CUSTOM)          | 🚧     | `Superadmin can filter roles by Source (SYSTEM or CUSTOM)`                               |
+| Empty state when no roles match search             | ✅     | `Superadmin sees empty state message when no roles match the search`                     |
+| Sort role list by Role Name column                 | ✅     | `Superadmin can sort role list by Role Name column`                                      |
+| Refresh role list using refresh button             | ✅     | `Superadmin can refresh the role list using the refresh button`                          |
+| Create a new custom role with name and description | ✅     | `Superadmin can create a new custom role with name and description`                      |
+| Edit a custom role name and description via drawer | ✅     | `Superadmin can edit a custom role name and description via drawer`                      |
+| System role edit button absent                     | ✅     | `Superadmin cannot edit a system role name or description (edit button absent)`          |
+| Deactivate (soft-delete) an active custom role     | ✅     | `Superadmin can delete (soft-delete) an active custom role`                              |
+| Activate (restore) a soft-deleted role             | ✅     | `Superadmin can activate (restore) a soft-deleted role`                                  |
+| Purge (hard-delete) a soft-deleted role            | ✅     | `Superadmin can purge (hard-delete) a soft-deleted role`                                 |
+| Open role detail drawer by clicking role name      | ✅     | `Superadmin can open the role detail drawer by clicking a role name`                     |
+| Drawer shows Role Assignments and Permissions tabs | ✅     | `Drawer shows "Role Assignments" and "Permissions" tabs`                                 |
+| Close role detail drawer                           | ✅     | `Superadmin can close the role detail drawer`                                            |
+| Add a permission to a role                         | ✅     | `Superadmin can add a permission to a role`                                              |
+| Delete a permission from a role                    | ✅     | `Superadmin can delete a permission from a role`                                         |
+| Empty state in Permissions tab                     | ✅     | `Superadmin sees empty state in Permissions tab when role has no permissions`            |
+| Assign a user to a role                            | ✅     | `Superadmin can assign a user to a role`                                                 |
+| Revoke a user from a role                          | ✅     | `Superadmin can revoke a single user from a role`                                        |
+| Skip users already holding the role on assignment  | ✅     | `Superadmin can see users already holding the role skipped while new users are assigned` |
+| Empty state in Role Assignments tab                | ✅     | `Superadmin sees empty state in Role Assignments tab when role has no users`             |
+| System role View Presets link opens its own preset | ✅     | `Superadmin can open exactly the preset of a system role from the role detail drawer`    |
 
-**Coverage: 🔶 22/23 features**
+**Coverage: 🔶 23/24 features**
 
 ---
 
