@@ -5,9 +5,10 @@
 import { RoleAssignmentTabBulkRevokeMutation } from '../__generated__/RoleAssignmentTabBulkRevokeMutation.graphql';
 import { RoleAssignmentTabFragment$key } from '../__generated__/RoleAssignmentTabFragment.graphql';
 import {
-  UserV2Filter,
-  UserV2OrderBy,
-} from '../__generated__/RoleAssignmentTabRefetchQuery.graphql';
+  RoleAssignmentFilter,
+  RoleAssignmentOrderBy,
+  RoleAssignmentTabQuery,
+} from '../__generated__/RoleAssignmentTabQuery.graphql';
 import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
 import { useSetBAINotification } from '../hooks/useBAINotification';
@@ -25,17 +26,25 @@ import {
   BAISelectionLabel,
   BAITable,
   BAIUnmountAfterClose,
+  INITIAL_FETCH_KEY,
   useBAILogger,
+  useFetchKey,
   useMutationWithPromise,
 } from 'backend.ai-ui';
+import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { PlusIcon, Trash2 } from 'lucide-react';
-import React, { useState, useTransition } from 'react';
+import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useRefetchableFragment } from 'react-relay';
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 type AssignmentOrder =
-  'EMAIL_ASC' | 'EMAIL_DESC' | 'USERNAME_ASC' | 'USERNAME_DESC';
+  | 'EMAIL_ASC'
+  | 'EMAIL_DESC'
+  | 'USERNAME_ASC'
+  | 'USERNAME_DESC'
+  | 'GRANTED_AT_ASC'
+  | 'GRANTED_AT_DESC';
 
 interface RoleAssignmentTabProps {
   roleNodeFrgmt: RoleAssignmentTabFragment$key;
@@ -55,7 +64,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
   const [revokingTargets, setRevokingTargets] = useState<
     { userId: string; label: string }[] | null
   >(null);
-  const [isPendingRefetch, startRefetchTransition] = useTransition();
+  const [fetchKey, updateFetchKey] = useFetchKey();
 
   // Pagination / order / filter live in local React state (not the URL);
   // they reset whenever the drawer content remounts.
@@ -63,7 +72,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
     current: number;
     pageSize: number;
     order: AssignmentOrder | null;
-    filter: UserV2Filter | null;
+    filter: RoleAssignmentFilter | null;
   }>({
     current: 1,
     pageSize: 10,
@@ -71,44 +80,15 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
     filter: null,
   });
 
-  const limit = queryParams.pageSize;
-  const offset =
-    queryParams.current > 1 ? (queryParams.current - 1) * limit : 0;
-
-  const [data, refetch] = useRefetchableFragment(
+  const data = useFragment(
     graphql`
-      fragment RoleAssignmentTabFragment on Role
-      @argumentDefinitions(
-        userFilter: { type: "UserV2Filter" }
-        userOrderBy: { type: "[UserV2OrderBy!]" }
-        limit: { type: "Int", defaultValue: 10 }
-        offset: { type: "Int", defaultValue: 0 }
-      )
-      @refetchable(queryName: "RoleAssignmentTabRefetchQuery") {
+      fragment RoleAssignmentTabFragment on Role {
         id
         entityId
         name
         source
         scopeType
         scopeId
-        usersV2(
-          filter: $userFilter
-          orderBy: $userOrderBy
-          limit: $limit
-          offset: $offset
-        ) {
-          count
-          edges {
-            node {
-              id
-              entityId
-              basicInfo {
-                email
-                fullName
-              }
-            }
-          }
-        }
       }
     `,
     roleNodeFrgmt,
@@ -144,61 +124,90 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
       }
     `);
 
-  // `usersV2` answers users, not assignment rows, so it has no grant time.
-  // TODO(needs-backend): BA-8188 — restore Granted At once usersV2 carries it.
-  const assignments: Array<{
-    id: string;
-    userId: string;
-    email?: string | null;
-    fullName?: string | null;
-  }> = _.compact(
-    _.map(data.usersV2?.edges, (edge) =>
+  const limit = queryParams.pageSize;
+  const queryVariables = {
+    filter: {
+      ...(queryParams.filter ?? {}),
+      roleId: { equals: roleId },
+    },
+    orderBy: convertToOrderBy<RoleAssignmentOrderBy>(queryParams.order),
+    limit,
+    offset: queryParams.current > 1 ? (queryParams.current - 1) * limit : 0,
+  };
+  const deferredQueryVariables = useDeferredValue(queryVariables);
+  const deferredFetchKey = useDeferredValue(fetchKey);
+
+  // RBAC management is superadmin-only, so this reads adminRoleAssignments on
+  // purpose instead of a scoped search (ADR 0011's system-management exception).
+  const { adminRoleAssignments } = useLazyLoadQuery<RoleAssignmentTabQuery>(
+    graphql`
+      query RoleAssignmentTabQuery(
+        $filter: RoleAssignmentFilter
+        $orderBy: [RoleAssignmentOrderBy!]
+        $limit: Int
+        $offset: Int
+      ) {
+        adminRoleAssignments(
+          filter: $filter
+          orderBy: $orderBy
+          limit: $limit
+          offset: $offset
+        ) {
+          count
+          edges {
+            node {
+              id
+              userId
+              grantedAt
+              user {
+                id
+                basicInfo {
+                  email
+                  fullName
+                }
+              }
+            }
+          }
+        }
+      }
+    `,
+    deferredQueryVariables,
+    {
+      fetchKey: deferredFetchKey,
+      fetchPolicy:
+        deferredFetchKey === INITIAL_FETCH_KEY
+          ? 'store-and-network'
+          : 'network-only',
+    },
+  );
+  const isPendingRefetch =
+    !_.isEqual(deferredQueryVariables, queryVariables) ||
+    deferredFetchKey !== fetchKey;
+
+  const assignments = _.compact(
+    _.map(adminRoleAssignments?.edges, (edge) =>
       edge?.node
         ? {
-            id: edge.node.id,
-            userId: edge.node.entityId,
-            email: edge.node.basicInfo.email,
-            fullName: edge.node.basicInfo.fullName,
+            userId: edge.node.userId,
+            email: edge.node.user?.basicInfo?.email,
+            fullName: edge.node.user?.basicInfo?.fullName,
+            grantedAt: edge.node.grantedAt,
           }
         : null,
     ),
   );
-  const totalCount = data.usersV2?.count ?? 0;
+  const totalCount = adminRoleAssignments?.count ?? 0;
 
-  const doRefetch = (overrides?: {
-    filter?: UserV2Filter | null;
-    order?: string | null;
-    limit?: number;
-    offset?: number;
-  }) => {
-    const filter =
-      overrides?.filter !== undefined ? overrides.filter : queryParams.filter;
-    const order =
-      overrides?.order !== undefined ? overrides.order : queryParams.order;
-    startRefetchTransition(() => {
-      refetch(
-        {
-          userFilter: filter,
-          userOrderBy: convertToOrderBy<UserV2OrderBy>(order),
-          limit: overrides?.limit ?? limit,
-          offset: overrides?.offset ?? offset,
-        },
-        { fetchPolicy: 'network-only' },
-      );
-    });
-  };
-
-  const handleFilterChange = (newFilter: UserV2Filter | undefined) => {
+  const handleFilterChange = (newFilter: RoleAssignmentFilter | undefined) => {
     setQueryParams((prev) => ({
       ...prev,
       filter: newFilter ?? null,
       current: 1,
     }));
-    doRefetch({ filter: newFilter ?? null, offset: 0 });
   };
 
   const handleRefresh = () => {
-    doRefetch();
+    updateFetchKey();
   };
 
   const handleBulkRevoke = (userIds: string[]) => {
@@ -221,7 +230,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
         />
       )}
       <BAIFlex justify="between" align="start" gap="sm" wrap="wrap">
-        <BAIGraphQLPropertyFilter<UserV2Filter>
+        <BAIGraphQLPropertyFilter<RoleAssignmentFilter>
           filterProperties={[
             {
               key: 'email',
@@ -253,10 +262,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
                     />
                   }
                   onClick={() => {
-                    const userIds = assignments
-                      .filter((a) => selectedRowKeys.includes(a.id))
-                      .map((a) => a.userId);
-                    handleBulkRevoke(userIds);
+                    handleBulkRevoke(selectedRowKeys.map(String));
                   }}
                 />
               </Tooltip>
@@ -279,7 +285,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
         </BAIFlex>
       </BAIFlex>
       <BAITable
-        rowKey="id"
+        rowKey="userId"
         dataSource={assignments}
         loading={isPendingRefetch}
         size="small"
@@ -289,8 +295,6 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
           total: totalCount,
           onChange: (current, pageSize) => {
             setQueryParams((prev) => ({ ...prev, current, pageSize }));
-            const newOffset = current > 1 ? (current - 1) * pageSize : 0;
-            doRefetch({ limit: pageSize, offset: newOffset });
           },
         }}
         rowSelection={
@@ -300,6 +304,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
                 type: 'checkbox',
                 selectedRowKeys,
                 onChange: (keys) => setSelectedRowKeys(keys),
+                getRowLabel: (record) => record.email ?? record.userId,
               }
         }
         order={queryParams.order}
@@ -308,7 +313,6 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
             ...prev,
             order: (newOrder as AssignmentOrder) ?? null,
           }));
-          doRefetch({ order: newOrder ?? null });
         }}
         columns={[
           {
@@ -342,6 +346,16 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
             dataIndex: 'username',
             title: t('credential.FullName'),
             render: (_, record) => record.fullName || '-',
+            sorter: true,
+          },
+          {
+            key: 'grantedAt',
+            dataIndex: 'grantedAt',
+            title: t('rbac.GrantedAt'),
+            render: (_, record) =>
+              record.grantedAt
+                ? dayjs(record.grantedAt).format('YYYY-MM-DD HH:mm')
+                : '-',
             sorter: true,
           },
         ]}

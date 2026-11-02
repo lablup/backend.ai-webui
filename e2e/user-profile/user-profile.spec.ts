@@ -1,6 +1,7 @@
 // spec: e2e/.agent-output/test-plan-user-profile-allowed-client-ip.md
 import {
   createAdminApiContext,
+  gqlAdmin,
   purgeUserViaApi,
   sweepProfileTestUsersViaApi,
 } from '../utils/admin-api';
@@ -622,6 +623,115 @@ test.describe(
         await profileModal(page)
           .getByRole('button', { name: 'Cancel' })
           .click();
+      });
+    });
+
+    // =========================================================================
+    // Password change request
+    // =========================================================================
+    test.describe('Password change request', () => {
+      // Its own user: this test changes the password, which the shared
+      // EMAIL account must keep for the other tests.
+      const PW_EMAIL = `e2e-profile-pw${TEST_RUN_ID}@lablup.com`;
+      const PW_USERNAME = `e2e-profile-pw${TEST_RUN_ID}`;
+      const NEW_PASSWORD = 'changed@456';
+
+      test.beforeAll(async ({ browser }) => {
+        test.setTimeout(300_000);
+        const adminContext = await browser.newContext();
+        const adminPage = await adminContext.newPage();
+        try {
+          await loginAsAdmin(adminPage, adminContext.request);
+          await createDisposableUser(
+            adminPage,
+            PW_EMAIL,
+            PW_USERNAME,
+            PASSWORD,
+          );
+        } finally {
+          await adminContext.close();
+        }
+        const api = await createAdminApiContext();
+        try {
+          const result = await gqlAdmin<{
+            modify_user?: { ok?: boolean; msg?: string };
+          }>(
+            api,
+            `mutation($email: String!, $props: ModifyUserInput!) {
+              modify_user(email: $email, props: $props) { ok msg }
+            }`,
+            { email: PW_EMAIL, props: { need_password_change: true } },
+          );
+          expect(result.modify_user?.ok, result.modify_user?.msg).toBe(true);
+        } finally {
+          await api.dispose();
+        }
+      });
+
+      test.afterAll(async () => {
+        try {
+          const api = await createAdminApiContext();
+          try {
+            await purgeUserViaApi(api, PW_EMAIL);
+          } finally {
+            await api.dispose();
+          }
+        } catch (e) {
+          console.warn(
+            `Password-change teardown failed (non-fatal; next run's sweep will reclaim): ${
+              e instanceof Error ? e.message : String(e)
+            }`,
+          );
+        }
+      });
+
+      test('Changing own password clears the password-change banner', async ({
+        page,
+        request,
+      }) => {
+        // Until the manager clears need_password_change on a self password
+        // change (backend issue BA-8671), this is an expected failure.
+        // Remove this line once the fixed manager is deployed.
+        test.fail();
+
+        await loginAsCreatedAccount(page, request, PW_EMAIL, PASSWORD);
+        const banner = page.getByText('Please change your password.');
+        await expect(banner).toBeVisible({ timeout: 20000 });
+
+        await openProfileModal(page);
+        const modal = profileModal(page);
+        await modal
+          .getByRole('textbox', { name: 'New Password', exact: true })
+          .fill(NEW_PASSWORD);
+        await modal
+          .getByRole('textbox', { name: 'New password (again)' })
+          .fill(NEW_PASSWORD);
+        await modal.getByRole('button', { name: 'Update' }).click();
+        await expect(
+          toastRegion(page).getByText('Profile has been successfully updated.'),
+        ).toBeVisible({ timeout: 10000 });
+
+        const api = await createAdminApiContext();
+        try {
+          const data = await gqlAdmin<{
+            user?: { need_password_change?: boolean | null };
+          }>(
+            api,
+            `query($email: String) {
+              user(email: $email) { need_password_change }
+            }`,
+            { email: PW_EMAIL },
+          );
+          expect(data.user?.need_password_change).toBe(false);
+        } finally {
+          await api.dispose();
+        }
+
+        await page.reload();
+        await expect(page.getByTestId('user-dropdown-button')).toBeVisible({
+          timeout: 20000,
+        });
+        await expect(banner).toBeHidden();
       });
     });
   },
