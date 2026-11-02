@@ -20,6 +20,7 @@ import {
   BAIListAlert,
   BAITable,
   BAITextInput,
+  useDebounceFn,
 } from 'backend.ai-ui';
 import { Search } from 'lucide-react';
 import React, { useState } from 'react';
@@ -109,6 +110,35 @@ export interface RBACPermissionGridProps {
     changes: RBACPermissionChanges,
   ) => Promise<RBACPermissionSaveFailure[]>;
 }
+
+/**
+ * Owns the typed text so a keystroke re-renders only this input: the compiler
+ * does not memoize the grid's table, so state held there re-renders every row.
+ */
+const PermissionTypeFilter: React.FC<{
+  initialValue: string;
+  onChange: (value: string) => void;
+}> = ({ initialValue, onChange }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const [value, setValue] = useState(initialValue);
+  const { run: debouncedOnChange } = useDebounceFn(onChange, { wait: 200 });
+
+  return (
+    <BAITextInput
+      aria-label={t('rbac.FilterByPermissionType')}
+      value={value}
+      hasClear
+      startIcon={Search}
+      placeholder={t('rbac.FilterByPermissionType')}
+      onChange={(next) => {
+        setValue(next);
+        debouncedOnChange(next);
+      }}
+      width={260}
+    />
+  );
+};
 
 /**
  * One row per permission type of a scope and one checkbox column per
@@ -339,14 +369,9 @@ const RBACPermissionGrid: React.FC<RBACPermissionGridProps> = ({
       <BAIFlex justify="between" align="center" gap="sm" wrap="wrap">
         <BAIFlex gap="sm" align="center" wrap="wrap">
           {toolbarStart}
-          <BAITextInput
-            aria-label={t('rbac.FilterByPermissionType')}
-            value={filterText}
-            hasClear
-            startIcon={Search}
-            placeholder={t('rbac.FilterByPermissionType')}
+          <PermissionTypeFilter
+            initialValue={filterText}
             onChange={setFilterText}
-            width={260}
           />
         </BAIFlex>
         <BAIFetchKeyButton
