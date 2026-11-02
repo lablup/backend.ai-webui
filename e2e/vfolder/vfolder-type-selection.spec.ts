@@ -21,6 +21,7 @@ async function switchProject(
 ): Promise<string> {
   const selector = page.getByRole('button', { name: 'Select Project' });
   await expect(selector).toBeVisible({ timeout: 15000 });
+  const previousSlug = new URL(page.url()).pathname.split('/')[2];
   await selector.click();
   const options = page
     .getByRole('listbox', { name: 'Select Project' })
@@ -30,7 +31,12 @@ async function switchProject(
   const optionName = (await options.first().innerText()).trim();
   await options.first().click();
   await expect(selector).toHaveText(optionName);
-  await expect(page).toHaveURL(/\/project\/[^/]+\/data/);
+  // The header label updates before navigation commits; wait for the URL to
+  // reach the other project's Data page.
+  await expect(page).toHaveURL((url) => {
+    const [, segment, slug, subPath] = url.pathname.split('/');
+    return segment === 'project' && subPath === 'data' && slug !== previousSlug;
+  });
   return new URL(page.url()).pathname.split('/')[2];
 }
 
@@ -51,6 +57,7 @@ test.describe(
         test.beforeEach(async ({ page, request }, testInfo) => {
           folderName = `.e2e-test-personal-automount-${Date.now()}-${testInfo.workerIndex}`;
           personalProjectSlug = undefined;
+          sharedProject = '';
           await loginAsUser(page, request);
           await navigateTo(page, 'data');
           sharedProject = (
@@ -69,7 +76,9 @@ test.describe(
             );
           }
           // Leave the user on the shared project the other specs expect.
-          await navigateTo(page, `project/${sharedProject}/data`);
+          if (sharedProject) {
+            await navigateTo(page, `project/${sharedProject}/data`);
+          }
         });
 
         test('User can create an Auto Mount folder only in the personal project', async ({

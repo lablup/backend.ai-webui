@@ -147,6 +147,34 @@ test.describe(
       test('User can create a project folder in a general project after confirming its visibility', async ({
         page,
       }) => {
+        // A saved "Don't ask again" on the shared account would skip the
+        // confirm modal; report it unset without touching the stored value.
+        await page.route('**/admin/gql', async (route) => {
+          if (
+            !(route.request().postData() ?? '').includes('useAppConfigMyQuery')
+          ) {
+            await route.fallback();
+            return;
+          }
+          const response = await route.fetch();
+          const body = await response.json();
+          for (const entry of body?.data?.myAppConfigs ?? []) {
+            if (entry?.configName !== 'userConfig') continue;
+            const isString = typeof entry.config === 'string';
+            const config = isString
+              ? JSON.parse(entry.config || '{}')
+              : (entry.config ?? {});
+            config.skip_project_folder_confirm = false;
+            entry.config = isString ? JSON.stringify(config) : config;
+          }
+          await route.fulfill({ response, json: body });
+        });
+        // Reload so the modal reads the config through the route.
+        await page.reload();
+        await page
+          .getByRole('button', { name: 'Create Folder' })
+          .first()
+          .click();
         const currentProject = (
           await page.getByRole('button', { name: 'Select Project' }).innerText()
         ).trim();
