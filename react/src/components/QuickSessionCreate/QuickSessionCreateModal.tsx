@@ -4,13 +4,11 @@
  */
 import { Form } from '../../form-engine';
 import { convertToBinaryUnit } from '../../helper';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
+import { useSuspendedBackendaiClient } from '../../hooks';
 import {
   toSessionHistoryParams,
-  toShareableFormValues,
   useLaunchSession,
 } from '../../hooks/useLaunchSession';
-import { useProjectPath } from '../../hooks/useRouteScope';
 import { useStartSession } from '../../hooks/useStartSession';
 import type { SessionLauncherFormValue } from '../../pages/SessionLauncherPage';
 import type { ProjectContext } from '../../types/projectContext';
@@ -29,8 +27,10 @@ import QuickSessionResourceCards, {
 } from './QuickSessionResourceCards';
 import { Button } from '@lablup/ui-common/Button';
 import { Collapsible } from '@lablup/ui-common/Collapsible';
+import { Divider } from '@lablup/ui-common/Divider';
 import { Heading } from '@lablup/ui-common/Heading';
 import { Text } from '@lablup/ui-common/Text';
+import * as stylex from '@stylexjs/stylex';
 import {
   BAIButton,
   BAICard,
@@ -45,6 +45,11 @@ import {
 import * as _ from 'lodash-es';
 import { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+// Astryx's vertical divider is `height: 100%`, which an auto-height row leaves at 0.
+const dividerStyles = stylex.create({
+  vertical: { alignSelf: 'stretch', height: 'auto' },
+});
 
 /** Fields shown outside the Advanced section; an error elsewhere opens it. */
 const VISIBLE_FIELD_ROOTS = [
@@ -86,9 +91,7 @@ const QuickSessionCreateModal: React.FC<QuickSessionCreateModalProps> = ({
   const { md } = useBAIBreakpoint();
   const { defaultFormValues } = useStartSession();
   const { launch } = useLaunchSession();
-  const webuiNavigate = useWebUINavigate();
   const baiClient = useSuspendedBackendaiClient();
-  const buildProjectPath = useProjectPath();
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
 
   const initialValues = _.merge(
@@ -124,16 +127,6 @@ const QuickSessionCreateModal: React.FC<QuickSessionCreateModalProps> = ({
     );
   };
 
-  const continueInLauncher = () => {
-    const params = new URLSearchParams({
-      formValues: JSON.stringify(
-        toShareableFormValues(form.getFieldsValue(true)),
-      ),
-    });
-    onRequestClose();
-    webuiNavigate(`${buildProjectPath('session/start')}?${params.toString()}`);
-  };
-
   const resource = watched.resource;
   const memGiB = resource?.mem
     ? convertToBinaryUnit(resource.mem, 'g', 6)?.number
@@ -155,6 +148,14 @@ const QuickSessionCreateModal: React.FC<QuickSessionCreateModalProps> = ({
         <SummaryRow
           label={t('session.launcher.Environments')}
           value={imageName ? _.last(_.split(imageName, '/')) : '-'}
+        />
+        <SummaryRow
+          label={t('webui.menu.Data&Storage')}
+          value={
+            _.isEmpty(watched.vfolderMounts)
+              ? t('session.quickCreate.NoFolder')
+              : _.size(watched.vfolderMounts)
+          }
         />
         <SummaryRow
           label="CPU"
@@ -179,14 +180,6 @@ const QuickSessionCreateModal: React.FC<QuickSessionCreateModalProps> = ({
           />
         )}
         <SummaryRow
-          label={t('webui.menu.Data&Storage')}
-          value={
-            _.isEmpty(watched.vfolderMounts)
-              ? t('session.quickCreate.NoFolder')
-              : _.size(watched.vfolderMounts)
-          }
-        />
-        <SummaryRow
           label={t('session.launcher.SessionType')}
           value={
             sessionType === 'batch'
@@ -205,36 +198,24 @@ const QuickSessionCreateModal: React.FC<QuickSessionCreateModalProps> = ({
       width={1080}
       onCancel={() => onRequestClose()}
       footer={
-        <BAIFlex justify="between" align="center" gap="sm" wrap="wrap">
+        <BAIFlex justify="end" align="center" gap="xs">
           <Button
-            variant="ghost"
-            label={t('session.quickCreate.ContinueInLauncher')}
-            onClick={continueInLauncher}
-            data-testid="quick-create-continue-in-launcher"
+            variant="secondary"
+            label={t('button.Cancel')}
+            onClick={() => onRequestClose()}
           />
-          <BAIFlex gap="xs">
-            <Button
-              variant="secondary"
-              label={t('button.Cancel')}
-              onClick={() => onRequestClose()}
-            />
-            <BAIButton
-              type="primary"
-              action={handleStart}
-              data-testid="quick-create-start"
-            >
-              {t('session.launcher.Start')}
-            </BAIButton>
-          </BAIFlex>
+          <BAIButton
+            type="primary"
+            action={handleStart}
+            data-testid="quick-create-start"
+          >
+            {t('session.launcher.Start')}
+          </BAIButton>
         </BAIFlex>
       }
     >
       <Form form={form} layout="vertical" initialValues={initialValues}>
-        <BAIFlex
-          direction={md ? 'row' : 'column'}
-          align={md ? 'start' : 'stretch'}
-          gap="md"
-        >
+        <BAIFlex direction={md ? 'row' : 'column'} align="stretch" gap="md">
           <BAIFlex
             direction="column"
             align="stretch"
@@ -251,17 +232,17 @@ const QuickSessionCreateModal: React.FC<QuickSessionCreateModalProps> = ({
               </Suspense>
             </BAIFlex>
 
-            <BAIFlex direction="column" align="stretch" gap="xs">
-              <Heading level={5}>{t('session.quickCreate.Resources')}</Heading>
-              <Suspense fallback={<BAISkeleton rows={4} />}>
-                <QuickSessionResourceCards project={project} />
-              </Suspense>
-            </BAIFlex>
-
             <BAIFlex direction="column" align="stretch">
               <Heading level={5}>{t('webui.menu.Data&Storage')}</Heading>
               <Suspense fallback={<BAISkeleton rows={3} />}>
                 <SessionLauncherStorageStep form={form} project={project} />
+              </Suspense>
+            </BAIFlex>
+
+            <BAIFlex direction="column" align="stretch" gap="xs">
+              <Heading level={5}>{t('session.quickCreate.Resources')}</Heading>
+              <Suspense fallback={<BAISkeleton rows={4} />}>
+                <QuickSessionResourceCards project={project} />
               </Suspense>
             </BAIFlex>
 
@@ -319,6 +300,10 @@ const QuickSessionCreateModal: React.FC<QuickSessionCreateModalProps> = ({
               </BAIFlex>
             </Collapsible>
           </BAIFlex>
+          <Divider
+            orientation={md ? 'vertical' : 'horizontal'}
+            xstyle={md ? dividerStyles.vertical : undefined}
+          />
           <BAIFlex
             direction="column"
             align="stretch"

@@ -4803,7 +4803,6 @@
         "session.quickCreate.AutoAllocated",
         "session.quickCreate.CellUnit",
         "session.quickCreate.ClearSelection",
-        "session.quickCreate.ContinueInLauncher",
         "session.quickCreate.InUse",
         "session.quickCreate.NameAndEnvironment",
         "session.quickCreate.NoFolder",
