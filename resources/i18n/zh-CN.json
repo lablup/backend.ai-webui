@@ -1004,7 +1004,7 @@
       "FolderCloned": "文件夹已克隆",
       "FolderCreated": "文件夹已创建",
       "FolderCreationFailed": "文件夹创建失败。",
-      "FolderCreationOpenPersonalProject": "打开个人项目数据",
+      "FolderCreationOpenPersonalProject": "前往",
       "FolderDeleted": "{{ folderName }} 文件夹已被删除。",
       "FolderDeletedForever": "已永久删除 {{ folderName }} 文件夹。",
       "FolderDisconnected": "文件夹已断开连接。",

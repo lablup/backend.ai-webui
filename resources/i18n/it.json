@@ -1004,7 +1004,7 @@
       "FolderCloned": "Cartella clonata",
       "FolderCreated": "Cartella creata",
       "FolderCreationFailed": "Impossibile creare la cartella.",
-      "FolderCreationOpenPersonalProject": "Apri i dati del progetto personale",
+      "FolderCreationOpenPersonalProject": "Vai al progetto",
       "FolderDeleted": "La cartella {{ folderName }} è stata eliminata.",
       "FolderDeletedForever": "Cartella {{ folderName }} eliminata definitivamente.",
       "FolderDisconnected": "La cartella è stata disconnessa.",

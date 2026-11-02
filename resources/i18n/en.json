@@ -991,7 +991,7 @@
       "FolderCloned": "Folder cloned",
       "FolderCreated": "Folder created",
       "FolderCreationFailed": "Failed to create folder.",
-      "FolderCreationOpenPersonalProject": "Open Personal Project Data",
+      "FolderCreationOpenPersonalProject": "Go to Project",
       "FolderDeleted": "The {{ folderName }} folder has been deleted.",
       "FolderDeletedForever": "Permanently deleted the {{ folderName }} folder.",
       "FolderDisconnected": "Folder disconnected.",

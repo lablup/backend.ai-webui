@@ -1000,7 +1000,7 @@
       "FolderCloned": "โคลนโฟลเดอร์แล้ว",
       "FolderCreated": "สร้างโฟลเดอร์แล้ว",
       "FolderCreationFailed": "ไม่สามารถสร้างโฟลเดอร์ได้",
-      "FolderCreationOpenPersonalProject": "เปิดข้อมูลโปรเจกต์ส่วนตัว",
+      "FolderCreationOpenPersonalProject": "ไปที่โปรเจกต์",
       "FolderDeleted": "ลบโฟลเดอร์ {{ folderName }} แล้ว",
       "FolderDeletedForever": "ลบโฟลเดอร์ {{ folderName }} ถาวรแล้ว",
       "FolderDisconnected": "ยกเลิกการเชื่อมต่อโฟลเดอร์แล้ว",

@@ -1004,7 +1004,7 @@
       "FolderCloned": "Папка клонирована",
       "FolderCreated": "Папка создана",
       "FolderCreationFailed": "Не удалось создать папку.",
-      "FolderCreationOpenPersonalProject": "Открыть данные личного проекта",
+      "FolderCreationOpenPersonalProject": "Перейти к проекту",
       "FolderDeleted": "Папка {{ folderName }} удалена.",
       "FolderDeletedForever": "Папка {{ folderName }} навсегда удалена.",
       "FolderDisconnected": "Папка отключена.",

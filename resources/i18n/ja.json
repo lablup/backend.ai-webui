@@ -1004,7 +1004,7 @@
       "FolderCloned": "クローンされたフォルダー",
       "FolderCreated": "作成されたフォルダ",
       "FolderCreationFailed": "フォルダの作成に失敗しました。",
-      "FolderCreationOpenPersonalProject": "個人プロジェクトのデータを開く",
+      "FolderCreationOpenPersonalProject": "移動",
       "FolderDeleted": "{{ folderName }} フォルダが削除されました。",
       "FolderDeletedForever": "{{ folderName }} フォルダを完全に削除しました。",
       "FolderDisconnected": "フォルダが切断されました。",

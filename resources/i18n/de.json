@@ -1004,7 +1004,7 @@
       "FolderCloned": "Ordner geklont",
       "FolderCreated": "Ordner erstellt",
       "FolderCreationFailed": "Ordner konnte nicht erstellt werden.",
-      "FolderCreationOpenPersonalProject": "Daten des persönlichen Projekts öffnen",
+      "FolderCreationOpenPersonalProject": "Zum Projekt",
       "FolderDeleted": "Der Ordner {{ FolderName }} wurde gelöscht.",
       "FolderDeletedForever": "Der Ordner {{ folderName }} wurde dauerhaft gelöscht.",
       "FolderDisconnected": "Ordner wurde getrennt.",

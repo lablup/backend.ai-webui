@@ -1004,7 +1004,7 @@
       "FolderCloned": "Pasta clonada",
       "FolderCreated": "Pasta criada",
       "FolderCreationFailed": "Falha ao criar a pasta.",
-      "FolderCreationOpenPersonalProject": "Abrir dados do projeto pessoal",
+      "FolderCreationOpenPersonalProject": "Ir para o projeto",
       "FolderDeleted": "A pasta {{ folderName }} foi excluída.",
       "FolderDeletedForever": "Pasta {{ folderName }} excluída permanentemente.",
       "FolderDisconnected": "A pasta foi desconectada.",

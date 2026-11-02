@@ -1004,7 +1004,7 @@
       "FolderCloned": "Klasör klonlandı",
       "FolderCreated": "Klasör oluşturuldu",
       "FolderCreationFailed": "Klasör oluşturulamadı.",
-      "FolderCreationOpenPersonalProject": "Kişisel proje verilerini aç",
+      "FolderCreationOpenPersonalProject": "Projeye git",
       "FolderDeleted": "{{ folderName }} klasörü silindi.",
       "FolderDeletedForever": "{{ folderName }} klasörü kalıcı olarak silindi.",
       "FolderDisconnected": "Klasörün bağlantısı kesildi.",

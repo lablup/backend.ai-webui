@@ -1004,7 +1004,7 @@
       "FolderCloned": "Ο φάκελος κλωνοποιήθηκε",
       "FolderCreated": "Δημιουργήθηκε φάκελος",
       "FolderCreationFailed": "Αποτυχία δημιουργίας φακέλου.",
-      "FolderCreationOpenPersonalProject": "Άνοιγμα δεδομένων προσωπικού έργου",
+      "FolderCreationOpenPersonalProject": "Μετάβαση στο έργο",
       "FolderDeleted": "Ο φάκελος {{ folderName }} έχει διαγραφεί.",
       "FolderDeletedForever": "Ο φάκελος {{ folderName }} διαγράφηκε οριστικά.",
       "FolderDisconnected": "Ο φάκελος αποσυνδέθηκε.",

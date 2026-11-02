@@ -1004,7 +1004,7 @@
       "FolderCloned": "Thư mục được nhân bản",
       "FolderCreated": "Thư mục đã được tạo",
       "FolderCreationFailed": "Không thể tạo thư mục.",
-      "FolderCreationOpenPersonalProject": "Mở dữ liệu dự án cá nhân",
+      "FolderCreationOpenPersonalProject": "Đi tới dự án",
       "FolderDeleted": "Thư mục {{ folderName }} đã bị xóa.",
       "FolderDeletedForever": "Đã xóa vĩnh viễn thư mục {{ folderName }}.",
       "FolderDisconnected": "Thư mục đã bị ngắt kết nối.",

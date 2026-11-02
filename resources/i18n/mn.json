@@ -1004,7 +1004,7 @@
       "FolderCloned": "Фолдерыг хуулсан",
       "FolderCreated": "Фолдер үүсгэсэн",
       "FolderCreationFailed": "Фолдер үүсгэхэд алдаа гарлаа.",
-      "FolderCreationOpenPersonalProject": "Хувийн төслийн өгөгдлийг нээх",
+      "FolderCreationOpenPersonalProject": "Төсөл рүү очих",
       "FolderDeleted": "{{ folderName }} хавтас устгагдсан.",
       "FolderDeletedForever": "{{ folderName }} хавтасыг бүрмөсөн устгасан.",
       "FolderDisconnected": "Фолдерыг салгасан.",

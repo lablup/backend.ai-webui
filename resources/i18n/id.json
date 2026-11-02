@@ -1004,7 +1004,7 @@
       "FolderCloned": "Folder diklon",
       "FolderCreated": "Folder dibuat",
       "FolderCreationFailed": "Gagal membuat folder.",
-      "FolderCreationOpenPersonalProject": "Buka Data Proyek Pribadi",
+      "FolderCreationOpenPersonalProject": "Buka Proyek",
       "FolderDeleted": "Folder {{ folderName }} telah dihapus.",
       "FolderDeletedForever": "Berhasil menghapus permanen folder {{ folderName }}.",
       "FolderDisconnected": "Koneksi folder telah terputus.",

@@ -1004,7 +1004,7 @@
       "FolderCloned": "Kloonattu kansio",
       "FolderCreated": "Kansio luotu",
       "FolderCreationFailed": "Kansion luonti epäonnistui.",
-      "FolderCreationOpenPersonalProject": "Avaa henkilökohtaisen projektin tiedot",
+      "FolderCreationOpenPersonalProject": "Siirry projektiin",
       "FolderDeleted": "Kansio {{ folderName }} on poistettu.",
       "FolderDeletedForever": "Kansio {{ folderName }} poistettiin pysyvästi.",
       "FolderDisconnected": "Kansio on katkaistu.",
