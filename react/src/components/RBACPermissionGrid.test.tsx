@@ -98,7 +98,7 @@ describe('RBACPermissionGrid permission type filter', () => {
     expect(tableRender).toHaveBeenCalledTimes(1);
   });
 
-  it('brings every row back after the filter is cleared', async () => {
+  it('brings every row back after the clear button empties the filter', async () => {
     const input = renderGrid();
 
     type(input, 'vfo');
@@ -106,7 +106,8 @@ describe('RBACPermissionGrid permission type filter', () => {
       expect(screen.queryByText('agent')).not.toBeInTheDocument(),
     );
 
-    type(input, '');
+    fireEvent.click(screen.getByRole('button', { name: /clear/i }));
+    expect(input).toHaveValue('');
     expect(await screen.findByText('agent')).toBeInTheDocument();
     expect(screen.getByText('session')).toBeInTheDocument();
   });

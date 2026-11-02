@@ -112,35 +112,6 @@ export interface RBACPermissionGridProps {
 }
 
 /**
- * Owns the typed text so a keystroke re-renders only this input: the compiler
- * does not memoize the grid's table, so state held there re-renders every row.
- */
-const PermissionTypeFilter: React.FC<{
-  initialValue: string;
-  onChange: (value: string) => void;
-}> = ({ initialValue, onChange }) => {
-  'use memo';
-  const { t } = useTranslation();
-  const [value, setValue] = useState(initialValue);
-  const { run: debouncedOnChange } = useDebounceFn(onChange, { wait: 200 });
-
-  return (
-    <BAITextInput
-      aria-label={t('rbac.FilterByPermissionType')}
-      value={value}
-      hasClear
-      startIcon={Search}
-      placeholder={t('rbac.FilterByPermissionType')}
-      onChange={(next) => {
-        setValue(next);
-        debouncedOnChange(next);
-      }}
-      width={260}
-    />
-  );
-};
-
-/**
  * One row per permission type of a scope and one checkbox column per
  * permission bit, edited in place. Every toggled cell is a pending change
  * until the floating save bar hands them all to `onSave`. Shared by the role
@@ -286,6 +257,9 @@ const RBACPermissionGrid: React.FC<RBACPermissionGridProps> = ({
   };
 
   const [filterText, setFilterText] = useState('');
+  const { run: setFilterTextDebounced } = useDebounceFn(setFilterText, {
+    wait: 200,
+  });
   const keyword = filterText.trim().toLowerCase();
   const visibleRows = keyword
     ? rows.filter(
@@ -369,9 +343,16 @@ const RBACPermissionGrid: React.FC<RBACPermissionGridProps> = ({
       <BAIFlex justify="between" align="center" gap="sm" wrap="wrap">
         <BAIFlex gap="sm" align="center" wrap="wrap">
           {toolbarStart}
-          <PermissionTypeFilter
-            initialValue={filterText}
-            onChange={setFilterText}
+          {/* Uncontrolled: the compiler leaves the table unmemoized, so state
+              set on each keystroke would re-render every row. */}
+          <BAITextInput
+            aria-label={t('rbac.FilterByPermissionType')}
+            defaultValue={filterText}
+            hasClear
+            startIcon={Search}
+            placeholder={t('rbac.FilterByPermissionType')}
+            onChange={(value) => setFilterTextDebounced(value)}
+            width={260}
           />
         </BAIFlex>
         <BAIFetchKeyButton
