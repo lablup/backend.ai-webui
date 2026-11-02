@@ -1071,8 +1071,9 @@ test.describe(
       });
       await loginAsAdmin(page, request);
       await navigateTo(page, 'rbac');
-      await createTestRole(page, roleName);
+      // Set first: cleanupTestRole copes with a role that was never created.
       roleCreated = true;
+      await createTestRole(page, roleName);
 
       const { adminRoles } = await gqlAdmin<{
         adminRoles: { edges: Array<{ node: { id: string } }> };
@@ -1085,6 +1086,7 @@ test.describe(
         }`,
         { name: roleName },
       );
+      expect(adminRoles.edges).toHaveLength(1);
       const roleId = toLocalId(adminRoles.edges[0].node.id);
       const { adminUsersV2 } = await gqlAdmin<{
         adminUsersV2: {
@@ -1105,6 +1107,7 @@ test.describe(
           toLocalId(e.node.id),
         ]),
       );
+      expect(Object.keys(userIdByEmail).sort()).toEqual([...userEmails].sort());
       for (const [index, email] of userEmails.entries()) {
         // Keep the two grant times apart so the sort order is unambiguous.
         if (index > 0) await page.waitForTimeout(2000);
