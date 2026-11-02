@@ -5643,16 +5643,6 @@
           ]
         },
         {
-          "key": "userSettings.AutoLogout",
-          "tab": "general",
-          "groupKey": "userSettings.Preferences",
-          "groupId": "group-preferences",
-          "testId": "items-auto-logout",
-          "descriptionKeys": [
-            "userSettings.DescAutoLogout"
-          ]
-        },
-        {
           "key": "userSettings.AutomaticUpdateCheck",
           "tab": "general",
           "groupKey": "userSettings.Preferences",

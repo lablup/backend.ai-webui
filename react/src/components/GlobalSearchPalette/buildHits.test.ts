@@ -129,19 +129,19 @@ describe('buildHits', () => {
 
   it("targets a setting item through its page's tab param and ?setting=", () => {
     const hit = _.find(build(), {
-      id: 'setting:/usersettings#userSettings.AutoLogout',
+      id: 'setting:/usersettings#userSettings.MyKeypairInfo',
     });
     // The settings modal's categories are `?settings=`, not `?tab=` (FR-3903).
     expect(hit?.target).toEqual({
       path: '/usersettings',
-      search: { settings: 'general', setting: 'userSettings.AutoLogout' },
+      search: { settings: 'general', setting: 'userSettings.MyKeypairInfo' },
     });
     expect(hit?.breadcrumbKeys).toEqual([
       'webui.menu.Settings&Logs',
       'userSettings.General',
       'userSettings.Preferences',
     ]);
-    expect(hit?.bodyKeys).toContain('userSettings.DescAutoLogout');
+    expect(hit?.bodyKeys).toContain('userSettings.DescMyKeypairInfo');
   });
 
   it('carries the group on auxiliaryData so Astryx can auto-group', () => {
