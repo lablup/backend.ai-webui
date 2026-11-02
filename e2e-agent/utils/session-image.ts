@@ -97,3 +97,103 @@ export async function findRunnableImage(
   }
   return candidates[0];
 }
+
+/**
+ * Picks an environment none of whose images is installed or private, so the
+ * session launcher lists it only when `showNonInstalledImages` is on.
+ * `environment` is the name the launcher shows (image metadata, else the
+ * last path segment), chosen so no installed environment shares it; `image`
+ * is one of its images as `registry/namespace:tag@arch`, and `imageKeyword`
+ * the last path segment, which the Environments page's "Image" filter matches.
+ */
+export async function findNotInstalledEnvironment(browser: Browser) {
+  await expect
+    .poll(
+      () =>
+        browser
+          .evaluate(() => (globalThis as any).backendaiclient?.ready === true)
+          .catch(() => false),
+      { timeout: 30_000 },
+    )
+    .toBe(true);
+  const { images, imageInfo } = (await browser.evaluate(async () => {
+    const client = (globalThis as any).backendaiclient;
+    const data = await client.query(
+      `query { images { name namespace registry tag architecture installed labels { key value } } }`,
+      {},
+    );
+    const metadata = await fetch("/resources/image_metadata.json")
+      .then((res) => res.json())
+      .catch(() => ({}));
+    return { images: data.images, imageInfo: metadata.imageInfo ?? {} };
+  })) as {
+    images: Array<ImageRow & { installed: boolean | null }>;
+    imageInfo: Record<string, { name?: string }>;
+  };
+
+  const groups = new Map<string, typeof images>();
+  for (const image of images) {
+    const key = `${image.registry}/${image.namespace ?? image.name}`;
+    groups.set(key, [...(groups.get(key) ?? []), image]);
+  }
+  const displayName = (environment: string) => {
+    const segments = environment.split("/");
+    return imageInfo[segments[2]]?.name ?? segments[segments.length - 1];
+  };
+  const installedLabels = [...groups]
+    .filter(([, group]) => group.some((image) => image.installed))
+    .map(([environment]) =>
+      `${environment} ${displayName(environment)}`.toLowerCase(),
+    );
+  const isPrivate = (image: ImageRow) =>
+    image.labels?.some(
+      (label) =>
+        label.key === "ai.backend.features" &&
+        label.value.split(" ").includes("private"),
+    );
+  const candidates = [...groups]
+    .filter(([, group]) =>
+      group.every((image) => !image.installed && !isPrivate(image)),
+    )
+    .map(([environment, group]) => {
+      const image = group
+        .map((i) => `${environment}:${i.tag}@${i.architecture}`)
+        .sort()[0];
+      return {
+        environment: displayName(environment),
+        image,
+        imageKeyword: environment.split("/").pop() ?? environment,
+      };
+    })
+    .filter(
+      ({ environment }) =>
+        environment.length >= 3 &&
+        !installedLabels.some((label) =>
+          label.includes(environment.toLowerCase()),
+        ),
+    )
+    .sort((a, b) => a.environment.localeCompare(b.environment));
+  if (candidates.length === 0) {
+    throw new Error(
+      "e2e-agent: no environment has only non-installed images under a name no installed environment shares",
+    );
+  }
+  return candidates[0];
+}
+
+/** Whether the manager reports the image (full name) as installed. */
+export async function isImageInstalled(browser: Browser, fullName: string) {
+  return browser.evaluate(async (target: string) => {
+    const client = (globalThis as any).backendaiclient;
+    const data = await client.query(
+      `query { images { name namespace registry tag architecture installed } }`,
+      {},
+    );
+    const image = data.images.find(
+      (i: any) =>
+        `${i.registry}/${i.namespace ?? i.name}:${i.tag}@${i.architecture}` ===
+        target,
+    );
+    return image ? Boolean(image.installed) : "absent";
+  }, fullName);
+}
