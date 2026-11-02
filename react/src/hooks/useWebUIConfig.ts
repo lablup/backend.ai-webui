@@ -90,7 +90,7 @@ export const configLoadedState = atom<boolean>(false);
 export const configParseErrorState = atom<unknown | null>(null);
 
 /**
- * Holds the auto_logout flag extracted from config.
+ * Holds the autoLogout flag: the public app config `settings`, else config.toml.
  */
 export const autoLogoutState = atom<boolean>(false);
 
@@ -219,22 +219,6 @@ export function fetchAppConfigOnce(): Promise<ConfigFetchResult> {
 }
 
 /**
- * The user's own choice (user settings, kept in `backendaioptions`) wins over
- * the configured default, whether that default came from the file or from
- * the public app config.
- */
-export function resolveAutoLogout(
-  cfg: Pick<LoginConfigState, 'autoLogout'>,
-): boolean {
-  const options = (globalThis as Record<string, unknown>).backendaioptions as
-    { get: (key: string, defaultValue?: unknown) => unknown } | undefined;
-  const stored = options ? options.get('auto_logout') : null;
-  return stored === null || stored === undefined
-    ? cfg.autoLogout
-    : Boolean(stored);
-}
-
-/**
  * Process the raw config to extract config values and set global state.
  * This replaces the Lit shell's loadConfig() method.
  */
@@ -268,7 +252,7 @@ function processConfig(config: RawTomlConfig): {
   const loginConfig = refreshConfigFromToml(config);
 
   return {
-    autoLogout: resolveAutoLogout(loginConfig),
+    autoLogout: loginConfig.autoLogout,
     proxyUrl,
     loginPlugin: loginConfig.loginPlugin,
     loginConfig,
@@ -350,7 +334,7 @@ export function initializeConfigOnce(
       );
       syncDebugFlag(effectiveLoginConfig);
       store.set(loginConfigState, effectiveLoginConfig);
-      store.set(autoLogoutState, resolveAutoLogout(effectiveLoginConfig));
+      store.set(autoLogoutState, effectiveLoginConfig.autoLogout);
       store.set(proxyUrlState, proxyUrl);
       store.set(loginPluginState, effectiveLoginConfig.loginPlugin);
 

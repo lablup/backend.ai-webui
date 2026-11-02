@@ -554,12 +554,8 @@ export async function loadConfigFromWebServer(
     // Re-process the merged config
     const { refreshConfigFromToml, syncDebugFlag } =
       await import('./loginConfig');
-    const {
-      loginConfigState,
-      autoLogoutState,
-      loginPluginState,
-      resolveAutoLogout,
-    } = await import('../hooks/useWebUIConfig');
+    const { loginConfigState, autoLogoutState, loginPluginState } =
+      await import('../hooks/useWebUIConfig');
     // `mergedConfig` keeps this page's own endpoint (the webserver's was
     // stripped above); the public slice belongs to the server being joined.
     const publicSlice = await fetchPublicDomainConfigOnce(
@@ -575,7 +571,7 @@ export async function loadConfigFromWebServer(
     );
     syncDebugFlag(effectiveLoginConfig);
     jotaiStore.set(loginConfigState, effectiveLoginConfig);
-    jotaiStore.set(autoLogoutState, resolveAutoLogout(effectiveLoginConfig));
+    jotaiStore.set(autoLogoutState, effectiveLoginConfig.autoLogout);
     jotaiStore.set(loginPluginState, effectiveLoginConfig.loginPlugin);
   }
 }
