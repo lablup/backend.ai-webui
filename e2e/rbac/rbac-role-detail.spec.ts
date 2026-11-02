@@ -1,7 +1,11 @@
 // spec: e2e/.agent-output/test-plan-rbac-management.md
 // Scenarios: 3.1 – 3.4, 5.1 – 5.4, 6.2 – 6.3
 // (Role detail drawer, user assignments, edge cases)
-import { createAdminApiContext, purgeUserViaApi } from '../utils/admin-api';
+import {
+  createAdminApiContext,
+  gqlAdmin,
+  purgeUserViaApi,
+} from '../utils/admin-api';
 import {
   KeyPairModal,
   UserSettingModal,
@@ -981,6 +985,142 @@ test.describe(
       await expect(dataRows(page)).toHaveCount(1, {
         timeout: SLOW_PAGE_TIMEOUT,
       });
+    });
+  },
+);
+
+// Two disposable users: one assigned to the role first (the holder), one
+// never assigned (the newcomer). Created and purged through the admin API.
+const SKIP_FIXTURE_RUN_ID = Date.now().toString(36) + randomUUID().slice(0, 4);
+const SKIP_HOLDER_EMAIL = `e2e-rbac-holder-${SKIP_FIXTURE_RUN_ID}@lablup.com`;
+const SKIP_NEWCOMER_EMAIL = `e2e-rbac-newcomer-${SKIP_FIXTURE_RUN_ID}@lablup.com`;
+
+test.describe(
+  'RBAC Role Assignments - users already holding the role',
+  { tag: ['@rbac', '@regression', '@functional', '@requires-manager-v26.9'] },
+  () => {
+    let roleName: string;
+    let roleToCleanup: string | undefined;
+
+    test.beforeAll(async () => {
+      const api = await createAdminApiContext();
+      try {
+        const domainName = await getE2EDomainName(api);
+        for (const email of [SKIP_HOLDER_EMAIL, SKIP_NEWCOMER_EMAIL]) {
+          await gqlAdmin(
+            api,
+            `mutation($email: String!, $props: UserInput!) {
+              create_user(email: $email, props: $props) { ok msg }
+            }`,
+            {
+              email,
+              props: {
+                username: email.split('@')[0],
+                password: ASSIGN_FIXTURE_PASSWORD,
+                need_password_change: false,
+                domain_name: domainName,
+              },
+            },
+          );
+        }
+      } finally {
+        await api.dispose();
+      }
+    });
+
+    test.afterAll(async () => {
+      let api: APIRequestContext | undefined;
+      try {
+        api = await createAdminApiContext();
+        for (const email of [SKIP_HOLDER_EMAIL, SKIP_NEWCOMER_EMAIL]) {
+          await purgeUserViaApi(api, email);
+        }
+      } catch (error) {
+        console.warn(
+          '[rbac-role-detail] failed to purge fixture users:',
+          error,
+        );
+      } finally {
+        await api?.dispose();
+      }
+    });
+
+    test.beforeEach(async ({ page, request }) => {
+      roleToCleanup = undefined;
+      // Keep the first-visit "superadmin view has changed" tour from
+      // covering the RBAC page.
+      await page.addInitScript(() => {
+        for (const key of [
+          'backendaiwebui.settings.user.has_opened_tour_back_to_user_view',
+          'backendaiwebui.settings.user.has_opened_tour_back_to_admin_settings',
+        ]) {
+          localStorage.setItem(key, 'true');
+        }
+      });
+      await loginAsAdmin(page, request);
+      roleName = `e2e-skip-role-${Date.now().toString(36)}${randomUUID().slice(0, 4)}`;
+      roleToCleanup = roleName;
+      await navigateTo(page, 'rbac');
+      await createTestRole(page, roleName);
+    });
+
+    test.afterEach(async ({ page }) => {
+      if (!roleToCleanup) return;
+      try {
+        await navigateTo(page, 'rbac');
+        await cleanupTestRole(page, roleToCleanup);
+      } catch (error) {
+        console.warn(
+          `[rbac-role-detail] failed to purge role ${roleName}:`,
+          error,
+        );
+      } finally {
+        roleToCleanup = undefined;
+      }
+    });
+
+    test('Superadmin can see users already holding the role skipped while new users are assigned', async ({
+      page,
+    }) => {
+      const drawer = await openRoleDrawer(page, roleName);
+      await drawerTab(page, 'Role Assignments').click();
+      const assignModal = page.getByRole('dialog', { name: 'Add User' });
+
+      // The holder gets the role first.
+      await drawer.getByRole('button', { name: 'Add User' }).click();
+      await expect(assignModal).toBeVisible();
+      await pickAssignUser(page, assignModal, SKIP_HOLDER_EMAIL);
+      await assignModal.getByRole('button', { name: 'Add' }).click();
+      await expect(assignModal).toBeHidden({ timeout: 10000 });
+      await expect(
+        drawer.getByRole('row').filter({ hasText: SKIP_HOLDER_EMAIL }),
+      ).toBeVisible({ timeout: 10000 });
+
+      // Assign the holder again together with the newcomer.
+      await drawer.getByRole('button', { name: 'Add User' }).click();
+      await expect(assignModal).toBeVisible();
+      await pickAssignUser(page, assignModal, SKIP_HOLDER_EMAIL);
+      await pickAssignUser(page, assignModal, SKIP_NEWCOMER_EMAIL);
+      await assignModal.getByRole('button', { name: 'Add' }).click();
+
+      // The holder is reported as skipped, not as a failure.
+      await expect(
+        toast(page, /Skipped 1 user\(s\) who already hold this role/),
+      ).toContainText(SKIP_HOLDER_EMAIL, { timeout: 10000 });
+      await expect(
+        toast(page, /Users assigned to role successfully/i),
+      ).toBeVisible();
+      await expect(assignModal).toBeHidden();
+      await expect(
+        page.getByText('Some user assignments failed. Please check the items.'),
+      ).toBeHidden();
+
+      await expect(
+        drawer.getByRole('row').filter({ hasText: SKIP_NEWCOMER_EMAIL }),
+      ).toBeVisible({ timeout: 10000 });
+      await expect(
+        drawer.getByRole('row').filter({ hasText: SKIP_HOLDER_EMAIL }),
+      ).toHaveCount(1);
     });
   },
 );
