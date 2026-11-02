@@ -664,21 +664,10 @@ export function refreshConfigFromToml(config: any): LoginConfigState {
 }
 
 /**
- * The diagnostics surfaces (i18n key markers, error details) read
- * `globalThis.backendaiwebui.debug` at call time, so every state the app
- * settles on is mirrored there: the file value, then each merged document.
- */
-export function syncDebugFlag(cfg: Pick<LoginConfigState, 'debug'>): void {
-  (globalThis as any).backendaiwebui = (globalThis as any).backendaiwebui || {};
-  (globalThis as any).backendaiwebui.debug = cfg.debug;
-}
-
-/**
  * Apply the login configuration state to globalThis.backendaiclient._config
  * after a successful GQL connection.
  */
 export function applyConfigToClient(cfg: LoginConfigState): void {
-  syncDebugFlag(cfg);
   const client = (globalThis as any).backendaiclient;
   if (!client || !client._config) return;
 
