@@ -1,7 +1,11 @@
 // spec: e2e/.agent-output/test-plan-rbac-management.md
 // Scenarios: 3.1 – 3.4, 5.1 – 5.4, 6.2 – 6.3
 // (Role detail drawer, user assignments, edge cases)
-import { createAdminApiContext, purgeUserViaApi } from '../utils/admin-api';
+import {
+  createAdminApiContext,
+  gqlAdmin,
+  purgeUserViaApi,
+} from '../utils/admin-api';
 import {
   KeyPairModal,
   UserSettingModal,
@@ -981,6 +985,181 @@ test.describe(
       await expect(dataRows(page)).toHaveCount(1, {
         timeout: SLOW_PAGE_TIMEOUT,
       });
+    });
+  },
+);
+
+// Role Assignments list `adminRoleAssignments` rows since #10275, so each row
+// carries its grant time and the Granted At column sorts server-side.
+test.describe(
+  'RBAC Role Assignments - Granted At',
+  { tag: ['@rbac', '@regression', '@functional', '@requires-manager-v26.9'] },
+  () => {
+    const runId = Date.now().toString(36) + randomUUID().slice(0, 4);
+    const roleName = `e2e-granted-role-${runId}`;
+    // Granted in this order, so ascending Granted At lists the first one first.
+    const userEmails = [
+      `e2e-rbac-granted-a-${runId}@lablup.com`,
+      `e2e-rbac-granted-b-${runId}@lablup.com`,
+    ];
+    let api: APIRequestContext | undefined;
+    let roleCreated = false;
+
+    test.beforeAll(async () => {
+      api = await createAdminApiContext();
+      const domainName = await getE2EDomainName(api);
+      for (const email of userEmails) {
+        const created = await gqlAdmin<{
+          create_user: { ok: boolean; msg: string };
+        }>(
+          api,
+          `mutation($email: String!, $props: UserInput!) {
+            create_user(email: $email, props: $props) { ok msg }
+          }`,
+          {
+            email,
+            props: {
+              username: email.split('@')[0],
+              password: `e2e-${randomUUID().slice(0, 12)}@Pw`,
+              need_password_change: false,
+              domain_name: domainName,
+            },
+          },
+        );
+        expect(created.create_user.ok, created.create_user.msg).toBe(true);
+      }
+    });
+
+    test.afterEach(async ({ page }) => {
+      if (!roleCreated) return;
+      try {
+        await navigateTo(page, 'rbac');
+        await cleanupTestRole(page, roleName);
+      } catch (error) {
+        console.warn(
+          `[rbac-role-detail] failed to purge role ${roleName}:`,
+          error,
+        );
+      } finally {
+        roleCreated = false;
+      }
+    });
+
+    test.afterAll(async () => {
+      if (!api) return;
+      for (const email of userEmails) {
+        await purgeUserViaApi(api, email).catch((error) =>
+          console.warn(`[rbac-role-detail] could not purge ${email}:`, error),
+        );
+      }
+      await api.dispose();
+    });
+
+    test('Superadmin can sort role assignments by Granted At', async ({
+      page,
+      request,
+    }) => {
+      const adminApi = api!;
+      // Keep the superadmin first-use tour modal from covering the page.
+      await page.addInitScript(() => {
+        for (const tour of ['back_to_user_view', 'back_to_admin_settings']) {
+          localStorage.setItem(
+            `backendaiwebui.settings.user.has_opened_tour_${tour}`,
+            'true',
+          );
+        }
+      });
+      await loginAsAdmin(page, request);
+      await navigateTo(page, 'rbac');
+      await createTestRole(page, roleName);
+      roleCreated = true;
+
+      const { adminRoles } = await gqlAdmin<{
+        adminRoles: { edges: Array<{ node: { id: string } }> };
+      }>(
+        adminApi,
+        `query ($name: String!) {
+          adminRoles(filter: { name: { equals: $name } }, limit: 1) {
+            edges { node { id } }
+          }
+        }`,
+        { name: roleName },
+      );
+      const roleId = toLocalId(adminRoles.edges[0].node.id);
+      const { adminUsersV2 } = await gqlAdmin<{
+        adminUsersV2: {
+          edges: Array<{ node: { id: string; basicInfo: { email: string } } }>;
+        };
+      }>(
+        adminApi,
+        `query ($emails: [String!]) {
+          adminUsersV2(filter: { email: { in: $emails } }) {
+            edges { node { id basicInfo { email } } }
+          }
+        }`,
+        { emails: userEmails },
+      );
+      const userIdByEmail = Object.fromEntries(
+        adminUsersV2.edges.map((e) => [
+          e.node.basicInfo.email,
+          toLocalId(e.node.id),
+        ]),
+      );
+      for (const [index, email] of userEmails.entries()) {
+        // Keep the two grant times apart so the sort order is unambiguous.
+        if (index > 0) await page.waitForTimeout(2000);
+        const { adminBulkAssignRole } = await gqlAdmin<{
+          adminBulkAssignRole: { failed: Array<{ message: string }> };
+        }>(
+          adminApi,
+          `mutation ($input: BulkAssignRoleInput!) {
+            adminBulkAssignRole(input: $input) { failed { message } }
+          }`,
+          { input: { roleId, userIds: [userIdByEmail[email]] } },
+        );
+        expect(adminBulkAssignRole.failed).toEqual([]);
+      }
+
+      const drawer = await openRoleDrawer(page, roleName);
+      await drawerTab(page, 'Role Assignments').click();
+      await expect(drawerTab(page, 'Role Assignments')).toHaveAttribute(
+        'aria-current',
+        'true',
+      );
+
+      const rows = dataRows(page, drawer);
+      await expect(rows).toHaveCount(2, { timeout: 10000 });
+      for (const email of userEmails) {
+        await expect(rows.filter({ hasText: email })).toContainText(
+          /\d{4}-\d{2}-\d{2} \d{2}:\d{2}/,
+        );
+      }
+
+      const grantedAtHeader = drawer
+        .getByRole('columnheader')
+        .filter({ hasText: 'Granted At' });
+      const sortBy = async (direction: 'ASC' | 'DESC') => {
+        const response = page.waitForResponse((res) => {
+          const body = res.request().postData() ?? '';
+          return (
+            body.includes('RoleAssignmentTabQuery') &&
+            body.includes('GRANTED_AT') &&
+            body.includes(direction)
+          );
+        });
+        await grantedAtHeader.getByRole('button').click();
+        await response;
+      };
+
+      await sortBy('ASC');
+      await expect(grantedAtHeader).toHaveAttribute('aria-sort', 'ascending');
+      await expect(rows.first()).toContainText(userEmails[0]);
+      await expect(rows.last()).toContainText(userEmails[1]);
+
+      await sortBy('DESC');
+      await expect(grantedAtHeader).toHaveAttribute('aria-sort', 'descending');
+      await expect(rows.first()).toContainText(userEmails[1]);
+      await expect(rows.last()).toContainText(userEmails[0]);
     });
   },
 );
