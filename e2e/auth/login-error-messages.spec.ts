@@ -534,6 +534,7 @@ async function gotoLoginPageWithOpenIDError(
   request: APIRequestContext,
   errorCode: string,
 ): Promise<void> {
+  // Unlike gotoLoginPage, no later /server/login mock needs the silent login to settle.
   // An empty realm name pins the banner title to the `OpenID` default.
   await modifyConfigToml(page, request, {
     general: {
@@ -578,7 +579,7 @@ test.describe(
       await expect(
         page.getByRole('button', { name: 'Login', exact: true }),
       ).toBeVisible({ timeout: 30_000 });
-      await expect(page.getByText('Login with OpenID failed')).toHaveCount(0);
+      await expect(banner).toHaveCount(0);
     });
 
     test('User sees the error code in a generic banner for an unknown OpenID error', async ({

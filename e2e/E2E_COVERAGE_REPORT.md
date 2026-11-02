@@ -12,11 +12,11 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 376 / 526 features covered (71%)**
+**Overall (in-scope routes): 378 / 528 features covered (72%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
-| Authentication           | `/interactive-login`                             |    37    |   35    | 🔶 95%  |
+| Authentication           | `/interactive-login`                             |    39    |   37    | 🔶 95%  |
 | Change Password          | `/change-password`                               |    9     |    9    | ✅ 100% |
 | Start Page               | `/start`                                         |    8     |    6    | 🔶 75%  |
 | Dashboard                | `/dashboard`                                     |    11    |    9    | 🔶 82%  |
@@ -54,7 +54,7 @@
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **526**  | **376** | **71%** |
+| **Total**                |                                                  | **528**  | **378** | **72%** |
 
 ---
 
@@ -110,12 +110,14 @@
 | Auth failed — missing keypair                        | ✅     | `missing keypair shows login information mismatch notification`                                                |
 | Active login session exists notification             | ✅     | `active login session exists shows session exists notification`                                                |
 | Monitor role login forbidden                         | ✅     | `monitor role user sees login forbidden notification`                                                          |
+| OpenID login failure banner (`bai_error`)            | ✅     | `User sees an OpenID login failure banner that does not come back after a reload`                              |
+| OpenID login failure — unknown error code            | ✅     | `User sees the error code in a generic banner for an unknown OpenID error`                                     |
 | Sign-in mode switch locked when apiEndpoint is set   | ✅     | `User cannot switch to API sign-in when apiEndpoint is configured`                                             |
 | Sign-in mode switch usable when apiEndpoint is empty | ✅     | `User can switch to API sign-in when apiEndpoint is empty`                                                     |
 | OAuth/SSO login flow                                 | ❌     | -                                                                                                              |
 | Session persistence                                  | ❌     | -                                                                                                              |
 
-**Coverage: 🔶 35/37 features**
+**Coverage: 🔶 37/39 features**
 
 ---
 
