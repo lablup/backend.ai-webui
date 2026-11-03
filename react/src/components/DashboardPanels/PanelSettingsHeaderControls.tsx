@@ -3,25 +3,15 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useDashboardResourceGroups } from './DashboardResourceGroups';
+import PanelRangeSelect from './PanelRangeSelect';
 import { cardResourceGroup } from './dashboardScope';
 import type { PanelSettingOverride } from './panelSettingOverrides';
-import {
-  DEFAULT_RANGE,
-  RANGE_LABEL_KEYS,
-  RANGE_PRESETS,
-  type RangePreset,
-  hasSetting,
-  isRangePreset,
-} from './panelSettings';
+import { DEFAULT_RANGE, hasSetting, rangeLabel } from './panelSettings';
 import type { PanelDefinition, PanelSettings } from './types';
 import { useDashboardFilterContext } from './useDashboardFilters';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
-import {
-  BAIFlex,
-  BAIScopedResourceGroupSelect,
-  BAISelect,
-} from 'backend.ai-ui';
+import { BAIFlex, BAIScopedResourceGroupSelect } from 'backend.ai-ui';
 import { RotateCcw } from 'lucide-react';
 import React, { Suspense, createContext, use } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -71,13 +61,7 @@ const PanelSettingsHeaderControls: React.FC = () => {
     hasSetting(definition, 'resourceGroup')
       ? (validPick(saved?.resourceGroups) ?? defaultResourceGroupLabel)
       : null,
-    hasSetting(definition, 'range')
-      ? t(
-          RANGE_LABEL_KEYS[
-            isRangePreset(savedRange) ? savedRange : DEFAULT_RANGE
-          ],
-        )
-      : null,
+    hasSetting(definition, 'range') ? rangeLabel(savedRange, t) : null,
   ]
     .filter(Boolean)
     .join(' · ');
@@ -120,19 +104,12 @@ const PanelSettingsHeaderControls: React.FC = () => {
           placement="end"
           hasHoverIndication={false}
         >
-          <BAISelect
+          <PanelRangeSelect
             size="small"
-            showSearch={false}
             variant={overridden.range ? 'filled' : 'borderless'}
             aria-label={t('dashboard.settings.TimeRange')}
-            options={RANGE_PRESETS.map((preset) => ({
-              value: preset,
-              label: t(RANGE_LABEL_KEYS[preset]),
-            }))}
             value={effective?.range ?? DEFAULT_RANGE}
-            onChange={(value: RangePreset | null) => {
-              if (value) onChange({ range: value });
-            }}
+            onChange={(range) => onChange({ range })}
           />
         </Tooltip>
       ) : null}

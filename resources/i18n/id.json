@@ -885,6 +885,7 @@
       "SessionStatus": "Status Sesi",
       "SessionStatusTooltip": "Sesi saat ini menurut status, dan sesi aktif menurut jenis sesi.",
       "Share": "Porsi",
+      "StartedBefore": "Dimulai sebelum {{time}}",
       "Starting": "Memulai",
       "Succeeded": "Berhasil",
       "ThisRange": "Rentang ini",
@@ -942,6 +943,8 @@
     "settings": {
       "AllResourceGroups": "Semua grup sumber daya",
       "BackToSavedSetting": "Kembali ke pengaturan tersimpan ({{value}})",
+      "CustomRange": "Rentang kustom",
+      "CustomRangeHelp": "Pilih awal dan akhir dengan jarak paling lama {{days}} hari. Akhir yang lebih lambat dari sekarang diatur ke sekarang.",
       "DefaultCardSettings": "Pengaturan default kartu",
       "DefaultResourceGroup": "Grup sumber daya default",
       "DefaultSettings": "Pengaturan default",
@@ -951,6 +954,10 @@
       "Last1Hour": "1 jam terakhir",
       "Last24Hours": "24 jam terakhir",
       "Last7Days": "7 hari terakhir",
+      "RangeEnd": "Selesai",
+      "RangeEndBeforeStart": "Akhir harus setelah awal.",
+      "RangeStart": "Mulai",
+      "RangeTooLong": "Rentang paling lama {{days}} hari.",
       "ResourceGroupsDescription": "Jika tidak ada yang dipilih: {{default}}",
       "TimeRange": "Rentang waktu"
     }

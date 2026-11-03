@@ -5,12 +5,8 @@
 import { Form } from '../../form-engine';
 import BAIFormItem from '../BAIFormItem';
 import { useDashboardResourceGroups } from './DashboardResourceGroups';
-import {
-  DEFAULT_RANGE,
-  RANGE_LABEL_KEYS,
-  RANGE_PRESETS,
-  hasSetting,
-} from './panelSettings';
+import PanelRangeSelect from './PanelRangeSelect';
+import { DEFAULT_RANGE, hasSetting } from './panelSettings';
 import type { PanelDefinition, PanelSettings } from './types';
 import { Text } from '@lablup/ui-common/Text';
 import {
@@ -131,12 +127,8 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
               label={t('dashboard.settings.DefaultTimeRange')}
               rules={[{ required: true }]}
             >
-              <BAISelect
+              <PanelRangeSelect
                 label={t('dashboard.settings.DefaultTimeRange')}
-                options={RANGE_PRESETS.map((preset) => ({
-                  value: preset,
-                  label: t(RANGE_LABEL_KEYS[preset]),
-                }))}
               />
             </BAIFormItem>
           ) : null}

@@ -885,6 +885,7 @@
       "SessionStatus": "Istuntojen tila",
       "SessionStatusTooltip": "Nykyiset istunnot tilan mukaan ja aktiiviset istuntotyypin mukaan.",
       "Share": "Osuus",
+      "StartedBefore": "Aloitettu ennen {{time}}",
       "Starting": "Käynnistymässä",
       "Succeeded": "Onnistuneet",
       "ThisRange": "Tämä jakso",
@@ -942,6 +943,8 @@
     "settings": {
       "AllResourceGroups": "Kaikki resurssiryhmät",
       "BackToSavedSetting": "Palaa tallennettuun asetukseen ({{value}})",
+      "CustomRange": "Mukautettu aikaväli",
+      "CustomRangeHelp": "Valitse alku ja loppu enintään {{days}} päivän välein. Nykyhetkeä myöhäisempi loppu asetetaan nykyhetkeen.",
       "DefaultCardSettings": "Kortin oletusasetukset",
       "DefaultResourceGroup": "Oletusresurssiryhmä",
       "DefaultSettings": "Oletusasetukset",
@@ -951,6 +954,10 @@
       "Last1Hour": "Viimeinen tunti",
       "Last24Hours": "Viimeiset 24 tuntia",
       "Last7Days": "Viimeiset 7 päivää",
+      "RangeEnd": "Loppu",
+      "RangeEndBeforeStart": "Lopun on oltava alun jälkeen.",
+      "RangeStart": "Alku",
+      "RangeTooLong": "Aikaväli voi olla enintään {{days}} päivää.",
       "ResourceGroupsDescription": "Jos mitään ei valita: {{default}}",
       "TimeRange": "Aikaväli"
     }

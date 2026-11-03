@@ -2,10 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { DEFAULT_RANGE } from './panelSettings';
-
-/** A card's default range; a custom range is `YYYY-MM-DD/YYYY-MM-DD`. */
-export const DEFAULT_TIME_RANGE = DEFAULT_RANGE;
+/** A card's default range; a fixed window is `<ISO datetime>/<ISO datetime>`. */
+export const DEFAULT_TIME_RANGE = 'now-24h' as const;
 
 /**
  * A time window, `after` inclusive, `before` exclusive. Never pass it as one
@@ -18,7 +16,8 @@ export interface DateTimeWindow {
 
 export type ParsedTimeRange =
   | { kind: 'relative'; durationMs: number }
-  | { kind: 'custom'; start: string; end: string };
+  | { kind: 'custom'; start: string; end: string }
+  | { kind: 'window'; from: number; to: number };
 
 const MINUTE = 60_000;
 const HOUR = 60 * MINUTE;
@@ -27,6 +26,11 @@ const UNIT_MS: Record<string, number> = { m: MINUTE, h: HOUR, d: DAY };
 
 const RELATIVE_PATTERN = /^now-(\d+)([mhd])$/;
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+const DATETIME_PATTERN =
+  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d{1,3})?)?(Z|[+-]\d{2}:\d{2})$/;
+
+/** The longest fixed window a card setting may hold. */
+export const MAX_WINDOW_DAYS = 90;
 
 /** At most this many buckets per chart, each one a count alias in one request. */
 export const MAX_BUCKETS = 8;
@@ -64,6 +68,13 @@ const nextLocalDayStart = (date: string): number => {
 
 export const customRange = (start: string, end: string) => `${start}/${end}`;
 
+/** A fixed window as a range setting. */
+export const windowRange = (window: DateTimeWindow) =>
+  `${new Date(window.after).toISOString()}/${new Date(window.before).toISOString()}`;
+
+const parseDateTime = (value: string): number =>
+  DATETIME_PATTERN.test(value) ? new Date(value).getTime() : Number.NaN;
+
 export const parseTimeRange = (
   range: string | null | undefined,
 ): ParsedTimeRange | null => {
@@ -74,9 +85,60 @@ export const parseTimeRange = (
     return durationMs > 0 ? { kind: 'relative', durationMs } : null;
   }
   const [start, end, ...rest] = range.split('/');
-  if (rest.length || !start || !end || !isValidDate(start) || !isValidDate(end))
-    return null;
+  if (rest.length || !start || !end) return null;
+  const from = parseDateTime(start);
+  const to = parseDateTime(end);
+  if (Number.isFinite(from) && Number.isFinite(to))
+    return from < to ? { kind: 'window', from, to } : null;
+  if (!isValidDate(start) || !isValidDate(end)) return null;
   return start <= end ? { kind: 'custom', start, end } : null;
+};
+
+/** A fixed window a card may store: ends after it starts, never later than `now`, at most {@link MAX_WINDOW_DAYS} long. */
+export type WindowProblem = 'endBeforeStart' | 'tooLong';
+
+/**
+ * Checks a picked window and clamps an end past `now` to `now`. Returns the
+ * window to store, or the reason it cannot be stored.
+ */
+export const checkWindow = (
+  from: number,
+  to: number,
+  now: number,
+): { window: DateTimeWindow } | { problem: WindowProblem } => {
+  const end = Math.min(to, now);
+  if (!Number.isFinite(from) || !Number.isFinite(end) || end <= from)
+    return { problem: 'endBeforeStart' };
+  if (end - from > MAX_WINDOW_DAYS * DAY) return { problem: 'tooLong' };
+  return {
+    window: {
+      after: new Date(from).toISOString(),
+      before: new Date(end).toISOString(),
+    },
+  };
+};
+
+/** A stored fixed window that is still well formed (see {@link checkWindow}). */
+export const isStorableWindow = (range: unknown): range is string => {
+  if (typeof range !== 'string') return false;
+  const parsed = parseTimeRange(range);
+  return (
+    parsed?.kind === 'window' &&
+    parsed.to - parsed.from <= MAX_WINDOW_DAYS * DAY
+  );
+};
+
+/** The window a stored fixed range holds; null for a relative or malformed range. */
+export const fixedWindowOf = (
+  range: string | null | undefined,
+): DateTimeWindow | null => {
+  const parsed = parseTimeRange(range);
+  return parsed?.kind === 'window'
+    ? {
+        after: new Date(parsed.from).toISOString(),
+        before: new Date(parsed.to).toISOString(),
+      }
+    : null;
 };
 
 export const isValidTimeRange = (range: string | null | undefined) =>
@@ -90,6 +152,7 @@ const windowMs = (
   if (!parsed) return null;
   if (parsed.kind === 'relative')
     return { from: now - parsed.durationMs, to: now };
+  if (parsed.kind === 'window') return { from: parsed.from, to: parsed.to };
   // A custom range covers whole local days, end day included.
   return {
     from: localDayStart(parsed.start),
@@ -130,7 +193,7 @@ export interface BucketPlan {
   /** Contiguous, oldest first, at most {@link MAX_BUCKETS}. */
   buckets: Array<DateTimeWindow>;
   states: Array<BucketState>;
-  /** The window does not move with `now` (a custom range). */
+  /** The window does not move with `now` (a custom range or a fixed window). */
   fixed: boolean;
 }
 

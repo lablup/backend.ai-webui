@@ -872,6 +872,7 @@
       "SessionStatus": "Session Status",
       "SessionStatusTooltip": "Sessions right now by status, and the active ones by session type.",
       "Share": "Share",
+      "StartedBefore": "Started before {{time}}",
       "Starting": "Starting",
       "Succeeded": "Succeeded",
       "ThisRange": "This range",
@@ -929,6 +930,8 @@
     "settings": {
       "AllResourceGroups": "All resource groups",
       "BackToSavedSetting": "Back to the saved setting ({{value}})",
+      "CustomRange": "Custom range",
+      "CustomRangeHelp": "Pick a start and an end at most {{days}} days apart. An end later than now is set to now.",
       "DefaultCardSettings": "Default card settings",
       "DefaultResourceGroup": "Default resource group",
       "DefaultSettings": "Default settings",
@@ -938,6 +941,10 @@
       "Last1Hour": "Last 1 hour",
       "Last24Hours": "Last 24 hours",
       "Last7Days": "Last 7 days",
+      "RangeEnd": "End",
+      "RangeEndBeforeStart": "The end must be after the start.",
+      "RangeStart": "Start",
+      "RangeTooLong": "The range can be at most {{days}} days long.",
       "ResourceGroupsDescription": "If none is selected: {{default}}",
       "TimeRange": "Time range"
     }

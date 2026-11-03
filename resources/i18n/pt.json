@@ -885,6 +885,7 @@
       "SessionStatus": "Estado das sessões",
       "SessionStatusTooltip": "As sessões atuais por estado e as ativas por tipo de sessão.",
       "Share": "Proporção",
+      "StartedBefore": "Iniciada antes de {{time}}",
       "Starting": "A iniciar",
       "Succeeded": "Concluídas",
       "ThisRange": "Este período",
@@ -942,6 +943,8 @@
     "settings": {
       "AllResourceGroups": "Todos os grupos de recursos",
       "BackToSavedSetting": "Voltar à definição guardada ({{value}})",
+      "CustomRange": "Intervalo personalizado",
+      "CustomRangeHelp": "Escolha um início e um fim com no máximo {{days}} dias de diferença. Um fim posterior a agora é ajustado para agora.",
       "DefaultCardSettings": "Definições predefinidas do cartão",
       "DefaultResourceGroup": "Grupo de recursos predefinido",
       "DefaultSettings": "Definições predefinidas",
@@ -951,6 +954,10 @@
       "Last1Hour": "Última 1 hora",
       "Last24Hours": "Últimas 24 horas",
       "Last7Days": "Últimos 7 dias",
+      "RangeEnd": "Fim",
+      "RangeEndBeforeStart": "O fim tem de ser depois do início.",
+      "RangeStart": "Início",
+      "RangeTooLong": "O intervalo pode ter no máximo {{days}} dias.",
       "ResourceGroupsDescription": "Se nenhum for selecionado: {{default}}",
       "TimeRange": "Intervalo de tempo"
     }

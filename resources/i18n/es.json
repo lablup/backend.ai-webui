@@ -885,6 +885,7 @@
       "SessionStatus": "Estado de las sesiones",
       "SessionStatusTooltip": "Las sesiones actuales por estado y las activas por tipo de sesión.",
       "Share": "Proporción",
+      "StartedBefore": "Iniciada antes de {{time}}",
       "Starting": "Iniciando",
       "Succeeded": "Correctas",
       "ThisRange": "Este periodo",
@@ -942,6 +943,8 @@
     "settings": {
       "AllResourceGroups": "Todos los grupos de recursos",
       "BackToSavedSetting": "Volver al ajuste guardado ({{value}})",
+      "CustomRange": "Rango personalizado",
+      "CustomRangeHelp": "Elija un inicio y un fin separados como máximo {{days}} días. Un fin posterior a ahora se ajusta a ahora.",
       "DefaultCardSettings": "Ajustes predeterminados de la tarjeta",
       "DefaultResourceGroup": "Grupo de recursos predeterminado",
       "DefaultSettings": "Ajustes predeterminados",
@@ -951,6 +954,10 @@
       "Last1Hour": "Última hora",
       "Last24Hours": "Últimas 24 horas",
       "Last7Days": "Últimos 7 días",
+      "RangeEnd": "Fin",
+      "RangeEndBeforeStart": "El fin debe ser posterior al inicio.",
+      "RangeStart": "Inicio",
+      "RangeTooLong": "El rango puede durar como máximo {{days}} días.",
       "ResourceGroupsDescription": "Si no se selecciona ninguno: {{default}}",
       "TimeRange": "Intervalo de tiempo"
     }

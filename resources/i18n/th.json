@@ -882,6 +882,7 @@
       "SessionStatus": "สถานะเซสชัน",
       "SessionStatusTooltip": "เซสชันขณะนี้ตามสถานะ และเซสชันที่ใช้งานอยู่ตามประเภทเซสชัน",
       "Share": "สัดส่วน",
+      "StartedBefore": "เริ่มก่อน {{time}}",
       "Starting": "กำลังเริ่ม",
       "Succeeded": "สำเร็จ",
       "ThisRange": "ช่วงนี้",
@@ -939,6 +940,8 @@
     "settings": {
       "AllResourceGroups": "ทุกกลุ่มทรัพยากร",
       "BackToSavedSetting": "กลับไปใช้การตั้งค่าที่บันทึกไว้ ({{value}})",
+      "CustomRange": "กำหนดช่วงเอง",
+      "CustomRangeHelp": "เลือกเวลาเริ่มต้นและสิ้นสุดห่างกันไม่เกิน {{days}} วัน เวลาสิ้นสุดที่เลยปัจจุบันจะถูกปรับเป็นปัจจุบัน",
       "DefaultCardSettings": "การตั้งค่าเริ่มต้นของการ์ด",
       "DefaultResourceGroup": "กลุ่มทรัพยากรเริ่มต้น",
       "DefaultSettings": "การตั้งค่าเริ่มต้น",
@@ -948,6 +951,10 @@
       "Last1Hour": "1 ชั่วโมงที่ผ่านมา",
       "Last24Hours": "24 ชั่วโมงที่ผ่านมา",
       "Last7Days": "7 วันที่ผ่านมา",
+      "RangeEnd": "สิ้นสุด",
+      "RangeEndBeforeStart": "เวลาสิ้นสุดต้องอยู่หลังเวลาเริ่มต้น",
+      "RangeStart": "เริ่มต้น",
+      "RangeTooLong": "ช่วงเวลายาวได้ไม่เกิน {{days}} วัน",
       "ResourceGroupsDescription": "หากไม่ได้เลือก: {{default}}",
       "TimeRange": "ช่วงเวลา"
     }

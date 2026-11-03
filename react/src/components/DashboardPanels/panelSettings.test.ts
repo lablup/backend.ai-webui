@@ -4,10 +4,16 @@
  */
 import { needsDeploymentDetails } from './memberCards/DeploymentHealthTable';
 import {
+  describePanelSettings,
+  formatWindowLabel,
+  isStoredRange,
   mergeSettings,
   sanitizeColumnOverrides,
   sanitizePanelSettings,
 } from './panelSettings';
+import { MAX_WINDOW_DAYS, windowRange } from './timeRange';
+import dayjs from 'dayjs';
+import type { TFunction } from 'i18next';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('../../hooks/useRouteScope', () => ({
@@ -80,5 +86,49 @@ describe('needsDeploymentDetails', () => {
     );
     expect(needsDeploymentDetails({ owner: { hidden: true } })).toBe(false);
     expect(needsDeploymentDetails({ owner: { hidden: false } })).toBe(true);
+  });
+});
+
+const t = ((key: string) => key) as unknown as TFunction;
+const RANGE = { settings: ['range'] as const };
+const at = (local: string) => new Date(local).toISOString();
+const WINDOW = {
+  after: at('2026-10-29T09:39:00'),
+  before: at('2026-10-30T09:39:00'),
+};
+
+describe('range settings', () => {
+  it('keeps a preset or a well-formed fixed window', () => {
+    expect(sanitizePanelSettings({ range: 'now-7d' }, RANGE)).toEqual({
+      range: 'now-7d',
+    });
+    const range = windowRange(WINDOW);
+    expect(isStoredRange(range)).toBe(true);
+    expect(sanitizePanelSettings({ range }, RANGE)).toEqual({ range });
+  });
+
+  it('drops a malformed, reversed or too long window, so the card reads the default', () => {
+    const reversed = `${WINDOW.before}/${WINDOW.after}`;
+    const tooLong = windowRange({
+      after: dayjs(WINDOW.before)
+        .subtract(MAX_WINDOW_DAYS + 1, 'day')
+        .toISOString(),
+      before: WINDOW.before,
+    });
+    for (const range of [reversed, tooLong, 'now-3y', 'yesterday', 7]) {
+      expect(sanitizePanelSettings({ range }, RANGE)).toBeUndefined();
+    }
+  });
+
+  it('labels a fixed window compactly and describes it in the sider', () => {
+    const range = windowRange(WINDOW);
+    expect(formatWindowLabel(range)).toBe('Oct 29 09:39 - Oct 30 09:39');
+    expect(formatWindowLabel('now-24h')).toBeUndefined();
+    expect(describePanelSettings({ range }, t)).toBe(
+      'Oct 29 09:39 - Oct 30 09:39',
+    );
+    expect(describePanelSettings({ range: 'now-1h' }, t)).toBe(
+      'dashboard.settings.Last1Hour',
+    );
   });
 });

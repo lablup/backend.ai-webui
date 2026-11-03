@@ -8,6 +8,7 @@ import type {
 } from '../../../__generated__/FailedLoginsPanelQuery.graphql';
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
 import ScopedCard from '../cards/ScopedCard';
+import PeriodCaption from '../charts/PeriodCaption';
 import StatRow from '../charts/StatRow';
 import {
   countDelta,
@@ -56,6 +57,7 @@ const FailedLogins: React.FC<{
     offset: baiPaginationOption.offset,
   };
   const deferredVariables = useDeferredValue(variables);
+  const shownRange = useDeferredValue(timeRange);
   const data = useLazyLoadQuery<FailedLoginsPanelQuery>(
     graphql`
       query FailedLoginsPanelQuery(
@@ -110,6 +112,7 @@ const FailedLogins: React.FC<{
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
+      <PeriodCaption window={shownRange} />
       <StatRow
         items={[
           {

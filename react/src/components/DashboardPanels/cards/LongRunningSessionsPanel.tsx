@@ -8,7 +8,9 @@ import type { PanelComponentProps } from '../types';
 import { useOpenSessionDetail } from '../useOpenSessionDetail';
 import ScopedCard from './ScopedCard';
 import SessionList, { crossProjectColumns } from './SessionList';
+import { Text } from '@lablup/ui-common/Text';
 import {
+  BAIFlex,
   BAILink,
   BAISessionNodesV2,
   type SessionV2InList,
@@ -37,59 +39,69 @@ const LongRunningSessionTable: React.FC<{
   fetchKey: string;
 }> = ({ scope, timeRange, fetchKey }) => {
   'use memo';
+  const { t } = useTranslation();
   const openSessionDetail = useOpenSessionDetail();
   // Running longer than the card's range: created before the range began.
   const threshold = dayjs(timeRange.after);
 
   return (
-    <SessionList
-      scope={scope}
-      filter={FILTER}
-      orderBy={ORDER_BY}
-      limit={ROW_LIMIT}
-      offset={0}
-      fetchKey={fetchKey}
-    >
-      {({ rows }) => (
-        <BAISessionNodesV2
-          sessionsFrgmt={_.takeWhile(
-            rows,
-            (row) =>
-              !!row.lifecycle.createdAt &&
-              dayjs(row.lifecycle.createdAt).isBefore(threshold),
-          )}
-          disableSorter
-          customizeColumns={(columns) =>
-            columns
-              .filter((column) =>
-                [...BASE_COLUMNS, ...crossProjectColumns(scope)].includes(
-                  String(column.key),
-                ),
-              )
-              .map((column) =>
-                column.key === 'name'
-                  ? {
-                      ...column,
-                      defaultHidden: false,
-                      render: (_value: unknown, session: SessionV2InList) =>
-                        openSessionDetail ? (
-                          <BAILink
-                            type="hover"
-                            onClick={() => openSessionDetail(session.entityId)}
-                          >
-                            {session.metadata?.name ?? '-'}
-                          </BAILink>
-                        ) : (
-                          (session.metadata?.name ?? '-')
-                        ),
-                    }
-                  : { ...column, defaultHidden: false },
-              )
-          }
-          pagination={false}
-        />
-      )}
-    </SessionList>
+    <BAIFlex direction="column" align="stretch" gap="xs">
+      <Text type="supporting" size="sm" data-testid="panel-period">
+        {t('dashboard.card.StartedBefore', {
+          time: threshold.format('lll'),
+        })}
+      </Text>
+      <SessionList
+        scope={scope}
+        filter={FILTER}
+        orderBy={ORDER_BY}
+        limit={ROW_LIMIT}
+        offset={0}
+        fetchKey={fetchKey}
+      >
+        {({ rows }) => (
+          <BAISessionNodesV2
+            sessionsFrgmt={_.takeWhile(
+              rows,
+              (row) =>
+                !!row.lifecycle.createdAt &&
+                dayjs(row.lifecycle.createdAt).isBefore(threshold),
+            )}
+            disableSorter
+            customizeColumns={(columns) =>
+              columns
+                .filter((column) =>
+                  [...BASE_COLUMNS, ...crossProjectColumns(scope)].includes(
+                    String(column.key),
+                  ),
+                )
+                .map((column) =>
+                  column.key === 'name'
+                    ? {
+                        ...column,
+                        defaultHidden: false,
+                        render: (_value: unknown, session: SessionV2InList) =>
+                          openSessionDetail ? (
+                            <BAILink
+                              type="hover"
+                              onClick={() =>
+                                openSessionDetail(session.entityId)
+                              }
+                            >
+                              {session.metadata?.name ?? '-'}
+                            </BAILink>
+                          ) : (
+                            (session.metadata?.name ?? '-')
+                          ),
+                      }
+                    : { ...column, defaultHidden: false },
+                )
+            }
+            pagination={false}
+          />
+        )}
+      </SessionList>
+    </BAIFlex>
   );
 };
 

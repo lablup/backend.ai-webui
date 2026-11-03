@@ -9,6 +9,7 @@ import type {
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
 import ScopedCard from '../cards/ScopedCard';
 import DonutChart from '../charts/DonutChart';
+import PeriodCaption from '../charts/PeriodCaption';
 import { readCounts } from '../countAliases';
 import { toDonutRows } from '../memberCards/memberCardData';
 import { readPrimary } from '../panelPermission';
@@ -70,6 +71,7 @@ const SchedulingFailures: React.FC<{
     offset: baiPaginationOption.offset,
   };
   const deferredVariables = useDeferredValue(variables);
+  const shownRange = useDeferredValue(timeRange);
   const data = useLazyLoadQuery<SchedulingFailuresPanelQuery>(
     graphql`
       query SchedulingFailuresPanelQuery(
@@ -167,6 +169,7 @@ const SchedulingFailures: React.FC<{
           })),
         )}
       />
+      <PeriodCaption window={shownRange} />
       <BAISchedulingHistoryNodes
         schedulingHistoryFrgmt={rows}
         disableSorter
