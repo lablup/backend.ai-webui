@@ -104,7 +104,6 @@ export const VALID_MENU_KEYS = [
   'admin-dashboard',
   'admin-data',
   'project-admin-users',
-  'project-data',
   'project-admin-deployments',
   'project-admin-session',
   'agent',
@@ -133,7 +132,6 @@ const ALL_ADMIN_PAGE_KEYS: ReadonlySet<string> = new Set([
   'admin-dashboard',
   'admin-data',
   'project-admin-users',
-  'project-data',
   'project-admin-deployments',
   'project-admin-session',
   'agent',
@@ -147,16 +145,11 @@ const ALL_ADMIN_PAGE_KEYS: ReadonlySet<string> = new Set([
 ]);
 
 // Admin-category page keys reachable by a project admin (3-tier admin gating).
-// Project admins see Sessions, Deployments, Data (vfolders) and Members within
-// the admin category. Other admin pages remain visible only to domain admins or
-// superadmins. Kept as a plain array so it can be exported and reused (e.g. for
-// per-page route gating in follow-up PRs).
+// Project admins see Sessions, Deployments and Members within the admin
+// category; the project's folders are on its Data page. Other admin pages
+// remain visible only to domain admins or superadmins.
 const PROJECT_ADMIN_PAGE_KEYS = [
-  // 'admin-session',
-  // 'admin-deployments',
-  // 'admin-data',
   'project-admin-users',
-  'project-data',
   'project-admin-deployments',
   'project-admin-session',
 ] as const;
@@ -166,7 +159,7 @@ export const PROJECT_ADMIN_PAGE_KEY_SET: ReadonlySet<string> = new Set(
 );
 
 // Legacy flat path for a menu key (the pre-scope-aware URL, e.g. `/session`,
-// `/project-data`, `/admin-session`). These flat paths are still mounted as
+// `/project-admin-users`, `/admin-session`). These flat paths are still mounted as
 // backward-compat redirect shims (`legacyRedirects.tsx`), so emitting one is a
 // safe fallback: the shim resolves it to the canonical scope-aware URL at
 // runtime. Used when a project-scoped menu key has no resolvable project name
@@ -182,8 +175,8 @@ const getLegacyFlatPath = (key: MenuKeys): string => {
 //
 // Delegates to `buildPath` via `MENU_KEY_TO_SCOPE_FEATURE` so a menu key like
 // `session` (project scope) becomes `/project/<projectName>/session`,
-// `project-data` (project-admin scope) becomes
-// `/project/<projectName>/admin/data`, and `admin-session` (global admin)
+// `project-admin-users` (project-admin scope) becomes
+// `/project/<projectName>/admin/users`, and `admin-session` (global admin)
 // becomes `/admin/session`.
 //
 // `projectName` is required for project / projectAdmin scopes. When it is
@@ -263,7 +256,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   const isCurrentProjectAdmin = useIsCurrentProjectAdmin();
 
   // Scope-aware current menu key (legacy hyphenated key, e.g. 'admin-session',
-  // 'project-data', 'session'). Derived from the matched route `handle.menuKey`
+  // 'project-admin-users', 'session'). Derived from the matched route `handle.menuKey`
   // (with a pathname-parse fallback) so it stays correct under the new
   // `/project/:name/<feature>` and `/admin/<feature>` URL shapes, where
   // `location.pathname.split('/')[1]` would return the scope prefix
@@ -438,12 +431,6 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       t('webui.menu.ProjectMembers'),
       <Users style={{ color: token('--color-info') }} size="1em" />,
       'project-admin-users',
-      'admin-operations',
-    ),
-    createAdminMenuItem(
-      t('webui.menu.Data'),
-      <CloudUpload style={{ color: token('--color-info') }} size="1em" />,
-      'project-data',
       'admin-operations',
     ),
     createAdminMenuItem(
