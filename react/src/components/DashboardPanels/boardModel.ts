@@ -28,12 +28,14 @@ export interface CatalogEntry {
 
 const meetsRole = (
   required: NonNullable<PanelDefinition['requires']>['role'],
-  role: PanelCatalogContext['role'],
+  {
+    role,
+    isProjectAdmin,
+  }: Pick<PanelCatalogContext, 'role' | 'isProjectAdmin'>,
 ) => {
   if (!required) return true;
   if (required === 'superadmin') return role === 'superadmin';
-  // TODO(#10422): check the project's admin role once the project admin board lands.
-  return role === 'superadmin' || role === 'admin';
+  return role === 'superadmin' || role === 'admin' || !!isProjectAdmin;
 };
 
 /**
@@ -42,7 +44,7 @@ const meetsRole = (
  */
 export const catalogFor = (
   definitions: ReadonlyArray<PanelDefinition>,
-  { page, role, config }: PanelCatalogContext,
+  { page, role, config, isProjectAdmin }: PanelCatalogContext,
 ): Array<CatalogEntry> => {
   const disabledMenus = new Set([
     ...(config.blockList ?? []),
@@ -52,7 +54,7 @@ export const catalogFor = (
     .filter(
       (definition) =>
         definition.page.includes(page) &&
-        meetsRole(definition.requires?.role, role) &&
+        meetsRole(definition.requires?.role, { role, isProjectAdmin }) &&
         !(
           definition.requires?.menuKey &&
           disabledMenus.has(definition.requires.menuKey)

@@ -8,6 +8,11 @@ import {
   useDashboardRefreshScheduler,
 } from './DashboardRefreshContext';
 import { cardResourceGroup } from './dashboardScope';
+import {
+  PanelPermissionBoundary,
+  PanelPermissionContext,
+  deniedNoticeKeyOf,
+} from './panelPermission';
 import { DEFAULT_RANGE } from './panelSettings';
 import { rangeToDateTimeFilter } from './timeRange';
 import type { DashboardScope, DashboardVars, PersistedPanelV2 } from './types';
@@ -27,6 +32,10 @@ export interface DashboardPanelContentProps {
   panel: PersistedPanelV2;
   /** The page query is refetching (the cards that still read it). */
   isPageRefetching: boolean;
+  /** A user-made panel: denied, it shows a notice instead of being hidden. */
+  isUserPanel?: boolean;
+  /** Frames the denied notice when the card's own frame is not rendered. */
+  deniedFrame?: (body: React.ReactNode) => React.ReactNode;
   children: (state: DashboardPanelState) => React.ReactNode;
 }
 
@@ -34,6 +43,8 @@ export interface DashboardPanelContentProps {
 const DashboardPanelContent: React.FC<DashboardPanelContentProps> = ({
   panel,
   isPageRefetching,
+  isUserPanel = false,
+  deniedFrame,
   children,
 }) => {
   'use memo';
@@ -47,7 +58,17 @@ const DashboardPanelContent: React.FC<DashboardPanelContentProps> = ({
   const range = panel.settings?.range ?? DEFAULT_RANGE;
   const currentResourceGroup = filters?.currentResourceGroup ?? null;
 
-  return children({
+  const { resourceGroups, ...otherSettings } = panel.settings ?? {};
+  const permission = {
+    panelId: panel.id,
+    noticeKey: deniedNoticeKeyOf({
+      resourceGroups,
+      hasOtherSetting: Object.keys(otherSettings).length > 0,
+      isUserPanel,
+    }),
+  };
+
+  const content = children({
     scope: filters?.scope ?? {
       kind: 'mine',
       projectId: filters?.currentProjectId ?? null,
@@ -68,6 +89,19 @@ const DashboardPanelContent: React.FC<DashboardPanelContentProps> = ({
     isRefetching: isPageRefetching || isPending,
     onRefresh: () => scheduler?.refreshAll(),
   });
+  return (
+    <PanelPermissionContext value={permission}>
+      <PanelPermissionBoundary
+        frame={deniedFrame}
+        resetKeys={[
+          deferredManualFetchKey,
+          JSON.stringify(panel.settings ?? null),
+        ]}
+      >
+        {content}
+      </PanelPermissionBoundary>
+    </PanelPermissionContext>
+  );
 };
 
 export default DashboardPanelContent;

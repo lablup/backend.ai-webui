@@ -850,6 +850,11 @@
       "TitleDescription": "Se muestra como encabezado del panel; úselo para describir la condición.",
       "TitleOptional": "Título (opcional)"
     },
+    "permission": {
+      "NoPermissionForResourceGroup": "Sin permiso para este grupo de recursos",
+      "NoPermissionForScope": "Sin permiso para esta configuración de la tarjeta",
+      "NoPermissionToView": "Sin permiso para ver"
+    },
     "settings": {
       "AllResourceGroups": "Todos los grupos de recursos",
       "CardSettings": "Ajustes de la tarjeta",

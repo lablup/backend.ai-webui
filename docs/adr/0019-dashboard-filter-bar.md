@@ -9,12 +9,14 @@
 - 자원 그룹과 기간은 [카드 설정](#용어)이다. 자원 그룹이나 기간에 따라 값이 달라지는 카드만 설정을 갖는다. 저장되는 기본값은 편집 모드에서 고치고, 보기 모드에서도 카드 머리의 picker로 그 카드의 값을 잠시 바꿀 수 있다. 바에는 일부 카드만 따르는 전역 filter가 없다.
 - 자동 새로고침은 page마다 하나다. 바의 refresh control이 간격(기본 1분)마다 tick을 보내고, tick은 화면에 보이는 모든 카드를 함께 다시 읽는다. 카드마다 정한 최소 간격은 없다. control을 누르면 모든 카드를 바로 다시 읽는다. 카드에는 자기 refresh 버튼이 없다.
 - 카드가 보여 주는 시간별 개수는 매니저가 계산한 count만 쓴다. 기간 전체의 합계는 그 카드가 읽은 bucket count를 더한 값이다. 한 프로젝트나 한 자원 그룹 단위로만 값을 주는 field는 행으로 나눠 보여 주고, 클라이언트는 프로젝트나 자원 그룹 사이의 값을 더하지 않는다.
+- 보는 사람이 읽을 권한이 없는 카드는 숨긴다. 이미 가진 데이터로 알 수 있으면 카탈로그에서 빼고, 아니면 응답의 권한 오류 code로 알아낸다. 권한을 확인하는 요청을 따로 보내지 않는다. 카드 설정이 범위를 좁힌 카드와 사용자 정의 패널은 숨기지 않고 카드 안에 안내를 보인다.
 
 ## Context
 
 - **Card scope**: #10580 이전의 대시보드 카드는 각자 범위를 정했다. "My Sessions" 카드는 관리자에게 프로젝트 전체 세션을 세었고, 어떤 범위인지 화면에 표시되지 않았다(#9839, #7843).
 - **Global filters ignored**: 보드 위에 전역 자원 그룹, 기간, 프로젝트 picker를 두자 카드 대부분이 그중 일부만 따랐다. 세션 수 카드는 기간을 무시했고, 도움말이 그 차이를 설명해야 했다. 2026-10-26 회의에서 전역 picker를 없애고 카드 설정으로 옮기기로 했다.
 - **Board model**: [ADR 0018](0018-dashboard-boards-in-manager-app-config.md)가 보드를 `DashboardModel`로 저장한다. 카드 하나는 보드의 `PersistedPanelV2`이다.
+- **Denied fields**: 매니저는 읽을 수 없는 V2 field에 HTTP 200과 함께 그 field만 `null`로 주고, `errors[]`에 `path: [<field>]`와 `extensions.code`(admin 전용 field는 `user_auth_forbidden`, RBAC scope 밖은 `permission_access_forbidden`)를 담는다. 같은 요청의 다른 field는 읽힌다(staging, 2026-11-03 프로젝트 관리자 계정으로 확인). `@catch`가 없으면 Relay는 그 field를 그냥 `null`로 읽어 카드가 0이나 빈 목록을 보인다.
 - **Manager bug**: 26.10.0a3 매니저는 `DateTimeFilter` 하나에 `after`와 `before`를 함께 주면 `after`를 무시한다.
 
 ## 설계도
@@ -123,6 +125,15 @@ sequenceDiagram
 
 - **One UI, scope as input**: 여러 page에 있는 카드(일반 사용자, 프로젝트 관리자, superadmin)는 한 component다. 배치, 통계 표기, 차트, 표, 설정, 빈 상태가 같고, page가 정한 `DashboardScope`만 다르다. 일반 사용자는 자기 데이터를, 프로젝트 관리자는 URL 경로의 프로젝트를, superadmin은 현재 도메인과 superadmin 전용 데이터를 읽는다. 카드는 scope를 입력으로 받아 그에 맞는 field를 고르고, 역할마다 다른 component를 만들지 않는다.
 
+### 8. 읽을 수 없는 카드는 숨긴다
+
+- **Catalog first**: 역할로 알 수 있는 카드는 카탈로그가 뺀다(`catalogFor`). `requires.role: 'projectAdmin'`은 superadmin, 도메인 관리자, page 프로젝트의 RBAC 관리자(`useIsCurrentProjectAdmin`, route guard와 같은 값)를 받는다. `PanelCatalogContext.isProjectAdmin`으로 넘긴다.
+- **Runtime detection**: 카드 query의 root field는 모두 `@catch(to: RESULT)`를 단다. `panelPermission.tsx`의 `isPermissionDenied(errors)`가 `extensions.code`가 `permission_access_forbidden`이나 `user_auth_forbidden`인지 본다. 요청 전체가 실패해 `RelayEnvironment`가 던진 객체는 `error_code`가 같은 code이거나 `statusCode`가 403일 때 거부로 본다. 401은 세션이 끊긴 것이라 거부로 보지 않는다.
+- **Primary and secondary**: 카드의 주 데이터 field는 `readPrimary`로 읽는다. 거부면 `PermissionDeniedError`를 던지고, 다른 오류는 예전처럼 `null`이다. 보조 field(추가 count, 이전 기간 count, bucket)는 `readSecondary`로 읽고, 거부된 값과 그 값으로 만든 합계, 증감, 도넛 합계는 0 대신 "-"로 그린다.
+- **Hide through the board**: 카드 안의 `PanelPermissionBoundary`가 거부를 잡아 effect에서 `DeniedPanelsContext`로 알린다. `useDeniedPanels`(`DashboardPanelBoard`)가 거부된 panel id를 page의 scope key(`dashboardScopeKey`: page와 프로젝트, superadmin page는 도메인)별로 들고, `useDashboardBoard`는 그 panel을 board item에서 빼 board가 빈칸 없이 다시 흐른다. 저장된 보드와 `activeKeys`에는 남고, `applyLayout`은 그리지 않는 panel의 자리를 지킨다. 편집 모드의 사이드 패널은 그 카드에 "볼 권한이 없습니다"를 적는다.
+- **Reset**: scope가 바뀌면 거부 목록은 비고, 사용자가 refresh control을 누르면(`refreshAll`) 비운다. 그 사이에 받은 권한은 다음 수동 refresh에서 보인다. 자동 tick은 목록을 비우지 않는다. 같은 scope의 같은 panel은 `useBAILogger`로 한 번만 기록한다.
+- **Notice instead of hiding**: 카드 설정이나 머리 picker가 범위를 좁힌 카드(자원 그룹, 기간 등)는 숨기지 않고 본문에 "이 자원 그룹에 대한 권한이 없습니다" 같은 안내를 그린다. 머리의 picker와 되돌리기 버튼은 남아 사용자가 고른 값을 되돌릴 수 있다. 사용자 정의 패널(`kind: 'preset'`)도 숨기지 않고 안내를 그린다.
+
 ## 대안과 기각 사유
 
 - **Global filter bar**: 보드 위에 프로젝트, 자원 그룹, 기간 picker를 두고 모든 카드가 따르게 한다. 보드의 범위가 한 줄에 보인다. 기각한다. 지금 상태를 보여 주는 카드는 기간을, 자원 그룹과 무관한 카드는 자원 그룹을 따를 수 없어 바의 값 일부를 조용히 무시하고, 사용자는 어느 카드가 어느 값을 따르는지 알 수 없다.
@@ -132,6 +143,8 @@ sequenceDiagram
 - **Domain-scoped audit log**: superadmin page의 감사 로그 카드도 현재 도메인 scope로 읽는다. 이웃 카드와 범위가 같아진다. 기각한다. 도메인 scope의 감사 로그에는 그 도메인의 세션, 폴더, 배포 기록이 빠져 카드가 실제 활동 대부분을 보여 주지 못한다.
 - **Domain picker**: superadmin 바에 도메인 multi-select를 둔다. 기각한다. [ADR 0012](0012-scoped-search-fields-in-place-of-admin-fields.md)가 모든 역할의 읽기를 현재 도메인의 `scoped*` field로 정했다.
 - **Scheduler timer**: scheduler가 자기 timer로 tick하고 버튼은 간격만 고른다. 기각한다. `BAIFetchKeyButton`은 간격을 고르면 자기 timer를 돌리므로 timer가 둘이 되고, 버튼의 countdown과 실제 refresh가 어긋난다.
+- **Permission pre-check**: 카드를 그리기 전에 `myAtomicBulkScopePermissions` 같은 요청으로 카드마다 권한을 묻는다. 거부된 카드가 잠깐도 그려지지 않는다. 기각한다. 카드마다 요청이 늘고, 카드가 읽는 field와 권한 entity를 짝지은 표를 클라이언트가 따로 관리해야 한다. 응답의 오류 code가 같은 사실을 추가 요청 없이 알려 준다.
+- **Show zero or an error state**: 거부된 카드를 그대로 두고 0이나 "unexpected error"를 보인다. 기각한다. 0은 사실과 다른 값이고, 오류 상태는 사용자가 고칠 수 없는 일을 고장처럼 보이게 한다.
 - **Client-side sums**: 프로젝트마다 받은 값을 브라우저에서 더한다. 기각한다. 권한 때문에 빠진 프로젝트를 클라이언트가 알 수 없어 합계가 틀리고, 요청 수가 프로젝트 수만큼 늘어난다.
 
 ## Consequences
@@ -140,11 +153,12 @@ sequenceDiagram
 - **Audit log range differs on the superadmin page**: 다중 도메인 cluster에서 superadmin page의 감사 로그 카드는 다른 도메인의 기록도 세고, 이웃 카드는 현재 도메인만 센다.
 - **No shareable filter links**: 링크는 page와 프로젝트만 나른다. 카드 설정은 보드에 저장되므로 같은 계정은 어느 기기에서나 같은 값을 본다.
 - **Unmigrated cards**: 이 결정이 들어간 시점의 기존 카드는 `scope`와 `vars`를 읽지 않고 page query와 헤더 값을 쓴다. 고정 카드 중 설정을 적은 카드도 아직 없다.
+- **A hidden card can flash once**: 거부는 응답을 받은 뒤에야 알 수 있어 숨길 카드도 첫 load 동안 skeleton으로 보이다 사라진다. 수동 refresh 뒤에도 같다.
 - **Cards blocked on aggregation**: 매니저가 group-by나 시계열 값을 주지 않는 카드는 만들지 않고 backend 요청으로 남는다.
 
 ## 출처
 
-- #10422 (epic), #10582, #9839, #7843, 2026-10-26 회의, 2026-10-29 결정(카드 하나의 refresh 주기, 기본 1분, 카드마다 자원 그룹 하나), 2026-10-30 결정(보기 모드의 카드 머리 picker, superadmin 감사 로그의 `adminAuditLogsV2`).
+- #10422 (epic), #10582, #9839, #7843, 2026-10-26 회의, 2026-10-29 결정(카드 하나의 refresh 주기, 기본 1분, 카드마다 자원 그룹 하나), 2026-10-30 결정(보기 모드의 카드 머리 picker, superadmin 감사 로그의 `adminAuditLogsV2`), 2026-11-03 결정(읽을 수 없는 카드 숨김, 설정이 좁힌 카드와 사용자 정의 패널은 안내).
 - #10422의 role-based dashboard 제안(기간과 갱신, 저장과 마이그레이션).
 
 관련: [ADR 0012](0012-scoped-search-fields-in-place-of-admin-fields.md), [ADR 0018](0018-dashboard-boards-in-manager-app-config.md).

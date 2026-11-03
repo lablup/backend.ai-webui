@@ -850,6 +850,11 @@
       "TitleDescription": "Affiché comme en-tête du panneau - utilisez-le pour décrire la condition.",
       "TitleOptional": "Titre (facultatif)"
     },
+    "permission": {
+      "NoPermissionForResourceGroup": "Aucune autorisation pour ce groupe de ressources",
+      "NoPermissionForScope": "Aucune autorisation pour ce paramètre de carte",
+      "NoPermissionToView": "Aucune autorisation d'affichage"
+    },
     "settings": {
       "AllResourceGroups": "Tous les groupes de ressources",
       "CardSettings": "Paramètres de la carte",
