@@ -4,8 +4,8 @@
 
  Adapter over ui-common `Board`: keeps the frozen `movable` / `resizable` /
  `bordered` names and the `onItemsChange({ detail })` shape the dashboards
- read. An item without its own `title` / `description` gets `data.content` as
- the description.
+ read. An item without its own `description` gets `data.content` as the
+ description.
 */
 import './BAIBoard.css';
 import {
@@ -44,8 +44,8 @@ export interface BAIBoardProps<
   bordered?: boolean;
 }
 
-const hasOwnSlots = (item: BAIBoardItem<BAIBoardDataType>) =>
-  item.title !== undefined || item.description !== undefined;
+const hasOwnDescription = (item: BAIBoardItem<BAIBoardDataType>) =>
+  item.description !== undefined;
 
 const BAIBoard = <T extends BAIBoardDataType = BAIBoardDataType>({
   items,
@@ -57,20 +57,22 @@ const BAIBoard = <T extends BAIBoardDataType = BAIBoardDataType>({
   ...boardProps
 }: BAIBoardProps<T>) => {
   'use memo';
-  const ownSlotIds = new Set(
-    items.filter((item) => hasOwnSlots(item)).map((item) => item.id),
-  );
   return (
     <Board<T>
       {...boardProps}
       className={classNames('bai-board', className)}
       items={items.map((item) =>
-        hasOwnSlots(item) ? item : { ...item, description: item.data?.content },
+        hasOwnDescription(item)
+          ? item
+          : { ...item, description: item.data?.content },
       )}
       // Hand back the items as given: the description added here is rebuilt on every render.
       onItemsChange={(detail) => {
+        const ownDescriptionIds = new Set(
+          items.filter(hasOwnDescription).map((item) => item.id),
+        );
         const strip = <I extends BAIBoardItem<T> | undefined>(item: I): I =>
-          item && !ownSlotIds.has(item.id)
+          item && !ownDescriptionIds.has(item.id)
             ? (_.omit(item, 'description') as I)
             : item;
         onItemsChange({
