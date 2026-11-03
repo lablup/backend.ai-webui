@@ -48,6 +48,11 @@
 // then tear the deployment down through the same delete flow and clean up
 // everything the run itself created.
 import {
+  createAdminApiContext,
+  deleteDeploymentViaApi,
+  listDeploymentsByPattern,
+} from '../utils/admin-api';
+import {
   cleanupDeploymentFixtures,
   cleanupDeploymentSafely,
   createDeploymentShell,
@@ -353,6 +358,105 @@ test.describe(
         });
 
         createdDeploymentName = null;
+      },
+    );
+
+    test(
+      'Admin can see why a paused deployment is paused',
+      { tag: ['@requires-manager-v26.10'] },
+      async ({ page }) => {
+        // The superadmin intro tour (AdminViewSwitchTour) otherwise covers
+        // the list.
+        await page.addInitScript(() => {
+          localStorage.setItem(
+            'backendaiwebui.settings.user.has_opened_tour_back_to_user_view',
+            'true',
+          );
+          localStorage.setItem(
+            'backendaiwebui.settings.user.has_opened_tour_back_to_admin_settings',
+            'true',
+          );
+        });
+        const deploymentName = `e2e-plan-pause-cause-${Date.now()}`;
+        try {
+          await navigateTo(page, 'deployments');
+          await createDeploymentShell(page, deploymentName);
+
+          // 1. Set Desired Replicas to 0: the user-set replica count is 0.
+          await page.getByRole('button', { name: 'Edit', exact: true }).click();
+          const dialog = page.getByRole('dialog', { name: 'Edit Deployment' });
+          await expect(dialog).toBeVisible({ timeout: 20000 });
+          await dialog
+            .getByRole('spinbutton', { name: /Desired Replicas/ })
+            .fill('0');
+          await dialog.getByRole('button', { name: 'Save' }).click();
+          await expect(dialog).toBeHidden({ timeout: 20000 });
+          await expect(metadataValue(page, 'Desired Replicas')).toHaveText(
+            '0',
+            { timeout: 20000 },
+          );
+
+          // A shell without a revision stays PENDING, and only a READY or
+          // HEALTHY deployment reads as paused, so report this one as READY.
+          await page.route('**/admin/gql', async (route) => {
+            if (
+              !(route.request().postData() ?? '').includes(
+                'DeploymentListPageQuery',
+              )
+            ) {
+              return route.fallback();
+            }
+            const response = await route.fetch();
+            const body = await response.json();
+            const markReady = (value: unknown): void => {
+              if (!value || typeof value !== 'object') return;
+              const node = value as Record<string, any>;
+              if (node.metadata?.name === deploymentName) {
+                node.metadata.status = 'READY';
+              }
+              Object.values(node).forEach(markReady);
+            };
+            markReady(body);
+            await route.fulfill({ response, json: body });
+          });
+
+          // 2. The Paused tab shows the deployment with its pause cause. The
+          // tab's accessible name also carries its help tooltip.
+          const pausedTab = page.getByRole('radio', { name: /^Paused\b/ });
+          const row = page.getByRole('row', {
+            name: new RegExp(escapeForRegExp(deploymentName)),
+          });
+          await expect(async () => {
+            await navigateTo(page, 'deployments');
+            await pausedTab.click();
+            await expect(row).toBeVisible({ timeout: 15000 });
+          }).toPass({ timeout: 60_000 });
+          const lifecycleIndex = await page
+            .getByRole('columnheader')
+            .evaluateAll((headers) =>
+              headers.findIndex((h) => h.textContent?.trim() === 'Lifecycle'),
+            );
+          expect(lifecycleIndex).toBeGreaterThanOrEqual(0);
+          const lifecycleCell = row.locator(
+            `td:nth-child(${lifecycleIndex + 1})`,
+          );
+          await expect(lifecycleCell).toContainText('Paused');
+          await expect(lifecycleCell).toContainText('Set by user');
+          await expect(lifecycleCell).not.toContainText('Auto-scaling');
+        } finally {
+          const api = await createAdminApiContext();
+          try {
+            const created = await listDeploymentsByPattern(
+              api,
+              new RegExp(`^${escapeForRegExp(deploymentName)}$`),
+            ).catch(() => []);
+            for (const { id } of created) {
+              await deleteDeploymentViaApi(api, id);
+            }
+          } finally {
+            await api.dispose();
+          }
+        }
       },
     );
 

@@ -1,6 +1,7 @@
 // Covers the filters on Admin Settings > Deployments > Deployments tab: the
 // Owner (`createdUserId`) filter added in #9639 (FR-3914) and the Label key /
-// Label value filters added in #10166.
+// Label value filters added in #10166, and the Serving / Paused / Terminated
+// status tabs added in #10662.
 import {
   createAdminApiContext,
   deleteDeploymentViaApi,
@@ -89,6 +90,27 @@ async function applyTextFilter(
   ).toHaveCount(0, { timeout: 20000 });
 }
 
+// Sets Desired Replicas to 0 from the deployment detail page's Edit modal,
+// which pauses the deployment. The caller must be on that detail page.
+async function pauseDeploymentFromDetailPage(page: Page): Promise<void> {
+  await page.getByRole('button', { name: 'Edit', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Edit Deployment' });
+  await expect(dialog).toBeVisible({ timeout: 20000 });
+  const replicasInput = dialog.getByRole('spinbutton', {
+    name: /Desired Replicas/,
+  });
+  await expect(replicasInput).toHaveValue('1');
+  await replicasInput.fill('0');
+  await dialog.getByRole('button', { name: 'Save' }).click();
+  await expect(dialog).toBeHidden({ timeout: 20000 });
+  await expect(
+    page
+      .getByRole('term')
+      .filter({ hasText: /^Desired Replicas$/ })
+      .locator('xpath=following-sibling::dd[1]'),
+  ).toHaveText('0', { timeout: 20000 });
+}
+
 test.describe(
   'Admin Deployments - Filters',
   {
@@ -123,6 +145,66 @@ test.describe(
         await api.dispose();
       }
     });
+
+    test(
+      'Admin can switch the admin deployment list between Serving, Paused and Terminated tabs',
+      { tag: ['@functional', '@requires-manager-v26.10'] },
+      async ({ page }) => {
+        // The superadmin intro tour (AdminViewSwitchTour) otherwise covers
+        // the list.
+        await page.addInitScript(() => {
+          localStorage.setItem(
+            'backendaiwebui.settings.user.has_opened_tour_back_to_user_view',
+            'true',
+          );
+          localStorage.setItem(
+            'backendaiwebui.settings.user.has_opened_tour_back_to_admin_settings',
+            'true',
+          );
+        });
+        // Arrange: a deployment whose Desired Replicas is set to 0.
+        await navigateTo(page, 'deployments');
+        await createDeploymentShell(page, deploymentName);
+        await pauseDeploymentFromDetailPage(page);
+
+        await page.goto(ADMIN_DEPLOYMENTS_URL);
+        // A tab's accessible name carries its help tooltip after the label.
+        const statusTab = (label: 'Serving' | 'Paused' | 'Terminated') =>
+          page.getByRole('radio', { name: new RegExp(`^${label}\\b`) });
+        const row = page.getByRole('row', {
+          name: new RegExp(escapeForRegExp(deploymentName)),
+        });
+        const grid = page.locator('.uic-data-grid__body');
+
+        // The old Running / Terminated toggle is gone; Serving is the default.
+        await expect(statusTab('Serving')).toBeChecked({ timeout: 30000 });
+        await expect(statusTab('Paused')).not.toBeChecked();
+        await expect(statusTab('Terminated')).not.toBeChecked();
+        await expect(
+          page.getByRole('radio', { name: 'Running', exact: true }),
+        ).toHaveCount(0);
+        await expect(grid.first()).toBeVisible({ timeout: 30000 });
+        await expect(row).toHaveCount(0);
+
+        // Act: the Paused tab lists the deployment.
+        await statusTab('Paused').click();
+        await expect(statusTab('Paused')).toBeChecked();
+        await expect(row).toBeVisible({ timeout: 30000 });
+
+        // The Terminated tab does not.
+        await statusTab('Terminated').click();
+        await expect(statusTab('Terminated')).toBeChecked();
+        await expect(row).toHaveCount(0, { timeout: 30000 });
+
+        // Back on Serving, it is still left out.
+        await statusTab('Serving').click();
+        await expect(statusTab('Serving')).toBeChecked();
+        await expect(
+          page.locator('.uic-data-grid__body[aria-busy="true"]'),
+        ).toHaveCount(0, { timeout: 30000 });
+        await expect(row).toHaveCount(0);
+      },
+    );
 
     test('Admin can filter deployments by owner', async ({ page }) => {
       // Arrange: a deployment owned by the admin account.
