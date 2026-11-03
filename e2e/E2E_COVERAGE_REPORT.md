@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-10-23
+> **Last Updated:** 2026-11-02
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 375 / 525 features covered (71%)**
+**Overall (in-scope routes): 376 / 526 features covered (71%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -20,7 +20,7 @@
 | Change Password          | `/change-password`                               |    9     |    9    | ✅ 100% |
 | Start Page               | `/start`                                         |    8     |    6    | 🔶 75%  |
 | Dashboard                | `/dashboard`                                     |    11    |    9    | 🔶 82%  |
-| Session List             | `/session`                                       |    26    |   18    | 🔶 69%  |
+| Session List             | `/session`                                       |    27    |   19    | 🔶 70%  |
 | Session Launcher         | `/session/start`                                 |    13    |    3    | 🔶 23%  |
 | Serving                  | `/serving`                                       |    7     |    2    | 🔶 29%  |
 | Endpoint Detail          | `/serving/:serviceId`                            |    19    |    8    | 🔶 42%  |
@@ -215,11 +215,12 @@
 | Pagination                                               | ❌     | -                                                                                                                                                    |
 | Batch terminate → TerminateSessionModal                  | ❌     | -                                                                                                                                                    |
 | Scheduling history modal → SessionSchedulingHistoryModal | ✅     | `Admin can see the scheduling history button` + 18 more tests                                                                                        |
+| Session detail audit log Action column and filter        | ✅     | `Admin can filter a session audit log by action name` (via mocked GraphQL)                                                                           |
 | Resource policy warnings                                 | 🚧     | Skipped: `superadmin to modify keypair resource policy`                                                                                              |
 | Header session monitor chip (experimental setting)       | ✅     | `User can enable the session monitor and see their unfinished session count in the header`                                                           |
 | Session monitor popover → SessionDetailDrawer            | ✅     | `User can open a watched session in the detail drawer from the session monitor popover` (via mocked GraphQL)                                         |
 
-**Coverage: 🔶 18/26 features**
+**Coverage: 🔶 19/27 features**
 
 ---
 
