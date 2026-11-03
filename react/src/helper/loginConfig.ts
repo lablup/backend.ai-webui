@@ -17,6 +17,12 @@ interface ConfigValueObject {
   value: boolean | number | string | Array<string>;
 }
 
+// An absent key, a `[placeholder]` or a non-number all read as unset.
+function parseOptionalCount(raw: unknown): number | undefined {
+  const value = parseInt(String(raw));
+  return Number.isNaN(value) ? undefined : value;
+}
+
 function getConfigValueByExists(
   parentsKey: unknown,
   valueObj: ConfigValueObject,
@@ -107,8 +113,9 @@ export interface LoginConfigState {
   maxGaudi2DevicesPerContainer: number;
   maxWarboyDevicesPerContainer: number;
   maxRNGDDevicesPerContainer: number;
-  maxATOMPLUSDevicesPerContainer: number;
-  maxHyperaccelLPUDevicesPerContainer: number;
+  /** Unset unless the file or a document names it, so the launcher falls back to the CUDA cap. */
+  maxATOMPLUSDevicesPerContainer?: number;
+  maxHyperaccelLPUDevicesPerContainer?: number;
   maxShmPerContainer: number;
   maxFileUploadSize: number;
   storageWarningThreshold: number;
@@ -185,8 +192,8 @@ export function getDefaultLoginConfig(): LoginConfigState {
     maxGaudi2DevicesPerContainer: 8,
     maxWarboyDevicesPerContainer: 8,
     maxRNGDDevicesPerContainer: 8,
-    maxATOMPLUSDevicesPerContainer: 8,
-    maxHyperaccelLPUDevicesPerContainer: 8,
+    maxATOMPLUSDevicesPerContainer: undefined,
+    maxHyperaccelLPUDevicesPerContainer: undefined,
     maxShmPerContainer: 2,
     maxFileUploadSize: -1,
     storageWarningThreshold: 90,
@@ -570,19 +577,12 @@ export function refreshConfigFromToml(config: any): LoginConfigState {
   }) as number;
 
   // The webserver renders the ATOM+ key as `maxATOMPlUS…` (lowercase l).
-  state.maxATOMPLUSDevicesPerContainer = getConfigValueByExists(r, {
-    valueType: 'number',
-    defaultValue: 8,
-    value: parseInt(
-      r?.maxATOMPLUSDevicesPerContainer ?? r?.maxATOMPlUSDevicesPerContainer,
-    ),
-  }) as number;
-
-  state.maxHyperaccelLPUDevicesPerContainer = getConfigValueByExists(r, {
-    valueType: 'number',
-    defaultValue: 8,
-    value: parseInt(r?.maxHyperaccelLPUDevicesPerContainer),
-  }) as number;
+  state.maxATOMPLUSDevicesPerContainer = parseOptionalCount(
+    r?.maxATOMPLUSDevicesPerContainer ?? r?.maxATOMPlUSDevicesPerContainer,
+  );
+  state.maxHyperaccelLPUDevicesPerContainer = parseOptionalCount(
+    r?.maxHyperaccelLPUDevicesPerContainer,
+  );
 
   state.maxShmPerContainer = getConfigValueByExists(r, {
     valueType: 'number',
@@ -697,10 +697,14 @@ export function applyConfigToClient(cfg: LoginConfigState): void {
   client._config.maxWarboyDevicesPerContainer =
     cfg.maxWarboyDevicesPerContainer;
   client._config.maxRNGDDevicesPerContainer = cfg.maxRNGDDevicesPerContainer;
-  client._config.maxATOMPLUSDevicesPerContainer =
-    cfg.maxATOMPLUSDevicesPerContainer;
-  client._config.maxHyperaccelLPUDevicesPerContainer =
-    cfg.maxHyperaccelLPUDevicesPerContainer;
+  if (cfg.maxATOMPLUSDevicesPerContainer !== undefined) {
+    client._config.maxATOMPLUSDevicesPerContainer =
+      cfg.maxATOMPLUSDevicesPerContainer;
+  }
+  if (cfg.maxHyperaccelLPUDevicesPerContainer !== undefined) {
+    client._config.maxHyperaccelLPUDevicesPerContainer =
+      cfg.maxHyperaccelLPUDevicesPerContainer;
+  }
   client._config.maxShmPerContainer = cfg.maxShmPerContainer;
   client._config.maxFileUploadSize = cfg.maxFileUploadSize;
   client._config.storageWarningThreshold = cfg.storageWarningThreshold;
