@@ -63,6 +63,14 @@ export interface BAIScopedImageSelectProps extends Omit<
   ref?: React.Ref<BAIScopedImageSelectRef>;
 }
 
+// The picker's labels and the copied image references read
+// `<canonicalName>@<architecture>`, but `name` holds the canonical name alone.
+export const toImageNameSearch = (input: string): string =>
+  input
+    .trim()
+    .replace(/@[^@/:]*$/, '')
+    .trimEnd();
+
 /**
  * Paginated image selector backed by `scopedImagesV2` (ImageV2) over the required `scope`.
  * Stored value is the image UUID so callers can pass it directly to
@@ -96,6 +104,7 @@ const BAIScopedImageSelect: React.FC<BAIScopedImageSelectProps> = ({
   const deferredOpen = useDeferredValue(controllableOpen);
   const [searchStr, setSearchStr] = useState<string>('');
   const debouncedDeferredValue = useDebouncedDeferredValue(searchStr);
+  const nameSearch = toImageNameSearch(debouncedDeferredValue);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [fetchKey, updateFetchKey] = useFetchKey();
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -179,9 +188,7 @@ const BAIScopedImageSelect: React.FC<BAIScopedImageSelectProps> = ({
         scope,
         filter: {
           ...(filterFromProps ?? {}),
-          ...(debouncedDeferredValue
-            ? { name: { contains: debouncedDeferredValue } }
-            : {}),
+          ...(nameSearch ? { name: { contains: nameSearch } } : {}),
         },
       },
       {
