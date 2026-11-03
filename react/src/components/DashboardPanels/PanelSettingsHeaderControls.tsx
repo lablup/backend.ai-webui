@@ -84,8 +84,10 @@ const PanelSettingsHeaderControls: React.FC = () => {
     <BAIFlex align="center" gap="xxs" data-testid="panel-header-settings">
       {hasSetting(definition, 'resourceGroup') ? (
         <Suspense fallback={null}>
+          {/* Below, so it never covers the select's own "Clear" tooltip above. */}
           <Tooltip
             content={t('general.ResourceGroup')}
+            placement="below"
             hasHoverIndication={false}
           >
             <BAIScopedResourceGroupSelect
@@ -114,6 +116,7 @@ const PanelSettingsHeaderControls: React.FC = () => {
       {hasSetting(definition, 'range') ? (
         <Tooltip
           content={t('dashboard.settings.TimeRange')}
+          placement="below"
           hasHoverIndication={false}
         >
           <BAISelect
