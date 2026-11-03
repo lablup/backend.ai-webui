@@ -59,14 +59,10 @@ type SelectSettingItemProps = BaseSettingItemProps & {
   defaultValue?: string;
   value?: string;
   onChange?: (value?: string) => void;
-  // PILOT-DECISION: narrowed from `Omit<BAISelectProps,...>` to the fields
-  // this area's call sites actually pass (grepped, P1) — `options`,
-  // `showSearch` (renamed `hasSearch`). antd's `optionFilterProp:
-  // 'filterValue'` sites always set `filterValue` equal to the label text,
-  // which is Selector's default search target — dropped as a no-op.
+  // The `BAISelectProps` fields this area's call sites pass.
   selectProps?: {
     options: SettingSelectOption[];
-    hasSearch?: boolean;
+    showSearch?: boolean;
     disabled?: boolean;
     loading?: boolean;
   };
@@ -230,7 +226,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
           <BAISelect
             aria-label={title}
             options={selectProps?.options ?? []}
-            showSearch={!!selectProps?.hasSearch}
+            showSearch={!!selectProps?.showSearch}
             disabled={selectProps?.disabled}
             loading={selectProps?.loading}
             value={value}
