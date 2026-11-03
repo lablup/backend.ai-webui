@@ -46,6 +46,7 @@ export type BAIModelDeploymentNodesFragment$data = ReadonlyArray<{
     } | null | undefined;
     readonly replicaState: {
         readonly desiredReplicaCount: number;
+        readonly replicaCount: number;
     };
     readonly runningReplicas: {
         readonly count: number;
