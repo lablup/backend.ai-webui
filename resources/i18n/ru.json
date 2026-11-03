@@ -360,8 +360,12 @@
   },
   "autoMount": {
     "AddAutoMount": "Добавить автомонтирование",
+    "AdvancedSettings": "Дополнительные настройки",
     "AutoMountAdded": "Автомонтирование добавлено.",
+    "AutoMountFailedAfterCreation": "Папка создана, но настроить автомонтирование не удалось.",
     "AutoMountFolders": "Папки автомонтирования",
+    "AutoMountInSessions": "Автомонтирование в сеансах",
+    "AutoMountInSessionsDesc": "Монтировать эту папку в каждый сеанс, созданный в этом проекте.",
     "AutoMountRemoved": "Автомонтирование удалено.",
     "AutoMountUpdated": "Автомонтирование обновлено.",
     "EditAutoMount": "Изменить автомонтирование",

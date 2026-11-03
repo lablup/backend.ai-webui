@@ -360,8 +360,12 @@
   },
   "autoMount": {
     "AddAutoMount": "เพิ่มการเมานต์อัตโนมัติ",
+    "AdvancedSettings": "การตั้งค่าขั้นสูง",
     "AutoMountAdded": "เพิ่มการเมานต์อัตโนมัติแล้ว",
+    "AutoMountFailedAfterCreation": "สร้างโฟลเดอร์แล้ว แต่ตั้งค่าการเมานต์อัตโนมัติไม่สำเร็จ",
     "AutoMountFolders": "โฟลเดอร์เมานต์อัตโนมัติ",
+    "AutoMountInSessions": "เมานต์อัตโนมัติในเซสชัน",
+    "AutoMountInSessionsDesc": "เมานต์โฟลเดอร์นี้ในทุกเซสชันที่สร้างในโปรเจกต์นี้",
     "AutoMountRemoved": "ลบการเมานต์อัตโนมัติแล้ว",
     "AutoMountUpdated": "อัปเดตการเมานต์อัตโนมัติแล้ว",
     "EditAutoMount": "แก้ไขการเมานต์อัตโนมัติ",

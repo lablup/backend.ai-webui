@@ -360,8 +360,12 @@
   },
   "autoMount": {
     "AddAutoMount": "新增自動掛載",
+    "AdvancedSettings": "進階設定",
     "AutoMountAdded": "已新增自動掛載。",
+    "AutoMountFailedAfterCreation": "資料夾已建立,但無法設定為自動掛載。",
     "AutoMountFolders": "自動掛載資料夾",
+    "AutoMountInSessions": "在工作階段中自動掛載",
+    "AutoMountInSessionsDesc": "將此資料夾掛載到此專案中建立的每個工作階段。",
     "AutoMountRemoved": "已移除自動掛載。",
     "AutoMountUpdated": "已更新自動掛載。",
     "EditAutoMount": "編輯自動掛載",

@@ -360,8 +360,12 @@
   },
   "autoMount": {
     "AddAutoMount": "添加自动挂载",
+    "AdvancedSettings": "高级设置",
     "AutoMountAdded": "已添加自动挂载。",
+    "AutoMountFailedAfterCreation": "文件夹已创建,但无法设置为自动挂载。",
     "AutoMountFolders": "自动挂载文件夹",
+    "AutoMountInSessions": "在会话中自动挂载",
+    "AutoMountInSessionsDesc": "将此文件夹挂载到此项目中创建的每个会话。",
     "AutoMountRemoved": "已移除自动挂载。",
     "AutoMountUpdated": "已更新自动挂载。",
     "EditAutoMount": "编辑自动挂载",

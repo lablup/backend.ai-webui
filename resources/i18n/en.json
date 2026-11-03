@@ -347,8 +347,12 @@
   },
   "autoMount": {
     "AddAutoMount": "Add auto-mount",
+    "AdvancedSettings": "Advanced settings",
     "AutoMountAdded": "Auto-mount added.",
+    "AutoMountFailedAfterCreation": "The folder was created, but it could not be set to auto-mount.",
     "AutoMountFolders": "Auto-mount folders",
+    "AutoMountInSessions": "Auto-mount in sessions",
+    "AutoMountInSessionsDesc": "Mount this folder into every session created in this project.",
     "AutoMountRemoved": "Auto-mount removed.",
     "AutoMountUpdated": "Auto-mount updated.",
     "EditAutoMount": "Edit auto-mount",

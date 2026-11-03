@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { FolderCreateModalAutoMountMutation } from '../__generated__/FolderCreateModalAutoMountMutation.graphql';
 import { FolderCreateModalPermissionQuery } from '../__generated__/FolderCreateModalPermissionQuery.graphql';
 import {
   FolderCreateModalPersonalMutation,
@@ -29,6 +30,7 @@ import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
 import StorageSelect from './StorageSelect';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
+import { Collapsible } from '@lablup/ui-common/Collapsible';
 import { Divider } from '@lablup/ui-common/Divider';
 import { HStack, VStack } from '@lablup/ui-common/Stack';
 import { useTheme } from '@lablup/ui-common/theme';
@@ -62,7 +64,17 @@ interface FolderCreateFormItemsType {
   group: string | undefined;
   usage_mode: 'general' | 'model' | 'automount';
   cloneable: boolean;
+  auto_mount_enabled?: boolean;
+  auto_mount_destination?: string;
+  auto_mount_subpath?: string;
+  auto_mount_permission?: 'READ_ONLY' | 'READ_WRITE' | 'RW_DELETE';
 }
+
+const AUTO_MOUNT_FIELDS = [
+  'auto_mount_destination',
+  'auto_mount_subpath',
+  'auto_mount_permission',
+];
 
 // Both mutations select the same vfolder fields.
 export type FolderCreationResponse =
@@ -171,6 +183,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   const [dontAskAgain, setDontAskAgain] = useState(false);
   const [isConfirmPending, setIsConfirmPending] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
 
   const { upsertNotification } = useSetBAINotification();
 
@@ -180,9 +193,17 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
     group: project?.id,
     usage_mode: 'general',
     cloneable: false,
+    auto_mount_enabled: false,
+    auto_mount_destination: '',
+    auto_mount_subpath: '.',
+    auto_mount_permission: 'READ_WRITE',
   };
 
   const isFolderTypeLocked = folderType === 'model_project';
+  // The folder is a project folder, so its auto-mount is set on that project.
+  const supportsAutoMountSetting =
+    baiClient.isManagerVersionCompatibleWith('26.10.0a5') &&
+    !isFolderTypeLocked;
   // When folderType narrows the form, these preset values override any
   // user-passed initialValues for the affected fields.
   const folderTypePreset: Partial<FolderCreateFormItemsType> | undefined =
@@ -272,10 +293,41 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
       }
     `);
 
+  const commitCreateAutoMountMutation =
+    useMutationWithPromise<FolderCreateModalAutoMountMutation>(graphql`
+      mutation FolderCreateModalAutoMountMutation(
+        $input: CreateVFolderAutoMountInput!
+      ) {
+        createVfolderAutoMount(input: $input) {
+          vfolderAutoMount {
+            id
+          }
+        }
+      }
+    `);
+
+  // A collapsed section would hide the failing auto-mount fields.
+  const validateForm = async () => {
+    try {
+      return await formRef.current?.validateFields();
+    } catch (error) {
+      const errorFields: Array<{ name: Array<string | number> }> =
+        _.get(error, 'errorFields') ?? [];
+      if (
+        errorFields.some((field) =>
+          AUTO_MOUNT_FIELDS.includes(String(field.name[0])),
+        )
+      ) {
+        setIsAdvancedOpen(true);
+      }
+      throw error;
+    }
+  };
+
   const handleOk = async () => {
     let values: FolderCreateFormItemsType | undefined;
     try {
-      values = await formRef.current?.validateFields();
+      values = await validateForm();
     } catch (error) {
       // The form renders inline errors for validation failures; just log.
       logger.error(error);
@@ -339,6 +391,37 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
       return;
     }
 
+    const autoMountProjectId = effectiveProject?.id ?? values.group;
+    if (
+      supportsAutoMountSetting &&
+      values.auto_mount_enabled &&
+      !isAutomount &&
+      vfolderResults &&
+      autoMountProjectId
+    ) {
+      // The folder exists by now; a refused auto-mount is reported, not undone.
+      await commitCreateAutoMountMutation({
+        input: {
+          scope: { scopeType: 'PROJECT', scopeId: autoMountProjectId },
+          vfolderId: vfolderResults.entityId,
+          mountDestination: (values.auto_mount_destination ?? '').trim(),
+          subpath: values.auto_mount_subpath?.trim() || '.',
+          mountPermission: values.auto_mount_permission ?? 'READ_WRITE',
+        },
+      }).catch((error) => {
+        logger.error(error);
+        upsertNotification({
+          key: `folder-auto-mount-failure-${vfolderResults.entityId}`,
+          type: 'error',
+          icon: 'folder',
+          message: `${t('general.Folder')}: ${folderName}`,
+          description: t('autoMount.AutoMountFailedAfterCreation'),
+          extraDescription: getErrorMessage(error),
+          open: true,
+        });
+      });
+    }
+
     if (vfolderResults) {
       upsertNotification({
         key: `folder-create-success-${vfolderResults.entityId}`,
@@ -387,8 +470,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
               clickAction={async () => {
                 if (canCreateInSharedProject && !skipSharedFolderConfirm) {
                   // Ask only once the form is valid; inline errors show otherwise.
-                  const isValid = await formRef.current
-                    ?.validateFields()
+                  const isValid = await validateForm()
                     .then(() => true)
                     .catch(() => false);
                   if (isValid) setIsSharedConfirmOpen(true);
@@ -650,6 +732,97 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                 );
               }}
             </Form.Item>
+
+            {supportsAutoMountSetting && (
+              <Form.Item dependencies={['usage_mode']} noStyle>
+                {({ getFieldValue }) =>
+                  getFieldValue('usage_mode') !== 'automount' && (
+                    <Collapsible
+                      trigger={t('autoMount.AdvancedSettings')}
+                      chevronPosition="start"
+                      isOpen={isAdvancedOpen}
+                      onOpenChange={setIsAdvancedOpen}
+                    >
+                      <BAIFormItem
+                        label={t('autoMount.AutoMountInSessions')}
+                        tooltip={t('autoMount.AutoMountInSessionsDesc')}
+                        name={'auto_mount_enabled'}
+                        layout="horizontal"
+                      >
+                        <BAISwitch
+                          aria-label={t('autoMount.AutoMountInSessions')}
+                        />
+                      </BAIFormItem>
+                      <Form.Item dependencies={['auto_mount_enabled']} noStyle>
+                        {({ getFieldValue: getValue }) =>
+                          getValue('auto_mount_enabled') && (
+                            <>
+                              <BAIFormItem
+                                label={t('autoMount.MountDestination')}
+                                tooltip={t('autoMount.MountDestinationDesc')}
+                                name={'auto_mount_destination'}
+                                layout="horizontal"
+                                required
+                                rules={[
+                                  {
+                                    required: true,
+                                    whitespace: true,
+                                    message: t(
+                                      'autoMount.PleaseEnterMountDestination',
+                                    ),
+                                  },
+                                ]}
+                              >
+                                <BAITextInput
+                                  aria-label={t('autoMount.MountDestination')}
+                                  placeholder="/home/work/data"
+                                />
+                              </BAIFormItem>
+                              <BAIFormItem
+                                label={t('autoMount.Subpath')}
+                                tooltip={t('autoMount.SubpathDesc')}
+                                name={'auto_mount_subpath'}
+                                layout="horizontal"
+                              >
+                                <BAITextInput
+                                  aria-label={t('autoMount.Subpath')}
+                                  placeholder="."
+                                />
+                              </BAIFormItem>
+                              <BAIFormItem
+                                label={t('autoMount.MountPermission')}
+                                name={'auto_mount_permission'}
+                                layout="horizontal"
+                                required
+                              >
+                                <BAISelect
+                                  showSearch={false}
+                                  aria-label={t('autoMount.MountPermission')}
+                                  options={[
+                                    {
+                                      value: 'READ_ONLY',
+                                      label: t('data.ReadOnly'),
+                                    },
+                                    {
+                                      value: 'READ_WRITE',
+                                      label: t('data.ReadWrite'),
+                                    },
+                                    {
+                                      value: 'RW_DELETE',
+                                      label: t('autoMount.ReadWriteDelete'),
+                                    },
+                                  ]}
+                                />
+                              </BAIFormItem>
+                            </>
+                          )
+                        }
+                      </Form.Item>
+                    </Collapsible>
+                  )
+                }
+              </Form.Item>
+            )}
           </Form>
         </VStack>
       </BAIModal>

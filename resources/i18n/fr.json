@@ -360,8 +360,12 @@
   },
   "autoMount": {
     "AddAutoMount": "Ajouter un montage automatique",
+    "AdvancedSettings": "Paramètres avancés",
     "AutoMountAdded": "Montage automatique ajouté.",
+    "AutoMountFailedAfterCreation": "Le dossier a été créé, mais le montage automatique n'a pas pu être configuré.",
     "AutoMountFolders": "Dossiers montés automatiquement",
+    "AutoMountInSessions": "Monter automatiquement dans les sessions",
+    "AutoMountInSessionsDesc": "Monter ce dossier dans chaque session créée dans ce projet.",
     "AutoMountRemoved": "Montage automatique supprimé.",
     "AutoMountUpdated": "Montage automatique mis à jour.",
     "EditAutoMount": "Modifier le montage automatique",

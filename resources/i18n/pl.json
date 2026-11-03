@@ -360,8 +360,12 @@
   },
   "autoMount": {
     "AddAutoMount": "Dodaj automatyczne montowanie",
+    "AdvancedSettings": "Ustawienia zaawansowane",
     "AutoMountAdded": "Dodano automatyczne montowanie.",
+    "AutoMountFailedAfterCreation": "Folder został utworzony, ale nie udało się ustawić automatycznego montowania.",
     "AutoMountFolders": "Foldery montowane automatycznie",
+    "AutoMountInSessions": "Montuj automatycznie w sesjach",
+    "AutoMountInSessionsDesc": "Montuj ten folder w każdej sesji utworzonej w tym projekcie.",
     "AutoMountRemoved": "Usunięto automatyczne montowanie.",
     "AutoMountUpdated": "Zaktualizowano automatyczne montowanie.",
     "EditAutoMount": "Edytuj automatyczne montowanie",

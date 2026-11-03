@@ -360,8 +360,12 @@
   },
   "autoMount": {
     "AddAutoMount": "Adicionar montagem automática",
+    "AdvancedSettings": "Definições avançadas",
     "AutoMountAdded": "Montagem automática adicionada.",
+    "AutoMountFailedAfterCreation": "A pasta foi criada, mas não foi possível configurar a montagem automática.",
     "AutoMountFolders": "Pastas de montagem automática",
+    "AutoMountInSessions": "Montar automaticamente nas sessões",
+    "AutoMountInSessionsDesc": "Montar esta pasta em todas as sessões criadas neste projeto.",
     "AutoMountRemoved": "Montagem automática removida.",
     "AutoMountUpdated": "Montagem automática atualizada.",
     "EditAutoMount": "Editar montagem automática",
