@@ -1014,7 +1014,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         handle: {
           scope: 'admin',
           menuKey: 'system-settings',
-          access: 'admin',
+          access: 'superadmin',
           labelKey: 'webui.menu.SystemSettings',
         },
       },
