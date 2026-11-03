@@ -527,6 +527,147 @@ export async function sweepStalePrometheusQueryPresetsViaApi(
   return purged;
 }
 
+export interface RoleRow {
+  id: string;
+  name: string;
+  source: string;
+  status: string;
+  createdAt: string;
+}
+
+/**
+ * Custom roles only: sweeps and by-name cleanup must never reach a system role.
+ * Every status is requested explicitly, so a soft-deleted role left behind by a
+ * killed run is found whatever the manager's default listing returns. `id`, not
+ * `entityId`, because `entityId` needs manager 26.9.0.
+ */
+export async function listCustomRolesViaApi(
+  api: APIRequestContext,
+  name: { equals: string } | { startsWith: string },
+): Promise<RoleRow[]> {
+  const pageSize = 100;
+  const rows: RoleRow[] = [];
+  for (let offset = 0; offset < 10_000; offset += pageSize) {
+    const data = await gqlAdmin<{
+      adminRoles: { edges: Array<{ node: RoleRow }> } | null;
+    }>(
+      api,
+      `query($filter: RoleFilter, $limit: Int, $offset: Int) {
+        adminRoles(
+          filter: $filter
+          orderBy: [{ field: CREATED_AT, direction: ASC }]
+          limit: $limit
+          offset: $offset
+        ) {
+          edges { node { id name source status createdAt } }
+        }
+      }`,
+      {
+        filter: {
+          name,
+          source: { equals: 'CUSTOM' },
+          status: { in: ['ACTIVE', 'INACTIVE', 'DELETED'] },
+        },
+        limit: pageSize,
+        offset,
+      },
+    );
+    const page = (data.adminRoles?.edges ?? []).map((e) => e.node);
+    rows.push(...page);
+    if (page.length < pageSize) break;
+  }
+  return rows.filter((row) => row.source === 'CUSTOM');
+}
+
+/**
+ * Soft-deletes a role unless it already is, then purges it. Assignments and
+ * permissions go with it by FK cascade, so they cannot block the purge.
+ *
+ * Uses `adminDeleteRole` / `adminPurgeRole`, deprecated since 26.10.0, because
+ * `deleteRole` / `purgeRole` do not exist on the LTS manager (26.4) and the
+ * RBAC page itself still calls the admin mutations.
+ *
+ * Defensive: returns `false` and warns instead of throwing.
+ */
+export async function purgeRoleViaApi(
+  api: APIRequestContext,
+  role: Pick<RoleRow, 'id' | 'status'>,
+): Promise<boolean> {
+  try {
+    const input = { id: toRawUUID(role.id) };
+    if (role.status !== 'DELETED') {
+      await gqlAdmin(
+        api,
+        `mutation($input: DeleteRoleInput!) { adminDeleteRole(input: $input) { id } }`,
+        { input },
+      );
+    }
+    const data = await gqlAdmin<{ adminPurgeRole: { id: string } | null }>(
+      api,
+      `mutation($input: PurgeRoleInput!) { adminPurgeRole(input: $input) { id } }`,
+      { input },
+    );
+    return !!data.adminPurgeRole?.id;
+  } catch (error) {
+    console.warn(`[admin-api] could not purge role ${role.id}:`, error);
+    return false;
+  }
+}
+
+/**
+ * Purges every custom role named exactly `name`, in any status. `found: 0`
+ * means it was already gone (not an error). Throws only when the lookup fails.
+ */
+export async function purgeRolesByNameViaApi(
+  api: APIRequestContext,
+  name: string,
+): Promise<{ found: number; deleted: number }> {
+  const matches = await listCustomRolesViaApi(api, { equals: name });
+  let deleted = 0;
+  for (const role of matches) {
+    if (await purgeRoleViaApi(api, role)) deleted++;
+  }
+  return { found: matches.length, deleted };
+}
+
+/**
+ * Name prefixes of the roles the e2e specs create: `e2e-role-*` (including
+ * `e2e-role-edited-*`, rbac-role-crud), `e2e-detail-role-*`, `e2e-scope-role-*`,
+ * `e2e-granted-role-*` (rbac-role-detail), and `e2e-skip-role-*` (the closed
+ * #10783, whose runs may have left some).
+ */
+export const E2E_ROLE_PATTERN =
+  /^e2e-(role|detail-role|scope-role|granted-role|skip-role)-/;
+
+/**
+ * Purges custom roles matching `pattern` that are older than `minAgeMs` — the
+ * global-cleanup backstop for roles a hard-killed run left behind. The age gate
+ * leaves a concurrent run's fresh roles alone. Returns the number purged.
+ */
+export async function sweepStaleRolesViaApi(
+  api: APIRequestContext,
+  pattern: RegExp = E2E_ROLE_PATTERN,
+  minAgeMs = 60 * 60 * 1000,
+): Promise<number> {
+  const rows = await listCustomRolesViaApi(api, { startsWith: 'e2e-' });
+  const stale = rows.filter((row) => {
+    const createdAt = new Date(row.createdAt).getTime();
+    return (
+      pattern.test(row.name) &&
+      Number.isFinite(createdAt) &&
+      Date.now() - createdAt > minAgeMs
+    );
+  });
+  let purged = 0;
+  for (const role of stale) {
+    if (await purgeRoleViaApi(api, role)) purged++;
+  }
+  if (purged > 0) {
+    console.log(`Swept ${purged} stale e2e role(s) matching ${pattern}`);
+  }
+  return purged;
+}
+
 /**
  * Creates a GENERAL project in `domainName` (default: the first member's
  * domain; one of the two is required) and adds `memberEmails` to it. Returns
