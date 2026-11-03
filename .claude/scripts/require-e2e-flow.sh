@@ -29,10 +29,19 @@ WEBUI = 'lablup/backend.ai-webui'
 inp = json.load(sys.stdin)
 cmd = inp.get('tool_input', {}).get('command', '')
 cwd = inp.get('cwd') or os.getcwd()
-GATE = re.compile(r'(^|[;&|(`]|\$\()\s*(?:(?:env|command|time|nohup|exec|nice|sudo)\s+(?:-\S+\s+)*)*(?:[A-Za-z_]\w*=(?:"[^"]*"|\'[^\']*\'|\S*)\s+)*(?:\S*/)?gh\s+(?:pr\s+create|stack\s+submit)(?![\w-])', re.M)
+PREFIX = 'env|command|time|nohup|exec|nice|sudo|timeout|xargs|watch|stdbuf'
+GATE = re.compile(r'(^|[;&|(`]|\$\()\s*(?:(?:' + PREFIX + r')\b[^;&|\n]*?\s)?(?:[A-Za-z_]\w*=(?:"[^"]*"|\'[^\']*\'|\S*)\s+)*(?:\S*/)?gh\s+(?:pr\s+create|stack\s+submit)(?![\w-])', re.M)
 # gh pr create flags that take a value: their value is never read as -R
 VALUED = {'-t', '--title', '-b', '--body', '-F', '--body-file', '-B', '--base', '-H', '--head', '-a', '--assignee', '-l', '--label',
           '-m', '--milestone', '-p', '--project', '-r', '--reviewer', '-T', '--template', '--recover'}
+# prefix command -> its options that take a separate value (timeout also takes a duration); kept in step with block-gt.sh
+PVALUED = {'env': {'-u', '--unset', '-C', '--chdir', '-S', '--split-string'}, 'command': set(), 'time': {'-f', '-o', '--format', '--output'},
+           'nohup': set(), 'exec': {'-a'}, 'nice': {'-n', '--adjustment'}, 'timeout': {'-s', '--signal', '-k', '--kill-after'},
+           'sudo': {'-u', '--user', '-g', '--group', '-h', '--host', '-p', '--prompt', '-C', '--close-from', '-U', '--other-user', '-r', '--role',
+                    '-t', '--type', '-D', '--chdir', '-R', '--chroot'},
+           'xargs': {'-n', '--max-args', '-I', '--replace', '-L', '--max-lines', '-P', '--max-procs', '-d', '--delimiter', '-E', '--eof',
+                     '-s', '--max-chars', '-a', '--arg-file'},
+           'watch': {'-n', '--interval', '-d', '--differences'}, 'stdbuf': {'-i', '--input', '-o', '--output', '-e', '--error'}}
 
 def slug(v):
     if not v or re.search(r'[$`*?]', v):
@@ -61,13 +70,18 @@ def resolve():
 
     def run(c):
         env = {}
-        while c and (re.match(r'^[A-Za-z_]\w*=', c[0]) or c[0] in ('env', 'command', 'time', 'nohup', 'exec', 'nice', 'sudo')
-                     or (env.get('_prefix') and c[0].startswith('-'))):
-            if not re.match(r'^[A-Za-z_]\w*=', c[0]):
-                env['_prefix'] = '1'
+        while c and (re.match(r'^[A-Za-z_]\w*=', c[0]) or c[0] in PVALUED):
+            if c[0] in PVALUED:
+                p = c.pop(0)
+                while c and c[0].startswith('-') and c[0] != '-':
+                    o = c.pop(0)
+                    if o in PVALUED[p] and c:
+                        c.pop(0)
+                if p == 'timeout' and c:
+                    c.pop(0)
+                continue
             k, _, v = c.pop(0).partition('=')
-            if _:
-                env[k] = v
+            env[k] = v
         if not c:
             return
         f = frames[-1]
@@ -140,18 +154,22 @@ PY
 )
 out=$(cat | python3 -c "$RESOLVE" 2>/dev/null) || exit 1
 case "$out" in
-  'check '*) record_of "${out#check }" || exit 1 ;;
+  'check '*) ;;
   none|skip) exit 0 ;;
   *) exit 1 ;;
 esac
 
-recorded=$(cat "$record" 2>/dev/null)
-[ "$recorded" = "$head" ] && exit 0
-
-if [ -z "$recorded" ]; then
-  why="no e2e-flow record for branch '$branch'"
+if ! record_of "${out#check }"; then
+  why="this PR targets lablup/backend.ai-webui, but the branch of '${out#check }' cannot be read (not a git checkout of it?). Run the command from the webui checkout of the PR's branch"
+elif [ "$(cat "$record" 2>/dev/null)" = "$head" ]; then
+  exit 0
 else
-  why="the e2e-flow record for '$branch' is for ${recorded:0:10}, but HEAD is now ${head:0:10}"
+  recorded=$(cat "$record" 2>/dev/null)
+  if [ -z "$recorded" ]; then
+    why="no e2e-flow record for branch '$branch'"
+  else
+    why="the e2e-flow record for '$branch' is for ${recorded:0:10}, but HEAD is now ${head:0:10}"
+  fi
 fi
 
 WHY="$why" python3 -c '
