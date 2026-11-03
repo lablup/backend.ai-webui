@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<05d5ea4780d45c29dd1c297c2477361f>>
+ * @generated SignedSource<<4b5b0a5bd688a0c9e41cba1a76baab44>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -137,6 +137,13 @@ return {
                 "kind": "ScalarField",
                 "name": "updatedAt",
                 "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "entityId",
+                "storageKey": null
               }
             ],
             "type": "RolePreset",
@@ -148,12 +155,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "bc25f8a881404199dee4b5278e6867f9",
+    "cacheID": "3a523f214c82c3caa2af5284f6bcb26b",
     "id": null,
     "metadata": {},
     "name": "RolePresetDetailDrawerRefetchQuery",
     "operationKind": "query",
-    "text": "query RolePresetDetailDrawerRefetchQuery(\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...RolePresetDetailDrawerFragment\n    id\n  }\n}\n\nfragment RolePresetDetailDrawerFragment on RolePreset {\n  id\n  name\n  scopeType\n  autoAssign\n  deleted\n  createdAt\n  updatedAt\n  ...RolePresetPermissionTableFragment\n}\n\nfragment RolePresetPermissionTableFragment on RolePreset {\n  id\n  scopeType\n}\n"
+    "text": "query RolePresetDetailDrawerRefetchQuery(\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...RolePresetDetailDrawerFragment\n    id\n  }\n}\n\nfragment RolePresetDetailDrawerFragment on RolePreset {\n  id\n  name\n  scopeType\n  autoAssign\n  deleted\n  createdAt\n  updatedAt\n  ...RolePresetPermissionTableFragment\n}\n\nfragment RolePresetPermissionTableFragment on RolePreset {\n  id\n  entityId\n  scopeType\n}\n"
   }
 };
 })();

@@ -16,7 +16,6 @@ import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting'
 import AliasedImageTagTokens from './AliasedImageTagTokens';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIDeleteConfirmModal,
   BAIFlex,
@@ -29,6 +28,7 @@ import {
   useToggle,
   useUpdatableState,
   BAITextHighlighter,
+  BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Trash2, RotateCw, Search, Settings } from 'lucide-react';
@@ -297,9 +297,8 @@ const CustomizedImageList: React.FC = () => {
               hasClear; label is required and visually hidden (P2/P8). The
               filter input is uncontrolled in the original, so the local
               search state stays the source of truth here too. */}
-          <TextInput
-            label={t('environment.SearchImages')}
-            isLabelHidden
+          <BAITextInput
+            aria-label={t('environment.SearchImages')}
             value={imageSearchInput}
             hasClear
             startIcon={Search}

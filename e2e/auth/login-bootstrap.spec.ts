@@ -13,6 +13,7 @@
 import {
   loginAsUser,
   logout,
+  seedStoredApiEndpoint,
   webServerEndpoint,
   webuiEndpoint,
 } from '../utils/test-util';
@@ -24,21 +25,28 @@ const GQL = `${webServerEndpoint}/func/admin/gql`;
 type ApiTrace = {
   loginChecks: number;
   bootstraps: number;
+  myUserReads: number;
   loginPosts: number;
 };
 
 /** Count the login flow's API calls from the moment `trace()` is attached. */
 function trace(page: Page): ApiTrace {
-  const t: ApiTrace = { loginChecks: 0, bootstraps: 0, loginPosts: 0 };
+  const t: ApiTrace = {
+    loginChecks: 0,
+    bootstraps: 0,
+    myUserReads: 0,
+    loginPosts: 0,
+  };
   page.on('request', (request) => {
     const url = request.url();
     if (url === LOGIN_CHECK) t.loginChecks += 1;
     if (url === `${webServerEndpoint}/server/login`) t.loginPosts += 1;
-    if (
-      url === GQL &&
-      /query loginBootstrapQuery\b/.test(request.postData() ?? '')
-    ) {
-      t.bootstraps += 1;
+    if (url === GQL) {
+      const body = request.postData() ?? '';
+      if (/query loginBootstrapQuery\b/.test(body)) t.bootstraps += 1;
+      if (/query loginSessionAuthMyUserQuery\b/.test(body)) {
+        t.myUserReads += 1;
+      }
     }
   });
   return t;
@@ -54,6 +62,7 @@ test.describe(
     test('guest reaches the login form through one refused bootstrap query and no login-check', async ({
       page,
     }) => {
+      await seedStoredApiEndpoint(page);
       const api = trace(page);
       await page.goto(webuiEndpoint);
       await expect(loginForm(page)).toBeVisible({ timeout: 30_000 });
@@ -68,12 +77,14 @@ test.describe(
       page,
       request,
     }) => {
+      await seedStoredApiEndpoint(page);
       const api = trace(page);
       await loginAsUser(page, request);
       await expect(userMenu(page)).toBeVisible();
-      // The guest load probes once, pressing Login probes once more before
-      // the credentials go out, and the accepted login bootstraps once.
-      await expect.poll(() => api.bootstraps, { timeout: 15_000 }).toBe(3);
+      // The guest load probes once and pressing Login probes once more before
+      // the credentials go out; the accepted login then reads the user once.
+      await expect.poll(() => api.myUserReads, { timeout: 15_000 }).toBe(1);
+      expect(api.bootstraps).toBe(2);
       expect(api.loginChecks).toBe(0);
     });
 

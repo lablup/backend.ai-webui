@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<dd82ea98f2737cad952045ab250a7c57>>
+ * @generated SignedSource<<d69a8df23d9edddb88d4e61fa9c8ce31>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -26,6 +26,7 @@ export type loginSessionAuthMyUserQuery$data = {
           readonly basicInfo: {
             readonly name: string;
           };
+          readonly entityId: string;
           readonly id: string;
         };
       }>;
@@ -36,6 +37,7 @@ export type loginSessionAuthMyUserQuery$data = {
       };
       readonly entityId: string;
     } | null | undefined;
+    readonly entityId: string;
     readonly id: string;
     readonly organization: {
       readonly domainName: string | null | undefined;
@@ -47,6 +49,7 @@ export type loginSessionAuthMyUserQuery$data = {
           readonly basicInfo: {
             readonly name: string;
           };
+          readonly entityId: string;
           readonly id: string;
         };
       }>;
@@ -79,6 +82,13 @@ v2 = {
 v3 = {
   "alias": null,
   "args": null,
+  "kind": "ScalarField",
+  "name": "entityId",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
   "concreteType": "UserV2BasicInfo",
   "kind": "LinkedField",
   "name": "basicInfo",
@@ -101,7 +111,7 @@ v3 = {
   ],
   "storageKey": null
 },
-v4 = {
+v5 = {
   "alias": null,
   "args": null,
   "concreteType": "UserV2OrganizationInfo",
@@ -124,13 +134,6 @@ v4 = {
       "storageKey": null
     }
   ],
-  "storageKey": null
-},
-v5 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "entityId",
   "storageKey": null
 },
 v6 = [
@@ -178,6 +181,7 @@ v10 = [
         "plural": false,
         "selections": [
           (v2/*: any*/),
+          (v3/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -292,6 +296,7 @@ return {
           (v2/*: any*/),
           (v3/*: any*/),
           (v4/*: any*/),
+          (v5/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -300,7 +305,7 @@ return {
             "name": "domain",
             "plural": false,
             "selections": [
-              (v5/*: any*/),
+              (v3/*: any*/),
               (v7/*: any*/)
             ],
             "storageKey": null
@@ -334,6 +339,7 @@ return {
           (v2/*: any*/),
           (v3/*: any*/),
           (v4/*: any*/),
+          (v5/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -342,7 +348,7 @@ return {
             "name": "domain",
             "plural": false,
             "selections": [
-              (v5/*: any*/),
+              (v3/*: any*/),
               (v7/*: any*/),
               (v2/*: any*/)
             ],
@@ -356,16 +362,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "b5bf366d0d2179c0a7d1238e63d0196b",
+    "cacheID": "d1ae34892bb1786f5521a5490a9b3721",
     "id": null,
     "metadata": {},
     "name": "loginSessionAuthMyUserQuery",
     "operationKind": "query",
-    "text": "query loginSessionAuthMyUserQuery(\n  $recentProjectName: String!\n  $hasRecentProject: Boolean!\n) {\n  myUserV2 {\n    id\n    basicInfo {\n      email\n      fullName\n    }\n    organization {\n      domainName\n      role\n    }\n    domain {\n      entityId\n      basicInfo {\n        name\n      }\n      id\n    }\n    recentProject: projects(filter: {isActive: true, type: {equals: GENERAL}, name: {equals: $recentProjectName}}, limit: 1) @include(if: $hasRecentProject) {\n      edges {\n        node {\n          id\n          basicInfo {\n            name\n          }\n        }\n      }\n    }\n    defaultProject: projects(filter: {isActive: true, type: {equals: GENERAL}}, orderBy: [{field: NAME, direction: ASC}], limit: 1) {\n      edges {\n        node {\n          id\n          basicInfo {\n            name\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query loginSessionAuthMyUserQuery(\n  $recentProjectName: String!\n  $hasRecentProject: Boolean!\n) {\n  myUserV2 {\n    id\n    entityId\n    basicInfo {\n      email\n      fullName\n    }\n    organization {\n      domainName\n      role\n    }\n    domain {\n      entityId\n      basicInfo {\n        name\n      }\n      id\n    }\n    recentProject: projects(filter: {isActive: true, type: {equals: GENERAL}, name: {equals: $recentProjectName}}, limit: 1) @include(if: $hasRecentProject) {\n      edges {\n        node {\n          id\n          entityId\n          basicInfo {\n            name\n          }\n        }\n      }\n    }\n    defaultProject: projects(filter: {isActive: true, type: {equals: GENERAL}}, orderBy: [{field: NAME, direction: ASC}], limit: 1) {\n      edges {\n        node {\n          id\n          entityId\n          basicInfo {\n            name\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "1f045c010e1773e462189296d4fe9594";
+(node as any).hash = "2264bd8b38f21f7a6abfc2b3a224f39c";
 
 export default node;

@@ -12,7 +12,6 @@ import {
   ProjectPageQuery$variables,
 } from '../__generated__/ProjectPageQuery.graphql';
 import { App } from '../app-shim';
-import BAIRadioGroup from '../components/BAIRadioGroup';
 import ProjectAdminSettingModal, {
   ProjectAdminSettingQuery,
   buildProjectAdminRoleFilter,
@@ -46,6 +45,8 @@ import {
   useErrorMessageResolver,
   useToggle,
   useUpdatableState,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
@@ -399,19 +400,23 @@ const ProjectPage = () => {
       <BAIFlex direction="column" align="stretch" gap="sm">
         <BAIFlex justify="between" align="start" wrap="wrap" gap="xs">
           <BAIFlex direction="row" gap="sm" align="start" wrap="wrap">
-            <BAIRadioGroup
+            <BAISegmentedControl
               value={queryParams.status}
-              onChange={(e) => {
-                setQueryParams({ status: e.target.value });
+              onChange={(value) => {
+                setQueryParams({ status: value as typeof queryParams.status });
                 setTablePaginationOption({ current: 1 });
                 setSelectedProjectList([]);
               }}
-              optionType="button"
-              options={[
-                { label: t('general.Active'), value: 'active' },
-                { label: t('general.Inactive'), value: 'inactive' },
-              ]}
-            />
+            >
+              <BAISegmentedControlItem
+                value="active"
+                label={t('general.Active')}
+              />
+              <BAISegmentedControlItem
+                value="inactive"
+                label={t('general.Inactive')}
+              />
+            </BAISegmentedControl>
             <BAIPropertyFilter
               filterProperties={[
                 {

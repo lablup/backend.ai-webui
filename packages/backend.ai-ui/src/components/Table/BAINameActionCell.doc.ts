@@ -31,7 +31,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Disable an action with `disabled: { reason }` rather than a bare `true` — the reason becomes the button tooltip and is appended to the label once the action overflows into the more menu. `true` disables it silently, which the type makes a deliberate choice.',
+          'Disable an action with `disabled: { reason }` rather than a bare `true` — the reason becomes the button tooltip and stays a tooltip on the label of the menu row once the action overflows into the more menu. `true` disables it silently, which the type makes a deliberate choice.',
       },
       {
         guidance: true,

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1483cc0ccdfe560129e52d753379fbd4>>
+ * @generated SignedSource<<1b450cfc42dbb835e589cf96f1f6528c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,6 +16,7 @@ import { FragmentRefs } from "relay-runtime";
 export type BAIRouteNodesFragment$data = ReadonlyArray<{
   readonly createdAt: string | null | undefined;
   readonly errorData: any | null | undefined;
+  readonly fieldId: string;
   readonly healthStatus: RouteHealthStatus;
   readonly id: string;
   readonly session: string | null | undefined;
@@ -42,6 +43,13 @@ const node: ReaderFragment = {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "fieldId",
       "storageKey": null
     },
     {
@@ -98,6 +106,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "f866952a4ccd2abfa019d5127b8b471b";
+(node as any).hash = "a6e1689e7bc4ba057f63729f0afd28d0";
 
 export default node;

@@ -9,11 +9,10 @@ import {
   VFolderOrderBy,
 } from '../__generated__/VFolderNodeListPageQuery.graphql';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
-import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import DeleteForeverVFolderModalV2 from '../components/DeleteForeverVFolderModalV2';
 import DeleteVFolderModalV2 from '../components/DeleteVFolderModalV2';
-import FolderCreateModalV2 from '../components/FolderCreateModalV2';
+import FolderCreateModal from '../components/FolderCreateModal';
 import RestoreVFolderModalV2 from '../components/RestoreVFolderModalV2';
 import VFolderNodesV2, {
   VFolderNodeInList,
@@ -24,6 +23,7 @@ import { isDeletedCategory } from '../helper/vfolderStatus';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useIsPersonalProject } from '../hooks/useAccessibleProjects';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCreateActionArrival } from '../hooks/useCreateActionArrival';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -47,6 +47,8 @@ import {
   useToggle,
   toEntityLabelFilter,
   useIsLabelableEntityType,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { RotateCcwIcon, Trash2Icon, TrashIcon } from 'lucide-react';
@@ -136,6 +138,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const isLabelable = useIsLabelableEntityType('vfolder');
   const currentProject = useCurrentProjectValue();
   const projectContext = toProjectContext(currentProject);
+  const isPersonalProject = useIsPersonalProject(currentProject.id);
   const [currentUser] = useCurrentUserInfo();
   const baiClient = useSuspendedBackendaiClient();
   const [invitations] = useVFolderInvitations();
@@ -368,15 +371,15 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
         <VStack align="stretch" gap={3}>
           <HStack justify="between" wrap="wrap" gap={3}>
             <HStack gap={3} align="start" style={{ flexShrink: 1 }} wrap="wrap">
-              <BAIRadioGroup
-                optionType="button"
+              <BAISegmentedControl
                 value={queryParams.mode}
-                onChange={(e) => {
-                  setQuery({ mode: e.target.value });
+                onChange={(value) => {
+                  setQuery({ mode: value as typeof queryParams.mode });
                   setTablePaginationOption({ current: 1 });
                   setSelectedFolderList([]);
                 }}
-                options={filterOutEmpty([
+              >
+                {filterOutEmpty([
                   { label: t('data.All'), value: 'all' },
                   { label: t('data.General'), value: 'general' },
                   baiClient?._config?.fasttrackEndpoint && {
@@ -388,8 +391,14 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                     label: t('data.Models'),
                     value: 'model',
                   },
-                ])}
-              />
+                ]).map((option) => (
+                  <BAISegmentedControlItem
+                    key={option.value}
+                    value={option.value}
+                    label={option.label}
+                  />
+                ))}
+              </BAISegmentedControl>
               <BAIGraphQLPropertyFilter<VFolderFilter>
                 data-testid="vfolder-filter"
                 // TODO(needs-backend): V2 `VFolderFilter` has no ownership_type,
@@ -517,7 +526,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             <VFolderNodesV2
               order={queryParams.order}
               loading={deferredQueryVariables !== queryVariables}
-              disableProjectFolderActions
               project={projectContext}
               vfoldersFrgmt={filterOutNullAndUndefined(
                 _.map(scopedVFoldersV2?.edges, 'node'),
@@ -580,9 +588,10 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           </Suspense>
         </VStack>
       </BAICard>
-      <FolderCreateModalV2
+      <FolderCreateModal
         open={isOpenCreateModal}
         project={projectContext}
+        allowAutoMount={isPersonalProject}
         initialValues={{
           usage_mode:
             queryParams.mode === 'model'

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e3eeb0da1307b514227a55dcf06e8a88>>
+ * @generated SignedSource<<933ca85f800e5adb13c662148aafd3f7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -23,6 +23,7 @@ export type RolePresetPermissionTableQuery$data = {
       readonly edges: ReadonlyArray<{
         readonly node: {
           readonly entityType: string;
+          readonly fieldId: string;
           readonly id: string;
           readonly permission: PermissionBit;
         };
@@ -113,6 +114,13 @@ v5 = {
               "alias": null,
               "args": null,
               "kind": "ScalarField",
+              "name": "fieldId",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
               "name": "entityType",
               "storageKey": null
             },
@@ -185,16 +193,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "292df4e9f77b5276e47d50f25ac78a3d",
+    "cacheID": "3bc94467a3e336011db932b835f58c81",
     "id": null,
     "metadata": {},
     "name": "RolePresetPermissionTableQuery",
     "operationKind": "query",
-    "text": "query RolePresetPermissionTableQuery(\n  $rolePresetId: ID!\n  $permissionLimit: Int\n) {\n  adminRolePreset(id: $rolePresetId) {\n    permissionCount: permissionPresets {\n      count\n    }\n    permissionPresets(limit: $permissionLimit) {\n      edges {\n        node {\n          id\n          entityType\n          permission\n        }\n      }\n    }\n    id\n  }\n}\n"
+    "text": "query RolePresetPermissionTableQuery(\n  $rolePresetId: ID!\n  $permissionLimit: Int\n) {\n  adminRolePreset(id: $rolePresetId) {\n    permissionCount: permissionPresets {\n      count\n    }\n    permissionPresets(limit: $permissionLimit) {\n      edges {\n        node {\n          id\n          fieldId\n          entityType\n          permission\n        }\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "54f4e74d63ba2a958d55729d3b69799a";
+(node as any).hash = "b963cec1e4a842f01dc863b73943a45b";
 
 export default node;

@@ -5,7 +5,6 @@
 import { ScanArtifactModelsFromHuggingFaceModalMutation } from '../__generated__/ScanArtifactModelsFromHuggingFaceModalMutation.graphql';
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
-import { AstryxFormTextInput } from './astryxFormControls';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIFlex,
@@ -13,6 +12,7 @@ import {
   BAIModalProps,
   BAIText,
   useBAILogger,
+  BAITextInput,
 } from 'backend.ai-ui';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -54,6 +54,7 @@ const ScanArtifactModelsFromHuggingFaceModal = ({
               node {
                 artifact {
                   id
+                  entityId
                 }
               }
             }
@@ -104,7 +105,7 @@ const ScanArtifactModelsFromHuggingFaceModal = ({
                   const artifactEdges =
                     res.scanArtifactModels?.artifactRevision?.edges ?? [];
                   const artifactId =
-                    artifactEdges[0]?.node?.artifact?.id ?? null;
+                    artifactEdges[0]?.node?.artifact?.entityId ?? null;
                   if (!artifactId) {
                     message.error(
                       t(
@@ -149,8 +150,8 @@ const ScanArtifactModelsFromHuggingFaceModal = ({
               required
               rules={[{ required: true }]}
             >
-              <AstryxFormTextInput
-                label={t('scanArtifactModelsFromHuggingFaceModal.ModelID')}
+              <BAITextInput
+                aria-label={t('scanArtifactModelsFromHuggingFaceModal.ModelID')}
                 placeholder={t(
                   'scanArtifactModelsFromHuggingFaceModal.EnterAModelID',
                 )}
@@ -160,8 +161,8 @@ const ScanArtifactModelsFromHuggingFaceModal = ({
               label={t('scanArtifactModelsFromHuggingFaceModal.Version')}
               name="revision"
             >
-              <AstryxFormTextInput
-                label={t('scanArtifactModelsFromHuggingFaceModal.Version')}
+              <BAITextInput
+                aria-label={t('scanArtifactModelsFromHuggingFaceModal.Version')}
                 placeholder={t(
                   'scanArtifactModelsFromHuggingFaceModal.EnterAVersion',
                 )}

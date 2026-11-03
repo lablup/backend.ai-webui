@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f3b4c2d4d3ddfa5e960b8684cbe99779>>
+ * @generated SignedSource<<0f6cd05f380aec2a5c80e1c2dc9314a2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,7 @@ import { ReaderFragment } from 'relay-runtime';
 export type VFolderOperationStatus = "CLONING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type EditableVFolderNameV2Fragment$data = {
+  readonly entityId: string;
   readonly id: string;
   readonly metadata: {
     readonly name: string;
@@ -39,6 +40,13 @@ const node: ReaderFragment = {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
       "storageKey": null
     },
     {
@@ -96,6 +104,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "b023311316ae114a381046a90112164c";
+(node as any).hash = "b22344cd9da8bf5a69dd84deac5c4954";
 
 export default node;

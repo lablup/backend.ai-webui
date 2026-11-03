@@ -97,7 +97,10 @@ function makeOptions(
     onLogin: vi.fn().mockResolvedValue(undefined),
     onOpen: vi.fn(),
     onBlock: vi.fn(),
-    onCheckLogin: vi.fn().mockResolvedValue(false),
+    onCheckLogin: vi
+      .fn<() => Promise<boolean | 'unreachable'>>()
+      .mockResolvedValue(false),
+    onServerUnreachable: vi.fn(),
     onLogoutSession: vi.fn().mockResolvedValue(undefined),
     apiEndpoint: 'https://api.example.com',
     connectionMode: 'SESSION' as const,
@@ -445,6 +448,33 @@ describe('useLoginOrchestration - auto-logout (single tab, fresh navigation)', (
     // currentTime - currentTime === 0 which is NOT > 3, so silent re-login
     expect(options.onLogin).toHaveBeenCalledWith(false);
     expect(options.onLogoutSession).not.toHaveBeenCalled();
+  });
+
+  it('reports an unreachable manager instead of opening the login panel, and retry re-runs the check', async () => {
+    const now = Date.now() / 1000;
+    backendaiOptions.set('last_window_close_time', now - 10);
+    const onCheckLogin = vi
+      .fn<() => Promise<boolean | 'unreachable'>>()
+      .mockResolvedValueOnce('unreachable')
+      .mockResolvedValueOnce(true);
+
+    const { options } = await renderOrchestrationHook(true, true, {
+      onCheckLogin,
+    });
+
+    expect(options.onServerUnreachable).toHaveBeenCalledTimes(1);
+    expect(options.onOpen).not.toHaveBeenCalled();
+    expect(options.onLogin).not.toHaveBeenCalled();
+    expect(options.onLogoutSession).not.toHaveBeenCalled();
+
+    const retry = vi.mocked(options.onServerUnreachable).mock.calls[0][0];
+    await act(async () => {
+      await retry();
+    });
+
+    expect(onCheckLogin).toHaveBeenCalledTimes(2);
+    expect(options.onLogoutSession).toHaveBeenCalled();
+    expect(options.onOpen).toHaveBeenCalled();
   });
 });
 

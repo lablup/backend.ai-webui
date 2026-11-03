@@ -7,8 +7,12 @@ import { QuotaSettingModalSetMutation } from '../__generated__/QuotaSettingModal
 import { message } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { GBToBytes, bytesToGB } from '../helper';
-import { AstryxFormNumberInput } from './astryxFormControls';
-import { BAIModal, BAIModalProps, useBAILogger } from 'backend.ai-ui';
+import {
+  BAIModal,
+  BAIModalProps,
+  BAINumberInput,
+  useBAILogger,
+} from 'backend.ai-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -130,12 +134,8 @@ const QuotaSettingModal: React.FC<Props> = ({
             },
           ]}
         >
-          {/* antd `Input type="number" suffix="GB"` → `AstryxFormNumberInput`
-              (MAPPING §3.17): `suffix` → `units`, and the numeric input is now
-              a real `NumberInput` rather than a text field in number mode.
-              The `^\d+(\.\d+)?$` rule above still runs, unchanged. */}
-          <AstryxFormNumberInput
-            label={t('storageHost.HardLimit')}
+          <BAINumberInput
+            aria-label={t('storageHost.HardLimit')}
             units="GB"
             step={0.25}
             width="70%"

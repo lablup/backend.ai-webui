@@ -35,6 +35,9 @@ export interface ProjectSelectProps extends BAISelectProps {
   personalProject?: { id: string; name: string };
   /** Whether the personal project is a locked option. Defaults to true. */
   lockPersonalProject?: boolean;
+  /** Label the personal project "My Project" instead of its name; only for
+   * the signed-in user's own personal project. */
+  labelPersonalProjectAsMine?: boolean;
   'aria-label'?: string;
 }
 
@@ -45,6 +48,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
   lockedProjectTypes,
   personalProject,
   lockPersonalProject = true,
+  labelPersonalProjectAsMine,
   'aria-label': ariaLabel,
   ...selectProps
 }) => {
@@ -120,10 +124,13 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
         title: key,
         options: _.map(_.sortBy(value, 'name'), (project) => {
           const isAdmin = !!project?.id && projectAdminIds.includes(project.id);
-          const isLockedPersonal =
-            lockPersonalProject &&
-            !!personalProject &&
-            project?.id === personalProject.id;
+          const isPersonal =
+            !!personalProject && project?.id === personalProject.id;
+          const isLockedPersonal = lockPersonalProject && isPersonal;
+          const displayName =
+            labelPersonalProjectAsMine && isPersonal
+              ? t('projectSelect.MyProject')
+              : project?.name;
           // Fills the option row so the whole item opens the hint; `pointerEvents`
           // covers single mode, whose disabled Item sets `none` (FR-3837).
           const row = (
@@ -136,7 +143,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
                   : undefined
               }
             >
-              <span>{project?.name}</span>
+              <span>{displayName}</span>
               {isAdmin && (
                 <BAIIconWithTooltip
                   content={t('projectSelect.ProjectAdminBadge')}
@@ -162,7 +169,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
             ) : isAdmin ? (
               row
             ) : (
-              project?.name
+              displayName
             ),
             value: project?.id,
             projectId: project?.id,

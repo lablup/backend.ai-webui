@@ -27,7 +27,7 @@ import {
   BAIGraphQLPropertyFilter,
   BAISelect,
   BAIStorageHostSelect,
-  safeDecodeUuid,
+  isValidUUID,
   useUpdatableState,
   BAITextHighlighter,
 } from 'backend.ai-ui';
@@ -249,6 +249,7 @@ const ModelCardV2Grid: React.FC<{
           edges {
             node {
               id
+              entityId
               ...ModelStoreListPageV2_ModelCardV2Fragment
             }
           }
@@ -296,7 +297,7 @@ const ModelCardV2Grid: React.FC<{
             key={item.id}
             modelCardV2Frgmt={item}
             searchKeyword={searchKeyword}
-            onClick={() => onCardClick?.(item.id)}
+            onClick={() => onCardClick?.(item.entityId)}
           />
         );
       })}
@@ -354,9 +355,11 @@ const ModelStoreListPageV2: React.FC = () => {
   // only kicks in once the drawer actually commits to opening.
   const selectedModelCardId = queryParams.modelCard;
   const drawerOpen = !!selectedModelCardId;
-  const localSelectedModelCardId = selectedModelCardId
-    ? safeDecodeUuid(selectedModelCardId)
-    : undefined;
+  // A hand-edited `?modelCard=` must not reach the `UUID!` query variable.
+  const validModelCardId =
+    selectedModelCardId && isValidUUID(selectedModelCardId)
+      ? selectedModelCardId
+      : undefined;
 
   const isPendingPage =
     deferredLimit !== baiPaginationOption.limit ||
@@ -517,7 +520,7 @@ const ModelStoreListPageV2: React.FC = () => {
       )}
 
       <ModelCardDrawer
-        modelCardId={localSelectedModelCardId}
+        modelCardId={validModelCardId}
         open={drawerOpen}
         onClose={() => {
           setQueryParams({ modelCard: null });

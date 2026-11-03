@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f3cac63cc6e1afdd0164a1c1ad70c43f>>
+ * @generated SignedSource<<29b92fdbc221517f7d22197baaeff954>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -76,6 +76,7 @@ export type EntityLabelFilter = {
   OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
   entityId?: UUIDFilter | null | undefined;
   entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   key?: StringFilter | null | undefined;
   value?: StringFilter | null | undefined;
 };
@@ -96,6 +97,7 @@ export type BAIProjectVfolderSelectPaginatedQuery$data = {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly entityId: string;
         readonly id: string;
         readonly metadata: {
           readonly name: string;
@@ -203,6 +205,13 @@ v4 = [
               {
                 "alias": null,
                 "args": null,
+                "kind": "ScalarField",
+                "name": "entityId",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
                 "concreteType": "VFolderMetadataInfo",
                 "kind": "LinkedField",
                 "name": "metadata",
@@ -256,16 +265,16 @@ return {
     "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "1ae2b7345e06443f7ed3f9ba60afa9f2",
+    "cacheID": "bec99ddc59b81f41e28a5e5206327ff2",
     "id": null,
     "metadata": {},
     "name": "BAIProjectVfolderSelectPaginatedQuery",
     "operationKind": "query",
-    "text": "query BAIProjectVfolderSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $projectId: UUID!\n  $filter: VFolderFilter\n) {\n  projectVfolders(projectId: $projectId, offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: CREATED_AT, direction: DESC}]) {\n    count\n    edges {\n      node {\n        id\n        metadata {\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIProjectVfolderSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $projectId: UUID!\n  $filter: VFolderFilter\n) {\n  projectVfolders(projectId: $projectId, offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: CREATED_AT, direction: DESC}]) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        metadata {\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "4b2170e32362d203c7b27052ac295a18";
+(node as any).hash = "bf505c165f00f359c7d8fc62f4a813e9";
 
 export default node;

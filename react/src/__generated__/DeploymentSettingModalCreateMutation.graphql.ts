@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fc265f55097aed47cb5b292522bb9aa9>>
+ * @generated SignedSource<<e716eeed7ffac10ada4b20589c844a62>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -159,6 +159,7 @@ export type DeploymentSettingModalCreateMutation$variables = {
 export type DeploymentSettingModalCreateMutation$data = {
   readonly createModelDeployment: {
     readonly deployment: {
+      readonly entityId: string;
       readonly id: string;
     };
   } | null | undefined;
@@ -205,6 +206,13 @@ v1 = [
             "kind": "ScalarField",
             "name": "id",
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "entityId",
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -231,16 +239,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "00cc34934f1d215d857c9a401f1ae7c3",
+    "cacheID": "6592848e1925044456caa53fe2c748b7",
     "id": null,
     "metadata": {},
     "name": "DeploymentSettingModalCreateMutation",
     "operationKind": "mutation",
-    "text": "mutation DeploymentSettingModalCreateMutation(\n  $input: CreateDeploymentInput!\n) {\n  createModelDeployment(input: $input) {\n    deployment {\n      id\n    }\n  }\n}\n"
+    "text": "mutation DeploymentSettingModalCreateMutation(\n  $input: CreateDeploymentInput!\n) {\n  createModelDeployment(input: $input) {\n    deployment {\n      id\n      entityId\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "3121181d35d8561977fe7fcb69126cd0";
+(node as any).hash = "4a2a4e040377daa19a7f550e45b986d5";
 
 export default node;

@@ -16,7 +16,6 @@ import { convertToOrderBy } from '../helper';
 import { csvLiteral, downloadCSV, escapeCsvValue } from '../helper/csv-util';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import BAIRadioGroup from './BAIRadioGroup';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
@@ -31,6 +30,8 @@ import {
   BAIModal,
   BAIModalProps,
   BAIPopconfirm,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
   BAITable,
   BAIText,
   INITIAL_FETCH_KEY,
@@ -404,24 +405,22 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
             style={{ marginBottom: token('--spacing-3') }}
           >
             <BAIFlex gap="xs" align="start" wrap="wrap">
-              <BAIRadioGroup
+              <BAISegmentedControl
                 value={activeFilter}
-                onChange={(e) => {
-                  setActiveFilter(e.target.value);
+                onChange={(value) => {
+                  setActiveFilter(value as ActiveFilter);
                   setTablePaginationOption({ current: 1 });
                 }}
-                optionType="button"
-                options={[
-                  {
-                    label: t('general.Active'),
-                    value: 'active',
-                  },
-                  {
-                    label: t('general.Inactive'),
-                    value: 'inactive',
-                  },
-                ]}
-              />
+              >
+                <BAISegmentedControlItem
+                  value="active"
+                  label={t('general.Active')}
+                />
+                <BAISegmentedControlItem
+                  value="inactive"
+                  label={t('general.Inactive')}
+                />
+              </BAISegmentedControl>
               <BAIGraphQLPropertyFilter
                 filterProperties={[
                   {

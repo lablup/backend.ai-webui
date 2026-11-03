@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c0f5b070824b9c873878b5b8dcb2f64e>>
+ * @generated SignedSource<<e8bd2a902a3804b68c49dd6667eafcc2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,6 +19,7 @@ export type VFolderNodeDescriptionV2Fragment$data = {
     readonly ownershipType: VFolderOwnershipType;
     readonly permission: VFolderMountPermission;
   };
+  readonly entityId: string;
   readonly host: string;
   readonly id: string;
   readonly metadata: {
@@ -50,7 +51,7 @@ export type VFolderNodeDescriptionV2Fragment$data = {
   };
   readonly status: VFolderOperationStatus;
   readonly unmanagedPath: string | null | undefined;
-  readonly " $fragmentSpreads": FragmentRefs<"VFolderPermissionCellV2Fragment" | "useVirtualFolderNodePathV2Fragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"useVirtualFolderNodePathV2Fragment">;
   readonly " $fragmentType": "VFolderNodeDescriptionV2Fragment";
 };
 export type VFolderNodeDescriptionV2Fragment$key = {
@@ -77,6 +78,13 @@ return {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
       "storageKey": null
     },
     {
@@ -145,14 +153,14 @@ return {
           "alias": null,
           "args": null,
           "kind": "ScalarField",
-          "name": "permission",
+          "name": "ownershipType",
           "storageKey": null
         },
         {
           "alias": null,
           "args": null,
           "kind": "ScalarField",
-          "name": "ownershipType",
+          "name": "permission",
           "storageKey": null
         }
       ],
@@ -253,35 +261,34 @@ return {
           "storageKey": null
         },
         {
-          "alias": null,
-          "args": null,
-          "concreteType": "ProjectV2",
-          "kind": "LinkedField",
-          "name": "project",
-          "plural": false,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "ProjectBasicInfo",
-              "kind": "LinkedField",
-              "name": "basicInfo",
-              "plural": false,
-              "selections": [
-                (v0/*: any*/)
-              ],
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
+          "kind": "CatchField",
+          "field": {
+            "alias": null,
+            "args": null,
+            "concreteType": "ProjectV2",
+            "kind": "LinkedField",
+            "name": "project",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ProjectBasicInfo",
+                "kind": "LinkedField",
+                "name": "basicInfo",
+                "plural": false,
+                "selections": [
+                  (v0/*: any*/)
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          "to": "NULL"
         }
       ],
       "storageKey": null
-    },
-    {
-      "args": null,
-      "kind": "FragmentSpread",
-      "name": "VFolderPermissionCellV2Fragment"
     },
     {
       "args": null,
@@ -294,6 +301,6 @@ return {
 };
 })();
 
-(node as any).hash = "0e67f5e87371928e7ba51d46ec56839f";
+(node as any).hash = "51eee52585925fdce057dca181127912";
 
 export default node;

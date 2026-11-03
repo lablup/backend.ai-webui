@@ -24,7 +24,7 @@ import { IconButton } from '@lablup/ui-common/IconButton';
 import { Popover } from '@lablup/ui-common/Popover';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIFlex, filterOutEmpty, toLocalId } from 'backend.ai-ui';
+import { BAIFlex, filterOutEmpty } from 'backend.ai-ui';
 import { isEmpty } from 'lodash-es';
 import {
   ArrowRightLeftIcon,
@@ -130,6 +130,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
     graphql`
       fragment ChatHeader_Deployment on ModelDeployment {
         id
+        entityId
         metadata {
           name
         }
@@ -138,9 +139,8 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
     deploymentFrgmt,
   );
   // The `deployments` chatting tab and DeploymentSelect both address a
-  // deployment by its local UUID, while the Strawberry node exposes the global
-  // Relay ID.
-  const deploymentId = deployment?.id ? toLocalId(deployment.id) : undefined;
+  // deployment by its local UUID.
+  const deploymentId = deployment?.entityId;
 
   // The deployments "chatting" tab addresses a deployment, not a URL.
   const canCompare = showCompareMenuItem && !customEndpointURL;

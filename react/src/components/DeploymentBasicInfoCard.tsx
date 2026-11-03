@@ -36,9 +36,7 @@ import {
   BAIUnmountAfterClose,
   BAIBooleanToken,
   isDeploymentInStoppedCategory,
-  safeDecodeUuid,
   toEntityLabelFilter,
-  toLocalId,
   useBAILogger,
   useIsLabelableEntityType,
 } from 'backend.ai-ui';
@@ -123,9 +121,9 @@ const DeploymentOverviewContent: React.FC<{
         )}
       </MetadataListItem>
       <MetadataListItem label={t('deployment.DeploymentId')}>
-        {deployment?.id ? (
+        {deployment?.entityId ? (
           <BAIId
-            globalId={deployment.id}
+            uuid={deployment.entityId}
             copyable
             ellipsis={false}
             style={{ maxWidth: 'none' }}
@@ -271,11 +269,11 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
   const listPath = buildProjectPath('deployments');
 
   const handleDelete = () => {
-    if (!deployment?.id) return;
+    if (!deployment?.entityId) return;
     commitDeleteMutation({
       variables: {
         input: {
-          id: toLocalId(deployment.id) ?? deployment.id,
+          id: deployment.entityId,
         },
       },
       onCompleted: (_response, errors) => {
@@ -359,17 +357,13 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
         <DeploymentOverviewContent
           deployment={deployment}
           onClickSchedulingHistoryAction={
-            deployment?.id
+            deployment?.entityId
               ? async () => {
                   // Render-as-you-fetch: start the request in the open event.
-                  const rawId = deployment.id;
-                  if (!rawId) {
-                    return;
-                  }
                   loadDeploymentHistoryQuery(
                     {
                       scope: {
-                        deploymentId: safeDecodeUuid(rawId) ?? rawId,
+                        deploymentId: deployment.entityId,
                       },
                       orderBy: [{ field: 'UPDATED_AT', direction: 'DESC' }],
                       limit: 10,

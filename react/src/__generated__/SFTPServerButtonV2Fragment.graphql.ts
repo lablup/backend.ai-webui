@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bfad94b82abcd97a7931f01cadac9a90>>
+ * @generated SignedSource<<9eedf5511ed28d46c59435f3e1c79424>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,6 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type SFTPServerButtonV2Fragment$data = {
+  readonly entityId: string;
   readonly host: string;
   readonly id: string;
   readonly metadata: {
@@ -34,6 +35,13 @@ const node: ReaderFragment = {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
       "storageKey": null
     },
     {
@@ -66,6 +74,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "97d22dc6a9ff3ed4b16f2c89b13714e1";
+(node as any).hash = "711e9e4a192cd5b7ec89ea2a45e7f18a";
 
 export default node;

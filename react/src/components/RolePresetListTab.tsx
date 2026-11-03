@@ -10,7 +10,6 @@ import {
 import { convertToOrderBy } from '../helper';
 import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
-import BAIRadioGroup from './BAIRadioGroup';
 import RolePresetDetailDrawer from './RolePresetDetailDrawer';
 import RolePresetNodes, {
   type RolePresetNodeInList,
@@ -22,6 +21,8 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
   INITIAL_FETCH_KEY,
   useFetchKey,
 } from 'backend.ai-ui';
@@ -123,18 +124,19 @@ const RolePresetListTab: React.FC = () => {
     <BAIFlex direction="column" align="stretch" gap={'sm'}>
       <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
         <BAIFlex gap={'sm'} align="start" wrap="wrap" style={{ flexShrink: 1 }}>
-          <BAIRadioGroup
-            optionType="button"
+          <BAISegmentedControl
             value={queryParams.status}
-            onChange={(e) => {
-              setQueryParams({ status: e.target.value });
+            onChange={(value) => {
+              setQueryParams({ status: value as typeof queryParams.status });
               setTablePaginationOption({ current: 1 });
             }}
-            options={[
-              { label: t('rbac.Active'), value: 'ACTIVE' },
-              { label: t('rbac.Deleted'), value: 'DELETED' },
-            ]}
-          />
+          >
+            <BAISegmentedControlItem value="ACTIVE" label={t('rbac.Active')} />
+            <BAISegmentedControlItem
+              value="DELETED"
+              label={t('rbac.Deleted')}
+            />
+          </BAISegmentedControl>
           <BAIGraphQLPropertyFilter<RolePresetFilter>
             filterProperties={[
               // The role drawer's View Presets link filters by id.

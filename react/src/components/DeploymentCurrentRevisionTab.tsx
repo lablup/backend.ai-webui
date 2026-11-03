@@ -10,7 +10,7 @@ import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIUnmountAfterClose, toLocalId } from 'backend.ai-ui';
+import { BAIUnmountAfterClose } from 'backend.ai-ui';
 import { LoaderCircle } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -48,6 +48,7 @@ const DeploymentCurrentRevisionTab: React.FC<
         }
         deployingRevision {
           id
+          fieldId
           revisionNumber
           ...DeploymentRevisionDetail_revision
         }
@@ -87,7 +88,7 @@ const DeploymentCurrentRevisionTab: React.FC<
             revisionNumber:
               deployingRevision.revisionNumber != null
                 ? `#${deployingRevision.revisionNumber}`
-                : (toLocalId(deployingRevision.id) ?? ''),
+                : deployingRevision.fieldId,
           })}
           endContent={
             <Button

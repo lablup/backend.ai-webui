@@ -127,25 +127,23 @@ const FileNameCell: React.FC<FileNameCellProps> = ({
       loading: isPendingDelete,
       onClick: onClickDelete,
     },
-    // Only offered where editing is permitted at all — a permanently disabled
-    // row would be the whole menu when it is not.
-    ...(enableEdit
+    // Only offered for files where editing is permitted at all — a permanently
+    // disabled row would be the whole menu otherwise.
+    ...(enableEdit && !isDirectory
       ? [
           {
             key: 'edit',
             title: t('comp:FileExplorer.EditFile'),
             icon: <EditIcon size="1em" />,
             showInMenu: 'always' as const,
-            disabled: isDirectory
-              ? { reason: t('comp:FileExplorer.UnsupportedFileFormat') }
-              : isFileTooLarge
-                ? {
-                    reason: t('comp:FileExplorer.FileTooLargeToEdit', {
-                      size: convertToBinaryUnit(MAX_EDITABLE_FILE_SIZE, 'auto')
-                        ?.numberFixed,
-                    }),
-                  }
-                : false,
+            disabled: isFileTooLarge
+              ? {
+                  reason: t('comp:FileExplorer.FileTooLargeToEdit', {
+                    size: convertToBinaryUnit(MAX_EDITABLE_FILE_SIZE, 'auto')
+                      ?.numberFixed,
+                  }),
+                }
+              : false,
             onClick: onClickEdit,
           },
         ]

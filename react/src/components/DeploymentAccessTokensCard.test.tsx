@@ -71,6 +71,7 @@ beforeAll(() => {
 const TOKEN_ROW = {
   node: {
     id: btoa('AccessToken:token-0000'),
+    fieldId: 'token-0000',
     token: 'bai-token-0000',
   },
 };

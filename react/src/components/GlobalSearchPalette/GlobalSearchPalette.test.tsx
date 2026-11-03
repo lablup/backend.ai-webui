@@ -178,21 +178,6 @@ vi.mock('../../hooks/useThemeMode', () => ({
   useThemeMode: () => ({ isDarkMode: false, setThemeMode }),
 }));
 
-// The rollout gate. The real hook drags in `DefaultProviders`; the flag is all
-// the button reads. Defaults to on so the contracts below exercise the palette.
-const experimentalGlobalSearch = vi.hoisted(() => ({
-  value: true as boolean | null,
-}));
-
-vi.mock('../../hooks/useBAISetting', () => ({
-  useBAISettingUserState: (name: string) => {
-    if (name === 'experimental_global_search') {
-      return [experimentalGlobalSearch.value, vi.fn()];
-    }
-    throw new Error(`Unexpected setting key in test: ${name}`);
-  },
-}));
-
 vi.mock('./useRecentSearchHits', () => ({
   useRecentSearchHits: () => [[], { push: pushRecent, clear: vi.fn() }],
 }));
@@ -217,8 +202,7 @@ vi.mock('./useGlobalSearchSource', () => ({
 /**
  * Presses ⌘K and reports whether a hotkey claimed it. `useHotkeys` calls
  * `preventDefault()` before its handler, so `defaultPrevented` is the only
- * observable trace of the registration — the render gate hides the dialog
- * either way, which is why asserting on the dialog proves nothing.
+ * observable trace of the registration.
  */
 const pressModK = () => {
   const event = new KeyboardEvent('keydown', {
@@ -269,50 +253,14 @@ describe('GlobalSearchPalette', () => {
     vi.clearAllMocks();
     suspension.release();
     bootstrapGate.release(hits);
-    experimentalGlobalSearch.value = true;
   });
 
-  it('renders the trigger while the experimental setting is on', () => {
+  it('renders the trigger', () => {
     render(<GlobalSearchPaletteButton />);
 
     expect(
       screen.getByRole('button', { name: 'webui.menu.Search' }),
     ).toBeInTheDocument();
-  });
-
-  it('renders no trigger and leaves mod+k to the browser while the experimental setting is off', () => {
-    experimentalGlobalSearch.value = null;
-    render(<GlobalSearchPaletteButton />);
-
-    expect(
-      screen.queryByRole('button', { name: 'webui.menu.Search' }),
-    ).not.toBeInTheDocument();
-    // Unclaimed, so the browser's own ⌘K (the address bar) still runs.
-    expect(pressModK()).toBe(false);
-  });
-
-  it('closes the palette and forgets it was open when the setting is toggled off', async () => {
-    const user = userEvent.setup();
-    const { rerender } = render(<GlobalSearchPaletteButton />);
-    await user.click(screen.getByRole('button', { name: 'webui.menu.Search' }));
-    await waitFor(() =>
-      expect(screen.getByText('Sessions')).toBeInTheDocument(),
-    );
-
-    experimentalGlobalSearch.value = null;
-    rerender(<GlobalSearchPaletteButton />);
-    expect(screen.queryByText('Sessions')).not.toBeInTheDocument();
-
-    experimentalGlobalSearch.value = true;
-    rerender(<GlobalSearchPaletteButton />);
-    // Give a surviving `isOpen` the chance to remount the palette — the lazy
-    // chunk is already resolved, so one flush is all it would need.
-    await act(async () => {});
-
-    expect(
-      screen.getByRole('button', { name: 'webui.menu.Search' }),
-    ).toBeInTheDocument();
-    expect(screen.queryByText('Sessions')).not.toBeInTheDocument();
   });
 
   it('fills the list with skeleton rows while bootstrap is pending, never the default copy', async () => {

@@ -518,7 +518,7 @@ test.describe(
         await expect(modal).toBeVisible();
 
         // 3. Pick the "Sessions" data source (project-scoped, available to every
-        //    role). The AstryxFormSelector for the `resourceType` field is
+        //    role). The Selector for the `resourceType` field is
         //    labelled `t('dashboard.panelModal.DataSource')` = "Data source"
         //    (`DashboardPanelModal.tsx`); the other combobox in the dialog is
         //    the condition property filter ("Search filters").

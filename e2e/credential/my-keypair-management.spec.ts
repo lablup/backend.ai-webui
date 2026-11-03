@@ -84,9 +84,9 @@ async function deactivateKeypair(
   accessKey: string,
 ) {
   const modal = page.getByRole('dialog', { name: 'My Keypair Management' });
-  // Make sure we're on the Active tab. `BAIRadioGroup` (the Active/Inactive
-  // toggle) renders on Astryx `SegmentedControl` since ticket 10 — a real
-  // `<button role="radio">`, not antd's `<label>`-wrapped radio.
+  // Make sure we're on the Active tab. `BAISegmentedControl` (the
+  // Active/Inactive toggle) renders a real `<button role="radio">`, not antd's
+  // `<label>`-wrapped radio.
   await modal.getByRole('radio', { name: 'Active', exact: true }).click();
   const row = modal
     .locator('tbody tr:not(.ant-table-measure-row)')

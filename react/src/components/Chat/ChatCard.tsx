@@ -41,7 +41,6 @@ import {
   BAIFlex,
   BAILogger,
   toGlobalId,
-  toLocalId,
   useBAILogger,
   useEventNotStable,
   useUpdatableState,
@@ -212,6 +211,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
       query ChatCardQuery($deploymentId: ID!) {
         deployment(id: $deploymentId) @catch {
           id
+          entityId
           networkAccess {
             endpointUrl
           }
@@ -244,7 +244,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
     deployment?.replicaState.desiredReplicaCount === 0;
   // Consumers below address the deployment by its local UUID, as the chat
   // provider and the `deploymentId` URL param do.
-  const deploymentId = deployment?.id ? toLocalId(deployment.id) : undefined;
+  const deploymentId = deployment?.entityId;
 
   const { token } = useTheme();
 

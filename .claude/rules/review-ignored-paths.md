@@ -17,7 +17,7 @@ edit), and it draws attention away from the hand-written source that actually ch
 
 The canonical example in this repo is Relay compiler output under `**/__generated__/**`.
 A single new fragment can add hundreds–thousands of lines of generated types, alias
-boilerplate, and `readonly` array patterns. Bots (especially Copilot) routinely leave
+boilerplate, and `readonly` array patterns. Review bots routinely leave
 useless comments on these. The real review surface is:
 
 - the `graphql\`...\`` tags inside `.tsx` / `.ts` files, and
@@ -54,13 +54,13 @@ The generated output is just those two inputs run through `pnpm relay`, and
 - `.gitattributes` marks `react/src/__generated__/**` and
   `packages/backend.ai-ui/src/__generated__/**` as `linguist-generated=true`, so GitHub
   collapses them in PR diffs automatically.
-- `.github/copilot-instructions.md` ("What NOT to comment on") tells Copilot to skip these
+- `REVIEW.md` ("What not to post") tells review bots and `/code-review` runs to skip these
   paths.
 - This rule covers the Claude-side review agents and any ad-hoc review you perform.
 
 ## Related
 
 - `.gitattributes` — the `linguist-generated=true` entries for `__generated__`.
-- `.github/copilot-instructions.md` — Copilot's matching skip list.
+- `REVIEW.md` — the matching skip list ("What not to post"); keep the two in sync.
 - `pnpm-lockfile-conflicts.md` — why the lockfile is auto-generated and never hand-merged.
 - `.github/instructions/react.instructions.md` (Relay section) — the fragment architecture whose `graphql` tags ARE the review surface.

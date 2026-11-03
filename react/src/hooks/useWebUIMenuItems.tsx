@@ -7,7 +7,10 @@ import { buildPath, MENU_KEY_TO_SCOPE_FEATURE } from '../helper/pathBuilder';
 import { useCurrentUserRole } from './backendai';
 import { useDiagnosticsBadgeSeverity } from './useAutoDiagnostics';
 import { useBAISettingUserState } from './useBAISetting';
-import { useEffectiveAdminRole } from './useCurrentUserProjectRoles';
+import {
+  useEffectiveAdminRole,
+  useIsCurrentProjectAdmin,
+} from './useCurrentUserProjectRoles';
 import { useCustomThemeConfig } from './useCustomThemeConfig';
 import {
   getRouteScopeAndKey,
@@ -257,6 +260,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   const isPluginLoaded = useWebUIPluginLoadedValue();
   const currentUserRole = useCurrentUserRole();
   const effectiveAdminRole = useEffectiveAdminRole();
+  const isCurrentProjectAdmin = useIsCurrentProjectAdmin();
 
   // Scope-aware current menu key (legacy hyphenated key, e.g. 'admin-session',
   // 'project-data', 'session'). Derived from the matched route `handle.menuKey`
@@ -582,6 +586,14 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
             (item) => !PROJECT_ADMIN_PAGE_KEY_SET.has(item.key as string),
           );
 
+  // The project-admin pages' sider menu: every admin tier can open them.
+  const projectAdminMenu: Array<WebUIAdminMenuItemType> =
+    effectiveAdminRole === 'none'
+      ? []
+      : fullAdminMenu.filter((item) =>
+          PROJECT_ADMIN_PAGE_KEY_SET.has(item.key as string),
+        );
+
   const pluginMap: Record<string, MenuItem[]> = {
     'menuitem-user': generalMenu as unknown as MenuItem[],
     'menuitem-admin': adminMenu as unknown as MenuItem[],
@@ -624,7 +636,11 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   });
 
   _.forEach(
-    [generalMenu as MenuItem[], adminMenu as unknown as MenuItem[]],
+    [
+      generalMenu as MenuItem[],
+      adminMenu as unknown as MenuItem[],
+      projectAdminMenu as unknown as MenuItem[],
+    ],
     (menu) => {
       // Remove menu items that are in blockList
       _.remove(menu, (item) => _.includes(blockList, item?.key));
@@ -752,6 +768,12 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     adminGroupOrder,
   );
 
+  const groupedProjectAdminMenu = buildGroupedMenu(
+    projectAdminMenu,
+    aliasAdminGroupNameMap,
+    adminGroupOrder,
+  );
+
   // First admin menu item reachable by the current user, after role filtering
   // (`adminMenu` is already narrowed by `effectiveAdminRole`) and blocklist /
   // inactive-list filtering. Treat this as the single source of truth for
@@ -795,6 +817,18 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       !_.includes(blockList, item.key) &&
       !_.includes(inactiveList, item.key),
   )?.key;
+
+  // The sider's Project Settings entry: only for a project admin of the
+  // current project, even for super/domain admins (who can still open the
+  // pages by URL).
+  const firstAvailableProjectAdminMenuItem = isCurrentProjectAdmin
+    ? _.find(projectAdminMenu, (item) => !item.disabled)
+    : undefined;
+
+  const isSelectedProjectAdminMenu = _.some(
+    projectAdminMenu,
+    (item) => item.key === currentMenuKeyFromRoute,
+  );
 
   const isSelectedAdminCategoryMenu = _.some(adminMenu, (item) => {
     if (item && 'key' in item) {
@@ -885,11 +919,14 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     adminMenu,
     groupedGeneralMenu,
     groupedAdminMenu,
+    groupedProjectAdminMenu,
     isSelectedAdminCategoryMenu,
+    isSelectedProjectAdminMenu,
     isCurrentPathAdminCategory,
     firstAvailableMenuItem,
     firstAvailableAdminMenuItem,
     firstAvailableProjectAdminMenuKey,
+    firstAvailableProjectAdminMenuItem,
     defaultMenuPath,
     isCurrentPageBlocked,
     isPluginLoaded,

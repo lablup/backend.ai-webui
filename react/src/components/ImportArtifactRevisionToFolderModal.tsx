@@ -8,7 +8,7 @@ import { ImportArtifactRevisionToFolderModalMutation } from '../__generated__/Im
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { toProjectContext } from '../types/projectContext';
-import FolderCreateModalV2 from './FolderCreateModalV2';
+import FolderCreateModal from './FolderCreateModal';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { useTheme } from '@lablup/ui-common/theme';
@@ -20,7 +20,6 @@ import {
   BAISelect,
   BAIVFolderSelect,
   BAIVFolderSelectRef,
-  convertToUUID,
   mergeFilterValues,
   toGlobalId,
   toLocalId,
@@ -90,6 +89,7 @@ const ImportArtifactRevisionToFolderModal = ({
       fragment ImportArtifactRevisionToFolderModalArtifactRevisionFragment on ArtifactRevision
       @relay(plural: true) {
         id @required(action: THROW)
+        fieldId
       }
     `,
     selectedArtifactRevisionFrgmt,
@@ -139,6 +139,7 @@ const ImportArtifactRevisionToFolderModal = ({
               version
               artifact {
                 id
+                entityId
                 name
               }
             }
@@ -149,7 +150,7 @@ const ImportArtifactRevisionToFolderModal = ({
 
   const selectedArtifactRevisionIds = _.map(
     selectedArtifactRevisions,
-    (revision) => revision.id,
+    (revision) => revision.fieldId,
   );
 
   return (
@@ -178,10 +179,7 @@ const ImportArtifactRevisionToFolderModal = ({
               importArtifacts({
                 variables: {
                   input: {
-                    artifactRevisionIds: _.map(
-                      selectedArtifactRevisionIds,
-                      (id) => toLocalId(id),
-                    ),
+                    artifactRevisionIds: selectedArtifactRevisionIds,
                     vfolderId: values.vfolderId
                       ? toLocalId(values.vfolderId)
                       : null,
@@ -225,7 +223,7 @@ const ImportArtifactRevisionToFolderModal = ({
                           taskId: task.taskId!,
                           version: task.artifactRevision.version,
                           artifact: {
-                            id: toLocalId(artifact.id ?? ''),
+                            id: artifact.entityId,
                             name: artifact.name ?? '',
                           },
                         };
@@ -352,7 +350,7 @@ const ImportArtifactRevisionToFolderModal = ({
           </BAIFlex>
         </Form>
       </BAIModal>
-      <FolderCreateModalV2
+      <FolderCreateModal
         open={isOpenCreateModal}
         // ADR-0001: the new folder lands in the model-store project the user
         // picked above — the same project the folder list is filtered by.
@@ -362,13 +360,8 @@ const ImportArtifactRevisionToFolderModal = ({
         onRequestClose={(result) => {
           toggleIsOpenCreateModal();
           if (result) {
-            // Set the created folder as the selected value in the vfolderId
-            // TODO: FolderCreateModalV2 returns id without '-'.
             formRef.current?.setFieldsValue({
-              vfolderId: toGlobalId(
-                'VirtualFolderNode',
-                convertToUUID(result.id),
-              ),
+              vfolderId: toGlobalId('VirtualFolderNode', result.entityId),
             });
             vfolderSelectRef.current?.refetch();
           }

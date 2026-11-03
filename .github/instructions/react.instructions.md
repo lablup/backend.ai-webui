@@ -10,7 +10,7 @@ canonical reference, and each BAI wrapper's file header documents its deliberate
 
 ## React Compiler — `'use memo'`
 
-- `babel-plugin-react-compiler` runs in **annotation mode**: memoization happens only in
+- The React Compiler (Oxc, through `@vitejs/plugin-react`) runs in **annotation mode**: memoization happens only in
   function bodies that start with `'use memo'`.
 - Add `'use memo'` as the **first statement of every component body and every custom hook
   body** (function bodies, not files). Never remove, rename, or backtick an existing one.
@@ -105,6 +105,10 @@ inherited call sites needed no edit when their internals were rebuilt on Astryx.
 - Export the "one row" type so consumers don't re-derive it:
   `export type UserNodeInList = NonNullable<BAIUserNodesFragment$data[number]>;`
 - Pagination argument modes are mutually exclusive — see `.claude/rules/graphql-pagination.md`.
+- **Local ids**: when a type exposes `entityId` (or `fieldId` when it has no `entityId`),
+  select it and use it for values, filters, mutation inputs and React keys. Do not add new
+  `toLocalId(node.id)`, `row_id` or nested `{ id }` decoding for such a type (#10494).
+  A type with neither field keeps the existing approach.
 - `@since` / `@sinceMultiple` / `@deprecatedSince` / `@deprecatedSinceMultiple` /
   `@skipOnClient` in `graphql` tags are
   **client-side** directives defined in `data/client-directives.graphql` and stripped at

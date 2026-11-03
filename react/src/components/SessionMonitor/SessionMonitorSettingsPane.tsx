@@ -15,8 +15,6 @@ import { useCurrentUserProjectRoles } from '../../hooks/useCurrentUserProjectRol
 import { useSessionMonitorCondition } from '../../hooks/useSessionMonitor';
 import { SETTING_ARRIVAL_PARAM } from '../../hooks/useSettingArrival';
 import { getSessionFilterProperties } from '../DashboardPanels/sessionFilterProperties';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
-import { Selector } from '@lablup/ui-common/Selector';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
@@ -27,6 +25,8 @@ import {
   BAIScopedUserSelect,
   BAISelect,
   type FilterProperty,
+  BAICheckboxInput,
+  BAISelector,
 } from 'backend.ai-ui';
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash-es';
@@ -144,9 +144,8 @@ const SessionMonitorSettingsPane: React.FC<{
         {t('sessionMonitor.settings.ShowInHeader')}
       </Text>
       {SESSION_MONITOR_CHIP_ITEMS.map((item) => (
-        <CheckboxInput
+        <BAICheckboxInput
           key={item}
-          label={t(CHIP_ITEM_LABEL_KEYS[item])}
           value={chipItems?.includes(item) ?? false}
           onChange={(checked) =>
             setChipItems(
@@ -155,23 +154,27 @@ const SessionMonitorSettingsPane: React.FC<{
               ),
             )
           }
-        />
+        >
+          {t(CHIP_ITEM_LABEL_KEYS[item])}
+        </BAICheckboxInput>
       ))}
       <Text type="label" weight="semibold">
         {t('sessionMonitor.settings.List')}
       </Text>
-      <BAIFlex direction="row" align="center" justify="between" gap="sm">
-        <Selector
-          label={t('sessionMonitor.settings.SortBy')}
+      <BAIFlex direction="column" align="stretch" gap="xs">
+        <Text>{t('sessionMonitor.settings.SortBy')}</Text>
+        <BAISelector
+          aria-label={t('sessionMonitor.settings.SortBy')}
           size="sm"
           options={sortOptions}
           value={sort ?? 'deadline'}
           onChange={(value) => setSort(value as SessionMonitorSort)}
         />
       </BAIFlex>
-      <BAIFlex direction="row" align="center" justify="between" gap="sm">
-        <Selector
-          label={t('sessionMonitor.settings.RowsShown')}
+      <BAIFlex direction="column" align="stretch" gap="xs">
+        <Text>{t('sessionMonitor.settings.RowsShown')}</Text>
+        <BAISelector
+          aria-label={t('sessionMonitor.settings.RowsShown')}
           size="sm"
           options={SESSION_MONITOR_ROW_OPTIONS.map((n) => String(n))}
           value={String(rows ?? SESSION_MONITOR_VISIBLE_LIMIT)}

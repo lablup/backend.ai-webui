@@ -4,10 +4,7 @@
  */
 import { Form, type FormItemProps } from '../form-engine';
 import { useValidateSessionName } from '../hooks/useValidateSessionName';
-// FRONTIER (ticket 17): Form.Item is self-hosted since ticket 34 (live again
-// since ticket 35). The CONTROL is Astryx now, via the shared `Form.Item`
-// adapter.
-import { AstryxFormTextInput } from './astryxFormControls';
+import { BAITextInput } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -35,13 +32,8 @@ const SessionNameFormItem: React.FC<SessionNameFormItemProps> = ({
           no Astryx counterpart (`TextInput` exposes no counter slot) and is
           dropped — the 64-char bound is already enforced by
           `useValidateSessionName`'s rules, which surface the same limit as a
-          validation message. `autoComplete="off"` is likewise dropped: the
-          adapter's surface does not carry it and a session name is not an
-          autofillable field. */}
-      <AstryxFormTextInput
-        label={t('session.launcher.SessionName')}
-        allowClear
-      />
+          validation message. */}
+      <BAITextInput aria-label={t('session.launcher.SessionName')} hasClear />
     </Form.Item>
   );
 };

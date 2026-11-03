@@ -19,6 +19,7 @@
  */
 import {
   modifyConfigToml,
+  seedStoredApiEndpoint,
   userInfo,
   webServerEndpoint,
   webuiEndpoint,
@@ -95,6 +96,7 @@ async function gotoLoginPage(
     },
   });
   await setupBaseMocks(page);
+  await seedStoredApiEndpoint(page);
   // The app attempts a silent re-login on load; let that request finish
   // before a test installs its own /server/login mock or spy.
   const silentLogin = page.waitForResponse(
@@ -433,7 +435,7 @@ const GATEWAY_IP_REJECTION = {
     {
       message:
         'Unexpected empty "data" and "errors" fields in result: {"type": "https://api.backend.ai/probs/auth-failed"}',
-      path: ['keypair'],
+      path: ['myUserV2'],
       extensions: {
         response: {
           status: 401,
@@ -450,7 +452,7 @@ const GATEWAY_IP_REJECTION = {
       },
     },
   ],
-  data: { keypair: null },
+  data: { myUserV2: null },
 };
 
 test.describe(
@@ -490,7 +492,9 @@ test.describe(
       });
 
       await page.route('**/admin/gql', async (route) => {
-        if (route.request().postData()?.includes('keypair')) {
+        if (
+          route.request().postData()?.includes('loginSessionAuthMyUserQuery')
+        ) {
           await route.fulfill({
             status: 200,
             contentType: 'application/json',
@@ -504,8 +508,10 @@ test.describe(
       await fillLoginForm(page);
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
+      // #10202 titles a refused post-login query with error.LoginFailed and
+      // keeps the manager's reason as the description.
       await expect(
-        page.getByText('Credential/signature mismatch.'),
+        page.getByText('Login failed. Check login information.'),
       ).toBeVisible({ timeout: 10_000 });
       await expect(page.getByText(DISALLOWED_IP_MSG)).toBeVisible();
       await expect(

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8f57e972345299ad14a69f2ecc0667e2>>
+ * @generated SignedSource<<2aabbcebcc8a9616e85f706f98bf1522>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -27,6 +27,7 @@ export type ScanArtifactModelsFromHuggingFaceModalMutation$data = {
       readonly edges: ReadonlyArray<{
         readonly node: {
           readonly artifact: {
+            readonly entityId: string;
             readonly id: string;
           } | null | undefined;
         };
@@ -76,7 +77,14 @@ v4 = {
   "name": "artifact",
   "plural": false,
   "selections": [
-    (v3/*: any*/)
+    (v3/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
+    }
   ],
   "storageKey": null
 };
@@ -193,16 +201,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d250e8933c3d6a6f42114c88bf281409",
+    "cacheID": "372089733050a8031bd7b5acc93ab54c",
     "id": null,
     "metadata": {},
     "name": "ScanArtifactModelsFromHuggingFaceModalMutation",
     "operationKind": "mutation",
-    "text": "mutation ScanArtifactModelsFromHuggingFaceModalMutation(\n  $input: ScanArtifactModelsInput!\n) {\n  scanArtifactModels(input: $input) {\n    artifactRevision {\n      count\n      edges {\n        node {\n          artifact {\n            id\n          }\n          id\n        }\n      }\n    }\n  }\n}\n"
+    "text": "mutation ScanArtifactModelsFromHuggingFaceModalMutation(\n  $input: ScanArtifactModelsInput!\n) {\n  scanArtifactModels(input: $input) {\n    artifactRevision {\n      count\n      edges {\n        node {\n          artifact {\n            id\n            entityId\n          }\n          id\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "21adbb6ef759156a2ad47c577c67e24e";
+(node as any).hash = "295e33ab1ce799e7aa6262992adb1366";
 
 export default node;

@@ -7,7 +7,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
-import { BAISkeleton, safeDecodeUuid } from 'backend.ai-ui';
+import { BAISkeleton } from 'backend.ai-ui';
 import React, { Suspense, useEffect, useEffectEvent } from 'react';
 import { useQueryLoader } from 'react-relay';
 
@@ -53,7 +53,7 @@ const DeploymentAuditLogTab: React.FC<DeploymentAuditLogTabProps> = ({
               entityType: baiClient.isManagerVersionCompatibleWith('26.9.0')
                 ? 'deployment'
                 : 'MODEL_DEPLOYMENT',
-              entityId: safeDecodeUuid(deploymentId) ?? deploymentId,
+              entityId: deploymentId,
             },
           ],
         },

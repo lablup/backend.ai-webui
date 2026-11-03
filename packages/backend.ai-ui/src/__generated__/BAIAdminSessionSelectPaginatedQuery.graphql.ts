@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<35e3d22704c717d42e965a4bd167d69c>>
+ * @generated SignedSource<<f77bcdbba0eae6a8b6499c3b41737dca>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -22,6 +22,7 @@ export type SessionV2Filter = {
   clusterSize?: IntFilter | null | undefined;
   creationId?: StringFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   id?: UUIDFilter | null | undefined;
   isPreemptible?: boolean | null | undefined;
   jobPriority?: IntFilter | null | undefined;
@@ -32,8 +33,10 @@ export type SessionV2Filter = {
   priority?: IntFilter | null | undefined;
   projectId?: UUIDFilter | null | undefined;
   replicaId?: UUIDFilter | null | undefined;
+  requestedStartsAt?: DateTimeFilter | null | undefined;
   resourceGroupName?: StringFilter | null | undefined;
   result?: SessionV2ResultFilter | null | undefined;
+  sessionGroupId?: UUIDFilter | null | undefined;
   sessionType?: SessionV2TypeFilter | null | undefined;
   startsAt?: DateTimeFilter | null | undefined;
   status?: SessionV2StatusFilter | null | undefined;
@@ -89,6 +92,7 @@ export type EntityLabelFilter = {
   OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
   entityId?: UUIDFilter | null | undefined;
   entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   key?: StringFilter | null | undefined;
   value?: StringFilter | null | undefined;
 };
@@ -134,6 +138,7 @@ export type BAIAdminSessionSelectPaginatedQuery$data = {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly entityId: string;
         readonly id: string;
         readonly metadata: {
           readonly name: string;
@@ -221,6 +226,13 @@ v3 = [
               {
                 "alias": null,
                 "args": null,
+                "kind": "ScalarField",
+                "name": "entityId",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
                 "concreteType": "SessionV2MetadataInfo",
                 "kind": "LinkedField",
                 "name": "metadata",
@@ -272,16 +284,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "030a6e61afe8935dcfb7c09de981e719",
+    "cacheID": "abdfd5866d03339dcbdf3086b2346fc5",
     "id": null,
     "metadata": {},
     "name": "BAIAdminSessionSelectPaginatedQuery",
     "operationKind": "query",
-    "text": "query BAIAdminSessionSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: SessionV2Filter\n) {\n  adminSessionsV2(offset: $offset, limit: $limit, filter: $filter) {\n    count\n    edges {\n      node {\n        id\n        metadata {\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIAdminSessionSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: SessionV2Filter\n) {\n  adminSessionsV2(offset: $offset, limit: $limit, filter: $filter) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        metadata {\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b620fe51cc5248b21337227de4c3ba6d";
+(node as any).hash = "31ef5021807ce80931a51d1eb28a78f3";
 
 export default node;

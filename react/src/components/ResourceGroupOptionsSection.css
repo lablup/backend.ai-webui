@@ -1,0 +1,9 @@
+/* The edit button shows only while its section is hovered or focused. */
+.bai-rg-options-section .bai-rg-options-section__edit {
+  opacity: 0;
+}
+
+.bai-rg-options-section:hover .bai-rg-options-section__edit,
+.bai-rg-options-section:focus-within .bai-rg-options-section__edit {
+  opacity: 1;
+}

@@ -46,6 +46,7 @@ const DeploymentRevisionCard: React.FC<DeploymentRevisionCardProps> = ({
     graphql`
       fragment DeploymentRevisionCard_deployment on ModelDeployment {
         id
+        entityId
         ...DeploymentCurrentRevisionTab_deployment
         ...DeploymentRevisionHistoryTab_deployment
       }
@@ -127,7 +128,7 @@ const DeploymentRevisionCard: React.FC<DeploymentRevisionCardProps> = ({
         </ErrorBoundaryWithNullFallback>
       )}
       {activeRevisionTab === 'auditLog' && deployment && (
-        <DeploymentAuditLogTab deploymentId={deployment.id} />
+        <DeploymentAuditLogTab deploymentId={deployment.entityId} />
       )}
     </BAICard>
   );

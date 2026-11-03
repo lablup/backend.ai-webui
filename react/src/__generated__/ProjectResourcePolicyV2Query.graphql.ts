@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ce670a0b018847f1ae48f7198ecaf656>>
+ * @generated SignedSource<<fadfbd86e46b25fe0a66062e7d8167e3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,6 +17,7 @@ export type ProjectResourcePolicyV2Filter = {
   NOT?: ReadonlyArray<ProjectResourcePolicyV2Filter> | null | undefined;
   OR?: ReadonlyArray<ProjectResourcePolicyV2Filter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   maxNetworkCount?: IntFilter | null | undefined;
   maxQuotaScopeSize?: IntFilter | null | undefined;
   maxVfolderCount?: IntFilter | null | undefined;
@@ -57,6 +58,12 @@ export type IntFilter = {
   lessThan?: number | null | undefined;
   lessThanOrEqual?: number | null | undefined;
   notEquals?: number | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
 };
 export type ProjectResourcePolicyV2OrderBy = {
   direction?: OrderDirection;

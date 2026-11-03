@@ -70,6 +70,7 @@ const BAILoginSessionTable = ({
       fragment BAILoginSessionTableFragment on LoginSessionV2
       @relay(plural: true) {
         id
+        fieldId
         accessKey
         createdAt
         lastAccessedAt

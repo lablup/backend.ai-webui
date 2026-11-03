@@ -12,7 +12,6 @@ import {
 } from '../__generated__/RBACManagementPageQuery.graphql';
 import { RBACManagementPageScopeTypesQuery } from '../__generated__/RBACManagementPageScopeTypesQuery.graphql';
 import { App } from '../app-shim';
-import BAIRadioGroup from '../components/BAIRadioGroup';
 import RoleDetailDrawerV2 from '../components/RoleDetailDrawerV2';
 import RoleFormModal from '../components/RoleFormModal';
 import RoleNodes, {
@@ -41,6 +40,8 @@ import {
   useBAILogger,
   useFetchKey,
   useMutationWithPromise,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import { Trash2, BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
 import {
@@ -268,18 +269,22 @@ const RoleListTab: React.FC = () => {
             wrap="wrap"
             style={{ flexShrink: 1 }}
           >
-            <BAIRadioGroup
-              optionType="button"
+            <BAISegmentedControl
               value={queryParams.status}
-              onChange={(e) => {
-                setQueryParams({ status: e.target.value });
+              onChange={(value) => {
+                setQueryParams({ status: value as typeof queryParams.status });
                 setTablePaginationOption({ current: 1 });
               }}
-              options={[
-                { label: t('rbac.Active'), value: 'ACTIVE' },
-                { label: t('rbac.Inactive'), value: 'DELETED' },
-              ]}
-            />
+            >
+              <BAISegmentedControlItem
+                value="ACTIVE"
+                label={t('rbac.Active')}
+              />
+              <BAISegmentedControlItem
+                value="DELETED"
+                label={t('rbac.Inactive')}
+              />
+            </BAISegmentedControl>
             <BAIGraphQLPropertyFilter<RoleFilter>
               filterProperties={filterOutEmpty([
                 {

@@ -63,7 +63,7 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
   };
 });
 
-vi.mock('./FolderCreateModalV2', async () => {
+vi.mock('./FolderCreateModal', async () => {
   const React = await import('react');
   return {
     default: (props: any) =>
@@ -74,7 +74,10 @@ vi.mock('./FolderCreateModalV2', async () => {
           type: 'button',
           'data-project-id': props.project?.id ?? '',
           onClick: () =>
-            props.onRequestClose?.({ id: CREATED_VFOLDER_GLOBAL_ID }),
+            props.onRequestClose?.({
+              id: CREATED_VFOLDER_GLOBAL_ID,
+              entityId: CREATED_VFOLDER_UUID,
+            }),
         },
         'create-folder',
       ),
@@ -128,7 +131,7 @@ describe('AdminModelCardSettingModal model-storage folder picker', () => {
     expect(input).not.toHaveProperty('domainName');
   });
 
-  it('fills the picker with the local id of a just-created folder', async () => {
+  it('fills the picker with the entityId of a just-created folder', async () => {
     const user = userEvent.setup();
     renderModal();
 

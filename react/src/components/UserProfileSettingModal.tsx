@@ -10,11 +10,6 @@ import { isIpIncludedInList, isValidIPOrCidr } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import TOTPActivateModal from './TOTPActivateModalLazy';
-import {
-  AstryxFormSwitch,
-  AstryxFormTagsInput,
-  AstryxFormTextInput,
-} from './astryxFormControls';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAIModal,
@@ -22,6 +17,9 @@ import {
   type BAIModalProps,
   useErrorMessageResolver,
   useToggle,
+  BAISwitch,
+  BAITagsInput,
+  BAITextInput,
 } from 'backend.ai-ui';
 import { CircleAlert } from 'lucide-react';
 import React, { useRef } from 'react';
@@ -239,7 +237,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
                 labels from the LIGHT antd theme — MAPPING §5's "a nested
                 <Theme> with no explicit `mode`" hazard. Fixing it belongs to
                 the modal/theme layer, not to this call site. */}
-            <AstryxFormTextInput label={t('webui.menu.FullName')} />
+            <BAITextInput aria-label={t('webui.menu.FullName')} />
           </Form.Item>
           <Form.Item
             name="password"
@@ -251,8 +249,8 @@ const UserProfileSettingModal: React.FC<Props> = ({
               },
             ]}
           >
-            <AstryxFormTextInput
-              label={t('general.NewPassword')}
+            <BAITextInput
+              aria-label={t('general.NewPassword')}
               type="password"
             />
           </Form.Item>
@@ -282,8 +280,8 @@ const UserProfileSettingModal: React.FC<Props> = ({
               }),
             ]}
           >
-            <AstryxFormTextInput
-              label={t('webui.menu.NewPasswordAgain')}
+            <BAITextInput
+              aria-label={t('webui.menu.NewPasswordAgain')}
               type="password"
             />
           </Form.Item>
@@ -338,9 +336,9 @@ const UserProfileSettingModal: React.FC<Props> = ({
             ]}
             style={{ marginBottom: 0 }}
           >
-            <AstryxFormTagsInput
+            <BAITagsInput
               tokenSeparators={[',', ' ']}
-              label={t('credential.AllowedClientIP')}
+              aria-label={t('credential.AllowedClientIP')}
               placeholder={t('credential.AllowedClientIPPlaceholder')}
             />
           </Form.Item>
@@ -350,17 +348,10 @@ const UserProfileSettingModal: React.FC<Props> = ({
               label={t('webui.menu.TotpActivated')}
               valuePropName="checked"
             >
-              {/* MAPPING §4: `checked` -> `value` (coalesced by the local
-                  adapter below, since Form.Item injects `undefined` until the
-                  field is touched), `loading` -> `isLoading`. */}
-              {/* `isLoading` and the post-`onChange` side-effect slot
-                  (`onValueChange`) are on the SHARED adapter now — those two
-                  gaps were the whole reason for the local copy (D10
-                  fold-back). */}
-              <AstryxFormSwitch
-                label={t('webui.menu.TotpActivated')}
+              <BAISwitch
+                aria-label={t('webui.menu.TotpActivated')}
                 isLoading={mutationToRemoveTotp.isPending}
-                onValueChange={(checked: boolean) => {
+                onChange={(checked: boolean) => {
                   if (checked) {
                     toggleTOTPActivateModal();
                   } else {

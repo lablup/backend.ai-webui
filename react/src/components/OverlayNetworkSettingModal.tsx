@@ -8,14 +8,12 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import BAIFormItem from './BAIFormItem';
 import {
-  AstryxFormCheckbox,
-  AstryxFormNumberInput,
-} from './astryxFormControls';
-import {
   BAIQuestionIconWithTooltip,
   BAIModal,
   BAIModalProps,
   BAIFlex,
+  BAICheckboxInput,
+  BAINumberInput,
 } from 'backend.ai-ui';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -140,11 +138,10 @@ const OverlayNetworkSettingModal = ({
                   >
                     {/* No wrapper element here: `Form.Item` clones its DIRECT
                         child, so a `<div style={{flex:1}}>` in between
-                        swallowed `value`/`onChange` and the field never bound.
-                        The adapter already defaults to `width="100%"`, which
-                        is what the flex wrapper was for. */}
-                    <AstryxFormNumberInput
-                      label="MTU"
+                        swallowed `value`/`onChange` and the field never bound. */}
+                    <BAINumberInput
+                      width="100%"
+                      aria-label="MTU"
                       min={0}
                       max={15000}
                       disabled={
@@ -157,8 +154,7 @@ const OverlayNetworkSettingModal = ({
               }}
             </Form.Item>
             <Form.Item noStyle name="mtu_checkbox" valuePropName="checked">
-              <AstryxFormCheckbox
-                label={t('settings.Unset')}
+              <BAICheckboxInput
                 disabled={isFetchingMtu}
                 onChange={(checked) => {
                   if (checked) {
@@ -167,7 +163,9 @@ const OverlayNetworkSettingModal = ({
                     });
                   }
                 }}
-              />
+              >
+                {t('settings.Unset')}
+              </BAICheckboxInput>
             </Form.Item>
           </BAIFlex>
         </BAIFormItem>

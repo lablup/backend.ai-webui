@@ -22,7 +22,6 @@ import {
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useThemeMode } from '../hooks/useThemeMode';
 import { ImageMetaDivider, ImageTagTokens } from './ImageTags';
-import { AstryxFormTextInput } from './astryxFormControls';
 import { Divider } from '@lablup/ui-common/Divider';
 import {
   DropdownMenu,
@@ -43,6 +42,7 @@ import {
   BAISelectOptionItem as SelectOption,
   BAISelectOptionGroup as SelectOptGroup,
   BAIText,
+  BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { ArrowUpDown } from 'lucide-react';
@@ -987,11 +987,8 @@ const ImageEnvironmentSelectFormItems: React.FC<
             : 'none',
         }}
       >
-        {/* antd `Input allowClear` → `AstryxFormTextInput hasClear`
-            (MAPPING §3.6). The handler already read the value rather than the
-            event, which the adapter now guarantees. */}
-        <AstryxFormTextInput
-          label={t('session.launcher.ManualImageName')}
+        <BAITextInput
+          aria-label={t('session.launcher.ManualImageName')}
           hasClear
           onChange={(value) => {
             if (!_.isEmpty(value)) {
@@ -1008,7 +1005,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
         />
       </Form.Item>
       <Form.Item noStyle hidden name={['environments', 'image']}>
-        <AstryxFormTextInput label={t('session.launcher.Environments')} />
+        <BAITextInput aria-label={t('session.launcher.Environments')} />
       </Form.Item>
     </>
   );

@@ -26,3 +26,9 @@ body.electron-macos:not(:has(.webui-announcement-banner)) .bai-webui-header {
   ) !important;
   padding-block-start: var(--webui-titlebar-height) !important;
 }
+
+/* Lets the session monitor chip shrink and clip its trailing items when the
+   band runs out of width; the Popover root it renders is not reachable by props. */
+.bai-webui-header__session-monitor > * {
+  min-width: 0;
+}

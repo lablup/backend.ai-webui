@@ -18,6 +18,7 @@
  - `BAIFileExplorer` / `ScopedAuditLog` / `BAILink` stay BUI (frontier:
    tickets 25/28 own their internals).
 */
+import { FolderExplorerModalV2OwnershipFragment$key } from '../__generated__/FolderExplorerModalV2OwnershipFragment.graphql';
 import { FolderExplorerModalV2OwnershipProjectQuery } from '../__generated__/FolderExplorerModalV2OwnershipProjectQuery.graphql';
 import { FolderExplorerModalV2Query } from '../__generated__/FolderExplorerModalV2Query.graphql';
 import type { ScopedAuditLogQuery as ScopedAuditLogQueryType } from '../__generated__/ScopedAuditLogQuery.graphql';
@@ -65,7 +66,12 @@ import {
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery, useQueryLoader } from 'react-relay';
+import {
+  graphql,
+  useFragment,
+  useLazyLoadQuery,
+  useQueryLoader,
+} from 'react-relay';
 
 /**
  * Height cap for the explorer dialog. The legacy modal derived its own from
@@ -120,11 +126,31 @@ interface FolderExplorerProps extends Omit<
 // `vfolderV2.ownership.project` runs, so a personal project is recognised even
 // when the caller holds no project role on it (FR-3983).
 const OwnershipProjectBanner: React.FC<{
-  projectId: string;
-  projectName?: string | null;
-}> = ({ projectId, projectName }) => {
+  vfolderNodeFrgmt: FolderExplorerModalV2OwnershipFragment$key;
+}> = ({ vfolderNodeFrgmt }) => {
   'use memo';
   const { t } = useTranslation();
+  // Read in a fragment of its own: a share recipient can read the folder but
+  // not its owning project, and the query's `@catch(to: RESULT)` would turn
+  // that field error into a failed node — Relay 20 lets an inner catch's
+  // errors bubble, marked handled, into the outer result (#10647).
+  const { ownership } = useFragment(
+    graphql`
+      fragment FolderExplorerModalV2OwnershipFragment on VFolder {
+        ownership {
+          projectId
+          project @catch(to: NULL) {
+            basicInfo {
+              name
+            }
+          }
+        }
+      }
+    `,
+    vfolderNodeFrgmt,
+  );
+  const projectId = ownership.projectId ?? '';
+  const projectName = ownership.project?.basicInfo?.name;
   const { group_node } =
     useLazyLoadQuery<FolderExplorerModalV2OwnershipProjectQuery>(
       graphql`
@@ -174,18 +200,15 @@ const useFolderExplorerQuery = (vfolderID: string) => {
           unmanagedPath
           host
           id
+          entityId
           metadata {
             name
           }
           permissions @since(version: "26.9.0rc1")
           ownership {
             projectId
-            project {
-              basicInfo {
-                name
-              }
-            }
           }
+          ...FolderExplorerModalV2OwnershipFragment
           ...FolderExplorerHeaderV2Fragment
           ...VFolderNodeDescriptionV2Fragment
         }
@@ -372,7 +395,7 @@ const FolderExplorerBody: React.FC<{
   };
 
   const { uploadStatus, uploadFiles } = useFileUploadManager(
-    vfolderNode?.id,
+    vfolderNode?.entityId,
     folderName || undefined,
   );
   // Polling to update fetchKey when there are pending uploads
@@ -389,20 +412,37 @@ const FolderExplorerBody: React.FC<{
     }
   }, [uploadStatus, updateFetchKey]);
 
-  // Changing the folder's contents needs the folder's `UPDATE` bit plus the
-  // storage host permission matching the operation (FR-4140).
+  // Each content action needs the folder permission bit the manager checks
+  // for it (upload and mkdir are CREATE, rename is UPDATE, delete is
+  // SOFT_DELETE) plus the storage host permission matching the operation
+  // (FR-4140, #10647).
   const hostPermissions = unitedAllowedPermissionByVolume[folderHost];
-  const canUpdateContent = _.includes(vfolderNode?.permissions, 'UPDATE');
-  const hasContentPermission = (hostPermission: string) =>
-    canUpdateContent && _.includes(hostPermissions, hostPermission);
+  const hasContentPermission = (
+    permissionBit: 'CREATE' | 'UPDATE' | 'SOFT_DELETE',
+    hostPermission: string,
+  ) =>
+    _.includes(vfolderNode?.permissions, permissionBit) &&
+    _.includes(hostPermissions, hostPermission);
   const hasDownloadContentPermission = _.includes(
     hostPermissions,
     'download-file',
   );
-  const hasUploadContentPermission = hasContentPermission('upload-file');
-  const hasCreateContentPermission = hasContentPermission('create-vfolder');
-  const hasDeleteContentPermission = hasContentPermission('delete-vfolder');
-  const hasModifyContentPermission = hasContentPermission('modify-vfolder');
+  const hasUploadContentPermission = hasContentPermission(
+    'CREATE',
+    'upload-file',
+  );
+  const hasCreateContentPermission = hasContentPermission(
+    'CREATE',
+    'create-vfolder',
+  );
+  const hasDeleteContentPermission = hasContentPermission(
+    'SOFT_DELETE',
+    'delete-vfolder',
+  );
+  const hasModifyContentPermission = hasContentPermission(
+    'UPDATE',
+    'modify-vfolder',
+  );
   // TODO: Skip permission check due to inaccurate API response. Update when API is fixed.
   const hasNoPermissions = false;
 
@@ -588,10 +628,7 @@ const FolderExplorerBody: React.FC<{
           !!vfolderNode?.ownership?.projectId ? (
           <ErrorBoundaryWithNullFallback>
             <Suspense fallback={null}>
-              <OwnershipProjectBanner
-                projectId={vfolderNode.ownership.projectId}
-                projectName={vfolderNode.ownership.project?.basicInfo?.name}
-              />
+              <OwnershipProjectBanner vfolderNodeFrgmt={vfolderNode} />
             </Suspense>
           </ErrorBoundaryWithNullFallback>
         ) : null}

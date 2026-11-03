@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<eb4fc142ea17479b038cd6d674cbd5d4>>
+ * @generated SignedSource<<408107fcec2575105bbad4f68a595e74>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,6 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type DeleteForeverVFolderModalV2Fragment$data = ReadonlyArray<{
+  readonly entityId: string;
   readonly id: string;
   readonly metadata: {
     readonly name: string;
@@ -40,6 +41,13 @@ const node: ReaderFragment = {
     {
       "alias": null,
       "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "VFolderMetadataInfo",
       "kind": "LinkedField",
       "name": "metadata",
@@ -60,6 +68,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "af117d7a409739259841dcfce2d2a493";
+(node as any).hash = "700c914e0ef4b5050894cea46e63352f";
 
 export default node;

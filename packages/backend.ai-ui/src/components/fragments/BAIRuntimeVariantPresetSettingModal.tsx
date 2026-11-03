@@ -13,26 +13,22 @@ import { Form } from '../../form-engine';
 import {
   isValueTypeCompatibleWithUIType,
   READ_UI_TYPE_TO_FORM_UI_TYPE,
-  toLocalId,
   type RuntimeVariantPresetUIType as UIType,
   type RuntimeVariantPresetValueType as ValueType,
 } from '../../helper';
 import { useBAILogger } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIAlert from '../BAIAlert';
-import BAIButton from '../BAIButton';
+import BAICheckboxInput from '../BAICheckboxInput';
+import BAIDynamicList from '../BAIDynamicList';
 import BAIFlex from '../BAIFlex';
 import BAIModal, { BAIModalProps } from '../BAIModal';
+import BAINumberInput from '../BAINumberInput';
 import BAISelect from '../BAISelect';
-import {
-  AstryxFormCheckbox,
-  AstryxFormNumberInput,
-  AstryxFormTextArea,
-  AstryxFormTextInput,
-} from '../astryxFormControls';
+import BAITextArea from '../BAITextArea';
+import BAITextInput from '../BAITextInput';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import BAIRuntimeVariantSelect from './BAIRuntimeVariantSelect';
-import { PlusIcon, Trash2 } from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { graphql, useFragment, useMutation } from 'react-relay';
 import { PayloadError } from 'relay-runtime';
@@ -146,6 +142,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
     graphql`
       fragment BAIRuntimeVariantPresetSettingModalFragment on RuntimeVariantPreset {
         id
+        entityId
         runtimeVariantId
         name
         description
@@ -444,7 +441,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
           : {};
         if (preset) {
           const input: UpdateRuntimeVariantPresetInput = {
-            id: toLocalId(preset.id),
+            id: preset.entityId,
             name: values.name,
             description: values.description ?? null,
             rank: values.rank,
@@ -488,6 +485,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
 
   return (
     <BAIModal
+      width={720}
       {...baiModalProps}
       title={
         preset
@@ -654,8 +652,8 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
             },
           ]}
         >
-          <AstryxFormTextInput
-            label={t('comp:BAIRuntimeVariantPresetSettingModal.Name')}
+          <BAITextInput
+            aria-label={t('comp:BAIRuntimeVariantPresetSettingModal.Name')}
             placeholder={t(
               'comp:BAIRuntimeVariantPresetSettingModal.NamePlaceholder',
             )}
@@ -665,8 +663,10 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
           label={t('comp:BAIRuntimeVariantPresetSettingModal.Description')}
           name="description"
         >
-          <AstryxFormTextArea
-            label={t('comp:BAIRuntimeVariantPresetSettingModal.Description')}
+          <BAITextArea
+            aria-label={t(
+              'comp:BAIRuntimeVariantPresetSettingModal.Description',
+            )}
             rows={2}
             placeholder={t(
               'comp:BAIRuntimeVariantPresetSettingModal.DescriptionPlaceholder',
@@ -682,7 +682,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                 'comp:BAIRuntimeVariantPresetSettingModal.CategoryTooltip',
               )}
             >
-              {/* PILOT-DECISION: antd `AutoComplete` -> `AstryxFormTextInput`.
+              {/* PILOT-DECISION: antd `AutoComplete` -> `TextInput`.
                   MAPPING §3.15 — free-text AutoComplete does not map to
                   `Typeahead` (it commits `T | null` and cannot keep a typed
                   string), and category must stay free text so a new category
@@ -691,8 +691,10 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                   categories (`categoryOptions`) are surfaced in the
                   placeholder instead; the client-side `filterOption` goes
                   with it. */}
-              <AstryxFormTextInput
-                label={t('comp:BAIRuntimeVariantPresetSettingModal.Category')}
+              <BAITextInput
+                aria-label={t(
+                  'comp:BAIRuntimeVariantPresetSettingModal.Category',
+                )}
                 placeholder={
                   categoryOptions && categoryOptions.length > 0
                     ? categoryOptions.join(', ')
@@ -709,8 +711,8 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                 'comp:BAIRuntimeVariantPresetSettingModal.DisplayNameTooltip',
               )}
             >
-              <AstryxFormTextInput
-                label={t(
+              <BAITextInput
+                aria-label={t(
                   'comp:BAIRuntimeVariantPresetSettingModal.DisplayName',
                 )}
                 placeholder={t(
@@ -841,8 +843,10 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                   ]}
                   style={{ flex: 1, minWidth: 0 }}
                 >
-                  <AstryxFormNumberInput
-                    label={t(
+                  <BAINumberInput
+                    width="100%"
+                    hasClear={false}
+                    aria-label={t(
                       'comp:BAIRuntimeVariantPresetSettingModal.SliderMin',
                     )}
                   />
@@ -886,8 +890,10 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                   ]}
                   style={{ flex: 1, minWidth: 0 }}
                 >
-                  <AstryxFormNumberInput
-                    label={t(
+                  <BAINumberInput
+                    width="100%"
+                    hasClear={false}
+                    aria-label={t(
                       'comp:BAIRuntimeVariantPresetSettingModal.SliderMax',
                     )}
                   />
@@ -922,8 +928,10 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                   ]}
                   style={{ flex: 1, minWidth: 0 }}
                 >
-                  <AstryxFormNumberInput
-                    label={t(
+                  <BAINumberInput
+                    width="100%"
+                    hasClear={false}
+                    aria-label={t(
                       'comp:BAIRuntimeVariantPresetSettingModal.SliderStep',
                     )}
                     placeholder="1"
@@ -945,8 +953,10 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                   name="numberMin"
                   style={{ flex: 1, minWidth: 0 }}
                 >
-                  <AstryxFormNumberInput
-                    label={t(
+                  <BAINumberInput
+                    width="100%"
+                    hasClear={false}
+                    aria-label={t(
                       'comp:BAIRuntimeVariantPresetSettingModal.NumberMin',
                     )}
                   />
@@ -984,8 +994,10 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                   ]}
                   style={{ flex: 1, minWidth: 0 }}
                 >
-                  <AstryxFormNumberInput
-                    label={t(
+                  <BAINumberInput
+                    width="100%"
+                    hasClear={false}
+                    aria-label={t(
                       'comp:BAIRuntimeVariantPresetSettingModal.NumberMax',
                     )}
                   />
@@ -995,6 +1007,9 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
             {uiType === 'SELECT' ? (
               <Form.List
                 name="choices"
+                // Removing the last row is a step, not an error; the
+                // at-least-one rule runs on save.
+                validateTrigger={false}
                 rules={[
                   {
                     validator: async (_, choices) => {
@@ -1017,75 +1032,89 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                       'comp:BAIRuntimeVariantPresetSettingModal.Choices',
                     )}
                   >
-                    <BAIFlex direction="column" align="stretch" gap="xs">
-                      {fields.map(({ key, name, ...restField }) => (
-                        <BAIFlex key={key} gap="xs" align="start">
-                          <Form.Item
-                            {...restField}
-                            name={[name, 'value']}
-                            style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
-                            rules={[
-                              {
-                                required: true,
-                                message: t(
-                                  'comp:BAIRuntimeVariantPresetSettingModal.ChoiceValueRequired',
-                                ),
-                              },
-                            ]}
-                          >
-                            <AstryxFormTextInput
-                              label={t(
-                                'comp:BAIRuntimeVariantPresetSettingModal.ChoiceValue',
-                              )}
-                              placeholder={t(
-                                'comp:BAIRuntimeVariantPresetSettingModal.ChoiceValuePlaceholder',
-                              )}
-                            />
-                          </Form.Item>
-                          <Form.Item
-                            {...restField}
-                            name={[name, 'label']}
-                            style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
-                            rules={[
-                              {
-                                required: true,
-                                message: t(
-                                  'comp:BAIRuntimeVariantPresetSettingModal.ChoiceLabelRequired',
-                                ),
-                              },
-                            ]}
-                          >
-                            <AstryxFormTextInput
-                              label={t(
-                                'comp:BAIRuntimeVariantPresetSettingModal.ChoiceLabel',
-                              )}
-                              placeholder={t(
-                                'comp:BAIRuntimeVariantPresetSettingModal.ChoiceLabelPlaceholder',
-                              )}
-                            />
-                          </Form.Item>
-                          <BAIButton
-                            type="text"
-                            danger
-                            icon={<Trash2 />}
-                            aria-label={t('general.button.Delete')}
-                            style={{ flexShrink: 0 }}
-                            onClick={() => remove(name)}
-                          />
-                        </BAIFlex>
-                      ))}
-                      <BAIButton
-                        type="dashed"
-                        icon={<PlusIcon />}
-                        onClick={() => add()}
-                        block
-                      >
-                        {t(
+                    <BAIDynamicList
+                      items={fields}
+                      addButton={{
+                        onClick: () => {
+                          add();
+                          // A failed save's message clears once a row fixes it.
+                          if (errors.length > 0) {
+                            form.validateFields(['choices']).catch(() => {});
+                          }
+                        },
+                        label: t(
                           'comp:BAIRuntimeVariantPresetSettingModal.AddChoice',
-                        )}
-                      </BAIButton>
-                      <Form.ErrorList errors={errors} />
-                    </BAIFlex>
+                        ),
+                      }}
+                      onRemove={(field) => remove(field.name)}
+                      columns={[
+                        {
+                          key: 'value',
+                          header: t(
+                            'comp:BAIRuntimeVariantPresetSettingModal.ChoiceValue',
+                          ),
+                          render: (
+                            { key: _key, name, ...restField },
+                            index,
+                          ) => (
+                            <Form.Item
+                              {...restField}
+                              name={[name, 'value']}
+                              style={{ marginBottom: 0 }}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: t(
+                                    'comp:BAIRuntimeVariantPresetSettingModal.ChoiceValueRequired',
+                                  ),
+                                },
+                              ]}
+                              validateTrigger={['onChange', 'onBlur']}
+                            >
+                              <BAITextInput
+                                aria-label={`${t('comp:BAIRuntimeVariantPresetSettingModal.ChoiceValue')} ${index + 1}`}
+                                placeholder={t(
+                                  'comp:BAIRuntimeVariantPresetSettingModal.ChoiceValuePlaceholder',
+                                )}
+                              />
+                            </Form.Item>
+                          ),
+                        },
+                        {
+                          key: 'label',
+                          header: t(
+                            'comp:BAIRuntimeVariantPresetSettingModal.ChoiceLabel',
+                          ),
+                          render: (
+                            { key: _key, name, ...restField },
+                            index,
+                          ) => (
+                            <Form.Item
+                              {...restField}
+                              name={[name, 'label']}
+                              style={{ marginBottom: 0 }}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: t(
+                                    'comp:BAIRuntimeVariantPresetSettingModal.ChoiceLabelRequired',
+                                  ),
+                                },
+                              ]}
+                              validateTrigger={['onChange', 'onBlur']}
+                            >
+                              <BAITextInput
+                                aria-label={`${t('comp:BAIRuntimeVariantPresetSettingModal.ChoiceLabel')} ${index + 1}`}
+                                placeholder={t(
+                                  'comp:BAIRuntimeVariantPresetSettingModal.ChoiceLabelPlaceholder',
+                                )}
+                              />
+                            </Form.Item>
+                          ),
+                        },
+                      ]}
+                    />
+                    <Form.ErrorList errors={errors} />
                   </Form.Item>
                 )}
               </Form.List>
@@ -1097,8 +1126,8 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                 )}
                 name="textPlaceholder"
               >
-                <AstryxFormTextInput
-                  label={t(
+                <BAITextInput
+                  aria-label={t(
                     'comp:BAIRuntimeVariantPresetSettingModal.TextPlaceholderLabel',
                   )}
                   placeholder={t(
@@ -1121,8 +1150,8 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
             },
           ]}
         >
-          <AstryxFormTextInput
-            label={t('comp:BAIRuntimeVariantPresetSettingModal.Key')}
+          <BAITextInput
+            aria-label={t('comp:BAIRuntimeVariantPresetSettingModal.Key')}
             placeholder={t(
               'comp:BAIRuntimeVariantPresetSettingModal.KeyPlaceholder',
             )}
@@ -1132,8 +1161,10 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
           label={t('comp:BAIRuntimeVariantPresetSettingModal.DefaultValue')}
           name="defaultValue"
         >
-          <AstryxFormTextInput
-            label={t('comp:BAIRuntimeVariantPresetSettingModal.DefaultValue')}
+          <BAITextInput
+            aria-label={t(
+              'comp:BAIRuntimeVariantPresetSettingModal.DefaultValue',
+            )}
             placeholder={t(
               'comp:BAIRuntimeVariantPresetSettingModal.DefaultValuePlaceholder',
             )}
@@ -1150,9 +1181,9 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
             'comp:BAIRuntimeVariantPresetSettingModal.RequiredTooltip',
           )}
         >
-          <AstryxFormCheckbox
-            label={t('comp:BAIRuntimeVariantPresetSettingModal.Required')}
-          />
+          <BAICheckboxInput>
+            {t('comp:BAIRuntimeVariantPresetSettingModal.Required')}
+          </BAICheckboxInput>
         </Form.Item>
         {preset ? (
           <Form.Item
@@ -1161,14 +1192,12 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
             tooltip={t('comp:BAIRuntimeVariantPresetSettingModal.RankTooltip')}
           >
             {/* PILOT-DECISION (to-astryx final-B): antd `InputNumber
-                precision={0}` -> `AstryxFormNumberInput step={1}`. Astryx's
-                `NumberInput` has no display-precision knob; `step={1}` is the
-                integer contract the field actually wants (rank is an ordinal),
-                and the mutation input is an `Int` the server rejects a
-                fraction for either way. `style={{ width: '100%' }}` is dropped
-                because the adapter already defaults `width` to `'100%'`. */}
-            <AstryxFormNumberInput
-              label={t('comp:BAIRuntimeVariantPresetSettingModal.Rank')}
+                precision={0}` -> `NumberInput step={1}`: Astryx has no
+                display-precision knob, and rank is an `Int` ordinal. */}
+            <BAINumberInput
+              width="100%"
+              hasClear={false}
+              aria-label={t('comp:BAIRuntimeVariantPresetSettingModal.Rank')}
               min={0}
               step={1}
             />

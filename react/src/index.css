@@ -61,6 +61,15 @@
   border: 1px solid var(--color-border-emphasized);
   border-radius: inherit;
   pointer-events: none;
+  z-index: 2;
+}
+/* Members are positioned without a z-index, so a later sibling's fill covers
+   the outward focus ring of the one before it: lift the focused member. */
+.astryx-button-group {
+  isolation: isolate;
+}
+.astryx-button-group .astryx-button:focus-visible {
+  z-index: 1;
 }
 .astryx-button-group .astryx-button[data-variant='secondary'] {
   border-width: 0 !important;

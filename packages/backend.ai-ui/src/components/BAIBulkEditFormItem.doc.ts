@@ -105,8 +105,7 @@ export const docs = {
     {
       label: 'Bulk-editing a numeric field',
       code: `<BAIBulkEditFormItem label={t('session.Priority')} name="priority">
-  <AstryxFormNumberInput
-    label={t('session.Priority')}
+  <NumberInput
     min={SESSION_PRIORITY_MIN}
     max={SESSION_PRIORITY_MAX}
     step={1}

@@ -85,9 +85,8 @@ async function cleanupTestProject(page: Page, projectName: string) {
     }).toPass({ timeout: 60000 });
   }
 
-  // Switch to Inactive tab and purge. `BAIRadioGroup` renders on Astryx
-  // `SegmentedControl`, whose options are `<button role="radio">` with no
-  // `<label>` wrapper (see `BAIRadioGroup.tsx`).
+  // Switch to Inactive tab and purge. The status toggle is `BAISegmentedControl`,
+  // whose options are `<button role="radio">` with no `<label>` wrapper.
   await page.getByRole('radio', { name: 'Inactive', exact: true }).click();
   const inactiveProjectRow = page
     .getByRole('row')
@@ -203,8 +202,7 @@ test.describe(
 
       // 5. Verify the Active radio button is selected and that row has Type = GENERAL
       // (Active is a filter tab, not a table column; the project is active).
-      // `ProjectPage.tsx`'s status toggle is `BAIRadioGroup`, rendered on
-      // Astryx `SegmentedControl` since ticket 10 (`BAIRadioGroup.tsx`).
+      // `ProjectPage.tsx`'s status toggle is `BAISegmentedControl`.
       // `exact` matters: a substring match on "Active" also hits "Inactive".
       await expect(
         page.getByRole('radio', { name: 'Active', exact: true }),

@@ -12,7 +12,6 @@ import type { SessionLauncherFormValue } from '../pages/SessionLauncherPage';
 import { ResourceNumbersOfSession } from './ResourceNumbersOfSession';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
@@ -23,6 +22,7 @@ import {
   BAITable,
   BAIFlex,
   BAILink,
+  BAITextInput,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -190,9 +190,8 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
                 // IconButton — antd Typography's editable behaviour has no
                 // Astryx destination (MAPPING.md §3.4).
                 return editingRow?.id === record.id ? (
-                  <TextInput
-                    label={t('data.folders.Rename')}
-                    isLabelHidden
+                  <BAITextInput
+                    aria-label={t('data.folders.Rename')}
                     value={editingRow.value}
                     onChange={(value) =>
                       setEditingRow({ id: record.id, value })

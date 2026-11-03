@@ -15,6 +15,7 @@ import {
   relativizeSourceLocation,
   relativizeSourcePaths,
 } from './source-path.js';
+import { liftAboveTopLayer } from './top-layer.js';
 import type { AnchorComponent } from './types.js';
 import type { ReactGrabAPI } from 'react-grab';
 
@@ -47,6 +48,8 @@ export interface PickerCallbacks {
 }
 
 const PLUGIN_NAME = 'bai-review-pick';
+/** The attribute react-grab 0.1.50 marks its overlay host with (`dn`). */
+const REACT_GRAB_HOST_ATTR = 'data-react-grab';
 
 /** react-grab reads `navigator.platform` first and falls back to the UA. */
 export const isMac = (): boolean =>
@@ -85,10 +88,27 @@ export function createPicker(callbacks: PickerCallbacks) {
    */
   let pendingDrag: Element[] | null = null;
 
+  /** Undoes the top-layer lift of react-grab's host while it is picking. */
+  let dropGrabLift: (() => void) | null = null;
+
   const api = () => window.__REACT_GRAB__ ?? null;
 
   const setMode = (active: boolean) => {
     callbacks.onModeChange(active);
+  };
+
+  // react-grab's host sits at the top z-index, which an open menu still covers.
+  // Lifted after `setMode`, so it lands above the overlay's own lifted host.
+  const liftGrab = () => {
+    if (dropGrabLift) return;
+    dropGrabLift = liftAboveTopLayer(
+      document.querySelector<HTMLElement>(`[${REACT_GRAB_HOST_ATTR}]`),
+    );
+  };
+
+  const dropGrab = () => {
+    dropGrabLift?.();
+    dropGrabLift = null;
   };
 
   function ensureGrabPlugin(): ReactGrabAPI | null {
@@ -102,6 +122,7 @@ export function createPicker(callbacks: PickerCallbacks) {
           onActivate: () => {
             grabActive = true;
             setMode(true);
+            liftGrab();
           },
           onDragEnd: (elements: Element[]) => {
             pendingDrag = elements.length > 1 ? [...elements] : null;
@@ -157,6 +178,7 @@ export function createPicker(callbacks: PickerCallbacks) {
           transformCopyContent: () => '',
           onDeactivate: () => {
             grabActive = false;
+            dropGrab();
             setMode(false);
           },
         },
@@ -229,6 +251,7 @@ export function createPicker(callbacks: PickerCallbacks) {
       if (grab.isActive()) {
         grabActive = true;
         setMode(true);
+        liftGrab();
         callbacks.showHint(
           'Click an element — hover shows its component (Esc to cancel)',
         );
@@ -254,6 +277,7 @@ export function createPicker(callbacks: PickerCallbacks) {
       pendingDrag = null;
       api()?.deactivate();
     }
+    dropGrab();
     if (fallbackPicking) {
       fallbackPicking = false;
       document.documentElement.style.cursor = '';

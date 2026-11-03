@@ -233,10 +233,8 @@ export const DisabledActionInOverflowMenu: Story = {
         story:
           'A disabled action keeps its reason after it collapses into the ' +
           'overflow menu. The visible icon button explains itself with a ' +
-          'tooltip; the menu row cannot carry one (Astryx types ' +
-          '`DropdownMenuItemData.label` as a plain string), so the reason is ' +
-          'folded into the label instead. Narrow the container to compare ' +
-          'the two. See FR-3423.',
+          'tooltip, and so does the menu row: hover its label to read the ' +
+          'reason. Narrow the container to compare the two.',
       },
     },
   },

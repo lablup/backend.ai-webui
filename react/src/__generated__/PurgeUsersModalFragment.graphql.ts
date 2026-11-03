@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5fd6da9d254380c9ef5d429bc9b66a75>>
+ * @generated SignedSource<<9eb009298665af8f2e2aa08ecc5419bb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,6 +14,7 @@ export type PurgeUsersModalFragment$data = ReadonlyArray<{
   readonly basicInfo: {
     readonly email: string;
   };
+  readonly entityId: string;
   readonly id: string;
   readonly " $fragmentType": "PurgeUsersModalFragment";
 }>;
@@ -40,6 +41,13 @@ const node: ReaderFragment = {
     {
       "alias": null,
       "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "UserV2BasicInfo",
       "kind": "LinkedField",
       "name": "basicInfo",
@@ -60,6 +68,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "d6402e002c03122082b84f8a319d50c2";
+(node as any).hash = "2341cec2f8284c0614ca1086220f2e35";
 
 export default node;

@@ -6,7 +6,6 @@ import { EditSessionPriorityModalFragment$key } from '../../__generated__/EditSe
 import { EditSessionPriorityModalMutation } from '../../__generated__/EditSessionPriorityModalMutation.graphql';
 import { App } from '../../app-shim';
 import { Form, FormInstance } from '../../form-engine';
-import { AstryxFormNumberInput } from '../astryxFormControls';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAIBulkEditFormItem,
@@ -15,6 +14,7 @@ import {
   BAIModalProps,
   BAITokenList,
   filterOutNullAndUndefined,
+  BAINumberInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useRef } from 'react';
@@ -170,8 +170,9 @@ const EditSessionPriorityModal: React.FC<EditSessionPriorityModalProps> = ({
           </Form.Item>
           {isBulkEdit ? (
             <BAIBulkEditFormItem label={t('session.Priority')} name="priority">
-              <AstryxFormNumberInput
-                label={t('session.Priority')}
+              <BAINumberInput
+                width="100%"
+                aria-label={t('session.Priority')}
                 min={SESSION_PRIORITY_MIN}
                 max={SESSION_PRIORITY_MAX}
                 step={1}
@@ -189,8 +190,9 @@ const EditSessionPriorityModal: React.FC<EditSessionPriorityModalProps> = ({
                 },
               ]}
             >
-              <AstryxFormNumberInput
-                label={t('session.Priority')}
+              <BAINumberInput
+                width="100%"
+                aria-label={t('session.Priority')}
                 min={SESSION_PRIORITY_MIN}
                 max={SESSION_PRIORITY_MAX}
                 step={1}

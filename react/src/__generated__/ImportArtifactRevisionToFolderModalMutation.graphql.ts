@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<401df58ae33c7d87765e1aa79fe6408d>>
+ * @generated SignedSource<<53af1b671726e1ddcc75dfaa5c1eeb8a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -28,6 +28,7 @@ export type ImportArtifactRevisionToFolderModalMutation$data = {
     readonly tasks: ReadonlyArray<{
       readonly artifactRevision: {
         readonly artifact: {
+          readonly entityId: string;
           readonly id: string;
           readonly name: string;
         } | null | undefined;
@@ -135,6 +136,13 @@ v2 = [
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
+                    "name": "entityId",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "name",
                     "storageKey": null
                   }
@@ -169,16 +177,16 @@ return {
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "870d144d05ea4c3ac90a4ce955510b44",
+    "cacheID": "262f08ff2a989f5cccb0d71fe230e8ac",
     "id": null,
     "metadata": {},
     "name": "ImportArtifactRevisionToFolderModalMutation",
     "operationKind": "mutation",
-    "text": "mutation ImportArtifactRevisionToFolderModalMutation(\n  $input: ImportArtifactsInput!\n) {\n  importArtifacts(input: $input) {\n    artifactRevisions {\n      count\n    }\n    tasks {\n      taskId\n      artifactRevision {\n        id\n        version\n        artifact {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "mutation ImportArtifactRevisionToFolderModalMutation(\n  $input: ImportArtifactsInput!\n) {\n  importArtifacts(input: $input) {\n    artifactRevisions {\n      count\n    }\n    tasks {\n      taskId\n      artifactRevision {\n        id\n        version\n        artifact {\n          id\n          entityId\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b59c2a54c55db7b77c2f8e36c51e81a8";
+(node as any).hash = "259eea7c2fef122ffd906edd5d7b9a4c";
 
 export default node;

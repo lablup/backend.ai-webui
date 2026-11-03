@@ -22,7 +22,6 @@ import { useSetBAINotification } from '../hooks/useBAINotification';
 import AdminModelCardSettingModal from './AdminModelCardSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { Text } from '@lablup/ui-common/Text';
 import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
@@ -46,10 +45,10 @@ import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   isValidUUID,
-  toLocalId,
   tokenColorForTagColor,
   useBAILogger,
   type BAITableSettings,
+  BAICheckboxInput,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -102,6 +101,7 @@ export const AdminModelCardQuery = graphql`
       edges {
         node {
           id
+          entityId
           name
           vfolderId
           vfolder {
@@ -594,11 +594,12 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
               >
                 {/* The adjacent visible text is the checkbox label now —
                     CheckboxInput renders it itself. */}
-                <CheckboxInput
-                  label={t('adminModelCard.AlsoDeleteModelFolder')}
+                <BAICheckboxInput
                   value={alsoDeleteFolder}
                   onChange={(checked) => setAlsoDeleteFolder(checked)}
-                />
+                >
+                  {t('adminModelCard.AlsoDeleteModelFolder')}
+                </BAICheckboxInput>
               </Tooltip>
               {deletingModelCard?.vfolder && (
                 <span>
@@ -646,7 +647,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
 
               commitDeleteModelCard({
                 variables: {
-                  id: toLocalId(deletingModelCard.id),
+                  id: deletingModelCard.entityId,
                   options: { deleteAssociatedVfolder: alsoDeleteFolder },
                 },
                 onCompleted: (_data, errors) => {
@@ -717,11 +718,12 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
               >
                 {/* The adjacent visible text is the checkbox label now —
                     CheckboxInput renders it itself. */}
-                <CheckboxInput
-                  label={t('adminModelCard.AlsoDeleteModelFolders')}
+                <BAICheckboxInput
                   value={alsoDeleteFoldersBulk}
                   onChange={(checked) => setAlsoDeleteFoldersBulk(checked)}
-                />
+                >
+                  {t('adminModelCard.AlsoDeleteModelFolders')}
+                </BAICheckboxInput>
               </Tooltip>
             </BAIFlex>
             {alsoDeleteFoldersBulk && (
@@ -737,7 +739,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
           </BAIFlex>
         }
         onOk={() => {
-          const ids = selectedModelCards.map((mc) => toLocalId(mc.id));
+          const ids = selectedModelCards.map((mc) => mc.entityId);
           return new Promise<void>((resolve, reject) => {
             commitBulkDeleteModelCards({
               variables: {
@@ -766,7 +768,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                   );
                   setSelectedModelCards(
                     selectedModelCards.filter((mc) =>
-                      failedIds.has(toLocalId(mc.id)),
+                      failedIds.has(mc.entityId),
                     ),
                   );
                   upsertNotification({
@@ -780,7 +782,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                         {failed.map((f) => {
                           const cardName =
                             selectedModelCards.find(
-                              (mc) => toLocalId(mc.id) === f.cardId,
+                              (mc) => mc.entityId === f.cardId,
                             )?.name ?? f.cardId;
                           return (
                             <div key={f.cardId}>

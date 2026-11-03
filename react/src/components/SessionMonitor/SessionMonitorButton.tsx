@@ -17,12 +17,11 @@ import { Button } from '@lablup/ui-common/Button';
 import { Popover } from '@lablup/ui-common/Popover';
 import { Text } from '@lablup/ui-common/Text';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
-import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex, BAISkeleton, useIntervalValue } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
 import { Hourglass } from 'lucide-react';
-import React, { Suspense, useState } from 'react';
+import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // The popover body (session list, settings pane) loads when first opened.
@@ -36,7 +35,6 @@ interface SessionMonitorButtonProps {
 
 const Separator: React.FC = () => {
   'use memo';
-  const { token } = useTheme();
   return (
     <span
       aria-hidden
@@ -45,9 +43,19 @@ const Separator: React.FC = () => {
         alignSelf: 'stretch',
         background: 'currentColor',
         opacity: 0.3,
-        marginInline: token('--spacing-1'),
       }}
     />
+  );
+};
+
+/** A chip item and its leading separator, kept together when the line wraps. */
+const ChipItem: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  'use memo';
+  return (
+    <BAIFlex direction="row" align="center" gap="xs">
+      <Separator />
+      {children}
+    </BAIFlex>
   );
 };
 
@@ -89,6 +97,24 @@ const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
     deadline !== null ? 1000 : null,
     String(deadline),
   );
+  // When the header squeezes the chip below its first item, hide it whole
+  // rather than show a cut-off count; visibility keeps its layout width.
+  const rowRef = useRef<HTMLDivElement>(null);
+  const [isCountCut, setIsCountCut] = useState(false);
+  useEffect(() => {
+    const row = rowRef.current;
+    const clip = row?.parentElement;
+    const first = row?.firstElementChild;
+    if (!clip || !first) return;
+    const check = () => {
+      const item = first.getBoundingClientRect();
+      const box = clip.getBoundingClientRect();
+      setIsCountCut(item.left < box.left - 0.5 || item.right > box.right + 0.5);
+    };
+    const observer = new ResizeObserver(check);
+    observer.observe(clip);
+    return () => observer.disconnect();
+  }, [scope]);
   const count = summary?.total ?? 0;
   if (!scope) return null;
   const title = t('sessionMonitor.Title');
@@ -132,44 +158,53 @@ const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
             data-astryx-media={bandMediaMode}
             data-testid={props['data-testid']}
             variant="ghost"
-            size="sm"
             label={title}
+            style={{ visibility: isCountCut ? 'hidden' : undefined }}
           >
-            <BAIFlex direction="row" align="center" gap="xs">
+            {/* One clipped line: an item that does not fit wraps out of view
+                whole, with its separator, instead of being cut mid-text; the kept
+                items hug the right so no gap opens before the next group. */}
+            <BAIFlex
+              ref={rowRef}
+              direction="row"
+              align="center"
+              justify="end"
+              gap="xs"
+              style={{ flexWrap: 'wrap', height: '1lh', overflow: 'hidden' }}
+            >
               <Text type="inherit" textWrap="nowrap">
                 {t('sessionMonitor.SessionCount', { count })}
               </Text>
               {summary?.starting != null && (
-                <>
-                  <Separator />
+                <ChipItem>
                   <Text type="inherit" textWrap="nowrap">
                     {t('sessionMonitor.ChipStartingCount', {
                       count: summary.starting,
                     })}
                   </Text>
-                </>
+                </ChipItem>
               )}
               {summary?.errors != null && (
-                <>
-                  <Separator />
+                <ChipItem>
                   <Text type="inherit" textWrap="nowrap">
                     {t('sessionMonitor.ErrorCount', { count: summary.errors })}
                   </Text>
-                </>
+                </ChipItem>
               )}
               {summary?.allocated && (
                 <ErrorBoundaryWithNullFallback>
                   <Suspense fallback={null}>
-                    <SessionMonitorAllocationSummary
-                      allocated={summary.allocated}
-                      separator={<Separator />}
-                    />
+                    <BAIFlex direction="row" align="center" gap="xs">
+                      <SessionMonitorAllocationSummary
+                        allocated={summary.allocated}
+                        separator={<Separator />}
+                      />
+                    </BAIFlex>
                   </Suspense>
                 </ErrorBoundaryWithNullFallback>
               )}
               {showsIdle && tick && (
-                <>
-                  <Separator />
+                <ChipItem>
                   <BAIFlex
                     direction="row"
                     align="center"
@@ -184,7 +219,7 @@ const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
                       {tick.text}
                     </Text>
                   </BAIFlex>
-                </>
+                </ChipItem>
               )}
             </BAIFlex>
           </Button>

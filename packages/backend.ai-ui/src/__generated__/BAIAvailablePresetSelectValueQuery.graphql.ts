@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<650157eb61d9f30c2154b7b723dd1c2c>>
+ * @generated SignedSource<<62ccce77117c71d9e0ef26ce81c2d1d3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,6 +19,7 @@ export type BAIAvailablePresetSelectValueQuery$data = {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly description: string | null | undefined;
+        readonly entityId: string;
         readonly id: string;
         readonly name: string;
       };
@@ -110,6 +111,13 @@ v3 = [
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
+                    "name": "entityId",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "name",
                     "storageKey": null
                   },
@@ -158,16 +166,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "764a9eece49de50435dc438c94ee6e4c",
+    "cacheID": "56cde47746c9f319bd08ebc2b8658f2e",
     "id": null,
     "metadata": {},
     "name": "BAIAvailablePresetSelectValueQuery",
     "operationKind": "query",
-    "text": "query BAIAvailablePresetSelectValueQuery(\n  $ids: [UUID!]\n  $first: Int!\n  $skip: Boolean!\n) {\n  deploymentRevisionPresets(filter: {id: {in: $ids}}, first: $first) @skip(if: $skip) {\n    edges {\n      node {\n        id\n        name\n        description\n      }\n    }\n  }\n}\n"
+    "text": "query BAIAvailablePresetSelectValueQuery(\n  $ids: [UUID!]\n  $first: Int!\n  $skip: Boolean!\n) {\n  deploymentRevisionPresets(filter: {id: {in: $ids}}, first: $first) @skip(if: $skip) {\n    edges {\n      node {\n        id\n        entityId\n        name\n        description\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "dcdae7e7805dee41d0a10741a101b9e1";
+(node as any).hash = "2f1d2baa1fcc3dbf1f8ca36c74cb61e9";
 
 export default node;

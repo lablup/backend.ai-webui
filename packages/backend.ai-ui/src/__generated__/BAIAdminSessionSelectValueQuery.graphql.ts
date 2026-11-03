@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ca8325edfb76eb40f77747c565e4f712>>
+ * @generated SignedSource<<5bfb4f33534c56f53ddada326161aa20>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -22,6 +22,7 @@ export type SessionV2Filter = {
   clusterSize?: IntFilter | null | undefined;
   creationId?: StringFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   id?: UUIDFilter | null | undefined;
   isPreemptible?: boolean | null | undefined;
   jobPriority?: IntFilter | null | undefined;
@@ -32,8 +33,10 @@ export type SessionV2Filter = {
   priority?: IntFilter | null | undefined;
   projectId?: UUIDFilter | null | undefined;
   replicaId?: UUIDFilter | null | undefined;
+  requestedStartsAt?: DateTimeFilter | null | undefined;
   resourceGroupName?: StringFilter | null | undefined;
   result?: SessionV2ResultFilter | null | undefined;
+  sessionGroupId?: UUIDFilter | null | undefined;
   sessionType?: SessionV2TypeFilter | null | undefined;
   startsAt?: DateTimeFilter | null | undefined;
   status?: SessionV2StatusFilter | null | undefined;
@@ -89,6 +92,7 @@ export type EntityLabelFilter = {
   OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
   entityId?: UUIDFilter | null | undefined;
   entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   key?: StringFilter | null | undefined;
   value?: StringFilter | null | undefined;
 };
@@ -133,6 +137,7 @@ export type BAIAdminSessionSelectValueQuery$data = {
   readonly adminSessionsV2?: {
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly entityId: string;
         readonly id: string;
         readonly metadata: {
           readonly name: string;
@@ -215,6 +220,13 @@ v1 = [
                   {
                     "alias": null,
                     "args": null,
+                    "kind": "ScalarField",
+                    "name": "entityId",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
                     "concreteType": "SessionV2MetadataInfo",
                     "kind": "LinkedField",
                     "name": "metadata",
@@ -260,16 +272,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "d8c1f7e52ee4d34899715d4b0c4aafa7",
+    "cacheID": "df361fc99f44b2b886d915ea3a9a6751",
     "id": null,
     "metadata": {},
     "name": "BAIAdminSessionSelectValueQuery",
     "operationKind": "query",
-    "text": "query BAIAdminSessionSelectValueQuery(\n  $filter: SessionV2Filter\n  $first: Int!\n  $skipSelected: Boolean!\n) {\n  adminSessionsV2(filter: $filter, first: $first) @skip(if: $skipSelected) {\n    edges {\n      node {\n        id\n        metadata {\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIAdminSessionSelectValueQuery(\n  $filter: SessionV2Filter\n  $first: Int!\n  $skipSelected: Boolean!\n) {\n  adminSessionsV2(filter: $filter, first: $first) @skip(if: $skipSelected) {\n    edges {\n      node {\n        id\n        entityId\n        metadata {\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "4e748e7f15221206581cf80b3651a103";
+(node as any).hash = "e076cb4cf8eba2b4039431ecfc031e85";
 
 export default node;

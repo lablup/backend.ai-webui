@@ -23,11 +23,17 @@ export const MOCK_MODEL_ID_B = 'gpt-mock-model-b';
  * Mirrors `toGlobalId` from `backend.ai-ui` (`btoa(\`${type}:${id}\`)`), but
  * implemented locally with `Buffer` since this file runs in the Playwright
  * Node context, not the browser. The Strawberry `deployment(id:)` field and
- * `myDeployments` connection nodes address deployments by this global id, and
- * the app decodes it back to the local UUID with `toLocalId`.
+ * `myDeployments` connection nodes address deployments by this global id; the
+ * app reads the local UUID from each node's `entityId`.
  */
 function toGlobalId(type: string, id: string): string {
   return Buffer.from(`${type}:${id}`).toString('base64');
+}
+
+/** The local UUID a global id encodes, served as the node's `entityId`. */
+function entityIdOf(globalId: string): string {
+  const decoded = Buffer.from(globalId, 'base64').toString();
+  return decoded.slice(decoded.indexOf(':') + 1);
 }
 
 const MOCK_DEPLOYMENT_GLOBAL_ID = toGlobalId(
@@ -50,7 +56,11 @@ const MOCK_DEPLOYMENT_GLOBAL_ID_B = toGlobalId(
 export function chatPageQueryMockResponse() {
   return {
     myDeployments: {
-      edges: [{ node: { id: MOCK_DEPLOYMENT_GLOBAL_ID } }],
+      edges: [
+        {
+          node: { id: MOCK_DEPLOYMENT_GLOBAL_ID, entityId: MOCK_ENDPOINT_UUID },
+        },
+      ],
     },
   };
 }
@@ -64,8 +74,15 @@ export function chatPageQueryTwoEndpointsMockResponse() {
   return {
     myDeployments: {
       edges: [
-        { node: { id: MOCK_DEPLOYMENT_GLOBAL_ID } },
-        { node: { id: MOCK_DEPLOYMENT_GLOBAL_ID_B } },
+        {
+          node: { id: MOCK_DEPLOYMENT_GLOBAL_ID, entityId: MOCK_ENDPOINT_UUID },
+        },
+        {
+          node: {
+            id: MOCK_DEPLOYMENT_GLOBAL_ID_B,
+            entityId: MOCK_ENDPOINT_UUID_B,
+          },
+        },
       ],
     },
   };
@@ -84,6 +101,7 @@ export function deploymentSelectQueryMockResponse() {
         {
           node: {
             id: MOCK_DEPLOYMENT_GLOBAL_ID,
+            entityId: MOCK_ENDPOINT_UUID,
             metadata: { name: 'mock-endpoint' },
             networkAccess: { endpointUrl: MOCK_ENDPOINT_URL },
           },
@@ -104,6 +122,7 @@ export function deploymentSelectQueryTwoEndpointsMockResponse() {
         {
           node: {
             id: MOCK_DEPLOYMENT_GLOBAL_ID,
+            entityId: MOCK_ENDPOINT_UUID,
             metadata: { name: 'mock-endpoint' },
             networkAccess: { endpointUrl: MOCK_ENDPOINT_URL },
           },
@@ -111,6 +130,7 @@ export function deploymentSelectQueryTwoEndpointsMockResponse() {
         {
           node: {
             id: MOCK_DEPLOYMENT_GLOBAL_ID_B,
+            entityId: MOCK_ENDPOINT_UUID_B,
             metadata: { name: 'mock-endpoint-b' },
             networkAccess: { endpointUrl: MOCK_ENDPOINT_URL_B },
           },
@@ -137,6 +157,7 @@ export function chatCardQueryMockResponse(deploymentId: string) {
   return {
     deployment: {
       id: deploymentId,
+      entityId: entityIdOf(deploymentId),
       networkAccess: {
         endpointUrl: isB ? MOCK_ENDPOINT_URL_B : MOCK_ENDPOINT_URL,
       },
@@ -159,6 +180,7 @@ export function chatCardQueryNullUrlMockResponse(deploymentId: string) {
   return {
     deployment: {
       id: deploymentId,
+      entityId: entityIdOf(deploymentId),
       networkAccess: { endpointUrl: null },
       // See chatCardQueryMockResponse: `replicaState` must be present for the
       // Relay `@catch` on `deployment` to resolve to a value (here we are
@@ -179,6 +201,7 @@ export function deploymentSelectValueQueryMockResponse(deploymentId: string) {
   return {
     deployment: {
       id: deploymentId,
+      entityId: entityIdOf(deploymentId),
       metadata: {
         name: isB ? 'mock-endpoint-b' : 'mock-endpoint',
         // Not exercised by these tests (only read for the cross-project
@@ -224,6 +247,7 @@ export function deploymentTokenSelectQueryMockResponse(deploymentId: string) {
   return {
     deployment: {
       id: deploymentId,
+      entityId: entityIdOf(deploymentId),
       accessTokens: { edges: [] },
     },
   };

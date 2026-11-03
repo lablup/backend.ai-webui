@@ -19,7 +19,6 @@ import {
   type LoginSessionNodeInList,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  toLocalId,
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -121,7 +120,7 @@ const LoginSession = ({
   const revokeSession = async (record: LoginSessionNodeInList) => {
     try {
       const res = await revokeSessionMutation({
-        sessionId: toLocalId(record.id),
+        sessionId: record.fieldId,
       });
       if (!res.myRevokeLoginSession?.success) {
         message.error(t('loginSession.RevokeFailed'));

@@ -18,7 +18,6 @@ import {
   BAIId,
   BAIText,
   INITIAL_FETCH_KEY,
-  toLocalId,
   useBAILogger,
   useFetchKey,
   useMutationWithPromise,
@@ -82,6 +81,7 @@ const RolePermissionSummaryTable: React.FC<RolePermissionSummaryTableProps> = ({
             edges {
               node {
                 id
+                fieldId
                 entityType
                 permission
               }
@@ -139,7 +139,7 @@ const RolePermissionSummaryTable: React.FC<RolePermissionSummaryTableProps> = ({
   const grants = _.compact(
     (data.adminRole?.permissions?.edges ?? []).map((edge) => edge?.node),
   ).map((node) => ({
-    id: toLocalId(node.id),
+    id: node.fieldId,
     entityType: node.entityType,
     permission: node.permission,
   }));

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5d88f0018917b1f6f039dc84f01fe975>>
+ * @generated SignedSource<<4481fb4cec9952747bdbee174ddf3161>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,6 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type useVirtualFolderNodePathV2Fragment$data = {
+  readonly entityId: string;
   readonly id: string;
   readonly metadata: {
     readonly quotaScopeId: string | null | undefined;
@@ -38,6 +39,13 @@ const node: ReaderFragment = {
     {
       "alias": null,
       "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "VFolderMetadataInfo",
       "kind": "LinkedField",
       "name": "metadata",
@@ -58,6 +66,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "98b54b5186f8575a7ae91b71cdf285a7";
+(node as any).hash = "4a306d6a09f82bd5a1a8aadc00c32e30";
 
 export default node;

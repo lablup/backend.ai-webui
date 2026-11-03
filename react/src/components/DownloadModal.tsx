@@ -13,7 +13,6 @@ import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
 import { Divider } from '@lablup/ui-common/Divider';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';
-import { Selector } from '@lablup/ui-common/Selector';
 import { Stack } from '@lablup/ui-common/Stack';
 import { Text } from '@lablup/ui-common/Text';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
@@ -23,6 +22,7 @@ import {
   BAIModal,
   BAIModalProps,
   filterOutEmpty,
+  BAISelector,
 } from 'backend.ai-ui';
 import { map, toUpper } from 'lodash-es';
 import { Download } from 'lucide-react';
@@ -44,9 +44,8 @@ const DesktopAppDownloadTab: React.FC = () => {
         {/* antd `Select` with `Select.Option` children -> `Selector` with an
             `options` array; `label` is required and hidden because the
             metadata row already prints it. */}
-        <Selector
-          label={t('summary.OS')}
-          isLabelHidden
+        <BAISelector
+          aria-label={t('summary.OS')}
           value={selectedOS}
           // Astryx `Selector` commits a plain `string`; the hook's setter is
           // typed on the OS literal union, so the narrowing happens here.
@@ -155,9 +154,8 @@ const CLIDownloadTab: React.FC = () => {
             <Text weight="semibold">{t('summary.CLIDownloadExecutable')}</Text>
             <BAIMetadataList columns="single">
               <MetadataListItem label={t('summary.OS')}>
-                <Selector
-                  label={t('summary.OS')}
-                  isLabelHidden
+                <BAISelector
+                  aria-label={t('summary.OS')}
                   value={selectedOS}
                   onChange={(value) =>
                     setSelectedOS(value as typeof selectedOS)

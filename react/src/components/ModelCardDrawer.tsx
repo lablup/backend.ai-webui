@@ -25,7 +25,6 @@ import {
   BAIMetadataList,
   BAIResourceNumberWithIcon,
   BAIUnmountAfterClose,
-  toLocalId,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -112,6 +111,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
         updatedAt
         vfolder {
           id
+          entityId
           metadata {
             name
           }
@@ -271,7 +271,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
                             <BAILink
                               type="hover"
                               to={generateFolderPath(
-                                toLocalId(modelCard.vfolder.id),
+                                modelCard.vfolder.entityId,
                               )}
                             >
                               <BAIFlex gap="xs" align="center">

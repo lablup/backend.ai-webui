@@ -7,7 +7,13 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { Button } from '@lablup/ui-common/Button';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';
-import { BAI_Z_INDEX, BAICard, BAIFlex, BAIMetadataList } from 'backend.ai-ui';
+import {
+  BAI_Z_INDEX,
+  BAICard,
+  BAIFlex,
+  BAIMetadataList,
+  resolveCallbackUrl,
+} from 'backend.ai-ui';
 import { parseAsString, useQueryState } from 'nuqs';
 import { Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -32,6 +38,12 @@ const Children = () => {
   const [callback] = useQueryState('callback', parseAsString);
   const [name] = useQueryState('name', parseAsString);
   const { t } = useTranslation();
+
+  // Never navigate to the raw param: a `javascript:` callback would run in this
+  // origin. Blank → null, since the helper would fall back to this page's URL.
+  const resolvedCallback = callback?.trim()
+    ? resolveCallbackUrl(callback)
+    : null;
 
   // This route has no MainLayout, so the interactive-login card is its "main
   // UI". Put the splash into login-backdrop mode (keeps the Diagonal Weave +
@@ -66,7 +78,7 @@ const Children = () => {
               {name}
             </MetadataListItem>
             <MetadataListItem label="URL">
-              {callback ? new URL(callback).origin : '-'}
+              {resolvedCallback ? new URL(resolvedCallback).origin : '-'}
             </MetadataListItem>
           </BAIMetadataList>
           <BAIFlex
@@ -101,9 +113,11 @@ const Children = () => {
               size="lg"
               variant="primary"
               label={t('login.Login')}
+              isDisabled={!resolvedCallback}
               onClick={() => {
-                //redirect to callback
-                window.location.href = callback || '';
+                if (resolvedCallback) {
+                  window.location.href = resolvedCallback;
+                }
               }}
             />
           </BAIFlex>

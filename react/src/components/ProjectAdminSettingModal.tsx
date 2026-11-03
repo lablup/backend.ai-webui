@@ -209,7 +209,7 @@ const ProjectAdminSettingModal = ({
       mutation ProjectAdminSettingModalRevokeMutation(
         $input: RevokeRoleInput!
       ) {
-        adminRevokeRole(input: $input) {
+        revokeRole(input: $input) {
           id
         }
       }

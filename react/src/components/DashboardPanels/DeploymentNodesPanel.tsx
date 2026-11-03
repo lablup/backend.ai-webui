@@ -13,7 +13,6 @@ import type { PanelDescriptor } from './types';
 import {
   BAIModelDeploymentNodes,
   filterOutNullAndUndefined,
-  toLocalId,
 } from 'backend.ai-ui';
 import React, { useDeferredValue } from 'react';
 import { useLazyLoadQuery } from 'react-relay';
@@ -90,9 +89,9 @@ export const DeploymentNodesPanelContent: React.FC<{
             column.key === 'name' && !disableNavigation
               ? {
                   ...column,
-                  onTitleClick: (record: { id: string }) => {
+                  onTitleClick: (record: { entityId: string }) => {
                     webUINavigate(
-                      `${buildProjectPath('deployments')}/${toLocalId(record.id)}`,
+                      `${buildProjectPath('deployments')}/${record.entityId}`,
                     );
                   },
                 }

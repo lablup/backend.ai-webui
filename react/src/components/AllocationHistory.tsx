@@ -5,12 +5,12 @@
 import { Form } from '../form-engine';
 import AllocationHistoryStatistics from './AllocationHistoryStatistics';
 import { Banner } from '@lablup/ui-common/Banner';
-import { Selector } from '@lablup/ui-common/Selector';
 import {
   BAISkeleton,
   useUpdatableState,
   BAIFlex,
   BAIFetchKeyButton,
+  BAISelector,
 } from 'backend.ai-ui';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Suspense, useTransition } from 'react';
@@ -62,9 +62,8 @@ const AllocationHistory: React.FC = () => {
               `Form.Item` label the only one rendered (flip recipe).
               `popupMatchSelectWidth={false}` has no destination — Astryx sizes
               its popup to the trigger. */}
-          <Selector
-            label={t('statistics.SelectPeriod')}
-            isLabelHidden
+          <BAISelector
+            aria-label={t('statistics.SelectPeriod')}
             options={periodOptions}
             value={selectedPeriod}
             onChange={(value) => setSelectedPeriod(value as Period)}

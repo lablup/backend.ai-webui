@@ -18,7 +18,6 @@ import { useLazyPaginatedQuery } from '../hooks/usePaginatedQuery';
 import ModelBrandIcon from './ModelBrandIcon';
 import {
   BAIComplexSelect,
-  toLocalId,
   useControllableValue,
   type BAIComplexSelectOption,
   type BAIComplexSelectProps,
@@ -153,6 +152,7 @@ const ModelCardSelect: React.FC<ModelCardSelectProps> = ({
             edges {
               node {
                 id
+                entityId
                 name
                 vfolderId
                 metadata {
@@ -183,13 +183,13 @@ const ModelCardSelect: React.FC<ModelCardSelectProps> = ({
       },
     );
 
-  // id-valued: the raw UUID (`toLocalId`), never the Relay global id. The card
+  // id-valued: the raw UUID (`entityId`), never the Relay global id. The card
   // node rides along on the option so `onChange` can surface its `vfolderId`.
   const cardByKey: Record<string, ModelCardItem> = {};
   const options: Array<BAIComplexSelectOption> = _.compact(
     _.map(paginationData, (item) => {
-      if (!item?.id) return null;
-      const key = toLocalId(item.id) ?? item.id;
+      if (!item?.entityId) return null;
+      const key = item.entityId;
       cardByKey[key] = item;
       // Cards with no compatible preset cannot be deployed — disable them,
       // mirroring the dimmed cards on the Model Store list page.
