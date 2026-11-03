@@ -2,156 +2,112 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type {
-  FairSharePanelQuery,
-  FairSharePanelQuery$data,
-} from '../../../__generated__/FairSharePanelQuery.graphql';
-import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
+import type { FairSharePanelQuery } from '../../../__generated__/FairSharePanelQuery.graphql';
+import ResourceGroupFairShareTableFragment, {
+  type ResourceGroupFairShareTableFragment$key,
+} from '../../../__generated__/ResourceGroupFairShareTableFragment.graphql';
 import ScopedCard from '../cards/ScopedCard';
-import { readPrimary, type CaughtValue } from '../panelPermission';
+import { readPrimary } from '../panelPermission';
 import type { PanelComponentProps } from '../types';
+import { MetadataList, MetadataListItem } from '@lablup/ui-common/MetadataList';
 import { Text } from '@lablup/ui-common/Text';
-import {
-  BAIFlex,
-  BAITable,
-  filterOutNullAndUndefined,
-  toFixedFloorWithoutTrailingZeros,
-} from 'backend.ai-ui';
-import React, { useDeferredValue } from 'react';
+import { BAIBadge, BAIFlex, ResourceTypeIcon } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
-type FairShareRow = NonNullable<
-  NonNullable<
-    NonNullable<
-      CaughtValue<FairSharePanelQuery$data['projects']>
-    >['edges'][number]
-  >['node']
->;
-
-// The Fair Share page's number format.
-const fixed = (value: unknown, digits: number) =>
-  value === null || value === undefined
-    ? '-'
-    : toFixedFloorWithoutTrailingZeros(Number(value), digits);
-
-const ResourceGroupFairShares: React.FC<{
-  resourceGroupName: string;
-  domainName: string;
-  fetchKey: string;
-}> = ({ resourceGroupName, domainName, fetchKey }) => {
+/** The Fair Share page's resource-group row, read through that page's own fragment. */
+const ResourceGroupFairShareSpec: React.FC<{
+  resourceGroupFrgmt: ResourceGroupFairShareTableFragment$key;
+}> = ({ resourceGroupFrgmt }) => {
   'use memo';
   const { t } = useTranslation();
-  const {
-    baiPaginationOption,
-    tablePaginationOption,
-    setTablePaginationOption,
-  } = useBAIPaginationOptionState({ current: 1, pageSize: 5 });
-  const variables = {
-    resourceGroupName,
-    domainName,
-    limit: baiPaginationOption.limit,
-    offset: baiPaginationOption.offset,
-  };
-  const deferredVariables = useDeferredValue(variables);
+  const [resourceGroup] = useFragment(
+    ResourceGroupFairShareTableFragment,
+    resourceGroupFrgmt,
+  );
+  const spec = resourceGroup?.fairShareSpec;
+  const days = (value: number | null | undefined) =>
+    _.isNil(value) ? '-' : t('general.Days', { num: value });
+  return (
+    <MetadataList>
+      <MetadataListItem label={t('fairShare.ResourceWeights')}>
+        {_.isEmpty(spec?.resourceWeights) ? (
+          '-'
+        ) : (
+          <BAIFlex gap="sm" wrap="wrap">
+            {_.map(spec?.resourceWeights, (weight) => (
+              <BAIFlex key={weight.resourceType} gap="xxs">
+                <ResourceTypeIcon type={weight.resourceType} />
+                <Text>{weight.weight}</Text>
+                {weight.usesDefault ? (
+                  <Text type="supporting" size="sm">
+                    ({t('fairShare.UsingDefault')})
+                  </Text>
+                ) : null}
+              </BAIFlex>
+            ))}
+          </BAIFlex>
+        )}
+      </MetadataListItem>
+      <MetadataListItem label={t('fairShare.DefaultWeight')}>
+        {spec?.defaultWeight ?? '-'}
+      </MetadataListItem>
+      <MetadataListItem label={t('fairShare.DecayUnitDays')}>
+        {days(spec?.decayUnitDays)}
+      </MetadataListItem>
+      <MetadataListItem label={t('fairShare.HalfLifeDays')}>
+        {days(spec?.halfLifeDays)}
+      </MetadataListItem>
+      <MetadataListItem label={t('fairShare.LookbackDays')}>
+        {days(spec?.lookbackDays)}
+      </MetadataListItem>
+      <MetadataListItem label={t('general.Status')}>
+        <BAIBadge
+          color={resourceGroup?.status?.isActive ? 'success' : 'default'}
+          text={
+            resourceGroup?.status?.isActive
+              ? t('general.Active')
+              : t('general.Inactive')
+          }
+        />
+      </MetadataListItem>
+    </MetadataList>
+  );
+};
+
+const ResourceGroupFairShare: React.FC<{
+  resourceGroupName: string;
+  fetchKey: string;
+}> = ({ resourceGroupName, fetchKey }) => {
+  'use memo';
+  const { t } = useTranslation();
   const data = useLazyLoadQuery<FairSharePanelQuery>(
     graphql`
-      query FairSharePanelQuery(
-        $resourceGroupName: String!
-        $domainName: String!
-        $limit: Int!
-        $offset: Int!
-      ) {
-        projects: rgProjectFairShares(
-          scope: {
-            resourceGroupName: $resourceGroupName
-            domainName: $domainName
-          }
-          orderBy: [{ field: FAIR_SHARE_FACTOR, direction: ASC }]
-          limit: $limit
-          offset: $offset
-        ) @catch(to: RESULT) {
-          count
+      query FairSharePanelQuery($filter: ResourceGroupFilter!) {
+        resourceGroups: adminResourceGroups(filter: $filter, limit: 1)
+          @catch(to: RESULT) {
           edges {
             node {
-              id
-              spec {
-                weight
-                usesDefault
-              }
-              calculationSnapshot {
-                fairShareFactor
-                normalizedUsage
-              }
-              project {
-                basicInfo {
-                  name
-                }
-              }
+              ...ResourceGroupFairShareTableFragment
             }
           }
         }
       }
     `,
-    deferredVariables,
+    { filter: { name: { equals: resourceGroupName } } },
     { fetchPolicy: 'store-and-network', fetchKey },
   );
-  const projects = readPrimary(data.projects);
-  return (
-    <BAITable<FairShareRow>
-      size="small"
-      rowKey="id"
-      dataSource={filterOutNullAndUndefined(
-        projects?.edges.map((edge) => edge?.node),
-      )}
-      loading={deferredVariables !== variables}
-      scroll={{ x: 'max-content' }}
-      columns={[
-        {
-          key: 'project',
-          title: t('general.Project'),
-          render: (_value, row) => row.project?.basicInfo.name ?? '-',
-        },
-        {
-          key: 'factor',
-          title: t('fairShare.FairShareFactor'),
-          render: (_value, row) =>
-            fixed(row.calculationSnapshot.fairShareFactor, 2),
-        },
-        {
-          key: 'usage',
-          title: t('dashboard.card.NormalizedUsage'),
-          render: (_value, row) =>
-            fixed(row.calculationSnapshot.normalizedUsage, 2),
-        },
-        {
-          key: 'weight',
-          title: t('fairShare.Weight'),
-          render: (_value, row) => (
-            <BAIFlex gap="xxs">
-              <Text>{fixed(row.spec.weight, 1)}</Text>
-              {row.spec.usesDefault ? (
-                <Text type="supporting" size="sm">
-                  ({t('fairShare.UsingDefault')})
-                </Text>
-              ) : null}
-            </BAIFlex>
-          ),
-        },
-      ]}
-      pagination={{
-        pageSize: tablePaginationOption.pageSize,
-        current: tablePaginationOption.current,
-        total: projects?.count ?? 0,
-        showSizeChanger: false,
-        onChange: (current, pageSize) =>
-          setTablePaginationOption({ current, pageSize }),
-      }}
-    />
+  const node = readPrimary(data.resourceGroups)?.edges[0]?.node;
+  return node ? (
+    <ResourceGroupFairShareSpec resourceGroupFrgmt={[node]} />
+  ) : (
+    <Text type="supporting">{t('dashboard.card.NoResourceGroup')}</Text>
   );
 };
 
-/** Each project's fair share in the card's resource group, the lowest factor (heaviest use) first. */
+/** The card's resource group's fair-share configuration, as the Fair Share page's resource-group step shows it. */
 const FairSharePanel: React.FC<PanelComponentProps> = ({
   scope,
   vars,
@@ -173,11 +129,8 @@ const FairSharePanel: React.FC<PanelComponentProps> = ({
         cardScope.kind !== 'domain' ? null : !vars.resourceGroup ? (
           <Text type="supporting">{t('dashboard.card.NoResourceGroup')}</Text>
         ) : (
-          <ResourceGroupFairShares
-            // A new resource group or domain starts again from the first page.
-            key={`${vars.resourceGroup}:${cardScope.domainName}`}
+          <ResourceGroupFairShare
             resourceGroupName={vars.resourceGroup}
-            domainName={cardScope.domainName}
             fetchKey={key}
           />
         )

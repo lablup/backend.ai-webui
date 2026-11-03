@@ -103,6 +103,23 @@ const pendingSessionsLink: NonNullable<PanelDefinition['detailLink']> = ({
   };
 };
 
+/** The Fair Share page, opened at the card's resource group when one is saved. */
+const fairShareLink: NonNullable<PanelDefinition['detailLink']> = ({
+  page,
+  settings,
+}) => {
+  if (page !== 'admin') return null;
+  const resourceGroup = settings?.resourceGroups?.[0];
+  return {
+    feature: 'scheduler',
+    labelKey: 'webui.menu.Scheduler',
+    query: {
+      tab: 'fair-share',
+      ...(resourceGroup ? { resourceGroup } : {}),
+    },
+  };
+};
+
 const size = (columnSpan: number, rowSpan: number): PanelSize => ({
   columnSpan,
   rowSpan,
@@ -497,7 +514,7 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     requires: SUPERADMIN_ONLY,
     kind: 'custom',
     Component: FairSharePanel,
-    detailLink: listLink('scheduler', { admin: 'webui.menu.Scheduler' }),
+    detailLink: fairShareLink,
     defaultSize: size(4, 3),
     minSize: size(2, 3),
     settings: ['resourceGroup'],

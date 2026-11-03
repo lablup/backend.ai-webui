@@ -40,6 +40,15 @@ describe('card detail links', () => {
     expect(hrefOf('pendingSessions', 'projectAdmin')).toBeNull();
   });
 
+  it('opens the Fair Share page at the card resource group', () => {
+    expect(hrefOf('fairShare', 'admin', { resourceGroups: ['rg-a'] })).toBe(
+      '/admin/scheduler?tab=fair-share&resourceGroup=rg-a',
+    );
+    expect(hrefOf('fairShare', 'admin')).toBe(
+      '/admin/scheduler?tab=fair-share',
+    );
+  });
+
   it('leaves cards without a list page without a link', () => {
     [
       'failuresByEntityType',
