@@ -1,0 +1,1 @@
+@layer reset,theme,base,astryx-base,astryx-theme;@layer ui-common{.uic-option-disabled-reason__label{text-overflow:ellipsis;white-space:nowrap;min-width:0;display:block;overflow:hidden}}@layer components,utilities;
