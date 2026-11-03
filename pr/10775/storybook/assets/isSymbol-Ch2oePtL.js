@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-sJBDdmOt.js";import{a as t,i as n,o as r,r as i}from"./isObject-Cu5W6UBH.js";function a(e){return typeof e==`symbol`||n(e)&&t(e)==o}var o;function s(){return(s=e((()=>{r(),i(),o=`[object Symbol]`})))()}export{a as n,s as t};
