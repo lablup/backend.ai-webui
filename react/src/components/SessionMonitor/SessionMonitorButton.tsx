@@ -194,12 +194,10 @@ const SessionMonitorButton: React.FC<SessionMonitorButtonProps> = (props) => {
               {summary?.allocated && (
                 <ErrorBoundaryWithNullFallback>
                   <Suspense fallback={null}>
-                    <BAIFlex direction="row" align="center" gap="xs">
-                      <SessionMonitorAllocationSummary
-                        allocated={summary.allocated}
-                        separator={<Separator />}
-                      />
-                    </BAIFlex>
+                    <SessionMonitorAllocationSummary
+                      allocated={summary.allocated}
+                      separator={<Separator />}
+                    />
                   </Suspense>
                 </ErrorBoundaryWithNullFallback>
               )}
