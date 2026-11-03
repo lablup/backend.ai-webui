@@ -20,7 +20,7 @@ import {
   BAINumberInput,
   BAIRadioList,
   BAIRadioListItem,
-  BAISelector,
+  BAISelect,
   BAITextInput,
   useBAILogger,
 } from 'backend.ai-ui';
@@ -302,7 +302,8 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
           name={'metric_source'}
           rules={[{ required: true }]}
         >
-          <BAISelector
+          <BAISelect
+            showSearch={false}
             aria-label={t('autoScalingRule.MetricSource')}
             onChange={(value) => {
               // @ts-ignore
@@ -361,15 +362,10 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
                   rules={[{ required: true }]}
                   noStyle
                 >
-                  {/* PILOT-DECISION: antd `Select` with a ReactNode option
-                      label + `optionLabelProp="selectedLabel"` -> `Selector`.
-                      Astryx option labels are STRINGS (P2/P26-3) and there is
-                      no `optionLabelProp`, so the two-part row collapses to one
-                      string, `"<label> (<value>)"`, which carries both pieces
-                      the node did. `style={{width:100}}` -> `width={100}`. */}
-                  <BAISelector
+                  <BAISelect
+                    showSearch={false}
                     aria-label={t('autoScalingRule.Comparator')}
-                    width={100}
+                    style={{ width: 100 }}
                     options={_.map(COMPARATOR_LABELS, (label, value) => ({
                       label: `${label} (${value})`,
                       value,

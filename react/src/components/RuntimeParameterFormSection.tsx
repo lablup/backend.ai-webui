@@ -24,7 +24,7 @@ import {
   isValueTypeCompatibleWithUIType,
   BAICheckboxInput,
   BAINumberInput,
-  BAISelector,
+  BAISelect,
   BAITextInput,
 } from 'backend.ai-ui';
 import { Undo2 } from 'lucide-react';
@@ -479,11 +479,10 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
           rules={requiredRules}
           getValueFromEvent={touchOnChange}
         >
-          {/* MAPPING 3.1: a small static option list -> `Selector`;
-              `allowClear` -> `hasClear`. */}
-          <BAISelector
+          <BAISelect
+            showSearch={false}
             aria-label={label}
-            hasClear
+            allowClear
             placeholder={
               param.choices?.items.find(
                 (opt) => opt.value === param.defaultValue,
