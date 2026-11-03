@@ -17,6 +17,7 @@ import ClientIpMaskingPolicySettingModal, {
 import {
   BAIAlert,
   BAIButton,
+  BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
   BAINameActionCell,
@@ -48,6 +49,8 @@ const AdminClientIpMaskingPolicyList: React.FC = () => {
   const [isOpenSettingModal, setIsOpenSettingModal] = useState(false);
   const [editingPolicy, setEditingPolicy] =
     useState<ClientIpMaskingPolicySettingModalFragment$key | null>(null);
+  const [deletingPolicy, setDeletingPolicy] =
+    useState<ClientIpMaskingPolicyNode | null>(null);
 
   const { adminClientIpMaskingPolicies } =
     useLazyLoadQuery<AdminClientIpMaskingPolicyListQuery>(
@@ -85,7 +88,7 @@ const AdminClientIpMaskingPolicyList: React.FC = () => {
       },
     );
 
-  const [commitPurge] =
+  const [commitPurge, isInFlightPurge] =
     useMutation<AdminClientIpMaskingPolicyListPurgeMutation>(graphql`
       mutation AdminClientIpMaskingPolicyListPurgeMutation($id: UUID!) {
         purgeClientIpMaskingPolicy(id: $id) {
@@ -112,26 +115,23 @@ const AdminClientIpMaskingPolicyList: React.FC = () => {
   const targetLabel = (target: string) =>
     t(`clientIpMasking.targets.${target}`, { defaultValue: target });
 
-  const purgePolicy = (policy: ClientIpMaskingPolicyNode) =>
-    new Promise<void>((resolve, reject) => {
-      commitPurge({
-        variables: { id: policy.entityId },
-        onCompleted: (_res, errors) => {
-          if (errors && errors.length > 0) {
-            _.forEach(errors, (err) => message.error(err.message));
-            reject();
-            return;
-          }
-          message.success(t('clientIpMasking.SuccessfullyDeleted'));
-          refetch();
-          resolve();
-        },
-        onError: (error) => {
-          message.error(error.message);
-          reject(error);
-        },
-      });
+  const purgePolicy = (policy: ClientIpMaskingPolicyNode) => {
+    commitPurge({
+      variables: { id: policy.entityId },
+      onCompleted: (_res, errors) => {
+        if (errors && errors.length > 0) {
+          _.forEach(errors, (err) => message.error(err.message));
+          return;
+        }
+        setDeletingPolicy(null);
+        message.success(t('clientIpMasking.SuccessfullyDeleted'));
+        refetch();
+      },
+      onError: (error) => {
+        message.error(error.message);
+      },
     });
+  };
 
   const renderPrefix = (
     policy: ClientIpMaskingPolicyNode,
@@ -176,19 +176,7 @@ const AdminClientIpMaskingPolicyList: React.FC = () => {
               title: t('button.Delete'),
               icon: <Trash2 size="1em" />,
               type: 'danger',
-              popConfirm: {
-                title: t('clientIpMasking.DeletePolicy'),
-                description: t(
-                  row.targetType === 'DEFAULT'
-                    ? 'clientIpMasking.DeleteDefaultPolicyDescription'
-                    : 'clientIpMasking.DeletePolicyDescription',
-                  { target: targetLabel(row.targetType) },
-                ),
-                okText: t('button.Delete'),
-                cancelText: t('button.Cancel'),
-                okButtonProps: { danger: true },
-                onConfirm: () => purgePolicy(row),
-              },
+              onClick: () => setDeletingPolicy(row),
             },
           ]}
         />
@@ -268,6 +256,39 @@ const AdminClientIpMaskingPolicyList: React.FC = () => {
             refetch();
           }
         }}
+      />
+      <BAIDeleteConfirmModal
+        open={!!deletingPolicy}
+        title={t('clientIpMasking.DeletePolicy')}
+        description={
+          deletingPolicy
+            ? t(
+                deletingPolicy.targetType === 'DEFAULT'
+                  ? 'clientIpMasking.DeleteDefaultPolicyDescription'
+                  : 'clientIpMasking.DeletePolicyDescription',
+                { target: targetLabel(deletingPolicy.targetType) },
+              )
+            : undefined
+        }
+        items={
+          deletingPolicy
+            ? [
+                {
+                  key: deletingPolicy.entityId,
+                  label: targetLabel(deletingPolicy.targetType),
+                },
+              ]
+            : []
+        }
+        confirmText={
+          deletingPolicy ? targetLabel(deletingPolicy.targetType) : ''
+        }
+        requireConfirmInput
+        confirmLoading={isInFlightPurge}
+        onOk={() => {
+          if (deletingPolicy) purgePolicy(deletingPolicy);
+        }}
+        onCancel={() => setDeletingPolicy(null)}
       />
     </BAIFlex>
   );
