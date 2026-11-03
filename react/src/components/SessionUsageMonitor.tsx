@@ -205,7 +205,7 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
     ),
   ]);
 
-  // Responsive policy R1 (ticket 14): antd `Row gutter={[16,16]}` +
+  // ADR 0020 R1: antd `Row gutter={[16,16]}` +
   // `Col xs={24} sm={12}` (2-up from 576px) -> container-driven Astryx Grid
   // (minWidth 576/2 ~= 280, max 2 tracks). The full-width I/O line keeps its
   // span via GridSpan 'full'.

@@ -5,7 +5,7 @@
 > Unfamiliar terms are collected in the [Glossary](#glossary) at the end.
 
 - A [page-level tab set](#glossary) keeps its active tab in the search param `tab`. A module-level `tabParser`, built with nuqs `parseAsStringLiteral([...]).withDefault(...)`, validates the value.
-- Only the active tab's filter, order, and pagination are in the URL. A tab switch saves the departing tab's state and restores the arriving tab's state. It never replaces the whole query string with `?tab=<key>`, and it never leaves one tab's keys in place for the next tab.
+- Only the active tab's filter, order, and pagination are in the URL. A tab switch saves the departing tab's state and restores the arriving tab's saved query string; a tab not yet visited starts from `?tab=<key>` alone. A switch never leaves one tab's keys in place for the next tab.
 - A page picks one of three shapes, by who owns the tab bodies' state. Decision sections 3 to 5 define them.
   - A host with self-contained child tabs calls `useTabQuerySnapshot`.
   - A page that owns its tabs' queries uses `useKeyedSnapshot`.

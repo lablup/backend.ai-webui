@@ -25,7 +25,7 @@
                            its own hover-revealed toggle)
    breakpoint="md"      -> the caller's `useBAIBreakpoint()` effect
                            (ADR 0020 R3; Astryx has no breakpoint
-                           system, MAPPING §3.9)
+                           system)
    trigger={null}       -> `hasButton: false`
    children             -> split into SideNav's `header` / `children` /
                            `footer` slots, which is what the hand-rolled

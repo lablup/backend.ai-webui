@@ -159,8 +159,8 @@ const ManageImageResourceLimitModal: React.FC<
           )}
         >
           {/* antd Row gutter={[24,16]} + Col span={12} (no breakpoint props)
-              -> Astryx Grid columns={2} (MAPPING.md §3.9; responsive policy
-              R-fixed: the original was a fixed 2-up grid). */}
+              -> Astryx Grid columns={2} (ADR 0020 R2: the original was a
+              fixed 2-up grid). */}
           <Grid columns={2} columnGap={6} rowGap={4} align="start">
             {_.map(
               _.chunk(image?.resource_limits ?? [], 2),

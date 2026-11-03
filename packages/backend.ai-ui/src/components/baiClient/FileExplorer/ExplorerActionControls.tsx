@@ -71,11 +71,8 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   extra,
 }) => {
   const { t } = useBAIi18n();
-  // to-astryx W2-D: `Grid.useBreakpoint()` -> the theme-shim's
-  // `useBAIBreakpoint()`. MAPPING §3.9 grades antd's breakpoint hook NONE and
-  // warns that Astryx's `useMediaQuery` returns `false` on FIRST RENDER for
-  // SSR safety — which would make every label here flash in and out. The shim
-  // exists for exactly this (ADR 0020 R3) and is a pure import swap.
+  // ADR 0020 R3: Astryx `useMediaQuery` returns `false` on first render,
+  // which would make every label here flash in and out.
   const { lg } = useBAIBreakpoint();
   const { token } = useTheme();
   const { message } = App.useApp();

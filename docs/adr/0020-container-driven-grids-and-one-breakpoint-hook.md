@@ -28,7 +28,7 @@ flowchart TD
   r4["R4: BAI_BREAKPOINTS step value"]
   css["browser CSS grid"]
   mm["window.matchMedia"]
-  need --> q1
+  need -- "asks" --> q1
   q1 -- "track count of a uniform grid" --> r1
   q1 -- "nothing, the split is fixed" --> r2
   q1 -- "which components mount, or a mode, or a text format" --> r3
@@ -90,6 +90,13 @@ flowchart TD
 ### 5. Responsive prop records on antd-shaped wrappers
 
 - **Collapse rule**: A [frozen antd-v6 prop](0017-single-select-for-client-held-option-lists.md#glossary) that still accepts antd's per-breakpoint record does not switch by viewport. `BAIModal` accepts `width` as a `BAIModalResponsiveWidth` record and uses the last declared entry (`Object.values(width).at(-1)`), not the widest one. New code passes one value. Source comments cite this rule as `ADR 0020 §5`.
+
+### 6. A settings-style left rail is the `settings-sidebar` composition
+
+- **Composition**: A page whose sections are picked from a left rail renders the `settings-sidebar` template (`pnpm run ui-common template settings-sidebar`): `Layout` with `start={<LayoutPanel hasDivider>}` holding a `List` of `ListItem`s, and `content={<LayoutContent>}` holding the pane. It is not a horizontal `TabList`, which has no side orientation. `SettingList.tsx` is the implementation.
+- **Selection**: The selected section is `ListItem isSelected`, which renders `aria-current` and the selected surface. Nothing hand-rolls a highlight.
+- **Narrow viewports**: Below `md` (R3, `useBAIBreakpoint`), the rail and the pane become a master-detail drill-down instead of side by side, as the template does.
+- **Discovery**: `ui-common component TabList` correctly reports no side orientation; `ui-common template --list` or `ui-common search "settings sidebar"` finds the template that a component lookup misses.
 
 ## Rejected alternatives
 

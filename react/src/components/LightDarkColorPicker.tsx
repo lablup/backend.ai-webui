@@ -50,7 +50,7 @@ const LightDarkColorPicker: React.FC<LightDarkColorPickerProps> = ({
       direction="column"
       style={{ alignSelf: 'stretch' }}
     >
-      {/* Responsive policy (ticket 14): container-driven Astryx Grid replaces
+      {/* ADR 0020 R1: container-driven Astryx Grid replaces
           `Row gutter={[16,4]}` + `Col xl={6} lg={24}`. minWidth 300 keeps the
           two scheme fields side-by-side whenever ~600px is available and
           stacks them below; max 4 reproduces the antd xl={6} quarter-width

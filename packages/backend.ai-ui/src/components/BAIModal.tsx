@@ -484,7 +484,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
   // A per-breakpoint width record collapses to its last declared entry (the
   // desktop budget; ADR 0020 §5). `width="auto"` is TRANSLATED to
   // `fit-content`, not forwarded: bare `auto` resolves against the viewport —
-  // measured 1440px where the content needed 301 / 288 (QA-FINDINGS Q-21).
+  // measured 1440px where the content needed 301 / 288.
   const resolvedWidth =
     typeof width === 'object'
       ? (Object.values(width).at(-1) ?? 520)

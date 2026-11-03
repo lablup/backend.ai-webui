@@ -1133,7 +1133,7 @@ const SessionLauncherPage = () => {
                         'autoEnabled',
                       ]);
                       return (
-                        // Responsive policy R1 (ticket 14): antd
+                        // ADR 0020 R1: antd
                         // `Row gutter` + `Col xs={24} sm={12}` -> Astryx Grid
                         // (2-up from 576px -> minWidth 280, max 2).
                         // W2A-17: a `Grid` child defaults to `min-width: auto`,

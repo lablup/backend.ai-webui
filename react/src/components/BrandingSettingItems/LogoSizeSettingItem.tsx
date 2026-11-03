@@ -63,7 +63,7 @@ const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
 
   return (
     <BAIFlex align="stretch" direction="column" style={{ width: '100%' }}>
-      {/* Responsive policy (ticket 14): container-driven Astryx Grid replaces
+      {/* ADR 0020 R1: container-driven Astryx Grid replaces
           `Row gutter={[12,4]}` + `Col xl={6} lg={24}` — same recipe as
           LightDarkColorPicker's light/dark pair. */}
       <Grid columns={{ minWidth: 200, max: 2 }} columnGap={3} rowGap={1}>

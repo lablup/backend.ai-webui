@@ -315,7 +315,7 @@ const ComputeSessionListPage = () => {
   const compute_session_nodes = computeSessionNodeResult.ok
     ? computeSessionNodeResult.value
     : null;
-  // Responsive policy R3 (ticket 14): the render tree branches on `lg`
+  // ADR 0020 R3: the render tree branches on `lg`
   // (the action card is unmounted below lg), so the JS hook stays; the antd
   // Row/Col track layout becomes an Astryx 24-column Grid whose spans are
   // picked from the same booleans (asymmetric split — the uniform minWidth

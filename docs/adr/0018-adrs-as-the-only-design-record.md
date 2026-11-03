@@ -5,7 +5,7 @@
 - `docs/adr/` is the only place in the repository where a design decision is recorded. `.specs/` is removed, and no other design-document directory replaces it.
 - Every ADR and `docs/ARCHITECTURE.md` is written in English: title, headings, and body. Identifiers are written as they appear in the code.
 - Implementation plans, task breakdowns, and status notes live in the GitHub issue and the PR, not in a repository file.
-- The `adr-writing` skill and `.claude/rules/adr.md` state these rules, and `.github/instructions/adr.instructions.md` makes a new `.specs/` directory a review finding.
+- The `adr-writing` skill, `.github/instructions/adr.instructions.md`, and `.claude/rules/adr.md` state these rules. `.claude/rules/adr.md` loads in every agent session, so it is the rule that catches a new `.specs/` directory.
 
 ## Context
 

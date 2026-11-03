@@ -72,8 +72,6 @@ export type SettingGroup = {
 
 interface SettingPageProps {
   settingGroups: Array<SettingGroup>;
-  // The left rail is the Astryx `settings-sidebar` template composition, not
-  // a horizontal `TabList`; it is page-internal state, not `?tab=` (ADR 0021).
   showChangedOptionFilter?: boolean;
   showResetButton?: boolean;
   showSearchBar?: boolean;
@@ -137,6 +135,8 @@ const GroupSettingItems: React.FC<
   );
 };
 
+// The left rail is the `settings-sidebar` template composition (ADR 0020 §6);
+// its selection is page-internal state, not `?tab=` (ADR 0021).
 const SettingList: React.FC<SettingPageProps> = ({
   settingGroups,
   showChangedOptionFilter,
