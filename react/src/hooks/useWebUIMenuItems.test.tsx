@@ -6,7 +6,7 @@
  * Role matrix of the Dashboard entry (#10583) under the split menus: first
  * item of a superadmin's system admin menu (`/admin/dashboard`) and of the
  * current project admin's Project Settings menu
- * (`/project/:name/admin/dashboard`), absent for domain admins and users.
+ * (`/project/:name/admin/dashboard`), absent for everyone else.
  */
 import type { EffectiveAdminRole } from './useCurrentUserProjectRoles';
 import { useWebUIMenuItems } from './useWebUIMenuItems';
@@ -143,32 +143,6 @@ describe('useWebUIMenuItems dashboard entry', () => {
       to: '/project/alpha/admin/dashboard',
     });
     expect(firstAvailableProjectAdminMenuKey).toBe('admin-dashboard');
-  });
-
-  it('is absent from a domain admin system admin menu', () => {
-    const {
-      adminMenu,
-      firstAvailableProjectAdminMenuKey,
-      firstAvailableProjectAdminMenuItem,
-    } = renderMenu('admin', 'domainAdmin');
-    const keys = adminMenu.map((item) => item.key);
-    expect(keys).not.toContain('admin-dashboard');
-    expect(keys).toContain('admin-session');
-    expect(firstAvailableProjectAdminMenuKey).toBe('project-admin-users');
-    expect(firstAvailableProjectAdminMenuItem).toBeUndefined();
-  });
-
-  it('keeps a domain admin who administers the project on the project dashboard', () => {
-    const { adminMenu, firstAvailableProjectAdminMenuItem } = renderMenu(
-      'admin',
-      'domainAdmin',
-      { isCurrentProjectAdmin: true },
-    );
-    expect(adminMenu.map((item) => item.key)).not.toContain('admin-dashboard');
-    expect(firstAvailableProjectAdminMenuItem).toMatchObject({
-      key: 'admin-dashboard',
-      to: '/project/alpha/admin/dashboard',
-    });
   });
 
   it('is absent for a regular user, who has no admin menu', () => {

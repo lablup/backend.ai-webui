@@ -437,7 +437,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
               }
               container="section"
               endContent={
-                !canCreateInSharedProject && personalProject?.name ? (
+                personalProject?.name ? (
                   <Button
                     variant="secondary"
                     size="sm"
