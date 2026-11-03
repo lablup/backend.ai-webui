@@ -15,24 +15,49 @@ import { fileURLToPath } from 'node:url';
 const SOURCE_MAP_FILE = /\.(?:[cm]?js|css)\.map$/i;
 const SCRIPT_OR_STYLE = /\.(?:[cm]?js|css)$/i;
 const INLINE_MAP_SCAN = /\.(?:[cm]?js|css|html?)$/i;
-const MAP_COMMENT =
-  /(?:\/\/[#@][ \t]*sourceMappingURL=[^\n]*|\/\*[#@][ \t]*sourceMappingURL=(?:(?!\*\/)[\s\S])*\*\/)/g;
-// Only the run of comments at the very end of a file — the place bundlers put
-// them — so a string that merely contains the text is left alone.
-const TRAILING_MAP_COMMENTS = new RegExp(
-  `(?:\\s*${MAP_COMMENT.source})+\\s*$`,
-);
+const MAP_COMMENT_START = /^(?:\/\/|\/\*)[#@][ \t]*sourceMappingURL=/;
+const MAP_URL = /^[^\s'"`]*$/;
 // A comment start after code or at a line start; a quoted string does not match.
 const INLINE_MAP = /(?:^|[;})\s])(?:\/\/|\/\*)[#@][ \t]*sourceMappingURL=data:/m;
 
+// Where the trailing sourceMappingURL comment of `text` starts, or -1.
+// String scanning instead of one regex, which backtracks exponentially here.
+function trailingMapCommentStart(text) {
+  if (text.endsWith('*/')) {
+    const start = text.lastIndexOf('/*');
+    const comment = text.slice(start);
+    return start >= 0 &&
+      comment.indexOf('*/') === comment.length - 2 &&
+      MAP_COMMENT_START.test(comment)
+      ? start
+      : -1;
+  }
+  const lineStart = text.lastIndexOf('\n') + 1;
+  const line = text.slice(lineStart);
+  const url = line.lastIndexOf('sourceMappingURL=');
+  if (url < 0 || !MAP_URL.test(line.slice(url + 'sourceMappingURL='.length))) {
+    return -1;
+  }
+  let start = url;
+  while (start > 0 && (line[start - 1] === ' ' || line[start - 1] === '\t')) {
+    start--;
+  }
+  start -= 3;
+  return start >= 0 && MAP_COMMENT_START.test(line.slice(start))
+    ? lineStart + start
+    : -1;
+}
+
+// Only the run of comments at the very end of a file — the place bundlers put
+// them — so a string that merely contains the text is left alone.
 export function stripTrailingSourceMapComments(text) {
   if (!text.includes('sourceMappingURL')) return { text, removed: 0 };
-  const match = TRAILING_MAP_COMMENTS.exec(text);
-  if (!match) return { text, removed: 0 };
-  return {
-    text: `${text.slice(0, match.index)}\n`,
-    removed: match[0].match(MAP_COMMENT).length,
-  };
+  let rest = text.trimEnd();
+  let removed = 0;
+  for (let start; (start = trailingMapCommentStart(rest)) >= 0; removed++) {
+    rest = rest.slice(0, start).trimEnd();
+  }
+  return removed > 0 ? { text: `${rest}\n`, removed } : { text, removed };
 }
 
 function isMapShaped(file) {

@@ -34,6 +34,18 @@ describe('stripTrailingSourceMapComments', () => {
     expect(strip(code)).toBe(code);
   });
 
+  it('keeps a quoted sourceMappingURL on the last line', () => {
+    const code = 'emit("//# sourceMappingURL=" + url)';
+    expect(strip(code)).toBe(code);
+  });
+
+  it('stays fast on repeated comment prefixes', () => {
+    const started = Date.now();
+    strip(`//#sourceMappingURL=${'//#sourceMappingURL='.repeat(5000)}"`);
+    strip(`/*#sourceMappingURL=${'*//*#sourceMappingURL='.repeat(5000)}x`);
+    expect(Date.now() - started).toBeLessThan(500);
+  });
+
   it('never reaches past code to a later block comment', () => {
     const css = 'a{}\n/*# sourceMappingURL=a.css.map */\nb{color:red}\n/*! end */\n';
     expect(strip(css)).toBe(css);
