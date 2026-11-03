@@ -221,18 +221,23 @@ export async function listDeploymentsByPattern(
   api: APIRequestContext,
   pattern: RegExp,
   options: { liveOnly?: boolean } = {},
-): Promise<Array<{ id: string; name: string; status: string }>> {
+): Promise<
+  Array<{ id: string; name: string; status: string; createdAt: string }>
+> {
   const data = await gqlAdmin<{
     adminDeployments: {
       edges: Array<{
-        node: { id: string; metadata: { name: string; status: string } };
+        node: {
+          id: string;
+          metadata: { name: string; status: string; createdAt: string };
+        };
       }>;
     };
   }>(
     api,
     `query($filter: DeploymentFilter) {
       adminDeployments(filter: $filter, limit: 300) {
-        edges { node { id metadata { name status } } }
+        edges { node { id metadata { name status createdAt } } }
       }
     }`,
     {
@@ -246,6 +251,7 @@ export async function listDeploymentsByPattern(
       id: e.node.id,
       name: e.node.metadata.name,
       status: e.node.metadata.status,
+      createdAt: e.node.metadata.createdAt,
     }))
     .filter((d) => pattern.test(d.name))
     .filter(
@@ -317,10 +323,11 @@ export async function setDeploymentTagsViaApi(
 
 /**
  * Deletes every live (not yet STOPPING/STOPPED) deployment named exactly
- * `name`. Used by `createTestResources().cleanup()`. Returns how many were
- * deleted; `0` means the deployment was already gone (not an error). Throws
- * only when the lookup itself fails; a failed delete is reported through
- * `deleteDeploymentViaApi`'s warning and counted as not deleted.
+ * `name`. Used by `createTestResources().cleanup()`. Returns how many live
+ * deployments it found and how many of those it deleted; `found: 0` means the
+ * deployment was already gone (not an error), and `deleted < found` means a
+ * delete failed. Throws only when the lookup itself fails; a failed delete is
+ * reported through `deleteDeploymentViaApi`'s warning.
  */
 export async function deleteDeploymentsByNameViaApi(
   api: APIRequestContext,
@@ -364,7 +371,9 @@ export const E2E_DEPLOYMENT_PATTERN = /^e2e-(plan|token|fr\d+|gh\d+)-/i;
 
 /**
  * Sweep-deletes every live deployment whose display name matches `pattern` —
- * by default every e2e deployment prefix in `E2E_DEPLOYMENT_PATTERN`. These
+ * by default every e2e deployment prefix in `E2E_DEPLOYMENT_PATTERN` — and that
+ * is older than `minAgeMs`, so a concurrent run's in-use deployments survive
+ * (same age gate as `sweepStaleProjectsViaApi`). These
  * names are NOT covered by sweepServices'/sweepVFolders' `/e2e-svc-/`
  * `/e2e-mod-/` patterns in global-cleanup.teardown.ts, and a per-test
  * UI-delete flow (same fragility as the test body it backstops) can itself
@@ -377,12 +386,17 @@ export const E2E_DEPLOYMENT_PATTERN = /^e2e-(plan|token|fr\d+|gh\d+)-/i;
 export async function sweepLeftoverDeploymentsViaApi(
   api: APIRequestContext,
   pattern: RegExp = E2E_DEPLOYMENT_PATTERN,
+  minAgeMs = 60 * 60 * 1000,
 ): Promise<number> {
   const matches = await listDeploymentsByPattern(api, pattern, {
     liveOnly: true,
   });
+  const stale = matches.filter(({ createdAt }) => {
+    const created = new Date(createdAt).getTime();
+    return Number.isFinite(created) && Date.now() - created > minAgeMs;
+  });
   let deleted = 0;
-  for (const { id } of matches) {
+  for (const { id } of stale) {
     if (await deleteDeploymentViaApi(api, id)) deleted++;
   }
   if (deleted > 0) {
@@ -399,8 +413,9 @@ interface PrometheusQueryPresetRow {
 
 /**
  * Lists Prometheus query presets (auto-scaling rule presets) matching a
- * server-side `QueryDefinitionFilter`, paging with limit/offset so a large
- * backlog is read in full before anything is purged.
+ * server-side `QueryDefinitionFilter`, paging with limit/offset in creation
+ * order (new rows land on the last page, so they cannot shift earlier ones) so
+ * a large backlog is read in full before anything is purged.
  */
 async function listPrometheusQueryPresets(
   api: APIRequestContext,
@@ -411,14 +426,17 @@ async function listPrometheusQueryPresets(
   for (let offset = 0; offset < 10_000; offset += pageSize) {
     const data = await gqlAdmin<{
       prometheusQueryPresets: {
-        count: number;
         edges: Array<{ node: PrometheusQueryPresetRow }>;
       } | null;
     }>(
       api,
       `query($filter: QueryDefinitionFilter, $limit: Int, $offset: Int) {
-        prometheusQueryPresets(filter: $filter, limit: $limit, offset: $offset) {
-          count
+        prometheusQueryPresets(
+          filter: $filter
+          orderBy: [{ field: CREATED_AT, direction: ASC }]
+          limit: $limit
+          offset: $offset
+        ) {
           edges { node { entityId name createdAt } }
         }
       }`,

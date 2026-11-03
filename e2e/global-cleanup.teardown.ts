@@ -104,7 +104,8 @@ const E2E_TEST_PROJECT_PATTERN = /^e2e-test-project-/;
 /**
  * Backstop sweeps for Prometheus query presets (`e2e-preset-*`, the
  * auto-scaling-rule-preset specs) and project-crud's GENERAL projects. Both
- * keep the helpers' age gate, so a concurrent run's fresh fixtures survive.
+ * keep the helpers' age gate, as the deployment sweep does, so a concurrent
+ * run's fresh fixtures survive.
  */
 async function sweepLeftoverPresetsAndProjects(): Promise<void> {
   const api = await createAdminApiContext();
@@ -212,9 +213,14 @@ test.describe('Global e2e cleanup', () => {
     } catch (error) {
       console.warn('[global-cleanup] user sweep failed (ignored):', error);
     }
-    // Purge any e2e deployment a per-spec afterEach failed
-    // to reap. API-based, so it does not use `page`; guard it directly so a
-    // failure never reds the run.
+  });
+
+  // API-only sweeps, in their own test (and so their own 600s budget): they
+  // have no deadline, and running them after the UI sweeps above could hit that
+  // test's timeout on a large backlog. No `page`; guard each directly so a
+  // failure never reds the run.
+  test('sweep leftover e2e deployments, presets and projects (API)', async () => {
+    // Purge any e2e deployment a per-spec afterEach failed to reap.
     try {
       await sweepLeftoverDeployments();
     } catch (error) {
