@@ -9,6 +9,7 @@
 // override see that override; keep the write→assert→clear window short.
 import { SessionAPIHelper } from '../utils/classes/session/SessionAPIHelper';
 import {
+  forbiddenPageHeading,
   getSideNavItem,
   loginAsAdmin,
   loginAsDomainAdmin,
@@ -26,7 +27,6 @@ import {
   enablePublicSlice,
   openLoginPage,
   openWebUISettings,
-  PUBLIC_ONLY_GROUPS,
   readClientConfig,
   readClientConfigForRows,
   readConfigToml,
@@ -43,6 +43,8 @@ import {
   WEBUI_SETTING_GROUPS,
   WEBUI_SETTING_ROWS,
   WebUISettingsApi,
+  WEBUI_SETTINGS_PATH,
+  i18nKeyMarkers,
   type SettingsDocument,
   type SettingsSnapshot,
 } from '../utils/webui-settings-util';
@@ -61,7 +63,6 @@ import path from 'path';
 test.describe.configure({ mode: 'default' });
 
 const DOMAIN_ROWS = WEBUI_SETTING_ROWS.filter((r) => r.scope === 'domain');
-const PUBLIC_ROWS = WEBUI_SETTING_ROWS.filter((r) => r.scope === 'public');
 
 let api: WebUISettingsApi;
 let snapshot: SettingsSnapshot;
@@ -175,25 +176,18 @@ test.describe(
       });
     });
 
-    test('domain admin sees no public-scope group', async ({
+    test('domain admin cannot open System Settings', async ({
       page,
       request,
     }) => {
       await loginAsDomainAdmin(page, request);
-      await openWebUISettings(page);
+      await navigateTo(page, WEBUI_SETTINGS_PATH);
 
-      for (const group of PUBLIC_ONLY_GROUPS) {
-        await expect(settingGroup(page, group)).toHaveCount(0);
-      }
-      for (const group of WEBUI_SETTING_GROUPS.filter(
-        (g) => !PUBLIC_ONLY_GROUPS.includes(g),
-      )) {
-        await expect(settingGroup(page, group)).toBeVisible();
-      }
-      await expect(allSettingRows(page)).toHaveCount(DOMAIN_ROWS.length);
-      for (const setting of PUBLIC_ROWS) {
-        await expect(settingRow(page, setting.key)).toHaveCount(0);
-      }
+      await expect(forbiddenPageHeading(page)).toBeVisible({
+        timeout: 30_000,
+      });
+      await expect(getSideNavItem(page, 'System Settings')).toHaveCount(0);
+      await expect(allSettingRows(page)).toHaveCount(0);
     });
 
     test('a checkbox row shows the changed marker and resets to the file value', async ({
@@ -235,7 +229,7 @@ test.describe(
       await expect(changedMarker(row)).toHaveCount(0);
     });
 
-    test('the Reset button discards every change at once and reloads', async ({
+    test('the Reset button deletes both saved documents after a typed confirmation', async ({
       page,
       request,
     }) => {
@@ -244,20 +238,29 @@ test.describe(
       const checkboxRow = settingRow(page, 'maskUserInfo');
       const textRow = settingRow(page, 'ssoRealmName');
 
+      // Save one domain and one public value first, so the reset has
+      // documents to delete.
       await rowCheckbox(checkboxRow).click();
       await commitRowInput(textRow, 'e2e-realm');
+      await applyWebUISettings(page);
       await expect(changedMarker(checkboxRow)).toBeVisible();
       await expect(changedMarker(textRow)).toBeVisible();
+      expect(await api.readSettings('domain')).toBeDefined();
+      expect(await api.readSettings('public')).toBeDefined();
 
       await toolbarResetButton(page).click();
-      const dialog = page
-        .getByRole('dialog')
-        .filter({ hasText: 'Do you want to reset your changes?' });
-      // Reset-all is confirmed by this dialog, so it saves and reloads at once.
-      await Promise.all([
-        page.waitForEvent('load'),
-        dialog.getByRole('button', { name: 'Reset', exact: true }).click(),
-      ]);
+      const dialog = page.getByRole('dialog', {
+        name: 'Reset all System Settings?',
+      });
+      await expect(dialog).toBeVisible();
+      const confirm = dialog.getByRole('button', {
+        name: 'Reset',
+        exact: true,
+      });
+      await expect(confirm).toBeDisabled();
+      await dialog.getByRole('textbox').fill('Reset');
+      await expect(confirm).toBeEnabled();
+      await Promise.all([page.waitForEvent('load'), confirm.click()]);
       await waitForClientReady(page);
       await expect(settingGroup(page, 'session')).toBeVisible({
         timeout: 30_000,
@@ -266,6 +269,8 @@ test.describe(
       await expect(changedMarker(checkboxRow)).toHaveCount(0);
       await expect(changedMarker(textRow)).toHaveCount(0);
       await expect(applyButton(page)).toBeDisabled();
+      expect(await api.readSettings('domain')).toBeUndefined();
+      expect(await api.readSettings('public')).toBeUndefined();
     });
 
     test('Apply confirms, reloads, saves only the changed keys and resetting them removes the document', async ({
@@ -521,9 +526,8 @@ test.describe(
       await expect(
         page.getByRole('button', { name: 'Login with e2e-realm' }),
       ).toBeVisible();
-      expect(
-        await page.evaluate(() => (globalThis as any).backendaiwebui?.debug),
-      ).toBe(true);
+      // `debug` turns on the i18n key markers next to every translated string.
+      await expect(i18nKeyMarkers(page).first()).toBeVisible();
     });
 
     test('a key absent from the public document keeps the login page config.toml value', async ({
@@ -557,12 +561,14 @@ test.describe(
       } else {
         await expect(samlButton).toBeHidden();
       }
-      expect(
-        await page.evaluate(() => (globalThis as any).backendaiwebui?.debug),
-      ).toBe(
+      const fileDebug =
         (tomlValueOf(config, rowByKey('debug')) as boolean | undefined) ??
-          false,
-      );
+        false;
+      if (fileDebug) {
+        await expect(i18nKeyMarkers(page).first()).toBeVisible();
+      } else {
+        await expect(i18nKeyMarkers(page)).toHaveCount(0);
+      }
     });
   },
 );
@@ -607,18 +613,23 @@ test.describe(
       await page.context().close();
     });
 
-    test('menuBlocklist from the domain document hides a page from the sidebar and its route', async ({
+    test('menuBlocklist from the domain document hides a page from the sidebar and its route, but never System Settings', async ({
       browser,
       request,
     }) => {
-      await api.writeSettings('domain', { menuBlocklist: ['information'] });
+      await api.writeSettings('domain', {
+        menuBlocklist: ['information', 'system-settings'],
+      });
 
       const page = await signInAsAdminInNewContext(browser, request);
       await navigateTo(page, 'admin/users');
       await expect(getSideNavItem(page, 'Users')).toBeVisible();
       await expect(getSideNavItem(page, 'Information')).toBeHidden();
+      // The page that edits the list cannot be hidden by it.
+      await expect(getSideNavItem(page, 'System Settings')).toBeVisible();
       await navigateTo(page, 'admin/information');
       await expect(notFoundPageHeading(page)).toBeVisible();
+      await openWebUISettings(page);
       await page.context().close();
     });
 
@@ -775,7 +786,7 @@ test.describe(
       request,
     }) => {
       await api.writeSettings('domain', {
-        menuInactivelist: ['dashboard'],
+        menuInactivelist: ['dashboard', 'system-settings'],
         enableReservoir: true,
         fasttrackEndpoint: 'https://example.com/fasttrack',
         allowSignout: true,
@@ -811,6 +822,8 @@ test.describe(
 
       await navigateTo(page, 'admin/users');
       await expect(getSideNavItem(page, 'Reservoir')).toBeVisible();
+      // menuInactivelist cannot disable the page that edits it.
+      await expect(getSideNavItem(page, 'System Settings')).toBeEnabled();
       await page.context().close();
     });
 
@@ -993,10 +1006,15 @@ test.describe(
           const client = (globalThis as any).backendaiclient;
           // The create call needs an explicit host; use the deployment's default.
           const { default: host } = await client.vfolder.list_hosts();
+          // A team project's Data page lists only that project's folders.
+          const projectId =
+            typeof client.current_group_id === 'function'
+              ? client.current_group_id()
+              : client.current_group_id;
           const created = await client.vfolder.create(
             name,
             host,
-            '',
+            projectId,
             'general',
             'rw',
             false,
