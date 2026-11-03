@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b6c523f342daaee02d060f06955524a1>>
+ * @generated SignedSource<<3cb2489f43119a0f5c3d08559fd3bb8e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,9 @@ import { ReaderFragment } from 'relay-runtime';
 export type SchedulerType = "DRF" | "FAIR_SHARE" | "FIFO" | "LIFO" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type ResourceGroupDetailDrawerFragment$data = {
+  readonly entityLabels: {
+    readonly " $fragmentSpreads": FragmentRefs<"BAIEntityLabelTokensFragment">;
+  } | null | undefined;
   readonly metadata: {
     readonly createdAt: string;
     readonly description: string | null | undefined;
@@ -132,12 +135,34 @@ const node: ReaderFragment = {
         }
       ],
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": [
+        {
+          "kind": "Literal",
+          "name": "limit",
+          "value": 100
+        }
+      ],
+      "concreteType": "EntityLabelConnection",
+      "kind": "LinkedField",
+      "name": "entityLabels",
+      "plural": false,
+      "selections": [
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "BAIEntityLabelTokensFragment"
+        }
+      ],
+      "storageKey": "entityLabels(limit:100)"
     }
   ],
   "type": "ResourceGroup",
   "abstractKey": null
 };
 
-(node as any).hash = "442ec3eb9856eb5bf18ce2bad741c929";
+(node as any).hash = "b1d34ce903b1cdf2307275173dceef38";
 
 export default node;
