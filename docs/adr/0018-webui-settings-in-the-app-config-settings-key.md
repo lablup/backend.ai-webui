@@ -27,12 +27,10 @@ flowchart LR
   dom["domainConfig.settings"]
   state["loginConfigState (Jotai)"]
   client["backendaiclient._config"]
-  dbg["globalThis.backendaiwebui.debug<br/>side effect: syncDebugFlag"]
   toml -- "every key, parsed by refreshConfigFromToml" --> state
   pub -- "10 public keys, before sign-in" --> state
   dom -- "43 domain keys, at sign-in" --> state
   state -- "applyConfigToClient" --> client
-  state -- "debug" --> dbg
 ```
 
 ### 저장
@@ -68,7 +66,7 @@ flowchart LR
 - **No seeding**: 저장은 파일 값과 다른 키만 문서에 쓴다(`buildWebUISettingsDocument`). 다른 키가 하나도 없으면 `settings` 서브키를 지운다. 손대지 않은 키는 계속 파일을 따른다.
 - **Read failures**: 문서를 읽지 못하면 경고만 남기고 파일 값으로 진행한다(`fetchDomainWebUISettings`, `fetchPublicDomainConfigOnce`).
 - **Merge points**: PUBLIC 문서는 부트(`initializeConfigOnce`)와 다른 webserver의 설정을 받을 때(`loadConfigFromWebServer`) 병합한다. 후자는 그 webserver의 `apiEndpoint`로 문서를 찾는다. DOMAIN 문서는 로그인(`connectViaGQL`) 때 병합한다.
-- **Debug flag**: `globalThis.backendaiwebui.debug`는 병합을 마친 값에서만 갱신한다(`syncDebugFlag`). 파일을 해석하는 `refreshConfigFromToml`은 부작용이 없다.
+- **One store**: 병합을 마친 값은 `loginConfigState`에만 있다. `debug`처럼 React 밖에서 읽는 값도 `jotaiStore.get(loginConfigState)`로 읽고, `globalThis` 사본을 두지 않는다. 파일을 해석하는 `refreshConfigFromToml`은 부작용이 없다.
 
 ### 3. `config.toml`에만 남는 키
 
@@ -108,7 +106,7 @@ flowchart LR
 - **Per-domain values**: 관리자가 재배포 없이 도메인별로 설정을 바꾸고, 같은 webserver의 도메인마다 다른 값을 가질 수 있다.
 - **Public means readable**: PUBLIC 키는 익명으로 읽히므로 비밀 값을 두지 않는다.
 - **Reload to apply**: 값은 페이지를 다시 불러와야 반영된다. Apply와 Reset은 저장 뒤 페이지를 다시 불러온다.
-- **Type-checked table**: 정의표의 `field`가 `keyof LoginConfigState`이므로, 표와 상태가 어긋나면 `tsc`가 실패한다.
+- **Checked table**: 정의표의 `field`는 `keyof LoginConfigState`로 타입이 붙지만, 기본값이 `key`를 그대로 캐스팅하므로 오타는 `tsc`가 잡지 못한다. 모든 `field`가 상태에 있는지는 `webuiSettings.test.ts`가 검사한다.
 
 ## 출처
 
