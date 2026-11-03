@@ -829,7 +829,7 @@
       "MyActivityTooltip": "Actions que vous avez effectuées sur la période choisie, d'après le journal d'audit.",
       "MyDeployments": "Mes déploiements",
       "MyRecentSessions": "Mes sessions récentes",
-      "MyResourcesTooltip": "Ce que vos sessions utilisent dans tous les groupes de ressources et projets. La limite correspond à cette utilisation plus la plus petite valeur entre ce que vous pouvez encore allouer dans le groupe de ressources de la carte et ce que vos limites de paire de clés, de projet et de domaine permettent encore.",
+      "MyResourcesTooltip": "Ce que vos sessions utilisent dans tous les groupes de ressources et projets. La limite correspond à cette utilisation plus la plus petite valeur entre ce qui est encore libre dans le groupe de ressources de la carte et ce que vos limites d'utilisateur et de projet permettent encore.",
       "MySessionsTooltip": "Vos sessions actives dans ce projet, par type de session.",
       "NoActiveSessions": "Aucune session active",
       "NoAllocation": "Aucune ressource allouée.",
