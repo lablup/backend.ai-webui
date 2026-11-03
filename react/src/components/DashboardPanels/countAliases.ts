@@ -3,12 +3,18 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
+  PermissionDeniedError,
+  permissionDeniedCode,
+  readSecondary,
+} from './panelPermission';
+import {
   MAX_BUCKETS,
   planBuckets,
   type BucketPlan,
   type DateTimeWindow,
 } from './timeRange';
 import * as _ from 'lodash-es';
+import type { Result } from 'relay-runtime';
 
 type BucketIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
@@ -36,7 +42,55 @@ export const bucketVariables = <TPrefix extends string, TFilter>(
     }),
   ) as BucketAliasVariables<TPrefix, TFilter>;
 
-type CountAlias = { readonly count: number } | null | undefined;
+type CountValue = { readonly count: number } | null | undefined;
+/** A count alias read with `@catch(to: RESULT)`, or with `@catch(to: NULL)` (a bare value). */
+export type CountAlias = CountValue | Result<CountValue, unknown>;
+
+const isResult = (alias: CountAlias): alias is Result<CountValue, unknown> =>
+  !!alias && 'ok' in alias;
+
+/** An alias's count: 0 when it failed or did not run, `denied` when the viewer may not read it. */
+export const readCount = (
+  alias: CountAlias,
+): { count: number; denied: boolean } => {
+  if (!isResult(alias)) return { count: alias?.count ?? 0, denied: false };
+  const { value, denied } = readSecondary(alias);
+  return { count: value?.count ?? 0, denied };
+};
+
+/**
+ * The count of each alias, null where it is denied (drawn "-"). When every
+ * alias is denied the card's data is, so it throws for the permission boundary.
+ */
+export const readCounts = <K extends string>(
+  data: Readonly<Record<K, CountAlias>>,
+  keys: ReadonlyArray<K>,
+): Record<K, number | null> => {
+  const counts = keys.map((key) => readCount(data[key]));
+  if (counts.length > 0 && counts.every((count) => count.denied)) {
+    const first = data[keys[0]];
+    throw new PermissionDeniedError(
+      (isResult(first) && !first.ok && permissionDeniedCode(first.errors)) ||
+        'forbidden',
+    );
+  }
+  return Object.fromEntries(
+    keys.map((key, index) => [
+      key,
+      counts[index].denied ? null : counts[index].count,
+    ]),
+  ) as Record<K, number | null>;
+};
+
+/** A count as text; "-" for a denied one. */
+export const countText = (count: number | null | undefined): string =>
+  count === null ? '-' : String(count ?? 0);
+
+/** The sum of counts, null when any part of it is denied. */
+export const sumCounts = (
+  counts: ReadonlyArray<number | null | undefined>,
+): number | null =>
+  counts.some((count) => count === null) ? null : _.sum(counts);
 
 /** The window of the same length that ends where `window` starts. */
 export const previousWindow = (window: DateTimeWindow): DateTimeWindow => {
@@ -49,6 +103,7 @@ export const previousWindow = (window: DateTimeWindow): DateTimeWindow => {
 };
 
 export interface CountDelta {
+  /** "-" when either count it compares is denied. */
   value: string;
   direction: 'up' | 'down' | 'flat';
   current: number;
@@ -62,7 +117,9 @@ export const countDelta = (
   current: number,
   previous: number,
   window?: DateTimeWindow,
+  denied = false,
 ): CountDelta => {
+  if (denied) return { value: '-', direction: 'flat', current, previous };
   const diff = current - previous;
   return {
     value: diff > 0 ? `+${diff}` : String(diff),
@@ -174,6 +231,9 @@ export const successFailureVariables = <TFilter>(
 export interface SuccessFailureCounts {
   success: number;
   failure: number;
+  /** A bucket of the total is denied: the total and its delta draw "-". */
+  successDenied: boolean;
+  failureDenied: boolean;
   successDelta: CountDelta;
   failureDelta: CountDelta;
   successTrend: Array<number>;
@@ -184,7 +244,8 @@ type CountData = Readonly<Record<string, CountAlias>>;
 
 /**
  * Reads the two queries {@link successFailureVariables} planned. A failed or
- * skipped count reads 0, in its bucket and in the totals summed from them.
+ * skipped count reads 0, in its bucket and in the totals summed from them; a
+ * denied one marks the total denied.
  */
 export const readSuccessFailure = (
   plan: BucketPlan,
@@ -192,31 +253,43 @@ export const readSuccessFailure = (
   live: CountData,
 ): SuccessFailureCounts => {
   const slots = liveSlots(plan);
-  const trend = (historyPrefix: 's' | 'f', livePrefix: 'liveS' | 'liveF') =>
+  const buckets = (historyPrefix: 's' | 'f', livePrefix: 'liveS' | 'liveF') =>
     plan.states.map((state, index) =>
-      state === 'settled'
-        ? (history?.[`${historyPrefix}${index}`]?.count ?? 0)
-        : state === 'live'
-          ? (live[`${livePrefix}${slots[index]}`]?.count ?? 0)
-          : 0,
+      readCount(
+        state === 'settled'
+          ? history?.[`${historyPrefix}${index}`]
+          : state === 'live'
+            ? live[`${livePrefix}${slots[index]}`]
+            : null,
+      ),
     );
-  const successTrend = trend('s', 'liveS');
-  const failureTrend = trend('f', 'liveF');
+  const successBuckets = buckets('s', 'liveS');
+  const failureBuckets = buckets('f', 'liveF');
+  const successTrend = successBuckets.map((bucket) => bucket.count);
+  const failureTrend = failureBuckets.map((bucket) => bucket.count);
   const success = _.sum(successTrend);
   const failure = _.sum(failureTrend);
+  const successDenied = successBuckets.some((bucket) => bucket.denied);
+  const failureDenied = failureBuckets.some((bucket) => bucket.denied);
   const previous = plan.fixed ? history : live;
+  const previousSuccess = readCount(previous?.previousSuccess);
+  const previousFailure = readCount(previous?.previousFailure);
   return {
     success,
     failure,
+    successDenied,
+    failureDenied,
     successDelta: countDelta(
       success,
-      previous?.previousSuccess?.count ?? 0,
+      previousSuccess.count,
       plan.window,
+      successDenied || previousSuccess.denied,
     ),
     failureDelta: countDelta(
       failure,
-      previous?.previousFailure?.count ?? 0,
+      previousFailure.count,
       plan.window,
+      failureDenied || previousFailure.denied,
     ),
     successTrend,
     failureTrend,

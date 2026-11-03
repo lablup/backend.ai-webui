@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<95d920ab2a257ed32bb1ec1f0462888d>>
+ * @generated SignedSource<<d295532bb5b455f4650d3f0b8804bf1a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,12 +18,12 @@ export type FoldersPanelProjectQuery$data = {
   readonly policy: Result<{
     readonly maxVfolderCount: number;
   } | null | undefined, unknown>;
-  readonly ready: {
+  readonly ready: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly trash: {
+  } | null | undefined, unknown>;
+  readonly trash: Result<{
     readonly count: number;
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type FoldersPanelProjectQuery = {
   response: FoldersPanelProjectQuery$data;
@@ -133,8 +133,16 @@ return {
     "metadata": null,
     "name": "FoldersPanelProjectQuery",
     "selections": [
-      (v5/*: any*/),
-      (v6/*: any*/),
+      {
+        "kind": "CatchField",
+        "field": (v5/*: any*/),
+        "to": "RESULT"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v6/*: any*/),
+        "to": "RESULT"
+      },
       {
         "kind": "CatchField",
         "field": {
@@ -198,6 +206,6 @@ return {
 };
 })();
 
-(node as any).hash = "5ff9cbe5dc56fdc5fe3c984149e81a03";
+(node as any).hash = "df4c84a239afccc7473ace466768535e";
 
 export default node;

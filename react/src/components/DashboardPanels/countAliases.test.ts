@@ -5,11 +5,15 @@
 import {
   bucketVariables,
   countDelta,
+  countText,
+  readCounts,
+  sumCounts,
   failureSentiment,
   previousWindow,
   readSuccessFailure,
   successFailureVariables,
 } from './countAliases';
+import { PermissionDeniedError } from './panelPermission';
 import { MAX_BUCKETS, customRange, planBuckets } from './timeRange';
 
 const WINDOW = {
@@ -153,5 +157,57 @@ describe('successFailureVariables and readSuccessFailure', () => {
     const counts = readSuccessFailure(plan, null, {});
     expect(counts.success).toBe(0);
     expect(counts.successTrend).toHaveLength(plan.buckets.length);
+  });
+
+  it('marks a total and its delta denied when a bucket or the previous range is', () => {
+    const plan = planBuckets('now-1h', NOW);
+    const denied = {
+      ok: false as const,
+      errors: [{ extensions: { code: 'user_auth_forbidden' } }],
+    };
+    const counts = readSuccessFailure(plan, null, {
+      liveS0: denied,
+      liveF0: { ok: true as const, value: { count: 2 } },
+      previousFailure: denied,
+    });
+    expect(counts.successDenied).toBe(true);
+    expect(counts.successDelta.value).toBe('-');
+    expect(counts.failureDenied).toBe(false);
+    expect(counts.failure).toBe(2);
+    expect(counts.failureDelta.value).toBe('-');
+  });
+});
+
+describe('readCounts', () => {
+  const denied = {
+    ok: false as const,
+    errors: [{ extensions: { code: 'permission_access_forbidden' } }],
+  };
+  const ok = (count: number) => ({ ok: true as const, value: { count } });
+
+  it('reads a denied alias as null, drawn "-", and its sums as "-"', () => {
+    const counts = readCounts({ running: ok(3), batch: denied }, [
+      'running',
+      'batch',
+    ]);
+    expect(counts).toEqual({ running: 3, batch: null });
+    expect(countText(counts.batch)).toBe('-');
+    expect(countText(counts.running)).toBe('3');
+    expect(sumCounts([counts.running, counts.batch])).toBeNull();
+    expect(sumCounts([counts.running, 2])).toBe(5);
+  });
+
+  it('reads another error as 0', () => {
+    expect(
+      readCounts({ a: { ok: false as const, errors: [{ message: 'x' }] } }, [
+        'a',
+      ]),
+    ).toEqual({ a: 0 });
+  });
+
+  it('throws when every alias is denied, so the card is hidden', () => {
+    expect(() => readCounts({ a: denied, b: denied }, ['a', 'b'])).toThrow(
+      PermissionDeniedError,
+    );
   });
 });

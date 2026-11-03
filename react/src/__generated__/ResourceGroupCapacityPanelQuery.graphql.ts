@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<630916cbf2e49473967582e89b541682>>
+ * @generated SignedSource<<df587d9735503e440834274f428a2b83>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,11 +9,12 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+import { Result } from "relay-runtime";
 export type ResourceGroupCapacityPanelQuery$variables = {
   resourceGroupName: string;
 };
 export type ResourceGroupCapacityPanelQuery$data = {
-  readonly resourceGroupResourceAllocationV2: {
+  readonly resourceGroupResourceAllocationV2: Result<{
     readonly resourceGroup: {
       readonly capacity: ReadonlyArray<{
         readonly quantity: any;
@@ -24,7 +25,7 @@ export type ResourceGroupCapacityPanelQuery$data = {
         readonly resourceType: string;
       }>;
     };
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type ResourceGroupCapacityPanelQuery = {
   response: ResourceGroupCapacityPanelQuery$data;
@@ -55,63 +56,67 @@ v1 = [
     "storageKey": null
   }
 ],
-v2 = [
-  {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "resourceGroupName",
-        "variableName": "resourceGroupName"
-      }
-    ],
-    "concreteType": "ResourceGroupResourceAllocationV2",
-    "kind": "LinkedField",
-    "name": "resourceGroupResourceAllocationV2",
-    "plural": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "ResourceGroupUsageV2",
-        "kind": "LinkedField",
-        "name": "resourceGroup",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ResourceSlotEntry",
-            "kind": "LinkedField",
-            "name": "capacity",
-            "plural": true,
-            "selections": (v1/*: any*/),
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ResourceSlotEntry",
-            "kind": "LinkedField",
-            "name": "used",
-            "plural": true,
-            "selections": (v1/*: any*/),
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
-  }
-];
+v2 = {
+  "alias": null,
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "resourceGroupName",
+      "variableName": "resourceGroupName"
+    }
+  ],
+  "concreteType": "ResourceGroupResourceAllocationV2",
+  "kind": "LinkedField",
+  "name": "resourceGroupResourceAllocationV2",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "ResourceGroupUsageV2",
+      "kind": "LinkedField",
+      "name": "resourceGroup",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "ResourceSlotEntry",
+          "kind": "LinkedField",
+          "name": "capacity",
+          "plural": true,
+          "selections": (v1/*: any*/),
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "ResourceSlotEntry",
+          "kind": "LinkedField",
+          "name": "used",
+          "plural": true,
+          "selections": (v1/*: any*/),
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "ResourceGroupCapacityPanelQuery",
-    "selections": (v2/*: any*/),
+    "selections": [
+      {
+        "kind": "CatchField",
+        "field": (v2/*: any*/),
+        "to": "RESULT"
+      }
+    ],
     "type": "Query",
     "abstractKey": null
   },
@@ -120,7 +125,9 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "ResourceGroupCapacityPanelQuery",
-    "selections": (v2/*: any*/)
+    "selections": [
+      (v2/*: any*/)
+    ]
   },
   "params": {
     "cacheID": "e921a8bf72f7ef1784075dd749081708",
@@ -133,6 +140,6 @@ return {
 };
 })();
 
-(node as any).hash = "d8c3b476aa026abcecb53d7981824726";
+(node as any).hash = "5590ee2aa10086a9da6aafbd0954d6c1";
 
 export default node;

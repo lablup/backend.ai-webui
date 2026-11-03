@@ -10,6 +10,7 @@ import type { CardScope } from '../cardScope';
 import DeploymentHealthTable, {
   type DeploymentHealthNode,
 } from '../memberCards/DeploymentHealthTable';
+import { readPrimary } from '../panelPermission';
 import type { PanelComponentProps } from '../types';
 import ScopedCard from './ScopedCard';
 import { filterOutNullAndUndefined } from 'backend.ai-ui';
@@ -62,7 +63,7 @@ const useMineDeployments = (
           orderBy: [{ field: CREATED_AT, direction: DESC }]
           limit: $limit
           offset: $offset
-        ) {
+        ) @catch(to: RESULT) {
           count
           edges {
             node {
@@ -84,7 +85,7 @@ const useMineDeployments = (
     { filter: { ...LIVE, projectId: { equals: projectId } }, limit, offset },
     { fetchPolicy: 'store-and-network', fetchKey },
   );
-  return toPage(data.deployments);
+  return toPage(readPrimary(data.deployments));
 };
 
 const useProjectDeployments = (
@@ -106,7 +107,7 @@ const useProjectDeployments = (
           orderBy: [{ field: CREATED_AT, direction: DESC }]
           limit: $limit
           offset: $offset
-        ) {
+        ) @catch(to: RESULT) {
           count
           edges {
             node {
@@ -128,7 +129,7 @@ const useProjectDeployments = (
     { projectId, filter: LIVE, limit, offset },
     { fetchPolicy: 'store-and-network', fetchKey },
   );
-  return toPage(data.deployments);
+  return toPage(readPrimary(data.deployments));
 };
 
 const MineDeployments: React.FC<

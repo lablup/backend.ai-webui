@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<14130ba67e7694b56323590bbaf428e1>>
+ * @generated SignedSource<<773638d729a94aedaa7de744a6c9b2de>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,17 +9,18 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+import { Result } from "relay-runtime";
 export type FoldersPanelMineQuery$variables = Record<PropertyKey, never>;
 export type FoldersPanelMineQuery$data = {
-  readonly myUserResourcePolicyV2: {
+  readonly myUserResourcePolicyV2: Result<{
     readonly maxVfolderCount: number;
-  } | null | undefined;
-  readonly ready: {
+  } | null | undefined, unknown>;
+  readonly ready: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly trash: {
+  } | null | undefined, unknown>;
+  readonly trash: Result<{
     readonly count: number;
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type FoldersPanelMineQuery = {
   response: FoldersPanelMineQuery$data;
@@ -102,19 +103,31 @@ return {
     "metadata": null,
     "name": "FoldersPanelMineQuery",
     "selections": [
-      (v2/*: any*/),
-      (v3/*: any*/),
       {
-        "alias": null,
-        "args": null,
-        "concreteType": "UserResourcePolicyV2",
-        "kind": "LinkedField",
-        "name": "myUserResourcePolicyV2",
-        "plural": false,
-        "selections": [
-          (v4/*: any*/)
-        ],
-        "storageKey": null
+        "kind": "CatchField",
+        "field": (v2/*: any*/),
+        "to": "RESULT"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v3/*: any*/),
+        "to": "RESULT"
+      },
+      {
+        "kind": "CatchField",
+        "field": {
+          "alias": null,
+          "args": null,
+          "concreteType": "UserResourcePolicyV2",
+          "kind": "LinkedField",
+          "name": "myUserResourcePolicyV2",
+          "plural": false,
+          "selections": [
+            (v4/*: any*/)
+          ],
+          "storageKey": null
+        },
+        "to": "RESULT"
       }
     ],
     "type": "Query",
@@ -160,6 +173,6 @@ return {
 };
 })();
 
-(node as any).hash = "8896f721a1da7e43a369856740710646";
+(node as any).hash = "229cccf1676d42be90ea6b9a446f1c0e";
 
 export default node;

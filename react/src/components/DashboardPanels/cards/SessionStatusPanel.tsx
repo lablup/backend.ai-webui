@@ -14,11 +14,16 @@ import { getSessionV2StatusBuckets } from '../../../helper/sessionStatusBuckets'
 import type { CardScope } from '../cardScope';
 import DonutChart from '../charts/DonutChart';
 import StatRow from '../charts/StatRow';
+import {
+  countText,
+  readCounts,
+  sumCounts,
+  type CountAlias,
+} from '../countAliases';
 import { toDonutRows } from '../memberCards/memberCardData';
 import type { PanelComponentProps } from '../types';
 import ScopedCard from './ScopedCard';
 import { BAIFlex, useSessionTypeLabel } from 'backend.ai-ui';
-import * as _ from 'lodash-es';
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -46,9 +51,12 @@ const SESSION_TYPES = [
 type CountKey =
   (typeof STATUS_GROUPS)[number]['key'] | (typeof SESSION_TYPES)[number]['key'];
 
-type StatusCounts = Readonly<
-  Record<CountKey, { readonly count: number } | null | undefined>
->;
+type StatusCounts = Readonly<Record<CountKey, CountAlias>>;
+
+const COUNT_KEYS: ReadonlyArray<CountKey> = [
+  ...STATUS_GROUPS.map(({ key }) => key),
+  ...SESSION_TYPES.map(({ key }) => key),
+];
 
 const ACTIVE_STATUSES = getSessionV2StatusBuckets(true).running;
 
@@ -81,6 +89,7 @@ const SessionStatusView: React.FC<{ data: StatusCounts }> = ({ data }) => {
   'use memo';
   const { t } = useTranslation();
   const sessionTypeLabel = useSessionTypeLabel();
+  const counts = readCounts(data, COUNT_KEYS);
   const statusLabels: Record<(typeof STATUS_GROUPS)[number]['key'], string> = {
     pending: 'PENDING',
     starting: t('dashboard.card.Starting'),
@@ -92,9 +101,10 @@ const SessionStatusView: React.FC<{ data: StatusCounts }> = ({ data }) => {
     SESSION_TYPES.map(({ key, type }) => ({
       key: type,
       label: sessionTypeLabel(type),
-      count: data[key]?.count,
+      count: counts[key],
     })),
   );
+  const typeTotal = sumCounts(SESSION_TYPES.map(({ key }) => counts[key]));
   return (
     <BAIFlex
       direction="column"
@@ -107,7 +117,7 @@ const SessionStatusView: React.FC<{ data: StatusCounts }> = ({ data }) => {
         items={STATUS_GROUPS.map(({ key }) => ({
           key,
           label: statusLabels[key],
-          value: String(data[key]?.count ?? 0),
+          value: countText(counts[key]),
           size: 'sm',
         }))}
       />
@@ -119,7 +129,7 @@ const SessionStatusView: React.FC<{ data: StatusCounts }> = ({ data }) => {
           value: t('dashboard.card.Count'),
           percent: t('dashboard.card.Share'),
         }}
-        total={_.sumBy(typeRows, 'value')}
+        total={typeTotal ?? '-'}
         rows={typeRows}
       />
     </BAIFlex>
@@ -146,28 +156,31 @@ const MineSessionCounts: React.FC<{ projectId: string; fetchKey: string }> = ({
         $inference: SessionV2Filter!
         $system: SessionV2Filter!
       ) {
-        pending: mySessionsV2(filter: $pending, limit: 1) {
+        pending: mySessionsV2(filter: $pending, limit: 1) @catch(to: RESULT) {
           count
         }
-        starting: mySessionsV2(filter: $starting, limit: 1) {
+        starting: mySessionsV2(filter: $starting, limit: 1) @catch(to: RESULT) {
           count
         }
-        running: mySessionsV2(filter: $running, limit: 1) {
+        running: mySessionsV2(filter: $running, limit: 1) @catch(to: RESULT) {
           count
         }
-        terminating: mySessionsV2(filter: $terminating, limit: 1) {
+        terminating: mySessionsV2(filter: $terminating, limit: 1)
+          @catch(to: RESULT) {
           count
         }
-        interactive: mySessionsV2(filter: $interactive, limit: 1) {
+        interactive: mySessionsV2(filter: $interactive, limit: 1)
+          @catch(to: RESULT) {
           count
         }
-        batch: mySessionsV2(filter: $batch, limit: 1) {
+        batch: mySessionsV2(filter: $batch, limit: 1) @catch(to: RESULT) {
           count
         }
-        inference: mySessionsV2(filter: $inference, limit: 1) {
+        inference: mySessionsV2(filter: $inference, limit: 1)
+          @catch(to: RESULT) {
           count
         }
-        system: mySessionsV2(filter: $system, limit: 1) {
+        system: mySessionsV2(filter: $system, limit: 1) @catch(to: RESULT) {
           count
         }
       }
@@ -201,56 +214,56 @@ const ProjectSessionCounts: React.FC<{
           scope: { projectId: $projectId }
           filter: $pending
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
         starting: projectSessionsV2(
           scope: { projectId: $projectId }
           filter: $starting
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
         running: projectSessionsV2(
           scope: { projectId: $projectId }
           filter: $running
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
         terminating: projectSessionsV2(
           scope: { projectId: $projectId }
           filter: $terminating
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
         interactive: projectSessionsV2(
           scope: { projectId: $projectId }
           filter: $interactive
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
         batch: projectSessionsV2(
           scope: { projectId: $projectId }
           filter: $batch
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
         inference: projectSessionsV2(
           scope: { projectId: $projectId }
           filter: $inference
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
         system: projectSessionsV2(
           scope: { projectId: $projectId }
           filter: $system
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
       }

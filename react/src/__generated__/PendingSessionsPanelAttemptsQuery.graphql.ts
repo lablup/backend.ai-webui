@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<48dffd73c45fdd96b4f1122335d32975>>
+ * @generated SignedSource<<e7717d48ab2d493e1c0600682226bf41>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-import { FragmentRefs } from "relay-runtime";
+import { FragmentRefs, Result } from "relay-runtime";
 export type SessionScope = {
   sessionId: string;
 };
@@ -17,13 +17,13 @@ export type PendingSessionsPanelAttemptsQuery$variables = {
   scope: SessionScope;
 };
 export type PendingSessionsPanelAttemptsQuery$data = {
-  readonly sessionScopedSchedulingHistories: {
+  readonly sessionScopedSchedulingHistories: Result<{
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly " $fragmentSpreads": FragmentRefs<"BAISchedulingHistoryTableFragment">;
       };
     }>;
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type PendingSessionsPanelAttemptsQuery = {
   response: PendingSessionsPanelAttemptsQuery$data;
@@ -82,42 +82,46 @@ return {
     "name": "PendingSessionsPanelAttemptsQuery",
     "selections": [
       {
-        "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "SessionSchedulingHistoryConnection",
-        "kind": "LinkedField",
-        "name": "sessionScopedSchedulingHistories",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "SessionSchedulingHistoryEdge",
-            "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "SessionSchedulingHistory",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": [
-                  {
-                    "args": null,
-                    "kind": "FragmentSpread",
-                    "name": "BAISchedulingHistoryTableFragment"
-                  }
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
+        "kind": "CatchField",
+        "field": {
+          "alias": null,
+          "args": (v1/*: any*/),
+          "concreteType": "SessionSchedulingHistoryConnection",
+          "kind": "LinkedField",
+          "name": "sessionScopedSchedulingHistories",
+          "plural": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "SessionSchedulingHistoryEdge",
+              "kind": "LinkedField",
+              "name": "edges",
+              "plural": true,
+              "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "SessionSchedulingHistory",
+                  "kind": "LinkedField",
+                  "name": "node",
+                  "plural": false,
+                  "selections": [
+                    {
+                      "args": null,
+                      "kind": "FragmentSpread",
+                      "name": "BAISchedulingHistoryTableFragment"
+                    }
+                  ],
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        },
+        "to": "RESULT"
       }
     ],
     "type": "Query",
@@ -267,6 +271,6 @@ return {
 };
 })();
 
-(node as any).hash = "9862707b467c868b08d3b9daed48f333";
+(node as any).hash = "6ec70c9f6d9e419bb06e00e9ca987d21";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3241aa35c3042ff0be6d07addf6b4614>>
+ * @generated SignedSource<<b04bdc6b09903e654a31a3326d5a171c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+import { Result } from "relay-runtime";
 export type SessionV2NetworkType = "HOST" | "PERSISTENT" | "VOLATILE" | "%future added value";
 export type SessionV2Result = "FAILURE" | "SUCCESS" | "UNDEFINED" | "%future added value";
 export type SessionV2Status = "CANCELLED" | "CREATING" | "DEPRIORITIZING" | "PENDING" | "PREEMPTED" | "PREPARED" | "PREPARING" | "RESCHEDULING" | "RESERVED" | "RUNNING" | "SCHEDULED" | "TERMINATED" | "TERMINATING" | "%future added value";
@@ -139,30 +140,30 @@ export type SessionStatusPanelMineQuery$variables = {
   terminating: SessionV2Filter;
 };
 export type SessionStatusPanelMineQuery$data = {
-  readonly batch: {
+  readonly batch: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly inference: {
+  } | null | undefined, unknown>;
+  readonly inference: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly interactive: {
+  } | null | undefined, unknown>;
+  readonly interactive: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly pending: {
+  } | null | undefined, unknown>;
+  readonly pending: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly running: {
+  } | null | undefined, unknown>;
+  readonly running: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly starting: {
+  } | null | undefined, unknown>;
+  readonly starting: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly system: {
+  } | null | undefined, unknown>;
+  readonly system: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly terminating: {
+  } | null | undefined, unknown>;
+  readonly terminating: Result<{
     readonly count: number;
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type SessionStatusPanelMineQuery = {
   response: SessionStatusPanelMineQuery$data;
@@ -224,144 +225,142 @@ v9 = [
     "storageKey": null
   }
 ],
-v10 = [
-  {
-    "alias": "pending",
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "filter",
-        "variableName": "pending"
-      },
-      (v8/*: any*/)
-    ],
-    "concreteType": "SessionV2Connection",
-    "kind": "LinkedField",
-    "name": "mySessionsV2",
-    "plural": false,
-    "selections": (v9/*: any*/),
-    "storageKey": null
-  },
-  {
-    "alias": "starting",
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "filter",
-        "variableName": "starting"
-      },
-      (v8/*: any*/)
-    ],
-    "concreteType": "SessionV2Connection",
-    "kind": "LinkedField",
-    "name": "mySessionsV2",
-    "plural": false,
-    "selections": (v9/*: any*/),
-    "storageKey": null
-  },
-  {
-    "alias": "running",
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "filter",
-        "variableName": "running"
-      },
-      (v8/*: any*/)
-    ],
-    "concreteType": "SessionV2Connection",
-    "kind": "LinkedField",
-    "name": "mySessionsV2",
-    "plural": false,
-    "selections": (v9/*: any*/),
-    "storageKey": null
-  },
-  {
-    "alias": "terminating",
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "filter",
-        "variableName": "terminating"
-      },
-      (v8/*: any*/)
-    ],
-    "concreteType": "SessionV2Connection",
-    "kind": "LinkedField",
-    "name": "mySessionsV2",
-    "plural": false,
-    "selections": (v9/*: any*/),
-    "storageKey": null
-  },
-  {
-    "alias": "interactive",
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "filter",
-        "variableName": "interactive"
-      },
-      (v8/*: any*/)
-    ],
-    "concreteType": "SessionV2Connection",
-    "kind": "LinkedField",
-    "name": "mySessionsV2",
-    "plural": false,
-    "selections": (v9/*: any*/),
-    "storageKey": null
-  },
-  {
-    "alias": "batch",
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "filter",
-        "variableName": "batch"
-      },
-      (v8/*: any*/)
-    ],
-    "concreteType": "SessionV2Connection",
-    "kind": "LinkedField",
-    "name": "mySessionsV2",
-    "plural": false,
-    "selections": (v9/*: any*/),
-    "storageKey": null
-  },
-  {
-    "alias": "inference",
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "filter",
-        "variableName": "inference"
-      },
-      (v8/*: any*/)
-    ],
-    "concreteType": "SessionV2Connection",
-    "kind": "LinkedField",
-    "name": "mySessionsV2",
-    "plural": false,
-    "selections": (v9/*: any*/),
-    "storageKey": null
-  },
-  {
-    "alias": "system",
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "filter",
-        "variableName": "system"
-      },
-      (v8/*: any*/)
-    ],
-    "concreteType": "SessionV2Connection",
-    "kind": "LinkedField",
-    "name": "mySessionsV2",
-    "plural": false,
-    "selections": (v9/*: any*/),
-    "storageKey": null
-  }
-];
+v10 = {
+  "alias": "pending",
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "filter",
+      "variableName": "pending"
+    },
+    (v8/*: any*/)
+  ],
+  "concreteType": "SessionV2Connection",
+  "kind": "LinkedField",
+  "name": "mySessionsV2",
+  "plural": false,
+  "selections": (v9/*: any*/),
+  "storageKey": null
+},
+v11 = {
+  "alias": "starting",
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "filter",
+      "variableName": "starting"
+    },
+    (v8/*: any*/)
+  ],
+  "concreteType": "SessionV2Connection",
+  "kind": "LinkedField",
+  "name": "mySessionsV2",
+  "plural": false,
+  "selections": (v9/*: any*/),
+  "storageKey": null
+},
+v12 = {
+  "alias": "running",
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "filter",
+      "variableName": "running"
+    },
+    (v8/*: any*/)
+  ],
+  "concreteType": "SessionV2Connection",
+  "kind": "LinkedField",
+  "name": "mySessionsV2",
+  "plural": false,
+  "selections": (v9/*: any*/),
+  "storageKey": null
+},
+v13 = {
+  "alias": "terminating",
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "filter",
+      "variableName": "terminating"
+    },
+    (v8/*: any*/)
+  ],
+  "concreteType": "SessionV2Connection",
+  "kind": "LinkedField",
+  "name": "mySessionsV2",
+  "plural": false,
+  "selections": (v9/*: any*/),
+  "storageKey": null
+},
+v14 = {
+  "alias": "interactive",
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "filter",
+      "variableName": "interactive"
+    },
+    (v8/*: any*/)
+  ],
+  "concreteType": "SessionV2Connection",
+  "kind": "LinkedField",
+  "name": "mySessionsV2",
+  "plural": false,
+  "selections": (v9/*: any*/),
+  "storageKey": null
+},
+v15 = {
+  "alias": "batch",
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "filter",
+      "variableName": "batch"
+    },
+    (v8/*: any*/)
+  ],
+  "concreteType": "SessionV2Connection",
+  "kind": "LinkedField",
+  "name": "mySessionsV2",
+  "plural": false,
+  "selections": (v9/*: any*/),
+  "storageKey": null
+},
+v16 = {
+  "alias": "inference",
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "filter",
+      "variableName": "inference"
+    },
+    (v8/*: any*/)
+  ],
+  "concreteType": "SessionV2Connection",
+  "kind": "LinkedField",
+  "name": "mySessionsV2",
+  "plural": false,
+  "selections": (v9/*: any*/),
+  "storageKey": null
+},
+v17 = {
+  "alias": "system",
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "filter",
+      "variableName": "system"
+    },
+    (v8/*: any*/)
+  ],
+  "concreteType": "SessionV2Connection",
+  "kind": "LinkedField",
+  "name": "mySessionsV2",
+  "plural": false,
+  "selections": (v9/*: any*/),
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": [
@@ -377,7 +376,48 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "SessionStatusPanelMineQuery",
-    "selections": (v10/*: any*/),
+    "selections": [
+      {
+        "kind": "CatchField",
+        "field": (v10/*: any*/),
+        "to": "RESULT"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v11/*: any*/),
+        "to": "RESULT"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v12/*: any*/),
+        "to": "RESULT"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v13/*: any*/),
+        "to": "RESULT"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v14/*: any*/),
+        "to": "RESULT"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v15/*: any*/),
+        "to": "RESULT"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v16/*: any*/),
+        "to": "RESULT"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v17/*: any*/),
+        "to": "RESULT"
+      }
+    ],
     "type": "Query",
     "abstractKey": null
   },
@@ -395,7 +435,16 @@ return {
     ],
     "kind": "Operation",
     "name": "SessionStatusPanelMineQuery",
-    "selections": (v10/*: any*/)
+    "selections": [
+      (v10/*: any*/),
+      (v11/*: any*/),
+      (v12/*: any*/),
+      (v13/*: any*/),
+      (v14/*: any*/),
+      (v15/*: any*/),
+      (v16/*: any*/),
+      (v17/*: any*/)
+    ]
   },
   "params": {
     "cacheID": "23209c1dee3cbef3f0108ccd863964de",
@@ -408,6 +457,6 @@ return {
 };
 })();
 
-(node as any).hash = "7e3883d40f1f4d0153100c4f32a7bb25";
+(node as any).hash = "cf11d40f13f8d775f7a5351091035a0b";
 
 export default node;
