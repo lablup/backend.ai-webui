@@ -19,11 +19,12 @@ import {
   deleteDeploymentsByNameViaApi,
   purgeProjectsByNameViaApi,
   purgePrometheusQueryPresetsByNameViaApi,
+  purgeRolesByNameViaApi,
 } from './admin-api';
 import type { APIRequestContext } from '@playwright/test';
 
 export type TestResourceKind =
-  'deployment' | 'prometheusQueryPreset' | 'project';
+  'deployment' | 'prometheusQueryPreset' | 'role' | 'project';
 
 type Remover = (
   api: APIRequestContext,
@@ -32,12 +33,14 @@ type Remover = (
 
 /**
  * Cleanup order matters: a deployment's auto-scaling rules can reference a
- * Prometheus query preset, so deployments go first, then presets, then
- * projects (which deployments may live in).
+ * Prometheus query preset, so deployments go first, then presets. Roles come
+ * before projects because a role can be scoped to one; a user's assignments
+ * follow the role by FK cascade, so specs purge fixture users after this.
  */
 const REMOVERS: ReadonlyArray<[TestResourceKind, Remover]> = [
   ['deployment', deleteDeploymentsByNameViaApi],
   ['prometheusQueryPreset', purgePrometheusQueryPresetsByNameViaApi],
+  ['role', purgeRolesByNameViaApi],
   ['project', purgeProjectsByNameViaApi],
 ];
 

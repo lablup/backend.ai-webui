@@ -23,8 +23,8 @@
  *
  * It also purges, via the admin GraphQL API (no browser UI involved), any
  * leftover `e2e-*` fixture user, stale e2e deployment (`E2E_DEPLOYMENT_PATTERN`),
- * stale `e2e-preset-*` Prometheus query preset and stale `e2e-test-project-*`
- * project, so those sweeps cannot fail the same way a per-test UI-based
+ * stale `e2e-preset-*` Prometheus query preset, stale e2e role
+ * (`E2E_ROLE_PATTERN`) and stale `e2e-test-project-*` project, so those sweeps cannot fail the same way a per-test UI-based
  * cleanup can. Specs register what they create with `createTestResources()`
  * (utils/test-resources.ts); these prefix sweeps only catch hard-killed runs.
  */
@@ -35,6 +35,7 @@ import {
   sweepLeftoverDeploymentsViaApi,
   sweepStaleProjectsViaApi,
   sweepStalePrometheusQueryPresetsViaApi,
+  sweepStaleRolesViaApi,
 } from './utils/admin-api';
 import { sweepServices, sweepVFolders } from './utils/cleanup-util';
 import { loginAsAdmin, loginAsUser } from './utils/test-util';
@@ -103,17 +104,23 @@ const E2E_TEST_PROJECT_PATTERN = /^e2e-test-project-/;
 
 /**
  * Backstop sweeps for Prometheus query presets (`e2e-preset-*`, the
- * auto-scaling-rule-preset specs) and project-crud's GENERAL projects. Both
- * keep the helpers' age gate, as the deployment sweep does, so a concurrent
+ * auto-scaling-rule-preset specs), the RBAC specs' roles and project-crud's
+ * GENERAL projects. All keep the helpers' age gate, as the deployment sweep does, so a concurrent
  * run's fresh fixtures survive.
  */
-async function sweepLeftoverPresetsAndProjects(): Promise<void> {
+async function sweepLeftoverPresetsRolesAndProjects(): Promise<void> {
   const api = await createAdminApiContext();
   try {
     try {
       await sweepStalePrometheusQueryPresetsViaApi(api, 'e2e-preset-');
     } catch (error) {
       console.warn('[global-cleanup] preset sweep failed (ignored):', error);
+    }
+    // Only custom roles matching E2E_ROLE_PATTERN; never a system role.
+    try {
+      await sweepStaleRolesViaApi(api);
+    } catch (error) {
+      console.warn('[global-cleanup] role sweep failed (ignored):', error);
     }
     try {
       const purged = await sweepStaleProjectsViaApi(
@@ -218,7 +225,7 @@ test.describe('Global e2e cleanup', () => {
 
   // Own test, so its own 600s budget: these sweeps have no deadline. No `page`;
   // guard each directly so a failure never reds the run.
-  test('sweep leftover e2e deployments, presets and projects (API)', async () => {
+  test('sweep leftover e2e deployments, presets, roles and projects (API)', async () => {
     // Purge any e2e deployment past the age gate that an afterEach failed to reap.
     try {
       await sweepLeftoverDeployments();
@@ -229,10 +236,10 @@ test.describe('Global e2e cleanup', () => {
       );
     }
     try {
-      await sweepLeftoverPresetsAndProjects();
+      await sweepLeftoverPresetsRolesAndProjects();
     } catch (error) {
       console.warn(
-        '[global-cleanup] preset/project sweep failed (ignored):',
+        '[global-cleanup] preset/role/project sweep failed (ignored):',
         error,
       );
     }
