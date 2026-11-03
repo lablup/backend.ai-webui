@@ -3958,7 +3958,7 @@
     "MyKeypairInfo": "Informasi Pasangan Kunci Saya",
     "NEODataPage": "Halaman data neo",
     "NEOSessionList": "Daftar Sesi NEO",
-    "NoExistingSSHKeypair": "Tidak ada Pasangan Kunci SSH untuk disalin. Untuk mendaftarkannya, silakan tekan tombol Masukkan Secara Manual.",
+    "NoExistingSSHKeypair": "Belum ada kunci publik SSH yang terdaftar. Masukkan kunci lalu tekan Simpan.",
     "PackageInstallation": "Instalasi Paket",
     "Preferences": "Preferensi",
     "PreferredSSHPort": "Port SSH Pilihan",

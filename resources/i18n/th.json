@@ -3940,7 +3940,7 @@
     "MyKeypairInfo": "ข้อมูลคู่คีย์ของฉัน",
     "NEODataPage": "หน้าข้อมูลนีโอ",
     "NEOSessionList": "รายการเซสชัน NEO",
-    "NoExistingSSHKeypair": "ไม่มีคู่คีย์ SSH ที่จะคัดลอก หากต้องการลงทะเบียน กรุณากดปุ่มป้อนด้วยตนเอง",
+    "NoExistingSSHKeypair": "ยังไม่มีคีย์สาธารณะ SSH ที่ลงทะเบียนไว้ กรุณาป้อนคีย์แล้วกดบันทึก",
     "PackageInstallation": "การติดตั้งแพ็คเกจ",
     "Preferences": "การตั้งค่า",
     "PreferredSSHPort": "พอร์ต SSH ที่ต้องการ",

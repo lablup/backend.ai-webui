@@ -3954,7 +3954,7 @@
     "MyKeypairInfo": "Информация о моей паре ключей",
     "NEODataPage": "НЕО СТРАНИЦА ДАННЫХ",
     "NEOSessionList": "Список сессий NEO",
-    "NoExistingSSHKeypair": "Нет пары ключей SSH для копирования. Чтобы зарегистрировать её, нажмите кнопку «Ввести вручную».",
+    "NoExistingSSHKeypair": "Открытый ключ SSH не зарегистрирован. Введите ключ и нажмите «Сохранить».",
     "PackageInstallation": "Установка пакета",
     "Preferences": "Предпочтения",
     "PreferredSSHPort": "Предпочтительный порт SSH",

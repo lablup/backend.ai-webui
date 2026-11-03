@@ -3956,7 +3956,7 @@
     "MyKeypairInfo": "我的密钥对信息",
     "NEODataPage": "NEO数据页",
     "NEOSessionList": "近地天体会议列表",
-    "NoExistingSSHKeypair": "没有要复制的 SSH 密钥对。要注册 SSH 密钥对，请按“手动输入”按钮。",
+    "NoExistingSSHKeypair": "尚未注册 SSH 公钥。请输入公钥后点击“保存”。",
     "PackageInstallation": "包安装",
     "Preferences": "首选项",
     "PreferredSSHPort": "首选 SSH 端口",

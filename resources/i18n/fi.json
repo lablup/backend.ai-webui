@@ -3954,7 +3954,7 @@
     "MyKeypairInfo": "Avainparini tiedot",
     "NEODataPage": "NEO -tietosivu",
     "NEOSessionList": "NEO-istuntoluettelo",
-    "NoExistingSSHKeypair": "Ei kopioitavaa SSH-avainparia. Rekisteröi avainpari painamalla Syötä manuaalisesti -painiketta.",
+    "NoExistingSSHKeypair": "Julkista SSH-avainta ei ole rekisteröity. Syötä avain ja paina Tallenna.",
     "PackageInstallation": "Paketin asennus",
     "Preferences": "Asetukset",
     "PreferredSSHPort": "Suositeltava SSH-portti",

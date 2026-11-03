@@ -3956,7 +3956,7 @@
     "MyKeypairInfo": "Thông tin về cặp khóa của tôi",
     "NEODataPage": "Trang dữ liệu NEO",
     "NEOSessionList": "Danh sách phiên Neo",
-    "NoExistingSSHKeypair": "Không có cặp khóa SSH nào để sao chép. Để đăng ký, hãy nhấn nút Nhập thủ công.",
+    "NoExistingSSHKeypair": "Chưa có khóa công khai SSH nào được đăng ký. Hãy nhập khóa và nhấn Lưu.",
     "PackageInstallation": "Cài đặt trọn gói",
     "Preferences": "Sở thích",
     "PreferredSSHPort": "Cổng SSH ưu tiên",
