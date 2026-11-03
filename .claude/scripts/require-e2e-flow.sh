@@ -7,8 +7,8 @@
 #
 # Registered with `if` filters in .claude/settings.json, which are best-effort,
 # so the command is checked again here (also inside `&&`, `;`, pipes, `$(…)`, backticks).
-# A denial is JSON on stdout with exit 0; anything unexpected exits 0 silently
-# so the hook never blocks unrelated work.
+# A denial is JSON on stdout with exit 0. The hook only runs on PR commands, so a failure of its
+# own (python3 missing, an unreadable checkout) exits 1 and `onFailure: block` stops the command.
 
 record_of() { # [dir] -> head, record path, branch
   { read -r head; read -r dir; read -r branch; } < <(git ${1:+-C "$1"} rev-parse HEAD --path-format=absolute --git-common-dir --abbrev-ref HEAD 2>/dev/null)
@@ -29,7 +29,7 @@ WEBUI = 'lablup/backend.ai-webui'
 inp = json.load(sys.stdin)
 cmd = inp.get('tool_input', {}).get('command', '')
 cwd = inp.get('cwd') or os.getcwd()
-GATE = re.compile(r'(^|[;&|(`]|\$\()\s*(?:(?:env|command)\s+)?(?:[A-Za-z_]\w*=(?:"[^"]*"|\'[^\']*\'|\S*)\s+)*(?:\S*/)?gh\s+(?:pr\s+create|stack\s+submit)(?![\w-])', re.M)
+GATE = re.compile(r'(^|[;&|(`]|\$\()\s*(?:(?:env|command|time|nohup|exec|nice|sudo)\s+(?:-\S+\s+)*)*(?:[A-Za-z_]\w*=(?:"[^"]*"|\'[^\']*\'|\S*)\s+)*(?:\S*/)?gh\s+(?:pr\s+create|stack\s+submit)(?![\w-])', re.M)
 # gh pr create flags that take a value: their value is never read as -R
 VALUED = {'-t', '--title', '-b', '--body', '-F', '--body-file', '-B', '--base', '-H', '--head', '-a', '--assignee', '-l', '--label',
           '-m', '--milestone', '-p', '--project', '-r', '--reviewer', '-T', '--template', '--recover'}
@@ -56,11 +56,15 @@ def resolve():
         n += 1
     lex = shlex.shlex(text, posix=True, punctuation_chars=';&|()<>')
     lex.whitespace_split = True
+    lex.commenters = ''  # newlines are ';' here, so a '#' comment would swallow the rest of the command
     frames, cur, prs = [{'dir': cwd, 'stack': []}], [], []
 
     def run(c):
         env = {}
-        while c and (re.match(r'^[A-Za-z_]\w*=', c[0]) or c[0] in ('env', 'command')):
+        while c and (re.match(r'^[A-Za-z_]\w*=', c[0]) or c[0] in ('env', 'command', 'time', 'nohup', 'exec', 'nice', 'sudo')
+                     or (env.get('_prefix') and c[0].startswith('-'))):
+            if not re.match(r'^[A-Za-z_]\w*=', c[0]):
+                env['_prefix'] = '1'
             k, _, v = c.pop(0).partition('=')
             if _:
                 env[k] = v
@@ -134,10 +138,11 @@ else:
         print('check ' + cwd)
 PY
 )
-out=$(cat | python3 -c "$RESOLVE" 2>/dev/null) || exit 0
+out=$(cat | python3 -c "$RESOLVE" 2>/dev/null) || exit 1
 case "$out" in
-  'check '*) record_of "${out#check }" || exit 0 ;;
-  *) exit 0 ;;
+  'check '*) record_of "${out#check }" || exit 1 ;;
+  none|skip) exit 0 ;;
+  *) exit 1 ;;
 esac
 
 recorded=$(cat "$record" 2>/dev/null)
@@ -158,5 +163,5 @@ print(json.dumps({"hookSpecificOutput": {
     "permissionDecisionReason": f"Blocked: {why}. Run the e2e-flow skill (.claude/skills/e2e-flow/SKILL.md) before opening the PR.",
     "additionalContext": "The e2e-flow skill compares the branch diff with the cases in e2e/ and e2e-agent/, asks about any changed user flow, writes the ## E2E flow PR body section, and records HEAD. Retry the same command after it finishes.",
 }}))
-' 2>/dev/null
+' 2>/dev/null || exit 1
 exit 0

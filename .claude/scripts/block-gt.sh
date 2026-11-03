@@ -4,59 +4,94 @@
 # Graphite is banned in this repository (FR-3391) — stacked-PR work goes
 # through GitHub Stacked PRs (`gh stack`; see .claude/skills/gh-stack/).
 # The permissions deny rule in .claude/settings.json covers plain `gt ...`
-# commands; this hook catches `gt` as the command word of any simple command:
-# after `;`, `&&`, `|`, subshells, `$(…)` or backticks, behind assignments,
-# `env`, `command`, `time`, `!`, `xargs`, `{`, `then`/`do`/`else`, or as a path (`/x/gt`).
+# commands; this hook blocks when either check finds gt as a command word:
+# - the command tokenised (shlex): the first word of any simple command, behind
+#   assignments, redirects, env / command / time / nohup / exec / sudo / nice /
+#   timeout / xargs (and their options), `!`, `{`, if/then/do/else/while, a function body,
+#   or as a path (`/x/gt`); array literals, case patterns and `command -v gt` are not commands;
+# - the raw text: gt after a separator, `$(`, a backtick or one of those prefix words,
+#   which also covers `$(gt …)` in double quotes and `bash -c '…; gt …'`.
 # `-gt` numeric comparisons and substrings like `mgt` do not trigger it.
 
-BLOCKED="Blocked: Graphite (gt) is banned in this repo (FR-3391). Use 'gh stack' instead — see .claude/skills/gh-stack/SKILL.md."
-
-input=$(cat)
-cmd=$(printf '%s' "$input" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("tool_input", {}).get("command", ""))' 2>/dev/null) || exit 0
-
 FIND=$(cat <<'PY'
-import os, re, shlex, sys
-cmd = sys.stdin.read()
-keep, ends = [], []
-for line in cmd.split('\n'):  # drop heredoc bodies: their lines are data, not commands
-    if ends:
-        if line.strip() == ends[0]:
-            ends.pop(0)
-        continue
-    keep.append(line)
-    ends += [m.group(2) for m in re.finditer(r'<<-?\s*([\'"]?)(\w+)\1', line)]
-cmd = '\n'.join(keep)
-PREFIX = {'env', 'command', 'time', 'nohup', 'exec', '!', '{', 'then', 'do', 'else', 'elif', 'if', 'while', 'until', 'xargs'}
-text, n = re.sub(r'\\\n', ' ', cmd).replace('\n', ' ; '), 0
-while '`' in text:
-    text = text.replace('`', ' ( ' if n % 2 == 0 else ' ) ', 1)
-    n += 1
-lex = shlex.shlex(text, posix=True, punctuation_chars=';&|()<>')
-lex.whitespace_split = True
+import json, os, re, shlex, sys
+cmd = json.load(sys.stdin).get('tool_input', {}).get('command', '')
+WORDS = 'then|do|else|elif|if|while|until|xargs|env|command|time|nohup|exec|sudo|nice|timeout'
+RAW = re.compile(r'(?:^|[;&|]|\$\(|`|\b(?:' + WORDS + r')\b)[ \t]*(?:[A-Za-z_]\w*=\S*[ \t]+)*(?:\S*/)?gt(?:\s|$)', re.M)
+KEYWORDS = {'!', '{', 'then', 'do', 'else', 'elif', 'if', 'while', 'until'}
+# prefix command -> its options that take a separate value; timeout also takes a duration
+VALUED = {'env': {'-u', '--unset', '-C', '--chdir', '-S', '--split-string'}, 'command': set(), 'time': {'-f', '-o', '--format', '--output'},
+          'nohup': set(), 'exec': {'-a'}, 'nice': {'-n', '--adjustment'}, 'timeout': {'-s', '--signal', '-k', '--kill-after'},
+          'sudo': {'-u', '-g', '-h', '-p', '-C', '-U', '-r', '-t', '-D', '-R'},
+          'xargs': {'-n', '-I', '-L', '-P', '-d', '-E', '-s', '-a', '--max-args', '--replace', '--max-lines', '--max-procs', '--delimiter'}}
 
 def is_gt(c):
-    while c and (re.match(r'^[A-Za-z_]\w*=', c[0]) or c[0] in PREFIX or (c[0].startswith('-') and c[0] != '-')):
-        c = c[1:]  # also skips the options of env / xargs / time
-    return bool(c) and os.path.basename(c[0]) == 'gt'
+    i = 0
+    while i < len(c):
+        w = c[i]
+        if re.match(r'^[A-Za-z_]\w*=', w) or w in KEYWORDS:
+            i += 1
+        elif w == 'function':
+            i += 2
+        elif w in VALUED:
+            if w == 'command' and i + 1 < len(c) and c[i + 1] in ('-v', '-V'):
+                return False  # a lookup, not a run
+            i += 1
+            while i < len(c) and c[i].startswith('-') and c[i] != '-':
+                i += 2 if c[i] in VALUED[w] else 1
+            if w == 'timeout':
+                i += 1
+        else:
+            return os.path.basename(w) == 'gt'
+    return False
 
-cur = []
-for t in lex:
-    if t and set(t) <= set(';&|()<>'):
-        if is_gt(cur):
-            print('gt'); sys.exit()
-        cur = []
-    else:
-        cur.append(t)
-print('gt' if is_gt(cur) else 'none')
+def tokens_find():
+    lex = shlex.shlex(re.sub(r'\\\n', ' ', cmd).replace('\n', ' ; ').replace('`', ' ; '), posix=True, punctuation_chars=';&|()<>')
+    lex.whitespace_split = True
+    lex.commenters = ''
+    cur, skip, array, case = [], False, False, False
+    for t in lex:
+        if skip:
+            skip = False
+            continue
+        if array:
+            array = ')' not in t
+            continue
+        if t and set(t) <= set(';&|()<>'):
+            if '<' in t or '>' in t:  # a redirect: drop the fd number before it and the target after it
+                if cur and cur[-1].isdigit():
+                    cur.pop()
+                skip = True
+                continue
+            if t.startswith('(') and cur and cur[-1].endswith('='):
+                array = ')' not in t
+                continue
+            if case and t.startswith(')'):
+                cur = []  # a case pattern
+                continue
+            if cur and cur[0] == 'case':
+                case = True
+            if cur and cur[-1:] == ['esac'] or cur[:1] == ['esac']:
+                case = False
+            if is_gt(cur):
+                return True
+            cur = []
+        else:
+            cur.append(t)
+    return is_gt(cur)
+
+found = bool(RAW.search(cmd))
+if not found:
+    try:
+        found = tokens_find()
+    except ValueError:
+        pass  # unbalanced quoting: the raw check above already decided
+print('gt' if found else 'none')
 PY
 )
-verdict=$(printf '%s' "$cmd" | python3 -c "$FIND" 2>/dev/null) || verdict=''
-if [ -z "$verdict" ]; then
-  # the tokenizer failed (unbalanced quotes, a heredoc): fall back to a plain match on the raw text
-  printf '%s' "$cmd" | grep -qE '(^|[;&|({!]|\$\(|`|then|do|else|xargs|env|command|time)[[:space:]]*([A-Za-z_][A-Za-z0-9_]*=[^[:space:]]*[[:space:]]+)*([^[:space:]]*/)?gt([[:space:]]|$)' && verdict=gt
-fi
+verdict=$(python3 -c "$FIND" 2>/dev/null) || exit 0
 if [ "$verdict" = gt ]; then
-  echo "$BLOCKED" >&2
+  echo "Blocked: Graphite (gt) is banned in this repo (FR-3391). Use 'gh stack' instead — see .claude/skills/gh-stack/SKILL.md." >&2
   exit 2
 fi
 exit 0
