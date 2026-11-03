@@ -587,6 +587,43 @@
     "Title": "Zaloguj Backend.AI WebUI Agent CLI",
     "VerificationCode": "Kod weryfikacyjny"
   },
+  "clientIpMasking": {
+    "AllTargetsHavePolicy": "Każdy cel ma już zasadę. Zamiast tego edytuj istniejącą.",
+    "ClientIpMasking": "Maskowanie IP klienta",
+    "CreatePolicy": "Utwórz zasadę",
+    "DefaultPrefix": "/{{prefix}} (domyślnie)",
+    "DeleteDefaultPolicyDescription": "Cele bez własnej zasady będą przechowywać adresy IP klienta w niezmienionej postaci.",
+    "DeletePolicy": "Usunąć tę zasadę maskowania?",
+    "DeletePolicyDescription": "{{target}} będzie korzystać z zasady domyślnej.",
+    "Description": "Określ, jak adresy IP klienta są maskowane przed zapisaniem. Cel bez własnej zasady stosuje zasadę domyślną; jeśli jej nie ma, adresy są zapisywane w niezmienionej postaci.",
+    "EditPolicy": "Edytuj zasadę",
+    "IPv4Prefix": "Długość prefiksu IPv4",
+    "IPv6Prefix": "Długość prefiksu IPv6",
+    "Mode": "Tryb maskowania",
+    "ModeRequired": "Wybierz tryb maskowania.",
+    "OnePolicyPerTarget": "Dla każdego celu może istnieć tylko jedna zasada.",
+    "PrefixExtra": "Liczba zachowywanych bitów początkowych (0–{{max}}). Pozostaw puste, aby użyć {{defaultPrefix}}.",
+    "PrefixRange": "Wprowadź liczbę od 0 do {{max}}.",
+    "SuccessfullyDeleted": "Usunięto zasadę maskowania IP klienta.",
+    "SuccessfullySaved": "Zapisano zasadę maskowania IP klienta.",
+    "Target": "Cel zasady",
+    "TargetRequired": "Wybierz cel zasady.",
+    "modeDescriptions": {
+      "DROP": "Adres IP klienta nie jest rejestrowany.",
+      "NONE": "Adresy IP klienta są zapisywane w niezmienionej postaci.",
+      "TRUNCATE": "Bity hosta są zerowane, zachowywany jest tylko prefiks sieci."
+    },
+    "modes": {
+      "DROP": "Odrzucenie",
+      "NONE": "Brak",
+      "TRUNCATE": "Obcięcie"
+    },
+    "targets": {
+      "AUDIT_LOGS": "Dzienniki audytu",
+      "DEFAULT": "Domyślny",
+      "LOGIN_HISTORY": "Historia logowań"
+    }
+  },
   "credential": {
     "2FAEnabled": "2FA włączone",
     "AccessKey": "Klucz dostępu",

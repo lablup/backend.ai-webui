@@ -587,6 +587,43 @@
     "Title": "Connecter la Backend.AI WebUI Agent CLI",
     "VerificationCode": "Code de vérification"
   },
+  "clientIpMasking": {
+    "AllTargetsHavePolicy": "Chaque cible a déjà une politique. Modifiez plutôt une politique existante.",
+    "ClientIpMasking": "Masquage de l'IP client",
+    "CreatePolicy": "Créer une politique",
+    "DefaultPrefix": "/{{prefix}} (par défaut)",
+    "DeleteDefaultPolicyDescription": "Les cibles sans politique propre stockeront les IP client telles qu'observées.",
+    "DeletePolicy": "Supprimer cette politique de masquage ?",
+    "DeletePolicyDescription": "{{target}} reviendra à la politique par défaut.",
+    "Description": "Définissez comment les adresses IP client sont masquées avant d'être stockées. Une cible sans politique propre suit la politique par défaut ; en l'absence de politique par défaut, les adresses sont stockées telles qu'observées.",
+    "EditPolicy": "Modifier la politique",
+    "IPv4Prefix": "Longueur du préfixe IPv4",
+    "IPv6Prefix": "Longueur du préfixe IPv6",
+    "Mode": "Mode de masquage",
+    "ModeRequired": "Sélectionnez un mode de masquage.",
+    "OnePolicyPerTarget": "Une seule politique peut exister par cible.",
+    "PrefixExtra": "Nombre de bits de tête conservés (0–{{max}}). Laissez vide pour utiliser {{defaultPrefix}}.",
+    "PrefixRange": "Saisissez un nombre entre 0 et {{max}}.",
+    "SuccessfullyDeleted": "Politique de masquage de l'IP client supprimée.",
+    "SuccessfullySaved": "Politique de masquage de l'IP client enregistrée.",
+    "Target": "Cible de la politique",
+    "TargetRequired": "Sélectionnez une cible de politique.",
+    "modeDescriptions": {
+      "DROP": "Aucune IP client n'est enregistrée.",
+      "NONE": "Les IP client sont stockées telles qu'observées.",
+      "TRUNCATE": "Les bits d'hôte sont mis à zéro ; seul le préfixe réseau est conservé."
+    },
+    "modes": {
+      "DROP": "Supprimer",
+      "NONE": "Aucun",
+      "TRUNCATE": "Tronquer"
+    },
+    "targets": {
+      "AUDIT_LOGS": "Journaux d'audit",
+      "DEFAULT": "Par défaut",
+      "LOGIN_HISTORY": "Historique de connexion"
+    }
+  },
   "credential": {
     "2FAEnabled": "2FA activée",
     "AccessKey": "Clé d'accès",

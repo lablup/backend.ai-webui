@@ -1894,6 +1894,11 @@
       "tabs": [
         {
           "param": "tab",
+          "key": "client-ip-masking",
+          "labelKey": "clientIpMasking.ClientIpMasking"
+        },
+        {
+          "param": "tab",
           "key": "maintenance",
           "labelKey": "webui.menu.Maintenance"
         },
@@ -1933,6 +1938,23 @@
         "button.Publish",
         "button.Reset",
         "button.SaveAsDraft",
+        "clientIpMasking.AllTargetsHavePolicy",
+        "clientIpMasking.CreatePolicy",
+        "clientIpMasking.DefaultPrefix",
+        "clientIpMasking.DeletePolicy",
+        "clientIpMasking.Description",
+        "clientIpMasking.EditPolicy",
+        "clientIpMasking.IPv4Prefix",
+        "clientIpMasking.IPv6Prefix",
+        "clientIpMasking.Mode",
+        "clientIpMasking.ModeRequired",
+        "clientIpMasking.OnePolicyPerTarget",
+        "clientIpMasking.PrefixExtra",
+        "clientIpMasking.PrefixRange",
+        "clientIpMasking.SuccessfullyDeleted",
+        "clientIpMasking.SuccessfullySaved",
+        "clientIpMasking.Target",
+        "clientIpMasking.TargetRequired",
         "dialog.ask.DoYouWantToDelete",
         "dialog.ask.DoYouWantToResetChanges",
         "dialog.warning.CannotBeUndone",
@@ -1940,6 +1962,7 @@
         "general.Disabled",
         "general.Folder",
         "general.InProgress",
+        "general.UpdatedAt",
         "maintenance.RecalculateUsage",
         "maintenance.Recalculating",
         "maintenance.RecalculationFailed",

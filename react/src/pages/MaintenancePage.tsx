@@ -7,6 +7,7 @@ import {
   AdminRetentionPolicyQuery as AdminRetentionPolicyQueryType,
   RetentionPolicyOrderBy,
 } from '../__generated__/AdminRetentionPolicyQuery.graphql';
+import AdminClientIpMaskingPolicyList from '../components/AdminClientIpMaskingPolicyList';
 import AdminRetentionPolicy, {
   ADMIN_RETENTION_POLICY_DEFAULT_PAGE_SIZE,
   AdminRetentionPolicyQuery,
@@ -33,12 +34,13 @@ import {
 const tabParser = parseAsStringLiteral([
   'maintenance',
   'retention-policy',
+  'client-ip-masking',
 ]).withDefault('maintenance');
 const orderParser = parseAsStringLiteral(
   availableRetentionPolicySorterValues,
 ).withDefault('category');
 
-type TabKey = 'maintenance' | 'retention-policy';
+type TabKey = 'maintenance' | 'retention-policy' | 'client-ip-masking';
 type RetentionPolicyVariables = AdminRetentionPolicyQueryType['variables'];
 
 type TabSnapshot = {
@@ -169,6 +171,10 @@ const MaintenancePage = () => {
           key: 'retention-policy',
           label: t('retentionPolicy.DataRetention'),
         },
+        {
+          key: 'client-ip-masking',
+          label: t('clientIpMasking.ClientIpMasking'),
+        },
       ]}
     >
       <Suspense fallback={<BAISkeleton />}>
@@ -187,6 +193,11 @@ const MaintenancePage = () => {
             ) : (
               <BAISkeleton />
             )}
+          </BAIErrorBoundary>
+        )}
+        {currentTab === 'client-ip-masking' && (
+          <BAIErrorBoundary>
+            <AdminClientIpMaskingPolicyList />
           </BAIErrorBoundary>
         )}
       </Suspense>

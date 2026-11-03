@@ -587,6 +587,43 @@
     "Title": "Log masuk Backend.AI WebUI Agent CLI",
     "VerificationCode": "Kod pengesahan"
   },
+  "clientIpMasking": {
+    "AllTargetsHavePolicy": "Setiap sasaran sudah mempunyai polisi. Sunting polisi sedia ada.",
+    "ClientIpMasking": "Penyamaran IP Klien",
+    "CreatePolicy": "Cipta Polisi",
+    "DefaultPrefix": "/{{prefix}} (lalai)",
+    "DeleteDefaultPolicyDescription": "Sasaran tanpa polisi sendiri akan menyimpan IP klien seperti yang diperhatikan.",
+    "DeletePolicy": "Padam polisi penyamaran ini?",
+    "DeletePolicyDescription": "{{target}} akan kembali kepada polisi Lalai.",
+    "Description": "Tetapkan cara alamat IP klien disamarkan sebelum disimpan. Sasaran tanpa polisi sendiri mengikut polisi Lalai; jika tiada polisi Lalai, alamat disimpan seperti yang diperhatikan.",
+    "EditPolicy": "Sunting Polisi",
+    "IPv4Prefix": "Panjang Awalan IPv4",
+    "IPv6Prefix": "Panjang Awalan IPv6",
+    "Mode": "Mod Penyamaran",
+    "ModeRequired": "Pilih mod penyamaran.",
+    "OnePolicyPerTarget": "Hanya satu polisi boleh wujud bagi setiap sasaran.",
+    "PrefixExtra": "Bilangan bit awal yang dikekalkan (0–{{max}}). Biarkan kosong untuk menggunakan {{defaultPrefix}}.",
+    "PrefixRange": "Masukkan nombor antara 0 dan {{max}}.",
+    "SuccessfullyDeleted": "Polisi penyamaran IP klien dipadam.",
+    "SuccessfullySaved": "Polisi penyamaran IP klien disimpan.",
+    "Target": "Sasaran Polisi",
+    "TargetRequired": "Pilih sasaran polisi.",
+    "modeDescriptions": {
+      "DROP": "Tiada IP klien direkodkan.",
+      "NONE": "IP klien disimpan seperti yang diperhatikan.",
+      "TRUNCATE": "Bit hos disifarkan, hanya awalan rangkaian dikekalkan."
+    },
+    "modes": {
+      "DROP": "Buang",
+      "NONE": "Tiada",
+      "TRUNCATE": "Pangkas"
+    },
+    "targets": {
+      "AUDIT_LOGS": "Log Audit",
+      "DEFAULT": "Lalai",
+      "LOGIN_HISTORY": "Sejarah Log Masuk"
+    }
+  },
   "credential": {
     "2FAEnabled": "2FA Diaktifkan",
     "AccessKey": "Kunci akses",
