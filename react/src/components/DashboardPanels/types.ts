@@ -160,6 +160,8 @@ export interface PersistedPanelV2 {
   columnSpan: number;
   rowSpan: number;
   columnOffset?: Record<number, number>;
+  /** A user-made panel taken off the board; it stays listed in the edit sider. */
+  hidden?: boolean;
 }
 
 export interface DashboardBoard {
