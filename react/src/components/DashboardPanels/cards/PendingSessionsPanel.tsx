@@ -6,6 +6,7 @@ import type { PendingSessionsPanelAttemptsQuery } from '../../../__generated__/P
 import type { PendingSessionsPanelReasonQuery } from '../../../__generated__/PendingSessionsPanelReasonQuery.graphql';
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
 import { legacyScopeId, type CardScope } from '../cardScope';
+import { readSecondary } from '../panelPermission';
 import {
   legacySessionIdFilter,
   pendingReason,
@@ -102,7 +103,7 @@ const SchedulingAttempts: React.FC<{ sessionId: string }> = ({ sessionId }) => {
           scope: $scope
           orderBy: [{ field: UPDATED_AT, direction: DESC }]
           limit: 5
-        ) {
+        ) @catch(to: RESULT) {
           edges {
             node {
               ...BAISchedulingHistoryTableFragment
@@ -122,7 +123,7 @@ const SchedulingAttempts: React.FC<{ sessionId: string }> = ({ sessionId }) => {
     >
       <BAISchedulingHistoryTable
         schedulingHistoryFrgmt={filterOutNullAndUndefined(
-          data.sessionScopedSchedulingHistories?.edges.map(
+          readSecondary(data.sessionScopedSchedulingHistories).value?.edges.map(
             (edge) => edge?.node,
           ),
         )}

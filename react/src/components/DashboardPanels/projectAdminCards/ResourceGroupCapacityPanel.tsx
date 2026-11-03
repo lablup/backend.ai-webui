@@ -6,6 +6,7 @@ import type { ResourceGroupCapacityPanelQuery } from '../../../__generated__/Res
 import MemberCard from '../memberCards/MemberCard';
 import ResourceUsageBars from '../memberCards/ResourceUsageBars';
 import { toLimitUsageRows } from '../memberCards/memberCardData';
+import { readPrimary } from '../panelPermission';
 import type { PanelComponentProps } from '../types';
 import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex } from 'backend.ai-ui';
@@ -24,7 +25,7 @@ const ResourceGroupCapacity: React.FC<{
       query ResourceGroupCapacityPanelQuery($resourceGroupName: String!) {
         resourceGroupResourceAllocationV2(
           resourceGroupName: $resourceGroupName
-        ) {
+        ) @catch(to: RESULT) {
           resourceGroup {
             capacity {
               resourceType
@@ -41,7 +42,9 @@ const ResourceGroupCapacity: React.FC<{
     variables,
     { fetchPolicy: 'store-and-network', fetchKey },
   );
-  const usage = data.resourceGroupResourceAllocationV2?.resourceGroup;
+  const usage = readPrimary(
+    data.resourceGroupResourceAllocationV2,
+  )?.resourceGroup;
   return (
     <ResourceUsageBars
       rows={toLimitUsageRows(

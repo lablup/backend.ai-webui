@@ -10,13 +10,16 @@ import type {
   SessionV2OrderBy,
 } from '../../../__generated__/SessionListProjectQuery.graphql';
 import type { CardScope } from '../cardScope';
+import { readPrimary, type CaughtValue } from '../panelPermission';
 import { filterOutNullAndUndefined } from 'backend.ai-ui';
 import React from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export type SessionRow = NonNullable<
   NonNullable<
-    NonNullable<SessionListProjectQuery$data['sessions']>['edges'][number]
+    NonNullable<
+      CaughtValue<SessionListProjectQuery$data['sessions']>
+    >['edges'][number]
   >['node']
 >;
 
@@ -70,7 +73,7 @@ const MineSessions: React.FC<
           orderBy: $orderBy
           limit: $limit
           offset: $offset
-        ) {
+        ) @catch(to: RESULT) {
           count
           edges {
             node {
@@ -92,7 +95,7 @@ const MineSessions: React.FC<
     },
     { fetchPolicy: 'store-and-network', fetchKey },
   );
-  return children(toPage(data.sessions));
+  return children(toPage(readPrimary(data.sessions)));
 };
 
 const ProjectSessions: React.FC<
@@ -117,7 +120,7 @@ const ProjectSessions: React.FC<
           orderBy: $orderBy
           limit: $limit
           offset: $offset
-        ) {
+        ) @catch(to: RESULT) {
           count
           edges {
             node {
@@ -134,7 +137,7 @@ const ProjectSessions: React.FC<
     { projectId, filter, orderBy: [...orderBy], limit, offset },
     { fetchPolicy: 'store-and-network', fetchKey },
   );
-  return children(toPage(data.sessions));
+  return children(toPage(readPrimary(data.sessions)));
 };
 
 /** One page of sessions in the card's scope, for the session list cards. */

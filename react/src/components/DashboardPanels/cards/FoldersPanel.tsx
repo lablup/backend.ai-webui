@@ -7,6 +7,8 @@ import type { FoldersPanelProjectQuery } from '../../../__generated__/FoldersPan
 import { useVFolderInvitations } from '../../../hooks/useVFolderInvitations';
 import type { CardScope } from '../cardScope';
 import StatRow, { type StatRowItem } from '../charts/StatRow';
+import { countText, readCounts } from '../countAliases';
+import { readSecondary } from '../panelPermission';
 import type { PanelComponentProps } from '../types';
 import ScopedCard from './ScopedCard';
 import { BAILink, useUpdateEffect } from 'backend.ai-ui';
@@ -15,12 +17,10 @@ import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-type Count = { readonly count: number } | null | undefined;
-
 /** Ready folders against the limit, and the trash; a limit of 0 means none. */
 const useFolderStats = (
-  ready: Count,
-  trash: Count,
+  ready: number | null,
+  trash: number | null,
   limit: number | null | undefined,
 ): Array<StatRowItem> => {
   'use memo';
@@ -29,7 +29,7 @@ const useFolderStats = (
     {
       key: 'ready',
       label: t('general.Folders'),
-      value: String(ready?.count ?? 0),
+      value: countText(ready),
       description: limit
         ? t('dashboard.card.FolderLimit', { max: limit })
         : undefined,
@@ -37,7 +37,7 @@ const useFolderStats = (
     {
       key: 'trash',
       label: t('data.folders.TrashBin'),
-      value: String(trash?.count ?? 0),
+      value: countText(trash),
     },
   ];
 };
@@ -70,16 +70,16 @@ const MineFolders: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
             }
           }
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
         trash: myVfolders(
           filter: { status: { equals: DELETE_PENDING } }
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
-        myUserResourcePolicyV2 {
+        myUserResourcePolicyV2 @catch(to: RESULT) {
           maxVfolderCount
         }
       }
@@ -88,10 +88,11 @@ const MineFolders: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
     { fetchPolicy: 'store-and-network', fetchKey },
   );
   const invitationCount = invitations.length;
+  const counts = readCounts(data, ['ready', 'trash']);
   const folderStats = useFolderStats(
-    data.ready,
-    data.trash,
-    data.myUserResourcePolicyV2?.maxVfolderCount,
+    counts.ready,
+    counts.trash,
+    readSecondary(data.myUserResourcePolicyV2).value?.maxVfolderCount,
   );
   return (
     <StatRow
@@ -142,14 +143,14 @@ const ProjectFolders: React.FC<{ projectId: string; fetchKey: string }> = ({
             }
           }
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
         trash: projectVfolders(
           projectId: $projectId
           filter: { status: { equals: DELETE_PENDING } }
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
         policy: scopedProjectResourcePolicyV2(projectId: $policyProjectId)
@@ -161,10 +162,11 @@ const ProjectFolders: React.FC<{ projectId: string; fetchKey: string }> = ({
     variables,
     { fetchPolicy: 'store-and-network', fetchKey },
   );
+  const counts = readCounts(data, ['ready', 'trash']);
   const items = useFolderStats(
-    data.ready,
-    data.trash,
-    data.policy.ok ? data.policy.value?.maxVfolderCount : null,
+    counts.ready,
+    counts.trash,
+    readSecondary(data.policy).value?.maxVfolderCount,
   );
   return <StatRow items={items} />;
 };
