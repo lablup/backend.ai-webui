@@ -7,17 +7,15 @@ export type BAIBoardItem<T extends BAIBoardDataType = BAIBoardDataType> = BoardI
 export interface BAIBoardItemsChangeEvent<T extends BAIBoardDataType = BAIBoardDataType> {
     detail: BoardItemsChangeDetail<T>;
 }
-export interface BAIBoardProps<T extends BAIBoardDataType = BAIBoardDataType> extends Omit<BoardProps<T>, 'items' | 'renderItem' | 'onItemsChange' | 'isMovable' | 'isResizable' | 'variant'> {
+export interface BAIBoardProps<T extends BAIBoardDataType = BAIBoardDataType> extends Omit<BoardProps<T>, 'items' | 'onItemsChange' | 'isMovable' | 'isResizable' | 'variant'> {
     items: Array<BAIBoardItem<T>>;
     onItemsChange: (event: BAIBoardItemsChangeEvent<T>) => void;
-    /** @default (item) => item.data?.content */
-    renderItem?: BoardProps<T>['renderItem'];
     movable?: boolean;
     resizable?: boolean;
     bordered?: boolean;
 }
 declare const BAIBoard: {
-    <T extends BAIBoardDataType = BAIBoardDataType>({ items, onItemsChange, renderItem, movable, resizable, bordered, className, ...boardProps }: BAIBoardProps<T>): React.JSX.Element;
+    <T extends BAIBoardDataType = BAIBoardDataType>({ items, onItemsChange, movable, resizable, bordered, className, ...boardProps }: BAIBoardProps<T>): React.JSX.Element;
     displayName: string;
 };
 export default BAIBoard;
