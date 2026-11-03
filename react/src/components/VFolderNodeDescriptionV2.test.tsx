@@ -57,6 +57,11 @@ vi.mock('./VirtualFolderNodeItems/VirtualFolderPathV2', async () => {
 vi.mock('./VFolderNodesV2', () => ({
   formatBinarySizeInfo: () => null,
 }));
+// The Labels row reads entity types through react-query; keep it out of this contract.
+vi.mock('backend.ai-ui', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('backend.ai-ui')>()),
+  useIsLabelableEntityType: () => false,
+}));
 
 const VFOLDER_ID = '01a156d6-7384-7dba-8016-79cde66f0a84';
 const OWNER = 'owner-uuid';
