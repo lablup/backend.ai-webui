@@ -260,13 +260,17 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
           children:
             definition.key === 'pluginLogin' ? (
               <PluginPathInput
-                aria-label={label.title}
+                label={label.title}
+                data-testid={`webui-setting-${definition.key}-input`}
                 value={String(current ?? '')}
                 onChange={(path) => setValue(definition, path)}
               />
             ) : (
               <BAIUncontrolledInput
                 key={String(current)}
+                label={label.title}
+                isLabelHidden
+                data-testid={`webui-setting-${definition.key}-input`}
                 defaultValue={String(current ?? '')}
                 onCommit={(raw) => setValue(definition, raw.trim())}
                 style={{ maxWidth: 480 }}
@@ -296,13 +300,17 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
           ) : definition.key === 'pluginPage' ? (
             <PluginPathInput
               multiple
-              aria-label={label.title}
+              label={label.title}
+              data-testid={`webui-setting-${definition.key}-input`}
               value={list}
               onChange={(paths) => setValue(definition, paths)}
             />
           ) : (
             <BAIUncontrolledInput
               key={joined}
+              label={label.title}
+              isLabelHidden
+              data-testid={`webui-setting-${definition.key}-input`}
               defaultValue={joined}
               onCommit={(raw) => setValue(definition, parseStringList(raw))}
               style={{ maxWidth: 480 }}

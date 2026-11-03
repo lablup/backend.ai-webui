@@ -22,7 +22,9 @@ type MultipleProps = {
   onChange: (value: Array<string>) => void;
 };
 export type PluginPathInputProps = (SingleProps | MultipleProps) & {
-  'aria-label': string;
+  /** Accessible name of the path box (hidden). */
+  label: string;
+  'data-testid'?: string;
 };
 
 const parseList = (raw: string): Array<string> =>
@@ -38,19 +40,21 @@ const parseList = (raw: string): Array<string> =>
  */
 const PluginPathInput: React.FC<PluginPathInputProps> = (props) => {
   'use memo';
-  const [isInvalid, setIsInvalid] = useState(false);
   const text = props.multiple ? props.value.join(', ') : props.value;
+  // The value an entry was rejected against; a new value (a reset) clears it.
+  const [rejectedFor, setRejectedFor] = useState<string | null>(null);
+  const isInvalid = rejectedFor === text;
 
   const commit = (raw: string) => {
     if (props.multiple) {
       const list = parseList(raw);
       const valid = list.every(isValidPluginPath);
-      setIsInvalid(!valid);
+      setRejectedFor(valid ? null : text);
       if (valid) props.onChange(list);
     } else {
       const path = raw.trim();
       const valid = path === '' || isValidPluginPath(path);
-      setIsInvalid(!valid);
+      setRejectedFor(valid ? null : text);
       if (valid) props.onChange(path);
     }
   };
@@ -58,7 +62,8 @@ const PluginPathInput: React.FC<PluginPathInputProps> = (props) => {
   return (
     <BAIFlex direction="row" gap="xs" align="center">
       <BAIUncontrolledInput
-        aria-label={PLUGIN_ROOT}
+        label={PLUGIN_ROOT}
+        isLabelHidden
         defaultValue={PLUGIN_ROOT}
         disabled
         style={{ width: ROOT_WIDTH }}
@@ -66,7 +71,9 @@ const PluginPathInput: React.FC<PluginPathInputProps> = (props) => {
       <Text color="secondary">/</Text>
       <BAIUncontrolledInput
         key={text}
-        aria-label={props['aria-label']}
+        label={props.label}
+        isLabelHidden
+        data-testid={props['data-testid']}
         defaultValue={text}
         status={isInvalid ? 'error' : undefined}
         onCommit={commit}
