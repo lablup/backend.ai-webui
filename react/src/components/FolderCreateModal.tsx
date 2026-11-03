@@ -28,6 +28,7 @@ import BAIFormItem from './BAIFormItem';
 import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
 // Keeps its antd-shaped contract until the ComplexSelector-based rebuild lands.
 import StorageSelect from './StorageSelect';
+import './collapsible-section.css';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
 import { Collapsible } from '@lablup/ui-common/Collapsible';
@@ -738,8 +739,8 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                 {({ getFieldValue }) =>
                   getFieldValue('usage_mode') !== 'automount' && (
                     <Collapsible
+                      className="bai-collapsible-section"
                       trigger={t('autoMount.AdvancedSettings')}
-                      chevronPosition="start"
                       isOpen={isAdvancedOpen}
                       onOpenChange={setIsAdvancedOpen}
                     >
