@@ -2,12 +2,15 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { ClientIPMaskingPolicyFilter } from '../__generated__/AdminClientIpMaskingPolicyListQuery.graphql';
 import {
   RetentionPolicyFilter,
   AdminRetentionPolicyQuery as AdminRetentionPolicyQueryType,
   RetentionPolicyOrderBy,
 } from '../__generated__/AdminRetentionPolicyQuery.graphql';
-import AdminClientIpMaskingPolicyList from '../components/AdminClientIpMaskingPolicyList';
+import AdminClientIpMaskingPolicyList, {
+  CLIENT_IP_MASKING_FILTER_KEYS,
+} from '../components/AdminClientIpMaskingPolicyList';
 import AdminRetentionPolicy, {
   ADMIN_RETENTION_POLICY_DEFAULT_PAGE_SIZE,
   AdminRetentionPolicyQuery,
@@ -43,10 +46,13 @@ const orderParser = parseAsStringLiteral(
 type TabKey = 'maintenance' | 'retention-policy' | 'client-ip-masking';
 type RetentionPolicyVariables = AdminRetentionPolicyQueryType['variables'];
 
+// One `filter` search param, shared by the retention and client IP masking tabs.
+type MaintenanceFilter = RetentionPolicyFilter & ClientIPMaskingPolicyFilter;
+
 type TabSnapshot = {
   queryParams: {
     order: typeof orderParser.defaultValue;
-    filter: RetentionPolicyFilter | null;
+    filter: MaintenanceFilter | null;
   };
   tablePaginationOption: { current: number; pageSize: number };
 };
@@ -59,8 +65,12 @@ const defaultSnapshotOf = (_tab: TabKey): TabSnapshot => ({
   },
 });
 
-const filterParser = parseAsJson<RetentionPolicyFilter>((value) =>
-  _.pick(value as RetentionPolicyFilter, ['category', 'enabled']),
+const filterParser = parseAsJson<MaintenanceFilter>((value) =>
+  _.pick(value as MaintenanceFilter, [
+    'category',
+    'enabled',
+    ...CLIENT_IP_MASKING_FILTER_KEYS,
+  ]),
 );
 
 const retentionPolicyVariablesOf = (

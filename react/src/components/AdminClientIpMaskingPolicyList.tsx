@@ -34,6 +34,7 @@ import {
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { PlusIcon, SquarePenIcon, Trash2 } from 'lucide-react';
+import { parseAsJson, useQueryState } from 'nuqs';
 import React, { useDeferredValue, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -43,6 +44,13 @@ type ClientIpMaskingPolicyNode = NonNullable<
     AdminClientIpMaskingPolicyListQuery$data['adminClientIpMaskingPolicies']
   >['edges'][number]['node']
 >;
+
+export const CLIENT_IP_MASKING_FILTER_KEYS = ['targetType', 'mode'] as const;
+
+const clientIpMaskingFilterParser = parseAsJson<ClientIPMaskingPolicyFilter>(
+  (value) =>
+    _.pick(value as ClientIPMaskingPolicyFilter, CLIENT_IP_MASKING_FILTER_KEYS),
+);
 
 const AdminClientIpMaskingPolicyList: React.FC = () => {
   'use memo';
@@ -55,11 +63,16 @@ const AdminClientIpMaskingPolicyList: React.FC = () => {
     useState<ClientIpMaskingPolicySettingModalFragment$key | null>(null);
   const [deletingPolicy, setDeletingPolicy] =
     useState<ClientIpMaskingPolicyNode | null>(null);
-  const [filter, setFilter] = useState<ClientIPMaskingPolicyFilter | null>(
-    null,
+  const [filterParam, setFilterParam] = useQueryState(
+    'filter',
+    clientIpMaskingFilterParser.withOptions({ history: 'replace' }),
   );
+  const filter = _.isEmpty(filterParam) ? null : filterParam;
+  const setFilter = (next: ClientIPMaskingPolicyFilter | null) => {
+    setFilterParam(_.isEmpty(next) ? null : next);
+  };
   const deferredFilter = useDeferredValue(filter);
-  const isFilterPending = deferredFilter !== filter;
+  const isFilterPending = !_.isEqual(deferredFilter, filter);
 
   const { adminClientIpMaskingPolicies } =
     useLazyLoadQuery<AdminClientIpMaskingPolicyListQuery>(
