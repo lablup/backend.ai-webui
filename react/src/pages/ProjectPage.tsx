@@ -17,6 +17,7 @@ import ProjectAdminSettingModal, {
   buildProjectAdminRoleFilter,
   selectProjectAdminRoles,
 } from '../components/ProjectAdminSettingModal';
+import ProjectAutoMountSettingModal from '../components/ProjectAutoMountSettingModal';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -52,6 +53,7 @@ import * as _ from 'lodash-es';
 import {
   Trash2,
   BanIcon,
+  FolderSync,
   PlusIcon,
   ShieldUserIcon,
   SquarePenIcon,
@@ -91,6 +93,10 @@ const ProjectPage = () => {
   const relayEnvironment = useRelayEnvironment();
   const baiClient = useSuspendedBackendaiClient();
   const supportsTypeFilter = baiClient.isManagerVersionCompatibleWith('26.9.0');
+  const supportsAutoMount =
+    baiClient.isManagerVersionCompatibleWith('26.10.0a5');
+  const [autoMountProject, setAutoMountProject] =
+    useState<ProjectInList | null>(null);
   const [openSettingModal, { toggle: toggleSettingModal }] = useToggle(false);
   const [openBulkEditModal, { toggle: toggleBulkEditModal }] = useToggle(false);
   const [selectedProjectList, setSelectedProjectList] = useState<ProjectNode[]>(
@@ -555,6 +561,17 @@ const ProjectPage = () => {
                               action: () =>
                                 openProjectAdminSettingModal(record),
                             },
+                            ...(supportsAutoMount
+                              ? [
+                                  {
+                                    key: 'auto-mount',
+                                    title: t('autoMount.AutoMountFolders'),
+                                    icon: <FolderSync />,
+                                    disabled: isModelStore || !record.row_id,
+                                    onClick: () => setAutoMountProject(record),
+                                  },
+                                ]
+                              : []),
                             {
                               key: 'edit',
                               title: t('project.EditProject'),
@@ -689,6 +706,14 @@ const ProjectPage = () => {
             />
           </BAIUnmountAfterClose>
         )}
+        <BAIUnmountAfterClose>
+          <ProjectAutoMountSettingModal
+            open={!!autoMountProject}
+            projectId={autoMountProject?.row_id ?? ''}
+            projectName={autoMountProject?.name}
+            onCancel={() => setAutoMountProject(null)}
+          />
+        </BAIUnmountAfterClose>
         <BAIDeleteConfirmModal
           open={!!purgingProject}
           title={t('project.PurgeProject')}
