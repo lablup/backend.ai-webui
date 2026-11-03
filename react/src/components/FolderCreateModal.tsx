@@ -31,7 +31,6 @@ import StorageSelect from './StorageSelect';
 import './collapsible-section.css';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
-import { Collapsible } from '@lablup/ui-common/Collapsible';
 import { Divider } from '@lablup/ui-common/Divider';
 import { HStack, VStack } from '@lablup/ui-common/Stack';
 import { useTheme } from '@lablup/ui-common/theme';
@@ -70,12 +69,6 @@ interface FolderCreateFormItemsType {
   auto_mount_subpath?: string;
   auto_mount_permission?: 'READ_ONLY' | 'READ_WRITE' | 'RW_DELETE';
 }
-
-const AUTO_MOUNT_FIELDS = [
-  'auto_mount_destination',
-  'auto_mount_subpath',
-  'auto_mount_permission',
-];
 
 // Both mutations select the same vfolder fields.
 export type FolderCreationResponse =
@@ -184,7 +177,6 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   const [dontAskAgain, setDontAskAgain] = useState(false);
   const [isConfirmPending, setIsConfirmPending] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
-  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
 
   const { upsertNotification } = useSetBAINotification();
 
@@ -307,28 +299,10 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
       }
     `);
 
-  // A collapsed section would hide the failing auto-mount fields.
-  const validateForm = async () => {
-    try {
-      return await formRef.current?.validateFields();
-    } catch (error) {
-      const errorFields: Array<{ name: Array<string | number> }> =
-        _.get(error, 'errorFields') ?? [];
-      if (
-        errorFields.some((field) =>
-          AUTO_MOUNT_FIELDS.includes(String(field.name[0])),
-        )
-      ) {
-        setIsAdvancedOpen(true);
-      }
-      throw error;
-    }
-  };
-
   const handleOk = async () => {
     let values: FolderCreateFormItemsType | undefined;
     try {
-      values = await validateForm();
+      values = await formRef.current?.validateFields();
     } catch (error) {
       // The form renders inline errors for validation failures; just log.
       logger.error(error);
@@ -471,7 +445,8 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
               clickAction={async () => {
                 if (canCreateInSharedProject && !skipSharedFolderConfirm) {
                   // Ask only once the form is valid; inline errors show otherwise.
-                  const isValid = await validateForm()
+                  const isValid = await formRef.current
+                    ?.validateFields()
                     .then(() => true)
                     .catch(() => false);
                   if (isValid) setIsSharedConfirmOpen(true);
@@ -738,26 +713,39 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
               <Form.Item dependencies={['usage_mode']} noStyle>
                 {({ getFieldValue }) =>
                   getFieldValue('usage_mode') !== 'automount' && (
-                    <Collapsible
+                    // The switch is the section's only expander: its fields
+                    // exist only while auto-mount is on.
+                    <VStack
                       className="bai-collapsible-section"
-                      trigger={t('autoMount.AdvancedSettings')}
-                      isOpen={isAdvancedOpen}
-                      onOpenChange={setIsAdvancedOpen}
+                      align="stretch"
+                      data-testid="folder-create-auto-mount-section"
                     >
-                      <BAIFormItem
-                        label={t('data.AutoMount')}
-                        tooltip={t('autoMount.AutoMountInSessionsDesc')}
-                        name={'auto_mount_enabled'}
-                        layout="horizontal"
+                      <HStack
+                        className="bai-toggle-section__header"
+                        justify="between"
+                        vAlign="center"
                       >
-                        <BAISwitch>
-                          {t('autoMount.AutoMountInSessions')}
-                        </BAISwitch>
-                      </BAIFormItem>
+                        <HStack gap={1} vAlign="center">
+                          <BAIText strong>
+                            {t('autoMount.AutoMountSettings')}
+                          </BAIText>
+                          <BAIQuestionIconWithTooltip
+                            title={t('autoMount.AutoMountInSessionsDesc')}
+                          />
+                        </HStack>
+                        <Form.Item name={'auto_mount_enabled'} noStyle>
+                          <BAISwitch
+                            aria-label={t('autoMount.AutoMountSettings')}
+                          />
+                        </Form.Item>
+                      </HStack>
                       <Form.Item dependencies={['auto_mount_enabled']} noStyle>
                         {({ getFieldValue: getValue }) =>
                           getValue('auto_mount_enabled') && (
-                            <>
+                            <VStack
+                              className="bai-toggle-section__content"
+                              align="stretch"
+                            >
                               <BAIFormItem
                                 label={t('autoMount.MountDestination')}
                                 tooltip={t('autoMount.MountDestinationDesc')}
@@ -815,11 +803,11 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                                   ]}
                                 />
                               </BAIFormItem>
-                            </>
+                            </VStack>
                           )
                         }
                       </Form.Item>
-                    </Collapsible>
+                    </VStack>
                   )
                 }
               </Form.Item>
