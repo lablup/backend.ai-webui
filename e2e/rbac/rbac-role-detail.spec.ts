@@ -628,6 +628,99 @@ test.describe(
       ).toBeVisible({ timeout: 10000 });
     });
 
+    test('Superadmin sees the refused user listed when a revoke partially fails', async ({
+      page,
+      request,
+    }) => {
+      const TEST_USER_EMAIL = ASSIGN_FIXTURE_EMAIL;
+
+      // 1. Login, create a fresh role and assign the fixture user to it
+      await loginAsAdmin(page, request);
+      await navigateTo(page, 'rbac');
+      await cleanupTestRole(page);
+      await createTestRole(page);
+      const drawer = await openRoleDrawer(page, ROLE_NAME);
+      await drawerTab(page, 'Role Assignments').click();
+      await drawer.getByRole('button', { name: 'Add User' }).click();
+      const assignModal = page.getByRole('dialog', { name: 'Add User' });
+      await expect(assignModal).toBeVisible();
+      await pickAssignUser(page, assignModal, TEST_USER_EMAIL);
+      await assignModal.getByRole('button', { name: 'Add' }).click();
+      await expect(assignModal).toBeHidden({ timeout: 10000 });
+      const userRow = drawer
+        .getByRole('row')
+        .filter({ hasText: TEST_USER_EMAIL });
+      await expect(userRow).toBeVisible({ timeout: 10000 });
+
+      // 2. Revoke the same user from a second tab, leaving this tab's list stale
+      const otherPage = await page.context().newPage();
+      try {
+        const otherDrawer = await openRoleDrawer(otherPage, ROLE_NAME);
+        await drawerTab(otherPage, 'Role Assignments').click();
+        const otherRow = otherDrawer
+          .getByRole('row')
+          .filter({ hasText: TEST_USER_EMAIL });
+        await otherRow.hover();
+        await otherRow
+          .getByRole('button', { name: 'Revoke User', exact: true })
+          .click();
+        await otherPage
+          .getByRole('dialog', { name: 'Revoke User' })
+          .getByRole('button', { name: 'Revoke User' })
+          .click();
+        await expect(otherRow).toBeHidden({ timeout: 10000 });
+      } finally {
+        await otherPage.close();
+      }
+
+      // 3. Revoke the already-revoked user from the stale list
+      await userRow.hover();
+      await userRow
+        .getByRole('button', { name: 'Revoke User', exact: true })
+        .click();
+      const revokeModal = page.getByRole('dialog', { name: 'Revoke User' });
+      await revokeModal.getByRole('button', { name: 'Revoke User' }).click();
+      await expect(revokeModal).toBeHidden({ timeout: 10000 });
+
+      // 4. The server refuses that user: the bulk error modal lists one row
+      //    per refused user with the server's reason. The modal makes the
+      //    page behind it inert, so the matching toast is not reachable here.
+      const errorModal = page.getByRole('dialog', {
+        name: 'Action execution failed',
+      });
+      await expect(errorModal).toBeVisible({ timeout: 10000 });
+      await expect(
+        errorModal.getByText('1 user(s) failed to be revoked.'),
+      ).toBeVisible();
+      const failureRow = errorModal
+        .getByRole('row')
+        .filter({ hasText: TEST_USER_EMAIL });
+      await expect(failureRow).toBeVisible();
+      await expect(failureRow).toContainText(/is not assigned to user/i);
+
+      // 5. Closing the report leaves the refused user selected for a retry
+      await page.keyboard.press('Escape');
+      await expect(errorModal).toBeHidden();
+      await expect(userRow.getByRole('checkbox')).toBeChecked();
+      await expect(drawer.getByText('1 selected')).toBeVisible();
+
+      // 6. Reopening the drawer shows the user is no longer assigned
+      await drawer.getByRole('button', { name: 'Close' }).click();
+      await expect(drawer).toBeHidden({ timeout: 5000 });
+      await page
+        .getByRole('row')
+        .filter({ hasText: ROLE_NAME })
+        .first()
+        .getByRole('button', { name: ROLE_NAME, exact: true })
+        .click();
+      await expect(drawer).toBeVisible({ timeout: 10000 });
+      await drawerTab(page, 'Role Assignments').click();
+      await expect(userRow).toBeHidden({ timeout: 10000 });
+      await drawer.getByRole('button', { name: 'Close' }).click();
+      await expect(drawer).toBeHidden({ timeout: 5000 });
+      await cleanupTestRole(page);
+    });
+
     test('Superadmin sees empty state in Role Assignments tab when role has no users', async ({
       page,
       request,
