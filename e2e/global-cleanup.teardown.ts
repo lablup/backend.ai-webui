@@ -22,7 +22,7 @@
  * project has finished, so no parallel test owns a live `e2e-*` folder.
  *
  * It also purges, via the admin GraphQL API (no browser UI involved), any
- * leftover `e2e-*` fixture user, e2e deployment (`E2E_DEPLOYMENT_PATTERN`),
+ * leftover `e2e-*` fixture user, stale e2e deployment (`E2E_DEPLOYMENT_PATTERN`),
  * stale `e2e-preset-*` Prometheus query preset and stale `e2e-test-project-*`
  * project, so those sweeps cannot fail the same way a per-test UI-based
  * cleanup can. Specs register what they create with `createTestResources()`
@@ -85,7 +85,7 @@ async function sweepLeftoverE2EUsers(): Promise<void> {
  * (a UI-delete flow) is the primary cleanup path, but it can fail for the same
  * reason the test body already failed (e.g. mid-modal, a stuck locator),
  * leaking a `PENDING` deployment with no other backstop. This purges any
- * leftover via the admin GraphQL API instead of the UI, so it cannot fail the
+ * leftover past the helper's age gate via the admin GraphQL API instead of the UI, so it cannot fail the
  * same way. API-based, so it does not use `page`; guard it directly (like
  * sweepLeftoverE2EUsers) so a failure never reds the run.
  */
@@ -169,7 +169,8 @@ test.describe('Global e2e cleanup', () => {
   // (and the previous 300s) so it can drain a larger backlog instead of timing
   // out mid-sweep; the per-sweep deadlines above keep it from ever reaching
   // this limit.
-  test.describe.configure({ timeout: 600_000 });
+  // `default` keeps file order under `fullyParallel`: API sweeps follow the UI ones.
+  test.describe.configure({ mode: 'default', timeout: 600_000 });
 
   test('sweep leftover e2e vfolders (user)', async ({ page, request }) => {
     await loginAsUser(page, request);
@@ -215,12 +216,10 @@ test.describe('Global e2e cleanup', () => {
     }
   });
 
-  // API-only sweeps, in their own test (and so their own 600s budget): they
-  // have no deadline, and running them after the UI sweeps above could hit that
-  // test's timeout on a large backlog. No `page`; guard each directly so a
-  // failure never reds the run.
+  // Own test, so its own 600s budget: these sweeps have no deadline. No `page`;
+  // guard each directly so a failure never reds the run.
   test('sweep leftover e2e deployments, presets and projects (API)', async () => {
-    // Purge any e2e deployment a per-spec afterEach failed to reap.
+    // Purge any e2e deployment past the age gate that an afterEach failed to reap.
     try {
       await sweepLeftoverDeployments();
     } catch (error) {

@@ -414,8 +414,7 @@ interface PrometheusQueryPresetRow {
 /**
  * Lists Prometheus query presets (auto-scaling rule presets) matching a
  * server-side `QueryDefinitionFilter`, paging with limit/offset in creation
- * order (new rows land on the last page, so they cannot shift earlier ones) so
- * a large backlog is read in full before anything is purged.
+ * order, before anything is purged.
  */
 async function listPrometheusQueryPresets(
   api: APIRequestContext,
