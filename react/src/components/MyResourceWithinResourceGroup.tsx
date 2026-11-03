@@ -24,6 +24,7 @@ import {
   useFetchKey,
   BAISegmentedControl,
   BAISegmentedControlItem,
+  useIsInBAIBoardItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { ReactNode, useDeferredValue, useMemo, useTransition } from 'react';
@@ -42,6 +43,7 @@ const MyResourceWithinResourceGroup: React.FC<
 > = ({ fetchKey, refetching, extra, ...props }) => {
   const { t } = useTranslation();
   const { token } = useTheme();
+  const isInBoard = useIsInBAIBoardItem();
 
   const currentProject = useCurrentProjectValue();
   if (!currentProject.name) {
@@ -188,8 +190,13 @@ const MyResourceWithinResourceGroup: React.FC<
       direction="column"
       align="stretch"
       style={{
-        paddingInline: token('--spacing-8'),
-        paddingBottom: token('--spacing-4'),
+        // On a board the board pads the item.
+        ...(isInBoard
+          ? {}
+          : {
+              paddingInline: token('--spacing-8'),
+              paddingBottom: token('--spacing-4'),
+            }),
         ...props.style,
       }}
       {..._.omit(props, ['style'])}

@@ -2,7 +2,7 @@ export { default as BAIImageWithFallback } from './BAIImageWithFallback';
 export type { BAIImageWithFallbackProps } from './BAIImageWithFallback';
 export { default as BAIBadge } from './BAIBadge';
 export type { BAIBadgeProps } from './BAIBadge';
-export { default as BAIBoard } from './BAIBoard';
+export { default as BAIBoard, useIsInBAIBoardItem } from './BAIBoard';
 export type {
   BAIBoardDataType,
   BAIBoardItem,
@@ -81,6 +81,7 @@ export {
 } from './BAISelect';
 export type {
   BAISelectProps,
+  BAISelectOption,
   BAISelectOptionProps,
   BAISelectOptionGroupProps,
 } from './BAISelect';
@@ -319,8 +320,6 @@ export { default as BAIRadioList, BAIRadioListItem } from './BAIRadioList';
 export type { BAIRadioListProps, BAIRadioListItemProps } from './BAIRadioList';
 export { default as BAISegmentedControl } from './BAISegmentedControl';
 export type { BAISegmentedControlProps } from './BAISegmentedControl';
-export { default as BAISelector } from './BAISelector';
-export type { BAISelectorProps } from './BAISelector';
 export { default as BAISlider } from './BAISlider';
 export type { BAISliderProps } from './BAISlider';
 export { default as BAISwitch } from './BAISwitch';

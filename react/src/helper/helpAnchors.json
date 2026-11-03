@@ -106,11 +106,6 @@
       "anchor": "users"
     },
     {
-      "path": "project-data",
-      "docPage": "project_admin.html",
-      "anchor": "data"
-    },
-    {
       "path": "project-admin-session",
       "docPage": "project_admin.html",
       "anchor": "sessions"

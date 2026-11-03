@@ -1,5 +1,6 @@
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIAlertIconWithTooltip from './BAIAlertIconWithTooltip';
+import { useIsInBAIBoardItem } from './BAIBoard';
 import BAIBoardItemTitle, {
   type BAIBoardItemTitleProps,
 } from './BAIBoardItemTitle';
@@ -21,6 +22,7 @@ const BAIBoardItemErrorBoundary: React.FC<BAIBoardItemErrorBoundaryProps> = ({
 }) => {
   const { t } = useBAIi18n();
   const { token } = useTheme();
+  const isInBoard = useIsInBAIBoardItem();
   return (
     <ErrorBoundary
       fallbackRender={() => {
@@ -29,8 +31,12 @@ const BAIBoardItemErrorBoundary: React.FC<BAIBoardItemErrorBoundaryProps> = ({
             data-bai-board-item-status={status}
             style={{
               height: '100%',
-              paddingInline: token('--spacing-8'),
-              paddingBottom: token('--spacing-4'),
+              ...(isInBoard
+                ? {}
+                : {
+                    paddingInline: token('--spacing-8'),
+                    paddingBottom: token('--spacing-4'),
+                  }),
               ...style,
             }}
           >

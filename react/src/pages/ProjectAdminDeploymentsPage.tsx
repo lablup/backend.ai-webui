@@ -120,7 +120,7 @@ const ProjectAdminDeploymentsContent: React.FC<
       : { status: { notIn: finishedStatuses } };
 
   const queryVariables = {
-    projectId,
+    scope: { project: [{ value: projectId }] },
     filter: {
       ...(queryParams.filter ?? {}),
       ...statusCategoryFilter,
@@ -136,14 +136,14 @@ const ProjectAdminDeploymentsContent: React.FC<
   const data = useLazyLoadQuery<ProjectAdminDeploymentsPageQuery>(
     graphql`
       query ProjectAdminDeploymentsPageQuery(
-        $projectId: UUID!
+        $scope: DeploymentSearchScope!
         $filter: DeploymentFilter
         $orderBy: [DeploymentOrderBy!]
         $limit: Int
         $offset: Int
       ) {
-        projectDeployments(
-          scope: { projectId: $projectId }
+        scopedDeployments(
+          scope: $scope
           filter: $filter
           orderBy: $orderBy
           limit: $limit
@@ -181,9 +181,9 @@ const ProjectAdminDeploymentsContent: React.FC<
   );
 
   const deploymentNodes = filterOutNullAndUndefined(
-    _.map(data.projectDeployments?.edges, 'node'),
+    _.map(data.scopedDeployments?.edges, 'node'),
   );
-  const total = data.projectDeployments?.count ?? 0;
+  const total = data.scopedDeployments?.count ?? 0;
   const editingDeployment =
     editingDeploymentId == null
       ? null

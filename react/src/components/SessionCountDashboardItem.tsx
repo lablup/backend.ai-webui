@@ -11,6 +11,7 @@ import {
   BAIRowWrapWithDividers,
   BAIStatistic,
   BAIFetchKeyButton,
+  useIsInBAIBoardItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTransition } from 'react';
@@ -31,6 +32,7 @@ const SessionCountDashboardItem: React.FC<SessionCountDashboardItemProps> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = useTheme();
+  const isInBoard = useIsInBAIBoardItem();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
   const [data, refetch] = useRefetchableFragment(
@@ -84,7 +86,8 @@ const SessionCountDashboardItem: React.FC<SessionCountDashboardItemProps> = ({
       direction="column"
       align="stretch"
       style={{
-        paddingInline: token('--spacing-8'),
+        // On a board the board pads the item.
+        ...(isInBoard ? {} : { paddingInline: token('--spacing-8') }),
         ...props.style,
       }}
       {..._.omit(props, ['style'])}
