@@ -3757,7 +3757,7 @@
     "MyKeypairInfo": "Informacje o mojej parze kluczy",
     "NEODataPage": "Strona danych NEO",
     "NEOSessionList": "Lista sesji NEO",
-    "NoExistingSSHKeypair": "Brak pary kluczy SSH do skopiowania. Aby ją zarejestrować, naciśnij przycisk Wprowadź ręcznie.",
+    "NoExistingSSHKeypair": "Brak zarejestrowanego klucza publicznego SSH. Wprowadź klucz i naciśnij Zapisz.",
     "PackageInstallation": "Instalacja pakietu",
     "Preferences": "Preferencje",
     "PreferredSSHPort": "Preferowany port SSH",

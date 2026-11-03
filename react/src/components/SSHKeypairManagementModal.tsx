@@ -2,20 +2,18 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
+import { Form, type FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useTanQuery } from '../hooks/reactQueryAlias';
-import SSHKeyBlock from './SSHKeyBlock';
-import SSHKeypairManualFormModal from './SSHKeypairManualFormModal';
-import { Button } from '@astryxdesign/core/Button';
-import { HStack } from '@astryxdesign/core/Stack';
+import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
+import BAIFormItem from './BAIFormItem';
+import { AstryxFormTextArea } from './astryxFormControls';
 import {
   BAIModal,
   BAIModalProps,
-  BAIUnmountAfterClose,
-  useToggle,
-  useUpdatableState,
+  useErrorMessageResolver,
 } from 'backend.ai-ui';
-import React, { useTransition } from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface SSHKeypairManagementModalProps extends BAIModalProps {
@@ -26,72 +24,74 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
   onRequestClose,
   ...modalProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
-  const [, startRefreshModalTransition] = useTransition();
-  const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
-  const [
-    isOpenSSHKeypairManualFormModal,
-    {
-      toggle: toggleSSHKeypairManualFormModal,
-      setLeft: closeSSHKeypairManualFormModal,
-    },
-  ] = useToggle(false);
-
+  const { message } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
   const baiClient = useSuspendedBackendaiClient();
-  const { data } = useTanQuery<{
+  const formRef = useRef<FormInstance>(null);
+
+  const { data, isFetching, refetch } = useTanQuery<{
     ssh_public_key: string;
   }>({
-    queryKey: ['fetchSSHKeypair', fetchKey],
-    queryFn: () => {
-      return baiClient.fetchSSHKeypair();
+    queryKey: ['fetchSSHKeypair'],
+    queryFn: () => baiClient.fetchSSHKeypair(),
+    enabled: !!modalProps.open,
+  });
+
+  // Hook-level callbacks, not `mutate(…, { onSuccess })`: per-call callbacks
+  // never fire once the modal has unmounted.
+  const mutationToPostSSHKeypair = useTanMutation({
+    mutationFn: (values: { pubkey: string }) =>
+      baiClient.postSSHKeypair(values),
+    onSuccess: () => {
+      message.success(t('userSettings.SSHKeypairEnterManuallyFinished'));
+      refetch();
+      onRequestClose(true);
+    },
+    onError: (error) => {
+      message.error(getErrorMessage(error));
     },
   });
 
   return (
-    <>
-      <BAIModal
-        title={t('userSettings.SSHKeypairManagement')}
-        onCancel={() => onRequestClose()}
-        // The same row BAIModal builds for its own OK/Cancel footer, so these
-        // actions sit where every other modal's do (right-aligned, spaced)
-        // instead of flush-left with no gap, which is what a bare array gets.
-        footer={
-          <HStack justify="end" gap={2} align="center">
-            <Button
-              variant="secondary"
-              label={t('button.Close')}
-              onClick={() => onRequestClose()}
-            />
-            <Button
-              variant="primary"
-              label={t('button.EnterManually')}
-              onClick={toggleSSHKeypairManualFormModal}
-            />
-          </HStack>
-        }
-        {...modalProps}
+    <BAIModal
+      title={t('userSettings.SSHKeypairManagement')}
+      okText={t('button.Save')}
+      onOk={() => {
+        formRef.current
+          ?.validateFields()
+          .then((values) => {
+            mutationToPostSSHKeypair.mutate(values);
+          })
+          .catch(() => {});
+      }}
+      onCancel={() => onRequestClose()}
+      confirmLoading={mutationToPostSSHKeypair.isPending}
+      {...modalProps}
+    >
+      {/* Remounts once the key arrives so the field starts from it. */}
+      <Form
+        key={data ? 'loaded' : 'loading'}
+        ref={formRef}
+        preserve={false}
+        layout="vertical"
+        initialValues={{ pubkey: data?.ssh_public_key ?? '' }}
       >
-        <SSHKeyBlock
-          label={t('userSettings.CurrentSSHPublicKey')}
-          value={data?.ssh_public_key}
-          placeholder={t('userSettings.NoExistingSSHKeypair')}
-        />
-      </BAIModal>
-      <BAIUnmountAfterClose>
-        <SSHKeypairManualFormModal
-          open={isOpenSSHKeypairManualFormModal}
-          // Closing is idempotent: the modal now closes from the mutation's
-          // onSuccess, so a toggle would reopen it after a cancel mid-request.
-          onCancel={closeSSHKeypairManualFormModal}
-          onRequestClose={closeSSHKeypairManualFormModal}
-          onRequestRefresh={() => {
-            startRefreshModalTransition(() => {
-              updateFetchKey();
-            });
-          }}
-        />
-      </BAIUnmountAfterClose>
-    </>
+        <BAIFormItem
+          name="pubkey"
+          label={t('userSettings.PublicKey')}
+          rules={[{ required: true, message: t('settings.InputRequired') }]}
+        >
+          <AstryxFormTextArea
+            label={t('userSettings.PublicKey')}
+            placeholder={t('userSettings.NoExistingSSHKeypair')}
+            disabled={isFetching && !data}
+            rows={6}
+          />
+        </BAIFormItem>
+      </Form>
+    </BAIModal>
   );
 };
 

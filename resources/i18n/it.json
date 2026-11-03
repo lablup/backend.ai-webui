@@ -3754,7 +3754,7 @@
     "MyKeypairInfo": "Informazioni sulla mia coppia di chiavi",
     "NEODataPage": "Pagina dati NEO",
     "NEOSessionList": "Elenco delle sessioni NEO",
-    "NoExistingSSHKeypair": "Nessuna coppia di chiavi SSH da copiare. Per registrarne una, premere il pulsante Inserire manualmente.",
+    "NoExistingSSHKeypair": "Nessuna chiave pubblica SSH registrata. Inseriscine una e premi Salva.",
     "PackageInstallation": "Installazione del pacchetto",
     "Preferences": "Preferenze",
     "PreferredSSHPort": "Porta SSH preferita",

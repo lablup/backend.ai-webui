@@ -3756,7 +3756,7 @@
     "MyKeypairInfo": "Meine Schlüsselpaarinformationen",
     "NEODataPage": "NEO -Datenseite",
     "NEOSessionList": "NEO Sitzungsliste",
-    "NoExistingSSHKeypair": "Kein zu kopierendes SSH-Schlüsselpaar. Um ein SSH-Schlüsselpaar zu registrieren, klicken Sie bitte auf die Schaltfläche Manuell eingeben.",
+    "NoExistingSSHKeypair": "Es ist kein öffentlicher SSH-Schlüssel registriert. Geben Sie einen ein und klicken Sie auf Speichern.",
     "PackageInstallation": "Paketinstallation",
     "Preferences": "Einstellungen",
     "PreferredSSHPort": "Bevorzugter SSH-Port",
