@@ -273,7 +273,7 @@ const DonutChart: React.FC<DonutChartProps> = ({
         role="group"
         style={
           density.columns === 2
-            ? { flex: 'none', width: '100%' }
+            ? { flex: '0 1 auto', minWidth: 0, maxWidth: '100%' }
             : { flex: 'none', maxWidth: '100%' }
         }
       >
@@ -285,10 +285,10 @@ const DonutChart: React.FC<DonutChartProps> = ({
             key={columnIndex}
             direction="column"
             align="stretch"
-            // Two columns share the card's width; one column sizes to its lines.
+            // Columns size to their lines and shrink, names truncating, when the card is narrow.
             style={
               density.columns === 2
-                ? { flex: '1 1 0', minWidth: 0 }
+                ? { flex: '0 1 auto', minWidth: 0 }
                 : { width: 'max-content', maxWidth: '100%' }
             }
           >
