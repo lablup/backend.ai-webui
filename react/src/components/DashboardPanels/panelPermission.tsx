@@ -73,6 +73,9 @@ export const thrownPermissionDeniedCode = (error: unknown): string | null => {
 
 type Caught<T> = Result<T, unknown> | null | undefined;
 
+/** The value type of a `@catch(to: RESULT)` field. */
+export type CaughtValue<R> = R extends { ok: true; value: infer V } ? V : never;
+
 /**
  * A card's primary field: its value, or null on another error (as before
  * `@catch`). A permission denial throws, so the card is hidden or shows a notice.

@@ -7,6 +7,7 @@ import { useWebUINavigate } from '../../hooks';
 import { useBAIPaginationOptionState } from '../../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import SessionNodes from '../SessionNodes';
+import { readPrimary } from './panelPermission';
 import { resourceRegistry } from './resourceRegistry';
 import type { PanelDescriptor } from './types';
 import { useDashboardQueryScope } from './useDashboardFilters';
@@ -64,7 +65,7 @@ export const SessionNodesPanelContent: React.FC<{
       fetchKey: deferredFetchKey,
     },
   );
-  const connection = data.compute_session_nodes;
+  const connection = readPrimary(data.compute_session_nodes);
   const sessions = filterOutNullAndUndefined(
     connection?.edges.map((e) => e?.node),
   );
