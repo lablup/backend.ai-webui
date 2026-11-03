@@ -370,6 +370,7 @@ const DonutChart: React.FC<DonutChartProps> = ({
                       fill={row.color}
                       color={row.color}
                       aria-hidden
+                      style={{ flexShrink: 0 }}
                     />
                     <Text maxLines={1} xstyle={styles.nameText}>
                       {row.label}
