@@ -151,8 +151,8 @@ const ResourceGroupList: React.FC = () => {
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const isRefetching = queryVariables !== deferredQueryVariables;
 
-  // `driver` / `driver_opts` are deliberately absent from the strawberry
-  // `ResourceGroup`, so there is no Driver column (its value is always "static").
+  // No Driver column: `driver` / `driver_opts` are absent from the strawberry
+  // `ResourceGroup` and the manager never reads them.
   const { adminResourceGroups } = useLazyLoadQuery<ResourceGroupListQuery>(
     graphql`
       query ResourceGroupListQuery(

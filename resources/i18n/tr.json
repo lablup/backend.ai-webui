@@ -2723,8 +2723,6 @@
     "DeleteResourceGroup": "Kaynak Grubunu Sil",
     "Description": "Açıklama",
     "Domain": "Etki Alanı",
-    "Driver": "sürücü",
-    "DriverOptions": "Sürücü Seçenekleri",
     "DuplicateHandlerOverride": "Bu handler zaten geçersiz kılındı.",
     "DuplicateResourceSlot": "Bu kaynak yuvası zaten eklendi.",
     "EditDefaultDeploymentOptions": "Varsayılan Dağıtım Seçeneklerini Düzenle",
