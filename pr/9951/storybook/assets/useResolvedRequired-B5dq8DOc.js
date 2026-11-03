@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-sJBDdmOt.js";import{t}from"./react-DlPsW1c0.js";import{n,t as r}from"./FormLayoutContext-0-cRCLNI.js";function i({isRequired:e=!1,isOptional:t=!1}){let{defaultOptionality:n}=(0,a.use)(r);return!t&&(e||n===`required`)}var a;function o(){return(o=e((()=>{a=t(),n()})))()}export{i as n,o as t};
