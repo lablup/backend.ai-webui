@@ -36,7 +36,6 @@ import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAICheckboxInput,
   BAINumberInput,
-  BAISelector,
   BAISwitch,
   BAITagsInput,
   BAITextArea,
@@ -978,7 +977,8 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             />
           </BAIFormItem>
           <BAIFormItem name="status" label={t('credential.UserStatus')}>
-            <BAISelector
+            <BAISelect
+              showSearch={false}
               aria-label={t('credential.UserStatus')}
               options={[
                 {
@@ -1003,7 +1003,8 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
           {!!currentUserRole &&
             currentUserRole in permissionRangeOfRoleChanges && (
               <BAIFormItem name="role" label={t('credential.Role')}>
-                <BAISelector
+                <BAISelect
+                  showSearch={false}
                   aria-label={t('credential.Role')}
                   options={_.map(
                     permissionRangeOfRoleChanges[currentUserRole],

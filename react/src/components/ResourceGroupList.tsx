@@ -151,8 +151,8 @@ const ResourceGroupList: React.FC = () => {
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const isRefetching = queryVariables !== deferredQueryVariables;
 
-  // `driver` / `driver_opts` are deliberately absent from the strawberry
-  // `ResourceGroup`, so there is no Driver column (its value is always "static").
+  // No Driver column: `driver` / `driver_opts` are absent from the strawberry
+  // `ResourceGroup` and the manager never reads them.
   const { adminResourceGroups } = useLazyLoadQuery<ResourceGroupListQuery>(
     graphql`
       query ResourceGroupListQuery(
@@ -612,7 +612,11 @@ const ResourceGroupList: React.FC = () => {
         entityLabelsFrgmt={labelingResourceGroup?.entityLabels}
         onRequestClose={(success) => {
           setLabelingResourceGroup(null);
-          if (success) updateFetchKey();
+          if (success) {
+            startRefetchTransition(() => {
+              updateFetchKey();
+            });
+          }
         }}
       />
       <BAIDeleteConfirmModal
@@ -672,6 +676,17 @@ const ResourceGroupList: React.FC = () => {
           open={isDrawerOpen}
           resourceGroupFrgmt={drawerResourceGroup ?? shownResourceGroup}
           onRequestClose={() => setIsDrawerOpen(false)}
+          onEditLabels={
+            drawerResourceGroup
+              ? () => setLabelingResourceGroup(drawerResourceGroup)
+              : undefined
+          }
+          onLabelClick={(label) => {
+            setIsDrawerOpen(false);
+            setFilter(toEntityLabelFilter(label));
+            setTablePaginationOption({ current: 1 });
+            setSelectedRowKeys([]);
+          }}
           onRequestRefetch={() => {
             startRefetchTransition(() => {
               updateFetchKey();

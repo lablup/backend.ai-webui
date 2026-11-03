@@ -140,9 +140,6 @@ const AdminVFolderNodeListPage = React.lazy(
 const ProjectAdminUsersPage = React.lazy(
   () => import('./pages/ProjectAdminUsersPage'),
 );
-const ProjectAdminDataPage = React.lazy(
-  () => import('./pages/ProjectAdminDataPage'),
-);
 const ProjectAdminDeploymentsPage = React.lazy(
   () => import('./pages/ProjectAdminDeploymentsPage'),
 );
@@ -205,7 +202,7 @@ const ScopeIndexRedirect: React.FC<{ scope: 'admin' | 'projectAdmin' }> = ({
   if (scope === 'projectAdmin') {
     // First project-admin page in sider order, already narrowed by the
     // config blocklist / inactive-list (so a hidden Users page falls through
-    // to Data, etc.). Only super/domain admins and project admins of the
+    // to Data, etc.). Only superadmins and project admins of the
     // URL project reach this element (RouteAccessGuard enforces
     // `access: 'projectAdmin'`). When the config hides every project-admin
     // page, fall back to the user's general default page.
@@ -224,7 +221,7 @@ const ScopeIndexRedirect: React.FC<{ scope: 'admin' | 'projectAdmin' }> = ({
     );
   }
 
-  // `/admin`: first admin menu item. Only super/domain admins reach this
+  // `/admin`: first admin menu item. Only superadmins reach this
   // element (RouteAccessGuard enforces the subtree's 'admin' requirement),
   // so an admin menu item always exists; defaultMenuPath is a defensive
   // fallback only.
@@ -536,8 +533,8 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       // --- project-admin scope: /project/:projectName/admin/* ---
       {
         path: 'admin',
-        // Subtree default (FR-3383): project-admin pages need super/domain
-        // admin or project-admin rights over the URL project.
+        // Subtree default (FR-3383): project-admin pages need superadmin
+        // or project-admin rights over the URL project.
         handle: { access: 'projectAdmin' },
         children: [
           // Bare `/project/:name/admin` -> first project-admin menu item.
@@ -604,22 +601,6 @@ export const mainLayoutChildRoutes: RouteObject[] = [
             ],
           },
           {
-            path: 'data',
-            Component: () => {
-              useSuspendedBackendaiClient();
-              return (
-                <Suspense fallback={<BAISkeleton rows={4} />}>
-                  <ProjectAdminDataPage />
-                </Suspense>
-              );
-            },
-            handle: {
-              scope: 'projectAdmin',
-              menuKey: 'project-data',
-              labelKey: 'webui.menu.Data',
-            },
-          },
-          {
             path: 'users',
             Component: () => {
               useSuspendedBackendaiClient();
@@ -646,13 +627,13 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   {
     path: 'admin',
     element: <AdminScopeLayout />,
-    // Subtree default (FR-3383): global admin pages need super/domain admin.
+    // Subtree default (FR-3383): global admin pages need superadmin.
     // Superadmin-only leaves override with `access: 'superadmin'`.
     handle: { access: 'admin' },
     children: [
       // Bare `/admin` -> first admin menu item. Inherits the subtree's
       // 'admin' requirement, so the /admin namespace (including its root) is
-      // super/domain-admin only — project admins get the forbidden page.
+      // superadmin only — project admins get the forbidden page.
       { index: true, element: <ScopeIndexRedirect scope="admin" /> },
       // Router-owned 404: any URL unmatched within this scope falls here
       // (plugin-aware — see UnknownRoutePage).
@@ -1197,13 +1178,6 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       <ProjectScopedRedirect scope="projectAdmin" featureKey="session" />
     ),
     handle: { labelKey: 'webui.menu.ProjectSessions' },
-  },
-  {
-    path: '/project-data',
-    Component: () => (
-      <ProjectScopedRedirect scope="projectAdmin" featureKey="data" />
-    ),
-    handle: { labelKey: 'webui.menu.Data' },
   },
   {
     path: '/project-admin-users',

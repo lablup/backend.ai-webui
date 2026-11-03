@@ -100,10 +100,6 @@ describe('MENU_KEY_TO_SCOPE_FEATURE', () => {
       scope: 'projectAdmin',
       featureKey: 'deployments',
     });
-    expect(MENU_KEY_TO_SCOPE_FEATURE['project-data']).toEqual({
-      scope: 'projectAdmin',
-      featureKey: 'data',
-    });
     expect(MENU_KEY_TO_SCOPE_FEATURE['project-admin-users']).toEqual({
       scope: 'projectAdmin',
       featureKey: 'users',

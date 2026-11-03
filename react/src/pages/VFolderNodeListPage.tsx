@@ -23,6 +23,7 @@ import { isDeletedCategory } from '../helper/vfolderStatus';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useIsPersonalProject } from '../hooks/useAccessibleProjects';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCreateActionArrival } from '../hooks/useCreateActionArrival';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -112,8 +113,8 @@ const VFOLDER_STATUSES_V2 = [
   'DELETE_ERROR',
 ] as const;
 
-// Module constants so each mode's filter keeps a stable identity (FR-3594);
-// see the same note on `ProjectAdminDataPage`.
+// Module constants so each mode's filter keeps a stable identity; a fresh object
+// re-fires the deferred-value loading flash every render (FR-3594).
 const USAGE_MODE_FILTERS: Partial<
   Record<(typeof modeValues)[number], VFolderFilter>
 > = {
@@ -137,6 +138,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const isLabelable = useIsLabelableEntityType('vfolder');
   const currentProject = useCurrentProjectValue();
   const projectContext = toProjectContext(currentProject);
+  const isPersonalProject = useIsPersonalProject(currentProject.id);
   const [currentUser] = useCurrentUserInfo();
   const baiClient = useSuspendedBackendaiClient();
   const [invitations] = useVFolderInvitations();
@@ -208,8 +210,8 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
       ? STATUS_FILTER_DELETED
       : STATUS_FILTER_ACTIVE;
 
-  // Built from literals and stable references only (no helper call), same
-  // reasoning as `ProjectAdminDataPage.combinedFilter`.
+  // Built from literals and stable references only (no helper call): the
+  // compiler keeps unknown calls with mutable arguments un-memoized.
   const combinedFilter: VFolderFilter = {
     AND: [
       statusFilter,
@@ -227,12 +229,12 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
 
   useCreateActionArrival(openCreateModal);
 
-  // Reproduces V1's `scope_id: project:<id>` (my folders + the current
-  // project's folders); `VFolderFilter` carries no project argument.
-  const vfolderScope = {
-    user: [{ value: currentUser.uuid }],
-    ...(projectContext ? { project: [{ value: projectContext.id }] } : {}),
-  };
+  // A team project lists only its own folders and those shared to it; personal
+  // folders live in the personal project, which the user scope already reaches.
+  const vfolderScope =
+    projectContext && !isPersonalProject
+      ? { project: [{ value: projectContext.id }] }
+      : { user: [{ value: currentUser.uuid }] };
 
   const queryVariables = {
     scope: vfolderScope,
@@ -524,7 +526,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             <VFolderNodesV2
               order={queryParams.order}
               loading={deferredQueryVariables !== queryVariables}
-              disableProjectFolderActions
               project={projectContext}
               vfoldersFrgmt={filterOutNullAndUndefined(
                 _.map(scopedVFoldersV2?.edges, 'node'),
@@ -590,6 +591,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
       <FolderCreateModal
         open={isOpenCreateModal}
         project={projectContext}
+        allowAutoMount={isPersonalProject}
         initialValues={{
           usage_mode:
             queryParams.mode === 'model'

@@ -61,6 +61,35 @@ export const isDeploymentInProgress = (
   status != null &&
   (DEPLOYMENT_IN_PROGRESS_STATUSES as readonly string[]).includes(status);
 
+export type DeploymentPauseCause = 'user' | 'autoScaling';
+
+/** The only statuses a pause replaces: any other one (a problem, a pending or
+ * in-progress step, a stop) keeps its own badge. */
+const DEPLOYMENT_PAUSABLE_STATUSES = [
+  'READY',
+  'HEALTHY',
+] as const satisfies readonly BAIDeploymentStatus[];
+
+/**
+ * Why a ready deployment runs no replicas, or `null` when it is not paused.
+ * Autoscaling changes only `desiredReplicaCount`, so a user-set
+ * `replicaCount` above zero means an autoscaling rule paused it.
+ */
+export const getDeploymentPauseCause = (
+  status: BAIDeploymentStatus | '%future added value' | null | undefined,
+  replicaState:
+    { replicaCount: number; desiredReplicaCount: number } | null | undefined,
+): DeploymentPauseCause | null => {
+  if (
+    !status ||
+    replicaState?.desiredReplicaCount !== 0 ||
+    !(DEPLOYMENT_PAUSABLE_STATUSES as readonly string[]).includes(status)
+  ) {
+    return null;
+  }
+  return replicaState.replicaCount === 0 ? 'user' : 'autoScaling';
+};
+
 const deploymentStatusI18nMap: Record<BAIDeploymentStatus, string> = {
   HEALTHY: 'comp:BAIDeploymentStatusBadge.Healthy',
   UNHEALTHY: 'comp:BAIDeploymentStatusBadge.Unhealthy',
