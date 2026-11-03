@@ -112,7 +112,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
       mutation RoleAssignmentTabBulkRevokeMutation(
         $input: BulkRevokeRoleInput!
       ) {
-        adminBulkRevokeRole(input: $input) {
+        partialBulkRevokeRoles(input: $input) {
           revoked {
             id
           }
@@ -392,7 +392,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
             input: { userIds, roleId },
           })
             .then((data) => {
-              const failed = data.adminBulkRevokeRole?.failed ?? [];
+              const failed = data.partialBulkRevokeRoles.failed;
               if (failed.length > 0) {
                 message.warning(
                   t('rbac.BulkRevokePartialFailure', {
