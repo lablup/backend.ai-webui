@@ -19,7 +19,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The single-choice and multi-choice select used across Backend.AI forms. It renders Astryx Selector, or MultiSelector when mode is "multiple" or "tags", and adds what those primitives do not carry on their own: ReactNode option labels (the flattened text becomes the accessible name and search key while the original node is restored through renderOption), an accessible name derived from placeholder when no label is given, section headers and footers built on the native option model, a below placement so the popup never covers the trigger, and a labels-first multi-select trigger instead of the "N selected" count. It also accepts the Select.Option / Select.OptGroup children form through BAISelectOptionItem and BAISelectOptionGroup. The prop surface is antd-Select-shaped so the twelve components that extend BAISelectProps keep compiling; several of those props are accepted and inert because Astryx owns the mechanism internally — they are marked below.',
+      'The one select of webui and backend.ai-ui for a list the client already holds; ui-common Selector has no other BAI name (ADR 0017). It renders ui-common Selector, or MultiSelector when mode is "multiple" or "tags", and adds what those primitives do not carry on their own: ReactNode option labels (the flattened text becomes the accessible name and search key while the original node is restored through renderOption), an accessible name derived from placeholder when no label is given, section headers and footers built on the native option model, and a labels-first multi-select trigger instead of the "N selected" count. It also accepts the Select.Option / Select.OptGroup children form through BAISelectOptionItem and BAISelectOptionGroup. The prop surface is antd-Select-shaped so the components that extend BAISelectProps keep compiling; several of those props are accepted and inert because Astryx owns the mechanism internally — they are marked below.',
     bestPractices: [
       {
         guidance: true,
@@ -59,7 +59,7 @@ export const docs = {
           name: 'options',
           type: 'Array<OptionType>',
           description:
-            'Option data. Each entry carries value, label (string or node), disabled, and any extra keys the call site reads back in optionRender.',
+            'Option data. Each entry carries value, label (string or node), disabled (true, or { reason } to say why), description and icon for the default row, and any extra keys the call site reads back in optionRender. An entry with its own options array is a group. Plain strings are not options.',
         },
         {
           name: 'value',
@@ -102,6 +102,12 @@ export const docs = {
           description: 'Blocks interaction; maps to Astryx isDisabled.',
         },
         {
+          name: 'disabledMessage',
+          type: 'string',
+          description:
+            'Tooltip on the trigger while it is disabled, saying why.',
+        },
+        {
           name: 'loading',
           type: 'boolean',
           description:
@@ -110,13 +116,14 @@ export const docs = {
         {
           name: 'allowClear',
           type: 'boolean',
-          description: 'Adds the clear affordance; maps to Astryx hasClear.',
+          description:
+            'Adds the clear affordance; maps to Astryx hasClear. Clearing emits undefined through onChange.',
         },
         {
           name: 'showSearch',
           type: 'boolean | { searchValue?: string; onSearch?: (value: string) => void; filterOption?: boolean | ((input: string, option?: any) => boolean); optionFilterProp?: string }',
           description:
-            'Enables the in-popup search box. The object form is accepted, but filterOption and optionFilterProp are inert — Selector filters on the option label it renders.',
+            'The in-popup search box, on unless this is false. The object form is accepted, but filterOption and optionFilterProp are inert — Selector filters on the option label it renders.',
         },
         {
           name: 'status',
@@ -150,7 +157,18 @@ export const docs = {
           name: 'label',
           type: 'string',
           description:
-            'Accessible name. Falls back to the flattened placeholder, then to a translated generic.',
+            'Accessible name. Falls back to aria-label, the flattened placeholder, then a translated generic.',
+        },
+        {
+          name: 'aria-label',
+          type: 'string',
+          description:
+            'Same as label, for a call site that names the control the DOM way.',
+        },
+        {
+          name: 'id',
+          type: 'string',
+          description: 'The trigger id, for a label outside a Form.Item.',
         },
         {
           name: 'isLabelHidden',
@@ -269,9 +287,9 @@ export const docs = {
         },
         {
           name: 'labelRender',
-          type: '(props: any) => ReactNode',
+          type: '(option: SelectorOptionData) => ReactNode',
           description:
-            'Accepted and inert — use optionLabelProp="children" for a rich trigger label.',
+            'The closed trigger’s content in single mode, from the selected Selector option. Maps to Astryx renderValue.',
         },
         {
           name: 'searchAction',
