@@ -4286,7 +4286,6 @@
       "SwitchToUserConsole": "Tukar ke Konsol Pengguna",
       "Tasks": "Tugasan",
       "TermsOfService": "Syarat perkhidmatan",
-      "TotalResourcesIn": "Jumlah sumber dalam",
       "TotalResourcesInResourceGroup": "Jumlah sumber dalam kumpulan sumber",
       "TotalResourcesInResourceGroupDescription": "Panel ini menunjukkan jumlah sumber yang digunakan dan percuma dalam kumpulan sumber yang dipilih. \nNilai -nilai dikira dengan menjumlahkan jumlah yang digunakan dan bebas dari semua ejen menggunakan kumpulan itu.",
       "TotpActivated": "2FA Didayakan",

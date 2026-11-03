@@ -4287,7 +4287,6 @@
       "SwitchToUserConsole": "Vaihda käyttäjäkonsoliin",
       "Tasks": "Tehtävät",
       "TermsOfService": "Käyttöehdot",
-      "TotalResourcesIn": "Resurssien kokonaismäärä",
       "TotalResourcesInResourceGroup": "Resurssien kokonaismäärä resurssiryhmässä",
       "TotalResourcesInResourceGroupDescription": "Tämä paneeli näyttää valitun resurssiryhmän käytetyt ja vapaat resurssit yhteensä. \nArvot lasketaan summaamalla kaikkien kyseistä ryhmää käyttävien aineiden käytetyt ja vapaat määrät.",
       "TotpActivated": "2FA käytössä",

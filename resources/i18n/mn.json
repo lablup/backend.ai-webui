@@ -4288,7 +4288,6 @@
       "SwitchToUserConsole": "Хэрэглэгчийн консол руу шилжих",
       "Tasks": "Даалгаврууд",
       "TermsOfService": "Үйлчилгээний нөхцөл",
-      "TotalResourcesIn": "Нийт нөөц",
       "TotalResourcesInResourceGroup": "Нөөцийн бүлгийн нийт нөөц",
       "TotalResourcesInResourceGroupDescription": "Энэ самбар нь сонгосон нөөцийн бүлэгт ашиглагдсан, үнэгүй нөөцийг харуулж байна. \nЭнэ бүлгийг ашиглан бүх агентуудын ашиглагдаж буй, чөлөөт дүнг тооцоогоор тооцно.",
       "TotpActivated": "2FA идэвхжүүлсэн",

@@ -884,7 +884,6 @@
         "storageHost.quotaSettings.SelectProject",
         "webui.menu.FairShare",
         "webui.menu.MyResources",
-        "webui.menu.TotalResourcesIn",
         "webui.menu.TotalResourcesInResourceGroup",
         "webui.menu.TotalResourcesInResourceGroupDescription",
         "webui.menu.Users"
@@ -3613,7 +3612,6 @@
         "storageHost.quotaSettings.SelectProject",
         "webui.menu.FairShare",
         "webui.menu.MyResources",
-        "webui.menu.TotalResourcesIn",
         "webui.menu.TotalResourcesInResourceGroup",
         "webui.menu.TotalResourcesInResourceGroupDescription",
         "webui.menu.Users"
@@ -4297,7 +4295,6 @@
         "storageHost.quotaSettings.SelectProject",
         "webui.menu.FairShare",
         "webui.menu.MyResources",
-        "webui.menu.TotalResourcesIn",
         "webui.menu.TotalResourcesInResourceGroup",
         "webui.menu.TotalResourcesInResourceGroupDescription",
         "webui.menu.Users"
@@ -5120,7 +5117,6 @@
         "webui.menu.MyResourcesIn",
         "webui.menu.MyResourcesInResourceGroup",
         "webui.menu.MyResourcesInResourceGroupDescription",
-        "webui.menu.TotalResourcesIn",
         "webui.menu.TotalResourcesInResourceGroup",
         "webui.menu.TotalResourcesInResourceGroupDescription"
       ]

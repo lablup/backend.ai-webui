@@ -4288,7 +4288,6 @@
       "SwitchToUserConsole": "Chuyển sang bảng điều khiển người dùng",
       "Tasks": "Nhiệm vụ",
       "TermsOfService": "Điều khoản dịch vụ",
-      "TotalResourcesIn": "Tổng tài nguyên trong",
       "TotalResourcesInResourceGroup": "Tổng tài nguyên trong nhóm tài nguyên",
       "TotalResourcesInResourceGroupDescription": "Bảng này hiển thị tổng số tài nguyên đã sử dụng và miễn phí trong nhóm tài nguyên đã chọn. \nCác giá trị được tính bằng cách tính tổng số tiền đã sử dụng và số tiền còn trống của tất cả các tác nhân sử dụng nhóm đó.",
       "TotpActivated": "Đã bật 2FA",

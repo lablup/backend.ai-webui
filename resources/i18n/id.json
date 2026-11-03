@@ -4290,7 +4290,6 @@
       "SwitchToUserConsole": "Beralih ke Konsol Pengguna",
       "Tasks": "Tugas",
       "TermsOfService": "Persyaratan layanan",
-      "TotalResourcesIn": "Total sumber daya di",
       "TotalResourcesInResourceGroup": "Total Sumber Daya dalam Grup Sumber Daya",
       "TotalResourcesInResourceGroupDescription": "Panel ini memperlihatkan total sumber daya yang digunakan dan gratis dalam grup sumber daya yang dipilih. \nNilainya dihitung dengan menjumlahkan jumlah terpakai dan jumlah bebas semua agen yang menggunakan grup tersebut.",
       "TotpActivated": "2FA Diaktifkan",

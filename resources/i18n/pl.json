@@ -4289,7 +4289,6 @@
       "SwitchToUserConsole": "Przełącz na konsolę użytkownika",
       "Tasks": "Zadania",
       "TermsOfService": "Warunki usługi",
-      "TotalResourcesIn": "Całkowite zasoby w",
       "TotalResourcesInResourceGroup": "Całkowite zasoby w grupie zasobów",
       "TotalResourcesInResourceGroupDescription": "Ten panel pokazuje całkowitą liczbę wykorzystanych i wolnych zasobów w wybranej grupie zasobów. \nWartości obliczane są poprzez zsumowanie wykorzystanych i wolnych ilości wszystkich środków korzystających z danej grupy.",
       "TotpActivated": "Włączone 2FA",

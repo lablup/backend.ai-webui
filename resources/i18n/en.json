@@ -4271,7 +4271,6 @@
       "SwitchToUserConsole": "Switch to User Console",
       "Tasks": "Tasks",
       "TermsOfService": "Terms of Service",
-      "TotalResourcesIn": "Total Resources in",
       "TotalResourcesInResourceGroup": "Total Resources in Resource Group",
       "TotalResourcesInResourceGroupDescription": "This panel shows the total used and free resources in the selected resource group. The values are calculated by summing the used and free amounts of all agents using that group.",
       "TotpActivated": "2FA Enabled",

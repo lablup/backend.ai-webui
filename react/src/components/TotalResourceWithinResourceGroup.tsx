@@ -18,6 +18,7 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIFlexProps,
+  BAIIconWithTooltip,
   ResourceStatistics,
   addNumberWithUnits,
   convertToNumber,
@@ -30,6 +31,7 @@ import {
   useIsInBAIBoardItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { CircleHelp } from 'lucide-react';
 import {
   ReactNode,
   useDeferredValue,
@@ -451,18 +453,25 @@ const TotalResourceWithinResourceGroup: React.FC<
       ])}
     >
       {asSection ? null : (
+        // The same header row as the dashboard's card: title, help, picker.
         <BAIBoardItemTitle
           title={
-            <BAIFlex gap={'xs'} wrap="wrap" align="center">
-              {/* antd Typography.Text (fontSizeHeading5 = 16px +
-                fontWeightStrong). 16px is heading-5 on the restored antd type
-                ramp; `level={3}` tracked the same 16px under Astryx's own. */}
-              <Heading level={5}>{t('webui.menu.TotalResourcesIn')}</Heading>
+            <BAIFlex gap="xs" wrap="wrap" align="center">
+              <Heading level={5}>
+                {t('webui.menu.TotalResourcesInResourceGroup')}
+              </Heading>
+              <BAIIconWithTooltip
+                icon={<CircleHelp size="1em" />}
+                content={t(
+                  'webui.menu.TotalResourcesInResourceGroupDescription',
+                )}
+              />
               {resourceGroup ? (
                 <Heading level={5}>{resourceGroup}</Heading>
               ) : (
                 <SharedResourceGroupSelectForCurrentProject
                   size="small"
+                  variant="borderless"
                   showSearch
                   style={{ minWidth: 100 }}
                   loading={
@@ -470,13 +479,13 @@ const TotalResourceWithinResourceGroup: React.FC<
                   }
                   popupMatchSelectWidth={false}
                   tooltip={t('general.ResourceGroup')}
+                  aria-label={t('general.ResourceGroup')}
                 />
               )}
             </BAIFlex>
           }
-          tooltip={t('webui.menu.TotalResourcesInResourceGroupDescription')}
           extra={
-            <BAIFlex gap={'xs'} wrap="wrap">
+            <BAIFlex gap="xs" wrap="wrap" align="center">
               {/* PILOT-DECISION: SegmentedControl.label is aria-only and required;
                 composed from the two option labels to avoid new i18n keys. */}
               <BAISegmentedControl

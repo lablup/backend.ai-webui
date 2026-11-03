@@ -4289,7 +4289,6 @@
       "SwitchToUserConsole": "Passer à la console utilisateur",
       "Tasks": "Tâches",
       "TermsOfService": "Conditions d'utilisation",
-      "TotalResourcesIn": "Ressources totales dans",
       "TotalResourcesInResourceGroup": "Ressources totales dans le groupe de ressources",
       "TotalResourcesInResourceGroupDescription": "Ce panneau affiche le total des ressources utilisées et libres dans le groupe de ressources sélectionné. \nLes valeurs sont calculées en additionnant les quantités utilisées et libres de tous les agents utilisant ce groupe.",
       "TotpActivated": "2FA activé",

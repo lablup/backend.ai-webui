@@ -4286,7 +4286,6 @@
       "SwitchToUserConsole": "Kullanıcı Konsoluna Geç",
       "Tasks": "Görevler",
       "TermsOfService": "Kullanım Şartları",
-      "TotalResourcesIn": "Toplam Kaynaklar",
       "TotalResourcesInResourceGroup": "Kaynak Grubundaki Toplam Kaynaklar",
       "TotalResourcesInResourceGroupDescription": "Bu panel, seçilen kaynak grubundaki toplam kullanılan ve boş kaynakları gösterir. \nDeğerler, o grubu kullanan tüm acentelerin kullanılmış ve serbest miktarlarının toplanmasıyla hesaplanır.",
       "TotpActivated": "2FA Etkin",

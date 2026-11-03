@@ -4272,7 +4272,6 @@
       "SwitchToUserConsole": "สลับไปยังคอนโซลผู้ใช้",
       "Tasks": "งาน",
       "TermsOfService": "ข้อตกลงการใช้บริการ",
-      "TotalResourcesIn": "ทรัพยากรทั้งหมดใน",
       "TotalResourcesInResourceGroup": "ทรัพยากรทั้งหมดในกลุ่มทรัพยากร",
       "TotalResourcesInResourceGroupDescription": "แผงนี้แสดงทรัพยากรที่ใช้ทั้งหมดและทรัพยากรว่างในกลุ่มทรัพยากรที่เลือก \nค่าจะคำนวณโดยการรวมจำนวนที่ใช้และจำนวนฟรีของตัวแทนทั้งหมดที่ใช้กลุ่มนั้น",
       "TotpActivated": "เปิดใช้งาน 2FA แล้ว",

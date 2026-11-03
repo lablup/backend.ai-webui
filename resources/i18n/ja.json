@@ -4288,7 +4288,6 @@
       "SwitchToUserConsole": "ユーザーコンソールに切り替え",
       "Tasks": "作業",
       "TermsOfService": "利用規約",
-      "TotalResourcesIn": "総リソース",
       "TotalResourcesInResourceGroup": "リソースグループの総リソース",
       "TotalResourcesInResourceGroupDescription": "このパネルには、選択したリソース グループ内の使用済みリソースと空きリソースの合計が表示されます。\n値は、そのグループを使用するすべてのエージェントの使用量と空き量を合計することによって計算されます。",
       "TotpActivated": "二要素認証の使用",

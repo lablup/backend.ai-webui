@@ -4288,7 +4288,6 @@
       "SwitchToUserConsole": "切换到用户控制台",
       "Tasks": "任务",
       "TermsOfService": "服务条款",
-      "TotalResourcesIn": "总资源中",
       "TotalResourcesInResourceGroup": "资源组的总资源",
       "TotalResourcesInResourceGroupDescription": "此面板显示所选资源组中已用资源和可用资源的总数。\n这些值是通过将使用该组的所有代理的已用量和可用量相加来计算的。",
       "TotpActivated": "已启用 2FA",
