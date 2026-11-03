@@ -14,6 +14,7 @@ import {
   BAIAlert,
   BAICard,
   BAIDoubleToken,
+  BAIEntityLabelTargetCell,
   BAIFlex,
   BAILink,
   BAIMetadataList,
@@ -22,6 +23,7 @@ import {
   tokenColorForTagColor,
   tokenColorForStatus,
   useBAIBreakpoint,
+  useIsLabelableEntityType,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -44,11 +46,13 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
   const { t } = useTranslation();
   const { md } = useBAIBreakpoint();
   const [activeTab, setActiveTab] = useState('permissions');
+  const isLabelable = useIsLabelableEntityType('role');
 
   const role = useFragment(
     graphql`
       fragment RoleDetailDrawerContentV2Fragment on Role {
         id
+        entityId
         name
         description
         source
@@ -195,6 +199,15 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
               ? dayjs(role.updatedAt).format('YYYY-MM-DD HH:mm:ss')
               : '-'}
           </MetadataListItem>
+          {isLabelable && (
+            <MetadataListItem label={t('entityLabel.Labels')}>
+              <BAIEntityLabelTargetCell
+                entityType="role"
+                entityId={role.entityId}
+                name={role.name ?? undefined}
+              />
+            </MetadataListItem>
+          )}
         </BAIMetadataList>
       </BAICard>
       <BAIFlex direction="column" gap="sm" align="stretch">
