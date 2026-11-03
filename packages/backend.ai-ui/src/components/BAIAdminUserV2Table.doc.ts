@@ -77,6 +77,12 @@ export const docs = {
       description:
         'Fired when the user sorts, with a key optionally prefixed by "-" for descending, or null when sorting is cleared. Convert it to the query `orderBy`; the table does not sort its own rows.',
     },
+    {
+      name: 'onLabelClick',
+      type: '(label: BAIEntityLabel) => void',
+      description:
+        'Fired when a token in the Labels column is clicked, with its `key` and `value`. The consuming surface turns it into a `labels` condition on its `UserV2Filter` (`toEntityLabelFilter`) and resets to the first page; left unset, the tokens are display-only.',
+    },
   ],
   examples: [
     {

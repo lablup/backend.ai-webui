@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c48dabf53382400549c35753134dbc13>>
+ * @generated SignedSource<<1b27f95a092298619b60250b101bc699>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -22,6 +22,7 @@ export type RoleFilter = {
   OR?: ReadonlyArray<RoleFilter> | null | undefined;
   assignedUser?: RoleUserNestedFilter | null | undefined;
   entityId?: UUIDFilter | null | undefined;
+  labels?: EntityLabelNestedFilter | null | undefined;
   mappedScope?: RoleMappedScopeNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;
   permissions?: RolePermissionNestedFilter | null | undefined;
@@ -116,6 +117,22 @@ export type RBACElementTypeFilter = {
   in?: ReadonlyArray<RBACElementType> | null | undefined;
   notEquals?: RBACElementType | null | undefined;
   notIn?: ReadonlyArray<RBACElementType> | null | undefined;
+};
+export type EntityLabelNestedFilter = {
+  every?: EntityLabelFilter | null | undefined;
+  exists?: boolean | null | undefined;
+  none?: EntityLabelFilter | null | undefined;
+  some?: EntityLabelFilter | null | undefined;
+};
+export type EntityLabelFilter = {
+  AND?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  NOT?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
+  key?: StringFilter | null | undefined;
+  value?: StringFilter | null | undefined;
 };
 export type RoleOrderBy = {
   direction?: OrderDirection;

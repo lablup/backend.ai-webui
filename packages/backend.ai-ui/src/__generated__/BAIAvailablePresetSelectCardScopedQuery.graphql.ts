@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5e6a57ed001611c194ee17e54a2e8cfb>>
+ * @generated SignedSource<<7e6c7e4f3ff6d2d2fc97b483dafde5ce>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,6 +15,7 @@ export type DeploymentRevisionPresetFilter = {
   OR?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
   entityId?: UUIDFilter | null | undefined;
   id?: UUIDFilter | null | undefined;
+  labels?: EntityLabelNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;
   runtimeVariantId?: UUIDFilter | null | undefined;
 };
@@ -45,6 +46,22 @@ export type StringFilter = {
   notIn?: ReadonlyArray<string> | null | undefined;
   notStartsWith?: string | null | undefined;
   startsWith?: string | null | undefined;
+};
+export type EntityLabelNestedFilter = {
+  every?: EntityLabelFilter | null | undefined;
+  exists?: boolean | null | undefined;
+  none?: EntityLabelFilter | null | undefined;
+  some?: EntityLabelFilter | null | undefined;
+};
+export type EntityLabelFilter = {
+  AND?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  NOT?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
+  key?: StringFilter | null | undefined;
+  value?: StringFilter | null | undefined;
 };
 export type ModelCardAvailablePresetsScope = {
   modelCardId: string;
