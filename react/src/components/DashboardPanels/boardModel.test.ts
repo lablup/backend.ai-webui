@@ -342,6 +342,19 @@ describe('catalogFor', () => {
     );
   });
 
+  it('keeps project-admin entries for a project admin of the page project only', () => {
+    const keys = (isProjectAdmin: boolean) =>
+      catalogFor(entries, {
+        page: 'project',
+        role: 'user',
+        config: {},
+        isProjectAdmin,
+      }).map((entry) => entry.definition.key);
+    expect(keys(true)).toContain('projectAdmin');
+    expect(keys(true)).not.toContain('superadmin');
+    expect(keys(false)).not.toContain('projectAdmin');
+  });
+
   it('locks an entry whose config check fails instead of dropping it', () => {
     const agents = catalogFor(entries, {
       page: 'project',
