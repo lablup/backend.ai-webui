@@ -10,7 +10,7 @@ it must not drift from it, and code that needs a new decision must record one.
 
 ## Why
 
-Reviewers and agents keep re-deriving *why* the code looks the way it does —
+Reviewers and agents keep re-deriving _why_ the code looks the way it does —
 why leaf components take `project` as a required prop, why a hook may not be
 imported on some routes — and the reasoning is scattered across Jira threads
 and commit bodies. An ADR puts it in one file a reader can open from the code.
@@ -32,10 +32,14 @@ and commit bodies. An ADR puts it in one file a reader can open from the code.
    implementing. The PR is where a human reviews it. The ADR, its
    `docs/ARCHITECTURE.md` row, and the code land in one PR.
 4. **Flag a reversal early.** A decision that reverses an ADR in force is a
-   bigger call: say so in the PR description or the Jira issue before landing.
+   bigger call: say so in the PR description or the issue before landing.
 5. **Name it where the code follows it.** A PR that lands or follows an ADR
    says `ADR NNNN` in its Summary. A source comment that exists because of an
    ADR is the one-line pointer `comment-density.md` allows, aimed at the ADR
    file, as the ESLint message for ADR 0001 is.
+6. **ADRs are the only design record, in English.** Do not add `.specs/`
+   directories or other design documents to the repository; plans and task
+   breakdowns stay in the issue and the PR. ADRs and `docs/ARCHITECTURE.md` are
+   written in English (ADR 0018).
 
 Write one with the `adr-writing` skill.

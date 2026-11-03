@@ -41,7 +41,7 @@ from now, not the author and not today's reviewer.
 - **The document never talks about itself.** No "covered in the last section",
   no "this document does not decide X". Say the thing or delete it.
 - **Link outward instead of retelling.** When the context lives in another
-  ADR, a source file, a Jira issue, or an upstream document, cite it and
+  ADR, a source file, an issue, or an upstream document, cite it and
   reproduce only the sentence the reader must act on.
 - **Name the scope boundary once.** What is out of scope gets one line — never
   the reasoning for deferring it, never a sketch of the deferred design.
@@ -62,7 +62,7 @@ reviewers at the ADRs); keep the two in step.
   `NNNN` in `docs/adr/` plus one. Numbers are never reused, so when the
   sequence has a gap the deleted number stays retired; `git log -- docs/adr`
   shows it.
-- **Title** — `# NNNN — <English noun phrase>` (T1–T6). A Jira key goes in
+- **Title** — `# NNNN — <English noun phrase>` (T1–T6). An issue key goes in
   the sources section, never in the title. A supersede pointer goes on its
   own line, never in the title.
 - **No status field.** An ADR on `main` is a decision in force — landing it
@@ -82,12 +82,14 @@ reviewers at the ADRs); keep the two in step.
 - **Mention form** — documents and PR bodies write `ADR NNNN`. Source
   comments written before this convention say `ADR-NNNN`; they are corrected
   when the file is next edited, never swept.
-- **Language** — the title is English; the body is Korean, with English
-  technical terms and identifiers written as they appear in the code. An ADR
-  that landed before this convention keeps its body language; a document is
-  revised only when its content changes, never translated for its own sake.
-  Section headings follow the body language, as
-  [references/document-shape.md](references/document-shape.md) fixes.
+- **Language** — the title, the headings, and the body are English, with
+  identifiers written as they appear in the code (ADR 0018). A landed ADR
+  still in another language is translated in a change of its own that alters
+  no decision.
+- **Single home** — a design decision is recorded here and nowhere else. Do
+  not create `.specs/` directories, design notes, or plan files in the
+  repository; implementation plans and task breakdowns live in the GitHub
+  issue and the PR (ADR 0018).
 
 ## Phase 0 — Gather what the document must agree with
 
@@ -98,7 +100,7 @@ landed.
   narrows, and their rows in `docs/ARCHITECTURE.md`.
 - The source files the decision names, so identifiers in the text match the
   code — component names, hook names, atom names, ESLint rule ids.
-- The Jira issue the work belongs to, so the sources section can cite it.
+- The GitHub issue the work belongs to, so the sources section can cite it.
 - Sibling ADRs written in the same increment, so terminology stays shared.
 
 ## Phase 1 — Draft against the rule catalogues
@@ -106,10 +108,10 @@ landed.
 Two reference files hold the rules, and both cite by id — "T1 violation",
 "fixed S4", "D2 missing".
 
-| file | ids | what it governs |
-|---|---|---|
-| [references/writing-rules.md](references/writing-rules.md) | T1–T6, L1–L5, S1–S10, D1–D2 | the title, the terms, the sentences and bullets, the Summary a body opens with, and the diagram a flow gets |
-| [references/document-shape.md](references/document-shape.md) | D3–D4 | the section skeleton, the heading language, the increment overview, the one-diagram floor, and the mermaid syntax traps |
+| file                                                         | ids                         | what it governs                                                                                                         |
+| ------------------------------------------------------------ | --------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| [references/writing-rules.md](references/writing-rules.md)   | T1–T6, L1–L5, S1–S10, D1–D2 | the title, the terms, the sentences and bullets, the Summary a body opens with, and the diagram a flow gets             |
+| [references/document-shape.md](references/document-shape.md) | D3–D4                       | the section skeleton, the heading language, the increment overview, the one-diagram floor, and the mermaid syntax traps |
 
 Write the sections in the order D3 fixes: title, Summary, Context, diagrams,
 Decision, alternatives with the reason each was rejected, Consequences,
@@ -123,8 +125,8 @@ checks, which only a document can fail:
 
 - A sibling document draws the same components with a different decomposition
   (D2), or the increment has no overview document (D4).
-- A section from the D3 skeleton is missing, or a heading is in the wrong
-  language for the body.
+- A section from the D3 skeleton is missing, or a heading or sentence is
+  not English.
 - A Decision item stacks several decisions that should be `### N.`
   subsections.
 
