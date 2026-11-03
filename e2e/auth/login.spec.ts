@@ -58,10 +58,13 @@ test.describe(
       await loginAsAdmin(page, request);
     });
 
+    // Since #10552 a superadmin lands on the first system admin page.
     test('should redirect to the Summary', async ({ page }) => {
-      await expect(page).toHaveURL(/\/start/);
+      await expect(page).toHaveURL(/\/admin\/users/);
       await expect(
-        page.getByTestId('webui-breadcrumb').getByText('Start'),
+        page
+          .getByTestId('webui-breadcrumb')
+          .getByText('User Credentials & Policies'),
       ).toBeVisible();
     });
   },
@@ -85,9 +88,11 @@ test.describe(
       await fillEndpoint(page, webServerEndpoint + '/');
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
-      await expect(page).toHaveURL(/\/start/, { timeout: 15_000 });
+      await expect(page).toHaveURL(/\/admin\/users/, { timeout: 15_000 });
       await expect(
-        page.getByTestId('webui-breadcrumb').getByText('Start'),
+        page
+          .getByTestId('webui-breadcrumb')
+          .getByText('User Credentials & Policies'),
       ).toBeVisible();
     });
 
@@ -99,9 +104,11 @@ test.describe(
       await fillEndpoint(page, webServerEndpoint + '///');
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
-      await expect(page).toHaveURL(/\/start/, { timeout: 15_000 });
+      await expect(page).toHaveURL(/\/admin\/users/, { timeout: 15_000 });
       await expect(
-        page.getByTestId('webui-breadcrumb').getByText('Start'),
+        page
+          .getByTestId('webui-breadcrumb')
+          .getByText('User Credentials & Policies'),
       ).toBeVisible();
     });
 
@@ -125,7 +132,7 @@ test.describe(
       await fillEndpoint(page, webServerEndpoint + '/');
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
-      await expect(page).toHaveURL(/\/start/, { timeout: 15_000 });
+      await expect(page).toHaveURL(/\/admin\/users/, { timeout: 15_000 });
       expect(doubleSlashUrls).toHaveLength(0);
     });
   },
