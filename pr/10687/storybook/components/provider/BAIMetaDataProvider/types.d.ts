@@ -4,7 +4,7 @@ export type DeviceMetaData = {
 };
 export declare const baseResourceSlotNames: readonly ["cpu", "mem"];
 export type BaseResourceSlotName = (typeof baseResourceSlotNames)[number];
-export declare const knownAcceleratorResourceSlotNames: readonly ["cuda.device", "cuda.shares", "rocm.device", "tpu.device", "ipu.device", "atom.device", "atom-plus.device", "atom-max.device", "gaudi2.device", "warboy.device", "rngd.device", "hyperaccel-lpu.device", "tt-n300.device"];
+export declare const knownAcceleratorResourceSlotNames: readonly ["cuda.device", "cuda.shares", "rocm.device", "tpu.device", "ipu.device", "atom.device", "atom-plus.device", "atom-max.device", "rebel100.device", "gaudi2.device", "warboy.device", "rngd.device", "hyperaccel-lpu.device", "tt-n300.device"];
 export type KnownAcceleratorResourceSlotName = (typeof knownAcceleratorResourceSlotNames)[number];
 export type ResourceSlotName = BaseResourceSlotName | KnownAcceleratorResourceSlotName;
 /**
