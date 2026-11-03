@@ -3,8 +3,13 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { AuditLogPanelAdminHistoryQuery } from '../../../__generated__/AuditLogPanelAdminHistoryQuery.graphql';
+import type { AuditLogPanelAdminListQuery } from '../../../__generated__/AuditLogPanelAdminListQuery.graphql';
 import type { AuditLogPanelAdminQuery } from '../../../__generated__/AuditLogPanelAdminQuery.graphql';
 import type { AuditLogPanelScopedHistoryQuery } from '../../../__generated__/AuditLogPanelScopedHistoryQuery.graphql';
+import type {
+  AuditLogPanelScopedListQuery,
+  AuditLogPanelScopedListQuery$data,
+} from '../../../__generated__/AuditLogPanelScopedListQuery.graphql';
 import type {
   AuditLogFilter,
   AuditLogPanelScopedQuery,
@@ -14,6 +19,7 @@ import type {
 import { useSuspendedBackendaiClient } from '../../../hooks';
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
 import type { CardScope } from '../cardScope';
+import PeriodCaption from '../charts/PeriodCaption';
 import SuccessFailureStats from '../charts/SuccessFailureStats';
 import {
   readSuccessFailure,
@@ -33,21 +39,17 @@ import ScopedCard from './ScopedCard';
 import {
   BAIAuditLogNodes,
   BAIFlex,
+  BAISkeleton,
   BAISwitch,
+  BAIText,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
-import React, { useDeferredValue } from 'react';
+import * as _ from 'lodash-es';
+import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-const VISIBLE_COLUMNS = new Set([
-  'createdAt',
-  'triggeredBy',
-  'actionName',
-  'entityType',
-  'status',
-  'description',
-]);
+const CLIENT_IP_MAX_WIDTH = 120;
 
 export const auditOutcomeFilter = (
   outcome: Outcome,
@@ -391,9 +393,6 @@ const ScopedAuditLog: React.FC<
     graphql`
       query AuditLogPanelScopedQuery(
         $scope: AuditLogScope!
-        $filter: AuditLogFilter!
-        $limit: Int!
-        $offset: Int!
         $previousSuccess: AuditLogFilter
         $previousFailure: AuditLogFilter
         $previousOn: Boolean!
@@ -404,20 +403,6 @@ const ScopedAuditLog: React.FC<
         $liveF1: AuditLogFilter
         $live1On: Boolean!
       ) {
-        logs: scopedAuditLogsV2(
-          scope: $scope
-          filter: $filter
-          orderBy: [{ field: CREATED_AT, direction: DESC }]
-          limit: $limit
-          offset: $offset
-        ) @catch(to: RESULT) {
-          count
-          edges {
-            node {
-              ...BAIAuditLogNodesFragment
-            }
-          }
-        }
         previousSuccess: scopedAuditLogsV2(
           scope: $scope
           filter: $previousSuccess
@@ -469,9 +454,6 @@ const AdminAuditLog: React.FC<QueryProps<LiveVariables, LiveData>> = ({
   const data = useLazyLoadQuery<AuditLogPanelAdminQuery>(
     graphql`
       query AuditLogPanelAdminQuery(
-        $filter: AuditLogFilter!
-        $limit: Int!
-        $offset: Int!
         $previousSuccess: AuditLogFilter
         $previousFailure: AuditLogFilter
         $previousOn: Boolean!
@@ -482,19 +464,6 @@ const AdminAuditLog: React.FC<QueryProps<LiveVariables, LiveData>> = ({
         $liveF1: AuditLogFilter
         $live1On: Boolean!
       ) {
-        logs: adminAuditLogsV2(
-          filter: $filter
-          orderBy: [{ field: CREATED_AT, direction: DESC }]
-          limit: $limit
-          offset: $offset
-        ) @catch(to: RESULT) {
-          count
-          edges {
-            node {
-              ...BAIAuditLogNodesFragment
-            }
-          }
-        }
         previousSuccess: adminAuditLogsV2(filter: $previousSuccess, limit: 1)
           @include(if: $previousOn)
           @catch(to: RESULT) {
@@ -533,6 +502,105 @@ const AdminAuditLog: React.FC<QueryProps<LiveVariables, LiveData>> = ({
   return children(data);
 };
 
+type ListVariables = Omit<AuditLogPanelScopedListQuery['variables'], 'scope'>;
+type ListData = AuditLogPanelScopedListQuery$data;
+
+const ScopedAuditLogList: React.FC<
+  QueryProps<ListVariables, ListData> & { scope: AuditLogScope }
+> = ({ scope, variables, fetchKey, children }) => {
+  'use memo';
+  const data = useLazyLoadQuery<AuditLogPanelScopedListQuery>(
+    graphql`
+      query AuditLogPanelScopedListQuery(
+        $scope: AuditLogScope!
+        $filter: AuditLogFilter!
+        $limit: Int!
+        $offset: Int!
+      ) {
+        logs: scopedAuditLogsV2(
+          scope: $scope
+          filter: $filter
+          orderBy: [{ field: CREATED_AT, direction: DESC }]
+          limit: $limit
+          offset: $offset
+        ) @catch(to: RESULT) {
+          count
+          edges {
+            node {
+              ...BAIAuditLogNodesFragment
+            }
+          }
+        }
+      }
+    `,
+    { scope, ...variables },
+    { fetchPolicy: 'store-and-network', fetchKey },
+  );
+  return children(data);
+};
+
+const AdminAuditLogList: React.FC<QueryProps<ListVariables, ListData>> = ({
+  variables,
+  fetchKey,
+  children,
+}) => {
+  'use memo';
+  const data = useLazyLoadQuery<AuditLogPanelAdminListQuery>(
+    graphql`
+      query AuditLogPanelAdminListQuery(
+        $filter: AuditLogFilter!
+        $limit: Int!
+        $offset: Int!
+      ) {
+        logs: adminAuditLogsV2(
+          filter: $filter
+          orderBy: [{ field: CREATED_AT, direction: DESC }]
+          limit: $limit
+          offset: $offset
+        ) @catch(to: RESULT) {
+          count
+          edges {
+            node {
+              ...BAIAuditLogNodesFragment
+            }
+          }
+        }
+      }
+    `,
+    variables,
+    { fetchPolicy: 'store-and-network', fetchKey },
+  );
+  return children(data);
+};
+
+/** The visible columns in order; on the viewer's own log the client IP follows the action. */
+export const auditColumnOrder = (hideTriggeredBy: boolean): Array<string> =>
+  hideTriggeredBy
+    ? [
+        'createdAt',
+        'actionName',
+        'clientIp',
+        'status',
+        'description',
+        'entityType',
+      ]
+    : [
+        'createdAt',
+        'actionName',
+        'status',
+        'description',
+        'triggeredBy',
+        'clientIp',
+        'entityType',
+      ];
+
+/** Whether a live count query has anything to count: a past fixed range reads history only. */
+export const hasLiveCounts = (live: {
+  live0On: boolean;
+  live1On: boolean;
+  previousOn: boolean;
+}) => live.live0On || live.live1On || live.previousOn;
+
 const AuditLogTable: React.FC<{
   scope: AuditLogScope | null;
   /** The viewer's own actions: every row's actor is the viewer, so the column is left out. */
@@ -557,102 +625,150 @@ const AuditLogTable: React.FC<{
     tablePaginationOption,
     setTablePaginationOption,
   } = useBAIPaginationOptionState({ current: 1, pageSize: 5 });
+  // A new range, filter or scope starts on the first page.
+  const resetKey = JSON.stringify([range, failuresOnly, scope]);
+  const [pagedKey, setPagedKey] = useState(resetKey);
+  if (pagedKey !== resetKey) {
+    setPagedKey(resetKey);
+    setTablePaginationOption({ current: 1 });
+  }
   const { plan, hasHistory, history, live } = successFailureVariables(
     auditOutcomeFilter,
     range,
     refreshedAt,
   );
-  const variables = {
-    plan,
-    hasHistory,
-    history,
-    live: {
-      filter: {
-        ...withinWindow('createdAt', plan.window),
-        ...(failuresOnly ? FAILURES_ONLY_FILTER : {}),
-      },
-      limit: baiPaginationOption.limit,
-      offset: baiPaginationOption.offset,
-      ...live,
+  const counts = useDeferredValue({ plan, hasHistory, history, live });
+  const listVariables: ListVariables = {
+    filter: {
+      ...withinWindow('createdAt', plan.window),
+      ...(failuresOnly ? FAILURES_ONLY_FILTER : {}),
     },
+    limit: baiPaginationOption.limit,
+    offset: baiPaginationOption.offset,
   };
-  const deferred = useDeferredValue(variables);
+  // Deferred together, so a page change keeps the current rows until the next page arrives.
+  const deferredList = useDeferredValue(listVariables);
 
-  const renderLog = (historyData: CountData | null, data: LiveData) => {
-    const logs = readPrimary(data.logs);
-    return (
-      <BAIFlex direction="column" align="stretch" gap="sm">
-        <SuccessFailureStats
-          counts={readSuccessFailure(deferred.plan, historyData, data)}
-          buckets={deferred.plan.buckets}
-        />
-        <BAIAuditLogNodes
-          auditLogFrgmt={filterOutNullAndUndefined(
-            logs?.edges.map((edge) => edge?.node),
-          )}
-          disableSorter
-          loading={deferred !== variables}
-          customizeColumns={(columns) =>
-            columns
-              .filter(
-                (column) =>
-                  VISIBLE_COLUMNS.has(String(column.key)) &&
-                  !(hideTriggeredBy && column.key === 'triggeredBy'),
-              )
-              .map((column) => ({ ...column, defaultHidden: false }))
-          }
-          pagination={{
-            pageSize: tablePaginationOption.pageSize,
-            current: tablePaginationOption.current,
-            total: logs?.count ?? 0,
-            onChange: (current, pageSize) =>
-              setTablePaginationOption({ current, pageSize }),
-          }}
-        />
-      </BAIFlex>
-    );
-  };
+  const renderStats = (historyData: CountData | null, data: CountData) => (
+    <SuccessFailureStats
+      counts={readSuccessFailure(counts.plan, historyData, data)}
+      buckets={counts.plan.buckets}
+    />
+  );
 
   const withHistory = (
     children: (data: CountData | null) => React.ReactNode,
   ) =>
-    !deferred.hasHistory ? (
+    !counts.hasHistory ? (
       children(null)
     ) : scope ? (
       <ScopedAuditLogHistory
         scope={scope}
-        variables={deferred.history}
+        variables={counts.history}
         fetchKey={manualFetchKey}
       >
         {children}
       </ScopedAuditLogHistory>
     ) : (
       <AdminAuditLogHistory
-        variables={deferred.history}
+        variables={counts.history}
         fetchKey={manualFetchKey}
       >
         {children}
       </AdminAuditLogHistory>
     );
 
-  return (
+  const stats = !hasLiveCounts(counts.live) ? (
+    withHistory((historyData) => renderStats(historyData, {}))
+  ) : (
     <>
       {/* A sibling, so the history request starts alongside the live one instead of after it. */}
       {withHistory(() => null)}
       {scope ? (
         <ScopedAuditLog
           scope={scope}
-          variables={deferred.live}
+          variables={counts.live}
           fetchKey={fetchKey}
         >
-          {(data) => withHistory((historyData) => renderLog(historyData, data))}
+          {(data) =>
+            withHistory((historyData) => renderStats(historyData, data))
+          }
         </ScopedAuditLog>
       ) : (
-        <AdminAuditLog variables={deferred.live} fetchKey={fetchKey}>
-          {(data) => withHistory((historyData) => renderLog(historyData, data))}
+        <AdminAuditLog variables={counts.live} fetchKey={fetchKey}>
+          {(data) =>
+            withHistory((historyData) => renderStats(historyData, data))
+          }
         </AdminAuditLog>
       )}
     </>
+  );
+
+  const renderList = (data: ListData) => {
+    const logs = readPrimary(data.logs);
+    const order = auditColumnOrder(hideTriggeredBy);
+    return (
+      <BAIAuditLogNodes
+        auditLogFrgmt={filterOutNullAndUndefined(
+          logs?.edges.map((edge) => edge?.node),
+        )}
+        disableSorter
+        loading={deferredList !== listVariables}
+        customizeColumns={(columns) =>
+          _.sortBy(
+            columns.filter((column) => order.includes(String(column.key))),
+            (column) => order.indexOf(String(column.key)),
+          ).map((column) =>
+            column.key === 'clientIp'
+              ? {
+                  ...column,
+                  defaultHidden: false,
+                  render: (
+                    _value: unknown,
+                    record: { clientIp?: string | null },
+                  ) => (
+                    <BAIText
+                      ellipsis={{ tooltip: true }}
+                      style={{ maxWidth: CLIENT_IP_MAX_WIDTH }}
+                    >
+                      {record.clientIp || '-'}
+                    </BAIText>
+                  ),
+                }
+              : { ...column, defaultHidden: false },
+          )
+        }
+        pagination={{
+          pageSize: tablePaginationOption.pageSize,
+          current: tablePaginationOption.current,
+          total: logs?.count ?? 0,
+          onChange: (current, pageSize) =>
+            setTablePaginationOption({ current, pageSize }),
+        }}
+      />
+    );
+  };
+
+  return (
+    <BAIFlex direction="column" align="stretch" gap="sm">
+      <PeriodCaption window={counts.plan.window} />
+      <Suspense fallback={<BAISkeleton />}>{stats}</Suspense>
+      <Suspense fallback={<BAISkeleton />}>
+        {scope ? (
+          <ScopedAuditLogList
+            scope={scope}
+            variables={deferredList}
+            fetchKey={fetchKey}
+          >
+            {renderList}
+          </ScopedAuditLogList>
+        ) : (
+          <AdminAuditLogList variables={deferredList} fetchKey={fetchKey}>
+            {renderList}
+          </AdminAuditLogList>
+        )}
+      </Suspense>
+    </BAIFlex>
   );
 };
 
@@ -703,8 +819,6 @@ const AuditLogPanel: React.FC<PanelComponentProps> = ({
     >
       {(cardScope, key) => (
         <AuditLogTable
-          // A new filter starts on the first page.
-          key={String(failuresOnly)}
           scope={auditLogScope(cardScope, baiClient.user_uuid)}
           hideTriggeredBy={cardScope.kind === 'mine'}
           range={vars.range}
