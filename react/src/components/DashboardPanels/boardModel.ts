@@ -77,10 +77,12 @@ export const siderEntries = (entries: ReadonlyArray<CatalogEntry>) =>
 export const panelTitleKey = (
   definition: PanelDefinition,
   role: PanelCatalogContext['role'],
+  page?: PanelPage,
 ) =>
-  role === 'superadmin' && definition.superadminTitleKey
+  (page && definition.pageTitleKeys?.[page]) ??
+  (role === 'superadmin' && definition.superadminTitleKey
     ? definition.superadminTitleKey
-    : definition.titleKey;
+    : definition.titleKey);
 
 export const sizeOf = (
   definition: PanelDefinition,

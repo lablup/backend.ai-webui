@@ -240,7 +240,7 @@ const FoldersPanel: React.FC<PanelComponentProps> = ({ scope, fetchKey }) => {
       heading={{
         mine: { title: t('data.MyFolders') },
         project: {
-          title: t('general.Folders'),
+          title: t('dashboard.card.ProjectFolders'),
           tooltip: t('dashboard.card.ProjectFoldersTooltip'),
         },
         domain: {

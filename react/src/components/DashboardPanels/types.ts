@@ -245,6 +245,8 @@ export interface PanelDefinition {
   titleKey: string;
   /** Replaces `titleKey` for a superadmin, whose card shows a wider range. */
   superadminTitleKey?: string;
+  /** Replaces `titleKey` (and `superadminTitleKey`) on the pages listed. */
+  pageTitleKeys?: Partial<Record<PanelPage, string>>;
   requires?: {
     role?: 'projectAdmin' | 'superadmin';
     /**

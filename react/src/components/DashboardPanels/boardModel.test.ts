@@ -7,6 +7,7 @@ import {
   applyLayout,
   catalogFor,
   siderEntries,
+  panelTitleKey,
   removePanel,
   resetBoard,
   sanitizeBoard,
@@ -496,5 +497,25 @@ describe('setPanelsHidden', () => {
       true,
       undefined,
     ]);
+  });
+});
+
+describe('panelTitleKey', () => {
+  const titled = card('users', {
+    titleKey: 'users',
+    superadminTitleKey: 'domainUsers',
+    pageTitleKeys: { projectAdmin: 'projectUsers' },
+  });
+
+  it('uses the page title on that page, for any role', () => {
+    expect(panelTitleKey(titled, 'superadmin', 'projectAdmin')).toBe(
+      'projectUsers',
+    );
+    expect(panelTitleKey(titled, 'user', 'projectAdmin')).toBe('projectUsers');
+  });
+
+  it('keeps the role title elsewhere', () => {
+    expect(panelTitleKey(titled, 'superadmin', 'admin')).toBe('domainUsers');
+    expect(panelTitleKey(titled, 'user', 'project')).toBe('users');
   });
 });

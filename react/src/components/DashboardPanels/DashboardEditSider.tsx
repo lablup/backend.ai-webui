@@ -7,7 +7,12 @@ import './DashboardEditSider.css';
 import { panelTitleKey, type CatalogEntry } from './boardModel';
 import { describePanelSettings } from './panelSettings';
 import { resolvePanelTitle } from './resourceRegistry';
-import { PANEL_GROUPS, type PanelGroup, type PersistedPanel } from './types';
+import {
+  PANEL_GROUPS,
+  type PanelGroup,
+  type PanelPage,
+  type PersistedPanel,
+} from './types';
 import type { PanelSettingsTarget } from './useDashboardBoard';
 import { Button } from '@lablup/ui-common/Button';
 import { IconButton } from '@lablup/ui-common/IconButton';
@@ -32,6 +37,8 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface DashboardEditSiderProps {
+  /** The page, for the card titles that differ per page. */
+  page?: PanelPage;
   /** Single-instance catalog entries, checked when on the board. */
   catalogEntries: ReadonlyArray<CatalogEntry>;
   /** Catalog keys, and user-made panel ids, of what is shown on the board. */
@@ -70,6 +77,7 @@ const GROUP_LABEL_KEYS: Record<PanelGroup, string> = {
  * puts cards on the board and takes them off, user-made panels first.
  */
 const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
+  page,
   catalogEntries,
   activeKeys,
   deniedKeys,
@@ -92,7 +100,7 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
   const normalizedSearch = search.trim().toLowerCase();
   const labeledEntries = catalogEntries.map((entry) => ({
     ...entry,
-    label: t(panelTitleKey(entry.definition, role)),
+    label: t(panelTitleKey(entry.definition, role, page)),
   }));
   const matchingEntries = normalizedSearch
     ? labeledEntries.filter((entry) =>

@@ -315,7 +315,7 @@ export const useDashboardBoard = ({
               panel={viewPanel}
               isPageRefetching={isRefetching}
               deniedFrame={(body) => (
-                <PanelFrame title={t(panelTitleKey(definition, role))}>
+                <PanelFrame title={t(panelTitleKey(definition, role, page))}>
                   {body}
                 </PanelFrame>
               )}
@@ -435,7 +435,7 @@ export const useDashboardBoard = ({
       return {
         title: legacyPanel
           ? resolvePanelTitle(legacyPanel.descriptor, t)
-          : t(panelTitleKey(definition, role)),
+          : t(panelTitleKey(definition, role, page)),
         definition,
         settings: panel.settings,
       };

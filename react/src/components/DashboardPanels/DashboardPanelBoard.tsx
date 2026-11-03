@@ -204,6 +204,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
         </div>
         {editMode ? (
           <DashboardEditSider
+            page={page}
             catalogEntries={catalogEntries}
             activeKeys={activeKeys}
             deniedKeys={deniedKeys}

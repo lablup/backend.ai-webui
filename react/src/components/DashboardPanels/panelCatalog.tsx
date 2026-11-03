@@ -381,6 +381,7 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     page: ['projectAdmin', 'admin'],
     group: 'resource',
     titleKey: 'general.Folders',
+    pageTitleKeys: { projectAdmin: 'dashboard.card.ProjectFolders' },
     kind: 'custom',
     Component: FoldersPanel,
     detailLink: listLink('data', {
@@ -396,6 +397,7 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     page: ['projectAdmin', 'admin'],
     group: 'users',
     titleKey: 'webui.menu.Users',
+    pageTitleKeys: { projectAdmin: 'dashboard.card.ProjectUsers' },
     kind: 'custom',
     Component: UsersPanel,
     detailLink: listLink('users', {

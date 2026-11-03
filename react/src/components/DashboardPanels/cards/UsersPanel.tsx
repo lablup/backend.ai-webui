@@ -184,7 +184,7 @@ const UsersPanel: React.FC<PanelComponentProps> = ({ scope, fetchKey }) => {
       fetchKey={fetchKey}
       heading={{
         project: {
-          title: t('webui.menu.Users'),
+          title: t('dashboard.card.ProjectUsers'),
           tooltip: t('dashboard.card.ProjectUsersTooltip'),
         },
         domain: {
