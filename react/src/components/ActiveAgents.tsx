@@ -4,7 +4,12 @@
  */
 import AgentList from './AgentList';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIBoardItemTitle, BAIFetchKeyButton, BAIFlex } from 'backend.ai-ui';
+import {
+  BAIBoardItemTitle,
+  BAIFetchKeyButton,
+  BAIFlex,
+  useIsInBAIBoardItem,
+} from 'backend.ai-ui';
 import { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -21,6 +26,7 @@ const ActiveAgents: React.FC<ActiveAgentsProps> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = useTheme();
+  const isInBoard = useIsInBAIBoardItem();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
   return (
@@ -28,8 +34,9 @@ const ActiveAgents: React.FC<ActiveAgentsProps> = ({
       direction="column"
       align="stretch"
       style={{
-        paddingInline: token('--spacing-8'),
         height: '100%',
+        // On a board the board pads the item.
+        ...(isInBoard ? {} : { paddingInline: token('--spacing-8') }),
       }}
     >
       <BAIBoardItemTitle
@@ -62,7 +69,7 @@ const ActiveAgents: React.FC<ActiveAgentsProps> = ({
           flex: 1,
           overflowY: 'auto',
           overflowX: 'hidden',
-          marginBottom: token('--spacing-4'),
+          ...(isInBoard ? {} : { marginBottom: token('--spacing-4') }),
         }}
       >
         <AgentList
