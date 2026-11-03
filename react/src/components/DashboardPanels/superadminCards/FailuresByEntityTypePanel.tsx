@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { FailuresByEntityTypePanelQuery } from '../../../__generated__/FailuresByEntityTypePanelQuery.graphql';
+import { rbacTypeLabel } from '../../../helper/rbacElementTypes';
 import ScopedCard from '../cards/ScopedCard';
 import DonutChart from '../charts/DonutChart';
 import PeriodCaption from '../charts/PeriodCaption';
@@ -97,7 +98,7 @@ const EntityTypeFailures: React.FC<{
         rows={toDonutRows([
           ...AUDIT_ENTITY_TYPES.map((type) => ({
             key: type,
-            label: type,
+            label: rbacTypeLabel(t, type),
             count: counts[ENTITY_TYPE_ALIASES[type]],
           })),
           {

@@ -16,6 +16,7 @@ import type {
   AuditLogPanelScopedQuery$data,
   AuditLogScope,
 } from '../../../__generated__/AuditLogPanelScopedQuery.graphql';
+import { rbacTypeLabel } from '../../../helper/rbacElementTypes';
 import { useSuspendedBackendaiClient } from '../../../hooks';
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
 import type { CardScope } from '../cardScope';
@@ -620,6 +621,7 @@ const AuditLogTable: React.FC<{
   manualFetchKey,
 }) => {
   'use memo';
+  const { t } = useTranslation();
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -735,7 +737,19 @@ const AuditLogTable: React.FC<{
                     </BAIText>
                   ),
                 }
-              : { ...column, defaultHidden: false },
+              : column.key === 'entityType'
+                ? {
+                    ...column,
+                    defaultHidden: false,
+                    render: (
+                      _value: unknown,
+                      record: { entityType?: string | null },
+                    ) =>
+                      record.entityType
+                        ? rbacTypeLabel(t, record.entityType)
+                        : '-',
+                  }
+                : { ...column, defaultHidden: false },
           )
         }
         pagination={{
