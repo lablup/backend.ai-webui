@@ -2,24 +2,27 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { TopProjectsUsagePanelLatestDayQuery } from '../../../__generated__/TopProjectsUsagePanelLatestDayQuery.graphql';
 import type {
   TopProjectsUsagePanelQuery,
   TopProjectsUsagePanelQuery$data,
 } from '../../../__generated__/TopProjectsUsagePanelQuery.graphql';
 import ScopedCard from '../cards/ScopedCard';
 import { readPrimary, type CaughtValue } from '../panelPermission';
+import type { DateTimeWindow } from '../timeRange';
 import type { PanelComponentProps } from '../types';
 import {
-  byCpuUsage,
   coreHours,
   formatAmount,
   gibHours,
-  slotQuantity,
+  sumUsageByProject,
+  usageDays,
+  usageDaysFilter,
+  type ProjectUsageTotal,
 } from './superadminCardData';
 import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex, BAITable, filterOutNullAndUndefined } from 'backend.ai-ui';
-import _ from 'lodash';
+import dayjs from 'dayjs';
+import * as _ from 'lodash-es';
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -33,67 +36,49 @@ type BucketRow = NonNullable<
 >;
 
 const PAGE_SIZE = 200;
-// The most buckets of one day read before ranking; past it the card says so.
+// The most buckets read before ranking; past it the card says so.
 const ROW_LIMIT = 5000;
 
 type UsageFilter = TopProjectsUsagePanelQuery['variables']['filter'];
 
-const scopeFilter = (
+const usageFilter = (
   domainName: string,
   resourceGroups: ReadonlyArray<string> | undefined,
+  days: { first: string; last: string },
 ): UsageFilter => ({
   domainName: { equals: domainName },
   ...(resourceGroups?.length
     ? { resourceGroup: { in: [...resourceGroups] } }
     : {}),
+  ...usageDaysFilter(days),
 });
 
+const formatDays = ({ first, last }: { first: string; last: string }) =>
+  first === last
+    ? dayjs(first).format('ll')
+    : `${dayjs(first).format('ll')} - ${dayjs(last).format('ll')}`;
+
 /**
- * The manager keeps one bucket per project, resource group and day and sums
- * none of them, so the card shows the latest recorded day: one row per project
- * and resource group.
+ * The manager keeps one bucket per project, resource group and day, so the
+ * card reads every bucket of the days the range touches and adds them up per
+ * project.
  */
-const LatestUsageDay: React.FC<{
+const RangeUsage: React.FC<{
   domainName: string;
   resourceGroups: ReadonlyArray<string> | undefined;
+  timeRange: DateTimeWindow;
   fetchKey: string;
-}> = ({ domainName, resourceGroups, fetchKey }) => {
+}> = ({ domainName, resourceGroups, timeRange, fetchKey }) => {
   'use memo';
   const { t } = useTranslation();
-  const filter = scopeFilter(domainName, resourceGroups);
-  const data = useLazyLoadQuery<TopProjectsUsagePanelLatestDayQuery>(
-    graphql`
-      query TopProjectsUsagePanelLatestDayQuery(
-        $filter: ProjectUsageBucketFilter!
-      ) {
-        latest: adminProjectUsageBuckets(
-          filter: $filter
-          orderBy: [{ field: PERIOD_START, direction: DESC }]
-          limit: 1
-        ) @catch(to: RESULT) {
-          edges {
-            node {
-              metadata {
-                periodStart
-              }
-            }
-          }
-        }
-      }
-    `,
-    useDeferredValue({ filter }),
-    { fetchPolicy: 'store-and-network', fetchKey },
-  );
-  const latest = readPrimary(data.latest);
-  const day = latest?.edges[0]?.node.metadata.periodStart;
-  if (!day) {
-    return <Text type="supporting">{t('dashboard.card.NoUsageRecorded')}</Text>;
-  }
+  const days = usageDays(timeRange);
   return (
     <BAIFlex direction="column" align="stretch" gap="xs">
-      <Text type="supporting">{t('dashboard.card.UsageOnDay', { day })}</Text>
+      <Text type="supporting" size="sm" data-testid="panel-period">
+        {t('dashboard.card.UsageOverDays', { days: formatDays(days) })}
+      </Text>
       <ProjectUsagePage
-        filter={{ ...filter, periodStart: { equals: day } }}
+        filter={usageFilter(domainName, resourceGroups, days)}
         fetchKey={fetchKey}
         offset={0}
         collected={[]}
@@ -103,8 +88,8 @@ const LatestUsageDay: React.FC<{
 };
 
 /**
- * One page of the day's buckets. The manager orders them by period start
- * only, so every bucket of the day is read, page by page, before ranking.
+ * One page of the range's buckets. The manager orders them by period start
+ * only, so every bucket is read, page by page, before ranking.
  */
 const ProjectUsagePage: React.FC<{
   filter: UsageFilter;
@@ -113,6 +98,7 @@ const ProjectUsagePage: React.FC<{
   collected: ReadonlyArray<BucketRow>;
 }> = ({ filter, fetchKey, offset, collected }) => {
   'use memo';
+  const { t } = useTranslation();
   const variables = useDeferredValue<TopProjectsUsagePanelQuery['variables']>({
     filter,
     limit: PAGE_SIZE,
@@ -135,6 +121,7 @@ const ProjectUsagePage: React.FC<{
           edges {
             node {
               id
+              projectId
               resourceGroupName
               resourceUsage {
                 entries {
@@ -173,64 +160,69 @@ const ProjectUsagePage: React.FC<{
       />
     );
   }
-  return <ProjectUsageTable rows={byCpuUsage(rows)} total={total} />;
+  if (rows.length === 0) {
+    return <Text type="supporting">{t('dashboard.card.NoUsageRecorded')}</Text>;
+  }
+  return (
+    <ProjectUsageTable
+      totals={sumUsageByProject(rows)}
+      read={rows.length}
+      total={total}
+    />
+  );
 };
 
 const ProjectUsageTable: React.FC<{
-  rows: ReadonlyArray<BucketRow>;
+  totals: ReadonlyArray<ProjectUsageTotal>;
+  /** Buckets added up, and how many the range holds. */
+  read: number;
   total: number;
-}> = ({ rows, total }) => {
+}> = ({ totals, read, total }) => {
   'use memo';
   const { t } = useTranslation();
   return (
     <BAIFlex direction="column" align="stretch" gap="xs">
-      <BAITable<BucketRow>
+      <BAITable<ProjectUsageTotal>
         size="small"
-        rowKey="id"
-        dataSource={[...rows]}
+        rowKey="projectId"
+        dataSource={[...totals]}
         scroll={{ x: 'max-content' }}
         columns={[
           {
             key: 'project',
             title: t('general.Project'),
-            render: (_value, row) => row.project?.basicInfo.name ?? '-',
+            render: (_value, row) => row.projectName ?? '-',
           },
           {
             key: 'resourceGroup',
             title: t('general.ResourceGroup'),
-            render: (_value, row) => row.resourceGroupName,
+            render: (_value, row) => row.resourceGroups.join(', '),
           },
           {
             key: 'cpu',
             title: t('dashboard.card.CpuCoreHours'),
             align: 'right',
-            render: (_value, row) =>
-              formatAmount(
-                coreHours(slotQuantity(row.resourceUsage.entries, 'cpu')),
-              ),
+            render: (_value, row) => formatAmount(coreHours(row.cpu)),
           },
           {
             key: 'mem',
             title: t('dashboard.card.MemoryGiBHours'),
             align: 'right',
-            render: (_value, row) =>
-              formatAmount(
-                gibHours(slotQuantity(row.resourceUsage.entries, 'mem')),
-              ),
+            render: (_value, row) => formatAmount(gibHours(row.mem)),
           },
         ]}
         pagination={{ pageSize: 5, showSizeChanger: false }}
       />
-      {total > rows.length ? (
+      {total > read ? (
         <Text type="supporting">
-          {t('dashboard.card.UsageRowsCapped', { shown: rows.length, total })}
+          {t('dashboard.card.UsageRowsCapped', { shown: read, total })}
         </Text>
       ) : null}
     </BAIFlex>
   );
 };
 
-/** The domain's projects by their usage on the latest recorded day, the heaviest first. */
+/** The domain's projects by their usage summed over the card's range, the heaviest first. */
 const TopProjectsUsagePanel: React.FC<PanelComponentProps> = ({
   scope,
   vars,
@@ -250,11 +242,12 @@ const TopProjectsUsagePanel: React.FC<PanelComponentProps> = ({
     >
       {(cardScope, key) =>
         cardScope.kind === 'domain' ? (
-          <LatestUsageDay
+          <RangeUsage
             domainName={cardScope.domainName}
             resourceGroups={
               vars.resourceGroup ? [vars.resourceGroup] : undefined
             }
+            timeRange={vars.timeRange}
             fetchKey={key}
           />
         ) : null

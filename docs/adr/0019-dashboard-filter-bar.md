@@ -126,6 +126,7 @@ sequenceDiagram
 - **Totals from buckets**: 기간 전체의 합계(감사 로그의 성공 수와 실패 수 같은 값)는 같은 카드가 읽은 bucket count를 더한다. bucket이 window를 빈틈과 겹침 없이 나누므로 합은 window의 count와 같고, 합계용 alias를 따로 읽지 않는다.
 - **Usage buckets**: 사용량 추이 카드는 매니저의 `usageBuckets`가 준 구간을 그대로 그린다.
 - **Rows, not sums**: 프로젝트 하나나 자원 그룹 하나 단위로만 값을 주는 field를 읽는 카드는 프로젝트나 자원 그룹마다 한 행을 그린다. 클라이언트는 프로젝트나 자원 그룹마다 받은 응답의 값을 더하지 않는다.
+- **Usage over a range**: 예외로 "Top Projects by Usage" 카드는 매니저가 프로젝트, 자원 그룹, 하루마다 기록한 사용량 bucket을 기간이 걸친 날 전부 읽어 프로젝트마다 slot별로 더하고, CPU core-hour 순으로 줄 세운다(`sumUsageByProject`). bucket이 하루 단위라 하루보다 짧은 기간은 그 기간이 걸친 날 전체를 읽는다(`usageDays`). 매니저에 기간 합계를 주는 field가 없어서다.
 
 ### 7. 역할이 달라도 카드는 하나다
 

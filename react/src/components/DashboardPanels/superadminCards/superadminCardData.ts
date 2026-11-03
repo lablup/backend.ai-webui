@@ -5,6 +5,7 @@
 import type { AuditLogFilter } from '../../../__generated__/FailuresByEntityTypePanelQuery.graphql';
 import { AUDIT_FAILURE_STATUSES } from '../memberCards/memberCardData';
 import { withinWindow, type DateTimeWindow } from '../timeRange';
+import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 
 /** Scheduling results that mean an attempt did not place the session, in donut order. */
@@ -89,10 +90,37 @@ export const entityTypeFailureFilters = (
 };
 
 /**
- * The `periodStart` lower bound for usage buckets that overlap `window`:
- * buckets are whole days and `DateFilter.after` is exclusive, so the day
- * before the window's first day.
+ * The days a window touches, as `YYYY-MM-DD` in local time: a usage bucket is
+ * one day, so a range shorter than a day reads the day (or two) it falls in.
  */
+export const usageDays = (
+  window: DateTimeWindow,
+): { first: string; last: string } => ({
+  first: dayjs(window.after).format('YYYY-MM-DD'),
+  // `before` is exclusive.
+  last: dayjs(window.before).subtract(1, 'ms').format('YYYY-MM-DD'),
+});
+
+/**
+ * `periodStart` within `days`, as two ANDed exclusive bounds (one
+ * `DateFilter` with both bounds applies only `before`, as `withinWindow` notes).
+ */
+export const usageDaysFilter = ({
+  first,
+  last,
+}: {
+  first: string;
+  last: string;
+}) => ({
+  AND: [
+    {
+      periodStart: {
+        after: dayjs(first).subtract(1, 'day').format('YYYY-MM-DD'),
+      },
+    },
+    { periodStart: { before: dayjs(last).add(1, 'day').format('YYYY-MM-DD') } },
+  ],
+});
 
 const toNumber = (value: unknown): number => {
   const number = Number(value);
@@ -125,17 +153,42 @@ export const gibHours = (byteSeconds: number): number =>
 export const formatAmount = (value: number, digits = 1): string =>
   value.toLocaleString(undefined, { maximumFractionDigits: digits });
 
-/**
- * Bucket rows ordered by CPU use, most first: each row is one manager-computed
- * bucket (project, resource group, day); rows are never added together.
- */
-export const byCpuUsage = <
-  TRow extends {
-    readonly resourceUsage: { readonly entries: ReadonlyArray<SlotEntry> };
-  },
->(
-  rows: ReadonlyArray<TRow>,
-): Array<TRow> =>
-  _.orderBy(rows, (row) => slotQuantity(row.resourceUsage.entries, 'cpu'), [
-    'desc',
-  ]);
+export interface UsageBucketRow {
+  readonly projectId: string;
+  readonly resourceGroupName: string;
+  readonly project?: { readonly basicInfo: { readonly name: string } } | null;
+  readonly resourceUsage: { readonly entries: ReadonlyArray<SlotEntry> };
+}
+
+export interface ProjectUsageTotal {
+  projectId: string;
+  projectName: string | null;
+  /** The resource groups the summed buckets came from, by name. */
+  resourceGroups: Array<string>;
+  /** Core-seconds. */
+  cpu: number;
+  /** Byte-seconds. */
+  mem: number;
+}
+
+/** Each project's buckets added up per slot, the heaviest CPU use first. */
+export const sumUsageByProject = (
+  rows: ReadonlyArray<UsageBucketRow>,
+): Array<ProjectUsageTotal> =>
+  _.orderBy(
+    _.map(_.groupBy(rows, 'projectId'), (buckets, projectId) => ({
+      projectId,
+      projectName:
+        _.find(buckets, (bucket) => !!bucket.project)?.project?.basicInfo
+          .name ?? null,
+      resourceGroups: _.sortBy(_.uniq(_.map(buckets, 'resourceGroupName'))),
+      cpu: _.sumBy(buckets, (bucket) =>
+        slotQuantity(bucket.resourceUsage.entries, 'cpu'),
+      ),
+      mem: _.sumBy(buckets, (bucket) =>
+        slotQuantity(bucket.resourceUsage.entries, 'mem'),
+      ),
+    })),
+    ['cpu', 'mem'],
+    ['desc', 'desc'],
+  );

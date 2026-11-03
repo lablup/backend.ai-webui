@@ -5,11 +5,13 @@
 import { withinWindow } from '../timeRange';
 import {
   AUDIT_ENTITY_TYPES,
-  byCpuUsage,
   coreHours,
   entityTypeFailureFilters,
   gibHours,
   slotQuantity,
+  sumUsageByProject,
+  usageDays,
+  usageDaysFilter,
 } from './superadminCardData';
 
 const usage = (cpu: string, mem = '0') => ({
@@ -40,14 +42,74 @@ describe('usage units', () => {
   });
 });
 
-describe('byCpuUsage', () => {
-  it('orders bucket rows by their own CPU use without merging them', () => {
-    const rows = [
-      { id: 'a', ...usage('10') },
-      { id: 'b', ...usage('300') },
-      { id: 'c', ...usage('20') },
-    ];
-    expect(byCpuUsage(rows).map((row) => row.id)).toEqual(['b', 'c', 'a']);
+describe('sumUsageByProject', () => {
+  const bucket = (
+    projectId: string,
+    group: string,
+    cpu: string,
+    mem = '0',
+  ) => ({
+    projectId,
+    resourceGroupName: group,
+    project: { basicInfo: { name: `name-${projectId}` } },
+    ...usage(cpu, mem),
+  });
+
+  it('adds up each project over days and resource groups, then ranks by CPU', () => {
+    const totals = sumUsageByProject([
+      bucket('a', 'rg1', '100', '10'),
+      bucket('b', 'rg1', '150'),
+      bucket('a', 'rg2', '100', '5'),
+      bucket('c', 'rg1', '20'),
+      bucket('b', 'rg1', '30'),
+    ]);
+    expect(totals.map((total) => [total.projectId, total.cpu])).toEqual([
+      ['a', 200],
+      ['b', 180],
+      ['c', 20],
+    ]);
+    expect(totals[0]).toMatchObject({
+      projectName: 'name-a',
+      resourceGroups: ['rg1', 'rg2'],
+      mem: 15,
+    });
+  });
+
+  it('breaks a CPU tie by memory', () => {
+    const totals = sumUsageByProject([
+      bucket('a', 'rg', '10', '1'),
+      bucket('b', 'rg', '10', '5'),
+    ]);
+    expect(totals.map((total) => total.projectId)).toEqual(['b', 'a']);
+  });
+});
+
+describe('usageDays', () => {
+  it('reads the local days a window touches, its end exclusive', () => {
+    const at = (value: string) => new Date(value).toISOString();
+    expect(
+      usageDays({
+        after: at('2026-10-27T10:00:00'),
+        before: at('2026-10-27T11:00:00'),
+      }),
+    ).toEqual({ first: '2026-10-27', last: '2026-10-27' });
+    expect(
+      usageDays({
+        after: at('2026-10-27T10:00:00'),
+        before: at('2026-10-29T00:00:00'),
+      }),
+    ).toEqual({ first: '2026-10-27', last: '2026-10-28' });
+  });
+
+  it('bounds periodStart by the day before and the day after', () => {
+    expect(
+      usageDaysFilter({ first: '2026-10-27', last: '2026-10-28' }),
+    ).toEqual({
+      AND: [
+        { periodStart: { after: '2026-10-26' } },
+        { periodStart: { before: '2026-10-29' } },
+      ],
+    });
   });
 });
 

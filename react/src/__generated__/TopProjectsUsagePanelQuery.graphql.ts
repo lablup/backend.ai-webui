@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b6ee0f315962184ba22a184e4236bdeb>>
+ * @generated SignedSource<<39f7aadd428ccb1cd1883fe878604ca0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -71,6 +71,7 @@ export type TopProjectsUsagePanelQuery$data = {
             readonly name: string;
           };
         } | null | undefined;
+        readonly projectId: string;
         readonly resourceGroupName: string;
         readonly resourceUsage: {
           readonly entries: ReadonlyArray<{
@@ -150,10 +151,17 @@ v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "resourceGroupName",
+  "name": "projectId",
   "storageKey": null
 },
 v5 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "resourceGroupName",
+  "storageKey": null
+},
+v6 = {
   "alias": null,
   "args": null,
   "concreteType": "ResourceSlot",
@@ -189,7 +197,7 @@ v5 = {
   ],
   "storageKey": null
 },
-v6 = {
+v7 = {
   "alias": null,
   "args": null,
   "concreteType": "ProjectBasicInfo",
@@ -244,6 +252,7 @@ return {
                     (v3/*: any*/),
                     (v4/*: any*/),
                     (v5/*: any*/),
+                    (v6/*: any*/),
                     {
                       "alias": null,
                       "args": null,
@@ -252,7 +261,7 @@ return {
                       "name": "project",
                       "plural": false,
                       "selections": [
-                        (v6/*: any*/)
+                        (v7/*: any*/)
                       ],
                       "storageKey": null
                     }
@@ -305,6 +314,7 @@ return {
                   (v3/*: any*/),
                   (v4/*: any*/),
                   (v5/*: any*/),
+                  (v6/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -313,7 +323,7 @@ return {
                     "name": "project",
                     "plural": false,
                     "selections": [
-                      (v6/*: any*/),
+                      (v7/*: any*/),
                       (v3/*: any*/)
                     ],
                     "storageKey": null
@@ -330,16 +340,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "99f667fd0ca9bd54723d0e40f0a46ec4",
+    "cacheID": "c047805390aef1366135ed206cbcd693",
     "id": null,
     "metadata": {},
     "name": "TopProjectsUsagePanelQuery",
     "operationKind": "query",
-    "text": "query TopProjectsUsagePanelQuery(\n  $filter: ProjectUsageBucketFilter!\n  $limit: Int!\n  $offset: Int!\n) {\n  buckets: adminProjectUsageBuckets(filter: $filter, orderBy: [{field: PERIOD_START, direction: DESC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        resourceGroupName\n        resourceUsage {\n          entries {\n            resourceType\n            quantity\n          }\n        }\n        project {\n          basicInfo {\n            name\n          }\n          id\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query TopProjectsUsagePanelQuery(\n  $filter: ProjectUsageBucketFilter!\n  $limit: Int!\n  $offset: Int!\n) {\n  buckets: adminProjectUsageBuckets(filter: $filter, orderBy: [{field: PERIOD_START, direction: DESC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        projectId\n        resourceGroupName\n        resourceUsage {\n          entries {\n            resourceType\n            quantity\n          }\n        }\n        project {\n          basicInfo {\n            name\n          }\n          id\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "87ca60d2314fa66f0b4dcff744984a17";
+(node as any).hash = "d4371cb3503e5205769c803b37d827a9";
 
 export default node;

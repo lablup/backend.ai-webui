@@ -503,7 +503,7 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: TopProjectsUsagePanel,
     defaultSize: size(4, 3),
     minSize: size(2, 3),
-    settings: ['resourceGroup'],
+    settings: ['resourceGroup', 'range'],
     ...adminOrder('topProjectsUsage'),
   },
   {
