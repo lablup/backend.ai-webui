@@ -9,6 +9,7 @@ import {
   useCurrentProjectValue,
   useCurrentResourceGroupValue,
 } from '../../hooks/useCurrentProject';
+import { useIsCurrentProjectAdmin } from '../../hooks/useCurrentUserProjectRoles';
 import type { BoardLayoutEntry } from './boardLayout';
 import {
   addPanel,
@@ -141,6 +142,7 @@ export const useDashboardBoard = ({
   'use memo';
   const { t } = useTranslation();
   const role = useCurrentUserRole();
+  const isProjectAdmin = useIsCurrentProjectAdmin();
   const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
   const currentResourceGroup = useCurrentResourceGroupValue();
@@ -159,7 +161,12 @@ export const useDashboardBoard = ({
     inactiveList: baiClient?._config?.inactiveList ?? [],
     hideAgents: !!baiClient?._config?.hideAgents,
   };
-  const visibleEntries = catalogFor(catalog, { page, role, config });
+  const visibleEntries = catalogFor(catalog, {
+    page,
+    role,
+    config,
+    isProjectAdmin,
+  });
   const visibleByKey = new Map(
     visibleEntries.map((entry) => [entry.definition.key, entry]),
   );
