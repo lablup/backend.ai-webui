@@ -1,6 +1,7 @@
 import { default as Big } from 'big.js';
 export * from './astryxTagVariant';
 export * from './combineFilters';
+export * from './durationFormatter';
 export * from './runtimeVariantPresetUI';
 export * from './vfolderHostPermission';
 /** The manager's "no limit" sentinel for count fields; rendered as ∞. */
