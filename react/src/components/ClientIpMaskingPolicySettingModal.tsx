@@ -327,11 +327,9 @@ const ClientIpMaskingPolicySettingModal: React.FC<
         }
       >
         <Form.Item
-          label={labelWithTooltip(
-            t('clientIpMasking.Target'),
-            t('clientIpMasking.OnePolicyPerTarget'),
-          )}
+          label={t('clientIpMasking.Target')}
           name="targetType"
+          extra={t('clientIpMasking.OnePolicyPerTarget')}
           rules={[
             { required: true, message: t('clientIpMasking.TargetRequired') },
             { validator: validateTargetIsFree },
