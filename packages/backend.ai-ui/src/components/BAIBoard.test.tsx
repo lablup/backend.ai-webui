@@ -67,11 +67,10 @@ describe('BAIBoard', () => {
     expect(shell('Alpha')).toHaveClass('uic-board-item--bordered');
   });
 
-  it('lets a custom renderItem replace the default content', () => {
+  it("keeps an item's own description instead of data.content", () => {
     render(
       <BAIBoard
-        items={items}
-        renderItem={(item) => <h5>Custom {item.id}</h5>}
+        items={[{ ...items[0], description: <h5>Custom a</h5> }, items[1]]}
         onItemsChange={() => {}}
       />,
     );
