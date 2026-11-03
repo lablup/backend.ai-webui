@@ -48,6 +48,9 @@ export const effectivePanelSettings = (
   const settings: PanelSettings = {
     ...(resourceGroups?.length ? { resourceGroups } : {}),
     ...(range && range !== DEFAULT_RANGE ? { range } : {}),
+    ...(saved?.columnOverrides
+      ? { columnOverrides: saved.columnOverrides }
+      : {}),
   };
   return _.isEmpty(settings) ? undefined : settings;
 };

@@ -257,6 +257,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     detailLink: listLink('deployments', { project: 'webui.menu.Deployments' }),
     defaultSize: size(2, 3),
     minSize: size(2, 2),
+    columnSettings: true,
   },
   {
     key: 'myActivity',
@@ -357,6 +358,7 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(2, 3),
     minSize: size(2, 2),
     defaultHidden: ['admin'],
+    columnSettings: true,
   },
   {
     key: 'projectFolders',

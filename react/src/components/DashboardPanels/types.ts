@@ -9,6 +9,7 @@ import type { PanelDetailLink, PanelDetailLinkContext } from './detailLink';
 import type {
   BAIColumnsType,
   BAIGraphQLFilterProperty,
+  BAITableColumnOverrideRecord,
   FilterProperty,
   GraphQLFilter,
 } from 'backend.ai-ui';
@@ -136,6 +137,8 @@ export interface PanelSettings {
   resourceGroups?: Array<string>;
   /** A relative range such as `now-24h`. */
   range?: string;
+  /** The card table's column picks (visibility, order, width), on cards with `columnSettings`. */
+  columnOverrides?: BAITableColumnOverrideRecord;
 }
 
 export interface PanelSize {
@@ -228,6 +231,8 @@ export interface PanelComponentProps {
   onRefresh: () => void;
   /** Saves the card's own filter on the board. */
   onChangeFilter?: (filter: PersistedPanelV2['filter']) => void;
+  /** Saves part of the card's own settings on the board, keeping the rest. */
+  onChangeSettings?: (patch: Partial<PanelSettings>) => void;
   onEdit?: () => void;
   onRemove?: () => void;
 }
@@ -271,6 +276,8 @@ export interface PanelDefinition {
   >;
   /** The settings the card reads; only these cards get a settings control. */
   settings?: ReadonlyArray<PanelSettingKind>;
+  /** The card's table offers column settings, kept in its `columnOverrides` setting. */
+  columnSettings?: boolean;
   /** Like a BAITable column's `defaultHidden`: in the catalog, not on a new board; a page list limits it to those pages. */
   defaultHidden?: boolean | ReadonlyArray<PanelPage>;
   /** Where a new board of the page places the card; cards without one follow, in catalog order. */

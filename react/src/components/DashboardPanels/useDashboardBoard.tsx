@@ -37,6 +37,7 @@ import {
   overriddenSettings,
   panelSettingOverridesAtom,
 } from './panelSettingOverrides';
+import { mergeSettings } from './panelSettings';
 import { availableResourceKeys, resolvePanelTitle } from './resourceRegistry';
 import type {
   DashboardBoard,
@@ -332,6 +333,13 @@ export const useDashboardBoard = ({
                     onChangeFilter={(filter) =>
                       save(updatePanel(board, panel.id, { filter }))
                     }
+                    onChangeSettings={(patch) =>
+                      save(
+                        updatePanel(board, panel.id, {
+                          settings: mergeSettings(panel.settings, patch),
+                        }),
+                      )
+                    }
                     {...state}
                   />
                 </DetailLinkContext.Provider>
@@ -432,8 +440,16 @@ export const useDashboardBoard = ({
         settings: panel.settings,
       };
     },
+    // The modal edits resource group and range; the table's column picks stay.
     updatePanelSettings: (id, settings) => {
-      save(updatePanel(board, id, { settings }));
+      const current = board.panels.find((item) => item.id === id)?.settings;
+      save(
+        updatePanel(board, id, {
+          settings: mergeSettings(settings, {
+            columnOverrides: current?.columnOverrides,
+          }),
+        }),
+      );
       setOverride(id, undefined);
     },
     resetLayout: () => {

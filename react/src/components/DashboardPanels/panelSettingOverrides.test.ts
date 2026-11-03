@@ -130,3 +130,15 @@ describe('overrideKeyOf', () => {
     );
   });
 });
+
+describe('effectivePanelSettings column overrides', () => {
+  it('keeps the saved column picks next to a header pick', () => {
+    expect(
+      effectivePanelSettings(
+        { columnOverrides: { owner: { hidden: false } } },
+        undefined,
+        { settings: [] },
+      ),
+    ).toEqual({ columnOverrides: { owner: { hidden: false } } });
+  });
+});
