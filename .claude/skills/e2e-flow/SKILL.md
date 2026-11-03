@@ -111,6 +111,8 @@ test(
 
 - `app.open` for the start page, then **only** `agent.act`: one user intent
   per call, in the visible English UI labels.
+- **No draft for a flow that changes server-global state**
+  (`.claude/rules/e2e-no-global-state.md`): use `Not added because: <reason>`.
 - **No** `expect`, no `params` or concrete values, no timeouts, no cleanup.
   Automation fills in the details, the assertions and the cleanup.
 - **`tags: ["draft"]` and a `skip` reason, both.** An act-only test passes
