@@ -58,8 +58,9 @@ test.describe(
       await loginAsAdmin(page, request);
     });
 
+    // Since #10552 a superadmin lands on the first system admin page, the admin dashboard.
     test('should redirect to the Dashboard', async ({ page }) => {
-      await expect(page).toHaveURL(/\/dashboard/);
+      await expect(page).toHaveURL(/\/admin\/dashboard/);
       await expect(
         page.getByTestId('webui-breadcrumb').getByText('Dashboard'),
       ).toBeVisible();
@@ -85,7 +86,7 @@ test.describe(
       await fillEndpoint(page, webServerEndpoint + '/');
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
-      await expect(page).toHaveURL(/\/dashboard/, { timeout: 15_000 });
+      await expect(page).toHaveURL(/\/admin\/dashboard/, { timeout: 15_000 });
       await expect(
         page.getByTestId('webui-breadcrumb').getByText('Dashboard'),
       ).toBeVisible();
@@ -99,7 +100,7 @@ test.describe(
       await fillEndpoint(page, webServerEndpoint + '///');
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
-      await expect(page).toHaveURL(/\/dashboard/, { timeout: 15_000 });
+      await expect(page).toHaveURL(/\/admin\/dashboard/, { timeout: 15_000 });
       await expect(
         page.getByTestId('webui-breadcrumb').getByText('Dashboard'),
       ).toBeVisible();
