@@ -838,6 +838,7 @@
       "FailedLoginsTooltip": "Geçerli etki alanının kartın zaman aralığındaki başarısız oturum açmaları, önceki aralığa göre.",
       "FailuresByEntityType": "Varlık türüne göre hatalar",
       "FailuresByEntityTypeTooltip": "Kartın zaman aralığında tüm kümede hatayla biten veya reddedilen denetim günlüğü kayıtları, varlık türüne göre sayılır.",
+      "FailuresOfType": "Başarısız kayıtlar: {{type}}",
       "FailuresOnly": "Yalnızca hataları göster",
       "FairShareTooltip": "Kartın kaynak grubunun Fair Share ayarları, Fair Share sayfasının gösterdiği biçimde. Öncelikler bu ayarlardan alan, proje ve kullanıcı başına hesaplanır.",
       "FolderLimit": "Sınır: {{max}}",

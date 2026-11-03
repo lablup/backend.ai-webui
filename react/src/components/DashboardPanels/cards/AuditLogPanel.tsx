@@ -540,11 +540,9 @@ const ScopedAuditLogList: React.FC<
   return children(data);
 };
 
-const AdminAuditLogList: React.FC<QueryProps<ListVariables, ListData>> = ({
-  variables,
-  fetchKey,
-  children,
-}) => {
+export const AdminAuditLogList: React.FC<
+  QueryProps<ListVariables, ListData>
+> = ({ variables, fetchKey, children }) => {
   'use memo';
   const data = useLazyLoadQuery<AuditLogPanelAdminListQuery>(
     graphql`
@@ -595,6 +593,72 @@ export const auditColumnOrder = (hideTriggeredBy: boolean): Array<string> =>
         'entityType',
       ];
 
+/** One page of audit log rows in the dashboard's columns, with the table's pager. */
+export const AuditLogRows: React.FC<{
+  data: ListData;
+  hideTriggeredBy: boolean;
+  loading: boolean;
+  current: number;
+  pageSize: number;
+  onChangePage: (current: number, pageSize: number) => void;
+}> = ({ data, hideTriggeredBy, loading, current, pageSize, onChangePage }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const logs = readPrimary(data.logs);
+  const order = auditColumnOrder(hideTriggeredBy);
+  return (
+    <BAIAuditLogNodes
+      auditLogFrgmt={filterOutNullAndUndefined(
+        logs?.edges.map((edge) => edge?.node),
+      )}
+      disableSorter
+      loading={loading}
+      customizeColumns={(columns) =>
+        _.sortBy(
+          columns.filter((column) => order.includes(String(column.key))),
+          (column) => order.indexOf(String(column.key)),
+        ).map((column) =>
+          column.key === 'clientIp'
+            ? {
+                ...column,
+                defaultHidden: false,
+                render: (
+                  _value: unknown,
+                  record: { clientIp?: string | null },
+                ) => (
+                  <BAIText
+                    ellipsis={{ tooltip: true }}
+                    style={{ maxWidth: CLIENT_IP_MAX_WIDTH }}
+                  >
+                    {record.clientIp || '-'}
+                  </BAIText>
+                ),
+              }
+            : column.key === 'entityType'
+              ? {
+                  ...column,
+                  defaultHidden: false,
+                  render: (
+                    _value: unknown,
+                    record: { entityType?: string | null },
+                  ) =>
+                    record.entityType
+                      ? rbacTypeLabel(t, record.entityType)
+                      : '-',
+                }
+              : { ...column, defaultHidden: false },
+        )
+      }
+      pagination={{
+        pageSize,
+        current,
+        total: logs?.count ?? 0,
+        onChange: onChangePage,
+      }}
+    />
+  );
+};
+
 /** Whether a live count query has anything to count: a past fixed range reads history only. */
 export const hasLiveCounts = (live: {
   live0On: boolean;
@@ -621,7 +685,6 @@ const AuditLogTable: React.FC<{
   manualFetchKey,
 }) => {
   'use memo';
-  const { t } = useTranslation();
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -706,62 +769,18 @@ const AuditLogTable: React.FC<{
     </>
   );
 
-  const renderList = (data: ListData) => {
-    const logs = readPrimary(data.logs);
-    const order = auditColumnOrder(hideTriggeredBy);
-    return (
-      <BAIAuditLogNodes
-        auditLogFrgmt={filterOutNullAndUndefined(
-          logs?.edges.map((edge) => edge?.node),
-        )}
-        disableSorter
-        loading={deferredList !== listVariables}
-        customizeColumns={(columns) =>
-          _.sortBy(
-            columns.filter((column) => order.includes(String(column.key))),
-            (column) => order.indexOf(String(column.key)),
-          ).map((column) =>
-            column.key === 'clientIp'
-              ? {
-                  ...column,
-                  defaultHidden: false,
-                  render: (
-                    _value: unknown,
-                    record: { clientIp?: string | null },
-                  ) => (
-                    <BAIText
-                      ellipsis={{ tooltip: true }}
-                      style={{ maxWidth: CLIENT_IP_MAX_WIDTH }}
-                    >
-                      {record.clientIp || '-'}
-                    </BAIText>
-                  ),
-                }
-              : column.key === 'entityType'
-                ? {
-                    ...column,
-                    defaultHidden: false,
-                    render: (
-                      _value: unknown,
-                      record: { entityType?: string | null },
-                    ) =>
-                      record.entityType
-                        ? rbacTypeLabel(t, record.entityType)
-                        : '-',
-                  }
-                : { ...column, defaultHidden: false },
-          )
-        }
-        pagination={{
-          pageSize: tablePaginationOption.pageSize,
-          current: tablePaginationOption.current,
-          total: logs?.count ?? 0,
-          onChange: (current, pageSize) =>
-            setTablePaginationOption({ current, pageSize }),
-        }}
-      />
-    );
-  };
+  const renderList = (data: ListData) => (
+    <AuditLogRows
+      data={data}
+      hideTriggeredBy={hideTriggeredBy}
+      loading={deferredList !== listVariables}
+      current={tablePaginationOption.current}
+      pageSize={tablePaginationOption.pageSize}
+      onChangePage={(current, pageSize) =>
+        setTablePaginationOption({ current, pageSize })
+      }
+    />
+  );
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">

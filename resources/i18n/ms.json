@@ -838,6 +838,7 @@
       "FailedLoginsTooltip": "Log masuk gagal domain semasa dalam julat masa kad berbanding julat sebelumnya.",
       "FailuresByEntityType": "Kegagalan mengikut jenis entiti",
       "FailuresByEntityTypeTooltip": "Entri log audit seluruh kluster dalam julat masa kad yang berakhir dengan ralat atau ditolak, dikira mengikut jenis entiti.",
+      "FailuresOfType": "Entri gagal: {{type}}",
       "FailuresOnly": "Tunjukkan kegagalan sahaja",
       "FairShareTooltip": "Tetapan Fair Share kumpulan sumber kad, seperti yang ditunjukkan halaman Fair Share. Keutamaan dikira daripada tetapan ini bagi setiap domain, projek dan pengguna.",
       "FolderLimit": "Had: {{max}}",

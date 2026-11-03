@@ -838,6 +838,7 @@
       "FailedLoginsTooltip": "Los inicios de sesión fallidos del dominio actual en el periodo de la tarjeta frente al anterior.",
       "FailuresByEntityType": "Fallos por tipo de entidad",
       "FailuresByEntityTypeTooltip": "Entradas de auditoría de todo el clúster en el periodo de la tarjeta que terminaron en error o fueron denegadas, contadas por tipo de entidad.",
+      "FailuresOfType": "Entradas fallidas: {{type}}",
       "FailuresOnly": "Mostrar solo fallos",
       "FairShareTooltip": "La configuración de Fair Share del grupo de recursos de la tarjeta, tal como la muestra la página Fair Share. Las prioridades se calculan a partir de ella por dominio, proyecto y usuario.",
       "FolderLimit": "Límite: {{max}}",

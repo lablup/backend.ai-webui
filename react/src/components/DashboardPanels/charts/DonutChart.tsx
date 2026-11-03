@@ -10,6 +10,7 @@ import {
   RadialTooltip,
   useChartColors,
 } from '@lablup/ui-common/lab';
+import { colorVars } from '@lablup/ui-common/theme/tokens.stylex';
 import useResizeObserver from '@react-hook/resize-observer';
 import * as stylex from '@stylexjs/stylex';
 import { BAIFlex } from 'backend.ai-ui';
@@ -39,6 +40,25 @@ const styles = stylex.create({
   nameText: { maxWidth: 200 },
   number: { minWidth: '2.5em', textAlign: 'end' },
   percent: { minWidth: '3.5em', textAlign: 'end' },
+  rowButton: {
+    display: 'block',
+    width: '100%',
+    padding: 0,
+    border: 'none',
+    font: 'inherit',
+    color: 'inherit',
+    textAlign: 'start',
+    cursor: 'pointer',
+    backgroundColor: {
+      default: 'transparent',
+      ':hover': colorVars['--color-overlay-hover'],
+    },
+    outline: {
+      default: 'none',
+      ':focus-visible': `2px solid ${colorVars['--color-accent']}`,
+    },
+    outlineOffset: -2,
+  },
 });
 
 /** One legend line: name, count and share, divided from the next like table rows. */
@@ -96,6 +116,8 @@ export interface DonutChartProps {
   emptyText: string;
   /** A manager-counted total shown in the ring's hole ("-" when part of it is denied); omitted, the hole stays empty. */
   total?: number | string | null;
+  /** Makes each legend row a button that reports its row's key. */
+  onRowClick?: (key: string) => void;
 }
 
 /**
@@ -110,6 +132,7 @@ const DonutChart: React.FC<DonutChartProps> = ({
   columnLabels,
   emptyText,
   total,
+  onRowClick,
 }) => {
   'use memo';
   const rootRef = useRef<HTMLDivElement>(null);
@@ -308,37 +331,50 @@ const DonutChart: React.FC<DonutChartProps> = ({
                 </Text>
               </LegendLine>
             )}
-            {columnRows.map((row) => (
-              <LegendLine
-                key={row.key}
-                height={density.rowHeight}
-                isCompact={density.columns === 2}
-              >
-                <BAIFlex
-                  gap="xs"
-                  align="center"
-                  wrap="nowrap"
-                  style={{ flex: 1, minWidth: 0 }}
+            {columnRows.map((row) => {
+              const line = (
+                <LegendLine
+                  height={density.rowHeight}
+                  isCompact={density.columns === 2}
                 >
-                  {/* The swatch takes the slice's data colour, which no token carries. */}
-                  <Circle
-                    size={12}
-                    fill={row.color}
-                    color={row.color}
-                    aria-hidden
-                  />
-                  <Text maxLines={1} xstyle={styles.nameText}>
-                    {row.label}
+                  <BAIFlex
+                    gap="xs"
+                    align="center"
+                    wrap="nowrap"
+                    style={{ flex: 1, minWidth: 0 }}
+                  >
+                    {/* The swatch takes the slice's data colour, which no token carries. */}
+                    <Circle
+                      size={12}
+                      fill={row.color}
+                      color={row.color}
+                      aria-hidden
+                    />
+                    <Text maxLines={1} xstyle={styles.nameText}>
+                      {row.label}
+                    </Text>
+                  </BAIFlex>
+                  <Text hasTabularNumbers xstyle={styles.number}>
+                    {row.value.toLocaleString()}
                   </Text>
-                </BAIFlex>
-                <Text hasTabularNumbers xstyle={styles.number}>
-                  {row.value.toLocaleString()}
-                </Text>
-                <Text hasTabularNumbers xstyle={styles.percent}>
-                  {`${row.percent}%`}
-                </Text>
-              </LegendLine>
-            ))}
+                  <Text hasTabularNumbers xstyle={styles.percent}>
+                    {`${row.percent}%`}
+                  </Text>
+                </LegendLine>
+              );
+              return onRowClick ? (
+                <button
+                  key={row.key}
+                  type="button"
+                  {...stylex.props(styles.rowButton)}
+                  onClick={() => onRowClick(row.key)}
+                >
+                  {line}
+                </button>
+              ) : (
+                <React.Fragment key={row.key}>{line}</React.Fragment>
+              );
+            })}
           </BAIFlex>
         ))}
       </BAIFlex>

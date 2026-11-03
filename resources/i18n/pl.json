@@ -838,6 +838,7 @@
       "FailedLoginsTooltip": "Nieudane logowania bieżącej domeny w zakresie czasu karty w porównaniu z poprzednim.",
       "FailuresByEntityType": "Błędy według typu encji",
       "FailuresByEntityTypeTooltip": "Wpisy audytu całego klastra w zakresie czasu karty zakończone błędem lub odrzucone, liczone według typu encji.",
+      "FailuresOfType": "Nieudane wpisy: {{type}}",
       "FailuresOnly": "Pokaż tylko niepowodzenia",
       "FairShareTooltip": "Ustawienia Fair Share grupy zasobów karty, tak jak pokazuje je strona Fair Share. Priorytety są z nich obliczane dla każdej domeny, projektu i użytkownika.",
       "FolderLimit": "Limit: {{max}}",

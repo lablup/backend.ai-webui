@@ -838,6 +838,7 @@
       "FailedLoginsTooltip": "Os logins com falha do domínio atual no período do cartão em relação ao anterior.",
       "FailuresByEntityType": "Falhas por tipo de entidade",
       "FailuresByEntityTypeTooltip": "Entradas de auditoria de todo o cluster no período do cartão que terminaram em erro ou foram negadas, contadas por tipo de entidade.",
+      "FailuresOfType": "Entradas com falha: {{type}}",
       "FailuresOnly": "Mostrar apenas falhas",
       "FairShareTooltip": "As configurações de Fair Share do grupo de recursos do cartão, como a página Fair Share as mostra. As prioridades são calculadas a partir delas por domínio, projeto e usuário.",
       "FolderLimit": "Limite: {{max}}",

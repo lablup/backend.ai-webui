@@ -838,6 +838,7 @@
       "FailedLoginsTooltip": "Login gagal domain saat ini dalam rentang waktu kartu dibandingkan rentang sebelumnya.",
       "FailuresByEntityType": "Kegagalan per jenis entitas",
       "FailuresByEntityTypeTooltip": "Entri log audit seluruh kluster dalam rentang waktu kartu yang berakhir dengan galat atau ditolak, dihitung per jenis entitas.",
+      "FailuresOfType": "Entri gagal: {{type}}",
       "FailuresOnly": "Tampilkan kegagalan saja",
       "FairShareTooltip": "Pengaturan Fair Share grup sumber daya kartu, seperti yang ditampilkan halaman Fair Share. Prioritas dihitung dari pengaturan ini per domain, proyek, dan pengguna.",
       "FolderLimit": "Batas: {{max}}",

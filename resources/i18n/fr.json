@@ -838,6 +838,7 @@
       "FailedLoginsTooltip": "Les connexions échouées du domaine actuel sur la période de la carte par rapport à la précédente.",
       "FailuresByEntityType": "Échecs par type d'entité",
       "FailuresByEntityTypeTooltip": "Entrées d'audit de tout le cluster sur la période de la carte terminées en erreur ou refusées, comptées par type d'entité.",
+      "FailuresOfType": "Entrées en échec : {{type}}",
       "FailuresOnly": "Afficher les échecs uniquement",
       "FairShareTooltip": "Les paramètres Fair Share du groupe de ressources de la carte, tels que la page Fair Share les affiche. Les priorités en sont calculées par domaine, projet et utilisateur.",
       "FolderLimit": "Limite : {{max}}",
