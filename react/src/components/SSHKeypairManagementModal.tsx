@@ -5,7 +5,6 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import SSHKeyBlock from './SSHKeyBlock';
-import SSHKeypairGenerationModal from './SSHKeypairGenerationModal';
 import SSHKeypairManualFormModal from './SSHKeypairManualFormModal';
 import { Button } from '@lablup/ui-common/Button';
 import { HStack } from '@lablup/ui-common/Stack';
@@ -28,12 +27,8 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
   ...modalProps
 }) => {
   const { t } = useTranslation();
-  const [isPendingRefreshModal, startRefreshModalTransition] = useTransition();
+  const [, startRefreshModalTransition] = useTransition();
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
-  const [
-    isOpenSSHKeypairGenerationModal,
-    { toggle: toggleSSHKeypairGenerationModal },
-  ] = useToggle(false);
   const [
     isOpenSSHKeypairManualFormModal,
     {
@@ -55,7 +50,7 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
   return (
     <>
       <BAIModal
-        title={t('userSettings.SSHKeypairGeneration')}
+        title={t('userSettings.SSHKeypairManagement')}
         onCancel={() => onRequestClose()}
         // The same row BAIModal builds for its own OK/Cancel footer, so these
         // actions sit where every other modal's do (right-aligned, spaced)
@@ -66,11 +61,6 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
               variant="secondary"
               label={t('button.Close')}
               onClick={() => onRequestClose()}
-            />
-            <Button
-              variant="primary"
-              label={t('button.Generate')}
-              onClick={toggleSSHKeypairGenerationModal}
             />
             <Button
               variant="primary"
@@ -87,16 +77,6 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
           placeholder={t('userSettings.NoExistingSSHKeypair')}
         />
       </BAIModal>
-      <SSHKeypairGenerationModal
-        open={isOpenSSHKeypairGenerationModal}
-        isRefreshModalPending={isPendingRefreshModal}
-        onRequestClose={() => {
-          toggleSSHKeypairGenerationModal();
-          startRefreshModalTransition(() => {
-            updateFetchKey();
-          });
-        }}
-      />
       <BAIUnmountAfterClose>
         <SSHKeypairManualFormModal
           open={isOpenSSHKeypairManualFormModal}

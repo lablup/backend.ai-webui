@@ -246,13 +246,11 @@ compute session. Once you sign up for Backend.AI, a public keypair is
 provided. If you click the button on the right of the SSH Keypair Management
 section, the following dialog appears. The existing SSH public key is shown
 under the **Current public key** label; click the copy button next to the
-label to copy it. You can update the SSH keypair by clicking the `Generate`
-button at the bottom of the dialog. SSH public/private keys are randomly
-generated and stored as user information. Please note that the secret key
-cannot be checked again unless it is saved manually immediately after
-creation.
+label to copy it. To change the SSH keypair, register your own keypair with
+the `Enter Manually` button as described below.
 
 ![=528px](../images/ssh_keypair_dialog.png)
+<!-- TODO: Recapture without the removed Generate button -->
 
 :::note
 Backend.AI uses SSH keypair based on OpenSSH. On Windows, you may need to convert
