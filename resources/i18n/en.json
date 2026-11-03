@@ -4125,7 +4125,7 @@
     "MyKeypairInfo": "My Keypair Information",
     "NEODataPage": "NEO Data page",
     "NEOSessionList": "NEO Session list",
-    "NoExistingSSHKeypair": "No SSH keypair to copy. To register one, press the Enter Manually button.",
+    "NoExistingSSHKeypair": "No SSH public key is registered. Enter one and press Save.",
     "PackageInstallation": "Package Installation",
     "Preferences": "Preferences",
     "PreferredSSHPort": "Preferred SSH Port",

@@ -4140,7 +4140,7 @@
     "MyKeypairInfo": "私のキーペア情報",
     "NEODataPage": "NEOデータページ",
     "NEOSessionList": "NEOセッションリスト",
-    "NoExistingSSHKeypair": "コピーするSSHキーペアはありません。SSHキーペアを登録するには、[直接入力する]ボタンを押してください。",
+    "NoExistingSSHKeypair": "登録されているSSH公開鍵はありません。公開鍵を入力して[保存]を押してください。",
     "PackageInstallation": "パッケージのインストール",
     "Preferences": "環境設定",
     "PreferredSSHPort": "優先SSHポート",

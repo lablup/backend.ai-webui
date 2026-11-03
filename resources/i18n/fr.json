@@ -4141,7 +4141,7 @@
     "MyKeypairInfo": "Informations sur ma paire de clés",
     "NEODataPage": "Page de données néo",
     "NEOSessionList": "Liste des sessions NEO",
-    "NoExistingSSHKeypair": "Aucune paire de clés SSH à copier. Pour en enregistrer une, veuillez appuyer sur le bouton Saisie manuelle.",
+    "NoExistingSSHKeypair": "Aucune clé publique SSH n'est enregistrée. Saisissez-en une puis appuyez sur Enregistrer.",
     "PackageInstallation": "Installation du paquet",
     "Preferences": "Préférences",
     "PreferredSSHPort": "Port SSH préféré",

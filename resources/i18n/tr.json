@@ -4138,7 +4138,7 @@
     "MyKeypairInfo": "Anahtar Çifti Bilgilerim",
     "NEODataPage": "NEO veri sayfası",
     "NEOSessionList": "NEO Oturum listesi",
-    "NoExistingSSHKeypair": "Kopyalanacak SSH anahtar çifti yok. Kaydetmek için lütfen Manuel Olarak Girin butonuna basınız.",
+    "NoExistingSSHKeypair": "Kayıtlı bir SSH ortak anahtarı yok. Bir anahtar girin ve Kaydet'e basın.",
     "PackageInstallation": "Paket Kurulumu",
     "Preferences": "Tercihler",
     "PreferredSSHPort": "Tercih Edilen SSH Bağlantı Noktası",

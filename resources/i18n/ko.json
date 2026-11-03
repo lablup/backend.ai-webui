@@ -4141,7 +4141,7 @@
     "MyKeypairInfo": "내 키페어 정보",
     "NEODataPage": "NEO 데이터 페이지",
     "NEOSessionList": "NEO 세션 목록",
-    "NoExistingSSHKeypair": "복사할 키페어가 없습니다. SSH 키페어를 등록하려면 직접 입력하기 버튼을 클릭해 주세요.",
+    "NoExistingSSHKeypair": "등록된 SSH 공개 키가 없습니다. 공개 키를 입력한 후 저장을 클릭해 주세요.",
     "PackageInstallation": "패키지 설치",
     "Preferences": "설정",
     "PreferredSSHPort": "선호하는 SSH 포트",

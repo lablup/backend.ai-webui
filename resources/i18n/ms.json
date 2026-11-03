@@ -4138,7 +4138,7 @@
     "MyKeypairInfo": "Maklumat Pasangan Kunci Saya",
     "NEODataPage": "Halaman data NEO",
     "NEOSessionList": "Senarai Sesi NEO",
-    "NoExistingSSHKeypair": "Tiada pasangan kunci SSH untuk disalin. Untuk mendaftarkannya, sila tekan butang Masukkan Secara Manual.",
+    "NoExistingSSHKeypair": "Tiada kunci awam SSH yang didaftarkan. Masukkan kunci dan tekan Simpan.",
     "PackageInstallation": "Pemasangan Pakej",
     "Preferences": "Keutamaan",
     "PreferredSSHPort": "Pelabuhan SSH Pilihan",

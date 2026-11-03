@@ -4142,7 +4142,7 @@
     "MyKeypairInfo": "我的密鑰對訊息",
     "NEODataPage": "NEO數據頁",
     "NEOSessionList": "近地天体会议列表",
-    "NoExistingSSHKeypair": "沒有要複製的 SSH 密鑰對。要註冊 SSH 密鑰對，請按“手动输入”按鈕。",
+    "NoExistingSSHKeypair": "尚未註冊 SSH 公鑰。請輸入公鑰後點擊「儲存」。",
     "PackageInstallation": "包安裝",
     "Preferences": "首選項",
     "PreferredSSHPort": "首選 SSH 端口",
