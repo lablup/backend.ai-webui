@@ -8,6 +8,7 @@
 - A split that never changes with width is `Grid columns={n}`, or `Grid columns={24}` with `GridSpan`. A single row of controls is `HStack` or `BAIFlex`.
 - A [behaviour branch](#glossary) that depends on the viewport reads `useBAIBreakpoint()` or `useBAIActiveBreakpoint()` from `backend.ai-ui`. No code calls Astryx `useMediaQuery` for this, and no code renders both branches and hides one with CSS.
 - A breakpoint number used as a fixed width reads `BAI_BREAKPOINTS.<step>`. `BAI_BREAKPOINTS.xs` is `0`, so it is never a width.
+- A settings-style left rail is a `Layout` + `LayoutPanel` + `List` composition with a drill-down below `md`, not a horizontal `TabList` (section 6).
 
 ## Context
 
@@ -91,12 +92,12 @@ flowchart TD
 
 - **Collapse rule**: A [frozen antd-v6 prop](0017-single-select-for-client-held-option-lists.md#glossary) that still accepts antd's per-breakpoint record does not switch by viewport. `BAIModal` accepts `width` as a `BAIModalResponsiveWidth` record and uses the last declared entry (`Object.values(width).at(-1)`), not the widest one. New code passes one value. Source comments cite this rule as `ADR 0020 §5`.
 
-### 6. A settings-style left rail is the `settings-sidebar` composition
+### 6. A settings-style left rail is a `Layout` composition
 
-- **Composition**: A page whose sections are picked from a left rail renders the `settings-sidebar` template (`pnpm run ui-common template settings-sidebar`): `Layout` with `start={<LayoutPanel hasDivider>}` holding a `List` of `ListItem`s, and `content={<LayoutContent>}` holding the pane. It is not a horizontal `TabList`, which has no side orientation. `SettingList.tsx` is the implementation.
+- **Composition**: A page whose sections are picked from a left rail renders `Layout` from `@lablup/ui-common/Layout` with `start={<LayoutPanel hasDivider>}` holding a `List` of `ListItem`s, and `content={<LayoutContent>}` holding the pane. It is not a horizontal `TabList`, which has no side orientation. `SettingList.tsx` is the implementation to copy.
 - **Selection**: The selected section is `ListItem isSelected`, which renders `aria-current` and the selected surface. Nothing hand-rolls a highlight.
-- **Narrow viewports**: Below `md` (R3, `useBAIBreakpoint`), the rail and the pane become a master-detail drill-down instead of side by side, as the template does.
-- **Discovery**: `ui-common component TabList` correctly reports no side orientation; `ui-common template --list` or `ui-common search "settings sidebar"` finds the template that a component lookup misses.
+- **Narrow viewports**: Below `md` (R3, `useBAIBreakpoint`), the rail and the pane become a master-detail drill-down instead of sitting side by side.
+- **Template source**: The layout follows Astryx's `settings-sidebar` template, which ui-common does not offer; `pnpm run ui-common astryx template settings-sidebar` prints it with `@astryxdesign/*` imports, which must be rewritten to `@lablup/ui-common` subpaths (ADR 0009).
 
 ## Rejected alternatives
 

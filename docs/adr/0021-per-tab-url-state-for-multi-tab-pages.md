@@ -5,7 +5,7 @@
 > Unfamiliar terms are collected in the [Glossary](#glossary) at the end.
 
 - A [page-level tab set](#glossary) keeps its active tab in the search param `tab`. A module-level `tabParser`, built with nuqs `parseAsStringLiteral([...]).withDefault(...)`, validates the value.
-- Only the active tab's filter, order, and pagination are in the URL. A tab switch saves the departing tab's state and restores the arriving tab's saved query string; a tab not yet visited starts from `?tab=<key>` alone. A switch never leaves one tab's keys in place for the next tab.
+- Only the active tab's filter, order, and pagination are in the URL. A tab switch saves the departing tab's state and restores the arriving tab's saved query string; a tab not yet visited starts from its default query, which for `useTabQuerySnapshot` is `?tab=<key>` alone. A switch never leaves one tab's keys in place for the next tab.
 - A page picks one of three shapes, by who owns the tab bodies' state. Decision sections 3 to 5 define them.
   - A host with self-contained child tabs calls `useTabQuerySnapshot`.
   - A page that owns its tabs' queries uses `useKeyedSnapshot`.
@@ -134,7 +134,7 @@ flowchart TD
 
 ### 9. Settings rails and drawer tabs write no search param
 
-- **Settings rail**: `SettingList` renders its left rail as the `settings-sidebar` template composition and holds the selection in `useState` (`activeTabKey`). The rail is page-internal state, separate from the page's `?tab=`. `ConfigurationsSettingList`, `MaintenanceSettingList`, `BrandingSettingList`, and `UserSettingsGeneralPane` render it.
+- **Settings rail**: `SettingList` renders its left rail as a `Layout` composition (ADR 0020 section 6) and holds the selection in `useState` (`activeTabKey`). The rail is page-internal state, separate from the page's `?tab=`. `ConfigurationsSettingList`, `MaintenanceSettingList`, `BrandingSettingList`, and `UserSettingsGeneralPane` render it.
 - **Drawer tabs**: A drawer's `TabList` holds its tab in `useState`, as `RoleDetailDrawerContentV2` does. A drawer is a widget surface and its tab does not need to survive a reload.
 
 ## Rejected alternatives

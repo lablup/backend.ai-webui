@@ -91,7 +91,7 @@ const GroupSettingItems: React.FC<
     group: SettingGroup;
     hideEmpty?: boolean;
     // Narrow drill-down already names the section beside the back button
-    // (settings-sidebar template), so the in-pane heading would be a duplicate.
+    // (the rail composition), so the in-pane heading would be a duplicate.
     hideTitle?: boolean;
     arrivalTitle?: string | null;
   } & React.HTMLAttributes<HTMLDivElement>
@@ -135,8 +135,8 @@ const GroupSettingItems: React.FC<
   );
 };
 
-// The left rail is the `settings-sidebar` template composition (ADR 0020 §6);
-// its selection is page-internal state, not `?tab=` (ADR 0021).
+// The left rail is a `Layout` + `LayoutPanel` + `List` composition (ADR 0020
+// §6); its selection is page-internal state, not `?tab=` (ADR 0021).
 const SettingList: React.FC<SettingPageProps> = ({
   settingGroups,
   showChangedOptionFilter,

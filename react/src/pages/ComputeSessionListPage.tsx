@@ -315,11 +315,8 @@ const ComputeSessionListPage = () => {
   const compute_session_nodes = computeSessionNodeResult.ok
     ? computeSessionNodeResult.value
     : null;
-  // ADR 0020 R3: the render tree branches on `lg`
-  // (the action card is unmounted below lg), so the JS hook stays; the antd
-  // Row/Col track layout becomes an Astryx 24-column Grid whose spans are
-  // picked from the same booleans (asymmetric split — the uniform minWidth
-  // model does not apply here).
+  // ADR 0020 R3: the action card is unmounted below `lg`. The asymmetric split
+  // is a 24-column Grid whose spans come from the same booleans (R2, not R1).
   const { lg, xl } = useBAIBreakpoint();
 
   return (
