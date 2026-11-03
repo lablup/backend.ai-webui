@@ -22,13 +22,15 @@ vi.mock('../hooks/useCurrentProject', () => ({
   useCurrentResourceGroupValue: () => 'default',
 }));
 
-vi.mock('../hooks/backendai', () => ({
-  useResourceSlotsDetails: () => ({
+const { useResourceSlotsDetails } = vi.hoisted(() => ({
+  useResourceSlotsDetails: vi.fn(() => ({
     resourceSlotsInRG: {
       cpu: { human_readable_name: 'CPU', display_unit: 'Core' },
     },
-  }),
+  })),
 }));
+
+vi.mock('../hooks/backendai', () => ({ useResourceSlotsDetails }));
 
 // Only the statistics the card hands over matter here.
 vi.mock('backend.ai-ui', async (importOriginal) => ({
@@ -76,6 +78,19 @@ describe('MyResource', () => {
     const data = await readResourceData();
     expect(data.cpu.used).toEqual({ current: 3, total: 7 });
     expect(data.cpu.free).toEqual({ current: 4, total: 7 });
+  });
+
+  it("reads the slots of the header's current resource group, so other groups' accelerators get no bar", async () => {
+    const environment = renderCard();
+    environment.mock.resolveMostRecentOperation({
+      data: {
+        effectiveResourceAllocationV2: { assignable: [] },
+        myUserResourceAllocationV2: { user: { used: [], assignable: [] } },
+      },
+    });
+
+    await readResourceData();
+    expect(useResourceSlotsDetails).toHaveBeenCalledWith('default');
   });
 
   it('keeps a rejected query inside the card', async () => {

@@ -5,6 +5,8 @@
 import {
   resolveDashboardScope,
   cardResourceGroup,
+  defaultResourceGroupOf,
+  resourceGroupScopeOf,
   type ResolveDashboardScopeInput,
 } from './dashboardScope';
 
@@ -47,14 +49,68 @@ describe('resolveDashboardScope', () => {
 });
 
 describe('cardResourceGroup', () => {
-  it('uses the card setting, the first group of an older multi-group one', () => {
-    expect(cardResourceGroup(['a'], 'current')).toBe('a');
-    expect(cardResourceGroup(['b', 'a'], 'current')).toBe('b');
+  const allowed = { names: ['cuda-ent', 'default'], isComplete: true };
+
+  it('uses the card setting while the project may use it', () => {
+    expect(cardResourceGroup(['default'], allowed)).toBe('default');
+    expect(cardResourceGroup(['default', 'cuda-ent'], allowed)).toBe('default');
   });
 
-  it('falls back to the header resource group', () => {
-    expect(cardResourceGroup(undefined, 'current')).toBe('current');
-    expect(cardResourceGroup([], 'current')).toBe('current');
-    expect(cardResourceGroup(undefined, null)).toBeNull();
+  it('defaults to the first allowed group without a setting', () => {
+    expect(cardResourceGroup(undefined, allowed)).toBe('cuda-ent');
+    expect(cardResourceGroup([], allowed)).toBe('cuda-ent');
+  });
+
+  it('falls back to the default when the project may no longer use the setting', () => {
+    expect(cardResourceGroup(['removed'], allowed)).toBe('cuda-ent');
+  });
+
+  it('keeps a setting it cannot check against a truncated list', () => {
+    expect(
+      cardResourceGroup(['beyond-page'], { ...allowed, isComplete: false }),
+    ).toBe('beyond-page');
+  });
+
+  it('reads no group when the project may use none', () => {
+    expect(
+      cardResourceGroup(undefined, { names: [], isComplete: true }),
+    ).toBeNull();
+    expect(cardResourceGroup(['gone'], { names: [], isComplete: true })).toBe(
+      null,
+    );
+  });
+});
+
+describe('defaultResourceGroupOf', () => {
+  it('is the first allowed group, in the order given', () => {
+    expect(
+      defaultResourceGroupOf({ names: ['b', 'a'], isComplete: true }),
+    ).toBe('b');
+    expect(defaultResourceGroupOf({ names: [], isComplete: true })).toBeNull();
+  });
+});
+
+describe('resourceGroupScopeOf', () => {
+  it('lists the page project groups, never another project', () => {
+    expect(resourceGroupScopeOf({ kind: 'mine', projectId: 'p-url' })).toEqual({
+      project: [{ value: 'p-url' }],
+    });
+    expect(
+      resourceGroupScopeOf({
+        kind: 'projects',
+        projectIds: ['p-url'],
+        domain: DOMAIN,
+      }),
+    ).toEqual({ project: [{ value: 'p-url' }] });
+  });
+
+  it('lists the domain groups on the superadmin page', () => {
+    expect(
+      resourceGroupScopeOf({
+        kind: 'projects',
+        projectIds: 'all',
+        domain: DOMAIN,
+      }),
+    ).toEqual({ domain: [{ value: DOMAIN.id }] });
   });
 });

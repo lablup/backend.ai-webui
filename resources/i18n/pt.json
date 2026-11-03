@@ -835,7 +835,7 @@
       "MyActivityTooltip": "Ações que realizou no período selecionado, a partir do registo de auditoria.",
       "MyDeployments": "As minhas implementações",
       "MyRecentSessions": "As minhas sessões recentes",
-      "MyResourcesTooltip": "O que as suas sessões utilizam em todos os grupos de recursos e projetos. O limite é essa utilização mais o menor valor entre o que ainda pode alocar no grupo de recursos do cartão e o que os seus limites de par de chaves, projeto e domínio ainda permitem.",
+      "MyResourcesTooltip": "O que as suas sessões utilizam em todos os grupos de recursos e projetos. O limite é essa utilização mais o menor valor entre o que ainda está livre no grupo de recursos do cartão e o que os seus limites de utilizador e projeto ainda permitem.",
       "MySessionsTooltip": "As suas sessões atuais neste projeto por estado e as ativas por tipo de sessão.",
       "NoActiveSessions": "Nenhuma sessão ativa",
       "NoAllocation": "Nenhum recurso alocado.",

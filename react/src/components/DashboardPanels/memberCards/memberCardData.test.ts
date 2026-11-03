@@ -9,6 +9,8 @@ import {
   toLimitUsageRows,
   toPresetRows,
   toUsageRows,
+  offeredSlotsOf,
+  freeAsLimits,
 } from './memberCardData';
 
 describe('toDonutRows', () => {
@@ -110,6 +112,49 @@ describe('toUsageRows', () => {
     expect(
       toUsageRows([{ resourceType: 'cpu', quantity: 2 }], [[], []]),
     ).toEqual([{ resourceType: 'cpu', used: 2, limit: null }]);
+  });
+
+  it('keeps only the given slots', () => {
+    expect(
+      toUsageRows(user.used, [effectiveAssignable, user.assignable], {
+        slots: new Set(['cpu', 'mem']),
+      }).map((row) => row.resourceType),
+    ).toEqual(['cpu', 'mem']);
+  });
+});
+
+describe('offeredSlotsOf', () => {
+  it('keeps cpu and mem and the slots the group has capacity of', () => {
+    expect(
+      offeredSlotsOf([
+        { resourceType: 'cpu', quantity: '14' },
+        { resourceType: 'mem', quantity: '132707778560' },
+        { resourceType: 'cuda.device', quantity: '0' },
+        { resourceType: 'cuda.shares', quantity: '2' },
+      ]),
+    ).toEqual(new Set(['cpu', 'mem', 'cuda.shares']));
+  });
+
+  it('keeps cpu and mem for a group without agents', () => {
+    expect(offeredSlotsOf([])).toEqual(new Set(['cpu', 'mem']));
+  });
+
+  it('is null when the capacity is unknown', () => {
+    expect(offeredSlotsOf(null)).toBeNull();
+  });
+});
+
+describe('freeAsLimits', () => {
+  it('limits each slot by what is free in the group', () => {
+    expect(
+      toUsageRows(
+        [{ resourceType: 'cpu', quantity: '1' }],
+        [
+          [{ resourceType: 'cpu', quantity: null, unlimited: true }],
+          freeAsLimits([{ resourceType: 'cpu', quantity: '7' }]),
+        ],
+      ),
+    ).toEqual([{ resourceType: 'cpu', used: 1, limit: 8 }]);
   });
 });
 

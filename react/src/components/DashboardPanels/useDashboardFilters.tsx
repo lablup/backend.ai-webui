@@ -4,7 +4,6 @@
  */
 import { useCurrentDomain } from '../../hooks';
 import { useCurrentUserInfo } from '../../hooks/backendai';
-import { useCurrentResourceGroupValue } from '../../hooks/useCurrentProject';
 import type { ProjectContextOrNull } from '../../types/projectContext';
 import { activeBoardOf, updateBoard } from './dashboardConfig';
 import { resolveDashboardScope } from './dashboardScope';
@@ -23,7 +22,6 @@ export interface DashboardFilters {
   /** The page's project from the URL path; `null` on the superadmin page. */
   project: ProjectContextOrNull;
   currentProjectId: string | null;
-  currentResourceGroup: string | null;
 }
 
 /**
@@ -39,7 +37,6 @@ export const useDashboardFilters = (
 ): DashboardFilters => {
   'use memo';
   const currentDomain = useCurrentDomain();
-  const currentResourceGroup = useCurrentResourceGroupValue() ?? null;
   const urlProjectId = project?.id ?? null;
   const storedRefresh = activeBoardOf(boards.config).vars.refresh;
 
@@ -56,7 +53,6 @@ export const useDashboardFilters = (
       ),
     project,
     currentProjectId: urlProjectId,
-    currentResourceGroup,
   };
 };
 
@@ -64,7 +60,6 @@ export interface DashboardFilterContextValue {
   scope: DashboardScope;
   project: ProjectContextOrNull;
   currentProjectId: string | null;
-  currentResourceGroup: string | null;
 }
 
 export const DashboardFilterContext =
