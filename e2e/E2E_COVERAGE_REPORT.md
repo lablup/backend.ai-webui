@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 385 / 535 features covered (72%)**
+**Overall (in-scope routes): 387 / 537 features covered (72%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -54,7 +54,7 @@
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **534**  | **384** | **72%** |
+| **Total**                |                                                  | **537**  | **387** | **72%** |
 
 ---
 
@@ -462,7 +462,7 @@
 | Shared folder permission → SharedFolderPermissionInfoModal                     | ❌     | -                                                                                                                                      |
 | File download                                                                  | ❌     | -                                                                                                                                      |
 
-**Coverage: 🔶 39/52 features (includes 1 skipped)**
+**Coverage: 🔶 41/54 features (includes 1 skipped)**
 
 ---
 
@@ -789,7 +789,7 @@
 | Edit keypair → KeypairSettingModal             | ❌     | -                                                     |
 | SSH key management → SSHKeypairManagementModal | ❌     | -                                                     |
 
-**Coverage: 🔶 18/25 features**
+**Coverage: 🔶 19/26 features**
 
 ---
 

@@ -311,9 +311,12 @@ test.describe(
   () => {
     let api: APIRequestContext | undefined;
     let folderId: string | undefined;
+    let folderName: string | undefined;
 
     const createFolderAndOpenExplorer = async (page: Page) => {
-      const folderName = `e2e-test-folder-explorer-label-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+      // Set before the create call so afterEach can find a folder whose
+      // create response was lost.
+      folderName = `e2e-test-folder-explorer-label-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
       api = await createAccountApiContext(userInfo.user);
       const created = await api.post('/func/folders', {
         data: {
@@ -326,11 +329,13 @@ test.describe(
       expect(created.ok()).toBeTruthy();
       folderId = (await created.json()).id;
 
-      await page.goto(`${webuiEndpoint}/data?folder=${folderId}`);
+      await navigateTo(page, `data?folder=${folderId}`);
       const modal = new FolderExplorerModal(page);
       await modal.waitForOpen();
       await modal.verifyFolderName(folderName);
-      const dialog = page.getByRole('dialog').first();
+      const dialog = page
+        .getByRole('dialog')
+        .filter({ has: page.getByRole('heading', { name: folderName }) });
       await expect(
         dialog.getByRole('button', { name: 'Metadata', exact: true }),
       ).toBeVisible();
@@ -339,7 +344,7 @@ test.describe(
       ).toBeVisible({ timeout: 20000 });
       // Edit labels is a hover action of the Labels definition.
       const labelsRow = dialog
-        .locator('dd')
+        .getByRole('definition')
         .filter({ has: page.getByRole('button', { name: 'Edit labels' }) });
       await labelsRow.hover();
       return {
@@ -351,6 +356,7 @@ test.describe(
     test.beforeEach(async ({ page, request }) => {
       api = undefined;
       folderId = undefined;
+      folderName = undefined;
       await loginAsUser(page, request);
       await skipUnlessLabelableEntityType(
         page,
@@ -361,18 +367,34 @@ test.describe(
 
     test.afterEach(async () => {
       if (!api) return;
-      if (folderId) {
-        await api
-          .delete('/func/folders', { data: { vfolder_id: folderId } })
-          .catch(() => undefined);
-        await api
-          .post('/func/folders/delete-from-trash-bin', {
-            data: { vfolder_id: folderId },
-          })
-          .catch(() => undefined);
-      }
-      await api.dispose();
+      const userApi = api;
       api = undefined;
+      try {
+        if (!folderId && folderName) {
+          const list = await userApi.get('/func/folders').catch(() => null);
+          const folders = list?.ok() ? await list.json() : [];
+          folderId = folders.find(
+            (folder: { name: string }) => folder.name === folderName,
+          )?.id;
+        }
+        if (folderId) {
+          for (const [method, path] of [
+            ['delete', '/func/folders'],
+            ['post', '/func/folders/delete-from-trash-bin'],
+          ] as const) {
+            const res = await userApi[method](path, {
+              data: { vfolder_id: folderId },
+            }).catch(() => null);
+            if (!res?.ok()) {
+              console.warn(
+                `could not clean up folder ${folderId} (${path}, status=${res?.status()})`,
+              );
+            }
+          }
+        }
+      } finally {
+        await userApi.dispose();
+      }
     });
 
     test('User can edit folder labels from the explorer Metadata tab', async ({
@@ -400,7 +422,7 @@ test.describe(
       page,
     }) => {
       // Report the folder without UPDATE so the explorer treats it as a
-      // folder the user may only read.
+      // folder the user may only read; this checks the UI gating only.
       await page.route('**/admin/gql', async (route) => {
         if (
           !(route.request().postData() ?? '').includes(

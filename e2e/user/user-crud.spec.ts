@@ -758,7 +758,7 @@ test.describe(
       ).toBeVisible({ timeout: 20000 });
       // Edit labels is a hover action of the Labels definition.
       const labelsRow = modal
-        .locator('dd')
+        .getByRole('definition')
         .filter({ has: page.getByRole('button', { name: 'Edit labels' }) });
       await labelsRow.hover();
       await labelsRow.getByRole('button', { name: 'Edit labels' }).click();
