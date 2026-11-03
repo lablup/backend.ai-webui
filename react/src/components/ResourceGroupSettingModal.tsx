@@ -38,7 +38,7 @@ import {
   BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, { Suspense, useDeferredValue, useMemo, useRef } from 'react';
+import React, { Suspense, useDeferredValue, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
@@ -147,9 +147,8 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
       }
     `);
 
-  const schedulerOpts: Partial<ScalingGroupOpts> = useMemo(
-    () => JSON.parse(resourceGroup?.scheduler_opts || '{}'),
-    [resourceGroup?.scheduler_opts],
+  const schedulerOpts: Partial<ScalingGroupOpts> = JSON.parse(
+    resourceGroup?.scheduler_opts || '{}',
   );
 
   const INITIAL_FORM_VALUES = omitNullAndUndefinedFields({
