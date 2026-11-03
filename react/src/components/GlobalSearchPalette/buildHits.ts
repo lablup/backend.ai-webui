@@ -185,8 +185,8 @@ const makeSettingHit = (
 
 /**
  * Trailing marker of a page row. The admin twins of a project page
- * (`/admin/data`, `/project/x/admin/data`) carry the same label and no
- * breadcrumb, so the marker is what tells them apart from `/project/x/data` —
+ * (`/admin/session`, `/project/x/admin/session`) carry the same label and no
+ * breadcrumb, so the marker is what tells them apart from `/project/x/session` —
  * which carries none, since the palette only ever runs in the active project.
  */
 const scopeTextOf = (

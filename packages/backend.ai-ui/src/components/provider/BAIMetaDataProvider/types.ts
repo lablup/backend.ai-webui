@@ -15,6 +15,7 @@ export const knownAcceleratorResourceSlotNames = [
   'atom.device',
   'atom-plus.device',
   'atom-max.device',
+  'rebel100.device',
   'gaudi2.device',
   'warboy.device',
   'rngd.device',
