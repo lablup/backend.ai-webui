@@ -567,12 +567,13 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
         'information',
         'admin-system',
       ),
-    createAdminMenuItem(
-      t('webui.menu.SystemSettings'),
-      <Settings2 style={{ color: token('--color-info') }} size="1em" />,
-      'system-settings',
-      'admin-system',
-    ),
+    isSuperAdmin &&
+      createAdminMenuItem(
+        t('webui.menu.SystemSettings'),
+        <Settings2 style={{ color: token('--color-info') }} size="1em" />,
+        'system-settings',
+        'admin-system',
+      ),
   ]);
 
   // 3-tier admin gating:

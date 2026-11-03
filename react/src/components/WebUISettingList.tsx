@@ -48,8 +48,6 @@ interface WebUISettingListProps {
   savedDomainSettings?: WebUISettingsDocument;
   /** The saved `publicConfigByDomain.<domain>.settings` document, if any. */
   savedPublicSettings?: WebUISettingsDocument;
-  /** Superadmins also edit the public (pre-login) keys. */
-  canEditPublic: boolean;
 }
 
 const parseStringList = (raw: string): Array<string> =>
@@ -67,7 +65,6 @@ const parseStringList = (raw: string): Array<string> =>
 const WebUISettingList: React.FC<WebUISettingListProps> = ({
   savedDomainSettings,
   savedPublicSettings,
-  canEditPublic,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -80,7 +77,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
 
   const fileState = refreshConfigFromToml(rawConfig);
   const saved: WebUISettingsDocument = {
-    ...(canEditPublic ? savedPublicSettings : undefined),
+    ...savedPublicSettings,
     ...savedDomainSettings,
   };
   const [draft, setDraft] = useState<WebUISettingsDocument>(saved);
@@ -164,12 +161,10 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
         buildWebUISettingsDocument('domain', next, fileState),
       );
       isDomainSaved = true;
-      if (canEditPublic) {
-        await updatePublicDomainAppConfig(
-          WEBUI_SETTINGS_CONFIG_KEY,
-          buildWebUISettingsDocument('public', next, fileState),
-        );
-      }
+      await updatePublicDomainAppConfig(
+        WEBUI_SETTINGS_CONFIG_KEY,
+        buildWebUISettingsDocument('public', next, fileState),
+      );
       isLeavingAfterApplyRef.current = true;
       window.location.reload();
     } catch (error) {
@@ -177,7 +172,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
       // The domain write lands first, so a public failure leaves a partial save.
       const notApplied = [
         ...(isDomainSaved ? [] : changedTitles(next, 'domain')),
-        ...(canEditPublic ? changedTitles(next, 'public') : []),
+        ...changedTitles(next, 'public'),
       ];
       modal.error({
         title: isDomainSaved
@@ -324,9 +319,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
   const settingGroups: Array<SettingGroup> = WEBUI_SETTING_GROUPS.flatMap(
     (group) => {
       const definitions = WEBUI_SETTING_DEFINITIONS.filter(
-        (definition) =>
-          definition.group === group &&
-          (canEditPublic || definition.scope !== 'public'),
+        (definition) => definition.group === group,
       );
       if (definitions.length === 0) return [];
       return [

@@ -88,8 +88,8 @@ flowchart LR
 
 ### 5. 편집 권한과 안전장치
 
-- **Who sees what**: 페이지 라우트는 `access: 'admin'`이다. superadmin은 두 스코프를 모두 보고 저장한다. 도메인 관리자는 DOMAIN 키만 본다(`WebUISettingList`의 `canEditPublic=false`).
-- **Who may write**: 저장 가능 여부는 manager의 RBAC가 정한다. PUBLIC 문서는 superadmin만 쓸 수 있다. 도메인 관리자의 DOMAIN 저장은 그 역할에 `app_config_fragment` 권한이 있을 때 성공하고, 없으면 오류를 보인다.
+- **Who sees what**: 페이지와 메뉴는 superadmin 전용이다(`access: 'superadmin'`). superadmin은 두 스코프를 모두 보고 저장한다. 도메인 관리자 화면은 이 결정의 범위 밖이다.
+- **Who may write**: 저장 가능 여부는 manager의 RBAC가 정한다. PUBLIC 문서는 superadmin만 쓸 수 있다. 저장이 거부되면 저장되지 않은 설정을 목록으로 알린다.
 - **Reset**: 툴바의 Reset은 보이는 스코프의 `settings` 서브키를 지운다. 되돌릴 수 없으므로 `BAIDeleteConfirmModal`에 버튼 이름(`button.Reset`)을 입력해야 실행된다.
 - **Self-hiding**: `menuBlocklist`/`menuInactivelist`의 `system-settings`는 무시한다(`useWebUIMenuItems`). 이 페이지를 숨기면 같은 화면에서 되돌릴 수 없다.
 
