@@ -23,6 +23,8 @@ import {
   BAICard,
   BAIDrawer,
   type BAIDrawerProps,
+  type BAIEntityLabel,
+  BAIEntityLabelCell,
   BAIFetchKeyButton,
   BAIFlex,
   BAIIconWithTooltip,
@@ -32,6 +34,7 @@ import {
   BAIUnmountAfterClose,
   tokenColorForStatus,
   useBAIBreakpoint,
+  useIsLabelableEntityType,
   useUpdatableState,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -129,11 +132,21 @@ const ResourceGroupDetailDrawerContent: React.FC<{
   onClickEdit: () => void;
   // The edit modal's data is in flight; the button shows it.
   isEditPending?: boolean;
-}> = ({ resourceGroup, fetchKey, onClickEdit, isEditPending }) => {
+  onEditLabels?: () => void;
+  onLabelClick?: (label: BAIEntityLabel) => void;
+}> = ({
+  resourceGroup,
+  fetchKey,
+  onClickEdit,
+  isEditPending,
+  onEditLabels,
+  onLabelClick,
+}) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
   const { md } = useBAIBreakpoint();
+  const isLabelable = useIsLabelableEntityType('resource_group');
   const [activeTab, setActiveTab] = useState<TabKey>('defaultSessionOptions');
 
   const resourceGroupName = resourceGroup.name;
@@ -234,6 +247,15 @@ const ResourceGroupDetailDrawerContent: React.FC<{
                 ? dayjs(resourceGroup.metadata.createdAt).format('lll')
                 : '-'}
             </MetadataListItem>
+            {isLabelable && (
+              <MetadataListItem label={t('entityLabel.Labels')}>
+                <BAIEntityLabelCell
+                  entityLabelsFrgmt={resourceGroup.entityLabels}
+                  onEdit={onEditLabels}
+                  onLabelClick={onLabelClick}
+                />
+              </MetadataListItem>
+            )}
           </BAIMetadataList>
         </BAICard>
       </BAIFlex>
@@ -292,12 +314,17 @@ interface ResourceGroupDetailDrawerProps extends Omit<
   onRequestClose?: () => void;
   /** Refetches the list query that owns `resourceGroupFrgmt`. */
   onRequestRefetch?: () => void;
+  /** Opens the owner's label editor for this resource group. */
+  onEditLabels?: () => void;
+  onLabelClick?: (label: BAIEntityLabel) => void;
 }
 
 const ResourceGroupDetailDrawer: React.FC<ResourceGroupDetailDrawerProps> = ({
   resourceGroupFrgmt,
   onRequestClose,
   onRequestRefetch,
+  onEditLabels,
+  onLabelClick,
   ...drawerProps
 }) => {
   'use memo';
@@ -319,6 +346,9 @@ const ResourceGroupDetailDrawer: React.FC<ResourceGroupDetailDrawerProps> = ({
         }
         scheduler {
           type
+        }
+        entityLabels(limit: 100) {
+          ...BAIEntityLabelTokensFragment
         }
       }
     `,
@@ -364,6 +394,8 @@ const ResourceGroupDetailDrawer: React.FC<ResourceGroupDetailDrawerProps> = ({
             resourceGroup={resourceGroup}
             fetchKey={fetchKey}
             isEditPending={isPendingEdit}
+            onEditLabels={onEditLabels}
+            onLabelClick={onLabelClick}
             onClickEdit={() => {
               if (!resourceGroupName) return;
               startEditTransition(() => {

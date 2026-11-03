@@ -33,6 +33,7 @@ import {
   BAIColumnType,
   BAIDeleteArtifactRevisionsModal,
   BAIDeleteArtifactRevisionsModalArtifactRevisionFragmentKey,
+  BAIEntityLabelTargetCell,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIImportArtifactModal,
@@ -44,6 +45,7 @@ import {
   convertToDecimalUnit,
   filterOutNullAndUndefined,
   toLocalId,
+  useIsLabelableEntityType,
   useUpdatableState,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -65,6 +67,7 @@ type RevisionNode = NonNullable<
 const ReservoirArtifactDetailPage = () => {
   const { token } = useTheme();
   const { t } = useTranslation();
+  const isLabelable = useIsLabelableEntityType('artifact');
   const { upsertNotification } = useSetBAINotification();
 
   const { artifactId } = useParams<{ artifactId: string }>();
@@ -132,6 +135,7 @@ const ReservoirArtifactDetailPage = () => {
       ) {
         artifact(id: $id) {
           id
+          entityId
           name
           ...BAIArtifactTypeTokenFragment
           description
@@ -417,6 +421,15 @@ const ReservoirArtifactDetailPage = () => {
               'N/A'
             )}
           </MetadataListItem>
+          {isLabelable && artifact && (
+            <MetadataListItem label={t('entityLabel.Labels')}>
+              <BAIEntityLabelTargetCell
+                entityType="artifact"
+                entityId={artifact.entityId}
+                name={artifact.name}
+              />
+            </MetadataListItem>
+          )}
         </BAIMetadataList>
       </BAICard>
 

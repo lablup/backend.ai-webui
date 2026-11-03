@@ -227,8 +227,10 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
               ? t(CATEGORY_LABEL_KEYS[category])
               : t('webui.menu.Settings&Logs')}
           </Text>
-          {/* The page's own help button is behind the mask while this is open. */}
-          <WEBUIHelpButton />
+          {/* The page's own help button is behind the mask while this is open.
+              `sm` keeps the row at the dialog heading's line height, which the
+              header's close button is centred against. */}
+          <WEBUIHelpButton size="sm" />
         </HStack>
       }
       footer={null}
