@@ -55,10 +55,10 @@ export const sessionMonitorScopeAtom = atom<SessionMonitorScope | null>(null);
  */
 export const useSessionMonitorCondition = () => {
   'use memo';
-  const { isSuperAdmin, domainAdminDomains } = useCurrentUserProjectRoles();
+  const { isSuperAdmin, isAdmin } = useCurrentUserProjectRoles();
   const [currentUser] = useCurrentUserInfo();
   const [condition] = useBAISettingUserState('session_monitor_condition');
-  const isDomainAdmin = isSuperAdmin || domainAdminDomains.length > 0;
+  const isDomainAdmin = isSuperAdmin || isAdmin;
   const userId = currentUser.uuid ?? '';
   return {
     condition: hasStoredUserSetting('session_monitor_condition')

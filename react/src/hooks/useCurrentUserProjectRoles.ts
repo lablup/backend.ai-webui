@@ -13,8 +13,8 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 export interface CurrentUserProjectRolesResult {
   /** `true` when the authenticated user is a super-admin (derived from baiClient). */
   isSuperAdmin: boolean;
-  /** Domain names the user has domain-admin rights over (derived from baiClient for now). */
-  domainAdminDomains: string[];
+  /** `true` when the user's legacy role is `admin` (super-admins excluded). */
+  isAdmin: boolean;
   /**
    * UUIDs of the user's member projects on which they hold the `scope_admin`
    * permission, through any scope that governs the project.
@@ -86,30 +86,21 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
       : [];
 
   const isSuperAdmin: boolean = !!baiClient?.is_superadmin;
-  // Domain-admin detection via RBAC is out of scope for this PR (no stable
-  // signal yet agreed with backend). Fall back to the existing baiClient
-  // heuristic: non-super admins whose legacy role === 'admin'.
-  const isLegacyAdmin: boolean = !!baiClient?.is_admin && !isSuperAdmin;
-  const domainName: string | undefined =
-    typeof baiClient?.current_domain === 'string'
-      ? baiClient.current_domain
-      : baiClient?._config?.domainName;
-  const domainAdminDomains: string[] =
-    isLegacyAdmin && domainName ? [domainName] : [];
+  const isAdmin: boolean = !!baiClient?.is_admin && !isSuperAdmin;
 
   return {
     isSuperAdmin,
-    domainAdminDomains,
+    isAdmin,
     projectAdminIds,
   };
 };
 
 export type EffectiveAdminRole =
-  'superadmin' | 'domainAdmin' | 'currentProjectAdmin' | 'none';
+  'superadmin' | 'admin' | 'currentProjectAdmin' | 'none';
 
 /**
  * Derived hook returning the user's effective admin role with priority:
- * super > domain > project > none.
+ * superadmin > admin > project > none.
  *
  * Project-admin rights are evaluated against the project the URL names
  * (`/project/:projectName/*`), falling back to the ambient current-project
@@ -120,19 +111,19 @@ export type EffectiveAdminRole =
  * what converges the atom to the URL — from ever mounting.
  */
 export const useEffectiveAdminRole = (): EffectiveAdminRole => {
-  const { isSuperAdmin, domainAdminDomains } = useCurrentUserProjectRoles();
+  const { isSuperAdmin, isAdmin } = useCurrentUserProjectRoles();
   const isCurrentProjectAdmin = useIsCurrentProjectAdmin();
 
   if (isSuperAdmin) return 'superadmin';
-  if (domainAdminDomains.length > 0) return 'domainAdmin';
+  if (isAdmin) return 'admin';
   if (isCurrentProjectAdmin) return 'currentProjectAdmin';
   return 'none';
 };
 
 /**
  * Whether the user holds a project-scoped admin role in the target project
- * (URL project, else the current-project atom), regardless of super/domain
- * admin rights.
+ * (URL project, else the current-project atom), regardless of superadmin
+ * or admin rights.
  */
 export const useIsCurrentProjectAdmin = (): boolean => {
   const { projectAdminIds } = useCurrentUserProjectRoles();

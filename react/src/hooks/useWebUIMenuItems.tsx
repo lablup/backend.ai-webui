@@ -558,10 +558,8 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   // 3-tier admin gating:
   // - 'none': no admin items
   // - 'currentProjectAdmin': only PROJECT_ADMIN_PAGE_KEYS
-  // - 'domainAdmin' / 'superadmin': full admin menu MINUS project-admin-only
-  //   pages. Higher-tier admins have broader equivalents (e.g. `credential`
-  //   covers users across the domain/system), so per-project admin pages would
-  //   be redundant and confusing to show.
+  // - 'admin' / 'superadmin': full admin menu MINUS project-admin-only pages,
+  //   which their broader equivalents (e.g. `credential`) already cover.
   const adminMenu: Array<WebUIAdminMenuItemType> =
     effectiveAdminRole === 'none'
       ? []
@@ -794,7 +792,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
 
   // First project-admin page in sider order that survives blocklist /
   // inactive-list filtering. Computed from the un-role-filtered fullAdminMenu
-  // (super/domain admins' `adminMenu` excludes project-admin items, but they
+  // (superadmins' and admins' `adminMenu` excludes project-admin items, but they
   // can access all of them) — the redirect target for `/project/:name/admin`.
   // `undefined` when the config hides every project-admin page.
   const firstAvailableProjectAdminMenuKey = _.find(
@@ -806,7 +804,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   )?.key;
 
   // The sider's Project Settings entry: only for a project admin of the
-  // current project, even for super/domain admins (who can still open the
+  // current project, even for superadmins/admins (who can still open the
   // pages by URL).
   const firstAvailableProjectAdminMenuItem = isCurrentProjectAdmin
     ? _.find(projectAdminMenu, (item) => !item.disabled)

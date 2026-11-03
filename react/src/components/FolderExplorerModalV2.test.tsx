@@ -127,7 +127,7 @@ vi.mock('../hooks/useCurrentUserProjectRoles', async (importOriginal) => {
     ...originalModule,
     useCurrentUserProjectRoles: () => ({
       isSuperAdmin: true,
-      domainAdminDomains: [],
+      isAdmin: false,
       projectAdminIds: [],
     }),
     useEffectiveAdminRole: () => 'superadmin' as const,
