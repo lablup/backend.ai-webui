@@ -276,7 +276,7 @@ describe('FolderCreateModal project prop contract (ADR-0001)', () => {
     }
   });
 
-  it('shows the visibility notice and holds Create for a confirm in a general project', async () => {
+  it('shows the visibility notice with the personal project shortcut and holds Create for a confirm in a general project', async () => {
     clientState.skipSharedConfirm = false;
     try {
       const user = userEvent.setup();
@@ -287,6 +287,9 @@ describe('FolderCreateModal project prop contract (ADR-0001)', () => {
 
       expect(
         screen.getByText('data.folders.SharedProjectFolderVisibleToMembers'),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('data.folders.FolderCreationOpenPersonalProject'),
       ).toBeInTheDocument();
       await fillFolderNameAndSubmit(user, 'contract-folder');
 

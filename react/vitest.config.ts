@@ -121,7 +121,6 @@ export default defineConfig({
         'src/__generated__/**',
         'src/**/__generated__/**',
         'src/index.tsx',
-        'src/reportWebVitals.ts',
       ],
     },
   },
