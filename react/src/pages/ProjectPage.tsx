@@ -95,8 +95,11 @@ const ProjectPage = () => {
   const supportsTypeFilter = baiClient.isManagerVersionCompatibleWith('26.9.0');
   const supportsAutoMount =
     baiClient.isManagerVersionCompatibleWith('26.10.0a5');
-  const [autoMountProject, setAutoMountProject] =
-    useState<ProjectInList | null>(null);
+  // The project outlives `open` so the closing modal does not re-query with an empty id.
+  const [autoMount, setAutoMount] = useState<{
+    open: boolean;
+    project: ProjectInList | null;
+  }>({ open: false, project: null });
   const [openSettingModal, { toggle: toggleSettingModal }] = useToggle(false);
   const [openBulkEditModal, { toggle: toggleBulkEditModal }] = useToggle(false);
   const [selectedProjectList, setSelectedProjectList] = useState<ProjectNode[]>(
@@ -568,7 +571,11 @@ const ProjectPage = () => {
                                     title: t('autoMount.AutoMountFolders'),
                                     icon: <FolderSync />,
                                     disabled: isModelStore || !record.row_id,
-                                    onClick: () => setAutoMountProject(record),
+                                    onClick: () =>
+                                      setAutoMount({
+                                        open: true,
+                                        project: record,
+                                      }),
                                   },
                                 ]
                               : []),
@@ -708,10 +715,12 @@ const ProjectPage = () => {
         )}
         <BAIUnmountAfterClose>
           <ProjectAutoMountSettingModal
-            open={!!autoMountProject}
-            projectId={autoMountProject?.row_id ?? ''}
-            projectName={autoMountProject?.name}
-            onCancel={() => setAutoMountProject(null)}
+            open={autoMount.open}
+            projectId={autoMount.project?.row_id ?? ''}
+            projectName={autoMount.project?.name}
+            onCancel={() =>
+              setAutoMount({ open: false, project: autoMount.project })
+            }
           />
         </BAIUnmountAfterClose>
         <BAIDeleteConfirmModal
