@@ -185,7 +185,7 @@ input=$(cat)
 verdict=$(printf '%s' "$input" | python3 -c "$FIND" 2>/dev/null) || verdict=''
 if [ -z "$verdict" ]; then
   # python failed: a plain match on the raw text decides
-  printf '%s' "$input" | grep -qE '(^|[;&|(]|\$\(|`|\\n|[{!]|then|do|else|xargs|env|command|time|nohup|exec|sudo|nice|timeout)[[:space:]]*([A-Za-z_][A-Za-z0-9_]*=[^[:space:]]*[[:space:]]+)*([^[:space:]]*/)?gt([[:space:]]|$|\\n|")' && verdict=gt
+  printf '%s' "$input" | grep -qE '(^|[;&|(]|\$\(|`|\\n|[{!"]|then|do|else|xargs|env|command|time|nohup|exec|sudo|nice|timeout)[[:space:]]*([A-Za-z_][A-Za-z0-9_]*=[^[:space:]]*[[:space:]]+)*([^[:space:]]*/)?gt([[:space:]]|$|\\n|")' && verdict=gt
 fi
 if [ "$verdict" = gt ]; then
   echo "Blocked: Graphite (gt) is banned in this repo (FR-3391). Use 'gh stack' instead — see .claude/skills/gh-stack/SKILL.md." >&2
