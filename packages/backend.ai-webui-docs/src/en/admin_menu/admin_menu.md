@@ -1892,6 +1892,41 @@ System settings are default settings. If resource group has certain value,
 then it overrides configured value in system settings.
 :::
 
+<a id="server-management"></a>
+
+## Server management
+
+Go to the Maintenance page and you will see the server management actions, grouped by purpose. A search
+bar at the top of the page filters the list when you are looking for a specific entry.
+
+![](../images/maintenance_page.png)
+
+**Fix**
+
+- **Match usage database with current state**: Occasionally, due to unstable network connections or
+  container management problem of Docker daemon, there may be a case where the
+  resource occupied by Backend.AI does not match the resource actually used by
+  the container. In this case, click **Recalculate Usage** to manually
+  correct the resource occupancy.
+
+**Images / Environment**
+
+- **Rescan image list from repository**: Click **Rescan Images** to update image meta information from
+  all registered Docker registries. It can be used when a new image is pushed to a
+  Backend.AI-connected docker registry. The scan can take a long time; progress is reported in the
+  notification area.
+
+**Announcement**
+
+- **System announcement**: Click **Edit Announcement** to create or change the announcement banner shown
+  to every user at the top of every page. See the
+  [System announcement](#system-announcement) section below.
+
+:::note
+We will continue to add other settings needed for management, such as
+removing unused images or registering periodic maintenance schedules.
+:::
+
 <a id="system-announcement"></a>
 
 ### System announcement
@@ -1902,7 +1937,7 @@ managed entirely from the WebUI, whether or not one has been published before.
 
 Open the editor in either of two ways:
 
-- From the System Settings page, click **Edit Announcement** in the **System announcement** row. This works
+- From the Maintenance page, click **Edit Announcement** in the **System announcement** row. This works
   even when no announcement exists yet, so it is the way to publish the first one.
 - From the announcement banner itself, when one is already published. Because the banner sits at the top
   of every page, a superadmin can open the editor from anywhere in the WebUI.
@@ -1942,35 +1977,6 @@ Sessions, Usage Records, and Usage Buckets.
 - **Edit**: Use the edit action in the row to change the **Policy Target**, the retention period, or the
   enabled setting.
 - **Delete**: Use the delete action in the row.
-
-<a id="server-management"></a>
-
-## Server management
-
-Go to the Maintenance page and you will see the server management actions, grouped by purpose. A search
-bar at the top of the page filters the list when you are looking for a specific entry.
-
-![](../images/maintenance_page.png)
-
-**Fix**
-
-- **Match usage database with current state**: Occasionally, due to unstable network connections or
-  container management problem of Docker daemon, there may be a case where the
-  resource occupied by Backend.AI does not match the resource actually used by
-  the container. In this case, click **Recalculate Usage** to manually
-  correct the resource occupancy.
-
-**Images / Environment**
-
-- **Rescan image list from repository**: Click **Rescan Images** to update image meta information from
-  all registered Docker registries. It can be used when a new image is pushed to a
-  Backend.AI-connected docker registry. The scan can take a long time; progress is reported in the
-  notification area.
-
-:::note
-We will continue to add other settings needed for management, such as
-removing unused images or registering periodic maintenance schedules.
-:::
 
 <a id="client-ip-masking"></a>
 
