@@ -40,8 +40,7 @@ import {
   applyRule,
   getImageAcceleratorLimits,
   getSupportedAcceleratorTypes,
-  isAcceleratorTypeUnsupported,
-  isPresetId,
+  acceleratorTypeErrorTarget,
   NON_ACCELERATOR_SLOTS,
   type ResourceAllocationFormValue,
   RuleContext,
@@ -397,7 +396,9 @@ const ResourceAllocationFormItems: React.FC<
     // without writing anything, and `dependencies` see only form fields.
     const names: NamePath[] = [];
     const label = form.getFieldValue('allocationPreset');
-    if (mode === 'free' || !isPresetId(label)) {
+    // In preset-only mode the type item is hidden; with a preset item its
+    // error goes there instead (`acceleratorTypeErrorTarget`).
+    if (mode === 'free' || !enableResourcePresets) {
       names.push(['resource', 'acceleratorType']);
     }
     if (label) names.push('allocationPreset');
@@ -456,7 +457,28 @@ const ResourceAllocationFormItems: React.FC<
                   resource_presets,
                   (preset) => preset?.id === value,
                 );
-                if (!preset) return;
+                if (!preset) {
+                  // Values that are not a preset's, in preset-only mode: the
+                  // type item is hidden, so its D3 error shows here instead.
+                  const type = getFieldValue(['resource', 'acceleratorType']);
+                  if (
+                    acceleratorTypeErrorTarget(
+                      type,
+                      value,
+                      ruleContext,
+                      supportedAcceleratorTypesInRGByImage,
+                    ) === 'preset'
+                  ) {
+                    return Promise.reject(
+                      t('session.launcher.AcceleratorTypeNotSupportedByImage', {
+                        type:
+                          mergedResourceSlots?.[type]?.human_readable_name ||
+                          type,
+                      }),
+                    );
+                  }
+                  return;
+                }
                 // An id the deferred group's check-presets response lacks
                 // gets only the scope check, not `not-allocatable`.
                 const checked = _.find(
@@ -1145,12 +1167,12 @@ const ResourceAllocationFormItems: React.FC<
                                         value: string,
                                       ) => {
                                         if (
-                                          isAcceleratorTypeUnsupported(
+                                          acceleratorTypeErrorTarget(
                                             value,
                                             currentAllocationPreset,
                                             ruleContext,
                                             supportedAcceleratorTypesInRGByImage,
-                                          )
+                                          ) === 'type'
                                         ) {
                                           return Promise.reject(
                                             t(
@@ -1158,7 +1180,8 @@ const ResourceAllocationFormItems: React.FC<
                                               {
                                                 type:
                                                   mergedResourceSlots?.[value]
-                                                    ?.display_unit || value,
+                                                    ?.human_readable_name ||
+                                                  value,
                                               },
                                             ),
                                           );

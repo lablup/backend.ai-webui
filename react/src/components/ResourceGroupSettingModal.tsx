@@ -32,7 +32,7 @@ import {
   useBAILogger,
   BAIMultiSelector,
   BAINumberInput,
-  BAISelector,
+  BAISelect,
   BAISwitch,
   BAITextArea,
   BAITextInput,
@@ -466,7 +466,8 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               },
             ]}
           >
-            <BAISelector
+            <BAISelect
+              showSearch={false}
               aria-label={t('resourceGroup.Scheduler')}
               options={[
                 {

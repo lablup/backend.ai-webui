@@ -15,7 +15,7 @@ import {
   BAIFlex,
   BAICheckboxInput,
   BAINumberInput,
-  BAISelector,
+  BAISelect,
 } from 'backend.ai-ui';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -120,9 +120,10 @@ const SchedulerSettingModal = ({
             </Text>
           }
         >
-          <BAISelector
+          <BAISelect
+            showSearch={false}
             aria-label={t('settings.Scheduler')}
-            isLoading={isUpdatingSchedulerOptions}
+            loading={isUpdatingSchedulerOptions}
             onChange={(value) => {
               if (value !== null) {
                 setIsUpdatingSchedulerOptions(true);
