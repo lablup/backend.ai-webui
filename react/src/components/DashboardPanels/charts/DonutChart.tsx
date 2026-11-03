@@ -26,6 +26,8 @@ const CHART_LABEL_ROOM = 40;
 const RING_HALO = 16;
 // The legend's width before it is first measured.
 const LEGEND_WIDTH_GUESS = 224;
+// The narrowest a two-column legend gets beside the ring before it moves under it.
+const TWO_COLUMN_LEGEND_MIN = 360;
 // The `lg` gap between the ring and the legend.
 const LEGEND_GAP = 24;
 // Legend line heights, divider included.
@@ -137,14 +139,21 @@ const DonutChart: React.FC<DonutChartProps> = ({
   'use memo';
   const rootRef = useRef<HTMLDivElement>(null);
   const legendRef = useRef<HTMLDivElement>(null);
+  const ringRef = useRef<HTMLDivElement>(null);
   const [box, setBox] = useState({ width: 0, height: 0 });
   const [legendWidth, setLegendWidth] = useState(LEGEND_WIDTH_GUESS);
   useResizeObserver(rootRef, ({ contentRect }) => {
     setBox({ width: contentRect.width, height: contentRect.height });
   });
-  // Only an unsqueezed legend reports its natural width.
+  // Only an unsqueezed legend reports its natural width: narrower than the room beside the ring.
   useResizeObserver(legendRef, ({ contentRect }) => {
-    if (contentRect.width < (rootRef.current?.clientWidth ?? 0) - 1) {
+    const root = rootRef.current;
+    if (!root) return;
+    const isRow = getComputedStyle(root).flexDirection === 'row';
+    const ringWidth =
+      isRow && ringRef.current ? ringRef.current.offsetWidth : 0;
+    const room = root.clientWidth - (ringWidth ? ringWidth + LEGEND_GAP : 0);
+    if (contentRect.width < room - 1) {
       setLegendWidth(Math.ceil(contentRect.width));
     }
   });
@@ -163,11 +172,22 @@ const DonutChart: React.FC<DonutChartProps> = ({
     ) ?? LEGEND_DENSITIES[LEGEND_DENSITIES.length - 1];
   const legendBoxHeight = legendHeight(density, rows.length);
 
+  // Two columns may shrink, names truncating, to leave the ring its minimum beside them.
+  const legendMinWidth =
+    density.columns === 2
+      ? Math.min(legendWidth, TWO_COLUMN_LEGEND_MIN)
+      : legendWidth;
   const sideBySide =
-    box.width >= RING_MIN + 2 * RING_HALO + LEGEND_GAP + legendWidth;
+    box.width >= RING_MIN + 2 * RING_HALO + LEGEND_GAP + legendMinWidth;
   const ringRoom =
     (sideBySide
-      ? Math.min(box.height, box.width - legendWidth - LEGEND_GAP)
+      ? Math.min(
+          box.height,
+          Math.max(
+            box.width - legendWidth - LEGEND_GAP,
+            RING_MIN + 2 * RING_HALO,
+          ),
+        )
       : Math.min(box.width, box.height - legendBoxHeight - LEGEND_GAP)) -
     2 * RING_HALO;
   const hasRing = box.width > 0 && ringRoom >= RING_MIN;
@@ -191,6 +211,7 @@ const DonutChart: React.FC<DonutChartProps> = ({
     >
       {hasRing && (
         <BAIFlex
+          ref={ringRef}
           justify="center"
           align="center"
           style={{
