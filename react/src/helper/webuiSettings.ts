@@ -272,32 +272,23 @@ export const buildWebUISettingsDocument = (
 };
 
 /**
- * The signed-in domain's `domainConfig.settings` through the plain client,
- * for the login path that runs outside `RelayEnvironmentProvider`.
- * `undefined` when the manager has no document or the read fails.
+ * The `settings` sub-key of the `domainConfig` row among `myAppConfigs`;
+ * `undefined` when there is no document or the read failed.
  */
-export const fetchDomainWebUISettings = async (client: {
-  query: (q: string, v: Record<string, unknown>) => Promise<any>;
-}): Promise<WebUISettingsDocument | undefined> => {
-  try {
-    const result = await client.query(
-      `query ($configNames: [String!]!) {
-        myAppConfigs(configNames: $configNames) { configName config }
-      }`,
-      { configNames: ['domainConfig'] },
-    );
-    const doc = _.find(result?.myAppConfigs, {
-      configName: 'domainConfig',
-    })?.config;
-    const settings = _.get(doc, WEBUI_SETTINGS_CONFIG_KEY);
-    return _.isPlainObject(settings)
-      ? (settings as WebUISettingsDocument)
-      : undefined;
-  } catch (error) {
-    // eslint-disable-next-line no-console -- module-scope diagnostics; no logger exists outside React here
-    console.warn(
-      `[domainConfig.settings] could not be read; keeping config.toml values (${String(error)}).`,
-    );
-    return undefined;
-  }
+export const readDomainWebUISettings = (
+  configs:
+    | ReadonlyArray<{ configName: string; config: unknown } | null>
+    | null
+    | undefined,
+): WebUISettingsDocument | undefined => {
+  const doc = _.find(
+    configs,
+    (row) => row?.configName === 'domainConfig',
+  )?.config;
+  const settings: unknown = (doc as Record<string, unknown> | undefined)?.[
+    WEBUI_SETTINGS_CONFIG_KEY
+  ];
+  return _.isPlainObject(settings)
+    ? (settings as WebUISettingsDocument)
+    : undefined;
 };

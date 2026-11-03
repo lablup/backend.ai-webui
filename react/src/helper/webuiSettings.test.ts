@@ -6,10 +6,10 @@ import { getDefaultLoginConfig } from './loginConfig';
 import {
   applyWebUISettings,
   buildWebUISettingsDocument,
-  fetchDomainWebUISettings,
+  readDomainWebUISettings,
   WEBUI_SETTING_DEFINITIONS,
 } from './webuiSettings';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 describe('WEBUI_SETTING_DEFINITIONS', () => {
   it('maps every key onto a distinct LoginConfigState field', () => {
@@ -160,39 +160,23 @@ describe('buildWebUISettingsDocument', () => {
   });
 });
 
-describe('fetchDomainWebUISettings', () => {
-  it('returns the settings sub-key of domainConfig', async () => {
-    const client = {
-      query: vi.fn().mockResolvedValue({
-        myAppConfigs: [
-          {
-            configName: 'domainConfig',
-            config: { settings: { hideAgents: false } },
-          },
-        ],
-      }),
-    };
-    await expect(fetchDomainWebUISettings(client)).resolves.toEqual({
-      hideAgents: false,
-    });
-    expect(client.query).toHaveBeenCalledWith(expect.any(String), {
-      configNames: ['domainConfig'],
-    });
+describe('readDomainWebUISettings', () => {
+  it('returns the settings sub-key of domainConfig', () => {
+    expect(
+      readDomainWebUISettings([
+        {
+          configName: 'domainConfig',
+          config: { settings: { hideAgents: false } },
+        },
+      ]),
+    ).toEqual({ hideAgents: false });
   });
 
-  it('is undefined without a document or when the read fails', async () => {
-    await expect(
-      fetchDomainWebUISettings({
-        query: vi.fn().mockResolvedValue({ myAppConfigs: [] }),
-      }),
-    ).resolves.toBeUndefined();
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    await expect(
-      fetchDomainWebUISettings({
-        query: vi.fn().mockRejectedValue(new Error('boom')),
-      }),
-    ).resolves.toBeUndefined();
-    expect(warn).toHaveBeenCalledTimes(1);
-    warn.mockRestore();
+  it('is undefined without a document or when the read failed', () => {
+    expect(readDomainWebUISettings([])).toBeUndefined();
+    expect(readDomainWebUISettings(null)).toBeUndefined();
+    expect(
+      readDomainWebUISettings([{ configName: 'domainConfig', config: {} }]),
+    ).toBeUndefined();
   });
 });

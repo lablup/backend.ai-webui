@@ -23,7 +23,7 @@ import {
 } from './publicAppConfig';
 import {
   applyWebUISettings,
-  fetchDomainWebUISettings,
+  readDomainWebUISettings,
   WEBUI_SETTINGS_CONFIG_KEY,
 } from './webuiSettings';
 import * as _ from 'lodash-es';
@@ -86,6 +86,11 @@ const myUserQuery = graphql`
           }
         }
       }
+    }
+    # The domain's System Settings; a failed read keeps the base config.
+    myAppConfigs(configNames: ["domainConfig"]) @catch(to: NULL) {
+      configName
+      config
     }
   }
 `;
@@ -344,9 +349,8 @@ export async function connectViaGQL(
   };
 
   // The domain's `settings` document overrides the file-derived config for
-  // the keys it carries (#10436); a failed read keeps the file values.
-  const domainSettings = await fetchDomainWebUISettings(client);
-  if (isCancelled?.()) throw cancel();
+  // the keys it carries (#10436).
+  const domainSettings = readDomainWebUISettings(response?.myAppConfigs);
   const effectiveCfg = applyWebUISettings(cfg, domainSettings, 'domain');
   const { jotaiStore } = await import('../components/DefaultProviders');
   const { loginConfigState } = await import('../hooks/useWebUIConfig');
