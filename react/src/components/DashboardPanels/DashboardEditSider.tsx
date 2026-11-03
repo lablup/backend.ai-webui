@@ -35,6 +35,8 @@ export interface DashboardEditSiderProps {
   /** Single-instance catalog entries, checked when on the board. */
   catalogEntries: ReadonlyArray<CatalogEntry>;
   activeKeys: ReadonlySet<string>;
+  /** Cards on the board that are hidden because the viewer may not read them. */
+  deniedKeys?: ReadonlySet<string>;
   onTogglePanels: (keys: ReadonlyArray<string>, active: boolean) => void;
   panels: ReadonlyArray<PersistedPanel>;
   onRequestAdd: () => void;
@@ -67,6 +69,7 @@ const GROUP_LABEL_KEYS: Record<PanelGroup, string> = {
 const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
   catalogEntries,
   activeKeys,
+  deniedKeys,
   onTogglePanels,
   panels,
   onRequestAdd,
@@ -288,9 +291,11 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
                   value={entry.definition.key}
                   label={entry.label}
                   description={
-                    activeKeys.has(entry.definition.key)
-                      ? settingsSummaryOf(entry.definition.key)
-                      : undefined
+                    deniedKeys?.has(entry.definition.key)
+                      ? t('dashboard.permission.NoPermissionToView')
+                      : activeKeys.has(entry.definition.key)
+                        ? settingsSummaryOf(entry.definition.key)
+                        : undefined
                   }
                   endContent={
                     activeKeys.has(entry.definition.key)

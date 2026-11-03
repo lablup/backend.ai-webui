@@ -208,6 +208,8 @@ export interface PanelCatalogContext {
   page: PanelPage;
   role: UserRole | null | undefined;
   config: PanelCatalogConfig;
+  /** The viewer holds the RBAC admin role of the page's project. */
+  isProjectAdmin?: boolean;
 }
 
 /** Fragment keys of the admin page query the built-in admin cards still read. */

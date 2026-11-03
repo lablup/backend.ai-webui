@@ -7,6 +7,7 @@ import { useWebUINavigate } from '../../hooks';
 import { useBAIPaginationOptionState } from '../../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useProjectPath } from '../../hooks/useRouteScope';
+import { readPrimary } from './panelPermission';
 import { resourceRegistry } from './resourceRegistry';
 import type { PanelDescriptor } from './types';
 import { useDashboardQueryScope } from './useDashboardFilters';
@@ -71,7 +72,7 @@ export const DeploymentNodesPanelContent: React.FC<{
     deferredVariables,
     { fetchPolicy: 'store-and-network', fetchKey: deferredFetchKey },
   );
-  const connection = data.scopedDeployments;
+  const connection = readPrimary(data.scopedDeployments);
   const deployments = filterOutNullAndUndefined(
     connection?.edges.map((e) => e?.node),
   );

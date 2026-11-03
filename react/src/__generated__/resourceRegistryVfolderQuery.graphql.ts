@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e1adb7d5a3d2fc1523d0562e1cd7ee65>>
+ * @generated SignedSource<<bc958a7a047fdc872bf0304b642e4ffc>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+import { Result } from "relay-runtime";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type VFolderOperationStatus = "CLONING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
 export type VFolderOrderField = "CREATED_AT" | "HOST" | "NAME" | "STATUS" | "USAGE_MODE" | "%future added value";
@@ -108,7 +109,7 @@ export type resourceRegistryVfolderQuery$variables = {
   scope: VFolderScope;
 };
 export type resourceRegistryVfolderQuery$data = {
-  readonly scopedVFoldersV2: {
+  readonly scopedVFoldersV2: Result<{
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -122,7 +123,7 @@ export type resourceRegistryVfolderQuery$data = {
         readonly status: VFolderOperationStatus;
       };
     }>;
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type resourceRegistryVfolderQuery = {
   response: resourceRegistryVfolderQuery$data;
@@ -155,127 +156,125 @@ v4 = {
   "kind": "LocalArgument",
   "name": "scope"
 },
-v5 = [
-  {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "filter",
-        "variableName": "filter"
-      },
-      {
-        "kind": "Variable",
-        "name": "limit",
-        "variableName": "limit"
-      },
-      {
-        "kind": "Variable",
-        "name": "offset",
-        "variableName": "offset"
-      },
-      {
-        "kind": "Variable",
-        "name": "orderBy",
-        "variableName": "orderBy"
-      },
-      {
-        "kind": "Variable",
-        "name": "scope",
-        "variableName": "scope"
-      }
-    ],
-    "concreteType": "VFolderConnection",
-    "kind": "LinkedField",
-    "name": "scopedVFoldersV2",
-    "plural": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "count",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "VFolderEdge",
-        "kind": "LinkedField",
-        "name": "edges",
-        "plural": true,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "VFolder",
-            "kind": "LinkedField",
-            "name": "node",
-            "plural": false,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "id",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "host",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "status",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "VFolderMetadataInfo",
-                "kind": "LinkedField",
-                "name": "metadata",
-                "plural": false,
-                "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "name",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "usageMode",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "createdAt",
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
-  }
-];
+v5 = {
+  "alias": null,
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "filter",
+      "variableName": "filter"
+    },
+    {
+      "kind": "Variable",
+      "name": "limit",
+      "variableName": "limit"
+    },
+    {
+      "kind": "Variable",
+      "name": "offset",
+      "variableName": "offset"
+    },
+    {
+      "kind": "Variable",
+      "name": "orderBy",
+      "variableName": "orderBy"
+    },
+    {
+      "kind": "Variable",
+      "name": "scope",
+      "variableName": "scope"
+    }
+  ],
+  "concreteType": "VFolderConnection",
+  "kind": "LinkedField",
+  "name": "scopedVFoldersV2",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "count",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "VFolderEdge",
+      "kind": "LinkedField",
+      "name": "edges",
+      "plural": true,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "VFolder",
+          "kind": "LinkedField",
+          "name": "node",
+          "plural": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "id",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "host",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "status",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "VFolderMetadataInfo",
+              "kind": "LinkedField",
+              "name": "metadata",
+              "plural": false,
+              "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "name",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "usageMode",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "createdAt",
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": [
@@ -288,7 +287,13 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "resourceRegistryVfolderQuery",
-    "selections": (v5/*: any*/),
+    "selections": [
+      {
+        "kind": "CatchField",
+        "field": (v5/*: any*/),
+        "to": "RESULT"
+      }
+    ],
     "type": "Query",
     "abstractKey": null
   },
@@ -303,7 +308,9 @@ return {
     ],
     "kind": "Operation",
     "name": "resourceRegistryVfolderQuery",
-    "selections": (v5/*: any*/)
+    "selections": [
+      (v5/*: any*/)
+    ]
   },
   "params": {
     "cacheID": "3ccdd2aea81f152b2c8c52ac225cbd2c",
@@ -316,6 +323,6 @@ return {
 };
 })();
 
-(node as any).hash = "3e2f23f454823fee247c4d8cb64ca51a";
+(node as any).hash = "019620bd2d8cc4cf201f459ad98c2bcc";
 
 export default node;

@@ -38,3 +38,12 @@ export const cardResourceGroup = (
   setting: ReadonlyArray<string> | undefined,
   currentResourceGroup: string | null | undefined,
 ): string | null => setting?.[0] || currentResourceGroup || null;
+
+/** What a card's read permission depends on: the page and its project, or its domain. */
+export const dashboardScopeKey = (
+  page: PanelPage,
+  scope: DashboardScope,
+): string =>
+  scope.kind === 'mine'
+    ? `${page}:${scope.projectId ?? ''}`
+    : `${page}:${scope.projectIds === 'all' ? `domain:${scope.domain.id}` : scope.projectIds.join(',')}`;

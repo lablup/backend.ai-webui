@@ -878,6 +878,11 @@
       "TitleDescription": "Dipaparkan sebagai tajuk panel - gunakannya untuk menerangkan syarat.",
       "TitleOptional": "Tajuk (pilihan)"
     },
+    "permission": {
+      "NoPermissionForResourceGroup": "Tiada kebenaran untuk kumpulan sumber ini",
+      "NoPermissionForScope": "Tiada kebenaran untuk tetapan kad ini",
+      "NoPermissionToView": "Tiada kebenaran untuk melihat"
+    },
     "settings": {
       "AllResourceGroups": "Semua kumpulan sumber",
       "CardSettings": "Tetapan kad",

@@ -865,6 +865,11 @@
       "TitleDescription": "Shown as the panel header - use it to describe the condition.",
       "TitleOptional": "Title (optional)"
     },
+    "permission": {
+      "NoPermissionForResourceGroup": "No permission for this resource group",
+      "NoPermissionForScope": "No permission for this card setting",
+      "NoPermissionToView": "No permission to view"
+    },
     "settings": {
       "AllResourceGroups": "All resource groups",
       "CardSettings": "Card settings",

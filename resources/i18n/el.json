@@ -878,6 +878,11 @@
       "TitleDescription": "Εμφανίζεται ως επικεφαλίδα του πίνακα - χρησιμοποιήστε τον για να περιγράψετε τη συνθήκη.",
       "TitleOptional": "Τίτλος (προαιρετικό)"
     },
+    "permission": {
+      "NoPermissionForResourceGroup": "Δεν υπάρχει δικαίωμα για αυτήν την ομάδα πόρων",
+      "NoPermissionForScope": "Δεν υπάρχει δικαίωμα για αυτήν τη ρύθμιση κάρτας",
+      "NoPermissionToView": "Δεν υπάρχει δικαίωμα προβολής"
+    },
     "settings": {
       "AllResourceGroups": "Όλες οι ομάδες πόρων",
       "CardSettings": "Ρυθμίσεις κάρτας",
