@@ -943,7 +943,6 @@
     "settings": {
       "AllResourceGroups": "Tüm kaynak grupları",
       "BackToSavedSetting": "Kaydedilen ayara dön ({{value}})",
-      "CurrentResourceGroup": "Geçerli kaynak grubu",
       "DefaultCardSettings": "Varsayılan kart ayarları",
       "DefaultResourceGroup": "Varsayılan kaynak grubu",
       "DefaultSettings": "Varsayılan ayarlar",

@@ -943,7 +943,6 @@
     "settings": {
       "AllResourceGroups": "Все группы ресурсов",
       "BackToSavedSetting": "Вернуть сохранённую настройку ({{value}})",
-      "CurrentResourceGroup": "Текущая группа ресурсов",
       "DefaultCardSettings": "Настройки карточки по умолчанию",
       "DefaultResourceGroup": "Группа ресурсов по умолчанию",
       "DefaultSettings": "Настройки по умолчанию",

@@ -943,7 +943,6 @@
     "settings": {
       "AllResourceGroups": "Todos los grupos de recursos",
       "BackToSavedSetting": "Volver al ajuste guardado ({{value}})",
-      "CurrentResourceGroup": "Grupo de recursos actual",
       "DefaultCardSettings": "Ajustes predeterminados de la tarjeta",
       "DefaultResourceGroup": "Grupo de recursos predeterminado",
       "DefaultSettings": "Ajustes predeterminados",

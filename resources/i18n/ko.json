@@ -943,7 +943,6 @@
     "settings": {
       "AllResourceGroups": "전체 자원 그룹",
       "BackToSavedSetting": "저장된 설정으로 되돌리기 ({{value}})",
-      "CurrentResourceGroup": "현재 자원 그룹",
       "DefaultCardSettings": "카드 기본 설정",
       "DefaultResourceGroup": "기본 자원 그룹",
       "DefaultSettings": "기본 설정",

@@ -943,7 +943,6 @@
     "settings": {
       "AllResourceGroups": "Semua kumpulan sumber",
       "BackToSavedSetting": "Kembali ke tetapan yang disimpan ({{value}})",
-      "CurrentResourceGroup": "Kumpulan sumber semasa",
       "DefaultCardSettings": "Tetapan lalai kad",
       "DefaultResourceGroup": "Kumpulan sumber lalai",
       "DefaultSettings": "Tetapan lalai",

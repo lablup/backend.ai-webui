@@ -943,7 +943,6 @@
     "settings": {
       "AllResourceGroups": "すべてのリソースグループ",
       "BackToSavedSetting": "保存された設定に戻す ({{value}})",
-      "CurrentResourceGroup": "現在のリソースグループ",
       "DefaultCardSettings": "カードの既定の設定",
       "DefaultResourceGroup": "既定のリソースグループ",
       "DefaultSettings": "既定の設定",

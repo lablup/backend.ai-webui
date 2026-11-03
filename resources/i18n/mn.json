@@ -943,7 +943,6 @@
     "settings": {
       "AllResourceGroups": "Бүх нөөцийн бүлэг",
       "BackToSavedSetting": "Хадгалсан тохиргоо руу буцах ({{value}})",
-      "CurrentResourceGroup": "Одоогийн нөөцийн бүлэг",
       "DefaultCardSettings": "Картын үндсэн тохиргоо",
       "DefaultResourceGroup": "Үндсэн нөөцийн бүлэг",
       "DefaultSettings": "Үндсэн тохиргоо",

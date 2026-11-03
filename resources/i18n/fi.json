@@ -943,7 +943,6 @@
     "settings": {
       "AllResourceGroups": "Kaikki resurssiryhmät",
       "BackToSavedSetting": "Palaa tallennettuun asetukseen ({{value}})",
-      "CurrentResourceGroup": "Nykyinen resurssiryhmä",
       "DefaultCardSettings": "Kortin oletusasetukset",
       "DefaultResourceGroup": "Oletusresurssiryhmä",
       "DefaultSettings": "Oletusasetukset",

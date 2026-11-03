@@ -943,7 +943,6 @@
     "settings": {
       "AllResourceGroups": "所有资源组",
       "BackToSavedSetting": "恢复为已保存的设置（{{value}}）",
-      "CurrentResourceGroup": "当前资源组",
       "DefaultCardSettings": "卡片默认设置",
       "DefaultResourceGroup": "默认资源组",
       "DefaultSettings": "默认设置",

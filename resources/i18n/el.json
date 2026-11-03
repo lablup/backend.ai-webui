@@ -943,7 +943,6 @@
     "settings": {
       "AllResourceGroups": "Όλες οι ομάδες πόρων",
       "BackToSavedSetting": "Επιστροφή στην αποθηκευμένη ρύθμιση ({{value}})",
-      "CurrentResourceGroup": "Τρέχουσα ομάδα πόρων",
       "DefaultCardSettings": "Προεπιλεγμένες ρυθμίσεις κάρτας",
       "DefaultResourceGroup": "Προεπιλεγμένη ομάδα πόρων",
       "DefaultSettings": "Προεπιλεγμένες ρυθμίσεις",

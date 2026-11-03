@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useResourceGroupsForCurrentProject } from '../../hooks/useCurrentProject';
-import { resourceGroupScopeOf } from './dashboardScope';
+import { useDashboardResourceGroups } from './DashboardResourceGroups';
+import { cardResourceGroup } from './dashboardScope';
 import type { PanelSettingOverride } from './panelSettingOverrides';
 import {
   DEFAULT_RANGE,
@@ -22,7 +22,6 @@ import {
   BAIScopedResourceGroupSelect,
   BAISelect,
 } from 'backend.ai-ui';
-import * as _ from 'lodash-es';
 import { RotateCcw } from 'lucide-react';
 import React, { Suspense, createContext, use } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -50,21 +49,27 @@ const PanelSettingsHeaderControls: React.FC = () => {
   const { t } = useTranslation();
   const settings = use(PanelHeaderSettingsContext);
   const filters = useDashboardFilterContext();
-  const { sftpResourceGroups } = useResourceGroupsForCurrentProject();
-  const excludedResourceGroups = _.compact(sftpResourceGroups);
+  // The page's allowed groups, never the header's (ADR 0019).
+  const allowed = useDashboardResourceGroups();
   if (!settings || !filters) return null;
   const { definition, saved, effective, overridden, onChange, onReset } =
     settings;
-  const resourceGroup = effective?.resourceGroups?.[0] ?? null;
+  const isPreset = definition.kind === 'preset';
+  // A pick the page's project can no longer use reads the default, so it shows as unset.
+  const validPick = (pick: ReadonlyArray<string> | undefined) =>
+    isPreset || !allowed
+      ? (pick?.[0] ?? null)
+      : pick?.[0] && cardResourceGroup(pick, allowed) === pick[0]
+        ? pick[0]
+        : null;
+  const resourceGroup = validPick(effective?.resourceGroups);
   const savedRange = saved?.range;
-  const defaultResourceGroupLabel =
-    definition.kind === 'preset'
-      ? t('dashboard.settings.AllResourceGroups')
-      : (filters.currentResourceGroup ??
-        t('dashboard.settings.CurrentResourceGroup'));
+  const defaultResourceGroupLabel = isPreset
+    ? t('dashboard.settings.AllResourceGroups')
+    : (allowed?.defaultResourceGroup ?? undefined);
   const savedLabel = [
     hasSetting(definition, 'resourceGroup')
-      ? (saved?.resourceGroups?.[0] ?? defaultResourceGroupLabel)
+      ? (validPick(saved?.resourceGroups) ?? defaultResourceGroupLabel)
       : null,
     hasSetting(definition, 'range')
       ? t(
@@ -95,12 +100,8 @@ const PanelSettingsHeaderControls: React.FC = () => {
               variant={overridden.resourceGroup ? 'secondary' : 'ghost'}
               label={t('general.ResourceGroup')}
               isLabelHidden
-              scope={resourceGroupScopeOf(filters.scope)}
-              filter={
-                _.isEmpty(excludedResourceGroups)
-                  ? undefined
-                  : { name: { notIn: excludedResourceGroups } }
-              }
+              scope={allowed?.scope ?? { project: [] }}
+              filter={allowed?.filter}
               value={resourceGroup}
               placeholder={defaultResourceGroupLabel}
               allowClear={!!resourceGroup}

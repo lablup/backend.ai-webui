@@ -930,7 +930,6 @@
     "settings": {
       "AllResourceGroups": "All resource groups",
       "BackToSavedSetting": "Back to the saved setting ({{value}})",
-      "CurrentResourceGroup": "Current resource group",
       "DefaultCardSettings": "Default card settings",
       "DefaultResourceGroup": "Default resource group",
       "DefaultSettings": "Default settings",

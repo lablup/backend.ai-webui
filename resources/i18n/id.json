@@ -943,7 +943,6 @@
     "settings": {
       "AllResourceGroups": "Semua grup sumber daya",
       "BackToSavedSetting": "Kembali ke pengaturan tersimpan ({{value}})",
-      "CurrentResourceGroup": "Grup sumber daya saat ini",
       "DefaultCardSettings": "Pengaturan default kartu",
       "DefaultResourceGroup": "Grup sumber daya default",
       "DefaultSettings": "Pengaturan default",
