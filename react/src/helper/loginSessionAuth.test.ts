@@ -63,6 +63,7 @@ const meWith = (
     role: string | null;
     domainName: string | null;
     domain: { entityId: string; basicInfo: { name: string } } | null;
+    domainConfig: Record<string, unknown>;
   }> = {},
 ) => ({
   myUserV2: {
@@ -80,6 +81,9 @@ const meWith = (
     recentProject: projects.recent ? { edges: edges(projects.recent) } : null,
     defaultProject: { edges: edges(projects.default ?? []) },
   },
+  myAppConfigs: overrides.domainConfig
+    ? [{ configName: 'domainConfig', config: overrides.domainConfig }]
+    : [],
 });
 
 // Queues one Relay payload per page and records the variables each was asked for.
@@ -124,6 +128,23 @@ describe('connectViaGQL', () => {
     delete g.backendaioptions;
     delete g.backendaiutils;
     delete g.backendaiclient;
+  });
+
+  test("layers the domain's settings document from the same read onto the config", async () => {
+    const { jotaiStore } = await import('../components/DefaultProviders');
+    const { loginConfigState } = await import('../hooks/useWebUIConfig');
+    queueResponses([
+      meWith(
+        { default: [[PROJECT_A, 'alpha']] },
+        { domainConfig: { settings: { hideAgents: !cfg.hideAgents } } },
+      ),
+    ]);
+
+    await connectViaGQL(makeClient(), cfg, []);
+    expect(jotaiStore.set).toHaveBeenCalledWith(
+      loginConfigState,
+      expect.objectContaining({ hideAgents: !cfg.hideAgents }),
+    );
   });
 
   test('stores the user, the default project, and the domain name + uuid from one myUserV2 read', async () => {
