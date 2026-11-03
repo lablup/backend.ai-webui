@@ -262,7 +262,7 @@ const ReservoirPage: React.FC = () => {
   return (
     <BAIFlex direction="column" align="stretch" gap={'md'}>
       {/* antd `Row gutter={[16,16]}` + a single `Col xs={12} sm={8} lg={6}
-          xl={4}` -> Astryx `Grid` on the RESPONSIVE-POLICY R1 recipe: the
+          xl={4}` -> Astryx `Grid` on the ADR 0020 R1 recipe: the
           widest antd step is `xl={4}` (6-up from 1200px), so minWidth 200 /
           max 6, gutter 16 -> gap 4. W2A-17: grid children take `width: 100%`
           and `minWidth: 0` so a filled track cannot push past its column. */}

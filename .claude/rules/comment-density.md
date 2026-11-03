@@ -74,8 +74,9 @@ moves, so it scales with the change instead of accreting in the file.
 |---|---|
 | The mechanism — what actually caused the bug | commit message body |
 | Evidence — measurements, before/after, verification counts | PR description |
-| A recipe worth reusing across fixes | `.specs/FR-3482-astryx-migration/CONVERSION-IDIOMS.md` |
+| A recipe worth reusing across fixes | the matching rule in `.claude/rules/` or skill |
 | A convention future code must follow | a rule in `.claude/rules/` |
+| An architecture decision | an ADR in `docs/adr/` |
 | The source file | a one-line pointer to one of the above |
 
 ## Pattern

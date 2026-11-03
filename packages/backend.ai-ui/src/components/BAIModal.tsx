@@ -263,7 +263,7 @@ export interface BAIModalProps extends Omit<
 
   /* ------------------------------------------------------------ dimensions */
   /**
-   * A per-breakpoint record collapses to its largest entry; `'auto'` becomes
+   * A per-breakpoint record collapses to its last declared entry; `'auto'` becomes
    * `fit-content`. `variant="fullscreen"` is the only way to edge-to-edge:
    * Astryx caps the standard dialog at 90vw.
    */
@@ -481,8 +481,8 @@ const BAIModal: React.FC<BAIModalProps> = ({
   const isMaximized = effectiveWindowState === 'maximized';
   const isMinimized = effectiveWindowState === 'minimized';
 
-  // A per-breakpoint width record collapses to its largest declared entry (the
-  // desktop budget; see RESPONSIVE-POLICY). `width="auto"` is TRANSLATED to
+  // A per-breakpoint width record collapses to its last declared entry (the
+  // desktop budget; ADR 0020 §5). `width="auto"` is TRANSLATED to
   // `fit-content`, not forwarded: bare `auto` resolves against the viewport —
   // measured 1440px where the content needed 301 / 288 (QA-FINDINGS Q-21).
   const resolvedWidth =

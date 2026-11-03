@@ -75,7 +75,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   // `useBAIBreakpoint()`. MAPPING §3.9 grades antd's breakpoint hook NONE and
   // warns that Astryx's `useMediaQuery` returns `false` on FIRST RENDER for
   // SSR safety — which would make every label here flash in and out. The shim
-  // exists for exactly this (RESPONSIVE-POLICY §2) and is a pure import swap.
+  // exists for exactly this (ADR 0020 R3) and is a pure import swap.
   const { lg } = useBAIBreakpoint();
   const { token } = useTheme();
   const { message } = App.useApp();

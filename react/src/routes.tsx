@@ -1428,8 +1428,7 @@ const AutoDiagnosticsRunner = () => {
  * Route-level gate that delegates to `STokenLoginBoundary` when an sToken
  * is present in the URL (transparently passes through otherwise). Sourced
  * here so the regular `LoginView` + `MainLayout` tree never re-reads the
- * URL query for authentication — see the spec "URL 파라미터 파싱 규약
- * (nuqs)" section for the invariant.
+ * URL query for authentication (ADR 0022).
  *
  * On boundary success, the route-level `onSuccess` persists the login
  * state (`last_login`, `login_attempt`, saved-credential cleanup,
