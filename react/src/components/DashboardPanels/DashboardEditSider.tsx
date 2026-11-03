@@ -34,10 +34,13 @@ import { useTranslation } from 'react-i18next';
 export interface DashboardEditSiderProps {
   /** Single-instance catalog entries, checked when on the board. */
   catalogEntries: ReadonlyArray<CatalogEntry>;
+  /** Catalog keys, and user-made panel ids, of what is shown on the board. */
   activeKeys: ReadonlySet<string>;
   /** Cards on the board that are hidden because the viewer may not read them. */
   deniedKeys?: ReadonlySet<string>;
+  /** Takes catalog keys or user-made panel ids. */
   onTogglePanels: (keys: ReadonlyArray<string>, active: boolean) => void;
+  /** User-made panels, listed as the first group of the checklist. */
   panels: ReadonlyArray<PersistedPanel>;
   onRequestAdd: () => void;
   onRequestEdit: (panel: PersistedPanel) => void;
@@ -62,9 +65,8 @@ const GROUP_LABEL_KEYS: Record<PanelGroup, string> = {
 
 /**
  * Edit-mode side panel, a flex sibling of the board so the board reflows. The
- * board block (admin pages) manages the boards; the custom panel block lists
- * user-made panels, created and edited through the panel modal; the card
- * checklist below it adds and removes catalog cards.
+ * board block (admin pages) manages the boards; the card checklist below it
+ * puts cards on the board and takes them off, user-made panels first.
  */
 const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
   catalogEntries,
@@ -115,10 +117,23 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
       : undefined;
   };
 
+  const labeledPanels = panels.map((panel) => ({
+    panel,
+    label: resolvePanelTitle(panel.descriptor, t),
+  }));
+  const matchingPanels = normalizedSearch
+    ? labeledPanels.filter(({ label }) =>
+        label.toLowerCase().includes(normalizedSearch),
+      )
+    : labeledPanels;
+
   // Select all acts on the cards the search leaves visible.
-  const selectableKeys = matchingEntries
-    .filter((entry) => !entry.locked)
-    .map((entry) => entry.definition.key);
+  const selectableKeys = [
+    ...matchingPanels.map(({ panel }) => panel.id),
+    ...matchingEntries
+      .filter((entry) => !entry.locked)
+      .map((entry) => entry.definition.key),
+  ];
   const activeCount = selectableKeys.filter((key) =>
     activeKeys.has(key),
   ).length;
@@ -128,6 +143,20 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
       : activeCount === selectableKeys.length
         ? true
         : ('indeterminate' as const);
+
+  const toggleChanged = (
+    listed: ReadonlyArray<string>,
+    values: ReadonlyArray<string>,
+  ) => {
+    const checked = new Set(values);
+    const changed = listed.filter(
+      (key) => checked.has(key) !== activeKeys.has(key),
+    );
+    const added = changed.filter((key) => checked.has(key));
+    const removed = changed.filter((key) => !checked.has(key));
+    if (added.length) onTogglePanels(added, true);
+    if (removed.length) onTogglePanels(removed, false);
+  };
 
   const groups = PANEL_GROUPS.map((group) => ({
     group,
@@ -153,81 +182,10 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
       }}
     >
       {boardSection}
-      <BAIFlex
-        direction="row"
-        justify="between"
-        align="center"
-        gap="sm"
+      <BAIText
+        strong
         style={boardSection ? { paddingTop: token('--spacing-3') } : undefined}
       >
-        <BAIText strong>{t('dashboard.editSider.Title')}</BAIText>
-        <Button
-          variant="primary"
-          size="sm"
-          icon={<Plus size="1em" />}
-          label={t('button.Add')}
-          onClick={onRequestAdd}
-        />
-      </BAIFlex>
-
-      {panels.length === 0 ? (
-        <BAIText type="secondary">{t('dashboard.editSider.Empty')}</BAIText>
-      ) : (
-        <BAIFlex direction="column" align="stretch">
-          {panels.map((panel) => {
-            const label = resolvePanelTitle(panel.descriptor, t);
-            return (
-              <BAIFlex
-                key={panel.id}
-                direction="row"
-                justify="between"
-                align="center"
-                gap="sm"
-                style={{
-                  paddingBlock: token('--spacing-2'),
-                  borderBottom: `1px solid ${token('--color-border')}`,
-                }}
-              >
-                <BAIFlex
-                  direction="column"
-                  align="stretch"
-                  style={{ flex: 1, minWidth: 0 }}
-                >
-                  <BAIText ellipsis>{label}</BAIText>
-                </BAIFlex>
-                <BAIFlex direction="row" align="center" gap="xxs">
-                  {settingsButton(panel.id, label)}
-                  <IconButton
-                    variant="ghost"
-                    size="sm"
-                    label={t('button.Edit')}
-                    tooltip={t('button.Edit')}
-                    icon={<SquarePenIcon size="1em" />}
-                    onClick={() => onRequestEdit(panel)}
-                  />
-                  <BAIPopconfirm
-                    title={t('dialog.ask.DoYouWantToDeleteSomething', {
-                      name: label,
-                    })}
-                    isDanger
-                    onConfirm={() => onRemove(panel.id)}
-                  >
-                    <IconButton
-                      variant="ghost"
-                      size="sm"
-                      label={t('button.Delete')}
-                      tooltip={t('button.Delete')}
-                      icon={<Trash2 size="1em" />}
-                    />
-                  </BAIPopconfirm>
-                </BAIFlex>
-              </BAIFlex>
-            );
-          })}
-        </BAIFlex>
-      )}
-
-      <BAIText strong style={{ paddingTop: token('--spacing-3') }}>
         {t('dashboard.editSider.Cards')}
       </BAIText>
       <BAITextInput
@@ -254,7 +212,90 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
           {t('dashboard.editSider.SelectAll')}
         </BAICheckboxInput>
       ) : null}
-      {groups.length === 0 ? (
+      {normalizedSearch && matchingPanels.length === 0 ? null : (
+        <BAIFlex
+          direction="column"
+          align="stretch"
+          gap="xxs"
+          data-testid="dashboard-custom-panels"
+        >
+          <BAIFlex direction="row" justify="between" align="center" gap="sm">
+            <BAIText
+              type="secondary"
+              style={{ fontSize: token('--font-size-sm') }}
+            >
+              {t('dashboard.editSider.Title')}
+            </BAIText>
+            <Button
+              variant="secondary"
+              size="sm"
+              icon={<Plus size="1em" />}
+              label={t('button.Add')}
+              onClick={onRequestAdd}
+            />
+          </BAIFlex>
+          {matchingPanels.length === 0 ? (
+            <BAIText type="secondary">{t('dashboard.editSider.Empty')}</BAIText>
+          ) : (
+            <BAICheckboxList
+              aria-label={t('dashboard.editSider.Title')}
+              density="compact"
+              width="100%"
+              value={matchingPanels
+                .filter(({ panel }) => activeKeys.has(panel.id))
+                .map(({ panel }) => panel.id)}
+              onChange={(values) =>
+                toggleChanged(
+                  matchingPanels.map(({ panel }) => panel.id),
+                  values,
+                )
+              }
+            >
+              {matchingPanels.map(({ panel, label }) => (
+                <BAICheckboxListItem
+                  key={panel.id}
+                  value={panel.id}
+                  label={label}
+                  description={
+                    activeKeys.has(panel.id)
+                      ? settingsSummaryOf(panel.id)
+                      : undefined
+                  }
+                  endContent={
+                    <BAIFlex direction="row" align="center" gap="xxs">
+                      {settingsButton(panel.id, label)}
+                      <IconButton
+                        variant="ghost"
+                        size="sm"
+                        label={t('button.Edit')}
+                        tooltip={t('button.Edit')}
+                        icon={<SquarePenIcon size="1em" />}
+                        onClick={() => onRequestEdit(panel)}
+                      />
+                      <BAIPopconfirm
+                        title={t('dialog.ask.DoYouWantToDeleteSomething', {
+                          name: label,
+                        })}
+                        isDanger
+                        onConfirm={() => onRemove(panel.id)}
+                      >
+                        <IconButton
+                          variant="ghost"
+                          size="sm"
+                          label={t('button.Delete')}
+                          tooltip={t('button.Delete')}
+                          icon={<Trash2 size="1em" />}
+                        />
+                      </BAIPopconfirm>
+                    </BAIFlex>
+                  }
+                />
+              ))}
+            </BAICheckboxList>
+          )}
+        </BAIFlex>
+      )}
+      {groups.length === 0 && matchingPanels.length === 0 ? (
         <BAIText type="secondary">
           {t('dashboard.editSider.NoMatchingCards')}
         </BAIText>
@@ -274,16 +315,12 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
               value={entries
                 .filter((entry) => activeKeys.has(entry.definition.key))
                 .map((entry) => entry.definition.key)}
-              onChange={(values) => {
-                const checked = new Set(values);
-                const changed = entries
-                  .map(({ definition }) => definition.key)
-                  .filter((key) => checked.has(key) !== activeKeys.has(key));
-                const added = changed.filter((key) => checked.has(key));
-                const removed = changed.filter((key) => !checked.has(key));
-                if (added.length) onTogglePanels(added, true);
-                if (removed.length) onTogglePanels(removed, false);
-              }}
+              onChange={(values) =>
+                toggleChanged(
+                  entries.map(({ definition }) => definition.key),
+                  values,
+                )
+              }
             >
               {entries.map((entry) => (
                 <BAICheckboxListItem
