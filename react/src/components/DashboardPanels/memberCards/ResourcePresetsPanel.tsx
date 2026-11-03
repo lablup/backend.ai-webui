@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { ResourcePresetsPanelQuery } from '../../../__generated__/ResourcePresetsPanelQuery.graphql';
+import { readPrimary } from '../panelPermission';
 import type { PanelComponentProps } from '../types';
 import MemberCard, { NoProjectText, mineProjectId } from './MemberCard';
 import { toPresetRows, type PresetRow } from './memberCardData';
@@ -28,7 +29,7 @@ const PresetAvailabilityTable: React.FC<{
   const data = useLazyLoadQuery<ResourcePresetsPanelQuery>(
     graphql`
       query ResourcePresetsPanelQuery($input: CheckPresetAvailabilityV2Input!) {
-        checkPresetAvailabilityV2(input: $input) {
+        checkPresetAvailabilityV2(input: $input) @catch(to: RESULT) {
           presets {
             id
             name
@@ -81,7 +82,9 @@ const PresetAvailabilityTable: React.FC<{
   return (
     <Table<PresetTableRow>
       data={
-        toPresetRows(data.checkPresetAvailabilityV2) as Array<PresetTableRow>
+        toPresetRows(
+          readPrimary(data.checkPresetAvailabilityV2),
+        ) as Array<PresetTableRow>
       }
       columns={columns}
       idKey="id"
