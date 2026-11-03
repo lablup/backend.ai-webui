@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 376 / 526 features covered (71%)**
+**Overall (in-scope routes): 377 / 527 features covered (72%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -47,14 +47,14 @@
 | Edu App Launcher         | `/applauncher`, `/edu-applauncher`               |    8     |    5    | 🔶 63%  |
 | Chat                     | `/chat/:id?`                                     |    7     |    7    | ✅ 100% |
 | Plugin System            | (config-based)                                   |    12    |   12    | ✅ 100% |
-| RBAC Management          | `/rbac`                                          |    24    |   23    | 🔶 96%  |
+| RBAC Management          | `/rbac`                                          |    25    |   24    | 🔶 96%  |
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule`           |    33    |   32    | 🔶 97%  |
 | Deployments              | `/deployments`, `/deployments/:id`               |    23    |   20    | 🔶 87%  |
 | Admin Deployment Preset  | `/admin/deployments/deployment-presets/new`      |    5     |    5    | ✅ 100% |
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **526**  | **376** | **71%** |
+| **Total**                |                                                  | **527**  | **377** | **72%** |
 
 ---
 
@@ -1117,9 +1117,10 @@ External portals (LMS) open these routes with a signed `sToken` plus the app and
 | Revoke a user from a role                          | ✅     | `Superadmin can revoke a single user from a role`                                        |
 | Skip users already holding the role on assignment  | ✅     | `Superadmin can see users already holding the role skipped while new users are assigned` |
 | Empty state in Role Assignments tab                | ✅     | `Superadmin sees empty state in Role Assignments tab when role has no users`             |
+| Sort role assignments by Granted At                | ✅     | `Superadmin can sort role assignments by Granted At`                                     |
 | System role View Presets link opens its own preset | ✅     | `Superadmin can open exactly the preset of a system role from the role detail drawer`    |
 
-**Coverage: 🔶 23/24 features**
+**Coverage: 🔶 24/25 features**
 
 ---
 

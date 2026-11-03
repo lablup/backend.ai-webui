@@ -409,6 +409,156 @@ test.describe(
   },
 );
 
+// Two disposable users: one assigned to the role first (the holder), one
+// never assigned (the newcomer). Created and purged through the admin API.
+const SKIP_FIXTURE_RUN_ID = Date.now().toString(36) + randomUUID().slice(0, 4);
+const SKIP_HOLDER_EMAIL = `e2e-rbac-holder-${SKIP_FIXTURE_RUN_ID}@lablup.com`;
+const SKIP_NEWCOMER_EMAIL = `e2e-rbac-newcomer-${SKIP_FIXTURE_RUN_ID}@lablup.com`;
+
+test.describe(
+  'RBAC Role Assignments - users already holding the role',
+  { tag: ['@rbac', '@regression', '@functional', '@requires-manager-v26.10'] },
+  () => {
+    let roleName: string;
+    let roleToCleanup: string | undefined;
+
+    test.beforeAll(async () => {
+      const api = await createAdminApiContext();
+      try {
+        const domainName = await getE2EDomainName(api);
+        for (const email of [SKIP_HOLDER_EMAIL, SKIP_NEWCOMER_EMAIL]) {
+          const created = await gqlAdmin<{
+            create_user: { ok: boolean; msg: string };
+          }>(
+            api,
+            `mutation($email: String!, $props: UserInput!) {
+              create_user(email: $email, props: $props) { ok msg }
+            }`,
+            {
+              email,
+              props: {
+                username: email.split('@')[0],
+                password: ASSIGN_FIXTURE_PASSWORD,
+                need_password_change: false,
+                domain_name: domainName,
+              },
+            },
+          );
+          expect(created.create_user.ok, created.create_user.msg).toBe(true);
+        }
+      } finally {
+        await api.dispose();
+      }
+    });
+
+    test.afterAll(async () => {
+      let api: APIRequestContext | undefined;
+      try {
+        api = await createAdminApiContext();
+        for (const email of [SKIP_HOLDER_EMAIL, SKIP_NEWCOMER_EMAIL]) {
+          await purgeUserViaApi(api, email);
+        }
+      } catch (error) {
+        console.warn(
+          '[rbac-role-detail] failed to purge fixture users:',
+          error,
+        );
+      } finally {
+        await api?.dispose();
+      }
+    });
+
+    test.beforeEach(async ({ page, request }) => {
+      roleToCleanup = undefined;
+      // Keep the first-visit "superadmin view has changed" tour from
+      // covering the RBAC page.
+      await page.addInitScript(() => {
+        for (const key of [
+          'backendaiwebui.settings.user.has_opened_tour_back_to_user_view',
+          'backendaiwebui.settings.user.has_opened_tour_back_to_admin_settings',
+        ]) {
+          localStorage.setItem(key, 'true');
+        }
+      });
+      await loginAsAdmin(page, request);
+      await skipUnlessManagerVersion(
+        page,
+        '26.10.0a2',
+        'Already-held users come back in adminBulkAssignRole.failed from manager >= 26.10.0a2 (lablup/backend.ai#15653, #10406)',
+      );
+      roleName = `e2e-skip-role-${Date.now().toString(36)}${randomUUID().slice(0, 4)}`;
+      roleToCleanup = roleName;
+      await navigateTo(page, 'rbac');
+      await createTestRole(page, roleName);
+    });
+
+    test.afterEach(async ({ page }) => {
+      if (!roleToCleanup) return;
+      try {
+        await navigateTo(page, 'rbac');
+        await cleanupTestRole(page, roleToCleanup);
+      } catch (error) {
+        console.warn(
+          `[rbac-role-detail] failed to purge role ${roleToCleanup}:`,
+          error,
+        );
+      } finally {
+        roleToCleanup = undefined;
+      }
+    });
+
+    test('Superadmin can see users already holding the role skipped while new users are assigned', async ({
+      page,
+    }) => {
+      const drawer = await openRoleDrawer(page, roleName);
+      await drawerTab(page, 'Role Assignments').click();
+      const assignModal = page.getByRole('dialog', { name: 'Add User' });
+
+      // The holder gets the role first.
+      await drawer.getByRole('button', { name: 'Add User' }).click();
+      await expect(assignModal).toBeVisible();
+      await pickAssignUser(page, assignModal, SKIP_HOLDER_EMAIL);
+      await assignModal.getByRole('button', { name: 'Add' }).click();
+      await expect(assignModal).toBeHidden({ timeout: 10000 });
+      await expect(
+        drawer.getByRole('row').filter({ hasText: SKIP_HOLDER_EMAIL }),
+      ).toBeVisible({ timeout: 10000 });
+      // The mixed assignment below shows the same success toast.
+      await expect(
+        toast(page, /Users assigned to role successfully/i),
+      ).toBeHidden({ timeout: 10000 });
+
+      // Assign the holder again together with the newcomer.
+      await drawer.getByRole('button', { name: 'Add User' }).click();
+      await expect(assignModal).toBeVisible();
+      await pickAssignUser(page, assignModal, SKIP_HOLDER_EMAIL);
+      await pickAssignUser(page, assignModal, SKIP_NEWCOMER_EMAIL);
+      await assignModal.getByRole('button', { name: 'Add' }).click();
+
+      // The holder is reported as skipped, not as a failure.
+      await expect(
+        toast(page, /Skipped 1 user\(s\) who already hold this role/),
+      ).toContainText(SKIP_HOLDER_EMAIL, { timeout: 10000 });
+      await expect(
+        toast(page, /Users assigned to role successfully/i),
+      ).toBeVisible();
+      await expect(assignModal).toBeHidden();
+      await expect(
+        page
+          .getByRole('status')
+          .filter({ hasText: /Some user assignments failed/ }),
+      ).toHaveCount(0);
+
+      await expect(
+        drawer.getByRole('row').filter({ hasText: SKIP_NEWCOMER_EMAIL }),
+      ).toBeVisible({ timeout: 10000 });
+      await expect(
+        drawer.getByRole('row').filter({ hasText: SKIP_HOLDER_EMAIL }),
+      ).toHaveCount(1);
+    });
+  },
+);
+
 // Not serial: each test provisions its own role (cleanupTestRole + createTestRole),
 // so a failure doesn't cascade. mode: 'default' keeps tests sequential on one worker
 // because they share the same ROLE_NAME (fullyParallel would make them race).
@@ -990,152 +1140,180 @@ test.describe(
   },
 );
 
-// Two disposable users: one assigned to the role first (the holder), one
-// never assigned (the newcomer). Created and purged through the admin API.
-const SKIP_FIXTURE_RUN_ID = Date.now().toString(36) + randomUUID().slice(0, 4);
-const SKIP_HOLDER_EMAIL = `e2e-rbac-holder-${SKIP_FIXTURE_RUN_ID}@lablup.com`;
-const SKIP_NEWCOMER_EMAIL = `e2e-rbac-newcomer-${SKIP_FIXTURE_RUN_ID}@lablup.com`;
-
+// Role Assignments list `adminRoleAssignments` rows since #10275, so each row
+// carries its grant time and the Granted At column sorts server-side.
 test.describe(
-  'RBAC Role Assignments - users already holding the role',
-  { tag: ['@rbac', '@regression', '@functional', '@requires-manager-v26.10'] },
+  'RBAC Role Assignments - Granted At',
+  { tag: ['@rbac', '@regression', '@functional', '@requires-manager-v26.9'] },
   () => {
-    let roleName: string;
-    let roleToCleanup: string | undefined;
+    const runId = Date.now().toString(36) + randomUUID().slice(0, 4);
+    const roleName = `e2e-granted-role-${runId}`;
+    // Granted in this order, so ascending Granted At lists the first one first.
+    const userEmails = [
+      `e2e-rbac-granted-a-${runId}@lablup.com`,
+      `e2e-rbac-granted-b-${runId}@lablup.com`,
+    ];
+    let api: APIRequestContext | undefined;
+    let roleCreated = false;
 
     test.beforeAll(async () => {
-      const api = await createAdminApiContext();
-      try {
-        const domainName = await getE2EDomainName(api);
-        for (const email of [SKIP_HOLDER_EMAIL, SKIP_NEWCOMER_EMAIL]) {
-          const created = await gqlAdmin<{
-            create_user: { ok: boolean; msg: string };
-          }>(
-            api,
-            `mutation($email: String!, $props: UserInput!) {
-              create_user(email: $email, props: $props) { ok msg }
-            }`,
-            {
-              email,
-              props: {
-                username: email.split('@')[0],
-                password: ASSIGN_FIXTURE_PASSWORD,
-                need_password_change: false,
-                domain_name: domainName,
-              },
+      api = await createAdminApiContext();
+      const domainName = await getE2EDomainName(api);
+      for (const email of userEmails) {
+        const created = await gqlAdmin<{
+          create_user: { ok: boolean; msg: string };
+        }>(
+          api,
+          `mutation($email: String!, $props: UserInput!) {
+            create_user(email: $email, props: $props) { ok msg }
+          }`,
+          {
+            email,
+            props: {
+              username: email.split('@')[0],
+              password: `e2e-${randomUUID().slice(0, 12)}@Pw`,
+              need_password_change: false,
+              domain_name: domainName,
             },
-          );
-          expect(created.create_user.ok, created.create_user.msg).toBe(true);
-        }
+          },
+        );
+        expect(created.create_user.ok, created.create_user.msg).toBe(true);
+      }
+    });
+
+    test.afterEach(async ({ page }) => {
+      if (!roleCreated) return;
+      try {
+        await navigateTo(page, 'rbac');
+        await cleanupTestRole(page, roleName);
+      } catch (error) {
+        console.warn(
+          `[rbac-role-detail] failed to purge role ${roleName}:`,
+          error,
+        );
       } finally {
-        await api.dispose();
+        roleCreated = false;
       }
     });
 
     test.afterAll(async () => {
-      let api: APIRequestContext | undefined;
-      try {
-        api = await createAdminApiContext();
-        for (const email of [SKIP_HOLDER_EMAIL, SKIP_NEWCOMER_EMAIL]) {
-          await purgeUserViaApi(api, email);
-        }
-      } catch (error) {
-        console.warn(
-          '[rbac-role-detail] failed to purge fixture users:',
-          error,
+      if (!api) return;
+      for (const email of userEmails) {
+        await purgeUserViaApi(api, email).catch((error) =>
+          console.warn(`[rbac-role-detail] could not purge ${email}:`, error),
         );
-      } finally {
-        await api?.dispose();
       }
+      await api.dispose();
     });
 
-    test.beforeEach(async ({ page, request }) => {
-      roleToCleanup = undefined;
-      // Keep the first-visit "superadmin view has changed" tour from
-      // covering the RBAC page.
+    test('Superadmin can sort role assignments by Granted At', async ({
+      page,
+      request,
+    }) => {
+      const adminApi = api!;
+      // Keep the superadmin first-use tour modal from covering the page.
       await page.addInitScript(() => {
-        for (const key of [
-          'backendaiwebui.settings.user.has_opened_tour_back_to_user_view',
-          'backendaiwebui.settings.user.has_opened_tour_back_to_admin_settings',
-        ]) {
-          localStorage.setItem(key, 'true');
+        for (const tour of ['back_to_user_view', 'back_to_admin_settings']) {
+          localStorage.setItem(
+            `backendaiwebui.settings.user.has_opened_tour_${tour}`,
+            'true',
+          );
         }
       });
       await loginAsAdmin(page, request);
-      await skipUnlessManagerVersion(
-        page,
-        '26.10.0a2',
-        'Already-held users come back in adminBulkAssignRole.failed from manager >= 26.10.0a2 (lablup/backend.ai#15653, #10406)',
-      );
-      roleName = `e2e-skip-role-${Date.now().toString(36)}${randomUUID().slice(0, 4)}`;
-      roleToCleanup = roleName;
       await navigateTo(page, 'rbac');
+      // Set first: cleanupTestRole copes with a role that was never created.
+      roleCreated = true;
       await createTestRole(page, roleName);
-    });
 
-    test.afterEach(async ({ page }) => {
-      if (!roleToCleanup) return;
-      try {
-        await navigateTo(page, 'rbac');
-        await cleanupTestRole(page, roleToCleanup);
-      } catch (error) {
-        console.warn(
-          `[rbac-role-detail] failed to purge role ${roleToCleanup}:`,
-          error,
+      const { adminRoles } = await gqlAdmin<{
+        adminRoles: { edges: Array<{ node: { id: string } }> };
+      }>(
+        adminApi,
+        `query ($name: String!) {
+          adminRoles(filter: { name: { equals: $name } }, limit: 1) {
+            edges { node { id } }
+          }
+        }`,
+        { name: roleName },
+      );
+      expect(adminRoles.edges).toHaveLength(1);
+      const roleId = toLocalId(adminRoles.edges[0].node.id);
+      const { adminUsersV2 } = await gqlAdmin<{
+        adminUsersV2: {
+          edges: Array<{ node: { id: string; basicInfo: { email: string } } }>;
+        };
+      }>(
+        adminApi,
+        `query ($emails: [String!]) {
+          adminUsersV2(filter: { email: { in: $emails } }) {
+            edges { node { id basicInfo { email } } }
+          }
+        }`,
+        { emails: userEmails },
+      );
+      const userIdByEmail = Object.fromEntries(
+        adminUsersV2.edges.map((e) => [
+          e.node.basicInfo.email,
+          toLocalId(e.node.id),
+        ]),
+      );
+      expect(Object.keys(userIdByEmail).sort()).toEqual([...userEmails].sort());
+      for (const [index, email] of userEmails.entries()) {
+        // Keep the two grant times apart so the sort order is unambiguous.
+        if (index > 0) await page.waitForTimeout(2000);
+        const { adminBulkAssignRole } = await gqlAdmin<{
+          adminBulkAssignRole: { failed: Array<{ message: string }> };
+        }>(
+          adminApi,
+          `mutation ($input: BulkAssignRoleInput!) {
+            adminBulkAssignRole(input: $input) { failed { message } }
+          }`,
+          { input: { roleId, userIds: [userIdByEmail[email]] } },
         );
-      } finally {
-        roleToCleanup = undefined;
+        expect(adminBulkAssignRole.failed).toEqual([]);
       }
-    });
 
-    test('Superadmin can see users already holding the role skipped while new users are assigned', async ({
-      page,
-    }) => {
       const drawer = await openRoleDrawer(page, roleName);
       await drawerTab(page, 'Role Assignments').click();
-      const assignModal = page.getByRole('dialog', { name: 'Add User' });
+      await expect(drawerTab(page, 'Role Assignments')).toHaveAttribute(
+        'aria-current',
+        'true',
+      );
 
-      // The holder gets the role first.
-      await drawer.getByRole('button', { name: 'Add User' }).click();
-      await expect(assignModal).toBeVisible();
-      await pickAssignUser(page, assignModal, SKIP_HOLDER_EMAIL);
-      await assignModal.getByRole('button', { name: 'Add' }).click();
-      await expect(assignModal).toBeHidden({ timeout: 10000 });
-      await expect(
-        drawer.getByRole('row').filter({ hasText: SKIP_HOLDER_EMAIL }),
-      ).toBeVisible({ timeout: 10000 });
-      // The mixed assignment below shows the same success toast.
-      await expect(
-        toast(page, /Users assigned to role successfully/i),
-      ).toBeHidden({ timeout: 10000 });
+      const rows = dataRows(page, drawer);
+      await expect(rows).toHaveCount(2, { timeout: 10000 });
+      for (const email of userEmails) {
+        await expect(rows.filter({ hasText: email })).toContainText(
+          /\d{4}-\d{2}-\d{2} \d{2}:\d{2}/,
+        );
+      }
 
-      // Assign the holder again together with the newcomer.
-      await drawer.getByRole('button', { name: 'Add User' }).click();
-      await expect(assignModal).toBeVisible();
-      await pickAssignUser(page, assignModal, SKIP_HOLDER_EMAIL);
-      await pickAssignUser(page, assignModal, SKIP_NEWCOMER_EMAIL);
-      await assignModal.getByRole('button', { name: 'Add' }).click();
+      const grantedAtHeader = drawer
+        .getByRole('columnheader')
+        .filter({ hasText: 'Granted At' });
+      const sortBy = async (direction: 'ASC' | 'DESC') => {
+        const response = page.waitForResponse((res) => {
+          const body = res.request().postData() ?? '';
+          return (
+            body.includes('RoleAssignmentTabQuery') &&
+            body.includes('GRANTED_AT') &&
+            body.includes(direction)
+          );
+        });
+        await grantedAtHeader.getByRole('button').click();
+        await response;
+      };
 
-      // The holder is reported as skipped, not as a failure.
-      await expect(
-        toast(page, /Skipped 1 user\(s\) who already hold this role/),
-      ).toContainText(SKIP_HOLDER_EMAIL, { timeout: 10000 });
-      await expect(
-        toast(page, /Users assigned to role successfully/i),
-      ).toBeVisible();
-      await expect(assignModal).toBeHidden();
-      await expect(
-        page
-          .getByRole('status')
-          .filter({ hasText: /Some user assignments failed/ }),
-      ).toHaveCount(0);
+      await sortBy('ASC');
+      await expect(grantedAtHeader).toHaveAttribute('aria-sort', 'ascending');
+      await expect(rows.first()).toContainText(userEmails[0]);
+      await expect(rows.last()).toContainText(userEmails[1]);
 
-      await expect(
-        drawer.getByRole('row').filter({ hasText: SKIP_NEWCOMER_EMAIL }),
-      ).toBeVisible({ timeout: 10000 });
-      await expect(
-        drawer.getByRole('row').filter({ hasText: SKIP_HOLDER_EMAIL }),
-      ).toHaveCount(1);
+      await sortBy('DESC');
+      await expect(grantedAtHeader).toHaveAttribute('aria-sort', 'descending');
+      await expect(rows.first()).toContainText(userEmails[1]);
+      await expect(rows.last()).toContainText(userEmails[0]);
     });
   },
 );
