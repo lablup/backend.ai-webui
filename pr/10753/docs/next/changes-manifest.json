@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-11-02T15:49:40.355Z",
+  "generatedAt": "2026-11-03T01:49:18.514Z",
   "languages": [
     "en",
     "ja",
@@ -12,16 +12,33 @@
   "langs": {
     "en": {
       "totals": {
-        "pages": 1,
-        "changes": 13,
-        "added": 2,
-        "modified": 8,
-        "removed": 3,
-        "images": 5,
+        "pages": 3,
+        "changes": 23,
+        "added": 3,
+        "modified": 16,
+        "removed": 4,
+        "images": 12,
         "newPages": 0,
         "deletedPages": 0
       },
       "pages": [
+        {
+          "slug": "sessions_all",
+          "title": "Compute Sessions",
+          "status": "modified",
+          "url": "next/en/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "0c3432f88fd0"
+          ]
+        },
         {
           "slug": "share_vfolder",
           "title": "Share Storage Folders",
@@ -50,21 +67,63 @@
             "7382e9ee0120",
             "d37d80126d5d"
           ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "Storage Folders",
+          "status": "modified",
+          "url": "next/en/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/vfolder/vfolder.md",
+          "counts": {
+            "added": 1,
+            "modified": 7,
+            "removed": 1,
+            "images": 6,
+            "total": 9
+          },
+          "fingerprints": [
+            "12fcd9034583",
+            "4b9ea6b0f188",
+            "189c969cbd51",
+            "4bd43f885528",
+            "b86eb5bdc62f",
+            "0c3432f88fd0",
+            "2757f7e932c0",
+            "0c3432f88fd0-2",
+            "0c3432f88fd0-3"
+          ]
         }
       ]
     },
     "ja": {
       "totals": {
-        "pages": 1,
-        "changes": 12,
-        "added": 1,
-        "modified": 9,
-        "removed": 2,
-        "images": 5,
+        "pages": 3,
+        "changes": 22,
+        "added": 2,
+        "modified": 17,
+        "removed": 3,
+        "images": 12,
         "newPages": 0,
         "deletedPages": 0
       },
       "pages": [
+        {
+          "slug": "sessions_all",
+          "title": "コンピュートセッション",
+          "status": "modified",
+          "url": "next/ja/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "364a30b58c7b"
+          ]
+        },
         {
           "slug": "share_vfolder",
           "title": "ストレージフォルダの共有",
@@ -92,21 +151,63 @@
             "22f073ea8738",
             "c294b3261cb7"
           ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "ストレージフォルダ",
+          "status": "modified",
+          "url": "next/ja/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/vfolder/vfolder.md",
+          "counts": {
+            "added": 1,
+            "modified": 7,
+            "removed": 1,
+            "images": 6,
+            "total": 9
+          },
+          "fingerprints": [
+            "6089ffa5cdb2",
+            "cd36f5121de4",
+            "49ab081f0cff",
+            "c932cde117db",
+            "3cefc613199a",
+            "364a30b58c7b",
+            "c0c0a5783035",
+            "364a30b58c7b-2",
+            "364a30b58c7b-3"
+          ]
         }
       ]
     },
     "ko": {
       "totals": {
-        "pages": 1,
-        "changes": 13,
-        "added": 2,
-        "modified": 8,
-        "removed": 3,
-        "images": 5,
+        "pages": 3,
+        "changes": 23,
+        "added": 3,
+        "modified": 16,
+        "removed": 4,
+        "images": 12,
         "newPages": 0,
         "deletedPages": 0
       },
       "pages": [
+        {
+          "slug": "sessions_all",
+          "title": "연산 세션",
+          "status": "modified",
+          "url": "next/ko/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "55d13b6965d4"
+          ]
+        },
         {
           "slug": "share_vfolder",
           "title": "스토리지 폴더 공유",
@@ -135,21 +236,63 @@
             "46e88e83890c",
             "f84e0d017d23"
           ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "스토리지 폴더",
+          "status": "modified",
+          "url": "next/ko/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/vfolder/vfolder.md",
+          "counts": {
+            "added": 1,
+            "modified": 7,
+            "removed": 1,
+            "images": 6,
+            "total": 9
+          },
+          "fingerprints": [
+            "51de8edccc13",
+            "1719362d4f4f",
+            "63b8f447c640",
+            "1f58ff3fbaaf",
+            "ed0c1e1c4a68",
+            "55d13b6965d4",
+            "e74c6ead7477",
+            "55d13b6965d4-2",
+            "55d13b6965d4-3"
+          ]
         }
       ]
     },
     "th": {
       "totals": {
-        "pages": 1,
-        "changes": 13,
-        "added": 2,
-        "modified": 8,
-        "removed": 3,
-        "images": 5,
+        "pages": 3,
+        "changes": 23,
+        "added": 3,
+        "modified": 16,
+        "removed": 4,
+        "images": 12,
         "newPages": 0,
         "deletedPages": 0
       },
       "pages": [
+        {
+          "slug": "sessions_all",
+          "title": "เซสชันการคำนวณ",
+          "status": "modified",
+          "url": "next/th/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "aede70b9a84d"
+          ]
+        },
         {
           "slug": "share_vfolder",
           "title": "การแชร์โฟลเดอร์จัดเก็บ",
@@ -177,6 +320,31 @@
             "316b40904d77",
             "c21afee6e7a8",
             "42c5f7a7ccca"
+          ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "โฟลเดอร์จัดเก็บ",
+          "status": "modified",
+          "url": "next/th/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/vfolder/vfolder.md",
+          "counts": {
+            "added": 1,
+            "modified": 7,
+            "removed": 1,
+            "images": 6,
+            "total": 9
+          },
+          "fingerprints": [
+            "d9594938d0ce",
+            "e8c823438f03",
+            "322849501f42",
+            "0ea6656bf6b3",
+            "b317e41855b8",
+            "aede70b9a84d",
+            "5692cd7eee37",
+            "aede70b9a84d-2",
+            "aede70b9a84d-3"
           ]
         }
       ]
