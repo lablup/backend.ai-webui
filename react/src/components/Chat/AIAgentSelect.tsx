@@ -5,7 +5,7 @@
 import { AIAgent, useAIAgent } from '../../hooks/useAIAgent';
 import { FluentEmojiIcon } from '../FluentEmojiIcon';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIFlex, BAISelector, useControllableValue } from 'backend.ai-ui';
+import { BAIFlex, BAISelect, useControllableValue } from 'backend.ai-ui';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -50,16 +50,11 @@ const AIAgentSelect: React.FC<ChatAgentSelectProps> = ({
             height={token('--spacing-8')}
             width={token('--spacing-8')}
           />
-          {/* PILOT-DECISION: antd `showSearch={{filterOption:false, onSearch}}`
-              (remote-shaped incremental search) has no destination on
-              Astryx `Selector` beyond its own built-in `hasSearch` (which
-              filters the already-loaded `options` client-side, per
-              MAPPING.md §3.1). The agent catalog is small and fully loaded,
-              so client-side filtering is behaviourally equivalent here. */}
-          <BAISelector
+          {/* The agent catalog is small and fully loaded, so the built-in
+              client-side search covers it. */}
+          <BAISelect
             aria-label={t('chatui.SelectAgent')}
-            hasSearch
-            isLoading={isSearchPending || loading}
+            loading={isSearchPending || loading}
             options={makeAgentOptions(agents, searchAgent)}
             value={controllableValue ?? undefined}
             onChange={(v) => {

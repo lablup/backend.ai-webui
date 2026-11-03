@@ -18,7 +18,7 @@ import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIDeleteConfirmModal,
   BAIFlex,
-  BAISelector,
+  BAISelect,
   BAIText,
   BAITextInput,
 } from 'backend.ai-ui';
@@ -96,16 +96,17 @@ const DashboardBoardSection: React.FC<DashboardBoardSectionProps> = ({
       data-testid="dashboard-board-section"
     >
       <BAIText strong>{t('dashboard.boards.Boards')}</BAIText>
-      <BAISelector
-        size="sm"
-        width="100%"
+      <BAISelect
+        size="small"
+        style={{ width: '100%' }}
+        showSearch={false}
         aria-label={t('dashboard.boards.Boards')}
         options={config.boards.map((board) => ({
           value: board.id,
           label: titleOf(board),
         }))}
         value={activeBoard.id}
-        onChange={(id) => update((current) => selectBoard(current, id))}
+        onChange={(id: string) => update((current) => selectBoard(current, id))}
         data-testid="dashboard-board-select"
       />
       <BAIFlex direction="column" align="stretch" gap="xxs">
