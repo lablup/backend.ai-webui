@@ -194,10 +194,8 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
           ?.validateFields()
           .then((values: FormInputType) => {
             const input = {
-              driver: 'static',
               scheduler: values.scheduler,
               description: values.description ?? null,
-              driver_opts: '{}',
               scheduler_opts: JSON.stringify({
                 allowed_session_types: values.allowedSessionTypes,
                 ...(values.pendingTimeout && {
@@ -285,7 +283,8 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
             commitCreateResourceGroup({
               variables: {
                 name: values.name,
-                input: input,
+                // `driver` is required by the schema but unused by the manager.
+                input: { ...input, driver: 'static' },
               },
               onCompleted: ({ create_scaling_group: res }, errors) => {
                 if (errors && errors.length > 0) {
