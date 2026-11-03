@@ -13,7 +13,7 @@ import {
   BAIFlex,
   BAIMetadataList,
   BAINumberInput,
-  BAISelector,
+  BAISelect,
   BAITable,
   BAIText,
   type BAIColumnsType,
@@ -246,11 +246,10 @@ export const HandlerOptionsFormFields: React.FC<{
                       { validator: validateUniqueHandler },
                     ]}
                   >
-                    <BAISelector
+                    <BAISelect
                       aria-label={t('resourceGroup.HandlerName')}
                       placeholder={t('resourceGroup.SelectHandlerName')}
                       options={optionsForRow(fieldName)}
-                      hasSearch
                       onChange={() => revalidateHandlerNames()}
                     />
                   </Form.Item>

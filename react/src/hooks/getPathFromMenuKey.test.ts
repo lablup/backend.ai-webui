@@ -39,9 +39,6 @@ describe('getPathFromMenuKey', () => {
     expect(getPathFromMenuKey('project-admin-session', 'alpha')).toBe(
       '/project/alpha/admin/session',
     );
-    expect(getPathFromMenuKey('project-data', 'alpha')).toBe(
-      '/project/alpha/admin/data',
-    );
     expect(getPathFromMenuKey('project-admin-users', 'alpha')).toBe(
       '/project/alpha/admin/users',
     );
@@ -66,8 +63,8 @@ describe('getPathFromMenuKey', () => {
     );
     // Other admin keys ignore the role.
     expect(
-      getPathFromMenuKey('project-data', 'alpha', 'currentProjectAdmin'),
-    ).toBe('/project/alpha/admin/data');
+      getPathFromMenuKey('project-admin-users', 'alpha', 'currentProjectAdmin'),
+    ).toBe('/project/alpha/admin/users');
   });
 
   it('encodes the project name for project-scoped keys', () => {
@@ -81,7 +78,9 @@ describe('getPathFromMenuKey', () => {
     expect(getPathFromMenuKey('session', '')).toBe('/session');
     expect(getPathFromMenuKey('job')).toBe('/session');
     expect(getPathFromMenuKey('summary')).toBe('/dashboard');
-    expect(getPathFromMenuKey('project-data')).toBe('/project-data');
+    expect(getPathFromMenuKey('project-admin-users')).toBe(
+      '/project-admin-users',
+    );
   });
 
   it('never produces a path with an empty project segment', () => {

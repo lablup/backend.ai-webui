@@ -27,7 +27,6 @@ import {
   BAIVFolderSelect,
   useBAILogger,
   BAICheckboxInput,
-  BAISelector,
   BAITextArea,
   BAITextInput,
 } from 'backend.ai-ui';
@@ -130,10 +129,11 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
     isLabelHidden: true,
   };
   const fallback = (
-    <BAISelector
+    <BAISelect
+      showSearch={false}
       aria-label={t('rbac.ScopeId')}
       placeholder={selectProps.placeholder}
-      isLoading
+      loading
       disabled
       options={[]}
     />
@@ -206,7 +206,8 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   }
   // No scope type picked yet: an inert, empty field.
   return (
-    <BAISelector
+    <BAISelect
+      showSearch={false}
       aria-label={t('rbac.ScopeId')}
       placeholder={selectProps.placeholder}
       value={selectProps.value}
