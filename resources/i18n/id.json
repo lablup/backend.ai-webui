@@ -588,7 +588,6 @@
     "VerificationCode": "Kode verifikasi"
   },
   "clientIpMasking": {
-    "AllTargetsHavePolicy": "Setiap target sudah memiliki kebijakan. Edit kebijakan yang ada.",
     "ClientIpMasking": "Penyamaran IP Klien",
     "CreatePolicy": "Buat Kebijakan",
     "DefaultPrefix": "/{{prefix}} (bawaan)",

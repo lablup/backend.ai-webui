@@ -588,7 +588,6 @@
     "VerificationCode": "รหัสยืนยัน"
   },
   "clientIpMasking": {
-    "AllTargetsHavePolicy": "ทุกเป้าหมายมีนโยบายอยู่แล้ว โปรดแก้ไขนโยบายที่มีอยู่แทน",
     "ClientIpMasking": "การปกปิด IP ของไคลเอนต์",
     "CreatePolicy": "สร้างนโยบาย",
     "DefaultPrefix": "/{{prefix}} (ค่าเริ่มต้น)",

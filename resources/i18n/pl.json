@@ -588,7 +588,6 @@
     "VerificationCode": "Kod weryfikacyjny"
   },
   "clientIpMasking": {
-    "AllTargetsHavePolicy": "Każdy cel ma już zasadę. Zamiast tego edytuj istniejącą.",
     "ClientIpMasking": "Maskowanie IP klienta",
     "CreatePolicy": "Utwórz zasadę",
     "DefaultPrefix": "/{{prefix}} (domyślnie)",

@@ -588,7 +588,6 @@
     "VerificationCode": "Κωδικός επαλήθευσης"
   },
   "clientIpMasking": {
-    "AllTargetsHavePolicy": "Κάθε στόχος έχει ήδη πολιτική. Επεξεργαστείτε μια υπάρχουσα.",
     "ClientIpMasking": "Απόκρυψη IP πελάτη",
     "CreatePolicy": "Δημιουργία πολιτικής",
     "DefaultPrefix": "/{{prefix}} (προεπιλογή)",

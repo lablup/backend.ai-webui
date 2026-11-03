@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ClientIpMaskingPolicySettingModalFragment$key } from '../__generated__/ClientIpMaskingPolicySettingModalFragment.graphql';
+import { ClientIpMaskingPolicySettingModalTargetCheckQuery } from '../__generated__/ClientIpMaskingPolicySettingModalTargetCheckQuery.graphql';
 import {
   ClientIPMaskingMode,
   ClientIPMaskingTarget,
@@ -12,16 +13,24 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import {
   BAIFlex,
+  BAILink,
   BAIModal,
   BAIModalProps,
   BAINumberInput,
   BAIQuestionIconWithTooltip,
   BAISelect,
+  useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, { useRef } from 'react';
-import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useMutation } from 'react-relay';
+import React, { useRef, useState } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+import {
+  fetchQuery,
+  graphql,
+  useFragment,
+  useMutation,
+  useRelayEnvironment,
+} from 'react-relay';
 
 export const CLIENT_IP_MASKING_TARGETS: ReadonlyArray<ClientIPMaskingTarget> = [
   'DEFAULT',
@@ -53,9 +62,8 @@ interface ClientIpMaskingPolicySettingModalProps extends Omit<
   'onOk' | 'onCancel'
 > {
   policyFrgmt?: ClientIpMaskingPolicySettingModalFragment$key | null;
-  // Targets a new policy may be created for; the edited policy keeps its own.
-  availableTargets: ReadonlyArray<ClientIPMaskingTarget>;
   onRequestClose: (success?: boolean) => void;
+  onViewExistingPolicy: (targetType: ClientIPMaskingTarget) => void;
 }
 
 const labelWithTooltip = (label: string, tooltip: React.ReactNode) => (
@@ -167,11 +175,19 @@ const MaskingModeFormItems: React.FC = () => {
 
 const ClientIpMaskingPolicySettingModal: React.FC<
   ClientIpMaskingPolicySettingModalProps
-> = ({ policyFrgmt, availableTargets, onRequestClose, ...baiModalProps }) => {
+> = ({
+  policyFrgmt,
+  onRequestClose,
+  onViewExistingPolicy,
+  ...baiModalProps
+}) => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
+  const { logger } = useBAILogger();
+  const relayEnv = useRelayEnvironment();
   const formRef = useRef<FormInstance<ClientIpMaskingPolicyFormValues>>(null);
+  const [pendingTargetChecks, setPendingTargetChecks] = useState(0);
 
   const policy = useFragment(
     graphql`
@@ -206,11 +222,51 @@ const ClientIpMaskingPolicySettingModal: React.FC<
       }
     `);
 
-  const targetOptions = policy
-    ? [policy.targetType]
-    : _.filter(CLIENT_IP_MASKING_TARGETS, (target) =>
-        _.includes(availableTargets, target),
+  const validateTargetIsFree = async (_rule: unknown, value: unknown) => {
+    const targetType = value as ClientIPMaskingTarget | undefined;
+    if (!targetType || targetType === policy?.targetType) return;
+    setPendingTargetChecks((n) => n + 1);
+    const result =
+      await fetchQuery<ClientIpMaskingPolicySettingModalTargetCheckQuery>(
+        relayEnv,
+        graphql`
+          query ClientIpMaskingPolicySettingModalTargetCheckQuery(
+            $filter: ClientIPMaskingPolicyFilter
+          ) {
+            adminClientIpMaskingPolicies(filter: $filter, limit: 1) {
+              edges {
+                node {
+                  id
+                  entityId
+                }
+              }
+            }
+          }
+        `,
+        { filter: { targetType } },
+        { fetchPolicy: 'network-only' },
+      )
+        .toPromise()
+        .catch((error) => {
+          logger.error(error);
+          return undefined;
+        })
+        .finally(() => setPendingTargetChecks((n) => n - 1));
+    const existingEntityId =
+      result?.adminClientIpMaskingPolicies?.edges[0]?.node?.entityId;
+    if (existingEntityId && existingEntityId !== policy?.entityId) {
+      throw (
+        <Trans
+          i18nKey="retentionPolicy.PolicyAlreadyExistsView"
+          components={{
+            viewLink: (
+              <BAILink onClick={() => onViewExistingPolicy(targetType)} />
+            ),
+          }}
+        />
       );
+    }
+  };
 
   const handleOk = () =>
     formRef.current
@@ -252,7 +308,7 @@ const ClientIpMaskingPolicySettingModal: React.FC<
           : t('clientIpMasking.CreatePolicy')
       }
       okText={policy ? t('button.Save') : t('button.Create')}
-      confirmLoading={isInFlightUpsert}
+      confirmLoading={pendingTargetChecks > 0 || isInFlightUpsert}
       onOk={handleOk}
       onCancel={() => onRequestClose(false)}
     >
@@ -267,7 +323,7 @@ const ClientIpMaskingPolicySettingModal: React.FC<
                 ipv4Prefix: policy.ipv4Prefix,
                 ipv6Prefix: policy.ipv6Prefix,
               }
-            : { targetType: targetOptions[0], mode: 'TRUNCATE' }
+            : { mode: 'TRUNCATE' }
         }
       >
         <Form.Item
@@ -278,12 +334,13 @@ const ClientIpMaskingPolicySettingModal: React.FC<
           name="targetType"
           rules={[
             { required: true, message: t('clientIpMasking.TargetRequired') },
+            { validator: validateTargetIsFree },
           ]}
         >
           <BAISelect
             disabled={!!policy}
             placeholder={t('clientIpMasking.Target')}
-            options={_.map(targetOptions, (target) => ({
+            options={_.map(CLIENT_IP_MASKING_TARGETS, (target) => ({
               value: target,
               label: t(`clientIpMasking.targets.${target}`, {
                 defaultValue: target,

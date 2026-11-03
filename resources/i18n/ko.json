@@ -588,7 +588,6 @@
     "VerificationCode": "확인 코드"
   },
   "clientIpMasking": {
-    "AllTargetsHavePolicy": "모든 대상에 이미 정책이 있습니다. 기존 정책을 수정해 주세요.",
     "ClientIpMasking": "클라이언트 IP 마스킹",
     "CreatePolicy": "정책 생성",
     "DefaultPrefix": "/{{prefix}} (기본값)",

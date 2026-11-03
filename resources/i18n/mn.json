@@ -588,7 +588,6 @@
     "VerificationCode": "Баталгаажуулах код"
   },
   "clientIpMasking": {
-    "AllTargetsHavePolicy": "Бүх зорилтод аль хэдийн бодлого байна. Одоо байгаа бодлогыг засна уу.",
     "ClientIpMasking": "Клиентийн IP нууцлалт",
     "CreatePolicy": "Бодлого үүсгэх",
     "DefaultPrefix": "/{{prefix}} (анхдагч)",

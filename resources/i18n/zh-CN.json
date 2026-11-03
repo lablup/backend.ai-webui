@@ -588,7 +588,6 @@
     "VerificationCode": "验证码"
   },
   "clientIpMasking": {
-    "AllTargetsHavePolicy": "所有目标都已有策略。请改为编辑现有策略。",
     "ClientIpMasking": "客户端 IP 掩码",
     "CreatePolicy": "创建策略",
     "DefaultPrefix": "/{{prefix}}（默认）",

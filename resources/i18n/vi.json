@@ -588,7 +588,6 @@
     "VerificationCode": "Mã xác minh"
   },
   "clientIpMasking": {
-    "AllTargetsHavePolicy": "Mọi mục tiêu đều đã có chính sách. Hãy chỉnh sửa chính sách hiện có.",
     "ClientIpMasking": "Che IP máy khách",
     "CreatePolicy": "Tạo chính sách",
     "DefaultPrefix": "/{{prefix}} (mặc định)",

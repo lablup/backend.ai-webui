@@ -588,7 +588,6 @@
     "VerificationCode": "Vahvistuskoodi"
   },
   "clientIpMasking": {
-    "AllTargetsHavePolicy": "Jokaisella kohteella on jo käytäntö. Muokkaa olemassa olevaa käytäntöä.",
     "ClientIpMasking": "Asiakkaan IP-osoitteen peittäminen",
     "CreatePolicy": "Luo käytäntö",
     "DefaultPrefix": "/{{prefix}} (oletus)",

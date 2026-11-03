@@ -588,7 +588,6 @@
     "VerificationCode": "Код подтверждения"
   },
   "clientIpMasking": {
-    "AllTargetsHavePolicy": "Для каждой цели уже есть политика. Отредактируйте существующую.",
     "ClientIpMasking": "Маскирование IP клиента",
     "CreatePolicy": "Создать политику",
     "DefaultPrefix": "/{{prefix}} (по умолчанию)",

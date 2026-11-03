@@ -588,7 +588,6 @@
     "VerificationCode": "Kod pengesahan"
   },
   "clientIpMasking": {
-    "AllTargetsHavePolicy": "Setiap sasaran sudah mempunyai polisi. Sunting polisi sedia ada.",
     "ClientIpMasking": "Penyamaran IP Klien",
     "CreatePolicy": "Cipta Polisi",
     "DefaultPrefix": "/{{prefix}} (lalai)",

@@ -107,10 +107,6 @@ const AdminClientIpMaskingPolicyList: React.FC = () => {
   const policies = filterOutNullAndUndefined(
     _.map(adminClientIpMaskingPolicies?.edges, (edge) => edge?.node),
   );
-  const availableTargets = _.difference(
-    CLIENT_IP_MASKING_TARGETS,
-    _.map(policies, 'targetType'),
-  );
 
   const targetLabel = (target: string) =>
     t(`clientIpMasking.targets.${target}`, { defaultValue: target });
@@ -223,12 +219,6 @@ const AdminClientIpMaskingPolicyList: React.FC = () => {
         <BAIButton
           type="primary"
           icon={<PlusIcon />}
-          disabled={_.isEmpty(availableTargets)}
-          title={
-            _.isEmpty(availableTargets)
-              ? t('clientIpMasking.AllTargetsHavePolicy')
-              : undefined
-          }
           onClick={() => {
             setEditingPolicy(null);
             setIsOpenSettingModal(true);
@@ -249,7 +239,10 @@ const AdminClientIpMaskingPolicyList: React.FC = () => {
       <ClientIpMaskingPolicySettingModal
         open={isOpenSettingModal}
         policyFrgmt={editingPolicy}
-        availableTargets={availableTargets}
+        onViewExistingPolicy={() => {
+          setIsOpenSettingModal(false);
+          refetch();
+        }}
         onRequestClose={(success) => {
           setIsOpenSettingModal(false);
           if (success && editingPolicy === null) {

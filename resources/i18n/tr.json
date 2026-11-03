@@ -588,7 +588,6 @@
     "VerificationCode": "Doğrulama kodu"
   },
   "clientIpMasking": {
-    "AllTargetsHavePolicy": "Her hedefin zaten bir politikası var. Bunun yerine mevcut olanı düzenleyin.",
     "ClientIpMasking": "İstemci IP Maskeleme",
     "CreatePolicy": "Politika Oluştur",
     "DefaultPrefix": "/{{prefix}} (varsayılan)",

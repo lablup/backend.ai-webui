@@ -588,7 +588,6 @@
     "VerificationCode": "Codice di verifica"
   },
   "clientIpMasking": {
-    "AllTargetsHavePolicy": "Ogni destinazione ha già una policy. Modifica una policy esistente.",
     "ClientIpMasking": "Mascheramento dell'IP client",
     "CreatePolicy": "Crea policy",
     "DefaultPrefix": "/{{prefix}} (predefinito)",
