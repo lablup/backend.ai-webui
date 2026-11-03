@@ -19,6 +19,7 @@ import {
   sanitizeBoard,
   seedBoard,
   sizeOf,
+  setPanelsHidden,
   syncBoard,
   toBoardLayout,
   toLegacyPanel,
@@ -208,12 +209,29 @@ export const useDashboardBoard = ({
   };
 
   const setPanelsActive = (keys: ReadonlyArray<string>, active: boolean) => {
+    // A user-made panel is listed by its id and only hidden, so unchecking it keeps it.
+    const presetIds = new Set(
+      board.panels
+        .filter((panel) => definitionByKey.get(panel.key)?.kind === 'preset')
+        .map((panel) => panel.id),
+    );
     // Folded into one board: saving per key would keep only the last change.
-    const next = keys.reduce((current, key) => {
-      const definition = definitionByKey.get(key);
-      if (!definition) return current;
-      return active ? addPanel(current, definition) : removePanel(current, key);
-    }, board);
+    const next = keys
+      .filter((key) => !presetIds.has(key))
+      .reduce(
+        (current, key) => {
+          const definition = definitionByKey.get(key);
+          if (!definition) return current;
+          return active
+            ? addPanel(current, definition)
+            : removePanel(current, key);
+        },
+        setPanelsHidden(
+          board,
+          keys.filter((key) => presetIds.has(key)),
+          !active,
+        ),
+      );
     if (next !== board) save(next);
   };
 
@@ -300,7 +318,12 @@ export const useDashboardBoard = ({
     catalogEntries: visibleEntries.filter(
       (entry) => entry.definition.kind === 'custom',
     ),
-    activeKeys: new Set(board.panels.map((panel) => panel.key)),
+    // Catalog keys of the cards on the board, plus the ids of the user-made panels shown on it.
+    activeKeys: new Set(
+      board.panels.flatMap((panel) =>
+        panel.hidden ? [] : [panel.key, panel.id],
+      ),
+    ),
     deniedKeys: new Set(
       board.panels
         .filter((panel) => deniedPanelIds?.has(panel.id))
