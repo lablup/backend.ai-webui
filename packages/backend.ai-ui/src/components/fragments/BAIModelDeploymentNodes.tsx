@@ -8,7 +8,9 @@ import { useIsLabelableEntityType } from '../../hooks/useLabelableEntityTypes';
 import BAIBooleanToken from '../BAIBooleanToken';
 import BAIDeploymentStatusBadge, {
   BAIDeploymentStatus,
+  getDeploymentPauseCause,
 } from '../BAIDeploymentStatusBadge';
+import BAIDoubleBadge from '../BAIDoubleBadge';
 import BAIFlex from '../BAIFlex';
 import BAIId from '../BAIId';
 import BAIText from '../BAIText';
@@ -133,6 +135,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
           type
         }
         replicaState {
+          replicaCount
           desiredReplicaCount
         }
         runningReplicas: replicas(filter: { status: { equals: RUNNING } }) {
@@ -206,6 +209,25 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
           const status = record.metadata?.status;
           if (!status || status === '%future added value') {
             return '-';
+          }
+          const pauseCause = getDeploymentPauseCause(
+            status,
+            record.replicaState,
+          );
+          if (pauseCause) {
+            return (
+              <BAIDoubleBadge
+                values={[
+                  {
+                    label: t('comp:BAIModelDeploymentNodes.Paused'),
+                    variant: 'warning',
+                  },
+                  pauseCause === 'user'
+                    ? t('comp:BAIModelDeploymentNodes.PausedByUser')
+                    : t('comp:BAIModelDeploymentNodes.PausedByAutoScaling'),
+                ]}
+              />
+            );
           }
           return (
             <BAIDeploymentStatusBadge status={status as BAIDeploymentStatus} />

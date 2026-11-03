@@ -7,7 +7,9 @@ import type {
   AdminDeploymentPresetTableFragment$key,
 } from '../__generated__/AdminDeploymentPresetTableFragment.graphql';
 import {
+  type BAIEntityLabel,
   BAIColumnType,
+  BAIEntityLabelTargetCell,
   BAIFlex,
   BAINameActionCell,
   BAIQuestionIconWithTooltip,
@@ -18,6 +20,7 @@ import {
   BAIBooleanToken,
   filterOutEmpty,
   filterOutNullAndUndefined,
+  useIsLabelableEntityType,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -55,6 +58,8 @@ interface AdminDeploymentPresetTableProps extends Omit<
   onChangeOrder?: (
     order: (typeof availablePresetSorterValues)[number] | null,
   ) => void;
+  /** Fired when a label token is clicked; the surface filters its list by it. */
+  onLabelClick?: (label: BAIEntityLabel) => void;
 }
 
 const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
@@ -64,10 +69,12 @@ const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
   onEdit,
   onDelete,
   onChangeOrder,
+  onLabelClick,
   ...tableProps
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const isLabelable = useIsLabelableEntityType('deployment_preset');
 
   const presets = useFragment(
     graphql`
@@ -263,6 +270,19 @@ const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
         dataIndex: 'updatedAt',
         render: (updatedAt: string | null | undefined) =>
           updatedAt ? dayjs(updatedAt).format('YYYY-MM-DD HH:mm') : '-',
+      },
+      // DeploymentRevisionPreset carries no entityLabels field, so each row loads its own.
+      isLabelable && {
+        key: 'labels',
+        title: t('entityLabel.Labels'),
+        render: (_value: unknown, record: DeploymentPresetNodeInList) => (
+          <BAIEntityLabelTargetCell
+            entityType="deployment_preset"
+            entityId={record.entityId}
+            name={record.name}
+            onLabelClick={onLabelClick}
+          />
+        ),
       },
     ]),
     (column) => {

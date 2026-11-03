@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<70c5c63af32f6a34883fdce6188a1290>>
+ * @generated SignedSource<<18a5c9229966a4fdaae57ed4175448ad>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -244,19 +244,8 @@ v3 = {
 v4 = {
   "alias": null,
   "args": null,
-  "concreteType": "ReplicaState",
-  "kind": "LinkedField",
-  "name": "replicaState",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "desiredReplicaCount",
-      "storageKey": null
-    }
-  ],
+  "kind": "ScalarField",
+  "name": "desiredReplicaCount",
   "storageKey": null
 },
 v5 = [
@@ -324,7 +313,18 @@ return {
                   "plural": false,
                   "selections": [
                     (v3/*: any*/),
-                    (v4/*: any*/),
+                    {
+                      "alias": null,
+                      "args": null,
+                      "concreteType": "ReplicaState",
+                      "kind": "LinkedField",
+                      "name": "replicaState",
+                      "plural": false,
+                      "selections": [
+                        (v4/*: any*/)
+                      ],
+                      "storageKey": null
+                    },
                     (v6/*: any*/),
                     {
                       "args": [
@@ -384,7 +384,25 @@ return {
                 "plural": false,
                 "selections": [
                   (v3/*: any*/),
-                  (v4/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "ReplicaState",
+                    "kind": "LinkedField",
+                    "name": "replicaState",
+                    "plural": false,
+                    "selections": [
+                      (v4/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "replicaCount",
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  },
                   (v6/*: any*/),
                   {
                     "alias": null,
@@ -722,12 +740,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d255e5ba53bd89af35be905f416b8821",
+    "cacheID": "078b02ceac0ca5f35e88b9ea71c733fb",
     "id": null,
     "metadata": {},
     "name": "DeploymentStatusPanelMineQuery",
     "operationKind": "query",
-    "text": "query DeploymentStatusPanelMineQuery(\n  $filter: DeploymentFilter!\n  $limit: Int!\n  $offset: Int!\n  $withDetails: Boolean!\n) {\n  deployments: myDeployments(filter: $filter, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        replicaState {\n          desiredReplicaCount\n        }\n        healthyReplicas: replicas(filter: {healthStatus: {equals: HEALTHY}}) {\n          count\n        }\n        ...BAIModelDeploymentNodesFragment_3NDDqj\n      }\n    }\n  }\n}\n\nfragment BAIDeploymentOwnerInfo_deployment on ModelDeployment {\n  id\n  creator {\n    id\n    basicInfo {\n      email\n      username\n      fullName\n    }\n  }\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIModelDeploymentNodesFragment_3NDDqj on ModelDeployment {\n  id\n  entityId\n  currentRevisionId\n  metadata {\n    projectId\n    domainName\n    name\n    status\n    createdAt\n    updatedAt\n    resourceGroupName\n    projectV2 @include(if: $withDetails) {\n      basicInfo {\n        name\n      }\n      id\n    }\n  }\n  networkAccess @include(if: $withDetails) {\n    endpointUrl\n    preferredDomainName\n    openToPublic\n  }\n  defaultDeploymentStrategy @include(if: $withDetails) {\n    type\n  }\n  currentRevision @include(if: $withDetails) {\n    id\n    revisionNumber\n    modelMountConfig {\n      vfolder {\n        id\n        name\n      }\n    }\n  }\n  entityLabels(limit: 100) @include(if: $withDetails) {\n    ...BAIEntityLabelTokensFragment\n    ...BAIEntityLabelSettingModalFragment\n  }\n  ...BAIDeploymentOwnerInfo_deployment @include(if: $withDetails)\n  replicaState {\n    desiredReplicaCount\n  }\n  runningReplicas: replicas(filter: {status: {equals: RUNNING}}) {\n    count\n  }\n}\n"
+    "text": "query DeploymentStatusPanelMineQuery(\n  $filter: DeploymentFilter!\n  $limit: Int!\n  $offset: Int!\n  $withDetails: Boolean!\n) {\n  deployments: myDeployments(filter: $filter, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        replicaState {\n          desiredReplicaCount\n        }\n        healthyReplicas: replicas(filter: {healthStatus: {equals: HEALTHY}}) {\n          count\n        }\n        ...BAIModelDeploymentNodesFragment_3NDDqj\n      }\n    }\n  }\n}\n\nfragment BAIDeploymentOwnerInfo_deployment on ModelDeployment {\n  id\n  creator {\n    id\n    basicInfo {\n      email\n      username\n      fullName\n    }\n  }\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIModelDeploymentNodesFragment_3NDDqj on ModelDeployment {\n  id\n  entityId\n  currentRevisionId\n  metadata {\n    projectId\n    domainName\n    name\n    status\n    createdAt\n    updatedAt\n    resourceGroupName\n    projectV2 @include(if: $withDetails) {\n      basicInfo {\n        name\n      }\n      id\n    }\n  }\n  networkAccess @include(if: $withDetails) {\n    endpointUrl\n    preferredDomainName\n    openToPublic\n  }\n  defaultDeploymentStrategy @include(if: $withDetails) {\n    type\n  }\n  currentRevision @include(if: $withDetails) {\n    id\n    revisionNumber\n    modelMountConfig {\n      vfolder {\n        id\n        name\n      }\n    }\n  }\n  entityLabels(limit: 100) @include(if: $withDetails) {\n    ...BAIEntityLabelTokensFragment\n    ...BAIEntityLabelSettingModalFragment\n  }\n  ...BAIDeploymentOwnerInfo_deployment @include(if: $withDetails)\n  replicaState {\n    replicaCount\n    desiredReplicaCount\n  }\n  runningReplicas: replicas(filter: {status: {equals: RUNNING}}) {\n    count\n  }\n}\n"
   }
 };
 })();
