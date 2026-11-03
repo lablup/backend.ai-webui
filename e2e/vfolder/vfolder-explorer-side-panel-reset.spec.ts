@@ -1,14 +1,14 @@
 // spec: FR-4005 (#9793) — the explorer's side panel starts on Metadata every time it opens
-import { createAdminApiContext } from '../utils/admin-api';
 import { FolderExplorerModal } from '../utils/classes/vfolder/FolderExplorerModal';
+import { cleanupVFolderSafely } from '../utils/cleanup-util';
 import {
   clearAllFilters,
+  createVFolderAndVerify,
   getPowerSearchInput,
   loginAsAdmin,
-  navigateTo,
   selectPropertyFilter,
 } from '../utils/test-util';
-import { test, expect, Page, APIRequestContext } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 
 // Narrow the Data list to this folder by name before clicking it: on a shared
 // server the folder may not be on the first page. Clear first, so a filter left
@@ -41,49 +41,33 @@ test.describe(
   'FolderExplorerModal - Side Panel',
   { tag: ['@regression', '@vfolder', '@functional'] },
   () => {
-    let api: APIRequestContext | undefined;
-    const createdFolderIds: string[] = [];
+    const createdFolderNames: string[] = [];
 
     test.beforeEach(async ({ page, request }) => {
       await loginAsAdmin(page, request);
     });
 
-    test.afterEach(async () => {
-      if (!api) return;
-      // Best-effort: move to trash, then purge, so nothing is left on the shared server.
-      for (const vfolderId of createdFolderIds.splice(0)) {
-        await api
-          .delete('/func/folders', { data: { vfolder_id: vfolderId } })
-          .catch(() => undefined);
-        await api
-          .post('/func/folders/delete-from-trash-bin', {
-            data: { vfolder_id: vfolderId },
-          })
-          .catch(() => undefined);
+    test.afterEach(async ({ page }) => {
+      for (const name of createdFolderNames.splice(0)) {
+        await cleanupVFolderSafely(page, name);
       }
-      await api.dispose();
-      api = undefined;
     });
 
     test('User can see the side panel start on Metadata when opening another folder after viewing the Audit Log', async ({
       page,
     }) => {
-      test.setTimeout(120000);
-      api = await createAdminApiContext();
+      test.setTimeout(180_000);
       const suffix = `${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
       const [firstFolder, secondFolder] = [
         `e2e-side-panel-a-${suffix}`,
         `e2e-side-panel-b-${suffix}`,
       ];
+      // A team project's Data page lists only project folders, and a folder
+      // POSTed without a project is user-owned, so create these through the page.
       for (const name of [firstFolder, secondFolder]) {
-        const created = await api.post('/func/folders', {
-          data: { name, usage_mode: 'general', permission: 'rw' },
-        });
-        expect(created.ok()).toBeTruthy();
-        createdFolderIds.push((await created.json()).id);
+        createdFolderNames.push(name);
+        await createVFolderAndVerify(page, name);
       }
-
-      await navigateTo(page, 'data');
 
       // 1. The first folder's side panel opens on Metadata; switch to Audit Log.
       const firstModal = await openFolderExplorer(page, firstFolder);
