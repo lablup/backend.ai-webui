@@ -11,6 +11,7 @@ import {
   resetBoard,
   sanitizeBoard,
   seedBoard,
+  setPanelsHidden,
   syncBoard,
   toBoardLayout,
   toLegacyPanel,
@@ -412,5 +413,72 @@ describe('toLegacyPanel', () => {
         resourceGroups: null,
       },
     });
+  });
+});
+
+describe('setPanelsHidden', () => {
+  const board: DashboardBoard = {
+    panels: [
+      { id: 'a', key: 'a', columnSpan: 2, rowSpan: 2 },
+      { id: 'p1', key: 'resource.session', columnSpan: 2, rowSpan: 3 },
+    ],
+    knownKeys: ['a'],
+  };
+
+  it('takes a user-made panel off the board but keeps it stored, and puts it back', () => {
+    const hidden = setPanelsHidden(board, ['p1'], true);
+    expect(ids(hidden)).toEqual(['a', 'p1']);
+    expect(
+      toBoardLayout(hidden, definitions, () => true).map((e) => e.id),
+    ).toEqual(['a']);
+    const shown = setPanelsHidden(hidden, ['p1'], false);
+    expect(shown.panels[1]).not.toHaveProperty('hidden');
+    expect(
+      toBoardLayout(shown, definitions, () => true).map((e) => e.id),
+    ).toEqual(['a', 'p1']);
+  });
+
+  it('keeps a hidden panel at its index through a layout change', () => {
+    const hidden = setPanelsHidden(
+      { ...board, panels: [board.panels[1]!, board.panels[0]!] },
+      ['p1'],
+      true,
+    );
+    const next = applyLayout(hidden, [{ id: 'a', columnSpan: 3, rowSpan: 2 }]);
+    expect(ids(next)).toEqual(['p1', 'a']);
+    expect(next.panels[0]?.hidden).toBe(true);
+  });
+
+  it('is a no-op for ids the board does not hold', () => {
+    expect(setPanelsHidden(board, ['missing'], true)).toBe(board);
+  });
+
+  it('survives sanitizing for presets only', () => {
+    const stored = {
+      panels: [
+        { id: 'a', key: 'a', columnSpan: 2, rowSpan: 2, hidden: true },
+        {
+          id: 'p1',
+          key: 'resource.session',
+          columnSpan: 2,
+          rowSpan: 3,
+          hidden: true,
+        },
+        {
+          id: 'p2',
+          key: 'resource.session',
+          columnSpan: 2,
+          rowSpan: 3,
+          hidden: 'yes',
+        },
+      ],
+      knownKeys: [],
+    };
+    const sanitized = sanitizeBoard(stored, definitions, 'project')!;
+    expect(sanitized.panels.map((panel) => panel.hidden)).toEqual([
+      undefined,
+      true,
+      undefined,
+    ]);
   });
 });
