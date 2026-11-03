@@ -25,6 +25,11 @@ full rules. The points below are the ones most often missed.
 - Title, headings, and body in English, identifiers as they appear in the code
   (ADR 0018). Explaining bullets open with a short noun-phrase label
   (`- **Required prop**: ...`).
+- Every `NNNN-title.md` has a Korean `NNNN-title.ko.md`, and
+  `docs/ARCHITECTURE.md` has `docs/ARCHITECTURE.ko.md`. The English file is the
+  authority; a PR that changes it without its `.ko.md` is a finding, and so is
+  a Korean sentence that says something the English one does not.
+  `scripts/check-adr-pairs.mjs` checks the shape, not the meaning.
 - At least one mermaid diagram, every edge labelled. Check the rendered branch
   on GitHub before landing; no CI catches a mermaid syntax error.
 - Issues (`#N`, or a legacy `FR-NNNN`) and the decision date go in

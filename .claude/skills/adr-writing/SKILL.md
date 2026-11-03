@@ -82,10 +82,14 @@ reviewers at the ADRs); keep the two in step.
 - **Mention form** — documents and PR bodies write `ADR NNNN`. Source
   comments written before this convention say `ADR-NNNN`; they are corrected
   when the file is next edited, never swept.
-- **Language** — the title, the headings, and the body are English, with
-  identifiers written as they appear in the code (ADR 0018). A landed ADR
-  still in another language is translated in a change of its own that alters
-  no decision.
+- **Language pair** — every ADR is two files: `NNNN-title.md` in English,
+  the authority, and `NNNN-title.ko.md`, its Korean translation (ADR 0018);
+  `docs/ARCHITECTURE.md` likewise has `docs/ARCHITECTURE.ko.md`. Write the
+  English file first, then translate it; a change to the English file
+  changes the `.ko.md` in the same PR. The Korean file keeps the English H1
+  title, the same `###` subsections and the same mermaid diagrams, and
+  follows [references/korean-companion.md](references/korean-companion.md).
+  Identifiers are written as they appear in the code in both.
 - **Single home** — a design decision is recorded here and nowhere else. Do
   not create `.specs/` directories, design notes, or plan files in the
   repository; implementation plans and task breakdowns live in the GitHub
@@ -112,10 +116,12 @@ Two reference files hold the rules, and both cite by id — "T1 violation",
 | ------------------------------------------------------------ | --------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | [references/writing-rules.md](references/writing-rules.md)   | T1–T6, L1–L5, S1–S10, D1–D2 | the title, the terms, the sentences and bullets, the Summary a body opens with, and the diagram a flow gets             |
 | [references/document-shape.md](references/document-shape.md) | D3–D4                       | the section skeleton, the heading language, the increment overview, the one-diagram floor, and the mermaid syntax traps |
+| [references/korean-companion.md](references/korean-companion.md) | K1–K4 | the `.ko.md` companion: its title, shape, heading map, and Korean sentence rules |
 
 Write the sections in the order D3 fixes: title, Summary, Context, diagrams,
 Decision, alternatives with the reason each was rejected, Consequences,
-sources, glossary.
+sources, glossary. Draft and review the English file to the end before
+translating it, so the Korean file never carries an unreviewed sentence.
 
 ## Phase 2 — Reread as a first-time reader
 
@@ -150,6 +156,11 @@ is common. Check the file it cites.
 
 - Read the document once on GitHub's rendering of the branch. A broken
   mermaid diagram shows there as a syntax error; no CI check catches it.
-- Add or update the ADR's row in `docs/ARCHITECTURE.md` in the same change.
+- Add or update the ADR's row in `docs/ARCHITECTURE.md` and
+  `docs/ARCHITECTURE.ko.md` in the same change.
+- Write or update the `.ko.md` companion, then run
+  `node scripts/check-adr-pairs.mjs` (also the `ADR pairs` lane of
+  `scripts/verify.sh`); it fails on a missing companion, a different title or
+  section shape, or an English file changed without its companion.
 - Verify every cross-reference resolves to a file that exists, and when an
   ADR was retired, grep for its filename so no link points at it.

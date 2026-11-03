@@ -37,9 +37,11 @@ and commit bodies. An ADR puts it in one file a reader can open from the code.
    says `ADR NNNN` in its Summary. A source comment that exists because of an
    ADR is the one-line pointer `comment-density.md` allows, aimed at the ADR
    file, as the ESLint message for ADR 0001 is.
-6. **ADRs are the only design record, in English.** Do not add `.specs/`
-   directories or other design documents to the repository; plans and task
-   breakdowns stay in the issue and the PR. ADRs and `docs/ARCHITECTURE.md` are
-   written in English (ADR 0018).
+6. **ADRs are the only design record, in an English/Korean pair.** Do not add
+   `.specs/` directories or other design documents to the repository; plans and
+   task breakdowns stay in the issue and the PR. Each ADR and
+   `docs/ARCHITECTURE.md` is written in English, the authority, with a Korean
+   `.ko.md` companion changed in the same PR; `scripts/check-adr-pairs.mjs`
+   checks the pairs (ADR 0018).
 
 Write one with the `adr-writing` skill.

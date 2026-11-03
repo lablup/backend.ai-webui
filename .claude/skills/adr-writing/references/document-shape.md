@@ -48,7 +48,8 @@ A reader moving between two ADRs should recognise the same boxes.
 - `## Glossary` — the glossary table, when the document introduced a term a
   first-time reader would not know.
 
-Every heading is English, as the body is (ADR 0018).
+Every heading of the English file is English (ADR 0018). The Korean
+companion's heading map is in [korean-companion.md](korean-companion.md).
 
 ## Mermaid syntax traps
 
