@@ -20,6 +20,7 @@ import {
   BAIListAlert,
   BAITable,
   BAITextInput,
+  useDebounceFn,
 } from 'backend.ai-ui';
 import { Search } from 'lucide-react';
 import React, { useState } from 'react';
@@ -256,6 +257,9 @@ const RBACPermissionGrid: React.FC<RBACPermissionGridProps> = ({
   };
 
   const [filterText, setFilterText] = useState('');
+  const { run: setFilterTextDebounced } = useDebounceFn(setFilterText, {
+    wait: 200,
+  });
   const keyword = filterText.trim().toLowerCase();
   const visibleRows = keyword
     ? rows.filter(
@@ -339,13 +343,15 @@ const RBACPermissionGrid: React.FC<RBACPermissionGridProps> = ({
       <BAIFlex justify="between" align="center" gap="sm" wrap="wrap">
         <BAIFlex gap="sm" align="center" wrap="wrap">
           {toolbarStart}
+          {/* Uncontrolled: the compiler leaves the table unmemoized, so state
+              set on each keystroke would re-render every row. */}
           <BAITextInput
             aria-label={t('rbac.FilterByPermissionType')}
-            value={filterText}
+            defaultValue={filterText}
             hasClear
             startIcon={Search}
             placeholder={t('rbac.FilterByPermissionType')}
-            onChange={setFilterText}
+            onChange={(value) => setFilterTextDebounced(value)}
             width={260}
           />
         </BAIFlex>

@@ -35,7 +35,7 @@ import {
   useFetchKey,
   useMutationWithPromise,
   BAIDateTimeInput,
-  BAISelector,
+  BAISelect,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -639,9 +639,10 @@ const CreateAccessTokenModal: React.FC<CreateAccessTokenModalProps> = ({
           label={t('deployment.accessToken.Expiration')}
           rules={[{ required: true }]}
         >
-          <BAISelector
+          <BAISelect
+            showSearch={false}
             aria-label={t('deployment.accessToken.Expiration')}
-            width={200}
+            style={{ width: 200 }}
             options={options}
             onChange={(value) => {
               const days = Number(value);

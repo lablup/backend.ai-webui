@@ -19,7 +19,6 @@ import {
   BAIModalProps,
   BAISelect,
   BAICheckboxInput,
-  BAISelector,
   BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -511,7 +510,8 @@ const ContainerRegistryEditorModal: React.FC<
             },
           ]}
         >
-          <BAISelector
+          <BAISelect
+            showSearch={false}
             aria-label={t('registry.RegistryType')}
             options={[
               'docker',
@@ -521,7 +521,7 @@ const ContainerRegistryEditorModal: React.FC<
               'gitlab',
               'ecr',
               'ecr-public',
-            ]}
+            ].map((value) => ({ value, label: value }))}
           />
         </BAIFormItem>
         <BAIFormItem

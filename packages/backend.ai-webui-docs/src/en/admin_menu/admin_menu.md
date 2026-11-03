@@ -431,14 +431,14 @@ the admin Data page, click `Create Folder` to open the folder creation dialog.
 Because the admin Data page can create only project folders, the dialog does not show a folder type
 selector.
 In the **Target Project** field at the top of the dialog, choose the project that will own the
-folder, then enter the folder name and set **Mount Permission**.
+folder, then enter the folder name. A new folder is created read-only; its default mount permission is
+changed afterwards from the folder's **Share Folder** modal, under **Folder Info** → **Edit**.
 
 ![=650px](../images/group_folder_creation.png)
 
 After confirming that the folder has been created, log in with the User B's
 account and check that the project folder just created on the Data & Storage page
-is displayed without any invitation procedure. You can see that R (Read Only) is
-also displayed in the Permission panel.
+is displayed without any invitation procedure.
 
 ![](../images/group_folder_listed_in_B.png)
 <!-- TODO: Re-capture group_folder_listed_in_B.png — shows the old UI. -->
@@ -482,14 +482,15 @@ When you open a deployment from the Admin Deployments page, the **Revisions** ca
 The **Audit Log** tab tracks all action history for the deployment. Each entry includes:
 
 - **Time**: The timestamp when the action was performed.
+- **Action**: The name of the action that wrote the record.
 - **Operation**: The type of action performed.
-- **Status**: The result of the operation.
-- **Description**: Additional details about the operation.
+- **Result**: The outcome of the operation: **Success**, **Failed**, **Denied**, **Running**, or **Unknown**.
+- **Description**: The error or denial details, shown only when the result is **Failed** or **Denied**; other rows show `-`.
 - **Duration**: The time taken to complete the operation.
 - **Triggered By**: The user who initiated the action.
 - **Client IP**: The IP address the action was requested from, shown exactly as the server reports it. It may be partially masked by the administrator's client IP masking policy, or `-` when it was not recorded.
 
-You can filter entries by **Status**, **Operation**, **Triggered By**, and a **Time** date-range picker.
+You can filter entries by **Result**, **Action**, **Operation**, **Triggered By**, and a **Time** date-range picker.
 
 <a id="admin-model-store-management"></a>
 
@@ -1328,9 +1329,9 @@ change the minimum resource amounts, it is recommended to keep the default value
 Additionally, you can add or modify the supported apps for each image by clicking the `Apps` icon located in the Controls column.
 Once you click the icon, the name of the app and its corresponding port number will be displayed accordingly.
 
-![=700px](../images/manage_app_dialog.png)
+![=800px](../images/manage_app_dialog.png)
 
-In this interface, you can add supported custom applications by clicking the `+ Add` button below. To delete an application, simply click the `trash can` button on the right side of each row.
+In this interface, you can add supported custom applications by clicking the **Add app** button. To delete an application, click the **Remove** button on the row.
 
 :::note
 
@@ -1564,9 +1565,9 @@ action to change them, or select several resource groups and click **Add labels*
 
 <a id="scheduling-methods"></a>
 
-You can edit a resource group by clicking the **Edit** (pencil) action in the Name column, which opens
-the **Edit Resource Group** dialog. In the **Scheduler** field, you can choose the scheduling method for
-creating a compute session. Currently, there are four types: `FIFO`, `LIFO`,
+Click a resource group's name to open its [detail drawer](#resource-group-detail-drawer), then use the
+**Edit Resource Group** action there to open the edit dialog. In the **Scheduler** field, you can choose
+the scheduling method for creating a compute session. Currently, there are four types: `FIFO`, `LIFO`,
 `DRF`, and `FAIR_SHARE`. `FIFO` and `LIFO` are scheduling methods creating the first- or the
 last-enqueued compute session in the job queue. `DRF` stands for Dominant Resource
 Fairness, and it aims to provide resources as fair as possible for each user.
@@ -1611,6 +1612,25 @@ Likewise other creating options, you cannot create a resource group with the nam
 that already exists, since name is the key value.
 
 ![=520px](../images/create_resource_group.png)
+
+<a id="resource-group-detail-drawer"></a>
+
+### Resource group detail drawer
+
+The detail drawer shows a resource group's settings at a glance and is where you edit them.
+
+![=800px](../images/resource_group_detail_drawer.png)
+
+The **Default Session Options** and **Default Deployment Options** tabs hold the defaults applied to sessions
+and deployments created in this resource group when the session or deployment does not set the value itself.
+Each section has its own edit action:
+
+- **Session Execution Options**: The image, resources, and start-up settings a session gets by default,
+  including the bootstrap script.
+- **Scheduler Options**: Priority, preemptible, failure policy, and agent selection policy.
+- **Handler Options**: The default timeout and maximum retry count, with per-handler overrides.
+
+The **Default Deployment Options** tab holds **Handler Options** only.
 
 <a id="bulk-edit-resource-groups"></a>
 
@@ -1940,22 +1960,18 @@ The footer holds four actions:
 
 ### Data retention
 
-Superadmins can control how long Backend.AI keeps each category of data on the **Data Retention** tab of the
-Maintenance page. Only categories with an enabled policy have data past its retention period cleaned up.
+Superadmins can control how long Backend.AI keeps each target's data on the **Data Retention Policy** tab of
+the Maintenance page. Only targets with an enabled policy have data past its retention period cleaned up.
+The available policy targets are Logs, Login History, Reconcile History, Roles & Invitations, Deployments,
+Sessions, Usage Records, and Usage Buckets.
 
-Each row of the list is the policy for one category and shows its **Category**, **Retention Period (Days)**,
-whether it is **Enabled**, and the **Last Cleanup** time (or "Not run yet"). The **Created At** and **Updated At** columns
-can be shown from the table settings. The
-available categories are Logs, Login History, Reconcile History, Roles & Invitations, Deployments, Sessions,
-Usage Records, and Usage Buckets. The list can be sorted by **Category**, **Last Cleanup**, or **Created At**.
+![](../images/admin_data_retention_policy_list.png)
 
-- **Create Policy**: Click **Create Policy**, choose a category, enter a retention period of at least 1 day,
-  and choose whether the policy is enabled. Only one policy can exist per category; creating a policy for a
-  category that already has one fails with an error, so edit the existing policy instead.
-- **Edit**: Use the edit action in the row to change the category, the retention period, or the enabled
-  setting. Moving the policy to a category that already has a policy fails with an error.
-- **Delete**: Use the delete action in the row. Because the policy is removed permanently, you must type
-  the category name shown in the dialog before the delete button is enabled.
+- **Create Policy**: Click **Create Policy**, choose a **Policy Target**, enter a retention period of at least
+  1 day, and choose whether the policy is enabled. Only one policy can exist per target.
+- **Edit**: Use the edit action in the row to change the **Policy Target**, the retention period, or the
+  enabled setting.
+- **Delete**: Use the delete action in the row.
 
 <a id="detailed-information"></a>
 

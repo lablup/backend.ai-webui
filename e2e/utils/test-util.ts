@@ -673,7 +673,6 @@ export async function createVFolderAndVerify(
   page: Page,
   folderName: string,
   usageMode: 'general' | 'model' = 'general',
-  type: 'user' | 'project' = 'user',
 ) {
   await navigateTo(page, 'data');
   // VFolderNodeListPage's BAICard extra renders a single "Create Folder" button.
@@ -692,14 +691,6 @@ export async function createVFolderAndVerify(
     await (await modal.getGeneralUsageModeRadio()).click();
   } else if (usageMode === 'model') {
     await (await modal.getModelUsageModeRadio()).click();
-  }
-
-  // Ownership is page-derived since FR-3441 (no in-form Type radio); this
-  // helper drives the user Data page, which creates user folders only.
-  if (type === 'project') {
-    throw new Error(
-      'createVFolderAndVerify drives the user Data page, which creates user folders only (FR-3441); drive the Project Admin Data page for project folders.',
-    );
   }
 
   // No mount permission step: every new folder is created read-only for
