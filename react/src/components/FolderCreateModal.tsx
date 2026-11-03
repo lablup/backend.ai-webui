@@ -744,14 +744,14 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                       onOpenChange={setIsAdvancedOpen}
                     >
                       <BAIFormItem
-                        label={t('autoMount.AutoMountInSessions')}
+                        label={t('data.AutoMount')}
                         tooltip={t('autoMount.AutoMountInSessionsDesc')}
                         name={'auto_mount_enabled'}
                         layout="horizontal"
                       >
-                        <BAISwitch
-                          aria-label={t('autoMount.AutoMountInSessions')}
-                        />
+                        <BAISwitch>
+                          {t('autoMount.AutoMountInSessions')}
+                        </BAISwitch>
                       </BAIFormItem>
                       <Form.Item dependencies={['auto_mount_enabled']} noStyle>
                         {({ getFieldValue: getValue }) =>
