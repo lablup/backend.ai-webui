@@ -9,14 +9,19 @@ import ErrorBoundaryWithNullFallback from '../components/ErrorBoundaryWithNullFa
 import FolderInvitationNotifier from '../components/FolderInvitationNotifier';
 import SessionDetailAndContainerLogOpenerLegacy from '../components/SessionDetailAndContainerLogOpenerLegacy';
 import StartFromURLDeepLinkOpener from '../components/StartFromURLDeepLinkOpener';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { toProjectContext } from '../types/projectContext';
+import { useUrlProjectValidity } from '../hooks/useUrlProjectValidity';
+import type { ProjectContextOrNull } from '../types/projectContext';
 import { Suspense } from 'react';
 
 /** The member dashboard: every card owns its query and follows the filter bar. */
 const DashboardPage: React.FC = () => {
   'use memo';
-  const project = toProjectContext(useCurrentProjectValue());
+  // The URL project, never the header's (ADR 0001): the header follows the URL only after an effect.
+  const { urlProjectName, resolvedId } = useUrlProjectValidity();
+  const project: ProjectContextOrNull =
+    urlProjectName && resolvedId
+      ? { id: resolvedId, name: urlProjectName }
+      : null;
   return (
     <DashboardRefreshProvider>
       <DashboardPanelBoard

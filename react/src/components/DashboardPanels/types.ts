@@ -117,10 +117,9 @@ export interface DashboardVars {
   timeRange: { after: string; before: string };
   /** The card's last refresh time, the `now` behind `timeRange`. */
   refreshedAt: number;
-  /** The header's project and resource group, for cards that read one of each. */
+  /** The page's project, for cards that read one. */
   currentProjectId: string | null;
-  currentResourceGroup: string | null;
-  /** The card's resource group setting, else the header's current group. */
+  /** The card's resource group setting while allowed, else the page's default group. */
   resourceGroup: string | null;
 }
 

@@ -55,7 +55,7 @@ const remainingOf = (entry: LimitEntry | undefined) =>
  * Used-vs-limit rows: `used` plus the smallest of the `assignables` per slot
  * (a slot no list limits is unlimited). Slots follow `slotOrder`, then the
  * rest alphabetically; with `dropEmpty`, a slot with nothing used and nothing
- * assignable is left out.
+ * assignable is left out, and with `slots`, every slot not in it.
  */
 export const toUsageRows = (
   used: ReadonlyArray<QuantityEntry>,
@@ -63,7 +63,12 @@ export const toUsageRows = (
   {
     slotOrder = ['cpu', 'mem'],
     dropEmpty = true,
-  }: { slotOrder?: ReadonlyArray<string>; dropEmpty?: boolean } = {},
+    slots,
+  }: {
+    slotOrder?: ReadonlyArray<string>;
+    dropEmpty?: boolean;
+    slots?: ReadonlySet<string>;
+  } = {},
 ): Array<UsageRow> => {
   const usedBySlot = new Map(
     used.map((entry) => [entry.resourceType, toNumber(entry.quantity)]),
@@ -71,11 +76,11 @@ export const toUsageRows = (
   const assignableBySlot = assignables.map(
     (list) => new Map(list.map((entry) => [entry.resourceType, entry])),
   );
-  const slots = _.uniq([
+  const listed = _.uniq([
     ...assignableBySlot.flatMap((bySlot) => [...bySlot.keys()]),
     ...usedBySlot.keys(),
-  ]);
-  const ordered = _.sortBy(slots, [
+  ]).filter((slot) => !slots || slots.has(slot));
+  const ordered = _.sortBy(listed, [
     (slot) => {
       const index = slotOrder.indexOf(slot);
       return index === -1 ? slotOrder.length : index;
@@ -95,6 +100,33 @@ export const toUsageRows = (
       : [{ resourceType, used: usedQuantity, limit }];
   });
 };
+
+/**
+ * The slots a resource group offers: cpu and mem always, and every other slot
+ * its agents have some capacity of. `null` when the capacity is unknown.
+ */
+export const offeredSlotsOf = (
+  capacity: ReadonlyArray<QuantityEntry> | null | undefined,
+): Set<string> | null =>
+  capacity
+    ? new Set([
+        'cpu',
+        'mem',
+        ...capacity
+          .filter((entry) => toNumber(entry.quantity) > 0)
+          .map((entry) => entry.resourceType),
+      ])
+    : null;
+
+/** A resource group's free amounts as limits, for {@link toUsageRows}. */
+export const freeAsLimits = (
+  free: ReadonlyArray<QuantityEntry> | null | undefined,
+): Array<LimitEntry> =>
+  (free ?? []).map((entry) => ({
+    resourceType: entry.resourceType,
+    quantity: entry.quantity,
+    unlimited: false,
+  }));
 
 /**
  * Used-vs-limit rows from a `ScopeResourceUsageV2` (`projectResourceAllocationV2`)

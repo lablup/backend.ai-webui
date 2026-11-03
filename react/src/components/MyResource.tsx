@@ -160,14 +160,21 @@ const MyResourceStatisticsQuery: React.FC<{
     { fetchPolicy: 'network-only', fetchKey },
   );
 
-  return <MyResourceStatisticsContent queryRef={queryRef} />;
+  return (
+    <MyResourceStatisticsContent
+      queryRef={queryRef}
+      resourceGroupName={resourceGroupName}
+    />
+  );
 };
 
 const MyResourceStatisticsContent: React.FC<{
   queryRef: MyResourceV2StatisticsFragment$key;
-}> = ({ queryRef }) => {
+  resourceGroupName: string;
+}> = ({ queryRef, resourceGroupName }) => {
   'use memo';
-  const resourceSlotsDetails = useResourceSlotsDetails();
+  // The slots this resource group offers, so accelerators it lacks get no bar.
+  const resourceSlotsDetails = useResourceSlotsDetails(resourceGroupName);
   const data = useFragment(
     graphql`
       fragment MyResourceV2StatisticsFragment on Query

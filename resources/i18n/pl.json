@@ -850,7 +850,7 @@
       "MyActivityTooltip": "Działania wykonane przez Ciebie w wybranym okresie, z dziennika audytu.",
       "MyDeployments": "Moje wdrożenia",
       "MyRecentSessions": "Moje ostatnie sesje",
-      "MyResourcesTooltip": "Zasoby używane przez Twoje sesje we wszystkich grupach zasobów i projektach. Limit to to użycie plus mniejsza z wartości: ile możesz jeszcze przydzielić w grupie zasobów karty i ile pozwalają jeszcze Twoje limity pary kluczy, projektu i domeny.",
+      "MyResourcesTooltip": "Zasoby używane przez Twoje sesje we wszystkich grupach zasobów i projektach. Limit to to użycie plus najmniejsza z wartości: ile jest jeszcze wolne w grupie zasobów karty i ile pozwalają jeszcze Twoje limity użytkownika i projektu.",
       "MySessionsTooltip": "Twoje bieżące sesje w tym projekcie według stanu, a aktywne według typu sesji.",
       "NoActiveSessions": "Brak aktywnych sesji",
       "NoAllocation": "Brak przydzielonych zasobów.",

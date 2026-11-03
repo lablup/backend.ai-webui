@@ -3,11 +3,11 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { MyResourcesPanelQuery } from '../../../__generated__/MyResourcesPanelQuery.graphql';
-import { readPrimary } from '../panelPermission';
+import { readPrimary, readSecondary } from '../panelPermission';
 import type { PanelComponentProps } from '../types';
 import MemberCard, { NoProjectText, mineProjectId } from './MemberCard';
 import ResourceUsageBars from './ResourceUsageBars';
-import { toUsageRows } from './memberCardData';
+import { freeAsLimits, offeredSlotsOf, toUsageRows } from './memberCardData';
 import { Text } from '@lablup/ui-common/Text';
 import React, { useDeferredValue } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -19,18 +19,21 @@ export const MyResourcesInResourceGroup: React.FC<{
   fetchKey: string;
 }> = ({ projectId, resourceGroupName, fetchKey }) => {
   'use memo';
-  const variables = { input: { projectId, resourceGroupName } };
+  const variables = {
+    projectId,
+    scope: { project: [{ value: projectId }] },
+    resourceGroupFilter: { name: { equals: resourceGroupName } },
+  };
   const deferredVariables = useDeferredValue(variables);
+  // Fields a plain project member can read; `effectiveResourceAllocationV2`
+  // needs session READ on the project, which members lack (ADR 0019).
   const data = useLazyLoadQuery<MyResourcesPanelQuery>(
     graphql`
-      query MyResourcesPanelQuery($input: EffectiveResourceAllocationV2Input!) {
-        effectiveResourceAllocationV2(input: $input) @catch(to: RESULT) {
-          assignable {
-            resourceType
-            quantity
-            unlimited
-          }
-        }
+      query MyResourcesPanelQuery(
+        $projectId: UUID!
+        $scope: ResourceGroupScope!
+        $resourceGroupFilter: ResourceGroupFilter!
+      ) {
         myUserResourceAllocationV2 @catch(to: RESULT) {
           user {
             used {
@@ -44,18 +47,65 @@ export const MyResourcesInResourceGroup: React.FC<{
             }
           }
         }
+        projectResourceAllocationV2(projectId: $projectId) @catch(to: RESULT) {
+          project {
+            assignable {
+              resourceType
+              quantity
+              unlimited
+            }
+          }
+        }
+        scopedResourceGroups(
+          scope: $scope
+          filter: $resourceGroupFilter
+          limit: 1
+        ) @catch(to: RESULT) {
+          edges {
+            node {
+              resourceInfo {
+                capacity {
+                  entries {
+                    resourceType
+                    quantity
+                  }
+                }
+                free {
+                  entries {
+                    resourceType
+                    quantity
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     `,
     deferredVariables,
     { fetchPolicy: 'store-and-network', fetchKey },
   );
-  const effective = readPrimary(data.effectiveResourceAllocationV2);
   const user = readPrimary(data.myUserResourceAllocationV2)?.user;
+  const project = readSecondary(data.projectResourceAllocationV2).value
+    ?.project;
+  const resourceInfo = readSecondary(data.scopedResourceGroups).value
+    ?.edges?.[0]?.node?.resourceInfo;
   return (
     <ResourceUsageBars
       rows={
-        effective && user
-          ? toUsageRows(user.used, [effective.assignable, user.assignable])
+        user
+          ? toUsageRows(
+              user.used,
+              [
+                user.assignable,
+                project?.assignable ?? [],
+                freeAsLimits(resourceInfo?.free.entries),
+              ],
+              {
+                slots:
+                  offeredSlotsOf(resourceInfo?.capacity.entries) ?? undefined,
+              },
+            )
           : []
       }
     />

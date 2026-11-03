@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { DashboardResourceGroupsContext } from './DashboardResourceGroups';
 import PanelSettingsModal from './PanelSettingsModal';
 import type { PanelSettings } from './types';
 import '@testing-library/jest-dom';
@@ -49,19 +50,29 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
 const renderModal = (
   settings: PanelSettings | undefined,
   onSubmit: (settings: PanelSettings | undefined) => void,
-  excludedResourceGroups?: ReadonlyArray<string>,
+  excludedResourceGroups?: Array<string>,
 ) =>
   render(
-    <PanelSettingsModal
-      open
-      title="My Total Resource Usage"
-      definition={{ kind: 'preset', settings: ['resourceGroup'] }}
-      settings={settings}
-      resourceGroupScope={{ domain: [{ value: 'default' }] } as never}
-      excludedResourceGroups={excludedResourceGroups}
-      onSubmit={onSubmit}
-      onRequestClose={() => {}}
-    />,
+    <DashboardResourceGroupsContext
+      value={{
+        names: ['g0', 'g1', 'g2', 'g3'],
+        isComplete: true,
+        defaultResourceGroup: 'g0',
+        scope: { project: [{ value: 'p-url' }] },
+        filter: excludedResourceGroups
+          ? { name: { notIn: excludedResourceGroups } }
+          : undefined,
+      }}
+    >
+      <PanelSettingsModal
+        open
+        title="My Total Resource Usage"
+        definition={{ kind: 'preset', settings: ['resourceGroup'] }}
+        settings={settings}
+        onSubmit={onSubmit}
+        onRequestClose={() => {}}
+      />
+    </DashboardResourceGroupsContext>,
   );
 
 describe('PanelSettingsModal', () => {
