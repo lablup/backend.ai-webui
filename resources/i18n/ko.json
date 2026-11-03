@@ -935,6 +935,11 @@
       "TitleDescription": "패널 머리글로 표시됩니다 - 조건을 설명하는 제목을 권장합니다.",
       "TitleOptional": "제목 (선택)"
     },
+    "permission": {
+      "NoPermissionForResourceGroup": "이 자원 그룹에 대한 권한이 없습니다",
+      "NoPermissionForScope": "이 카드 설정에 대한 권한이 없습니다",
+      "NoPermissionToView": "볼 권한이 없습니다"
+    },
     "settings": {
       "AllResourceGroups": "전체 자원 그룹",
       "BackToSavedSetting": "저장된 설정으로 되돌리기 ({{value}})",

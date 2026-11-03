@@ -932,6 +932,11 @@
       "TitleDescription": "แสดงเป็นหัวเรื่องของแผง - ใช้เพื่ออธิบายเงื่อนไข",
       "TitleOptional": "ชื่อ (ไม่บังคับ)"
     },
+    "permission": {
+      "NoPermissionForResourceGroup": "ไม่มีสิทธิ์สำหรับกลุ่มทรัพยากรนี้",
+      "NoPermissionForScope": "ไม่มีสิทธิ์สำหรับการตั้งค่าการ์ดนี้",
+      "NoPermissionToView": "ไม่มีสิทธิ์ดู"
+    },
     "settings": {
       "AllResourceGroups": "ทุกกลุ่มทรัพยากร",
       "BackToSavedSetting": "กลับไปใช้การตั้งค่าที่บันทึกไว้ ({{value}})",

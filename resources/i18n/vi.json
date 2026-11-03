@@ -935,6 +935,11 @@
       "TitleDescription": "Hiển thị làm tiêu đề của bảng - hãy dùng nó để mô tả điều kiện.",
       "TitleOptional": "Tiêu đề (tùy chọn)"
     },
+    "permission": {
+      "NoPermissionForResourceGroup": "Không có quyền đối với nhóm tài nguyên này",
+      "NoPermissionForScope": "Không có quyền đối với cài đặt thẻ này",
+      "NoPermissionToView": "Không có quyền xem"
+    },
     "settings": {
       "AllResourceGroups": "Tất cả nhóm tài nguyên",
       "BackToSavedSetting": "Quay lại cài đặt đã lưu ({{value}})",

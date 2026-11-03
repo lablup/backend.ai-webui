@@ -6,6 +6,7 @@ import PanelFrame from '../PanelFrame';
 import PanelSettingsHeaderControls, {
   PanelHeaderSettingsContext,
 } from '../PanelSettingsHeaderControls';
+import { PanelPermissionBoundary } from '../panelPermission';
 import type { DashboardScope } from '../types';
 import { Heading } from '@lablup/ui-common/Heading';
 import { Text } from '@lablup/ui-common/Text';
@@ -40,6 +41,11 @@ const MemberCard: React.FC<MemberCardProps> = ({
 }) => {
   'use memo';
   const headerSettings = use(PanelHeaderSettingsContext);
+  const retryKeys = [
+    fetchKey,
+    JSON.stringify(headerSettings?.effective ?? null),
+    ...resetKeys,
+  ];
   return (
     <BAIBoardItemErrorBoundary
       // The failed state keeps the header picks, so a pick that broke the card can be undone.
@@ -54,14 +60,12 @@ const MemberCard: React.FC<MemberCardProps> = ({
         )
       }
       status="error"
-      resetKeys={[
-        fetchKey,
-        JSON.stringify(headerSettings?.effective ?? null),
-        ...resetKeys,
-      ]}
+      resetKeys={retryKeys}
     >
       <PanelFrame title={title} tooltip={tooltip} extra={extra}>
-        <Suspense fallback={<BAISkeleton />}>{children(fetchKey)}</Suspense>
+        <PanelPermissionBoundary resetKeys={retryKeys}>
+          <Suspense fallback={<BAISkeleton />}>{children(fetchKey)}</Suspense>
+        </PanelPermissionBoundary>
       </PanelFrame>
     </BAIBoardItemErrorBoundary>
   );

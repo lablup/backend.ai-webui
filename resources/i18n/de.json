@@ -935,6 +935,11 @@
       "TitleDescription": "Wird als Panel-Überschrift angezeigt - beschreiben Sie damit die Bedingung.",
       "TitleOptional": "Titel (optional)"
     },
+    "permission": {
+      "NoPermissionForResourceGroup": "Keine Berechtigung für diese Ressourcengruppe",
+      "NoPermissionForScope": "Keine Berechtigung für diese Karteneinstellung",
+      "NoPermissionToView": "Keine Berechtigung zum Anzeigen"
+    },
     "settings": {
       "AllResourceGroups": "Alle Ressourcengruppen",
       "BackToSavedSetting": "Zur gespeicherten Einstellung zurück ({{value}})",

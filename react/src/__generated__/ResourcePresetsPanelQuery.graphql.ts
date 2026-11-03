@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<132c7f8760613f5d028d3f5b94d14edf>>
+ * @generated SignedSource<<2ca6146d94d873a6837faaf74103276c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+import { Result } from "relay-runtime";
 export type CheckPresetAvailabilityV2Input = {
   projectId: string;
   resourceGroupName: string;
@@ -17,7 +18,7 @@ export type ResourcePresetsPanelQuery$variables = {
   input: CheckPresetAvailabilityV2Input;
 };
 export type ResourcePresetsPanelQuery$data = {
-  readonly checkPresetAvailabilityV2: {
+  readonly checkPresetAvailabilityV2: Result<{
     readonly presets: ReadonlyArray<{
       readonly available: boolean;
       readonly id: string;
@@ -27,7 +28,7 @@ export type ResourcePresetsPanelQuery$data = {
         readonly resourceType: string;
       }>;
     }>;
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type ResourcePresetsPanelQuery = {
   response: ResourcePresetsPanelQuery$data;
@@ -42,89 +43,93 @@ var v0 = [
     "name": "input"
   }
 ],
-v1 = [
-  {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "input",
-        "variableName": "input"
-      }
-    ],
-    "concreteType": "CheckPresetAvailabilityPayloadV2",
-    "kind": "LinkedField",
-    "name": "checkPresetAvailabilityV2",
-    "plural": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "PresetAvailabilityV2",
-        "kind": "LinkedField",
-        "name": "presets",
-        "plural": true,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "name",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "available",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ResourceSlotEntry",
-            "kind": "LinkedField",
-            "name": "resourceSlots",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "resourceType",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "quantity",
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
-  }
-];
+v1 = {
+  "alias": null,
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "input",
+      "variableName": "input"
+    }
+  ],
+  "concreteType": "CheckPresetAvailabilityPayloadV2",
+  "kind": "LinkedField",
+  "name": "checkPresetAvailabilityV2",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "PresetAvailabilityV2",
+      "kind": "LinkedField",
+      "name": "presets",
+      "plural": true,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "id",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "name",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "available",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "ResourceSlotEntry",
+          "kind": "LinkedField",
+          "name": "resourceSlots",
+          "plural": true,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "resourceType",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "quantity",
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "ResourcePresetsPanelQuery",
-    "selections": (v1/*: any*/),
+    "selections": [
+      {
+        "kind": "CatchField",
+        "field": (v1/*: any*/),
+        "to": "RESULT"
+      }
+    ],
     "type": "Query",
     "abstractKey": null
   },
@@ -133,7 +138,9 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "ResourcePresetsPanelQuery",
-    "selections": (v1/*: any*/)
+    "selections": [
+      (v1/*: any*/)
+    ]
   },
   "params": {
     "cacheID": "7d7d2e122fb0ea6e12c71f0121bdf18f",
@@ -146,6 +153,6 @@ return {
 };
 })();
 
-(node as any).hash = "f568ea2b5bb3c15cb03cba96932603e7";
+(node as any).hash = "fb116b2d04398d49df94e967cddff22f";
 
 export default node;

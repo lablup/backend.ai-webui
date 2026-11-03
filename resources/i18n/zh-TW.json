@@ -935,6 +935,11 @@
       "TitleDescription": "顯示為面板標題 - 建議用於描述篩選條件。",
       "TitleOptional": "標題（選填）"
     },
+    "permission": {
+      "NoPermissionForResourceGroup": "沒有此資源組的權限",
+      "NoPermissionForScope": "沒有此卡片設定的權限",
+      "NoPermissionToView": "沒有檢視權限"
+    },
     "settings": {
       "AllResourceGroups": "所有資源群組",
       "BackToSavedSetting": "還原為已儲存的設定（{{value}}）",

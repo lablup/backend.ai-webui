@@ -935,6 +935,11 @@
       "TitleDescription": "Mostrato come intestazione del pannello - usalo per descrivere la condizione.",
       "TitleOptional": "Titolo (facoltativo)"
     },
+    "permission": {
+      "NoPermissionForResourceGroup": "Nessuna autorizzazione per questo gruppo di risorse",
+      "NoPermissionForScope": "Nessuna autorizzazione per questa impostazione della scheda",
+      "NoPermissionToView": "Nessuna autorizzazione alla visualizzazione"
+    },
     "settings": {
       "AllResourceGroups": "Tutti i gruppi di risorse",
       "BackToSavedSetting": "Torna all'impostazione salvata ({{value}})",

@@ -12,6 +12,7 @@ import { ResourceCountContent } from './ResourceCountPanel';
 import { ResourceTableContent } from './ResourceTablePanel';
 import { SessionNodesPanelContent } from './SessionNodesPanel';
 import { SessionResourceGridContent } from './SessionResourceGridPanel';
+import { PanelPermissionBoundary } from './panelPermission';
 import { availablePanelTypes, panelTypeLabelKeys } from './panelRegistry';
 import { resourceRegistry } from './resourceRegistry';
 import type {
@@ -271,68 +272,70 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
               title={t(config.labelKey)}
               status="error"
             >
-              <Suspense fallback={<BAISkeleton />}>
-                {panelType === 'resourceCount' ? (
-                  <BAIFlex align="center" justify="center">
-                    <ResourceCountContent
+              <PanelPermissionBoundary>
+                <Suspense fallback={<BAISkeleton />}>
+                  {panelType === 'resourceCount' ? (
+                    <BAIFlex align="center" justify="center">
+                      <ResourceCountContent
+                        key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
+                        descriptor={{
+                          resourceType,
+                          filter: filter ?? null,
+                          order,
+                        }}
+                      />
+                    </BAIFlex>
+                  ) : panelType === 'sessionResourceGrid' ? (
+                    // The grid's own toolbar IS this panel kind's settings UI —
+                    // the same symmetry as sorting the table preview to set the
+                    // panel's order. `gridView` stays out of the key so toggling a
+                    // setting doesn't remount and refetch.
+                    <SessionResourceGridContent
+                      key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
+                      descriptor={{
+                        resourceType,
+                        filter: filter ?? null,
+                        order,
+                        gridView,
+                      }}
+                      onChangeViewParams={setGridView}
+                      disableSessionDetail
+                    />
+                  ) : config.kind === 'deploymentNodes' ? (
+                    <DeploymentNodesPanelContent
                       key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
                       descriptor={{
                         resourceType,
                         filter: filter ?? null,
                         order,
                       }}
+                      onChangeOrder={(next) => setOrder(next ?? null)}
+                      disableNavigation
                     />
-                  </BAIFlex>
-                ) : panelType === 'sessionResourceGrid' ? (
-                  // The grid's own toolbar IS this panel kind's settings UI —
-                  // the same symmetry as sorting the table preview to set the
-                  // panel's order. `gridView` stays out of the key so toggling a
-                  // setting doesn't remount and refetch.
-                  <SessionResourceGridContent
-                    key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
-                    descriptor={{
-                      resourceType,
-                      filter: filter ?? null,
-                      order,
-                      gridView,
-                    }}
-                    onChangeViewParams={setGridView}
-                    disableSessionDetail
-                  />
-                ) : config.kind === 'deploymentNodes' ? (
-                  <DeploymentNodesPanelContent
-                    key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
-                    descriptor={{
-                      resourceType,
-                      filter: filter ?? null,
-                      order,
-                    }}
-                    onChangeOrder={(next) => setOrder(next ?? null)}
-                    disableNavigation
-                  />
-                ) : config.kind === 'sessionNodes' ? (
-                  <SessionNodesPanelContent
-                    key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
-                    descriptor={{
-                      resourceType,
-                      filter: filter ?? null,
-                      order,
-                    }}
-                    onChangeOrder={(next) => setOrder(next ?? null)}
-                    disableSessionDetail
-                  />
-                ) : (
-                  <ResourceTableContent
-                    key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
-                    descriptor={{
-                      resourceType,
-                      filter: filter ?? null,
-                      order,
-                    }}
-                    onChangeOrder={(next) => setOrder(next ?? null)}
-                  />
-                )}
-              </Suspense>
+                  ) : config.kind === 'sessionNodes' ? (
+                    <SessionNodesPanelContent
+                      key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
+                      descriptor={{
+                        resourceType,
+                        filter: filter ?? null,
+                        order,
+                      }}
+                      onChangeOrder={(next) => setOrder(next ?? null)}
+                      disableSessionDetail
+                    />
+                  ) : (
+                    <ResourceTableContent
+                      key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
+                      descriptor={{
+                        resourceType,
+                        filter: filter ?? null,
+                        order,
+                      }}
+                      onChangeOrder={(next) => setOrder(next ?? null)}
+                    />
+                  )}
+                </Suspense>
+              </PanelPermissionBoundary>
             </BAIBoardItemErrorBoundary>
           ) : null}
         </div>

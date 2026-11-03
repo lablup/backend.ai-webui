@@ -935,6 +935,11 @@
       "TitleDescription": "パネルの見出しとして表示されます。条件を説明するタイトルをおすすめします。",
       "TitleOptional": "タイトル（オプション）"
     },
+    "permission": {
+      "NoPermissionForResourceGroup": "このリソースグループの権限がありません",
+      "NoPermissionForScope": "このカード設定の権限がありません",
+      "NoPermissionToView": "表示する権限がありません"
+    },
     "settings": {
       "AllResourceGroups": "すべてのリソースグループ",
       "BackToSavedSetting": "保存された設定に戻す ({{value}})",

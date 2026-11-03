@@ -49,3 +49,12 @@ export const resourceGroupScopeOf = (
     : scope.projectIds === 'all'
       ? { domain: [{ value: scope.domain.id }] }
       : { project: scope.projectIds.map((value) => ({ value })) };
+
+/** What a card's read permission depends on: the page and its project, or its domain. */
+export const dashboardScopeKey = (
+  page: PanelPage,
+  scope: DashboardScope,
+): string =>
+  scope.kind === 'mine'
+    ? `${page}:${scope.projectId ?? ''}`
+    : `${page}:${scope.projectIds === 'all' ? `domain:${scope.domain.id}` : scope.projectIds.join(',')}`;
