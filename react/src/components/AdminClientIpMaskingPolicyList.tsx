@@ -6,10 +6,12 @@ import { AdminClientIpMaskingPolicyListPurgeMutation } from '../__generated__/Ad
 import {
   AdminClientIpMaskingPolicyListQuery,
   AdminClientIpMaskingPolicyListQuery$data,
+  ClientIPMaskingPolicyFilter,
 } from '../__generated__/AdminClientIpMaskingPolicyListQuery.graphql';
 import { ClientIpMaskingPolicySettingModalFragment$key } from '../__generated__/ClientIpMaskingPolicySettingModalFragment.graphql';
 import { App } from '../app-shim';
 import ClientIpMaskingPolicySettingModal, {
+  CLIENT_IP_MASKING_MODES,
   CLIENT_IP_MASKING_TARGETS,
   DEFAULT_IPV4_PREFIX,
   DEFAULT_IPV6_PREFIX,
@@ -20,17 +22,19 @@ import {
   BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
+  BAIGraphQLPropertyFilter,
   BAINameActionCell,
   BAITable,
   BAIText,
   filterOutNullAndUndefined,
   useUpdatableState,
   type BAIColumnType,
+  type GraphQLFilter,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { PlusIcon, SquarePenIcon, Trash2 } from 'lucide-react';
-import React, { useState, useTransition } from 'react';
+import React, { useDeferredValue, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
@@ -51,15 +55,25 @@ const AdminClientIpMaskingPolicyList: React.FC = () => {
     useState<ClientIpMaskingPolicySettingModalFragment$key | null>(null);
   const [deletingPolicy, setDeletingPolicy] =
     useState<ClientIpMaskingPolicyNode | null>(null);
+  const [filter, setFilter] = useState<ClientIPMaskingPolicyFilter | null>(
+    null,
+  );
+  const deferredFilter = useDeferredValue(filter);
+  const isFilterPending = deferredFilter !== filter;
 
   const { adminClientIpMaskingPolicies } =
     useLazyLoadQuery<AdminClientIpMaskingPolicyListQuery>(
       graphql`
         query AdminClientIpMaskingPolicyListQuery(
+          $filter: ClientIPMaskingPolicyFilter
           $orderBy: [ClientIPMaskingPolicyOrderBy!]
           $limit: Int
         ) {
-          adminClientIpMaskingPolicies(orderBy: $orderBy, limit: $limit) {
+          adminClientIpMaskingPolicies(
+            filter: $filter
+            orderBy: $orderBy
+            limit: $limit
+          ) {
             count
             edges {
               node {
@@ -77,6 +91,7 @@ const AdminClientIpMaskingPolicyList: React.FC = () => {
         }
       `,
       {
+        filter: deferredFilter,
         orderBy: [{ field: 'TARGET_TYPE', direction: 'ASC' }],
         // One policy per target at most, so a single page holds them all.
         limit: CLIENT_IP_MASKING_TARGETS.length,
@@ -210,28 +225,69 @@ const AdminClientIpMaskingPolicyList: React.FC = () => {
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIAlert type="info" description={t('clientIpMasking.Description')} />
-      <BAIFlex justify="end" gap="xs">
-        <BAIFetchKeyButton
-          loading={isRefetchPending}
-          value={fetchKey}
-          onChange={refetch}
-        />
-        <BAIButton
-          type="primary"
-          icon={<PlusIcon />}
-          onClick={() => {
-            setEditingPolicy(null);
-            setIsOpenSettingModal(true);
+      <BAIFlex justify="between" align="start" wrap="wrap" gap="sm">
+        <BAIGraphQLPropertyFilter<GraphQLFilter>
+          style={{ flex: 1 }}
+          singleCondition
+          value={filter ?? undefined}
+          onChange={(next) => {
+            const nextFilter: ClientIPMaskingPolicyFilter = next?.AND
+              ? _.assign({}, ..._.castArray(next.AND))
+              : (next ?? {});
+            setFilter(_.isEmpty(nextFilter) ? null : nextFilter);
           }}
-        >
-          {t('clientIpMasking.CreatePolicy')}
-        </BAIButton>
+          filterProperties={[
+            {
+              key: 'targetType',
+              propertyLabel: t('clientIpMasking.Target'),
+              type: 'enum',
+              valueMode: 'scalar',
+              fixedOperator: 'equals',
+              strictSelection: true,
+              options: _.map(CLIENT_IP_MASKING_TARGETS, (target) => ({
+                label: targetLabel(target),
+                value: target,
+              })),
+            },
+            {
+              key: 'mode',
+              propertyLabel: t('clientIpMasking.Mode'),
+              type: 'enum',
+              valueMode: 'scalar',
+              fixedOperator: 'equals',
+              strictSelection: true,
+              options: _.map(CLIENT_IP_MASKING_MODES, (mode) => ({
+                label: t(`clientIpMasking.modes.${mode}`, {
+                  defaultValue: mode,
+                }),
+                value: mode,
+              })),
+            },
+          ]}
+        />
+        <BAIFlex gap="xs">
+          <BAIFetchKeyButton
+            loading={isRefetchPending}
+            value={fetchKey}
+            onChange={refetch}
+          />
+          <BAIButton
+            type="primary"
+            icon={<PlusIcon />}
+            onClick={() => {
+              setEditingPolicy(null);
+              setIsOpenSettingModal(true);
+            }}
+          >
+            {t('clientIpMasking.CreatePolicy')}
+          </BAIButton>
+        </BAIFlex>
       </BAIFlex>
       <BAITable<ClientIpMaskingPolicyNode>
         scroll={{ x: 'max-content' }}
         size="small"
         rowKey="entityId"
-        loading={isRefetchPending}
+        loading={isRefetchPending || isFilterPending}
         dataSource={policies}
         columns={columns}
         pagination={false}
@@ -239,8 +295,9 @@ const AdminClientIpMaskingPolicyList: React.FC = () => {
       <ClientIpMaskingPolicySettingModal
         open={isOpenSettingModal}
         policyFrgmt={editingPolicy}
-        onViewExistingPolicy={() => {
+        onViewExistingPolicy={(targetType) => {
           setIsOpenSettingModal(false);
+          setFilter({ targetType });
           refetch();
         }}
         onRequestClose={(success) => {
