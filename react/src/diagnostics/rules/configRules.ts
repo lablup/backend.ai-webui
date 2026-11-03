@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { isValidPluginPath } from '../../helper/pluginPath';
 import type { DiagnosticResult } from '../../types/diagnostics';
 
 // ---------------------------------------------------------------------------
@@ -493,76 +494,34 @@ export function checkImageReferences(
 }
 
 // ---------------------------------------------------------------------------
-// Plugin configuration  (config.toml [plugin] section)
+// Plugin configuration (the effective `pluginPages` / `loginPlugin`)
 // ---------------------------------------------------------------------------
 
-const VALID_PLUGIN_NAME_PATTERN = /^[a-zA-Z0-9_-]+$/;
-const VALID_JS_FILENAME_PATTERN = /^[a-zA-Z0-9_-]+\.js$/;
-
 /**
- * Validate [plugin] section:
- *   - page: comma-separated plugin names (alphanumeric + hyphens/underscores)
- *   - login: JS filename (e.g. "signup-cloud.js")
- *   - sidebar: JS filename (e.g. "report-cloud.js")
+ * Flags plugin entries the loader would refuse (`isValidPluginPath`, the rule
+ * `resolvePluginScriptUrl` applies): page entries and the login plugin alike.
  */
 export function checkPluginConfiguration(
-  pluginConfig: Record<string, unknown> | undefined,
+  pluginPages: ReadonlyArray<string>,
+  loginPlugin: string,
 ): DiagnosticResult[] {
-  if (!pluginConfig) return [];
-
-  const results: DiagnosticResult[] = [];
-
-  // Check page names (skip placeholders — already reported by checkPlaceholderValues)
-  const page = pluginConfig.page;
-  if (page && typeof page === 'string' && !isPlaceholder(page)) {
-    const pluginNames = page
-      .split(',')
-      .map((name) => name.trim())
-      .filter(Boolean);
-
-    const invalidNames = pluginNames.filter(
-      (name) => !VALID_PLUGIN_NAME_PATTERN.test(name),
-    );
-
-    if (invalidNames.length > 0) {
-      results.push({
-        id: 'config-invalid-plugin-names',
-        severity: 'warning',
-        category: 'config',
-        titleKey: 'diagnostics.InvalidPluginNames',
-        descriptionKey: 'diagnostics.InvalidPluginNamesDesc',
-        remediationKey: 'diagnostics.InvalidPluginNamesFix',
-        interpolationValues: {
-          plugins: invalidNames.join(', '),
-          count: String(invalidNames.length),
-        },
-      });
-    }
-  }
-
-  // Check login / sidebar JS filenames
-  const jsFields = [
-    { key: 'login', label: 'plugin.login' },
-    { key: 'sidebar', label: 'plugin.sidebar' },
+  const entries = [...pluginPages, loginPlugin]
+    .map((entry) => entry.trim())
+    .filter((entry) => entry !== '' && !isPlaceholder(entry));
+  const invalidNames = entries.filter((entry) => !isValidPluginPath(entry));
+  if (invalidNames.length === 0) return [];
+  return [
+    {
+      id: 'config-invalid-plugin-names',
+      severity: 'warning',
+      category: 'config',
+      titleKey: 'diagnostics.InvalidPluginNames',
+      descriptionKey: 'diagnostics.InvalidPluginNamesDesc',
+      remediationKey: 'diagnostics.InvalidPluginNamesFix',
+      interpolationValues: {
+        plugins: invalidNames.join(', '),
+        count: String(invalidNames.length),
+      },
+    },
   ];
-
-  for (const { key, label } of jsFields) {
-    const value = pluginConfig[key];
-    if (!value || typeof value !== 'string' || value.trim() === '') continue;
-    if (isPlaceholder(value)) continue;
-
-    if (!VALID_JS_FILENAME_PATTERN.test(value)) {
-      results.push({
-        id: `config-invalid-plugin-${key}`,
-        severity: 'warning',
-        category: 'config',
-        titleKey: 'diagnostics.InvalidPluginFilename',
-        descriptionKey: 'diagnostics.InvalidPluginFilenameDesc',
-        remediationKey: 'diagnostics.InvalidPluginFilenameFix',
-        interpolationValues: { field: label, value },
-      });
-    }
-  }
-
-  return results;
 }
