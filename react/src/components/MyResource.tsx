@@ -9,7 +9,11 @@ import {
   useCurrentProjectValue,
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
-import { toUsageRows } from './DashboardPanels/memberCards/memberCardData';
+import {
+  freeAsLimits,
+  offeredSlotsOf,
+  toUsageRows,
+} from './DashboardPanels/memberCards/memberCardData';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIBoardItemTitle,
@@ -145,11 +149,24 @@ const MyResourceStatisticsQuery: React.FC<{
   'use memo';
   const queryRef = useLazyLoadQuery<MyResourceQuery>(
     graphql`
-      query MyResourceQuery($input: EffectiveResourceAllocationV2Input!) {
-        ...MyResourceV2StatisticsFragment @arguments(input: $input)
+      query MyResourceQuery(
+        $projectId: UUID!
+        $scope: ResourceGroupScope!
+        $resourceGroupFilter: ResourceGroupFilter!
+      ) {
+        ...MyResourceV2StatisticsFragment
+          @arguments(
+            projectId: $projectId
+            scope: $scope
+            resourceGroupFilter: $resourceGroupFilter
+          )
       }
     `,
-    { input: { projectId, resourceGroupName } },
+    {
+      projectId,
+      scope: { project: [{ value: projectId }] },
+      resourceGroupFilter: { name: { equals: resourceGroupName } },
+    },
     { fetchPolicy: 'network-only', fetchKey },
   );
 
@@ -172,15 +189,10 @@ const MyResourceStatisticsContent: React.FC<{
     graphql`
       fragment MyResourceV2StatisticsFragment on Query
       @argumentDefinitions(
-        input: { type: "EffectiveResourceAllocationV2Input!" }
+        projectId: { type: "UUID!" }
+        scope: { type: "ResourceGroupScope!" }
+        resourceGroupFilter: { type: "ResourceGroupFilter!" }
       ) {
-        effectiveResourceAllocationV2(input: $input) @catch(to: RESULT) {
-          assignable {
-            resourceType
-            quantity
-            unlimited
-          }
-        }
         myUserResourceAllocationV2 @catch(to: RESULT) {
           user {
             used {
@@ -194,24 +206,67 @@ const MyResourceStatisticsContent: React.FC<{
             }
           }
         }
+        projectResourceAllocationV2(projectId: $projectId) @catch(to: RESULT) {
+          project {
+            assignable {
+              resourceType
+              quantity
+              unlimited
+            }
+          }
+        }
+        scopedResourceGroups(
+          scope: $scope
+          filter: $resourceGroupFilter
+          limit: 1
+        ) @catch(to: RESULT) {
+          edges {
+            node {
+              resourceInfo {
+                capacity {
+                  entries {
+                    resourceType
+                    quantity
+                  }
+                }
+                free {
+                  entries {
+                    resourceType
+                    quantity
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     `,
     queryRef,
   );
 
-  // Same user-based usage as the dashboard's My Resources card: every keypair's sessions.
-  const effective = data.effectiveResourceAllocationV2.ok
-    ? data.effectiveResourceAllocationV2.value
-    : undefined;
+  // The dashboard's My Resources reading: fields a plain project member may
+  // read (`effectiveResourceAllocationV2` needs session READ on the project).
   const user = data.myUserResourceAllocationV2.ok
     ? data.myUserResourceAllocationV2.value?.user
     : undefined;
-  const allocation = effective && user ? { effective, user } : undefined;
-  const usageRows = allocation
+  const project = data.projectResourceAllocationV2.ok
+    ? data.projectResourceAllocationV2.value?.project
+    : undefined;
+  const resourceInfo = data.scopedResourceGroups.ok
+    ? data.scopedResourceGroups.value?.edges?.[0]?.node?.resourceInfo
+    : undefined;
+  const usageRows = user
     ? toUsageRows(
-        allocation.user.used,
-        [allocation.effective.assignable, allocation.user.assignable],
-        { dropEmpty: false },
+        user.used,
+        [
+          user.assignable,
+          project?.assignable ?? [],
+          freeAsLimits(resourceInfo?.free.entries),
+        ],
+        {
+          dropEmpty: false,
+          slots: offeredSlotsOf(resourceInfo?.capacity.entries) ?? undefined,
+        },
       )
     : [];
 
@@ -232,8 +287,8 @@ const MyResourceStatisticsContent: React.FC<{
   const cpuAmounts = amountsOf('cpu');
   const memAmounts = amountsOf('mem');
 
-  // Without the allocation there is nothing to show, not zero usage.
-  const resourceData = !allocation
+  // Without the user allocation there is nothing to show, not zero usage.
+  const resourceData = !user
     ? NO_RESOURCE_DATA
     : {
         cpu: cpuSlot
