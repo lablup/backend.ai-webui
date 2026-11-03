@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# PreToolUse hook: refuse `gh pr create` / `gh stack submit` until the e2e-flow
-# skill (.claude/skills/e2e-flow/SKILL.md) has recorded the current HEAD.
+# PreToolUse hook: refuse `gh pr create` / `gh stack submit` on lablup/backend.ai-webui
+# until the e2e-flow skill (.claude/skills/e2e-flow/SKILL.md) has recorded the current HEAD.
+# A PR on another repository (another checkout, `-R`) passes.
 # `require-e2e-flow.sh --record` writes that record; the skill calls it.
 #
 # Registered with `if` filters in .claude/settings.json, which are best-effort,
@@ -21,6 +22,32 @@ input=$(cat)
 cmd=$(printf '%s' "$input" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("tool_input", {}).get("command", ""))' 2>/dev/null) || exit 0
 
 printf '%s' "$cmd" | grep -qE '(^|[;&|(]|\$\(|`)[[:space:]]*gh[[:space:]]+(pr[[:space:]]+create|stack[[:space:]]+submit)([^[:alnum:]_-]|$)' || exit 0
+
+# Only a PR on this repository needs the record: the target is `-R`/`--repo`, else `GH_REPO=`, else the last
+# `cd <dir>` before the command, else the session cwd — judged by its git remotes.
+target=$(INPUT="$input" python3 - <<'PY' 2>/dev/null
+import json, os, re, shlex, subprocess
+inp = json.loads(os.environ['INPUT'])
+cmd = inp.get('tool_input', {}).get('command', '')
+cwd = inp.get('cwd') or os.getcwd()
+m = re.search(r'(?:^|[;&|(]|\$\(|`)\s*((?:\w+=\S*\s+)*)gh\s+(?:pr\s+create|stack\s+submit)(?![\w-])', cmd)
+seg = re.split(r'[;&|)`]', cmd[m.end():])[0]
+repo = re.search(r'(?:^|\s)(?:-R|--repo)(?:\s+|=)(\S+)', seg) or re.search(r'(?:^|\s)GH_REPO=(\S+)', m.group(1) + ' ' + cmd[:m.start()])
+if repo:
+    print('repo ' + repo.group(1).strip('\'"'))
+else:
+    d = cwd
+    for c in re.finditer(r'(?:^|[;&|(])\s*cd\s+([^;&|)]+)', cmd[:m.start()]):
+        try:
+            p = os.path.expanduser(os.path.expandvars(shlex.split(c.group(1))[0]))
+        except (ValueError, IndexError):
+            continue
+        d = os.path.normpath(os.path.join(d, p))
+    r = subprocess.run(['git', '-C', d, 'remote', '-v'], capture_output=True, text=True)
+    print('remotes ' + ' '.join(r.stdout.split()))
+PY
+) || exit 0
+printf '%s' "$target" | grep -qiE '(^repo ([^/ ]+/)?|[:/])lablup/backend\.ai-webui(\.git)?( |$)' || exit 0
 
 recorded=$(cat "$record" 2>/dev/null)
 [ "$recorded" = "$head" ] && exit 0
