@@ -31,7 +31,8 @@ const astryxDynamicImportBan = [
     'Import Astryx through @lablup/ui-common, dynamic imports and require() included (ADR 0009).',
 }));
 // ADR 0014: ui-common's form controls are imported as BAI* from backend.ai-ui.
-// Types and helpers on the same subpaths stay importable.
+// Types and helpers on the same subpaths stay importable. `Selector` has only
+// the antd-shaped BAISelect (ADR 0017).
 const formControlImportBans = [
   ['CheckboxInput'],
   ['CheckboxList', 'CheckboxListItem'],
@@ -55,13 +56,16 @@ const formControlImportBans = [
 ].map((importNames) => ({
   name: `@lablup/ui-common/${importNames[0]}`,
   importNames,
-  message: `Import ${importNames
-    .map((name) =>
-      name === 'SegmentedControlItem'
-        ? 'BAISegmentedControlItem'
-        : `BAI${name}`,
-    )
-    .join(' / ')} from 'backend.ai-ui' (ADR 0014).`,
+  message:
+    importNames[0] === 'Selector'
+      ? "Import BAISelect from 'backend.ai-ui' (ADR 0017)."
+      : `Import ${importNames
+          .map((name) =>
+            name === 'SegmentedControlItem'
+              ? 'BAISegmentedControlItem'
+              : `BAI${name}`,
+          )
+          .join(' / ')} from 'backend.ai-ui' (ADR 0014).`,
 }));
 const restrictedImportPaths = [
   {

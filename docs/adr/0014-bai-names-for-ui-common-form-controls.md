@@ -1,6 +1,7 @@
 # 0014 — BAI names for ui-common form controls
 
 > ADR 0009의 1절 "New code" 항목 중 form control에 관한 부분을 대신한다.
+> `BAISelector`에 관한 부분은 ADR 0017이 대신한다.
 
 ## Summary
 
