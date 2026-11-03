@@ -13,7 +13,7 @@ import {
   BAIModal,
   type BAIModalProps,
   BAIQuestionIconWithTooltip,
-  BAISelector,
+  BAISelect,
   useErrorMessageResolver,
   useMutationWithPromise,
 } from 'backend.ai-ui';
@@ -124,11 +124,11 @@ const FolderDefaultMountPermissionModal: React.FC<
       width={480}
     >
       <Field label={t('data.folders.DefaultMountPermission')} inputID={inputId}>
-        <BAISelector
+        <BAISelect
+          showSearch={false}
           id={inputId}
           aria-label={t('data.folders.DefaultMountPermission')}
-          placement="below"
-          width="100%"
+          style={{ width: '100%' }}
           options={[
             { value: 'ro', label: t('data.ReadOnly') },
             {

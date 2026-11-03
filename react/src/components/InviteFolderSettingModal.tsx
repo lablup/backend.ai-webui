@@ -54,7 +54,7 @@ import {
   useErrorMessageResolver,
   useFetchKey,
   useMutationWithPromise,
-  BAISelector,
+  BAISelect,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleXIcon, MailXIcon, PencilIcon } from 'lucide-react';
@@ -663,11 +663,11 @@ const InviteFolderSettingModalBody: React.FC<{
                 inputID={mountLevelInputId}
                 isDisabled={isEmailInvite}
               >
-                <BAISelector
+                <BAISelect
+                  showSearch={false}
                   id={mountLevelInputId}
                   aria-label={t('data.folders.MountPermission')}
-                  placement="below"
-                  width={150}
+                  style={{ width: 150 }}
                   options={mountLevelOptions}
                   // An e-mail invite gets the folder default, so the disabled
                   // selector shows that value rather than the last pick.
@@ -1072,10 +1072,10 @@ const SharedUserTable: React.FC<{
           // its user id on acceptance.
           render: (level: ShareRow['mountLevel'], row) =>
             row.userId ? (
-              <BAISelector
+              <BAISelect
+                showSearch={false}
                 aria-label={t('data.folders.MountPermission')}
-                placement="below"
-                width={130}
+                style={{ width: 130 }}
                 options={mountLevelOptions}
                 value={level}
                 onChange={(next) =>
