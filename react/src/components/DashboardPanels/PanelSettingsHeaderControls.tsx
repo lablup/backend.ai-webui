@@ -9,6 +9,7 @@ import {
   DEFAULT_RANGE,
   RANGE_LABEL_KEYS,
   RANGE_PRESETS,
+  type RangePreset,
   hasSetting,
   isRangePreset,
 } from './panelSettings';
@@ -19,7 +20,7 @@ import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIFlex,
   BAIScopedResourceGroupSelect,
-  BAISelector,
+  BAISelect,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { RotateCcw } from 'lucide-react';
@@ -115,16 +116,17 @@ const PanelSettingsHeaderControls: React.FC = () => {
           content={t('dashboard.settings.TimeRange')}
           hasHoverIndication={false}
         >
-          <BAISelector
-            size="sm"
-            variant={overridden.range ? 'secondary' : 'ghost'}
+          <BAISelect
+            size="small"
+            showSearch={false}
+            variant={overridden.range ? 'filled' : 'borderless'}
             aria-label={t('dashboard.settings.TimeRange')}
             options={RANGE_PRESETS.map((preset) => ({
               value: preset,
               label: t(RANGE_LABEL_KEYS[preset]),
             }))}
             value={effective?.range ?? DEFAULT_RANGE}
-            onChange={(value) => {
+            onChange={(value: RangePreset | null) => {
               if (value) onChange({ range: value });
             }}
           />

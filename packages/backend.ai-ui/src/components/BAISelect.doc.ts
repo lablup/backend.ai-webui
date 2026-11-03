@@ -137,6 +137,12 @@ export const docs = {
           description: 'Control height, in the antd sizing vocabulary.',
         },
         {
+          name: 'variant',
+          type: "'outlined' | 'filled' | 'borderless'",
+          description:
+            'Trigger style, in the antd vocabulary: `filled` maps to the secondary trigger and `borderless` to the ghost one.',
+        },
+        {
           name: 'open',
           type: 'boolean',
           description:
