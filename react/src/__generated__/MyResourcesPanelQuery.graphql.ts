@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<15e5b1d65a81c4cf707a0393a79a6fdf>>
+ * @generated SignedSource<<b4629dd3915add450ece1f60691e19d2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+import { Result } from "relay-runtime";
 export type EffectiveResourceAllocationV2Input = {
   projectId: string;
   resourceGroupName: string;
@@ -17,14 +18,14 @@ export type MyResourcesPanelQuery$variables = {
   input: EffectiveResourceAllocationV2Input;
 };
 export type MyResourcesPanelQuery$data = {
-  readonly effectiveResourceAllocationV2: {
+  readonly effectiveResourceAllocationV2: Result<{
     readonly assignable: ReadonlyArray<{
       readonly quantity: any | null | undefined;
       readonly resourceType: string;
       readonly unlimited: boolean;
     }>;
-  } | null | undefined;
-  readonly myUserResourceAllocationV2: {
+  } | null | undefined, unknown>;
+  readonly myUserResourceAllocationV2: Result<{
     readonly user: {
       readonly assignable: ReadonlyArray<{
         readonly quantity: any | null | undefined;
@@ -36,7 +37,7 @@ export type MyResourcesPanelQuery$data = {
         readonly resourceType: string;
       }>;
     };
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type MyResourcesPanelQuery = {
   response: MyResourcesPanelQuery$data;
@@ -85,69 +86,78 @@ v3 = {
   ],
   "storageKey": null
 },
-v4 = [
-  {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "input",
-        "variableName": "input"
-      }
-    ],
-    "concreteType": "EffectiveResourceAllocationV2",
-    "kind": "LinkedField",
-    "name": "effectiveResourceAllocationV2",
-    "plural": false,
-    "selections": [
-      (v3/*: any*/)
-    ],
-    "storageKey": null
-  },
-  {
-    "alias": null,
-    "args": null,
-    "concreteType": "UserResourceAllocationV2",
-    "kind": "LinkedField",
-    "name": "myUserResourceAllocationV2",
-    "plural": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "ScopeResourceUsageV2",
-        "kind": "LinkedField",
-        "name": "user",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ResourceSlotEntry",
-            "kind": "LinkedField",
-            "name": "used",
-            "plural": true,
-            "selections": [
-              (v1/*: any*/),
-              (v2/*: any*/)
-            ],
-            "storageKey": null
-          },
-          (v3/*: any*/)
-        ],
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
-  }
-];
+v4 = {
+  "alias": null,
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "input",
+      "variableName": "input"
+    }
+  ],
+  "concreteType": "EffectiveResourceAllocationV2",
+  "kind": "LinkedField",
+  "name": "effectiveResourceAllocationV2",
+  "plural": false,
+  "selections": [
+    (v3/*: any*/)
+  ],
+  "storageKey": null
+},
+v5 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "UserResourceAllocationV2",
+  "kind": "LinkedField",
+  "name": "myUserResourceAllocationV2",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "ScopeResourceUsageV2",
+      "kind": "LinkedField",
+      "name": "user",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "ResourceSlotEntry",
+          "kind": "LinkedField",
+          "name": "used",
+          "plural": true,
+          "selections": [
+            (v1/*: any*/),
+            (v2/*: any*/)
+          ],
+          "storageKey": null
+        },
+        (v3/*: any*/)
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "MyResourcesPanelQuery",
-    "selections": (v4/*: any*/),
+    "selections": [
+      {
+        "kind": "CatchField",
+        "field": (v4/*: any*/),
+        "to": "RESULT"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v5/*: any*/),
+        "to": "RESULT"
+      }
+    ],
     "type": "Query",
     "abstractKey": null
   },
@@ -156,7 +166,10 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "MyResourcesPanelQuery",
-    "selections": (v4/*: any*/)
+    "selections": [
+      (v4/*: any*/),
+      (v5/*: any*/)
+    ]
   },
   "params": {
     "cacheID": "5b8b7db7ecc26e074d00255795fea5a8",
@@ -169,6 +182,6 @@ return {
 };
 })();
 
-(node as any).hash = "7e4e7dcc184513a70ef200ff6641acb3";
+(node as any).hash = "9b1919403b99d62fd42f9d246214c393";
 
 export default node;

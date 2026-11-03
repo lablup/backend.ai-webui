@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { MyResourcesPanelQuery } from '../../../__generated__/MyResourcesPanelQuery.graphql';
+import { readPrimary } from '../panelPermission';
 import type { PanelComponentProps } from '../types';
 import MemberCard, { NoProjectText, mineProjectId } from './MemberCard';
 import ResourceUsageBars from './ResourceUsageBars';
@@ -24,14 +25,14 @@ export const MyResourcesInResourceGroup: React.FC<{
   const data = useLazyLoadQuery<MyResourcesPanelQuery>(
     graphql`
       query MyResourcesPanelQuery($input: EffectiveResourceAllocationV2Input!) {
-        effectiveResourceAllocationV2(input: $input) {
+        effectiveResourceAllocationV2(input: $input) @catch(to: RESULT) {
           assignable {
             resourceType
             quantity
             unlimited
           }
         }
-        myUserResourceAllocationV2 {
+        myUserResourceAllocationV2 @catch(to: RESULT) {
           user {
             used {
               resourceType
@@ -49,8 +50,8 @@ export const MyResourcesInResourceGroup: React.FC<{
     deferredVariables,
     { fetchPolicy: 'store-and-network', fetchKey },
   );
-  const effective = data.effectiveResourceAllocationV2;
-  const user = data.myUserResourceAllocationV2?.user;
+  const effective = readPrimary(data.effectiveResourceAllocationV2);
+  const user = readPrimary(data.myUserResourceAllocationV2)?.user;
   return (
     <ResourceUsageBars
       rows={

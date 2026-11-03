@@ -904,6 +904,11 @@
       "TitleDescription": "Wyświetlany jako nagłówek panelu - użyj go do opisania warunku.",
       "TitleOptional": "Tytuł (opcjonalnie)"
     },
+    "permission": {
+      "NoPermissionForResourceGroup": "Brak uprawnień do tej grupy zasobów",
+      "NoPermissionForScope": "Brak uprawnień do tego ustawienia karty",
+      "NoPermissionToView": "Brak uprawnień do wyświetlania"
+    },
     "settings": {
       "AllResourceGroups": "Wszystkie grupy zasobów",
       "CardSettings": "Ustawienia karty",

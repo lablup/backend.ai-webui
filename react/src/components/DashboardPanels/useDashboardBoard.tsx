@@ -5,7 +5,9 @@
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
+import { useIsCurrentProjectAdmin } from '../../hooks/useCurrentUserProjectRoles';
 import DashboardPanelContent from './DashboardPanelContent';
+import PanelFrame from './PanelFrame';
 import type { BoardLayoutEntry } from './boardLayout';
 import {
   addPanel,
@@ -88,6 +90,8 @@ export interface UseDashboardBoardOptions {
   /** Opens the panel modal pre-filled with a custom panel. */
   onRequestEditCustomPanel: (panel: PersistedPanel) => void;
   catalog: ReadonlyArray<PanelDefinition>;
+  /** Panels the viewer may not read: left off the board, kept in the stored one. */
+  deniedPanelIds?: ReadonlyMap<string, string>;
 }
 
 export interface UseDashboardBoardResult {
@@ -97,6 +101,8 @@ export interface UseDashboardBoardResult {
   /** Single-instance entries for the sider checklist. */
   catalogEntries: Array<CatalogEntry>;
   activeKeys: ReadonlySet<string>;
+  /** Catalog keys on the board that are hidden because the viewer may not read them. */
+  deniedKeys: ReadonlySet<string>;
   /** Adds or removes several catalog cards in one save. */
   setPanelsActive: (keys: ReadonlyArray<string>, active: boolean) => void;
   customPanels: Array<PersistedPanel>;
@@ -129,10 +135,12 @@ export const useDashboardBoard = ({
   queryRefs,
   onRequestEditCustomPanel,
   catalog,
+  deniedPanelIds,
 }: UseDashboardBoardOptions): UseDashboardBoardResult => {
   'use memo';
   const { t } = useTranslation();
   const role = useCurrentUserRole();
+  const isProjectAdmin = useIsCurrentProjectAdmin();
   const baiClient = useSuspendedBackendaiClient();
   const [gridEnabled] = useBAISettingUserState(
     'experimental_session_resource_grid',
@@ -150,7 +158,12 @@ export const useDashboardBoard = ({
     hideAgents: !!baiClient?._config?.hideAgents,
     enableModelFolders: !!baiClient?._config?.enableModelFolders,
   };
-  const visibleEntries = catalogFor(catalog, { page, role, config });
+  const visibleEntries = catalogFor(catalog, {
+    page,
+    role,
+    config,
+    isProjectAdmin,
+  });
   const visibleByKey = new Map(
     visibleEntries.map((entry) => [entry.definition.key, entry]),
   );
@@ -162,7 +175,7 @@ export const useDashboardBoard = ({
 
   const isRenderable = (panel: PersistedPanelV2) => {
     const entry = visibleByKey.get(panel.key);
-    return !!entry && !entry.locked;
+    return !!entry && !entry.locked && !deniedPanelIds?.has(panel.id);
   };
 
   const removeById = (id: string) => save(removePanel(board, id));
@@ -206,7 +219,15 @@ export const useDashboardBoard = ({
     if (definition.kind === 'custom') {
       const Component = definition.Component;
       return Component ? (
-        <DashboardPanelContent panel={panel} isPageRefetching={isRefetching}>
+        <DashboardPanelContent
+          panel={panel}
+          isPageRefetching={isRefetching}
+          deniedFrame={(body) => (
+            <PanelFrame title={t(panelTitleKey(definition, role))}>
+              {body}
+            </PanelFrame>
+          )}
+        >
           {(state) => (
             <Component
               panel={panel}
@@ -233,7 +254,20 @@ export const useDashboardBoard = ({
         title={resolvePanelTitle(legacyPanel.descriptor, t)}
         status="error"
       >
-        <DashboardPanelContent panel={panel} isPageRefetching={isRefetching}>
+        <DashboardPanelContent
+          panel={panel}
+          isPageRefetching={isRefetching}
+          isUserPanel
+          deniedFrame={(body) => (
+            <PanelFrame
+              title={resolvePanelTitle(legacyPanel.descriptor, t)}
+              onEdit={() => onRequestEditCustomPanel(legacyPanel)}
+              onRemove={() => removeById(panel.id)}
+            >
+              {body}
+            </PanelFrame>
+          )}
+        >
           {({ fetchKey }) => (
             <Panel
               descriptor={legacyPanel.descriptor}
@@ -268,6 +302,11 @@ export const useDashboardBoard = ({
     onLayoutChange: (reported) => save(applyLayout(board, reported)),
     catalogEntries: siderEntries(visibleEntries),
     activeKeys: new Set(board.panels.map((panel) => panel.key)),
+    deniedKeys: new Set(
+      board.panels
+        .filter((panel) => deniedPanelIds?.has(panel.id))
+        .map((panel) => panel.key),
+    ),
     setPanelsActive,
     customPanels,
     availableResources: availableResourceKeys(role),

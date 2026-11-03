@@ -6,6 +6,7 @@ import type { resourceRegistryDeploymentQuery } from '../../__generated__/resour
 import type { resourceRegistrySessionQuery } from '../../__generated__/resourceRegistrySessionQuery.graphql';
 import type { resourceRegistryVfolderQuery } from '../../__generated__/resourceRegistryVfolderQuery.graphql';
 import { convertToOrderBy } from '../../helper';
+import { readPrimary, type CaughtValue } from './panelPermission';
 import { getSessionFilterProperties } from './sessionFilterProperties';
 import type {
   PanelDescriptor,
@@ -43,15 +44,17 @@ import type { OperationType } from 'relay-runtime';
 type SessionNode = NonNullable<
   NonNullable<
     NonNullable<
-      resourceRegistrySessionQuery['response']['compute_session_nodes']
+      CaughtValue<
+        resourceRegistrySessionQuery['response']['compute_session_nodes']
+      >
     >['edges'][number]
   >['node']
 >;
 type DeploymentNode = NonNullable<
-  resourceRegistryDeploymentQuery['response']['scopedDeployments']
+  CaughtValue<resourceRegistryDeploymentQuery['response']['scopedDeployments']>
 >['edges'][number]['node'];
 type VfolderNode = NonNullable<
-  resourceRegistryVfolderQuery['response']['scopedVFoldersV2']
+  CaughtValue<resourceRegistryVfolderQuery['response']['scopedVFoldersV2']>
 >['edges'][number]['node'];
 
 const formatDate = (value?: string | null) =>
@@ -137,7 +140,7 @@ const sessionConfig: ResourceConfig<resourceRegistrySessionQuery, SessionNode> =
           offset: $offset
           filter: $filter
           order: $order
-        ) {
+        ) @catch(to: RESULT) {
           count
           edges {
             node {
@@ -172,7 +175,7 @@ const sessionConfig: ResourceConfig<resourceRegistrySessionQuery, SessionNode> =
     }),
     // Legacy connection: count and nodes are individually nullable.
     selectConnection: (data) => {
-      const connection = data.compute_session_nodes;
+      const connection = readPrimary(data.compute_session_nodes);
       return connection
         ? {
             count: connection.count ?? 0,
@@ -208,7 +211,7 @@ const deploymentConfig: ResourceConfig<
         orderBy: $orderBy
         limit: $limit
         offset: $offset
-      ) {
+      ) @catch(to: RESULT) {
         count
         edges {
           node {
@@ -256,7 +259,8 @@ const deploymentConfig: ResourceConfig<
     limit,
     offset,
   }),
-  selectConnection: (data) => selectOffsetConnection(data.scopedDeployments),
+  selectConnection: (data) =>
+    selectOffsetConnection(readPrimary(data.scopedDeployments)),
 };
 
 const vfolderConfig: ResourceConfig<resourceRegistryVfolderQuery, VfolderNode> =
@@ -279,7 +283,7 @@ const vfolderConfig: ResourceConfig<resourceRegistryVfolderQuery, VfolderNode> =
           orderBy: $orderBy
           limit: $limit
           offset: $offset
-        ) {
+        ) @catch(to: RESULT) {
           count
           edges {
             node {
@@ -341,7 +345,8 @@ const vfolderConfig: ResourceConfig<resourceRegistryVfolderQuery, VfolderNode> =
       },
     ],
     buildVariables: makeOffsetVariables<resourceRegistryVfolderQuery>(),
-    selectConnection: (data) => selectOffsetConnection(data.scopedVFoldersV2),
+    selectConnection: (data) =>
+      selectOffsetConnection(readPrimary(data.scopedVFoldersV2)),
   };
 
 export const resourceRegistry: {

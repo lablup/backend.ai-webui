@@ -904,6 +904,11 @@
       "TitleDescription": "Panel başlığı olarak gösterilir - koşulu açıklamak için kullanın.",
       "TitleOptional": "Başlık (isteğe bağlı)"
     },
+    "permission": {
+      "NoPermissionForResourceGroup": "Bu kaynak grubu için izin yok",
+      "NoPermissionForScope": "Bu kart ayarı için izin yok",
+      "NoPermissionToView": "Görüntüleme izni yok"
+    },
     "settings": {
       "AllResourceGroups": "Tüm kaynak grupları",
       "CardSettings": "Kart ayarları",

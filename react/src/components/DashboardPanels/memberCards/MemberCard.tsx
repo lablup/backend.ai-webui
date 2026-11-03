@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import PanelFrame from '../PanelFrame';
+import { PanelPermissionBoundary } from '../panelPermission';
 import type { DashboardScope } from '../types';
 import { Text } from '@lablup/ui-common/Text';
 import { BAIBoardItemErrorBoundary, BAISkeleton } from 'backend.ai-ui';
@@ -42,7 +43,9 @@ const MemberCard: React.FC<MemberCardProps> = ({
       resetKeys={[fetchKey, ...resetKeys]}
     >
       <PanelFrame title={title} tooltip={tooltip} extra={extra}>
-        <Suspense fallback={<BAISkeleton />}>{children(fetchKey)}</Suspense>
+        <PanelPermissionBoundary resetKeys={[fetchKey, ...resetKeys]}>
+          <Suspense fallback={<BAISkeleton />}>{children(fetchKey)}</Suspense>
+        </PanelPermissionBoundary>
       </PanelFrame>
     </BAIBoardItemErrorBoundary>
   );
