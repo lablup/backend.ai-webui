@@ -140,6 +140,12 @@ A notification window pops up when a new WebUI version is detected. It works
 only in an environment where Internet access is available. If the feature is
 automatically disabled, clicking the toggle again will resume update checks.
 
+### Auto logout
+
+Log out automatically when all Backend.AI WebUI pages are closed except for
+pages created to run apps in a session (e.g. Jupyter Notebook, web terminal,
+etc.).
+
 ### My keypair information
 
 Every user has at least one keypair. You can view your access key and secret key
