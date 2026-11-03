@@ -2947,7 +2947,8 @@
           "descriptionKeys": [
             "settings.DescRebel100Support",
             "settings.RequireRebel100Plugin"
-          ]
+          ],
+          "tab": "configurations"
         },
         {
           "key": "settings.Scheduler",
