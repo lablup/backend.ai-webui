@@ -283,14 +283,6 @@ export const WEBUI_SETTING_GROUPS: ReadonlyArray<WebUISettingGroup> = [
   'plugins',
 ];
 
-/** Groups that hold only public keys; a domain admin does not see them. */
-export const PUBLIC_ONLY_GROUPS: ReadonlyArray<WebUISettingGroup> =
-  WEBUI_SETTING_GROUPS.filter((group) =>
-    WEBUI_SETTING_ROWS.filter((r) => r.group === group).every(
-      (r) => r.scope === 'public',
-    ),
-  );
-
 export const rowByKey = (key: string): WebUISettingRow => {
   const found = WEBUI_SETTING_ROWS.find((r) => r.key === key);
   if (!found) throw new Error(`Unknown WebUI setting key: ${key}`);
@@ -603,7 +595,14 @@ export function settingRow(page: Page, key: string): Locator {
 
 /** Every rendered setting row, for the inventory check. */
 export function allSettingRows(page: Page): Locator {
-  return page.locator('[data-testid^="webui-setting-"]');
+  return page.locator(
+    '[data-testid^="webui-setting-"]:not([data-testid$="-input"])',
+  );
+}
+
+/** Key markers the `debug` setting adds next to every translated string. */
+export function i18nKeyMarkers(page: Page): Locator {
+  return page.locator('[data-i18n-key-anchor]');
 }
 
 /** The "Changed from default" dot a row shows while its value differs. */
