@@ -15,8 +15,8 @@ description: >
 # E2E flow
 
 A PR that changes a flow the e2e suites cover states the new flow; it does
-not run it. Running drafts, adding their assertions and cleanup is the nightly
-automation's job.
+not run it. Running drafts, adding their assertions and declaring their test
+resources (section 6) is the nightly automation's job.
 
 ## 1. Detect
 
@@ -170,3 +170,52 @@ Print the outcome line (`e2e-flow: <Result> @ <short sha>`). Any new commit
 invalidates the record: rerun this skill, reusing the earlier answers when the
 new commits do not touch the flow. `gh stack submit` is checked against the
 current branch only; run the skill on each layer you changed.
+
+## 6. Test resources in a completed test
+
+Drafts stay act-only (above). Every `e2e-agent/` test that has real checks, by
+automation or by hand, owns the data it uses:
+
+1. **Declare** what the flow creates or depends on, at the top of the test,
+   through the `resources` fixture of `e2e-agent/utils/test-resources.ts`.
+2. **Run only through what was declared.** A flow that edits or deletes
+   something gets its own copy; it does not touch a folder, session, user or
+   project that another test or person owns.
+3. **Leave cleanup to the fixture.** It removes everything declared through the
+   admin API after the test, including when the test failed midway. Do not add
+   cleanup steps to the body.
+
+```ts
+import { expect, unique } from "e2e";
+import { apiEndpoint, signIn } from "../utils/login";
+import { test } from "../utils/test-resources";
+
+test("a member renames a folder", async ({ agent, app, resources, screen }) => {
+  const user = await resources.createUser("rename-folder");
+  const folder = resources.vfolder("rename-folder");
+  await signIn(app, screen, user.email, user.password, apiEndpoint);
+  await agent.act("Create a folder named {name}", {
+    params: { name: unique(folder) },
+  });
+});
+```
+
+| Resource | The flow creates it | The test needs it to exist |
+|---|---|---|
+| Session | `resources.session(slug)` | |
+| Folder | `resources.vfolder(slug)`, or `resources.declare("vfolder", name)` for a dot-prefixed one | |
+| Project | `resources.project(slug)` | `await resources.createProject(slug, { memberEmails })` |
+| User | `resources.user(slug)` | `await resources.createUser(slug, { role, project })` |
+| Anything else | `resources.onCleanup(label, remove)` | `resources.onCleanup(label, remove)` |
+
+- **No declared data, no resources.** A flow that creates and changes nothing on
+  the server (`agent/agent.e2e.ts`, `navigation.e2e.ts`) declares nothing. Fixed
+  choices such as a resource group or a preset name are not resources.
+- **Use a test user when the flow depends on who is signed in** or changes the
+  user. Otherwise keep `session: "admin"`: each purged user leaves its personal
+  project behind for the manager's retention sweep.
+- **User emails are `test-agent-*@lablup.com`, never `e2e-*`.** The fixture
+  generates and enforces this. `e2e/global-cleanup.teardown.ts` purges `e2e-*`
+  accounts, and a sweep from another run must not remove a user in use.
+- Wrap declared names in `unique()` when they reach `agent.act` params, since
+  they change every run.

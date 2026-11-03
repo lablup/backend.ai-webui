@@ -46,6 +46,9 @@ export default {
     },
   ],
   timeout: 180_000,
+  // Test resources are removed in fixture teardown: terminating a session and
+  // purging a user take longer than the default 30s.
+  cleanupTimeout: 120_000,
   agents: {
     default: {
       model,

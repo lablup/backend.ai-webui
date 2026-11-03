@@ -1,13 +1,17 @@
-import { test } from "@e2e-dev/web";
-import { expect } from "e2e";
+import { expect, unique } from "e2e";
+import { apiEndpoint, signIn } from "../utils/login";
 import { currentProjectName, personalProjectName } from "../utils/project";
+import { test } from "../utils/test-resources";
 
 const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 test(
   "the user switches to their personal project from the header project selector",
-  { session: "admin", timeout: 180_000 },
-  async ({ app, agent, browser, screen }) => {
+  { timeout: 180_000 },
+  async ({ app, agent, browser, resources, screen }) => {
+    const user = await resources.createUser("personal-project");
+    await signIn(app, screen, user.email, user.password, apiEndpoint);
+
     await app.open("/data");
     const selector = screen.getByRole("button", "Select Project");
     await expect(selector).toBeVisible({ timeout: 30_000 });
@@ -33,7 +37,7 @@ test(
 
     await agent.act(
       'In the open project list, choose the {project} option listed under the "Personal" group',
-      { params: { project: personalName } },
+      { params: { project: unique(personalName) } },
     );
     await expect(browser).toHaveURL(projectUrl, { timeout: 15_000 });
     await expect(selector).toHaveText(selectedText);

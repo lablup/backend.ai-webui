@@ -1,5 +1,8 @@
 import { type App, type Credential, type Screen, expect } from "e2e";
 
+export const apiEndpoint =
+  process.env.E2E_WEBSERVER_ENDPOINT ?? "http://127.0.0.1:8090";
+
 const loggedIn = (screen: Screen) => screen.getByTestId("user-dropdown-button");
 const concurrentLoginDialog = (screen: Screen) =>
   screen.getByRole("alertdialog", "Logged in elsewhere");
@@ -11,12 +14,13 @@ const concurrentLoginDialog = (screen: Screen) =>
 export async function signIn(
   app: App,
   screen: Screen,
-  account: Credential,
+  username: string,
+  password: Credential["password"] | string,
   endpoint: string,
 ) {
   await app.open("/");
-  await screen.getByLabel("Email or Username").fill(account.username);
-  await screen.getByLabel("Password").fill(account.password);
+  await screen.getByLabel("Email or Username").fill(username);
+  await screen.getByLabel("Password").fill(password);
   const endpointInput = screen.getByRole("textbox", "Endpoint");
   const advanced = screen.getByRole("link", "Advanced");
   if (!(await endpointInput.isVisible()) && (await advanced.isVisible())) {
@@ -38,12 +42,12 @@ export async function signIn(
       if (forced || process.env.E2E_AGENT_NO_FORCE_LOGIN === "1") {
         throw new Error(
           forced
-            ? `e2e-agent: "${account.username}" is still reported as logged in elsewhere after a forced login`
-            : `e2e-agent: "${account.username}" is logged in elsewhere; unset E2E_AGENT_NO_FORCE_LOGIN to end that session and log in`,
+            ? `e2e-agent: "${username}" is still reported as logged in elsewhere after a forced login`
+            : `e2e-agent: "${username}" is logged in elsewhere; unset E2E_AGENT_NO_FORCE_LOGIN to end that session and log in`,
         );
       }
       console.log(
-        `e2e-agent: "${account.username}" was logged in elsewhere; ending that session and logging in`,
+        `e2e-agent: "${username}" was logged in elsewhere; ending that session and logging in`,
       );
       await dialog.getByRole("button", "Login").tap();
       await dialog.waitFor({ state: "hidden", timeout: 10_000 });

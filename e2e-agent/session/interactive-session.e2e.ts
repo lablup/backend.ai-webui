@@ -1,15 +1,14 @@
 import { expect, unique } from "e2e";
-import { test } from "../utils/cleanup";
 import { findRunnableImage } from "../utils/session-image";
+import { test } from "../utils/test-resources";
 
 const resourceGroup = "default";
 
 test(
   "the agent launches an interactive session that reaches RUNNING",
   { session: "admin", timeout: 600_000 },
-  async ({ app, agent, browser, screen, sessionsToCleanup }) => {
-    const name = `e2e-agent-${Date.now()}`;
-    sessionsToCleanup.push(name);
+  async ({ app, agent, browser, resources, screen }) => {
+    const name = resources.session("interactive");
 
     // Seed the environment through the launcher's own `formValues` link: its
     // default is the first accelerator-dedicated image, which only GPU agents
