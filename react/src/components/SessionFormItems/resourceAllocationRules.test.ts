@@ -10,9 +10,9 @@ import {
   presetUnavailableReasonText,
 } from '../ResourcePresetSelect';
 import {
+  acceleratorTypeErrorTarget,
   applyRule,
   getSupportedAcceleratorTypes,
-  isAcceleratorTypeUnsupported,
   matchesPreset,
   resolveAcceleratorType,
   ResourceValues,
@@ -682,31 +682,71 @@ describe('applyRule — data.changed', () => {
     expect(
       applyRule(makeValues({ allocationPreset: 'p-gpu' }), dataChanged, ctx),
     ).toEqual({});
-    expect(isAcceleratorTypeUnsupported('cuda.device', 'p-gpu', ctx)).toBe(
-      false,
+    expect(acceleratorTypeErrorTarget('cuda.device', 'p-gpu', ctx)).toBe(
+      undefined,
     );
-    // Not a preset: the type error applies in preset-only mode too.
-    expect(isAcceleratorTypeUnsupported('cuda.device', 'custom', ctx)).toBe(
-      true,
+    // No group type runs the image: R3 zeroes the accelerator, no type error.
+    expect(acceleratorTypeErrorTarget('cuda.device', 'custom', ctx)).toBe(
+      undefined,
     );
-    expect(isAcceleratorTypeUnsupported('cuda.device', null, ctx)).toBe(true);
     expect(
-      isAcceleratorTypeUnsupported(
-        'cuda.device',
-        'p-gpu',
-        makeCtx({ image: rocmOnlyImage }),
-      ),
-    ).toBe(true);
-    expect(
-      isAcceleratorTypeUnsupported('cuda.device', 'p-gpu', makeCtx()),
-    ).toBe(false);
-    expect(
-      isAcceleratorTypeUnsupported(
+      acceleratorTypeErrorTarget(
         'cuda.device',
         'custom',
         makeCtx({ image: undefined }),
       ),
-    ).toBe(false);
+    ).toBe(undefined);
+  });
+
+  it('names the item that reports an accelerator type the image does not support', () => {
+    // Two group types run the image, neither is the current one.
+    const slots = {
+      slotsInRG: ['cpu', 'mem', 'cuda.device', 'rocm.device', 'tpu.device'],
+      acceleratorSlotsInRG: ['cuda.device', 'rocm.device', 'tpu.device'],
+    };
+    const image = makeImage({ supported_accelerators: ['rocm', 'tpu'] });
+    const free = makeCtx({ ...slots, image });
+    const presetOnlyCtx = presetOnly({ ...slots, image });
+    // Free mode: the type item, whatever the label.
+    expect(acceleratorTypeErrorTarget('cuda.device', 'p-gpu', free)).toBe(
+      'type',
+    );
+    expect(acceleratorTypeErrorTarget('cuda.device', 'custom', free)).toBe(
+      'type',
+    );
+    expect(acceleratorTypeErrorTarget('cuda.device', null, free)).toBe('type');
+    // Preset-only: the visible preset item, only for values that are not a preset's.
+    expect(
+      acceleratorTypeErrorTarget('cuda.device', 'custom', presetOnlyCtx),
+    ).toBe('preset');
+    expect(
+      acceleratorTypeErrorTarget(
+        'cuda.device',
+        'minimum-required',
+        presetOnlyCtx,
+      ),
+    ).toBe('preset');
+    expect(
+      acceleratorTypeErrorTarget('cuda.device', 'p-gpu', presetOnlyCtx),
+    ).toBe(undefined);
+    expect(acceleratorTypeErrorTarget('cuda.device', null, presetOnlyCtx)).toBe(
+      undefined,
+    );
+    // No preset item to carry it: back to the (hidden) type item.
+    expect(
+      acceleratorTypeErrorTarget(
+        'cuda.device',
+        'custom',
+        presetOnly({ ...slots, image, enableResourcePresets: false }),
+      ),
+    ).toBe('type');
+    // A supported type, or no type: nothing.
+    expect(
+      acceleratorTypeErrorTarget('rocm.device', 'custom', presetOnlyCtx),
+    ).toBe(undefined);
+    expect(acceleratorTypeErrorTarget(undefined, 'custom', free)).toBe(
+      undefined,
+    );
   });
 
   it('switches to the only accelerator type the image runs on and keeps the quantity', () => {

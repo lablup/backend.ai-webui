@@ -19,7 +19,7 @@ import {
   BAIDynamicUnitInputNumber,
   BAIFlex,
   BAINumberInput,
-  BAISelector,
+  BAISelect,
   BAITextArea,
   BAITextInput,
   convertToBinaryUnit,
@@ -129,8 +129,7 @@ export const toSessionExecutionSpecFormValue = (
     isBatchSession: !(
       _.isEmpty(info?.startsAt) &&
       _.isNil(info?.batchTimeoutSec) &&
-      _.isEmpty(info?.startupCommand) &&
-      _.isEmpty(info?.bootstrapScript)
+      _.isEmpty(info?.startupCommand)
     ),
     startsAtEnabled: !_.isEmpty(info?.startsAt),
     startsAt: info?.startsAt ?? null,
@@ -181,7 +180,7 @@ export const toKernelExecutionSpecInput = (
       ? { shmem: { expr: value!.shmem! } }
       : null,
     startupCommand: isBatch ? blankToNull(value?.startupCommand) : null,
-    bootstrapScript: isBatch ? blankToNull(value?.bootstrapScript) : null,
+    bootstrapScript: blankToNull(value?.bootstrapScript),
     startsAt:
       isBatch && value?.startsAtEnabled ? blankToNull(value.startsAt) : null,
     batchTimeoutSec,
@@ -209,12 +208,13 @@ const ImageSelectField: React.FC<{
   return (
     <Suspense
       fallback={
-        <BAISelector
+        <BAISelect
+          showSearch={false}
           aria-label={t('general.Loading')}
           disabled
           options={[]}
           placeholder={t('general.Loading')}
-          width="100%"
+          style={{ width: '100%' }}
         />
       }
     >
@@ -439,11 +439,10 @@ export const SessionExecutionSpecFormFields: React.FC<{
                         { validator: validateUniqueSlot },
                       ]}
                     >
-                      <BAISelector
+                      <BAISelect
                         aria-label={t('adminDeploymentPreset.ResourceSlots')}
                         placeholder={t('adminDeploymentPreset.ResourceSlots')}
                         options={slotOptions}
-                        hasSearch
                         onChange={() => revalidateSlotNames()}
                       />
                     </Form.Item>
@@ -511,12 +510,24 @@ export const SessionExecutionSpecFormFields: React.FC<{
         name={clusterModeName}
         rules={[{ required: true }]}
       >
-        <BAISelector
+        <BAISelect
+          showSearch={false}
           aria-label={t('session.ClusterMode')}
           options={[
             { label: t('session.launcher.SingleNode'), value: 'single-node' },
             { label: t('session.launcher.MultiNode'), value: 'multi-node' },
           ]}
+        />
+      </BAIFormItem>
+      {/* Runs for every session type, so it does not sit behind the batch box. */}
+      <BAIFormItem
+        label={t('adminDeploymentPreset.BootstrapScript')}
+        name={[name, 'bootstrapScript']}
+      >
+        <BAITextArea
+          aria-label={t('adminDeploymentPreset.BootstrapScript')}
+          placeholder={t('adminDeploymentPreset.BootstrapScriptPlaceholder')}
+          rows={3}
         />
       </BAIFormItem>
       <BAIFormItem
@@ -600,10 +611,11 @@ export const SessionExecutionSpecFormFields: React.FC<{
                   />
                 </Form.Item>
                 <Form.Item noStyle name={[name, 'batchTimeoutUnit']}>
-                  <BAISelector
+                  <BAISelect
+                    showSearch={false}
                     aria-label={t('session.launcher.BatchJobTimeoutDuration')}
                     disabled={!batchTimeoutEnabled}
-                    width={100}
+                    style={{ width: 100 }}
                     options={[
                       { label: t('time.Sec'), value: 's' },
                       { label: t('time.Min'), value: 'm' },
@@ -619,23 +631,11 @@ export const SessionExecutionSpecFormFields: React.FC<{
           <BAIFormItem
             label={t('session.launcher.StartUpCommand')}
             name={[name, 'startupCommand']}
+            style={{ marginBottom: 0 }}
           >
             <BAITextArea
               aria-label={t('session.launcher.StartUpCommand')}
               rows={2}
-            />
-          </BAIFormItem>
-          <BAIFormItem
-            label={t('adminDeploymentPreset.BootstrapScript')}
-            name={[name, 'bootstrapScript']}
-            style={{ marginBottom: 0 }}
-          >
-            <BAITextArea
-              aria-label={t('adminDeploymentPreset.BootstrapScript')}
-              placeholder={t(
-                'adminDeploymentPreset.BootstrapScriptPlaceholder',
-              )}
-              rows={3}
             />
           </BAIFormItem>
         </>

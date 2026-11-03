@@ -13,6 +13,7 @@ Record Playwright e2e tests as GIF animations, one GIF per test case.
 ## Prerequisites
 
 - `ffmpeg` must be on `PATH` (`command -v ffmpeg`)
+- `gh` 2.99.0 or newer with push access, to attach the recordings to a PR
 - Playwright dev server must be running. The endpoint is read from `e2e/envs/.env.playwright` (`E2E_WEBUI_ENDPOINT`). Do NOT hardcode the port — it varies per environment.
 
 ## How It Works
@@ -65,32 +66,25 @@ Parse the directory name to derive a slug for the GIF filename:
 
 ## Uploading GIFs to GitHub PR
 
-GIFs stay out of git (`e2e/recordings/` is in `.gitignore`). Upload them through the
-PR page's own attachment control via Chrome DevTools MCP — that is what yields
-`github.com/user-attachments` CDN URLs; `gh` and release assets do not. The GIF table
-goes in the PR body, not a comment.
+GIFs stay out of git (`e2e/recordings/` is in `.gitignore`). Attach them with
+`gh pr edit --attach`, following Steps 5-6 of `.claude/agents/playwright-e2e-pr-updater.md`:
+the table goes in the PR body, and each reference is the same path you pass to `--attach`.
+Those steps assume the default `outputDir`.
 
-The workflow:
-
-1. Navigate to the PR page via `mcp__chrome-devtools__navigate_page`
-2. Enter edit mode on the PR body (click "Show options" → "Edit comment")
-3. Upload GIFs via the "Attach files" button (`mcp__chrome-devtools__upload_file`) to get CDN URLs
-4. Extract CDN URLs (`github.com/user-attachments/assets/...`) from the textarea
-5. If uploads went to the comment textarea, extract URLs and clear it
-6. Set the PR body textarea content (preserve existing body + append GIF table) using `nativeInputValueSetter`
-7. Submit via the "Update comment" button on the PR body form
-
-This produces persistent GitHub CDN URLs that render correctly in markdown. The user must be logged into GitHub in Chrome for this to work.
-
-See `.claude/agents/playwright-e2e-pr-updater.md` for the full step-by-step Chrome DevTools upload workflow.
+If `ffmpeg` is unavailable, attach the videos instead of GIFs. Run
+`mkdir -p e2e/recordings` and copy each `test-results/{dir}/video.webm` to
+`e2e/recordings/{slug}.webm` first, since every recording has the same basename. `![name](e2e/recordings/{slug}.webm)` plays as a video, also inside a
+table cell.
 
 ## Output Format
 
-Return a markdown table suitable for embedding in a PR description:
+Return a markdown table suitable for embedding in a PR description. Before the upload it
+holds the local paths. After the upload, return the table from the saved PR body, since the
+local paths render nowhere else:
 
 ```markdown
 | Test | Recording |
 |------|-----------|
-| Admin can see the BAIPropertyFilter | ![](https://github.com/user-attachments/assets/{uuid}) |
-| Admin can filter by name | ![](https://github.com/user-attachments/assets/{uuid}) |
+| Admin can see the BAIPropertyFilter | ![Admin can see the BAIPropertyFilter](https://github.com/user-attachments/assets/{uuid}) |
+| Admin can filter by name | ![Admin can filter by name](https://github.com/user-attachments/assets/{uuid}) |
 ```
