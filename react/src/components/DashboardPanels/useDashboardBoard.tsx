@@ -5,6 +5,7 @@
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
+import { useIsCurrentProjectAdmin } from '../../hooks/useCurrentUserProjectRoles';
 import DashboardPanelContent from './DashboardPanelContent';
 import type { BoardLayoutEntry } from './boardLayout';
 import {
@@ -134,6 +135,7 @@ export const useDashboardBoard = ({
   'use memo';
   const { t } = useTranslation();
   const role = useCurrentUserRole();
+  const isProjectAdmin = useIsCurrentProjectAdmin();
   const baiClient = useSuspendedBackendaiClient();
   const [gridEnabled] = useBAISettingUserState(
     'experimental_session_resource_grid',
@@ -150,7 +152,12 @@ export const useDashboardBoard = ({
     inactiveList: baiClient?._config?.inactiveList ?? [],
     hideAgents: !!baiClient?._config?.hideAgents,
   };
-  const visibleEntries = catalogFor(catalog, { page, role, config });
+  const visibleEntries = catalogFor(catalog, {
+    page,
+    role,
+    config,
+    isProjectAdmin,
+  });
   const visibleByKey = new Map(
     visibleEntries.map((entry) => [entry.definition.key, entry]),
   );
