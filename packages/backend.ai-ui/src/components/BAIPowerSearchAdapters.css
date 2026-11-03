@@ -20,8 +20,28 @@
      so a long token runs past the search box; `Token`'s own `max-width: 100%`
      resolves against that span (FR-3931). */
   .bai-power-search .astryx-tokenizer > :has(> .astryx-token) {
-    max-width: 100%;
+    max-width: calc(100% - 40px - var(--spacing-1));
     min-width: 0;
+  }
+
+  /* Tokenizer pins its clear/busy lane absolutely over the first row and parks
+     the empty input absolutely behind the chips, so a chip ran under Clear all
+     and a wide chip covered the whole input. Keep chips out of the lane and the
+     input in flow after them, as its own click target. */
+  .bai-power-search .astryx-tokenizer:has(.astryx-token) {
+    padding-inline-end: calc(
+      var(--_tokenizer-end-lane-reserve, 0px) + var(--spacing-1)
+    );
+  }
+
+  .bai-power-search .astryx-tokenizer:has(.astryx-token) > input {
+    position: relative;
+    inset: auto;
+    flex: 1 1 40px;
+    width: 0;
+    min-width: 40px;
+    padding-inline-end: 0;
+    text-align: start;
   }
 
   /* `Token`'s click target is `all: unset`, which inlines the label and so
