@@ -4,9 +4,9 @@
  *
  * Usage: node scripts/strip-sourcemaps.mjs <build-dir> <out-dir>
  *
- * Skips *.js.map / *.mjs.map / *.cjs.map / *.css.map, removes the trailing
- * sourceMappingURL comments of JS/CSS files, then fails if a source map is
- * still reachable: an inline `data:` map or a map-shaped file.
+ * Leaves out *.js.map / *.css.map and any other map-shaped *.map file, removes
+ * the trailing sourceMappingURL comments of JS/CSS files, then fails if an
+ * inline `data:` map is still in comment position.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -15,15 +15,24 @@ import { fileURLToPath } from 'node:url';
 const SOURCE_MAP_FILE = /\.(?:[cm]?js|css)\.map$/i;
 const SCRIPT_OR_STYLE = /\.(?:[cm]?js|css)$/i;
 const INLINE_MAP_SCAN = /\.(?:[cm]?js|css|html?)$/i;
+const MAP_COMMENT =
+  /(?:\/\/[#@][ \t]*sourceMappingURL=[^\n]*|\/\*[#@][ \t]*sourceMappingURL=(?:(?!\*\/)[\s\S])*\*\/)/g;
 // Only the run of comments at the very end of a file — the place bundlers put
 // them — so a string that merely contains the text is left alone.
-const TRAILING_MAP_COMMENTS =
-  /(?:\s*(?:\/\/[#@][ \t]*sourceMappingURL=[^\n]*|\/\*[#@][ \t]*sourceMappingURL=[\s\S]*?\*\/))+\s*$/;
-const INLINE_MAP = /sourceMappingURL=data:/;
+const TRAILING_MAP_COMMENTS = new RegExp(
+  `(?:\\s*${MAP_COMMENT.source})+\\s*$`,
+);
+// A comment start after code or at a line start; a quoted string does not match.
+const INLINE_MAP = /(?:^|[;})\s])(?:\/\/|\/\*)[#@][ \t]*sourceMappingURL=data:/m;
 
 export function stripTrailingSourceMapComments(text) {
-  if (!text.includes('sourceMappingURL')) return text;
-  return text.replace(TRAILING_MAP_COMMENTS, '\n');
+  if (!text.includes('sourceMappingURL')) return { text, removed: 0 };
+  const match = TRAILING_MAP_COMMENTS.exec(text);
+  if (!match) return { text, removed: 0 };
+  return {
+    text: `${text.slice(0, match.index)}\n`,
+    removed: match[0].match(MAP_COMMENT).length,
+  };
 }
 
 function isMapShaped(file) {
@@ -35,41 +44,49 @@ function isMapShaped(file) {
   }
 }
 
+function isSourceMap(file) {
+  if (!/\.map$/i.test(file) || !fs.lstatSync(file).isFile()) return false;
+  return SOURCE_MAP_FILE.test(file) || isMapShaped(file);
+}
+
 export function stripSourceMaps(srcDir, outDir) {
-  const stats = { skippedMaps: 0, stripped: 0, files: 0 };
+  const stats = { skippedMaps: 0, strippedFiles: 0, removedComments: 0 };
   const problems = [];
-  const walk = (src, out) => {
-    fs.mkdirSync(out, { recursive: true });
-    for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
-      const from = path.join(src, entry.name);
-      const to = path.join(out, entry.name);
-      if (entry.isDirectory()) {
-        walk(from, to);
-        continue;
-      }
-      if (SOURCE_MAP_FILE.test(entry.name)) {
-        stats.skippedMaps++;
-        continue;
-      }
-      stats.files++;
-      if (!SCRIPT_OR_STYLE.test(entry.name)) {
-        fs.copyFileSync(from, to);
-      } else {
-        const text = fs.readFileSync(from, 'utf8');
-        const stripped = stripTrailingSourceMapComments(text);
-        if (stripped !== text) stats.stripped++;
-        fs.writeFileSync(to, stripped);
-      }
-      if (INLINE_MAP_SCAN.test(entry.name)) {
-        if (INLINE_MAP.test(fs.readFileSync(to, 'utf8'))) {
-          problems.push(`inline source map: ${path.relative(outDir, to)}`);
+  fs.cpSync(srcDir, outDir, {
+    recursive: true,
+    preserveTimestamps: true,
+    verbatimSymlinks: true,
+    filter: (src) => {
+      if (!isSourceMap(src)) return true;
+      stats.skippedMaps++;
+      return false;
+    },
+  });
+  const walk = (dir) => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const file = path.join(dir, entry.name);
+      if (entry.isDirectory()) walk(file);
+      if (!entry.isFile() || !INLINE_MAP_SCAN.test(entry.name)) continue;
+      const bytes = fs.readFileSync(file);
+      if (!bytes.includes('sourceMappingURL')) continue;
+      let text = bytes.toString('utf8');
+      if (SCRIPT_OR_STYLE.test(entry.name)) {
+        const result = stripTrailingSourceMapComments(text);
+        if (result.removed > 0) {
+          const { atime, mtime } = fs.statSync(file);
+          fs.writeFileSync(file, result.text);
+          fs.utimesSync(file, atime, mtime);
+          stats.strippedFiles++;
+          stats.removedComments += result.removed;
+          text = result.text;
         }
-      } else if (/\.map$/i.test(entry.name) && isMapShaped(to)) {
-        problems.push(`source map file: ${path.relative(outDir, to)}`);
+      }
+      if (INLINE_MAP.test(text)) {
+        problems.push(`inline source map: ${path.relative(outDir, file)}`);
       }
     }
   };
-  walk(srcDir, outDir);
+  walk(outDir);
   return { stats, problems };
 }
 
@@ -94,6 +111,6 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     process.exit(1);
   }
   console.log(
-    `strip-sourcemaps: ${stats.files} files, ${stats.skippedMaps} maps skipped, ${stats.stripped} comments removed`,
+    `strip-sourcemaps: ${stats.skippedMaps} maps left out, ${stats.removedComments} comments removed from ${stats.strippedFiles} files`,
   );
 }
