@@ -11,9 +11,11 @@ import {
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import {
+  BAIFlex,
   BAIModal,
   BAIModalProps,
   BAINumberInput,
+  BAIQuestionIconWithTooltip,
   BAISelect,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -56,6 +58,13 @@ interface ClientIpMaskingPolicySettingModalProps extends Omit<
   onRequestClose: (success?: boolean) => void;
 }
 
+const labelWithTooltip = (label: string, tooltip: React.ReactNode) => (
+  <BAIFlex gap="xxs" align="center">
+    {label}
+    <BAIQuestionIconWithTooltip title={tooltip} />
+  </BAIFlex>
+);
+
 // Mounted inside the Form, so the watch is fresh on every open of the modal.
 const MaskingModeFormItems: React.FC = () => {
   'use memo';
@@ -66,16 +75,19 @@ const MaskingModeFormItems: React.FC = () => {
   return (
     <>
       <Form.Item
-        label={t('clientIpMasking.Mode')}
+        label={labelWithTooltip(
+          t('clientIpMasking.Mode'),
+          <BAIFlex direction="column" align="start" gap="xxs">
+            {_.map(CLIENT_IP_MASKING_MODES, (mode) => (
+              <span key={mode}>
+                {t(`clientIpMasking.modes.${mode}`, { defaultValue: mode })}:{' '}
+                {t(`clientIpMasking.modeDescriptions.${mode}`)}
+              </span>
+            ))}
+          </BAIFlex>,
+        )}
         name="mode"
         rules={[{ required: true, message: t('clientIpMasking.ModeRequired') }]}
-        extra={
-          watchedMode
-            ? t(`clientIpMasking.modeDescriptions.${watchedMode}`, {
-                defaultValue: '',
-              })
-            : undefined
-        }
       >
         <BAISelect
           placeholder={t('clientIpMasking.Mode')}
@@ -88,7 +100,13 @@ const MaskingModeFormItems: React.FC = () => {
       {watchedMode === 'TRUNCATE' && (
         <>
           <Form.Item
-            label={t('clientIpMasking.IPv4Prefix')}
+            label={labelWithTooltip(
+              t('clientIpMasking.IPv4Prefix'),
+              t('clientIpMasking.PrefixExtra', {
+                max: MAX_IPV4_PREFIX,
+                defaultPrefix: DEFAULT_IPV4_PREFIX,
+              }),
+            )}
             name="ipv4Prefix"
             rules={[
               {
@@ -100,10 +118,6 @@ const MaskingModeFormItems: React.FC = () => {
                 }),
               },
             ]}
-            extra={t('clientIpMasking.PrefixExtra', {
-              max: MAX_IPV4_PREFIX,
-              defaultPrefix: DEFAULT_IPV4_PREFIX,
-            })}
           >
             <BAINumberInput
               width="100%"
@@ -116,7 +130,13 @@ const MaskingModeFormItems: React.FC = () => {
             />
           </Form.Item>
           <Form.Item
-            label={t('clientIpMasking.IPv6Prefix')}
+            label={labelWithTooltip(
+              t('clientIpMasking.IPv6Prefix'),
+              t('clientIpMasking.PrefixExtra', {
+                max: MAX_IPV6_PREFIX,
+                defaultPrefix: DEFAULT_IPV6_PREFIX,
+              }),
+            )}
             name="ipv6Prefix"
             rules={[
               {
@@ -128,10 +148,6 @@ const MaskingModeFormItems: React.FC = () => {
                 }),
               },
             ]}
-            extra={t('clientIpMasking.PrefixExtra', {
-              max: MAX_IPV6_PREFIX,
-              defaultPrefix: DEFAULT_IPV6_PREFIX,
-            })}
           >
             <BAINumberInput
               width="100%"
@@ -255,12 +271,14 @@ const ClientIpMaskingPolicySettingModal: React.FC<
         }
       >
         <Form.Item
-          label={t('clientIpMasking.Target')}
+          label={labelWithTooltip(
+            t('clientIpMasking.Target'),
+            t('clientIpMasking.OnePolicyPerTarget'),
+          )}
           name="targetType"
           rules={[
             { required: true, message: t('clientIpMasking.TargetRequired') },
           ]}
-          extra={t('clientIpMasking.OnePolicyPerTarget')}
         >
           <BAISelect
             disabled={!!policy}
