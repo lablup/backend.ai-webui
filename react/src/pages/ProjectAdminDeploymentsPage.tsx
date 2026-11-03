@@ -7,7 +7,6 @@ import type { ProjectAdminDeploymentsPageDeleteMutation } from '../__generated__
 import type {
   DeploymentFilter,
   DeploymentOrderBy,
-  DeploymentStatus,
   ProjectAdminDeploymentsPageQuery,
 } from '../__generated__/ProjectAdminDeploymentsPageQuery.graphql';
 import { App } from '../app-shim';
@@ -15,6 +14,10 @@ import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDetailDrawer';
 import DeploymentSettingModal from '../components/DeploymentSettingModal';
+import DeploymentStatusCategoryControl, {
+  DEPLOYMENT_STATUS_CATEGORIES,
+  deploymentStatusCategoryFilter,
+} from '../components/DeploymentStatusCategoryControl';
 import { convertToOrderBy } from '../helper';
 import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -44,8 +47,6 @@ import {
   toEntityLabelFilter,
   useIsLabelableEntityType,
   type ModelDeploymentNodeInList,
-  BAISegmentedControl,
-  BAISegmentedControlItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Trash2, SquarePenIcon } from 'lucide-react';
@@ -53,8 +54,6 @@ import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
-
-type DeploymentStatusCategory = 'running' | 'finished';
 
 interface ProjectAdminDeploymentsContentProps {
   projectId: string;
@@ -99,10 +98,9 @@ const ProjectAdminDeploymentsContent: React.FC<
           : ({} as DeploymentFilter),
       ),
       order: parseAsStringLiteral(availableDeploymentSorterValues),
-      statusCategory: parseAsStringLiteral<DeploymentStatusCategory>([
-        'running',
-        'finished',
-      ]).withDefault('running'),
+      statusCategory: parseAsStringLiteral(
+        DEPLOYMENT_STATUS_CATEGORIES,
+      ).withDefault('serving'),
     },
     { history: 'replace' },
   );
@@ -113,14 +111,12 @@ const ProjectAdminDeploymentsContent: React.FC<
 
   const [fetchKey, updateFetchKey] = useFetchKey();
 
-  const finishedStatuses: ReadonlyArray<DeploymentStatus> = ['STOPPED'];
-  const statusCategoryFilter: DeploymentFilter =
-    queryParams.statusCategory === 'finished'
-      ? { status: { in: finishedStatuses } }
-      : { status: { notIn: finishedStatuses } };
+  const statusCategoryFilter = deploymentStatusCategoryFilter(
+    queryParams.statusCategory,
+  );
 
   const queryVariables = {
-    projectId,
+    scope: { project: [{ value: projectId }] },
     filter: {
       ...(queryParams.filter ?? {}),
       ...statusCategoryFilter,
@@ -136,14 +132,14 @@ const ProjectAdminDeploymentsContent: React.FC<
   const data = useLazyLoadQuery<ProjectAdminDeploymentsPageQuery>(
     graphql`
       query ProjectAdminDeploymentsPageQuery(
-        $projectId: UUID!
+        $scope: DeploymentSearchScope!
         $filter: DeploymentFilter
         $orderBy: [DeploymentOrderBy!]
         $limit: Int
         $offset: Int
       ) {
-        projectDeployments(
-          scope: { projectId: $projectId }
+        scopedDeployments(
+          scope: $scope
           filter: $filter
           orderBy: $orderBy
           limit: $limit
@@ -181,9 +177,9 @@ const ProjectAdminDeploymentsContent: React.FC<
   );
 
   const deploymentNodes = filterOutNullAndUndefined(
-    _.map(data.projectDeployments?.edges, 'node'),
+    _.map(data.scopedDeployments?.edges, 'node'),
   );
-  const total = data.projectDeployments?.count ?? 0;
+  const total = data.scopedDeployments?.count ?? 0;
   const editingDeployment =
     editingDeploymentId == null
       ? null
@@ -244,24 +240,13 @@ const ProjectAdminDeploymentsContent: React.FC<
       <BAIFlex direction="column" align="stretch" gap="sm">
         <BAIFlex justify="between" wrap="wrap" gap="sm">
           <BAIFlex gap="sm" align="start" wrap="wrap" style={{ flexShrink: 1 }}>
-            <BAISegmentedControl
+            <DeploymentStatusCategoryControl
               value={queryParams.statusCategory}
-              onChange={(value) => {
-                setQueryParams({
-                  statusCategory: value as typeof queryParams.statusCategory,
-                });
+              onChange={(statusCategory) => {
+                setQueryParams({ statusCategory });
                 setTablePaginationOption({ current: 1 });
               }}
-            >
-              <BAISegmentedControlItem
-                value="running"
-                label={t('deployment.Running')}
-              />
-              <BAISegmentedControlItem
-                value="finished"
-                label={t('deployment.status.Terminated')}
-              />
-            </BAISegmentedControl>
+            />
             <BAIGraphQLPropertyFilter<DeploymentFilter>
               filterProperties={filterProperties}
               value={queryParams.filter ?? undefined}

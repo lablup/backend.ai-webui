@@ -14,12 +14,15 @@ import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
 import { Token } from '@lablup/ui-common/Token';
 import {
+  type BAIEntityLabel,
   BAIColumnType,
   BAIDoubleToken,
+  BAIEntityLabelTargetCell,
   BAIFlex,
   BAIId,
   BAITable,
   BAITableProps,
+  useIsLabelableEntityType,
   useToggle,
   tokenColorForTagColor,
   tokenColorForStatus,
@@ -53,16 +56,20 @@ interface RoleNodesProps extends Omit<
   onChangeOrder?: (
     order: (typeof availableRoleSorterValues)[number] | null,
   ) => void;
+  /** Fired when a label token is clicked; the surface filters its list by it. */
+  onLabelClick?: (label: BAIEntityLabel) => void;
 }
 
 const RoleNodes: React.FC<RoleNodesProps> = ({
   rolesFrgmt,
   customizeColumns,
   onChangeOrder,
+  onLabelClick,
   ...tableProps
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const isLabelable = useIsLabelableEntityType('role');
   const [hiddenColumnKeys, setHiddenColumnKeys] =
     useHiddenColumnKeysSetting('RoleList');
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
@@ -235,6 +242,23 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
       render: (updatedAt: string) =>
         updatedAt ? dayjs(updatedAt).format('YYYY-MM-DD HH:mm') : '-',
     },
+    // Role carries no entityLabels field, so each row loads its own.
+    ...(isLabelable
+      ? [
+          {
+            key: 'labels',
+            title: t('entityLabel.Labels'),
+            render: (_value: unknown, record: RoleNodeInList) => (
+              <BAIEntityLabelTargetCell
+                entityType="role"
+                entityId={record.entityId}
+                name={record.name}
+                onLabelClick={onLabelClick}
+              />
+            ),
+          },
+        ]
+      : []),
   ];
 
   const allColumns = customizeColumns ? customizeColumns(columns) : columns;
