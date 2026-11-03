@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 382 / 532 features covered (72%)**
+**Overall (in-scope routes): 385 / 535 features covered (72%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -25,7 +25,7 @@
 | Serving                  | `/serving`                                       |    7     |    2    | 🔶 29%  |
 | Endpoint Detail          | `/serving/:serviceId`                            |    19    |    8    | 🔶 42%  |
 | Service Launcher         | `/service/start`                                 |    5     |    1    | 🔶 20%  |
-| VFolder / Data           | `/data`                                          |    54    |   41    | 🔶 76%  |
+| VFolder / Data           | `/data`                                          |    56    |   43    | 🔶 77%  |
 | Model Store              | `/model-store`                                   |    6     |    6    | ✅ 100% |
 | Admin Model Store        | `/admin-model-store`                             |    28    |   28    | ✅ 100% |
 | Storage Host             | `/storage-settings/:hostname`                    |    3     |    0    |  ❌ 0%  |
@@ -34,7 +34,7 @@
 | Configurations           | `/settings`                                      |    11    |    9    | 🔶 82%  |
 | Resources                | `/agent-summary`, `/agent`                       |    10    |    3    | 🔶 30%  |
 | Resource Policy          | `/resource-policy`                               |    13    |   10    | 🔶 77%  |
-| User Credentials         | `/credential`                                    |    25    |   18    | 🔶 72%  |
+| User Credentials         | `/credential`                                    |    26    |   19    | 🔶 73%  |
 | Maintenance              | `/maintenance`                                   |    5     |    4    | 🔶 80%  |
 | User Settings            | `/usersettings`                                  |    10    |    1    | 🔶 10%  |
 | Project                  | `/project`                                       |    6     |    5    | 🔶 83%  |
@@ -448,6 +448,8 @@
 | Type selection: Both types for admin                                           | ✅     | `Admin sees both User-type and Project-type radios`                                                                                    |
 | Edit labels (Labels column hover action) and filter by clicking a label        | ✅     | `User can edit labels on a folder and filter the list by a label`                                                                      |
 | Bulk add labels to selected folders                                            | ✅     | `User can add labels to multiple selected folders`                                                                                     |
+| Explorer Metadata tab: edit labels from the Labels row                         | ✅     | `User can edit folder labels from the explorer Metadata tab`                                                                           |
+| Explorer Metadata tab: Edit labels disabled without UPDATE permission          | ✅     | `User cannot edit labels of a folder without update permission in the explorer` (permissions mocked)                                   |
 | Active/Deleted tab switching                                                   | ❌     | -                                                                                                                                      |
 | Usage mode filtering (general/pipeline/automount/model)                        | ❌     | -                                                                                                                                      |
 | Property filtering (name, status, location)                                    | ❌     | -                                                                                                                                      |
@@ -765,6 +767,7 @@
 | Deleted user login blocked                               | ✅     | `Deleted user cannot log in`                                                                                                |
 | Unblock login (More actions) → confirm → success toast   | ✅     | `Admin can unblock a user's failed-login lock from the user list`                                                           |
 | Locked-out user signs in again after unblock             | ✅     | `User can log in again after admin unblocks their failed-login lock`                                                        |
+| User Detail modal: edit labels from the Labels row       | ✅     | `Admin can edit a user's labels from the user info modal`                                                                   |
 | Allowed IP restriction enforcement (active session)      | ✅     | `User can access pages when their current IP is in the allowed list` / `User is denied access after admin revokes their IP` |
 | User name click → UserInfoModal                          | ❌     | -                                                                                                                           |
 | Bulk edit → UpdateUsersModal                             | ❌     | -                                                                                                                           |

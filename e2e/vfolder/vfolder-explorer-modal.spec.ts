@@ -1,6 +1,9 @@
 // spec: FolderExplorerModal-Test-Plan.md
+import { createAccountApiContext } from '../utils/admin-api';
 import { FolderExplorerModal } from '../utils/classes/vfolder/FolderExplorerModal';
 import { cleanupVFolderSafely } from '../utils/cleanup-util';
+import { getE2EVFolderHost } from '../utils/e2e-scope';
+import { skipUnlessLabelableEntityType } from '../utils/feature-gate-util';
 import {
   loginAsUser,
   navigateTo,
@@ -8,9 +11,10 @@ import {
   moveToTrashAndVerify,
   deleteForeverAndVerifyFromTrash,
   modifyConfigToml,
+  userInfo,
   webuiEndpoint,
 } from '../utils/test-util';
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, APIRequestContext, Page } from '@playwright/test';
 
 const openFolderExplorer = async (
   page: Page,
@@ -292,6 +296,133 @@ test.describe(
 
       // 3. Close modal
       await modal.close();
+    });
+  },
+);
+
+// #10388: the explorer's Metadata tab carries a Labels row whose hover
+// action edits the folder's labels. Each test creates its own user folder
+// through the API and purges it in afterEach.
+test.describe(
+  'VFolder Explorer Modal - Labels',
+  {
+    tag: ['@vfolder', '@functional', '@regression', '@requires-manager-v26.9'],
+  },
+  () => {
+    let api: APIRequestContext | undefined;
+    let folderId: string | undefined;
+
+    const createFolderAndOpenExplorer = async (page: Page) => {
+      const folderName = `e2e-test-folder-explorer-label-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+      api = await createAccountApiContext(userInfo.user);
+      const created = await api.post('/func/folders', {
+        data: {
+          name: folderName,
+          host: await getE2EVFolderHost(),
+          usage_mode: 'general',
+          permission: 'rw',
+        },
+      });
+      expect(created.ok()).toBeTruthy();
+      folderId = (await created.json()).id;
+
+      await page.goto(`${webuiEndpoint}/data?folder=${folderId}`);
+      const modal = new FolderExplorerModal(page);
+      await modal.waitForOpen();
+      await modal.verifyFolderName(folderName);
+      const dialog = page.getByRole('dialog').first();
+      await expect(
+        dialog.getByRole('button', { name: 'Metadata', exact: true }),
+      ).toBeVisible();
+      await expect(
+        dialog.getByRole('term').filter({ hasText: /^Labels$/ }),
+      ).toBeVisible({ timeout: 20000 });
+      // Edit labels is a hover action of the Labels definition.
+      const labelsRow = dialog
+        .locator('dd')
+        .filter({ has: page.getByRole('button', { name: 'Edit labels' }) });
+      await labelsRow.hover();
+      return {
+        labelsRow,
+        editButton: labelsRow.getByRole('button', { name: 'Edit labels' }),
+      };
+    };
+
+    test.beforeEach(async ({ page, request }) => {
+      api = undefined;
+      folderId = undefined;
+      await loginAsUser(page, request);
+      await skipUnlessLabelableEntityType(
+        page,
+        'vfolder',
+        'Folder labels require a manager that accepts vfolder labels (#10166)',
+      );
+    });
+
+    test.afterEach(async () => {
+      if (!api) return;
+      if (folderId) {
+        await api
+          .delete('/func/folders', { data: { vfolder_id: folderId } })
+          .catch(() => undefined);
+        await api
+          .post('/func/folders/delete-from-trash-bin', {
+            data: { vfolder_id: folderId },
+          })
+          .catch(() => undefined);
+      }
+      await api.dispose();
+      api = undefined;
+    });
+
+    test('User can edit folder labels from the explorer Metadata tab', async ({
+      page,
+    }) => {
+      const { labelsRow, editButton } = await createFolderAndOpenExplorer(page);
+      await expect(labelsRow).toHaveText(/^-/);
+
+      await editButton.click();
+      const labelModal = page.getByRole('dialog', { name: 'Edit labels' });
+      await expect(labelModal).toBeVisible();
+      await labelModal.getByRole('textbox', { name: 'Key' }).fill('env');
+      await labelModal.getByRole('textbox', { name: 'Value' }).fill('prod');
+      await labelModal.getByRole('button', { name: 'Save' }).click();
+      await expect(page.getByText('Labels saved.').first()).toBeVisible();
+      await expect(labelModal).toBeHidden({ timeout: 30000 });
+
+      // The tokens are display-only here, not filter buttons.
+      await expect(
+        labelsRow.getByText('env=prod', { exact: true }),
+      ).toBeVisible({ timeout: 30000 });
+    });
+
+    test('User cannot edit labels of a folder without update permission in the explorer', async ({
+      page,
+    }) => {
+      // Report the folder without UPDATE so the explorer treats it as a
+      // folder the user may only read.
+      await page.route('**/admin/gql', async (route) => {
+        if (
+          !(route.request().postData() ?? '').includes(
+            'FolderExplorerModalV2Query',
+          )
+        ) {
+          await route.fallback();
+          return;
+        }
+        const response = await route.fetch();
+        const body = await response.json();
+        const node = body?.data?.vfolderNode;
+        if (Array.isArray(node?.permissions)) {
+          node.permissions = node.permissions.filter(
+            (permission: string) => permission !== 'UPDATE',
+          );
+        }
+        await route.fulfill({ response, json: body });
+      });
+
+      const { editButton } = await createFolderAndOpenExplorer(page);
+      await expect(editButton).toBeDisabled();
     });
   },
 );
