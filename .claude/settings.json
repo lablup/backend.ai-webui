@@ -39,17 +39,19 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"${CLAUDE_PROJECT_DIR:-.}\"/.claude/scripts/block-gt.sh"
+            "command": "bash \"${CLAUDE_PROJECT_DIR:-.}\"/.claude/scripts/block-gt.sh"
           },
           {
             "type": "command",
             "if": "Bash(gh pr create*)",
-            "command": "\"${CLAUDE_PROJECT_DIR:-.}\"/.claude/scripts/require-e2e-flow.sh"
+            "command": "bash \"${CLAUDE_PROJECT_DIR:-.}\"/.claude/scripts/require-e2e-flow.sh",
+            "onFailure": "block"
           },
           {
             "type": "command",
             "if": "Bash(gh stack submit*)",
-            "command": "\"${CLAUDE_PROJECT_DIR:-.}\"/.claude/scripts/require-e2e-flow.sh"
+            "command": "bash \"${CLAUDE_PROJECT_DIR:-.}\"/.claude/scripts/require-e2e-flow.sh",
+            "onFailure": "block"
           }
         ]
       }
