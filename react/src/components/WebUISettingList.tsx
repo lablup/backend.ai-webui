@@ -25,6 +25,7 @@ import type { SettingItemProps } from './SettingItem';
 import SettingList, { type SettingGroup } from './SettingList';
 import { useWebUISettingLabels } from './WebUISettingLabels';
 import { Button } from '@lablup/ui-common/Button';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAIAlert,
   BAIButton,
@@ -70,7 +71,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { message, modal } = App.useApp();
+  const { modal } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
   const labels = useWebUISettingLabels();
   const rawConfig = useRawConfig();
@@ -144,13 +145,25 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
 
   // Writes both scopes from `next` and reloads; the reloaded page runs the
   // merge again, which is the feedback.
+  const changedTitles = (
+    next: WebUISettingsDocument,
+    scope: WebUISettingDefinition['scope'],
+  ) =>
+    WEBUI_SETTING_DEFINITIONS.filter(
+      (definition) =>
+        definition.scope === scope &&
+        !_.isEqual(next[definition.key], saved[definition.key]),
+    ).map((definition) => labels.items[definition.key].title);
+
   const persist = async (next: WebUISettingsDocument) => {
     setIsApplying(true);
+    let isDomainSaved = false;
     try {
       await updateDomainAppConfig(
         WEBUI_SETTINGS_CONFIG_KEY,
         buildWebUISettingsDocument('domain', next, fileState),
       );
+      isDomainSaved = true;
       if (canEditPublic) {
         await updatePublicDomainAppConfig(
           WEBUI_SETTINGS_CONFIG_KEY,
@@ -160,8 +173,37 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
       isLeavingAfterApplyRef.current = true;
       window.location.reload();
     } catch (error) {
-      message.error(getErrorMessage(error));
       setIsApplying(false);
+      // The domain write lands first, so a public failure leaves a partial save.
+      const notApplied = [
+        ...(isDomainSaved ? [] : changedTitles(next, 'domain')),
+        ...(canEditPublic ? changedTitles(next, 'public') : []),
+      ];
+      modal.error({
+        title: isDomainSaved
+          ? t('webuiSettings.PartiallyApplied')
+          : t('webuiSettings.NotApplied'),
+        content: (
+          <BAIFlex direction="column" align="stretch" gap="xs">
+            <Text>{getErrorMessage(error)}</Text>
+            {notApplied.length > 0 && (
+              <>
+                <Text>{t('webuiSettings.NotAppliedItems')}</Text>
+                <BAIFlex direction="column" align="start" gap="xxs">
+                  {notApplied.map((title) => (
+                    <Text key={title} weight="semibold">
+                      {title}
+                    </Text>
+                  ))}
+                </BAIFlex>
+              </>
+            )}
+            {isDomainSaved && (
+              <Text>{t('webuiSettings.PartiallyAppliedDesc')}</Text>
+            )}
+          </BAIFlex>
+        ),
+      });
     }
   };
   const applySettings = () => persist(draft);
