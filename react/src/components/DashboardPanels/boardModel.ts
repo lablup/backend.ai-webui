@@ -200,6 +200,29 @@ export const updatePanel = (
   ),
 });
 
+/**
+ * Puts user-made panels on the board or takes them off it while keeping them;
+ * a catalog card is added or removed instead (`addPanel` / `removePanel`).
+ */
+export const setPanelsHidden = (
+  board: DashboardBoard,
+  ids: ReadonlyArray<string>,
+  hidden: boolean,
+): DashboardBoard => {
+  const targets = new Set(ids);
+  if (!board.panels.some((panel) => targets.has(panel.id))) return board;
+  return {
+    ...board,
+    panels: board.panels.map((panel) =>
+      targets.has(panel.id)
+        ? hidden
+          ? { ...panel, hidden: true }
+          : _.omit(panel, 'hidden')
+        : panel,
+    ),
+  };
+};
+
 const layoutEntryOf = (panel: PersistedPanelV2): BoardLayoutEntry => ({
   id: panel.id,
   columnSpan: panel.columnSpan,
@@ -251,7 +274,7 @@ export const toBoardLayout = (
   );
   return board.panels.flatMap((panel) => {
     const definition = byKey.get(panel.key);
-    if (!definition || !isRenderable(panel)) return [];
+    if (!definition || panel.hidden || !isRenderable(panel)) return [];
     const { minSize } = sizeOf(definition, panel.viz);
     return [
       {
@@ -338,8 +361,11 @@ export const sanitizeBoard = (
     const settings = sanitizePanelSettings(panel.settings, definition);
     return [
       {
-        ..._.omit(panel, 'settings'),
+        ..._.omit(panel, 'settings', 'hidden'),
         ...(settings ? { settings } : {}),
+        ...(panel.hidden === true && definition.kind === 'preset'
+          ? { hidden: true }
+          : {}),
         columnSpan: isPositiveNumber(panel.columnSpan)
           ? panel.columnSpan
           : defaultSize.columnSpan,
@@ -424,6 +450,9 @@ export const renderedPanelKeys = (
       .map((entry) => entry.definition.key),
   );
   return new Set(
-    board.panels.map((panel) => panel.key).filter((key) => usable.has(key)),
+    board.panels
+      .filter((panel) => !panel.hidden)
+      .map((panel) => panel.key)
+      .filter((key) => usable.has(key)),
   );
 };
