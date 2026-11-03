@@ -293,13 +293,12 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
 const ADMIN_ORDER = {
   projectSessionStatus: 1,
   pendingSessions: 2,
-  schedulingFailures: 3,
-  activeAgents: 4,
-  agentStats: 5,
-  failuresByEntityType: 6,
-  projectAuditLog: 7,
-  topProjectsUsage: 8,
-  fairShare: 9,
+  activeAgents: 3,
+  agentStats: 4,
+  failuresByEntityType: 5,
+  projectAuditLog: 6,
+  topProjectsUsage: 7,
+  fairShare: 8,
 } as const;
 
 const adminOrder = (key: keyof typeof ADMIN_ORDER) => ({
@@ -448,7 +447,8 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(4, 4),
     minSize: size(2, 3),
     settings: ['range'],
-    ...adminOrder('schedulingFailures'),
+    // Addable from the sider; boards that already hold it keep it.
+    defaultHidden: true,
   },
   {
     key: 'activeAgents',

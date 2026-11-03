@@ -101,7 +101,6 @@ describe('PANEL_CATALOG', () => {
       [
         'projectSessionStatus',
         'pendingSessions',
-        'schedulingFailures',
         'activeAgents',
         'agentStats',
         'failuresByEntityType',
