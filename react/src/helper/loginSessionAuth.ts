@@ -538,11 +538,13 @@ export async function loadConfigFromWebServer(
       backendaiutils.deleteNestedKeyFromObject(config, key);
     });
 
-    // Merge with the current raw config stored in the Jotai atom.
-    // For backward compat, we also try the Lit shell element.
+    // Merge onto the bundled config.toml, not the current state: that may
+    // already carry another endpoint's server config.
     const { jotaiStore } = await import('../components/DefaultProviders');
-    const { rawConfigState } = await import('../hooks/useWebUIConfig');
-    const currentConfig = jotaiStore.get(rawConfigState) ?? {};
+    const { rawConfigState, fetchAppConfigOnce } =
+      await import('../hooks/useWebUIConfig');
+    const { config: bundledConfig } = await fetchAppConfigOnce();
+    const currentConfig = structuredClone(bundledConfig ?? {});
     const mergedConfig = backendaiutils.mergeNestedObjects(
       currentConfig,
       config,
@@ -553,7 +555,7 @@ export async function loadConfigFromWebServer(
 
     // Re-process the merged config
     const { refreshConfigFromToml } = await import('./loginConfig');
-    const { loginConfigState, autoLogoutState, loginPluginState } =
+    const { loginConfigState, autoLogoutState } =
       await import('../hooks/useWebUIConfig');
     // `mergedConfig` keeps this page's own endpoint (the webserver's was
     // stripped above); the public slice belongs to the server being joined.
@@ -570,7 +572,8 @@ export async function loadConfigFromWebServer(
     );
     jotaiStore.set(loginConfigState, effectiveLoginConfig);
     jotaiStore.set(autoLogoutState, effectiveLoginConfig.autoLogout);
-    jotaiStore.set(loginPluginState, effectiveLoginConfig.loginPlugin);
+    // loginPluginState stays on the bundled value: the login screen is drawn
+    // before any endpoint is known, so a server's login plugin cannot apply.
   }
 }
 
