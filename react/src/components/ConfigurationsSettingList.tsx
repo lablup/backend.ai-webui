@@ -35,6 +35,7 @@ const defaultConfigurationsSettings: BAIConfigurationsSetting = {
   atom: false,
   atom_plus: false,
   atom_max: false,
+  rebel100: false,
   gaudi2: false,
   warboy: false,
   rngd: false,
@@ -58,6 +59,7 @@ interface BAIConfigurationsSetting {
   atom: boolean;
   atom_plus: boolean;
   atom_max: boolean;
+  rebel100: boolean;
   gaudi2: boolean;
   warboy: boolean;
   rngd: boolean;
@@ -77,6 +79,7 @@ const resourcesSlots: {
   'atom.device': 'atom',
   'atom-plus.device': 'atom_plus',
   'atom-max.device': 'atom_max',
+  'rebel100.device': 'rebel100',
   'warboy.device': 'warboy',
   'rngd.device': 'rngd',
   'hyperaccel-lpu.device': 'hyperaccel_lpu',
@@ -344,6 +347,22 @@ const ConfigurationsSettingList = () => {
           ),
           value: options.atom_max,
           defaultValue: defaultConfigurationsSettings.atom_max,
+          checkboxProps: {
+            disabled: true,
+          },
+        },
+        {
+          type: 'checkbox',
+          title: t('settings.Rebel100Support'),
+          description: (
+            <>
+              {t('settings.DescRebel100Support')}
+              <br />
+              {t('settings.RequireRebel100Plugin')}
+            </>
+          ),
+          value: options.rebel100,
+          defaultValue: defaultConfigurationsSettings.rebel100,
           checkboxProps: {
             disabled: true,
           },
