@@ -235,6 +235,14 @@ bundle: dep_web
 	@mkdir -p ./app
 	@cd build/web; zip -r -6 ../../app/backend.ai-webui-bundle-$(BUILD_DATE).zip . > /dev/null
 	@mv ./app/backend.ai-webui-bundle-$(BUILD_DATE).zip ./app/backend.ai-webui-bundle-$(BUILD_VERSION).zip
+	@# Same bundle without source maps: drop the .map files and the
+	@# sourceMappingURL comments pointing at them, on a copy of build/web.
+	@rm -rf ./build/web-nosourcemap
+	@cp -Rp build/web build/web-nosourcemap
+	@find build/web-nosourcemap -name '*.map' -type f -delete
+	@find build/web-nosourcemap -type f \( -name '*.js' -o -name '*.mjs' -o -name '*.css' \) -exec perl -ni -e 'print unless m{^\s*(//|/\*)# sourceMappingURL=}' {} +
+	@cd build/web-nosourcemap; zip -r -6 ../../app/backend.ai-webui-bundle-$(BUILD_VERSION)-nosourcemap.zip . > /dev/null
+	@rm -rf ./build/web-nosourcemap
 	@printf "$(YELLOW)Finished$(NC)\n"
 mac: dep
 	@make mac_x64
@@ -287,6 +295,6 @@ i18n:
 	@pnpm exec i18next-scanner --config ./i18n.config.js
 clean:
 	@rm -rf ./app/backend*; rm -rf ./app/Backend*
-	@rm -rf ./build/unbundle ./build/bundle ./build/web ./build/electron-app
+	@rm -rf ./build/unbundle ./build/bundle ./build/web ./build/web-nosourcemap ./build/electron-app
 	@rm -rf ./react/build
 	@rm -rf ./src/wsproxy/dist
