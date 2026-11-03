@@ -5,12 +5,14 @@
 import { convertToBinaryUnit } from '../../helper';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { Text } from '@lablup/ui-common/Text';
+import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
 
 /**
  * "CPU 4 · RAM 8G · GPU 2": what the watched sessions hold, in the popover
- * rows' format. Suspends; mount under a Suspense with a null fallback.
+ * rows' format, as one row item that renders nothing when no slot is held.
+ * Suspends; mount under a Suspense with a null fallback.
  */
 const SessionMonitorAllocationSummary: React.FC<{
   allocated: Record<string, number>;
@@ -37,12 +39,12 @@ const SessionMonitorAllocationSummary: React.FC<{
     .join(' · ');
 
   return (
-    <>
+    <BAIFlex direction="row" align="center" gap="xs">
       {separator}
       <Text type="inherit" textWrap="nowrap">
         {text}
       </Text>
-    </>
+    </BAIFlex>
   );
 };
 

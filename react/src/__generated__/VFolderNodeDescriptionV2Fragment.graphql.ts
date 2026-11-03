@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e8bd2a902a3804b68c49dd6667eafcc2>>
+ * @generated SignedSource<<2bbd7b83d52ff53efda2c5df0a3e6c4a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
+export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
 export type VFolderOperationStatus = "CLONING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
 export type VFolderOwnershipType = "GROUP" | "USER" | "%future added value";
@@ -20,6 +21,9 @@ export type VFolderNodeDescriptionV2Fragment$data = {
     readonly permission: VFolderMountPermission;
   };
   readonly entityId: string;
+  readonly entityLabels: {
+    readonly " $fragmentSpreads": FragmentRefs<"BAIEntityLabelSettingModalFragment" | "BAIEntityLabelTokensFragment">;
+  } | null | undefined;
   readonly host: string;
   readonly id: string;
   readonly metadata: {
@@ -43,6 +47,7 @@ export type VFolderNodeDescriptionV2Fragment$data = {
     } | null | undefined;
     readonly userId: string | null | undefined;
   };
+  readonly permissions: ReadonlyArray<PermissionBit>;
   readonly quota: {
     readonly maxFiles: number;
     readonly maxSize: {
@@ -107,6 +112,40 @@ return {
       "kind": "ScalarField",
       "name": "unmanagedPath",
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "permissions",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": [
+        {
+          "kind": "Literal",
+          "name": "limit",
+          "value": 100
+        }
+      ],
+      "concreteType": "EntityLabelConnection",
+      "kind": "LinkedField",
+      "name": "entityLabels",
+      "plural": false,
+      "selections": [
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "BAIEntityLabelTokensFragment"
+        },
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "BAIEntityLabelSettingModalFragment"
+        }
+      ],
+      "storageKey": "entityLabels(limit:100)"
     },
     {
       "alias": null,
@@ -301,6 +340,6 @@ return {
 };
 })();
 
-(node as any).hash = "51eee52585925fdce057dca181127912";
+(node as any).hash = "e0332eee328f1527e3bdc4dfd7a6dc68";
 
 export default node;

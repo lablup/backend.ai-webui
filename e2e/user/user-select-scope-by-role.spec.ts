@@ -3,7 +3,6 @@
 import { createAdminApiContext, gqlAdmin } from '../utils/admin-api';
 import {
   loginAsAdmin,
-  loginAsDomainAdmin,
   loginAsUser,
   logout,
   navigateTo,
@@ -101,7 +100,7 @@ async function searchAndPickUser(
 
 /**
  * Opens Admin Settings > Resource Policies > Keypair and stages the 'User'
- * filter, which both admin roles reach (credential creation is superadmin-only).
+ * filter (the admin console is superadmin-only).
  */
 async function openKeypairPolicyUserFilter(page: Page) {
   await navigateTo(page, 'admin/resource-policy?tab=keypair');
@@ -122,10 +121,7 @@ test.describe(
     ],
   },
   () => {
-    for (const [role, login] of [
-      ['Superadmin', loginAsAdmin],
-      ['Domain admin', loginAsDomainAdmin],
-    ] as const) {
+    for (const [role, login] of [['Superadmin', loginAsAdmin]] as const) {
       test(`${role} can pick users of their domain from the keypair policy user filter`, async ({
         page,
         request,
@@ -154,7 +150,7 @@ test.describe(
           page.getByRole('group', { name: 'Search filters' }),
         ).toContainText(userInfo.user2.email);
 
-        // Both admin roles read the current domain only (ADR 0012).
+        // The admin reads the current domain only (ADR 0012).
         const scoped = operations.filter(
           (op) => op.name === 'BAIScopedUserSelectPaginatedQuery',
         );
