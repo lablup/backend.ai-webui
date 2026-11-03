@@ -18,6 +18,7 @@ export interface BAIScopedImageSelectProps extends Omit<BAIComplexSelectProps, '
     scope: ImageSearchScope;
     ref?: React.Ref<BAIScopedImageSelectRef>;
 }
+export declare const toImageNameSearch: (input: string) => string;
 /**
  * Paginated image selector backed by `scopedImagesV2` (ImageV2) over the required `scope`.
  * Stored value is the image UUID so callers can pass it directly to
