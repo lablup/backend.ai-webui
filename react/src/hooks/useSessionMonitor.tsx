@@ -43,7 +43,7 @@ export type SessionMonitorScope = {
   filter: string;
   /** Only the viewer's own sessions: the default, and what alerts need. */
   onlyMine: boolean;
-  /** The viewer may read other users' sessions (domain admin and above). */
+  /** The viewer may read other users' sessions (superadmin only). */
   isDomainAdmin: boolean;
 };
 /** Written by `SessionMonitorWatcher`; null hides the chip. */
@@ -55,10 +55,10 @@ export const sessionMonitorScopeAtom = atom<SessionMonitorScope | null>(null);
  */
 export const useSessionMonitorCondition = () => {
   'use memo';
-  const { isSuperAdmin, isAdmin } = useCurrentUserProjectRoles();
+  const { isSuperAdmin } = useCurrentUserProjectRoles();
   const [currentUser] = useCurrentUserInfo();
   const [condition] = useBAISettingUserState('session_monitor_condition');
-  const isDomainAdmin = isSuperAdmin || isAdmin;
+  const isDomainAdmin = isSuperAdmin;
   const userId = currentUser.uuid ?? '';
   return {
     condition: hasStoredUserSetting('session_monitor_condition')
@@ -80,7 +80,7 @@ export const useSessionMonitorScope = (): SessionMonitorScope => {
   return {
     scopeId: isDomainAdmin ? `domain:${domainName}` : `user:${userId}`,
     filter: condition,
-    // Below domain admin the user scope already holds only their sessions.
+    // Below superadmin the user scope already holds only their sessions.
     onlyMine:
       !isDomainAdmin || condition.includes(sessionMonitorOwnerFilter(userId)),
     isDomainAdmin,

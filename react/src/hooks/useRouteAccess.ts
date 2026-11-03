@@ -77,12 +77,9 @@ export const useRouteAccessDecision = (): RouteAccessDecision => {
 
   if (access) {
     const allowed =
-      access === 'superadmin'
+      access === 'superadmin' || access === 'admin'
         ? effectiveAdminRole === 'superadmin'
-        : access === 'admin'
-          ? effectiveAdminRole === 'superadmin' ||
-            effectiveAdminRole === 'admin'
-          : effectiveAdminRole !== 'none';
+        : effectiveAdminRole !== 'none';
     if (!allowed) {
       return 'unauthorized';
     }

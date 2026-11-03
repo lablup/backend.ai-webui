@@ -57,7 +57,6 @@ vi.mock('../helper', async (importOriginal) => {
 vi.mock('../hooks/useCurrentUserProjectRoles', () => ({
   useCurrentUserProjectRoles: () => ({
     isSuperAdmin: false,
-    isAdmin: false,
     projectAdminIds: [],
   }),
 }));

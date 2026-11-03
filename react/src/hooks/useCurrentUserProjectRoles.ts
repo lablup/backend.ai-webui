@@ -13,8 +13,6 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 export interface CurrentUserProjectRolesResult {
   /** `true` when the authenticated user is a super-admin (derived from baiClient). */
   isSuperAdmin: boolean;
-  /** `true` when the user's legacy role is `admin` (super-admins excluded). */
-  isAdmin: boolean;
   /**
    * UUIDs of the user's member projects on which they hold the `scope_admin`
    * permission, through any scope that governs the project.
@@ -86,21 +84,19 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
       : [];
 
   const isSuperAdmin: boolean = !!baiClient?.is_superadmin;
-  const isAdmin: boolean = !!baiClient?.is_admin && !isSuperAdmin;
 
   return {
     isSuperAdmin,
-    isAdmin,
     projectAdminIds,
   };
 };
 
-export type EffectiveAdminRole =
-  'superadmin' | 'admin' | 'currentProjectAdmin' | 'none';
+export type EffectiveAdminRole = 'superadmin' | 'currentProjectAdmin' | 'none';
 
 /**
  * Derived hook returning the user's effective admin role with priority:
- * superadmin > admin > project > none.
+ * superadmin > project > none. The legacy `admin` role (domain admin) gets no
+ * admin tier of its own.
  *
  * Project-admin rights are evaluated against the project the URL names
  * (`/project/:projectName/*`), falling back to the ambient current-project
@@ -111,11 +107,10 @@ export type EffectiveAdminRole =
  * what converges the atom to the URL — from ever mounting.
  */
 export const useEffectiveAdminRole = (): EffectiveAdminRole => {
-  const { isSuperAdmin, isAdmin } = useCurrentUserProjectRoles();
+  const { isSuperAdmin } = useCurrentUserProjectRoles();
   const isCurrentProjectAdmin = useIsCurrentProjectAdmin();
 
   if (isSuperAdmin) return 'superadmin';
-  if (isAdmin) return 'admin';
   if (isCurrentProjectAdmin) return 'currentProjectAdmin';
   return 'none';
 };
@@ -123,7 +118,7 @@ export const useEffectiveAdminRole = (): EffectiveAdminRole => {
 /**
  * Whether the user holds a project-scoped admin role in the target project
  * (URL project, else the current-project atom), regardless of superadmin
- * or admin rights.
+ * rights.
  */
 export const useIsCurrentProjectAdmin = (): boolean => {
   const { projectAdminIds } = useCurrentUserProjectRoles();

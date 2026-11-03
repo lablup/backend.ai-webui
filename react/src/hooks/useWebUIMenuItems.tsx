@@ -147,7 +147,7 @@ const ALL_ADMIN_PAGE_KEYS: ReadonlySet<string> = new Set([
 // Admin-category page keys reachable by a project admin (3-tier admin gating).
 // Project admins see Sessions, Deployments and Members within the admin
 // category; the project's folders are on its Data page. Other admin pages
-// remain visible only to domain admins or superadmins.
+// remain visible only to superadmins.
 const PROJECT_ADMIN_PAGE_KEYS = [
   'project-admin-users',
   'project-admin-deployments',
@@ -558,7 +558,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   // 3-tier admin gating:
   // - 'none': no admin items
   // - 'currentProjectAdmin': only PROJECT_ADMIN_PAGE_KEYS
-  // - 'admin' / 'superadmin': full admin menu MINUS project-admin-only pages,
+  // - 'superadmin': full admin menu MINUS project-admin-only pages,
   //   which their broader equivalents (e.g. `credential`) already cover.
   const adminMenu: Array<WebUIAdminMenuItemType> =
     effectiveAdminRole === 'none'
@@ -792,7 +792,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
 
   // First project-admin page in sider order that survives blocklist /
   // inactive-list filtering. Computed from the un-role-filtered fullAdminMenu
-  // (superadmins' and admins' `adminMenu` excludes project-admin items, but they
+  // (superadmins' `adminMenu` excludes project-admin items, but they
   // can access all of them) — the redirect target for `/project/:name/admin`.
   // `undefined` when the config hides every project-admin page.
   const firstAvailableProjectAdminMenuKey = _.find(
@@ -804,7 +804,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   )?.key;
 
   // The sider's Project Settings entry: only for a project admin of the
-  // current project, even for superadmins/admins (who can still open the
+  // current project, even for superadmins (who can still open the
   // pages by URL).
   const firstAvailableProjectAdminMenuItem = isCurrentProjectAdmin
     ? _.find(projectAdminMenu, (item) => !item.disabled)
