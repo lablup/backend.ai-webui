@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useWebUINavigate } from '../../../hooks';
+import { useIsPersonalProject } from '../../../hooks/useAccessibleProjects';
 import { useProjectPath } from '../../../hooks/useRouteScope';
 import type { SessionLauncherFormValue } from '../../../pages/SessionLauncherPage';
 import DeploymentSettingModal from '../../DeploymentSettingModal';
@@ -103,6 +104,7 @@ export const CreateFolderPanel: React.FC<PanelComponentProps> = () => {
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
   const project = useDashboardProject();
+  const isPersonalProject = useIsPersonalProject(project?.id);
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
@@ -117,6 +119,7 @@ export const CreateFolderPanel: React.FC<PanelComponentProps> = () => {
         <FolderCreateModal
           open={isOpen}
           project={project}
+          allowAutoMount={isPersonalProject}
           onRequestClose={(response) => {
             setIsOpen(false);
             if (response) webuiNavigate(buildProjectPath('data'));
