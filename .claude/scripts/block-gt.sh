@@ -62,9 +62,9 @@ def exec_text(src):
                 seg += line[i:i + 2]
                 i += 2
             elif ch in '\'"':
-                j = i + 1
+                j, escapes = i + 1, ch == '"' or seg.endswith('$')  # $'…' (ANSI-C) honours backslash escapes
                 while j < len(line) and line[j] != ch:
-                    j += 2 if ch == '"' and line[j] == '\\' else 1
+                    j += 2 if escapes and line[j] == '\\' else 1
                 body = line[i + 1:j]
                 i = j + 1
                 if re.search(r'(?:^|[\s;&|(])(?:(?:\S*/)?(?:bash|sh|zsh|dash)(?:\s+-\w+)*\s+-\w*c\w*|eval)\s*$', seg):
@@ -136,7 +136,8 @@ def tokens_find(text):
     for t in lex:
         if skip:
             skip = False
-            continue
+            if not (t and set(t) <= set(';&|()<>')):
+                continue  # the redirect target; an operator (`2> >(…)`) is handled below
         if array:
             array = ')' not in t
             continue
