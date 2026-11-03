@@ -53,8 +53,9 @@ import {
   useBAIBreakpoint,
   useDebounceFn,
   BAICheckboxInput,
+  BAIDynamicList,
   BAINumberInput,
-  BAISelector,
+  BAISelect,
   BAISwitch,
   BAITextArea,
   BAITextInput,
@@ -64,7 +65,6 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronsRight,
-  CircleMinus,
   PlusIcon,
 } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
@@ -141,12 +141,13 @@ const ImageSelectField: React.FC<{
   return (
     <Suspense
       fallback={
-        <BAISelector
+        <BAISelect
           aria-label={t('general.Loading')}
           disabled
           options={[]}
           placeholder={t('general.Loading')}
-          width="100%"
+          style={{ width: '100%' }}
+          showSearch={false}
         />
       }
     >
@@ -868,14 +869,10 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 },
               ]}
             >
-              {/* PILOT-DECISION: antd's custom `showSearch.filterOption`
-                  (case-insensitive label match) dropped — Astryx Selector's
-                  built-in `hasSearch` filtering covers the same UX. */}
-              <BAISelector
+              <BAISelect
                 aria-label={t('adminDeploymentPreset.Runtime')}
                 options={runtimeVariantOptions}
                 placeholder={t('adminDeploymentPreset.SelectRuntimeVariant')}
-                hasSearch
               />
             </BAIFormItem>
 
@@ -1033,58 +1030,70 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             >
               <Form.List name="resourceOpts">
                 {(fields, { add, remove }) => (
-                  <BAIFlex direction="column" gap="xs" align="stretch">
-                    {fields.map(({ key, name, ...rest }) => (
-                      <BAIFlex
-                        key={key}
-                        direction="row"
-                        align="baseline"
-                        gap="xs"
-                      >
-                        <BAIFormItem
-                          {...rest}
-                          name={[name, 'name']}
-                          style={{ marginBottom: 0, flex: 1 }}
-                          rules={[{ required: true, message: '' }]}
-                        >
-                          {/* PILOT-DECISION: antd `AutoComplete` (free text +
-                              one 'shmem' suggestion) has no Astryx equivalent;
-                              converted to a plain text input — the placeholder
-                              already shows the same example. */}
-                          <BAITextInput
-                            aria-label={t('adminDeploymentPreset.ResourceOpts')}
-                            placeholder={t('general.Example', {
-                              value: 'shmem',
-                            })}
-                          />
-                        </BAIFormItem>
-                        <BAIFormItem
-                          {...rest}
-                          name={[name, 'value']}
-                          style={{ marginBottom: 0, flex: 1 }}
-                          rules={[{ required: true, message: '' }]}
-                        >
-                          <BAITextInput
-                            aria-label={t(
-                              'session.launcher.EnvironmentVariableValue',
-                            )}
-                            placeholder={t('general.Example', { value: '64m' })}
-                          />
-                        </BAIFormItem>
-                        <CircleMinus size="1em" onClick={() => remove(name)} />
-                      </BAIFlex>
-                    ))}
-                    <BAIFormItem noStyle>
-                      <BAIButton
-                        type="dashed"
-                        onClick={() => add()}
-                        icon={<PlusIcon />}
-                        block
-                      >
-                        {t('adminDeploymentPreset.AddResourceOpt')}
-                      </BAIButton>
-                    </BAIFormItem>
-                  </BAIFlex>
+                  <BAIDynamicList
+                    items={fields}
+                    addButton={{
+                      onClick: () => add(),
+                      label: t('adminDeploymentPreset.AddResourceOpt'),
+                    }}
+                    onRemove={(field) => remove(field.name)}
+                    columns={[
+                      {
+                        key: 'name',
+                        header: t('adminDeploymentPreset.Name'),
+                        render: ({ key: _key, name, ...rest }, index) => (
+                          <BAIFormItem
+                            {...rest}
+                            name={[name, 'name']}
+                            style={{ marginBottom: 0 }}
+                            rules={[
+                              {
+                                required: true,
+                                message: t(
+                                  'adminDeploymentPreset.ResourceOptNameRequired',
+                                ),
+                              },
+                            ]}
+                            validateTrigger={['onChange', 'onBlur']}
+                          >
+                            <BAITextInput
+                              aria-label={`${t('adminDeploymentPreset.Name')} ${index + 1}`}
+                              placeholder={t('general.Example', {
+                                value: 'shmem',
+                              })}
+                            />
+                          </BAIFormItem>
+                        ),
+                      },
+                      {
+                        key: 'value',
+                        header: t('session.launcher.EnvironmentVariableValue'),
+                        render: ({ key: _key, name, ...rest }, index) => (
+                          <BAIFormItem
+                            {...rest}
+                            name={[name, 'value']}
+                            style={{ marginBottom: 0 }}
+                            rules={[
+                              {
+                                required: true,
+                                message: t(
+                                  'session.launcher.EnvironmentVariableValueRequired',
+                                ),
+                              },
+                            ]}
+                            validateTrigger={['onChange', 'onBlur']}
+                          >
+                            <BAITextInput
+                              aria-label={`${t('session.launcher.EnvironmentVariableValue')} ${index + 1}`}
+                              placeholder={t('general.Example', {
+                                value: '64m',
+                              })}
+                            />
+                          </BAIFormItem>
+                        ),
+                      },
+                    ]}
+                  />
                 )}
               </Form.List>
             </BAIFormItem>
@@ -1121,7 +1130,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   },
                 ]}
               >
-                <BAISelector
+                <BAISelect
+                  showSearch={false}
                   aria-label={t('adminDeploymentPreset.ClusterMode')}
                   placeholder={t('adminDeploymentPreset.SelectClusterMode')}
                   options={[

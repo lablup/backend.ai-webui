@@ -219,6 +219,7 @@ const ConfirmPopoverButton: React.FC<{
       }
     >
       <BAIButton
+        data-testid={`bai-name-action-${action.key}`}
         type="text"
         size="small"
         icon={action.icon}
@@ -542,6 +543,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
             return (
               <BAIButton
                 key={action.key}
+                data-testid={`bai-name-action-${action.key}`}
                 type="text"
                 size="small"
                 icon={action.icon}

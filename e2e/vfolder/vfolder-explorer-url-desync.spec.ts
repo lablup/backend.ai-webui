@@ -44,7 +44,7 @@ test.describe(
       await loginAsUser(page, request);
 
       const folderName = 'e2e-explorer-desync-' + new Date().getTime();
-      await createVFolderAndVerify(page, folderName, 'general', 'user', 'rw');
+      await createVFolderAndVerify(page, folderName);
 
       // Force `FolderExplorerModalV2Query` to suspend for a beat by delaying only
       // that GraphQL operation (the rest of the page is untouched). This is

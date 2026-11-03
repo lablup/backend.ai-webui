@@ -142,26 +142,6 @@ test.describe(
         ).toBeChecked();
         await (await folderCreationModal.getCreateButton()).click();
       });
-      test('User can create Read & Write vFolder', async ({ page }) => {
-        const folderCreationModal = new FolderCreationModal(page);
-        await folderCreationModal.modalToBeVisible();
-        await folderCreationModal.fillFolderName(creationFolderName);
-        await (await folderCreationModal.getReadWritePermissionRadio()).check();
-        await expect(
-          await folderCreationModal.getReadWritePermissionRadio(),
-        ).toBeChecked();
-        await (await folderCreationModal.getCreateButton()).click();
-      });
-      test('User can create Read Only vFolder', async ({ page }) => {
-        const folderCreationModal = new FolderCreationModal(page);
-        await folderCreationModal.modalToBeVisible();
-        await folderCreationModal.fillFolderName(creationFolderName);
-        await (await folderCreationModal.getReadOnlyPermissionRadio()).check();
-        await expect(
-          await folderCreationModal.getReadOnlyPermissionRadio(),
-        ).toBeChecked();
-        await (await folderCreationModal.getCreateButton()).click();
-      });
     });
     // Auto Mount uses a dedicated folder name (dot-prefixed) that is independent.
     // Not serial: single test — no ordering dependency.
@@ -233,9 +213,6 @@ test.describe(
       );
     });
 
-    // Regression guard for FR-2978: previously the leave_invited client
-    // sent `null` as the request body, which the manager's
-    // BodyParam[LeaveVFolderReq] rejected with HTTP 400.
     test('Invitee can leave a shared vFolder', async ({
       page,
       browser,

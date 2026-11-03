@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ce37b3e56805741a5017b81a18ee5dcd>>
+ * @generated SignedSource<<e0bc8986f7a13ea3688f81228fb30cfb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,6 +20,8 @@ export type RolePresetFilter = {
   OR?: ReadonlyArray<RolePresetFilter> | null | undefined;
   autoAssign?: boolean | null | undefined;
   deleted?: boolean | null | undefined;
+  deletedAt?: NullableDateTimeFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   id?: UUIDFilter | null | undefined;
   name?: StringFilter | null | undefined;
   permissions?: RolePresetPermissionNestedFilter | null | undefined;
@@ -53,6 +55,13 @@ export type StringFilter = {
   notStartsWith?: string | null | undefined;
   startsWith?: string | null | undefined;
 };
+export type NullableDateTimeFilter = {
+  after?: string | null | undefined;
+  before?: string | null | undefined;
+  equals?: string | null | undefined;
+  isNull?: boolean | null | undefined;
+  notEquals?: string | null | undefined;
+};
 export type RolePresetPermissionNestedFilter = {
   every?: RolePermissionPresetFilter | null | undefined;
   exists?: boolean | null | undefined;
@@ -65,6 +74,7 @@ export type RolePermissionPresetFilter = {
   OR?: ReadonlyArray<RolePermissionPresetFilter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
   entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   operation?: OperationTypeFilter | null | undefined;
   permission?: PermissionBitFilter | null | undefined;
   rolePresetId?: UUIDFilter | null | undefined;

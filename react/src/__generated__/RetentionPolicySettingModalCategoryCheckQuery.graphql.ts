@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f3d171bf0ab9cb96d7e2f5e92989693b>>
+ * @generated SignedSource<<4cddf9f901b7c98f7b0d801d421938b4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,6 +13,13 @@ export type RetentionCategory = "DEPLOYMENTS" | "LOGIN" | "LOGS" | "RECONCILE_HI
 export type RetentionPolicyFilter = {
   category?: RetentionCategory | null | undefined;
   enabled?: boolean | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
 };
 export type RetentionPolicySettingModalCategoryCheckQuery$variables = {
   filter?: RetentionPolicyFilter | null | undefined;

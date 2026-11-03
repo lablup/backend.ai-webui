@@ -10,7 +10,7 @@ canonical reference, and each BAI wrapper's file header documents its deliberate
 
 ## React Compiler — `'use memo'`
 
-- `babel-plugin-react-compiler` runs in **annotation mode**: memoization happens only in
+- The React Compiler (Oxc, through `@vitejs/plugin-react`) runs in **annotation mode**: memoization happens only in
   function bodies that start with `'use memo'`.
 - Add `'use memo'` as the **first statement of every component body and every custom hook
   body** (function bodies, not files). Never remove, rename, or backtick an existing one.

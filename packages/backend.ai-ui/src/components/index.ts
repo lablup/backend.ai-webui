@@ -15,6 +15,11 @@ export { default as BAIBulkEditFormItem } from './BAIBulkEditFormItem';
 export type { BAIBulkEditFormItemProps } from './BAIBulkEditFormItem';
 export { default as BAIFlex } from './BAIFlex';
 export type { BAIFlexProps } from './BAIFlex';
+export { default as BAIDynamicList } from './BAIDynamicList';
+export type {
+  BAIDynamicListColumn,
+  BAIDynamicListProps,
+} from './BAIDynamicList';
 export { default as BAICard } from './BAICard';
 export type { BAICardProps, BAICardTabItem } from './BAICard';
 export { default as BAITabList } from './BAITabList';
@@ -76,6 +81,7 @@ export {
 } from './BAISelect';
 export type {
   BAISelectProps,
+  BAISelectOption,
   BAISelectOptionProps,
   BAISelectOptionGroupProps,
 } from './BAISelect';
@@ -86,6 +92,20 @@ export type {
   BAIComplexSelectValue,
   BAILabeledValue,
 } from './BAIComplexSelect';
+export { default as BAIEntitySharePermissionSelector } from './BAIEntitySharePermissionSelector';
+export {
+  ENTITY_SHARE_PERMISSION_BITS,
+  ENTITY_SHARE_PERMISSION_PRESETS,
+  normalizeEntitySharePermissionBits,
+  toEntitySharePermissionChoice,
+  useEntitySharePermissionLabels,
+} from './BAIEntitySharePermissionSelector';
+export type {
+  BAIEntitySharePermissionBit,
+  BAIEntitySharePermissionChoice,
+  BAIEntitySharePermissionPreset,
+  BAIEntitySharePermissionSelectorProps,
+} from './BAIEntitySharePermissionSelector';
 export { default as BAINotificationItem } from './BAINotificationItem';
 export type { BAINotificationItemProps } from './BAINotificationItem';
 export { default as BAIModal } from './BAIModal';
@@ -300,8 +320,6 @@ export { default as BAIRadioList, BAIRadioListItem } from './BAIRadioList';
 export type { BAIRadioListProps, BAIRadioListItemProps } from './BAIRadioList';
 export { default as BAISegmentedControl } from './BAISegmentedControl';
 export type { BAISegmentedControlProps } from './BAISegmentedControl';
-export { default as BAISelector } from './BAISelector';
-export type { BAISelectorProps } from './BAISelector';
 export { default as BAISlider } from './BAISlider';
 export type { BAISliderProps } from './BAISlider';
 export { default as BAISwitch } from './BAISwitch';

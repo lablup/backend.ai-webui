@@ -1,4 +1,4 @@
-# Production build of the React app plus the entry-chunk budget
+# Production build of the React app plus the boot-path budget
 # (scripts/bundle-budget.mjs). No other PR check builds the app, so the
 # 5 MiB service-worker precache limit used to surface only on release
 # (observed on main, 2026-10-22). Advisory: see typecheck.yml on `paths:`.
@@ -40,5 +40,5 @@ jobs:
       - uses: ./.github/actions/setup-node-pnpm
       - name: Build the React app
         run: pnpm run build:react-only
-      - name: Entry-chunk budget
+      - name: Boot-path budget
         run: node scripts/bundle-budget.mjs --build react/build | tee -a "$GITHUB_STEP_SUMMARY"

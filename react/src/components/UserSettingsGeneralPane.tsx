@@ -275,7 +275,7 @@ const UserSettingsGeneralPane = () => {
                   }
                 : item,
             ),
-            hasSearch: true,
+            showSearch: true,
           },
           defaultValue: defaultLanguage,
           value: selectedLanguage || defaultLanguage,

@@ -9,7 +9,7 @@ import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { toProjectContext } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
-import FolderCreateModalV2 from './FolderCreateModalV2';
+import FolderCreateModal from './FolderCreateModal';
 import FolderLink from './FolderLink';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import { Banner } from '@lablup/ui-common/Banner';
@@ -22,7 +22,7 @@ import {
   type BAIProjectVfolderSelectRef,
   convertToUUID,
   useBAILogger,
-  BAISelector,
+  BAISelect,
   BAITagsInput,
   BAITextArea,
   BAITextInput,
@@ -495,7 +495,8 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                 },
               ]}
             >
-              <BAISelector
+              <BAISelect
+                showSearch={false}
                 aria-label={t('adminModelCard.AccessLevel')}
                 options={[
                   {
@@ -514,7 +515,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
       </BAIModal>
       {/* Model folders are created in the model-store project, never the
           ambient one. */}
-      <FolderCreateModalV2
+      <FolderCreateModal
         open={isOpenCreateFolderModal}
         project={modelStoreProjectContext}
         initialValidate={true}

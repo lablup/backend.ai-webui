@@ -38,9 +38,11 @@ test("user can manage apps", draft, async ({ app, agent }) => {
   await agent.act('Choose "Switch to Admin Console"');
   await agent.act('Open "Environments" from the side menu');
   await agent.act('Press "Manage Apps" on the first image row');
-  await agent.act('Press "Add" and fill in an app name, protocol and port');
+  await agent.act('Press "Add app" and fill in an app name, protocol and port');
   await agent.act('Press "OK" and confirm the reinstallation notice');
-  await agent.act('Open "Manage Apps" again, delete the added app and press "OK"');
+  await agent.act(
+    'Open "Manage Apps" again, press "Remove" on the added app row and press "OK"',
+  );
 });
 
 // ported from: e2e/environment/environment.spec.ts › Admin can see the BAIPropertyFilter on the Images tab
@@ -78,7 +80,9 @@ test(
     await agent.act("Open the user menu in the header");
     await agent.act('Choose "Switch to Admin Console"');
     await agent.act('Open "Environments" from the side menu');
-    await agent.act("Filter the images by architecture, choosing a listed value");
+    await agent.act(
+      "Filter the images by architecture, choosing a listed value",
+    );
   },
 );
 

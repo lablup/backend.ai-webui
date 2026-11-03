@@ -11,7 +11,7 @@ import {
   useStartSession,
 } from '../hooks/useStartSession';
 import { toProjectContext } from '../types/projectContext';
-import FolderCreateModalV2 from './FolderCreateModalV2';
+import FolderCreateModal from './FolderCreateModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import HuggingFaceModelPreview from './HuggingFaceModelPreview';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
@@ -153,7 +153,7 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
   const vfolderSelectRef = useRef<BAIVFolderSelectRef>(null);
   const [isFolderCreateModalOpen, setIsFolderCreateModalOpen] = useState(false);
   // id → name for selected folders, resolved by BAIVFolderSelect (and seeded
-  // directly when a folder is created through FolderCreateModalV2). The name
+  // directly when a folder is created through FolderCreateModal). The name
   // is needed to build the download path under `/home/work/<folder>/`.
   const [folderNameMap, setFolderNameMap] = useState<Record<string, string>>(
     {},
@@ -413,7 +413,7 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
           </BAIButton>
         </Form.Item>
       </Form>
-      <FolderCreateModalV2
+      <FolderCreateModal
         open={isFolderCreateModalOpen}
         project={toProjectContext(currentProject)}
         initialValues={{ usage_mode: 'model' }}

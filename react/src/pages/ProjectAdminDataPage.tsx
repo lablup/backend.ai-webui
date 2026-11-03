@@ -13,7 +13,7 @@ import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BAITabs from '../components/BAITabs';
 import DeleteForeverVFolderModalV2 from '../components/DeleteForeverVFolderModalV2';
 import DeleteVFolderModalV2 from '../components/DeleteVFolderModalV2';
-import FolderCreateModalV2 from '../components/FolderCreateModalV2';
+import FolderCreateModal from '../components/FolderCreateModal';
 import RestoreVFolderModalV2 from '../components/RestoreVFolderModalV2';
 import VFolderNodesV2, {
   VFolderNodeInList,
@@ -22,6 +22,7 @@ import VFolderNodesV2, {
 import { convertToOrderBy, handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useIsPersonalProject } from '../hooks/useAccessibleProjects';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { ProjectContext, toProjectContext } from '../types/projectContext';
@@ -119,6 +120,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
   const { t } = useTranslation();
   const isLabelable = useIsLabelableEntityType('vfolder');
   const baiClient = useSuspendedBackendaiClient();
+  const isPersonalProject = useIsPersonalProject(project.id);
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.ProjectAdminDataPage',
@@ -557,10 +559,12 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
           toggleDeleteForeverModal();
         }}
       />
-      <FolderCreateModalV2
+      <FolderCreateModal
         open={isOpenCreateModal}
         project={project}
-        folderType="project"
+        // The manager rejects dot-prefixed project folders, so AutoMount is
+        // offered only for the admin's own personal project.
+        allowAutoMount={isPersonalProject}
         alertMessage={t('data.folders.ProjectAdminDataPageAlert')}
         onRequestClose={(result) => {
           toggleCreateModal();

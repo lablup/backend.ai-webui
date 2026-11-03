@@ -195,10 +195,6 @@ your system administrator.
 
 ### Menus available to your role
 
-The sidebar lists only the pages you are allowed to open. Every user sees the
-general menu groups; the **Administration** groups appear in addition for
-superadmins and domain admins.
-
 Project-admin entries are evaluated against **the currently selected project**,
 not against your account as a whole. The project you are working in is
 part of the page address, so switching projects with the project selector in the

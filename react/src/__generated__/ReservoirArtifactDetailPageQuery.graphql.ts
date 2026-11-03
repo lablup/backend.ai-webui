@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6f12530ad164024119781209a1ee6745>>
+ * @generated SignedSource<<7715c24df822e290508ab2d49ee37bac>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,6 +17,7 @@ export type ArtifactRevisionFilter = {
   NOT?: ReadonlyArray<ArtifactRevisionFilter> | null | undefined;
   OR?: ReadonlyArray<ArtifactRevisionFilter> | null | undefined;
   artifactId?: UUIDFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   remoteStatus?: ArtifactRevisionRemoteStatusFilter | null | undefined;
   size?: IntFilter | null | undefined;
   status?: ArtifactRevisionStatusFilter | null | undefined;

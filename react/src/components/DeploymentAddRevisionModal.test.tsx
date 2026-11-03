@@ -120,7 +120,7 @@ vi.mock('./SessionFormItems/ResourceAllocationFormItems', async () => {
 });
 
 // In-modal folder creation must target the deployment's project as well.
-vi.mock('./FolderCreateModalV2', async () => {
+vi.mock('./FolderCreateModal', async () => {
   const React = await import('react');
   return {
     default: (props: any) =>

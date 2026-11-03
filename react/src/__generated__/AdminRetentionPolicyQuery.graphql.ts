@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<29a5824d98c549bbd48f64d437a86648>>
+ * @generated SignedSource<<b0cb0e32b915b9f99bbd850190076a20>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,6 +15,13 @@ export type RetentionPolicyOrderField = "CATEGORY" | "CREATED_AT" | "LAST_SWEPT_
 export type RetentionPolicyFilter = {
   category?: RetentionCategory | null | undefined;
   enabled?: boolean | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
 };
 export type RetentionPolicyOrderBy = {
   direction?: string;
