@@ -5,6 +5,7 @@
 import type { FailuresByEntityTypePanelQuery } from '../../../__generated__/FailuresByEntityTypePanelQuery.graphql';
 import ScopedCard from '../cards/ScopedCard';
 import DonutChart from '../charts/DonutChart';
+import { readCounts } from '../countAliases';
 import { toDonutRows } from '../memberCards/memberCardData';
 import type { DateTimeWindow } from '../timeRange';
 import type { PanelComponentProps } from '../types';
@@ -38,31 +39,34 @@ const EntityTypeFailures: React.FC<{
         $artifactRegistry: AuditLogFilter!
         $other: AuditLogFilter!
       ) {
-        session: adminAuditLogsV2(filter: $session, limit: 1) @catch(to: NULL) {
+        session: adminAuditLogsV2(filter: $session, limit: 1)
+          @catch(to: RESULT) {
           count
         }
-        vfolder: adminAuditLogsV2(filter: $vfolder, limit: 1) @catch(to: NULL) {
+        vfolder: adminAuditLogsV2(filter: $vfolder, limit: 1)
+          @catch(to: RESULT) {
           count
         }
         deployment: adminAuditLogsV2(filter: $deployment, limit: 1)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
-        user: adminAuditLogsV2(filter: $user, limit: 1) @catch(to: NULL) {
+        user: adminAuditLogsV2(filter: $user, limit: 1) @catch(to: RESULT) {
           count
         }
-        project: adminAuditLogsV2(filter: $project, limit: 1) @catch(to: NULL) {
+        project: adminAuditLogsV2(filter: $project, limit: 1)
+          @catch(to: RESULT) {
           count
         }
         resourceGroup: adminAuditLogsV2(filter: $resourceGroup, limit: 1)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         artifactRegistry: adminAuditLogsV2(filter: $artifactRegistry, limit: 1)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
-        other: adminAuditLogsV2(filter: $other, limit: 1) @catch(to: NULL) {
+        other: adminAuditLogsV2(filter: $other, limit: 1) @catch(to: RESULT) {
           count
         }
       }
@@ -70,6 +74,10 @@ const EntityTypeFailures: React.FC<{
     variables,
     { fetchPolicy: 'store-and-network', fetchKey },
   );
+  const counts = readCounts(data, [
+    ...AUDIT_ENTITY_TYPES.map((type) => ENTITY_TYPE_ALIASES[type]),
+    'other',
+  ]);
   return (
     <DonutChart
       label={t('dashboard.card.FailuresByEntityType')}
@@ -83,12 +91,12 @@ const EntityTypeFailures: React.FC<{
         ...AUDIT_ENTITY_TYPES.map((type) => ({
           key: type,
           label: type,
-          count: data[ENTITY_TYPE_ALIASES[type]]?.count,
+          count: counts[ENTITY_TYPE_ALIASES[type]],
         })),
         {
           key: 'other',
           label: t('dashboard.card.OtherTypes'),
-          count: data.other?.count,
+          count: counts.other,
         },
       ])}
     />

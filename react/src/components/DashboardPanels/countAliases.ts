@@ -42,7 +42,7 @@ export const bucketVariables = <TPrefix extends string, TFilter>(
     }),
   ) as BucketAliasVariables<TPrefix, TFilter>;
 
-type CountValue = { readonly count: number } | null | undefined;
+type CountValue = { readonly count?: number | null } | null | undefined;
 /** A count alias read with `@catch(to: RESULT)`, or with `@catch(to: NULL)` (a bare value). */
 export type CountAlias = CountValue | Result<CountValue, unknown>;
 

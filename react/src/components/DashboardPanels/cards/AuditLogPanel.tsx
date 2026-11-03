@@ -25,6 +25,7 @@ import {
   FAILURES_ONLY_FILTER,
   isFailuresOnlyFilter,
 } from '../memberCards/memberCardData';
+import { readPrimary } from '../panelPermission';
 import { projectAuditScope } from '../projectAdminCards/projectCardData';
 import { withinWindow, type DateTimeWindow } from '../timeRange';
 import type { PanelComponentProps } from '../types';
@@ -143,94 +144,94 @@ const ScopedAuditLogHistory: React.FC<
           scope: $scope
           filter: $previousSuccess
           limit: 1
-        ) @include(if: $previousOn) @catch(to: NULL) {
+        ) @include(if: $previousOn) @catch(to: RESULT) {
           count
         }
         previousFailure: scopedAuditLogsV2(
           scope: $scope
           filter: $previousFailure
           limit: 1
-        ) @include(if: $previousOn) @catch(to: NULL) {
+        ) @include(if: $previousOn) @catch(to: RESULT) {
           count
         }
         s0: scopedAuditLogsV2(scope: $scope, filter: $s0, limit: 1)
           @include(if: $s0On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         s1: scopedAuditLogsV2(scope: $scope, filter: $s1, limit: 1)
           @include(if: $s1On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         s2: scopedAuditLogsV2(scope: $scope, filter: $s2, limit: 1)
           @include(if: $s2On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         s3: scopedAuditLogsV2(scope: $scope, filter: $s3, limit: 1)
           @include(if: $s3On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         s4: scopedAuditLogsV2(scope: $scope, filter: $s4, limit: 1)
           @include(if: $s4On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         s5: scopedAuditLogsV2(scope: $scope, filter: $s5, limit: 1)
           @include(if: $s5On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         s6: scopedAuditLogsV2(scope: $scope, filter: $s6, limit: 1)
           @include(if: $s6On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         s7: scopedAuditLogsV2(scope: $scope, filter: $s7, limit: 1)
           @include(if: $s7On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         f0: scopedAuditLogsV2(scope: $scope, filter: $f0, limit: 1)
           @include(if: $f0On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         f1: scopedAuditLogsV2(scope: $scope, filter: $f1, limit: 1)
           @include(if: $f1On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         f2: scopedAuditLogsV2(scope: $scope, filter: $f2, limit: 1)
           @include(if: $f2On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         f3: scopedAuditLogsV2(scope: $scope, filter: $f3, limit: 1)
           @include(if: $f3On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         f4: scopedAuditLogsV2(scope: $scope, filter: $f4, limit: 1)
           @include(if: $f4On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         f5: scopedAuditLogsV2(scope: $scope, filter: $f5, limit: 1)
           @include(if: $f5On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         f6: scopedAuditLogsV2(scope: $scope, filter: $f6, limit: 1)
           @include(if: $f6On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         f7: scopedAuditLogsV2(scope: $scope, filter: $f7, limit: 1)
           @include(if: $f7On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
       }
@@ -286,92 +287,92 @@ const AdminAuditLogHistory: React.FC<
       ) {
         previousSuccess: adminAuditLogsV2(filter: $previousSuccess, limit: 1)
           @include(if: $previousOn)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         previousFailure: adminAuditLogsV2(filter: $previousFailure, limit: 1)
           @include(if: $previousOn)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         s0: adminAuditLogsV2(filter: $s0, limit: 1)
           @include(if: $s0On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         s1: adminAuditLogsV2(filter: $s1, limit: 1)
           @include(if: $s1On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         s2: adminAuditLogsV2(filter: $s2, limit: 1)
           @include(if: $s2On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         s3: adminAuditLogsV2(filter: $s3, limit: 1)
           @include(if: $s3On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         s4: adminAuditLogsV2(filter: $s4, limit: 1)
           @include(if: $s4On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         s5: adminAuditLogsV2(filter: $s5, limit: 1)
           @include(if: $s5On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         s6: adminAuditLogsV2(filter: $s6, limit: 1)
           @include(if: $s6On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         s7: adminAuditLogsV2(filter: $s7, limit: 1)
           @include(if: $s7On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         f0: adminAuditLogsV2(filter: $f0, limit: 1)
           @include(if: $f0On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         f1: adminAuditLogsV2(filter: $f1, limit: 1)
           @include(if: $f1On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         f2: adminAuditLogsV2(filter: $f2, limit: 1)
           @include(if: $f2On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         f3: adminAuditLogsV2(filter: $f3, limit: 1)
           @include(if: $f3On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         f4: adminAuditLogsV2(filter: $f4, limit: 1)
           @include(if: $f4On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         f5: adminAuditLogsV2(filter: $f5, limit: 1)
           @include(if: $f5On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         f6: adminAuditLogsV2(filter: $f6, limit: 1)
           @include(if: $f6On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         f7: adminAuditLogsV2(filter: $f7, limit: 1)
           @include(if: $f7On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
       }
@@ -409,7 +410,7 @@ const ScopedAuditLog: React.FC<
           orderBy: [{ field: CREATED_AT, direction: DESC }]
           limit: $limit
           offset: $offset
-        ) {
+        ) @catch(to: RESULT) {
           count
           edges {
             node {
@@ -421,34 +422,34 @@ const ScopedAuditLog: React.FC<
           scope: $scope
           filter: $previousSuccess
           limit: 1
-        ) @include(if: $previousOn) @catch(to: NULL) {
+        ) @include(if: $previousOn) @catch(to: RESULT) {
           count
         }
         previousFailure: scopedAuditLogsV2(
           scope: $scope
           filter: $previousFailure
           limit: 1
-        ) @include(if: $previousOn) @catch(to: NULL) {
+        ) @include(if: $previousOn) @catch(to: RESULT) {
           count
         }
         liveS0: scopedAuditLogsV2(scope: $scope, filter: $liveS0, limit: 1)
           @include(if: $live0On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         liveF0: scopedAuditLogsV2(scope: $scope, filter: $liveF0, limit: 1)
           @include(if: $live0On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         liveS1: scopedAuditLogsV2(scope: $scope, filter: $liveS1, limit: 1)
           @include(if: $live1On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         liveF1: scopedAuditLogsV2(scope: $scope, filter: $liveF1, limit: 1)
           @include(if: $live1On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
       }
@@ -486,7 +487,7 @@ const AdminAuditLog: React.FC<QueryProps<LiveVariables, LiveData>> = ({
           orderBy: [{ field: CREATED_AT, direction: DESC }]
           limit: $limit
           offset: $offset
-        ) {
+        ) @catch(to: RESULT) {
           count
           edges {
             node {
@@ -496,32 +497,32 @@ const AdminAuditLog: React.FC<QueryProps<LiveVariables, LiveData>> = ({
         }
         previousSuccess: adminAuditLogsV2(filter: $previousSuccess, limit: 1)
           @include(if: $previousOn)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         previousFailure: adminAuditLogsV2(filter: $previousFailure, limit: 1)
           @include(if: $previousOn)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         liveS0: adminAuditLogsV2(filter: $liveS0, limit: 1)
           @include(if: $live0On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         liveF0: adminAuditLogsV2(filter: $liveF0, limit: 1)
           @include(if: $live0On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         liveS1: adminAuditLogsV2(filter: $liveS1, limit: 1)
           @include(if: $live1On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
         liveF1: adminAuditLogsV2(filter: $liveF1, limit: 1)
           @include(if: $live1On)
-          @catch(to: NULL) {
+          @catch(to: RESULT) {
           count
         }
       }
@@ -577,37 +578,40 @@ const AuditLogTable: React.FC<{
   };
   const deferred = useDeferredValue(variables);
 
-  const renderLog = (historyData: CountData | null, data: LiveData) => (
-    <BAIFlex direction="column" align="stretch" gap="sm">
-      <SuccessFailureStats
-        counts={readSuccessFailure(deferred.plan, historyData, data)}
-        buckets={deferred.plan.buckets}
-      />
-      <BAIAuditLogNodes
-        auditLogFrgmt={filterOutNullAndUndefined(
-          data.logs?.edges.map((edge) => edge?.node),
-        )}
-        disableSorter
-        loading={deferred !== variables}
-        customizeColumns={(columns) =>
-          columns
-            .filter(
-              (column) =>
-                VISIBLE_COLUMNS.has(String(column.key)) &&
-                !(hideTriggeredBy && column.key === 'triggeredBy'),
-            )
-            .map((column) => ({ ...column, defaultHidden: false }))
-        }
-        pagination={{
-          pageSize: tablePaginationOption.pageSize,
-          current: tablePaginationOption.current,
-          total: data.logs?.count ?? 0,
-          onChange: (current, pageSize) =>
-            setTablePaginationOption({ current, pageSize }),
-        }}
-      />
-    </BAIFlex>
-  );
+  const renderLog = (historyData: CountData | null, data: LiveData) => {
+    const logs = readPrimary(data.logs);
+    return (
+      <BAIFlex direction="column" align="stretch" gap="sm">
+        <SuccessFailureStats
+          counts={readSuccessFailure(deferred.plan, historyData, data)}
+          buckets={deferred.plan.buckets}
+        />
+        <BAIAuditLogNodes
+          auditLogFrgmt={filterOutNullAndUndefined(
+            logs?.edges.map((edge) => edge?.node),
+          )}
+          disableSorter
+          loading={deferred !== variables}
+          customizeColumns={(columns) =>
+            columns
+              .filter(
+                (column) =>
+                  VISIBLE_COLUMNS.has(String(column.key)) &&
+                  !(hideTriggeredBy && column.key === 'triggeredBy'),
+              )
+              .map((column) => ({ ...column, defaultHidden: false }))
+          }
+          pagination={{
+            pageSize: tablePaginationOption.pageSize,
+            current: tablePaginationOption.current,
+            total: logs?.count ?? 0,
+            onChange: (current, pageSize) =>
+              setTablePaginationOption({ current, pageSize }),
+          }}
+        />
+      </BAIFlex>
+    );
+  };
 
   const withHistory = (
     children: (data: CountData | null) => React.ReactNode,

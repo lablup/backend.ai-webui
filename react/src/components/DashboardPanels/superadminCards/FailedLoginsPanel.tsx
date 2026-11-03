@@ -9,7 +9,13 @@ import type {
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
 import ScopedCard from '../cards/ScopedCard';
 import StatRow from '../charts/StatRow';
-import { countDelta, failureSentiment, previousWindow } from '../countAliases';
+import {
+  countDelta,
+  failureSentiment,
+  previousWindow,
+  readCount,
+} from '../countAliases';
+import { readPrimary } from '../panelPermission';
 import { withinWindow, type DateTimeWindow } from '../timeRange';
 import type { PanelComponentProps } from '../types';
 import { LOGIN_FAILURE_RESULTS } from './superadminCardData';
@@ -58,7 +64,8 @@ const FailedLogins: React.FC<{
         $limit: Int!
         $offset: Int!
       ) {
-        previousFailed: adminLoginHistoryV2(filter: $previousFailed, limit: 1) {
+        previousFailed: adminLoginHistoryV2(filter: $previousFailed, limit: 1)
+          @catch(to: RESULT) {
           count
         }
         failedLogins: adminLoginHistoryV2(
@@ -66,7 +73,7 @@ const FailedLogins: React.FC<{
           orderBy: [{ field: CREATED_AT, direction: DESC }]
           limit: $limit
           offset: $offset
-        ) {
+        ) @catch(to: RESULT) {
           count
           edges {
             node {
@@ -85,14 +92,21 @@ const FailedLogins: React.FC<{
     deferredVariables,
     { fetchPolicy: 'store-and-network', fetchKey },
   );
-  const failed = data.failedLogins?.count ?? 0;
+  const failedLogins = readPrimary(data.failedLogins);
+  const failed = failedLogins?.count ?? 0;
   const logins = filterOutNullAndUndefined(
-    data.failedLogins?.edges.map((edge) => edge?.node),
+    failedLogins?.edges.map((edge) => edge?.node),
   );
   const emails = new Map(
     logins.map((login) => [login.id, login.user?.basicInfo.email]),
   );
-  const delta = countDelta(failed, data.previousFailed?.count ?? 0, timeRange);
+  const previousFailed = readCount(data.previousFailed);
+  const delta = countDelta(
+    failed,
+    previousFailed.count,
+    timeRange,
+    previousFailed.denied,
+  );
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">

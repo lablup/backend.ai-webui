@@ -163,7 +163,7 @@ const DomainSessions: React.FC<
           orderBy: $orderBy
           limit: $limit
           offset: $offset
-        ) {
+        ) @catch(to: RESULT) {
           count
           edges {
             node {
@@ -180,7 +180,7 @@ const DomainSessions: React.FC<
     { domainId, filter, orderBy: [...orderBy], limit, offset },
     { fetchPolicy: 'store-and-network', fetchKey },
   );
-  return children(toPage(data.sessions));
+  return children(toPage(readPrimary(data.sessions)));
 };
 
 /** One page of sessions in the card's scope, for the session list cards. */

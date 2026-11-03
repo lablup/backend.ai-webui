@@ -8,6 +8,7 @@ import type {
   TopProjectsUsagePanelQuery$data,
 } from '../../../__generated__/TopProjectsUsagePanelQuery.graphql';
 import ScopedCard from '../cards/ScopedCard';
+import { readPrimary, type CaughtValue } from '../panelPermission';
 import type { PanelComponentProps } from '../types';
 import {
   byCpuUsage,
@@ -25,7 +26,9 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 
 type BucketRow = NonNullable<
   NonNullable<
-    NonNullable<TopProjectsUsagePanelQuery$data['buckets']>['edges'][number]
+    NonNullable<
+      CaughtValue<TopProjectsUsagePanelQuery$data['buckets']>
+    >['edges'][number]
   >['node']
 >;
 
@@ -67,7 +70,7 @@ const LatestUsageDay: React.FC<{
           filter: $filter
           orderBy: [{ field: PERIOD_START, direction: DESC }]
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           edges {
             node {
               metadata {
@@ -81,7 +84,8 @@ const LatestUsageDay: React.FC<{
     useDeferredValue({ filter }),
     { fetchPolicy: 'store-and-network', fetchKey },
   );
-  const day = data.latest?.edges[0]?.node.metadata.periodStart;
+  const latest = readPrimary(data.latest);
+  const day = latest?.edges[0]?.node.metadata.periodStart;
   if (!day) {
     return <Text type="supporting">{t('dashboard.card.NoUsageRecorded')}</Text>;
   }
@@ -126,7 +130,7 @@ const ProjectUsagePage: React.FC<{
           orderBy: [{ field: PERIOD_START, direction: DESC }]
           limit: $limit
           offset: $offset
-        ) {
+        ) @catch(to: RESULT) {
           count
           edges {
             node {
@@ -151,12 +155,13 @@ const ProjectUsagePage: React.FC<{
     variables,
     { fetchPolicy: 'store-and-network', fetchKey },
   );
+  const buckets = readPrimary(data.buckets);
   const page = filterOutNullAndUndefined(
-    data.buckets?.edges.map((edge) => edge?.node),
+    buckets?.edges.map((edge) => edge?.node),
   );
   // Rows tied on period start can repeat across offset pages.
   const rows = _.uniqBy([...collected, ...page], 'id');
-  const total = data.buckets?.count ?? 0;
+  const total = buckets?.count ?? 0;
   const nextOffset = offset + PAGE_SIZE;
   if (page.length === PAGE_SIZE && nextOffset < Math.min(total, ROW_LIMIT)) {
     return (

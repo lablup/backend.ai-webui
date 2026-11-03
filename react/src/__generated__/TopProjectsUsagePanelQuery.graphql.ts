@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0e62e1b61f2dbec9981c2d30963bf642>>
+ * @generated SignedSource<<b6ee0f315962184ba22a184e4236bdeb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+import { Result } from "relay-runtime";
 export type ProjectUsageBucketFilter = {
   AND?: ReadonlyArray<ProjectUsageBucketFilter> | null | undefined;
   NOT?: ReadonlyArray<ProjectUsageBucketFilter> | null | undefined;
@@ -60,7 +61,7 @@ export type TopProjectsUsagePanelQuery$variables = {
   offset: number;
 };
 export type TopProjectsUsagePanelQuery$data = {
-  readonly buckets: {
+  readonly buckets: Result<{
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -79,7 +80,7 @@ export type TopProjectsUsagePanelQuery$data = {
         };
       };
     }>;
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type TopProjectsUsagePanelQuery = {
   response: TopProjectsUsagePanelQuery$data;
@@ -214,53 +215,57 @@ return {
     "name": "TopProjectsUsagePanelQuery",
     "selections": [
       {
-        "alias": "buckets",
-        "args": (v1/*: any*/),
-        "concreteType": "ProjectUsageBucketConnection",
-        "kind": "LinkedField",
-        "name": "adminProjectUsageBuckets",
-        "plural": false,
-        "selections": [
-          (v2/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ProjectUsageBucketEdge",
-            "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "ProjectUsageBucket",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": [
-                  (v3/*: any*/),
-                  (v4/*: any*/),
-                  (v5/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "ProjectV2",
-                    "kind": "LinkedField",
-                    "name": "project",
-                    "plural": false,
-                    "selections": [
-                      (v6/*: any*/)
-                    ],
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
+        "kind": "CatchField",
+        "field": {
+          "alias": "buckets",
+          "args": (v1/*: any*/),
+          "concreteType": "ProjectUsageBucketConnection",
+          "kind": "LinkedField",
+          "name": "adminProjectUsageBuckets",
+          "plural": false,
+          "selections": [
+            (v2/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "ProjectUsageBucketEdge",
+              "kind": "LinkedField",
+              "name": "edges",
+              "plural": true,
+              "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "ProjectUsageBucket",
+                  "kind": "LinkedField",
+                  "name": "node",
+                  "plural": false,
+                  "selections": [
+                    (v3/*: any*/),
+                    (v4/*: any*/),
+                    (v5/*: any*/),
+                    {
+                      "alias": null,
+                      "args": null,
+                      "concreteType": "ProjectV2",
+                      "kind": "LinkedField",
+                      "name": "project",
+                      "plural": false,
+                      "selections": [
+                        (v6/*: any*/)
+                      ],
+                      "storageKey": null
+                    }
+                  ],
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        },
+        "to": "RESULT"
       }
     ],
     "type": "Query",
@@ -335,6 +340,6 @@ return {
 };
 })();
 
-(node as any).hash = "97c7874899df8e35fdd5f6e5ad6bc8b9";
+(node as any).hash = "87ca60d2314fa66f0b4dcff744984a17";
 
 export default node;

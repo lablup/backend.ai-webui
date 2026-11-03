@@ -8,6 +8,7 @@ import type {
 } from '../../../__generated__/FairSharePanelQuery.graphql';
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
 import ScopedCard from '../cards/ScopedCard';
+import { readPrimary, type CaughtValue } from '../panelPermission';
 import type { PanelComponentProps } from '../types';
 import { Text } from '@lablup/ui-common/Text';
 import {
@@ -22,7 +23,9 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 
 type FairShareRow = NonNullable<
   NonNullable<
-    NonNullable<FairSharePanelQuery$data['projects']>['edges'][number]
+    NonNullable<
+      CaughtValue<FairSharePanelQuery$data['projects']>
+    >['edges'][number]
   >['node']
 >;
 
@@ -67,7 +70,7 @@ const ResourceGroupFairShares: React.FC<{
           orderBy: [{ field: FAIR_SHARE_FACTOR, direction: ASC }]
           limit: $limit
           offset: $offset
-        ) {
+        ) @catch(to: RESULT) {
           count
           edges {
             node {
@@ -93,12 +96,13 @@ const ResourceGroupFairShares: React.FC<{
     deferredVariables,
     { fetchPolicy: 'store-and-network', fetchKey },
   );
+  const projects = readPrimary(data.projects);
   return (
     <BAITable<FairShareRow>
       size="small"
       rowKey="id"
       dataSource={filterOutNullAndUndefined(
-        data.projects?.edges.map((edge) => edge?.node),
+        projects?.edges.map((edge) => edge?.node),
       )}
       loading={deferredVariables !== variables}
       scroll={{ x: 'max-content' }}
@@ -138,7 +142,7 @@ const ResourceGroupFairShares: React.FC<{
       pagination={{
         pageSize: tablePaginationOption.pageSize,
         current: tablePaginationOption.current,
-        total: data.projects?.count ?? 0,
+        total: projects?.count ?? 0,
         showSizeChanger: false,
         onChange: (current, pageSize) =>
           setTablePaginationOption({ current, pageSize }),

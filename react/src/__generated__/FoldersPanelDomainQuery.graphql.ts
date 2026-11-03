@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b2866f835104aea02061a0befd109138>>
+ * @generated SignedSource<<0686511d600baf7c09fc9dc536c88387>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,16 +9,17 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+import { Result } from "relay-runtime";
 export type FoldersPanelDomainQuery$variables = {
   domainId: string;
 };
 export type FoldersPanelDomainQuery$data = {
-  readonly ready: {
+  readonly ready: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly trash: {
+  } | null | undefined, unknown>;
+  readonly trash: Result<{
     readonly count: number;
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type FoldersPanelDomainQuery = {
   response: FoldersPanelDomainQuery$data;
@@ -70,64 +71,73 @@ v3 = [
     "storageKey": null
   }
 ],
-v4 = [
-  {
-    "alias": "ready",
-    "args": [
-      {
-        "kind": "Literal",
-        "name": "filter",
-        "value": {
-          "status": {
-            "notIn": [
-              "DELETE_PENDING",
-              "DELETE_ONGOING",
-              "DELETE_COMPLETE",
-              "DELETE_ERROR"
-            ]
-          }
+v4 = {
+  "alias": "ready",
+  "args": [
+    {
+      "kind": "Literal",
+      "name": "filter",
+      "value": {
+        "status": {
+          "notIn": [
+            "DELETE_PENDING",
+            "DELETE_ONGOING",
+            "DELETE_COMPLETE",
+            "DELETE_ERROR"
+          ]
         }
-      },
-      (v1/*: any*/),
-      (v2/*: any*/)
-    ],
-    "concreteType": "VFolderConnection",
-    "kind": "LinkedField",
-    "name": "scopedVFoldersV2",
-    "plural": false,
-    "selections": (v3/*: any*/),
-    "storageKey": null
-  },
-  {
-    "alias": "trash",
-    "args": [
-      {
-        "kind": "Literal",
-        "name": "filter",
-        "value": {
-          "status": {
-            "equals": "DELETE_PENDING"
-          }
+      }
+    },
+    (v1/*: any*/),
+    (v2/*: any*/)
+  ],
+  "concreteType": "VFolderConnection",
+  "kind": "LinkedField",
+  "name": "scopedVFoldersV2",
+  "plural": false,
+  "selections": (v3/*: any*/),
+  "storageKey": null
+},
+v5 = {
+  "alias": "trash",
+  "args": [
+    {
+      "kind": "Literal",
+      "name": "filter",
+      "value": {
+        "status": {
+          "equals": "DELETE_PENDING"
         }
-      },
-      (v1/*: any*/),
-      (v2/*: any*/)
-    ],
-    "concreteType": "VFolderConnection",
-    "kind": "LinkedField",
-    "name": "scopedVFoldersV2",
-    "plural": false,
-    "selections": (v3/*: any*/),
-    "storageKey": null
-  }
-];
+      }
+    },
+    (v1/*: any*/),
+    (v2/*: any*/)
+  ],
+  "concreteType": "VFolderConnection",
+  "kind": "LinkedField",
+  "name": "scopedVFoldersV2",
+  "plural": false,
+  "selections": (v3/*: any*/),
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "FoldersPanelDomainQuery",
-    "selections": (v4/*: any*/),
+    "selections": [
+      {
+        "kind": "CatchField",
+        "field": (v4/*: any*/),
+        "to": "RESULT"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v5/*: any*/),
+        "to": "RESULT"
+      }
+    ],
     "type": "Query",
     "abstractKey": null
   },
@@ -136,7 +146,10 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "FoldersPanelDomainQuery",
-    "selections": (v4/*: any*/)
+    "selections": [
+      (v4/*: any*/),
+      (v5/*: any*/)
+    ]
   },
   "params": {
     "cacheID": "847e766d41088dfe11417cb9ca33cd52",
@@ -149,6 +162,6 @@ return {
 };
 })();
 
-(node as any).hash = "bbf9411870d686ae1c535c327e46e4e6";
+(node as any).hash = "57d098faf2c91e69bc2db428c1702505";
 
 export default node;

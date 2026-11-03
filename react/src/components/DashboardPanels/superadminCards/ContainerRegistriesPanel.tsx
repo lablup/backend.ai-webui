@@ -8,6 +8,7 @@ import type {
 } from '../../../__generated__/ContainerRegistriesPanelQuery.graphql';
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
 import ScopedCard from '../cards/ScopedCard';
+import { readPrimary, type CaughtValue } from '../panelPermission';
 import type { PanelComponentProps } from '../types';
 import { Token } from '@lablup/ui-common/Token';
 import {
@@ -22,7 +23,7 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 type RegistryRow = NonNullable<
   NonNullable<
     NonNullable<
-      ContainerRegistriesPanelQuery$data['registries']
+      CaughtValue<ContainerRegistriesPanelQuery$data['registries']>
     >['edges'][number]
   >['node']
 >;
@@ -47,7 +48,7 @@ const RegistryList: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
           orderBy: [{ field: REGISTRY_NAME, direction: ASC }]
           limit: $limit
           offset: $offset
-        ) {
+        ) @catch(to: RESULT) {
           count
           edges {
             node {
@@ -65,12 +66,13 @@ const RegistryList: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
     deferredVariables,
     { fetchPolicy: 'store-and-network', fetchKey },
   );
+  const registries = readPrimary(data.registries);
   return (
     <BAITable<RegistryRow>
       size="small"
       rowKey="id"
       dataSource={filterOutNullAndUndefined(
-        data.registries?.edges.map((edge) => edge?.node),
+        registries?.edges.map((edge) => edge?.node),
       )}
       loading={deferredVariables !== variables}
       scroll={{ x: 'max-content' }}
@@ -105,7 +107,7 @@ const RegistryList: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
       pagination={{
         pageSize: tablePaginationOption.pageSize,
         current: tablePaginationOption.current,
-        total: data.registries?.count ?? 0,
+        total: registries?.count ?? 0,
         onChange: (current, pageSize) =>
           setTablePaginationOption({ current, pageSize }),
       }}

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ebe894c0a1aee869a8482bc60d6a8166>>
+ * @generated SignedSource<<7674dc24c0d5cc21e47db75eaf83694f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+import { Result } from "relay-runtime";
 export type ProjectUsageBucketFilter = {
   AND?: ReadonlyArray<ProjectUsageBucketFilter> | null | undefined;
   NOT?: ReadonlyArray<ProjectUsageBucketFilter> | null | undefined;
@@ -58,7 +59,7 @@ export type TopProjectsUsagePanelLatestDayQuery$variables = {
   filter: ProjectUsageBucketFilter;
 };
 export type TopProjectsUsagePanelLatestDayQuery$data = {
-  readonly latest: {
+  readonly latest: Result<{
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly metadata: {
@@ -66,7 +67,7 @@ export type TopProjectsUsagePanelLatestDayQuery$data = {
         };
       };
     }>;
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type TopProjectsUsagePanelLatestDayQuery = {
   response: TopProjectsUsagePanelLatestDayQuery$data;
@@ -129,38 +130,42 @@ return {
     "name": "TopProjectsUsagePanelLatestDayQuery",
     "selections": [
       {
-        "alias": "latest",
-        "args": (v1/*: any*/),
-        "concreteType": "ProjectUsageBucketConnection",
-        "kind": "LinkedField",
-        "name": "adminProjectUsageBuckets",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ProjectUsageBucketEdge",
-            "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "ProjectUsageBucket",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": [
-                  (v2/*: any*/)
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
+        "kind": "CatchField",
+        "field": {
+          "alias": "latest",
+          "args": (v1/*: any*/),
+          "concreteType": "ProjectUsageBucketConnection",
+          "kind": "LinkedField",
+          "name": "adminProjectUsageBuckets",
+          "plural": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "ProjectUsageBucketEdge",
+              "kind": "LinkedField",
+              "name": "edges",
+              "plural": true,
+              "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "ProjectUsageBucket",
+                  "kind": "LinkedField",
+                  "name": "node",
+                  "plural": false,
+                  "selections": [
+                    (v2/*: any*/)
+                  ],
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        },
+        "to": "RESULT"
       }
     ],
     "type": "Query",
@@ -226,6 +231,6 @@ return {
 };
 })();
 
-(node as any).hash = "2e9d0aa6a16b8fde5b86b8663cf46f6a";
+(node as any).hash = "eb7640204ad1fea53623fe71cb519c01";
 
 export default node;

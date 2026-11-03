@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a8a1ce3b615ebc6402fa199e7fd22b89>>
+ * @generated SignedSource<<5adf83a3f37377f8e76e91a691bfa7ce>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,13 +9,14 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+import { Result } from "relay-runtime";
 export type ContainerRegistryType = "DOCKER" | "ECR" | "ECR_PUB" | "GITHUB" | "GITLAB" | "HARBOR" | "HARBOR2" | "LOCAL" | "OCP" | "%future added value";
 export type ContainerRegistriesPanelQuery$variables = {
   limit: number;
   offset: number;
 };
 export type ContainerRegistriesPanelQuery$data = {
-  readonly registries: {
+  readonly registries: Result<{
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -27,7 +28,7 @@ export type ContainerRegistriesPanelQuery$data = {
         readonly url: string;
       };
     }>;
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type ContainerRegistriesPanelQuery = {
   response: ContainerRegistriesPanelQuery$data;
@@ -47,118 +48,122 @@ var v0 = [
     "name": "offset"
   }
 ],
-v1 = [
-  {
-    "alias": "registries",
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "limit",
-        "variableName": "limit"
-      },
-      {
-        "kind": "Variable",
-        "name": "offset",
-        "variableName": "offset"
-      },
-      {
-        "kind": "Literal",
-        "name": "orderBy",
-        "value": [
-          {
-            "direction": "ASC",
-            "field": "REGISTRY_NAME"
-          }
-        ]
-      }
-    ],
-    "concreteType": "ContainerRegistryV2Connection",
-    "kind": "LinkedField",
-    "name": "adminContainerRegistriesV2",
-    "plural": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "count",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "ContainerRegistryV2Edge",
-        "kind": "LinkedField",
-        "name": "edges",
-        "plural": true,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ContainerRegistryV2",
-            "kind": "LinkedField",
-            "name": "node",
-            "plural": false,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "id",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "registryName",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "url",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "type",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "project",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "isGlobal",
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
-  }
-];
+v1 = {
+  "alias": "registries",
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "limit",
+      "variableName": "limit"
+    },
+    {
+      "kind": "Variable",
+      "name": "offset",
+      "variableName": "offset"
+    },
+    {
+      "kind": "Literal",
+      "name": "orderBy",
+      "value": [
+        {
+          "direction": "ASC",
+          "field": "REGISTRY_NAME"
+        }
+      ]
+    }
+  ],
+  "concreteType": "ContainerRegistryV2Connection",
+  "kind": "LinkedField",
+  "name": "adminContainerRegistriesV2",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "count",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "ContainerRegistryV2Edge",
+      "kind": "LinkedField",
+      "name": "edges",
+      "plural": true,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "ContainerRegistryV2",
+          "kind": "LinkedField",
+          "name": "node",
+          "plural": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "id",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "registryName",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "url",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "type",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "project",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "isGlobal",
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "ContainerRegistriesPanelQuery",
-    "selections": (v1/*: any*/),
+    "selections": [
+      {
+        "kind": "CatchField",
+        "field": (v1/*: any*/),
+        "to": "RESULT"
+      }
+    ],
     "type": "Query",
     "abstractKey": null
   },
@@ -167,7 +172,9 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "ContainerRegistriesPanelQuery",
-    "selections": (v1/*: any*/)
+    "selections": [
+      (v1/*: any*/)
+    ]
   },
   "params": {
     "cacheID": "97e3842dbda9624e940fb497a295e16c",
@@ -180,6 +187,6 @@ return {
 };
 })();
 
-(node as any).hash = "115d2bad166635b58a1d0f4ef5d7e200";
+(node as any).hash = "b76207b6103b4a70b9bddd9afec74201";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d48bc4286243afdb83906632d6be58c5>>
+ * @generated SignedSource<<f3bcf110d5ed3490ef2dd632b077e5c5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+import { Result } from "relay-runtime";
 export type AuditLogActionKind = "BULK" | "GLOBAL" | "LOOKUP" | "MEMBERSHIP" | "RELATION" | "SCOPE" | "SINGLE_ENTITY" | "%future added value";
 export type AuditLogStatus = "DENIED" | "ERROR" | "RUNNING" | "SUCCESS" | "UNKNOWN" | "%future added value";
 export type AuditLogFilter = {
@@ -87,30 +88,30 @@ export type FailuresByEntityTypePanelQuery$variables = {
   vfolder: AuditLogFilter;
 };
 export type FailuresByEntityTypePanelQuery$data = {
-  readonly artifactRegistry: {
+  readonly artifactRegistry: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly deployment: {
+  } | null | undefined, unknown>;
+  readonly deployment: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly other: {
+  } | null | undefined, unknown>;
+  readonly other: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly project: {
+  } | null | undefined, unknown>;
+  readonly project: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly resourceGroup: {
+  } | null | undefined, unknown>;
+  readonly resourceGroup: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly session: {
+  } | null | undefined, unknown>;
+  readonly session: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly user: {
+  } | null | undefined, unknown>;
+  readonly user: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly vfolder: {
+  } | null | undefined, unknown>;
+  readonly vfolder: Result<{
     readonly count: number;
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type FailuresByEntityTypePanelQuery = {
   response: FailuresByEntityTypePanelQuery$data;
@@ -327,42 +328,42 @@ return {
       {
         "kind": "CatchField",
         "field": (v10/*: any*/),
-        "to": "NULL"
+        "to": "RESULT"
       },
       {
         "kind": "CatchField",
         "field": (v11/*: any*/),
-        "to": "NULL"
+        "to": "RESULT"
       },
       {
         "kind": "CatchField",
         "field": (v12/*: any*/),
-        "to": "NULL"
+        "to": "RESULT"
       },
       {
         "kind": "CatchField",
         "field": (v13/*: any*/),
-        "to": "NULL"
+        "to": "RESULT"
       },
       {
         "kind": "CatchField",
         "field": (v14/*: any*/),
-        "to": "NULL"
+        "to": "RESULT"
       },
       {
         "kind": "CatchField",
         "field": (v15/*: any*/),
-        "to": "NULL"
+        "to": "RESULT"
       },
       {
         "kind": "CatchField",
         "field": (v16/*: any*/),
-        "to": "NULL"
+        "to": "RESULT"
       },
       {
         "kind": "CatchField",
         "field": (v17/*: any*/),
-        "to": "NULL"
+        "to": "RESULT"
       }
     ],
     "type": "Query",
@@ -404,6 +405,6 @@ return {
 };
 })();
 
-(node as any).hash = "7bbb51446bb1baaaa4e67c050670e846";
+(node as any).hash = "2eee34b098df943d540cddd0825ba695";
 
 export default node;

@@ -195,14 +195,14 @@ const DomainFolders: React.FC<{ domainId: string; fetchKey: string }> = ({
             }
           }
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
         trash: scopedVFoldersV2(
           scope: { domain: [{ value: $domainId }] }
           filter: { status: { equals: DELETE_PENDING } }
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
       }
@@ -210,7 +210,8 @@ const DomainFolders: React.FC<{ domainId: string; fetchKey: string }> = ({
     variables,
     { fetchPolicy: 'store-and-network', fetchKey },
   );
-  const items = useFolderStats(data.ready, data.trash, null);
+  const counts = readCounts(data, ['ready', 'trash']);
+  const items = useFolderStats(counts.ready, counts.trash, null);
   return <StatRow items={items} />;
 };
 

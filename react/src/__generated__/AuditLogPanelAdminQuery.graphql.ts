@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c30cc1fa7628a3d1c418d0892bde050d>>
+ * @generated SignedSource<<f97628a4305b035cd9eeb21f43dba8f7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-import { FragmentRefs } from "relay-runtime";
+import { FragmentRefs, Result } from "relay-runtime";
 export type AuditLogActionKind = "BULK" | "GLOBAL" | "LOOKUP" | "MEMBERSHIP" | "RELATION" | "SCOPE" | "SINGLE_ENTITY" | "%future added value";
 export type AuditLogStatus = "DENIED" | "ERROR" | "RUNNING" | "SUCCESS" | "UNKNOWN" | "%future added value";
 export type AuditLogFilter = {
@@ -92,32 +92,32 @@ export type AuditLogPanelAdminQuery$variables = {
   previousSuccess?: AuditLogFilter | null | undefined;
 };
 export type AuditLogPanelAdminQuery$data = {
-  readonly liveF0?: {
+  readonly liveF0?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly liveF1?: {
+  } | null | undefined, unknown>;
+  readonly liveF1?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly liveS0?: {
+  } | null | undefined, unknown>;
+  readonly liveS0?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly liveS1?: {
+  } | null | undefined, unknown>;
+  readonly liveS1?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly logs: {
+  } | null | undefined, unknown>;
+  readonly logs: Result<{
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly " $fragmentSpreads": FragmentRefs<"BAIAuditLogNodesFragment">;
       };
     }>;
-  } | null | undefined;
-  readonly previousFailure?: {
+  } | null | undefined, unknown>;
+  readonly previousFailure?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly previousSuccess?: {
+  } | null | undefined, unknown>;
+  readonly previousSuccess?: Result<{
     readonly count: number;
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type AuditLogPanelAdminQuery = {
   response: AuditLogPanelAdminQuery$data;
@@ -357,43 +357,47 @@ return {
     "name": "AuditLogPanelAdminQuery",
     "selections": [
       {
-        "alias": "logs",
-        "args": (v12/*: any*/),
-        "concreteType": "AuditLogV2Connection",
-        "kind": "LinkedField",
-        "name": "adminAuditLogsV2",
-        "plural": false,
-        "selections": [
-          (v13/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "AuditLogV2Edge",
-            "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "AuditLogV2",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": [
-                  {
-                    "args": null,
-                    "kind": "FragmentSpread",
-                    "name": "BAIAuditLogNodesFragment"
-                  }
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
+        "kind": "CatchField",
+        "field": {
+          "alias": "logs",
+          "args": (v12/*: any*/),
+          "concreteType": "AuditLogV2Connection",
+          "kind": "LinkedField",
+          "name": "adminAuditLogsV2",
+          "plural": false,
+          "selections": [
+            (v13/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "AuditLogV2Edge",
+              "kind": "LinkedField",
+              "name": "edges",
+              "plural": true,
+              "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "AuditLogV2",
+                  "kind": "LinkedField",
+                  "name": "node",
+                  "plural": false,
+                  "selections": [
+                    {
+                      "args": null,
+                      "kind": "FragmentSpread",
+                      "name": "BAIAuditLogNodesFragment"
+                    }
+                  ],
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        },
+        "to": "RESULT"
       },
       {
         "condition": "previousOn",
@@ -403,12 +407,12 @@ return {
           {
             "kind": "CatchField",
             "field": (v16/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           },
           {
             "kind": "CatchField",
             "field": (v17/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -420,12 +424,12 @@ return {
           {
             "kind": "CatchField",
             "field": (v18/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           },
           {
             "kind": "CatchField",
             "field": (v19/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -437,12 +441,12 @@ return {
           {
             "kind": "CatchField",
             "field": (v20/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           },
           {
             "kind": "CatchField",
             "field": (v21/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       }
@@ -665,6 +669,6 @@ return {
 };
 })();
 
-(node as any).hash = "16312e0e2c4af5cee8e77daa9011879a";
+(node as any).hash = "286cb1a3044495e804c4701993ba8152";
 
 export default node;

@@ -4,6 +4,7 @@
  */
 import type { AgentStatsPanelQuery } from '../../../__generated__/AgentStatsPanelQuery.graphql';
 import AgentStats from '../../AgentStats';
+import { PanelPermissionBoundary } from '../panelPermission';
 import type { PanelComponentProps } from '../types';
 import { BAIBoardItemErrorBoundary, BAISkeleton } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
@@ -44,9 +45,11 @@ const AgentStatsPanel: React.FC<PanelComponentProps> = ({ fetchKey }) => {
       status="error"
       resetKeys={[fetchKey]}
     >
-      <Suspense fallback={<BAISkeleton />}>
-        <AgentStatsContent fetchKey={fetchKey} />
-      </Suspense>
+      <PanelPermissionBoundary resetKeys={[fetchKey]}>
+        <Suspense fallback={<BAISkeleton />}>
+          <AgentStatsContent fetchKey={fetchKey} />
+        </Suspense>
+      </PanelPermissionBoundary>
     </BAIBoardItemErrorBoundary>
   );
 };

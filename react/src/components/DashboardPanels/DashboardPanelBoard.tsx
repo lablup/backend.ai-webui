@@ -13,8 +13,7 @@ import DashboardPanelModal from './DashboardPanelModal';
 import { useBoardItemVisibility } from './DashboardRefreshContext';
 import PanelSettingsModal from './PanelSettingsModal';
 import { boardSortsAtom } from './ResourceTablePanel';
-import { resourceGroupScopeOf } from './dashboardScope';
-import { dashboardScopeKey } from './dashboardScope';
+import { resourceGroupScopeOf, dashboardScopeKey } from './dashboardScope';
 import { DeniedPanelsContext, useDeniedPanels } from './panelPermission';
 import { panelSettingOverridesAtom } from './panelSettingOverrides';
 import type {

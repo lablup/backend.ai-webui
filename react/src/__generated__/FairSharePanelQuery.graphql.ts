@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7a7eb602542cad23dee7d152ef504a69>>
+ * @generated SignedSource<<e709f3b54c1dc4a3c02a49411f42bfc7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+import { Result } from "relay-runtime";
 export type FairSharePanelQuery$variables = {
   domainName: string;
   limit: number;
@@ -16,7 +17,7 @@ export type FairSharePanelQuery$variables = {
   resourceGroupName: string;
 };
 export type FairSharePanelQuery$data = {
-  readonly projects: {
+  readonly projects: Result<{
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -36,7 +37,7 @@ export type FairSharePanelQuery$data = {
         };
       };
     }>;
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type FairSharePanelQuery = {
   response: FairSharePanelQuery$data;
@@ -197,53 +198,57 @@ return {
     "name": "FairSharePanelQuery",
     "selections": [
       {
-        "alias": "projects",
-        "args": (v4/*: any*/),
-        "concreteType": "ProjectFairShareConnection",
-        "kind": "LinkedField",
-        "name": "rgProjectFairShares",
-        "plural": false,
-        "selections": [
-          (v5/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ProjectFairShareEdge",
-            "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "ProjectFairShare",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": [
-                  (v6/*: any*/),
-                  (v7/*: any*/),
-                  (v8/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "ProjectV2",
-                    "kind": "LinkedField",
-                    "name": "project",
-                    "plural": false,
-                    "selections": [
-                      (v9/*: any*/)
-                    ],
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
+        "kind": "CatchField",
+        "field": {
+          "alias": "projects",
+          "args": (v4/*: any*/),
+          "concreteType": "ProjectFairShareConnection",
+          "kind": "LinkedField",
+          "name": "rgProjectFairShares",
+          "plural": false,
+          "selections": [
+            (v5/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "ProjectFairShareEdge",
+              "kind": "LinkedField",
+              "name": "edges",
+              "plural": true,
+              "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "ProjectFairShare",
+                  "kind": "LinkedField",
+                  "name": "node",
+                  "plural": false,
+                  "selections": [
+                    (v6/*: any*/),
+                    (v7/*: any*/),
+                    (v8/*: any*/),
+                    {
+                      "alias": null,
+                      "args": null,
+                      "concreteType": "ProjectV2",
+                      "kind": "LinkedField",
+                      "name": "project",
+                      "plural": false,
+                      "selections": [
+                        (v9/*: any*/)
+                      ],
+                      "storageKey": null
+                    }
+                  ],
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        },
+        "to": "RESULT"
       }
     ],
     "type": "Query",
@@ -323,6 +328,6 @@ return {
 };
 })();
 
-(node as any).hash = "b68cd943be2d8724c883ac3267da7567";
+(node as any).hash = "34d647f24bbe5017c726f9cc6a11fc37";
 
 export default node;

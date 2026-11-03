@@ -5,6 +5,8 @@
 import { AgentStatsFragment$key } from '../__generated__/AgentStatsFragment.graphql';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import PanelDetailLinkButton from './DashboardPanels/PanelDetailLinkButton';
+import { countText, readCount } from './DashboardPanels/countAliases';
+import { readPrimary } from './DashboardPanels/panelPermission';
 import { Heading } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
@@ -33,6 +35,11 @@ interface AgentStatsProps extends BAIFlexProps {
   extra?: ReactNode;
 }
 
+const agentCountText = (alias: Parameters<typeof readCount>[0]) => {
+  const { count, denied } = readCount(alias);
+  return countText(denied ? null : count);
+};
+
 const AgentStats: React.FC<AgentStatsProps> = ({
   queryRef,
   extra,
@@ -59,20 +66,21 @@ const AgentStats: React.FC<AgentStatsProps> = ({
         schedulableAgentFilter: { type: "String!" }
       )
       @refetchable(queryName: "AgentStatsRefetchQuery") {
-        agentStats {
+        agentStats @catch(to: RESULT) {
           totalResource {
             free
             used
             capacity
           }
         }
-        aliveAgents: agent_nodes(filter: $aliveAgentFilter, first: 1) {
+        aliveAgents: agent_nodes(filter: $aliveAgentFilter, first: 1)
+          @catch(to: RESULT) {
           count
         }
         schedulableAgents: agent_nodes(
           filter: $schedulableAgentFilter
           first: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
       }
@@ -83,7 +91,7 @@ const AgentStats: React.FC<AgentStatsProps> = ({
   const resourceSlotsDetails = useResourceSlotsDetails();
 
   const agentStatsData = (() => {
-    const totalResource = data.agentStats?.totalResource;
+    const totalResource = readPrimary(data.agentStats)?.totalResource;
     if (!totalResource) {
       return { cpu: null, memory: null, accelerators: [] };
     }
@@ -196,9 +204,9 @@ const AgentStats: React.FC<AgentStatsProps> = ({
               values={[
                 { label: t('agentStats.SchedulableAgents') },
                 {
-                  label: `${data.schedulableAgents?.count ?? 0} / ${
-                    data.aliveAgents?.count ?? 0
-                  }`,
+                  label: `${agentCountText(data.schedulableAgents)} / ${agentCountText(
+                    data.aliveAgents,
+                  )}`,
                 },
               ]}
             />

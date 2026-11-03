@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5447dff820dd1a3aee3bb37c836362cc>>
+ * @generated SignedSource<<25a74aa2b78a64d99f7a63914fec9e01>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-import { FragmentRefs } from "relay-runtime";
+import { FragmentRefs, Result } from "relay-runtime";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type SessionV2NetworkType = "HOST" | "PERSISTENT" | "VOLATILE" | "%future added value";
 export type SessionV2OrderField = "ACCESS_KEY" | "BATCH_TIMEOUT" | "CLUSTER_SIZE" | "CREATED_AT" | "CREATION_ID" | "DOMAIN_NAME" | "ID" | "IS_PREEMPTIBLE" | "JOB_PRIORITY" | "NAME" | "NETWORK_ID" | "NETWORK_TYPE" | "PRIORITY" | "PROJECT_ID" | "REPLICA_ID" | "REQUESTED_STARTS_AT" | "RESOURCE_GROUP_NAME" | "RESULT" | "SESSION_GROUP_ID" | "SESSION_TYPE" | "STARTS_AT" | "STATUS" | "TAG" | "TERMINATED_AT" | "TIER" | "USER_ID" | "USE_HOST_NETWORK" | "%future added value";
@@ -143,7 +143,7 @@ export type SessionListDomainQuery$variables = {
   orderBy: ReadonlyArray<SessionV2OrderBy>;
 };
 export type SessionListDomainQuery$data = {
-  readonly sessions: {
+  readonly sessions: Result<{
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -154,7 +154,7 @@ export type SessionListDomainQuery$data = {
         readonly " $fragmentSpreads": FragmentRefs<"BAISessionNodesV2Fragment">;
       };
     }>;
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type SessionListDomainQuery = {
   response: SessionListDomainQuery$data;
@@ -326,56 +326,60 @@ return {
     "name": "SessionListDomainQuery",
     "selections": [
       {
-        "alias": "sessions",
-        "args": (v5/*: any*/),
-        "concreteType": "SessionV2Connection",
-        "kind": "LinkedField",
-        "name": "scopedSessionsV2",
-        "plural": false,
-        "selections": [
-          (v6/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "SessionV2Edge",
-            "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "SessionV2",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": [
-                  (v7/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "SessionV2LifecycleInfo",
-                    "kind": "LinkedField",
-                    "name": "lifecycle",
-                    "plural": false,
-                    "selections": [
-                      (v8/*: any*/)
-                    ],
-                    "storageKey": null
-                  },
-                  {
-                    "args": null,
-                    "kind": "FragmentSpread",
-                    "name": "BAISessionNodesV2Fragment"
-                  }
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
+        "kind": "CatchField",
+        "field": {
+          "alias": "sessions",
+          "args": (v5/*: any*/),
+          "concreteType": "SessionV2Connection",
+          "kind": "LinkedField",
+          "name": "scopedSessionsV2",
+          "plural": false,
+          "selections": [
+            (v6/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "SessionV2Edge",
+              "kind": "LinkedField",
+              "name": "edges",
+              "plural": true,
+              "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "SessionV2",
+                  "kind": "LinkedField",
+                  "name": "node",
+                  "plural": false,
+                  "selections": [
+                    (v7/*: any*/),
+                    {
+                      "alias": null,
+                      "args": null,
+                      "concreteType": "SessionV2LifecycleInfo",
+                      "kind": "LinkedField",
+                      "name": "lifecycle",
+                      "plural": false,
+                      "selections": [
+                        (v8/*: any*/)
+                      ],
+                      "storageKey": null
+                    },
+                    {
+                      "args": null,
+                      "kind": "FragmentSpread",
+                      "name": "BAISessionNodesV2Fragment"
+                    }
+                  ],
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        },
+        "to": "RESULT"
       }
     ],
     "type": "Query",
@@ -743,6 +747,6 @@ return {
 };
 })();
 
-(node as any).hash = "93a9588a17d78334a678d3601f378874";
+(node as any).hash = "5fb1a037495c222691acc3bf5e44862d";
 
 export default node;

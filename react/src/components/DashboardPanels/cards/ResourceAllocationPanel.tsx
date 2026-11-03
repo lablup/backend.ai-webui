@@ -7,6 +7,7 @@ import type { ResourceAllocationPanelProjectQuery } from '../../../__generated__
 import type { CardScope } from '../cardScope';
 import ResourceUsageBars from '../memberCards/ResourceUsageBars';
 import { toLimitUsageRows } from '../memberCards/memberCardData';
+import { readPrimary } from '../panelPermission';
 import type { PanelComponentProps } from '../types';
 import ScopedCard from './ScopedCard';
 import React, { useDeferredValue } from 'react';
@@ -22,7 +23,7 @@ const ProjectAllocation: React.FC<{ projectId: string; fetchKey: string }> = ({
   const data = useLazyLoadQuery<ResourceAllocationPanelProjectQuery>(
     graphql`
       query ResourceAllocationPanelProjectQuery($projectId: UUID!) {
-        projectResourceAllocationV2(projectId: $projectId) {
+        projectResourceAllocationV2(projectId: $projectId) @catch(to: RESULT) {
           project {
             limits {
               resourceType
@@ -42,7 +43,9 @@ const ProjectAllocation: React.FC<{ projectId: string; fetchKey: string }> = ({
   );
   return (
     <ResourceUsageBars
-      rows={toLimitUsageRows(data.projectResourceAllocationV2?.project)}
+      rows={toLimitUsageRows(
+        readPrimary(data.projectResourceAllocationV2)?.project,
+      )}
     />
   );
 };
@@ -56,7 +59,8 @@ const DomainAllocation: React.FC<{ domainName: string; fetchKey: string }> = ({
   const data = useLazyLoadQuery<ResourceAllocationPanelDomainQuery>(
     graphql`
       query ResourceAllocationPanelDomainQuery($domainName: String!) {
-        adminDomainResourceAllocationV2(domainName: $domainName) {
+        adminDomainResourceAllocationV2(domainName: $domainName)
+          @catch(to: RESULT) {
           domain {
             limits {
               resourceType
@@ -76,7 +80,9 @@ const DomainAllocation: React.FC<{ domainName: string; fetchKey: string }> = ({
   );
   return (
     <ResourceUsageBars
-      rows={toLimitUsageRows(data.adminDomainResourceAllocationV2?.domain)}
+      rows={toLimitUsageRows(
+        readPrimary(data.adminDomainResourceAllocationV2)?.domain,
+      )}
     />
   );
 };

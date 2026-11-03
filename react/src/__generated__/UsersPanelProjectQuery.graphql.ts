@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f13690c5c8668d5677286f1bc5664212>>
+ * @generated SignedSource<<ab5198714af858ef90f0f71e33b466e8>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,9 +14,9 @@ export type UsersPanelProjectQuery$variables = {
   projectId: string;
 };
 export type UsersPanelProjectQuery$data = {
-  readonly active: {
+  readonly active: Result<{
     readonly count: number;
-  } | null | undefined;
+  } | null | undefined, unknown>;
   readonly adminRoles: Result<{
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -28,9 +28,9 @@ export type UsersPanelProjectQuery$data = {
       };
     }>;
   } | null | undefined, unknown>;
-  readonly inactive: {
+  readonly inactive: Result<{
     readonly count: number;
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type UsersPanelProjectQuery = {
   response: UsersPanelProjectQuery$data;
@@ -171,8 +171,16 @@ return {
     "metadata": null,
     "name": "UsersPanelProjectQuery",
     "selections": [
-      (v6/*: any*/),
-      (v7/*: any*/),
+      {
+        "kind": "CatchField",
+        "field": (v6/*: any*/),
+        "to": "RESULT"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v7/*: any*/),
+        "to": "RESULT"
+      },
       {
         "kind": "CatchField",
         "field": {
@@ -281,6 +289,6 @@ return {
 };
 })();
 
-(node as any).hash = "90cf9069f7ad34950df0e47119bb0793";
+(node as any).hash = "52f195a4caba35254ae5ec287367bfeb";
 
 export default node;

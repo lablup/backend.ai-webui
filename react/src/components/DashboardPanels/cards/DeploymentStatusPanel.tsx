@@ -173,7 +173,7 @@ const DomainDeployments: React.FC<
           orderBy: [{ field: CREATED_AT, direction: DESC }]
           limit: $limit
           offset: $offset
-        ) {
+        ) @catch(to: RESULT) {
           count
           edges {
             node {
@@ -195,7 +195,7 @@ const DomainDeployments: React.FC<
     { domainId, filter: LIVE, limit, offset },
     { fetchPolicy: 'store-and-network', fetchKey },
   );
-  return children(toPage(data.deployments));
+  return children(toPage(readPrimary(data.deployments)));
 };
 
 /** One page of live deployments in the scope, newest first. */

@@ -6,6 +6,7 @@ import type { UsersPanelDomainQuery } from '../../../__generated__/UsersPanelDom
 import type { UsersPanelProjectQuery } from '../../../__generated__/UsersPanelProjectQuery.graphql';
 import type { CardScope } from '../cardScope';
 import StatRow, { type StatRowItem } from '../charts/StatRow';
+import { countText, readCounts } from '../countAliases';
 import type { PanelComponentProps } from '../types';
 import ScopedCard from './ScopedCard';
 import { filterOutNullAndUndefined } from 'backend.ai-ui';
@@ -13,11 +14,9 @@ import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-type Count = { readonly count: number } | null | undefined;
-
 const useAccountStats = (
-  active: Count,
-  inactive: Count,
+  active: number | null,
+  inactive: number | null,
 ): Array<StatRowItem> => {
   'use memo';
   const { t } = useTranslation();
@@ -25,12 +24,12 @@ const useAccountStats = (
     {
       key: 'active',
       label: t('general.Active'),
-      value: String(active?.count ?? 0),
+      value: countText(active),
     },
     {
       key: 'inactive',
       label: t('general.Inactive'),
-      value: String(inactive?.count ?? 0),
+      value: countText(inactive),
     },
   ];
 };
@@ -49,14 +48,14 @@ const ProjectUsers: React.FC<{ projectId: string; fetchKey: string }> = ({
           scope: { projectId: $projectId }
           filter: { status: { equals: ACTIVE } }
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
         inactive: projectUsersV2(
           scope: { projectId: $projectId }
           filter: { status: { equals: INACTIVE } }
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
         adminRoles: projectRoles(
@@ -82,7 +81,8 @@ const ProjectUsers: React.FC<{ projectId: string; fetchKey: string }> = ({
     variables,
     { fetchPolicy: 'store-and-network', fetchKey },
   );
-  const accountStats = useAccountStats(data.active, data.inactive);
+  const counts = readCounts(data, ['active', 'inactive']);
+  const accountStats = useAccountStats(counts.active, counts.inactive);
   const roles = data.adminRoles.ok
     ? filterOutNullAndUndefined(
         data.adminRoles.value?.edges.map((edge) => edge?.node),
@@ -121,21 +121,21 @@ const DomainUsers: React.FC<{ domainId: string; fetchKey: string }> = ({
           scope: { domain: [{ value: $domainId }] }
           filter: { status: { equals: ACTIVE } }
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
         inactive: scopedUsersV2(
           scope: { domain: [{ value: $domainId }] }
           filter: { status: { equals: INACTIVE } }
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
         admins: scopedUsersV2(
           scope: { domain: [{ value: $domainId }] }
           filter: { status: { equals: ACTIVE }, role: { equals: ADMIN } }
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
       }
@@ -143,7 +143,8 @@ const DomainUsers: React.FC<{ domainId: string; fetchKey: string }> = ({
     variables,
     { fetchPolicy: 'store-and-network', fetchKey },
   );
-  const accountStats = useAccountStats(data.active, data.inactive);
+  const counts = readCounts(data, ['active', 'inactive', 'admins']);
+  const accountStats = useAccountStats(counts.active, counts.inactive);
   return (
     <StatRow
       items={[
@@ -151,7 +152,7 @@ const DomainUsers: React.FC<{ domainId: string; fetchKey: string }> = ({
         {
           key: 'admins',
           label: t('dashboard.card.Admins'),
-          value: String(data.admins?.count ?? 0),
+          value: countText(counts.admins),
         },
       ]}
     />

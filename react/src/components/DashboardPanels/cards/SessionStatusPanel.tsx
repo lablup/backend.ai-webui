@@ -297,56 +297,56 @@ const DomainSessionCounts: React.FC<{ domainId: string; fetchKey: string }> = ({
           scope: { domain: [{ value: $domainId }] }
           filter: $pending
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
         starting: scopedSessionsV2(
           scope: { domain: [{ value: $domainId }] }
           filter: $starting
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
         running: scopedSessionsV2(
           scope: { domain: [{ value: $domainId }] }
           filter: $running
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
         terminating: scopedSessionsV2(
           scope: { domain: [{ value: $domainId }] }
           filter: $terminating
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
         interactive: scopedSessionsV2(
           scope: { domain: [{ value: $domainId }] }
           filter: $interactive
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
         batch: scopedSessionsV2(
           scope: { domain: [{ value: $domainId }] }
           filter: $batch
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
         inference: scopedSessionsV2(
           scope: { domain: [{ value: $domainId }] }
           filter: $inference
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
         system: scopedSessionsV2(
           scope: { domain: [{ value: $domainId }] }
           filter: $system
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
       }

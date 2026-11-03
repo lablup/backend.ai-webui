@@ -9,7 +9,9 @@ import type {
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
 import ScopedCard from '../cards/ScopedCard';
 import DonutChart from '../charts/DonutChart';
+import { readCounts } from '../countAliases';
 import { toDonutRows } from '../memberCards/memberCardData';
+import { readPrimary } from '../panelPermission';
 import { withinWindow, type DateTimeWindow } from '../timeRange';
 import type { PanelComponentProps } from '../types';
 import { useOpenSessionDetail } from '../useOpenSessionDetail';
@@ -79,19 +81,22 @@ const SchedulingFailures: React.FC<{
         $limit: Int!
         $offset: Int!
       ) {
-        failure: adminSessionSchedulingHistories(filter: $failure, limit: 1) {
+        failure: adminSessionSchedulingHistories(filter: $failure, limit: 1)
+          @catch(to: RESULT) {
           count
         }
-        giveUp: adminSessionSchedulingHistories(filter: $giveUp, limit: 1) {
+        giveUp: adminSessionSchedulingHistories(filter: $giveUp, limit: 1)
+          @catch(to: RESULT) {
           count
         }
-        expired: adminSessionSchedulingHistories(filter: $expired, limit: 1) {
+        expired: adminSessionSchedulingHistories(filter: $expired, limit: 1)
+          @catch(to: RESULT) {
           count
         }
         needRetry: adminSessionSchedulingHistories(
           filter: $needRetry
           limit: 1
-        ) {
+        ) @catch(to: RESULT) {
           count
         }
         histories: adminSessionSchedulingHistories(
@@ -99,7 +104,7 @@ const SchedulingFailures: React.FC<{
           orderBy: [{ field: CREATED_AT, direction: DESC }]
           limit: $limit
           offset: $offset
-        ) {
+        ) @catch(to: RESULT) {
           count
           edges {
             node {
@@ -127,8 +132,15 @@ const SchedulingFailures: React.FC<{
     deferredVariables,
     { fetchPolicy: 'store-and-network', fetchKey },
   );
+  const histories = readPrimary(data.histories);
+  const counts = readCounts(data, [
+    'failure',
+    'giveUp',
+    'expired',
+    'needRetry',
+  ]);
   const rows = filterOutNullAndUndefined(
-    data.histories?.edges.map((edge) => edge?.node),
+    histories?.edges.map((edge) => edge?.node),
   );
   const rowById = new Map(rows.map((row) => [row.id, row]));
 
@@ -151,7 +163,7 @@ const SchedulingFailures: React.FC<{
           SCHEDULING_FAILURE_RESULTS.map((result) => ({
             key: result,
             label: result,
-            count: data[ALIAS[result]]?.count,
+            count: counts[ALIAS[result]],
           })),
         )}
       />
@@ -213,7 +225,7 @@ const SchedulingFailures: React.FC<{
         pagination={{
           pageSize: tablePaginationOption.pageSize,
           current: tablePaginationOption.current,
-          total: data.histories?.count ?? 0,
+          total: histories?.count ?? 0,
           onChange: (current, pageSize) =>
             setTablePaginationOption({ current, pageSize }),
         }}

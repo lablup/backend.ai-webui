@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8dd6f3af668fa909456bedb7b01e30a8>>
+ * @generated SignedSource<<04452f8217416bd992ecc9f919b08a3f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,17 +9,18 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+import { Result } from "relay-runtime";
 export type ResourcePoliciesPanelQuery$variables = Record<PropertyKey, never>;
 export type ResourcePoliciesPanelQuery$data = {
-  readonly keypair: {
+  readonly keypair: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly project: {
+  } | null | undefined, unknown>;
+  readonly project: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly user: {
+  } | null | undefined, unknown>;
+  readonly user: Result<{
     readonly count: number;
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type ResourcePoliciesPanelQuery = {
   response: ResourcePoliciesPanelQuery$data;
@@ -43,45 +44,59 @@ v1 = [
     "storageKey": null
   }
 ],
-v2 = [
-  {
-    "alias": "keypair",
-    "args": (v0/*: any*/),
-    "concreteType": "KeypairResourcePolicyV2Connection",
-    "kind": "LinkedField",
-    "name": "adminKeypairResourcePoliciesV2",
-    "plural": false,
-    "selections": (v1/*: any*/),
-    "storageKey": "adminKeypairResourcePoliciesV2(limit:1)"
-  },
-  {
-    "alias": "user",
-    "args": (v0/*: any*/),
-    "concreteType": "UserResourcePolicyV2Connection",
-    "kind": "LinkedField",
-    "name": "adminUserResourcePoliciesV2",
-    "plural": false,
-    "selections": (v1/*: any*/),
-    "storageKey": "adminUserResourcePoliciesV2(limit:1)"
-  },
-  {
-    "alias": "project",
-    "args": (v0/*: any*/),
-    "concreteType": "ProjectResourcePolicyV2Connection",
-    "kind": "LinkedField",
-    "name": "adminProjectResourcePoliciesV2",
-    "plural": false,
-    "selections": (v1/*: any*/),
-    "storageKey": "adminProjectResourcePoliciesV2(limit:1)"
-  }
-];
+v2 = {
+  "alias": "keypair",
+  "args": (v0/*: any*/),
+  "concreteType": "KeypairResourcePolicyV2Connection",
+  "kind": "LinkedField",
+  "name": "adminKeypairResourcePoliciesV2",
+  "plural": false,
+  "selections": (v1/*: any*/),
+  "storageKey": "adminKeypairResourcePoliciesV2(limit:1)"
+},
+v3 = {
+  "alias": "user",
+  "args": (v0/*: any*/),
+  "concreteType": "UserResourcePolicyV2Connection",
+  "kind": "LinkedField",
+  "name": "adminUserResourcePoliciesV2",
+  "plural": false,
+  "selections": (v1/*: any*/),
+  "storageKey": "adminUserResourcePoliciesV2(limit:1)"
+},
+v4 = {
+  "alias": "project",
+  "args": (v0/*: any*/),
+  "concreteType": "ProjectResourcePolicyV2Connection",
+  "kind": "LinkedField",
+  "name": "adminProjectResourcePoliciesV2",
+  "plural": false,
+  "selections": (v1/*: any*/),
+  "storageKey": "adminProjectResourcePoliciesV2(limit:1)"
+};
 return {
   "fragment": {
     "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
     "name": "ResourcePoliciesPanelQuery",
-    "selections": (v2/*: any*/),
+    "selections": [
+      {
+        "kind": "CatchField",
+        "field": (v2/*: any*/),
+        "to": "RESULT"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v3/*: any*/),
+        "to": "RESULT"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v4/*: any*/),
+        "to": "RESULT"
+      }
+    ],
     "type": "Query",
     "abstractKey": null
   },
@@ -90,7 +105,11 @@ return {
     "argumentDefinitions": [],
     "kind": "Operation",
     "name": "ResourcePoliciesPanelQuery",
-    "selections": (v2/*: any*/)
+    "selections": [
+      (v2/*: any*/),
+      (v3/*: any*/),
+      (v4/*: any*/)
+    ]
   },
   "params": {
     "cacheID": "9c5b5f745c02e90a2cfe9e57b8bd34eb",
@@ -103,6 +122,6 @@ return {
 };
 })();
 
-(node as any).hash = "74f93c448a826a5186b8ffeffd24d437";
+(node as any).hash = "e0824f6a0947e14ef5faa7c41c287780";
 
 export default node;

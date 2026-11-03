@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<dede0c9bcc6f2d3cb6cdc29948cf03c5>>
+ * @generated SignedSource<<2927170446660447f59559538d271fa2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,13 +9,13 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-import { FragmentRefs } from "relay-runtime";
+import { FragmentRefs, Result } from "relay-runtime";
 export type AgentsPanelQuery$variables = {
   first: number;
   offset: number;
 };
 export type AgentsPanelQuery$data = {
-  readonly agents: {
+  readonly agents: Result<{
     readonly count: number | null | undefined;
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -24,19 +24,19 @@ export type AgentsPanelQuery$data = {
         readonly " $fragmentSpreads": FragmentRefs<"BAIAgentTableFragment">;
       } | null | undefined;
     } | null | undefined>;
-  } | null | undefined;
-  readonly alive: {
+  } | null | undefined, unknown>;
+  readonly alive: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly lost: {
+  } | null | undefined, unknown>;
+  readonly lost: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly restarting: {
+  } | null | undefined, unknown>;
+  readonly restarting: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly terminated: {
+  } | null | undefined, unknown>;
+  readonly terminated: Result<{
     readonly count: number;
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type AgentsPanelQuery = {
   response: AgentsPanelQuery$data;
@@ -193,50 +193,70 @@ return {
     "metadata": null,
     "name": "AgentsPanelQuery",
     "selections": [
-      (v4/*: any*/),
-      (v5/*: any*/),
-      (v6/*: any*/),
-      (v7/*: any*/),
       {
-        "alias": "agents",
-        "args": (v8/*: any*/),
-        "concreteType": "AgentConnection",
-        "kind": "LinkedField",
-        "name": "agent_nodes",
-        "plural": false,
-        "selections": [
-          (v2/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "AgentEdge",
-            "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "AgentNode",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": [
-                  (v9/*: any*/),
-                  (v10/*: any*/),
-                  {
-                    "args": null,
-                    "kind": "FragmentSpread",
-                    "name": "BAIAgentTableFragment"
-                  }
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
+        "kind": "CatchField",
+        "field": (v4/*: any*/),
+        "to": "RESULT"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v5/*: any*/),
+        "to": "RESULT"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v6/*: any*/),
+        "to": "RESULT"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v7/*: any*/),
+        "to": "RESULT"
+      },
+      {
+        "kind": "CatchField",
+        "field": {
+          "alias": "agents",
+          "args": (v8/*: any*/),
+          "concreteType": "AgentConnection",
+          "kind": "LinkedField",
+          "name": "agent_nodes",
+          "plural": false,
+          "selections": [
+            (v2/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "AgentEdge",
+              "kind": "LinkedField",
+              "name": "edges",
+              "plural": true,
+              "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "AgentNode",
+                  "kind": "LinkedField",
+                  "name": "node",
+                  "plural": false,
+                  "selections": [
+                    (v9/*: any*/),
+                    (v10/*: any*/),
+                    {
+                      "args": null,
+                      "kind": "FragmentSpread",
+                      "name": "BAIAgentTableFragment"
+                    }
+                  ],
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        },
+        "to": "RESULT"
       }
     ],
     "type": "Query",
@@ -399,6 +419,6 @@ return {
 };
 })();
 
-(node as any).hash = "a652df24a8376beeb15c297dc5793029";
+(node as any).hash = "3e3b93a6dceb2f6abbac63f26cd2731d";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fec6ad002bc1d9f302e6a295e6b279f8>>
+ * @generated SignedSource<<17056340ac0ea6d95535c0001597afc1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-import { FragmentRefs } from "relay-runtime";
+import { FragmentRefs, Result } from "relay-runtime";
 export type LoginAttemptResult = "EVICTED" | "EXPIRED" | "FAILED_BLOCKED" | "FAILED_INVALID_CREDENTIALS" | "FAILED_PASSWORD_EXPIRED" | "FAILED_REJECTED_BY_HOOK" | "FAILED_SESSION_ALREADY_EXISTS" | "FAILED_USER_INACTIVE" | "LOGOUT" | "REVOKED_BY_ADMIN" | "REVOKED_BY_USER" | "SUCCESS" | "%future added value";
 export type LoginHistoryFilter = {
   AND?: ReadonlyArray<LoginHistoryFilter> | null | undefined;
@@ -67,7 +67,7 @@ export type FailedLoginsPanelQuery$variables = {
   previousFailed: LoginHistoryFilter;
 };
 export type FailedLoginsPanelQuery$data = {
-  readonly failedLogins: {
+  readonly failedLogins: Result<{
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -80,10 +80,10 @@ export type FailedLoginsPanelQuery$data = {
         readonly " $fragmentSpreads": FragmentRefs<"BAILoginHistoryTableFragment">;
       };
     }>;
-  } | null | undefined;
-  readonly previousFailed: {
+  } | null | undefined, unknown>;
+  readonly previousFailed: Result<{
     readonly count: number;
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type FailedLoginsPanelQuery = {
   response: FailedLoginsPanelQuery$data;
@@ -205,58 +205,66 @@ return {
     "metadata": null,
     "name": "FailedLoginsPanelQuery",
     "selections": [
-      (v5/*: any*/),
       {
-        "alias": "failedLogins",
-        "args": (v6/*: any*/),
-        "concreteType": "LoginHistoryV2Connection",
-        "kind": "LinkedField",
-        "name": "adminLoginHistoryV2",
-        "plural": false,
-        "selections": [
-          (v4/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "LoginHistoryV2Edge",
-            "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "LoginHistoryV2",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": [
-                  (v7/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "UserV2",
-                    "kind": "LinkedField",
-                    "name": "user",
-                    "plural": false,
-                    "selections": [
-                      (v8/*: any*/)
-                    ],
-                    "storageKey": null
-                  },
-                  {
-                    "args": null,
-                    "kind": "FragmentSpread",
-                    "name": "BAILoginHistoryTableFragment"
-                  }
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
+        "kind": "CatchField",
+        "field": (v5/*: any*/),
+        "to": "RESULT"
+      },
+      {
+        "kind": "CatchField",
+        "field": {
+          "alias": "failedLogins",
+          "args": (v6/*: any*/),
+          "concreteType": "LoginHistoryV2Connection",
+          "kind": "LinkedField",
+          "name": "adminLoginHistoryV2",
+          "plural": false,
+          "selections": [
+            (v4/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "LoginHistoryV2Edge",
+              "kind": "LinkedField",
+              "name": "edges",
+              "plural": true,
+              "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "LoginHistoryV2",
+                  "kind": "LinkedField",
+                  "name": "node",
+                  "plural": false,
+                  "selections": [
+                    (v7/*: any*/),
+                    {
+                      "alias": null,
+                      "args": null,
+                      "concreteType": "UserV2",
+                      "kind": "LinkedField",
+                      "name": "user",
+                      "plural": false,
+                      "selections": [
+                        (v8/*: any*/)
+                      ],
+                      "storageKey": null
+                    },
+                    {
+                      "args": null,
+                      "kind": "FragmentSpread",
+                      "name": "BAILoginHistoryTableFragment"
+                    }
+                  ],
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        },
+        "to": "RESULT"
       }
     ],
     "type": "Query",
@@ -370,6 +378,6 @@ return {
 };
 })();
 
-(node as any).hash = "58b768caa6579c8625f8001d85819202";
+(node as any).hash = "cf5ef56dfbad0c931e61f591111ccf73";
 
 export default node;

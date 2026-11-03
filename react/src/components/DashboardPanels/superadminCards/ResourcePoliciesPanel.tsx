@@ -6,6 +6,7 @@ import type { ResourcePoliciesPanelQuery } from '../../../__generated__/Resource
 import { useProjectPath } from '../../../hooks/useRouteScope';
 import ScopedCard from '../cards/ScopedCard';
 import StatRow from '../charts/StatRow';
+import { countText, readCounts } from '../countAliases';
 import type { PanelComponentProps } from '../types';
 import { BAILink } from 'backend.ai-ui';
 import React from 'react';
@@ -19,13 +20,13 @@ const PolicyCounts: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
   const data = useLazyLoadQuery<ResourcePoliciesPanelQuery>(
     graphql`
       query ResourcePoliciesPanelQuery {
-        keypair: adminKeypairResourcePoliciesV2(limit: 1) {
+        keypair: adminKeypairResourcePoliciesV2(limit: 1) @catch(to: RESULT) {
           count
         }
-        user: adminUserResourcePoliciesV2(limit: 1) {
+        user: adminUserResourcePoliciesV2(limit: 1) @catch(to: RESULT) {
           count
         }
-        project: adminProjectResourcePoliciesV2(limit: 1) {
+        project: adminProjectResourcePoliciesV2(limit: 1) @catch(to: RESULT) {
           count
         }
       }
@@ -33,30 +34,34 @@ const PolicyCounts: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
     {},
     { fetchPolicy: 'store-and-network', fetchKey },
   );
-  const link = (tab: string, count: number | undefined) => (
-    <BAILink
-      to={`${buildPath('resource-policy', { scope: 'admin' })}?tab=${tab}`}
-    >
-      {String(count ?? 0)}
-    </BAILink>
-  );
+  const counts = readCounts(data, ['keypair', 'user', 'project']);
+  const link = (tab: string, count: number | null) =>
+    count === null ? (
+      countText(count)
+    ) : (
+      <BAILink
+        to={`${buildPath('resource-policy', { scope: 'admin' })}?tab=${tab}`}
+      >
+        {String(count)}
+      </BAILink>
+    );
   return (
     <StatRow
       items={[
         {
           key: 'keypair',
           label: t('resourcePolicy.KeypairResourcePolicy'),
-          value: link('keypair', data.keypair?.count),
+          value: link('keypair', counts.keypair),
         },
         {
           key: 'user',
           label: t('resourcePolicy.UserResourcePolicy'),
-          value: link('user', data.user?.count),
+          value: link('user', counts.user),
         },
         {
           key: 'project',
           label: t('resourcePolicy.ProjectResourcePolicy'),
-          value: link('project', data.project?.count),
+          value: link('project', counts.project),
         },
       ]}
     />

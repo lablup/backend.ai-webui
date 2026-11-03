@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e39eb4d82dfaad43c6f3680cb6a602e6>>
+ * @generated SignedSource<<960b9259ea0d8d6c4e46e22ba69ff224>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+import { Result } from "relay-runtime";
 export type AuditLogActionKind = "BULK" | "GLOBAL" | "LOOKUP" | "MEMBERSHIP" | "RELATION" | "SCOPE" | "SINGLE_ENTITY" | "%future added value";
 export type AuditLogStatus = "DENIED" | "ERROR" | "RUNNING" | "SUCCESS" | "UNKNOWN" | "%future added value";
 export type AuditLogScope = {
@@ -126,60 +127,60 @@ export type AuditLogPanelScopedHistoryQuery$variables = {
   scope: AuditLogScope;
 };
 export type AuditLogPanelScopedHistoryQuery$data = {
-  readonly f0?: {
+  readonly f0?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly f1?: {
+  } | null | undefined, unknown>;
+  readonly f1?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly f2?: {
+  } | null | undefined, unknown>;
+  readonly f2?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly f3?: {
+  } | null | undefined, unknown>;
+  readonly f3?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly f4?: {
+  } | null | undefined, unknown>;
+  readonly f4?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly f5?: {
+  } | null | undefined, unknown>;
+  readonly f5?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly f6?: {
+  } | null | undefined, unknown>;
+  readonly f6?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly f7?: {
+  } | null | undefined, unknown>;
+  readonly f7?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly previousFailure?: {
+  } | null | undefined, unknown>;
+  readonly previousFailure?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly previousSuccess?: {
+  } | null | undefined, unknown>;
+  readonly previousSuccess?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly s0?: {
+  } | null | undefined, unknown>;
+  readonly s0?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly s1?: {
+  } | null | undefined, unknown>;
+  readonly s1?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly s2?: {
+  } | null | undefined, unknown>;
+  readonly s2?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly s3?: {
+  } | null | undefined, unknown>;
+  readonly s3?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly s4?: {
+  } | null | undefined, unknown>;
+  readonly s4?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly s5?: {
+  } | null | undefined, unknown>;
+  readonly s5?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly s6?: {
+  } | null | undefined, unknown>;
+  readonly s6?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly s7?: {
+  } | null | undefined, unknown>;
+  readonly s7?: Result<{
     readonly count: number;
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type AuditLogPanelScopedHistoryQuery = {
   response: AuditLogPanelScopedHistoryQuery$data;
@@ -762,12 +763,12 @@ return {
           {
             "kind": "CatchField",
             "field": (v39/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           },
           {
             "kind": "CatchField",
             "field": (v40/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -779,7 +780,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v41/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -791,7 +792,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v42/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -803,7 +804,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v43/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -815,7 +816,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v44/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -827,7 +828,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v45/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -839,7 +840,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v46/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -851,7 +852,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v47/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -863,7 +864,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v48/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -875,7 +876,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v49/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -887,7 +888,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v50/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -899,7 +900,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v51/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -911,7 +912,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v52/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -923,7 +924,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v53/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -935,7 +936,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v54/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -947,7 +948,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v55/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -959,7 +960,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v56/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       }
@@ -1160,6 +1161,6 @@ return {
 };
 })();
 
-(node as any).hash = "eda1a66259d126daa83c814746ca7d0b";
+(node as any).hash = "c1f977e83b562e0ef87e09e2fbec906a";
 
 export default node;

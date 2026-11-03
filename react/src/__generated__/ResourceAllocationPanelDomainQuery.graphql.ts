@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d43438301c2e003871371a2951560121>>
+ * @generated SignedSource<<61b48cb7739c584c1fea40bb9385ad48>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,11 +9,12 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+import { Result } from "relay-runtime";
 export type ResourceAllocationPanelDomainQuery$variables = {
   domainName: string;
 };
 export type ResourceAllocationPanelDomainQuery$data = {
-  readonly adminDomainResourceAllocationV2: {
+  readonly adminDomainResourceAllocationV2: Result<{
     readonly domain: {
       readonly limits: ReadonlyArray<{
         readonly quantity: any | null | undefined;
@@ -25,7 +26,7 @@ export type ResourceAllocationPanelDomainQuery$data = {
         readonly resourceType: string;
       }>;
     };
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type ResourceAllocationPanelDomainQuery = {
   response: ResourceAllocationPanelDomainQuery$data;
@@ -54,76 +55,80 @@ v2 = {
   "name": "quantity",
   "storageKey": null
 },
-v3 = [
-  {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "domainName",
-        "variableName": "domainName"
-      }
-    ],
-    "concreteType": "DomainResourceAllocationV2",
-    "kind": "LinkedField",
-    "name": "adminDomainResourceAllocationV2",
-    "plural": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "ScopeResourceUsageV2",
-        "kind": "LinkedField",
-        "name": "domain",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ResourceLimitEntry",
-            "kind": "LinkedField",
-            "name": "limits",
-            "plural": true,
-            "selections": [
-              (v1/*: any*/),
-              (v2/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "unlimited",
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ResourceSlotEntry",
-            "kind": "LinkedField",
-            "name": "used",
-            "plural": true,
-            "selections": [
-              (v1/*: any*/),
-              (v2/*: any*/)
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
-  }
-];
+v3 = {
+  "alias": null,
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "domainName",
+      "variableName": "domainName"
+    }
+  ],
+  "concreteType": "DomainResourceAllocationV2",
+  "kind": "LinkedField",
+  "name": "adminDomainResourceAllocationV2",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "ScopeResourceUsageV2",
+      "kind": "LinkedField",
+      "name": "domain",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "ResourceLimitEntry",
+          "kind": "LinkedField",
+          "name": "limits",
+          "plural": true,
+          "selections": [
+            (v1/*: any*/),
+            (v2/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "unlimited",
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "ResourceSlotEntry",
+          "kind": "LinkedField",
+          "name": "used",
+          "plural": true,
+          "selections": [
+            (v1/*: any*/),
+            (v2/*: any*/)
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "ResourceAllocationPanelDomainQuery",
-    "selections": (v3/*: any*/),
+    "selections": [
+      {
+        "kind": "CatchField",
+        "field": (v3/*: any*/),
+        "to": "RESULT"
+      }
+    ],
     "type": "Query",
     "abstractKey": null
   },
@@ -132,7 +137,9 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "ResourceAllocationPanelDomainQuery",
-    "selections": (v3/*: any*/)
+    "selections": [
+      (v3/*: any*/)
+    ]
   },
   "params": {
     "cacheID": "59bafb5f609dd9651569b6a20cc066da",
@@ -145,6 +152,6 @@ return {
 };
 })();
 
-(node as any).hash = "bd7ac4fd20b26db86ffa415e4550578e";
+(node as any).hash = "307c0ec877d42f491e636d16dff3c1bd";
 
 export default node;

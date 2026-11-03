@@ -6,6 +6,7 @@ import type { ResourceGroupTotalPanelQuery } from '../../../__generated__/Resour
 import { useCurrentUserRole } from '../../../hooks/backendai';
 import TotalResourceWithinResourceGroup from '../../TotalResourceWithinResourceGroup';
 import PanelSettingsHeaderControls from '../PanelSettingsHeaderControls';
+import { PanelPermissionBoundary } from '../panelPermission';
 import type { PanelComponentProps } from '../types';
 import { Heading } from '@lablup/ui-common/Heading';
 import { Text } from '@lablup/ui-common/Text';
@@ -141,14 +142,16 @@ const ResourceGroupTotalPanel: React.FC<PanelComponentProps> = ({
           />
         </BAIFlex>
         {resourceGroup ? (
-          <Suspense fallback={<BAISkeleton />}>
-            <ResourceGroupTotal
-              resourceGroup={resourceGroup}
-              fetchKey={fetchKey}
-              isRefetching={isRefetching}
-              displayType={displayType}
-            />
-          </Suspense>
+          <PanelPermissionBoundary resetKeys={[fetchKey, resourceGroup]}>
+            <Suspense fallback={<BAISkeleton />}>
+              <ResourceGroupTotal
+                resourceGroup={resourceGroup}
+                fetchKey={fetchKey}
+                isRefetching={isRefetching}
+                displayType={displayType}
+              />
+            </Suspense>
+          </PanelPermissionBoundary>
         ) : (
           <Text type="supporting">{t('dashboard.card.NoResourceGroup')}</Text>
         )}

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e15031ddf408ef6ace556bdb4f464ea6>>
+ * @generated SignedSource<<b17b0594acf3264f3bd71ea316d4fda4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-import { FragmentRefs } from "relay-runtime";
+import { FragmentRefs, Result } from "relay-runtime";
 export type DeploymentStatus = "DEPLOYING" | "PENDING" | "READY" | "SCALING" | "STOPPED" | "STOPPING" | "%future added value";
 export type ReplicaHealthStatus = "DEGRADED" | "HEALTHY" | "NOT_CHECKED" | "UNHEALTHY" | "%future added value";
 export type ReplicaStatus = "FAILED_TO_START" | "PROVISIONING" | "RUNNING" | "TERMINATED" | "TERMINATING" | "%future added value";
@@ -156,7 +156,7 @@ export type DeploymentStatusPanelDomainQuery$variables = {
   offset: number;
 };
 export type DeploymentStatusPanelDomainQuery$data = {
-  readonly deployments: {
+  readonly deployments: Result<{
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -170,7 +170,7 @@ export type DeploymentStatusPanelDomainQuery$data = {
         readonly " $fragmentSpreads": FragmentRefs<"BAIModelDeploymentNodesFragment">;
       };
     }>;
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type DeploymentStatusPanelDomainQuery = {
   response: DeploymentStatusPanelDomainQuery$data;
@@ -320,46 +320,50 @@ return {
     "name": "DeploymentStatusPanelDomainQuery",
     "selections": [
       {
-        "alias": "deployments",
-        "args": (v1/*: any*/),
-        "concreteType": "ModelDeploymentConnection",
-        "kind": "LinkedField",
-        "name": "scopedDeployments",
-        "plural": false,
-        "selections": [
-          (v2/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ModelDeploymentEdge",
-            "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "ModelDeployment",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": [
-                  (v3/*: any*/),
-                  (v4/*: any*/),
-                  (v6/*: any*/),
-                  {
-                    "args": null,
-                    "kind": "FragmentSpread",
-                    "name": "BAIModelDeploymentNodesFragment"
-                  }
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
+        "kind": "CatchField",
+        "field": {
+          "alias": "deployments",
+          "args": (v1/*: any*/),
+          "concreteType": "ModelDeploymentConnection",
+          "kind": "LinkedField",
+          "name": "scopedDeployments",
+          "plural": false,
+          "selections": [
+            (v2/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "ModelDeploymentEdge",
+              "kind": "LinkedField",
+              "name": "edges",
+              "plural": true,
+              "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "ModelDeployment",
+                  "kind": "LinkedField",
+                  "name": "node",
+                  "plural": false,
+                  "selections": [
+                    (v3/*: any*/),
+                    (v4/*: any*/),
+                    (v6/*: any*/),
+                    {
+                      "args": null,
+                      "kind": "FragmentSpread",
+                      "name": "BAIModelDeploymentNodesFragment"
+                    }
+                  ],
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        },
+        "to": "RESULT"
       }
     ],
     "type": "Query",
@@ -731,6 +735,6 @@ return {
 };
 })();
 
-(node as any).hash = "9c0a4c0fde4fabc5582efa7d31947c0d";
+(node as any).hash = "261288bde18d67be6ad87d1514336c81";
 
 export default node;
