@@ -47,14 +47,14 @@
 | Edu App Launcher         | `/applauncher`, `/edu-applauncher`               |    8     |    5    | 🔶 63%  |
 | Chat                     | `/chat/:id?`                                     |    7     |    7    | ✅ 100% |
 | Plugin System            | (config-based)                                   |    12    |   12    | ✅ 100% |
-| RBAC Management          | `/rbac`                                          |    23    |   22    | 🔶 96%  |
+| RBAC Management          | `/rbac`                                          |    24    |   23    | 🔶 96%  |
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule`           |    33    |   32    | 🔶 97%  |
 | Deployments              | `/deployments`, `/deployments/:id`               |    23    |   20    | 🔶 87%  |
 | Admin Deployment Preset  | `/admin/deployments/deployment-presets/new`      |    5     |    5    | ✅ 100% |
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **525**  | **375** | **71%** |
+| **Total**                |                                                  | **526**  | **376** | **71%** |
 
 ---
 
@@ -1116,9 +1116,10 @@ External portals (LMS) open these routes with a signed `sToken` plus the app and
 | Assign a user to a role                            | ✅     | `Superadmin can assign a user to a role`                                              |
 | Revoke a user from a role                          | ✅     | `Superadmin can revoke a single user from a role`                                     |
 | Empty state in Role Assignments tab                | ✅     | `Superadmin sees empty state in Role Assignments tab when role has no users`          |
+| Sort role assignments by Granted At                | ✅     | `Superadmin can sort role assignments by Granted At`                                  |
 | System role View Presets link opens its own preset | ✅     | `Superadmin can open exactly the preset of a system role from the role detail drawer` |
 
-**Coverage: 🔶 22/23 features**
+**Coverage: 🔶 23/24 features**
 
 ---
 

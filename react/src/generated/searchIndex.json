@@ -2726,6 +2726,15 @@
           ]
         },
         {
+          "key": "settings.Rebel100Support",
+          "groupKey": "settings.EnterpriseFeatures",
+          "groupId": "settings-enterprise",
+          "descriptionKeys": [
+            "settings.DescRebel100Support",
+            "settings.RequireRebel100Plugin"
+          ]
+        },
+        {
           "key": "settings.Scheduler",
           "groupKey": "settings.General",
           "groupId": "settings-general",
@@ -4441,7 +4450,6 @@
         "modelStore.RelativeTime",
         "modelStore.ResourceGroup",
         "modelStore.ResourceGroupTooltip",
-        "modelStore.Sort",
         "modelStore.SortByCreatedAtAsc",
         "modelStore.SortByCreatedAtDesc",
         "modelStore.SortByNameAsc",
