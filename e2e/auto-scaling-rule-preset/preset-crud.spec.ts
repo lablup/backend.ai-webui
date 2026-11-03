@@ -1,7 +1,12 @@
 // spec: e2e/.agent-output/test-plan-auto-scaling-rule-preset.md
 // sections: 1. Page Load, 2. Create Preset, 3. Edit Preset, 4. Delete Preset
+import { createTestResources } from '../utils/test-resources';
 import { loginAsAdmin, webuiEndpoint } from '../utils/test-util';
 import { test, expect, Page } from '@playwright/test';
+
+// Every preset a test names is declared here and purged via the admin API in
+// afterEach, so a test that fails midway cannot leak it.
+const resources = createTestResources();
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers
@@ -68,25 +73,6 @@ async function createPreset(
     ),
   ).toBeVisible({ timeout: 120000 });
   await expect(modal).toBeHidden({ timeout: 30000 });
-}
-
-async function deletePreset(page: Page, presetName: string): Promise<void> {
-  await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
-  await page.waitForLoadState('domcontentloaded');
-  const row = page.getByRole('row').filter({ hasText: presetName });
-  if ((await row.count()) === 0) return;
-  // BAINameActionCell renders icon-only buttons (lucide `Trash2`, no antd
-  // `.anticon-delete` class); locate by the button's accessible name
-  // (`aria-label={action.title}` = t('button.Delete')).
-  await row.getByRole('button', { name: 'Delete', exact: true }).click();
-  const confirmModal = page.getByRole('dialog');
-  await expect(confirmModal).toBeVisible({ timeout: 15000 });
-  const confirmInput = confirmModal.locator('input');
-  await confirmInput.fill(presetName);
-  await confirmModal
-    .getByRole('button', { name: 'Delete', exact: true })
-    .click();
-  await expect(confirmModal).toBeHidden({ timeout: 30000 });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -185,16 +171,7 @@ test.describe(
       await loginAsAdmin(page, request);
     });
 
-    test.afterEach(async ({ page }) => {
-      if (presetName) {
-        try {
-          await deletePreset(page, presetName);
-        } catch {
-          // ignore cleanup errors
-        }
-        presetName = '';
-      }
-    });
+    test.afterEach(() => resources.cleanup());
 
     // 2.1 Superadmin can open the Create Preset modal
     test('Superadmin can open the Create Preset modal with all form fields', async ({
@@ -258,7 +235,10 @@ test.describe(
     test('Superadmin can create a new preset with only required fields', async ({
       page,
     }) => {
-      presetName = `e2e-preset-create-required-${Date.now()}`;
+      presetName = resources.name(
+        'prometheusQueryPreset',
+        'e2e-preset-create-required',
+      );
 
       // Navigate to the prometheus preset tab
       await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
@@ -309,7 +289,10 @@ test.describe(
     test('Superadmin can create a new preset with all fields populated', async ({
       page,
     }) => {
-      presetName = `e2e-preset-create-full-${Date.now()}`;
+      presetName = resources.name(
+        'prometheusQueryPreset',
+        'e2e-preset-create-full',
+      );
 
       // Navigate and open modal
       await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
@@ -429,7 +412,7 @@ test.describe(
       // Fill Name and Query Template but leave Metric Name empty
       await modal
         .getByRole('textbox', { name: 'Name', exact: true })
-        .fill(`e2e-preset-no-metric-${Date.now()}`);
+        .fill(resources.name('prometheusQueryPreset', 'e2e-preset-no-metric'));
       await modal.getByRole('textbox', { name: 'Query Template' }).fill('up');
 
       // Click "Create"
@@ -459,7 +442,7 @@ test.describe(
       // Fill Name and Metric Name but leave Query Template empty
       await modal
         .getByRole('textbox', { name: 'Name', exact: true })
-        .fill(`e2e-preset-no-query-${Date.now()}`);
+        .fill(resources.name('prometheusQueryPreset', 'e2e-preset-no-query'));
       await modal
         .getByRole('textbox', { name: 'Metric Name' })
         .fill('e2e_metric');
@@ -483,7 +466,10 @@ test.describe(
     test('Superadmin can cancel the Create Preset modal without creating anything', async ({
       page,
     }) => {
-      const cancelledName = `e2e-preset-cancelled-${Date.now()}`;
+      const cancelledName = resources.name(
+        'prometheusQueryPreset',
+        'e2e-preset-cancelled',
+      );
 
       // Navigate and note the initial count
       await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
@@ -523,7 +509,10 @@ test.describe(
     test.fixme('Superadmin cannot create a preset with a duplicate name', async ({
       page,
     }) => {
-      const duplicateName = `e2e-preset-duplicate-${Date.now()}`;
+      const duplicateName = resources.name(
+        'prometheusQueryPreset',
+        'e2e-preset-duplicate',
+      );
 
       // Navigate and create first preset
       await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
@@ -562,9 +551,6 @@ test.describe(
 
       // Close modal
       await modal.getByRole('button', { name: 'Cancel' }).click();
-
-      // Cleanup first preset
-      await deletePreset(page, duplicateName);
     });
   },
 );
@@ -583,16 +569,7 @@ test.describe(
       await loginAsAdmin(page, request);
     });
 
-    test.afterEach(async ({ page }) => {
-      if (presetName) {
-        try {
-          await deletePreset(page, presetName);
-        } catch {
-          // ignore cleanup errors
-        }
-        presetName = '';
-      }
-    });
+    test.afterEach(() => resources.cleanup());
 
     // 3.1 Superadmin can open the Edit Preset modal for an existing preset
     // NOTE: The edit modal form does not pre-fill initialValues when using a
@@ -603,7 +580,10 @@ test.describe(
     test('Superadmin can open the Edit Preset modal with form fields and live preview', async ({
       page,
     }) => {
-      presetName = `e2e-preset-edit-open-${Date.now()}`;
+      presetName = resources.name(
+        'prometheusQueryPreset',
+        'e2e-preset-edit-open',
+      );
 
       // Create a preset via helper (leaves page on admin-serving?tab=prometheus-preset)
       await createPreset(page, presetName, 'e2e_old_metric', 'up');
@@ -652,7 +632,10 @@ test.describe(
     test('Superadmin can update the Metric Name of an existing preset', async ({
       page,
     }) => {
-      presetName = `e2e-preset-edit-metric-${Date.now()}`;
+      presetName = resources.name(
+        'prometheusQueryPreset',
+        'e2e-preset-edit-metric',
+      );
 
       // Create a preset (leaves page on admin-serving?tab=prometheus-preset)
       await createPreset(page, presetName, 'e2e_old_metric', 'up');
@@ -705,7 +688,10 @@ test.describe(
     test('Superadmin can update the Time Window of an existing preset', async ({
       page,
     }) => {
-      presetName = `e2e-preset-edit-window-${Date.now()}`;
+      presetName = resources.name(
+        'prometheusQueryPreset',
+        'e2e-preset-edit-window',
+      );
 
       // Create a preset (no Time Window) — leaves page on admin-serving?tab=prometheus-preset
       await createPreset(page, presetName, 'e2e_metric', 'up');
@@ -756,7 +742,10 @@ test.describe(
     test('Superadmin can add Filter Labels and Group Labels when editing a preset', async ({
       page,
     }) => {
-      presetName = `e2e-preset-edit-labels-${Date.now()}`;
+      presetName = resources.name(
+        'prometheusQueryPreset',
+        'e2e-preset-edit-labels',
+      );
 
       // Create a preset (leaves page on admin-serving?tab=prometheus-preset)
       await createPreset(page, presetName, 'e2e_metric', 'up');
@@ -812,7 +801,10 @@ test.describe(
     test('Superadmin cannot save an edited preset without a Name', async ({
       page,
     }) => {
-      presetName = `e2e-preset-edit-clear-name-${Date.now()}`;
+      presetName = resources.name(
+        'prometheusQueryPreset',
+        'e2e-preset-edit-clear-name',
+      );
 
       // Create a preset (leaves page on admin-serving?tab=prometheus-preset)
       await createPreset(page, presetName, 'e2e_metric', 'up');
@@ -859,7 +851,10 @@ test.describe(
     test('Superadmin cannot save an edited preset without a Metric Name', async ({
       page,
     }) => {
-      presetName = `e2e-preset-edit-clear-metric-${Date.now()}`;
+      presetName = resources.name(
+        'prometheusQueryPreset',
+        'e2e-preset-edit-clear-metric',
+      );
 
       // Create a preset (leaves page on admin-serving?tab=prometheus-preset)
       await createPreset(page, presetName, 'e2e_metric', 'up');
@@ -906,7 +901,10 @@ test.describe(
     test('Superadmin can cancel the Edit Preset modal without saving changes', async ({
       page,
     }) => {
-      presetName = `e2e-preset-edit-cancel-${Date.now()}`;
+      presetName = resources.name(
+        'prometheusQueryPreset',
+        'e2e-preset-edit-cancel',
+      );
 
       // Create a preset (leaves page on admin-serving?tab=prometheus-preset)
       await createPreset(page, presetName, 'e2e_old_metric', 'up');
@@ -960,22 +958,16 @@ test.describe(
       await loginAsAdmin(page, request);
     });
 
-    test.afterEach(async ({ page }) => {
-      if (presetName) {
-        try {
-          await deletePreset(page, presetName);
-        } catch {
-          // ignore cleanup errors
-        }
-        presetName = '';
-      }
-    });
+    test.afterEach(() => resources.cleanup());
 
     // 4.1 Superadmin can delete a preset by typing its exact name
     test('Superadmin can delete a preset by typing its exact name in the confirmation modal', async ({
       page,
     }) => {
-      presetName = `e2e-preset-delete-confirm-${Date.now()}`;
+      presetName = resources.name(
+        'prometheusQueryPreset',
+        'e2e-preset-delete-confirm',
+      );
 
       // Create a preset (leaves page on admin-serving?tab=prometheus-preset)
       await createPreset(page, presetName, 'e2e_metric', 'up');
@@ -1024,16 +1016,16 @@ test.describe(
       await expect(
         page.getByRole('row').filter({ hasText: presetName }),
       ).toBeHidden();
-
-      // Clear presetName to avoid double-cleanup in afterEach
-      presetName = '';
     });
 
     // 4.2 Superadmin cannot delete a preset with an incorrect confirmation string
     test('Superadmin cannot delete a preset with an incorrect confirmation string', async ({
       page,
     }) => {
-      presetName = `e2e-preset-delete-wrong-${Date.now()}`;
+      presetName = resources.name(
+        'prometheusQueryPreset',
+        'e2e-preset-delete-wrong',
+      );
 
       // Create a preset
       // Create a preset (leaves page on admin-serving?tab=prometheus-preset)
@@ -1079,7 +1071,10 @@ test.describe(
     test('Superadmin can cancel the delete confirmation modal without deleting the preset', async ({
       page,
     }) => {
-      presetName = `e2e-preset-delete-cancel-${Date.now()}`;
+      presetName = resources.name(
+        'prometheusQueryPreset',
+        'e2e-preset-delete-cancel',
+      );
 
       // Create a preset (leaves page on admin-serving?tab=prometheus-preset)
       await createPreset(page, presetName, 'e2e_metric', 'up');
