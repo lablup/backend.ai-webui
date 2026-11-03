@@ -852,6 +852,11 @@
       "TitleDescription": "Näytetään paneelin otsikkona - kuvaa sillä ehto.",
       "TitleOptional": "Otsikko (valinnainen)"
     },
+    "permission": {
+      "NoPermissionForResourceGroup": "Ei oikeutta tähän resurssiryhmään",
+      "NoPermissionForScope": "Ei oikeutta tähän kortin asetukseen",
+      "NoPermissionToView": "Ei oikeutta tarkastella"
+    },
     "settings": {
       "AllResourceGroups": "Kaikki resurssiryhmät",
       "CardSettings": "Kortin asetukset",

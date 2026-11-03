@@ -852,6 +852,11 @@
       "TitleDescription": "Самбарын гарчиг болж харагдана - нөхцөлийг тайлбарлахад ашиглана уу.",
       "TitleOptional": "Гарчиг (заавал биш)"
     },
+    "permission": {
+      "NoPermissionForResourceGroup": "Энэ нөөцийн бүлгийн эрх байхгүй",
+      "NoPermissionForScope": "Энэ картын тохиргооны эрх байхгүй",
+      "NoPermissionToView": "Харах эрх байхгүй"
+    },
     "settings": {
       "AllResourceGroups": "Бүх нөөцийн бүлэг",
       "CardSettings": "Картын тохиргоо",

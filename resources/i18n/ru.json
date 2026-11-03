@@ -852,6 +852,11 @@
       "TitleDescription": "Отображается как заголовок панели - используйте его для описания условия.",
       "TitleOptional": "Заголовок (необязательно)"
     },
+    "permission": {
+      "NoPermissionForResourceGroup": "Нет прав на эту группу ресурсов",
+      "NoPermissionForScope": "Нет прав на эту настройку карточки",
+      "NoPermissionToView": "Нет прав на просмотр"
+    },
     "settings": {
       "AllResourceGroups": "Все группы ресурсов",
       "CardSettings": "Настройки карточки",

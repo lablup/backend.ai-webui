@@ -12,6 +12,8 @@ import DashboardPanelModal from './DashboardPanelModal';
 import { useBoardItemVisibility } from './DashboardRefreshContext';
 import PanelSettingsModal from './PanelSettingsModal';
 import { boardSortsAtom } from './ResourceTablePanel';
+import { dashboardScopeKey } from './dashboardScope';
+import { DeniedPanelsContext, useDeniedPanels } from './panelPermission';
 import type {
   DashboardPageQueryRefs,
   DashboardScope,
@@ -89,11 +91,13 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     };
   }, [setEditMode, setBoardSorts]);
 
+  const denied = useDeniedPanels();
   const {
     boardItems,
     onLayoutChange,
     catalogEntries,
     activeKeys,
+    deniedKeys,
     setPanelsActive,
     customPanels,
     availableResources,
@@ -110,6 +114,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     catalog,
     isRefetching,
     queryRefs,
+    deniedPanelIds: denied.deniedPanels,
     onRequestEditCustomPanel: (panel) =>
       setPanelModalState({ open: true, panel }),
   });
@@ -118,6 +123,8 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     : null;
 
   const filters = useDashboardFilters(page, boards);
+  const scopeKey = dashboardScopeKey(page, filters.scope);
+  denied.setScope(scopeKey);
   useBoardItemVisibility(boardContainerRef);
 
   const scrollBoardEndIntoView = () => {
@@ -144,19 +151,21 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
               currentResourceGroup: filters.currentResourceGroup,
             }}
           >
-            <BAIBoard
-              movable
-              resizable
-              bordered
-              items={boardItems}
-              // The board is controlled: the next render must hand back exactly
-              // what it reported, or it snaps back.
-              onItemsChange={(event) => {
-                onLayoutChange(
-                  _.map(event.detail.items, (item) => _.omit(item, 'data')),
-                );
-              }}
-            />
+            <DeniedPanelsContext value={denied.reporterFor(scopeKey)}>
+              <BAIBoard
+                movable
+                resizable
+                bordered
+                items={boardItems}
+                // The board is controlled: the next render must hand back exactly
+                // what it reported, or it snaps back.
+                onItemsChange={(event) => {
+                  onLayoutChange(
+                    _.map(event.detail.items, (item) => _.omit(item, 'data')),
+                  );
+                }}
+              />
+            </DeniedPanelsContext>
           </DashboardFilterContext>
         </BAIFlex>
       </div>
@@ -164,6 +173,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
         <DashboardEditSider
           catalogEntries={catalogEntries}
           activeKeys={activeKeys}
+          deniedKeys={deniedKeys}
           onTogglePanels={(keys, active) => {
             setPanelsActive(keys, active);
             if (active) scrollBoardEndIntoView();
