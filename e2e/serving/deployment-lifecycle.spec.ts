@@ -63,6 +63,7 @@ import {
   provisionDeploymentFixtures,
   provisionDeploymentModelFolder,
 } from '../utils/deployment-fixtures';
+import { skipUnlessManagerVersion } from '../utils/feature-gate-util';
 import { loginAsAdmin, modifyConfigToml, navigateTo } from '../utils/test-util';
 import { getFormItemControlByLabel } from '../utils/test-util-antd';
 import { test, expect, Page } from '@playwright/test';
@@ -377,6 +378,11 @@ test.describe(
             'true',
           );
         });
+        await skipUnlessManagerVersion(
+          page,
+          '26.10.0a1',
+          'The pause cause needs ReplicaState.replicaCount, manager >= 26.10.0 (#10662)',
+        );
         const deploymentName = `e2e-plan-pause-cause-${Date.now()}`;
         try {
           await navigateTo(page, 'deployments');
@@ -444,18 +450,27 @@ test.describe(
           await expect(lifecycleCell).toContainText('Set by user');
           await expect(lifecycleCell).not.toContainText('Auto-scaling');
         } finally {
-          const api = await createAdminApiContext();
-          try {
-            const created = await listDeploymentsByPattern(
-              api,
-              new RegExp(`^${escapeForRegExp(deploymentName)}$`),
-            ).catch(() => []);
-            for (const { id } of created) {
-              await deleteDeploymentViaApi(api, id);
+          // A cleanup error must not replace the test's own failure; the
+          // global teardown sweeps any `e2e-plan-` leftover.
+          await (async () => {
+            const api = await createAdminApiContext();
+            try {
+              const created = await listDeploymentsByPattern(
+                api,
+                new RegExp(`^${escapeForRegExp(deploymentName)}$`),
+              );
+              for (const { id } of created) {
+                await deleteDeploymentViaApi(api, id);
+              }
+            } finally {
+              await api.dispose();
             }
-          } finally {
-            await api.dispose();
-          }
+          })().catch((error) =>
+            console.warn(
+              `[cleanup] could not delete deployment "${deploymentName}":`,
+              error,
+            ),
+          );
         }
       },
     );

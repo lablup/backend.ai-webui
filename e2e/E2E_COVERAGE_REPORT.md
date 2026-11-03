@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-11-03
+> **Last Updated:** 2026-11-04
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -49,12 +49,12 @@
 | Plugin System            | (config-based)                                   |    12    |   12    | ✅ 100% |
 | RBAC Management          | `/rbac`                                          |    24    |   23    | 🔶 96%  |
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule`           |    33    |   32    | 🔶 97%  |
-| Deployments              | `/deployments`, `/deployments/:id`               |    23    |   20    | 🔶 87%  |
+| Deployments              | `/deployments`, `/deployments/:id`               |    25    |   22    | 🔶 88%  |
 | Admin Deployment Preset  | `/admin/deployments/deployment-presets/new`      |    5     |    5    | ✅ 100% |
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **532**  | **382** | **72%** |
+| **Total**                |                                                  | **534**  | **384** | **72%** |
 
 ---
 
@@ -1218,19 +1218,21 @@ External portals (LMS) open these routes with a signed `sToken` plus the app and
 
 #### List Page
 
-| Feature                                                                                   | Status | Test                                                                          |
-| ----------------------------------------------------------------------------------------- | ------ | ----------------------------------------------------------------------------- |
-| List columns, Serving/Paused/Terminated tabs with help tooltips, reload & Create controls | ✅     | `Admin can view the deployments list with expected columns and controls`      |
-| Zero Desired Replicas lists under Paused (not Serving), tab kept in URL across reload     | ✅     | `Admin can find a deployment with zero Desired Replicas under the Paused tab` |
-| Create deployment (defaults, auto-redirect) + typed-name permanent delete                 | ✅     | `Admin can create a new deployment and permanently delete it`                 |
+| Feature                                                                                         | Status | Test                                                                          |
+| ----------------------------------------------------------------------------------------------- | ------ | ----------------------------------------------------------------------------- |
+| List columns, Serving/Paused/Terminated tabs with help tooltips, reload & Create controls       | ✅     | `Admin can view the deployments list with expected columns and controls`      |
+| Zero Desired Replicas lists under Paused (not Serving), tab kept in URL across reload           | ✅     | `Admin can find a deployment with zero Desired Replicas under the Paused tab` |
+| Create deployment (defaults, auto-redirect) + typed-name permanent delete                       | ✅     | `Admin can create a new deployment and permanently delete it`                 |
+| Paused row reads `Paused · Set by user` in Lifecycle (READY status mocked, real replica counts) | ✅     | `Admin can see why a paused deployment is paused`                             |
 
-#### Admin List — Filters (`/admin/deployments`)
+#### Admin List — Filters and Status Tabs (`/admin/deployments`)
 
-| Feature                                                              | Status | Test                                             |
-| -------------------------------------------------------------------- | ------ | ------------------------------------------------ |
-| Owner filter (`createdUserId`) shows the owner email, not a UUID     | ✅     | `Admin can filter deployments by owner`          |
-| Tags-column click filters by the exact tag (`iEquals`)               | ✅     | `Admin can filter deployments by clicking a tag` |
-| Edit labels, filter by Label key / Label value, label on detail card | ✅     | `Admin can filter deployments by label`          |
+| Feature                                                                                       | Status | Test                                                                                     |
+| --------------------------------------------------------------------------------------------- | ------ | ---------------------------------------------------------------------------------------- |
+| Owner filter (`createdUserId`) shows the owner email, not a UUID                              | ✅     | `Admin can filter deployments by owner`                                                  |
+| Tags-column click filters by the exact tag (`iEquals`)                                        | ✅     | `Admin can filter deployments by clicking a tag`                                         |
+| Edit labels, filter by Label key / Label value, label on detail card                          | ✅     | `Admin can filter deployments by label`                                                  |
+| Serving / Paused / Terminated tabs (Serving default); zero Desired Replicas only under Paused | ✅     | `Admin can switch the admin deployment list between Serving, Paused and Terminated tabs` |
 
 #### Detail Page
 
@@ -1266,7 +1268,7 @@ External portals (LMS) open these routes with a signed `sToken` plus the app and
 | Replica scheduling completion (Lifecycle leaves Pending → replica scheduled)       | ❌     | Deferred — measured ~40s–20min+ on the shared cluster; out of scope for webui e2e                                        |
 | Revision rollback / promote from Revision History                                  | ❌     | -                                                                                                                        |
 
-**Coverage: 🔶 17/21 features (4 deferred to backend-surface testing or future work)**
+**Coverage: 🔶 19/23 features (4 deferred to backend-surface testing or future work)**
 
 ---
 

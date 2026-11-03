@@ -11,7 +11,10 @@ import {
   createDeploymentShell,
   escapeForRegExp,
 } from '../utils/deployment-fixtures';
-import { skipUnlessLabelableEntityType } from '../utils/feature-gate-util';
+import {
+  skipUnlessLabelableEntityType,
+  skipUnlessManagerVersion,
+} from '../utils/feature-gate-util';
 import {
   loginAsAdmin,
   navigateTo,
@@ -162,46 +165,64 @@ test.describe(
             'true',
           );
         });
+        await skipUnlessManagerVersion(
+          page,
+          '26.10.0a1',
+          'The Paused tab needs ReplicaState.replicaCount, manager >= 26.10.0 (#10662)',
+        );
         // Arrange: a deployment whose Desired Replicas is set to 0.
         await navigateTo(page, 'deployments');
         await createDeploymentShell(page, deploymentName);
         await pauseDeploymentFromDetailPage(page);
 
-        await page.goto(ADMIN_DEPLOYMENTS_URL);
         // A tab's accessible name carries its help tooltip after the label.
         const statusTab = (label: 'Serving' | 'Paused' | 'Terminated') =>
           page.getByRole('radio', { name: new RegExp(`^${label}\\b`) });
         const row = page.getByRole('row', {
           name: new RegExp(escapeForRegExp(deploymentName)),
         });
-        const grid = page.locator('.uic-data-grid__body');
+        const busyGrid = page.locator('.uic-data-grid__body[aria-busy="true"]');
+        // The list keeps the previous tab's rows until the refetch answers, so
+        // wait for the response the tab click triggers before asserting.
+        const switchTab = async (
+          label: 'Serving' | 'Paused' | 'Terminated',
+        ) => {
+          const refetch = page.waitForResponse(
+            (response) =>
+              (response.request().postData() ?? '').includes(
+                'AdminDeploymentQuery',
+              ),
+            { timeout: 30000 },
+          );
+          await statusTab(label).click();
+          await refetch;
+          await expect(statusTab(label)).toBeChecked();
+          await expect(busyGrid).toHaveCount(0, { timeout: 30000 });
+        };
 
         // The old Running / Terminated toggle is gone; Serving is the default.
+        await page.goto(ADMIN_DEPLOYMENTS_URL);
         await expect(statusTab('Serving')).toBeChecked({ timeout: 30000 });
         await expect(statusTab('Paused')).not.toBeChecked();
         await expect(statusTab('Terminated')).not.toBeChecked();
         await expect(
           page.getByRole('radio', { name: 'Running', exact: true }),
         ).toHaveCount(0);
-        await expect(grid.first()).toBeVisible({ timeout: 30000 });
+
+        // Act: the Paused tab lists the deployment. The list read can lag the
+        // mutation, so reload until the row shows.
+        await expect(async () => {
+          await page.goto(ADMIN_DEPLOYMENTS_URL);
+          await switchTab('Paused');
+          await expect(row).toBeVisible({ timeout: 15000 });
+        }).toPass({ timeout: 60_000 });
+
+        // Neither the Terminated tab nor the Serving tab lists it.
+        await switchTab('Terminated');
         await expect(row).toHaveCount(0);
-
-        // Act: the Paused tab lists the deployment.
-        await statusTab('Paused').click();
-        await expect(statusTab('Paused')).toBeChecked();
+        await switchTab('Paused');
         await expect(row).toBeVisible({ timeout: 30000 });
-
-        // The Terminated tab does not.
-        await statusTab('Terminated').click();
-        await expect(statusTab('Terminated')).toBeChecked();
-        await expect(row).toHaveCount(0, { timeout: 30000 });
-
-        // Back on Serving, it is still left out.
-        await statusTab('Serving').click();
-        await expect(statusTab('Serving')).toBeChecked();
-        await expect(
-          page.locator('.uic-data-grid__body[aria-busy="true"]'),
-        ).toHaveCount(0, { timeout: 30000 });
+        await switchTab('Serving');
         await expect(row).toHaveCount(0);
       },
     );
