@@ -17,6 +17,7 @@ import { dashboardScopeKey } from './dashboardScope';
 import { DeniedPanelsContext, useDeniedPanels } from './panelPermission';
 import type {
   DashboardPageQueryRefs,
+  DashboardScope,
   PanelDefinition,
   PanelPage,
   PersistedPanel,
@@ -45,6 +46,19 @@ export interface DashboardPanelBoardProps {
   isRefetching: boolean;
   queryRefs: DashboardPageQueryRefs;
 }
+
+/** The page's allowed resource groups under a boundary of its own. */
+const WithResourceGroups: React.FC<{
+  scope: DashboardScope;
+  fallback: React.ReactNode;
+  children: React.ReactNode;
+}> = ({ scope, fallback, children }) => (
+  <Suspense fallback={fallback}>
+    <DashboardResourceGroupsProvider scope={scope}>
+      {children}
+    </DashboardResourceGroupsProvider>
+  </Suspense>
+);
 
 /**
  * A dashboard page's board under the dashboard bar (board tabs and refresh). Moving and resizing work at
@@ -129,6 +143,25 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     });
   };
 
+  // Each card waits for the page's allowed resource groups on its own, under a
+  // boundary keyed by the scope: a project change keeps the bar and the board
+  // mounted and shows only the cards' loading.
+  const scopedItems = boardItems.map((item) => ({
+    ...item,
+    data: {
+      ...item.data,
+      content: (
+        <WithResourceGroups
+          key={scopeKey}
+          scope={filters.scope}
+          fallback={<BAISkeleton />}
+        >
+          {item.data.content}
+        </WithResourceGroups>
+      ),
+    },
+  }));
+
   return (
     // The provider also covers the panel modal, whose previews read the page's project.
     <DashboardFilterContext
@@ -138,112 +171,102 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
         currentProjectId: filters.currentProjectId,
       }}
     >
-      {/* Cards and pickers wait for the page's allowed resource groups: a card's group depends on them. */}
-      <Suspense fallback={<BAISkeleton />}>
-        <DashboardResourceGroupsProvider scope={filters.scope}>
-          <BAIFlex
-            direction="row"
-            align="stretch"
-            gap="lg"
-            style={{ width: '100%' }}
-          >
-            <div ref={boardContainerRef} style={{ flex: 1, minWidth: 0 }}>
-              <BAIFlex direction="column" align="stretch" gap="md">
-                <DashboardFilterBar
-                  filters={filters}
-                  isRefetching={isRefetching}
-                >
-                  {page !== 'project' ? (
-                    <DashboardBoardTabs boards={boards} />
-                  ) : null}
-                </DashboardFilterBar>
-                <DeniedPanelsContext value={denied.reporterFor(scopeKey)}>
-                  <BAIBoard
-                    movable
-                    resizable
-                    bordered
-                    items={boardItems}
-                    // The board is controlled: the next render must hand back exactly
-                    // what it reported, or it snaps back.
-                    onItemsChange={(event) => {
-                      onLayoutChange(
-                        _.map(event.detail.items, (item) =>
-                          _.omit(item, 'data'),
-                        ),
-                      );
-                    }}
-                  />
-                </DeniedPanelsContext>
-              </BAIFlex>
-            </div>
-            {editMode ? (
-              <DashboardEditSider
-                catalogEntries={catalogEntries}
-                activeKeys={activeKeys}
-                deniedKeys={deniedKeys}
-                onTogglePanels={(keys, active) => {
-                  setPanelsActive(keys, active);
-                  if (active) scrollBoardEndIntoView();
-                }}
-                panels={customPanels}
-                onRequestAdd={() => setPanelModalState({ open: true })}
-                onRequestEdit={(panel) =>
-                  setPanelModalState({ open: true, panel })
-                }
-                onRemove={removePanel}
-                onResetLayout={resetLayout}
-                settingsTargetOf={settingsTargetOf}
-                onRequestSettings={(panelId) => {
-                  setSettingsPanelId(panelId);
-                  setIsSettingsOpen(true);
-                }}
-                boardSection={
-                  page !== 'project' ? (
-                    <DashboardBoardSection
-                      page={page}
-                      boards={boards}
-                      catalog={catalog}
-                    />
-                  ) : undefined
-                }
-              />
-            ) : null}
-            <BAIUnmountAfterClose>
-              <PanelSettingsModal
-                open={isSettingsOpen && !!settingsTarget}
-                title={settingsTarget?.title ?? ''}
-                definition={settingsTarget?.definition ?? { kind: 'custom' }}
-                settings={settingsTarget?.settings}
-                onSubmit={(settings) => {
-                  if (settingsPanelId)
-                    updatePanelSettings(settingsPanelId, settings);
-                }}
-                onRequestClose={() => setIsSettingsOpen(false)}
-                afterClose={() => setSettingsPanelId(null)}
-              />
-            </BAIUnmountAfterClose>
-            {/* Unmounted after the close animation, so each open starts fresh: two
-          consecutive Adds would otherwise share the preview-driven state. */}
-            <BAIUnmountAfterClose>
-              <DashboardPanelModal
-                open={panelModalState.open}
-                initialPanel={panelModalState.panel}
-                availableResources={availableResources}
-                gridEnabled={gridEnabled}
-                onRequestClose={() => setPanelModalState({ open: false })}
-                onSubmit={(input) => {
-                  if (panelModalState.panel) {
-                    updateCustomPanel(panelModalState.panel.id, input);
-                  } else {
-                    addCustomPanel(input);
-                    scrollBoardEndIntoView();
-                  }
+      <BAIFlex
+        direction="row"
+        align="stretch"
+        gap="lg"
+        style={{ width: '100%' }}
+      >
+        <div ref={boardContainerRef} style={{ flex: 1, minWidth: 0 }}>
+          <BAIFlex direction="column" align="stretch" gap="md">
+            <DashboardFilterBar filters={filters} isRefetching={isRefetching}>
+              {page !== 'project' ? (
+                <DashboardBoardTabs boards={boards} />
+              ) : null}
+            </DashboardFilterBar>
+            <DeniedPanelsContext value={denied.reporterFor(scopeKey)}>
+              <BAIBoard
+                movable
+                resizable
+                bordered
+                items={scopedItems}
+                // The board is controlled: the next render must hand back exactly
+                // what it reported, or it snaps back.
+                onItemsChange={(event) => {
+                  onLayoutChange(
+                    _.map(event.detail.items, (item) => _.omit(item, 'data')),
+                  );
                 }}
               />
-            </BAIUnmountAfterClose>
+            </DeniedPanelsContext>
           </BAIFlex>
-        </DashboardResourceGroupsProvider>
-      </Suspense>
+        </div>
+        {editMode ? (
+          <DashboardEditSider
+            catalogEntries={catalogEntries}
+            activeKeys={activeKeys}
+            deniedKeys={deniedKeys}
+            onTogglePanels={(keys, active) => {
+              setPanelsActive(keys, active);
+              if (active) scrollBoardEndIntoView();
+            }}
+            panels={customPanels}
+            onRequestAdd={() => setPanelModalState({ open: true })}
+            onRequestEdit={(panel) => setPanelModalState({ open: true, panel })}
+            onRemove={removePanel}
+            onResetLayout={resetLayout}
+            settingsTargetOf={settingsTargetOf}
+            onRequestSettings={(panelId) => {
+              setSettingsPanelId(panelId);
+              setIsSettingsOpen(true);
+            }}
+            boardSection={
+              page !== 'project' ? (
+                <DashboardBoardSection
+                  page={page}
+                  boards={boards}
+                  catalog={catalog}
+                />
+              ) : undefined
+            }
+          />
+        ) : null}
+        <BAIUnmountAfterClose>
+          <WithResourceGroups scope={filters.scope} fallback={null}>
+            <PanelSettingsModal
+              open={isSettingsOpen && !!settingsTarget}
+              title={settingsTarget?.title ?? ''}
+              definition={settingsTarget?.definition ?? { kind: 'custom' }}
+              settings={settingsTarget?.settings}
+              onSubmit={(settings) => {
+                if (settingsPanelId)
+                  updatePanelSettings(settingsPanelId, settings);
+              }}
+              onRequestClose={() => setIsSettingsOpen(false)}
+              afterClose={() => setSettingsPanelId(null)}
+            />
+          </WithResourceGroups>
+        </BAIUnmountAfterClose>
+        {/* Unmounted after the close animation, so each open starts fresh: two
+          consecutive Adds would otherwise share the preview-driven state. */}
+        <BAIUnmountAfterClose>
+          <DashboardPanelModal
+            open={panelModalState.open}
+            initialPanel={panelModalState.panel}
+            availableResources={availableResources}
+            gridEnabled={gridEnabled}
+            onRequestClose={() => setPanelModalState({ open: false })}
+            onSubmit={(input) => {
+              if (panelModalState.panel) {
+                updateCustomPanel(panelModalState.panel.id, input);
+              } else {
+                addCustomPanel(input);
+                scrollBoardEndIntoView();
+              }
+            }}
+          />
+        </BAIUnmountAfterClose>
+      </BAIFlex>
     </DashboardFilterContext>
   );
 };
