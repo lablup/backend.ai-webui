@@ -280,6 +280,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: DeploymentStatusPanel,
     defaultSize: size(2, 3),
     minSize: size(2, 2),
+    columnSettings: true,
   },
   {
     key: 'myActivity',
@@ -347,6 +348,7 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     Component: DeploymentStatusPanel,
     defaultSize: size(2, 3),
     minSize: size(2, 2),
+    columnSettings: true,
   },
   {
     key: 'projectFolders',

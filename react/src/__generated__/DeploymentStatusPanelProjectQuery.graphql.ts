@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<39b6f79a77ab6e50e33c8d5a73d773e0>>
+ * @generated SignedSource<<93e797bf1e130784882c39a51e40bf00>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -154,6 +154,7 @@ export type DeploymentStatusPanelProjectQuery$variables = {
   limit: number;
   offset: number;
   projectId: string;
+  withDetails: boolean;
 };
 export type DeploymentStatusPanelProjectQuery$data = {
   readonly deployments: Result<{
@@ -198,7 +199,12 @@ v3 = {
   "kind": "LocalArgument",
   "name": "projectId"
 },
-v4 = [
+v4 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "withDetails"
+},
+v5 = [
   {
     "kind": "Variable",
     "name": "filter",
@@ -236,21 +242,21 @@ v4 = [
     "name": "scope"
   }
 ],
-v5 = {
+v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "count",
   "storageKey": null
 },
-v6 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v7 = {
+v8 = {
   "alias": null,
   "args": null,
   "concreteType": "ReplicaState",
@@ -268,10 +274,10 @@ v7 = {
   ],
   "storageKey": null
 },
-v8 = [
-  (v5/*: any*/)
+v9 = [
+  (v6/*: any*/)
 ],
-v9 = {
+v10 = {
   "alias": "healthyReplicas",
   "args": [
     {
@@ -288,8 +294,15 @@ v9 = {
   "kind": "LinkedField",
   "name": "replicas",
   "plural": false,
-  "selections": (v8/*: any*/),
+  "selections": (v9/*: any*/),
   "storageKey": "replicas(filter:{\"healthStatus\":{\"equals\":\"HEALTHY\"}})"
+},
+v11 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -297,7 +310,8 @@ return {
       (v0/*: any*/),
       (v1/*: any*/),
       (v2/*: any*/),
-      (v3/*: any*/)
+      (v3/*: any*/),
+      (v4/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
@@ -307,13 +321,13 @@ return {
         "kind": "CatchField",
         "field": {
           "alias": "deployments",
-          "args": (v4/*: any*/),
+          "args": (v5/*: any*/),
           "concreteType": "ModelDeploymentConnection",
           "kind": "LinkedField",
           "name": "projectDeployments",
           "plural": false,
           "selections": [
-            (v5/*: any*/),
+            (v6/*: any*/),
             {
               "alias": null,
               "args": null,
@@ -330,15 +344,15 @@ return {
                   "name": "node",
                   "plural": false,
                   "selections": [
-                    (v6/*: any*/),
                     (v7/*: any*/),
-                    (v9/*: any*/),
+                    (v8/*: any*/),
+                    (v10/*: any*/),
                     {
                       "args": [
                         {
-                          "kind": "Literal",
+                          "kind": "Variable",
                           "name": "withDetails",
-                          "value": false
+                          "variableName": "withDetails"
                         }
                       ],
                       "kind": "FragmentSpread",
@@ -365,20 +379,21 @@ return {
       (v3/*: any*/),
       (v0/*: any*/),
       (v1/*: any*/),
-      (v2/*: any*/)
+      (v2/*: any*/),
+      (v4/*: any*/)
     ],
     "kind": "Operation",
     "name": "DeploymentStatusPanelProjectQuery",
     "selections": [
       {
         "alias": "deployments",
-        "args": (v4/*: any*/),
+        "args": (v5/*: any*/),
         "concreteType": "ModelDeploymentConnection",
         "kind": "LinkedField",
         "name": "projectDeployments",
         "plural": false,
         "selections": [
-          (v5/*: any*/),
+          (v6/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -395,9 +410,9 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v6/*: any*/),
                   (v7/*: any*/),
-                  (v9/*: any*/),
+                  (v8/*: any*/),
+                  (v10/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -434,13 +449,7 @@ return {
                         "name": "domainName",
                         "storageKey": null
                       },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "name",
-                        "storageKey": null
-                      },
+                      (v11/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -468,6 +477,37 @@ return {
                         "kind": "ScalarField",
                         "name": "resourceGroupName",
                         "storageKey": null
+                      },
+                      {
+                        "condition": "withDetails",
+                        "kind": "Condition",
+                        "passingValue": true,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "ProjectV2",
+                            "kind": "LinkedField",
+                            "name": "projectV2",
+                            "plural": false,
+                            "selections": [
+                              {
+                                "alias": null,
+                                "args": null,
+                                "concreteType": "ProjectBasicInfo",
+                                "kind": "LinkedField",
+                                "name": "basicInfo",
+                                "plural": false,
+                                "selections": [
+                                  (v11/*: any*/)
+                                ],
+                                "storageKey": null
+                              },
+                              (v7/*: any*/)
+                            ],
+                            "storageKey": null
+                          }
+                        ]
                       }
                     ],
                     "storageKey": null
@@ -489,8 +529,213 @@ return {
                     "kind": "LinkedField",
                     "name": "replicas",
                     "plural": false,
-                    "selections": (v8/*: any*/),
+                    "selections": (v9/*: any*/),
                     "storageKey": "replicas(filter:{\"status\":{\"equals\":\"RUNNING\"}})"
+                  },
+                  {
+                    "condition": "withDetails",
+                    "kind": "Condition",
+                    "passingValue": true,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "ModelDeploymentNetworkAccess",
+                        "kind": "LinkedField",
+                        "name": "networkAccess",
+                        "plural": false,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "endpointUrl",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "preferredDomainName",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "openToPublic",
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "DeploymentStrategy",
+                        "kind": "LinkedField",
+                        "name": "defaultDeploymentStrategy",
+                        "plural": false,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "type",
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "ModelRevision",
+                        "kind": "LinkedField",
+                        "name": "currentRevision",
+                        "plural": false,
+                        "selections": [
+                          (v7/*: any*/),
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "revisionNumber",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "ModelMountConfig",
+                            "kind": "LinkedField",
+                            "name": "modelMountConfig",
+                            "plural": false,
+                            "selections": [
+                              {
+                                "alias": null,
+                                "args": null,
+                                "concreteType": "VirtualFolderNode",
+                                "kind": "LinkedField",
+                                "name": "vfolder",
+                                "plural": false,
+                                "selections": [
+                                  (v7/*: any*/),
+                                  (v11/*: any*/)
+                                ],
+                                "storageKey": null
+                              }
+                            ],
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": [
+                          {
+                            "kind": "Literal",
+                            "name": "limit",
+                            "value": 100
+                          }
+                        ],
+                        "concreteType": "EntityLabelConnection",
+                        "kind": "LinkedField",
+                        "name": "entityLabels",
+                        "plural": false,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "EntityLabelEdge",
+                            "kind": "LinkedField",
+                            "name": "edges",
+                            "plural": true,
+                            "selections": [
+                              {
+                                "alias": null,
+                                "args": null,
+                                "concreteType": "EntityLabel",
+                                "kind": "LinkedField",
+                                "name": "node",
+                                "plural": false,
+                                "selections": [
+                                  {
+                                    "alias": null,
+                                    "args": null,
+                                    "kind": "ScalarField",
+                                    "name": "key",
+                                    "storageKey": null
+                                  },
+                                  {
+                                    "alias": null,
+                                    "args": null,
+                                    "kind": "ScalarField",
+                                    "name": "value",
+                                    "storageKey": null
+                                  },
+                                  (v7/*: any*/),
+                                  {
+                                    "alias": null,
+                                    "args": null,
+                                    "kind": "ScalarField",
+                                    "name": "fieldId",
+                                    "storageKey": null
+                                  }
+                                ],
+                                "storageKey": null
+                              }
+                            ],
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": "entityLabels(limit:100)"
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "UserV2",
+                        "kind": "LinkedField",
+                        "name": "creator",
+                        "plural": false,
+                        "selections": [
+                          (v7/*: any*/),
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "UserV2BasicInfo",
+                            "kind": "LinkedField",
+                            "name": "basicInfo",
+                            "plural": false,
+                            "selections": [
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "email",
+                                "storageKey": null
+                              },
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "username",
+                                "storageKey": null
+                              },
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "fullName",
+                                "storageKey": null
+                              }
+                            ],
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      }
+                    ]
                   }
                 ],
                 "storageKey": null
@@ -504,16 +749,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "50ff24fe470b002fe78d5337ba9dfdd9",
+    "cacheID": "e296dffd4d7a53bca89d2e89db13e14f",
     "id": null,
     "metadata": {},
     "name": "DeploymentStatusPanelProjectQuery",
     "operationKind": "query",
-    "text": "query DeploymentStatusPanelProjectQuery(\n  $projectId: UUID!\n  $filter: DeploymentFilter!\n  $limit: Int!\n  $offset: Int!\n) {\n  deployments: projectDeployments(scope: {projectId: $projectId}, filter: $filter, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        replicaState {\n          desiredReplicaCount\n        }\n        healthyReplicas: replicas(filter: {healthStatus: {equals: HEALTHY}}) {\n          count\n        }\n        ...BAIModelDeploymentNodesFragment_CtZCR\n      }\n    }\n  }\n}\n\nfragment BAIModelDeploymentNodesFragment_CtZCR on ModelDeployment {\n  id\n  entityId\n  currentRevisionId\n  metadata {\n    projectId\n    domainName\n    name\n    status\n    createdAt\n    updatedAt\n    resourceGroupName\n  }\n  replicaState {\n    desiredReplicaCount\n  }\n  runningReplicas: replicas(filter: {status: {equals: RUNNING}}) {\n    count\n  }\n}\n"
+    "text": "query DeploymentStatusPanelProjectQuery(\n  $projectId: UUID!\n  $filter: DeploymentFilter!\n  $limit: Int!\n  $offset: Int!\n  $withDetails: Boolean!\n) {\n  deployments: projectDeployments(scope: {projectId: $projectId}, filter: $filter, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        replicaState {\n          desiredReplicaCount\n        }\n        healthyReplicas: replicas(filter: {healthStatus: {equals: HEALTHY}}) {\n          count\n        }\n        ...BAIModelDeploymentNodesFragment_3NDDqj\n      }\n    }\n  }\n}\n\nfragment BAIDeploymentOwnerInfo_deployment on ModelDeployment {\n  id\n  creator {\n    id\n    basicInfo {\n      email\n      username\n      fullName\n    }\n  }\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIModelDeploymentNodesFragment_3NDDqj on ModelDeployment {\n  id\n  entityId\n  currentRevisionId\n  metadata {\n    projectId\n    domainName\n    name\n    status\n    createdAt\n    updatedAt\n    resourceGroupName\n    projectV2 @include(if: $withDetails) {\n      basicInfo {\n        name\n      }\n      id\n    }\n  }\n  networkAccess @include(if: $withDetails) {\n    endpointUrl\n    preferredDomainName\n    openToPublic\n  }\n  defaultDeploymentStrategy @include(if: $withDetails) {\n    type\n  }\n  currentRevision @include(if: $withDetails) {\n    id\n    revisionNumber\n    modelMountConfig {\n      vfolder {\n        id\n        name\n      }\n    }\n  }\n  entityLabels(limit: 100) @include(if: $withDetails) {\n    ...BAIEntityLabelTokensFragment\n    ...BAIEntityLabelSettingModalFragment\n  }\n  ...BAIDeploymentOwnerInfo_deployment @include(if: $withDetails)\n  replicaState {\n    desiredReplicaCount\n  }\n  runningReplicas: replicas(filter: {status: {equals: RUNNING}}) {\n    count\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "fd0787c45bedb7909be4bb66eb607169";
+(node as any).hash = "fad8adf83d10343f3294c5ee523c3e5f";
 
 export default node;

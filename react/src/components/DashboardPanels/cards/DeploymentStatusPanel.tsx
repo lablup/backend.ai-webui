@@ -7,12 +7,14 @@ import type { DeploymentStatusPanelProjectQuery } from '../../../__generated__/D
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
 import type { CardScope } from '../cardScope';
 import DeploymentHealthTable, {
+  needsDeploymentDetails,
   type DeploymentHealthNode,
 } from '../memberCards/DeploymentHealthTable';
 import { readPrimary } from '../panelPermission';
-import type { PanelComponentProps } from '../types';
+import type { PanelComponentProps, PanelSettings } from '../types';
 import ScopedCard from './ScopedCard';
 import { filterOutNullAndUndefined } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -20,6 +22,8 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 interface PageArgs {
   limit: number;
   offset: number;
+  /** Fetches what the optional detail columns read. */
+  withDetails: boolean;
   fetchKey: string;
 }
 
@@ -47,7 +51,7 @@ const LIVE = { destroyedAt: { isNull: true } } as const;
 
 const useMineDeployments = (
   projectId: string,
-  { limit, offset, fetchKey }: PageArgs,
+  { limit, offset, withDetails, fetchKey }: PageArgs,
 ): DeploymentPage => {
   'use memo';
   const data = useLazyLoadQuery<DeploymentStatusPanelMineQuery>(
@@ -56,6 +60,7 @@ const useMineDeployments = (
         $filter: DeploymentFilter!
         $limit: Int!
         $offset: Int!
+        $withDetails: Boolean!
       ) {
         deployments: myDeployments(
           filter: $filter
@@ -75,13 +80,19 @@ const useMineDeployments = (
               ) {
                 count
               }
-              ...BAIModelDeploymentNodesFragment @arguments(withDetails: false)
+              ...BAIModelDeploymentNodesFragment
+                @arguments(withDetails: $withDetails)
             }
           }
         }
       }
     `,
-    { filter: { ...LIVE, projectId: { equals: projectId } }, limit, offset },
+    {
+      filter: { ...LIVE, projectId: { equals: projectId } },
+      limit,
+      offset,
+      withDetails,
+    },
     { fetchPolicy: 'store-and-network', fetchKey },
   );
   return toPage(readPrimary(data.deployments));
@@ -89,7 +100,7 @@ const useMineDeployments = (
 
 const useProjectDeployments = (
   projectId: string,
-  { limit, offset, fetchKey }: PageArgs,
+  { limit, offset, withDetails, fetchKey }: PageArgs,
 ): DeploymentPage => {
   'use memo';
   const data = useLazyLoadQuery<DeploymentStatusPanelProjectQuery>(
@@ -99,6 +110,7 @@ const useProjectDeployments = (
         $filter: DeploymentFilter!
         $limit: Int!
         $offset: Int!
+        $withDetails: Boolean!
       ) {
         deployments: projectDeployments(
           scope: { projectId: $projectId }
@@ -119,13 +131,14 @@ const useProjectDeployments = (
               ) {
                 count
               }
-              ...BAIModelDeploymentNodesFragment @arguments(withDetails: false)
+              ...BAIModelDeploymentNodesFragment
+                @arguments(withDetails: $withDetails)
             }
           }
         }
       }
     `,
-    { projectId, filter: LIVE, limit, offset },
+    { projectId, filter: LIVE, limit, offset, withDetails },
     { fetchPolicy: 'store-and-network', fetchKey },
   );
   return toPage(readPrimary(data.deployments));
@@ -167,34 +180,59 @@ const DeploymentPageOf: React.FC<
   }
 };
 
-const DeploymentList: React.FC<{ scope: CardScope; fetchKey: string }> = ({
-  scope,
-  fetchKey,
-}) => {
+const DeploymentList: React.FC<{
+  scope: CardScope;
+  fetchKey: string;
+  columnOverrides: PanelSettings['columnOverrides'];
+  onChangeSettings?: PanelComponentProps['onChangeSettings'];
+}> = ({ scope, fetchKey, columnOverrides, onChangeSettings }) => {
   'use memo';
   const {
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
   } = useBAIPaginationOptionState({ current: 1, pageSize: 5 });
-  const page = {
+  const view = {
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
+    withDetails: needsDeploymentDetails(columnOverrides),
+    columnOverrides,
   };
-  const deferredPage = useDeferredValue(page);
+  // Deferred together, so a page or a detail column waits on the old rows instead of the skeleton.
+  const deferredView = useDeferredValue(view);
   return (
-    <DeploymentPageOf scope={scope} fetchKey={fetchKey} {...deferredPage}>
+    <DeploymentPageOf
+      scope={scope}
+      fetchKey={fetchKey}
+      limit={deferredView.limit}
+      offset={deferredView.offset}
+      withDetails={deferredView.withDetails}
+    >
       {({ nodes, total }) => (
         <DeploymentHealthTable
           nodes={nodes}
           total={total}
-          loading={deferredPage.offset !== page.offset}
+          loading={
+            deferredView.offset !== view.offset ||
+            deferredView.withDetails !== view.withDetails
+          }
           pagination={{
             pageSize: tablePaginationOption.pageSize,
             current: tablePaginationOption.current,
             onChange: (current, pageSize) =>
               setTablePaginationOption({ current, pageSize }),
           }}
+          columnOverrides={deferredView.columnOverrides}
+          onColumnOverridesChange={
+            onChangeSettings
+              ? (overrides) =>
+                  onChangeSettings({
+                    columnOverrides: _.isEmpty(overrides)
+                      ? undefined
+                      : overrides,
+                  })
+              : undefined
+          }
         />
       )}
     </DeploymentPageOf>
@@ -205,6 +243,8 @@ const DeploymentList: React.FC<{ scope: CardScope; fetchKey: string }> = ({
 const DeploymentStatusPanel: React.FC<PanelComponentProps> = ({
   scope,
   fetchKey,
+  panel,
+  onChangeSettings,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -220,7 +260,14 @@ const DeploymentStatusPanel: React.FC<PanelComponentProps> = ({
         },
       }}
     >
-      {(cardScope, key) => <DeploymentList scope={cardScope} fetchKey={key} />}
+      {(cardScope, key) => (
+        <DeploymentList
+          scope={cardScope}
+          fetchKey={key}
+          columnOverrides={panel.settings?.columnOverrides}
+          onChangeSettings={onChangeSettings}
+        />
+      )}
     </ScopedCard>
   );
 };
