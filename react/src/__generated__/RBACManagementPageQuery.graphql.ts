@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<78fe39c81c45f441d4e0bf16c01a3f45>>
+ * @generated SignedSource<<1b27f95a092298619b60250b101bc699>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -22,6 +22,7 @@ export type RoleFilter = {
   OR?: ReadonlyArray<RoleFilter> | null | undefined;
   assignedUser?: RoleUserNestedFilter | null | undefined;
   entityId?: UUIDFilter | null | undefined;
+  labels?: EntityLabelNestedFilter | null | undefined;
   mappedScope?: RoleMappedScopeNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;
   permissions?: RolePermissionNestedFilter | null | undefined;
@@ -116,6 +117,22 @@ export type RBACElementTypeFilter = {
   in?: ReadonlyArray<RBACElementType> | null | undefined;
   notEquals?: RBACElementType | null | undefined;
   notIn?: ReadonlyArray<RBACElementType> | null | undefined;
+};
+export type EntityLabelNestedFilter = {
+  every?: EntityLabelFilter | null | undefined;
+  exists?: boolean | null | undefined;
+  none?: EntityLabelFilter | null | undefined;
+  some?: EntityLabelFilter | null | undefined;
+};
+export type EntityLabelFilter = {
+  AND?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  NOT?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
+  key?: StringFilter | null | undefined;
+  value?: StringFilter | null | undefined;
 };
 export type RoleOrderBy = {
   direction?: OrderDirection;
@@ -607,12 +624,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "f049c160741a949c66404f36858d8834",
+    "cacheID": "0a96c3702d608ca498e8e2236fb0da4e",
     "id": null,
     "metadata": {},
     "name": "RBACManagementPageQuery",
     "operationKind": "query",
-    "text": "query RBACManagementPageQuery(\n  $filter: RoleFilter\n  $orderBy: [RoleOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminRoles(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...RoleNodesFragment\n        ...RoleDetailDrawerV2Fragment\n      }\n    }\n  }\n}\n\nfragment RoleAssignmentTabFragment on Role {\n  id\n  entityId\n  name\n  source\n  scopeType\n  scopeId\n}\n\nfragment RoleDetailDrawerContentV2Fragment on Role {\n  id\n  name\n  description\n  source\n  status\n  autoAssign\n  createdAt\n  updatedAt\n  scopeType\n  scopeId\n  scope {\n    __typename\n    ... on DomainV2 {\n      basicInfo {\n        name\n      }\n    }\n    ... on ProjectV2 {\n      basicInfo {\n        name\n      }\n    }\n    ... on UserV2 {\n      basicInfo {\n        email\n      }\n    }\n    ... on VFolder {\n      metadata {\n        name\n      }\n    }\n    ... on SessionV2 {\n      metadata {\n        sessionName: name\n      }\n    }\n    ... on ModelDeployment {\n      metadata {\n        name\n      }\n    }\n    ... on ResourceGroup {\n      name\n    }\n    ... on ContainerRegistryV2 {\n      registryName\n      project\n    }\n    ... on Node {\n      __isNode: __typename\n      id\n    }\n    ... on ArtifactRegistry {\n      id\n    }\n  }\n  rolePresetId\n  ...RoleAssignmentTabFragment\n  ...RolePermissionSummaryTableFragment\n}\n\nfragment RoleDetailDrawerV2Fragment on Role {\n  source\n  ...RoleDetailDrawerContentV2Fragment\n  ...RoleFormModalFragment\n  id\n}\n\nfragment RoleFormModalFragment on Role {\n  id\n  entityId\n  name\n  description\n  autoAssign\n}\n\nfragment RoleNodesFragment on Role {\n  id\n  entityId\n  name\n  description\n  source\n  status\n  autoAssign\n  createdAt\n  updatedAt\n  scopeType\n  scopeId\n  rolePresetId\n  rolePreset {\n    name\n    id\n  }\n  scope {\n    __typename\n    ... on ProjectV2 {\n      basicInfo {\n        projectName: name\n      }\n    }\n    ... on DomainV2 {\n      basicInfo {\n        domainName: name\n      }\n    }\n    ... on UserV2 {\n      basicInfo {\n        userEmail: email\n      }\n    }\n    ... on VFolder {\n      metadata {\n        name\n      }\n    }\n    ... on SessionV2 {\n      metadata {\n        sessionName: name\n      }\n    }\n    ... on ModelDeployment {\n      metadata {\n        name\n      }\n    }\n    ... on ResourceGroup {\n      name\n    }\n    ... on ContainerRegistryV2 {\n      registryName\n      project\n    }\n    ... on Node {\n      __isNode: __typename\n      id\n    }\n    ... on ArtifactRegistry {\n      id\n    }\n  }\n}\n\nfragment RolePermissionSummaryTableFragment on Role {\n  id\n  entityId\n  source\n  scopeType\n}\n"
+    "text": "query RBACManagementPageQuery(\n  $filter: RoleFilter\n  $orderBy: [RoleOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminRoles(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...RoleNodesFragment\n        ...RoleDetailDrawerV2Fragment\n      }\n    }\n  }\n}\n\nfragment RoleAssignmentTabFragment on Role {\n  id\n  entityId\n  name\n  source\n  scopeType\n  scopeId\n}\n\nfragment RoleDetailDrawerContentV2Fragment on Role {\n  id\n  entityId\n  name\n  description\n  source\n  status\n  autoAssign\n  createdAt\n  updatedAt\n  scopeType\n  scopeId\n  scope {\n    __typename\n    ... on DomainV2 {\n      basicInfo {\n        name\n      }\n    }\n    ... on ProjectV2 {\n      basicInfo {\n        name\n      }\n    }\n    ... on UserV2 {\n      basicInfo {\n        email\n      }\n    }\n    ... on VFolder {\n      metadata {\n        name\n      }\n    }\n    ... on SessionV2 {\n      metadata {\n        sessionName: name\n      }\n    }\n    ... on ModelDeployment {\n      metadata {\n        name\n      }\n    }\n    ... on ResourceGroup {\n      name\n    }\n    ... on ContainerRegistryV2 {\n      registryName\n      project\n    }\n    ... on Node {\n      __isNode: __typename\n      id\n    }\n    ... on ArtifactRegistry {\n      id\n    }\n  }\n  rolePresetId\n  ...RoleAssignmentTabFragment\n  ...RolePermissionSummaryTableFragment\n}\n\nfragment RoleDetailDrawerV2Fragment on Role {\n  source\n  ...RoleDetailDrawerContentV2Fragment\n  ...RoleFormModalFragment\n  id\n}\n\nfragment RoleFormModalFragment on Role {\n  id\n  entityId\n  name\n  description\n  autoAssign\n}\n\nfragment RoleNodesFragment on Role {\n  id\n  entityId\n  name\n  description\n  source\n  status\n  autoAssign\n  createdAt\n  updatedAt\n  scopeType\n  scopeId\n  rolePresetId\n  rolePreset {\n    name\n    id\n  }\n  scope {\n    __typename\n    ... on ProjectV2 {\n      basicInfo {\n        projectName: name\n      }\n    }\n    ... on DomainV2 {\n      basicInfo {\n        domainName: name\n      }\n    }\n    ... on UserV2 {\n      basicInfo {\n        userEmail: email\n      }\n    }\n    ... on VFolder {\n      metadata {\n        name\n      }\n    }\n    ... on SessionV2 {\n      metadata {\n        sessionName: name\n      }\n    }\n    ... on ModelDeployment {\n      metadata {\n        name\n      }\n    }\n    ... on ResourceGroup {\n      name\n    }\n    ... on ContainerRegistryV2 {\n      registryName\n      project\n    }\n    ... on Node {\n      __isNode: __typename\n      id\n    }\n    ... on ArtifactRegistry {\n      id\n    }\n  }\n}\n\nfragment RolePermissionSummaryTableFragment on Role {\n  id\n  entityId\n  source\n  scopeType\n}\n"
   }
 };
 })();

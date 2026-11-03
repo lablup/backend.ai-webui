@@ -161,7 +161,7 @@ When the outcome is settled (every outcome except "not intended"), record
 HEAD with the hook's own record mode, so the path never drifts from the check:
 
 ```bash
-.claude/scripts/require-e2e-flow.sh --record
+bash "$(git rev-parse --show-toplevel)"/.claude/scripts/require-e2e-flow.sh --record   # any subdirectory, no exec bit needed
 ```
 
 Commit the draft test **before** recording, since the commit moves HEAD. The

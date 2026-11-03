@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9045e9b946b4eb1df38a7b2186cb5576>>
+ * @generated SignedSource<<306010feef41175c93ec8cf461f12fb7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -57,6 +57,7 @@ export type BAIModelDeploymentNodesFragment$data = ReadonlyArray<{
   } | null | undefined;
   readonly replicaState: {
     readonly desiredReplicaCount: number;
+    readonly replicaCount: number;
   };
   readonly runningReplicas: {
     readonly count: number;
@@ -352,6 +353,13 @@ return {
           "alias": null,
           "args": null,
           "kind": "ScalarField",
+          "name": "replicaCount",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "desiredReplicaCount",
           "storageKey": null
         }
@@ -392,6 +400,6 @@ return {
 };
 })();
 
-(node as any).hash = "065b96117a0462140468ba39cbf46920";
+(node as any).hash = "1e06bb77140fb8382c5c84ba01554c15";
 
 export default node;
