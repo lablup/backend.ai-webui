@@ -56,6 +56,10 @@ export async function mockEntityLabelOnFirstRow(
     ) {
       const response = await route.fetch();
       const json = await response.json();
+      if (!json?.data?.entityLabels) {
+        await route.fulfill({ response });
+        return;
+      }
       const fieldId = randomUUID();
       json.data.entityLabels.edges = [
         ...(json.data.entityLabels.edges ?? []),

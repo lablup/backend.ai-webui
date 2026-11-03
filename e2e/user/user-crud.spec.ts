@@ -778,13 +778,14 @@ test.describe(
   },
 );
 
-/** Resolves with the variables of the next `AdminUserManagementQuery` matching `predicate`. */
-function waitForUserListRequest(
+/** Resolves with the response to the next `AdminUserManagementQuery` whose variables match `predicate`. */
+function waitForUserListResponse(
   page: Page,
   predicate: (variables: Record<string, any>) => boolean,
 ) {
-  return page.waitForRequest(
-    (req) => {
+  return page.waitForResponse(
+    (response) => {
+      const req = response.request();
       if (req.method() !== 'POST' || !req.url().includes('/admin/gql')) {
         return false;
       }
@@ -807,12 +808,22 @@ test.describe(
   () => {
     let api: APIRequestContext | null = null;
     let labeledEmail: string | null = null;
+    let labelId: string | null = null;
 
     test.afterEach(async () => {
       if (!api) return;
       const adminApi = api;
       api = null;
       try {
+        if (labelId) {
+          await gqlAdmin(
+            adminApi,
+            `mutation($id: ID!) { purgeEntityLabel(id: $id) { label { id } } }`,
+            { id: labelId },
+          ).catch((error) =>
+            console.warn(`could not purge label ${labelId}:`, error),
+          );
+        }
         if (labeledEmail) {
           await purgeUserViaApi(adminApi, labeledEmail).catch((error) =>
             console.warn(`could not purge ${labeledEmail}:`, error),
@@ -820,6 +831,7 @@ test.describe(
         }
       } finally {
         labeledEmail = null;
+        labelId = null;
         await adminApi.dispose();
       }
     });
@@ -861,10 +873,12 @@ test.describe(
       );
       expect(create_user.ok, create_user.msg).toBe(true);
       labeledEmail = email;
-      await gqlAdmin(
+      const { upsertEntityLabel } = await gqlAdmin<{
+        upsertEntityLabel: { label: { fieldId: string } };
+      }>(
         api,
         `mutation($input: UpsertEntityLabelInput!) {
-          upsertEntityLabel(input: $input) { label { id } }
+          upsertEntityLabel(input: $input) { label { fieldId } }
         }`,
         {
           input: {
@@ -873,6 +887,8 @@ test.describe(
           },
         },
       );
+      // purgeEntityLabel takes the label's fieldId, not its global id.
+      labelId = upsertEntityLabel.label.fieldId;
 
       // The superadmin intro tour (AdminViewSwitchTour) otherwise covers the page.
       await page.addInitScript(() => {
@@ -905,17 +921,26 @@ test.describe(
       await expect(labelToken).toBeVisible({ timeout: 30000 });
 
       // Act: the token click replaces the email filter with the label filter.
-      const labelRequest = waitForUserListRequest(
+      const labelResponse = waitForUserListResponse(
         page,
         (variables) =>
           variables.filter?.labels?.some?.key?.iEquals === label.key &&
           variables.filter?.labels?.some?.value?.iEquals === label.value,
       );
       await labelToken.click();
-      const variables = (await labelRequest).postDataJSON().variables;
+      const response = await labelResponse;
+      const variables = response.request().postDataJSON().variables;
       expect(variables.offset).toBe(0);
       expect(variables.filter.email).toBeUndefined();
       expect(variables.filter.status).toEqual({ notEquals: 'ACTIVE' });
+      // The label is unique to this run, so the manager returns only this user.
+      const body = await response.json();
+      expect(body.errors).toBeUndefined();
+      expect(body.data.scopedUsersV2.count).toBe(1);
+      expect(JSON.stringify(body.data.scopedUsersV2.edges)).toContain(email);
+      await expect(
+        page.locator('.uic-data-grid__body[aria-busy="true"]'),
+      ).toHaveCount(0, { timeout: 20000 });
 
       const filterGroup = page
         .getByRole('group', { name: 'Search filters' })

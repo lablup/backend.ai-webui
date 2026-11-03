@@ -432,16 +432,18 @@ test.describe(
       await expect(
         filterGroup.getByRole('button', { name: /^Label value/ }),
       ).toBeVisible();
-      expect(
-        JSON.parse(new URL(page.url()).searchParams.get('filter') ?? '{}'),
-      ).toEqual({
-        labels: {
-          some: {
-            key: { iEquals: label.key },
-            value: { iEquals: label.value },
+      await expect
+        .poll(() =>
+          JSON.parse(new URL(page.url()).searchParams.get('filter') ?? '{}'),
+        )
+        .toEqual({
+          labels: {
+            some: {
+              key: { iEquals: label.key },
+              value: { iEquals: label.value },
+            },
           },
-        },
-      });
+        });
       await expect(roleDataRows(page)).toHaveCount(1, { timeout: 20000 });
       await expect(roleDataRows(page).first()).toContainText(
         mock.targetName() ?? '',
