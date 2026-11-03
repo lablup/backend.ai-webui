@@ -45,6 +45,14 @@ describe('reportWebVitals', () => {
     expect(window.__BAI_WEB_VITALS__?.map((m) => m.value)).toEqual([0.05, 0.3]);
   });
 
+  it('does not keep the live entries of a metric', async () => {
+    const report = await startAndGetReporter();
+
+    report({ ...cls(0.05, 0.05), entries: [] } as Metric);
+
+    expect(window.__BAI_WEB_VITALS__?.[0]).not.toHaveProperty('entries');
+  });
+
   it('keeps collecting after a lab run replaces the global', async () => {
     const report = await startAndGetReporter();
 

@@ -4,27 +4,35 @@
  */
 import type { Metric } from 'web-vitals';
 
+type WebVitalsSample = Pick<
+  Metric,
+  'name' | 'value' | 'delta' | 'rating' | 'id'
+>;
+
 declare global {
   interface Window {
     // Read by lab runs (Playwright) to compare load metrics across builds.
-    // CLS, INP and LCP arrive only once the page is hidden or, for LCP, on the
-    // first trusted input; LCP therefore covers what painted before that input.
-    __BAI_WEB_VITALS__?: Metric[];
+    // One entry per report with a cumulative `value`: take the last per `id`.
+    // CLS and INP report when the page is hidden; LCP at the next idle period
+    // after the first trusted input, so it covers what painted before it.
+    __BAI_WEB_VITALS__?: WebVitalsSample[];
   }
 }
 
 const reportWebVitals = () => {
-  window.__BAI_WEB_VITALS__ ??= [];
-  const record = (metric: Metric) => {
-    // web-vitals mutates and re-reports one object per metric, so keep a copy.
-    (window.__BAI_WEB_VITALS__ ??= []).push({ ...metric });
+  const record = ({ name, value, delta, rating, id }: Metric) => {
+    // Not `entries`: web-vitals keeps mutating them and they pin DOM nodes.
+    (window.__BAI_WEB_VITALS__ ??= []).push({
+      name,
+      value,
+      delta,
+      rating,
+      id,
+    });
     if (process.env.NODE_ENV === 'development') {
-      const value =
-        metric.name === 'CLS'
-          ? metric.value.toFixed(3)
-          : Math.round(metric.value);
+      const printed = name === 'CLS' ? value.toFixed(3) : Math.round(value);
       // eslint-disable-next-line no-console
-      console.debug(`[web-vitals] ${metric.name} ${value} (${metric.rating})`);
+      console.debug(`[web-vitals] ${name} ${printed} (${rating})`);
     }
   };
   import('web-vitals')
