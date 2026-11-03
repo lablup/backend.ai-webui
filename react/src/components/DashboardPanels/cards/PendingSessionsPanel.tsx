@@ -2,18 +2,15 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { PendingSessionsPanelAttemptsQuery } from '../../../__generated__/PendingSessionsPanelAttemptsQuery.graphql';
 import type { PendingSessionsPanelReasonQuery } from '../../../__generated__/PendingSessionsPanelReasonQuery.graphql';
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
+import SessionSchedulingHistoryModal from '../../SessionSchedulingHistoryModal';
 import { legacyScopeId, type CardScope } from '../cardScope';
-import { readSecondary } from '../panelPermission';
 import {
   legacySessionIdFilter,
   pendingReason,
 } from '../projectAdminCards/projectCardData';
 import type { PanelComponentProps } from '../types';
-import { useOpenSessionDetail } from '../useOpenSessionDetail';
-import './PendingSessionsPanel.css';
 import ScopedCard from './ScopedCard';
 import SessionList, {
   crossProjectColumns,
@@ -24,20 +21,17 @@ import { Text } from '@lablup/ui-common/Text';
 import {
   BAIFlex,
   BAILink,
-  BAISchedulingHistoryTable,
   BAISessionNodesV2,
-  BAISkeleton,
   BAIText,
+  BAIUnmountAfterClose,
   filterOutNullAndUndefined,
   type SessionV2InList,
 } from 'backend.ai-ui';
-import React, { Suspense, useDeferredValue } from 'react';
+import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const PAGE_SIZE = 5;
-const ATTEMPT_COLUMNS = ['updatedAt', 'phase', 'result', 'attempts', 'message'];
-const BASE_COLUMNS = ['name', 'owner', 'elapsedTime'];
 const PENDING_FILTER: SessionV2Filter = { status: { in: ['PENDING'] } };
 // Longest waiting first.
 const ORDER_BY = [{ field: 'CREATED_AT' as const, direction: 'ASC' as const }];
@@ -97,67 +91,50 @@ const PendingReasons: React.FC<{
   );
 };
 
-/** The session's scheduling attempts, newest first. */
-const SchedulingAttempts: React.FC<{ sessionId: string }> = ({ sessionId }) => {
+/** One pending session: the scheduler's last message, then its name and how long it has waited. */
+export const PendingSessionRow: React.FC<{
+  /** `undefined` when the lookup did not return the session (failed, or not readable). */
+  reason: string | null | undefined;
+  name: string;
+  waited: React.ReactNode;
+  /** The session's project, on the cross-project (superadmin) card. */
+  project?: React.ReactNode;
+  onOpenHistory: () => void;
+}> = ({ reason, name, waited, project, onOpenHistory }) => {
   'use memo';
-  const data = useLazyLoadQuery<PendingSessionsPanelAttemptsQuery>(
-    graphql`
-      query PendingSessionsPanelAttemptsQuery($scope: SessionScope!) {
-        sessionScopedSchedulingHistories(
-          scope: $scope
-          orderBy: [{ field: UPDATED_AT, direction: DESC }]
-          limit: 5
-        ) @catch(to: RESULT) {
-          edges {
-            node {
-              ...BAISchedulingHistoryTableFragment
-            }
-          }
-        }
-      }
-    `,
-    { scope: { sessionId } },
-    { fetchPolicy: 'store-and-network' },
-  );
+  const { t } = useTranslation();
   return (
-    <BAIFlex
-      direction="column"
-      align="stretch"
-      className="bai-pending-attempts"
-    >
-      <BAISchedulingHistoryTable
-        schedulingHistoryFrgmt={filterOutNullAndUndefined(
-          readSecondary(data.sessionScopedSchedulingHistories).value?.edges.map(
-            (edge) => edge?.node,
-          ),
-        )}
-        disableSorter
-        pagination={false}
-        scroll={{}}
-        customizeColumns={(columns) =>
-          columns
-            .filter((column) => ATTEMPT_COLUMNS.includes(String(column.key)))
-            .map((column) =>
-              column.key === 'message'
-                ? {
-                    ...column,
-                    onCell: () => ({ style: { width: '100%', maxWidth: 0 } }),
-                    render: (
-                      _value: unknown,
-                      record: { message?: string | null },
-                    ) =>
-                      record.message ? (
-                        <BAIText ellipsis={{ tooltip: record.message }}>
-                          {record.message.replace(/\s*\n\s*/g, ' ')}
-                        </BAIText>
-                      ) : (
-                        '-'
-                      ),
-                  }
-                : column,
-            )
-        }
-      />
+    <BAIFlex direction="column" align="stretch" gap="xxs">
+      {reason ? (
+        <BAIText ellipsis={{ tooltip: reason }}>
+          {reason.replace(/\s*\n\s*/g, ' ')}
+        </BAIText>
+      ) : (
+        <Text type="supporting">
+          {reason === null ? t('dashboard.card.NotTriedYet') : '-'}
+        </Text>
+      )}
+      <BAIFlex gap="xs" style={{ minWidth: 0 }}>
+        <BAILink
+          type="hover"
+          ellipsis
+          onClick={(event) => {
+            // The row opens the same history; one click, one modal.
+            event.stopPropagation();
+            onOpenHistory();
+          }}
+        >
+          {name}
+        </BAILink>
+        {project ? (
+          <Text type="supporting" size="sm">
+            {project}
+          </Text>
+        ) : null}
+        <Text type="supporting" size="sm">
+          {t('dashboard.card.Waiting')} {waited}
+        </Text>
+      </BAIFlex>
     </BAIFlex>
   );
 };
@@ -168,12 +145,9 @@ const PendingSessionTable: React.FC<{
   fetchKey: string;
 }> = ({ scope, resourceGroups, fetchKey }) => {
   'use memo';
-  const { t } = useTranslation();
-  const visibleColumns = new Set([
-    ...BASE_COLUMNS,
-    ...crossProjectColumns(scope),
-  ]);
-  const openSessionDetail = useOpenSessionDetail();
+  // The id outlives `open` until after-close, so the closing modal keeps its content.
+  const [historySessionId, setHistorySessionId] = useState<string | null>(null);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -181,99 +155,92 @@ const PendingSessionTable: React.FC<{
   } = useBAIPaginationOptionState({ current: 1, pageSize: PAGE_SIZE });
   const deferredOffset = useDeferredValue(baiPaginationOption.offset);
   const deferredLimit = useDeferredValue(baiPaginationOption.limit);
+  const openHistory = (session: SessionV2InList) => {
+    setHistorySessionId(session.entityId);
+    setIsHistoryOpen(true);
+  };
 
   return (
-    <SessionList
-      scope={scope}
-      filter={inResourceGroups(PENDING_FILTER, resourceGroups)}
-      orderBy={ORDER_BY}
-      limit={deferredLimit}
-      offset={deferredOffset}
-      fetchKey={fetchKey}
-    >
-      {({ count, rows }) => (
-        <PendingReasons
-          scope={scope}
-          sessionIds={rows.map((row) => row.entityId)}
-          fetchKey={fetchKey}
-        >
-          {(reasons) => (
-            <BAISessionNodesV2
-              sessionsFrgmt={rows}
-              disableSorter
-              loading={
-                deferredOffset !== baiPaginationOption.offset ||
-                deferredLimit !== baiPaginationOption.limit
-              }
-              customizeColumns={(columns) => [
-                ...columns
-                  .filter((column) => visibleColumns.has(String(column.key)))
-                  .map((column) =>
-                    column.key === 'name'
-                      ? {
-                          ...column,
-                          defaultHidden: false,
-                          render: (
-                            _value: unknown,
-                            session: SessionV2InList,
-                          ) =>
-                            openSessionDetail ? (
-                              <BAILink
-                                type="hover"
-                                onClick={() =>
-                                  openSessionDetail(session.entityId)
-                                }
-                              >
-                                {session.metadata?.name ?? '-'}
-                              </BAILink>
-                            ) : (
-                              (session.metadata?.name ?? '-')
-                            ),
-                        }
-                      : column.key === 'elapsedTime'
-                        ? {
-                            ...column,
-                            defaultHidden: false,
-                            title: t('dashboard.card.Waiting'),
+    <>
+      <SessionList
+        scope={scope}
+        filter={inResourceGroups(PENDING_FILTER, resourceGroups)}
+        orderBy={ORDER_BY}
+        limit={deferredLimit}
+        offset={deferredOffset}
+        fetchKey={fetchKey}
+      >
+        {({ count, rows }) => (
+          <PendingReasons
+            scope={scope}
+            sessionIds={rows.map((row) => row.entityId)}
+            fetchKey={fetchKey}
+          >
+            {(reasons) => (
+              <BAISessionNodesV2
+                sessionsFrgmt={rows}
+                disableSorter
+                showHeader={false}
+                loading={
+                  deferredOffset !== baiPaginationOption.offset ||
+                  deferredLimit !== baiPaginationOption.limit
+                }
+                onRow={(session) => ({
+                  onClick: () => openHistory(session),
+                  style: { cursor: 'pointer' },
+                })}
+                customizeColumns={(columns) => {
+                  const columnOf = (key: string) =>
+                    columns.find((column) => column.key === key);
+                  const elapsed = columnOf('elapsedTime');
+                  const project = crossProjectColumns(scope).includes('project')
+                    ? columnOf('project')
+                    : undefined;
+                  return [
+                    {
+                      key: 'pending',
+                      onCell: () => ({ style: { maxWidth: 0, width: '100%' } }),
+                      render: (_value: unknown, session: SessionV2InList) => (
+                        <PendingSessionRow
+                          reason={
+                            session.entityId in reasons
+                              ? reasons[session.entityId]
+                              : undefined
                           }
-                        : { ...column, defaultHidden: false },
-                  ),
-                {
-                  key: 'reason',
-                  title: t('dashboard.card.Reason'),
-                  render: (_value: unknown, session: SessionV2InList) => {
-                    // Absent: the lookup did not return the session (failed, or not readable).
-                    if (!(session.entityId in reasons)) return '-';
-                    const reason = reasons[session.entityId];
-                    return reason ? (
-                      <BAIText ellipsis={{ tooltip: reason }}>{reason}</BAIText>
-                    ) : (
-                      <Text type="supporting">
-                        {t('dashboard.card.NotTriedYet')}
-                      </Text>
-                    );
-                  },
-                },
-              ]}
-              expandable={{
-                expandedRowRender: (session) => (
-                  <Suspense fallback={<BAISkeleton />}>
-                    <SchedulingAttempts sessionId={session.entityId} />
-                  </Suspense>
-                ),
-              }}
-              pagination={{
-                pageSize: tablePaginationOption.pageSize,
-                current: tablePaginationOption.current,
-                total: count,
-                onChange: (current, pageSize) =>
-                  setTablePaginationOption({ current, pageSize }),
-              }}
+                          name={session.metadata?.name ?? '-'}
+                          waited={elapsed?.render?.(undefined, session, 0)}
+                          project={project?.render?.(undefined, session, 0)}
+                          onOpenHistory={() => openHistory(session)}
+                        />
+                      ),
+                    },
+                  ];
+                }}
+                pagination={{
+                  pageSize: tablePaginationOption.pageSize,
+                  current: tablePaginationOption.current,
+                  total: count,
+                  onChange: (current, pageSize) =>
+                    setTablePaginationOption({ current, pageSize }),
+                }}
+              />
+            )}
+          </PendingReasons>
+        )}
+      </SessionList>
+      {historySessionId ? (
+        <Suspense fallback={null}>
+          <BAIUnmountAfterClose>
+            <SessionSchedulingHistoryModal
+              open={isHistoryOpen}
+              sessionId={historySessionId}
+              onCancel={() => setIsHistoryOpen(false)}
+              afterClose={() => setHistorySessionId(null)}
             />
-          )}
-        </PendingReasons>
-      )}
-    </SessionList>
+          </BAIUnmountAfterClose>
+        </Suspense>
+      ) : null}
+    </>
   );
 };
 
