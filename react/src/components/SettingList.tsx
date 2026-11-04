@@ -26,7 +26,13 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { ArrowLeft, ChevronRight, Redo2, Search } from 'lucide-react';
-import React, { CSSProperties, ReactNode, useState } from 'react';
+import React, {
+  CSSProperties,
+  ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 
 // Frame budget for the settings shell (astryx docs layout — pick the shell and
@@ -84,7 +90,20 @@ interface SettingPageProps {
    * `LayoutPanel` would be a nav inside a nav and a `Layout` inside a `Layout`.
    */
   hideGroupNav?: boolean;
+  /**
+   * Keep the toolbar (search, filters, Reset / Apply) and the group nav in view
+   * while the page scrolls, for long lists saved with one Apply.
+   */
+  isStickyHeader?: boolean;
 }
+
+const stickyToolbar: CSSProperties = {
+  position: 'sticky',
+  top: 0,
+  zIndex: 1,
+  paddingBlock: 'var(--spacing-2)',
+  background: 'var(--color-background-card)',
+};
 
 const GroupSettingItems: React.FC<
   {
@@ -144,6 +163,7 @@ const SettingList: React.FC<SettingPageProps> = ({
   showSearchBar,
   primaryButton,
   extraButton,
+  isStickyHeader = false,
   onReset,
   hideGroupNav = false,
 }) => {
@@ -156,6 +176,17 @@ const SettingList: React.FC<SettingPageProps> = ({
   const { md } = useBAIBreakpoint();
   const isNarrow = !md;
   const [searchValue, setSearchValue] = useState('');
+  const toolbarRef = useRef<HTMLDivElement>(null);
+  const [toolbarHeight, setToolbarHeight] = useState(0);
+  useEffect(() => {
+    const toolbar = toolbarRef.current;
+    if (!isStickyHeader || !toolbar) return;
+    const observer = new ResizeObserver(() =>
+      setToolbarHeight(toolbar.offsetHeight),
+    );
+    observer.observe(toolbar);
+    return () => observer.disconnect();
+  }, [isStickyHeader]);
   const [changedOptionFilter, setChangedOptionFilter] = useState(false);
   const [isOpenResetChangesModal, { toggle: setIsOpenResetChangesModal }] =
     useToggle(false);
@@ -237,7 +268,15 @@ const SettingList: React.FC<SettingPageProps> = ({
   };
 
   const navList = (
-    <BAIFlex direction="column" align="stretch" style={navPanelPadding}>
+    <BAIFlex
+      direction="column"
+      align="stretch"
+      style={
+        isStickyHeader && !isNarrow
+          ? { ...navPanelPadding, position: 'sticky', top: toolbarHeight }
+          : navPanelPadding
+      }
+    >
       <List density="spacious">
         {_.map(navItems, (item) => (
           <ListItem
@@ -294,7 +333,13 @@ const SettingList: React.FC<SettingPageProps> = ({
   return (
     <>
       <BAIFlex direction="column" gap={'md'} align="stretch">
-        <BAIFlex justify="start" gap={'xs'} wrap="nowrap">
+        <BAIFlex
+          ref={toolbarRef}
+          justify="start"
+          gap={'xs'}
+          wrap="nowrap"
+          style={isStickyHeader ? stickyToolbar : undefined}
+        >
           {!!showSearchBar && (
             // The flex item is the field's OUTER box, which `TextInput` does
             // not expose (its `style` lands on the inner control), so the
