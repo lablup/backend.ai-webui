@@ -111,7 +111,7 @@ import { BAIPopconfirm } from 'backend.ai-ui';
 `BAINameActionCell` actions take a `popConfirm` object (`BAIPopconfirmConfig`: `title`, `description`, `okText`, `cancelText`, `okButtonProps.danger`, `onConfirm`, `onCancel`). The visible icon button gets an anchored `Popover` confirm; when the action overflows into the more-menu, it falls back to a `modal.confirm` that mirrors the same copy.
 
 ```tsx
-// react/src/components/AdminUserCredentialList.tsx
+// react/src/pages/AdminUsersPage/components/AdminUserCredentialList.tsx
 {
   key: 'deactivate',
   title: t('credential.Deactivate'),

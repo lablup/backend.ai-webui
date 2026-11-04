@@ -3,7 +3,7 @@
 Project-specific guidance for AI coding agents.
 
 <!-- UI-COMMON:START -->
-@lablup/ui-common v0.2.0-alpha.20.canary-20261030092430-1f45b2b9a · Astryx v0.7.3 · 173 components
+@lablup/ui-common v0.2.0-alpha.20.canary-20261030093333-ad744b188 · Astryx v0.7.3 · 173 components
 CLI: run every command as `pnpm exec ui-common <cmd>` (shown below as `ui-common ...`).
 
 SETUP (once, first in your entry stylesheet) — without these, components render unstyled:
@@ -35,7 +35,7 @@ RULES:
   docs authoring     build an integration package, and every field it holds
   upgrade --from <old version> --apply   run after a dependency bump
 
-UI-COMMON (@lablup/ui-common v0.2.0-alpha.20.canary-20261030092430-1f45b2b9a wraps Astryx v0.7.3):
+UI-COMMON (@lablup/ui-common v0.2.0-alpha.20.canary-20261030093333-ad744b188 wraps Astryx v0.7.3):
 - Import only from @lablup/ui-common: the root, or the same subpath Astryx uses (@lablup/ui-common/Button, /theme/tokens.stylex, /lab). Never import @astryxdesign/* directly.
 - Layers: declare `@layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;` once, first, in the entry stylesheet. ui-common's styles sit in `ui-common`; yours go in `components` / `utilities`.
 - Use AlertModal (@lablup/ui-common/AlertModal), not AlertDialog: ui-common hides AlertDialog.
@@ -61,18 +61,3 @@ PROJECT LINES (this repo; outside the generated markers so `ui-common agents --w
 - STATUS SEMANTICS (this repo; overrides "Status = StatusDot/Token; Badge = counts only" above — ADR 0007): Badge = a value the system changes on its own over time (lifecycle/health status, in-progress markers, live tickers, counts). Token = a value that changes only when a user edits it, or a category/classification label (names, types, permissions, tags, versions, on/off settings, recorded outcomes). StatusDot stays for dot-only status. BUI chips are named *Badge / *Token by the primitive they render; "Tag" is only a domain noun. Rule: .claude/rules/badge-vs-token.md.
 - BUI INTEGRATION (this repo): `backend.ai-ui` is registered as an Astryx integration, so `ui-common component`, `ui-common search` and `ui-common component --list` cover the `BAI*` wrappers next to ui-common's and core's components, and `ui-common docs backend-ai-ui` explains the layer. The component count in the block's first line is core's own, so the live catalog is larger; run the command to see it. When a `BAI*` component and a ui-common or core component both fit, use the `BAI*` one — it carries the project defaults, and it imports from `backend.ai-ui`. A new `BAI*` component ships a same-stem `{Name}.doc.ts` beside its source; a new product-neutral component goes to ui-common instead (.claude/rules/bui-component-home.md).
 - FORM CONTROLS (this repo; overrides the "Form controls … at Astryx's import paths" line above for `react/` — ADR 0014): import ui-common's Form.Item-aware controls from `backend.ai-ui` as `BAI<X>` (`BAITextInput`, `BAINumberInput`, `BAISwitch`, `BAICheckboxInput`, `BAITagsInput`, `BAIRadioList`/`BAIRadioListItem`, `BAISegmentedControl`/`BAISegmentedControlItem`, …). They are plain re-exports, so the props are ui-common's; ESLint blocks the component names from the ui-common subpaths, while their types stay importable there. `Selector` has no re-export: the single select is the antd-shaped `BAISelect` (ADR 0017).
-
-## Migration conversion idioms (branch `to-astryx`)
-
-Some antd patterns have no one-to-one Astryx component and are **not** allowed
-to be dropped ad hoc — they have a standing composition recipe in
-`.specs/FR-3482-astryx-migration/CONVERSION-IDIOMS.md`. Read it before recording a
-PILOT-DECISION that gives up a layout capability. Currently:
-
-- **antd vertical tabs** (`tabPosition`/`tabPlacement="left" | "start"`) →
-  the Astryx `settings-sidebar` template composition
-  (`Layout` + `LayoutPanel` nav column of `List`/`ListItem isSelected` +
-  `LayoutContent` pane), **not** a horizontal `TabList`. Run
-  `pnpm exec ui-common template settings-sidebar`. The "discover, don't guess"
-  workflow above includes `ui-common template --list` / `ui-common search` — a
-  component-level lookup alone will wrongly report the capability as missing.

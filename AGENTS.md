@@ -51,7 +51,7 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
   - **Jira**: read-only legacy. Use the `jira-workflow` skill (fw plugin; config in `.jira.config`) only to inspect existing FR issues — never to create work items.
   - **GitHub**: Use `gh` CLI (preferred) or GitHub MCP (`mcp__github__*`)
   - **Git/PR**: Use **GitHub Stacked PRs** via the `gh stack` CLI (`github/gh-stack` extension) for all stacked branch/PR work. The command reference lives in the `gh-stack` skill (`.claude/skills/gh-stack/`) and the project conventions (naming, draft→ready lifecycle, bottom-up merge, sync/rebase/conflict loops, non-interactive agent rules) in the `fw:stacked-pr-workflow` skill — load both before stack work.
-    - **Graphite (`gt`) is banned in this repository (FR-3391).** Never run any `gt` command; a permissions deny rule plus a `PreToolUse` hook block `gt` invocations. Stack metadata lives on GitHub itself.
+    - **Graphite (`gt`) is banned in this repository (FR-3391).** Never run any `gt` command; the `Bash(gt:*)` permissions deny rule blocks `gt` invocations. Stack metadata lives on GitHub itself.
     - Open and update PRs with `gh stack submit --auto`, which creates them as drafts. For a genuinely single, unstacked PR, plain `git push` + `gh pr create` is acceptable. Leave them as drafts — marking a PR ready (`--open` / `gh pr ready`) belongs to the gate below, not here.
     - **Draft → ready goes through the `fw:pr-ready-gate` (fw ≥ 29.0.0) skill (FR-3508), never a bare `gh pr ready` / `--open`.** The gate runs Claude Code's `/code-review` (hunt + verify) at an effort set by the PR's risk tier from `REVIEW.md`, adds a security review on High-tier PRs, and posts the findings as threads tagged Important / Nit / Pre-existing. It fixes what is objectively wrong, brings anything needing a human decision back to you with the thread left open, replies to and resolves the rest, and only then flips the PR out of draft — at most two review rounds. The agent is the first reader; humans are the second.
     - **Reviewing a PR here? Follow `REVIEW.md`** — what failure looks like in this repo, the evidence rule, the skip list, the Nit cap, and the risk tiers the gate reads.
@@ -157,7 +157,7 @@ When reviewing PRs (especially agent-generated ones), check:
 - No hardcoded strings, magic numbers, or debug artifacts left behind
 
 <!-- UI-COMMON:START -->
-@lablup/ui-common v0.2.0-alpha.20.canary-20261030092430-1f45b2b9a · Astryx v0.7.3 · 173 components
+@lablup/ui-common v0.2.0-alpha.20.canary-20261030093333-ad744b188 · Astryx v0.7.3 · 173 components
 CLI: run every command as `pnpm exec ui-common <cmd>` (shown below as `ui-common ...`).
 
 SETUP (once, first in your entry stylesheet) — without these, components render unstyled:
@@ -189,7 +189,7 @@ RULES:
   docs authoring     build an integration package, and every field it holds
   upgrade --from <old version> --apply   run after a dependency bump
 
-UI-COMMON (@lablup/ui-common v0.2.0-alpha.20.canary-20261030092430-1f45b2b9a wraps Astryx v0.7.3):
+UI-COMMON (@lablup/ui-common v0.2.0-alpha.20.canary-20261030093333-ad744b188 wraps Astryx v0.7.3):
 - Import only from @lablup/ui-common: the root, or the same subpath Astryx uses (@lablup/ui-common/Button, /theme/tokens.stylex, /lab). Never import @astryxdesign/* directly.
 - Layers: declare `@layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;` once, first, in the entry stylesheet. ui-common's styles sit in `ui-common`; yours go in `components` / `utilities`.
 - Use AlertModal (@lablup/ui-common/AlertModal), not AlertDialog: ui-common hides AlertDialog.

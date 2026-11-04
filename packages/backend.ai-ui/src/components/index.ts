@@ -232,10 +232,12 @@ export {
   DEPLOYMENT_STOPPED_CATEGORY_STATUSES,
   isDeploymentInProgress,
   DEPLOYMENT_IN_PROGRESS_STATUSES,
+  getDeploymentPauseCause,
 } from './BAIDeploymentStatusBadge';
 export type {
   BAIDeploymentStatusBadgeProps,
   BAIDeploymentStatus,
+  DeploymentPauseCause,
 } from './BAIDeploymentStatusBadge';
 export { default as BAIIntervalView } from './BAIIntervalView';
 export { default as BAIImageMetaIcon } from './BAIImageMetaIcon';

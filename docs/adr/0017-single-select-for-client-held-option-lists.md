@@ -1,25 +1,25 @@
 # 0017 — Single select for client-held option lists
 
-> ADR 0014의 `BAISelector` 부분을 대신한다: 1절 표의 `BAISelector` 행, 2절 "Existing antd-shaped wrappers stay"의 `BAISelect` 부분, 3절 "Antd-shaped wrappers included"와 "Where the subpath stays"의 `BAISelect` 부분.
+> This ADR replaces the `BAISelector` parts of ADR 0014: the `BAISelector` row of the table in section 1, the `BAISelect` part of "Existing antd-shaped wrappers stay" in section 2, and the `BAISelect` parts of "Antd-shaped wrappers included" and "Where the subpath stays" in section 3.
 
 ## Summary
 
-> 낯선 용어는 문서 맨 아래 [용어](#용어)에 모아 두었다.
+> Unfamiliar terms are collected in the [Glossary](#glossary) at the end.
 
-- client가 이미 가진 option 목록에서 고르는 control은 `backend.ai-ui`의 `BAISelect` 하나다. `BAISelector`는 파일, doc, story, barrel export까지 없앤다.
-- `BAISelect.tsx`가 ui-common `Selector`를 직접 import한다. 이 파일이 BUI에서 `Selector` component를 import하는 유일한 파일이다.
-- `BAISelector`의 49개 call site는 `BAISelect`의 frozen antd-v6 props로 옮긴다. 화면 동작은 그대로 둔다.
-- `BAISelect`는 `BAISelector`가 주던 기능 중 옮겨 온 call site가 쓰는 것을 받는다: option의 `description`·`icon`·`disabled: { reason }`, `aria-label`, `id`, `disabledMessage`, 그리고 `labelRender`.
-- `react/eslint.config.js`의 `formControlImportBans`는 `Selector` import를 계속 막고, 메시지로 `BAISelect`를 가리킨다.
-- `BAIMultiSelector`를 포함한 나머지 18개 항목의 re-export는 ADR 0014대로 남는다.
+- The control for picking from an option list that the client already holds is one component, `BAISelect` in `backend.ai-ui`. `BAISelector` is removed, together with its file, doc, story, and barrel export.
+- `BAISelect.tsx` imports ui-common `Selector` directly. This file is the only file in BUI that imports the `Selector` component.
+- The 49 call sites of `BAISelector` move to the [frozen antd-v6 props](#glossary) of `BAISelect`. The on-screen behavior stays the same.
+- `BAISelect` accepts the features of `BAISelector` that the moved call sites use: the option's `description`, `icon`, and `disabled: { reason }`, plus `aria-label`, `id`, `disabledMessage`, and `labelRender`.
+- `formControlImportBans` in `react/eslint.config.js` keeps blocking the `Selector` import, and its message points to `BAISelect`.
+- The re-exports of the other 18 entries, including `BAIMultiSelector`, remain as ADR 0014 defines them.
 
 ## Context
 
-- **Two names**: ADR 0014 이후 BUI에는 같은 일을 하는 이름이 둘 있었다. `BAISelector`는 ui-common `Selector`의 re-export이고, `BAISelect`는 같은 `Selector`를 그리는 antd 모양 adapter다.
-- **Call site cost**: 두 이름은 props가 달랐다. `BAISelector`는 `hasClear`·`isLoading`·`hasSearch`를 받고 `BAISelect`는 `allowClear`·`loading`·`showSearch`를 받는다. 새 select를 쓰는 사람은 먼저 둘 중 하나를 골라야 했고, 고르는 기준은 ADR 0014와 `BAISelector.doc.ts`에서 서로 달랐다.
-- **Why not the other way**: `BAISelect`는 antd 모양 props를 쓰는 call site가 62곳이고 `BAISelectProps`를 extend하는 component도 있다. 이 props는 `component-props-extension.md`의 frozen 어휘다.
+- **Two names**: After ADR 0014, BUI had two names that did the same job. `BAISelector` is a re-export of ui-common `Selector`, and `BAISelect` is an antd-shaped [adapter](#glossary) that renders the same `Selector`.
+- **Call site cost**: The two names took different props. `BAISelector` takes `hasClear`, `isLoading`, and `hasSearch`, and `BAISelect` takes `allowClear`, `loading`, and `showSearch`. A developer writing a new select first had to pick one of the two, and ADR 0014 and `BAISelector.doc.ts` gave different criteria for that choice.
+- **Why not the other way**: `BAISelect` has 62 call sites that use antd-shaped props, and some components extend `BAISelectProps`. These props are the frozen vocabulary of `component-props-extension.md`.
 
-## 설계도
+## Diagram
 
 ```mermaid
 flowchart LR
@@ -45,63 +45,63 @@ flowchart LR
 
 ## Decision
 
-### 1. `BAISelect`가 유일한 이름이다
+### 1. `BAISelect` is the only name
 
-- **Removed files**: `BAISelector.tsx`, `BAISelector.doc.ts`, `BAISelector.stories.tsx`를 지우고 components barrel `index.ts`의 `BAISelector`, `BAISelectorProps` export를 지운다.
-- **Selector import**: `BAISelect.tsx`는 `@lablup/ui-common/Selector`에서 `Selector` component를 import한다. ADR 0014 3절의 "ui-common subpath에서 control component를 import하는 파일"에 이 파일이 더해진다.
-- **Types stay importable**: `SelectorOptionData` 같은 type은 ADR 0014 4절대로 `react/`와 BUI에서 그대로 import한다.
+- **Removed files**: The change deletes `BAISelector.tsx`, `BAISelector.doc.ts`, and `BAISelector.stories.tsx`, and removes the `BAISelector` and `BAISelectorProps` exports from the components barrel `index.ts`.
+- **Selector import**: `BAISelect.tsx` imports the `Selector` component from `@lablup/ui-common/Selector`. This file joins the files that ADR 0014 section 3 lists as "files that import a control component from a ui-common subpath".
+- **Types stay importable**: `react/` and BUI keep importing types such as `SelectorOptionData` directly, as section 4 of ADR 0014 defines.
 
-### 2. `BAISelect`의 props는 antd 어휘를 유지한다
+### 2. `BAISelect` props keep the antd vocabulary
 
-- **Prop mapping**: 옮겨 온 call site는 아래 표대로 props를 바꾼다.
+- **Prop mapping**: A moved call site changes its props as the table below shows.
 
-| `BAISelector` | `BAISelect` |
-|---|---|
-| `hasClear` | `allowClear` |
-| `isLoading` | `loading` |
-| `hasSearch` 없음 | `showSearch={false}` |
-| `hasSearch` | 생략(기본값이 검색 켜짐) |
-| `width` | `style.width` |
-| `controlStyle` | `style` |
-| `size="sm"` | `size="small"` |
-| `renderOption(option)` | `optionRender({ data })` |
-| `renderValue(option)` | `labelRender(option)` |
-| `{ type: 'section', title, options }` | `{ label, options }` |
-| 문자열 option | `{ value, label }` |
+| `BAISelector`                         | `BAISelect`                       |
+| ------------------------------------- | --------------------------------- |
+| `hasClear`                            | `allowClear`                      |
+| `isLoading`                           | `loading`                         |
+| no `hasSearch`                        | `showSearch={false}`              |
+| `hasSearch`                           | omitted (search is on by default) |
+| `width`                               | `style.width`                     |
+| `controlStyle`                        | `style`                           |
+| `size="sm"`                           | `size="small"`                    |
+| `renderOption(option)`                | `optionRender({ data })`          |
+| `renderValue(option)`                 | `labelRender(option)`             |
+| `{ type: 'section', title, options }` | `{ label, options }`              |
+| string option                         | `{ value, label }`                |
 
-- **Option shape**: `BAISelectOption`은 `disabled`에 `{ reason }`을 받고 `description`, `icon`을 받는다. `BAISelect`는 이 값을 `Selector`로 넘긴다. `BAISelectOption`은 barrel에서 export한다.
-- **Default row**: `BAISelect`는 `optionRender`가 없고 모든 label이 string이면 `renderOption`을 넘기지 않는다. Astryx의 기본 option row만 `icon`과 `description`을 그리기 때문이다.
-- **Accessible name**: `BAISelect`는 `label`, `aria-label`, `placeholder`, 번역된 일반 문구 순서로 이름을 정한다.
-- **New Selector props**: antd에 같은 일을 하는 이름이 있으면 그 이름을 쓴다(`labelRender`). 없으면 `Selector`의 이름을 그대로 받는다(`disabledMessage`, `id`).
+- **Option shape**: `BAISelectOption` accepts `{ reason }` in `disabled`, and accepts `description` and `icon`. `BAISelect` passes these values to `Selector`. The barrel exports `BAISelectOption`.
+- **Default row**: When `optionRender` is absent and every label is a string, `BAISelect` does not pass `renderOption`. The reason is that only Astryx's default option row renders `icon` and `description`.
+- **Accessible name**: `BAISelect` picks the accessible name from `label`, `aria-label`, `placeholder`, and a translated generic phrase, in that order.
+- **New Selector props**: When antd has a name for the same job, `BAISelect` uses that name (`labelRender`). Otherwise, `BAISelect` takes the `Selector` name as is (`disabledMessage`, `id`).
 
-### 3. ESLint는 `BAISelect`를 가리킨다
+### 3. ESLint points to `BAISelect`
 
-- **Rule**: `formControlImportBans`의 `Selector` 항목은 유지하고, 메시지만 `BAISelect`와 이 문서를 가리키게 바꾼다.
+- **Rule**: The `Selector` entry of `formControlImportBans` stays, and only its message changes to point to `BAISelect` and this document.
 
-## 대안과 기각 사유
+## Rejected alternatives
 
-- **Keep both and document the criterion**: 두 이름을 두고 언제 무엇을 쓰는지 문서로 정한다. 코드를 바꾸지 않는다는 것이 장점이다. 기각한 이유는 새 select를 쓸 때마다 두 props 어휘 중 하나를 고르는 비용이 남기 때문이다.
-- **Keep only BAISelector**: `BAISelect`를 없애고 Astryx 모양 props로 통일한다. ui-common 문서와 props가 같다는 것이 장점이다. 기각한 이유는 ReactNode label, `autoSelectOption`, children option 같은 `BAISelect`의 동작이 `Selector`에 없고, frozen antd 어휘를 쓰는 call site를 모두 고쳐야 하기 때문이다.
-- **Rename BAISelect to BAISelector**: 이름만 ADR 0014의 `BAI<X>` 규칙에 맞춘다. 규칙이 하나로 보인다는 것이 장점이다. 기각한 이유는 `BAI<X>`가 re-export를 뜻한다는 ADR 0014의 약속이 깨지고, `BAISelectProps`를 쓰는 component까지 고쳐야 하기 때문이다.
+- **Keep both and document the criterion**: This alternative keeps both names and documents when to use which. Its advantage is that the code does not change. It is rejected because every new select would still cost a choice between two props vocabularies.
+- **Keep only BAISelector**: This alternative removes `BAISelect` and unifies on Astryx-shaped props. Its advantage is that the props match the ui-common documentation. It is rejected because `Selector` lacks behaviors of `BAISelect` such as a ReactNode label, `autoSelectOption`, and children options, and because every call site that uses the frozen antd vocabulary would need edits.
+- **Rename BAISelect to BAISelector**: This alternative only renames the component to fit the `BAI<X>` rule of ADR 0014. Its advantage is that the naming rule looks uniform. It is rejected because it breaks the ADR 0014 promise that `BAI<X>` means a re-export, and because the components that use `BAISelectProps` would also need edits.
 
 ## Consequences
 
-- **One vocabulary**: select를 쓰는 사람은 `BAISelect` 하나의 props만 읽는다. 서버 paging이 필요한 목록은 지금처럼 `BAIComplexSelect`를 쓴다.
-- **Search default**: `BAISelect`의 기본값은 검색이 켜진 상태다. 짧고 고정된 목록은 call site가 `showSearch={false}`를 적는다.
-- **Clear value**: `allowClear`로 값을 지우면 `onChange`는 `null`이 아니라 `undefined`를 받는다. 옮겨 온 call site는 둘을 같게 처리한다.
-- **Controlled value**: `BAISelect`는 항상 `Selector`에 `value`를 넘기므로 `defaultValue`만 주면 선택이 바뀌지 않는다. 옮겨 온 call site는 `value`를 주거나 `Form.Item` 안에 있다.
-- **Upstream props**: ui-common `Selector`의 새 prop은 `BAISelect`가 받기 전까지 webui에서 쓸 수 없다. 필요해지면 `BAISelectProps`와 `BAISelect.doc.ts`에 더한다.
-- **Naming exception**: `BAI<X>` 표에서 `Selector`만 빠진다. `MultiSelector`는 `BAIMultiSelector`로 남고, `BAISelect`의 `mode="multiple"`도 이것을 그린다.
+- **One vocabulary**: A developer writing a select reads the props of one component, `BAISelect`. A list that needs server paging uses `BAIComplexSelect`, as it does today.
+- **Search default**: The default of `BAISelect` has search turned on. For a short, fixed list, the call site writes `showSearch={false}`.
+- **Clear value**: When a user clears the value through `allowClear`, `onChange` receives `undefined`, not `null`. The moved call sites treat the two the same way.
+- **Controlled value**: `BAISelect` always passes `value` to `Selector`, so a call site that gives only `defaultValue` cannot change the selection. Every moved call site either passes `value` or sits inside `Form.Item`.
+- **Upstream props**: webui cannot use a new prop of ui-common `Selector` until `BAISelect` accepts it. When a call site needs such a prop, a developer adds it to `BAISelectProps` and `BAISelect.doc.ts`.
+- **Naming exception**: Only `Selector` drops out of the `BAI<X>` table. `MultiSelector` remains as `BAIMultiSelector`, and the `mode="multiple"` of `BAISelect` also renders it.
 
-## 출처
+## Sources
 
 - GitHub: #10728.
-- 결정일: 2026-10-30.
-- 관련: [ADR 0014](0014-bai-names-for-ui-common-form-controls.md) (form control의 `BAI<X>` 이름), [ADR 0009](0009-ui-common-as-the-single-entry-point-to-astryx.md) (ui-common이 Astryx로 가는 유일한 경로).
+- Decided 2026-10-30.
+- Related: [ADR 0014](0014-bai-names-for-ui-common-form-controls.md) (the `BAI<X>` names of form controls), [ADR 0009](0009-ui-common-as-the-single-entry-point-to-astryx.md) (ui-common as the only path to Astryx).
 
-## 용어
+## Glossary
 
-| 용어 | 뜻 |
-|---|---|
-| frozen antd-v6 props | antd 시절 call site가 그대로 컴파일되도록 BUI wrapper가 유지하는 antd v6 모양의 props 이름이다. `.claude/rules/component-props-extension.md`가 정의한다. |
-| adapter | 다른 모양의 props를 받아 ui-common component의 props로 옮겨 그리는 BUI component다. re-export와 달리 자기 동작을 가진다. |
+| Term                 | Meaning                                                                                                                                                                                                       |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| frozen antd-v6 props | Frozen antd-v6 props are the antd v6-shaped prop names that a BUI wrapper keeps so that call sites from the antd era compile unchanged. `.claude/rules/component-props-extension.md` defines them.            |
+| adapter              | An adapter is a BUI component that accepts props of a different shape, maps them onto the props of a ui-common component, and renders that component. Unlike a re-export, an adapter has behavior of its own. |
