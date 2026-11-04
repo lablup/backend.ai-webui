@@ -1,4 +1,4 @@
-# 0026 — Dashboard refresh bar and per-card settings
+# 0027 — Dashboard refresh bar and per-card settings
 
 ## Summary
 
@@ -15,7 +15,7 @@
 
 - **Card scope**: Before #10580, each dashboard card decided its own range. The "My Sessions" card counted every session in the project for an admin, and the screen did not show which range it used (#9839, #7843).
 - **Global filters ignored**: When global resource group, period, and project pickers sat above the board, most cards followed only some of them. The session count card ignored the period, and the help text had to explain the difference. The 2026-10-26 meeting decided to remove the global pickers and move them into card settings.
-- **Board model**: [ADR 0025](0025-dashboard-boards-in-manager-app-config.md) stores a board as a `DashboardModel`. One card is a `PersistedPanelV2` of the board.
+- **Board model**: [ADR 0026](0026-dashboard-boards-in-manager-app-config.md) stores a board as a `DashboardModel`. One card is a `PersistedPanelV2` of the board.
 - **Denied fields**: For a V2 field the viewer cannot read, the manager answers HTTP 200 with only that field set to `null`, and puts `path: [<field>]` and `extensions.code` in `errors[]` (`user_auth_forbidden` for an admin-only field, `permission_access_forbidden` outside the RBAC scope). The other fields of the same request are read (checked on staging with a project admin account, 2026-11-03). Without `@catch`, Relay reads that field as a plain `null`, and the card shows 0 or an empty list.
 - **Manager bug**: The 26.10.0a3 manager ignores `after` when one `DateTimeFilter` carries both `after` and `before`.
 
@@ -158,7 +158,7 @@ sequenceDiagram
 
 - #10422 (epic), #10582, #9839, #7843, the 2026-10-26 meeting, the 2026-10-29 decision (one refresh cadence for every card, 1 minute by default, one resource group per card), the 2026-10-30 decision (card header pickers in view mode, `adminAuditLogsV2` for the superadmin audit log), and the 2026-11-03 decision (hide cards the viewer cannot read, show a notice on cards narrowed by settings and on custom panels).
 - The role-based dashboard proposal in #10422 (period and refresh, storage and migration).
-- Related: [ADR 0012](0012-scoped-search-fields-in-place-of-admin-fields.md), [ADR 0025](0025-dashboard-boards-in-manager-app-config.md).
+- Related: [ADR 0012](0012-scoped-search-fields-in-place-of-admin-fields.md), [ADR 0026](0026-dashboard-boards-in-manager-app-config.md).
 
 ## Glossary
 
@@ -166,6 +166,6 @@ sequenceDiagram
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | dashboard bar | The row above the dashboard board. It holds the board tabs and the auto-refresh control, and `DashboardFilterBar` draws it.                                               |
 | card setting  | The resource group and period values one card saves in the board. It is `PersistedPanelV2.settings`, and a card has only the settings its definition lists in `settings`. |
-| board         | One saved dashboard sheet that holds the card layout and settings. It is a `DashboardModel`, defined by [ADR 0025](0025-dashboard-boards-in-manager-app-config.md).       |
+| board         | One saved dashboard sheet that holds the card layout and settings. It is a `DashboardModel`, defined by [ADR 0026](0026-dashboard-boards-in-manager-app-config.md).       |
 | fetch key     | The string passed to the `fetchKey` option of Relay `useLazyLoadQuery`. When the value changes, the query reads from the server again.                                    |
 | count alias   | Calling the same connection field several times in one GraphQL request with different filters, and reading only each result's `count` under its own name.                 |

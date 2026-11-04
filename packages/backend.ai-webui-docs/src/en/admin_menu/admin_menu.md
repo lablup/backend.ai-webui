@@ -421,9 +421,7 @@ storage folder. A project storage folder is a folder belonging to a specific
 project, not a specific user, and can be accessed by all users in that project.
 
 :::note
-Project folders can be created only by administrators. Normal users can only
-access the contents of the project folder created by the administrator.
-Depending on the system settings, project folders may not be allowed.
+Project folder functionality may be restricted based on user permissions.
 :::
 
 First, log in with an admin account and create a project folder. After moving to
@@ -452,13 +450,11 @@ is displayed without any invitation procedure.
 
 ### Admin deployments page
 
-Administrators and superadmins can access the Admin Deployments page at `/admin/deployments`, which provides a cross-project view of every deployment in the cluster. The **Project** column is available in the deployment list but is hidden by default; you can enable it using the column settings.
-
 ![](../images/admin_serving_page.png)
 
 The Admin Deployments page has up to four tabs:
 
-- **Deployments**: Displays the deployment list across all projects and provides the same lifecycle and property filters as the user-facing Deployments page. This cross-project view additionally offers a **Project** filter property.
+- **Deployments**: Displays the deployment list across all projects.
 - **Model Store Management**: See the [Admin Model Store Management](#admin-model-store-management) section below.
 - **Prometheus Preset**: Lets administrators manage reusable Prometheus query presets. See the [Prometheus Query Presets](#prometheus-query-presets) section below.
 - **Deployment Presets**: Lets administrators manage reusable deployment presets that end users can apply when deploying a model. See the [Deployment Presets](#deployment-presets) section below.
@@ -1582,7 +1578,6 @@ The resource group edit dialog contains the following additional fields:
 
 - **Allowed session types**: Since users can choose the type of session, the resource group can allow certain types. You should allow at least one session type. The allowed session types are Interactive, Batch, Inference, and System.
 - **App Proxy Server Address**: Sets the App Proxy address for the resource group's Agents to use. If you set a URL in this field, App Proxy will relay the traffic of an app like Jupyter directly to the compute session via Agent bypassing Manager.
-- **App Proxy API Token**: The API token for authenticating with the App Proxy server.
 - **SFTP Storage Proxies**: The storage proxies used when users in this resource group transfer files to
   their folders over SFTP. The field is available to superadmins and is pre-filled with the proxies that
   currently serve this resource group. Saving synchronizes only this group's membership — it is added to

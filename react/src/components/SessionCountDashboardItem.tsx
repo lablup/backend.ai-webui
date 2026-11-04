@@ -10,6 +10,7 @@ import {
   BAIFlexProps,
   BAIRowWrapWithDividers,
   BAIStatistic,
+  useIsInBAIBoardItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
@@ -69,6 +70,7 @@ const SessionCountDashboardItem: React.FC<SessionCountDashboardItemProps> = ({
   );
 
   const { myInteractive, myBatch, myInference, myUpload } = data || {};
+  const isInBoard = useIsInBAIBoardItem();
 
   const renderBAIPanelItem = (title: string, value: number) => (
     <BAIStatistic title={title} current={value} progressMode="hidden" />
@@ -79,7 +81,8 @@ const SessionCountDashboardItem: React.FC<SessionCountDashboardItemProps> = ({
       direction="column"
       align="stretch"
       style={{
-        paddingInline: token('--spacing-8'),
+        // On a board the board pads the item.
+        ...(isInBoard ? {} : { paddingInline: token('--spacing-8') }),
         ...props.style,
       }}
       {..._.omit(props, ['style'])}
