@@ -465,9 +465,10 @@ test.describe(
       await expect(deployModal).toBeVisible();
 
       // The Resource Group select is an Astryx Selector: a button trigger
-      // whose accessible name starts with its form label, plus a listbox.
+      // named by its form label, plus a listbox. `exact` skips the label's
+      // "Resource Group — info" tooltip button.
       await deployModal
-        .getByRole('button', { name: /^Resource Group/ })
+        .getByRole('button', { name: 'Resource Group', exact: true })
         .click();
 
       // Verify resource group options are visible
@@ -559,7 +560,8 @@ test.describe(
       await expect(deployModal).toBeVisible();
 
       const resourceGroupSelect = deployModal.getByRole('button', {
-        name: /^Resource Group/,
+        name: 'Resource Group',
+        exact: true,
       });
       await resourceGroupSelect.click();
 

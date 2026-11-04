@@ -168,7 +168,7 @@ test.describe(
         .getByLabel('Display Name', { exact: true })
         .fill('E2E Display Name');
 
-      await modal.getByRole('button', { name: /^UI Type/ }).click();
+      await modal.getByRole('button', { name: 'UI Type', exact: true }).click();
       await page.getByRole('option', { name: 'Select', exact: true }).click();
 
       await modal.getByRole('button', { name: /Add Choice/i }).click();
@@ -228,7 +228,7 @@ test.describe(
       // defaults to String — declare the type before picking the control.
       await selectValueType(page, modal, 'Integer');
 
-      await modal.getByRole('button', { name: /^UI Type/ }).click();
+      await modal.getByRole('button', { name: 'UI Type', exact: true }).click();
       await page.getByRole('option', { name: 'Slider', exact: true }).click();
 
       await modal.getByRole('spinbutton', { name: 'Minimum' }).fill('0');
@@ -289,7 +289,7 @@ test.describe(
       // defaults to String — declare the type before picking the control.
       await selectValueType(page, modal, 'Integer');
 
-      await modal.getByRole('button', { name: /^UI Type/ }).click();
+      await modal.getByRole('button', { name: 'UI Type', exact: true }).click();
       await page.getByRole('option', { name: 'Slider', exact: true }).click();
 
       await modal.getByRole('button', { name: 'Create' }).click();
@@ -325,7 +325,7 @@ test.describe(
       // defaults to String — declare the type before picking the control.
       await selectValueType(page, modal, 'Integer');
 
-      await modal.getByRole('button', { name: /^UI Type/ }).click();
+      await modal.getByRole('button', { name: 'UI Type', exact: true }).click();
       await page.getByRole('option', { name: 'Slider', exact: true }).click();
 
       await modal.getByRole('spinbutton', { name: 'Minimum' }).fill('0');
@@ -388,7 +388,7 @@ test.describe(
       await modal
         .getByLabel('Display Name', { exact: true })
         .fill('E2E Display Name');
-      await modal.getByRole('button', { name: /^UI Type/ }).click();
+      await modal.getByRole('button', { name: 'UI Type', exact: true }).click();
       await page.getByRole('option', { name: 'Select', exact: true }).click();
       // Two choice rows, not one — a bug that only mishandles the second
       // (or later) `Form.List` row wouldn't be caught by asserting `.first()`
