@@ -31,6 +31,7 @@ import {
   useBAIResourceSlots,
   useConnectedBAIClient,
 } from '../provider';
+import { Badge } from '@lablup/ui-common/Badge';
 import { Text } from '@lablup/ui-common/Text';
 import { Token } from '@lablup/ui-common/Token';
 import { useTheme } from '@lablup/ui-common/theme';
@@ -556,6 +557,9 @@ const StatusCell: React.FC<{
           },
         ]}
       />
+      {value && value !== 'ALIVE' ? (
+        <Badge variant={badgeVariantForStatus('agent', value)} label={value} />
+      ) : null}
       {parsedComputePlugins?.cuda ? (
         <>
           {parsedComputePlugins?.cuda?.cuda_version ? (
