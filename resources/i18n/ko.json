@@ -587,6 +587,42 @@
     "Title": "Backend.AI WebUI Agent CLI 로그인",
     "VerificationCode": "확인 코드"
   },
+  "clientIpMasking": {
+    "ClientIpMasking": "클라이언트 IP 마스킹",
+    "CreatePolicy": "정책 생성",
+    "DefaultPrefix": "/{{prefix}} (기본값)",
+    "DeleteDefaultPolicyDescription": "자체 정책이 없는 대상은 클라이언트 IP를 그대로 저장합니다.",
+    "DeletePolicy": "이 마스킹 정책을 삭제하시겠습니까?",
+    "DeletePolicyDescription": "{{target}}은(는) 기본 정책을 따르게 됩니다.",
+    "Description": "클라이언트 IP 주소를 저장하기 전에 어떻게 마스킹할지 설정합니다. 자체 정책이 없는 대상은 기본 정책을 따르며, 기본 정책이 없으면 주소를 그대로 저장합니다.",
+    "EditPolicy": "정책 수정",
+    "IPv4Prefix": "IPv4 프리픽스 길이",
+    "IPv6Prefix": "IPv6 프리픽스 길이",
+    "Mode": "마스킹 방식",
+    "ModeRequired": "마스킹 방식을 선택해 주세요.",
+    "OnePolicyPerTarget": "대상마다 정책은 하나만 존재할 수 있습니다.",
+    "PrefixExtra": "유지할 앞쪽 비트 수입니다 (0–{{max}}). 비워 두면 {{defaultPrefix}}을(를) 사용합니다.",
+    "PrefixRange": "0에서 {{max}} 사이의 숫자를 입력해 주세요.",
+    "SuccessfullyDeleted": "클라이언트 IP 마스킹 정책을 삭제했습니다.",
+    "SuccessfullySaved": "클라이언트 IP 마스킹 정책을 저장했습니다.",
+    "Target": "정책 대상",
+    "TargetRequired": "정책 대상을 선택해 주세요.",
+    "modeDescriptions": {
+      "DROP": "클라이언트 IP를 기록하지 않습니다.",
+      "NONE": "클라이언트 IP를 그대로 저장합니다.",
+      "TRUNCATE": "호스트 비트를 0으로 바꾸고 네트워크 프리픽스만 남깁니다."
+    },
+    "modes": {
+      "DROP": "기록 안 함",
+      "NONE": "없음",
+      "TRUNCATE": "잘라내기"
+    },
+    "targets": {
+      "AUDIT_LOGS": "감사 로그",
+      "DEFAULT": "기본",
+      "LOGIN_HISTORY": "로그인 기록"
+    }
+  },
   "credential": {
     "2FAEnabled": "이중인중 활성화",
     "AccessKey": "액세스 키",
@@ -2711,7 +2747,6 @@
     "AgentSelectionPreferred": "Preferred",
     "AgentSelectionStrict": "Strict",
     "AllowedSessionTypes": "허용된 세션 타입",
-    "AppProxyAPIToken": "App Proxy API 토큰",
     "AppProxyAddress": "App Proxy 서버 주소",
     "CreateResourceGroup": "자원 그룹 추가",
     "Deactivate": "비활성화",
@@ -2732,7 +2767,6 @@
     "DuplicateResourceSlot": "이미 추가된 리소스 슬롯입니다.",
     "EditDefaultDeploymentOptions": "기본 배포 옵션 수정",
     "EditDefaultSessionOptions": "기본 세션 옵션 수정",
-    "EnterAPIToken": "API 토큰 입력",
     "EnterValidResourceGroupName": "올바른 자원 그룹 이름을 입력해 주세요.",
     "FailedToLoadDefaultOptions": "기본 옵션을 불러오지 못했습니다.",
     "FailurePolicy": "실패 정책",
@@ -3179,6 +3213,8 @@
       "AddingKernelToSocketQueue": "커널을 소켓 큐에 추가합니다...",
       "AdvancedSettings": "고급 설정",
       "AgentNode": "에이전트",
+      "AgentPrefilledDescription": "AI 에이전트가 이 양식을 채웠습니다. {{launch}} 버튼을 누르기 전에 모든 값을 확인하세요.",
+      "AgentPrefilledTitle": "AI 에이전트가 입력한 양식",
       "AllocateNode": "배치",
       "ApplicationMemory": "Application MEM {{value}}",
       "Architecture": "아키텍처",
@@ -3189,7 +3225,7 @@
       "BatchJobTimeoutDurationDesc": "배치 작업의 최대 실행 시간을 설정합니다. 지정된 시간이 초과되면 세션이 자동으로 종료됩니다.",
       "BatchMode": "배치",
       "BatchModeConfig": "배치 모드 설정",
-      "BatchModeDesc": "여러 노드 클러스터로 코드를 실행합니다.",
+      "BatchModeDesc": "미리 정의된 파일 또는 예약된 작업에 대해 입력한 명령을 지정한 일시에 실행합니다.",
       "BootstrapScriptDetail": "부트스트랩 스크립트",
       "CPU": "CPU",
       "ChooseEnvironment": "환경을 선택하세요",

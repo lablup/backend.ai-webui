@@ -587,6 +587,42 @@
     "Title": "Backend.AI WebUI Agent CLI-д нэвтрэх",
     "VerificationCode": "Баталгаажуулах код"
   },
+  "clientIpMasking": {
+    "ClientIpMasking": "Клиентийн IP нууцлалт",
+    "CreatePolicy": "Бодлого үүсгэх",
+    "DefaultPrefix": "/{{prefix}} (анхдагч)",
+    "DeleteDefaultPolicyDescription": "Өөрийн бодлогогүй зорилтууд клиентийн IP-г ажиглагдсанаар нь хадгална.",
+    "DeletePolicy": "Энэ нууцлалтын бодлогыг устгах уу?",
+    "DeletePolicyDescription": "{{target}} анхдагч бодлогыг дагах болно.",
+    "Description": "Клиентийн IP хаягийг хадгалахаас өмнө хэрхэн нууцлахыг тохируулна. Өөрийн бодлогогүй зорилт анхдагч бодлогыг дагана; анхдагч бодлого байхгүй бол хаягийг ажиглагдсанаар нь хадгална.",
+    "EditPolicy": "Бодлого засах",
+    "IPv4Prefix": "IPv4 угтварын урт",
+    "IPv6Prefix": "IPv6 угтварын урт",
+    "Mode": "Нууцлалтын горим",
+    "ModeRequired": "Нууцлалтын горимыг сонгоно уу.",
+    "OnePolicyPerTarget": "Зорилт бүрт зөвхөн нэг бодлого байж болно.",
+    "PrefixExtra": "Хадгалах эхний битийн тоо (0–{{max}}). Хоосон орхивол {{defaultPrefix}}-г ашиглана.",
+    "PrefixRange": "0-ээс {{max}} хүртэлх тоо оруулна уу.",
+    "SuccessfullyDeleted": "Клиентийн IP нууцлалтын бодлогыг устгалаа.",
+    "SuccessfullySaved": "Клиентийн IP нууцлалтын бодлогыг хадгаллаа.",
+    "Target": "Бодлогын зорилт",
+    "TargetRequired": "Бодлогын зорилтыг сонгоно уу.",
+    "modeDescriptions": {
+      "DROP": "Клиентийн IP-г бүртгэхгүй.",
+      "NONE": "Клиентийн IP-г ажиглагдсанаар нь хадгална.",
+      "TRUNCATE": "Хостын битүүдийг тэглэж, зөвхөн сүлжээний угтварыг үлдээнэ."
+    },
+    "modes": {
+      "DROP": "Хаях",
+      "NONE": "Үгүй",
+      "TRUNCATE": "Таслах"
+    },
+    "targets": {
+      "AUDIT_LOGS": "Аудитын бүртгэл",
+      "DEFAULT": "Анхдагч",
+      "LOGIN_HISTORY": "Нэвтрэлтийн түүх"
+    }
+  },
   "credential": {
     "2FAEnabled": "2FA идэвхтэй",
     "AccessKey": "Хандалтын түлхүүр",
@@ -2710,7 +2746,6 @@
     "AgentSelectionPreferred": "Preferred",
     "AgentSelectionStrict": "Strict",
     "AllowedSessionTypes": "Зөвшөөрөгдсөн сессийн төрлүүд",
-    "AppProxyAPIToken": "App Proxy API токен",
     "AppProxyAddress": "App Proxy серверийн хаяг",
     "CreateResourceGroup": "Нөөцийн бүлэг үүсгэх",
     "Deactivate": "Идэвхгүй болгох",
@@ -2731,7 +2766,6 @@
     "DuplicateResourceSlot": "Энэ нөөцийн слот аль хэдийн нэмэгдсэн байна.",
     "EditDefaultDeploymentOptions": "Үндсэн байршуулалтын тохиргоог засах",
     "EditDefaultSessionOptions": "Үндсэн сешний тохиргоог засах",
-    "EnterAPIToken": "API токен оруулна уу",
     "EnterValidResourceGroupName": "Зөв нөөцийн бүлгийн нэрийг оруулна уу",
     "FailedToLoadDefaultOptions": "Үндсэн тохиргоог ачаалж чадсангүй.",
     "FailurePolicy": "Алдааны бодлого",
@@ -3178,6 +3212,8 @@
       "AddingKernelToSocketQueue": "Цөмийг сокет дараалалд нэмж оруулах ...",
       "AdvancedSettings": "Нарийвчилсан тохиргоо",
       "AgentNode": "Агент",
+      "AgentPrefilledDescription": "AI агент энэ маягтыг бөглөсөн. «{{launch}}» товчийг дарахаас өмнө бүх утгыг шалгана уу.",
+      "AgentPrefilledTitle": "AI агент бөглөсөн",
       "AllocateNode": "Кластер горим",
       "ApplicationMemory": "Аппликейшны санах ой {{value}}",
       "Architecture": "Архитектур",
@@ -3188,7 +3224,7 @@
       "BatchJobTimeoutDurationDesc": "Багцын ажлыг гүйцэтгэх хамгийн дээд хугацааг тохируулна уу. \nХэрэв заасан хугацаа хэтэрсэн бол сесс автоматаар дуусгавар болно.",
       "BatchMode": "Багц",
       "BatchModeConfig": "Багц горимын тохиргоо",
-      "BatchModeDesc": "Кодоо олон зангилаатай кластераар ажиллуул.",
+      "BatchModeDesc": "Урьдчилан тодорхойлсон файл эсвэл төлөвлөсөн ажилд зориулж оруулсан тушаалыг шууд эсвэл тохируулсан огноо, цагт ажиллуулна.",
       "BootstrapScriptDetail": "Bootstrap скрипт",
       "CPU": "CPU",
       "ChooseEnvironment": "Environment сонгоно уу",

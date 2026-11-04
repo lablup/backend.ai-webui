@@ -587,6 +587,42 @@
     "Title": "Iniciar sesión en la Backend.AI WebUI Agent CLI",
     "VerificationCode": "Código de verificación"
   },
+  "clientIpMasking": {
+    "ClientIpMasking": "Enmascaramiento de IP del cliente",
+    "CreatePolicy": "Crear política",
+    "DefaultPrefix": "/{{prefix}} (predeterminado)",
+    "DeleteDefaultPolicyDescription": "Los destinos sin política propia almacenarán las IP del cliente tal como se observan.",
+    "DeletePolicy": "¿Eliminar esta política de enmascaramiento?",
+    "DeletePolicyDescription": "{{target}} volverá a la política predeterminada.",
+    "Description": "Configure cómo se enmascaran las direcciones IP del cliente antes de almacenarlas. Un destino sin política propia sigue la política predeterminada; si no existe, las direcciones se almacenan tal como se observan.",
+    "EditPolicy": "Editar política",
+    "IPv4Prefix": "Longitud de prefijo IPv4",
+    "IPv6Prefix": "Longitud de prefijo IPv6",
+    "Mode": "Modo de enmascaramiento",
+    "ModeRequired": "Seleccione un modo de enmascaramiento.",
+    "OnePolicyPerTarget": "Solo puede existir una política por destino.",
+    "PrefixExtra": "Número de bits iniciales que se conservan (0–{{max}}). Déjelo vacío para usar {{defaultPrefix}}.",
+    "PrefixRange": "Introduzca un número entre 0 y {{max}}.",
+    "SuccessfullyDeleted": "Política de enmascaramiento de IP del cliente eliminada.",
+    "SuccessfullySaved": "Política de enmascaramiento de IP del cliente guardada.",
+    "Target": "Destino de la política",
+    "TargetRequired": "Seleccione un destino de la política.",
+    "modeDescriptions": {
+      "DROP": "No se registra ninguna IP del cliente.",
+      "NONE": "Las IP del cliente se almacenan tal como se observan.",
+      "TRUNCATE": "Los bits de host se ponen a cero y solo se conserva el prefijo de red."
+    },
+    "modes": {
+      "DROP": "Descartar",
+      "NONE": "Ninguno",
+      "TRUNCATE": "Truncar"
+    },
+    "targets": {
+      "AUDIT_LOGS": "Registros de auditoría",
+      "DEFAULT": "Predeterminado",
+      "LOGIN_HISTORY": "Historial de inicio de sesión"
+    }
+  },
   "credential": {
     "2FAEnabled": "2FA habilitado",
     "AccessKey": "Clave de acceso",
@@ -2709,7 +2745,6 @@
     "AgentSelectionPreferred": "Preferred",
     "AgentSelectionStrict": "Strict",
     "AllowedSessionTypes": "Tipos de sesión permitidos",
-    "AppProxyAPIToken": "Token API de App Proxy",
     "AppProxyAddress": "Dirección del servidor App Proxy",
     "CreateResourceGroup": "Crear grupo de recursos",
     "Deactivate": "Desactivar",
@@ -2730,7 +2765,6 @@
     "DuplicateResourceSlot": "Esta ranura de recursos ya está añadida.",
     "EditDefaultDeploymentOptions": "Editar opciones de despliegue predeterminadas",
     "EditDefaultSessionOptions": "Editar opciones de sesión predeterminadas",
-    "EnterAPIToken": "Introduzca el token de la API",
     "EnterValidResourceGroupName": "Introduzca un nombre de grupo de recursos válido",
     "FailedToLoadDefaultOptions": "No se pudieron cargar las opciones predeterminadas.",
     "FailurePolicy": "Política de fallos",
@@ -3177,6 +3211,8 @@
       "AddingKernelToSocketQueue": "Añadiendo kernel a la cola de sockets...",
       "AdvancedSettings": "Configuración avanzada",
       "AgentNode": "Agente",
+      "AgentPrefilledDescription": "Un agente de IA ha rellenado este formulario. Revise todos los valores antes de pulsar «{{launch}}».",
+      "AgentPrefilledTitle": "Rellenado por un agente de IA",
       "AllocateNode": "Modo clúster",
       "ApplicationMemory": "Memoria de la aplicación {{value}}",
       "Architecture": "Arquitectura",
@@ -3187,7 +3223,7 @@
       "BatchJobTimeoutDurationDesc": "Establezca el tiempo máximo de ejecución para trabajos por lotes. \nLa sesión finalizará automáticamente si se excede el tiempo especificado.",
       "BatchMode": "Lote",
       "BatchModeConfig": "Modo por lotes Configuración",
-      "BatchModeDesc": "Puedes ejecutar tu código con múltiples nodos y clusters para escalar tu idea",
+      "BatchModeDesc": "Ejecuta el comando que introduzcas para archivos predefinidos o tareas programadas, de inmediato o en una fecha y hora establecidas",
       "BootstrapScriptDetail": "Script de Bootstrap",
       "CPU": "CPU",
       "ChooseEnvironment": "Elija Entorno",

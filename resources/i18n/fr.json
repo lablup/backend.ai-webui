@@ -587,6 +587,42 @@
     "Title": "Connecter la Backend.AI WebUI Agent CLI",
     "VerificationCode": "Code de vérification"
   },
+  "clientIpMasking": {
+    "ClientIpMasking": "Masquage de l'IP client",
+    "CreatePolicy": "Créer une politique",
+    "DefaultPrefix": "/{{prefix}} (par défaut)",
+    "DeleteDefaultPolicyDescription": "Les cibles sans politique propre stockeront les IP client telles qu'observées.",
+    "DeletePolicy": "Supprimer cette politique de masquage ?",
+    "DeletePolicyDescription": "{{target}} reviendra à la politique par défaut.",
+    "Description": "Définissez comment les adresses IP client sont masquées avant d'être stockées. Une cible sans politique propre suit la politique par défaut ; en l'absence de politique par défaut, les adresses sont stockées telles qu'observées.",
+    "EditPolicy": "Modifier la politique",
+    "IPv4Prefix": "Longueur du préfixe IPv4",
+    "IPv6Prefix": "Longueur du préfixe IPv6",
+    "Mode": "Mode de masquage",
+    "ModeRequired": "Sélectionnez un mode de masquage.",
+    "OnePolicyPerTarget": "Une seule politique peut exister par cible.",
+    "PrefixExtra": "Nombre de bits de tête conservés (0–{{max}}). Laissez vide pour utiliser {{defaultPrefix}}.",
+    "PrefixRange": "Saisissez un nombre entre 0 et {{max}}.",
+    "SuccessfullyDeleted": "Politique de masquage de l'IP client supprimée.",
+    "SuccessfullySaved": "Politique de masquage de l'IP client enregistrée.",
+    "Target": "Cible de la politique",
+    "TargetRequired": "Sélectionnez une cible de politique.",
+    "modeDescriptions": {
+      "DROP": "Aucune IP client n'est enregistrée.",
+      "NONE": "Les IP client sont stockées telles qu'observées.",
+      "TRUNCATE": "Les bits d'hôte sont mis à zéro ; seul le préfixe réseau est conservé."
+    },
+    "modes": {
+      "DROP": "Supprimer",
+      "NONE": "Aucun",
+      "TRUNCATE": "Tronquer"
+    },
+    "targets": {
+      "AUDIT_LOGS": "Journaux d'audit",
+      "DEFAULT": "Par défaut",
+      "LOGIN_HISTORY": "Historique de connexion"
+    }
+  },
   "credential": {
     "2FAEnabled": "2FA activée",
     "AccessKey": "Clé d'accès",
@@ -2711,7 +2747,6 @@
     "AgentSelectionPreferred": "Preferred",
     "AgentSelectionStrict": "Strict",
     "AllowedSessionTypes": "Types de session autorisés",
-    "AppProxyAPIToken": "Jeton d'API App Proxy",
     "AppProxyAddress": "Adresse du serveur App Proxy",
     "CreateResourceGroup": "Créer un groupe de ressources",
     "Deactivate": "Désactiver",
@@ -2732,7 +2767,6 @@
     "DuplicateResourceSlot": "Cet emplacement de ressources est déjà ajouté.",
     "EditDefaultDeploymentOptions": "Modifier les options de déploiement par défaut",
     "EditDefaultSessionOptions": "Modifier les options de session par défaut",
-    "EnterAPIToken": "Saisissez le jeton API",
     "EnterValidResourceGroupName": "Entrez un nom de groupe de ressources valide",
     "FailedToLoadDefaultOptions": "Impossible de charger les options par défaut.",
     "FailurePolicy": "Politique d'échec",
@@ -3180,6 +3214,8 @@
       "AddingKernelToSocketQueue": "Ajout du noyau à la file d'attente des sockets...",
       "AdvancedSettings": "Paramètres avancés",
       "AgentNode": "Agent",
+      "AgentPrefilledDescription": "Un agent IA a rempli ce formulaire. Vérifiez chaque valeur avant d’appuyer sur « {{launch}} ».",
+      "AgentPrefilledTitle": "Rempli par un agent IA",
       "AllocateNode": "Mode cluster",
       "ApplicationMemory": "Mémoire de l'application {{value}}",
       "Architecture": "Architecture",
@@ -3190,7 +3226,7 @@
       "BatchJobTimeoutDurationDesc": "Définissez la durée d'exécution maximale des tâches par lots. \nLa session se terminera automatiquement si la durée spécifiée est dépassée.",
       "BatchMode": "Lot",
       "BatchModeConfig": "Mode batch Configuration",
-      "BatchModeDesc": "Vous pouvez exécuter votre code avec plusieurs nœuds et clusters pour faire évoluer votre idée.",
+      "BatchModeDesc": "Exécute la commande que vous saisissez pour des fichiers prédéfinis ou des tâches planifiées, immédiatement ou à la date et l'heure définies.",
       "BootstrapScriptDetail": "Script d'initialisation",
       "CPU": "CPU",
       "ChooseEnvironment": "Choisissez l'environnement",

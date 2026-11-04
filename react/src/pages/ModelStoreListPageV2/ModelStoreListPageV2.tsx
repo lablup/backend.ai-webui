@@ -13,6 +13,7 @@ import { useSuspendedBackendaiClient } from '../../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
 import { useModelStoreProject } from '../../hooks/useModelStoreProject';
 import AuthorIcon from './components/AuthorIcon';
+import WebMCPModelCardListTools from './components/WebMCPModelCardListTools';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Card } from '@lablup/ui-common/Card';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
@@ -27,11 +28,13 @@ import {
   BAIGraphQLPropertyFilter,
   BAISelect,
   BAIStorageHostSelect,
+  filterOutNullAndUndefined,
   isValidUUID,
   useUpdatableState,
   BAITextHighlighter,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
+import * as _ from 'lodash-es';
 import {
   parseAsJson,
   parseAsString,
@@ -198,6 +201,15 @@ const ModelCardV2Grid: React.FC<{
   offset: number;
   onTotalChange: (total: number) => void;
   onCardClick?: (id: string) => void;
+  /** The grid still shows the previous view; reported by the WebMCP tools. */
+  pending: boolean;
+  /** The store's URL params, reported by the WebMCP tools. */
+  viewParams: {
+    filter: string | null;
+    sort: string;
+    current: number;
+    pageSize: number;
+  };
 }> = ({
   projectId,
   filter,
@@ -209,6 +221,8 @@ const ModelCardV2Grid: React.FC<{
   offset,
   onTotalChange,
   onCardClick,
+  pending,
+  viewParams,
 }) => {
   'use memo';
 
@@ -250,6 +264,7 @@ const ModelCardV2Grid: React.FC<{
               id
               entityId
               ...ModelStoreListPageV2_ModelCardV2Fragment
+              ...WebMCPModelCardListToolsFragment
             }
           }
         }
@@ -279,28 +294,47 @@ const ModelCardV2Grid: React.FC<{
     onTotalChanged();
   }, [total]);
 
+  const webMCPTools = (
+    <WebMCPModelCardListTools
+      modelCardsFrgmt={filterOutNullAndUndefined(_.map(items, 'node'))}
+      page={pageSize > 0 ? Math.floor(offset / pageSize) + 1 : 1}
+      pageSize={pageSize}
+      total={total}
+      pending={pending}
+      viewParams={viewParams}
+    />
+  );
+
   if (items.length === 0) {
-    return <EmptyState title={t('modelStore.NoModelsFound')} />;
+    return (
+      <>
+        {webMCPTools}
+        <EmptyState title={t('modelStore.NoModelsFound')} />
+      </>
+    );
   }
 
   // PILOT-DECISION (ADR 0020 R1): identical recipe to
   // AIAgentPage's grid — `xs={24} sm={24} lg={12} xl={12} xxl={8} xxxl={6}`
   // first goes 2-up at `lg` (992px) -> `minWidth: 496`; `xxxl={6}` -> `max: 4`.
   return (
-    <Grid columns={{ minWidth: 496, max: 4 }} gap={4}>
-      {items.map((edge) => {
-        const item = edge?.node;
-        if (!item) return null;
-        return (
-          <ModelCardV2Card
-            key={item.id}
-            modelCardV2Frgmt={item}
-            searchKeyword={searchKeyword}
-            onClick={() => onCardClick?.(item.entityId)}
-          />
-        );
-      })}
-    </Grid>
+    <>
+      {webMCPTools}
+      <Grid columns={{ minWidth: 496, max: 4 }} gap={4}>
+        {items.map((edge) => {
+          const item = edge?.node;
+          if (!item) return null;
+          return (
+            <ModelCardV2Card
+              key={item.id}
+              modelCardV2Frgmt={item}
+              searchKeyword={searchKeyword}
+              onClick={() => onCardClick?.(item.entityId)}
+            />
+          );
+        })}
+      </Grid>
+    </>
   );
 };
 
@@ -484,6 +518,13 @@ const ModelStoreListPageV2: React.FC = () => {
           onTotalChange={setTotal}
           onCardClick={(id) => {
             setQueryParams({ modelCard: id });
+          }}
+          pending={isPendingPage || isPendingSort || isPendingFilter}
+          viewParams={{
+            filter: filter ? JSON.stringify(filter) : null,
+            sort: queryParams.sort,
+            current: tablePaginationOption.current,
+            pageSize: tablePaginationOption.pageSize,
           }}
         />
       </div>

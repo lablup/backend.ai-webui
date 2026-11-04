@@ -587,6 +587,42 @@
     "Title": "Backend.AI WebUI Agent CLI'de oturum açın",
     "VerificationCode": "Doğrulama kodu"
   },
+  "clientIpMasking": {
+    "ClientIpMasking": "İstemci IP Maskeleme",
+    "CreatePolicy": "Politika Oluştur",
+    "DefaultPrefix": "/{{prefix}} (varsayılan)",
+    "DeleteDefaultPolicyDescription": "Kendi politikası olmayan hedefler istemci IP adreslerini gözlemlendiği gibi saklar.",
+    "DeletePolicy": "Bu maskeleme politikası silinsin mi?",
+    "DeletePolicyDescription": "{{target}} varsayılan politikaya geri döner.",
+    "Description": "İstemci IP adreslerinin saklanmadan önce nasıl maskeleneceğini ayarlayın. Kendi politikası olmayan bir hedef varsayılan politikayı izler; varsayılan politika yoksa adresler gözlemlendiği gibi saklanır.",
+    "EditPolicy": "Politikayı Düzenle",
+    "IPv4Prefix": "IPv4 Önek Uzunluğu",
+    "IPv6Prefix": "IPv6 Önek Uzunluğu",
+    "Mode": "Maskeleme Modu",
+    "ModeRequired": "Bir maskeleme modu seçin.",
+    "OnePolicyPerTarget": "Her hedef için yalnızca bir politika olabilir.",
+    "PrefixExtra": "Korunacak baştaki bit sayısı (0–{{max}}). {{defaultPrefix}} kullanmak için boş bırakın.",
+    "PrefixRange": "0 ile {{max}} arasında bir sayı girin.",
+    "SuccessfullyDeleted": "İstemci IP maskeleme politikası silindi.",
+    "SuccessfullySaved": "İstemci IP maskeleme politikası kaydedildi.",
+    "Target": "Politika Hedefi",
+    "TargetRequired": "Bir politika hedefi seçin.",
+    "modeDescriptions": {
+      "DROP": "İstemci IP adresi kaydedilmez.",
+      "NONE": "İstemci IP adresleri gözlemlendiği gibi saklanır.",
+      "TRUNCATE": "Ana bilgisayar bitleri sıfırlanır, yalnızca ağ öneki korunur."
+    },
+    "modes": {
+      "DROP": "Kaydetme",
+      "NONE": "Yok",
+      "TRUNCATE": "Kırp"
+    },
+    "targets": {
+      "AUDIT_LOGS": "Denetim Günlükleri",
+      "DEFAULT": "Varsayılan",
+      "LOGIN_HISTORY": "Oturum Açma Geçmişi"
+    }
+  },
   "credential": {
     "2FAEnabled": "2FA Etkin",
     "AccessKey": "Erişim Anahtarı",
@@ -2709,7 +2745,6 @@
     "AgentSelectionPreferred": "Preferred",
     "AgentSelectionStrict": "Strict",
     "AllowedSessionTypes": "İzin verilen oturum türleri",
-    "AppProxyAPIToken": "App Proxy API Jetonu",
     "AppProxyAddress": "App Proxy Sunucu Adresi",
     "CreateResourceGroup": "Kaynak Grubu Oluştur",
     "Deactivate": "Devre dışı bırakmak",
@@ -2730,7 +2765,6 @@
     "DuplicateResourceSlot": "Bu kaynak yuvası zaten eklendi.",
     "EditDefaultDeploymentOptions": "Varsayılan Dağıtım Seçeneklerini Düzenle",
     "EditDefaultSessionOptions": "Varsayılan Oturum Seçeneklerini Düzenle",
-    "EnterAPIToken": "API jetonunu girin",
     "EnterValidResourceGroupName": "Geçerli Kaynak grubu adını girin",
     "FailedToLoadDefaultOptions": "Varsayılan seçenekler yüklenemedi.",
     "FailurePolicy": "Hata Politikası",
@@ -3177,6 +3211,8 @@
       "AddingKernelToSocketQueue": "Soket kuyruğuna çekirdek ekleniyor...",
       "AdvancedSettings": "Gelişmiş Ayarlar",
       "AgentNode": "Ajan",
+      "AgentPrefilledDescription": "Bu formu bir yapay zekâ ajanı doldurdu. “{{launch}}” düğmesine basmadan önce tüm değerleri gözden geçirin.",
+      "AgentPrefilledTitle": "Bir yapay zekâ ajanı tarafından dolduruldu",
       "AllocateNode": "küme modu",
       "ApplicationMemory": "Uygulama Belleği {{value}}",
       "Architecture": "Mimarlık",
@@ -3187,7 +3223,7 @@
       "BatchJobTimeoutDurationDesc": "Toplu işler için maksimum yürütme süresini ayarlayın. \nBelirtilen sürenin aşılması durumunda oturum otomatik olarak sonlandırılacaktır.",
       "BatchMode": "Toplu İş",
       "BatchModeConfig": "Toplu mod Yapılandırması",
-      "BatchModeDesc": "Fikrinizi ölçeklendirmek için kodunuzu birden fazla düğüm ve küme ile çalıştırabilirsiniz",
+      "BatchModeDesc": "Önceden tanımlanmış dosyalar veya zamanlanmış görevler için girdiğiniz komutu hemen ya da belirlenen tarih ve saatte çalıştırır",
       "BootstrapScriptDetail": "Bootstrap betiği",
       "CPU": "İşlemci",
       "ChooseEnvironment": "Ortam Seçin",

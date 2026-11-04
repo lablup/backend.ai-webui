@@ -587,6 +587,42 @@
     "Title": "Вход для Backend.AI WebUI Agent CLI",
     "VerificationCode": "Код подтверждения"
   },
+  "clientIpMasking": {
+    "ClientIpMasking": "Маскирование IP клиента",
+    "CreatePolicy": "Создать политику",
+    "DefaultPrefix": "/{{prefix}} (по умолчанию)",
+    "DeleteDefaultPolicyDescription": "Цели без собственной политики будут сохранять IP клиента без изменений.",
+    "DeletePolicy": "Удалить эту политику маскирования?",
+    "DeletePolicyDescription": "Для {{target}} будет действовать политика по умолчанию.",
+    "Description": "Задайте, как маскируются IP-адреса клиентов перед сохранением. Цель без собственной политики следует политике по умолчанию; если её нет, адреса сохраняются без изменений.",
+    "EditPolicy": "Изменить политику",
+    "IPv4Prefix": "Длина префикса IPv4",
+    "IPv6Prefix": "Длина префикса IPv6",
+    "Mode": "Режим маскирования",
+    "ModeRequired": "Выберите режим маскирования.",
+    "OnePolicyPerTarget": "Для каждой цели может существовать только одна политика.",
+    "PrefixExtra": "Количество сохраняемых начальных битов (0–{{max}}). Оставьте пустым, чтобы использовать {{defaultPrefix}}.",
+    "PrefixRange": "Введите число от 0 до {{max}}.",
+    "SuccessfullyDeleted": "Политика маскирования IP клиента удалена.",
+    "SuccessfullySaved": "Политика маскирования IP клиента сохранена.",
+    "Target": "Цель политики",
+    "TargetRequired": "Выберите цель политики.",
+    "modeDescriptions": {
+      "DROP": "IP клиента не записывается.",
+      "NONE": "IP клиента сохраняются без изменений.",
+      "TRUNCATE": "Биты узла обнуляются, сохраняется только сетевой префикс."
+    },
+    "modes": {
+      "DROP": "Отбросить",
+      "NONE": "Нет",
+      "TRUNCATE": "Усечение"
+    },
+    "targets": {
+      "AUDIT_LOGS": "Журналы аудита",
+      "DEFAULT": "По умолчанию",
+      "LOGIN_HISTORY": "История входов"
+    }
+  },
   "credential": {
     "2FAEnabled": "2FA включена",
     "AccessKey": "Ключ доступа",
@@ -2709,7 +2745,6 @@
     "AgentSelectionPreferred": "Preferred",
     "AgentSelectionStrict": "Strict",
     "AllowedSessionTypes": "Разрешенные типы сессий",
-    "AppProxyAPIToken": "API-токен App Proxy",
     "AppProxyAddress": "Адрес сервера App Proxy",
     "CreateResourceGroup": "Создать группу ресурсов",
     "Deactivate": "Деактивировать",
@@ -2730,7 +2765,6 @@
     "DuplicateResourceSlot": "Этот слот ресурсов уже добавлен.",
     "EditDefaultDeploymentOptions": "Изменить параметры развертывания по умолчанию",
     "EditDefaultSessionOptions": "Изменить параметры сеанса по умолчанию",
-    "EnterAPIToken": "Введите API‑токен",
     "EnterValidResourceGroupName": "Введите действительное имя группы ресурсов",
     "FailedToLoadDefaultOptions": "Не удалось загрузить параметры по умолчанию.",
     "FailurePolicy": "Политика сбоев",
@@ -3177,6 +3211,8 @@
       "AddingKernelToSocketQueue": "Добавление ядра в очередь сокетов ...",
       "AdvancedSettings": "Расширенные настройки",
       "AgentNode": "Агент",
+      "AgentPrefilledDescription": "ИИ-агент заполнил эту форму. Проверьте все значения, прежде чем нажать «{{launch}}».",
+      "AgentPrefilledTitle": "Заполнено ИИ-агентом",
       "AllocateNode": "Кластерный режим",
       "ApplicationMemory": "Память приложения {{value}}",
       "Architecture": "Архитектура",
@@ -3187,7 +3223,7 @@
       "BatchJobTimeoutDurationDesc": "Установите максимальное время выполнения пакетных заданий. \nСеанс автоматически завершится, если указанное время будет превышено.",
       "BatchMode": "Пакет",
       "BatchModeConfig": "Пакетный режим Конфигурация",
-      "BatchModeDesc": "Вы можете запускать свой код на нескольких узлах и кластерах, чтобы масштабировать свою идею.",
+      "BatchModeDesc": "Выполняет введённую команду для заранее определённых файлов или запланированных задач — сразу или в заданные дату и время.",
       "BootstrapScriptDetail": "Скрипт Bootstrap",
       "CPU": "Процессор",
       "ChooseEnvironment": "Выберите среду",

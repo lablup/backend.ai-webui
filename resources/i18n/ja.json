@@ -587,6 +587,42 @@
     "Title": "Backend.AI WebUI Agent CLI にサインイン",
     "VerificationCode": "確認コード"
   },
+  "clientIpMasking": {
+    "ClientIpMasking": "クライアントIPマスキング",
+    "CreatePolicy": "ポリシーを作成",
+    "DefaultPrefix": "/{{prefix}}（デフォルト）",
+    "DeleteDefaultPolicyDescription": "独自のポリシーがない対象では、クライアントIPがそのまま保存されます。",
+    "DeletePolicy": "このマスキングポリシーを削除しますか？",
+    "DeletePolicyDescription": "{{target}}はデフォルトポリシーに従います。",
+    "Description": "クライアントIPアドレスを保存する前にどのようにマスキングするかを設定します。独自のポリシーがない対象はデフォルトポリシーに従い、デフォルトポリシーがない場合はアドレスがそのまま保存されます。",
+    "EditPolicy": "ポリシーを編集",
+    "IPv4Prefix": "IPv4プレフィックス長",
+    "IPv6Prefix": "IPv6プレフィックス長",
+    "Mode": "マスキング方式",
+    "ModeRequired": "マスキング方式を選択してください。",
+    "OnePolicyPerTarget": "対象ごとに存在できるポリシーは1つだけです。",
+    "PrefixExtra": "保持する先頭ビット数（0–{{max}}）。空欄の場合は{{defaultPrefix}}が使用されます。",
+    "PrefixRange": "0から{{max}}までの数値を入力してください。",
+    "SuccessfullyDeleted": "クライアントIPマスキングポリシーを削除しました。",
+    "SuccessfullySaved": "クライアントIPマスキングポリシーを保存しました。",
+    "Target": "ポリシー対象",
+    "TargetRequired": "ポリシー対象を選択してください。",
+    "modeDescriptions": {
+      "DROP": "クライアントIPを記録しません。",
+      "NONE": "クライアントIPをそのまま保存します。",
+      "TRUNCATE": "ホストビットをゼロにし、ネットワークプレフィックスのみを残します。"
+    },
+    "modes": {
+      "DROP": "破棄",
+      "NONE": "なし",
+      "TRUNCATE": "切り詰め"
+    },
+    "targets": {
+      "AUDIT_LOGS": "監査ログ",
+      "DEFAULT": "デフォルト",
+      "LOGIN_HISTORY": "ログイン履歴"
+    }
+  },
   "credential": {
     "2FAEnabled": "2要素認証が有効",
     "AccessKey": "アクセスキー",
@@ -2711,7 +2747,6 @@
     "AgentSelectionPreferred": "Preferred",
     "AgentSelectionStrict": "Strict",
     "AllowedSessionTypes": "許可されたセッションタイプ",
-    "AppProxyAPIToken": "App Proxy APIトークン",
     "AppProxyAddress": "App Proxy サーバアドレス",
     "CreateResourceGroup": "リソースグループの作成",
     "Deactivate": "無効にします",
@@ -2732,7 +2767,6 @@
     "DuplicateResourceSlot": "このリソーススロットはすでに追加されています。",
     "EditDefaultDeploymentOptions": "デフォルトデプロイメントオプションを編集",
     "EditDefaultSessionOptions": "デフォルトセッションオプションを編集",
-    "EnterAPIToken": "APIトークンを入力",
     "EnterValidResourceGroupName": "有効なリソースグループ名を入力してください",
     "FailedToLoadDefaultOptions": "デフォルトオプションを読み込めませんでした。",
     "FailurePolicy": "失敗ポリシー",
@@ -3179,6 +3213,8 @@
       "AddingKernelToSocketQueue": "カーネルをソケットキューに追加しています...",
       "AdvancedSettings": "詳細設定",
       "AgentNode": "エージェント",
+      "AgentPrefilledDescription": "AI エージェントがこのフォームを入力しました。「{{launch}}」を押す前にすべての値を確認してください。",
+      "AgentPrefilledTitle": "AI エージェントが入力したフォーム",
       "AllocateNode": "クラスターモード",
       "ApplicationMemory": "アプリケーションメモリ {{value}}",
       "Architecture": "アーキテクチャ",
@@ -3189,7 +3225,7 @@
       "BatchJobTimeoutDurationDesc": "バッチジョブの最大実行時間を設定します。\n指定された時間を超えると、セッションは自動的に終了します。",
       "BatchMode": "バッチ",
       "BatchModeConfig": "バッチモード設定",
-      "BatchModeDesc": "複数のノードやクラスタでコードを実行し、アイデアをスケールさせることができます。",
+      "BatchModeDesc": "準備済みのファイルや予約タスクに対して、入力したコマンドをすぐに、または指定した日時に実行します。",
       "BootstrapScriptDetail": "ブートストラップスクリプト",
       "CPU": "CPU",
       "ChooseEnvironment": "環境を選択",

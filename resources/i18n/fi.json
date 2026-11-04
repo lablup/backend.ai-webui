@@ -587,6 +587,42 @@
     "Title": "Kirjaa Backend.AI WebUI Agent CLI sisään",
     "VerificationCode": "Vahvistuskoodi"
   },
+  "clientIpMasking": {
+    "ClientIpMasking": "Asiakkaan IP-osoitteen peittäminen",
+    "CreatePolicy": "Luo käytäntö",
+    "DefaultPrefix": "/{{prefix}} (oletus)",
+    "DeleteDefaultPolicyDescription": "Kohteet, joilla ei ole omaa käytäntöä, tallentavat asiakkaan IP-osoitteet sellaisinaan.",
+    "DeletePolicy": "Poistetaanko tämä peittämiskäytäntö?",
+    "DeletePolicyDescription": "{{target}} palaa käyttämään oletuskäytäntöä.",
+    "Description": "Määritä, miten asiakkaan IP-osoitteet peitetään ennen tallennusta. Kohde ilman omaa käytäntöä noudattaa oletuskäytäntöä; jos oletuskäytäntöä ei ole, osoitteet tallennetaan sellaisinaan.",
+    "EditPolicy": "Muokkaa käytäntöä",
+    "IPv4Prefix": "IPv4-etuliitteen pituus",
+    "IPv6Prefix": "IPv6-etuliitteen pituus",
+    "Mode": "Peittämistapa",
+    "ModeRequired": "Valitse peittämistapa.",
+    "OnePolicyPerTarget": "Kullakin kohteella voi olla vain yksi käytäntö.",
+    "PrefixExtra": "Säilytettävien alkubittien määrä (0–{{max}}). Jätä tyhjäksi käyttääksesi arvoa {{defaultPrefix}}.",
+    "PrefixRange": "Anna luku väliltä 0–{{max}}.",
+    "SuccessfullyDeleted": "Asiakkaan IP-peittämiskäytäntö poistettu.",
+    "SuccessfullySaved": "Asiakkaan IP-peittämiskäytäntö tallennettu.",
+    "Target": "Käytännön kohde",
+    "TargetRequired": "Valitse käytännön kohde.",
+    "modeDescriptions": {
+      "DROP": "Asiakkaan IP-osoitetta ei tallenneta.",
+      "NONE": "Asiakkaan IP-osoitteet tallennetaan sellaisinaan.",
+      "TRUNCATE": "Isäntäbitit nollataan, ja vain verkon etuliite säilyy."
+    },
+    "modes": {
+      "DROP": "Hylkää",
+      "NONE": "Ei mitään",
+      "TRUNCATE": "Katkaise"
+    },
+    "targets": {
+      "AUDIT_LOGS": "Tarkastuslokit",
+      "DEFAULT": "Oletus",
+      "LOGIN_HISTORY": "Kirjautumishistoria"
+    }
+  },
   "credential": {
     "2FAEnabled": "2FA käytössä",
     "AccessKey": "Pääsyavain",
@@ -2709,7 +2745,6 @@
     "AgentSelectionPreferred": "Preferred",
     "AgentSelectionStrict": "Strict",
     "AllowedSessionTypes": "Sallitut istuntotyypit",
-    "AppProxyAPIToken": "App Proxy API -avain",
     "AppProxyAddress": "App Proxy-palvelimen osoite",
     "CreateResourceGroup": "Luo resurssiryhmä",
     "Deactivate": "Deaktivoida",
@@ -2730,7 +2765,6 @@
     "DuplicateResourceSlot": "Tämä resurssipaikka on jo lisätty.",
     "EditDefaultDeploymentOptions": "Muokkaa käyttöönoton oletusasetuksia",
     "EditDefaultSessionOptions": "Muokkaa istunnon oletusasetuksia",
-    "EnterAPIToken": "Syötä API-avain",
     "EnterValidResourceGroupName": "Syötä kelvollinen resurssiryhmän nimi",
     "FailedToLoadDefaultOptions": "Oletusasetusten lataaminen epäonnistui.",
     "FailurePolicy": "Virhekäytäntö",
@@ -3177,6 +3211,8 @@
       "AddingKernelToSocketQueue": "Ytimen lisääminen socket-jonoon...",
       "AdvancedSettings": "Lisäasetukset",
       "AgentNode": "Agentti",
+      "AgentPrefilledDescription": "Tekoälyagentti täytti tämän lomakkeen. Tarkista kaikki arvot ennen kuin painat {{launch}}.",
+      "AgentPrefilledTitle": "Tekoälyagentin täyttämä",
       "AllocateNode": "Cluster-tila",
       "ApplicationMemory": "Sovellusmuisti {{value}}",
       "Architecture": "Arkkitehtuuri",
@@ -3187,7 +3223,7 @@
       "BatchJobTimeoutDurationDesc": "Aseta erätöiden enimmäissuoritusaika. \nIstunto päättyy automaattisesti, jos määritetty aika ylittyy.",
       "BatchMode": "Erä",
       "BatchModeConfig": "Erätila Konfigurointi",
-      "BatchModeDesc": "Voit ajaa koodisi useiden solmujen ja klustereiden kanssa ideasi skaalaamiseksi.",
+      "BatchModeDesc": "Suorittaa antamasi komennon ennalta määritetyille tiedostoille tai ajoitetuille tehtäville heti tai asetettuna päivänä ja kellonaikana.",
       "BootstrapScriptDetail": "Bootstrap-skripti",
       "CPU": "CPU",
       "ChooseEnvironment": "Valitse ympäristö",
