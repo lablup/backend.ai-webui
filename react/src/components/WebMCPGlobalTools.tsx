@@ -89,7 +89,7 @@ export interface CurrentPageInfo {
   errorScreen: { code: string; title: string } | null;
 }
 
-export const errorScreenInfo = (
+const errorScreenInfo = (
   screen: RouteErrorScreen | null,
 ): CurrentPageInfo['errorScreen'] =>
   screen ? { code: ROUTE_ERROR_CODES[screen.kind], title: screen.label } : null;
@@ -180,10 +180,14 @@ export const createNavigateTool = ({
       if (!target.ok) return webMCPError(target.code, target.message);
       to = target.to;
     }
-    // A reload keeps the pathname, so a guard screen on it would come back.
+    // Access follows the pathname a reload keeps, so the forbidden screen would come back.
     const screenBefore = readRouteErrorScreen();
-    if (screenBefore && needsDocumentReload(to, window.location)) {
-      return routeErrorResult(screenBefore, to);
+    if (
+      screenBefore?.kind === 'forbidden' &&
+      needsDocumentReload(to, window.location)
+    ) {
+      const { pathname, search, hash } = window.location;
+      return routeErrorResult(screenBefore, `${pathname}${search}${hash}`);
     }
     if (needsDocumentReload(to, window.location)) {
       window.setTimeout(() => reloadDocument(to), settleMs);
