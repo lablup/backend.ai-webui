@@ -452,8 +452,6 @@ is displayed without any invitation procedure.
 
 ### Admin deployments page
 
-Superadmins can access the Admin Deployments page at `/admin/deployments`, which provides a cross-project view of every deployment in the cluster.
-
 ![](../images/admin_serving_page.png)
 
 The Admin Deployments page has up to four tabs:

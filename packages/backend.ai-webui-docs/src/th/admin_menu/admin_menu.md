@@ -400,8 +400,6 @@ Backend.AI ให้บริการโฟลเดอร์จัดเก็
 
 ### หน้า Admin Deployments
 
-ผู้ดูแลระบบขั้นสูงสามารถเข้าถึงหน้า Admin Deployments ที่ `/admin/deployments` ซึ่งให้มุมมองข้ามโปรเจกต์ของการปรับใช้ทั้งหมดในคลัสเตอร์
-
 ![](../images/admin_serving_page.png)
 
 หน้า Admin Deployments มีได้สูงสุดสี่แท็บ:
