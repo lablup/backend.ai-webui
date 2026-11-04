@@ -2031,9 +2031,12 @@
         "project.SetProjectAdmin",
         "project.Type",
         "project.ViewRBACPermissions",
+        "rbac.ErrorMessage",
         "rbac.PleaseSelectUsers",
         "rbac.SelectUsers",
+        "rbac.UserAssignmentsPartialFailureDescription",
         "rbac.UserRevoked",
+        "rbac.UsersAlreadyAssignedSkipped",
         "rbac.UsersAssigned"
       ]
     },

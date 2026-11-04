@@ -39,10 +39,6 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"${CLAUDE_PROJECT_DIR:-.}\"/.claude/scripts/block-gt.sh"
-          },
-          {
-            "type": "command",
             "if": "Bash(gh pr create*)",
             "command": "bash \"${CLAUDE_PROJECT_DIR:-.}\"/.claude/scripts/require-e2e-flow.sh",
             "onFailure": "block"

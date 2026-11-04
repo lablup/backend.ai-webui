@@ -124,7 +124,7 @@ inherited call sites needed no edit when their internals were rebuilt on Astryx.
 |---|---|
 | Shared component under `packages/backend.ai-ui/` | `BAI*` (`BAIButton`, `BAIFlex`, `BAIUserNodes`) |
 | Relay-backed table bound to a GraphQL type | `*Nodes` (`SessionNodes`, `VFolderNodes`) — colocates a `@relay(plural: true)` fragment |
-| Top-level route component in `react/src/pages/` | `*Page` (`AdminComputeSessionListPage`) |
+| Top-level route component | `react/src/pages/<Name>Page/<Name>Page.tsx` (tests in `<Name>Page.test.tsx`, no `index.tsx` barrel; importers name the file); the folder carries the route component's name (`SchedulerPage/`), its page-only code sits in `components/` / `hooks/` / `helper/` beside it, and its `CLAUDE.md` describes the page (ADR 0024) |
 | Modal / drawer shell | `*Modal` / `*Drawer` |
 | Reusable group of `Form.Item`s | `*FormItems` (`ResourceAllocationFormItems`) |
 
