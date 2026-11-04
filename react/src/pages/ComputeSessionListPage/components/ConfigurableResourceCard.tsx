@@ -10,6 +10,7 @@ import TotalResourceWithinResourceGroup, {
 import { useCurrentUserRole } from '../../../hooks/backendai';
 import { useBAISettingUserState } from '../../../hooks/useBAISetting';
 import { useCurrentResourceGroupValue } from '../../../hooks/useCurrentProject';
+import './ConfigurableResourceCard.css';
 import {
   DropdownMenu,
   type DropdownMenuOption,
@@ -172,6 +173,7 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
     // `styles.body` is accepted and ignored by BAICard; `padding` is the knob.
     <BAICard
       padding={0}
+      className="session-resource-card"
       {..._.omit(props, ['style'])}
       style={{ ...props.style }}
     >

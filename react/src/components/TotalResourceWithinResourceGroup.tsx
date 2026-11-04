@@ -442,7 +442,7 @@ const TotalResourceWithinResourceGroup: React.FC<
           : {
               paddingBlock: token('--spacing-4'),
               paddingInline: token('--spacing-8'),
-              height: '100%',
+              flex: 1,
             }),
         ...props.style,
       }}
