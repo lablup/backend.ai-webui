@@ -60,7 +60,7 @@ async function createTestRole(page: Page, roleName = ROLE_NAME) {
   // matched exactly.
   await modal.getByRole('button', { name: 'Scope Type' }).click();
   await page.getByRole('option', { name: 'Domain', exact: true }).click();
-  await expect(modal.getByRole('button', { name: 'Target' })).toBeHidden();
+  await expect(modal.getByRole('combobox', { name: 'Target' })).toBeHidden();
 
   await modal.getByRole('button', { name: 'OK' }).click();
   await expect(modal).toBeHidden({ timeout: 10000 });

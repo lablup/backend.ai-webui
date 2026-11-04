@@ -166,7 +166,10 @@ describe('BAIComplexSelect option and panel mapping', () => {
       <BAIComplexSelect label="Target" options={OPTIONS} onSearch={onSearch} />,
     );
     await user.click(trigger());
-    await user.type(screen.getAllByRole('combobox', h)[1], 'br');
+    await user.type(
+      screen.getByRole('combobox', { name: 'Search options', ...h }),
+      'br',
+    );
     expect(onSearch).toHaveBeenLastCalledWith('br');
   });
 

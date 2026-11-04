@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r28-default-brand-h1g2o6r8 theme — built by `pnpm exec astryx theme build`
+ * bai-r29-default-brand-h10lscus theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR28DefaultBrandH1g2o6r8Theme } from './bai-r28-default-brand-h1g2o6r8';
- *   import './bai-r28-default-brand-h1g2o6r8.css';
+ *   import { baiR29DefaultBrandH10lscusTheme } from './bai-r29-default-brand-h10lscus';
+ *   import './bai-r29-default-brand-h10lscus.css';
  */
-export const baiR28DefaultBrandH1g2o6r8Theme = {
-  name: 'bai-r28-default-brand-h1g2o6r8',
+export const baiR29DefaultBrandH10lscusTheme = {
+  name: 'bai-r29-default-brand-h10lscus',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
@@ -133,12 +133,12 @@ export const baiR28DefaultBrandH1g2o6r8Theme = {
     "--color-on-error": "light-dark(#ffffff, #ffffff)",
     "--color-on-warning": "#111111",
     "--color-info": "light-dark(#028DF2, #009BDD)",
-    "--color-info-muted": "light-dark(#b9d7ff, #88bcff3D)",
-    "--color-on-info": "light-dark(#ffffff, #111111)",
-    "--color-text-info": "light-dark(#0067ce, #a1caff)",
-    "--color-text-success": "light-dark(#2f7d33, #90ca90)",
-    "--color-text-warning": "light-dark(#836700, #eec448)",
-    "--color-text-error": "light-dark(#c0262c, #ffaea7)",
+    "--color-info-muted": "light-dark(#028DF233, #009BDD3F)",
+    "--color-on-info": "light-dark(#ffffff, #ffffff)",
+    "--color-text-info": "light-dark(#028DF2, #009BDD)",
+    "--color-text-success": "light-dark(#00BD9B, #03A487)",
+    "--color-text-warning": "light-dark(#FAAD14, #FAAD14)",
+    "--color-text-error": "light-dark(#FF4D4F, #DC4446)",
     "--color-on-info-muted": "light-dark(#003978, #a1caff)",
     "--color-on-success-muted": "light-dark(#00490b, #90ca90)",
     "--color-on-warning-muted": "light-dark(#4b3900, #eec448)",
@@ -243,7 +243,7 @@ export const baiR28DefaultBrandH1g2o6r8Theme = {
   __localTokenOwners: {
     "--astryx-theme-neutral-color-status-fill-accent": "neutral"
   },
-  __localTokenLineage: ["neutral","bai-r28-default-brand-h1g2o6r8"],
+  __localTokenLineage: ["neutral","bai-r29-default-brand-h10lscus"],
   components: {
     "heading": {
       "level:1": {
@@ -362,7 +362,8 @@ export const baiR28DefaultBrandH1g2o6r8Theme = {
       "variant:destructive": {
         "backgroundColor": "var(--color-error-muted)",
         "color": "var(--color-on-error-muted)",
-        "--color-overlay-hover": "rgba(255,255,255,0.16)"
+        "--color-overlay-hover": "rgba(255,255,255,0.16)",
+        "--color-on-error-muted": "var(--color-error)"
       },
       "variant:primary": {
         "--color-overlay-hover": "rgba(255,255,255,0.16)",
@@ -431,7 +432,7 @@ export const baiR28DefaultBrandH1g2o6r8Theme = {
       },
       "variant:info": {
         "backgroundColor": "var(--color-background-blue)",
-        "--color-on-accent": "var(--color-text-blue)",
+        "--color-on-info": "var(--color-text-blue)",
         "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-blue)"
       },
       "variant:success": {
@@ -511,15 +512,23 @@ export const baiR28DefaultBrandH1g2o6r8Theme = {
     },
     "banner": {
       "status:info": {
-        "--color-accent-muted": "light-dark(#c4ddfb, #393f50)"
+        "--color-text-primary": "var(--color-on-info-muted)",
+        "--color-text-secondary": "var(--color-on-info-muted)",
+        "--color-info-muted": "light-dark(#c4ddfb, #393f50)"
       },
       "status:error": {
+        "--color-text-primary": "var(--color-on-error-muted)",
+        "--color-text-secondary": "var(--color-on-error-muted)",
         "--color-error-muted": "light-dark(#FFDBDC, #452020)"
       },
       "status:success": {
+        "--color-text-primary": "var(--color-on-success-muted)",
+        "--color-text-secondary": "var(--color-on-success-muted)",
         "--color-success-muted": "light-dark(#CCF2EB, #103830)"
       },
       "status:warning": {
+        "--color-text-primary": "var(--color-on-warning-muted)",
+        "--color-text-secondary": "var(--color-on-warning-muted)",
         "--color-warning-muted": "light-dark(#FEEFD0, #4D3A14)"
       }
     },

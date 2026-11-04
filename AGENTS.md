@@ -143,7 +143,7 @@ Run `bash scripts/verify.sh` from project root to check Relay, Lint, Format, and
 node scripts/migration-gates/astryx-token-gate.mjs --strict
 ```
 
-It catches a failure mode nothing else reports: an **undeclared** `var(--name)` produces no compiler, lint or runtime error. With a fallback (`var(--radius-md, 6px)`) the literal wins forever and the token never participates in theming; without one the whole declaration is invalid at computed-value time. The declared set is not guessable — there is no `--color-text-tertiary` and no `--color-text-error` (the semantic error token is the solid `--color-error`) — so run the gate rather than assuming a name.
+It catches a failure mode nothing else reports: an **undeclared** `var(--name)` produces no compiler, lint or runtime error. With a fallback (`var(--radius-md, 6px)`) the literal wins forever and the token never participates in theming; without one the whole declaration is invalid at computed-value time. The declared set is not guessable — Astryx has no `--color-text-tertiary` (only the brand theme's custom vocabulary declares it), and `--color-text-error` exists only since Astryx 0.7.7 — so run the gate rather than assuming a name.
 
 ### PR Review Checklist
 

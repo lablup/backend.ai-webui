@@ -105,7 +105,7 @@ export async function selectRuntimeVariant(
   modal: Locator,
   optionLabel: string,
 ): Promise<void> {
-  await modal.getByRole('button', { name: 'Runtime', exact: true }).click();
+  await modal.getByRole('combobox', { name: 'Runtime', exact: true }).click();
   const popup = page.getByRole('dialog', { name: 'Runtime', exact: true });
   await expect(popup).toBeVisible({ timeout: 10000 });
   const option = popup.getByRole('option', {
@@ -121,7 +121,7 @@ export async function selectRuntimeVariant(
   // Runtime Parameters warning for reads=false).
   await expect(popup).toBeHidden({ timeout: 10000 });
   await expect(
-    modal.getByRole('button', { name: 'Runtime', exact: true }),
+    modal.getByRole('combobox', { name: 'Runtime', exact: true }),
   ).toContainText(optionLabel, { timeout: 10000 });
 }
 
