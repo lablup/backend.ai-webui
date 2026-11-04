@@ -369,18 +369,24 @@ function devAssetsReloadPlugin(): Plugin {
         }, 300);
       };
 
+      // A checkout or pull rewrites many locale files in one burst; every one is reloaded.
+      const changedLngs = new Set<string>();
       const scheduleI18nUpdate = (lng: string) => {
+        changedLngs.add(lng);
         clearTimeout(i18nTimer);
         i18nTimer = setTimeout(() => {
-          server.config.logger.info(`[bai] host i18n hot-reload: ${lng}`, {
-            clear: false,
-            timestamp: true,
-          });
-          server.ws.send({
-            type: 'custom',
-            event: 'bai:host-i18n-changed',
-            data: { lng },
-          });
+          for (const changed of changedLngs) {
+            server.config.logger.info(
+              `[bai] host i18n hot-reload: ${changed}`,
+              { clear: false, timestamp: true },
+            );
+            server.ws.send({
+              type: 'custom',
+              event: 'bai:host-i18n-changed',
+              data: { lng: changed },
+            });
+          }
+          changedLngs.clear();
         }, 150);
       };
 
