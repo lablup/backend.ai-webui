@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-11-03T16:11:24.872Z",
+  "generatedAt": "2026-11-04T04:54:34.847Z",
   "languages": [
     "en",
     "ja",
@@ -13,10 +13,10 @@
     "en": {
       "totals": {
         "pages": 1,
-        "changes": 2,
+        "changes": 3,
         "added": 0,
         "modified": 2,
-        "removed": 0,
+        "removed": 1,
         "images": 0,
         "newPages": 0,
         "deletedPages": 0
@@ -31,12 +31,13 @@
           "counts": {
             "added": 0,
             "modified": 2,
-            "removed": 0,
+            "removed": 1,
             "images": 0,
-            "total": 2
+            "total": 3
           },
           "fingerprints": [
-            "95f337beb1fe",
+            "278d958101f0",
+            "4c1efe77812e",
             "85d417f476d8"
           ]
         }
@@ -45,10 +46,10 @@
     "ja": {
       "totals": {
         "pages": 1,
-        "changes": 2,
+        "changes": 3,
         "added": 0,
         "modified": 2,
-        "removed": 0,
+        "removed": 1,
         "images": 0,
         "newPages": 0,
         "deletedPages": 0
@@ -63,12 +64,13 @@
           "counts": {
             "added": 0,
             "modified": 2,
-            "removed": 0,
+            "removed": 1,
             "images": 0,
-            "total": 2
+            "total": 3
           },
           "fingerprints": [
-            "325572e8d5a9",
+            "05cb8907f98c",
+            "d0ac760b61f6",
             "5955a6120693"
           ]
         }
@@ -77,10 +79,10 @@
     "ko": {
       "totals": {
         "pages": 1,
-        "changes": 3,
+        "changes": 4,
         "added": 1,
         "modified": 1,
-        "removed": 1,
+        "removed": 2,
         "images": 0,
         "newPages": 0,
         "deletedPages": 0
@@ -95,12 +97,13 @@
           "counts": {
             "added": 1,
             "modified": 1,
-            "removed": 1,
+            "removed": 2,
             "images": 0,
-            "total": 3
+            "total": 4
           },
           "fingerprints": [
-            "f4e0c08f4831",
+            "87859dc37b57",
+            "53cfd01badc7",
             "8a59cb43a320",
             "51a2ab4ae153"
           ]
@@ -110,10 +113,10 @@
     "th": {
       "totals": {
         "pages": 1,
-        "changes": 2,
+        "changes": 3,
         "added": 0,
         "modified": 2,
-        "removed": 0,
+        "removed": 1,
         "images": 0,
         "newPages": 0,
         "deletedPages": 0
@@ -128,12 +131,13 @@
           "counts": {
             "added": 0,
             "modified": 2,
-            "removed": 0,
+            "removed": 1,
             "images": 0,
-            "total": 2
+            "total": 3
           },
           "fingerprints": [
-            "c423dc465aab",
+            "cf435fa2c20a",
+            "a816ad7b9574",
             "36ec9225cc8c"
           ]
         }

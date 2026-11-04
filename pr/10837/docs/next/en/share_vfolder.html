@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Share Storage Folders" />
   <meta name="twitter:description" content="You may need to share the contents of storage folders with other users or project members to collaborate." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Share Storage Folders","inLanguage":"en","description":"You may need to share the contents of storage folders with other users or project members to collaborate.","dateModified":"2026-10-28T05:10:31.000Z","url":"https://webui.docs.backend.ai/next/en/share_vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Share Storage Folders","inLanguage":"en","description":"You may need to share the contents of storage folders with other users or project members to collaborate.","dateModified":"2026-11-03T02:13:20.000Z","url":"https://webui.docs.backend.ai/next/en/share_vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/share_vfolder.html" />
   <link rel="alternate" hreflang="en" href="../en/share_vfolder.html" />
   <link rel="alternate" hreflang="ja" href="../ja/share_vfolder.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.2 (5a8b0d6)">v26.10.0-alpha.2 (5a8b0d6)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.2 (ad61faa)">v26.10.0-alpha.2 (ad61faa)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -238,14 +238,15 @@ account.</p>
 
 <p data-bai-block="11">Back to User A&#39;s account, click the share button next to the <code>tests</code> folder&#39;s
 name in the list.</p>
-<p><figure data-bai-block="12" class="doc-figure"><img src="./images/share_button_on_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="712" /><figcaption>Figure 17.4</figcaption></figure>
+<p><figure data-bai-block="12" class="doc-figure"><img src="./images/share_button_on_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="782" /><figcaption>Figure 17.4</figcaption></figure>
 </p>
-<p data-bai-block="13">A Share Folder modal opens. In the <strong>Invite User</strong> section, enter User B&#39;s
-email address and select the desired permission level from the <strong>Permission</strong>
-dropdown. If you choose <code>Read only</code>, User B will be able to only view the
-folder but not modify it. If you select <code>Read &amp; Write</code>, User B will be able to
-both view and modify the folder. Click the <code>Add</code> button to send the invitation.</p>
-<p><figure data-bai-block="14" class="doc-figure"><img src="./images/send_vfolder_invitation.png" alt="" class="doc-image" style="width:550px" loading="lazy" decoding="async" width="1100" height="664" /><figcaption>Figure 17.5</figcaption></figure>
+<p data-bai-block="13">A Share Folder modal opens. In the <strong>Invite User</strong> section, select User B in
+the user selector, set <strong>Share permission</strong> and <strong>Mount Permission</strong>, then
+click <strong>Invite</strong>. <strong>Share permission</strong> is what the share lets the user do with
+the folder, and <strong>Mount Permission</strong> is how the folder is mounted into the
+user&#39;s sessions. An address that does not have an account yet is invited with
+<strong>Invite by e-mail</strong>.</p>
+<p><figure data-bai-block="14" class="doc-figure"><img src="./images/send_vfolder_invitation.png" alt="" class="doc-image" style="width:720px" loading="lazy" decoding="async" width="1440" height="992" /><figcaption>Figure 17.5</figcaption></figure>
 </p>
 <p data-bai-block="15">Switch back to User B&#39;s account and go to the Data page. When invitations are
 waiting for a response, a <strong>Pending invitations</strong> link appears at the top right
@@ -254,16 +255,17 @@ of the folder list, showing the number of pending invitations.</p>
 </p>
 <p data-bai-block="17">Clicking the link opens the <strong>Invited Folders</strong> modal, where pending folder
 invitations can be accepted or declined.</p>
-<p><figure data-bai-block="18" class="doc-figure"><img src="./images/invitation_accept.png" alt="" class="doc-image" style="width:520px" loading="lazy" decoding="async" width="1040" height="350" /><figcaption>Figure 17.7</figcaption></figure>
+<p><figure data-bai-block="18" class="doc-figure"><img src="./images/invitation_accept.png" alt="" class="doc-image" style="width:520px" loading="lazy" decoding="async" width="1040" height="356" /><figcaption>Figure 17.7</figcaption></figure>
 </p>
 <p data-bai-block="19">Go to the Data page and check that the <code>tests</code> folder is displayed in
 the list. If you don&#39;t see it on the list, try refreshing your browser page.
 Since you have accepted the invitation, you can now view the contents of User
 A&#39;s <code>tests</code> folder in User B account. Unlike folders created by User B,
-the shared folder shows User A&#39;s email address in the Owner column. You
-can also see the <code>Read only</code> mark displayed in the Mount Permission column.</p>
+the shared folder shows User A&#39;s email address in the Owner column.</p>
 <p><figure data-bai-block="20" class="doc-figure"><img src="./images/test_vfolder_listed_in_B.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2264" height="636" /><figcaption>Figure 17.8</figcaption></figure>
 </p>
+<!-- TODO(screenshot): User B's /data after accepting - the folder list as the invitee, with User A in the Owner column and no Mount Permission column. Not captured: the capture backend admits no second (non-admin) account, so this image still shows the retired Mount Permission column. -->
+
 <p data-bai-block="21">Let&#39;s navigate inside the <code>tests</code> folder by clicking its name in the list. You
 can check the <code>hello.txt</code> and <code>myfolder</code> that you checked in the User A&#39;s
 account again. Since User A shared the folder as <code>Read only</code>, the write
@@ -297,49 +299,46 @@ For details, go to <a href="./admin_menu.html#share-project-storage-folders-with
 <p><a id="adjust-permission-for-shared-folders"></a></p>
 <h2 data-bai-block="30" id="share_vfolder-adjust-permission-for-shared-folders">Adjust permission for shared folders<a class="hash-link" href="#share_vfolder-adjust-permission-for-shared-folders" aria-label="Direct link to Adjust permission for shared folders">#</a></h2>
 <p data-bai-block="31">You can modify the permissions of shared users from the Share Folder modal.
-The <strong>Shared Users</strong> section displays a table listing all users who have accepted
-the invitation. Each row shows the invitee&#39;s email address and a permission
-dropdown. Click the permission dropdown in a user&#39;s row to change their access
-level:</p>
-<ul>
-<li data-bai-block="32"><strong>Read only</strong>: The invited user has read-only access to the folder.</li>
-<li data-bai-block="33"><strong>Read &amp; Write</strong>: The invited user has read and write access to the folder, including creating, modifying, and deleting files and folders within it.</li>
-</ul>
-<p><figure data-bai-block="34" class="doc-figure"><img src="./images/modify_perm.png" alt="" class="doc-image" style="width:566px" loading="lazy" decoding="async" width="1132" height="670" /><figcaption>Figure 17.12</figcaption></figure>
+The <strong>Shared Users</strong> table lists both the users who have accepted the
+invitation and the invitations that are still waiting for an answer. Change a
+listed user&#39;s <strong>Share permission</strong> or <strong>Mount Permission</strong> in their row.</p>
+<p><figure data-bai-block="32" class="doc-figure"><img src="./images/modify_perm.png" alt="" class="doc-image" style="width:760px" loading="lazy" decoding="async" width="1520" height="1240" /><figcaption>Figure 17.12</figcaption></figure>
 </p>
+<p data-bai-block="33">The <strong>Folder Info</strong> section of the modal shows the folder&#39;s
+<strong>Default mount permission</strong>. Click <strong>Edit</strong> to change it.</p>
 <div class="admonition admonition-note">
-<div data-bai-block="35" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="34" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="36">Renaming the folder itself is available only for the owner, even if the user has been
+<p data-bai-block="35">Renaming the folder itself is available only for the owner, even if the user has been
 granted Read &amp; Write permission. Please note that Read &amp; Write permission does not
 include renaming the folder.</p>
 </div></div>
 
 
 <p><a id="stop-sharing-a-folder"></a></p>
-<h2 data-bai-block="37" id="share_vfolder-stop-sharing-a-folder">Stop sharing a folder<a class="hash-link" href="#share_vfolder-stop-sharing-a-folder" aria-label="Direct link to Stop sharing a folder">#</a></h2>
-<p data-bai-block="38">To stop sharing a folder as the inviter, open the Share Folder modal by
+<h2 data-bai-block="36" id="share_vfolder-stop-sharing-a-folder">Stop sharing a folder<a class="hash-link" href="#share_vfolder-stop-sharing-a-folder" aria-label="Direct link to Stop sharing a folder">#</a></h2>
+<p data-bai-block="37">To stop sharing a folder as the inviter, open the Share Folder modal by
 clicking the share button next to the folder&#39;s name in the folder list. In the
-<strong>Shared Users</strong> table, click the stop sharing icon (red close circle) next to
-the permission dropdown in the row of the user you want to remove. A
-confirmation dialog will appear asking you to confirm. Click <code>Confirm</code> to
-revoke the user&#39;s access.</p>
-<p><figure data-bai-block="39" class="doc-figure"><img src="./images/modify_permission_and_stop_sharing.png" alt="" class="doc-image" style="width:652px" loading="lazy" decoding="async" width="1304" height="802" /><figcaption>Figure 17.13</figcaption></figure>
+<strong>Shared Users</strong> table, click the <strong>Stop sharing</strong> action in the row of the
+user you want to remove. A confirmation dialog will appear asking you to
+confirm. Click <code>Confirm</code> to revoke the user&#39;s access. An invitation that is
+still waiting for an answer is withdrawn with <strong>Cancel invitation</strong> instead.</p>
+<p><figure data-bai-block="38" class="doc-figure"><img src="./images/modify_permission_and_stop_sharing.png" alt="" class="doc-image" style="width:760px" loading="lazy" decoding="async" width="1520" height="1174" /><figcaption>Figure 17.13</figcaption></figure>
 </p>
-<p data-bai-block="40">If access to a shared folder is no longer needed as an invitee, click the share
+<p data-bai-block="39">If access to a shared folder is no longer needed as an invitee, click the share
 button next to the folder in the folder list to open the Shared Folder
 Permission modal. In the permission table, click the leave icon in the
 <strong>Control</strong> column to leave the shared folder. A confirmation dialog will appear
 before the action is completed.</p>
-<p><figure data-bai-block="41" class="doc-figure"><img src="./images/leave_shared_folder.png" alt="" class="doc-image" style="width:650px" loading="lazy" decoding="async" width="1300" height="1054" /><figcaption>Figure 17.14</figcaption></figure>
+<p><figure data-bai-block="40" class="doc-figure"><img src="./images/leave_shared_folder.png" alt="" class="doc-image" style="width:650px" loading="lazy" decoding="async" width="1300" height="1054" /><figcaption>Figure 17.14</figcaption></figure>
 </p>
 
 </section>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/en/share_vfolder/share_vfolder.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> Edit this page</a>
-  <span class="last-updated">Last updated on Oct 28, 2026</span>
+  <span class="last-updated">Last updated on Nov 3, 2026</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./mount_vfolder.html">
