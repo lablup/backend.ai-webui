@@ -226,6 +226,27 @@ describe('createNavigateTool', () => {
     ).resolves.toMatchObject({ error: { code: 'path_not_allowed' } });
     expect(navigate).not.toHaveBeenCalled();
   });
+
+  it.each([
+    ['forbidden', 'page_forbidden'],
+    ['not_found', 'page_not_found'],
+    ['error', 'page_error'],
+  ] as const)(
+    'reports a %s screen as %s instead of success',
+    async (kind, code) => {
+      const guarded = createNavigateTool({
+        pages: [],
+        activeProjectName: 'default',
+        navigate,
+        readRouteErrorScreen: () => ({ kind, label: 'Unauthorized Access' }),
+        settleMs: 0,
+      });
+      const result = await guarded.execute({ path: '/admin/users' });
+      expect(navigate).toHaveBeenCalledWith('/admin/users');
+      expect(result).toMatchObject({ error: { code } });
+      expect(JSON.stringify(result)).toContain('Unauthorized Access');
+    },
+  );
 });
 
 describe('createNavigateTool on the same path', () => {

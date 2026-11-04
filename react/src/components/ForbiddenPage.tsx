@@ -50,6 +50,8 @@ const ForbiddenPage = () => {
 
   return (
     <RouteErrorContent
+      kind="forbidden"
+      label={t('webui.UnauthorizedAccess')}
       segments={segments.length ? segments : undefined}
       title={<Trans i18nKey={'webui.UnauthorizedAccess'} />}
       description={t('webui.AdminOnlyPage')}
