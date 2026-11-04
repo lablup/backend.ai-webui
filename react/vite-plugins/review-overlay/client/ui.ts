@@ -793,7 +793,7 @@ ${ICON_STYLE}
     // the re-encode this keystroke would have started and let them repeat it.
     if (readyNote !== null && note !== readyNote) {
       flushNote();
-      composeErr.textContent = 'Still encoding that note — press ⌘⏎ again.';
+      composeErr.textContent = `Still encoding that note — press ${addOnly ? '⇧⌘⏎' : '⌘⏎'} again.`;
       composeErr.style.display = 'block';
       return;
     }

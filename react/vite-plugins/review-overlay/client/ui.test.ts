@@ -385,6 +385,22 @@ describe('gating the copy on the note', () => {
     expect(err().textContent).toContain('Still encoding');
     expect(noteChanges).toEqual(['typed but not encoded']);
   });
+
+  it('names ⇧⌘⏎ as the retry when an add-only press beat the debounce', () => {
+    ui.setComposeReady(true, '');
+    type('typed but not encoded');
+    textarea().dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'Enter',
+        metaKey: true,
+        shiftKey: true,
+        bubbles: true,
+      }),
+    );
+    expect(err().textContent).toBe(
+      'Still encoding that note — press ⇧⌘⏎ again.',
+    );
+  });
 });
 
 /**
