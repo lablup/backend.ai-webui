@@ -3219,7 +3219,7 @@
       "BatchJobTimeoutDurationDesc": "Aseta erätöiden enimmäissuoritusaika. \nIstunto päättyy automaattisesti, jos määritetty aika ylittyy.",
       "BatchMode": "Erä",
       "BatchModeConfig": "Erätila Konfigurointi",
-      "BatchModeDesc": "Voit ajaa koodisi useiden solmujen ja klustereiden kanssa ideasi skaalaamiseksi.",
+      "BatchModeDesc": "Suorittaa antamasi komennon ennalta määritetyille tiedostoille tai ajoitetuille tehtäville heti tai asetettuna päivänä ja kellonaikana.",
       "BootstrapScriptDetail": "Bootstrap-skripti",
       "CPU": "CPU",
       "ChooseEnvironment": "Valitse ympäristö",

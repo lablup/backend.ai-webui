@@ -3219,7 +3219,7 @@
       "BatchJobTimeoutDurationDesc": "Establezca el tiempo máximo de ejecución para trabajos por lotes. \nLa sesión finalizará automáticamente si se excede el tiempo especificado.",
       "BatchMode": "Lote",
       "BatchModeConfig": "Modo por lotes Configuración",
-      "BatchModeDesc": "Puedes ejecutar tu código con múltiples nodos y clusters para escalar tu idea",
+      "BatchModeDesc": "Ejecuta el comando que introduzcas para archivos predefinidos o tareas programadas, de inmediato o en una fecha y hora establecidas",
       "BootstrapScriptDetail": "Script de Bootstrap",
       "CPU": "CPU",
       "ChooseEnvironment": "Elija Entorno",

@@ -3222,7 +3222,7 @@
       "BatchJobTimeoutDurationDesc": "Tetapkan waktu eksekusi maksimum untuk pekerjaan batch. \nSesi akan otomatis berakhir jika waktu yang ditentukan terlampaui.",
       "BatchMode": "Batch",
       "BatchModeConfig": "Konfigurasi mode batch",
-      "BatchModeDesc": "Anda dapat menjalankan kode Anda dengan beberapa node & cluster untuk menskalakan ide Anda",
+      "BatchModeDesc": "Menjalankan perintah yang Anda masukkan untuk file yang telah ditentukan atau tugas terjadwal, segera atau pada tanggal dan waktu yang ditetapkan",
       "BootstrapScriptDetail": "Skrip Bootstrap",
       "CPU": "CPU",
       "ChooseEnvironment": "Pilih Lingkungan",

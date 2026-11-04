@@ -3219,7 +3219,7 @@
       "BatchJobTimeoutDurationDesc": "Toplu işler için maksimum yürütme süresini ayarlayın. \nBelirtilen sürenin aşılması durumunda oturum otomatik olarak sonlandırılacaktır.",
       "BatchMode": "Toplu İş",
       "BatchModeConfig": "Toplu mod Yapılandırması",
-      "BatchModeDesc": "Fikrinizi ölçeklendirmek için kodunuzu birden fazla düğüm ve küme ile çalıştırabilirsiniz",
+      "BatchModeDesc": "Önceden tanımlanmış dosyalar veya zamanlanmış görevler için girdiğiniz komutu hemen ya da belirlenen tarih ve saatte çalıştırır",
       "BootstrapScriptDetail": "Bootstrap betiği",
       "CPU": "İşlemci",
       "ChooseEnvironment": "Ortam Seçin",

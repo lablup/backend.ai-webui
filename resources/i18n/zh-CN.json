@@ -3221,7 +3221,7 @@
       "BatchJobTimeoutDurationDesc": "设置批处理作业的最长执行时间。\n如果超过指定时间，会话将自动终止。",
       "BatchMode": "批次",
       "BatchModeConfig": "批处理模式配置",
-      "BatchModeDesc": "您可以使用多个节点和集群运行代码，以扩展您的想法",
+      "BatchModeDesc": "针对预定义文件或计划任务，立即或在设定的日期和时间运行您输入的命令",
       "BootstrapScriptDetail": "引导脚本",
       "CPU": "中央处理器",
       "ChooseEnvironment": "选择环境",

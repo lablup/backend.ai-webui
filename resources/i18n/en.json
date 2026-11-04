@@ -3206,7 +3206,7 @@
       "BatchJobTimeoutDurationDesc": "Set the maximum execution time for batch jobs. The session will automatically terminate if the specified time is exceeded.",
       "BatchMode": "Batch",
       "BatchModeConfig": "Batch mode Configuration",
-      "BatchModeDesc": "runs your code with multiple node & clusters to scale your idea",
+      "BatchModeDesc": "runs the command you enter for predefined files or scheduled tasks, right away or at a set date and time",
       "BootstrapScriptDetail": "Bootstrap script",
       "CPU": "CPU",
       "ChooseEnvironment": "Choose Environment",

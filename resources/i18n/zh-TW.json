@@ -3223,7 +3223,7 @@
       "BatchJobTimeoutDurationDesc": "設定批次作業的最長執行時間。\n如果超過指定時間，會話將自動終止。",
       "BatchMode": "批次",
       "BatchModeConfig": "批处理模式配置",
-      "BatchModeDesc": "您可以使用多个节点和集群运行代码，以扩展您的想法",
+      "BatchModeDesc": "針對預先定義的檔案或排程任務，立即或在設定的日期和時間執行您輸入的命令",
       "BootstrapScriptDetail": "引導腳本",
       "CPU": "中央處理器",
       "ChooseEnvironment": "選擇環境",

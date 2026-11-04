@@ -3221,7 +3221,7 @@
       "BatchJobTimeoutDurationDesc": "Đặt thời gian thực hiện tối đa cho các công việc hàng loạt. \nPhiên sẽ tự động kết thúc nếu vượt quá thời gian quy định.",
       "BatchMode": "Lô hàng",
       "BatchModeConfig": "Cấu hình chế độ hàng loạt",
-      "BatchModeDesc": "Bạn có thể chạy mã của mình với nhiều nút",
+      "BatchModeDesc": "Chạy lệnh bạn nhập cho các tệp được xác định trước hoặc tác vụ đã lên lịch, ngay lập tức hoặc vào ngày giờ đã đặt",
       "BootstrapScriptDetail": "Tập lệnh Bootstrap",
       "CPU": "CPU",
       "ChooseEnvironment": "Chọn môi trường",
