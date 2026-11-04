@@ -22,20 +22,20 @@ vi.mock('../hooks/useCurrentProject', () => ({
   useCurrentResourceGroupValue: () => 'default',
 }));
 
-const { useResourceSlotsDetails } = vi.hoisted(() => ({
-  useResourceSlotsDetails: vi.fn(() => ({
-    resourceSlotsInRG: {
-      cpu: { human_readable_name: 'CPU', display_unit: 'Core' },
-    },
-  })),
+vi.mock('../hooks', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../hooks')>()),
+  useCurrentDomain: () => ({ id: 'domain-0000', name: 'default' }),
 }));
-
-vi.mock('../hooks/backendai', () => ({ useResourceSlotsDetails }));
 
 // Only the statistics the card hands over matter here.
 vi.mock('backend.ai-ui', async (importOriginal) => ({
   ...(await importOriginal<typeof import('backend.ai-ui')>()),
   BAIBoardItemTitle: () => null,
+  useBAIResourceSlots: () => ({
+    mergedResourceSlots: {
+      cpu: { human_readable_name: 'CPU', display_unit: 'Core' },
+    },
+  }),
   ResourceStatistics: ({ resourceData }: { resourceData: unknown }) => (
     <pre data-testid="resource-data">{JSON.stringify(resourceData)}</pre>
   ),
@@ -55,15 +55,19 @@ const readResourceData = async () =>
   JSON.parse((await screen.findByTestId('resource-data')).textContent ?? '');
 
 describe('MyResource', () => {
-  it("shows every keypair's usage against the smaller remainder of the effective and user scopes", async () => {
+  it('shows the dashboard card body for the header resource group: usage against the smallest limit', async () => {
     const environment = renderCard();
-    environment.mock.resolveMostRecentOperation({
+    const operation = environment.mock.getMostRecentOperation();
+    expect(operation.request.variables).toEqual({
+      projectId: 'project-0000',
+      scope: {
+        domain: [{ value: 'domain-0000' }],
+        project: [{ value: 'project-0000' }],
+      },
+      resourceGroupFilter: { name: { equals: 'default' } },
+    });
+    environment.mock.resolve(operation, {
       data: {
-        effectiveResourceAllocationV2: {
-          assignable: [
-            { resourceType: 'cpu', quantity: '6', unlimited: false },
-          ],
-        },
         myUserResourceAllocationV2: {
           user: {
             used: [{ resourceType: 'cpu', quantity: '3' }],
@@ -72,25 +76,20 @@ describe('MyResource', () => {
             ],
           },
         },
+        projectResourceAllocationV2: {
+          project: {
+            assignable: [
+              { resourceType: 'cpu', quantity: '6', unlimited: false },
+            ],
+          },
+        },
+        scopedResourceGroups: { edges: [] },
       },
     });
 
     const data = await readResourceData();
     expect(data.cpu.used).toEqual({ current: 3, total: 7 });
     expect(data.cpu.free).toEqual({ current: 4, total: 7 });
-  });
-
-  it("reads the slots of the header's current resource group, so other groups' accelerators get no bar", async () => {
-    const environment = renderCard();
-    environment.mock.resolveMostRecentOperation({
-      data: {
-        effectiveResourceAllocationV2: { assignable: [] },
-        myUserResourceAllocationV2: { user: { used: [], assignable: [] } },
-      },
-    });
-
-    await readResourceData();
-    expect(useResourceSlotsDetails).toHaveBeenCalledWith('default');
   });
 
   it('keeps a rejected query inside the card', async () => {

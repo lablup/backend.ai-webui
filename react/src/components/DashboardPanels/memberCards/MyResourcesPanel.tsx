@@ -3,25 +3,35 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { MyResourcesPanelQuery } from '../../../__generated__/MyResourcesPanelQuery.graphql';
+import { useCurrentDomain } from '../../../hooks';
 import { readPrimary, readSecondary } from '../panelPermission';
 import type { PanelComponentProps } from '../types';
 import MemberCard, { NoProjectText, mineProjectId } from './MemberCard';
-import ResourceUsageBars from './ResourceUsageBars';
+import ResourceUsageStatistics from './ResourceUsageStatistics';
 import { freeAsLimits, offeredSlotsOf, toUsageRows } from './memberCardData';
 import { Text } from '@lablup/ui-common/Text';
 import React, { useDeferredValue } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
+/**
+ * The viewer's used-vs-limit per slot in one resource group; the dashboard
+ * card and the session page's My Total Resource Usage both render it.
+ */
 export const MyResourcesInResourceGroup: React.FC<{
   projectId: string;
   resourceGroupName: string;
   fetchKey: string;
 }> = ({ projectId, resourceGroupName, fetchKey }) => {
   'use memo';
+  const currentDomain = useCurrentDomain();
   const variables = {
     projectId,
-    scope: { project: [{ value: projectId }] },
+    // A group the project uses only through its domain is read as well (ADR 0019).
+    scope: {
+      domain: [{ value: currentDomain.id }],
+      project: [{ value: projectId }],
+    },
     resourceGroupFilter: { name: { equals: resourceGroupName } },
   };
   const deferredVariables = useDeferredValue(variables);
@@ -91,7 +101,7 @@ export const MyResourcesInResourceGroup: React.FC<{
   const resourceInfo = readSecondary(data.scopedResourceGroups).value
     ?.edges?.[0]?.node?.resourceInfo;
   return (
-    <ResourceUsageBars
+    <ResourceUsageStatistics
       rows={
         user
           ? toUsageRows(
