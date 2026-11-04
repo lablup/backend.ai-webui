@@ -33,7 +33,7 @@
     "graphql": "catalog:",
     "graphql-sse": "^2.6.0",
     "i18next": "catalog:",
-    "i18next-http-backend": "^3.0.6",
+    "i18next-http-backend": "^4.0.5",
     "jotai": "^2.20.2",
     "jotai-effect": "^2.4.1",
     "jotai-family": "^1.1.0",
@@ -70,7 +70,7 @@
     "tus-js-client": "catalog:",
     "typescript": "~6.0.3",
     "uuid": "catalog:",
-    "web-vitals": "^3.5.2",
+    "web-vitals": "^6.2.2",
     "yaml": "^2.9.0",
     "zod": "^4.6.6"
   },

@@ -81,6 +81,7 @@ export {
 } from './BAISelect';
 export type {
   BAISelectProps,
+  BAISelectOption,
   BAISelectOptionProps,
   BAISelectOptionGroupProps,
 } from './BAISelect';
@@ -231,10 +232,12 @@ export {
   DEPLOYMENT_STOPPED_CATEGORY_STATUSES,
   isDeploymentInProgress,
   DEPLOYMENT_IN_PROGRESS_STATUSES,
+  getDeploymentPauseCause,
 } from './BAIDeploymentStatusBadge';
 export type {
   BAIDeploymentStatusBadgeProps,
   BAIDeploymentStatus,
+  DeploymentPauseCause,
 } from './BAIDeploymentStatusBadge';
 export { default as BAIIntervalView } from './BAIIntervalView';
 export { default as BAIImageMetaIcon } from './BAIImageMetaIcon';
@@ -319,8 +322,6 @@ export { default as BAIRadioList, BAIRadioListItem } from './BAIRadioList';
 export type { BAIRadioListProps, BAIRadioListItemProps } from './BAIRadioList';
 export { default as BAISegmentedControl } from './BAISegmentedControl';
 export type { BAISegmentedControlProps } from './BAISegmentedControl';
-export { default as BAISelector } from './BAISelector';
-export type { BAISelectorProps } from './BAISelector';
 export { default as BAISlider } from './BAISlider';
 export type { BAISliderProps } from './BAISlider';
 export { default as BAISwitch } from './BAISwitch';

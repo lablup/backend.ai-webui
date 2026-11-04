@@ -1,6 +1,6 @@
 # AWS Amplify build manifest (monorepo).
 #
-# Spec: .specs/FR-2729-webui-docs-multi-version-deployment/spec.md
+# Decision: docs/adr/0023-multi-version-docs-site-from-source-archive-branches.md
 # Sub-task: FR-2735 (add `amplify.yml` for multi-version docs deployment)
 #
 # ─────────────────────────────────────────────────────────────────────

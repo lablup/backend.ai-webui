@@ -23,7 +23,7 @@ The Deployments page displays a list of all deployments in the current project. 
 At the top of the page, you can filter deployments by lifecycle stage:
 
 - **Serving**: Shows deployments whose Desired Replicas is 1 or more. This is the default view.
-- **Paused**: Shows deployments that are not terminated but have Desired Replicas set to 0. They move back to **Serving** once Desired Replicas is 1 or more.
+- **Paused**: Shows deployments that are not terminated but have Desired Replicas at 0, so they serve no requests. The **Lifecycle** column shows whether you set Desired Replicas to 0 or an auto-scaling rule scaled the deployment down. They move back to **Serving** once Desired Replicas is 1 or more.
 - **Terminated**: Shows deployments that have been terminated.
 
 Click the `Create Deployment` button to open the **Create Deployment** modal.
@@ -49,7 +49,7 @@ The modal contains the following fields:
 
 - **Deployment Name**: A unique name used to identify the deployment across the dashboard, API, and the endpoint URL.
 - **Resource Group**: The resource group where the deployment will run. If only one resource group is available to your project, the field is auto-selected and you can proceed without choosing one manually.
-- **Desired Replicas**: The number of replicas to keep running for this deployment. The system scales the active pool toward this target.
+- **Desired Replicas**: The number of replicas you set for this deployment. Auto-scaling rules can change the running target without changing this value, and setting it to 0 pauses the deployment.
 - **Tags**: Optional labels for organizing and filtering deployments. Press Enter or comma to add.
 - **Open to Public**: When enabled, the endpoint is reachable without an access token. When disabled, every request must carry a token. See [Access Tokens](#generating-tokens).
 

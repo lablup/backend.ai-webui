@@ -176,16 +176,12 @@ compatible).
   the highest patch represents that minor (e.g., `25.16.5` is shown as
   `25.16`). This is enforced at config-load time: `versions.ts` rejects
   labels that match `/^\d+\.\d+\.\d+/`.
-- Eligibility is gated by the build itself: a minor is admitted to the
-  selector only if its docs build cleanly under the current toolkit
-  with `--strict` (F5). A minor that breaks the strict build must be
-  patched, deferred via a follow-up issue, or explicitly excluded —
-  the choice is documented in the PR that adds the entry.
-- Past-minor build artifacts live on **orphan branches**
-  (`docs-archive/<minor>`). Past minors are built ONCE with the
-  toolkit-of-its-day and pushed to the archive branch by the
-  `docs-archive-orphan-branch.yml` workflow; they are NOT re-built with
-  the current toolkit on every deploy.
+- Past minors keep only their docs **source** on orphan branches
+  (`docs-archive/<minor>`), written by `docs-archive-orphan-branch.yml`.
+  Every build renders all archives plus `next` with the current toolkit.
+  The deploy model, the strictness flags and the checked/unchecked
+  `versions:` rules are ADR 0023
+  (`docs/adr/0023-multi-version-docs-site-from-source-archive-branches.md`).
 
 ### Output directory layout
 
@@ -213,7 +209,7 @@ versions:
   - label: "25.10"
     source:
       kind: archive-branch
-      ref: docs-archive/25.10  # orphan branch holding pre-built artifacts
+      ref: docs-archive/25.10  # orphan branch holding that minor's docs source
 ```
 
 Validation rules (enforced by `loadVersions` in `versions.ts`):
@@ -231,14 +227,10 @@ Validation rules (enforced by `loadVersions` in `versions.ts`):
 
 - **`workspace`** — build from the current checkout. Used for the
   `latest` entry in normal day-to-day deploys.
-- **`archive-branch`** — build by reading from a sibling worktree at
-  `<projectRoot>/.docs-archive/<sanitized-ref>`. The CI workflow that
-  PUSHES the orphan branch ships in this PR
-  (`.github/workflows/docs-archive-orphan-branch.yml`); the workflow /
-  operator that PULLS the orphan branch into a worktree before rebuild
-  is operational scope. If the worktree does not exist when the build
-  runs, the version is logged and skipped (NOT a hard failure) so CI
-  doesn't break before the archive infrastructure is materialized.
+- **`archive-branch`** — render the source read from a sibling worktree at
+  `<projectRoot>/.docs-archive/<sanitized-ref>`, which `amplify.yml` checks
+  out before the build. If the worktree does not exist when the build
+  runs, the version is logged and skipped (not a hard failure).
 
 ### Header version selector
 
