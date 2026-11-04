@@ -65,12 +65,12 @@ flowchart LR
 
 ### 3. 이름은 `bai_` prefix와 정해진 모양을 따른다
 
-| 모양                      | 하는 일                                                    | 예                         |
-| ------------------------- | ---------------------------------------------------------- | -------------------------- |
-| `bai_list_visible_<noun>` | 지금 화면에 그려진 page의 행을 현재 정렬 순서로 돌려준다   | `bai_list_visible_session` |
-| `bai_get_current_<noun>`  | 열려 있거나 선택된 항목 하나를 돌려주고, 없으면 `null`이다 | `bai_get_current_vfolder`  |
-| `bai_get_<noun>_filter`   | page가 URL에 둔 filter·정렬·page 상태를 돌려준다           | `bai_get_session_filter`   |
-| `bai_prepare_<noun>`      | 생성·수정 form을 열고 값을 채운다. submit하지 않는다       | `bai_prepare_session`      |
+| 모양 | 하는 일 | 예 |
+|---|---|---|
+| `bai_list_visible_<noun>` | 지금 화면에 그려진 page의 행을 현재 정렬 순서로 돌려준다 | `bai_list_visible_session` |
+| `bai_get_current_<noun>` | 열려 있거나 선택된 항목 하나를 돌려주고, 없으면 `null`이다 | `bai_get_current_vfolder` |
+| `bai_get_<noun>_filter` | page가 URL에 둔 filter·정렬·page 상태를 돌려준다 | `bai_get_session_filter` |
+| `bai_prepare_<noun>` | 생성·수정 form을 열고 값을 채운다. submit하지 않는다 | `bai_prepare_session` |
 
 - **Noun**: `<noun>`은 snake_case 단수형이고, schema의 resource 이름을 쓴다(`session`, `vfolder`, `deployment`, `model_card`).
 - **App shell tools**: 특정 page에 속하지 않는 tool은 짧은 동사구로 이름을 짓는다. FR-4073이 `bai_whoami`, `bai_get_current_page`, `bai_navigate`를 app shell에 둔다.
@@ -79,11 +79,11 @@ flowchart LR
 
 ### 4. tool은 읽기, 이동, form 채우기만 한다
 
-| 허용                                                  | 금지                                                       |
-| ----------------------------------------------------- | ---------------------------------------------------------- |
-| component가 이미 화면에 그린 data와 URL 상태를 읽는다 | 생성·수정·확인 action을 submit한다                         |
-| app 안의 다른 page나 항목으로 이동한다                | 삭제, purge, 종료, revoke 같은 destructive action을 부른다 |
-| form이나 modal을 열고 값을 채운다                     | page 안의 확인 dialog를 조건으로 위 두 가지를 허용한다     |
+| 허용 | 금지 |
+|---|---|
+| component가 이미 화면에 그린 data와 URL 상태를 읽는다 | 생성·수정·확인 action을 submit한다 |
+| app 안의 다른 page나 항목으로 이동한다 | 삭제, purge, 종료, revoke 같은 destructive action을 부른다 |
+| form이나 modal을 열고 값을 채운다 | page 안의 확인 dialog를 조건으로 위 두 가지를 허용한다 |
 
 - **Enforced by the tool list**: WebUI는 submit이나 삭제를 부르는 `execute`를 만들지 않는 것으로 이 규칙을 지킨다. agent가 UI의 승인 버튼을 누를 수 있어도, tool을 불러서는 그 action이 일어나지 않는다.
 - **Prepare description**: `bai_prepare_<noun>`의 `description`은 form을 submit하지 않으며 submit은 사람이 한다고 적는다.
@@ -100,14 +100,14 @@ flowchart LR
 
 `validateWebMCPInput(schema, input)`는 평평한 object schema만 다룬다. `WebMCPInputSchema` 타입이 이 부분집합만 허용하므로 중첩 object, array, `oneOf`는 컴파일되지 않는다.
 
-| keyword                       | 검사                                                |
-| ----------------------------- | --------------------------------------------------- |
-| `type`                        | `string`, `integer`, `number`(유한한 수), `boolean` |
-| `enum`                        | `string`과 수 property에서 값이 목록 안에 있는지    |
-| `required`                    | 목록의 key가 `undefined`가 아닌지                   |
-| `minimum`·`maximum`           | 수의 범위                                           |
-| `minLength`·`maxLength`       | 문자열 길이                                         |
-| `additionalProperties: false` | 선언하지 않은 key가 없는지                          |
+| keyword | 검사 |
+|---|---|
+| `type` | `string`, `integer`, `number`(유한한 수), `boolean` |
+| `enum` | `string`과 수 property에서 값이 목록 안에 있는지 |
+| `required` | 목록의 key가 `undefined`가 아닌지 |
+| `minimum`·`maximum` | 수의 범위 |
+| `minLength`·`maxLength` | 문자열 길이 |
+| `additionalProperties: false` | 선언하지 않은 key가 없는지 |
 
 - **Input forms**: 문자열 입력은 먼저 JSON으로 parse한다. `undefined`, `null`, 그리고 parse 결과가 `null`인 입력은 `{}`로 본다.
 - **Always on**: `useWebMCPTool`이 `execute`를 부르기 전에 항상 검사한다. 여러 property 사이의 규칙(예: 둘 중 하나만)은 tool의 `execute`가 직접 확인한다.
@@ -115,13 +115,13 @@ flowchart LR
 
 ### 6. 실패는 구조화된 error로 돌려준다
 
-| `code`                                         | 누가 돌려주는가  | 언제                                                                                                                                                                                                                                                      |
-| ---------------------------------------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `invalid_input`                                | `useWebMCPTool`  | `validateWebMCPInput`이 거절했다. `issues: [{ path, message }]`가 붙는다                                                                                                                                                                                  |
-| `execution_failed`                             | `useWebMCPTool`  | 입력 검사나 `execute`가 예외를 던졌거나, 반환값을 JSON으로 바꿀 수 없거나, 바꾼 결과가 `undefined`다. `message`에는 예외나 client와 Relay가 던지는 plain object의 `message`, `msg`, `title` 중 처음 나온 문자열을 담고, 셋 다 없으면 고정된 문구를 담는다 |
-| `tool_unavailable`                             | `useWebMCPTool`  | 등록이 끝난 뒤의 호출이다. component가 `null` tool을 넘기게 되었거나, unmount되었거나, gate가 꺼졌다                                                                                                                                                      |
-| `page_forbidden`·`page_not_found`·`page_error` | `bai_navigate`   | 이동한 뒤 page 대신 route error 화면이 떴다. 화면은 `RouteErrorContent`가 `routeErrorScreenAtom`에 남기는 종류(`forbidden`·`not_found`·`error`)로 판단하고, 그 화면이 있는 동안 tab 제목도 page 이름 대신 화면 제목을 쓴다                                |
-| 그 밖의 snake_case 문자열                      | tool의 `execute` | tool이 자기 규칙으로 거절했다. `webMCPError(code, message)`로 만든다                                                                                                                                                                                      |
+| `code` | 누가 돌려주는가 | 언제 |
+|---|---|---|
+| `invalid_input` | `useWebMCPTool` | `validateWebMCPInput`이 거절했다. `issues: [{ path, message }]`가 붙는다 |
+| `execution_failed` | `useWebMCPTool` | 입력 검사나 `execute`가 예외를 던졌거나, 반환값을 JSON으로 바꿀 수 없거나, 바꾼 결과가 `undefined`다. `message`에는 예외나 client와 Relay가 던지는 plain object의 `message`, `msg`, `title` 중 처음 나온 문자열을 담고, 셋 다 없으면 고정된 문구를 담는다 |
+| `tool_unavailable` | `useWebMCPTool` | 등록이 끝난 뒤의 호출이다. component가 `null` tool을 넘기게 되었거나, unmount되었거나, gate가 꺼졌다 |
+| `page_forbidden`·`page_not_found`·`page_error` | `bai_navigate` | page 대신 route error 화면이 떴다. 화면은 `RouteErrorContent`가 `routeErrorScreenAtom`에 남기는 종류(`forbidden`·`not_found`·`error`)로 판단하고, `bai_get_current_page`는 같은 값을 `errorScreen`으로 돌려준다. 그 화면이 있는 동안 tab 제목은 page 이름 대신 화면 제목이다 |
+| 그 밖의 snake_case 문자열 | tool의 `execute` | tool이 자기 규칙으로 거절했다. `webMCPError(code, message)`로 만든다 |
 
 - **Shape**: 모든 error는 `{ error: { code, message, issues? } }`이다(`WebMCPErrorResult`).
 - **Success shape**: 성공한 호출은 camelCase key를 가진 JSON object 하나를 돌려준다.
@@ -129,11 +129,11 @@ flowchart LR
 
 ### 7. annotation은 정해진 조건에서만 단다
 
-| annotation                   | 다는 tool                                                                                             |
-| ---------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `readOnlyHint: true`         | 읽기만 하는 tool. 이동과 form 채우기 tool은 달지 않는다                                               |
-| `untrustedContentHint: true` | 이름, email, 설명, project 이름처럼 사용자가 쓴 text를 반환값에 담는 tool                             |
-| `consequentialHint`          | 쓰지 않는다. 4항 때문에 되돌릴 수 없는 결과를 내는 tool이 없고, `WebMCPToolAnnotations` 타입에도 없다 |
+| annotation | 다는 tool |
+|---|---|
+| `readOnlyHint: true` | 읽기만 하는 tool. 이동과 form 채우기 tool은 달지 않는다 |
+| `untrustedContentHint: true` | 이름, email, 설명, project 이름처럼 사용자가 쓴 text를 반환값에 담는 tool |
+| `consequentialHint` | 쓰지 않는다. 4항 때문에 되돌릴 수 없는 결과를 내는 tool이 없고, `WebMCPToolAnnotations` 타입에도 없다 |
 
 - **Description is page content**: agent는 tool의 `description`도 page가 보낸 신뢰할 수 없는 내용으로 받는다. tool 작성자는 `description`에 사용자가 쓴 data를 넣지 않는다.
 
@@ -170,11 +170,11 @@ flowchart LR
 
 ## 용어
 
-| 용어         | 뜻                                                                                                                                                           |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| WebMCP       | web page가 JavaScript로 tool을 등록하고 브라우저에 연결된 AI agent가 그 tool을 부르게 하는 W3C community group 제안이다. 진입점은 `document.modelContext`다. |
-| tool         | `name`, `description`, `inputSchema`, `execute`로 이루어진 등록 단위다. agent는 이름과 JSON 입력으로 tool을 부르고, `execute`의 반환값을 JSON으로 받는다.    |
-| polyfill     | 브라우저에 없는 API를 page의 JavaScript로 흉내 내 채워 넣는 library다. FR-3764는 `@mcp-b/global`로 `document.modelContext`를 채웠다.                         |
-| relay        | page 밖의 MCP client와 page의 tool을 이어 주는 별도 process와 page 안의 embed다. FR-3764는 `@mcp-b/webmcp-local-relay`를 썼다.                               |
-| origin trial | Chrome이 실험 기능을 특정 site에 token으로 미리 열어 주는 제도다.                                                                                            |
-| AbortSignal  | `AbortController`가 만드는 web 표준 객체다. `registerTool`에 넘긴 signal을 abort하면 브라우저가 그 tool의 등록을 푼다.                                       |
+| 용어 | 뜻 |
+|---|---|
+| WebMCP | web page가 JavaScript로 tool을 등록하고 브라우저에 연결된 AI agent가 그 tool을 부르게 하는 W3C community group 제안이다. 진입점은 `document.modelContext`다. |
+| tool | `name`, `description`, `inputSchema`, `execute`로 이루어진 등록 단위다. agent는 이름과 JSON 입력으로 tool을 부르고, `execute`의 반환값을 JSON으로 받는다. |
+| polyfill | 브라우저에 없는 API를 page의 JavaScript로 흉내 내 채워 넣는 library다. FR-3764는 `@mcp-b/global`로 `document.modelContext`를 채웠다. |
+| relay | page 밖의 MCP client와 page의 tool을 이어 주는 별도 process와 page 안의 embed다. FR-3764는 `@mcp-b/webmcp-local-relay`를 썼다. |
+| origin trial | Chrome이 실험 기능을 특정 site에 token으로 미리 열어 주는 제도다. |
+| AbortSignal | `AbortController`가 만드는 web 표준 객체다. `registerTool`에 넘긴 signal을 abort하면 브라우저가 그 tool의 등록을 푼다. |

@@ -72,6 +72,12 @@ export const createWhoamiTool = (info: WhoamiInfo): WebMCPTool => ({
   execute: () => info,
 });
 
+const ROUTE_ERROR_CODES: Record<RouteErrorKind, string> = {
+  forbidden: 'page_forbidden',
+  not_found: 'page_not_found',
+  error: 'page_error',
+};
+
 export interface CurrentPageInfo {
   path: string;
   menuKey: string | null;
@@ -79,14 +85,21 @@ export interface CurrentPageInfo {
   scope: string;
   project: string | null;
   searchParams: Record<string, string | Array<string>>;
+  /** The error screen shown in place of the page, as `bai_navigate` would report it. */
+  errorScreen: { code: string; title: string } | null;
 }
+
+export const errorScreenInfo = (
+  screen: RouteErrorScreen | null,
+): CurrentPageInfo['errorScreen'] =>
+  screen ? { code: ROUTE_ERROR_CODES[screen.kind], title: screen.label } : null;
 
 export const createCurrentPageTool = (
   readPage: () => CurrentPageInfo,
 ): WebMCPTool => ({
   name: 'bai_get_current_page',
   description:
-    'Where this Backend.AI WebUI tab is: pathname, menu key, translated page title, route scope (project, projectAdmin or admin), the project in the URL, search params and the main heading on screen.',
+    'Where this Backend.AI WebUI tab is: pathname, menu key, translated page title, route scope (project, projectAdmin or admin), the project in the URL, search params and the main heading on screen. errorScreen is non-null when an error screen (code page_forbidden, page_not_found or page_error) replaces the page; title then still names the route, not what is shown.',
   inputSchema: NO_INPUT,
   annotations: { readOnlyHint: true, untrustedContentHint: true },
   execute: () => ({ ...readPage(), heading: readMainHeading() }),
@@ -100,11 +113,11 @@ export interface NavigablePage {
 
 const NAVIGATION_SETTLE_MS = 300;
 
-const ROUTE_ERROR_CODES: Record<RouteErrorKind, string> = {
-  forbidden: 'page_forbidden',
-  not_found: 'page_not_found',
-  error: 'page_error',
-};
+const routeErrorResult = (screen: RouteErrorScreen, path: string) =>
+  webMCPError(
+    ROUTE_ERROR_CODES[screen.kind],
+    `${path} shows "${screen.label}" instead of a page.`,
+  );
 
 export const createNavigateTool = ({
   pages,
@@ -167,6 +180,11 @@ export const createNavigateTool = ({
       if (!target.ok) return webMCPError(target.code, target.message);
       to = target.to;
     }
+    // A reload keeps the pathname, so a guard screen on it would come back.
+    const screenBefore = readRouteErrorScreen();
+    if (screenBefore && needsDocumentReload(to, window.location)) {
+      return routeErrorResult(screenBefore, to);
+    }
     if (needsDocumentReload(to, window.location)) {
       window.setTimeout(() => reloadDocument(to), settleMs);
       return { path: to, title: document.title, reloaded: true };
@@ -177,12 +195,7 @@ export const createNavigateTool = ({
     const { pathname, search, hash } = window.location;
     const landed = `${pathname}${search}${hash}`;
     const errorScreen = readRouteErrorScreen();
-    if (errorScreen) {
-      return webMCPError(
-        ROUTE_ERROR_CODES[errorScreen.kind],
-        `${landed} shows "${errorScreen.label}" instead of a page.`,
-      );
-    }
+    if (errorScreen) return routeErrorResult(errorScreen, landed);
     return { path: landed, title: document.title };
   },
 });
@@ -240,6 +253,7 @@ const WebMCPGlobalToolsRegistrar: React.FC = () => {
       scope,
       project: scope === 'admin' ? null : (activeProjectName ?? null),
       searchParams: searchParamsToRecord(location.search),
+      errorScreen: errorScreenInfo(store.get(routeErrorScreenAtom)),
     })),
   );
 

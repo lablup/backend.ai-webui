@@ -12,7 +12,7 @@ import RouteErrorContent, { RouteErrorSegment } from './RouteErrorContent';
 import { Button } from '@lablup/ui-common/Button';
 import { Icon } from '@lablup/ui-common/Icon';
 import { ArrowRightIcon } from 'lucide-react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
 const MAX_SEGMENTS = 4;
@@ -53,7 +53,6 @@ const ForbiddenPage = () => {
       kind="forbidden"
       label={t('webui.UnauthorizedAccess')}
       segments={segments.length ? segments : undefined}
-      title={<Trans i18nKey={'webui.UnauthorizedAccess'} />}
       description={t('webui.AdminOnlyPage')}
       extra={
         // PILOT-DECISION: antd `Button type="primary" size="large"` with a

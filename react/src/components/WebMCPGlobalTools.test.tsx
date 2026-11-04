@@ -2,12 +2,14 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { routeErrorScreenAtom } from '../helper/routeErrorScreen';
 import WebMCPGlobalTools, {
   createNavigateTool,
   displayedEmail,
 } from './WebMCPGlobalTools';
 import { render, waitFor } from '@testing-library/react';
 import { BAIWebMCPProvider, type WebMCPToolDescriptor } from 'backend.ai-ui';
+import { getDefaultStore } from 'jotai';
 import { Suspense } from 'react';
 import { RouterProvider, createMemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -162,7 +164,30 @@ describe('WebMCPGlobalTools', () => {
       scope: 'project',
       project: 'default',
       searchParams: { type: 'all' },
+      errorScreen: null,
     });
+  });
+
+  it('reads the error screen from the store in both page tools', async () => {
+    renderShell(true);
+    await waitFor(() => expect(registerTool).toHaveBeenCalledTimes(3));
+    const store = getDefaultStore();
+    store.set(routeErrorScreenAtom, {
+      kind: 'forbidden',
+      label: 'Unauthorized Access',
+    });
+    try {
+      await expect(
+        toolNamed('bai_get_current_page').execute(undefined),
+      ).resolves.toMatchObject({
+        errorScreen: { code: 'page_forbidden', title: 'Unauthorized Access' },
+      });
+      await expect(
+        toolNamed('bai_navigate').execute({ page: 'data' }),
+      ).resolves.toMatchObject({ error: { code: 'page_forbidden' } });
+    } finally {
+      store.set(routeErrorScreenAtom, null);
+    }
   });
 
   it('offers only accessible route pages in bai_navigate and validates input', async () => {
@@ -274,6 +299,27 @@ describe('createNavigateTool on the same path', () => {
       ),
     );
     expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('reports the guard screen instead of reloading onto it again', async () => {
+    const reloadDocument = vi.fn();
+    window.history.replaceState({}, '', '/admin/users');
+    const tool = createNavigateTool({
+      pages: [],
+      activeProjectName: 'default',
+      navigate: vi.fn(),
+      readRouteErrorScreen: () => ({
+        kind: 'forbidden',
+        label: 'Unauthorized Access',
+      }),
+      reloadDocument,
+      settleMs: 0,
+    });
+
+    await expect(
+      tool.execute({ path: '/admin/users?tab=credentials' }),
+    ).resolves.toMatchObject({ error: { code: 'page_forbidden' } });
+    expect(reloadDocument).not.toHaveBeenCalled();
   });
 
   it('reloads despite a trailing slash on the target', async () => {

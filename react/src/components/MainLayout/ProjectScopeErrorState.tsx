@@ -43,7 +43,6 @@ const ProjectScopeErrorState: React.FC<ProjectScopeErrorStateProps> = ({
       <RouteErrorContent
         kind="forbidden"
         label={t('projectSelect.NoAccessibleProjects')}
-        title={t('projectSelect.NoAccessibleProjects')}
         description={t('projectSelect.AskAdminForProjectAccess')}
       />
     );
@@ -55,16 +54,13 @@ const ProjectScopeErrorState: React.FC<ProjectScopeErrorStateProps> = ({
     ...(featureKey ? [{ text: featureKey }] : []),
   ];
 
-  const title = t('projectSelect.ProjectNotFoundOrNoAccess', {
-    project: projectName,
-  });
-
   return (
     <RouteErrorContent
       kind="not_found"
-      label={title}
+      label={t('projectSelect.ProjectNotFoundOrNoAccess', {
+        project: projectName,
+      })}
       segments={segments}
-      title={title}
       description={
         <>
           <ArrowUpLeftIcon

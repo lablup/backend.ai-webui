@@ -65,7 +65,6 @@ const RouteErrorBoundary = () => {
     <RouteErrorContent
       kind="error"
       label={t('dialog.ErrorOccurred')}
-      title={t('dialog.ErrorOccurred')}
       description={t('error.UnexpectedError')}
     />
   );

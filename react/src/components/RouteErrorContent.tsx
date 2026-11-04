@@ -12,7 +12,7 @@ import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex } from 'backend.ai-ui';
 import { useSetAtom } from 'jotai';
-import React, { useEffect } from 'react';
+import React, { useLayoutEffect } from 'react';
 
 /**
  * Shared minimal composition for route-level error states (invalid project,
@@ -36,11 +36,12 @@ export interface RouteErrorSegment {
 interface RouteErrorContentProps {
   /** What kind of dead end this is; the tab title and `bai_navigate` read it. */
   kind: RouteErrorKind;
-  /** `title` as plain text, for the tab title. */
+  /** The heading as plain text; also the tab title. */
   label: string;
   /** Path segments for the pill; omit to hide the pill entirely. */
   segments?: RouteErrorSegment[];
-  title: React.ReactNode;
+  /** Rich heading, when it needs markup `label` cannot carry. Defaults to `label`. */
+  title?: React.ReactNode;
   description?: React.ReactNode;
   /** Action area under the copy (e.g. a primary navigation button). */
   extra?: React.ReactNode;
@@ -59,7 +60,8 @@ const RouteErrorContent: React.FC<RouteErrorContentProps> = ({
   const { isDarkMode } = useThemeMode();
   const setRouteErrorScreen = useSetAtom(routeErrorScreenAtom);
 
-  useEffect(() => {
+  // A layout effect, so the screen also clears when a suspending route hides it.
+  useLayoutEffect(() => {
     setRouteErrorScreen({ kind, label });
     return () => setRouteErrorScreen(null);
   }, [kind, label, setRouteErrorScreen]);
@@ -153,7 +155,7 @@ const RouteErrorContent: React.FC<RouteErrorContentProps> = ({
           justify="center"
           style={{ margin: 0, maxWidth: 560 }}
         >
-          {title}
+          {title ?? label}
         </Heading>
 
         {description ? (
