@@ -100,6 +100,7 @@ describe("a card's resource group in DashboardPanelContent", () => {
     names: ['cuda-ent', 'default'],
     isComplete: true,
     defaultResourceGroup: 'cuda-ent',
+    offeredSlots: null,
     scope: { project: [{ value: 'p-url' }] },
     filter: undefined,
   };

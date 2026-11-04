@@ -58,6 +58,7 @@ const renderModal = (
         names: ['g0', 'g1', 'g2', 'g3'],
         isComplete: true,
         defaultResourceGroup: 'g0',
+        offeredSlots: null,
         scope: { project: [{ value: 'p-url' }] },
         filter: excludedResourceGroups
           ? { name: { notIn: excludedResourceGroups } }

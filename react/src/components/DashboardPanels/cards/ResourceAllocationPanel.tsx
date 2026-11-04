@@ -4,15 +4,31 @@
  */
 import type { ResourceAllocationPanelDomainQuery } from '../../../__generated__/ResourceAllocationPanelDomainQuery.graphql';
 import type { ResourceAllocationPanelProjectQuery } from '../../../__generated__/ResourceAllocationPanelProjectQuery.graphql';
+import { useDashboardResourceGroups } from '../DashboardResourceGroups';
 import type { CardScope } from '../cardScope';
-import ResourceUsageBars from '../memberCards/ResourceUsageBars';
-import { toLimitUsageRows } from '../memberCards/memberCardData';
+import ResourceUsageStatistics from '../memberCards/ResourceUsageStatistics';
+import { toLimitUsageRows, type UsageRow } from '../memberCards/memberCardData';
 import { readPrimary } from '../panelPermission';
 import type { PanelComponentProps } from '../types';
 import ScopedCard from './ScopedCard';
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+
+/** Only the slots the scope's resource groups offer, drawn like the resource group totals. */
+const ScopeUsage: React.FC<{ rows: ReadonlyArray<UsageRow> }> = ({ rows }) => {
+  'use memo';
+  const offeredSlots = useDashboardResourceGroups()?.offeredSlots;
+  return (
+    <ResourceUsageStatistics
+      rows={
+        offeredSlots
+          ? rows.filter((row) => offeredSlots.has(row.resourceType))
+          : rows
+      }
+    />
+  );
+};
 
 const ProjectAllocation: React.FC<{ projectId: string; fetchKey: string }> = ({
   projectId,
@@ -42,7 +58,7 @@ const ProjectAllocation: React.FC<{ projectId: string; fetchKey: string }> = ({
     { fetchPolicy: 'store-and-network', fetchKey },
   );
   return (
-    <ResourceUsageBars
+    <ScopeUsage
       rows={toLimitUsageRows(
         readPrimary(data.projectResourceAllocationV2)?.project,
       )}
@@ -79,7 +95,7 @@ const DomainAllocation: React.FC<{ domainName: string; fetchKey: string }> = ({
     { fetchPolicy: 'store-and-network', fetchKey },
   );
   return (
-    <ResourceUsageBars
+    <ScopeUsage
       rows={toLimitUsageRows(
         readPrimary(data.adminDomainResourceAllocationV2)?.domain,
       )}
