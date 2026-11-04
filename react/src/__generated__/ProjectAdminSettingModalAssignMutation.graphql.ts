@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1f30eadcf45e7d6fa4ea28370fe6f182>>
+ * @generated SignedSource<<e7806cf965106e96df5d4230b47bf0cf>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -23,6 +23,10 @@ export type ProjectAdminSettingModalAssignMutation$data = {
       readonly id: string;
       readonly userId: string;
     }>;
+    readonly failed: ReadonlyArray<{
+      readonly message: string;
+      readonly userId: string;
+    }>;
   };
 };
 export type ProjectAdminSettingModalAssignMutation = {
@@ -38,7 +42,14 @@ var v0 = [
     "name": "input"
   }
 ],
-v1 = [
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "userId",
+  "storageKey": null
+},
+v2 = [
   {
     "alias": null,
     "args": [
@@ -68,11 +79,24 @@ v1 = [
             "name": "id",
             "storageKey": null
           },
+          (v1/*: any*/)
+        ],
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "BulkAssignRoleError",
+        "kind": "LinkedField",
+        "name": "failed",
+        "plural": true,
+        "selections": [
+          (v1/*: any*/),
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "userId",
+            "name": "message",
             "storageKey": null
           }
         ],
@@ -88,7 +112,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "ProjectAdminSettingModalAssignMutation",
-    "selections": (v1/*: any*/),
+    "selections": (v2/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -97,19 +121,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "ProjectAdminSettingModalAssignMutation",
-    "selections": (v1/*: any*/)
+    "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "1682c2cadfafd09ca3b4b1317d6a6de2",
+    "cacheID": "63305f4039b613b045622b9cd46a9f28",
     "id": null,
     "metadata": {},
     "name": "ProjectAdminSettingModalAssignMutation",
     "operationKind": "mutation",
-    "text": "mutation ProjectAdminSettingModalAssignMutation(\n  $input: BulkAssignRoleInput!\n) {\n  partialBulkAssignRoles(input: $input) {\n    assigned {\n      id\n      userId\n    }\n  }\n}\n"
+    "text": "mutation ProjectAdminSettingModalAssignMutation(\n  $input: BulkAssignRoleInput!\n) {\n  partialBulkAssignRoles(input: $input) {\n    assigned {\n      id\n      userId\n    }\n    failed {\n      userId\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "78876bf6c8fcdc49ad2e3d834545876c";
+(node as any).hash = "797835a3d0cf313943ba6733d75300c8";
 
 export default node;

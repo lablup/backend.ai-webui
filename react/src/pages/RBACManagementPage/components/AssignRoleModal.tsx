@@ -6,6 +6,7 @@ import { AssignRoleModalBulkAssignMutation } from '../../../__generated__/Assign
 import { App } from '../../../app-shim';
 import { Form, type FormInstance } from '../../../form-engine';
 import { reasonMessage } from '../../../helper/mutationError';
+import { isAlreadyAssignedFailure } from '../helper/roleAssignment';
 import {
   BAIAdminUserV2Select,
   BAIBulkErrorModal,
@@ -35,9 +36,6 @@ interface FailedAssignment {
   message: string;
 }
 
-// `BulkAssignRoleError` carries no reason code, so "already holds the role" is
-// recognised by the manager's message; anything unrecognised stays a failure.
-const ALREADY_ASSIGNED_MESSAGE = /is already assigned to user/;
 const MAX_SKIPPED_NAMES = 3;
 
 /**
@@ -130,7 +128,7 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
       });
       const [skipped, failed] = _.partition(
         result.partialBulkAssignRoles.failed,
-        (failure) => ALREADY_ASSIGNED_MESSAGE.test(failure.message),
+        isAlreadyAssignedFailure,
       );
       const hasAssigned = !_.isEmpty(result.partialBulkAssignRoles.assigned);
       if (!_.isEmpty(skipped)) {
