@@ -177,17 +177,15 @@ export interface OgConfig {
 // output layout (`dist/web/<lang>/...`) is preserved exactly. When
 // declared, each entry produces a self-contained per-minor site under
 // `dist/web/<label>/<lang>/...`, and the version selector is rendered in
-// every page header. See ARCHITECTURE.md → "Versioned docs (F6)".
+// every page header. See ARCHITECTURE.md → "Versioned docs (F6)" and ADR 0023.
 //
 // Source kinds:
 //   - `workspace`     — build from the current checkout (used for the
 //                       `latest` entry in normal day-to-day deploys).
-//   - `archive-branch`— build by checking out a static, pre-built tree
-//                       from a `docs-archive/<minor>` orphan branch.
-//                       The toolkit-of-its-day produced those artifacts;
-//                       we never re-run the current toolkit against past
-//                       minors. If the branch does not exist locally,
-//                       the version is skipped with a clear warning.
+//   - `archive-branch`— render the docs source on a `docs-archive/<minor>`
+//                       orphan branch with the current toolkit (ADR 0023).
+//                       If the branch is not checked out, the version is
+//                       skipped with a warning.
 
 export type VersionSource =
   | { kind: "workspace" }
