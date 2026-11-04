@@ -121,11 +121,22 @@ export interface DonutChartProps {
   columnLabels: { name: string; value: string; percent: string };
   /** The empty ring's accessible name, when every value is 0. */
   emptyText: string;
-  /** A manager-counted total shown in the ring's hole ("-" when part of it is denied); omitted, the hole stays empty. */
+  /** The ring's centre; omitted, the rows' sum ({@link donutTotal}). */
   total?: number | string | null;
   /** Makes each legend row a button that reports its row's key. */
   onRowClick?: (key: string) => void;
 }
+
+/** The rows' sum, "-" when a row's count was denied; an explicit `total` wins. */
+export const donutTotal = (
+  rows: ReadonlyArray<DonutRow>,
+  total?: number | string | null,
+): number | string | null =>
+  total !== undefined
+    ? total
+    : rows.some((row) => row.isUnknown)
+      ? '-'
+      : _.sumBy(rows, 'value');
 
 /**
  * A donut of manager-counted values with a compact name / value / share
@@ -170,6 +181,7 @@ const DonutChart: React.FC<DonutChartProps> = ({
     color: colors[index % colors.length],
   }));
   const hasValue = rows.some((row) => row.value > 0);
+  const centre = donutTotal(rows, total);
 
   const density =
     LEGEND_DENSITIES.find(
@@ -264,9 +276,9 @@ const DonutChart: React.FC<DonutChartProps> = ({
                   pointerEvents: 'none',
                 }}
               >
-                {_.isNumber(total) || _.isString(total) ? (
+                {_.isNumber(centre) || _.isString(centre) ? (
                   <Text size="xl" weight="semibold" hasTabularNumbers>
-                    {total.toLocaleString()}
+                    {centre.toLocaleString()}
                   </Text>
                 ) : null}
               </BAIFlex>
@@ -308,7 +320,7 @@ const DonutChart: React.FC<DonutChartProps> = ({
                 color="secondary"
                 hasTabularNumbers
               >
-                {_.isString(total) ? total : 0}
+                {_.isString(centre) ? centre : 0}
               </Text>
             </BAIFlex>
           )}

@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import DonutChart from './DonutChart';
+import DonutChart, { donutTotal } from './DonutChart';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
@@ -50,5 +50,25 @@ describe('DonutChart legend rows', () => {
       />,
     );
     expect(screen.queryByRole('button', { name: /Session/ })).toBeNull();
+  });
+});
+
+describe('donutTotal', () => {
+  it('sums the rows when no total is passed', () => {
+    expect(donutTotal(ROWS)).toBe(4);
+    expect(
+      donutTotal(ROWS.map((row) => ({ ...row, value: 0, percent: 0 }))),
+    ).toBe(0);
+  });
+
+  it('is "-" when a row was denied', () => {
+    expect(
+      donutTotal([...ROWS, { ...ROWS[1], key: 'x', isUnknown: true }]),
+    ).toBe('-');
+  });
+
+  it('keeps an explicit total', () => {
+    expect(donutTotal(ROWS, 10)).toBe(10);
+    expect(donutTotal(ROWS, '-')).toBe('-');
   });
 });

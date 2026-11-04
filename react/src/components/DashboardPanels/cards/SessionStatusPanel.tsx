@@ -14,12 +14,7 @@ import { getSessionV2StatusBuckets } from '../../../helper/sessionStatusBuckets'
 import type { CardScope } from '../cardScope';
 import DonutChart from '../charts/DonutChart';
 import StatRow from '../charts/StatRow';
-import {
-  countText,
-  readCounts,
-  sumCounts,
-  type CountAlias,
-} from '../countAliases';
+import { countText, readCounts, type CountAlias } from '../countAliases';
 import { toDonutRows } from '../memberCards/memberCardData';
 import type { PanelComponentProps } from '../types';
 import ScopedCard from './ScopedCard';
@@ -96,7 +91,7 @@ const SessionStatusView: React.FC<{ data: StatusCounts }> = ({ data }) => {
     running: 'RUNNING',
     terminating: 'TERMINATING',
   };
-  // Every session has one of the four types, so their sum is the active total.
+  // Every session has one of the four types, so the ring's sum is the active total.
   const typeRows = toDonutRows(
     SESSION_TYPES.map(({ key, type }) => ({
       key: type,
@@ -104,7 +99,6 @@ const SessionStatusView: React.FC<{ data: StatusCounts }> = ({ data }) => {
       count: counts[key],
     })),
   );
-  const typeTotal = sumCounts(SESSION_TYPES.map(({ key }) => counts[key]));
   return (
     <BAIFlex
       direction="column"
@@ -129,7 +123,6 @@ const SessionStatusView: React.FC<{ data: StatusCounts }> = ({ data }) => {
           value: t('dashboard.card.Count'),
           percent: t('dashboard.card.Share'),
         }}
-        total={typeTotal ?? '-'}
         rows={typeRows}
       />
     </BAIFlex>

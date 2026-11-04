@@ -11,6 +11,8 @@ export interface DonutRow {
   value: number;
   /** Share of the total, 0-100; 0 for every row when the total is 0. */
   percent: number;
+  /** The count was denied, so `value` is 0 and the total is unknown. */
+  isUnknown?: boolean;
 }
 
 /** Legend rows for manager-counted slices, in the given order. */
@@ -24,6 +26,7 @@ export const toDonutRows = (
     label: slice.label,
     value: values[index],
     percent: total > 0 ? Math.round((values[index] / total) * 100) : 0,
+    ...(slice.count === null ? { isUnknown: true } : {}),
   }));
 };
 
