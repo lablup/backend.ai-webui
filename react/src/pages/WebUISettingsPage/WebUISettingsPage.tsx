@@ -5,11 +5,11 @@
 import BAIErrorBoundary from '../../components/BAIErrorBoundary';
 import { WEBUI_SETTINGS_CONFIG_KEY } from '../../helper/webuiSettings';
 import { useSuspendedBackendaiClient, useTabQuerySnapshot } from '../../hooks';
-import ConfigurationsSettingList from '../ConfigurationsPage/components/ConfigurationsSettingList';
 import {
   useDomainAppConfig,
   useRawPublicDomainAppConfig,
 } from '../../hooks/useAppConfig';
+import ConfigurationsSettingList from './components/ConfigurationsSettingList';
 import WebUISettingList from './components/WebUISettingList';
 import { BAICard, BAIFlex, BAISkeleton } from 'backend.ai-ui';
 import { parseAsStringLiteral } from 'nuqs';
