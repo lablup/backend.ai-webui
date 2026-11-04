@@ -74,7 +74,7 @@ flowchart LR
 
 - **Noun**: `<noun>`은 snake_case 단수형이고, schema의 resource 이름을 쓴다(`session`, `vfolder`, `deployment`, `model_card`).
 - **App shell tools**: 특정 page에 속하지 않는 tool은 짧은 동사구로 이름을 짓는다. FR-4073이 `bai_whoami`, `bai_get_current_page`, `bai_navigate`를 app shell에 둔다.
-- **Pending**: page가 새 page나 filter를 아직 불러오는 동안 화면의 행은 이전 결과다. 그동안 `bai_list_visible_<noun>`, `bai_get_<noun>_filter`, `bai_get_current_<noun>`의 결과에는 `pending: true`가 붙고, agent는 다시 부른다. page가 넘기는 값만으로는 부족하다. 같은 page 안의 `bai_navigate` 뒤에는 router의 search가 먼저 바뀌고, page의 URL 상태와 `useDeferredValue`는 아직 이전 view에 머물 수 있다. 그래서 `usePageReadTools`는 `window.location.search`가 행을 그린 search와 다를 때, 또는 URL에 있는 param이 page가 그린 view 상태와 다를 때(`viewLagsUrl`)도 `pending`을 붙인다.
+- **Pending**: page가 새 page나 filter를 아직 불러오는 동안 화면의 행은 이전 결과다. 그동안 `bai_list_visible_<noun>`, `bai_get_<noun>_filter`, `bai_get_current_<noun>`의 결과에는 `pending: true`가 붙고, agent는 다시 부른다. page가 넘기는 값만으로는 부족하다. 같은 page 안의 `bai_navigate` 뒤에는 router의 search가 먼저 바뀌고, page의 URL 상태와 `useDeferredValue`는 아직 이전 view에 머물 수 있다. 그래서 `usePageReadTools`는 `window.location.search`가 행을 그린 search와 다를 때, 또는 URL에 있는 param이 page가 그린 view 상태와 다를 때(`viewLagsUrl`)도 `pending`을 붙인다. Users와 Credentials page는 같은 view를 새로 고치는 동안에도 `pending`을 보고하므로, `pending`은 다시 부르라는 뜻이지 view가 바뀌었다는 뜻이 아니다.
 - **Unique names**: tool 작성자는 같은 이름의 tool이 두 component에서 동시에 mount되지 않도록 등록 위치를 고른다. 브라우저가 중복 이름을 거절하면 `useWebMCPTool`은 `useBAILogger`로 경고만 남긴다. 이름에 project나 tab을 넣어 중복을 피하지 않는다.
 
 ### 4. tool은 읽기, 이동, form 채우기만 한다
