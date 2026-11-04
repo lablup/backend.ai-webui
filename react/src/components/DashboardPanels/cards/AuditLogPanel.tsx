@@ -601,7 +601,17 @@ export const AuditLogRows: React.FC<{
   current: number;
   pageSize: number;
   onChangePage: (current: number, pageSize: number) => void;
-}> = ({ data, hideTriggeredBy, loading, current, pageSize, onChangePage }) => {
+  /** Adds a copy button for the full description beside the truncated text. */
+  copyableDescription?: boolean;
+}> = ({
+  data,
+  hideTriggeredBy,
+  loading,
+  current,
+  pageSize,
+  onChangePage,
+  copyableDescription,
+}) => {
   'use memo';
   const { t } = useTranslation();
   const logs = readPrimary(data.logs);
@@ -634,19 +644,43 @@ export const AuditLogRows: React.FC<{
                   </BAIText>
                 ),
               }
-            : column.key === 'entityType'
+            : column.key === 'description' && copyableDescription
               ? {
                   ...column,
                   defaultHidden: false,
                   render: (
                     _value: unknown,
-                    record: { entityType?: string | null },
+                    record: {
+                      status?: string | null;
+                      description?: string | null;
+                    },
                   ) =>
-                    record.entityType
-                      ? rbacTypeLabel(t, record.entityType)
-                      : '-',
+                    (record.status === 'ERROR' || record.status === 'DENIED') &&
+                    record.description ? (
+                      <BAIText
+                        ellipsis={{ tooltip: true }}
+                        copyable={{ text: record.description }}
+                        style={{ width: '100%' }}
+                      >
+                        {record.description}
+                      </BAIText>
+                    ) : (
+                      '-'
+                    ),
                 }
-              : { ...column, defaultHidden: false },
+              : column.key === 'entityType'
+                ? {
+                    ...column,
+                    defaultHidden: false,
+                    render: (
+                      _value: unknown,
+                      record: { entityType?: string | null },
+                    ) =>
+                      record.entityType
+                        ? rbacTypeLabel(t, record.entityType)
+                        : '-',
+                  }
+                : { ...column, defaultHidden: false },
         )
       }
       pagination={{

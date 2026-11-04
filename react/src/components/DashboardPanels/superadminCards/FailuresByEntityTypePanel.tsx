@@ -55,6 +55,7 @@ const FailedEntries: React.FC<{
         <AuditLogRows
           data={data}
           hideTriggeredBy={false}
+          copyableDescription
           loading={deferred !== variables}
           current={tablePaginationOption.current}
           pageSize={tablePaginationOption.pageSize}
