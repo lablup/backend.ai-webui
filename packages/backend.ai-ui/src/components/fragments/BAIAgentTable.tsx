@@ -32,6 +32,7 @@ import {
   useBAIResourceSlots,
   useConnectedBAIClient,
 } from '../provider';
+import { Badge } from '@astryxdesign/core/Badge';
 import { Text } from '@astryxdesign/core/Text';
 import { Token } from '@astryxdesign/core/Token';
 import dayjs from 'dayjs';
@@ -541,6 +542,9 @@ const StatusCell: React.FC<{
           },
         ]}
       />
+      {value && value !== 'ALIVE' ? (
+        <Badge variant={badgeVariantForStatus('agent', value)} label={value} />
+      ) : null}
       {parsedComputePlugins?.cuda ? (
         <>
           {parsedComputePlugins?.cuda?.cuda_version ? (
