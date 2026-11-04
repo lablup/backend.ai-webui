@@ -587,6 +587,42 @@
     "Title": "Accedi con la Backend.AI WebUI Agent CLI",
     "VerificationCode": "Codice di verifica"
   },
+  "clientIpMasking": {
+    "ClientIpMasking": "Mascheramento dell'IP client",
+    "CreatePolicy": "Crea policy",
+    "DefaultPrefix": "/{{prefix}} (predefinito)",
+    "DeleteDefaultPolicyDescription": "Le destinazioni senza una propria policy memorizzeranno gli IP client così come osservati.",
+    "DeletePolicy": "Eliminare questa policy di mascheramento?",
+    "DeletePolicyDescription": "{{target}} tornerà alla policy predefinita.",
+    "Description": "Imposta come vengono mascherati gli indirizzi IP client prima della memorizzazione. Una destinazione senza policy propria segue la policy predefinita; se non esiste, gli indirizzi vengono memorizzati così come osservati.",
+    "EditPolicy": "Modifica policy",
+    "IPv4Prefix": "Lunghezza prefisso IPv4",
+    "IPv6Prefix": "Lunghezza prefisso IPv6",
+    "Mode": "Modalità di mascheramento",
+    "ModeRequired": "Seleziona una modalità di mascheramento.",
+    "OnePolicyPerTarget": "Può esistere una sola policy per destinazione.",
+    "PrefixExtra": "Numero di bit iniziali da mantenere (0–{{max}}). Lascia vuoto per usare {{defaultPrefix}}.",
+    "PrefixRange": "Inserisci un numero tra 0 e {{max}}.",
+    "SuccessfullyDeleted": "Policy di mascheramento dell'IP client eliminata.",
+    "SuccessfullySaved": "Policy di mascheramento dell'IP client salvata.",
+    "Target": "Destinazione della policy",
+    "TargetRequired": "Seleziona una destinazione della policy.",
+    "modeDescriptions": {
+      "DROP": "Nessun IP client viene registrato.",
+      "NONE": "Gli IP client vengono memorizzati così come osservati.",
+      "TRUNCATE": "I bit host vengono azzerati, mantenendo solo il prefisso di rete."
+    },
+    "modes": {
+      "DROP": "Scarta",
+      "NONE": "Nessuna",
+      "TRUNCATE": "Tronca"
+    },
+    "targets": {
+      "AUDIT_LOGS": "Log di audit",
+      "DEFAULT": "Predefinito",
+      "LOGIN_HISTORY": "Cronologia accessi"
+    }
+  },
   "credential": {
     "2FAEnabled": "2FA abilitata",
     "AccessKey": "Chiave di accesso",
@@ -2764,8 +2800,6 @@
     "DeleteResourceGroup": "Elimina il gruppo delle risorse",
     "Description": "Descrizione",
     "Domain": "Dominio",
-    "Driver": "autista",
-    "DriverOptions": "Opzioni conducente Driver",
     "DuplicateHandlerOverride": "Questo handler è già sovrascritto.",
     "DuplicateResourceSlot": "Questo slot di risorse è già stato aggiunto.",
     "EditDefaultDeploymentOptions": "Modifica opzioni di distribuzione predefinite",

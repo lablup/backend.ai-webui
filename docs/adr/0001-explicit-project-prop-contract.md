@@ -80,7 +80,7 @@ of the ambient hook and pass `project={currentProject}` explicitly.
 - **Prefer "no null state" over the Modal tier when the surface that can
   reach the component is itself always project-scoped.** The in-modal
   selector exists for components an oversight surface can legitimately open
-  without a project. When creation is offered _only_ from project-scoped
+  without a project. When creation is offered *only* from project-scoped
   menus, `null` is not a reachable state and modelling it invites a silent
   wrong-project path plus dead selector UI. In that case make the prop a
   non-null `ProjectContext` — expressed as a props union when the same
@@ -169,10 +169,10 @@ narrowing helper for the loosely-typed ambient value).
       the folder's own `ownership.projectId`, never a page-supplied one.
       Domain admins are excluded: they hold no implicit per-project
       ownership rights.
-      Neither consults `useEffectiveAdminRole`, whose target project comes
-      from the ambient value — which is why the `project` prop dropped out of
-      both gates entirely, and why super-admin abilities no longer flicker
-      with header state.
+    Neither consults `useEffectiveAdminRole`, whose target project comes
+    from the ambient value — which is why the `project` prop dropped out of
+    both gates entirely, and why super-admin abilities no longer flicker
+    with header state.
   - The globally-mounted `FolderExplorerModalV2` (see the route-derivation
     exception below) now keys `useMergedAllowedStorageHostPermission` to
     the folder's own ownership project when the folder is project-owned;
@@ -240,7 +240,7 @@ narrowing helper for the loosely-typed ambient value).
     `AdminModelCardListPage`, `PendingSessionNodeList`, `AdminUsersPage`,
     `ResourcePolicyPage`, `SchedulerPage`, `ResourcesPage`, `ProjectPage`,
     `ConfigurationsPage`, `MaintenancePage`, `DiagnosticsPage`,
-    `RBACManagementPage`, `BrandingPage`, `components/Information`), pointing
+    `RBACManagementPage`, `BrandingPage`, `pages/InformationPage/InformationPage`), pointing
     violators at this ADR. `EnvironmentPage`, `ReservoirPage`,
     `AdminDashboardPage` (all excluded from the flip) and
     `DeploymentDetailPage` (sanctioned page-level reader) are excluded.

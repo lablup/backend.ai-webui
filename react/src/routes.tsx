@@ -40,8 +40,8 @@ import {
 } from './hooks/useWebUIMenuItems';
 import { pluginApiEndpointState } from './hooks/useWebUIPluginState';
 import { AdminRedirect, ProjectScopedRedirect } from './legacyRedirects';
-import Page404 from './pages/Page404';
-import UnknownRoutePage from './pages/UnknownRoutePage';
+import Page404 from './pages/Page404/Page404';
+import UnknownRoutePage from './pages/UnknownRoutePage/UnknownRoutePage';
 import { toProjectContext } from './types/projectContext';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAISkeleton, BAIFlex, BAICard } from 'backend.ai-ui';
@@ -52,31 +52,41 @@ import { useTranslation } from 'react-i18next';
 import { RouteObject, useParams } from 'react-router-dom';
 
 const ComputeSessionListPage = React.lazy(
-  () => import('./pages/ComputeSessionListPage'),
+  () => import('./pages/ComputeSessionListPage/ComputeSessionListPage'),
 );
 const VFolderNodeListPage = React.lazy(
-  () => import('./pages/VFolderNodeListPage'),
+  () => import('./pages/VFolderNodeListPage/VFolderNodeListPage'),
 );
 
-const Information = React.lazy(() => import('./components/Information'));
-const StartPage = React.lazy(() => import('./pages/StartPage'));
+const InformationPage = React.lazy(
+  () => import('./pages/InformationPage/InformationPage'),
+);
+const StartPage = React.lazy(() => import('./pages/StartPage/StartPage'));
 // Astryx/StyleX foundation probe (to-astryx ticket 01).
 const AstryxStylexProbePage = React.lazy(
-  () => import('./pages/AstryxStylexProbePage'),
+  () => import('./pages/AstryxStylexProbePage/AstryxStylexProbePage'),
 );
-const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
+const DashboardPage = React.lazy(
+  () => import('./pages/DashboardPage/DashboardPage'),
+);
 const AdminDashboardPage = React.lazy(
-  () => import('./pages/AdminDashboardPage'),
+  () => import('./pages/AdminDashboardPage/AdminDashboardPage'),
 );
-const EnvironmentPage = React.lazy(() => import('./pages/EnvironmentPage'));
-const MyEnvironmentPage = React.lazy(() => import('./pages/MyEnvironmentPage'));
+const EnvironmentPage = React.lazy(
+  () => import('./pages/EnvironmentPage/EnvironmentPage'),
+);
+const MyEnvironmentPage = React.lazy(
+  () => import('./pages/MyEnvironmentPage/MyEnvironmentPage'),
+);
 const SessionLauncherPage = React.lazy(
-  () => import('./pages/SessionLauncherPage'),
+  () => import('./pages/SessionLauncherPage/SessionLauncherPage'),
 );
 const ResourcePolicyPage = React.lazy(
-  () => import('./pages/ResourcePolicyPage'),
+  () => import('./pages/ResourcePolicyPage/ResourcePolicyPage'),
 );
-const ResourcesPage = React.lazy(() => import('./pages/ResourcesPage'));
+const ResourcesPage = React.lazy(
+  () => import('./pages/ResourcesPage/ResourcesPage'),
+);
 const FolderExplorerOpener = React.lazy(
   () => import('./components/FolderExplorerOpener'),
 );
@@ -91,72 +101,95 @@ const UserSettingsModalOpener = React.lazy(
 );
 
 const DeploymentListPage = React.lazy(
-  () => import('./pages/DeploymentListPage'),
+  () => import('./pages/DeploymentListPage/DeploymentListPage'),
 );
 const DeploymentDetailPage = React.lazy(
-  () => import('./pages/DeploymentDetailPage'),
+  () => import('./pages/DeploymentDetailPage/DeploymentDetailPage'),
 );
 const AdminDeploymentPage = React.lazy(
-  () => import('./pages/AdminDeploymentPage'),
+  () => import('./pages/AdminDeploymentPage/AdminDeploymentPage'),
 );
-const CliLoginPage = React.lazy(() => import('./pages/CliLoginPage'));
+const CliLoginPage = React.lazy(
+  () => import('./pages/CliLoginPage/CliLoginPage'),
+);
 const InteractiveLoginPage = React.lazy(
-  () => import('./pages/InteractiveLoginPage'),
+  () => import('./pages/InteractiveLoginPage/InteractiveLoginPage'),
 );
-const AdminUsersPage = React.lazy(() => import('./pages/AdminUsersPage'));
+const AdminUsersPage = React.lazy(
+  () => import('./pages/AdminUsersPage/AdminUsersPage'),
+);
 
-const AgentSummaryPage = React.lazy(() => import('./pages/AgentSummaryPage'));
-const MaintenancePage = React.lazy(() => import('./pages/MaintenancePage'));
-const DiagnosticsPage = React.lazy(() => import('./pages/DiagnosticsPage'));
-const StatisticsPage = React.lazy(() => import('./pages/StatisticsPage'));
+const AgentSummaryPage = React.lazy(
+  () => import('./pages/AgentSummaryPage/AgentSummaryPage'),
+);
+const MaintenancePage = React.lazy(
+  () => import('./pages/MaintenancePage/MaintenancePage'),
+);
+const DiagnosticsPage = React.lazy(
+  () => import('./pages/DiagnosticsPage/DiagnosticsPage'),
+);
+const StatisticsPage = React.lazy(
+  () => import('./pages/StatisticsPage/StatisticsPage'),
+);
 const ConfigurationsPage = React.lazy(
-  () => import('./pages/ConfigurationsPage'),
+  () => import('./pages/ConfigurationsPage/ConfigurationsPage'),
 );
 const SessionDetailAndContainerLogOpenerLegacy = React.lazy(
   () => import('./components/SessionDetailAndContainerLogOpenerLegacy'),
 );
-const ProjectPage = React.lazy(() => import('./pages/ProjectPage'));
+const ProjectPage = React.lazy(() => import('./pages/ProjectPage/ProjectPage'));
 
-const ChatPage = React.lazy(() => import('./pages/ChatPage'));
+const ChatPage = React.lazy(() => import('./pages/ChatPage/ChatPage'));
 
-const AIAgentPage = React.lazy(() => import('./pages/AIAgentPage'));
-const ReservoirPage = React.lazy(() => import('./pages/ReservoirPage'));
+const AIAgentPage = React.lazy(() => import('./pages/AIAgentPage/AIAgentPage'));
+const ReservoirPage = React.lazy(
+  () => import('./pages/ReservoirPage/ReservoirPage'),
+);
 const ReservoirArtifactDetailPage = React.lazy(
-  () => import('./pages/ReservoirArtifactDetailPage'),
+  () =>
+    import('./pages/ReservoirArtifactDetailPage/ReservoirArtifactDetailPage'),
 );
 
-const SchedulerPage = React.lazy(() => import('./pages/SchedulerPage'));
-const BrandingPage = React.lazy(() => import('./pages/BrandingPage'));
-const RBACManagementPage = React.lazy(
-  () => import('./pages/RBACManagementPage'),
+const SchedulerPage = React.lazy(
+  () => import('./pages/SchedulerPage/SchedulerPage'),
 );
-const AdminSessionPage = React.lazy(() => import('./pages/AdminSessionPage'));
+const BrandingPage = React.lazy(
+  () => import('./pages/BrandingPage/BrandingPage'),
+);
+const RBACManagementPage = React.lazy(
+  () => import('./pages/RBACManagementPage/RBACManagementPage'),
+);
+const AdminSessionPage = React.lazy(
+  () => import('./pages/AdminSessionPage/AdminSessionPage'),
+);
 const AdminDeploymentPresetSettingPage = React.lazy(
-  () => import('./pages/AdminDeploymentPresetSettingPage'),
+  () =>
+    import('./pages/AdminDeploymentPresetSettingPage/AdminDeploymentPresetSettingPage'),
 );
 const AdminVFolderNodeListPage = React.lazy(
-  () => import('./pages/AdminVFolderNodeListPage'),
+  () => import('./pages/AdminVFolderNodeListPage/AdminVFolderNodeListPage'),
 );
 const ProjectAdminUsersPage = React.lazy(
-  () => import('./pages/ProjectAdminUsersPage'),
+  () => import('./pages/ProjectAdminUsersPage/ProjectAdminUsersPage'),
 );
 const ProjectAdminDeploymentsPage = React.lazy(
-  () => import('./pages/ProjectAdminDeploymentsPage'),
+  () =>
+    import('./pages/ProjectAdminDeploymentsPage/ProjectAdminDeploymentsPage'),
 );
 const ProjectAdminSessionPage = React.lazy(
-  () => import('./pages/ProjectAdminSessionPage'),
+  () => import('./pages/ProjectAdminSessionPage/ProjectAdminSessionPage'),
 );
 const EmailVerificationPage = React.lazy(
-  () => import('./pages/EmailVerificationPage'),
+  () => import('./pages/EmailVerificationPage/EmailVerificationPage'),
 );
 const ChangePasswordPage = React.lazy(
-  () => import('./pages/ChangePasswordPage'),
+  () => import('./pages/ChangePasswordPage/ChangePasswordPage'),
 );
 const EduAppLauncherPage = React.lazy(
-  () => import('./pages/EduAppLauncherPage'),
+  () => import('./pages/EduAppLauncherPage/EduAppLauncherPage'),
 );
 const ModelStoreListPageV2 = React.lazy(
-  () => import('./pages/ModelStoreListPageV2'),
+  () => import('./pages/ModelStoreListPageV2/ModelStoreListPageV2'),
 );
 
 const DefaultMenuRedirect: React.FC = () => {
@@ -976,7 +1009,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         path: 'information',
         element: (
           <Suspense fallback={<BAISkeleton rows={4} />}>
-            <Information />
+            <InformationPage />
           </Suspense>
         ),
         handle: {
@@ -1442,8 +1475,7 @@ const AutoDiagnosticsRunner = () => {
  * Route-level gate that delegates to `STokenLoginBoundary` when an sToken
  * is present in the URL (transparently passes through otherwise). Sourced
  * here so the regular `LoginView` + `MainLayout` tree never re-reads the
- * URL query for authentication — see the spec "URL 파라미터 파싱 규약
- * (nuqs)" section for the invariant.
+ * URL query for authentication (ADR 0022).
  *
  * On boundary success, the route-level `onSuccess` persists the login
  * state (`last_login`, `login_attempt`, saved-credential cleanup,

@@ -587,6 +587,42 @@
     "Title": "Backend.AI WebUI Agent CLI 로그인",
     "VerificationCode": "확인 코드"
   },
+  "clientIpMasking": {
+    "ClientIpMasking": "클라이언트 IP 마스킹",
+    "CreatePolicy": "정책 생성",
+    "DefaultPrefix": "/{{prefix}} (기본값)",
+    "DeleteDefaultPolicyDescription": "자체 정책이 없는 대상은 클라이언트 IP를 그대로 저장합니다.",
+    "DeletePolicy": "이 마스킹 정책을 삭제하시겠습니까?",
+    "DeletePolicyDescription": "{{target}}은(는) 기본 정책을 따르게 됩니다.",
+    "Description": "클라이언트 IP 주소를 저장하기 전에 어떻게 마스킹할지 설정합니다. 자체 정책이 없는 대상은 기본 정책을 따르며, 기본 정책이 없으면 주소를 그대로 저장합니다.",
+    "EditPolicy": "정책 수정",
+    "IPv4Prefix": "IPv4 프리픽스 길이",
+    "IPv6Prefix": "IPv6 프리픽스 길이",
+    "Mode": "마스킹 방식",
+    "ModeRequired": "마스킹 방식을 선택해 주세요.",
+    "OnePolicyPerTarget": "대상마다 정책은 하나만 존재할 수 있습니다.",
+    "PrefixExtra": "유지할 앞쪽 비트 수입니다 (0–{{max}}). 비워 두면 {{defaultPrefix}}을(를) 사용합니다.",
+    "PrefixRange": "0에서 {{max}} 사이의 숫자를 입력해 주세요.",
+    "SuccessfullyDeleted": "클라이언트 IP 마스킹 정책을 삭제했습니다.",
+    "SuccessfullySaved": "클라이언트 IP 마스킹 정책을 저장했습니다.",
+    "Target": "정책 대상",
+    "TargetRequired": "정책 대상을 선택해 주세요.",
+    "modeDescriptions": {
+      "DROP": "클라이언트 IP를 기록하지 않습니다.",
+      "NONE": "클라이언트 IP를 그대로 저장합니다.",
+      "TRUNCATE": "호스트 비트를 0으로 바꾸고 네트워크 프리픽스만 남깁니다."
+    },
+    "modes": {
+      "DROP": "기록 안 함",
+      "NONE": "없음",
+      "TRUNCATE": "잘라내기"
+    },
+    "targets": {
+      "AUDIT_LOGS": "감사 로그",
+      "DEFAULT": "기본",
+      "LOGIN_HISTORY": "로그인 기록"
+    }
+  },
   "credential": {
     "2FAEnabled": "이중인중 활성화",
     "AccessKey": "액세스 키",
@@ -2766,8 +2802,6 @@
     "DeleteResourceGroup": "자원 그룹 삭제",
     "Description": "설명",
     "Domain": "도메인",
-    "Driver": "드라이버",
-    "DriverOptions": "드라이버 옵션",
     "DuplicateHandlerOverride": "이미 재정의된 handler입니다.",
     "DuplicateResourceSlot": "이미 추가된 리소스 슬롯입니다.",
     "EditDefaultDeploymentOptions": "기본 배포 옵션 수정",
