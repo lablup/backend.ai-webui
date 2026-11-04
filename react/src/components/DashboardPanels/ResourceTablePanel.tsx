@@ -26,8 +26,8 @@ export interface ResourceTablePanelProps {
 
 /**
  * The generic executor for every table panel: title + table, in the SAME shell
- * as the built-in board items (paddingInline XL, title row with a refresh
- * button, scrollable content). The condition lives in the descriptor and is
+ * as the built-in board items (PanelFrame: the board's title row with a
+ * refresh button, scrollable content). The condition lives in the descriptor and is
  * expressed through the TITLE; it is edited only via the panel modal (edit
  * mode), never inline — so a locked board can be explored (pagination) without
  * ever mutating panel config.

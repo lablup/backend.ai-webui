@@ -9,6 +9,7 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   useFetchKey,
+  useIsInBAIBoardItem,
 } from 'backend.ai-ui';
 import React, { useTransition } from 'react';
 
@@ -24,9 +25,10 @@ export interface PanelFrameProps {
 }
 
 /**
- * The shared custom-panel shell, matching the built-in board items: the same
- * horizontal inset, a sticky title row carrying the refresh button (plus the
- * edit/remove controls while the board is in edit mode), and a scrollable body.
+ * The shared custom-panel shell, matching the built-in board items: a sticky
+ * title row carrying the refresh button (plus the edit/remove controls while
+ * the board is in edit mode) and a scrollable body. On a board the board pads
+ * both; elsewhere (the panel modal's preview) the frame insets itself.
  */
 const PanelFrame: React.FC<PanelFrameProps> = ({
   title,
@@ -36,6 +38,7 @@ const PanelFrame: React.FC<PanelFrameProps> = ({
 }) => {
   'use memo';
   const { token } = useTheme();
+  const isInBoard = useIsInBAIBoardItem();
   const [localFetchKey, updateLocalFetchKey] = useFetchKey();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
@@ -43,7 +46,10 @@ const PanelFrame: React.FC<PanelFrameProps> = ({
     <BAIFlex
       direction="column"
       align="stretch"
-      style={{ paddingInline: token('--spacing-8'), height: '100%' }}
+      style={{
+        height: '100%',
+        ...(isInBoard ? {} : { paddingInline: token('--spacing-8') }),
+      }}
     >
       <BAIBoardItemTitle
         title={title}
@@ -74,9 +80,10 @@ const PanelFrame: React.FC<PanelFrameProps> = ({
         align="stretch"
         style={{
           flex: 1,
+          minHeight: 0,
           overflowY: 'auto',
           overflowX: 'hidden',
-          marginBottom: token('--spacing-4'),
+          ...(isInBoard ? {} : { marginBottom: token('--spacing-4') }),
         }}
       >
         {children(localFetchKey)}
