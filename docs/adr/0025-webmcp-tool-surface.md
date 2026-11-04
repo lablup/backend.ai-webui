@@ -87,6 +87,12 @@ flowchart LR
 
 - **Enforced by the tool list**: WebUI keeps this rule by not building any `execute` that calls a submit or a delete. Even if an agent can press an approve button in the UI, calling a tool does not cause that action.
 - **Prepare description**: The `description` of a `bai_prepare_<noun>` tool states that the tool does not submit the form and that a person submits it.
+- **Hand-off by link**: An agent usually works in its own browser, which the user cannot see. So `bai_prepare_<noun>` returns a `webui_url` that opens the same filled form, and the user opens that link in their own browser, reviews the form, and submits it. The form state travels in the URL; secret values do not.
+- **Agent-filled marker**: The URL of a form that `bai_prepare_<noun>` opened carries an `agentPrefill` parameter, and while that parameter is present the page shows a notice that an AI agent filled the form and it must be reviewed before submitting. `bai_navigate` refuses a path that carries form state (`formValues`) with `use_prepare_tool`, so no form is filled without the notice.
+- **Applied and unverified**: The `applied` field of `bai_prepare_<noun>` holds only values that went in as given and values read back from the form. Values that the form's rules or the server can still change go in `unverified`. When there is nothing to fill, the tool does not open the form.
+- **Link warnings**: When `webui_url` is longer than 6000 characters, the result says so in `warnings: [{ field, reason }]`. This is about the link itself, not a form value, so it stays apart from `unverified`. 6000 sits below the default 8 KB request line of aiohttp and nginx; it was not measured on a real deployment.
+- **Secrets stay out of the link**: `webui_url` carries form values in plain text and passes through chat and browser history. So the description of an input that takes text a person writes (such as `startupCommand`) says not to put secrets in it, and the user adds secrets in the launcher's environment variables themselves. The launcher already syncs a form a person types into the URL the same way, so the warning is about the link travelling through chat, not about a new place the value is stored.
+- **Next step**: `nextStep` says what to do with the result. When `rejected` is not empty it says to fix the fields and call again, or to tell the user what was not applied, and it does not say to hand over the link. When `rejected` names the image, the form already holds another image the launcher chose, and the text says so.
 - **No extra data**: A tool returns only the data that the component that registered it draws on screen. A tool does not fetch fields that permissions keep off the screen.
 - **No login by URL**: `bai_navigate` refuses a path that carries an `sToken` or `stoken` parameter (`path_not_allowed`), because arriving with that parameter starts a login.
 
@@ -118,6 +124,7 @@ flowchart LR
 
 - **Shape**: Every error is `{ error: { code, message, issues? } }` (`WebMCPErrorResult`).
 - **Success shape**: A successful call returns one JSON object with camelCase keys.
+- **Link key**: The absolute URL to hand to a person goes in the `webui_url` key. The `bai-agent` CLI's query rows use the same name, so an agent hands the user the same key whether it came from the CLI or the browser. It is the one exception to the camelCase rule.
 
 ### 7. Annotations only under fixed conditions
 
@@ -131,7 +138,7 @@ flowchart LR
 
 ### 8. The component that owns the data registers, and unmount unregisters
 
-- **Owner**: The component that already holds a tool's data, or the open state of its form, registers the tool with `useWebMCPTool(tool)`. The page component that holds the state that opens the form registers `bai_prepare_<noun>`. A component does not send a new query for a tool.
+- **Owner**: The component that already holds a tool's data, or the open state of its form, registers the tool with `useWebMCPTool(tool)`. The page component that holds the state that opens the form registers `bai_prepare_<noun>`. A component does not send a new query to register a tool. There is one exception: `bai_prepare_<noun>` may look up a reference the agent gave by name (for example a folder to mount) with a read-only query at call time. Registering sends no request, and the query is narrowed to the given names and to what the user could pick in that form.
 - **Lifetime**: `useWebMCPTool` aborts, on unmount, the `AbortController` it created at registration. When the route changes, the previous page's tools disappear and the new page's tools are registered.
 - **Re-registration**: When any of `name`, `description`, `inputSchema`, or `annotations` changes, `useWebMCPTool` aborts the previous registration and registers again.
 - **Latest closure**: The browser calls `execute` long after the effect has finished, so `useWebMCPTool` builds a stable `execute` with BUI's `useEventNotStable` (`useEffectEvent` is safe only inside an effect). `useEventNotStable` swaps in the latest closure in a layout effect, so `execute` always reads the values of the latest render, and a change of values alone does not cause re-registration.
