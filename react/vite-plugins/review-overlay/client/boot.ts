@@ -187,10 +187,8 @@ function boot(host: OverlayHost): OverlayHandle {
   } | null = null;
   /**
    * The encoded anchor for `note`, done the moment the reviewer picks and
-   * again whenever they pause typing — NOT when they press ⌘⏎.
-   * `execCommand('copy')` is the only clipboard on the plain-http gateway
-   * origin and it needs the user activation still to be live, so nothing may
-   * be awaited between the gesture and the write.
+   * again whenever they pause typing — NOT when they press ⌘⏎, which adds
+   * the pin synchronously from it.
    */
   let capture: { epoch: number; note: string; value: AnchorCapture } | null =
     null;
@@ -243,7 +241,7 @@ function boot(host: OverlayHost): OverlayHandle {
 
   const ui = createOverlayUI(
     {
-      onBuildBlock: (text) => {
+      onAddPin: (text) => {
         if (capture?.epoch !== ui.composeSession() || capture.note !== text)
           return null;
         if (store.isFull())
@@ -252,14 +250,8 @@ function boot(host: OverlayHost): OverlayHandle {
           };
         const pin = pickedPin(capture.value, text);
         if (store.has(pin.id)) return { refused: 'Already pinned' };
-        const set = [...draft, pin];
         return {
-          text: buildSetText(set, copyOptions()),
-          html: buildSetHtml(set, copyOptions()),
-          toast: copiedToast(set.length),
-          addedToast: `Added pin ${set.length} to your set — Copy all from the dock when you are done`,
-          // The pin joins the set only once THIS write has landed (or "Add to
-          // set" skipped the write): a failed or abandoned copy adds nothing.
+          toast: `Added pin ${draft.length + 1} to your set — copy it from the dock when you are done`,
           commit: () => {
             store.add(pin);
             syncDraft();
@@ -527,7 +519,9 @@ function boot(host: OverlayHost): OverlayHandle {
   const stackPending = (pin: SetPin): boolean =>
     pin.origin === 'link' && !pin.stack.length && !stacks.get(pin.id)?.ready;
 
-  function buildComment(target: DeepLinkPinTarget): PinCopyPayload | null {
+  function buildComment(
+    target: Pick<DeepLinkPinTarget, 'id'>,
+  ): PinCopyPayload | null {
     const pin = draft.find((held) => held.id === target.id);
     if (!pin) return null;
     if (stackPending(pin)) return null;
@@ -578,6 +572,11 @@ function boot(host: OverlayHost): OverlayHandle {
     onRemove: removeFromSet,
     onMove: moveInSet,
     onEdit: startEdit,
+    onCopyOne: (id) => {
+      const payload = buildComment({ id });
+      if (!payload) return ui.showToast('Still reading this pin — try again');
+      ui.copyWithToast(payload);
+    },
     onUnhide: revealPin,
     onToggleCards: toggleCards,
     onToggleAccount: () => {

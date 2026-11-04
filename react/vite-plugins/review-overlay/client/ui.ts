@@ -17,7 +17,7 @@
 import { icon, ICON_STYLE } from './icons.js';
 import { fractionWithin, projectFraction, type Box } from './selection.js';
 import { liftAboveTopLayer } from './top-layer.js';
-import type { AnchorRect, CopyPayload, OverlayPalette } from './types.js';
+import type { AnchorRect, OverlayPalette } from './types.js';
 
 /**
  * The attribute the shadow host carries, and the only mark a host — or another
@@ -42,19 +42,16 @@ const NOTE_DEBOUNCE_MS = 250;
 const COMPOSE_GAP = 10;
 const VIEWPORT_PAD = 8;
 
-/** What the composer copies, and what to run once it has. */
-export interface ComposedCopy extends CopyPayload {
-  /**
-   * Runs only when THIS copy landed on the clipboard; closing the composer
-   * mid-write does not cancel it, so a write that failed adds nothing.
-   * "Add to set" runs it with no write at all.
-   */
-  commit?: () => void;
-  /** What "Add to set" says once `commit` ran without a clipboard write. */
-  addedToast?: string;
+/**
+ * A pick ready to join the set. The composer never writes the clipboard: the
+ * dock's "Copy all" and its rows' copy buttons hand pins over.
+ */
+export interface ComposedPin {
+  commit: () => void;
+  toast: string;
 }
 
-/** Nothing is copied and the composer stays open; the toast says why. */
+/** Nothing is added and the composer stays open; the toast says why. */
 export interface RefusedCopy {
   refused: string;
 }
@@ -105,14 +102,13 @@ export interface EditorOpen {
 
 export interface OverlayUICallbacks {
   /**
-   * Render the block for this note, SYNCHRONOUSLY — everything async was done
-   * at pick time. `null` means the capture is not ready, which the composer
-   * prevents by keeping the copy button disabled until it is.
+   * The pin for this note, SYNCHRONOUSLY. `null` means the capture is not
+   * ready, which the composer prevents by keeping its button disabled.
    */
-  onBuildBlock: (text: string) => ComposedCopy | RefusedCopy | null;
+  onAddPin: (text: string) => ComposedPin | RefusedCopy | null;
   /**
-   * Edit mode's ⌘⏎: no clipboard at all — the owner re-keys the pin and says
-   * what happened. Synchronous, like `onBuildBlock`.
+   * Edit mode's ⌘⏎: the owner re-keys the pin and says what happened.
+   * Synchronous, like `onAddPin`.
    */
   onSaveNote: (text: string) => SaveResult;
   /** Debounced: the note rides in the anchor, so it has to be re-encoded. */
@@ -361,10 +357,9 @@ export function createOverlayUI(
     .compose .actions {
       display: flex; justify-content: flex-end; gap: 6px; margin-top: 6px;
     }
-    .compose .btn.primary, .compose .btn[data-act="add"] {
+    .compose .btn.primary {
       display: inline-flex; align-items: center; gap: 5px;
     }
-    .compose.editing .btn[data-act="add"] { display: none; }
     .compose .err {
       color: var(--bai-review-error); font-size: 11px; margin-top: 4px;
       display: none;
@@ -389,13 +384,12 @@ ${ICON_STYLE}
   const compose = el('div', 'compose');
   compose.innerHTML = `
     <div class="pathlabel"></div>
-    <textarea aria-label="Review comment on the picked element" placeholder="Comment on this element… (⌘⏎ to copy, ⇧⌘⏎ to add to the set without copying; may be empty)"></textarea>
+    <textarea aria-label="Review comment on the picked element" placeholder="Comment on this element… (⌘⏎ to add it to the set; may be empty)"></textarea>
     <div class="err"></div>
     <div class="warn"></div>
     <div class="actions">
       <button class="btn" data-act="cancel">Cancel</button>
-      <button class="btn" data-act="add" title="Add to the set without touching the clipboard (⇧⌘⏎)"><span class="lbl">Add to set</span></button>
-      <button class="btn primary" data-act="copy"><span class="lbl"></span></button>
+      <button class="btn primary" data-act="save"><span class="lbl"></span></button>
     </div>
   `;
   const toast = el('div', 'toast');
@@ -404,15 +398,11 @@ ${ICON_STYLE}
   const composeText = compose.querySelector('textarea') as HTMLTextAreaElement;
   const composeErr = compose.querySelector('.err') as HTMLElement;
   const composeLabel = compose.querySelector('.pathlabel') as HTMLElement;
-  const copyButton = compose.querySelector(
-    '[data-act="copy"]',
+  const saveButton = compose.querySelector(
+    '[data-act="save"]',
   ) as HTMLButtonElement;
-  const copyLabel = copyButton.querySelector('.lbl') as HTMLElement;
-  copyButton.prepend(icon('copy'));
-  const addButton = compose.querySelector(
-    '[data-act="add"]',
-  ) as HTMLButtonElement;
-  addButton.prepend(icon('map-pin'));
+  const saveLabel = saveButton.querySelector('.lbl') as HTMLElement;
+  saveButton.prepend(icon('map-pin'));
   (compose.querySelector('.warn') as HTMLElement).textContent = EDIT_WARNING;
 
   let pickActive = false;
@@ -480,39 +470,33 @@ ${ICON_STYLE}
 
   /**
    * The note the ready capture was encoded around; `null` while nothing is
-   * ready. The copy gesture may only ever write a block for THIS text.
+   * ready. ⌘⏎ may only ever add a pin for THIS text.
    */
   let readyNote: string | null = null;
   let noteTimer = 0;
-  /** A second ⌘⏎ over an unresolved write would build a second pin. */
-  let copyInFlight = false;
-  /** Bumped by every open: a settled copy may only close the composer it ran from. */
+  /** Bumped by every open, so an owner can tell which open it answers. */
   let composeEpoch = 0;
   let draftFull = false;
   let draftSize = 0;
 
   function syncCopyEnabled() {
-    copyButton.disabled =
+    saveButton.disabled =
       (mode === 'pick' && draftFull) ||
-      copyInFlight ||
       readyNote === null ||
       composeText.value.trim() !== readyNote;
-    addButton.disabled = mode === 'edit' || copyButton.disabled;
   }
 
-  /** The button says what ⌘⏎ does here; an edit only ever saves one note. */
+  /** The button says what ⌘⏎ does here. */
   function syncCopyLabel() {
-    copyButton
+    saveButton
       .querySelector('svg')
-      ?.replaceWith(icon(mode === 'edit' ? 'check' : 'copy'));
-    copyLabel.textContent =
+      ?.replaceWith(icon(mode === 'edit' ? 'check' : 'map-pin'));
+    saveLabel.textContent =
       mode === 'edit'
         ? 'Save note'
         : draftFull
           ? `Set is full (${draftSize})`
-          : draftSize > 0
-            ? `Add & copy all (${draftSize + 1})`
-            : 'Copy block';
+          : 'Add to set';
   }
 
   function setComposeReady(ready: boolean, note = '') {
@@ -784,21 +768,19 @@ ${ICON_STYLE}
 
   // ---------------------------------------------------------------- events
 
-  /** `addOnly` commits the pin to the set and leaves the clipboard alone. */
-  function runCopy(addOnly = false) {
-    if (copyInFlight) return;
-    // Empty text is allowed — the block still carries label, stack and link.
+  function runSave() {
+    // Empty text is allowed — the pin still carries label, stack and link.
     const note = composeText.value.trim();
     // ⌘⏎ can beat the debounce, and the note is part of the anchor now: start
     // the re-encode this keystroke would have started and let them repeat it.
     if (readyNote !== null && note !== readyNote) {
       flushNote();
-      composeErr.textContent = `Still encoding that note — press ${addOnly ? '⇧⌘⏎' : '⌘⏎'} again.`;
+      composeErr.textContent = 'Still encoding that note — press ⌘⏎ again.';
       composeErr.style.display = 'block';
       return;
     }
-    // Editing writes no clipboard: the pin is re-keyed in place, and the set's
-    // own "Copy all" is what replaces a paste that names the retired id.
+    // The pin is re-keyed in place; the set's own "Copy all" is what replaces
+    // a paste that names the retired id.
     if (mode === 'edit') {
       const saved = callbacks.onSaveNote(note);
       if ('refused' in saved) {
@@ -809,11 +791,11 @@ ${ICON_STYLE}
       showToast(saved.toast);
       return;
     }
-    let built: ComposedCopy | RefusedCopy | null;
+    let built: ComposedPin | RefusedCopy | null;
     try {
-      built = callbacks.onBuildBlock(note);
+      built = callbacks.onAddPin(note);
     } catch (e) {
-      composeErr.textContent = `Could not build the block: ${e}`;
+      composeErr.textContent = `Could not build the pin: ${e}`;
       composeErr.style.display = 'block';
       return;
     }
@@ -828,58 +810,27 @@ ${ICON_STYLE}
       composeErr.style.display = 'block';
       return;
     }
-    const block = built;
-    if (addOnly) {
-      block.commit?.();
-      closeCompose();
-      showToast(block.addedToast ?? 'Added to the set');
-      return;
-    }
-    const epoch = composeEpoch;
-    const copied = copyText(block.text, block.html);
-    // Close only on success. A failed copy tells the reviewer to press ⌘⏎
-    // again, so the composer and the note they typed have to still be there.
-    const done = (ok: boolean) => {
-      copyInFlight = false;
-      // Bound to this block, not to whatever the composer holds by now: the
-      // reviewer can close it while an async write is still in flight.
-      if (ok) block.commit?.();
-      syncCopyEnabled();
-      showToast(
-        ok
-          ? (block.toast ?? COPIED_ONE)
-          : 'Could not reach the clipboard — press ⌘⏎ again',
-      );
-      // Only the composer this copy ran from: an async write that settles after
-      // the reviewer moved on must not close the pick they are typing into now.
-      if (ok && epoch === composeEpoch) closeCompose();
-    };
-    if (typeof copied === 'boolean') done(copied);
-    else {
-      copyInFlight = true;
-      syncCopyEnabled();
-      void copied.then(done);
-    }
+    built.commit();
+    closeCompose();
+    showToast(built.toast);
   }
 
   compose.addEventListener('click', (evt) => {
-    // `closest`, not the target: the copy button holds an icon and a label
-    // span, so a click on the words never reaches the button itself (R5.2).
+    // `closest`, not the target: the button holds an icon and a label span,
+    // so a click on the words never reaches the button itself (R5.2).
     const target = evt.target instanceof Element ? evt.target : null;
     const act =
       target?.closest<HTMLButtonElement>('button[data-act]')?.dataset.act;
     if (act === 'cancel') closeCompose();
-    if (act === 'copy') runCopy();
-    if (act === 'add') runCopy(true);
+    if (act === 'save') runSave();
   });
 
   composeText.addEventListener('keydown', (evt) => {
     if ((evt.metaKey || evt.ctrlKey) && evt.key === 'Enter') {
       evt.preventDefault();
-      // Not gated on `copyButton.disabled`: `runCopy` says why it cannot build
-      // yet, which is more use than a keystroke that does nothing. ⇧ adds
-      // without copying; an editor saves either way.
-      runCopy(evt.shiftKey && mode === 'pick');
+      // Not gated on `saveButton.disabled`: `runSave` says why it cannot add
+      // yet, which is more use than a keystroke that does nothing.
+      runSave();
     }
   });
 
