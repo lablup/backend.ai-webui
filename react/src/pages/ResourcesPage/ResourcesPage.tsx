@@ -41,7 +41,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
       <Suspense fallback={<BAISkeleton />}>
         {currentTab === 'agents' && (
           <BAIErrorBoundary>
-            <AgentList />
+            <AgentList registerWebMCPTools />
           </BAIErrorBoundary>
         )}
         {currentTab === 'storages' && (

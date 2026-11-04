@@ -1,0 +1,283 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import { maskString } from '../helper';
+import {
+  routeErrorScreenAtom,
+  type RouteErrorKind,
+  type RouteErrorScreen,
+} from '../helper/routeErrorScreen';
+import {
+  isNavigableMenuKey,
+  needsDocumentReload,
+  readMainHeading,
+  resolveAppPath,
+  searchParamsToRecord,
+} from '../helper/webmcpNavigation';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useCurrentUserRole } from '../hooks/backendai';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useCurrentRouteLabel } from '../hooks/useCurrentRouteLabel';
+import {
+  useActiveProjectName,
+  useCurrentMenuKey,
+  useRouteScope,
+} from '../hooks/useRouteScope';
+import { useWebUIMenuItems } from '../hooks/useWebUIMenuItems';
+import {
+  useBAIWebMCPActive,
+  useWebMCPTool,
+  webMCPError,
+  type WebMCPInputSchema,
+  type WebMCPTool,
+} from 'backend.ai-ui';
+import { useStore } from 'jotai';
+import * as _ from 'lodash-es';
+import React from 'react';
+import { useLocation } from 'react-router-dom';
+
+/** The email as the header shows it: masked when `maskUserInfo` is on. */
+export const displayedEmail = (
+  email: string | null | undefined,
+  maskUserInfo: boolean | undefined,
+): string | null => {
+  if (!email) return null;
+  if (!maskUserInfo) return email;
+  const at = email.indexOf('@');
+  const localLength = at < 0 ? email.length : at;
+  return maskString(email, '*', 2, Math.max(localLength - 2, 0));
+};
+
+const NO_INPUT: WebMCPInputSchema = {
+  type: 'object',
+  properties: {},
+  additionalProperties: false,
+};
+
+export interface WhoamiInfo {
+  email: string | null;
+  role: string | null;
+  project: { id: string | null; name: string | null } | null;
+  apiEndpoint: string | null;
+  webuiVersion: string | null;
+}
+
+export const createWhoamiTool = (info: WhoamiInfo): WebMCPTool => ({
+  name: 'bai_whoami',
+  description:
+    'The user signed in to this Backend.AI WebUI tab: email, role, current project (id and name), the Backend.AI API endpoint and the WebUI version.',
+  inputSchema: NO_INPUT,
+  annotations: { readOnlyHint: true, untrustedContentHint: true },
+  execute: () => info,
+});
+
+const ROUTE_ERROR_CODES: Record<RouteErrorKind, string> = {
+  forbidden: 'page_forbidden',
+  not_found: 'page_not_found',
+  error: 'page_error',
+};
+
+export interface CurrentPageInfo {
+  path: string;
+  menuKey: string | null;
+  title: string | null;
+  scope: string;
+  project: string | null;
+  searchParams: Record<string, string | Array<string>>;
+  /** The error screen shown in place of the page, as `bai_navigate` would report it. */
+  errorScreen: { code: string; title: string } | null;
+}
+
+const errorScreenInfo = (
+  screen: RouteErrorScreen | null,
+): CurrentPageInfo['errorScreen'] =>
+  screen ? { code: ROUTE_ERROR_CODES[screen.kind], title: screen.label } : null;
+
+export const createCurrentPageTool = (
+  readPage: () => CurrentPageInfo,
+): WebMCPTool => ({
+  name: 'bai_get_current_page',
+  description:
+    'Where this Backend.AI WebUI tab is: pathname, menu key, translated page title, route scope (project, projectAdmin or admin), the project in the URL, search params and the main heading on screen. errorScreen is non-null when an error screen (code page_forbidden, page_not_found or page_error) replaces the page; title then still names the route, not what is shown.',
+  inputSchema: NO_INPUT,
+  annotations: { readOnlyHint: true, untrustedContentHint: true },
+  execute: () => ({ ...readPage(), heading: readMainHeading() }),
+});
+
+export interface NavigablePage {
+  key: string;
+  label: string;
+  to: string;
+}
+
+const NAVIGATION_SETTLE_MS = 300;
+
+const routeErrorResult = (screen: RouteErrorScreen, path: string) =>
+  webMCPError(
+    ROUTE_ERROR_CODES[screen.kind],
+    `${path} shows "${screen.label}" instead of a page.`,
+  );
+
+export const createNavigateTool = ({
+  pages,
+  activeProjectName,
+  navigate,
+  readRouteErrorScreen = () => null,
+  reloadDocument = (to) => window.location.assign(to),
+  settleMs = NAVIGATION_SETTLE_MS,
+}: {
+  pages: ReadonlyArray<NavigablePage>;
+  activeProjectName: string | undefined;
+  navigate: (to: string) => void;
+  /** The error screen shown in place of the page, read after navigating. */
+  readRouteErrorScreen?: () => RouteErrorScreen | null;
+  reloadDocument?: (to: string) => void;
+  settleMs?: number;
+}): WebMCPTool => ({
+  name: 'bai_navigate',
+  description:
+    'Open a page in this Backend.AI WebUI tab. Pass exactly one of "page" (a menu key the user can access) or "path" (an app path under /project/<name>/ or /admin/; a flat menu path such as /session?x=1 opens in the current project). Only navigates — never submits or deletes anything. Returns the resulting path and tab title; with reloaded: true the page is reloading, so wait for it and list the tools again. When the tab lands on an error screen instead, returns error.code page_forbidden (this account may not open it), page_not_found or page_error. To fill a new session form, open /session/start and call bai_prepare_session there.',
+  inputSchema: {
+    type: 'object',
+    properties: {
+      page: {
+        type: 'string',
+        enum: pages.map((page) => page.key),
+        description: `Menu key. ${pages.map((page) => `${page.key} = ${page.label}`).join('; ')}.`,
+      },
+      path: {
+        type: 'string',
+        minLength: 1,
+        maxLength: 2048,
+        description: 'Same-origin app path, optionally with ?search and #hash.',
+      },
+    },
+    additionalProperties: false,
+  },
+  annotations: { untrustedContentHint: true },
+  execute: async (input) => {
+    const { page, path } = input as { page?: string; path?: string };
+    if ((page === undefined) === (path === undefined)) {
+      return webMCPError(
+        'invalid_input',
+        'Pass exactly one of "page" or "path".',
+      );
+    }
+    let to: string;
+    if (page !== undefined) {
+      const target = pages.find((candidate) => candidate.key === page);
+      if (!target) {
+        return webMCPError('page_not_available', `No page "${page}".`);
+      }
+      to = target.to;
+    } else {
+      const target = resolveAppPath(
+        path as string,
+        activeProjectName,
+        window.location.origin,
+      );
+      if (!target.ok) return webMCPError(target.code, target.message);
+      to = target.to;
+    }
+    // Access follows the pathname a reload keeps, so the forbidden screen would come back.
+    const screenBefore = readRouteErrorScreen();
+    if (
+      screenBefore?.kind === 'forbidden' &&
+      needsDocumentReload(to, window.location)
+    ) {
+      const { pathname, search, hash } = window.location;
+      return routeErrorResult(screenBefore, `${pathname}${search}${hash}`);
+    }
+    if (needsDocumentReload(to, window.location)) {
+      window.setTimeout(() => reloadDocument(to), settleMs);
+      return { path: to, title: document.title, reloaded: true };
+    }
+    navigate(to);
+    // Lets the router commit and `RouteDocumentTitle` update before answering.
+    await new Promise((resolve) => window.setTimeout(resolve, settleMs));
+    const { pathname, search, hash } = window.location;
+    const landed = `${pathname}${search}${hash}`;
+    const errorScreen = readRouteErrorScreen();
+    if (errorScreen) return routeErrorResult(errorScreen, landed);
+    return { path: landed, title: document.title };
+  },
+});
+
+const WebMCPGlobalToolsRegistrar: React.FC = () => {
+  'use memo';
+  const baiClient = useSuspendedBackendaiClient();
+  const role = useCurrentUserRole();
+  // Sanctioned global reader (ADR 0001): bai_whoami reports the ambient project.
+  const currentProject = useCurrentProjectValue();
+  const activeProjectName = useActiveProjectName();
+  const { generalMenu, adminMenu, groupedProjectAdminMenu } =
+    useWebUIMenuItems();
+  const menuKey = useCurrentMenuKey();
+  const scope = useRouteScope();
+  const label = useCurrentRouteLabel();
+  const location = useLocation();
+  const navigate = useWebUINavigate();
+  // The store, not a render value: the answer is read after the navigation settles.
+  const store = useStore();
+
+  // `adminMenu` leaves project-admin pages out for domain and super admins,
+  // who can still open them.
+  const projectAdminPages = groupedProjectAdminMenu.flatMap((item) =>
+    item && 'children' in item ? item.children : [item],
+  );
+  const pages: Array<NavigablePage> = _.uniqBy(
+    [...generalMenu, ...adminMenu, ...projectAdminPages],
+    'key',
+  )
+    .filter((item) => item.to && !item.disabled && isNavigableMenuKey(item.key))
+    .map((item) => ({
+      key: item.key,
+      label: item.labelText,
+      to: item.to as string,
+    }));
+
+  useWebMCPTool(
+    createWhoamiTool({
+      email: displayedEmail(baiClient.email, baiClient._config?.maskUserInfo),
+      role: role ?? null,
+      project: currentProject?.id
+        ? { id: currentProject.id, name: currentProject.name ?? null }
+        : null,
+      apiEndpoint: baiClient._config?.endpoint ?? null,
+      webuiVersion: globalThis.packageVersion ?? null,
+    }),
+  );
+
+  useWebMCPTool(
+    createCurrentPageTool(() => ({
+      path: `${location.pathname}${location.search}${location.hash}`,
+      menuKey: menuKey ?? null,
+      title: label ?? null,
+      scope,
+      project: scope === 'admin' ? null : (activeProjectName ?? null),
+      searchParams: searchParamsToRecord(location.search),
+      errorScreen: errorScreenInfo(store.get(routeErrorScreenAtom)),
+    })),
+  );
+
+  useWebMCPTool(
+    createNavigateTool({
+      pages,
+      activeProjectName,
+      navigate: (to) => navigate(to),
+      readRouteErrorScreen: () => store.get(routeErrorScreenAtom),
+    }),
+  );
+
+  return null;
+};
+
+/** The app-shell WebMCP tools (ADR 0025). Mount inside a Suspense boundary: it waits for login. */
+const WebMCPGlobalTools: React.FC = () => {
+  'use memo';
+  const isActive = useBAIWebMCPActive();
+  return isActive ? <WebMCPGlobalToolsRegistrar /> : null;
+};
+
+export default WebMCPGlobalTools;

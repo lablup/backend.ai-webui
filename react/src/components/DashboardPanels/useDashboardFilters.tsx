@@ -27,8 +27,12 @@ export interface DashboardFilters {
 /**
  * One dashboard page's shared state: the scope every card reads, from the
  * page alone, and the active board's refresh interval. Resource groups and
- * time ranges are each card's own settings (ADR 0026). `project` is the
+<<<<<<< HEAD
+ * time ranges are each card's own settings (ADR 0027). `project` is the
  * page's URL project, passed in by the page (ADR 0001).
+=======
+ * time ranges are each card's own settings (ADR 0027).
+>>>>>>> origin/feat/gh-10582-dashboard-filter-bar
  */
 export const useDashboardFilters = (
   page: PanelPage,
