@@ -421,9 +421,6 @@ storage folder. A project storage folder is a folder belonging to a specific
 project, not a specific user, and can be accessed by all users in that project.
 
 :::note
-A project folder can be created by anyone with permission to create folders in
-the project, and project members can manage it from the Data page.
-Depending on the system settings, project folders may not be allowed.
 Project folder functionality may be restricted based on user permissions.
 :::
 
