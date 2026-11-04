@@ -1578,7 +1578,6 @@ The resource group edit dialog contains the following additional fields:
 
 - **Allowed session types**: Since users can choose the type of session, the resource group can allow certain types. You should allow at least one session type. The allowed session types are Interactive, Batch, Inference, and System.
 - **App Proxy Server Address**: Sets the App Proxy address for the resource group's Agents to use. If you set a URL in this field, App Proxy will relay the traffic of an app like Jupyter directly to the compute session via Agent bypassing Manager.
-- **App Proxy API Token**: The API token for authenticating with the App Proxy server.
 - **SFTP Storage Proxies**: The storage proxies used when users in this resource group transfer files to
   their folders over SFTP. The field is available to superadmins and is pre-filled with the proxies that
   currently serve this resource group. Saving synchronizes only this group's membership — it is added to

@@ -291,20 +291,6 @@
       "description": "Resource Group settings field label for the App Proxy server address."
     },
     {
-      "id": "app-proxy-api-token",
-      "category": "Feature-Specific Terms",
-      "status": "approved",
-      "decidingFR": "FR-2841",
-      "preferred": {
-        "en": "App Proxy API Token",
-        "ko": "App Proxy API 토큰",
-        "ja": "App Proxy APIトークン",
-        "th": "โทเค็น API ของ App Proxy"
-      },
-      "context": "Field label (Resource Group settings)",
-      "description": "Resource Group settings field label for the App Proxy API token."
-    },
-    {
       "id": "container",
       "category": "Feature-Specific Terms",
       "status": "approved",
