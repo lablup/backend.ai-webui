@@ -20,6 +20,11 @@ located (Location).
 There are two types of storage folders: `User` and `Project`. You can
 distinguish between them in the 'Type' column.
 
+The Data page lists the folders of the project selected with the project
+selector in the top bar: your personal project shows the `User` folders you
+own, and any other project shows its own folders and the folders shared with
+it.
+
 ## Invitation badge and entry point
 
 When another user invites you to share one of their storage folders, a small
