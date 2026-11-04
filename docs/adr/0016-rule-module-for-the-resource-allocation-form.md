@@ -123,7 +123,7 @@ The FR-3523 loop came from the edge from `form` to `effect`. When `resourceKey` 
 - #10628 — the disabled display of a preset that requires a slot not in the resource group. Section 4 replaced that PR's automatic re-pick.
 - FR-3523, FR-3985 — the loop caused by an effect reacting to the value it wrote itself, and its mitigation.
 - FR-4067 (#9927) — the decision to identify a preset by id and to show a preset dedicated to another resource group as an error.
-- `react/src/components/SessionFormItems/resourceAllocationRules.ts`, `resourceAllocationRules.test.ts`, `ResourceAllocationFormItems.tsx`, `react/src/components/ResourcePresetSelect.tsx`, `react/src/components/DeploymentAddRevisionModal.tsx`.
+- `react/src/components/SessionFormItems/resourceAllocationRules.ts`, `resourceAllocationRules.test.ts`, `ResourceAllocationFormItems.tsx`, `react/src/components/ResourcePresetSelect.tsx`, `react/src/pages/DeploymentDetailPage/components/DeploymentAddRevisionModal.tsx`.
 
 Related: ADR 0001 (the contract by which this fragment receives the project as a prop), ADR 0014 (the `BAI*` names of form controls).
 
