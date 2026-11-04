@@ -2292,7 +2292,6 @@
     "SessionMode": "Session",
     "SignUp": "S'inscrire",
     "SignoutFinished": "Déconnexion terminée.",
-    "TooManyAttempt": "Il y a eu trop de tentatives de connexion. Les tentatives de connexion sont bloquées depuis un certain temps.",
     "singleSignOn": {
       "LoginWithRealm": "Se connecter avec {{ realmName }}",
       "LoginWithRealmFailed": "Échec de la connexion avec {{ realmName }}",
@@ -4491,7 +4490,7 @@
     "PluginLogin": "Chemin du plugin de connexion",
     "PluginPage": "Chemins des plugins de pages",
     "ResetAllSettings": "Réinitialiser tous les paramètres système ?",
-    "ResetAllSettingsDesc": "Toutes les valeurs enregistrées sur cette page pour le domaine {{domain}} sont supprimées et chaque ligne revient à sa valeur de config.toml. La page est rechargée après la réinitialisation.",
+    "ResetAllSettingsDesc": "Toutes les valeurs enregistrées sur cette page pour le domaine {{domain}} sont supprimées et chaque ligne revient à sa valeur par défaut. La page est rechargée après la réinitialisation.",
     "ShowNonInstalledImages": "Afficher les images non installées",
     "SingleSignOnVendors": "Autoriser la connexion SSO",
     "SsoRealmName": "Libellé du bouton SSO OpenID",

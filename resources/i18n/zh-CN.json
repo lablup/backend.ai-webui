@@ -2293,7 +2293,6 @@
     "SessionMode": "会话",
     "SignUp": "注册",
     "SignoutFinished": "注销完毕。",
-    "TooManyAttempt": "登录尝试次数过多。登录尝试已被阻止一段时间。",
     "singleSignOn": {
       "LoginWithRealm": "使用 {{ realmName }} 登录",
       "LoginWithRealmFailed": "使用 {{ realmName }} 登录失败",
@@ -4490,7 +4489,7 @@
     "PluginLogin": "登录插件路径",
     "PluginPage": "页面插件路径",
     "ResetAllSettings": "重置所有系统设置？",
-    "ResetAllSettingsDesc": "通过此页面为 {{domain}} 域保存的所有值都将被删除，每一项都将恢复为 config.toml 中的值。重置后页面将重新加载。",
+    "ResetAllSettingsDesc": "通过此页面为 {{domain}} 域保存的所有值都将被删除，每一项都将恢复为 默认值。重置后页面将重新加载。",
     "ShowNonInstalledImages": "显示未安装的镜像",
     "SingleSignOnVendors": "允许 SSO 登录",
     "SsoRealmName": "SSO OpenID 按钮标签",

@@ -9,8 +9,8 @@ import * as _ from 'lodash-es';
  * The flat `settings` document served through app config (#10436). The same
  * sub-key lives in `publicConfigByDomain.<domain>` (keys the login page needs
  * before sign-in) and in `domainConfig` (everything else). Key names are the
- * `config.toml` names; the file stays the fallback for any key a document does
- * not carry.
+ * former `config.toml` names; a key no document carries keeps its code default
+ * (`getDefaultLoginConfig`).
  */
 export const WEBUI_SETTINGS_CONFIG_KEY = 'settings';
 /** `WebUISettingsPage`'s `?tab=` default; kept a literal there for the search-index extractor. */
@@ -220,7 +220,7 @@ export const isValidWebUISettingValue = (
 /**
  * `state` with every key of `scope` that `doc` carries with a value of the
  * right type overridden. Anything else, including a whole missing document,
- * keeps the `config.toml`-derived value.
+ * keeps the value `state` already holds.
  */
 export const applyWebUISettings = (
   state: LoginConfigState,
@@ -243,7 +243,7 @@ export const applyWebUISettings = (
   return next;
 };
 
-/** The value of one setting as the file-derived state holds it. */
+/** The value of one setting as `state` holds it. */
 export const readWebUISettingFromState = (
   state: LoginConfigState,
   definition: WebUISettingDefinition,
@@ -251,13 +251,13 @@ export const readWebUISettingFromState = (
 
 /**
  * The document to save for `scope`: only the keys whose draft differs from
- * the file value, so an untouched key keeps following `config.toml`.
+ * the default in `baseState`, so an untouched key keeps following the code default.
  * `undefined` when nothing differs, which removes the sub-key.
  */
 export const buildWebUISettingsDocument = (
   scope: WebUISettingScope,
   draft: WebUISettingsDocument,
-  fileState: LoginConfigState,
+  baseState: LoginConfigState,
 ): WebUISettingsDocument | undefined => {
   const doc: WebUISettingsDocument = {};
   for (const definition of WEBUI_SETTING_DEFINITIONS) {
@@ -265,7 +265,7 @@ export const buildWebUISettingsDocument = (
     const value = restrictToOptions(definition, draft[definition.key]);
     if (
       isValidWebUISettingValue(definition.type, value) &&
-      !_.isEqual(value, readWebUISettingFromState(fileState, definition))
+      !_.isEqual(value, readWebUISettingFromState(baseState, definition))
     ) {
       doc[definition.key] = value;
     }

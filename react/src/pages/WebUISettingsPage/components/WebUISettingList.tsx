@@ -8,7 +8,7 @@ import type { SettingItemProps } from '../../../components/SettingItem';
 import SettingList, {
   type SettingGroup,
 } from '../../../components/SettingList';
-import { refreshConfigFromToml } from '../../../helper/loginConfig';
+import { getDefaultLoginConfig } from '../../../helper/loginConfig';
 import {
   buildWebUISettingsDocument,
   isValidWebUISettingValue,
@@ -27,7 +27,6 @@ import {
   useUpdateDomainAppConfig,
   useUpdatePublicDomainAppConfig,
 } from '../../../hooks/useAppConfig';
-import { useRawConfig } from '../../../hooks/useWebUIConfig';
 import MenuKeySelector from './MenuKeySelector';
 import PluginPathInput from './PluginPathInput';
 import { useWebUISettingLabels } from './WebUISettingLabels';
@@ -75,8 +74,8 @@ const parseStringList = (raw: string): Array<string> =>
 
 /**
  * Edits the flat `settings` app-config document (#10436). Each row's default
- * is the `config.toml` value; only rows that differ from it are saved, so an
- * untouched row keeps following the file. Apply writes both scopes and
+ * is the code default (`getDefaultLoginConfig`); only rows that differ from it
+ * are saved, so an untouched row keeps following the default. Apply writes both scopes and
  * reloads, which is how the overrides reach `backendaiclient._config`.
  */
 const WebUISettingList: React.FC<WebUISettingListProps> = ({
@@ -88,11 +87,10 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
   const { modal } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
   const labels = useWebUISettingLabels();
-  const rawConfig = useRawConfig();
   const updateDomainAppConfig = useUpdateDomainAppConfig();
   const updatePublicDomainAppConfig = useUpdatePublicDomainAppConfig();
 
-  const fileState = refreshConfigFromToml(rawConfig);
+  const baseState = getDefaultLoginConfig();
   // Only the keys a definition owns: the announcement beside them is saved by
   // its own modal and must not make the page dirty.
   const saved: WebUISettingsDocument = ownedWebUISettings({
@@ -102,17 +100,17 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
   const [draft, setDraft] = useState<WebUISettingsDocument>(saved);
   const isDirty = !_.isEqual(draft, saved);
 
-  const fileValueOf = (definition: WebUISettingDefinition) =>
-    readWebUISettingFromState(fileState, definition);
+  const defaultValueOf = (definition: WebUISettingDefinition) =>
+    readWebUISettingFromState(baseState, definition);
   const valueOf = (definition: WebUISettingDefinition) =>
     definition.key in draft &&
     isValidWebUISettingValue(definition.type, draft[definition.key])
       ? draft[definition.key]
-      : fileValueOf(definition);
+      : defaultValueOf(definition);
   const setValue = (definition: WebUISettingDefinition, value: unknown) => {
     setDraft((prev) => {
       const next = { ...prev };
-      if (value === undefined || _.isEqual(value, fileValueOf(definition))) {
+      if (value === undefined || _.isEqual(value, defaultValueOf(definition))) {
         delete next[definition.key];
       } else {
         next[definition.key] = value;
@@ -186,7 +184,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
         (current: unknown) =>
           withForeignWebUISettings(
             current,
-            buildWebUISettingsDocument('domain', next, fileState),
+            buildWebUISettingsDocument('domain', next, baseState),
           ),
       );
       isDomainSaved = true;
@@ -195,7 +193,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
         (current: unknown) =>
           withForeignWebUISettings(
             current,
-            buildWebUISettingsDocument('public', next, fileState),
+            buildWebUISettingsDocument('public', next, baseState),
           ),
       );
       isLeavingAfterApplyRef.current = true;
@@ -245,7 +243,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
   ): SettingItemProps => {
     const label = labels.items[definition.key];
     const current = valueOf(definition);
-    const fileValue = fileValueOf(definition);
+    const rowDefault = defaultValueOf(definition);
     const base = {
       'data-testid': `webui-setting-${definition.key}`,
       title: label.title,
@@ -257,7 +255,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
         return {
           ...base,
           type: 'checkbox',
-          defaultValue: fileValue as boolean,
+          defaultValue: rowDefault as boolean,
           value: current as boolean,
           onChange: (value) => setValue(definition, value),
         };
@@ -265,7 +263,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
         return {
           ...base,
           type: 'custom',
-          defaultValue: fileValue,
+          defaultValue: rowDefault,
           value: current,
           children: (
             // An unset setting shows its default as the placeholder, so the
@@ -286,7 +284,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
         return {
           ...base,
           type: 'custom',
-          defaultValue: fileValue,
+          defaultValue: rowDefault,
           value: current,
           children:
             definition.key === 'pluginLogin' ? (
@@ -315,8 +313,8 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
           ...base,
           type: 'custom',
           // Same reference when equal so the "changed" dot stays off.
-          defaultValue: fileValue,
-          value: _.isEqual(current, fileValue) ? fileValue : current,
+          defaultValue: rowDefault,
+          value: _.isEqual(current, rowDefault) ? rowDefault : current,
           children: definition.options ? (
             <BAIMultiSelector
               aria-label={label.title}

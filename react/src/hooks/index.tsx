@@ -707,7 +707,6 @@ type BackendAIConfig = {
   domainId: string;
   default_session_environment: string;
   default_import_environment: string;
-  allow_project_resource_monitor: boolean;
   allow_manual_image_name_for_session: boolean;
   openPortToPublic: boolean;
   allowPreferredPort: boolean;
@@ -727,11 +726,9 @@ type BackendAIConfig = {
   maxShmPerContainer: number;
   maxFileUploadSize: number;
   storageWarningThreshold: number;
-  allow_image_list: string[];
   maskUserInfo: boolean;
   singleSignOnVendors: string[];
   ssoRealmName: string;
-  enableImportFromHuggingFace: boolean;
   enableContainerCommit: boolean;
   enableModelFolders: boolean;
   appDownloadUrl: string;
@@ -740,8 +737,6 @@ type BackendAIConfig = {
   defaultFileBrowserImage: string;
   fasttrackEndpoint: string;
   hideAgents: boolean;
-  force2FA: boolean;
-  directoryBasedUsage: boolean;
   maxCountForPreopenPorts: number;
   pluginPages: string[];
   blockList: MenuKeys[];

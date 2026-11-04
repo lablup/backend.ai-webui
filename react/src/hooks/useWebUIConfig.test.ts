@@ -8,7 +8,6 @@
  * Tests cover:
  * - fetchAndParseConfig: TOML fetching and parsing
  * - fetchAppConfigOnce: one shared config.toml fetch per page load
- * - preprocessToml: escape sequence handling in apiEndpointText
  * - processConfig (via fetchAndParseConfig): config value extraction
  * - Atom initial values
  */
@@ -137,33 +136,6 @@ page = "custom-pages"
     expect(result.config?.plugin?.page).toBe('custom-pages');
   });
 
-  it('preprocesses apiEndpointText escape sequences', async () => {
-    // The preprocessing replaces escape sequences like \\n with actual newlines
-    // by wrapping the value in JSON.parse(`"..."`)
-    const tomlContent = `
-[general]
-apiEndpointText = "Line1\\nLine2"
-`;
-    mockFetch(200, tomlContent);
-    const result = await fetchAndParseConfig('/config.toml');
-    expect(result.config).not.toBeNull();
-    // After preprocessing, the string should contain an actual newline
-    expect(result.config?.general?.apiEndpointText).toBe('Line1\nLine2');
-  });
-
-  it('keeps original apiEndpointText when preprocessing fails', async () => {
-    // An invalid escape sequence that JSON.parse cannot handle
-    const tomlContent = `
-[general]
-apiEndpointText = "valid text"
-`;
-    mockFetch(200, tomlContent);
-    const result = await fetchAndParseConfig('/config.toml');
-    expect(result.config).not.toBeNull();
-    // Regular text without escape sequences should be preserved
-    expect(result.config?.general?.apiEndpointText).toBe('valid text');
-  });
-
   it('handles TOML with multiple sections', async () => {
     const tomlContent = `
 [general]
@@ -241,27 +213,6 @@ edition = "Open Source"
     mockFetch(200, tomlContent);
     const result = await fetchAndParseConfig('/config.toml');
     expect(result.config?.general).toBeUndefined();
-  });
-
-  it('does not modify config when apiEndpointText is absent', async () => {
-    const tomlContent = `
-[general]
-apiEndpoint = "https://example.com"
-`;
-    mockFetch(200, tomlContent);
-    const result = await fetchAndParseConfig('/config.toml');
-    expect(result.config?.general?.apiEndpoint).toBe('https://example.com');
-    expect(result.config?.general?.apiEndpointText).toBeUndefined();
-  });
-
-  it('handles tab escape sequence in apiEndpointText', async () => {
-    const tomlContent = `
-[general]
-apiEndpointText = "Column1\\tColumn2"
-`;
-    mockFetch(200, tomlContent);
-    const result = await fetchAndParseConfig('/config.toml');
-    expect(result.config?.general?.apiEndpointText).toBe('Column1\tColumn2');
   });
 });
 
@@ -346,20 +297,9 @@ describe('getDefaultLoginConfig fallback values', () => {
     expect(defaults.api_endpoint).toBe('');
   });
 
-  it('sets login_attempt_limit to 500', () => {
-    const defaults = getDefaultLoginConfig();
-    expect(defaults.login_attempt_limit).toBe(500);
-  });
-
-  it('sets login_block_time to 180', () => {
-    const defaults = getDefaultLoginConfig();
-    expect(defaults.login_block_time).toBe(180);
-  });
-
   it('disables optional features by default', () => {
     const defaults = getDefaultLoginConfig();
     expect(defaults.signup_support).toBe(false);
-    expect(defaults.force2FA).toBe(false);
     expect(defaults.enablePipeline).toBe(false);
     expect(defaults.maskUserInfo).toBe(false);
   });
@@ -372,7 +312,6 @@ describe('getDefaultLoginConfig fallback values', () => {
   it('returns empty arrays for list fields', () => {
     const defaults = getDefaultLoginConfig();
     expect(defaults.singleSignOnVendors).toEqual([]);
-    expect(defaults.allow_image_list).toEqual([]);
     expect(defaults.blockList).toEqual([]);
     expect(defaults.inactiveList).toEqual([]);
   });

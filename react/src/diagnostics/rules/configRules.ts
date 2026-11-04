@@ -223,18 +223,14 @@ interface UrlFieldDef {
  *   general.apiEndpoint   — "Default API Endpoint"
  *   general.appDownloadUrl — "URL to download the electron app"
  *   wsproxy.proxyURL      — "Proxy URL"
- *   wsproxy.proxyBaseURL  — "Base URL of websocket proxy"
  *   server.webServerURL   — "Web server website URL"
- *   pipeline.endpoint     — "FastTrack API endpoint"
  *   pipeline.frontendEndpoint — "FastTrack frontend endpoint"
  */
 const URL_FIELDS: UrlFieldDef[] = [
   { section: 'general', field: 'apiEndpoint' },
   { section: 'general', field: 'appDownloadUrl' },
   { section: 'wsproxy', field: 'proxyURL' },
-  { section: 'wsproxy', field: 'proxyBaseURL' },
   { section: 'server', field: 'webServerURL' },
-  { section: 'pipeline', field: 'endpoint' },
   { section: 'pipeline', field: 'frontendEndpoint' },
 ];
 
@@ -376,18 +372,6 @@ const GENERAL_NUMERIC_RANGES: ResourceLimitRange[] = [
     field: 'maxCountForPreopenPorts',
     min: 0,
     max: 100,
-  },
-  // "The number of allowed login attempts"
-  {
-    field: 'loginAttemptLimit',
-    min: 1,
-    max: 1000,
-  },
-  // "The amount of time(sec.) for rejecting login attempt"
-  {
-    field: 'loginBlockTime',
-    min: 1,
-    max: 86400,
   },
 ];
 

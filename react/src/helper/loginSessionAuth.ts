@@ -471,7 +471,6 @@ export async function tokenLogin(
  * etc.). Centralized here so every successful login path keeps the same
  * side effects in lockstep:
  *
- *   - `last_login` timestamp + reset of `login_attempt` counter
  *   - drop any saved username / password / keypair credentials from prior
  *     signed-out sessions on this device
  *   - persist the resolved API endpoint into `localStorage` so the next
@@ -486,14 +485,9 @@ export async function tokenLogin(
  * once the boundary migrations settle (see PR #6861 review discussion). Kept
  * separate from `connectViaGQL` because the GQL step also runs for the
  * non-authenticated paths (e.g. an already-logged-in session refresh) where
- * the counter and credential-cleanup side effects would be incorrect.
+ * the credential-cleanup side effect would be incorrect.
  */
 export function persistPostLoginState(client: any): void {
-  const options = (globalThis as any).backendaioptions;
-  if (options) {
-    options.set('last_login', Math.floor(Date.now() / 1000), 'general');
-    options.set('login_attempt', 0, 'general');
-  }
   localStorage.removeItem('backendaiwebui.login.api_key');
   localStorage.removeItem('backendaiwebui.login.secret_key');
   localStorage.removeItem('backendaiwebui.login.user_id');
@@ -532,12 +526,7 @@ export async function loadConfigFromWebServer(
     const backendaiutils = (globalThis as Record<string, any>).backendaiutils;
     if (!backendaiutils) return;
 
-    const fieldsToExclude = [
-      'general.apiEndpoint',
-      'general.apiEndpointText',
-      'general.appDownloadUrl',
-      'wsproxy',
-    ];
+    const fieldsToExclude = ['general.apiEndpoint', 'wsproxy'];
     fieldsToExclude.forEach((key) => {
       backendaiutils.deleteNestedKeyFromObject(config, key);
     });

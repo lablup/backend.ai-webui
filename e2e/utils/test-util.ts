@@ -1,3 +1,4 @@
+import { WEBUI_SETTING_DEFINITIONS } from '../../react/src/helper/webuiSettings';
 import { FolderCreationModal } from './classes/vfolder/FolderCreationModal';
 import TOML from '@iarna/toml';
 import {
@@ -1361,6 +1362,144 @@ function deduplicateTomlKeys(tomlStr: string): string {
 // Store the accumulated config modifications in a WeakMap keyed by page
 const configCache = new WeakMap<Page, any>();
 
+// The app no longer reads System Settings keys from config.toml (#10664). A
+// spec that sets one through `modifyConfigToml` gets it through this page's
+// app-config responses instead, so no cluster-wide document is written.
+const RENAMED_SETTING_KEYS: Record<string, string> = {
+  'menu.blocklist': 'menuBlocklist',
+  'menu.inactivelist': 'menuInactivelist',
+  'pipeline.frontendEndpoint': 'fasttrackEndpoint',
+  'plugin.login': 'pluginLogin',
+  'plugin.page': 'pluginPage',
+};
+
+type SettingsByScope = {
+  public: Record<string, unknown>;
+  domain: Record<string, unknown>;
+};
+
+function toSettingValue(type: string, raw: unknown): unknown {
+  switch (type) {
+    case 'boolean':
+      return raw === true || raw === 'true';
+    case 'number':
+      return Number(raw);
+    case 'stringList':
+      return Array.isArray(raw)
+        ? raw
+        : String(raw)
+            .split(',')
+            .map((v) => v.trim())
+            .filter(Boolean);
+    default:
+      return String(raw);
+  }
+}
+
+function settingsFromToml(config: Record<string, any>): SettingsByScope {
+  const settings: SettingsByScope = { public: {}, domain: {} };
+  for (const [section, fields] of Object.entries(config ?? {})) {
+    if (!isPlainObject(fields)) continue;
+    for (const [field, raw] of Object.entries(fields)) {
+      if (raw === undefined) continue;
+      const key = RENAMED_SETTING_KEYS[`${section}.${field}`] ?? field;
+      const definition = WEBUI_SETTING_DEFINITIONS.find((d) => d.key === key);
+      if (!definition) continue;
+      settings[definition.scope][key] = toSettingValue(definition.type, raw);
+    }
+  }
+  return settings;
+}
+
+type RouteHandler = Parameters<Page['route']>[1];
+const appConfigRoutes = new WeakMap<
+  Page,
+  { publicHandler?: RouteHandler; gqlHandler?: RouteHandler }
+>();
+const PUBLIC_APP_CONFIG_URL = '**/func/v2/app-config/public/get';
+const GQL_URL = '**/admin/gql';
+// The public slice is looked up under this domain when the file names none.
+const FALLBACK_PUBLIC_DOMAIN = 'default';
+
+async function routeAppConfigSettings(
+  page: Page,
+  config: Record<string, any>,
+): Promise<void> {
+  const settings = settingsFromToml(config);
+  const previous = appConfigRoutes.get(page) ?? {};
+  if (previous.publicHandler) {
+    await page.unroute(PUBLIC_APP_CONFIG_URL, previous.publicHandler);
+  }
+  if (previous.gqlHandler) {
+    await page.unroute(GQL_URL, previous.gqlHandler);
+  }
+  const next: { publicHandler?: RouteHandler; gqlHandler?: RouteHandler } = {};
+
+  if (Object.keys(settings.public).length > 0) {
+    const domainName: string =
+      config.general?.apiDomainName || FALLBACK_PUBLIC_DOMAIN;
+    next.publicHandler = async (route) => {
+      let payload: any = { app_configs: [] };
+      try {
+        payload = await (await route.fetch()).json();
+      } catch {
+        // Unreachable or not JSON: serve the injected slice alone.
+      }
+      const configs: Array<any> = Array.isArray(payload?.app_configs)
+        ? payload.app_configs
+        : [];
+      let entry = configs.find(
+        (c) => c?.config_name === 'publicConfigByDomain',
+      );
+      if (!entry) {
+        entry = { config_name: 'publicConfigByDomain', config: {} };
+        configs.push(entry);
+      }
+      const slice = (entry.config ??= {})[domainName] ?? {};
+      entry.config[domainName] = {
+        ...slice,
+        settings: { ...slice.settings, ...settings.public },
+      };
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ ...payload, app_configs: configs }),
+      });
+    };
+    await page.route(PUBLIC_APP_CONFIG_URL, next.publicHandler);
+  }
+
+  if (Object.keys(settings.domain).length > 0) {
+    next.gqlHandler = async (route) => {
+      const response = await route.fetch();
+      let json: any;
+      try {
+        json = await response.json();
+      } catch {
+        await route.fulfill({ response });
+        return;
+      }
+      const rows = json?.data?.myAppConfigs;
+      if (!Array.isArray(rows)) {
+        await route.fulfill({ response, json });
+        return;
+      }
+      let row = rows.find((r: any) => r?.configName === 'domainConfig');
+      if (!row) {
+        row = { configName: 'domainConfig', config: {} };
+        rows.push(row);
+      }
+      row.config = {
+        ...row.config,
+        settings: { ...row.config?.settings, ...settings.domain },
+      };
+      await route.fulfill({ response, json });
+    };
+    await page.route(GQL_URL, next.gqlHandler);
+  }
+  appConfigRoutes.set(page, next);
+}
+
 /**
  * The deployment's real `config.toml`, parsed. Fetched from a throwaway
  * browser context (bypasses bot protection and never touches the page's own
@@ -1433,12 +1572,28 @@ export async function modifyConfigToml(
   // Cache the updated config
   configCache.set(page, config);
 
+  await routeAppConfigSettings(page, config);
+  if (
+    Object.keys(settingsFromToml(config).public).length > 0 &&
+    !config.general?.apiEndpoint
+  ) {
+    // The pre-login slice is only fetched once the app has an endpoint.
+    await seedStoredApiEndpoint(page);
+  }
+  const servedConfig =
+    Object.keys(settingsFromToml(config).public).length > 0 &&
+    !config.general?.apiDomainName
+      ? mergeWithUndefined(config, {
+          general: { apiDomainName: FALLBACK_PUBLIC_DOMAIN },
+        })
+      : config;
+
   // Clear all existing route handlers for config.toml
   await page.unroute('**/config.toml**');
 
   // Set up the new route handler with the current config
   // IMPORTANT: Use a closure to capture the current config value
-  const configToServe = config;
+  const configToServe = servedConfig;
   await page.route('**/config.toml**', async (route) => {
     await route.fulfill({
       status: 200,

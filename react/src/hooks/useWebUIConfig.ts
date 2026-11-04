@@ -123,22 +123,6 @@ type JotaiStore = ReturnType<typeof createStore>;
 // ---------------------------------------------------------------------------
 
 /**
- * Preprocess the TOML config to handle escape sequences in apiEndpointText.
- * This mirrors the Lit shell's _preprocessToml logic.
- */
-function preprocessToml(config: RawTomlConfig): void {
-  if (config?.general?.apiEndpointText) {
-    try {
-      config.general.apiEndpointText = JSON.parse(
-        `"${config.general.apiEndpointText}"`,
-      );
-    } catch {
-      // If JSON.parse fails, keep the original value
-    }
-  }
-}
-
-/**
  * Result of fetching and parsing config.toml.
  * - Fetch failure (network error, non-200, SPA fallback): `{ config: null }` — no error.
  * - Parse failure (invalid TOML after fetch succeeds): `{ config: null, error }`.
@@ -178,7 +162,6 @@ export async function fetchAndParseConfig(
   try {
     const text = await res.text();
     const parsed = toml(text) as RawTomlConfig;
-    preprocessToml(parsed);
     return { config: parsed };
   } catch (error) {
     // Parse error — config was fetched but TOML is invalid.
