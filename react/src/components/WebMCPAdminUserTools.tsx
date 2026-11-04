@@ -145,7 +145,7 @@ const AdminUserToolsRegistrar: React.FC<WebMCPAdminUserToolsProps> = ({
 
 /**
  * `bai_list_visible_user`, `bai_get_user_filter` and `bai_get_current_user`
- * for the Users tab of the admin user page (ADR 0017).
+ * for the Users tab of the admin user page (ADR 0018).
  */
 export const WebMCPAdminUserTools: React.FC<WebMCPAdminUserToolsProps> = (
   props,
@@ -235,7 +235,7 @@ const AdminKeypairToolsRegistrar: React.FC<WebMCPAdminKeypairToolsProps> = ({
 /**
  * `bai_list_visible_keypair`, `bai_get_keypair_filter` and
  * `bai_get_current_keypair` for the Credentials tab of the admin user page
- * (ADR 0017).
+ * (ADR 0018).
  */
 export const WebMCPAdminKeypairTools: React.FC<WebMCPAdminKeypairToolsProps> = (
   props,

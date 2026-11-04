@@ -138,7 +138,7 @@ const RoleListToolsRegistrar: React.FC<WebMCPRoleListToolsProps> = ({
 
 /**
  * `bai_list_visible_role`, `bai_get_role_filter` and `bai_get_current_role`
- * for the RBAC role list (ADR 0017).
+ * for the RBAC role list (ADR 0018).
  */
 const WebMCPRoleListTools: React.FC<WebMCPRoleListToolsProps> = (props) => {
   'use memo';
