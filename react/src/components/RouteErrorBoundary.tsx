@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import ForbiddenPage from '../pages/ForbiddenPage';
-import Page404 from '../pages/Page404';
+import Page404 from '../pages/Page404/Page404';
+import ForbiddenPage from './ForbiddenPage';
 import RouteErrorContent from './RouteErrorContent';
 import { useTranslation } from 'react-i18next';
 import { isRouteErrorResponse, useRouteError } from 'react-router-dom';

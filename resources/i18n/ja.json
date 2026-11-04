@@ -587,6 +587,42 @@
     "Title": "Backend.AI WebUI Agent CLI にサインイン",
     "VerificationCode": "確認コード"
   },
+  "clientIpMasking": {
+    "ClientIpMasking": "クライアントIPマスキング",
+    "CreatePolicy": "ポリシーを作成",
+    "DefaultPrefix": "/{{prefix}}（デフォルト）",
+    "DeleteDefaultPolicyDescription": "独自のポリシーがない対象では、クライアントIPがそのまま保存されます。",
+    "DeletePolicy": "このマスキングポリシーを削除しますか？",
+    "DeletePolicyDescription": "{{target}}はデフォルトポリシーに従います。",
+    "Description": "クライアントIPアドレスを保存する前にどのようにマスキングするかを設定します。独自のポリシーがない対象はデフォルトポリシーに従い、デフォルトポリシーがない場合はアドレスがそのまま保存されます。",
+    "EditPolicy": "ポリシーを編集",
+    "IPv4Prefix": "IPv4プレフィックス長",
+    "IPv6Prefix": "IPv6プレフィックス長",
+    "Mode": "マスキング方式",
+    "ModeRequired": "マスキング方式を選択してください。",
+    "OnePolicyPerTarget": "対象ごとに存在できるポリシーは1つだけです。",
+    "PrefixExtra": "保持する先頭ビット数（0–{{max}}）。空欄の場合は{{defaultPrefix}}が使用されます。",
+    "PrefixRange": "0から{{max}}までの数値を入力してください。",
+    "SuccessfullyDeleted": "クライアントIPマスキングポリシーを削除しました。",
+    "SuccessfullySaved": "クライアントIPマスキングポリシーを保存しました。",
+    "Target": "ポリシー対象",
+    "TargetRequired": "ポリシー対象を選択してください。",
+    "modeDescriptions": {
+      "DROP": "クライアントIPを記録しません。",
+      "NONE": "クライアントIPをそのまま保存します。",
+      "TRUNCATE": "ホストビットをゼロにし、ネットワークプレフィックスのみを残します。"
+    },
+    "modes": {
+      "DROP": "破棄",
+      "NONE": "なし",
+      "TRUNCATE": "切り詰め"
+    },
+    "targets": {
+      "AUDIT_LOGS": "監査ログ",
+      "DEFAULT": "デフォルト",
+      "LOGIN_HISTORY": "ログイン履歴"
+    }
+  },
   "credential": {
     "2FAEnabled": "2要素認証が有効",
     "AccessKey": "アクセスキー",
@@ -2768,8 +2804,6 @@
     "DeleteResourceGroup": "リソースグループを削除します",
     "Description": "説明",
     "Domain": "ドメイン",
-    "Driver": "運転者",
-    "DriverOptions": "ドライバーオプション",
     "DuplicateHandlerOverride": "この handler はすでに再定義されています。",
     "DuplicateResourceSlot": "このリソーススロットはすでに追加されています。",
     "EditDefaultDeploymentOptions": "デフォルトデプロイメントオプションを編集",

@@ -587,6 +587,42 @@
     "Title": "เข้าสู่ระบบ Backend.AI WebUI Agent CLI",
     "VerificationCode": "รหัสยืนยัน"
   },
+  "clientIpMasking": {
+    "ClientIpMasking": "การปกปิด IP ของไคลเอนต์",
+    "CreatePolicy": "สร้างนโยบาย",
+    "DefaultPrefix": "/{{prefix}} (ค่าเริ่มต้น)",
+    "DeleteDefaultPolicyDescription": "เป้าหมายที่ไม่มีนโยบายของตนเองจะจัดเก็บ IP ของไคลเอนต์ตามที่พบ",
+    "DeletePolicy": "ลบนโยบายการปกปิดนี้หรือไม่?",
+    "DeletePolicyDescription": "{{target}} จะกลับไปใช้นโยบายค่าเริ่มต้น",
+    "Description": "กำหนดวิธีปกปิดที่อยู่ IP ของไคลเอนต์ก่อนจัดเก็บ เป้าหมายที่ไม่มีนโยบายของตนเองจะใช้นโยบายค่าเริ่มต้น หากไม่มีนโยบายค่าเริ่มต้น ที่อยู่จะถูกจัดเก็บตามที่พบ",
+    "EditPolicy": "แก้ไขนโยบาย",
+    "IPv4Prefix": "ความยาวพรีฟิกซ์ IPv4",
+    "IPv6Prefix": "ความยาวพรีฟิกซ์ IPv6",
+    "Mode": "โหมดการปกปิด",
+    "ModeRequired": "โปรดเลือกโหมดการปกปิด",
+    "OnePolicyPerTarget": "แต่ละเป้าหมายมีนโยบายได้เพียงหนึ่งรายการ",
+    "PrefixExtra": "จำนวนบิตนำหน้าที่เก็บไว้ (0–{{max}}) เว้นว่างไว้เพื่อใช้ {{defaultPrefix}}",
+    "PrefixRange": "โปรดป้อนตัวเลขระหว่าง 0 ถึง {{max}}",
+    "SuccessfullyDeleted": "ลบนโยบายการปกปิด IP ของไคลเอนต์แล้ว",
+    "SuccessfullySaved": "บันทึกนโยบายการปกปิด IP ของไคลเอนต์แล้ว",
+    "Target": "เป้าหมายนโยบาย",
+    "TargetRequired": "โปรดเลือกเป้าหมายนโยบาย",
+    "modeDescriptions": {
+      "DROP": "ไม่บันทึก IP ของไคลเอนต์",
+      "NONE": "จัดเก็บ IP ของไคลเอนต์ตามที่พบ",
+      "TRUNCATE": "ตั้งค่าบิตโฮสต์เป็นศูนย์ เหลือไว้เพียงพรีฟิกซ์เครือข่าย"
+    },
+    "modes": {
+      "DROP": "ไม่บันทึก",
+      "NONE": "ไม่มี",
+      "TRUNCATE": "ตัดทอน"
+    },
+    "targets": {
+      "AUDIT_LOGS": "บันทึกการตรวจสอบ",
+      "DEFAULT": "ค่าเริ่มต้น",
+      "LOGIN_HISTORY": "ประวัติการเข้าสู่ระบบ"
+    }
+  },
   "credential": {
     "2FAEnabled": "เปิดใช้งาน 2FA แล้ว",
     "AccessKey": "คีย์การเข้าถึง",
@@ -2757,8 +2793,6 @@
     "DeleteResourceGroup": "ลบกลุ่มทรัพยากร",
     "Description": "คำอธิบาย",
     "Domain": "โดเมน",
-    "Driver": "ไดรเวอร์",
-    "DriverOptions": "ตัวเลือกไดรเวอร์",
     "DuplicateHandlerOverride": "Handler นี้ถูกกำหนดทับแล้ว",
     "DuplicateResourceSlot": "ช่องทรัพยากรนี้ถูกเพิ่มแล้ว",
     "EditDefaultDeploymentOptions": "แก้ไขตัวเลือกการปรับใช้เริ่มต้น",
