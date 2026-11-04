@@ -94,7 +94,7 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  // RESPONSIVE-POLICY R3 — the BUI breakpoint hook, never Astryx `useMediaQuery`.
+  // ADR 0020 R3 — the BUI breakpoint hook, never Astryx `useMediaQuery`.
   const { md } = useBAIBreakpoint();
   const isNarrow = !md;
   const [narrowView, setNarrowView] = useState<'nav' | 'detail'>('detail');

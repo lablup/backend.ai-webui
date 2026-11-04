@@ -587,6 +587,42 @@
     "Title": "Backend.AI WebUI Agent CLI anmelden",
     "VerificationCode": "Bestätigungscode"
   },
+  "clientIpMasking": {
+    "ClientIpMasking": "Client-IP-Maskierung",
+    "CreatePolicy": "Richtlinie erstellen",
+    "DefaultPrefix": "/{{prefix}} (Standard)",
+    "DeleteDefaultPolicyDescription": "Ziele ohne eigene Richtlinie speichern Client-IPs unverändert.",
+    "DeletePolicy": "Diese Maskierungsrichtlinie löschen?",
+    "DeletePolicyDescription": "{{target}} fällt auf die Standardrichtlinie zurück.",
+    "Description": "Legen Sie fest, wie Client-IP-Adressen vor dem Speichern maskiert werden. Ein Ziel ohne eigene Richtlinie folgt der Standardrichtlinie; gibt es keine Standardrichtlinie, werden Adressen unverändert gespeichert.",
+    "EditPolicy": "Richtlinie bearbeiten",
+    "IPv4Prefix": "IPv4-Präfixlänge",
+    "IPv6Prefix": "IPv6-Präfixlänge",
+    "Mode": "Maskierungsmodus",
+    "ModeRequired": "Wählen Sie einen Maskierungsmodus.",
+    "OnePolicyPerTarget": "Pro Ziel kann nur eine Richtlinie existieren.",
+    "PrefixExtra": "Anzahl der beibehaltenen führenden Bits (0–{{max}}). Leer lassen, um {{defaultPrefix}} zu verwenden.",
+    "PrefixRange": "Geben Sie eine Zahl zwischen 0 und {{max}} ein.",
+    "SuccessfullyDeleted": "Client-IP-Maskierungsrichtlinie gelöscht.",
+    "SuccessfullySaved": "Client-IP-Maskierungsrichtlinie gespeichert.",
+    "Target": "Richtlinienziel",
+    "TargetRequired": "Wählen Sie ein Richtlinienziel.",
+    "modeDescriptions": {
+      "DROP": "Es wird keine Client-IP aufgezeichnet.",
+      "NONE": "Client-IPs werden unverändert gespeichert.",
+      "TRUNCATE": "Host-Bits werden auf null gesetzt, nur das Netzwerkpräfix bleibt erhalten."
+    },
+    "modes": {
+      "DROP": "Verwerfen",
+      "NONE": "Keine",
+      "TRUNCATE": "Kürzen"
+    },
+    "targets": {
+      "AUDIT_LOGS": "Audit-Protokolle",
+      "DEFAULT": "Standard",
+      "LOGIN_HISTORY": "Anmeldeverlauf"
+    }
+  },
   "credential": {
     "2FAEnabled": "2FA aktiviert",
     "AccessKey": "Zugriffsschlüssel",
@@ -2753,8 +2789,6 @@
     "DeleteResourceGroup": "Ressourcengruppe löschen",
     "Description": "Beschreibung",
     "Domain": "Bereich",
-    "Driver": "Treiber",
-    "DriverOptions": "Treiberoptionen",
     "DuplicateHandlerOverride": "Dieser Handler ist bereits überschrieben.",
     "DuplicateResourceSlot": "Dieser Ressourcen-Slot ist bereits hinzugefügt.",
     "EditDefaultDeploymentOptions": "Standard-Bereitstellungsoptionen bearbeiten",

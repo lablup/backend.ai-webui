@@ -60,10 +60,9 @@ navTitle: 프로젝트 관리자 기능
 
 ## 프로젝트 관리자 사이드바
 
-프로젝트 관리자 권한을 가진 프로젝트를 선택하면 사이드바에 **프로젝트 설정** 항목이 표시됩니다. 이 항목을 선택하면 사이드바가 프로젝트 관리 메뉴로 전환되며, **운영** 섹션에 해당 프로젝트를 관리하기 위한 네 개의 항목이 표시됩니다:
+프로젝트 관리자 권한을 가진 프로젝트를 선택하면 사이드바에 **프로젝트 설정** 항목이 표시됩니다. 이 항목을 선택하면 사이드바가 프로젝트 관리 메뉴로 전환되며, **운영** 섹션에 해당 프로젝트를 관리하기 위한 세 개의 항목이 표시됩니다:
 
 - **사용자** — 현재 프로젝트의 구성원
-- **데이터** — 현재 프로젝트가 소유한 스토리지 폴더
 - **세션** — 현재 프로젝트의 사용자들이 소유한 연산 세션
 - **배포** — 현재 프로젝트가 소유한 모델 배포
 
@@ -104,56 +103,9 @@ navTitle: 프로젝트 관리자 기능
 
 <a id="data"></a>
 
-## 데이터
+## 스토리지 폴더
 
-**데이터** 페이지에는 현재 선택된 프로젝트가 소유한 스토리지 폴더(vfolder)가 표시됩니다. 이 페이지에서 프로젝트 공유 폴더를 생성하거나, 실수로 삭제된 폴더를 복원하거나, 더 이상 보관할 필요가 없는 폴더를 영구 삭제할 수 있습니다.
-
-![](../images/project_admin_data_page.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
-
-페이지는 다음 컨트롤을 제공합니다:
-
-- **활성 / 휴지통** 탭: 현재 활성 폴더와 소프트 삭제된 폴더 사이를 전환합니다. 각 탭에는 포함된 폴더 수를 나타내는 개수 배지가 표시됩니다.
-- **모드 필터**: 폴더 사용 모드별로 필터링합니다 — **전체**, **일반**, **파이프라인**, **자동 마운트**, **모델**.
-
-   **파이프라인**과 **모델** 옵션은 배포에서 해당 기능이 활성화된 경우에만 표시됩니다 — **파이프라인**은 FastTrack 파이프라인 엔드포인트, **모델**은 모델 폴더가 활성화되어 있어야 합니다.
-
-- **속성 필터**: 표준 스토리지 폴더 속성 필터를 사용하여 목록을 필터링합니다.
-
-폴더의 **라벨 편집** 작업으로 해당 폴더에 키-값 라벨을 지정할 수 있으며, 여러 폴더를 선택한 뒤 **라벨 추가**를 클릭하면 한 번에 라벨을 지정할 수 있습니다.
-
-### 폴더 생성
-
-이 페이지에서 새 폴더를 생성하려면:
-
-1. 페이지 오른쪽 상단의 **폴더 생성** 버튼을 클릭합니다.
-2. 생성 모달에서 폴더 정보를 입력합니다.
-3. **생성**을 클릭하여 폴더를 생성합니다.
-
-![=650px](../images/project_admin_create_folder_modal.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
-
-:::info
-프로젝트 관리자용 데이터 페이지에서 생성한 폴더는 항상 **프로젝트 폴더**입니다. 생성 모달에는 폴더 유형을 선택하는 항목이 없으며, 이를 명확히 알리는 다음 메시지가 표시됩니다:
-
-> 프로젝트 관리자용 데이터 페이지에서는 프로젝트 폴더로 생성됩니다.
-:::
-
-폴더 사용 모드, 권한, 할당량에 대한 자세한 내용은 [스토리지 폴더](#vfolders) 장을 참고하세요.
-
-### 폴더 복원 또는 영구 삭제
-
-**휴지통** 탭으로 전환하면 소프트 삭제된 폴더를 확인할 수 있습니다. 행 체크박스로 하나 이상의 폴더를 선택한 다음, 선택 개수 옆에 나타나는 헤더 작업 버튼을 사용합니다:
-
-- **복구**: 선택한 폴더를 활성 탭으로 되돌립니다.
-- **영구 삭제**: 선택한 폴더를 완전히 제거합니다. 이 작업은 되돌릴 수 없으며, 확인을 위해 폴더 이름을 직접 입력해야 합니다.
-
-![](../images/project_admin_data_deleted_tab.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
-
-:::danger
-스토리지 폴더를 영구 삭제하면 모든 콘텐츠가 제거되며 되돌릴 수 없습니다. 확인 모달에서는 삭제 버튼이 활성화되기 전에 폴더 이름을 정확히 입력해야 합니다.
-:::
+프로젝트의 스토리지 폴더는 해당 프로젝트를 선택한 상태에서 **데이터** 페이지를 통해 관리합니다. 폴더 사용 모드, 권한, 할당량에 대한 자세한 내용은 [스토리지 폴더](#vfolders) 장을 참고하세요.
 
 <a id="sessions"></a>
 

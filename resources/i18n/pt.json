@@ -587,6 +587,42 @@
     "Title": "Iniciar sessão na Backend.AI WebUI Agent CLI",
     "VerificationCode": "Código de verificação"
   },
+  "clientIpMasking": {
+    "ClientIpMasking": "Mascaramento de IP do cliente",
+    "CreatePolicy": "Criar política",
+    "DefaultPrefix": "/{{prefix}} (predefinido)",
+    "DeleteDefaultPolicyDescription": "Os destinos sem política própria armazenarão os IPs do cliente tal como observados.",
+    "DeletePolicy": "Eliminar esta política de mascaramento?",
+    "DeletePolicyDescription": "{{target}} passará a seguir a política predefinida.",
+    "Description": "Defina como os endereços IP do cliente são mascarados antes de serem armazenados. Um destino sem política própria segue a política predefinida; se não existir, os endereços são armazenados tal como observados.",
+    "EditPolicy": "Editar política",
+    "IPv4Prefix": "Comprimento do prefixo IPv4",
+    "IPv6Prefix": "Comprimento do prefixo IPv6",
+    "Mode": "Modo de mascaramento",
+    "ModeRequired": "Selecione um modo de mascaramento.",
+    "OnePolicyPerTarget": "Só pode existir uma política por destino.",
+    "PrefixExtra": "Número de bits iniciais a manter (0–{{max}}). Deixe vazio para usar {{defaultPrefix}}.",
+    "PrefixRange": "Introduza um número entre 0 e {{max}}.",
+    "SuccessfullyDeleted": "Política de mascaramento de IP do cliente eliminada.",
+    "SuccessfullySaved": "Política de mascaramento de IP do cliente guardada.",
+    "Target": "Destino da política",
+    "TargetRequired": "Selecione um destino da política.",
+    "modeDescriptions": {
+      "DROP": "Nenhum IP do cliente é registado.",
+      "NONE": "Os IPs do cliente são armazenados tal como observados.",
+      "TRUNCATE": "Os bits de anfitrião são zerados, mantendo apenas o prefixo de rede."
+    },
+    "modes": {
+      "DROP": "Descartar",
+      "NONE": "Nenhum",
+      "TRUNCATE": "Truncar"
+    },
+    "targets": {
+      "AUDIT_LOGS": "Registos de auditoria",
+      "DEFAULT": "Predefinido",
+      "LOGIN_HISTORY": "Histórico de início de sessão"
+    }
+  },
   "credential": {
     "2FAEnabled": "2FA ativada",
     "AccessKey": "Chave de acesso",
@@ -2753,8 +2789,6 @@
     "DeleteResourceGroup": "Excluir Grupo de Recursos",
     "Description": "Descrição",
     "Domain": "Domínio",
-    "Driver": "Motorista",
-    "DriverOptions": "Opções do driver",
     "DuplicateHandlerOverride": "Este handler já foi substituído.",
     "DuplicateResourceSlot": "Este slot de recursos já foi adicionado.",
     "EditDefaultDeploymentOptions": "Editar opções de implantação padrão",

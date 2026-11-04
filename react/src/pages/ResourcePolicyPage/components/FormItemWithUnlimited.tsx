@@ -1,0 +1,114 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import BAIFormItem from '../../../components/BAIFormItem';
+import type { BAIFormItemProps } from '../../../components/BAIFormItem';
+import { Form } from '../../../form-engine';
+import { BAICheckboxInput, BAIFlex } from 'backend.ai-ui';
+import React, {
+  Attributes,
+  cloneElement,
+  isValidElement,
+  useEffect,
+  useState,
+} from 'react';
+import { useTranslation } from 'react-i18next';
+
+interface FormItemWithUnlimitedProps extends BAIFormItemProps {
+  unlimitedValue?: number | string | null;
+  disableUnlimited?: boolean;
+}
+
+const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
+  name,
+  unlimitedValue,
+  disableUnlimited,
+  children,
+  ...formItemPropsWithoutNameAndChildren
+}) => {
+  const { t } = useTranslation();
+  const [isUnlimited, setIsUnlimited] = useState<boolean>(false);
+  const form = Form.useFormInstance();
+
+  // Detect changes in form value to update the isUnlimited state.
+  useEffect(() => {
+    const fieldValue = form.getFieldValue(name);
+    // When unlimitedValue is undefined or null, treat both null and undefined
+    // form values as "unlimited" because Ant Design may internally convert
+    // undefined to null when storing form field values.
+    const isFieldUnlimited =
+      unlimitedValue === undefined || unlimitedValue === null
+        ? fieldValue === undefined || fieldValue === null
+        : fieldValue === unlimitedValue;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsUnlimited(isFieldUnlimited);
+  }, [form, name, unlimitedValue]);
+
+  // Disable children when isUnlimited is true.
+  const childrenWithProps = isValidElement(children)
+    ? cloneElement(children, {
+        disabled: isUnlimited,
+      } as Attributes & { disabled?: boolean })
+    : children;
+
+  const childrenWithUndefinedValue =
+    isUnlimited && isValidElement(children)
+      ? cloneElement(children, {
+          value: undefined,
+          disabled: isUnlimited,
+        } as Attributes & { value?: any })
+      : undefined;
+
+  return (
+    // The grid cell stretches to its row's tallest item; bottom-aligning the
+    // stack keeps every input on one baseline when labels wrap to two lines.
+    <BAIFlex
+      direction="column"
+      align="stretch"
+      justify="end"
+      gap="xs"
+      style={{ height: '100%' }}
+    >
+      <BAIFormItem
+        style={{ margin: 0 }}
+        name={name}
+        hidden={isUnlimited}
+        {...formItemPropsWithoutNameAndChildren}
+      >
+        {childrenWithProps}
+      </BAIFormItem>
+      {isUnlimited ? (
+        <BAIFormItem
+          style={{ margin: 0 }}
+          {...formItemPropsWithoutNameAndChildren}
+        >
+          {childrenWithUndefinedValue}
+        </BAIFormItem>
+      ) : null}
+      {/* Outside the Form.Item value binding: this checkbox drives
+          isUnlimited local state and imperatively pokes the form value. */}
+      <BAICheckboxInput
+        // The toggle is secondary to the field it disables, so it uses the
+        // compact step instead of the default 24px indicator.
+        size="sm"
+        value={isUnlimited}
+        disabled={disableUnlimited}
+        onChange={(checked) => {
+          setIsUnlimited(checked);
+          if (checked) {
+            // Use null instead of undefined because Ant Design may treat
+            // undefined as "reset to initial value" rather than storing it.
+            form.setFieldValue(name, unlimitedValue ?? null);
+          } else {
+            form.resetFields([name]);
+          }
+        }}
+      >
+        {t('resourcePolicy.Unlimited')}
+      </BAICheckboxInput>
+    </BAIFlex>
+  );
+};
+
+export default FormItemWithUnlimited;
