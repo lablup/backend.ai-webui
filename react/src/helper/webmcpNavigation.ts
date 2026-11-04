@@ -58,7 +58,7 @@ export const resolveAppPath = (
   ) {
     return notAllowed('"path" must not carry a login token.');
   }
-  // A form filled through the URL must carry the agent-filled notice (ADR 0017).
+  // A form filled through the URL must carry the agent-filled notice (ADR 0018).
   if (
     url.searchParams.has('formValues') ||
     url.searchParams.has(AGENT_PREFILL_PARAM)

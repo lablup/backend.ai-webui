@@ -66,7 +66,7 @@ export interface PrepareSessionToolDeps {
 const wait = (ms: number) =>
   new Promise((resolve) => window.setTimeout(resolve, ms));
 
-/** `bai_prepare_session` (ADR 0017). It can only navigate: no submit or mutation is reachable from here. */
+/** `bai_prepare_session` (ADR 0018). It can only navigate: no submit or mutation is reachable from here. */
 export const createPrepareSessionTool = ({
   findFolders,
   allowCustomResourceAllocation,
