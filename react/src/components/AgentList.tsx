@@ -12,6 +12,7 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useThemeMode } from '../hooks/useThemeMode';
 import AgentDetailDrawer from './AgentDetailDrawer';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
+import WebMCPAgentListTools from './WebMCPAgentListTools';
 import { Token } from '@lablup/ui-common/Token';
 import {
   AgentNodeInList,
@@ -50,11 +51,14 @@ interface AgentListProps {
   headerProps?: BAIFlexProps;
   fetchKey?: string;
   onChangeFetchKey?: (key: string) => void;
+  /** Register the WebMCP agent tools; only the agent page owns them. */
+  registerWebMCPTools?: boolean;
 }
 
 const AgentList: React.FC<AgentListProps> = ({
   tableProps,
   headerProps,
+  registerWebMCPTools,
   ...otherProps
 }) => {
   'use memo';
@@ -82,10 +86,11 @@ const AgentList: React.FC<AgentListProps> = ({
     defaultValue: INITIAL_FETCH_KEY,
   });
 
+  // Any value other than ALIVE (including the old `status=TERMINATED` links)
+  // opens the second tab, which lists LOST, RESTARTING and TERMINATED agents.
+  const statusTab = queryParams.status === 'ALIVE' ? 'ALIVE' : 'INACTIVE';
   const statusFilter =
-    queryParams.status === 'ALIVE'
-      ? 'status == "ALIVE"'
-      : 'status == "TERMINATED"';
+    statusTab === 'ALIVE' ? 'status == "ALIVE"' : 'status != "ALIVE"';
 
   const queryVariables: AgentListQuery$variables = {
     offset: baiPaginationOption.offset,
@@ -125,6 +130,7 @@ const AgentList: React.FC<AgentListProps> = ({
             node {
               id
               ...BAIAgentTableFragment
+              ...WebMCPAgentListToolsFragment
               ...AgentDetailModalFragment
               ...AgentDetailDrawerFragment
             }
@@ -197,6 +203,9 @@ const AgentList: React.FC<AgentListProps> = ({
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.AgentList',
   );
+  const agentNodes = filterOutEmpty(
+    agent_nodes?.edges.map((e) => e?.node) ?? [],
+  );
 
   return (
     <BAIFlex
@@ -214,7 +223,7 @@ const AgentList: React.FC<AgentListProps> = ({
           wrap="wrap"
         >
           <BAISegmentedControl
-            value={queryParams.status}
+            value={statusTab}
             onChange={(value) => {
               setQueryParams({ status: value });
               setTablePaginationOption({ current: 1 });
@@ -225,8 +234,8 @@ const AgentList: React.FC<AgentListProps> = ({
               label={t('agent.Connected')}
             />
             <BAISegmentedControlItem
-              value="TERMINATED"
-              label={t('agent.Terminated')}
+              value="INACTIVE"
+              label={t('general.Inactive')}
             />
           </BAISegmentedControl>
 
@@ -313,11 +322,21 @@ const AgentList: React.FC<AgentListProps> = ({
           />
         </BAIFlex>
       </BAIFlex>
+      {registerWebMCPTools && (
+        <WebMCPAgentListTools
+          agentsFrgmt={agentNodes}
+          columnOverrides={columnOverrides}
+          page={tablePaginationOption.current}
+          pageSize={tablePaginationOption.pageSize}
+          total={agent_nodes?.count}
+          pending={deferredQueryVariables !== queryVariables}
+          viewParams={{ tab: 'agents', ...queryParams }}
+          openedAgentId={currentAgentInfo?.id}
+        />
+      )}
       <BAIAgentTable
         resizable
-        agentsFragment={filterOutEmpty(
-          agent_nodes?.edges.map((e) => e?.node) ?? [],
-        )}
+        agentsFragment={agentNodes}
         onClickAgentName={(agent) => {
           const targetAgent = _.find(
             agent_nodes?.edges,

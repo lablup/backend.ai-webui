@@ -5,11 +5,12 @@
  Adapter over ui-common `Board`: keeps the frozen `movable` / `resizable` /
  `bordered` names and the `onItemsChange({ detail })` shape the dashboards
  read. An item without its own `description` gets `data.content` as the
- description.
+ description; ui-common `Board` moves its first `BAIBoardItemTitle` into the header.
 */
 import './BAIBoard.css';
 import {
   Board,
+  useIsInBoardItem,
   type BoardItem,
   type BoardItemsChangeDetail,
   type BoardProps,
@@ -92,4 +93,7 @@ const BAIBoard = <T extends BAIBoardDataType = BAIBoardDataType>({
 };
 
 BAIBoard.displayName = 'BAIBoard';
+
+/** Whether the caller renders inside a `BAIBoard` item, whose board pads it. */
+export const useIsInBAIBoardItem = useIsInBoardItem;
 export default BAIBoard;

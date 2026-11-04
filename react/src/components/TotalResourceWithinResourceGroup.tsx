@@ -27,6 +27,7 @@ import {
   useControllableValue,
   BAISegmentedControl,
   BAISegmentedControlItem,
+  useIsInBAIBoardItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
@@ -201,6 +202,7 @@ const TotalResourceWithinResourceGroup: React.FC<
   const deferredSelectedResourceGroup = useDeferredValue(currentResourceGroup);
   const userRole = useCurrentUserRole();
   const { token } = useTheme();
+  const isInBoard = useIsInBAIBoardItem();
 
   const [{ agent_nodes, agent_summary_list }, refetch] = useRefetchableFragment(
     graphql`
@@ -430,8 +432,13 @@ const TotalResourceWithinResourceGroup: React.FC<
       direction="column"
       align="stretch"
       style={{
-        paddingInline: token('--spacing-8'),
-        paddingBottom: token('--spacing-4'),
+        // On a board the board pads the item.
+        ...(isInBoard
+          ? {}
+          : {
+              paddingInline: token('--spacing-8'),
+              paddingBottom: token('--spacing-4'),
+            }),
         ...props.style,
       }}
       {..._.omit(props, ['style'])}

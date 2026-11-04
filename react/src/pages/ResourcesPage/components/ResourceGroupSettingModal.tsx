@@ -50,7 +50,6 @@ type FormInputType = {
   description: string;
   allowedSessionTypes: string[];
   wsProxyAddress: string;
-  wsProxyAPIToken: string;
   active: boolean;
   public: boolean;
   scheduler: string;
@@ -86,7 +85,6 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
         is_active
         is_public
         wsproxy_addr
-        wsproxy_api_token
         scheduler
         scheduler_opts
       }
@@ -171,7 +169,6 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
       ? _.toNumber(schedulerOpts?.config?.num_retries_to_skip)
       : null,
     wsProxyAddress: resourceGroup?.wsproxy_addr,
-    wsProxyAPIToken: resourceGroup?.wsproxy_api_token,
   });
 
   return (
@@ -212,7 +209,6 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               is_public: values.public,
               is_active: values.active,
               wsproxy_addr: values.wsProxyAddress,
-              wsproxy_api_token: values.wsProxyAPIToken,
             };
 
             // After the group is saved, sync its SFTP proxy membership to the
@@ -402,16 +398,6 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
             <BAITextInput
               aria-label={t('resourceGroup.AppProxyAddress')}
               placeholder="http://localhost:10200"
-            />
-          </BAIFormItem>
-          <BAIFormItem
-            label={t('resourceGroup.AppProxyAPIToken')}
-            name="wsProxyAPIToken"
-          >
-            <BAITextInput
-              aria-label={t('resourceGroup.AppProxyAPIToken')}
-              type="password"
-              placeholder={t('resourceGroup.EnterAPIToken')}
             />
           </BAIFormItem>
           {baiClient.is_superadmin ? (

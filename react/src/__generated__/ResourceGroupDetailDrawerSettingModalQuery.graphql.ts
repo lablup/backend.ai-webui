@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<19f634e8ab104b8e1f5d05babd23af6e>>
+ * @generated SignedSource<<751abc0da19e392b337dd4d21e1fc613>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -118,13 +118,6 @@ return {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "wsproxy_api_token",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
             "name": "scheduler",
             "storageKey": null
           },
@@ -141,12 +134,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "6ef792eb1ab04073786cf1ec19b81509",
+    "cacheID": "65225859ad66b2d9880c83db7b7476bc",
     "id": null,
     "metadata": {},
     "name": "ResourceGroupDetailDrawerSettingModalQuery",
     "operationKind": "query",
-    "text": "query ResourceGroupDetailDrawerSettingModalQuery(\n  $name: String!\n) {\n  scaling_group(name: $name) {\n    ...ResourceGroupSettingModalFragment\n  }\n}\n\nfragment ResourceGroupSettingModalFragment on ScalingGroup {\n  name\n  description\n  is_active\n  is_public\n  wsproxy_addr\n  wsproxy_api_token\n  scheduler\n  scheduler_opts\n}\n"
+    "text": "query ResourceGroupDetailDrawerSettingModalQuery(\n  $name: String!\n) {\n  scaling_group(name: $name) {\n    ...ResourceGroupSettingModalFragment\n  }\n}\n\nfragment ResourceGroupSettingModalFragment on ScalingGroup {\n  name\n  description\n  is_active\n  is_public\n  wsproxy_addr\n  scheduler\n  scheduler_opts\n}\n"
   }
 };
 })();

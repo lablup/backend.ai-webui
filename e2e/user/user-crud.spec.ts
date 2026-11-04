@@ -11,6 +11,7 @@ import {
   UserSettingModal,
 } from '../utils/classes/user/UserSettingModal';
 import { getE2EDomainName } from '../utils/e2e-scope';
+import { skipUnlessLabelableEntityType } from '../utils/feature-gate-util';
 import {
   loginAsAdmin,
   loginAsCreatedAccount,
@@ -658,6 +659,121 @@ test.describe(
       const keypairRow = credentialTable.locator('tbody tr').first();
       await expect(keypairRow).toBeVisible({ timeout: 20000 });
       await expectRowActions(page, keypairRow, ['Info', 'Edit', 'Deactivate']);
+    });
+  },
+);
+
+// #10388: the User Detail modal carries a Labels row whose hover action edits
+// the user's labels. Each test creates its own active user through the admin
+// API and purges it in afterEach.
+test.describe(
+  'User Labels - Superadmin',
+  { tag: ['@regression', '@user', '@functional', '@requires-manager-v26.9'] },
+  () => {
+    let api: APIRequestContext | null = null;
+    let labelUserEmail: string | null = null;
+
+    test.beforeEach(async ({ page, request }) => {
+      await loginAsAdmin(page, request);
+      await skipUnlessLabelableEntityType(
+        page,
+        'user',
+        'User labels require a manager that accepts user labels (#10387)',
+      );
+
+      api = await createAdminApiContext();
+      const runId = `${Date.now().toString(36)}${randomBytes(3).toString('hex')}`;
+      const email = `e2e-user-label-${runId}@lablup.com`;
+      // Set before the create call so a partial failure is still purged.
+      labelUserEmail = email;
+      const { create_user } = await gqlAdmin<{
+        create_user: { ok: boolean; msg: string };
+      }>(
+        api,
+        `mutation($email: String!, $props: UserInput!) {
+          create_user(email: $email, props: $props) { ok msg }
+        }`,
+        {
+          email,
+          props: {
+            username: email.split('@')[0],
+            password: `e2e-${randomBytes(12).toString('hex')}@Pw`,
+            need_password_change: false,
+            domain_name: await getE2EDomainName(api),
+            is_active: true,
+            status: 'active',
+          },
+        },
+      );
+      expect(create_user.ok, create_user.msg).toBe(true);
+    });
+
+    test.afterEach(async () => {
+      if (!api) return;
+      const adminApi = api;
+      api = null;
+      try {
+        if (labelUserEmail) {
+          await purgeUserViaApi(adminApi, labelUserEmail).catch((error) =>
+            console.warn(`could not purge ${labelUserEmail}:`, error),
+          );
+        }
+      } finally {
+        labelUserEmail = null;
+        await adminApi.dispose();
+      }
+    });
+
+    test("Admin can edit a user's labels from the user info modal", async ({
+      page,
+    }) => {
+      // The superadmin intro tour (AdminViewSwitchTour) otherwise covers the page.
+      await page.addInitScript(() => {
+        localStorage.setItem(
+          'backendaiwebui.settings.user.has_opened_tour_back_to_user_view',
+          'true',
+        );
+        localStorage.setItem(
+          'backendaiwebui.settings.user.has_opened_tour_back_to_admin_settings',
+          'true',
+        );
+      });
+      await navigateTo(
+        page,
+        `credential?tab=users&filter=${encodeURIComponent(
+          JSON.stringify({ email: { equals: labelUserEmail } }),
+        )}`,
+      );
+      const userRow = page
+        .getByRole('row')
+        .filter({ has: page.getByRole('cell', { name: labelUserEmail! }) });
+      await expect(userRow).toBeVisible({ timeout: 20000 });
+      await clickRowAction(page, userRow, 'User Detail');
+      const userInfoModal = new UserInfoModal(page);
+      await userInfoModal.waitForVisible();
+      const modal = userInfoModal.getModal();
+
+      await expect(
+        modal.getByRole('term').filter({ hasText: /^Labels$/ }),
+      ).toBeVisible({ timeout: 20000 });
+      // Edit labels is a hover action of the Labels definition.
+      const labelsRow = modal
+        .getByRole('definition')
+        .filter({ has: page.getByRole('button', { name: 'Edit labels' }) });
+      await labelsRow.hover();
+      await labelsRow.getByRole('button', { name: 'Edit labels' }).click();
+
+      const labelModal = page.getByRole('dialog', { name: 'Edit labels' });
+      await expect(labelModal).toBeVisible();
+      await labelModal.getByRole('textbox', { name: 'Key' }).fill('team');
+      await labelModal.getByRole('textbox', { name: 'Value' }).fill('e2e');
+      await labelModal.getByRole('button', { name: 'Save' }).click();
+      await expect(page.getByText('Labels saved.').first()).toBeVisible();
+      await expect(labelModal).toBeHidden({ timeout: 30000 });
+
+      await expect(
+        labelsRow.getByText('team=e2e', { exact: true }),
+      ).toBeVisible({ timeout: 30000 });
     });
   },
 );
