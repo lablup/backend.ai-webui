@@ -257,8 +257,9 @@ function boot(host: OverlayHost): OverlayHandle {
           text: buildSetText(set, copyOptions()),
           html: buildSetHtml(set, copyOptions()),
           toast: copiedToast(set.length),
-          // The pin joins the set only once THIS write has landed: a copy that
-          // failed, or a composer closed while it was in flight, adds nothing.
+          addedToast: `Added pin ${set.length} to your set — Copy all from the dock when you are done`,
+          // The pin joins the set only once THIS write has landed (or "Add to
+          // set" skipped the write): a failed or abandoned copy adds nothing.
           commit: () => {
             store.add(pin);
             syncDraft();

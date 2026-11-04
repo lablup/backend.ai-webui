@@ -303,6 +303,70 @@ describe('adding to a set', () => {
     expect(textarea().value).toBe('two');
   });
 
+  describe('without copying', () => {
+    const pressAdd = () =>
+      textarea().dispatchEvent(
+        new KeyboardEvent('keydown', {
+          key: 'Enter',
+          metaKey: true,
+          shiftKey: true,
+          bubbles: true,
+        }),
+      );
+
+    it('adds the pin from the button and writes no clipboard', async () => {
+      await bootOverlay();
+      stubExecCommand();
+      await pickAndCopy('create', 'one');
+      const written = stubExecCommand();
+
+      await pick('cancel', 'two');
+      node<HTMLButtonElement>('[data-act="add"]').click();
+      await ticks(2);
+
+      expect(document.execCommand).not.toHaveBeenCalled();
+      expect(written['text/plain']).toBeUndefined();
+      expect(storedIds()).toHaveLength(2);
+      expect(dockRows()).toHaveLength(2);
+      expect(composeOpen()).toBe(false);
+      expect(toast()).toBe(
+        'Added pin 2 to your set — Copy all from the dock when you are done',
+      );
+    });
+
+    it('adds the first pin on ⇧⌘⏎, and the dock copies it later', async () => {
+      await bootOverlay();
+      const written = stubExecCommand();
+
+      await pick('create', 'one');
+      pressAdd();
+      await ticks(2);
+
+      expect(written['text/plain']).toBeUndefined();
+      expect(storedIds()).toHaveLength(1);
+      expect(node('.setdock').classList.contains('shown')).toBe(true);
+      expect(copyButton().textContent).toBe('Add & copy all (2)');
+    });
+
+    it('is refused, like the copy, once the set is full', async () => {
+      seed(
+        Array.from({ length: 30 }, (_, i) =>
+          storedPin(nthId(i), 'create', `Start › ${i}`),
+        ),
+      );
+      await bootOverlay();
+      stubExecCommand();
+
+      await pick('create', 'one too many');
+
+      expect(node<HTMLButtonElement>('[data-act="add"]').disabled).toBe(true);
+      pressAdd();
+      await ticks(2);
+      expect(toast()).toContain('full at 30 pins');
+      expect(storedIds()).toHaveLength(30);
+    });
+  });
+
   /**
    * A secure-context dev run gets `navigator.clipboard`, and its write lands
    * a tick later — long enough for the composer to be gone by then.

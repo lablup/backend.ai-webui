@@ -47,8 +47,11 @@ export interface ComposedCopy extends CopyPayload {
   /**
    * Runs only when THIS copy landed on the clipboard; closing the composer
    * mid-write does not cancel it, so a write that failed adds nothing.
+   * "Add to set" runs it with no write at all.
    */
   commit?: () => void;
+  /** What "Add to set" says once `commit` ran without a clipboard write. */
+  addedToast?: string;
 }
 
 /** Nothing is copied and the composer stays open; the toast says why. */
@@ -358,9 +361,10 @@ export function createOverlayUI(
     .compose .actions {
       display: flex; justify-content: flex-end; gap: 6px; margin-top: 6px;
     }
-    .compose .btn.primary {
+    .compose .btn.primary, .compose .btn[data-act="add"] {
       display: inline-flex; align-items: center; gap: 5px;
     }
+    .compose.editing .btn[data-act="add"] { display: none; }
     .compose .err {
       color: var(--bai-review-error); font-size: 11px; margin-top: 4px;
       display: none;
@@ -385,11 +389,12 @@ ${ICON_STYLE}
   const compose = el('div', 'compose');
   compose.innerHTML = `
     <div class="pathlabel"></div>
-    <textarea aria-label="Review comment on the picked element" placeholder="Comment on this element… (⌘⏎ to copy the block; may be empty)"></textarea>
+    <textarea aria-label="Review comment on the picked element" placeholder="Comment on this element… (⌘⏎ to copy, ⇧⌘⏎ to add to the set without copying; may be empty)"></textarea>
     <div class="err"></div>
     <div class="warn"></div>
     <div class="actions">
       <button class="btn" data-act="cancel">Cancel</button>
+      <button class="btn" data-act="add" title="Add to the set without touching the clipboard (⇧⌘⏎)"><span class="lbl">Add to set</span></button>
       <button class="btn primary" data-act="copy"><span class="lbl"></span></button>
     </div>
   `;
@@ -404,6 +409,10 @@ ${ICON_STYLE}
   ) as HTMLButtonElement;
   const copyLabel = copyButton.querySelector('.lbl') as HTMLElement;
   copyButton.prepend(icon('copy'));
+  const addButton = compose.querySelector(
+    '[data-act="add"]',
+  ) as HTMLButtonElement;
+  addButton.prepend(icon('map-pin'));
   (compose.querySelector('.warn') as HTMLElement).textContent = EDIT_WARNING;
 
   let pickActive = false;
@@ -488,6 +497,7 @@ ${ICON_STYLE}
       copyInFlight ||
       readyNote === null ||
       composeText.value.trim() !== readyNote;
+    addButton.disabled = mode === 'edit' || copyButton.disabled;
   }
 
   /** The button says what ⌘⏎ does here; an edit only ever saves one note. */
@@ -774,7 +784,8 @@ ${ICON_STYLE}
 
   // ---------------------------------------------------------------- events
 
-  function runCopy() {
+  /** `addOnly` commits the pin to the set and leaves the clipboard alone. */
+  function runCopy(addOnly = false) {
     if (copyInFlight) return;
     // Empty text is allowed — the block still carries label, stack and link.
     const note = composeText.value.trim();
@@ -818,6 +829,12 @@ ${ICON_STYLE}
       return;
     }
     const block = built;
+    if (addOnly) {
+      block.commit?.();
+      closeCompose();
+      showToast(block.addedToast ?? 'Added to the set');
+      return;
+    }
     const epoch = composeEpoch;
     const copied = copyText(block.text, block.html);
     // Close only on success. A failed copy tells the reviewer to press ⌘⏎
@@ -853,14 +870,16 @@ ${ICON_STYLE}
       target?.closest<HTMLButtonElement>('button[data-act]')?.dataset.act;
     if (act === 'cancel') closeCompose();
     if (act === 'copy') runCopy();
+    if (act === 'add') runCopy(true);
   });
 
   composeText.addEventListener('keydown', (evt) => {
     if ((evt.metaKey || evt.ctrlKey) && evt.key === 'Enter') {
       evt.preventDefault();
       // Not gated on `copyButton.disabled`: `runCopy` says why it cannot build
-      // yet, which is more use than a keystroke that does nothing.
-      runCopy();
+      // yet, which is more use than a keystroke that does nothing. ⇧ adds
+      // without copying; an editor saves either way.
+      runCopy(evt.shiftKey && mode === 'pick');
     }
   });
 

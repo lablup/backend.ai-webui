@@ -346,6 +346,21 @@ describe('gating the copy on the note', () => {
     expect(copyButton().disabled).toBe(false);
   });
 
+  it('gates "Add to set" exactly as it gates the copy', () => {
+    const addButton = () =>
+      compose().querySelector('[data-act="add"]') as HTMLButtonElement;
+    expect(addButton().textContent).toBe('Add to set');
+    expect(addButton().querySelector('svg')).not.toBeNull();
+    expect(addButton().disabled).toBe(true);
+    ui.setComposeReady(true, '');
+    expect(addButton().disabled).toBe(false);
+    type('needs re-encoding');
+    expect(addButton().disabled).toBe(true);
+    ui.setComposeReady(true, 'needs re-encoding');
+    ui.setDraftSize(30, true);
+    expect(addButton().disabled).toBe(true);
+  });
+
   it('asks for one re-encode per typing pause, not per keystroke', async () => {
     ui.setComposeReady(true, '');
     type('a');
@@ -481,6 +496,26 @@ describe('the composer in edit mode', () => {
     expect(built).toEqual([]);
     expect(ui.isComposeOpen()).toBe(false);
     expect(ui.root.querySelector('.toast')?.textContent).toBe('saved a note');
+  });
+
+  it('has no "Add to set", and saves on ⇧⌘⏎ too', () => {
+    openEditor('a note');
+
+    expect(
+      (compose().querySelector('[data-act="add"]') as HTMLButtonElement)
+        .disabled,
+    ).toBe(true);
+    textarea().dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'Enter',
+        metaKey: true,
+        shiftKey: true,
+        bubbles: true,
+      }),
+    );
+
+    expect(saved).toEqual(['a note']);
+    expect(built).toEqual([]);
   });
 
   it('closes on Escape without saving', () => {
