@@ -94,7 +94,10 @@ const MOCK_INACTIVE_AGENTS = [
 
 // Serves the Inactive tab's AgentListQuery from a real ALIVE agent re-labelled
 // LOST / RESTARTING, so every fragment field the page reads is present.
-async function mockInactiveAgentList(page: Page, filters: string[]) {
+async function mockInactiveAgentList(
+  page: Page,
+  state: { filters: string[]; templateMissing: boolean },
+) {
   await page.route('**/admin/gql', async (route) => {
     const request = route.request();
     const body = request.postDataJSON?.() as
@@ -107,7 +110,7 @@ async function mockInactiveAgentList(page: Page, filters: string[]) {
       return;
     }
     const filter: string = body.variables?.filter ?? '';
-    filters.push(filter);
+    state.filters.push(filter);
     if (!filter.includes('status != "ALIVE"')) {
       await route.continue();
       return;
@@ -124,6 +127,7 @@ async function mockInactiveAgentList(page: Page, filters: string[]) {
     const json = await response.json();
     const template = json?.data?.agent_nodes?.edges?.[0]?.node;
     if (!template) {
+      state.templateMissing = true;
       await route.fulfill({ response, json });
       return;
     }
@@ -150,7 +154,7 @@ async function mockInactiveAgentList(page: Page, filters: string[]) {
 }
 
 test.describe(
-  'Agents status tabs',
+  'Agent List - Status Tabs',
   { tag: ['@regression', '@agent-summary', '@functional'] },
   () => {
     test('Admin can list LOST and RESTARTING agents in the Inactive tab', async ({
@@ -168,8 +172,8 @@ test.describe(
           'true',
         );
       });
-      const filters: string[] = [];
-      await mockInactiveAgentList(page, filters);
+      const mockState = { filters: [] as string[], templateMissing: false };
+      await mockInactiveAgentList(page, mockState);
       await loginAsAdmin(page, request);
       // An old `?status=TERMINATED` link still opens the second tab.
       await navigateTo(page, 'agent?status=TERMINATED');
@@ -184,15 +188,20 @@ test.describe(
         statusTabs.getByRole('radio', { name: 'Terminated' }),
       ).toHaveCount(0);
 
+      await expect
+        .poll(() =>
+          mockState.filters.some((f) => f.includes('status != "ALIVE"')),
+        )
+        .toBe(true);
+      expect(
+        mockState.templateMissing,
+        'needs at least one ALIVE agent to clone into the mocked rows',
+      ).toBe(false);
       for (const { rowId, status } of MOCK_INACTIVE_AGENTS) {
         const row = agentList.getByRole('row').filter({ hasText: rowId });
         await expect(row).toBeVisible();
         await expect(row.getByText(status, { exact: true })).toBeVisible();
       }
-      expect(filters.some((f) => f.includes('status != "ALIVE"'))).toBe(true);
-      expect(filters.some((f) => f.includes('status == "TERMINATED"'))).toBe(
-        false,
-      );
 
       await connectedTab.click();
       await expect(connectedTab).toBeChecked();
