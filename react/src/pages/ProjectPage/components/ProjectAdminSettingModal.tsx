@@ -146,9 +146,13 @@ export const groupProjectAdminAssignmentsByUser = (
     }),
   );
 
-type GrantResult = PromiseSettledResult<
-  ProjectAdminSettingModalAssignMutation['response']
->;
+/** One role grant of an Add: the users it was sent for and how it settled. */
+export interface ProjectAdminGrant {
+  userIds: Array<string>;
+  result: PromiseSettledResult<
+    ProjectAdminSettingModalAssignMutation['response']
+  >;
+}
 
 export interface ProjectAdminGrantFailure {
   userId: string;
@@ -165,15 +169,16 @@ export interface ProjectAdminGrantOutcome {
 }
 
 /**
- * Folds the per-role results of one Add into per-user outcomes. A rejected
- * request counts every requested user as failed for that role; "already holds
- * the role" is a skip, and only a user skipped for every role is reported so.
+ * Folds the per-role grants of one Add into per-user outcomes. A rejected
+ * grant counts every user it was sent for as failed; "already holds the role"
+ * is a skip, and only a user skipped by every grant sent for them is reported so.
  */
 export const classifyProjectAdminGrants = (
-  results: Array<GrantResult>,
+  grants: Array<ProjectAdminGrant>,
   userIds: Array<string>,
 ): ProjectAdminGrantOutcome => {
   const messagesByUser = new Map<string, Array<string>>();
+  const grantCountByUser = new Map<string, number>();
   const skipCountByUser = new Map<string, number>();
   const addFailure = (userId: string, message: string) =>
     messagesByUser.set(userId, [
@@ -181,10 +186,13 @@ export const classifyProjectAdminGrants = (
       message,
     ]);
   let hasAssigned = false;
-  results.forEach((result) => {
+  grants.forEach(({ userIds: requested, result }) => {
+    requested.forEach((userId) =>
+      grantCountByUser.set(userId, (grantCountByUser.get(userId) ?? 0) + 1),
+    );
     if (result.status === 'rejected') {
       const message = reasonMessage(result.reason);
-      userIds.forEach((userId) => addFailure(userId, message));
+      requested.forEach((userId) => addFailure(userId, message));
       return;
     }
     const { assigned, failed } = result.value.partialBulkAssignRoles;
@@ -205,7 +213,7 @@ export const classifyProjectAdminGrants = (
     skippedUserIds: userIds.filter(
       (userId) =>
         !messagesByUser.has(userId) &&
-        skipCountByUser.get(userId) === results.length,
+        skipCountByUser.get(userId) === grantCountByUser.get(userId),
     ),
     // Requested order first; an entry for any other id is still a failure.
     failures: _.uniq([...userIds, ...messagesByUser.keys()])
@@ -325,25 +333,46 @@ const ProjectAdminSettingModal = ({
     if (!values) {
       return;
     }
-    // `allSettled`, not `all`: with several roles one grant can be
-    // refused while the rest land, and the table must not be refetched
-    // while the others are still in flight.
-    const settled = await Promise.allSettled(
-      roles.map((adminRole, index) =>
-        mutateBulkAssignRole({
-          input: {
-            roleId: adminRole.entityId,
-            userIds: values.userIds,
-            // Passing projectId auto-adds the project to each user's
-            // allowed project list — once is enough, and concurrent
-            // writes of the same list would race.
-            ...(index === 0 ? { projectId } : {}),
-          },
-        }),
-      ),
-    );
+    const grant = async (
+      roleId: string,
+      userIds: Array<string>,
+      withProject: boolean,
+    ): Promise<ProjectAdminGrant> => ({
+      userIds,
+      result: (
+        await Promise.allSettled([
+          mutateBulkAssignRole({
+            input: {
+              roleId,
+              userIds,
+              ...(withProject ? { projectId } : {}),
+            },
+          }),
+        ])
+      )[0],
+    });
+    // Only the first role carries projectId, which adds the project to each
+    // user's allowed list; the other roles go to the users it did not refuse,
+    // so a refused join grants no admin role at all.
+    const [firstRole, ...otherRoles] = roles;
+    const first = await grant(firstRole.entityId, values.userIds, true);
+    const joinedUserIds =
+      first.result.status === 'fulfilled'
+        ? _.difference(
+            values.userIds,
+            first.result.value.partialBulkAssignRoles.failed
+              .filter((failure) => !isAlreadyAssignedFailure(failure))
+              .map((failure) => failure.userId),
+          )
+        : [];
+    // Settle every grant before the refetch below.
+    const others = _.isEmpty(joinedUserIds)
+      ? []
+      : await Promise.all(
+          otherRoles.map((role) => grant(role.entityId, joinedUserIds, false)),
+        );
     const { hasAssigned, skippedUserIds, failures } =
-      classifyProjectAdminGrants(settled, values.userIds);
+      classifyProjectAdminGrants([first, ...others], values.userIds);
     if (!_.isEmpty(skippedUserIds)) {
       const labels = skippedUserIds.map(userLabelOf);
       const shown = labels.slice(0, MAX_SKIPPED_NAMES).join(', ');

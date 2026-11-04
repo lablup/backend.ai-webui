@@ -105,14 +105,18 @@ describe('groupProjectAdminAssignmentsByUser', () => {
 describe('classifyProjectAdminGrants', () => {
   type Grant = Parameters<typeof classifyProjectAdminGrants>[0][number];
   const granted = (
+    userIds: Array<string>,
     assigned: Array<string>,
     failed: Array<{ userId: string; message: string }> = [],
   ): Grant => ({
-    status: 'fulfilled',
-    value: {
-      partialBulkAssignRoles: {
-        assigned: assigned.map((userId) => ({ id: `a-${userId}`, userId })),
-        failed,
+    userIds,
+    result: {
+      status: 'fulfilled',
+      value: {
+        partialBulkAssignRoles: {
+          assigned: assigned.map((userId) => ({ id: `a-${userId}`, userId })),
+          failed,
+        },
       },
     },
   });
@@ -123,26 +127,36 @@ describe('classifyProjectAdminGrants', () => {
 
   it('reports a clean grant as assigned with nothing skipped or failed', () => {
     expect(
-      classifyProjectAdminGrants([granted(['u1', 'u2'])], ['u1', 'u2']),
+      classifyProjectAdminGrants(
+        [granted(['u1', 'u2'], ['u1', 'u2'])],
+        ['u1', 'u2'],
+      ),
     ).toEqual({ hasAssigned: true, skippedUserIds: [], failures: [] });
   });
 
-  it('skips a user only when they already held every admin role', () => {
+  it('skips a user only when every grant sent for them was a skip', () => {
     expect(
       classifyProjectAdminGrants(
         [
-          granted(['u2'], [already('u1')]),
-          granted([], [already('u1'), already('u2')]),
+          granted(['u1', 'u2'], ['u2'], [already('u1')]),
+          granted(['u1', 'u2'], [], [already('u1'), already('u2')]),
         ],
         ['u1', 'u2'],
       ),
     ).toEqual({ hasAssigned: true, skippedUserIds: ['u1'], failures: [] });
   });
 
-  it('reports every other per-user entry as a failure', () => {
+  it('reports a user refused by the first grant without the other grants', () => {
     expect(
       classifyProjectAdminGrants(
-        [granted(['u1'], [{ userId: 'u2', message: 'cannot join project' }])],
+        [
+          granted(
+            ['u1', 'u2'],
+            ['u1'],
+            [{ userId: 'u2', message: 'cannot join project' }],
+          ),
+          granted(['u1'], ['u1']),
+        ],
         ['u1', 'u2'],
       ),
     ).toEqual({
@@ -152,29 +166,29 @@ describe('classifyProjectAdminGrants', () => {
     });
   });
 
-  it('counts every requested user as failed for a rejected role grant', () => {
+  it('counts only the users a rejected grant was sent for as failed', () => {
     expect(
       classifyProjectAdminGrants(
         [
-          granted([], [already('u1')]),
-          { status: 'rejected', reason: new Error('forbidden') },
+          granted(['u1', 'u2'], ['u2'], [already('u1')]),
+          {
+            userIds: ['u2'],
+            result: { status: 'rejected', reason: new Error('forbidden') },
+          },
         ],
         ['u1', 'u2'],
       ),
     ).toEqual({
-      hasAssigned: false,
-      skippedUserIds: [],
-      failures: [
-        { userId: 'u1', message: 'forbidden' },
-        { userId: 'u2', message: 'forbidden' },
-      ],
+      hasAssigned: true,
+      skippedUserIds: ['u1'],
+      failures: [{ userId: 'u2', message: 'forbidden' }],
     });
   });
 
   it('keeps a failure reported for an id the request did not name', () => {
     expect(
       classifyProjectAdminGrants(
-        [granted([], [{ userId: 'U1', message: 'database refused' }])],
+        [granted(['u1'], [], [{ userId: 'U1', message: 'database refused' }])],
         ['u1'],
       ).failures,
     ).toEqual([{ userId: 'U1', message: 'database refused' }]);
@@ -184,7 +198,7 @@ describe('classifyProjectAdminGrants', () => {
     const refused = { userId: 'u1', message: 'database refused' };
     expect(
       classifyProjectAdminGrants(
-        [granted([], [refused]), granted([], [refused])],
+        [granted(['u1'], [], [refused]), granted(['u1'], [], [refused])],
         ['u1'],
       ).failures,
     ).toEqual([{ userId: 'u1', message: 'database refused' }]);
