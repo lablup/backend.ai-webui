@@ -196,6 +196,7 @@ test.describe(
         // direct access or redirect.
         await page.goto(`${webuiEndpoint}/`);
         await page.waitForURL((url) => !url.pathname.endsWith('/'));
+        await expect(page).toHaveURL(/\/admin\//);
         await openUserScope(page);
 
         // 4. Verify "Start" menu item appears disabled in sidebar
