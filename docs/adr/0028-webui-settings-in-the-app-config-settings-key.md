@@ -84,13 +84,14 @@ flowchart LR
 
 - **Entry shape**: an entry (`WebUISettingDefinition`) has `key`, `scope`, `type` (`boolean`, `number`, `string`, `stringList`), `group`, `field` (`keyof LoginConfigState`), and the optional `options`, `unit` and `min` / `max` (the inclusive range of a `number`; a value outside it is ignored when read and not saved).
 - **Single source**: the page (`WebUISettingList`), the merge (`applyWebUISettings`) and the save (`buildWebUISettingsDocument`) read only this table.
+- **Keys outside the table**: `settings` also holds keys the table does not define; today that is the system announcement alone (`settings.announcement`, #10713). The page does not count such a key when deciding whether anything changed (`ownedWebUISettings`). Apply and Reset carry it over unchanged from the raw document at save time (`withForeignWebUISettings`), and the write hooks take a `(current) => next` function applied to that raw value.
 - **Adding a setting**: a new setting adds a `LoginConfigState` field, its file parsing in `refreshConfigFromToml`, its `_config` copy in `applyConfigToClient`, one table entry, and its copy in `WebUISettingLabels.ts`, together.
 
 ### 5. Who may edit, and safeguards
 
 - **Who sees what**: the page and its menu item are superadmin-only (`access: 'superadmin'`). A superadmin sees and saves both scopes. A domain admin page is outside this decision.
 - **Who may write**: whether a save succeeds is the manager's RBAC call; only a superadmin may write the PUBLIC document. A refused save lists the settings that were not saved.
-- **Reset**: the toolbar's Reset removes the `settings` sub-key of the scopes on screen. It cannot be undone, so it runs only after the button's name (`button.Reset`) is typed into a `BAIDeleteConfirmModal`.
+- **Reset**: the toolbar's Reset removes the table's keys from `settings` in the scopes on screen. It cannot be undone, so it runs only after the button's name (`button.Reset`) is typed into a `BAIDeleteConfirmModal`.
 - **Self-hiding**: `system-settings` in `menuBlocklist`/`menuInactivelist` is ignored (`useWebUIMenuItems`); hiding this page would leave no screen to undo it from.
 
 ## Rejected alternatives
