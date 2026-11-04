@@ -18,7 +18,8 @@ import _ from 'lodash';
 import { Circle } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 
-const RING_MIN = 64;
+// The smallest ring whose hole still reads as a donut with its total in it.
+const RING_MIN = 120;
 const RING_MAX = 220;
 // RadialChart keeps 40px around the ring for slice labels, which this chart turns off.
 const CHART_LABEL_ROOM = 40;
@@ -26,8 +27,6 @@ const CHART_LABEL_ROOM = 40;
 const RING_HALO = 16;
 // The legend's width before it is first measured.
 const LEGEND_WIDTH_GUESS = 224;
-// The narrowest a two-column legend gets beside the ring before it moves under it.
-const TWO_COLUMN_LEGEND_MIN = 360;
 // The `lg` gap between the ring and the legend.
 const LEGEND_GAP = 24;
 // Legend line heights, divider included.
@@ -35,6 +34,9 @@ const ROW_HEIGHT = 37;
 const COMPACT_ROW_HEIGHT = 29;
 // The hole's share of the ring's radius, for the filled and the empty ring alike.
 const DONUT_INNER_RADIUS = 0.6;
+// The centre total's `xl` digit advance and the margin it keeps from the ring.
+const CENTRE_CHAR_WIDTH = 13;
+const CENTRE_PADDING = 16;
 
 const styles = stylex.create({
   name: { flex: 1, minWidth: 0 },
@@ -142,7 +144,7 @@ export const donutTotal = (
  * A donut of manager-counted values with a compact name / value / share
  * legend. It never outgrows its box: the legend fits first (tighter rows,
  * then no header row, then two columns), the ring takes the room left and is
- * dropped when that is under `RING_MIN`. The legend moves under the ring when the box is narrow.
+ * dropped when that is under `RING_MIN` or its hole cannot hold the total. The legend moves under the ring when the box is narrow.
  */
 const DonutChart: React.FC<DonutChartProps> = ({
   rows,
@@ -171,6 +173,9 @@ const DonutChart: React.FC<DonutChartProps> = ({
     const room = root.clientWidth - (ringWidth ? ringWidth + LEGEND_GAP : 0);
     if (contentRect.width < room - 1) {
       setLegendWidth(Math.ceil(contentRect.width));
+    } else if (ringWidth) {
+      // Squeezed beside the ring: it needs more than the room, so the ring gives way.
+      setLegendWidth((width) => Math.max(width, Math.ceil(room) + 1));
     }
   });
 
@@ -189,13 +194,9 @@ const DonutChart: React.FC<DonutChartProps> = ({
     ) ?? LEGEND_DENSITIES[LEGEND_DENSITIES.length - 1];
   const legendBoxHeight = legendHeight(density, rows.length);
 
-  // Two columns may shrink, names truncating, to leave the ring its minimum beside them.
-  const legendMinWidth =
-    density.columns === 2
-      ? Math.min(legendWidth, TWO_COLUMN_LEGEND_MIN)
-      : legendWidth;
+  // The legend keeps its full width; the ring only takes the room left beside it.
   const sideBySide =
-    box.width >= RING_MIN + 2 * RING_HALO + LEGEND_GAP + legendMinWidth;
+    box.width >= RING_MIN + 2 * RING_HALO + LEGEND_GAP + legendWidth;
   const ringRoom =
     (sideBySide
       ? Math.min(
@@ -207,8 +208,14 @@ const DonutChart: React.FC<DonutChartProps> = ({
         )
       : Math.min(box.width, box.height - legendBoxHeight - LEGEND_GAP)) -
     2 * RING_HALO;
-  const hasRing = box.width > 0 && ringRoom >= RING_MIN;
   const ring = _.clamp(ringRoom, RING_MIN, RING_MAX);
+  // Every donut card drops the ring by the same rule: too small, or its hole cannot hold the total.
+  const centreText = _.isNil(centre) ? '' : centre.toLocaleString();
+  const hasRing =
+    box.width > 0 &&
+    ringRoom >= RING_MIN &&
+    ring * DONUT_INNER_RADIUS >=
+      centreText.length * CENTRE_CHAR_WIDTH + CENTRE_PADDING;
   const chartSize = ring + 2 * CHART_LABEL_ROOM;
 
   // Zero-value slices stay in the legend only; drawn, their separators show as a gap.
@@ -276,9 +283,9 @@ const DonutChart: React.FC<DonutChartProps> = ({
                   pointerEvents: 'none',
                 }}
               >
-                {_.isNumber(centre) || _.isString(centre) ? (
+                {centreText ? (
                   <Text size="xl" weight="semibold" hasTabularNumbers>
-                    {centre.toLocaleString()}
+                    {centreText}
                   </Text>
                 ) : null}
               </BAIFlex>
