@@ -87,6 +87,7 @@ flowchart LR
 - **Enforced by the tool list**: WebUI는 submit이나 삭제를 부르는 `execute`를 만들지 않는 것으로 이 규칙을 지킨다. agent가 UI의 승인 버튼을 누를 수 있어도, tool을 불러서는 그 action이 일어나지 않는다.
 - **Prepare description**: `bai_prepare_<noun>`의 `description`은 form을 submit하지 않으며 submit은 사람이 한다고 적는다.
 - **No extra data**: tool은 자기를 등록한 component가 화면에 그리는 data만 돌려준다. 권한 때문에 화면에 없는 field를 tool을 위해 더 가져오지 않는다.
+- **No login by URL**: `bai_navigate`는 `sToken`이나 `stoken` parameter가 붙은 경로를 거절한다(`path_not_allowed`). 이 parameter는 도착하는 것만으로 login을 시작하기 때문이다.
 
 ### 5. tool은 입력을 스스로 검사한다
 
