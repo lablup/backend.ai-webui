@@ -500,7 +500,8 @@ const ProjectAdminSettingModal = ({
                 rules={[
                   { required: true, message: t('rbac.PleaseSelectUsers') },
                 ]}
-                style={{ flex: 1, marginBottom: 0 }}
+                // minWidth 0: a long selection must not push Add out of the row.
+                style={{ flex: 1, minWidth: 0, marginBottom: 0 }}
               >
                 <BAIScopedUserSelect
                   scope={domainScope}
