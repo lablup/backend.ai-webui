@@ -14,6 +14,7 @@ import ResourceAllocationPanel from './cards/ResourceAllocationPanel';
 import SessionStatusPanel from './cards/SessionStatusPanel';
 import UsersPanel from './cards/UsersPanel';
 import { DEFAULT_PANEL_LAYOUTS, presetKey } from './defaults';
+import MemberAgentStatsPanel from './memberCards/MemberAgentStatsPanel';
 import MyResourcesPanel from './memberCards/MyResourcesPanel';
 import ResourceGroupTotalPanel from './memberCards/ResourceGroupTotalPanel';
 import ResourcePresetsPanel from './memberCards/ResourcePresetsPanel';
@@ -232,6 +233,24 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(2, 2),
     minSize: size(2, 2),
     settings: ['resourceGroup'],
+  },
+  {
+    key: 'memberAgentStats',
+    page: ['project'],
+    group: 'resource',
+    titleKey: 'agentStats.AgentStats',
+    requires: {
+      menuKey: 'agent-summary',
+      // The manager refuses agent_summary_list to everyone but superadmins under hideAgents.
+      hidden: (config, role) => !!config.hideAgents && role !== 'superadmin',
+    },
+    kind: 'custom',
+    Component: MemberAgentStatsPanel,
+    detailLink: listLink('agent-summary', {
+      project: 'webui.menu.AgentSummary',
+    }),
+    defaultSize: size(2, 2),
+    minSize: size(2, 2),
   },
   // TODO(needs-backend): BA-8719 - re-add `folderStatus` (FoldersPanel) once
   // the folders a user owns can be counted apart from those shared with them.

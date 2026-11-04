@@ -78,6 +78,7 @@ describe('PANEL_CATALOG', () => {
         'myRecentSessions',
         'myResource',
         'totalResourceWithinResourceGroup',
+        'memberAgentStats',
         'quotaPerStorageVolume',
         'myDeployments',
         'myActivity',
@@ -112,6 +113,24 @@ describe('PANEL_CATALOG', () => {
     expect(
       seedBoard(PANEL_CATALOG, page).panels.map((panel) => panel.id),
     ).toEqual(keys);
+  });
+});
+
+describe('member Agent Statistics', () => {
+  const hidden = PANEL_CATALOG.find(
+    (definition) => definition.key === 'memberAgentStats',
+  )?.requires?.hidden;
+  it('is dropped under hideAgents for everyone but superadmins', () => {
+    const on = { hideAgents: true } as Parameters<
+      NonNullable<typeof hidden>
+    >[0];
+    const off = { hideAgents: false } as Parameters<
+      NonNullable<typeof hidden>
+    >[0];
+    expect(hidden?.(on, 'user')).toBe(true);
+    expect(hidden?.(on, 'admin')).toBe(true);
+    expect(hidden?.(on, 'superadmin')).toBe(false);
+    expect(hidden?.(off, 'user')).toBe(false);
   });
 });
 
