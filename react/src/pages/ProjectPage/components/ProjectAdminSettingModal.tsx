@@ -207,7 +207,8 @@ export const classifyProjectAdminGrants = (
         !messagesByUser.has(userId) &&
         skipCountByUser.get(userId) === results.length,
     ),
-    failures: userIds
+    // Requested order first; an entry for any other id is still a failure.
+    failures: _.uniq([...userIds, ...messagesByUser.keys()])
       .filter((userId) => messagesByUser.has(userId))
       .map((userId) => ({
         userId,
@@ -316,68 +317,68 @@ const ProjectAdminSettingModal = ({
     if (_.isEmpty(roles)) {
       return;
     }
-    await formRef.current
-      ?.validateFields()
-      .then(async (values) => {
-        // `allSettled`, not `all`: with several roles one grant can be
-        // refused while the rest land, and the table must not be refetched
-        // while the others are still in flight.
-        const settled = await Promise.allSettled(
-          roles.map((adminRole, index) =>
-            mutateBulkAssignRole({
-              input: {
-                roleId: adminRole.entityId,
-                userIds: values.userIds,
-                // Passing projectId auto-adds the project to each user's
-                // allowed project list — once is enough, and concurrent
-                // writes of the same list would race.
-                ...(index === 0 ? { projectId } : {}),
-              },
-            }),
-          ),
-        );
-        const { hasAssigned, skippedUserIds, failures } =
-          classifyProjectAdminGrants(settled, values.userIds);
-        if (!_.isEmpty(skippedUserIds)) {
-          const labels = skippedUserIds.map(userLabelOf);
-          const shown = labels.slice(0, MAX_SKIPPED_NAMES).join(', ');
-          const rest = labels.length - MAX_SKIPPED_NAMES;
-          message.info(
-            t('rbac.UsersAlreadyAssignedSkipped', {
-              count: labels.length,
-              names: rest > 0 ? `${shown} +${rest}` : shown,
-            }),
-          );
-        }
-        if (_.isEmpty(failures)) {
-          if (hasAssigned) {
-            message.success(t('rbac.UsersAssigned'));
-          }
-          formRef.current?.resetFields();
-        } else {
-          failures.forEach((failure) =>
-            logger.error('Failed to assign project admin', failure.message),
-          );
-          // Keep only the failed users selected so the next Add retries them;
-          // the empty error gives the red border, details are in the modal.
-          const failedIds = failures.map((failure) => failure.userId);
-          formRef.current?.setFieldsValue({ userIds: failedIds });
-          formRef.current?.setFields([{ name: 'userIds', errors: [''] }]);
-          message.error(t('rbac.UserAssignmentsPartialFailureDescription'));
-          setFailedGrants(failures);
-        }
-        onReload(queryRef.variables, { fetchPolicy: 'network-only' });
-      })
-      .catch((error) => {
-        // Validation errors are rendered inline on the Form.Item.
-        logger.debug(error);
-      });
+    const values = await formRef.current?.validateFields().catch((error) => {
+      // Validation errors are rendered inline on the Form.Item.
+      logger.debug(error);
+      return undefined;
+    });
+    if (!values) {
+      return;
+    }
+    // `allSettled`, not `all`: with several roles one grant can be
+    // refused while the rest land, and the table must not be refetched
+    // while the others are still in flight.
+    const settled = await Promise.allSettled(
+      roles.map((adminRole, index) =>
+        mutateBulkAssignRole({
+          input: {
+            roleId: adminRole.entityId,
+            userIds: values.userIds,
+            // Passing projectId auto-adds the project to each user's
+            // allowed project list — once is enough, and concurrent
+            // writes of the same list would race.
+            ...(index === 0 ? { projectId } : {}),
+          },
+        }),
+      ),
+    );
+    const { hasAssigned, skippedUserIds, failures } =
+      classifyProjectAdminGrants(settled, values.userIds);
+    if (!_.isEmpty(skippedUserIds)) {
+      const labels = skippedUserIds.map(userLabelOf);
+      const shown = labels.slice(0, MAX_SKIPPED_NAMES).join(', ');
+      const rest = labels.length - MAX_SKIPPED_NAMES;
+      message.info(
+        t('rbac.UsersAlreadyAssignedSkipped', {
+          count: labels.length,
+          names: rest > 0 ? `${shown} +${rest}` : shown,
+        }),
+      );
+    }
+    if (_.isEmpty(failures)) {
+      if (hasAssigned) {
+        message.success(t('rbac.UsersAssigned'));
+      }
+      formRef.current?.resetFields();
+    } else {
+      failures.forEach((failure) =>
+        logger.error('Failed to assign project admin', failure.message),
+      );
+      // Keep only the failed users selected so the next Add retries them;
+      // the empty error gives the red border, details are in the modal.
+      const failedIds = failures.map((failure) => failure.userId);
+      formRef.current?.setFieldsValue({ userIds: failedIds });
+      formRef.current?.setFields([{ name: 'userIds', errors: [''] }]);
+      message.error(t('rbac.UserAssignmentsPartialFailureDescription'));
+      setFailedGrants(failures);
+    }
+    onReload(queryRef.variables, { fetchPolicy: 'network-only' });
   };
 
   const failureColumns: BAIColumnsType<ProjectAdminGrantFailure> = [
     {
       key: 'user',
-      title: t('credential.UserID'),
+      title: t('general.E-Mail'),
       render: (__, record) => userLabelOf(record.userId),
     },
     {
@@ -447,8 +448,6 @@ const ProjectAdminSettingModal = ({
       {...modalProps}
     >
       <BAIFlex direction="column" align="stretch" gap="sm">
-        {/* antd `Alert` → `Banner` (MAPPING §4): `type` → `status`, `showIcon`
-            dropped (Banner always renders its status icon). */}
         <Banner
           role="status"
           status="info"
@@ -483,10 +482,14 @@ const ProjectAdminSettingModal = ({
                   placeholder={t('rbac.SelectUsers')}
                   onChange={(__, option) => {
                     _.castArray(option ?? []).forEach((o) => {
-                      userLabelsRef.current.set(
-                        String(o.value),
-                        String(o.label ?? o.value),
-                      );
+                      const label = String(o.label ?? o.value);
+                      // An unresolved option echoes its id; keep a known email.
+                      if (
+                        label !== String(o.value) ||
+                        !userLabelsRef.current.has(String(o.value))
+                      ) {
+                        userLabelsRef.current.set(String(o.value), label);
+                      }
                     });
                   }}
                 />

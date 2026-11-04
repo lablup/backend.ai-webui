@@ -171,6 +171,15 @@ describe('classifyProjectAdminGrants', () => {
     });
   });
 
+  it('keeps a failure reported for an id the request did not name', () => {
+    expect(
+      classifyProjectAdminGrants(
+        [granted([], [{ userId: 'U1', message: 'database refused' }])],
+        ['u1'],
+      ).failures,
+    ).toEqual([{ userId: 'U1', message: 'database refused' }]);
+  });
+
   it('lists each distinct reason of a user once', () => {
     const refused = { userId: 'u1', message: 'database refused' };
     expect(
