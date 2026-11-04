@@ -583,6 +583,42 @@
     "Title": "Iniciar sesión en la Backend.AI WebUI Agent CLI",
     "VerificationCode": "Código de verificación"
   },
+  "clientIpMasking": {
+    "ClientIpMasking": "Enmascaramiento de IP del cliente",
+    "CreatePolicy": "Crear política",
+    "DefaultPrefix": "/{{prefix}} (predeterminado)",
+    "DeleteDefaultPolicyDescription": "Los destinos sin política propia almacenarán las IP del cliente tal como se observan.",
+    "DeletePolicy": "¿Eliminar esta política de enmascaramiento?",
+    "DeletePolicyDescription": "{{target}} volverá a la política predeterminada.",
+    "Description": "Configure cómo se enmascaran las direcciones IP del cliente antes de almacenarlas. Un destino sin política propia sigue la política predeterminada; si no existe, las direcciones se almacenan tal como se observan.",
+    "EditPolicy": "Editar política",
+    "IPv4Prefix": "Longitud de prefijo IPv4",
+    "IPv6Prefix": "Longitud de prefijo IPv6",
+    "Mode": "Modo de enmascaramiento",
+    "ModeRequired": "Seleccione un modo de enmascaramiento.",
+    "OnePolicyPerTarget": "Solo puede existir una política por destino.",
+    "PrefixExtra": "Número de bits iniciales que se conservan (0–{{max}}). Déjelo vacío para usar {{defaultPrefix}}.",
+    "PrefixRange": "Introduzca un número entre 0 y {{max}}.",
+    "SuccessfullyDeleted": "Política de enmascaramiento de IP del cliente eliminada.",
+    "SuccessfullySaved": "Política de enmascaramiento de IP del cliente guardada.",
+    "Target": "Destino de la política",
+    "TargetRequired": "Seleccione un destino de la política.",
+    "modeDescriptions": {
+      "DROP": "No se registra ninguna IP del cliente.",
+      "NONE": "Las IP del cliente se almacenan tal como se observan.",
+      "TRUNCATE": "Los bits de host se ponen a cero y solo se conserva el prefijo de red."
+    },
+    "modes": {
+      "DROP": "Descartar",
+      "NONE": "Ninguno",
+      "TRUNCATE": "Truncar"
+    },
+    "targets": {
+      "AUDIT_LOGS": "Registros de auditoría",
+      "DEFAULT": "Predeterminado",
+      "LOGIN_HISTORY": "Historial de inicio de sesión"
+    }
+  },
   "credential": {
     "2FAEnabled": "2FA habilitado",
     "AccessKey": "Clave de acceso",
@@ -2853,8 +2889,6 @@
     "DeleteResourceGroup": "Eliminar el grupo de recursos",
     "Description": "Descripción",
     "Domain": "Dominio",
-    "Driver": "Conductor",
-    "DriverOptions": "Opciones del conductor",
     "DuplicateHandlerOverride": "Este handler ya está sobrescrito.",
     "DuplicateResourceSlot": "Esta ranura de recursos ya está añadida.",
     "EditDefaultDeploymentOptions": "Editar opciones de despliegue predeterminadas",

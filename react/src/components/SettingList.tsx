@@ -72,18 +72,6 @@ export type SettingGroup = {
 
 interface SettingPageProps {
   settingGroups: Array<SettingGroup>;
-  // CONVERSION-IDIOM (supersedes ticket 22's horizontal-collapse
-  // PILOT-DECISION): antd's vertical tabs (`tabPlacement="start"`, formerly
-  // this component's `tabDirection='left'` default) are NOT a horizontal
-  // `TabList`. Astryx's canonical equivalent is the `settings-sidebar`
-  // template composition — `Layout` + `LayoutPanel` nav column (`List` /
-  // `ListItem` with `isSelected`) + `LayoutContent` pane — which is what this
-  // component now renders. `TabList` genuinely has no side orientation, but
-  // the missing capability was never "tabs on the left"; it was "settings
-  // shell", and Layout provides it. See
-  // `.specs/FR-3482-astryx-migration/CONVERSION-IDIOMS.md`.
-  // `tabDirection` stays dropped: the vertical shell is now the only layout,
-  // and no call site ever asked for the horizontal one.
   showChangedOptionFilter?: boolean;
   showResetButton?: boolean;
   showSearchBar?: boolean;
@@ -103,7 +91,7 @@ const GroupSettingItems: React.FC<
     group: SettingGroup;
     hideEmpty?: boolean;
     // Narrow drill-down already names the section beside the back button
-    // (settings-sidebar template), so the in-pane heading would be a duplicate.
+    // (the rail composition), so the in-pane heading would be a duplicate.
     hideTitle?: boolean;
     arrivalTitle?: string | null;
   } & React.HTMLAttributes<HTMLDivElement>
@@ -147,6 +135,8 @@ const GroupSettingItems: React.FC<
   );
 };
 
+// The left rail is a `Layout` + `LayoutPanel` + `List` composition (ADR 0020
+// §6); its selection is page-internal state, not `?tab=` (ADR 0021).
 const SettingList: React.FC<SettingPageProps> = ({
   settingGroups,
   showChangedOptionFilter,
@@ -160,7 +150,7 @@ const SettingList: React.FC<SettingPageProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  // RESPONSIVE-POLICY §2: JS behaviour branches use `useBAIBreakpoint()`, not
+  // ADR 0020 R3: JS behaviour branches use `useBAIBreakpoint()`, not
   // Astryx `useMediaQuery` (which reports `false` on first render and flashes).
   // `md` is antd's 768px step — the same breakpoint the template drills down at.
   const { md } = useBAIBreakpoint();

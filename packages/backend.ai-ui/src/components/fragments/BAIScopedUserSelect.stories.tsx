@@ -208,7 +208,7 @@ export const IdValued: Story = {
     docs: {
       description: {
         story:
-          '`valuePropName="id"` — the plain-key value is the local user UUID, which is what `adminBulkAssignRole` and friends take. This is the only mode that runs the `uuid in` label-resolution query.',
+          '`valuePropName="id"` — the plain-key value is the local user UUID, which is what `partialBulkAssignRoles` and friends take. This is the only mode that runs the `uuid in` label-resolution query.',
       },
     },
   },

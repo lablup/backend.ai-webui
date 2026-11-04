@@ -583,6 +583,42 @@
     "Title": "Đăng nhập Backend.AI WebUI Agent CLI",
     "VerificationCode": "Mã xác minh"
   },
+  "clientIpMasking": {
+    "ClientIpMasking": "Che IP máy khách",
+    "CreatePolicy": "Tạo chính sách",
+    "DefaultPrefix": "/{{prefix}} (mặc định)",
+    "DeleteDefaultPolicyDescription": "Các mục tiêu không có chính sách riêng sẽ lưu IP máy khách như đã ghi nhận.",
+    "DeletePolicy": "Xóa chính sách che này?",
+    "DeletePolicyDescription": "{{target}} sẽ quay về chính sách Mặc định.",
+    "Description": "Thiết lập cách che địa chỉ IP máy khách trước khi lưu. Mục tiêu không có chính sách riêng sẽ theo chính sách Mặc định; nếu không có chính sách Mặc định, địa chỉ được lưu như đã ghi nhận.",
+    "EditPolicy": "Chỉnh sửa chính sách",
+    "IPv4Prefix": "Độ dài tiền tố IPv4",
+    "IPv6Prefix": "Độ dài tiền tố IPv6",
+    "Mode": "Chế độ che",
+    "ModeRequired": "Hãy chọn chế độ che.",
+    "OnePolicyPerTarget": "Mỗi mục tiêu chỉ có thể có một chính sách.",
+    "PrefixExtra": "Số bit đầu được giữ lại (0–{{max}}). Để trống để dùng {{defaultPrefix}}.",
+    "PrefixRange": "Nhập một số từ 0 đến {{max}}.",
+    "SuccessfullyDeleted": "Đã xóa chính sách che IP máy khách.",
+    "SuccessfullySaved": "Đã lưu chính sách che IP máy khách.",
+    "Target": "Mục tiêu chính sách",
+    "TargetRequired": "Hãy chọn mục tiêu chính sách.",
+    "modeDescriptions": {
+      "DROP": "Không ghi lại IP máy khách.",
+      "NONE": "IP máy khách được lưu như đã ghi nhận.",
+      "TRUNCATE": "Các bit máy chủ được đặt về 0, chỉ giữ lại tiền tố mạng."
+    },
+    "modes": {
+      "DROP": "Bỏ qua",
+      "NONE": "Không",
+      "TRUNCATE": "Cắt bớt"
+    },
+    "targets": {
+      "AUDIT_LOGS": "Nhật ký kiểm tra",
+      "DEFAULT": "Mặc định",
+      "LOGIN_HISTORY": "Lịch sử đăng nhập"
+    }
+  },
   "credential": {
     "2FAEnabled": "Đã bật 2FA",
     "AccessKey": "Khóa truy cập",
@@ -2855,8 +2891,6 @@
     "DeleteResourceGroup": "Xóa nhóm tài nguyên",
     "Description": "Sự miêu tả",
     "Domain": "Lãnh địa",
-    "Driver": "Người lái xe",
-    "DriverOptions": "Tùy chọn trình điều khiển",
     "DuplicateHandlerOverride": "Handler này đã được ghi đè.",
     "DuplicateResourceSlot": "Khe tài nguyên này đã được thêm.",
     "EditDefaultDeploymentOptions": "Chỉnh sửa tùy chọn triển khai mặc định",

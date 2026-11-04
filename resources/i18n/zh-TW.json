@@ -583,6 +583,42 @@
     "Title": "登入 Backend.AI WebUI Agent CLI",
     "VerificationCode": "驗證碼"
   },
+  "clientIpMasking": {
+    "ClientIpMasking": "用戶端 IP 遮罩",
+    "CreatePolicy": "建立策略",
+    "DefaultPrefix": "/{{prefix}}（預設）",
+    "DeleteDefaultPolicyDescription": "沒有自身策略的目標將依原樣儲存用戶端 IP。",
+    "DeletePolicy": "要刪除此遮罩策略嗎？",
+    "DeletePolicyDescription": "{{target}} 將回退至預設策略。",
+    "Description": "設定在儲存用戶端 IP 位址之前如何進行遮罩。沒有自身策略的目標遵循預設策略；若沒有預設策略，則依原樣儲存位址。",
+    "EditPolicy": "編輯策略",
+    "IPv4Prefix": "IPv4 前綴長度",
+    "IPv6Prefix": "IPv6 前綴長度",
+    "Mode": "遮罩模式",
+    "ModeRequired": "請選擇遮罩模式。",
+    "OnePolicyPerTarget": "每個目標只能有一個策略。",
+    "PrefixExtra": "要保留的前導位元數（0–{{max}}）。留空則使用 {{defaultPrefix}}。",
+    "PrefixRange": "請輸入 0 到 {{max}} 之間的數字。",
+    "SuccessfullyDeleted": "已刪除用戶端 IP 遮罩策略。",
+    "SuccessfullySaved": "已儲存用戶端 IP 遮罩策略。",
+    "Target": "策略目標",
+    "TargetRequired": "請選擇策略目標。",
+    "modeDescriptions": {
+      "DROP": "不記錄用戶端 IP。",
+      "NONE": "依原樣儲存用戶端 IP。",
+      "TRUNCATE": "將主機位元清零，僅保留網路前綴。"
+    },
+    "modes": {
+      "DROP": "捨棄",
+      "NONE": "無",
+      "TRUNCATE": "截斷"
+    },
+    "targets": {
+      "AUDIT_LOGS": "稽核日誌",
+      "DEFAULT": "預設",
+      "LOGIN_HISTORY": "登入紀錄"
+    }
+  },
   "credential": {
     "2FAEnabled": "已啟用雙因素驗證",
     "AccessKey": "存取密鑰",
@@ -2857,8 +2893,6 @@
     "DeleteResourceGroup": "刪除資源組",
     "Description": "描述",
     "Domain": "域名",
-    "Driver": "司機",
-    "DriverOptions": "驅動程序選項",
     "DuplicateHandlerOverride": "該 handler 已被覆寫。",
     "DuplicateResourceSlot": "該資源槽已新增。",
     "EditDefaultDeploymentOptions": "編輯預設部署選項",

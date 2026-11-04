@@ -83,7 +83,7 @@ interface QueryProps<TVariables, TData> {
  * Whose audit log a scope reads: the viewer's own actions, or a project and
  * the entities in it. Null on the superadmin page, which reads
  * `adminAuditLogsV2`: a domain entity scope leaves out the sessions, folders
- * and deployments in it (checked on manager 26.10; ADR 0019).
+ * and deployments in it (checked on manager 26.10; ADR 0026).
  */
 export const auditLogScope = (
   scope: CardScope,

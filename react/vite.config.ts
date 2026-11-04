@@ -1012,11 +1012,11 @@ export default defineConfig(({ command, mode }) => {
           './src/components/MainLayout/WebUISider.tsx',
           './src/components/STokenLoginBoundary.tsx',
           './src/components/WebUINavigate.tsx',
-          // Pages marked "High priority" in routes.tsx (eagerly imported,
-          // not behind React.lazy).
-          './src/pages/ComputeSessionListPage.tsx',
-          './src/pages/Page404.tsx',
-          './src/pages/VFolderNodeListPage.tsx',
+          // Page404 is imported eagerly; the session and data lists are lazy
+          // but are the first screens most users open, so they stay warm.
+          './src/pages/ComputeSessionListPage/ComputeSessionListPage.tsx',
+          './src/pages/Page404/Page404.tsx',
+          './src/pages/VFolderNodeListPage/VFolderNodeListPage.tsx',
           // Hooks barrel — pulled in by virtually every page/component the
           // first render touches (useSuspendedBackendaiClient, useCurrentProject,
           // useBAISetting, etc. all re-export from here).

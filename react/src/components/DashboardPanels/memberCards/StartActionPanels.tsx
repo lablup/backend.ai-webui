@@ -5,7 +5,7 @@
 import { useWebUINavigate } from '../../../hooks';
 import { useIsPersonalProject } from '../../../hooks/useAccessibleProjects';
 import { useProjectPath } from '../../../hooks/useRouteScope';
-import type { SessionLauncherFormValue } from '../../../pages/SessionLauncherPage';
+import type { SessionLauncherFormValue } from '../../../pages/SessionLauncherPage/SessionLauncherPage';
 import DeploymentSettingModal from '../../DeploymentSettingModal';
 import FolderCreateModal from '../../FolderCreateModal';
 import StartFromURLModal from '../../StartFromURLModal';

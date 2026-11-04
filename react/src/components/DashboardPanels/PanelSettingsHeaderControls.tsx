@@ -44,7 +44,7 @@ const PanelSettingsHeaderControls: React.FC = () => {
   const { t } = useTranslation();
   const settings = use(PanelHeaderSettingsContext);
   const filters = useDashboardFilterContext();
-  // The page's allowed groups, never the header's (ADR 0019).
+  // The page's allowed groups, never the header's (ADR 0026).
   const allowed = useDashboardResourceGroups();
   if (!settings || !filters) return null;
   const { definition, saved, effective, overridden, onChange, onReset } =

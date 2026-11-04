@@ -570,6 +570,42 @@
     "Title": "Sign in the Backend.AI WebUI Agent CLI",
     "VerificationCode": "Verification code"
   },
+  "clientIpMasking": {
+    "ClientIpMasking": "Client IP Masking",
+    "CreatePolicy": "Create Policy",
+    "DefaultPrefix": "/{{prefix}} (default)",
+    "DeleteDefaultPolicyDescription": "Targets without their own policy will store client IPs as observed.",
+    "DeletePolicy": "Delete this masking policy?",
+    "DeletePolicyDescription": "{{target}} will fall back to the Default policy.",
+    "Description": "Set how client IP addresses are masked before they are stored. A target without its own policy follows the Default policy; when there is no Default policy, addresses are stored as observed.",
+    "EditPolicy": "Edit Policy",
+    "IPv4Prefix": "IPv4 Prefix Length",
+    "IPv6Prefix": "IPv6 Prefix Length",
+    "Mode": "Masking Mode",
+    "ModeRequired": "Select a masking mode.",
+    "OnePolicyPerTarget": "Only one policy can exist per target.",
+    "PrefixExtra": "Number of leading bits to keep (0–{{max}}). Leave empty to use {{defaultPrefix}}.",
+    "PrefixRange": "Enter a number between 0 and {{max}}.",
+    "SuccessfullyDeleted": "Client IP masking policy deleted.",
+    "SuccessfullySaved": "Client IP masking policy saved.",
+    "Target": "Policy Target",
+    "TargetRequired": "Select a policy target.",
+    "modeDescriptions": {
+      "DROP": "No client IP is recorded.",
+      "NONE": "Client IPs are stored as observed.",
+      "TRUNCATE": "Host bits are zeroed, keeping only the network prefix."
+    },
+    "modes": {
+      "DROP": "Drop",
+      "NONE": "None",
+      "TRUNCATE": "Truncate"
+    },
+    "targets": {
+      "AUDIT_LOGS": "Audit Logs",
+      "DEFAULT": "Default",
+      "LOGIN_HISTORY": "Login History"
+    }
+  },
   "credential": {
     "2FAEnabled": "2FA Enabled",
     "AccessKey": "Access Key",
@@ -2840,8 +2876,6 @@
     "DeleteResourceGroup": "Delete Resource Group",
     "Description": "Description",
     "Domain": "Domain",
-    "Driver": "Driver",
-    "DriverOptions": "Driver Options",
     "DuplicateHandlerOverride": "This handler is already overridden.",
     "DuplicateResourceSlot": "This resource slot is already added.",
     "EditDefaultDeploymentOptions": "Edit Default Deployment Options",

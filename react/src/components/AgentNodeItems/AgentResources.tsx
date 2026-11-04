@@ -71,7 +71,7 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
           <MetadataListItem label={t('agent.ResourceAllocation')}>
             {/* antd Row gutter={[16,16]} + Col xs={24} sm={12} (uniform 2-up
                 from 576px) → Grid columns={{minWidth:280, max:2}}
-                (RESPONSIVE-POLICY R1, container-driven). The gutter is 2, not
+                (ADR 0020 R1, container-driven). The gutter is 2, not
                 the mapped 4: a cell is now a whole progress block, so the gap
                 separates blocks rather than a label from its own bar. */}
             <Grid columns={{ minWidth: 280, max: 2 }} gap={2}>
