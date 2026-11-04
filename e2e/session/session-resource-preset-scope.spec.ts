@@ -8,6 +8,7 @@
 import { loginAsUser, navigateTo } from '../utils/test-util';
 import { test, expect, type Page } from '@playwright/test';
 
+// Real resource groups of the nightly cluster; the tests skip without them.
 const BASE_GROUP = 'cuda-ent';
 const OTHER_GROUP = 'default';
 const PRESET_NAME = 'e2e-mock-scoped-preset';
@@ -129,13 +130,36 @@ const globalPresetOption = (page: Page) =>
 test.describe(
   'Session launcher - resource-group-scoped presets',
   {
-    tag: ['@regression', '@functional', '@session', '@requires-manager-v26.4'],
+    tag: [
+      '@regression',
+      '@functional',
+      '@session',
+      '@requires-manager-v26.4',
+      '@requires-seeded-data',
+    ],
   },
   () => {
     test.beforeEach(async ({ page, request }) => {
       await mockScopedPresets(page);
       await loginAsUser(page, request);
       await openResourceAllocationStep(page);
+      await resourceGroupTrigger(page).click();
+      await expect(page.getByRole('option').first()).toBeVisible();
+      const missingGroups = [];
+      for (const group of [BASE_GROUP, OTHER_GROUP]) {
+        if (
+          (await page
+            .getByRole('option', { name: group, exact: true })
+            .count()) === 0
+        ) {
+          missingGroups.push(group);
+        }
+      }
+      await page.keyboard.press('Escape');
+      test.skip(
+        missingGroups.length > 0,
+        `Requires the e2e user's project to reach the "${BASE_GROUP}" (with fGPU) and "${OTHER_GROUP}" resource groups; missing: ${missingGroups.join(', ')} (@requires-seeded-data)`,
+      );
       await selectResourceGroup(page, BASE_GROUP);
     });
 
