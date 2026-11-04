@@ -4,6 +4,11 @@
  */
 import { maskString } from '../helper';
 import {
+  routeErrorScreenAtom,
+  type RouteErrorKind,
+  type RouteErrorScreen,
+} from '../helper/routeErrorScreen';
+import {
   isNavigableMenuKey,
   needsDocumentReload,
   readMainHeading,
@@ -27,6 +32,7 @@ import {
   type WebMCPInputSchema,
   type WebMCPTool,
 } from 'backend.ai-ui';
+import { useStore } from 'jotai';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
@@ -66,6 +72,12 @@ export const createWhoamiTool = (info: WhoamiInfo): WebMCPTool => ({
   execute: () => info,
 });
 
+const ROUTE_ERROR_CODES: Record<RouteErrorKind, string> = {
+  forbidden: 'page_forbidden',
+  not_found: 'page_not_found',
+  error: 'page_error',
+};
+
 export interface CurrentPageInfo {
   path: string;
   menuKey: string | null;
@@ -73,14 +85,21 @@ export interface CurrentPageInfo {
   scope: string;
   project: string | null;
   searchParams: Record<string, string | Array<string>>;
+  /** The error screen shown in place of the page, as `bai_navigate` would report it. */
+  errorScreen: { code: string; title: string } | null;
 }
+
+const errorScreenInfo = (
+  screen: RouteErrorScreen | null,
+): CurrentPageInfo['errorScreen'] =>
+  screen ? { code: ROUTE_ERROR_CODES[screen.kind], title: screen.label } : null;
 
 export const createCurrentPageTool = (
   readPage: () => CurrentPageInfo,
 ): WebMCPTool => ({
   name: 'bai_get_current_page',
   description:
-    'Where this Backend.AI WebUI tab is: pathname, menu key, translated page title, route scope (project, projectAdmin or admin), the project in the URL, search params and the main heading on screen.',
+    'Where this Backend.AI WebUI tab is: pathname, menu key, translated page title, route scope (project, projectAdmin or admin), the project in the URL, search params and the main heading on screen. errorScreen is non-null when an error screen (code page_forbidden, page_not_found or page_error) replaces the page; title then still names the route, not what is shown.',
   inputSchema: NO_INPUT,
   annotations: { readOnlyHint: true, untrustedContentHint: true },
   execute: () => ({ ...readPage(), heading: readMainHeading() }),
@@ -94,22 +113,31 @@ export interface NavigablePage {
 
 const NAVIGATION_SETTLE_MS = 300;
 
+const routeErrorResult = (screen: RouteErrorScreen, path: string) =>
+  webMCPError(
+    ROUTE_ERROR_CODES[screen.kind],
+    `${path} shows "${screen.label}" instead of a page.`,
+  );
+
 export const createNavigateTool = ({
   pages,
   activeProjectName,
   navigate,
+  readRouteErrorScreen = () => null,
   reloadDocument = (to) => window.location.assign(to),
   settleMs = NAVIGATION_SETTLE_MS,
 }: {
   pages: ReadonlyArray<NavigablePage>;
   activeProjectName: string | undefined;
   navigate: (to: string) => void;
+  /** The error screen shown in place of the page, read after navigating. */
+  readRouteErrorScreen?: () => RouteErrorScreen | null;
   reloadDocument?: (to: string) => void;
   settleMs?: number;
 }): WebMCPTool => ({
   name: 'bai_navigate',
   description:
-    'Open a page in this Backend.AI WebUI tab. Pass exactly one of "page" (a menu key the user can access) or "path" (an app path under /project/<name>/ or /admin/; a flat menu path such as /session?x=1 opens in the current project). Only navigates — never submits or deletes anything. Returns the resulting path and tab title; with reloaded: true the page is reloading, so wait for it and list the tools again. To fill a new session form, open /session/start and call bai_prepare_session there.',
+    'Open a page in this Backend.AI WebUI tab. Pass exactly one of "page" (a menu key the user can access) or "path" (an app path under /project/<name>/ or /admin/; a flat menu path such as /session?x=1 opens in the current project). Only navigates — never submits or deletes anything. Returns the resulting path and tab title; with reloaded: true the page is reloading, so wait for it and list the tools again. When the tab lands on an error screen instead, returns error.code page_forbidden (this account may not open it), page_not_found or page_error. To fill a new session form, open /session/start and call bai_prepare_session there.',
   inputSchema: {
     type: 'object',
     properties: {
@@ -152,6 +180,15 @@ export const createNavigateTool = ({
       if (!target.ok) return webMCPError(target.code, target.message);
       to = target.to;
     }
+    // Access follows the pathname a reload keeps, so the forbidden screen would come back.
+    const screenBefore = readRouteErrorScreen();
+    if (
+      screenBefore?.kind === 'forbidden' &&
+      needsDocumentReload(to, window.location)
+    ) {
+      const { pathname, search, hash } = window.location;
+      return routeErrorResult(screenBefore, `${pathname}${search}${hash}`);
+    }
     if (needsDocumentReload(to, window.location)) {
       window.setTimeout(() => reloadDocument(to), settleMs);
       return { path: to, title: document.title, reloaded: true };
@@ -160,7 +197,10 @@ export const createNavigateTool = ({
     // Lets the router commit and `RouteDocumentTitle` update before answering.
     await new Promise((resolve) => window.setTimeout(resolve, settleMs));
     const { pathname, search, hash } = window.location;
-    return { path: `${pathname}${search}${hash}`, title: document.title };
+    const landed = `${pathname}${search}${hash}`;
+    const errorScreen = readRouteErrorScreen();
+    if (errorScreen) return routeErrorResult(errorScreen, landed);
+    return { path: landed, title: document.title };
   },
 });
 
@@ -178,6 +218,8 @@ const WebMCPGlobalToolsRegistrar: React.FC = () => {
   const label = useCurrentRouteLabel();
   const location = useLocation();
   const navigate = useWebUINavigate();
+  // The store, not a render value: the answer is read after the navigation settles.
+  const store = useStore();
 
   // `adminMenu` leaves project-admin pages out for domain and super admins,
   // who can still open them.
@@ -215,6 +257,7 @@ const WebMCPGlobalToolsRegistrar: React.FC = () => {
       scope,
       project: scope === 'admin' ? null : (activeProjectName ?? null),
       searchParams: searchParamsToRecord(location.search),
+      errorScreen: errorScreenInfo(store.get(routeErrorScreenAtom)),
     })),
   );
 
@@ -223,6 +266,7 @@ const WebMCPGlobalToolsRegistrar: React.FC = () => {
       pages,
       activeProjectName,
       navigate: (to) => navigate(to),
+      readRouteErrorScreen: () => store.get(routeErrorScreenAtom),
     }),
   );
 

@@ -120,6 +120,7 @@ flowchart LR
 | `invalid_input` | `useWebMCPTool` | `validateWebMCPInput`이 거절했다. `issues: [{ path, message }]`가 붙는다 |
 | `execution_failed` | `useWebMCPTool` | 입력 검사나 `execute`가 예외를 던졌거나, 반환값을 JSON으로 바꿀 수 없거나, 바꾼 결과가 `undefined`다. `message`에는 예외나 client와 Relay가 던지는 plain object의 `message`, `msg`, `title` 중 처음 나온 문자열을 담고, 셋 다 없으면 고정된 문구를 담는다 |
 | `tool_unavailable` | `useWebMCPTool` | 등록이 끝난 뒤의 호출이다. component가 `null` tool을 넘기게 되었거나, unmount되었거나, gate가 꺼졌다 |
+| `page_forbidden`·`page_not_found`·`page_error` | `bai_navigate` | page 대신 route error 화면이 떴다. 화면은 `RouteErrorContent`가 `routeErrorScreenAtom`에 남기는 종류(`forbidden`·`not_found`·`error`)로 판단하고, `bai_get_current_page`는 같은 값을 `errorScreen`으로 돌려준다. 그 화면이 있는 동안 tab 제목은 page 이름 대신 화면 제목이다 |
 | 그 밖의 snake_case 문자열 | tool의 `execute` | tool이 자기 규칙으로 거절했다. `webMCPError(code, message)`로 만든다 |
 
 - **Shape**: 모든 error는 `{ error: { code, message, issues? } }`이다(`WebMCPErrorResult`).

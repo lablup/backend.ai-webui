@@ -2,14 +2,17 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { routeErrorScreenAtom } from '../helper/routeErrorScreen';
+import RouteErrorContent from './RouteErrorContent';
 import WebMCPGlobalTools, {
   createNavigateTool,
   displayedEmail,
 } from './WebMCPGlobalTools';
 import { render, waitFor } from '@testing-library/react';
 import { BAIWebMCPProvider, type WebMCPToolDescriptor } from 'backend.ai-ui';
+import { getDefaultStore } from 'jotai';
 import { Suspense } from 'react';
-import { RouterProvider, createMemoryRouter } from 'react-router-dom';
+import { Outlet, RouterProvider, createMemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
@@ -66,33 +69,53 @@ vi.mock('../hooks/useWebUIMenuItems', async (importOriginal) => ({
   }),
 }));
 
+vi.mock('../hooks/useThemeMode', () => ({
+  useThemeMode: () => ({ isDarkMode: false }),
+}));
+
 const registerTool =
   vi.fn<
     (tool: WebMCPToolDescriptor, options: { signal: AbortSignal }) => void
   >();
 const modelContextGetter = vi.fn(() => ({ registerTool }));
 
+let lastRouter: ReturnType<typeof createMemoryRouter> | undefined;
+
 const renderShell = (enabled: boolean) => {
   const router = createMemoryRouter(
     [
       {
-        path: '/project/:projectName/session',
-        handle: {
-          scope: 'project',
-          menuKey: 'session',
-          labelKey: 'webui.menu.Sessions',
-        },
         element: (
           <BAIWebMCPProvider enabled={enabled}>
             <Suspense fallback={null}>
               <WebMCPGlobalTools />
             </Suspense>
+            <Outlet />
           </BAIWebMCPProvider>
         ),
+        children: [
+          {
+            path: '/project/:projectName/session',
+            handle: {
+              scope: 'project',
+              menuKey: 'session',
+              labelKey: 'webui.menu.Sessions',
+            },
+            element: null,
+          },
+          {
+            path: '/project/:projectName/data',
+            handle: { scope: 'project', menuKey: 'data' },
+            element: (
+              <RouteErrorContent kind="forbidden" label="Unauthorized Access" />
+            ),
+          },
+        ],
       },
     ],
     { initialEntries: ['/project/default/session?type=all'] },
   );
+  lastRouter = router;
   return render(<RouterProvider router={router} />);
 };
 
@@ -162,7 +185,31 @@ describe('WebMCPGlobalTools', () => {
       scope: 'project',
       project: 'default',
       searchParams: { type: 'all' },
+      errorScreen: null,
     });
+  });
+
+  it('reports the screen it lands on and clears it on the next page', async () => {
+    renderShell(true);
+    await waitFor(() => expect(registerTool).toHaveBeenCalledTimes(3));
+    const viaRouter = (to: string) => void lastRouter?.navigate(to);
+    mocks.navigate
+      .mockImplementationOnce(viaRouter)
+      .mockImplementationOnce(viaRouter);
+
+    await expect(
+      toolNamed('bai_navigate').execute({ page: 'data' }),
+    ).resolves.toMatchObject({ error: { code: 'page_forbidden' } });
+    await expect(
+      toolNamed('bai_get_current_page').execute(undefined),
+    ).resolves.toMatchObject({
+      errorScreen: { code: 'page_forbidden', title: 'Unauthorized Access' },
+    });
+
+    await expect(
+      toolNamed('bai_navigate').execute({ path: '/session' }),
+    ).resolves.not.toHaveProperty('error');
+    expect(getDefaultStore().get(routeErrorScreenAtom)).toBeNull();
   });
 
   it('offers only accessible route pages in bai_navigate and validates input', async () => {
@@ -226,6 +273,27 @@ describe('createNavigateTool', () => {
     ).resolves.toMatchObject({ error: { code: 'path_not_allowed' } });
     expect(navigate).not.toHaveBeenCalled();
   });
+
+  it.each([
+    ['forbidden', 'page_forbidden'],
+    ['not_found', 'page_not_found'],
+    ['error', 'page_error'],
+  ] as const)(
+    'reports a %s screen as %s instead of success',
+    async (kind, code) => {
+      const guarded = createNavigateTool({
+        pages: [],
+        activeProjectName: 'default',
+        navigate,
+        readRouteErrorScreen: () => ({ kind, label: 'Unauthorized Access' }),
+        settleMs: 0,
+      });
+      const result = await guarded.execute({ path: '/admin/users' });
+      expect(navigate).toHaveBeenCalledWith('/admin/users');
+      expect(result).toMatchObject({ error: { code } });
+      expect(JSON.stringify(result)).toContain('Unauthorized Access');
+    },
+  );
 });
 
 describe('createNavigateTool on the same path', () => {
@@ -253,6 +321,45 @@ describe('createNavigateTool on the same path', () => {
       ),
     );
     expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('reports the guard screen instead of reloading onto it again', async () => {
+    const reloadDocument = vi.fn();
+    window.history.replaceState({}, '', '/admin/users');
+    const tool = createNavigateTool({
+      pages: [],
+      activeProjectName: 'default',
+      navigate: vi.fn(),
+      readRouteErrorScreen: () => ({
+        kind: 'forbidden',
+        label: 'Unauthorized Access',
+      }),
+      reloadDocument,
+      settleMs: 0,
+    });
+
+    await expect(
+      tool.execute({ path: '/admin/users?tab=credentials' }),
+    ).resolves.toMatchObject({ error: { code: 'page_forbidden' } });
+    expect(reloadDocument).not.toHaveBeenCalled();
+  });
+
+  it('still reloads away from a page that failed', async () => {
+    const reloadDocument = vi.fn();
+    window.history.replaceState({}, '', '/admin/users');
+    const tool = createNavigateTool({
+      pages: [],
+      activeProjectName: 'default',
+      navigate: vi.fn(),
+      readRouteErrorScreen: () => ({ kind: 'error', label: 'Error Occurred' }),
+      reloadDocument,
+      settleMs: 0,
+    });
+
+    await expect(
+      tool.execute({ path: '/admin/users?tab=credentials' }),
+    ).resolves.toMatchObject({ reloaded: true });
+    await waitFor(() => expect(reloadDocument).toHaveBeenCalled());
   });
 
   it('reloads despite a trailing slash on the target', async () => {

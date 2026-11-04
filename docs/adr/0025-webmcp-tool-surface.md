@@ -120,6 +120,7 @@ flowchart LR
 | `invalid_input` | `useWebMCPTool` | `validateWebMCPInput` rejected the input. `issues: [{ path, message }]` is attached |
 | `execution_failed` | `useWebMCPTool` | The input check or `execute` threw, the return value cannot be converted to JSON, or the conversion result is `undefined`. `message` holds the first string among `message`, `msg`, and `title` of the exception or of the plain object the client and Relay throw, and holds a fixed text when none of the three exists |
 | `tool_unavailable` | `useWebMCPTool` | A call arrived after registration ended: the component switched to passing a `null` tool, unmounted, or the gate turned off |
+| `page_forbidden`·`page_not_found`·`page_error` | `bai_navigate` | A route error screen appeared instead of the page. The kind (`forbidden`, `not_found`, `error`) comes from what `RouteErrorContent` records in `routeErrorScreenAtom`, and `bai_get_current_page` returns the same value as `errorScreen`. While that screen is up, the tab title is the screen's title, not the page name |
 | Any other snake_case string | The tool's `execute` | The tool rejected the call by its own rule. The tool builds it with `webMCPError(code, message)` |
 
 - **Shape**: Every error is `{ error: { code, message, issues? } }` (`WebMCPErrorResult`).
