@@ -412,7 +412,7 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     titleKey: 'dashboard.card.ResourceGroupCapacity',
     kind: 'custom',
     Component: ResourceGroupCapacityPanel,
-    defaultSize: size(4, 2),
+    defaultSize: size(2, 2),
     minSize: size(2, 2),
     settings: ['resourceGroup'],
     defaultHidden: true,
