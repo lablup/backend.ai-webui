@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { dashboardEditModeAtom } from '../../../components/dashboardEditModeAtom';
+import { dashboardEditModeAtom } from './dashboardEditModeAtom';
 import { Button } from '@lablup/ui-common/Button';
 import { useAtom } from 'jotai';
 import { SquarePenIcon } from 'lucide-react';

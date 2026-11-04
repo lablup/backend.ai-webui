@@ -2,11 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import QuotaPerStorageVolumePanelCard, {
   type VolumeInfo,
-} from '../../../components/QuotaPerStorageVolumePanelCard';
-import { useSuspendedBackendaiClient } from '../../../hooks';
-import { useSuspenseTanQuery } from '../../../hooks/reactQueryAlias';
+} from './QuotaPerStorageVolumePanelCard';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIBoardItemTitle, BAIFlex } from 'backend.ai-ui';
