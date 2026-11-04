@@ -224,6 +224,9 @@ and a failure prints `✗ <code>: …` with exit 1, so always pass `--json`.
    long enough that a server may refuse it. A null `webui_url` means nothing was
    filled, and the form was left as it was. Do not rebuild the URL yourself, and
    do not send the user to your own browser tab: they cannot see it.
+   `webui_url` carries the form in plain text, so never pass a password, token
+   or key in any field such as `startupCommand`; ask the user to add secrets in
+   the launcher's environment variables after they open the link.
 2. **Never perform a destructive action** — delete, purge, terminate, revoke,
    force-stop — by any route: no tool offers one, and you do not click one.
    Point the user at the page and let them do it.
