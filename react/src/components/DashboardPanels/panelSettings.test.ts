@@ -120,6 +120,25 @@ describe('range settings', () => {
     }
   });
 
+  it('drops a custom range longer than the card cap, and keeps it under the global cap', () => {
+    const eightDays = windowRange({
+      after: dayjs(WINDOW.before).subtract(8, 'day').toISOString(),
+      before: WINDOW.before,
+    });
+    expect(
+      sanitizePanelSettings(
+        { range: eightDays },
+        { ...RANGE, maxRangeDays: 7 },
+      ),
+    ).toBeUndefined();
+    expect(
+      sanitizePanelSettings({ range: 'now-7d' }, { ...RANGE, maxRangeDays: 7 }),
+    ).toEqual({ range: 'now-7d' });
+    expect(sanitizePanelSettings({ range: eightDays }, RANGE)).toEqual({
+      range: eightDays,
+    });
+  });
+
   it('labels a fixed window compactly and describes it in the sider', () => {
     const range = windowRange(WINDOW);
     expect(formatWindowLabel(range)).toBe('Oct 29 09:39 - Oct 30 09:39');

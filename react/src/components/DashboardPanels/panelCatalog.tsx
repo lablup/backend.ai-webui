@@ -35,6 +35,7 @@ import FairSharePanel from './superadminCards/FairSharePanel';
 import ResourcePoliciesPanel from './superadminCards/ResourcePoliciesPanel';
 import SchedulingFailuresPanel from './superadminCards/SchedulingFailuresPanel';
 import TopProjectsUsagePanel from './superadminCards/TopProjectsUsagePanel';
+import { CLIENT_COUNTED_MAX_RANGE_DAYS } from './timeRange';
 import type {
   PanelComponentProps,
   PanelDefinition,
@@ -286,6 +287,7 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(4, 3),
     minSize: size(2, 2),
     settings: ['range'],
+    maxRangeDays: CLIENT_COUNTED_MAX_RANGE_DAYS,
   },
 ];
 
@@ -418,6 +420,7 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(4, 4),
     minSize: size(2, 3),
     settings: ['range'],
+    maxRangeDays: CLIENT_COUNTED_MAX_RANGE_DAYS,
     ...adminOrder('projectAuditLog'),
   },
   {
@@ -449,6 +452,7 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(4, 4),
     minSize: size(2, 3),
     settings: ['range'],
+    maxRangeDays: CLIENT_COUNTED_MAX_RANGE_DAYS,
     // Addable from the sider; boards that already hold it keep it.
     defaultHidden: true,
   },
@@ -493,6 +497,7 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(2, 3),
     minSize: size(2, 3),
     settings: ['range'],
+    maxRangeDays: CLIENT_COUNTED_MAX_RANGE_DAYS,
     ...adminOrder('failuresByEntityType'),
   },
   {
@@ -566,6 +571,7 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(2, 3),
     minSize: size(2, 3),
     settings: ['range'],
+    maxRangeDays: CLIENT_COUNTED_MAX_RANGE_DAYS,
     defaultHidden: true,
   },
   {

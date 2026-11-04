@@ -41,12 +41,15 @@ export interface PanelRangeSelectProps extends Omit<
   /** A preset (`now-24h`) or a fixed window (`windowRange`). */
   value?: string;
   onChange?: (range: string) => void;
+  /** The longest custom range, in days. */
+  maxDays?: number;
 }
 
 /** A card's time range: the presets, the stored fixed window, and "Custom range", which opens a start/end picker. */
 const PanelRangeSelect: React.FC<PanelRangeSelectProps> = ({
   value,
   onChange,
+  maxDays = MAX_WINDOW_DAYS,
   ...selectProps
 }) => {
   'use memo';
@@ -78,6 +81,7 @@ const PanelRangeSelect: React.FC<PanelRangeSelectProps> = ({
         <CustomRangeModal
           open={isPicking}
           initial={fixedWindowOf(range)}
+          maxDays={maxDays}
           onSubmit={(window) => {
             onChange?.(windowRange(window));
             setIsPicking(false);
@@ -100,9 +104,10 @@ const toInput = (iso: string) =>
 const CustomRangeModal: React.FC<{
   open: boolean;
   initial: DateTimeWindow | null;
+  maxDays: number;
   onSubmit: (window: DateTimeWindow) => void;
   onRequestClose: () => void;
-}> = ({ open, initial, onSubmit, onRequestClose }) => {
+}> = ({ open, initial, maxDays, onSubmit, onRequestClose }) => {
   'use memo';
   const { t } = useTranslation();
   const [form] = Form.useForm<CustomRangeValues>();
@@ -112,6 +117,7 @@ const CustomRangeModal: React.FC<{
       dayjs(values.start).valueOf(),
       dayjs(values.end).valueOf(),
       Date.now(),
+      maxDays,
     );
 
   return (
@@ -129,7 +135,7 @@ const CustomRangeModal: React.FC<{
     >
       <BAIFlex direction="column" align="stretch" gap="md">
         <Text type="supporting">
-          {t('dashboard.settings.CustomRangeHelp', { days: MAX_WINDOW_DAYS })}
+          {t('dashboard.settings.CustomRangeHelp', { days: maxDays })}
         </Text>
         <Form
           form={form}
@@ -169,7 +175,7 @@ const CustomRangeModal: React.FC<{
                     throw new Error(
                       result.problem === 'tooLong'
                         ? t('dashboard.settings.RangeTooLong', {
-                            days: MAX_WINDOW_DAYS,
+                            days: maxDays,
                           })
                         : t('dashboard.settings.RangeEndBeforeStart'),
                     );

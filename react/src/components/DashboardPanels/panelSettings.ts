@@ -4,6 +4,7 @@
  */
 import {
   DEFAULT_TIME_RANGE,
+  MAX_WINDOW_DAYS,
   fixedWindowOf,
   isStorableWindow,
 } from './timeRange';
@@ -28,9 +29,16 @@ export const RANGE_LABEL_KEYS: Record<RangePreset, string> = {
 export const isRangePreset = (value: unknown): value is RangePreset =>
   _.includes(RANGE_PRESETS, value);
 
-/** A range a card setting may hold: a preset, or a fixed window. */
-export const isStoredRange = (value: unknown): value is string =>
-  isRangePreset(value) || isStorableWindow(value);
+/** The longest custom range the card accepts, in days. */
+export const maxRangeDaysOf = (
+  definition: Pick<PanelDefinition, 'maxRangeDays'> | undefined,
+) => definition?.maxRangeDays ?? MAX_WINDOW_DAYS;
+
+/** A range a card setting may hold: a preset, or a fixed window at most `maxDays` long. */
+export const isStoredRange = (
+  value: unknown,
+  maxDays: number = MAX_WINDOW_DAYS,
+): value is string => isRangePreset(value) || isStorableWindow(value, maxDays);
 
 /** A fixed window, compact: `Oct 29 09:39 - Oct 30 09:39`. */
 export const formatWindowLabel = (range: string): string | undefined => {
@@ -84,7 +92,10 @@ export const sanitizeColumnOverrides = (
  */
 export const sanitizePanelSettings = (
   value: unknown,
-  definition: Pick<PanelDefinition, 'settings' | 'columnSettings'>,
+  definition: Pick<
+    PanelDefinition,
+    'settings' | 'columnSettings' | 'maxRangeDays'
+  >,
 ): PanelSettings | undefined => {
   if (!value || typeof value !== 'object') return undefined;
   const { resourceGroups, range, columnOverrides } = value as Record<
@@ -102,7 +113,10 @@ export const sanitizePanelSettings = (
   ) {
     settings.resourceGroups = [resourceGroup];
   }
-  if (hasSetting(definition, 'range') && isStoredRange(range)) {
+  if (
+    hasSetting(definition, 'range') &&
+    isStoredRange(range, maxRangeDaysOf(definition))
+  ) {
     settings.range = range;
   }
   const columns = definition.columnSettings
