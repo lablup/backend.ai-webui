@@ -257,7 +257,7 @@ check_stylex_injection() {
   # stylesheet rollup emitted first — possibly a lazy route's. Nothing warns
   # when the predicate stops matching, so: (1) the config must declare it;
   # (2) when a production build is present, the sentinel rule authored in
-  # react/src/pages/AstryxStylexProbePage.tsx must land in the entry
+  # react/src/pages/AstryxStylexProbePage/AstryxStylexProbePage.tsx must land in the entry
   # stylesheet only. Keep STYLEX_SENTINEL in sync with that `sentinel` style.
   local STYLEX_SENTINEL='z-index: ?2147480001'
   local config=react/vite.config.ts
