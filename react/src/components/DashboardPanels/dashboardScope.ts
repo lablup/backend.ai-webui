@@ -47,7 +47,7 @@ export const defaultResourceGroupOf = (
 /**
  * The one resource group a card reads: its own setting (the first group of an
  * older multi-group setting) while the page's project may still use it, else
- * the default. Never the header's current resource group (ADR 0026).
+ * the default. Never the header's current resource group (ADR 0027).
  */
 export const cardResourceGroup = (
   setting: ReadonlyArray<string> | undefined,

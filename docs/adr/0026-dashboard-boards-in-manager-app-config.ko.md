@@ -1,4 +1,4 @@
-# 0025 — Dashboard boards in manager app config
+# 0026 — Dashboard boards in manager app config
 
 ## Summary
 

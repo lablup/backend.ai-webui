@@ -50,7 +50,7 @@ const projectIdOf = (scope: DashboardScope): string | null =>
 /**
  * Reads the resource groups the page's project (the superadmin page: the
  * current domain) may use, once per page, for every card's default and picker.
- * It never reads the header's current project or resource group (ADR 0026).
+ * It never reads the header's current project or resource group (ADR 0027).
  */
 export const DashboardResourceGroupsProvider: React.FC<{
   scope: DashboardScope;

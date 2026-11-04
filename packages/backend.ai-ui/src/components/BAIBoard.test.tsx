@@ -102,6 +102,27 @@ describe('BAIBoard', () => {
     expect(header).not.toHaveTextContent('Section');
   });
 
+  it("keeps an item's own description instead of data.content", () => {
+    render(
+      <BAIBoard
+        items={[{ ...items[0], description: <h5>Custom a</h5> }, items[1]]}
+        onItemsChange={() => {}}
+      />,
+    );
+    expect(screen.getByRole('heading', { name: 'Custom a' })).toBeVisible();
+    expect(screen.queryByRole('heading', { name: 'Alpha' })).toBeNull();
+  });
+
+  it('still renders data.content for an item that sets only a title', () => {
+    render(
+      <BAIBoard
+        items={[{ ...items[0], title: 'Heading' }, items[1]]}
+        onItemsChange={() => {}}
+      />,
+    );
+    expect(screen.getByRole('heading', { name: 'Alpha' })).toBeVisible();
+  });
+
   it('passes an item with its own title and description through', () => {
     render(
       <BAIBoard
@@ -176,5 +197,11 @@ describe('BAIBoard', () => {
     expect(event.detail.movedItem?.id).toBe('b');
     expect(event.detail.resizedItem).toBeUndefined();
     expect(event.detail.items[0].data).toBe(items[1].data);
+    expect(
+      event.detail.items.every(
+        (item: BAIBoardItem) => !('description' in item),
+      ),
+    ).toBe(true);
+    expect(event.detail.movedItem).not.toHaveProperty('description');
   });
 });

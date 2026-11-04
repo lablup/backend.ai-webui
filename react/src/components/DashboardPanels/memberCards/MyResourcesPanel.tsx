@@ -27,7 +27,7 @@ export const MyResourcesInResourceGroup: React.FC<{
   const currentDomain = useCurrentDomain();
   const variables = {
     projectId,
-    // A group the project uses only through its domain is read as well (ADR 0026).
+    // A group the project uses only through its domain is read as well (ADR 0027).
     scope: {
       domain: [{ value: currentDomain.id }],
       project: [{ value: projectId }],
@@ -36,7 +36,7 @@ export const MyResourcesInResourceGroup: React.FC<{
   };
   const deferredVariables = useDeferredValue(variables);
   // Fields a plain project member can read; `effectiveResourceAllocationV2`
-  // needs session READ on the project, which members lack (ADR 0026).
+  // needs session READ on the project, which members lack (ADR 0027).
   const data = useLazyLoadQuery<MyResourcesPanelQuery>(
     graphql`
       query MyResourcesPanelQuery(

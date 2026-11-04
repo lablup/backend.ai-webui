@@ -32,11 +32,6 @@ fields:
     meaning: The App Proxy this group's sessions publish their apps and endpoints through.
     concept: app-proxy-server-address
     docs: deployment#accessing-your-deployment
-  wsproxy_api_token:
-    label: App Proxy API Token
-    meaning: The token the manager authenticates to this group's App Proxy with.
-    concept: app-proxy-api-token
-    docs: deployment#generating-tokens
   agent_count_by_status:
     label: Agents
     meaning: How many of the group's agents are in each status, which is what the resource panels total.

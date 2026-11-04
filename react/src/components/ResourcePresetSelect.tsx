@@ -41,8 +41,6 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
  */
 export interface PresetOptionType extends SelectorOptionData {
   preset?: ResourcePreset;
-  /** Set exactly when the option is disabled; shown on hover. */
-  disabledReason?: string;
 }
 
 export type ResourcePreset = NonNullable<
@@ -266,13 +264,12 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
         // Names repeat across resource groups; the id is the option's key.
         value: preset?.id ?? '',
         label: preset?.name ?? '',
-        disabled: !!disabledReason,
-        disabledReason,
+        disabled: disabledReason ? { reason: disabledReason } : false,
         preset: preset ?? undefined,
       };
     },
   )
-    .sort((a, b) => (a.disabled === b.disabled ? 0 : a.disabled ? 1 : -1))
+    .sort((a, b) => (!!a.disabled === !!b.disabled ? 0 : a.disabled ? 1 : -1))
     .sort((a, b) => localeCompare(a.label, b.label));
 
   const renderResourceRow = (option: BAISelectOption) => {
@@ -296,10 +293,11 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     const presetOption = presetOptions.find((o) => o.value === option.value);
     const preset = presetOption?.preset;
     if (!preset) return option.label;
+    const disabledReason = disabledReasonOf(preset);
     const slotsInfo: {
       [key in ResourceSlotName]: string;
     } = JSON.parse(preset.resource_slots || '{}');
-    const row = (
+    return (
       <BAIFlex direction="row" justify="between" gap={'xs'} style={{ flex: 1 }}>
         <BAIFlex direction="row" gap={'xs'} align="center">
           {preset.name}
@@ -307,7 +305,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
             // Global presets carry no mark; the token names the group this
             // one belongs to, so same-named rows tell apart. A disabled row
             // already explains itself, so the token stays quiet there.
-            presetOption?.disabledReason ? (
+            disabledReason ? (
               <Token label={preset.scaling_group_name} size="sm" />
             ) : (
               <Tooltip content={onlyInGroupText(preset.scaling_group_name)}>
@@ -340,11 +338,6 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
           )}
         </BAIFlex>
       </BAIFlex>
-    );
-    return presetOption?.disabledReason ? (
-      <Tooltip content={presetOption.disabledReason}>{row}</Tooltip>
-    ) : (
-      row
     );
   };
 

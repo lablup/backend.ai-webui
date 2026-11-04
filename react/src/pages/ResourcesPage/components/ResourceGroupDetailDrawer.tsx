@@ -60,7 +60,7 @@ import {
 type TabKey = 'defaultSessionOptions' | 'defaultDeploymentOptions';
 
 // The basic-info form still edits the graphene `ScalingGroup` (it carries
-// `wsproxy_api_token` and `scheduler_opts`, which `ResourceGroup` does not).
+// `scheduler_opts`, which `ResourceGroup` does not).
 // The drawer starts this query on the edit click (render-as-you-fetch).
 const SettingModalQuery = graphql`
   query ResourceGroupDetailDrawerSettingModalQuery($name: String!) {

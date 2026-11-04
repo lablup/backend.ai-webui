@@ -32,7 +32,7 @@ const DATETIME_PATTERN =
 /** The longest fixed window a card setting may hold, unless its catalog entry sets `maxRangeDays`. */
 export const MAX_WINDOW_DAYS = 90;
 
-/** The cap for cards that count every bucket of the window themselves, one alias each (ADR 0026). */
+/** The cap for cards that count every bucket of the window themselves, one alias each (ADR 0027). */
 export const CLIENT_COUNTED_MAX_RANGE_DAYS = 7;
 
 /** At most this many buckets per chart, each one a count alias in one request. */
