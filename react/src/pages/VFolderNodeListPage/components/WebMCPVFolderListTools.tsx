@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { WebMCPVFolderListToolsFragment$key } from '../__generated__/WebMCPVFolderListToolsFragment.graphql';
+import type { WebMCPVFolderListToolsFragment$key } from '../../../__generated__/WebMCPVFolderListToolsFragment.graphql';
 import {
   openedItem,
   pathWithSearchParam,
@@ -12,7 +12,7 @@ import {
   type PageToolColumn,
   type PageToolRow,
   type ViewParamValue,
-} from '../helper/webmcpPageTools';
+} from '../../../helper/webmcpPageTools';
 import {
   convertToUUID,
   filterOutNullAndUndefined,
@@ -169,7 +169,7 @@ const VFolderListToolsRegistrar: React.FC<WebMCPVFolderListToolsProps> = ({
 
 /**
  * `bai_list_visible_vfolder`, `bai_get_vfolder_filter` and
- * `bai_get_current_vfolder` for the folder list (ADR 0018).
+ * `bai_get_current_vfolder` for the folder list (ADR 0025).
  */
 const WebMCPVFolderListTools: React.FC<WebMCPVFolderListToolsProps> = (
   props,

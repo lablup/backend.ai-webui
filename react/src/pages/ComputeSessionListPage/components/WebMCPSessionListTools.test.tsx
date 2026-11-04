@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { WebMCPSessionListToolsTestQuery } from '../__generated__/WebMCPSessionListToolsTestQuery.graphql';
+import type { WebMCPSessionListToolsTestQuery } from '../../../__generated__/WebMCPSessionListToolsTestQuery.graphql';
 import WebMCPSessionListTools from './WebMCPSessionListTools';
 import { render, waitFor } from '@testing-library/react';
 import {
@@ -21,12 +21,12 @@ import { MemoryRouter } from 'react-router-dom';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('../hooks', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../hooks')>()),
+vi.mock('../../../hooks', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../../../hooks')>()),
   useSuspendedBackendaiClient: () => ({ _config: { hideAgents: false } }),
 }));
-vi.mock('../hooks/backendai', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../hooks/backendai')>()),
+vi.mock('../../../hooks/backendai', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../../../hooks/backendai')>()),
   useCurrentUserRole: () => 'user',
 }));
 

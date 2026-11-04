@@ -29,7 +29,7 @@ import { useCreateActionArrival } from '../../hooks/useCreateActionArrival';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { useVFolderInvitations } from '../../hooks/useVFolderInvitations';
 import { toProjectContext } from '../../types/projectContext';
-import WebMCPVFolderListTools from '../../components/WebMCPVFolderListTools';
+import WebMCPVFolderListTools from './components/WebMCPVFolderListTools';
 import { Button } from '@lablup/ui-common/Button';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Link } from '@lablup/ui-common/Link';

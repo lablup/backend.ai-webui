@@ -26,7 +26,7 @@ import { useCreateActionArrival } from '../../hooks/useCreateActionArrival';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { useProjectPath } from '../../hooks/useRouteScope';
 import { toProjectContext } from '../../types/projectContext';
-import WebMCPDeploymentListTools from '../../components/WebMCPDeploymentTools';
+import WebMCPDeploymentListTools from './components/WebMCPDeploymentTools';
 import { Button } from '@lablup/ui-common/Button';
 import { Link } from '@lablup/ui-common/Link';
 import { Text } from '@lablup/ui-common/Text';

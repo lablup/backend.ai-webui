@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { WebMCPDeploymentTools_deployments$key } from '../__generated__/WebMCPDeploymentTools_deployments.graphql';
+import type { WebMCPDeploymentTools_deployments$key } from '../../../__generated__/WebMCPDeploymentTools_deployments.graphql';
 import {
   createCurrentItemTool,
   openedItem,
@@ -12,7 +12,7 @@ import {
   type PageToolColumn,
   type PageToolRow,
   type ViewParamValue,
-} from '../helper/webmcpPageTools';
+} from '../../../helper/webmcpPageTools';
 import {
   filterOutNullAndUndefined,
   toLocalId,
@@ -166,7 +166,7 @@ const DeploymentListToolsRegistrar: React.FC<
 
 /**
  * `bai_list_visible_deployment`, `bai_get_deployment_filter` and
- * `bai_get_current_deployment` for the deployment list (ADR 0018).
+ * `bai_get_current_deployment` for the deployment list (ADR 0025).
  */
 const WebMCPDeploymentListTools: React.FC<WebMCPDeploymentListToolsProps> = (
   props,

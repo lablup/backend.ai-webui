@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { WebMCPSessionListToolsFragment$key } from '../__generated__/WebMCPSessionListToolsFragment.graphql';
+import type { WebMCPSessionListToolsFragment$key } from '../../../__generated__/WebMCPSessionListToolsFragment.graphql';
 import {
   openedItem,
   pathWithSearchParam,
@@ -12,9 +12,9 @@ import {
   type PageToolColumn,
   type PageToolRow,
   type ViewParamValue,
-} from '../helper/webmcpPageTools';
-import { useSuspendedBackendaiClient } from '../hooks';
-import { useCurrentUserRole } from '../hooks/backendai';
+} from '../../../helper/webmcpPageTools';
+import { useSuspendedBackendaiClient } from '../../../hooks';
+import { useCurrentUserRole } from '../../../hooks/backendai';
 import {
   filterOutNullAndUndefined,
   useBAIWebMCPActive,
@@ -152,7 +152,7 @@ const SessionListToolsRegistrar: React.FC<WebMCPSessionListToolsProps> = ({
 
 /**
  * `bai_list_visible_session`, `bai_get_session_filter` and
- * `bai_get_current_session` for the session list (ADR 0018).
+ * `bai_get_current_session` for the session list (ADR 0025).
  */
 const WebMCPSessionListTools: React.FC<WebMCPSessionListToolsProps> = (
   props,

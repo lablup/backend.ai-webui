@@ -26,7 +26,7 @@ import { useCSVExport } from '../../hooks/useCSVExport';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { useProjectPath } from '../../hooks/useRouteScope';
 import ConfigurableResourceCard from './components/ConfigurableResourceCard';
-import WebMCPSessionListTools from '../../components/WebMCPSessionListTools';
+import WebMCPSessionListTools from './components/WebMCPSessionListTools';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
 import { Grid, GridSpan } from '@lablup/ui-common/Grid';

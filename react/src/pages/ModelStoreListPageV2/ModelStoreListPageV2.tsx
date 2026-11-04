@@ -13,7 +13,7 @@ import { useSuspendedBackendaiClient } from '../../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
 import { useModelStoreProject } from '../../hooks/useModelStoreProject';
 import AuthorIcon from './components/AuthorIcon';
-import WebMCPModelCardListTools from '../../components/WebMCPModelCardListTools';
+import WebMCPModelCardListTools from './components/WebMCPModelCardListTools';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Card } from '@lablup/ui-common/Card';
 import { EmptyState } from '@lablup/ui-common/EmptyState';

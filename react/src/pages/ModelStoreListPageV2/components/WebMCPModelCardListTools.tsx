@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { WebMCPModelCardListToolsFragment$key } from '../__generated__/WebMCPModelCardListToolsFragment.graphql';
+import type { WebMCPModelCardListToolsFragment$key } from '../../../__generated__/WebMCPModelCardListToolsFragment.graphql';
 import {
   openedItem,
   pathWithSearchParam,
@@ -11,7 +11,7 @@ import {
   visibleRowsResult,
   type PageToolRow,
   type ViewParamValue,
-} from '../helper/webmcpPageTools';
+} from '../../../helper/webmcpPageTools';
 import { filterOutNullAndUndefined, useBAIWebMCPActive } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
@@ -95,7 +95,7 @@ const ModelCardListToolsRegistrar: React.FC<WebMCPModelCardListToolsProps> = ({
 
 /**
  * `bai_list_visible_model_card`, `bai_get_model_card_filter` and
- * `bai_get_current_model_card` for the model store (ADR 0018).
+ * `bai_get_current_model_card` for the model store (ADR 0025).
  */
 const WebMCPModelCardListTools: React.FC<WebMCPModelCardListToolsProps> = (
   props,

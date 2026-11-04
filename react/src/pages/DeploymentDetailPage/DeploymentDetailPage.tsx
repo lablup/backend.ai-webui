@@ -13,12 +13,12 @@ import {
   useActiveProjectName,
   useProjectPath,
 } from '../../hooks/useRouteScope';
-import { WebMCPDeploymentDetailTools } from '../../components/WebMCPDeploymentTools';
 import {
   getPathFromMenuKey,
   useWebUIMenuItems,
 } from '../../hooks/useWebUIMenuItems';
 import { toProjectContext } from '../../types/projectContext';
+import { WebMCPDeploymentDetailTools } from '../DeploymentListPage/components/WebMCPDeploymentTools';
 import DeploymentAccessTokensCard from './components/DeploymentAccessTokensCard';
 import DeploymentAddRevisionModal, {
   type DeploymentAddRevisionModalCreatedRevision,
