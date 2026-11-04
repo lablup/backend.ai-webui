@@ -2,13 +2,16 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { NON_ACCELERATOR_SLOTS } from '../components/SessionFormItems/resourceAllocationRules';
+import { NON_ACCELERATOR_SLOTS } from '../../../components/SessionFormItems/resourceAllocationRules';
+import {
+  parseImageString,
+  removeArchitectureFromImageFullName,
+} from '../../../helper/index';
 import {
   findSessionNameProblem,
   type SessionNameProblem,
-} from '../hooks/useValidateSessionName';
-import type { SessionLauncherFormValue } from '../pages/SessionLauncherPage/SessionLauncherPage';
-import { parseImageString, removeArchitectureFromImageFullName } from './index';
+} from '../../../hooks/useValidateSessionName';
+import type { SessionLauncherFormValue } from '../SessionLauncherPage';
 import type { VFolderMountConfigValue, WebMCPInputSchema } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 

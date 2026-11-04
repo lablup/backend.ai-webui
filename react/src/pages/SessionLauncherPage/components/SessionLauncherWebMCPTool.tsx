@@ -2,9 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { SessionLauncherWebMCPToolFoldersQuery } from '../__generated__/SessionLauncherWebMCPToolFoldersQuery.graphql';
-import { generateUUID } from '../helper/uuid';
-import { AGENT_PREFILL_PARAM } from '../helper/webmcpConstants';
+import type { SessionLauncherWebMCPToolFoldersQuery } from '../../../__generated__/SessionLauncherWebMCPToolFoldersQuery.graphql';
+import { generateUUID } from '../../../helper/uuid';
+import { AGENT_PREFILL_PARAM } from '../../../helper/webmcpConstants';
+import { useSuspendedBackendaiClient } from '../../../hooks';
+import { useMountableStorageHosts } from '../../../hooks/useMountableStorageHosts';
+import type { ProjectContext } from '../../../types/projectContext';
 import {
   buildSessionPrefill,
   isRequestedImage,
@@ -15,9 +18,6 @@ import {
   type PrepareSessionInput,
   type ResolvedEnvironment,
 } from '../helper/webmcpSessionPrefill';
-import { useSuspendedBackendaiClient } from '../hooks';
-import { useMountableStorageHosts } from '../hooks/useMountableStorageHosts';
-import type { ProjectContext } from '../types/projectContext';
 import {
   isAutoMountFolderName,
   mountableVFolderFilter,
@@ -66,7 +66,7 @@ export interface PrepareSessionToolDeps {
 const wait = (ms: number) =>
   new Promise((resolve) => window.setTimeout(resolve, ms));
 
-/** `bai_prepare_session` (ADR 0018). It can only navigate: no submit or mutation is reachable from here. */
+/** `bai_prepare_session` (ADR 0025). It can only navigate: no submit or mutation is reachable from here. */
 export const createPrepareSessionTool = ({
   findFolders,
   allowCustomResourceAllocation,

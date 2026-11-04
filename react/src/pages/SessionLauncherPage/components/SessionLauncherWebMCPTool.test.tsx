@@ -20,14 +20,14 @@ import { RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment } from 'relay-test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('../hooks', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../hooks')>()),
+vi.mock('../../../hooks', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../../../hooks')>()),
   useSuspendedBackendaiClient: () => ({
     _config: { allowCustomResourceAllocation: true },
     user_uuid: 'user-1',
   }),
 }));
-vi.mock('../hooks/useMountableStorageHosts', () => ({
+vi.mock('../../../hooks/useMountableStorageHosts', () => ({
   useMountableStorageHosts: () => ['local:volume1'],
 }));
 

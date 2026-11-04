@@ -20,8 +20,6 @@ import ResourceAllocationFormItems, {
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
   ResourceAllocationFormValue,
 } from '../../components/SessionFormItems/ResourceAllocationFormItems';
-import SessionLauncherAgentPrefillNotice from '../../components/SessionLauncherAgentPrefillNotice';
-import SessionLauncherWebMCPTool from '../../components/SessionLauncherWebMCPTool';
 import { Form, type FormInstance } from '../../form-engine';
 import { formatDuration } from '../../helper';
 import { normalizeLegacyMountFields } from '../../helper/vfolderMounts';
@@ -39,10 +37,12 @@ import { useRecentSessionHistory } from '../../hooks/useRecentSessionHistory';
 import { useStartSession } from '../../hooks/useStartSession';
 import { toProjectContext } from '../../types/projectContext';
 import LaunchMultipleSessionsModal from './components/LaunchMultipleSessionsModal';
+import SessionLauncherAgentPrefillNotice from './components/SessionLauncherAgentPrefillNotice';
 import SessionLauncherValidationTour from './components/SessionLauncherErrorTourProps';
 import SessionLauncherFormIncompatibleValueChecker from './components/SessionLauncherFormIncompatibleValueChecker';
 import SessionLauncherPreview from './components/SessionLauncherPreview';
 import SessionLauncherStorageStep from './components/SessionLauncherStorageStep';
+import SessionLauncherWebMCPTool from './components/SessionLauncherWebMCPTool';
 import SessionNameFormItem, {
   SessionNameFormItemValue,
 } from './components/SessionNameFormItem';
