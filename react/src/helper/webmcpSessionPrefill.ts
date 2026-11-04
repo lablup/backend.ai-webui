@@ -35,7 +35,7 @@ export const PREPARE_SESSION_INPUT_SCHEMA: WebMCPInputSchema = {
       minLength: 1,
       maxLength: 4096,
       description:
-        'The command a batch session runs. Required with sessionType "batch", refused otherwise.',
+        'The command a batch session runs. Required with sessionType "batch", refused otherwise. It travels in webui_url as plain text, so never put a password, token or key in it; tell the user to add secrets in the launcher\'s environment variables instead.',
     },
     image: {
       type: 'string',
