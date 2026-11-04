@@ -31,7 +31,6 @@ import AgentsPanel from './superadminCards/AgentsPanel';
 import ContainerRegistriesPanel from './superadminCards/ContainerRegistriesPanel';
 import FailedLoginsPanel from './superadminCards/FailedLoginsPanel';
 import FailuresByEntityTypePanel from './superadminCards/FailuresByEntityTypePanel';
-import FairSharePanel from './superadminCards/FairSharePanel';
 import ResourcePoliciesPanel from './superadminCards/ResourcePoliciesPanel';
 import SchedulingFailuresPanel from './superadminCards/SchedulingFailuresPanel';
 import TopProjectsUsagePanel from './superadminCards/TopProjectsUsagePanel';
@@ -99,23 +98,6 @@ const pendingSessionsLink: NonNullable<PanelDefinition['detailLink']> = ({
     labelKey: 'adminSession.PendingSessions',
     query: {
       tab: 'pending-sessions',
-      ...(resourceGroup ? { resourceGroup } : {}),
-    },
-  };
-};
-
-/** The Fair Share page, opened at the card's resource group when one is saved. */
-const fairShareLink: NonNullable<PanelDefinition['detailLink']> = ({
-  page,
-  settings,
-}) => {
-  if (page !== 'admin') return null;
-  const resourceGroup = settings?.resourceGroups?.[0];
-  return {
-    feature: 'scheduler',
-    labelKey: 'webui.menu.Scheduler',
-    query: {
-      tab: 'fair-share',
       ...(resourceGroup ? { resourceGroup } : {}),
     },
   };
@@ -300,7 +282,6 @@ const ADMIN_ORDER = {
   failuresByEntityType: 5,
   projectAuditLog: 6,
   topProjectsUsage: 7,
-  fairShare: 8,
 } as const;
 
 const adminOrder = (key: keyof typeof ADMIN_ORDER) => ({
@@ -513,20 +494,6 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     minSize: size(2, 3),
     settings: ['resourceGroup', 'range'],
     ...adminOrder('topProjectsUsage'),
-  },
-  {
-    key: 'fairShare',
-    page: ['admin'],
-    group: 'resource',
-    titleKey: 'webui.menu.FairShare',
-    requires: SUPERADMIN_ONLY,
-    kind: 'custom',
-    Component: FairSharePanel,
-    detailLink: fairShareLink,
-    defaultSize: size(4, 3),
-    minSize: size(2, 3),
-    settings: ['resourceGroup'],
-    ...adminOrder('fairShare'),
   },
   {
     // The member page's My Recent Sessions over the domain; the key is the one stored boards already carry.

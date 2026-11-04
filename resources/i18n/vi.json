@@ -840,7 +840,6 @@
       "FailuresByEntityTypeTooltip": "Các mục nhật ký kiểm toán của toàn cụm trong khoảng thời gian của thẻ kết thúc bằng lỗi hoặc bị từ chối, đếm theo loại thực thể.",
       "FailuresOfType": "Mục thất bại: {{type}}",
       "FailuresOnly": "Chỉ hiện lỗi",
-      "FairShareTooltip": "Cài đặt Fair Share của nhóm tài nguyên của thẻ, như trang Fair Share hiển thị. Mức ưu tiên được tính từ các cài đặt này cho từng miền, dự án và người dùng.",
       "FolderLimit": "Giới hạn: {{max}}",
       "Healthy": "Ổn định",
       "Insufficient": "Không đủ tài nguyên",

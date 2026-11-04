@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { catalogFor, seedBoard } from './boardModel';
+import { catalogFor, sanitizeBoard, seedBoard } from './boardModel';
 import { PANEL_CATALOG } from './panelCatalog';
 import { resourceKeys } from './resourceRegistry';
 import type { PanelCatalogContext, PanelPage } from './types';
@@ -106,7 +106,6 @@ describe('PANEL_CATALOG', () => {
         'failuresByEntityType',
         'projectAuditLog',
         'topProjectsUsage',
-        'fairShare',
         'totalResourceWithinResourceGroup',
       ],
     ],
@@ -114,6 +113,28 @@ describe('PANEL_CATALOG', () => {
     expect(
       seedBoard(PANEL_CATALOG, page).panels.map((panel) => panel.id),
     ).toEqual(keys);
+  });
+});
+
+describe('stored boards on the real catalog', () => {
+  it('drops a removed card (Fair Share) and keeps the rest', () => {
+    const board = sanitizeBoard(
+      {
+        panels: [
+          { id: 'fairShare', key: 'fairShare', columnSpan: 4, rowSpan: 3 },
+          {
+            id: 'activeAgents',
+            key: 'activeAgents',
+            columnSpan: 2,
+            rowSpan: 2,
+          },
+        ],
+        knownKeys: ['fairShare', 'activeAgents'],
+      },
+      PANEL_CATALOG,
+      'admin',
+    );
+    expect(board?.panels.map((panel) => panel.id)).toEqual(['activeAgents']);
   });
 });
 

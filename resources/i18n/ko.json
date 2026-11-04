@@ -840,7 +840,6 @@
       "FailuresByEntityTypeTooltip": "카드에 설정한 기간 동안 클러스터 전체에서 오류로 끝났거나 거부된 감사 로그 항목을 엔터티 유형별로 셉니다.",
       "FailuresOfType": "실패 기록: {{type}}",
       "FailuresOnly": "실패만 보기",
-      "FairShareTooltip": "카드에 설정한 자원 그룹의 Fair Share 설정을 Fair Share 페이지와 같이 보여 줍니다. 우선순위는 이 설정을 바탕으로 도메인, 프로젝트, 사용자마다 계산됩니다.",
       "FolderLimit": "한도: {{max}}개",
       "Healthy": "정상",
       "Insufficient": "자원 부족",

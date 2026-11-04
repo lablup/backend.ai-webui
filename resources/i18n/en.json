@@ -827,7 +827,6 @@
       "FailuresByEntityTypeTooltip": "Audit log entries of the whole cluster that ended in an error or were denied in the card's time range, counted per entity type.",
       "FailuresOfType": "Failed entries: {{type}}",
       "FailuresOnly": "Show failures only",
-      "FairShareTooltip": "The Fair Share settings of the card's resource group, as the Fair Share page shows them. Priorities are calculated per domain, project and user from these settings.",
       "FolderLimit": "Limit: {{max}}",
       "Healthy": "Healthy",
       "Insufficient": "Not enough resources",

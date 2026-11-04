@@ -840,7 +840,6 @@
       "FailuresByEntityTypeTooltip": "卡片時間範圍內整個叢集中以錯誤結束或遭拒絕的稽核記錄項目，依實體類型計數。",
       "FailuresOfType": "失敗紀錄：{{type}}",
       "FailuresOnly": "僅顯示失敗",
-      "FairShareTooltip": "依 Fair Share 頁面的方式顯示卡片資源群組的 Fair Share 設定。優先順序會依這些設定按網域、專案和使用者分別計算。",
       "FolderLimit": "上限: {{max}}",
       "Healthy": "正常",
       "Insufficient": "資源不足",

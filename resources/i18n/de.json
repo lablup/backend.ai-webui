@@ -840,7 +840,6 @@
       "FailuresByEntityTypeTooltip": "Audit-Log-Einträge des gesamten Clusters im Zeitraum der Karte, die mit einem Fehler endeten oder abgelehnt wurden, je Entitätstyp gezählt.",
       "FailuresOfType": "Fehlgeschlagene Einträge: {{type}}",
       "FailuresOnly": "Nur Fehler anzeigen",
-      "FairShareTooltip": "Die Fair-Share-Einstellungen der Ressourcengruppe der Karte, wie sie die Fair-Share-Seite zeigt. Prioritäten werden daraus je Domäne, Projekt und Benutzer berechnet.",
       "FolderLimit": "Limit: {{max}}",
       "Healthy": "Fehlerfrei",
       "Insufficient": "Nicht genug Ressourcen",

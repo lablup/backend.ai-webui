@@ -840,7 +840,6 @@
       "FailuresByEntityTypeTooltip": "Voci di audit dell'intero cluster nel periodo della scheda terminate con errore o negate, contate per tipo di entità.",
       "FailuresOfType": "Voci non riuscite: {{type}}",
       "FailuresOnly": "Mostra solo errori",
-      "FairShareTooltip": "Le impostazioni Fair Share del gruppo di risorse della scheda, come le mostra la pagina Fair Share. Le priorità sono calcolate da esse per dominio, progetto e utente.",
       "FolderLimit": "Limite: {{max}}",
       "Healthy": "Integro",
       "Insufficient": "Risorse insufficienti",

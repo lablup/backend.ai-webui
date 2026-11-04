@@ -840,7 +840,6 @@
       "FailuresByEntityTypeTooltip": "カードの期間中にクラスター全体でエラー終了または拒否された監査ログ項目を、エンティティタイプ別に数えます。",
       "FailuresOfType": "失敗した記録: {{type}}",
       "FailuresOnly": "失敗のみ表示",
-      "FairShareTooltip": "カードに設定したリソースグループの Fair Share 設定を、Fair Share ページと同じ形で表示します。優先度はこの設定をもとにドメイン、プロジェクト、ユーザーごとに計算されます。",
       "FolderLimit": "上限: {{max}}",
       "Healthy": "正常",
       "Insufficient": "リソース不足",

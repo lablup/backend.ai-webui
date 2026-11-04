@@ -840,7 +840,6 @@
       "FailuresByEntityTypeTooltip": "Koko klusterin auditointimerkinnät kortin aikavälillä, jotka päättyivät virheeseen tai hylättiin, entiteettityypeittäin laskettuna.",
       "FailuresOfType": "Epäonnistuneet merkinnät: {{type}}",
       "FailuresOnly": "Näytä vain epäonnistuneet",
-      "FairShareTooltip": "Kortin resurssiryhmän Fair Share -asetukset sellaisina kuin Fair Share -sivu ne näyttää. Prioriteetit lasketaan niistä toimialueittain, projekteittain ja käyttäjittäin.",
       "FolderLimit": "Raja: {{max}}",
       "Healthy": "Kunnossa",
       "Insufficient": "Resurssit eivät riitä",
