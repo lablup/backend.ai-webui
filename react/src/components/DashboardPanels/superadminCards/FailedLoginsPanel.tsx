@@ -116,7 +116,6 @@ const FailedLogins: React.FC<{
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
-      <PeriodCaption window={shownRange} />
       <StatRow
         items={[
           {
@@ -128,6 +127,7 @@ const FailedLogins: React.FC<{
           },
         ]}
       />
+      <PeriodCaption window={shownRange} />
       <BAILoginHistoryTable
         loginHistoryFrgmt={logins}
         disableSorter
