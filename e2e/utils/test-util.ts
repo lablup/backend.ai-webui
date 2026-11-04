@@ -1285,11 +1285,8 @@ export async function deleteSession(page: Page, sessionName: string) {
 /**
  * Convert a config object to TOML string that is compatible with the app's TOML parser.
  *
- * The app's preprocessToml processes apiEndpointText with JSON.parse, which keeps
- * the original value on failure (try/catch with no-op catch).
- *
- * Additionally, some TOML serializers emit underscore-separated numbers
- * (e.g., 4_294_967_296) which may be parsed as strings instead of numbers.
+ * Some TOML serializers emit underscore-separated numbers (e.g., 4_294_967_296)
+ * which may be parsed as strings instead of numbers.
  *
  * This function uses @iarna/toml stringify and post-processes the output to:
  * 1. Remove lines with empty string values (the app treats missing keys as empty)
@@ -1361,6 +1358,9 @@ function deduplicateTomlKeys(tomlStr: string): string {
 
 // Store the accumulated config modifications in a WeakMap keyed by page
 const configCache = new WeakMap<Page, any>();
+// Only what specs passed: the settings mock must not revive the base file's
+// values, which the app no longer reads.
+const requestedConfigCache = new WeakMap<Page, any>();
 
 // The app no longer reads System Settings keys from config.toml (#10664). A
 // spec that sets one through `modifyConfigToml` gets it through this page's
@@ -1378,12 +1378,23 @@ type SettingsByScope = {
   domain: Record<string, unknown>;
 };
 
+// `undefined` means unset: '', a `[placeholder]` and a non-number read as
+// unset, as the app's former file parser did.
 function toSettingValue(type: string, raw: unknown): unknown {
+  if (raw === null || raw === undefined) return undefined;
+  if (typeof raw === 'string') {
+    const text = raw.trim();
+    if (text === '' || text === '""' || /^\[.*\]$/.test(text)) {
+      return undefined;
+    }
+  }
   switch (type) {
     case 'boolean':
       return raw === true || raw === 'true';
-    case 'number':
-      return Number(raw);
+    case 'number': {
+      const value = typeof raw === 'number' ? raw : parseInt(String(raw), 10);
+      return Number.isFinite(value) ? value : undefined;
+    }
     case 'stringList':
       return Array.isArray(raw)
         ? raw
@@ -1405,7 +1416,8 @@ function settingsFromToml(config: Record<string, any>): SettingsByScope {
       const key = RENAMED_SETTING_KEYS[`${section}.${field}`] ?? field;
       const definition = WEBUI_SETTING_DEFINITIONS.find((d) => d.key === key);
       if (!definition) continue;
-      settings[definition.scope][key] = toSettingValue(definition.type, raw);
+      const value = toSettingValue(definition.type, raw);
+      if (value !== undefined) settings[definition.scope][key] = value;
     }
   }
   return settings;
@@ -1423,9 +1435,10 @@ const FALLBACK_PUBLIC_DOMAIN = 'default';
 
 async function routeAppConfigSettings(
   page: Page,
-  config: Record<string, any>,
+  requested: Record<string, any>,
+  domainName: string,
 ): Promise<void> {
-  const settings = settingsFromToml(config);
+  const settings = settingsFromToml(requested);
   const previous = appConfigRoutes.get(page) ?? {};
   if (previous.publicHandler) {
     await page.unroute(PUBLIC_APP_CONFIG_URL, previous.publicHandler);
@@ -1436,8 +1449,6 @@ async function routeAppConfigSettings(
   const next: { publicHandler?: RouteHandler; gqlHandler?: RouteHandler } = {};
 
   if (Object.keys(settings.public).length > 0) {
-    const domainName: string =
-      config.general?.apiDomainName || FALLBACK_PUBLIC_DOMAIN;
     next.publicHandler = async (route) => {
       let payload: any = { app_configs: [] };
       try {
@@ -1458,7 +1469,7 @@ async function routeAppConfigSettings(
       const slice = (entry.config ??= {})[domainName] ?? {};
       entry.config[domainName] = {
         ...slice,
-        settings: { ...slice.settings, ...settings.public },
+        settings: { ...settings.public, ...slice.settings },
       };
       await route.fulfill({
         status: 200,
@@ -1471,6 +1482,11 @@ async function routeAppConfigSettings(
 
   if (Object.keys(settings.domain).length > 0) {
     next.gqlHandler = async (route) => {
+      // Leave every other operation to the mocks registered before this one.
+      if (!(route.request().postData() ?? '').includes('myAppConfigs')) {
+        await route.fallback();
+        return;
+      }
       const response = await route.fetch();
       let json: any;
       try {
@@ -1491,7 +1507,7 @@ async function routeAppConfigSettings(
       }
       row.config = {
         ...row.config,
-        settings: { ...row.config?.settings, ...settings.domain },
+        settings: { ...settings.domain, ...row.config?.settings },
       };
       await route.fulfill({ response, json });
     };
@@ -1568,21 +1584,26 @@ export async function modifyConfigToml(
   // Deep merge the new configuration into the existing config
   // Use custom merge that preserves explicit undefined values
   config = mergeWithUndefined(config, configColumn);
+  const requested = mergeWithUndefined(
+    requestedConfigCache.get(page) ?? {},
+    configColumn,
+  );
 
   // Cache the updated config
   configCache.set(page, config);
+  requestedConfigCache.set(page, requested);
 
-  await routeAppConfigSettings(page, config);
-  if (
-    Object.keys(settingsFromToml(config).public).length > 0 &&
-    !config.general?.apiEndpoint
-  ) {
+  const needsPublicSlice =
+    Object.keys(settingsFromToml(requested).public).length > 0;
+  const domainName: string =
+    config.general?.apiDomainName || FALLBACK_PUBLIC_DOMAIN;
+  await routeAppConfigSettings(page, requested, domainName);
+  if (needsPublicSlice && !config.general?.apiEndpoint) {
     // The pre-login slice is only fetched once the app has an endpoint.
     await seedStoredApiEndpoint(page);
   }
   const servedConfig =
-    Object.keys(settingsFromToml(config).public).length > 0 &&
-    !config.general?.apiDomainName
+    needsPublicSlice && !config.general?.apiDomainName
       ? mergeWithUndefined(config, {
           general: { apiDomainName: FALLBACK_PUBLIC_DOMAIN },
         })

@@ -183,6 +183,16 @@ export function getDefaultLoginConfig(): LoginConfigState {
   };
 }
 
+/** The keys config.toml still owns (ADR 0025, section 3); System Settings serves the rest. */
+export const FILE_ONLY_CONFIG_KEYS: Readonly<
+  Record<string, ReadonlyArray<string>>
+> = {
+  general: ['apiEndpoint', 'apiDomainName', 'connectionMode', 'signupSupport'],
+  wsproxy: ['proxyURL', 'disableCertCheck'],
+  server: ['webServerURL'],
+  license: ['edition', 'validUntil'],
+};
+
 /**
  * Applies the keys `config.toml` still owns (ADR 0025, section 3) over the code
  * defaults. Every other setting comes from the app config documents.

@@ -15,6 +15,7 @@ import {
   checkUrlFields,
   isPlaceholder,
 } from '../diagnostics/rules/configRules';
+import { FILE_ONLY_CONFIG_KEYS } from '../helper/loginConfig';
 import type { DiagnosticResult } from '../types/diagnostics';
 import {
   useConfigParseError,
@@ -25,18 +26,10 @@ import {
 import { VALID_MENU_KEYS } from './useWebUIMenuItems';
 import * as _ from 'lodash-es';
 
-// The keys config.toml still owns (ADR 0025, section 3); the rest come from System Settings.
-const FILE_ONLY_KEYS: Record<string, ReadonlyArray<string>> = {
-  general: ['apiEndpoint', 'apiDomainName', 'connectionMode', 'signupSupport'],
-  wsproxy: ['proxyURL', 'disableCertCheck'],
-  server: ['webServerURL'],
-  license: ['edition', 'validUntil'],
-};
-
 const fileOnlyConfig = (
   rawConfig: Record<string, any>,
 ): Record<string, Record<string, unknown>> =>
-  _.mapValues(FILE_ONLY_KEYS, (keys, section) =>
+  _.mapValues(FILE_ONLY_CONFIG_KEYS, (keys, section) =>
     _.pick(rawConfig[section] ?? {}, keys),
   );
 
@@ -52,6 +45,7 @@ export function useWebServerConfigDiagnostics(
 
   const baiClient = useSuspendedBackendaiClient();
   const rawConfig = useRawConfig();
+  const fileConfig = rawConfig ? fileOnlyConfig(rawConfig) : {};
   const loginConfig = useLoginConfig();
   const proxyUrl = useProxyUrl();
   const configParseError = useConfigParseError();
@@ -81,7 +75,7 @@ export function useWebServerConfigDiagnostics(
 
   // --- Placeholder detection (e.g. "[Proxy URL]" left in config.toml) ---
   if (rawConfig) {
-    const placeholderIssues = checkPlaceholderValues(fileOnlyConfig(rawConfig));
+    const placeholderIssues = checkPlaceholderValues(fileConfig);
     results.push(...placeholderIssues);
   }
 
@@ -172,9 +166,9 @@ export function useWebServerConfigDiagnostics(
   // --- URL field validation: file keys from the file, settings from the merged config ---
   if (rawConfig) {
     const { issues: urlIssues, checkedCount } = checkUrlFields({
-      ...fileOnlyConfig(rawConfig),
+      ...fileConfig,
       general: {
-        ...fileOnlyConfig(rawConfig).general,
+        ...fileConfig.general,
         appDownloadUrl: loginConfig?.appDownloadUrl,
       },
       pipeline: { frontendEndpoint: loginConfig?.fasttrackEndpoint },

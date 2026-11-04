@@ -101,7 +101,7 @@ flowchart LR
 - **The `config.toml` section layout as is**: file and document would map mechanically. Rejected: sections organise hand edits of the file, and one section can span both scopes.
 - **A new single document such as `siteConfig`**: one document with no scope split. Rejected: values needed before sign-in must sit in the anonymously readable PUBLIC document, per-domain values in the DOMAIN document.
 - **No `config.toml` at all**: settings in one place. Rejected: the keys in section 3 are needed before the documents can be read, or the webserver enforces the same value.
-- **The file as the default for every setting**: what this ADR first decided. Replaced by #10664: a deployment file and a System Settings value for the same key left two places to look, and the file is being retired as a settings source.
+- **The file as the default for every setting**: an untouched deployment would keep its `config.toml` values with no migration. Rejected: the same key would live in the deployment file and in System Settings, leaving two places to look, and the file is being retired as a settings source.
 - **Seed the documents from the file at first sign-in**: the page would show every value from the documents from the start. Rejected: it would carry the file forward as a second source.
 
 ## Consequences

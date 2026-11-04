@@ -132,8 +132,9 @@ page = "custom-pages"
     mockFetch(200, tomlContent);
     const result = await fetchAndParseConfig('/config.toml');
     expect(result.config).not.toBeNull();
-    expect(result.config?.plugin?.login).toBe('custom-login');
-    expect(result.config?.plugin?.page).toBe('custom-pages');
+    const plugin = result.config?.plugin as Record<string, unknown> | undefined;
+    expect(plugin?.login).toBe('custom-login');
+    expect(plugin?.page).toBe('custom-pages');
   });
 
   it('handles TOML with multiple sections', async () => {

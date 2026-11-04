@@ -348,8 +348,8 @@ export async function connectViaGQL(
     ];
   };
 
-  // The domain's `settings` document overrides the file-derived config for
-  // the keys it carries (#10436).
+  // The domain's `settings` document overrides the base config for the keys
+  // it carries (#10436).
   const domainSettings = readDomainWebUISettings(response?.myAppConfigs);
   const effectiveCfg = applyWebUISettings(cfg, domainSettings, 'domain');
   const { jotaiStore } = await import('../components/DefaultProviders');
