@@ -213,17 +213,13 @@ const SchedulingFailures: React.FC<{
             message && {
               ...message,
               title: t('dashboard.card.Reason'),
-              onCell: undefined,
+              // Takes the width left over, so the message ellipsizes only when the card is narrow.
+              onCell: () => ({ style: { maxWidth: 0, width: '100%' } }),
               render: (_value: unknown, history: { id: string }) => {
                 const row = rowById.get(history.id);
                 const reason = row?.errorCode ?? row?.message ?? row?.phase;
                 return (
-                  <BAIText
-                    ellipsis={{ tooltip: reason }}
-                    style={{ maxWidth: 320 }}
-                  >
-                    {reason}
-                  </BAIText>
+                  <BAIText ellipsis={{ tooltip: reason }}>{reason}</BAIText>
                 );
               },
             },
