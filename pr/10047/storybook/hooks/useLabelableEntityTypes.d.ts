@@ -1,5 +1,5 @@
 /** The entity type names the label UI is wired for. */
-export type BAILabelableEntityType = 'session' | 'vfolder' | 'deployment' | 'resource_group';
+export type BAILabelableEntityType = 'session' | 'vfolder' | 'deployment' | 'resource_group' | 'user' | 'role' | 'role_preset' | 'model_card' | 'artifact' | 'deployment_preset';
 /**
  * The entity types the manager accepts labels for, fetched once per page load and
  * kept for the session. Empty until the first response arrives.

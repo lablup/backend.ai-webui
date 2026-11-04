@@ -137,7 +137,7 @@ export interface BAIModalProps extends Omit<ModalProps, BAIModalOwnedModalProps>
         blur?: boolean;
     };
     /**
-     * A per-breakpoint record collapses to its largest entry; `'auto'` becomes
+     * A per-breakpoint record collapses to its last declared entry; `'auto'` becomes
      * `fit-content`. `variant="fullscreen"` is the only way to edge-to-edge:
      * Astryx caps the standard dialog at 90vw.
      */
