@@ -184,9 +184,7 @@ e2e/.agent-output/
 
 e2e/recordings/
 
-# Local scratch space — never committed (the FR-3482 migration's working
-# directory briefly lived here; its durable records moved to
-# .specs/FR-3482-astryx-migration/ in FR-3488).
+# Local scratch space — never committed.
 .scratch/
 
 # smoke run reports (e2e/playwright.smoke.config.ts)

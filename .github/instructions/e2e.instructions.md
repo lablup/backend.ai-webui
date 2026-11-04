@@ -28,9 +28,7 @@ is the self-hosted engine in `packages/backend.ai-ui/src/form-engine/`. Nothing 
 - There is no measure row in the Astryx table, so `tr:not(.ant-table-measure-row)` is both dead
   and unnecessary — plain rows are the only rows.
 
-Background on how the component mapping was decided lives in
-`.specs/FR-3482-astryx-migration/CONVERSION-IDIOMS.md` if you need to know what a given antd
-component became.
+ADR 0019 records the antd removal and this locator rule.
 
 ---
 

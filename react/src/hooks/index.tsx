@@ -36,8 +36,7 @@ export const useWebUILocation = () => useLocation();
 
 /**
  * Per-tab query-string snapshot/restore for page-like tab hosts
- * (pattern A-ii in .specs/FR-3267-tab-url-state). Reads the tab from router
- * location, not nuqs —
+ * (ADR 0021). Reads the tab from router location, not nuqs —
  * nuqs applies external URL changes in a transition that can hang on the
  * incoming tab's Suspense.
  */

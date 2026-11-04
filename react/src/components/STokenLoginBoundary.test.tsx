@@ -5,16 +5,16 @@
 /**
  * Tests for STokenLoginBoundary (Epic FR-2616).
  *
- * Focus areas mapped to spec acceptance criteria:
+ * Focus areas, mapped to the contract in ADR 0022:
  * - Children only render after the authentication sequence succeeds.
  * - `backend-ai-connected` fires exactly once per successful login, even
- *   across a retry-then-success sequence (invariant from spec Pitfall #6).
+ *   across a retry-then-success sequence.
  * - Error classification surfaced via `onError` for each branch the test
  *   can provoke without network (missing-token, endpoint-unresolved,
  *   server-unreachable, token-invalid).
- * - `errorFallback` prop replaces the built-in card for every kind (Q4).
- * - Source file does not reference forbidden URL APIs — this is the
- *   CI-enforced gate for the spec FR-2616 "URL 파라미터 파싱 규약" rule.
+ * - `errorFallback` prop replaces the built-in card for every kind.
+ * - Source file does not reference forbidden URL APIs — the CI-enforced
+ *   gate for ADR 0022's no-URL-API rule.
  *
  * The helper module is mocked entirely because the real
  * `createBackendAIClient` instantiates a global `BackendAIClient` that is

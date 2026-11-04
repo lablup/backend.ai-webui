@@ -2,24 +2,24 @@
 
 ## Summary
 
-> 낯선 용어는 문서 맨 아래 [용어](#용어)에 모아 두었다.
+> Unfamiliar terms are collected in the [Glossary](#glossary) at the end.
 
-- **Host seam**: review overlay client(`react/vite-plugins/review-overlay/client/`)가 dev server에서만 얻을 수 있는 것은 모두 [Host](#용어)가 답하는 option이 되었다. 시작점은 `client/boot.ts`의 `bootOverlay(options)` 하나이고, 이 module은 import될 때 아무 일도 하지 않는다. host가 넘기는 것은 항목이 전부 optional인 [`OverlayHostOptions`](#용어)다.
-- **Entry**: `client/main.ts`는 dev server가 `/__review/overlay.js`로 내보내고 static build가 번들하는 entry로 남는다. 이 파일은 module 평가 시점에 `location.hash`를 잡아 기본 host로 `bootOverlay`를 부르는 것이 전부다.
-- **Default host**: 기본값은 오늘의 동작 그대로다. `/__review/state`를 읽는 state source, page에서 가져가는 keyboard shortcut, link가 요구하는 page로의 자동 이동, page의 `--color-*` token 상속, 값이 빈 `data-bai-review-overlay` marker가 모두 기본값이다.
-- **One codec**: ADR 0002의 "읽는 쪽은 codec 하나"는 그대로 발효 중이다. Lablup Jira Helper chrome extension은 이 client를 다시 구현하지 않고 `client/*.ts`를 byte 단위로 그대로 vendoring하며, sync script와 CI의 `--check` gate와 함께 복사한 vitest suite가 그 동일성을 보증한다.
-- **Extension host**: extension은 `pageChords: false`, `autoNavigate: false`, `palette: 'own'`, `marker: 'extension'`, `expectReactGrab: false`로 boot한다. 임의의 site 위에서 Ctrl+C나 맨 글자 key를 가로채는 것과 fragment 하나가 독자를 다른 경로로 옮기는 것과 site의 `--color-*`를 그대로 믿는 것이 모두 받아들일 수 없기 때문이다.
-- **Storage**: overlay가 쓰는 storage key는 전부 page의 `sessionStorage`·`localStorage`에 그대로 남는다. content script가 page와 같은 storage를 보므로 방문한 site가 그 key를 읽고 지울 수 있다는 것이 감수한 대가다.
+- **Host seam**: Everything that the review overlay client (`react/vite-plugins/review-overlay/client/`) could get only from the dev server is now an option that a [Host](#glossary) answers. The only starting point is `bootOverlay(options)` in `client/boot.ts`, and this module does nothing when it is imported. The host passes an [`OverlayHostOptions`](#glossary), in which every item is optional.
+- **Entry**: `client/main.ts` remains the entry that the dev server serves as `/__review/overlay.js` and that the static build bundles. All this file does is capture `location.hash` when the module is evaluated and call `bootOverlay` with the default host.
+- **Default host**: The defaults are today's behaviour exactly. The defaults are a state source that reads `/__review/state`, keyboard shortcuts that the overlay takes from the page, automatic navigation to the page a link asks for, inheritance of the page's `--color-*` tokens, and a `data-bai-review-overlay` marker with an empty value.
+- **One codec**: ADR 0002's "one codec on the reading side" stays in force. The Lablup Jira Helper chrome extension does not reimplement this client; it vendors `client/*.ts` byte for byte, and a sync script, a `--check` gate in CI, and the copied vitest suite together guarantee that the copies are identical.
+- **Extension host**: The extension boots with `pageChords: false`, `autoNavigate: false`, `palette: 'own'`, `marker: 'extension'`, and `expectReactGrab: false`. The reason is that three behaviours are unacceptable on an arbitrary site: intercepting Ctrl+C or bare letter keys, letting a single fragment move the reader to a different path, and trusting the site's `--color-*` as they are.
+- **Storage**: Every storage key the overlay uses stays in the page's `sessionStorage` and `localStorage`. The content script sees the same storage as the page, so the visited site can read and delete those keys; this is the accepted cost.
 
 ## Context
 
-review overlay는 화면의 element를 집어 note를 달고, 그 pin 전체를 `#bai=v3` link 하나로 복사하는 dev 도구다. link의 문법과 codec은 ADR 0002가, 구현한 session이 남기는 walkthrough stop은 ADR 0004가 정한다. 지금 이 client는 Web UI dev server와 nightly static build 두 곳에서만 돈다.
+The review overlay is a dev tool that picks an element on screen, attaches a note to it, and copies the whole set of pins as one `#bai=v3` link. ADR 0002 decides the link's grammar and codec, and ADR 0004 decides the walkthrough stops that an implementing session leaves. Today this client runs in only two places: the Web UI dev server and the nightly static build.
 
-Lablup Jira Helper chrome extension이 같은 pin을 임의의 site 위에서 찍고, 같은 link를 임의의 site 위에서 열려고 한다. client가 dev server에 대해 갖고 있던 가정은 네 가지다. `/__review/state` endpoint가 같은 origin에 있다는 것, react-grab이 page에 올라온다는 것, page가 Astryx `--color-*` token을 정의한다는 것, 그리고 이 page는 overlay가 주인이므로 ⌘C를 가져가고 fragment를 따라 이동해도 된다는 것이다. content script 안에서는 넷 다 성립하지 않는다.
+The Lablup Jira Helper chrome extension needs to create the same pins on an arbitrary site and to open the same links on an arbitrary site. The client made four assumptions about the dev server. The first is that the `/__review/state` endpoint is on the same origin. The second is that react-grab is loaded on the page. The third is that the page defines the Astryx `--color-*` tokens. The fourth is that the overlay owns this page, so the overlay may take ⌘C and may navigate by following a fragment. Inside a content script, none of the four holds.
 
-[**OverlayHostOptions**](#용어)는 그 네 가지를 포함한 일곱 항목이 전부 optional인 평범한 option 객체다. plugin system도 아니고 rendering을 추상화하는 layer도 아니다. host가 답하지 않은 항목은 기본값, 즉 오늘의 Web UI 동작이 된다.
+[**OverlayHostOptions**](#glossary) is a plain option object with seven items, including those four, and every item is optional. It is not a plugin system and not a layer that abstracts rendering. An item the host does not answer takes the default value, which is today's Web UI behaviour.
 
-## 설계도
+## Diagram
 
 ```mermaid
 flowchart TD
@@ -44,94 +44,94 @@ flowchart TD
 
 ## Decision
 
-### 1. `bootOverlay`가 유일한 시작점이다
+### 1. `bootOverlay` is the only starting point
 
-`client/boot.ts`는 import될 때 아무 일도 하지 않고 `bootOverlay(options)`를 export한다. 이 함수는 `window.__baiReviewOverlay`를 확인해 이미 떠 있으면 `null`을, 아니면 `OverlayHandle`을 돌려준다. handle은 host가 자기 entry point에서 부르는 네 가지 — `startPick()`, `cancelPick()`, `toggleCards()`, `pinCount()` — 를 가진다.
+`client/boot.ts` does nothing when it is imported, and it exports `bootOverlay(options)`. This function checks `window.__baiReviewOverlay` and returns `null` if an overlay is already running, and an `OverlayHandle` otherwise. The handle has the four functions that the host calls from its own entry points: `startPick()`, `cancelPick()`, `toggleCards()`, and `pinCount()`.
 
-두 번 주입될 수 있는 host는 **첫 boot에서 받은 handle을 자기 쪽에 붙들어야 한다**. 두 번째 `bootOverlay`는 `null`을 돌려주고, 떠 있는 instance로 가는 길은 그 handle 말고 없다. extension처럼 popup을 누를 때마다 overlay file을 다시 주입하는 host라면 첫 주입이 등록한 message listener가 그 entry point다.
+A host that can be injected twice **must keep the handle it received from the first boot on its own side**. The second `bootOverlay` returns `null`, and the handle is the only way to reach the running instance. For a host such as the extension, which injects the overlay file again on every popup press, the message listener that the first injection registered is that entry point.
 
-`client/main.ts`는 이 seam의 첫 host다. SPA의 login redirect가 fragment를 버리므로 module 평가 시점에 `location.hash`를 잡아 `bootOverlay({ bootHash })`를 부르는 것이 파일 전체다.
+`client/main.ts` is the first host of this seam. The SPA's login redirect drops the fragment, so the whole file captures `location.hash` when the module is evaluated and calls `bootOverlay({ bootHash })`.
 
-### 2. Host가 답하는 option
+### 2. Options that the host answers
 
-host가 넘기는 `OverlayHostOptions`는 항목이 전부 optional이고, `bootOverlay`가 기본값을 채워 모든 항목이 채워진 `OverlayHost` 하나로 만든 뒤 나머지 module에 넘긴다.
+In the `OverlayHostOptions` that the host passes, every item is optional. `bootOverlay` fills in the defaults, builds one `OverlayHost` in which every item is set, and passes it to the other modules.
 
-| option | 기본값 | 기본값이 뜻하는 것 |
-|---|---|---|
-| `state` | `client/state.ts`의 `readEmbeddedState`와 `fetchServerState` | built document의 JSON block을 먼저 읽고, 없으면 `/__review/state`를 부른다 |
-| `bootHash` | `location.hash` | pin을 읽어 오는 fragment |
-| `pageChords` | `true` | overlay가 page의 key를 가져간다: pick mode의 ⌘C/Ctrl+C, card를 접는 ⌘⇧H, guided mode의 맨 `n`·`p`·`v`·`m`·`c`·`[`·`]` |
-| `autoNavigate` | `true` | link의 pin이 전부 다른 page에 있으면 `location.assign`으로 그 page로 간다 |
-| `palette` | `'inherit'` | overlay의 색을 page의 `--color-*` token에서 읽는다 |
-| `marker` | `''` | shadow host의 `data-bai-review-overlay` 값 |
+| option         | default                                                         | what the default means                                                                                                                           |
+| -------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `state`        | `readEmbeddedState` and `fetchServerState` in `client/state.ts` | The client reads the JSON block of the built document first and calls `/__review/state` when the block is absent                                 |
+| `bootHash`     | `location.hash`                                                 | The fragment the pins are read from                                                                                                              |
+| `pageChords`   | `true`                                                          | The overlay takes keys from the page: ⌘C/Ctrl+C in pick mode, ⌘⇧H to collapse the cards, and the bare `n`·`p`·`v`·`m`·`c`·`[`·`]` in guided mode |
+| `autoNavigate` | `true`                                                          | When every pin of a link is on another page, the client goes to that page with `location.assign`                                                 |
+| `palette`      | `'inherit'`                                                     | The overlay reads its colours from the page's `--color-*` tokens                                                                                 |
+| `marker`       | `''`                                                            | The value of `data-bai-review-overlay` on the shadow host                                                                                        |
 
-`expectReactGrab`은 일곱 번째이자 유일하게 세 가지 상태를 갖는 항목이다. 값을 주지 않으면 지금까지처럼 state의 `host === 'static'`에서 파생하고, `false`를 주면 react-grab을 기다리지 않는다. 이 값이 없던 때에는 react-grab이 없는 host가 static build를 자칭하는 것 말고는 방법이 없었다.
+`expectReactGrab` is the seventh item and the only one with three states. When no value is given, the client derives it from `host === 'static'` in the state, as before; when `false` is given, the client does not wait for react-grab. Before this value existed, a host without react-grab had no option other than claiming to be a static build.
 
-`marker`는 값만 바뀌고 attribute 자체는 남는다. `[data-bai-review-overlay]` selector로 overlay를 찾는 코드와 test가 그대로 동작해야 하기 때문이다. attribute 이름은 그 값을 쓰는 `ui.ts`가 `OVERLAY_MARKER_ATTR`로 export하고, client 안에서 그 이름을 읽거나 쓰는 곳은 전부 이 상수를 쓴다. native overlay를 보고 물러서야 하는 host도 literal을 다시 적는 대신 이것을 import한다 — 이름이 바뀌었는데 한 쪽만 따라가지 않으면 한 page에 overlay가 둘 뜨고, 그때 실패하는 test가 없다.
+For `marker`, only the value changes and the attribute itself stays. The reason is that code and tests that find the overlay with the `[data-bai-review-overlay]` selector must keep working. `ui.ts`, which uses the value, exports the attribute name as `OVERLAY_MARKER_ATTR`, and every place in the client that reads or writes that name uses this constant. A host that must step aside when it sees the native overlay also imports this constant instead of writing the literal again. If the name changes and one side does not follow, two overlays appear on one page, and no test fails when that happens.
 
-**page chord를 끈 host에게는 그 key를 광고하지도 않는다.** `pageChords: false`면 dock header의 `⌘⇧H` hint와 cards button label의 chord 접미사, navigator의 `Previous stop (p)`·`Next stop (n)` title, popover의 `Copy ref (c)`·`Comment (m)`와 key legend가 모두 빠진다. 붙지 않은 key를 안내하는 UI는 그 자체로 틀린 말이다. Escape는 `pageChords`와 무관하게 언제나 동작하므로 legend에 남고, composer의 `⌘⏎`는 textarea 자신의 shortcut이라 그대로 있다.
+**A host that turns page chords off does not advertise those keys either.** With `pageChords: false`, the client drops the `⌘⇧H` hint in the dock header, the chord suffix on the cards button label, the `Previous stop (p)` and `Next stop (n)` titles in the navigator, and `Copy ref (c)`, `Comment (m)`, and the key legend in the popover. A UI that describes keys that are not bound states something false. Escape always works regardless of `pageChords`, so it stays in the legend, and the composer's `⌘⏎` stays because it is the textarea's own shortcut.
 
-### 3. extension은 client를 다시 구현하지 않고 vendoring한다
+### 3. The extension vendors the client instead of reimplementing it
 
-ADR 0002가 정한 "읽는 쪽은 codec 하나"는 그대로다. extension은 `client/*.ts`와 그 test를 **byte 단위로 그대로** 자기 저장소에 복사하고, 다음 세 가지로 그 동일성을 지킨다.
+The "one codec on the reading side" that ADR 0002 decided stays. The extension copies `client/*.ts` and its tests **byte for byte** into its own repository, and the following three mechanisms keep the copies identical.
 
-- **Sync script**: 복사해 온 upstream commit과 파일별 sha256을 기록 파일에 남긴다. 어떤 파일이 어느 시점의 webui에서 왔는지 한 곳에서 읽힌다.
-- **`--check` gate**: 같은 script의 `--check` mode가 기록된 sha256과 실제 파일을 비교해 어긋나면 실패하고, extension CI가 PR마다 이것을 돌린다. vendored directory를 손으로 고치면 CI가 막는다.
-- **Vendored tests**: 함께 복사한 vitest suite가 extension 저장소에서 conformance suite로 돈다. wire format, block 문법, id 파생이 두 저장소에서 같다는 것을 test가 증명한다.
+- **Sync script**: The script records the upstream commit it copied from and the sha256 of each file in a record file. A reader can find in one place which file came from which point of webui.
+- **`--check` gate**: The `--check` mode of the same script compares the recorded sha256 with the actual files and fails when they differ, and the extension CI runs it on every PR. If someone edits the vendored directory by hand, CI blocks the change.
+- **Vendored tests**: The vitest suite copied together with the client runs as a conformance suite in the extension repository. The tests prove that the wire format, the block grammar, and the id derivation are the same in both repositories.
 
-extension 고유의 코드는 전부 vendored directory 바깥의 host adapter에 둔다.
+All code specific to the extension lives in the host adapter outside the vendored directory.
 
-### 4. extension host가 끄는 것
+### 4. What the extension host turns off
 
-| option | extension 값 | 이유 |
-|---|---|---|
-| `pageChords` | `false` | `picker.ts`의 chord는 shift도 alt도 없는 ⌘C/Ctrl+C이고, guided mode는 맨 `n`·`p`·`v`·`m`·`c`·`[`·`]`를 `preventDefault`한다. 임의의 site에서 이것을 가져가면 사용자가 글자를 복사할 수 없고, `c`는 GitHub과 Jira에서 "새로 만들기"다. extension은 popup button과 `chrome.commands` command에서 `handle.startPick()`을 부른다. |
-| `autoNavigate` | `false` | 남이 만든 link를 여는 것이 extension의 기본 사용 방식이므로, 조작된 fragment가 독자를 같은 origin의 다른 경로로 옮기게 두지 않는다. pin은 그대로 set에 합쳐지고, dock의 "go"와 guided mode의 `›`는 사용자가 overlay의 chrome을 눌러야 하는 것이라 그대로 동작한다. guided mode가 stop 사이를 옮기는 `location.assign`은 이 option이 아니라 `pageChords`가 막는다: `pageChords: false`면 맨 `n`이 붙지 않으므로 그 이동은 click으로만 시작한다. |
-| `palette` | `'own'` | `--color-text-primary` 같은 이름은 흔하고, site마다 뜻이 다르다. `'own'`은 shadow root 안에서 literal light palette와 `prefers-color-scheme` dark palette를 정의하고 page의 custom property를 하나도 읽지 않는다. |
-| `marker` | `'extension'` | 한 page에 native overlay와 extension overlay 둘 중 무엇이 떠 있는지 구분한다. |
-| `expectReactGrab` | `false` | content script의 isolated world에서 `window.__REACT_GRAB__`은 영원히 보이지 않는다. 이 값이 없으면 chord가 붙기까지 20초, link가 연 pin마다 ⚛️ stack 재시도에 4초를 쓴다. |
+| option            | extension value | reason                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ----------------- | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pageChords`      | `false`         | The chord in `picker.ts` is ⌘C/Ctrl+C with neither shift nor alt, and guided mode calls `preventDefault` on the bare `n`·`p`·`v`·`m`·`c`·`[`·`]`. If the overlay takes these keys on an arbitrary site, the user cannot copy text, and `c` means "create" on GitHub and Jira. The extension calls `handle.startPick()` from a popup button and from a `chrome.commands` command.                                                                                                                                                                         |
+| `autoNavigate`    | `false`         | Opening a link that someone else made is the extension's default use, so the extension does not let a crafted fragment move the reader to another path on the same origin. The pins are still merged into the set, and the dock's "go" and guided mode's `›` keep working because the user must press the overlay's chrome for them. The `location.assign` that guided mode uses to move between stops is blocked by `pageChords`, not by this option: with `pageChords: false`, the bare `n` is not bound, so that navigation starts only from a click. |
+| `palette`         | `'own'`         | Names such as `--color-text-primary` are common, and each site gives them a different meaning. `'own'` defines a literal light palette and a `prefers-color-scheme` dark palette inside the shadow root and reads none of the page's custom properties.                                                                                                                                                                                                                                                                                                  |
+| `marker`          | `'extension'`   | The value tells which of the two overlays, native or extension, is running on a page.                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `expectReactGrab` | `false`         | In the isolated world of a content script, `window.__REACT_GRAB__` is never visible. Without this value, the client spends 20 seconds before the chords are bound and 4 seconds retrying the ⚛️ stack for every pin a link opened.                                                                                                                                                                                                                                                                                                                       |
 
-### 5. storage는 page의 것을 그대로 쓴다
+### 5. Storage uses the page's own storage
 
-draft set, navigation guard, focus handover, dock 위치, walkthrough 진행률은 전부 지금 쓰는 key 그대로 page의 `sessionStorage`와 `localStorage`에 남는다. content script가 page와 같은 storage를 보므로 tab마다·origin마다 나뉘는 성질이 그대로 유지되고, `location.assign`이 일으키는 reload를 넘어 handover가 살아남는다.
+The draft set, the navigation guard, the focus handover, the dock position, and the walkthrough progress all stay in the page's `sessionStorage` and `localStorage` under the keys used today. The content script sees the same storage as the page, so the storage keeps its per-tab and per-origin separation, and the handover survives the reload that `location.assign` causes.
 
-대가는 방문한 site가 그 key를 읽고 지울 수 있다는 것이다. key에는 pin의 anchor와 reviewer가 쓴 note가 들어 있다. `chrome.storage`로 옮기면 이 노출은 사라지지만 `dock.ts`의 위치 읽기·쓰기가 async가 되고 vendored directory가 extension API를 알게 된다.
+The cost is that the visited site can read and delete those keys. The keys contain the pins' anchors and the notes the reviewer wrote. Moving to `chrome.storage` would remove this exposure, but the position reads and writes in `dock.ts` would become async, and the vendored directory would depend on the extension API.
 
-### 6. route event 이름을 export한다
+### 6. The route event name is exported
 
-`deeplink.ts`의 `ROUTE_EVENT` 상수를 export한다. `patchHistory()`가 page의 `history`를 감싸는 방식은 isolated world에서 동작하지 않지만 DOM event는 world를 넘으므로, extension adapter가 `navigation` API에서 같은 이름의 event를 직접 dispatch하면 `watchRoute`가 그대로 듣는다. route watching을 위한 client 쪽 변경은 이 export 하나뿐이다.
+The `ROUTE_EVENT` constant in `deeplink.ts` is exported. The way `patchHistory()` wraps the page's `history` does not work in an isolated world, but DOM events cross worlds, so when the extension adapter dispatches an event of the same name itself from the `navigation` API, `watchRoute` receives it unchanged. This export is the only client-side change for route watching.
 
-## 대안과 기각 사유
+## Rejected alternatives
 
-- **Publish as an npm package**: `client/`를 package로 내고 extension이 dependency로 받는 방법이다. 복사본을 CI로 지키는 대신 version 번호로 지킬 수 있다. 소비자가 하나뿐인 package를 위해 registry와 release 절차를 새로 만들어야 하고, 그 절차를 거치는 동안 두 저장소의 pin 동작이 서로 다른 기간이 생긴다. 기각한다.
-- **Pin store on a backend**: pin을 server에 두고 extension이 id로 읽어 오는 방법이다. origin이 anchor에 없는 문제를 정면으로 풀 수 있다. FR-3813이 pin list를 일부러 없앤 결정을 되돌리는 일이고, link 하나가 pin 전부를 나른다는 ADR 0002의 전제를 깬다. 기각한다.
-- **Reimplement in the extension**: ADR 0002가 이미 Python 재구현(`pin_parser.py`)을 두고 기각한 안이다. multi-pin 변경이 두 번 착지해야 했고 두 구현의 주석이 이미 어긋나 있었다. 같은 이유로 기각한다.
-- **Inject into the MAIN world**: `chrome.scripting`의 `world: 'MAIN'`으로 page와 같은 realm에 넣으면 react-grab도 보이고 `history` patch도 동작한다. page의 script와 같은 realm을 공유하므로 page가 overlay의 함수와 storage에 접근할 수 있고, CSP가 script를 막는 site에서 실패한다. v1에서는 기각한다.
+- **Publish as an npm package**: In this approach, `client/` is published as a package and the extension takes it as a dependency. A version number would keep the copies in step instead of CI. The approach would need a new registry and release procedure for a package with only one consumer, and while a change goes through that procedure, the pin behaviour of the two repositories would differ for a period. It is rejected.
+- **Pin store on a backend**: In this approach, the pins live on a server and the extension reads them by id. It would directly solve the problem that the anchor does not carry the origin. It would reverse the FR-3813 decision that removed the pin list on purpose, and it would break ADR 0002's premise that one link carries all of the pins. It is rejected.
+- **Reimplement in the extension**: ADR 0002 already rejected this option for the Python reimplementation (`pin_parser.py`). A multi-pin change had to land twice, and the comments of the two implementations had already diverged. It is rejected for the same reason.
+- **Inject into the MAIN world**: Injecting into the same realm as the page with `world: 'MAIN'` of `chrome.scripting` would make react-grab visible and would make the `history` patch work. The overlay would share a realm with the page's scripts, so the page could reach the overlay's functions and storage, and the injection would fail on sites whose CSP blocks scripts. It is rejected for v1.
 
 ## Consequences
 
-- **Default host unchanged by the seam**: seam 자체는 dev server와 static build의 동작을 하나도 바꾸지 않는다. wire format, block 문법, label, cap, id 파생은 손대지 않았고, `pageChords`가 `true`인 host는 chord도 chord 안내 문구도 전과 같다. 기존 vitest suite에서 고친 것은 dock을 만드는 한 줄 — `SetDockOptions`에 새로 생긴 `pageChords` — 뿐이고, 나머지는 seam을 덮는 test가 늘어난 것이다.
-- **Default host에서도 달라지는 것 — 전부 고침이고, 전부 의도한 것이다**: box가 없는 element에 pin을 그리던 세 자리가 이 PR에서 함께 고쳐졌고 그 고침은 default host에도 적용된다. `display: none` look-alike로 resolve되던 것, page가 숨긴 held element를 다시 찾지 않던 것, rect가 빈 사이에 marker·box·card를 (0,0)에 그리던 것이다. 그래서 box가 없는 element는 이제 (0,0)에 그려지는 대신 포기되고 ladder가 다시 찾는다 — `display: contents` wrapper처럼 자식만 그려지는 element도 여기에 들어간다. 그리고 dock의 away row는 "where"를 제 줄로 내려 note가 눌리지 않게 했다 — 이 PR에서 유일하게 순수한 화면 변경이다.
-- **New module served for free**: dev server는 `/__review/<name>.js`를 `client/<name>.ts`로 1:1 매핑하고 static build는 `main.ts`에서 도달하는 module을 전부 한 chunk로 묶으므로, `boot.ts`는 plugin을 고치지 않고도 serve되고 번들된다.
-- **Extension tsconfig compatibility**: extension의 `exactOptionalPropertyTypes: true`, `moduleResolution: node`, `DOM.Iterable` 없는 `lib`에서 client 전체가 컴파일된다. 고친 곳은 네 군데이고 동작은 바뀌지 않았다 — `anchor.ts`의 `tid` 대입, `boot.ts`의 pick state에 담기는 `component`, `ui.ts`의 `copyWithToast` payload(`pin.ts:654`가 `html: undefined`를 넘기던 자리), 그리고 `DOMTokenList`를 펼치던 `dock.ts`의 `Array.from`.
-- **A gate, pinned to TypeScript 5.x**: 위 문장은 저절로 참으로 남지 않으므로 `react/vite-plugins/review-overlay/tsconfig.host.json`이 extension의 flag로 client를 컴파일하고 `scripts/verify.sh`가 lane으로 돌린다. 이 lane만 **root의 TypeScript 5.5.4**를 쓴다: TypeScript 6은 iterable DOM 선언을 `DOM` lib 본체로 합쳐서 `DOM.Iterable` 위반을 아예 감지하지 못하고, `react/`의 6.0.3으로 돌리면 gate의 절반이 무력해진다. `host-conformance.ts`가 extension host를 type으로만 적어 두어 `OverlayHost`가 다시 `OverlayHostOptions`에 담기지 않게 되면 gate가 깨진다.
-- **Pick entry point without a chord**: `pageChords: false`인 host는 chord를 전혀 붙이지 않으므로 `handle.startPick()` 말고는 pick mode로 들어갈 길이 없다. 그 entry point를 주지 않는 host는 pin을 만들 수 없고 읽기만 할 수 있다.
-- **Two palettes to keep**: `palette: 'own'`의 dark 값은 `ui.ts`의 `TONES` table이 갖고 있고, app의 theme을 따라가지 않는다. `--color-*` token이 바뀌면 `inherit`는 따라가지만 `own`은 손으로 맞춰야 한다. 이 dark 값들은 이 저장소의 어떤 화면도 그리지 않으므로 대비를 잰 적이 없다. 실제 dark page에서 확인하는 것은 phase B의 몫이다.
-- **Known limits for v1**: extension host에는 ⚛️ component stack이 없고, `data-testid`가 없는 site에서는 anchor가 selector와 text에만 기댄다. iframe 안의 element는 pin할 수 없다.
+- **Default host unchanged by the seam**: The seam itself changes none of the behaviour of the dev server and the static build. The wire format, the block grammar, the labels, the caps, and the id derivation were not touched, and a host with `pageChords` set to `true` has the same chords and the same chord hints as before. The only edit to the existing vitest suite is one line that builds the dock, for the new `pageChords` in `SetDockOptions`; the rest is added tests that cover the seam.
+- **Default host fixes, all intended**: This PR also fixed three places that drew pins on an element without a box, and the fixes apply to the default host too. The first resolved to a `display: none` look-alike, the second did not search again for a held element that the page had hidden, and the third drew the marker, the box, and the card at (0,0) while the rect was empty. As a result, the client now gives up on an element without a box instead of drawing it at (0,0), and the ladder searches for it again; an element that draws only its children, such as a `display: contents` wrapper, falls in this group. In addition, the dock's away row moves "where" onto its own line so that the note is not squeezed; this is the only purely visual change in this PR.
+- **New module served for free**: The dev server maps `/__review/<name>.js` one to one to `client/<name>.ts`, and the static build bundles every module reachable from `main.ts` into one chunk, so the dev server serves `boot.ts` and the static build bundles it without any change to the plugin.
+- **Extension tsconfig compatibility**: The whole client compiles under the extension's `exactOptionalPropertyTypes: true`, `moduleResolution: node`, and a `lib` without `DOM.Iterable`. Four places were edited and the behaviour did not change: the `tid` assignment in `anchor.ts`, the `component` stored in the pick state in `boot.ts`, the `copyWithToast` payload in `ui.ts` (the place where `pin.ts:654` passed `html: undefined`), and the `Array.from` in `dock.ts` that spread a `DOMTokenList`.
+- **A gate, pinned to TypeScript 5.x**: The sentence above does not stay true by itself, so `react/vite-plugins/review-overlay/tsconfig.host.json` compiles the client with the extension's flags and `scripts/verify.sh` runs it as a lane. Only this lane uses **the root's TypeScript 5.5.4**: TypeScript 6 merges the iterable DOM declarations into the main `DOM` lib, so it cannot detect a `DOM.Iterable` violation at all, and running the lane with the 6.0.3 of `react/` would disable half of the gate. `host-conformance.ts` writes down the extension host only as a type, so the gate breaks if `OverlayHost` can no longer be held in an `OverlayHostOptions`.
+- **Pick entry point without a chord**: A host with `pageChords: false` binds no chords at all, so `handle.startPick()` is the only way into pick mode. A host that does not provide that entry point cannot create pins and can only read them.
+- **Two palettes to keep**: The `TONES` table in `ui.ts` holds the dark values of `palette: 'own'`, and they do not follow the app's theme. When the `--color-*` tokens change, `inherit` follows them, but someone must update `own` by hand. No screen in this repository draws these dark values, so nobody has measured their contrast. Checking them on a real dark page is part of phase B.
+- **Known limits for v1**: The extension host has no ⚛️ component stack, and on a site without `data-testid` the anchor relies only on the selector and the text. The overlay cannot pin an element inside an iframe.
 
-## 출처
+## Sources
 
-- Jira: FR-4004. 이 결정은 review overlay client를 두 번째 host에 열어 주는 작업의 phase A이고, phase B는 Lablup Jira Helper extension 쪽 작업이다.
-- FR-3811·FR-3813·FR-3858·FR-3859가 overlay를, FR-3950이 guided mode를 만들었다.
-- 결정일: 2026-09-18.
-- 관련: [ADR 0002](0002-pin-set-link-grammar-and-single-codec.md)가 link 문법과 codec 하나를, [ADR 0004](0004-walkthrough-stops-in-the-v3-anchor.md)가 walkthrough stop을 정한다.
+- Jira: FR-4004. This decision is phase A of the work that opens the review overlay client to a second host, and phase B is the work on the Lablup Jira Helper extension side.
+- FR-3811, FR-3813, FR-3858, and FR-3859 built the overlay, and FR-3950 built guided mode.
+- Decided 2026-09-18.
+- Related: [ADR 0002](0002-pin-set-link-grammar-and-single-codec.md) decides the link grammar and the single codec, and [ADR 0004](0004-walkthrough-stops-in-the-v3-anchor.md) decides the walkthrough stops.
 
-## 용어
+## Glossary
 
-| 용어 | 뜻 |
-|---|---|
-| Host | overlay client를 띄우고, dev server에서만 얻을 수 있는 값들을 대신 답하는 쪽이다. Web UI dev server, static build, chrome extension이 각각 하나의 host다. |
-| OverlayHostOptions | host가 `bootOverlay`에 넘기는 option 객체의 type이며 `client/boot.ts`가 export한다. 항목이 전부 optional이고, 뺀 항목은 Web UI의 기본값이 쓰인다. |
-| OverlayHost | 위 option에 기본값을 채운 결과이며 `bootOverlay`가 만들어 안쪽에 넘긴다. 항목이 전부 채워져 있고, `defaultOverlayHost()`가 Web UI의 것을 돌려준다. |
-| OverlayHandle | `bootOverlay`가 돌려주는 객체이고, host가 자기 entry point에서 부르는 `startPick`, `cancelPick`, `toggleCards`, `pinCount`를 가진다. |
-| Vendoring | 다른 저장소의 source file을 dependency로 받지 않고 그대로 복사해 두고, script와 CI로 원본과의 동일성을 검사하는 것이다. |
+| Term               | Meaning                                                                                                                                                                                                                            |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Host               | A host is the side that starts the overlay client and answers in place of the dev server for the values that only the dev server can provide. The Web UI dev server, the static build, and the chrome extension are each one host. |
+| OverlayHostOptions | OverlayHostOptions is the type of the option object that a host passes to `bootOverlay`, and `client/boot.ts` exports it. Every item is optional, and an item left out takes the Web UI default.                                   |
+| OverlayHost        | OverlayHost is the result of filling the defaults into the options above, and `bootOverlay` builds it and passes it inward. Every item is set, and `defaultOverlayHost()` returns the Web UI one.                                  |
+| OverlayHandle      | OverlayHandle is the object that `bootOverlay` returns, and it has `startPick`, `cancelPick`, `toggleCards`, and `pinCount`, which the host calls from its own entry points.                                                       |
+| Vendoring          | Vendoring means copying another repository's source files as they are instead of taking them as a dependency, and checking with a script and CI that the copies match the originals.                                               |

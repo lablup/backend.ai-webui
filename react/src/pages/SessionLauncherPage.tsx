@@ -1133,16 +1133,10 @@ const SessionLauncherPage = () => {
                         'autoEnabled',
                       ]);
                       return (
-                        // Responsive policy R1 (ticket 14): antd
-                        // `Row gutter` + `Col xs={24} sm={12}` -> Astryx Grid
-                        // (2-up from 576px -> minWidth 280, max 2).
-                        // W2A-17: a `Grid` child defaults to `min-width: auto`,
-                        // so a 100%-wide field pushes its track past the
-                        // container. `width="100%"` on the grid plus
-                        // `minWidth: 0` on every direct child is the standing
-                        // fix (it also replaces the `flex: 1` these items
-                        // carried over from their old `Col` wrappers, which a
-                        // grid item ignores).
+                        // ADR 0020 R1. A `Grid` child defaults to
+                        // `min-width: auto`, so a 100%-wide field pushes its
+                        // track past the container: `width="100%"` on the grid
+                        // plus `minWidth: 0` on every direct child prevents it.
                         <AstryxGrid
                           columns={{ minWidth: 280, max: 2 }}
                           gap={4}

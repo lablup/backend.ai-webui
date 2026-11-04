@@ -198,7 +198,7 @@ const KeypairResourcePolicyInfoModal: React.FC<InfoModalProps> = ({
       footer={null}
       title={`${t('resourcePolicy.ResourcePolicy')}: '${resourcePolicy?.name}'`}
       centered
-      // Responsive policy (ticket 14): `token.screenSM` was a 576px width
+      // ADR 0020 R4: `token.screenSM` was a 576px width
       // CONSTANT, not responsive behaviour — read the breakpoint table, not
       // the theme.
       width={BAI_BREAKPOINTS.sm}
