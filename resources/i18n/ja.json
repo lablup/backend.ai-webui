@@ -2293,7 +2293,6 @@
     "SessionMode": "セッション",
     "SignUp": "サインアップ",
     "SignoutFinished": "サインアウトが終了しました。",
-    "TooManyAttempt": "ログインの試行回数が多すぎました。ログインの試行はしばらくの間ブロックされています。",
     "singleSignOn": {
       "LoginWithRealm": "{{ realmName }}ログイン",
       "LoginWithRealmFailed": "{{ realmName }} でのログインに失敗しました",
@@ -4490,7 +4489,7 @@
     "PluginLogin": "ログインプラグインのパス",
     "PluginPage": "ページプラグインのパス",
     "ResetAllSettings": "システム設定をすべて初期化しますか？",
-    "ResetAllSettingsDesc": "{{domain}} ドメインでこのページから保存した値はすべて削除され、各項目は config.toml の値に戻ります。初期化後、ページを再読み込みします。",
+    "ResetAllSettingsDesc": "{{domain}} ドメインでこのページから保存した値はすべて削除され、各項目は 既定値に戻ります。初期化後、ページを再読み込みします。",
     "ShowNonInstalledImages": "未インストールのイメージを表示",
     "SingleSignOnVendors": "SSO サインインを許可",
     "SsoRealmName": "SSO OpenID ボタンのラベル",

@@ -5,7 +5,8 @@
  * The page edits one flat `settings` sub-key in two documents:
  * `publicConfigByDomain.<domain>.settings` (PUBLIC scope, read anonymously
  * before sign-in) and `domainConfig.settings` (DOMAIN scope, read at sign-in).
- * `config.toml` stays the fallback for every key a document does not carry.
+ * A key no document carries keeps its code default (`getDefaultLoginConfig`);
+ * `config.toml` no longer feeds these settings (#10664).
  *
  * Both documents are cluster-wide, so a spec that writes them must run its
  * tests sequentially and restore what it found (`WebUISettingsApi.snapshot`
@@ -14,9 +15,10 @@
  * of the `settings` sub-key alone, and inside it every key no row owns
  * (`settings.announcement`, #10713) is carried over as read.
  */
+import { getDefaultLoginConfig } from '../../react/src/helper/loginConfig';
+import { WEBUI_SETTING_DEFINITIONS } from '../../react/src/helper/webuiSettings';
 import { createAccountApiContext, gqlAdmin } from './admin-api';
 import {
-  fetchConfigToml,
   modifyConfigToml,
   navigateTo,
   seedStoredApiEndpoint,
@@ -52,7 +54,7 @@ export interface WebUISettingRow {
   scope: WebUISettingScope;
   type: WebUISettingType;
   group: WebUISettingGroup;
-  /** `[section, key]` in `config.toml`. */
+  /** `[section, key]` the setting had in `config.toml`; the app no longer reads it there. */
   toml: [string, string];
   /**
    * Field on `globalThis.backendaiclient._config` after sign-in; `null` for
@@ -294,43 +296,13 @@ export const rowByKey = (key: string): WebUISettingRow => {
 
 export type SettingsDocument = Record<string, unknown>;
 
-/**
- * The value `config.toml` holds for a row, normalized to the row's type the
- * way `refreshConfigFromToml` does (comma lists become arrays). `undefined`
- * when the file does not set the key — the app then uses its built-in default.
- */
-export function tomlValueOf(
-  config: Record<string, any> | undefined,
-  setting: WebUISettingRow,
-): unknown {
-  const raw = config?.[setting.toml[0]]?.[setting.toml[1]];
-  // An empty string counts as unset too: the app then falls back to its
-  // built-in default (`defaultImportEnvironment` has a non-empty one).
-  if (raw === undefined || raw === null || raw === '') return undefined;
-  switch (setting.type) {
-    case 'boolean':
-      return typeof raw === 'boolean' ? raw : String(raw) === 'true';
-    case 'number': {
-      const n = Number(raw);
-      return Number.isFinite(n) ? n : undefined;
-    }
-    case 'string':
-      return String(raw);
-    case 'stringList':
-      return String(raw)
-        .split(',')
-        .map((s) => s.trim())
-        .filter(Boolean);
-  }
-}
-
-/** The config.toml of the WebUI under test, fetched once per call. */
-export async function readConfigToml(page: Page): Promise<Record<string, any>> {
-  const config = await fetchConfigToml(page);
-  if (!config) {
-    throw new Error(`config.toml could not be fetched from ${webuiEndpoint}`);
-  }
-  return config;
+/** The value a row falls back to when no document carries it: the app's code default. */
+export function defaultValueOf(setting: WebUISettingRow): unknown {
+  const definition = WEBUI_SETTING_DEFINITIONS.find(
+    (d) => d.key === setting.key,
+  );
+  if (!definition) throw new Error(`Unknown WebUI setting key: ${setting.key}`);
+  return getDefaultLoginConfig()[definition.field];
 }
 
 // ---------------------------------------------------------------------------

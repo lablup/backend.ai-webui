@@ -175,7 +175,7 @@ export interface STokenLoginBoundaryProps {
   /**
    * Invoked after successful authentication with the connected client. This
    * is where callers perform their own post-setup work: panel close,
-   * last_login counters, URL cleanup via the `clear` tuple returned from
+   * URL cleanup via the `clear` tuple returned from
    * `useSToken`, etc.
    */
   onSuccess?: (client: unknown) => void;

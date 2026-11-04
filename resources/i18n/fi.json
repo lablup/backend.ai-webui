@@ -2291,7 +2291,6 @@
     "SessionMode": "Istunto",
     "SignUp": "Rekisteröidy",
     "SignoutFinished": "Kirjautuminen päättyi.",
-    "TooManyAttempt": "Kirjautumisyrityksiä oli liikaa. Kirjautumisyritykset on estetty jonkin aikaa.",
     "singleSignOn": {
       "LoginWithRealm": "Kirjaudu sisään {{ realmName }}",
       "LoginWithRealmFailed": "Kirjautuminen palvelulla {{ realmName }} epäonnistui",
@@ -4489,7 +4488,7 @@
     "PluginLogin": "Kirjautumisliitännäisen polku",
     "PluginPage": "Sivuliitännäisten polut",
     "ResetAllSettings": "Nollataanko kaikki järjestelmäasetukset?",
-    "ResetAllSettingsDesc": "Kaikki tällä sivulla toimialueelle {{domain}} tallennetut arvot poistetaan, ja jokainen rivi palaa config.toml-arvoonsa. Sivu ladataan uudelleen nollauksen jälkeen.",
+    "ResetAllSettingsDesc": "Kaikki tällä sivulla toimialueelle {{domain}} tallennetut arvot poistetaan, ja jokainen rivi palaa oletusarvoonsa. Sivu ladataan uudelleen nollauksen jälkeen.",
     "ShowNonInstalledImages": "Näytä asentamattomat imaget",
     "SingleSignOnVendors": "Salli SSO-kirjautuminen",
     "SsoRealmName": "SSO OpenID -painikkeen teksti",

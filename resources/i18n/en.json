@@ -2278,7 +2278,6 @@
     "SessionMode": "Session",
     "SignUp": "Sign up",
     "SignoutFinished": "Signout finished.",
-    "TooManyAttempt": "There were too many login attempts. Login attempts have been blocked for a while.",
     "singleSignOn": {
       "LoginWithRealm": "Login with {{ realmName }}",
       "LoginWithRealmFailed": "Login with {{ realmName }} failed",
@@ -4473,7 +4472,7 @@
     "PluginLogin": "Login plugin path",
     "PluginPage": "Page plugin paths",
     "ResetAllSettings": "Reset all System Settings?",
-    "ResetAllSettingsDesc": "Every value saved on this page for the {{domain}} domain is deleted and each row returns to its config.toml value. The page reloads after the reset.",
+    "ResetAllSettingsDesc": "Every value saved on this page for the {{domain}} domain is deleted and each row returns to its default value. The page reloads after the reset.",
     "ShowNonInstalledImages": "Show non-installed images",
     "SingleSignOnVendors": "SSO sign-in",
     "SsoRealmName": "SSO OpenID button label",

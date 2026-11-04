@@ -512,18 +512,10 @@ const LoginView: React.FC<{
 
   // Shared post-connection setup used by both the regular session login
   // (doGQLConnect) and the sToken SSO path. Keeps the two flows consistent:
-  // login_attempt/last_login counters, saved-credentials cleanup, panel
-  // close, connected-event dispatch, and endpoint persistence.
+  // saved-credentials cleanup, panel close, connected-event dispatch, and
+  // endpoint persistence.
   const postConnectSetup = useCallback(
     (client: ReturnType<typeof createBackendAIClient>['client']) => {
-      const currentTime = Math.floor(Date.now() / 1000);
-      (globalThis as any).backendaioptions.set(
-        'last_login',
-        currentTime,
-        'general',
-      );
-      (globalThis as any).backendaioptions.set('login_attempt', 0, 'general');
-
       const event = new CustomEvent('backend-ai-connected', {
         detail: client,
       });
@@ -1009,51 +1001,6 @@ const LoginView: React.FC<{
     const isReloginAfterPasswordChange = reloginAfterPasswordChangeRef.current;
     reloginAfterPasswordChangeRef.current = false;
 
-    const loginAttempt = (globalThis as any).backendaioptions.get(
-      'login_attempt',
-      0,
-      'general',
-    );
-    const lastLogin = (globalThis as any).backendaioptions.get(
-      'last_login',
-      Math.floor(Date.now() / 1000),
-      'general',
-    );
-
-    const currentTime = Math.floor(Date.now() / 1000);
-
-    if (
-      loginAttempt >= loginConfig.login_attempt_limit &&
-      currentTime - lastLogin > loginConfig.login_block_time
-    ) {
-      (globalThis as any).backendaioptions.set(
-        'last_login',
-        currentTime,
-        'general',
-      );
-      (globalThis as any).backendaioptions.set('login_attempt', 0, 'general');
-    } else if (loginAttempt >= loginConfig.login_attempt_limit) {
-      (globalThis as any).backendaioptions.set(
-        'last_login',
-        currentTime,
-        'general',
-      );
-      (globalThis as any).backendaioptions.set(
-        'login_attempt',
-        loginAttempt + 1,
-        'general',
-      );
-
-      notification(t('login.TooManyAttempt'));
-      return;
-    } else {
-      (globalThis as any).backendaioptions.set(
-        'login_attempt',
-        loginAttempt + 1,
-        'general',
-      );
-    }
-
     const epInput = form.getFieldValue('api_endpoint') || apiEndpoint;
     const ep = epInput.replace(/\/+$/, '').trim();
     setApiEndpoint(ep);
@@ -1101,7 +1048,6 @@ const LoginView: React.FC<{
       await connectUsingAPI(true, ep);
     }
   }, [
-    loginConfig,
     form,
     apiEndpoint,
     effectiveConnectionMode,

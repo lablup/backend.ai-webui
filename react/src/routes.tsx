@@ -1492,8 +1492,7 @@ const AutoDiagnosticsRunner = () => {
  * URL query for authentication (ADR 0022).
  *
  * On boundary success, the route-level `onSuccess` persists the login
- * state (`last_login`, `login_attempt`, saved-credential cleanup,
- * `api_endpoint`, `client.ready`) and nulls both `sToken` / `stoken` keys
+ * state (saved-credential cleanup, `api_endpoint`, `client.ready`) and nulls both `sToken` / `stoken` keys
  * from the URL via the nuqs setter so the token doesn't leak into browser
  * history or referer headers.
  */
