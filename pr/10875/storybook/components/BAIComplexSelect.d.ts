@@ -1,4 +1,4 @@
-import { PagedSelectorSingleProps } from '@lablup/ui-common/components/PagedSelector';
+import { PagedSelectorOption, PagedSelectorSingleProps } from '@lablup/ui-common/components/PagedSelector';
 import { default as React } from '../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.3.1/389d2ab16b7e9a891f1811154c26db12b2fd74e8cb0d60e295d30c107a842d5d/node_modules/react';
 /** antd `labelInValue` shape. */
 export interface BAILabeledValue {
@@ -20,7 +20,8 @@ export interface BAIComplexSelectOption {
     description?: React.ReactNode;
     /** Trailing content (tokens, meta). */
     extra?: React.ReactNode;
-    disabled?: boolean;
+    /** `{ reason }` also puts a glyph at the end of the row whose tooltip says why. */
+    disabled?: PagedSelectorOption['isDisabled'];
 }
 /** PagedSelector props this adapter renames or owns. */
 type OwnedPagedSelectorKey = 'isMultiple' | 'value' | 'onChange' | 'options' | 'labels' | 'onSearchChange' | 'hasClear' | 'onEndReached' | 'endReachedThreshold' | 'onAtEndChange' | 'isLoadingMore' | 'totalCount' | 'emptyText' | 'maxTriggerItems' | 'selectionIndicator' | 'triggerDisplay';
