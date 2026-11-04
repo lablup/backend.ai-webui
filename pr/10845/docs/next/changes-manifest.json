@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-11-03T16:13:20.655Z",
+  "generatedAt": "2026-11-04T04:23:35.537Z",
   "languages": [
     "en",
     "ja",
@@ -13,11 +13,11 @@
     "en": {
       "totals": {
         "pages": 1,
-        "changes": 1,
-        "added": 1,
-        "modified": 0,
-        "removed": 0,
-        "images": 0,
+        "changes": 5,
+        "added": 2,
+        "modified": 2,
+        "removed": 1,
+        "images": 1,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -29,14 +29,18 @@
           "url": "next/en/vfolder.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/en/vfolder/vfolder.md",
           "counts": {
-            "added": 1,
-            "modified": 0,
-            "removed": 0,
-            "images": 0,
-            "total": 1
+            "added": 2,
+            "modified": 2,
+            "removed": 1,
+            "images": 1,
+            "total": 5
           },
           "fingerprints": [
-            "2a734ca95cb2"
+            "2a734ca95cb2",
+            "ad7cb6396841",
+            "e630598c054f",
+            "1fae3393d48a",
+            "424c981c47b4"
           ]
         }
       ]
@@ -44,11 +48,11 @@
     "ja": {
       "totals": {
         "pages": 1,
-        "changes": 1,
-        "added": 1,
-        "modified": 0,
-        "removed": 0,
-        "images": 0,
+        "changes": 5,
+        "added": 2,
+        "modified": 2,
+        "removed": 1,
+        "images": 1,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -60,14 +64,18 @@
           "url": "next/ja/vfolder.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/ja/vfolder/vfolder.md",
           "counts": {
-            "added": 1,
-            "modified": 0,
-            "removed": 0,
-            "images": 0,
-            "total": 1
+            "added": 2,
+            "modified": 2,
+            "removed": 1,
+            "images": 1,
+            "total": 5
           },
           "fingerprints": [
-            "63b75a03a6b6"
+            "63b75a03a6b6",
+            "75aeb7116330",
+            "97e903f70205",
+            "4c9e1c3be46e",
+            "a83187eae5d1"
           ]
         }
       ]
@@ -75,11 +83,11 @@
     "ko": {
       "totals": {
         "pages": 1,
-        "changes": 1,
-        "added": 1,
-        "modified": 0,
-        "removed": 0,
-        "images": 0,
+        "changes": 5,
+        "added": 2,
+        "modified": 2,
+        "removed": 1,
+        "images": 1,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -91,14 +99,18 @@
           "url": "next/ko/vfolder.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/ko/vfolder/vfolder.md",
           "counts": {
-            "added": 1,
-            "modified": 0,
-            "removed": 0,
-            "images": 0,
-            "total": 1
+            "added": 2,
+            "modified": 2,
+            "removed": 1,
+            "images": 1,
+            "total": 5
           },
           "fingerprints": [
-            "f19178aeb053"
+            "f19178aeb053",
+            "6f8493fc499d",
+            "90d88e6a015e",
+            "79221e1bb10a",
+            "244791311894"
           ]
         }
       ]
@@ -106,11 +118,11 @@
     "th": {
       "totals": {
         "pages": 1,
-        "changes": 1,
-        "added": 1,
-        "modified": 0,
-        "removed": 0,
-        "images": 0,
+        "changes": 5,
+        "added": 2,
+        "modified": 2,
+        "removed": 1,
+        "images": 1,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -122,14 +134,18 @@
           "url": "next/th/vfolder.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/th/vfolder/vfolder.md",
           "counts": {
-            "added": 1,
-            "modified": 0,
-            "removed": 0,
-            "images": 0,
-            "total": 1
+            "added": 2,
+            "modified": 2,
+            "removed": 1,
+            "images": 1,
+            "total": 5
           },
           "fingerprints": [
-            "f6028735d9c9"
+            "f6028735d9c9",
+            "1af265d5b3d7",
+            "0e5386352d18",
+            "0adc34e0b8b8",
+            "df139a23839c"
           ]
         }
       ]
