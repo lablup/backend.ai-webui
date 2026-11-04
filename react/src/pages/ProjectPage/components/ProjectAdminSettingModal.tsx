@@ -195,7 +195,7 @@ const ProjectAdminSettingModal = ({
       mutation ProjectAdminSettingModalAssignMutation(
         $input: BulkAssignRoleInput!
       ) {
-        adminBulkAssignRole(input: $input) {
+        partialBulkAssignRoles(input: $input) {
           assigned {
             id
             userId

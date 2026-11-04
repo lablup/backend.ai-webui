@@ -41,7 +41,7 @@ const ALREADY_ASSIGNED_MESSAGE = /is already assigned to user/;
 const MAX_SKIPPED_NAMES = 3;
 
 /**
- * Assigns users to a role via `adminBulkAssignRole` (FR-3357). Users who
+ * Assigns users to a role via `partialBulkAssignRoles`. Users who
  * already hold the role are skipped with an info toast. On failure the modal
  * stays open with only the failed users selected (error border) and
  * `BAIBulkErrorModal` lists each of them.
@@ -75,7 +75,7 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
   const bulkAssignRole =
     useMutationWithPromise<AssignRoleModalBulkAssignMutation>(graphql`
       mutation AssignRoleModalBulkAssignMutation($input: BulkAssignRoleInput!) {
-        adminBulkAssignRole(input: $input) {
+        partialBulkAssignRoles(input: $input) {
           assigned {
             id
             userId
@@ -129,10 +129,10 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
         },
       });
       const [skipped, failed] = _.partition(
-        result.adminBulkAssignRole?.failed ?? [],
+        result.partialBulkAssignRoles.failed,
         (failure) => ALREADY_ASSIGNED_MESSAGE.test(failure.message),
       );
-      const hasAssigned = !_.isEmpty(result.adminBulkAssignRole?.assigned);
+      const hasAssigned = !_.isEmpty(result.partialBulkAssignRoles.assigned);
       if (!_.isEmpty(skipped)) {
         notifySkipped(skipped.map((failure) => failure.userId));
       }
