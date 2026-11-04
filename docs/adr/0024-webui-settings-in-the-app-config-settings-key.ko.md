@@ -1,4 +1,4 @@
-# 0018 — WebUI settings in the app config settings key
+# 0024 — WebUI settings in the app config settings key
 
 ## Summary
 
@@ -64,8 +64,8 @@ flowchart LR
 - **File first, then each document**: 상태는 `config.toml` 값으로 시작하고, `applyWebUISettings(state, doc, scope)`가 그 스코프의 키만 덮는다. 다른 스코프의 키, 정의표에 없는 키, `isValidWebUISettingValue`를 통과하지 못한 값은 무시한다. 그래서 PUBLIC과 DOMAIN 문서는 겹치지 않는다.
 - **Option-limited lists**: `options`가 있는 `stringList` 정의는 목록 밖의 값을 병합과 저장 모두에서 버린다(`restrictToOptions`).
 - **No seeding**: 저장은 파일 값과 다른 키만 문서에 쓴다(`buildWebUISettingsDocument`). 다른 키가 하나도 없으면 `settings` 서브키를 지운다. 손대지 않은 키는 계속 파일을 따른다.
-- **Read failures**: 문서를 읽지 못하면 경고만 남기고 파일 값으로 진행한다(`fetchDomainWebUISettings`, `fetchPublicDomainConfigOnce`).
-- **Merge points**: PUBLIC 문서는 부트(`initializeConfigOnce`)와 다른 webserver의 설정을 받을 때(`loadConfigFromWebServer`) 병합한다. 후자는 그 webserver의 `apiEndpoint`로 문서를 찾는다. DOMAIN 문서는 로그인(`connectViaGQL`) 때 병합한다.
+- **Read failures**: 문서를 읽지 못하면 경고만 남기고 파일 값으로 진행한다. DOMAIN 문서는 로그인 query(`loginSessionAuthMyUserQuery`의 `myAppConfigs … @catch(to: NULL)`, `readDomainWebUISettings`)에 실려 오고, PUBLIC 문서는 `fetchPublicDomainConfigOnce`가 읽는다.
+- **Merge points**: PUBLIC 문서는 부트(`initializeConfigOnce`)와 다른 webserver의 설정을 받을 때(`loadConfigFromWebServer`) 병합한다. 후자는 그 webserver의 `apiEndpoint`로 문서를 찾고, 내장 `config.toml` 위에 병합한다. DOMAIN 문서는 로그인(`connectViaGQL`) 때 병합한다.
 - **One store**: 병합을 마친 값은 `loginConfigState`에만 있다. `debug`처럼 React 밖에서 읽는 값도 `jotaiStore.get(loginConfigState)`로 읽고, `globalThis` 사본을 두지 않는다. 파일을 해석하는 `refreshConfigFromToml`은 부작용이 없다.
 
 ### 3. `config.toml`에만 남는 키
