@@ -844,6 +844,7 @@
       "FolderLimit": "Sınır: {{max}}",
       "Healthy": "Sağlıklı",
       "Insufficient": "Yetersiz kaynak",
+      "LatestSchedulingReason": "Son zamanlama nedeni",
       "LongRunningSessions": "Uzun Süredir Çalışan Oturumlar",
       "LongRunningSessionsTooltip": "Kartın zaman aralığından önce başlamış, projenin çalışan oturumları, en eski önce.",
       "MemoryGiBHours": "Bellek (GiB-saat)",

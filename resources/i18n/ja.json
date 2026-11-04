@@ -844,6 +844,7 @@
       "FolderLimit": "上限: {{max}}",
       "Healthy": "正常",
       "Insufficient": "リソース不足",
+      "LatestSchedulingReason": "最新のスケジューリング理由",
       "LongRunningSessions": "長時間実行中のセッション",
       "LongRunningSessionsTooltip": "カードの期間の開始前から実行中のプロジェクトのセッションを古い順に表示します。",
       "MemoryGiBHours": "メモリ (GiB時間)",

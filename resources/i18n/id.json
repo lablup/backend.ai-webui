@@ -844,6 +844,7 @@
       "FolderLimit": "Batas: {{max}}",
       "Healthy": "Sehat",
       "Insufficient": "Sumber daya tidak cukup",
+      "LatestSchedulingReason": "Alasan penjadwalan terakhir",
       "LongRunningSessions": "Sesi yang Berjalan Lama",
       "LongRunningSessionsTooltip": "Sesi berjalan proyek yang dimulai sebelum rentang kartu, terlama lebih dulu.",
       "MemoryGiBHours": "Memori (GiB-jam)",

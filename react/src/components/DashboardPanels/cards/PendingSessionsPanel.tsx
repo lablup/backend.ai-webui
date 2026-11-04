@@ -10,23 +10,24 @@ import {
   legacySessionIdFilter,
   pendingReason,
 } from '../projectAdminCards/projectCardData';
-import type { PanelComponentProps } from '../types';
+import type { PanelComponentProps, PanelSettings } from '../types';
 import ScopedCard from './ScopedCard';
 import SessionList, {
-  crossProjectColumns,
   inResourceGroups,
   type SessionV2Filter,
 } from './SessionList';
 import { Text } from '@lablup/ui-common/Text';
 import {
-  BAIFlex,
   BAILink,
   BAISessionNodesV2,
   BAIText,
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
+  type BAIColumnType,
   type SessionV2InList,
 } from 'backend.ai-ui';
+import type { TFunction } from 'i18next';
+import * as _ from 'lodash-es';
 import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -91,60 +92,101 @@ const PendingReasons: React.FC<{
   );
 };
 
-/** One pending session: the scheduler's last message, then its name and how long it has waited. */
-export const PendingSessionRow: React.FC<{
+/** The scheduler's latest message for one session, on one line, the full text on hover. */
+export const PendingReasonCell: React.FC<{
   /** `undefined` when the lookup did not return the session (failed, or not readable). */
   reason: string | null | undefined;
-  name: string;
-  waited: React.ReactNode;
-  /** The session's project, on the cross-project (superadmin) card. */
-  project?: React.ReactNode;
-  onOpenHistory: () => void;
-}> = ({ reason, name, waited, project, onOpenHistory }) => {
+}> = ({ reason }) => {
   'use memo';
   const { t } = useTranslation();
-  return (
-    <BAIFlex direction="column" align="stretch" gap="xxs">
-      {reason ? (
-        <BAIText ellipsis={{ tooltip: reason }}>
-          {reason.replace(/\s*\n\s*/g, ' ')}
-        </BAIText>
-      ) : (
-        <Text type="supporting">
-          {reason === null ? t('dashboard.card.NotTriedYet') : '-'}
-        </Text>
-      )}
-      <BAIFlex gap="xs" style={{ minWidth: 0 }}>
-        <BAILink
-          type="hover"
-          ellipsis
-          onClick={(event) => {
-            // The row opens the same history; one click, one modal.
-            event.stopPropagation();
-            onOpenHistory();
-          }}
-        >
-          {name}
-        </BAILink>
-        {project ? (
-          <Text type="supporting" size="sm">
-            {project}
-          </Text>
-        ) : null}
-        <Text type="supporting" size="sm">
-          {t('dashboard.card.Waiting')} {waited}
-        </Text>
-      </BAIFlex>
-    </BAIFlex>
+  if (reason === undefined) return '-';
+  return reason ? (
+    <BAIText ellipsis={{ tooltip: reason }}>
+      {reason.replace(/\s*\n\s*/g, ' ')}
+    </BAIText>
+  ) : (
+    <Text type="supporting">{t('dashboard.card.NotTriedYet')}</Text>
   );
+};
+
+/** Shown on a new card; the other session columns start hidden in the column settings. */
+export const PENDING_DEFAULT_COLUMNS = ['name', 'reason', 'elapsedTime'];
+
+/**
+ * Session name (a link to the scheduling history), the latest scheduling
+ * reason and the time waited; every other session column is available from
+ * the column settings.
+ */
+export const customizePendingColumns = (
+  columns: Array<BAIColumnType<SessionV2InList>>,
+  {
+    reasons,
+    t,
+    onOpenHistory,
+  }: {
+    reasons: Reasons;
+    t: TFunction;
+    onOpenHistory: (session: SessionV2InList) => void;
+  },
+): Array<BAIColumnType<SessionV2InList>> => {
+  const reasonColumn: BAIColumnType<SessionV2InList> = {
+    key: 'reason',
+    title: t('dashboard.card.LatestSchedulingReason'),
+    // Takes the width left over, so a long message ellipsizes instead of widening the table.
+    onCell: () => ({ style: { maxWidth: 0, width: '100%' } }),
+    render: (_value: unknown, session: SessionV2InList) => (
+      <PendingReasonCell
+        reason={
+          session.entityId in reasons ? reasons[session.entityId] : undefined
+        }
+      />
+    ),
+  };
+  const customized = columns.map((column): BAIColumnType<SessionV2InList> => ({
+    ...column,
+    defaultHidden: !PENDING_DEFAULT_COLUMNS.includes(String(column.key)),
+    ...(column.key === 'name'
+      ? {
+          render: (_value: unknown, session: SessionV2InList) => (
+            <BAILink
+              ellipsis
+              onClick={(event) => {
+                // The row opens the same history; one click, one modal.
+                event.stopPropagation();
+                onOpenHistory(session);
+              }}
+            >
+              {session.metadata?.name ?? '-'}
+            </BAILink>
+          ),
+        }
+      : column.key === 'elapsedTime'
+        ? { title: t('dashboard.card.Waiting') }
+        : {}),
+  }));
+  const nameIndex = customized.findIndex((column) => column.key === 'name');
+  return [
+    ...customized.slice(0, nameIndex + 1),
+    reasonColumn,
+    ...customized.slice(nameIndex + 1),
+  ];
 };
 
 const PendingSessionTable: React.FC<{
   scope: CardScope;
   resourceGroups: ReadonlyArray<string> | undefined;
   fetchKey: string;
-}> = ({ scope, resourceGroups, fetchKey }) => {
+  columnOverrides: PanelSettings['columnOverrides'];
+  onChangeSettings?: PanelComponentProps['onChangeSettings'];
+}> = ({
+  scope,
+  resourceGroups,
+  fetchKey,
+  columnOverrides,
+  onChangeSettings,
+}) => {
   'use memo';
+  const { t } = useTranslation();
   // The id outlives `open` until after-close, so the closing modal keeps its content.
   const [historySessionId, setHistorySessionId] = useState<string | null>(null);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
@@ -180,7 +222,6 @@ const PendingSessionTable: React.FC<{
               <BAISessionNodesV2
                 sessionsFrgmt={rows}
                 disableSorter
-                showHeader={false}
                 loading={
                   deferredOffset !== baiPaginationOption.offset ||
                   deferredLimit !== baiPaginationOption.limit
@@ -189,33 +230,26 @@ const PendingSessionTable: React.FC<{
                   onClick: () => openHistory(session),
                   style: { cursor: 'pointer' },
                 })}
-                customizeColumns={(columns) => {
-                  const columnOf = (key: string) =>
-                    columns.find((column) => column.key === key);
-                  const elapsed = columnOf('elapsedTime');
-                  const project = crossProjectColumns(scope).includes('project')
-                    ? columnOf('project')
-                    : undefined;
-                  return [
-                    {
-                      key: 'pending',
-                      onCell: () => ({ style: { maxWidth: 0, width: '100%' } }),
-                      render: (_value: unknown, session: SessionV2InList) => (
-                        <PendingSessionRow
-                          reason={
-                            session.entityId in reasons
-                              ? reasons[session.entityId]
-                              : undefined
-                          }
-                          name={session.metadata?.name ?? '-'}
-                          waited={elapsed?.render?.(undefined, session, 0)}
-                          project={project?.render?.(undefined, session, 0)}
-                          onOpenHistory={() => openHistory(session)}
-                        />
-                      ),
-                    },
-                  ];
-                }}
+                customizeColumns={(columns) =>
+                  customizePendingColumns(columns, {
+                    reasons,
+                    t,
+                    onOpenHistory: openHistory,
+                  })
+                }
+                tableSettings={
+                  onChangeSettings
+                    ? {
+                        columnOverrides: columnOverrides ?? {},
+                        onColumnOverridesChange: (overrides) =>
+                          onChangeSettings({
+                            columnOverrides: _.isEmpty(overrides)
+                              ? undefined
+                              : overrides,
+                          }),
+                      }
+                    : undefined
+                }
                 pagination={{
                   pageSize: tablePaginationOption.pageSize,
                   current: tablePaginationOption.current,
@@ -249,6 +283,8 @@ const PendingSessionsPanel: React.FC<PanelComponentProps> = ({
   scope,
   vars,
   fetchKey,
+  panel,
+  onChangeSettings,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -272,6 +308,8 @@ const PendingSessionsPanel: React.FC<PanelComponentProps> = ({
           scope={cardScope}
           resourceGroups={vars.resourceGroup ? [vars.resourceGroup] : undefined}
           fetchKey={key}
+          columnOverrides={panel.settings?.columnOverrides}
+          onChangeSettings={onChangeSettings}
         />
       )}
     </ScopedCard>

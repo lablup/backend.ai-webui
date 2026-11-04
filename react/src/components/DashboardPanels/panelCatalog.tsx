@@ -335,6 +335,7 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(4, 3),
     minSize: size(2, 2),
     settings: ['resourceGroup'],
+    columnSettings: true,
     ...adminOrder('pendingSessions'),
   },
   {

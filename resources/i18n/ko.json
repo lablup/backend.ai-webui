@@ -844,6 +844,7 @@
       "FolderLimit": "한도: {{max}}개",
       "Healthy": "정상",
       "Insufficient": "자원 부족",
+      "LatestSchedulingReason": "최근 스케줄링 사유",
       "LongRunningSessions": "장시간 실행 중인 세션",
       "LongRunningSessionsTooltip": "카드에 설정한 기간이 시작되기 전부터 실행 중인 프로젝트 세션을 가장 오래된 것부터 보여 줍니다.",
       "MemoryGiBHours": "메모리 (GiB 시간)",

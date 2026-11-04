@@ -844,6 +844,7 @@
       "FolderLimit": "Giới hạn: {{max}}",
       "Healthy": "Ổn định",
       "Insufficient": "Không đủ tài nguyên",
+      "LatestSchedulingReason": "Lý do lập lịch gần nhất",
       "LongRunningSessions": "Phiên chạy lâu",
       "LongRunningSessionsTooltip": "Các phiên đang chạy của dự án bắt đầu trước khoảng thời gian của thẻ, cũ nhất trước.",
       "MemoryGiBHours": "Bộ nhớ (GiB-giờ)",

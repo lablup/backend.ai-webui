@@ -2,8 +2,14 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { PendingSessionRow } from './PendingSessionsPanel';
+import {
+  PENDING_DEFAULT_COLUMNS,
+  PendingReasonCell,
+  customizePendingColumns,
+} from './PendingSessionsPanel';
 import { fireEvent, render, screen } from '@testing-library/react';
+import type { BAIColumnType, SessionV2InList } from 'backend.ai-ui';
+import type { TFunction } from 'i18next';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -12,55 +18,104 @@ vi.mock('react-i18next', async (importOriginal) => ({
   useTranslation: () => ({ t: (key: string) => key }),
 }));
 
-const renderRow = (
-  props: Partial<React.ComponentProps<typeof PendingSessionRow>> = {},
-) => {
-  const onOpenHistory = vi.fn();
+const t = ((key: string) => key) as unknown as TFunction;
+const BASE_COLUMNS = [
+  'name',
+  'sessionId',
+  'status',
+  'elapsedTime',
+  'resourceGroup',
+  'project',
+  'owner',
+].map((key) => ({ key, title: key }) as BAIColumnType<SessionV2InList>);
+const SESSION = {
+  entityId: 's-1',
+  metadata: { name: 'train-llm' },
+} as unknown as SessionV2InList;
+
+const columnsWith = (onOpenHistory = vi.fn()) =>
+  customizePendingColumns(BASE_COLUMNS, {
+    reasons: { 's-1': 'No agent has enough cuda.shares' },
+    t,
+    onOpenHistory,
+  });
+
+const renderCell = (
+  column: BAIColumnType<SessionV2InList> | undefined,
+  session: SessionV2InList = SESSION,
+) =>
   render(
     <MemoryRouter>
-      <PendingSessionRow
-        reason="No agent has enough cuda.shares"
-        name="train-llm"
-        waited="00:12:30"
-        onOpenHistory={onOpenHistory}
-        {...props}
-      />
+      <>{column?.render?.(undefined, session, 0) as React.ReactNode}</>
     </MemoryRouter>,
   );
-  return onOpenHistory;
-};
 
-describe('PendingSessionRow', () => {
-  it('shows the reason first, then the name and how long the session waited', () => {
-    renderRow({ project: 'default' });
+describe('customizePendingColumns', () => {
+  it('shows the name, the latest reason and the time waited; the rest sit in the column settings', () => {
+    const columns = columnsWith();
+    expect(columns.map((column) => column.key).slice(0, 2)).toEqual([
+      'name',
+      'reason',
+    ]);
+    expect(
+      columns
+        .filter((column) => !column.defaultHidden)
+        .map((column) => column.key),
+    ).toEqual(PENDING_DEFAULT_COLUMNS);
+    for (const key of ['owner', 'resourceGroup', 'project']) {
+      expect(columns.find((column) => column.key === key)?.defaultHidden).toBe(
+        true,
+      );
+    }
+    expect(columns.find((column) => column.key === 'reason')?.title).toBe(
+      'dashboard.card.LatestSchedulingReason',
+    );
+    expect(columns.find((column) => column.key === 'elapsedTime')?.title).toBe(
+      'dashboard.card.Waiting',
+    );
+  });
+
+  it('reads the reason looked up for the session, "-" for one not returned', () => {
+    const reason = columnsWith().find((column) => column.key === 'reason');
+    renderCell(reason);
     expect(
       screen.getByText('No agent has enough cuda.shares'),
     ).toBeInTheDocument();
-    expect(screen.getByText('train-llm')).toBeInTheDocument();
-    expect(screen.getByText('default')).toBeInTheDocument();
-    expect(
-      screen.getByText(/dashboard\.card\.Waiting\s+00:12:30/),
-    ).toBeInTheDocument();
-  });
-
-  it('joins a multi-line scheduler message into one line', () => {
-    renderRow({ reason: 'first\n  second' });
-    expect(screen.getByText('first second')).toBeInTheDocument();
-  });
-
-  it('says the scheduler has not tried yet', () => {
-    renderRow({ reason: null });
-    expect(screen.getByText('dashboard.card.NotTriedYet')).toBeInTheDocument();
-  });
-
-  it('shows "-" when the reason lookup did not return the session', () => {
-    renderRow({ reason: undefined });
+    renderCell(reason, {
+      ...SESSION,
+      entityId: 's-2',
+    } as unknown as SessionV2InList);
     expect(screen.getByText('-')).toBeInTheDocument();
   });
 
   it('opens the scheduling history once from the session name', () => {
-    const onOpenHistory = renderRow();
+    const onOpenHistory = vi.fn();
+    const onRowClick = vi.fn();
+    const name = columnsWith(onOpenHistory).find(
+      (column) => column.key === 'name',
+    );
+    render(
+      <MemoryRouter>
+        <div onClick={onRowClick}>
+          {name?.render?.(undefined, SESSION, 0) as React.ReactNode}
+        </div>
+      </MemoryRouter>,
+    );
     fireEvent.click(screen.getByText('train-llm'));
     expect(onOpenHistory).toHaveBeenCalledTimes(1);
+    expect(onOpenHistory).toHaveBeenCalledWith(SESSION);
+    expect(onRowClick).not.toHaveBeenCalled();
+  });
+});
+
+describe('PendingReasonCell', () => {
+  it('joins a multi-line scheduler message into one line', () => {
+    render(<PendingReasonCell reason={'first\n  second'} />);
+    expect(screen.getByText('first second')).toBeInTheDocument();
+  });
+
+  it('says the scheduler has not tried yet', () => {
+    render(<PendingReasonCell reason={null} />);
+    expect(screen.getByText('dashboard.card.NotTriedYet')).toBeInTheDocument();
   });
 });

@@ -844,6 +844,7 @@
       "FolderLimit": "Όριο: {{max}}",
       "Healthy": "Υγιές",
       "Insufficient": "Ανεπαρκείς πόροι",
+      "LatestSchedulingReason": "Τελευταία αιτία χρονοπρογραμματισμού",
       "LongRunningSessions": "Μακροχρόνιες συνεδρίες",
       "LongRunningSessionsTooltip": "Συνεδρίες σε εκτέλεση του έργου που ξεκίνησαν πριν από το διάστημα της κάρτας, πρώτα οι παλαιότερες.",
       "MemoryGiBHours": "Μνήμη (GiB-ώρες)",

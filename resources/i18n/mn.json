@@ -844,6 +844,7 @@
       "FolderLimit": "Хязгаар: {{max}}",
       "Healthy": "Хэвийн",
       "Insufficient": "Нөөц хүрэлцэхгүй",
+      "LatestSchedulingReason": "Сүүлийн хуваарилалтын шалтгаан",
       "LongRunningSessions": "Удаан ажиллаж буй сешнүүд",
       "LongRunningSessionsTooltip": "Картын хугацаа эхлэхээс өмнө эхэлсэн төслийн ажиллаж буй сешнүүд, хуучнаас нь эхлэн.",
       "MemoryGiBHours": "Санах ой (GiB-цаг)",

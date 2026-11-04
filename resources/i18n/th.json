@@ -841,6 +841,7 @@
       "FolderLimit": "ขีดจำกัด: {{max}}",
       "Healthy": "ปกติ",
       "Insufficient": "ทรัพยากรไม่พอ",
+      "LatestSchedulingReason": "เหตุผลการจัดตารางล่าสุด",
       "LongRunningSessions": "เซสชันที่ทำงานนาน",
       "LongRunningSessionsTooltip": "เซสชันที่กำลังทำงานของโปรเจกต์ซึ่งเริ่มก่อนช่วงเวลาของการ์ด เรียงจากเก่าที่สุด",
       "MemoryGiBHours": "หน่วยความจำ (GiB-ชั่วโมง)",

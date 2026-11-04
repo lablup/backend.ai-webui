@@ -844,6 +844,7 @@
       "FolderLimit": "Limite : {{max}}",
       "Healthy": "Sain",
       "Insufficient": "Ressources insuffisantes",
+      "LatestSchedulingReason": "Dernier motif de planification",
       "LongRunningSessions": "Sessions de longue durée",
       "LongRunningSessionsTooltip": "Sessions en cours du projet démarrées avant la période de la carte, les plus anciennes d'abord.",
       "MemoryGiBHours": "Mémoire (Gio-heures)",

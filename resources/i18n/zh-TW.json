@@ -844,6 +844,7 @@
       "FolderLimit": "上限: {{max}}",
       "Healthy": "正常",
       "Insufficient": "資源不足",
+      "LatestSchedulingReason": "最近排程原因",
       "LongRunningSessions": "長時間執行的工作階段",
       "LongRunningSessionsTooltip": "專案中在卡片時間範圍開始前就已執行的工作階段，依最舊排序。",
       "MemoryGiBHours": "記憶體 (GiB 小時)",

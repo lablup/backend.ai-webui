@@ -844,6 +844,7 @@
       "FolderLimit": "Raja: {{max}}",
       "Healthy": "Kunnossa",
       "Insufficient": "Resurssit eivät riitä",
+      "LatestSchedulingReason": "Viimeisin ajoituksen syy",
       "LongRunningSessions": "Pitkään käynnissä olevat istunnot",
       "LongRunningSessionsTooltip": "Projektin käynnissä olevat istunnot, jotka alkoivat ennen kortin aikaväliä, vanhimmat ensin.",
       "MemoryGiBHours": "Muisti (GiB-tunnit)",

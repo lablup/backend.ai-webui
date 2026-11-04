@@ -831,6 +831,7 @@
       "FolderLimit": "Limit: {{max}}",
       "Healthy": "Healthy",
       "Insufficient": "Not enough resources",
+      "LatestSchedulingReason": "Latest Scheduling Reason",
       "LongRunningSessions": "Long-running Sessions",
       "LongRunningSessionsTooltip": "The project's running sessions that started before the card's time range, oldest first.",
       "MemoryGiBHours": "Memory (GiB-hours)",

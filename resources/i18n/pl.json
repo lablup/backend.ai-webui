@@ -844,6 +844,7 @@
       "FolderLimit": "Limit: {{max}}",
       "Healthy": "Sprawny",
       "Insufficient": "Za mało zasobów",
+      "LatestSchedulingReason": "Ostatni powód planowania",
       "LongRunningSessions": "Długo działające sesje",
       "LongRunningSessionsTooltip": "Działające sesje projektu, które rozpoczęły się przed zakresem karty, najstarsze najpierw.",
       "MemoryGiBHours": "Pamięć (GiB-godziny)",

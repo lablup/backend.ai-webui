@@ -844,6 +844,7 @@
       "FolderLimit": "Лимит: {{max}}",
       "Healthy": "Исправно",
       "Insufficient": "Недостаточно ресурсов",
+      "LatestSchedulingReason": "Последняя причина планирования",
       "LongRunningSessions": "Долго работающие сеансы",
       "LongRunningSessionsTooltip": "Работающие сеансы проекта, запущенные до периода карточки, сначала самые старые.",
       "MemoryGiBHours": "Память (ГиБ-часы)",

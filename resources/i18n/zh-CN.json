@@ -844,6 +844,7 @@
       "FolderLimit": "上限: {{max}}",
       "Healthy": "正常",
       "Insufficient": "资源不足",
+      "LatestSchedulingReason": "最近调度原因",
       "LongRunningSessions": "长时间运行的会话",
       "LongRunningSessionsTooltip": "项目中在卡片时间范围开始前就已运行的会话，按最早排序。",
       "MemoryGiBHours": "内存 (GiB 小时)",
