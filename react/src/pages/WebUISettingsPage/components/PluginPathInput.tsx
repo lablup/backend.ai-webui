@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { isValidPluginPath } from '../helper/pluginPath';
+import { isValidPluginPath } from '../../../helper/pluginPath';
 import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex, BAIUncontrolledInput } from 'backend.ai-ui';
 import { useState } from 'react';

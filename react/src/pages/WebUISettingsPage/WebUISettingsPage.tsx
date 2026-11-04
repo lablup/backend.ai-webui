@@ -2,13 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import BAIErrorBoundary from '../components/BAIErrorBoundary';
-import WebUISettingList from '../components/WebUISettingList';
-import { WEBUI_SETTINGS_CONFIG_KEY } from '../helper/webuiSettings';
+import BAIErrorBoundary from '../../components/BAIErrorBoundary';
+import { WEBUI_SETTINGS_CONFIG_KEY } from '../../helper/webuiSettings';
 import {
   useDomainAppConfig,
   useRawPublicDomainAppConfig,
-} from '../hooks/useAppConfig';
+} from '../../hooks/useAppConfig';
+import WebUISettingList from './components/WebUISettingList';
 import { BAICard, BAIFlex, BAISkeleton } from 'backend.ai-ui';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Suspense } from 'react';

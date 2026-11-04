@@ -2,8 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { App } from '../app-shim';
-import { refreshConfigFromToml } from '../helper/loginConfig';
+import { App } from '../../../app-shim';
+import type { SettingItemProps } from '../../../components/SettingItem';
+import SettingList, {
+  type SettingGroup,
+} from '../../../components/SettingList';
+import { refreshConfigFromToml } from '../../../helper/loginConfig';
 import {
   buildWebUISettingsDocument,
   isValidWebUISettingValue,
@@ -13,16 +17,14 @@ import {
   WEBUI_SETTINGS_CONFIG_KEY,
   type WebUISettingDefinition,
   type WebUISettingsDocument,
-} from '../helper/webuiSettings';
-import { useCurrentDomainValue } from '../hooks';
+} from '../../../helper/webuiSettings';
+import { useCurrentDomainValue } from '../../../hooks';
 import {
   useUpdateDomainAppConfig,
   useUpdatePublicDomainAppConfig,
-} from '../hooks/useAppConfig';
-import { useRawConfig } from '../hooks/useWebUIConfig';
+} from '../../../hooks/useAppConfig';
+import { useRawConfig } from '../../../hooks/useWebUIConfig';
 import PluginPathInput from './PluginPathInput';
-import type { SettingItemProps } from './SettingItem';
-import SettingList, { type SettingGroup } from './SettingList';
 import { useWebUISettingLabels } from './WebUISettingLabels';
 import { Button } from '@lablup/ui-common/Button';
 import { Text } from '@lablup/ui-common/Text';
