@@ -1392,6 +1392,7 @@
     "TextPlaceholderExample": "vd: Nhập một giá trị",
     "TextPlaceholderLabel": "Văn bản gợi ý ô nhập",
     "UIType": "Loại giao diện",
+    "UITypeCannotRenderSelectedValueType": "Loại UI này không thể hiển thị loại giá trị đã chọn.",
     "UITypeCheckbox": "Hộp kiểm",
     "UITypeIncompatibleWithValueType": "Loại giao diện đã chọn không thể hiển thị loại giá trị này.",
     "UITypeNumberInput": "Ô nhập số",
@@ -1457,6 +1458,7 @@
     "InviteByEmail": "Mời qua e-mail"
   },
   "comp:BAIScopedVFolderSelect": {
+    "NoMountPermission": "Bạn không có quyền gắn thư mục này.",
     "SelectFolder": "Chọn thư mục"
   },
   "comp:BAISessionAgentIds": {

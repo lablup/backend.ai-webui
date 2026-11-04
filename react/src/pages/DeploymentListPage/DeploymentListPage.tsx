@@ -26,6 +26,7 @@ import { useCreateActionArrival } from '../../hooks/useCreateActionArrival';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { useProjectPath } from '../../hooks/useRouteScope';
 import { toProjectContext } from '../../types/projectContext';
+import WebMCPDeploymentListTools from './components/WebMCPDeploymentTools';
 import { Button } from '@lablup/ui-common/Button';
 import { Link } from '@lablup/ui-common/Link';
 import { Text } from '@lablup/ui-common/Text';
@@ -164,6 +165,7 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
               entityId
               ...BAIModelDeploymentNodesFragment
               ...DeploymentSettingModal_deployment
+              ...WebMCPDeploymentTools_deployments
               metadata {
                 name
                 status
@@ -278,6 +280,22 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
             />
           </BAIFlex>
         </BAIFlex>
+        <WebMCPDeploymentListTools
+          deploymentsFrgmt={deploymentNodes}
+          columnOverrides={columnOverrides}
+          page={tablePaginationOption.current}
+          pageSize={tablePaginationOption.pageSize}
+          total={total}
+          pending={deferredQueryVariables !== queryVariables}
+          viewParams={{
+            statusCategory: queryParams.statusCategory,
+            filter: _.isEmpty(queryParams.filter)
+              ? null
+              : JSON.stringify(queryParams.filter),
+            order: queryParams.order,
+          }}
+          editingDeploymentId={pageProject ? editingDeployment?.id : null}
+        />
         <BAIModelDeploymentNodes
           onEditLabels={isLabelable ? setLabelingDeployment : undefined}
           onLabelClick={(label) => {

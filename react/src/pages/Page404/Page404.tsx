@@ -49,6 +49,12 @@ const Page404 = () => {
 
   return (
     <RouteErrorContent
+      kind="not_found"
+      // The copy carries a <br/> for the heading's <Trans>; a tab title is plain text.
+      label={t('webui.NotFound')
+        .replace(/<br\s*\/?>/gi, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()}
       segments={segments.length ? segments : undefined}
       title={<Trans i18nKey={'webui.NotFound'} />}
       description={t('webui.DescNotFound')}
