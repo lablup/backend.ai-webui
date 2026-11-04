@@ -222,7 +222,7 @@ project: { id: string; name: string } | null
     `AdminModelCardListPage`, `PendingSessionNodeList`, `AdminUsersPage`,
     `ResourcePolicyPage`, `SchedulerPage`, `ResourcesPage`, `ProjectPage`,
     `ConfigurationsPage`, `MaintenancePage`, `DiagnosticsPage`,
-    `RBACManagementPage`, `BrandingPage`, `components/Information`)에서
+    `RBACManagementPage`, `BrandingPage`, `pages/InformationPage/InformationPage`)에서
     `useCurrentProjectValue` import를 막고, 위반한 코드에 이 ADR을 가리킨다.
     `EnvironmentPage`, `ReservoirPage`, `AdminDashboardPage`(모두 전환에서
     제외)와 `DeploymentDetailPage`(허용된 page 수준 reader)는 제외한다.

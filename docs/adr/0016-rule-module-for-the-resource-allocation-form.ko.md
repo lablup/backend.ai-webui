@@ -123,7 +123,7 @@ flowchart LR
 - #10628 — 자원 그룹에 없는 슬롯을 요구하는 preset의 비활성 표시. 그 PR의 자동 재선택은 4절로 대체됐다.
 - FR-3523, FR-3985 — effect가 자기 쓴 값에 반응해 생긴 루프와 그 완화책.
 - FR-4067 (#9927) — preset을 id로 식별하고 다른 자원 그룹 전용 preset을 에러로 표시한 결정.
-- `react/src/components/SessionFormItems/resourceAllocationRules.ts`, `resourceAllocationRules.test.ts`, `ResourceAllocationFormItems.tsx`, `react/src/components/ResourcePresetSelect.tsx`, `react/src/components/DeploymentAddRevisionModal.tsx`.
+- `react/src/components/SessionFormItems/resourceAllocationRules.ts`, `resourceAllocationRules.test.ts`, `ResourceAllocationFormItems.tsx`, `react/src/components/ResourcePresetSelect.tsx`, `react/src/pages/DeploymentDetailPage/components/DeploymentAddRevisionModal.tsx`.
 
 관련: ADR 0001(이 fragment가 project를 prop으로 받는 계약), ADR 0014(폼 control의 `BAI*` 이름).
 

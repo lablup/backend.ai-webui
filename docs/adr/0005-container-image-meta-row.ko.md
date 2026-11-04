@@ -23,7 +23,7 @@
 | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `react/src/components/ImageNodeSimpleTag.tsx`                                 | icon, `BAIText`로 그린 세 부분, 직접 쓴 `Divider`, tag chip, `BAIText copyable`                                                                                                                                               |
 | `packages/backend.ai-ui/src/components/fragments/BAIImageNodeSimpleTagV2.tsx` | icon, Astryx `Text`로 그린 세 부분, 직접 쓴 `Divider`, tag chip, `BAIText copyable`                                                                                                                                           |
-| `react/src/components/SessionLauncherPreview.tsx`                             | 같은 행을 `supportExtendedImageInfo` 분기마다 한 벌씩. FR-3544의 `ImageMetaDivider`와 `ImageTagTokens`는 썼지만 icon, 세 부분, copy control은 두 분기가 따로 조립했고 copy control은 이 파일 안의 `CopyValueIconButton`이었다 |
+| `react/src/pages/SessionLauncherPage/components/SessionLauncherPreview.tsx`   | 같은 행을 `supportExtendedImageInfo` 분기마다 한 벌씩. FR-3544의 `ImageMetaDivider`와 `ImageTagTokens`는 썼지만 icon, 세 부분, copy control은 두 분기가 따로 조립했고 copy control은 이 파일 안의 `CopyValueIconButton`이었다 |
 | `react/src/components/ImageTags.tsx`의 `UNSAFELazySessionImageTag`            | 행이 아니라 다른 모양. 이름과 version을 blue/green double tag로, base image와 architecture를 각각 badge로                                                                                                                     |
 | `react/src/components/ImageList.tsx`의 Full image path 열                     | reference 문자열. `BAIText copyable ellipsis`, monospace 아님                                                                                                                                                                 |
 | `react/src/components/CustomizedImageList.tsx`의 Full image path 열           | reference 문자열. `BAIText monospace copyable`, ellipsis 없음                                                                                                                                                                 |
@@ -168,7 +168,7 @@ flowchart TB
 - **The launcher copy control loses its custom label**: session launcher 리뷰 단계의 copy control이 "Copy Image" tooltip 대신 다른 행과 같은 BUI의 일반 Copy label을 쓴다.
 - **Empty chips and empty parts disappear**: key가 빈 tag가 그리던 빈 chip이 사라지고, chip이 없는 image는 chip 앞 구분선도 그리지 않는다.
 - **The chip loop exists three times**: v1 component, v2 component, host의 `ImageTagTokens`가 같은 fact를 같은 규칙으로 그린다. 판정은 `imageNodeTagFacts` 한 곳에 있으므로 규칙이 갈리지는 않지만, chip의 markup을 바꾸려면 세 곳을 같이 고쳐야 한다.
-- **Three surfaces stay outside the row**: 환경 선택 dropdown의 환경 목록, 손으로 입력한 image 문자열, 그리고 `react/src/components/SessionTemplateModal.tsx`의 Environments 열은 image 행을 그리지 않는다. 앞의 둘은 image 하나의 identity가 아니고, 마지막은 폭이 250px로 묶인 cell에 넣는 축약 label이라 architecture와 copy control이 들어갈 자리가 없다. 셋 다 `BAIImageMetaIcon`은 쓴다.
+- **Three surfaces stay outside the row**: 환경 선택 dropdown의 환경 목록, 손으로 입력한 image 문자열, 그리고 `react/src/pages/SessionLauncherPage/components/SessionTemplateModal.tsx`의 Environments 열은 image 행을 그리지 않는다. 앞의 둘은 image 하나의 identity가 아니고, 마지막은 폭이 250px로 묶인 cell에 넣는 축약 label이라 architecture와 copy control이 들어갈 자리가 없다. 셋 다 `BAIImageMetaIcon`은 쓴다.
 
 ## 출처
 
