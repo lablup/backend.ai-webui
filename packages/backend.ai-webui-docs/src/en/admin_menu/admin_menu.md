@@ -450,13 +450,11 @@ is displayed without any invitation procedure.
 
 ### Admin deployments page
 
-Administrators and superadmins can access the Admin Deployments page at `/admin/deployments`, which provides a cross-project view of every deployment in the cluster. The **Project** column is available in the deployment list but is hidden by default; you can enable it using the column settings.
-
 ![](../images/admin_serving_page.png)
 
 The Admin Deployments page has up to four tabs:
 
-- **Deployments**: Displays the deployment list across all projects and provides the same lifecycle and property filters as the user-facing Deployments page. This cross-project view additionally offers a **Project** filter property.
+- **Deployments**: Displays the deployment list across all projects.
 - **Model Store Management**: See the [Admin Model Store Management](#admin-model-store-management) section below.
 - **Prometheus Preset**: Lets administrators manage reusable Prometheus query presets. See the [Prometheus Query Presets](#prometheus-query-presets) section below.
 - **Deployment Presets**: Lets administrators manage reusable deployment presets that end users can apply when deploying a model. See the [Deployment Presets](#deployment-presets) section below.
