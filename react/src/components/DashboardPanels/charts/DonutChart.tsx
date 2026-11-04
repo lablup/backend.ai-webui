@@ -111,6 +111,9 @@ const LEGEND_DENSITIES: ReadonlyArray<LegendDensity> = [
   { rowHeight: COMPACT_ROW_HEIGHT, hasHeader: false, columns: 2 },
 ];
 
+// A two-column legend needs this much width to keep every name readable; narrower, it stays one scrolling column.
+const TWO_COLUMN_MIN_WIDTH = 480;
+
 const legendHeight = (density: LegendDensity, rowCount: number) =>
   (Math.ceil(rowCount / density.columns) + (density.hasHeader ? 1 : 0)) *
   density.rowHeight;
@@ -188,10 +191,13 @@ const DonutChart: React.FC<DonutChartProps> = ({
   const hasValue = rows.some((row) => row.value > 0);
   const centre = donutTotal(rows, total);
 
+  const densities = LEGEND_DENSITIES.filter(
+    (candidate) => candidate.columns === 1 || box.width >= TWO_COLUMN_MIN_WIDTH,
+  );
   const density =
-    LEGEND_DENSITIES.find(
+    densities.find(
       (candidate) => legendHeight(candidate, rows.length) <= box.height,
-    ) ?? LEGEND_DENSITIES[LEGEND_DENSITIES.length - 1];
+    ) ?? densities[densities.length - 1];
   const legendBoxHeight = legendHeight(density, rows.length);
 
   // The legend keeps its full width; the ring only takes the room left beside it.
@@ -339,11 +345,14 @@ const DonutChart: React.FC<DonutChartProps> = ({
         gap="md"
         aria-label={label}
         role="group"
-        style={
-          density.columns === 2
+        style={{
+          ...(density.columns === 2
             ? { flex: '0 1 auto', minWidth: 0, maxWidth: '100%' }
-            : { flex: 'none', maxWidth: '100%' }
-        }
+            : { flex: 'none', maxWidth: '100%' }),
+          // Rows the box cannot hold scroll inside the legend.
+          maxHeight: '100%',
+          overflowY: 'auto',
+        }}
       >
         {_.chunk(
           legendRows,
@@ -356,7 +365,7 @@ const DonutChart: React.FC<DonutChartProps> = ({
             // Columns size to their lines and shrink, names truncating, when the card is narrow.
             style={
               density.columns === 2
-                ? { flex: '0 1 auto', minWidth: 0 }
+                ? { flex: '1 1 0', minWidth: 0 }
                 : { width: 'max-content', maxWidth: '100%' }
             }
           >
