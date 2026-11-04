@@ -18,6 +18,7 @@ import {
   useWebUIMenuItems,
 } from '../../hooks/useWebUIMenuItems';
 import { toProjectContext } from '../../types/projectContext';
+import { WebMCPDeploymentDetailTools } from '../DeploymentListPage/components/WebMCPDeploymentTools';
 import DeploymentAccessTokensCard from './components/DeploymentAccessTokensCard';
 import DeploymentAddRevisionModal, {
   type DeploymentAddRevisionModalCreatedRevision,
@@ -358,6 +359,19 @@ const DeploymentDetailPage: React.FC = () => {
 
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
+      <WebMCPDeploymentDetailTools
+        deployment={{
+          id: deploymentId,
+          name: deploymentName ?? null,
+          status: deploymentStatus ?? null,
+          projectId: deploymentProjectId,
+          projectName: deploymentProjectName,
+          endpointUrl: deployment.networkAccess.endpointUrl ?? null,
+          openToPublic: deployment.networkAccess.openToPublic ?? null,
+          runningReplicas: deployment.runningReplicas?.count ?? 0,
+          desiredReplicas: deployment.replicaState?.desiredReplicaCount ?? 0,
+        }}
+      />
       {isProjectMismatch && deploymentProjectId && (
         <Banner
           role="alert"
