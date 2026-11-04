@@ -10,6 +10,7 @@ import {
 import { fireEvent, render, screen } from '@testing-library/react';
 import type { BAIColumnType, SessionV2InList } from 'backend.ai-ui';
 import type { TFunction } from 'i18next';
+import type { ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -35,7 +36,7 @@ const SESSION = {
 
 const columnsWith = (onOpenHistory = vi.fn()) =>
   customizePendingColumns(BASE_COLUMNS, {
-    reasons: { 's-1': 'No agent has enough cuda.shares' },
+    renderReason: (session) => `reason of ${session.entityId}` as ReactNode,
     t,
     onOpenHistory,
   });
@@ -75,17 +76,10 @@ describe('customizePendingColumns', () => {
     );
   });
 
-  it('reads the reason looked up for the session, "-" for one not returned', () => {
+  it('renders each row reason through renderReason', () => {
     const reason = columnsWith().find((column) => column.key === 'reason');
     renderCell(reason);
-    expect(
-      screen.getByText('No agent has enough cuda.shares'),
-    ).toBeInTheDocument();
-    renderCell(reason, {
-      ...SESSION,
-      entityId: 's-2',
-    } as unknown as SessionV2InList);
-    expect(screen.getByText('-')).toBeInTheDocument();
+    expect(screen.getByText('reason of s-1')).toBeInTheDocument();
   });
 
   it('opens the scheduling history once from the session name', () => {
@@ -117,5 +111,10 @@ describe('PendingReasonCell', () => {
   it('says the scheduler has not tried yet', () => {
     render(<PendingReasonCell reason={null} />);
     expect(screen.getByText('dashboard.card.NotTriedYet')).toBeInTheDocument();
+  });
+
+  it('shows "-" when the history could not be read', () => {
+    render(<PendingReasonCell reason={undefined} />);
+    expect(screen.getByText('-')).toBeInTheDocument();
   });
 });

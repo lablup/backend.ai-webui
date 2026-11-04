@@ -5,11 +5,7 @@
 import type { PendingSessionsPanelReasonQuery } from '../../../__generated__/PendingSessionsPanelReasonQuery.graphql';
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
 import SessionSchedulingHistoryModal from '../../SessionSchedulingHistoryModal';
-import { legacyScopeId, type CardScope } from '../cardScope';
-import {
-  legacySessionIdFilter,
-  pendingReason,
-} from '../projectAdminCards/projectCardData';
+import type { CardScope } from '../cardScope';
 import type { PanelComponentProps, PanelSettings } from '../types';
 import { useResetPageOn } from '../useResetPageOn';
 import ScopedCard from './ScopedCard';
@@ -21,9 +17,9 @@ import { Text } from '@lablup/ui-common/Text';
 import {
   BAILink,
   BAISessionNodesV2,
+  BAISkeleton,
   BAIText,
   BAIUnmountAfterClose,
-  filterOutNullAndUndefined,
   type BAIColumnType,
   type SessionV2InList,
 } from 'backend.ai-ui';
@@ -38,64 +34,47 @@ const PENDING_FILTER: SessionV2Filter = { status: { in: ['PENDING'] } };
 // Longest waiting first.
 const ORDER_BY = [{ field: 'CREATED_AT' as const, direction: 'ASC' as const }];
 
-type Reasons = Readonly<Record<string, string | null>>;
-
-/** The legacy session node's scheduler message for the listed sessions, in one query. */
-const PendingReasons: React.FC<{
-  scope: CardScope;
-  sessionIds: ReadonlyArray<string>;
-  fetchKey: string;
-  children: (reasons: Reasons) => React.ReactNode;
-}> = ({ scope, sessionIds, fetchKey, children }) => {
+/** The latest scheduling attempt that did not succeed, from the session's scheduling history. */
+const PendingReason: React.FC<{ sessionId: string; fetchKey: string }> = ({
+  sessionId,
+  fetchKey,
+}) => {
   'use memo';
   const data = useLazyLoadQuery<PendingSessionsPanelReasonQuery>(
     graphql`
-      query PendingSessionsPanelReasonQuery(
-        $scopeId: ScopeField!
-        $filter: String!
-        $first: Int!
-        $skip: Boolean!
-      ) {
-        compute_session_nodes(
-          scope_id: $scopeId
-          filter: $filter
-          first: $first
-        ) @skip(if: $skip) @catch(to: RESULT) {
+      query PendingSessionsPanelReasonQuery($scope: SessionScope!) {
+        sessionScopedSchedulingHistories(
+          scope: $scope
+          filter: { result: { notEquals: SUCCESS } }
+          orderBy: [{ field: UPDATED_AT, direction: DESC }]
+          limit: 1
+        ) @catch(to: RESULT) {
           edges {
             node {
-              row_id
-              status_info
-              status_data
+              message
+              errorCode
             }
           }
         }
       }
     `,
-    {
-      scopeId: legacyScopeId(scope),
-      filter: legacySessionIdFilter(sessionIds),
-      first: Math.max(1, sessionIds.length),
-      skip: sessionIds.length === 0,
-    },
+    { scope: { sessionId } },
     { fetchPolicy: 'store-and-network', fetchKey },
   );
-  // A failed lookup leaves every reason unknown instead of failing the card.
-  const connection = data.compute_session_nodes;
-  return children(
-    Object.fromEntries(
-      filterOutNullAndUndefined(
-        connection?.ok ? connection.value?.edges.map((edge) => edge?.node) : [],
-      ).map((node) => [
-        String(node.row_id),
-        pendingReason(node.status_info, node.status_data),
-      ]),
-    ),
+  const histories = data.sessionScopedSchedulingHistories;
+  // A failed lookup reads as unknown instead of failing the card.
+  if (!histories.ok) return <PendingReasonCell reason={undefined} />;
+  const latest = histories.value?.edges[0]?.node;
+  return (
+    <PendingReasonCell
+      reason={latest ? (latest.message ?? latest.errorCode ?? null) : null}
+    />
   );
 };
 
 /** The scheduler's latest message for one session, on one line, the full text on hover. */
 export const PendingReasonCell: React.FC<{
-  /** `undefined` when the lookup did not return the session (failed, or not readable). */
+  /** `undefined` when the history could not be read. */
   reason: string | null | undefined;
 }> = ({ reason }) => {
   'use memo';
@@ -121,11 +100,11 @@ export const PENDING_DEFAULT_COLUMNS = ['name', 'reason', 'elapsedTime'];
 export const customizePendingColumns = (
   columns: Array<BAIColumnType<SessionV2InList>>,
   {
-    reasons,
+    renderReason,
     t,
     onOpenHistory,
   }: {
-    reasons: Reasons;
+    renderReason: (session: SessionV2InList) => React.ReactNode;
     t: TFunction;
     onOpenHistory: (session: SessionV2InList) => void;
   },
@@ -135,13 +114,8 @@ export const customizePendingColumns = (
     title: t('dashboard.card.LatestSchedulingReason'),
     // Takes the width left over, so a long message ellipsizes instead of widening the table.
     onCell: () => ({ style: { maxWidth: 0, width: '100%' } }),
-    render: (_value: unknown, session: SessionV2InList) => (
-      <PendingReasonCell
-        reason={
-          session.entityId in reasons ? reasons[session.entityId] : undefined
-        }
-      />
-    ),
+    render: (_value: unknown, session: SessionV2InList) =>
+      renderReason(session),
   };
   const customized = columns.map((column): BAIColumnType<SessionV2InList> => ({
     ...column,
@@ -219,53 +193,54 @@ const PendingSessionTable: React.FC<{
         fetchKey={fetchKey}
       >
         {({ count, rows }) => (
-          <PendingReasons
-            scope={scope}
-            sessionIds={rows.map((row) => row.entityId)}
-            fetchKey={fetchKey}
-          >
-            {(reasons) => (
-              <BAISessionNodesV2
-                sessionsFrgmt={rows}
-                disableSorter
-                loading={
-                  deferredPage.offset !== page.offset ||
-                  deferredPage.limit !== page.limit
-                }
-                onRow={(session) => ({
-                  onClick: () => openHistory(session),
-                  style: { cursor: 'pointer' },
-                })}
-                customizeColumns={(columns) =>
-                  customizePendingColumns(columns, {
-                    reasons,
-                    t,
-                    onOpenHistory: openHistory,
-                  })
-                }
-                tableSettings={
-                  onChangeSettings
-                    ? {
-                        columnOverrides: columnOverrides ?? {},
-                        onColumnOverridesChange: (overrides) =>
-                          onChangeSettings({
-                            columnOverrides: _.isEmpty(overrides)
-                              ? undefined
-                              : overrides,
-                          }),
-                      }
-                    : undefined
-                }
-                pagination={{
-                  pageSize: tablePaginationOption.pageSize,
-                  current: tablePaginationOption.current,
-                  total: count,
-                  onChange: (current, pageSize) =>
-                    setTablePaginationOption({ current, pageSize }),
-                }}
-              />
-            )}
-          </PendingReasons>
+          <BAISessionNodesV2
+            sessionsFrgmt={rows}
+            disableSorter
+            loading={
+              deferredPage.offset !== page.offset ||
+              deferredPage.limit !== page.limit
+            }
+            onRow={(session) => ({
+              onClick: () => openHistory(session),
+              style: { cursor: 'pointer' },
+            })}
+            customizeColumns={(columns) =>
+              customizePendingColumns(columns, {
+                renderReason: (session) => (
+                  <Suspense
+                    fallback={<BAISkeleton rows={1} hasTitle={false} />}
+                  >
+                    <PendingReason
+                      sessionId={session.entityId}
+                      fetchKey={fetchKey}
+                    />
+                  </Suspense>
+                ),
+                t,
+                onOpenHistory: openHistory,
+              })
+            }
+            tableSettings={
+              onChangeSettings
+                ? {
+                    columnOverrides: columnOverrides ?? {},
+                    onColumnOverridesChange: (overrides) =>
+                      onChangeSettings({
+                        columnOverrides: _.isEmpty(overrides)
+                          ? undefined
+                          : overrides,
+                      }),
+                  }
+                : undefined
+            }
+            pagination={{
+              pageSize: tablePaginationOption.pageSize,
+              current: tablePaginationOption.current,
+              total: count,
+              onChange: (current, pageSize) =>
+                setTablePaginationOption({ current, pageSize }),
+            }}
+          />
         )}
       </SessionList>
       {historySessionId ? (
