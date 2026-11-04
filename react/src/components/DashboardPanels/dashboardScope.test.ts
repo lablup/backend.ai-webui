@@ -91,26 +91,41 @@ describe('defaultResourceGroupOf', () => {
 });
 
 describe('resourceGroupScopeOf', () => {
-  it('lists the page project groups, never another project', () => {
-    expect(resourceGroupScopeOf({ kind: 'mine', projectId: 'p-url' })).toEqual({
+  it('lists the page project groups with its domain ones, never another project', () => {
+    expect(
+      resourceGroupScopeOf({ kind: 'mine', projectId: 'p-url' }, 'current'),
+    ).toEqual({
+      domain: [{ value: 'current' }],
       project: [{ value: 'p-url' }],
     });
     expect(
-      resourceGroupScopeOf({
-        kind: 'projects',
-        projectIds: ['p-url'],
-        domain: DOMAIN,
-      }),
-    ).toEqual({ project: [{ value: 'p-url' }] });
+      resourceGroupScopeOf(
+        {
+          kind: 'projects',
+          projectIds: ['p-url'],
+          domain: DOMAIN,
+        },
+        'current',
+      ),
+    ).toEqual({
+      domain: [{ value: 'domain-uuid' }],
+      project: [{ value: 'p-url' }],
+    });
+    expect(
+      resourceGroupScopeOf({ kind: 'mine', projectId: null }, 'current'),
+    ).toEqual({ project: [] });
   });
 
   it('lists the domain groups on the superadmin page', () => {
     expect(
-      resourceGroupScopeOf({
-        kind: 'projects',
-        projectIds: 'all',
-        domain: DOMAIN,
-      }),
+      resourceGroupScopeOf(
+        {
+          kind: 'projects',
+          projectIds: 'all',
+          domain: DOMAIN,
+        },
+        'current',
+      ),
     ).toEqual({ domain: [{ value: DOMAIN.id }] });
   });
 });
