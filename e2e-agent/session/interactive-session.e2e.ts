@@ -31,9 +31,9 @@ test(
       'Choose the "Interactive" session type, enter {name} as the Session name, then press "Next"',
       { params: { name: unique(name) } },
     );
-    await expect(screen.getByRole("button", /^Resource Group/)).toBeVisible({
-      timeout: 15_000,
-    });
+    await expect(
+      screen.getByRole("heading", "Resource Allocation"),
+    ).toBeVisible({ timeout: 15_000 });
 
     await agent.act(
       'Select {group} in the "Resource Group" field and {preset} in the "Resource Presets" field',
