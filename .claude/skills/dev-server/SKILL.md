@@ -229,9 +229,13 @@ pre-fill. A `config.toml` that is already there and **not** written by `use` (no
 `# Written by \`pnpm run dev-env use\`` first line) is the user's: keep it, `--set` still
 applies to it in place.
 
-**Switches the PR needs: the `Config:` line.** A PR whose change sits behind a switch says
-so in its body with one line — `Config: resources.openPortToPublic = true` (several,
-comma-separated: `Config: resources.openPortToPublic = true, general.enableModelFolders = true`).
+**Switches the PR needs: the `Config:` line.** A PR whose change sits behind a key
+`config.toml` still owns (ADR 0025, section 3) says so in its body with one line —
+`Config: general.apiDomainName = "default"` (several, comma-separated:
+`Config: general.apiDomainName = "default", general.signupSupport = true`). A setting
+System Settings serves (`resources.openPortToPublic`, `general.enableModelFolders`, …) is
+not a `Config:` pair: the dev server reads the backend's own System Settings, `use` warns
+and skips such a `--set`, and the PR body names the setting for the reviewer instead.
 Read it from the same `gh pr view --json body` as 2c and pass each pair as
 `--set <section>.<key>=<value>`; repeat it on every `use`, since `use` rewrites the file whole.
 When you are the one opening the PR and your change is behind a `baiClient._config.*` /
