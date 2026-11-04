@@ -13,7 +13,7 @@ import { App } from '../../../app-shim';
 import { useSuspendedBackendaiClient } from '../../../hooks';
 import KeypairInfoModal from './KeypairInfoModal';
 import KeypairSettingModal from './KeypairSettingModal';
-import { WebMCPAdminKeypairTools } from '../../../components/WebMCPAdminUserTools';
+import { WebMCPAdminKeypairTools } from './WebMCPAdminUserTools';
 import { Text } from '@lablup/ui-common/Text';
 import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';

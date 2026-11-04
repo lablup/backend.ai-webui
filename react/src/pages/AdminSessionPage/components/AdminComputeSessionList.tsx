@@ -24,7 +24,7 @@ import { useCurrentUserRole } from '../../../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../../../hooks/useBAISetting';
 import { useCSVExport } from '../../../hooks/useCSVExport';
-import WebMCPSessionListTools from '../../../components/WebMCPSessionListTools';
+import WebMCPSessionListTools from '../../ComputeSessionListPage/components/WebMCPSessionListTools';
 import { Banner } from '@lablup/ui-common/Banner';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Tooltip } from '@lablup/ui-common/Tooltip';

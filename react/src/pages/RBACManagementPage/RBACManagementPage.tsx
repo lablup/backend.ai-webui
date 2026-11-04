@@ -22,7 +22,7 @@ import RoleNodes, {
   availableRoleSorterValues,
 } from './components/RoleNodes';
 import RolePresetListTab from './components/RolePresetListTab';
-import WebMCPRoleListTools from '../../components/WebMCPRoleListTools';
+import WebMCPRoleListTools from './components/WebMCPRoleListTools';
 import {
   BAIButton,
   BAICard,

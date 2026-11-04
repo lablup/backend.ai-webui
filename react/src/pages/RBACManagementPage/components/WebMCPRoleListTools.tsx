@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { WebMCPRoleListToolsFragment$key } from '../__generated__/WebMCPRoleListToolsFragment.graphql';
+import type { WebMCPRoleListToolsFragment$key } from '../../../__generated__/WebMCPRoleListToolsFragment.graphql';
 import {
   openedItem,
   overridesFromHiddenKeys,
@@ -13,8 +13,8 @@ import {
   type PageToolColumn,
   type PageToolRow,
   type ViewParamValue,
-} from '../helper/webmcpPageTools';
-import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
+} from '../../../helper/webmcpPageTools';
+import { useHiddenColumnKeysSetting } from '../../../hooks/useHiddenColumnKeysSetting';
 import { filterOutNullAndUndefined, useBAIWebMCPActive } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
@@ -138,7 +138,7 @@ const RoleListToolsRegistrar: React.FC<WebMCPRoleListToolsProps> = ({
 
 /**
  * `bai_list_visible_role`, `bai_get_role_filter` and `bai_get_current_role`
- * for the RBAC role list (ADR 0018).
+ * for the RBAC role list (ADR 0025).
  */
 const WebMCPRoleListTools: React.FC<WebMCPRoleListToolsProps> = (props) => {
   'use memo';

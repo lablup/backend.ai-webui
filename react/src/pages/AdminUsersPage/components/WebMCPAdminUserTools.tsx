@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { WebMCPAdminUserToolsFragment$key } from '../__generated__/WebMCPAdminUserToolsFragment.graphql';
+import type { WebMCPAdminUserToolsFragment$key } from '../../../__generated__/WebMCPAdminUserToolsFragment.graphql';
 import {
   openedItem,
   usePageReadTools,
@@ -11,7 +11,7 @@ import {
   type PageToolColumn,
   type PageToolRow,
   type ViewParamValue,
-} from '../helper/webmcpPageTools';
+} from '../../../helper/webmcpPageTools';
 import {
   filterOutNullAndUndefined,
   toLocalId,
@@ -145,7 +145,7 @@ const AdminUserToolsRegistrar: React.FC<WebMCPAdminUserToolsProps> = ({
 
 /**
  * `bai_list_visible_user`, `bai_get_user_filter` and `bai_get_current_user`
- * for the Users tab of the admin user page (ADR 0018).
+ * for the Users tab of the admin user page (ADR 0025).
  */
 export const WebMCPAdminUserTools: React.FC<WebMCPAdminUserToolsProps> = (
   props,
@@ -235,7 +235,7 @@ const AdminKeypairToolsRegistrar: React.FC<WebMCPAdminKeypairToolsProps> = ({
 /**
  * `bai_list_visible_keypair`, `bai_get_keypair_filter` and
  * `bai_get_current_keypair` for the Credentials tab of the admin user page
- * (ADR 0018).
+ * (ADR 0025).
  */
 export const WebMCPAdminKeypairTools: React.FC<WebMCPAdminKeypairToolsProps> = (
   props,

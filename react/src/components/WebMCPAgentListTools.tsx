@@ -151,7 +151,7 @@ const AgentListToolsRegistrar: React.FC<WebMCPAgentListToolsProps> = ({
 
 /**
  * `bai_list_visible_agent`, `bai_get_agent_filter` and
- * `bai_get_current_agent` for the agent list (ADR 0018).
+ * `bai_get_current_agent` for the agent list (ADR 0025).
  */
 const WebMCPAgentListTools: React.FC<WebMCPAgentListToolsProps> = (props) => {
   'use memo';

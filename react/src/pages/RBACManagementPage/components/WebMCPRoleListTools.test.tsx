@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { WebMCPRoleListToolsTestQuery } from '../__generated__/WebMCPRoleListToolsTestQuery.graphql';
+import type { WebMCPRoleListToolsTestQuery } from '../../../__generated__/WebMCPRoleListToolsTestQuery.graphql';
 import WebMCPRoleListTools from './WebMCPRoleListTools';
 import { render, waitFor } from '@testing-library/react';
 import { BAIWebMCPProvider, type WebMCPToolDescriptor } from 'backend.ai-ui';
@@ -19,7 +19,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({ hiddenKeys: [] as Array<string> }));
 
-vi.mock('../hooks/useHiddenColumnKeysSetting', () => ({
+vi.mock('../../../hooks/useHiddenColumnKeysSetting', () => ({
   useHiddenColumnKeysSetting: () => [mocks.hiddenKeys],
 }));
 

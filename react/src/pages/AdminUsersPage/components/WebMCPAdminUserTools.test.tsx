@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { WebMCPAdminUserToolsTestQuery } from '../__generated__/WebMCPAdminUserToolsTestQuery.graphql';
+import type { WebMCPAdminUserToolsTestQuery } from '../../../__generated__/WebMCPAdminUserToolsTestQuery.graphql';
 import {
   WebMCPAdminKeypairTools,
   WebMCPAdminUserTools,
