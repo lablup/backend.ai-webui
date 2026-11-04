@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9f295c8f0c68d0dcfc23f8c13064113a>>
+ * @generated SignedSource<<1f30eadcf45e7d6fa4ea28370fe6f182>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,12 +18,12 @@ export type ProjectAdminSettingModalAssignMutation$variables = {
   input: BulkAssignRoleInput;
 };
 export type ProjectAdminSettingModalAssignMutation$data = {
-  readonly adminBulkAssignRole: {
+  readonly partialBulkAssignRoles: {
     readonly assigned: ReadonlyArray<{
       readonly id: string;
       readonly userId: string;
     }>;
-  } | null | undefined;
+  };
 };
 export type ProjectAdminSettingModalAssignMutation = {
   response: ProjectAdminSettingModalAssignMutation$data;
@@ -50,7 +50,7 @@ v1 = [
     ],
     "concreteType": "BulkAssignRolePayload",
     "kind": "LinkedField",
-    "name": "adminBulkAssignRole",
+    "name": "partialBulkAssignRoles",
     "plural": false,
     "selections": [
       {
@@ -100,16 +100,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "09d9f12089a2c96ecb53085b5cbb1c9d",
+    "cacheID": "1682c2cadfafd09ca3b4b1317d6a6de2",
     "id": null,
     "metadata": {},
     "name": "ProjectAdminSettingModalAssignMutation",
     "operationKind": "mutation",
-    "text": "mutation ProjectAdminSettingModalAssignMutation(\n  $input: BulkAssignRoleInput!\n) {\n  adminBulkAssignRole(input: $input) {\n    assigned {\n      id\n      userId\n    }\n  }\n}\n"
+    "text": "mutation ProjectAdminSettingModalAssignMutation(\n  $input: BulkAssignRoleInput!\n) {\n  partialBulkAssignRoles(input: $input) {\n    assigned {\n      id\n      userId\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "4fc0a561f7a656fe3784d9c8f9862438";
+(node as any).hash = "78876bf6c8fcdc49ad2e3d834545876c";
 
 export default node;
