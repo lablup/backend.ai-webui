@@ -2708,8 +2708,6 @@
     "DeleteResourceGroup": "删除资源组",
     "Description": "描述",
     "Domain": "域名",
-    "Driver": "司机",
-    "DriverOptions": "驱动程序选项",
     "DuplicateHandlerOverride": "该 handler 已被覆盖。",
     "DuplicateResourceSlot": "该资源槽已添加。",
     "EditDefaultDeploymentOptions": "编辑默认部署选项",

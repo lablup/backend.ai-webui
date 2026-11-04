@@ -1,0 +1,237 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import {
+  SizeUnit,
+  convertToBinaryUnit,
+  convertToDecimalUnit,
+} from '../../../helper';
+import { UserStatsData, UserStatsDataKey } from '../../../hooks';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import useUserUsageStats from '../../../hooks/useUserUsageStats';
+import { Period } from './AllocationHistory';
+import './AllocationHistoryStatistics.css';
+import { Heading } from '@lablup/ui-common/Heading';
+import { useTheme } from '@lablup/ui-common/theme';
+import { BAICard, BAIFlex, BAIQuestionIconWithTooltip } from 'backend.ai-ui';
+import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip as ChartTooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
+
+type ByteUnit = 'B' | 'KiB' | 'MiB' | 'GiB' | 'TiB' | 'PiB' | 'EiB';
+type DecimalUnit = 'B' | 'KB' | 'MB' | 'GB' | 'TB' | 'PB' | 'EB';
+
+const DAY_LENGTH = 4 * 24;
+const WEEK_LENGTH = DAY_LENGTH * 7;
+
+interface GraphCardProps {
+  title: string;
+  tooltipText?: string;
+  children: React.ReactNode;
+}
+// PILOT-DECISION: antd `Card type="inner"` -> BUI `BAICard` (MAPPING §5.1 —
+// Astryx `Card` is a bare surface, the header is composition). antd's inner
+// variant differed from the outer one by a tinted header strip, a 14px title
+// and 16px body padding; Astryx has no header strip to tint, so the two
+// carried-over metrics are the card title level and `padding={4}` (16px). The
+// tint itself is DROPPED — reproducing it would be a per-component CSS block
+// fighting `astryx-card`, which the defaults-first policy rules out.
+//
+// The title is `Heading level={5}` (16px). It was `level={4}` for the 14px rung
+// of Astryx's own ramp, but the restored antd ramp has no 14px heading rung at
+// all (38/30/24/20/16) and heading-4 is now 20px — bigger than the OUTER card
+// titles this inner card sits under, i.e. an inverted hierarchy. 16px is the
+// nearest rung and lines this up with every other card title.
+export const GraphCard = ({ title, tooltipText, children }: GraphCardProps) => (
+  <BAICard
+    padding={4}
+    width="100%"
+    title={
+      <BAIFlex gap={'xxs'} align="center">
+        <Heading level={5}>{title}</Heading>
+        {tooltipText ? (
+          <BAIQuestionIconWithTooltip title={tooltipText} />
+        ) : null}
+      </BAIFlex>
+    }
+  >
+    {children}
+  </BAICard>
+);
+
+interface UsageBarChartProps {
+  data: UserStatsData[];
+  dataKey: UserStatsDataKey;
+  period: Period;
+  targetUnit: SizeUnit | 'count';
+  displayUnit: ByteUnit | DecimalUnit | 'count';
+  unitType: 'byte' | 'decimal' | 'count';
+  height?: number;
+}
+
+const UsageBarChart: React.FC<UsageBarChartProps> = ({
+  data,
+  dataKey,
+  period,
+  targetUnit,
+  displayUnit,
+  unitType,
+  height = 200,
+}) => {
+  'use memo';
+  const { token } = useTheme();
+  const { isDarkMode } = useThemeMode();
+
+  const formatValue = (value: number) => {
+    if (unitType === 'count') {
+      return value;
+    }
+    if (unitType === 'byte') {
+      return convertToBinaryUnit(value, targetUnit as SizeUnit)?.number ?? 0;
+    }
+    if (unitType === 'decimal') {
+      return convertToDecimalUnit(value, targetUnit as SizeUnit)?.number ?? 0;
+    }
+    return value;
+  };
+
+  const windowLength = period === '1D' ? DAY_LENGTH : WEEK_LENGTH;
+  // 1D: tick every 3 hours (12 * 15min) labeled as "HH:mm".
+  // 1W: tick every 24 hours (96 * 15min) labeled as "MMM DD".
+  const tickStep = period === '1D' ? 12 : 96;
+  const tickFormat = period === '1D' ? 'HH:mm' : 'MMM DD';
+
+  const chartData = data
+    .filter((_, i) => data.length - windowLength <= i)
+    .map((d, i) => {
+      const m = dayjs(d.date * 1000);
+      return {
+        index: i,
+        axisLabel: m.format(tickFormat),
+        tooltipLabel: m.format('MMM DD HH:mm'),
+        value: formatValue(d[dataKey].value),
+      };
+    });
+
+  const tickValues = chartData
+    .filter((d) => d.index % tickStep === 0)
+    .map((d) => d.index);
+
+  return (
+    <ResponsiveContainer
+      width="100%"
+      height={height}
+      className="allocation-history-graph-card"
+    >
+      <BarChart
+        data={chartData}
+        margin={{ top: 24, right: 16, bottom: 8, left: 8 }}
+      >
+        <CartesianGrid strokeDasharray="3 3" stroke={token('--color-border')} />
+        <XAxis
+          dataKey="index"
+          type="number"
+          domain={['dataMin', 'dataMax']}
+          ticks={tickValues}
+          interval={0}
+          tickFormatter={(i: number) => chartData[i]?.axisLabel ?? ''}
+        />
+        <YAxis
+          label={{
+            value: displayUnit,
+            position: 'top',
+            offset: 12,
+            fill: token('--color-text-description'),
+          }}
+        />
+        <ChartTooltip
+          cursor={{
+            fill: isDarkMode
+              ? token('--color-fill-secondary')
+              : token('--color-fill-tertiary'),
+          }}
+          labelFormatter={(i: number) => chartData[i]?.tooltipLabel ?? ''}
+        />
+        <Bar
+          dataKey="value"
+          name={displayUnit}
+          fill={token('--color-accent')}
+          isAnimationActive
+          animationDuration={400}
+          animationEasing="ease-out"
+        />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+};
+
+interface AllocationHistoryStatisticsProps {
+  period: Period;
+  fetchKey?: string;
+}
+
+const AllocationHistoryStatistics: React.FC<
+  AllocationHistoryStatisticsProps
+> = ({ period, fetchKey }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { data } = useUserUsageStats({
+    fetchKey,
+  });
+
+  return (
+    <BAIFlex direction="column" align="start" gap="md">
+      <GraphCard title="Sessions" tooltipText={t('statistics.SessionsDesc')}>
+        <UsageBarChart
+          data={data}
+          dataKey="num_sessions"
+          period={period}
+          targetUnit="count"
+          displayUnit="count"
+          unitType="count"
+        />
+      </GraphCard>
+      <GraphCard title="CPU" tooltipText={t('statistics.CPUDesc')}>
+        <UsageBarChart
+          data={data}
+          dataKey="cpu_allocated"
+          period={period}
+          targetUnit="count"
+          displayUnit="count"
+          unitType="count"
+        />
+      </GraphCard>
+      <GraphCard title="Memory" tooltipText={t('statistics.MemoryDesc')}>
+        <UsageBarChart
+          data={data}
+          dataKey="mem_allocated"
+          period={period}
+          targetUnit="g"
+          displayUnit="GiB"
+          unitType="byte"
+        />
+      </GraphCard>
+      <GraphCard title="GPU" tooltipText={t('statistics.GPUDesc')}>
+        <UsageBarChart
+          data={data}
+          dataKey="gpu_allocated"
+          period={period}
+          targetUnit="count"
+          displayUnit="count"
+          unitType="count"
+        />
+      </GraphCard>
+    </BAIFlex>
+  );
+};
+
+export default AllocationHistoryStatistics;

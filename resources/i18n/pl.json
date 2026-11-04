@@ -2708,8 +2708,6 @@
     "DeleteResourceGroup": "Usuń grupę zasobów",
     "Description": "Opis",
     "Domain": "Domena",
-    "Driver": "Kierowca",
-    "DriverOptions": "Opcje sterownika",
     "DuplicateHandlerOverride": "Ten handler jest już nadpisany.",
     "DuplicateResourceSlot": "Ten slot zasobów został już dodany.",
     "EditDefaultDeploymentOptions": "Edytuj domyślne opcje wdrożenia",

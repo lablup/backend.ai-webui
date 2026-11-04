@@ -2706,8 +2706,6 @@
     "DeleteResourceGroup": "Διαγραφή ομάδας πόρων",
     "Description": "Περιγραφή",
     "Domain": "Τομέας",
-    "Driver": "Οδηγός",
-    "DriverOptions": "Επιλογές προγράμματος οδήγησης",
     "DuplicateHandlerOverride": "Αυτός ο handler έχει ήδη παρακαμφθεί.",
     "DuplicateResourceSlot": "Αυτή η υποδοχή πόρων έχει ήδη προστεθεί.",
     "EditDefaultDeploymentOptions": "Επεξεργασία προεπιλεγμένων επιλογών ανάπτυξης",

@@ -1,26 +1,26 @@
 # 0014 — BAI names for ui-common form controls
 
-> ADR 0009의 1절 "New code" 항목 중 form control에 관한 부분을 대신한다.
-> `BAISelector`에 관한 부분은 ADR 0017이 대신한다.
+> This ADR supersedes the part about form controls in the "New code" item of section 1 of ADR 0009.
+> ADR 0017 supersedes the part of this ADR about `BAISelector`.
 
 ## Summary
 
-> 낯선 용어는 문서 맨 아래 [용어](#용어)에 모아 두었다.
+> Unfamiliar terms are collected in the [Glossary](#glossary) at the end.
 
-- `react/`는 ui-common의 [Form.Item-aware form control](#용어)을 `@lablup/ui-common/<X>`가 아니라 `backend.ai-ui`의 `BAI<X>` 이름으로 import한다.
-- BUI는 control마다 `packages/backend.ai-ui/src/components/BAI<X>.tsx` 파일을 두고, 그 파일이 ui-common component를 [re-export](#용어)한다. re-export는 wrapper가 아니므로 props와 동작은 ui-common component 그대로다.
-- form control을 `Form.Item`에 맞추던 webui의 adapter(`AstryxForm*`)는 두지 않는다. value 보정, item 안의 기본 폭, label과 status와 disabled 전달은 ui-common이 한다.
-- BUI 쪽 동작이 필요해진 control은 그 `BAI<X>.tsx`의 re-export를 component로 바꾼다. 지금 그런 control은 `BAISegmentedControlItem` 하나다.
-- BUI의 다른 source(component, fragment, story, test)도 form control을 그 `BAI<X>.tsx`에서 상대 경로로 import한다.
-- `react/eslint.config.js`의 `no-restricted-imports`가 `react/`에서 이 component 이름을 ui-common subpath로 import하는 것을 막는다. control 자신의 props type은 `BAI<X>Props`를 쓰고, 같은 subpath의 다른 type과 helper(`SelectorOptionType`, `ISODateTimeString`, `SearchSource` 등)는 그대로 import한다.
+- `react/` imports ui-common's [Form.Item-aware form controls](#glossary) under their `BAI<X>` names from `backend.ai-ui`, not from `@lablup/ui-common/<X>`.
+- BUI keeps one file `packages/backend.ai-ui/src/components/BAI<X>.tsx` per control, and that file is a [re-export](#glossary) of the ui-common component. A re-export is not a wrapper, so the props and the behaviour are exactly those of the ui-common component.
+- Webui keeps no adapters (`AstryxForm*`) that fit form controls to `Form.Item`. ui-common does the value correction, the default width inside an item, and the passing of label, status, and disabled.
+- When a control needs BUI-side behaviour, BUI replaces the re-export in its `BAI<X>.tsx` with a component. Today `BAISegmentedControlItem` is the only such control.
+- The other BUI source files (components, fragments, stories, tests) also import form controls from that `BAI<X>.tsx` through a relative path.
+- `no-restricted-imports` in `react/eslint.config.js` stops `react/` from importing these component names from the ui-common subpaths. For the control's own props type, code uses `BAI<X>Props`. Code still imports the other types and helpers of the same subpath (`SelectorOptionType`, `ISODateTimeString`, `SearchSource`, and so on) from there.
 
 ## Context
 
-- **What ui-common provides**: ui-common 0.2.0-alpha.20부터 form control(`TextInput`, `NumberInput`, `Selector` 등)은 Astryx component를 감싼 Form.Item-aware wrapper다. `Form.Item` 안에서 value, onChange, disabled, validation status, 접근 가능한 이름을 item에서 받고, item 행 안에서 control마다 정해진 기본 폭(`IN_ITEM_WIDTH`)을 쓴다. text·select 계열은 `100%`이고, `NumberInput`은 90px, date·time input과 switch·checkbox는 `fit-content`다. `NumberInput`은 비우면 `null`을 보고하고, `Selector`는 trigger 아래로 열리고, `TagsInput`은 `tokenSeparators`로 tag를 나눈다.
-- **What webui had**: webui는 이 일을 직접 하는 adapter를 두 벌 두었다. `react/src/components/astryxFormControls.tsx`·`astryxFormTextInput.tsx`와 BUI의 `astryxFormControls.tsx`다. #10553이 둘을 지우고 ui-common control을 직접 쓰게 했다.
-- **Why a decision is needed**: ADR 0009는 새 webui code가 BUI에 `BAI*` adapter가 있으면 그것을, 없으면 ui-common component를 직접 쓴다고 정했다. 그 규칙대로면 form control은 BUI에 adapter가 없으므로 webui가 ui-common subpath를 직접 import한다. 그러면 webui 화면의 다른 component(`BAISelect`, `BAICheckbox`, `BAIModal` 등)는 `backend.ai-ui`에서, form control만 ui-common에서 오고, BUI 쪽 동작을 나중에 더할 자리가 없다. 팀은 form control도 `BAI*` 이름 하나로 쓰기로 했다.
+- **What ui-common provides**: From ui-common 0.2.0-alpha.20, the form controls (`TextInput`, `NumberInput`, `Selector`, and so on) are Form.Item-aware wrappers around Astryx components. Inside a `Form.Item`, each control receives the value, onChange, disabled, the validation status, and the accessible name from the item, and it uses a default width set per control (`IN_ITEM_WIDTH`) inside the item row. The width is `100%` for the text and select controls, 90px for `NumberInput`, and `fit-content` for the date and time inputs and for switches and checkboxes. `NumberInput` reports `null` when it is empty, `Selector` opens below its trigger, and `TagsInput` splits tags with `tokenSeparators`.
+- **What webui had**: Webui had two sets of adapters that did this work themselves: `react/src/components/astryxFormControls.tsx` with `astryxFormTextInput.tsx`, and BUI's `astryxFormControls.tsx`. #10553 deleted both and made webui use the ui-common controls directly.
+- **Why a decision is needed**: ADR 0009 decided that new webui code uses a `BAI*` adapter in BUI when one exists and uses the ui-common component directly when none exists. Under that rule, BUI has no adapter for form controls, so webui imports the ui-common subpaths directly. Then the other components on a webui screen (`BAISelect`, `BAICheckbox`, `BAIModal`, and so on) come from `backend.ai-ui`, only the form controls come from ui-common, and BUI has no place to add behaviour later. The team decided to use form controls under a single `BAI*` name too.
 
-## 설계도
+## Diagram
 
 ```mermaid
 flowchart LR
@@ -50,78 +50,79 @@ flowchart LR
 
 ## Decision
 
-### 1. BUI가 form control을 `BAI<X>` 이름으로 re-export한다
+### 1. BUI re-exports the form controls under `BAI<X>` names
 
-| `backend.ai-ui` 이름 | ui-common subpath의 이름 |
-|---|---|
-| `BAICheckboxInput` | `CheckboxInput` |
+| `backend.ai-ui` name                     | Name in the ui-common subpath      |
+| ---------------------------------------- | ---------------------------------- |
+| `BAICheckboxInput`                       | `CheckboxInput`                    |
 | `BAICheckboxList`, `BAICheckboxListItem` | `CheckboxList`, `CheckboxListItem` |
-| `BAIDateInput` | `DateInput` |
-| `BAIDateRangeInput` | `DateRangeInput` |
-| `BAIDateTimeInput` | `DateTimeInput` |
-| `BAIFileInput` | `FileInput` |
-| `BAIMultiSelector` | `MultiSelector` |
-| `BAINumberInput` | `NumberInput` |
-| `BAIRadioList`, `BAIRadioListItem` | `RadioList`, `RadioListItem` |
-| `BAISegmentedControl` | `SegmentedControl` |
-| `BAISelector` | `Selector` |
-| `BAISlider` | `Slider` |
-| `BAISwitch` | `Switch` |
-| `BAITagsInput` | `TagsInput` |
-| `BAITextArea` | `TextArea` |
-| `BAITextInput` | `TextInput` |
-| `BAITimeInput` | `TimeInput` |
-| `BAITokenizer` | `Tokenizer` |
-| `BAITypeahead` | `Typeahead` |
+| `BAIDateInput`                           | `DateInput`                        |
+| `BAIDateRangeInput`                      | `DateRangeInput`                   |
+| `BAIDateTimeInput`                       | `DateTimeInput`                    |
+| `BAIFileInput`                           | `FileInput`                        |
+| `BAIMultiSelector`                       | `MultiSelector`                    |
+| `BAINumberInput`                         | `NumberInput`                      |
+| `BAIRadioList`, `BAIRadioListItem`       | `RadioList`, `RadioListItem`       |
+| `BAISegmentedControl`                    | `SegmentedControl`                 |
+| `BAISelector`                            | `Selector`                         |
+| `BAISlider`                              | `Slider`                           |
+| `BAISwitch`                              | `Switch`                           |
+| `BAITagsInput`                           | `TagsInput`                        |
+| `BAITextArea`                            | `TextArea`                         |
+| `BAITextInput`                           | `TextInput`                        |
+| `BAITimeInput`                           | `TimeInput`                        |
+| `BAITokenizer`                           | `Tokenizer`                        |
+| `BAITypeahead`                           | `Typeahead`                        |
 
-- **One file per control**: `BAI<X>.tsx`는 `export { X as default, type XProps as BAIXProps } from '@lablup/ui-common/X'` 한 문장이다. item component는 부모 파일에서 함께 낸다(`BAIRadioList.tsx`의 `BAIRadioListItem`, `BAICheckboxList.tsx`의 `BAICheckboxListItem`). components barrel `index.ts`는 다른 BUI component와 같이 `export { default as BAIX } from './BAIX'`로 낸다.
-- **Props type**: 각 control은 `BAI<X>Props` type도 함께 낸다. 이 type은 ui-common의 `<X>Props`와 같다. `react/`와 BUI의 call site는 control 자신의 props type으로 `BAI<X>Props`를 쓰고 ui-common `<X>Props`를 import하지 않는다. 2절대로 promotion되면 두 type이 달라지기 때문이다.
-- **Catalog**: 파일마다 같은 이름의 `BAI<X>.doc.ts`가 있어 `ui-common component` 목록과 `astryxIntegration.test.ts`의 catalog coverage를 채운다. doc의 공통 문장은 `formControlDoc.ts`의 `formControlDoc()`가 만든다.
-- **Not a wrapper**: re-export는 ui-common component 그 자체이므로 `component-props-extension.md`가 말하는 wrapper 규칙(props extend, `...rest` 전달)의 대상이 아니다.
+- **One file per control**: `BAI<X>.tsx` is one statement: `export { X as default, type XProps as BAIXProps } from '@lablup/ui-common/X'`. The parent file also exports the item component (`BAIRadioListItem` in `BAIRadioList.tsx`, `BAICheckboxListItem` in `BAICheckboxList.tsx`). The components barrel `index.ts` exports each control with `export { default as BAIX } from './BAIX'`, the same way it exports the other BUI components.
+- **Props type**: Each control also exports a `BAI<X>Props` type. This type is the same as ui-common's `<X>Props`. Call sites in `react/` and BUI use `BAI<X>Props` as the control's own props type and do not import ui-common's `<X>Props`, because the two types become different after a promotion under section 2.
+- **Catalog**: Each file has a `BAI<X>.doc.ts` with the same name, which fills the `ui-common component` list and the catalog coverage of `astryxIntegration.test.ts`. `formControlDoc()` in `formControlDoc.ts` produces the sentences that the docs share.
+- **Not a wrapper**: A re-export is the ui-common component itself, so the wrapper rules in `component-props-extension.md` (extend the props, pass `...rest` through) do not apply to it.
 
-### 2. BUI 동작이 필요한 control은 그 파일에서 component가 된다
+### 2. A control that needs BUI behaviour becomes a component in its file
 
-- **Promotion**: 어떤 control에 BUI 쪽 동작(번역, 기본값, 다른 props)이 필요해지면 그 `BAI<X>.tsx`의 re-export를 component로 바꾸고 `BAI<X>.doc.ts`에 그 props를 적는다. props interface는 ui-common `<X>Props`를 extend한다. 파일과 이름이 그대로이므로 barrel과 call site는 바뀌지 않는다.
-- **SegmentedControlItem**: `BAISegmentedControlItem`은 이미 그런 component다. `label`을 `ReactNode`로 넓히고, `isLabelHidden`은 `label`이 string일 때만 받는다. 그래서 `SegmentedControlItem`의 BAI 이름은 이것이고, 같은 이름의 re-export는 두지 않는다.
-- **Existing antd-shaped wrappers stay**: `BAISelect`, `BAICheckbox`, `BAIDynamicUnitInputNumber`처럼 frozen antd-v6 props를 받는 기존 BUI component는 그대로 남는다. 새 code는 Astryx 모양 props가 맞으면 이 문서의 `BAI<X>`를 쓴다.
+- **Promotion**: When a control needs BUI-side behaviour (translation, default values, different props), BUI replaces the re-export in that `BAI<X>.tsx` with a component and writes those props in `BAI<X>.doc.ts`. The props interface extends ui-common's `<X>Props`. The file and the name stay the same, so the barrel and the call sites do not change.
+- **SegmentedControlItem**: `BAISegmentedControlItem` is already such a component. It widens `label` to `ReactNode` and accepts `isLabelHidden` only when `label` is a string. For this reason this component is the BAI name of `SegmentedControlItem`, and no re-export with the same name exists.
+- **Existing antd-shaped wrappers stay**: Existing BUI components that take frozen antd-v6 props, such as `BAISelect`, `BAICheckbox`, and `BAIDynamicUnitInputNumber`, stay as they are. New code uses the `BAI<X>` of this document when Astryx-shaped props fit.
 
-### 3. BUI source도 `BAI<X>`를 쓴다
+### 3. BUI source also uses `BAI<X>`
 
-- **Rule**: BUI의 component, fragment, story, test는 form control을 `BAI<X>` 이름으로 쓰고, import하는 파일에서 `components/BAI<X>.tsx`까지의 상대 경로로 import한다(`components/`에서는 `./BAITextInput`, `components/fragments/`에서는 `../BAITextInput`). item component는 부모 파일의 named export다(`import BAIRadioList, { BAIRadioListItem } from './BAIRadioList'`). `backend.ai-ui`나 components barrel `index.ts`에서 import하지 않는다. barrel을 거치면 순환 import가 생긴다.
-- **Antd-shaped wrappers included**: `BAISelect`, `BAICheckbox`, `BAIDynamicUnitInputNumber`처럼 2절의 기존 wrapper도 안에서 그리는 control을 `BAI<X>`로 import한다.
-- **Where the subpath stays**: ui-common subpath에서 control component를 import하는 파일은 1절의 `BAI<X>.tsx`와 2절의 promotion된 component(`BAISegmentedControlItem.tsx`)뿐이다.
-- **Props type**: control 자신의 props type은 1절대로 `BAI<X>.tsx`의 `BAI<X>Props`를 쓴다.
-- **Types stay importable**: 그 밖의 type과 helper(`SelectorOptionData`, `ISODateTimeString`, `SearchSource` 등)는 BUI에서도 ui-common subpath에서 그대로 import한다.
+- **Rule**: BUI components, fragments, stories, and tests use form controls under their `BAI<X>` names, and they import them through the relative path from the importing file to `components/BAI<X>.tsx` (`./BAITextInput` in `components/`, `../BAITextInput` in `components/fragments/`). An item component is a named export of its parent file (`import BAIRadioList, { BAIRadioListItem } from './BAIRadioList'`). BUI source does not import them from `backend.ai-ui` or from the components barrel `index.ts`, because an import through the barrel creates a circular import.
+- **Antd-shaped wrappers included**: The existing wrappers of section 2, such as `BAISelect`, `BAICheckbox`, and `BAIDynamicUnitInputNumber`, also import the controls they render as `BAI<X>`.
+- **Where the subpath stays**: The only files that import a control component from a ui-common subpath are the `BAI<X>.tsx` files of section 1 and the promoted component of section 2 (`BAISegmentedControlItem.tsx`).
+- **Props type**: For the control's own props type, code uses `BAI<X>Props` from `BAI<X>.tsx`, as section 1 says.
+- **Types stay importable**: BUI also still imports the other types and helpers (`SelectorOptionData`, `ISODateTimeString`, `SearchSource`, and so on) from the ui-common subpaths.
 
-### 4. ESLint가 `react/`의 직접 import를 막는다
+### 4. ESLint blocks direct imports in `react/`
 
-- **Rule**: `react/eslint.config.js`의 `formControlImportBans`가 `no-restricted-imports`의 `paths`에 subpath마다 한 항목을 둔다. 항목은 그 subpath의 component 이름만 `importNames`로 막고, 메시지로 `BAI<X>`를 가리킨다. `restrictedImportPaths`와 project-agnostic page block이 이 배열을 펼친다.
-- **Types stay importable**: `importNames`에 없는 이름(type, helper, `TypeaheadItem` 같은 다른 component)은 막지 않는다. control 자신의 `<X>Props`도 lint로는 막히지 않으므로 1절의 Props type 규칙은 review가 지킨다.
-## 대안과 기각 사유
+- **Rule**: `formControlImportBans` in `react/eslint.config.js` puts one entry per subpath into the `paths` of `no-restricted-imports`. Each entry blocks only the component names of that subpath through `importNames`, and its message points at `BAI<X>`. `restrictedImportPaths` and the project-agnostic page block spread this array.
+- **Types stay importable**: The rule does not block names that are not in `importNames` (types, helpers, and other components such as `TypeaheadItem`). Lint does not block the control's own `<X>Props` either, so review enforces the Props type rule of section 1.
 
-- **Direct ui-common imports**: ADR 0009의 규칙대로 webui가 `@lablup/ui-common/<X>`를 직접 import한다. BUI에 파일을 더하지 않는다는 것이 장점이다. 기각한 이유는 한 화면 안에서 component 출처가 `backend.ai-ui`와 ui-common으로 갈리고, 나중에 BUI 동작을 더하려면 call site를 다시 모두 고쳐야 하기 때문이다.
-- **Thin BAI wrappers per control**: 각 `BAI<X>.tsx`가 ui-common component를 감싸는 function component다. 동작을 더할 자리가 처음부터 있다는 것이 장점이다. 기각한 이유는 더할 동작이 없는 wrapper가 19개 생기고, 각 wrapper가 props 전달과 `ref`를 다시 구현해 ui-common과 어긋날 수 있기 때문이다. 필요해진 control만 2절대로 component가 된다.
-- **BUI imports ui-common directly**: BUI source는 re-export를 거치지 않고 ui-common subpath를 쓴다. BUI 안에 import 경로가 하나 줄어든다는 것이 장점이다. 기각한 이유는 control이 2절대로 component가 될 때 BUI 안의 화면(`BAIProjectSettingModal`, File Explorer의 modal 등)만 그 동작을 받지 못하고, 같은 control이 BUI와 `react/`에서 다른 이름으로 보이기 때문이다.
-- **One re-export file**: 19개 re-export를 한 파일에 모은다. 파일 수가 적다는 것이 장점이다. 기각한 이유는 다른 BUI component와 파일 구조가 달라지고, control 하나를 component로 바꿀 때 목록에서 빼서 새 파일로 옮겨야 하기 때문이다.
-- **Keep the AstryxForm adapters**: webui의 adapter를 그대로 둔다. call site를 바꾸지 않는다는 것이 장점이다. 기각한 이유는 adapter가 하던 일을 ui-common이 하게 되어 같은 일을 두 곳에서 하고, adapter가 ui-common과 다른 props 이름(`label`, `onValueChange`, `allowClear`)을 써서 ui-common 문서와 맞지 않기 때문이다.
+## Rejected alternatives
+
+- **Direct ui-common imports**: Webui imports `@lablup/ui-common/<X>` directly, as the rule of ADR 0009 says. The advantage is that BUI gets no new files. This alternative is rejected because the components on one screen would come from two sources, `backend.ai-ui` and ui-common, and adding BUI behaviour later would require changing every call site again.
+- **Thin BAI wrappers per control**: Each `BAI<X>.tsx` is a function component that wraps the ui-common component. The advantage is that a place to add behaviour exists from the start. This alternative is rejected because it creates 19 wrappers with no behaviour to add, and each wrapper reimplements the props passing and `ref`, so it can diverge from ui-common. Only a control that needs it becomes a component, as section 2 says.
+- **BUI imports ui-common directly**: BUI source uses the ui-common subpaths without going through the re-exports. The advantage is one fewer import path inside BUI. This alternative is rejected because, when a control becomes a component under section 2, only the screens inside BUI (`BAIProjectSettingModal`, the File Explorer modals, and so on) would not get that behaviour, and the same control would appear under different names in BUI and in `react/`.
+- **One re-export file**: All 19 re-exports go into one file. The advantage is fewer files. This alternative is rejected because the file structure would differ from the other BUI components, and turning one control into a component would mean removing it from the list and moving it into a new file.
+- **Keep the AstryxForm adapters**: Webui keeps its adapters as they are. The advantage is that the call sites do not change. This alternative is rejected because ui-common now does the work the adapters did, so two places would do the same work, and the adapters use props names that differ from ui-common (`label`, `onValueChange`, `allowClear`), so they do not match the ui-common docs.
 
 ## Consequences
 
-- **One import source**: webui 화면의 form control은 다른 BUI component와 같이 `backend.ai-ui`에서 오고, BUI 안의 화면에서는 같은 `BAI<X>.tsx`에서 온다.
-- **Upstream props**: `BAI<X>`의 props는 ui-common과 Astryx의 props다. 행을 채워야 하는 `BAINumberInput`은 call site에서 `width="100%"`를 준다. 삭제한 adapter는 이 값이 기본이었다. `label`은 `Form.Item`이 그리고 control에는 필요할 때 `aria-label`을 준다. checkbox와 switch의 보이는 글은 `children`이다.
-- **New ui-common control**: ui-common이 새 Form.Item-aware control을 내면, webui에서 쓰기 전에 `BAI<X>.tsx`와 `BAI<X>.doc.ts`를 더하고 components barrel과 `formControlImportBans`에 같이 적는다.
-- **Lint scope**: ban은 `react/`의 static import만 본다. BUI의 직접 import는 review에서 3절대로 고친다.
+- **One import source**: On webui screens the form controls come from `backend.ai-ui`, like the other BUI components, and on screens inside BUI they come from the same `BAI<X>.tsx`.
+- **Upstream props**: The props of `BAI<X>` are the ui-common and Astryx props. A `BAINumberInput` that must fill the row gets `width="100%"` at the call site. The deleted adapter had this value as its default. `Form.Item` draws the `label`, and a control gets an `aria-label` when it needs one. The visible text of a checkbox or a switch is its `children`.
+- **New ui-common control**: When ui-common releases a new Form.Item-aware control, a developer adds `BAI<X>.tsx` and `BAI<X>.doc.ts` before webui uses it, and also adds the control to the components barrel and to `formControlImportBans`.
+- **Lint scope**: The ban looks only at static imports in `react/`. Review fixes direct imports in BUI, as section 3 says.
 
-## 출처
+## Sources
 
-- GitHub: #10553, PR #10554. ui-common의 Form.Item wrapper는 lablup/ui-common#72(0.2.0-alpha.20).
-- 결정일: 2026-10-25.
-- 관련: [ADR 0009](0009-ui-common-as-the-single-entry-point-to-astryx.md) (ui-common이 Astryx로 가는 유일한 경로, BUI의 `BAI*` adapter).
+- GitHub: #10553, PR #10554. ui-common's Form.Item wrappers came in lablup/ui-common#72 (0.2.0-alpha.20).
+- Decided 2026-10-25.
+- Related: [ADR 0009](0009-ui-common-as-the-single-entry-point-to-astryx.md) (ui-common as the only path to Astryx, and BUI's `BAI*` adapters).
 
-## 용어
+## Glossary
 
-| 용어 | 뜻 |
-|---|---|
-| Form.Item-aware form control | ui-common이 Astryx 입력 component를 감싸 `Form.Item` 안에서 value, onChange, disabled, validation status, 접근 가능한 이름을 item에서 받게 한 component다. Astryx의 field chrome(`label`, `description`, `isRequired`)은 받지 않는다. |
-| promotion | `BAI<X>.tsx`의 re-export를 ui-common component를 감싸는 BUI component로 바꾸는 것이다(2절). 파일과 이름은 그대로다. |
-| re-export | 다른 module의 export를 이름만 바꿔 다시 내는 것이다. 새 component를 만들지 않으므로 `BAITextInput === TextInput`이다. |
+| Term                         | Meaning                                                                                                                                                                                                                                                                                                                     |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Form.Item-aware form control | A Form.Item-aware form control is a component in which ui-common wraps an Astryx input component so that, inside a `Form.Item`, it receives the value, onChange, disabled, the validation status, and the accessible name from the item. It does not accept the Astryx field chrome (`label`, `description`, `isRequired`). |
+| promotion                    | Promotion is the change that replaces the re-export in `BAI<X>.tsx` with a BUI component that wraps the ui-common component (section 2). The file and the name stay the same.                                                                                                                                               |
+| re-export                    | A re-export exports another module's export again under a new name only. It creates no new component, so `BAITextInput === TextInput`.                                                                                                                                                                                      |

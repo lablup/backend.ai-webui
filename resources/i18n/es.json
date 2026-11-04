@@ -2706,8 +2706,6 @@
     "DeleteResourceGroup": "Eliminar el grupo de recursos",
     "Description": "Descripción",
     "Domain": "Dominio",
-    "Driver": "Conductor",
-    "DriverOptions": "Opciones del conductor",
     "DuplicateHandlerOverride": "Este handler ya está sobrescrito.",
     "DuplicateResourceSlot": "Esta ranura de recursos ya está añadida.",
     "EditDefaultDeploymentOptions": "Editar opciones de despliegue predeterminadas",
