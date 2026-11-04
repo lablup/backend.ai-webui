@@ -7,10 +7,13 @@ import { ProjectAdminSettingModalQuery } from '../__generated__/ProjectAdminSett
 import { ProjectAdminSettingModalRevokeMutation } from '../__generated__/ProjectAdminSettingModalRevokeMutation.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
+import { reasonMessage } from '../helper/mutationError';
+import { isAlreadyAssignedFailure } from '../helper/roleAssignment';
 import { useWebUINavigate, useCurrentDomain } from '../hooks';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
+  BAIBulkErrorModal,
   BAIButton,
   BAIFlex,
   BAIId,
@@ -22,10 +25,11 @@ import {
   filterOutNullAndUndefined,
   useBAILogger,
   useMutationWithPromise,
+  type BAIColumnsType,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { ShieldCheckIcon, XIcon } from 'lucide-react';
-import { Suspense, useDeferredValue, useRef } from 'react';
+import { Suspense, useDeferredValue, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -142,6 +146,78 @@ export const groupProjectAdminAssignmentsByUser = (
     }),
   );
 
+type GrantResult = PromiseSettledResult<
+  ProjectAdminSettingModalAssignMutation['response']
+>;
+
+export interface ProjectAdminGrantFailure {
+  userId: string;
+  message: string;
+}
+
+export interface ProjectAdminGrantOutcome {
+  /** At least one role was newly granted to at least one user. */
+  hasAssigned: boolean;
+  /** Users who already held every admin role of the project. */
+  skippedUserIds: Array<string>;
+  /** Users refused at least one role, with every distinct reason. */
+  failures: Array<ProjectAdminGrantFailure>;
+}
+
+/**
+ * Folds the per-role results of one Add into per-user outcomes. A rejected
+ * request counts every requested user as failed for that role; "already holds
+ * the role" is a skip, and only a user skipped for every role is reported so.
+ */
+export const classifyProjectAdminGrants = (
+  results: Array<GrantResult>,
+  userIds: Array<string>,
+): ProjectAdminGrantOutcome => {
+  const messagesByUser = new Map<string, Array<string>>();
+  const skipCountByUser = new Map<string, number>();
+  const addFailure = (userId: string, message: string) =>
+    messagesByUser.set(userId, [
+      ...(messagesByUser.get(userId) ?? []),
+      message,
+    ]);
+  let hasAssigned = false;
+  results.forEach((result) => {
+    if (result.status === 'rejected') {
+      const message = reasonMessage(result.reason);
+      userIds.forEach((userId) => addFailure(userId, message));
+      return;
+    }
+    const { assigned, failed } = result.value.partialBulkAssignRoles;
+    hasAssigned ||= !_.isEmpty(assigned);
+    failed.forEach((failure) => {
+      if (isAlreadyAssignedFailure(failure)) {
+        skipCountByUser.set(
+          failure.userId,
+          (skipCountByUser.get(failure.userId) ?? 0) + 1,
+        );
+      } else {
+        addFailure(failure.userId, failure.message);
+      }
+    });
+  });
+  return {
+    hasAssigned,
+    skippedUserIds: userIds.filter(
+      (userId) =>
+        !messagesByUser.has(userId) &&
+        skipCountByUser.get(userId) === results.length,
+    ),
+    failures: userIds
+      .filter((userId) => messagesByUser.has(userId))
+      .map((userId) => ({
+        userId,
+        message: _.uniq(messagesByUser.get(userId)).join('\n'),
+      })),
+  };
+};
+
+const MAX_SKIPPED_NAMES = 3;
+
 interface ProjectAdminSettingModalProps extends Omit<
   BAIModalProps,
   'children'
@@ -176,6 +252,15 @@ const ProjectAdminSettingModal = ({
   const { logger } = useBAILogger();
   const webuiNavigate = useWebUINavigate();
   const formRef = useRef<FormInstance<{ userIds: string[] }>>(null);
+  // The error modal is open while non-empty.
+  const [failedGrants, setFailedGrants] = useState<
+    Array<ProjectAdminGrantFailure>
+  >([]);
+  // Emails of every user picked so far: the select's options only hold the
+  // current search results when a failure arrives.
+  const userLabelsRef = useRef(new Map<string, string>());
+  const userLabelOf = (userId: string) =>
+    userLabelsRef.current.get(userId) ?? userId;
 
   // Keep the previous result visible while a reload is in flight so the table
   // shows an inline loading indicator instead of a Suspense fallback.
@@ -199,6 +284,10 @@ const ProjectAdminSettingModal = ({
           assigned {
             id
             userId
+          }
+          failed {
+            userId
+            message
           }
         }
       }
@@ -247,15 +336,35 @@ const ProjectAdminSettingModal = ({
             }),
           ),
         );
-        const rejected = settled.filter(
-          (result) => result.status === 'rejected',
-        );
-        if (rejected.length > 0) {
-          _.forEach(rejected, (result) => logger.error(result.reason));
-          message.error(resolveErrorMessage(rejected[0].reason));
-        } else {
-          message.success(t('rbac.UsersAssigned'));
+        const { hasAssigned, skippedUserIds, failures } =
+          classifyProjectAdminGrants(settled, values.userIds);
+        if (!_.isEmpty(skippedUserIds)) {
+          const labels = skippedUserIds.map(userLabelOf);
+          const shown = labels.slice(0, MAX_SKIPPED_NAMES).join(', ');
+          const rest = labels.length - MAX_SKIPPED_NAMES;
+          message.info(
+            t('rbac.UsersAlreadyAssignedSkipped', {
+              count: labels.length,
+              names: rest > 0 ? `${shown} +${rest}` : shown,
+            }),
+          );
+        }
+        if (_.isEmpty(failures)) {
+          if (hasAssigned) {
+            message.success(t('rbac.UsersAssigned'));
+          }
           formRef.current?.resetFields();
+        } else {
+          failures.forEach((failure) =>
+            logger.error('Failed to assign project admin', failure.message),
+          );
+          // Keep only the failed users selected so the next Add retries them;
+          // the empty error gives the red border, details are in the modal.
+          const failedIds = failures.map((failure) => failure.userId);
+          formRef.current?.setFieldsValue({ userIds: failedIds });
+          formRef.current?.setFields([{ name: 'userIds', errors: [''] }]);
+          message.error(t('rbac.UserAssignmentsPartialFailureDescription'));
+          setFailedGrants(failures);
         }
         onReload(queryRef.variables, { fetchPolicy: 'network-only' });
       })
@@ -264,6 +373,19 @@ const ProjectAdminSettingModal = ({
         logger.debug(error);
       });
   };
+
+  const failureColumns: BAIColumnsType<ProjectAdminGrantFailure> = [
+    {
+      key: 'user',
+      title: t('credential.UserID'),
+      render: (__, record) => userLabelOf(record.userId),
+    },
+    {
+      key: 'message',
+      title: t('rbac.ErrorMessage'),
+      dataIndex: 'message',
+    },
+  ];
 
   const handleRevoke = async (userId: string, roleIds: Array<string>) => {
     if (_.isEmpty(roleIds)) {
@@ -359,6 +481,14 @@ const ProjectAdminSettingModal = ({
                   label={t('rbac.SelectUsers')}
                   isLabelHidden
                   placeholder={t('rbac.SelectUsers')}
+                  onChange={(__, option) => {
+                    _.castArray(option ?? []).forEach((o) => {
+                      userLabelsRef.current.set(
+                        String(o.value),
+                        String(o.label ?? o.value),
+                      );
+                    });
+                  }}
                 />
               </Form.Item>
             </Suspense>
@@ -401,6 +531,14 @@ const ProjectAdminSettingModal = ({
           ]}
         />
       </BAIFlex>
+      <BAIBulkErrorModal<ProjectAdminGrantFailure>
+        open={!_.isEmpty(failedGrants)}
+        alertDescription={t('rbac.UserAssignmentsPartialFailureDescription')}
+        columns={failureColumns}
+        dataSource={failedGrants}
+        idKey="userId"
+        onRequestClose={() => setFailedGrants([])}
+      />
     </BAIModal>
   );
 };
