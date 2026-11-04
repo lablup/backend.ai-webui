@@ -27,6 +27,7 @@ import {
   useUpdateDomainAppConfig,
   useUpdatePublicDomainAppConfig,
 } from '../../../hooks/useAppConfig';
+import ImportConfigTomlModal from './ImportConfigTomlModal';
 import MenuKeySelector from './MenuKeySelector';
 import PluginPathInput from './PluginPathInput';
 import { useWebUISettingLabels } from './WebUISettingLabels';
@@ -45,7 +46,7 @@ import {
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { CircleAlert, Redo2, SquarePenIcon } from 'lucide-react';
+import { CircleAlert, FileUp, Redo2, SquarePenIcon } from 'lucide-react';
 import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useBlocker } from 'react-router-dom';
@@ -84,7 +85,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { modal } = App.useApp();
+  const { modal, message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
   const labels = useWebUISettingLabels();
   const updateDomainAppConfig = useUpdateDomainAppConfig();
@@ -238,6 +239,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
   // by a typed word; a per-row reset only edits the draft and needs Apply.
   const domainName = useCurrentDomainValue();
   const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
 
   const toSettingItem = (
     definition: WebUISettingDefinition,
@@ -410,13 +412,21 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
         showSearchBar
         showChangedOptionFilter
         extraButton={
-          <BAIButton
-            danger
-            icon={<Redo2 size="1em" />}
-            onClick={() => setIsResetConfirmOpen(true)}
-          >
-            {t('button.Reset')}
-          </BAIButton>
+          <BAIFlex gap="xs" align="center">
+            <Button
+              data-testid="webui-settings-import-config-toml"
+              icon={<FileUp size="1em" />}
+              label={t('webuiSettings.ImportConfigToml')}
+              onClick={() => setIsImportOpen(true)}
+            />
+            <BAIButton
+              danger
+              icon={<Redo2 size="1em" />}
+              onClick={() => setIsResetConfirmOpen(true)}
+            >
+              {t('button.Reset')}
+            </BAIButton>
+          </BAIFlex>
         }
         primaryButton={
           <Button
@@ -461,6 +471,20 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
         confirmLoading={isApplying}
         onOk={() => persist({})}
         onCancel={() => setIsResetConfirmOpen(false)}
+      />
+      <ImportConfigTomlModal
+        open={isImportOpen}
+        currentValueOf={valueOf}
+        onLoad={(imported) => {
+          for (const { definition, value } of imported) {
+            setValue(definition, value);
+          }
+          setIsImportOpen(false);
+          message.success(
+            t('webuiSettings.ImportLoaded', { count: imported.length }),
+          );
+        }}
+        onCancel={() => setIsImportOpen(false)}
       />
       <BAIUnmountAfterClose>
         <AnnouncementEditModal
