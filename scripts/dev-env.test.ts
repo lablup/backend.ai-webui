@@ -299,29 +299,30 @@ describe("dev-env CLI", () => {
       expect(playwright).not.toContain("E2E_PROJECT_ADMIN_PASSWORD");
     });
 
-    it("writes config.toml from the sample, the server's switches and --set", async () => {
+    it("writes config.toml from the sample, the server's file-only keys and --set", async () => {
       const result = await run([
         "use",
         "main",
         "--set",
         "resources.openPortToPublic=true",
-        "--set=general.maxCountForPreopenPorts=3",
+        "--set=general.signupSupport=true",
       ]);
       expect(result.status).toBe(0);
       expect(result.stdout).toContain(
-        'wrote config.toml (switches of main, set resources.openPortToPublic=true, general.maxCountForPreopenPorts=3)',
+        "warning: not written to config.toml: resources.openPortToPublic.",
+      );
+      expect(result.stdout).toContain(
+        "wrote config.toml (switches of main, set general.signupSupport=true)",
       );
       const config = read("config.toml");
       expect(config.startsWith("# Written by `pnpm run dev-env use`")).toBe(true);
-      expect(config).toContain(
-        "overrides: resources.openPortToPublic = true, general.maxCountForPreopenPorts = 3",
-      );
+      expect(config).toContain("overrides: general.signupSupport = true");
       expect(config).toContain('connectionMode = "SESSION"');
-      expect(config).toContain("enableModelFolders = true  # Enable model folders");
-      expect(config).toContain("signupSupport = false");
-      expect(config).toContain("maxCountForPreopenPorts = 3");
+      expect(config).toContain("enableModelFolders = false   # Enable model folders");
+      expect(config).toContain("signupSupport = true");
+      expect(config).not.toContain("maxCountForPreopenPorts");
       expect(config).toContain(
-        "openPortToPublic = true  # Show option to open app proxy port to anyone.",
+        "openPortToPublic = false     # Show option to open app proxy port to anyone.",
       );
       expect(config).toContain('#apiEndpointText = "[Placeholder text]"');
       expect(config).toContain('#page = "test-plugin1"');
@@ -348,14 +349,20 @@ describe("dev-env CLI", () => {
       expect(read("config.toml")).toBe(
         '[general]\nconnectionMode = "API" # mine\n\n[resources]\n#openPortToPublic = false\n',
       );
-      const set = await run(["use", "main", "--set", "resources.openPortToPublic=true"]);
-      expect(set.status).toBe(0);
-      expect(set.stdout).toContain(
-        "kept config.toml (hand-written), set resources.openPortToPublic=true",
+      const ignored = await run(["use", "main", "--set", "resources.openPortToPublic=true"]);
+      expect(ignored.status).toBe(0);
+      expect(ignored.stdout).toContain(
+        "warning: not written to config.toml: resources.openPortToPublic.",
       );
       expect(read("config.toml")).toBe(
-        '[general]\nconnectionMode = "API" # mine\n\n[resources]\nopenPortToPublic = true\n',
+        '[general]\nconnectionMode = "API" # mine\n\n[resources]\n#openPortToPublic = false\n',
       );
+      const set = await run(["use", "main", "--set", "general.signupSupport=true"]);
+      expect(set.status).toBe(0);
+      expect(set.stdout).toContain(
+        "kept config.toml (hand-written), set general.signupSupport=true",
+      );
+      expect(read("config.toml")).toContain("signupSupport = true");
     });
 
     it("rejects a malformed --set with usage, writing nothing", async () => {
@@ -515,7 +522,7 @@ describe("dev-env CLI", () => {
       const result = await run(["list"]);
       expect(result.status).toBe(0);
       expect(result.stdout).toContain(
-        "  config: SESSION -signupSupport +enableModelFolders plugin.page=a,b\n",
+        "  config: SESSION -signupSupport\n",
       );
       expect(result.stdout).toContain("  config: none (HTTP 404)");
       expect(result.stdout).toContain("  config: none (not checked yet)");
@@ -529,9 +536,9 @@ describe("dev-env CLI", () => {
       const result = await run(["config", "main"]);
       expect(result.status).toBe(0);
       expect(result.stdout).toMatch(/^ {2}general\.connectionMode +SESSION$/m);
-      expect(result.stdout).toMatch(/^ {2}general\.enableModelFolders +true$/m);
-      expect(result.stdout).toMatch(/^ {2}general\.force2FA +— \(not set\)$/m);
-      expect(result.stdout).toMatch(/^ {2}plugin\.page +a,b$/m);
+      expect(result.stdout).toMatch(/^ {2}general\.apiDomainName +— \(not set\)$/m);
+      expect(result.stdout).not.toMatch(/^ {2}general\.enableModelFolders /m);
+      expect(result.stdout).not.toMatch(/^ {2}plugin\.page /m);
       expect(result.stdout).not.toContain("apiEndpointText");
 
       const all = await run(["config", "main", "--all"]);
@@ -547,7 +554,7 @@ describe("dev-env CLI", () => {
         present: true,
       });
       expect(json.settings).toContainEqual({
-        key: "pipeline.*",
+        key: "general.apiDomainName",
         value: null,
         present: false,
       });

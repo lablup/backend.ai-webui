@@ -32,6 +32,8 @@ import {
   selectAccount,
   serverHealth,
   setTomlValue,
+  splitConfigOverrides,
+  ignoredOverridesWarning,
   upsertEnv,
 } from "./dev-env-lib.mjs";
 import dotenv from "dotenv";
@@ -63,8 +65,10 @@ const USAGE = `Usage: pnpm run dev-env <command>
                              Write .env.development.local (login pre-fill; account
                              is a role or an email, default "user"),
                              e2e/envs/.env.playwright and config.toml (the sample
-                             plus the server's probed switches; --set overrides
-                             one, e.g. --set resources.openPortToPublic=true)
+                             plus the server's probed file-only keys; --set
+                             overrides one, e.g. --set general.signupSupport=true;
+                             System Settings keys are not written, set them on
+                             the server's System Settings page)
   compat [--branch <name>] [--json]
                              The manager compatibility policy for this branch
                              (a release branch "X.Y" reads its own entry, any
@@ -318,7 +322,10 @@ function writeEnvFile(relativePath, buildVars, { seedFrom, expand } = {}) {
  * or none → rendered from the sample, the server and `overrides`; a hand-written
  * one is kept, with `overrides` applied in place.
  */
-function writeConfigToml(server, overrides) {
+function writeConfigToml(server, requested) {
+  const { kept: overrides, ignored } = splitConfigOverrides(requested);
+  const ignoredWarning = ignoredOverridesWarning(ignored);
+  if (ignoredWarning) console.log(ignoredWarning);
   const target = path.join(REPO_ROOT, "config.toml");
   const sample = fs.readFileSync(
     path.join(REPO_ROOT, "config.toml.sample"),
