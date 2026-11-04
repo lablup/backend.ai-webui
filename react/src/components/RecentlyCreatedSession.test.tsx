@@ -43,6 +43,7 @@ vi.mock('backend.ai-ui', () => ({
   ),
   BAIFetchKeyButton: () => null,
   BAIBoardItemTitle: () => null,
+  useIsInBAIBoardItem: () => false,
 }));
 
 vi.mock('./SessionNodes', () => ({

@@ -4,7 +4,7 @@
  */
 import PanelEditControls from './PanelEditControls';
 import { useTheme } from '@lablup/ui-common/theme';
-import { BAIBoardItemTitle, BAIFlex } from 'backend.ai-ui';
+import { BAIBoardItemTitle, BAIFlex, useIsInBAIBoardItem } from 'backend.ai-ui';
 import React from 'react';
 
 export interface PanelFrameProps {
@@ -28,12 +28,16 @@ const PanelFrame: React.FC<PanelFrameProps> = ({
 }) => {
   'use memo';
   const { token } = useTheme();
+  const isInBoard = useIsInBAIBoardItem();
 
   return (
     <BAIFlex
       direction="column"
       align="stretch"
-      style={{ paddingInline: token('--spacing-8'), height: '100%' }}
+      style={{
+        height: '100%',
+        ...(isInBoard ? {} : { paddingInline: token('--spacing-8') }),
+      }}
     >
       <BAIBoardItemTitle
         title={title}
@@ -50,9 +54,10 @@ const PanelFrame: React.FC<PanelFrameProps> = ({
         align="stretch"
         style={{
           flex: 1,
+          minHeight: 0,
           overflowY: 'auto',
           overflowX: 'hidden',
-          marginBottom: token('--spacing-4'),
+          ...(isInBoard ? {} : { marginBottom: token('--spacing-4') }),
         }}
       >
         {children}

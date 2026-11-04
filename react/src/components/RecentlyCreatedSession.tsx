@@ -14,6 +14,7 @@ import {
   BAIFlex,
   BAIUnmountAfterClose,
   BAIBoardItemTitle,
+  useIsInBAIBoardItem,
 } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
@@ -34,6 +35,7 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = useTheme();
+  const isInBoard = useIsInBAIBoardItem();
   // Read from the router, not nuqs: the board's session panels set the param
   // with a navigation, which nuqs applies in a transition that React holds
   // back while any async action is pending.
@@ -81,8 +83,9 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
         direction="column"
         align="stretch"
         style={{
-          paddingInline: token('--spacing-8'),
           height: '100%',
+          // On a board the board pads the item.
+          ...(isInBoard ? {} : { paddingInline: token('--spacing-8') }),
         }}
       >
         <BAIBoardItemTitle
@@ -100,7 +103,7 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
             flex: 1,
             overflowY: 'auto',
             overflowX: 'hidden',
-            marginBottom: token('--spacing-4'),
+            ...(isInBoard ? {} : { marginBottom: token('--spacing-4') }),
           }}
         >
           <SessionNodes

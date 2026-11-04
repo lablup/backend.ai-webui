@@ -20,7 +20,7 @@ import { useLazyLoadQuery } from 'react-relay';
 
 /**
  * Count stat panel in the same shell and stat layout as the built-in count
- * items (SessionCountDashboardItem): paddingInline XL, title row with a
+ * items (SessionCountDashboardItem): the board's title row with a
  * refresh button, left-aligned BAIStatistic rows. Same descriptor, registry and
  * query as the table panel — only the rendered selection differs.
  */

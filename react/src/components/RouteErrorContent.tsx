@@ -2,12 +2,17 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import {
+  routeErrorScreenAtom,
+  type RouteErrorKind,
+} from '../helper/routeErrorScreen';
 import { useThemeMode } from '../hooks/useThemeMode';
 import { Heading } from '@lablup/ui-common/Heading';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex } from 'backend.ai-ui';
-import React from 'react';
+import { useSetAtom } from 'jotai';
+import React, { useLayoutEffect } from 'react';
 
 /**
  * Shared minimal composition for route-level error states (invalid project,
@@ -29,15 +34,22 @@ export interface RouteErrorSegment {
 }
 
 interface RouteErrorContentProps {
+  /** What kind of dead end this is; the tab title and `bai_navigate` read it. */
+  kind: RouteErrorKind;
+  /** The heading as plain text; also the tab title. */
+  label: string;
   /** Path segments for the pill; omit to hide the pill entirely. */
   segments?: RouteErrorSegment[];
-  title: React.ReactNode;
+  /** Rich heading, when it needs markup `label` cannot carry. Defaults to `label`. */
+  title?: React.ReactNode;
   description?: React.ReactNode;
   /** Action area under the copy (e.g. a primary navigation button). */
   extra?: React.ReactNode;
 }
 
 const RouteErrorContent: React.FC<RouteErrorContentProps> = ({
+  kind,
+  label,
   segments,
   title,
   description,
@@ -46,6 +58,13 @@ const RouteErrorContent: React.FC<RouteErrorContentProps> = ({
   'use memo';
   const { token } = useTheme();
   const { isDarkMode } = useThemeMode();
+  const setRouteErrorScreen = useSetAtom(routeErrorScreenAtom);
+
+  // A layout effect, so the screen also clears when a suspending route hides it.
+  useLayoutEffect(() => {
+    setRouteErrorScreen({ kind, label });
+    return () => setRouteErrorScreen(null);
+  }, [kind, label, setRouteErrorScreen]);
 
   // Splash-derived warm palette: the broken-segment ink needs ~4.5:1 on the
   // pill background, so light mode uses a darker orange than the raw accent.
@@ -136,7 +155,7 @@ const RouteErrorContent: React.FC<RouteErrorContentProps> = ({
           justify="center"
           style={{ margin: 0, maxWidth: 560 }}
         >
-          {title}
+          {title ?? label}
         </Heading>
 
         {description ? (
