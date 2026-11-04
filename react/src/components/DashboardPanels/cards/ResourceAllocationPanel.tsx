@@ -138,10 +138,7 @@ const ResourceAllocationPanel: React.FC<PanelComponentProps> = ({
           title: t('dashboard.card.ResourceAllocation'),
           tooltip: t('dashboard.card.ResourceAllocationTooltip'),
         },
-        domain: {
-          title: t('dashboard.card.ResourceAllocation'),
-          tooltip: t('dashboard.card.DomainResourceAllocationTooltip'),
-        },
+        domain: { title: t('dashboard.card.ResourceAllocation') },
       }}
     >
       {(cardScope, key) => <Allocation scope={cardScope} fetchKey={key} />}

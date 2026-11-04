@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<17056340ac0ea6d95535c0001597afc1>>
+ * @generated SignedSource<<0ccc0dffb17f55c452d01e42d5186afa>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -64,7 +64,6 @@ export type FailedLoginsPanelQuery$variables = {
   failed: LoginHistoryFilter;
   limit: number;
   offset: number;
-  previousFailed: LoginHistoryFilter;
 };
 export type FailedLoginsPanelQuery$data = {
   readonly failedLogins: Result<{
@@ -81,9 +80,6 @@ export type FailedLoginsPanelQuery$data = {
       };
     }>;
   } | null | undefined, unknown>;
-  readonly previousFailed: Result<{
-    readonly count: number;
-  } | null | undefined, unknown>;
 };
 export type FailedLoginsPanelQuery = {
   response: FailedLoginsPanelQuery$data;
@@ -91,57 +87,24 @@ export type FailedLoginsPanelQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "failed"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "limit"
-},
-v2 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "offset"
-},
-v3 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "previousFailed"
-},
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "count",
-  "storageKey": null
-},
-v5 = {
-  "alias": "previousFailed",
-  "args": [
-    {
-      "kind": "Variable",
-      "name": "filter",
-      "variableName": "previousFailed"
-    },
-    {
-      "kind": "Literal",
-      "name": "limit",
-      "value": 1
-    }
-  ],
-  "concreteType": "LoginHistoryV2Connection",
-  "kind": "LinkedField",
-  "name": "adminLoginHistoryV2",
-  "plural": false,
-  "selections": [
-    (v4/*: any*/)
-  ],
-  "storageKey": null
-},
-v6 = [
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "failed"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "limit"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "offset"
+  }
+],
+v1 = [
   {
     "kind": "Variable",
     "name": "filter",
@@ -168,14 +131,21 @@ v6 = [
     ]
   }
 ],
-v7 = {
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "count",
+  "storageKey": null
+},
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v8 = {
+v4 = {
   "alias": null,
   "args": null,
   "concreteType": "UserV2BasicInfo",
@@ -195,32 +165,22 @@ v8 = {
 };
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/),
-      (v2/*: any*/),
-      (v3/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "FailedLoginsPanelQuery",
     "selections": [
       {
         "kind": "CatchField",
-        "field": (v5/*: any*/),
-        "to": "RESULT"
-      },
-      {
-        "kind": "CatchField",
         "field": {
           "alias": "failedLogins",
-          "args": (v6/*: any*/),
+          "args": (v1/*: any*/),
           "concreteType": "LoginHistoryV2Connection",
           "kind": "LinkedField",
           "name": "adminLoginHistoryV2",
           "plural": false,
           "selections": [
-            (v4/*: any*/),
+            (v2/*: any*/),
             {
               "alias": null,
               "args": null,
@@ -237,7 +197,7 @@ return {
                   "name": "node",
                   "plural": false,
                   "selections": [
-                    (v7/*: any*/),
+                    (v3/*: any*/),
                     {
                       "alias": null,
                       "args": null,
@@ -246,7 +206,7 @@ return {
                       "name": "user",
                       "plural": false,
                       "selections": [
-                        (v8/*: any*/)
+                        (v4/*: any*/)
                       ],
                       "storageKey": null
                     },
@@ -272,25 +232,19 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v3/*: any*/),
-      (v1/*: any*/),
-      (v2/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "FailedLoginsPanelQuery",
     "selections": [
-      (v5/*: any*/),
       {
         "alias": "failedLogins",
-        "args": (v6/*: any*/),
+        "args": (v1/*: any*/),
         "concreteType": "LoginHistoryV2Connection",
         "kind": "LinkedField",
         "name": "adminLoginHistoryV2",
         "plural": false,
         "selections": [
-          (v4/*: any*/),
+          (v2/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -307,7 +261,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v7/*: any*/),
+                  (v3/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -316,8 +270,8 @@ return {
                     "name": "user",
                     "plural": false,
                     "selections": [
-                      (v8/*: any*/),
-                      (v7/*: any*/)
+                      (v4/*: any*/),
+                      (v3/*: any*/)
                     ],
                     "storageKey": null
                   },
@@ -368,16 +322,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "c19f2da9164e5364be864a8ee3e50391",
+    "cacheID": "1e5b95fb63ed14aaccf9413cfbe95766",
     "id": null,
     "metadata": {},
     "name": "FailedLoginsPanelQuery",
     "operationKind": "query",
-    "text": "query FailedLoginsPanelQuery(\n  $failed: LoginHistoryFilter!\n  $previousFailed: LoginHistoryFilter!\n  $limit: Int!\n  $offset: Int!\n) {\n  previousFailed: adminLoginHistoryV2(filter: $previousFailed, limit: 1) {\n    count\n  }\n  failedLogins: adminLoginHistoryV2(filter: $failed, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        user {\n          basicInfo {\n            email\n          }\n          id\n        }\n        ...BAILoginHistoryTableFragment\n      }\n    }\n  }\n}\n\nfragment BAILoginHistoryTableFragment on LoginHistoryV2 {\n  id\n  result\n  domainName\n  clientIp @since(version: \"26.9.0\")\n  failReason\n  createdAt\n}\n"
+    "text": "query FailedLoginsPanelQuery(\n  $failed: LoginHistoryFilter!\n  $limit: Int!\n  $offset: Int!\n) {\n  failedLogins: adminLoginHistoryV2(filter: $failed, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        user {\n          basicInfo {\n            email\n          }\n          id\n        }\n        ...BAILoginHistoryTableFragment\n      }\n    }\n  }\n}\n\nfragment BAILoginHistoryTableFragment on LoginHistoryV2 {\n  id\n  result\n  domainName\n  clientIp @since(version: \"26.9.0\")\n  failReason\n  createdAt\n}\n"
   }
 };
 })();
 
-(node as any).hash = "cf5ef56dfbad0c931e61f591111ccf73";
+(node as any).hash = "24fb06b7cd921682481db26f000d3361";
 
 export default node;

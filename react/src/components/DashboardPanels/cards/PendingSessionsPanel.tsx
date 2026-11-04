@@ -247,6 +247,9 @@ const PendingSessionTable: React.FC<{
         <Suspense fallback={null}>
           <BAIUnmountAfterClose>
             <SessionSchedulingHistoryModal
+              // A dialog over the dashboard, not the full-screen page the session detail opens.
+              variant="standard"
+              width={1200}
               open={isHistoryOpen}
               sessionId={historySessionId}
               onCancel={() => setIsHistoryOpen(false)}

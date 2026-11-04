@@ -8,14 +8,7 @@ import type {
 } from '../../../__generated__/FailedLoginsPanelQuery.graphql';
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
 import ScopedCard from '../cards/ScopedCard';
-import PeriodCaption from '../charts/PeriodCaption';
 import StatRow from '../charts/StatRow';
-import {
-  countDelta,
-  failureSentiment,
-  previousWindow,
-  readCount,
-} from '../countAliases';
 import { readPrimary } from '../panelPermission';
 import { withinWindow, type DateTimeWindow } from '../timeRange';
 import type { PanelComponentProps } from '../types';
@@ -56,24 +49,17 @@ const FailedLogins: React.FC<{
   useResetPageOn([domainName, range], setTablePaginationOption);
   const variables: FailedLoginsPanelQuery['variables'] = {
     failed: failedLoginFilter(domainName, timeRange),
-    previousFailed: failedLoginFilter(domainName, previousWindow(timeRange)),
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
   };
   const deferredVariables = useDeferredValue(variables);
-  const shownRange = useDeferredValue(timeRange);
   const data = useLazyLoadQuery<FailedLoginsPanelQuery>(
     graphql`
       query FailedLoginsPanelQuery(
         $failed: LoginHistoryFilter!
-        $previousFailed: LoginHistoryFilter!
         $limit: Int!
         $offset: Int!
       ) {
-        previousFailed: adminLoginHistoryV2(filter: $previousFailed, limit: 1)
-          @catch(to: RESULT) {
-          count
-        }
         failedLogins: adminLoginHistoryV2(
           filter: $failed
           orderBy: [{ field: CREATED_AT, direction: DESC }]
@@ -106,25 +92,15 @@ const FailedLogins: React.FC<{
   const emails = new Map(
     logins.map((login) => [login.id, login.user?.basicInfo.email]),
   );
-  const previousFailed = readCount(data.previousFailed);
-  const delta = countDelta(
-    failed,
-    previousFailed.count,
-    timeRange,
-    previousFailed.denied,
-  );
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
-      <PeriodCaption window={shownRange} />
       <StatRow
         items={[
           {
             key: 'failedLogins',
             label: t('dashboard.card.FailedLogins'),
             value: String(failed),
-            description: t('dashboard.card.VsPreviousRange'),
-            delta: { ...delta, sentiment: failureSentiment(delta) },
           },
         ]}
       />
@@ -163,7 +139,7 @@ const FailedLogins: React.FC<{
   );
 };
 
-/** The domain's failed sign-ins in the card's range, against the previous range. */
+/** The domain's failed sign-ins in the card's range. */
 const FailedLoginsPanel: React.FC<PanelComponentProps> = ({
   scope,
   vars,
