@@ -32,7 +32,7 @@
 | My Environment           | `/my-environment`                                |    2     |    2    | ✅ 100% |
 | Environment              | `/environment`                                   |    29    |   23    | 🔶 79%  |
 | Configurations           | `/settings`                                      |    11    |    9    | 🔶 82%  |
-| Resources                | `/agent-summary`, `/agent`                       |    10    |    3    | 🔶 30%  |
+| Resources                | `/agent-summary`, `/agent`                       |    11    |    4    | 🔶 36%  |
 | Resource Policy          | `/resource-policy`                               |    13    |   10    | 🔶 77%  |
 | User Credentials         | `/credential`                                    |    26    |   19    | 🔶 73%  |
 | Maintenance              | `/maintenance`                                   |    5     |    4    | 🔶 80%  |
@@ -54,7 +54,7 @@
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **537**  | **387** | **72%** |
+| **Total**                |                                                  | **538**  | **388** | **72%** |
 
 ---
 
@@ -660,10 +660,11 @@
 
 **Table link:** Agent name → `AgentDetailDrawer`
 
-| Feature                              | Status | Test                                       |
-| ------------------------------------ | ------ | ------------------------------------------ |
-| Agent list with connected agents     | ✅     | `should have at least one connected agent` |
-| Agent name click → AgentDetailDrawer | ❌     | -                                          |
+| Feature                                                      | Status | Test                                                            |
+| ------------------------------------------------------------ | ------ | --------------------------------------------------------------- |
+| Agent list with connected agents                             | ✅     | `should have at least one connected agent`                      |
+| Inactive tab lists LOST/RESTARTING agents with status badges | ✅     | `Admin can list LOST and RESTARTING agents in the Inactive tab` |
+| Agent name click → AgentDetailDrawer                         | ❌     | -                                                               |
 
 #### Storage Proxies Tab
 
@@ -685,7 +686,7 @@
 | Edit resource group → ResourceGroupSettingModal    | ❌     | -    |
 | Delete resource group → Popconfirm                 | ❌     | -    |
 
-**Coverage: 🔶 3/10 features**
+**Coverage: 🔶 4/11 features**
 
 ---
 
