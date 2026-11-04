@@ -151,6 +151,7 @@ const EntityTypeFailures: React.FC<{
   ]);
   return (
     <BAIFlex direction="column" align="stretch" gap="xs" style={{ flex: 1 }}>
+      <PeriodCaption window={deferred.timeRange} />
       <DonutChart
         label={t('dashboard.card.FailuresByEntityType')}
         emptyText={t('dashboard.card.NoFailures')}
@@ -167,7 +168,6 @@ const EntityTypeFailures: React.FC<{
           setIsListOpen(true);
         }}
       />
-      <PeriodCaption window={deferred.timeRange} />
       <BAIUnmountAfterClose>
         <BAIModal
           open={isListOpen}

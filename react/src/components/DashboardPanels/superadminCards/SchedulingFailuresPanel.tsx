@@ -157,6 +157,7 @@ const SchedulingFailures: React.FC<{
       gap="md"
       style={{ flex: 1, minHeight: 0 }}
     >
+      <PeriodCaption window={shownRange} />
       <DonutChart
         label={t('dashboard.card.SchedulingFailures')}
         emptyText={t('dashboard.card.NoSchedulingFailures')}
@@ -173,7 +174,6 @@ const SchedulingFailures: React.FC<{
           })),
         )}
       />
-      <PeriodCaption window={shownRange} />
       <BAISchedulingHistoryNodes
         schedulingHistoryFrgmt={rows}
         disableSorter
