@@ -30,6 +30,7 @@ import {
 } from '../ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from '../InputNumberWithSlider';
 import ResourcePresetSelect, {
+  toSessionResourcePreset,
   getPresetUnavailableReason,
   presetUnavailableReasonText,
   getUnavailableSlotNames,
@@ -310,7 +311,7 @@ const ResourceAllocationFormItems: React.FC<
     projectId: project.id,
     resourceGroupName: deferredResourceGroup,
     skip: !deferredResourceGroup,
-  });
+  }).map(toSessionResourcePreset);
 
   const [resourceSlots] = useResourceSlots();
 

@@ -2,19 +2,20 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useSessionResourcePresetsQuery } from '../__generated__/useSessionResourcePresetsQuery.graphql';
-import type { ResourcePreset } from './useResourceLimitAndRemaining';
+import {
+  useSessionResourcePresetsQuery,
+  useSessionResourcePresetsQuery$data,
+} from '../__generated__/useSessionResourcePresetsQuery.graphql';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import type { FetchPolicy } from 'relay-runtime';
 
-export interface SessionResourcePreset extends ResourcePreset {
-  /** `null` for a global preset. */
-  resource_group_name: string | null;
-}
+export type PresetAvailabilityV2 = NonNullable<
+  useSessionResourcePresetsQuery$data['checkPresetAvailabilityV2']
+>['presets'][number];
 
 /**
- * The presets a session can launch with in `resourceGroupName` (global ones
- * included), from `checkPresetAvailabilityV2`. `allocatable` carries `available`.
+ * The `checkPresetAvailabilityV2` presets a session can launch with in
+ * `resourceGroupName` (global ones included), as the API returns them.
  * Pass `skip` while the resource group is not known yet; it returns `[]` then.
  */
 export const useSessionResourcePresets = ({
@@ -29,7 +30,7 @@ export const useSessionResourcePresets = ({
   skip: boolean;
   fetchKey?: string | number;
   fetchPolicy?: FetchPolicy;
-}): SessionResourcePreset[] => {
+}): ReadonlyArray<PresetAvailabilityV2> => {
   'use memo';
   const { checkPresetAvailabilityV2 } =
     useLazyLoadQuery<useSessionResourcePresetsQuery>(
@@ -71,19 +72,5 @@ export const useSessionResourcePresets = ({
       { fetchKey, fetchPolicy },
     );
 
-  return (checkPresetAvailabilityV2?.presets ?? []).map((preset) => ({
-    id: preset.presetId,
-    name: preset.name,
-    // Same shape as the REST `check-presets` slots: `Decimal` strings
-    // such as "2.000" become "2", memory stays in bytes.
-    resource_slots: Object.fromEntries(
-      preset.resourceSlots.map((slot) => [
-        slot.resourceType,
-        String(parseFloat(String(slot.quantity))),
-      ]),
-    ) as ResourcePreset['resource_slots'],
-    shared_memory: preset.sharedMemory?.expr ?? null,
-    allocatable: preset.available,
-    resource_group_name: preset.resourceGroupName ?? null,
-  }));
+  return checkPresetAvailabilityV2?.presets ?? [];
 };

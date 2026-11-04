@@ -9,8 +9,9 @@ import {
   useResourceSlots,
 } from '../hooks/backendai';
 import useControllableState_deprecated from '../hooks/useControllableState';
+import type { ResourcePreset as CheckedResourcePreset } from '../hooks/useResourceLimitAndRemaining';
 import {
-  type SessionResourcePreset,
+  type PresetAvailabilityV2,
   useSessionResourcePresets,
 } from '../hooks/useSessionResourcePresets';
 import type { SelectorOptionData } from '@lablup/ui-common/Selector';
@@ -31,6 +32,29 @@ import * as _ from 'lodash-es';
 import { Info, SquarePen } from 'lucide-react';
 import React, { useEffect, useTransition, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
+
+export interface SessionResourcePreset extends CheckedResourcePreset {
+  /** `null` for a global preset. */
+  resource_group_name: string | null;
+}
+
+/** `preset` in the REST `check-presets` shape the launcher's rules take. */
+export const toSessionResourcePreset = (
+  preset: PresetAvailabilityV2,
+): SessionResourcePreset => ({
+  id: preset.presetId,
+  name: preset.name,
+  // `Decimal` strings such as "2.000" become "2"; memory stays in bytes.
+  resource_slots: Object.fromEntries(
+    preset.resourceSlots.map((slot) => [
+      slot.resourceType,
+      String(parseFloat(String(slot.quantity))),
+    ]),
+  ) as CheckedResourcePreset['resource_slots'],
+  shared_memory: preset.sharedMemory?.expr ?? null,
+  allocatable: preset.available,
+  resource_group_name: preset.resourceGroupName ?? null,
+});
 
 /**
  * The option shape this component hands back through `onChange`. It used to be
@@ -189,7 +213,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     skip: !resourceGroup,
     fetchKey,
     fetchPolicy: fetchKey === 'first' ? 'store-and-network' : 'network-only',
-  });
+  }).map(toSessionResourcePreset);
 
   const onlyInGroupText = (name: string) =>
     t('resourcePreset.OnlyAvailableInResourceGroup', { name });
