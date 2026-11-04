@@ -169,7 +169,7 @@ const VFolderListToolsRegistrar: React.FC<WebMCPVFolderListToolsProps> = ({
 
 /**
  * `bai_list_visible_vfolder`, `bai_get_vfolder_filter` and
- * `bai_get_current_vfolder` for the folder list (ADR 0017).
+ * `bai_get_current_vfolder` for the folder list (ADR 0018).
  */
 const WebMCPVFolderListTools: React.FC<WebMCPVFolderListToolsProps> = (
   props,

@@ -152,7 +152,7 @@ const SessionListToolsRegistrar: React.FC<WebMCPSessionListToolsProps> = ({
 
 /**
  * `bai_list_visible_session`, `bai_get_session_filter` and
- * `bai_get_current_session` for the session list (ADR 0017).
+ * `bai_get_current_session` for the session list (ADR 0018).
  */
 const WebMCPSessionListTools: React.FC<WebMCPSessionListToolsProps> = (
   props,
