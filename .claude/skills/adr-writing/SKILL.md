@@ -41,7 +41,7 @@ from now, not the author and not today's reviewer.
 - **The document never talks about itself.** No "covered in the last section",
   no "this document does not decide X". Say the thing or delete it.
 - **Link outward instead of retelling.** When the context lives in another
-  ADR, a source file, a Jira issue, or an upstream document, cite it and
+  ADR, a source file, an issue, or an upstream document, cite it and
   reproduce only the sentence the reader must act on.
 - **Name the scope boundary once.** What is out of scope gets one line — never
   the reasoning for deferring it, never a sketch of the deferred design.
@@ -62,7 +62,7 @@ reviewers at the ADRs); keep the two in step.
   `NNNN` in `docs/adr/` plus one. Numbers are never reused, so when the
   sequence has a gap the deleted number stays retired; `git log -- docs/adr`
   shows it.
-- **Title** — `# NNNN — <English noun phrase>` (T1–T6). A Jira key goes in
+- **Title** — `# NNNN — <English noun phrase>` (T1–T6). An issue key goes in
   the sources section, never in the title. A supersede pointer goes on its
   own line, never in the title.
 - **No status field.** An ADR on `main` is a decision in force — landing it
@@ -82,12 +82,18 @@ reviewers at the ADRs); keep the two in step.
 - **Mention form** — documents and PR bodies write `ADR NNNN`. Source
   comments written before this convention say `ADR-NNNN`; they are corrected
   when the file is next edited, never swept.
-- **Language** — the title is English; the body is Korean, with English
-  technical terms and identifiers written as they appear in the code. An ADR
-  that landed before this convention keeps its body language; a document is
-  revised only when its content changes, never translated for its own sake.
-  Section headings follow the body language, as
-  [references/document-shape.md](references/document-shape.md) fixes.
+- **Language pair** — every ADR is two files: `NNNN-title.md` in English,
+  the authority, and `NNNN-title.ko.md`, its Korean translation (ADR 0018);
+  `docs/ARCHITECTURE.md` likewise has `docs/ARCHITECTURE.ko.md`. Write the
+  English file first, then translate it; a change to the English file
+  changes the `.ko.md` in the same PR. The Korean file keeps the English H1
+  title, the same `###` subsections and the same mermaid diagrams, and
+  follows [references/korean-companion.md](references/korean-companion.md).
+  Identifiers are written as they appear in the code in both.
+- **Single home** — a design decision is recorded here and nowhere else. Do
+  not create `.specs/` directories, design notes, or plan files in the
+  repository; implementation plans and task breakdowns live in the GitHub
+  issue and the PR (ADR 0018).
 
 ## Phase 0 — Gather what the document must agree with
 
@@ -98,7 +104,7 @@ landed.
   narrows, and their rows in `docs/ARCHITECTURE.md`.
 - The source files the decision names, so identifiers in the text match the
   code — component names, hook names, atom names, ESLint rule ids.
-- The Jira issue the work belongs to, so the sources section can cite it.
+- The GitHub issue the work belongs to, so the sources section can cite it.
 - Sibling ADRs written in the same increment, so terminology stays shared.
 
 ## Phase 1 — Draft against the rule catalogues
@@ -106,14 +112,16 @@ landed.
 Two reference files hold the rules, and both cite by id — "T1 violation",
 "fixed S4", "D2 missing".
 
-| file | ids | what it governs |
-|---|---|---|
-| [references/writing-rules.md](references/writing-rules.md) | T1–T6, L1–L5, S1–S10, D1–D2 | the title, the terms, the sentences and bullets, the Summary a body opens with, and the diagram a flow gets |
-| [references/document-shape.md](references/document-shape.md) | D3–D4 | the section skeleton, the heading language, the increment overview, the one-diagram floor, and the mermaid syntax traps |
+| file                                                         | ids                         | what it governs                                                                                                         |
+| ------------------------------------------------------------ | --------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| [references/writing-rules.md](references/writing-rules.md)   | T1–T6, L1–L5, S1–S10, D1–D2 | the title, the terms, the sentences and bullets, the Summary a body opens with, and the diagram a flow gets             |
+| [references/document-shape.md](references/document-shape.md) | D3–D4                       | the section skeleton, the heading language, the increment overview, the one-diagram floor, and the mermaid syntax traps |
+| [references/korean-companion.md](references/korean-companion.md) | K1–K4 | the `.ko.md` companion: its title, shape, heading map, and Korean sentence rules |
 
 Write the sections in the order D3 fixes: title, Summary, Context, diagrams,
 Decision, alternatives with the reason each was rejected, Consequences,
-sources, glossary.
+sources, glossary. Draft and review the English file to the end before
+translating it, so the Korean file never carries an unreviewed sentence.
 
 ## Phase 2 — Reread as a first-time reader
 
@@ -123,8 +131,8 @@ checks, which only a document can fail:
 
 - A sibling document draws the same components with a different decomposition
   (D2), or the increment has no overview document (D4).
-- A section from the D3 skeleton is missing, or a heading is in the wrong
-  language for the body.
+- A section from the D3 skeleton is missing, or a heading or sentence is
+  not English.
 - A Decision item stacks several decisions that should be `### N.`
   subsections.
 
@@ -148,6 +156,11 @@ is common. Check the file it cites.
 
 - Read the document once on GitHub's rendering of the branch. A broken
   mermaid diagram shows there as a syntax error; no CI check catches it.
-- Add or update the ADR's row in `docs/ARCHITECTURE.md` in the same change.
+- Add or update the ADR's row in `docs/ARCHITECTURE.md` and
+  `docs/ARCHITECTURE.ko.md` in the same change.
+- Write or update the `.ko.md` companion, then run
+  `node scripts/check-adr-pairs.mjs` (also the `ADR pairs` lane of
+  `scripts/verify.sh`); it fails on a missing companion, a different title or
+  section shape, or an English file changed without its companion.
 - Verify every cross-reference resolves to a file that exists, and when an
   ADR was retired, grep for its filename so no link points at it.

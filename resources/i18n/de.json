@@ -2728,8 +2728,6 @@
     "DeleteResourceGroup": "Ressourcengruppe löschen",
     "Description": "Beschreibung",
     "Domain": "Bereich",
-    "Driver": "Treiber",
-    "DriverOptions": "Treiberoptionen",
     "DuplicateHandlerOverride": "Dieser Handler ist bereits überschrieben.",
     "DuplicateResourceSlot": "Dieser Ressourcen-Slot ist bereits hinzugefügt.",
     "EditDefaultDeploymentOptions": "Standard-Bereitstellungsoptionen bearbeiten",

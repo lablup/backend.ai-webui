@@ -440,3 +440,91 @@ export async function sweepStaleProjectsViaApi(
   }
   return purged;
 }
+
+/**
+ * Creates an active, public, empty resource group (no agents) so a test can
+ * edit its options without touching the groups other specs schedule on.
+ */
+export async function createResourceGroupViaApi(
+  api: APIRequestContext,
+  name: string,
+  description = 'e2e',
+): Promise<void> {
+  const data = await gqlAdmin<{
+    create_scaling_group: { ok: boolean; msg: string };
+  }>(
+    api,
+    `mutation($name: String!, $props: CreateScalingGroupInput!) {
+      create_scaling_group(name: $name, props: $props) { ok msg }
+    }`,
+    {
+      name,
+      props: {
+        description,
+        is_active: true,
+        is_public: true,
+        driver: 'static',
+        driver_opts: '{}',
+        scheduler: 'fifo',
+        scheduler_opts: '{}',
+        wsproxy_addr: '',
+        use_host_network: false,
+      },
+    },
+  );
+  if (!data.create_scaling_group?.ok) {
+    throw new Error(
+      `create_scaling_group failed: ${data.create_scaling_group?.msg}`,
+    );
+  }
+}
+
+/**
+ * Deletes a resource group. Returns `false` instead of throwing so teardown
+ * never masks the test result.
+ */
+export async function deleteResourceGroupViaApi(
+  api: APIRequestContext,
+  name: string,
+): Promise<boolean> {
+  try {
+    const data = await gqlAdmin<{
+      delete_scaling_group: { ok: boolean; msg: string };
+    }>(
+      api,
+      `mutation($name: String!) { delete_scaling_group(name: $name) { ok msg } }`,
+      { name },
+    );
+    return data.delete_scaling_group?.ok === true;
+  } catch (error) {
+    console.warn(`[admin-api] could not delete resource group ${name}:`, error);
+    return false;
+  }
+}
+
+/**
+ * Deletes resource groups matching `pattern` that are older than `minAgeMs`,
+ * so a hard-killed run cannot leak them.
+ */
+export async function sweepStaleResourceGroupsViaApi(
+  api: APIRequestContext,
+  pattern: RegExp,
+  minAgeMs = 60 * 60 * 1000,
+): Promise<number> {
+  const data = await gqlAdmin<{
+    scaling_groups: Array<{ name: string; created_at: string }>;
+  }>(api, `query { scaling_groups(is_active: null) { name created_at } }`);
+  const stale = (data.scaling_groups ?? []).filter((g) => {
+    const createdAt = new Date(g.created_at).getTime();
+    return (
+      pattern.test(g.name) &&
+      Number.isFinite(createdAt) &&
+      Date.now() - createdAt > minAgeMs
+    );
+  });
+  let deleted = 0;
+  for (const { name } of stale) {
+    if (await deleteResourceGroupViaApi(api, name)) deleted++;
+  }
+  return deleted;
+}

@@ -2717,8 +2717,6 @@
     "DeleteResourceGroup": "ลบกลุ่มทรัพยากร",
     "Description": "คำอธิบาย",
     "Domain": "โดเมน",
-    "Driver": "ไดรเวอร์",
-    "DriverOptions": "ตัวเลือกไดรเวอร์",
     "DuplicateHandlerOverride": "Handler นี้ถูกกำหนดทับแล้ว",
     "DuplicateResourceSlot": "ช่องทรัพยากรนี้ถูกเพิ่มแล้ว",
     "EditDefaultDeploymentOptions": "แก้ไขตัวเลือกการปรับใช้เริ่มต้น",

@@ -2,56 +2,66 @@
 
 ## Summary
 
-> 낯선 용어는 문서 맨 아래 [용어](#용어)에 모아 두었다.
+> Unfamiliar terms are collected in the [Glossary](#glossary) at the end.
 
-- **Stop** — 구현한 session이 무엇이 바뀌었고 무엇을 확인해야 하는지 남기는 pin
-  하나 — 은 기존 v3 anchor(ADR 0002)에 추가된 optional field 묶음이다. v4
-  envelope는 없다: 3배 더 작지만 grammar가 하나 더 늘어나므로 미룬다.
-- Stop은 **strict**하게 resolve된다: landmark가 일치해야 하고, `dlg` flag는
-  후보를 열린 dialog 안으로 제한한다. 측정된 false positive — 닫힌 modal의
-  stop이 밖의 look-alike element에 위치를 잡은 사례 — 가 stop에 더 느슨한
-  reviewer-pin resolution을 쓰지 않기로 한 이유다.
-- codec은 **volatile-query denylist** 하나를 소유하며, `formValues` 같은
-  parameter를 모든 anchor의 query에서 제거한다 — reviewer pin도 포함된다.
-- walkthrough는 **20 stop**으로 cap되며, GitHub의 65,536자 댓글 제한이 그
-  기준이지 link 자체가 아니다.
-- PR 댓글은 `<!-- bai-walkthrough v1 pr= sha= stops= server= -->` marker
-  하나만 가진다 — 이 marker는 re-mint 시 댓글을 idempotent하게 만드는
-  역할일 뿐이고, `pr-review-thread-resolver`가 stop을 finding으로 읽지 않게
-  만드는 실제 보장은 `cli.ts`의 `review-pins parse`가 stop(즉 `ck`를 가진
-  anchor)을 기본으로 findings에서 제외하는 codec 쪽 규칙이다.
-- guided mode는 docs PR preview의 grammar
-  (`packages/backend.ai-docs-toolkit/templates/assets/pr-preview.{js,css}`)를
-  design으로 차용한다. Web UI overlay와 구현을 공유하는 것은 범위 밖이다.
-- link는 **모든** part가 stop일 때만 guided mode를 연다; 그렇게 열리는
-  walkthrough는 reviewer의 draft set에 절대 합쳐지지 않는 별도의 읽기
-  전용 set이다. Mark는 Shadow-root tracking box가 그리며 화면에 보이는
-  element를 직접 칠하지 않고, page를 넘는 `›`는 전체 reload보다 host app
-  자신의 router를 우선한다.
-- trigger는 webui 소유 skill(`.claude/skills/walkthrough/`)이며, 구현한
-  session 자신이 실행한다 — 공유 `dw`/`fw` plugin의 변경이 아니고
-  notification도 아니다. 이는 spec R3.1의 "no ✅ What to check comment"
-  결정(2026-09-01)을 spec R3.9가 열어 둔 모양으로 좁게 재검토한 것이다: 새
-  ticket이지 중단된 Teams 답장의 부활이 아니다.
+- A **Stop** is one pin that the implementing session leaves to record what
+  changed and what to check. A Stop is a bundle of optional fields added to
+  the existing v3 anchor (ADR 0002). There is no v4 envelope: a v4 envelope
+  would be three times smaller, but it adds one more grammar, so it is
+  deferred.
+- The overlay resolves a Stop **strictly**: the landmark must match, and the
+  `dlg` flag limits the candidates to elements inside an open dialog. A
+  measured false positive, in which a stop for a closed modal took its
+  position from a look-alike element outside the modal, is the reason the
+  overlay does not use the looser reviewer-pin resolution for stops.
+- The codec owns one **volatile-query denylist** and removes parameters such
+  as `formValues` from the query of every anchor, reviewer pins included.
+- A walkthrough is **capped at 20 stops**. GitHub's 65,536-character comment
+  limit sets that cap, not the link itself.
+- The PR comment carries one marker,
+  `<!-- bai-walkthrough v1 pr= sha= stops= server= -->`. The marker only
+  makes the comment idempotent on a re-mint. The actual guarantee that
+  `pr-review-thread-resolver` does not read stops as findings is a codec-side
+  rule: `review-pins parse` in `cli.ts` excludes stops (that is, anchors that
+  carry `ck`) from the findings by default.
+- Guided mode borrows the grammar of the docs PR preview
+  (`packages/backend.ai-docs-toolkit/templates/assets/pr-preview.{js,css}`)
+  as a design. Sharing an implementation with the Web UI overlay is out of
+  scope.
+- A link opens guided mode only when **every** part is a stop. A walkthrough
+  opened that way is a separate read-only set that the overlay never merges
+  into the reviewer's draft set. A Shadow-root tracking box draws each Mark
+  and does not paint the visible element directly. The cross-page `›`
+  prefers the host app's own router over a full reload.
+- The trigger is a webui-owned skill (`.claude/skills/walkthrough/`), and the
+  implementing session runs it itself. The trigger is not a change to the
+  shared `dw`/`fw` plugins, and it is not a notification. This decision is a
+  narrow re-examination of the "no ✅ What to check comment" decision of spec
+  R3.1 (2026-09-01), in the shape that spec R3.9 left open: it is a new
+  ticket, not a revival of the stopped Teams reply.
 
 ## Context
 
-review overlay의 pin set(ADR 0002)은 reviewer 한 명의 remark를 나른다. 이
-결정은 같은 anchor가 [**Stop**](#용어)도 나르도록 확장한다: reviewer가
-아니라 _구현한_ session이 무엇을 바꿨고 requester가 무엇을 확인해야 하는지
-적어 만드는 pin이다. Stop들의 순서 있는 집합이 [**Walkthrough**](#용어)다.
-이 용어들과 [**Mark**](#용어)(pin glyph 대신 guided mode가 그리는 tint
-처리된 element), [**Navigator**](#용어)(stop을 따라가는 우하단 pill)는
-`react/vite-plugins/review-overlay/CONTEXT.md`에도 정의되어 있다.
+The pin set of the review overlay (ADR 0002) carries the remarks of one
+reviewer. This decision extends the same anchor to also carry a
+[**Stop**](#glossary): a pin that the _implementing_ session, not a reviewer,
+creates to record what it changed and what the requester should check. An
+ordered set of Stops is a [**Walkthrough**](#glossary). These terms, together
+with [**Mark**](#glossary) (the tinted element that guided mode draws instead
+of a pin glyph) and [**Navigator**](#glossary) (the bottom-right pill that
+steps through the stops), are also defined in
+`react/vite-plugins/review-overlay/CONTEXT.md`.
 
-Stop은 anchor의 기존 예산 안에 들어가야 하고, tab과 dialog 뒤에서 렌더되는
-DOM에 대해서도 안정적으로 resolve되어야 하며, GitHub가 받아들이고
-review-thread resolver가 무시하는 댓글로 PR에 도달해야 한다. spec Revision
-3(R3.1, R3.9)은 이미 자동 "what to check" 댓글과 공유 구현 workflow를 위한
-종료 시 notification을 배제해 두었다; 이 결정은 트리거가 다른 mechanism에
-한해 첫 번째 ruling만 재검토하고, R3.9는 그대로 유지한다.
+A Stop must fit within the existing budget of the anchor. The overlay must
+resolve it reliably against DOM that renders behind tabs and dialogs. The
+Stop must reach the PR as a comment that GitHub accepts and that the
+review-thread resolver ignores. Spec Revision 3 (R3.1, R3.9) already ruled
+out an automatic "what to check" comment and an end-of-run notification for
+the shared implementation workflow. This decision re-examines only the first
+ruling, and only for a mechanism with a different trigger; R3.9 stays as it
+is.
 
-## 설계도
+## Diagram
 
 ```mermaid
 flowchart LR
@@ -76,321 +86,346 @@ flowchart LR
 
 ## Decision
 
-### 1. Additive stop field와 없는 v4 envelope
+### 1. Additive stop fields and no v4 envelope
 
-Stop은 `AnchorV3`(`react/vite-plugins/review-overlay/client/types.ts`)에
-optional key를 추가하며, 각각의 cap은 `client/stop-guard.ts`에 있다:
+A Stop adds optional keys to `AnchorV3`
+(`react/vite-plugins/review-overlay/client/types.ts`), and the cap of each key
+is in `client/stop-guard.ts`:
 
-| field         | 의미                                                                                                                                                                                                                        | cap           |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
-| `ch`          | 무엇이 바뀌었는지                                                                                                                                                                                                           | ≤280자        |
-| `ck`          | 무엇을 확인해야 하는지, 기대되는 결과로 표현                                                                                                                                                                                | ≤280자        |
-| `old` / `new` | popover의 diff 줄                                                                                                                                                                                                           | 각각 ≤40자    |
-| `type`        | `'added'` 또는 `'modified'`                                                                                                                                                                                                 | 고정 enum     |
-| `kind`        | 짧은 element 종류                                                                                                                                                                                                           | ≤64자         |
-| `code`        | 1–3개의 `{path, line, to?}` code reference                                                                                                                                                                                  | 1–3개 항목    |
-| `sha`         | stop이 만들어진 시점의 전체 head                                                                                                                                                                                            | 40자리 16진수 |
-| `pr`          | stop이 minting된 PR                                                                                                                                                                                                         | 양의 정수     |
-| `via`         | 재생 가능한 step list — `{click: {text?, tid?}}`, `{fill: {tid?, label?, value, enter?}}`, `{select: {tid?, label?, option}}` 중 하나씩 (FR-4103). overlay는 문장과 화면 힌트로 안내할 뿐 절대 대신 클릭·입력·선택하지 않음 | ≤8개 항목     |
-| `dlg`         | 열린 dialog 안에서 pick됨                                                                                                                                                                                                   | 리터럴 `1`    |
+| field         | meaning                                                                                                                                                                                                                                                                             | cap                 |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| `ch`          | What changed                                                                                                                                                                                                                                                                        | ≤280 characters     |
+| `ck`          | What to check, written as the expected result                                                                                                                                                                                                                                       | ≤280 characters     |
+| `old` / `new` | The diff line in the popover                                                                                                                                                                                                                                                        | ≤40 characters each |
+| `type`        | `'added'` or `'modified'`                                                                                                                                                                                                                                                           | fixed enum          |
+| `kind`        | A short element kind                                                                                                                                                                                                                                                                | ≤64 characters      |
+| `code`        | 1–3 `{path, line, to?}` code references                                                                                                                                                                                                                                             | 1–3 items           |
+| `sha`         | The full head at the time the stop was created                                                                                                                                                                                                                                      | 40 hex digits       |
+| `pr`          | The PR for which the stop was minted                                                                                                                                                                                                                                                | positive integer    |
+| `via`         | A replayable step list; each step is one of `{click: {text?, tid?}}`, `{fill: {tid?, label?, value, enter?}}`, or `{select: {tid?, label?, option}}` (FR-4103). The overlay only guides with sentences and on-screen hints; it never clicks, types, or selects on the user's behalf | ≤8 items            |
+| `dlg`         | The element was picked inside an open dialog                                                                                                                                                                                                                                        | literal `1`         |
 
-`pr`는 항상 존재하므로 boot record가 없는 static build도 code link를 만들
-수 있다. `decodeAnchor`는 anchor를 거부하는 대신 타입이 맞지 않는 optional
-field를 버린다; `isStop(anchor)`은 `ck`가 문자열인지로 판정한다. 오늘의
-`decodeAnchor`와 `review-pins` CLI는 이미 이 key들을 그대로 받아들이고
-보존하므로, 이는 ADR 0002의 "버전을 올리지 않는" case다.
+`pr` is always present, so a static build without a boot record can still
+build code links. `decodeAnchor` drops an optional field whose type does not
+match instead of rejecting the anchor; `isStop(anchor)` decides by whether
+`ck` is a string. Today's `decodeAnchor` and the `review-pins` CLI already
+accept and preserve these keys as they are, so this is the "no version bump"
+case of ADR 0002.
 
-| variant                                         | 최악의 경우, 문자 수                          |
-| ----------------------------------------------- | --------------------------------------------- |
-| 오늘의 reviewer note, 280자 한국어              | 760                                           |
-| `ch`+`ck` 280 한국어, code ref 3개, `sha`, `pr` | 1,263                                         |
-| `ch`+`ck` 280 영어, code ref 3개, `sha`, `pr`   | 792                                           |
-| v4 envelope, 같은 내용                          | 해당 없음 — set 기준 3배 작음, stop 기준 아님 |
+| variant                                            | worst case, in characters                        |
+| -------------------------------------------------- | ------------------------------------------------ |
+| Today's reviewer note, 280 Korean characters       | 760                                              |
+| `ch`+`ck` at 280 Korean, 3 code refs, `sha`, `pr`  | 1,263                                            |
+| `ch`+`ck` at 280 English, 3 code refs, `sha`, `pr` | 792                                              |
+| v4 envelope, same content                          | not applicable: 3× smaller per set, not per stop |
 
-v4 envelope는 30 stop 기준 3배 더 작지만(12.3K vs. 36.1K자) grammar가 하나
-더 늘고 v3 link를 위한 legacy path가 영구히 남는다. 20 stop보다 높은 cap이
-실제로 필요해질 때까지 미룬다.
+A v4 envelope is three times smaller at 30 stops (12.3K vs. 36.1K
+characters), but it adds one more grammar and leaves a permanent legacy path
+for v3 links. The v4 envelope is deferred until a cap higher than 20 stops is
+actually needed.
 
-### 2. Strict resolution과 volatile-query denylist
+### 2. Strict resolution and the volatile-query denylist
 
-`resolve.ts`는 Stop에 대해 text-scan 후보의 landmark `data-testid`가
-stop의 것과 일치할 때만 받아들인다. `tid`는 (ADR 0002의) optional
-base-anchor field이지 Stop 전용이 아니다; 그래서 `tid`가 아예 없는 stop은
-맞춰 볼 landmark가 없으므로, 막혀서 실패하는 대신 제한 없는 문서 전체
-text scan으로 넘어간다. `dlg: 1`을 가진 stop은 후보가 `DIALOG_SELECTOR`
-(`dialog, [role="dialog"], [role="alertdialog"]` — Astryx 자체의 native
-`<dialog>`와 ui-common `Modal`의 `alertdialog` 둘 다 해당) 안에 있을 때만
-받아들인다. 이는 측정된 false positive를 따른 것이다: modal이 닫혀 있는
-동안 modal용 stop이 Data page의 Active 버튼에 "위치를 잡은" 사례로, text
-fallback이 landmark 확인 없이 look-alike를 매칭했고 modal을 열어도 mark가
-실제 element로 옮겨가지 않았다. 확인되지 않은 stop은 틀린 element를 pin하는
-대신 "waiting" 상태로 남는다.
+For a Stop, `resolve.ts` accepts a text-scan candidate only when the
+candidate's landmark `data-testid` matches the stop's. `tid` is an optional
+base-anchor field (from ADR 0002), not a Stop-only field. For that reason, a
+stop with no `tid` at all has no landmark to match, and `resolve.ts` falls
+back to an unrestricted text scan of the whole document instead of failing.
+For a stop with `dlg: 1`, `resolve.ts` accepts a candidate only when it is
+inside `DIALOG_SELECTOR` (`dialog, [role="dialog"], [role="alertdialog"]`,
+which covers both Astryx's own native `<dialog>` and the `alertdialog` of
+ui-common `Modal`). This rule follows a measured false positive: while a
+modal was closed, a stop for that modal "took its position" from the Active
+button on the Data page. The text fallback matched a look-alike without a
+landmark check, and opening the modal did not move the mark to the real
+element. An unconfirmed stop stays in the "waiting" state instead of pinning
+the wrong element.
 
-`client/stop-guard.ts`는 volatile query parameter(`VOLATILE_QUERY_PARAMS`,
-`formValues`가 첫 번째)의 공유된 codec 소유 denylist와, query string에서
-그것을 제거하는 `stripVolatileQuery` helper를 갖는다. `client/anchor.ts`는
-capture 시점에 제거하고; `deeplink.ts`의 `pathNeedsChange`와 `cli.ts`의
-link ranking은 둘 다 비교 전에 anchor의 query _와_ 실제 URL 양쪽에서
-제거하므로, 모든 비교 지점이 일치한다 — reviewer pin도 포함이다. session
-launcher의 `formValues` JSON은 그것만으로 1,047자짜리 anchor를 만들었고,
-매 keystroke마다 다시 쓴다 — raw query만 비교하면 막 만든 pin이 그 순간
-바로 "away"로 뒤집혔다.
+`client/stop-guard.ts` holds a shared, codec-owned denylist of volatile query
+parameters (`VOLATILE_QUERY_PARAMS`, with `formValues` first) and the
+`stripVolatileQuery` helper that removes them from a query string.
+`client/anchor.ts` removes them at capture time. `pathNeedsChange` in
+`deeplink.ts` and the link ranking in `cli.ts` both remove them from the
+anchor's query _and_ from the actual URL before comparing, so every
+comparison point agrees, reviewer pins included. The `formValues` JSON of the
+session launcher alone produced a 1,047-character anchor, and the launcher
+rewrites it on every keystroke. When the overlay compared only the raw query,
+a pin that had just been created flipped to "away" at once.
 
-walkthrough stop이 현재 선택되어 있고 확인되지 않은 동안, `pin.ts`는
-오늘처럼 landing ladder와 route 변경뿐 아니라 overlay host 바깥의 DOM
-mutation에서도 resolution을 다시 무장한다 — URL을 바꾸지 않고 열리는
-dialog는 그렇지 않으면 resolution을 다시 트리거하지 못했다.
+While a walkthrough stop is selected and unconfirmed, `pin.ts` re-arms
+resolution not only on the landing ladder and on route changes, as it does
+today, but also on DOM mutations outside the overlay host. Without this, a
+dialog that opens without changing the URL could not trigger resolution
+again.
 
-### 3. 20-stop cap과 댓글 길이 예산
+### 3. The 20-stop cap and the comment length budget
 
-GitHub의 65,536자 댓글 본문이 anchor나 URL이 아니라 실제 한계다. 20개의
-한국어 stop에서, block마다 per-stop link를 나르지 않고 header에 set link
-하나만 나르는 댓글은 대략 38K자에 이른다; 모든 block마다 per-stop link를
-붙인 같은 모양은 대략 62K에 이르러, 더 무거운 stop에서 실패할 만큼 한계에
-가깝다. 그래서 walkthrough는 reviewer pin set의 30-pin cap(ADR 0002)과
-별도로 20 stop으로 cap된다.
+GitHub's 65,536-character comment body is the real limit, not the anchor or
+the URL. With 20 Korean stops, a comment that carries one set link in the
+header, with no per-stop link in each block, reaches about 38K characters.
+The same shape with a per-stop link on every block reaches about 62K, which
+is close enough to the limit to fail with heavier stops. For that reason, a
+walkthrough is capped at 20 stops, separately from the 30-pin cap of the
+reviewer pin set (ADR 0002).
 
-### 4. Code link 형식과 sha-drift 경고
+### 4. Code link format and the sha-drift warning
 
-stop의 code link는 resolve하는 데 commit SHA가 필요 없다: 이는
-`<repo>/pull/<pr>/files#diff-<sha256(path)>R<line>[-R<to>]`로 렌더되며,
-현재 head와 무관하게 PR의 Files 탭이 답한다. `<repo>`는
-`ReviewServerState.repo`(`/__review/state`)이며, `repoUrl()`이 GitHub
-URL로 바꾼다; state가 `repo`를 전혀 갖지 않을 때만
-`https://github.com/lablup/backend.ai-webui`로 떨어지고, hardcode된
-상수가 아니다. rebase 이후의 line drift는 받아들여진다; stop 자신의 `sha`
-field는 server가 stop이 만들어진 시점과 다른 commit을 서빙할 때 overlay가
-경고하게 해주는 값이다.
+A stop's code link needs no commit SHA to resolve: the overlay renders it as
+`<repo>/pull/<pr>/files#diff-<sha256(path)>R<line>[-R<to>]`, and the PR's
+Files tab answers it regardless of the current head. `<repo>` is
+`ReviewServerState.repo` (`/__review/state`), and `repoUrl()` turns it into a
+GitHub URL. Only when the state has no `repo` at all does the link fall back
+to `https://github.com/lablup/backend.ai-webui`; it is not a hardcoded
+constant. Line drift after a rebase is accepted. The stop's own `sha` field
+is the value that lets the overlay warn when the server serves a different
+commit from the one at which the stop was created.
 
-### 5. `bai-review`와 가르는 것은 marker가 아니라 codec의 stop 제외 규칙이다
+### 5. The codec's stop-exclusion rule, not the marker, separates stops from `bai-review`
 
-PR마다 댓글 하나가 정확히 marker 하나를 갖는다,
-`<!-- bai-walkthrough v1 pr=<pr> sha=<sha> stops=<n> server=<app> -->` —
-찾아서 re-mint 시 제자리에서 편집한다. 이 marker의 역할은 댓글을
-idempotent하게 만드는 것뿐이고, `pr-review-thread-resolver`를 stop에서
-떼어 놓는 것이 아니다. 그 보장은 `cli.ts`의 `review-pins parse`에서
-온다: `--include-stops`가 주어지지 않는 한, `ck`를 가진 anchor(stop,
-Decision 1)를 findings에서 기본으로 제외한다. 그래서 stop은 marker의
-유무와 무관하게 resolver에게 보이지 않는다 — 공유 `claude-mp` resolver의
-변경은 필요 없다. walkthrough의 guided-mode popover 안에서 남긴 reviewer
-댓글은 여전히 보통의 `bai-review` block으로 export된다(Decision 12가
-먼저 stop field를 제거하므로 export된 anchor는 `ck`를 갖지 않고, 그래서
-같은 제외 규칙이 적용되지 않는다), `re: stop k · <id>` 줄과 함께 — 그래서
-resolver는 언제나처럼 그것들을 계속 읽는다.
+Each PR has one comment, and that comment carries exactly one marker,
+`<!-- bai-walkthrough v1 pr=<pr> sha=<sha> stops=<n> server=<app> -->`. The
+skill finds the comment by the marker and edits it in place on a re-mint.
+The marker's only role is to make the comment idempotent; it does not keep
+`pr-review-thread-resolver` away from stops. That guarantee comes from
+`review-pins parse` in `cli.ts`: unless `--include-stops` is given, it
+excludes anchors that carry `ck` (stops, Decision 1) from the findings by
+default. As a result, stops are invisible to the resolver whether or not the
+marker is present, and the shared `claude-mp` resolver needs no change. A
+reviewer comment left inside a walkthrough's guided-mode popover is still
+exported as an ordinary `bai-review` block (Decision 12 removes the stop
+fields first, so the exported anchor has no `ck` and the same exclusion rule
+does not apply), with a `re: stop k · <id>` line. The resolver therefore
+keeps reading those blocks as it always does.
 
-### 6. Guided mode는 docs PR preview의 grammar를 design으로 차용한다
+### 6. Guided mode borrows the docs PR preview grammar as a design
 
-overlay의 guided mode — dashed outline과 ordinal badge를 가진 tint 처리된
-Mark, 우하단 Navigator pill, stop별 popover, `n`/`p`/`v`/`m`/`c` key,
-그리고 stale-server 경고도 나르는 page banner — 는 docs PR preview
-(`packages/backend.ai-docs-toolkit/templates/assets/pr-preview.{js,css}`)의
-시각·상호작용 grammar를 따른다. 이 차용은 design 참조이지 공유 code가
-아니다: docs preview는 docs DOM에 묶인 global-CSS IIFE이고, Web UI
-overlay는 `#bai=v3`에 묶인 Shadow-DOM module이다. 두 구현을 하나의
-module로 합치는 것은 나중 과제이며 이 결정의 범위 밖이다.
+The overlay's guided mode follows the visual and interaction grammar of the
+docs PR preview
+(`packages/backend.ai-docs-toolkit/templates/assets/pr-preview.{js,css}`).
+Guided mode consists of tinted Marks with a dashed outline and an ordinal
+badge, the bottom-right Navigator pill, a per-stop popover, the
+`n`/`p`/`v`/`m`/`c` keys, and a page banner that also carries the
+stale-server warning. This borrowing is a design reference, not shared code:
+the docs preview is a global-CSS IIFE tied to the docs DOM, and the Web UI
+overlay is a Shadow-DOM module tied to `#bai=v3`. Merging the two
+implementations into one module is later work and is outside the scope of
+this decision.
 
-### 7. 모든 part가 stop일 때만 link가 guided mode를 연다
+### 7. A link opens guided mode only when every part is a stop
 
-`applyFragment`(`main.ts`)는 `#bai=v3` link의 각 part를 decode해 모두에
-대해 `isStop`을 확인한다; guided mode는 part 수와 stop 수가 같을 때만
-열린다. stop이 아닌 part가 하나라도 있으면 link 전체는 기존의 draft
-set으로 합치는 경로를 그대로 탄다 — walkthrough는 caller가 flag로 고르는
-mode가 아니라, link 안의 모든 anchor가 `ck`를 가질 때 link가 되는 것이다.
-`ck`를 잃은 stop(손으로 고쳤거나, 타입이 안 맞는 field를 버린 decode)은
-깨진 walkthrough 대신 보통의 pin set으로 그 link를 다시 연다.
+`applyFragment` (`main.ts`) decodes each part of a `#bai=v3` link and checks
+`isStop` on all of them; guided mode opens only when the number of parts
+equals the number of stops. If even one part is not a stop, the whole link
+takes the existing path that merges into the draft set. A walkthrough is not
+a mode that a caller picks with a flag: a link becomes a walkthrough when
+every anchor in it carries `ck`. When a stop has lost `ck` (through a hand
+edit, or a decode that dropped a mistyped field), the overlay reopens that
+link as an ordinary pin set instead of a broken walkthrough.
 
-### 8. walkthrough set은 draft set과 분리되어 있다
+### 8. The walkthrough set is separate from the draft set
 
-walkthrough는 reviewer의 draft set과 구분되는 자신만의 `sessionStorage`
-key에 살며, 거기에 합쳐지지도 dock의 "Copy all"에 포함되지도 않는다.
-그 진행 상태 — 어떤 stop을 봤는지, 어떤 comment를 입력했는지 — 는
-따로 `localStorage`에 walkthrough의 `sha`로 key가 잡혀 산다(어떤 stop도
-sha를 갖지 않으면 고정된 fallback key로), 그래서 새 push를 위해
-walkthrough를 다시 만들면 본 상태가 처음부터 다시 시작한다. page reload는
-walkthrough를 연 채로 유지한다: 들어오는 hash가 적용되기 전에 저장된
-set을 먼저 읽고, 들어오는 hash 자체가 walkthrough를 나르면 저장된 것을
-대체한다. 모든 storage 읽기·쓰기는 감싸져 있어 storage가 꺼진 tab에서도
-walkthrough를 걸을 수 있다, 다만 reload 사이의 지속성은 없다. 나가는
-것은 ☰ panel의 `Exit` action뿐이다 — `Escape`는 popover와 panel만
-닫는다 — 나가면 session 범위의 set과 모든 mark가 지워진다;
-`localStorage`의 진행 상태는 남아서, 같은 link를 다시 열면 이미 본 것이
-돌아온다.
+A walkthrough lives under its own `sessionStorage` key, separate from the
+reviewer's draft set. The overlay neither merges it into the draft set nor
+includes it in the dock's "Copy all". Its progress (which stops the reviewer
+has seen and which comments the reviewer has typed) lives separately in
+`localStorage`, keyed by the walkthrough's `sha` (or by a fixed fallback key
+when no stop has a sha). As a result, when the skill re-creates the
+walkthrough for a new push, the seen state starts over. A page reload keeps
+the walkthrough open: the overlay reads the stored set before it applies the
+incoming hash, and when the incoming hash itself carries a walkthrough, that
+walkthrough replaces the stored one. Every storage read and write is wrapped,
+so a reviewer can walk a walkthrough in a tab where storage is disabled,
+though nothing persists across reloads. The only way out is the `Exit`
+action in the ☰ panel (`Escape` closes only the popover and the panel).
+Exiting clears the session-scoped set and every mark. The progress in
+`localStorage` remains, so reopening the same link brings back what the
+reviewer has already seen.
 
-### 9. Mark는 tracking overlay이지 element styling이 아니다
+### 9. A Mark is a tracking overlay, not element styling
 
-Guided mode는 각 mark를 overlay의 Shadow root 안에 있는 자신만의 box로
-그리며, target element의 rect를 따라 위치를 잡는다, reviewer 자신의 pin
-layer 아래에 있어서 walkthrough가 열려 있는 동안에도 reviewer의 pin이
-그대로 보인다. 이 box는 pointer event를 받지 않는다; mark의 유일한 클릭
-가능 부분은 ordinal badge이며, 밑에 있는 element가 아니다. element
-자신은 `data-bai-change`, `data-bai-type`만 얻고 — element가 아직 갖고
-있지 않을 때만 — `role`과 `aria-label`을 얻는다; 그중 무엇을 추가했는지가
-기록되어, 나갈 때 guided mode가 추가한 것만 정확히 제거하고 app이 원래
-준 것은 그대로 둔다.
+Guided mode draws each mark as its own box inside the overlay's Shadow root
+and positions the box to follow the target element's rect. The box sits
+below the reviewer's own pin layer, so the reviewer's pins stay visible
+while a walkthrough is open. The box does not receive pointer events; the
+only clickable part of a mark is its ordinal badge, not the element beneath
+it. The element itself gets only `data-bai-change` and `data-bai-type`, plus
+`role` and `aria-label` when the element does not already have them. Guided
+mode records which of these it added, so on exit it removes exactly what it
+added and leaves what the app originally gave the element.
 
-### 10. page를 넘는 이동은 host의 router를 우선한다
+### 10. Cross-page moves prefer the host's router
 
-host는 route label을 publish하던 것과 같은 `window.__BAI_REVIEW__`
-object에 `navigate` function을 함께 publish한다
-(`DevReviewRouteLabel.tsx`, `useWebUINavigate`를 통해). guided mode의
-`›`는 그것을 먼저 부른다; 그것이 없거나 던질 때만 guided mode는 stop
-자신의 set link로 전체 reload하는 `location.assign`으로 물러난다 —
-그 link가 walkthrough 전체를 나르기 때문에 도착해도 guided mode로 다시
-돌아온다.
+The host publishes a `navigate` function on the same `window.__BAI_REVIEW__`
+object on which it publishes the route label (`DevReviewRouteLabel.tsx`,
+through `useWebUINavigate`). Guided mode's `›` calls that function first.
+Only when the function is missing or throws does guided mode fall back to
+`location.assign`, which does a full reload with the stop's own set link.
+That link carries the whole walkthrough, so the page returns to guided mode
+on arrival.
 
-### 11. `/__review/state`가 서빙 중인 head를 알려 준다
+### 11. `/__review/state` reports the head being served
 
-page banner는 server가 지금 무엇을 서빙하는지 알아야만 walkthrough가
-다른 commit용으로 만들어졌다고 경고할 수 있다. `/__review/state`는
-optional `head` field를 얻는다 — checkout의 `git rev-parse HEAD`, checkout
-밖에서는 `null` — 그리고 banner는 `head`가 있고, walkthrough가 진짜
-`sha`를 가지며, 어떤 stop의 `sha`도 `head`와 일치하지 않을 때만 경고로
-바뀐다.
+The page banner can warn that a walkthrough was made for a different commit
+only when it knows what the server is serving now. `/__review/state` gains an
+optional `head` field: the checkout's `git rev-parse HEAD`, or `null` outside
+a checkout. The banner turns into a warning only when `head` is present, the
+walkthrough has a real `sha`, and no stop's `sha` matches `head`.
 
-### 12. Comment export는 stop field를 제거해 보통의 pin으로 다시 쓴다
+### 12. Comment export removes the stop fields and rewrites stops as ordinary pins
 
-`✎ Copy N comments`(하나에 대해서는 `Copy ref`)는 comment가 달린 stop마다
-보통의 reviewer pin으로 다시 쓴다: anchor에서 stop 전용 field 11개 전부
-(`ch`, `ck`, `old`, `new`, `type`, `kind`, `code`, `sha`, `pr`, `via`,
-`dlg`)를 제거하므로, 내보내진
-anchor는 `ck`를 갖지 않고 stop이 아니라 보통의 pin으로 읽힌다; reviewer
-자신의 comment는 그 pin의 note가 된다. 내보낸 block마다 기존의
-reviewer-pin 형식을 쓰며 `re: stop k · <id>` 줄이 붙고, 뒤따르는 set
-link는 없다 — export는 하나의 set이 아니라 N개의 별개 remark다. 내보낸
-anchor가 더는 `ck`를 갖지 않으므로 `cli.ts`의 stop 제외 규칙(Decision
-5)은 여기 적용되지 않고, 그래서 `pr-review-thread-resolver`, CLI, Claude
-쪽 skill은 내보낸 comment 각각을 자기 쪽에서 새로 parsing할 것 없이
-보통의 finding으로 읽는다.
+`✎ Copy N comments` (`Copy ref` for a single one) rewrites each stop that has
+a comment as an ordinary reviewer pin. It removes all 11 stop-only fields
+from the anchor (`ch`, `ck`, `old`, `new`, `type`, `kind`, `code`, `sha`,
+`pr`, `via`, `dlg`), so the exported anchor has no `ck` and reads as an
+ordinary pin, not a stop. The reviewer's own comment becomes that pin's note.
+Each exported block uses the existing reviewer-pin format with a
+`re: stop k · <id>` line, and no set link follows: the export is N separate
+remarks, not one set. The exported anchor no longer carries `ck`, so the stop
+exclusion rule of `cli.ts` (Decision 5) does not apply here. As a result,
+`pr-review-thread-resolver`, the CLI, and the Claude-side skills read each
+exported comment as an ordinary finding, with no new parsing on their side.
 
-### 13. Trigger: dw/fw plugin이 아니라 webui 소유 skill
+### 13. Trigger: a webui-owned skill, not the dw/fw plugins
 
-Walkthrough는 이 repository가 소유한 skill인
-`.claude/skills/walkthrough/`가 mint한다. 구현한 session이 자신의
-workflow 마지막 단계로 — PR의 dev server가 부팅되고 advertise된 뒤 —
-그것을 부르며, 살아 있는 server가 있는 어떤 PR에 대해서도 요청에 따라
-부를 수 있다. `dev-server` 자신의 skill은 바뀌지 않는다; minting은
-booting의 새 side effect가 아니라 그것을 부르는 쪽이다. 공유 `dw`/`fw`
-plugin의 변경은 없고, notification도 없다: 마지막 chat message에
-`[Walkthrough](<set link>) · N stops` 형태의 줄 하나가 더해질 뿐, Teams에는
-아무것도 올라가지 않는다.
+A skill that this repository owns, `.claude/skills/walkthrough/`, mints
+walkthroughs. The implementing session calls it as the last step of its
+workflow, after the PR's dev server has booted and been advertised, and a
+person can also call it on request for any PR that has a live server. The
+`dev-server` skill itself does not change: minting is not a new side effect
+of booting; the walkthrough skill is a caller of the boot record. The shared
+`dw`/`fw` plugins do not change, and there is no notification: the final
+chat message gains one line of the form `[Walkthrough](<set link>) · N stops`,
+and nothing is posted to Teams.
 
-이는 spec R3.1의 "no ✅ What to check comment" 결정(2026-09-01, driver
-Jongeun Lee, FR-3814 Not Planned)을 좁게 재검토한 것이다 — spec R3.1이
-배제한 댓글은 모든 구현 실행마다 공유 `dw:impl` orchestrator가 자동으로
-올리는 것이었다. Walkthrough는 그 대신 repository 소유 skill이
-trigger하며, 화면에 보이고 review 가능한 변경에 국한된다, 상태 업데이트가
-아니다. 종료 시 notification에 대한 spec R3.9의 "not planned" ruling은
-그대로 유지된다: Walkthrough를 minting해도 Teams 메시지는 올라가지
-않는다. 이 reversal은 조용히 착지하는 대신
-[FR-3947](https://lablup.atlassian.net/browse/FR-3947)을 통해 이전
-driver에게 알린다.
+This is a narrow re-examination of the "no ✅ What to check comment" decision
+of spec R3.1 (2026-09-01, driver Jongeun Lee, FR-3814 Not Planned). The
+comment that spec R3.1 ruled out was one that the shared `dw:impl`
+orchestrator posted automatically on every implementation run. A
+walkthrough, by contrast, is triggered by a repository-owned skill and is
+limited to changes that are visible on screen and reviewable; it is not a
+status update. The "not planned" ruling of spec R3.9 on end-of-run
+notifications stays as it is: minting a Walkthrough posts no Teams message.
+Instead of landing silently, this reversal is reported to the previous
+driver through [FR-3947](https://lablup.atlassian.net/browse/FR-3947).
 
-## 대안과 기각 사유
+## Rejected alternatives
 
-- **모든 stop에 v4 envelope.** 댓글이 더 짧아진다(30 stop 기준 3배), 하지만
-  grammar가 하나 더 늘고 v3 link를 위한 legacy path가 영구히 남는다.
-  20-stop cap 자체가 올라가야 할 때까지 기각.
-- **Stop에 느슨한(reviewer 스타일) resolution.** 오늘의 reviewer pin과
-  맞지만, 측정된 false positive — 닫힌 modal의 stop이 look-alike
-  element에 위치를 잡은 사례 — 는 "waiting"으로 남는 stop보다 틀린 pin이
-  더 나쁘다는 것을 보여줬다. strict한 landmark-and-dialog 확인을 택하며
-  기각.
-- **Minting을 위한 encoder CLI fallback.** 살아 있는 dev server 없이도
-  stop을 만들 수 있게 해준다. 기각: 모든 stop은 돌아가는 server를 상대로
-  headless로 minting되고 검증되거나, 아예 minting되지 않는다 — CLI가
-  만든 anchor는 존재를 검증받지 못한다.
-- **PR 댓글 안에 per-stop dev link.** ADR 0002의 reviewer pin per-block
-  link 관례와 맞지만, 20-stop 한국어 walkthrough에 block마다 link를
-  붙이면 대략 62K자에 이르러 GitHub 한계에 가깝다. 기각: 댓글은 set
-  link 하나만 나르고, Navigator가 나머지를 걷는다.
-- **docs PR preview와 Web UI review overlay를 하나의 guided-mode 구현으로
-  합치기.** guided mode의 차용이 만드는 중복을 없애지만, 둘은 다른 DOM과
-  styling 기반 위에서 돈다. 이 결정에서는 기각; 공유 구현은 나중 과제다.
-- **walkthrough trigger를 위해 spec R3.9의 종료 시 Teams notification을
-  되살리기.** notification이 취했을 같은 모양 — 구현 실행이 끝날 때
-  메시지 하나 — 이 trigger가 공유 orchestrator가 아니라 repository
-  소유가 된 지금 다시 가능해졌다. 기각: R3.9는 그대로 중단된 채 남고,
-  Walkthrough의 전달 수단은 PR 댓글과 마지막 chat message뿐이다.
-- **stop을 draft set에 합쳐서 보통의 pin card로 그리기.** 새 set, storage
-  key, mode 전환이 필요 없다. 기각: 남의 walkthrough를 여는 것만으로
-  reviewer 자신의 draft set이 조용히 불어나고, "Copy all"이 reviewer가
-  쓴 적 없는 내용을 PR 댓글로 실어 보낸다. walkthrough는 관례가 아니라
-  구조로 읽기 전용이어야 한다.
-- **reviewed document에 global CSS를 주입해 mark를 그리기.** 가장 짧은
-  길이며, 가장 이른 prototype이 한 방식이다. 기각: overlay의 styling이
-  review 중인 page로 새고, exit 때 모든 흔적이 지워졌다는 것을 증명할
-  방법이 없다 — Shadow-root tracking box는 app 자신의 element나
-  stylesheet에 아무것도 칠하지 않는다. Decision 9가 이름 붙인 semantic
-  attribute만 app의 DOM에 닿고, 그것도 exit 때 벗겨진다.
-- **comment 전용 export 형식**(prototype의 그냥 `[walkthrough] …` text
-  block). 그 자체로 더 읽기 좋다. 기각: `pr-review-thread-resolver`도,
-  `review-pins` CLI도, Claude 쪽 skill도 그것을 읽지 못하는 반면, 셋 다
-  기존 block 형식은 이미 읽는다.
-- **page를 넘는 이동을 항상 `location.assign`으로.** host app의 협조가
-  필요 없다. 기각: `›`마다 전체 reload를 하면 modal 뒤에 숨은 stop이
-  기대는 resolution ladder가 사라지고, 매 단계마다 app 전체가 다시
-  뜬다; host 자신의 router를 우선하면 둘 다 피한다.
+- **A v4 envelope for every stop.** The comment becomes shorter (three times
+  at 30 stops), but the envelope adds one more grammar and leaves a permanent
+  legacy path for v3 links. It is rejected until the 20-stop cap itself must
+  rise.
+- **Loose (reviewer-style) resolution for stops.** This matches today's
+  reviewer pins, but the measured false positive, in which a stop for a
+  closed modal took its position from a look-alike element, showed that a
+  wrong pin is worse than a stop that stays "waiting". It is rejected in
+  favor of the strict landmark-and-dialog check.
+- **An encoder CLI fallback for minting.** This would let a developer create
+  stops without a live dev server. It is rejected: the skill mints and
+  verifies every stop headlessly against a running server, or does not mint
+  it at all, because nothing verifies that the element of a CLI-made anchor
+  exists.
+- **A per-stop dev link inside the PR comment.** This matches the per-block
+  link convention of ADR 0002 reviewer pins, but a link on every block of a
+  20-stop Korean walkthrough reaches about 62K characters, which is close to
+  the GitHub limit. It is rejected: the comment carries one set link, and the
+  Navigator walks the rest.
+- **One guided-mode implementation shared by the docs PR preview and the Web
+  UI review overlay.** This would remove the duplication that the borrowed
+  guided mode creates, but the two run on different DOM and styling bases.
+  It is rejected for this decision; a shared implementation is later work.
+- **Reviving the end-of-run Teams notification of spec R3.9 for the
+  walkthrough trigger.** The shape that the notification would have taken,
+  one message at the end of an implementation run, became possible again now
+  that the trigger is owned by the repository, not by the shared
+  orchestrator. It is rejected: R3.9 stays stopped, and the only delivery
+  channels of a Walkthrough are the PR comment and the final chat message.
+- **Merging stops into the draft set and drawing them as ordinary pin
+  cards.** This needs no new set, storage key, or mode switch. It is
+  rejected: opening someone else's walkthrough would silently grow the
+  reviewer's own draft set, and "Copy all" would send content the reviewer
+  never wrote as a PR comment. A walkthrough must be read-only by structure,
+  not by convention.
+- **Drawing marks by injecting global CSS into the reviewed document.** This
+  is the shortest path, and the earliest prototype used it. It is rejected:
+  the overlay's styling leaks into the page under review, and nothing can
+  prove that every trace is removed on exit. A Shadow-root tracking box
+  paints nothing on the app's own elements or stylesheets. Only the semantic
+  attributes that Decision 9 names touch the app's DOM, and guided mode
+  removes them on exit.
+- **A comment-only export format** (the prototype's plain
+  `[walkthrough] …` text block). This format is easier to read on its own.
+  It is rejected: neither `pr-review-thread-resolver`, nor the `review-pins`
+  CLI, nor the Claude-side skills can read it, while all three already read
+  the existing block format.
+- **Always using `location.assign` for cross-page moves.** This needs no
+  cooperation from the host app. It is rejected: a full reload on every `›`
+  loses the resolution ladder that stops hidden behind a modal depend on, and
+  the whole app loads again at every step. Preferring the host's own router
+  avoids both.
 
 ## Consequences
 
 - `react/vite-plugins/review-overlay/client/types.ts`, `resolve.ts`,
-  `stop-guard.ts`, `pin.ts`가 Stop 전용 field, resolution 규칙, denylist를
-  얻는다; reviewer-pin 경로는 공유 denylist를 빼면 영향받지 않는다.
-- `.claude/skills/walkthrough/`는 overlay의 in-page anchor-minting
-  module과 `dev-server`의 boot record의 새 caller가 된다; 이 결정에서는
-  둘 다 바뀌지 않는다.
-- 20 stop보다 긴 walkthrough는 만드는 skill이 줄이거나 묶어야 한다; v4
-  envelope가 만들어질 때까지 더 큰 set을 위한 escape hatch는 없다.
-- `cli.ts`의 `review-pins parse`가 stop을 findings에서 기본 제외하는
-  것이 집행 지점이므로, `pr-review-thread-resolver`는 walkthrough
-  댓글로부터 안전하기 위해 바뀔 필요가 없다.
-- guided mode의 시각 언어는 이제 손으로 docs PR preview와 맞춰야 한다,
-  둘 사이에 공유되는 code가 없기 때문이다.
-- reviewer는 walkthrough가 열려 있는 동안에도 평소처럼 dock에서 pin을
-  찍고 복사할 수 있다; 두 set은 서로 간섭하지 않는다.
-- 만드는 skill은 별도의 mode flag가 필요 없다: 모든 stop에 `ck`를 주는
-  것이 곧 link를 walkthrough로 여는 것이고, stop 하나가 그것을 잃으면
-  link 전체가 pin set으로 다시 열린다.
-- guided mode는 resolution ladder와 나란히 mutation observer를 돌린다,
-  modal이나 launcher 단계 뒤의 stop은 ladder만으로는 기대한 대로 route가
-  바뀌지 않기 때문이다.
-- 이미 `role`/`aria-label`을 가진 element는 screen reader에게 자신의
-  semantics만 남긴다; mark의 ordinal 위치는 그런 element에서는 읽히지
-  않는다.
+  `stop-guard.ts`, and `pin.ts` gain the Stop-only fields, the resolution
+  rules, and the denylist. The reviewer-pin path is unaffected apart from the
+  shared denylist.
+- `.claude/skills/walkthrough/` becomes a new caller of the overlay's
+  in-page anchor-minting module and of the `dev-server` boot record. This
+  decision changes neither of them.
+- The minting skill must shorten or group a walkthrough longer than 20
+  stops. Until someone builds the v4 envelope, no escape hatch exists for a
+  larger set.
+- The enforcement point is `review-pins parse` in `cli.ts`, which excludes
+  stops from the findings by default, so `pr-review-thread-resolver` needs
+  no change to stay safe from walkthrough comments.
+- A developer must now keep the visual language of guided mode in line with
+  the docs PR preview by hand, because the two share no code.
+- A reviewer can still drop and copy pins from the dock as usual while a
+  walkthrough is open; the two sets do not interfere with each other.
+- The minting skill needs no separate mode flag: giving every stop `ck` is
+  what opens the link as a walkthrough, and when one stop loses `ck`, the
+  overlay reopens the whole link as a pin set.
+- Guided mode runs a mutation observer alongside the resolution ladder,
+  because for a stop behind a modal or a launcher step, the route does not
+  change as expected through the ladder alone.
+- An element that already has `role`/`aria-label` keeps only its own
+  semantics for screen readers; screen readers do not read the mark's
+  ordinal position on such an element.
 
-## 출처
+## Sources
 
-- [FR-3941](https://lablup.atlassian.net/browse/FR-3941)(wayfinder map)과
-  그 결의된 결정들인
-  [FR-3942](https://lablup.atlassian.net/browse/FR-3942)(payload와 예산),
-  [FR-3943](https://lablup.atlassian.net/browse/FR-3943)(headless
-  minting과 strict resolution),
-  [FR-3944](https://lablup.atlassian.net/browse/FR-3944)(guided mode),
-  [FR-3945](https://lablup.atlassian.net/browse/FR-3945)(walkthrough
-  skill), [FR-3946](https://lablup.atlassian.net/browse/FR-3946)(PR
-  댓글). 2026-09-15 결정.
-- FR-3947 — R3.1 재검토를 이전 driver에게 알린다.
-- FR-3950 — guided-mode 구현(mark, navigator, popover, storage 분리,
-  host-router navigation, comment export, `/__review/state`), 위
-  decision 7–12.
-- FR-3949 — 모든 비교 지점에 적용된 volatile-query denylist와 넓어진
-  `DIALOG_SELECTOR`, 위 decision 2 (commit `3c4507c74`).
+- [FR-3941](https://lablup.atlassian.net/browse/FR-3941) (wayfinder map) and
+  its resolved decisions,
+  [FR-3942](https://lablup.atlassian.net/browse/FR-3942) (payload and budget),
+  [FR-3943](https://lablup.atlassian.net/browse/FR-3943) (headless
+  minting and strict resolution),
+  [FR-3944](https://lablup.atlassian.net/browse/FR-3944) (guided mode),
+  [FR-3945](https://lablup.atlassian.net/browse/FR-3945) (walkthrough
+  skill), and [FR-3946](https://lablup.atlassian.net/browse/FR-3946) (PR
+  comment). Decided 2026-09-15.
+- FR-3947 — reports the R3.1 re-examination to the previous driver.
+- FR-3950 — the guided-mode implementation (mark, navigator, popover,
+  storage separation, host-router navigation, comment export,
+  `/__review/state`), decisions 7–12 above.
+- FR-3949 — the volatile-query denylist applied at every comparison point
+  and the widened `DIALOG_SELECTOR`, decision 2 above (commit `3c4507c74`).
 - Prototype: branch `proto/FR-3944-guided-mode`,
-  `walkthrough-guided-mode.html` variant D. 시각 token은
-  `packages/backend.ai-docs-toolkit/templates/assets/pr-preview.css`에서
-  차용.
-- 관련: ADR 0002(이 결정이 확장하는 v3 anchor와 pin-set grammar); spec
-  `pr-devserver-review.md` Revision 3(R3.1, R3.8, R3.9)와 Revision 4,
-  `lablup/frontend-board`.
+  `walkthrough-guided-mode.html` variant D. The visual tokens are borrowed
+  from `packages/backend.ai-docs-toolkit/templates/assets/pr-preview.css`.
+- Related: ADR 0002 (the v3 anchor and pin-set grammar that this decision
+  extends); spec `pr-devserver-review.md` Revision 3 (R3.1, R3.8, R3.9) and
+  Revision 4, `lablup/frontend-board`.
 
-## 용어
+## Glossary
 
-- **Stop** — Walkthrough 안의 pin 하나로, 무엇이 바뀌었는지, 무엇을
-  확인해야 하는지, 그 code reference를 나른다. 전체 정의:
+- **Stop** — A Stop is one pin inside a Walkthrough that carries what
+  changed, what to check, and the code references for the change. Full
+  definition: `react/vite-plugins/review-overlay/CONTEXT.md`.
+- **Walkthrough** — A Walkthrough is the ordered set of Stops that the
+  implementing session leaves on the dev server. Full definition:
   `react/vite-plugins/review-overlay/CONTEXT.md`.
-- **Walkthrough** — 구현한 session이 dev server에 남기는 Stop들의 순서
-  있는 집합. 전체 정의: `react/vite-plugins/review-overlay/CONTEXT.md`.
-- **Mark** — guided mode가 pin glyph 대신 그리는, tint 처리된 바뀐
-  element. 전체 정의: `react/vite-plugins/review-overlay/CONTEXT.md`.
-- **Navigator** — stop을 따라가는 우하단 pill. 전체 정의:
+- **Mark** — A Mark is the tinted, changed element that guided mode draws
+  instead of a pin glyph. Full definition:
   `react/vite-plugins/review-overlay/CONTEXT.md`.
+- **Navigator** — The Navigator is the bottom-right pill that steps through
+  the stops. Full definition: `react/vite-plugins/review-overlay/CONTEXT.md`.

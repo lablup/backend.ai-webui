@@ -2728,8 +2728,6 @@
     "DeleteResourceGroup": "リソースグループを削除します",
     "Description": "説明",
     "Domain": "ドメイン",
-    "Driver": "運転者",
-    "DriverOptions": "ドライバーオプション",
     "DuplicateHandlerOverride": "この handler はすでに再定義されています。",
     "DuplicateResourceSlot": "このリソーススロットはすでに追加されています。",
     "EditDefaultDeploymentOptions": "デフォルトデプロイメントオプションを編集",

@@ -23,7 +23,7 @@ fi
 
 # Prints `none` (no PR command), `skip` (every PR command targets another repository for certain)
 # or `check <dir>` (the checkout whose record decides).
-RESOLVE=$(cat <<'PY'
+IFS= read -r -d '' RESOLVE <<'PY'
 import json, os, re, shlex, subprocess, sys
 WEBUI = 'lablup/backend.ai-webui'
 inp = json.load(sys.stdin)
@@ -34,7 +34,7 @@ GATE = re.compile(r'(^|[;&|(`]|\$\()\s*(?:(?:' + PREFIX + r')\b[^;&|\n]*?\s)?(?:
 # gh pr create flags that take a value: their value is never read as -R
 VALUED = {'-t', '--title', '-b', '--body', '-F', '--body-file', '-B', '--base', '-H', '--head', '-a', '--assignee', '-l', '--label',
           '-m', '--milestone', '-p', '--project', '-r', '--reviewer', '-T', '--template', '--recover'}
-# prefix command -> its options that take a separate value (timeout also takes a duration); kept in step with block-gt.sh
+# prefix command -> its options that take a separate value (timeout also takes a duration)
 PVALUED = {'env': {'-u', '--unset', '-C', '--chdir', '-S', '--split-string'}, 'command': set(), 'time': {'-f', '-o', '--format', '--output'},
            'nohup': set(), 'exec': {'-a'}, 'nice': {'-n', '--adjustment'}, 'timeout': {'-s', '--signal', '-k', '--kill-after'},
            'sudo': {'-u', '--user', '-g', '--group', '-h', '--host', '-p', '--prompt', '-C', '--close-from', '-U', '--other-user', '-r', '--role',
@@ -151,7 +151,6 @@ else:
     except Exception:
         print('check ' + cwd)
 PY
-)
 out=$(cat | python3 -c "$RESOLVE" 2>/dev/null) || exit 1
 case "$out" in
   'check '*) ;;

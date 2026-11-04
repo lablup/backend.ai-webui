@@ -2726,8 +2726,6 @@
     "DeleteResourceGroup": "Poista resurssiryhmä",
     "Description": "Kuvaus",
     "Domain": "Verkkotunnus",
-    "Driver": "Kuljettaja",
-    "DriverOptions": "Kuljettajan vaihtoehdot",
     "DuplicateHandlerOverride": "Tämä handler on jo ohitettu.",
     "DuplicateResourceSlot": "Tämä resurssipaikka on jo lisätty.",
     "EditDefaultDeploymentOptions": "Muokkaa käyttöönoton oletusasetuksia",

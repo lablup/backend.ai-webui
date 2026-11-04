@@ -2727,8 +2727,6 @@
     "DeleteResourceGroup": "Нөөцийн бүлгийг устгах",
     "Description": "Тодорхойлолт",
     "Domain": "Домэйн",
-    "Driver": "Жолооч",
-    "DriverOptions": "Жолоочийн сонголтууд",
     "DuplicateHandlerOverride": "Энэ handler аль хэдийн дахин тодорхойлогдсон байна.",
     "DuplicateResourceSlot": "Энэ нөөцийн слот аль хэдийн нэмэгдсэн байна.",
     "EditDefaultDeploymentOptions": "Үндсэн байршуулалтын тохиргоог засах",

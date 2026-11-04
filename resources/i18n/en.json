@@ -2713,8 +2713,6 @@
     "DeleteResourceGroup": "Delete Resource Group",
     "Description": "Description",
     "Domain": "Domain",
-    "Driver": "Driver",
-    "DriverOptions": "Driver Options",
     "DuplicateHandlerOverride": "This handler is already overridden.",
     "DuplicateResourceSlot": "This resource slot is already added.",
     "EditDefaultDeploymentOptions": "Edit Default Deployment Options",
