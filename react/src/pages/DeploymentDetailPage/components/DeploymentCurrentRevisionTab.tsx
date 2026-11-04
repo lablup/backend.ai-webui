@@ -1,0 +1,133 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import type { DeploymentCurrentRevisionTab_deployment$key } from '../../../__generated__/DeploymentCurrentRevisionTab_deployment.graphql';
+import type { DeploymentRevisionDetail_revision$key } from '../../../__generated__/DeploymentRevisionDetail_revision.graphql';
+import DeploymentRevisionDetail from '../../../components/DeploymentRevisionDetail';
+import DeploymentRevisionDetailDrawer from '../../../components/DeploymentRevisionDetailDrawer';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { useTheme } from '@lablup/ui-common/theme';
+import { BAIUnmountAfterClose } from 'backend.ai-ui';
+import { LoaderCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { graphql, useFragment } from 'react-relay';
+
+interface DeploymentCurrentRevisionTabProps {
+  deploymentFrgmt:
+    DeploymentCurrentRevisionTab_deployment$key | null | undefined;
+}
+
+/**
+ * DeploymentCurrentRevisionTab — content of the "Current revision" tab inside
+ * `DeploymentRevisionCard`. Shows the active revision detail and the "applying"
+ * banner while a different revision is rolling out. The rollout poll itself
+ * lives at the page level (`DeploymentDetailPage` drives the page query's
+ * auto-refetch via `BAIFetchKeyButton`'s `autoUpdateDelay`), so it keeps
+ * running even when the user switches to another revision sub-tab and this
+ * component unmounts.
+ */
+const DeploymentCurrentRevisionTab: React.FC<
+  DeploymentCurrentRevisionTabProps
+> = ({ deploymentFrgmt }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { token } = useTheme();
+
+  const deployment = useFragment(
+    graphql`
+      fragment DeploymentCurrentRevisionTab_deployment on ModelDeployment {
+        id
+        currentRevision {
+          id
+          revisionNumber
+          ...DeploymentRevisionDetail_revision
+        }
+        deployingRevision {
+          id
+          fieldId
+          revisionNumber
+          ...DeploymentRevisionDetail_revision
+        }
+      }
+    `,
+    deploymentFrgmt,
+  );
+
+  const [drawerState, setDrawerState] = useState<{
+    revisionFrgmt: DeploymentRevisionDetail_revision$key;
+    status?: 'current' | 'deploying' | 'none';
+    title?: string;
+  } | null>(null);
+
+  const handleShowRevisionDrawer = (
+    frgmt: DeploymentRevisionDetail_revision$key,
+    status?: 'current' | 'deploying' | 'none',
+    title?: string,
+  ) => {
+    setDrawerState({ revisionFrgmt: frgmt, status, title });
+  };
+
+  const currentRevision = deployment?.currentRevision;
+  const deployingRevision = deployment?.deployingRevision;
+  const isDeployingDifferentRevision =
+    !!deployingRevision && deployingRevision.id !== currentRevision?.id;
+
+  return (
+    <>
+      {isDeployingDifferentRevision && (
+        <Banner
+          role="status"
+          status="info"
+          icon={<LoaderCircle className="bai-icon-spin" size="1em" />}
+          style={{ marginBottom: token('--spacing-5') }}
+          title={t('deployment.ApplyingRevision', {
+            revisionNumber:
+              deployingRevision.revisionNumber != null
+                ? `#${deployingRevision.revisionNumber}`
+                : deployingRevision.fieldId,
+          })}
+          endContent={
+            <Button
+              variant="secondary"
+              label={t('deployment.ViewRevision')}
+              onClick={() =>
+                handleShowRevisionDrawer(
+                  deployingRevision,
+                  'deploying',
+                  t('deployment.ApplyingRevisionDetail'),
+                )
+              }
+            />
+          }
+        />
+      )}
+      {currentRevision ? (
+        <DeploymentRevisionDetail
+          revisionFrgmt={currentRevision}
+          status="current"
+        />
+      ) : !isDeployingDifferentRevision ? (
+        // PILOT-DECISION: antd `Empty image={PRESENTED_IMAGE_SIMPLE}` →
+        // `EmptyState`. The former `description` string becomes the required
+        // `title`; the simple placeholder illustration is dropped (EmptyState
+        // renders fine without an icon; no icon carries equivalent meaning).
+        <EmptyState title={t('deployment.NoCurrentRevisionDeployed')} />
+      ) : null}
+      <BAIUnmountAfterClose>
+        <DeploymentRevisionDetailDrawer
+          revisionFrgmt={drawerState?.revisionFrgmt}
+          status={drawerState?.status}
+          title={drawerState?.title}
+          open={!!drawerState}
+          onClose={() => setDrawerState(null)}
+        />
+      </BAIUnmountAfterClose>
+    </>
+  );
+};
+
+export default DeploymentCurrentRevisionTab;

@@ -1,0 +1,233 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import { StorageStatusPanelCardQuery } from '../../../__generated__/StorageStatusPanelCardQuery.graphql';
+import BAIPanelItem from '../../../components/BAIPanelItem';
+import { useSuspendedBackendaiClient } from '../../../hooks';
+import { useSuspenseTanQuery } from '../../../hooks/reactQueryAlias';
+import { useCurrentProjectValue } from '../../../hooks/useCurrentProject';
+import { useVFolderInvitations } from '../../../hooks/useVFolderInvitations';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
+import {
+  BAIBadgeCount,
+  BAIBoardItemTitle,
+  BAIFlex,
+  BAIFlexProps,
+  BAIRowWrapWithDividers,
+  useUpdateEffect,
+  cssLengthToPx,
+} from 'backend.ai-ui';
+import * as _ from 'lodash-es';
+import React, { useDeferredValue } from 'react';
+import { useTranslation } from 'react-i18next';
+import { graphql, useLazyLoadQuery } from 'react-relay';
+
+interface StorageStatusPanelProps extends BAIFlexProps {
+  fetchKey?: string;
+  onRequestBadgeClick?: () => void;
+}
+
+const PANEL_ITEM_MAX_WIDTH = 90; // Adjusted max width for panel items
+
+// Dashboard board-item body for folder-status counts. Uses the shared
+// `BAIBoardItemTitle` so the title reserves space for the board drag handle
+// and sits consistently with peer items (`MyResource`, etc.) — wrapping in a
+// `BAICard` here caused the title to overlap the handle on the left edge.
+const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
+  fetchKey,
+  onRequestBadgeClick,
+  style,
+  ...flexProps
+}) => {
+  const { t } = useTranslation();
+  const { token } = useTheme();
+  const baiClient = useSuspendedBackendaiClient();
+  const currentProject = useCurrentProjectValue();
+  if (!currentProject.id) {
+    throw new Error('Project ID is required for StorageStatusPanelCard');
+  }
+  const deferredFetchKey = useDeferredValue(fetchKey);
+  const [invitations, { updateInvitations }] = useVFolderInvitations();
+  const invitationCount = invitations.length;
+
+  useUpdateEffect(() => {
+    // TODO: Consider use suspense without useEffect
+    updateInvitations();
+  }, [fetchKey]);
+
+  // The REST list stays only for the invited count: `VFolderFilter` has no
+  // invited / received-share predicate.
+  const { data: vfolders } = useSuspenseTanQuery({
+    queryKey: ['vfolders', { deferredFetchKey, id: currentProject.id }],
+    queryFn: () => {
+      if (!currentProject?.id) {
+        throw new Error('Project ID is required for StorageStatusPanelCard');
+      }
+      return baiClient.vfolder.list(currentProject.id);
+    },
+  });
+  const invitedCount = vfolders?.filter(
+    (item: any) =>
+      !item.is_owner &&
+      item.ownership_type === 'user' &&
+      !_.includes(
+        ['delete-ongoing', 'delete-complete', 'delete-error'],
+        item.status,
+      ),
+  ).length;
+
+  const {
+    myUserResourcePolicyV2,
+    scopedProjectResourcePolicyV2,
+    myVfolders,
+    projectVfolders,
+  } = useLazyLoadQuery<StorageStatusPanelCardQuery>(
+    graphql`
+      query StorageStatusPanelCardQuery(
+        $projectId: UUID!
+        $projectIdForPolicy: ID!
+        $activeFilter: VFolderFilter
+      ) {
+        myUserResourcePolicyV2 {
+          maxVfolderCount
+        }
+        scopedProjectResourcePolicyV2(projectId: $projectIdForPolicy)
+          @since(version: "26.9.0") {
+          maxVfolderCount
+        }
+        myVfolders(filter: $activeFilter) {
+          count
+        }
+        projectVfolders(projectId: $projectId, filter: $activeFilter) {
+          count
+        }
+      }
+    `,
+    {
+      projectId: currentProject.id,
+      // Same UUID; the field types its argument as ID.
+      projectIdForPolicy: currentProject.id,
+      // A trash-bin (DELETE_PENDING) folder still counts toward the quota.
+      activeFilter: {
+        status: {
+          notIn: ['DELETE_ONGOING', 'DELETE_COMPLETE', 'DELETE_ERROR'],
+        },
+      },
+    },
+    {
+      fetchPolicy: 'store-and-network',
+      fetchKey: deferredFetchKey,
+    },
+  );
+
+  const maxVfolderCount = myUserResourcePolicyV2?.maxVfolderCount;
+  const createdCount = myVfolders?.count;
+  const projectCount = projectVfolders?.count;
+
+  return (
+    <BAIFlex
+      direction="column"
+      align="stretch"
+      style={{
+        paddingInline: token('--spacing-8'),
+        paddingBottom: token('--spacing-4'),
+        ...style,
+      }}
+      {...flexProps}
+    >
+      <BAIBoardItemTitle title={t('data.FolderStatus')} />
+      <BAIRowWrapWithDividers
+        rowGap={token('--spacing-8')}
+        columnGap={token('--spacing-8')}
+        dividerColor={token('--color-border-emphasized')}
+        dividerInset={cssLengthToPx(token('--spacing-2'))}
+        dividerWidth={parseFloat(token('--border-width'))}
+      >
+        <BAIPanelItem
+          title={t('data.MyFolders')}
+          value={createdCount}
+          unit={maxVfolderCount ? `/ ${maxVfolderCount}` : undefined}
+          style={{
+            maxWidth: PANEL_ITEM_MAX_WIDTH,
+          }}
+          color={token('--color-text-primary')}
+        />
+        <BAIPanelItem
+          title={t('data.ProjectFolders')}
+          value={projectCount}
+          unit={
+            scopedProjectResourcePolicyV2?.maxVfolderCount
+              ? `/ ${scopedProjectResourcePolicyV2.maxVfolderCount}`
+              : undefined
+          }
+          style={{
+            maxWidth: PANEL_ITEM_MAX_WIDTH,
+          }}
+          color={token('--color-text-primary')}
+        />
+        <BAIPanelItem
+          title={
+            invitationCount > 0 ? (
+              // Add <a></a> to make tooltip clickable
+              <a
+                onClick={() => {
+                  onRequestBadgeClick?.();
+                }}
+              >
+                {/* PILOT-DECISION: the antd-arrow-nudging createStyles block
+                    (.ant-tooltip-*) is dead CSS after the Astryx Tooltip swap
+                    (P6) and was deleted rather than translated; Astryx tooltip
+                    placement/alignment covers the intent. antd
+                    placement="topRight" -> placement="above" alignment="end". */}
+                <Tooltip
+                  content={t('data.InvitedFoldersTooltip', {
+                    count: invitationCount,
+                  })}
+                  placement="above"
+                  alignment="end"
+                >
+                  <BAIBadgeCount
+                    count={`+${invitationCount}`}
+                    // PILOT-DECISION: antd's count Badge was implicitly red;
+                    // Astryx Badge defaults to neutral, so the pending-
+                    // invitation semantics are restated explicitly (the
+                    // per-site colour decision BAIBadgeCount documents).
+                    variant="error"
+                    offset={[
+                      -cssLengthToPx(token('--spacing-2')),
+                      -cssLengthToPx(token('--spacing-2')),
+                    ]}
+                    // As in the antd version: lift the overlay above the
+                    // sticky BAIBoardItemTitle band so the pill is not
+                    // painted over (the original passed zIndex 50 to Badge).
+                    style={{ zIndex: 50 }}
+                    title={t('data.InvitedFoldersTooltip', {
+                      count: invitationCount,
+                    })}
+                  >
+                    <Text size="lg">{t('data.InvitedFolders')}</Text>
+                  </BAIBadgeCount>
+                </Tooltip>
+              </a>
+            ) : (
+              <Text size="lg">{t('data.InvitedFolders')}</Text>
+            )
+          }
+          value={
+            // PILOT-DECISION: antd fontSizeHeading1 (38px) has no Astryx text
+            // step; size="4xl" is the closest on the Astryx ramp.
+            <Text size="4xl">{invitedCount}</Text>
+          }
+          style={{
+            maxWidth: PANEL_ITEM_MAX_WIDTH,
+          }}
+        />
+      </BAIRowWrapWithDividers>
+    </BAIFlex>
+  );
+};
+
+export default StorageStatusPanelCard;

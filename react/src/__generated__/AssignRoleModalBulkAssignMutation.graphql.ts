@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<60d470b0181b2c753fe5a4c0f01fa60b>>
+ * @generated SignedSource<<47eefa22f02eae87c9ee7f6ba5dec78d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,7 +18,7 @@ export type AssignRoleModalBulkAssignMutation$variables = {
   input: BulkAssignRoleInput;
 };
 export type AssignRoleModalBulkAssignMutation$data = {
-  readonly adminBulkAssignRole: {
+  readonly partialBulkAssignRoles: {
     readonly assigned: ReadonlyArray<{
       readonly grantedAt: string;
       readonly grantedBy: string | null | undefined;
@@ -29,7 +29,7 @@ export type AssignRoleModalBulkAssignMutation$data = {
       readonly message: string;
       readonly userId: string;
     }>;
-  } | null | undefined;
+  };
 };
 export type AssignRoleModalBulkAssignMutation = {
   response: AssignRoleModalBulkAssignMutation$data;
@@ -63,7 +63,7 @@ v2 = [
     ],
     "concreteType": "BulkAssignRolePayload",
     "kind": "LinkedField",
-    "name": "adminBulkAssignRole",
+    "name": "partialBulkAssignRoles",
     "plural": false,
     "selections": [
       {
@@ -140,16 +140,16 @@ return {
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "545598ab56417816a46c5970a2504d59",
+    "cacheID": "396c28c9e72b4b47bcd73a5644af1eb9",
     "id": null,
     "metadata": {},
     "name": "AssignRoleModalBulkAssignMutation",
     "operationKind": "mutation",
-    "text": "mutation AssignRoleModalBulkAssignMutation(\n  $input: BulkAssignRoleInput!\n) {\n  adminBulkAssignRole(input: $input) {\n    assigned {\n      id\n      userId\n      grantedBy\n      grantedAt\n    }\n    failed {\n      userId\n      message\n    }\n  }\n}\n"
+    "text": "mutation AssignRoleModalBulkAssignMutation(\n  $input: BulkAssignRoleInput!\n) {\n  partialBulkAssignRoles(input: $input) {\n    assigned {\n      id\n      userId\n      grantedBy\n      grantedAt\n    }\n    failed {\n      userId\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "551167c7c7372c61b97ff5db472badd4";
+(node as any).hash = "cafb130273f47ea8035f1afb97fb8031";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<83f8aae7001b7fb1f7fd5de0388ab4bb>>
+ * @generated SignedSource<<df6154b19dd46dbd84d7c756b7665a35>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -76,6 +76,7 @@ export type ReservoirArtifactDetailPageQuery$variables = {
 export type ReservoirArtifactDetailPageQuery$data = {
   readonly artifact: {
     readonly description: string | null | undefined;
+    readonly entityId: string;
     readonly id: string;
     readonly latestVersion: {
       readonly edges: ReadonlyArray<{
@@ -166,18 +167,25 @@ v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "entityId",
   "storageKey": null
 },
 v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
   "name": "description",
   "storageKey": null
 },
-v8 = [
-  (v6/*: any*/),
+v9 = [
+  (v7/*: any*/),
   {
     "alias": null,
     "args": null,
@@ -186,34 +194,34 @@ v8 = [
     "storageKey": null
   }
 ],
-v9 = {
+v10 = {
   "alias": null,
   "args": null,
   "concreteType": "SourceInfo",
   "kind": "LinkedField",
   "name": "registry",
   "plural": false,
-  "selections": (v8/*: any*/),
+  "selections": (v9/*: any*/),
   "storageKey": null
 },
-v10 = {
+v11 = {
   "alias": null,
   "args": null,
   "concreteType": "SourceInfo",
   "kind": "LinkedField",
   "name": "source",
   "plural": false,
-  "selections": (v8/*: any*/),
+  "selections": (v9/*: any*/),
   "storageKey": null
 },
-v11 = {
+v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "updatedAt",
   "storageKey": null
 },
-v12 = {
+v13 = {
   "kind": "Literal",
   "name": "orderBy",
   "value": [
@@ -227,7 +235,7 @@ v12 = {
     }
   ]
 },
-v13 = [
+v14 = [
   {
     "kind": "Literal",
     "name": "filter",
@@ -237,37 +245,37 @@ v13 = [
       }
     }
   },
-  (v12/*: any*/)
+  (v13/*: any*/)
 ],
-v14 = {
+v15 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "count",
   "storageKey": null
 },
-v15 = {
+v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "status",
   "storageKey": null
 },
-v16 = {
+v17 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "__typename",
   "storageKey": null
 },
-v17 = {
+v18 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "cursor",
   "storageKey": null
 },
-v18 = {
+v19 = {
   "alias": null,
   "args": null,
   "concreteType": "PageInfo",
@@ -306,7 +314,7 @@ v18 = {
   ],
   "storageKey": null
 },
-v19 = {
+v20 = {
   "kind": "ClientExtension",
   "selections": [
     {
@@ -318,34 +326,34 @@ v19 = {
     }
   ]
 },
-v20 = [
+v21 = [
   {
     "kind": "Literal",
     "name": "limit",
     "value": 1
   },
-  (v12/*: any*/)
+  (v13/*: any*/)
 ],
-v21 = {
+v22 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "size",
   "storageKey": null
 },
-v22 = {
+v23 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "version",
   "storageKey": null
 },
-v23 = {
+v24 = {
   "args": null,
   "kind": "FragmentSpread",
   "name": "BAIImportArtifactModalArtifactRevisionFragment"
 },
-v24 = [
+v25 = [
   {
     "kind": "Variable",
     "name": "filter",
@@ -361,9 +369,9 @@ v24 = [
     "name": "offset",
     "variableName": "offset"
   },
-  (v12/*: any*/)
+  (v13/*: any*/)
 ],
-v25 = {
+v26 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -392,24 +400,25 @@ return {
         "selections": [
           (v5/*: any*/),
           (v6/*: any*/),
+          (v7/*: any*/),
           {
             "args": null,
             "kind": "FragmentSpread",
             "name": "BAIArtifactTypeTokenFragment"
           },
-          (v7/*: any*/),
-          (v9/*: any*/),
+          (v8/*: any*/),
           (v10/*: any*/),
           (v11/*: any*/),
+          (v12/*: any*/),
           {
             "alias": "pullingArtifactRevisions",
-            "args": (v13/*: any*/),
+            "args": (v14/*: any*/),
             "concreteType": "ArtifactRevisionConnection",
             "kind": "LinkedField",
             "name": "__ReservoirArtifactDetailPage_pullingArtifactRevisions_connection",
             "plural": false,
             "selections": [
-              (v14/*: any*/),
+              (v15/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -427,28 +436,28 @@ return {
                     "plural": false,
                     "selections": [
                       (v5/*: any*/),
-                      (v15/*: any*/),
+                      (v16/*: any*/),
                       {
                         "args": null,
                         "kind": "FragmentSpread",
                         "name": "BAIPullingArtifactRevisionAlertFragment"
                       },
-                      (v16/*: any*/)
+                      (v17/*: any*/)
                     ],
                     "storageKey": null
                   },
-                  (v17/*: any*/)
+                  (v18/*: any*/)
                 ],
                 "storageKey": null
               },
-              (v18/*: any*/),
-              (v19/*: any*/)
+              (v19/*: any*/),
+              (v20/*: any*/)
             ],
             "storageKey": "__ReservoirArtifactDetailPage_pullingArtifactRevisions_connection(filter:{\"status\":{\"equals\":\"PULLING\"}},orderBy:[{\"direction\":\"DESC\",\"field\":\"VERSION\"},{\"direction\":\"DESC\",\"field\":\"UPDATED_AT\"}])"
           },
           {
             "alias": "latestVersion",
-            "args": (v20/*: any*/),
+            "args": (v21/*: any*/),
             "concreteType": "ArtifactRevisionConnection",
             "kind": "LinkedField",
             "name": "revisions",
@@ -471,10 +480,10 @@ return {
                     "plural": false,
                     "selections": [
                       (v5/*: any*/),
-                      (v21/*: any*/),
                       (v22/*: any*/),
-                      (v15/*: any*/),
                       (v23/*: any*/),
+                      (v16/*: any*/),
+                      (v24/*: any*/),
                       {
                         "args": null,
                         "kind": "FragmentSpread",
@@ -491,13 +500,13 @@ return {
           },
           {
             "alias": null,
-            "args": (v24/*: any*/),
+            "args": (v25/*: any*/),
             "concreteType": "ArtifactRevisionConnection",
             "kind": "LinkedField",
             "name": "revisions",
             "plural": false,
             "selections": [
-              (v14/*: any*/),
+              (v15/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -515,13 +524,13 @@ return {
                     "plural": false,
                     "selections": [
                       (v5/*: any*/),
-                      (v15/*: any*/),
+                      (v16/*: any*/),
                       {
                         "args": null,
                         "kind": "FragmentSpread",
                         "name": "BAIArtifactRevisionTableArtifactRevisionFragment"
                       },
-                      (v23/*: any*/),
+                      (v24/*: any*/),
                       {
                         "args": null,
                         "kind": "FragmentSpread",
@@ -594,6 +603,7 @@ return {
         "selections": [
           (v5/*: any*/),
           (v6/*: any*/),
+          (v7/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -601,19 +611,19 @@ return {
             "name": "type",
             "storageKey": null
           },
-          (v7/*: any*/),
-          (v9/*: any*/),
+          (v8/*: any*/),
           (v10/*: any*/),
           (v11/*: any*/),
+          (v12/*: any*/),
           {
             "alias": "pullingArtifactRevisions",
-            "args": (v13/*: any*/),
+            "args": (v14/*: any*/),
             "concreteType": "ArtifactRevisionConnection",
             "kind": "LinkedField",
             "name": "revisions",
             "plural": false,
             "selections": [
-              (v14/*: any*/),
+              (v15/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -631,25 +641,25 @@ return {
                     "plural": false,
                     "selections": [
                       (v5/*: any*/),
-                      (v15/*: any*/),
-                      (v25/*: any*/),
-                      (v22/*: any*/),
-                      (v16/*: any*/)
+                      (v16/*: any*/),
+                      (v26/*: any*/),
+                      (v23/*: any*/),
+                      (v17/*: any*/)
                     ],
                     "storageKey": null
                   },
-                  (v17/*: any*/)
+                  (v18/*: any*/)
                 ],
                 "storageKey": null
               },
-              (v18/*: any*/),
-              (v19/*: any*/)
+              (v19/*: any*/),
+              (v20/*: any*/)
             ],
             "storageKey": "revisions(filter:{\"status\":{\"equals\":\"PULLING\"}},orderBy:[{\"direction\":\"DESC\",\"field\":\"VERSION\"},{\"direction\":\"DESC\",\"field\":\"UPDATED_AT\"}])"
           },
           {
             "alias": "pullingArtifactRevisions",
-            "args": (v13/*: any*/),
+            "args": (v14/*: any*/),
             "filters": [
               "filter",
               "orderBy"
@@ -661,7 +671,7 @@ return {
           },
           {
             "alias": "latestVersion",
-            "args": (v20/*: any*/),
+            "args": (v21/*: any*/),
             "concreteType": "ArtifactRevisionConnection",
             "kind": "LinkedField",
             "name": "revisions",
@@ -684,10 +694,10 @@ return {
                     "plural": false,
                     "selections": [
                       (v5/*: any*/),
-                      (v21/*: any*/),
                       (v22/*: any*/),
-                      (v15/*: any*/),
-                      (v25/*: any*/)
+                      (v23/*: any*/),
+                      (v16/*: any*/),
+                      (v26/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -699,13 +709,13 @@ return {
           },
           {
             "alias": null,
-            "args": (v24/*: any*/),
+            "args": (v25/*: any*/),
             "concreteType": "ArtifactRevisionConnection",
             "kind": "LinkedField",
             "name": "revisions",
             "plural": false,
             "selections": [
-              (v14/*: any*/),
+              (v15/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -723,11 +733,11 @@ return {
                     "plural": false,
                     "selections": [
                       (v5/*: any*/),
-                      (v15/*: any*/),
+                      (v16/*: any*/),
+                      (v23/*: any*/),
                       (v22/*: any*/),
-                      (v21/*: any*/),
-                      (v11/*: any*/),
-                      (v25/*: any*/)
+                      (v12/*: any*/),
+                      (v26/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -736,13 +746,6 @@ return {
               }
             ],
             "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "entityId",
-            "storageKey": null
           }
         ],
         "storageKey": null
@@ -750,7 +753,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3fb44bd1c2efdc286679dde265eda903",
+    "cacheID": "4bf8b0c6669275629d6f10e11fd1c4a3",
     "id": null,
     "metadata": {
       "connection": [
@@ -767,11 +770,11 @@ return {
     },
     "name": "ReservoirArtifactDetailPageQuery",
     "operationKind": "query",
-    "text": "query ReservoirArtifactDetailPageQuery(\n  $id: ID!\n  $offset: Int!\n  $limit: Int!\n  $filter: ArtifactRevisionFilter!\n) {\n  artifact(id: $id) {\n    id\n    name\n    ...BAIArtifactTypeTokenFragment\n    description\n    registry {\n      name\n      url\n    }\n    source {\n      name\n      url\n    }\n    updatedAt\n    pullingArtifactRevisions: revisions(filter: {status: {equals: PULLING}}, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}]) {\n      count\n      edges {\n        node {\n          id\n          status\n          ...BAIPullingArtifactRevisionAlertFragment\n          __typename\n        }\n        cursor\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n    latestVersion: revisions(limit: 1, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}]) {\n      edges {\n        node {\n          id\n          size\n          version\n          status\n          ...BAIImportArtifactModalArtifactRevisionFragment\n          ...BAIArtifactRevisionTableLatestRevisionFragment\n        }\n      }\n    }\n    revisions(offset: $offset, limit: $limit, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}], filter: $filter) {\n      count\n      edges {\n        node {\n          id\n          status\n          ...BAIArtifactRevisionTableArtifactRevisionFragment\n          ...BAIImportArtifactModalArtifactRevisionFragment\n          ...BAIDeleteArtifactRevisionsModalArtifactRevisionFragment\n          ...BAIArtifactRevisionDeleteButtonFragment\n          ...BAIArtifactRevisionDownloadButtonFragment\n          ...ImportArtifactRevisionToFolderButtonFragment\n          ...ImportArtifactRevisionToFolderModalArtifactRevisionFragment\n        }\n      }\n    }\n    ...BAIImportArtifactModalArtifactFragment\n    ...BAIDeleteArtifactRevisionsModalArtifactFragment\n  }\n}\n\nfragment BAIArtifactDescriptionsFragment on Artifact {\n  name\n  description\n  source {\n    name\n    url\n  }\n  ...BAIArtifactTypeTokenFragment\n}\n\nfragment BAIArtifactRevisionDeleteButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactRevisionDownloadButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactRevisionTableArtifactRevisionFragment on ArtifactRevision {\n  id\n  version\n  size\n  status\n  updatedAt\n  ...BAIArtifactStatusBadgeFragment\n  ...BAIArtifactRevisionDownloadButtonFragment\n  ...BAIArtifactRevisionDeleteButtonFragment\n}\n\nfragment BAIArtifactRevisionTableLatestRevisionFragment on ArtifactRevision {\n  id\n}\n\nfragment BAIArtifactStatusBadgeFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactTypeTokenFragment on Artifact {\n  type\n}\n\nfragment BAIDeleteArtifactRevisionsModalArtifactFragment on Artifact {\n  id\n  ...BAIArtifactDescriptionsFragment\n}\n\nfragment BAIDeleteArtifactRevisionsModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  fieldId\n  version\n  size\n  status\n}\n\nfragment BAIImportArtifactModalArtifactFragment on Artifact {\n  id\n  entityId\n  name\n  ...BAIArtifactDescriptionsFragment\n}\n\nfragment BAIImportArtifactModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  fieldId\n  version\n  size\n  status\n}\n\nfragment BAIPullingArtifactRevisionAlertFragment on ArtifactRevision {\n  id\n  fieldId\n  status\n  version\n}\n\nfragment ImportArtifactRevisionToFolderButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment ImportArtifactRevisionToFolderModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  fieldId\n}\n"
+    "text": "query ReservoirArtifactDetailPageQuery(\n  $id: ID!\n  $offset: Int!\n  $limit: Int!\n  $filter: ArtifactRevisionFilter!\n) {\n  artifact(id: $id) {\n    id\n    entityId\n    name\n    ...BAIArtifactTypeTokenFragment\n    description\n    registry {\n      name\n      url\n    }\n    source {\n      name\n      url\n    }\n    updatedAt\n    pullingArtifactRevisions: revisions(filter: {status: {equals: PULLING}}, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}]) {\n      count\n      edges {\n        node {\n          id\n          status\n          ...BAIPullingArtifactRevisionAlertFragment\n          __typename\n        }\n        cursor\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n    latestVersion: revisions(limit: 1, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}]) {\n      edges {\n        node {\n          id\n          size\n          version\n          status\n          ...BAIImportArtifactModalArtifactRevisionFragment\n          ...BAIArtifactRevisionTableLatestRevisionFragment\n        }\n      }\n    }\n    revisions(offset: $offset, limit: $limit, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}], filter: $filter) {\n      count\n      edges {\n        node {\n          id\n          status\n          ...BAIArtifactRevisionTableArtifactRevisionFragment\n          ...BAIImportArtifactModalArtifactRevisionFragment\n          ...BAIDeleteArtifactRevisionsModalArtifactRevisionFragment\n          ...BAIArtifactRevisionDeleteButtonFragment\n          ...BAIArtifactRevisionDownloadButtonFragment\n          ...ImportArtifactRevisionToFolderButtonFragment\n          ...ImportArtifactRevisionToFolderModalArtifactRevisionFragment\n        }\n      }\n    }\n    ...BAIImportArtifactModalArtifactFragment\n    ...BAIDeleteArtifactRevisionsModalArtifactFragment\n  }\n}\n\nfragment BAIArtifactDescriptionsFragment on Artifact {\n  name\n  description\n  source {\n    name\n    url\n  }\n  ...BAIArtifactTypeTokenFragment\n}\n\nfragment BAIArtifactRevisionDeleteButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactRevisionDownloadButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactRevisionTableArtifactRevisionFragment on ArtifactRevision {\n  id\n  version\n  size\n  status\n  updatedAt\n  ...BAIArtifactStatusBadgeFragment\n  ...BAIArtifactRevisionDownloadButtonFragment\n  ...BAIArtifactRevisionDeleteButtonFragment\n}\n\nfragment BAIArtifactRevisionTableLatestRevisionFragment on ArtifactRevision {\n  id\n}\n\nfragment BAIArtifactStatusBadgeFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactTypeTokenFragment on Artifact {\n  type\n}\n\nfragment BAIDeleteArtifactRevisionsModalArtifactFragment on Artifact {\n  id\n  ...BAIArtifactDescriptionsFragment\n}\n\nfragment BAIDeleteArtifactRevisionsModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  fieldId\n  version\n  size\n  status\n}\n\nfragment BAIImportArtifactModalArtifactFragment on Artifact {\n  id\n  entityId\n  name\n  ...BAIArtifactDescriptionsFragment\n}\n\nfragment BAIImportArtifactModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  fieldId\n  version\n  size\n  status\n}\n\nfragment BAIPullingArtifactRevisionAlertFragment on ArtifactRevision {\n  id\n  fieldId\n  status\n  version\n}\n\nfragment ImportArtifactRevisionToFolderButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment ImportArtifactRevisionToFolderModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  fieldId\n}\n"
   }
 };
 })();
 
-(node as any).hash = "18389b13be61664ef4a67b3212b198c3";
+(node as any).hash = "551d971d0ec916a5d56a1658f59d1ce3";
 
 export default node;
