@@ -58,6 +58,7 @@ import {
 } from '../helper/loginSessionAuth';
 import { resolvePluginScriptUrl } from '../helper/pluginPath';
 import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
+import { useElectronEndpointStep } from '../hooks/useElectronEndpointStep';
 import { useLoginOrchestration } from '../hooks/useLoginOrchestration';
 import {
   useInitializeConfig,
@@ -68,6 +69,7 @@ import {
 import { pluginApiEndpointState } from '../hooks/useWebUIPluginState';
 import { preloadPostLoginChunks } from '../preload';
 import { jotaiStore } from './DefaultProviders';
+import LoginEndpointStep from './LoginEndpointStep';
 import LoginFormPanel, { type EndpointHistoryEntry } from './LoginFormPanel';
 import { Button } from '@lablup/ui-common/Button';
 import { Text } from '@lablup/ui-common/Text';
@@ -217,6 +219,22 @@ const LoginView: React.FC<{
   const [isEndpointDisabled, setIsEndpointDisabled] = useState(false);
 
   const [form] = Form.useForm();
+  const isElectron = !!(globalThis as Record<string, unknown>).isElectron;
+  const endpointStep = useElectronEndpointStep({
+    isElectron,
+    isPanelOpen: isLoginPanelOpen,
+    storedEndpoint: apiEndpoint,
+    onConfirmed: (endpoint) => {
+      setApiEndpoint(endpoint);
+      form.setFieldValue('api_endpoint', endpoint);
+      localStorage.setItem(STORED_API_ENDPOINT_KEY, endpoint);
+    },
+  });
+  const endpointStepErrorMessage = {
+    invalidUrl: t('login.EndpointStartWith'),
+    unreachable: t('login.EndpointUnreachable'),
+    noConfig: t('login.EndpointNoConfig'),
+  };
   const clientRef =
     useRef<ReturnType<typeof createBackendAIClient>['client']>(null);
   const configRef = useRef<LoginConfigState>(loginConfig);
@@ -1331,6 +1349,26 @@ const LoginView: React.FC<{
           if (!v) expiredCredentialsRef.current = null;
         }}
         onSetShowSignupModal={setShowSignupModal}
+        endpointStep={
+          endpointStep.isStepOpen ? (
+            <LoginEndpointStep
+              defaultEndpoint={apiEndpoint}
+              isConnecting={endpointStep.isConnecting}
+              error={
+                endpointStep.error
+                  ? endpointStepErrorMessage[endpointStep.error]
+                  : null
+              }
+              onContinue={endpointStep.continueWith}
+            />
+          ) : undefined
+        }
+        onChangeEndpoint={isElectron ? endpointStep.changeEndpoint : undefined}
+        endpointNotice={
+          isElectron && endpointStep.hasNoDomain
+            ? t('login.EndpointNoDomain')
+            : null
+        }
       />
 
       {/* Block/Error Panel */}

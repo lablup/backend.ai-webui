@@ -121,6 +121,8 @@ type JotaiStore = ReturnType<typeof createStore>;
 export interface ConfigFetchResult {
   config: RawTomlConfig | null;
   error?: unknown;
+  /** The request itself failed (no response), as opposed to a missing file. */
+  unreachable?: boolean;
 }
 
 /**
@@ -135,7 +137,7 @@ export async function fetchAndParseConfig(
     res = await fetch(configPath);
   } catch {
     // Network / fetch error — treat as missing config (no error field).
-    return { config: null };
+    return { config: null, unreachable: true };
   }
 
   if (res.status !== 200) {

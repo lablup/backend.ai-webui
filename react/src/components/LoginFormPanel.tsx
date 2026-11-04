@@ -61,7 +61,7 @@ import {
   Trash2,
   TriangleAlert,
 } from 'lucide-react';
-import React, { Suspense, useEffect, useRef, useState } from 'react';
+import React, { ReactNode, Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // Signup pulls Typeahead/Tokenizer form controls; load it when it opens.
@@ -156,6 +156,11 @@ interface LoginFormPanelProps {
   onSetNeedsOtpRegistration: (v: boolean) => void;
   onSetNeedToResetPassword: (v: boolean) => void;
   onSetShowSignupModal: (v: boolean) => void;
+  /** Shown in place of the form while the Electron endpoint step is open. */
+  endpointStep?: ReactNode;
+  /** Electron: the endpoint is fixed for this form and changed through this. */
+  onChangeEndpoint?: () => void;
+  endpointNotice?: string | null;
 }
 
 const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
@@ -192,6 +197,9 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   onSetNeedsOtpRegistration,
   onSetNeedToResetPassword,
   onSetShowSignupModal,
+  endpointStep,
+  onChangeEndpoint,
+  endpointNotice,
 }) => {
   'use memo';
 
@@ -338,8 +346,8 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
           ...(needToResetPassword ? { wrapper: { display: 'none' } } : {}),
         }}
       >
-        {/* Mode switching: Segmented control */}
-        {loginConfig.change_signin_support && (
+        {endpointStep}
+        {!endpointStep && loginConfig.change_signin_support && (
           <div style={{ marginBottom: token('--spacing-5') }}>
             {/* `disabledMessage` is the whole control's, not a segment's:
                 Astryx has no per-item reason, and a disabled control swallows
@@ -367,16 +375,24 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
           </div>
         )}
 
-        <Form
-          form={form}
-          layout="vertical"
-          onKeyDown={onKeyDown}
-          initialValues={{ api_endpoint: apiEndpoint }}
-        >
-          {/* SESSION login fields */}
-          {connectionMode === 'SESSION' && (
-            <>
-              {/* PILOT-DECISION: antd `Input prefix={<icon/>}` (MAPPING
+        {!endpointStep && (
+          <Form
+            form={form}
+            layout="vertical"
+            onKeyDown={onKeyDown}
+            initialValues={{ api_endpoint: apiEndpoint }}
+          >
+            {endpointNotice && (
+              <Banner
+                status="info"
+                title={endpointNotice}
+                style={{ marginBottom: token('--spacing-3') }}
+              />
+            )}
+            {/* SESSION login fields */}
+            {connectionMode === 'SESSION' && (
+              <>
+                {/* PILOT-DECISION: antd `Input prefix={<icon/>}` (MAPPING
                   §3.6) -> `TextInput startIcon`; the leading glyphs stay
                   dropped — the placeholder already carries the field meaning,
                   and the `label` (hidden, supplied for a11y) carries the
@@ -387,134 +403,162 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                   native `<input>`, so the adapter only had to declare them.
                   `autoComplete` in particular is what lets a password manager
                   recognise this as a login form. */}
-              <BAIFormItem
-                name="user_id"
-                style={{ marginBottom: token('--spacing-3') }}
-              >
-                <BAITextInput
-                  aria-label={t('login.E-mailOrUsername', { postProcess: [] })}
-                  placeholder={t('login.E-mailOrUsername', { postProcess: [] })}
-                  maxLength={64}
-                  autoComplete="username"
-                  // Focus the first field when the login form opens. When OTP is
-                  // later required, the OTP input mounts with its own autoFocus
-                  // and takes over.
-                  hasAutoFocus={!otpRequired}
-                  disabled={isLoading}
-                />
-              </BAIFormItem>
-              <BAIFormItem
-                name="password"
-                style={{ marginBottom: token('--spacing-3') }}
-              >
-                <BAITextInput
-                  type="password"
-                  aria-label={t('login.Password', { postProcess: [] })}
-                  placeholder={t('login.Password', { postProcess: [] })}
-                  autoComplete="current-password"
-                  disabled={isLoading}
-                />
-              </BAIFormItem>
-              {otpRequired && (
                 <BAIFormItem
-                  name="otp"
+                  name="user_id"
                   style={{ marginBottom: token('--spacing-3') }}
                 >
                   <BAITextInput
-                    aria-label={t('totp.OTP', { postProcess: [] })}
-                    placeholder={t('totp.OTP', { postProcess: [] })}
+                    aria-label={t('login.E-mailOrUsername', {
+                      postProcess: [],
+                    })}
+                    placeholder={t('login.E-mailOrUsername', {
+                      postProcess: [],
+                    })}
+                    maxLength={64}
+                    autoComplete="username"
+                    // Focus the first field when the login form opens. When OTP is
+                    // later required, the OTP input mounts with its own autoFocus
+                    // and takes over.
+                    hasAutoFocus={!otpRequired}
                     disabled={isLoading}
-                    hasAutoFocus
                   />
                 </BAIFormItem>
-              )}
-            </>
-          )}
+                <BAIFormItem
+                  name="password"
+                  style={{ marginBottom: token('--spacing-3') }}
+                >
+                  <BAITextInput
+                    type="password"
+                    aria-label={t('login.Password', { postProcess: [] })}
+                    placeholder={t('login.Password', { postProcess: [] })}
+                    autoComplete="current-password"
+                    disabled={isLoading}
+                  />
+                </BAIFormItem>
+                {otpRequired && (
+                  <BAIFormItem
+                    name="otp"
+                    style={{ marginBottom: token('--spacing-3') }}
+                  >
+                    <BAITextInput
+                      aria-label={t('totp.OTP', { postProcess: [] })}
+                      placeholder={t('totp.OTP', { postProcess: [] })}
+                      disabled={isLoading}
+                      hasAutoFocus
+                    />
+                  </BAIFormItem>
+                )}
+              </>
+            )}
 
-          {/* API login fields */}
-          {connectionMode === 'API' && (
-            <>
-              <BAIFormItem
-                name="api_key"
+            {/* API login fields */}
+            {connectionMode === 'API' && (
+              <>
+                <BAIFormItem
+                  name="api_key"
+                  style={{ marginBottom: token('--spacing-3') }}
+                >
+                  <BAITextInput
+                    aria-label={t('login.APIKey', { postProcess: [] })}
+                    placeholder={t('login.APIKey', { postProcess: [] })}
+                    maxLength={20}
+                    hasAutoFocus
+                    disabled={isLoading}
+                  />
+                </BAIFormItem>
+                <BAIFormItem
+                  name="secret_key"
+                  style={{ marginBottom: token('--spacing-3') }}
+                >
+                  <BAITextInput
+                    type="password"
+                    aria-label={t('login.SecretKey', { postProcess: [] })}
+                    placeholder={t('login.SecretKey', { postProcess: [] })}
+                    maxLength={40}
+                    disabled={isLoading}
+                  />
+                </BAIFormItem>
+              </>
+            )}
+
+            {/* Login error alert */}
+            {loginError && (
+              <Banner
+                role="alert"
+                status="error"
+                title={loginError.message}
+                description={loginError.description}
                 style={{ marginBottom: token('--spacing-3') }}
-              >
-                <BAITextInput
-                  aria-label={t('login.APIKey', { postProcess: [] })}
-                  placeholder={t('login.APIKey', { postProcess: [] })}
-                  maxLength={20}
-                  hasAutoFocus
-                  disabled={isLoading}
-                />
-              </BAIFormItem>
-              <BAIFormItem
-                name="secret_key"
-                style={{ marginBottom: token('--spacing-3') }}
-              >
-                <BAITextInput
-                  type="password"
-                  aria-label={t('login.SecretKey', { postProcess: [] })}
-                  placeholder={t('login.SecretKey', { postProcess: [] })}
-                  maxLength={40}
-                  disabled={isLoading}
-                />
-              </BAIFormItem>
-            </>
-          )}
+                isDismissable
+                onDismiss={onClearLoginError}
+              />
+            )}
 
-          {/* Login error alert */}
-          {loginError && (
-            <Banner
-              role="alert"
-              status="error"
-              title={loginError.message}
-              description={loginError.description}
-              style={{ marginBottom: token('--spacing-3') }}
-              isDismissable
-              onDismiss={onClearLoginError}
-            />
-          )}
-
-          {/* Login button */}
-          <BAIFormItem style={{ marginBottom: token('--spacing-3') }}>
-            <Button
-              variant="primary"
-              width="100%"
-              onClick={onLogin}
-              isLoading={isLoading}
-              label={t('login.Login')}
-            />
-          </BAIFormItem>
-          {/* SSO buttons */}
-          {loginConfig.singleSignOnVendors.includes('saml') && (
+            {/* Login button */}
             <BAIFormItem style={{ marginBottom: token('--spacing-3') }}>
               <Button
+                variant="primary"
                 width="100%"
-                onClick={onSAMLLogin}
-                label={t('login.singleSignOn.LoginWithSAML')}
+                onClick={onLogin}
+                isLoading={isLoading}
+                label={t('login.Login')}
               />
             </BAIFormItem>
-          )}
-          {loginConfig.singleSignOnVendors.includes('openid') && (
-            <BAIFormItem style={{ marginBottom: token('--spacing-3') }}>
-              <Button
-                width="100%"
-                onClick={onOpenIDLogin}
-                label={t('login.singleSignOn.LoginWithRealm', {
-                  realmName: loginConfig.ssoRealmName || 'OpenID',
-                })}
-              />
-            </BAIFormItem>
-          )}
+            {/* SSO buttons */}
+            {loginConfig.singleSignOnVendors.includes('saml') && (
+              <BAIFormItem style={{ marginBottom: token('--spacing-3') }}>
+                <Button
+                  width="100%"
+                  onClick={onSAMLLogin}
+                  label={t('login.singleSignOn.LoginWithSAML')}
+                />
+              </BAIFormItem>
+            )}
+            {loginConfig.singleSignOnVendors.includes('openid') && (
+              <BAIFormItem style={{ marginBottom: token('--spacing-3') }}>
+                <Button
+                  width="100%"
+                  onClick={onOpenIDLogin}
+                  label={t('login.singleSignOn.LoginWithRealm', {
+                    realmName: loginConfig.ssoRealmName || 'OpenID',
+                  })}
+                />
+              </BAIFormItem>
+            )}
 
-          {/* Collapsible endpoint section */}
-          {showEndpointInput && (
-            <div style={{ marginTop: token('--spacing-3') }}>
-              {/* `Typography.Link onClick` with no href -> Astryx `Link`
+            {onChangeEndpoint && (
+              <BAIFlex
+                gap="xs"
+                align="center"
+                justify="between"
+                style={{ marginTop: token('--spacing-3') }}
+              >
+                <Text color="secondary" maxLines={1}>
+                  {apiEndpoint}
+                </Text>
+                <Link
+                  isStandalone
+                  href="#"
+                  data-testid="login-change-endpoint"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onChangeEndpoint();
+                  }}
+                >
+                  {t('login.ChangeEndpoint')}
+                </Link>
+              </BAIFlex>
+            )}
+
+            {/* Collapsible endpoint section */}
+            {!onChangeEndpoint && showEndpointInput && (
+              <div style={{ marginTop: token('--spacing-3') }}>
+                {/* `Typography.Link onClick` with no href -> Astryx `Link`
                   is anchor-first (MAPPING §3.16), so the router-less toggle
                   uses `href="#"` + `preventDefault` (the pilot's fallback).
                   The hand-set 13px/10px sizes are dropped (closed type
                   scale). */}
-              {/* `isStandalone` is not cosmetic: an Astryx `Link` with no
+                {/* `isStandalone` is not cosmetic: an Astryx `Link` with no
                   `isStandalone` INHERITS its font size, and the dialog's base
                   is the app's 16px/24px, whereas antd pinned `.ant-modal` to
                   14px/22px. Without it this disclosure row rendered 2px larger
@@ -522,220 +566,225 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                   is Astryx's own "this link is not inside a paragraph" flag and
                   resolves to `--text-body-size` / `--text-body-leading`, i.e.
                   exactly 14px / 1.5714 — the legacy values. */}
-              <Link
-                isStandalone
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setIsEndpointExpanded((prev) => !prev);
-                }}
-                style={{ userSelect: 'none' }}
-              >
-                {/* Astryx `Link` lays its children out in a block flow, so the
-                    disclosure chevron and the label are kept on one line by an
-                    explicit inline-flex row rather than by the anchor itself. */}
-                <span
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 4,
-                  }}
-                >
-                  {isEndpointExpanded ? (
-                    <ChevronDown size="1em" />
-                  ) : (
-                    <ChevronRight size="1em" />
-                  )}
-                  {t('login.AdvancedSettings')}
-                </span>
-              </Link>
-              {isEndpointExpanded && (
-                <BAIFlex
-                  gap="xs"
-                  align="start"
-                  style={{ marginTop: token('--spacing-2') }}
-                >
-                  <div
-                    ref={(el) => {
-                      endpointAnchorRef.current = el;
-                      endpointHistoryPopover.triggerRef(el);
-                    }}
-                    onFocus={showEndpointHistory}
-                    onClick={showEndpointHistory}
-                    onBlur={(e) => {
-                      const next = e.relatedTarget as Node | null;
-                      if (
-                        !e.currentTarget.contains(next) &&
-                        !endpointHistoryPopover.contentRef.current?.contains(
-                          next,
-                        )
-                      ) {
-                        endpointHistoryPopover.hide();
-                      }
-                    }}
-                    onKeyDown={(e) => {
-                      if (!endpointHistoryPopover.isOpen) {
-                        if (e.key === 'ArrowDown') showEndpointHistory();
-                        return;
-                      }
-                      const list = endpointHistoryPopover.contentRef.current;
-                      // The layer is its own focus scope, so Tab from the field
-                      // skips it; ArrowDown enters it as in a combobox.
-                      if (
-                        e.key === 'ArrowDown' &&
-                        !list?.contains(e.target as Node)
-                      ) {
-                        e.preventDefault();
-                        list?.querySelector('button')?.focus();
-                      } else if (e.key === 'Escape') {
-                        e.stopPropagation();
-                        endpointHistoryPopover.hide();
-                        endpointAnchorRef.current
-                          ?.querySelector('input')
-                          ?.focus();
-                      }
-                    }}
-                    style={{ flex: 1, minWidth: 0 }}
-                  >
-                    <BAIFormItem
-                      name="api_endpoint"
-                      style={{ marginBottom: 0 }}
-                      rules={[
-                        {
-                          pattern: /^https?:\/\/(.*)/,
-                          message: t('login.EndpointStartWith'),
-                        },
-                      ]}
-                    >
-                      <BAITextInput
-                        aria-label={t('login.Endpoint', { postProcess: [] })}
-                        placeholder={t('login.Endpoint', { postProcess: [] })}
-                        disabled={isEndpointDisabled || isLoading}
-                        onChange={(value) => onSetApiEndpoint(value)}
-                      />
-                    </BAIFormItem>
-                    {endpointHistory.length > 0 &&
-                      endpointHistoryPopover.render(
-                        <List
-                          density="compact"
-                          hasDividers
-                          aria-label={t('login.EndpointHistory')}
-                          xstyle={styles.endpointList}
-                        >
-                          {endpointHistory.map(({ endpoint, isFromEnv }, i) => (
-                            <ListItem
-                              key={endpoint}
-                              label={isFromEnv ? `${endpoint} (env)` : endpoint}
-                              xstyle={[
-                                styles.endpointRow,
-                                i === endpointHistory.length - 1 &&
-                                  styles.endpointLastRow,
-                              ]}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                selectEndpoint(endpoint);
-                              }}
-                              endContent={
-                                <IconButton
-                                  variant="ghost"
-                                  size="sm"
-                                  icon={<Trash2 size="1em" />}
-                                  label={`${t('button.Delete')}: ${endpoint}`}
-                                  onClick={(e) => {
-                                    // The row is the select target; deleting
-                                    // must not also select it.
-                                    e.stopPropagation();
-                                    if (endpointHistory.length === 1) {
-                                      endpointHistoryPopover.hide();
-                                    }
-                                    onDeleteEndpoint(endpoint);
-                                    // The pressed row unmounts with focus in it.
-                                    endpointAnchorRef.current
-                                      ?.querySelector('input')
-                                      ?.focus();
-                                  }}
-                                />
-                              }
-                            />
-                          ))}
-                        </List>,
-                        {
-                          placement: 'below',
-                          alignment: 'start',
-                          offset: spacingVars['--spacing-1'],
-                          xstyle: styles.endpointPopover,
-                        },
-                      )}
-                  </div>
-                  <IconButton
-                    icon={<Info size="1em" />}
-                    variant="ghost"
-                    label={t('login.EndpointInfo')}
-                    onClick={() =>
-                      setHelpPanel({
-                        title: t('login.EndpointInfo'),
-                        content: t('login.DescEndpoint'),
-                      })
-                    }
-                  />
-                </BAIFlex>
-              )}
-            </div>
-          )}
-
-          {/* Signup and change password links */}
-          {hasBottomLinks && (
-            <BAIFlex
-              gap="xs"
-              justify="center"
-              align="center"
-              wrap="wrap"
-              style={{
-                marginTop: token('--spacing-6'),
-                fontSize: 13,
-              }}
-            >
-              {loginConfig.signup_support && (
                 <Link
+                  isStandalone
                   href="#"
                   onClick={(e) => {
                     e.preventDefault();
-                    onShowSignupDialog();
+                    setIsEndpointExpanded((prev) => !prev);
                   }}
+                  style={{ userSelect: 'none' }}
                 >
-                  {t('login.SignUp')}
+                  {/* Astryx `Link` lays its children out in a block flow, so the
+                    disclosure chevron and the label are kept on one line by an
+                    explicit inline-flex row rather than by the anchor itself. */}
+                  <span
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 4,
+                    }}
+                  >
+                    {isEndpointExpanded ? (
+                      <ChevronDown size="1em" />
+                    ) : (
+                      <ChevronRight size="1em" />
+                    )}
+                    {t('login.AdvancedSettings')}
+                  </span>
                 </Link>
-              )}
-              {/* `type="inherit"` is the Astryx spelling of legacy's
-                  `style={{ fontSize: 'inherit' }}` on these `Typography.Text`s:
-                  the row pins 13px and every child followed it. A plain `Text`
-                  imposes its own `--text-body-size` (14px) instead, which is
-                  1px off legacy right next to `Link`s that DO inherit. */}
-              {loginConfig.signup_support &&
-                loginConfig.allowAnonymousChangePassword && (
-                  <Text type="inherit" color="secondary">
-                    |
-                  </Text>
+                {isEndpointExpanded && (
+                  <BAIFlex
+                    gap="xs"
+                    align="start"
+                    style={{ marginTop: token('--spacing-2') }}
+                  >
+                    <div
+                      ref={(el) => {
+                        endpointAnchorRef.current = el;
+                        endpointHistoryPopover.triggerRef(el);
+                      }}
+                      onFocus={showEndpointHistory}
+                      onClick={showEndpointHistory}
+                      onBlur={(e) => {
+                        const next = e.relatedTarget as Node | null;
+                        if (
+                          !e.currentTarget.contains(next) &&
+                          !endpointHistoryPopover.contentRef.current?.contains(
+                            next,
+                          )
+                        ) {
+                          endpointHistoryPopover.hide();
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        if (!endpointHistoryPopover.isOpen) {
+                          if (e.key === 'ArrowDown') showEndpointHistory();
+                          return;
+                        }
+                        const list = endpointHistoryPopover.contentRef.current;
+                        // The layer is its own focus scope, so Tab from the field
+                        // skips it; ArrowDown enters it as in a combobox.
+                        if (
+                          e.key === 'ArrowDown' &&
+                          !list?.contains(e.target as Node)
+                        ) {
+                          e.preventDefault();
+                          list?.querySelector('button')?.focus();
+                        } else if (e.key === 'Escape') {
+                          e.stopPropagation();
+                          endpointHistoryPopover.hide();
+                          endpointAnchorRef.current
+                            ?.querySelector('input')
+                            ?.focus();
+                        }
+                      }}
+                      style={{ flex: 1, minWidth: 0 }}
+                    >
+                      <BAIFormItem
+                        name="api_endpoint"
+                        style={{ marginBottom: 0 }}
+                        rules={[
+                          {
+                            pattern: /^https?:\/\/(.*)/,
+                            message: t('login.EndpointStartWith'),
+                          },
+                        ]}
+                      >
+                        <BAITextInput
+                          aria-label={t('login.Endpoint', { postProcess: [] })}
+                          placeholder={t('login.Endpoint', { postProcess: [] })}
+                          disabled={isEndpointDisabled || isLoading}
+                          onChange={(value) => onSetApiEndpoint(value)}
+                        />
+                      </BAIFormItem>
+                      {endpointHistory.length > 0 &&
+                        endpointHistoryPopover.render(
+                          <List
+                            density="compact"
+                            hasDividers
+                            aria-label={t('login.EndpointHistory')}
+                            xstyle={styles.endpointList}
+                          >
+                            {endpointHistory.map(
+                              ({ endpoint, isFromEnv }, i) => (
+                                <ListItem
+                                  key={endpoint}
+                                  label={
+                                    isFromEnv ? `${endpoint} (env)` : endpoint
+                                  }
+                                  xstyle={[
+                                    styles.endpointRow,
+                                    i === endpointHistory.length - 1 &&
+                                      styles.endpointLastRow,
+                                  ]}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    selectEndpoint(endpoint);
+                                  }}
+                                  endContent={
+                                    <IconButton
+                                      variant="ghost"
+                                      size="sm"
+                                      icon={<Trash2 size="1em" />}
+                                      label={`${t('button.Delete')}: ${endpoint}`}
+                                      onClick={(e) => {
+                                        // The row is the select target; deleting
+                                        // must not also select it.
+                                        e.stopPropagation();
+                                        if (endpointHistory.length === 1) {
+                                          endpointHistoryPopover.hide();
+                                        }
+                                        onDeleteEndpoint(endpoint);
+                                        // The pressed row unmounts with focus in it.
+                                        endpointAnchorRef.current
+                                          ?.querySelector('input')
+                                          ?.focus();
+                                      }}
+                                    />
+                                  }
+                                />
+                              ),
+                            )}
+                          </List>,
+                          {
+                            placement: 'below',
+                            alignment: 'start',
+                            offset: spacingVars['--spacing-1'],
+                            xstyle: styles.endpointPopover,
+                          },
+                        )}
+                    </div>
+                    <IconButton
+                      icon={<Info size="1em" />}
+                      variant="ghost"
+                      label={t('login.EndpointInfo')}
+                      onClick={() =>
+                        setHelpPanel({
+                          title: t('login.EndpointInfo'),
+                          content: t('login.DescEndpoint'),
+                        })
+                      }
+                    />
+                  </BAIFlex>
                 )}
-              {loginConfig.allowAnonymousChangePassword && (
-                <>
-                  <Text type="inherit" color="secondary">
-                    {t('login.ForgotPassword')}
-                  </Text>
+              </div>
+            )}
+
+            {/* Signup and change password links */}
+            {hasBottomLinks && (
+              <BAIFlex
+                gap="xs"
+                justify="center"
+                align="center"
+                wrap="wrap"
+                style={{
+                  marginTop: token('--spacing-6'),
+                  fontSize: 13,
+                }}
+              >
+                {loginConfig.signup_support && (
                   <Link
                     href="#"
                     onClick={(e) => {
                       e.preventDefault();
-                      setShowChangePasswordEmailModal(true);
+                      onShowSignupDialog();
                     }}
                   >
-                    {t('login.ChangePassword')}
+                    {t('login.SignUp')}
                   </Link>
-                </>
-              )}
-            </BAIFlex>
-          )}
-        </Form>
+                )}
+                {/* `type="inherit"` is the Astryx spelling of legacy's
+                  `style={{ fontSize: 'inherit' }}` on these `Typography.Text`s:
+                  the row pins 13px and every child followed it. A plain `Text`
+                  imposes its own `--text-body-size` (14px) instead, which is
+                  1px off legacy right next to `Link`s that DO inherit. */}
+                {loginConfig.signup_support &&
+                  loginConfig.allowAnonymousChangePassword && (
+                    <Text type="inherit" color="secondary">
+                      |
+                    </Text>
+                  )}
+                {loginConfig.allowAnonymousChangePassword && (
+                  <>
+                    <Text type="inherit" color="secondary">
+                      {t('login.ForgotPassword')}
+                    </Text>
+                    <Link
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setShowChangePasswordEmailModal(true);
+                      }}
+                    >
+                      {t('login.ChangePassword')}
+                    </Link>
+                  </>
+                )}
+              </BAIFlex>
+            )}
+          </Form>
+        )}
       </BAIModal>
 
       {/* Help side panel - positioned to the right of the login modal */}
