@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { WebUISettingGroup } from '../helper/webuiSettings';
+import type { WebUISettingGroup } from '../../../helper/webuiSettings';
 import { useTranslation } from 'react-i18next';
 
 export interface WebUISettingLabel {
