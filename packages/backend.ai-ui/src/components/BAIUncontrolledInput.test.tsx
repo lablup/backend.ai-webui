@@ -9,7 +9,10 @@ import { vi } from 'vitest';
 describe('BAIUncontrolledInput', () => {
   it('maps disabled', () => {
     render(<BAIUncontrolledInput label="Font" disabled />);
-    expect(screen.getByRole('textbox', { name: 'Font' })).toBeDisabled();
+    expect(screen.getByRole('textbox', { name: 'Font' })).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
   });
 
   it('maps an antd status string onto an invalid field', () => {

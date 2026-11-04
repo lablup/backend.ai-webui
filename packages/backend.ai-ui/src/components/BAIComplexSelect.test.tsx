@@ -51,7 +51,7 @@ const OPTIONS: Array<BAIComplexSelectOption> = [
 ];
 
 const h = { hidden: true } as const;
-const trigger = () => screen.getAllByRole('button')[0];
+const trigger = () => screen.getAllByRole('combobox')[0];
 const optionRows = () => screen.getAllByRole('option', h);
 const triggerText = () => trigger()?.textContent?.trim() ?? '';
 
@@ -166,7 +166,7 @@ describe('BAIComplexSelect option and panel mapping', () => {
       <BAIComplexSelect label="Target" options={OPTIONS} onSearch={onSearch} />,
     );
     await user.click(trigger());
-    await user.type(screen.getByRole('combobox', h), 'br');
+    await user.type(screen.getAllByRole('combobox', h)[1], 'br');
     expect(onSearch).toHaveBeenLastCalledWith('br');
   });
 

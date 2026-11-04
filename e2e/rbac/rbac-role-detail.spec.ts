@@ -133,10 +133,12 @@ function dataRows(page: Page, scope: Locator | Page = page) {
     .filter({ hasNot: page.getByRole('columnheader') });
 }
 
-// The Add User modal's "Users" field is a paged selector: a trigger button
+// The Add User modal's "Users" field is a paged selector: a combobox trigger
 // opening a "Users" popover with its own "Search options" combobox.
 async function pickAssignUser(page: Page, assignModal: Locator, email: string) {
-  await assignModal.getByRole('button', { name: 'Users' }).click();
+  await assignModal
+    .getByRole('combobox', { name: 'Users', exact: true })
+    .click();
   const userPicker = page.getByRole('dialog', { name: 'Users' });
   await userPicker
     .getByRole('combobox', { name: 'Search options' })
@@ -150,7 +152,7 @@ async function pickAssignUser(page: Page, assignModal: Locator, email: string) {
   await page.keyboard.press('Escape');
   await expect(userPicker).toBeHidden();
   await expect(
-    assignModal.getByRole('button', { name: 'Users' }),
+    assignModal.getByRole('combobox', { name: 'Users', exact: true }),
   ).toContainText(email);
 }
 
@@ -530,7 +532,7 @@ test.describe(
       const assignModal = page.getByRole('dialog', { name: 'Add User' });
       await expect(assignModal).toBeVisible();
       await expect(
-        assignModal.getByRole('button', { name: 'Users' }),
+        assignModal.getByRole('combobox', { name: 'Users', exact: true }),
       ).toBeVisible();
 
       // 8. Attempt to click "Add" (OK) without selecting any user – verify validation error

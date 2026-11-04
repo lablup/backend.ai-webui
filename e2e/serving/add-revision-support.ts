@@ -84,11 +84,11 @@ export async function openAddRevisionAdvanced(page: Page): Promise<Locator> {
   // Switch Preset → Advanced (Custom) mode via the header Segmented control.
   await modal.getByText('Advanced Mode', { exact: true }).click();
   // The Model Folder select is the first field of the Custom form; its
-  // ComplexSelector trigger is a plain <button> named by the field label.
+  // ComplexSelector trigger is a role="combobox" named by the field label.
   // Wait for it so we know the Advanced form has mounted before driving
   // fields.
   await modal
-    .getByRole('button', { name: 'Model Folder', exact: true })
+    .getByRole('combobox', { name: 'Model Folder', exact: true })
     .waitFor({ state: 'visible' });
   return modal;
 }
