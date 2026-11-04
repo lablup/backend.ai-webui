@@ -106,7 +106,7 @@ async function openKeypairPolicyUserFilter(page: Page) {
   await navigateTo(page, 'admin/resource-policy?tab=keypair');
   await page.getByRole('combobox', { name: 'Search filters' }).click();
   await page.getByRole('option', { name: 'User', exact: true }).click();
-  return page.getByRole('button', { name: 'User', exact: true });
+  return page.getByRole('combobox', { name: 'User', exact: true });
 }
 
 test.describe(
@@ -306,13 +306,13 @@ test.describe(
         // Exactly the project's two members, no one else in the domain.
         await searchAndPickUser(
           page,
-          page.getByRole('button', { name: 'Owner', exact: true }),
+          page.getByRole('combobox', { name: 'Owner', exact: true }),
           'Owner',
           userInfo.user2.email,
           [userInfo.user.email, userInfo.user2.email],
         );
         await expect(
-          page.getByRole('button', { name: 'Owner', exact: true }),
+          page.getByRole('combobox', { name: 'Owner', exact: true }),
         ).toHaveText(userInfo.user2.email);
         await page.getByRole('button', { name: 'Apply', exact: true }).click();
         await expect(

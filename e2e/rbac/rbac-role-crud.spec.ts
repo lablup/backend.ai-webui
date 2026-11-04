@@ -172,16 +172,16 @@ test.describe.serial(
       // 10. Fill in the Description field
       await modal.getByLabel('Description').fill(ROLE_DESCRIPTION);
 
-      // 11. Pick the required scope. BAISelect (Scope Type) and ScopeIdSelect
-      // (Target) render as Astryx Selector triggers (`role="button"`), each
-      // opening a floating `listbox`/`option` panel — not an antd
-      // `.ant-select`. A trigger's accessible name is its label plus its
-      // current value, so match the label as a substring.
+      // 11. Pick the required scope. Scope Type is a BAISelect trigger; Target
+      // is a combobox (project ComplexSelector) or, while it suspends, a
+      // BAISelect button, so the locator takes either.
       // A Project scope asks for its Target project.
       const scopeTypeTrigger = modal.getByRole('button', {
         name: 'Scope Type',
       });
-      const targetTrigger = modal.getByRole('button', { name: 'Target' });
+      const targetTrigger = modal
+        .getByRole('combobox', { name: 'Target' })
+        .or(modal.getByRole('button', { name: 'Target' }));
       await scopeTypeTrigger.click();
       await page.getByRole('option', { name: 'Project', exact: true }).click();
       await expect(targetTrigger).toBeEnabled({ timeout: 10000 });

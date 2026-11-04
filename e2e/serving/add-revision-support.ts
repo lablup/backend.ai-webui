@@ -84,11 +84,11 @@ export async function openAddRevisionAdvanced(page: Page): Promise<Locator> {
   // Switch Preset → Advanced (Custom) mode via the header Segmented control.
   await modal.getByText('Advanced Mode', { exact: true }).click();
   // The Model Folder select is the first field of the Custom form; its
-  // ComplexSelector trigger is a plain <button> named by the field label.
+  // ComplexSelector trigger is a role="combobox" named by the field label.
   // Wait for it so we know the Advanced form has mounted before driving
   // fields.
   await modal
-    .getByRole('button', { name: 'Model Folder', exact: true })
+    .getByRole('combobox', { name: 'Model Folder', exact: true })
     .waitFor({ state: 'visible' });
   return modal;
 }
@@ -105,7 +105,7 @@ export async function selectRuntimeVariant(
   modal: Locator,
   optionLabel: string,
 ): Promise<void> {
-  await modal.getByRole('button', { name: 'Runtime', exact: true }).click();
+  await modal.getByRole('combobox', { name: 'Runtime', exact: true }).click();
   const popup = page.getByRole('dialog', { name: 'Runtime', exact: true });
   await expect(popup).toBeVisible({ timeout: 10000 });
   const option = popup.getByRole('option', {
@@ -121,7 +121,7 @@ export async function selectRuntimeVariant(
   // Runtime Parameters warning for reads=false).
   await expect(popup).toBeHidden({ timeout: 10000 });
   await expect(
-    modal.getByRole('button', { name: 'Runtime', exact: true }),
+    modal.getByRole('combobox', { name: 'Runtime', exact: true }),
   ).toContainText(optionLabel, { timeout: 10000 });
 }
 
