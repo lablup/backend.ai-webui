@@ -94,7 +94,7 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  // RESPONSIVE-POLICY R3 — the BUI breakpoint hook, never Astryx `useMediaQuery`.
+  // ADR 0020 R3 — the BUI breakpoint hook, never Astryx `useMediaQuery`.
   const { md } = useBAIBreakpoint();
   const isNarrow = !md;
   const [narrowView, setNarrowView] = useState<'nav' | 'detail'>('detail');
@@ -227,8 +227,10 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
               ? t(CATEGORY_LABEL_KEYS[category])
               : t('webui.menu.Settings&Logs')}
           </Text>
-          {/* The page's own help button is behind the mask while this is open. */}
-          <WEBUIHelpButton />
+          {/* The page's own help button is behind the mask while this is open.
+              `sm` keeps the row at the dialog heading's line height, which the
+              header's close button is centred against. */}
+          <WEBUIHelpButton size="sm" />
         </HStack>
       }
       footer={null}

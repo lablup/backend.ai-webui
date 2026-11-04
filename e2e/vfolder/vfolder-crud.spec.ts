@@ -142,6 +142,116 @@ test.describe(
         ).toBeChecked();
         await (await folderCreationModal.getCreateButton()).click();
       });
+      // #10501: a folder created in a general project is a project folder its
+      // members can see, so creation asks for confirmation first.
+      test('User can create a project folder in a general project after confirming its visibility', async ({
+        page,
+      }) => {
+        // A saved "Don't ask again" on the shared account would skip the
+        // confirm modal; report it unset without touching the stored value.
+        await page.route('**/admin/gql', async (route) => {
+          if (
+            !(route.request().postData() ?? '').includes('useAppConfigMyQuery')
+          ) {
+            await route.fallback();
+            return;
+          }
+          const response = await route.fetch();
+          const body = await response.json();
+          for (const entry of body?.data?.myAppConfigs ?? []) {
+            if (entry?.configName !== 'userConfig') continue;
+            const isString = typeof entry.config === 'string';
+            const config = isString
+              ? JSON.parse(entry.config || '{}')
+              : (entry.config ?? {});
+            config.skip_project_folder_confirm = false;
+            entry.config = isString ? JSON.stringify(config) : config;
+          }
+          await route.fulfill({ response, json: body });
+        });
+        // Reload so the modal reads the config through the route.
+        await page.reload();
+        await page
+          .getByRole('button', { name: 'Create Folder' })
+          .first()
+          .click();
+        const currentProject = (
+          await page.getByRole('button', { name: 'Select Project' }).innerText()
+        ).trim();
+        const folderCreationModal = new FolderCreationModal(page);
+        await folderCreationModal.modalToBeVisible();
+        const creationDialog = page
+          .getByRole('dialog', { name: 'Create a new storage folder' })
+          .filter({ has: page.getByTestId('create-folder-button') });
+        await expect(
+          creationDialog.getByRole('status').filter({
+            hasText: "can be seen by the project's other members",
+          }),
+        ).toBeVisible();
+        await folderCreationModal.fillFolderName(creationFolderName);
+        await (await folderCreationModal.getCreateButton()).click();
+
+        const confirmModal = page.getByTestId('shared-folder-confirm-modal');
+        await expect(confirmModal).toBeVisible();
+        await expect(confirmModal).toContainText(
+          'Other members of this project will also be able to see this folder.',
+        );
+        await expect(
+          confirmModal.getByRole('checkbox', { name: "Don't ask again" }),
+        ).not.toBeChecked();
+        await confirmModal
+          .getByRole('button', { name: 'Create', exact: true })
+          .click();
+        await expect(confirmModal).toBeHidden();
+        await expect(creationDialog).toBeHidden({ timeout: 30000 });
+
+        const folderRow = getVFolderRow(page, creationFolderName);
+        await expect(folderRow).toBeVisible({ timeout: 20000 });
+        await folderRow
+          .getByRole('link', { name: creationFolderName, exact: true })
+          .click();
+        const folderInfo = page.getByRole('dialog').filter({
+          has: page.getByRole('heading', { name: creationFolderName }),
+        });
+        await expect(folderInfo).toBeVisible();
+        const definitionOf = (term: string) =>
+          folderInfo
+            .getByRole('term')
+            .filter({ hasText: new RegExp(`^${term}$`) })
+            .locator('xpath=following-sibling::*[1]');
+        await expect(definitionOf('Ownership')).toHaveText('Project');
+        await expect(definitionOf('Project')).toHaveText(currentProject);
+        await page.keyboard.press('Escape');
+        await expect(folderInfo).toBeHidden();
+      });
+    });
+    // Not serial: single test — it creates no folder.
+    test.describe('vFolder Creation modal', () => {
+      test('User can reopen the folder creation modal with an empty form after canceling', async ({
+        page,
+      }) => {
+        await page.getByRole('link', { name: 'Data' }).click();
+        const createFolderButton = page
+          .getByRole('button', { name: 'Create Folder' })
+          .first();
+        await createFolderButton.click();
+        const folderCreationModal = new FolderCreationModal(page);
+        await folderCreationModal.modalToBeVisible();
+        await folderCreationModal.fillFolderName(
+          `e2e-test-folder-cancel-${uniqueSuffix()}`,
+        );
+        await (await folderCreationModal.getCancelButton()).click();
+        await expect(
+          page.getByRole('dialog', { name: 'Create a new storage folder' }),
+        ).toBeHidden();
+
+        await createFolderButton.click();
+        await folderCreationModal.modalToBeVisible();
+        await expect(
+          await folderCreationModal.getFolderNameInput(),
+        ).toHaveValue('');
+        await (await folderCreationModal.getCancelButton()).click();
+      });
     });
     // Auto Mount uses a dedicated folder name (dot-prefixed) that is independent.
     // Not serial: single test — no ordering dependency.

@@ -1,7 +1,11 @@
 // spec: e2e/.agent-output/test-plan-rbac-management.md
 // Scenarios: 3.1 – 3.4, 5.1 – 5.4, 6.2 – 6.3
 // (Role detail drawer, user assignments, edge cases)
-import { createAdminApiContext, purgeUserViaApi } from '../utils/admin-api';
+import {
+  createAdminApiContext,
+  gqlAdmin,
+  purgeUserViaApi,
+} from '../utils/admin-api';
 import {
   KeyPairModal,
   UserSettingModal,
@@ -628,6 +632,99 @@ test.describe(
       ).toBeVisible({ timeout: 10000 });
     });
 
+    test('Superadmin sees the refused user listed when a revoke partially fails', async ({
+      page,
+      request,
+    }) => {
+      const TEST_USER_EMAIL = ASSIGN_FIXTURE_EMAIL;
+
+      // 1. Login, create a fresh role and assign the fixture user to it
+      await loginAsAdmin(page, request);
+      await navigateTo(page, 'rbac');
+      await cleanupTestRole(page);
+      await createTestRole(page);
+      const drawer = await openRoleDrawer(page, ROLE_NAME);
+      await drawerTab(page, 'Role Assignments').click();
+      await drawer.getByRole('button', { name: 'Add User' }).click();
+      const assignModal = page.getByRole('dialog', { name: 'Add User' });
+      await expect(assignModal).toBeVisible();
+      await pickAssignUser(page, assignModal, TEST_USER_EMAIL);
+      await assignModal.getByRole('button', { name: 'Add' }).click();
+      await expect(assignModal).toBeHidden({ timeout: 10000 });
+      const userRow = drawer
+        .getByRole('row')
+        .filter({ hasText: TEST_USER_EMAIL });
+      await expect(userRow).toBeVisible({ timeout: 10000 });
+
+      // 2. Revoke the same user from a second tab, leaving this tab's list stale
+      const otherPage = await page.context().newPage();
+      try {
+        const otherDrawer = await openRoleDrawer(otherPage, ROLE_NAME);
+        await drawerTab(otherPage, 'Role Assignments').click();
+        const otherRow = otherDrawer
+          .getByRole('row')
+          .filter({ hasText: TEST_USER_EMAIL });
+        await otherRow.hover();
+        await otherRow
+          .getByRole('button', { name: 'Revoke User', exact: true })
+          .click();
+        await otherPage
+          .getByRole('dialog', { name: 'Revoke User' })
+          .getByRole('button', { name: 'Revoke User' })
+          .click();
+        await expect(otherRow).toBeHidden({ timeout: 10000 });
+      } finally {
+        await otherPage.close();
+      }
+
+      // 3. Revoke the already-revoked user from the stale list
+      await userRow.hover();
+      await userRow
+        .getByRole('button', { name: 'Revoke User', exact: true })
+        .click();
+      const revokeModal = page.getByRole('dialog', { name: 'Revoke User' });
+      await revokeModal.getByRole('button', { name: 'Revoke User' }).click();
+      await expect(revokeModal).toBeHidden({ timeout: 10000 });
+
+      // 4. The server refuses that user: the bulk error modal lists one row
+      //    per refused user with the server's reason. The modal makes the
+      //    page behind it inert, so the matching toast is not reachable here.
+      const errorModal = page.getByRole('dialog', {
+        name: 'Action execution failed',
+      });
+      await expect(errorModal).toBeVisible({ timeout: 10000 });
+      await expect(
+        errorModal.getByText('1 user(s) failed to be revoked.'),
+      ).toBeVisible();
+      const failureRow = errorModal
+        .getByRole('row')
+        .filter({ hasText: TEST_USER_EMAIL });
+      await expect(failureRow).toBeVisible();
+      await expect(failureRow).toContainText(/is not assigned to user/i);
+
+      // 5. Closing the report leaves the refused user selected for a retry
+      await page.keyboard.press('Escape');
+      await expect(errorModal).toBeHidden();
+      await expect(userRow.getByRole('checkbox')).toBeChecked();
+      await expect(drawer.getByText('1 selected')).toBeVisible();
+
+      // 6. Reopening the drawer shows the user is no longer assigned
+      await drawer.getByRole('button', { name: 'Close' }).click();
+      await expect(drawer).toBeHidden({ timeout: 5000 });
+      await page
+        .getByRole('row')
+        .filter({ hasText: ROLE_NAME })
+        .first()
+        .getByRole('button', { name: ROLE_NAME, exact: true })
+        .click();
+      await expect(drawer).toBeVisible({ timeout: 10000 });
+      await drawerTab(page, 'Role Assignments').click();
+      await expect(userRow).toBeHidden({ timeout: 10000 });
+      await drawer.getByRole('button', { name: 'Close' }).click();
+      await expect(drawer).toBeHidden({ timeout: 5000 });
+      await cleanupTestRole(page);
+    });
+
     test('Superadmin sees empty state in Role Assignments tab when role has no users', async ({
       page,
       request,
@@ -981,6 +1078,184 @@ test.describe(
       await expect(dataRows(page)).toHaveCount(1, {
         timeout: SLOW_PAGE_TIMEOUT,
       });
+    });
+  },
+);
+
+// Role Assignments list `adminRoleAssignments` rows since #10275, so each row
+// carries its grant time and the Granted At column sorts server-side.
+test.describe(
+  'RBAC Role Assignments - Granted At',
+  { tag: ['@rbac', '@regression', '@functional', '@requires-manager-v26.9'] },
+  () => {
+    const runId = Date.now().toString(36) + randomUUID().slice(0, 4);
+    const roleName = `e2e-granted-role-${runId}`;
+    // Granted in this order, so ascending Granted At lists the first one first.
+    const userEmails = [
+      `e2e-rbac-granted-a-${runId}@lablup.com`,
+      `e2e-rbac-granted-b-${runId}@lablup.com`,
+    ];
+    let api: APIRequestContext | undefined;
+    let roleCreated = false;
+
+    test.beforeAll(async () => {
+      api = await createAdminApiContext();
+      const domainName = await getE2EDomainName(api);
+      for (const email of userEmails) {
+        const created = await gqlAdmin<{
+          create_user: { ok: boolean; msg: string };
+        }>(
+          api,
+          `mutation($email: String!, $props: UserInput!) {
+            create_user(email: $email, props: $props) { ok msg }
+          }`,
+          {
+            email,
+            props: {
+              username: email.split('@')[0],
+              password: `e2e-${randomUUID().slice(0, 12)}@Pw`,
+              need_password_change: false,
+              domain_name: domainName,
+            },
+          },
+        );
+        expect(created.create_user.ok, created.create_user.msg).toBe(true);
+      }
+    });
+
+    test.afterEach(async ({ page }) => {
+      if (!roleCreated) return;
+      try {
+        await navigateTo(page, 'rbac');
+        await cleanupTestRole(page, roleName);
+      } catch (error) {
+        console.warn(
+          `[rbac-role-detail] failed to purge role ${roleName}:`,
+          error,
+        );
+      } finally {
+        roleCreated = false;
+      }
+    });
+
+    test.afterAll(async () => {
+      if (!api) return;
+      for (const email of userEmails) {
+        await purgeUserViaApi(api, email).catch((error) =>
+          console.warn(`[rbac-role-detail] could not purge ${email}:`, error),
+        );
+      }
+      await api.dispose();
+    });
+
+    test('Superadmin can sort role assignments by Granted At', async ({
+      page,
+      request,
+    }) => {
+      const adminApi = api!;
+      // Keep the superadmin first-use tour modal from covering the page.
+      await page.addInitScript(() => {
+        for (const tour of ['back_to_user_view', 'back_to_admin_settings']) {
+          localStorage.setItem(
+            `backendaiwebui.settings.user.has_opened_tour_${tour}`,
+            'true',
+          );
+        }
+      });
+      await loginAsAdmin(page, request);
+      await navigateTo(page, 'rbac');
+      // Set first: cleanupTestRole copes with a role that was never created.
+      roleCreated = true;
+      await createTestRole(page, roleName);
+
+      const { adminRoles } = await gqlAdmin<{
+        adminRoles: { edges: Array<{ node: { id: string } }> };
+      }>(
+        adminApi,
+        `query ($name: String!) {
+          adminRoles(filter: { name: { equals: $name } }, limit: 1) {
+            edges { node { id } }
+          }
+        }`,
+        { name: roleName },
+      );
+      expect(adminRoles.edges).toHaveLength(1);
+      const roleId = toLocalId(adminRoles.edges[0].node.id);
+      const { adminUsersV2 } = await gqlAdmin<{
+        adminUsersV2: {
+          edges: Array<{ node: { id: string; basicInfo: { email: string } } }>;
+        };
+      }>(
+        adminApi,
+        `query ($emails: [String!]) {
+          adminUsersV2(filter: { email: { in: $emails } }) {
+            edges { node { id basicInfo { email } } }
+          }
+        }`,
+        { emails: userEmails },
+      );
+      const userIdByEmail = Object.fromEntries(
+        adminUsersV2.edges.map((e) => [
+          e.node.basicInfo.email,
+          toLocalId(e.node.id),
+        ]),
+      );
+      expect(Object.keys(userIdByEmail).sort()).toEqual([...userEmails].sort());
+      for (const [index, email] of userEmails.entries()) {
+        // Keep the two grant times apart so the sort order is unambiguous.
+        if (index > 0) await page.waitForTimeout(2000);
+        const { adminBulkAssignRole } = await gqlAdmin<{
+          adminBulkAssignRole: { failed: Array<{ message: string }> };
+        }>(
+          adminApi,
+          `mutation ($input: BulkAssignRoleInput!) {
+            adminBulkAssignRole(input: $input) { failed { message } }
+          }`,
+          { input: { roleId, userIds: [userIdByEmail[email]] } },
+        );
+        expect(adminBulkAssignRole.failed).toEqual([]);
+      }
+
+      const drawer = await openRoleDrawer(page, roleName);
+      await drawerTab(page, 'Role Assignments').click();
+      await expect(drawerTab(page, 'Role Assignments')).toHaveAttribute(
+        'aria-current',
+        'true',
+      );
+
+      const rows = dataRows(page, drawer);
+      await expect(rows).toHaveCount(2, { timeout: 10000 });
+      for (const email of userEmails) {
+        await expect(rows.filter({ hasText: email })).toContainText(
+          /\d{4}-\d{2}-\d{2} \d{2}:\d{2}/,
+        );
+      }
+
+      const grantedAtHeader = drawer
+        .getByRole('columnheader')
+        .filter({ hasText: 'Granted At' });
+      const sortBy = async (direction: 'ASC' | 'DESC') => {
+        const response = page.waitForResponse((res) => {
+          const body = res.request().postData() ?? '';
+          return (
+            body.includes('RoleAssignmentTabQuery') &&
+            body.includes('GRANTED_AT') &&
+            body.includes(direction)
+          );
+        });
+        await grantedAtHeader.getByRole('button').click();
+        await response;
+      };
+
+      await sortBy('ASC');
+      await expect(grantedAtHeader).toHaveAttribute('aria-sort', 'ascending');
+      await expect(rows.first()).toContainText(userEmails[0]);
+      await expect(rows.last()).toContainText(userEmails[1]);
+
+      await sortBy('DESC');
+      await expect(grantedAtHeader).toHaveAttribute('aria-sort', 'descending');
+      await expect(rows.first()).toContainText(userEmails[1]);
+      await expect(rows.last()).toContainText(userEmails[0]);
     });
   },
 );

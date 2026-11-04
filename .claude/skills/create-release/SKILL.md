@@ -222,7 +222,7 @@ Before `gh pr create`: the `require-e2e-flow` hook reads the branch from the
 into `$BWT` first (`EnterWorktree` with `path`). Then record the e2e-flow check:
 
 - alpha bump (version files only) →
-  `bash .claude/scripts/require-e2e-flow.sh --record`;
+  `bash "$(git rev-parse --show-toplevel)"/.claude/scripts/require-e2e-flow.sh --record`;
 - dependency-refresh bump → run the `e2e-flow` skill; a dependency bump can
   change a user flow, and its report becomes the PR body's E2E flow section.
 

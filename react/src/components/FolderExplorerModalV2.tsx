@@ -12,7 +12,7 @@
  - antd `Tabs` becomes the converted `BAITabs` wrapper (renders the active
    panel itself). The `type={xl ? 'card' : 'line'}` visual split is intact:
    QA2-A gave `BAITabs` a real card variant, so both looks exist again.
- - `Grid.useBreakpoint` becomes `useBAIBreakpoint` (RESPONSIVE-POLICY R2).
+ - `Grid.useBreakpoint` becomes `useBAIBreakpoint` (ADR 0020 R3).
  - The `createStyles` block (`.ant-modal-title` width) is deleted — dead CSS
    once the modal is no longer antd (P6).
  - `BAIFileExplorer` / `ScopedAuditLog` / `BAILink` stay BUI (frontier:

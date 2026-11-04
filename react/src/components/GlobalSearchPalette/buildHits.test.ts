@@ -16,12 +16,11 @@ const indexedEntries = _.filter(
 );
 
 /**
- * Production puts `admin-data` and `project-data` in the same admin group, so
- * the twin Data pages really do share a heading. A per-key group label would
- * hand the fixture a uniqueness the app does not have.
+ * Production puts these admin pages in the same group. A per-key group label
+ * would hand the fixture a uniqueness the app does not have.
  */
 const SHARED_ADMIN_GROUP = 'Administration › Operations';
-const SHARED_GROUP_KEYS = ['admin-data', 'project-data', 'admin-session'];
+const SHARED_GROUP_KEYS = ['admin-data', 'admin-session'];
 
 /** A menu that shows every indexed page, so buildHits is the only filter. */
 const fullMenu: Array<MenuHitSource> = _.map(
@@ -74,25 +73,17 @@ describe('buildHits', () => {
       build(),
       (hit) => hit.kind === 'page' && hit.labelKey === 'webui.menu.Data',
     );
-    expect(_.map(dataPages, 'menuKey').sort()).toEqual([
-      'admin-data',
-      'data',
-      'project-data',
-    ]);
+    expect(_.map(dataPages, 'menuKey').sort()).toEqual(['admin-data', 'data']);
     expect(_.uniq(_.map(dataPages, 'scope')).sort()).toEqual([
       'admin',
       'project',
-      'projectAdmin',
     ]);
-    expect(_.uniq(_.map(dataPages, 'id'))).toHaveLength(3);
-    // Two of the three share a heading, so the group cannot be the difference …
-    expect(_.uniq(_.map(dataPages, 'group'))).toHaveLength(2);
-    // … the trailing scope marker the palette renders is: each admin twin
-    // carries its own, and the project page (where the palette runs) none.
-    expect(_.map(dataPages, 'breadcrumbKeys')).toEqual([[], [], []]);
-    expect(_.compact(_.map(dataPages, 'scopeText')).sort()).toEqual([
+    expect(_.uniq(_.map(dataPages, 'id'))).toHaveLength(2);
+    // The trailing scope marker the palette renders tells them apart: the admin
+    // twin carries its own, and the project page (where the palette runs) none.
+    expect(_.map(dataPages, 'breadcrumbKeys')).toEqual([[], []]);
+    expect(_.compact(_.map(dataPages, 'scopeText'))).toEqual([
       'Administration',
-      'Project administration',
     ]);
     expect(_.find(dataPages, { scope: 'project' })?.scopeText).toBeUndefined();
   });

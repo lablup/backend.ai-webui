@@ -240,7 +240,7 @@ narrowing helper for the loosely-typed ambient value).
     `AdminModelCardListPage`, `PendingSessionNodeList`, `AdminUsersPage`,
     `ResourcePolicyPage`, `SchedulerPage`, `ResourcesPage`, `ProjectPage`,
     `ConfigurationsPage`, `MaintenancePage`, `DiagnosticsPage`,
-    `RBACManagementPage`, `BrandingPage`, `components/Information`), pointing
+    `RBACManagementPage`, `BrandingPage`, `pages/InformationPage/InformationPage`), pointing
     violators at this ADR. `EnvironmentPage`, `ReservoirPage`,
     `AdminDashboardPage` (all excluded from the flip) and
     `DeploymentDetailPage` (sanctioned page-level reader) are excluded.
