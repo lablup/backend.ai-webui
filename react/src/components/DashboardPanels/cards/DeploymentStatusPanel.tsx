@@ -13,6 +13,7 @@ import DeploymentHealthTable, {
 } from '../memberCards/DeploymentHealthTable';
 import { readPrimary } from '../panelPermission';
 import type { PanelComponentProps, PanelSettings } from '../types';
+import { useResetPageOn } from '../useResetPageOn';
 import ScopedCard from './ScopedCard';
 import { filterOutNullAndUndefined } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -243,6 +244,7 @@ const DeploymentList: React.FC<{
     tablePaginationOption,
     setTablePaginationOption,
   } = useBAIPaginationOptionState({ current: 1, pageSize: 5 });
+  useResetPageOn(scope, setTablePaginationOption);
   const view = {
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,

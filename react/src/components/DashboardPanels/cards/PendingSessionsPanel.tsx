@@ -11,6 +11,7 @@ import {
   pendingReason,
 } from '../projectAdminCards/projectCardData';
 import type { PanelComponentProps, PanelSettings } from '../types';
+import { useResetPageOn } from '../useResetPageOn';
 import ScopedCard from './ScopedCard';
 import SessionList, {
   inResourceGroups,
@@ -195,8 +196,13 @@ const PendingSessionTable: React.FC<{
     tablePaginationOption,
     setTablePaginationOption,
   } = useBAIPaginationOptionState({ current: 1, pageSize: PAGE_SIZE });
-  const deferredOffset = useDeferredValue(baiPaginationOption.offset);
-  const deferredLimit = useDeferredValue(baiPaginationOption.limit);
+  useResetPageOn([scope, resourceGroups], setTablePaginationOption);
+  const page = {
+    limit: baiPaginationOption.limit,
+    offset: baiPaginationOption.offset,
+  };
+  // Deferred together, so a page change keeps the current rows until the next page arrives.
+  const deferredPage = useDeferredValue(page);
   const openHistory = (session: SessionV2InList) => {
     setHistorySessionId(session.entityId);
     setIsHistoryOpen(true);
@@ -208,8 +214,8 @@ const PendingSessionTable: React.FC<{
         scope={scope}
         filter={inResourceGroups(PENDING_FILTER, resourceGroups)}
         orderBy={ORDER_BY}
-        limit={deferredLimit}
-        offset={deferredOffset}
+        limit={deferredPage.limit}
+        offset={deferredPage.offset}
         fetchKey={fetchKey}
       >
         {({ count, rows }) => (
@@ -223,8 +229,8 @@ const PendingSessionTable: React.FC<{
                 sessionsFrgmt={rows}
                 disableSorter
                 loading={
-                  deferredOffset !== baiPaginationOption.offset ||
-                  deferredLimit !== baiPaginationOption.limit
+                  deferredPage.offset !== page.offset ||
+                  deferredPage.limit !== page.limit
                 }
                 onRow={(session) => ({
                   onClick: () => openHistory(session),

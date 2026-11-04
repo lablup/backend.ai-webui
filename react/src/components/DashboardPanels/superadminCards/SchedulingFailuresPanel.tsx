@@ -16,6 +16,7 @@ import { readPrimary } from '../panelPermission';
 import { withinWindow, type DateTimeWindow } from '../timeRange';
 import type { PanelComponentProps } from '../types';
 import { useOpenSessionDetail } from '../useOpenSessionDetail';
+import { useResetPageOn } from '../useResetPageOn';
 import {
   SCHEDULING_FAILURE_RESULTS,
   type SchedulingFailureResult,
@@ -50,9 +51,11 @@ const resultFilter = (
 });
 
 const SchedulingFailures: React.FC<{
+  /** The range setting; a new one starts the list on page 1. */
+  range: string;
   timeRange: DateTimeWindow;
   fetchKey: string;
-}> = ({ timeRange, fetchKey }) => {
+}> = ({ range, timeRange, fetchKey }) => {
   'use memo';
   const { t } = useTranslation();
   const openSessionDetail = useOpenSessionDetail();
@@ -61,6 +64,7 @@ const SchedulingFailures: React.FC<{
     tablePaginationOption,
     setTablePaginationOption,
   } = useBAIPaginationOptionState({ current: 1, pageSize: 5 });
+  useResetPageOn(range, setTablePaginationOption);
   const variables: SchedulingFailuresPanelQuery['variables'] = {
     filter: resultFilter(timeRange, SCHEDULING_FAILURE_RESULTS),
     failure: resultFilter(timeRange, ['FAILURE']),
@@ -256,7 +260,11 @@ const SchedulingFailuresPanel: React.FC<PanelComponentProps> = ({
       heading={{ project: heading, domain: heading }}
     >
       {(_cardScope, key) => (
-        <SchedulingFailures timeRange={vars.timeRange} fetchKey={key} />
+        <SchedulingFailures
+          range={vars.range}
+          timeRange={vars.timeRange}
+          fetchKey={key}
+        />
       )}
     </ScopedCard>
   );

@@ -19,6 +19,7 @@ import {
 import { readPrimary } from '../panelPermission';
 import { withinWindow, type DateTimeWindow } from '../timeRange';
 import type { PanelComponentProps } from '../types';
+import { useResetPageOn } from '../useResetPageOn';
 import { LOGIN_FAILURE_RESULTS } from './superadminCardData';
 import {
   BAIFlex,
@@ -40,9 +41,11 @@ const failedLoginFilter = (
 
 const FailedLogins: React.FC<{
   domainName: string;
+  /** The range setting; a new one starts the list on page 1. */
+  range: string;
   timeRange: DateTimeWindow;
   fetchKey: string;
-}> = ({ domainName, timeRange, fetchKey }) => {
+}> = ({ domainName, range, timeRange, fetchKey }) => {
   'use memo';
   const { t } = useTranslation();
   const {
@@ -50,6 +53,7 @@ const FailedLogins: React.FC<{
     tablePaginationOption,
     setTablePaginationOption,
   } = useBAIPaginationOptionState({ current: 1, pageSize: 5 });
+  useResetPageOn([domainName, range], setTablePaginationOption);
   const variables: FailedLoginsPanelQuery['variables'] = {
     failed: failedLoginFilter(domainName, timeRange),
     previousFailed: failedLoginFilter(domainName, previousWindow(timeRange)),
@@ -181,6 +185,7 @@ const FailedLoginsPanel: React.FC<PanelComponentProps> = ({
         cardScope.kind === 'domain' ? (
           <FailedLogins
             domainName={cardScope.domainName}
+            range={vars.range}
             timeRange={vars.timeRange}
             fetchKey={key}
           />

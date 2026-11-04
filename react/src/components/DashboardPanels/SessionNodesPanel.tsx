@@ -11,6 +11,7 @@ import { readPrimary } from './panelPermission';
 import { resourceRegistry } from './resourceRegistry';
 import type { PanelDescriptor } from './types';
 import { useDashboardQueryScope } from './useDashboardFilters';
+import { useResetPageOn } from './useResetPageOn';
 import { filterOutNullAndUndefined } from 'backend.ai-ui';
 import React, { useDeferredValue } from 'react';
 import { useLazyLoadQuery } from 'react-relay';
@@ -43,6 +44,10 @@ export const SessionNodesPanelContent: React.FC<{
     tablePaginationOption,
     setTablePaginationOption,
   } = useBAIPaginationOptionState({ current: 1, pageSize: 10 });
+  useResetPageOn(
+    [descriptor.filter, descriptor.resourceGroups, queryScope],
+    setTablePaginationOption,
+  );
 
   // The query falls back to the default order; the table shows only a chosen one,
   // so its sort cycle can reach ascending instead of snapping back to the default.
