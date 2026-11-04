@@ -7,7 +7,6 @@ import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import MyResource from './MyResource';
-import MyResourceWithinResourceGroup from './MyResourceWithinResourceGroup';
 import TotalResourceWithinResourceGroup, {
   useIsAvailableTotalResourceWithinResourceGroup,
 } from './TotalResourceWithinResourceGroup';
@@ -51,7 +50,11 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
   const isAvailableTotalResourcePanel =
     useIsAvailableTotalResourceWithinResourceGroup();
   const currentResourceGroup = useCurrentResourceGroupValue();
-  const currentPanelType: ResourcePanelType = selectedPanelType || 'MyResource';
+  // The retired in-group view is the same data as My Resources now.
+  const currentPanelType: ResourcePanelType =
+    selectedPanelType === 'TotalResourceWithinResourceGroup'
+      ? selectedPanelType
+      : 'MyResource';
 
   const queryRefForTotalResource =
     useLazyLoadQuery<ConfigurableResourceCardQuery>(
@@ -89,10 +92,6 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
     {
       label: t('webui.menu.MyResources'),
       value: 'MyResource' as ResourcePanelType,
-    },
-    {
-      label: t('webui.menu.MyResourcesInResourceGroup'),
-      value: 'MyResourceWithinResourceGroup' as ResourcePanelType,
     },
     isAvailableTotalResourcePanel && {
       label: t('webui.menu.TotalResourcesInResourceGroup'),
@@ -154,8 +153,6 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
     };
 
     switch (currentPanelType) {
-      case 'MyResourceWithinResourceGroup':
-        return <MyResourceWithinResourceGroup {...commonProps} />;
       case 'TotalResourceWithinResourceGroup':
         return (
           isAvailableTotalResourcePanel && (

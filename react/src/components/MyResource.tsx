@@ -7,11 +7,14 @@ import {
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
 import { MyResourcesInResourceGroup } from './DashboardPanels/memberCards/MyResourcesPanel';
+import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
+import { Heading } from '@lablup/ui-common/Heading';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIBoardItemTitle,
   BAIFlex,
   BAIFlexProps,
+  BAIIconWithTooltip,
   ResourceStatistics,
   BAIFetchKeyButton,
   BAISkeleton,
@@ -19,6 +22,7 @@ import {
   useIsInBAIBoardItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { CircleHelp } from 'lucide-react';
 import { ReactNode, Suspense, useTransition } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
@@ -64,9 +68,26 @@ const MyResource: React.FC<MyResourceProps> = ({
       }}
       {..._.omit(props, ['style'])}
     >
+      {/* The dashboard card's header; the picker is the session page's current resource group. */}
       <BAIBoardItemTitle
-        title={t('webui.menu.MyResources')}
-        tooltip={<Trans i18nKey={'webui.menu.MyResourcesDescription'} />}
+        title={
+          <BAIFlex gap="xs" wrap="wrap" align="center">
+            <Heading level={5}>{t('webui.menu.MyResources')}</Heading>
+            <BAIIconWithTooltip
+              icon={<CircleHelp size="1em" />}
+              content={<Trans i18nKey="dashboard.card.MyResourcesTooltip" />}
+            />
+            <SharedResourceGroupSelectForCurrentProject
+              size="small"
+              variant="borderless"
+              showSearch
+              style={{ minWidth: 100 }}
+              popupMatchSelectWidth={false}
+              tooltip={t('general.ResourceGroup')}
+              aria-label={t('general.ResourceGroup')}
+            />
+          </BAIFlex>
+        }
         extra={
           <BAIFlex gap={'xs'}>
             <BAIFetchKeyButton
