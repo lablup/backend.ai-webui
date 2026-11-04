@@ -61,8 +61,9 @@ const MyResource: React.FC<MyResourceProps> = ({
         ...(isInBoard
           ? {}
           : {
+              paddingBlock: token('--spacing-4'),
               paddingInline: token('--spacing-8'),
-              paddingBottom: token('--spacing-4'),
+              height: '100%',
             }),
         ...props.style,
       }}
@@ -107,26 +108,34 @@ const MyResource: React.FC<MyResourceProps> = ({
           </BAIFlex>
         }
       />
-      {/* A transport failure, or a manager without myUserResourceAllocationV2, escapes @catch; keep the title and let refresh retry. */}
-      <ErrorBoundary
-        resetKeys={[
-          fetchKey,
-          internalFetchKey,
-          currentProject.id,
-          currentResourceGroup,
-        ]}
-        fallbackRender={() => (
-          <ResourceStatistics
-            resourceData={NO_RESOURCE_DATA}
-            displayType="used"
-            progressMode="normal"
-          />
-        )}
+      {/* Off a board the card is taller than its numbers; they sit in its middle. */}
+      <BAIFlex
+        direction="column"
+        align="stretch"
+        justify="center"
+        style={{ flex: 1 }}
       >
-        <Suspense fallback={<BAISkeleton />}>
-          <MyResourceStatistics fetchKey={`${fetchKey}${internalFetchKey}`} />
-        </Suspense>
-      </ErrorBoundary>
+        {/* A transport failure, or a manager without myUserResourceAllocationV2, escapes @catch; keep the title and let refresh retry. */}
+        <ErrorBoundary
+          resetKeys={[
+            fetchKey,
+            internalFetchKey,
+            currentProject.id,
+            currentResourceGroup,
+          ]}
+          fallbackRender={() => (
+            <ResourceStatistics
+              resourceData={NO_RESOURCE_DATA}
+              displayType="used"
+              progressMode="normal"
+            />
+          )}
+        >
+          <Suspense fallback={<BAISkeleton />}>
+            <MyResourceStatistics fetchKey={`${fetchKey}${internalFetchKey}`} />
+          </Suspense>
+        </ErrorBoundary>
+      </BAIFlex>
     </BAIFlex>
   );
 };

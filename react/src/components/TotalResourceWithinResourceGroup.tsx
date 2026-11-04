@@ -440,8 +440,9 @@ const TotalResourceWithinResourceGroup: React.FC<
         ...(isInBoard
           ? {}
           : {
+              paddingBlock: token('--spacing-4'),
               paddingInline: token('--spacing-8'),
-              paddingBottom: token('--spacing-4'),
+              height: '100%',
             }),
         ...props.style,
       }}
@@ -538,11 +539,18 @@ const TotalResourceWithinResourceGroup: React.FC<
         />
       )}
 
-      <ResourceStatistics
-        resourceData={resourceData}
-        displayType={displayType}
-        progressMode="normal"
-      />
+      <BAIFlex
+        direction="column"
+        align="stretch"
+        justify="center"
+        style={{ flex: 1 }}
+      >
+        <ResourceStatistics
+          resourceData={resourceData}
+          displayType={displayType}
+          progressMode="normal"
+        />
+      </BAIFlex>
     </BAIFlex>
   );
 };
