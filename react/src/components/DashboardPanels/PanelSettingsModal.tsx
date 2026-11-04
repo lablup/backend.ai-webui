@@ -50,7 +50,7 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
   'use memo';
   const { t } = useTranslation();
   const [form] = Form.useForm<SettingsFormValues>();
-  // The page's allowed groups, never the header's (ADR 0019).
+  // The page's allowed groups, never the header's (ADR 0026).
   const resourceGroups = useDashboardResourceGroups();
   // A custom panel reads every resource group by default; a built-in card the page's default group.
   const resourceGroupDefault =

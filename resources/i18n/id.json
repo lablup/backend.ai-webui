@@ -587,6 +587,42 @@
     "Title": "Masuk ke Backend.AI WebUI Agent CLI",
     "VerificationCode": "Kode verifikasi"
   },
+  "clientIpMasking": {
+    "ClientIpMasking": "Penyamaran IP Klien",
+    "CreatePolicy": "Buat Kebijakan",
+    "DefaultPrefix": "/{{prefix}} (bawaan)",
+    "DeleteDefaultPolicyDescription": "Target tanpa kebijakan sendiri akan menyimpan IP klien apa adanya.",
+    "DeletePolicy": "Hapus kebijakan penyamaran ini?",
+    "DeletePolicyDescription": "{{target}} akan kembali mengikuti kebijakan Bawaan.",
+    "Description": "Atur cara alamat IP klien disamarkan sebelum disimpan. Target tanpa kebijakan sendiri mengikuti kebijakan Bawaan; jika tidak ada kebijakan Bawaan, alamat disimpan apa adanya.",
+    "EditPolicy": "Edit Kebijakan",
+    "IPv4Prefix": "Panjang Prefiks IPv4",
+    "IPv6Prefix": "Panjang Prefiks IPv6",
+    "Mode": "Mode Penyamaran",
+    "ModeRequired": "Pilih mode penyamaran.",
+    "OnePolicyPerTarget": "Hanya satu kebijakan yang dapat ada per target.",
+    "PrefixExtra": "Jumlah bit awal yang dipertahankan (0–{{max}}). Biarkan kosong untuk menggunakan {{defaultPrefix}}.",
+    "PrefixRange": "Masukkan angka antara 0 dan {{max}}.",
+    "SuccessfullyDeleted": "Kebijakan penyamaran IP klien dihapus.",
+    "SuccessfullySaved": "Kebijakan penyamaran IP klien disimpan.",
+    "Target": "Target Kebijakan",
+    "TargetRequired": "Pilih target kebijakan.",
+    "modeDescriptions": {
+      "DROP": "Tidak ada IP klien yang dicatat.",
+      "NONE": "IP klien disimpan apa adanya.",
+      "TRUNCATE": "Bit host diubah menjadi nol, hanya prefiks jaringan yang dipertahankan."
+    },
+    "modes": {
+      "DROP": "Buang",
+      "NONE": "Tidak Ada",
+      "TRUNCATE": "Potong"
+    },
+    "targets": {
+      "AUDIT_LOGS": "Log Audit",
+      "DEFAULT": "Bawaan",
+      "LOGIN_HISTORY": "Riwayat Login"
+    }
+  },
   "credential": {
     "2FAEnabled": "2FA Diaktifkan",
     "AccessKey": "Kunci Akses",
@@ -2795,8 +2831,6 @@
     "DeleteResourceGroup": "Hapus Grup Sumber Daya",
     "Description": "Deskripsi",
     "Domain": "Domain",
-    "Driver": "Driver",
-    "DriverOptions": "Opsi Driver",
     "DuplicateHandlerOverride": "Handler ini sudah ditimpa.",
     "DuplicateResourceSlot": "Slot sumber daya ini sudah ditambahkan.",
     "EditDefaultDeploymentOptions": "Edit Opsi Deployment Default",

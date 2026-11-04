@@ -587,6 +587,42 @@
     "Title": "登录 Backend.AI WebUI Agent CLI",
     "VerificationCode": "验证码"
   },
+  "clientIpMasking": {
+    "ClientIpMasking": "客户端 IP 掩码",
+    "CreatePolicy": "创建策略",
+    "DefaultPrefix": "/{{prefix}}（默认）",
+    "DeleteDefaultPolicyDescription": "没有自身策略的目标将按原样存储客户端 IP。",
+    "DeletePolicy": "要删除此掩码策略吗？",
+    "DeletePolicyDescription": "{{target}} 将回退到默认策略。",
+    "Description": "设置在存储客户端 IP 地址之前如何对其进行掩码处理。没有自身策略的目标遵循默认策略；如果没有默认策略，则按原样存储地址。",
+    "EditPolicy": "编辑策略",
+    "IPv4Prefix": "IPv4 前缀长度",
+    "IPv6Prefix": "IPv6 前缀长度",
+    "Mode": "掩码模式",
+    "ModeRequired": "请选择掩码模式。",
+    "OnePolicyPerTarget": "每个目标只能有一个策略。",
+    "PrefixExtra": "要保留的前导位数（0–{{max}}）。留空则使用 {{defaultPrefix}}。",
+    "PrefixRange": "请输入 0 到 {{max}} 之间的数字。",
+    "SuccessfullyDeleted": "已删除客户端 IP 掩码策略。",
+    "SuccessfullySaved": "已保存客户端 IP 掩码策略。",
+    "Target": "策略目标",
+    "TargetRequired": "请选择策略目标。",
+    "modeDescriptions": {
+      "DROP": "不记录客户端 IP。",
+      "NONE": "按原样存储客户端 IP。",
+      "TRUNCATE": "将主机位清零，仅保留网络前缀。"
+    },
+    "modes": {
+      "DROP": "丢弃",
+      "NONE": "无",
+      "TRUNCATE": "截断"
+    },
+    "targets": {
+      "AUDIT_LOGS": "审计日志",
+      "DEFAULT": "默认",
+      "LOGIN_HISTORY": "登录历史"
+    }
+  },
   "credential": {
     "2FAEnabled": "已启用双因素认证",
     "AccessKey": "访问密钥",
@@ -2794,8 +2830,6 @@
     "DeleteResourceGroup": "删除资源组",
     "Description": "描述",
     "Domain": "域名",
-    "Driver": "司机",
-    "DriverOptions": "驱动程序选项",
     "DuplicateHandlerOverride": "该 handler 已被覆盖。",
     "DuplicateResourceSlot": "该资源槽已添加。",
     "EditDefaultDeploymentOptions": "编辑默认部署选项",
