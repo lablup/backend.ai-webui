@@ -70,10 +70,11 @@ export const resourceGroupScopeOf = (
 ): BAIScopedResourceGroupSelectProps['scope'] => {
   if (scope.kind === 'projects' && scope.projectIds === 'all')
     return { domain: [{ value: scope.domain.id }] };
-  const projectIds =
-    scope.kind === 'mine' ? _.compact([scope.projectId]) : scope.projectIds;
+  const [projectIds, domainId] =
+    scope.kind === 'mine'
+      ? [_.compact([scope.projectId]), currentDomainId]
+      : [scope.projectIds as Array<string>, scope.domain.id];
   if (!projectIds.length) return { project: [] };
-  const domainId = scope.kind === 'mine' ? currentDomainId : scope.domain.id;
   return {
     domain: [{ value: domainId }],
     project: projectIds.map((value) => ({ value })),
