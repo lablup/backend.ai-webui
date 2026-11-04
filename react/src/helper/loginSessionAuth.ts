@@ -505,26 +505,32 @@ export function persistPostLoginState(client: any): void {
  * Load webserver config when the api_endpoint differs from current URL origin.
  * Uses React's fetchAndParseConfig instead of the Lit shell's _parseConfig.
  */
+export type WebServerConfigResult =
+  | { status: 'invalid-url' | 'unreachable' | 'no-config' }
+  /** `domainName` is null when the server names no domain (code defaults then). */
+  | { status: 'loaded'; domainName: string | null };
+
 export async function loadConfigFromWebServer(
   apiEndpoint: string,
-): Promise<void> {
+): Promise<WebServerConfigResult> {
   if (!window.location.href.startsWith(apiEndpoint)) {
     // Validate the endpoint URL scheme to prevent fetching config from
     // unexpected protocols (e.g., javascript:, data:, file:).
     try {
       const endpointUrl = new URL(apiEndpoint);
       if (!['http:', 'https:'].includes(endpointUrl.protocol)) {
-        return;
+        return { status: 'invalid-url' };
       }
     } catch {
-      return;
+      return { status: 'invalid-url' };
     }
     const webserverConfigURL = new URL('./config.toml', apiEndpoint).href;
-    const { config } = await fetchAndParseConfig(webserverConfigURL);
-    if (!config) return;
+    const { config, unreachable } =
+      await fetchAndParseConfig(webserverConfigURL);
+    if (!config) return { status: unreachable ? 'unreachable' : 'no-config' };
 
     const backendaiutils = (globalThis as Record<string, any>).backendaiutils;
-    if (!backendaiutils) return;
+    if (!backendaiutils) return { status: 'no-config' };
 
     const fieldsToExclude = ['general.apiEndpoint', 'wsproxy'];
     fieldsToExclude.forEach((key) => {
@@ -552,12 +558,11 @@ export async function loadConfigFromWebServer(
       await import('../hooks/useWebUIConfig');
     // `mergedConfig` keeps this page's own endpoint (the webserver's was
     // stripped above); the public slice belongs to the server being joined.
-    const publicSlice = await fetchPublicDomainConfigOnce(
-      resolvePublicConfigTarget({
-        ...mergedConfig,
-        general: { ...mergedConfig.general, apiEndpoint },
-      }),
-    );
+    const publicTarget = resolvePublicConfigTarget({
+      ...mergedConfig,
+      general: { ...mergedConfig.general, apiEndpoint },
+    });
+    const publicSlice = await fetchPublicDomainConfigOnce(publicTarget);
     const effectiveLoginConfig = applyWebUISettings(
       refreshConfigFromToml(mergedConfig),
       publicSlice?.[WEBUI_SETTINGS_CONFIG_KEY],
@@ -565,9 +570,11 @@ export async function loadConfigFromWebServer(
     );
     jotaiStore.set(loginConfigState, effectiveLoginConfig);
     jotaiStore.set(autoLogoutState, effectiveLoginConfig.autoLogout);
-    // loginPluginState stays on the bundled value: the login screen is drawn
-    // before any endpoint is known, so a server's login plugin cannot apply.
+    // loginPluginState stays on the bundled value; whether the joined
+    // server's login plugin should load is still open (#10872).
+    return { status: 'loaded', domainName: publicTarget?.domainName ?? null };
   }
+  return { status: 'loaded', domainName: null };
 }
 
 /**
