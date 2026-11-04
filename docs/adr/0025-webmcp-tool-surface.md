@@ -87,6 +87,7 @@ flowchart LR
 - **Enforced by the tool list**: WebUI keeps this rule by not building any `execute` that calls a submit or a delete. Even if an agent can press an approve button in the UI, calling a tool does not cause that action.
 - **Prepare description**: The `description` of a `bai_prepare_<noun>` tool states that the tool does not submit the form and that a person submits it.
 - **No extra data**: A tool returns only the data that the component that registered it draws on screen. A tool does not fetch fields that permissions keep off the screen.
+- **No login by URL**: `bai_navigate` refuses a path that carries an `sToken` or `stoken` parameter (`path_not_allowed`), because arriving with that parameter starts a login.
 
 ### 5. Tools check their own input
 
