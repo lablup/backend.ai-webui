@@ -861,10 +861,7 @@ const AuditLogPanel: React.FC<PanelComponentProps> = ({
       scope={scope}
       fetchKey={fetchKey}
       heading={{
-        mine: {
-          title: t('dashboard.card.MyActivity'),
-          tooltip: t('dashboard.card.MyActivityTooltip'),
-        },
+        mine: { title: t('dashboard.card.MyActivity') },
         project: {
           title: t('auditLog.AuditLog'),
           tooltip: t('dashboard.card.ProjectAuditLogTooltip'),

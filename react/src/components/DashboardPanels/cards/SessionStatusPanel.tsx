@@ -86,10 +86,10 @@ const SessionStatusView: React.FC<{ data: StatusCounts }> = ({ data }) => {
   const sessionTypeLabel = useSessionTypeLabel();
   const counts = readCounts(data, COUNT_KEYS);
   const statusLabels: Record<(typeof STATUS_GROUPS)[number]['key'], string> = {
-    pending: 'PENDING',
+    pending: t('dashboard.card.Pending'),
     starting: t('dashboard.card.Starting'),
-    running: 'RUNNING',
-    terminating: 'TERMINATING',
+    running: t('dashboard.card.Running'),
+    terminating: t('dashboard.card.Terminating'),
   };
   // Every session has one of the four types, so the ring's sum is the active total.
   const typeRows = toDonutRows(
