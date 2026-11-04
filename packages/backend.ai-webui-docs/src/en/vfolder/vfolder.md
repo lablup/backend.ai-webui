@@ -66,7 +66,7 @@ The meaning of each field in the creation dialog is as follows.
 A new folder's **Default mount permission** is **Read only**. To change it, click **Edit** in the **Folder Info** section of the folder's Share Folder modal (see [Adjust permission for shared folders](#adjust-permission-for-shared-folders)).
 
 :::note
-A folder created from the Data page belongs to the currently selected project, so the project's other members can see it. To create a folder for yourself only, switch to your personal project first.
+A folder created from the Data page belongs to the currently selected project, so the project's other members can see it. To create a folder for yourself only, select **My Project** from the project selector in the header first.
 :::
 
 The folders created here can be [mounted](#session-mounts) when creating a compute session. Folders are mounted
