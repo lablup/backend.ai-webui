@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Storage Folders" />
   <meta name="twitter:description" content="Backend.AI supports dedicated storage to preserve user's files." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Storage Folders","inLanguage":"en","description":"Backend.AI supports dedicated storage to preserve user's files.","dateModified":"2026-10-30T06:32:31.000Z","url":"https://webui.docs.backend.ai/next/en/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Storage Folders","inLanguage":"en","description":"Backend.AI supports dedicated storage to preserve user's files.","dateModified":"2026-11-03T02:13:20.000Z","url":"https://webui.docs.backend.ai/next/en/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/vfolder.html" />
   <link rel="alternate" hreflang="en" href="../en/vfolder.html" />
   <link rel="alternate" hreflang="ja" href="../ja/vfolder.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.2 (682e7f0)">v26.10.0-alpha.2 (682e7f0)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.2 (9cadfde)">v26.10.0-alpha.2 (9cadfde)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -214,9 +214,9 @@
 and directories of a compute session are deleted upon session termination, it is
 recommended to save them in a storage folder. List of storage folders can be
 found by selecting the Data page on the sidebar. You can see the information
-such as the folder name and ID, the storage host name where the folder is located
-(Location), and folder access rights (Permission).</p>
-<p><figure data-bai-block="2" class="doc-figure"><img src="./images/data_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>Figure 15.1</figcaption></figure>
+such as the folder name and ID and the storage host name where the folder is
+located (Location).</p>
+<p><figure data-bai-block="2" class="doc-figure"><img src="./images/data_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 15.1</figcaption></figure>
 </p>
 <p data-bai-block="3">There are two types of storage folders: <code>User</code> and <code>Project</code>. You can
 distinguish between them in the &#39;Type&#39; column.</p>
@@ -237,7 +237,7 @@ list is reachable from the folder status summary.</p>
 <h2 data-bai-block="8" id="vfolder-create-storage-folder">Create storage folder<a class="hash-link" href="#vfolder-create-storage-folder" aria-label="Direct link to Create storage folder">#</a></h2>
 <p data-bai-block="9">To create a new folder, click <code>Create Folder</code> on the Data page. Fill in the fields in
 the creation dialog as follows:</p>
-<p><figure data-bai-block="10" class="doc-figure"><img src="./images/vfolder_create_modal.png" alt="" class="doc-image" style="width:650px" loading="lazy" decoding="async" width="1300" height="780" /><figcaption>Figure 15.3</figcaption></figure>
+<p><figure data-bai-block="10" class="doc-figure"><img src="./images/vfolder_create_modal.png" alt="" class="doc-image" style="width:650px" loading="lazy" decoding="async" width="1300" height="668" /><figcaption>Figure 15.3</figcaption></figure>
 </p>
 <p data-bai-block="11">The meaning of each field in the creation dialog is as follows.</p>
 <ul>
@@ -252,11 +252,10 @@ the creation dialog as follows:</p>
 </li>
 <li data-bai-block="17"><p><strong>Location</strong>: Select the storage host where the folder will be created. If there are multiple hosts, choose one. An indicator will show if there is enough available space.</p>
 </li>
-<li data-bai-block="18"><p><strong>Mount Permission</strong>: The mount permission applied when the folder is mounted into a compute session. <strong>Read &amp; Write</strong> allows writing to the folder inside sessions; <strong>Read only</strong> prevents it.</p>
-</li>
-<li data-bai-block="19"><p><strong>Cloneable</strong>: Shown only when you select usage mode to &quot;Model&quot;. Select whether the vfolder you are creating should be cloneable.</p>
+<li data-bai-block="18"><p><strong>Cloneable</strong>: Shown only when you select usage mode to &quot;Model&quot;. Select whether the vfolder you are creating should be cloneable.</p>
 </li>
 </ul>
+<p data-bai-block="19">A new folder&#39;s <strong>Default mount permission</strong> is <strong>Read only</strong>. To change it, click <strong>Edit</strong> in the <strong>Folder Info</strong> section of the folder&#39;s Share Folder modal (see <a href="./share_vfolder.html#adjust-permission-for-shared-folders">Adjust permission for shared folders</a>).</p>
 <div class="admonition admonition-note">
 <div data-bai-block="20" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
@@ -284,9 +283,9 @@ directory will not be deleted when the compute session is terminated.
 </li>
 </ul>
 <p data-bai-block="31">On wide (xl) screens a draggable divider separates the two panels so you can resize them to suit your workflow. On narrow screens the panels stack vertically.</p>
-<p><figure data-bai-block="32" class="doc-figure"><img src="./images/folder_explorer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3348" height="1268" /><figcaption>Figure 15.5</figcaption></figure>
+<p><figure data-bai-block="32" class="doc-figure"><img src="./images/folder_explorer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3348" height="1380" /><figcaption>Figure 15.5</figcaption></figure>
 </p>
-<p><figure data-bai-block="33" class="doc-figure"><img src="./images/split_panel_folder_explorer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1980" height="1900" /><figcaption>Figure 15.6</figcaption></figure>
+<p><figure data-bai-block="33" class="doc-figure"><img src="./images/split_panel_folder_explorer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1980" height="1952" /><figcaption>Figure 15.6</figcaption></figure>
 </p>
 <h3 data-bai-block="34" id="vfolder-file-operations">File operations<a class="hash-link" href="#vfolder-file-operations" aria-label="Direct link to File operations">#</a></h3>
 <p data-bai-block="35">Inside the left panel you can see all directories and files in the folder. Click a directory name in the <strong>Name</strong> column to navigate into it. The actions for each row sit in the <strong>Name</strong> column, next to the item&#39;s name: click <strong>Download</strong> to download a file or directory, <strong>Delete</strong> to delete it, or the pencil (<strong>Rename</strong>) button beside the name to rename it in place. When the column is too narrow to show every button, the remaining actions move into the <strong>More actions</strong> (⋮) menu on the same row. For more detailed file operations, you can mount this folder when creating a compute session and then use a service like Terminal or Jupyter Notebook.</p>
@@ -430,7 +429,7 @@ storage folder. Click the folder name to open the file explorer.</p>
 <p><figure data-bai-block="95" class="doc-figure"><img src="./images/click_folder_name.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2298" height="830" /><figcaption>Figure 15.17</figcaption></figure>
 </p>
 <p data-bai-block="96">Click <code>Execute filebrowser</code> button in the upper-right corner of the explorer.</p>
-<p><figure data-bai-block="97" class="doc-figure"><img src="./images/folder_explorer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3348" height="1268" /><figcaption>Figure 15.18</figcaption></figure>
+<p><figure data-bai-block="97" class="doc-figure"><img src="./images/folder_explorer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3348" height="1380" /><figcaption>Figure 15.18</figcaption></figure>
 </p>
 <p data-bai-block="98">You can see the FileBrowser is opened in a new window. You can also see that the
 storage folder you opened the explorer dialog becomes the root directory. From the
@@ -557,7 +556,7 @@ be allowed.</p>
 <p data-bai-block="140">Go to the Data page and open the file explorer dialog of target storage folder.
 Click the folder button or the folder name to open the file explorer.</p>
 <p data-bai-block="141">Click <code>Run SFTP server</code> button in the upper-right corner of the explorer.</p>
-<p><figure data-bai-block="142" class="doc-figure"><img src="./images/folder_explorer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3348" height="1268" /><figcaption>Figure 15.28</figcaption></figure>
+<p><figure data-bai-block="142" class="doc-figure"><img src="./images/folder_explorer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3348" height="1380" /><figcaption>Figure 15.28</figcaption></figure>
 </p>
 <p data-bai-block="143">You can see the SSH / SFTP connection dialog. And a new SFTP session will be created
 automatically. (This session will not affect resource occupancy.)</p>
@@ -610,7 +609,7 @@ You can store the necessary data, including input data for <a href="./deployment
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/en/vfolder/vfolder.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> Edit this page</a>
-  <span class="last-updated">Last updated on Oct 30, 2026</span>
+  <span class="last-updated">Last updated on Nov 3, 2026</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./my_environments.html">
