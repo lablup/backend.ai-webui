@@ -11,7 +11,12 @@ import {
   navigateTo,
 } from '../utils/test-util';
 import { usersTabButton } from '../utils/user-profile-util';
-import test, { expect, type APIRequestContext } from '@playwright/test';
+import test, {
+  expect,
+  type APIRequestContext,
+  type Locator,
+  type Page,
+} from '@playwright/test';
 import { randomUUID } from 'node:crypto';
 
 // Helper to open the My Keypair Management modal
@@ -47,6 +52,27 @@ async function openKeypairModal(page: import('@playwright/test').Page) {
   await expect(
     page.getByRole('dialog', { name: 'My Keypair Management' }),
   ).toBeVisible();
+}
+
+// The main access key banner is an info `Banner` with role="status"; the modal
+// also holds other role="status" elements (button spinners), so match its text.
+function getMainAccessKeyBanner(modal: Locator) {
+  return modal.getByRole('status').filter({ hasText: 'Main Access Key:' });
+}
+
+// Reads the key from its own text node: the banner's textContent also carries
+// the Copy button's text, which the key pattern would swallow.
+async function getMainAccessKey(modal: Locator): Promise<string> {
+  const keyText = await getMainAccessKeyBanner(modal)
+    .getByText(/^AKIA[A-Z0-9]+$/)
+    .textContent();
+  return keyText?.trim() ?? '';
+}
+
+// Toasts render in the "Notifications" region; outside it, ToastViewport's
+// visually-hidden live region mirrors the same text.
+function toastViewport(page: Page) {
+  return page.getByRole('region', { name: 'Notifications' });
 }
 
 // Helper to get the keypair table rows (excluding the antd measure row and
@@ -100,7 +126,9 @@ async function deactivateKeypair(
     page.getByText('Are you sure you want to deactivate this keypair?'),
   ).toBeVisible();
   await page.getByRole('button', { name: 'Confirm' }).click();
-  await expect(page.getByText('Keypair deactivated.')).toBeVisible();
+  await expect(
+    toastViewport(page).getByText('Keypair deactivated.'),
+  ).toBeVisible();
 }
 
 // Helper to delete an inactive keypair by its access key (must be in Inactive tab)
@@ -122,10 +150,12 @@ async function deleteInactiveKeypair(
   const deleteDialog = page.getByRole('dialog', { name: /Delete Keypair/ });
   await expect(deleteDialog).toBeVisible();
   await deleteDialog
-    .getByRole('textbox', { name: 'Please type "Permanently' })
+    .getByRole('textbox', { name: 'Type Permanently Delete to confirm.' })
     .fill('Permanently Delete');
-  await deleteDialog.getByRole('button', { name: 'Delete' }).click();
-  await expect(page.getByText('Keypair deleted.')).toBeVisible();
+  await deleteDialog
+    .getByRole('button', { name: 'Delete', exact: true })
+    .click();
+  await expect(toastViewport(page).getByText('Keypair deleted.')).toBeVisible();
 }
 
 // Disposable fixture user: every test in this file logs in as a fresh user
@@ -152,6 +182,16 @@ test.describe(
       // that appears right after creation). Use the admin context's own
       // request so it carries fresh auth state.
       const adminContext = await browser.newContext();
+      // A fresh context shows the superadmin AdminViewSwitchTour intro modal on
+      // admin pages, whose mask blocks the Create User click.
+      await adminContext.addInitScript(() => {
+        for (const name of [
+          'has_opened_tour_back_to_user_view',
+          'has_opened_tour_back_to_admin_settings',
+        ]) {
+          localStorage.setItem(`backendaiwebui.settings.user.${name}`, 'true');
+        }
+      });
       const adminPage = await adminContext.newPage();
       const adminRequest = adminContext.request;
       try {
@@ -288,7 +328,7 @@ test.describe(
       await openKeypairModal(page);
 
       const modal = page.getByRole('dialog', { name: 'My Keypair Management' });
-      const alert = modal.getByRole('alert');
+      const alert = getMainAccessKeyBanner(modal);
 
       // Verify the alert shows the main access key label
       await expect(alert).toContainText('Main Access Key:');
@@ -304,14 +344,12 @@ test.describe(
 
       const modal = page.getByRole('dialog', { name: 'My Keypair Management' });
 
-      // Get the main access key from the alert banner
-      const alertText = await modal.getByRole('alert').textContent();
-      const mainKeyMatch = alertText?.match(/AKIA[A-Z0-9]+/);
-      const mainAccessKey = mainKeyMatch?.[0] ?? '';
+      // Get the main access key from the banner
+      const mainAccessKey = await getMainAccessKey(modal);
       expect(mainAccessKey).toBeTruthy();
 
       // Sort by Access Key ascending to ensure the main key is visible on the current page
-      await modal.getByRole('columnheader', { name: 'Access Key' }).click();
+      await getSortableColumnHeader(modal, 'Access Key').click();
 
       // Find the main keypair row by text content
       const mainKeyRow = modal
@@ -345,14 +383,12 @@ test.describe(
       await expect(rows.first()).toBeVisible({ timeout: 10000 });
 
       // Verify table column headers are visible
-      await expect(
-        modal.getByRole('columnheader', { name: 'Access Key' }),
-      ).toBeVisible();
+      await expect(getSortableColumnHeader(modal, 'Access Key')).toBeVisible();
       await expect(
         modal.getByRole('columnheader', { name: 'Controls' }),
       ).toBeVisible();
       await expect(
-        modal.getByRole('columnheader', { name: 'Resource Policy' }),
+        getSortableColumnHeader(modal, 'Resource Policy'),
       ).toBeVisible();
     });
 
@@ -370,9 +406,7 @@ test.describe(
       ).toBeChecked();
 
       // Verify table re-renders (columns still visible)
-      await expect(
-        modal.getByRole('columnheader', { name: 'Access Key' }),
-      ).toBeVisible();
+      await expect(getSortableColumnHeader(modal, 'Access Key')).toBeVisible();
     });
 
     test('User can switch back to Active keypair filter after viewing Inactive', async ({
@@ -444,7 +478,7 @@ test.describe(
 
         // Verify success notification
         await expect(
-          page.getByText('Keypair successfully created.'),
+          toastViewport(page).getByText('Keypair successfully created.'),
         ).toBeVisible();
 
         // Close the credential dialog
@@ -523,10 +557,8 @@ test.describe(
         // Issue a new keypair to ensure a non-main keypair exists
         createdAccessKey = await issueNewKeypair(page);
 
-        // Get the main access key from the alert banner
-        const alertText = await modal.getByRole('alert').textContent();
-        const mainKeyMatch = alertText?.match(/AKIA[A-Z0-9]+/);
-        const originalMainKey = mainKeyMatch?.[0] ?? '';
+        // Get the main access key from the banner
+        const originalMainKey = await getMainAccessKey(modal);
 
         // Find the newly created non-main keypair row
         const nonMainRow = modal
@@ -554,7 +586,9 @@ test.describe(
         await visiblePopconfirm.getByRole('button', { name: 'Cancel' }).click();
 
         // Verify main key is unchanged
-        await expect(modal.getByRole('alert')).toContainText(originalMainKey);
+        await expect(getMainAccessKeyBanner(modal)).toContainText(
+          originalMainKey,
+        );
 
         // Verify the Re-login Required dialog did NOT appear
         await expect(
@@ -580,14 +614,12 @@ test.describe(
 
       const modal = page.getByRole('dialog', { name: 'My Keypair Management' });
 
-      // Get the main access key from the alert banner
-      const alertText = await modal.getByRole('alert').textContent();
-      const mainKeyMatch = alertText?.match(/AKIA[A-Z0-9]+/);
-      const mainAccessKey = mainKeyMatch?.[0] ?? '';
+      // Get the main access key from the banner
+      const mainAccessKey = await getMainAccessKey(modal);
       expect(mainAccessKey).toBeTruthy();
 
       // Sort by Access Key to ensure main key is visible
-      await modal.getByRole('columnheader', { name: 'Access Key' }).click();
+      await getSortableColumnHeader(modal, 'Access Key').click();
 
       // Find the main keypair row
       const mainKeyRow = modal
@@ -629,7 +661,9 @@ test.describe(
         await page.getByRole('button', { name: 'Confirm' }).click();
 
         // Verify success notification
-        await expect(page.getByText('Keypair deactivated.')).toBeVisible();
+        await expect(
+          toastViewport(page).getByText('Keypair deactivated.'),
+        ).toBeVisible();
 
         // Verify the row is removed from Active table
         await expect(
@@ -699,14 +733,12 @@ test.describe(
 
       const modal = page.getByRole('dialog', { name: 'My Keypair Management' });
 
-      // Get the main access key from the alert banner
-      const alertText = await modal.getByRole('alert').textContent();
-      const mainKeyMatch = alertText?.match(/AKIA[A-Z0-9]+/);
-      const mainAccessKey = mainKeyMatch?.[0] ?? '';
+      // Get the main access key from the banner
+      const mainAccessKey = await getMainAccessKey(modal);
       expect(mainAccessKey).toBeTruthy();
 
       // Sort by Access Key to ensure main key is visible
-      await modal.getByRole('columnheader', { name: 'Access Key' }).click();
+      await getSortableColumnHeader(modal, 'Access Key').click();
 
       // Find the main keypair row
       const mainKeyRow = modal
@@ -917,24 +949,28 @@ test.describe(
       );
       await expect(deleteDialog).toContainText('This action cannot be undone.');
       await expect(
-        deleteDialog.getByRole('button', { name: 'Delete' }),
+        deleteDialog.getByRole('button', { name: 'Delete', exact: true }),
       ).toBeDisabled();
 
       // Type the confirmation phrase
       await deleteDialog
-        .getByRole('textbox', { name: 'Please type "Permanently' })
+        .getByRole('textbox', { name: 'Type Permanently Delete to confirm.' })
         .fill('Permanently Delete');
 
       // Verify Delete button becomes enabled
       await expect(
-        deleteDialog.getByRole('button', { name: 'Delete' }),
+        deleteDialog.getByRole('button', { name: 'Delete', exact: true }),
       ).toBeEnabled();
 
       // Click Delete
-      await deleteDialog.getByRole('button', { name: 'Delete' }).click();
+      await deleteDialog
+        .getByRole('button', { name: 'Delete', exact: true })
+        .click();
 
       // Verify success notification and row removal
-      await expect(page.getByText('Keypair deleted.')).toBeVisible();
+      await expect(
+        toastViewport(page).getByText('Keypair deleted.'),
+      ).toBeVisible();
       await expect(
         modal
           .locator('tbody tr:not(.ant-table-measure-row)')
@@ -995,6 +1031,15 @@ test.describe(
             async () => {
               count = await inactiveRows.count();
               if (count === 0) return true;
+              // The empty state is itself a `<tr>` in the DataGrid body.
+              if (
+                await modal
+                  .getByRole('heading', { name: 'No inactive keypairs.' })
+                  .isVisible()
+              ) {
+                count = 0;
+                return true;
+              }
               const hasRestoreIcon = await firstControlsCell
                 .locator('.lucide-undo')
                 .count();
@@ -1045,7 +1090,7 @@ test.describe(
 
         // Verify Delete button is disabled when input is empty
         await expect(
-          deleteDialog.getByRole('button', { name: 'Delete' }),
+          deleteDialog.getByRole('button', { name: 'Delete', exact: true }),
         ).toBeDisabled();
 
         // Close the dialog without deleting
@@ -1080,7 +1125,7 @@ test.describe(
 
       // Type the confirmation phrase
       await page
-        .getByRole('textbox', { name: 'Please type "Permanently' })
+        .getByRole('textbox', { name: 'Type Permanently Delete to confirm.' })
         .fill('Permanently Delete');
 
       // Click Cancel instead of Delete
@@ -1098,10 +1143,14 @@ test.describe(
       await targetRow.getByRole('button', { name: 'Delete Keypair' }).click();
       await expect(deleteDialog).toBeVisible();
       await deleteDialog
-        .getByRole('textbox', { name: 'Please type "Permanently' })
+        .getByRole('textbox', { name: 'Type Permanently Delete to confirm.' })
         .fill('Permanently Delete');
-      await deleteDialog.getByRole('button', { name: 'Delete' }).click();
-      await expect(page.getByText('Keypair deleted.')).toBeVisible();
+      await deleteDialog
+        .getByRole('button', { name: 'Delete', exact: true })
+        .click();
+      await expect(
+        toastViewport(page).getByText('Keypair deleted.'),
+      ).toBeVisible();
     });
 
     test('User cannot see Delete Keypair button for active keypairs', async ({
@@ -1148,8 +1197,8 @@ test.describe(
         modal.getByRole('columnheader', { name: 'Modified At' }),
       ).toBeHidden({ timeout: 3000 });
 
-      // Click the gear icon to open Table Settings (SettingOutlined icon button)
-      await modal.getByRole('button', { name: 'setting' }).click();
+      // Click the gear icon to open Table Settings
+      await modal.getByRole('button', { name: 'Table Settings' }).click();
 
       // Verify Table Settings dialog opens
       const settingsDialog = page.getByRole('dialog', {
@@ -1170,8 +1219,8 @@ test.describe(
         settingsDialog.getByRole('checkbox', { name: 'Modified At' }),
       ).toBeChecked();
 
-      // Click OK
-      await settingsDialog.getByRole('button', { name: 'OK' }).click();
+      // Click Apply
+      await settingsDialog.getByRole('button', { name: 'Apply' }).click();
       await expect(settingsDialog).toBeHidden();
 
       // Verify Modified At column is now visible
@@ -1187,8 +1236,8 @@ test.describe(
 
       const modal = page.getByRole('dialog', { name: 'My Keypair Management' });
 
-      // Click the gear icon to open Table Settings (SettingOutlined icon button)
-      await modal.getByRole('button', { name: 'setting' }).click();
+      // Click the gear icon to open Table Settings
+      await modal.getByRole('button', { name: 'Table Settings' }).click();
 
       const settingsDialog = page.getByRole('dialog', {
         name: 'Table Settings',
@@ -1209,7 +1258,7 @@ test.describe(
 
       // Verify Resource Policy column is still visible (changes not applied)
       await expect(
-        modal.getByRole('columnheader', { name: 'Resource Policy' }),
+        getSortableColumnHeader(modal, 'Resource Policy'),
       ).toBeVisible();
     });
 
@@ -1220,8 +1269,8 @@ test.describe(
 
       const modal = page.getByRole('dialog', { name: 'My Keypair Management' });
 
-      // Click the reload button
-      await modal.getByRole('button', { name: 'reload' }).click();
+      // Click the refresh button
+      await modal.getByRole('button', { name: 'Refresh', exact: true }).click();
 
       // Verify the table still renders after reload
       const rows = getKeypairTableRows(page);
@@ -1241,17 +1290,17 @@ test.describe(
       const modal = page.getByRole('dialog', { name: 'My Keypair Management' });
 
       // Verify the default page size combobox is visible
-      const pageSizeSelect = modal.getByRole('combobox', { name: 'Page Size' });
+      const pageSizeSelect = modal.getByRole('combobox', {
+        name: 'Items per page',
+      });
       await expect(pageSizeSelect).toBeVisible();
 
-      // Click the page size selector and select 20 / page
+      // Click the page size selector and select 20
       await pageSizeSelect.click();
-      await page.getByRole('option', { name: '20 / page' }).click();
+      await page.getByRole('option', { name: '20', exact: true }).click();
 
       // Verify the page size changed
-      await expect(
-        modal.locator('.ant-select-content').filter({ hasText: '20 / page' }),
-      ).toBeVisible();
+      await expect(pageSizeSelect).toContainText('20');
     });
 
     // ── 12. Edge Cases ─────────────────────────────────────────────────────────

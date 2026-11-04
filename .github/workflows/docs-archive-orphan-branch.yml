@@ -29,7 +29,7 @@
 # minor on a higher patch tag overwrites the archive with the new src.
 #
 # References:
-#   - Spec:   .specs/FR-2729-webui-docs-multi-version-deployment/spec.md
+#   - ADR:    docs/adr/0023-multi-version-docs-site-from-source-archive-branches.md
 #   - v1 sub-task: FR-2738
 #   - Predecessor (Done): FR-2710 F6 (versioned output layout)
 #   - Follow-up: FR-2751 (per-archive build caching)

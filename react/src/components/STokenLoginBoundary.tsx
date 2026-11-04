@@ -2,14 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- IMPORTANT — URL-API prohibition invariant (spec FR-2616 acceptance):
- This file and any module imported from it MUST NOT reference
- `window.location`, `window.history`, `document.location`, or
- `URLSearchParams`. The `sToken` value is supplied by callers via prop
- (sourced through `useSToken` or equivalent nuqs-based hook). See
- `.specs/draft-stoken-login-boundary/spec.md` section
- "URL 파라미터 파싱 규약 (nuqs)". A static assertion in the accompanying
- unit test (`STokenLoginBoundary.test.tsx`) enforces this in CI.
+ IMPORTANT — this file MUST NOT reference `window.location`,
+ `window.history`, `document.location`, or `URLSearchParams`; callers pass
+ `sToken` as a prop (via `useSToken`). A static assertion in
+ `STokenLoginBoundary.test.tsx` enforces it for this file (ADR 0022).
  */
 import { App } from '../app-shim';
 // Ticket 34: `Form` is the self-hosted engine (was the antd SHIM).
@@ -165,8 +161,8 @@ export interface STokenLoginBoundaryProps {
    * Canonical sToken value sourced by the caller via nuqs. Required — the
    * boundary does not read URL state on its own. Pass an empty string when
    * the caller intends to surface `missing-token`; usually callers should
-   * conditionally mount the boundary only when a token is present (see
-   * spec scenario A for LoginView).
+   * conditionally mount the boundary only when a token is present (as
+   * `STokenGuard` in `routes.tsx` does).
    */
   sToken: string;
   children: ReactNode;
@@ -222,15 +218,15 @@ type PendingStep = 'connecting' | 'authenticating';
 /**
  * sToken-based login boundary. Authenticates via `client.token_login` using
  * the caller-supplied `sToken`, dispatches `backend-ai-connected` exactly
- * once on success, and only then renders `children`. See spec section
- * "컴포넌트 설계" and "내부 동작 시퀀스" for the full contract.
+ * once on success, and only then renders `children`. ADR 0022 holds the
+ * full contract.
  *
  * Config semantics: the boundary awaits the same-origin `config.toml`
  * bootstrap (`initializeConfigOnce`) before authenticating, so webserver
  * flags like `[resources].allowNonAuthTCP` reach
  * `backendaiclient._config` even though `LoginView` has not mounted yet
  * (FR-3128). The cross-origin webserver config merge
- * (`loadConfigFromWebServer`) remains excluded per spec Q2 — callers that
+ * (`loadConfigFromWebServer`) remains excluded (ADR 0022) — callers that
  * target an API endpoint on a different origin may invoke it from
  * `onSuccess`.
  */
@@ -357,7 +353,7 @@ const STokenLoginBoundaryInner: React.FC<STokenLoginBoundaryProps> = ({
     // flags such as `[resources].allowNonAuthTCP`, hiding the SSH/SFTP app
     // after SSO login (FR-3128). This is the same-origin bootstrap load,
     // not the cross-origin `loadConfigFromWebServer` merge — the latter is
-    // still intentionally NOT invoked here (spec Q2); callers may invoke it
+    // still intentionally NOT invoked here (ADR 0022); callers may invoke it
     // from `onSuccess` when the API endpoint lives on another origin.
     try {
       await initializeConfigOnce(store, logger);
