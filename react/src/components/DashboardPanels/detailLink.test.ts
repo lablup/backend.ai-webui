@@ -43,7 +43,6 @@ describe('card detail links', () => {
   it('leaves cards without a list page without a link', () => {
     [
       'failuresByEntityType',
-      'topProjectsUsage',
       'projectAuditLog',
       'myActivity',
       'schedulingFailures',

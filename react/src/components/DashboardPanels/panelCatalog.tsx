@@ -33,7 +33,6 @@ import FailedLoginsPanel from './superadminCards/FailedLoginsPanel';
 import FailuresByEntityTypePanel from './superadminCards/FailuresByEntityTypePanel';
 import ResourcePoliciesPanel from './superadminCards/ResourcePoliciesPanel';
 import SchedulingFailuresPanel from './superadminCards/SchedulingFailuresPanel';
-import TopProjectsUsagePanel from './superadminCards/TopProjectsUsagePanel';
 import { CLIENT_COUNTED_MAX_RANGE_DAYS } from './timeRange';
 import type {
   PanelComponentProps,
@@ -281,7 +280,6 @@ const ADMIN_ORDER = {
   agentStats: 4,
   failuresByEntityType: 5,
   projectAuditLog: 6,
-  topProjectsUsage: 7,
 } as const;
 
 const adminOrder = (key: keyof typeof ADMIN_ORDER) => ({
@@ -481,19 +479,6 @@ const SUPERADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     settings: ['range'],
     maxRangeDays: CLIENT_COUNTED_MAX_RANGE_DAYS,
     ...adminOrder('failuresByEntityType'),
-  },
-  {
-    key: 'topProjectsUsage',
-    page: ['admin'],
-    group: 'resource',
-    titleKey: 'dashboard.card.TopProjectsByUsage',
-    requires: SUPERADMIN_ONLY,
-    kind: 'custom',
-    Component: TopProjectsUsagePanel,
-    defaultSize: size(4, 3),
-    minSize: size(2, 3),
-    settings: ['resourceGroup', 'range'],
-    ...adminOrder('topProjectsUsage'),
   },
   {
     // The member page's My Recent Sessions over the domain; the key is the one stored boards already carry.

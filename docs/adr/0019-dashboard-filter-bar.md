@@ -94,7 +94,7 @@ sequenceDiagram
 - **Allowed groups**: `DashboardResourceGroupsProvider`(`DashboardResourceGroups.tsx`)가 page마다 한 번 그 범위의 `scopedResourceGroups`(프로젝트 page는 프로젝트와 그 도메인 scope의 OR, `resourceGroupScopeOf`. 도메인에만 연결된 자원 그룹도 프로젝트에서 쓸 수 있기 때문이다)를 SFTP 전용 그룹을 뺀 채 `NAME` 오름차순으로 100개까지 읽어 `useDashboardResourceGroups()`로 나눈다. 카드, 머리의 picker, 설정 modal이 이 값을 함께 쓰고, 목록을 받기 전에는 board 대신 skeleton을 그린다.
 - **Defaults**: 자원 그룹 설정이 비어 있으면 고정 카드는 그 목록의 첫 자원 그룹(`defaultResourceGroupOf`)을, 사용자 정의 패널은 모든 자원 그룹을 읽는다. 저장된 값이나 머리에서 고른 값이 목록에 없으면(프로젝트가 더 쓸 수 없으면) 같은 기본값으로 돌아간다. 목록이 100개에서 잘렸거나 읽기에 실패했으면 저장된 값을 그대로 쓴다. 헤더의 현재 자원 그룹은 읽지 않으므로 헤더에서 자원 그룹을 바꿔도 카드는 바뀌지 않는다. 기간 설정의 기본은 최근 24시간(`DEFAULT_RANGE`, `panelSettings.ts`)이고, 선택지는 최근 1시간, 24시간, 7일과 직접 선택이다.
 - **Fixed window**: 기간은 preset(`now-1h`, `now-24h`, `now-7d`)이거나 고정 window다. 머리의 picker와 설정 modal의 "직접 선택"(`PanelRangeSelect`)이 시작과 끝 일시를 받아 `<ISO 일시>/<ISO 일시>`(`windowRange`, `timeRange.ts`)로 저장한다. 끝은 시작보다 늦어야 하고, 지금보다 늦은 끝은 지금으로 맞추며, 길이는 90일(`MAX_WINDOW_DAYS`)까지다(`checkWindow`). `sanitizePanelSettings`는 preset과 이 조건을 지키는 window만 남기고, 나머지는 버려 기본 기간으로 돌아간다. 보드에 저장하는 값과 머리에서 고른 값(메모리)은 preset과 같은 규칙을 따른다.
-- **Client-counted cap**: 기간 안의 개수를 매니저 시계열 없이 구간마다 count alias로 직접 세는 카드(My Activity, Project Audit Log, Scheduling Failures, Failures by Entity Type, Failed Logins)는 카탈로그 항목의 `maxRangeDays`로 직접 선택 기간을 7일(`CLIENT_COUNTED_MAX_RANGE_DAYS`)까지로 줄인다. `checkWindow`, `sanitizePanelSettings`, `PanelRangeSelect`가 카드마다 이 값을 쓰고, 더 긴 저장값은 기본 기간으로 돌아간다. 장기 실행 세션(기간이 기준값이다)과 Top Projects by Usage(매니저의 하루 단위 사용량 bucket을 읽는다)는 90일 그대로다.
+- **Client-counted cap**: 기간 안의 개수를 매니저 시계열 없이 구간마다 count alias로 직접 세는 카드(My Activity, Project Audit Log, Scheduling Failures, Failures by Entity Type, Failed Logins)는 카탈로그 항목의 `maxRangeDays`로 직접 선택 기간을 7일(`CLIENT_COUNTED_MAX_RANGE_DAYS`)까지로 줄인다. `checkWindow`, `sanitizePanelSettings`, `PanelRangeSelect`가 카드마다 이 값을 쓰고, 더 긴 저장값은 기본 기간으로 돌아간다. 장기 실행 세션(기간이 기준값이다)은 90일 그대로다.
 - **Period line**: 기간이나 시점에 따라 숫자가 바뀌는 카드는 본문에 그 기간을 한 줄로 쓴다(`PeriodCaption`, `formatBucketSpan`). 카드의 마지막 refresh 시각으로 고정한 `timeRange`를 쓰므로 refresh마다 함께 바뀐다.
 - **Superadmin resource group**: `/admin/dashboard` route는 헤더 프로젝트 selector를 그리지 않는다. superadmin page의 목록은 현재 도메인의 자원 그룹이고, 설정이 빈 카드는 그중 이름 순 첫 자원 그룹을 읽는다.
 - **Card state**: `DashboardPanelContent`가 머리에서 고른 값, 없으면 저장된 설정을 풀어 `vars`(`DashboardVars`)로 넘긴다. `range`, 카드의 마지막 refresh 시각으로 고정한 `timeRange`, `resourceGroup`(목록에 있는 설정, 아니면 기본 자원 그룹), `currentProjectId`(page의 프로젝트)이다.
@@ -127,7 +127,6 @@ sequenceDiagram
 - **Totals from buckets**: 기간 전체의 합계(감사 로그의 성공 수와 실패 수 같은 값)는 같은 카드가 읽은 bucket count를 더한다. bucket이 window를 빈틈과 겹침 없이 나누므로 합은 window의 count와 같고, 합계용 alias를 따로 읽지 않는다.
 - **Usage buckets**: 사용량 추이 카드는 매니저의 `usageBuckets`가 준 구간을 그대로 그린다.
 - **Rows, not sums**: 프로젝트 하나나 자원 그룹 하나 단위로만 값을 주는 field를 읽는 카드는 프로젝트나 자원 그룹마다 한 행을 그린다. 클라이언트는 프로젝트나 자원 그룹마다 받은 응답의 값을 더하지 않는다.
-- **Usage over a range**: 예외로 "Top Projects by Usage" 카드는 매니저가 프로젝트, 자원 그룹, 하루마다 기록한 사용량 bucket을 기간이 걸친 날 전부 읽어 프로젝트마다 slot별로 더하고, CPU core-hour 순으로 줄 세운다(`sumUsageByProject`). bucket이 하루 단위라 하루보다 짧은 기간은 그 기간이 걸친 날 전체를 읽는다(`usageDays`). 매니저에 기간 합계를 주는 field가 없어서다.
 
 ### 7. 역할이 달라도 카드는 하나다
 

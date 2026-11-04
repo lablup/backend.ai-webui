@@ -105,7 +105,6 @@ describe('PANEL_CATALOG', () => {
         'agentStats',
         'failuresByEntityType',
         'projectAuditLog',
-        'topProjectsUsage',
         'totalResourceWithinResourceGroup',
       ],
     ],
@@ -117,11 +116,17 @@ describe('PANEL_CATALOG', () => {
 });
 
 describe('stored boards on the real catalog', () => {
-  it('drops a removed card (Fair Share) and keeps the rest', () => {
+  it('drops removed cards (Fair Share, Top Projects by Usage) and keeps the rest', () => {
     const board = sanitizeBoard(
       {
         panels: [
           { id: 'fairShare', key: 'fairShare', columnSpan: 4, rowSpan: 3 },
+          {
+            id: 'topProjectsUsage',
+            key: 'topProjectsUsage',
+            columnSpan: 4,
+            rowSpan: 3,
+          },
           {
             id: 'activeAgents',
             key: 'activeAgents',
