@@ -39,9 +39,9 @@ describe('resolveAppPath', () => {
 
   it('maps flat admin and project-admin menu keys to their scope', () => {
     expect(resolve('/credential')).toEqual({ ok: true, to: '/admin/users' });
-    expect(resolve('/project-data')).toEqual({
+    expect(resolve('/project-admin-users')).toEqual({
       ok: true,
-      to: '/project/default/admin/data',
+      to: '/project/default/admin/users',
     });
     expect(resolve('/project')).toEqual({ ok: true, to: '/admin/project' });
   });

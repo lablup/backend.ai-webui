@@ -55,9 +55,9 @@ vi.mock('../hooks/useWebUIMenuItems', async (importOriginal) => ({
         labelText: 'Operations',
         children: [
           {
-            key: 'project-data',
-            labelText: 'Project Data',
-            to: '/project/default/admin/data',
+            key: 'project-admin-users',
+            labelText: 'Project Users',
+            to: '/project/default/admin/users',
           },
         ],
       },
@@ -171,7 +171,7 @@ describe('WebMCPGlobalTools', () => {
     const navigateTool = toolNamed('bai_navigate');
 
     expect(navigateTool.inputSchema.properties.page).toMatchObject({
-      enum: ['session', 'data', 'project-data'],
+      enum: ['session', 'data', 'project-admin-users'],
     });
     await expect(navigateTool.execute({ page: 123 })).resolves.toMatchObject({
       error: { code: 'invalid_input' },
