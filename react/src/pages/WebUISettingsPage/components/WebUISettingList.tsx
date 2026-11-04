@@ -52,6 +52,10 @@ interface WebUISettingListProps {
   savedPublicSettings?: WebUISettingsDocument;
 }
 
+// One width for every editable row; the plugin path rows keep their wider
+// root + path pair (PluginPathInput).
+const CONTROL_WIDTH = 240;
+
 const parseStringList = (raw: string): Array<string> =>
   raw
     .split(',')
@@ -239,7 +243,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
           children: (
             <BAINumberInput
               aria-label={label.title}
-              width={240}
+              width={CONTROL_WIDTH}
               value={current as number}
               units={definition.unit}
               onChange={(value) =>
@@ -270,7 +274,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
                 data-testid={`webui-setting-${definition.key}-input`}
                 defaultValue={String(current ?? '')}
                 onCommit={(raw) => setValue(definition, raw.trim())}
-                style={{ maxWidth: 480 }}
+                width={CONTROL_WIDTH}
               />
             ),
         };
@@ -286,7 +290,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
           children: definition.options ? (
             <BAIMultiSelector
               aria-label={label.title}
-              width={320}
+              width={CONTROL_WIDTH}
               options={definition.options.map((option) => ({
                 value: option.value,
                 label: option.label,
@@ -310,7 +314,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
               data-testid={`webui-setting-${definition.key}-input`}
               defaultValue={joined}
               onCommit={(raw) => setValue(definition, parseStringList(raw))}
-              style={{ maxWidth: 480 }}
+              width={CONTROL_WIDTH}
             />
           ),
         };
