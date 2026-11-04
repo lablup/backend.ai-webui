@@ -587,6 +587,42 @@
     "Title": "Backend.AI WebUI Agent CLI-д нэвтрэх",
     "VerificationCode": "Баталгаажуулах код"
   },
+  "clientIpMasking": {
+    "ClientIpMasking": "Клиентийн IP нууцлалт",
+    "CreatePolicy": "Бодлого үүсгэх",
+    "DefaultPrefix": "/{{prefix}} (анхдагч)",
+    "DeleteDefaultPolicyDescription": "Өөрийн бодлогогүй зорилтууд клиентийн IP-г ажиглагдсанаар нь хадгална.",
+    "DeletePolicy": "Энэ нууцлалтын бодлогыг устгах уу?",
+    "DeletePolicyDescription": "{{target}} анхдагч бодлогыг дагах болно.",
+    "Description": "Клиентийн IP хаягийг хадгалахаас өмнө хэрхэн нууцлахыг тохируулна. Өөрийн бодлогогүй зорилт анхдагч бодлогыг дагана; анхдагч бодлого байхгүй бол хаягийг ажиглагдсанаар нь хадгална.",
+    "EditPolicy": "Бодлого засах",
+    "IPv4Prefix": "IPv4 угтварын урт",
+    "IPv6Prefix": "IPv6 угтварын урт",
+    "Mode": "Нууцлалтын горим",
+    "ModeRequired": "Нууцлалтын горимыг сонгоно уу.",
+    "OnePolicyPerTarget": "Зорилт бүрт зөвхөн нэг бодлого байж болно.",
+    "PrefixExtra": "Хадгалах эхний битийн тоо (0–{{max}}). Хоосон орхивол {{defaultPrefix}}-г ашиглана.",
+    "PrefixRange": "0-ээс {{max}} хүртэлх тоо оруулна уу.",
+    "SuccessfullyDeleted": "Клиентийн IP нууцлалтын бодлогыг устгалаа.",
+    "SuccessfullySaved": "Клиентийн IP нууцлалтын бодлогыг хадгаллаа.",
+    "Target": "Бодлогын зорилт",
+    "TargetRequired": "Бодлогын зорилтыг сонгоно уу.",
+    "modeDescriptions": {
+      "DROP": "Клиентийн IP-г бүртгэхгүй.",
+      "NONE": "Клиентийн IP-г ажиглагдсанаар нь хадгална.",
+      "TRUNCATE": "Хостын битүүдийг тэглэж, зөвхөн сүлжээний угтварыг үлдээнэ."
+    },
+    "modes": {
+      "DROP": "Хаях",
+      "NONE": "Үгүй",
+      "TRUNCATE": "Таслах"
+    },
+    "targets": {
+      "AUDIT_LOGS": "Аудитын бүртгэл",
+      "DEFAULT": "Анхдагч",
+      "LOGIN_HISTORY": "Нэвтрэлтийн түүх"
+    }
+  },
   "credential": {
     "2FAEnabled": "2FA идэвхтэй",
     "AccessKey": "Хандалтын түлхүүр",
@@ -2762,8 +2798,6 @@
     "DeleteResourceGroup": "Нөөцийн бүлгийг устгах",
     "Description": "Тодорхойлолт",
     "Domain": "Домэйн",
-    "Driver": "Жолооч",
-    "DriverOptions": "Жолоочийн сонголтууд",
     "DuplicateHandlerOverride": "Энэ handler аль хэдийн дахин тодорхойлогдсон байна.",
     "DuplicateResourceSlot": "Энэ нөөцийн слот аль хэдийн нэмэгдсэн байна.",
     "EditDefaultDeploymentOptions": "Үндсэн байршуулалтын тохиргоог засах",

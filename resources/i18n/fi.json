@@ -587,6 +587,42 @@
     "Title": "Kirjaa Backend.AI WebUI Agent CLI sisään",
     "VerificationCode": "Vahvistuskoodi"
   },
+  "clientIpMasking": {
+    "ClientIpMasking": "Asiakkaan IP-osoitteen peittäminen",
+    "CreatePolicy": "Luo käytäntö",
+    "DefaultPrefix": "/{{prefix}} (oletus)",
+    "DeleteDefaultPolicyDescription": "Kohteet, joilla ei ole omaa käytäntöä, tallentavat asiakkaan IP-osoitteet sellaisinaan.",
+    "DeletePolicy": "Poistetaanko tämä peittämiskäytäntö?",
+    "DeletePolicyDescription": "{{target}} palaa käyttämään oletuskäytäntöä.",
+    "Description": "Määritä, miten asiakkaan IP-osoitteet peitetään ennen tallennusta. Kohde ilman omaa käytäntöä noudattaa oletuskäytäntöä; jos oletuskäytäntöä ei ole, osoitteet tallennetaan sellaisinaan.",
+    "EditPolicy": "Muokkaa käytäntöä",
+    "IPv4Prefix": "IPv4-etuliitteen pituus",
+    "IPv6Prefix": "IPv6-etuliitteen pituus",
+    "Mode": "Peittämistapa",
+    "ModeRequired": "Valitse peittämistapa.",
+    "OnePolicyPerTarget": "Kullakin kohteella voi olla vain yksi käytäntö.",
+    "PrefixExtra": "Säilytettävien alkubittien määrä (0–{{max}}). Jätä tyhjäksi käyttääksesi arvoa {{defaultPrefix}}.",
+    "PrefixRange": "Anna luku väliltä 0–{{max}}.",
+    "SuccessfullyDeleted": "Asiakkaan IP-peittämiskäytäntö poistettu.",
+    "SuccessfullySaved": "Asiakkaan IP-peittämiskäytäntö tallennettu.",
+    "Target": "Käytännön kohde",
+    "TargetRequired": "Valitse käytännön kohde.",
+    "modeDescriptions": {
+      "DROP": "Asiakkaan IP-osoitetta ei tallenneta.",
+      "NONE": "Asiakkaan IP-osoitteet tallennetaan sellaisinaan.",
+      "TRUNCATE": "Isäntäbitit nollataan, ja vain verkon etuliite säilyy."
+    },
+    "modes": {
+      "DROP": "Hylkää",
+      "NONE": "Ei mitään",
+      "TRUNCATE": "Katkaise"
+    },
+    "targets": {
+      "AUDIT_LOGS": "Tarkastuslokit",
+      "DEFAULT": "Oletus",
+      "LOGIN_HISTORY": "Kirjautumishistoria"
+    }
+  },
   "credential": {
     "2FAEnabled": "2FA käytössä",
     "AccessKey": "Pääsyavain",
@@ -2761,8 +2797,6 @@
     "DeleteResourceGroup": "Poista resurssiryhmä",
     "Description": "Kuvaus",
     "Domain": "Verkkotunnus",
-    "Driver": "Kuljettaja",
-    "DriverOptions": "Kuljettajan vaihtoehdot",
     "DuplicateHandlerOverride": "Tämä handler on jo ohitettu.",
     "DuplicateResourceSlot": "Tämä resurssipaikka on jo lisätty.",
     "EditDefaultDeploymentOptions": "Muokkaa käyttöönoton oletusasetuksia",
