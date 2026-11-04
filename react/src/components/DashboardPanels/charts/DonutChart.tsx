@@ -40,6 +40,11 @@ const styles = stylex.create({
   name: { flex: 1, minWidth: 0 },
   // Long names truncate rather than widen the legend.
   nameText: { maxWidth: 200 },
+  // A clickable row names its action by looking like a link.
+  linkName: {
+    color: 'var(--color-text-accent)',
+    textDecoration: { default: 'none', ':hover': 'underline' },
+  },
   number: { minWidth: '2.5em', textAlign: 'end' },
   percent: { minWidth: '3.5em', textAlign: 'end' },
   rowButton: {
@@ -372,7 +377,10 @@ const DonutChart: React.FC<DonutChartProps> = ({
                       aria-hidden
                       style={{ flexShrink: 0 }}
                     />
-                    <Text maxLines={1} xstyle={styles.nameText}>
+                    <Text
+                      maxLines={1}
+                      xstyle={[styles.nameText, onRowClick && styles.linkName]}
+                    >
                       {row.label}
                     </Text>
                   </BAIFlex>

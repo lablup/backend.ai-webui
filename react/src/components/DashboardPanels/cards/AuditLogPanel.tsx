@@ -653,6 +653,7 @@ export const AuditLogRows: React.FC<{
         pageSize,
         current,
         total: logs?.count ?? 0,
+        hideOnSinglePage: false,
         onChange: onChangePage,
       }}
     />

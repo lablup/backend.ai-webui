@@ -173,7 +173,7 @@ const EntityTypeFailures: React.FC<{
           title={t('dashboard.card.FailuresOfType', {
             type: listed?.label ?? '',
           })}
-          width={1000}
+          width={1400}
           footer={null}
           onCancel={() => setIsListOpen(false)}
         >
