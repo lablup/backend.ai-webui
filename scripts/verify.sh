@@ -415,6 +415,8 @@ start_lane gate "z-index ladder mirrors" node scripts/migration-gates/z-index-la
 start_lane gate "Agent mappings" check_agent_mappings
 start_lane gate "Help anchors (user manual)" check_help_anchors
 start_lane gate "Terminology" check_terminology_drift
+# ADR 0018: every ADR and docs/ARCHITECTURE.md has a Korean `.ko.md` companion.
+start_lane gate "ADR pairs" node scripts/check-adr-pairs.mjs
 # Gates the non-English avoid-row DATA, a separate axis from CHECK 1 above; the
 # hard gate is terminology-selftest.yml (FR-3051).
 start_lane report "Terminology self-test (report-only here; hard gate in CI)" \

@@ -283,7 +283,7 @@ const ModelCardV2Grid: React.FC<{
     return <EmptyState title={t('modelStore.NoModelsFound')} />;
   }
 
-  // PILOT-DECISION (RESPONSIVE-POLICY.md R1): identical recipe to
+  // PILOT-DECISION (ADR 0020 R1): identical recipe to
   // AIAgentPage's grid — `xs={24} sm={24} lg={12} xl={12} xxl={8} xxxl={6}`
   // first goes 2-up at `lg` (992px) -> `minWidth: 496`; `xxxl={6}` -> `max: 4`.
   return (

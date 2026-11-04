@@ -11,12 +11,13 @@ import {
 } from '../__generated__/RoleAssignmentTabQuery.graphql';
 import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
-import { useSetBAINotification } from '../hooks/useBAINotification';
+import { reasonMessage } from '../helper/mutationError';
 import AssignRoleModal from './AssignRoleModal';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
+  BAIBulkErrorModal,
   BAIButton,
   BAIDeleteConfirmModal,
   BAIFetchKeyButton,
@@ -30,6 +31,7 @@ import {
   useBAILogger,
   useFetchKey,
   useMutationWithPromise,
+  type BAIColumnsType,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -46,6 +48,13 @@ type AssignmentOrder =
   | 'GRANTED_AT_ASC'
   | 'GRANTED_AT_DESC';
 
+/** One failed revocation, shaped for the shared `BAIBulkErrorModal` table. */
+interface FailedRevocation {
+  key: string;
+  userLabel: string;
+  message: string;
+}
+
 interface RoleAssignmentTabProps {
   roleNodeFrgmt: RoleAssignmentTabFragment$key;
 }
@@ -58,12 +67,16 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
   const { token } = useTheme();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
-  const { upsertNotification } = useSetBAINotification();
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [revokingTargets, setRevokingTargets] = useState<
     { userId: string; label: string }[] | null
   >(null);
+  // One row per user the server refused on the last revoke; the error modal
+  // is open while non-empty.
+  const [failedRevocations, setFailedRevocations] = useState<
+    FailedRevocation[]
+  >([]);
   const [fetchKey, updateFetchKey] = useFetchKey();
 
   // Pagination / order / filter live in local React state (not the URL);
@@ -112,7 +125,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
       mutation RoleAssignmentTabBulkRevokeMutation(
         $input: BulkRevokeRoleInput!
       ) {
-        adminBulkRevokeRole(input: $input) {
+        partialBulkRevokeRoles(input: $input) {
           revoked {
             id
           }
@@ -218,6 +231,19 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
     });
     setRevokingTargets(targets);
   };
+
+  const failureColumns: BAIColumnsType<FailedRevocation> = [
+    {
+      key: 'user',
+      title: t('credential.UserID'),
+      dataIndex: 'userLabel',
+    },
+    {
+      key: 'message',
+      title: t('rbac.ErrorMessage'),
+      dataIndex: 'message',
+    },
+  ];
 
   return (
     <BAIFlex align="stretch" direction="column" gap="sm">
@@ -387,41 +413,64 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
         okText={t('rbac.RevokeUser')}
         onOk={() => {
           if (!revokingTargets) return;
-          const userIds = revokingTargets.map((t) => t.userId);
+          const targets = revokingTargets;
+          const labelOf = (userId: string) =>
+            targets.find((target) => target.userId === userId)?.label ?? userId;
+          // Keep only the failed users selected so the next revoke retries them.
+          const markFailures = (failures: FailedRevocation[]) => {
+            setSelectedRowKeys(failures.map((failure) => failure.key));
+            message.error(
+              t('rbac.BulkRevokePartialFailure', { count: failures.length }),
+            );
+            setFailedRevocations(failures);
+          };
           return mutateBulkRevokeRole({
-            input: { userIds, roleId },
+            input: { userIds: targets.map((target) => target.userId), roleId },
           })
-            .then((data) => {
-              const failed = data.adminBulkRevokeRole?.failed ?? [];
-              if (failed.length > 0) {
-                message.warning(
-                  t('rbac.BulkRevokePartialFailure', {
-                    count: failed.length,
-                  }),
-                );
-                _.forEach(failed, (item) =>
-                  upsertNotification({
-                    key: `rbac-bulk-revoke-failed-${item.userId}`,
-                    open: true,
-                    duration: 0,
-                    type: 'error',
-                    message: item.message,
-                  }),
-                );
-              } else {
-                message.success(t('rbac.UserRevoked'));
-              }
+            .then(({ partialBulkRevokeRoles: { revoked, failed } }) => {
               setRevokingTargets(null);
-              setSelectedRowKeys([]);
-              handleRefresh();
+              if (!_.isEmpty(revoked)) {
+                handleRefresh();
+              }
+              if (_.isEmpty(failed)) {
+                message.success(t('rbac.UserRevoked'));
+                setSelectedRowKeys([]);
+                return;
+              }
+              failed.forEach((failure) =>
+                logger.error('Failed to revoke role', failure.message),
+              );
+              markFailures(
+                failed.map((failure) => ({
+                  key: failure.userId,
+                  userLabel: labelOf(failure.userId),
+                  message: failure.message,
+                })),
+              );
             })
             .catch((error) => {
+              // A rejected request counts every requested user as failed.
               logger.error('Failed to bulk revoke role', error);
-              message.error(error?.message || t('general.ErrorOccurred'));
               setRevokingTargets(null);
+              markFailures(
+                targets.map(({ userId, label }) => ({
+                  key: userId,
+                  userLabel: label,
+                  message: reasonMessage(error),
+                })),
+              );
             });
         }}
         onCancel={() => setRevokingTargets(null)}
+      />
+      <BAIBulkErrorModal<FailedRevocation>
+        open={!_.isEmpty(failedRevocations)}
+        alertDescription={t('rbac.BulkRevokePartialFailure', {
+          count: failedRevocations.length,
+        })}
+        columns={failureColumns}
+        dataSource={failedRevocations}
+        onRequestClose={() => setFailedRevocations([])}
       />
     </BAIFlex>
   );

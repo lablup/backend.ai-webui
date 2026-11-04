@@ -38,7 +38,7 @@ import {
   BAITextInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, { Suspense, useDeferredValue, useMemo, useRef } from 'react';
+import React, { Suspense, useDeferredValue, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
@@ -147,9 +147,8 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
       }
     `);
 
-  const schedulerOpts: Partial<ScalingGroupOpts> = useMemo(
-    () => JSON.parse(resourceGroup?.scheduler_opts || '{}'),
-    [resourceGroup?.scheduler_opts],
+  const schedulerOpts: Partial<ScalingGroupOpts> = JSON.parse(
+    resourceGroup?.scheduler_opts || '{}',
   );
 
   const INITIAL_FORM_VALUES = omitNullAndUndefinedFields({
@@ -194,10 +193,8 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
           ?.validateFields()
           .then((values: FormInputType) => {
             const input = {
-              driver: 'static',
               scheduler: values.scheduler,
               description: values.description ?? null,
-              driver_opts: '{}',
               scheduler_opts: JSON.stringify({
                 allowed_session_types: values.allowedSessionTypes,
                 ...(values.pendingTimeout && {
@@ -285,7 +282,8 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
             commitCreateResourceGroup({
               variables: {
                 name: values.name,
-                input: input,
+                // `driver` is required by the schema but unused by the manager.
+                input: { ...input, driver: 'static' },
               },
               onCompleted: ({ create_scaling_group: res }, errors) => {
                 if (errors && errors.length > 0) {

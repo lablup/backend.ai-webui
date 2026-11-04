@@ -76,7 +76,7 @@ BAIMetadataList.displayName = 'BAIMetadataList';
 
 /**
  * Astryx types `label` as `string`, but `MetadataListItem` renders it as a JSX
- * child with no attribute path, so a node works (CONVERSION-IDIOMS §3).
+ * child with no attribute path, so a node works (`component-props-extension.md`, "Widening a `string`-typed slot").
  */
 export interface BAIMetadataListItemProps extends Omit<
   MetadataListItemProps,

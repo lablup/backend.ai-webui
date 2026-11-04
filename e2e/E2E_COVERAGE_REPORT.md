@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-10-23
+> **Last Updated:** 2026-11-04
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,20 +12,20 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 375 / 525 features covered (71%)**
+**Overall (in-scope routes): 382 / 532 features covered (72%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
-| Authentication           | `/interactive-login`                             |    37    |   35    | 🔶 95%  |
+| Authentication           | `/interactive-login`                             |    39    |   37    | 🔶 95%  |
 | Change Password          | `/change-password`                               |    9     |    9    | ✅ 100% |
 | Start Page               | `/start`                                         |    8     |    6    | 🔶 75%  |
 | Dashboard                | `/dashboard`                                     |    11    |    9    | 🔶 82%  |
-| Session List             | `/session`                                       |    26    |   18    | 🔶 69%  |
+| Session List             | `/session`                                       |    27    |   19    | 🔶 70%  |
 | Session Launcher         | `/session/start`                                 |    13    |    3    | 🔶 23%  |
 | Serving                  | `/serving`                                       |    7     |    2    | 🔶 29%  |
 | Endpoint Detail          | `/serving/:serviceId`                            |    19    |    8    | 🔶 42%  |
 | Service Launcher         | `/service/start`                                 |    5     |    1    | 🔶 20%  |
-| VFolder / Data           | `/data`                                          |    51    |   38    | 🔶 75%  |
+| VFolder / Data           | `/data`                                          |    54    |   41    | 🔶 76%  |
 | Model Store              | `/model-store`                                   |    6     |    6    | ✅ 100% |
 | Admin Model Store        | `/admin-model-store`                             |    28    |   28    | ✅ 100% |
 | Storage Host             | `/storage-settings/:hostname`                    |    3     |    0    |  ❌ 0%  |
@@ -49,12 +49,12 @@
 | Plugin System            | (config-based)                                   |    12    |   12    | ✅ 100% |
 | RBAC Management          | `/rbac`                                          |    24    |   23    | 🔶 96%  |
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule`           |    33    |   32    | 🔶 97%  |
-| Deployments              | `/deployments`, `/deployments/:id`               |    23    |   20    | 🔶 87%  |
+| Deployments              | `/deployments`, `/deployments/:id`               |    25    |   22    | 🔶 88%  |
 | Admin Deployment Preset  | `/admin/deployments/deployment-presets/new`      |    5     |    5    | ✅ 100% |
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **526**  | **376** | **71%** |
+| **Total**                |                                                  | **534**  | **384** | **72%** |
 
 ---
 
@@ -110,12 +110,14 @@
 | Auth failed — missing keypair                        | ✅     | `missing keypair shows login information mismatch notification`                                                |
 | Active login session exists notification             | ✅     | `active login session exists shows session exists notification`                                                |
 | Monitor role login forbidden                         | ✅     | `monitor role user sees login forbidden notification`                                                          |
+| OpenID login failure banner (`bai_error`)            | ✅     | `User sees an OpenID login failure banner that does not come back after a reload`                              |
+| OpenID login failure — unknown error code            | ✅     | `User sees the error code in a generic banner for an unknown OpenID error`                                     |
 | Sign-in mode switch locked when apiEndpoint is set   | ✅     | `User cannot switch to API sign-in when apiEndpoint is configured`                                             |
 | Sign-in mode switch usable when apiEndpoint is empty | ✅     | `User can switch to API sign-in when apiEndpoint is empty`                                                     |
 | OAuth/SSO login flow                                 | ❌     | -                                                                                                              |
 | Session persistence                                  | ❌     | -                                                                                                              |
 
-**Coverage: 🔶 35/37 features**
+**Coverage: 🔶 37/39 features**
 
 ---
 
@@ -215,11 +217,12 @@
 | Pagination                                               | ❌     | -                                                                                                                                                    |
 | Batch terminate → TerminateSessionModal                  | ❌     | -                                                                                                                                                    |
 | Scheduling history modal → SessionSchedulingHistoryModal | ✅     | `Admin can see the scheduling history button` + 18 more tests                                                                                        |
+| Session detail audit log Action column and filter        | ✅     | `Admin can filter a session audit log by action name` (via mocked GraphQL)                                                                           |
 | Resource policy warnings                                 | 🚧     | Skipped: `superadmin to modify keypair resource policy`                                                                                              |
 | Header session monitor chip (experimental setting)       | ✅     | `User can enable the session monitor and see their unfinished session count in the header`                                                           |
 | Session monitor popover → SessionDetailDrawer            | ✅     | `User can open a watched session in the detail drawer from the session monitor popover` (via mocked GraphQL)                                         |
 
-**Coverage: 🔶 18/26 features**
+**Coverage: 🔶 19/27 features**
 
 ---
 
@@ -400,61 +403,64 @@
 **Bulk actions (Deleted):** Restore → `RestoreVFolderModal`
 **Row actions:** Share → `InviteFolderSettingModal`, Permission info → `SharedFolderPermissionInfoModal`
 
-| Feature                                                                  | Status | Test                                                                                                                                   |
-| ------------------------------------------------------------------------ | ------ | -------------------------------------------------------------------------------------------------------------------------------------- |
-| Create folder (default) → FolderCreateModal                              | ✅     | `User can create default vFolder`                                                                                                      |
-| Create folder (specific location) → FolderCreateModal                    | ✅     | `User can create a vFolder by selecting a specific location`                                                                           |
-| Create model folder → FolderCreateModal                                  | ✅     | `User can create Model vFolder`                                                                                                        |
-| Create cloneable model folder                                            | ✅     | `User can create cloneable Model vFolder`                                                                                              |
-| Create R/W folder                                                        | ✅     | `User can create Read & Write vFolder`                                                                                                 |
-| Create R/O folder                                                        | ✅     | `User can create Read Only vFolder`                                                                                                    |
-| Create auto-mount folder                                                 | ✅     | `User can create Auto Mount vFolder`                                                                                                   |
-| Delete / trash / restore / purge                                         | ✅     | `User can create, delete(move to trash), restore, delete forever`                                                                      |
-| Consecutive deletion                                                     | ✅     | `User can create and permanently delete multiple VFolders`                                                                             |
-| Share folder → InviteFolderSettingModal                                  | ✅     | `User can share vFolder` (also asserts inviter email shown in invitation modal — FR-2982)                                              |
-| Leave shared folder → SharedFolderPermissionInfoModal                    | ✅     | `Invitee can leave a shared vFolder`                                                                                                   |
-| File upload (button)                                                     | ✅     | `User can upload a single/multiple files via Upload button`                                                                            |
-| File upload (drag & drop)                                                | ✅     | `User can upload a file via drag and drop`                                                                                             |
-| File upload (duplicate handling)                                         | ✅     | `User sees duplicate confirmation` / `User can cancel duplicate`                                                                       |
-| File upload (permissions)                                                | ✅     | `User cannot upload files to read-only VFolder`                                                                                        |
-| File upload (subdirectory)                                               | ✅     | `User can upload a file to a subdirectory`                                                                                             |
-| Explorer modal (CRUD)                                                    | ✅     | `User can create folders and upload files`                                                                                             |
-| Explorer modal (read-only)                                               | ✅     | `User can view files but cannot upload to read-only`                                                                                   |
-| Explorer modal (error handling)                                          | ✅     | `User sees error message when accessing non-existent`                                                                                  |
-| Explorer modal (open/close)                                              | ✅     | `User can open and close VFolder explorer modal`                                                                                       |
-| Explorer modal (file browser)                                            | ✅     | `User can access File Browser from VFolder explorer`                                                                                   |
-| Explorer modal (file browser fallback, `defaultFileBrowserImage` unset)  | ✅     | `File Browser button falls back to an installed image when defaultFileBrowserImage is unset` (env-gated `@requires-image-filebrowser`) |
-| Explorer modal (details view)                                            | ✅     | `User can view VFolder details in the explorer`                                                                                        |
-| Explorer modal (opens despite suspending detail query, URL-param desync) | ✅     | `clicking a folder opens the explorer even when the detail query suspends inside the nuqs transition` (FR-3358 regression)             |
-| Explorer modal (side panel resets to Metadata per session)               | ✅     | `User can see the side panel start on Metadata when opening another folder after viewing the Audit Log` (FR-4005)                      |
-| File creation (Create File button)                                       | ✅     | `User can see Create File button in file explorer`                                                                                     |
-| File creation (new file)                                                 | ✅     | `User can create a new file in the file explorer`                                                                                      |
-| File creation (yaml config)                                              | ✅     | `User can create a yaml configuration file`                                                                                            |
-| File creation (empty name validation)                                    | ✅     | `User cannot create a file with empty name`                                                                                            |
-| File creation (invalid chars validation)                                 | ✅     | `User cannot create a file with invalid characters in name`                                                                            |
-| File creation (read-only disabled)                                       | 🚧     | Skipped: `User cannot create files in read-only VFolder`                                                                               |
-| Type selection: User-type default                                        | ✅     | `User can create a User-type vfolder with default selection`                                                                           |
-| Type selection: Project-type (admin)                                     | ✅     | `Admin can create a Project-type vfolder`                                                                                              |
-| Type selection: Project disabled for model mode                          | ✅     | `Project radio is disabled when usage mode is model (non-model-store project)`                                                         |
-| Type selection: Project disabled for automount                           | ✅     | `Project radio is disabled when usage mode is automount`                                                                               |
-| Type selection: Project enabled for general                              | ✅     | `Project radio is enabled when usage mode is general`                                                                                  |
-| Type selection: User-only for regular user                               | ✅     | `Regular user sees only User-type radio (no Project radio)`                                                                            |
-| Type selection: Both types for admin                                     | ✅     | `Admin sees both User-type and Project-type radios`                                                                                    |
-| Edit labels (Labels column hover action) and filter by clicking a label  | ✅     | `User can edit labels on a folder and filter the list by a label`                                                                      |
-| Bulk add labels to selected folders                                      | ✅     | `User can add labels to multiple selected folders`                                                                                     |
-| Active/Deleted tab switching                                             | ❌     | -                                                                                                                                      |
-| Usage mode filtering (general/pipeline/automount/model)                  | ❌     | -                                                                                                                                      |
-| Property filtering (name, status, location)                              | ❌     | -                                                                                                                                      |
-| Folder table sorting                                                     | ❌     | -                                                                                                                                      |
-| Pagination                                                               | ❌     | -                                                                                                                                      |
-| Storage status / quota display                                           | ❌     | -                                                                                                                                      |
-| Bulk trash → DeleteVFolderModal                                          | ❌     | -                                                                                                                                      |
-| Bulk restore → RestoreVFolderModal                                       | ❌     | -                                                                                                                                      |
-| Invitation notifications                                                 | ❌     | -                                                                                                                                      |
-| Shared folder permission → SharedFolderPermissionInfoModal               | ❌     | -                                                                                                                                      |
-| File download                                                            | ❌     | -                                                                                                                                      |
+| Feature                                                                        | Status | Test                                                                                                                                   |
+| ------------------------------------------------------------------------------ | ------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Create folder (default) → FolderCreateModal                                    | ✅     | `User can create default vFolder`                                                                                                      |
+| Create folder (specific location) → FolderCreateModal                          | ✅     | `User can create a vFolder by selecting a specific location`                                                                           |
+| Create model folder → FolderCreateModal                                        | ✅     | `User can create Model vFolder`                                                                                                        |
+| Create cloneable model folder                                                  | ✅     | `User can create cloneable Model vFolder`                                                                                              |
+| Create R/W folder                                                              | ✅     | `User can create Read & Write vFolder`                                                                                                 |
+| Create R/O folder                                                              | ✅     | `User can create Read Only vFolder`                                                                                                    |
+| Create auto-mount folder                                                       | ✅     | `User can create Auto Mount vFolder`                                                                                                   |
+| Create project folder in a general project (visibility notice + confirm modal) | ✅     | `User can create a project folder in a general project after confirming its visibility` (#10501)                                       |
+| Auto Mount offered only in the personal project                                | ✅     | `User can create an Auto Mount folder only in the personal project` (#10501)                                                           |
+| Create modal resets its form after cancel                                      | ✅     | `User can reopen the folder creation modal with an empty form after canceling`                                                         |
+| Delete / trash / restore / purge                                               | ✅     | `User can create, delete(move to trash), restore, delete forever`                                                                      |
+| Consecutive deletion                                                           | ✅     | `User can create and permanently delete multiple VFolders`                                                                             |
+| Share folder → InviteFolderSettingModal                                        | ✅     | `User can share vFolder` (also asserts inviter email shown in invitation modal — FR-2982)                                              |
+| Leave shared folder → SharedFolderPermissionInfoModal                          | ✅     | `Invitee can leave a shared vFolder`                                                                                                   |
+| File upload (button)                                                           | ✅     | `User can upload a single/multiple files via Upload button`                                                                            |
+| File upload (drag & drop)                                                      | ✅     | `User can upload a file via drag and drop`                                                                                             |
+| File upload (duplicate handling)                                               | ✅     | `User sees duplicate confirmation` / `User can cancel duplicate`                                                                       |
+| File upload (permissions)                                                      | ✅     | `User cannot upload files to read-only VFolder`                                                                                        |
+| File upload (subdirectory)                                                     | ✅     | `User can upload a file to a subdirectory`                                                                                             |
+| Explorer modal (CRUD)                                                          | ✅     | `User can create folders and upload files`                                                                                             |
+| Explorer modal (read-only)                                                     | ✅     | `User can view files but cannot upload to read-only`                                                                                   |
+| Explorer modal (error handling)                                                | ✅     | `User sees error message when accessing non-existent`                                                                                  |
+| Explorer modal (open/close)                                                    | ✅     | `User can open and close VFolder explorer modal`                                                                                       |
+| Explorer modal (file browser)                                                  | ✅     | `User can access File Browser from VFolder explorer`                                                                                   |
+| Explorer modal (file browser fallback, `defaultFileBrowserImage` unset)        | ✅     | `File Browser button falls back to an installed image when defaultFileBrowserImage is unset` (env-gated `@requires-image-filebrowser`) |
+| Explorer modal (details view)                                                  | ✅     | `User can view VFolder details in the explorer`                                                                                        |
+| Explorer modal (opens despite suspending detail query, URL-param desync)       | ✅     | `clicking a folder opens the explorer even when the detail query suspends inside the nuqs transition` (FR-3358 regression)             |
+| Explorer modal (side panel resets to Metadata per session)                     | ✅     | `User can see the side panel start on Metadata when opening another folder after viewing the Audit Log` (FR-4005)                      |
+| File creation (Create File button)                                             | ✅     | `User can see Create File button in file explorer`                                                                                     |
+| File creation (new file)                                                       | ✅     | `User can create a new file in the file explorer`                                                                                      |
+| File creation (yaml config)                                                    | ✅     | `User can create a yaml configuration file`                                                                                            |
+| File creation (empty name validation)                                          | ✅     | `User cannot create a file with empty name`                                                                                            |
+| File creation (invalid chars validation)                                       | ✅     | `User cannot create a file with invalid characters in name`                                                                            |
+| File creation (read-only disabled)                                             | 🚧     | Skipped: `User cannot create files in read-only VFolder`                                                                               |
+| Type selection: User-type default                                              | ✅     | `User can create a User-type vfolder with default selection`                                                                           |
+| Type selection: Project-type (admin)                                           | ✅     | `Admin can create a Project-type vfolder`                                                                                              |
+| Type selection: Project disabled for model mode                                | ✅     | `Project radio is disabled when usage mode is model (non-model-store project)`                                                         |
+| Type selection: Project disabled for automount                                 | ✅     | `Project radio is disabled when usage mode is automount`                                                                               |
+| Type selection: Project enabled for general                                    | ✅     | `Project radio is enabled when usage mode is general`                                                                                  |
+| Type selection: User-only for regular user                                     | ✅     | `Regular user sees only User-type radio (no Project radio)`                                                                            |
+| Type selection: Both types for admin                                           | ✅     | `Admin sees both User-type and Project-type radios`                                                                                    |
+| Edit labels (Labels column hover action) and filter by clicking a label        | ✅     | `User can edit labels on a folder and filter the list by a label`                                                                      |
+| Bulk add labels to selected folders                                            | ✅     | `User can add labels to multiple selected folders`                                                                                     |
+| Active/Deleted tab switching                                                   | ❌     | -                                                                                                                                      |
+| Usage mode filtering (general/pipeline/automount/model)                        | ❌     | -                                                                                                                                      |
+| Property filtering (name, status, location)                                    | ❌     | -                                                                                                                                      |
+| Folder table sorting                                                           | ❌     | -                                                                                                                                      |
+| Pagination                                                                     | ❌     | -                                                                                                                                      |
+| Storage status / quota display                                                 | ❌     | -                                                                                                                                      |
+| Bulk trash → DeleteVFolderModal                                                | ❌     | -                                                                                                                                      |
+| Bulk restore → RestoreVFolderModal                                             | ❌     | -                                                                                                                                      |
+| Invitation notifications                                                       | ❌     | -                                                                                                                                      |
+| Shared folder permission → SharedFolderPermissionInfoModal                     | ❌     | -                                                                                                                                      |
+| File download                                                                  | ❌     | -                                                                                                                                      |
 
-**Coverage: 🔶 36/49 features (includes 1 skipped)**
+**Coverage: 🔶 39/52 features (includes 1 skipped)**
 
 ---
 
@@ -1212,19 +1218,21 @@ External portals (LMS) open these routes with a signed `sToken` plus the app and
 
 #### List Page
 
-| Feature                                                                                   | Status | Test                                                                          |
-| ----------------------------------------------------------------------------------------- | ------ | ----------------------------------------------------------------------------- |
-| List columns, Serving/Paused/Terminated tabs with help tooltips, reload & Create controls | ✅     | `Admin can view the deployments list with expected columns and controls`      |
-| Zero Desired Replicas lists under Paused (not Serving), tab kept in URL across reload     | ✅     | `Admin can find a deployment with zero Desired Replicas under the Paused tab` |
-| Create deployment (defaults, auto-redirect) + typed-name permanent delete                 | ✅     | `Admin can create a new deployment and permanently delete it`                 |
+| Feature                                                                                         | Status | Test                                                                          |
+| ----------------------------------------------------------------------------------------------- | ------ | ----------------------------------------------------------------------------- |
+| List columns, Serving/Paused/Terminated tabs with help tooltips, reload & Create controls       | ✅     | `Admin can view the deployments list with expected columns and controls`      |
+| Zero Desired Replicas lists under Paused (not Serving), tab kept in URL across reload           | ✅     | `Admin can find a deployment with zero Desired Replicas under the Paused tab` |
+| Create deployment (defaults, auto-redirect) + typed-name permanent delete                       | ✅     | `Admin can create a new deployment and permanently delete it`                 |
+| Paused row reads `Paused · Set by user` in Lifecycle (READY status mocked, real replica counts) | ✅     | `Admin can see why a paused deployment is paused`                             |
 
-#### Admin List — Filters (`/admin/deployments`)
+#### Admin List — Filters and Status Tabs (`/admin/deployments`)
 
-| Feature                                                              | Status | Test                                             |
-| -------------------------------------------------------------------- | ------ | ------------------------------------------------ |
-| Owner filter (`createdUserId`) shows the owner email, not a UUID     | ✅     | `Admin can filter deployments by owner`          |
-| Tags-column click filters by the exact tag (`iEquals`)               | ✅     | `Admin can filter deployments by clicking a tag` |
-| Edit labels, filter by Label key / Label value, label on detail card | ✅     | `Admin can filter deployments by label`          |
+| Feature                                                                                       | Status | Test                                                                                     |
+| --------------------------------------------------------------------------------------------- | ------ | ---------------------------------------------------------------------------------------- |
+| Owner filter (`createdUserId`) shows the owner email, not a UUID                              | ✅     | `Admin can filter deployments by owner`                                                  |
+| Tags-column click filters by the exact tag (`iEquals`)                                        | ✅     | `Admin can filter deployments by clicking a tag`                                         |
+| Edit labels, filter by Label key / Label value, label on detail card                          | ✅     | `Admin can filter deployments by label`                                                  |
+| Serving / Paused / Terminated tabs (Serving default); zero Desired Replicas only under Paused | ✅     | `Admin can switch the admin deployment list between Serving, Paused and Terminated tabs` |
 
 #### Detail Page
 
@@ -1260,7 +1268,7 @@ External portals (LMS) open these routes with a signed `sToken` plus the app and
 | Replica scheduling completion (Lifecycle leaves Pending → replica scheduled)       | ❌     | Deferred — measured ~40s–20min+ on the shared cluster; out of scope for webui e2e                                        |
 | Revision rollback / promote from Revision History                                  | ❌     | -                                                                                                                        |
 
-**Coverage: 🔶 17/21 features (4 deferred to backend-surface testing or future work)**
+**Coverage: 🔶 19/23 features (4 deferred to backend-surface testing or future work)**
 
 ---
 
