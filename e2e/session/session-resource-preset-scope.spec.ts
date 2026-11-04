@@ -101,6 +101,18 @@ const openPresetList = async (page: Page) => {
   await expect(page.getByRole('listbox')).toBeVisible();
 };
 
+// Opening the list refetches it; pick only once that answer has landed.
+const openRefetchedPresetList = async (page: Page) => {
+  const refetched = page.waitForResponse(
+    (response) =>
+      operationOf(response.request().postData()) ===
+      'useSessionResourcePresetsQuery',
+  );
+  await openPresetList(page);
+  await refetched;
+  await expect(presetOptions(page)).toHaveCount(2);
+};
+
 const presetOptions = (page: Page) =>
   page.getByRole('option').filter({ hasText: PRESET_NAME });
 
@@ -117,7 +129,7 @@ const globalPresetOption = (page: Page) =>
 test.describe(
   'Session launcher - resource-group-scoped presets',
   {
-    tag: ['@regression', '@functional', '@session', '@requires-manager-v25.4'],
+    tag: ['@regression', '@functional', '@session', '@requires-manager-v26.4'],
   },
   () => {
     test.beforeEach(async ({ page, request }) => {
@@ -134,8 +146,7 @@ test.describe(
     test('User can tell a resource-group preset from a same-named global preset and select it alone', async ({
       page,
     }) => {
-      await openPresetList(page);
-      await expect(presetOptions(page)).toHaveCount(2);
+      await openRefetchedPresetList(page);
       const scopedOption = presetOptionIn(page, BASE_GROUP);
       const globalOption = globalPresetOption(page);
       await expect(scopedOption).toHaveCount(1);
@@ -167,9 +178,7 @@ test.describe(
     test('User can see a mismatch warning after switching away from the selected preset resource group', async ({
       page,
     }) => {
-      await openPresetList(page);
-      // Opening the list refetches it; pick only once the refetch has landed.
-      await expect(presetOptions(page)).toHaveCount(2);
+      await openRefetchedPresetList(page);
       await presetOptionIn(page, BASE_GROUP).click();
       await expect(presetTrigger(page)).toContainText(PRESET_NAME);
 
