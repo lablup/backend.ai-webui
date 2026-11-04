@@ -374,6 +374,7 @@ $ make bundle
 ```
 
 will generate compiled static web bundle at `./app` directory. Then you can serve the web bundle via webservers.
+It also generates `backend.ai-webui-bundle-<version>-nosourcemap.zip`, the same bundle without source maps, for deployments that must not expose them.
 
 ### Serving with nginx
 

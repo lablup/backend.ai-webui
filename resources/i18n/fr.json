@@ -2761,8 +2761,6 @@
     "DeleteResourceGroup": "Supprimer le groupe de ressources",
     "Description": "La description",
     "Domain": "Domaine",
-    "Driver": "Conducteur",
-    "DriverOptions": "Options de pilote",
     "DuplicateHandlerOverride": "Ce handler est déjà redéfini.",
     "DuplicateResourceSlot": "Cet emplacement de ressources est déjà ajouté.",
     "EditDefaultDeploymentOptions": "Modifier les options de déploiement par défaut",

@@ -2759,8 +2759,6 @@
     "DeleteResourceGroup": "Удалить ресурсную группу",
     "Description": "Описание",
     "Domain": "Домен",
-    "Driver": "Драйвер",
-    "DriverOptions": "Параметры драйвера",
     "DuplicateHandlerOverride": "Этот handler уже переопределён.",
     "DuplicateResourceSlot": "Этот слот ресурсов уже добавлен.",
     "EditDefaultDeploymentOptions": "Изменить параметры развертывания по умолчанию",

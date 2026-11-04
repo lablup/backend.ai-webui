@@ -13,7 +13,7 @@ import {
 import type {
   SessionLauncherFormValue,
   SessionResources,
-} from '../pages/SessionLauncherPage';
+} from '../pages/SessionLauncherPage/SessionLauncherPage';
 import { useSetBAINotification } from './useBAINotification';
 import {
   useCurrentProjectValue,

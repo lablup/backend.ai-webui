@@ -2759,8 +2759,6 @@
     "DeleteResourceGroup": "Padam Kumpulan Sumber",
     "Description": "Penerangan",
     "Domain": "Domain",
-    "Driver": "Pemandu",
-    "DriverOptions": "Pilihan Pemandu",
     "DuplicateHandlerOverride": "Handler ini sudah ditindih.",
     "DuplicateResourceSlot": "Slot sumber ini sudah ditambah.",
     "EditDefaultDeploymentOptions": "Edit Pilihan Penggunaan Lalai",

@@ -2763,8 +2763,6 @@
     "DeleteResourceGroup": "刪除資源組",
     "Description": "描述",
     "Domain": "域名",
-    "Driver": "司機",
-    "DriverOptions": "驅動程序選項",
     "DuplicateHandlerOverride": "該 handler 已被覆寫。",
     "DuplicateResourceSlot": "該資源槽已新增。",
     "EditDefaultDeploymentOptions": "編輯預設部署選項",

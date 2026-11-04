@@ -2761,8 +2761,6 @@
     "DeleteResourceGroup": "자원 그룹 삭제",
     "Description": "설명",
     "Domain": "도메인",
-    "Driver": "드라이버",
-    "DriverOptions": "드라이버 옵션",
     "DuplicateHandlerOverride": "이미 재정의된 handler입니다.",
     "DuplicateResourceSlot": "이미 추가된 리소스 슬롯입니다.",
     "EditDefaultDeploymentOptions": "기본 배포 옵션 수정",
