@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-11-04T04:54:34.847Z",
+  "generatedAt": "2026-11-04T05:31:15.617Z",
   "languages": [
     "en",
     "ja",
@@ -11,72 +11,6 @@
   ],
   "langs": {
     "en": {
-      "totals": {
-        "pages": 1,
-        "changes": 3,
-        "added": 0,
-        "modified": 2,
-        "removed": 1,
-        "images": 0,
-        "newPages": 0,
-        "deletedPages": 0
-      },
-      "pages": [
-        {
-          "slug": "admin_menu",
-          "title": "Admin Features",
-          "status": "modified",
-          "url": "next/en/admin_menu.html",
-          "sourcePath": "packages/backend.ai-webui-docs/src/en/admin_menu/admin_menu.md",
-          "counts": {
-            "added": 0,
-            "modified": 2,
-            "removed": 1,
-            "images": 0,
-            "total": 3
-          },
-          "fingerprints": [
-            "278d958101f0",
-            "4c1efe77812e",
-            "85d417f476d8"
-          ]
-        }
-      ]
-    },
-    "ja": {
-      "totals": {
-        "pages": 1,
-        "changes": 3,
-        "added": 0,
-        "modified": 2,
-        "removed": 1,
-        "images": 0,
-        "newPages": 0,
-        "deletedPages": 0
-      },
-      "pages": [
-        {
-          "slug": "admin_menu",
-          "title": "管理者機能",
-          "status": "modified",
-          "url": "next/ja/admin_menu.html",
-          "sourcePath": "packages/backend.ai-webui-docs/src/ja/admin_menu/admin_menu.md",
-          "counts": {
-            "added": 0,
-            "modified": 2,
-            "removed": 1,
-            "images": 0,
-            "total": 3
-          },
-          "fingerprints": [
-            "05cb8907f98c",
-            "d0ac760b61f6",
-            "5955a6120693"
-          ]
-        }
-      ]
-    },
-    "ko": {
       "totals": {
         "pages": 1,
         "changes": 4,
@@ -90,10 +24,10 @@
       "pages": [
         {
           "slug": "admin_menu",
-          "title": "관리자 기능",
+          "title": "Admin Features",
           "status": "modified",
-          "url": "next/ko/admin_menu.html",
-          "sourcePath": "packages/backend.ai-webui-docs/src/ko/admin_menu/admin_menu.md",
+          "url": "next/en/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/admin_menu/admin_menu.md",
           "counts": {
             "added": 1,
             "modified": 1,
@@ -102,7 +36,76 @@
             "total": 4
           },
           "fingerprints": [
-            "87859dc37b57",
+            "53fba4e4cd8a",
+            "5bd701f7ab3d",
+            "4c1efe77812e",
+            "85d417f476d8"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 1,
+        "changes": 4,
+        "added": 1,
+        "modified": 1,
+        "removed": 2,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "管理者機能",
+          "status": "modified",
+          "url": "next/ja/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 1,
+            "modified": 1,
+            "removed": 2,
+            "images": 0,
+            "total": 4
+          },
+          "fingerprints": [
+            "5ff39b547e7a",
+            "81c934b791b9",
+            "d0ac760b61f6",
+            "5955a6120693"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 1,
+        "changes": 5,
+        "added": 2,
+        "modified": 0,
+        "removed": 3,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "관리자 기능",
+          "status": "modified",
+          "url": "next/ko/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 2,
+            "modified": 0,
+            "removed": 3,
+            "images": 0,
+            "total": 5
+          },
+          "fingerprints": [
+            "806982b58efe",
+            "1268b253bcad",
             "53cfd01badc7",
             "8a59cb43a320",
             "51a2ab4ae153"
@@ -113,10 +116,10 @@
     "th": {
       "totals": {
         "pages": 1,
-        "changes": 3,
-        "added": 0,
-        "modified": 2,
-        "removed": 1,
+        "changes": 4,
+        "added": 1,
+        "modified": 1,
+        "removed": 2,
         "images": 0,
         "newPages": 0,
         "deletedPages": 0
@@ -129,14 +132,15 @@
           "url": "next/th/admin_menu.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/th/admin_menu/admin_menu.md",
           "counts": {
-            "added": 0,
-            "modified": 2,
-            "removed": 1,
+            "added": 1,
+            "modified": 1,
+            "removed": 2,
             "images": 0,
-            "total": 3
+            "total": 4
           },
           "fingerprints": [
-            "cf435fa2c20a",
+            "b5aecc559580",
+            "1af44cd360c0",
             "a816ad7b9574",
             "36ec9225cc8c"
           ]
