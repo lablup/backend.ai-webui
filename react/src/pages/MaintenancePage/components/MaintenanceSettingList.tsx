@@ -2,9 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import SettingList, { SettingGroup } from '../../../components/SettingList';
 import { useSuspendedBackendaiClient } from '../../../hooks';
 import { useSetBAINotification } from '../../../hooks/useBAINotification';
-import SettingList, { SettingGroup } from '../../../components/SettingList';
 import { Button } from '@lablup/ui-common/Button';
 import { Redo2 } from 'lucide-react';
 import { useState } from 'react';
