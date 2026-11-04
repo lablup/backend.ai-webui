@@ -3219,7 +3219,7 @@
       "BatchJobTimeoutDurationDesc": "Tetapkan masa pelaksanaan maksimum untuk kerja kelompok. \nSesi akan ditamatkan secara automatik jika melebihi masa yang ditetapkan.",
       "BatchMode": "Kumpulan",
       "BatchModeConfig": "Konfigurasi mod kelompok",
-      "BatchModeDesc": "Anda boleh menjalankan kod anda dengan berbilang nod",
+      "BatchModeDesc": "Menjalankan arahan yang anda masukkan untuk fail yang dipratentukan atau tugasan berjadual, serta-merta atau pada tarikh dan masa yang ditetapkan",
       "BootstrapScriptDetail": "Skrip Bootstrap",
       "CPU": "CPU",
       "ChooseEnvironment": "Pilih Persekitaran",

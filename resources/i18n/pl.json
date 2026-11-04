@@ -3222,7 +3222,7 @@
       "BatchJobTimeoutDurationDesc": "Ustaw maksymalny czas wykonywania zadań wsadowych. \nSesja zakończy się automatycznie po przekroczeniu określonego czasu.",
       "BatchMode": "Partia",
       "BatchModeConfig": "Konfiguracja trybu wsadowego",
-      "BatchModeDesc": "Możesz uruchomić swój kod z wieloma węzłami i klastrami, aby skalować swój pomysł",
+      "BatchModeDesc": "Uruchamia wprowadzone polecenie dla wstępnie zdefiniowanych plików lub zaplanowanych zadań, od razu lub w ustalonym dniu i godzinie",
       "BootstrapScriptDetail": "Skrypt inicjalizacyjny",
       "CPU": "procesor",
       "ChooseEnvironment": "Wybierz środowisko",

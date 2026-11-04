@@ -3221,7 +3221,7 @@
       "BatchJobTimeoutDurationDesc": "Legen Sie die maximale Ausführungszeit für Batch-Jobs fest. \nDie Sitzung wird automatisch beendet, wenn die angegebene Zeit überschritten wird.",
       "BatchMode": "Stapel",
       "BatchModeConfig": "Batch-Modus Konfiguration",
-      "BatchModeDesc": "Sie können Ihren Code mit mehreren Knoten und Clustern ausführen, um Ihre Idee zu skalieren",
+      "BatchModeDesc": "Führt den eingegebenen Befehl für vordefinierte Dateien oder geplante Aufgaben aus, sofort oder zu einem festgelegten Datum und einer festgelegten Uhrzeit",
       "BootstrapScriptDetail": "Bootstrap-Skript",
       "CPU": "Zentralprozessor",
       "ChooseEnvironment": "Wählen Sie Umgebung",

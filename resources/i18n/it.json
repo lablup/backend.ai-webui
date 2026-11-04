@@ -3219,7 +3219,7 @@
       "BatchJobTimeoutDurationDesc": "Imposta il tempo di esecuzione massimo per i lavori batch. \nLa sessione terminerà automaticamente se viene superato il tempo specificato.",
       "BatchMode": "Lotto",
       "BatchModeConfig": "Modalità batch Configurazione",
-      "BatchModeDesc": "È possibile eseguire il codice con più nodi e cluster per scalare la propria idea.",
+      "BatchModeDesc": "Esegue il comando inserito per file predefiniti o attività pianificate, subito o alla data e ora impostate.",
       "BootstrapScriptDetail": "Script di bootstrap",
       "CPU": "processore",
       "ChooseEnvironment": "Scegli l'ambiente",

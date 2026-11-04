@@ -3221,7 +3221,7 @@
       "BatchJobTimeoutDurationDesc": "バッチジョブの最大実行時間を設定します。\n指定された時間を超えると、セッションは自動的に終了します。",
       "BatchMode": "バッチ",
       "BatchModeConfig": "バッチモード設定",
-      "BatchModeDesc": "複数のノードやクラスタでコードを実行し、アイデアをスケールさせることができます。",
+      "BatchModeDesc": "準備済みのファイルや予約タスクに対して、入力したコマンドをすぐに、または指定した日時に実行します。",
       "BootstrapScriptDetail": "ブートストラップスクリプト",
       "CPU": "CPU",
       "ChooseEnvironment": "環境を選択",
