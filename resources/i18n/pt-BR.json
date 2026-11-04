@@ -587,6 +587,42 @@
     "Title": "Entrar na Backend.AI WebUI Agent CLI",
     "VerificationCode": "Código de verificação"
   },
+  "clientIpMasking": {
+    "ClientIpMasking": "Mascaramento de IP do cliente",
+    "CreatePolicy": "Criar política",
+    "DefaultPrefix": "/{{prefix}} (padrão)",
+    "DeleteDefaultPolicyDescription": "Os destinos sem política própria armazenarão os IPs do cliente como observados.",
+    "DeletePolicy": "Excluir esta política de mascaramento?",
+    "DeletePolicyDescription": "{{target}} passará a seguir a política padrão.",
+    "Description": "Defina como os endereços IP do cliente são mascarados antes de serem armazenados. Um destino sem política própria segue a política padrão; se não houver política padrão, os endereços são armazenados como observados.",
+    "EditPolicy": "Editar política",
+    "IPv4Prefix": "Comprimento do prefixo IPv4",
+    "IPv6Prefix": "Comprimento do prefixo IPv6",
+    "Mode": "Modo de mascaramento",
+    "ModeRequired": "Selecione um modo de mascaramento.",
+    "OnePolicyPerTarget": "Só pode existir uma política por destino.",
+    "PrefixExtra": "Número de bits iniciais a manter (0–{{max}}). Deixe vazio para usar {{defaultPrefix}}.",
+    "PrefixRange": "Digite um número entre 0 e {{max}}.",
+    "SuccessfullyDeleted": "Política de mascaramento de IP do cliente excluída.",
+    "SuccessfullySaved": "Política de mascaramento de IP do cliente salva.",
+    "Target": "Destino da política",
+    "TargetRequired": "Selecione um destino da política.",
+    "modeDescriptions": {
+      "DROP": "Nenhum IP do cliente é registrado.",
+      "NONE": "Os IPs do cliente são armazenados como observados.",
+      "TRUNCATE": "Os bits de host são zerados, mantendo apenas o prefixo de rede."
+    },
+    "modes": {
+      "DROP": "Descartar",
+      "NONE": "Nenhum",
+      "TRUNCATE": "Truncar"
+    },
+    "targets": {
+      "AUDIT_LOGS": "Logs de auditoria",
+      "DEFAULT": "Padrão",
+      "LOGIN_HISTORY": "Histórico de login"
+    }
+  },
   "credential": {
     "2FAEnabled": "2FA ativada",
     "AccessKey": "Chave de acesso",
@@ -2818,8 +2854,6 @@
     "DeleteResourceGroup": "Excluir Grupo de Recursos",
     "Description": "Descrição",
     "Domain": "Domínio",
-    "Driver": "Motorista",
-    "DriverOptions": "Opções do driver",
     "DuplicateHandlerOverride": "Este handler já foi substituído.",
     "DuplicateResourceSlot": "Este slot de recursos já foi adicionado.",
     "EditDefaultDeploymentOptions": "Editar opções de implantação padrão",

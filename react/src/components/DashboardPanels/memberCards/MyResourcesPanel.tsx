@@ -27,7 +27,7 @@ export const MyResourcesInResourceGroup: React.FC<{
   };
   const deferredVariables = useDeferredValue(variables);
   // Fields a plain project member can read; `effectiveResourceAllocationV2`
-  // needs session READ on the project, which members lack (ADR 0019).
+  // needs session READ on the project, which members lack (ADR 0026).
   const data = useLazyLoadQuery<MyResourcesPanelQuery>(
     graphql`
       query MyResourcesPanelQuery(

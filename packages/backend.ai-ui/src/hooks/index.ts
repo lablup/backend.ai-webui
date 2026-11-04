@@ -145,8 +145,7 @@ export type {
 // ── ahooks replacements ────────────────────────────────────────────────────
 // BUI-native ports of the `ahooks` hooks this repo used, so the dependency
 // could be dropped. Each module documents which ahooks hook it mirrors and
-// which parts of the option surface were kept. See
-// `.specs/FR-3482-astryx-migration/issues/ahooks-removal.md`.
+// which parts of the option surface were kept. See ADR 0019.
 export { default as useControllableValue } from './useControllableValue';
 export type {
   UseControllableValueOptions,

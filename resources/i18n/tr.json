@@ -587,6 +587,42 @@
     "Title": "Backend.AI WebUI Agent CLI'de oturum açın",
     "VerificationCode": "Doğrulama kodu"
   },
+  "clientIpMasking": {
+    "ClientIpMasking": "İstemci IP Maskeleme",
+    "CreatePolicy": "Politika Oluştur",
+    "DefaultPrefix": "/{{prefix}} (varsayılan)",
+    "DeleteDefaultPolicyDescription": "Kendi politikası olmayan hedefler istemci IP adreslerini gözlemlendiği gibi saklar.",
+    "DeletePolicy": "Bu maskeleme politikası silinsin mi?",
+    "DeletePolicyDescription": "{{target}} varsayılan politikaya geri döner.",
+    "Description": "İstemci IP adreslerinin saklanmadan önce nasıl maskeleneceğini ayarlayın. Kendi politikası olmayan bir hedef varsayılan politikayı izler; varsayılan politika yoksa adresler gözlemlendiği gibi saklanır.",
+    "EditPolicy": "Politikayı Düzenle",
+    "IPv4Prefix": "IPv4 Önek Uzunluğu",
+    "IPv6Prefix": "IPv6 Önek Uzunluğu",
+    "Mode": "Maskeleme Modu",
+    "ModeRequired": "Bir maskeleme modu seçin.",
+    "OnePolicyPerTarget": "Her hedef için yalnızca bir politika olabilir.",
+    "PrefixExtra": "Korunacak baştaki bit sayısı (0–{{max}}). {{defaultPrefix}} kullanmak için boş bırakın.",
+    "PrefixRange": "0 ile {{max}} arasında bir sayı girin.",
+    "SuccessfullyDeleted": "İstemci IP maskeleme politikası silindi.",
+    "SuccessfullySaved": "İstemci IP maskeleme politikası kaydedildi.",
+    "Target": "Politika Hedefi",
+    "TargetRequired": "Bir politika hedefi seçin.",
+    "modeDescriptions": {
+      "DROP": "İstemci IP adresi kaydedilmez.",
+      "NONE": "İstemci IP adresleri gözlemlendiği gibi saklanır.",
+      "TRUNCATE": "Ana bilgisayar bitleri sıfırlanır, yalnızca ağ öneki korunur."
+    },
+    "modes": {
+      "DROP": "Kaydetme",
+      "NONE": "Yok",
+      "TRUNCATE": "Kırp"
+    },
+    "targets": {
+      "AUDIT_LOGS": "Denetim Günlükleri",
+      "DEFAULT": "Varsayılan",
+      "LOGIN_HISTORY": "Oturum Açma Geçmişi"
+    }
+  },
   "credential": {
     "2FAEnabled": "2FA Etkin",
     "AccessKey": "Erişim Anahtarı",
@@ -2818,8 +2854,6 @@
     "DeleteResourceGroup": "Kaynak Grubunu Sil",
     "Description": "Açıklama",
     "Domain": "Etki Alanı",
-    "Driver": "sürücü",
-    "DriverOptions": "Sürücü Seçenekleri",
     "DuplicateHandlerOverride": "Bu handler zaten geçersiz kılındı.",
     "DuplicateResourceSlot": "Bu kaynak yuvası zaten eklendi.",
     "EditDefaultDeploymentOptions": "Varsayılan Dağıtım Seçeneklerini Düzenle",

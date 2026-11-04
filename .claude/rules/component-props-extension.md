@@ -167,6 +167,32 @@ benefit. When a wrapper's props interface `Omit<>`s one of these names, target
 the **v6** name, not the v5 one. New props added to an antd-shaped wrapper
 should also follow the frozen v6 spelling rather than inventing a third one.
 
+## Widening a `string`-typed slot to `ReactNode`
+
+`ui-common component <Name>` often prints a slot as `label | string`. That is
+usually a type-level limit, not a structural one: many Astryx components render
+the prop straight through as a JSX child, so a node renders correctly. Check
+the render before writing that a capability is lost.
+
+1. **Find where the prop lands.** Read the component source in
+   `react/node_modules/@astryxdesign/core/src/`.
+
+   | Where the prop goes | ReactNode? |
+   |---|---|
+   | Only `{prop}` as a JSX child | Safe. |
+   | Also into an attribute (`aria-label`, `title`, `alt`, `placeholder`) on a condition | Safe only on the branch that renders it as a child. Assert that the call site never takes the other branch (e.g. `SegmentedControlItem` uses `aria-label={isLabelHidden ? label : undefined}`). |
+   | Into an attribute unconditionally | Unsafe: React stringifies it. |
+
+2. **Widen it once, in a BAI wrapper**, not with a cast at each call site:
+   `interface BAIFooProps extends Omit<FooProps, 'label'> { label?: ReactNode }`,
+   cast once inside, and give the wrapper header the one-line reason.
+   (`BAIMetadataListItem` is the example.)
+3. **Verify the accessible name.** The name now comes from the rendered content,
+   so anything added joins it. Check it with a role query
+   (`getByRole('radio', { name: '…' })`).
+4. **Grep for string use upstream.** A `string` label may feed `localeCompare`
+   or a React key; check before widening.
+
 ## Verification
 
 - The wrapper's props interface names a base that actually exists in the repo:
