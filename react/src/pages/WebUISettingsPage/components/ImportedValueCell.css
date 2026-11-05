@@ -1,0 +1,13 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+*/
+@layer components {
+  .bai-imported-value-cell .bai-imported-value-cell__edit {
+    opacity: 0;
+  }
+  tr:hover .bai-imported-value-cell .bai-imported-value-cell__edit,
+  .bai-imported-value-cell:focus-within .bai-imported-value-cell__edit {
+    opacity: 1;
+  }
+}
