@@ -20,7 +20,7 @@ const RESOURCES_KEYS = new Set([
   'storageWarningThreshold',
 ]);
 
-/** Keys the file named differently, or kept in another table (ADR 0025, section 1). */
+/** Keys the file named differently, or kept in another table (ADR 0026, section 1). */
 const RENAMED_TOML_PATHS: Readonly<Record<string, ReadonlyArray<string>>> = {
   menuBlocklist: ['menu.blocklist'],
   menuInactivelist: ['menu.inactivelist'],
