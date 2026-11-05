@@ -4464,7 +4464,7 @@
     "ImportColumnScope": "Lưu vào",
     "ImportColumnSetting": "Cài đặt",
     "ImportConfigToml": "Nhập cài đặt",
-    "ImportConfigTomlDesc": "Dán một config.toml có sẵn hoặc nhập từ tệp. Các giá trị Cài đặt hệ thống trong đó được tải vào trang này; không có gì được lưu cho đến khi bạn nhấn Áp dụng trên trang.",
+    "ImportConfigTomlDesc": "Nhập một config.toml có sẵn để thay đổi cài đặt, hoặc xuất cài đặt hiện tại.",
     "ImportFileReadError": "Không thể đọc tệp.",
     "ImportFileTooLarge": "Tệp lớn hơn 1 MB.",
     "ImportFromFile": "Nhập config.toml",

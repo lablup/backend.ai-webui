@@ -4462,7 +4462,7 @@
     "ImportColumnScope": "Salvo em",
     "ImportColumnSetting": "Configuração",
     "ImportConfigToml": "Importar configurações",
-    "ImportConfigTomlDesc": "Cole um config.toml existente ou importe-o de um arquivo. Os valores de Configurações do sistema dele são carregados nesta página; nada é salvo até você pressionar Aplicar na página.",
+    "ImportConfigTomlDesc": "Importe um config.toml existente para alterar as configurações ou exporte as configurações atuais.",
     "ImportFileReadError": "Não foi possível ler o arquivo.",
     "ImportFileTooLarge": "O arquivo é maior que 1 MB.",
     "ImportFromFile": "Importar config.toml",

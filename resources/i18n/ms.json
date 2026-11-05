@@ -4462,7 +4462,7 @@
     "ImportColumnScope": "Disimpan ke",
     "ImportColumnSetting": "Tetapan",
     "ImportConfigToml": "Import tetapan",
-    "ImportConfigTomlDesc": "Tampal config.toml sedia ada, atau importnya daripada fail. Nilai Tetapan Sistemnya dimuatkan ke halaman ini; tiada apa disimpan sehingga anda menekan Guna pada halaman.",
+    "ImportConfigTomlDesc": "Import config.toml sedia ada untuk menukar tetapan, atau eksport tetapan semasa.",
     "ImportFileReadError": "Fail tidak dapat dibaca.",
     "ImportFileTooLarge": "Fail lebih besar daripada 1 MB.",
     "ImportFromFile": "Import config.toml",

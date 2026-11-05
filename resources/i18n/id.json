@@ -4466,7 +4466,7 @@
     "ImportColumnScope": "Disimpan ke",
     "ImportColumnSetting": "Pengaturan",
     "ImportConfigToml": "Impor pengaturan",
-    "ImportConfigTomlDesc": "Tempel config.toml yang ada, atau impor dari file. Nilai Pengaturan Sistemnya dimuat ke halaman ini; tidak ada yang disimpan sampai Anda menekan Terapkan di halaman.",
+    "ImportConfigTomlDesc": "Impor config.toml yang ada untuk mengubah pengaturan, atau ekspor pengaturan saat ini.",
     "ImportFileReadError": "File tidak dapat dibaca.",
     "ImportFileTooLarge": "File lebih besar dari 1 MB.",
     "ImportFromFile": "Impor config.toml",

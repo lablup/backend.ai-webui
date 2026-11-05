@@ -4462,7 +4462,7 @@
     "ImportColumnScope": "Kaydedildiği yer",
     "ImportColumnSetting": "Ayar",
     "ImportConfigToml": "Ayarları içe aktar",
-    "ImportConfigTomlDesc": "Mevcut bir config.toml yapıştırın veya bir dosyadan içe aktarın. Sistem Ayarları değerleri bu sayfaya yüklenir; sayfada Uygula’ya basana kadar hiçbir şey kaydedilmez.",
+    "ImportConfigTomlDesc": "Ayarları değiştirmek için mevcut bir config.toml dosyasını içe aktarın veya geçerli ayarları dışa aktarın.",
     "ImportFileReadError": "Dosya okunamadı.",
     "ImportFileTooLarge": "Dosya 1 MB’tan büyük.",
     "ImportFromFile": "config.toml içe aktar",

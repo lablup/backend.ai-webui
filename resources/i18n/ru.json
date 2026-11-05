@@ -4462,7 +4462,7 @@
     "ImportColumnScope": "Сохраняется в",
     "ImportColumnSetting": "Настройка",
     "ImportConfigToml": "Импорт настроек",
-    "ImportConfigTomlDesc": "Вставьте существующий config.toml или импортируйте его из файла. Его значения системных настроек загрузятся на эту страницу; ничего не сохранится, пока вы не нажмёте «Применить» на странице.",
+    "ImportConfigTomlDesc": "Импортируйте существующий config.toml, чтобы изменить настройки, или экспортируйте текущие настройки.",
     "ImportFileReadError": "Не удалось прочитать файл.",
     "ImportFileTooLarge": "Файл больше 1 МБ.",
     "ImportFromFile": "Импорт config.toml",

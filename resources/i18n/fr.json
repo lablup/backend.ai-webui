@@ -4465,7 +4465,7 @@
     "ImportColumnScope": "Enregistré dans",
     "ImportColumnSetting": "Paramètre",
     "ImportConfigToml": "Importer les paramètres",
-    "ImportConfigTomlDesc": "Collez un config.toml existant ou importez-le depuis un fichier. Ses valeurs de Paramètres système sont chargées dans cette page ; rien n’est enregistré tant que vous n’appuyez pas sur Appliquer dans la page.",
+    "ImportConfigTomlDesc": "Importez un config.toml existant pour modifier les paramètres, ou exportez les paramètres actuels.",
     "ImportFileReadError": "Impossible de lire le fichier.",
     "ImportFileTooLarge": "Le fichier dépasse 1 Mo.",
     "ImportFromFile": "Importer config.toml",

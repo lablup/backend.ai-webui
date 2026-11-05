@@ -4464,7 +4464,7 @@
     "ImportColumnScope": "Хадгалах газар",
     "ImportColumnSetting": "Тохиргоо",
     "ImportConfigToml": "Тохиргоо импортлох",
-    "ImportConfigTomlDesc": "Одоо байгаа config.toml-г буулгах эсвэл файлаас импортлоно уу. Түүний системийн тохиргооны утгууд энэ хуудсанд ачаалагдах ба хуудсан дээрх Хэрэглэх товчийг дарах хүртэл хадгалагдахгүй.",
+    "ImportConfigTomlDesc": "Одоо байгаа config.toml-г импортлон тохиргоог өөрчлөх эсвэл одоогийн тохиргоог экспортлох боломжтой.",
     "ImportFileReadError": "Файлыг уншиж чадсангүй.",
     "ImportFileTooLarge": "Файл 1 MB-аас том байна.",
     "ImportFromFile": "config.toml импортлох",

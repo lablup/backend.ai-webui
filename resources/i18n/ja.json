@@ -4464,7 +4464,7 @@
     "ImportColumnScope": "保存先",
     "ImportColumnSetting": "設定",
     "ImportConfigToml": "設定をインポート",
-    "ImportConfigTomlDesc": "既存の config.toml を貼り付けるか、ファイルからインポートしてください。そのシステム設定の値がこのページに読み込まれ、ページの「適用」を押すまで保存されません。",
+    "ImportConfigTomlDesc": "既存の config.toml をインポートして設定を変更するか、現在の設定をエクスポートできます。",
     "ImportFileReadError": "ファイルを読み込めませんでした。",
     "ImportFileTooLarge": "ファイルが 1 MB を超えています。",
     "ImportFromFile": "config.toml をインポート",
