@@ -4465,7 +4465,7 @@
     "ImportColumnScope": "저장 위치",
     "ImportColumnSetting": "설정",
     "ImportConfigToml": "설정 가져오기",
-    "ImportConfigTomlDesc": "기존 config.toml을 붙여 넣거나 파일에서 가져오세요. 그 안의 시스템 설정 값이 이 페이지에 불러와지며, 페이지의 적용을 눌러야 저장됩니다.",
+    "ImportConfigTomlDesc": "기존 설정된 config.toml 파일을 가져와 설정을 변경하거나, 현재 설정을 내보낼 수 있습니다.",
     "ImportFileReadError": "파일을 읽을 수 없습니다.",
     "ImportFileTooLarge": "파일이 1MB보다 큽니다.",
     "ImportFromFile": "config.toml 가져오기",

@@ -4464,7 +4464,7 @@
     "ImportColumnScope": "保存到",
     "ImportColumnSetting": "设置",
     "ImportConfigToml": "导入设置",
-    "ImportConfigTomlDesc": "粘贴现有的 config.toml，或从文件导入。其中的系统设置值会加载到此页面；在页面上按“应用”之前不会保存。",
+    "ImportConfigTomlDesc": "导入现有的 config.toml 以更改设置，或导出当前设置。",
     "ImportFileReadError": "无法读取文件。",
     "ImportFileTooLarge": "文件大于 1 MB。",
     "ImportFromFile": "导入 config.toml",

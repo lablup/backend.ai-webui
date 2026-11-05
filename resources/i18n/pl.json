@@ -4465,7 +4465,7 @@
     "ImportColumnScope": "Zapisywane w",
     "ImportColumnSetting": "Ustawienie",
     "ImportConfigToml": "Importuj ustawienia",
-    "ImportConfigTomlDesc": "Wklej istniejący plik config.toml lub zaimportuj go z pliku. Jego wartości Ustawień systemu zostaną wczytane na tę stronę; nic nie zostanie zapisane, dopóki nie naciśniesz Zastosuj na stronie.",
+    "ImportConfigTomlDesc": "Zaimportuj istniejący plik config.toml, aby zmienić ustawienia, lub wyeksportuj bieżące ustawienia.",
     "ImportFileReadError": "Nie można odczytać pliku.",
     "ImportFileTooLarge": "Plik jest większy niż 1 MB.",
     "ImportFromFile": "Importuj config.toml",

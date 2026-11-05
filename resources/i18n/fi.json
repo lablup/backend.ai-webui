@@ -4463,7 +4463,7 @@
     "ImportColumnScope": "Tallennetaan",
     "ImportColumnSetting": "Asetus",
     "ImportConfigToml": "Tuo asetukset",
-    "ImportConfigTomlDesc": "Liitä olemassa oleva config.toml tai tuo se tiedostosta. Sen järjestelmäasetusten arvot ladataan tälle sivulle; mitään ei tallenneta ennen kuin painat sivulla Käytä.",
+    "ImportConfigTomlDesc": "Tuo olemassa oleva config.toml muuttaaksesi asetuksia tai vie nykyiset asetukset.",
     "ImportFileReadError": "Tiedostoa ei voitu lukea.",
     "ImportFileTooLarge": "Tiedosto on suurempi kuin 1 Mt.",
     "ImportFromFile": "Tuo config.toml",
