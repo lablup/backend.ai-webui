@@ -13,8 +13,10 @@ import {
   type SkippedKey,
   type SkipReason,
 } from '../helper/importConfigToml';
+import ImportedValueCell from './ImportedValueCell';
 import { useWebUISettingLabels } from './WebUISettingLabels';
 import { Button } from '@lablup/ui-common/Button';
+import { Collapsible } from '@lablup/ui-common/Collapsible';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAIAlert,
@@ -39,9 +41,6 @@ export interface ImportConfigTomlModalProps {
   onCancel: () => void;
 }
 
-const formatValue = (value: unknown): string =>
-  Array.isArray(value) ? value.join(', ') : String(value ?? '');
-
 const ImportConfigTomlModal: React.FC<ImportConfigTomlModalProps> = ({
   open,
   currentValueOf,
@@ -54,10 +53,16 @@ const ImportConfigTomlModal: React.FC<ImportConfigTomlModalProps> = ({
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const [text, setText] = useState('');
+  // Values edited in the preview, by setting key; a new file clears them.
+  const [edits, setEdits] = useState<Record<string, unknown>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const result = text.trim() ? importConfigToml(text) : undefined;
-  const imported = result?.ok ? result.imported : [];
+  const imported = (result?.ok ? result.imported : []).map((entry) =>
+    entry.definition.key in edits
+      ? { ...entry, value: edits[entry.definition.key] }
+      : entry,
+  );
   const skipped = result?.ok ? result.skipped : [];
 
   const reasonLabel: Record<SkipReason, string> = {
@@ -68,8 +73,13 @@ const ImportConfigTomlModal: React.FC<ImportConfigTomlModalProps> = ({
     duplicate: t('webuiSettings.ImportReasonDuplicate'),
   };
 
+  const replaceText = (next: string) => {
+    setText(next);
+    setEdits({});
+  };
+
   const close = () => {
-    setText('');
+    replaceText('');
     onCancel();
   };
 
@@ -80,7 +90,7 @@ const ImportConfigTomlModal: React.FC<ImportConfigTomlModalProps> = ({
       return;
     }
     try {
-      setText(await file.text());
+      replaceText(await file.text());
     } catch (error) {
       logger.error('Failed to read the config.toml file', error);
       message.error(t('webuiSettings.ImportFileReadError'));
@@ -89,7 +99,7 @@ const ImportConfigTomlModal: React.FC<ImportConfigTomlModalProps> = ({
 
   const load = () => {
     onLoad(imported);
-    setText('');
+    replaceText('');
   };
 
   return (
@@ -156,10 +166,8 @@ const ImportConfigTomlModal: React.FC<ImportConfigTomlModalProps> = ({
         />
         <BAICodeEditor
           language="toml"
-          editable
           height={240}
           value={text}
-          onChange={setText}
           options={{ ariaLabel: t('webuiSettings.ImportPasteLabel') }}
         />
         {result && !result.ok && (
@@ -179,10 +187,15 @@ const ImportConfigTomlModal: React.FC<ImportConfigTomlModalProps> = ({
           />
         )}
         {imported.length > 0 && (
-          <BAIFlex direction="column" align="stretch" gap="xs">
-            <Text weight="semibold">
-              {t('webuiSettings.ImportPreview', { count: imported.length })}
-            </Text>
+          <Collapsible
+            defaultIsOpen={false}
+            chevronPosition="start"
+            trigger={
+              <Text weight="semibold">
+                {t('webuiSettings.ImportPreview', { count: imported.length })}
+              </Text>
+            }
+          >
             <BAITable<ImportedSetting>
               data-testid="import-config-toml-preview"
               size="small"
@@ -198,33 +211,44 @@ const ImportConfigTomlModal: React.FC<ImportConfigTomlModalProps> = ({
                     entry.definition.key,
                 },
                 {
-                  key: 'imported',
-                  title: t('webuiSettings.ImportColumnImported'),
-                  render: (_v, entry) => formatValue(entry.value),
+                  key: 'path',
+                  title: t('webuiSettings.ImportColumnSettingKey'),
+                  dataIndex: 'path',
                 },
                 {
-                  key: 'current',
-                  title: t('webuiSettings.ImportColumnCurrent'),
-                  render: (_v, entry) =>
-                    formatValue(currentValueOf(entry.definition)),
-                },
-                {
-                  key: 'scope',
-                  title: t('webuiSettings.ImportColumnScope'),
-                  render: (_v, entry) =>
-                    entry.definition.scope === 'public'
-                      ? t('webuiSettings.ImportScopePublic')
-                      : t('webuiSettings.ImportScopeDomain'),
+                  key: 'value',
+                  title: t('webuiSettings.ImportColumnValue'),
+                  render: (_v, entry) => (
+                    <ImportedValueCell
+                      definition={entry.definition}
+                      label={
+                        labels.items[entry.definition.key]?.title ??
+                        entry.definition.key
+                      }
+                      value={entry.value}
+                      onChange={(value) =>
+                        setEdits((prev) => ({
+                          ...prev,
+                          [entry.definition.key]: value,
+                        }))
+                      }
+                    />
+                  ),
                 },
               ]}
             />
-          </BAIFlex>
+          </Collapsible>
         )}
         {skipped.length > 0 && (
-          <BAIFlex direction="column" align="stretch" gap="xs">
-            <Text weight="semibold">
-              {t('webuiSettings.ImportSkipped', { count: skipped.length })}
-            </Text>
+          <Collapsible
+            defaultIsOpen={false}
+            chevronPosition="start"
+            trigger={
+              <Text weight="semibold">
+                {t('webuiSettings.ImportSkipped', { count: skipped.length })}
+              </Text>
+            }
+          >
             <BAITable<SkippedKey>
               data-testid="import-config-toml-skipped"
               size="small"
@@ -244,7 +268,7 @@ const ImportConfigTomlModal: React.FC<ImportConfigTomlModalProps> = ({
                 },
               ]}
             />
-          </BAIFlex>
+          </Collapsible>
         )}
       </BAIFlex>
     </BAIModal>
