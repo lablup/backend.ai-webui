@@ -24,7 +24,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Pass a placeholder on every instance — it is what the accessible name falls back to when label is absent.',
+          'Pass a placeholder on every instance — it is what the accessible name falls back to when no label, aria-label or Form.Item label is present.',
       },
       {
         guidance: true,
@@ -88,7 +88,7 @@ export const docs = {
           name: 'placeholder',
           type: 'ReactNode',
           description:
-            'Empty-state text on the trigger. Doubles as the accessible name when label is not given.',
+            'Empty-state text on the trigger. Doubles as the accessible name when no label, aria-label or Form.Item label is given.',
         },
         {
           name: 'mode',
@@ -163,7 +163,7 @@ export const docs = {
           name: 'label',
           type: 'string',
           description:
-            'Accessible name. Falls back to aria-label, the flattened placeholder, then a translated generic.',
+            'Accessible name. Falls back to aria-label, the enclosing Form.Item label, the flattened placeholder, then a translated generic.',
         },
         {
           name: 'aria-label',
