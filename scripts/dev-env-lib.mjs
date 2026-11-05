@@ -263,7 +263,7 @@ function parsePolicy(raw, warnings) {
 }
 
 /**
- * The keys the WebUI still reads from `config.toml` (ADR 0025, section 3); every
+ * The keys the WebUI still reads from `config.toml` (ADR 0026, section 3); every
  * other setting comes from the backend's System Settings (app config).
  * Mirrors FILE_ONLY_CONFIG_KEYS in react/src/helper/loginConfig.ts; a test compares them.
  */
@@ -272,6 +272,7 @@ export const FILE_ONLY_CONFIG_KEYS = [
   "general.apiDomainName",
   "general.connectionMode",
   "general.signupSupport",
+  "general.enableWebMCP",
   "wsproxy.proxyURL",
   "wsproxy.disableCertCheck",
   "server.webServerURL",
@@ -1195,7 +1196,7 @@ export function ignoredOverridesWarning(ignored) {
   const keys = ignored.map(({ key }) => key).join(", ");
   return (
     `warning: not written to config.toml: ${keys}. The WebUI reads only ` +
-    `${FILE_ONLY_CONFIG_KEYS.join(", ")} from config.toml (ADR 0025); set the ` +
+    `${FILE_ONLY_CONFIG_KEYS.join(", ")} from config.toml (ADR 0026); set the ` +
     "rest in that server's System Settings (/admin/system-settings)."
   );
 }
