@@ -291,7 +291,25 @@ export const userInfo = {
   },
 };
 
+/**
+ * Mark the superadmin view-switch tours (`AdminViewSwitchTour`) as seen unless a
+ * spec already set them, so the tour does not cover the page after login.
+ */
+export async function skipAdminViewSwitchTours(page: Page) {
+  await page.addInitScript(() => {
+    for (const key of [
+      'backendaiwebui.settings.user.has_opened_tour_back_to_user_view',
+      'backendaiwebui.settings.user.has_opened_tour_back_to_admin_settings',
+    ]) {
+      if (localStorage.getItem(key) === null) {
+        localStorage.setItem(key, 'true');
+      }
+    }
+  });
+}
+
 export async function loginAsAdmin(page: Page, request: APIRequestContext) {
+  await skipAdminViewSwitchTours(page);
   await login(
     page,
     request,
@@ -352,6 +370,7 @@ export async function loginAsVisualRegressionAdmin(
   page: Page,
   request: APIRequestContext,
 ) {
+  await skipAdminViewSwitchTours(page);
   await login(
     page,
     request,
