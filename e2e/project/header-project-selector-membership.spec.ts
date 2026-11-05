@@ -1,9 +1,12 @@
 // FR-4108 (#10000): the header project selector reads membership from
 // ProjectV2 — it lists only the active projects the user belongs to.
-// #10490: it also offers the user's personal project under a "Personal" group.
+// #10490: it also offers the user's personal project under a "Personal" group,
+// labelled "My Project" since #10671 while the URL keeps its real name.
 import {
+  createAccountApiContext,
   createAdminApiContext,
   createProjectViaApi,
+  gqlAdmin,
   purgeProjectViaApi,
   sweepStaleProjectsViaApi,
 } from '../utils/admin-api';
@@ -19,6 +22,37 @@ import { navigateToUsersPage } from '../utils/user-profile-util';
 import { expect, test, type APIRequestContext } from '@playwright/test';
 
 const PROJECT_PREFIX = 'e2e-membership-';
+
+async function getPersonalProjectName(): Promise<string> {
+  const api = await createAccountApiContext(userInfo.user);
+  try {
+    const data = await gqlAdmin<{
+      myUserV2: {
+        projects: {
+          edges: Array<{ node: { basicInfo: { name: string; type: string } } }>;
+        };
+      } | null;
+    }>(
+      api,
+      `query {
+        myUserV2 {
+          projects(filter: { isActive: true }, limit: 1000) {
+            edges { node { basicInfo { name type } } }
+          }
+        }
+      }`,
+    );
+    const name = data.myUserV2?.projects.edges
+      .map((edge) => edge.node.basicInfo)
+      .find((info) => info.type === 'PERSONAL')?.name;
+    if (!name) {
+      throw new Error(`${userInfo.user.email} has no active personal project.`);
+    }
+    return name;
+  } finally {
+    await api.dispose();
+  }
+}
 
 test.describe(
   'Header ProjectSelect - Project Membership',
@@ -121,20 +155,20 @@ test.describe(
         .getByRole('option');
       await expect(personalOption).toHaveCount(1, { timeout: 15000 });
       await expect(personalOption).toBeEnabled();
-      const personalProject = (await personalOption.innerText()).trim();
-      expect(personalProject).not.toBe('');
+      await expect(personalOption).toHaveText('My Project');
+      const personalProject = await getPersonalProjectName();
 
       // The reload can add a trailing slash.
       const isPersonalDataPage = (url: URL) =>
-        url.pathname
+        decodeURIComponent(url.pathname)
           .replace(/\/$/, '')
           .endsWith(`/project/${personalProject}/data`);
       await personalOption.click();
       await expect(page).toHaveURL(isPersonalDataPage);
-      await expect(selector).toHaveText(personalProject);
+      await expect(selector).toHaveText('My Project');
 
       await page.reload();
-      await expect(selector).toHaveText(personalProject, { timeout: 15000 });
+      await expect(selector).toHaveText('My Project', { timeout: 15000 });
       await expect(page).toHaveURL(isPersonalDataPage);
       await expect(notFoundPageHeading(page)).toBeHidden();
       await expect(page.getByText(/Project .+ was not found/)).toBeHidden();
