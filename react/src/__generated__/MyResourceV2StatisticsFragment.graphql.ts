@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ef3c98b5cc6a81500eadd3c6c3c497e8>>
+ * @generated SignedSource<<0ce70c9de27735fb4d5b6d82e3b8742f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -33,6 +33,20 @@ export type MyResourceV2StatisticsFragment$data = {
       }>;
     };
   } | null | undefined, unknown>;
+  readonly scopedResourceGroups: Result<{
+    readonly edges: ReadonlyArray<{
+      readonly node: {
+        readonly resourceInfo: {
+          readonly capacity: {
+            readonly entries: ReadonlyArray<{
+              readonly quantity: any;
+              readonly resourceType: string;
+            }>;
+          };
+        } | null | undefined;
+      };
+    }>;
+  } | null | undefined, unknown>;
   readonly " $fragmentType": "MyResourceV2StatisticsFragment";
 };
 export type MyResourceV2StatisticsFragment$key = {
@@ -55,7 +69,11 @@ v1 = {
   "name": "quantity",
   "storageKey": null
 },
-v2 = {
+v2 = [
+  (v0/*: any*/),
+  (v1/*: any*/)
+],
+v3 = {
   "alias": null,
   "args": null,
   "concreteType": "ResourceLimitEntry",
@@ -112,13 +130,10 @@ return {
                 "kind": "LinkedField",
                 "name": "used",
                 "plural": true,
-                "selections": [
-                  (v0/*: any*/),
-                  (v1/*: any*/)
-                ],
+                "selections": (v2/*: any*/),
                 "storageKey": null
               },
-              (v2/*: any*/)
+              (v3/*: any*/)
             ],
             "storageKey": null
           }
@@ -151,7 +166,105 @@ return {
             "name": "project",
             "plural": false,
             "selections": [
-              (v2/*: any*/)
+              (v3/*: any*/)
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      },
+      "to": "RESULT"
+    },
+    {
+      "kind": "CatchField",
+      "field": {
+        "alias": null,
+        "args": [
+          {
+            "kind": "Literal",
+            "name": "limit",
+            "value": 100
+          },
+          {
+            "fields": [
+              {
+                "items": [
+                  {
+                    "fields": [
+                      {
+                        "kind": "Variable",
+                        "name": "value",
+                        "variableName": "projectId"
+                      }
+                    ],
+                    "kind": "ObjectValue",
+                    "name": "project.0"
+                  }
+                ],
+                "kind": "ListValue",
+                "name": "project"
+              }
+            ],
+            "kind": "ObjectValue",
+            "name": "scope"
+          }
+        ],
+        "concreteType": "ResourceGroupConnection",
+        "kind": "LinkedField",
+        "name": "scopedResourceGroups",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ResourceGroupEdge",
+            "kind": "LinkedField",
+            "name": "edges",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ResourceGroup",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "ResourceInfo",
+                    "kind": "LinkedField",
+                    "name": "resourceInfo",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "ResourceSlot",
+                        "kind": "LinkedField",
+                        "name": "capacity",
+                        "plural": false,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "ResourceSlotEntry",
+                            "kind": "LinkedField",
+                            "name": "entries",
+                            "plural": true,
+                            "selections": (v2/*: any*/),
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
             ],
             "storageKey": null
           }
@@ -166,6 +279,6 @@ return {
 };
 })();
 
-(node as any).hash = "32d075bea3d6be33660661fee77daef7";
+(node as any).hash = "07e73b88a482bf378e203a7f2a9395eb";
 
 export default node;

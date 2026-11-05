@@ -6,7 +6,10 @@ import { MyResourceQuery } from '../__generated__/MyResourceQuery.graphql';
 import { MyResourceV2StatisticsFragment$key } from '../__generated__/MyResourceV2StatisticsFragment.graphql';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import ResourceUsageStatistics from './DashboardPanels/memberCards/ResourceUsageStatistics';
-import { toUsageRows } from './DashboardPanels/memberCards/memberCardData';
+import {
+  offeredSlotsOf,
+  toUsageRows,
+} from './DashboardPanels/memberCards/memberCardData';
 import { readPrimary, readSecondary } from './DashboardPanels/panelPermission';
 import { Heading } from '@lablup/ui-common/Heading';
 import { useTheme } from '@lablup/ui-common/theme';
@@ -193,6 +196,23 @@ const MyTotalResourceStatisticsContent: React.FC<{
             }
           }
         }
+        scopedResourceGroups(
+          scope: { project: [{ value: $projectId }] }
+          limit: 100
+        ) @catch(to: RESULT) {
+          edges {
+            node {
+              resourceInfo {
+                capacity {
+                  entries {
+                    resourceType
+                    quantity
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     `,
     queryRef,
@@ -200,12 +220,27 @@ const MyTotalResourceStatisticsContent: React.FC<{
   const user = readPrimary(data.myUserResourceAllocationV2)?.user;
   const project = readSecondary(data.projectResourceAllocationV2).value
     ?.project;
+  // Only the slots some group of the project offers; the allocation lists every slot the manager knows.
+  const groupSlots = _.compact(
+    _.map(readSecondary(data.scopedResourceGroups).value?.edges, (edge) =>
+      offeredSlotsOf(edge?.node?.resourceInfo?.capacity.entries),
+    ),
+  );
+  const slots = groupSlots.length
+    ? new Set(groupSlots.flatMap((offered) => [...offered]))
+    : undefined;
 
   return (
     <ResourceUsageStatistics
       rows={
         user
-          ? toUsageRows(user.used, [user.assignable, project?.assignable ?? []])
+          ? toUsageRows(
+              user.used,
+              [user.assignable, project?.assignable ?? []],
+              {
+                slots,
+              },
+            )
           : []
       }
     />

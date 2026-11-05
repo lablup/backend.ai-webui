@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4eefbbf63bde5eaf93295bd915b4417d>>
+ * @generated SignedSource<<ce5dafa54767713cb7284b2eb641d86f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -50,7 +50,11 @@ v3 = {
   "name": "quantity",
   "storageKey": null
 },
-v4 = {
+v4 = [
+  (v2/*: any*/),
+  (v3/*: any*/)
+],
+v5 = {
   "alias": null,
   "args": null,
   "concreteType": "ResourceLimitEntry",
@@ -115,13 +119,10 @@ return {
                 "kind": "LinkedField",
                 "name": "used",
                 "plural": true,
-                "selections": [
-                  (v2/*: any*/),
-                  (v3/*: any*/)
-                ],
+                "selections": (v4/*: any*/),
                 "storageKey": null
               },
-              (v4/*: any*/)
+              (v5/*: any*/)
             ],
             "storageKey": null
           }
@@ -144,7 +145,108 @@ return {
             "name": "project",
             "plural": false,
             "selections": [
-              (v4/*: any*/)
+              (v5/*: any*/)
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": [
+          {
+            "kind": "Literal",
+            "name": "limit",
+            "value": 100
+          },
+          {
+            "fields": [
+              {
+                "items": [
+                  {
+                    "fields": [
+                      {
+                        "kind": "Variable",
+                        "name": "value",
+                        "variableName": "projectId"
+                      }
+                    ],
+                    "kind": "ObjectValue",
+                    "name": "project.0"
+                  }
+                ],
+                "kind": "ListValue",
+                "name": "project"
+              }
+            ],
+            "kind": "ObjectValue",
+            "name": "scope"
+          }
+        ],
+        "concreteType": "ResourceGroupConnection",
+        "kind": "LinkedField",
+        "name": "scopedResourceGroups",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ResourceGroupEdge",
+            "kind": "LinkedField",
+            "name": "edges",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ResourceGroup",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "ResourceInfo",
+                    "kind": "LinkedField",
+                    "name": "resourceInfo",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "ResourceSlot",
+                        "kind": "LinkedField",
+                        "name": "capacity",
+                        "plural": false,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "ResourceSlotEntry",
+                            "kind": "LinkedField",
+                            "name": "entries",
+                            "plural": true,
+                            "selections": (v4/*: any*/),
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "id",
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
             ],
             "storageKey": null
           }
@@ -154,12 +256,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "5aff3176d70fc137364b6d926bddf818",
+    "cacheID": "53841597db52bc76afd3fdf9abffa762",
     "id": null,
     "metadata": {},
     "name": "MyResourceQuery",
     "operationKind": "query",
-    "text": "query MyResourceQuery(\n  $projectId: UUID!\n) {\n  ...MyResourceV2StatisticsFragment_2CgS8h\n}\n\nfragment MyResourceV2StatisticsFragment_2CgS8h on Query {\n  myUserResourceAllocationV2 {\n    user {\n      used {\n        resourceType\n        quantity\n      }\n      assignable {\n        resourceType\n        quantity\n        unlimited\n      }\n    }\n  }\n  projectResourceAllocationV2(projectId: $projectId) {\n    project {\n      assignable {\n        resourceType\n        quantity\n        unlimited\n      }\n    }\n  }\n}\n"
+    "text": "query MyResourceQuery(\n  $projectId: UUID!\n) {\n  ...MyResourceV2StatisticsFragment_2CgS8h\n}\n\nfragment MyResourceV2StatisticsFragment_2CgS8h on Query {\n  myUserResourceAllocationV2 {\n    user {\n      used {\n        resourceType\n        quantity\n      }\n      assignable {\n        resourceType\n        quantity\n        unlimited\n      }\n    }\n  }\n  projectResourceAllocationV2(projectId: $projectId) {\n    project {\n      assignable {\n        resourceType\n        quantity\n        unlimited\n      }\n    }\n  }\n  scopedResourceGroups(scope: {project: [{value: $projectId}]}, limit: 100) {\n    edges {\n      node {\n        resourceInfo {\n          capacity {\n            entries {\n              resourceType\n              quantity\n            }\n          }\n        }\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
