@@ -130,6 +130,11 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
   if (isError && heldError !== error) setHeldError(error);
   else if (heldError && !isError && !isFetching) setHeldError(null);
   const displayedError = isError ? error : heldError;
+  // A kernel not yet scheduled onto an agent is an expected state, not a
+  // failure — the info alert below is a placeholder until it is assigned.
+  const isKernelNotAssignedYet =
+    (displayedError as { error_code?: string } | null)?.error_code ===
+    'agent_read_not-found';
 
   const [lastLineNumbers, { resetPrevious: resetPreviousLineNumber }] =
     useMemoWithPrevious(() => logs?.split('\n').length || 0, [logs]);
@@ -256,12 +261,21 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
         </BAIFlex>
 
         {displayedError ? (
-          <BAIAlert
-            type="error"
-            style={{ alignSelf: 'stretch' }}
-            title={t('kernel.FailedToLoadContainerLogs')}
-            description={getErrorMessage(displayedError)}
-          />
+          isKernelNotAssignedYet ? (
+            <BAIAlert
+              type="info"
+              style={{ alignSelf: 'stretch' }}
+              title={t('kernel.ContainerLogsNotReadyYet')}
+              description={t('kernel.ContainerLogsNotReadyYetDescription')}
+            />
+          ) : (
+            <BAIAlert
+              type="error"
+              style={{ alignSelf: 'stretch' }}
+              title={t('kernel.FailedToLoadContainerLogs')}
+              description={getErrorMessage(displayedError)}
+            />
+          )
         ) : null}
 
         <div

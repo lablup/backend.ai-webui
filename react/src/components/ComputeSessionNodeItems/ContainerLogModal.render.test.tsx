@@ -95,6 +95,23 @@ const serverError = {
     'Traceback (most recent call last):\n  File "agent.py", line 3650, in get_logs\nKeyError: UUID(\'01a08403-eacd-704d-9b18-068bc0fc7642\')\n',
 };
 
+/**
+ * The exact object `Client._wrapWithPromise` throws for the manager's
+ * `agent_read_not-found` problem+json body — the answer while the session's
+ * kernel is not scheduled onto an agent yet.
+ */
+const notAssignedError = {
+  isError: true,
+  type: 'https://api.backend.ai/probs/agent-read-not-found',
+  statusCode: 404,
+  statusText: 'Not Found',
+  title: '404 Not Found - ',
+  message:
+    'server responded failure: 404 - Kernel has not been assigned to an agent.',
+  description: 'Kernel has not been assigned to an agent.',
+  error_code: 'agent_read_not-found',
+};
+
 const renderModal = () =>
   render(
     <QueryClientProvider
@@ -162,6 +179,47 @@ describe('ContainerLogModal', () => {
     });
     expect(
       screen.queryByText('kernel.FailedToLoadContainerLogs'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows the not-assigned notice instead of the failure banner while the kernel has no agent', async () => {
+    getLogs.mockRejectedValue(notAssignedError);
+    renderModal();
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('kernel.ContainerLogsNotReadyYet'),
+      ).toBeInTheDocument();
+    });
+    expect(
+      screen.getByText('kernel.ContainerLogsNotReadyYetDescription'),
+    ).toBeInTheDocument();
+    // The failure banner and the raw manager message are for real failures.
+    expect(
+      screen.queryByText('kernel.FailedToLoadContainerLogs'),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText(/agent_read_not-found/)).not.toBeInTheDocument();
+  });
+
+  it('picks the logs up automatically once the container is assigned', async () => {
+    getLogs.mockRejectedValueOnce(notAssignedError);
+    getLogs.mockResolvedValue({ result: { logs: 'hello from the container' } });
+    renderModal();
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('kernel.ContainerLogsNotReadyYet'),
+      ).toBeInTheDocument();
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: 'refresh' }));
+    await waitFor(() => {
+      expect(screen.getByTestId('log-body')).toHaveTextContent(
+        'hello from the container',
+      );
+    });
+    expect(
+      screen.queryByText('kernel.ContainerLogsNotReadyYet'),
     ).not.toBeInTheDocument();
   });
 });
