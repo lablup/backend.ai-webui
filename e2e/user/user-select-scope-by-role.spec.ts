@@ -1,6 +1,7 @@
 // FR-4119: admin pages list the signed-in admin's domain (the WebUI assumes a
 // single domain); the project-admin session page lists the project's members.
 import { createAdminApiContext, gqlAdmin } from '../utils/admin-api';
+import { getE2EDomainName } from '../utils/e2e-scope';
 import {
   loginAsAdmin,
   loginAsUser,
@@ -127,6 +128,17 @@ test.describe(
         request,
       }) => {
         const operations = recordUserSelectOperations(page);
+        // The superadmin intro tour (AdminViewSwitchTour) otherwise covers the page.
+        await page.addInitScript(() => {
+          localStorage.setItem(
+            'backendaiwebui.settings.user.has_opened_tour_back_to_user_view',
+            'true',
+          );
+          localStorage.setItem(
+            'backendaiwebui.settings.user.has_opened_tour_back_to_admin_settings',
+            'true',
+          );
+        });
         await login(page, request);
         await skipUnlessManager269(page);
 
@@ -180,16 +192,18 @@ test.describe(
       /** Creates the project, adds two members and makes the first its admin. */
       async function seedProject() {
         api = await createAdminApiContext();
+        // The e2e accounts' domain: it is not `default` on every server.
+        const domainName = await getE2EDomainName(api);
         const created = await gqlAdmin<{
           create_group: { group: { id: string } };
         }>(
           api,
-          `mutation ($name: String!) {
-            create_group(name: $name, props: { domain_name: "default" }) {
+          `mutation ($name: String!, $domain: String!) {
+            create_group(name: $name, props: { domain_name: $domain }) {
               group { id }
             }
           }`,
-          { name: projectName },
+          { name: projectName, domain: domainName },
         );
         projectId = created.create_group.group.id;
 
