@@ -151,3 +151,19 @@ describe('range settings', () => {
     );
   });
 });
+
+describe('sanitizePanelSettings presets-only card', () => {
+  it('drops a stored custom window when the card allows 0 days', () => {
+    const definition = { settings: ['range' as const], maxRangeDays: 0 };
+    const window = windowRange({
+      after: '2026-11-01T00:00:00.000Z',
+      before: '2026-11-02T00:00:00.000Z',
+    });
+    expect(
+      sanitizePanelSettings({ range: window }, definition),
+    ).toBeUndefined();
+    expect(sanitizePanelSettings({ range: 'now-7d' }, definition)).toEqual({
+      range: 'now-7d',
+    });
+  });
+});

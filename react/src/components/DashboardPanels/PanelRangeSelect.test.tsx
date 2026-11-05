@@ -76,3 +76,18 @@ describe('PanelRangeSelect custom range cap', () => {
     ).not.toBeInTheDocument();
   });
 });
+
+describe('PanelRangeSelect presets only', () => {
+  it('offers no custom range when the card allows 0 days', async () => {
+    const user = userEvent.setup();
+    render(<PanelRangeSelect aria-label="range" maxDays={0} />);
+    await user.click(screen.getAllByRole('combobox', h)[0]);
+    expect(
+      screen.queryByRole('option', {
+        ...h,
+        name: 'dashboard.settings.CustomRange',
+      }),
+    ).not.toBeInTheDocument();
+    expect(screen.getAllByRole('option', h).length).toBeGreaterThan(0);
+  });
+});

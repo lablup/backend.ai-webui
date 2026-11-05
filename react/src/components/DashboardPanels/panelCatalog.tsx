@@ -287,7 +287,8 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(4, 3),
     minSize: size(2, 2),
     settings: ['range'],
-    maxRangeDays: CLIENT_COUNTED_MAX_RANGE_DAYS,
+    // The presets only: a member's activity has no use for a custom window.
+    maxRangeDays: 0,
   },
 ];
 

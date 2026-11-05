@@ -41,7 +41,7 @@ export interface PanelRangeSelectProps extends Omit<
   /** A preset (`now-24h`) or a fixed window (`windowRange`). */
   value?: string;
   onChange?: (range: string) => void;
-  /** The longest custom range, in days. */
+  /** The longest custom range, in days; `0` offers the presets only. */
   maxDays?: number;
 }
 
@@ -68,8 +68,12 @@ const PanelRangeSelect: React.FC<PanelRangeSelectProps> = ({
             value: preset,
             label: t(RANGE_LABEL_KEYS[preset]),
           })),
-          ...(windowLabel ? [{ value: range, label: windowLabel }] : []),
-          { value: CUSTOM, label: t('dashboard.settings.CustomRange') },
+          ...(maxDays > 0
+            ? [
+                ...(windowLabel ? [{ value: range, label: windowLabel }] : []),
+                { value: CUSTOM, label: t('dashboard.settings.CustomRange') },
+              ]
+            : []),
         ]}
         value={range}
         onChange={(next: string | null) => {
