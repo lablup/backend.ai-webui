@@ -888,6 +888,8 @@
         "storageHost.QuotaDoesNotSupported",
         "storageHost.quotaSettings.SelectProject",
         "webui.menu.MyResources",
+        "webui.menu.MyResourcesDescription",
+        "webui.menu.MyResourcesInResourceGroup",
         "webui.menu.TotalResourcesInResourceGroup",
         "webui.menu.TotalResourcesInResourceGroupDescription",
         "webui.menu.Users"
@@ -3659,6 +3661,8 @@
         "storageHost.QuotaDoesNotSupported",
         "storageHost.quotaSettings.SelectProject",
         "webui.menu.MyResources",
+        "webui.menu.MyResourcesDescription",
+        "webui.menu.MyResourcesInResourceGroup",
         "webui.menu.TotalResourcesInResourceGroup",
         "webui.menu.TotalResourcesInResourceGroupDescription",
         "webui.menu.Users"
@@ -4354,6 +4358,8 @@
         "storageHost.QuotaDoesNotSupported",
         "storageHost.quotaSettings.SelectProject",
         "webui.menu.MyResources",
+        "webui.menu.MyResourcesDescription",
+        "webui.menu.MyResourcesInResourceGroup",
         "webui.menu.TotalResourcesInResourceGroup",
         "webui.menu.TotalResourcesInResourceGroupDescription",
         "webui.menu.Users"
@@ -5163,6 +5169,9 @@
         "start.button.StartSession",
         "userSettings.SessionTerminationDialog",
         "webui.menu.MyResources",
+        "webui.menu.MyResourcesDescription",
+        "webui.menu.MyResourcesInResourceGroup",
+        "webui.menu.MyResourcesInResourceGroupDescription",
         "webui.menu.TotalResourcesInResourceGroup",
         "webui.menu.TotalResourcesInResourceGroupDescription"
       ]

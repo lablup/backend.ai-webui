@@ -22,11 +22,6 @@ vi.mock('../hooks/useCurrentProject', () => ({
   useCurrentResourceGroupValue: () => 'default',
 }));
 
-vi.mock('../hooks', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../hooks')>()),
-  useCurrentDomain: () => ({ id: 'domain-0000', name: 'default' }),
-}));
-
 // Only the statistics the card hands over matter here.
 vi.mock('backend.ai-ui', async (importOriginal) => ({
   ...(await importOriginal<typeof import('backend.ai-ui')>()),
@@ -55,17 +50,10 @@ const readResourceData = async () =>
   JSON.parse((await screen.findByTestId('resource-data')).textContent ?? '');
 
 describe('MyResource', () => {
-  it('shows the dashboard card body for the header resource group: usage against the smallest limit', async () => {
+  it('shows the usage across all resource groups against the smaller of the user and project remainders', async () => {
     const environment = renderCard();
     const operation = environment.mock.getMostRecentOperation();
-    expect(operation.request.variables).toEqual({
-      projectId: 'project-0000',
-      scope: {
-        domain: [{ value: 'domain-0000' }],
-        project: [{ value: 'project-0000' }],
-      },
-      resourceGroupFilter: { name: { equals: 'default' } },
-    });
+    expect(operation.request.variables).toEqual({ projectId: 'project-0000' });
     environment.mock.resolve(operation, {
       data: {
         myUserResourceAllocationV2: {
@@ -83,7 +71,6 @@ describe('MyResource', () => {
             ],
           },
         },
-        scopedResourceGroups: { edges: [] },
       },
     });
 

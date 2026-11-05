@@ -2,12 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
-  useCurrentProjectValue,
-  useCurrentResourceGroupValue,
-} from '../hooks/useCurrentProject';
-import { MyResourcesInResourceGroup } from './DashboardPanels/memberCards/MyResourcesPanel';
-import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
+import { MyResourceQuery } from '../__generated__/MyResourceQuery.graphql';
+import { MyResourceV2StatisticsFragment$key } from '../__generated__/MyResourceV2StatisticsFragment.graphql';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import ResourceUsageStatistics from './DashboardPanels/memberCards/ResourceUsageStatistics';
+import { toUsageRows } from './DashboardPanels/memberCards/memberCardData';
+import { readPrimary, readSecondary } from './DashboardPanels/panelPermission';
 import { Heading } from '@lablup/ui-common/Heading';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
@@ -26,6 +26,7 @@ import { CircleHelp } from 'lucide-react';
 import { ReactNode, Suspense, useTransition } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 interface MyResourceProps extends BAIFlexProps {
   fetchKey?: string;
@@ -47,7 +48,6 @@ const MyResource: React.FC<MyResourceProps> = ({
   const { token } = useTheme();
   const isInBoard = useIsInBAIBoardItem();
   const currentProject = useCurrentProjectValue();
-  const currentResourceGroup = useCurrentResourceGroupValue();
 
   const [internalFetchKey, updateInternalFetchKey] = useFetchKey();
   const [isPending, startTransition] = useTransition();
@@ -69,23 +69,13 @@ const MyResource: React.FC<MyResourceProps> = ({
       }}
       {..._.omit(props, ['style'])}
     >
-      {/* The dashboard card's header; the picker is the session page's current resource group. */}
       <BAIBoardItemTitle
         title={
           <BAIFlex gap="xs" wrap="wrap" align="center">
             <Heading level={5}>{t('webui.menu.MyResources')}</Heading>
             <BAIIconWithTooltip
               icon={<CircleHelp size="1em" />}
-              content={<Trans i18nKey="dashboard.card.MyResourcesTooltip" />}
-            />
-            <SharedResourceGroupSelectForCurrentProject
-              size="small"
-              variant="borderless"
-              showSearch
-              style={{ minWidth: 100 }}
-              popupMatchSelectWidth={false}
-              tooltip={t('general.ResourceGroup')}
-              aria-label={t('general.ResourceGroup')}
+              content={<Trans i18nKey="webui.menu.MyResourcesDescription" />}
             />
           </BAIFlex>
         }
@@ -115,14 +105,9 @@ const MyResource: React.FC<MyResourceProps> = ({
         justify="center"
         style={{ flex: 1 }}
       >
-        {/* A transport failure, or a manager without myUserResourceAllocationV2, escapes @catch; keep the title and let refresh retry. */}
+        {/* A transport failure escapes @catch; keep the title and let refresh retry. */}
         <ErrorBoundary
-          resetKeys={[
-            fetchKey,
-            internalFetchKey,
-            currentProject.id,
-            currentResourceGroup,
-          ]}
+          resetKeys={[fetchKey, internalFetchKey, currentProject.id]}
           fallbackRender={() => (
             <ResourceStatistics
               resourceData={NO_RESOURCE_DATA}
@@ -132,7 +117,18 @@ const MyResource: React.FC<MyResourceProps> = ({
           )}
         >
           <Suspense fallback={<BAISkeleton />}>
-            <MyResourceStatistics fetchKey={`${fetchKey}${internalFetchKey}`} />
+            {currentProject.id ? (
+              <MyTotalResourceStatistics
+                projectId={currentProject.id}
+                fetchKey={`${fetchKey}${internalFetchKey}`}
+              />
+            ) : (
+              <ResourceStatistics
+                resourceData={NO_RESOURCE_DATA}
+                displayType="used"
+                progressMode="normal"
+              />
+            )}
           </Suspense>
         </ErrorBoundary>
       </BAIFlex>
@@ -142,28 +138,74 @@ const MyResource: React.FC<MyResourceProps> = ({
 
 const NO_RESOURCE_DATA = { cpu: null, memory: null, accelerators: [] };
 
-const MyResourceStatistics: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
+/**
+ * The viewer's used-vs-limit per slot across all resource groups, for one
+ * project; the session page card and the dashboard card both render it.
+ */
+export const MyTotalResourceStatistics: React.FC<{
+  projectId: string;
+  fetchKey: string;
+}> = ({ projectId, fetchKey }) => {
   'use memo';
-  const currentProject = useCurrentProjectValue();
-  const currentResourceGroup = useCurrentResourceGroupValue();
-  if (!currentProject.id) {
-    throw new Error('Project id is required for MyResource');
-  }
-  if (!currentResourceGroup) {
-    return (
-      <ResourceStatistics
-        resourceData={NO_RESOURCE_DATA}
-        displayType="used"
-        progressMode="normal"
-      />
-    );
-  }
+  const queryRef = useLazyLoadQuery<MyResourceQuery>(
+    graphql`
+      query MyResourceQuery($projectId: UUID!) {
+        ...MyResourceV2StatisticsFragment @arguments(projectId: $projectId)
+      }
+    `,
+    { projectId },
+    { fetchPolicy: 'network-only', fetchKey },
+  );
+
+  return <MyTotalResourceStatisticsContent queryRef={queryRef} />;
+};
+
+const MyTotalResourceStatisticsContent: React.FC<{
+  queryRef: MyResourceV2StatisticsFragment$key;
+}> = ({ queryRef }) => {
+  'use memo';
+  // Fields a plain project member can read; the user's figures count every keypair.
+  const data = useFragment(
+    graphql`
+      fragment MyResourceV2StatisticsFragment on Query
+      @argumentDefinitions(projectId: { type: "UUID!" }) {
+        myUserResourceAllocationV2 @catch(to: RESULT) {
+          user {
+            used {
+              resourceType
+              quantity
+            }
+            assignable {
+              resourceType
+              quantity
+              unlimited
+            }
+          }
+        }
+        projectResourceAllocationV2(projectId: $projectId) @catch(to: RESULT) {
+          project {
+            assignable {
+              resourceType
+              quantity
+              unlimited
+            }
+          }
+        }
+      }
+    `,
+    queryRef,
+  );
+  const user = readPrimary(data.myUserResourceAllocationV2)?.user;
+  const project = readSecondary(data.projectResourceAllocationV2).value
+    ?.project;
 
   return (
-    <MyResourcesInResourceGroup
-      projectId={currentProject.id}
-      resourceGroupName={currentResourceGroup}
-      fetchKey={fetchKey}
+    <ResourceUsageStatistics
+      rows={
+        user
+          ? toUsageRows(user.used, [user.assignable, project?.assignable ?? []])
+          : []
+      }
     />
   );
 };

@@ -4,6 +4,7 @@
  */
 import { ConfigurableResourceCardQuery } from '../../../__generated__/ConfigurableResourceCardQuery.graphql';
 import MyResource from '../../../components/MyResource';
+import MyResourceWithinResourceGroup from '../../../components/MyResourceWithinResourceGroup';
 import TotalResourceWithinResourceGroup, {
   useIsAvailableTotalResourceWithinResourceGroup,
 } from '../../../components/TotalResourceWithinResourceGroup';
@@ -51,11 +52,7 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
   const isAvailableTotalResourcePanel =
     useIsAvailableTotalResourceWithinResourceGroup();
   const currentResourceGroup = useCurrentResourceGroupValue();
-  // The retired in-group view is the same data as My Resources now.
-  const currentPanelType: ResourcePanelType =
-    selectedPanelType === 'TotalResourceWithinResourceGroup'
-      ? selectedPanelType
-      : 'MyResource';
+  const currentPanelType: ResourcePanelType = selectedPanelType ?? 'MyResource';
 
   const queryRefForTotalResource =
     useLazyLoadQuery<ConfigurableResourceCardQuery>(
@@ -94,6 +91,10 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
       label: t('webui.menu.MyResources'),
       value: 'MyResource' as ResourcePanelType,
     },
+    {
+      label: t('webui.menu.MyResourcesInResourceGroup'),
+      value: 'MyResourceWithinResourceGroup' as ResourcePanelType,
+    },
     isAvailableTotalResourcePanel && {
       label: t('webui.menu.TotalResourcesInResourceGroup'),
       value: 'TotalResourceWithinResourceGroup' as ResourcePanelType,
@@ -121,7 +122,7 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
       items: _.map(panelOptions, (option) => ({
         label: option.label,
         onClick: () => setSelectedPanelType(option.value),
-        // Marks the view on screen, since both views share the menu.
+        // Marks the view on screen, since the views share the menu.
         endContent:
           option.value === currentPanelType ? (
             <Check size="1em" aria-hidden />
@@ -162,6 +163,8 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
             />
           )
         );
+      case 'MyResourceWithinResourceGroup':
+        return <MyResourceWithinResourceGroup {...commonProps} />;
       default:
         return <MyResource {...commonProps} />;
     }

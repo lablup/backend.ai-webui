@@ -76,6 +76,7 @@ describe('PANEL_CATALOG', () => {
         'start.url',
         'mySession',
         'myRecentSessions',
+        'myTotalResource',
         'myResource',
         'totalResourceWithinResourceGroup',
         'memberAgentStats',

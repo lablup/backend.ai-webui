@@ -16,7 +16,7 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 
 /**
  * The viewer's used-vs-limit per slot in one resource group; the dashboard
- * card and the session page's My Total Resource Usage both render it.
+ * card and the session page's My Resources in Resource Group both render it.
  */
 export const MyResourcesInResourceGroup: React.FC<{
   projectId: string;
@@ -135,7 +135,7 @@ const MyResourcesPanel: React.FC<PanelComponentProps> = ({
   const resourceGroupName = vars.resourceGroup;
   return (
     <MemberCard
-      title={t('webui.menu.MyResources')}
+      title={t('webui.menu.MyResourcesInResourceGroup')}
       tooltip={<Trans i18nKey="dashboard.card.MyResourcesTooltip" />}
       fetchKey={fetchKey}
       resetKeys={[projectId, resourceGroupName]}

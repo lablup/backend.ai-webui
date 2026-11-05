@@ -16,6 +16,7 @@ import UsersPanel from './cards/UsersPanel';
 import { DEFAULT_PANEL_LAYOUTS, presetKey } from './defaults';
 import MemberAgentStatsPanel from './memberCards/MemberAgentStatsPanel';
 import MyResourcesPanel from './memberCards/MyResourcesPanel';
+import MyTotalResourcePanel from './memberCards/MyTotalResourcePanel';
 import ResourceGroupTotalPanel from './memberCards/ResourceGroupTotalPanel';
 import ResourcePresetsPanel from './memberCards/ResourcePresetsPanel';
 import {
@@ -194,10 +195,20 @@ const MEMBER_PANELS: ReadonlyArray<PanelDefinition> = [
     minSize: size(2, 2),
   },
   {
-    key: 'myResource',
+    key: 'myTotalResource',
     page: ['project'],
     group: 'resource',
     titleKey: 'webui.menu.MyResources',
+    kind: 'custom',
+    Component: MyTotalResourcePanel,
+    defaultSize: size(2, 3),
+    minSize: size(2, 2),
+  },
+  {
+    key: 'myResource',
+    page: ['project'],
+    group: 'resource',
+    titleKey: 'webui.menu.MyResourcesInResourceGroup',
     kind: 'custom',
     Component: MyResourcesPanel,
     defaultSize: size(2, 3),
