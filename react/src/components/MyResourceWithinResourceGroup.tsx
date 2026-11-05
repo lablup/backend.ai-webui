@@ -60,6 +60,8 @@ const MyResourceWithinResourceGroup: React.FC<
               paddingBlock: token('--spacing-4'),
               paddingInline: token('--spacing-8'),
               flex: 1,
+              // A narrow cell leaves no height to center in; the title still keeps its distance.
+              rowGap: token('--spacing-4'),
             }),
         ...props.style,
       }}
