@@ -5,9 +5,12 @@ export class FolderCreationModal {
   private readonly modal: Locator;
   private readonly page: Page;
   constructor(page: Page) {
+    // The general-project confirm (#10501) shares this title, so match the
+    // creation modal by its Create button.
     this.modal = page
       .getByRole('dialog')
-      .filter({ hasText: 'Create a new storage folder' });
+      .filter({ hasText: 'Create a new storage folder' })
+      .filter({ has: page.getByTestId('create-folder-button') });
 
     this.page = page;
   }
@@ -182,6 +185,32 @@ export class FolderCreationModal {
     const createButton = this.modal.getByTestId('create-folder-button');
     await expect(createButton).toBeVisible();
     return createButton;
+  }
+
+  /**
+   * Clicks Create and, when the general-project visibility confirm (#10501)
+   * opens, confirms it with "Don't ask again" left unchecked.
+   */
+  async submit(): Promise<void> {
+    await (await this.getCreateButton()).click();
+    const confirmModal = this.page.getByTestId('shared-folder-confirm-modal');
+    await expect
+      .poll(
+        async () =>
+          (await confirmModal.isVisible()) || !(await this.modal.isVisible()),
+        { timeout: 30000 },
+      )
+      .toBe(true);
+    if (await confirmModal.isVisible()) {
+      await confirmModal
+        .getByRole('button', { name: 'Create', exact: true })
+        .click();
+      await expect(confirmModal).toBeHidden();
+    }
+  }
+
+  async waitForClosed(): Promise<void> {
+    await expect(this.modal).toBeHidden({ timeout: 30000 });
   }
 
   async getCancelButton(): Promise<Locator> {
