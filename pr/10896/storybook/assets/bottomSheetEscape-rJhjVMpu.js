@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-sJBDdmOt.js";import{t}from"./react-DlPsW1c0.js";var n,r;function i(){return(i=e((()=>{n=t(),r=(0,n.createContext)(!0),r.displayName=`BottomSheetEscapeContext`})))()}export{i as n,r as t};
