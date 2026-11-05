@@ -99,9 +99,13 @@ export class AdminModelCardPage {
 
   async applyNameFilter(value: string): Promise<void> {
     // PowerSearch has no submit button — typing opens a quoted free-text
-    // suggestion, and clicking it commits the condition.
-    await this.getFilterSearchInput().fill(value);
-    await this.getFilterSearchResultOption(value).click();
+    // suggestion, and clicking it commits the condition. A table refresh
+    // still settling can reset the input, so re-type until the suggestion can be clicked.
+    const option = this.getFilterSearchResultOption(value);
+    await expect(async () => {
+      await this.getFilterSearchInput().fill(value);
+      await option.click({ timeout: 3000 });
+    }).toPass({ timeout: 30000 });
     await this.page.waitForURL(new RegExp(`filter=`));
   }
 
