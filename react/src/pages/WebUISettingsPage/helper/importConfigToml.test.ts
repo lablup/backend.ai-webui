@@ -3,7 +3,11 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { WEBUI_SETTING_DEFINITIONS } from '../../../helper/webuiSettings';
-import { importConfigToml, tomlPathsOf } from './importConfigToml';
+import {
+  exportConfigToml,
+  importConfigToml,
+  tomlPathsOf,
+} from './importConfigToml';
 import { describe, expect, it } from 'vitest';
 
 const valueOf = (text: string, key: string) => {
@@ -178,5 +182,39 @@ edition = "Enterprise"
   it('returns the parse error for a file that is not TOML', () => {
     const result = importConfigToml('[general\nhideAgents = ');
     expect(result.ok).toBe(false);
+  });
+});
+
+describe('exportConfigToml', () => {
+  const sample = (key: string): unknown => {
+    const definition = WEBUI_SETTING_DEFINITIONS.find((d) => d.key === key)!;
+    switch (definition.type) {
+      case 'boolean':
+        return true;
+      case 'number':
+        return 7;
+      case 'stringList':
+        return definition.options ? [definition.options[0].value] : ['a'];
+      default:
+        return 'x';
+    }
+  };
+
+  it('imports back to the values it exported', () => {
+    const text = exportConfigToml((definition) => sample(definition.key));
+    const result = importConfigToml(text);
+    if (!result.ok) throw new Error(result.error);
+    expect(result.skipped).toEqual([]);
+    expect(result.imported).toHaveLength(WEBUI_SETTING_DEFINITIONS.length);
+    for (const entry of result.imported) {
+      expect(entry.value).toEqual(sample(entry.definition.key));
+    }
+  });
+
+  it('leaves out settings with no value', () => {
+    const text = exportConfigToml((definition) =>
+      definition.key === 'debug' ? true : undefined,
+    );
+    expect(text.trim()).toBe('[general]\ndebug = true');
   });
 });
