@@ -60,10 +60,7 @@ describe('MyResource', () => {
     const operation = environment.mock.getMostRecentOperation();
     expect(operation.request.variables).toEqual({
       projectId: 'project-0000',
-      scope: {
-        domain: [{ value: 'domain-0000' }],
-        project: [{ value: 'project-0000' }],
-      },
+      scope: { project: [{ value: 'project-0000' }] },
       resourceGroupFilter: { name: { equals: 'default' } },
     });
     environment.mock.resolve(operation, {

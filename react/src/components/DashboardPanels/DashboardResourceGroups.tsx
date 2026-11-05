@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { DashboardResourceGroupsQuery } from '../../__generated__/DashboardResourceGroupsQuery.graphql';
-import { useCurrentDomain, useSuspendedBackendaiClient } from '../../hooks';
+import { useSuspendedBackendaiClient } from '../../hooks';
 import { useSuspenseTanQuery } from '../../hooks/reactQueryAlias';
 import {
   type AllowedResourceGroups,
@@ -82,8 +82,7 @@ export const DashboardResourceGroupsProvider: React.FC<{
   )
     ? undefined
     : { name: { notIn: sftpResourceGroups } };
-  const currentDomain = useCurrentDomain();
-  const pickerScope = resourceGroupScopeOf(scope, currentDomain.id);
+  const pickerScope = resourceGroupScopeOf(scope);
   const data = useLazyLoadQuery<DashboardResourceGroupsQuery>(
     graphql`
       query DashboardResourceGroupsQuery(

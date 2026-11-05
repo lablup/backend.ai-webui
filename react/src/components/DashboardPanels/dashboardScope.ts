@@ -60,25 +60,20 @@ export const cardResourceGroup = (
 };
 
 /**
- * The resource groups a card's setting can pick from: the page's projects
- * with their domain (a group the domain may use is usable in its projects),
- * else the domain's.
+ * The resource groups a card's setting can pick from: the page's project's,
+ * else (the superadmin page) the domain's. Scopes are OR'd, so a project page
+ * never adds its domain: that would offer groups the project may not use.
  */
 export const resourceGroupScopeOf = (
   scope: DashboardScope,
-  currentDomainId: string,
 ): BAIScopedResourceGroupSelectProps['scope'] => {
   if (scope.kind === 'projects' && scope.projectIds === 'all')
     return { domain: [{ value: scope.domain.id }] };
-  const [projectIds, domainId] =
+  const projectIds =
     scope.kind === 'mine'
-      ? [_.compact([scope.projectId]), currentDomainId]
-      : [scope.projectIds as Array<string>, scope.domain.id];
-  if (!projectIds.length) return { project: [] };
-  return {
-    domain: [{ value: domainId }],
-    project: projectIds.map((value) => ({ value })),
-  };
+      ? _.compact([scope.projectId])
+      : (scope.projectIds as Array<string>);
+  return { project: projectIds.map((value) => ({ value })) };
 };
 
 /** What a card's read permission depends on: the page and its project, or its domain. */
