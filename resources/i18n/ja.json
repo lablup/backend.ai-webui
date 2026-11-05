@@ -4468,6 +4468,7 @@
     "ImportFileTooLarge": "ファイルが 1 MB を超えています。",
     "ImportFromFile": "config.toml をインポート",
     "ImportLoaded": "{{count}} 件の設定を読み込みました。適用を押して保存してください。",
+    "ImportMigrationNotice": "ほとんどの設定はアプリ設定（App Config）で管理されるようになり、ログイン画面など認証前に必要な設定のみ、従来どおり設定ファイルに保存されます。エクスポートボタンから、新しい形式または従来の形式の設定ファイルをダウンロードできます。",
     "ImportNothing": "このファイルにはシステム設定の値がありません。",
     "ImportParseError": "有効な TOML ではありません: {{error}}",
     "ImportPasteLabel": "config.toml の内容",

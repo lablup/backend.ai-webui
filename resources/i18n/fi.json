@@ -4467,6 +4467,7 @@
     "ImportFileTooLarge": "Tiedosto on suurempi kuin 1 Mt.",
     "ImportFromFile": "Tuo config.toml",
     "ImportLoaded": "Ladattiin {{count}} asetusta. Tallenna painamalla Käytä.",
+    "ImportMigrationNotice": "Useimpia asetuksia hallitaan nyt sovelluksen määrityksissä (App Config); vain ennen kirjautumista tarvittavat asetukset, kuten kirjautumisnäkymä, säilyvät asetustiedostossa kuten ennenkin. Vientipainikkeella voit ladata asetustiedoston uudessa tai aiemmassa muodossa.",
     "ImportNothing": "Tiedostossa ei ole järjestelmäasetuksia.",
     "ImportParseError": "Tämä tiedosto ei ole kelvollista TOMLia: {{error}}",
     "ImportPasteLabel": "config.toml-sisältö",

@@ -4468,6 +4468,7 @@
     "ImportFileTooLarge": "Tệp lớn hơn 1 MB.",
     "ImportFromFile": "Nhập config.toml",
     "ImportLoaded": "Đã nạp {{count}} cài đặt. Nhấn Áp dụng để lưu.",
+    "ImportMigrationNotice": "Hầu hết cài đặt hiện được quản lý trong cấu hình ứng dụng (App Config); chỉ những cài đặt cần trước khi đăng nhập, như màn hình đăng nhập, vẫn được lưu trong tệp cấu hình như trước. Nút xuất sẽ tải tệp cấu hình ở định dạng mới hoặc định dạng trước đây.",
     "ImportNothing": "Tệp này không có giá trị Cài đặt hệ thống.",
     "ImportParseError": "Tệp này không phải TOML hợp lệ: {{error}}",
     "ImportPasteLabel": "Nội dung config.toml",

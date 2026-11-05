@@ -4468,6 +4468,7 @@
     "ImportFileTooLarge": "O ficheiro é maior do que 1 MB.",
     "ImportFromFile": "Importar config.toml",
     "ImportLoaded": "{{count}} definições carregadas. Prima Aplicar para as guardar.",
+    "ImportMigrationNotice": "A maioria das definições é agora gerida na configuração da aplicação (App Config); apenas as definições necessárias antes do início de sessão, como o ecrã de início de sessão, permanecem no ficheiro de configuração como antes. O botão de exportação transfere o ficheiro de configuração no formato novo ou no anterior.",
     "ImportNothing": "Este ficheiro não tem valores de definições de sistema.",
     "ImportParseError": "Este ficheiro não é um TOML válido: {{error}}",
     "ImportPasteLabel": "Conteúdo do config.toml",

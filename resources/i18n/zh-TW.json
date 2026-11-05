@@ -4470,6 +4470,7 @@
     "ImportFileTooLarge": "檔案大於 1 MB。",
     "ImportFromFile": "匯入 config.toml",
     "ImportLoaded": "已載入 {{count}} 項設定。按下套用以儲存。",
+    "ImportMigrationNotice": "大多數設定現在於應用程式設定（App Config）中管理，只有登入畫面等驗證前需要的設定仍像以前一樣儲存在設定檔中。可透過匯出按鈕下載新格式或舊格式的設定檔。",
     "ImportNothing": "此檔案中沒有系統設定值。",
     "ImportParseError": "此檔案不是有效的 TOML：{{error}}",
     "ImportPasteLabel": "config.toml 內容",

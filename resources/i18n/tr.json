@@ -4466,6 +4466,7 @@
     "ImportFileTooLarge": "Dosya 1 MB’tan büyük.",
     "ImportFromFile": "config.toml içe aktar",
     "ImportLoaded": "{{count}} ayar yüklendi. Kaydetmek için Uygula'ya basın.",
+    "ImportMigrationNotice": "Ayarların çoğu artık uygulama yapılandırmasında (App Config) yönetilir; yalnızca oturum açma ekranı gibi kimlik doğrulamadan önce gereken ayarlar eskisi gibi yapılandırma dosyasında kalır. Dışa aktar düğmesi yapılandırma dosyasını yeni veya önceki biçimde indirir.",
     "ImportNothing": "Bu dosyada Sistem Ayarları değeri yok.",
     "ImportParseError": "Bu dosya geçerli bir TOML değil: {{error}}",
     "ImportPasteLabel": "config.toml içeriği",

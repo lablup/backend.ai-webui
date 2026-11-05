@@ -4469,6 +4469,7 @@
     "ImportFileTooLarge": "Plik jest większy niż 1 MB.",
     "ImportFromFile": "Importuj config.toml",
     "ImportLoaded": "Wczytano {{count}} ustawień. Naciśnij Zastosuj, aby je zapisać.",
+    "ImportMigrationNotice": "Większość ustawień jest teraz zarządzana w konfiguracji aplikacji (App Config); tylko ustawienia potrzebne przed zalogowaniem, takie jak ekran logowania, pozostają w pliku konfiguracyjnym jak dotąd. Przycisk eksportu pobiera plik konfiguracyjny w nowym lub poprzednim formacie.",
     "ImportNothing": "Ten plik nie zawiera wartości ustawień systemowych.",
     "ImportParseError": "Ten plik nie jest poprawnym TOML: {{error}}",
     "ImportPasteLabel": "Zawartość config.toml",

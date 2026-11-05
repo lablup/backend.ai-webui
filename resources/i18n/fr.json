@@ -4469,6 +4469,7 @@
     "ImportFileTooLarge": "Le fichier dépasse 1 Mo.",
     "ImportFromFile": "Importer config.toml",
     "ImportLoaded": "{{count}} paramètres chargés. Appuyez sur Appliquer pour les enregistrer.",
+    "ImportMigrationNotice": "La plupart des paramètres sont désormais gérés dans la configuration de l’application (App Config) ; seuls les paramètres nécessaires avant la connexion, comme l’écran de connexion, restent dans le fichier de configuration comme avant. Le bouton d’exportation télécharge le fichier de configuration au nouveau format ou à l’ancien.",
     "ImportNothing": "Ce fichier ne contient aucune valeur de paramètres système.",
     "ImportParseError": "Ce fichier n'est pas un TOML valide : {{error}}",
     "ImportPasteLabel": "Contenu de config.toml",
