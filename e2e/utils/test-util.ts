@@ -291,7 +291,25 @@ export const userInfo = {
   },
 };
 
+/**
+ * Mark the superadmin view-switch tours (`AdminViewSwitchTour`) as already seen.
+ * Each test starts in a fresh browser context, where the tour's intro modal
+ * would otherwise cover the page on every superadmin landing. Call it before
+ * the page opens. The app only reads these keys for a superadmin.
+ */
+export async function skipAdminViewSwitchTours(page: Page) {
+  await page.addInitScript(() => {
+    for (const key of [
+      'backendaiwebui.settings.user.has_opened_tour_back_to_user_view',
+      'backendaiwebui.settings.user.has_opened_tour_back_to_admin_settings',
+    ]) {
+      localStorage.setItem(key, 'true');
+    }
+  });
+}
+
 export async function loginAsAdmin(page: Page, request: APIRequestContext) {
+  await skipAdminViewSwitchTours(page);
   await login(
     page,
     request,
@@ -352,6 +370,7 @@ export async function loginAsVisualRegressionAdmin(
   page: Page,
   request: APIRequestContext,
 ) {
+  await skipAdminViewSwitchTours(page);
   await login(
     page,
     request,
