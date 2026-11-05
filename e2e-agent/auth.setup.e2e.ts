@@ -1,15 +1,13 @@
 import { test } from "@e2e-dev/web";
 import { credentials } from "e2e";
-import { signIn } from "./utils/login";
-
-const apiEndpoint =
-  process.env.E2E_WEBSERVER_ENDPOINT ?? "http://127.0.0.1:8090";
+import { apiEndpoint, signIn } from "./utils/login";
 
 test.setup(
   "sign in as admin",
   { sessions: ["admin"] },
   async ({ app, screen, session }) => {
-    await signIn(app, screen, credentials.user("admin"), apiEndpoint);
+    const admin = credentials.user("admin");
+    await signIn(app, screen, admin.username, admin.password, apiEndpoint);
     await session.save("admin");
   },
 );

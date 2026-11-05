@@ -1,15 +1,14 @@
 import { expect, unique } from "e2e";
-import { test } from "../utils/cleanup";
 import { findRunnableImage } from "../utils/session-image";
+import { test } from "../utils/test-resources";
 
 const resourceGroup = "default";
 
 test(
   "the agent launches an interactive session that reaches RUNNING",
   { session: "admin", timeout: 600_000 },
-  async ({ app, agent, browser, screen, sessionsToCleanup }) => {
-    const name = `e2e-agent-${Date.now()}`;
-    sessionsToCleanup.push(name);
+  async ({ app, agent, browser, resources, screen }) => {
+    const name = resources.session("interactive");
 
     // Seed the environment through the launcher's own `formValues` link: its
     // default is the first accelerator-dedicated image, which only GPU agents
@@ -32,9 +31,9 @@ test(
       'Choose the "Interactive" session type, enter {name} as the Session name, then press "Next"',
       { params: { name: unique(name) } },
     );
-    await expect(screen.getByRole("button", /^Resource Group/)).toBeVisible({
-      timeout: 15_000,
-    });
+    await expect(
+      screen.getByRole("heading", "Resource Allocation"),
+    ).toBeVisible({ timeout: 15_000 });
 
     await agent.act(
       'Select {group} in the "Resource Group" field and {preset} in the "Resource Presets" field',
