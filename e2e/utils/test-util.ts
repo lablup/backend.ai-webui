@@ -1373,20 +1373,22 @@ const RENAMED_SETTING_KEYS: Record<string, string> = {
   'plugin.page': 'pluginPage',
 };
 
-type SettingsByScope = {
-  public: Record<string, unknown>;
-  domain: Record<string, unknown>;
+type SettingScope = 'public' | 'domain';
+type SettingsByScope = Record<SettingScope, Record<string, unknown>> & {
+  // Keys a spec cleared with '': dropped from the served document, so the
+  // app falls back to its code default whatever the cluster has stored.
+  cleared: Record<SettingScope, Set<string>>;
 };
 
-// `undefined` means unset: '', a `[placeholder]` and a non-number read as
-// unset, as the app's former file parser did.
+const CLEARED = Symbol('cleared');
+
+// `undefined` is ignored (a `[placeholder]`, a non-number); '' is CLEARED.
 function toSettingValue(type: string, raw: unknown): unknown {
   if (raw === null || raw === undefined) return undefined;
   if (typeof raw === 'string') {
     const text = raw.trim();
-    if (text === '' || text === '""' || /^\[.*\]$/.test(text)) {
-      return undefined;
-    }
+    if (text === '' || text === '""') return CLEARED;
+    if (/^\[.*\]$/.test(text)) return undefined;
   }
   switch (type) {
     case 'boolean':
@@ -1409,7 +1411,11 @@ function toSettingValue(type: string, raw: unknown): unknown {
 }
 
 function settingsFromToml(config: Record<string, any>): SettingsByScope {
-  const settings: SettingsByScope = { public: {}, domain: {} };
+  const settings: SettingsByScope = {
+    public: {},
+    domain: {},
+    cleared: { public: new Set(), domain: new Set() },
+  };
   for (const [section, fields] of Object.entries(config ?? {})) {
     if (!isPlainObject(fields)) continue;
     for (const [field, raw] of Object.entries(fields)) {
@@ -1417,11 +1423,38 @@ function settingsFromToml(config: Record<string, any>): SettingsByScope {
       const key = RENAMED_SETTING_KEYS[`${section}.${field}`] ?? field;
       const definition = WEBUI_SETTING_DEFINITIONS.find((d) => d.key === key);
       if (!definition) continue;
+      const scope = definition.scope as SettingScope;
       const value = toSettingValue(definition.type, raw);
-      if (value !== undefined) settings[definition.scope][key] = value;
+      if (value === CLEARED) {
+        settings.cleared[scope].add(key);
+        delete settings[scope][key];
+      } else if (value !== undefined) {
+        settings.cleared[scope].delete(key);
+        settings[scope][key] = value;
+      }
     }
   }
   return settings;
+}
+
+function touchesScope(settings: SettingsByScope, scope: SettingScope) {
+  return (
+    Object.keys(settings[scope]).length > 0 || settings.cleared[scope].size > 0
+  );
+}
+
+// What the spec requested wins over the cluster's stored document.
+function overrideSettings(
+  stored: unknown,
+  settings: SettingsByScope,
+  scope: SettingScope,
+): Record<string, unknown> {
+  const merged: Record<string, unknown> = {
+    ...(isPlainObject(stored) ? stored : {}),
+    ...settings[scope],
+  };
+  for (const key of settings.cleared[scope]) delete merged[key];
+  return merged;
 }
 
 type RouteHandler = Parameters<Page['route']>[1];
@@ -1449,7 +1482,7 @@ async function routeAppConfigSettings(
   }
   const next: { publicHandler?: RouteHandler; gqlHandler?: RouteHandler } = {};
 
-  if (Object.keys(settings.public).length > 0) {
+  if (touchesScope(settings, 'public')) {
     next.publicHandler = async (route) => {
       let payload: any = { app_configs: [] };
       try {
@@ -1470,7 +1503,7 @@ async function routeAppConfigSettings(
       const slice = (entry.config ??= {})[domainName] ?? {};
       entry.config[domainName] = {
         ...slice,
-        settings: { ...settings.public, ...slice.settings },
+        settings: overrideSettings(slice.settings, settings, 'public'),
       };
       await route.fulfill({
         status: 200,
@@ -1481,7 +1514,7 @@ async function routeAppConfigSettings(
     await page.route(PUBLIC_APP_CONFIG_URL, next.publicHandler);
   }
 
-  if (Object.keys(settings.domain).length > 0) {
+  if (touchesScope(settings, 'domain')) {
     next.gqlHandler = async (route) => {
       // Leave every other operation to the mocks registered before this one.
       if (!(route.request().postData() ?? '').includes('myAppConfigs')) {
@@ -1508,7 +1541,7 @@ async function routeAppConfigSettings(
       }
       row.config = {
         ...row.config,
-        settings: { ...settings.domain, ...row.config?.settings },
+        settings: overrideSettings(row.config?.settings, settings, 'domain'),
       };
       await route.fulfill({ response, json });
     };
@@ -1594,8 +1627,7 @@ export async function modifyConfigToml(
   configCache.set(page, config);
   requestedConfigCache.set(page, requested);
 
-  const needsPublicSlice =
-    Object.keys(settingsFromToml(requested).public).length > 0;
+  const needsPublicSlice = touchesScope(settingsFromToml(requested), 'public');
   const domainName: string =
     config.general?.apiDomainName || FALLBACK_PUBLIC_DOMAIN;
   await routeAppConfigSettings(page, requested, domainName);
