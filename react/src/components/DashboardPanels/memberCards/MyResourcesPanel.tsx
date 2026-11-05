@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { MyResourcesPanelQuery } from '../../../__generated__/MyResourcesPanelQuery.graphql';
+import { useCurrentDomain } from '../../../hooks';
 import { readPrimary, readSecondary } from '../panelPermission';
 import type { PanelComponentProps } from '../types';
 import MemberCard, { NoProjectText, mineProjectId } from './MemberCard';
@@ -23,10 +24,15 @@ export const MyResourcesInResourceGroup: React.FC<{
   fetchKey: string;
 }> = ({ projectId, resourceGroupName, fetchKey }) => {
   'use memo';
+  const currentDomain = useCurrentDomain();
   const variables = {
     projectId,
-    // The project scope alone: scopes are OR'd, and adding the domain reads groups the project may not use.
-    scope: { project: [{ value: projectId }] },
+    // One named group is read, so the OR'd scopes only widen where it is found: the session
+    // page's header picker can hold a group reached through the domain or the keypair.
+    scope: {
+      domain: [{ value: currentDomain.id }],
+      project: [{ value: projectId }],
+    },
     resourceGroupFilter: { name: { equals: resourceGroupName } },
   };
   const deferredVariables = useDeferredValue(variables);
