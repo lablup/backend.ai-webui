@@ -34,3 +34,27 @@ export function personalProjectName(browser: Browser) {
     })
     .catch(() => null);
 }
+
+// The UUID of one of the signed-in user's projects, or null.
+export function projectId(browser: Browser, name: string) {
+  return browser
+    .evaluate(async (projectName: string) => {
+      const client = (globalThis as any).backendaiclient;
+      if (client?.ready !== true) return null;
+      const result = await client.query(
+        `query {
+          myUserV2 {
+            projects(filter: { isActive: true }, limit: 1000) {
+              edges { node { entityId basicInfo { name } } }
+            }
+          }
+        }`,
+        {},
+      );
+      const project = result?.myUserV2?.projects?.edges
+        ?.map((edge: any) => edge?.node)
+        .find((node: any) => node?.basicInfo?.name === projectName);
+      return (project?.entityId as string | undefined) ?? null;
+    }, name)
+    .catch(() => null);
+}
