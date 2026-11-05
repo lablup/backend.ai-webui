@@ -280,12 +280,11 @@ describe('fixed windows', () => {
     });
   });
 
-  it('applies a card cap shorter than the global one', () => {
-    expect(checkWindow(NOW - 8 * DAY, NOW, NOW, 7)).toEqual({
+  it('caps a picked window at 7 days', () => {
+    expect(checkWindow(NOW - 8 * DAY, NOW, NOW)).toEqual({
       problem: 'tooLong',
     });
-    expect(checkWindow(NOW - 7 * DAY, NOW, NOW, 7)).toHaveProperty('window');
-    expect(checkWindow(NOW - 8 * DAY, NOW, NOW)).toHaveProperty('window');
+    expect(checkWindow(NOW - 7 * DAY, NOW, NOW)).toHaveProperty('window');
   });
 
   it('splits a past window equally and settles every bucket', () => {

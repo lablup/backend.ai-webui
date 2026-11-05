@@ -59,6 +59,7 @@ flowchart LR
 | `BAIDateInput` | `DateInput` |
 | `BAIDateRangeInput` | `DateRangeInput` |
 | `BAIDateTimeInput` | `DateTimeInput` |
+| `BAIDateTimeRangeInput` | `DateTimeRangeInput` (`components/DateTimeRangeInput`) |
 | `BAIFileInput` | `FileInput` |
 | `BAIMultiSelector` | `MultiSelector` |
 | `BAINumberInput` | `NumberInput` |

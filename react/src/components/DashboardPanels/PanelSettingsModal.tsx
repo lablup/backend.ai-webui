@@ -6,7 +6,7 @@ import { Form } from '../../form-engine';
 import BAIFormItem from '../BAIFormItem';
 import { useDashboardResourceGroups } from './DashboardResourceGroups';
 import PanelRangeSelect from './PanelRangeSelect';
-import { DEFAULT_RANGE, hasSetting, maxRangeDaysOf } from './panelSettings';
+import { DEFAULT_RANGE, hasSetting } from './panelSettings';
 import type { PanelDefinition, PanelSettings } from './types';
 import { Text } from '@lablup/ui-common/Text';
 import {
@@ -28,7 +28,7 @@ export interface PanelSettingsModalProps {
   open: boolean;
   /** The card's title, shown in the modal title. */
   title: string;
-  definition: Pick<PanelDefinition, 'settings' | 'kind' | 'maxRangeDays'>;
+  definition: Pick<PanelDefinition, 'settings' | 'kind'>;
   settings?: PanelSettings;
   onSubmit: (settings: PanelSettings | undefined) => void;
   onRequestClose: () => void;
@@ -127,10 +127,7 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
               label={t('dashboard.settings.DefaultTimeRange')}
               rules={[{ required: true }]}
             >
-              <PanelRangeSelect
-                label={t('dashboard.settings.DefaultTimeRange')}
-                maxDays={maxRangeDaysOf(definition)}
-              />
+              <PanelRangeSelect width="100%" />
             </BAIFormItem>
           ) : null}
         </Form>

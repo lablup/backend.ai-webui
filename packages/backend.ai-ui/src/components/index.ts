@@ -312,6 +312,12 @@ export { default as BAIDateRangeInput } from './BAIDateRangeInput';
 export type { BAIDateRangeInputProps } from './BAIDateRangeInput';
 export { default as BAIDateTimeInput } from './BAIDateTimeInput';
 export type { BAIDateTimeInputProps } from './BAIDateTimeInput';
+export { default as BAIDateTimeRangeInput } from './BAIDateTimeRangeInput';
+export type {
+  BAIDateTimeRangeInputProps,
+  BAIDateTimeRangeInputPreset,
+  BAIDateTimeRangeInputValue,
+} from './BAIDateTimeRangeInput';
 export { default as BAIFileInput } from './BAIFileInput';
 export type { BAIFileInputProps } from './BAIFileInput';
 export { default as BAIMultiSelector } from './BAIMultiSelector';

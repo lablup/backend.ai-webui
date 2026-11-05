@@ -6,12 +6,7 @@ import { useDashboardResourceGroups } from './DashboardResourceGroups';
 import PanelRangeSelect from './PanelRangeSelect';
 import { cardResourceGroup } from './dashboardScope';
 import type { PanelSettingOverride } from './panelSettingOverrides';
-import {
-  DEFAULT_RANGE,
-  hasSetting,
-  maxRangeDaysOf,
-  rangeLabel,
-} from './panelSettings';
+import { DEFAULT_RANGE, hasSetting, rangeLabel } from './panelSettings';
 import type { PanelDefinition, PanelSettings } from './types';
 import { useDashboardFilterContext } from './useDashboardFilters';
 import { IconButton } from '@lablup/ui-common/IconButton';
@@ -22,7 +17,7 @@ import React, { Suspense, createContext, use } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface PanelHeaderSettings {
-  definition: Pick<PanelDefinition, 'settings' | 'kind' | 'maxRangeDays'>;
+  definition: Pick<PanelDefinition, 'settings' | 'kind'>;
   saved: PanelSettings | undefined;
   /** What the card reads now: the header's pick, else the saved setting. */
   effective: PanelSettings | undefined;
@@ -110,11 +105,9 @@ const PanelSettingsHeaderControls: React.FC = () => {
           hasHoverIndication={false}
         >
           <PanelRangeSelect
-            size="small"
-            variant={overridden.range ? 'filled' : 'borderless'}
+            size="sm"
             aria-label={t('dashboard.settings.TimeRange')}
             value={effective?.range ?? DEFAULT_RANGE}
-            maxDays={maxRangeDaysOf(definition)}
             onChange={(range) => onChange({ range })}
           />
         </Tooltip>

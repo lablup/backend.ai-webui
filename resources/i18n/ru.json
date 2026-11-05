@@ -977,8 +977,6 @@
     "settings": {
       "AllResourceGroups": "Все группы ресурсов",
       "BackToSavedSetting": "Вернуть сохранённую настройку ({{value}})",
-      "CustomRange": "Свой период",
-      "CustomRangeHelp": "Выберите начало и конец не более чем через {{days}} дн. Конец позже текущего момента заменяется текущим моментом.",
       "DefaultCardSettings": "Настройки карточки по умолчанию",
       "DefaultResourceGroup": "Группа ресурсов по умолчанию",
       "DefaultSettings": "Настройки по умолчанию",
@@ -988,10 +986,6 @@
       "Last1Hour": "Последний час",
       "Last24Hours": "Последние 24 часа",
       "Last7Days": "Последние 7 дней",
-      "RangeEnd": "Конец",
-      "RangeEndBeforeStart": "Конец должен быть позже начала.",
-      "RangeStart": "Начало",
-      "RangeTooLong": "Период может длиться не более {{days}} дн.",
       "ResourceGroupsDescription": "Если ничего не выбрано: {{default}}",
       "TimeRange": "Период"
     }
