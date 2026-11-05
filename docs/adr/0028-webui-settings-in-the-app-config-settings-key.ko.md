@@ -77,7 +77,7 @@ flowchart LR
 | `general.apiEndpoint`, `general.apiDomainName`                                                                 | 문서를 찾는 주소와 도메인이다.                                                                               |
 | `general.connectionMode`                                                                                       | webserver 배포는 SESSION으로 고정되고, Electron은 PUBLIC 문서를 찾을 도메인이 없다.                          |
 | `general.signupSupport`                                                                                        | webserver의 `service.enable-signup`이 가입 요청을 따로 막는다. webui만 바꾸면 버튼은 보이고 요청은 거부된다. |
-| `general.enableWebMCP` | ADR 0025가 정한 WebMCP tool의 배포 스위치이고, 배포를 운영하는 쪽이 정한다. |
+| `general.enableWebMCP`                                                                                         | ADR 0025가 정한 WebMCP tool의 배포 스위치이고, 배포를 운영하는 쪽이 정한다.                                  |
 | `wsproxy.proxyURL`, `wsproxy.disableCertCheck`, `server.webServerURL`, `license.edition`, `license.validUntil` | Electron 로컬 proxy와 창, 부트, About 모달용 값이다.                                                         |
 
 - **Removed keys**: 아무 코드도 읽지 않던 파일 키 10개(`apiEndpointText`, `allowProjectResourceMonitor`, `alwaysEnqueueComputeSession`, `force2FA`, `directoryBasedUsage`, `enableImportFromHuggingFace`, `environments.allowlist`, `wsproxy.proxyBaseURL`, `wsproxy.proxyListenIP`, `pipeline.endpoint`)와, 이 값을 쓰던 브라우저 측 로그인 시도 제한과 함께 `loginAttemptLimit`/`loginBlockTime`을 없앴다(#10664). 로그인 시도 제한은 webserver의 제한(`session.login-allowed-fail-count`, `session.login-block-time`)만 남는다.

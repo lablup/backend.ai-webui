@@ -300,26 +300,12 @@ function lookup(config, dotted) {
   return value;
 }
 
-/** `[{key, value, present}]` for MANAGER_CONFIG_KEYS; a present `section.*` expands to one row per key in it. */
+/** `[{key, value, present}]` for MANAGER_CONFIG_KEYS. */
 export function managerSettings(config) {
-  const rows = [];
-  for (const key of MANAGER_CONFIG_KEYS) {
-    if (key.endsWith(".*")) {
-      const section = key.slice(0, -2);
-      const table = lookup(config, section);
-      if (isObject(table) && Object.keys(table).length > 0) {
-        for (const [name, value] of Object.entries(table)) {
-          rows.push({ key: `${section}.${name}`, value, present: true });
-        }
-      } else {
-        rows.push({ key, value: null, present: false });
-      }
-      continue;
-    }
+  return MANAGER_CONFIG_KEYS.map((key) => {
     const value = lookup(config, key);
-    rows.push({ key, value: value ?? null, present: value !== undefined });
-  }
-  return rows;
+    return { key, value: value ?? null, present: value !== undefined };
+  });
 }
 
 /** Every leaf of `config` as `[{key, value, present: true}]`, for `config --all`. */
@@ -1044,11 +1030,10 @@ export const CONFIG_GENERATED_MARKER =
   "# Written by `pnpm run dev-env use`";
 
 /**
- * Probed keys `use` never copies: the login endpoint comes from
- * `.env.development.local` (a baked `apiEndpoint` disables API sign-in), and
- * `plugin.*` names bundle files the deployment has and a worktree does not.
+ * File-only keys `use` never copies: the login endpoint comes from
+ * `.env.development.local` (a baked `apiEndpoint` disables API sign-in).
  */
-export const CONFIG_COPY_SKIP = ["general.apiEndpoint", "general.apiEndpointText", "plugin"];
+export const CONFIG_COPY_SKIP = ["general.apiEndpoint"];
 
 const TOML_KEY = "[A-Za-z0-9_-]+";
 const PLACEHOLDER = /^"\[.*\]"$/;
