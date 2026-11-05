@@ -10,7 +10,7 @@ import {
   type WebUISettingDefinition,
 } from '../../../helper/webuiSettings';
 import * as _ from 'lodash-es';
-import { parse as parseToml } from 'smol-toml';
+import { parse as parseToml, stringify as stringifyToml } from 'smol-toml';
 
 const RESOURCES_KEYS = new Set([
   'openPortToPublic',
@@ -163,4 +163,28 @@ export const importConfigToml = (text: string): ConfigTomlImport => {
     }
   }
   return { ok: true, imported, skipped };
+};
+
+/**
+ * A `config.toml` holding every setting's value under the path the import
+ * reads it from, so the file loads back into System Settings elsewhere.
+ */
+export const exportConfigToml = (
+  valueOf: (definition: WebUISettingDefinition) => unknown,
+): string => {
+  const doc: Record<string, Record<string, unknown>> = {};
+  for (const definition of WEBUI_SETTING_DEFINITIONS) {
+    const value = valueOf(definition);
+    if (
+      value === undefined ||
+      value === null ||
+      value === '' ||
+      (Array.isArray(value) && value.length === 0)
+    ) {
+      continue;
+    }
+    const [section, key] = tomlPathsOf(definition)[0].split('.');
+    (doc[section] ??= {})[key] = value;
+  }
+  return stringifyToml(doc);
 };

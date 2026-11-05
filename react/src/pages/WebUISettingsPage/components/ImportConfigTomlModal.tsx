@@ -2,24 +2,29 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../../../app-shim';
+import BAICodeEditor from '../../../components/BAICodeEditor';
+import { downloadBlob } from '../../../helper/csv-util';
 import type { WebUISettingDefinition } from '../../../helper/webuiSettings';
 import {
+  exportConfigToml,
   importConfigToml,
   type ImportedSetting,
   type SkippedKey,
   type SkipReason,
 } from '../helper/importConfigToml';
 import { useWebUISettingLabels } from './WebUISettingLabels';
+import { Button } from '@lablup/ui-common/Button';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAIAlert,
-  BAIFileInput,
   BAIFlex,
   BAIModal,
   BAITable,
-  BAITextArea,
+  useBAILogger,
 } from 'backend.ai-ui';
-import { useState } from 'react';
+import { ExternalLink, Import } from 'lucide-react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // Large enough for any real config.toml, small enough to reject a wrong file early.
@@ -46,7 +51,10 @@ const ImportConfigTomlModal: React.FC<ImportConfigTomlModalProps> = ({
   'use memo';
   const { t } = useTranslation();
   const labels = useWebUISettingLabels();
+  const { message } = App.useApp();
+  const { logger } = useBAILogger();
   const [text, setText] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const result = text.trim() ? importConfigToml(text) : undefined;
   const imported = result?.ok ? result.imported : [];
@@ -65,39 +73,94 @@ const ImportConfigTomlModal: React.FC<ImportConfigTomlModalProps> = ({
     onCancel();
   };
 
+  const readFile = async (file: File | undefined) => {
+    if (!file) return;
+    if (file.size > MAX_FILE_SIZE) {
+      message.error(t('webuiSettings.ImportFileTooLarge'));
+      return;
+    }
+    try {
+      setText(await file.text());
+    } catch (error) {
+      logger.error('Failed to read the config.toml file', error);
+      message.error(t('webuiSettings.ImportFileReadError'));
+    }
+  };
+
+  const load = () => {
+    onLoad(imported);
+    setText('');
+  };
+
   return (
     <BAIModal
       open={open}
       title={t('webuiSettings.ImportConfigToml')}
       width={880}
-      okText={t('webuiSettings.ImportLoad')}
-      okButtonProps={{ disabled: imported.length === 0 }}
-      onOk={() => {
-        onLoad(imported);
-        setText('');
-      }}
-      cancelText={t('button.Cancel')}
       onCancel={close}
+      footer={
+        <BAIFlex direction="row" justify="between" gap="xs">
+          <BAIFlex gap="sm">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".toml,text/plain"
+              style={{ display: 'none' }}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                e.target.value = '';
+                void readFile(file);
+              }}
+            />
+            <Button
+              data-testid="import-config-toml-file"
+              icon={<Import size="1em" />}
+              label={t('webuiSettings.ImportFromFile')}
+              onClick={() => fileInputRef.current?.click()}
+            />
+            <Button
+              data-testid="import-config-toml-export"
+              icon={<ExternalLink size="1em" />}
+              label={t('webuiSettings.ExportToFile')}
+              onClick={() =>
+                downloadBlob(
+                  new Blob([exportConfigToml(currentValueOf)], {
+                    type: 'application/toml',
+                  }),
+                  'config.toml',
+                )
+              }
+            />
+          </BAIFlex>
+          <BAIFlex gap="sm">
+            <Button
+              variant="secondary"
+              label={t('button.Cancel')}
+              onClick={close}
+            />
+            <Button
+              variant="primary"
+              label={t('button.Apply')}
+              isDisabled={imported.length === 0}
+              onClick={load}
+            />
+          </BAIFlex>
+        </BAIFlex>
+      }
     >
       <BAIFlex direction="column" align="stretch" gap="md">
-        <Text>{t('webuiSettings.ImportConfigTomlDesc')}</Text>
-        <BAIFileInput
-          aria-label={t('webuiSettings.ImportFile')}
-          accept=".toml,text/plain"
-          maxSize={MAX_FILE_SIZE}
-          onChange={async (file) => {
-            const single = Array.isArray(file) ? file[0] : file;
-            setText(single ? await single.text() : '');
-          }}
+        <BAIAlert
+          type="info"
+          showIcon
+          title={t('webuiSettings.ImportConfigTomlDesc')}
         />
-        <BAITextArea
-          aria-label={t('webuiSettings.ImportPasteLabel')}
-          placeholder={t('webuiSettings.ImportPasteLabel')}
-          data-testid="import-config-toml-text"
-          rows={8}
-          width="100%"
+        <BAICodeEditor
+          language="toml"
+          editable
+          height={240}
           value={text}
-          onChange={(value) => setText(value)}
+          onChange={setText}
+          options={{ ariaLabel: t('webuiSettings.ImportPasteLabel') }}
         />
         {result && !result.ok && (
           <BAIAlert

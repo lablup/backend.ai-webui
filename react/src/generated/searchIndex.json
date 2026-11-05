@@ -2965,6 +2965,7 @@
         }
       ],
       "keys": [
+        "button.Apply",
         "button.Discard",
         "button.Publish",
         "button.Reset",
@@ -3121,6 +3122,7 @@
         "webuiSettings.EnableInteractiveLoginAccountSwitch",
         "webuiSettings.EnableModelFolders",
         "webuiSettings.EnableReservoir",
+        "webuiSettings.ExportToFile",
         "webuiSettings.FasttrackEndpoint",
         "webuiSettings.HideAgents",
         "webuiSettings.ImportColumnCurrent",
@@ -3131,8 +3133,9 @@
         "webuiSettings.ImportColumnSetting",
         "webuiSettings.ImportConfigToml",
         "webuiSettings.ImportConfigTomlDesc",
-        "webuiSettings.ImportFile",
-        "webuiSettings.ImportLoad",
+        "webuiSettings.ImportFileReadError",
+        "webuiSettings.ImportFileTooLarge",
+        "webuiSettings.ImportFromFile",
         "webuiSettings.ImportLoaded",
         "webuiSettings.ImportNothing",
         "webuiSettings.ImportParseError",
