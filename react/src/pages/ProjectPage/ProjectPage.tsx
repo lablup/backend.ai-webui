@@ -399,7 +399,13 @@ const ProjectPage = () => {
     >
       <BAIFlex direction="column" align="stretch" gap="sm">
         <BAIFlex justify="between" align="start" wrap="wrap" gap="xs">
-          <BAIFlex direction="row" gap="sm" align="start" wrap="wrap">
+          <BAIFlex
+            direction="row"
+            gap="sm"
+            align="start"
+            wrap="wrap"
+            style={{ flexShrink: 1 }}
+          >
             <BAISegmentedControl
               value={queryParams.status}
               onChange={(value) => {

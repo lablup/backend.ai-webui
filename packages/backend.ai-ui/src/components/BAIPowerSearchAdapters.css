@@ -16,6 +16,13 @@
     flex-wrap: wrap;
   }
 
+  /* `className` lands on the Tokenizer, not PowerSearch's root, which is the
+     flex item a toolbar row sizes: let it shrink to the row so chips wrap. */
+  .astryx-power-search:has(.bai-power-search) {
+    max-width: 100%;
+    min-width: 0;
+  }
+
   /* Tokenizer wraps each token in a non-shrinking span sized to its content,
      so a long token runs past the search box; `Token`'s own `max-width: 100%`
      resolves against that span (FR-3931). */
