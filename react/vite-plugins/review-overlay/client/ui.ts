@@ -17,7 +17,7 @@
 import { icon, ICON_STYLE } from './icons.js';
 import { fractionWithin, projectFraction, type Box } from './selection.js';
 import { liftAboveTopLayer } from './top-layer.js';
-import type { AnchorRect, OverlayPalette } from './types.js';
+import type { AnchorRect, CopyPayload, OverlayPalette } from './types.js';
 
 /**
  * The attribute the shadow host carries, and the only mark a host — or another
@@ -43,12 +43,14 @@ const COMPOSE_GAP = 10;
 const VIEWPORT_PAD = 8;
 
 /**
- * A pick ready to join the set. The composer never writes the clipboard: the
- * dock's "Copy all" and its rows' copy buttons hand pins over.
+ * A pick ready to join the set. ⌘⏎ only commits it; ⌘⌥⏎ also copies the set
+ * it makes, and then commits only once that write has landed.
  */
 export interface ComposedPin {
   commit: () => void;
   toast: string;
+  /** The whole set with this pin in it, rendered inside the gesture. */
+  copy: () => CopyPayload;
 }
 
 /** Nothing is added and the composer stays open; the toast says why. */
@@ -384,7 +386,7 @@ ${ICON_STYLE}
   const compose = el('div', 'compose');
   compose.innerHTML = `
     <div class="pathlabel"></div>
-    <textarea aria-label="Review comment on the picked element" placeholder="Comment on this element… (⌘⏎ to add it to the set; may be empty)"></textarea>
+    <textarea aria-label="Review comment on the picked element" placeholder="Comment on this element… (⌘⏎ to add it to the set, ⌘⌥⏎ to add and copy; may be empty)"></textarea>
     <div class="err"></div>
     <div class="warn"></div>
     <div class="actions">
@@ -478,25 +480,41 @@ ${ICON_STYLE}
   let composeEpoch = 0;
   let draftFull = false;
   let draftSize = 0;
+  /** ⌥ is down: the button and ⌘⏎ add AND copy, as the composer used to. */
+  let altHeld = false;
+  /** A second ⌘⌥⏎ over an unresolved write would build a second pin. */
+  let copyInFlight = false;
 
   function syncCopyEnabled() {
     saveButton.disabled =
       (mode === 'pick' && draftFull) ||
+      copyInFlight ||
       readyNote === null ||
       composeText.value.trim() !== readyNote;
   }
 
   /** The button says what ⌘⏎ does here. */
   function syncCopyLabel() {
+    const copying = mode === 'pick' && altHeld;
     saveButton
       .querySelector('svg')
-      ?.replaceWith(icon(mode === 'edit' ? 'check' : 'map-pin'));
+      ?.replaceWith(
+        icon(mode === 'edit' ? 'check' : copying ? 'copy' : 'map-pin'),
+      );
     saveLabel.textContent =
       mode === 'edit'
         ? 'Save note'
         : draftFull
           ? `Set is full (${draftSize})`
-          : 'Add to set';
+          : copying
+            ? 'Add & copy'
+            : 'Add to set';
+  }
+
+  function setAltHeld(next: boolean) {
+    if (next === altHeld) return;
+    altHeld = next;
+    syncCopyLabel();
   }
 
   function setComposeReady(ready: boolean, note = '') {
@@ -644,6 +662,7 @@ ${ICON_STYLE}
     compose.style.display = 'none';
     mode = 'pick';
     compose.classList.remove('editing');
+    altHeld = false;
     syncCopyLabel();
     pickTarget = null;
     pickRegion = null;
@@ -768,7 +787,9 @@ ${ICON_STYLE}
 
   // ---------------------------------------------------------------- events
 
-  function runSave() {
+  /** `andCopy` also writes the set to the clipboard, the way ⌘⏎ once did. */
+  function runSave(andCopy = false) {
+    if (copyInFlight) return;
     // Empty text is allowed — the pin still carries label, stack and link.
     const note = composeText.value.trim();
     // ⌘⏎ can beat the debounce, and the note is part of the anchor now: start
@@ -810,9 +831,35 @@ ${ICON_STYLE}
       composeErr.style.display = 'block';
       return;
     }
-    built.commit();
-    closeCompose();
-    showToast(built.toast);
+    const block = built;
+    if (!andCopy) {
+      block.commit();
+      closeCompose();
+      showToast(block.toast);
+      return;
+    }
+    const payload = block.copy();
+    const epoch = composeEpoch;
+    const copied = copyText(payload.text, payload.html);
+    // The pin joins only once THIS write has landed, even if the composer
+    // closed meanwhile; a failure keeps the note for the retry.
+    const done = (ok: boolean) => {
+      copyInFlight = false;
+      if (ok) block.commit();
+      syncCopyEnabled();
+      showToast(
+        ok
+          ? (payload.toast ?? COPIED_ONE)
+          : 'Could not reach the clipboard — press ⌘⌥⏎ again',
+      );
+      if (ok && epoch === composeEpoch) closeCompose();
+    };
+    if (typeof copied === 'boolean') done(copied);
+    else {
+      copyInFlight = true;
+      syncCopyEnabled();
+      void copied.then(done);
+    }
   }
 
   compose.addEventListener('click', (evt) => {
@@ -822,7 +869,7 @@ ${ICON_STYLE}
     const act =
       target?.closest<HTMLButtonElement>('button[data-act]')?.dataset.act;
     if (act === 'cancel') closeCompose();
-    if (act === 'save') runSave();
+    if (act === 'save') runSave(evt.altKey && mode === 'pick');
   });
 
   composeText.addEventListener('keydown', (evt) => {
@@ -830,9 +877,17 @@ ${ICON_STYLE}
       evt.preventDefault();
       // Not gated on `saveButton.disabled`: `runSave` says why it cannot add
       // yet, which is more use than a keystroke that does nothing.
-      runSave();
+      runSave(evt.altKey && mode === 'pick');
     }
   });
+
+  // The label follows ⌥ wherever focus is inside the open composer.
+  const trackAlt = (evt: KeyboardEvent) => {
+    if (isComposeOpen()) setAltHeld(evt.altKey);
+  };
+  document.addEventListener('keydown', trackAlt, true);
+  document.addEventListener('keyup', trackAlt, true);
+  window.addEventListener('blur', () => setAltHeld(false));
 
   // Only when the overlay owns the interaction — otherwise every Escape in the
   // app (closing a modal, clearing a select) would cancel a pick that is not

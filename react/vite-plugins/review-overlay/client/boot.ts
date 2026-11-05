@@ -252,6 +252,14 @@ function boot(host: OverlayHost): OverlayHandle {
         if (store.has(pin.id)) return { refused: 'Already pinned' };
         return {
           toast: `Added pin ${draft.length + 1} to your set — copy it from the dock when you are done`,
+          copy: () => {
+            const set = [...draft, pin];
+            return {
+              text: buildSetText(set, copyOptions()),
+              html: buildSetHtml(set, copyOptions()),
+              toast: copiedToast(set.length),
+            };
+          },
           commit: () => {
             store.add(pin);
             syncDraft();

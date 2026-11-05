@@ -310,6 +310,74 @@ describe('adding to a set', () => {
     expect(composeOpen()).toBe(false);
   });
 
+  describe('⌘⌥⏎', () => {
+    const pressAddAndCopy = () =>
+      textarea().dispatchEvent(
+        new KeyboardEvent('keydown', {
+          key: 'Enter',
+          metaKey: true,
+          altKey: true,
+          bubbles: true,
+        }),
+      );
+
+    it('adds the pin and copies the whole set, as the composer used to', async () => {
+      await bootOverlay();
+      const written = stubExecCommand();
+      await pickAndAdd('create', 'First note.');
+
+      await pick('cancel', 'Second note.');
+      pressAddAndCopy();
+      await ticks(2);
+
+      const text = written['text/plain'];
+      expect(text.split('📍')).toHaveLength(3);
+      expect(text).toContain('First note.');
+      expect(text).toContain('Second note.');
+      expect(storedIds()).toHaveLength(2);
+      expect(composeOpen()).toBe(false);
+      expect(toast()).toBe('Copied all 2 pins — replaces your last paste');
+    });
+
+    it('adds nothing when the clipboard write fails', async () => {
+      await bootOverlay();
+      stubExecCommand(false);
+
+      await pick('create', 'one');
+      pressAddAndCopy();
+      await ticks(2);
+
+      expect(storedIds()).toHaveLength(0);
+      expect(composeOpen()).toBe(true);
+      expect(textarea().value).toBe('one');
+    });
+
+    it('relabels the button while ⌥ is held', async () => {
+      await bootOverlay();
+      stubExecCommand();
+      await pick('create', 'one');
+
+      textarea().dispatchEvent(
+        new KeyboardEvent('keydown', {
+          key: 'Alt',
+          altKey: true,
+          bubbles: true,
+          composed: true,
+        }),
+      );
+      expect(saveButton().textContent).toBe('Add & copy');
+      textarea().dispatchEvent(
+        new KeyboardEvent('keyup', {
+          key: 'Alt',
+          altKey: false,
+          bubbles: true,
+          composed: true,
+        }),
+      );
+      expect(saveButton().textContent).toBe('Add to set');
+    });
+  });
+
   it('copies one pin, and only that one, from its dock row', async () => {
     await bootOverlay();
     const written = stubExecCommand();
