@@ -89,6 +89,7 @@
  pass: 28 of 64) before falling back to the translated generic — the same
  policy `BAIButton` / `BAICheckbox` / `BAIUncontrolledInput` use here.
 */
+import { FormItemInputContext } from '../form-engine';
 import { nodeToAccessibleLabel } from '../helper/astryxLabel';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIMultiSelector from './BAIMultiSelector';
@@ -173,7 +174,10 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
   autoFocus?: boolean;
   tabIndex?: number;
   id?: string;
-  /** Accessible name; derived from `placeholder` when absent. */
+  /**
+   * Accessible name; falls back to the enclosing Form.Item's label, then to
+   * `placeholder`.
+   */
   label?: string;
   /** Same as `label`, for a call site that names the control the DOM way. */
   'aria-label'?: string;
@@ -292,6 +296,8 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   ...restProps
 }: BAISelectProps<ValueType, OptionType>): React.ReactElement {
   const { t } = useBAIi18n();
+  const formItemLabel =
+    React.useContext(FormItemInputContext).label || undefined;
 
   // antd's OTHER option API: `<Select.Option>` / `<Select.OptGroup>` children.
   // Astryx's `Selector` is `options`-driven only, so the element tree is
@@ -509,6 +515,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   const accessibleLabel =
     label ??
     ariaLabel ??
+    formItemLabel ??
     nodeToAccessibleLabel(placeholder) ??
     t('general.Select');
 

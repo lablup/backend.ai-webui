@@ -201,7 +201,12 @@ describe('ImportArtifactRevisionToFolderModal destination project (ADR-0001, FR-
     );
     expect(projectSelect).toBeInTheDocument();
     expect(
-      screen.getByText('importArtifactRevisionToFolderModal.ModelStoreProject'),
+      screen.getByText(
+        'importArtifactRevisionToFolderModal.ModelStoreProject',
+        {
+          selector: '.uic-form-item__label',
+        },
+      ),
     ).toBeInTheDocument();
   });
 
