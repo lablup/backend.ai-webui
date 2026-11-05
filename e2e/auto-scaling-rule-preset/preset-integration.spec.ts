@@ -2,11 +2,10 @@
 // section: 9. Preset Selectability in the Auto-Scaling Rule Editor (Integration)
 //
 // The auto-scaling rule editor lives on the deployment detail page, so these
-// tests create an empty deployment shell (no revision needed) and delete it in afterAll.
-import {
-  cleanupDeploymentSafely,
-  createDeploymentShell,
-} from '../utils/deployment-fixtures';
+// tests create an empty deployment shell (no revision needed) and delete it in afterAll
+// through the admin API.
+import { createDeploymentShell } from '../utils/deployment-fixtures';
+import { createTestResources } from '../utils/test-resources';
 import { loginAsAdmin, navigateTo, webuiEndpoint } from '../utils/test-util';
 import { test, expect, Page, Locator } from '@playwright/test';
 
@@ -36,25 +35,6 @@ async function createPreset(
       .first(),
   ).toBeVisible({ timeout: 10000 });
   await expect(modal).toBeHidden({ timeout: 30000 });
-}
-
-async function deletePreset(page: Page, presetName: string): Promise<void> {
-  await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
-  const row = page.getByRole('row').filter({ hasText: presetName });
-  if ((await row.count()) === 0) return;
-  await row.getByRole('button', { name: 'Delete', exact: true }).click();
-  const confirmModal = page.getByRole('dialog');
-  await expect(confirmModal).toBeVisible({ timeout: 30000 });
-  await confirmModal.locator('input').fill(presetName);
-  await confirmModal
-    .getByRole('button', { name: 'Delete', exact: true })
-    .click();
-  await expect(
-    page
-      .getByText('Prometheus query preset has been successfully deleted.')
-      .first(),
-  ).toBeVisible({ timeout: 10000 });
-  await expect(confirmModal).toBeHidden({ timeout: 30000 });
 }
 
 async function openAddAutoScalingRuleModal(page: Page): Promise<Locator> {
@@ -111,36 +91,10 @@ test.describe(
     let deploymentName: string;
     let deploymentUrl: string;
 
-    test.afterAll(async ({ browser, request }) => {
-      // Cleanup presets and services using a fresh context (page fixture not allowed in afterAll)
-      const context = await browser.newContext();
-      const page = await context.newPage();
-      try {
-        await loginAsAdmin(page, request);
-      } catch {
-        await context.close();
-        return;
-      }
-      // Cleanup presets
-      if (presetName) {
-        try {
-          await deletePreset(page, presetName);
-        } catch {
-          // ignore
-        }
-      }
-      if (presetNameTimeWindow) {
-        try {
-          await deletePreset(page, presetNameTimeWindow);
-        } catch {
-          // ignore
-        }
-      }
-      if (deploymentName) {
-        await cleanupDeploymentSafely(page, deploymentName);
-      }
-      await context.close();
-    });
+    // Shared across the serial tests: 9.1 creates the deployment and its preset,
+    // 9.2 reuses the deployment. Purged via the admin API once the block ends.
+    const resources = createTestResources();
+    test.afterAll(() => resources.cleanup());
 
     // 9.1 A newly created Prometheus Query Preset appears in the auto-scaling rule editor dropdown
     test('Superadmin can find a newly created preset in the auto-scaling rule editor Prometheus dropdown', async ({
@@ -153,8 +107,14 @@ test.describe(
       await loginAsAdmin(page, request);
 
       // Step 2: Create the integration preset
-      const timestamp = Date.now();
-      presetName = `e2e-preset-integration-${timestamp}`;
+      presetName = resources.name(
+        'prometheusQueryPreset',
+        'e2e-preset-integration',
+      );
+      deploymentName = resources.name(
+        'deployment',
+        'e2e-plan-preset-integration',
+      );
 
       await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
       await page.getByRole('button', { name: 'Create Preset' }).click();
@@ -187,7 +147,6 @@ test.describe(
       ).toBeVisible({ timeout: 10000 });
 
       // Step 3: Create an empty deployment and land on its detail page
-      deploymentName = `e2e-plan-preset-integration-${timestamp}`;
       await navigateTo(page, 'deployments');
       await createDeploymentShell(page, deploymentName);
       deploymentUrl = page.url();
@@ -225,8 +184,10 @@ test.describe(
       await loginAsAdmin(page, request);
 
       // Create a second preset with Time Window
-      const timestamp = Date.now();
-      presetNameTimeWindow = `e2e-preset-integration-timewindow-${timestamp}`;
+      presetNameTimeWindow = resources.name(
+        'prometheusQueryPreset',
+        'e2e-preset-integration-timewindow',
+      );
 
       await createPreset(page, presetNameTimeWindow, 'e2e_tw_metric', 'up');
 
