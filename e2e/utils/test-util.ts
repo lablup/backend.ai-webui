@@ -715,11 +715,8 @@ export async function createVFolderAndVerify(
 
   // No mount permission step: every new folder is created read-only for
   // shared users (#10647); the default is changed from the share modal.
-  await (await modal.getCreateButton()).click();
-  // Wait for the creation modal to close before verifying
-  await expect(
-    page.getByRole('dialog').filter({ hasText: 'Create a new storage folder' }),
-  ).toBeHidden({ timeout: 30000 });
+  await modal.submit();
+  await modal.waitForClosed();
   await verifyVFolder(page, folderName);
 }
 

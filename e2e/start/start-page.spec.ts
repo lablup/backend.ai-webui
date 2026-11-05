@@ -173,7 +173,7 @@ test.describe(
           await modal.fillFolderName(folderName);
 
           // 4. Click the "Create" button in the modal
-          await (await modal.getCreateButton()).click();
+          await modal.submit();
           folderCreated = true;
 
           // 5. Verify the modal closes and browser URL changes to /data
