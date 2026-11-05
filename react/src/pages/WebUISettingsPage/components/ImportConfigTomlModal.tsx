@@ -164,6 +164,11 @@ const ImportConfigTomlModal: React.FC<ImportConfigTomlModalProps> = ({
           showIcon
           title={t('webuiSettings.ImportConfigTomlDesc')}
         />
+        <BAIAlert
+          type="warning"
+          showIcon
+          title={t('webuiSettings.ImportMigrationNotice')}
+        />
         <BAICodeEditor
           language="toml"
           height={240}

@@ -4466,6 +4466,7 @@
     "ImportFileTooLarge": "Fail lebih besar daripada 1 MB.",
     "ImportFromFile": "Import config.toml",
     "ImportLoaded": "{{count}} tetapan dimuatkan. Tekan Guna untuk menyimpan.",
+    "ImportMigrationNotice": "Kebanyakan tetapan kini diurus dalam konfigurasi aplikasi (App Config); hanya tetapan yang diperlukan sebelum log masuk, seperti skrin log masuk, kekal dalam fail konfigurasi seperti sebelum ini. Butang eksport memuat turun fail konfigurasi dalam format baharu atau format terdahulu.",
     "ImportNothing": "Fail ini tiada nilai Tetapan Sistem.",
     "ImportParseError": "Fail ini bukan TOML yang sah: {{error}}",
     "ImportPasteLabel": "Kandungan config.toml",

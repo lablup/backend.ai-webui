@@ -3136,6 +3136,7 @@
         "webuiSettings.ImportFileTooLarge",
         "webuiSettings.ImportFromFile",
         "webuiSettings.ImportLoaded",
+        "webuiSettings.ImportMigrationNotice",
         "webuiSettings.ImportNothing",
         "webuiSettings.ImportParseError",
         "webuiSettings.ImportPasteLabel",

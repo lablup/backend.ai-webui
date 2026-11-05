@@ -4470,6 +4470,7 @@
     "ImportFileTooLarge": "File lebih besar dari 1 MB.",
     "ImportFromFile": "Impor config.toml",
     "ImportLoaded": "{{count}} pengaturan dimuat. Tekan Terapkan untuk menyimpan.",
+    "ImportMigrationNotice": "Sebagian besar pengaturan kini dikelola di konfigurasi aplikasi (App Config); hanya pengaturan yang diperlukan sebelum masuk, seperti layar login, yang tetap disimpan di file konfigurasi seperti sebelumnya. Tombol ekspor mengunduh file konfigurasi dalam format baru atau format sebelumnya.",
     "ImportNothing": "Berkas ini tidak memiliki nilai Pengaturan Sistem.",
     "ImportParseError": "Berkas ini bukan TOML yang valid: {{error}}",
     "ImportPasteLabel": "Isi config.toml",

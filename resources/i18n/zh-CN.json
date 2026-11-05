@@ -4468,6 +4468,7 @@
     "ImportFileTooLarge": "文件大于 1 MB。",
     "ImportFromFile": "导入 config.toml",
     "ImportLoaded": "已载入 {{count}} 项设置。点击应用以保存。",
+    "ImportMigrationNotice": "大多数设置现在在应用配置（App Config）中管理，只有登录界面等认证前需要的设置仍像以前一样保存在配置文件中。可通过导出按钮下载新格式或旧格式的配置文件。",
     "ImportNothing": "此文件中没有系统设置值。",
     "ImportParseError": "此文件不是有效的 TOML：{{error}}",
     "ImportPasteLabel": "config.toml 内容",
