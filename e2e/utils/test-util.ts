@@ -1412,7 +1412,8 @@ function toSettingValue(type: string, raw: unknown): unknown {
     case 'boolean':
       return raw === true || raw === 'true';
     case 'number': {
-      const value = typeof raw === 'number' ? raw : parseInt(String(raw), 10);
+      const value =
+        typeof raw === 'number' ? raw : Number(String(raw).replace(/_/g, ''));
       return Number.isFinite(value) ? value : undefined;
     }
     case 'stringList':
