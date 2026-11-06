@@ -885,7 +885,7 @@
       "MyDeployments": "我的部署",
       "MyRecentSessions": "我最近的工作階段",
       "MyResourcesTooltip": "您的工作階段在所有資源群組和專案中使用的資源。上限為該用量加上以下兩者中較小的一個：卡片的資源群組中仍空閒的量，以及您的使用者和專案限制仍允許的量。",
-      "MySessionsTooltip": "您在此專案中目前的工作階段依狀態顯示，作用中的工作階段依類型顯示。",
+      "MySessionsTooltip": "顯示目前專案中您的工作階段的目前狀態及依類型的分布。",
       "NoActiveSessions": "沒有作用中的工作階段",
       "NoAllocation": "未分配資源。",
       "NoFailures": "無失敗",

@@ -885,7 +885,7 @@
       "MyDeployments": "Penggunaan Saya",
       "MyRecentSessions": "Sesi Terkini Saya",
       "MyResourcesTooltip": "Apa yang digunakan oleh sesi anda merentas semua kumpulan sumber dan projek. Had ialah penggunaan itu ditambah nilai terkecil antara apa yang masih bebas dalam kumpulan sumber kad dan apa yang masih dibenarkan oleh had pengguna dan projek anda.",
-      "MySessionsTooltip": "Sesi semasa anda dalam projek ini mengikut status, dan sesi aktif mengikut jenis sesi.",
+      "MySessionsTooltip": "Menunjukkan status semasa sesi anda dalam projek ini dan pecahan mengikut jenis.",
       "NoActiveSessions": "Tiada sesi aktif",
       "NoAllocation": "Tiada sumber diperuntukkan.",
       "NoFailures": "Tiada kegagalan",
