@@ -5,10 +5,7 @@
 import { atom } from 'jotai';
 
 /**
- * Dashboard edit-mode flag. Transient (not persisted). It gates only the
- * custom-panel affordances — the edit sider and the per-panel edit/remove
- * controls. Dragging and resizing are never gated: the board stays
- * rearrangeable in both states. Toggled by the breadcrumb
- * {@link DashboardEditToggleButton}.
+ * Dashboard edit mode, transient. It gates adding and removing cards and the
+ * custom-panel controls; moving and resizing work in both states.
  */
 export const dashboardEditModeAtom = atom(false);

@@ -37,21 +37,17 @@ const ResourceCountPanel: React.FC<ResourceTablePanelProps> = ({
 
   return (
     <PanelFrame title={title} onEdit={onEdit} onRemove={onRemove}>
-      {(localFetchKey) => (
-        <BAIFlex direction="row" wrap="wrap" gap="lg">
-          <BAIRowWrapWithDividers
-            style={{ paddingBlock: token('--spacing-4') }}
-          >
-            <Suspense fallback={<BAISkeleton />}>
-              <ResourceCountContent
-                key={`${descriptor.resourceType}:${JSON.stringify(descriptor.filter ?? null)}`}
-                descriptor={descriptor}
-                fetchKey={`${fetchKey ?? ''}:${localFetchKey}`}
-              />
-            </Suspense>
-          </BAIRowWrapWithDividers>
-        </BAIFlex>
-      )}
+      <BAIFlex direction="row" wrap="wrap" gap="lg">
+        <BAIRowWrapWithDividers style={{ paddingBlock: token('--spacing-4') }}>
+          <Suspense fallback={<BAISkeleton />}>
+            <ResourceCountContent
+              key={`${descriptor.resourceType}:${JSON.stringify(descriptor.filter ?? null)}`}
+              descriptor={descriptor}
+              fetchKey={fetchKey}
+            />
+          </Suspense>
+        </BAIRowWrapWithDividers>
+      </BAIFlex>
     </PanelFrame>
   );
 };
@@ -73,6 +69,7 @@ export const ResourceCountContent: React.FC<{
     limit: 1,
     offset: 0,
     projectId: currentProject.id ?? '',
+    resourceGroups: descriptor.resourceGroups,
   });
   const deferredVariables = useDeferredValue(variables);
   const deferredFetchKey = useDeferredValue(fetchKey);

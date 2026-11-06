@@ -13,18 +13,15 @@ import {
   toLocalId,
   BAIFlex,
   BAIUnmountAfterClose,
-  BAIFetchKeyButton,
   BAIBoardItemTitle,
   useIsInBAIBoardItem,
 } from 'backend.ai-ui';
-import { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
 import { useLocation } from 'react-router-dom';
 
 interface RecentlyCreatedSessionProps {
   queryRef: RecentlyCreatedSessionFragment$key;
-  isRefetching?: boolean;
   /**
    * Explicit project prop contract (ADR-0001, FR-3413): pass-through to the
    * session-detail drawer. The mounting page decides the project context.
@@ -34,7 +31,6 @@ interface RecentlyCreatedSessionProps {
 
 const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
   queryRef,
-  isRefetching,
   project,
 }) => {
   const { t } = useTranslation();
@@ -55,9 +51,8 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
     else searchParams.set('sessionDetail', value);
     navigate({ search: searchParams.toString(), hash: location.hash });
   };
-  const [isPendingRefetch, startRefetchTransition] = useTransition();
 
-  const [data, refetch] = useRefetchableFragment(
+  const [data] = useRefetchableFragment(
     graphql`
       fragment RecentlyCreatedSessionFragment on Query
       @argumentDefinitions(
@@ -98,27 +93,6 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
           tooltip={t('session.RecentlyCreatedSessionsTooltip', {
             count: 5,
           })}
-          extra={
-            <BAIFetchKeyButton
-              size="small"
-              loading={isPendingRefetch || isRefetching}
-              value=""
-              onChange={() => {
-                startRefetchTransition(() => {
-                  refetch(
-                    {},
-                    {
-                      fetchPolicy: 'network-only',
-                    },
-                  );
-                });
-              }}
-              type="text"
-              style={{
-                backgroundColor: 'transparent',
-              }}
-            />
-          }
         />
 
         {/* Scrollable Content Section */}

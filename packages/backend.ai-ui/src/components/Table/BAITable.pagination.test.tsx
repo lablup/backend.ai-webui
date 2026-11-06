@@ -77,6 +77,15 @@ describe('BAITable pagination (FR-3563)', () => {
     expect(screen.getByText('row-20')).toBeInTheDocument();
   });
 
+  it('offers a page size outside the default choices as a choice', () => {
+    renderTable({
+      dataSource: makeRows(5),
+      pagination: { current: 1, pageSize: 5, total: 40 },
+    });
+
+    expect(screen.getByRole('combobox')).toHaveTextContent('5');
+  });
+
   it('renders every row when pagination is disabled', () => {
     renderTable({ dataSource: makeRows(25), pagination: false });
 

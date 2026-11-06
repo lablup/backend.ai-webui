@@ -11,7 +11,7 @@ export type BoardLayoutEntry = Omit<
 >;
 
 export interface ReconcileBoardLayoutInput {
-  /** The unified `dashboard_board_items` list as persisted (may be empty). */
+  /** The layout as persisted (may be empty). */
   persistedLayout: ReadonlyArray<BoardLayoutEntry>;
   /** Seed layout for every renderable id, in seed order (built-in then custom). */
   defaultLayout: ReadonlyArray<BoardLayoutEntry>;
@@ -37,13 +37,10 @@ export const reconcileBoardLayout = ({
 };
 
 /**
- * The list to persist after the board reports a change. The board only reports
- * the items it is rendering, so entries for ids that are currently hidden — a
- * custom panel while the feature is opted out, a built-in gated off by role —
- * would be dropped by a plain overwrite, losing their saved geometry. They are
- * carried over instead, each spliced back at the index it held in `previous`,
- * so turning a hidden panel back on restores its position and not just its
- * size. Appending them would silently move every hidden panel to the end.
+ * The list to persist after the board reports a change. The board reports only
+ * the items it renders, so a hidden panel (gated off by role or config) is
+ * spliced back at the index it held in `previous`; appending it would move it
+ * to the end.
  */
 export const mergeHiddenLayoutEntries = (
   reported: ReadonlyArray<BoardLayoutEntry>,

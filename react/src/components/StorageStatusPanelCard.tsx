@@ -2,12 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { StorageStatusPanelCardQuery } from '../../../__generated__/StorageStatusPanelCardQuery.graphql';
-import BAIPanelItem from '../../../components/BAIPanelItem';
-import { useSuspendedBackendaiClient } from '../../../hooks';
-import { useSuspenseTanQuery } from '../../../hooks/reactQueryAlias';
-import { useCurrentProjectValue } from '../../../hooks/useCurrentProject';
-import { useVFolderInvitations } from '../../../hooks/useVFolderInvitations';
+import { StorageStatusPanelCardQuery } from '../__generated__/StorageStatusPanelCardQuery.graphql';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
+import BAIPanelItem from './BAIPanelItem';
 import { Text } from '@lablup/ui-common/Text';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { useTheme } from '@lablup/ui-common/theme';

@@ -4,25 +4,11 @@
 //            11 (Recently Created Sessions Widget), 12 (Board Layout)
 // plus: custom panel add flow (edit sider -> panel modal), added after the plan
 import { loginAsAdmin, loginAsUser, navigateTo } from '../utils/test-util';
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
 // Timeout for widget visibility checks - widgets load after GraphQL data fetches,
 // which may be slow when multiple workers run in parallel.
 const WIDGET_TIMEOUT = 30_000;
-
-// Custom dashboard panels are an experimental opt-in. The user-settings atom
-// reads localStorage at app boot, so write the flag and reload rather than
-// toggling it through the settings UI.
-const enableCustomDashboardPanels = async (page: Page) => {
-  await page.evaluate(() => {
-    localStorage.setItem(
-      'backendaiwebui.settings.user.experimental_custom_dashboard_panels',
-      'true',
-    );
-  });
-  await page.reload();
-  await page.waitForSelector('[data-testid="user-dropdown-button"]');
-};
 
 test.describe(
   'Dashboard Page',
@@ -175,25 +161,6 @@ test.describe(
         // The fourth session type is "Upload Sessions" (not "System")
         await expect(widget.getByText('Upload Sessions')).toBeVisible();
       });
-
-      test('Admin can manually refresh the session count widget', async ({
-        page,
-      }) => {
-        // 1. Locate the "Active Sessions" widget
-        const widget = page
-          .locator('.uic-board-item')
-          .filter({ hasText: 'Active Sessions' })
-          .first();
-        await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
-
-        // 2. Click the refresh (BAIFetchKeyButton) in the widget's header area
-        const refreshButton = widget.getByRole('button', { name: 'Refresh' });
-        await refreshButton.click();
-
-        // 3. Verify the widget data remains visible after refresh
-        await expect(widget.getByText('Interactive')).toBeVisible();
-        await expect(widget.getByText('Batch')).toBeVisible();
-      });
     });
 
     // -----------------------------------------------------------------------
@@ -220,24 +187,6 @@ test.describe(
 
         // 3. Verify the Memory usage statistic is displayed
         await expect(widget.getByText(/Memory|RAM/i)).toBeVisible();
-      });
-
-      test('Admin can manually refresh the My Resources widget', async ({
-        page,
-      }) => {
-        // 1. Locate the "My Resources" widget
-        const widget = page
-          .locator('.uic-board-item')
-          .filter({ hasText: 'My Total Resource Usage' })
-          .first();
-        await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
-
-        // 2. Click the refresh button in the widget header
-        const refreshButton = widget.getByRole('button', { name: 'Refresh' });
-        await refreshButton.click();
-
-        // 3. Verify the widget still renders CPU/Memory after refresh
-        await expect(widget.getByText(/CPU/i)).toBeVisible();
       });
     });
 
@@ -377,22 +326,6 @@ test.describe(
             segmentedControl.getByRole('radio', { name: 'Used' }),
           ).toBeChecked();
         });
-
-        test('Admin can manually refresh the Agent Stats widget', async ({
-          page,
-        }) => {
-          const widget = page
-            .locator('.uic-board-item')
-            .filter({ hasText: 'Agent Statistics' });
-          await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
-
-          // 2. Click the refresh button in the widget header
-          const refreshButton = widget.getByRole('button', { name: 'Refresh' });
-          await refreshButton.click();
-
-          // 3. Verify the widget still renders after refresh (no error state)
-          await expect(widget).toBeVisible();
-        });
       },
     );
 
@@ -415,23 +348,6 @@ test.describe(
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
         // 2. Verify the sessions table container is displayed
-        await expect(widget.getByRole('table')).toBeVisible();
-      });
-
-      test('Admin can manually refresh the Recently Created Sessions widget', async ({
-        page,
-      }) => {
-        // 1. Locate the "Recently Created Sessions" widget
-        const widget = page
-          .locator('.uic-board-item')
-          .filter({ hasText: 'Recently Created Sessions' });
-        await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
-
-        // 2. Click the refresh button in the widget header
-        const refreshButton = widget.getByRole('button', { name: 'Refresh' });
-        await refreshButton.click();
-
-        // 3. Verify the widget still renders after refresh
         await expect(widget.getByRole('table')).toBeVisible();
       });
     });
@@ -475,7 +391,6 @@ test.describe(
         // 1. Login as admin and navigate to /summary
         await loginAsAdmin(page, request);
         await navigateTo(page, 'summary');
-        await enableCustomDashboardPanels(page);
         await expect(
           page.getByRole('heading', { name: 'Active Sessions' }),
         ).toBeVisible({ timeout: WIDGET_TIMEOUT });
@@ -499,10 +414,9 @@ test.describe(
         page,
         request,
       }) => {
-        // 1. Login as admin, open the dashboard, opt in, and enter edit mode
+        // 1. Login as admin, open the dashboard, and enter edit mode
         await loginAsAdmin(page, request);
         await navigateTo(page, 'summary');
-        await enableCustomDashboardPanels(page);
         await expect(
           page.getByRole('heading', { name: 'Active Sessions' }),
         ).toBeVisible({ timeout: WIDGET_TIMEOUT });
