@@ -42,7 +42,7 @@ async function applyOwnerFilter(page: Page, email: string): Promise<void> {
     await expect(typeahead).toBeVisible({ timeout: 2000 });
   }).toPass({ timeout: 15000 });
   await typeahead.getByRole('option', { name: 'Owner', exact: true }).click();
-  await page.getByRole('button', { name: 'Owner', exact: true }).click();
+  await page.getByRole('combobox', { name: 'Owner', exact: true }).click();
   await page
     .getByRole('combobox', { name: 'Search options' })
     .fill(email.split('@')[0]);

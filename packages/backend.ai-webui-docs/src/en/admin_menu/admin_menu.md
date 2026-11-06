@@ -1468,11 +1468,11 @@ drawer you can also change its schedulable status and control the agent service 
 
 ![](../images/agent_list.png)
 
-Use the **Connected** / **Terminated** selector to switch between agents that are currently connected and
-agents that have been connected once and then terminated or disconnected. The Terminated list can be used
-as a reference for node management; if it is empty, then no disconnection or termination has occurred.
+Use the **Connected** / **Inactive** selector to switch between agents that are currently connected and
+agents that are not. The Inactive list covers terminated, lost, and restarting agents, each marked with
+its status.
 
-![](../images/terminated_agent_list.png)
+![](../images/inactive_agent_list.png)
 
 You can narrow the list with the property filter, which supports **ID**, **Endpoint**, and
 **Schedulable**.
@@ -1967,6 +1967,26 @@ Sessions, Usage Records, and Usage Buckets.
 - **Edit**: Use the edit action in the row to change the **Policy Target**, the retention period, or the
   enabled setting.
 - **Delete**: Use the delete action in the row.
+
+<a id="client-ip-masking"></a>
+
+### Client IP masking
+
+Superadmins can set how client IP addresses are masked before they are stored on the **Client IP Masking**
+tab of the Maintenance page. The available policy targets are Default, Login History, and Audit Logs. A
+target without its own policy follows the Default policy, and when there is no Default policy the
+addresses are stored as observed.
+
+![](../images/admin_client_ip_masking_policy_list.png)
+
+- **Create Policy**: Click **Create Policy**, choose a **Policy Target**, and choose a **Masking Mode**.
+  Only one policy can exist per target.
+   * None: Client IPs are stored as observed.
+   * Truncate: Host bits are zeroed, keeping only the network prefix. Set the **IPv4 Prefix Length** and
+     **IPv6 Prefix Length** to choose how many leading bits are kept.
+   * Drop: No client IP is recorded.
+- **Edit**: Use the edit action in the row to change the masking mode or the prefix lengths.
+- **Delete**: Use the delete action in the row. The target then falls back to the Default policy.
 
 <a id="detailed-information"></a>
 

@@ -404,7 +404,12 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
             wrap="wrap"
             style={{ marginBottom: token('--spacing-3') }}
           >
-            <BAIFlex gap="xs" align="start" wrap="wrap">
+            <BAIFlex
+              gap="xs"
+              align="start"
+              wrap="wrap"
+              style={{ flexShrink: 1 }}
+            >
               <BAISegmentedControl
                 value={activeFilter}
                 onChange={(value) => {

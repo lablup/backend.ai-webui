@@ -136,7 +136,7 @@ async function selectRevisionModalOptionLocal(
   fieldLabel: string,
   optionName: string,
 ): Promise<void> {
-  await page.getByRole('button', { name: fieldLabel, exact: true }).click();
+  await page.getByRole('combobox', { name: fieldLabel, exact: true }).click();
   const popup = page.getByRole('dialog', { name: fieldLabel, exact: true });
   await expect(popup).toBeVisible({ timeout: 10000 });
   await popup
@@ -147,7 +147,7 @@ async function selectRevisionModalOptionLocal(
   await option.click();
   await expect(popup).toBeHidden({ timeout: 5000 });
   await expect(
-    page.getByRole('button', { name: fieldLabel, exact: true }),
+    page.getByRole('combobox', { name: fieldLabel, exact: true }),
   ).toContainText(optionName, { timeout: 5000 });
 }
 
@@ -803,10 +803,9 @@ test.describe(
         timeout: 10000,
       });
       await expect(dialog.getByText('Select Folder')).toBeVisible();
-      // Runtime is a ComplexSelector trigger button ("Select Runtime
-      // Variant" placeholder), not a native combobox.
+      // Runtime is a ComplexSelector: its trigger is a role="combobox".
       await expect(
-        dialog.getByRole('button', { name: 'Runtime' }),
+        dialog.getByRole('combobox', { name: 'Runtime', exact: true }),
       ).toBeVisible();
       await expect(
         dialog.getByRole('checkbox', { name: 'Enable Health Check' }),
@@ -823,8 +822,7 @@ test.describe(
       await expect(dialog.getByText('Cluster & Resources')).toBeVisible({
         timeout: 20000,
       });
-      // Resource Presets is also a ComplexSelector trigger button, not a
-      // native combobox.
+      // Resource Presets is a BAISelect (Astryx Selector) trigger button.
       await expect(
         dialog.getByRole('button', { name: 'Resource Presets' }),
       ).toBeVisible({ timeout: 20000 });
@@ -899,7 +897,7 @@ test.describe(
           ).toBeChecked();
 
           // 2. Select the ensured preset from the "Preset" select — the
-          // ComplexSelector interaction (trigger button → search → option
+          // ComplexSelector interaction (combobox trigger → search → option
           // click) lives on selectRevisionModalOptionLocal above.
           await selectRevisionModalOptionLocal(
             page,
@@ -1066,7 +1064,7 @@ test.describe(
           );
 
           // 3. Select the "custom" runtime variant -- Runtime is the same
-          // ComplexSelector pattern (trigger button -> popup search -> option
+          // ComplexSelector pattern (combobox trigger -> popup search -> option
           // click) as Preset/Model Folder now, not an antd Select.
           await selectRevisionModalOptionLocal(page, 'Runtime', 'custom');
 
@@ -1097,7 +1095,7 @@ test.describe(
           // dies on the missing values with no visible error at all --
           // observed live as a click that produced no form error, no
           // notification, and no mutation. Gate on the section's landmark --
-          // also a ComplexSelector trigger button now, not a combobox.
+          // a BAISelect (Astryx Selector) trigger button.
           await expect(
             dialog.getByRole('button', { name: 'Resource Presets' }),
           ).toBeVisible({ timeout: 30000 });

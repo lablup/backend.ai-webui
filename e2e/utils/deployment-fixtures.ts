@@ -660,8 +660,8 @@ export async function cleanupDeploymentFixtures(
  *
  * Both fields are `BAIComplexSelect`-backed (BAIAvailablePresetSelect /
  * BAIVFolderSelect): the Astryx ComplexSelector's field trigger is a
- * plain `<button>` whose accessible name is the field label
- * (`aria-haspopup="dialog"`, NOT a combobox), and its popup is a
+ * `role="combobox"` named by the field label (`aria-haspopup="dialog"`), and
+ * its popup is a
  * `role="dialog"` (aria-labelled with the same field label) hosting a search
  * `TextInput` with `role="combobox"` named "Search options"
  * (ui-common `uic.PagedSelector.searchOptions`, FR-3603 / #8914) plus a
@@ -682,7 +682,7 @@ export async function selectRevisionModalOption(
   fieldLabel: string,
   optionName: string,
 ): Promise<void> {
-  await page.getByRole('button', { name: fieldLabel, exact: true }).click();
+  await page.getByRole('combobox', { name: fieldLabel, exact: true }).click();
   const popup = page.getByRole('dialog', { name: fieldLabel, exact: true });
   await expect(popup).toBeVisible({ timeout: 10000 });
   await popup
@@ -693,6 +693,6 @@ export async function selectRevisionModalOption(
   await option.click();
   await expect(popup).toBeHidden({ timeout: 5000 });
   await expect(
-    page.getByRole('button', { name: fieldLabel, exact: true }),
+    page.getByRole('combobox', { name: fieldLabel, exact: true }),
   ).toContainText(optionName, { timeout: 5000 });
 }

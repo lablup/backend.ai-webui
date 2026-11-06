@@ -254,7 +254,7 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex justify="between" align="start" gap="xs" wrap="wrap">
-        <BAIFlex gap={'sm'} align="start">
+        <BAIFlex gap={'sm'} align="start" wrap="wrap" style={{ flexShrink: 1 }}>
           <BAISegmentedControl
             value={activeType}
             onChange={(value) => {

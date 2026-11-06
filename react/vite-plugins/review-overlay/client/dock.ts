@@ -223,6 +223,8 @@ export interface SetDockOptions {
   onMove: (id: string, delta: -1 | 1) => void;
   /** A row's ✏️: that pin's note goes back in the composer. */
   onEdit: (id: string) => void;
+  /** A row's copy button: that pin alone, written inside the click. */
+  onCopyOne: (id: string) => void;
   /** Its card comes back: the row's eye button, or the row itself. */
   onUnhide: (id: string) => void;
   /** The header switch: every card off, or on again. */
@@ -678,6 +680,8 @@ export function createSetDock(options: SetDockOptions) {
           setLabel(edit, LINK_NOT_EDITABLE);
         }
         edit.addEventListener('click', () => options.onEdit(pin.id));
+        const copy = button('copy', 'copy', 'Copy this pin');
+        copy.addEventListener('click', () => options.onCopyOne(pin.id));
         const up = button('up', 'chevron-up', 'Move this pin up');
         up.disabled = index === 0;
         up.addEventListener('click', () => options.onMove(pin.id, -1));
@@ -690,7 +694,7 @@ export function createSetDock(options: SetDockOptions) {
           'Remove this pin from the set',
         );
         remove.addEventListener('click', () => options.onRemove(pin.id));
-        row.append(edit, up, down, remove);
+        row.append(copy, edit, up, down, remove);
         return row;
       }),
     );
