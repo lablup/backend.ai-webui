@@ -61,12 +61,13 @@ const inlineBleed: CSSProperties = {
 // The narrow nav list is a plain flex column, so it bleeds by hand.
 const narrowNavBleed: CSSProperties = { ...bodyBleed, ...inlineBleed };
 
-// The toolbar band runs from the card's top padding to the divider, edge to
-// edge, so the sticky part covers the whole strip and nothing scrolls under it.
+// The toolbar band runs edge to edge from just under the card header (BAICard
+// stacks header and body with gap 4) down to the divider, so the sticky part
+// covers the whole strip without covering the tab rail's rule.
 const toolbarBand: CSSProperties = {
   ...inlineBleed,
-  marginBlockStart: 'calc(-1 * var(--container-padding-block-start, 0px))',
-  paddingBlockStart: 'var(--container-padding-block-start, 0px)',
+  marginBlockStart: 'calc(-1 * var(--spacing-4))',
+  paddingBlockStart: 'var(--spacing-4)',
   paddingInlineStart: 'var(--container-padding-inline-start, 0px)',
   paddingInlineEnd: 'var(--container-padding-inline-end, 0px)',
   paddingBlockEnd: 'var(--spacing-5)',
