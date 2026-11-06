@@ -123,7 +123,8 @@ stateDiagram-v2
 - **Admin-provided defaults**: superadmin은 template key를 써서 설치나 도메인의 기본 보드를 바꿀 수 있다. 이미 보드를 저장한 사용자는 "기본 배치로 초기화"를 누를 때 새 template을 받는다.
 - **Write latency**: 보드 변경은 최대 800ms 뒤에 서버로 간다. 탭을 숨기거나 닫으면 바로 보내지만, 브라우저가 페이지를 내리기 전에 요청이 끝난다는 보장은 없다.
 - **Lost local boards**: 업그레이드 전 localStorage에 보드를 꾸며 둔 사용자는 template부터 다시 시작한다.
-- **Same-board edits**: 두 기기가 같은 보드의 패널을 동시에 고치면, 나중에 쓴 쪽의 패널 목록이 남는다. replay는 보드 단위까지만 변경을 나눈다.
+- **Same-panel edits**: 저장은 이 탭이 추가, 삭제, 변경한 패널만 서버에 있는 패널 목록에 적용하므로, 다른 기기에서 추가하거나 바꾼 패널은 남는다. 두 기기가 같은 패널을 바꾸면 나중에 쓴 쪽이 이긴다.
+- **Older clients**: 저장은 이 클라이언트 카탈로그에 없는 저장된 카드와, 카드 정의가 선언하지 않은 설정을 되돌려 놓으므로, 같은 매니저를 쓰는 구버전 WebUI가 저장해도 신버전이 추가한 내용이 남는다.
 - **Shared queue scope**: queue는 대시보드 쓰기만 줄 세운다. `useRecentSessionHistory`처럼 `userConfig`의 다른 key를 쓰는 기능과 동시에 upsert하면 USER fragment 문서를 두고 경합할 수 있다.
 - **Vars without consumer**: `vars`는 저장되지만, 필터 바(#10582)가 생기기 전까지 카드의 데이터 범위를 바꾸지 않는다.
 - **No pinned projects**: 보드에 프로젝트를 고정하는 field는 두지 않는다. 예전에 저장된 `pinned`는 `sanitizeDashboardModel`이 버린다.
