@@ -161,6 +161,8 @@ interface LoginFormPanelProps {
   endpointStep?: ReactNode;
   /** Electron: the endpoint is fixed for this form and changed through this. */
   onChangeEndpoint?: () => void;
+  /** Electron: the confirmed webserver, shown beside "Change endpoint". */
+  serverEndpoint?: string;
   endpointNotice?: string | null;
 }
 
@@ -200,6 +202,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   onSetShowSignupModal,
   endpointStep,
   onChangeEndpoint,
+  serverEndpoint,
   endpointNotice,
 }) => {
   'use memo';
@@ -209,6 +212,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   const { isDarkMode } = useThemeMode();
   const { rawThemeConfig } = useCustomThemeConfig();
 
+  const isElectronApiEndpoint = !!onChangeEndpoint && connectionMode === 'API';
   const [isEndpointExpanded, setIsEndpointExpanded] = useState(
     () => showEndpointInput && !isEndpointDisabled && apiEndpoint === '',
   );
@@ -546,7 +550,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                           overflowWrap: 'anywhere',
                         }}
                       >
-                        {apiEndpoint}
+                        {serverEndpoint ?? apiEndpoint}
                       </BAIFlex>
                     }
                   >
@@ -555,7 +559,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                       maxLines={1}
                       hasTruncateTooltip={false}
                     >
-                      {apiEndpoint}
+                      {serverEndpoint ?? apiEndpoint}
                     </Text>
                   </Tooltip>
                 </BAIFlex>
@@ -582,15 +586,17 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               </BAIFlex>
             )}
 
-            {/* Collapsible endpoint section */}
-            {!onChangeEndpoint && showEndpointInput && (
-              <div style={{ marginTop: token('--spacing-3') }}>
-                {/* `Typography.Link onClick` with no href -> Astryx `Link`
+            {/* Collapsible endpoint section; Electron's API mode always shows
+                it open, for the manager the sign-in goes to. */}
+            {(!onChangeEndpoint || connectionMode === 'API') &&
+              showEndpointInput && (
+                <div style={{ marginTop: token('--spacing-3') }}>
+                  {/* `Typography.Link onClick` with no href -> Astryx `Link`
                   is anchor-first (MAPPING §3.16), so the router-less toggle
                   uses `href="#"` + `preventDefault` (the pilot's fallback).
                   The hand-set 13px/10px sizes are dropped (closed type
                   scale). */}
-                {/* `isStandalone` is not cosmetic: an Astryx `Link` with no
+                  {/* `isStandalone` is not cosmetic: an Astryx `Link` with no
                   `isStandalone` INHERITS its font size, and the dialog's base
                   is the app's 16px/24px, whereas antd pinned `.ant-modal` to
                   14px/22px. Without it this disclosure row rendered 2px larger
@@ -598,170 +604,177 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                   is Astryx's own "this link is not inside a paragraph" flag and
                   resolves to `--text-body-size` / `--text-body-leading`, i.e.
                   exactly 14px / 1.5714 — the legacy values. */}
-                <Link
-                  isStandalone
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setIsEndpointExpanded((prev) => !prev);
-                  }}
-                  style={{ userSelect: 'none' }}
-                >
-                  {/* Astryx `Link` lays its children out in a block flow, so the
+                  {!isElectronApiEndpoint && (
+                    <Link
+                      isStandalone
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsEndpointExpanded((prev) => !prev);
+                      }}
+                      style={{ userSelect: 'none' }}
+                    >
+                      {/* Astryx `Link` lays its children out in a block flow, so the
                     disclosure chevron and the label are kept on one line by an
                     explicit inline-flex row rather than by the anchor itself. */}
-                  <span
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 4,
-                    }}
-                  >
-                    {isEndpointExpanded ? (
-                      <ChevronDown size="1em" />
-                    ) : (
-                      <ChevronRight size="1em" />
-                    )}
-                    {t('login.AdvancedSettings')}
-                  </span>
-                </Link>
-                {isEndpointExpanded && (
-                  <BAIFlex
-                    gap="xs"
-                    align="start"
-                    style={{ marginTop: token('--spacing-2') }}
-                  >
-                    <div
-                      ref={(el) => {
-                        endpointAnchorRef.current = el;
-                        endpointHistoryPopover.triggerRef(el);
-                      }}
-                      onFocus={showEndpointHistory}
-                      onClick={showEndpointHistory}
-                      onBlur={(e) => {
-                        const next = e.relatedTarget as Node | null;
-                        if (
-                          !e.currentTarget.contains(next) &&
-                          !endpointHistoryPopover.contentRef.current?.contains(
-                            next,
-                          )
-                        ) {
-                          endpointHistoryPopover.hide();
-                        }
-                      }}
-                      onKeyDown={(e) => {
-                        if (!endpointHistoryPopover.isOpen) {
-                          if (e.key === 'ArrowDown') showEndpointHistory();
-                          return;
-                        }
-                        const list = endpointHistoryPopover.contentRef.current;
-                        // The layer is its own focus scope, so Tab from the field
-                        // skips it; ArrowDown enters it as in a combobox.
-                        if (
-                          e.key === 'ArrowDown' &&
-                          !list?.contains(e.target as Node)
-                        ) {
-                          e.preventDefault();
-                          list?.querySelector('button')?.focus();
-                        } else if (e.key === 'Escape') {
-                          e.stopPropagation();
-                          endpointHistoryPopover.hide();
-                          endpointAnchorRef.current
-                            ?.querySelector('input')
-                            ?.focus();
-                        }
-                      }}
-                      style={{ flex: 1, minWidth: 0 }}
-                    >
-                      <BAIFormItem
-                        name="api_endpoint"
-                        style={{ marginBottom: 0 }}
-                        rules={[
-                          {
-                            pattern: /^https?:\/\/(.*)/,
-                            message: t('login.EndpointStartWith'),
-                          },
-                        ]}
+                      <span
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 4,
+                        }}
                       >
-                        <BAITextInput
-                          aria-label={t('login.Endpoint', { postProcess: [] })}
-                          placeholder={t('login.Endpoint', { postProcess: [] })}
-                          disabled={isEndpointDisabled || isLoading}
-                          onChange={(value) => onSetApiEndpoint(value)}
-                        />
-                      </BAIFormItem>
-                      {endpointHistory.length > 0 &&
-                        endpointHistoryPopover.render(
-                          <List
-                            density="compact"
-                            hasDividers
-                            aria-label={t('login.EndpointHistory')}
-                            xstyle={styles.endpointList}
-                          >
-                            {endpointHistory.map(
-                              ({ endpoint, isFromEnv }, i) => (
-                                <ListItem
-                                  key={endpoint}
-                                  label={
-                                    isFromEnv ? `${endpoint} (env)` : endpoint
-                                  }
-                                  xstyle={[
-                                    styles.endpointRow,
-                                    i === endpointHistory.length - 1 &&
-                                      styles.endpointLastRow,
-                                  ]}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    selectEndpoint(endpoint);
-                                  }}
-                                  endContent={
-                                    <IconButton
-                                      variant="ghost"
-                                      size="sm"
-                                      icon={<Trash2 size="1em" />}
-                                      label={`${t('button.Delete')}: ${endpoint}`}
-                                      onClick={(e) => {
-                                        // The row is the select target; deleting
-                                        // must not also select it.
-                                        e.stopPropagation();
-                                        if (endpointHistory.length === 1) {
-                                          endpointHistoryPopover.hide();
-                                        }
-                                        onDeleteEndpoint(endpoint);
-                                        // The pressed row unmounts with focus in it.
-                                        endpointAnchorRef.current
-                                          ?.querySelector('input')
-                                          ?.focus();
-                                      }}
-                                    />
-                                  }
-                                />
-                              ),
-                            )}
-                          </List>,
-                          {
-                            placement: 'below',
-                            alignment: 'start',
-                            offset: spacingVars['--spacing-1'],
-                            xstyle: styles.endpointPopover,
-                          },
+                        {isEndpointExpanded ? (
+                          <ChevronDown size="1em" />
+                        ) : (
+                          <ChevronRight size="1em" />
                         )}
-                    </div>
-                    <IconButton
-                      icon={<Info size="1em" />}
-                      variant="ghost"
-                      label={t('login.EndpointInfo')}
-                      onClick={() =>
-                        setHelpPanel({
-                          title: t('login.EndpointInfo'),
-                          content: t('login.DescEndpoint'),
-                        })
-                      }
-                    />
-                  </BAIFlex>
-                )}
-              </div>
-            )}
+                        {t('login.AdvancedSettings')}
+                      </span>
+                    </Link>
+                  )}
+                  {(isEndpointExpanded || isElectronApiEndpoint) && (
+                    <BAIFlex
+                      gap="xs"
+                      align="start"
+                      style={{ marginTop: token('--spacing-2') }}
+                    >
+                      <div
+                        ref={(el) => {
+                          endpointAnchorRef.current = el;
+                          endpointHistoryPopover.triggerRef(el);
+                        }}
+                        onFocus={showEndpointHistory}
+                        onClick={showEndpointHistory}
+                        onBlur={(e) => {
+                          const next = e.relatedTarget as Node | null;
+                          if (
+                            !e.currentTarget.contains(next) &&
+                            !endpointHistoryPopover.contentRef.current?.contains(
+                              next,
+                            )
+                          ) {
+                            endpointHistoryPopover.hide();
+                          }
+                        }}
+                        onKeyDown={(e) => {
+                          if (!endpointHistoryPopover.isOpen) {
+                            if (e.key === 'ArrowDown') showEndpointHistory();
+                            return;
+                          }
+                          const list =
+                            endpointHistoryPopover.contentRef.current;
+                          // The layer is its own focus scope, so Tab from the field
+                          // skips it; ArrowDown enters it as in a combobox.
+                          if (
+                            e.key === 'ArrowDown' &&
+                            !list?.contains(e.target as Node)
+                          ) {
+                            e.preventDefault();
+                            list?.querySelector('button')?.focus();
+                          } else if (e.key === 'Escape') {
+                            e.stopPropagation();
+                            endpointHistoryPopover.hide();
+                            endpointAnchorRef.current
+                              ?.querySelector('input')
+                              ?.focus();
+                          }
+                        }}
+                        style={{ flex: 1, minWidth: 0 }}
+                      >
+                        <BAIFormItem
+                          name="api_endpoint"
+                          style={{ marginBottom: 0 }}
+                          rules={[
+                            {
+                              pattern: /^https?:\/\/(.*)/,
+                              message: t('login.EndpointStartWith'),
+                            },
+                          ]}
+                        >
+                          <BAITextInput
+                            aria-label={t('login.Endpoint', {
+                              postProcess: [],
+                            })}
+                            placeholder={t('login.Endpoint', {
+                              postProcess: [],
+                            })}
+                            disabled={isEndpointDisabled || isLoading}
+                            onChange={(value) => onSetApiEndpoint(value)}
+                          />
+                        </BAIFormItem>
+                        {endpointHistory.length > 0 &&
+                          endpointHistoryPopover.render(
+                            <List
+                              density="compact"
+                              hasDividers
+                              aria-label={t('login.EndpointHistory')}
+                              xstyle={styles.endpointList}
+                            >
+                              {endpointHistory.map(
+                                ({ endpoint, isFromEnv }, i) => (
+                                  <ListItem
+                                    key={endpoint}
+                                    label={
+                                      isFromEnv ? `${endpoint} (env)` : endpoint
+                                    }
+                                    xstyle={[
+                                      styles.endpointRow,
+                                      i === endpointHistory.length - 1 &&
+                                        styles.endpointLastRow,
+                                    ]}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      selectEndpoint(endpoint);
+                                    }}
+                                    endContent={
+                                      <IconButton
+                                        variant="ghost"
+                                        size="sm"
+                                        icon={<Trash2 size="1em" />}
+                                        label={`${t('button.Delete')}: ${endpoint}`}
+                                        onClick={(e) => {
+                                          // The row is the select target; deleting
+                                          // must not also select it.
+                                          e.stopPropagation();
+                                          if (endpointHistory.length === 1) {
+                                            endpointHistoryPopover.hide();
+                                          }
+                                          onDeleteEndpoint(endpoint);
+                                          // The pressed row unmounts with focus in it.
+                                          endpointAnchorRef.current
+                                            ?.querySelector('input')
+                                            ?.focus();
+                                        }}
+                                      />
+                                    }
+                                  />
+                                ),
+                              )}
+                            </List>,
+                            {
+                              placement: 'below',
+                              alignment: 'start',
+                              offset: spacingVars['--spacing-1'],
+                              xstyle: styles.endpointPopover,
+                            },
+                          )}
+                      </div>
+                      <IconButton
+                        icon={<Info size="1em" />}
+                        variant="ghost"
+                        label={t('login.EndpointInfo')}
+                        onClick={() =>
+                          setHelpPanel({
+                            title: t('login.EndpointInfo'),
+                            content: t('login.DescEndpoint'),
+                          })
+                        }
+                      />
+                    </BAIFlex>
+                  )}
+                </div>
+              )}
 
             {/* Signup and change password links */}
             {hasBottomLinks && (
