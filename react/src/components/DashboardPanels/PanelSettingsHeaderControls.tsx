@@ -105,6 +105,7 @@ const PanelSettingsHeaderControls: React.FC = () => {
       ) : null}
       {hasSetting(definition, 'range') ? (
         <PanelRangeSelect
+          size="sm"
           isCompactLabel
           aria-label={t('dashboard.settings.TimeRange')}
           maxDays={maxRangeDaysOf(definition)}
