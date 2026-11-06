@@ -65,4 +65,13 @@ describe('checkEndpoint', () => {
       ),
     ).resolves.toEqual({ ok: false, error: 'noConfig' });
   });
+
+  it('ends a load that throws as unreachable instead of rejecting', async () => {
+    await expect(
+      checkEndpoint(
+        'https://a.example',
+        vi.fn().mockRejectedValue(new Error('boom')),
+      ),
+    ).resolves.toEqual({ ok: false, error: 'unreachable' });
+  });
 });

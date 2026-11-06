@@ -327,12 +327,6 @@ const applyDevServerHeaderColorOverride = (
   return applied;
 };
 
-/**
- * One-shot appearance bootstrap: theme.json and the domain's saved document
- * are fetched in parallel, the domain slice wins wholesale, and a single
- * `custom-theme-loaded` event fires once both have settled — including when
- * neither document is usable, so listeners never wait forever.
- */
 const applyDomainDoc = (domainDoc: BAIAppearanceConfig | undefined) => {
   store.domainDoc = domainDoc;
   store.appliedDoc = applyDevServerHeaderColorOverride(
@@ -346,6 +340,12 @@ const applyDomainDoc = (domainDoc: BAIAppearanceConfig | undefined) => {
 
 let bootstrap: Promise<void> | undefined;
 
+/**
+ * One-shot appearance bootstrap: theme.json and the domain's saved document
+ * are fetched in parallel, the domain slice wins wholesale, and a single
+ * `custom-theme-loaded` event fires once both have settled — including when
+ * neither document is usable, so listeners never wait forever.
+ */
 export const loadCustomThemeConfig = () => {
   bootstrap = Promise.all([fetchStaticDoc(), fetchDomainDoc()])
     .then(([staticDoc, domainDoc]) => {

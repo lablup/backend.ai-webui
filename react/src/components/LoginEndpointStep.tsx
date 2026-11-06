@@ -32,7 +32,7 @@ const LoginEndpointStep: React.FC<LoginEndpointStepProps> = ({
   const [endpoint, setEndpoint] = useState(defaultEndpoint);
 
   const submit = () => {
-    if (!isConnecting) onContinue(endpoint.trim().replace(/\/+$/, ''));
+    if (!isConnecting) onContinue(endpoint);
   };
 
   return (

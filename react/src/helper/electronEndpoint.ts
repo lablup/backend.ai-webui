@@ -31,7 +31,12 @@ export async function checkEndpoint(
   if (!/^https?:\/\/[^/]/.test(endpoint)) {
     return { ok: false, error: 'invalidUrl' };
   }
-  const result = await load(endpoint);
+  let result: WebServerConfigResult;
+  try {
+    result = await load(endpoint);
+  } catch {
+    return { ok: false, error: 'unreachable' };
+  }
   switch (result.status) {
     case 'loaded':
       return { ok: true, endpoint, hasDomain: result.domainName !== null };

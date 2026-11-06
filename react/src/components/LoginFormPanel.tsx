@@ -540,9 +540,10 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                   isStandalone
                   href="#"
                   data-testid="login-change-endpoint"
+                  aria-disabled={isLoading}
                   onClick={(e) => {
                     e.preventDefault();
-                    onChangeEndpoint();
+                    if (!isLoading) onChangeEndpoint();
                   }}
                 >
                   {t('login.ChangeEndpoint')}
