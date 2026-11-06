@@ -1374,6 +1374,8 @@ const LoginView: React.FC<{
                 setLoginError(null);
                 setOtpRequired(false);
                 setNeedsOtpRegistration(false);
+                setNeedToResetPassword(false);
+                expiredCredentialsRef.current = null;
                 form.setFieldValue('otp', '');
                 endpointStep.changeEndpoint();
               }

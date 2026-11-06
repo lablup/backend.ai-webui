@@ -42,7 +42,10 @@ export function useElectronEndpointStep({
   const [error, setError] = useState<EndpointError | null>(null);
   const [hasNoDomain, setHasNoDomain] = useState(false);
   const autoTriedRef = useRef(false);
-  const [isAutoSettled, setIsAutoSettled] = useState(false);
+  // Pending only for an endpoint present at mount; it never starts later.
+  const [isAutoPending, setIsAutoPending] = useState(
+    () => isElectron && !!storedEndpoint,
+  );
 
   const continueWith = async (raw: string) => {
     setIsConnecting(true);
@@ -61,23 +64,23 @@ export function useElectronEndpointStep({
   const confirmStored = useEffectEvent(() => {
     if (autoTriedRef.current || confirmed !== null || !storedEndpoint) return;
     autoTriedRef.current = true;
-    void continueWith(storedEndpoint).finally(() => setIsAutoSettled(true));
+    void continueWith(storedEndpoint).finally(() => setIsAutoPending(false));
   });
   useEffect(() => {
     if (isElectron && isPanelOpen) confirmStored();
-  }, [isElectron, isPanelOpen, storedEndpoint]);
+  }, [isElectron, isPanelOpen]);
 
   return {
     isStepOpen: isElectron && confirmed === null,
     isCheckingStored:
-      isElectron && confirmed === null && !!storedEndpoint && !isAutoSettled,
+      isElectron && confirmed === null && isAutoPending && !!storedEndpoint,
     isConnecting,
     error,
     hasNoDomain,
     continueWith,
     changeEndpoint: () => {
       autoTriedRef.current = true;
-      setIsAutoSettled(true);
+      setIsAutoPending(false);
       setConfirmed(null);
       setError(null);
       setHasNoDomain(false);
