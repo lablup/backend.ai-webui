@@ -118,10 +118,10 @@ export const keepUnreadablePanels = (
   return {
     ...written,
     boards: written.boards.map((board) => {
-      const storedPanels = _.filter(
-        storedBoards.get(board.id)?.panels as unknown,
-        isRecord,
-      );
+      const storedValue = storedBoards.get(board.id)?.panels;
+      const storedPanels = Array.isArray(storedValue)
+        ? storedValue.filter(isRecord)
+        : [];
       if (storedPanels.length === 0) return board;
       const storedById = new Map(
         storedPanels.map((panel) => [panel.id, panel]),
