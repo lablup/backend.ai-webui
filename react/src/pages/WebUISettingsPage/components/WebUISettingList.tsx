@@ -342,7 +342,6 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
     <>
       <SettingList
         settingGroups={settingGroups}
-        isStickyHeader
         showSearchBar
         showChangedOptionFilter
         extraButton={
