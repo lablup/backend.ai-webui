@@ -217,6 +217,8 @@ export const exportConfigToml = ({
     }
   }
   if (includeSettings) {
+    // The file goes to another site: its endpoint and domain are left to fill in.
+    Object.assign((doc.general ??= {}), { apiEndpoint: '', apiDomainName: '' });
     for (const definition of WEBUI_SETTING_DEFINITIONS) {
       const value = valueOf(definition);
       if (

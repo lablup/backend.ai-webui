@@ -245,6 +245,18 @@ describe('exportConfigToml', () => {
     resources: { openPortToPublic: false },
   };
 
+  it('leaves the endpoint and domain empty in the previous format', () => {
+    const text = exportConfigToml({
+      valueOf: () => undefined,
+      fileConfig,
+      includeSettings: true,
+    });
+    expect(text).toContain('apiEndpoint = ""');
+    expect(text).toContain('apiDomainName = ""');
+    expect(text).toContain('connectionMode = "SESSION"');
+    expect(text).toContain('proxyURL = "https://proxy.example/"');
+  });
+
   it('imports back to the settings it exported in the full format', () => {
     const text = exportConfigToml({
       valueOf: (definition) => sample(definition.key),
@@ -284,7 +296,9 @@ describe('exportConfigToml', () => {
         definition.key === 'menuBlocklist' ? ['start', 'data'] : undefined,
       includeSettings: true,
     });
-    expect(text.trim()).toBe('[menu]\nblocklist = "start,data"');
+    expect(text.trim()).toBe(
+      '[general]\napiEndpoint = ""\napiDomainName = ""\n\n[menu]\nblocklist = "start,data"',
+    );
   });
 
   it('leaves out settings with no value', () => {
@@ -292,6 +306,8 @@ describe('exportConfigToml', () => {
       valueOf: (definition) => (definition.key === 'debug' ? true : undefined),
       includeSettings: true,
     });
-    expect(text.trim()).toBe('[general]\ndebug = true');
+    expect(text.trim()).toBe(
+      '[general]\napiEndpoint = ""\napiDomainName = ""\ndebug = true',
+    );
   });
 });
