@@ -32,6 +32,8 @@ const LABEL_DEPLOYMENT_PREFIX = 'e2e-plan-label-';
 
 // The Owner filter value is a `BAIUserSelect` rendered inside the PowerSearch
 // edit popover; it stages the picked user and the popover's Apply commits it.
+// Returns once the filtered list query has answered and the grid has left its
+// busy state, since the list keeps showing the previous rows until then.
 async function applyOwnerFilter(page: Page, email: string): Promise<void> {
   const searchBar = page.getByRole('combobox', { name: 'Search filters' });
   const typeahead = page.getByRole('listbox', { name: 'Search results' });
@@ -49,12 +51,25 @@ async function applyOwnerFilter(page: Page, email: string): Promise<void> {
   await page
     .getByRole('option', { name: new RegExp(`^${escapeForRegExp(email)}`) })
     .click();
+  const refetch = page.waitForResponse(
+    (response) => {
+      const body = response.request().postData() ?? '';
+      return (
+        body.includes('AdminDeploymentQuery') && body.includes('createdUserId')
+      );
+    },
+    { timeout: 20000 },
+  );
   await page.getByRole('button', { name: 'Apply', exact: true }).click();
+  await refetch;
   await expect(page).toHaveURL(/createdUserId/);
   // Committing hands focus back to the search bar, which reopens the field
   // typeahead over the table; close it so it does not cover the rows.
   await page.keyboard.press('Escape');
   await expect(typeahead).toBeHidden();
+  await expect(
+    page.locator('.uic-data-grid__body[aria-busy="true"]'),
+  ).toHaveCount(0, { timeout: 20000 });
 }
 
 // Adds a free-text condition from the PowerSearch typeahead; its edit popover
@@ -129,6 +144,18 @@ test.describe(
         .toString(36)
         .slice(2, 6)}`;
       extraDeploymentNames = [];
+      // The superadmin intro tour (AdminViewSwitchTour) otherwise covers the
+      // page and intercepts clicks.
+      await page.addInitScript(() => {
+        localStorage.setItem(
+          'backendaiwebui.settings.user.has_opened_tour_back_to_user_view',
+          'true',
+        );
+        localStorage.setItem(
+          'backendaiwebui.settings.user.has_opened_tour_back_to_admin_settings',
+          'true',
+        );
+      });
       await loginAsAdmin(page, request);
     });
 
@@ -153,18 +180,6 @@ test.describe(
       'Admin can switch the admin deployment list between Serving, Paused and Terminated tabs',
       { tag: ['@functional', '@requires-manager-v26.10'] },
       async ({ page }) => {
-        // The superadmin intro tour (AdminViewSwitchTour) otherwise covers
-        // the list.
-        await page.addInitScript(() => {
-          localStorage.setItem(
-            'backendaiwebui.settings.user.has_opened_tour_back_to_user_view',
-            'true',
-          );
-          localStorage.setItem(
-            'backendaiwebui.settings.user.has_opened_tour_back_to_admin_settings',
-            'true',
-          );
-        });
         await skipUnlessManagerVersion(
           page,
           '26.10.0a1',
