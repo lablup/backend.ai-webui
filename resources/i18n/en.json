@@ -860,7 +860,7 @@
       "MyDeployments": "My Deployments",
       "MyRecentSessions": "My Recent Sessions",
       "MyResourcesTooltip": "What your sessions use across all resource groups and projects. The limit is that usage plus the smallest of what is still free in the card's resource group and what your user and project limits still allow.",
-      "MySessionsTooltip": "Your sessions in this project right now by status, and the active ones by session type.",
+      "MySessionsTooltip": "Shows the current status of your sessions in this project and a breakdown by type.",
       "NoActiveSessions": "No active sessions",
       "NoAllocation": "No resources are allocated.",
       "NoProject": "Select a project to see this card.",

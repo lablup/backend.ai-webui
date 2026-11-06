@@ -873,7 +873,7 @@
       "MyDeployments": "我的部署",
       "MyRecentSessions": "我最近的会话",
       "MyResourcesTooltip": "您的会话在所有资源组和项目中使用的资源。上限为该用量加上以下两者中较小的一个：卡片的资源组中仍空闲的量，以及您的用户和项目限制仍允许的量。",
-      "MySessionsTooltip": "您在此项目中的当前会话按状态显示，活动会话按会话类型显示。",
+      "MySessionsTooltip": "显示当前项目中您的会话的当前状态及按类型的分布。",
       "NoActiveSessions": "没有活动会话",
       "NoAllocation": "未分配资源。",
       "NoProject": "选择项目以查看此卡片。",

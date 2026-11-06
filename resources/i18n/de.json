@@ -873,7 +873,7 @@
       "MyDeployments": "Meine Deployments",
       "MyRecentSessions": "Meine letzten Sitzungen",
       "MyResourcesTooltip": "Was Ihre Sitzungen über alle Ressourcengruppen und Projekte hinweg nutzen. Das Limit ist diese Nutzung plus der kleinste Wert aus dem, was in der Ressourcengruppe der Karte noch frei ist, und dem, was Ihre Benutzer- und Projektlimits noch zulassen.",
-      "MySessionsTooltip": "Ihre aktuellen Sitzungen in diesem Projekt nach Status und die aktiven nach Sitzungstyp.",
+      "MySessionsTooltip": "Zeigt den aktuellen Status Ihrer Sitzungen in diesem Projekt und eine Aufschlüsselung nach Typ.",
       "NoActiveSessions": "Keine aktiven Sitzungen",
       "NoAllocation": "Keine Ressourcen zugewiesen.",
       "NoProject": "Wählen Sie ein Projekt, um diese Karte zu sehen.",

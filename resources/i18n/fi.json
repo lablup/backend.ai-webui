@@ -873,7 +873,7 @@
       "MyDeployments": "Omat käyttöönotot",
       "MyRecentSessions": "Viimeisimmät istuntoni",
       "MyResourcesTooltip": "Istuntojesi käyttämät resurssit kaikissa resurssiryhmissä ja projekteissa. Raja on tämä käyttö lisättynä pienimmällä seuraavista: mitä kortin resurssiryhmässä on vielä vapaana ja mitä käyttäjä- ja projektirajasi vielä sallivat.",
-      "MySessionsTooltip": "Omat nykyiset istuntosi tässä projektissa tilan mukaan ja aktiiviset istuntotyypin mukaan.",
+      "MySessionsTooltip": "Näyttää istuntojesi nykyisen tilan tässä projektissa ja jakauman tyypeittäin.",
       "NoActiveSessions": "Ei aktiivisia istuntoja",
       "NoAllocation": "Resursseja ei ole varattu.",
       "NoProject": "Valitse projekti nähdäksesi tämän kortin.",

@@ -873,7 +873,7 @@
       "MyDeployments": "Moje wdrożenia",
       "MyRecentSessions": "Moje ostatnie sesje",
       "MyResourcesTooltip": "Zasoby używane przez Twoje sesje we wszystkich grupach zasobów i projektach. Limit to to użycie plus najmniejsza z wartości: ile jest jeszcze wolne w grupie zasobów karty i ile pozwalają jeszcze Twoje limity użytkownika i projektu.",
-      "MySessionsTooltip": "Twoje bieżące sesje w tym projekcie według stanu, a aktywne według typu sesji.",
+      "MySessionsTooltip": "Pokazuje bieżący stan Twoich sesji w tym projekcie i ich podział według typu.",
       "NoActiveSessions": "Brak aktywnych sesji",
       "NoAllocation": "Brak przydzielonych zasobów.",
       "NoProject": "Wybierz projekt, aby zobaczyć tę kartę.",
