@@ -151,6 +151,64 @@ export async function skipAdminViewSwitchTours(page: Page) {
   });
 }
 
+/**
+ * Puts the login page on `endpoint` and leaves it on the account form. A
+ * config.toml without `apiEndpoint` asks for the server first (the endpoint
+ * step, #10872); once confirmed the form shows it beside "Change endpoint". An
+ * older form keeps the field under "Advanced", and a pinned server has none.
+ */
+export async function fillLoginEndpoint(page: Page, endpoint: string) {
+  const stepInput = page.getByTestId('login-endpoint-step-input');
+  const changeEndpoint = page.getByTestId('login-change-endpoint');
+  const email = page.getByLabel('Email or Username');
+  const confirm = async () => {
+    await stepInput.fill(endpoint);
+    await page.getByTestId('login-endpoint-step-continue').click();
+    await expect(email).toBeVisible({ timeout: 30_000 });
+  };
+  // A stored server is confirmed on its own first: the step shows it read-only
+  // until the check ends with the form (or an editable step on failure).
+  const editableStep = page.locator(
+    '[data-testid="login-endpoint-step-input"]:not([readonly])',
+  );
+  await expect(editableStep.or(email).first()).toBeVisible({
+    timeout: 30_000,
+  });
+  if (await editableStep.isVisible()) {
+    await confirm();
+    return;
+  }
+  if (await changeEndpoint.isVisible().catch(() => false)) {
+    const shown = await loginEndpointRow(page).innerText();
+    if (!shown.includes(endpoint.replace(/\/+$/, ''))) {
+      await changeEndpoint.click();
+      await confirm();
+    }
+    return;
+  }
+  // `getByLabel('Endpoint')` also matches the History / About buttons.
+  const endpointInput = page.getByRole('textbox', {
+    name: 'Endpoint',
+    exact: true,
+  });
+  if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
+    const advanced = page.getByText('Advanced');
+    if (await advanced.isVisible().catch(() => false)) await advanced.click();
+  }
+  // No field at all means the server pins `apiEndpoint`.
+  try {
+    await endpointInput.waitFor({ state: 'visible', timeout: 3000 });
+    await endpointInput.fill(endpoint);
+  } catch {
+    // server-pinned endpoint: nothing to fill
+  }
+}
+
+/** The confirmed server beside "Change endpoint" on the login form. */
+export function loginEndpointRow(page: Page) {
+  return page.getByTestId('login-endpoint-row');
+}
+
 export async function login(
   page: Page,
   request: APIRequestContext,
@@ -179,36 +237,11 @@ export async function login(
       if (overlay) overlay.remove();
     })
     .catch(() => {});
+  await fillLoginEndpoint(page, endpoint);
   await page.getByLabel('Email or Username').fill(username);
   await page.getByLabel('Password').fill(password);
   // Astryx Button exposes no aria-label — its accessible name is the visible text.
   const loginButton = page.getByRole('button', { name: 'Login', exact: true });
-  // Expand the endpoint section if it's not already visible.
-  // `getByLabel('Endpoint')` matches on substring, so it also picks up the
-  // "Endpoint History" trigger and the "About Endpoint" button — three
-  // elements, so it throws. `exact` pins the role lookup to the input alone.
-  const endpointInput = page.getByRole('textbox', {
-    name: 'Endpoint',
-    exact: true,
-  });
-  if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
-    // Older login UIs hide the input behind an 'Advanced' toggle.
-    const advanced = page.getByText('Advanced');
-    if (await advanced.isVisible().catch(() => false)) {
-      await advanced.click();
-    }
-  }
-  // No endpoint input means the server pins `apiEndpoint` (the config.toml
-  // intercept above did not take — an installed cluster under
-  // `playwright.smoke.config.ts`). Wait briefly rather than probing once:
-  // `isVisible()` does not auto-wait, and a slow render must not submit an
-  // empty endpoint.
-  try {
-    await endpointInput.waitFor({ state: 'visible', timeout: 3000 });
-    await endpointInput.fill(endpoint);
-  } catch {
-    // server-pinned endpoint: nothing to fill
-  }
   // A busy shared test backend can transiently reject a *valid* login (the
   // manager surfaces an internal error, the UI renders it as "Login
   // information mismatch"). Retry the submit a couple of times, with a fixed

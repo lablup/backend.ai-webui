@@ -1,24 +1,12 @@
 import {
+  fillLoginEndpoint,
   loginAsAdmin,
   modifyConfigToml,
   userInfo,
   webServerEndpoint,
   webuiEndpoint,
 } from '../utils/test-util';
-import { test, expect, Page } from '@playwright/test';
-
-/**
- * Expand the endpoint section if not already visible and fill the endpoint.
- */
-async function fillEndpoint(page: Page, endpoint: string): Promise<void> {
-  // Must be the role locator: getByLabel('Endpoint') is ambiguous once the
-  // section is expanded (matches the History/About buttons too).
-  const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
-  if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
-    await page.getByText('Advanced').click();
-  }
-  await endpointInput.fill(endpoint);
-}
+import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page, request }) => {
   // Modify config.toml to enable session-based login with manual endpoint input
@@ -37,12 +25,12 @@ test.describe(
   { tag: ['@smoke', '@auth', '@functional'] },
   () => {
     test('should display the login form', async ({ page }) => {
+      await fillLoginEndpoint(page, webServerEndpoint);
       await expect(page.getByLabel('Email or Username')).toBeVisible();
       await expect(page.getByLabel('Password')).toBeVisible();
       // Astryx `Button`'s accessible name comes from its visible text content,
       // not `aria-label`, so `getByRole` is required (`getByLabel` matches
-      // nothing) — see `fillEndpoint` above for the sibling `Endpoint` locator
-      // issue from the same migration.
+      // nothing).
       await expect(
         page.getByRole('button', { name: 'Login', exact: true }),
       ).toBeVisible();
@@ -81,9 +69,9 @@ test.describe(
     test('user can login with endpoint that has a single trailing slash', async ({
       page,
     }) => {
+      await fillLoginEndpoint(page, webServerEndpoint + '/');
       await page.getByLabel('Email or Username').fill(userInfo.admin.email);
       await page.getByLabel('Password').fill(userInfo.admin.password);
-      await fillEndpoint(page, webServerEndpoint + '/');
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       await expect(page).toHaveURL(/\/admin\/dashboard/, { timeout: 15_000 });
@@ -95,9 +83,9 @@ test.describe(
     test('user can login with endpoint that has multiple trailing slashes', async ({
       page,
     }) => {
+      await fillLoginEndpoint(page, webServerEndpoint + '///');
       await page.getByLabel('Email or Username').fill(userInfo.admin.email);
       await page.getByLabel('Password').fill(userInfo.admin.password);
-      await fillEndpoint(page, webServerEndpoint + '///');
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       await expect(page).toHaveURL(/\/admin\/dashboard/, { timeout: 15_000 });
@@ -121,9 +109,9 @@ test.describe(
         }
       });
 
+      await fillLoginEndpoint(page, webServerEndpoint + '/');
       await page.getByLabel('Email or Username').fill(userInfo.admin.email);
       await page.getByLabel('Password').fill(userInfo.admin.password);
-      await fillEndpoint(page, webServerEndpoint + '/');
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       await expect(page).toHaveURL(/\/start/, { timeout: 15_000 });
@@ -139,12 +127,12 @@ test.describe(
     test('should display error message for non-existent email', async ({
       page,
     }) => {
+      await fillLoginEndpoint(page, webServerEndpoint);
       await page
         .getByLabel('Email or Username')
         // Use random email to avoid block due to too many requests
         .fill(`nonexistent-${new Date().getTime()}@example.com`);
       await page.getByLabel('Password').fill('somepassword');
-      await fillEndpoint(page, webServerEndpoint);
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       // Wait for and verify the error notification appears
@@ -156,9 +144,9 @@ test.describe(
     test('should display error message for incorrect password', async ({
       page,
     }) => {
+      await fillLoginEndpoint(page, webServerEndpoint);
       await page.getByLabel('Email or Username').fill(userInfo.admin.email);
       await page.getByLabel('Password').fill(userInfo.admin.password + 'wrong');
-      await fillEndpoint(page, webServerEndpoint);
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       // Wait for and verify the error notification appears

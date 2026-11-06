@@ -461,6 +461,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
 
             {onChangeEndpoint && (
               <BAIFlex
+                data-testid="login-endpoint-row"
                 gap="xs"
                 align="center"
                 justify="between"
