@@ -4,6 +4,7 @@
  */
 import { Form } from '../../form-engine';
 import BAIFormItem from '../BAIFormItem';
+import { useDashboardResourceGroups } from './DashboardResourceGroups';
 import {
   DEFAULT_RANGE,
   RANGE_LABEL_KEYS,
@@ -15,7 +16,6 @@ import {
   BAIModal,
   BAIScopedResourceGroupSelect,
   BAISelect,
-  type BAIScopedResourceGroupSelectProps,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense } from 'react';
@@ -32,10 +32,6 @@ export interface PanelSettingsModalProps {
   title: string;
   definition: Pick<PanelDefinition, 'settings' | 'kind'>;
   settings?: PanelSettings;
-  /** The resource groups the setting offers: the page's projects, else the current domain. */
-  resourceGroupScope: BAIScopedResourceGroupSelectProps['scope'];
-  /** Resource groups the setting never offers (the SFTP-only ones). */
-  excludedResourceGroups?: ReadonlyArray<string>;
   onSubmit: (settings: PanelSettings | undefined) => void;
   onRequestClose: () => void;
   afterClose?: () => void;
@@ -47,8 +43,6 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
   title,
   definition,
   settings,
-  resourceGroupScope,
-  excludedResourceGroups,
   onSubmit,
   onRequestClose,
   afterClose,
@@ -56,17 +50,18 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
   'use memo';
   const { t } = useTranslation();
   const [form] = Form.useForm<SettingsFormValues>();
-  // A custom panel reads every resource group by default; a built-in card reads the header's.
+  // The page's allowed groups, never the header's (ADR 0027).
+  const resourceGroups = useDashboardResourceGroups();
+  // A custom panel reads every resource group by default; a built-in card the page's default group.
   const resourceGroupDefault =
     definition.kind === 'preset'
       ? t('dashboard.settings.AllResourceGroups')
-      : t('dashboard.settings.CurrentResourceGroup');
-  const resourceGroupsExtra = t(
-    'dashboard.settings.ResourceGroupsDescription',
-    {
-      default: resourceGroupDefault,
-    },
-  );
+      : (resourceGroups?.defaultResourceGroup ?? undefined);
+  const resourceGroupsExtra = resourceGroupDefault
+    ? t('dashboard.settings.ResourceGroupsDescription', {
+        default: resourceGroupDefault,
+      })
+    : undefined;
 
   return (
     <BAIModal
@@ -117,12 +112,8 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
               <BAIScopedResourceGroupSelect
                 label={t('dashboard.settings.ResourceGroup')}
                 placeholder={resourceGroupDefault}
-                scope={resourceGroupScope}
-                filter={
-                  _.isEmpty(excludedResourceGroups)
-                    ? undefined
-                    : { name: { notIn: [...(excludedResourceGroups ?? [])] } }
-                }
+                scope={resourceGroups?.scope ?? { project: [] }}
+                filter={resourceGroups?.filter}
                 allowClear
               />
             </BAIFormItem>

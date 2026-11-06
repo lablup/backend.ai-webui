@@ -169,9 +169,8 @@ interface TotalResourceWithinResourceGroupProps extends BAIFlexProps {
   displayType?: 'used' | 'free';
   onDisplayTypeChange?: (type: 'used' | 'free') => void;
   extra?: ReactNode;
-  /** Overrides the header's resource group, with `resourceGroupSelect` as its picker. */
+  /** Fixes the resource group (the parent query's); without it the header's group and a picker are used. */
   resourceGroup?: string;
-  resourceGroupSelect?: ReactNode;
 }
 
 export const useIsAvailableTotalResourceWithinResourceGroup = () => {
@@ -191,7 +190,6 @@ const TotalResourceWithinResourceGroup: React.FC<
   hideRefreshButton,
   extra,
   resourceGroup,
-  resourceGroupSelect,
   ...props
 }) => {
   'use memo';
@@ -259,13 +257,13 @@ const TotalResourceWithinResourceGroup: React.FC<
   });
 
   useEffect(() => {
-    if (deferredSelectedResourceGroup) {
+    if (deferredSelectedResourceGroup && !resourceGroup) {
       refetch({
         resourceGroup: deferredSelectedResourceGroup,
         isSuperAdmin: userRole === 'superadmin',
       });
     }
-  }, [deferredSelectedResourceGroup, refetch, userRole]);
+  }, [deferredSelectedResourceGroup, refetch, userRole, resourceGroup]);
 
   const firstPageAgents: Array<AgentSlots> = filterOutNullAndUndefined(
     agent_nodes
@@ -450,7 +448,9 @@ const TotalResourceWithinResourceGroup: React.FC<
                 fontWeightStrong). 16px is heading-5 on the restored antd type
                 ramp; `level={3}` tracked the same 16px under Astryx's own. */}
             <Heading level={5}>{t('webui.menu.TotalResourcesIn')}</Heading>
-            {resourceGroupSelect ?? (
+            {resourceGroup ? (
+              <Heading level={5}>{resourceGroup}</Heading>
+            ) : (
               <SharedResourceGroupSelectForCurrentProject
                 size="small"
                 showSearch

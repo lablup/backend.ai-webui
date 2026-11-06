@@ -2,18 +2,18 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { App } from '../../../app-shim';
-import FolderCreateModal from '../../../components/FolderCreateModal';
-import { useFolderExplorerOpener } from '../../../components/FolderExplorerOpener';
-import HuggingFaceModelPreview from '../../../components/HuggingFaceModelPreview';
-import { Form, FormInstance, FormProps } from '../../../form-engine';
-import { useSuspendedBackendaiClient } from '../../../hooks';
-import { useCurrentProjectValue } from '../../../hooks/useCurrentProject';
+import { App } from '../app-shim';
+import { Form, FormInstance, FormProps } from '../form-engine';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
   StartSessionWithDefaultValue,
   useStartSession,
-} from '../../../hooks/useStartSession';
-import { toProjectContext } from '../../../types/projectContext';
+} from '../hooks/useStartSession';
+import { toProjectContext } from '../types/projectContext';
+import FolderCreateModal from './FolderCreateModal';
+import { useFolderExplorerOpener } from './FolderExplorerOpener';
+import HuggingFaceModelPreview from './HuggingFaceModelPreview';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import {

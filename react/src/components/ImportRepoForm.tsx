@@ -5,16 +5,16 @@
 import {
   ImportRepoFormCreateVFolderMutation,
   ImportRepoFormCreateVFolderMutation$data,
-} from '../../../__generated__/ImportRepoFormCreateVFolderMutation.graphql';
-import { App } from '../../../app-shim';
-import StorageSelect from '../../../components/StorageSelect';
-import { Form, FormInstance, FormProps } from '../../../form-engine';
-import { useSuspendedBackendaiClient } from '../../../hooks';
-import { useSetBAINotification } from '../../../hooks/useBAINotification';
+} from '../__generated__/ImportRepoFormCreateVFolderMutation.graphql';
+import { App } from '../app-shim';
+import { Form, FormInstance, FormProps } from '../form-engine';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useSetBAINotification } from '../hooks/useBAINotification';
 import {
   StartSessionWithDefaultValue,
   useStartSession,
-} from '../../../hooks/useStartSession';
+} from '../hooks/useStartSession';
+import StorageSelect from './StorageSelect';
 import {
   BAIButton,
   useBAILogger,

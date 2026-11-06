@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useResourceGroupsForCurrentProject } from '../../hooks/useCurrentProject';
 import type { ProjectContextOrNull } from '../../types/projectContext';
 import { dashboardEditModeAtom } from '../dashboardEditModeAtom';
 import DashboardBoardSection from './DashboardBoardSection';
@@ -11,6 +10,7 @@ import DashboardEditSider from './DashboardEditSider';
 import DashboardFilterBar from './DashboardFilterBar';
 import DashboardPanelModal from './DashboardPanelModal';
 import { useBoardItemVisibility } from './DashboardRefreshContext';
+import { DashboardResourceGroupsProvider } from './DashboardResourceGroups';
 import PanelSettingsModal from './PanelSettingsModal';
 import { boardSortsAtom } from './ResourceTablePanel';
 import { dashboardScopeKey } from './dashboardScope';
@@ -30,22 +30,13 @@ import {
 import {
   BAIBoard,
   BAIFlex,
+  BAISkeleton,
   BAIUnmountAfterClose,
-  type BAIScopedResourceGroupSelectProps,
 } from 'backend.ai-ui';
 import { useAtom, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
-import React, { useEffect, useRef, useState } from 'react';
-
-/** The resource groups a card's setting can pick from: the page's projects, else the domain's. */
-const resourceGroupScopeOf = (
-  scope: DashboardScope,
-): BAIScopedResourceGroupSelectProps['scope'] =>
-  scope.kind === 'mine'
-    ? { project: scope.projectId ? [{ value: scope.projectId }] : [] }
-    : scope.projectIds === 'all'
-      ? { domain: [{ value: scope.domain.id }] }
-      : { project: scope.projectIds.map((value) => ({ value })) };
+import React, { Suspense, useEffect, useRef, useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 
 export interface DashboardPanelBoardProps {
   page: PanelPage;
@@ -56,6 +47,25 @@ export interface DashboardPanelBoardProps {
   isRefetching: boolean;
   queryRefs: DashboardPageQueryRefs;
 }
+
+/** The page's allowed resource groups under a boundary of its own. */
+const WithResourceGroups: React.FC<{
+  scope: DashboardScope;
+  fallback: React.ReactNode;
+  children: React.ReactNode;
+}> = ({ scope, fallback, children }) => (
+  // A failed lookup leaves the cards on their saved groups instead of failing the page.
+  <ErrorBoundary
+    fallbackRender={() => children}
+    resetKeys={[JSON.stringify(scope)]}
+  >
+    <Suspense fallback={fallback}>
+      <DashboardResourceGroupsProvider scope={scope}>
+        {children}
+      </DashboardResourceGroupsProvider>
+    </Suspense>
+  </ErrorBoundary>
+);
 
 /**
  * A dashboard page's board under the dashboard bar (board tabs and refresh). Moving and resizing work at
@@ -80,7 +90,6 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
   // The id outlives `open` until after-close, so the closing modal keeps its content.
   const [settingsPanelId, setSettingsPanelId] = useState<string | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const { sftpResourceGroups } = useResourceGroupsForCurrentProject();
   const boardContainerRef = useRef<HTMLDivElement>(null);
 
   // The edit-mode atom is global: close it when leaving the page, but not when a
@@ -141,6 +150,25 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     });
   };
 
+  // Each card waits for the page's allowed resource groups on its own, under a
+  // boundary keyed by the scope: a project change keeps the bar and the board
+  // mounted and shows only the cards' loading.
+  const scopedItems = boardItems.map((item) => ({
+    ...item,
+    data: {
+      ...item.data,
+      content: (
+        <WithResourceGroups
+          key={scopeKey}
+          scope={filters.scope}
+          fallback={<BAISkeleton />}
+        >
+          {item.data.content}
+        </WithResourceGroups>
+      ),
+    },
+  }));
+
   return (
     // The provider also covers the panel modal, whose previews read the page's project.
     <DashboardFilterContext
@@ -148,7 +176,6 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
         scope: filters.scope,
         project: filters.project,
         currentProjectId: filters.currentProjectId,
-        currentResourceGroup: filters.currentResourceGroup,
       }}
     >
       <BAIFlex
@@ -169,7 +196,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
                 movable
                 resizable
                 bordered
-                items={boardItems}
+                items={scopedItems}
                 // The board is controlled: the next render must hand back exactly
                 // what it reported, or it snaps back.
                 onItemsChange={(event) => {
@@ -212,20 +239,20 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
           />
         ) : null}
         <BAIUnmountAfterClose>
-          <PanelSettingsModal
-            open={isSettingsOpen && !!settingsTarget}
-            title={settingsTarget?.title ?? ''}
-            definition={settingsTarget?.definition ?? { kind: 'custom' }}
-            settings={settingsTarget?.settings}
-            resourceGroupScope={resourceGroupScopeOf(filters.scope)}
-            excludedResourceGroups={_.compact(sftpResourceGroups)}
-            onSubmit={(settings) => {
-              if (settingsPanelId)
-                updatePanelSettings(settingsPanelId, settings);
-            }}
-            onRequestClose={() => setIsSettingsOpen(false)}
-            afterClose={() => setSettingsPanelId(null)}
-          />
+          <WithResourceGroups scope={filters.scope} fallback={null}>
+            <PanelSettingsModal
+              open={isSettingsOpen && !!settingsTarget}
+              title={settingsTarget?.title ?? ''}
+              definition={settingsTarget?.definition ?? { kind: 'custom' }}
+              settings={settingsTarget?.settings}
+              onSubmit={(settings) => {
+                if (settingsPanelId)
+                  updatePanelSettings(settingsPanelId, settings);
+              }}
+              onRequestClose={() => setIsSettingsOpen(false)}
+              afterClose={() => setSettingsPanelId(null)}
+            />
+          </WithResourceGroups>
         </BAIUnmountAfterClose>
         {/* Unmounted after the close animation, so each open starts fresh: two
           consecutive Adds would otherwise share the preview-driven state. */}

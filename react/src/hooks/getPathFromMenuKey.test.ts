@@ -20,12 +20,15 @@ describe('getPathFromMenuKey', () => {
     expect(getPathFromMenuKey('session', 'alpha')).toBe(
       '/project/alpha/session',
     );
-    expect(getPathFromMenuKey('start', 'alpha')).toBe('/project/alpha/start');
     expect(getPathFromMenuKey('data', 'alpha')).toBe('/project/alpha/data');
   });
 
   it('resolves general menu aliases to their canonical feature', () => {
-    // 'job' -> session, 'summary' -> dashboard
+    // 'job' -> session, 'summary' and the retired 'start' -> dashboard
+    expect(getPathFromMenuKey('start', 'alpha')).toBe(
+      '/project/alpha/dashboard',
+    );
+    expect(getPathFromMenuKey('start')).toBe('/dashboard');
     expect(getPathFromMenuKey('job', 'alpha')).toBe('/project/alpha/session');
     expect(getPathFromMenuKey('summary', 'alpha')).toBe(
       '/project/alpha/dashboard',

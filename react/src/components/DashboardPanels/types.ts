@@ -5,7 +5,6 @@
 import type { AgentStatsFragment$key } from '../../__generated__/AgentStatsFragment.graphql';
 import type { RecentlyCreatedSessionFragment$key } from '../../__generated__/RecentlyCreatedSessionFragment.graphql';
 import type { SessionCountDashboardItemFragment$key } from '../../__generated__/SessionCountDashboardItemFragment.graphql';
-import type { TotalResourceWithinResourceGroupFragment$key } from '../../__generated__/TotalResourceWithinResourceGroupFragment.graphql';
 import type { SessionGridViewParams } from '../../helper/sessionResourceGridData';
 import type { UserRole } from '../../helper/userRole';
 import type { MenuKeys } from '../../hooks/useWebUIMenuItems';
@@ -119,10 +118,9 @@ export interface DashboardVars {
   timeRange: { after: string; before: string };
   /** The card's last refresh time, the `now` behind `timeRange`. */
   refreshedAt: number;
-  /** The header's project and resource group, for cards that read one of each. */
+  /** The page's project, for cards that read one. */
   currentProjectId: string | null;
-  currentResourceGroup: string | null;
-  /** The card's resource group setting, else the header's current group. */
+  /** The card's resource group setting while allowed, else the page's default group. */
   resourceGroup: string | null;
 }
 
@@ -204,6 +202,7 @@ export interface PanelCatalogConfig {
   blockList?: ReadonlyArray<string>;
   inactiveList?: ReadonlyArray<string>;
   hideAgents?: boolean;
+  enableModelFolders?: boolean;
 }
 
 export interface PanelCatalogContext {
@@ -214,11 +213,10 @@ export interface PanelCatalogContext {
   isProjectAdmin?: boolean;
 }
 
-/** The page query's fragments; null when no card on the board reads one. */
+/** Fragment keys of the admin page query the built-in admin cards still read. */
 export interface DashboardPageQueryRefs {
-  sessionCountQueryRef?: SessionCountDashboardItemFragment$key | null;
-  recentSessionsQueryRef?: RecentlyCreatedSessionFragment$key | null;
-  totalResourceQueryRef?: TotalResourceWithinResourceGroupFragment$key | null;
+  queryRef?: SessionCountDashboardItemFragment$key &
+    RecentlyCreatedSessionFragment$key;
   agentStatsQueryRef?: AgentStatsFragment$key | null;
 }
 
@@ -233,6 +231,8 @@ export interface PanelComponentProps {
   queryRefs: DashboardPageQueryRefs;
   /** Refreshes every card now. */
   onRefresh: () => void;
+  /** Saves the card's own filter on the board. */
+  onChangeFilter?: (filter: PersistedPanelV2['filter']) => void;
   onEdit?: () => void;
   onRemove?: () => void;
 }
@@ -247,7 +247,16 @@ export interface PanelDefinition {
   superadminTitleKey?: string;
   requires?: {
     role?: 'projectAdmin' | 'superadmin';
-    menuKey?: MenuKeys;
+    /**
+     * Any of these in `blockList` / `inactiveList` drops the entry. `import` is
+     * a blockList key of its own, though it has no menu item.
+     */
+    menuKey?: MenuKeys | 'import' | ReadonlyArray<MenuKeys | 'import'>;
+    /** True drops the entry for this viewer: not listed and not rendered. */
+    hidden?: (
+      config: PanelCatalogConfig,
+      role: UserRole | null | undefined,
+    ) => boolean;
     /** False locks the entry: listed but disabled, and not rendered. */
     config?: (
       config: PanelCatalogConfig,

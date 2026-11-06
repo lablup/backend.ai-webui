@@ -7,6 +7,7 @@
 - 대시보드 page의 [대시보드 바](#용어)는 보드 탭과 자동 새로고침 control 하나만 둔다. 바는 언제 다시 읽을지만 정하고, 무엇을 읽을지는 정하지 않는다.
 - 카드가 읽는 범위는 page가 정한다. 일반 사용자 page는 헤더 프로젝트에서 자기 데이터, 프로젝트 관리자 page는 URL 경로의 프로젝트, superadmin page는 현재 도메인 전체다. superadmin도 도메인을 고르지 않는다([ADR 0012](0012-scoped-search-fields-in-place-of-admin-fields.ko.md)). 예외는 superadmin page의 감사 로그 카드 하나로, cluster 전체의 `adminAuditLogsV2`를 읽는다.
 - 자원 그룹과 기간은 [카드 설정](#용어)이다. 자원 그룹이나 기간에 따라 값이 달라지는 카드만 설정을 갖는다. 저장되는 기본값은 편집 모드에서 고치고, 보기 모드에서도 카드 머리의 picker로 그 카드의 값을 잠시 바꿀 수 있다. 바에는 일부 카드만 따르는 전역 filter가 없다.
+- 대시보드는 헤더의 현재 자원 그룹을 읽지 않는다. 카드의 자원 그룹 선택지는 page의 URL 프로젝트(superadmin page는 현재 도메인)가 쓸 수 있는 자원 그룹이고, 설정이 없거나 더 쓸 수 없는 카드는 그 목록의 이름 순 첫 자원 그룹을 읽는다.
 - 자동 새로고침은 page마다 하나다. 바의 refresh control이 간격(기본 1분)마다 tick을 보내고, tick은 화면에 보이는 모든 카드를 함께 다시 읽는다. 카드마다 정한 최소 간격은 없다. control을 누르면 모든 카드를 바로 다시 읽는다. 카드에는 자기 refresh 버튼이 없다.
 - 카드가 보여 주는 시간별 개수는 매니저가 계산한 count만 쓴다. 기간 전체의 합계는 그 카드가 읽은 bucket count를 더한 값이다. 한 프로젝트나 한 자원 그룹 단위로만 값을 주는 field는 행으로 나눠 보여 주고, 클라이언트는 프로젝트나 자원 그룹 사이의 값을 더하지 않는다.
 - 보는 사람이 읽을 권한이 없는 카드는 숨긴다. 이미 가진 데이터로 알 수 있으면 카탈로그에서 빼고, 아니면 응답의 권한 오류 code로 알아낸다. 권한을 확인하는 요청을 따로 보내지 않는다. 카드 설정이 범위를 좁힌 카드와 사용자 정의 패널은 숨기지 않고 카드 안에 안내를 보인다.
@@ -35,7 +36,7 @@ flowchart LR
   hook -- "refresh, setRefresh" --> bar
   bar -- "간격 변경" --> board
   bar -- "간격마다 tick(), 클릭하면 refreshAll()" --> sched
-  hook -- "scope, 헤더 프로젝트와 자원 그룹" --> content
+  hook -- "scope, page 프로젝트, 허용 자원 그룹" --> content
   board -- "panel.settings" --> content
   sched -- "보이는 모든 카드의 fetchKey" --> content
   sched -- "refetchQueries(queryKey)" --> tan
@@ -75,11 +76,11 @@ sequenceDiagram
 
 | kind       | page           | field                                            |
 | ---------- | -------------- | ------------------------------------------------ |
-| `mine`     | `project`      | `projectId`: page의 프로젝트(헤더 프로젝트)      |
+| `mine`     | `project`      | `projectId`: URL 경로의 프로젝트                 |
 | `projects` | `projectAdmin` | `projectIds`: URL 경로의 프로젝트 하나, `domain` |
 | `projects` | `admin`        | `projectIds: 'all'`, `domain`: 현재 도메인       |
 
-- **Page project**: page가 `DashboardPanelBoard`에 `project`(`ProjectContextOrNull`)를 넘긴다. 일반 사용자 page는 page의 현재 프로젝트, 프로젝트 관리자 page는 URL 경로의 프로젝트, superadmin page는 `null`이다. 카드와 패널 modal은 `DashboardFilterContext`에서 `useDashboardProject`로 읽고, 사용자 정의 패널 query는 `useDashboardQueryScope`가 주는 프로젝트를, 그것이 `null`이면 현재 도메인을 범위로 쓴다(ADR 0001).
+- **Page project**: page가 `DashboardPanelBoard`에 `project`(`ProjectContextOrNull`)를 넘긴다. 일반 사용자 page와 프로젝트 관리자 page는 URL 경로의 프로젝트(`useUrlProjectValidity`), superadmin page는 `null`이다. 헤더의 현재 프로젝트는 URL을 effect로 따라가므로 읽지 않는다. 카드와 패널 modal은 `DashboardFilterContext`에서 `useDashboardProject`로 읽고, 사용자 정의 패널 query는 `useDashboardQueryScope`가 주는 프로젝트를, 그것이 `null`이면 현재 도메인을 범위로 쓴다(ADR 0001).
 - **Current domain**: `useDashboardFilters`가 `useCurrentDomain()`의 `{ id, name }`을 `domain`으로 넘긴다.
 - **Audit log exception**: superadmin page에서 감사 로그를 읽는 카드는 현재 도메인의 scoped query 대신 cluster 전체의 `adminAuditLogsV2`를 읽는다. 도메인 entity scope로 읽은 감사 로그에는 그 도메인 안의 세션, 폴더, 배포 기록이 빠지기 때문이다(26.10 매니저에서 확인). [ADR 0012](0012-scoped-search-fields-in-place-of-admin-fields.ko.md)의 scoped field 규칙에 대한 예외이고, 이 카드에만 적용한다. 다중 도메인 cluster에서는 이 카드만 다른 도메인의 기록까지 센다.
 - **Board vars**: 보드의 `vars`(`DashboardBoardVars`)는 `{ refresh }` 하나다. `sanitizeBoardVars`는 예전 보드에 남은 `project`, `rg`, `range`를 버리고, `REFRESH_OPTIONS`에 없는 `refresh`를 `1m`으로 바꾼다. 이미 간격을 고른 보드는 그 값을 유지한다.
@@ -89,11 +90,14 @@ sequenceDiagram
 - **Declared settings**: `PanelDefinition.settings`가 카드가 읽는 설정(`resourceGroup`, `range`)을 적는다. 값은 보드 패널의 `PersistedPanelV2.settings`(`{ resourceGroups?: string[]; range?: string }`)에 저장한다. 카드는 자원 그룹을 하나만 갖고, `resourceGroups`는 항목 하나인 배열로 저장한다. `sanitizeBoard`는 카드 정의가 적지 않은 설정을 버리고, 예전 보드에 남은 여러 자원 그룹은 첫 번째만 남긴다.
 - **Saved default in edit mode**: 편집 모드의 사이드 패널은 보드에 있는 카드 중 설정을 적은 카드에만 설정 버튼과 지금 값을 보여 주고, 버튼은 `PanelSettingsModal`을 연다. 여기서 고른 값이 보드에 저장되는 카드의 기본값이다. 설정을 적지 않은 카드는 control이 없다.
 - **Header pickers in view mode**: 설정을 적은 카드는 보기 모드에서도 머리의 제목 옆에 자원 그룹 picker와 기간 picker를 그린다(`PanelSettingsHeaderControls`). 각 picker는 hover하면 무엇을 고르는지(자원 그룹, 기간) tooltip으로 알린다. 머리에서 고른 값은 저장하지 않고 메모리(`panelSettingOverridesAtom`)에만 두어, 자동 새로고침 동안 유지되고 page를 떠나거나 다시 읽으면 저장된 기본값으로 돌아간다. 저장된 값과 다르면 picker가 강조되고, 옆의 되돌리기 버튼이 저장된 값으로 돌린다.
-- **Resource group choices**: `PanelSettingsModal`과 머리의 picker는 자원 그룹 하나를 `BAIScopedResourceGroupSelect`로 고른다. 선택지는 page의 프로젝트(`scope: { project }`)에서, superadmin page에서는 현재 도메인(`scope: { domain }`)에서 읽고, SFTP 전용 자원 그룹은 뺀다.
-- **Defaults**: 자원 그룹 설정이 비어 있으면 고정 카드는 헤더의 현재 자원 그룹을, 사용자 정의 패널은 모든 자원 그룹을 읽는다. 기간 설정의 기본은 최근 24시간(`DEFAULT_RANGE`, `panelSettings.ts`)이고, 선택지는 최근 1시간, 24시간, 7일이다.
-- **Superadmin resource group**: `/admin/dashboard` route는 헤더 프로젝트 selector를 그리지 않으므로, superadmin page의 기본 자원 그룹은 page가 따로 둔다(`superadminResourceGroupAtom`, `usePageResourceGroup`). 처음 값은 숨은 현재 프로젝트의 자원 그룹이고, Total Resources 카드의 picker는 현재 도메인의 자원 그룹을 모두 보여 준다.
-- **Card state**: `DashboardPanelContent`가 머리에서 고른 값, 없으면 저장된 설정을 풀어 `vars`(`DashboardVars`)로 넘긴다. `range`, 카드의 마지막 refresh 시각으로 고정한 `timeRange`, `resourceGroup`(설정 또는 헤더 자원 그룹), `currentProjectId`, `currentResourceGroup`이다.
-- **Single resource group cards**: 자원 그룹 하나만 받는 field를 읽는 카드는 `cardResourceGroup(settings.resourceGroups, currentResourceGroup)`이 정한 자원 그룹 하나만 읽는다. 자원 그룹마다 요청을 나누지 않는다.
+- **Resource group choices**: `PanelSettingsModal`과 머리의 picker는 자원 그룹 하나를 `BAIScopedResourceGroupSelect`로 고른다. 선택지는 page의 URL 프로젝트(`scope: { project }`)에서, superadmin page에서는 현재 도메인(`scope: { domain }`)에서 읽는다(`resourceGroupScopeOf`, `dashboardScope.ts`). SFTP 전용 자원 그룹은 뺀다. 그 목록은 같은 프로젝트의 storage host(`vfolder.list_hosts(projectId)`, superadmin page는 프로젝트 없이)의 `sftp_scaling_groups`다.
+- **Allowed groups**: `DashboardResourceGroupsProvider`(`DashboardResourceGroups.tsx`)가 page마다 한 번 그 범위의 `scopedResourceGroups`를 SFTP 전용 그룹을 뺀 채 `NAME` 오름차순으로 100개까지 읽어 `useDashboardResourceGroups()`로 나눈다. 카드, 머리의 picker, 설정 modal이 이 값을 함께 쓰고, 목록을 받기 전에는 board 대신 skeleton을 그린다.
+- **Defaults**: 자원 그룹 설정이 비어 있으면 고정 카드는 그 목록의 첫 자원 그룹(`defaultResourceGroupOf`)을, 사용자 정의 패널은 모든 자원 그룹을 읽는다. 저장된 값이나 머리에서 고른 값이 목록에 없으면(프로젝트가 더 쓸 수 없으면) 같은 기본값으로 돌아간다. 목록이 100개에서 잘렸거나 읽기에 실패했으면 저장된 값을 그대로 쓴다. 헤더의 현재 자원 그룹은 읽지 않으므로 헤더에서 자원 그룹을 바꿔도 카드는 바뀌지 않는다. 기간 설정의 기본은 최근 24시간(`DEFAULT_RANGE`, `panelSettings.ts`)이고, 선택지는 최근 1시간, 24시간, 7일이다.
+- **Superadmin resource group**: `/admin/dashboard` route는 헤더 프로젝트 selector를 그리지 않는다. superadmin page의 목록은 현재 도메인의 자원 그룹이고, 설정이 빈 카드는 그중 이름 순 첫 자원 그룹을 읽는다.
+- **Card state**: `DashboardPanelContent`가 머리에서 고른 값, 없으면 저장된 설정을 풀어 `vars`(`DashboardVars`)로 넘긴다. `range`, 카드의 마지막 refresh 시각으로 고정한 `timeRange`, `resourceGroup`(목록에 있는 설정, 아니면 기본 자원 그룹), `currentProjectId`(page의 프로젝트)이다.
+- **Single resource group cards**: 자원 그룹 하나만 받는 field를 읽는 카드는 `cardResourceGroup(settings.resourceGroups, allowed)`가 정한 자원 그룹 하나만 읽는다. 자원 그룹마다 요청을 나누지 않는다.
+- **Group slots**: 일반 사용자 page의 "My Total Resource Usage" 카드는 cpu, mem과 카드 자원 그룹의 `ResourceGroup.resourceInfo.capacity`에서 0보다 큰 slot만 막대로 그린다(`offeredSlotsOf`, `memberCardData.ts`). `myUserResourceAllocationV2`는 자원 그룹과 무관하게 매니저가 아는 slot을 모두 주기 때문이다. `resourceInfo`가 `null`이면 거르지 않는다. 세션 목록의 같은 이름의 카드(`MyResource.tsx`)는 헤더의 현재 자원 그룹을 그대로 따르고, slot은 `/config/resource-slots/details?sgroup=<그 그룹>`으로 거른다.
+- **Member allocation**: 이 카드는 일반 프로젝트 멤버가 읽을 수 있는 field만 읽는다. 사용량은 `myUserResourceAllocationV2.user.used`이고, 한도는 사용량에 `myUserResourceAllocationV2.user.assignable`, `projectResourceAllocationV2(projectId).project.assignable`, 카드 자원 그룹의 `resourceInfo.free` 중 가장 작은 값을 더한 값이다. `effectiveResourceAllocationV2`는 일반 멤버에게 `permission_access_forbidden`(프로젝트의 session READ 없음)이라 쓰지 않는다(staging, 2026-11-03 `frontend-session-guest` 계정으로 확인). 도메인 한도는 멤버가 읽을 field가 없어 빠진다. 프로젝트 한도와 자원 그룹 여유분이 거부되면 그 한도만 빼고, 카드를 숨기는 것은 주 field인 `myUserResourceAllocationV2`의 거부뿐이다.
 - **Custom panels**: data source가 자원 그룹으로 좁힐 수 있으면(`ResourceConfig.supportsResourceGroup`) 사용자 정의 패널도 자원 그룹 설정을 갖는다. 세션은 minilang filter에 `scaling_group == ...`를 붙이고, 배포는 `resourceGroup: { in }`을 쓴다. 폴더 패널은 설정이 없다.
 
 ### 4. 기간은 두 bound의 AND로 거른다
@@ -139,6 +143,8 @@ sequenceDiagram
 - **Global filter bar**: 보드 위에 프로젝트, 자원 그룹, 기간 picker를 두고 모든 카드가 따르게 한다. 보드의 범위가 한 줄에 보인다. 기각한다. 지금 상태를 보여 주는 카드는 기간을, 자원 그룹과 무관한 카드는 자원 그룹을 따를 수 없어 바의 값 일부를 조용히 무시하고, 사용자는 어느 카드가 어느 값을 따르는지 알 수 없다.
 - **Per-card refresh**: 카드마다 refresh 버튼을 둔다. 카드 하나만 다시 읽을 수 있다. 기각한다. 같은 화면에 refresh control이 여러 개면 무엇이 무엇을 다시 읽는지 모호하고, 페이지의 refresh와 겹친다.
 - **Per-card minimum**: 카드 정의마다 최소 refresh 간격(`refresh.min`)을 두고 tick은 그 간격이 지난 카드만 다시 읽는다. 느리게 바뀌는 데이터를 덜 요청한다. 기각한다(2026-10-29). 같은 화면의 카드가 서로 다른 시각의 값을 보여 주고, 바의 간격이 어느 카드를 다시 읽는지 사용자가 알 수 없다.
+- **Header resource group default**: 설정이 빈 카드가 헤더의 현재 자원 그룹을 읽는다. 다른 page와 같은 그룹을 보여 준다. 기각한다. 헤더의 자원 그룹은 헤더의 현재 프로젝트를 따르는데, 프로젝트 관리자 page의 URL 프로젝트와 다를 수 있어 그 프로젝트가 쓸 수 없는 그룹을 읽고, 헤더를 바꿀 때마다 카드가 조용히 바뀐다.
+- **Effective allocation for members**: "My Total Resource Usage"가 `effectiveResourceAllocationV2` 하나로 모든 한도의 최솟값을 읽는다. 도메인 한도까지 들어간다. 기각한다. 일반 멤버는 자기 프로젝트에서도 이 field를 읽지 못해 카드가 숨거나 비고, 대시보드의 주 사용자에게 카드가 사라진다.
 - **Edit-mode-only settings**: 카드 설정 control을 편집 모드에만 둔다. 보기 모드의 카드가 단순해진다. 기각한다. 다른 자원 그룹이나 기간을 잠깐 보려면 편집 모드에 들어가 보드의 저장값을 바꿔야 하고, 보기 모드에서는 카드가 어느 자원 그룹과 기간을 읽는지 보이지 않는다.
 - **Domain-scoped audit log**: superadmin page의 감사 로그 카드도 현재 도메인 scope로 읽는다. 이웃 카드와 범위가 같아진다. 기각한다. 도메인 scope의 감사 로그에는 그 도메인의 세션, 폴더, 배포 기록이 빠져 카드가 실제 활동 대부분을 보여 주지 못한다.
 - **Domain picker**: superadmin 바에 도메인 multi-select를 둔다. 기각한다. [ADR 0012](0012-scoped-search-fields-in-place-of-admin-fields.ko.md)가 모든 역할의 읽기를 현재 도메인의 `scoped*` field로 정했다.
@@ -153,12 +159,13 @@ sequenceDiagram
 - **Superadmin audit log range**: 다중 도메인 cluster에서 superadmin page의 감사 로그 카드는 다른 도메인의 기록도 세고, 이웃 카드는 현재 도메인만 센다.
 - **No shareable filter links**: 링크는 page와 프로젝트만 나른다. 카드 설정은 보드에 저장되므로 같은 계정은 어느 기기에서나 같은 값을 본다.
 - **Unmigrated cards**: 이 결정이 들어간 시점의 기존 카드는 `scope`와 `vars`를 읽지 않고 page query와 헤더 값을 쓴다. 고정 카드 중 설정을 적은 카드도 아직 없다.
+- **No domain limit for members**: "My Total Resource Usage"의 한도에는 도메인 한도가 빠진다. 도메인 한도가 사용자, 프로젝트 한도나 자원 그룹 여유분보다 작으면 실제로 할당할 수 있는 양보다 큰 한도를 보인다.
 - **Hidden card flash**: 거부는 응답을 받은 뒤에야 알 수 있어 숨길 카드도 첫 load 동안 skeleton으로 보이다 사라진다. 수동 refresh 뒤에도 같다.
 - **Cards blocked on aggregation**: 매니저가 group-by나 시계열 값을 주지 않는 카드는 만들지 않고 backend 요청으로 남는다.
 
 ## 출처
 
-- #10422 (epic), #10582, #9839, #7843, 2026-10-26 회의, 2026-10-29 결정(카드 하나의 refresh 주기, 기본 1분, 카드마다 자원 그룹 하나), 2026-10-30 결정(보기 모드의 카드 머리 picker, superadmin 감사 로그의 `adminAuditLogsV2`), 2026-11-03 결정(읽을 수 없는 카드 숨김, 설정이 좁힌 카드와 사용자 정의 패널은 안내).
+- #10422 (epic), #10582, #9839, #7843, 2026-10-26 회의, 2026-10-29 결정(카드 하나의 refresh 주기, 기본 1분, 카드마다 자원 그룹 하나), 2026-10-30 결정(보기 모드의 카드 머리 picker, superadmin 감사 로그의 `adminAuditLogsV2`), 2026-11-03 결정(읽을 수 없는 카드 숨김, 설정이 좁힌 카드와 사용자 정의 패널은 안내, 대시보드 자원 그룹은 헤더와 독립이고 기본은 URL 프로젝트의 첫 자원 그룹, "My Total Resource Usage"는 자원 그룹이 제공하는 slot만).
 - #10422의 role-based dashboard 제안(기간과 갱신, 저장과 마이그레이션).
 - 관련: [ADR 0012](0012-scoped-search-fields-in-place-of-admin-fields.ko.md), [ADR 0026](0026-dashboard-boards-in-manager-app-config.ko.md).
 

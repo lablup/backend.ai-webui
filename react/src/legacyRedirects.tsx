@@ -18,8 +18,8 @@
  *     /project/<cur>/session`). The current project is read from the atom via
  *     `useActiveProjectName()`. When no project is resolvable, the shim renders
  *     a terminal "no accessible projects" guidance instead of redirecting:
- *     redirecting to a project-scoped path (e.g. `/start`, itself a Class B shim)
- *     would bounce back here and loop.
+ *     redirecting to a project-scoped path (itself a Class B shim) would
+ *     bounce back here and loop.
  *
  * All shims preserve `location.search`. The factories that handle detail routes
  * read the dynamic param (`:deploymentId` / `:serviceId` / `:presetId` /
@@ -81,9 +81,30 @@ export const AdminRedirect: React.FC<{
 };
 
 /**
+ * `/project/:projectName/start` → the project's dashboard. The query and hash
+ * are kept: the import deep links (`?type=url&data=`, `/github?…`) ride on them.
+ */
+export const ProjectStartRedirect: React.FC = () => {
+  'use memo';
+  const { projectName } = useParams();
+  const location = useLocation();
+  return (
+    <WebUINavigate
+      to={
+        buildPath('project', 'dashboard', projectName) +
+        location.search +
+        location.hash
+      }
+      replace
+    />
+  );
+};
+
+/**
  * Class B — runtime project-scoped redirect. Injects the current project NAME
  * and produces a `<WebUINavigate>` to the scope-aware (`project` /
- * `projectAdmin`) path. Falls back to `/start` when no project is resolvable.
+ * `projectAdmin`) path, or the "no accessible projects" notice when no project
+ * is resolvable.
  */
 export const ProjectScopedRedirect: React.FC<{
   scope: Extract<RouteScope, 'project' | 'projectAdmin'>;
@@ -97,10 +118,8 @@ export const ProjectScopedRedirect: React.FC<{
   const { suffix } = useDetailSuffix(options?.param);
 
   if (!projectName) {
-    // No resolvable project (user belongs to no project). Render the same
-    // "no accessible projects" guidance as ProjectScopeLayout. Redirecting to a
-    // project-scoped path (e.g. `/start`, itself a Class B shim) would bounce
-    // back here and loop, so this branch is terminal.
+    // No resolvable project: the same notice as ProjectScopeLayout. Redirecting
+    // to another Class B shim would bounce back here and loop.
     return (
       <BAIFlex direction="column" align="stretch" style={{ width: '100%' }}>
         <BAIAlert

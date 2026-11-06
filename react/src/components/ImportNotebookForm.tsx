@@ -2,16 +2,16 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { App } from '../../../app-shim';
-import CopyButton from '../../../components/Chat/CopyButton';
-import { PrimaryAppOption } from '../../../components/ComputeSessionNodeItems/SessionActionButtons';
-import { Form, FormInstance, FormProps } from '../../../form-engine';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../../../hooks';
-import { useProjectPath } from '../../../hooks/useRouteScope';
+import { App } from '../app-shim';
+import { Form, FormInstance, FormProps } from '../form-engine';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useProjectPath } from '../hooks/useRouteScope';
 import {
   StartSessionWithDefaultValue,
   useStartSession,
-} from '../../../hooks/useStartSession';
+} from '../hooks/useStartSession';
+import CopyButton from './Chat/CopyButton';
+import { PrimaryAppOption } from './ComputeSessionNodeItems/SessionActionButtons';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
 import { Divider } from '@lablup/ui-common/Divider';
 import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';

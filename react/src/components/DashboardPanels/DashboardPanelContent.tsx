@@ -7,6 +7,7 @@ import {
   useDashboardFetchKey,
   useDashboardRefreshScheduler,
 } from './DashboardRefreshContext';
+import { useDashboardResourceGroups } from './DashboardResourceGroups';
 import { cardResourceGroup } from './dashboardScope';
 import {
   PanelPermissionBoundary,
@@ -56,7 +57,7 @@ const DashboardPanelContent: React.FC<DashboardPanelContentProps> = ({
   const deferredFetchKey = useDeferredValue(fetchKey);
   const deferredManualFetchKey = useDeferredValue(manualFetchKey);
   const range = panel.settings?.range ?? DEFAULT_RANGE;
-  const currentResourceGroup = filters?.currentResourceGroup ?? null;
+  const allowedResourceGroups = useDashboardResourceGroups();
 
   const { resourceGroups, ...otherSettings } = panel.settings ?? {};
   const permission = {
@@ -72,10 +73,9 @@ const DashboardPanelContent: React.FC<DashboardPanelContentProps> = ({
     kind: 'mine' as const,
     projectId: filters?.currentProjectId ?? null,
   };
-  const resourceGroup = cardResourceGroup(
-    panel.settings?.resourceGroups,
-    currentResourceGroup,
-  );
+  const resourceGroup = allowedResourceGroups
+    ? cardResourceGroup(panel.settings?.resourceGroups, allowedResourceGroups)
+    : (panel.settings?.resourceGroups?.[0] ?? null);
   const content = children({
     scope,
     vars: {
@@ -83,7 +83,6 @@ const DashboardPanelContent: React.FC<DashboardPanelContentProps> = ({
       timeRange: rangeToDateTimeFilter(range, refreshedAt),
       refreshedAt,
       currentProjectId: filters?.currentProjectId ?? null,
-      currentResourceGroup,
       resourceGroup,
     },
     fetchKey: deferredFetchKey,

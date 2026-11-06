@@ -2,9 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import BAITabs from '../../../components/BAITabs';
-import { useSuspendedBackendaiClient } from '../../../hooks';
-import { useBAISettingUserState } from '../../../hooks/useBAISetting';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
+import BAITabs from './BAITabs';
 import ImportHuggingFaceModelForm from './ImportHuggingFaceModelForm';
 import ImportNotebookForm from './ImportNotebookForm';
 import ImportRepoForm from './ImportRepoForm';

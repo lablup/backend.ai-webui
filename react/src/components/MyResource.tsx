@@ -5,7 +5,15 @@
 import { MyResourceQuery } from '../__generated__/MyResourceQuery.graphql';
 import { MyResourceV2StatisticsFragment$key } from '../__generated__/MyResourceV2StatisticsFragment.graphql';
 import { useResourceSlotsDetails } from '../hooks/backendai';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import {
+  useCurrentProjectValue,
+  useCurrentResourceGroupValue,
+} from '../hooks/useCurrentProject';
+import {
+  freeAsLimits,
+  offeredSlotsOf,
+  toUsageRows,
+} from './DashboardPanels/memberCards/memberCardData';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIBoardItemTitle,
@@ -45,6 +53,7 @@ const MyResource: React.FC<MyResourceProps> = ({
   const { token } = useTheme();
   const isInBoard = useIsInBAIBoardItem();
   const currentProject = useCurrentProjectValue();
+  const currentResourceGroup = useCurrentResourceGroupValue();
 
   const [internalFetchKey, updateInternalFetchKey] = useFetchKey();
   const [isPending, startTransition] = useTransition();
@@ -87,9 +96,14 @@ const MyResource: React.FC<MyResourceProps> = ({
           </BAIFlex>
         }
       />
-      {/* A transport failure escapes @catch; keep the title and let refresh retry. */}
+      {/* A transport failure, or a manager without myUserResourceAllocationV2, escapes @catch; keep the title and let refresh retry. */}
       <ErrorBoundary
-        resetKeys={[fetchKey, internalFetchKey, currentProject.id]}
+        resetKeys={[
+          fetchKey,
+          internalFetchKey,
+          currentProject.id,
+          currentResourceGroup,
+        ]}
         fallbackRender={() => (
           <ResourceStatistics
             resourceData={NO_RESOURCE_DATA}
@@ -111,59 +125,86 @@ const NO_RESOURCE_DATA = { cpu: null, memory: null, accelerators: [] };
 const MyResourceStatistics: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
   'use memo';
   const currentProject = useCurrentProjectValue();
+  const currentResourceGroup = useCurrentResourceGroupValue();
   if (!currentProject.id) {
     throw new Error('Project id is required for MyResource');
   }
+  if (!currentResourceGroup) {
+    return (
+      <ResourceStatistics
+        resourceData={NO_RESOURCE_DATA}
+        displayType="used"
+        progressMode="normal"
+      />
+    );
+  }
 
+  return (
+    <MyResourceStatisticsQuery
+      projectId={currentProject.id}
+      resourceGroupName={currentResourceGroup}
+      fetchKey={fetchKey}
+    />
+  );
+};
+
+const MyResourceStatisticsQuery: React.FC<{
+  projectId: string;
+  resourceGroupName: string;
+  fetchKey: string;
+}> = ({ projectId, resourceGroupName, fetchKey }) => {
+  'use memo';
   const queryRef = useLazyLoadQuery<MyResourceQuery>(
     graphql`
-      query MyResourceQuery($projectId: UUID!) {
-        ...MyResourceV2StatisticsFragment @arguments(projectId: $projectId)
+      query MyResourceQuery(
+        $projectId: UUID!
+        $scope: ResourceGroupScope!
+        $resourceGroupFilter: ResourceGroupFilter!
+      ) {
+        ...MyResourceV2StatisticsFragment
+          @arguments(
+            projectId: $projectId
+            scope: $scope
+            resourceGroupFilter: $resourceGroupFilter
+          )
       }
     `,
-    { projectId: currentProject.id },
+    {
+      projectId,
+      scope: { project: [{ value: projectId }] },
+      resourceGroupFilter: { name: { equals: resourceGroupName } },
+    },
     { fetchPolicy: 'network-only', fetchKey },
   );
 
-  return <MyResourceStatisticsContent queryRef={queryRef} />;
+  return (
+    <MyResourceStatisticsContent
+      queryRef={queryRef}
+      resourceGroupName={resourceGroupName}
+    />
+  );
 };
-
-type LimitEntries = ReadonlyArray<{
-  readonly resourceType: string;
-  readonly quantity: unknown;
-  readonly unlimited: boolean;
-}>;
-
-// Undefined when the slot is unlimited; a slot with no entry is unlimited too.
-const finiteQuantity = (entries: LimitEntries | undefined, slot: string) => {
-  const entry = _.find(entries, (e) => e.resourceType === slot);
-  return !entry || entry.unlimited || entry.quantity == null
-    ? undefined
-    : _.toNumber(entry.quantity);
-};
-
-const smallestFinite = (...values: Array<number | undefined>) =>
-  _.min(_.filter(values, (v): v is number => v !== undefined));
 
 const MyResourceStatisticsContent: React.FC<{
   queryRef: MyResourceV2StatisticsFragment$key;
-}> = ({ queryRef }) => {
+  resourceGroupName: string;
+}> = ({ queryRef, resourceGroupName }) => {
   'use memo';
-  const resourceSlotsDetails = useResourceSlotsDetails();
+  // The slots this resource group offers, so accelerators it lacks get no bar.
+  const resourceSlotsDetails = useResourceSlotsDetails(resourceGroupName);
   const data = useFragment(
     graphql`
       fragment MyResourceV2StatisticsFragment on Query
-      @argumentDefinitions(projectId: { type: "UUID!" }) {
-        myKeypairResourceAllocationV2 @catch(to: RESULT) {
-          keypair {
+      @argumentDefinitions(
+        projectId: { type: "UUID!" }
+        scope: { type: "ResourceGroupScope!" }
+        resourceGroupFilter: { type: "ResourceGroupFilter!" }
+      ) {
+        myUserResourceAllocationV2 @catch(to: RESULT) {
+          user {
             used {
               resourceType
               quantity
-            }
-            limits {
-              resourceType
-              quantity
-              unlimited
             }
             assignable {
               resourceType
@@ -174,15 +215,34 @@ const MyResourceStatisticsContent: React.FC<{
         }
         projectResourceAllocationV2(projectId: $projectId) @catch(to: RESULT) {
           project {
-            limits {
-              resourceType
-              quantity
-              unlimited
-            }
             assignable {
               resourceType
               quantity
               unlimited
+            }
+          }
+        }
+        scopedResourceGroups(
+          scope: $scope
+          filter: $resourceGroupFilter
+          limit: 1
+        ) @catch(to: RESULT) {
+          edges {
+            node {
+              resourceInfo {
+                capacity {
+                  entries {
+                    resourceType
+                    quantity
+                  }
+                }
+                free {
+                  entries {
+                    resourceType
+                    quantity
+                  }
+                }
+              }
             }
           }
         }
@@ -191,34 +251,51 @@ const MyResourceStatisticsContent: React.FC<{
     queryRef,
   );
 
-  const keypair = data.myKeypairResourceAllocationV2.ok
-    ? data.myKeypairResourceAllocationV2.value?.keypair
+  // The dashboard's My Resources reading: fields a plain project member may
+  // read (`effectiveResourceAllocationV2` needs session READ on the project).
+  const user = data.myUserResourceAllocationV2.ok
+    ? data.myUserResourceAllocationV2.value?.user
     : undefined;
   const project = data.projectResourceAllocationV2.ok
     ? data.projectResourceAllocationV2.value?.project
     : undefined;
+  const resourceInfo = data.scopedResourceGroups.ok
+    ? data.scopedResourceGroups.value?.edges?.[0]?.node?.resourceInfo
+    : undefined;
+  const usageRows = user
+    ? toUsageRows(
+        user.used,
+        [
+          user.assignable,
+          project?.assignable ?? [],
+          freeAsLimits(resourceInfo?.free.entries),
+        ],
+        {
+          dropEmpty: false,
+          slots: offeredSlotsOf(resourceInfo?.capacity.entries) ?? undefined,
+        },
+      )
+    : [];
 
-  // Raw units (cores, bytes, device counts); an undefined limit or remaining
-  // means unlimited, and a slot the keypair holds nothing of is 0 used.
-  const amountsOf = (slot: string) => ({
-    used: _.find(keypair?.used, (e) => e.resourceType === slot)?.quantity ?? 0,
-    limit: smallestFinite(
-      finiteQuantity(keypair?.limits, slot),
-      finiteQuantity(project?.limits, slot),
-    ),
-    remaining: smallestFinite(
-      finiteQuantity(keypair?.assignable, slot),
-      finiteQuantity(project?.assignable, slot),
-    ),
-  });
+  // Raw units (cores, bytes, device counts); the manager's effective limit
+  // across scopes, undefined when unlimited.
+  const amountsOf = (slot: string) => {
+    const row = _.find(usageRows, (entry) => entry.resourceType === slot);
+    const limit = row?.limit ?? undefined;
+    return {
+      used: row?.used ?? 0,
+      limit,
+      remaining: limit === undefined ? undefined : limit - (row?.used ?? 0),
+    };
+  };
 
   const cpuSlot = resourceSlotsDetails?.resourceSlotsInRG?.['cpu'];
   const memSlot = resourceSlotsDetails?.resourceSlotsInRG?.['mem'];
   const cpuAmounts = amountsOf('cpu');
   const memAmounts = amountsOf('mem');
 
-  // Without the keypair figures there is nothing to show, not zero usage.
-  const resourceData = !keypair
+  // Without the user allocation there is nothing to show, not zero usage.
+  const resourceData = !user
     ? NO_RESOURCE_DATA
     : {
         cpu: cpuSlot

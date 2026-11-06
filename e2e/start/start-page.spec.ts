@@ -1,6 +1,6 @@
 // spec: e2e/.agent-output/test-plan-start-dashboard.md
-// scenarios: 1 (Card Rendering), 2 (Create Folder), 3 (Start Session Navigation),
-//            4 (Start From URL Modal), 5 (Board Item Drag-and-Drop)
+// The Start page is retired (#10584): its five actions are member dashboard
+// cards, and `/start` redirects to the dashboard keeping the query string.
 import { StartPage } from '../utils/classes/common/StartPage';
 import { FolderCreationModal } from '../utils/classes/vfolder/FolderCreationModal';
 import { skipUnlessClientConfig } from '../utils/feature-gate-util';
@@ -14,26 +14,26 @@ import {
 } from '../utils/test-util';
 import { test, expect } from '@playwright/test';
 
-// Timeout for card/widget visibility checks - the Start page board loads items
+// Timeout for card/widget visibility checks - the dashboard board loads items
 // asynchronously after GraphQL queries, which may be slow when multiple workers
 // run in parallel.
 const CARD_TIMEOUT = 30_000;
 
 test.describe(
-  'Start Page',
-  { tag: ['@regression', '@start', '@functional'] },
+  'Start items on the dashboard',
+  { tag: ['@regression', '@start', '@dashboard', '@functional'] },
   () => {
     // -----------------------------------------------------------------------
     // 1. Card Rendering
     // -----------------------------------------------------------------------
     test.describe('Card Rendering', () => {
-      test('Admin can see all expected quick-action cards on the Start page', async ({
+      test('Admin can see all expected Start cards on the dashboard', async ({
         page,
         request,
       }) => {
-        // 1. Login as admin and navigate to /start
+        // 1. Login as admin and open the dashboard
         await loginAsAdmin(page, request);
-        await navigateTo(page, 'start');
+        await navigateTo(page, 'dashboard');
 
         // 2. Verify the "Create New Storage Folder" card is visible
         await expect(
@@ -60,21 +60,15 @@ test.describe(
         await expect(
           page.locator('.uic-board-item').filter({ hasText: 'Start From URL' }),
         ).toBeVisible({ timeout: CARD_TIMEOUT });
-
-        // 6. Verify the board is not empty (no empty-state alert visible)
-        // Note: the actual UI text contains a typo "availiable" instead of "available"
-        await expect(
-          page.getByText('No availiable Start items.'),
-        ).not.toBeVisible();
       });
 
-      test('User can see all expected quick-action cards on the Start page', async ({
+      test('User can see all expected Start cards on the dashboard', async ({
         page,
         request,
       }) => {
-        // 1. Login as regular user and navigate to /start
+        // 1. Login as regular user and open the dashboard
         await loginAsUser(page, request);
-        await navigateTo(page, 'start');
+        await navigateTo(page, 'dashboard');
 
         // 2. Verify the "Create New Storage Folder" card is visible
         await expect(
@@ -108,13 +102,13 @@ test.describe(
     // 2. Create Folder Action
     // -----------------------------------------------------------------------
     test.describe('Create Folder Action', () => {
-      test('Admin can open the Create Folder modal from the Start page', async ({
+      test('Admin can open the Create Folder modal from the dashboard', async ({
         page,
         request,
       }) => {
-        // 1. Login as admin and navigate to /start
+        // 1. Login as admin and open the dashboard
         await loginAsAdmin(page, request);
-        await navigateTo(page, 'start');
+        await navigateTo(page, 'dashboard');
 
         // 2. Locate the "Create New Storage Folder" card and click the "Create Folder" button
         const card = page
@@ -163,9 +157,9 @@ test.describe(
           page,
           request,
         }) => {
-          // 1. Login as admin and navigate to /start
+          // 1. Login as admin and open the dashboard
           await loginAsAdmin(page, request);
-          await navigateTo(page, 'start');
+          await navigateTo(page, 'dashboard');
 
           // 2. Click the "Create Folder" button on the "Create New Storage Folder" card
           const card = page
@@ -196,9 +190,9 @@ test.describe(
         page,
         request,
       }) => {
-        // 1. Login as admin and navigate to /start
+        // 1. Login as admin and open the dashboard
         await loginAsAdmin(page, request);
-        await navigateTo(page, 'start');
+        await navigateTo(page, 'dashboard');
 
         // 2. Click the "Create Folder" button on the "Create New Storage Folder" card
         const card = page
@@ -232,7 +226,7 @@ test.describe(
     test.describe('Start Session Navigation', () => {
       test.beforeEach(async ({ page, request }) => {
         await loginAsAdmin(page, request);
-        await navigateTo(page, 'start');
+        await navigateTo(page, 'dashboard');
       });
 
       test('Admin can navigate to the Session Launcher from the "Start Interactive Session" card', async ({
@@ -262,15 +256,15 @@ test.describe(
         await expect(page).toHaveURL(/sessionType.*batch|batch.*sessionType/);
       });
 
-      test('Admin can navigate to the Deployments page from the "Start Deployment" card', async ({
+      test('Admin can open the Create Deployment modal from the "Start Deployment" card', async ({
         page,
       }) => {
         const startPage = new StartPage(page);
 
         // Declarative config gate (FR-3112): the "Start Deployment" card
         // (formerly titled "Start Model Service") is rendered only when
-        // `enableModelFolders = true` in config.toml (StartPage.tsx reads
-        // `baiClient._config.enableModelFolders`).
+        // `enableModelFolders = true` in config.toml (the catalog locks the
+        // `start.deployment` card otherwise).
         await skipUnlessClientConfig(
           page,
           'enableModelFolders',
@@ -285,9 +279,11 @@ test.describe(
         // from "Start Service").
         await startPage.getCreateDeploymentButton(card).click();
 
-        // 3. Verify the URL changes to /deployments (this card no longer
-        // routes through /service/start).
-        await expect(page).toHaveURL(/\/deployments/);
+        // 3. The card opens the Create Deployment modal in place of navigating.
+        await expect(
+          page.getByRole('dialog').filter({ hasText: 'Create Deployment' }),
+        ).toBeVisible();
+        await expect(page).not.toHaveURL(/\/deployments/);
       });
     });
 
@@ -297,10 +293,10 @@ test.describe(
     test.describe('Start From URL Modal', () => {
       test.beforeEach(async ({ page, request }) => {
         await loginAsAdmin(page, request);
-        await navigateTo(page, 'start');
+        await navigateTo(page, 'dashboard');
       });
 
-      test('Admin can open the "Start From URL" modal from the Start page', async ({
+      test('Admin can open the "Start From URL" modal from the dashboard', async ({
         page,
       }) => {
         // 1. Locate the "Start From URL" card and click the "Start Now" button
@@ -396,7 +392,8 @@ test.describe(
       test('Admin can open the Start From URL modal pre-filled via query parameters', async ({
         page,
       }) => {
-        // 1. Navigate directly to /start with type=url and data query params
+        // 1. Open the legacy /start link with type=url and data query params;
+        //    it redirects to the dashboard, which opens the import modal
         const notebookUrl =
           'https://github.com/example/repo/blob/main/notebook.ipynb';
         const data = JSON.stringify({ url: notebookUrl });
@@ -423,8 +420,8 @@ test.describe(
         const urlInput = page.getByRole('dialog').getByRole('textbox').first();
         await expect(urlInput).toHaveValue(notebookUrl);
 
-        // 5. Verify the URL query parameters are cleared from the address bar after modal opens
-        await expect(page).toHaveURL(/\/start(?!\?type)/);
+        // 5. Verify the redirect landed on the dashboard and the deep link was cleared
+        await expect(page).toHaveURL(/\/dashboard(?!\?type)/);
 
         // 6. Close the modal
         await page
@@ -438,13 +435,13 @@ test.describe(
     // 5. Board Layout (smoke test - verify board and drag handles exist)
     // -----------------------------------------------------------------------
     test.describe('Board Layout', () => {
-      test('Admin can see draggable cards on the Start page board', async ({
+      test('Admin can see draggable cards on the dashboard board', async ({
         page,
         request,
       }) => {
-        // 1. Login as admin and navigate to /start
+        // 1. Login as admin and open the dashboard
         await loginAsAdmin(page, request);
-        await navigateTo(page, 'start');
+        await navigateTo(page, 'dashboard');
 
         // 2. Verify at least two cards are visible
         const cards = page.locator('.uic-board-item');

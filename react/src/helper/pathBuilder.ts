@@ -79,12 +79,12 @@ interface ScopeFeature {
  * PROJECT_ADMIN_PAGE_KEYS -> projectAdmin at `/project/:name/admin/<feature>`
  * all other adminMenu keys -> admin at `/admin/<feature>`
  *
- * Aliases (`summary`->dashboard, `job`->session) share the same target as
+ * Aliases (`summary`/`start`->dashboard, `job`->session) share the same target as
  * their canonical key; the inverse lookup resolves to the canonical key.
  */
 export const MENU_KEY_TO_SCOPE_FEATURE: Record<string, ScopeFeature> = {
   // --- generalMenu: project scope ---
-  start: { scope: 'project', featureKey: 'start' },
+  start: { scope: 'project', featureKey: 'dashboard' }, // alias -> dashboard (retired Start page)
   dashboard: { scope: 'project', featureKey: 'dashboard' },
   summary: { scope: 'project', featureKey: 'dashboard' }, // alias -> dashboard
   session: { scope: 'project', featureKey: 'session' },
