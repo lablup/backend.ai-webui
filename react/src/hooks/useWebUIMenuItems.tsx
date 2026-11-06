@@ -23,45 +23,22 @@ import {
   useCurrentMenuKey,
 } from './useRouteScope';
 import {
+  useWebUIMenuCatalog,
+  type WebUIMenuCatalogEntry,
+  type WebUIMenuCatalogKey,
+} from './useWebUIMenuCatalog';
+import {
   PluginPage,
   useWebUIPluginLoadedValue,
   useWebUIPluginValue,
 } from './useWebUIPluginState';
-import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIBadgeCount,
-  BAIEndpointsIcon,
-  BAIModelStoreIcon,
-  BAIMyEnvironmentsIcon,
-  BAIPipelinesIcon,
-  BAISessionsIcon,
   filterOutEmpty,
   useSessionStorageState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import {
-  Gauge,
-  MessageSquare,
-  CloudUpload,
-  HardDrive,
-  ChartColumn,
-  User,
-  FileCheck,
-  FileUser,
-  Settings2,
-  Wrench,
-  Info,
-  Plug,
-  Users,
-  BadgeCheck,
-  Activity,
-  BotMessageSquare,
-  ClipboardClock,
-  PackagePlus,
-  LinkIcon,
-  ExternalLinkIcon,
-  Palette,
-} from 'lucide-react';
+import { ExternalLinkIcon, LinkIcon, Plug } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
@@ -285,7 +262,6 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     list ? _.without(list, 'system-settings') : null;
   const blockList = withoutSystemSettings(baiClient?._config?.blockList);
   const inactiveList = withoutSystemSettings(baiClient?._config?.inactiveList);
-  const { token } = useTheme();
 
   const [experimentalAIAgents] = useBAISettingUserState(
     'experimental_ai_agents',
@@ -297,272 +273,108 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
 
   const diagnosticsBadgeSeverity = useDiagnosticsBadgeSeverity();
 
-  // Helper to create a menu item. The `to` path is derived from the menu `key`
-  // via `getPathFromMenuKey` (scope-aware: `/project/<name>/<feature>` for
-  // general keys), so call sites no longer hardcode the URL — a single source
-  // of truth that stays correct under the scope-prefixed routing scheme.
+  const catalog = _.keyBy(useWebUIMenuCatalog(), 'key') as Record<
+    WebUIMenuCatalogKey,
+    WebUIMenuCatalogEntry
+  >;
+
+  // `to` comes from the key (`getPathFromMenuKey`), label and icon from the
+  // catalog, so the sidebar and the System Settings menu-key selector agree.
   const createMenuItem = (
-    labelText: string,
-    icon: React.ReactNode,
-    key: MenuKeys,
+    key: WebUIMenuCatalogKey,
     group: MenuGroupName,
   ): WebUIGeneralMenuItemType => ({
     to: getPathFromMenuKey(key, activeProjectName),
-    icon,
+    icon: catalog[key].icon,
     key,
     group,
-    labelText,
+    labelText: catalog[key].labelText,
   });
 
-  // Admin menu item builder — same scope-aware `to` derivation, with the admin
-  // menu's info-color icons and admin group typing.
   const createAdminMenuItem = (
-    labelText: string,
-    icon: React.ReactNode,
-    key: MenuKeys,
+    key: WebUIMenuCatalogKey,
     group: AdminMenuGroupName,
+    icon: React.ReactNode = catalog[key].icon,
   ): WebUIAdminMenuItemType => ({
     to: getPathFromMenuKey(key, activeProjectName, effectiveAdminRole),
     icon,
     key,
     group,
-    labelText,
+    labelText: catalog[key].labelText,
   });
 
   const generalMenu = filterOutEmpty<WebUIGeneralMenuItemType>([
-    createMenuItem(
-      t('webui.menu.Dashboard'),
-      <Gauge style={{ color: token('--color-accent') }} size="1em" />,
-      'dashboard',
-      'none',
-    ),
-    createMenuItem(
-      t('webui.menu.Sessions'),
-      <BAISessionsIcon style={{ color: token('--color-accent') }} />,
-      'session',
-      'workload',
-    ),
-    createMenuItem(
-      t('webui.menu.Deployments'),
-      <BAIEndpointsIcon style={{ color: token('--color-accent') }} />,
-      'deployments',
-      'service',
-    ),
-    createMenuItem(
-      t('data.ModelStore'),
-      <BAIModelStoreIcon style={{ color: token('--color-accent') }} />,
-      'model-store',
-      'service',
-    ),
-    experimentalAIAgents &&
-      createMenuItem(
-        t('webui.menu.AIAgents'),
-        <BotMessageSquare style={{ color: token('--color-accent') }} />,
-        'ai-agent',
-        'playground',
-      ),
-    createMenuItem(
-      t('webui.menu.Chat'),
-      <MessageSquare style={{ color: token('--color-accent') }} size="1em" />,
-      'chat',
-      'playground',
-    ),
-    createMenuItem(
-      t('webui.menu.Data'),
-      <CloudUpload style={{ color: token('--color-accent') }} size="1em" />,
-      'data',
-      'storage',
-    ),
-    createMenuItem(
-      t('webui.menu.MyEnvironments'),
-      <BAIMyEnvironmentsIcon style={{ color: token('--color-accent') }} />,
-      'my-environment',
-      'workload',
-    ),
-    !isHideAgents &&
-      createMenuItem(
-        t('webui.menu.AgentSummary'),
-        <HardDrive style={{ color: token('--color-accent') }} size="1em" />,
-        'agent-summary',
-        'metrics',
-      ),
-    createMenuItem(
-      t('webui.menu.Statistics'),
-      <ChartColumn style={{ color: token('--color-accent') }} size="1em" />,
-      'statistics',
-      'metrics',
-    ),
+    createMenuItem('dashboard', 'none'),
+    createMenuItem('session', 'workload'),
+    createMenuItem('deployments', 'service'),
+    createMenuItem('model-store', 'service'),
+    experimentalAIAgents && createMenuItem('ai-agent', 'playground'),
+    createMenuItem('chat', 'playground'),
+    createMenuItem('data', 'storage'),
+    createMenuItem('my-environment', 'workload'),
+    !isHideAgents && createMenuItem('agent-summary', 'metrics'),
+    createMenuItem('statistics', 'metrics'),
     !!fasttrackEndpoint && {
-      icon: <BAIPipelinesIcon style={{ color: token('--color-accent') }} />,
+      icon: catalog.pipeline.icon,
       key: 'pipeline' as MenuKeys,
       onClick: () => {
         window.open(fasttrackEndpoint, '_blank', 'noopener noreferrer');
       },
       group: 'mlops' as MenuGroupName,
-      labelText: t('webui.menu.FastTrack'),
+      labelText: catalog.pipeline.labelText,
     },
   ]);
 
   const isSuperAdmin = currentUserRole === 'superadmin';
 
-  // PILOT-DECISION: antd `Badge dot offset color` — a DOT OVERLAY on a child
-  // — is MAPPING §3.8's explicit NONE ("no count overlay, no Badge.Ribbon;
-  // self-build, build once"). The gap component built for exactly that in
-  // ticket 08 is `BAIBadgeCount`, used here in its `dot` form. The
-  // arbitrary `color={token('--color-error')|colorWarning}` becomes the component's
-  // closed `variant` enum.
   const diagnosticsIcon = diagnosticsBadgeSeverity ? (
     <BAIBadgeCount
       hasDot
       offset={[-2, 2]}
       variant={diagnosticsBadgeSeverity === 'critical' ? 'error' : 'warning'}
-      title={t('webui.menu.Diagnostics')}
+      title={catalog.diagnostics.labelText}
     >
-      <Activity style={{ color: token('--color-info') }} />
+      {catalog.diagnostics.icon}
     </BAIBadgeCount>
   ) : (
-    <Activity style={{ color: token('--color-info') }} />
+    catalog.diagnostics.icon
   );
 
   const fullAdminMenu: Array<WebUIAdminMenuItemType> = filterOutEmpty([
     // Superadmins and the current project's admins only; not domain admins.
     (isSuperAdmin || isCurrentProjectAdmin) &&
-      createAdminMenuItem(
-        t('webui.menu.Dashboard'),
-        <Gauge style={{ color: token('--color-info') }} size="1em" />,
-        'admin-dashboard',
-        'none',
-      ),
+      createAdminMenuItem('admin-dashboard', 'none'),
     // --- Operations group ---
-    createAdminMenuItem(
-      t('webui.menu.Users'),
-      <User style={{ color: token('--color-info') }} size="1em" />,
-      'credential',
-      'admin-operations',
-    ),
-    createAdminMenuItem(
-      t('webui.menu.ProjectMembers'),
-      <Users style={{ color: token('--color-info') }} size="1em" />,
-      'project-admin-users',
-      'admin-operations',
-    ),
-    createAdminMenuItem(
-      t('webui.menu.ProjectSessions'),
-      <BAISessionsIcon style={{ color: token('--color-info') }} />,
-      'project-admin-session',
-      'admin-operations',
-    ),
-    createAdminMenuItem(
-      t('webui.menu.ProjectDeployments'),
-      <BAIEndpointsIcon style={{ color: token('--color-info') }} />,
-      'project-admin-deployments',
-      'admin-operations',
-    ),
+    createAdminMenuItem('credential', 'admin-operations'),
+    createAdminMenuItem('project-admin-users', 'admin-operations'),
+    createAdminMenuItem('project-admin-session', 'admin-operations'),
+    createAdminMenuItem('project-admin-deployments', 'admin-operations'),
+    isSuperAdmin && createAdminMenuItem('project', 'admin-operations'),
+    isSuperAdmin && createAdminMenuItem('admin-data', 'admin-operations'),
+    createAdminMenuItem('admin-session', 'admin-operations'),
     isSuperAdmin &&
-      createAdminMenuItem(
-        t('webui.menu.Projects'),
-        <Users style={{ color: token('--color-info') }} size="1em" />,
-        'project',
-        'admin-operations',
-      ),
-    isSuperAdmin &&
-      createAdminMenuItem(
-        t('webui.menu.Data'),
-        <CloudUpload style={{ color: token('--color-info') }} size="1em" />,
-        'admin-data',
-        'admin-operations',
-      ),
-    createAdminMenuItem(
-      t('webui.menu.Sessions'),
-      <BAISessionsIcon style={{ color: token('--color-info') }} />,
-      'admin-session',
-      'admin-operations',
-    ),
-    isSuperAdmin &&
-      createAdminMenuItem(
-        t('webui.menu.Deployments'),
-        <BAIEndpointsIcon style={{ color: token('--color-info') }} />,
-        'admin-deployments',
-        'admin-operations',
-      ),
-    createAdminMenuItem(
-      t('webui.menu.Environments'),
-      <FileCheck style={{ color: token('--color-info') }} size="1em" />,
-      'environment',
-      'admin-operations',
-    ),
+      createAdminMenuItem('admin-deployments', 'admin-operations'),
+    createAdminMenuItem('environment', 'admin-operations'),
     baiClient?._config.enableReservoir &&
-      createAdminMenuItem(
-        t('webui.menu.Reservoir'),
-        <PackagePlus style={{ color: token('--color-info') }} />,
-        'reservoir',
-        'admin-operations',
-      ),
-    isSuperAdmin &&
-      createAdminMenuItem(
-        t('webui.menu.Scheduler'),
-        <ClipboardClock style={{ color: token('--color-info') }} />,
-        'scheduler',
-        'admin-operations',
-      ),
-    createAdminMenuItem(
-      t('webui.menu.ResourcePolicies'),
-      <FileUser style={{ color: token('--color-info') }} size="1em" />,
-      'resource-policy',
-      'admin-operations',
-    ),
+      createAdminMenuItem('reservoir', 'admin-operations'),
+    isSuperAdmin && createAdminMenuItem('scheduler', 'admin-operations'),
+    createAdminMenuItem('resource-policy', 'admin-operations'),
     // --- Infrastructure group (superadmin only) ---
+    isSuperAdmin && createAdminMenuItem('agent', 'admin-infrastructure'),
+    isSuperAdmin && createAdminMenuItem('maintenance', 'admin-infrastructure'),
     isSuperAdmin &&
       createAdminMenuItem(
-        t('webui.menu.Resources'),
-        <HardDrive style={{ color: token('--color-info') }} size="1em" />,
-        'agent',
-        'admin-infrastructure',
-      ),
-    isSuperAdmin &&
-      createAdminMenuItem(
-        t('webui.menu.Maintenance'),
-        <Wrench style={{ color: token('--color-info') }} size="1em" />,
-        'maintenance',
-        'admin-infrastructure',
-      ),
-    isSuperAdmin &&
-      createAdminMenuItem(
-        t('webui.menu.Diagnostics'),
-        diagnosticsIcon,
         'diagnostics',
         'admin-infrastructure',
+        diagnosticsIcon,
       ),
     // --- System group (superadmin only) ---
-    isSuperAdmin &&
-      createAdminMenuItem(
-        t('webui.menu.RBACManagement'),
-        <BadgeCheck style={{ color: token('--color-info') }} size="1em" />,
-        'rbac',
-        'admin-system',
-      ),
+    isSuperAdmin && createAdminMenuItem('rbac', 'admin-system'),
     isSuperAdmin &&
       !isThemePreviewMode &&
-      createAdminMenuItem(
-        t('webui.menu.Branding'),
-        <Palette style={{ color: token('--color-info') }} />,
-        'branding',
-        'admin-system',
-      ),
-    isSuperAdmin &&
-      createAdminMenuItem(
-        t('webui.menu.Information'),
-        <Info style={{ color: token('--color-info') }} size="1em" />,
-        'information',
-        'admin-system',
-      ),
-    isSuperAdmin &&
-      createAdminMenuItem(
-        t('webui.menu.SystemSettings'),
-        <Settings2 style={{ color: token('--color-info') }} size="1em" />,
-        'system-settings',
-        'admin-system',
-      ),
+      createAdminMenuItem('branding', 'admin-system'),
+    isSuperAdmin && createAdminMenuItem('information', 'admin-system'),
+    isSuperAdmin && createAdminMenuItem('system-settings', 'admin-system'),
   ]);
 
   // 3-tier admin gating:
