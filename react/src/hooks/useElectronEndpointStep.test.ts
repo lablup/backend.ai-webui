@@ -16,7 +16,7 @@ const ok = (endpoint: string, hasDomain = true) => ({
 });
 
 const render = (props: {
-  isElectron?: boolean;
+  isEnabled?: boolean;
   isPanelOpen?: boolean;
   storedEndpoint?: string;
   onConfirmed?: (endpoint: string) => void;
@@ -24,7 +24,7 @@ const render = (props: {
   renderHook(
     (p: typeof props) =>
       useElectronEndpointStep({
-        isElectron: p.isElectron ?? true,
+        isEnabled: p.isEnabled ?? true,
         isPanelOpen: p.isPanelOpen ?? true,
         storedEndpoint: p.storedEndpoint ?? '',
         onConfirmed: p.onConfirmed ?? (() => {}),
@@ -39,7 +39,7 @@ describe('useElectronEndpointStep', () => {
 
   it('never opens the step outside Electron', () => {
     const { result } = render({
-      isElectron: false,
+      isEnabled: false,
       storedEndpoint: 'https://a',
     });
     expect(result.current.isStepOpen).toBe(false);

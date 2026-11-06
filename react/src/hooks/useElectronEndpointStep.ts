@@ -21,17 +21,18 @@ export interface ElectronEndpointStep {
 }
 
 /**
- * Electron reads the server's config.toml and PUBLIC settings before the login
- * form (#10872). A stored endpoint is confirmed on its own each time the
- * panel opens (start-up, after a logout); "Change endpoint" asks again.
+ * Without an `apiEndpoint` in the app's own config.toml (always in Electron,
+ * on the web when the file names none), the server's config.toml and PUBLIC
+ * settings are read before the login form (#10872). A stored endpoint is
+ * confirmed on its own each time the panel opens; "Change endpoint" asks again.
  */
 export function useElectronEndpointStep({
-  isElectron,
+  isEnabled,
   isPanelOpen,
   storedEndpoint,
   onConfirmed,
 }: {
-  isElectron: boolean;
+  isEnabled: boolean;
   isPanelOpen: boolean;
   storedEndpoint: string;
   onConfirmed: (endpoint: string) => void;
@@ -44,7 +45,7 @@ export function useElectronEndpointStep({
   const autoTriedRef = useRef(false);
   // Pending only for an endpoint present at mount; it never starts later.
   const [isAutoPending, setIsAutoPending] = useState(
-    () => isElectron && !!storedEndpoint,
+    () => isEnabled && !!storedEndpoint,
   );
 
   const continueWith = async (raw: string) => {
@@ -67,13 +68,13 @@ export function useElectronEndpointStep({
     void continueWith(storedEndpoint).finally(() => setIsAutoPending(false));
   });
   useEffect(() => {
-    if (isElectron && isPanelOpen) confirmStored();
-  }, [isElectron, isPanelOpen]);
+    if (isEnabled && isPanelOpen) confirmStored();
+  }, [isEnabled, isPanelOpen]);
 
   return {
-    isStepOpen: isElectron && confirmed === null,
+    isStepOpen: isEnabled && confirmed === null,
     isCheckingStored:
-      isElectron && confirmed === null && isAutoPending && !!storedEndpoint,
+      isEnabled && confirmed === null && isAutoPending && !!storedEndpoint,
     isConnecting,
     error,
     hasNoDomain,

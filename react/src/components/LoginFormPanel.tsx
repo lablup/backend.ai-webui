@@ -157,11 +157,11 @@ interface LoginFormPanelProps {
   onSetNeedsOtpRegistration: (v: boolean) => void;
   onSetNeedToResetPassword: (v: boolean) => void;
   onSetShowSignupModal: (v: boolean) => void;
-  /** Shown in place of the form while the Electron endpoint step is open. */
+  /** Shown in place of the form while the endpoint step is open. */
   endpointStep?: ReactNode;
-  /** Electron: the endpoint is fixed for this form and changed through this. */
+  /** Endpoint step: the server is fixed for this form and changed through this. */
   onChangeEndpoint?: () => void;
-  /** Electron: the confirmed webserver, shown beside "Change endpoint". */
+  /** Endpoint step: the confirmed webserver, shown beside "Change endpoint". */
   serverEndpoint?: string;
   endpointNotice?: string | null;
 }
@@ -212,7 +212,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   const { isDarkMode } = useThemeMode();
   const { rawThemeConfig } = useCustomThemeConfig();
 
-  const isElectronApiEndpoint = !!onChangeEndpoint && connectionMode === 'API';
+  const isStepApiEndpoint = !!onChangeEndpoint && connectionMode === 'API';
   const [isEndpointExpanded, setIsEndpointExpanded] = useState(
     () => showEndpointInput && !isEndpointDisabled && apiEndpoint === '',
   );
@@ -586,7 +586,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               </BAIFlex>
             )}
 
-            {/* Collapsible endpoint section; Electron's API mode always shows
+            {/* Collapsible endpoint section; the endpoint step's API mode always shows
                 it open, for the manager the sign-in goes to. */}
             {(!onChangeEndpoint || connectionMode === 'API') &&
               showEndpointInput && (
@@ -604,7 +604,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                   is Astryx's own "this link is not inside a paragraph" flag and
                   resolves to `--text-body-size` / `--text-body-leading`, i.e.
                   exactly 14px / 1.5714 — the legacy values. */}
-                  {!isElectronApiEndpoint && (
+                  {!isStepApiEndpoint && (
                     <Link
                       isStandalone
                       href="#"
@@ -633,7 +633,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                       </span>
                     </Link>
                   )}
-                  {(isEndpointExpanded || isElectronApiEndpoint) && (
+                  {(isEndpointExpanded || isStepApiEndpoint) && (
                     <BAIFlex
                       gap="xs"
                       align="start"
