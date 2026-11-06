@@ -118,7 +118,7 @@ blocklist = ""
     );
   });
 
-  it('parses numbers with parseInt and accepts a numeric string', () => {
+  it('parses numbers with parseInt, the two fractional ones with parseFloat, and accepts a numeric string', () => {
     expect(
       valueOf(
         '[resources]\nmaxMemoryPerContainer = "32"',
@@ -127,6 +127,18 @@ blocklist = ""
     ).toBe(32);
     expect(
       valueOf('[resources]\nmaxShmPerContainer = 2.5', 'maxShmPerContainer'),
+    ).toBe(2.5);
+    expect(
+      valueOf(
+        '[resources]\nstorageWarningThreshold = "85.5"',
+        'storageWarningThreshold',
+      ),
+    ).toBe(85.5);
+    expect(
+      valueOf(
+        '[resources]\nmaxCPUCoresPerContainer = 2.5',
+        'maxCPUCoresPerContainer',
+      ),
     ).toBe(2);
   });
 
@@ -165,13 +177,32 @@ edition = "Enterprise"
     ).toEqual([{ path: 'general.force2FA', reason: 'unknown' }]);
   });
 
-  it('reads both ATOM+ spellings and keeps the first', () => {
+  it('reads both ATOM+ spellings and prefers the uppercase one, as the old parser did', () => {
     const text =
-      '[resources]\nmaxATOMPLUSDevicesPerContainer = 4\nmaxATOMPlUSDevicesPerContainer = 8';
-    expect(valueOf(text, 'maxATOMPLUSDevicesPerContainer')).toBe(4);
+      '[resources]\nmaxATOMPlUSDevicesPerContainer = 4\nmaxATOMPLUSDevicesPerContainer = 8';
+    expect(valueOf(text, 'maxATOMPLUSDevicesPerContainer')).toBe(8);
     expect(skippedOf(text)).toEqual([
       { path: 'resources.maxATOMPlUSDevicesPerContainer', reason: 'duplicate' },
     ]);
+  });
+
+  it('reads a literal "" as unset, as the old parser did', () => {
+    const result = importConfigToml(`[pipeline]\nfrontendEndpoint = '""'`);
+    if (!result.ok) throw new Error(result.error);
+    expect(result.imported).toHaveLength(1);
+    expect(result.imported[0].value).toBeUndefined();
+  });
+
+  it('skips plugin paths the page would reject', () => {
+    expect(
+      skippedOf('[plugin]\nlogin = "../x"\npage = "ok/page, bad.js"'),
+    ).toEqual([
+      { path: 'plugin.login', reason: 'invalid' },
+      { path: 'plugin.page', reason: 'invalid' },
+    ]);
+    expect(valueOf('[plugin]\nlogin = "vendor/login"', 'pluginLogin')).toBe(
+      'vendor/login',
+    );
   });
 
   it('returns the parse error for a file that is not TOML', () => {
@@ -235,6 +266,15 @@ describe('exportConfigToml', () => {
         'proxyURL = "https://proxy.example/"',
       ].join('\n'),
     );
+  });
+
+  it('writes lists as comma strings, as the previous parser read them', () => {
+    const text = exportConfigToml({
+      valueOf: (definition) =>
+        definition.key === 'menuBlocklist' ? ['start', 'data'] : undefined,
+      includeSettings: true,
+    });
+    expect(text.trim()).toBe('[menu]\nblocklist = "start,data"');
   });
 
   it('leaves out settings with no value', () => {
