@@ -81,6 +81,7 @@ const MenuKeySelector: React.FC<MenuKeySelectorProps> = ({
   return (
     <BAIMultiSelector
       hasSearch
+      hasClear
       {...multiSelectorProps}
       options={options}
       value={value}
