@@ -60,7 +60,6 @@ const GROUP_LABEL_KEYS: Record<PanelGroup, string> = {
   resource: 'dashboard.catalog.group.Resources',
   deployment: 'dashboard.catalog.group.Deployments',
   activity: 'dashboard.catalog.group.Activity',
-  superadmin: 'dashboard.editSider.RequiresSuperadmin',
   other: 'dashboard.catalog.group.Other',
 };
 
@@ -328,18 +327,12 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
                   key={entry.definition.key}
                   value={entry.definition.key}
                   label={entry.label}
-                  isDisabled={entry.locked}
                   description={
-                    entry.locked
-                      ? t('dashboard.editSider.Unavailable')
-                      : entry.definition.requires?.role === 'superadmin' &&
-                          group !== 'superadmin'
-                        ? t('dashboard.editSider.RequiresSuperadmin')
-                        : deniedKeys?.has(entry.definition.key)
-                          ? t('dashboard.permission.NoPermissionToView')
-                          : activeKeys.has(entry.definition.key)
-                            ? settingsSummaryOf(entry.definition.key)
-                            : undefined
+                    deniedKeys?.has(entry.definition.key)
+                      ? t('dashboard.permission.NoPermissionToView')
+                      : activeKeys.has(entry.definition.key)
+                        ? settingsSummaryOf(entry.definition.key)
+                        : undefined
                   }
                   endContent={
                     activeKeys.has(entry.definition.key)

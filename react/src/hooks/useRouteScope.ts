@@ -18,7 +18,7 @@
 import { useWebUINavigate } from '.';
 import {
   buildPath,
-  MENU_KEY_TO_SCOPE_FEATURE,
+  featureKeyInScope,
   RouteScope,
   FeatureKey,
 } from '../helper/pathBuilder';
@@ -294,13 +294,9 @@ export const useSwitchProject = (): ((info: SwitchProjectInput) => void) => {
       }
       // Defensive fallback: reconstruct from the current feature key when the
       // path is not under `/project/:projectName` for some reason.
-      const scopeFeature = currentMenuKey
-        ? MENU_KEY_TO_SCOPE_FEATURE[currentMenuKey]
-        : undefined;
       const featureKey =
-        scopeFeature && scopeFeature.scope === routeScope
-          ? scopeFeature.featureKey
-          : 'session';
+        (currentMenuKey && featureKeyInScope(currentMenuKey, routeScope)) ||
+        'session';
       webuiNavigate(
         buildPath(routeScope, featureKey, projectName) + location.search,
       );

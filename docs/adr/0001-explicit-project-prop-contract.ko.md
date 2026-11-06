@@ -334,9 +334,7 @@ resource_preset/row.py`). `data/schema.graphql`도 같다.
     disabled가 된다.
   - **Gating**: `environment`와 `reservoir`가 `PROJECT_AGNOSTIC_MENU_KEYS`에
     들어갔다(정식 path와 legacy path 포함. reservoir 항목은 prefix이므로
-    `/:artifactId` 자식도 포함된다). 이제 제외된 `/admin/*` key는
-    `admin-dashboard` 하나뿐이다. 이 page는 쓰이지 않고 여전히 ambient state를
-    직접 읽는다.
+    `/:artifactId` 자식도 포함된다).
   - **Fourth copy removed**:
     `e2e/admin-scope/admin-header-project-selector.spec.ts`는 처음 세 route만
     다루는 자체 local `SUPER_ADMIN_ROUTES` 상수를 갖고 있었다. 이제 이 spec은
@@ -352,6 +350,14 @@ resource_preset/row.py`). `data/schema.graphql`도 같다.
   배관을 통째로 지우는 것이다. ambient read가 project 범위 resource를 뜻한다고
   가정하기 전에 manager의 data model을 확인한다.
 
+- Dashboards (#10583): `admin-dashboard`가 `/admin/dashboard` route로
+  `PROJECT_AGNOSTIC_MENU_KEYS`에 들어갔으므로, 이제 제외된 `/admin/*` key는 없다.
+  `AdminDashboardPage`는 프로젝트 관리자 route에서 URL 프로젝트
+  (`useUrlProjectValidity`)를, superadmin route에서 `null`을 넘기고,
+  `DashboardPage`는 page 수준 프로젝트를 넘기며, `DashboardPanelBoard`는 그 값을
+  filter context로 모든 카드에 전한다. `AdminDashboardPage`와
+  `components/DashboardPanels/**`는 ESLint 제한 file 목록에 있다.
+
 ## route에서 정하는 project context (`useIsProjectAgnosticPage`)
 
 `react/src/hooks/useIsProjectAgnosticPage.ts`는
@@ -361,14 +367,16 @@ hook을 노출한다. 이 hook은 가장 깊은 route의 `handle.menuKey`를 기
 prefix 없는 legacy path에는 pathname fallback을 쓴다.
 
 ```
-admin-session  admin-deployments  admin-data  credential  environment
-resource-policy  reservoir        scheduler   agent       project
-settings       maintenance        diagnostics rbac        branding
-information
+admin-session  admin-deployments  admin-data  admin-dashboard  credential
+environment    resource-policy    reservoir   scheduler        agent
+project        settings           maintenance diagnostics      rbac
+branding       information
 ```
 
-제외: `admin-dashboard` 하나뿐이다(범위 밖 — 이 page는 쓰이지 않고 여전히
-ambient project를 직접 읽는다).
+`admin-dashboard`는 프로젝트 관리자 대시보드(`/project/:projectName/admin/dashboard`)도
+가리킨다. 이 route는 프로젝트 범위이고 프로젝트를 URL에서 받는다. 이 key의
+`/admin/dashboard` route만 project에 묶이지 않으므로, hook은 key와 함께 `admin`
+route scope도 요구한다(#10583).
 
 호출할 수 있는 곳:
 
@@ -409,5 +417,5 @@ ambient project를 직접 읽는다).
 ## 출처
 
 - FR-3407(epic). FR-3408, FR-3410, FR-3411, FR-3412, FR-3413, FR-3414,
-  FR-3415(적용 순서대로이며, 마지막으로 `/admin/*` 화면이 완성된다).
+  FR-3415(적용 순서대로이며, 마지막으로 `/admin/*` 화면이 완성된다). #10583(대시보드).
 - 결정일: 2026-07-29.

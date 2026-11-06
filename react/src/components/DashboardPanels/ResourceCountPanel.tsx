@@ -2,11 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import PanelFrame from './PanelFrame';
 import type { ResourceTablePanelProps } from './ResourceTablePanel';
 import { resolvePanelTitle, resourceRegistry } from './resourceRegistry';
 import type { PanelDescriptor } from './types';
+import { useDashboardQueryScope } from './useDashboardFilters';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIFlex,
@@ -59,7 +59,7 @@ export const ResourceCountContent: React.FC<{
 }> = ({ descriptor, fetchKey }) => {
   'use memo';
   const { t } = useTranslation();
-  const currentProject = useCurrentProjectValue();
+  const queryScope = useDashboardQueryScope();
   const config = resourceRegistry[descriptor.resourceType];
 
   // Offset mode with the minimum page — only `count` is consumed.
@@ -68,7 +68,7 @@ export const ResourceCountContent: React.FC<{
     order: descriptor.order ?? config.defaultOrder,
     limit: 1,
     offset: 0,
-    projectId: currentProject.id ?? '',
+    ...queryScope,
     resourceGroups: descriptor.resourceGroups,
   });
   const deferredVariables = useDeferredValue(variables);

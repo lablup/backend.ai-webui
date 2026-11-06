@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9c35313c6d1aca2ab56780a9d704e92a>>
+ * @generated SignedSource<<bdff3bab038069a3b37f94cae468a8f1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-import { FragmentRefs } from "relay-runtime";
+import { FragmentRefs, Result } from "relay-runtime";
 export type resourceRegistrySessionQuery$variables = {
   filter?: string | null | undefined;
   first?: number | null | undefined;
@@ -18,7 +18,7 @@ export type resourceRegistrySessionQuery$variables = {
   scopeId?: any | null | undefined;
 };
 export type resourceRegistrySessionQuery$data = {
-  readonly compute_session_nodes: {
+  readonly compute_session_nodes: Result<{
     readonly count: number | null | undefined;
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -26,7 +26,7 @@ export type resourceRegistrySessionQuery$data = {
         readonly " $fragmentSpreads": FragmentRefs<"SessionNodesFragment">;
       } | null | undefined;
     } | null | undefined>;
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type resourceRegistrySessionQuery = {
   response: resourceRegistrySessionQuery$data;
@@ -194,44 +194,48 @@ return {
     "name": "resourceRegistrySessionQuery",
     "selections": [
       {
-        "alias": null,
-        "args": (v5/*: any*/),
-        "concreteType": "ComputeSessionConnection",
-        "kind": "LinkedField",
-        "name": "compute_session_nodes",
-        "plural": false,
-        "selections": [
-          (v6/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ComputeSessionEdge",
-            "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "ComputeSessionNode",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": [
-                  (v7/*: any*/),
-                  {
-                    "args": null,
-                    "kind": "FragmentSpread",
-                    "name": "SessionNodesFragment"
-                  }
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
+        "kind": "CatchField",
+        "field": {
+          "alias": null,
+          "args": (v5/*: any*/),
+          "concreteType": "ComputeSessionConnection",
+          "kind": "LinkedField",
+          "name": "compute_session_nodes",
+          "plural": false,
+          "selections": [
+            (v6/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "ComputeSessionEdge",
+              "kind": "LinkedField",
+              "name": "edges",
+              "plural": true,
+              "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "ComputeSessionNode",
+                  "kind": "LinkedField",
+                  "name": "node",
+                  "plural": false,
+                  "selections": [
+                    (v7/*: any*/),
+                    {
+                      "args": null,
+                      "kind": "FragmentSpread",
+                      "name": "SessionNodesFragment"
+                    }
+                  ],
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        },
+        "to": "RESULT"
       }
     ],
     "type": "Query",
@@ -686,6 +690,6 @@ return {
 };
 })();
 
-(node as any).hash = "bb92c247cff2de74130007224eef9d02";
+(node as any).hash = "709f099cca01a266595fd04dfb3a54a0";
 
 export default node;

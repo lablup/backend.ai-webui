@@ -48,6 +48,22 @@ describe('getPathFromMenuKey', () => {
     expect(getPathFromMenuKey('reservoir')).toBe('/admin/reservoir');
   });
 
+  it('resolves the admin dashboard by admin role', () => {
+    expect(getPathFromMenuKey('admin-dashboard', 'alpha', 'superadmin')).toBe(
+      '/admin/dashboard',
+    );
+    expect(
+      getPathFromMenuKey('admin-dashboard', 'alpha', 'currentProjectAdmin'),
+    ).toBe('/project/alpha/admin/dashboard');
+    expect(getPathFromMenuKey('admin-dashboard', 'alpha')).toBe(
+      '/admin/dashboard',
+    );
+    // Other admin keys ignore the role.
+    expect(
+      getPathFromMenuKey('project-admin-users', 'alpha', 'currentProjectAdmin'),
+    ).toBe('/project/alpha/admin/users');
+  });
+
   it('encodes the project name for project-scoped keys', () => {
     expect(getPathFromMenuKey('session', 'a b')).toBe('/project/a%20b/session');
   });

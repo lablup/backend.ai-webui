@@ -868,13 +868,11 @@
       "Empty": "Ei vielä mukautettuja paneeleja",
       "GridDisabled": "Ruudukkonäkymä pois (Kokeelliset ominaisuudet)",
       "NoMatchingCards": "Ei vastaavia kortteja",
-      "RequiresSuperadmin": "Vain superadmin-käyttäjille",
       "ResetLayout": "Palauta asettelu",
       "ResetLayoutDescription": "Palauttaa paneelien oletusjärjestyksen. Mukautetut paneelit säilytetään.",
       "SearchCards": "Hae kortteja",
       "SelectAll": "Valitse kaikki",
-      "Title": "Mukautetut paneelit",
-      "Unavailable": "Ei käytettävissä tässä ympäristössä"
+      "Title": "Mukautetut paneelit"
     },
     "panelModal": {
       "AddPanel": "Lisää paneeli",
@@ -4143,7 +4141,6 @@
       "AIAccelerator": "AI-kiihdyttämö",
       "AIAgents": "AI-agentit",
       "AboutBackendAI": "Tietoja Backend.AI:sta",
-      "AdminDashboard": "Järjestelmänvalvojan kojelauta",
       "AdminDeployments": "Järjestelmänvalvojan käyttöönotot",
       "AdminSettings": "Ylläpitäjän asetukset",
       "Administration": "Hallinto",

@@ -11,6 +11,29 @@ const keysFor = (context: PanelCatalogContext) =>
   catalogFor(PANEL_CATALOG, context).map((entry) => entry.definition.key);
 
 describe('PANEL_CATALOG', () => {
+  it.each<['admin' | 'user', PanelPage]>([
+    ['admin', 'project'],
+    ['admin', 'projectAdmin'],
+    ['user', 'project'],
+    ['user', 'projectAdmin'],
+  ])('offers a %s no superadmin-only card on the %s page', (role, page) => {
+    catalogFor(PANEL_CATALOG, { page, role, config: {} }).forEach(
+      ({ definition }) =>
+        expect(definition.requires?.role).not.toBe('superadmin'),
+    );
+  });
+
+  it.each<PanelPage>(['project', 'projectAdmin'])(
+    'offers a superadmin on the %s page only the cards placed on it',
+    (page) => {
+      catalogFor(PANEL_CATALOG, {
+        page,
+        role: 'superadmin',
+        config: {},
+      }).forEach(({ definition }) => expect(definition.page).toContain(page));
+    },
+  );
+
   it('has unique keys', () => {
     const keys = PANEL_CATALOG.map((definition) => definition.key);
     expect(new Set(keys).size).toBe(keys.length);
@@ -52,11 +75,10 @@ describe('PANEL_CATALOG', () => {
         'folderStatus',
         'quotaPerStorageVolume',
         'totalResourceWithinResourceGroup',
-        'agentStats',
-        'activeAgents',
         'recentlyCreatedSession',
       ],
     ],
+    ['projectAdmin', ['activeSessions']],
     [
       'admin',
       [
@@ -85,16 +107,21 @@ describe('catalogFor on the real catalog', () => {
     );
   });
 
-  it('shows them to a superadmin', () => {
-    expect(
-      keysFor({ page: 'project', role: 'superadmin', config: {} }),
-    ).toEqual(
+  it('shows them to a superadmin on the superadmin page', () => {
+    expect(keysFor({ page: 'admin', role: 'superadmin', config: {} })).toEqual(
       expect.arrayContaining([
         'agentStats',
         'activeAgents',
         'resource.vfolder',
       ]),
     );
+  });
+
+  it('keeps cluster and project-wide cards off the member dashboard, even for a superadmin', () => {
+    const keys = keysFor({ page: 'project', role: 'superadmin', config: {} });
+    expect(keys).not.toContain('agentStats');
+    expect(keys).not.toContain('activeAgents');
+    expect(keys).not.toContain('activeSessions');
   });
 
   it('locks the resource group total for a non-superadmin when agents are hidden', () => {
