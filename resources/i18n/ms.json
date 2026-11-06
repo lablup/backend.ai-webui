@@ -977,6 +977,8 @@
     "settings": {
       "AllResourceGroups": "Semua kumpulan sumber",
       "BackToSavedSetting": "Kembali ke tetapan yang disimpan ({{value}})",
+      "CustomRange": "Julat tersuai",
+      "CustomRangeHelp": "Pilih mula dan tamat yang berjarak paling lama {{days}} hari. Tamat yang lewat daripada sekarang ditetapkan kepada sekarang.",
       "DefaultCardSettings": "Tetapan lalai kad",
       "DefaultResourceGroup": "Kumpulan sumber lalai",
       "DefaultSettings": "Tetapan lalai",
@@ -986,6 +988,10 @@
       "Last1Hour": "1 jam lepas",
       "Last24Hours": "24 jam lepas",
       "Last7Days": "7 hari lepas",
+      "RangeEnd": "Tamat",
+      "RangeEndBeforeStart": "Tamat mesti selepas mula.",
+      "RangeStart": "Mula",
+      "RangeTooLong": "Julat boleh paling lama {{days}} hari.",
       "ResourceGroupsDescription": "Jika tiada yang dipilih: {{default}}",
       "TimeRange": "Julat masa"
     }

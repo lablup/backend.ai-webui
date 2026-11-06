@@ -977,6 +977,8 @@
     "settings": {
       "AllResourceGroups": "Alle Ressourcengruppen",
       "BackToSavedSetting": "Zur gespeicherten Einstellung zurück ({{value}})",
+      "CustomRange": "Eigener Zeitraum",
+      "CustomRangeHelp": "Wählen Sie Start und Ende mit höchstens {{days}} Tagen Abstand. Ein Ende nach jetzt wird auf jetzt gesetzt.",
       "DefaultCardSettings": "Standardeinstellungen der Karte",
       "DefaultResourceGroup": "Standard-Ressourcengruppe",
       "DefaultSettings": "Standardeinstellungen",
@@ -986,6 +988,10 @@
       "Last1Hour": "Letzte Stunde",
       "Last24Hours": "Letzte 24 Stunden",
       "Last7Days": "Letzte 7 Tage",
+      "RangeEnd": "Ende",
+      "RangeEndBeforeStart": "Das Ende muss nach dem Start liegen.",
+      "RangeStart": "Start",
+      "RangeTooLong": "Der Zeitraum darf höchstens {{days}} Tage lang sein.",
       "ResourceGroupsDescription": "Ohne Auswahl: {{default}}",
       "TimeRange": "Zeitraum"
     }

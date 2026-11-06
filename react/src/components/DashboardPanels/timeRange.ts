@@ -29,7 +29,7 @@ const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const DATETIME_PATTERN =
   /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d{1,3})?)?(Z|[+-]\d{2}:\d{2})$/;
 
-/** The longest fixed window any card setting may hold (ADR 0027). */
+/** The longest fixed window any card setting may hold, unless its catalog entry sets `maxRangeDays` (ADR 0027). */
 export const MAX_WINDOW_DAYS = 7;
 
 /** At most this many buckets per chart, each one a count alias in one request. */
@@ -94,7 +94,7 @@ export const parseTimeRange = (
   return start <= end ? { kind: 'custom', start, end } : null;
 };
 
-/** A fixed window a card may store: ends after it starts, never later than `now`, at most `MAX_WINDOW_DAYS` long. */
+/** A fixed window a card may store: ends after it starts, never later than `now`, at most `maxDays` long. */
 export type WindowProblem = 'endBeforeStart' | 'tooLong';
 
 /**
@@ -105,11 +105,12 @@ export const checkWindow = (
   from: number,
   to: number,
   now: number,
+  maxDays: number = MAX_WINDOW_DAYS,
 ): { window: DateTimeWindow } | { problem: WindowProblem } => {
   const end = Math.min(to, now);
   if (!Number.isFinite(from) || !Number.isFinite(end) || end <= from)
     return { problem: 'endBeforeStart' };
-  if (end - from > MAX_WINDOW_DAYS * DAY) return { problem: 'tooLong' };
+  if (end - from > maxDays * DAY) return { problem: 'tooLong' };
   return {
     window: {
       after: new Date(from).toISOString(),
@@ -119,13 +120,13 @@ export const checkWindow = (
 };
 
 /** A stored fixed window that is still well formed (see {@link checkWindow}). */
-export const isStorableWindow = (range: unknown): range is string => {
+export const isStorableWindow = (
+  range: unknown,
+  maxDays: number = MAX_WINDOW_DAYS,
+): range is string => {
   if (typeof range !== 'string') return false;
   const parsed = parseTimeRange(range);
-  return (
-    parsed?.kind === 'window' &&
-    parsed.to - parsed.from <= MAX_WINDOW_DAYS * DAY
-  );
+  return parsed?.kind === 'window' && parsed.to - parsed.from <= maxDays * DAY;
 };
 
 /** The window a stored fixed range holds; null for a relative or malformed range. */

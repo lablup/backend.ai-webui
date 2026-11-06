@@ -52,28 +52,27 @@ flowchart LR
 
 ### 1. BUI re-exports the form controls under `BAI<X>` names
 
-| `backend.ai-ui` name                     | Name in the ui-common subpath                          |
-| ---------------------------------------- | ------------------------------------------------------ |
-| `BAICheckboxInput`                       | `CheckboxInput`                                        |
-| `BAICheckboxList`, `BAICheckboxListItem` | `CheckboxList`, `CheckboxListItem`                     |
-| `BAIDateInput`                           | `DateInput`                                            |
-| `BAIDateRangeInput`                      | `DateRangeInput`                                       |
-| `BAIDateTimeInput`                       | `DateTimeInput`                                        |
-| `BAIDateTimeRangeInput`                  | `DateTimeRangeInput` (`components/DateTimeRangeInput`) |
-| `BAIFileInput`                           | `FileInput`                                            |
-| `BAIMultiSelector`                       | `MultiSelector`                                        |
-| `BAINumberInput`                         | `NumberInput`                                          |
-| `BAIRadioList`, `BAIRadioListItem`       | `RadioList`, `RadioListItem`                           |
-| `BAISegmentedControl`                    | `SegmentedControl`                                     |
-| `BAISelector`                            | `Selector`                                             |
-| `BAISlider`                              | `Slider`                                               |
-| `BAISwitch`                              | `Switch`                                               |
-| `BAITagsInput`                           | `TagsInput`                                            |
-| `BAITextArea`                            | `TextArea`                                             |
-| `BAITextInput`                           | `TextInput`                                            |
-| `BAITimeInput`                           | `TimeInput`                                            |
-| `BAITokenizer`                           | `Tokenizer`                                            |
-| `BAITypeahead`                           | `Typeahead`                                            |
+| `backend.ai-ui` name                     | Name in the ui-common subpath      |
+| ---------------------------------------- | ---------------------------------- |
+| `BAICheckboxInput`                       | `CheckboxInput`                    |
+| `BAICheckboxList`, `BAICheckboxListItem` | `CheckboxList`, `CheckboxListItem` |
+| `BAIDateInput`                           | `DateInput`                        |
+| `BAIDateRangeInput`                      | `DateRangeInput`                   |
+| `BAIDateTimeInput`                       | `DateTimeInput`                    |
+| `BAIFileInput`                           | `FileInput`                        |
+| `BAIMultiSelector`                       | `MultiSelector`                    |
+| `BAINumberInput`                         | `NumberInput`                      |
+| `BAIRadioList`, `BAIRadioListItem`       | `RadioList`, `RadioListItem`       |
+| `BAISegmentedControl`                    | `SegmentedControl`                 |
+| `BAISelector`                            | `Selector`                         |
+| `BAISlider`                              | `Slider`                           |
+| `BAISwitch`                              | `Switch`                           |
+| `BAITagsInput`                           | `TagsInput`                        |
+| `BAITextArea`                            | `TextArea`                         |
+| `BAITextInput`                           | `TextInput`                        |
+| `BAITimeInput`                           | `TimeInput`                        |
+| `BAITokenizer`                           | `Tokenizer`                        |
+| `BAITypeahead`                           | `Typeahead`                        |
 
 - **One file per control**: `BAI<X>.tsx` is one statement: `export { X as default, type XProps as BAIXProps } from '@lablup/ui-common/X'`. The parent file also exports the item component (`BAIRadioListItem` in `BAIRadioList.tsx`, `BAICheckboxListItem` in `BAICheckboxList.tsx`). The components barrel `index.ts` exports each control with `export { default as BAIX } from './BAIX'`, the same way it exports the other BUI components.
 - **Props type**: Each control also exports a `BAI<X>Props` type. This type is the same as ui-common's `<X>Props`. Call sites in `react/` and BUI use `BAI<X>Props` as the control's own props type and do not import ui-common's `<X>Props`, because the two types become different after a promotion under section 2.

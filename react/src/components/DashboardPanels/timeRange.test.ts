@@ -280,11 +280,14 @@ describe('fixed windows', () => {
     });
   });
 
-  it('caps a picked window at 7 days', () => {
+  it('caps every window at 7 days, and a card cap can lower it', () => {
     expect(checkWindow(NOW - 8 * DAY, NOW, NOW)).toEqual({
       problem: 'tooLong',
     });
     expect(checkWindow(NOW - 7 * DAY, NOW, NOW)).toHaveProperty('window');
+    expect(checkWindow(NOW - 3 * DAY, NOW, NOW, 2)).toEqual({
+      problem: 'tooLong',
+    });
   });
 
   it('splits a past window equally and settles every bucket', () => {

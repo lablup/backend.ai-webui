@@ -10,8 +10,8 @@ catalog:
   "@astryxdesign/core": 0.7.7
   "@astryxdesign/lab": 0.7.7-canary.273ec43
   # The library and its CLI release in lockstep; pin both exactly (ADR 0009).
-  "@lablup/ui-common": 0.2.0-alpha.21.pr-139-20261105074005-7bc1c68f1
-  "@lablup/ui-common-cli": 0.2.0-alpha.21.pr-139-20261105074005-7bc1c68f1
+  "@lablup/ui-common": 0.2.0-alpha.21.canary-20261104085608-032a35f28
+  "@lablup/ui-common-cli": 0.2.0-alpha.21.canary-20261104085608-032a35f28
   "@babel/core": ^7.29.7
   "@babel/preset-typescript": ^7.29.7
   "@eslint/js": ^9.39.5

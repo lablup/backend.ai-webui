@@ -977,6 +977,8 @@
     "settings": {
       "AllResourceGroups": "すべてのリソースグループ",
       "BackToSavedSetting": "保存された設定に戻す ({{value}})",
+      "CustomRange": "カスタム期間",
+      "CustomRangeHelp": "開始と終了を最大{{days}}日の範囲で選んでください。現在より後の終了は現在に合わせます。",
       "DefaultCardSettings": "カードの既定の設定",
       "DefaultResourceGroup": "既定のリソースグループ",
       "DefaultSettings": "既定の設定",
@@ -986,6 +988,10 @@
       "Last1Hour": "過去1時間",
       "Last24Hours": "過去24時間",
       "Last7Days": "過去7日間",
+      "RangeEnd": "終了",
+      "RangeEndBeforeStart": "終了は開始より後にしてください。",
+      "RangeStart": "開始",
+      "RangeTooLong": "期間は最大{{days}}日までです。",
       "ResourceGroupsDescription": "未選択の場合: {{default}}",
       "TimeRange": "期間"
     }

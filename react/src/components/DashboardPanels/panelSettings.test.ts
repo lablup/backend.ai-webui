@@ -120,18 +120,21 @@ describe('range settings', () => {
     }
   });
 
-  it('caps every card at 7 days, so a window saved under the old 90-day cap falls back', () => {
-    const window = (days: number) =>
-      windowRange({
-        after: dayjs(WINDOW.before).subtract(days, 'day').toISOString(),
-        before: WINDOW.before,
-      });
-    expect(MAX_WINDOW_DAYS).toBe(7);
-    expect(sanitizePanelSettings({ range: window(8) }, RANGE)).toBeUndefined();
-    expect(sanitizePanelSettings({ range: window(30) }, RANGE)).toBeUndefined();
-    expect(sanitizePanelSettings({ range: window(7) }, RANGE)).toEqual({
-      range: window(7),
+  it('drops a custom range longer than 7 days, the cap of every card', () => {
+    const eightDays = windowRange({
+      after: dayjs(WINDOW.before).subtract(8, 'day').toISOString(),
+      before: WINDOW.before,
     });
+    expect(
+      sanitizePanelSettings(
+        { range: eightDays },
+        { ...RANGE, maxRangeDays: 7 },
+      ),
+    ).toBeUndefined();
+    expect(
+      sanitizePanelSettings({ range: 'now-7d' }, { ...RANGE, maxRangeDays: 7 }),
+    ).toEqual({ range: 'now-7d' });
+    expect(sanitizePanelSettings({ range: eightDays }, RANGE)).toBeUndefined();
   });
 
   it('labels a fixed window compactly and describes it in the sider', () => {
@@ -144,5 +147,21 @@ describe('range settings', () => {
     expect(describePanelSettings({ range: 'now-1h' }, t)).toBe(
       'dashboard.settings.Last1Hour',
     );
+  });
+});
+
+describe('sanitizePanelSettings presets-only card', () => {
+  it('drops a stored custom window when the card allows 0 days', () => {
+    const definition = { settings: ['range' as const], maxRangeDays: 0 };
+    const window = windowRange({
+      after: '2026-11-01T00:00:00.000Z',
+      before: '2026-11-02T00:00:00.000Z',
+    });
+    expect(
+      sanitizePanelSettings({ range: window }, definition),
+    ).toBeUndefined();
+    expect(sanitizePanelSettings({ range: 'now-7d' }, definition)).toEqual({
+      range: 'now-7d',
+    });
   });
 });

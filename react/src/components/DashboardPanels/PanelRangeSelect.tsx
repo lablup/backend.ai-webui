@@ -2,129 +2,200 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { Form } from '../../form-engine';
+import BAIFormItem from '../BAIFormItem';
 import {
   DEFAULT_RANGE,
   RANGE_LABEL_KEYS,
   RANGE_PRESETS,
-  type RangePreset,
+  formatWindowLabel,
 } from './panelSettings';
 import {
   MAX_WINDOW_DAYS,
   checkWindow,
-  rangeToDateTimeFilter,
+  fixedWindowOf,
   windowRange,
+  type DateTimeWindow,
 } from './timeRange';
 import type { ISODateTimeString } from '@lablup/ui-common/DateTimeInput';
+import { Text } from '@lablup/ui-common/Text';
 import {
-  BAIDateTimeRangeInput,
-  type BAIDateTimeRangeInputProps,
-  type BAIDateTimeRangeInputValue,
-  useIntervalValue,
+  BAIDateTimeInput,
+  BAIFlex,
+  BAIModal,
+  BAISelect,
+  BAIUnmountAfterClose,
+  type BAISelectProps,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import React, { useRef } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const MINUTE = 60_000;
-const MAX_DURATION_MS = MAX_WINDOW_DAYS * 24 * 60 * MINUTE;
-
-const toInput = (time: number | string) =>
-  dayjs(time).format('YYYY-MM-DDTHH:mm') as ISODateTimeString;
-
-/** The range's window as of `now`, in the input's local minute strings. */
-export const inputValueOf = (
-  range: string,
-  now: number,
-): BAIDateTimeRangeInputValue => {
-  const window = rangeToDateTimeFilter(range, now);
-  return { start: toInput(window.after), end: toInput(window.before) };
-};
-
-const isSameRange = (
-  a: BAIDateTimeRangeInputValue | undefined,
-  b: BAIDateTimeRangeInputValue,
-) => a?.start === b.start && a?.end === b.end;
-
-/**
- * The setting for a picked range: the preset it equals (as offered, or as of
- * `now`), else a fixed window; null for one `checkWindow` rejects.
- */
-export const storedRangeOf = (
-  next: BAIDateTimeRangeInputValue,
-  now: number,
-  offered: ReadonlyMap<RangePreset, BAIDateTimeRangeInputValue> = new Map(),
-): string | null => {
-  const preset = RANGE_PRESETS.find(
-    (candidate) =>
-      isSameRange(offered.get(candidate), next) ||
-      isSameRange(inputValueOf(candidate, now), next),
-  );
-  if (preset) return preset;
-  const result = checkWindow(
-    dayjs(next.start).valueOf(),
-    dayjs(next.end).valueOf(),
-    Date.now(),
-  );
-  return 'window' in result ? windowRange(result.window) : null;
-};
+const CUSTOM = '__custom__';
+const INPUT_FORMAT = 'YYYY-MM-DDTHH:mm';
 
 export interface PanelRangeSelectProps extends Omit<
-  BAIDateTimeRangeInputProps,
-  | 'value'
-  | 'defaultValue'
-  | 'onChange'
-  | 'presets'
-  | 'min'
-  | 'max'
-  | 'maxDuration'
-  | 'hasClear'
+  BAISelectProps,
+  'value' | 'onChange' | 'options' | 'mode'
 > {
   /** A preset (`now-24h`) or a fixed window (`windowRange`). */
   value?: string;
   onChange?: (range: string) => void;
+  /** The longest custom range, in days; `0` offers the presets only. */
+  maxDays?: number;
 }
 
-/**
- * A card's time range as a date-time range input. A pick equal to a preset
- * stores the preset, so it keeps rolling; any other pick stores a fixed window.
- */
+/** A card's time range: the presets, the stored fixed window, and "Custom range", which opens a start/end picker. */
 const PanelRangeSelect: React.FC<PanelRangeSelectProps> = ({
   value,
   onChange,
-  ...inputProps
+  maxDays = MAX_WINDOW_DAYS,
+  ...selectProps
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const [isPicking, setIsPicking] = useState(false);
   const range = value ?? DEFAULT_RANGE;
-  // The current minute, so presets, the end cap and a rolling value agree.
-  const now = useIntervalValue(
-    () => Math.floor(Date.now() / MINUTE) * MINUTE,
-    10_000,
-  );
-  // What each preset last offered, to recognise it when it comes back in onChange.
-  const offeredRef = useRef(new Map<RangePreset, BAIDateTimeRangeInputValue>());
+  const windowLabel = formatWindowLabel(range);
 
   return (
-    <BAIDateTimeRangeInput
-      hourFormat="24h"
-      {...inputProps}
-      value={inputValueOf(range, now)}
-      max={toInput(now)}
-      maxDuration={MAX_DURATION_MS}
-      hasClear={false}
-      presets={RANGE_PRESETS.map((preset) => ({
-        label: t(RANGE_LABEL_KEYS[preset]),
-        getRange: () => {
-          const offered = inputValueOf(preset, now);
-          offeredRef.current.set(preset, offered);
-          return offered;
-        },
-      }))}
-      onChange={(next) => {
-        const stored = next && storedRangeOf(next, now, offeredRef.current);
-        if (stored) onChange?.(stored);
+    <>
+      <BAISelect
+        showSearch={false}
+        {...selectProps}
+        options={[
+          ...RANGE_PRESETS.map((preset) => ({
+            value: preset,
+            label: t(RANGE_LABEL_KEYS[preset]),
+          })),
+          ...(maxDays > 0
+            ? [
+                ...(windowLabel ? [{ value: range, label: windowLabel }] : []),
+                { value: CUSTOM, label: t('dashboard.settings.CustomRange') },
+              ]
+            : []),
+        ]}
+        value={range}
+        onChange={(next: string | null) => {
+          if (next === CUSTOM) setIsPicking(true);
+          else if (next) onChange?.(next);
+        }}
+      />
+      <BAIUnmountAfterClose>
+        <CustomRangeModal
+          open={isPicking}
+          initial={fixedWindowOf(range)}
+          maxDays={maxDays}
+          onSubmit={(window) => {
+            onChange?.(windowRange(window));
+            setIsPicking(false);
+          }}
+          onRequestClose={() => setIsPicking(false)}
+        />
+      </BAIUnmountAfterClose>
+    </>
+  );
+};
+
+interface CustomRangeValues {
+  start?: ISODateTimeString;
+  end?: ISODateTimeString;
+}
+
+const toInput = (iso: string) =>
+  dayjs(iso).format(INPUT_FORMAT) as ISODateTimeString;
+
+const CustomRangeModal: React.FC<{
+  open: boolean;
+  initial: DateTimeWindow | null;
+  maxDays: number;
+  onSubmit: (window: DateTimeWindow) => void;
+  onRequestClose: () => void;
+}> = ({ open, initial, maxDays, onSubmit, onRequestClose }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const [form] = Form.useForm<CustomRangeValues>();
+  const now = dayjs();
+  const check = (values: CustomRangeValues) =>
+    checkWindow(
+      dayjs(values.start).valueOf(),
+      dayjs(values.end).valueOf(),
+      Date.now(),
+      maxDays,
+    );
+
+  return (
+    <BAIModal
+      open={open}
+      title={t('dashboard.settings.CustomRange')}
+      okText={t('button.Apply')}
+      onCancel={onRequestClose}
+      onOk={async () => {
+        const values = await form.validateFields().catch(() => undefined);
+        if (!values) return;
+        const result = check(values);
+        if ('window' in result) onSubmit(result.window);
       }}
-    />
+    >
+      <BAIFlex direction="column" align="stretch" gap="md">
+        <Text type="supporting">
+          {t('dashboard.settings.CustomRangeHelp', { days: maxDays })}
+        </Text>
+        <Form
+          form={form}
+          layout="vertical"
+          preserve={false}
+          initialValues={{
+            start: toInput(
+              initial?.after ?? now.subtract(1, 'day').toISOString(),
+            ),
+            end: toInput(initial?.before ?? now.toISOString()),
+          }}
+        >
+          <BAIFormItem
+            name="start"
+            label={t('dashboard.settings.RangeStart')}
+            rules={[{ required: true }]}
+          >
+            <BAIDateTimeInput
+              hourFormat="24h"
+              width="100%"
+              max={toInput(now.toISOString())}
+              data-testid="panel-range-start"
+            />
+          </BAIFormItem>
+          <BAIFormItem
+            name="end"
+            label={t('dashboard.settings.RangeEnd')}
+            dependencies={['start']}
+            rules={[
+              { required: true },
+              ({ getFieldValue }) => ({
+                validator: async (_rule, end?: ISODateTimeString) => {
+                  const start = getFieldValue('start');
+                  if (!start || !end) return;
+                  const result = check({ start, end });
+                  if ('problem' in result)
+                    throw new Error(
+                      result.problem === 'tooLong'
+                        ? t('dashboard.settings.RangeTooLong', {
+                            days: maxDays,
+                          })
+                        : t('dashboard.settings.RangeEndBeforeStart'),
+                    );
+                },
+              }),
+            ]}
+          >
+            <BAIDateTimeInput
+              hourFormat="24h"
+              width="100%"
+              data-testid="panel-range-end"
+            />
+          </BAIFormItem>
+        </Form>
+      </BAIFlex>
+    </BAIModal>
   );
 };
 

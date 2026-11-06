@@ -977,6 +977,8 @@
     "settings": {
       "AllResourceGroups": "Όλες οι ομάδες πόρων",
       "BackToSavedSetting": "Επιστροφή στην αποθηκευμένη ρύθμιση ({{value}})",
+      "CustomRange": "Προσαρμοσμένο διάστημα",
+      "CustomRangeHelp": "Επιλέξτε έναρξη και λήξη με απόσταση έως {{days}} ημέρες. Λήξη μετά το τώρα ορίζεται στο τώρα.",
       "DefaultCardSettings": "Προεπιλεγμένες ρυθμίσεις κάρτας",
       "DefaultResourceGroup": "Προεπιλεγμένη ομάδα πόρων",
       "DefaultSettings": "Προεπιλεγμένες ρυθμίσεις",
@@ -986,6 +988,10 @@
       "Last1Hour": "Τελευταία 1 ώρα",
       "Last24Hours": "Τελευταίες 24 ώρες",
       "Last7Days": "Τελευταίες 7 ημέρες",
+      "RangeEnd": "Λήξη",
+      "RangeEndBeforeStart": "Η λήξη πρέπει να είναι μετά την έναρξη.",
+      "RangeStart": "Έναρξη",
+      "RangeTooLong": "Το διάστημα μπορεί να είναι έως {{days}} ημέρες.",
       "ResourceGroupsDescription": "Χωρίς επιλογή: {{default}}",
       "TimeRange": "Χρονικό διάστημα"
     }
