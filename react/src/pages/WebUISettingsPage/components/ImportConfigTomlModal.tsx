@@ -29,7 +29,13 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import { useAtomValue } from 'jotai';
-import { Ellipsis, ExternalLink, Import } from 'lucide-react';
+import {
+  CircleCheck,
+  CircleX,
+  Ellipsis,
+  ExternalLink,
+  Import,
+} from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -86,10 +92,8 @@ const ImportConfigTomlModal: React.FC<ImportConfigTomlModalProps> = ({
   const skipped = result?.ok ? result.skipped : [];
 
   const reasonLabel: Record<SkipReason, string> = {
-    fileOnly: t('webuiSettings.ImportReasonFileOnly'),
     unknown: t('webuiSettings.ImportReasonUnknown'),
     invalid: t('webuiSettings.ImportReasonInvalid'),
-    empty: t('webuiSettings.ImportReasonEmpty'),
     duplicate: t('webuiSettings.ImportReasonDuplicate'),
   };
 
@@ -231,9 +235,18 @@ const ImportConfigTomlModal: React.FC<ImportConfigTomlModalProps> = ({
             defaultIsOpen={false}
             chevronPosition="start"
             trigger={
-              <Text weight="semibold">
-                {t('webuiSettings.ImportPreview', { count: imported.length })}
-              </Text>
+              <BAIFlex gap="xs" align="center">
+                <CircleCheck
+                  size="1em"
+                  color="var(--color-text-success)"
+                  aria-hidden
+                />
+                <Text weight="semibold">
+                  {t('webuiSettings.ImportPreview', {
+                    count: imported.length,
+                  })}
+                </Text>
+              </BAIFlex>
             }
           >
             <BAITable<ImportedSetting>
@@ -284,9 +297,16 @@ const ImportConfigTomlModal: React.FC<ImportConfigTomlModalProps> = ({
             defaultIsOpen={false}
             chevronPosition="start"
             trigger={
-              <Text weight="semibold">
-                {t('webuiSettings.ImportSkipped', { count: skipped.length })}
-              </Text>
+              <BAIFlex gap="xs" align="center">
+                <CircleX
+                  size="1em"
+                  color="var(--color-text-error)"
+                  aria-hidden
+                />
+                <Text weight="semibold">
+                  {t('webuiSettings.ImportSkipped', { count: skipped.length })}
+                </Text>
+              </BAIFlex>
             }
           >
             <BAITable<SkippedKey>
