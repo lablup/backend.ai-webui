@@ -105,7 +105,7 @@ const RolePermissionSummaryTable: React.FC<RolePermissionSummaryTableProps> = ({
       mutation RolePermissionSummaryTableGrantMutation(
         $input: BulkAddRolePermissionsInput!
       ) {
-        adminBulkAddRolePermissions(input: $input) {
+        partialBulkAddRolePermissions(input: $input) {
           items {
             id
             entityType
@@ -124,7 +124,7 @@ const RolePermissionSummaryTable: React.FC<RolePermissionSummaryTableProps> = ({
       mutation RolePermissionSummaryTableRevokeMutation(
         $input: BulkRemoveRolePermissionsInput!
       ) {
-        adminBulkRemoveRolePermissions(input: $input) {
+        partialBulkRemoveRolePermissions(input: $input) {
           items {
             id
           }
@@ -166,7 +166,7 @@ const RolePermissionSummaryTable: React.FC<RolePermissionSummaryTableProps> = ({
 
     const failures: RBACPermissionSaveFailure[] = [];
     if (grantResult.status === 'fulfilled') {
-      grantResult.value?.adminBulkAddRolePermissions?.failed.forEach(
+      grantResult.value?.partialBulkAddRolePermissions.failed.forEach(
         (failure) => {
           logger.error('Failed to grant permission', failure.message);
           failures.push({
@@ -188,7 +188,7 @@ const RolePermissionSummaryTable: React.FC<RolePermissionSummaryTableProps> = ({
     }
     if (revokeResult.status === 'fulfilled') {
       const failedById = new Map(
-        (revokeResult.value?.adminBulkRemoveRolePermissions?.failed ?? []).map(
+        (revokeResult.value?.partialBulkRemoveRolePermissions.failed ?? []).map(
           (failure) => [String(failure.permissionId), failure.message],
         ),
       );
