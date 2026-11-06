@@ -1706,6 +1706,7 @@
         "webui.menu.Resources",
         "webui.menu.Scheduler",
         "webui.menu.Sessions",
+        "webui.menu.Start",
         "webui.menu.Statistics",
         "webui.menu.SystemSettings",
         "webui.menu.Users",
