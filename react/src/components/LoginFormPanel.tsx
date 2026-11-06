@@ -39,6 +39,7 @@ import { List, ListItem } from '@lablup/ui-common/List';
 import { usePopover } from '@lablup/ui-common/Popover';
 import { Spinner } from '@lablup/ui-common/Spinner';
 import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { useTheme } from '@lablup/ui-common/theme';
 import { focusVars, spacingVars } from '@lablup/ui-common/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
@@ -533,12 +534,30 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                 justify="between"
                 style={{ marginTop: token('--spacing-3') }}
               >
-                {/* A long endpoint ends in an ellipsis (Text adds the full
-                    address as a tooltip); the link never wraps. */}
+                {/* A long endpoint ends in an ellipsis; the full address shows
+                    in a start-aligned tooltip that wraps inside the panel. */}
                 <BAIFlex style={{ flex: 1, minWidth: 0 }}>
-                  <Text color="secondary" maxLines={1}>
-                    {apiEndpoint}
-                  </Text>
+                  <Tooltip
+                    alignment="start"
+                    content={
+                      <BAIFlex
+                        style={{
+                          maxWidth: 'min(320px, 80vw)',
+                          overflowWrap: 'anywhere',
+                        }}
+                      >
+                        {apiEndpoint}
+                      </BAIFlex>
+                    }
+                  >
+                    <Text
+                      color="secondary"
+                      maxLines={1}
+                      hasTruncateTooltip={false}
+                    >
+                      {apiEndpoint}
+                    </Text>
+                  </Tooltip>
                 </BAIFlex>
                 <BAIFlex
                   style={{
