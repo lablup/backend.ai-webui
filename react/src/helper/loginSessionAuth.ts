@@ -563,6 +563,8 @@ export async function loadConfigFromWebServer(
       general: { ...mergedConfig.general, apiEndpoint },
     });
     const publicSlice = await fetchPublicDomainConfigOnce(publicTarget);
+    const { applyJoinedServerAppearance } = await import('./customThemeConfig');
+    await applyJoinedServerAppearance(publicSlice, publicTarget);
     const effectiveLoginConfig = applyWebUISettings(
       refreshConfigFromToml(mergedConfig),
       publicSlice?.[WEBUI_SETTINGS_CONFIG_KEY],
