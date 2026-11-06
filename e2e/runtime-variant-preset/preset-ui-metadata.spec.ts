@@ -55,9 +55,9 @@ async function openCreateModalWithRequiredFields(
       const modal = page.getByRole('dialog');
       await expect(modal).toBeVisible();
 
-      // Runtime Variant is a `BAIComplexSelect`: a button trigger named by
+      // Runtime Variant is a `BAIComplexSelect`: a combobox trigger named by
       // the field label opening a `role="dialog"` popup of options.
-      const runtimeVariantSelect = modal.getByRole('button', {
+      const runtimeVariantSelect = modal.getByRole('combobox', {
         name: 'Runtime Variant',
         exact: true,
       });
