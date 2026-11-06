@@ -28,7 +28,10 @@ export interface BAIFetchKeyButtonProps extends Omit<BAIButtonProps, 'value' | '
      */
     autoUpdateDelay?: number | null;
     size?: BAIButtonProps['size'];
-    onChange: (fetchKey: string) => void;
+    /** `isAuto` tells an interval refresh from a click on the button. */
+    onChange: (fetchKey: string, info: {
+        isAuto: boolean;
+    }) => void;
     hidden?: boolean;
     pauseWhenHidden?: boolean;
     /**

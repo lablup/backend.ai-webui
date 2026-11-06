@@ -65,6 +65,7 @@ export type { ThrottleOptions } from './useThrottleFn';
 export { default as useToggle } from './useToggle';
 export type { UseToggleActions } from './useToggle';
 export { default as useUpdateEffect } from './useUpdateEffect';
+export { default as useSessionTypeLabel } from './useSessionTypeLabel';
 export { useProjectResourceGroups, StorageHostFetchError, } from './useProjectResourceGroups';
 export type { ScalingGroupItem } from './useProjectResourceGroups';
 export { isAutoMountFolderName, mountableVFolderFilter, mountableVFolderScope, useSuspendedAutoMountedVFolders, } from './useMountableVFolders';
