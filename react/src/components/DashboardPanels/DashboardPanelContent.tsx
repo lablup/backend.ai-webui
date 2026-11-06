@@ -68,21 +68,23 @@ const DashboardPanelContent: React.FC<DashboardPanelContentProps> = ({
     }),
   };
 
+  const scope = filters?.scope ?? {
+    kind: 'mine' as const,
+    projectId: filters?.currentProjectId ?? null,
+  };
+  const resourceGroup = cardResourceGroup(
+    panel.settings?.resourceGroups,
+    currentResourceGroup,
+  );
   const content = children({
-    scope: filters?.scope ?? {
-      kind: 'mine',
-      projectId: filters?.currentProjectId ?? null,
-    },
+    scope,
     vars: {
       range,
       timeRange: rangeToDateTimeFilter(range, refreshedAt),
       refreshedAt,
       currentProjectId: filters?.currentProjectId ?? null,
       currentResourceGroup,
-      resourceGroup: cardResourceGroup(
-        panel.settings?.resourceGroups,
-        currentResourceGroup,
-      ),
+      resourceGroup,
     },
     fetchKey: deferredFetchKey,
     manualFetchKey: deferredManualFetchKey,
@@ -93,9 +95,12 @@ const DashboardPanelContent: React.FC<DashboardPanelContentProps> = ({
     <PanelPermissionContext value={permission}>
       <PanelPermissionBoundary
         frame={deniedFrame}
+        // What the card reads: a denied card retries once any of it changes.
         resetKeys={[
           deferredManualFetchKey,
           JSON.stringify(panel.settings ?? null),
+          JSON.stringify(scope),
+          resourceGroup,
         ]}
       >
         {content}
