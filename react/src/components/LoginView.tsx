@@ -220,7 +220,14 @@ const LoginView: React.FC<{
   const [isEndpointDisabled, setIsEndpointDisabled] = useState(false);
 
   const [form] = Form.useForm();
-  const isElectron = !!(globalThis as Record<string, unknown>).isElectron;
+  // A build whose bundled config.toml pins apiEndpoint keeps it fixed in
+  // Electron too: no endpoint step and no "Change endpoint".
+  const isEndpointPinned =
+    isConfigLoaded &&
+    !!atomLoginConfig?.api_endpoint &&
+    !devApiEndpointOverride;
+  const isElectron =
+    !!(globalThis as Record<string, unknown>).isElectron && !isEndpointPinned;
   const endpointStep = useElectronEndpointStep({
     isElectron,
     isPanelOpen: isLoginPanelOpen,
