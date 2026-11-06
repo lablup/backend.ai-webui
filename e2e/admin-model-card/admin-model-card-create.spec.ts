@@ -451,7 +451,7 @@ test.describe(
       // Fill Name but leave VFolder empty.
       // Wait for the VFolder select to load out of Suspense before filling the name,
       // so the form field is registered and will fire validation on submit.
-      // The VFolder picker is Astryx `ComplexSelector` (role="button" trigger).
+      // The VFolder picker is Astryx `ComplexSelector` (role="combobox" trigger).
       await expect(
         adminModelCardPage.getCreateModalVFolderSelect(),
       ).toBeVisible({ timeout: 15000 });
