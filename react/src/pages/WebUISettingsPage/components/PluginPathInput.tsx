@@ -2,7 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { isValidPluginPath } from '../../../helper/pluginPath';
+import {
+  isValidPluginPath,
+  parsePluginPathList,
+} from '../../../helper/pluginPath';
 import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex, BAIUncontrolledInput } from 'backend.ai-ui';
 import { useState } from 'react';
@@ -27,12 +30,6 @@ export type PluginPathInputProps = (SingleProps | MultipleProps) & {
   'data-testid'?: string;
 };
 
-const parseList = (raw: string): Array<string> =>
-  raw
-    .split(',')
-    .map((s) => s.trim())
-    .filter(Boolean);
-
 /**
  * A plugin path under `/dist/plugins/`: the fixed root in a disabled box, a
  * `/`, then the relative path (one, or comma-separated when `multiple`).
@@ -47,7 +44,7 @@ const PluginPathInput: React.FC<PluginPathInputProps> = (props) => {
 
   const commit = (raw: string) => {
     if (props.multiple) {
-      const list = parseList(raw);
+      const list = parsePluginPathList(raw);
       const valid = list.every(isValidPluginPath);
       setRejectedFor(valid ? null : text);
       if (valid) props.onChange(list);

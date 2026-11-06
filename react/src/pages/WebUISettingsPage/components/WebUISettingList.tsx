@@ -241,10 +241,13 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
           defaultValue: fileValue,
           value: current,
           children: (
+            // An unset setting shows its default as the placeholder, so the
+            // clear button empties the field instead of refilling the default.
             <BAINumberInput
               aria-label={label.title}
               width={CONTROL_WIDTH}
-              value={current as number}
+              value={definition.key in draft ? (current as number) : null}
+              placeholder={String(fileValue ?? '')}
               units={definition.unit}
               onChange={(value) =>
                 setValue(definition, value === null ? undefined : value)

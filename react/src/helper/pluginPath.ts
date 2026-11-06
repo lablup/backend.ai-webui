@@ -14,6 +14,13 @@ const PLUGIN_PATH_PATTERN = /^[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*$/;
 export const isValidPluginPath = (path: string): boolean =>
   PLUGIN_PATH_PATTERN.test(path);
 
+/** A comma-separated path list, with the spaces around each entry dropped. */
+export const parsePluginPathList = (raw: string): Array<string> =>
+  raw
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+
 /** The last segment: the custom element name and the route of a page plugin. */
 export const pluginPathName = (path: string): string =>
   path.slice(path.lastIndexOf('/') + 1);
