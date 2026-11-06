@@ -36,6 +36,8 @@ export interface DashboardEditSiderProps {
   catalogEntries: ReadonlyArray<CatalogEntry>;
   /** Catalog keys, and user-made panel ids, of what is shown on the board. */
   activeKeys: ReadonlySet<string>;
+  /** Cards on the board that are hidden because the viewer may not read them. */
+  deniedKeys?: ReadonlySet<string>;
   /** Takes catalog keys or user-made panel ids. */
   onTogglePanels: (keys: ReadonlyArray<string>, active: boolean) => void;
   /** User-made panels, listed as the first group of the checklist. */
@@ -70,6 +72,7 @@ const GROUP_LABEL_KEYS: Record<PanelGroup, string> = {
 const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
   catalogEntries,
   activeKeys,
+  deniedKeys,
   onTogglePanels,
   panels,
   onRequestAdd,
@@ -332,9 +335,11 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
                       : entry.definition.requires?.role === 'superadmin' &&
                           group !== 'superadmin'
                         ? t('dashboard.editSider.RequiresSuperadmin')
-                        : activeKeys.has(entry.definition.key)
-                          ? settingsSummaryOf(entry.definition.key)
-                          : undefined
+                        : deniedKeys?.has(entry.definition.key)
+                          ? t('dashboard.permission.NoPermissionToView')
+                          : activeKeys.has(entry.definition.key)
+                            ? settingsSummaryOf(entry.definition.key)
+                            : undefined
                   }
                   endContent={
                     activeKeys.has(entry.definition.key)

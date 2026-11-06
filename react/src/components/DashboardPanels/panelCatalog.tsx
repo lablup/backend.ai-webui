@@ -16,6 +16,7 @@ import RecentlyCreatedSession from '../RecentlyCreatedSession';
 import SessionCountDashboardItem from '../SessionCountDashboardItem';
 import StorageStatusPanelCard from '../StorageStatusPanelCard';
 import TotalResourceWithinResourceGroup from '../TotalResourceWithinResourceGroup';
+import { useDashboardRefreshQuery } from './DashboardRefreshContext';
 import { DEFAULT_PANEL_LAYOUTS, presetKey } from './defaults';
 import { resourceKeys, resourceRegistry } from './resourceRegistry';
 import type {
@@ -145,6 +146,7 @@ const FolderStatusPanel: React.FC<PanelComponentProps> = ({ fetchKey }) => {
 const QuotaPerStorageVolumePanel: React.FC<PanelComponentProps> = () => {
   'use memo';
   const { t } = useTranslation();
+  useDashboardRefreshQuery(['vhostInfo']);
   return (
     <BAIBoardItemErrorBoundary
       title={t('data.QuotaPerStorageVolume')}

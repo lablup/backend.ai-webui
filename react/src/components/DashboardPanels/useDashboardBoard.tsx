@@ -5,11 +5,9 @@
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
-import {
-  useCurrentProjectValue,
-  useCurrentResourceGroupValue,
-} from '../../hooks/useCurrentProject';
 import { useIsCurrentProjectAdmin } from '../../hooks/useCurrentUserProjectRoles';
+import DashboardPanelContent from './DashboardPanelContent';
+import PanelFrame from './PanelFrame';
 import type { BoardLayoutEntry } from './boardLayout';
 import {
   addPanel,
@@ -62,8 +60,8 @@ export type BoardStore = (
   save: (board: DashboardBoard) => void;
   /** What "Reset layout" restores; the code default when absent. */
   template?: DashboardBoard;
-  /** The page's boards, for the board tabs. */
-  boards?: DashboardBoardsState;
+  /** The page's boards, for the board tabs and the refresh interval. */
+  boards: DashboardBoardsState;
 };
 
 /** Keeps the page's active board in `userConfig.dashboard` (manager app config). */
@@ -91,13 +89,14 @@ const useBoardStore: BoardStore = useAppConfigBoardStore;
 
 export interface UseDashboardBoardOptions {
   page: PanelPage;
-  fetchKey: string;
+  /** The page query is refetching. */
   isRefetching: boolean;
   queryRefs: DashboardPageQueryRefs;
-  onRefresh: () => void;
   /** Opens the panel modal pre-filled with a custom panel. */
   onRequestEditCustomPanel: (panel: PersistedPanel) => void;
   catalog: ReadonlyArray<PanelDefinition>;
+  /** Panels the viewer may not read: left off the board, kept in the stored one. */
+  deniedPanelIds?: ReadonlyMap<string, string>;
 }
 
 export interface UseDashboardBoardResult {
@@ -107,6 +106,8 @@ export interface UseDashboardBoardResult {
   /** Single-instance entries for the sider checklist. */
   catalogEntries: Array<CatalogEntry>;
   activeKeys: ReadonlySet<string>;
+  /** Catalog keys on the board that are hidden because the viewer may not read them. */
+  deniedKeys: ReadonlySet<string>;
   /** Adds or removes several catalog cards in one save. */
   setPanelsActive: (keys: ReadonlyArray<string>, active: boolean) => void;
   customPanels: Array<PersistedPanel>;
@@ -123,8 +124,7 @@ export interface UseDashboardBoardResult {
     id: string,
     settings: PanelSettings | undefined,
   ) => void;
-  /** The page's boards, when the store keeps more than one. */
-  boards?: DashboardBoardsState;
+  boards: DashboardBoardsState;
 }
 
 export interface PanelSettingsTarget {
@@ -136,20 +136,17 @@ export interface PanelSettingsTarget {
 /** One page's board: the catalog resolved for the viewer, the stored layout, and the content per panel. */
 export const useDashboardBoard = ({
   page,
-  fetchKey,
   isRefetching,
   queryRefs,
-  onRefresh,
   onRequestEditCustomPanel,
   catalog,
+  deniedPanelIds,
 }: UseDashboardBoardOptions): UseDashboardBoardResult => {
   'use memo';
   const { t } = useTranslation();
   const role = useCurrentUserRole();
   const isProjectAdmin = useIsCurrentProjectAdmin();
   const baiClient = useSuspendedBackendaiClient();
-  const currentProject = useCurrentProjectValue();
-  const currentResourceGroup = useCurrentResourceGroupValue();
   const [gridEnabled] = useBAISettingUserState(
     'experimental_session_resource_grid',
   );
@@ -186,7 +183,7 @@ export const useDashboardBoard = ({
 
   const isRenderable = (panel: PersistedPanelV2) => {
     const entry = visibleByKey.get(panel.key);
-    return !!entry && !entry.locked;
+    return !!entry && !entry.locked && !deniedPanelIds?.has(panel.id);
   };
 
   const removeById = (id: string) => save(removePanel(board, id));
@@ -247,18 +244,19 @@ export const useDashboardBoard = ({
     if (definition.kind === 'custom') {
       const Component = definition.Component;
       return Component ? (
-        <Component
+        <DashboardPanelContent
           panel={panel}
-          scope={{ type: 'project', projectId: currentProject.id ?? null }}
-          vars={{
-            projectId: currentProject.id ?? null,
-            resourceGroup: currentResourceGroup ?? null,
-          }}
-          fetchKey={fetchKey}
-          isRefetching={isRefetching}
-          queryRefs={queryRefs}
-          onRefresh={onRefresh}
-        />
+          isPageRefetching={isRefetching}
+          deniedFrame={(body) => (
+            <PanelFrame title={t(panelTitleKey(definition, role))}>
+              {body}
+            </PanelFrame>
+          )}
+        >
+          {(state) => (
+            <Component panel={panel} queryRefs={queryRefs} {...state} />
+          )}
+        </DashboardPanelContent>
       ) : null;
     }
     const legacyPanel = toLegacyPanel(panel, definition);
@@ -274,13 +272,30 @@ export const useDashboardBoard = ({
         title={resolvePanelTitle(legacyPanel.descriptor, t)}
         status="error"
       >
-        <Panel
-          descriptor={legacyPanel.descriptor}
-          fetchKey={fetchKey}
-          panelId={panel.id}
-          onEdit={() => onRequestEditCustomPanel(legacyPanel)}
-          onRemove={() => removeById(panel.id)}
-        />
+        <DashboardPanelContent
+          panel={panel}
+          isPageRefetching={isRefetching}
+          isUserPanel
+          deniedFrame={(body) => (
+            <PanelFrame
+              title={resolvePanelTitle(legacyPanel.descriptor, t)}
+              onEdit={() => onRequestEditCustomPanel(legacyPanel)}
+              onRemove={() => removeById(panel.id)}
+            >
+              {body}
+            </PanelFrame>
+          )}
+        >
+          {({ fetchKey }) => (
+            <Panel
+              descriptor={legacyPanel.descriptor}
+              fetchKey={fetchKey}
+              panelId={panel.id}
+              onEdit={() => onRequestEditCustomPanel(legacyPanel)}
+              onRemove={() => removeById(panel.id)}
+            />
+          )}
+        </DashboardPanelContent>
       </BAIBoardItemErrorBoundary>
     );
   };
@@ -311,6 +326,11 @@ export const useDashboardBoard = ({
       board.panels.flatMap((panel) =>
         panel.hidden ? [] : [panel.key, panel.id],
       ),
+    ),
+    deniedKeys: new Set(
+      board.panels
+        .filter((panel) => deniedPanelIds?.has(panel.id))
+        .map((panel) => panel.key),
     ),
     setPanelsActive,
     customPanels,

@@ -889,6 +889,11 @@
       "TitleDescription": "Ditampilkan sebagai judul panel - gunakan untuk menjelaskan kondisinya.",
       "TitleOptional": "Judul (opsional)"
     },
+    "permission": {
+      "NoPermissionForResourceGroup": "Tidak ada izin untuk grup sumber daya ini",
+      "NoPermissionForScope": "Tidak ada izin untuk pengaturan kartu ini",
+      "NoPermissionToView": "Tidak ada izin untuk melihat"
+    },
     "settings": {
       "AllResourceGroups": "Semua grup sumber daya",
       "CardSettings": "Pengaturan kartu",
