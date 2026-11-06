@@ -23,8 +23,6 @@ const RING_MIN = 120;
 const RING_MAX = 220;
 // RadialChart keeps 40px around the ring for slice labels, which this chart turns off.
 const CHART_LABEL_ROOM = 40;
-// RadialChart sizes itself from its own ResizeObserver a frame late, so its box keeps one width.
-const CHART_BOX = RING_MAX + 2 * CHART_LABEL_ROOM;
 // Room the tooltip's hover ring and highlight still draw into.
 const RING_HALO = 16;
 // The legend's width before it is first measured.
@@ -173,11 +171,8 @@ const DonutChart: React.FC<DonutChartProps> = ({
     const root = rootRef.current;
     if (!root) return;
     const isRow = getComputedStyle(root).flexDirection === 'row';
-    const ringBox = ringRef.current;
     const ringWidth =
-      isRow && ringBox && ringBox.style.visibility !== 'hidden'
-        ? ringBox.offsetWidth
-        : 0;
+      isRow && ringRef.current ? ringRef.current.offsetWidth : 0;
     const room = root.clientWidth - (ringWidth ? ringWidth + LEGEND_GAP : 0);
     if (contentRect.width < room - 1) {
       setLegendWidth(Math.ceil(contentRect.width));
@@ -244,7 +239,7 @@ const DonutChart: React.FC<DonutChartProps> = ({
       gap="lg"
       style={{ flex: '1 1 0', minHeight: 0, overflow: 'hidden' }}
     >
-      {box.width > 0 && (
+      {hasRing && (
         <BAIFlex
           ref={ringRef}
           justify="center"
@@ -253,19 +248,15 @@ const DonutChart: React.FC<DonutChartProps> = ({
             flex: 'none',
             width: ring + 2 * RING_HALO,
             height: ring + 2 * RING_HALO,
-            overflow: 'hidden',
-            // Hidden rather than unmounted, so the chart does not redraw from an empty frame.
-            ...(hasRing
-              ? { position: 'relative' }
-              : { position: 'absolute', visibility: 'hidden' }),
+            position: 'relative',
           }}
         >
           {hasValue ? (
             <BAIFlex
               style={{
                 flex: 'none',
-                width: CHART_BOX,
-                marginBlock: RING_HALO - CHART_LABEL_ROOM,
+                width: chartSize,
+                margin: RING_HALO - CHART_LABEL_ROOM,
               }}
             >
               <RadialChart
