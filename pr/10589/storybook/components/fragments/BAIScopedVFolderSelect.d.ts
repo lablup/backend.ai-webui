@@ -12,9 +12,9 @@ export interface ScopedVFolderSummary {
     permission: string;
 }
 export interface ScopedVFolderResolution {
-    /** Selected folders the scope and `filter` reach and `isFolderDisabled` allows. */
+    /** Selected folders the scope and `filter` reach and `disableUnmountable` allows. */
     resolved: Array<ScopedVFolderSummary>;
-    /** Selected ids the scope and `filter` do not reach, or `isFolderDisabled` rejects. */
+    /** Selected ids the scope and `filter` do not reach, or `disableUnmountable` rejects. */
     unresolved: Array<string>;
 }
 export interface BAIScopedVFolderSelectRef {
@@ -31,8 +31,11 @@ export interface BAIScopedVFolderSelectProps extends Omit<BAIComplexSelectProps,
     filter?: VFolderFilter;
     /** ANDed onto the options only; a selected folder it excludes stays selected. */
     optionFilter?: VFolderFilter;
-    /** A matching option is listed disabled, and a matching selection is reported unresolved. */
-    isFolderDisabled?: (folder: ScopedVFolderSummary) => boolean;
+    /**
+     * Lists a folder the caller cannot mount (mount level NONE) disabled, with
+     * the reason, and reports a matching selection unresolved.
+     */
+    disableUnmountable?: boolean;
     /** Labels for selected ids the scope and `filter` do not reach. */
     fallbackLabels?: Record<string, string>;
     /** Fires once the selected ids are looked up, and again whenever the outcome changes. */
