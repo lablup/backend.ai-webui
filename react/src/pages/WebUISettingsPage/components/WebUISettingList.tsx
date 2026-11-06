@@ -272,7 +272,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
               aria-label={label.title}
               width={CONTROL_WIDTH}
               value={definition.key in draft ? (current as number) : null}
-              placeholder={String(fileValue ?? '')}
+              placeholder={String(rowDefault ?? '')}
               units={definition.unit}
               onChange={(value) =>
                 setValue(definition, value === null ? undefined : value)
