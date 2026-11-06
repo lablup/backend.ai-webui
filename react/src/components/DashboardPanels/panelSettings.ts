@@ -26,6 +26,15 @@ export const hasSetting = (
   kind: PanelSettingKind,
 ) => !!definition?.settings?.includes(kind);
 
+/** The settings keys this client writes for a card; any other stored key belongs to another client. */
+export const ownedSettingKeys = (
+  definition: Pick<PanelDefinition, 'settings'>,
+): Array<keyof PanelSettings> =>
+  _.compact([
+    hasSetting(definition, 'resourceGroup') && 'resourceGroups',
+    hasSetting(definition, 'range') && 'range',
+  ]);
+
 /**
  * The stored settings the definition still declares, malformed values
  * dropped and a multi-group setting cut to its first group; undefined when
