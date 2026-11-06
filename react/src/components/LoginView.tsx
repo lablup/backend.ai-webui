@@ -1392,7 +1392,9 @@ const LoginView: React.FC<{
             </BAIFlex>
           ) : endpointStep.isStepOpen ? (
             <LoginEndpointStep
-              defaultEndpoint={apiEndpoint}
+              defaultEndpoint={serverEndpoint}
+              history={endpointHistory}
+              onDeleteEndpoint={deleteEndpoint}
               isConnecting={endpointStep.isConnecting}
               error={
                 endpointStep.error
