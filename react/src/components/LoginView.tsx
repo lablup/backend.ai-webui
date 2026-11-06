@@ -72,6 +72,7 @@ import { jotaiStore } from './DefaultProviders';
 import LoginEndpointStep from './LoginEndpointStep';
 import LoginFormPanel, { type EndpointHistoryEntry } from './LoginFormPanel';
 import { Button } from '@lablup/ui-common/Button';
+import { Spinner } from '@lablup/ui-common/Spinner';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAIAlert,
@@ -1350,7 +1351,11 @@ const LoginView: React.FC<{
         }}
         onSetShowSignupModal={setShowSignupModal}
         endpointStep={
-          endpointStep.isStepOpen ? (
+          endpointStep.isCheckingStored ? (
+            <BAIFlex justify="center" style={{ padding: 'var(--spacing-6)' }}>
+              <Spinner size="lg" />
+            </BAIFlex>
+          ) : endpointStep.isStepOpen ? (
             <LoginEndpointStep
               defaultEndpoint={apiEndpoint}
               isConnecting={endpointStep.isConnecting}

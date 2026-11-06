@@ -10,6 +10,8 @@ type EndpointError = Extract<EndpointCheck, { ok: false }>['error'];
 export interface ElectronEndpointStep {
   /** The endpoint step replaces the login form. */
   isStepOpen: boolean;
+  /** A stored endpoint is being confirmed; show a loader, not the step. */
+  isCheckingStored: boolean;
   isConnecting: boolean;
   error: EndpointError | null;
   /** The confirmed server named no domain, so its PUBLIC settings were not read. */
@@ -40,6 +42,7 @@ export function useElectronEndpointStep({
   const [error, setError] = useState<EndpointError | null>(null);
   const [hasNoDomain, setHasNoDomain] = useState(false);
   const autoTriedRef = useRef(false);
+  const [isAutoSettled, setIsAutoSettled] = useState(false);
 
   const continueWith = async (raw: string) => {
     setIsConnecting(true);
@@ -58,7 +61,7 @@ export function useElectronEndpointStep({
   const confirmStored = useEffectEvent(() => {
     if (autoTriedRef.current || confirmed !== null || !storedEndpoint) return;
     autoTriedRef.current = true;
-    void continueWith(storedEndpoint);
+    void continueWith(storedEndpoint).finally(() => setIsAutoSettled(true));
   });
   useEffect(() => {
     if (isElectron && isPanelOpen) confirmStored();
@@ -66,12 +69,15 @@ export function useElectronEndpointStep({
 
   return {
     isStepOpen: isElectron && confirmed === null,
+    isCheckingStored:
+      isElectron && confirmed === null && !!storedEndpoint && !isAutoSettled,
     isConnecting,
     error,
     hasNoDomain,
     continueWith,
     changeEndpoint: () => {
       autoTriedRef.current = true;
+      setIsAutoSettled(true);
       setConfirmed(null);
       setError(null);
       setHasNoDomain(false);

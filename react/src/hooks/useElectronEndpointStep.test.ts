@@ -49,6 +49,7 @@ describe('useElectronEndpointStep', () => {
   it('opens the step with no stored endpoint and waits for the user', () => {
     const { result } = render({});
     expect(result.current.isStepOpen).toBe(true);
+    expect(result.current.isCheckingStored).toBe(false);
     expect(checkEndpoint).not.toHaveBeenCalled();
   });
 
@@ -68,8 +69,9 @@ describe('useElectronEndpointStep', () => {
       storedEndpoint: 'https://a.example',
       onConfirmed,
     });
-    expect(result.current.isStepOpen).toBe(true);
+    expect(result.current.isCheckingStored).toBe(true);
     await waitFor(() => expect(result.current.isStepOpen).toBe(false));
+    expect(result.current.isCheckingStored).toBe(false);
     expect(checkEndpoint).toHaveBeenCalledWith('https://a.example');
     expect(onConfirmed).toHaveBeenCalledWith('https://a.example');
   });
@@ -82,6 +84,7 @@ describe('useElectronEndpointStep', () => {
     const { result, rerender } = render({ storedEndpoint: 'https://down' });
     await waitFor(() => expect(result.current.error).toBe('unreachable'));
     expect(result.current.isStepOpen).toBe(true);
+    expect(result.current.isCheckingStored).toBe(false);
     rerender({ isPanelOpen: false, storedEndpoint: 'https://down' });
     rerender({ isPanelOpen: true, storedEndpoint: 'https://down' });
     expect(checkEndpoint).toHaveBeenCalledTimes(1);
