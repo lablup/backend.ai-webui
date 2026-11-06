@@ -166,25 +166,43 @@ export const importConfigToml = (text: string): ConfigTomlImport => {
 };
 
 /**
- * A `config.toml` holding every setting's value under the path the import
- * reads it from, so the file loads back into System Settings elsewhere.
+ * A `config.toml` from the deployment's file-only keys (`fileConfig`) and, with
+ * `includeSettings`, every setting at the path the import reads it from: the
+ * full file copies a deployment's System Settings to another, the slim one is
+ * the file a deployment keeps now (ADR 0026, section 3).
  */
-export const exportConfigToml = (
-  valueOf: (definition: WebUISettingDefinition) => unknown,
-): string => {
+export const exportConfigToml = ({
+  valueOf,
+  fileConfig,
+  includeSettings,
+}: {
+  valueOf: (definition: WebUISettingDefinition) => unknown;
+  fileConfig?: Record<string, unknown> | null;
+  includeSettings: boolean;
+}): string => {
   const doc: Record<string, Record<string, unknown>> = {};
-  for (const definition of WEBUI_SETTING_DEFINITIONS) {
-    const value = valueOf(definition);
-    if (
-      value === undefined ||
-      value === null ||
-      value === '' ||
-      (Array.isArray(value) && value.length === 0)
-    ) {
-      continue;
+  for (const [section, keys] of Object.entries(FILE_ONLY_CONFIG_KEYS)) {
+    const table = fileConfig?.[section];
+    if (!_.isPlainObject(table)) continue;
+    for (const key of keys) {
+      const value = (table as Record<string, unknown>)[key];
+      if (value !== undefined) (doc[section] ??= {})[key] = value;
     }
-    const [section, key] = tomlPathsOf(definition)[0].split('.');
-    (doc[section] ??= {})[key] = value;
+  }
+  if (includeSettings) {
+    for (const definition of WEBUI_SETTING_DEFINITIONS) {
+      const value = valueOf(definition);
+      if (
+        value === undefined ||
+        value === null ||
+        value === '' ||
+        (Array.isArray(value) && value.length === 0)
+      ) {
+        continue;
+      }
+      const [section, key] = tomlPathsOf(definition)[0].split('.');
+      (doc[section] ??= {})[key] = value;
+    }
   }
   return stringifyToml(doc);
 };
