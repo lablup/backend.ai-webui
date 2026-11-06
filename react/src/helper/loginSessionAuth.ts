@@ -10,7 +10,10 @@
  */
 import { RelayEnvironment } from '../RelayEnvironment';
 import { loginSessionAuthMyUserQuery } from '../__generated__/loginSessionAuthMyUserQuery.graphql';
-import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
+import {
+  fetchAndParseConfig,
+  fetchAppConfigOnce,
+} from '../hooks/useWebUIConfig';
 import { getActAsTarget } from './actAs';
 import {
   LoginBootstrapIncompleteError,
@@ -501,15 +504,17 @@ export function persistPostLoginState(client: any): void {
   }
 }
 
-/**
- * Load webserver config when the api_endpoint differs from current URL origin.
- * Uses React's fetchAndParseConfig instead of the Lit shell's _parseConfig.
- */
 export type WebServerConfigResult =
   | { status: 'invalid-url' | 'unreachable' | 'no-config' }
   /** `domainName` is null when the server names no domain (code defaults then). */
   | { status: 'loaded'; domainName: string | null };
 
+const WEBSERVER_CONFIG_FETCH_TIMEOUT_MS = 10_000;
+
+/**
+ * Load webserver config when the api_endpoint differs from current URL origin.
+ * Uses React's fetchAndParseConfig instead of the Lit shell's _parseConfig.
+ */
 export async function loadConfigFromWebServer(
   apiEndpoint: string,
 ): Promise<WebServerConfigResult> {
@@ -524,9 +529,15 @@ export async function loadConfigFromWebServer(
     } catch {
       return { status: 'invalid-url' };
     }
-    const webserverConfigURL = new URL('./config.toml', apiEndpoint).href;
-    const { config, unreachable } =
-      await fetchAndParseConfig(webserverConfigURL);
+    // A trailing slash keeps a sub-path deployment's last segment.
+    const webserverConfigURL = new URL(
+      'config.toml',
+      apiEndpoint.endsWith('/') ? apiEndpoint : `${apiEndpoint}/`,
+    ).href;
+    const { config, unreachable } = await fetchAndParseConfig(
+      webserverConfigURL,
+      WEBSERVER_CONFIG_FETCH_TIMEOUT_MS,
+    );
     if (!config) return { status: unreachable ? 'unreachable' : 'no-config' };
 
     const backendaiutils = (globalThis as Record<string, any>).backendaiutils;
@@ -540,8 +551,7 @@ export async function loadConfigFromWebServer(
     // Merge onto the bundled config.toml, not the current state: that may
     // already carry another endpoint's server config.
     const { jotaiStore } = await import('../components/DefaultProviders');
-    const { rawConfigState, fetchAppConfigOnce } =
-      await import('../hooks/useWebUIConfig');
+    const { rawConfigState } = await import('../hooks/useWebUIConfig');
     const { config: bundledConfig } = await fetchAppConfigOnce();
     const currentConfig = structuredClone(bundledConfig ?? {});
     const mergedConfig = backendaiutils.mergeNestedObjects(
@@ -576,7 +586,12 @@ export async function loadConfigFromWebServer(
     // server's login plugin should load is still open (#10872).
     return { status: 'loaded', domainName: publicTarget?.domainName ?? null };
   }
-  return { status: 'loaded', domainName: null };
+  // Same origin: this page's own config.toml already belongs to the server.
+  const { config } = await fetchAppConfigOnce();
+  return {
+    status: 'loaded',
+    domainName: resolvePublicConfigTarget(config)?.domainName ?? null,
+  };
 }
 
 /**

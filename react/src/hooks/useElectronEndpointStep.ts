@@ -65,7 +65,7 @@ export function useElectronEndpointStep({
   });
   useEffect(() => {
     if (isElectron && isPanelOpen) confirmStored();
-  }, [isElectron, isPanelOpen]);
+  }, [isElectron, isPanelOpen, storedEndpoint]);
 
   return {
     isStepOpen: isElectron && confirmed === null,

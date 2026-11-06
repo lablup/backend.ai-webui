@@ -90,6 +90,16 @@ describe('useElectronEndpointStep', () => {
     expect(checkEndpoint).toHaveBeenCalledTimes(1);
   });
 
+  it('confirms a stored endpoint that appears while the panel is open', async () => {
+    vi.mocked(checkEndpoint).mockResolvedValue(ok('https://a.example'));
+    const { result, rerender } = render({ storedEndpoint: '' });
+    expect(result.current.isCheckingStored).toBe(false);
+    rerender({ storedEndpoint: 'https://a.example' });
+    await waitFor(() => expect(result.current.isStepOpen).toBe(false));
+    expect(result.current.isCheckingStored).toBe(false);
+    expect(checkEndpoint).toHaveBeenCalledTimes(1);
+  });
+
   it('reports a server without a domain after confirming it', async () => {
     vi.mocked(checkEndpoint).mockResolvedValue(ok('https://b.example', false));
     const { result } = render({});

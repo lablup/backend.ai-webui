@@ -76,4 +76,28 @@ describe('loadConfigFromWebServer', () => {
     await loadConfigFromWebServer('https://a.example');
     expect(store.has(loginPluginState)).toBe(false);
   });
+
+  it("keeps a sub-path deployment's last segment and bounds the fetch", async () => {
+    await loadConfigFromWebServer('https://host.example/webui');
+    expect(fetchAndParseConfig).toHaveBeenCalledWith(
+      'https://host.example/webui/config.toml',
+      expect.any(Number),
+    );
+  });
+
+  it("reports the page's own domain for the same-origin endpoint", async () => {
+    vi.mocked(fetchAndParseConfig).mockClear();
+    vi.mocked(fetchAppConfigOnce).mockResolvedValue({
+      config: {
+        general: {
+          apiDomainName: 'default',
+          apiEndpoint: window.location.origin,
+        },
+      },
+    } as any);
+    await expect(
+      loadConfigFromWebServer(window.location.origin),
+    ).resolves.toEqual({ status: 'loaded', domainName: 'default' });
+    expect(fetchAndParseConfig).not.toHaveBeenCalled();
+  });
 });

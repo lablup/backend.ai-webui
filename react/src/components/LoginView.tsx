@@ -1368,7 +1368,17 @@ const LoginView: React.FC<{
             />
           ) : undefined
         }
-        onChangeEndpoint={isElectron ? endpointStep.changeEndpoint : undefined}
+        onChangeEndpoint={
+          isElectron
+            ? () => {
+                setLoginError(null);
+                setOtpRequired(false);
+                setNeedsOtpRegistration(false);
+                form.setFieldValue('otp', '');
+                endpointStep.changeEndpoint();
+              }
+            : undefined
+        }
         endpointNotice={
           isElectron && endpointStep.hasNoDomain
             ? t('login.EndpointNoDomain')
