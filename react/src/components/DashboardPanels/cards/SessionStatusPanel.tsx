@@ -27,13 +27,14 @@ import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
+// Every active status is in one group, so the groups add up to the type donut's total.
 const STATUS_GROUPS = [
-  { key: 'pending', statuses: ['PENDING'] },
+  { key: 'pending', statuses: ['PENDING', 'PREEMPTED', 'RESCHEDULING'] },
   {
     key: 'starting',
-    statuses: ['SCHEDULED', 'PREPARING', 'PREPARED', 'CREATING'],
+    statuses: ['RESERVED', 'SCHEDULED', 'PREPARING', 'PREPARED', 'CREATING'],
   },
-  { key: 'running', statuses: ['RUNNING'] },
+  { key: 'running', statuses: ['RUNNING', 'DEPRIORITIZING'] },
   { key: 'terminating', statuses: ['TERMINATING'] },
 ] as const satisfies ReadonlyArray<{
   key: string;
