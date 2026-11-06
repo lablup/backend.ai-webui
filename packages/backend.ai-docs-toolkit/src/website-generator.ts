@@ -20,6 +20,7 @@ import {
   buildHomePage,
   buildRootRedirectIndexPage,
   buildLangRedirectStubPage,
+  buildNotFoundPage,
   applyImageAttributes,
 } from "./website-builder.js";
 import { buildSearchIndex } from "./search-index-builder.js";
@@ -862,6 +863,26 @@ export async function generateWebsite(
     console.log(
       `Written: index.html (root redirect${loadedVersions.latest ? ` → ${loadedVersions.latest.label}` : ""})`,
     );
+
+    // Site-root 404 fallback (FR-3280). The hosting layer serves it for
+    // every path that matched no rule and no file — an unsupported
+    // locale like `/latest/fr/` above all — which previously returned an
+    // empty body. Its links are site-root-absolute because the page is
+    // served under the requested (wrong) URL, not under `/404.html`.
+    fs.writeFileSync(
+      path.join(distBase, "404.html"),
+      buildNotFoundPage({
+        title,
+        productName,
+        languages: peerLangsForRedirect,
+        basePath:
+          loadedVersions.enabled && loadedVersions.latest
+            ? "latest"
+            : undefined,
+      }),
+      "utf-8",
+    );
+    console.log(`Written: 404.html (unmatched-path fallback)`);
   }
 
   // Per-language redirect stubs (FR-3247). Versioned mode only: emit
