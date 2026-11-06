@@ -5,6 +5,8 @@
 import DashboardEditToggleButton from '../DashboardEditToggleButton';
 import { breadcrumbExtraAtom } from '../breadcrumbExtraAtom';
 import { dashboardEditModeAtom } from '../dashboardEditModeAtom';
+import DashboardBoardSection from './DashboardBoardSection';
+import DashboardBoardTabs from './DashboardBoardTabs';
 import DashboardEditSider from './DashboardEditSider';
 import DashboardPanelModal from './DashboardPanelModal';
 import PanelSettingsModal from './PanelSettingsModal';
@@ -32,7 +34,8 @@ export interface DashboardPanelBoardProps {
 
 /**
  * A dashboard page's board. Moving and resizing work at all times; edit mode
- * opens the sider that adds and removes cards and manages custom panels.
+ * opens the sider that adds and removes cards and manages custom panels. The
+ * admin pages keep several boards behind tabs; the member page keeps one.
  */
 const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
   page,
@@ -84,6 +87,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
     resetLayout,
     settingsTargetOf,
     updatePanelSettings,
+    boards,
   } = useDashboardBoard({
     page,
     catalog,
@@ -111,19 +115,24 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
   return (
     <BAIFlex direction="row" align="stretch" gap="lg" style={{ width: '100%' }}>
       <div ref={boardContainerRef} style={{ flex: 1, minWidth: 0 }}>
-        <BAIBoard
-          movable
-          resizable
-          bordered
-          items={boardItems}
-          // The board is controlled: the next render must hand back exactly
-          // what it reported, or it snaps back.
-          onItemsChange={(event) => {
-            onLayoutChange(
-              _.map(event.detail.items, (item) => _.omit(item, 'data')),
-            );
-          }}
-        />
+        <BAIFlex direction="column" align="stretch" gap="md">
+          {boards && page !== 'project' ? (
+            <DashboardBoardTabs boards={boards} />
+          ) : null}
+          <BAIBoard
+            movable
+            resizable
+            bordered
+            items={boardItems}
+            // The board is controlled: the next render must hand back exactly
+            // what it reported, or it snaps back.
+            onItemsChange={(event) => {
+              onLayoutChange(
+                _.map(event.detail.items, (item) => _.omit(item, 'data')),
+              );
+            }}
+          />
+        </BAIFlex>
       </div>
       {editMode ? (
         <DashboardEditSider
@@ -143,6 +152,15 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
             setSettingsPanelId(panelId);
             setIsSettingsOpen(true);
           }}
+          boardSection={
+            boards && page !== 'project' ? (
+              <DashboardBoardSection
+                page={page}
+                boards={boards}
+                catalog={catalog}
+              />
+            ) : undefined
+          }
         />
       ) : null}
       <BAIUnmountAfterClose>

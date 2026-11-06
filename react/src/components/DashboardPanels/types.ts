@@ -132,6 +132,8 @@ export interface PersistedPanelV2 {
   columnSpan: number;
   rowSpan: number;
   columnOffset?: Record<number, number>;
+  /** A user-made panel taken off the board; it stays listed in the edit sider. */
+  hidden?: boolean;
 }
 
 export interface DashboardBoard {
@@ -139,6 +141,34 @@ export interface DashboardBoard {
   /** Catalog keys this board has seen, so a removed panel stays removed while a new one appears. */
   knownKeys: Array<string>;
 }
+
+/** A board's last filter-bar values, `'all'` meaning no restriction. */
+export interface DashboardBoardVars {
+  project: Array<string> | 'all';
+  rg: Array<string> | 'all';
+  range: string;
+  refresh: string;
+}
+
+/** One saved board: its panels plus the filter values it opens with. */
+export interface DashboardModel extends DashboardBoard {
+  id: string;
+  /** Empty for the default board, which the tabs label generically. */
+  title: string;
+  vars: DashboardBoardVars;
+}
+
+/** One page's boards in `userConfig.dashboard`. */
+export interface DashboardPageConfig {
+  boards: Array<DashboardModel>;
+  active: string;
+}
+
+/** `userConfig.dashboard`. */
+export type DashboardConfig = Partial<Record<PanelPage, DashboardPageConfig>>;
+
+/** `dashboardTemplates` in `domainConfig` / `publicConfigByDomain[domain]`. */
+export type DashboardTemplates = Partial<Record<PanelPage, DashboardModel>>;
 
 /** The parts of the WebUI config the catalog reads. */
 export interface PanelCatalogConfig {

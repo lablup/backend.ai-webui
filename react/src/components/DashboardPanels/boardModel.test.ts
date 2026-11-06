@@ -6,11 +6,11 @@ import {
   addPanel,
   applyLayout,
   catalogFor,
-  migrateLegacyBoard,
   removePanel,
   resetBoard,
   sanitizeBoard,
   seedBoard,
+  setPanelsHidden,
   syncBoard,
   toBoardLayout,
   toLegacyPanel,
@@ -365,46 +365,20 @@ describe('catalogFor', () => {
   });
 });
 
-describe('migrateLegacyBoard', () => {
-  const legacyPanel: PersistedPanel = {
-    id: 'session-1',
-    panelType: 'resourceCount',
-    descriptor: {
-      resourceType: 'session',
-      title: 'Running',
-      filter: 'status == "RUNNING"',
-      order: null,
-    },
-  };
-
-  it('returns null when nothing legacy is stored', () => {
+describe('toLegacyPanel', () => {
+  it('turns a stored preset panel into the modal shape', () => {
+    const legacyPanel: PersistedPanel = {
+      id: 'session-1',
+      panelType: 'resourceCount',
+      descriptor: {
+        resourceType: 'session',
+        title: 'Running',
+        filter: 'status == "RUNNING"',
+        order: null,
+      },
+    };
     expect(
-      migrateLegacyBoard({ layout: undefined, customPanels: undefined }),
-    ).toBeNull();
-    expect(migrateLegacyBoard({ layout: [], customPanels: [] })).toBeNull();
-    expect(
-      migrateLegacyBoard({ layout: 'undefined', customPanels: null }),
-    ).toBeNull();
-  });
-
-  it('keeps the stored order and geometry of built-in and custom panels', () => {
-    const board = migrateLegacyBoard({
-      layout: [
-        { id: 'b', columnSpan: 3, rowSpan: 2, columnOffset: { 4: 1 } },
-        { id: 'session-1', columnSpan: 2, rowSpan: 4 },
-        { id: 'a', columnSpan: 2, rowSpan: 2 },
-      ],
-      customPanels: [legacyPanel],
-    });
-    expect(board).toEqual({
-      panels: [
-        {
-          id: 'b',
-          key: 'b',
-          columnSpan: 3,
-          rowSpan: 2,
-          columnOffset: { 4: 1 },
-        },
+      toLegacyPanel(
         {
           id: 'session-1',
           key: 'resource.session',
@@ -416,32 +390,9 @@ describe('migrateLegacyBoard', () => {
           columnSpan: 2,
           rowSpan: 4,
         },
-        { id: 'a', key: 'a', columnSpan: 2, rowSpan: 2 },
-      ],
-      knownKeys: ['b', 'a'],
-    });
-  });
-
-  it('appends custom panels the layout never saw, and lets a sync add unseen cards', () => {
-    const board = migrateLegacyBoard({
-      layout: [{ id: 'a', columnSpan: 2, rowSpan: 2 }],
-      customPanels: [legacyPanel],
-    })!;
-    expect(ids(board)).toEqual(['a', 'session-1']);
-    const synced = syncBoard(
-      sanitizeBoard(board, definitions, 'project')!,
-      definitions,
-      'project',
-    );
-    expect(ids(synced)).toEqual(['a', 'session-1', 'b']);
-  });
-
-  it('round-trips a migrated custom panel back to the modal shape', () => {
-    const board = migrateLegacyBoard({
-      layout: [],
-      customPanels: [legacyPanel],
-    })!;
-    expect(toLegacyPanel(board.panels[0], sessionPreset)).toEqual({
+        sessionPreset,
+      ),
+    ).toEqual({
       ...legacyPanel,
       descriptor: {
         ...legacyPanel.descriptor,
@@ -449,5 +400,72 @@ describe('migrateLegacyBoard', () => {
         resourceGroups: null,
       },
     });
+  });
+});
+
+describe('setPanelsHidden', () => {
+  const board: DashboardBoard = {
+    panels: [
+      { id: 'a', key: 'a', columnSpan: 2, rowSpan: 2 },
+      { id: 'p1', key: 'resource.session', columnSpan: 2, rowSpan: 3 },
+    ],
+    knownKeys: ['a'],
+  };
+
+  it('takes a user-made panel off the board but keeps it stored, and puts it back', () => {
+    const hidden = setPanelsHidden(board, ['p1'], true);
+    expect(ids(hidden)).toEqual(['a', 'p1']);
+    expect(
+      toBoardLayout(hidden, definitions, () => true).map((e) => e.id),
+    ).toEqual(['a']);
+    const shown = setPanelsHidden(hidden, ['p1'], false);
+    expect(shown.panels[1]).not.toHaveProperty('hidden');
+    expect(
+      toBoardLayout(shown, definitions, () => true).map((e) => e.id),
+    ).toEqual(['a', 'p1']);
+  });
+
+  it('keeps a hidden panel at its index through a layout change', () => {
+    const hidden = setPanelsHidden(
+      { ...board, panels: [board.panels[1]!, board.panels[0]!] },
+      ['p1'],
+      true,
+    );
+    const next = applyLayout(hidden, [{ id: 'a', columnSpan: 3, rowSpan: 2 }]);
+    expect(ids(next)).toEqual(['p1', 'a']);
+    expect(next.panels[0]?.hidden).toBe(true);
+  });
+
+  it('is a no-op for ids the board does not hold', () => {
+    expect(setPanelsHidden(board, ['missing'], true)).toBe(board);
+  });
+
+  it('survives sanitizing for presets only', () => {
+    const stored = {
+      panels: [
+        { id: 'a', key: 'a', columnSpan: 2, rowSpan: 2, hidden: true },
+        {
+          id: 'p1',
+          key: 'resource.session',
+          columnSpan: 2,
+          rowSpan: 3,
+          hidden: true,
+        },
+        {
+          id: 'p2',
+          key: 'resource.session',
+          columnSpan: 2,
+          rowSpan: 3,
+          hidden: 'yes',
+        },
+      ],
+      knownKeys: [],
+    };
+    const sanitized = sanitizeBoard(stored, definitions, 'project')!;
+    expect(sanitized.panels.map((panel) => panel.hidden)).toEqual([
+      undefined,
+      true,
+      undefined,
+    ]);
   });
 });
