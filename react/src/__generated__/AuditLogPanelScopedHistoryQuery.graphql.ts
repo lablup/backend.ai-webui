@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2d69095c22a3999fe03718a244fe19d1>>
+ * @generated SignedSource<<960b9259ea0d8d6c4e46e22ba69ff224>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+import { Result } from "relay-runtime";
 export type AuditLogActionKind = "BULK" | "GLOBAL" | "LOOKUP" | "MEMBERSHIP" | "RELATION" | "SCOPE" | "SINGLE_ENTITY" | "%future added value";
 export type AuditLogStatus = "DENIED" | "ERROR" | "RUNNING" | "SUCCESS" | "UNKNOWN" | "%future added value";
 export type AuditLogScope = {
@@ -87,7 +88,7 @@ export type AuditLogActionKindFilter = {
   notEquals?: AuditLogActionKind | null | undefined;
   notIn?: ReadonlyArray<AuditLogActionKind> | null | undefined;
 };
-export type AuditLogPanelHistoryQuery$variables = {
+export type AuditLogPanelScopedHistoryQuery$variables = {
   f0?: AuditLogFilter | null | undefined;
   f0On: boolean;
   f1?: AuditLogFilter | null | undefined;
@@ -125,65 +126,65 @@ export type AuditLogPanelHistoryQuery$variables = {
   s7On: boolean;
   scope: AuditLogScope;
 };
-export type AuditLogPanelHistoryQuery$data = {
-  readonly f0?: {
+export type AuditLogPanelScopedHistoryQuery$data = {
+  readonly f0?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly f1?: {
+  } | null | undefined, unknown>;
+  readonly f1?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly f2?: {
+  } | null | undefined, unknown>;
+  readonly f2?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly f3?: {
+  } | null | undefined, unknown>;
+  readonly f3?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly f4?: {
+  } | null | undefined, unknown>;
+  readonly f4?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly f5?: {
+  } | null | undefined, unknown>;
+  readonly f5?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly f6?: {
+  } | null | undefined, unknown>;
+  readonly f6?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly f7?: {
+  } | null | undefined, unknown>;
+  readonly f7?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly previousFailure?: {
+  } | null | undefined, unknown>;
+  readonly previousFailure?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly previousSuccess?: {
+  } | null | undefined, unknown>;
+  readonly previousSuccess?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly s0?: {
+  } | null | undefined, unknown>;
+  readonly s0?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly s1?: {
+  } | null | undefined, unknown>;
+  readonly s1?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly s2?: {
+  } | null | undefined, unknown>;
+  readonly s2?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly s3?: {
+  } | null | undefined, unknown>;
+  readonly s3?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly s4?: {
+  } | null | undefined, unknown>;
+  readonly s4?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly s5?: {
+  } | null | undefined, unknown>;
+  readonly s5?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly s6?: {
+  } | null | undefined, unknown>;
+  readonly s6?: Result<{
     readonly count: number;
-  } | null | undefined;
-  readonly s7?: {
+  } | null | undefined, unknown>;
+  readonly s7?: Result<{
     readonly count: number;
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
-export type AuditLogPanelHistoryQuery = {
-  response: AuditLogPanelHistoryQuery$data;
-  variables: AuditLogPanelHistoryQuery$variables;
+export type AuditLogPanelScopedHistoryQuery = {
+  response: AuditLogPanelScopedHistoryQuery$data;
+  variables: AuditLogPanelScopedHistoryQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -752,7 +753,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "AuditLogPanelHistoryQuery",
+    "name": "AuditLogPanelScopedHistoryQuery",
     "selections": [
       {
         "condition": "previousOn",
@@ -762,12 +763,12 @@ return {
           {
             "kind": "CatchField",
             "field": (v39/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           },
           {
             "kind": "CatchField",
             "field": (v40/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -779,7 +780,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v41/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -791,7 +792,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v42/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -803,7 +804,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v43/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -815,7 +816,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v44/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -827,7 +828,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v45/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -839,7 +840,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v46/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -851,7 +852,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v47/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -863,7 +864,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v48/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -875,7 +876,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v49/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -887,7 +888,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v50/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -899,7 +900,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v51/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -911,7 +912,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v52/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -923,7 +924,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v53/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -935,7 +936,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v54/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -947,7 +948,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v55/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       },
@@ -959,7 +960,7 @@ return {
           {
             "kind": "CatchField",
             "field": (v56/*: any*/),
-            "to": "NULL"
+            "to": "RESULT"
           }
         ]
       }
@@ -1008,7 +1009,7 @@ return {
       (v15/*: any*/)
     ],
     "kind": "Operation",
-    "name": "AuditLogPanelHistoryQuery",
+    "name": "AuditLogPanelScopedHistoryQuery",
     "selections": [
       {
         "condition": "previousOn",
@@ -1150,16 +1151,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "72d3ff96df4692db00e0c91ab72fb5d4",
+    "cacheID": "4de8ace8e23b6eb28a6cdf87c1cade00",
     "id": null,
     "metadata": {},
-    "name": "AuditLogPanelHistoryQuery",
+    "name": "AuditLogPanelScopedHistoryQuery",
     "operationKind": "query",
-    "text": "query AuditLogPanelHistoryQuery(\n  $scope: AuditLogScope!\n  $previousSuccess: AuditLogFilter\n  $previousFailure: AuditLogFilter\n  $previousOn: Boolean!\n  $s0: AuditLogFilter\n  $s0On: Boolean!\n  $s1: AuditLogFilter\n  $s1On: Boolean!\n  $s2: AuditLogFilter\n  $s2On: Boolean!\n  $s3: AuditLogFilter\n  $s3On: Boolean!\n  $s4: AuditLogFilter\n  $s4On: Boolean!\n  $s5: AuditLogFilter\n  $s5On: Boolean!\n  $s6: AuditLogFilter\n  $s6On: Boolean!\n  $s7: AuditLogFilter\n  $s7On: Boolean!\n  $f0: AuditLogFilter\n  $f0On: Boolean!\n  $f1: AuditLogFilter\n  $f1On: Boolean!\n  $f2: AuditLogFilter\n  $f2On: Boolean!\n  $f3: AuditLogFilter\n  $f3On: Boolean!\n  $f4: AuditLogFilter\n  $f4On: Boolean!\n  $f5: AuditLogFilter\n  $f5On: Boolean!\n  $f6: AuditLogFilter\n  $f6On: Boolean!\n  $f7: AuditLogFilter\n  $f7On: Boolean!\n) {\n  previousSuccess: scopedAuditLogsV2(scope: $scope, filter: $previousSuccess, limit: 1) @include(if: $previousOn) {\n    count\n  }\n  previousFailure: scopedAuditLogsV2(scope: $scope, filter: $previousFailure, limit: 1) @include(if: $previousOn) {\n    count\n  }\n  s0: scopedAuditLogsV2(scope: $scope, filter: $s0, limit: 1) @include(if: $s0On) {\n    count\n  }\n  s1: scopedAuditLogsV2(scope: $scope, filter: $s1, limit: 1) @include(if: $s1On) {\n    count\n  }\n  s2: scopedAuditLogsV2(scope: $scope, filter: $s2, limit: 1) @include(if: $s2On) {\n    count\n  }\n  s3: scopedAuditLogsV2(scope: $scope, filter: $s3, limit: 1) @include(if: $s3On) {\n    count\n  }\n  s4: scopedAuditLogsV2(scope: $scope, filter: $s4, limit: 1) @include(if: $s4On) {\n    count\n  }\n  s5: scopedAuditLogsV2(scope: $scope, filter: $s5, limit: 1) @include(if: $s5On) {\n    count\n  }\n  s6: scopedAuditLogsV2(scope: $scope, filter: $s6, limit: 1) @include(if: $s6On) {\n    count\n  }\n  s7: scopedAuditLogsV2(scope: $scope, filter: $s7, limit: 1) @include(if: $s7On) {\n    count\n  }\n  f0: scopedAuditLogsV2(scope: $scope, filter: $f0, limit: 1) @include(if: $f0On) {\n    count\n  }\n  f1: scopedAuditLogsV2(scope: $scope, filter: $f1, limit: 1) @include(if: $f1On) {\n    count\n  }\n  f2: scopedAuditLogsV2(scope: $scope, filter: $f2, limit: 1) @include(if: $f2On) {\n    count\n  }\n  f3: scopedAuditLogsV2(scope: $scope, filter: $f3, limit: 1) @include(if: $f3On) {\n    count\n  }\n  f4: scopedAuditLogsV2(scope: $scope, filter: $f4, limit: 1) @include(if: $f4On) {\n    count\n  }\n  f5: scopedAuditLogsV2(scope: $scope, filter: $f5, limit: 1) @include(if: $f5On) {\n    count\n  }\n  f6: scopedAuditLogsV2(scope: $scope, filter: $f6, limit: 1) @include(if: $f6On) {\n    count\n  }\n  f7: scopedAuditLogsV2(scope: $scope, filter: $f7, limit: 1) @include(if: $f7On) {\n    count\n  }\n}\n"
+    "text": "query AuditLogPanelScopedHistoryQuery(\n  $scope: AuditLogScope!\n  $previousSuccess: AuditLogFilter\n  $previousFailure: AuditLogFilter\n  $previousOn: Boolean!\n  $s0: AuditLogFilter\n  $s0On: Boolean!\n  $s1: AuditLogFilter\n  $s1On: Boolean!\n  $s2: AuditLogFilter\n  $s2On: Boolean!\n  $s3: AuditLogFilter\n  $s3On: Boolean!\n  $s4: AuditLogFilter\n  $s4On: Boolean!\n  $s5: AuditLogFilter\n  $s5On: Boolean!\n  $s6: AuditLogFilter\n  $s6On: Boolean!\n  $s7: AuditLogFilter\n  $s7On: Boolean!\n  $f0: AuditLogFilter\n  $f0On: Boolean!\n  $f1: AuditLogFilter\n  $f1On: Boolean!\n  $f2: AuditLogFilter\n  $f2On: Boolean!\n  $f3: AuditLogFilter\n  $f3On: Boolean!\n  $f4: AuditLogFilter\n  $f4On: Boolean!\n  $f5: AuditLogFilter\n  $f5On: Boolean!\n  $f6: AuditLogFilter\n  $f6On: Boolean!\n  $f7: AuditLogFilter\n  $f7On: Boolean!\n) {\n  previousSuccess: scopedAuditLogsV2(scope: $scope, filter: $previousSuccess, limit: 1) @include(if: $previousOn) {\n    count\n  }\n  previousFailure: scopedAuditLogsV2(scope: $scope, filter: $previousFailure, limit: 1) @include(if: $previousOn) {\n    count\n  }\n  s0: scopedAuditLogsV2(scope: $scope, filter: $s0, limit: 1) @include(if: $s0On) {\n    count\n  }\n  s1: scopedAuditLogsV2(scope: $scope, filter: $s1, limit: 1) @include(if: $s1On) {\n    count\n  }\n  s2: scopedAuditLogsV2(scope: $scope, filter: $s2, limit: 1) @include(if: $s2On) {\n    count\n  }\n  s3: scopedAuditLogsV2(scope: $scope, filter: $s3, limit: 1) @include(if: $s3On) {\n    count\n  }\n  s4: scopedAuditLogsV2(scope: $scope, filter: $s4, limit: 1) @include(if: $s4On) {\n    count\n  }\n  s5: scopedAuditLogsV2(scope: $scope, filter: $s5, limit: 1) @include(if: $s5On) {\n    count\n  }\n  s6: scopedAuditLogsV2(scope: $scope, filter: $s6, limit: 1) @include(if: $s6On) {\n    count\n  }\n  s7: scopedAuditLogsV2(scope: $scope, filter: $s7, limit: 1) @include(if: $s7On) {\n    count\n  }\n  f0: scopedAuditLogsV2(scope: $scope, filter: $f0, limit: 1) @include(if: $f0On) {\n    count\n  }\n  f1: scopedAuditLogsV2(scope: $scope, filter: $f1, limit: 1) @include(if: $f1On) {\n    count\n  }\n  f2: scopedAuditLogsV2(scope: $scope, filter: $f2, limit: 1) @include(if: $f2On) {\n    count\n  }\n  f3: scopedAuditLogsV2(scope: $scope, filter: $f3, limit: 1) @include(if: $f3On) {\n    count\n  }\n  f4: scopedAuditLogsV2(scope: $scope, filter: $f4, limit: 1) @include(if: $f4On) {\n    count\n  }\n  f5: scopedAuditLogsV2(scope: $scope, filter: $f5, limit: 1) @include(if: $f5On) {\n    count\n  }\n  f6: scopedAuditLogsV2(scope: $scope, filter: $f6, limit: 1) @include(if: $f6On) {\n    count\n  }\n  f7: scopedAuditLogsV2(scope: $scope, filter: $f7, limit: 1) @include(if: $f7On) {\n    count\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "7e1accae7c4c94b08354173bcf467e12";
+(node as any).hash = "c1f977e83b562e0ef87e09e2fbec906a";
 
 export default node;

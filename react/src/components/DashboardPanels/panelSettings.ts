@@ -2,8 +2,15 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import {
+  DEFAULT_TIME_RANGE,
+  MAX_WINDOW_DAYS,
+  fixedWindowOf,
+  isStorableWindow,
+} from './timeRange';
 import type { PanelDefinition, PanelSettingKind, PanelSettings } from './types';
 import type { BAITableColumnOverrideRecord } from 'backend.ai-ui';
+import dayjs from 'dayjs';
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash-es';
 
@@ -11,7 +18,7 @@ import * as _ from 'lodash-es';
 export const RANGE_PRESETS = ['now-1h', 'now-24h', 'now-7d'] as const;
 export type RangePreset = (typeof RANGE_PRESETS)[number];
 
-export const DEFAULT_RANGE: RangePreset = 'now-24h';
+export const DEFAULT_RANGE: RangePreset = DEFAULT_TIME_RANGE;
 
 export const RANGE_LABEL_KEYS: Record<RangePreset, string> = {
   'now-1h': 'dashboard.settings.Last1Hour',
@@ -21,6 +28,32 @@ export const RANGE_LABEL_KEYS: Record<RangePreset, string> = {
 
 export const isRangePreset = (value: unknown): value is RangePreset =>
   _.includes(RANGE_PRESETS, value);
+
+/** The longest custom range the card accepts, in days. */
+export const maxRangeDaysOf = (
+  definition: Pick<PanelDefinition, 'maxRangeDays'> | undefined,
+) => definition?.maxRangeDays ?? MAX_WINDOW_DAYS;
+
+/** A range a card setting may hold: a preset, or a fixed window at most `maxDays` long. */
+export const isStoredRange = (
+  value: unknown,
+  maxDays: number = MAX_WINDOW_DAYS,
+): value is string => isRangePreset(value) || isStorableWindow(value, maxDays);
+
+/** A fixed window, compact: `Oct 29 09:39 - Oct 30 09:39`. */
+export const formatWindowLabel = (range: string): string | undefined => {
+  const window = fixedWindowOf(range);
+  if (!window) return undefined;
+  const format = (iso: string) => dayjs(iso).format('MMM D HH:mm');
+  return `${format(window.after)} - ${format(window.before)}`;
+};
+
+/** A range setting's label: the preset's name, the window's dates, else the default's name. */
+export const rangeLabel = (range: string | undefined, t: TFunction): string =>
+  isRangePreset(range)
+    ? t(RANGE_LABEL_KEYS[range])
+    : ((range && formatWindowLabel(range)) ??
+      t(RANGE_LABEL_KEYS[DEFAULT_RANGE]));
 
 export const hasSetting = (
   definition: Pick<PanelDefinition, 'settings'> | undefined,
@@ -69,7 +102,10 @@ export const ownedSettingKeys = (
  */
 export const sanitizePanelSettings = (
   value: unknown,
-  definition: Pick<PanelDefinition, 'settings' | 'columnSettings'>,
+  definition: Pick<
+    PanelDefinition,
+    'settings' | 'columnSettings' | 'maxRangeDays'
+  >,
 ): PanelSettings | undefined => {
   if (!value || typeof value !== 'object') return undefined;
   const { resourceGroups, range, columnOverrides } = value as Record<
@@ -87,7 +123,10 @@ export const sanitizePanelSettings = (
   ) {
     settings.resourceGroups = [resourceGroup];
   }
-  if (hasSetting(definition, 'range') && isRangePreset(range)) {
+  if (
+    hasSetting(definition, 'range') &&
+    isStoredRange(range, maxRangeDaysOf(definition))
+  ) {
     settings.range = range;
   }
   const columns = definition.columnSettings
@@ -104,8 +143,8 @@ export const panelSettingsParts = (
 ): string[] =>
   _.compact([
     settings?.resourceGroups?.[0],
-    settings?.range && isRangePreset(settings.range)
-      ? t(RANGE_LABEL_KEYS[settings.range])
+    settings?.range && isStoredRange(settings.range)
+      ? rangeLabel(settings.range, t)
       : undefined,
   ]);
 

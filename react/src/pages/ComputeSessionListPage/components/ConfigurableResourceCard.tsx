@@ -11,6 +11,7 @@ import TotalResourceWithinResourceGroup, {
 import { useCurrentUserRole } from '../../../hooks/backendai';
 import { useBAISettingUserState } from '../../../hooks/useBAISetting';
 import { useCurrentResourceGroupValue } from '../../../hooks/useCurrentProject';
+import './ConfigurableResourceCard.css';
 import {
   DropdownMenu,
   type DropdownMenuOption,
@@ -23,7 +24,7 @@ import {
   filterOutEmpty,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { Settings } from 'lucide-react';
+import { Check, Settings } from 'lucide-react';
 import React, { Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -51,7 +52,7 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
   const isAvailableTotalResourcePanel =
     useIsAvailableTotalResourceWithinResourceGroup();
   const currentResourceGroup = useCurrentResourceGroupValue();
-  const currentPanelType: ResourcePanelType = selectedPanelType || 'MyResource';
+  const currentPanelType: ResourcePanelType = selectedPanelType ?? 'MyResource';
 
   const queryRefForTotalResource =
     useLazyLoadQuery<ConfigurableResourceCardQuery>(
@@ -121,16 +122,15 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
       items: _.map(panelOptions, (option) => ({
         label: option.label,
         onClick: () => setSelectedPanelType(option.value),
+        // Marks the view on screen, since the views share the menu.
+        endContent:
+          option.value === currentPanelType ? (
+            <Check size="1em" aria-hidden />
+          ) : undefined,
       })),
     },
   ];
 
-  // PILOT-DECISION: antd's `menu.selectable` + `defaultSelectedKeys` check mark
-  // on the active panel is DROPPED. `DropdownMenu` action items carry no
-  // selected state (only `DropdownMenuRadioGroup`, which is a compound-children
-  // form this three-entry menu does not warrant), and the card BELOW the button
-  // already shows which panel is active — the check was a second, weaker
-  // channel for the same information.
   const settingsButton = (
     <DropdownMenu
       button={{
@@ -154,8 +154,6 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
     };
 
     switch (currentPanelType) {
-      case 'MyResourceWithinResourceGroup':
-        return <MyResourceWithinResourceGroup {...commonProps} />;
       case 'TotalResourceWithinResourceGroup':
         return (
           isAvailableTotalResourcePanel && (
@@ -165,6 +163,8 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
             />
           )
         );
+      case 'MyResourceWithinResourceGroup':
+        return <MyResourceWithinResourceGroup {...commonProps} />;
       default:
         return <MyResource {...commonProps} />;
     }
@@ -175,6 +175,7 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
     // `styles.body` is accepted and ignored by BAICard; `padding` is the knob.
     <BAICard
       padding={0}
+      className="session-resource-card"
       {..._.omit(props, ['style'])}
       style={{ ...props.style }}
     >

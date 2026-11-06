@@ -10,13 +10,19 @@ import type { DashboardScope } from './types';
  * several pages picks its fields from this and keeps one UI.
  */
 export type CardScope =
-  { kind: 'mine'; projectId: string } | { kind: 'project'; projectId: string };
+  | { kind: 'mine'; projectId: string }
+  | { kind: 'project'; projectId: string }
+  | { kind: 'domain'; domainId: string; domainName: string };
 
 export type CardScopeKind = CardScope['kind'];
 
 /** The scope kind of a page, known even before its project resolves. */
 export const cardScopeKind = (scope: DashboardScope): CardScopeKind =>
-  scope.kind === 'mine' ? 'mine' : 'project';
+  scope.kind === 'mine'
+    ? 'mine'
+    : scope.projectIds === 'all'
+      ? 'domain'
+      : 'project';
 
 /** The card scope of a page; null while the page has no project. */
 export const resolveCardScope = (scope: DashboardScope): CardScope | null => {
@@ -25,9 +31,16 @@ export const resolveCardScope = (scope: DashboardScope): CardScope | null => {
       ? { kind: 'mine', projectId: scope.projectId }
       : null;
   }
-  const projectId = Array.isArray(scope.projectIds)
-    ? scope.projectIds[0]
-    : undefined;
+  if (scope.projectIds === 'all') {
+    return scope.domain.id
+      ? {
+          kind: 'domain',
+          domainId: scope.domain.id,
+          domainName: scope.domain.name,
+        }
+      : null;
+  }
+  const projectId = scope.projectIds[0];
   return projectId ? { kind: 'project', projectId } : null;
 };
 
@@ -37,5 +50,15 @@ export const legacyScopeId = (scope: CardScope): string => {
     case 'mine':
     case 'project':
       return `project:${scope.projectId}`;
+    case 'domain':
+      return `domain:${scope.domainName}`;
   }
+};
+
+/** The domain of the superadmin page; null on every other page. */
+export const domainOf = (
+  scope: DashboardScope,
+): Extract<CardScope, { kind: 'domain' }> | null => {
+  const cardScope = resolveCardScope(scope);
+  return cardScope?.kind === 'domain' ? cardScope : null;
 };

@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { catalogFor, seedBoard } from './boardModel';
+import { catalogFor, sanitizeBoard, seedBoard } from './boardModel';
 import { PANEL_CATALOG } from './panelCatalog';
 import { resourceKeys } from './resourceRegistry';
 import type { PanelCatalogContext, PanelPage } from './types';
@@ -76,8 +76,10 @@ describe('PANEL_CATALOG', () => {
         'start.url',
         'mySession',
         'myRecentSessions',
+        'myTotalResource',
         'myResource',
         'totalResourceWithinResourceGroup',
+        'memberAgentStats',
         'quotaPerStorageVolume',
         'myDeployments',
         'myActivity',
@@ -99,17 +101,65 @@ describe('PANEL_CATALOG', () => {
     [
       'admin',
       [
-        'activeSessions',
-        'totalResourceWithinResourceGroup',
-        'agentStats',
+        'projectSessionStatus',
+        'pendingSessions',
         'activeAgents',
-        'recentlyCreatedSession',
+        'agentStats',
+        'failuresByEntityType',
+        'projectAuditLog',
+        'totalResourceWithinResourceGroup',
       ],
     ],
   ])('seeds the %s board with its default cards', (page, keys) => {
     expect(
       seedBoard(PANEL_CATALOG, page).panels.map((panel) => panel.id),
     ).toEqual(keys);
+  });
+});
+
+describe('member Agent Statistics', () => {
+  const hidden = PANEL_CATALOG.find(
+    (definition) => definition.key === 'memberAgentStats',
+  )?.requires?.hidden;
+  it('is dropped under hideAgents for everyone but superadmins', () => {
+    const on = { hideAgents: true } as Parameters<
+      NonNullable<typeof hidden>
+    >[0];
+    const off = { hideAgents: false } as Parameters<
+      NonNullable<typeof hidden>
+    >[0];
+    expect(hidden?.(on, 'user')).toBe(true);
+    expect(hidden?.(on, 'admin')).toBe(true);
+    expect(hidden?.(on, 'superadmin')).toBe(false);
+    expect(hidden?.(off, 'user')).toBe(false);
+  });
+});
+
+describe('stored boards on the real catalog', () => {
+  it('drops removed cards (Fair Share, Top Projects by Usage) and keeps the rest', () => {
+    const board = sanitizeBoard(
+      {
+        panels: [
+          { id: 'fairShare', key: 'fairShare', columnSpan: 4, rowSpan: 3 },
+          {
+            id: 'topProjectsUsage',
+            key: 'topProjectsUsage',
+            columnSpan: 4,
+            rowSpan: 3,
+          },
+          {
+            id: 'activeAgents',
+            key: 'activeAgents',
+            columnSpan: 2,
+            rowSpan: 2,
+          },
+        ],
+        knownKeys: ['fairShare', 'activeAgents'],
+      },
+      PANEL_CATALOG,
+      'admin',
+    );
+    expect(board?.panels.map((panel) => panel.id)).toEqual(['activeAgents']);
   });
 });
 
@@ -149,11 +199,39 @@ describe('catalogFor on the real catalog', () => {
     );
   });
 
+  it('offers the catalog-only superadmin cards without placing them', () => {
+    const board = seedBoard(PANEL_CATALOG, 'admin');
+    const catalogOnly = [
+      'longRunningSessions',
+      'projectResourceAllocation',
+      'projectDeployments',
+      'projectFolders',
+      'projectUsers',
+      'resourceGroupCapacity',
+      'recentlyCreatedSession',
+      'resourcePolicies',
+      'failedLogins',
+      'containerRegistries',
+    ];
+    expect(board.knownKeys).toEqual(expect.arrayContaining(catalogOnly));
+    const placed = board.panels.map((panel) => panel.id);
+    for (const key of catalogOnly) expect(placed).not.toContain(key);
+  });
+
+  it('places the shared admin cards on the project admin board but keeps their catalog-only ones off the superadmin board', () => {
+    const projectAdmin = seedBoard(PANEL_CATALOG, 'projectAdmin').panels.map(
+      (panel) => panel.id,
+    );
+    expect(projectAdmin).toEqual(
+      expect.arrayContaining(['projectUsers', 'projectFolders']),
+    );
+  });
+
   it('keeps cluster and project-wide cards off the member dashboard, even for a superadmin', () => {
     const keys = keysFor({ page: 'project', role: 'superadmin', config: {} });
     expect(keys).not.toContain('agentStats');
     expect(keys).not.toContain('activeAgents');
-    expect(keys).not.toContain('activeSessions');
+    expect(keys).not.toContain('projectSessionStatus');
   });
 
   it('drops a Start item whose menu is blocked and locks the deployment one without model folders', () => {

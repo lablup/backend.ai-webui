@@ -1,9 +1,0 @@
-/**
- @license
- Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
-*/
-/* Drop the selector's selected-option-over-trigger offset, a negative margin
-   no position fallback can flip, so the page-size list flips above near the bottom. */
-.uic-data-grid__footer [popover]:has(> .astryx-selector-popup) {
-  margin-block-start: 0 !important;
-}

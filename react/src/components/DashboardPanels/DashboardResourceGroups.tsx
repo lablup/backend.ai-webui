@@ -10,6 +10,7 @@ import {
   defaultResourceGroupOf,
   resourceGroupScopeOf,
 } from './dashboardScope';
+import { offeredSlotsOf } from './memberCards/memberCardData';
 import type { DashboardScope } from './types';
 import type {
   BAIScopedResourceGroupSelectFilter,
@@ -26,6 +27,8 @@ export interface DashboardResourceGroups extends AllowedResourceGroups {
   scope: BAIScopedResourceGroupSelectProps['scope'];
   /** Leaves the SFTP-only groups out of the pickers. */
   filter: BAIScopedResourceGroupSelectFilter | undefined;
+  /** Slots the allowed groups offer (cpu and mem always); null when no capacity was read. */
+  offeredSlots: ReadonlySet<string> | null;
 }
 
 export const DashboardResourceGroupsContext =
@@ -98,6 +101,14 @@ export const DashboardResourceGroupsProvider: React.FC<{
           edges {
             node {
               name
+              resourceInfo {
+                capacity {
+                  entries {
+                    resourceType
+                    quantity
+                  }
+                }
+              }
             }
           }
         }
@@ -115,6 +126,14 @@ export const DashboardResourceGroupsProvider: React.FC<{
     ? data.scopedResourceGroups.value
     : null;
   const names = _.compact(_.map(connection?.edges, (edge) => edge?.node?.name));
+  const offeredSets = _.compact(
+    _.map(connection?.edges, (edge) =>
+      offeredSlotsOf(edge?.node?.resourceInfo?.capacity.entries),
+    ),
+  );
+  const offeredSlots = offeredSets.length
+    ? new Set(offeredSets.flatMap((slots) => [...slots]))
+    : null;
   // A failed read cannot rule a saved group out, so it keeps it.
   const allowed: AllowedResourceGroups = {
     names,
@@ -130,6 +149,7 @@ export const DashboardResourceGroupsProvider: React.FC<{
         defaultResourceGroup: defaultResourceGroupOf(allowed),
         scope: pickerScope,
         filter,
+        offeredSlots,
       }}
     >
       {children}

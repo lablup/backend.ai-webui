@@ -30,14 +30,14 @@ describe('toDonutRows', () => {
     ]);
   });
 
-  it('reads a missing count as 0 and gives every row 0% when nothing is counted', () => {
+  it('reads a missing count as 0, marks a denied one unknown, and gives every row 0% when nothing is counted', () => {
     expect(
       toDonutRows([
         { key: 'a', label: 'A', count: null },
         { key: 'b', label: 'B' },
       ]),
     ).toEqual([
-      { key: 'a', label: 'A', value: 0, percent: 0 },
+      { key: 'a', label: 'A', value: 0, percent: 0, isUnknown: true },
       { key: 'b', label: 'B', value: 0, percent: 0 },
     ]);
   });

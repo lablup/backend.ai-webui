@@ -14,7 +14,12 @@ import {
   successFailureVariables,
 } from './countAliases';
 import { PermissionDeniedError } from './panelPermission';
-import { MAX_BUCKETS, customRange, planBuckets } from './timeRange';
+import {
+  MAX_BUCKETS,
+  customRange,
+  planBuckets,
+  windowRange,
+} from './timeRange';
 
 const WINDOW = {
   after: '2026-10-25T12:00:00.000Z',
@@ -115,6 +120,26 @@ describe('successFailureVariables and readSuccessFailure', () => {
     expect(live.previousOn).toBe(false);
     expect(live.live0On).toBe(false);
     expect(live.live1On).toBe(false);
+  });
+
+  it('reads a past fixed window and the same-length window before it from history only', () => {
+    const window = {
+      after: '2026-10-20T09:30:00.000Z',
+      before: '2026-10-21T09:30:00.000Z',
+    };
+    const { plan, hasHistory, history, live } = successFailureVariables(
+      makeFilter,
+      windowRange(window),
+      NOW,
+    );
+    expect(hasHistory).toBe(true);
+    expect(plan.states.every((state) => state === 'settled')).toBe(true);
+    expect(history.previousSuccess).toEqual({
+      outcome: 'success',
+      after: '2026-10-19T09:30:00.000Z',
+      before: window.after,
+    });
+    expect(live.previousOn || live.live0On || live.live1On).toBe(false);
   });
 
   it('sums the buckets into the totals and reads the previous range from the right query', () => {

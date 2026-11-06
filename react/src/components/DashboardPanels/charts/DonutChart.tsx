@@ -10,6 +10,7 @@ import {
   RadialTooltip,
   useChartColors,
 } from '@lablup/ui-common/lab';
+import { colorVars } from '@lablup/ui-common/theme/tokens.stylex';
 import useResizeObserver from '@react-hook/resize-observer';
 import * as stylex from '@stylexjs/stylex';
 import { BAIFlex } from 'backend.ai-ui';
@@ -17,7 +18,8 @@ import _ from 'lodash';
 import { Circle } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 
-const RING_MIN = 64;
+// The smallest ring whose hole still reads as a donut with its total in it.
+const RING_MIN = 120;
 const RING_MAX = 220;
 // RadialChart keeps 40px around the ring for slice labels, which this chart turns off.
 const CHART_LABEL_ROOM = 40;
@@ -25,8 +27,6 @@ const CHART_LABEL_ROOM = 40;
 const RING_HALO = 16;
 // The legend's width before it is first measured.
 const LEGEND_WIDTH_GUESS = 224;
-// The narrowest a two-column legend gets beside the ring before it moves under it.
-const TWO_COLUMN_LEGEND_MIN = 360;
 // The `lg` gap between the ring and the legend.
 const LEGEND_GAP = 24;
 // Legend line heights, divider included.
@@ -34,13 +34,40 @@ const ROW_HEIGHT = 37;
 const COMPACT_ROW_HEIGHT = 29;
 // The hole's share of the ring's radius, for the filled and the empty ring alike.
 const DONUT_INNER_RADIUS = 0.6;
+// The centre total's `xl` digit advance and the margin it keeps from the ring.
+const CENTRE_CHAR_WIDTH = 13;
+const CENTRE_PADDING = 16;
 
 const styles = stylex.create({
   name: { flex: 1, minWidth: 0 },
   // Long names truncate rather than widen the legend.
   nameText: { maxWidth: 200 },
+  // A clickable row names its action by looking like a link.
+  linkName: {
+    color: 'var(--color-text-accent)',
+    textDecoration: { default: 'none', ':hover': 'underline' },
+  },
   number: { minWidth: '2.5em', textAlign: 'end' },
   percent: { minWidth: '3.5em', textAlign: 'end' },
+  rowButton: {
+    display: 'block',
+    width: '100%',
+    padding: 0,
+    border: 'none',
+    font: 'inherit',
+    color: 'inherit',
+    textAlign: 'start',
+    cursor: 'pointer',
+    backgroundColor: {
+      default: 'transparent',
+      ':hover': colorVars['--color-overlay-hover'],
+    },
+    outline: {
+      default: 'none',
+      ':focus-visible': `2px solid ${colorVars['--color-accent']}`,
+    },
+    outlineOffset: -2,
+  },
 });
 
 /** One legend line: name, count and share, divided from the next like table rows. */
@@ -84,6 +111,9 @@ const LEGEND_DENSITIES: ReadonlyArray<LegendDensity> = [
   { rowHeight: COMPACT_ROW_HEIGHT, hasHeader: false, columns: 2 },
 ];
 
+// A two-column legend needs this much width to keep every name readable; narrower, it stays one scrolling column.
+const TWO_COLUMN_MIN_WIDTH = 480;
+
 const legendHeight = (density: LegendDensity, rowCount: number) =>
   (Math.ceil(rowCount / density.columns) + (density.hasHeader ? 1 : 0)) *
   density.rowHeight;
@@ -96,15 +126,28 @@ export interface DonutChartProps {
   columnLabels: { name: string; value: string; percent: string };
   /** The empty ring's accessible name, when every value is 0. */
   emptyText: string;
-  /** A manager-counted total shown in the ring's hole ("-" when part of it is denied); omitted, the hole stays empty. */
+  /** The ring's centre; omitted, the rows' sum ({@link donutTotal}). */
   total?: number | string | null;
+  /** Makes each legend row a button that reports its row's key. */
+  onRowClick?: (key: string) => void;
 }
+
+/** The rows' sum, "-" when a row's count was denied; an explicit `total` wins. */
+export const donutTotal = (
+  rows: ReadonlyArray<DonutRow>,
+  total?: number | string | null,
+): number | string | null =>
+  total !== undefined
+    ? total
+    : rows.some((row) => row.isUnknown)
+      ? '-'
+      : _.sumBy(rows, 'value');
 
 /**
  * A donut of manager-counted values with a compact name / value / share
  * legend. It never outgrows its box: the legend fits first (tighter rows,
  * then no header row, then two columns), the ring takes the room left and is
- * dropped when that is under `RING_MIN`. The legend moves under the ring when the box is narrow.
+ * dropped when that is under `RING_MIN` or its hole cannot hold the total. The legend moves under the ring when the box is narrow.
  */
 const DonutChart: React.FC<DonutChartProps> = ({
   rows,
@@ -112,6 +155,7 @@ const DonutChart: React.FC<DonutChartProps> = ({
   columnLabels,
   emptyText,
   total,
+  onRowClick,
 }) => {
   'use memo';
   const rootRef = useRef<HTMLDivElement>(null);
@@ -132,6 +176,9 @@ const DonutChart: React.FC<DonutChartProps> = ({
     const room = root.clientWidth - (ringWidth ? ringWidth + LEGEND_GAP : 0);
     if (contentRect.width < room - 1) {
       setLegendWidth(Math.ceil(contentRect.width));
+    } else if (ringWidth) {
+      // Squeezed beside the ring: it needs more than the room, so the ring gives way.
+      setLegendWidth((width) => Math.max(width, Math.ceil(room) + 1));
     }
   });
 
@@ -142,20 +189,20 @@ const DonutChart: React.FC<DonutChartProps> = ({
     color: colors[index % colors.length],
   }));
   const hasValue = rows.some((row) => row.value > 0);
+  const centre = donutTotal(rows, total);
 
+  const densities = LEGEND_DENSITIES.filter(
+    (candidate) => candidate.columns === 1 || box.width >= TWO_COLUMN_MIN_WIDTH,
+  );
   const density =
-    LEGEND_DENSITIES.find(
+    densities.find(
       (candidate) => legendHeight(candidate, rows.length) <= box.height,
-    ) ?? LEGEND_DENSITIES[LEGEND_DENSITIES.length - 1];
+    ) ?? densities[densities.length - 1];
   const legendBoxHeight = legendHeight(density, rows.length);
 
-  // Two columns may shrink, names truncating, to leave the ring its minimum beside them.
-  const legendMinWidth =
-    density.columns === 2
-      ? Math.min(legendWidth, TWO_COLUMN_LEGEND_MIN)
-      : legendWidth;
+  // The legend keeps its full width; the ring only takes the room left beside it.
   const sideBySide =
-    box.width >= RING_MIN + 2 * RING_HALO + LEGEND_GAP + legendMinWidth;
+    box.width >= RING_MIN + 2 * RING_HALO + LEGEND_GAP + legendWidth;
   const ringRoom =
     (sideBySide
       ? Math.min(
@@ -167,8 +214,14 @@ const DonutChart: React.FC<DonutChartProps> = ({
         )
       : Math.min(box.width, box.height - legendBoxHeight - LEGEND_GAP)) -
     2 * RING_HALO;
-  const hasRing = box.width > 0 && ringRoom >= RING_MIN;
   const ring = _.clamp(ringRoom, RING_MIN, RING_MAX);
+  // Every donut card drops the ring by the same rule: too small, or its hole cannot hold the total.
+  const centreText = _.isNil(centre) ? '' : centre.toLocaleString();
+  const hasRing =
+    box.width > 0 &&
+    ringRoom >= RING_MIN &&
+    ring * DONUT_INNER_RADIUS >=
+      centreText.length * CENTRE_CHAR_WIDTH + CENTRE_PADDING;
   const chartSize = ring + 2 * CHART_LABEL_ROOM;
 
   // Zero-value slices stay in the legend only; drawn, their separators show as a gap.
@@ -236,9 +289,9 @@ const DonutChart: React.FC<DonutChartProps> = ({
                   pointerEvents: 'none',
                 }}
               >
-                {_.isNumber(total) || _.isString(total) ? (
+                {centreText ? (
                   <Text size="xl" weight="semibold" hasTabularNumbers>
-                    {total.toLocaleString()}
+                    {centreText}
                   </Text>
                 ) : null}
               </BAIFlex>
@@ -280,7 +333,7 @@ const DonutChart: React.FC<DonutChartProps> = ({
                 color="secondary"
                 hasTabularNumbers
               >
-                {_.isString(total) ? total : 0}
+                {_.isString(centre) ? centre : 0}
               </Text>
             </BAIFlex>
           )}
@@ -292,11 +345,14 @@ const DonutChart: React.FC<DonutChartProps> = ({
         gap="md"
         aria-label={label}
         role="group"
-        style={
-          density.columns === 2
+        style={{
+          ...(density.columns === 2
             ? { flex: '0 1 auto', minWidth: 0, maxWidth: '100%' }
-            : { flex: 'none', maxWidth: '100%' }
-        }
+            : { flex: 'none', maxWidth: '100%' }),
+          // Rows the box cannot hold scroll inside the legend.
+          maxHeight: '100%',
+          overflowY: 'auto',
+        }}
       >
         {_.chunk(
           legendRows,
@@ -309,7 +365,7 @@ const DonutChart: React.FC<DonutChartProps> = ({
             // Columns size to their lines and shrink, names truncating, when the card is narrow.
             style={
               density.columns === 2
-                ? { flex: '0 1 auto', minWidth: 0 }
+                ? { flex: '1 1 0', minWidth: 0 }
                 : { width: 'max-content', maxWidth: '100%' }
             }
           >
@@ -329,37 +385,54 @@ const DonutChart: React.FC<DonutChartProps> = ({
                 </Text>
               </LegendLine>
             )}
-            {columnRows.map((row) => (
-              <LegendLine
-                key={row.key}
-                height={density.rowHeight}
-                isCompact={density.columns === 2}
-              >
-                <BAIFlex
-                  gap="xs"
-                  align="center"
-                  wrap="nowrap"
-                  style={{ flex: 1, minWidth: 0 }}
+            {columnRows.map((row) => {
+              const line = (
+                <LegendLine
+                  height={density.rowHeight}
+                  isCompact={density.columns === 2}
                 >
-                  {/* The swatch takes the slice's data colour, which no token carries. */}
-                  <Circle
-                    size={12}
-                    fill={row.color}
-                    color={row.color}
-                    aria-hidden
-                  />
-                  <Text maxLines={1} xstyle={styles.nameText}>
-                    {row.label}
+                  <BAIFlex
+                    gap="xs"
+                    align="center"
+                    wrap="nowrap"
+                    style={{ flex: 1, minWidth: 0 }}
+                  >
+                    {/* The swatch takes the slice's data colour, which no token carries. */}
+                    <Circle
+                      size={12}
+                      fill={row.color}
+                      color={row.color}
+                      aria-hidden
+                      style={{ flexShrink: 0 }}
+                    />
+                    <Text
+                      maxLines={1}
+                      xstyle={[styles.nameText, onRowClick && styles.linkName]}
+                    >
+                      {row.label}
+                    </Text>
+                  </BAIFlex>
+                  <Text hasTabularNumbers xstyle={styles.number}>
+                    {row.value.toLocaleString()}
                   </Text>
-                </BAIFlex>
-                <Text hasTabularNumbers xstyle={styles.number}>
-                  {row.value.toLocaleString()}
-                </Text>
-                <Text hasTabularNumbers xstyle={styles.percent}>
-                  {`${row.percent}%`}
-                </Text>
-              </LegendLine>
-            ))}
+                  <Text hasTabularNumbers xstyle={styles.percent}>
+                    {`${row.percent}%`}
+                  </Text>
+                </LegendLine>
+              );
+              return onRowClick ? (
+                <button
+                  key={row.key}
+                  type="button"
+                  {...stylex.props(styles.rowButton)}
+                  onClick={() => onRowClick(row.key)}
+                >
+                  {line}
+                </button>
+              ) : (
+                <React.Fragment key={row.key}>{line}</React.Fragment>
+              );
+            })}
           </BAIFlex>
         ))}
       </BAIFlex>

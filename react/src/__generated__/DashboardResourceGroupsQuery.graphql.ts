@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fda23633d9fac348139a6cb976f1b92d>>
+ * @generated SignedSource<<b494c1df6bed75efdcef12d6fb7492ad>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -86,6 +86,14 @@ export type DashboardResourceGroupsQuery$data = {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly name: string;
+        readonly resourceInfo: {
+          readonly capacity: {
+            readonly entries: ReadonlyArray<{
+              readonly quantity: any;
+              readonly resourceType: string;
+            }>;
+          };
+        } | null | undefined;
       };
     }>;
   } | null | undefined, unknown>;
@@ -156,6 +164,53 @@ v6 = {
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "ResourceInfo",
+  "kind": "LinkedField",
+  "name": "resourceInfo",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "ResourceSlot",
+      "kind": "LinkedField",
+      "name": "capacity",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "ResourceSlotEntry",
+          "kind": "LinkedField",
+          "name": "entries",
+          "plural": true,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "resourceType",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "quantity",
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -201,7 +256,8 @@ return {
                       "name": "node",
                       "plural": false,
                       "selections": [
-                        (v6/*: any*/)
+                        (v6/*: any*/),
+                        (v7/*: any*/)
                       ],
                       "storageKey": null
                     }
@@ -261,6 +317,7 @@ return {
                     "plural": false,
                     "selections": [
                       (v6/*: any*/),
+                      (v7/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -282,16 +339,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "54bb5c7eecc5bcf896d3dd0cbecdab69",
+    "cacheID": "7c3e2519c96a076fdf5087f83185933b",
     "id": null,
     "metadata": {},
     "name": "DashboardResourceGroupsQuery",
     "operationKind": "query",
-    "text": "query DashboardResourceGroupsQuery(\n  $scope: ResourceGroupScope!\n  $filter: ResourceGroupFilter\n  $limit: Int!\n  $hasScope: Boolean!\n) {\n  scopedResourceGroups(scope: $scope, filter: $filter, orderBy: [{field: NAME, direction: ASC}], limit: $limit) @include(if: $hasScope) {\n    count\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query DashboardResourceGroupsQuery(\n  $scope: ResourceGroupScope!\n  $filter: ResourceGroupFilter\n  $limit: Int!\n  $hasScope: Boolean!\n) {\n  scopedResourceGroups(scope: $scope, filter: $filter, orderBy: [{field: NAME, direction: ASC}], limit: $limit) @include(if: $hasScope) {\n    count\n    edges {\n      node {\n        name\n        resourceInfo {\n          capacity {\n            entries {\n              resourceType\n              quantity\n            }\n          }\n        }\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0ae39b9e9095e1e579c9e991890df812";
+(node as any).hash = "73b605591e42043fa7cc52f8e5be1c65";
 
 export default node;

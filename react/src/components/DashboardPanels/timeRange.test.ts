@@ -4,10 +4,15 @@
  */
 import {
   MAX_BUCKETS,
+  MAX_WINDOW_DAYS,
+  checkWindow,
   customRange,
+  fixedWindowOf,
+  isStorableWindow,
   parseTimeRange,
   planBuckets,
   rangeToDateTimeFilter,
+  windowRange,
   withinWindow,
 } from './timeRange';
 
@@ -217,5 +222,83 @@ describe('withinWindow', () => {
       expect(Object.keys(filter.AND[0].createdAt)).toEqual(['after']);
       expect(Object.keys(filter.AND[1].createdAt)).toEqual(['before']);
     });
+  });
+});
+
+describe('fixed windows', () => {
+  const window = {
+    after: '2026-10-20T09:30:00.000Z',
+    before: '2026-10-21T15:00:00.000Z',
+  };
+
+  it('round-trips a window through the stored range', () => {
+    const range = windowRange(window);
+    expect(parseTimeRange(range)).toEqual({
+      kind: 'window',
+      from: ms(window.after),
+      to: ms(window.before),
+    });
+    expect(fixedWindowOf(range)).toEqual(window);
+    expect(rangeToDateTimeFilter(range, NOW)).toEqual(window);
+    expect(fixedWindowOf('now-24h')).toBeNull();
+  });
+
+  it('rejects a window that ends before it starts, or a malformed one', () => {
+    expect(parseTimeRange(`${window.before}/${window.after}`)).toBeNull();
+    expect(parseTimeRange('2026-10-20T09:30/2026-10-21T15:00')).toBeNull();
+    expect(isStorableWindow(`${window.before}/${window.after}`)).toBe(false);
+    expect(isStorableWindow(42)).toBe(false);
+  });
+
+  it('stores only windows up to the cap', () => {
+    expect(isStorableWindow(windowRange(window))).toBe(true);
+    expect(
+      isStorableWindow(
+        windowRange({
+          after: new Date(NOW - (MAX_WINDOW_DAYS + 1) * DAY).toISOString(),
+          before: new Date(NOW).toISOString(),
+        }),
+      ),
+    ).toBe(false);
+  });
+
+  it('checks a picked window and clamps an end past now', () => {
+    expect(checkWindow(NOW - DAY, NOW + HOUR, NOW)).toEqual({
+      window: {
+        after: new Date(NOW - DAY).toISOString(),
+        before: new Date(NOW).toISOString(),
+      },
+    });
+    expect(checkWindow(NOW, NOW - HOUR, NOW)).toEqual({
+      problem: 'endBeforeStart',
+    });
+    expect(checkWindow(NOW + HOUR, NOW + 2 * HOUR, NOW)).toEqual({
+      problem: 'endBeforeStart',
+    });
+    expect(checkWindow(NOW - (MAX_WINDOW_DAYS + 1) * DAY, NOW, NOW)).toEqual({
+      problem: 'tooLong',
+    });
+  });
+
+  it('caps every window at 7 days, and a card cap can lower it', () => {
+    expect(checkWindow(NOW - 8 * DAY, NOW, NOW)).toEqual({
+      problem: 'tooLong',
+    });
+    expect(checkWindow(NOW - 7 * DAY, NOW, NOW)).toHaveProperty('window');
+    expect(checkWindow(NOW - 3 * DAY, NOW, NOW, 2)).toEqual({
+      problem: 'tooLong',
+    });
+  });
+
+  it('splits a past window equally and settles every bucket', () => {
+    const plan = planBuckets(windowRange(window), NOW);
+    expect(plan.fixed).toBe(true);
+    expect(plan.window).toEqual(window);
+    expectContiguous(plan.buckets, ms(window.after), ms(window.before));
+    const lengths = plan.buckets.map(
+      (bucket) => ms(bucket.before) - ms(bucket.after),
+    );
+    expect(Math.max(...lengths) - Math.min(...lengths)).toBeLessThanOrEqual(1);
+    expect(plan.states.every((state) => state === 'settled')).toBe(true);
   });
 });

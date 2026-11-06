@@ -2,190 +2,51 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
 import {
   useCurrentProjectValue,
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
-import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
+import { MyResourcesInResourceGroup } from './DashboardPanels/memberCards/MyResourcesPanel';
 import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
-import { Heading } from '@lablup/ui-common/Text';
+import { Heading } from '@lablup/ui-common/Heading';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIBoardItemTitle,
-  BAIFetchKeyButton,
   BAIFlex,
   BAIFlexProps,
-  BAISkeleton,
+  BAIIconWithTooltip,
   ResourceStatistics,
-  convertToNumber,
-  processMemoryValue,
-  useControllableValue,
+  BAIFetchKeyButton,
+  BAISkeleton,
   useFetchKey,
-  BAISegmentedControl,
-  BAISegmentedControlItem,
   useIsInBAIBoardItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { ReactNode, useDeferredValue, useMemo, useTransition } from 'react';
-import { useTranslation } from 'react-i18next';
+import { CircleHelp } from 'lucide-react';
+import { ReactNode, Suspense, useTransition } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { Trans, useTranslation } from 'react-i18next';
 
 interface MyResourceWithinResourceGroupProps extends BAIFlexProps {
   fetchKey?: string;
   refetching?: boolean;
   /** Hides the card's own refresh button, for hosts that refresh it themselves. */
   hideRefreshButton?: boolean;
-  displayType?: 'used' | 'free';
-  onDisplayTypeChange?: (type: 'used' | 'free') => void;
   extra?: ReactNode;
 }
 
 const MyResourceWithinResourceGroup: React.FC<
   MyResourceWithinResourceGroupProps
 > = ({ fetchKey, refetching, hideRefreshButton, extra, ...props }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
   const isInBoard = useIsInBAIBoardItem();
-
   const currentProject = useCurrentProjectValue();
-  if (!currentProject.name) {
-    throw new Error(
-      'Project name is required for MyResourceWithinResourceGroup',
-    );
-  }
   const currentResourceGroup = useCurrentResourceGroupValue();
-  const deferredCurrentResourceGroup = useDeferredValue(
-    currentResourceGroup || 'default',
-  );
+
   const [internalFetchKey, updateInternalFetchKey] = useFetchKey();
   const [isPending, startTransition] = useTransition();
-
-  const [{ checkPresetInfo }] = useResourceLimitAndRemaining({
-    currentProjectName: currentProject.name,
-    currentResourceGroup: deferredCurrentResourceGroup,
-    fetchKey: `${fetchKey}${internalFetchKey}`,
-  });
-
-  const resourceSlotsDetails = useResourceSlotsDetails(
-    deferredCurrentResourceGroup,
-  );
-  const [displayType, setDisplayType] = useControllableValue<
-    Exclude<MyResourceWithinResourceGroupProps['displayType'], undefined>
-  >(props, {
-    defaultValue: 'free',
-    trigger: 'onDisplayTypeChange',
-    defaultValuePropName: 'defaultDisplayType',
-  });
-
-  const resourceData = useMemo(() => {
-    const cpuSlot = resourceSlotsDetails?.resourceSlotsInRG?.['cpu'];
-    const memSlot = resourceSlotsDetails?.resourceSlotsInRG?.['mem'];
-    const cpuData =
-      cpuSlot &&
-      !_.isUndefined(
-        checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]?.using
-          ?.cpu,
-      )
-        ? {
-            used: {
-              current: convertToNumber(
-                checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
-                  ?.using?.cpu,
-              ),
-              total: undefined, // No total for resource group view
-            },
-            free: {
-              current: convertToNumber(
-                checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
-                  ?.remaining?.cpu,
-              ),
-              total: undefined,
-            },
-            metadata: {
-              title: cpuSlot.human_readable_name,
-              displayUnit: cpuSlot.display_unit,
-            },
-          }
-        : null;
-
-    const memoryData =
-      memSlot &&
-      !_.isUndefined(
-        checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]?.using
-          ?.mem,
-      )
-        ? {
-            used: {
-              current: processMemoryValue(
-                checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
-                  ?.using?.mem,
-                memSlot.display_unit,
-              ),
-              total: undefined,
-            },
-            free: {
-              current: processMemoryValue(
-                checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
-                  ?.remaining?.mem,
-                memSlot.display_unit,
-              ),
-              total: undefined,
-            },
-            metadata: {
-              title: memSlot.human_readable_name,
-              displayUnit: memSlot.display_unit,
-            },
-          }
-        : null;
-
-    const accelerators = _.compact(
-      _.map(
-        _.omit(resourceSlotsDetails?.resourceSlotsInRG, ['cpu', 'mem']),
-        (resourceSlot, key) => {
-          if (
-            !resourceSlot ||
-            _.isUndefined(
-              checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
-                ?.using?.[key as ResourceSlotName],
-            )
-          )
-            return null;
-
-          // TODO: convertToNumber should not handle `undefined` as Infinity.
-          const usingCurrent = convertToNumber(
-            checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
-              ?.using?.[key as ResourceSlotName],
-          );
-          const remainingCurrent = convertToNumber(
-            checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
-              ?.remaining?.[key as ResourceSlotName],
-          );
-
-          // Skip displaying if both used and free are not finite numbers
-          if (!isFinite(usingCurrent) && !isFinite(remainingCurrent))
-            return null;
-
-          return {
-            key,
-            used: {
-              current: usingCurrent,
-              total: undefined,
-            },
-            free: {
-              current: remainingCurrent,
-              total: undefined,
-            },
-            metadata: {
-              title: resourceSlot.human_readable_name,
-              displayUnit: resourceSlot.display_unit,
-            },
-          };
-        },
-      ),
-    );
-
-    return { cpu: cpuData, memory: memoryData, accelerators };
-  }, [checkPresetInfo, resourceSlotsDetails, deferredCurrentResourceGroup]);
 
   return (
     <BAIFlex
@@ -196,57 +57,34 @@ const MyResourceWithinResourceGroup: React.FC<
         ...(isInBoard
           ? {}
           : {
+              paddingBlock: token('--spacing-4'),
               paddingInline: token('--spacing-8'),
-              paddingBottom: token('--spacing-4'),
+              flex: 1,
+              // A narrow cell leaves no height to center in; the title still keeps its distance.
+              rowGap: token('--spacing-4'),
             }),
         ...props.style,
       }}
       {..._.omit(props, ['style'])}
     >
+      {/* The dashboard card's header; the picker is the session page's current resource group. */}
       <BAIBoardItemTitle
         title={
-          <>
-            {/* antd Typography.Text (fontSizeHeading5 = 16px +
-                fontWeightStrong). 16px is heading-5 on the restored antd type
-                ramp; `level={3}` tracked the same 16px under Astryx's own. */}
-            <Heading level={5}>{t('webui.menu.MyResourcesIn')}</Heading>
-            <SharedResourceGroupSelectForCurrentProject
-              size="small"
-              showSearch
-              loading={currentResourceGroup !== deferredCurrentResourceGroup}
-              popupMatchSelectWidth={false}
-              tooltip={t('general.ResourceGroup')}
+          <BAIFlex gap="xs" wrap="wrap" align="center">
+            <Heading level={5}>
+              {t('webui.menu.MyResourcesInResourceGroup')}
+            </Heading>
+            <BAIIconWithTooltip
+              icon={<CircleHelp size="1em" />}
+              content={
+                <Trans i18nKey="webui.menu.MyResourcesInResourceGroupDescription" />
+              }
             />
-          </>
+            <SharedResourceGroupSelectForCurrentProject />
+          </BAIFlex>
         }
-        tooltip={t('webui.menu.MyResourcesInResourceGroupDescription')}
         extra={
           <BAIFlex gap={'xs'}>
-            {/* PILOT-DECISION: SegmentedControl.label is aria-only and required;
-                composed from the two option labels to avoid new i18n keys. */}
-            <BAISegmentedControl
-              size="sm"
-              aria-label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
-              value={displayType}
-              onChange={(v) =>
-                v &&
-                setDisplayType(
-                  v as Exclude<
-                    MyResourceWithinResourceGroupProps['displayType'],
-                    undefined
-                  >,
-                )
-              }
-            >
-              <BAISegmentedControlItem
-                value="used"
-                label={t('dashboard.Used')}
-              />
-              <BAISegmentedControlItem
-                value="free"
-                label={t('dashboard.Free')}
-              />
-            </BAISegmentedControl>
             <BAIFetchKeyButton
               hidden={hideRefreshButton}
               size="small"
@@ -264,19 +102,67 @@ const MyResourceWithinResourceGroup: React.FC<
           </BAIFlex>
         }
       />
-      {resourceSlotsDetails.isLoading ? (
-        // `data-testid` anchor for e2e (`dashboard.spec.ts`): Astryx
-        // `Skeleton` renders `aria-hidden="true"` with no default class, so
-        // there is no other stable "still loading" selector.
-        <BAISkeleton data-testid="my-resource-skeleton" />
-      ) : (
-        <ResourceStatistics
-          resourceData={resourceData}
-          displayType={displayType}
-          progressMode="ghost"
-        />
-      )}
+      {/* Off a board the card is taller than its numbers; they sit in its middle. */}
+      <BAIFlex
+        direction="column"
+        align="stretch"
+        justify="center"
+        style={{ flex: 1 }}
+      >
+        {/* A transport failure, or a manager without myUserResourceAllocationV2, escapes @catch; keep the title and let refresh retry. */}
+        <ErrorBoundary
+          resetKeys={[
+            fetchKey,
+            internalFetchKey,
+            currentProject.id,
+            currentResourceGroup,
+          ]}
+          fallbackRender={() => (
+            <ResourceStatistics
+              resourceData={NO_RESOURCE_DATA}
+              displayType="used"
+              progressMode="normal"
+            />
+          )}
+        >
+          <Suspense fallback={<BAISkeleton />}>
+            <MyResourceWithinResourceGroupStatistics
+              fetchKey={`${fetchKey}${internalFetchKey}`}
+            />
+          </Suspense>
+        </ErrorBoundary>
+      </BAIFlex>
     </BAIFlex>
+  );
+};
+
+const NO_RESOURCE_DATA = { cpu: null, memory: null, accelerators: [] };
+
+const MyResourceWithinResourceGroupStatistics: React.FC<{
+  fetchKey: string;
+}> = ({ fetchKey }) => {
+  'use memo';
+  const currentProject = useCurrentProjectValue();
+  const currentResourceGroup = useCurrentResourceGroupValue();
+  if (!currentProject.id) {
+    throw new Error('Project id is required for MyResourceWithinResourceGroup');
+  }
+  if (!currentResourceGroup) {
+    return (
+      <ResourceStatistics
+        resourceData={NO_RESOURCE_DATA}
+        displayType="used"
+        progressMode="normal"
+      />
+    );
+  }
+
+  return (
+    <MyResourcesInResourceGroup
+      projectId={currentProject.id}
+      resourceGroupName={currentResourceGroup}
+      fetchKey={fetchKey}
+    />
   );
 };
 

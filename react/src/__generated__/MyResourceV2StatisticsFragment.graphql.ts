@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a459ca2a717fa05f17c1ce26245ace8e>>
+ * @generated SignedSource<<0ce70c9de27735fb4d5b6d82e3b8742f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -38,12 +38,6 @@ export type MyResourceV2StatisticsFragment$data = {
       readonly node: {
         readonly resourceInfo: {
           readonly capacity: {
-            readonly entries: ReadonlyArray<{
-              readonly quantity: any;
-              readonly resourceType: string;
-            }>;
-          };
-          readonly free: {
             readonly entries: ReadonlyArray<{
               readonly quantity: any;
               readonly resourceType: string;
@@ -98,35 +92,13 @@ v3 = {
     }
   ],
   "storageKey": null
-},
-v4 = [
-  {
-    "alias": null,
-    "args": null,
-    "concreteType": "ResourceSlotEntry",
-    "kind": "LinkedField",
-    "name": "entries",
-    "plural": true,
-    "selections": (v2/*: any*/),
-    "storageKey": null
-  }
-];
+};
 return {
   "argumentDefinitions": [
     {
       "defaultValue": null,
       "kind": "LocalArgument",
       "name": "projectId"
-    },
-    {
-      "defaultValue": null,
-      "kind": "LocalArgument",
-      "name": "resourceGroupFilter"
-    },
-    {
-      "defaultValue": null,
-      "kind": "LocalArgument",
-      "name": "scope"
     }
   ],
   "kind": "Fragment",
@@ -209,19 +181,32 @@ return {
         "alias": null,
         "args": [
           {
-            "kind": "Variable",
-            "name": "filter",
-            "variableName": "resourceGroupFilter"
-          },
-          {
             "kind": "Literal",
             "name": "limit",
-            "value": 1
+            "value": 100
           },
           {
-            "kind": "Variable",
-            "name": "scope",
-            "variableName": "scope"
+            "fields": [
+              {
+                "items": [
+                  {
+                    "fields": [
+                      {
+                        "kind": "Variable",
+                        "name": "value",
+                        "variableName": "projectId"
+                      }
+                    ],
+                    "kind": "ObjectValue",
+                    "name": "project.0"
+                  }
+                ],
+                "kind": "ListValue",
+                "name": "project"
+              }
+            ],
+            "kind": "ObjectValue",
+            "name": "scope"
           }
         ],
         "concreteType": "ResourceGroupConnection",
@@ -260,17 +245,18 @@ return {
                         "kind": "LinkedField",
                         "name": "capacity",
                         "plural": false,
-                        "selections": (v4/*: any*/),
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "ResourceSlot",
-                        "kind": "LinkedField",
-                        "name": "free",
-                        "plural": false,
-                        "selections": (v4/*: any*/),
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "ResourceSlotEntry",
+                            "kind": "LinkedField",
+                            "name": "entries",
+                            "plural": true,
+                            "selections": (v2/*: any*/),
+                            "storageKey": null
+                          }
+                        ],
                         "storageKey": null
                       }
                     ],
@@ -293,6 +279,6 @@ return {
 };
 })();
 
-(node as any).hash = "29786df7b235eb3c9dd15c9af29ba475";
+(node as any).hash = "07e73b88a482bf378e203a7f2a9395eb";
 
 export default node;

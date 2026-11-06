@@ -7,6 +7,7 @@ import {
   applyLayout,
   catalogFor,
   siderEntries,
+  panelTitleKey,
   removePanel,
   resetBoard,
   sanitizeBoard,
@@ -80,6 +81,22 @@ describe('seedBoard', () => {
 
   it('never seeds presets', () => {
     expect(ids(seedBoard(definitions, 'admin'))).toEqual(['adminOnly']);
+  });
+
+  it('hides a card by default only on the pages its defaultHidden lists, and orders cards per page', () => {
+    const shared: ReadonlyArray<PanelDefinition> = [
+      card('first', { page: ['project', 'admin'], defaultHidden: ['admin'] }),
+      card('second', { page: ['project', 'admin'], order: { admin: 2 } }),
+      card('third', { page: ['project', 'admin'], order: { admin: 1 } }),
+    ];
+    expect(ids(seedBoard(shared, 'project'))).toEqual([
+      'first',
+      'second',
+      'third',
+    ]);
+    const admin = seedBoard(shared, 'admin');
+    expect(ids(admin)).toEqual(['third', 'second']);
+    expect(admin.knownKeys).toEqual(['third', 'second', 'first']);
   });
 });
 
@@ -480,5 +497,25 @@ describe('setPanelsHidden', () => {
       true,
       undefined,
     ]);
+  });
+});
+
+describe('panelTitleKey', () => {
+  const titled = card('users', {
+    titleKey: 'users',
+    superadminTitleKey: 'domainUsers',
+    pageTitleKeys: { projectAdmin: 'projectUsers' },
+  });
+
+  it('uses the page title on that page, for any role', () => {
+    expect(panelTitleKey(titled, 'superadmin', 'projectAdmin')).toBe(
+      'projectUsers',
+    );
+    expect(panelTitleKey(titled, 'user', 'projectAdmin')).toBe('projectUsers');
+  });
+
+  it('keeps the role title elsewhere', () => {
+    expect(panelTitleKey(titled, 'superadmin', 'admin')).toBe('domainUsers');
+    expect(panelTitleKey(titled, 'user', 'project')).toBe('users');
   });
 });

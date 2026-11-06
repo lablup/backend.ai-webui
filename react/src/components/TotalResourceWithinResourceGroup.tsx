@@ -18,6 +18,7 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIFlexProps,
+  BAIIconWithTooltip,
   ResourceStatistics,
   addNumberWithUnits,
   convertToNumber,
@@ -30,6 +31,7 @@ import {
   useIsInBAIBoardItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { CircleHelp } from 'lucide-react';
 import {
   ReactNode,
   useDeferredValue,
@@ -171,6 +173,8 @@ interface TotalResourceWithinResourceGroupProps extends BAIFlexProps {
   extra?: ReactNode;
   /** Fixes the resource group (the parent query's); without it the header's group and a picker are used. */
   resourceGroup?: string;
+  /** Drops the title row, for a host that owns the card header and its resource group picker. */
+  asSection?: boolean;
 }
 
 export const useIsAvailableTotalResourceWithinResourceGroup = () => {
@@ -190,6 +194,7 @@ const TotalResourceWithinResourceGroup: React.FC<
   hideRefreshButton,
   extra,
   resourceGroup,
+  asSection,
   ...props
 }) => {
   'use memo';
@@ -252,6 +257,7 @@ const TotalResourceWithinResourceGroup: React.FC<
     Exclude<TotalResourceWithinResourceGroupProps['displayType'], undefined>
   >(props, {
     defaultValue: 'free',
+    valuePropName: 'displayType',
     trigger: 'onDisplayTypeChange',
     defaultValuePropName: 'defaultDisplayType',
   });
@@ -434,93 +440,112 @@ const TotalResourceWithinResourceGroup: React.FC<
         ...(isInBoard
           ? {}
           : {
+              paddingBlock: token('--spacing-4'),
               paddingInline: token('--spacing-8'),
-              paddingBottom: token('--spacing-4'),
+              flex: 1,
+              // A narrow cell leaves no height to center in; the title still keeps its distance.
+              rowGap: token('--spacing-4'),
             }),
         ...props.style,
       }}
-      {..._.omit(props, ['style'])}
+      {..._.omit(props, [
+        'style',
+        'displayType',
+        'defaultDisplayType',
+        'onDisplayTypeChange',
+      ])}
     >
-      <BAIBoardItemTitle
-        title={
-          <BAIFlex gap={'xs'} wrap="wrap">
-            {/* antd Typography.Text (fontSizeHeading5 = 16px +
-                fontWeightStrong). 16px is heading-5 on the restored antd type
-                ramp; `level={3}` tracked the same 16px under Astryx's own. */}
-            <Heading level={5}>{t('webui.menu.TotalResourcesIn')}</Heading>
-            {resourceGroup ? (
-              <Heading level={5}>{resourceGroup}</Heading>
-            ) : (
-              <SharedResourceGroupSelectForCurrentProject
-                size="small"
-                showSearch
-                style={{ minWidth: 100 }}
-                loading={currentResourceGroup !== deferredSelectedResourceGroup}
-                popupMatchSelectWidth={false}
-                tooltip={t('general.ResourceGroup')}
+      {asSection ? null : (
+        // The same header row as the dashboard's card: title, help, picker.
+        <BAIBoardItemTitle
+          title={
+            <BAIFlex gap="xs" wrap="wrap" align="center">
+              <Heading level={5}>
+                {t('webui.menu.TotalResourcesInResourceGroup')}
+              </Heading>
+              <BAIIconWithTooltip
+                icon={<CircleHelp size="1em" />}
+                content={t(
+                  'webui.menu.TotalResourcesInResourceGroupDescription',
+                )}
               />
-            )}
-          </BAIFlex>
-        }
-        tooltip={t('webui.menu.TotalResourcesInResourceGroupDescription')}
-        extra={
-          <BAIFlex gap={'xs'} wrap="wrap">
-            {/* PILOT-DECISION: SegmentedControl.label is aria-only and required;
+              {resourceGroup ? (
+                <Heading level={5}>{resourceGroup}</Heading>
+              ) : (
+                <SharedResourceGroupSelectForCurrentProject
+                  isLoading={
+                    currentResourceGroup !== deferredSelectedResourceGroup
+                  }
+                />
+              )}
+            </BAIFlex>
+          }
+          extra={
+            <BAIFlex gap="xs" wrap="wrap" align="center">
+              {/* PILOT-DECISION: SegmentedControl.label is aria-only and required;
                 composed from the two option labels to avoid new i18n keys. */}
-            <BAISegmentedControl
-              size="sm"
-              aria-label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
-              value={displayType}
-              onChange={(v) =>
-                setDisplayType(
-                  v as Exclude<
-                    TotalResourceWithinResourceGroupProps['displayType'],
-                    undefined
-                  >,
-                )
-              }
-            >
-              <BAISegmentedControlItem
-                value="used"
-                label={t('dashboard.Used')}
+              <BAISegmentedControl
+                size="sm"
+                aria-label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
+                value={displayType}
+                onChange={(v) =>
+                  setDisplayType(
+                    v as Exclude<
+                      TotalResourceWithinResourceGroupProps['displayType'],
+                      undefined
+                    >,
+                  )
+                }
+              >
+                <BAISegmentedControlItem
+                  value="used"
+                  label={t('dashboard.Used')}
+                />
+                <BAISegmentedControlItem
+                  value="free"
+                  label={t('dashboard.Free')}
+                />
+              </BAISegmentedControl>
+              <BAIFetchKeyButton
+                hidden={hideRefreshButton}
+                size="small"
+                loading={isPendingRefetch || refetching || isLoadingRemaining}
+                value=""
+                onChange={() => {
+                  // Handle local refetching
+                  startRefetchTransition(() => {
+                    refetch(
+                      {
+                        resourceGroup: deferredSelectedResourceGroup,
+                        isSuperAdmin: _.isEqual(userRole, 'superadmin'),
+                      },
+                      {
+                        fetchPolicy: 'network-only',
+                      },
+                    );
+                  });
+                }}
+                variant="link"
+                color="default"
               />
-              <BAISegmentedControlItem
-                value="free"
-                label={t('dashboard.Free')}
-              />
-            </BAISegmentedControl>
-            <BAIFetchKeyButton
-              hidden={hideRefreshButton}
-              size="small"
-              loading={isPendingRefetch || refetching || isLoadingRemaining}
-              value=""
-              onChange={() => {
-                // Handle local refetching
-                startRefetchTransition(() => {
-                  refetch(
-                    {
-                      resourceGroup: deferredSelectedResourceGroup,
-                      isSuperAdmin: _.isEqual(userRole, 'superadmin'),
-                    },
-                    {
-                      fetchPolicy: 'network-only',
-                    },
-                  );
-                });
-              }}
-              variant="link"
-              color="default"
-            />
-            {extra}
-          </BAIFlex>
-        }
-      />
+              {extra}
+            </BAIFlex>
+          }
+        />
+      )}
 
-      <ResourceStatistics
-        resourceData={resourceData}
-        displayType={displayType}
-        progressMode="normal"
-      />
+      <BAIFlex
+        direction="column"
+        align="stretch"
+        justify="center"
+        style={{ flex: 1 }}
+      >
+        <ResourceStatistics
+          resourceData={resourceData}
+          displayType={displayType}
+          progressMode="normal"
+        />
+      </BAIFlex>
     </BAIFlex>
   );
 };

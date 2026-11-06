@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { DeploymentStatusPanelDomainQuery } from '../../../__generated__/DeploymentStatusPanelDomainQuery.graphql';
 import type { DeploymentStatusPanelMineQuery } from '../../../__generated__/DeploymentStatusPanelMineQuery.graphql';
 import type { DeploymentStatusPanelProjectQuery } from '../../../__generated__/DeploymentStatusPanelProjectQuery.graphql';
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
@@ -12,6 +13,7 @@ import DeploymentHealthTable, {
 } from '../memberCards/DeploymentHealthTable';
 import { readPrimary } from '../panelPermission';
 import type { PanelComponentProps, PanelSettings } from '../types';
+import { useResetPageOn } from '../useResetPageOn';
 import ScopedCard from './ScopedCard';
 import { filterOutNullAndUndefined } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -164,6 +166,54 @@ const ProjectDeployments: React.FC<
   return children(useProjectDeployments(projectId, args));
 };
 
+const DomainDeployments: React.FC<
+  PageArgs & {
+    domainId: string;
+    children: (page: DeploymentPage) => React.ReactNode;
+  }
+> = ({ domainId, children, limit, offset, withDetails, fetchKey }) => {
+  'use memo';
+  const data = useLazyLoadQuery<DeploymentStatusPanelDomainQuery>(
+    graphql`
+      query DeploymentStatusPanelDomainQuery(
+        $domainId: UUID!
+        $filter: DeploymentFilter!
+        $limit: Int!
+        $offset: Int!
+        $withDetails: Boolean!
+      ) {
+        deployments: scopedDeployments(
+          scope: { domain: [{ value: $domainId }] }
+          filter: $filter
+          orderBy: [{ field: CREATED_AT, direction: DESC }]
+          limit: $limit
+          offset: $offset
+        ) @catch(to: RESULT) {
+          count
+          edges {
+            node {
+              id
+              replicaState {
+                desiredReplicaCount
+              }
+              healthyReplicas: replicas(
+                filter: { healthStatus: { equals: HEALTHY } }
+              ) {
+                count
+              }
+              ...BAIModelDeploymentNodesFragment
+                @arguments(withDetails: $withDetails)
+            }
+          }
+        }
+      }
+    `,
+    { domainId, filter: LIVE, limit, offset, withDetails },
+    { fetchPolicy: 'store-and-network', fetchKey },
+  );
+  return children(toPage(readPrimary(data.deployments)));
+};
+
 /** One page of live deployments in the scope, newest first. */
 const DeploymentPageOf: React.FC<
   PageArgs & {
@@ -177,6 +227,8 @@ const DeploymentPageOf: React.FC<
       return <MineDeployments projectId={scope.projectId} {...args} />;
     case 'project':
       return <ProjectDeployments projectId={scope.projectId} {...args} />;
+    case 'domain':
+      return <DomainDeployments domainId={scope.domainId} {...args} />;
   }
 };
 
@@ -192,6 +244,7 @@ const DeploymentList: React.FC<{
     tablePaginationOption,
     setTablePaginationOption,
   } = useBAIPaginationOptionState({ current: 1, pageSize: 5 });
+  useResetPageOn(scope, setTablePaginationOption);
   const view = {
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
@@ -257,6 +310,10 @@ const DeploymentStatusPanel: React.FC<PanelComponentProps> = ({
         project: {
           title: t('dashboard.card.DeploymentStatus'),
           tooltip: t('dashboard.card.DeploymentStatusTooltip'),
+        },
+        domain: {
+          title: t('dashboard.card.DeploymentStatus'),
+          tooltip: t('dashboard.card.DomainDeploymentStatusTooltip'),
         },
       }}
     >

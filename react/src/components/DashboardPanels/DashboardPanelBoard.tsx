@@ -15,6 +15,7 @@ import PanelSettingsModal from './PanelSettingsModal';
 import { boardSortsAtom } from './ResourceTablePanel';
 import { dashboardScopeKey } from './dashboardScope';
 import { DeniedPanelsContext, useDeniedPanels } from './panelPermission';
+import { panelSettingOverridesAtom } from './panelSettingOverrides';
 import type {
   DashboardPageQueryRefs,
   DashboardScope,
@@ -27,6 +28,7 @@ import {
   DashboardFilterContext,
   useDashboardFilters,
 } from './useDashboardFilters';
+import { useResetOnLeavingPath } from './useResetOnLeavingPath';
 import {
   BAIBoard,
   BAIFlex,
@@ -35,7 +37,7 @@ import {
 } from 'backend.ai-ui';
 import { useAtom, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
-import React, { Suspense, useEffect, useRef, useState } from 'react';
+import React, { Suspense, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
 export interface DashboardPanelBoardProps {
@@ -83,6 +85,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
   'use memo';
   const [editMode, setEditMode] = useAtom(dashboardEditModeAtom);
   const setBoardSorts = useSetAtom(boardSortsAtom);
+  const setSettingOverrides = useSetAtom(panelSettingOverridesAtom);
   const [panelModalState, setPanelModalState] = useState<{
     open: boolean;
     panel?: PersistedPanel;
@@ -92,17 +95,13 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const boardContainerRef = useRef<HTMLDivElement>(null);
 
-  // The edit-mode atom is global: close it when leaving the page, but not when a
+  // These atoms are global: clear them when leaving the page, but not when a
   // suspending query remounts the board on the same path (that would drop an early click).
-  useEffect(() => {
-    const mountedPath = window.location.pathname;
-    return () => {
-      if (window.location.pathname !== mountedPath) {
-        setEditMode(false);
-        setBoardSorts({});
-      }
-    };
-  }, [setEditMode, setBoardSorts]);
+  useResetOnLeavingPath(() => {
+    setEditMode(false);
+    setBoardSorts({});
+    setSettingOverrides({});
+  });
 
   const denied = useDeniedPanels();
   const {
@@ -201,7 +200,9 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
                 // what it reported, or it snaps back.
                 onItemsChange={(event) => {
                   onLayoutChange(
-                    _.map(event.detail.items, (item) => _.omit(item, 'data')),
+                    _.map(event.detail.items, (item) =>
+                      _.omit(item, ['data', 'title', 'description']),
+                    ),
                   );
                 }}
               />
@@ -210,6 +211,7 @@ const DashboardPanelBoard: React.FC<DashboardPanelBoardProps> = ({
         </div>
         {editMode ? (
           <DashboardEditSider
+            page={page}
             catalogEntries={catalogEntries}
             activeKeys={activeKeys}
             deniedKeys={deniedKeys}

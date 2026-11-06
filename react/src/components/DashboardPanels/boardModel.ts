@@ -77,10 +77,12 @@ export const siderEntries = (entries: ReadonlyArray<CatalogEntry>) =>
 export const panelTitleKey = (
   definition: PanelDefinition,
   role: PanelCatalogContext['role'],
+  page?: PanelPage,
 ) =>
-  role === 'superadmin' && definition.superadminTitleKey
+  (page && definition.pageTitleKeys?.[page]) ??
+  (role === 'superadmin' && definition.superadminTitleKey
     ? definition.superadminTitleKey
-    : definition.titleKey;
+    : definition.titleKey);
 
 export const sizeOf = (
   definition: PanelDefinition,
@@ -91,15 +93,26 @@ export const sizeOf = (
     minSize: definition.minSize,
   };
 
+/** The page's single-instance entries, ordered by their `order` on the page, then catalog order. */
 const singleInstanceDefinitions = (
   definitions: ReadonlyArray<PanelDefinition>,
   page: PanelPage,
 ) =>
-  definitions.filter(
-    (definition) =>
-      definition.kind === 'custom' && definition.page.includes(page),
+  _.sortBy(
+    definitions.filter(
+      (definition) =>
+        definition.kind === 'custom' && definition.page.includes(page),
+    ),
+    (definition) => definition.order?.[page] ?? Number.POSITIVE_INFINITY,
   );
 
+export const isHiddenByDefault = (
+  definition: Pick<PanelDefinition, 'defaultHidden'>,
+  page: PanelPage,
+): boolean =>
+  Array.isArray(definition.defaultHidden)
+    ? definition.defaultHidden.includes(page)
+    : !!definition.defaultHidden;
 const panelOf = (definition: PanelDefinition): PersistedPanelV2 => ({
   id: definition.key,
   key: definition.key,
@@ -118,7 +131,7 @@ export const seedBoard = (
   const pageDefinitions = singleInstanceDefinitions(definitions, page);
   return {
     panels: pageDefinitions
-      .filter((definition) => !definition.defaultHidden)
+      .filter((definition) => !isHiddenByDefault(definition, page))
       .map(panelOf),
     knownKeys: pageDefinitions.map((definition) => definition.key),
   };
@@ -142,7 +155,8 @@ export const syncBoard = (
       ...unseen
         .filter(
           (definition) =>
-            !definition.defaultHidden && !onBoard.has(definition.key),
+            !isHiddenByDefault(definition, page) &&
+            !onBoard.has(definition.key),
         )
         .map(panelOf),
     ],

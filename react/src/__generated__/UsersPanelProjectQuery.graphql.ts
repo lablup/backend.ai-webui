@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<09725b1493fe26dcbc0fe2ee137c8aa8>>
+ * @generated SignedSource<<ab5198714af858ef90f0f71e33b466e8>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,13 +10,13 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { Result } from "relay-runtime";
-export type ProjectUsersPanelQuery$variables = {
+export type UsersPanelProjectQuery$variables = {
   projectId: string;
 };
-export type ProjectUsersPanelQuery$data = {
-  readonly active: {
+export type UsersPanelProjectQuery$data = {
+  readonly active: Result<{
     readonly count: number;
-  } | null | undefined;
+  } | null | undefined, unknown>;
   readonly adminRoles: Result<{
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -28,13 +28,13 @@ export type ProjectUsersPanelQuery$data = {
       };
     }>;
   } | null | undefined, unknown>;
-  readonly inactive: {
+  readonly inactive: Result<{
     readonly count: number;
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
-export type ProjectUsersPanelQuery = {
-  response: ProjectUsersPanelQuery$data;
-  variables: ProjectUsersPanelQuery$variables;
+export type UsersPanelProjectQuery = {
+  response: UsersPanelProjectQuery$data;
+  variables: UsersPanelProjectQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -169,10 +169,18 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "ProjectUsersPanelQuery",
+    "name": "UsersPanelProjectQuery",
     "selections": [
-      (v6/*: any*/),
-      (v7/*: any*/),
+      {
+        "kind": "CatchField",
+        "field": (v6/*: any*/),
+        "to": "RESULT"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v7/*: any*/),
+        "to": "RESULT"
+      },
       {
         "kind": "CatchField",
         "field": {
@@ -221,7 +229,7 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "ProjectUsersPanelQuery",
+    "name": "UsersPanelProjectQuery",
     "selections": [
       (v6/*: any*/),
       (v7/*: any*/),
@@ -271,16 +279,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "dc24b49a45a423337060707e5f02f9b4",
+    "cacheID": "a6ab23f2e2938633af15671e37cb73ac",
     "id": null,
     "metadata": {},
-    "name": "ProjectUsersPanelQuery",
+    "name": "UsersPanelProjectQuery",
     "operationKind": "query",
-    "text": "query ProjectUsersPanelQuery(\n  $projectId: UUID!\n) {\n  active: projectUsersV2(scope: {projectId: $projectId}, filter: {status: {equals: ACTIVE}}, limit: 1) {\n    count\n  }\n  inactive: projectUsersV2(scope: {projectId: $projectId}, filter: {status: {equals: INACTIVE}}, limit: 1) {\n    count\n  }\n  adminRoles: projectRoles(projectId: $projectId, filter: {status: {equals: ACTIVE}, permissions: {some: {entityType: {iEquals: \"scope_admin\"}}}}, limit: 5) {\n    edges {\n      node {\n        entityId\n        name\n        usersV2(limit: 1) {\n          count\n        }\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query UsersPanelProjectQuery(\n  $projectId: UUID!\n) {\n  active: projectUsersV2(scope: {projectId: $projectId}, filter: {status: {equals: ACTIVE}}, limit: 1) {\n    count\n  }\n  inactive: projectUsersV2(scope: {projectId: $projectId}, filter: {status: {equals: INACTIVE}}, limit: 1) {\n    count\n  }\n  adminRoles: projectRoles(projectId: $projectId, filter: {status: {equals: ACTIVE}, permissions: {some: {entityType: {iEquals: \"scope_admin\"}}}}, limit: 5) {\n    edges {\n      node {\n        entityId\n        name\n        usersV2(limit: 1) {\n          count\n        }\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "5207fe0861df3affaa3609a87756a240";
+(node as any).hash = "52f195a4caba35254ae5ec287367bfeb";
 
 export default node;

@@ -3,26 +3,36 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { MyResourcesPanelQuery } from '../../../__generated__/MyResourcesPanelQuery.graphql';
+import { useCurrentDomain } from '../../../hooks';
 import { readPrimary, readSecondary } from '../panelPermission';
 import type { PanelComponentProps } from '../types';
 import MemberCard, { NoProjectText, mineProjectId } from './MemberCard';
-import ResourceUsageBars from './ResourceUsageBars';
+import ResourceUsageStatistics from './ResourceUsageStatistics';
 import { freeAsLimits, offeredSlotsOf, toUsageRows } from './memberCardData';
 import { Text } from '@lablup/ui-common/Text';
-import { BAIFlex } from 'backend.ai-ui';
 import React, { useDeferredValue } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
+/**
+ * The viewer's used-vs-limit per slot in one resource group; the dashboard
+ * card and the session page's My Resources in Resource Group both render it.
+ */
 export const MyResourcesInResourceGroup: React.FC<{
   projectId: string;
   resourceGroupName: string;
   fetchKey: string;
 }> = ({ projectId, resourceGroupName, fetchKey }) => {
   'use memo';
+  const currentDomain = useCurrentDomain();
   const variables = {
     projectId,
-    scope: { project: [{ value: projectId }] },
+    // One named group is read, so the OR'd scopes only widen where it is found: the session
+    // page's header picker can hold a group reached through the domain or the keypair.
+    scope: {
+      domain: [{ value: currentDomain.id }],
+      project: [{ value: projectId }],
+    },
     resourceGroupFilter: { name: { equals: resourceGroupName } },
   };
   const deferredVariables = useDeferredValue(variables);
@@ -92,7 +102,7 @@ export const MyResourcesInResourceGroup: React.FC<{
   const resourceInfo = readSecondary(data.scopedResourceGroups).value
     ?.edges?.[0]?.node?.resourceInfo;
   return (
-    <ResourceUsageBars
+    <ResourceUsageStatistics
       rows={
         user
           ? toUsageRows(
@@ -125,8 +135,10 @@ const MyResourcesPanel: React.FC<PanelComponentProps> = ({
   const resourceGroupName = vars.resourceGroup;
   return (
     <MemberCard
-      title={t('webui.menu.MyResources')}
-      tooltip={<Trans i18nKey="dashboard.card.MyResourcesTooltip" />}
+      title={t('webui.menu.MyResourcesInResourceGroup')}
+      tooltip={
+        <Trans i18nKey="webui.menu.MyResourcesInResourceGroupDescription" />
+      }
       fetchKey={fetchKey}
       resetKeys={[projectId, resourceGroupName]}
     >
@@ -136,14 +148,11 @@ const MyResourcesPanel: React.FC<PanelComponentProps> = ({
         ) : !resourceGroupName ? (
           <Text type="supporting">{t('dashboard.card.NoResourceGroup')}</Text>
         ) : (
-          <BAIFlex direction="column" align="stretch" gap="sm">
-            <Text weight="semibold">{resourceGroupName}</Text>
-            <MyResourcesInResourceGroup
-              projectId={projectId}
-              resourceGroupName={resourceGroupName}
-              fetchKey={key}
-            />
-          </BAIFlex>
+          <MyResourcesInResourceGroup
+            projectId={projectId}
+            resourceGroupName={resourceGroupName}
+            fetchKey={key}
+          />
         )
       }
     </MemberCard>

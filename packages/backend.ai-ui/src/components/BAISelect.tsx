@@ -16,6 +16,7 @@
    `optionRender`     -> `renderOption`
    `labelRender`      -> `renderValue` (single mode)
    `style.width`      -> `width`
+   `variant`          -> `variant` (`outlined` input, `filled` secondary, `borderless` ghost)
 
  PILOT-DECISION — **ReactNode option labels survive via `renderOption`.**
  Astryx's `SelectorOptionData.label` is a plain `string`, but real call sites
@@ -156,6 +157,7 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
       };
   status?: 'error' | 'warning' | '';
   size?: 'small' | 'middle' | 'large';
+  variant?: 'outlined' | 'filled' | 'borderless';
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   /**
@@ -289,6 +291,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   open: _open,
   onOpenChange: _onOpenChange,
   title: _title,
+  variant,
   ...restProps
 }: BAISelectProps<ValueType, OptionType>): React.ReactElement {
   const { t } = useBAIi18n();
@@ -570,6 +573,12 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
         ? ('sm' as const)
         : size === 'large'
           ? ('lg' as const)
+          : undefined,
+    variant:
+      variant === 'filled'
+        ? ('secondary' as const)
+        : variant === 'borderless'
+          ? ('ghost' as const)
           : undefined,
     width: style?.width,
     controlStyle: style,

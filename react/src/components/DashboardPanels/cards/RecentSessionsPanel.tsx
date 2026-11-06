@@ -7,6 +7,7 @@ import { useBAISettingUserState } from '../../../hooks/useBAISetting';
 import type { CardScope } from '../cardScope';
 import type { PanelComponentProps } from '../types';
 import { useOpenSessionDetail } from '../useOpenSessionDetail';
+import { useResetPageOn } from '../useResetPageOn';
 import ScopedCard from './ScopedCard';
 import SessionList from './SessionList';
 import { BAILink, BAISessionNodesV2 } from 'backend.ai-ui';
@@ -30,16 +31,21 @@ const RecentSessionsTable: React.FC<{ scope: CardScope; fetchKey: string }> = ({
     tablePaginationOption,
     setTablePaginationOption,
   } = useBAIPaginationOptionState({ current: 1, pageSize: PAGE_SIZE });
-  const deferredOffset = useDeferredValue(baiPaginationOption.offset);
-  const deferredLimit = useDeferredValue(baiPaginationOption.limit);
+  useResetPageOn(scope, setTablePaginationOption);
+  const page = {
+    limit: baiPaginationOption.limit,
+    offset: baiPaginationOption.offset,
+  };
+  // Deferred together, so a page change keeps the current rows until the next page arrives.
+  const deferredPage = useDeferredValue(page);
 
   return (
     <SessionList
       scope={scope}
       filter={{}}
       orderBy={ORDER_BY}
-      limit={deferredLimit}
-      offset={deferredOffset}
+      limit={deferredPage.limit}
+      offset={deferredPage.offset}
       fetchKey={fetchKey}
     >
       {({ count, rows }) => (
@@ -47,8 +53,8 @@ const RecentSessionsTable: React.FC<{ scope: CardScope; fetchKey: string }> = ({
           sessionsFrgmt={rows}
           disableSorter
           loading={
-            deferredOffset !== baiPaginationOption.offset ||
-            deferredLimit !== baiPaginationOption.limit
+            deferredPage.offset !== page.offset ||
+            deferredPage.limit !== page.limit
           }
           customizeColumns={(columns) =>
             columns.map((column) =>

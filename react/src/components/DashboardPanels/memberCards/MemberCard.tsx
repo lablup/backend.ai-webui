@@ -3,11 +3,15 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import PanelFrame from '../PanelFrame';
+import PanelSettingsHeaderControls, {
+  PanelHeaderSettingsContext,
+} from '../PanelSettingsHeaderControls';
 import { PanelPermissionBoundary } from '../panelPermission';
 import type { DashboardScope } from '../types';
+import { Heading } from '@lablup/ui-common/Heading';
 import { Text } from '@lablup/ui-common/Text';
-import { BAIBoardItemErrorBoundary, BAISkeleton } from 'backend.ai-ui';
-import React, { Suspense } from 'react';
+import { BAIBoardItemErrorBoundary, BAIFlex, BAISkeleton } from 'backend.ai-ui';
+import React, { Suspense, use } from 'react';
 import { useTranslation } from 'react-i18next';
 
 /** The member page's project; member cards render nothing without one. */
@@ -36,14 +40,30 @@ const MemberCard: React.FC<MemberCardProps> = ({
   children,
 }) => {
   'use memo';
+  const headerSettings = use(PanelHeaderSettingsContext);
+  const retryKeys = [
+    fetchKey,
+    JSON.stringify(headerSettings?.effective ?? null),
+    ...resetKeys,
+  ];
   return (
     <BAIBoardItemErrorBoundary
-      title={title}
+      // The failed state keeps the header picks, so a pick that broke the card can be undone.
+      title={
+        headerSettings ? (
+          <BAIFlex align="center" gap="xs" wrap="wrap">
+            <Heading level={5}>{title}</Heading>
+            <PanelSettingsHeaderControls />
+          </BAIFlex>
+        ) : (
+          title
+        )
+      }
       status="error"
-      resetKeys={[fetchKey, ...resetKeys]}
+      resetKeys={retryKeys}
     >
       <PanelFrame title={title} tooltip={tooltip} extra={extra}>
-        <PanelPermissionBoundary resetKeys={[fetchKey, ...resetKeys]}>
+        <PanelPermissionBoundary resetKeys={retryKeys}>
           <Suspense fallback={<BAISkeleton />}>{children(fetchKey)}</Suspense>
         </PanelPermissionBoundary>
       </PanelFrame>

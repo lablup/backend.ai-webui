@@ -91,7 +91,7 @@ describe('defaultResourceGroupOf', () => {
 });
 
 describe('resourceGroupScopeOf', () => {
-  it('lists the page project groups, never another project', () => {
+  it('lists only the page project groups, without its domain', () => {
     expect(resourceGroupScopeOf({ kind: 'mine', projectId: 'p-url' })).toEqual({
       project: [{ value: 'p-url' }],
     });
@@ -102,6 +102,9 @@ describe('resourceGroupScopeOf', () => {
         domain: DOMAIN,
       }),
     ).toEqual({ project: [{ value: 'p-url' }] });
+    expect(resourceGroupScopeOf({ kind: 'mine', projectId: null })).toEqual({
+      project: [],
+    });
   });
 
   it('lists the domain groups on the superadmin page', () => {
