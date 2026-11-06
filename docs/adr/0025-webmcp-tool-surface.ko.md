@@ -157,7 +157,7 @@ flowchart LR
 - **On by default**: key가 없는 배포도 tool을 등록하지만, WebMCP를 구현한 브라우저에서만 보인다. 끄려면 정적 `config.toml`에 `enableWebMCP = false`를 쓴다. webserver가 만드는 `/config.toml`에는 이 key가 없어서 webserver 배포는 지금 끌 수 없고, 끄는 경로가 필요해지면 webserver template에 key를 더한다. 꺼진 배포에서 `useWebMCPTool`은 context를 읽고 effect에서 바로 돌아가며 브라우저 API에는 닿지 않는다.
 - **Browser support**: WebMCP를 구현한 브라우저에서만 tool이 보인다. 지금은 origin trial이나 feature flag를 켠 Chrome이다.
 - **Writes stay manual**: agent가 form을 채워도 submit은 사람이 누른다. 사람 없이 끝나는 쓰기 자동화는 이 tool들로 만들 수 없다.
-- **Plugin risk**: System Settings의 `pluginLogin` / `pluginPage`가 불러오는 제3자 JavaScript도(ADR 0026) 같은 page에서 `document.modelContext.registerTool`을 부를 수 있다. 이 ADR의 규칙은 WebUI 저장소의 코드에만 적용된다. 운영자가 plugin이 등록하는 tool을 확인한다.
+- **Plugin risk**: System Settings의 `pluginLogin` / `pluginPage`가 불러오는 제3자 JavaScript도(ADR 0028) 같은 page에서 `document.modelContext.registerTool`을 부를 수 있다. 이 ADR의 규칙은 WebUI 저장소의 코드에만 적용된다. 운영자가 plugin이 등록하는 tool을 확인한다.
 - **Flat inputs only**: 복잡한 입력이 필요한 tool은 입력을 여러 개의 평평한 property로 나누거나 tool을 나눈다.
 
 ## 출처
