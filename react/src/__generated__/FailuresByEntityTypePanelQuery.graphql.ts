@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f3bcf110d5ed3490ef2dd632b077e5c5>>
+ * @generated SignedSource<<09dadf37db11449f15c55eda1835ad0e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,17 @@ import { ConcreteRequest } from 'relay-runtime';
 import { Result } from "relay-runtime";
 export type AuditLogActionKind = "BULK" | "GLOBAL" | "LOOKUP" | "MEMBERSHIP" | "RELATION" | "SCOPE" | "SINGLE_ENTITY" | "%future added value";
 export type AuditLogStatus = "DENIED" | "ERROR" | "RUNNING" | "SUCCESS" | "UNKNOWN" | "%future added value";
+export type AuditLogScope = {
+  entity?: ReadonlyArray<EntityTypeScope> | null | undefined;
+  triggeredUser?: ReadonlyArray<UUIDScope> | null | undefined;
+};
+export type EntityTypeScope = {
+  entityId: string;
+  entityType: string;
+};
+export type UUIDScope = {
+  value: string;
+};
 export type AuditLogFilter = {
   AND?: ReadonlyArray<AuditLogFilter> | null | undefined;
   NOT?: ReadonlyArray<AuditLogFilter> | null | undefined;
@@ -83,6 +94,7 @@ export type FailuresByEntityTypePanelQuery$variables = {
   other: AuditLogFilter;
   project: AuditLogFilter;
   resourceGroup: AuditLogFilter;
+  scope: AuditLogScope;
   session: AuditLogFilter;
   user: AuditLogFilter;
   vfolder: AuditLogFilter;
@@ -147,24 +159,34 @@ v4 = {
 v5 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "session"
+  "name": "scope"
 },
 v6 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "user"
+  "name": "session"
 },
 v7 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "vfolder"
+  "name": "user"
 },
 v8 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "vfolder"
+},
+v9 = {
   "kind": "Literal",
   "name": "limit",
   "value": 1
 },
-v9 = [
+v10 = {
+  "kind": "Variable",
+  "name": "scope",
+  "variableName": "scope"
+},
+v11 = [
   {
     "alias": null,
     "args": null,
@@ -173,7 +195,7 @@ v9 = [
     "storageKey": null
   }
 ],
-v10 = {
+v12 = {
   "alias": "session",
   "args": [
     {
@@ -181,16 +203,17 @@ v10 = {
       "name": "filter",
       "variableName": "session"
     },
-    (v8/*: any*/)
+    (v9/*: any*/),
+    (v10/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "adminAuditLogsV2",
+  "name": "scopedAuditLogsV2",
   "plural": false,
-  "selections": (v9/*: any*/),
+  "selections": (v11/*: any*/),
   "storageKey": null
 },
-v11 = {
+v13 = {
   "alias": "vfolder",
   "args": [
     {
@@ -198,16 +221,17 @@ v11 = {
       "name": "filter",
       "variableName": "vfolder"
     },
-    (v8/*: any*/)
+    (v9/*: any*/),
+    (v10/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "adminAuditLogsV2",
+  "name": "scopedAuditLogsV2",
   "plural": false,
-  "selections": (v9/*: any*/),
+  "selections": (v11/*: any*/),
   "storageKey": null
 },
-v12 = {
+v14 = {
   "alias": "deployment",
   "args": [
     {
@@ -215,16 +239,17 @@ v12 = {
       "name": "filter",
       "variableName": "deployment"
     },
-    (v8/*: any*/)
+    (v9/*: any*/),
+    (v10/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "adminAuditLogsV2",
+  "name": "scopedAuditLogsV2",
   "plural": false,
-  "selections": (v9/*: any*/),
+  "selections": (v11/*: any*/),
   "storageKey": null
 },
-v13 = {
+v15 = {
   "alias": "user",
   "args": [
     {
@@ -232,16 +257,17 @@ v13 = {
       "name": "filter",
       "variableName": "user"
     },
-    (v8/*: any*/)
+    (v9/*: any*/),
+    (v10/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "adminAuditLogsV2",
+  "name": "scopedAuditLogsV2",
   "plural": false,
-  "selections": (v9/*: any*/),
+  "selections": (v11/*: any*/),
   "storageKey": null
 },
-v14 = {
+v16 = {
   "alias": "project",
   "args": [
     {
@@ -249,16 +275,17 @@ v14 = {
       "name": "filter",
       "variableName": "project"
     },
-    (v8/*: any*/)
+    (v9/*: any*/),
+    (v10/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "adminAuditLogsV2",
+  "name": "scopedAuditLogsV2",
   "plural": false,
-  "selections": (v9/*: any*/),
+  "selections": (v11/*: any*/),
   "storageKey": null
 },
-v15 = {
+v17 = {
   "alias": "resourceGroup",
   "args": [
     {
@@ -266,16 +293,17 @@ v15 = {
       "name": "filter",
       "variableName": "resourceGroup"
     },
-    (v8/*: any*/)
+    (v9/*: any*/),
+    (v10/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "adminAuditLogsV2",
+  "name": "scopedAuditLogsV2",
   "plural": false,
-  "selections": (v9/*: any*/),
+  "selections": (v11/*: any*/),
   "storageKey": null
 },
-v16 = {
+v18 = {
   "alias": "artifactRegistry",
   "args": [
     {
@@ -283,16 +311,17 @@ v16 = {
       "name": "filter",
       "variableName": "artifactRegistry"
     },
-    (v8/*: any*/)
+    (v9/*: any*/),
+    (v10/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "adminAuditLogsV2",
+  "name": "scopedAuditLogsV2",
   "plural": false,
-  "selections": (v9/*: any*/),
+  "selections": (v11/*: any*/),
   "storageKey": null
 },
-v17 = {
+v19 = {
   "alias": "other",
   "args": [
     {
@@ -300,13 +329,14 @@ v17 = {
       "name": "filter",
       "variableName": "other"
     },
-    (v8/*: any*/)
+    (v9/*: any*/),
+    (v10/*: any*/)
   ],
   "concreteType": "AuditLogV2Connection",
   "kind": "LinkedField",
-  "name": "adminAuditLogsV2",
+  "name": "scopedAuditLogsV2",
   "plural": false,
-  "selections": (v9/*: any*/),
+  "selections": (v11/*: any*/),
   "storageKey": null
 };
 return {
@@ -319,22 +349,13 @@ return {
       (v4/*: any*/),
       (v5/*: any*/),
       (v6/*: any*/),
-      (v7/*: any*/)
+      (v7/*: any*/),
+      (v8/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
     "name": "FailuresByEntityTypePanelQuery",
     "selections": [
-      {
-        "kind": "CatchField",
-        "field": (v10/*: any*/),
-        "to": "RESULT"
-      },
-      {
-        "kind": "CatchField",
-        "field": (v11/*: any*/),
-        "to": "RESULT"
-      },
       {
         "kind": "CatchField",
         "field": (v12/*: any*/),
@@ -364,6 +385,16 @@ return {
         "kind": "CatchField",
         "field": (v17/*: any*/),
         "to": "RESULT"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v18/*: any*/),
+        "to": "RESULT"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v19/*: any*/),
+        "to": "RESULT"
       }
     ],
     "type": "Query",
@@ -373,9 +404,10 @@ return {
   "operation": {
     "argumentDefinitions": [
       (v5/*: any*/),
-      (v7/*: any*/),
-      (v1/*: any*/),
       (v6/*: any*/),
+      (v8/*: any*/),
+      (v1/*: any*/),
+      (v7/*: any*/),
       (v3/*: any*/),
       (v4/*: any*/),
       (v0/*: any*/),
@@ -384,27 +416,27 @@ return {
     "kind": "Operation",
     "name": "FailuresByEntityTypePanelQuery",
     "selections": [
-      (v10/*: any*/),
-      (v11/*: any*/),
       (v12/*: any*/),
       (v13/*: any*/),
       (v14/*: any*/),
       (v15/*: any*/),
       (v16/*: any*/),
-      (v17/*: any*/)
+      (v17/*: any*/),
+      (v18/*: any*/),
+      (v19/*: any*/)
     ]
   },
   "params": {
-    "cacheID": "14d39fcdab768680c1dd5621434eff30",
+    "cacheID": "a49ab7ea29976f4e22d50abe40a5456b",
     "id": null,
     "metadata": {},
     "name": "FailuresByEntityTypePanelQuery",
     "operationKind": "query",
-    "text": "query FailuresByEntityTypePanelQuery(\n  $session: AuditLogFilter!\n  $vfolder: AuditLogFilter!\n  $deployment: AuditLogFilter!\n  $user: AuditLogFilter!\n  $project: AuditLogFilter!\n  $resourceGroup: AuditLogFilter!\n  $artifactRegistry: AuditLogFilter!\n  $other: AuditLogFilter!\n) {\n  session: adminAuditLogsV2(filter: $session, limit: 1) {\n    count\n  }\n  vfolder: adminAuditLogsV2(filter: $vfolder, limit: 1) {\n    count\n  }\n  deployment: adminAuditLogsV2(filter: $deployment, limit: 1) {\n    count\n  }\n  user: adminAuditLogsV2(filter: $user, limit: 1) {\n    count\n  }\n  project: adminAuditLogsV2(filter: $project, limit: 1) {\n    count\n  }\n  resourceGroup: adminAuditLogsV2(filter: $resourceGroup, limit: 1) {\n    count\n  }\n  artifactRegistry: adminAuditLogsV2(filter: $artifactRegistry, limit: 1) {\n    count\n  }\n  other: adminAuditLogsV2(filter: $other, limit: 1) {\n    count\n  }\n}\n"
+    "text": "query FailuresByEntityTypePanelQuery(\n  $scope: AuditLogScope!\n  $session: AuditLogFilter!\n  $vfolder: AuditLogFilter!\n  $deployment: AuditLogFilter!\n  $user: AuditLogFilter!\n  $project: AuditLogFilter!\n  $resourceGroup: AuditLogFilter!\n  $artifactRegistry: AuditLogFilter!\n  $other: AuditLogFilter!\n) {\n  session: scopedAuditLogsV2(scope: $scope, filter: $session, limit: 1) {\n    count\n  }\n  vfolder: scopedAuditLogsV2(scope: $scope, filter: $vfolder, limit: 1) {\n    count\n  }\n  deployment: scopedAuditLogsV2(scope: $scope, filter: $deployment, limit: 1) {\n    count\n  }\n  user: scopedAuditLogsV2(scope: $scope, filter: $user, limit: 1) {\n    count\n  }\n  project: scopedAuditLogsV2(scope: $scope, filter: $project, limit: 1) {\n    count\n  }\n  resourceGroup: scopedAuditLogsV2(scope: $scope, filter: $resourceGroup, limit: 1) {\n    count\n  }\n  artifactRegistry: scopedAuditLogsV2(scope: $scope, filter: $artifactRegistry, limit: 1) {\n    count\n  }\n  other: scopedAuditLogsV2(scope: $scope, filter: $other, limit: 1) {\n    count\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "2eee34b098df943d540cddd0825ba695";
+(node as any).hash = "ffc4786e0967b5ddcc28246f0863862f";
 
 export default node;

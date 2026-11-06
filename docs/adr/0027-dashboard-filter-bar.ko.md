@@ -5,7 +5,7 @@
 > 낯선 용어는 문서 맨 아래 [용어](#용어)에 모아 두었다.
 
 - 대시보드 page의 [대시보드 바](#용어)는 보드 탭과 자동 새로고침 control 하나만 둔다. 바는 언제 다시 읽을지만 정하고, 무엇을 읽을지는 정하지 않는다.
-- 카드가 읽는 범위는 page가 정한다. 일반 사용자 page는 헤더 프로젝트에서 자기 데이터, 프로젝트 관리자 page는 URL 경로의 프로젝트, superadmin page는 현재 도메인 전체다. superadmin도 도메인을 고르지 않는다([ADR 0012](0012-scoped-search-fields-in-place-of-admin-fields.ko.md)). 예외는 superadmin page의 감사 로그 카드 하나로, cluster 전체의 `adminAuditLogsV2`를 읽는다.
+- 카드가 읽는 범위는 page가 정한다. 일반 사용자 page는 헤더 프로젝트에서 자기 데이터, 프로젝트 관리자 page는 URL 경로의 프로젝트, superadmin page는 현재 도메인 전체다. superadmin도 도메인을 고르지 않는다([ADR 0012](0012-scoped-search-fields-in-place-of-admin-fields.ko.md)). 감사 로그 카드는 "Domain audit scope"에 적은 방식으로 도메인 scope를 만든다.
 - 자원 그룹과 기간은 [카드 설정](#용어)이다. 자원 그룹이나 기간에 따라 값이 달라지는 카드만 설정을 갖는다. 저장되는 기본값은 편집 모드에서 고치고, 보기 모드에서도 카드 머리의 picker로 그 카드의 값을 잠시 바꿀 수 있다. 바에는 일부 카드만 따르는 전역 filter가 없다.
 - 대시보드는 헤더의 현재 자원 그룹을 읽지 않는다. 카드의 자원 그룹 선택지는 page의 URL 프로젝트(superadmin page는 현재 도메인)가 쓸 수 있는 자원 그룹이고, 설정이 없거나 더 쓸 수 없는 카드는 그 목록의 이름 순 첫 자원 그룹을 읽는다.
 - 자동 새로고침은 page마다 하나다. 바의 refresh control이 간격(기본 1분)마다 tick을 보내고, tick은 화면에 보이는 모든 카드를 함께 다시 읽는다. 카드마다 정한 최소 간격은 없다. control을 누르면 모든 카드를 바로 다시 읽는다. 카드에는 자기 refresh 버튼이 없다.
@@ -82,7 +82,7 @@ sequenceDiagram
 
 - **Page project**: page가 `DashboardPanelBoard`에 `project`(`ProjectContextOrNull`)를 넘긴다. 일반 사용자 page와 프로젝트 관리자 page는 URL 경로의 프로젝트(`useUrlProjectValidity`), superadmin page는 `null`이다. 헤더의 현재 프로젝트는 URL을 effect로 따라가므로 읽지 않는다. 카드와 패널 modal은 `DashboardFilterContext`에서 `useDashboardProject`로 읽고, 사용자 정의 패널 query는 `useDashboardQueryScope`가 주는 프로젝트를, 그것이 `null`이면 현재 도메인을 범위로 쓴다(ADR 0001).
 - **Current domain**: `useDashboardFilters`가 `useCurrentDomain()`의 `{ id, name }`을 `domain`으로 넘긴다.
-- **Audit log exception**: superadmin page에서 감사 로그를 읽는 카드는 현재 도메인의 scoped query 대신 cluster 전체의 `adminAuditLogsV2`를 읽는다. 도메인 entity scope로 읽은 감사 로그에는 그 도메인 안의 세션, 폴더, 배포 기록이 빠지기 때문이다(26.10 매니저에서 확인). [ADR 0012](0012-scoped-search-fields-in-place-of-admin-fields.ko.md)의 scoped field 규칙에 대한 예외이고, 이 카드에만 적용한다. 다중 도메인 cluster에서는 이 카드만 다른 도메인의 기록까지 센다.
+- **Domain audit scope**: superadmin page에서 감사 로그를 읽는 카드는 `scopedAuditLogsV2`를 scope 하나로 읽는다. scope는 현재 도메인, 그 도메인의 모든 프로젝트, 그리고 `triggeredUser`로 넣은 그 도메인의 모든 사용자다. 도메인 entity scope만으로는 그 도메인 안의 세션, 폴더, 배포 기록이 빠지고, 사용자 항목이 그 기록을 되살린다. 도메인이 하나인 26.10 매니저에서 30일 기록을 읽으면 도메인만으로는 91건, 이 scope로는 3012건이고 cluster 전체는 5157건이었으며, 나머지는 사용자가 실행하지 않은 시스템 기록이었다. WebUI는 도메인 하나를 다루므로 다른 도메인의 기록은 보이지 않는다. scope가 프로젝트와 사용자를 달리 가리킬 방법이 없어 카드는 도메인의 프로젝트와 사용자를 먼저 각각 한 페이지로 읽는다.
 - **Board vars**: 보드의 `vars`(`DashboardBoardVars`)는 `{ refresh }` 하나다. `sanitizeBoardVars`는 예전 보드에 남은 `project`, `rg`, `range`를 버리고, `REFRESH_OPTIONS`에 없는 `refresh`를 `1m`으로 바꾼다. 이미 간격을 고른 보드는 그 값을 유지한다.
 
 ### 3. 자원 그룹과 기간은 카드 설정이다
@@ -149,7 +149,8 @@ sequenceDiagram
 - **Header resource group default**: 설정이 빈 카드가 헤더의 현재 자원 그룹을 읽는다. 다른 page와 같은 그룹을 보여 준다. 기각한다. 헤더의 자원 그룹은 헤더의 현재 프로젝트를 따르는데, 프로젝트 관리자 page의 URL 프로젝트와 다를 수 있어 그 프로젝트가 쓸 수 없는 그룹을 읽고, 헤더를 바꿀 때마다 카드가 조용히 바뀐다.
 - **Effective allocation for members**: "My Total Resource Usage"가 `effectiveResourceAllocationV2` 하나로 모든 한도의 최솟값을 읽는다. 도메인 한도까지 들어간다. 기각한다. 일반 멤버는 자기 프로젝트에서도 이 field를 읽지 못해 카드가 숨거나 비고, 대시보드의 주 사용자에게 카드가 사라진다.
 - **Edit-mode-only settings**: 카드 설정 control을 편집 모드에만 둔다. 보기 모드의 카드가 단순해진다. 기각한다. 다른 자원 그룹이나 기간을 잠깐 보려면 편집 모드에 들어가 보드의 저장값을 바꿔야 하고, 보기 모드에서는 카드가 어느 자원 그룹과 기간을 읽는지 보이지 않는다.
-- **Domain-scoped audit log**: superadmin page의 감사 로그 카드도 현재 도메인 scope로 읽는다. 이웃 카드와 범위가 같아진다. 기각한다. 도메인 scope의 감사 로그에는 그 도메인의 세션, 폴더, 배포 기록이 빠져 카드가 실제 활동 대부분을 보여 주지 못한다.
+- **Cluster-wide audit log**: superadmin page의 감사 로그 카드가 모든 기록을 담은 `adminAuditLogsV2`를 읽는다. 기각한다(2026-11-06). WebUI는 도메인 하나를 다루는데, 다중 도메인 cluster에서 카드가 다른 도메인의 기록을 보여 주고 이웃 카드는 현재 도메인만 센다.
+- **Domain entity scope alone**: 감사 로그 카드가 현재 도메인 하나만 scope로 읽는다. 기각한다. 그 scope에는 도메인의 세션, 폴더, 배포 기록이 빠져 카드가 실제 활동 대부분을 보여 주지 못한다.
 - **Domain picker**: superadmin 바에 도메인 multi-select를 둔다. 기각한다. [ADR 0012](0012-scoped-search-fields-in-place-of-admin-fields.ko.md)가 모든 역할의 읽기를 현재 도메인의 `scoped*` field로 정했다.
 - **Scheduler timer**: scheduler가 자기 timer로 tick하고 버튼은 간격만 고른다. 기각한다. `BAIFetchKeyButton`은 간격을 고르면 자기 timer를 돌리므로 timer가 둘이 되고, 버튼의 countdown과 실제 refresh가 어긋난다.
 - **Permission pre-check**: 카드를 그리기 전에 `myAtomicBulkScopePermissions` 같은 요청으로 카드마다 권한을 묻는다. 거부된 카드가 잠깐도 그려지지 않는다. 기각한다. 카드마다 요청이 늘고, 카드가 읽는 field와 권한 entity를 짝지은 표를 클라이언트가 따로 관리해야 한다. 응답의 오류 code가 같은 사실을 추가 요청 없이 알려 준다.
@@ -159,7 +160,7 @@ sequenceDiagram
 ## Consequences
 
 - **Visible card scope**: 설정을 적은 카드는 보기 모드에서도 머리의 picker에 지금 읽는 자원 그룹과 기간을 보여 준다. 편집 모드의 사이드 패널은 저장된 기본값을 보여 준다.
-- **Superadmin audit log range**: 다중 도메인 cluster에서 superadmin page의 감사 로그 카드는 다른 도메인의 기록도 세고, 이웃 카드는 현재 도메인만 센다.
+- **Superadmin audit log range**: 사용자가 실행하지 않았고 도메인의 프로젝트도 가리키지 않는 시스템 기록(scheduler, 전역 설정 기록 등)은 superadmin 감사 로그 카드에 보이지 않는다. 사용자나 프로젝트가 많은 도메인은 감사 로그를 읽을 때마다 긴 scope를 보낸다.
 - **No shareable filter links**: 링크는 page와 프로젝트만 나른다. 카드 설정은 보드에 저장되므로 같은 계정은 어느 기기에서나 같은 값을 본다.
 - **Unmigrated cards**: 이 결정이 들어간 시점의 기존 카드는 `scope`와 `vars`를 읽지 않고 page query와 헤더 값을 쓴다. 고정 카드 중 설정을 적은 카드도 아직 없다.
 - **No domain limit for members**: "My Total Resource Usage"의 한도에는 도메인 한도가 빠진다. 도메인 한도가 사용자, 프로젝트 한도나 자원 그룹 여유분보다 작으면 실제로 할당할 수 있는 양보다 큰 한도를 보인다.
@@ -168,7 +169,7 @@ sequenceDiagram
 
 ## 출처
 
-- #10422 (epic), #10582, #9839, #7843, 2026-10-26 회의, 2026-10-29 결정(카드 하나의 refresh 주기, 기본 1분, 카드마다 자원 그룹 하나), 2026-10-30 결정(보기 모드의 카드 머리 picker, superadmin 감사 로그의 `adminAuditLogsV2`), 2026-11-03 결정(읽을 수 없는 카드 숨김, 설정이 좁힌 카드와 사용자 정의 패널은 안내, 대시보드 자원 그룹은 헤더와 독립이고 기본은 URL 프로젝트의 첫 자원 그룹, "My Total Resource Usage"는 자원 그룹이 제공하는 slot만).
+- #10422 (epic), #10582, #9839, #7843, 2026-10-26 회의, 2026-10-29 결정(카드 하나의 refresh 주기, 기본 1분, 카드마다 자원 그룹 하나), 2026-10-30 결정(보기 모드의 카드 머리 picker), 2026-11-03 결정(읽을 수 없는 카드 숨김, 설정이 좁힌 카드와 사용자 정의 패널은 안내, 대시보드 자원 그룹은 헤더와 독립이고 기본은 URL 프로젝트의 첫 자원 그룹, "My Total Resource Usage"는 자원 그룹이 제공하는 slot만), 2026-11-06 결정(superadmin 감사 로그는 현재 도메인만 읽음).
 - #10422의 role-based dashboard 제안(기간과 갱신, 저장과 마이그레이션).
 - 관련: [ADR 0012](0012-scoped-search-fields-in-place-of-admin-fields.ko.md), [ADR 0026](0026-dashboard-boards-in-manager-app-config.ko.md).
 
