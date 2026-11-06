@@ -85,6 +85,16 @@ export const sanitizeColumnOverrides = (
   return entries.length ? Object.fromEntries(entries) : undefined;
 };
 
+/** The settings keys this client writes for a card; any other stored key belongs to another client. */
+export const ownedSettingKeys = (
+  definition: Pick<PanelDefinition, 'settings' | 'columnSettings'>,
+): Array<keyof PanelSettings> =>
+  _.compact([
+    hasSetting(definition, 'resourceGroup') && 'resourceGroups',
+    hasSetting(definition, 'range') && 'range',
+    definition.columnSettings && 'columnOverrides',
+  ]);
+
 /**
  * The stored settings the definition still declares, malformed values
  * dropped and a multi-group setting cut to its first group; undefined when

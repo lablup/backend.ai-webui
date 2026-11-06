@@ -123,7 +123,8 @@ stateDiagram-v2
 - **Admin-provided defaults**: A superadmin can change the default board of an installation or a domain by writing a template key. A user who already saved boards gets the new template when they press "Reset to default layout".
 - **Write latency**: A board change reaches the server up to 800ms later. Hiding or closing the tab sends it at once, but nothing guarantees the request finishes before the browser unloads the page.
 - **Lost local boards**: A user who arranged boards in localStorage before the upgrade starts again from the template.
-- **Same-board edits**: When two devices edit the panels of the same board at the same time, the panel list of the later write survives. The replay separates changes only down to the board.
+- **Same-panel edits**: A save applies only the panels this tab added, removed, or changed onto the panels the server holds, so a panel added or changed on another device survives. When two devices change the same panel, the later write wins.
+- **Older clients**: A save puts back the stored cards that this client's catalog does not have and the settings its card definitions do not declare, so a save from an older WebUI on the same manager keeps what a newer one added.
 - **Shared queue scope**: The queue orders only dashboard writes. An upsert from a feature that writes another `userConfig` key, such as `useRecentSessionHistory`, can race with it over the USER fragment document.
 - **Vars without consumer**: `vars` is saved, but it does not change a card's data range until the filter bar (#10582) exists.
 - **No pinned projects**: A board has no field that pins a project. `sanitizeDashboardModel` drops a `pinned` value saved earlier.
