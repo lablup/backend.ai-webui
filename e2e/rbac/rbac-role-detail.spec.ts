@@ -60,7 +60,13 @@ async function createTestRole(page: Page, roleName = ROLE_NAME) {
   // matched exactly.
   await modal.getByRole('button', { name: 'Scope Type' }).click();
   await page.getByRole('option', { name: 'Domain', exact: true }).click();
-  await expect(modal.getByRole('button', { name: 'Target' })).toBeHidden();
+  // Target is a combobox (project ComplexSelector) or, while it suspends, a
+  // BAISelect button; neither may remain.
+  await expect(
+    modal
+      .getByRole('combobox', { name: 'Target' })
+      .or(modal.getByRole('button', { name: 'Target' })),
+  ).toBeHidden();
 
   await modal.getByRole('button', { name: 'OK' }).click();
   await expect(modal).toBeHidden({ timeout: 10000 });
@@ -133,10 +139,12 @@ function dataRows(page: Page, scope: Locator | Page = page) {
     .filter({ hasNot: page.getByRole('columnheader') });
 }
 
-// The Add User modal's "Users" field is a paged selector: a trigger button
+// The Add User modal's "Users" field is a paged selector: a combobox trigger
 // opening a "Users" popover with its own "Search options" combobox.
 async function pickAssignUser(page: Page, assignModal: Locator, email: string) {
-  await assignModal.getByRole('button', { name: 'Users' }).click();
+  await assignModal
+    .getByRole('combobox', { name: 'Users', exact: true })
+    .click();
   const userPicker = page.getByRole('dialog', { name: 'Users' });
   await userPicker
     .getByRole('combobox', { name: 'Search options' })
@@ -150,7 +158,7 @@ async function pickAssignUser(page: Page, assignModal: Locator, email: string) {
   await page.keyboard.press('Escape');
   await expect(userPicker).toBeHidden();
   await expect(
-    assignModal.getByRole('button', { name: 'Users' }),
+    assignModal.getByRole('combobox', { name: 'Users', exact: true }),
   ).toContainText(email);
 }
 
@@ -530,7 +538,7 @@ test.describe(
       const assignModal = page.getByRole('dialog', { name: 'Add User' });
       await expect(assignModal).toBeVisible();
       await expect(
-        assignModal.getByRole('button', { name: 'Users' }),
+        assignModal.getByRole('combobox', { name: 'Users', exact: true }),
       ).toBeVisible();
 
       // 8. Attempt to click "Add" (OK) without selecting any user – verify validation error

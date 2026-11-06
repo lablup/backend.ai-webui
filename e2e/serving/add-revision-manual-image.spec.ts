@@ -361,7 +361,7 @@ test.describe(
       );
       await expect(mountsControl).toBeVisible({ timeout: 30000 });
       await mountsControl
-        .getByRole('button', { name: 'Select Folder', exact: true })
+        .getByRole('combobox', { name: 'Select Folder', exact: true })
         .click();
       const popup = page.getByRole('dialog', {
         name: 'Select Folder',

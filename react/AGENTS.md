@@ -3,7 +3,7 @@
 Project-specific guidance for AI coding agents.
 
 <!-- UI-COMMON:START -->
-@lablup/ui-common v0.2.0-alpha.20.canary-20261030093333-ad744b188 · Astryx v0.7.3 · 173 components
+@lablup/ui-common v0.2.0-alpha.21.canary-20261104085608-032a35f28 · Astryx v0.7.7 · 174 components
 CLI: run every command as `pnpm exec ui-common <cmd>` (shown below as `ui-common ...`).
 
 SETUP (once, first in your entry stylesheet) — without these, components render unstyled:
@@ -18,6 +18,7 @@ WORKFLOW — start every page from a template, never from scratch:
 2. `ui-common template <name> <path>` — scaffold it; keep its frame, gap and padding; replace the content.
 3. `ui-common template <Block>` for parts it lacks; `ui-common component <Name>` to read props before using one.
 Changing an existing page? Keep it: skip step 2 and add blocks/components inside its sections.
+Before you deliver a build, run `ui-common doctor --built <dir>`; don't deliver it if it fails.
 
 RULES:
 - No <div> — components handle all layout and spacing.
@@ -35,7 +36,7 @@ RULES:
   docs authoring     build an integration package, and every field it holds
   upgrade --from <old version> --apply   run after a dependency bump
 
-UI-COMMON (@lablup/ui-common v0.2.0-alpha.20.canary-20261030093333-ad744b188 wraps Astryx v0.7.3):
+UI-COMMON (@lablup/ui-common v0.2.0-alpha.21.canary-20261104085608-032a35f28 wraps Astryx v0.7.7):
 - Import only from @lablup/ui-common: the root, or the same subpath Astryx uses (@lablup/ui-common/Button, /theme/tokens.stylex, /lab). Never import @astryxdesign/* directly.
 - Layers: declare `@layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;` once, first, in the entry stylesheet. ui-common's styles sit in `ui-common`; yours go in `components` / `utilities`.
 - Use AlertModal (@lablup/ui-common/AlertModal), not AlertDialog: ui-common hides AlertDialog.

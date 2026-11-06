@@ -236,9 +236,11 @@ describe('ResourcePresetSettingModal edit contract', () => {
     const { seenOperations } = renderEditModal();
 
     // Editing: the name is shown but locked, and the button reads Save.
-    expect(
-      await screen.findByLabelText('resourcePreset.PresetName'),
-    ).toBeDisabled();
+    const presetName = await screen.findByLabelText(
+      'resourcePreset.PresetName',
+    );
+    expect(presetName).toHaveAttribute('aria-disabled', 'true');
+    expect(presetName).toHaveAttribute('readonly');
     await user.click(screen.getByRole('button', { name: /button.Save/ }));
 
     await waitFor(() => {
