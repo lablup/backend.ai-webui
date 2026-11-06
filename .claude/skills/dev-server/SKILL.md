@@ -230,7 +230,7 @@ pre-fill. A `config.toml` that is already there and **not** written by `use` (no
 applies to it in place.
 
 **Switches the PR needs: the `Config:` line.** A PR whose change sits behind a key
-`config.toml` still owns (ADR 0026, section 3) says so in its body with one line —
+`config.toml` still owns (ADR 0028, section 3) says so in its body with one line —
 `Config: general.apiDomainName = "default"` (several, comma-separated:
 `Config: general.apiDomainName = "default", general.signupSupport = true`). A setting
 System Settings serves (`resources.openPortToPublic`, `general.enableModelFolders`, …) is

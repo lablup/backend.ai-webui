@@ -4,7 +4,7 @@
  */
 /**
  * Login configuration: the code defaults, the few keys `config.toml` still
- * carries, and the copy onto `backendaiclient._config` (ADR 0026).
+ * carries, and the copy onto `backendaiclient._config` (ADR 0028).
  */
 
 type ConfigValueType = 'boolean' | 'number' | 'string' | 'array';
@@ -183,7 +183,7 @@ export function getDefaultLoginConfig(): LoginConfigState {
   };
 }
 
-/** The keys config.toml still owns (ADR 0026, section 3); System Settings serves the rest. */
+/** The keys config.toml still owns (ADR 0028, section 3); System Settings serves the rest. */
 export const FILE_ONLY_CONFIG_KEYS: Readonly<
   Record<string, ReadonlyArray<string>>
 > = {
@@ -200,7 +200,7 @@ export const FILE_ONLY_CONFIG_KEYS: Readonly<
 };
 
 /**
- * Applies the keys `config.toml` still owns (ADR 0026, section 3) over the code
+ * Applies the keys `config.toml` still owns (ADR 0028, section 3) over the code
  * defaults. Every other setting comes from the app config documents.
  */
 export function refreshConfigFromToml(config: any): LoginConfigState {
