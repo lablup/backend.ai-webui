@@ -199,22 +199,58 @@ describe('exportConfigToml', () => {
         return 'x';
     }
   };
+  const fileConfig = {
+    general: {
+      apiEndpoint: 'https://api.example',
+      connectionMode: 'SESSION',
+      debug: false,
+    },
+    wsproxy: { proxyURL: 'https://proxy.example/' },
+    resources: { openPortToPublic: false },
+  };
 
-  it('imports back to the values it exported', () => {
-    const text = exportConfigToml((definition) => sample(definition.key));
+  it('imports back to the settings it exported in the full format', () => {
+    const text = exportConfigToml({
+      valueOf: (definition) => sample(definition.key),
+      fileConfig,
+      includeSettings: true,
+    });
     const result = importConfigToml(text);
     if (!result.ok) throw new Error(result.error);
-    expect(result.skipped).toEqual([]);
     expect(result.imported).toHaveLength(WEBUI_SETTING_DEFINITIONS.length);
     for (const entry of result.imported) {
       expect(entry.value).toEqual(sample(entry.definition.key));
     }
+    expect(result.skipped.map((s) => s.reason)).toEqual([
+      'fileOnly',
+      'fileOnly',
+      'fileOnly',
+    ]);
+  });
+
+  it('keeps only the file-only keys in the current format', () => {
+    const text = exportConfigToml({
+      valueOf: (definition) => sample(definition.key),
+      fileConfig,
+      includeSettings: false,
+    });
+    expect(text.trim()).toBe(
+      [
+        '[general]',
+        'apiEndpoint = "https://api.example"',
+        'connectionMode = "SESSION"',
+        '',
+        '[wsproxy]',
+        'proxyURL = "https://proxy.example/"',
+      ].join('\n'),
+    );
   });
 
   it('leaves out settings with no value', () => {
-    const text = exportConfigToml((definition) =>
-      definition.key === 'debug' ? true : undefined,
-    );
+    const text = exportConfigToml({
+      valueOf: (definition) => (definition.key === 'debug' ? true : undefined),
+      includeSettings: true,
+    });
     expect(text.trim()).toBe('[general]\ndebug = true');
   });
 });

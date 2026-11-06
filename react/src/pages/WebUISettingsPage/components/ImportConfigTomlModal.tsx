@@ -6,6 +6,7 @@ import { App } from '../../../app-shim';
 import BAICodeEditor from '../../../components/BAICodeEditor';
 import { downloadBlob } from '../../../helper/csv-util';
 import type { WebUISettingDefinition } from '../../../helper/webuiSettings';
+import { rawConfigState } from '../../../hooks/useWebUIConfig';
 import {
   exportConfigToml,
   importConfigToml,
@@ -16,7 +17,9 @@ import {
 import ImportedValueCell from './ImportedValueCell';
 import { useWebUISettingLabels } from './WebUISettingLabels';
 import { Button } from '@lablup/ui-common/Button';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
 import { Collapsible } from '@lablup/ui-common/Collapsible';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAIAlert,
@@ -25,7 +28,8 @@ import {
   BAITable,
   useBAILogger,
 } from 'backend.ai-ui';
-import { ExternalLink, Import } from 'lucide-react';
+import { useAtomValue } from 'jotai';
+import { Ellipsis, ExternalLink, Import } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -56,6 +60,22 @@ const ImportConfigTomlModal: React.FC<ImportConfigTomlModalProps> = ({
   // Values edited in the preview, by setting key; a new file clears them.
   const [edits, setEdits] = useState<Record<string, unknown>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileConfig = useAtomValue(rawConfigState);
+
+  const exportFile = (includeSettings: boolean) =>
+    downloadBlob(
+      new Blob(
+        [
+          exportConfigToml({
+            valueOf: currentValueOf,
+            fileConfig: fileConfig as Record<string, unknown> | null,
+            includeSettings,
+          }),
+        ],
+        { type: 'application/toml' },
+      ),
+      'config.toml',
+    );
 
   const result = text.trim() ? importConfigToml(text) : undefined;
   const imported = (result?.ok ? result.imported : []).map((entry) =>
@@ -128,19 +148,34 @@ const ImportConfigTomlModal: React.FC<ImportConfigTomlModalProps> = ({
               label={t('webuiSettings.ImportFromFile')}
               onClick={() => fileInputRef.current?.click()}
             />
-            <Button
-              data-testid="import-config-toml-export"
-              icon={<ExternalLink size="1em" />}
-              label={t('webuiSettings.ExportToFile')}
-              onClick={() =>
-                downloadBlob(
-                  new Blob([exportConfigToml(currentValueOf)], {
-                    type: 'application/toml',
-                  }),
-                  'config.toml',
-                )
-              }
-            />
+            <ButtonGroup label={t('webuiSettings.ExportToFile')}>
+              <Button
+                data-testid="import-config-toml-export"
+                icon={<ExternalLink size="1em" />}
+                label={t('webuiSettings.ExportToFile')}
+                onClick={() => exportFile(true)}
+              />
+              <DropdownMenu
+                hasChevron={false}
+                button={{
+                  icon: <Ellipsis size="1em" />,
+                  isIconOnly: true,
+                  label: t('webuiSettings.ExportFormats'),
+                }}
+                items={[
+                  {
+                    label: t('webuiSettings.ExportPreviousFormat'),
+                    description: t('webuiSettings.ExportPreviousFormatDesc'),
+                    onClick: () => exportFile(true),
+                  },
+                  {
+                    label: t('webuiSettings.ExportCurrentFormat'),
+                    description: t('webuiSettings.ExportCurrentFormatDesc'),
+                    onClick: () => exportFile(false),
+                  },
+                ]}
+              />
+            </ButtonGroup>
           </BAIFlex>
           <BAIFlex gap="sm">
             <Button
