@@ -473,16 +473,9 @@ const TotalResourceWithinResourceGroup: React.FC<
                 <Heading level={5}>{resourceGroup}</Heading>
               ) : (
                 <SharedResourceGroupSelectForCurrentProject
-                  size="small"
-                  variant="borderless"
-                  showSearch
-                  style={{ minWidth: 100 }}
-                  loading={
+                  isLoading={
                     currentResourceGroup !== deferredSelectedResourceGroup
                   }
-                  popupMatchSelectWidth={false}
-                  tooltip={t('general.ResourceGroup')}
-                  aria-label={t('general.ResourceGroup')}
                 />
               )}
             </BAIFlex>

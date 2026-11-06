@@ -2,80 +2,68 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useSuspendedBackendaiClient } from '../hooks';
-import useControllableState_deprecated from '../hooks/useControllableState';
 import {
+  useCurrentProjectValue,
   useCurrentResourceGroupState,
   useResourceGroupsForCurrentProject,
 } from '../hooks/useCurrentProject';
-import { BAISelect, BAISelectProps, BAITextHighlighter } from 'backend.ai-ui';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { BAIScopedResourceGroupSelect } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useState, useTransition } from 'react';
+import { useTranslation } from 'react-i18next';
 
-interface ResourceGroupSelectForCurrentProjectProps extends Omit<
-  BAISelectProps,
-  'defaultValue' | 'value' | 'allowClear' | 'onClear' | 'onChange'
-> {
-  onChangeInTransition?: BAISelectProps['onChange'];
+interface SharedResourceGroupSelectForCurrentProjectProps {
+  /** The card's own query is still loading for the picked group. */
+  isLoading?: boolean;
+  onChangeInTransition?: (resourceGroup: string) => void;
 }
 
+/** The current project's resource group, kept as the app's current one, picked like a dashboard card header's picker. */
 const SharedResourceGroupSelectForCurrentProject: React.FC<
-  ResourceGroupSelectForCurrentProjectProps
-> = ({
-  // filter,
-  showSearch,
-  onChangeInTransition,
-  loading,
-  ...selectProps
-}) => {
-  useSuspendedBackendaiClient(); // To make sure the client is ready
-  const [controllableSearchValue, setControllableSearchValue] =
-    useControllableState_deprecated<string>({
-      value:
-        typeof showSearch === 'object' ? showSearch.searchValue : undefined,
-      onChange:
-        typeof showSearch === 'object' ? showSearch.onSearch : undefined,
-    });
+  SharedResourceGroupSelectForCurrentProjectProps
+> = ({ isLoading, onChangeInTransition }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const currentProject = useCurrentProjectValue();
   const [currentResourceGroup, setCurrentResourceGroup] =
     useCurrentResourceGroupState();
-
-  const [isPendingLoading, startLoadingTransition] = useTransition();
-  const { nonSftpResourceGroups } = useResourceGroupsForCurrentProject();
+  const { sftpResourceGroups } = useResourceGroupsForCurrentProject();
+  const [isPending, startTransition] = useTransition();
   const [optimisticValue, setOptimisticValue] = useState(currentResourceGroup);
 
   return (
-    <BAISelect
-      defaultActiveFirstOption
-      loading={isPendingLoading || loading}
-      options={_.map(nonSftpResourceGroups, (resourceGroup) => {
-        return { value: resourceGroup.name, label: resourceGroup.name };
-      })}
-      optionRender={(option) => {
-        return (
-          <BAITextHighlighter keyword={controllableSearchValue}>
-            {option.data.value?.toString()}
-          </BAITextHighlighter>
-        );
-      }}
-      showSearch={
-        showSearch
-          ? {
-              onSearch: setControllableSearchValue,
-              searchValue: controllableSearchValue,
-            }
-          : undefined
-      }
-      {...selectProps}
-      disabled={isPendingLoading}
-      value={isPendingLoading ? optimisticValue : currentResourceGroup}
-      onChange={(value, option) => {
-        setOptimisticValue(value);
-        startLoadingTransition(() => {
-          setCurrentResourceGroup(value);
-          onChangeInTransition?.(value, option);
-        });
-      }}
-    />
+    // To the right, so it never covers the select's own tooltips above.
+    <Tooltip
+      content={t('general.ResourceGroup')}
+      placement="end"
+      hasHoverIndication={false}
+    >
+      <BAIScopedResourceGroupSelect
+        size="sm"
+        variant="ghost"
+        label={t('general.ResourceGroup')}
+        isLabelHidden
+        scope={{
+          project: _.compact([currentProject.id]).map((value) => ({ value })),
+        }}
+        filter={
+          _.isEmpty(sftpResourceGroups)
+            ? undefined
+            : { name: { notIn: _.compact(sftpResourceGroups) } }
+        }
+        isLoading={isPending || isLoading}
+        value={isPending ? optimisticValue : currentResourceGroup}
+        onChange={(value) => {
+          if (typeof value !== 'string') return;
+          setOptimisticValue(value);
+          startTransition(() => {
+            setCurrentResourceGroup(value);
+            onChangeInTransition?.(value);
+          });
+        }}
+      />
+    </Tooltip>
   );
 };
 

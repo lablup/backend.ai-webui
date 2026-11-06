@@ -80,15 +80,7 @@ const MyResourceWithinResourceGroup: React.FC<
                 <Trans i18nKey="webui.menu.MyResourcesInResourceGroupDescription" />
               }
             />
-            <SharedResourceGroupSelectForCurrentProject
-              size="small"
-              variant="borderless"
-              showSearch
-              style={{ minWidth: 100 }}
-              popupMatchSelectWidth={false}
-              tooltip={t('general.ResourceGroup')}
-              aria-label={t('general.ResourceGroup')}
-            />
+            <SharedResourceGroupSelectForCurrentProject />
           </BAIFlex>
         }
         extra={
