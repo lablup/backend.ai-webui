@@ -977,8 +977,6 @@
     "settings": {
       "AllResourceGroups": "Todos os grupos de recursos",
       "BackToSavedSetting": "Voltar à configuração salva ({{value}})",
-      "CustomRange": "Intervalo personalizado",
-      "CustomRangeHelp": "Escolha um início e um fim com no máximo {{days}} dias de diferença. Um fim depois de agora é ajustado para agora.",
       "DefaultCardSettings": "Configurações padrão do cartão",
       "DefaultResourceGroup": "Grupo de recursos padrão",
       "DefaultSettings": "Configurações padrão",
@@ -988,10 +986,6 @@
       "Last1Hour": "Última 1 hora",
       "Last24Hours": "Últimas 24 horas",
       "Last7Days": "Últimos 7 dias",
-      "RangeEnd": "Fim",
-      "RangeEndBeforeStart": "O fim deve ser depois do início.",
-      "RangeStart": "Início",
-      "RangeTooLong": "O intervalo pode ter no máximo {{days}} dias.",
       "ResourceGroupsDescription": "Se nenhum for selecionado: {{default}}",
       "TimeRange": "Intervalo de tempo"
     }

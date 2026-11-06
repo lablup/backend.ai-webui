@@ -977,8 +977,6 @@
     "settings": {
       "AllResourceGroups": "Tüm kaynak grupları",
       "BackToSavedSetting": "Kaydedilen ayara dön ({{value}})",
-      "CustomRange": "Özel aralık",
-      "CustomRangeHelp": "En fazla {{days}} gün arayla bir başlangıç ve bitiş seçin. Şu andan sonraki bir bitiş şu ana ayarlanır.",
       "DefaultCardSettings": "Varsayılan kart ayarları",
       "DefaultResourceGroup": "Varsayılan kaynak grubu",
       "DefaultSettings": "Varsayılan ayarlar",
@@ -988,10 +986,6 @@
       "Last1Hour": "Son 1 saat",
       "Last24Hours": "Son 24 saat",
       "Last7Days": "Son 7 gün",
-      "RangeEnd": "Bitiş",
-      "RangeEndBeforeStart": "Bitiş başlangıçtan sonra olmalıdır.",
-      "RangeStart": "Başlangıç",
-      "RangeTooLong": "Aralık en fazla {{days}} gün olabilir.",
       "ResourceGroupsDescription": "Hiçbiri seçilmezse: {{default}}",
       "TimeRange": "Zaman aralığı"
     }

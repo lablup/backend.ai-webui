@@ -977,8 +977,6 @@
     "settings": {
       "AllResourceGroups": "所有资源组",
       "BackToSavedSetting": "恢复为已保存的设置（{{value}}）",
-      "CustomRange": "自定义范围",
-      "CustomRangeHelp": "选择间隔不超过 {{days}} 天的开始和结束时间。晚于当前时间的结束时间会设为当前时间。",
       "DefaultCardSettings": "卡片默认设置",
       "DefaultResourceGroup": "默认资源组",
       "DefaultSettings": "默认设置",
@@ -988,10 +986,6 @@
       "Last1Hour": "最近 1 小时",
       "Last24Hours": "最近 24 小时",
       "Last7Days": "最近 7 天",
-      "RangeEnd": "结束",
-      "RangeEndBeforeStart": "结束时间必须晚于开始时间。",
-      "RangeStart": "开始",
-      "RangeTooLong": "时间范围最多为 {{days}} 天。",
       "ResourceGroupsDescription": "未选择时：{{default}}",
       "TimeRange": "时间范围"
     }

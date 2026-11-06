@@ -977,8 +977,6 @@
     "settings": {
       "AllResourceGroups": "Бүх нөөцийн бүлэг",
       "BackToSavedSetting": "Хадгалсан тохиргоо руу буцах ({{value}})",
-      "CustomRange": "Өөрөө сонгох",
-      "CustomRangeHelp": "Эхлэл ба төгсгөлийг хамгийн ихдээ {{days}} хоногийн зайтай сонгоно уу. Одоогоос хойших төгсгөлийг одоо болгоно.",
       "DefaultCardSettings": "Картын үндсэн тохиргоо",
       "DefaultResourceGroup": "Үндсэн нөөцийн бүлэг",
       "DefaultSettings": "Үндсэн тохиргоо",
@@ -988,10 +986,6 @@
       "Last1Hour": "Сүүлийн 1 цаг",
       "Last24Hours": "Сүүлийн 24 цаг",
       "Last7Days": "Сүүлийн 7 хоног",
-      "RangeEnd": "Төгсгөл",
-      "RangeEndBeforeStart": "Төгсгөл эхлэлээс хойш байх ёстой.",
-      "RangeStart": "Эхлэл",
-      "RangeTooLong": "Хугацаа хамгийн ихдээ {{days}} хоног байна.",
       "ResourceGroupsDescription": "Сонгоогүй бол: {{default}}",
       "TimeRange": "Хугацааны муж"
     }
