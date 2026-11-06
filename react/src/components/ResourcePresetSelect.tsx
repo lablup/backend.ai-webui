@@ -374,13 +374,13 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   ];
 
   return (
-    // PILOT-DECISION: antd `onOpenChange` (used only to throttle-refetch the
-    // presets when the popup opens) has no Astryx equivalent. Rather than lose
-    // the refresh, the same trigger is read one level up — a `display:contents`
-    // wrapper that sees the pointer-down that opens the popup.
+    // BAISelect drops `onOpenChange`, so the popup-open refetch reads the
+    // trigger's pointer-down here. React events bubble out of the portalled
+    // popup too, so a press inside the option list must not refetch.
     <div
       style={{ display: 'contents' }}
-      onPointerDownCapture={() => {
+      onPointerDownCapture={(e) => {
+        if ((e.target as Element).closest?.('[role="listbox"]')) return;
         updateFetchKeyUnderTransition();
       }}
     >
