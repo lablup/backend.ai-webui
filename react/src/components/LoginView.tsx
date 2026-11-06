@@ -228,16 +228,18 @@ const LoginView: React.FC<{
   const [isEndpointDisabled, setIsEndpointDisabled] = useState(false);
 
   const [form] = Form.useForm();
-  // A build whose bundled config.toml pins apiEndpoint keeps it fixed in
-  // Electron too: no endpoint step and no "Change endpoint".
+  // A config.toml that pins apiEndpoint keeps it fixed: no endpoint step and
+  // no "Change endpoint". Without one, the web asks for the server first, as
+  // Electron does; it waits for the file so a pinned page never flashes it.
   const isEndpointPinned =
     isConfigLoaded &&
     !!atomLoginConfig?.api_endpoint &&
     !devApiEndpointOverride;
-  const isElectron =
-    !!(globalThis as Record<string, unknown>).isElectron && !isEndpointPinned;
+  const usesEndpointStep = (globalThis as Record<string, unknown>).isElectron
+    ? !isEndpointPinned
+    : isConfigLoaded && !isEndpointPinned;
   const endpointStep = useElectronEndpointStep({
-    isElectron,
+    isEnabled: usesEndpointStep,
     isPanelOpen: isLoginPanelOpen,
     storedEndpoint: serverEndpoint,
     onConfirmed: (endpoint) => {
@@ -357,7 +359,7 @@ const LoginView: React.FC<{
   // sign-in, so a mode stored from an earlier version cannot strand the user.
   const isApiSigninBlocked =
     !!loginConfig.api_endpoint ||
-    (isElectron && !loginConfig.change_signin_support);
+    (usesEndpointStep && !loginConfig.change_signin_support);
   const effectiveConnectionMode: ConnectionMode = isApiSigninBlocked
     ? 'SESSION'
     : connectionMode;
@@ -1048,7 +1050,7 @@ const LoginView: React.FC<{
     // Electron signs in by session against the confirmed webserver; the form
     // field is the manager for API mode.
     const epInput =
-      isElectron && effectiveConnectionMode === 'SESSION'
+      usesEndpointStep && effectiveConnectionMode === 'SESSION'
         ? serverEndpoint
         : form.getFieldValue('api_endpoint') || apiEndpoint;
     const ep = epInput.replace(/\/+$/, '').trim();
@@ -1061,10 +1063,7 @@ const LoginView: React.FC<{
 
     setIsLoading(true);
 
-    if (
-      (globalThis as Record<string, unknown>).isElectron &&
-      effectiveConnectionMode === 'SESSION'
-    ) {
+    if (usesEndpointStep && effectiveConnectionMode === 'SESSION') {
       await loadConfigFromWebServer(ep);
     }
 
@@ -1103,7 +1102,7 @@ const LoginView: React.FC<{
     form,
     apiEndpoint,
     serverEndpoint,
-    isElectron,
+    usesEndpointStep,
     effectiveConnectionMode,
     connectUsingSession,
     connectUsingAPI,
@@ -1129,7 +1128,7 @@ const LoginView: React.FC<{
   const login = useCallback(
     async (showError = true) => {
       const ep = resolveEndpoint();
-      if ((globalThis as Record<string, unknown>).isElectron) {
+      if (usesEndpointStep && effectiveConnectionMode === 'SESSION') {
         await loadConfigFromWebServer(ep);
       }
       if (effectiveConnectionMode === 'SESSION') {
@@ -1142,6 +1141,7 @@ const LoginView: React.FC<{
     },
     [
       resolveEndpoint,
+      usesEndpointStep,
       effectiveConnectionMode,
       connectUsingSession,
       connectUsingAPI,
@@ -1153,7 +1153,7 @@ const LoginView: React.FC<{
   // Used by the orchestration hook as `onCheckLogin`.
   const checkLogin = useCallback(async (): Promise<boolean | 'unreachable'> => {
     const ep = resolveEndpoint();
-    if ((globalThis as Record<string, unknown>).isElectron) {
+    if (usesEndpointStep && effectiveConnectionMode === 'SESSION') {
       await loadConfigFromWebServer(ep);
     }
     if (effectiveConnectionMode === 'SESSION') {
@@ -1183,7 +1183,7 @@ const LoginView: React.FC<{
       }
     }
     return false;
-  }, [resolveEndpoint, effectiveConnectionMode]);
+  }, [resolveEndpoint, usesEndpointStep, effectiveConnectionMode]);
 
   // Log out the current session on the server.
   // Used by the orchestration hook as `onLogoutSession`.
@@ -1404,7 +1404,7 @@ const LoginView: React.FC<{
           ) : undefined
         }
         onChangeEndpoint={
-          isElectron
+          usesEndpointStep
             ? () => {
                 setLoginError(null);
                 setOtpRequired(false);
@@ -1416,9 +1416,9 @@ const LoginView: React.FC<{
               }
             : undefined
         }
-        serverEndpoint={isElectron ? serverEndpoint : undefined}
+        serverEndpoint={usesEndpointStep ? serverEndpoint : undefined}
         endpointNotice={
-          isElectron && endpointStep.hasNoDomain
+          usesEndpointStep && endpointStep.hasNoDomain
             ? t('login.EndpointNoDomain')
             : null
         }
