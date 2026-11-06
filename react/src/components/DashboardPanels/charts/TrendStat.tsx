@@ -62,6 +62,8 @@ const TrendStat: React.FC<TrendStatProps> = ({
         xKey="bucket"
         yKeys={['value']}
         height={SPARKLINE_HEIGHT}
+        // From zero, so an all-zero range lies on the baseline like its neighbours instead of mid-height.
+        yDomain={[0, Math.max(1, ...points.map(({ value }) => value))]}
         margin={{ top: 2, right: 0, bottom: 2, left: 0 }}
         label={statProps.label}
       >
