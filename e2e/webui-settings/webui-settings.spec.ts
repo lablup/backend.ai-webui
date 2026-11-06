@@ -544,7 +544,27 @@ test.describe(
 
       await api.writeSettings('public', { ssoRealmName: 'e2e-realm' });
       await enablePublicSlice(page, request, api.domainName);
+      const publicSlice = page.waitForResponse(
+        (response) =>
+          response.url().includes('/func/v2/app-config/public/get') &&
+          response.ok(),
+      );
       await openLoginPage(page);
+
+      // The public slice was read: it carries the one key written above.
+      const payload = await (await publicSlice).json();
+      const publicDoc = payload?.app_configs?.find(
+        (entry: { config_name: string }) =>
+          entry.config_name === 'publicConfigByDomain',
+      )?.config;
+      expect(publicDoc?.[api.domainName]?.settings?.ssoRealmName).toBe(
+        'e2e-realm',
+      );
+      if (fileVendors.includes('openid')) {
+        await expect(
+          page.getByRole('button', { name: 'Login with e2e-realm' }),
+        ).toBeVisible();
+      }
 
       const signinSwitch = page.getByRole('radiogroup', {
         name: 'Login',
