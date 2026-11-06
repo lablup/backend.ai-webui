@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ea488334eb263514a7711d2238d5c077>>
+ * @generated SignedSource<<fe8bec860a2c68e549ff97362f909aaf>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,21 +10,20 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { Result } from "relay-runtime";
+export type SessionScope = {
+  sessionId: string;
+};
 export type PendingSessionsPanelReasonQuery$variables = {
-  filter: string;
-  first: number;
-  scopeId: any;
-  skip: boolean;
+  scope: SessionScope;
 };
 export type PendingSessionsPanelReasonQuery$data = {
-  readonly compute_session_nodes?: Result<{
+  readonly sessionScopedSchedulingHistories: Result<{
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly row_id: string | null | undefined;
-        readonly status_data: string | null | undefined;
-        readonly status_info: string | null | undefined;
-      } | null | undefined;
-    } | null | undefined>;
+        readonly errorCode: string | null | undefined;
+        readonly message: string | null | undefined;
+      };
+    }>;
   } | null | undefined, unknown>;
 };
 export type PendingSessionsPanelReasonQuery = {
@@ -33,122 +32,103 @@ export type PendingSessionsPanelReasonQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "filter"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "first"
-},
-v2 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "scopeId"
-},
-v3 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "skip"
-},
-v4 = [
+var v0 = [
   {
-    "kind": "Variable",
-    "name": "filter",
-    "variableName": "filter"
-  },
-  {
-    "kind": "Variable",
-    "name": "first",
-    "variableName": "first"
-  },
-  {
-    "kind": "Variable",
-    "name": "scope_id",
-    "variableName": "scopeId"
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "scope"
   }
 ],
-v5 = {
+v1 = [
+  {
+    "kind": "Literal",
+    "name": "filter",
+    "value": {
+      "result": {
+        "notEquals": "SUCCESS"
+      }
+    }
+  },
+  {
+    "kind": "Literal",
+    "name": "limit",
+    "value": 1
+  },
+  {
+    "kind": "Literal",
+    "name": "orderBy",
+    "value": [
+      {
+        "direction": "DESC",
+        "field": "UPDATED_AT"
+      }
+    ]
+  },
+  {
+    "kind": "Variable",
+    "name": "scope",
+    "variableName": "scope"
+  }
+],
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "row_id",
+  "name": "message",
   "storageKey": null
 },
-v6 = {
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "status_info",
-  "storageKey": null
-},
-v7 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "status_data",
+  "name": "errorCode",
   "storageKey": null
 };
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/),
-      (v2/*: any*/),
-      (v3/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "PendingSessionsPanelReasonQuery",
     "selections": [
       {
-        "condition": "skip",
-        "kind": "Condition",
-        "passingValue": false,
-        "selections": [
-          {
-            "kind": "CatchField",
-            "field": {
+        "kind": "CatchField",
+        "field": {
+          "alias": null,
+          "args": (v1/*: any*/),
+          "concreteType": "SessionSchedulingHistoryConnection",
+          "kind": "LinkedField",
+          "name": "sessionScopedSchedulingHistories",
+          "plural": false,
+          "selections": [
+            {
               "alias": null,
-              "args": (v4/*: any*/),
-              "concreteType": "ComputeSessionConnection",
+              "args": null,
+              "concreteType": "SessionSchedulingHistoryEdge",
               "kind": "LinkedField",
-              "name": "compute_session_nodes",
-              "plural": false,
+              "name": "edges",
+              "plural": true,
               "selections": [
                 {
                   "alias": null,
                   "args": null,
-                  "concreteType": "ComputeSessionEdge",
+                  "concreteType": "SessionSchedulingHistory",
                   "kind": "LinkedField",
-                  "name": "edges",
-                  "plural": true,
+                  "name": "node",
+                  "plural": false,
                   "selections": [
-                    {
-                      "alias": null,
-                      "args": null,
-                      "concreteType": "ComputeSessionNode",
-                      "kind": "LinkedField",
-                      "name": "node",
-                      "plural": false,
-                      "selections": [
-                        (v5/*: any*/),
-                        (v6/*: any*/),
-                        (v7/*: any*/)
-                      ],
-                      "storageKey": null
-                    }
+                    (v2/*: any*/),
+                    (v3/*: any*/)
                   ],
                   "storageKey": null
                 }
               ],
               "storageKey": null
-            },
-            "to": "RESULT"
-          }
-        ]
+            }
+          ],
+          "storageKey": null
+        },
+        "to": "RESULT"
       }
     ],
     "type": "Query",
@@ -156,55 +136,41 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v2/*: any*/),
-      (v0/*: any*/),
-      (v1/*: any*/),
-      (v3/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "PendingSessionsPanelReasonQuery",
     "selections": [
       {
-        "condition": "skip",
-        "kind": "Condition",
-        "passingValue": false,
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "SessionSchedulingHistoryConnection",
+        "kind": "LinkedField",
+        "name": "sessionScopedSchedulingHistories",
+        "plural": false,
         "selections": [
           {
             "alias": null,
-            "args": (v4/*: any*/),
-            "concreteType": "ComputeSessionConnection",
+            "args": null,
+            "concreteType": "SessionSchedulingHistoryEdge",
             "kind": "LinkedField",
-            "name": "compute_session_nodes",
-            "plural": false,
+            "name": "edges",
+            "plural": true,
             "selections": [
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "ComputeSessionEdge",
+                "concreteType": "SessionSchedulingHistory",
                 "kind": "LinkedField",
-                "name": "edges",
-                "plural": true,
+                "name": "node",
+                "plural": false,
                 "selections": [
+                  (v2/*: any*/),
+                  (v3/*: any*/),
                   {
                     "alias": null,
                     "args": null,
-                    "concreteType": "ComputeSessionNode",
-                    "kind": "LinkedField",
-                    "name": "node",
-                    "plural": false,
-                    "selections": [
-                      (v5/*: any*/),
-                      (v6/*: any*/),
-                      (v7/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "id",
-                        "storageKey": null
-                      }
-                    ],
+                    "kind": "ScalarField",
+                    "name": "id",
                     "storageKey": null
                   }
                 ],
@@ -213,21 +179,22 @@ return {
             ],
             "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "8ee241d27178474ab3fd3c4fe562057b",
+    "cacheID": "75212c84a34ecb4e5ba1d3485d1384f7",
     "id": null,
     "metadata": {},
     "name": "PendingSessionsPanelReasonQuery",
     "operationKind": "query",
-    "text": "query PendingSessionsPanelReasonQuery(\n  $scopeId: ScopeField!\n  $filter: String!\n  $first: Int!\n  $skip: Boolean!\n) {\n  compute_session_nodes(scope_id: $scopeId, filter: $filter, first: $first) @skip(if: $skip) {\n    edges {\n      node {\n        row_id\n        status_info\n        status_data\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query PendingSessionsPanelReasonQuery(\n  $scope: SessionScope!\n) {\n  sessionScopedSchedulingHistories(scope: $scope, filter: {result: {notEquals: SUCCESS}}, orderBy: [{field: UPDATED_AT, direction: DESC}], limit: 1) {\n    edges {\n      node {\n        message\n        errorCode\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "87d450d91d070233597f8b853892e447";
+(node as any).hash = "8f2b816e358c9a5ca355a96bf75b2d5a";
 
 export default node;
