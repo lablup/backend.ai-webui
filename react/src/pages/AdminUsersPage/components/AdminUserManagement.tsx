@@ -515,7 +515,13 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex justify="between" align="start" gap="xs" wrap="wrap">
-        <BAIFlex direction="row" gap={'sm'} align="start" wrap="wrap">
+        <BAIFlex
+          direction="row"
+          gap={'sm'}
+          align="start"
+          wrap="wrap"
+          style={{ flexShrink: 1 }}
+        >
           <BAISegmentedControl
             value={statusValue}
             onChange={(value) => {

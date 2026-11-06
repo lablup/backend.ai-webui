@@ -655,7 +655,7 @@ importers:
         specifier: ^1.58.2
         version: 1.58.2
       sharp:
-        specifier: ^0.35.4
+        specifier: ^0.35.5
         version: 0.35.5(@types/node@22.20.1)
       tsx:
         specifier: ^4.21.0
@@ -866,7 +866,7 @@ importers:
         specifier: 'catalog:'
         version: 20.1.1
       storybook:
-        specifier: ^10.5.7
+        specifier: ^10.6.2
         version: 10.6.2(@types/react@19.3.0)(bufferutil@4.1.0)(prettier@3.9.6)(react@19.3.1)(utf-8-validate@6.0.6)
       typescript:
         specifier: ~6.0.3
@@ -1233,7 +1233,7 @@ importers:
         specifier: ^1.0.30001807
         version: 1.0.30001807
       compression:
-        specifier: ^1.8.1
+        specifier: ^1.8.2
         version: 1.8.2(supports-color@8.1.1)
       eslint:
         specifier: 'catalog:'
