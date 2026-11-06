@@ -68,7 +68,7 @@ export type ConfigTomlImport =
   | { ok: true; imported: ImportedSetting[]; skipped: SkippedKey[] }
   | { ok: false; error: string };
 
-const isUnsetText = (value: string) => {
+export const isUnsetText = (value: string) => {
   const text = value.trim();
   return text === '' || text === '""' || /^\[[\s\S]*\]$/.test(text);
 };
@@ -165,32 +165,28 @@ export const importConfigToml = (text: string): ConfigTomlImport => {
     }
   }
 
+  const leaves = leafPaths(doc);
+  const present = new Set(leaves.map(([path]) => path));
   const imported: ImportedSetting[] = [];
   const skipped: SkippedKey[] = [];
-  for (const [path, raw] of leafPaths(doc)) {
+  for (const [path, raw] of leaves) {
     const definition = definitionByPath.get(path);
     if (!definition) {
       if (!isFileOnlyPath(path)) skipped.push({ path, reason: 'unknown' });
       continue;
     }
+    // Two spellings of one setting: only the earlier one in tomlPathsOf is
+    // read, as the old parser's `a ?? b` did, even when its value is invalid.
+    const paths = tomlPathsOf(definition);
+    if (paths.slice(0, paths.indexOf(path)).some((p) => present.has(p))) {
+      skipped.push({ path, reason: 'duplicate' });
+      continue;
+    }
     const value = coerce(definition, raw);
     if (value === null || !isApplicableSettingValue(definition, value)) {
       skipped.push({ path, reason: 'invalid' });
-      continue;
-    }
-    // Two spellings of one setting: the earlier one in tomlPathsOf wins, as
-    // the old parser's `a ?? b` did, whatever the order in the file.
-    const at = imported.findIndex((entry) => entry.definition === definition);
-    if (at < 0) {
-      imported.push({ definition, path, value });
     } else {
-      const paths = tomlPathsOf(definition);
-      if (paths.indexOf(path) < paths.indexOf(imported[at].path)) {
-        skipped.push({ path: imported[at].path, reason: 'duplicate' });
-        imported[at] = { definition, path, value };
-      } else {
-        skipped.push({ path, reason: 'duplicate' });
-      }
+      imported.push({ definition, path, value });
     }
   }
   return { ok: true, imported, skipped };

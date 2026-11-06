@@ -6,7 +6,10 @@ import {
   restrictToOptions,
   type WebUISettingDefinition,
 } from '../../../helper/webuiSettings';
-import { isApplicableSettingValue } from '../helper/importConfigToml';
+import {
+  isApplicableSettingValue,
+  isUnsetText,
+} from '../helper/importConfigToml';
 import './ImportedValueCell.css';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
@@ -73,13 +76,14 @@ const ImportedValueCell: React.FC<ImportedValueCellProps> = ({
       return undefined;
     }
     if (typeof raw !== 'string') return raw;
+    if (isUnsetText(raw)) return undefined;
     if (definition.type === 'stringList') {
       const list = parseList(raw);
       return list.length === 0
         ? undefined
         : restrictToOptions(definition, list);
     }
-    return raw.trim() === '' ? undefined : raw.trim();
+    return raw.trim();
   };
   const isValid = isApplicableSettingValue(definition, toCandidate(draft));
 
@@ -193,6 +197,7 @@ const ImportedValueCell: React.FC<ImportedValueCellProps> = ({
         variant="ghost"
         icon={<Check size="1em" />}
         label={t('button.Save')}
+        isDisabled={!isValid}
         onClick={commit}
       />
       <IconButton

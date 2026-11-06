@@ -186,6 +186,16 @@ edition = "Enterprise"
     ]);
   });
 
+  it('does not fall back to the lowercase ATOM+ key when the uppercase one is invalid', () => {
+    const text =
+      '[resources]\nmaxATOMPLUSDevicesPerContainer = "abc"\nmaxATOMPlUSDevicesPerContainer = 8';
+    expect(valueOf(text, 'maxATOMPLUSDevicesPerContainer')).toBeUndefined();
+    expect(skippedOf(text)).toEqual([
+      { path: 'resources.maxATOMPLUSDevicesPerContainer', reason: 'invalid' },
+      { path: 'resources.maxATOMPlUSDevicesPerContainer', reason: 'duplicate' },
+    ]);
+  });
+
   it('reads a literal "" as unset, as the old parser did', () => {
     const result = importConfigToml(`[pipeline]\nfrontendEndpoint = '""'`);
     if (!result.ok) throw new Error(result.error);
