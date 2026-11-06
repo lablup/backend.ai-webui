@@ -12,7 +12,7 @@ import {
 } from '../../../helper/webuiSettings';
 import * as _ from 'lodash-es';
 
-/** The settings as the two app config documents hold them (ADR 0026). */
+/** The settings as the two app config documents hold them (ADR 0028). */
 export type SettingsJson = Record<WebUISettingScope, Record<string, unknown>>;
 
 const SCOPES: ReadonlyArray<WebUISettingScope> = ['public', 'domain'];
