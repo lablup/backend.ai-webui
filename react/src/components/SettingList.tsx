@@ -51,18 +51,27 @@ const navPanelPadding: CSSProperties = {
   paddingInline: 'var(--spacing-3)',
 };
 
-// Layout escapes the card padding on its own (`--container-padding-*`); only
-// its top margin is kept so the gap under the toolbar survives, and the top
-// border runs edge to edge like the card header's divider.
-const bodyBleed: CSSProperties = {
-  marginBlockStart: 0,
-  borderBlockStart: '1px solid var(--color-border)',
-};
-// The narrow nav list is a plain flex column, so it bleeds by hand.
-const narrowNavBleed: CSSProperties = {
-  ...bodyBleed,
+// Layout escapes the card padding on its own (`--container-padding-*`); the
+// edge-to-edge divider above it belongs to the toolbar band.
+const bodyBleed: CSSProperties = { marginBlockStart: 0 };
+const inlineBleed: CSSProperties = {
   marginInlineStart: 'calc(-1 * var(--container-padding-inline-start, 0px))',
   marginInlineEnd: 'calc(-1 * var(--container-padding-inline-end, 0px))',
+};
+// The narrow nav list is a plain flex column, so it bleeds by hand.
+const narrowNavBleed: CSSProperties = { ...bodyBleed, ...inlineBleed };
+
+// The toolbar band runs from the card's top padding to the divider, edge to
+// edge, so the sticky part covers the whole strip and nothing scrolls under it.
+const toolbarBand: CSSProperties = {
+  ...inlineBleed,
+  marginBlockStart: 'calc(-1 * var(--container-padding-block-start, 0px))',
+  paddingBlockStart: 'var(--container-padding-block-start, 0px)',
+  paddingInlineStart: 'var(--container-padding-inline-start, 0px)',
+  paddingInlineEnd: 'var(--container-padding-inline-end, 0px)',
+  paddingBlockEnd: 'var(--spacing-5)',
+  borderBlockEnd: '1px solid var(--color-border)',
+  background: 'var(--color-background-card)',
 };
 
 const ALL_NAV_KEY = 'all';
@@ -91,18 +100,18 @@ interface SettingPageProps {
    */
   hideGroupNav?: boolean;
   /**
-   * Keep the toolbar (search, filters, Reset / Apply) and the group nav in view
-   * while the page scrolls, for long lists saved with one Apply.
+   * Keep the toolbar band (search, filters, Reset / Apply, down to its divider)
+   * and the group nav in view while the page scrolls. On by default with the
+   * group nav; the stacked `hideGroupNav` layout has no band.
    */
   isStickyHeader?: boolean;
 }
 
-const stickyToolbar: CSSProperties = {
+const stickyBand: CSSProperties = {
+  ...toolbarBand,
   position: 'sticky',
   top: 0,
   zIndex: 1,
-  paddingBlock: 'var(--spacing-2)',
-  background: 'var(--color-background-card)',
 };
 
 const GroupSettingItems: React.FC<
@@ -163,9 +172,9 @@ const SettingList: React.FC<SettingPageProps> = ({
   showSearchBar,
   primaryButton,
   extraButton,
-  isStickyHeader = false,
   onReset,
   hideGroupNav = false,
+  isStickyHeader = !hideGroupNav,
 }) => {
   'use memo';
 
@@ -332,13 +341,15 @@ const SettingList: React.FC<SettingPageProps> = ({
 
   return (
     <>
-      <BAIFlex direction="column" gap={'md'} align="stretch">
+      <BAIFlex direction="column" gap={hideGroupNav ? 'md' : 0} align="stretch">
         <BAIFlex
           ref={toolbarRef}
           justify="start"
           gap={'xs'}
           wrap="nowrap"
-          style={isStickyHeader ? stickyToolbar : undefined}
+          style={
+            hideGroupNav ? undefined : isStickyHeader ? stickyBand : toolbarBand
+          }
         >
           {!!showSearchBar && (
             // The flex item is the field's OUTER box, which `TextInput` does
