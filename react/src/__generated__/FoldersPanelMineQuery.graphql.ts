@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7b3da8dd7ce794c86ab740ad11478e6a>>
+ * @generated SignedSource<<773638d729a94aedaa7de744a6c9b2de>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,21 +9,22 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type MyFoldersPanelQuery$variables = Record<PropertyKey, never>;
-export type MyFoldersPanelQuery$data = {
-  readonly folders: {
-    readonly count: number;
-  } | null | undefined;
-  readonly myUserResourcePolicyV2: {
+import { Result } from "relay-runtime";
+export type FoldersPanelMineQuery$variables = Record<PropertyKey, never>;
+export type FoldersPanelMineQuery$data = {
+  readonly myUserResourcePolicyV2: Result<{
     readonly maxVfolderCount: number;
-  } | null | undefined;
-  readonly trash: {
+  } | null | undefined, unknown>;
+  readonly ready: Result<{
     readonly count: number;
-  } | null | undefined;
+  } | null | undefined, unknown>;
+  readonly trash: Result<{
+    readonly count: number;
+  } | null | undefined, unknown>;
 };
-export type MyFoldersPanelQuery = {
-  response: MyFoldersPanelQuery$data;
-  variables: MyFoldersPanelQuery$variables;
+export type FoldersPanelMineQuery = {
+  response: FoldersPanelMineQuery$data;
+  variables: FoldersPanelMineQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -42,7 +43,7 @@ v1 = [
   }
 ],
 v2 = {
-  "alias": "folders",
+  "alias": "ready",
   "args": [
     {
       "kind": "Literal",
@@ -100,21 +101,33 @@ return {
     "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
-    "name": "MyFoldersPanelQuery",
+    "name": "FoldersPanelMineQuery",
     "selections": [
-      (v2/*: any*/),
-      (v3/*: any*/),
       {
-        "alias": null,
-        "args": null,
-        "concreteType": "UserResourcePolicyV2",
-        "kind": "LinkedField",
-        "name": "myUserResourcePolicyV2",
-        "plural": false,
-        "selections": [
-          (v4/*: any*/)
-        ],
-        "storageKey": null
+        "kind": "CatchField",
+        "field": (v2/*: any*/),
+        "to": "RESULT"
+      },
+      {
+        "kind": "CatchField",
+        "field": (v3/*: any*/),
+        "to": "RESULT"
+      },
+      {
+        "kind": "CatchField",
+        "field": {
+          "alias": null,
+          "args": null,
+          "concreteType": "UserResourcePolicyV2",
+          "kind": "LinkedField",
+          "name": "myUserResourcePolicyV2",
+          "plural": false,
+          "selections": [
+            (v4/*: any*/)
+          ],
+          "storageKey": null
+        },
+        "to": "RESULT"
       }
     ],
     "type": "Query",
@@ -124,7 +137,7 @@ return {
   "operation": {
     "argumentDefinitions": [],
     "kind": "Operation",
-    "name": "MyFoldersPanelQuery",
+    "name": "FoldersPanelMineQuery",
     "selections": [
       (v2/*: any*/),
       (v3/*: any*/),
@@ -150,16 +163,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "5f29fb6cdbec56dd1a176c86aefe6349",
+    "cacheID": "b9a1de08dbf6000e3357736882d467f9",
     "id": null,
     "metadata": {},
-    "name": "MyFoldersPanelQuery",
+    "name": "FoldersPanelMineQuery",
     "operationKind": "query",
-    "text": "query MyFoldersPanelQuery {\n  folders: myVfolders(filter: {status: {notIn: [DELETE_PENDING, DELETE_ONGOING, DELETE_COMPLETE, DELETE_ERROR]}}, limit: 1) {\n    count\n  }\n  trash: myVfolders(filter: {status: {equals: DELETE_PENDING}}, limit: 1) {\n    count\n  }\n  myUserResourcePolicyV2 {\n    maxVfolderCount\n    id\n  }\n}\n"
+    "text": "query FoldersPanelMineQuery {\n  ready: myVfolders(filter: {status: {notIn: [DELETE_PENDING, DELETE_ONGOING, DELETE_COMPLETE, DELETE_ERROR]}}, limit: 1) {\n    count\n  }\n  trash: myVfolders(filter: {status: {equals: DELETE_PENDING}}, limit: 1) {\n    count\n  }\n  myUserResourcePolicyV2 {\n    maxVfolderCount\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "63b2988a872d06b373265cbbd1a5cb58";
+(node as any).hash = "229cccf1676d42be90ea6b9a446f1c0e";
 
 export default node;

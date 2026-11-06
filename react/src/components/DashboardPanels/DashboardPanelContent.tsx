@@ -59,7 +59,12 @@ const DashboardPanelContent: React.FC<DashboardPanelContentProps> = ({
   const range = panel.settings?.range ?? DEFAULT_RANGE;
   const allowedResourceGroups = useDashboardResourceGroups();
 
-  const { resourceGroups, ...otherSettings } = panel.settings ?? {};
+  // Column picks change what a card shows, not what it may read.
+  const {
+    resourceGroups,
+    columnOverrides: _columns,
+    ...otherSettings
+  } = panel.settings ?? {};
   const permission = {
     panelId: panel.id,
     noticeKey: deniedNoticeKeyOf({

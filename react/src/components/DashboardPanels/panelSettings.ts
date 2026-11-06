@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { PanelDefinition, PanelSettingKind, PanelSettings } from './types';
+import type { BAITableColumnOverrideRecord } from 'backend.ai-ui';
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash-es';
 
@@ -26,13 +27,39 @@ export const hasSetting = (
   kind: PanelSettingKind,
 ) => !!definition?.settings?.includes(kind);
 
+const isFiniteNumber = (value: unknown): value is number =>
+  typeof value === 'number' && Number.isFinite(value);
+
+/** Column overrides with only well-typed `hidden` / `order` / `width`; undefined when none are left. */
+export const sanitizeColumnOverrides = (
+  value: unknown,
+): BAITableColumnOverrideRecord | undefined => {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return undefined;
+  }
+  const entries = Object.entries(value as Record<string, unknown>).flatMap(
+    ([key, override]) => {
+      if (!override || typeof override !== 'object') return [];
+      const { hidden, order, width } = override as Record<string, unknown>;
+      const kept = {
+        ...(typeof hidden === 'boolean' ? { hidden } : {}),
+        ...(isFiniteNumber(order) ? { order } : {}),
+        ...(isFiniteNumber(width) && width > 0 ? { width } : {}),
+      };
+      return _.isEmpty(kept) ? [] : [[key, kept] as const];
+    },
+  );
+  return entries.length ? Object.fromEntries(entries) : undefined;
+};
+
 /** The settings keys this client writes for a card; any other stored key belongs to another client. */
 export const ownedSettingKeys = (
-  definition: Pick<PanelDefinition, 'settings'>,
+  definition: Pick<PanelDefinition, 'settings' | 'columnSettings'>,
 ): Array<keyof PanelSettings> =>
   _.compact([
     hasSetting(definition, 'resourceGroup') && 'resourceGroups',
     hasSetting(definition, 'range') && 'range',
+    definition.columnSettings && 'columnOverrides',
   ]);
 
 /**
@@ -42,10 +69,13 @@ export const ownedSettingKeys = (
  */
 export const sanitizePanelSettings = (
   value: unknown,
-  definition: Pick<PanelDefinition, 'settings'>,
+  definition: Pick<PanelDefinition, 'settings' | 'columnSettings'>,
 ): PanelSettings | undefined => {
   if (!value || typeof value !== 'object') return undefined;
-  const { resourceGroups, range } = value as Record<string, unknown>;
+  const { resourceGroups, range, columnOverrides } = value as Record<
+    string,
+    unknown
+  >;
   const settings: PanelSettings = {};
   const resourceGroup = Array.isArray(resourceGroups)
     ? resourceGroups[0]
@@ -60,6 +90,10 @@ export const sanitizePanelSettings = (
   if (hasSetting(definition, 'range') && isRangePreset(range)) {
     settings.range = range;
   }
+  const columns = definition.columnSettings
+    ? sanitizeColumnOverrides(columnOverrides)
+    : undefined;
+  if (columns) settings.columnOverrides = columns;
   return _.isEmpty(settings) ? undefined : settings;
 };
 
@@ -82,4 +116,13 @@ export const describePanelSettings = (
 ): string | undefined => {
   const parts = panelSettingsParts(settings, t);
   return parts.length ? parts.join(' · ') : undefined;
+};
+
+/** `patch` over `settings`; an undefined field is removed, and nothing left is undefined. */
+export const mergeSettings = (
+  settings: PanelSettings | undefined,
+  patch: Partial<PanelSettings>,
+): PanelSettings | undefined => {
+  const merged = _.omitBy({ ...settings, ...patch }, _.isUndefined);
+  return _.isEmpty(merged) ? undefined : (merged as PanelSettings);
 };

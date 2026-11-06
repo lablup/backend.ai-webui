@@ -284,7 +284,7 @@ const BAISubStepNodes = ({
                     )}
                   </td>
                   <td>
-                    <Text type="supporting">
+                    <Text type="supporting" maxLines={1}>
                       {isResultMarker
                         ? t('comp:BAISubStepNodes.ResultMarker')
                         : toSingleLine(record.message)}

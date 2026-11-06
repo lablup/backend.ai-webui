@@ -96,8 +96,8 @@ export interface DonutChartProps {
   columnLabels: { name: string; value: string; percent: string };
   /** The empty ring's accessible name, when every value is 0. */
   emptyText: string;
-  /** A manager-counted total shown in the ring's hole; omitted, the hole stays empty. */
-  total?: number | null;
+  /** A manager-counted total shown in the ring's hole ("-" when part of it is denied); omitted, the hole stays empty. */
+  total?: number | string | null;
 }
 
 /**
@@ -236,7 +236,7 @@ const DonutChart: React.FC<DonutChartProps> = ({
                   pointerEvents: 'none',
                 }}
               >
-                {_.isNumber(total) ? (
+                {_.isNumber(total) || _.isString(total) ? (
                   <Text size="xl" weight="semibold" hasTabularNumbers>
                     {total.toLocaleString()}
                   </Text>
@@ -280,7 +280,7 @@ const DonutChart: React.FC<DonutChartProps> = ({
                 color="secondary"
                 hasTabularNumbers
               >
-                0
+                {_.isString(total) ? total : 0}
               </Text>
             </BAIFlex>
           )}
