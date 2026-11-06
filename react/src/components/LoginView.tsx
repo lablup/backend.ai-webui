@@ -99,6 +99,11 @@ type ConnectionMode = 'SESSION' | 'API';
 const DISPLAYABLE_OPENID_ERROR_CODE = /^[A-Za-z0-9_-]{1,64}$/;
 
 const STORED_API_ENDPOINT_KEY = 'backendaiwebui.api_endpoint';
+// Electron: the webserver the endpoint step confirmed. API-mode sign-in stores a
+// manager in STORED_API_ENDPOINT_KEY, which serves no config.toml to confirm.
+const STORED_SERVER_ENDPOINT_KEY = 'backendaiwebui.electron_server_endpoint';
+const readStored = (key: string) =>
+  (localStorage.getItem(key) ?? '').replace(/^"+|"+$/g, '');
 
 // Logged-out: turn the splash into the login backdrop (keep the weave +
 // version/copyright metadata, hide the loader); the login modals render above
@@ -170,6 +175,9 @@ const LoginView: React.FC<{
     const storedEndpoint = stored ? stored.replace(/^"+|"+$/g, '') : '';
     return storedEndpoint || devApiEndpointOverride || '';
   });
+  const [serverEndpoint, setServerEndpoint] = useState(
+    () => readStored(STORED_SERVER_ENDPOINT_KEY) || apiEndpoint,
+  );
   const [otpRequired, setOtpRequired] = useState(false);
   const [needsOtpRegistration, setNeedsOtpRegistration] = useState(false);
   const [totpRegistrationToken, setTotpRegistrationToken] = useState('');
@@ -231,11 +239,17 @@ const LoginView: React.FC<{
   const endpointStep = useElectronEndpointStep({
     isElectron,
     isPanelOpen: isLoginPanelOpen,
-    storedEndpoint: apiEndpoint,
+    storedEndpoint: serverEndpoint,
     onConfirmed: (endpoint) => {
-      setApiEndpoint(endpoint);
-      form.setFieldValue('api_endpoint', endpoint);
-      localStorage.setItem(STORED_API_ENDPOINT_KEY, endpoint);
+      setServerEndpoint(endpoint);
+      localStorage.setItem(STORED_SERVER_ENDPOINT_KEY, endpoint);
+      // Keep the manager an API-mode sign-in last used for the manager field.
+      const lastSignIn = readStored(STORED_API_ENDPOINT_KEY);
+      const signInEndpoint =
+        connectionMode === 'API' && lastSignIn ? lastSignIn : endpoint;
+      setApiEndpoint(signInEndpoint);
+      form.setFieldValue('api_endpoint', signInEndpoint);
+      localStorage.setItem(STORED_API_ENDPOINT_KEY, signInEndpoint);
     },
   });
   const endpointStepErrorMessage = {
@@ -339,7 +353,11 @@ const LoginView: React.FC<{
   // origin into `config.toml`), and a webserver cannot serve API-mode sign-in.
   // Derived, never stored: a config refresh re-applies the configured mode at
   // any time, so a value pinned once here would be silently reverted.
-  const isApiSigninBlocked = !!loginConfig.api_endpoint;
+  // Electron also signs in by session unless the confirmed server allows API
+  // sign-in, so a mode stored from an earlier version cannot strand the user.
+  const isApiSigninBlocked =
+    !!loginConfig.api_endpoint ||
+    (isElectron && !loginConfig.change_signin_support);
   const effectiveConnectionMode: ConnectionMode = isApiSigninBlocked
     ? 'SESSION'
     : connectionMode;
@@ -1027,7 +1045,12 @@ const LoginView: React.FC<{
     const isReloginAfterPasswordChange = reloginAfterPasswordChangeRef.current;
     reloginAfterPasswordChangeRef.current = false;
 
-    const epInput = form.getFieldValue('api_endpoint') || apiEndpoint;
+    // Electron signs in by session against the confirmed webserver; the form
+    // field is the manager for API mode.
+    const epInput =
+      isElectron && effectiveConnectionMode === 'SESSION'
+        ? serverEndpoint
+        : form.getFieldValue('api_endpoint') || apiEndpoint;
     const ep = epInput.replace(/\/+$/, '').trim();
     setApiEndpoint(ep);
 
@@ -1038,7 +1061,10 @@ const LoginView: React.FC<{
 
     setIsLoading(true);
 
-    if ((globalThis as Record<string, unknown>).isElectron) {
+    if (
+      (globalThis as Record<string, unknown>).isElectron &&
+      effectiveConnectionMode === 'SESSION'
+    ) {
       await loadConfigFromWebServer(ep);
     }
 
@@ -1076,6 +1102,8 @@ const LoginView: React.FC<{
   }, [
     form,
     apiEndpoint,
+    serverEndpoint,
+    isElectron,
     effectiveConnectionMode,
     connectUsingSession,
     connectUsingAPI,
@@ -1388,6 +1416,7 @@ const LoginView: React.FC<{
               }
             : undefined
         }
+        serverEndpoint={isElectron ? serverEndpoint : undefined}
         endpointNotice={
           isElectron && endpointStep.hasNoDomain
             ? t('login.EndpointNoDomain')
