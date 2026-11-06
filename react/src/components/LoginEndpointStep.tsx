@@ -6,10 +6,9 @@ import { Form } from '../form-engine';
 import BAIFormItem from './BAIFormItem';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
-import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex, BAITextInput } from 'backend.ai-ui';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 
 export interface LoginEndpointStepProps {
   defaultEndpoint: string;
@@ -39,11 +38,15 @@ const LoginEndpointStep: React.FC<LoginEndpointStepProps> = ({
   return (
     <Form layout="vertical">
       <BAIFlex direction="column" align="stretch" gap="sm">
-        <Text color="secondary">{t('login.EndpointStepDesc')}</Text>
-        <BAIFormItem label={t('login.Endpoint')} style={{ marginBottom: 0 }}>
+        <BAIFormItem
+          label={t('login.LoginEndpoint')}
+          required
+          tooltip={<Trans i18nKey="login.DescEndpoint" />}
+          style={{ marginBottom: 0 }}
+        >
           <BAITextInput
             data-testid="login-endpoint-step-input"
-            aria-label={t('login.Endpoint', { postProcess: [] })}
+            aria-label={t('login.LoginEndpoint', { postProcess: [] })}
             placeholder="https://"
             value={endpoint}
             disabled={isConnecting}
