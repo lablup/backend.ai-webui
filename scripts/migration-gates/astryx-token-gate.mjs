@@ -9,9 +9,9 @@
  *     computed-value time — the property falls back to inherit/initial.
  * Neither case produces a compiler, lint, or runtime error. The declared set
  * is not guessable (e.g. Astryx's text ramp is primary/secondary/disabled/
- * accent plus named hues — there is no `--color-text-tertiary` and no
- * `--color-text-error`; the semantic error token is the solid
- * `--color-error`).
+ * accent, the named hues and, since 0.7.7, `--color-text-{info,success,
+ * warning,error}` — but no `--color-text-tertiary`, which only the brand
+ * theme declares as a custom token).
  *
  * This gate cross-checks every `var(--…)` USED in app source against the
  * set of custom properties DECLARED by:
@@ -47,10 +47,7 @@ export const REPO_ROOT = resolve(
 // `react/theme-probe` used to be a third root. That directory was the
 // migration's antd-vs-Astryx A/B harness and went away with antd itself (final
 // switch); the two roots below are the shipping source.
-export const DEFAULT_SCAN_ROOTS = [
-  "react/src",
-  "packages/backend.ai-ui/src",
-];
+export const DEFAULT_SCAN_ROOTS = ["react/src", "packages/backend.ai-ui/src"];
 
 const UI_COMMON_DIST = "react/node_modules/@lablup/ui-common/dist";
 export const DEFAULT_DECLARED_CSS = [

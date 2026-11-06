@@ -950,10 +950,10 @@ test.describe(
 
       // One deployment selector per pane, in pane order. `DeploymentSelect`
       // renders a `BAIComplexSelect` with `label={t('chatui.Deployment')}` +
-      // `isLabelHidden`, so its trigger button's accessible name is
+      // `isLabelHidden`, so its combobox trigger's accessible name is
       // "Deployment" and its text content is the selected deployment name —
       // no `.astryx-card` index and no `[title]` attribute needed.
-      const deploymentTriggers = page.getByRole('button', {
+      const deploymentTriggers = page.getByRole('combobox', {
         name: 'Deployment',
         exact: true,
       });

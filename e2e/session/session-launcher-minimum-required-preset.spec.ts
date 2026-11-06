@@ -108,7 +108,7 @@ test.describe(
       await page
         .getByRole('button', { name: 'Go to step 3: Data & Storage' })
         .click();
-      await page.getByRole('button', { name: 'Select Folder' }).click();
+      await page.getByRole('combobox', { name: 'Select Folder' }).click();
       await page
         .getByRole('option', { name: new RegExp(`^${folderName}\\b`) })
         .click();
@@ -121,7 +121,7 @@ test.describe(
         .getByRole('listitem')
         .filter({ has: page.getByRole('link', { name: folderName }) });
       await expect(mountRow).toBeVisible();
-      const subpathPicker = mountRow.getByRole('button', { name: 'Subpath' });
+      const subpathPicker = mountRow.getByRole('combobox', { name: 'Subpath' });
       await expect(subpathPicker).toHaveText('Select a path');
       await subpathPicker.click();
 

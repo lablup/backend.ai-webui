@@ -192,10 +192,9 @@ export class AdminModelCardPage {
   }
 
   getCreateModalVFolderSelect(): Locator {
-    // The VFolder picker is Astryx `ComplexSelector` (`aria-haspopup="dialog"`),
-    // which renders role="button" (not "combobox") with its accessible name
-    // taken from the field label via `aria-labelledby`.
-    return this.getCreateModal().getByRole('button', {
+    // The VFolder picker is Astryx `ComplexSelector`: a role="combobox"
+    // trigger named by the field label.
+    return this.getCreateModal().getByRole('combobox', {
       name: 'Model Storage Folder',
     });
   }
@@ -327,11 +326,11 @@ export class AdminModelCardPage {
     const vfolderFormItem = modal
       .locator('.uic-form-item')
       .filter({ hasText: 'Model Storage Folder' });
-    // The picker is Astryx `ComplexSelector`: its trigger is role="button"
+    // The picker is Astryx `ComplexSelector`: its trigger is role="combobox"
     // (named after the field label via `aria-labelledby`), and opening it
     // pops a nested role="dialog" (also named after the field label)
     // containing a search box and a role="listbox" of role="option" rows.
-    const vfolderTrigger = vfolderFormItem.getByRole('button', {
+    const vfolderTrigger = vfolderFormItem.getByRole('combobox', {
       name: 'Model Storage Folder',
     });
 
@@ -386,13 +385,13 @@ export class AdminModelCardPage {
       await this.createNewFolderViaPlus(fields.createNewFolderName);
     } else {
       // Select an existing VFolder: use specified title or pick the first available option.
-      // The picker is Astryx `ComplexSelector` — its role="button" trigger
+      // The picker is Astryx `ComplexSelector` — its role="combobox" trigger
       // (named after the field label) opens a nested role="dialog" holding a
       // search box and a role="listbox" of role="option" rows.
       const vfolderFormItem = modal
         .locator('.uic-form-item')
         .filter({ hasText: 'Model Storage Folder' });
-      const vfolderTrigger = vfolderFormItem.getByRole('button', {
+      const vfolderTrigger = vfolderFormItem.getByRole('combobox', {
         name: 'Model Storage Folder',
       });
       await vfolderTrigger.click();
