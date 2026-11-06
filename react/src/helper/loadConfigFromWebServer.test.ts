@@ -100,4 +100,12 @@ describe('loadConfigFromWebServer', () => {
     ).resolves.toEqual({ status: 'loaded', domainName: 'default' });
     expect(fetchAndParseConfig).not.toHaveBeenCalled();
   });
+
+  it("drops the previous server's config when the same origin is confirmed", async () => {
+    const { rawConfigState } = await import('../hooks/useWebUIConfig');
+    await loadConfigFromWebServer('https://a.example');
+    await loadConfigFromWebServer(window.location.origin);
+    const merged = store.get(rawConfigState) as Record<string, any>;
+    expect(merged.general).toEqual({ apiEndpoint: '' });
+  });
 });

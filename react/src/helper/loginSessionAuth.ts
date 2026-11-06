@@ -22,6 +22,7 @@ import {
 import { applyConfigToClient, type LoginConfigState } from './loginConfig';
 import {
   fetchPublicDomainConfigOnce,
+  PUBLIC_CONFIG_FETCH_TIMEOUT_MS,
   resolvePublicConfigTarget,
 } from './publicAppConfig';
 import {
@@ -509,7 +510,13 @@ export type WebServerConfigResult =
   /** `domainName` is null when the server names no domain (code defaults then). */
   | { status: 'loaded'; domainName: string | null };
 
-const WEBSERVER_CONFIG_FETCH_TIMEOUT_MS = 10_000;
+const isPageOrigin = (endpoint: string) => {
+  try {
+    return new URL(endpoint).origin === window.location.origin;
+  } catch {
+    return false;
+  }
+};
 
 /**
  * Load webserver config when the api_endpoint differs from current URL origin.
@@ -518,7 +525,10 @@ const WEBSERVER_CONFIG_FETCH_TIMEOUT_MS = 10_000;
 export async function loadConfigFromWebServer(
   apiEndpoint: string,
 ): Promise<WebServerConfigResult> {
-  if (!window.location.href.startsWith(apiEndpoint)) {
+  // Same origin: this page's own config.toml is the server's, so only the
+  // bundled config is merged — which also drops a previous server's.
+  let serverConfig: Record<string, any> = {};
+  if (!isPageOrigin(apiEndpoint)) {
     // Validate the endpoint URL scheme to prevent fetching config from
     // unexpected protocols (e.g., javascript:, data:, file:).
     try {
@@ -536,62 +546,58 @@ export async function loadConfigFromWebServer(
     ).href;
     const { config, unreachable } = await fetchAndParseConfig(
       webserverConfigURL,
-      WEBSERVER_CONFIG_FETCH_TIMEOUT_MS,
+      PUBLIC_CONFIG_FETCH_TIMEOUT_MS,
     );
     if (!config) return { status: unreachable ? 'unreachable' : 'no-config' };
-
-    const backendaiutils = (globalThis as Record<string, any>).backendaiutils;
-    if (!backendaiutils) return { status: 'no-config' };
-
-    const fieldsToExclude = ['general.apiEndpoint', 'wsproxy'];
-    fieldsToExclude.forEach((key) => {
-      backendaiutils.deleteNestedKeyFromObject(config, key);
-    });
-
-    // Merge onto the bundled config.toml, not the current state: that may
-    // already carry another endpoint's server config.
-    const { jotaiStore } = await import('../components/DefaultProviders');
-    const { rawConfigState } = await import('../hooks/useWebUIConfig');
-    const { config: bundledConfig } = await fetchAppConfigOnce();
-    const currentConfig = structuredClone(bundledConfig ?? {});
-    const mergedConfig = backendaiutils.mergeNestedObjects(
-      currentConfig,
-      config,
-    );
-
-    // Update the Jotai store with merged config
-    jotaiStore.set(rawConfigState, mergedConfig);
-
-    // Re-process the merged config
-    const { refreshConfigFromToml } = await import('./loginConfig');
-    const { loginConfigState, autoLogoutState } =
-      await import('../hooks/useWebUIConfig');
-    // `mergedConfig` keeps this page's own endpoint (the webserver's was
-    // stripped above); the public slice belongs to the server being joined.
-    const publicTarget = resolvePublicConfigTarget({
-      ...mergedConfig,
-      general: { ...mergedConfig.general, apiEndpoint },
-    });
-    const publicSlice = await fetchPublicDomainConfigOnce(publicTarget);
-    const { applyJoinedServerAppearance } = await import('./customThemeConfig');
-    await applyJoinedServerAppearance(publicSlice, publicTarget);
-    const effectiveLoginConfig = applyWebUISettings(
-      refreshConfigFromToml(mergedConfig),
-      publicSlice?.[WEBUI_SETTINGS_CONFIG_KEY],
-      'public',
-    );
-    jotaiStore.set(loginConfigState, effectiveLoginConfig);
-    jotaiStore.set(autoLogoutState, effectiveLoginConfig.autoLogout);
-    // loginPluginState stays on the bundled value; whether the joined
-    // server's login plugin should load is still open (#10872).
-    return { status: 'loaded', domainName: publicTarget?.domainName ?? null };
+    serverConfig = config;
   }
-  // Same origin: this page's own config.toml already belongs to the server.
-  const { config } = await fetchAppConfigOnce();
-  return {
-    status: 'loaded',
-    domainName: resolvePublicConfigTarget(config)?.domainName ?? null,
-  };
+
+  const backendaiutils = (globalThis as Record<string, any>).backendaiutils;
+  if (!backendaiutils) return { status: 'no-config' };
+
+  if (Object.keys(serverConfig).length > 0) {
+    ['general.apiEndpoint', 'wsproxy'].forEach((key) => {
+      backendaiutils.deleteNestedKeyFromObject(serverConfig, key);
+    });
+  }
+
+  // Merge onto the bundled config.toml, not the current state: that may
+  // already carry another endpoint's server config.
+  const { jotaiStore } = await import('../components/DefaultProviders');
+  const { rawConfigState } = await import('../hooks/useWebUIConfig');
+  const { config: bundledConfig } = await fetchAppConfigOnce();
+  const currentConfig = structuredClone(bundledConfig ?? {});
+  const mergedConfig = backendaiutils.mergeNestedObjects(
+    currentConfig,
+    serverConfig,
+  );
+
+  // Update the Jotai store with merged config
+  jotaiStore.set(rawConfigState, mergedConfig);
+
+  // Re-process the merged config
+  const { refreshConfigFromToml } = await import('./loginConfig');
+  const { loginConfigState, autoLogoutState } =
+    await import('../hooks/useWebUIConfig');
+  // `mergedConfig` keeps this page's own endpoint (the webserver's was
+  // stripped above); the public slice belongs to the server being joined.
+  const publicTarget = resolvePublicConfigTarget({
+    ...mergedConfig,
+    general: { ...mergedConfig.general, apiEndpoint },
+  });
+  const publicSlice = await fetchPublicDomainConfigOnce(publicTarget);
+  const { applyJoinedServerAppearance } = await import('./customThemeConfig');
+  await applyJoinedServerAppearance(publicSlice, publicTarget);
+  const effectiveLoginConfig = applyWebUISettings(
+    refreshConfigFromToml(mergedConfig),
+    publicSlice?.[WEBUI_SETTINGS_CONFIG_KEY],
+    'public',
+  );
+  jotaiStore.set(loginConfigState, effectiveLoginConfig);
+  jotaiStore.set(autoLogoutState, effectiveLoginConfig.autoLogout);
+  // loginPluginState stays on the bundled value; whether the joined
+  // server's login plugin should load is still open (#10872).
+  return { status: 'loaded', domainName: publicTarget?.domainName ?? null };
 }
 
 /**
