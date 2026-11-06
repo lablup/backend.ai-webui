@@ -5,6 +5,7 @@
 import {
   isValidPluginPath,
   joinPluginPath,
+  parsePluginPathList,
   pluginPathName,
   resolvePluginScriptUrl,
   splitPluginPath,
@@ -75,5 +76,19 @@ describe('resolvePluginScriptUrl', () => {
 
   it('returns undefined for a rejected path', () => {
     expect(resolvePluginScriptUrl('../x')).toBeUndefined();
+  });
+});
+
+describe('parsePluginPathList', () => {
+  it('reads the same list with or without spaces around the commas', () => {
+    const expected = ['vendor/page', 'other'];
+    expect(parsePluginPathList('vendor/page,other')).toEqual(expected);
+    expect(parsePluginPathList('vendor/page, other')).toEqual(expected);
+    expect(parsePluginPathList(' vendor/page , other ')).toEqual(expected);
+  });
+
+  it('drops empty entries', () => {
+    expect(parsePluginPathList('a,, b ,')).toEqual(['a', 'b']);
+    expect(parsePluginPathList('  ')).toEqual([]);
   });
 });
