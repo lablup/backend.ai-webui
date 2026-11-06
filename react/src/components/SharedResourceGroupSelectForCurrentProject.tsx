@@ -8,7 +8,7 @@ import {
   useResourceGroupsForCurrentProject,
 } from '../hooks/useCurrentProject';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
-import { BAIScopedResourceGroupSelect } from 'backend.ai-ui';
+import { BAIFlex, BAIScopedResourceGroupSelect } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -33,37 +33,40 @@ const SharedResourceGroupSelectForCurrentProject: React.FC<
   const [optimisticValue, setOptimisticValue] = useState(currentResourceGroup);
 
   return (
-    // To the right, so it never covers the select's own tooltips above.
-    <Tooltip
-      content={t('general.ResourceGroup')}
-      placement="end"
-      hasHoverIndication={false}
-    >
-      <BAIScopedResourceGroupSelect
-        size="sm"
-        variant="ghost"
-        label={t('general.ResourceGroup')}
-        isLabelHidden
-        scope={{
-          project: _.compact([currentProject.id]).map((value) => ({ value })),
-        }}
-        filter={
-          _.isEmpty(sftpResourceGroups)
-            ? undefined
-            : { name: { notIn: _.compact(sftpResourceGroups) } }
-        }
-        isLoading={isPending || isLoading}
-        value={isPending ? optimisticValue : currentResourceGroup}
-        onChange={(value) => {
-          if (typeof value !== 'string') return;
-          setOptimisticValue(value);
-          startTransition(() => {
-            setCurrentResourceGroup(value);
-            onChangeInTransition?.(value);
-          });
-        }}
-      />
-    </Tooltip>
+    // Wrapped like the dashboard's header controls, so the picker keeps to its content width.
+    <BAIFlex align="center" gap="xxs">
+      {/* To the right, so it never covers the select's own tooltips above. */}
+      <Tooltip
+        content={t('general.ResourceGroup')}
+        placement="end"
+        hasHoverIndication={false}
+      >
+        <BAIScopedResourceGroupSelect
+          size="sm"
+          variant="ghost"
+          label={t('general.ResourceGroup')}
+          isLabelHidden
+          scope={{
+            project: _.compact([currentProject.id]).map((value) => ({ value })),
+          }}
+          filter={
+            _.isEmpty(sftpResourceGroups)
+              ? undefined
+              : { name: { notIn: _.compact(sftpResourceGroups) } }
+          }
+          isLoading={isPending || isLoading}
+          value={isPending ? optimisticValue : currentResourceGroup}
+          onChange={(value) => {
+            if (typeof value !== 'string') return;
+            setOptimisticValue(value);
+            startTransition(() => {
+              setCurrentResourceGroup(value);
+              onChangeInTransition?.(value);
+            });
+          }}
+        />
+      </Tooltip>
+    </BAIFlex>
   );
 };
 
