@@ -6,7 +6,12 @@ import { useDashboardResourceGroups } from './DashboardResourceGroups';
 import PanelRangeSelect from './PanelRangeSelect';
 import { cardResourceGroup } from './dashboardScope';
 import type { PanelSettingOverride } from './panelSettingOverrides';
-import { DEFAULT_RANGE, hasSetting, rangeLabel } from './panelSettings';
+import {
+  DEFAULT_RANGE,
+  hasSetting,
+  maxRangeDaysOf,
+  rangeLabel,
+} from './panelSettings';
 import type { PanelDefinition, PanelSettings } from './types';
 import { useDashboardFilterContext } from './useDashboardFilters';
 import { IconButton } from '@lablup/ui-common/IconButton';
@@ -99,19 +104,14 @@ const PanelSettingsHeaderControls: React.FC = () => {
         </Suspense>
       ) : null}
       {hasSetting(definition, 'range') ? (
-        <Tooltip
-          content={t('dashboard.settings.TimeRange')}
-          placement="end"
-          hasHoverIndication={false}
-        >
-          <PanelRangeSelect
-            size="small"
-            variant={overridden.range ? 'filled' : 'borderless'}
-            aria-label={t('dashboard.settings.TimeRange')}
-            value={effective?.range ?? DEFAULT_RANGE}
-            onChange={(range) => onChange({ range })}
-          />
-        </Tooltip>
+        <PanelRangeSelect
+          size="sm"
+          isCompactLabel
+          aria-label={t('dashboard.settings.TimeRange')}
+          maxDays={maxRangeDaysOf(definition)}
+          value={effective?.range ?? DEFAULT_RANGE}
+          onChange={(range) => onChange({ range })}
+        />
       ) : null}
       {overridden.resourceGroup || overridden.range ? (
         <IconButton

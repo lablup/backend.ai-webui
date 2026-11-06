@@ -6,7 +6,7 @@ import { Form } from '../../form-engine';
 import BAIFormItem from '../BAIFormItem';
 import { useDashboardResourceGroups } from './DashboardResourceGroups';
 import PanelRangeSelect from './PanelRangeSelect';
-import { DEFAULT_RANGE, hasSetting } from './panelSettings';
+import { DEFAULT_RANGE, hasSetting, maxRangeDaysOf } from './panelSettings';
 import type { PanelDefinition, PanelSettings } from './types';
 import { Text } from '@lablup/ui-common/Text';
 import {
@@ -127,9 +127,7 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
               label={t('dashboard.settings.DefaultTimeRange')}
               rules={[{ required: true }]}
             >
-              <PanelRangeSelect
-                label={t('dashboard.settings.DefaultTimeRange')}
-              />
+              <PanelRangeSelect maxDays={maxRangeDaysOf(definition)} />
             </BAIFormItem>
           ) : null}
         </Form>
