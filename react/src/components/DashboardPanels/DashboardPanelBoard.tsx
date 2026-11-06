@@ -36,6 +36,7 @@ import {
 import { useAtom, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
 import React, { Suspense, useEffect, useRef, useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 
 export interface DashboardPanelBoardProps {
   page: PanelPage;
@@ -53,11 +54,17 @@ const WithResourceGroups: React.FC<{
   fallback: React.ReactNode;
   children: React.ReactNode;
 }> = ({ scope, fallback, children }) => (
-  <Suspense fallback={fallback}>
-    <DashboardResourceGroupsProvider scope={scope}>
-      {children}
-    </DashboardResourceGroupsProvider>
-  </Suspense>
+  // A failed lookup leaves the cards on their saved groups instead of failing the page.
+  <ErrorBoundary
+    fallbackRender={() => children}
+    resetKeys={[JSON.stringify(scope)]}
+  >
+    <Suspense fallback={fallback}>
+      <DashboardResourceGroupsProvider scope={scope}>
+        {children}
+      </DashboardResourceGroupsProvider>
+    </Suspense>
+  </ErrorBoundary>
 );
 
 /**

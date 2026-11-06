@@ -25,7 +25,7 @@ import {
   updatePanel,
   type CatalogEntry,
 } from './boardModel';
-import { updateBoard } from './dashboardConfig';
+import { mergePanelEdits, updateBoard } from './dashboardConfig';
 import { createPanel, panelConfigFromInput } from './defaults';
 import { effectivePanelType, panelRegistry } from './panelRegistry';
 import { mergeSettings } from './panelSettings';
@@ -47,6 +47,7 @@ import {
   type DashboardBoardsState,
 } from './useDashboardBoards';
 import { BAIBoardItemErrorBoundary, type BAIBoardItem } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 
 /** Where a board is kept. The next storage backend replaces `useBoardStore`, nothing else. */
@@ -69,14 +70,16 @@ export const useAppConfigBoardStore: BoardStore = (page, catalog) => {
   const boards = useDashboardBoards(page, catalog);
   return {
     board: boards.activeBoard,
-    save: (board) =>
+    save: (board) => {
+      const base = boards.activeBoard.panels;
       boards.update((config) =>
         updateBoard(config, boards.activeBoard.id, (active) => ({
           ...active,
-          panels: board.panels,
-          knownKeys: board.knownKeys,
+          panels: mergePanelEdits(base, board.panels, active.panels),
+          knownKeys: _.union(active.knownKeys, board.knownKeys),
         })),
-      ),
+      );
+    },
     template: boards.template,
     boards,
   };

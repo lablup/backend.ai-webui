@@ -20,6 +20,8 @@ export interface PageWrite {
   resolve: (stored: unknown) => DashboardPageConfig;
   /** What the screen shows for the page until the write settles. */
   optimistic: DashboardPageConfig;
+  /** Adds back to the written config what this client could not read from the stored value. */
+  keep?: (written: DashboardPageConfig, stored: unknown) => DashboardPageConfig;
 }
 
 export interface DashboardWriter {
