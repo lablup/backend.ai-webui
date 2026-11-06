@@ -228,12 +228,11 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
 
   useCreateActionArrival(openCreateModal);
 
-  // A team project lists only its own folders and those shared to it; personal
-  // folders live in the personal project, which the user scope already reaches.
-  const vfolderScope =
-    projectContext && !isPersonalProject
-      ? { project: [{ value: projectContext.id }] }
-      : { user: [{ value: currentUser.uuid }] };
+  // Every project, the personal one included, lists its own folders and those
+  // shared to it; the user scope is only the fallback when no project is set.
+  const vfolderScope = projectContext
+    ? { project: [{ value: projectContext.id }] }
+    : { user: [{ value: currentUser.uuid }] };
 
   const queryVariables = {
     scope: vfolderScope,
