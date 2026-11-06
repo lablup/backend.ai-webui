@@ -533,21 +533,33 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                 justify="between"
                 style={{ marginTop: token('--spacing-3') }}
               >
-                <Text color="secondary" maxLines={1}>
-                  {apiEndpoint}
-                </Text>
-                <Link
-                  isStandalone
-                  href="#"
-                  data-testid="login-change-endpoint"
-                  isDisabled={isLoading}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onChangeEndpoint();
+                {/* A long endpoint ends in an ellipsis (Text adds the full
+                    address as a tooltip); the link never wraps. */}
+                <BAIFlex style={{ flex: 1, minWidth: 0 }}>
+                  <Text color="secondary" maxLines={1}>
+                    {apiEndpoint}
+                  </Text>
+                </BAIFlex>
+                <BAIFlex
+                  style={{
+                    flexShrink: 0,
+                    whiteSpace: 'nowrap',
+                    wordBreak: 'keep-all',
                   }}
                 >
-                  {t('login.ChangeEndpoint')}
-                </Link>
+                  <Link
+                    isStandalone
+                    href="#"
+                    data-testid="login-change-endpoint"
+                    isDisabled={isLoading}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onChangeEndpoint();
+                    }}
+                  >
+                    {t('login.ChangeEndpoint')}
+                  </Link>
+                </BAIFlex>
               </BAIFlex>
             )}
 
