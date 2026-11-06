@@ -1,0 +1,267 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-11-06T02:20:12.804Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 2,
+        "changes": 17,
+        "added": 0,
+        "modified": 8,
+        "removed": 9,
+        "images": 8,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "Admin Features",
+          "status": "modified",
+          "url": "next/en/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 0,
+            "modified": 6,
+            "removed": 9,
+            "images": 6,
+            "total": 15
+          },
+          "fingerprints": [
+            "c5ef013f9250",
+            "31b3d76303dc",
+            "a999a335da04",
+            "bae72b84c993",
+            "1d7fe2e6cd2d",
+            "f336484c6225",
+            "add64409ef45",
+            "a0a94d30961d",
+            "97890642e274",
+            "90fcc716c8a1",
+            "29ac41b09617",
+            "cd0b7f58275b",
+            "816b99f83c03",
+            "87f89a243a7c",
+            "cd8cfb274d7e"
+          ]
+        },
+        {
+          "slug": "sessions_all",
+          "title": "Compute Sessions",
+          "status": "modified",
+          "url": "next/en/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "9ab8139a5b87",
+            "a81b68a4e230"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 2,
+        "changes": 17,
+        "added": 0,
+        "modified": 8,
+        "removed": 9,
+        "images": 8,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "管理者機能",
+          "status": "modified",
+          "url": "next/ja/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 0,
+            "modified": 6,
+            "removed": 9,
+            "images": 6,
+            "total": 15
+          },
+          "fingerprints": [
+            "fd6a68045b9f",
+            "80734bd574d9",
+            "1fb4ab8caa3d",
+            "985c01c40305",
+            "02d4f4af357b",
+            "4ad214204188",
+            "5ac5198c80f9",
+            "3e05965bf585",
+            "ec8c6c06932b",
+            "77fbd0f8c4ad",
+            "a0f46245991f",
+            "b6009670dc15",
+            "f4782f147fa1",
+            "2d607140aaef",
+            "f63fd724f977"
+          ]
+        },
+        {
+          "slug": "sessions_all",
+          "title": "コンピュートセッション",
+          "status": "modified",
+          "url": "next/ja/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "1d5a6cf96823",
+            "467fa9a8bbcb"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 2,
+        "changes": 18,
+        "added": 1,
+        "modified": 7,
+        "removed": 10,
+        "images": 8,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "관리자 기능",
+          "status": "modified",
+          "url": "next/ko/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 1,
+            "modified": 5,
+            "removed": 10,
+            "images": 6,
+            "total": 16
+          },
+          "fingerprints": [
+            "60b95ee7352c",
+            "e3cd3c513fa9",
+            "5bbf64e8d59d",
+            "7826932291b0",
+            "b15a8183d582",
+            "e507a4f58173",
+            "f319c135f059",
+            "4b8e572016bd",
+            "ad284a2aa1cf",
+            "f9d64094b99c",
+            "1e240f444e17",
+            "2ccde5efe5f7",
+            "be8ccdecd20f",
+            "2bb9a1b408bb",
+            "41999a8b4599",
+            "085a7dd3a40c"
+          ]
+        },
+        {
+          "slug": "sessions_all",
+          "title": "연산 세션",
+          "status": "modified",
+          "url": "next/ko/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "a5d888be6968",
+            "feb0292e4e3c"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 2,
+        "changes": 17,
+        "added": 0,
+        "modified": 8,
+        "removed": 9,
+        "images": 8,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "ฟีเจอร์ผู้ดูแลระบบ",
+          "status": "modified",
+          "url": "next/th/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 0,
+            "modified": 6,
+            "removed": 9,
+            "images": 6,
+            "total": 15
+          },
+          "fingerprints": [
+            "59680e3f2f63",
+            "4f877573669c",
+            "2793f9ee8fb4",
+            "23db66710f21",
+            "52ded37cf308",
+            "88d341cb720f",
+            "3395263d6034",
+            "af84f6d4e312",
+            "888987528234",
+            "e0ccb400f8fe",
+            "7ead48923a9f",
+            "57bc7581f636",
+            "d1100e72209d",
+            "4ce9bb80504e",
+            "fcac122825bd"
+          ]
+        },
+        {
+          "slug": "sessions_all",
+          "title": "เซสชันการคำนวณ",
+          "status": "modified",
+          "url": "next/th/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "642b890af901",
+            "373bcf39d29a"
+          ]
+        }
+      ]
+    }
+  }
+}
