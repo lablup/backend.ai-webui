@@ -31,6 +31,18 @@ export interface ImportedValueCellProps {
 export const formatSettingValue = (value: unknown): string =>
   Array.isArray(value) ? value.join(', ') : String(value ?? '');
 
+// The value a cleared (default) setting starts editing from.
+const emptyDraftOf = (definition: WebUISettingDefinition): unknown => {
+  switch (definition.type) {
+    case 'boolean':
+      return false;
+    case 'stringList':
+      return definition.options ? [] : '';
+    default:
+      return '';
+  }
+};
+
 const parseList = (raw: string) =>
   raw
     .split(',')
@@ -73,7 +85,11 @@ const ImportedValueCell: React.FC<ImportedValueCellProps> = ({
   if (!isEditing) {
     return (
       <BAIFlex gap="xs" align="center" className="bai-imported-value-cell">
-        <Text>{formatSettingValue(value)}</Text>
+        {value === undefined ? (
+          <Text color="secondary">{t('webuiSettings.ImportDefaultValue')}</Text>
+        ) : (
+          <Text>{formatSettingValue(value)}</Text>
+        )}
         <BAIFlex className="bai-imported-value-cell__edit">
           <IconButton
             size="sm"
@@ -82,9 +98,11 @@ const ImportedValueCell: React.FC<ImportedValueCellProps> = ({
             label={t('button.Edit')}
             onClick={() =>
               setDraft(
-                definition.type === 'stringList' && !definition.options
-                  ? formatSettingValue(value)
-                  : value,
+                value === undefined
+                  ? emptyDraftOf(definition)
+                  : definition.type === 'stringList' && !definition.options
+                    ? formatSettingValue(value)
+                    : value,
               )
             }
           />

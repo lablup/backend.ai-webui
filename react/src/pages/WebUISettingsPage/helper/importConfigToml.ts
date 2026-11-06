@@ -48,12 +48,13 @@ export const tomlPathsOf = (
   return [`${section}.${key}`];
 };
 
-export type SkipReason =
-  'fileOnly' | 'unknown' | 'invalid' | 'empty' | 'duplicate';
+/** Why a key cannot be applied; keys `config.toml` still owns are not listed. */
+export type SkipReason = 'unknown' | 'invalid' | 'duplicate';
 
 export interface ImportedSetting {
   definition: WebUISettingDefinition;
   path: string;
+  /** `undefined`: the file left it empty, which meant the code default. */
   value: unknown;
 }
 
@@ -141,18 +142,13 @@ export const importConfigToml = (text: string): ConfigTomlImport => {
   for (const [path, raw] of leafPaths(doc)) {
     const definition = definitionByPath.get(path);
     if (!definition) {
-      skipped.push({
-        path,
-        reason: isFileOnlyPath(path) ? 'fileOnly' : 'unknown',
-      });
+      if (!isFileOnlyPath(path)) skipped.push({ path, reason: 'unknown' });
       continue;
     }
     const value = coerce(definition, raw);
-    if (value === undefined) {
-      skipped.push({ path, reason: 'empty' });
-    } else if (
+    if (
       value === null ||
-      !isValidWebUISettingValue(definition.type, value)
+      (value !== undefined && !isValidWebUISettingValue(definition.type, value))
     ) {
       skipped.push({ path, reason: 'invalid' });
     } else if (imported.some((entry) => entry.definition === definition)) {

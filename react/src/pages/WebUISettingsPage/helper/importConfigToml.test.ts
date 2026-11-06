@@ -106,14 +106,15 @@ maxCPUCoresPerContainer = ""
 blocklist = ""
 `;
     const result = importConfigToml(text);
-    expect(result.ok && result.imported).toEqual([]);
-    expect(skippedOf(text)).toEqual(
-      expect.arrayContaining([
-        { path: 'general.appDownloadUrl', reason: 'empty' },
-        { path: 'general.defaultSessionEnvironment', reason: 'empty' },
-        { path: 'resources.maxCPUCoresPerContainer', reason: 'empty' },
-        { path: 'menu.blocklist', reason: 'empty' },
-      ]),
+    if (!result.ok) throw new Error(result.error);
+    expect(result.skipped).toEqual([]);
+    expect(result.imported.map(({ path, value }) => ({ path, value }))).toEqual(
+      [
+        { path: 'general.appDownloadUrl', value: undefined },
+        { path: 'general.defaultSessionEnvironment', value: undefined },
+        { path: 'resources.maxCPUCoresPerContainer', value: undefined },
+        { path: 'menu.blocklist', value: undefined },
+      ],
     );
   });
 
@@ -149,7 +150,7 @@ blocklist = ""
     ]);
   });
 
-  it('separates file-only keys from keys nothing reads', () => {
+  it('lists the keys nothing reads and leaves out the file-only keys', () => {
     expect(
       skippedOf(`
 [general]
@@ -161,13 +162,7 @@ proxyURL = "http://127.0.0.1:5050/"
 [license]
 edition = "Enterprise"
 `),
-    ).toEqual([
-      { path: 'general.apiEndpoint', reason: 'fileOnly' },
-      { path: 'general.connectionMode', reason: 'fileOnly' },
-      { path: 'general.force2FA', reason: 'unknown' },
-      { path: 'wsproxy.proxyURL', reason: 'fileOnly' },
-      { path: 'license.edition', reason: 'fileOnly' },
-    ]);
+    ).toEqual([{ path: 'general.force2FA', reason: 'unknown' }]);
   });
 
   it('reads both ATOM+ spellings and keeps the first', () => {
@@ -221,11 +216,7 @@ describe('exportConfigToml', () => {
     for (const entry of result.imported) {
       expect(entry.value).toEqual(sample(entry.definition.key));
     }
-    expect(result.skipped.map((s) => s.reason)).toEqual([
-      'fileOnly',
-      'fileOnly',
-      'fileOnly',
-    ]);
+    expect(result.skipped).toEqual([]);
   });
 
   it('keeps only the file-only keys in the current format', () => {
