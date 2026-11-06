@@ -13,6 +13,7 @@ import {
 import { getE2EDomainName } from '../utils/e2e-scope';
 import { skipUnlessLabelableEntityType } from '../utils/feature-gate-util';
 import {
+  fillLoginEndpoint,
   loginAsAdmin,
   loginAsCreatedAccount,
   logout,
@@ -404,17 +405,9 @@ test.describe.serial(
 
       // 2. Attempt to login as the deleted user
       await page.goto(webuiEndpoint);
+      await fillLoginEndpoint(page, webServerEndpoint);
       await page.getByLabel('Email or Username').fill(EMAIL);
       await page.getByRole('textbox', { name: 'Password' }).fill(NEW_PASSWORD);
-      // The endpoint input is collapsed under "Advanced" on the login form.
-      const endpointInput = page.getByRole('textbox', {
-        name: 'Endpoint',
-        exact: true,
-      });
-      if (!(await endpointInput.isVisible())) {
-        await page.getByText('Advanced').click();
-      }
-      await endpointInput.fill(webServerEndpoint);
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       // 3. Verify "Login information mismatch" error notification appears

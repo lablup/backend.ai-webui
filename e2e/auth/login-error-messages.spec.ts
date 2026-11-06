@@ -18,6 +18,7 @@
  *     `handleLoginError`.
  */
 import {
+  fillLoginEndpoint,
   modifyConfigToml,
   seedStoredApiEndpoint,
   userInfo,
@@ -74,14 +75,9 @@ async function setupBaseMocks(page: Page): Promise<void> {
 }
 
 async function fillLoginForm(page: Page): Promise<void> {
+  await fillLoginEndpoint(page, webServerEndpoint);
   await page.getByLabel('Email or Username').fill(TEST_EMAIL);
   await page.getByLabel('Password').fill(TEST_PASSWORD);
-
-  const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
-  if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
-    await page.getByText('Advanced').click();
-  }
-  await endpointInput.fill(webServerEndpoint);
 }
 
 async function gotoLoginPage(

@@ -12,6 +12,7 @@
 //   - All other requests (GET / for version, the bootstrap POST /func/admin/gql) hit the real cluster.
 import { createAdminApiContext, purgeUserViaApi } from '../utils/admin-api';
 import {
+  fillLoginEndpoint,
   loginAsAdmin,
   logout,
   modifyConfigToml,
@@ -51,14 +52,9 @@ const TEST_PASSWORD = 'oldPassword1!';
  * Mirrors the pattern used in e2e/auth/login.spec.ts.
  */
 async function fillLoginForm(page: Page): Promise<void> {
+  await fillLoginEndpoint(page, webServerEndpoint);
   await page.getByLabel('Email or Username').fill(TEST_EMAIL);
   await page.getByLabel('Password').fill(TEST_PASSWORD);
-
-  const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
-  if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
-    await page.getByText('Advanced').click();
-  }
-  await endpointInput.fill(webServerEndpoint);
 }
 
 /**
@@ -243,18 +239,9 @@ test.describe('real account password change flow', () => {
       // The app's orchestration hook calls /server/login on load (auto-login check).
       // We must let that pass through to the real backend so it doesn't consume our mock.
       await page.goto(webuiEndpoint);
-      await expect(page.getByLabel('Email or Username')).toBeVisible({
-        timeout: 15_000,
-      });
+      await fillLoginEndpoint(page, webServerEndpoint);
       await page.getByLabel('Email or Username').fill(USER_EMAIL);
       await page.getByLabel('Password').fill(ORIGINAL_PASSWORD);
-      const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
-      if (
-        !(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))
-      ) {
-        await page.getByText('Advanced').click();
-      }
-      await endpointInput.fill(webServerEndpoint);
 
       // ── Now register the mock: first user-initiated call → expired, rest → real backend ──
       // The mock is registered late (after page.goto and form fill) so that the app's

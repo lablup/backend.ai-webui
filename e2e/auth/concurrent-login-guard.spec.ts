@@ -12,6 +12,8 @@
  *   - POST /server/login       → per-test mock (409, TOTP-required, etc.)
  */
 import {
+  fillLoginEndpoint,
+  loginEndpointRow,
   modifyConfigToml,
   seedStoredApiEndpoint,
   userInfo,
@@ -103,14 +105,9 @@ async function setupBaseMocks(page: Page): Promise<void> {
  * Fill the SESSION login form with test credentials and endpoint.
  */
 async function fillLoginForm(page: Page): Promise<void> {
+  await fillLoginEndpoint(page, webServerEndpoint);
   await page.getByLabel('Email or Username').fill(TEST_EMAIL);
   await page.getByLabel('Password').fill(TEST_PASSWORD);
-
-  const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
-  if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
-    await page.getByText('Advanced').click();
-  }
-  await endpointInput.fill(webServerEndpoint);
 }
 
 /**
@@ -233,9 +230,7 @@ test.describe(
       );
       await expect(page.getByLabel('Password')).toBeVisible();
       await expect(page.getByLabel('Password')).toHaveValue(TEST_PASSWORD);
-      await expect(page.getByRole('textbox', { name: 'Endpoint' })).toHaveValue(
-        webServerEndpoint,
-      );
+      await expect(loginEndpointRow(page)).toContainText(webServerEndpoint);
     });
 
     // ── 3. Force login sends force=true ──────────────────────────────────
