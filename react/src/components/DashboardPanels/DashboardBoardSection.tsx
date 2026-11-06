@@ -14,6 +14,7 @@ import {
 import type { DashboardModel, PanelDefinition, PanelPage } from './types';
 import type { DashboardBoardsState } from './useDashboardBoards';
 import { Button } from '@lablup/ui-common/Button';
+import { IconButton } from '@lablup/ui-common/IconButton';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIDeleteConfirmModal,
@@ -95,7 +96,17 @@ const DashboardBoardSection: React.FC<DashboardBoardSectionProps> = ({
       gap="sm"
       data-testid="dashboard-board-section"
     >
-      <BAIText strong>{t('dashboard.boards.Boards')}</BAIText>
+      <BAIFlex direction="row" justify="between" align="center" gap="sm">
+        <BAIText strong>{t('dashboard.boards.Boards')}</BAIText>
+        <Button
+          variant="secondary"
+          size="sm"
+          icon={<Plus size="1em" />}
+          label={t('dashboard.boards.NewBoard')}
+          onClick={addNewBoard}
+          data-testid="dashboard-board-add"
+        />
+      </BAIFlex>
       <BAISelect
         size="small"
         style={{ width: '100%' }}
@@ -110,9 +121,31 @@ const DashboardBoardSection: React.FC<DashboardBoardSectionProps> = ({
         data-testid="dashboard-board-select"
       />
       <BAIFlex direction="column" align="stretch" gap="xxs">
-        <BAIText type="secondary" style={{ fontSize: token('--font-size-sm') }}>
-          {t('dashboard.boards.BoardName')}
-        </BAIText>
+        <BAIFlex direction="row" justify="between" align="center" gap="sm">
+          <BAIText
+            type="secondary"
+            style={{ fontSize: token('--font-size-sm') }}
+          >
+            {t('dashboard.boards.BoardName')}
+          </BAIText>
+          <IconButton
+            variant="ghost"
+            size="sm"
+            icon={<Trash2 size="1em" />}
+            label={t('dashboard.boards.DeleteBoard')}
+            className="dashboard-board-delete"
+            isDisabled={!canDelete}
+            tooltip={
+              canDelete
+                ? t('dashboard.boards.DeleteBoard')
+                : t('dashboard.boards.CannotDeleteLastBoard')
+            }
+            onClick={() =>
+              setDeleting({ id: activeBoard.id, title: titleOf(activeBoard) })
+            }
+            data-testid="dashboard-board-delete"
+          />
+        </BAIFlex>
         <BAITextInput
           size="sm"
           width="100%"
@@ -133,31 +166,6 @@ const DashboardBoardSection: React.FC<DashboardBoardSectionProps> = ({
             {t('dashboard.boards.BoardNameRequired')}
           </BAIText>
         ) : null}
-      </BAIFlex>
-      <BAIFlex direction="row" align="center" gap="xs" wrap="wrap">
-        <Button
-          variant="secondary"
-          size="sm"
-          icon={<Plus size="1em" />}
-          label={t('dashboard.boards.NewBoard')}
-          onClick={addNewBoard}
-          data-testid="dashboard-board-add"
-        />
-        <Button
-          variant="secondary"
-          size="sm"
-          icon={<Trash2 size="1em" />}
-          label={t('dashboard.boards.DeleteBoard')}
-          className="dashboard-board-delete"
-          isDisabled={!canDelete}
-          tooltip={
-            canDelete ? undefined : t('dashboard.boards.CannotDeleteLastBoard')
-          }
-          onClick={() =>
-            setDeleting({ id: activeBoard.id, title: titleOf(activeBoard) })
-          }
-          data-testid="dashboard-board-delete"
-        />
       </BAIFlex>
       <BAIDeleteConfirmModal
         open={!!deleting}
