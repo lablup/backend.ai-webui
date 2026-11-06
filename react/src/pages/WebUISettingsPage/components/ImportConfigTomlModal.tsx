@@ -299,7 +299,9 @@ const ImportConfigTomlModal: React.FC<ImportConfigTomlModalProps> = ({
         )}
         {skipped.length > 0 && (
           <Collapsible
-            defaultIsOpen={false}
+            // Open when nothing applies, so the reasons are what the dialog shows.
+            key={`skipped-${fileVersion}`}
+            defaultIsOpen={imported.length === 0}
             chevronPosition="start"
             trigger={
               <BAIFlex gap="xs" align="center">
