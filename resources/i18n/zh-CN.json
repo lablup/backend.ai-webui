@@ -861,7 +861,7 @@
       "Count": "数量",
       "DeploymentStatus": "部署",
       "DeploymentStatusTooltip": "项目的部署及其副本健康状况，按最新排序。",
-      "DomainAuditLogTooltip": "卡片时间范围内当前域的审计日志：对域及其项目的操作，以及其用户执行的所有操作。",
+      "DomainAuditLogTooltip": "所设时间段内的完整审计日志。",
       "DomainDeploymentStatusTooltip": "按创建时间从新到旧显示所有项目的部署及副本健康状况。",
       "DomainFoldersTooltip": "所有项目和用户的文件夹，回收站单独显示。",
       "DomainLongRunningSessionsTooltip": "在卡片时间范围之前启动的运行中会话，最早的在前。",

@@ -861,7 +861,7 @@
       "Count": "Anzahl",
       "DeploymentStatus": "Bereitstellungen",
       "DeploymentStatusTooltip": "Die Bereitstellungen des Projekts mit Replikatzustand, neueste zuerst.",
-      "DomainAuditLogTooltip": "Audit-Log der aktuellen Domäne im Zeitraum der Karte: Aktionen an der Domäne und ihren Projekten sowie alle Aktionen ihrer Benutzer.",
+      "DomainAuditLogTooltip": "Das vollständige Audit-Log für den eingestellten Zeitraum.",
       "DomainDeploymentStatusTooltip": "Aktive Deployments aller Projekte mit Replikat-Zustand, neueste zuerst.",
       "DomainFoldersTooltip": "Ordner aller Projekte und Benutzer, Papierkorb getrennt.",
       "DomainLongRunningSessionsTooltip": "Laufende Sitzungen, die vor dem Zeitraum der Karte gestartet wurden, älteste zuerst.",

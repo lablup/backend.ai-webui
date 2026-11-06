@@ -861,7 +861,7 @@
       "Count": "Määrä",
       "DeploymentStatus": "Käyttöönotot",
       "DeploymentStatusTooltip": "Projektin käyttöönotot replikoiden tilan kanssa, uusimmat ensin.",
-      "DomainAuditLogTooltip": "Nykyisen toimialueen tarkastusloki kortin aikavälillä: toimialueeseen ja sen projekteihin kohdistuneet toiminnot sekä kaikki sen käyttäjien toiminnot.",
+      "DomainAuditLogTooltip": "Koko tarkastusloki asettamallesi aikavälille.",
       "DomainDeploymentStatusTooltip": "Kaikkien projektien käyttöönotot replikoiden kunnon kanssa, uusimmat ensin.",
       "DomainFoldersTooltip": "Kaikkien projektien ja käyttäjien kansiot, roskakori erikseen.",
       "DomainLongRunningSessionsTooltip": "Käynnissä olevat istunnot, jotka alkoivat ennen kortin aikaväliä, vanhimmat ensin.",

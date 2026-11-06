@@ -861,7 +861,7 @@
       "Count": "개수",
       "DeploymentStatus": "배포",
       "DeploymentStatusTooltip": "프로젝트의 배포와 복제본 상태를 최근에 만든 순서로 보여 줍니다.",
-      "DomainAuditLogTooltip": "카드에 설정한 기간 동안의 현재 도메인 감사 로그입니다. 도메인과 그 프로젝트에 대한 작업, 그리고 도메인 사용자가 한 모든 작업을 보여 줍니다.",
+      "DomainAuditLogTooltip": "설정한 기간 동안의 전체 감사 로그입니다.",
       "DomainDeploymentStatusTooltip": "모든 프로젝트의 배포와 복제본 상태를 최근에 만든 순서로 보여 줍니다.",
       "DomainFoldersTooltip": "모든 프로젝트와 사용자의 폴더를 휴지통과 나누어 보여 줍니다.",
       "DomainLongRunningSessionsTooltip": "카드에 설정한 기간이 시작되기 전에 시작된 실행 중 세션을 오래된 순서로 보여 줍니다.",

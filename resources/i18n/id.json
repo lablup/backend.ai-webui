@@ -861,7 +861,7 @@
       "Count": "Jumlah",
       "DeploymentStatus": "Deployment",
       "DeploymentStatusTooltip": "Deployment proyek beserta kesehatan replikanya, terbaru lebih dulu.",
-      "DomainAuditLogTooltip": "Log audit domain saat ini dalam rentang waktu kartu: tindakan pada domain dan proyeknya, serta setiap tindakan penggunanya.",
+      "DomainAuditLogTooltip": "Log audit lengkap untuk periode yang Anda tetapkan.",
       "DomainDeploymentStatusTooltip": "Deployment aktif dari semua proyek beserta kesehatan replika, terbaru lebih dulu.",
       "DomainFoldersTooltip": "Folder semua proyek dan pengguna, tempat sampah terpisah.",
       "DomainLongRunningSessionsTooltip": "Sesi berjalan yang dimulai sebelum rentang waktu kartu, terlama lebih dulu.",

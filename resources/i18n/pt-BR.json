@@ -861,7 +861,7 @@
       "Count": "Quantidade",
       "DeploymentStatus": "Implantações",
       "DeploymentStatusTooltip": "As implantações do projeto com a integridade das réplicas, as mais recentes primeiro.",
-      "DomainAuditLogTooltip": "Log de auditoria do domínio atual no período do cartão: ações no domínio e em seus projetos, e todas as ações de seus usuários.",
+      "DomainAuditLogTooltip": "O log de auditoria completo do período definido.",
       "DomainDeploymentStatusTooltip": "Implantações ativas de todos os projetos com a integridade das réplicas, as mais recentes primeiro.",
       "DomainFoldersTooltip": "Pastas de todos os projetos e usuários, lixeira à parte.",
       "DomainLongRunningSessionsTooltip": "Sessões em execução iniciadas antes do período do cartão, as mais antigas primeiro.",

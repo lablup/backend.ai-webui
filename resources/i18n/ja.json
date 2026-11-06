@@ -861,7 +861,7 @@
       "Count": "件数",
       "DeploymentStatus": "デプロイメント",
       "DeploymentStatusTooltip": "プロジェクトのデプロイメントとレプリカの状態を新しい順に表示します。",
-      "DomainAuditLogTooltip": "カードに設定した期間における現在のドメインの監査ログです。ドメインとそのプロジェクトに対する操作、およびドメインのユーザーが行ったすべての操作を表示します。",
+      "DomainAuditLogTooltip": "設定した期間の監査ログ全体です。",
       "DomainDeploymentStatusTooltip": "すべてのプロジェクトのデプロイとレプリカの状態を、新しい順に表示します。",
       "DomainFoldersTooltip": "すべてのプロジェクトとユーザーのフォルダーを、ごみ箱と分けて表示します。",
       "DomainLongRunningSessionsTooltip": "カードの期間より前に開始された実行中のセッションを古い順に表示します。",

@@ -848,7 +848,7 @@
       "Count": "Count",
       "DeploymentStatus": "Deployments",
       "DeploymentStatusTooltip": "The project's deployments with replica health, newest first.",
-      "DomainAuditLogTooltip": "Audit log of the current domain in the card's time range: actions on the domain and its projects, and every action its users took.",
+      "DomainAuditLogTooltip": "The full audit log for the period you set.",
       "DomainDeploymentStatusTooltip": "Live deployments of every project with replica health, newest first.",
       "DomainFoldersTooltip": "Folders of every project and user, trash bin apart.",
       "DomainLongRunningSessionsTooltip": "Running sessions that started before the card's time range, oldest first.",

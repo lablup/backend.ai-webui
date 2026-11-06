@@ -861,7 +861,7 @@
       "Count": "Bilangan",
       "DeploymentStatus": "Penggunaan",
       "DeploymentStatusTooltip": "Penggunaan projek dengan kesihatan replika, terbaharu dahulu.",
-      "DomainAuditLogTooltip": "Log audit domain semasa dalam julat masa kad: tindakan pada domain dan projeknya, dan setiap tindakan penggunanya.",
+      "DomainAuditLogTooltip": "Log audit penuh bagi tempoh yang anda tetapkan.",
       "DomainDeploymentStatusTooltip": "Pengerahan aktif semua projek dengan kesihatan replika, terbaru dahulu.",
       "DomainFoldersTooltip": "Folder semua projek dan pengguna, tong sampah berasingan.",
       "DomainLongRunningSessionsTooltip": "Sesi berjalan yang bermula sebelum julat masa kad, paling lama dahulu.",

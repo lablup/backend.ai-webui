@@ -861,7 +861,7 @@
       "Count": "Nombre",
       "DeploymentStatus": "Déploiements",
       "DeploymentStatusTooltip": "Les déploiements du projet avec l'état de leurs réplicas, les plus récents d'abord.",
-      "DomainAuditLogTooltip": "Journal d’audit du domaine actuel sur la période de la carte : actions sur le domaine et ses projets, et toutes les actions de ses utilisateurs.",
+      "DomainAuditLogTooltip": "Le journal d’audit complet de la période définie.",
       "DomainDeploymentStatusTooltip": "Déploiements actifs de tous les projets avec l'état des répliques, les plus récents en premier.",
       "DomainFoldersTooltip": "Dossiers de tous les projets et utilisateurs, corbeille à part.",
       "DomainLongRunningSessionsTooltip": "Sessions en cours démarrées avant la période de la carte, les plus anciennes en premier.",

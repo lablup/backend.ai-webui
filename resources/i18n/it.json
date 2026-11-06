@@ -861,7 +861,7 @@
       "Count": "Numero",
       "DeploymentStatus": "Deployment",
       "DeploymentStatusTooltip": "I deployment del progetto con lo stato delle repliche, prima i più recenti.",
-      "DomainAuditLogTooltip": "Registro di audit del dominio attuale nell’intervallo della scheda: azioni sul dominio e sui suoi progetti, e tutte le azioni dei suoi utenti.",
+      "DomainAuditLogTooltip": "Il registro di audit completo per il periodo impostato.",
       "DomainDeploymentStatusTooltip": "Deployment attivi di tutti i progetti con lo stato delle repliche, i più recenti prima.",
       "DomainFoldersTooltip": "Cartelle di tutti i progetti e utenti, cestino a parte.",
       "DomainLongRunningSessionsTooltip": "Sessioni in esecuzione avviate prima del periodo della scheda, le più vecchie prima.",

@@ -861,7 +861,7 @@
       "Count": "Liczba",
       "DeploymentStatus": "Wdrożenia",
       "DeploymentStatusTooltip": "Wdrożenia projektu ze stanem replik, najnowsze najpierw.",
-      "DomainAuditLogTooltip": "Dziennik audytu bieżącej domeny w zakresie czasu karty: działania na domenie i jej projektach oraz wszystkie działania jej użytkowników.",
+      "DomainAuditLogTooltip": "Pełny dziennik audytu dla ustawionego okresu.",
       "DomainDeploymentStatusTooltip": "Aktywne wdrożenia wszystkich projektów ze stanem replik, najnowsze najpierw.",
       "DomainFoldersTooltip": "Foldery wszystkich projektów i użytkowników, kosz osobno.",
       "DomainLongRunningSessionsTooltip": "Działające sesje rozpoczęte przed zakresem czasu karty, najstarsze najpierw.",

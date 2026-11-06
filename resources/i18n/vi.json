@@ -861,7 +861,7 @@
       "Count": "Số lượng",
       "DeploymentStatus": "Triển khai",
       "DeploymentStatusTooltip": "Các triển khai của dự án cùng tình trạng bản sao, mới nhất trước.",
-      "DomainAuditLogTooltip": "Nhật ký kiểm tra của miền hiện tại trong khoảng thời gian của thẻ: các thao tác trên miền và các dự án của miền, và mọi thao tác của người dùng trong miền.",
+      "DomainAuditLogTooltip": "Toàn bộ nhật ký kiểm tra trong khoảng thời gian bạn đặt.",
       "DomainDeploymentStatusTooltip": "Các bản triển khai đang hoạt động của mọi dự án cùng tình trạng bản sao, mới nhất trước.",
       "DomainFoldersTooltip": "Thư mục của mọi dự án và người dùng, thùng rác tách riêng.",
       "DomainLongRunningSessionsTooltip": "Các phiên đang chạy đã bắt đầu trước khoảng thời gian của thẻ, cũ nhất trước.",
