@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { resetBoard, sanitizeBoard, seedBoard } from './boardModel';
+import { ownedSettingKeys } from './panelSettings';
 import type {
   DashboardBoardVars,
   DashboardConfig,
@@ -10,6 +11,7 @@ import type {
   DashboardPageConfig,
   PanelDefinition,
   PanelPage,
+  PersistedPanelV2,
 } from './types';
 import * as _ from 'lodash-es';
 
@@ -93,6 +95,85 @@ export const sanitizeDashboardPageConfig = (
         ? value.active
         : boards[0].id,
   };
+};
+
+/**
+ * Adds back what this client cannot read in the stored page: cards of a newer
+ * catalog, and the settings a card's definition here does not declare. Without
+ * it, a save from an older WebUI on the same manager erases what a newer one added.
+ */
+export const keepUnreadablePanels = (
+  written: DashboardPageConfig,
+  stored: unknown,
+  definitions: ReadonlyArray<PanelDefinition>,
+  page: PanelPage,
+): DashboardPageConfig => {
+  if (!isRecord(stored) || !Array.isArray(stored.boards)) return written;
+  const byKey = new Map(
+    definitions.map((definition) => [definition.key, definition]),
+  );
+  const storedBoards = new Map(
+    stored.boards.filter(isRecord).map((board) => [board.id, board]),
+  );
+  return {
+    ...written,
+    boards: written.boards.map((board) => {
+      const storedPanels = _.filter(
+        storedBoards.get(board.id)?.panels as unknown,
+        isRecord,
+      );
+      if (storedPanels.length === 0) return board;
+      const storedById = new Map(
+        storedPanels.map((panel) => [panel.id, panel]),
+      );
+      const panels = board.panels.map((panel) => {
+        const storedSettings = storedById.get(panel.id)?.settings;
+        const definition = byKey.get(panel.key);
+        if (!isRecord(storedSettings) || !definition) return panel;
+        const kept = _.omit(storedSettings, ownedSettingKeys(definition));
+        return _.isEmpty(kept)
+          ? panel
+          : { ...panel, settings: { ...kept, ...panel.settings } };
+      });
+      const writtenIds = new Set(board.panels.map((panel) => panel.id));
+      // A card this client knows for this page and left out was removed here.
+      const unreadable = storedPanels.filter(
+        (panel) =>
+          typeof panel.id === 'string' &&
+          !writtenIds.has(panel.id) &&
+          !(
+            typeof panel.key === 'string' &&
+            byKey.get(panel.key)?.page.includes(page)
+          ),
+      ) as unknown as Array<PersistedPanelV2>;
+      return { ...board, panels: [...panels, ...unreadable] };
+    }),
+  };
+};
+
+/**
+ * This tab's panel edits (`base` to `edited`) applied on the panels the server
+ * holds now: a panel added, removed or changed elsewhere since `base` stays so
+ * unless this tab changed that same panel.
+ */
+export const mergePanelEdits = (
+  base: ReadonlyArray<PersistedPanelV2>,
+  edited: ReadonlyArray<PersistedPanelV2>,
+  current: ReadonlyArray<PersistedPanelV2>,
+): Array<PersistedPanelV2> => {
+  const baseById = new Map(base.map((panel) => [panel.id, panel]));
+  const currentById = new Map(current.map((panel) => [panel.id, panel]));
+  const editedIds = new Set(edited.map((panel) => panel.id));
+  const kept = edited.flatMap((panel) => {
+    const before = baseById.get(panel.id);
+    if (!before || !_.isEqual(before, panel)) return [panel];
+    const now = currentById.get(panel.id);
+    return now ? [now] : [];
+  });
+  const addedElsewhere = current.filter(
+    (panel) => !baseById.has(panel.id) && !editedIds.has(panel.id),
+  );
+  return [...kept, ...addedElsewhere];
 };
 
 /** Validates `userConfig.dashboard`; a page that does not survive is left out. */

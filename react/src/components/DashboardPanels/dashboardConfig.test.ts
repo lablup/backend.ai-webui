@@ -8,6 +8,8 @@ import {
   DEFAULT_BOARD_VARS,
   addBoard,
   createEmptyBoard,
+  keepUnreadablePanels,
+  mergePanelEdits,
   removeBoard,
   renameBoard,
   resetActiveBoard,
@@ -302,5 +304,92 @@ describe('board operations', () => {
     expect(reset.title).toBe('Mine');
     expect(reset.panels.map((panel) => panel.id)).toEqual(['b', 'p1']);
     expect(reset.panels[1]).toMatchObject({ columnSpan: 2, rowSpan: 3 });
+  });
+});
+
+describe('keepUnreadablePanels', () => {
+  const ranged = [...definitions, card('r', { settings: ['range'] })];
+  const stored = {
+    active: 'default',
+    boards: [
+      {
+        id: 'default',
+        panels: [
+          { id: 'a', key: 'a', columnSpan: 2, rowSpan: 2 },
+          { id: 'b', key: 'b', columnSpan: 2, rowSpan: 2 },
+          { id: 'new', key: 'newer.card', columnSpan: 3, rowSpan: 2 },
+          {
+            id: 'r',
+            key: 'r',
+            columnSpan: 2,
+            rowSpan: 2,
+            settings: { range: 'now-7d', newerSetting: 'x' },
+          },
+        ],
+      },
+    ],
+  };
+  const written: DashboardPageConfig = {
+    active: 'default',
+    boards: [
+      board('default', {
+        panels: [
+          { id: 'a', key: 'a', columnSpan: 2, rowSpan: 2 },
+          { id: 'r', key: 'r', columnSpan: 2, rowSpan: 2 },
+        ],
+      }),
+    ],
+  };
+
+  it('keeps a card this client does not know, and drops one it removed', () => {
+    const result = keepUnreadablePanels(written, stored, ranged, 'project');
+    expect(result.boards[0].panels.map((panel) => panel.id)).toEqual([
+      'a',
+      'r',
+      'new',
+    ]);
+  });
+
+  it('keeps settings the card here does not declare, not the ones it cleared', () => {
+    const result = keepUnreadablePanels(written, stored, ranged, 'project');
+    expect(result.boards[0].panels[1].settings).toEqual({ newerSetting: 'x' });
+  });
+
+  it('leaves a board it cannot match alone', () => {
+    expect(keepUnreadablePanels(written, null, ranged, 'project')).toBe(
+      written,
+    );
+  });
+});
+
+describe('mergePanelEdits', () => {
+  const panel = (id: string, columnSpan = 2) => ({
+    id,
+    key: id,
+    columnSpan,
+    rowSpan: 2,
+  });
+
+  it('keeps a panel added elsewhere since this tab read the board', () => {
+    const base = [panel('a'), panel('b')];
+    const edited = [panel('a', 4), panel('b')];
+    const current = [panel('a'), panel('b'), panel('x')];
+    expect(mergePanelEdits(base, edited, current)).toEqual([
+      panel('a', 4),
+      panel('b'),
+      panel('x'),
+    ]);
+  });
+
+  it('applies a removal here and keeps a change made elsewhere to another panel', () => {
+    const base = [panel('a'), panel('b')];
+    const edited = [panel('a')];
+    const current = [panel('a', 3), panel('b')];
+    expect(mergePanelEdits(base, edited, current)).toEqual([panel('a', 3)]);
+  });
+
+  it('drops a panel removed elsewhere that this tab did not change', () => {
+    const base = [panel('a'), panel('b')];
+    expect(mergePanelEdits(base, base, [panel('a')])).toEqual([panel('a')]);
   });
 });

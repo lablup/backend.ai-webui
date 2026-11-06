@@ -10,7 +10,11 @@ import {
   useRefetchMyAppConfig,
   useUpdateMyUserAppConfig,
 } from '../../hooks/useAppConfig';
-import { activeBoardOf, resolveBoards } from './dashboardConfig';
+import {
+  activeBoardOf,
+  keepUnreadablePanels,
+  resolveBoards,
+} from './dashboardConfig';
 import {
   applyPageUpdate,
   createDashboardWriter,
@@ -104,11 +108,17 @@ export const useDashboardBoards = (
   useEffect(() => {
     currentWrite = async (batch) => {
       try {
-        for (const [writtenPage, { update, resolve: resolveStored }] of batch) {
+        for (const [
+          writtenPage,
+          { update, resolve: resolveStored, keep },
+        ] of batch) {
           // Replayed on the value the server holds now, so edits made elsewhere survive.
           await updateMyUserAppConfig(
             ['dashboard', writtenPage],
-            (stored: unknown) => update(resolveStored(stored)),
+            (stored: unknown) => {
+              const written = update(resolveStored(stored));
+              return keep ? keep(written, stored) : written;
+            },
           );
         }
       } catch (error) {
@@ -152,6 +162,8 @@ export const useDashboardBoards = (
         .save(page, {
           update,
           resolve: (stored) => resolve(stored).config,
+          keep: (written, stored) =>
+            keepUnreadablePanels(written, stored, definitions, page),
           optimistic: next,
         })
         .catch(() => {});
