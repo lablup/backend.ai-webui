@@ -3,10 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
-  isValidWebUISettingValue,
   restrictToOptions,
   type WebUISettingDefinition,
 } from '../../../helper/webuiSettings';
+import { isApplicableSettingValue } from '../helper/importConfigToml';
 import './ImportedValueCell.css';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
@@ -18,7 +18,7 @@ import {
   BAITextInput,
 } from 'backend.ai-ui';
 import { Check, SquarePenIcon, X } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface ImportedValueCellProps {
@@ -28,7 +28,7 @@ export interface ImportedValueCellProps {
   onChange: (value: unknown) => void;
 }
 
-export const formatSettingValue = (value: unknown): string =>
+const formatSettingValue = (value: unknown): string =>
   Array.isArray(value) ? value.join(', ') : String(value ?? '');
 
 // The value a cleared (default) setting starts editing from.
@@ -58,18 +58,34 @@ const ImportedValueCell: React.FC<ImportedValueCellProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const [draft, setDraft] = useState<unknown>(undefined);
+  const [draft, setDraftState] = useState<unknown>(undefined);
+  // NumberInput reports on Enter right before onKeyDown, so commit reads this.
+  const latestDraft = useRef<unknown>(undefined);
+  const setDraft = (next: unknown) => {
+    latestDraft.current = next;
+    setDraftState(next);
+  };
   const isEditing = draft !== undefined;
 
-  const candidate =
-    definition.type === 'stringList' && typeof draft === 'string'
-      ? restrictToOptions(definition, parseList(draft))
-      : draft;
-  const isValid =
-    isEditing && isValidWebUISettingValue(definition.type, candidate);
+  // An emptied editor means the default, as an empty value in the file does.
+  const toCandidate = (raw: unknown): unknown => {
+    if (raw === null || (Array.isArray(raw) && raw.length === 0)) {
+      return undefined;
+    }
+    if (typeof raw !== 'string') return raw;
+    if (definition.type === 'stringList') {
+      const list = parseList(raw);
+      return list.length === 0
+        ? undefined
+        : restrictToOptions(definition, list);
+    }
+    return raw.trim() === '' ? undefined : raw.trim();
+  };
+  const isValid = isApplicableSettingValue(definition, toCandidate(draft));
 
   const commit = () => {
-    if (!isValid) return;
+    const candidate = toCandidate(latestDraft.current);
+    if (!isApplicableSettingValue(definition, candidate)) return;
     onChange(candidate);
     setDraft(undefined);
   };
@@ -150,6 +166,7 @@ const ImportedValueCell: React.FC<ImportedValueCellProps> = ({
             aria-label={label}
             size="sm"
             value={draft as string}
+            status={isValid ? '' : 'error'}
             onChange={(next) => setDraft(next)}
             onKeyDown={onKeyDown}
           />
@@ -176,7 +193,6 @@ const ImportedValueCell: React.FC<ImportedValueCellProps> = ({
         variant="ghost"
         icon={<Check size="1em" />}
         label={t('button.Save')}
-        isDisabled={!isValid}
         onClick={commit}
       />
       <IconButton

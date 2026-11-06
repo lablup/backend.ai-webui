@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { FILE_ONLY_CONFIG_KEYS } from '../../../helper/loginConfig';
+import { isValidPluginPath } from '../../../helper/pluginPath';
 import {
   isValidWebUISettingValue,
   restrictToOptions,
@@ -67,12 +68,37 @@ export type ConfigTomlImport =
   | { ok: true; imported: ImportedSetting[]; skipped: SkippedKey[] }
   | { ok: false; error: string };
 
-const isUnsetText = (value: string) =>
-  value.trim() === '' || /^\[[\s\S]*\]$/.test(value.trim());
+const isUnsetText = (value: string) => {
+  const text = value.trim();
+  return text === '' || text === '""' || /^\[[\s\S]*\]$/.test(text);
+};
+
+// The old parser read these two with parseFloat; every other number with parseInt.
+const FLOAT_KEYS = new Set(['maxShmPerContainer', 'storageWarningThreshold']);
+
+/**
+ * Whether `value` can be applied to `definition`; `undefined` (the default)
+ * always can. Plugin paths follow the same rule as the page's path input.
+ */
+export const isApplicableSettingValue = (
+  definition: WebUISettingDefinition,
+  value: unknown,
+): boolean => {
+  if (value === undefined) return true;
+  if (!isValidWebUISettingValue(definition.type, value)) return false;
+  if (definition.key === 'pluginLogin') {
+    return value === '' || isValidPluginPath(value as string);
+  }
+  if (definition.key === 'pluginPage') {
+    return (value as string[]).every(isValidPluginPath);
+  }
+  return true;
+};
 
 /**
  * One value read the way the old file parser read it: an empty string or a
- * `[placeholder]` is unset, numbers go through `parseInt`, a list is a comma
+ * `[placeholder]` is unset, numbers go through `parseInt` (`parseFloat` for
+ * FLOAT_KEYS), a list is a comma
  * string or a TOML array. `undefined` = unset, `null` = the wrong type.
  */
 const coerce = (
@@ -86,7 +112,9 @@ const coerce = (
       return typeof raw === 'boolean' ? raw : null;
     case 'number': {
       if (typeof raw !== 'number' && typeof raw !== 'string') return null;
-      const value = parseInt(String(raw));
+      const value = FLOAT_KEYS.has(definition.key)
+        ? parseFloat(String(raw))
+        : parseInt(String(raw));
       return Number.isNaN(value) ? null : value;
     }
     case 'string':
@@ -146,16 +174,23 @@ export const importConfigToml = (text: string): ConfigTomlImport => {
       continue;
     }
     const value = coerce(definition, raw);
-    if (
-      value === null ||
-      (value !== undefined && !isValidWebUISettingValue(definition.type, value))
-    ) {
+    if (value === null || !isApplicableSettingValue(definition, value)) {
       skipped.push({ path, reason: 'invalid' });
-    } else if (imported.some((entry) => entry.definition === definition)) {
-      // A second spelling of the same key: the first one in the file wins.
-      skipped.push({ path, reason: 'duplicate' });
-    } else {
+      continue;
+    }
+    // Two spellings of one setting: the earlier one in tomlPathsOf wins, as
+    // the old parser's `a ?? b` did, whatever the order in the file.
+    const at = imported.findIndex((entry) => entry.definition === definition);
+    if (at < 0) {
       imported.push({ definition, path, value });
+    } else {
+      const paths = tomlPathsOf(definition);
+      if (paths.indexOf(path) < paths.indexOf(imported[at].path)) {
+        skipped.push({ path: imported[at].path, reason: 'duplicate' });
+        imported[at] = { definition, path, value };
+      } else {
+        skipped.push({ path, reason: 'duplicate' });
+      }
     }
   }
   return { ok: true, imported, skipped };
@@ -173,12 +208,12 @@ export const exportConfigToml = ({
   includeSettings,
 }: {
   valueOf: (definition: WebUISettingDefinition) => unknown;
-  fileConfig?: Record<string, unknown> | null;
+  fileConfig?: object | null;
   includeSettings: boolean;
 }): string => {
   const doc: Record<string, Record<string, unknown>> = {};
   for (const [section, keys] of Object.entries(FILE_ONLY_CONFIG_KEYS)) {
-    const table = fileConfig?.[section];
+    const table = (fileConfig as Record<string, unknown> | null)?.[section];
     if (!_.isPlainObject(table)) continue;
     for (const key of keys) {
       const value = (table as Record<string, unknown>)[key];
@@ -197,7 +232,10 @@ export const exportConfigToml = ({
         continue;
       }
       const [section, key] = tomlPathsOf(definition)[0].split('.');
-      (doc[section] ??= {})[key] = value;
+      // The previous parser split lists from a comma string.
+      (doc[section] ??= {})[key] = Array.isArray(value)
+        ? value.join(',')
+        : value;
     }
   }
   return stringifyToml(doc);

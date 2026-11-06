@@ -6,7 +6,7 @@ import { App } from '../../../app-shim';
 import BAICodeEditor from '../../../components/BAICodeEditor';
 import { downloadBlob } from '../../../helper/csv-util';
 import type { WebUISettingDefinition } from '../../../helper/webuiSettings';
-import { rawConfigState } from '../../../hooks/useWebUIConfig';
+import { useRawConfig } from '../../../hooks/useWebUIConfig';
 import {
   exportConfigToml,
   importConfigToml,
@@ -28,7 +28,6 @@ import {
   BAITable,
   useBAILogger,
 } from 'backend.ai-ui';
-import { useAtomValue } from 'jotai';
 import {
   CircleCheck,
   CircleX,
@@ -65,8 +64,10 @@ const ImportConfigTomlModal: React.FC<ImportConfigTomlModalProps> = ({
   const [text, setText] = useState('');
   // Values edited in the preview, by setting key; a new file clears them.
   const [edits, setEdits] = useState<Record<string, unknown>>({});
+  // Remounts the value cells for each new file, so no editor carries over.
+  const [fileVersion, setFileVersion] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const fileConfig = useAtomValue(rawConfigState);
+  const fileConfig = useRawConfig();
 
   const exportFile = (includeSettings: boolean) =>
     downloadBlob(
@@ -74,7 +75,7 @@ const ImportConfigTomlModal: React.FC<ImportConfigTomlModalProps> = ({
         [
           exportConfigToml({
             valueOf: currentValueOf,
-            fileConfig: fileConfig as Record<string, unknown> | null,
+            fileConfig,
             includeSettings,
           }),
         ],
@@ -100,6 +101,7 @@ const ImportConfigTomlModal: React.FC<ImportConfigTomlModalProps> = ({
   const replaceText = (next: string) => {
     setText(next);
     setEdits({});
+    setFileVersion((v) => v + 1);
   };
 
   const close = () => {
@@ -139,7 +141,7 @@ const ImportConfigTomlModal: React.FC<ImportConfigTomlModalProps> = ({
               ref={fileInputRef}
               type="file"
               accept=".toml,text/plain"
-              style={{ display: 'none' }}
+              hidden
               onChange={(e) => {
                 const file = e.target.files?.[0];
                 e.target.value = '';
@@ -223,13 +225,15 @@ const ImportConfigTomlModal: React.FC<ImportConfigTomlModalProps> = ({
             })}
           />
         )}
-        {result?.ok && imported.length === 0 && (
-          <BAIAlert
-            type="warning"
-            showIcon
-            title={t('webuiSettings.ImportNothing')}
-          />
-        )}
+        {result?.ok &&
+          imported.length === 0 &&
+          skipped.every((entry) => entry.reason === 'unknown') && (
+            <BAIAlert
+              type="warning"
+              showIcon
+              title={t('webuiSettings.ImportNothing')}
+            />
+          )}
         {imported.length > 0 && (
           <Collapsible
             defaultIsOpen={false}
@@ -273,6 +277,7 @@ const ImportConfigTomlModal: React.FC<ImportConfigTomlModalProps> = ({
                   title: t('webuiSettings.ImportColumnValue'),
                   render: (_v, entry) => (
                     <ImportedValueCell
+                      key={`${fileVersion}-${entry.definition.key}`}
                       definition={entry.definition}
                       label={
                         labels.items[entry.definition.key]?.title ??
