@@ -379,6 +379,8 @@ are only reliable when `isLocalEnvironment` is true.
 
 ## Test isolation, cleanup, and shared state
 
+- **Never change server-global state**, even if the test restores it: retention policies, RBAC,
+  global configuration and the rest are listed in `.claude/rules/e2e-no-global-state.md`.
 - Each test must stand alone: log in and navigate in `beforeEach`, never rely on ordering.
 - Use `test.describe.configure({ mode: 'serial' })` only when tests genuinely share one
   expensive resource; prefer `afterEach` cleanup for isolated tests and `afterAll` for a
