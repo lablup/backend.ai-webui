@@ -2,11 +2,18 @@
  * The tab scope is sent as a real `DeploymentFilter` on a list's first query,
  * so its shape has to match what the manager accepts.
  */
-import {
+import DeploymentStatusCategoryControl, {
   DEPLOYMENT_STATUS_CATEGORIES,
   deploymentStatusCategoryFilter,
   deploymentStatusCategoryOf,
 } from './DeploymentStatusCategoryControl';
+import '@testing-library/jest-dom';
+import { render, screen } from '@testing-library/react';
+
+vi.mock('react-i18next', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('react-i18next')>()),
+  useTranslation: () => ({ t: (key: string) => key }),
+}));
 
 describe('deploymentStatusCategoryFilter', () => {
   it('scopes Terminated with `in` and no replica condition', () => {
@@ -53,5 +60,22 @@ describe('deploymentStatusCategoryOf', () => {
     expect(deploymentStatusCategoryOf({ name: { contains: 'x' } })).toBe(
       'serving',
     );
+  });
+});
+
+describe('DeploymentStatusCategoryControl', () => {
+  it('names each tab by its label and describes it with the help text', () => {
+    render(
+      <DeploymentStatusCategoryControl value="serving" onChange={() => {}} />,
+    );
+    const serving = screen.getByRole('radio', { name: 'deployment.Serving' });
+    expect(serving).toBeChecked();
+    expect(serving).toHaveAccessibleDescription('deployment.ServingTooltip');
+    expect(
+      screen.getByRole('radio', { name: 'deployment.Paused' }),
+    ).toHaveAccessibleDescription('deployment.PausedTooltip');
+    expect(
+      screen.getByRole('radio', { name: 'deployment.status.Terminated' }),
+    ).not.toBeChecked();
   });
 });
