@@ -17,6 +17,7 @@ import {
   WEBUI_SETTINGS_CONFIG_KEY,
   type WebUISettingDefinition,
   type WebUISettingsDocument,
+  WEBUI_SETTINGS_DEFAULT_TAB,
 } from '../../../helper/webuiSettings';
 import { useCurrentDomainValue } from '../../../hooks';
 import {
@@ -24,6 +25,7 @@ import {
   useUpdatePublicDomainAppConfig,
 } from '../../../hooks/useAppConfig';
 import { useRawConfig } from '../../../hooks/useWebUIConfig';
+import MenuKeySelector from './MenuKeySelector';
 import PluginPathInput from './PluginPathInput';
 import { useWebUISettingLabels } from './WebUISettingLabels';
 import { Button } from '@lablup/ui-common/Button';
@@ -55,6 +57,11 @@ interface WebUISettingListProps {
 // One width for every editable row; the plugin path rows keep their wider
 // root + path pair (PluginPathInput).
 const CONTROL_WIDTH = 240;
+
+const MENU_KEY_SETTINGS: ReadonlySet<string> = new Set([
+  'menuBlocklist',
+  'menuInactivelist',
+]);
 
 const parseStringList = (raw: string): Array<string> =>
   raw
@@ -110,9 +117,15 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
 
   // Set before the post-Apply reload so neither guard asks to confirm it.
   const isLeavingAfterApplyRef = useRef(false);
+  // A `?tab=` switch unmounts the draft too; other query changes (the
+  // user-settings modal, a palette deep link) keep it mounted.
+  const tabOf = (search: string) =>
+    new URLSearchParams(search).get('tab') ?? WEBUI_SETTINGS_DEFAULT_TAB;
   const blocker = useBlocker(
     ({ currentLocation, nextLocation }) =>
-      isDirty && currentLocation.pathname !== nextLocation.pathname,
+      isDirty &&
+      (currentLocation.pathname !== nextLocation.pathname ||
+        tabOf(currentLocation.search) !== tabOf(nextLocation.search)),
   );
   const confirmLeave = useEffectEvent(() => {
     modal.confirm({
@@ -300,6 +313,14 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
               }))}
               value={list}
               onChange={(values) => setValue(definition, values)}
+            />
+          ) : MENU_KEY_SETTINGS.has(definition.key) ? (
+            <MenuKeySelector
+              aria-label={label.title}
+              data-testid={`webui-setting-${definition.key}-input`}
+              width={CONTROL_WIDTH}
+              value={list}
+              onChange={(keys) => setValue(definition, keys)}
             />
           ) : definition.key === 'pluginPage' ? (
             <PluginPathInput

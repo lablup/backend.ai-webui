@@ -31,7 +31,7 @@
 | Storage Host             | `/storage-settings/:hostname`                    |    3     |    0    |  ❌ 0%  |
 | My Environment           | `/my-environment`                                |    2     |    2    | ✅ 100% |
 | Environment              | `/environment`                                   |    29    |   23    | 🔶 79%  |
-| Configurations           | `/settings`                                      |    11    |    9    | 🔶 82%  |
+| Configurations           | `/admin/system-settings?tab=configurations`      |    11    |    9    | 🔶 82%  |
 | Resources                | `/agent-summary`, `/agent`                       |    11    |    4    | 🔶 36%  |
 | Resource Policy          | `/resource-policy`                               |    13    |   10    | 🔶 77%  |
 | User Credentials         | `/credential`                                    |    26    |   19    | 🔶 73%  |
@@ -620,7 +620,7 @@
 
 ---
 
-### 14. Configurations (`/settings`)
+### 14. Configurations (`/admin/system-settings?tab=configurations`, formerly `/settings`)
 
 **Test files:** [`e2e/config/config.spec.ts`](config/config.spec.ts), [`e2e/config/page-access-control.spec.ts`](config/page-access-control.spec.ts)
 
