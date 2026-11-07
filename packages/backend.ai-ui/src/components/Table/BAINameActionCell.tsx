@@ -286,9 +286,17 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
         menuOnlyActions.length > 0 ? MORE_BUTTON_WIDTH + ACTIONS_GAP : 0;
       const availableWidth =
         containerWidth - minTitleReserve - moreButtonReserve;
+      // A More button as wide as the one action it would hide saves no
+      // width, so a lone overflowing action keeps its own button (#10502).
+      const commitVisibleCount = (count: number) =>
+        setVisibleCount(
+          menuOnlyActions.length === 0 && count === autoActionCount - 1
+            ? autoActionCount
+            : count,
+        );
 
       if (availableWidth <= 0) {
-        setVisibleCount(Math.max(0, minVisibleActions));
+        commitVisibleCount(Math.max(0, minVisibleActions));
         return;
       }
 
@@ -317,7 +325,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
         }
       }
 
-      setVisibleCount(Math.max(count, minVisibleActions));
+      commitVisibleCount(Math.max(count, minVisibleActions));
     },
   );
 
