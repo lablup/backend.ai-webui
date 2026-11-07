@@ -58,6 +58,7 @@ import {
 } from '../helper/loginSessionAuth';
 import { resolvePluginScriptUrl } from '../helper/pluginPath';
 import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
+import { useElectronEndpointStep } from '../hooks/useElectronEndpointStep';
 import { useLoginOrchestration } from '../hooks/useLoginOrchestration';
 import {
   useInitializeConfig,
@@ -68,8 +69,10 @@ import {
 import { pluginApiEndpointState } from '../hooks/useWebUIPluginState';
 import { preloadPostLoginChunks } from '../preload';
 import { jotaiStore } from './DefaultProviders';
+import LoginEndpointStep from './LoginEndpointStep';
 import LoginFormPanel, { type EndpointHistoryEntry } from './LoginFormPanel';
 import { Button } from '@lablup/ui-common/Button';
+import { Spinner } from '@lablup/ui-common/Spinner';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAIAlert,
@@ -96,6 +99,11 @@ type ConnectionMode = 'SESSION' | 'API';
 const DISPLAYABLE_OPENID_ERROR_CODE = /^[A-Za-z0-9_-]{1,64}$/;
 
 const STORED_API_ENDPOINT_KEY = 'backendaiwebui.api_endpoint';
+// Electron: the webserver the endpoint step confirmed. API-mode sign-in stores a
+// manager in STORED_API_ENDPOINT_KEY, which serves no config.toml to confirm.
+const STORED_SERVER_ENDPOINT_KEY = 'backendaiwebui.electron_server_endpoint';
+const readStored = (key: string) =>
+  (localStorage.getItem(key) ?? '').replace(/^"+|"+$/g, '');
 
 // Logged-out: turn the splash into the login backdrop (keep the weave +
 // version/copyright metadata, hide the loader); the login modals render above
@@ -167,6 +175,9 @@ const LoginView: React.FC<{
     const storedEndpoint = stored ? stored.replace(/^"+|"+$/g, '') : '';
     return storedEndpoint || devApiEndpointOverride || '';
   });
+  const [serverEndpoint, setServerEndpoint] = useState(
+    () => readStored(STORED_SERVER_ENDPOINT_KEY) || apiEndpoint,
+  );
   const [otpRequired, setOtpRequired] = useState(false);
   const [needsOtpRegistration, setNeedsOtpRegistration] = useState(false);
   const [totpRegistrationToken, setTotpRegistrationToken] = useState('');
@@ -217,6 +228,37 @@ const LoginView: React.FC<{
   const [isEndpointDisabled, setIsEndpointDisabled] = useState(false);
 
   const [form] = Form.useForm();
+  // A config.toml that pins apiEndpoint keeps it fixed: no endpoint step and
+  // no "Change endpoint". Without one, the web asks for the server first, as
+  // Electron does; it waits for the file so a pinned page never flashes it.
+  const isEndpointPinned =
+    isConfigLoaded &&
+    !!atomLoginConfig?.api_endpoint &&
+    !devApiEndpointOverride;
+  const usesEndpointStep = (globalThis as Record<string, unknown>).isElectron
+    ? !isEndpointPinned
+    : isConfigLoaded && !isEndpointPinned;
+  const endpointStep = useElectronEndpointStep({
+    isEnabled: usesEndpointStep,
+    isPanelOpen: isLoginPanelOpen,
+    storedEndpoint: serverEndpoint,
+    onConfirmed: (endpoint) => {
+      setServerEndpoint(endpoint);
+      localStorage.setItem(STORED_SERVER_ENDPOINT_KEY, endpoint);
+      // Keep the manager an API-mode sign-in last used for the manager field.
+      const lastSignIn = readStored(STORED_API_ENDPOINT_KEY);
+      const signInEndpoint =
+        connectionMode === 'API' && lastSignIn ? lastSignIn : endpoint;
+      setApiEndpoint(signInEndpoint);
+      form.setFieldValue('api_endpoint', signInEndpoint);
+      localStorage.setItem(STORED_API_ENDPOINT_KEY, signInEndpoint);
+    },
+  });
+  const endpointStepErrorMessage = {
+    invalidUrl: t('login.EndpointStartWith'),
+    unreachable: t('login.EndpointUnreachable'),
+    noConfig: t('login.EndpointNoConfig'),
+  };
   const clientRef =
     useRef<ReturnType<typeof createBackendAIClient>['client']>(null);
   const configRef = useRef<LoginConfigState>(loginConfig);
@@ -313,7 +355,11 @@ const LoginView: React.FC<{
   // origin into `config.toml`), and a webserver cannot serve API-mode sign-in.
   // Derived, never stored: a config refresh re-applies the configured mode at
   // any time, so a value pinned once here would be silently reverted.
-  const isApiSigninBlocked = !!loginConfig.api_endpoint;
+  // Electron also signs in by session unless the confirmed server allows API
+  // sign-in, so a mode stored from an earlier version cannot strand the user.
+  const isApiSigninBlocked =
+    !!loginConfig.api_endpoint ||
+    (usesEndpointStep && !loginConfig.change_signin_support);
   const effectiveConnectionMode: ConnectionMode = isApiSigninBlocked
     ? 'SESSION'
     : connectionMode;
@@ -1001,7 +1047,12 @@ const LoginView: React.FC<{
     const isReloginAfterPasswordChange = reloginAfterPasswordChangeRef.current;
     reloginAfterPasswordChangeRef.current = false;
 
-    const epInput = form.getFieldValue('api_endpoint') || apiEndpoint;
+    // Electron signs in by session against the confirmed webserver; the form
+    // field is the manager for API mode.
+    const epInput =
+      usesEndpointStep && effectiveConnectionMode === 'SESSION'
+        ? serverEndpoint
+        : form.getFieldValue('api_endpoint') || apiEndpoint;
     const ep = epInput.replace(/\/+$/, '').trim();
     setApiEndpoint(ep);
 
@@ -1012,7 +1063,7 @@ const LoginView: React.FC<{
 
     setIsLoading(true);
 
-    if ((globalThis as Record<string, unknown>).isElectron) {
+    if (usesEndpointStep && effectiveConnectionMode === 'SESSION') {
       await loadConfigFromWebServer(ep);
     }
 
@@ -1050,6 +1101,8 @@ const LoginView: React.FC<{
   }, [
     form,
     apiEndpoint,
+    serverEndpoint,
+    usesEndpointStep,
     effectiveConnectionMode,
     connectUsingSession,
     connectUsingAPI,
@@ -1075,7 +1128,7 @@ const LoginView: React.FC<{
   const login = useCallback(
     async (showError = true) => {
       const ep = resolveEndpoint();
-      if ((globalThis as Record<string, unknown>).isElectron) {
+      if (usesEndpointStep && effectiveConnectionMode === 'SESSION') {
         await loadConfigFromWebServer(ep);
       }
       if (effectiveConnectionMode === 'SESSION') {
@@ -1088,6 +1141,7 @@ const LoginView: React.FC<{
     },
     [
       resolveEndpoint,
+      usesEndpointStep,
       effectiveConnectionMode,
       connectUsingSession,
       connectUsingAPI,
@@ -1099,7 +1153,7 @@ const LoginView: React.FC<{
   // Used by the orchestration hook as `onCheckLogin`.
   const checkLogin = useCallback(async (): Promise<boolean | 'unreachable'> => {
     const ep = resolveEndpoint();
-    if ((globalThis as Record<string, unknown>).isElectron) {
+    if (usesEndpointStep && effectiveConnectionMode === 'SESSION') {
       await loadConfigFromWebServer(ep);
     }
     if (effectiveConnectionMode === 'SESSION') {
@@ -1129,7 +1183,7 @@ const LoginView: React.FC<{
       }
     }
     return false;
-  }, [resolveEndpoint, effectiveConnectionMode]);
+  }, [resolveEndpoint, usesEndpointStep, effectiveConnectionMode]);
 
   // Log out the current session on the server.
   // Used by the orchestration hook as `onLogoutSession`.
@@ -1331,6 +1385,45 @@ const LoginView: React.FC<{
           if (!v) expiredCredentialsRef.current = null;
         }}
         onSetShowSignupModal={setShowSignupModal}
+        endpointStep={
+          endpointStep.isCheckingStored ? (
+            <BAIFlex justify="center" style={{ padding: 'var(--spacing-6)' }}>
+              <Spinner size="lg" />
+            </BAIFlex>
+          ) : endpointStep.isStepOpen ? (
+            <LoginEndpointStep
+              defaultEndpoint={serverEndpoint}
+              history={endpointHistory}
+              onDeleteEndpoint={deleteEndpoint}
+              isConnecting={endpointStep.isConnecting}
+              error={
+                endpointStep.error
+                  ? endpointStepErrorMessage[endpointStep.error]
+                  : null
+              }
+              onContinue={endpointStep.continueWith}
+            />
+          ) : undefined
+        }
+        onChangeEndpoint={
+          usesEndpointStep
+            ? () => {
+                setLoginError(null);
+                setOtpRequired(false);
+                setNeedsOtpRegistration(false);
+                setNeedToResetPassword(false);
+                expiredCredentialsRef.current = null;
+                form.setFieldValue('otp', '');
+                endpointStep.changeEndpoint();
+              }
+            : undefined
+        }
+        serverEndpoint={usesEndpointStep ? serverEndpoint : undefined}
+        endpointNotice={
+          usesEndpointStep && endpointStep.hasNoDomain
+            ? t('login.EndpointNoDomain')
+            : null
+        }
       />
 
       {/* Block/Error Panel */}

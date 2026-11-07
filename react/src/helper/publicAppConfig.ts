@@ -19,7 +19,7 @@ export interface PublicConfigTarget {
   restBase: string;
 }
 
-const PUBLIC_CONFIG_FETCH_TIMEOUT_MS = 10_000;
+export const PUBLIC_CONFIG_FETCH_TIMEOUT_MS = 10_000;
 
 /**
  * Where to read from, out of the parsed `config.toml`: `general.apiDomainName`

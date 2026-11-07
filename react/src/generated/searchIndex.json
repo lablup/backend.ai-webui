@@ -3392,6 +3392,7 @@
         "login.APIKey",
         "login.APIMode",
         "login.AdvancedSettings",
+        "login.ChangeEndpoint",
         "login.ChangePassword",
         "login.DescChangePasswordEmail",
         "login.DescEndpoint",

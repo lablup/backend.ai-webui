@@ -236,6 +236,72 @@ describe('customThemeConfig (v2 appearance bootstrap)', () => {
     });
   });
 
+  describe('applyJoinedServerAppearance (Electron endpoint step)', () => {
+    const target = { domainName: 'default', restBase: 'https://b.example' };
+
+    it("replaces the previous server's appearance with the joined one", async () => {
+      resolverState.apiDomainName = 'default';
+      resolverState.apiEndpoint = 'https://a.example';
+      const mod = await importFreshModule();
+      mockFetchRoutes({
+        staticDoc: V2_THEME,
+        publicConfigByDomain: { default: { appearance: V2_DOMAIN_THEME } },
+      });
+      mod.loadCustomThemeConfig();
+      await flush();
+      expect(mod.getCustomTheme()).toEqual(V2_DOMAIN_THEME);
+
+      const joined: BAIAppearanceConfig = {
+        schemaVersion: 2,
+        branding: { brandName: 'Joined' },
+      };
+      await mod.applyJoinedServerAppearance({ appearance: joined }, target);
+      expect(mod.getCustomTheme()).toEqual(joined);
+    });
+
+    it('falls back to theme.json when the joined server has no appearance', async () => {
+      resolverState.apiDomainName = 'default';
+      resolverState.apiEndpoint = 'https://a.example';
+      const mod = await importFreshModule();
+      mockFetchRoutes({
+        staticDoc: V2_THEME,
+        publicConfigByDomain: { default: { appearance: V2_DOMAIN_THEME } },
+      });
+      mod.loadCustomThemeConfig();
+      await flush();
+
+      await mod.applyJoinedServerAppearance(undefined, target);
+      expect(mod.getCustomTheme()).toEqual(V2_THEME);
+      expect(mod.getDomainAppearanceConfig()).toBeUndefined();
+
+      await mod.applyJoinedServerAppearance(
+        { appearance: V2_DOMAIN_THEME },
+        undefined,
+      );
+      expect(mod.getCustomTheme()).toEqual(V2_THEME);
+    });
+
+    it('waits for the start-up bootstrap so it is not overwritten by it', async () => {
+      const mod = await importFreshModule();
+      mockFetchRoutes({ staticDoc: V2_THEME });
+      const dispatchEventSpy = vi.spyOn(document, 'dispatchEvent');
+
+      mod.loadCustomThemeConfig();
+      await mod.applyJoinedServerAppearance(
+        { appearance: V2_DOMAIN_THEME },
+        target,
+      );
+      await flush();
+
+      expect(mod.getCustomTheme()).toEqual(V2_DOMAIN_THEME);
+      expect(
+        dispatchEventSpy.mock.calls.filter(
+          ([e]) => (e as CustomEvent).type === 'custom-theme-loaded',
+        ),
+      ).toHaveLength(2);
+    });
+  });
+
   describe('pickSeed', () => {
     it('resolves a tuple per scheme and a string for both', async () => {
       const mod = await importFreshModule();

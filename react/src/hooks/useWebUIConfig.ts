@@ -115,12 +115,15 @@ type JotaiStore = ReturnType<typeof createStore>;
 
 /**
  * Result of fetching and parsing config.toml.
- * - Fetch failure (network error, non-200, SPA fallback): `{ config: null }` — no error.
+ * - No response (network error, timeout): `{ config: null, unreachable: true }`.
+ * - Non-200 or SPA fallback: `{ config: null }` — no error.
  * - Parse failure (invalid TOML after fetch succeeds): `{ config: null, error }`.
  */
 export interface ConfigFetchResult {
   config: RawTomlConfig | null;
   error?: unknown;
+  /** The request itself failed (no response), as opposed to a missing file. */
+  unreachable?: boolean;
 }
 
 /**
@@ -129,13 +132,16 @@ export interface ConfigFetchResult {
  */
 export async function fetchAndParseConfig(
   configPath: string,
+  timeoutMs?: number,
 ): Promise<ConfigFetchResult> {
   let res: Response;
   try {
-    res = await fetch(configPath);
+    res = timeoutMs
+      ? await fetch(configPath, { signal: AbortSignal.timeout(timeoutMs) })
+      : await fetch(configPath);
   } catch {
     // Network / fetch error — treat as missing config (no error field).
-    return { config: null };
+    return { config: null, unreachable: true };
   }
 
   if (res.status !== 200) {
