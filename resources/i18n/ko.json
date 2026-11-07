@@ -2293,7 +2293,6 @@
     "SessionMode": "세션",
     "SignUp": "가입하기",
     "SignoutFinished": "탈퇴가 완료되었습니다.",
-    "TooManyAttempt": "너무 많은 로그인 시도가 있었습니다. 잠시동안 로그인 시도가 차단되었습니다.",
     "singleSignOn": {
       "LoginWithRealm": "{{ realmName }} 로그인",
       "LoginWithRealmFailed": "{{ realmName }} 로그인에 실패했습니다",
@@ -4491,7 +4490,7 @@
     "PluginLogin": "로그인 플러그인 경로",
     "PluginPage": "페이지 플러그인 경로",
     "ResetAllSettings": "시스템 설정을 모두 초기화할까요?",
-    "ResetAllSettingsDesc": "{{domain}} 도메인에 이 페이지로 저장한 값이 모두 삭제되고, 각 항목은 config.toml 값으로 돌아갑니다. 초기화 후 페이지를 다시 불러옵니다.",
+    "ResetAllSettingsDesc": "{{domain}} 도메인에 이 페이지로 저장한 값이 모두 삭제되고, 각 항목은 기본값으로 돌아갑니다. 초기화 후 페이지를 다시 불러옵니다.",
     "ShowNonInstalledImages": "미설치 이미지 표시",
     "SingleSignOnVendors": "SSO 로그인",
     "SsoRealmName": "SSO OpenID 버튼 라벨 지정",

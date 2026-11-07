@@ -82,8 +82,6 @@ export type SessionHistory = {
 };
 
 interface GeneralSettings {
-  last_login?: number;
-  login_attempt?: number;
   language?: string;
 }
 

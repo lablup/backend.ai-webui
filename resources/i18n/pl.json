@@ -2292,7 +2292,6 @@
     "SessionMode": "Sesja",
     "SignUp": "Zapisz się",
     "SignoutFinished": "Wylogowanie zakończone.",
-    "TooManyAttempt": "Zbyt wiele prób logowania. Próby logowania zostały na jakiś czas zablokowane.",
     "singleSignOn": {
       "LoginWithRealm": "Zaloguj się za pomocą {{ realmName }}.",
       "LoginWithRealmFailed": "Logowanie przez {{ realmName }} nie powiodło się",
@@ -4491,7 +4490,7 @@
     "PluginLogin": "Ścieżka wtyczki logowania",
     "PluginPage": "Ścieżki wtyczek stron",
     "ResetAllSettings": "Zresetować wszystkie ustawienia systemowe?",
-    "ResetAllSettingsDesc": "Wszystkie wartości zapisane na tej stronie dla domeny {{domain}} zostaną usunięte, a każdy wiersz wróci do wartości z config.toml. Po zresetowaniu strona zostanie przeładowana.",
+    "ResetAllSettingsDesc": "Wszystkie wartości zapisane na tej stronie dla domeny {{domain}} zostaną usunięte, a każdy wiersz wróci do wartości domyślnej. Po zresetowaniu strona zostanie przeładowana.",
     "ShowNonInstalledImages": "Pokazuj niezainstalowane obrazy",
     "SingleSignOnVendors": "Zezwól na logowanie SSO",
     "SsoRealmName": "Etykieta przycisku SSO OpenID",

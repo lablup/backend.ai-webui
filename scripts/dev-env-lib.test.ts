@@ -1,8 +1,11 @@
 // @ts-nocheck
 import {
   CONFIG_GENERATED_MARKER,
+  FILE_ONLY_CONFIG_KEYS,
   GATE_SCAN_DIRS,
   MANAGER_CONFIG_KEYS,
+  ignoredOverridesWarning,
+  splitConfigOverrides,
   ambiguityNote,
   allSettings,
   compareLines,
@@ -501,17 +504,31 @@ describe("dev-env manager settings", () => {
     const result = rows(UP_CONFIG);
     expect(result["general.connectionMode"]).toEqual(["SESSION", true]);
     expect(result["general.signupSupport"]).toEqual([false, true]);
-    expect(result["general.force2FA"]).toEqual([null, false]);
-    expect(result["resources.openPortToPublic"]).toEqual([null, false]);
+    expect(result["general.apiDomainName"]).toEqual([null, false]);
     expect(result).not.toHaveProperty("general.apiEndpointText");
     expect(result).not.toHaveProperty("wsproxy.proxyURL");
   });
 
-  it("expands a present `section.*` and keeps an absent one as one row", () => {
+  it("lists no System Settings key, since the WebUI no longer reads them from the file", () => {
     const result = rows(UP_CONFIG);
-    expect(result["plugin.page"]).toEqual(["a,b", true]);
-    expect(result).not.toHaveProperty("plugin.*");
-    expect(result["pipeline.*"]).toEqual([null, false]);
+    expect(result).not.toHaveProperty("general.enableModelFolders");
+    expect(result).not.toHaveProperty("general.maxCountForPreopenPorts");
+    expect(result).not.toHaveProperty("plugin.page");
+    expect(MANAGER_CONFIG_KEYS.every((key) => FILE_ONLY_CONFIG_KEYS.includes(key))).toBe(true);
+  });
+
+  it("mirrors FILE_ONLY_CONFIG_KEYS in react/src/helper/loginConfig.ts", () => {
+    const source = fs.readFileSync(
+      path.join(process.cwd(), "react/src/helper/loginConfig.ts"),
+      "utf8",
+    );
+    const literal = /export const FILE_ONLY_CONFIG_KEYS[^=]*=\s*\{([\s\S]*?)\};/.exec(source);
+    expect(literal).not.toBeNull();
+    const keys = [...literal![1].matchAll(/(\w+):\s*\[([^\]]*)\]/g)].flatMap(
+      ([, section, names]) =>
+        [...names.matchAll(/'(\w+)'/g)].map(([, name]) => `${section}.${name}`),
+    );
+    expect([...keys].sort()).toEqual([...FILE_ONLY_CONFIG_KEYS].sort());
   });
 
   it("keeps the list order and covers every key for a missing config", () => {
@@ -659,7 +676,7 @@ describe("dev-env server probe status", () => {
 
   it("prints one compact config line per server", () => {
     expect(formatConfigLine(byName("up"))).toBe(
-      "config: SESSION -signupSupport +enableModelFolders maxCountForPreopenPorts=10 plugin.page=a,b",
+      "config: SESSION -signupSupport",
     );
     expect(formatConfigLine(byName("down"))).toBe("config: none (HTTP 404)");
     expect(formatConfigLine(byName("fresh"))).toBe(
@@ -1337,25 +1354,47 @@ describe("config.toml", () => {
       },
     };
 
-    it("layers sample < probed switches < overrides under a generated header", () => {
+    it("layers sample < probed file-only keys < file-only overrides under a generated header", () => {
       const out = renderConfigToml({
         sample: SAMPLE,
         server,
-        overrides: [parseConfigSet("resources.openPortToPublic=true")],
+        overrides: [parseConfigSet('general.connectionMode="API"')],
       });
       const lines = out.split("\n");
       expect(isGeneratedConfig(out)).toBe(true);
       expect(lines[0].startsWith(CONFIG_GENERATED_MARKER)).toBe(true);
       expect(lines[1]).toBe(
-        "# base: config.toml.sample · switches: main (probed 2026-10-12T03:00:00Z) · overrides: resources.openPortToPublic = true",
+        '# base: config.toml.sample · switches: main (probed 2026-10-12T03:00:00Z) · overrides: general.connectionMode = "API"',
       );
       expect(lines[2]).toBe("");
       expect(lines[3]).toBe("[general]");
-      expect(out).toContain('connectionMode = "SESSION"');
-      expect(out).toContain("debug = true  # README");
-      expect(out).toContain("enableModelFolders = true");
-      expect(out).toContain("openPortToPublic = true  # Show option");
-      expect(out).toContain('[pipeline]\nendpoint = "http://mlops.example.test/"');
+      expect(out).toContain('connectionMode = "API"');
+    });
+
+    it("copies no System Settings key from the server, and writes none from --set", () => {
+      const out = renderConfigToml({
+        sample: SAMPLE,
+        server,
+        overrides: [parseConfigSet("resources.openPortToPublic=true")],
+      });
+      expect(out.split("\n")[1]).not.toContain("overrides:");
+      expect(out).toContain("debug = false                 # README");
+      expect(out).not.toContain("enableModelFolders");
+      expect(out).toContain("openPortToPublic = false  # Show option");
+      expect(out).not.toContain("http://mlops.example.test/");
+    });
+
+    it("splits --set into file-only keys and keys System Settings serves", () => {
+      const { kept, ignored } = splitConfigOverrides([
+        parseConfigSet("general.signupSupport=true"),
+        parseConfigSet("resources.openPortToPublic=true"),
+      ]);
+      expect(kept.map(({ key }) => key)).toEqual(["general.signupSupport"]);
+      expect(ignored.map(({ key }) => key)).toEqual(["resources.openPortToPublic"]);
+      expect(ignoredOverridesWarning(ignored)).toMatch(
+        /not written to config\.toml: resources\.openPortToPublic\..*System Settings/,
+      );
+      expect(ignoredOverridesWarning([])).toBeNull();
     });
 
     it("never copies the endpoint or the plugin table", () => {

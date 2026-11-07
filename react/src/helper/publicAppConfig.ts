@@ -10,7 +10,7 @@ import * as _ from 'lodash-es';
  * bootstrap, before login and outside `RelayEnvironmentProvider`. One request
  * per page load serves every consumer of the domain's slice (`appearance`,
  * `settings`, …). A failed fetch is logged once and yields `undefined`; the
- * callers keep their file-based fallback until the next reload.
+ * callers keep their code defaults until the next reload.
  */
 export type PublicDomainConfigSlice = Record<string, unknown>;
 

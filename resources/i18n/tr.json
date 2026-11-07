@@ -2291,7 +2291,6 @@
     "SessionMode": "Oturum",
     "SignUp": "kaydol",
     "SignoutFinished": "Oturum kapatma işlemi tamamlandı.",
-    "TooManyAttempt": "Çok fazla giriş denemesi oldu. Giriş denemeleri bir süreliğine engellendi.",
     "singleSignOn": {
       "LoginWithRealm": "{{realmName }} ile giriş yapın",
       "LoginWithRealmFailed": "{{ realmName }} ile giriş başarısız oldu",
@@ -4488,7 +4487,7 @@
     "PluginLogin": "Giriş eklentisi yolu",
     "PluginPage": "Sayfa eklentisi yolları",
     "ResetAllSettings": "Tüm Sistem Ayarları sıfırlansın mı?",
-    "ResetAllSettingsDesc": "Bu sayfada {{domain}} etki alanı için kaydedilen tüm değerler silinir ve her satır config.toml değerine döner. Sıfırlamadan sonra sayfa yeniden yüklenir.",
+    "ResetAllSettingsDesc": "Bu sayfada {{domain}} etki alanı için kaydedilen tüm değerler silinir ve her satır varsayılan değerine döner. Sıfırlamadan sonra sayfa yeniden yüklenir.",
     "ShowNonInstalledImages": "Yüklenmemiş imajları göster",
     "SingleSignOnVendors": "SSO ile oturum açmaya izin ver",
     "SsoRealmName": "SSO OpenID düğmesi etiketi",

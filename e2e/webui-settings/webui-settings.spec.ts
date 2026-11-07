@@ -29,7 +29,6 @@ import {
   openWebUISettings,
   readClientConfig,
   readClientConfigForRows,
-  readConfigToml,
   resetRow,
   rowByKey,
   rowCheckbox,
@@ -37,7 +36,7 @@ import {
   settingGroup,
   settingRow,
   suppressAdminViewSwitchTour,
-  tomlValueOf,
+  defaultValueOf,
   toolbarResetButton,
   waitForClientReady,
   WEBUI_SETTING_GROUPS,
@@ -77,7 +76,7 @@ test.afterAll(async () => {
   await api.dispose();
 });
 
-// Each test starts from file values only and leaves nothing behind.
+// Each test starts from the defaults only and leaves nothing behind.
 test.beforeEach(async () => {
   await api.clear();
 });
@@ -123,11 +122,10 @@ test.describe(
   'System Settings - Page',
   { tag: ['@critical', '@config', '@webui-settings', '@functional'] },
   () => {
-    test('superadmin sees every group and every row with its config.toml value as the default', async ({
+    test('superadmin sees every group and every row with its code default', async ({
       page,
       request,
     }) => {
-      const config = await readConfigToml(page);
       await signInAsAdmin(page, request);
       await openWebUISettings(page);
 
@@ -146,21 +144,21 @@ test.describe(
         }
       });
 
-      await test.step('no row is marked as changed and each shows the file value', async () => {
+      await test.step('no row is marked as changed and each shows its default', async () => {
         for (const setting of WEBUI_SETTING_ROWS) {
           const row = settingRow(page, setting.key);
           await expect(changedMarker(row)).toHaveCount(0);
-          const fileValue = tomlValueOf(config, setting);
-          if (fileValue === undefined) continue;
+          const defaultValue = defaultValueOf(setting);
+          if (defaultValue === undefined) continue;
           switch (setting.type) {
             case 'boolean':
               await expect(rowCheckbox(row)).toBeChecked({
-                checked: fileValue as boolean,
+                checked: defaultValue as boolean,
               });
               break;
             case 'number':
             case 'string':
-              await expect(rowInput(row)).toHaveValue(String(fileValue));
+              await expect(rowInput(row)).toHaveValue(String(defaultValue));
               break;
             case 'stringList':
               // Rendered per key (vendor checkboxes, plugin path rows, a
@@ -190,7 +188,7 @@ test.describe(
       await expect(allSettingRows(page)).toHaveCount(0);
     });
 
-    test('a checkbox row shows the changed marker and resets to the file value', async ({
+    test('a checkbox row shows the changed marker and resets to the default', async ({
       page,
       request,
     }) => {
@@ -211,7 +209,7 @@ test.describe(
       await expect(applyButton(page)).toBeDisabled();
     });
 
-    test('a number row shows the changed marker and resets to the file value', async ({
+    test('a number row shows the changed marker and resets to the default', async ({
       page,
       request,
     }) => {
@@ -316,7 +314,7 @@ test.describe(
         expect(await api.readSettings('public')).toBeUndefined();
       });
 
-      await test.step('resetting both rows and applying removes the document and the file values return', async () => {
+      await test.step('resetting both rows and applying removes the document and the defaults return', async () => {
         await resetRow(page, hideAgentsRow);
         await resetRow(page, maxCpuRow);
         await applyWebUISettings(page);
@@ -387,7 +385,7 @@ test.describe(
   'System Settings - Precedence',
   { tag: ['@critical', '@config', '@webui-settings', '@integration'] },
   () => {
-    test('a value in the domain document overrides config.toml for every domain key after sign-in', async ({
+    test('a value in the domain document overrides the default for every domain key after sign-in', async ({
       browser,
       request,
     }) => {
@@ -417,7 +415,7 @@ test.describe(
       }
     });
 
-    test('a wrong-typed value or an absent key keeps the config.toml value', async ({
+    test('a wrong-typed value or an absent key keeps the default', async ({
       browser,
       request,
     }) => {
@@ -482,21 +480,20 @@ test.describe(
       expect(effective.ssoRealmName).toEqual(baseline.ssoRealmName);
     });
 
-    test('a value in the public document overrides config.toml on the login page before sign-in', async ({
+    test('a value in the public document overrides the default on the login page before sign-in', async ({
       page,
       request,
     }) => {
-      const config = await readConfigToml(page);
-      const fileSigninSwitch =
-        (tomlValueOf(config, rowByKey('allowChangeSigninMode')) as
+      const defaultSigninSwitch =
+        (defaultValueOf(rowByKey('allowChangeSigninMode')) as
           boolean | undefined) ?? false;
-      const fileAnonymousPassword =
-        (tomlValueOf(config, rowByKey('allowAnonymousChangePassword')) as
+      const defaultAnonymousPassword =
+        (defaultValueOf(rowByKey('allowAnonymousChangePassword')) as
           boolean | undefined) ?? false;
 
       await api.writeSettings('public', {
-        allowChangeSigninMode: !fileSigninSwitch,
-        allowAnonymousChangePassword: !fileAnonymousPassword,
+        allowChangeSigninMode: !defaultSigninSwitch,
+        allowAnonymousChangePassword: !defaultAnonymousPassword,
         singleSignOnVendors: ['saml', 'openid'],
         ssoRealmName: 'e2e-realm',
         debug: true,
@@ -510,12 +507,12 @@ test.describe(
         exact: true,
       });
       const forgotPassword = page.getByText('Forgot password?');
-      if (fileSigninSwitch) {
+      if (defaultSigninSwitch) {
         await expect(signinSwitch).toBeHidden();
       } else {
         await expect(signinSwitch).toBeVisible();
       }
-      if (fileAnonymousPassword) {
+      if (defaultAnonymousPassword) {
         await expect(forgotPassword).toBeHidden();
       } else {
         await expect(forgotPassword).toBeVisible();
@@ -530,16 +527,15 @@ test.describe(
       await expect(i18nKeyMarkers(page).first()).toBeVisible();
     });
 
-    test('a key absent from the public document keeps the login page config.toml value', async ({
+    test('a key absent from the public document keeps the login page default', async ({
       page,
       request,
     }) => {
-      const config = await readConfigToml(page);
-      const fileSigninSwitch =
-        (tomlValueOf(config, rowByKey('allowChangeSigninMode')) as
+      const defaultSigninSwitch =
+        (defaultValueOf(rowByKey('allowChangeSigninMode')) as
           boolean | undefined) ?? false;
-      const fileVendors =
-        (tomlValueOf(config, rowByKey('singleSignOnVendors')) as
+      const defaultVendors =
+        (defaultValueOf(rowByKey('singleSignOnVendors')) as
           Array<string> | undefined) ?? [];
 
       await api.writeSettings('public', { ssoRealmName: 'e2e-realm' });
@@ -570,21 +566,20 @@ test.describe(
         name: 'Login',
         exact: true,
       });
-      if (fileSigninSwitch) {
+      if (defaultSigninSwitch) {
         await expect(signinSwitch).toBeVisible();
       } else {
         await expect(signinSwitch).toBeHidden();
       }
       const samlButton = page.getByRole('button', { name: 'Login with SAML' });
-      if (fileVendors.includes('saml')) {
+      if (defaultVendors.includes('saml')) {
         await expect(samlButton).toBeVisible();
       } else {
         await expect(samlButton).toBeHidden();
       }
-      const fileDebug =
-        (tomlValueOf(config, rowByKey('debug')) as boolean | undefined) ??
-        false;
-      if (fileDebug) {
+      const defaultDebug =
+        (defaultValueOf(rowByKey('debug')) as boolean | undefined) ?? false;
+      if (defaultDebug) {
         await expect(i18nKeyMarkers(page).first()).toBeVisible();
       } else {
         await expect(i18nKeyMarkers(page)).toHaveCount(0);
@@ -851,17 +846,14 @@ test.describe(
       browser,
       request,
     }) => {
-      // `enableInteractiveLoginAccountSwitch` is public-scope; the file turns it
-      // on so the document's `false` is a real override.
+      // `enableInteractiveLoginAccountSwitch` is public-scope and on by default,
+      // so the document's `false` is a real override.
       await api.writeSettings('domain', { maskUserInfo: true });
       await api.writeSettings('public', {
         enableInteractiveLoginAccountSwitch: false,
       });
 
       const page = await (await browser.newContext()).newPage();
-      await modifyConfigToml(page, request, {
-        general: { enableInteractiveLoginAccountSwitch: true },
-      });
       await enablePublicSlice(page, request, api.domainName);
       await signInAsAdmin(page, request);
       await navigateTo(
@@ -1174,24 +1166,25 @@ test.describe(
       page,
       request,
     }) => {
-      // The file enables sign-up without confirmation; the document turns it
-      // off, which brings the invitation token back.
+      // Sign-up asks for an invitation token by default; the document turns
+      // confirmation off, which removes the token field.
       await api.writeSettings('public', {
-        allowSignupWithoutConfirmation: false,
+        allowSignupWithoutConfirmation: true,
       });
       await modifyConfigToml(page, request, {
-        general: { signupSupport: true, allowSignupWithoutConfirmation: true },
+        general: { signupSupport: true },
       });
       await enablePublicSlice(page, request, api.domainName);
       await openLoginPage(page);
       await page.getByText('Sign up', { exact: true }).click();
       const dialog = page.getByRole('dialog', {
-        name: 'Sign up (Beta invitation only)',
+        name: 'Sign up',
+        exact: true,
       });
       await expect(dialog).toBeVisible();
       await expect(
         dialog.getByRole('textbox', { name: 'Invitation Token' }),
-      ).toBeVisible();
+      ).toHaveCount(0);
     });
   },
 );

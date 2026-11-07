@@ -386,18 +386,12 @@ describe('checkUrlFields', () => {
         apiEndpoint: 'https://api.example.com',
         appDownloadUrl: 'https://download.example.com',
       },
-      wsproxy: {
-        proxyURL: 'https://proxy.example.com',
-        proxyBaseURL: 'https://proxy-base.example.com',
-      },
+      wsproxy: { proxyURL: 'https://proxy.example.com' },
       server: { webServerURL: 'https://web.example.com' },
-      pipeline: {
-        endpoint: 'https://pipeline.example.com',
-        frontendEndpoint: 'https://pipeline-frontend.example.com',
-      },
+      pipeline: { frontendEndpoint: 'https://pipeline-frontend.example.com' },
     });
     expect(issues).toEqual([]);
-    expect(checkedCount).toBe(7);
+    expect(checkedCount).toBe(5);
   });
 
   it('should return multiple issues when multiple URLs are invalid', () => {
@@ -525,8 +519,6 @@ describe('checkGeneralNumericFields', () => {
   it('should return empty array when all values are within range', () => {
     const results = checkGeneralNumericFields({
       maxCountForPreopenPorts: 10,
-      loginAttemptLimit: 5,
-      loginBlockTime: 300,
     });
     expect(results).toEqual([]);
   });
@@ -555,18 +547,6 @@ describe('checkGeneralNumericFields', () => {
     expect(results[0].id).toBe('config-general-maxCountForPreopenPorts');
   });
 
-  it('should return warning when loginAttemptLimit is below minimum', () => {
-    const results = checkGeneralNumericFields({ loginAttemptLimit: 0 });
-    expect(results).toHaveLength(1);
-    expect(results[0].id).toBe('config-general-loginAttemptLimit');
-  });
-
-  it('should return warning when loginBlockTime exceeds maximum', () => {
-    const results = checkGeneralNumericFields({ loginBlockTime: 86401 });
-    expect(results).toHaveLength(1);
-    expect(results[0].id).toBe('config-general-loginBlockTime');
-  });
-
   it('should accept 0 for maxCountForPreopenPorts (disables feature)', () => {
     const results = checkGeneralNumericFields({ maxCountForPreopenPorts: 0 });
     expect(results).toEqual([]);
@@ -574,25 +554,24 @@ describe('checkGeneralNumericFields', () => {
 
   it('should skip undefined/null fields', () => {
     const results = checkGeneralNumericFields({
-      loginAttemptLimit: undefined,
-      loginBlockTime: null,
+      maxCountForPreopenPorts: null,
     } as Record<string, unknown>);
     expect(results).toEqual([]);
   });
 
   it('should skip NaN string values', () => {
     const results = checkGeneralNumericFields({
-      loginAttemptLimit: 'unlimited',
+      maxCountForPreopenPorts: 'unlimited',
     });
     expect(results).toEqual([]);
   });
 
-  it('should return multiple warnings for multiple out-of-range fields', () => {
+  it('ignores the removed login limiter keys', () => {
     const results = checkGeneralNumericFields({
       loginAttemptLimit: 0,
       loginBlockTime: 86401,
     });
-    expect(results).toHaveLength(2);
+    expect(results).toEqual([]);
   });
 });
 
