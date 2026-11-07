@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7500fccc260d5755743ca92cf8785b68>>
+ * @generated SignedSource<<640818b8469cb36a598d3cbaa539f92e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -27,7 +27,7 @@ export type RolePermissionSummaryTableGrantMutation$variables = {
   input: BulkAddRolePermissionsInput;
 };
 export type RolePermissionSummaryTableGrantMutation$data = {
-  readonly adminBulkAddRolePermissions: {
+  readonly partialBulkAddRolePermissions: {
     readonly failed: ReadonlyArray<{
       readonly entityType: string;
       readonly message: string;
@@ -38,7 +38,7 @@ export type RolePermissionSummaryTableGrantMutation$data = {
       readonly id: string;
       readonly permission: PermissionBit;
     }>;
-  } | null | undefined;
+  };
 };
 export type RolePermissionSummaryTableGrantMutation = {
   response: RolePermissionSummaryTableGrantMutation$data;
@@ -79,7 +79,7 @@ v3 = [
     ],
     "concreteType": "BulkAddRolePermissionsPayload",
     "kind": "LinkedField",
-    "name": "adminBulkAddRolePermissions",
+    "name": "partialBulkAddRolePermissions",
     "plural": false,
     "selections": [
       {
@@ -144,16 +144,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "1251c54dd22874695493fe8444fee058",
+    "cacheID": "eab852e9d6b4cf64e53f881c95e333b9",
     "id": null,
     "metadata": {},
     "name": "RolePermissionSummaryTableGrantMutation",
     "operationKind": "mutation",
-    "text": "mutation RolePermissionSummaryTableGrantMutation(\n  $input: BulkAddRolePermissionsInput!\n) {\n  adminBulkAddRolePermissions(input: $input) {\n    items {\n      id\n      entityType\n      permission\n    }\n    failed {\n      entityType\n      permission\n      message\n    }\n  }\n}\n"
+    "text": "mutation RolePermissionSummaryTableGrantMutation(\n  $input: BulkAddRolePermissionsInput!\n) {\n  partialBulkAddRolePermissions(input: $input) {\n    items {\n      id\n      entityType\n      permission\n    }\n    failed {\n      entityType\n      permission\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "8cde7fb3c899ce368d1aca3414efd257";
+(node as any).hash = "22bed8ec78360d9be6870557ddb70ee5";
 
 export default node;

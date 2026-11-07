@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ea3f6b4cd1559228bae4f4c53176d34e>>
+ * @generated SignedSource<<ba6de2ea481a1a0e0d8f8607bdb2cc7d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,7 +16,7 @@ export type RolePermissionSummaryTableRevokeMutation$variables = {
   input: BulkRemoveRolePermissionsInput;
 };
 export type RolePermissionSummaryTableRevokeMutation$data = {
-  readonly adminBulkRemoveRolePermissions: {
+  readonly partialBulkRemoveRolePermissions: {
     readonly failed: ReadonlyArray<{
       readonly message: string;
       readonly permissionId: string;
@@ -24,7 +24,7 @@ export type RolePermissionSummaryTableRevokeMutation$data = {
     readonly items: ReadonlyArray<{
       readonly id: string;
     }>;
-  } | null | undefined;
+  };
 };
 export type RolePermissionSummaryTableRevokeMutation = {
   response: RolePermissionSummaryTableRevokeMutation$data;
@@ -51,7 +51,7 @@ v1 = [
     ],
     "concreteType": "BulkRemoveRolePermissionsPayload",
     "kind": "LinkedField",
-    "name": "adminBulkRemoveRolePermissions",
+    "name": "partialBulkRemoveRolePermissions",
     "plural": false,
     "selections": [
       {
@@ -119,16 +119,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "9279502b941bd0ecd241258118a3cacf",
+    "cacheID": "3639e447a8ceecae4d0244806b249496",
     "id": null,
     "metadata": {},
     "name": "RolePermissionSummaryTableRevokeMutation",
     "operationKind": "mutation",
-    "text": "mutation RolePermissionSummaryTableRevokeMutation(\n  $input: BulkRemoveRolePermissionsInput!\n) {\n  adminBulkRemoveRolePermissions(input: $input) {\n    items {\n      id\n    }\n    failed {\n      permissionId\n      message\n    }\n  }\n}\n"
+    "text": "mutation RolePermissionSummaryTableRevokeMutation(\n  $input: BulkRemoveRolePermissionsInput!\n) {\n  partialBulkRemoveRolePermissions(input: $input) {\n    items {\n      id\n    }\n    failed {\n      permissionId\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "601c90466c602e3f3e4cbfc8ce8c1322";
+(node as any).hash = "4d7645cdf3a49fba65cf1d6a3c9d586c";
 
 export default node;
