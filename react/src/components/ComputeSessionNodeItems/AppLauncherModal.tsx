@@ -17,6 +17,7 @@ import {
   TCP_APPS,
   useBackendAIAppLauncher,
 } from '../../hooks/useBackendAIAppLauncher';
+import { useLoginConfig } from '../../hooks/useWebUIConfig';
 import AppLaunchConfirmationModal from './AppLaunchConfirmationModal';
 import TCPConnectionInfoModal from './TCPConnectionInfoModal';
 import TensorboardPathModal from './TensorboardPathModal';
@@ -79,6 +80,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
   const { t } = useTranslation();
   const { logger } = useBAILogger();
   const baiClient = useSuspendedBackendaiClient();
+  const isDebugMode = useLoginConfig()?.debug === true;
   const formRef = useRef<FormInstance>(null);
   const [openToPublic, setOpenToPublic] = useState<boolean>(false);
   const [tryPreferredPort, setTryPreferredPort] = useState<boolean>(false);
@@ -514,9 +516,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                 />
               </Form.Item>
             ) : null}
-            {/* TODO: add debug value into baiClient._config */}
-            {/* @ts-ignore */}
-            {globalThis?.backendaiwebui?.debug ? (
+            {isDebugMode ? (
               <>
                 <Form.Item
                   label={

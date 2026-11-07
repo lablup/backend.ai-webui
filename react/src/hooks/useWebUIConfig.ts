@@ -17,8 +17,16 @@ import {
   refreshConfigFromToml,
   type LoginConfigState,
 } from '../helper/loginConfig';
+import {
+  fetchPublicDomainConfigOnce,
+  resolvePublicConfigTarget,
+} from '../helper/publicAppConfig';
+import {
+  applyWebUISettings,
+  WEBUI_SETTINGS_CONFIG_KEY,
+} from '../helper/webuiSettings';
 import { useBAILogger } from 'backend.ai-ui';
-import { atom, useAtomValue, useSetAtom, useStore } from 'jotai';
+import { atom, useAtomValue, useStore } from 'jotai';
 import type { createStore } from 'jotai';
 import { useEffect } from 'react';
 import { parse as toml } from 'smol-toml';
@@ -81,7 +89,7 @@ export const configLoadedState = atom<boolean>(false);
 export const configParseErrorState = atom<unknown | null>(null);
 
 /**
- * Holds the auto_logout flag extracted from config.
+ * Holds the autoLogout flag: the public app config `settings`, else config.toml.
  */
 export const autoLogoutState = atom<boolean>(false);
 
@@ -219,27 +227,6 @@ function processConfig(config: RawTomlConfig): {
   loginPlugin: string;
   loginConfig: LoginConfigState;
 } {
-  // Auto-logout setting
-  let autoLogout = false;
-  const storedAutoLogout = (globalThis as Record<string, unknown>)
-    .backendaioptions
-    ? (
-        (globalThis as Record<string, unknown>).backendaioptions as {
-          get: (key: string, defaultValue?: unknown) => unknown;
-        }
-      ).get('auto_logout')
-    : null;
-
-  if (
-    storedAutoLogout === null &&
-    config.general !== undefined &&
-    'autoLogout' in config.general
-  ) {
-    autoLogout = config.general.autoLogout as boolean;
-  } else {
-    autoLogout = (storedAutoLogout as boolean) ?? false;
-  }
-
   // Package edition and license info
   let edition = 'Open Source';
   let validUntil = '';
@@ -260,19 +247,13 @@ function processConfig(config: RawTomlConfig): {
     proxyUrl = config.wsproxy.proxyURL ?? '';
   }
 
-  // Login plugin
-  let loginPlugin = '';
-  if (config.plugin !== undefined && 'login' in config.plugin) {
-    loginPlugin = config.plugin.login ?? '';
-  }
-
   // Derive the full LoginConfigState from the raw config
   const loginConfig = refreshConfigFromToml(config);
 
   return {
-    autoLogout,
+    autoLogout: loginConfig.autoLogout,
     proxyUrl,
-    loginPlugin,
+    loginPlugin: loginConfig.loginPlugin,
     loginConfig,
   };
 }
@@ -337,14 +318,23 @@ export function initializeConfigOnce(
 
       store.set(rawConfigState, result.config);
 
-      const { autoLogout, proxyUrl, loginPlugin, loginConfig } = processConfig(
-        result.config,
-      );
+      const { proxyUrl, loginConfig } = processConfig(result.config);
 
-      store.set(loginConfigState, loginConfig);
-      store.set(autoLogoutState, autoLogout);
+      // The domain's public `settings` slice overrides the file for the keys
+      // the login page needs before sign-in (#10436); the file is the
+      // fallback for everything it does not carry.
+      const publicSlice = await fetchPublicDomainConfigOnce(
+        resolvePublicConfigTarget(result.config),
+      );
+      const effectiveLoginConfig = applyWebUISettings(
+        loginConfig,
+        publicSlice?.[WEBUI_SETTINGS_CONFIG_KEY],
+        'public',
+      );
+      store.set(loginConfigState, effectiveLoginConfig);
+      store.set(autoLogoutState, effectiveLoginConfig.autoLogout);
       store.set(proxyUrlState, proxyUrl);
-      store.set(loginPluginState, loginPlugin);
+      store.set(loginPluginState, effectiveLoginConfig.loginPlugin);
 
       store.set(configLoadedState, true);
     })().catch((error) => {
@@ -434,29 +424,6 @@ export function useProxyUrl(): string {
  */
 export function useConfigParseError(): unknown | null {
   return useAtomValue(configParseErrorState);
-}
-
-/**
- * Hook to update the raw config (e.g., after Electron webserver config merge).
- * Returns a setter that re-processes config after updating.
- */
-export function useUpdateRawConfig(): (config: RawTomlConfig) => void {
-  'use memo';
-  const setRawConfig = useSetAtom(rawConfigState);
-  const setLoginConfig = useSetAtom(loginConfigState);
-  const setAutoLogout = useSetAtom(autoLogoutState);
-  const setProxyUrl = useSetAtom(proxyUrlState);
-  const setLoginPlugin = useSetAtom(loginPluginState);
-
-  return (config: RawTomlConfig) => {
-    setRawConfig(config);
-    const { autoLogout, proxyUrl, loginPlugin, loginConfig } =
-      processConfig(config);
-    setLoginConfig(loginConfig);
-    setAutoLogout(autoLogout);
-    setProxyUrl(proxyUrl);
-    setLoginPlugin(loginPlugin);
-  };
 }
 
 /**

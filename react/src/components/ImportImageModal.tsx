@@ -463,15 +463,7 @@ const ImportImageModalContent: React.FC<{
       return t('environment.ImportImageScanFailedOnServer');
     }
     const title = _.isString(error?.title) ? error.title : undefined;
-    let relieved: string | undefined;
-    try {
-      // `usePainKiller().relieve` reads `globalThis.backendaiwebui.debug`
-      // unguarded and throws when config.toml never loaded; guarded here
-      // rather than in the hook, which every error path shares (FR-3953).
-      relieved = title ? painKiller.relieve(title) : undefined;
-    } catch {
-      relieved = undefined;
-    }
+    const relieved = title ? painKiller.relieve(title) : undefined;
     return (
       relieved ||
       title ||

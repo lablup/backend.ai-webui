@@ -48,6 +48,7 @@ import {
   User,
   FileCheck,
   FileUser,
+  Settings2,
   SlidersHorizontal,
   Wrench,
   Info,
@@ -118,6 +119,7 @@ export const VALID_MENU_KEYS = [
   'branding',
   'rbac',
   'information',
+  'system-settings',
 ] as const;
 
 export type MenuKeys = (typeof VALID_MENU_KEYS)[number];
@@ -146,6 +148,7 @@ const ALL_ADMIN_PAGE_KEYS: ReadonlySet<string> = new Set([
   'branding',
   'rbac',
   'information',
+  'system-settings',
 ]);
 
 // Admin-category page keys reachable by a project admin (3-tier admin gating).
@@ -277,8 +280,12 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   const baiClient = useSuspendedBackendaiClient();
   const isHideAgents = baiClient?._config?.hideAgents ?? true;
   const fasttrackEndpoint = baiClient?._config?.fasttrackEndpoint ?? null;
-  const blockList = baiClient?._config?.blockList ?? null;
-  const inactiveList = baiClient?._config?.inactiveList ?? null;
+  // System Settings is where both lists are edited, so it can never be
+  // hidden or disabled by them (that would lock the admin out of undoing it).
+  const withoutSystemSettings = (list?: Array<string> | null) =>
+    list ? _.without(list, 'system-settings') : null;
+  const blockList = withoutSystemSettings(baiClient?._config?.blockList);
+  const inactiveList = withoutSystemSettings(baiClient?._config?.inactiveList);
   const { token } = useTheme();
 
   const [experimentalAIAgents] = useBAISettingUserState(
@@ -558,6 +565,13 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
         t('webui.menu.Information'),
         <Info style={{ color: token('--color-info') }} size="1em" />,
         'information',
+        'admin-system',
+      ),
+    isSuperAdmin &&
+      createAdminMenuItem(
+        t('webui.menu.SystemSettings'),
+        <Settings2 style={{ color: token('--color-info') }} size="1em" />,
+        'system-settings',
         'admin-system',
       ),
   ]);

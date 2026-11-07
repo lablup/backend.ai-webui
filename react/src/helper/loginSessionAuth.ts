@@ -17,6 +17,15 @@ import {
   type LoginBootstrap,
 } from './loginBootstrap';
 import { applyConfigToClient, type LoginConfigState } from './loginConfig';
+import {
+  fetchPublicDomainConfigOnce,
+  resolvePublicConfigTarget,
+} from './publicAppConfig';
+import {
+  applyWebUISettings,
+  readDomainWebUISettings,
+  WEBUI_SETTINGS_CONFIG_KEY,
+} from './webuiSettings';
 import * as _ from 'lodash-es';
 import { fetchQuery, graphql } from 'react-relay';
 
@@ -77,6 +86,11 @@ const myUserQuery = graphql`
           }
         }
       }
+    }
+    # The domain's System Settings; a failed read keeps the base config.
+    myAppConfigs(configNames: ["domainConfig"]) @catch(to: NULL) {
+      configName
+      config
     }
   }
 `;
@@ -334,9 +348,16 @@ export async function connectViaGQL(
     ];
   };
 
-  // Apply config
+  // The domain's `settings` document overrides the file-derived config for
+  // the keys it carries (#10436).
+  const domainSettings = readDomainWebUISettings(response?.myAppConfigs);
+  const effectiveCfg = applyWebUISettings(cfg, domainSettings, 'domain');
+  const { jotaiStore } = await import('../components/DefaultProviders');
+  const { loginConfigState } = await import('../hooks/useWebUIConfig');
+  jotaiStore.set(loginConfigState, effectiveCfg);
+
   applyConfigToClient({
-    ...cfg,
+    ...effectiveCfg,
     domain_name: domainName,
     domain_id: me.domain?.entityId ?? '',
   });
@@ -521,11 +542,13 @@ export async function loadConfigFromWebServer(
       backendaiutils.deleteNestedKeyFromObject(config, key);
     });
 
-    // Merge with the current raw config stored in the Jotai atom.
-    // For backward compat, we also try the Lit shell element.
+    // Merge onto the bundled config.toml, not the current state: that may
+    // already carry another endpoint's server config.
     const { jotaiStore } = await import('../components/DefaultProviders');
-    const { rawConfigState } = await import('../hooks/useWebUIConfig');
-    const currentConfig = jotaiStore.get(rawConfigState) ?? {};
+    const { rawConfigState, fetchAppConfigOnce } =
+      await import('../hooks/useWebUIConfig');
+    const { config: bundledConfig } = await fetchAppConfigOnce();
+    const currentConfig = structuredClone(bundledConfig ?? {});
     const mergedConfig = backendaiutils.mergeNestedObjects(
       currentConfig,
       config,
@@ -536,9 +559,25 @@ export async function loadConfigFromWebServer(
 
     // Re-process the merged config
     const { refreshConfigFromToml } = await import('./loginConfig');
-    const { loginConfigState } = await import('../hooks/useWebUIConfig');
-    const loginConfig = refreshConfigFromToml(mergedConfig);
-    jotaiStore.set(loginConfigState, loginConfig);
+    const { loginConfigState, autoLogoutState } =
+      await import('../hooks/useWebUIConfig');
+    // `mergedConfig` keeps this page's own endpoint (the webserver's was
+    // stripped above); the public slice belongs to the server being joined.
+    const publicSlice = await fetchPublicDomainConfigOnce(
+      resolvePublicConfigTarget({
+        ...mergedConfig,
+        general: { ...mergedConfig.general, apiEndpoint },
+      }),
+    );
+    const effectiveLoginConfig = applyWebUISettings(
+      refreshConfigFromToml(mergedConfig),
+      publicSlice?.[WEBUI_SETTINGS_CONFIG_KEY],
+      'public',
+    );
+    jotaiStore.set(loginConfigState, effectiveLoginConfig);
+    jotaiStore.set(autoLogoutState, effectiveLoginConfig.autoLogout);
+    // loginPluginState stays on the bundled value: the login screen is drawn
+    // before any endpoint is known, so a server's login plugin cannot apply.
   }
 }
 

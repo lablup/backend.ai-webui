@@ -19,6 +19,7 @@ import type { DiagnosticResult } from '../types/diagnostics';
 import {
   useConfigParseError,
   useProxyUrl,
+  useLoginConfig,
   useRawConfig,
 } from './useWebUIConfig';
 import { VALID_MENU_KEYS } from './useWebUIMenuItems';
@@ -35,6 +36,7 @@ export function useWebServerConfigDiagnostics(
 
   const baiClient = useSuspendedBackendaiClient();
   const rawConfig = useRawConfig();
+  const loginConfig = useLoginConfig();
   const proxyUrl = useProxyUrl();
   const configParseError = useConfigParseError();
 
@@ -218,28 +220,22 @@ export function useWebServerConfigDiagnostics(
     }
   }
 
-  // --- Plugin configuration (page names, login/sidebar JS filenames) ---
+  // --- Plugin configuration: the loaded values, after the settings documents ---
+  const pluginPages = loginConfig?.pluginPages ?? [];
   const pluginIssues = checkPluginConfiguration(
-    rawConfig?.plugin as Record<string, unknown> | undefined,
+    pluginPages,
+    loginConfig?.loginPlugin ?? '',
   );
   if (pluginIssues.length > 0) {
     results.push(...pluginIssues);
-  } else if (
-    rawConfig?.plugin?.page &&
-    !isPlaceholder(rawConfig.plugin.page as string)
-  ) {
-    const pluginNames = (rawConfig.plugin.page as string)
-      .split(',')
-      .map((n) => n.trim())
-      .filter(Boolean)
-      .join(', ');
+  } else if (pluginPages.length > 0) {
     results.push({
       id: 'config-plugin-valid',
       severity: 'passed',
       category: 'config',
       titleKey: 'diagnostics.PluginConfigValid',
       descriptionKey: 'diagnostics.PluginConfigValidDesc',
-      interpolationValues: { plugins: pluginNames },
+      interpolationValues: { plugins: pluginPages.join(', ') },
     });
   }
 
