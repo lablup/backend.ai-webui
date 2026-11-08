@@ -17,7 +17,7 @@ export class Keypair {
   /**
    * Information of specific Keypair.
    *
-   * @param {string} accessKey - Access key to query information. If client is not authorized as admin, this will be ignored and current API key infomation will be returned.
+   * @param {string} accessKey - Access key to query information. If client is not authorized as admin, this will be ignored and current API key information will be returned.
    * @param {array} fields - Fields to query. Queryable fields are: 'access_key', 'secret_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
    'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'.
    */
