@@ -14,6 +14,35 @@ import { test, expect, type Page } from '@playwright/test';
 // which may be slow when multiple workers run in parallel.
 const WIDGET_TIMEOUT = 30_000;
 
+// Resolves with the first successful GraphQL response of `operation` whose
+// variables pass `matches`; rejects on a GraphQL error.
+const waitForGraphQL = async (
+  page: Page,
+  operation: string,
+  matches: (variables: any) => boolean = () => true,
+) => {
+  const response = await page.waitForResponse(
+    (res) => {
+      if (res.request().method() !== 'POST') return false;
+      let body: { query?: string; variables?: unknown } | null = null;
+      try {
+        body = res.request().postDataJSON();
+      } catch {
+        return false;
+      }
+      return (
+        !!body?.query?.match(
+          new RegExp(`(query|mutation)\\s+${operation}\\b`),
+        ) && matches(body.variables)
+      );
+    },
+    { timeout: WIDGET_TIMEOUT },
+  );
+  expect(response.ok()).toBe(true);
+  const json = await response.json();
+  expect(json.errors ?? []).toEqual([]);
+};
+
 test.describe(
   'Dashboard Page',
   { tag: ['@regression', '@dashboard', '@functional'] },
@@ -443,28 +472,67 @@ test.describe(
         ).toHaveText(selectedProject);
       });
 
-      test('Admin can toggle "Show failures only" on the project admin Audit Log card', async ({
-        page,
-      }) => {
-        // 1. Locate the "Audit Log" card
-        const widget = page
-          .locator('.uic-board-item')
-          .filter({
-            has: page.getByRole('heading', { name: 'Audit Log', exact: true }),
-          })
-          .first();
-        await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
+      test.describe('Audit Log failures only', () => {
+        // The switch is saved on the shared admin account's board.
+        const auditLogCard = (page: Page) =>
+          page
+            .locator('.uic-board-item')
+            .filter({
+              has: page.getByRole('heading', {
+                name: 'Audit Log',
+                exact: true,
+              }),
+            })
+            .first();
+        const failuresOnlySwitch = (page: Page) =>
+          auditLogCard(page).getByRole('switch', {
+            name: 'Show failures only',
+          });
+        // Clicks the switch to `checked` and waits until the board write lands.
+        const setFailuresOnly = async (page: Page, checked: boolean) => {
+          const toggle = failuresOnlySwitch(page);
+          if ((await toggle.isChecked()) === checked) return;
+          const saved = waitForGraphQL(page, 'useAppConfigMyUpsertMutation');
+          await toggle.click();
+          await expect(toggle).toBeChecked({ checked });
+          await saved;
+        };
 
-        // 2. The header switch is saved on the board, so turn it on and back off
-        const failuresOnly = widget.getByRole('switch', {
-          name: 'Show failures only',
+        test.afterEach(async ({ page }) => {
+          const toggle = failuresOnlySwitch(page);
+          if (await toggle.isVisible().catch(() => false)) {
+            await setFailuresOnly(page, false);
+          }
         });
-        await expect(failuresOnly).not.toBeChecked();
-        await failuresOnly.click();
-        await expect(failuresOnly).toBeChecked();
-        await expect(widget).toBeVisible();
-        await failuresOnly.click();
-        await expect(failuresOnly).not.toBeChecked();
+
+        test('Admin can toggle "Show failures only" on the project admin Audit Log card', async ({
+          page,
+        }) => {
+          // 1. Locate the "Audit Log" card, starting from the switch off
+          const widget = auditLogCard(page);
+          await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
+          const failuresOnly = failuresOnlySwitch(page);
+          await setFailuresOnly(page, false);
+
+          // 2. Turning the switch on reloads the list with the failure statuses
+          const filteredList = waitForGraphQL(
+            page,
+            'AuditLogPanelScopedListQuery',
+            (variables) =>
+              JSON.stringify(variables?.filter?.status ?? null).includes(
+                'DENIED',
+              ),
+          );
+          await setFailuresOnly(page, true);
+          await filteredList;
+          await expect(
+            widget.getByRole('group', { name: 'Table' }).getByRole('table'),
+          ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+
+          // 3. Turning it off again restores the unfiltered list
+          await setFailuresOnly(page, false);
+          await expect(failuresOnly).not.toBeChecked();
+        });
       });
     });
 
