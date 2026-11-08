@@ -1,20 +1,22 @@
 ---
-navTitle: Start
+navTitle: Get Started
 ---
 
-# Start Page
+# Get Started
 
-The Start page provides quick access to frequently used WebUI features through
-action cards. Each card represents a common workflow such as creating storage
+The **Get started** cards provide quick access to frequently used WebUI
+features. Each card represents a common workflow such as creating storage
 folders, launching sessions, deploying models, or importing projects from
-external URLs.
+external URLs. The cards are part of the [Dashboard](#dashboard), the page you
+land on after logging in; the separate Start page no longer exists, and links to
+it open the Dashboard instead.
 
 ![](../images/start_page.png)
 
 ## Announcement banner
 
 If your system administrator has published an announcement, it appears as a
-banner at the top of every page, not only the Start page. The announcement
+banner at the top of every page, not only the Dashboard. The announcement
 supports Markdown formatting and may contain important notices about system
 maintenance, updates, or usage guidelines.
 
@@ -33,7 +35,7 @@ details, refer to the [System announcement](#system-announcement) section.
 
 ## Action cards
 
-The Start page displays the following action cards by default:
+The **Get started** group contains the following cards by default:
 
 - **Create New Storage Folder**: Create a storage folder and upload files. This
   is an essential first step for training models or providing external services.
@@ -57,8 +59,8 @@ system administrator.
 ## Start from URL
 
 The **Start From URL** card allows you to import and run projects directly from
-external sources. Clicking the card opens a dialog with one tab per import
-source: **Import Notebook**, **Import GitHub Repository**, and
+external sources. Clicking **Start Now** on the card opens a dialog with one tab
+per import source: **Import Notebook**, **Import GitHub Repository**, and
 **Import GitLab Repository**. An additional **Import Hugging Face Model** tab
 appears when the experimental Hugging Face import is turned on.
 
@@ -177,13 +179,3 @@ The tab downloads into model folders, so it is only available when the
 deployment feature is enabled for your account. Large models take a long time
 to download and consume the storage quota of the target folder.
 :::
-
-## Customizing card layout
-
-You can rearrange the action cards on the Start page by dragging and dropping
-them. Each card has a drag handle at the top-left corner that you can grab to
-move the card to a different position.
-
-Your customized card arrangement is automatically saved and persists across
-browser sessions. The layout is stored per user, so each user can have their
-own preferred arrangement.
