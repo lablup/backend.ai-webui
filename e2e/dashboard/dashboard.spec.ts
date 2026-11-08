@@ -20,6 +20,7 @@ const waitForGraphQL = async (
   page: Page,
   operation: string,
   matches: (variables: any) => boolean = () => true,
+  timeout = WIDGET_TIMEOUT,
 ) => {
   const response = await page.waitForResponse(
     (res) => {
@@ -36,7 +37,7 @@ const waitForGraphQL = async (
         ) && matches(body.variables)
       );
     },
-    { timeout: WIDGET_TIMEOUT },
+    { timeout },
   );
   expect(response.ok()).toBe(true);
   const json = await response.json();
@@ -408,6 +409,10 @@ test.describe(
     // 13. Project Admin Dashboard (/project/:name/admin/dashboard)
     // -----------------------------------------------------------------------
     test.describe('Project Admin Dashboard', () => {
+      const adminDashboardUrl = (name: string) =>
+        new RegExp(
+          `/project/${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/admin/dashboard`,
+        );
       let projectName = '';
       let selectedProject = '';
 
@@ -440,9 +445,7 @@ test.describe(
         await expect(projectSelector).not.toHaveText('');
         selectedProject = (await projectSelector.innerText()).trim();
         await navigateTo(page, `project/${projectName}/admin/dashboard`);
-        await expect(page).toHaveURL(
-          new RegExp(`/project/${projectName}/admin/dashboard`),
-        );
+        await expect(page).toHaveURL(adminDashboardUrl(projectName));
       });
 
       test('Admin can view the project admin dashboard cards', async ({
@@ -464,9 +467,7 @@ test.describe(
         }
 
         // 2. The header project selector stays on the URL's project
-        await expect(page).toHaveURL(
-          new RegExp(`/project/${projectName}/admin/dashboard`),
-        );
+        await expect(page).toHaveURL(adminDashboardUrl(projectName));
         await expect(
           page.getByRole('button', { name: 'Select Project' }),
         ).toHaveText(selectedProject);
@@ -492,7 +493,17 @@ test.describe(
         const setFailuresOnly = async (page: Page, checked: boolean) => {
           const toggle = failuresOnlySwitch(page);
           if ((await toggle.isChecked()) === checked) return;
-          const saved = waitForGraphQL(page, 'useAppConfigMyUpsertMutation');
+          // Other board writes share the mutation, so match the filter payload.
+          // A board that already holds the value (a concurrent run) sends no write.
+          const saved = waitForGraphQL(
+            page,
+            'useAppConfigMyUpsertMutation',
+            (variables) =>
+              JSON.stringify(variables).includes('DENIED') === checked,
+            10_000,
+          ).catch((error: Error) => {
+            if (error.name !== 'TimeoutError') throw error;
+          });
           await toggle.click();
           await expect(toggle).toBeChecked({ checked });
           await saved;
@@ -529,7 +540,7 @@ test.describe(
             widget.getByRole('group', { name: 'Table' }).getByRole('table'),
           ).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-          // 3. Turning it off again restores the unfiltered list
+          // 3. Turning it off again saves the board without the filter
           await setFailuresOnly(page, false);
           await expect(failuresOnly).not.toBeChecked();
         });
