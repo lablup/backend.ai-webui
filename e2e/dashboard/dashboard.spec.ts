@@ -3,7 +3,8 @@
 //            9 (My Activity Widget, replaces My Resources in Resource Group),
 //            10 (Agent Stats Widget), 11 (Recently Created Sessions Widget),
 //            12 (Board Layout)
-// plus: custom panel add flow (edit sider -> panel modal), added after the plan.
+// plus: custom panel add flow (edit sider -> panel modal) and the project admin
+// dashboard cards (#10585), added after the plan.
 // The member dashboard reads only the viewer's own data (#10584); Agent Stats
 // and Recently Created Sessions live on the superadmin dashboard.
 import { loginAsAdmin, loginAsUser, navigateTo } from '../utils/test-util';
@@ -371,6 +372,99 @@ test.describe(
 
         // 3. Verify the widget still renders after refresh
         await expect(widget.getByRole('table')).toBeVisible();
+      });
+    });
+
+    // -----------------------------------------------------------------------
+    // 13. Project Admin Dashboard (/project/:name/admin/dashboard)
+    // -----------------------------------------------------------------------
+    test.describe('Project Admin Dashboard', () => {
+      let projectName = '';
+      let selectedProject = '';
+
+      test.beforeEach(async ({ page, request }) => {
+        // The superadmin intro tour (AdminViewSwitchTour) otherwise covers
+        // the admin page.
+        await page.addInitScript(() => {
+          localStorage.setItem(
+            'backendaiwebui.settings.user.has_opened_tour_back_to_user_view',
+            'true',
+          );
+          localStorage.setItem(
+            'backendaiwebui.settings.user.has_opened_tour_back_to_admin_settings',
+            'true',
+          );
+        });
+        await loginAsAdmin(page, request);
+        // /summary replace-redirects to /project/:name/dashboard.
+        await navigateTo(page, 'summary');
+        await expect(page).toHaveURL(/\/project\/[^/]+\/dashboard/, {
+          timeout: WIDGET_TIMEOUT,
+        });
+        projectName =
+          new URL(page.url()).pathname.match(/^\/project\/([^/]+)\//)?.[1] ??
+          '';
+        expect(projectName).not.toBe('');
+        const projectSelector = page.getByRole('button', {
+          name: 'Select Project',
+        });
+        await expect(projectSelector).not.toHaveText('');
+        selectedProject = (await projectSelector.innerText()).trim();
+        await navigateTo(page, `project/${projectName}/admin/dashboard`);
+        await expect(page).toHaveURL(
+          new RegExp(`/project/${projectName}/admin/dashboard`),
+        );
+      });
+
+      test('Admin can view the project admin dashboard cards', async ({
+        page,
+      }) => {
+        // 1. Every default card of the project admin board is shown
+        for (const title of [
+          'Session Status',
+          'Pending Sessions and Reasons',
+          'Resource Allocation',
+          'Deployments',
+          'Project Folders',
+          'Project Users',
+          'Audit Log',
+        ]) {
+          await expect(
+            page.getByRole('heading', { name: title, exact: true }),
+          ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+        }
+
+        // 2. The header project selector stays on the URL's project
+        await expect(page).toHaveURL(
+          new RegExp(`/project/${projectName}/admin/dashboard`),
+        );
+        await expect(
+          page.getByRole('button', { name: 'Select Project' }),
+        ).toHaveText(selectedProject);
+      });
+
+      test('Admin can toggle "Show failures only" on the project admin Audit Log card', async ({
+        page,
+      }) => {
+        // 1. Locate the "Audit Log" card
+        const widget = page
+          .locator('.uic-board-item')
+          .filter({
+            has: page.getByRole('heading', { name: 'Audit Log', exact: true }),
+          })
+          .first();
+        await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
+
+        // 2. The header switch is saved on the board, so turn it on and back off
+        const failuresOnly = widget.getByRole('switch', {
+          name: 'Show failures only',
+        });
+        await expect(failuresOnly).not.toBeChecked();
+        await failuresOnly.click();
+        await expect(failuresOnly).toBeChecked();
+        await expect(widget).toBeVisible();
+        await failuresOnly.click();
+        await expect(failuresOnly).not.toBeChecked();
       });
     });
 

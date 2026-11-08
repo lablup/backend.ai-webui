@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-11-04
+> **Last Updated:** 2026-11-08
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,14 +12,14 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 391 / 541 features covered (72%)**
+**Overall (in-scope routes): 393 / 543 features covered (72%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
 | Authentication           | `/interactive-login`                             |    39    |   37    | 🔶 95%  |
 | Change Password          | `/change-password`                               |    9     |    9    | ✅ 100% |
 | Start Page               | `/start`                                         |    8     |    6    | 🔶 75%  |
-| Dashboard                | `/dashboard`                                     |    11    |    9    | 🔶 82%  |
+| Dashboard                | `/dashboard`                                     |    13    |   11    | 🔶 85%  |
 | Session List             | `/session`                                       |    27    |   19    | 🔶 70%  |
 | Session Launcher         | `/session/start`                                 |    13    |    3    | 🔶 23%  |
 | Serving                  | `/serving`                                       |    7     |    2    | 🔶 29%  |
@@ -179,8 +179,10 @@
 | Dashboard item drag/resize          | ✅     | `Admin sees drag and resize handles on the dashboard board`                  |
 | Edit sider open/close (breadcrumb)  | ✅     | `Admin can open and close the dashboard edit sider`                          |
 | Custom panel add (edit sider/modal) | ✅     | `Admin can add a custom table panel from the dashboard edit sider`           |
+| Project admin dashboard cards       | ✅     | `Admin can view the project admin dashboard cards`                           |
+| Project admin Audit Log failures    | ✅     | `Admin can toggle "Show failures only" on the project admin Audit Log card`  |
 
-**Coverage: 🔶 9/11 features**
+**Coverage: 🔶 11/13 features**
 
 ---
 
