@@ -287,6 +287,7 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
           <BAIFlex direction="row" align="start" gap="md" wrap="wrap">
             <Form.Item
               name="chartType"
+              required
               label={t('dashboard.panelModal.ChartType')}
               style={{ flexShrink: 0 }}
             >
@@ -305,6 +306,7 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
             {chart.type === 'line' ? (
               <Form.Item
                 name="chartRange"
+                required
                 label={t('dashboard.settings.TimeRange')}
                 extra={t('dashboard.panelModal.CreatedOverTimeDescription')}
                 style={{ flex: 1, minWidth: 180 }}
@@ -321,6 +323,7 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
             ) : (
               <Form.Item
                 name="groupBy"
+                required
                 label={t('dashboard.panelModal.GroupBy')}
                 style={{ flex: 1, minWidth: 180 }}
               >
@@ -336,6 +339,7 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
             )}
             <Form.Item
               name="showTable"
+              required
               label={t('dashboard.panelModal.ShowTable')}
               style={{ flexShrink: 0 }}
             >
