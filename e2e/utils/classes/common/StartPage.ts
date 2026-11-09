@@ -34,7 +34,7 @@ export class StartPage {
   // changed from "Start Service" to "Create Deployment", and it now navigates
   // straight to /deployments instead of /service/start).
   getDeploymentCard() {
-    return this.getCardByTitle('Start Deployment');
+    return this.getCardByTitle('Start a Deployment');
   }
   getStartFromURLCard() {
     return this.getCardByTitle('Start From URL');
