@@ -344,8 +344,7 @@ export function findIgnoredConfigTomlKeys(
 }
 
 /**
- * A warning naming the keys whose file value is not what runs, and an info
- * row naming the rest.
+ * Two info rows: the keys whose file value is not what runs, and the rest.
  */
 export function checkIgnoredConfigTomlKeys(
   rawConfig: Record<string, unknown> | null | undefined,
@@ -360,7 +359,9 @@ export function checkIgnoredConfigTomlKeys(
   if (overridden.length > 0) {
     results.push({
       id: 'config-ignored-keys-not-applied',
-      severity: 'warning',
+      // Info, not warning: config.toml no longer carries these keys, so they
+      // must not raise the sidebar badge (useAutoDiagnostics).
+      severity: 'info',
       category: 'config',
       titleKey: 'diagnostics.IgnoredConfigKeysNotApplied',
       descriptionKey: 'diagnostics.IgnoredConfigKeysNotAppliedDesc',

@@ -360,7 +360,7 @@ describe('checkIgnoredConfigTomlKeys', () => {
     expect(results).toEqual([
       expect.objectContaining({
         id: 'config-ignored-keys-not-applied',
-        severity: 'warning',
+        severity: 'info',
         linksSystemSettings: true,
         interpolationValues: {
           keys: 'general.maskUserInfo, resources.maxCPUCoresPerContainer',
