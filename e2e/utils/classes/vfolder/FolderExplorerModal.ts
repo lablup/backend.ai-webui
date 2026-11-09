@@ -85,13 +85,33 @@ export class FolderExplorerModal {
     return fileBrowserButton;
   }
 
-  // The description list carries no mount permission row since #10647; the
-  // folder's default mount permission is shown and edited in the share modal.
-  async verifyFolderDetails(): Promise<void> {
-    await expect(this.modal.getByText('Ownership')).toBeVisible();
-    await expect(
-      this.modal.getByRole('term').filter({ hasText: 'Mount Permission' }),
-    ).toHaveCount(0);
+  private definitionOf(term: string): Locator {
+    return this.modal
+      .getByRole('term')
+      .filter({ hasText: new RegExp(`^${term}$`) })
+      .locator('xpath=following-sibling::*[1]');
+  }
+
+  // Mirrors VFolderNodeDescriptionV2: the owner always mounts read & write, so
+  // the row only shows for folders the viewer does not own, project ones included.
+  async verifyFolderDetails(
+    viewerEmail: string,
+    expectedMountPermission: 'Read only' | 'Read & Write',
+  ): Promise<void> {
+    const ownership = this.definitionOf('Ownership');
+    await expect(ownership).toHaveText(/^(User|Project)$/);
+    const isProjectFolder =
+      (await ownership.textContent())?.trim() === 'Project';
+    const ownerEmail = isProjectFolder
+      ? null
+      : (await this.definitionOf('User').textContent())?.trim().toLowerCase();
+
+    const mountPermission = this.definitionOf('Mount Permission');
+    if (ownerEmail === viewerEmail.toLowerCase()) {
+      await expect(mountPermission).toHaveCount(0);
+    } else {
+      await expect(mountPermission).toHaveText(expectedMountPermission);
+    }
   }
 
   async verifyOwnership(): Promise<void> {

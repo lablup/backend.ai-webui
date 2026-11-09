@@ -16,6 +16,10 @@ import {
 } from '../utils/test-util';
 import { test, expect, APIRequestContext, Page } from '@playwright/test';
 
+// The folder default is read-only (#10647), but the manager gives the creator
+// of a project folder a read & write mount policy of their own.
+const CREATOR_MOUNT_PERMISSION = 'Read & Write';
+
 const openFolderExplorer = async (
   page: Page,
   folderName: string,
@@ -66,8 +70,11 @@ test.describe(
       // 4. Verify file explorer loads without errors
       await modal.verifyFileExplorerLoaded();
 
-      // 5. The description list no longer carries a mount permission row.
-      await modal.verifyFolderDetails();
+      // 5. Ownership decides whether the mount permission row is shown.
+      await modal.verifyFolderDetails(
+        userInfo.user.email,
+        CREATOR_MOUNT_PERMISSION,
+      );
 
       // 6. Verify upload functionality is available (Write permission)
       const uploadButton = await modal.getUploadButton();
@@ -105,8 +112,11 @@ test.describe(
       // 3. Verify modal opens successfully
       await modal.verifyFolderName(roFolderName);
 
-      // 4. The description list no longer carries a mount permission row.
-      await modal.verifyFolderDetails();
+      // 4. Ownership decides whether the mount permission row is shown.
+      await modal.verifyFolderDetails(
+        userInfo.user.email,
+        CREATOR_MOUNT_PERMISSION,
+      );
 
       // 5. Verify file explorer loads
       await modal.verifyFileExplorerLoaded();
@@ -292,7 +302,10 @@ test.describe(
       const modal = await openFolderExplorer(page, testFolderName);
 
       // 2. Verify essential folder details are displayed
-      await modal.verifyFolderDetails();
+      await modal.verifyFolderDetails(
+        userInfo.user.email,
+        CREATOR_MOUNT_PERMISSION,
+      );
 
       // 3. Close modal
       await modal.close();
