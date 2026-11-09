@@ -2293,7 +2293,6 @@
     "SessionMode": "Phiên",
     "SignUp": "Đăng ký",
     "SignoutFinished": "Đã kết thúc đăng ký.",
-    "TooManyAttempt": "Đã có quá nhiều lần đăng nhập. Nỗ lực đăng nhập đã bị chặn trong một thời gian.",
     "singleSignOn": {
       "LoginWithRealm": "Đăng nhập bằng {{realmName }}",
       "LoginWithRealmFailed": "Đăng nhập bằng {{ realmName }} không thành công",
@@ -4490,7 +4489,7 @@
     "PluginLogin": "Đường dẫn plugin đăng nhập",
     "PluginPage": "Đường dẫn plugin trang",
     "ResetAllSettings": "Đặt lại toàn bộ Cài đặt hệ thống?",
-    "ResetAllSettingsDesc": "Mọi giá trị đã lưu trên trang này cho miền {{domain}} sẽ bị xóa và mỗi dòng trở về giá trị trong config.toml. Trang sẽ tải lại sau khi đặt lại.",
+    "ResetAllSettingsDesc": "Mọi giá trị đã lưu trên trang này cho miền {{domain}} sẽ bị xóa và mỗi dòng trở về giá trị mặc định. Trang sẽ tải lại sau khi đặt lại.",
     "ShowNonInstalledImages": "Hiển thị image chưa cài đặt",
     "SingleSignOnVendors": "Cho phép đăng nhập SSO",
     "SsoRealmName": "Nhãn nút SSO OpenID",

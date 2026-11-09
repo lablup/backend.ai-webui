@@ -2293,7 +2293,6 @@
     "SessionMode": "Sitzung",
     "SignUp": "Anmelden",
     "SignoutFinished": "Abmeldung abgeschlossen.",
-    "TooManyAttempt": "Es gab zu viele Anmeldeversuche. Anmeldeversuche sind seit einiger Zeit blockiert.",
     "singleSignOn": {
       "LoginWithRealm": "Anmeldung mit {{ realmName }}",
       "LoginWithRealmFailed": "Anmeldung mit {{ realmName }} fehlgeschlagen",
@@ -4490,7 +4489,7 @@
     "PluginLogin": "Pfad des Anmelde-Plugins",
     "PluginPage": "Pfade der Seiten-Plugins",
     "ResetAllSettings": "Alle Systemeinstellungen zurücksetzen?",
-    "ResetAllSettingsDesc": "Alle auf dieser Seite für die Domain {{domain}} gespeicherten Werte werden gelöscht, und jede Zeile kehrt zu ihrem Wert aus config.toml zurück. Die Seite wird danach neu geladen.",
+    "ResetAllSettingsDesc": "Alle auf dieser Seite für die Domain {{domain}} gespeicherten Werte werden gelöscht, und jede Zeile kehrt zu ihrem Standardwert zurück. Die Seite wird danach neu geladen.",
     "ShowNonInstalledImages": "Nicht installierte Images anzeigen",
     "SingleSignOnVendors": "SSO-Anmeldung erlauben",
     "SsoRealmName": "Beschriftung der SSO-OpenID-Schaltfläche",

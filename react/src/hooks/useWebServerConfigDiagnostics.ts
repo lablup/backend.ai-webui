@@ -15,6 +15,7 @@ import {
   checkUrlFields,
   isPlaceholder,
 } from '../diagnostics/rules/configRules';
+import { FILE_ONLY_CONFIG_KEYS } from '../helper/loginConfig';
 import type { DiagnosticResult } from '../types/diagnostics';
 import {
   useConfigParseError,
@@ -23,6 +24,14 @@ import {
   useRawConfig,
 } from './useWebUIConfig';
 import { VALID_MENU_KEYS } from './useWebUIMenuItems';
+import * as _ from 'lodash-es';
+
+const fileOnlyConfig = (
+  rawConfig: Record<string, any>,
+): Record<string, Record<string, unknown>> =>
+  _.mapValues(FILE_ONLY_CONFIG_KEYS, (keys, section) =>
+    _.pick(rawConfig[section] ?? {}, keys),
+  );
 
 /**
  * Hook that checks webserver configuration consistency.
@@ -36,6 +45,7 @@ export function useWebServerConfigDiagnostics(
 
   const baiClient = useSuspendedBackendaiClient();
   const rawConfig = useRawConfig();
+  const fileConfig = rawConfig ? fileOnlyConfig(rawConfig) : {};
   const loginConfig = useLoginConfig();
   const proxyUrl = useProxyUrl();
   const configParseError = useConfigParseError();
@@ -65,7 +75,7 @@ export function useWebServerConfigDiagnostics(
 
   // --- Placeholder detection (e.g. "[Proxy URL]" left in config.toml) ---
   if (rawConfig) {
-    const placeholderIssues = checkPlaceholderValues(rawConfig);
+    const placeholderIssues = checkPlaceholderValues(fileConfig);
     results.push(...placeholderIssues);
   }
 
@@ -153,9 +163,16 @@ export function useWebServerConfigDiagnostics(
     });
   }
 
-  // --- URL field validation ---
+  // --- URL field validation: file keys from the file, settings from the merged config ---
   if (rawConfig) {
-    const { issues: urlIssues, checkedCount } = checkUrlFields(rawConfig);
+    const { issues: urlIssues, checkedCount } = checkUrlFields({
+      ...fileConfig,
+      general: {
+        ...fileConfig.general,
+        appDownloadUrl: loginConfig?.appDownloadUrl,
+      },
+      pipeline: { frontendEndpoint: loginConfig?.fasttrackEndpoint },
+    });
     if (urlIssues.length > 0) {
       results.push(...urlIssues);
     } else if (checkedCount > 0) {
@@ -169,18 +186,17 @@ export function useWebServerConfigDiagnostics(
     }
   }
 
-  // --- Resource limits ([resources] section) ---
-  const resourceLimitIssues = checkResourceLimits(
-    rawConfig?.resources as Record<string, unknown> | undefined,
-  );
-  // --- Numeric fields in [general] (maxCountForPreopenPorts, loginAttemptLimit, loginBlockTime) ---
+  // --- Resource limits and preopen ports: the merged System Settings values ---
+  const settings = loginConfig as unknown as
+    Record<string, unknown> | undefined;
+  const resourceLimitIssues = checkResourceLimits(settings);
   const generalNumericIssues = checkGeneralNumericFields(
-    rawConfig?.general as Record<string, unknown> | undefined,
+    settings && { maxCountForPreopenPorts: settings.maxCountForPreopenPorts },
   );
   const allNumericIssues = [...resourceLimitIssues, ...generalNumericIssues];
   if (allNumericIssues.length > 0) {
     results.push(...allNumericIssues);
-  } else if (rawConfig?.resources) {
+  } else if (settings) {
     results.push({
       id: 'config-resource-limits-passed',
       severity: 'passed',
@@ -191,22 +207,20 @@ export function useWebServerConfigDiagnostics(
   }
 
   // --- Image references (systemSSHImage, defaultFileBrowserImage, etc.) ---
-  const imageRefIssues = checkImageReferences(
-    rawConfig?.general as Record<string, unknown> | undefined,
-  );
+  const imageRefs: Record<string, unknown> | undefined = loginConfig
+    ? {
+        systemSSHImage: loginConfig.systemSSHImage,
+        defaultFileBrowserImage: loginConfig.defaultFileBrowserImage,
+        defaultSessionEnvironment: loginConfig.default_session_environment,
+        defaultImportEnvironment: loginConfig.default_import_environment,
+      }
+    : undefined;
+  const imageRefIssues = checkImageReferences(imageRefs);
   if (imageRefIssues.length > 0) {
     results.push(...imageRefIssues);
-  } else if (rawConfig?.general) {
+  } else if (imageRefs) {
     // Only show "passed" when at least one image ref field is non-placeholder
-    const imageRefFields = [
-      'systemSSHImage',
-      'defaultFileBrowserImage',
-      'defaultSessionEnvironment',
-      'defaultImportEnvironment',
-    ];
-    const generalSection = rawConfig.general as Record<string, unknown>;
-    const hasNonPlaceholderImageRef = imageRefFields.some((f) => {
-      const v = generalSection[f];
+    const hasNonPlaceholderImageRef = Object.values(imageRefs).some((v) => {
       return v && typeof v === 'string' && v.trim() !== '' && !isPlaceholder(v);
     });
     if (hasNonPlaceholderImageRef) {

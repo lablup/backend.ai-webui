@@ -50,15 +50,6 @@ export interface RawTomlConfig {
     proxyURL?: string;
     [key: string]: unknown;
   };
-  plugin?: {
-    login?: string;
-    page?: string;
-    [key: string]: unknown;
-  };
-  resources?: Record<string, unknown>;
-  environments?: Record<string, unknown>;
-  menu?: Record<string, unknown>;
-  pipeline?: Record<string, unknown>;
   [key: string]: unknown;
 }
 
@@ -89,7 +80,7 @@ export const configLoadedState = atom<boolean>(false);
 export const configParseErrorState = atom<unknown | null>(null);
 
 /**
- * Holds the autoLogout flag: the public app config `settings`, else config.toml.
+ * Holds the autoLogout flag: the public app config `settings`, else the code default.
  */
 export const autoLogoutState = atom<boolean>(false);
 
@@ -99,7 +90,7 @@ export const autoLogoutState = atom<boolean>(false);
 export const proxyUrlState = atom<string>('');
 
 /**
- * Holds the login plugin name from config.plugin.login.
+ * Holds the login plugin path: the public app config `pluginLogin`, else the code default.
  */
 export const loginPluginState = atom<string>('');
 
@@ -121,22 +112,6 @@ type JotaiStore = ReturnType<typeof createStore>;
 // ---------------------------------------------------------------------------
 // TOML fetching and preprocessing
 // ---------------------------------------------------------------------------
-
-/**
- * Preprocess the TOML config to handle escape sequences in apiEndpointText.
- * This mirrors the Lit shell's _preprocessToml logic.
- */
-function preprocessToml(config: RawTomlConfig): void {
-  if (config?.general?.apiEndpointText) {
-    try {
-      config.general.apiEndpointText = JSON.parse(
-        `"${config.general.apiEndpointText}"`,
-      );
-    } catch {
-      // If JSON.parse fails, keep the original value
-    }
-  }
-}
 
 /**
  * Result of fetching and parsing config.toml.
@@ -178,7 +153,6 @@ export async function fetchAndParseConfig(
   try {
     const text = await res.text();
     const parsed = toml(text) as RawTomlConfig;
-    preprocessToml(parsed);
     return { config: parsed };
   } catch (error) {
     // Parse error — config was fetched but TOML is invalid.
@@ -222,9 +196,7 @@ export function fetchAppConfigOnce(): Promise<ConfigFetchResult> {
  * This replaces the Lit shell's loadConfig() method.
  */
 function processConfig(config: RawTomlConfig): {
-  autoLogout: boolean;
   proxyUrl: string;
-  loginPlugin: string;
   loginConfig: LoginConfigState;
 } {
   // Package edition and license info
@@ -250,12 +222,7 @@ function processConfig(config: RawTomlConfig): {
   // Derive the full LoginConfigState from the raw config
   const loginConfig = refreshConfigFromToml(config);
 
-  return {
-    autoLogout: loginConfig.autoLogout,
-    proxyUrl,
-    loginPlugin: loginConfig.loginPlugin,
-    loginConfig,
-  };
+  return { proxyUrl, loginConfig };
 }
 
 /**
@@ -268,8 +235,8 @@ function processConfig(config: RawTomlConfig): {
  * bootstrap. Entry points that authenticate *before* the regular layout
  * mounts — e.g. `STokenLoginBoundary` on sToken/SSO URLs — must await this
  * themselves, otherwise the login sequence runs against
- * `getDefaultLoginConfig()` and silently drops webserver-configured flags
- * such as `[resources].allowNonAuthTCP` (FR-3128).
+ * `getDefaultLoginConfig()` alone and silently drops the bootstrap's
+ * file-only keys and public settings slice (FR-3128).
  *
  * Missing or unparsable config.toml is not an error: defaults are applied
  * and the promise resolves, mirroring the previous `useInitializeConfig`
@@ -320,9 +287,8 @@ export function initializeConfigOnce(
 
       const { proxyUrl, loginConfig } = processConfig(result.config);
 
-      // The domain's public `settings` slice overrides the file for the keys
-      // the login page needs before sign-in (#10436); the file is the
-      // fallback for everything it does not carry.
+      // The domain's public `settings` slice overrides the code defaults for
+      // the keys the login page needs before sign-in (#10436).
       const publicSlice = await fetchPublicDomainConfigOnce(
         resolvePublicConfigTarget(result.config),
       );

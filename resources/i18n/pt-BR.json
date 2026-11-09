@@ -2291,7 +2291,6 @@
     "SessionMode": "Sessão",
     "SignUp": "Inscrever-se",
     "SignoutFinished": "Desconexão concluída.",
-    "TooManyAttempt": "Houve muitas tentativas de login. As tentativas de login foram bloqueadas por um tempo.",
     "singleSignOn": {
       "LoginWithRealm": "Iniciar sessão com {{ realmName }}",
       "LoginWithRealmFailed": "Falha ao fazer login com {{ realmName }}",
@@ -4488,7 +4487,7 @@
     "PluginLogin": "Caminho do plugin de login",
     "PluginPage": "Caminhos dos plugins de páginas",
     "ResetAllSettings": "Redefinir todas as configurações do sistema?",
-    "ResetAllSettingsDesc": "Todos os valores salvos nesta página para o domínio {{domain}} são excluídos e cada linha volta ao valor do config.toml. A página é recarregada após a redefinição.",
+    "ResetAllSettingsDesc": "Todos os valores salvos nesta página para o domínio {{domain}} são excluídos e cada linha volta ao valor padrão. A página é recarregada após a redefinição.",
     "ShowNonInstalledImages": "Mostrar imagens não instaladas",
     "SingleSignOnVendors": "Permitir login SSO",
     "SsoRealmName": "Rótulo do botão SSO OpenID",
