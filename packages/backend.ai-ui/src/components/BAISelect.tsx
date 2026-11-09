@@ -161,6 +161,7 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
   status?: 'error' | 'warning' | '';
   size?: 'small' | 'middle' | 'large';
   variant?: 'outlined' | 'filled' | 'borderless';
+  /** Accepted and inert: ui-common's selectors own their popup visibility. */
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   /**
@@ -295,7 +296,6 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   filterOption: _filterOption,
   defaultActiveFirstOption: _defaultActiveFirstOption,
   open: _open,
-  onOpenChange: _onOpenChange,
   title: _title,
   variant,
   ...restProps
