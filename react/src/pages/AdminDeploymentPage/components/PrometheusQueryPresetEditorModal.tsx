@@ -336,7 +336,7 @@ const PrometheusQueryPresetEditorModal: React.FC<
         <Suspense
           fallback={
             <Form.Item label={t('prometheusQueryPreset.Category')}>
-              <BAISelect loading />
+              <BAISelect loading disabled />
             </Form.Item>
           }
         >

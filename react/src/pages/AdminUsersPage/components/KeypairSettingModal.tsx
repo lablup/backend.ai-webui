@@ -170,7 +170,7 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
                   },
                 ]}
               >
-                <BAISelect loading style={{ width: '100%' }} />
+                <BAISelect loading disabled style={{ width: '100%' }} />
               </BAIFormItem>
             }
           >
@@ -213,7 +213,7 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
                     },
                   ]}
                 >
-                  <BAISelect loading style={{ width: '100%' }} />
+                  <BAISelect loading disabled style={{ width: '100%' }} />
                 </BAIFormItem>
               }
             >

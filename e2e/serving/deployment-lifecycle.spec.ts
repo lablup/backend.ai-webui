@@ -815,7 +815,11 @@ test.describe(
       await expect(
         dialog.getByRole('separator', { name: 'Environments' }),
       ).toBeVisible();
-      await expect(dialog.getByText('Environments / Version')).toBeVisible();
+      await expect(
+        dialog.locator('.uic-form-item__label', {
+          hasText: 'Environments / Version',
+        }),
+      ).toBeVisible();
       await expect(
         dialog.getByRole('button', { name: 'Add environment variables' }),
       ).toBeVisible();
