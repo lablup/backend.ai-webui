@@ -152,7 +152,7 @@ export const docs = {
           name: 'onOpenChange',
           type: '(open: boolean) => void',
           description:
-            'Called with the new state whenever the popup opens or closes, whether by the trigger, the keyboard, a light dismiss or Escape.',
+            'Called with the new state whenever the popup opens or closes, whether by the trigger, the keyboard, choosing an option, a light dismiss or Escape.',
         },
         {
           name: 'optionRender',

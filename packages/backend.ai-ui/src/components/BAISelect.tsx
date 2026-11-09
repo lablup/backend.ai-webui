@@ -160,7 +160,6 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
   variant?: 'outlined' | 'filled' | 'borderless';
   /** Accepted and inert: ui-common's selectors own their popup visibility. */
   open?: boolean;
-  /** Called when the popup opens or closes, however that happened. */
   onOpenChange?: (open: boolean) => void;
   /**
    * antd handed the render function `{ data, label, value }`. The shape is

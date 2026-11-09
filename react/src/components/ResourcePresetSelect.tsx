@@ -153,13 +153,6 @@ export const presetUnavailableReasonText = (
   }
 };
 
-/**
- * PILOT-DECISION: the `extends Omit<SelectProps,'onChange'>` surface is
- * replaced by the props the single call site actually passes (P1 — grepped,
- * not guessed: `showCustom`, `showMinimumRequired`, `onChange`,
- * `allocatablePresetIds`, `resourceGroup`; the Form injects `value`), plus
- * the usual disabled/loading/style trio.
- */
 export interface ResourcePresetSelectProps {
   /** Injected by `Form.Item`. */
   value?: string;
