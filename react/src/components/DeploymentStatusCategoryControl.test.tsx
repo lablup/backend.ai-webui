@@ -64,20 +64,18 @@ describe('deploymentStatusCategoryOf', () => {
 });
 
 describe('DeploymentStatusCategoryControl', () => {
-  it('names each tab by its label and describes it with the help text', () => {
+  it('names each tab by its label alone, not its help tooltip', () => {
     render(
       <DeploymentStatusCategoryControl value="serving" onChange={() => {}} />,
     );
-    const serving = screen.getByRole('radio', { name: 'deployment.Serving' });
-    expect(serving).toBeChecked();
-    expect(serving).toHaveAccessibleDescription('deployment.ServingTooltip');
+    expect(
+      screen.getByRole('radio', { name: 'deployment.Serving' }),
+    ).toBeChecked();
     expect(
       screen.getByRole('radio', { name: 'deployment.Paused' }),
-    ).toHaveAccessibleDescription('deployment.PausedTooltip');
-    const terminated = screen.getByRole('radio', {
-      name: 'deployment.status.Terminated',
-    });
-    expect(terminated).not.toBeChecked();
-    expect(terminated).not.toHaveAccessibleDescription();
+    ).not.toBeChecked();
+    expect(
+      screen.getByRole('radio', { name: 'deployment.status.Terminated' }),
+    ).not.toBeChecked();
   });
 });

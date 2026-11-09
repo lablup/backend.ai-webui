@@ -5,6 +5,7 @@
 import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
+import { VisuallyHidden } from '@lablup/ui-common/VisuallyHidden';
 import {
   BAIFlex,
   BAIIconWithTooltip,
@@ -145,6 +146,12 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
                     } as React.CSSProperties
                   }
                 />
+              )}
+              {/* The non-focusable icon is hidden from assistive tech; keep the role in the option's name. */}
+              {isAdmin && (
+                <VisuallyHidden>
+                  {t('projectSelect.ProjectAdminBadge')}
+                </VisuallyHidden>
               )}
             </BAIFlex>
           );
