@@ -49,6 +49,14 @@ async function openUserScope(page: Page) {
   ).toBeVisible({ timeout: 15_000 });
 }
 
+/**
+ * The project dashboard (menu key `dashboard`) and its legacy shim. Not
+ * `/admin/dashboard` or `/project/<name>/admin/dashboard`: those are the
+ * separate `admin-dashboard` menu key (#10595), which a `dashboard` blocklist
+ * entry does not cover.
+ */
+const PROJECT_DASHBOARD_PATH = /^\/(?:project\/[^/]+\/)?dashboard\/?$/;
+
 // The superadmin AdminViewSwitchTour (#10552) otherwise covers the page with
 // its intro modal on admin scope and its spotlight on project scope.
 test.beforeEach(async ({ page }) => {
@@ -567,7 +575,9 @@ test.describe(
 
         // 6. Verify user is redirected to first available menu item (not the blocked dashboard)
         await page.waitForURL((url) => !url.pathname.endsWith('/'));
-        expect(page.url()).not.toContain('/dashboard');
+        expect(new URL(page.url()).pathname).not.toMatch(
+          PROJECT_DASHBOARD_PATH,
+        );
       },
     );
 
@@ -666,7 +676,9 @@ test.describe(
 
         // 4. Verify user is redirected to first available page (not /dashboard)
         await page.waitForURL((url) => !url.pathname.endsWith('/'));
-        expect(page.url()).not.toContain('/dashboard');
+        expect(new URL(page.url()).pathname).not.toMatch(
+          PROJECT_DASHBOARD_PATH,
+        );
 
         // 5. Modify config.toml to set blocklist = "dashboard,job"
         await modifyConfigToml(page, request, {
@@ -684,7 +696,9 @@ test.describe(
 
         // 8. Verify user is redirected to next available page
         await page.waitForURL((url) => !url.pathname.endsWith('/'));
-        expect(page.url()).not.toContain('/dashboard');
+        expect(new URL(page.url()).pathname).not.toMatch(
+          PROJECT_DASHBOARD_PATH,
+        );
         expect(page.url()).not.toContain('/job');
       },
     );
@@ -783,7 +797,9 @@ test.describe(
         // 12. Verify user is redirected to first active, non-blocked page
         await page.waitForURL((url) => !url.pathname.endsWith('/'));
         expect(page.url()).not.toContain('/start');
-        expect(page.url()).not.toContain('/dashboard');
+        expect(new URL(page.url()).pathname).not.toMatch(
+          PROJECT_DASHBOARD_PATH,
+        );
       },
     );
 
