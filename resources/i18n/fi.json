@@ -3144,6 +3144,7 @@
     "ConnectionInformation": "Liitäntätiedot",
     "ConnectionNotice": "Ilmoitus",
     "ContainerToCleanUp": "Säiliö(t) puhdistettava(t).",
+    "CopyName": "Kopioi nimi",
     "Core": "Ydin",
     "CreatedAt": "Luotu jhk",
     "CreationFailed": "Istunnon luominen epäonnistui. Yritä uudelleen muutaman minuutin kuluttua.",

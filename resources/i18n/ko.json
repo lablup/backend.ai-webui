@@ -3146,6 +3146,7 @@
     "ConnectionInformation": "연결 정보",
     "ConnectionNotice": "주의",
     "ContainerToCleanUp": "확인할 컨테이너 목록",
+    "CopyName": "이름 복사",
     "Core": "코어",
     "CreatedAt": "생성 시간",
     "CreationFailed": "세션 생성에 실패했습니다. 잠시 후 다시 시도해 주세요.",

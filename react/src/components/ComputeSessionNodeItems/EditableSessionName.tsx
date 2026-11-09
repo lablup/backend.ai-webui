@@ -120,21 +120,15 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
               {displayedName}
             </Text>
           )}
-          {/* QA-FINDINGS Q-37 — legacy was an antd `Typography.Text` with
-              `copyable` + `editable`, and antd paints BOTH of those operation
-              icons through its `operationUnit` mixin: `color: token.colorLink`.
-              The rebuild into two ghost `IconButton`s dropped that to
-              `--color-text-primary`; the report names these two controls
-              explicitly ("copy, info, rename 버튼"). `.bai-action-accent` puts
-              `colorLink` back via `--color-text-accent`
-              (`packages/backend.ai-ui/src/styles/actionAccent.css`). */}
+          {/* `.bai-action-accent` keeps the link colour these action icons had
+              (QA-FINDINGS Q-37, `backend.ai-ui/src/styles/actionAccent.css`). */}
           <IconButton
             className="bai-action-accent"
             variant="ghost"
             size="sm"
             icon={copied ? <CheckIcon aria-hidden /> : <CopyIcon aria-hidden />}
-            label={t('sourceCodeViewer.Copy')}
-            tooltip={t('sourceCodeViewer.Copy')}
+            label={t('session.CopyName')}
+            tooltip={t('session.CopyName')}
             isDisabled={copied}
             onClick={() => {
               void navigator.clipboard?.writeText(displayedName ?? '');

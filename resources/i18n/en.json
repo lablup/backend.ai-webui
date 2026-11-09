@@ -3131,6 +3131,7 @@
     "ConnectionInformation": "Connection Information",
     "ConnectionNotice": "Notice",
     "ContainerToCleanUp": "Container(s) to clean up",
+    "CopyName": "Copy name",
     "Core": "Core",
     "CreatedAt": "Created At",
     "CreationFailed": "Session creation failed. Please try again in few minutes.",
