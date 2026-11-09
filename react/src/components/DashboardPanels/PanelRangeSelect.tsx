@@ -16,46 +16,52 @@ import {
   windowRange,
 } from './timeRange';
 import {
-  DateTimeRangeInput,
-  type DateTimeRangeInputPreset,
-  type DateTimeRangeInputProps,
-  type DateTimeRangeInputValue,
-} from '@lablup/ui-common/components/DateTimeRangeInput';
+  BAIDateTimeRangeInput,
+  type BAIDateTimeRangeInputPreset,
+  type BAIDateTimeRangeInputProps,
+  type BAIDateTimeRangeInputValue,
+  useIntervalValue,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 const DAY = 24 * 60 * 60 * 1000;
 
+type RangePresetOption = BAIDateTimeRangeInputPreset & { range: RangePreset };
+
 /** The control's local `YYYY-MM-DDTHH:MM`. */
 const toLocal = (time: dayjs.ConfigType) =>
-  dayjs(time).format('YYYY-MM-DDTHH:mm') as DateTimeRangeInputValue['start'];
+  dayjs(time).format('YYYY-MM-DDTHH:mm') as BAIDateTimeRangeInputValue['start'];
 
 const durationOf = (range: string) => {
   const parsed = parseTimeRange(range);
   return parsed?.kind === 'relative' ? parsed.durationMs : 0;
 };
 
-/** The last `durationMs` up to now, to the minute. */
-const lastSpan = (durationMs: number): DateTimeRangeInputValue => {
-  const end = dayjs().startOf('minute');
-  return {
-    start: toLocal(end.subtract(durationMs, 'ms')),
-    end: toLocal(end),
-  };
-};
+/** The last `durationMs` up to `now`. */
+const lastSpan = (
+  durationMs: number,
+  now: number,
+): BAIDateTimeRangeInputValue => ({
+  start: toLocal(now - durationMs),
+  end: toLocal(now),
+});
 
 /** A preset as the span it covers now, a fixed window as its own ends. */
-const toInputValue = (range: string): DateTimeRangeInputValue | null => {
+const toInputValue = (
+  range: string,
+  now: number,
+): BAIDateTimeRangeInputValue | null => {
   const window = fixedWindowOf(range);
   if (window)
     return { start: toLocal(window.after), end: toLocal(window.before) };
   const durationMs = durationOf(range);
-  return durationMs ? lastSpan(durationMs) : null;
+  return durationMs ? lastSpan(durationMs, now) : null;
 };
 
 export interface PanelRangeSelectProps extends Omit<
-  DateTimeRangeInputProps,
+  BAIDateTimeRangeInputProps,
   | 'value'
   | 'defaultValue'
   | 'onChange'
@@ -81,28 +87,34 @@ const PanelRangeSelect: React.FC<PanelRangeSelectProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const presets: Array<DateTimeRangeInputPreset & { range: RangePreset }> =
-    RANGE_PRESETS.map((range) => ({
-      range,
-      label: t(RANGE_LABEL_KEYS[range]),
-      getRange: () => lastSpan(durationOf(range)),
-      isRelative: true,
-    }));
+  // One clock for `max`, the presets and the value, so a preset still matches its span after the minute turns.
+  const now = useIntervalValue(
+    () => dayjs().startOf('minute').valueOf(),
+    10_000,
+  );
+  const range = value ?? DEFAULT_RANGE;
+  const presets: Array<RangePresetOption> = RANGE_PRESETS.map((preset) => ({
+    range: preset,
+    label: t(RANGE_LABEL_KEYS[preset]),
+    getRange: () => lastSpan(durationOf(preset), now),
+    isRelative: true,
+  }));
 
   return (
-    <DateTimeRangeInput
+    <BAIDateTimeRangeInput
       {...inputProps}
+      // A new value from outside (reset) drops the preset label the control kept.
+      key={range}
       showTime
       hasClear={false}
       presets={presets}
-      max={toLocal(dayjs())}
+      max={toLocal(now)}
       maxDuration={maxDays * DAY}
-      value={toInputValue(value ?? DEFAULT_RANGE)}
+      value={toInputValue(range, now)}
       onChange={(next, preset) => {
         // A preset is stored as its rolling range, so the card keeps moving with now.
-        const picked = preset && presets.find((p) => p.label === preset.label);
-        if (picked) {
-          onChange?.(picked.range);
+        if (preset) {
+          onChange?.((preset as RangePresetOption).range);
           return;
         }
         if (!next) return;

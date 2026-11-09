@@ -82,4 +82,40 @@ describe('PanelRangeSelect', () => {
       '2026-10-30 09:30',
     );
   });
+
+  it('stores a custom start and end as a fixed window', async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    const day = (offset: number) => {
+      const date = new Date();
+      date.setDate(date.getDate() + offset);
+      date.setHours(0, 0, 0, 0);
+      return date;
+    };
+    const iso = (date: Date) =>
+      `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    render(
+      <PanelRangeSelect
+        aria-label="range"
+        data-testid="range"
+        onChange={onChange}
+      />,
+    );
+    await user.click(screen.getByTestId('range-start'));
+    // The calendar remounts between the two ends, so find it again each time.
+    const dayButton = (date: Date) =>
+      screen
+        .getByTestId('range-calendar')
+        .querySelector<HTMLElement>(`[data-date="${iso(date)}"]`)!;
+    await user.click(dayButton(day(-3)));
+    await user.click(screen.getByTestId('range-confirm'));
+    await user.click(dayButton(day(-1)));
+    await user.click(screen.getByTestId('range-confirm'));
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+    const [after, before] = (onChange.mock.calls[0][0] as string).split('/');
+    expect(new Date(after).getTime()).toBe(day(-3).getTime());
+    // The end keeps the time it had; only its day moved.
+    expect(new Date(before).toDateString()).toBe(day(-1).toDateString());
+  });
 });

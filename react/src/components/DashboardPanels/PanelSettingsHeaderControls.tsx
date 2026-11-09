@@ -104,14 +104,20 @@ const PanelSettingsHeaderControls: React.FC = () => {
         </Suspense>
       ) : null}
       {hasSetting(definition, 'range') ? (
-        <PanelRangeSelect
-          size="sm"
-          isCompactLabel
-          aria-label={t('dashboard.settings.TimeRange')}
-          maxDays={maxRangeDaysOf(definition)}
-          value={effective?.range ?? DEFAULT_RANGE}
-          onChange={(range) => onChange({ range })}
-        />
+        <Tooltip
+          content={t('dashboard.settings.TimeRange')}
+          placement="end"
+          hasHoverIndication={false}
+        >
+          <PanelRangeSelect
+            size="sm"
+            isCompactLabel
+            aria-label={t('dashboard.settings.TimeRange')}
+            maxDays={maxRangeDaysOf(definition)}
+            value={effective?.range ?? DEFAULT_RANGE}
+            onChange={(range) => onChange({ range })}
+          />
+        </Tooltip>
       ) : null}
       {overridden.resourceGroup || overridden.range ? (
         <IconButton

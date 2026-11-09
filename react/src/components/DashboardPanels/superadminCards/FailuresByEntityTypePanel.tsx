@@ -83,11 +83,10 @@ const EntityTypeFailures: React.FC<{
 }> = ({ scope, timeRange, fetchKey }) => {
   'use memo';
   const { t } = useTranslation();
-  const deferred = useDeferredValue({
-    timeRange,
-    variables: { scope, ...entityTypeFailureFilters(timeRange) },
+  const variables = useDeferredValue({
+    scope,
+    ...entityTypeFailureFilters(timeRange),
   });
-  const variables = deferred.variables;
   // The legend row whose failed entries are listed, with its label.
   const [listed, setListed] = useState<{ key: string; label: string } | null>(
     null,
