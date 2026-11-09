@@ -134,9 +134,8 @@ export interface BAICardTabItem {
    */
   tooltip?: ReactNode;
   /**
-   * Accepted and ignored: Astryx `Tab` has no disabled state. No call site in
-   * the repo passes it, so nothing regresses — it stays in the type only so an
-   * antd-shaped `tabList` literal keeps type-checking.
+   * Rendered as `aria-disabled`: the tab stays visible, Astryx `Tab` ignores
+   * its clicks, and `onTabChange` is never called with its key.
    */
   disabled?: boolean;
 }
@@ -350,7 +349,10 @@ const BAICard: React.FC<BAICardProps> = ({
                 : 'bai-card__tabs'
             }
             value={activeTab}
-            onChange={(key) => onTabChange?.(key)}
+            onChange={(key) => {
+              if (!tabs.find((tab) => tab.key === key)?.disabled)
+                onTabChange?.(key);
+            }}
             tabBarExtraContent={tabBarExtraContent}
           >
             {tabs.map((tab) => {
@@ -376,6 +378,7 @@ const BAICard: React.FC<BAICardProps> = ({
                       tab.endContent
                     )
                   }
+                  aria-disabled={tab.disabled ? true : undefined}
                 />
               );
             })}

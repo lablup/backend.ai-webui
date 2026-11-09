@@ -1706,6 +1706,7 @@
         "webui.menu.Resources",
         "webui.menu.Scheduler",
         "webui.menu.Sessions",
+        "webui.menu.Start",
         "webui.menu.Statistics",
         "webui.menu.SystemSettings",
         "webui.menu.Users",
@@ -2797,14 +2798,26 @@
       ]
     },
     {
-      "menuKey": "settings",
+      "menuKey": "system-settings",
       "scope": "admin",
-      "path": "/admin/settings",
-      "labelKey": "webui.menu.Configurations",
-      "tabs": [],
+      "path": "/admin/system-settings",
+      "labelKey": "webui.menu.SystemSettings",
+      "tabs": [
+        {
+          "param": "tab",
+          "key": "configurations",
+          "labelKey": "webui.menu.Configurations"
+        },
+        {
+          "param": "tab",
+          "key": "settings",
+          "labelKey": "webui.menu.SystemSettings"
+        }
+      ],
       "settings": [
         {
           "key": "settings.ATOMMaxSupport",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
@@ -2814,6 +2827,7 @@
         },
         {
           "key": "settings.ATOMPlusSupport",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
@@ -2823,6 +2837,7 @@
         },
         {
           "key": "settings.ATOMSupport",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
@@ -2832,6 +2847,7 @@
         },
         {
           "key": "settings.FractionalGPU",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
@@ -2841,6 +2857,7 @@
         },
         {
           "key": "settings.Gaudi2Support",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
@@ -2850,6 +2867,7 @@
         },
         {
           "key": "settings.HyperaccelLPUSupport",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
@@ -2859,6 +2877,7 @@
         },
         {
           "key": "settings.IPUSupport",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
@@ -2868,6 +2887,7 @@
         },
         {
           "key": "settings.ImagePullBehavior",
+          "tab": "configurations",
           "groupKey": "settings.General",
           "groupId": "settings-general",
           "descriptionKeys": [
@@ -2876,6 +2896,7 @@
         },
         {
           "key": "settings.OpenSourceCudaGPUSupport",
+          "tab": "configurations",
           "groupKey": "settings.Plugins",
           "groupId": "settings-plugins",
           "descriptionKeys": [
@@ -2885,6 +2906,7 @@
         },
         {
           "key": "settings.OverlayNetwork",
+          "tab": "configurations",
           "groupKey": "settings.General",
           "groupId": "settings-general",
           "descriptionKeys": [
@@ -2893,6 +2915,7 @@
         },
         {
           "key": "settings.RNGDSupport",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
@@ -2902,6 +2925,7 @@
         },
         {
           "key": "settings.ROCMGPUSupport",
+          "tab": "configurations",
           "groupKey": "settings.Plugins",
           "groupId": "settings-plugins",
           "descriptionKeys": [
@@ -2910,6 +2934,7 @@
         },
         {
           "key": "settings.Rebel100Support",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
@@ -2919,6 +2944,7 @@
         },
         {
           "key": "settings.Scheduler",
+          "tab": "configurations",
           "groupKey": "settings.General",
           "groupId": "settings-general",
           "descriptionKeys": [
@@ -2927,6 +2953,7 @@
         },
         {
           "key": "settings.TPU",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
@@ -2936,6 +2963,7 @@
         },
         {
           "key": "settings.WarboySupport",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
@@ -2945,7 +2973,9 @@
         }
       ],
       "keys": [
+        "button.Discard",
         "button.Reset",
+        "data.ModelStore",
         "data.explorer.ValueRequired",
         "dialog.ask.DoYouWantToResetChanges",
         "dialog.warning.CannotBeUndone",
@@ -2972,29 +3002,34 @@
         "settings.image.Digest",
         "settings.image.None",
         "settings.image.Tag",
+        "webui.menu.AIAgents",
+        "webui.menu.AgentSummary",
+        "webui.menu.Branding",
+        "webui.menu.Chat",
+        "webui.menu.Dashboard",
+        "webui.menu.Data",
+        "webui.menu.Deployments",
+        "webui.menu.Diagnostics",
+        "webui.menu.Environments",
+        "webui.menu.FastTrack",
         "webui.menu.GoBack",
-        "webui.menu.Settings"
-      ]
-    },
-    {
-      "menuKey": "system-settings",
-      "scope": "admin",
-      "path": "/admin/system-settings",
-      "labelKey": "webui.menu.SystemSettings",
-      "tabs": [],
-      "settings": [],
-      "keys": [
-        "button.Discard",
-        "button.Reset",
-        "dialog.ask.DoYouWantToResetChanges",
-        "dialog.warning.CannotBeUndone",
-        "general.All",
-        "settings.ChangedFromDefault",
-        "settings.NoChangesToDisplay",
-        "settings.SearchPlaceholder",
-        "settings.ShowOnlyChanged",
-        "webui.menu.GoBack",
+        "webui.menu.Information",
+        "webui.menu.Maintenance",
+        "webui.menu.MyEnvironments",
+        "webui.menu.ProjectDeployments",
+        "webui.menu.ProjectMembers",
+        "webui.menu.ProjectSessions",
+        "webui.menu.Projects",
+        "webui.menu.RBACManagement",
+        "webui.menu.Reservoir",
+        "webui.menu.ResourcePolicies",
+        "webui.menu.Resources",
+        "webui.menu.Scheduler",
+        "webui.menu.Sessions",
         "webui.menu.Settings",
+        "webui.menu.Start",
+        "webui.menu.Statistics",
+        "webui.menu.Users",
         "webuiSettings.AllowAnonymousChangePassword",
         "webuiSettings.AllowAppDownloadPanel",
         "webuiSettings.AllowCLIDownloadPanel",
@@ -3097,6 +3132,9 @@
         "webuiSettings.MaxTPUDevicesPerContainer",
         "webuiSettings.MaxWarboyDevicesPerContainer",
         "webuiSettings.MenuBlocklist",
+        "webuiSettings.MenuGroupAdmin",
+        "webuiSettings.MenuGroupProjectAdmin",
+        "webuiSettings.MenuGroupUser",
         "webuiSettings.MenuInactivelist",
         "webuiSettings.NotApplied",
         "webuiSettings.NotAppliedItems",
@@ -3112,6 +3150,7 @@
         "webuiSettings.SsoRealmName",
         "webuiSettings.StorageWarningThreshold",
         "webuiSettings.SystemSSHImage",
+        "webuiSettings.UnknownMenuKeys",
         "webuiSettings.group.Account",
         "webuiSettings.group.AppLauncher",
         "webuiSettings.group.Diagnostics",

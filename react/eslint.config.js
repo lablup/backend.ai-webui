@@ -168,7 +168,7 @@ export default [
   //   scheduler          -> SchedulerPage
   //   agent              -> ResourcesPage
   //   project            -> ProjectPage
-  //   settings           -> ConfigurationsPage
+  //   settings           -> WebUISettingsPage (its Configurations tab)
   //   maintenance        -> MaintenancePage
   //   diagnostics        -> DiagnosticsPage
   //   rbac               -> RBACManagementPage
@@ -187,7 +187,7 @@ export default [
   // the sanctioned page-level ambient reader (see the ADR).
   {
     files: [
-      'src/pages/{AdminSessionPage,AdminVFolderNodeListPage,AdminDeploymentPage,AdminDeploymentPresetSettingPage,AdminUsersPage,ResourcePolicyPage,SchedulerPage,ResourcesPage,ProjectPage,ConfigurationsPage,MaintenancePage,DiagnosticsPage,RBACManagementPage,BrandingPage,EnvironmentPage,ReservoirPage,ReservoirArtifactDetailPage,InformationPage,AdminDashboardPage}/**',
+      'src/pages/{AdminSessionPage,AdminVFolderNodeListPage,AdminDeploymentPage,AdminDeploymentPresetSettingPage,AdminUsersPage,ResourcePolicyPage,SchedulerPage,ResourcesPage,ProjectPage,WebUISettingsPage,MaintenancePage,DiagnosticsPage,RBACManagementPage,BrandingPage,EnvironmentPage,ReservoirPage,ReservoirArtifactDetailPage,InformationPage,AdminDashboardPage}/**',
       'src/components/DashboardPanels/**',
     ],
     rules: {
