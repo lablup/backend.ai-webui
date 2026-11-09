@@ -149,9 +149,7 @@ test.describe(
 
       // Change an unrelated field only and save.
       let dialog = await openEditUserModal(page, email);
-      const projectSelect = dialog.getByRole('button', {
-        name: 'Select Project',
-      });
+      const projectSelect = dialog.getByRole('button', { name: /^Projects/ });
       await expect
         .poll(async () =>
           countSummarisedProjects((await projectSelect.textContent()) ?? ''),
@@ -177,7 +175,7 @@ test.describe(
         .poll(async () =>
           countSummarisedProjects(
             (await dialog
-              .getByRole('button', { name: 'Select Project' })
+              .getByRole('button', { name: /^Projects/ })
               .textContent()) ?? '',
           ),
         )

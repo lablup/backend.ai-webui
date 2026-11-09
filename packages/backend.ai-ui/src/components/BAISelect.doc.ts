@@ -19,12 +19,12 @@ export const docs = {
   ],
   usage: {
     description:
-      'The one select of webui and backend.ai-ui for a list the client already holds; ui-common Selector has no other BAI name (ADR 0017). It renders ui-common Selector, or MultiSelector when mode is "multiple" or "tags", and adds what those primitives do not carry on their own: ReactNode option labels (the flattened text becomes the accessible name and search key while the original node is restored through renderOption), an accessible name derived from placeholder when no label is given, section headers and footers built on the native option model, and a labels-first multi-select trigger instead of the "N selected" count. It also accepts the Select.Option / Select.OptGroup children form through BAISelectOptionItem and BAISelectOptionGroup. The prop surface is antd-Select-shaped so the components that extend BAISelectProps keep compiling; several of those props are accepted and inert because Astryx owns the mechanism internally — they are marked below.',
+      'The one select of webui and backend.ai-ui for a list the client already holds; ui-common Selector has no other BAI name (ADR 0017). It renders ui-common Selector, or MultiSelector when mode is "multiple" or "tags", and adds what those primitives do not carry on their own: ReactNode option labels (the flattened text becomes the accessible name and search key while the original node is restored through renderOption), an accessible name taken from the enclosing Form.Item label or placeholder when no label is given, section headers and footers built on the native option model, and a labels-first multi-select trigger instead of the "N selected" count. It also accepts the Select.Option / Select.OptGroup children form through BAISelectOptionItem and BAISelectOptionGroup. The prop surface is antd-Select-shaped so the components that extend BAISelectProps keep compiling; several of those props are accepted and inert because Astryx owns the mechanism internally — they are marked below.',
     bestPractices: [
       {
         guidance: true,
         description:
-          'Pass a placeholder on every instance — it is what the accessible name falls back to when label is absent.',
+          'Pass a placeholder on every instance — it is what the accessible name falls back to when no label, aria-label or Form.Item label is present.',
       },
       {
         guidance: true,
@@ -88,7 +88,7 @@ export const docs = {
           name: 'placeholder',
           type: 'ReactNode',
           description:
-            'Empty-state text on the trigger. Doubles as the accessible name when label is not given.',
+            'Empty-state text on the trigger. Doubles as the accessible name when no label, aria-label or Form.Item label is given.',
         },
         {
           name: 'mode',
@@ -163,7 +163,7 @@ export const docs = {
           name: 'label',
           type: 'string',
           description:
-            'Accessible name. Falls back to aria-label, the flattened placeholder, then a translated generic.',
+            'Accessible name. Falls back to aria-label, the enclosing Form.Item label, the flattened placeholder, then a translated generic.',
         },
         {
           name: 'aria-label',

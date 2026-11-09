@@ -246,7 +246,7 @@ const UpdateUsersModal = ({
           <Suspense
             fallback={
               <BAIFormItem label={t('credential.Projects')}>
-                <BAISelect loading />
+                <BAISelect loading disabled />
               </BAIFormItem>
             }
           >
@@ -283,7 +283,7 @@ const UpdateUsersModal = ({
           <Suspense
             fallback={
               <BAIFormItem label={t('resourcePolicy.ResourcePolicy')}>
-                <BAISelect loading />
+                <BAISelect loading disabled />
               </BAIFormItem>
             }
           >
