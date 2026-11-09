@@ -83,12 +83,11 @@ async function applyNameFilter(page: Page, searchValue: string): Promise<void> {
   await page.getByRole('option', { name: 'Name', exact: true }).click();
   await page.getByRole('textbox', { name: 'Value' }).fill(searchValue);
   await page.getByRole('button', { name: 'Apply', exact: true }).click();
-  // Wait for the committed filter token to appear, confirming the condition
-  // was added to local state. Token remove buttons carry `aria-label="Remove
-  // {field}: {operator}"` (`@astryxdesign/core`'s `Token` component); the
-  // label excludes the value, so match on the fixed "Name: contains" prefix.
+  // Wait for the committed filter token to appear. Since Astryx 0.7.7 the
+  // remove button is named "Remove <field>: <operator> <value>", and a long
+  // value is truncated in that name, so match the field and operator.
   await expect(
-    page.getByRole('button', { name: 'Remove Name: contains', exact: true }),
+    page.getByRole('button', { name: /^Remove Name: contains / }),
   ).toBeVisible({
     timeout: 5000,
   });
@@ -214,8 +213,7 @@ test.describe(
 
       // Click the remove button on the filter token to remove the filter
       const removeFilterButton = page.getByRole('button', {
-        name: 'Remove Name: contains',
-        exact: true,
+        name: /^Remove Name: contains /,
       });
       await removeFilterButton.click();
 

@@ -937,13 +937,10 @@ test.describe(
       // The id condition shows as a removable chip in the Presets filter.
       const searchFilters = page.getByRole('group', { name: 'Search filters' });
       await expect(
-        searchFilters.getByRole('button', { name: 'ID: equals', exact: true }),
+        searchFilters.getByRole('button', { name: /^ID: equals / }),
       ).toBeVisible();
       await expect(
-        searchFilters.getByRole('button', {
-          name: 'Remove ID: equals',
-          exact: true,
-        }),
+        searchFilters.getByRole('button', { name: /^Remove ID: equals / }),
       ).toBeVisible();
 
       // Exactly one preset is listed, and it is the role's own preset.

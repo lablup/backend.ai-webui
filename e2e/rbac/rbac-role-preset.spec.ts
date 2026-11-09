@@ -205,8 +205,7 @@ test.describe(
       );
 
       const filterChip = page.getByRole('button', {
-        name: 'Remove Preset Name: contains',
-        exact: true,
+        name: /^Remove Preset Name: contains /,
       });
       await filterChip.click();
       await expect(filterChip).toBeHidden({ timeout: 5000 });
@@ -226,7 +225,7 @@ test.describe(
       );
       await expect(
         page.getByRole('button', {
-          name: 'Remove Scope Type: equals',
+          name: 'Remove Scope Type: equals Project',
           exact: true,
         }),
       ).toBeVisible();
@@ -241,7 +240,7 @@ test.describe(
       );
       await expect(
         page.getByRole('button', {
-          name: 'Remove Scope Type: equals',
+          name: 'Remove Scope Type: equals Project',
           exact: true,
         }),
       ).toBeHidden();
@@ -428,11 +427,9 @@ test.describe(
         'aria-current',
         'true',
       );
+      // A role linked to a preset opens exactly that preset by id.
       await expect(
-        page.getByRole('button', {
-          name: 'Remove Scope Type: equals',
-          exact: true,
-        }),
+        page.getByRole('button', { name: /^Remove ID: equals / }),
       ).toBeVisible({ timeout: 10000 });
       await expectEveryRowCell(
         page,
