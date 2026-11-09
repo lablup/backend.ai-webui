@@ -206,7 +206,7 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
           label: user.basicInfo.email,
         }))}
         requireConfirmInput
-        confirmText={t('credential.PermanentlyDelete')}
+        confirmText={t('credential.PermanentlyDelete', { postProcess: [] })}
         inputProps={{ placeholder: t('credential.PermanentlyDelete') }}
         cannotBeUndoneText={t('dialog.warning.CannotBeUndone')}
         okText={t('credential.PermanentlyDelete')}

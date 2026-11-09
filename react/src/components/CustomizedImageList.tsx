@@ -377,7 +377,7 @@ const CustomizedImageList: React.FC = () => {
               ]
             : []
         }
-        confirmText={t('credential.PermanentlyDelete')}
+        confirmText={t('credential.PermanentlyDelete', { postProcess: [] })}
         requireConfirmInput
         inputProps={{
           placeholder: t('credential.PermanentlyDelete'),

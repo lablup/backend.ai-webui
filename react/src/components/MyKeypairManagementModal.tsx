@@ -748,7 +748,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
               ]
             : []
         }
-        confirmText={t('credential.PermanentlyDelete')}
+        confirmText={t('credential.PermanentlyDelete', { postProcess: [] })}
         requireConfirmInput
         inputProps={{
           placeholder: t('credential.PermanentlyDelete'),

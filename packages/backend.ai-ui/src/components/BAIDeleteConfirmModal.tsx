@@ -109,11 +109,6 @@ function resolveWidth(
 const plainLabel = (node: React.ReactNode) =>
   typeof node === 'string' ? node : undefined;
 
-// Debug mode appends i18n keys as invisible tag characters (I18nKeyMarkers.tsx);
-// nobody can type them, so the expected text drops them.
-const I18N_KEY_MARKER = /\u{E0001}[\u{E0020}-\u{E007E}]*/gu;
-const stripI18nKeyMarkers = (text: string) => text.replace(I18N_KEY_MARKER, '');
-
 const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
   items,
   title,
@@ -211,9 +206,6 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
   );
 
   const actionButtonProps: BAIModalActionButtonProps = okButtonProps ?? {};
-  const expectedText =
-    confirmText ??
-    (items.length === 1 ? plainLabel(items[0]?.label) : undefined);
 
   return (
     <DeleteConfirmModal
@@ -239,11 +231,7 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
       target={target}
       isReversible={reversible}
       isConfirmInputRequired={requireConfirmInput}
-      confirmText={
-        expectedText === undefined
-          ? undefined
-          : stripI18nKeyMarkers(expectedText)
-      }
+      confirmText={confirmText}
       inputLabel={inputLabel}
       inputPlaceholder={inputProps?.placeholder}
       isInputDisabled={inputProps?.disabled}

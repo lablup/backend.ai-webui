@@ -66,31 +66,4 @@ describe('typed-confirm destructive flow through the app-shim', () => {
     const toasts = await screen.findAllByText('Folder deleted.');
     expect(toasts.length).toBeGreaterThan(0);
   });
-
-  it('accepts the visible text when confirmText carries debug-mode i18n key markers', async () => {
-    const user = userEvent.setup();
-    // What the debug post-processor appends for the key `credential.PermanentlyDelete`.
-    const marker =
-      '\u{E0001}' +
-      Array.from('credential.PermanentlyDelete', (c) =>
-        String.fromCodePoint(0xe0000 + c.charCodeAt(0)),
-      ).join('');
-
-    render(
-      <BAIAppProvider>
-        <BAIDeleteConfirmModal
-          open
-          items={[{ key: 'k-1', label: 'my-key' }]}
-          requireConfirmInput
-          confirmText={`Permanently Delete${marker}`}
-          onOk={vi.fn()}
-          onCancel={vi.fn()}
-        />
-      </BAIAppProvider>,
-    );
-
-    const okButton = screen.getByRole('button', { name: /delete/i });
-    await user.type(screen.getByRole('textbox'), 'Permanently Delete');
-    expect(okButton).toBeEnabled();
-  });
 });

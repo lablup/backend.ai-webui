@@ -465,7 +465,9 @@ const DeploymentAccessTokensTable: React.FC<
             ? [{ key: deletingToken.id, label: deletingToken.id }]
             : []
         }
-        confirmText={t('data.folders.DeleteForeverConfirmText')}
+        confirmText={t('data.folders.DeleteForeverConfirmText', {
+          postProcess: [],
+        })}
         requireConfirmInput
         inputProps={{ placeholder: t('data.folders.DeleteForeverConfirmText') }}
         okButtonProps={{ loading: isDeletingToken }}
