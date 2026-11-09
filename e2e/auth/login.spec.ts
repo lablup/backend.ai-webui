@@ -126,7 +126,7 @@ test.describe(
       await fillEndpoint(page, webServerEndpoint + '/');
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
-      await expect(page).toHaveURL(/\/start/, { timeout: 15_000 });
+      await expect(page).toHaveURL(/\/admin\/dashboard/, { timeout: 15_000 });
       expect(doubleSlashUrls).toHaveLength(0);
     });
   },

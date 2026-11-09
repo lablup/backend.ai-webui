@@ -396,7 +396,7 @@ export async function loginAsVisualRegressionUser(
 
 export async function logout(page: Page) {
   await page.getByTestId('user-dropdown-button').click();
-  await page.getByText('Log Out').click();
+  await page.getByRole('menuitem', { name: 'Log Out' }).click();
   await page.waitForTimeout(1000);
 }
 

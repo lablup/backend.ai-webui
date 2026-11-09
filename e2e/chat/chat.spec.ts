@@ -656,13 +656,11 @@ test.describe(
       await chatInput.press('Enter');
 
       // ChatCard renders the completion failure as an Astryx `Banner
-      // status="error"` (ChatCard.tsx), and Banner stamps `role="alert"` on
-      // error/warning. The old CSS `[role="alert"]` fallback resolved to a
-      // hidden, empty live region first; the role locator only matches the
-      // banner that is actually in the accessibility tree.
-      const errorAlert = page.getByRole('alert');
+      // status="error"` (ChatCard.tsx). Astryx's empty assertive live region
+      // also has role="alert" and is always present, so select the banner by
+      // its text. The chat client retries the 500 before reporting it.
+      const errorAlert = page.getByRole('alert').filter({ hasText: /error/i });
       await expect(errorAlert).toBeVisible({ timeout: 15000 });
-      await expect(errorAlert).toContainText(/error/i);
     });
 
     test('User sees an error alert when the endpoint URL is invalid', async ({

@@ -90,7 +90,9 @@ test(
 
     await skipAdminViewSwitchTours(browser);
     await app.open("/start");
-    await expect(browser).toHaveURL(/\/start/, { timeout: 30_000 });
+    await expect(browser).toHaveURL(/\/project\/[^/]+\/dashboard/, {
+      timeout: 30_000,
+    });
     await expect(screen.getByTestId("user-dropdown-button")).toBeVisible({
       timeout: 30_000,
     });
@@ -119,7 +121,9 @@ test(
 
     await skipAdminViewSwitchTours(browser);
     await app.open("/start");
-    await expect(browser).toHaveURL(/\/start/, { timeout: 30_000 });
+    await expect(browser).toHaveURL(/\/project\/[^/]+\/dashboard/, {
+      timeout: 30_000,
+    });
     await expect(screen.getByTestId("user-dropdown-button")).toBeVisible({
       timeout: 30_000,
     });
@@ -135,9 +139,11 @@ test(
     await expect(switchToUser).toBeVisible({ timeout: 15_000 });
 
     await agent.act('Choose "Switch to User Console"');
-    await expect(browser).toHaveURL(/\/start/, { timeout: 15_000 });
+    await expect(browser).toHaveURL(/\/project\/[^/]+\/dashboard/, {
+      timeout: 15_000,
+    });
     await expect(switchToUser).toBeHidden({ timeout: 15_000 });
-    await expect(screen.getByTestId("page-start")).toBeVisible({
+    await expect(screen.getByTestId("page-dashboard")).toBeVisible({
       timeout: 15_000,
     });
   },
@@ -148,7 +154,9 @@ test(
   { session: "admin", timeout: 300_000 },
   async ({ app, agent, browser, screen }) => {
     const project = "model-store";
-    const projectStartUrl = new RegExp(`/project/${project}/start/?($|\\?)`);
+    const projectDashboardUrl = new RegExp(
+      `/project/${project}/dashboard/?($|\\?)`,
+    );
     const projectSettings = screen.getByRole("link", "Project Settings");
     const goBack = screen.getByRole("button", "Go Back");
 
@@ -166,7 +174,7 @@ test(
       'Open the "Select Project" selector in the header and choose the {project} project marked "Project Admin"',
       { params: { project } },
     );
-    await expect(browser).toHaveURL(projectStartUrl, {
+    await expect(browser).toHaveURL(projectDashboardUrl, {
       timeout: 15_000,
     });
     await expect(selector).toHaveText(new RegExp(project));
@@ -181,7 +189,7 @@ test(
     await expect(goBack).toBeVisible({ timeout: 15_000 });
 
     await agent.act('Press "Go Back" next to the "Project Settings" heading');
-    await expect(browser).toHaveURL(projectStartUrl, {
+    await expect(browser).toHaveURL(projectDashboardUrl, {
       timeout: 15_000,
     });
     await expect(goBack).toBeHidden({ timeout: 15_000 });

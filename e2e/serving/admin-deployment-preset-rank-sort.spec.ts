@@ -127,6 +127,9 @@ test.describe(
       await expect(
         rankHeader.getByRole('button', {
           name: 'Display ordering among presets of the same runtime. Lower values appear first.',
+          // The sort button's name is "Rank <tooltip text>"; only the tooltip
+          // trigger has this exact name.
+          exact: true,
         }),
       ).toBeVisible();
 
@@ -145,7 +148,7 @@ test.describe(
         timeout: 30000,
       });
 
-      const sortButton = page.getByRole('button', { name: /^Sort by rank/ });
+      const sortButton = rankHeader.getByRole('button', { name: /^Rank/ });
 
       await sortButton.click();
       await expect(rankHeader).toHaveAttribute('aria-sort', 'ascending');

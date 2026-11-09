@@ -121,8 +121,25 @@ test.describe(
         .getByRole('option');
       await expect(personalOption).toHaveCount(1, { timeout: 15000 });
       await expect(personalOption).toBeEnabled();
-      const personalProject = (await personalOption.innerText()).trim();
-      expect(personalProject).not.toBe('');
+      // The header labels the signed-in user's personal project "My Project"
+      // (#10670), so the real name comes from the API.
+      await expect(personalOption).toHaveText('My Project');
+      const personalProject = await page.evaluate(async () => {
+        const result = await (globalThis as any).backendaiclient.query(
+          `query {
+            myUserV2 {
+              projects(filter: { isActive: true }, limit: 1000) {
+                edges { node { basicInfo { name type } } }
+              }
+            }
+          }`,
+          {},
+        );
+        return result.myUserV2.projects.edges
+          .map((edge: any) => edge.node.basicInfo)
+          .find((info: any) => info.type === 'PERSONAL')?.name as string;
+      });
+      expect(personalProject).toBeTruthy();
 
       // The reload can add a trailing slash.
       const isPersonalDataPage = (url: URL) =>
@@ -131,10 +148,10 @@ test.describe(
           .endsWith(`/project/${personalProject}/data`);
       await personalOption.click();
       await expect(page).toHaveURL(isPersonalDataPage);
-      await expect(selector).toHaveText(personalProject);
+      await expect(selector).toHaveText('My Project');
 
       await page.reload();
-      await expect(selector).toHaveText(personalProject, { timeout: 15000 });
+      await expect(selector).toHaveText('My Project', { timeout: 15000 });
       await expect(page).toHaveURL(isPersonalDataPage);
       await expect(notFoundPageHeading(page)).toBeHidden();
       await expect(page.getByText(/Project .+ was not found/)).toBeHidden();
@@ -155,9 +172,9 @@ test.describe(
       const dialog = page.getByRole('dialog', { name: 'Edit User Detail' });
       await expect(dialog).toBeVisible();
 
-      await dialog.getByRole('button', { name: /^Projects/ }).click();
+      await dialog.getByRole('button', { name: 'Select Project' }).click();
       const personalOption = page
-        .getByRole('listbox', { name: /^Projects/ })
+        .getByRole('listbox', { name: 'Select Project' })
         .getByRole('group', { name: 'Personal' })
         .getByRole('option');
       await expect(personalOption).toHaveCount(1, { timeout: 15000 });

@@ -244,8 +244,9 @@ test.describe(
         const rows = await roleDataRows(page).all();
         expect(rows.length).toBeGreaterThan(0);
         for (const row of rows) {
-          // Source is the 5th column (RoleNodes.tsx column order).
-          const source = await row.getByRole('cell').nth(4).innerText();
+          // Source is the 6th column, after Auto Assign (RoleNodes.tsx column
+          // order).
+          const source = await row.getByRole('cell').nth(5).innerText();
           expect(source.trim()).toBe('System');
         }
       }).toPass({ timeout: 10000 });

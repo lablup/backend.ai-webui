@@ -481,7 +481,9 @@ async function expectRowActions(
   menuOnly: Array<string> = [],
 ) {
   await row.hover();
-  const moreButton = row.getByRole('button', { name: 'More actions' });
+  // The row also holds a second, hidden "More actions" button in a later
+  // cell; the row actions live in the first (email) cell.
+  const moreButton = row.getByRole('button', { name: 'More actions' }).first();
   const menu = page.getByRole('menu');
   if (menuOnly.length > 0) {
     await expect(moreButton).toBeVisible({ timeout: 10000 });
