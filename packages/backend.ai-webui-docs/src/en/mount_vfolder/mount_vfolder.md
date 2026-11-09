@@ -74,7 +74,7 @@ Fill the contents with \"file inside user2-vfolder\".
 ![=682px](../images/mounted_folders_in_terminal.png)
 
 Running `ls` command against `user2-vfolder`, users can confirm the file was created successfully.
-Please note the contents of the file can be chekced with `cat` command.
+Please note the contents of the file can be checked with `cat` command.
 
 Now delete the compute session and go to the Storage page.
 Locate the `user2-vfolder folder`, open a file explorer and check that the `test_file` exists.
