@@ -108,6 +108,12 @@
   max-width: none;
 }
 
+/* Astryx `Tab` only swaps the cursor for `aria-disabled`; mute the label too.
+   `[data-tab-value]` keeps a disabled control in the extra slot out of it. */
+.bai-card__tabs [data-tab-value][aria-disabled='true'] {
+  color: var(--color-text-disabled);
+}
+
 /*
  Title-less tabbed card: pull the strip up to the card's top edge and reserve
  the header band above it, instead of floating a full card padding below the

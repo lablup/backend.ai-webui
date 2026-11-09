@@ -315,7 +315,9 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
           extra={t('import.OnlyWritableModelFoldersAreListed')}
         >
           <BAIFlex direction="row" gap="xs">
-            <Suspense fallback={<BAISelect loading style={{ flex: 1 }} />}>
+            <Suspense
+              fallback={<BAISelect loading disabled style={{ flex: 1 }} />}
+            >
               <Form.Item
                 name="vfolderId"
                 noStyle

@@ -21,6 +21,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('../hooks/useWebUIConfig', () => ({
   fetchAndParseConfig: vi.fn(),
+  loginConfigState: Symbol('loginConfigState'),
+}));
+vi.mock('../components/DefaultProviders', () => ({
+  jotaiStore: { get: vi.fn(), set: vi.fn() },
 }));
 vi.mock('../RelayEnvironment', async () => {
   const { createMockEnvironment } = await import('relay-test-utils');
@@ -59,6 +63,7 @@ const meWith = (
     role: string | null;
     domainName: string | null;
     domain: { entityId: string; basicInfo: { name: string } } | null;
+    domainConfig: Record<string, unknown>;
   }> = {},
 ) => ({
   myUserV2: {
@@ -76,6 +81,9 @@ const meWith = (
     recentProject: projects.recent ? { edges: edges(projects.recent) } : null,
     defaultProject: { edges: edges(projects.default ?? []) },
   },
+  myAppConfigs: overrides.domainConfig
+    ? [{ configName: 'domainConfig', config: overrides.domainConfig }]
+    : [],
 });
 
 // Queues one Relay payload per page and records the variables each was asked for.
@@ -120,6 +128,23 @@ describe('connectViaGQL', () => {
     delete g.backendaioptions;
     delete g.backendaiutils;
     delete g.backendaiclient;
+  });
+
+  test("layers the domain's settings document from the same read onto the config", async () => {
+    const { jotaiStore } = await import('../components/DefaultProviders');
+    const { loginConfigState } = await import('../hooks/useWebUIConfig');
+    queueResponses([
+      meWith(
+        { default: [[PROJECT_A, 'alpha']] },
+        { domainConfig: { settings: { hideAgents: !cfg.hideAgents } } },
+      ),
+    ]);
+
+    await connectViaGQL(makeClient(), cfg, []);
+    expect(jotaiStore.set).toHaveBeenCalledWith(
+      loginConfigState,
+      expect.objectContaining({ hideAgents: !cfg.hideAgents }),
+    );
   });
 
   test('stores the user, the default project, and the domain name + uuid from one myUserV2 read', async () => {
@@ -513,7 +538,10 @@ describe('connectViaGQL — act-as tab (FR-4111)', () => {
     } as unknown as LoginBootstrap;
 
     await connectViaGQL(client, cfg, [], bootstrap);
-    expect(client.query).not.toHaveBeenCalled();
+    expect(client.query).not.toHaveBeenCalledWith(
+      expect.stringContaining('keypair'),
+      expect.anything(),
+    );
     expect((client._config as Record<string, unknown>)._accessKey).toBe(
       'TARGET_KEY',
     );
@@ -524,6 +552,9 @@ describe('connectViaGQL — act-as tab (FR-4111)', () => {
     const client = { ...makeClient(), query: vi.fn() };
 
     await connectViaGQL(client, cfg, []);
-    expect(client.query).not.toHaveBeenCalled();
+    expect(client.query).not.toHaveBeenCalledWith(
+      expect.stringContaining('keypair'),
+      expect.anything(),
+    );
   });
 });

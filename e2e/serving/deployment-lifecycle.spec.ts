@@ -217,7 +217,7 @@ test.describe(
         await expect(page.getByRole('tooltip')).toHaveCount(0);
         await statusTab(page, 'Paused').locator('svg').hover();
         await expect(page.getByRole('tooltip')).toContainText(
-          'Desired Replicas set to 0',
+          'Desired Replicas at 0',
         );
         await page.mouse.move(0, 0);
         await expect(
@@ -353,7 +353,7 @@ test.describe(
         });
         // `BAISegmentedControl` renders a directly-clickable `role="radio"` button
         // (see comment in "Admin can view the deployments list..." above).
-        await page.getByRole('radio', { name: 'Terminated' }).click();
+        await statusTab(page, 'Terminated').click();
         await expect(page.getByText(deploymentName).first()).toBeHidden({
           timeout: 10000,
         });
@@ -815,7 +815,11 @@ test.describe(
       await expect(
         dialog.getByRole('separator', { name: 'Environments' }),
       ).toBeVisible();
-      await expect(dialog.getByText('Environments / Version')).toBeVisible();
+      await expect(
+        dialog.locator('.uic-form-item__label', {
+          hasText: 'Environments / Version',
+        }),
+      ).toBeVisible();
       await expect(
         dialog.getByRole('button', { name: 'Add environment variables' }),
       ).toBeVisible();

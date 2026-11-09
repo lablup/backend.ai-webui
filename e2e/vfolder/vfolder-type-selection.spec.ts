@@ -96,7 +96,7 @@ test.describe(
           await autoMountRadio.check();
           await expect(autoMountRadio).toBeChecked();
           await modal.fillFolderName(folderName);
-          await (await modal.getCreateButton()).click();
+          await modal.submit();
           await expect(
             page.getByRole('dialog', { name: 'Create a new storage folder' }),
           ).toBeHidden({ timeout: 30000 });

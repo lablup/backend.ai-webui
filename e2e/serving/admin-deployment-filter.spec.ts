@@ -244,10 +244,7 @@ test.describe(
       // The condition chip reads as the owner's email, not the user UUID.
       const filterGroup = page.getByRole('group', { name: 'Search filters' });
       await expect(
-        filterGroup.getByRole('button', {
-          name: 'Owner: equals',
-          exact: true,
-        }),
+        filterGroup.getByRole('button', { name: /^Owner: equals / }),
       ).toBeVisible();
       await expect(filterGroup).toContainText(userInfo.admin.email);
       await expect(filterGroup).not.toContainText(
@@ -265,10 +262,13 @@ test.describe(
       const ownerCells = page
         .locator('tbody tr')
         .locator(`td:nth-child(${ownerHeaderIndex + 1})`);
-      await expect(ownerCells.first()).toBeVisible();
-      for (const owner of await ownerCells.allTextContents()) {
-        expect(owner.trim()).toBe(userInfo.admin.email);
-      }
+      // The table keeps the previous rows on screen until the refetch lands.
+      await expect(async () => {
+        await expect(ownerCells.first()).toBeVisible();
+        for (const owner of await ownerCells.allTextContents()) {
+          expect(owner.trim()).toBe(userInfo.admin.email);
+        }
+      }).toPass({ timeout: 30000 });
 
       // Switching the owner to another user drops the admin's deployment.
       await filterGroup

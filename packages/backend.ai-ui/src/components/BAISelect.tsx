@@ -86,11 +86,14 @@
 
  PILOT-DECISION — **`label` is required by Astryx and defaults to hidden.**
  No antd call site passes one. The wrapper accepts `label` and otherwise
- derives an accessible name from `placeholder` (which every call site does
- pass: 28 of 64) before falling back to the translated generic — the same
- policy `BAIButton` / `BAICheckbox` / `BAIUncontrolledInput` use here.
+ takes the accessible name from `aria-label`, then the Form.Item label, then
+ `placeholder`, before falling back to the translated generic.
 */
-import { nodeToAccessibleLabel } from '../helper/astryxLabel';
+import { FormItemInputContext } from '../form-engine';
+import {
+  nodeToAccessibleLabel,
+  resolveAccessibleLabel,
+} from '../helper/astryxLabel';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIMultiSelector from './BAIMultiSelector';
 import './BAISelect.css';
@@ -158,6 +161,7 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
   status?: 'error' | 'warning' | '';
   size?: 'small' | 'middle' | 'large';
   variant?: 'outlined' | 'filled' | 'borderless';
+  /** Accepted and inert: ui-common's selectors own their popup visibility. */
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   /**
@@ -175,7 +179,10 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
   autoFocus?: boolean;
   tabIndex?: number;
   id?: string;
-  /** Accessible name; derived from `placeholder` when absent. */
+  /**
+   * Accessible name; falls back to `aria-label`, the enclosing Form.Item's
+   * label, then `placeholder`.
+   */
   label?: string;
   /** Same as `label`, for a call site that names the control the DOM way. */
   'aria-label'?: string;
@@ -289,12 +296,14 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   filterOption: _filterOption,
   defaultActiveFirstOption: _defaultActiveFirstOption,
   open: _open,
-  onOpenChange: _onOpenChange,
   title: _title,
   variant,
   ...restProps
 }: BAISelectProps<ValueType, OptionType>): React.ReactElement {
+  'use memo';
   const { t } = useBAIi18n();
+  const formItemLabel =
+    React.useContext(FormItemInputContext).label || undefined;
 
   // antd's OTHER option API: `<Select.Option>` / `<Select.OptGroup>` children.
   // Astryx's `Selector` is `options`-driven only, so the element tree is
@@ -510,9 +519,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   }, [autoSelectedValue]);
 
   const accessibleLabel =
-    label ??
-    ariaLabel ??
-    nodeToAccessibleLabel(placeholder) ??
+    resolveAccessibleLabel(label, ariaLabel, formItemLabel, placeholder) ||
     t('general.Select');
 
   const singleValue = toOptionKey(value ?? defaultValue);
@@ -552,7 +559,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
       ghost && 'bai-select-ghost',
       richTriggerNode !== undefined && 'bai-select-rich-trigger',
     ),
-    'aria-label': accessibleLabel || t('general.Select'),
+    'aria-label': accessibleLabel,
     placeholder:
       typeof placeholder === 'string'
         ? placeholder

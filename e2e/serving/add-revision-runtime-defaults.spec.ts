@@ -32,10 +32,10 @@
 import { setupGraphQLMocks } from '../session/mocking/graphql-interceptor';
 import {
   cleanupDeploymentFixtures,
-  cleanupDeploymentSafely,
   provisionDeploymentModelFolder,
   selectRevisionModalOption,
 } from '../utils/deployment-fixtures';
+import { createTestResources } from '../utils/test-resources';
 import { loginAsAdmin, modifyConfigToml } from '../utils/test-util';
 import {
   createDeploymentAndOpenPage,
@@ -68,6 +68,11 @@ import {
   type Page,
 } from '@playwright/test';
 
+// Every deployment a test names is declared here and deleted via the admin API
+// after each test, so a failure midway (or a broken UI delete) cannot leak it.
+const resources = createTestResources();
+test.afterEach(() => resources.cleanup());
+
 async function loginWithVariantMocks(
   page: Page,
   request: APIRequestContext,
@@ -91,141 +96,129 @@ test.describe(
       page,
       request,
     }) => {
-      const name = `e2e-fr3342-reads-true-${Date.now()}`;
-      try {
-        await loginWithVariantMocks(page, request, {
-          ...runtimeVariantSelectMocks('custom', true),
-          DeploymentAddRevisionModalVariantDefaultQuery:
-            variantDefaultModelDefinitionMock(),
-        });
-        await createDeploymentAndOpenPage(page, name);
-        const modal = await openAddRevisionAdvanced(page);
-        await selectRuntimeVariant(page, modal, 'custom');
+      const name = resources.name('deployment', 'e2e-fr3342-reads-true');
+      await loginWithVariantMocks(page, request, {
+        ...runtimeVariantSelectMocks('custom', true),
+        DeploymentAddRevisionModalVariantDefaultQuery:
+          variantDefaultModelDefinitionMock(),
+      });
+      await createDeploymentAndOpenPage(page, name);
+      const modal = await openAddRevisionAdvanced(page);
+      await selectRuntimeVariant(page, modal, 'custom');
 
-        // reads=true → Service Configuration section + the command input are
-        // shown. Assert on the labeled command control ("Command" in the
-        // default Shell mode) rather than the Form.Item label text, whose
-        // <label> also wraps a tooltip icon.
-        await expect(
-          modal.getByText('Service Configuration', { exact: true }),
-        ).toBeVisible();
-        await expect(
-          modal.getByRole('textbox', { name: 'Command', exact: true }),
-        ).toBeVisible();
+      // reads=true → Service Configuration section + the command input are
+      // shown. Assert on the labeled command control ("Command" in the
+      // default Shell mode) rather than the Form.Item label text, whose
+      // <label> also wraps a tooltip icon.
+      await expect(
+        modal.getByText('Service Configuration', { exact: true }),
+      ).toBeVisible();
+      await expect(
+        modal.getByRole('textbox', { name: 'Command', exact: true }),
+      ).toBeVisible();
 
-        // Runtime-parameter presets are hidden for a config-reading variant.
-        await expect(
-          modal.getByText('Runtime Parameters', { exact: true }),
-        ).toHaveCount(0);
-        // The "default command applied" warning is NOT shown for this variant.
-        await expect(
-          modal.getByText(
-            'The default start command for the selected inference runtime will be applied automatically.',
-          ),
-        ).toHaveCount(0);
-      } finally {
-        await cleanupDeploymentSafely(page, name);
-      }
+      // Runtime-parameter presets are hidden for a config-reading variant.
+      await expect(
+        modal.getByText('Runtime Parameters', { exact: true }),
+      ).toHaveCount(0);
+      // The "default command applied" warning is NOT shown for this variant.
+      await expect(
+        modal.getByText(
+          'The default start command for the selected inference runtime will be applied automatically.',
+        ),
+      ).toHaveCount(0);
     });
 
     test('Admin sees runtime-parameter presets and the default-command note for a non-config-reading variant (vllm)', async ({
       page,
       request,
     }) => {
-      const name = `e2e-fr3342-reads-false-${Date.now()}`;
-      try {
-        await loginWithVariantMocks(page, request, {
-          ...runtimeVariantSelectMocks('vllm', false),
-        });
-        await createDeploymentAndOpenPage(page, name);
-        const modal = await openAddRevisionAdvanced(page);
-        await selectRuntimeVariant(page, modal, 'vllm');
+      const name = resources.name('deployment', 'e2e-fr3342-reads-false');
+      await loginWithVariantMocks(page, request, {
+        ...runtimeVariantSelectMocks('vllm', false),
+      });
+      await createDeploymentAndOpenPage(page, name);
+      const modal = await openAddRevisionAdvanced(page);
+      await selectRuntimeVariant(page, modal, 'vllm');
 
-        // reads=false → Service Configuration (custom command) is hidden.
-        await expect(
-          modal.getByText('Service Configuration', { exact: true }),
-        ).toHaveCount(0);
+      // reads=false → Service Configuration (custom command) is hidden.
+      await expect(
+        modal.getByText('Service Configuration', { exact: true }),
+      ).toHaveCount(0);
 
-        // Runtime Parameters section shows for a preset-driven variant. Match
-        // loosely (substring, not exact): RuntimeParameterFormSection renders
-        // the title with a conditional trailing "(Optional)" span when the
-        // manager lacks required-field support, so the element text can be
-        // "Runtime Parameters (Optional)" — an { exact: true } match would miss
-        // it and fail version-dependently.
-        await expect(modal.getByText(/Runtime Parameters/).first()).toBeVisible(
-          { timeout: 10000 },
-        );
+      // Runtime Parameters section shows for a preset-driven variant. Match
+      // loosely (substring, not exact): RuntimeParameterFormSection renders
+      // the title with a conditional trailing "(Optional)" span when the
+      // manager lacks required-field support, so the element text can be
+      // "Runtime Parameters (Optional)" — an { exact: true } match would miss
+      // it and fail version-dependently.
+      await expect(modal.getByText(/Runtime Parameters/).first()).toBeVisible({
+        timeout: 10000,
+      });
 
-        // The "default start command will be applied" warning note appears
-        // (rendered as the Runtime select's warning-only validation message,
-        // in the form item's warning explain slot).
-        await expect(
-          modal.locator('.uic-form-item__explain-warning').filter({
-            hasText:
-              'The default start command for the selected inference runtime will be applied automatically.',
-          }),
-        ).toBeVisible({ timeout: 10000 });
+      // The "default start command will be applied" warning note appears
+      // (rendered as the Runtime select's warning-only validation message,
+      // in the form item's warning explain slot).
+      await expect(
+        modal.locator('.uic-form-item__explain-warning').filter({
+          hasText:
+            'The default start command for the selected inference runtime will be applied automatically.',
+        }),
+      ).toBeVisible({ timeout: 10000 });
 
-        // The "Model Definition File Path" points at the model-definition.yaml
-        // the server reads, so it is gated on the variant reading the vfolder
-        // config files and is NOT rendered at all for a non-config-reading
-        // variant — regardless of the Advanced Settings collapse. (Its shown
-        // counterpart is asserted for the custom variant in
-        // add-revision-command-shell.spec.ts.)
-        await expect(
-          modal.getByLabel('Model Definition File Path'),
-        ).toHaveCount(0);
-      } finally {
-        await cleanupDeploymentSafely(page, name);
-      }
+      // The "Model Definition File Path" points at the model-definition.yaml
+      // the server reads, so it is gated on the variant reading the vfolder
+      // config files and is NOT rendered at all for a non-config-reading
+      // variant — regardless of the Advanced Settings collapse. (Its shown
+      // counterpart is asserted for the custom variant in
+      // add-revision-command-shell.spec.ts.)
+      await expect(modal.getByLabel('Model Definition File Path')).toHaveCount(
+        0,
+      );
     });
 
     test('Admin sees the variant defaultModelDefinition fill the command / port / health-check placeholders', async ({
       page,
       request,
     }) => {
-      const name = `e2e-fr3342-placeholders-${Date.now()}`;
-      try {
-        await loginWithVariantMocks(page, request, {
-          ...runtimeVariantSelectMocks('custom', true),
-          DeploymentAddRevisionModalVariantDefaultQuery:
-            variantDefaultModelDefinitionMock(),
-        });
-        await createDeploymentAndOpenPage(page, name);
-        const modal = await openAddRevisionAdvanced(page);
-        await selectRuntimeVariant(page, modal, 'custom');
+      const name = resources.name('deployment', 'e2e-fr3342-placeholders');
+      await loginWithVariantMocks(page, request, {
+        ...runtimeVariantSelectMocks('custom', true),
+        DeploymentAddRevisionModalVariantDefaultQuery:
+          variantDefaultModelDefinitionMock(),
+      });
+      await createDeploymentAndOpenPage(page, name);
+      const modal = await openAddRevisionAdvanced(page);
+      await selectRuntimeVariant(page, modal, 'custom');
 
-        // The command input carries the DB default command as its placeholder
-        // (display-only) — NOT as its value.
-        const startCommand = modal.getByRole('textbox', {
-          name: 'Command',
-          exact: true,
-        });
-        await expect(startCommand).toHaveAttribute(
-          'placeholder',
-          MOCK_DB_DEFAULT_COMMAND,
-          { timeout: 10000 },
-        );
-        await expect(startCommand).toHaveValue('');
+      // The command input carries the DB default command as its placeholder
+      // (display-only) — NOT as its value.
+      const startCommand = modal.getByRole('textbox', {
+        name: 'Command',
+        exact: true,
+      });
+      await expect(startCommand).toHaveAttribute(
+        'placeholder',
+        MOCK_DB_DEFAULT_COMMAND,
+        { timeout: 10000 },
+      );
+      await expect(startCommand).toHaveValue('');
 
-        // The Port input's placeholder is the DB default port (as a string).
-        await expect(
-          modal.getByRole('spinbutton', { name: 'Port', exact: true }),
-        ).toHaveAttribute('placeholder', String(MOCK_DB_DEFAULT_PORT));
+      // The Port input's placeholder is the DB default port (as a string).
+      await expect(
+        modal.getByRole('spinbutton', { name: 'Port', exact: true }),
+      ).toHaveAttribute('placeholder', String(MOCK_DB_DEFAULT_PORT));
 
-        // The health-check "Max Retries" placeholder is the DB default (shown
-        // once Health Check is enabled).
-        await modal
-          .getByRole('checkbox', { name: 'Enable Health Check', exact: true })
-          .check();
-        await expect(
-          modal.getByRole('spinbutton', { name: 'Max Retries', exact: true }),
-        ).toHaveAttribute('placeholder', String(MOCK_DB_DEFAULT_MAX_RETRIES), {
-          timeout: 10000,
-        });
-      } finally {
-        await cleanupDeploymentSafely(page, name);
-      }
+      // The health-check "Max Retries" placeholder is the DB default (shown
+      // once Health Check is enabled).
+      await modal
+        .getByRole('checkbox', { name: 'Enable Health Check', exact: true })
+        .check();
+      await expect(
+        modal.getByRole('spinbutton', { name: 'Max Retries', exact: true }),
+      ).toHaveAttribute('placeholder', String(MOCK_DB_DEFAULT_MAX_RETRIES), {
+        timeout: 10000,
+      });
     });
 
     test('Admin sees a selected model folder’s model-definition.yaml override the DB-default command / port / health-check placeholders', async ({
@@ -249,7 +242,7 @@ test.describe(
       // fallthrough is exercised separately by the next test, which uploads a
       // yaml defining only `start_command`.
       test.setTimeout(240_000);
-      const name = `e2e-fr3342-vfolder-override-${Date.now()}`;
+      const name = resources.name('deployment', 'e2e-fr3342-vfolder-override');
       let folderName: string | undefined;
       try {
         await loginWithVariantMocks(page, request, {
@@ -308,7 +301,6 @@ test.describe(
           timeout: 10000,
         });
       } finally {
-        await cleanupDeploymentSafely(page, name);
         if (folderName) {
           await cleanupDeploymentFixtures(page, { folderName });
         }
@@ -325,7 +317,7 @@ test.describe(
       // flip to the vfolder value while port/max_retries fall through to the
       // DB baseline untouched.
       test.setTimeout(240_000);
-      const name = `e2e-fr3342-vfolder-partial-${Date.now()}`;
+      const name = resources.name('deployment', 'e2e-fr3342-vfolder-partial');
       let folderName: string | undefined;
       try {
         await loginWithVariantMocks(page, request, {
@@ -384,7 +376,6 @@ test.describe(
           timeout: 10000,
         });
       } finally {
-        await cleanupDeploymentSafely(page, name);
         if (folderName) {
           await cleanupDeploymentFixtures(page, { folderName });
         }
@@ -395,74 +386,62 @@ test.describe(
       page,
       request,
     }) => {
-      const name = `e2e-fr3342-def-path-${Date.now()}`;
-      try {
-        await loginWithVariantMocks(page, request, {
-          ...runtimeVariantSelectMocks('custom', true),
-          DeploymentAddRevisionModalVariantDefaultQuery:
-            variantDefaultModelDefinitionMock(),
-        });
-        await createDeploymentAndOpenPage(page, name);
-        const modal = await openAddRevisionAdvanced(page);
-        await selectRuntimeVariant(page, modal, 'custom');
+      const name = resources.name('deployment', 'e2e-fr3342-def-path');
+      await loginWithVariantMocks(page, request, {
+        ...runtimeVariantSelectMocks('custom', true),
+        DeploymentAddRevisionModalVariantDefaultQuery:
+          variantDefaultModelDefinitionMock(),
+      });
+      await createDeploymentAndOpenPage(page, name);
+      const modal = await openAddRevisionAdvanced(page);
+      await selectRuntimeVariant(page, modal, 'custom');
 
-        const startCommand = modal.getByRole('textbox', {
-          name: 'Command',
-          exact: true,
-        });
-        await expect(startCommand).toHaveAttribute(
-          'placeholder',
-          MOCK_DB_DEFAULT_COMMAND,
-          { timeout: 10000 },
-        );
+      const startCommand = modal.getByRole('textbox', {
+        name: 'Command',
+        exact: true,
+      });
+      await expect(startCommand).toHaveAttribute(
+        'placeholder',
+        MOCK_DB_DEFAULT_COMMAND,
+        { timeout: 10000 },
+      );
 
-        // Expand Advanced Settings and type into the Model Definition File
-        // Path. Its value must NOT feed back into the placeholders of the
-        // command fields above it (the lower field is deliberately excluded
-        // from the placeholder read).
-        await modal.getByRole('button', { name: 'Advanced Settings' }).click();
-        const modelDefPath = modal.getByRole('textbox', {
-          name: 'Model Definition File Path',
-          exact: true,
-        });
-        await expect(modelDefPath).toBeVisible({ timeout: 10000 });
-        await modelDefPath.fill('some-other-definition.yaml');
+      // Expand Advanced Settings and type into the Model Definition File
+      // Path. Its value must NOT feed back into the placeholders of the
+      // command fields above it (the lower field is deliberately excluded
+      // from the placeholder read).
+      await modal.getByRole('button', { name: 'Advanced Settings' }).click();
+      const modelDefPath = modal.getByRole('textbox', {
+        name: 'Model Definition File Path',
+        exact: true,
+      });
+      await expect(modelDefPath).toBeVisible({ timeout: 10000 });
+      await modelDefPath.fill('some-other-definition.yaml');
 
-        // The command placeholder is still the DB-default command, unchanged.
-        await expect(startCommand).toHaveAttribute(
-          'placeholder',
-          MOCK_DB_DEFAULT_COMMAND,
-        );
-      } finally {
-        await cleanupDeploymentSafely(page, name);
-      }
+      // The command placeholder is still the DB-default command, unchanged.
+      await expect(startCommand).toHaveAttribute(
+        'placeholder',
+        MOCK_DB_DEFAULT_COMMAND,
+      );
     });
 
     test('Admin sees the custom service config for an old-manager variant (readsVfolderConfigFiles omitted, name === custom)', async ({
       page,
       request,
     }) => {
-      const name = `e2e-fr3342-oldmgr-${Date.now()}`;
-      try {
-        await loginWithVariantMocks(page, request, {
-          ...runtimeVariantSelectMocks(
-            'custom',
-            true,
-            /* omitReadsFlag */ true,
-          ),
-          DeploymentAddRevisionModalVariantDefaultQuery:
-            variantDefaultModelDefinitionMock(),
-        });
-        await createDeploymentAndOpenPage(page, name);
-        const modal = await openAddRevisionAdvanced(page);
-        await selectRuntimeVariant(page, modal, 'custom');
+      const name = resources.name('deployment', 'e2e-fr3342-oldmgr');
+      await loginWithVariantMocks(page, request, {
+        ...runtimeVariantSelectMocks('custom', true, /* omitReadsFlag */ true),
+        DeploymentAddRevisionModalVariantDefaultQuery:
+          variantDefaultModelDefinitionMock(),
+      });
+      await createDeploymentAndOpenPage(page, name);
+      const modal = await openAddRevisionAdvanced(page);
+      await selectRuntimeVariant(page, modal, 'custom');
 
-        await expect(
-          modal.getByText('Service Configuration', { exact: true }),
-        ).toBeVisible();
-      } finally {
-        await cleanupDeploymentSafely(page, name);
-      }
+      await expect(
+        modal.getByText('Service Configuration', { exact: true }),
+      ).toBeVisible();
     });
   },
 );
@@ -478,7 +457,7 @@ test.describe(
       request,
     }) => {
       test.setTimeout(240_000);
-      const name = `e2e-gh10223-blank-hc-${Date.now()}`;
+      const name = resources.name('deployment', 'e2e-gh10223-blank-hc');
       const capture: { input: any } = { input: null };
       let folderName: string | undefined;
       try {
@@ -561,7 +540,6 @@ test.describe(
         const service = capture.input?.modelDefinition?.models?.[0]?.service;
         expect(service?.healthCheck).toEqual({ enable: true });
       } finally {
-        await cleanupDeploymentSafely(page, name);
         if (folderName) {
           await cleanupDeploymentFixtures(page, { folderName });
         }

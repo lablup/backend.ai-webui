@@ -103,7 +103,7 @@ const RetentionPolicySettingModal: React.FC<
       mutation RetentionPolicySettingModalUpdateMutation(
         $input: UpdateRetentionPolicyInput!
       ) {
-        adminUpdateRetentionPolicy(input: $input) {
+        updateRetentionPolicy(input: $input) {
           policy {
             id
             category

@@ -60,19 +60,29 @@ navTitle: プロジェクト管理者機能
 
 ## プロジェクト管理者用サイドバー
 
-プロジェクト管理者ロールを持つプロジェクトを選択すると、サイドバーに **プロジェクト設定** 項目が表示されます。この項目を選択するとサイドバーがプロジェクト管理メニューに切り替わり、**運用** セクションに、そのプロジェクトを管理するための3つの項目が表示されます:
+プロジェクト管理者ロールを持つプロジェクトを選択すると、サイドバーに **プロジェクト設定** 項目が表示されます。この項目を選択するとサイドバーがプロジェクト管理メニューに切り替わり、**ダッシュボード** 項目と、そのプロジェクトを管理するための3つの項目を含む **運用** セクションが表示されます:
 
+- **ダッシュボード** — 現在のプロジェクトの概要
 - **ユーザー** — 現在のプロジェクトのメンバー
 - **セッション** — 現在のプロジェクトのユーザーが所有するコンピュートセッション
 - **デプロイメント** — 現在のプロジェクトが所有するモデルデプロイメント
 
 ![=240px](../images/project_admin_sidebar.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 プロジェクト管理者ページでは、上部のプロジェクトセレクターで選択したプロジェクト配下の項目のみが表示されます。この内容はページ上部のバナーで確認できます。
 
 ![](../images/project_admin_scope_alert.png)
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
+
+<a id="project-admin-dashboard"></a>
+
+## ダッシュボード
+
+**ダッシュボード** 項目を選択すると、選択中のプロジェクトに範囲が限定されたカードのボードが開きます: **セッションの状況**、**保留中のセッションと理由**、**長時間実行中のセッション**、**リソース割り当て**、**デプロイメント**、**プロジェクトフォルダ**、**プロジェクトユーザー**、**監査ログ**。**保留中のセッションと理由** で行を選択すると、そのセッションのスケジューリング履歴が開きます。
+
+![](../images/project_admin_dashboard.png)
+
+ボード、カード設定、更新コントロールはユーザーの [ダッシュボード](#dashboard) と同じように動作します。
 
 <a id="refreshing-project-admin-pages"></a>
 

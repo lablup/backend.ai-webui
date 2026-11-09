@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-11-04
+> **Last Updated:** 2026-11-08
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,14 +12,14 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 388 / 538 features covered (72%)**
+**Overall (in-scope routes): 426 / 580 features covered (73%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
 | Authentication           | `/interactive-login`                             |    39    |   37    | 🔶 95%  |
 | Change Password          | `/change-password`                               |    9     |    9    | ✅ 100% |
 | Start Page               | `/start`                                         |    8     |    6    | 🔶 75%  |
-| Dashboard                | `/dashboard`                                     |    11    |    9    | 🔶 82%  |
+| Dashboard                | `/dashboard`                                     |    15    |   13    | 🔶 87%  |
 | Session List             | `/session`                                       |    27    |   19    | 🔶 70%  |
 | Session Launcher         | `/session/start`                                 |    13    |    3    | 🔶 23%  |
 | Serving                  | `/serving`                                       |    7     |    2    | 🔶 29%  |
@@ -31,11 +31,11 @@
 | Storage Host             | `/storage-settings/:hostname`                    |    3     |    0    |  ❌ 0%  |
 | My Environment           | `/my-environment`                                |    2     |    2    | ✅ 100% |
 | Environment              | `/environment`                                   |    29    |   23    | 🔶 79%  |
-| Configurations           | `/settings`                                      |    11    |    9    | 🔶 82%  |
+| Configurations           | `/admin/system-settings?tab=configurations`      |    11    |    9    | 🔶 82%  |
 | Resources                | `/agent-summary`, `/agent`                       |    11    |    4    | 🔶 36%  |
 | Resource Policy          | `/resource-policy`                               |    13    |   10    | 🔶 77%  |
-| User Credentials         | `/credential`                                    |    26    |   19    | 🔶 73%  |
-| Maintenance              | `/maintenance`                                   |    5     |    4    | 🔶 80%  |
+| User Credentials         | `/credential`                                    |    27    |   20    | 🔶 74%  |
+| Maintenance              | `/maintenance`                                   |    3     |    2    | 🔶 67%  |
 | User Settings            | `/usersettings`                                  |    10    |    1    | 🔶 10%  |
 | Project                  | `/project`                                       |    6     |    5    | 🔶 83%  |
 | Statistics               | `/statistics`                                    |    2     |    2    | ✅ 100% |
@@ -47,14 +47,15 @@
 | Edu App Launcher         | `/applauncher`, `/edu-applauncher`               |    8     |    5    | 🔶 63%  |
 | Chat                     | `/chat/:id?`                                     |    7     |    7    | ✅ 100% |
 | Plugin System            | (config-based)                                   |    12    |   12    | ✅ 100% |
-| RBAC Management          | `/rbac`                                          |    24    |   23    | 🔶 96%  |
+| RBAC Management          | `/rbac`                                          |    26    |   25    | 🔶 96%  |
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule`           |    33    |   32    | 🔶 97%  |
 | Deployments              | `/deployments`, `/deployments/:id`               |    25    |   22    | 🔶 88%  |
 | Admin Deployment Preset  | `/admin/deployments/deployment-presets/new`      |    5     |    5    | ✅ 100% |
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **538**  | **388** | **72%** |
+| System Settings          | `/admin/system-settings`                         |    37    |   33    | 🔶 89%  |
+| **Total**                |                                                  | **580**  | **426** | **73%** |
 
 ---
 
@@ -166,21 +167,25 @@
 
 **Test files:** [`e2e/dashboard/dashboard.spec.ts`](dashboard/dashboard.spec.ts), visual regression: [`e2e/visual_regression/dashboard/dashboard_page.test.ts`](visual_regression/dashboard/dashboard_page.test.ts)
 
-| Feature                             | Status | Test                                                                         |
-| ----------------------------------- | ------ | ---------------------------------------------------------------------------- |
-| Dashboard rendering                 | ✅     | `Admin can see all expected dashboard widgets`                               |
-| Session count cards                 | ✅     | `Admin can see session type breakdown in the session count widget`           |
-| Resource usage display (MyResource) | ✅     | `Admin can view CPU and Memory usage in the My Resources widget`             |
-| Resource usage per resource group   | ✅     | `Admin can view resource usage scoped to the current resource group`         |
-| Agent statistics (admin)            | ✅     | `Admin can view cluster-level resource statistics in the Agent Stats widget` |
-| Active agents list (admin)          | ❌     | -                                                                            |
-| Recent sessions list                | ✅     | `Admin can view the recently created sessions list on the Dashboard`         |
-| Auto-refresh (15s)                  | ❌     | -                                                                            |
-| Dashboard item drag/resize          | ✅     | `Admin sees drag and resize handles on the dashboard board`                  |
-| Edit sider open/close (breadcrumb)  | ✅     | `Admin can open and close the dashboard edit sider`                          |
-| Custom panel add (edit sider/modal) | ✅     | `Admin can add a custom table panel from the dashboard edit sider`           |
+| Feature                             | Status | Test                                                                             |
+| ----------------------------------- | ------ | -------------------------------------------------------------------------------- |
+| Dashboard rendering                 | ✅     | `Admin can see all expected dashboard widgets`                                   |
+| Session count cards                 | ✅     | `Admin can see session type breakdown in the session count widget`               |
+| Resource usage display (MyResource) | ✅     | `Admin can view CPU and Memory usage in the My Resources widget`                 |
+| Resource usage per resource group   | ✅     | `Admin can view resource usage scoped to the current resource group`             |
+| Agent statistics (admin)            | ✅     | `Admin can view cluster-level resource statistics in the Agent Stats widget`     |
+| Active agents list (admin)          | ❌     | -                                                                                |
+| Recent sessions list                | ✅     | `Admin can view the recently created sessions list on the Dashboard`             |
+| Auto-refresh (15s)                  | ❌     | -                                                                                |
+| Dashboard item drag/resize          | ✅     | `Admin sees drag and resize handles on the dashboard board`                      |
+| Edit sider open/close (breadcrumb)  | ✅     | `Admin can open and close the dashboard edit sider`                              |
+| Custom panel add (edit sider/modal) | ✅     | `Admin can add a custom table panel from the dashboard edit sider`               |
+| Project admin dashboard cards       | ✅     | `Admin can view the project admin dashboard cards`                               |
+| Project admin Audit Log failures    | ✅     | `Admin can toggle "Show failures only" on the project admin Audit Log card`      |
+| Admin dashboard sidebar entry       | ✅     | `Admin can open the admin dashboard from the admin sidebar menu`                 |
+| Legacy `/admin-dashboard` redirect  | ✅     | `Admin is redirected from the legacy admin dashboard URL to the admin dashboard` |
 
-**Coverage: 🔶 9/11 features**
+**Coverage: 🔶 13/15 features**
 
 ---
 
@@ -619,7 +624,7 @@
 
 ---
 
-### 14. Configurations (`/settings`)
+### 14. Configurations (`/admin/system-settings?tab=configurations`, formerly `/settings`)
 
 **Test files:** [`e2e/config/config.spec.ts`](config/config.spec.ts), [`e2e/config/page-access-control.spec.ts`](config/page-access-control.spec.ts)
 
@@ -761,6 +766,7 @@
 | Bulk create users from CSV (client-side validation)      | ✅     | `bulk-create-from-csv.spec.ts` (preview stats + submit enable/disable)                                                      |
 | Bulk create users from CSV → real submit + purge cleanup | ✅     | `bulk-create-from-csv-submit.spec.ts` (creates users on backend, then deactivates + purges)                                 |
 | Update user → UserSettingModal                           | ✅     | `Admin can update user information`                                                                                         |
+| Filter users by clicking a label token                   | ✅     | `Admin can filter the user list by clicking a label token`                                                                  |
 | Update user in >10 projects keeps every membership       | ✅     | `Admin can save a user in more than 10 projects without losing memberships`                                                 |
 | Deactivate user                                          | ✅     | `Admin can deactivate a user`                                                                                               |
 | Reactivate user                                          | ✅     | `Admin can reactivate an inactive user`                                                                                     |
@@ -790,7 +796,7 @@
 | Edit keypair → KeypairSettingModal             | ❌     | -                                                     |
 | SSH key management → SSHKeypairManagementModal | ❌     | -                                                     |
 
-**Coverage: 🔶 19/26 features**
+**Coverage: 🔶 20/27 features**
 
 ---
 
@@ -798,15 +804,13 @@
 
 **Test files:** [`e2e/maintenance/maintenance.spec.ts`](maintenance/maintenance.spec.ts)
 
-| Feature                     | Status | Test                                                                   |
-| --------------------------- | ------ | ---------------------------------------------------------------------- |
-| Recalculate usage           | ✅     | `click the Recalculate Usage button`                                   |
-| Rescan images               | ✅     | `click the Rescan Images button`                                       |
-| Publish system announcement | ✅     | `Admin can publish a system announcement with a title`                 |
-| Save announcement as draft  | ✅     | `Admin can save an announcement as a draft without showing the banner` |
-| Other maintenance actions   | ❌     | -                                                                      |
+| Feature                   | Status | Test                                 |
+| ------------------------- | ------ | ------------------------------------ |
+| Recalculate usage         | ✅     | `click the Recalculate Usage button` |
+| Rescan images             | ✅     | `click the Rescan Images button`     |
+| Other maintenance actions | ❌     | -                                    |
 
-**Coverage: 🔶 4/5 features**
+**Coverage: 🔶 2/3 features** (the system announcement moved to System Settings in #10713)
 
 ---
 
@@ -1100,36 +1104,38 @@ External portals (LMS) open these routes with a signed `sToken` plus the app and
 
 ### 28. RBAC Management (`/rbac`)
 
-**Test files:** [`e2e/rbac/rbac-role-list.spec.ts`](rbac/rbac-role-list.spec.ts), [`e2e/rbac/rbac-role-crud.spec.ts`](rbac/rbac-role-crud.spec.ts), [`e2e/rbac/rbac-role-detail.spec.ts`](rbac/rbac-role-detail.spec.ts)
+**Test files:** [`e2e/rbac/rbac-role-list.spec.ts`](rbac/rbac-role-list.spec.ts), [`e2e/rbac/rbac-role-crud.spec.ts`](rbac/rbac-role-crud.spec.ts), [`e2e/rbac/rbac-role-detail.spec.ts`](rbac/rbac-role-detail.spec.ts), [`e2e/rbac/rbac-role-preset.spec.ts`](rbac/rbac-role-preset.spec.ts)
 
-| Feature                                            | Status | Test                                                                                  |
-| -------------------------------------------------- | ------ | ------------------------------------------------------------------------------------- |
-| Display RBAC management page with role list table  | ✅     | `Superadmin can view the RBAC management page with role list table`                   |
-| Switch between Active/Inactive role filters        | ✅     | `Superadmin can switch to Inactive roles filter and back to Active`                   |
-| Search for a role by name using property filter    | ✅     | `Superadmin can search for a role by name using the property filter`                  |
-| Filter roles by Source (SYSTEM or CUSTOM)          | 🚧     | `Superadmin can filter roles by Source (SYSTEM or CUSTOM)`                            |
-| Empty state when no roles match search             | ✅     | `Superadmin sees empty state message when no roles match the search`                  |
-| Sort role list by Role Name column                 | ✅     | `Superadmin can sort role list by Role Name column`                                   |
-| Refresh role list using refresh button             | ✅     | `Superadmin can refresh the role list using the refresh button`                       |
-| Create a new custom role with name and description | ✅     | `Superadmin can create a new custom role with name and description`                   |
-| Edit a custom role name and description via drawer | ✅     | `Superadmin can edit a custom role name and description via drawer`                   |
-| System role edit button absent                     | ✅     | `Superadmin cannot edit a system role name or description (edit button absent)`       |
-| Deactivate (soft-delete) an active custom role     | ✅     | `Superadmin can delete (soft-delete) an active custom role`                           |
-| Activate (restore) a soft-deleted role             | ✅     | `Superadmin can activate (restore) a soft-deleted role`                               |
-| Purge (hard-delete) a soft-deleted role            | ✅     | `Superadmin can purge (hard-delete) a soft-deleted role`                              |
-| Open role detail drawer by clicking role name      | ✅     | `Superadmin can open the role detail drawer by clicking a role name`                  |
-| Drawer shows Role Assignments and Permissions tabs | ✅     | `Drawer shows "Role Assignments" and "Permissions" tabs`                              |
-| Close role detail drawer                           | ✅     | `Superadmin can close the role detail drawer`                                         |
-| Add a permission to a role                         | ✅     | `Superadmin can add a permission to a role`                                           |
-| Delete a permission from a role                    | ✅     | `Superadmin can delete a permission from a role`                                      |
-| Empty state in Permissions tab                     | ✅     | `Superadmin sees empty state in Permissions tab when role has no permissions`         |
-| Assign a user to a role                            | ✅     | `Superadmin can assign a user to a role`                                              |
-| Revoke a user from a role                          | ✅     | `Superadmin can revoke a single user from a role`                                     |
-| Empty state in Role Assignments tab                | ✅     | `Superadmin sees empty state in Role Assignments tab when role has no users`          |
-| Sort role assignments by Granted At                | ✅     | `Superadmin can sort role assignments by Granted At`                                  |
-| System role View Presets link opens its own preset | ✅     | `Superadmin can open exactly the preset of a system role from the role detail drawer` |
+| Feature                                                       | Status | Test                                                                                  |
+| ------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------- |
+| Display RBAC management page with role list table             | ✅     | `Superadmin can view the RBAC management page with role list table`                   |
+| Switch between Active/Inactive role filters                   | ✅     | `Superadmin can switch to Inactive roles filter and back to Active`                   |
+| Search for a role by name using property filter               | ✅     | `Superadmin can search for a role by name using the property filter`                  |
+| Filter roles by Source (SYSTEM or CUSTOM)                     | 🚧     | `Superadmin can filter roles by Source (SYSTEM or CUSTOM)`                            |
+| Empty state when no roles match search                        | ✅     | `Superadmin sees empty state message when no roles match the search`                  |
+| Sort role list by Role Name column                            | ✅     | `Superadmin can sort role list by Role Name column`                                   |
+| Refresh role list using refresh button                        | ✅     | `Superadmin can refresh the role list using the refresh button`                       |
+| Create a new custom role with name and description            | ✅     | `Superadmin can create a new custom role with name and description`                   |
+| Edit a custom role name and description via drawer            | ✅     | `Superadmin can edit a custom role name and description via drawer`                   |
+| System role edit button absent                                | ✅     | `Superadmin cannot edit a system role name or description (edit button absent)`       |
+| Deactivate (soft-delete) an active custom role                | ✅     | `Superadmin can delete (soft-delete) an active custom role`                           |
+| Activate (restore) a soft-deleted role                        | ✅     | `Superadmin can activate (restore) a soft-deleted role`                               |
+| Purge (hard-delete) a soft-deleted role                       | ✅     | `Superadmin can purge (hard-delete) a soft-deleted role`                              |
+| Open role detail drawer by clicking role name                 | ✅     | `Superadmin can open the role detail drawer by clicking a role name`                  |
+| Drawer shows Role Assignments and Permissions tabs            | ✅     | `Drawer shows "Role Assignments" and "Permissions" tabs`                              |
+| Close role detail drawer                                      | ✅     | `Superadmin can close the role detail drawer`                                         |
+| Add a permission to a role                                    | ✅     | `Superadmin can add a permission to a role`                                           |
+| Delete a permission from a role                               | ✅     | `Superadmin can delete a permission from a role`                                      |
+| Empty state in Permissions tab                                | ✅     | `Superadmin sees empty state in Permissions tab when role has no permissions`         |
+| Assign a user to a role                                       | ✅     | `Superadmin can assign a user to a role`                                              |
+| Revoke a user from a role                                     | ✅     | `Superadmin can revoke a single user from a role`                                     |
+| Empty state in Role Assignments tab                           | ✅     | `Superadmin sees empty state in Role Assignments tab when role has no users`          |
+| Sort role assignments by Granted At                           | ✅     | `Superadmin can sort role assignments by Granted At`                                  |
+| Filter roles by clicking a label token (mocked labels)        | ✅     | `Superadmin can filter the role list by clicking a label token`                       |
+| Filter role presets by clicking a label token (mocked labels) | ✅     | `Superadmin can filter role presets by clicking a label token`                        |
+| System role View Presets link opens its own preset            | ✅     | `Superadmin can open exactly the preset of a system role from the role detail drawer` |
 
-**Coverage: 🔶 23/24 features**
+**Coverage: 🔶 25/26 features**
 
 ---
 
@@ -1342,6 +1348,59 @@ is deliberately out of scope — operate above project scope — the header proj
 
 ---
 
+### 34. System Settings (`/admin/system-settings`) — config.toml → app config (#10436)
+
+**Test files:** [`e2e/webui-settings/webui-settings.spec.ts`](webui-settings/webui-settings.spec.ts)
+
+**Helpers:** [`e2e/utils/webui-settings-util.ts`](utils/webui-settings-util.ts) — the row table mirroring `WEBUI_SETTING_DEFINITIONS`, `WebUISettingsApi` (snapshot / write / restore of the `settings` sub-key per scope), row and Apply helpers, `enablePublicSlice` for the anonymous `publicConfigByDomain` read.
+
+The spec writes the cluster-wide `settings` documents, so it runs sequentially (`test.describe.configure({ mode: 'default' })`), clears both documents around each test, and restores the pre-run snapshot in `afterAll`.
+
+| Feature                                                                                                                                                                                                      | Status | Test                                                                                                                                                                  |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Every group renders for a superadmin                                                                                                                                                                         | ✅     | `superadmin sees every group and every row with its code default`                                                                                                     |
+| Row inventory equals the definition table (`data-testid="webui-setting-<key>"`)                                                                                                                              | ✅     | same test                                                                                                                                                             |
+| Each row shows the code default, no changed marker                                                                                                                                                           | ✅     | same test                                                                                                                                                             |
+| Apply disabled while nothing changed                                                                                                                                                                         | ✅     | same test                                                                                                                                                             |
+| Domain admin cannot open System Settings (superadmin-only route, no menu item)                                                                                                                               | ✅     | `domain admin cannot open System Settings`                                                                                                                            |
+| Changed marker + per-row reset (checkbox row)                                                                                                                                                                | ✅     | `a checkbox row shows the changed marker and resets to the default`                                                                                                   |
+| Changed marker + per-row reset (number row)                                                                                                                                                                  | ✅     | `a number row shows the changed marker and resets to the default`                                                                                                     |
+| Toolbar Reset deletes both saved documents after a typed confirmation                                                                                                                                        | ✅     | `the Reset button deletes both saved documents after a typed confirmation`                                                                                            |
+| Apply → confirmation → reload; rows stay marked; client reads the new values                                                                                                                                 | ✅     | `Apply confirms, reloads, saves only the changed keys and resetting them removes the document`                                                                        |
+| Only differing keys are saved; resetting them removes the `settings` sub-key                                                                                                                                 | ✅     | same test                                                                                                                                                             |
+| Superadmin saves a Sign-in row into the public document                                                                                                                                                      | ✅     | `superadmin saves a Sign-in row into the public document`                                                                                                             |
+| Leaving with unapplied changes asks for confirmation (Cancel / Discard)                                                                                                                                      | ✅     | `leaving the page with unapplied changes asks for confirmation`                                                                                                       |
+| `domainConfig.settings` overrides the default for every domain key after sign-in                                                                                                                             | ✅     | `a value in the domain document overrides the default for every domain key after sign-in`                                                                             |
+| Wrong-typed value / absent key keeps the default (client and page)                                                                                                                                           | ✅     | `a wrong-typed value or an absent key keeps the default`                                                                                                              |
+| A key saved under the other scope is ignored                                                                                                                                                                 | ✅     | `a key saved under the other scope is ignored`                                                                                                                        |
+| Public document overrides the login page before sign-in (switch, SSO, debug)                                                                                                                                 | ✅     | `a value in the public document overrides the default on the login page before sign-in`                                                                               |
+| Key absent from the public document keeps the login-page default                                                                                                                                             | ✅     | `a key absent from the public document keeps the login page default`                                                                                                  |
+| `hideAgents` → Agent Summary menu and launcher agent selector                                                                                                                                                | ✅     | `hideAgents controls the Agent Summary menu and the launcher agent selector`                                                                                          |
+| `menuBlocklist` → sidebar item hidden, route 404; System Settings cannot be hidden or disabled                                                                                                               | ✅     | `menuBlocklist from the domain document hides a page from the sidebar and its route, but never System Settings`                                                       |
+| `maxCPUCoresPerContainer` → session launcher CPU cap                                                                                                                                                         | ✅     | `maxCPUCoresPerContainer from the domain document caps the session launcher`                                                                                          |
+| `allowAppDownloadPanel` / `allowCLIDownloadPanel` → Downloads menu item                                                                                                                                      | ✅     | `download panel keys from the domain document remove the Downloads menu item`                                                                                         |
+| `enableModelFolders` → Models on the Data page                                                                                                                                                               | ✅     | `enableModelFolders from the domain document removes Models from the Data page`                                                                                       |
+| `pluginLogin` / `pluginPage` → login plugin and page plugin loaded                                                                                                                                           | ✅     | `plugin paths from the public document load the login plugin and the page plugin`                                                                                     |
+| Cleanup touches only the `settings` sub-key (`appearance`, `announcement` kept)                                                                                                                              | ✅     | `clearing the settings sub-key leaves the other sub-keys of both documents untouched`                                                                                 |
+| `autoLogout` (tab-close choreography)                                                                                                                                                                        | ❌     | -                                                                                                                                                                     |
+| `menuInactivelist`, `enableReservoir`, `fasttrackEndpoint`, `allowSignout`, `enableExtendLoginSession`, `allowAppDownloadPanel`/`allowCLIDownloadPanel`, `cliDownloadUrl` → sidebar, header, Downloads modal | ✅     | `sidebar, header and Downloads keys from the domain document`                                                                                                         |
+| `maskUserInfo`, `enableInteractiveLoginAccountSwitch` → interactive-login page                                                                                                                               | ✅     | `maskUserInfo and enableInteractiveLoginAccountSwitch on the interactive-login page`                                                                                  |
+| `allowThemeMode` → theme family row in user settings                                                                                                                                                         | ✅     | `allowThemeMode shows the theme family row in user settings`                                                                                                          |
+| `defaultSessionEnvironment`, `allowManualImageNameForSession`, `allowCustomResourceAllocation`, `maxMemoryPerContainer`, `maxCountForPreopenPorts`, `showNonInstalledImages` → session launcher              | ✅     | `session launcher keys from the domain document`, `allowCustomResourceAllocation off hides custom allocation and showNonInstalledImages off filters installed images` |
+| `isDirectorySizeVisible`, `maxFileUploadSize` → folder explorer; `systemSSHImage`, `defaultFileBrowserImage` → session request body                                                                          | ✅     | `folder explorer keys from the domain document`                                                                                                                       |
+| `defaultImportEnvironment` → Import Notebook launcher URL                                                                                                                                                    | ✅     | `defaultImportEnvironment is the environment of an imported notebook`                                                                                                 |
+| `storageWarningThreshold` → Diagnostics storage warning                                                                                                                                                      | ✅     | `storageWarningThreshold from the domain document turns the diagnostics warning on`                                                                                   |
+| `allowSignupWithoutConfirmation` → sign-up modal invitation token (public)                                                                                                                                   | ✅     | `allowSignupWithoutConfirmation from the public document controls the invitation token field`                                                                         |
+| `openPortToPublic`, `allowPreferredPort`, `allowNonAuthTCP` → app launcher modal of a running session                                                                                                        | ✅     | `app launcher and commit controls follow the domain document (all on / all off)`                                                                                      |
+| `enableContainerCommit` → Request Container Commit button of a running session                                                                                                                               | ✅     | same test                                                                                                                                                             |
+| `appDownloadUrl` → Desktop App download URL                                                                                                                                                                  | 🔶     | the tab is asserted; the URL goes through `window.open` and is not                                                                                                    |
+| `maxShmPerContainer` → launcher shmem cap                                                                                                                                                                    | ❌     | nothing reads it today; #10709 wires it up                                                                                                                            |
+| Accelerator caps other than CPU (`maxCUDADevicesPerContainer`, …)                                                                                                                                            | ❌     | need the device in the resource group                                                                                                                                 |
+
+**Coverage: 🔶 33/37 features**
+
+---
+
 ## Visual Regression Tests
 
 Visual regression tests exist for most pages but only capture screenshots, not functional behavior.
@@ -1425,12 +1484,14 @@ These are core user workflows that affect the largest number of users.
 
 ### Shared Utilities
 
-| Utility             | Location                                                                                     | Purpose                                                                                                                |
-| ------------------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `test-util.ts`      | [`e2e/utils/test-util.ts`](utils/test-util.ts)                                               | Login, config modification, TOML helpers, route-error screen locators (`notFoundPageHeading` / `forbiddenPageHeading`) |
-| `test-util-antd.ts` | [`e2e/utils/test-util-antd.ts`](utils/test-util-antd.ts)                                     | Ant Design component interaction helpers                                                                               |
-| `SessionAPIHelper`  | [`e2e/utils/classes/session/SessionAPIHelper.ts`](utils/classes/session/SessionAPIHelper.ts) | Create and manage sessions via Backend.AI API                                                                          |
-| `admin-api.ts`      | [`e2e/utils/admin-api.ts`](utils/admin-api.ts)                                               | Admin GraphQL helpers: users, projects, deployments (`findDeploymentByName`, `setDeploymentTagsViaApi`, delete/sweep)  |
+| Utility                  | Location                                                                                     | Purpose                                                                                                                                                                                        |
+| ------------------------ | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `test-util.ts`           | [`e2e/utils/test-util.ts`](utils/test-util.ts)                                               | Login, config modification (`fetchConfigToml` / `modifyConfigToml`), TOML helpers, sidebar (`getSideNavItem`) and route-error screen locators (`notFoundPageHeading` / `forbiddenPageHeading`) |
+| `webui-settings-util.ts` | [`e2e/utils/webui-settings-util.ts`](utils/webui-settings-util.ts)                           | System Settings rows (`WEBUI_SETTING_ROWS`), `WebUISettingsApi` for the `settings` app-config documents (snapshot / write / restore), Apply and row helpers, `enablePublicSlice`               |
+| `test-util-antd.ts`      | [`e2e/utils/test-util-antd.ts`](utils/test-util-antd.ts)                                     | Ant Design component interaction helpers                                                                                                                                                       |
+| `SessionAPIHelper`       | [`e2e/utils/classes/session/SessionAPIHelper.ts`](utils/classes/session/SessionAPIHelper.ts) | Create and manage sessions via Backend.AI API                                                                                                                                                  |
+| `admin-api.ts`           | [`e2e/utils/admin-api.ts`](utils/admin-api.ts)                                               | Admin GraphQL helpers: users, projects, deployments (`findDeploymentByName`, `setDeploymentTagsViaApi`, delete/sweep)                                                                          |
+| `entity-label-mock.ts`   | [`e2e/utils/entity-label-mock.ts`](utils/entity-label-mock.ts)                               | Mocks an entity label onto a list's first row (`mockEntityLabelOnFirstRow`) and waits for GraphQL request variables, for label flows on shared entities                                        |
 
 ### Page Object Models Needed
 
@@ -1485,6 +1546,7 @@ To efficiently build new E2E tests, these POMs should be created:
 | Global Search Palette (header)         |        ✅        |      ❌      |    -     |
 | Plugin System (config-based)           |        ✅        |      ❌      |    -     |
 | `/admin-serving?tab=auto-scaling-rule` |        🔶        |      ❌      |    -     |
+| `/admin/system-settings`               |        🔶        |      ❌      |    -     |
 
 ---
 

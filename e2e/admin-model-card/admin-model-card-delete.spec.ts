@@ -1,12 +1,8 @@
 // spec: e2e/.agent-output/test-plan-admin-model-card.md
 // section: 5. Delete Model Card
+import { purgeVFoldersByNameViaApi } from '../utils/admin-api';
 import { AdminModelCardPage } from '../utils/classes/AdminModelCardPage';
-import {
-  deleteForeverAndVerifyFromTrash,
-  loginAsAdmin,
-  moveToTrashAndVerify,
-  webuiEndpoint,
-} from '../utils/test-util';
+import { loginAsAdmin, webuiEndpoint } from '../utils/test-util';
 import { test, expect } from '@playwright/test';
 
 test.describe(
@@ -51,38 +47,7 @@ test.describe(
         }
       }
 
-      // Permanently delete each tracked folder from admin-data regardless of its
-      // current state (Active or Trash):
-      //   1. Try to move from Active → Trash. If the folder is already in Trash
-      //      (e.g. the test itself moved it via "Also delete folder") or does not
-      //      exist, moveToTrashAndVerify will throw — we catch and continue.
-      //   2. Try to purge from Trash. If the folder was not found in step 1 and
-      //      is not in Trash either, deleteForeverAndVerifyFromTrash will throw —
-      //      we catch and continue. A folder the card deletion already
-      //      cascade-purged sits in Trash as DELETE-COMPLETE with its Delete
-      //      button disabled for good; `skipIfAlreadyDeleted` treats that as
-      //      done instead of waiting on the button.
-      for (const folderName of foldersToClean) {
-        try {
-          await moveToTrashAndVerify(page, folderName, 'admin-data', {
-            skipTrashVerify: true,
-          });
-        } catch {
-          // Folder may already be in Trash or may not exist
-        }
-        try {
-          await deleteForeverAndVerifyFromTrash(
-            page,
-            folderName,
-            'admin-data',
-            {
-              skipIfAlreadyDeleted: true,
-            },
-          );
-        } catch {
-          // Folder may not be in Trash (already purged or never created)
-        }
-      }
+      await purgeVFoldersByNameViaApi(foldersToClean);
     });
 
     // 5.1 Superadmin can delete a model card via the trash icon with confirmation
@@ -491,9 +456,7 @@ test.describe(
       foldersToClean = [folderName];
       cardsToClean = [cardName];
       // Note: the "Also delete folder" action moves the folder to Trash during the test.
-      // afterEach handles it correctly: moveToTrashAndVerify will fail (folder already in
-      // Trash) and the catch is silently ignored; deleteForeverAndVerifyFromTrash then
-      // purges it completely.
+      // afterEach purges the folder whichever state the test left it in.
 
       // Create a model card with a new dedicated folder via the "+" button
       await page.goto(
@@ -572,8 +535,7 @@ test.describe(
         },
         { timeout: 30000 },
       );
-      // afterEach permanently deletes the folder from Trash (moveToTrash is skipped
-      // since the folder is already in Trash, then deleteForever purges it)
+      // afterEach permanently deletes the folder from Trash
     });
 
     // 5.8 Superadmin deletes card only: card-only deletion shows success message (no trash link)
@@ -653,8 +615,7 @@ test.describe(
       foldersToClean = [folderName1, folderName2];
       cardsToClean = [...cardNames];
       // Note: the "Also delete folders" action moves both folders to Trash during the test.
-      // afterEach handles them correctly: moveToTrashAndVerify fails (already in Trash) and
-      // is silently ignored; deleteForeverAndVerifyFromTrash then purges each one.
+      // afterEach purges each folder whichever state the test left it in.
 
       // Setup: create card 1 with its own folder
       await page.goto(
@@ -752,8 +713,7 @@ test.describe(
         },
         { timeout: 30000 },
       );
-      // afterEach permanently deletes both folders from Trash (moveToTrash is skipped
-      // since they are already in Trash, then deleteForever purges each one)
+      // afterEach permanently deletes both folders from Trash
     });
 
     // 5.10 Superadmin can bulk delete model cards without moving their folders to trash

@@ -1,10 +1,13 @@
-import { webuiEndpoint, webServerEndpoint } from '../../utils/test-util';
+import {
+  fillLoginEndpoint,
+  webuiEndpoint,
+  webServerEndpoint,
+} from '../../utils/test-util';
 import { expect, test } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
   await page.goto(webuiEndpoint);
-  await expect(page.getByRole('textbox', { name: 'Endpoint' })).toBeVisible();
-  await page.getByRole('textbox', { name: 'Endpoint' }).fill(webServerEndpoint);
+  await fillLoginEndpoint(page, webServerEndpoint);
 });
 
 test.describe(

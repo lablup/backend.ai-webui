@@ -3,7 +3,8 @@
 //            9 (My Activity Widget, replaces My Resources in Resource Group),
 //            10 (Agent Stats Widget), 11 (Recently Created Sessions Widget),
 //            12 (Board Layout)
-// plus: custom panel add flow (edit sider -> panel modal), added after the plan.
+// plus: custom panel add flow (edit sider -> panel modal) and the project admin
+// dashboard cards (#10585), added after the plan.
 // The member dashboard reads only the viewer's own data (#10584); Agent Stats
 // and Recently Created Sessions live on the superadmin dashboard.
 import { loginAsAdmin, loginAsUser, navigateTo } from '../utils/test-util';
@@ -12,6 +13,36 @@ import { test, expect, type Page } from '@playwright/test';
 // Timeout for widget visibility checks - widgets load after GraphQL data fetches,
 // which may be slow when multiple workers run in parallel.
 const WIDGET_TIMEOUT = 30_000;
+
+// Resolves with the first successful GraphQL response of `operation` whose
+// variables pass `matches`; rejects on a GraphQL error.
+const waitForGraphQL = async (
+  page: Page,
+  operation: string,
+  matches: (variables: any) => boolean = () => true,
+  timeout = WIDGET_TIMEOUT,
+) => {
+  const response = await page.waitForResponse(
+    (res) => {
+      if (res.request().method() !== 'POST') return false;
+      let body: { query?: string; variables?: unknown } | null = null;
+      try {
+        body = res.request().postDataJSON();
+      } catch {
+        return false;
+      }
+      return (
+        !!body?.query?.match(
+          new RegExp(`(query|mutation)\\s+${operation}\\b`),
+        ) && matches(body.variables)
+      );
+    },
+    { timeout },
+  );
+  expect(response.ok()).toBe(true);
+  const json = await response.json();
+  expect(json.errors ?? []).toEqual([]);
+};
 
 test.describe(
   'Dashboard Page',
@@ -311,6 +342,77 @@ test.describe(
     );
 
     // -----------------------------------------------------------------------
+    // Admin Dashboard Entry (sidebar menu and legacy /admin-dashboard URL)
+    // -----------------------------------------------------------------------
+    test.describe(
+      'Admin Dashboard Entry',
+      { tag: ['@requires-manager-v25.15'] },
+      () => {
+        test.beforeEach(async ({ page }) => {
+          // The superadmin intro tour (AdminViewSwitchTour) otherwise covers the page.
+          await page.addInitScript(() => {
+            for (const tour of [
+              'back_to_user_view',
+              'back_to_admin_settings',
+            ]) {
+              localStorage.setItem(
+                `backendaiwebui.settings.user.has_opened_tour_${tour}`,
+                'true',
+              );
+            }
+          });
+        });
+
+        test('Admin can open the admin dashboard from the admin sidebar menu', async ({
+          page,
+          request,
+        }) => {
+          // 1. Login as admin and open another admin page
+          await loginAsAdmin(page, request);
+          await navigateTo(page, 'admin/users');
+
+          // 2. Click the "Dashboard" entry in the admin side navigation
+          const sideNav = page.getByRole('navigation', {
+            name: 'Side navigation',
+          });
+          await sideNav
+            .getByRole('link', { name: 'Dashboard', exact: true })
+            .click();
+
+          // 3. Verify the URL and the superadmin board
+          await expect(page).toHaveURL(/\/admin\/dashboard\/?$/);
+          await expect(page.getByTestId('dashboard-filter-bar')).toBeVisible({
+            timeout: WIDGET_TIMEOUT,
+          });
+          await expect(
+            page
+              .locator('.uic-board-item')
+              .filter({ hasText: 'Agent Statistics' }),
+          ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+        });
+
+        test('Admin is redirected from the legacy admin dashboard URL to the admin dashboard', async ({
+          page,
+          request,
+        }) => {
+          // 1. Login as admin and open the legacy /admin-dashboard URL
+          await loginAsAdmin(page, request);
+          await navigateTo(page, 'admin-dashboard');
+
+          // 2. Verify the redirect and the superadmin board
+          await expect(page).toHaveURL(/\/admin\/dashboard\/?$/, {
+            timeout: WIDGET_TIMEOUT,
+          });
+          await expect(
+            page
+              .locator('.uic-board-item')
+              .filter({ hasText: 'Agent Statistics' }),
+          ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+        });
+      },
+    );
+
+    // -----------------------------------------------------------------------
     // 11. Recently Created Sessions Widget
     // -----------------------------------------------------------------------
     test.describe('Recently Created Sessions Widget', () => {
@@ -371,6 +473,148 @@ test.describe(
 
         // 3. Verify the widget still renders after refresh
         await expect(widget.getByRole('table')).toBeVisible();
+      });
+    });
+
+    // -----------------------------------------------------------------------
+    // 13. Project Admin Dashboard (/project/:name/admin/dashboard)
+    // -----------------------------------------------------------------------
+    test.describe('Project Admin Dashboard', () => {
+      const adminDashboardUrl = (name: string) =>
+        new RegExp(
+          `/project/${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/admin/dashboard`,
+        );
+      let projectName = '';
+      let selectedProject = '';
+
+      test.beforeEach(async ({ page, request }) => {
+        // The superadmin intro tour (AdminViewSwitchTour) otherwise covers
+        // the admin page.
+        await page.addInitScript(() => {
+          localStorage.setItem(
+            'backendaiwebui.settings.user.has_opened_tour_back_to_user_view',
+            'true',
+          );
+          localStorage.setItem(
+            'backendaiwebui.settings.user.has_opened_tour_back_to_admin_settings',
+            'true',
+          );
+        });
+        await loginAsAdmin(page, request);
+        // /summary replace-redirects to /project/:name/dashboard.
+        await navigateTo(page, 'summary');
+        await expect(page).toHaveURL(/\/project\/[^/]+\/dashboard/, {
+          timeout: WIDGET_TIMEOUT,
+        });
+        projectName =
+          new URL(page.url()).pathname.match(/^\/project\/([^/]+)\//)?.[1] ??
+          '';
+        expect(projectName).not.toBe('');
+        const projectSelector = page.getByRole('button', {
+          name: 'Select Project',
+        });
+        await expect(projectSelector).not.toHaveText('');
+        selectedProject = (await projectSelector.innerText()).trim();
+        await navigateTo(page, `project/${projectName}/admin/dashboard`);
+        await expect(page).toHaveURL(adminDashboardUrl(projectName));
+      });
+
+      test('Admin can view the project admin dashboard cards', async ({
+        page,
+      }) => {
+        // 1. Every default card of the project admin board is shown
+        for (const title of [
+          'Session Status',
+          'Pending Sessions and Reasons',
+          'Resource Allocation',
+          'Deployments',
+          'Project Folders',
+          'Project Users',
+          'Audit Log',
+        ]) {
+          await expect(
+            page.getByRole('heading', { name: title, exact: true }),
+          ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+        }
+
+        // 2. The header project selector stays on the URL's project
+        await expect(page).toHaveURL(adminDashboardUrl(projectName));
+        await expect(
+          page.getByRole('button', { name: 'Select Project' }),
+        ).toHaveText(selectedProject);
+      });
+
+      test.describe('Audit Log failures only', () => {
+        // The switch is saved on the shared admin account's board.
+        const auditLogCard = (page: Page) =>
+          page
+            .locator('.uic-board-item')
+            .filter({
+              has: page.getByRole('heading', {
+                name: 'Audit Log',
+                exact: true,
+              }),
+            })
+            .first();
+        const failuresOnlySwitch = (page: Page) =>
+          auditLogCard(page).getByRole('switch', {
+            name: 'Show failures only',
+          });
+        // Clicks the switch to `checked` and waits until the board write lands.
+        const setFailuresOnly = async (page: Page, checked: boolean) => {
+          const toggle = failuresOnlySwitch(page);
+          if ((await toggle.isChecked()) === checked) return;
+          // Other board writes share the mutation, so match the filter payload.
+          // A board that already holds the value (a concurrent run) sends no write.
+          const saved = waitForGraphQL(
+            page,
+            'useAppConfigMyUpsertMutation',
+            (variables) =>
+              JSON.stringify(variables).includes('DENIED') === checked,
+            10_000,
+          ).catch((error: Error) => {
+            if (error.name !== 'TimeoutError') throw error;
+          });
+          await toggle.click();
+          await expect(toggle).toBeChecked({ checked });
+          await saved;
+        };
+
+        test.afterEach(async ({ page }) => {
+          const toggle = failuresOnlySwitch(page);
+          if (await toggle.isVisible().catch(() => false)) {
+            await setFailuresOnly(page, false);
+          }
+        });
+
+        test('Admin can toggle "Show failures only" on the project admin Audit Log card', async ({
+          page,
+        }) => {
+          // 1. Locate the "Audit Log" card, starting from the switch off
+          const widget = auditLogCard(page);
+          await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
+          const failuresOnly = failuresOnlySwitch(page);
+          await setFailuresOnly(page, false);
+
+          // 2. Turning the switch on reloads the list with the failure statuses
+          const filteredList = waitForGraphQL(
+            page,
+            'AuditLogPanelScopedListQuery',
+            (variables) =>
+              JSON.stringify(variables?.filter?.status ?? null).includes(
+                'DENIED',
+              ),
+          );
+          await setFailuresOnly(page, true);
+          await filteredList;
+          await expect(
+            widget.getByRole('group', { name: 'Table' }).getByRole('table'),
+          ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+
+          // 3. Turning it off again saves the board without the filter
+          await setFailuresOnly(page, false);
+          await expect(failuresOnly).not.toBeChecked();
+        });
       });
     });
 

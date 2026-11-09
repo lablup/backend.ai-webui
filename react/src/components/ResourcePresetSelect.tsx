@@ -153,13 +153,6 @@ export const presetUnavailableReasonText = (
   }
 };
 
-/**
- * PILOT-DECISION: the `extends Omit<SelectProps,'onChange'>` surface is
- * replaced by the props the single call site actually passes (P1 — grepped,
- * not guessed: `showCustom`, `showMinimumRequired`, `onChange`,
- * `allocatablePresetIds`, `resourceGroup`; the Form injects `value`), plus
- * the usual disabled/loading/style trio.
- */
 export interface ResourcePresetSelectProps {
   /** Injected by `Form.Item`. */
   value?: string;
@@ -374,33 +367,27 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   ];
 
   return (
-    // PILOT-DECISION: antd `onOpenChange` (used only to throttle-refetch the
-    // presets when the popup opens) has no Astryx equivalent. Rather than lose
-    // the refresh, the same trigger is read one level up — a `display:contents`
-    // wrapper that sees the pointer-down that opens the popup.
-    <div
-      style={{ display: 'contents' }}
-      onPointerDownCapture={() => {
-        updateFetchKeyUnderTransition();
-      }}
-    >
-      <BAISelect
-        aria-label={t('resourcePreset.ResourcePresets')}
-        loading={isPendingUpdate}
-        disabled={disabled}
-        style={{ width: '100%', ...style }}
-        options={options}
-        optionRender={({ data }) => renderResourceRow(data)}
-        labelRender={renderSelectedValue}
-        value={controllableValue ?? ''}
-        onChange={(next) =>
-          setControllableValue(
-            next,
-            presetOptions.find((o) => o.value === next) ?? { value: next },
-          )
+    <BAISelect
+      aria-label={t('resourcePreset.ResourcePresets')}
+      loading={isPendingUpdate}
+      disabled={disabled}
+      style={{ width: '100%', ...style }}
+      options={options}
+      optionRender={({ data }) => renderResourceRow(data)}
+      labelRender={renderSelectedValue}
+      value={controllableValue ?? ''}
+      onChange={(next) =>
+        setControllableValue(
+          next,
+          presetOptions.find((o) => o.value === next) ?? { value: next },
+        )
+      }
+      onOpenChange={(open) => {
+        if (open) {
+          updateFetchKeyUnderTransition();
         }
-      />
-    </div>
+      }}
+    />
   );
 };
 

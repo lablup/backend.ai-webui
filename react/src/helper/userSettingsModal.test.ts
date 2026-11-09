@@ -51,10 +51,10 @@ describe('buildUserSettingsSearch', () => {
 
   it("carries the caller's extra params but not its tab or category", () => {
     const carried = new URLSearchParams(
-      '?tab=general&settings=general&setting=userSettings.AutoLogout',
+      '?tab=general&settings=general&setting=userSettings.AutomaticUpdateCheck',
     );
     expect(buildUserSettingsSearch('?order=name', 'logs', carried)).toBe(
-      '?order=name&setting=userSettings.AutoLogout&settings=logs',
+      '?order=name&setting=userSettings.AutomaticUpdateCheck&settings=logs',
     );
   });
 });

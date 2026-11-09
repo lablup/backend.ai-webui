@@ -8,6 +8,7 @@ import {
 } from '../utils/admin-api';
 import { getE2EDomainName } from '../utils/e2e-scope';
 import {
+  fillLoginEndpoint,
   loginAsAdmin,
   loginAsCreatedAccount,
   logout,
@@ -59,16 +60,9 @@ async function submitLoginForm(
     },
   });
   await page.goto(webuiEndpoint);
+  await fillLoginEndpoint(page, webServerEndpoint);
   await page.getByLabel('Email or Username').fill(email);
   await page.getByRole('textbox', { name: 'Password' }).fill(password);
-  const endpointInput = page.getByRole('textbox', {
-    name: 'Endpoint',
-    exact: true,
-  });
-  if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
-    await page.getByText('Advanced').click();
-  }
-  await endpointInput.fill(webServerEndpoint);
   await page.getByRole('button', { name: 'Login', exact: true }).click();
 }
 
@@ -97,7 +91,12 @@ async function unblockLoginFromUserList(
 
   // `showInMenu: 'always'` keeps the action in the row's More actions menu.
   await userRow.hover();
-  await userRow.getByRole('button', { name: 'More actions' }).click();
+  // Scope to the email cell: the row also holds a second, hidden "More actions"
+  // button in another cell.
+  await userRow
+    .getByRole('cell', { name: email })
+    .getByRole('button', { name: 'More actions' })
+    .click();
   await page.getByRole('menuitem', { name: 'Unblock login' }).click();
 
   // A menu action's popConfirm falls back to the app-shim modal.confirm.
