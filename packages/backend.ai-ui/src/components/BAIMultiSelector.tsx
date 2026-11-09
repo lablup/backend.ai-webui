@@ -43,18 +43,30 @@ function BAIMultiSelector<
   value,
   defaultValue,
   onChange,
+  onOpenChange,
   options,
   triggerDisplay = 'labels',
   maxBadges,
   formatValue,
+  renderTrigger,
+  disabled,
   ...props
 }: BAIMultiSelectorProps<T>) {
   'use memo';
   const triggerRef = useRef<HTMLElement | null>(null);
-  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
-  const selected = value ?? uncontrolledValue ?? [];
+  // Mirrors ui-common's useMergedValue: a cleared `value` (form reset) empties it.
+  const [ownValue, setOwnValue] = useState(defaultValue);
+  const [prevValue, setPrevValue] = useState(value);
+  if (!Object.is(prevValue, value)) {
+    setPrevValue(value);
+    if (value === undefined) setOwnValue(undefined);
+  }
+  const selected = (value !== undefined ? value : ownValue) ?? [];
   const [isTextOverflowing, setIsTextOverflowing] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
+  // A custom trigger's text is unknown, so the tooltip cannot tell what it hides.
+  const hasCustomTrigger = !!formatValue || !!renderTrigger;
   const visibleCount =
     triggerDisplay === 'count'
       ? 0
@@ -62,12 +74,14 @@ function BAIMultiSelector<
         ? (maxBadges ?? DEFAULT_MAX_BADGES)
         : TRIGGER_LABEL_COUNT;
   const isTruncated =
+    !hasCustomTrigger &&
     selected.length > 0 &&
     (selected.length > visibleCount ||
       (triggerDisplay !== 'badges' && isTextOverflowing));
 
   const selectionKey = selected.join('\n');
   useLayoutEffect(() => {
+    if (hasCustomTrigger) return;
     // The trigger's text span: button > content span > text span.
     const text = triggerRef.current?.firstElementChild?.firstElementChild;
     if (!(text instanceof HTMLElement)) return;
@@ -78,7 +92,10 @@ function BAIMultiSelector<
     const observer = new ResizeObserver(check);
     observer.observe(text);
     return () => observer.disconnect();
-  }, [selectionKey, triggerDisplay]);
+  }, [selectionKey, triggerDisplay, hasCustomTrigger]);
+
+  // Mounted only while it can show: Tooltip writes aria-describedby on mount.
+  const showsTooltip = isTruncated && !disabled && !isOpen;
 
   return (
     <>
@@ -89,20 +106,27 @@ function BAIMultiSelector<
         value={value}
         defaultValue={defaultValue}
         onChange={(next, change) => {
-          if (value === undefined) setUncontrolledValue(next);
+          if (value === undefined) setOwnValue(next);
           onChange?.(next, change);
+        }}
+        onOpenChange={(open) => {
+          setIsOpen(open);
+          onOpenChange?.(open);
         }}
         triggerDisplay={triggerDisplay}
         maxBadges={maxBadges}
         formatValue={formatValue}
+        renderTrigger={renderTrigger}
+        disabled={disabled}
       />
-      <Tooltip
-        anchorRef={triggerRef}
-        isEnabled={isTruncated}
-        content={selected
-          .map((item) => labelOf(options as MultiSelectorOptionType[], item))
-          .join(', ')}
-      />
+      {showsTooltip && (
+        <Tooltip
+          anchorRef={triggerRef}
+          content={selected
+            .map((item) => labelOf(options as MultiSelectorOptionType[], item))
+            .join(', ')}
+        />
+      )}
     </>
   );
 }

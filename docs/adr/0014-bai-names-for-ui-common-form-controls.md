@@ -60,7 +60,6 @@ flowchart LR
 | `BAIDateRangeInput`                      | `DateRangeInput`                   |
 | `BAIDateTimeInput`                       | `DateTimeInput`                    |
 | `BAIFileInput`                           | `FileInput`                        |
-| `BAIMultiSelector`                       | `MultiSelector`                    |
 | `BAINumberInput`                         | `NumberInput`                      |
 | `BAIRadioList`, `BAIRadioListItem`       | `RadioList`, `RadioListItem`       |
 | `BAISegmentedControl`                    | `SegmentedControl`                 |
@@ -102,9 +101,9 @@ flowchart LR
 ## Rejected alternatives
 
 - **Direct ui-common imports**: Webui imports `@lablup/ui-common/<X>` directly, as the rule of ADR 0009 says. The advantage is that BUI gets no new files. This alternative is rejected because the components on one screen would come from two sources, `backend.ai-ui` and ui-common, and adding BUI behaviour later would require changing every call site again.
-- **Thin BAI wrappers per control**: Each `BAI<X>.tsx` is a function component that wraps the ui-common component. The advantage is that a place to add behaviour exists from the start. This alternative is rejected because it creates 19 wrappers with no behaviour to add, and each wrapper reimplements the props passing and `ref`, so it can diverge from ui-common. Only a control that needs it becomes a component, as section 2 says.
+- **Thin BAI wrappers per control**: Each `BAI<X>.tsx` is a function component that wraps the ui-common component. The advantage is that a place to add behaviour exists from the start. This alternative is rejected because it creates 18 wrappers with no behaviour to add, and each wrapper reimplements the props passing and `ref`, so it can diverge from ui-common. Only a control that needs it becomes a component, as section 2 says.
 - **BUI imports ui-common directly**: BUI source uses the ui-common subpaths without going through the re-exports. The advantage is one fewer import path inside BUI. This alternative is rejected because, when a control becomes a component under section 2, only the screens inside BUI (`BAIProjectSettingModal`, the File Explorer modals, and so on) would not get that behaviour, and the same control would appear under different names in BUI and in `react/`.
-- **One re-export file**: All 19 re-exports go into one file. The advantage is fewer files. This alternative is rejected because the file structure would differ from the other BUI components, and turning one control into a component would mean removing it from the list and moving it into a new file.
+- **One re-export file**: All 18 re-exports go into one file. The advantage is fewer files. This alternative is rejected because the file structure would differ from the other BUI components, and turning one control into a component would mean removing it from the list and moving it into a new file.
 - **Keep the AstryxForm adapters**: Webui keeps its adapters as they are. The advantage is that the call sites do not change. This alternative is rejected because ui-common now does the work the adapters did, so two places would do the same work, and the adapters use props names that differ from ui-common (`label`, `onValueChange`, `allowClear`), so they do not match the ui-common docs.
 
 ## Consequences

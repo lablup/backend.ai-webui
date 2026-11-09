@@ -1,8 +1,5 @@
 import BAIMultiSelector from './BAIMultiSelector';
-import {
-  formControlDocsDescription,
-  formControlStories,
-} from './formControlStory';
+import { formControlStories } from './formControlStory';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const sampleOptions = [
@@ -12,8 +9,8 @@ const sampleOptions = [
 ];
 
 /**
- * BAIMultiSelector is ui-common's `MultiSelector` under its BAI name: several
- * choices from a static option list, named in the trigger.
+ * BAIMultiSelector wraps ui-common's `MultiSelector` with a tooltip that names
+ * every selection when the closed trigger cannot.
  *
  * @see ADR 0014 (docs/adr/0014-bai-names-for-ui-common-form-controls.md)
  */
@@ -25,13 +22,16 @@ const meta: Meta<typeof BAIMultiSelector> = {
     layout: 'padded',
     docs: {
       description: {
-        component: formControlDocsDescription(
-          'BAIMultiSelector',
-          'MultiSelector',
-          `<Form.Item name="sessionTypes" label="Allowed session types">
+        component: `
+**BAIMultiSelector** is ui-common's \`MultiSelector\` promoted to a BUI component (ADR 0014): the same props, plus a tooltip that lists every selected option when the closed trigger shows "+N", "N selected" or cuts the text off.
+
+## Usage
+\`\`\`tsx
+<Form.Item name="sessionTypes" label="Allowed session types">
   <BAIMultiSelector options={sessionTypeOptions} />
-</Form.Item>`,
-        ),
+</Form.Item>
+\`\`\`
+`,
       },
     },
   },

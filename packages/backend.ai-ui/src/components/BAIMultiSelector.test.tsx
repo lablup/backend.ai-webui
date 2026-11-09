@@ -17,15 +17,19 @@ const OPTIONS = [
   { value: 'c', label: 'Charlie' },
   { value: 'd', label: 'Delta' },
 ];
+const ALL = ['a', 'b', 'c', 'd'];
 
 const hoverTrigger = async () => {
   vi.useFakeTimers({ shouldAdvanceTime: true });
-  const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-  await user.hover(screen.getByRole('combobox'));
-  await act(async () => {
-    vi.advanceTimersByTime(500);
-  });
-  vi.useRealTimers();
+  try {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    await user.hover(screen.getByRole('combobox'));
+    await act(async () => {
+      vi.advanceTimersByTime(500);
+    });
+  } finally {
+    vi.useRealTimers();
+  }
 };
 
 describe('BAIMultiSelector selection tooltip', () => {
@@ -34,7 +38,7 @@ describe('BAIMultiSelector selection tooltip', () => {
       <BAIMultiSelector
         aria-label="Menus"
         options={OPTIONS}
-        value={['a', 'b', 'c', 'd']}
+        value={ALL}
         onChange={() => {}}
       />,
     );
@@ -47,13 +51,44 @@ describe('BAIMultiSelector selection tooltip', () => {
     );
   });
 
-  it('shows no tooltip when every selection fits', async () => {
+  it('adds no tooltip or description when every selection fits', async () => {
     render(
       <BAIMultiSelector
         aria-label="Menus"
         options={OPTIONS}
         value={['a', 'b']}
         onChange={() => {}}
+      />,
+    );
+    expect(screen.getByRole('combobox')).not.toHaveAttribute(
+      'aria-describedby',
+    );
+    await hoverTrigger();
+    expect(screen.queryByRole('tooltip')).toBeNull();
+  });
+
+  it('shows no tooltip while disabled', async () => {
+    render(
+      <BAIMultiSelector
+        aria-label="Menus"
+        options={OPTIONS}
+        value={ALL}
+        onChange={() => {}}
+        disabled
+      />,
+    );
+    await hoverTrigger();
+    expect(screen.queryByRole('tooltip')).toBeNull();
+  });
+
+  it('shows no tooltip for a custom trigger text', async () => {
+    render(
+      <BAIMultiSelector
+        aria-label="Menus"
+        options={OPTIONS}
+        value={ALL}
+        onChange={() => {}}
+        formatValue={(items) => `${items.length} menus`}
       />,
     );
     await hoverTrigger();
@@ -77,5 +112,21 @@ describe('BAIMultiSelector selection tooltip', () => {
     expect(await screen.findByRole('tooltip')).toHaveTextContent(
       'Alpha, Bravo, Charlie, Delta',
     );
+  });
+
+  it('empties the selection when a set value is cleared', async () => {
+    const { rerender } = render(
+      <BAIMultiSelector aria-label="Menus" options={OPTIONS} value={ALL} />,
+    );
+    rerender(
+      <BAIMultiSelector
+        aria-label="Menus"
+        options={OPTIONS}
+        value={undefined}
+      />,
+    );
+    expect(screen.getByRole('combobox')).not.toHaveTextContent('+1');
+    await hoverTrigger();
+    expect(screen.queryByRole('tooltip')).toBeNull();
   });
 });

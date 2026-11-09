@@ -60,7 +60,6 @@ flowchart LR
 | `BAIDateRangeInput`                      | `DateRangeInput`                   |
 | `BAIDateTimeInput`                       | `DateTimeInput`                    |
 | `BAIFileInput`                           | `FileInput`                        |
-| `BAIMultiSelector`                       | `MultiSelector`                    |
 | `BAINumberInput`                         | `NumberInput`                      |
 | `BAIRadioList`, `BAIRadioListItem`       | `RadioList`, `RadioListItem`       |
 | `BAISegmentedControl`                    | `SegmentedControl`                 |
@@ -102,9 +101,9 @@ flowchart LR
 ## 대안과 기각 사유
 
 - **Direct ui-common imports**: ADR 0009의 규칙대로 webui가 `@lablup/ui-common/<X>`를 직접 import한다. BUI에 파일을 더하지 않는다는 것이 장점이다. 기각한 이유는 한 화면 안에서 component 출처가 `backend.ai-ui`와 ui-common으로 갈리고, 나중에 BUI 동작을 더하려면 call site를 다시 모두 고쳐야 하기 때문이다.
-- **Thin BAI wrappers per control**: 각 `BAI<X>.tsx`가 ui-common component를 감싸는 function component다. 동작을 더할 자리가 처음부터 있다는 것이 장점이다. 기각한 이유는 더할 동작이 없는 wrapper가 19개 생기고, 각 wrapper가 props 전달과 `ref`를 다시 구현해 ui-common과 어긋날 수 있기 때문이다. 필요해진 control만 2절대로 component가 된다.
+- **Thin BAI wrappers per control**: 각 `BAI<X>.tsx`가 ui-common component를 감싸는 function component다. 동작을 더할 자리가 처음부터 있다는 것이 장점이다. 기각한 이유는 더할 동작이 없는 wrapper가 18개 생기고, 각 wrapper가 props 전달과 `ref`를 다시 구현해 ui-common과 어긋날 수 있기 때문이다. 필요해진 control만 2절대로 component가 된다.
 - **BUI imports ui-common directly**: BUI source는 re-export를 거치지 않고 ui-common subpath를 쓴다. BUI 안에 import 경로가 하나 줄어든다는 것이 장점이다. 기각한 이유는 control이 2절대로 component가 될 때 BUI 안의 화면(`BAIProjectSettingModal`, File Explorer의 modal 등)만 그 동작을 받지 못하고, 같은 control이 BUI와 `react/`에서 다른 이름으로 보이기 때문이다.
-- **One re-export file**: 19개 re-export를 한 파일에 모은다. 파일 수가 적다는 것이 장점이다. 기각한 이유는 다른 BUI component와 파일 구조가 달라지고, control 하나를 component로 바꿀 때 목록에서 빼서 새 파일로 옮겨야 하기 때문이다.
+- **One re-export file**: 18개 re-export를 한 파일에 모은다. 파일 수가 적다는 것이 장점이다. 기각한 이유는 다른 BUI component와 파일 구조가 달라지고, control 하나를 component로 바꿀 때 목록에서 빼서 새 파일로 옮겨야 하기 때문이다.
 - **Keep the AstryxForm adapters**: webui의 adapter를 그대로 둔다. call site를 바꾸지 않는다는 것이 장점이다. 기각한 이유는 adapter가 하던 일을 ui-common이 하게 되어 같은 일을 두 곳에서 하고, adapter가 ui-common과 다른 props 이름(`label`, `onValueChange`, `allowClear`)을 써서 ui-common 문서와 맞지 않기 때문이다.
 
 ## Consequences
