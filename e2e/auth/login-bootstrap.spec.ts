@@ -11,6 +11,7 @@
  *     longer holds lands back on the login form.
  */
 import {
+  fillLoginEndpoint,
   loginAsUser,
   logout,
   seedStoredApiEndpoint,
@@ -225,16 +226,10 @@ test.describe(
       await expect(loginForm(page)).toBeVisible({ timeout: 30_000 });
 
       restoreBootstrap();
+      // After Log Out the form keeps the session's server; this re-asks only if it changed.
+      await fillLoginEndpoint(page, webServerEndpoint);
       await loginForm(page).fill(userInfo.user.email);
       await page.getByLabel('Password').fill(userInfo.user.password);
-      const endpointInput = page.getByRole('textbox', {
-        name: 'Endpoint',
-        exact: true,
-      });
-      // After Log Out the form keeps the session's endpoint and may hide the input.
-      if (await endpointInput.isVisible().catch(() => false)) {
-        await endpointInput.fill(webServerEndpoint);
-      }
       const loginResponse = page.waitForResponse(
         (response) =>
           response.url() === `${webServerEndpoint}/server/login` &&

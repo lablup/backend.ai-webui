@@ -11,20 +11,16 @@ const SAVED_ENDPOINTS = [
 ];
 
 /**
- * Expand the Advanced section if needed and return the endpoint input.
+ * The endpoint step's field (config.toml pins no endpoint here, #10872); a
+ * server already confirmed is changed through "Change endpoint".
  */
 async function endpointField(page: Page) {
-  // Wait for the form itself first: `isVisible()` does not retry, and the
-  // section starts expanded when no endpoint is pre-filled, so clicking
-  // "Advanced" before the form renders would collapse it.
-  await expect(page.getByLabel('Email or Username')).toBeVisible({
+  const input = page.getByTestId('login-endpoint-step-input');
+  const changeEndpoint = page.getByTestId('login-change-endpoint');
+  await expect(input.or(changeEndpoint).first()).toBeVisible({
     timeout: 15_000,
   });
-  // `getByLabel('Endpoint')` also matches the "About Endpoint" button.
-  const input = page.getByRole('textbox', { name: 'Endpoint', exact: true });
-  if (!(await input.isVisible().catch(() => false))) {
-    await page.getByText('Advanced').click();
-  }
+  if (!(await input.isVisible())) await changeEndpoint.click();
   await expect(input).toBeVisible();
   return input;
 }
@@ -102,16 +98,13 @@ test.describe(
       }
     });
 
-    test('user can open the list without moving the rest of the login form', async ({
+    test('user can open the list without moving the rest of the endpoint step', async ({
       page,
     }) => {
       const input = await endpointField(page);
-      const loginButton = page.getByRole('button', {
-        name: 'Login',
-        exact: true,
-      });
+      const continueButton = page.getByTestId('login-endpoint-step-continue');
       const before = {
-        login: await settledBoundingBox(loginButton),
+        login: await settledBoundingBox(continueButton),
         input: await settledBoundingBox(input),
       };
 
@@ -120,7 +113,7 @@ test.describe(
 
       // The list floats over the dialog, so opening it must not re-centre it.
       // Reading the settled boxes also catches a shift that lands late.
-      expect(await settledBoundingBox(loginButton)).toEqual(before.login);
+      expect(await settledBoundingBox(continueButton)).toEqual(before.login);
       expect(await settledBoundingBox(input)).toEqual(before.input);
     });
 

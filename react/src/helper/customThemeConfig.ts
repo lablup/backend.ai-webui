@@ -6,6 +6,8 @@ import { fetchAppConfigOnce } from '../hooks/useWebUIConfig';
 import {
   fetchPublicDomainConfigOnce,
   resolvePublicConfigTarget,
+  type PublicConfigTarget,
+  type PublicDomainConfigSlice,
 } from './publicAppConfig';
 import * as _ from 'lodash-es';
 
@@ -247,6 +249,20 @@ function injectFontCSS(fontFamilies: string[]) {
   }
 }
 
+const appearanceFromSlice = (
+  slice: PublicDomainConfigSlice | undefined,
+  target: PublicConfigTarget,
+): BAIAppearanceConfig | undefined => {
+  const doc = slice?.[DOMAIN_APPEARANCE_CONFIG_KEY];
+  // No saved slice is the normal case; only a present-but-invalid one warns.
+  return _.isNil(doc)
+    ? undefined
+    : pickValidAppearanceConfig(
+        doc,
+        `publicConfigByDomain[${target.domainName}].appearance`,
+      );
+};
+
 /**
  * The domain's saved `appearance` slice out of the one anonymous
  * `publicConfigByDomain` read per page load (`publicAppConfig.ts`). A
@@ -260,15 +276,10 @@ const fetchDomainDoc = async (): Promise<BAIAppearanceConfig | undefined> => {
     if (!target) {
       return undefined;
     }
-    const slice = await fetchPublicDomainConfigOnce(target);
-    const doc = slice?.[DOMAIN_APPEARANCE_CONFIG_KEY];
-    // No saved slice is the normal case; only a present-but-invalid one warns.
-    return _.isNil(doc)
-      ? undefined
-      : pickValidAppearanceConfig(
-          doc,
-          `publicConfigByDomain[${target.domainName}].appearance`,
-        );
+    return appearanceFromSlice(
+      await fetchPublicDomainConfigOnce(target),
+      target,
+    );
   } catch (error) {
     logAppearanceError(
       `the domain appearance document could not be fetched (${String(error)}).`,
@@ -316,6 +327,19 @@ const applyDevServerHeaderColorOverride = (
   return applied;
 };
 
+const applyDomainDoc = (domainDoc: BAIAppearanceConfig | undefined) => {
+  store.domainDoc = domainDoc;
+  store.appliedDoc = applyDevServerHeaderColorOverride(
+    domainDoc ?? store.staticDoc,
+  );
+  const fontFamily = store.appliedDoc?.theme?.fontFamily;
+  if (_.isString(fontFamily) && fontFamily) {
+    injectFontCSS(parseFontFamilies(fontFamily));
+  }
+};
+
+let bootstrap: Promise<void> | undefined;
+
 /**
  * One-shot appearance bootstrap: theme.json and the domain's saved document
  * are fetched in parallel, the domain slice wins wholesale, and a single
@@ -323,18 +347,10 @@ const applyDevServerHeaderColorOverride = (
  * neither document is usable, so listeners never wait forever.
  */
 export const loadCustomThemeConfig = () => {
-  Promise.all([fetchStaticDoc(), fetchDomainDoc()])
+  bootstrap = Promise.all([fetchStaticDoc(), fetchDomainDoc()])
     .then(([staticDoc, domainDoc]) => {
       store.staticDoc = staticDoc;
-      store.domainDoc = domainDoc;
-      store.appliedDoc = applyDevServerHeaderColorOverride(
-        domainDoc ?? staticDoc,
-      );
-
-      const fontFamily = store.appliedDoc?.theme?.fontFamily;
-      if (_.isString(fontFamily) && fontFamily) {
-        injectFontCSS(parseFontFamilies(fontFamily));
-      }
+      applyDomainDoc(domainDoc);
     })
     .catch((error) => {
       logAppearanceError(`appearance bootstrap failed (${String(error)}).`);
@@ -342,4 +358,18 @@ export const loadCustomThemeConfig = () => {
     .finally(() => {
       document.dispatchEvent(new CustomEvent('custom-theme-loaded'));
     });
+};
+
+/**
+ * Re-applies the appearance for a server joined after start-up (the Electron
+ * endpoint step, #10872): its saved `appearance`, else theme.json — never the
+ * previous server's. Waits for the bootstrap so it cannot be overwritten by it.
+ */
+export const applyJoinedServerAppearance = async (
+  slice: PublicDomainConfigSlice | undefined,
+  target: PublicConfigTarget | undefined,
+) => {
+  await bootstrap;
+  applyDomainDoc(target ? appearanceFromSlice(slice, target) : undefined);
+  document.dispatchEvent(new CustomEvent('custom-theme-loaded'));
 };
