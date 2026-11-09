@@ -1055,6 +1055,10 @@ export default defineConfig(({ command, mode }) => {
       devReviewOverlayPlugin(),
       graphqlDevtools({
         schemaPath: resolve(projectRoot, 'data/schema.graphql'),
+        clientDirectivesPath: resolve(
+          projectRoot,
+          'data/client-directives.graphql',
+        ),
       }),
       // FR-3880: the same overlay inside a `vite build` artifact, for the
       // nightly Amplify deployment. Opt IN with VITE_REVIEW_OVERLAY_BUILD=1;

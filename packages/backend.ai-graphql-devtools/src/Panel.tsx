@@ -1,4 +1,5 @@
 import './Panel.css';
+import { manipulateGraphQLQueryWithClientDirectives } from './graphql-transformer';
 import {
   buildSchema,
   type DocumentNode,
@@ -43,6 +44,7 @@ declare global {
         ready?: boolean;
         requestTimeout: number;
         _config: { connectionMode?: string };
+        isManagerVersionCompatibleWith?(version: string): boolean;
         newSignedRequest(
           method: string,
           path: string,
@@ -529,10 +531,30 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
       record('not sent', label, 'Not sent: log in to the WebUI first.');
       return;
     }
+    const isCompatibleWith = (version: string) =>
+      client.isManagerVersionCompatibleWith?.(version) ?? true;
+    let transformedQuery: string;
+    try {
+      transformedQuery = manipulateGraphQLQueryWithClientDirectives(
+        sentQuery,
+        parsedVariables,
+        (version) =>
+          Array.isArray(version)
+            ? version.some((item) => !isCompatibleWith(item))
+            : !isCompatibleWith(version),
+      );
+    } catch (error) {
+      record(
+        'not sent',
+        label,
+        `Not sent: could not apply client directives. ${(error as Error).message}`,
+      );
+      return;
+    }
     setIsRunning(true);
     try {
       const request = client.newSignedRequest('POST', '/admin/gql', {
-        query: sentQuery,
+        query: transformedQuery,
         variables: parsedVariables,
       });
       const response = await fetch(request.uri, {
