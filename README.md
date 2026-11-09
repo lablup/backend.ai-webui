@@ -96,7 +96,7 @@ Backend.AI Web UI focuses to
 
 ### Baked versions
 
-`backend.ai-webui` production version is also served as `backend.ai-app` and refered by `backend.ai-webserver` as submodule. If you use `backend.ai-webserver`, you are using latest stable release of `backend.ai-webui`.
+`backend.ai-webui` production version is also served as `backend.ai-app` and referred by `backend.ai-webserver` as submodule. If you use `backend.ai-webserver`, you are using latest stable release of `backend.ai-webui`.
 
 ### Configuration
 
