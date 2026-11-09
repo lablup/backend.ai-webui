@@ -320,7 +320,7 @@ const STokenLoginBoundaryInner: React.FC<STokenLoginBoundaryProps> = ({
       err instanceof LoginBootstrapIncompleteError ? err : null,
     );
     try {
-      await client.get_manager_version();
+      await client.probeServer();
     } catch (cause) {
       logger.error('[STokenLoginBoundary] server unreachable', cause);
       surfaceError({ kind: 'server-unreachable', cause });
@@ -506,7 +506,7 @@ const kindToI18nKey = (kind: STokenLoginError['kind']): string =>
  *
  * `step` drives the description line so the user can see which phase is
  * currently running — mostly relevant on slower networks where
- * `get_manager_version` and `token_login` together take a few seconds.
+ * `probeServer` and `token_login` together take a few seconds.
  * The outer Suspense boundary (during endpoint resolution) renders this
  * without a `step` prop, which defaults to `connecting` — the same label
  * the inner component starts with on mount.

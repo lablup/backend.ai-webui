@@ -60,7 +60,7 @@ sequenceDiagram
   opt sToken non-empty
     B->>B: document.cookie sToken=encoded value
   end
-  B->>S: get_manager_version and session probe
+  B->>S: probeServer and session probe
   S-->>B: reachable, plus an existing session or none
   B->>B: await initializeConfigOnce (config.toml)
   alt browser already has a session
@@ -124,7 +124,7 @@ sequenceDiagram
 
 ### 7. Login order and the existing-session path
 
-- **Order**: The boundary resolves the endpoint, writes the cookie, creates the client with `createBackendAIClient('', '', apiEndpoint, 'SESSION')`, and runs `get_manager_version()` together with `probeLoginSession(client)` from `helper/loginBootstrap.ts`.
+- **Order**: The boundary resolves the endpoint, writes the cookie, creates the client with `createBackendAIClient('', '', apiEndpoint, 'SESSION')`, and runs `probeServer()` (an anonymous reachability check) together with `probeLoginSession(client)` from `helper/loginBootstrap.ts`. The manager version is read only once signed in, by `connectViaGQL`.
 - **Probe failure**: A `probeLoginSession` rejection other than `LoginBootstrapIncompleteError` counts as no session, and the boundary continues to `token_login`.
 - **Existing session**: When `probeLoginSession` finds a live session, the boundary skips `token_login` and calls `connectViaGQL` with that session. This path sends none of `extraParams`, the OTP, or `force`. The boundary takes it whether or not a token is present, and it does not compare the session's user with the token. A URL token therefore does not replace a session the browser already holds.
 - **Missing token**: The boundary reports `missing-token` only when there is no session and `sToken` is empty.
@@ -140,7 +140,7 @@ sequenceDiagram
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
 | `missing-token`       | no live session and an empty `sToken`                                                                                                                                                                                                                         | Retry                                                           |
 | `endpoint-unresolved` | `useResolvedApiEndpoint()` returned an empty string                                                                                                                                                                                                           | Retry                                                           |
-| `server-unreachable`  | `get_manager_version()` threw                                                                                                                                                                                                                                 | Retry                                                           |
+| `server-unreachable`  | `probeServer()` threw                                                                                                                                                                                                                                         | Retry                                                           |
 | `token-invalid`       | `tokenLogin` or `connectViaGQL` threw and no other kind matched                                                                                                                                                                                               | Retry                                                           |
 | `totp-required`       | `failType` `require-totp-authentication` or `require-totp-registration`, a `rejected-by-hook` failure whose reason names an invalid OTP, or the matching legacy reason strings; `invalidOtp` is true whenever a code was submitted or the server rejected one | inline OTP form; the code is added to the next attempt as `otp` |
 | `concurrent-session`  | the server reported `active-login-session-exists`                                                                                                                                                                                                             | Login confirm; later attempts in the mount send `force: true`   |

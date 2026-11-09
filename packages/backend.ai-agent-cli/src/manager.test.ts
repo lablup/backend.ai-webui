@@ -1,5 +1,11 @@
-import { fetchWhoAmI, gqlRequest, isAuthFailure } from './manager.js';
-import { describe, expect, it, vi } from 'vitest';
+import {
+  clearManagerVersionCache,
+  fetchPublicManagerVersion,
+  fetchWhoAmI,
+  gqlRequest,
+  isAuthFailure,
+} from './manager.js';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const SESSION = {
   endpoint: 'http://manager.example.com:8090',
@@ -165,5 +171,31 @@ describe('fetchWhoAmI', () => {
         fetchImpl: jsonResponse(200, { data: { user: null } }),
       }),
     ).rejects.toMatchObject({ code: 'auth_required' });
+  });
+});
+
+describe('fetchPublicManagerVersion', () => {
+  beforeEach(() => clearManagerVersionCache());
+
+  it('reads an older manager that answers /func/ anonymously', async () => {
+    await expect(
+      fetchPublicManagerVersion(SESSION.endpoint, {
+        fetchImpl: jsonResponse(200, {
+          version: 'v8.20240915',
+          manager: '26.9.0',
+        }),
+      }),
+    ).resolves.toMatchObject({ manager: '26.9.0', source: '/func/' });
+  });
+
+  it('points at login when the manager refuses an anonymous caller', async () => {
+    await expect(
+      fetchPublicManagerVersion(SESSION.endpoint, {
+        fetchImpl: jsonResponse(401, { error_code: 'user_auth_unauthorized' }),
+      }),
+    ).rejects.toMatchObject({
+      code: 'internal',
+      hint: `bai-agent login --endpoint ${SESSION.endpoint}`,
+    });
   });
 });

@@ -198,7 +198,7 @@ async function failAsMockedManager(
  */
 export async function probeManager(client: any): Promise<void> {
   if (!import.meta.env.DEV) {
-    await client.get_manager_version();
+    await client.probeServer();
     return;
   }
   const controller = new AbortController();
@@ -207,7 +207,7 @@ export async function probeManager(client: any): Promise<void> {
   try {
     const mockMode = readMockManagerMode();
     if (mockMode) await failAsMockedManager(mockMode, controller.signal);
-    await client.get_manager_version(controller.signal);
+    await client.probeServer(controller.signal);
   } catch (err) {
     if (controller.signal.reason === LOGIN_PROBE_ESCAPED) {
       throw new LoginProbeCancelledError();
@@ -246,6 +246,9 @@ export async function connectViaGQL(
   // tab must never log it out.
   const isActingAs = !!client.actAsUserId;
 
+  // The manager tells its version only to an authenticated caller; the Relay
+  // query below needs it to keep version-gated fields.
+  await client.get_manager_version();
   if (isCancelled?.()) throw new LoginAttemptCancelledError();
   // The Relay query below reads the global client, so a cancelled attempt
   // puts the previous one back.
