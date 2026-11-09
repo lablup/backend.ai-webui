@@ -1,7 +1,7 @@
 # GraphQL devtools test plan
 
 Pass criteria are fixed before running. A result counts only if it was executed on the final code.
-Last run 2026-11-09 on the final code.
+Full run 2026-11-09, before the ready-gate fixes. After them, the fixed behaviour and regressions were re-checked headless and against a logged-in staging session, not all 76 rows.
 
 Env: `chrome` = logged-in superadmin on staging, `headless` = logged-out Playwright, `shell` = local command.
 `sim` = the failure is simulated by stubbing `fetch` for that one query only.
