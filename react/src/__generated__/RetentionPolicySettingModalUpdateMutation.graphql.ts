@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e3924a13489a529b65f51bd83a431034>>
+ * @generated SignedSource<<7df104dd40ce681ddc3a370eb86ab8a0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,7 +20,7 @@ export type RetentionPolicySettingModalUpdateMutation$variables = {
   input: UpdateRetentionPolicyInput;
 };
 export type RetentionPolicySettingModalUpdateMutation$data = {
-  readonly adminUpdateRetentionPolicy: {
+  readonly updateRetentionPolicy: {
     readonly policy: {
       readonly category: RetentionCategory;
       readonly enabled: boolean;
@@ -28,7 +28,7 @@ export type RetentionPolicySettingModalUpdateMutation$data = {
       readonly retentionPeriodDays: number;
       readonly updatedAt: string;
     };
-  } | null | undefined;
+  };
 };
 export type RetentionPolicySettingModalUpdateMutation = {
   response: RetentionPolicySettingModalUpdateMutation$data;
@@ -55,7 +55,7 @@ v1 = [
     ],
     "concreteType": "UpdateRetentionPolicyPayload",
     "kind": "LinkedField",
-    "name": "adminUpdateRetentionPolicy",
+    "name": "updateRetentionPolicy",
     "plural": false,
     "selections": [
       {
@@ -126,16 +126,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "104afbbf03cf34a555ef9b7c35d4ce17",
+    "cacheID": "f91eff86674964e62d6c2a2cff983004",
     "id": null,
     "metadata": {},
     "name": "RetentionPolicySettingModalUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation RetentionPolicySettingModalUpdateMutation(\n  $input: UpdateRetentionPolicyInput!\n) {\n  adminUpdateRetentionPolicy(input: $input) {\n    policy {\n      id\n      category\n      retentionPeriodDays\n      enabled\n      updatedAt\n    }\n  }\n}\n"
+    "text": "mutation RetentionPolicySettingModalUpdateMutation(\n  $input: UpdateRetentionPolicyInput!\n) {\n  updateRetentionPolicy(input: $input) {\n    policy {\n      id\n      category\n      retentionPeriodDays\n      enabled\n      updatedAt\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "287b29fd7f762c6dcc8705f7bd8e9e18";
+(node as any).hash = "5ad0d6bd58f62febc6e6cab459923875";
 
 export default node;
