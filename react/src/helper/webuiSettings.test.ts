@@ -6,6 +6,7 @@ import { getDefaultLoginConfig } from './loginConfig';
 import {
   applyWebUISettings,
   buildWebUISettingsDocument,
+  isValidWebUISetting,
   readDomainWebUISettings,
   WEBUI_SETTING_DEFINITIONS,
 } from './webuiSettings';
@@ -146,6 +147,47 @@ describe('buildWebUISettingsDocument', () => {
   it('drops values of the wrong type', () => {
     expect(
       buildWebUISettingsDocument('domain', { maxCPUCoresPerContainer: '128' }),
+    ).toBeUndefined();
+  });
+});
+
+describe('isValidWebUISetting', () => {
+  const byKey = (key: string) =>
+    WEBUI_SETTING_DEFINITIONS.find((d) => d.key === key)!;
+
+  it('gives every number setting a range', () => {
+    for (const d of WEBUI_SETTING_DEFINITIONS.filter(
+      (d) => d.type === 'number',
+    )) {
+      expect([d.key, typeof d.min, typeof d.max]).toEqual([
+        d.key,
+        'number',
+        'number',
+      ]);
+    }
+  });
+
+  it('accepts the bounds and rejects a number outside them', () => {
+    const cpu = byKey('maxCPUCoresPerContainer');
+    expect(isValidWebUISetting(cpu, 1)).toBe(true);
+    expect(isValidWebUISetting(cpu, 8192)).toBe(true);
+    expect(isValidWebUISetting(cpu, 0)).toBe(false);
+    expect(isValidWebUISetting(cpu, -4)).toBe(false);
+    expect(isValidWebUISetting(byKey('maxFileUploadSize'), -1)).toBe(true);
+    expect(isValidWebUISetting(byKey('maxFileUploadSize'), -2)).toBe(false);
+    expect(isValidWebUISetting(byKey('storageWarningThreshold'), 101)).toBe(
+      false,
+    );
+  });
+
+  it('keeps an out-of-range number out of the state and the document', () => {
+    const state = getDefaultLoginConfig();
+    expect(
+      applyWebUISettings(state, { maxCountForPreopenPorts: -1 }, 'domain')
+        .maxCountForPreopenPorts,
+    ).toBe(state.maxCountForPreopenPorts);
+    expect(
+      buildWebUISettingsDocument('domain', { maxCountForPreopenPorts: -1 }),
     ).toBeUndefined();
   });
 });

@@ -42,6 +42,9 @@ export interface WebUISettingDefinition {
   options?: ReadonlyArray<{ value: string; label: string }>;
   /** For a `number`: the unit shown after the input. */
   unit?: string;
+  /** For a `number`: the valid range, inclusive; a value outside it is ignored. */
+  min?: number;
+  max?: number;
 }
 
 /** The SSO vendors the login form renders a button for. */
@@ -84,6 +87,8 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
     def('debug', 'public', 'boolean', 'diagnostics'),
     {
       ...def('storageWarningThreshold', 'domain', 'number', 'diagnostics'),
+      min: 0,
+      max: 100,
       unit: '%',
     },
     // Plugin scripts are loaded at bootstrap, before sign-in, so both keys
@@ -108,27 +113,88 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
     ),
     def('allowCustomResourceAllocation', 'domain', 'boolean', 'session'),
     def('enableContainerCommit', 'domain', 'boolean', 'session'),
-    def('maxCountForPreopenPorts', 'domain', 'number', 'session'),
-    def('maxCPUCoresPerContainer', 'domain', 'number', 'session'),
+    {
+      ...def('maxCountForPreopenPorts', 'domain', 'number', 'session'),
+      min: 0,
+      max: 100,
+    },
+    {
+      ...def('maxCPUCoresPerContainer', 'domain', 'number', 'session'),
+      min: 1,
+      max: 8192,
+    },
     {
       ...def('maxMemoryPerContainer', 'domain', 'number', 'session'),
+      min: 1,
+      max: 16384,
       unit: 'GiB',
     },
     {
       ...def('maxShmPerContainer', 'domain', 'number', 'session'),
+      min: 0,
+      max: 16384,
       unit: 'GiB',
     },
-    def('maxCUDADevicesPerContainer', 'domain', 'number', 'session'),
-    def('maxCUDASharesPerContainer', 'domain', 'number', 'session'),
-    def('maxROCMDevicesPerContainer', 'domain', 'number', 'session'),
-    def('maxTPUDevicesPerContainer', 'domain', 'number', 'session'),
-    def('maxIPUDevicesPerContainer', 'domain', 'number', 'session'),
-    def('maxATOMDevicesPerContainer', 'domain', 'number', 'session'),
-    def('maxATOMPLUSDevicesPerContainer', 'domain', 'number', 'session'),
-    def('maxGaudi2DevicesPerContainer', 'domain', 'number', 'session'),
-    def('maxWarboyDevicesPerContainer', 'domain', 'number', 'session'),
-    def('maxRNGDDevicesPerContainer', 'domain', 'number', 'session'),
-    def('maxHyperaccelLPUDevicesPerContainer', 'domain', 'number', 'session'),
+    {
+      ...def('maxCUDADevicesPerContainer', 'domain', 'number', 'session'),
+      min: 0,
+      max: 64,
+    },
+    {
+      ...def('maxCUDASharesPerContainer', 'domain', 'number', 'session'),
+      min: 0,
+      max: 64,
+    },
+    {
+      ...def('maxROCMDevicesPerContainer', 'domain', 'number', 'session'),
+      min: 0,
+      max: 64,
+    },
+    {
+      ...def('maxTPUDevicesPerContainer', 'domain', 'number', 'session'),
+      min: 0,
+      max: 64,
+    },
+    {
+      ...def('maxIPUDevicesPerContainer', 'domain', 'number', 'session'),
+      min: 0,
+      max: 64,
+    },
+    {
+      ...def('maxATOMDevicesPerContainer', 'domain', 'number', 'session'),
+      min: 0,
+      max: 64,
+    },
+    {
+      ...def('maxATOMPLUSDevicesPerContainer', 'domain', 'number', 'session'),
+      min: 0,
+      max: 64,
+    },
+    {
+      ...def('maxGaudi2DevicesPerContainer', 'domain', 'number', 'session'),
+      min: 0,
+      max: 64,
+    },
+    {
+      ...def('maxWarboyDevicesPerContainer', 'domain', 'number', 'session'),
+      min: 0,
+      max: 64,
+    },
+    {
+      ...def('maxRNGDDevicesPerContainer', 'domain', 'number', 'session'),
+      min: 0,
+      max: 64,
+    },
+    {
+      ...def(
+        'maxHyperaccelLPUDevicesPerContainer',
+        'domain',
+        'number',
+        'session',
+      ),
+      min: 0,
+      max: 64,
+    },
     def('showNonInstalledImages', 'domain', 'boolean', 'session'),
 
     // App launcher.
@@ -152,6 +218,8 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
     def('enableModelFolders', 'domain', 'boolean', 'storage'),
     {
       ...def('maxFileUploadSize', 'domain', 'number', 'storage'),
+      min: -1,
+      max: 107374182400,
       unit: 'Bytes',
     },
 
@@ -199,6 +267,16 @@ export const restrictToOptions = (
     ? value.filter((v) => definition.options!.some((o) => o.value === v))
     : value;
 
+/** The value has the definition's type and, for a number, lies in its range. */
+export const isValidWebUISetting = (
+  definition: WebUISettingDefinition,
+  value: unknown,
+): boolean =>
+  isValidWebUISettingValue(definition.type, value) &&
+  (definition.type !== 'number' ||
+    ((definition.min === undefined || (value as number) >= definition.min) &&
+      (definition.max === undefined || (value as number) <= definition.max)));
+
 export const isValidWebUISettingValue = (
   type: WebUISettingType,
   value: unknown,
@@ -231,10 +309,10 @@ export const applyWebUISettings = (
   const settings = doc as WebUISettingsDocument;
   const next = { ...state };
   for (const definition of WEBUI_SETTING_DEFINITIONS) {
-    const { key, type, field, scope: defScope } = definition;
+    const { key, field, scope: defScope } = definition;
     if (defScope !== scope || !(key in settings)) continue;
     const value = restrictToOptions(definition, settings[key]);
-    if (isValidWebUISettingValue(type, value)) {
+    if (isValidWebUISetting(definition, value)) {
       (next as Record<string, unknown>)[field] = value;
     }
   }
@@ -260,7 +338,7 @@ export const buildWebUISettingsDocument = (
   for (const definition of WEBUI_SETTING_DEFINITIONS) {
     if (definition.scope !== scope || !(definition.key in draft)) continue;
     const value = restrictToOptions(definition, draft[definition.key]);
-    if (isValidWebUISettingValue(definition.type, value)) {
+    if (isValidWebUISetting(definition, value)) {
       doc[definition.key] = value;
     }
   }

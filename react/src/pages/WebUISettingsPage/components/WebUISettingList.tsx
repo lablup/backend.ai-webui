@@ -10,7 +10,7 @@ import SettingList, {
 import { refreshConfigFromToml } from '../../../helper/loginConfig';
 import {
   buildWebUISettingsDocument,
-  isValidWebUISettingValue,
+  isValidWebUISetting,
   readWebUISettingFromState,
   WEBUI_SETTING_DEFINITIONS,
   WEBUI_SETTING_GROUPS,
@@ -93,7 +93,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
     readWebUISettingFromState(fileState, definition);
   const valueOf = (definition: WebUISettingDefinition) =>
     definition.key in draft &&
-    isValidWebUISettingValue(definition.type, draft[definition.key])
+    isValidWebUISetting(definition, draft[definition.key])
       ? draft[definition.key]
       : fileValueOf(definition);
   const setValue = (definition: WebUISettingDefinition, value: unknown) => {
@@ -249,6 +249,8 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
               width={CONTROL_WIDTH}
               value={definition.key in draft ? (current as number) : null}
               placeholder={String(fileValue ?? '')}
+              min={definition.min}
+              max={definition.max}
               units={definition.unit}
               onChange={(value) =>
                 setValue(definition, value === null ? undefined : value)

@@ -82,7 +82,7 @@ flowchart LR
 
 ### 4. Definition table
 
-- **Entry shape**: an entry (`WebUISettingDefinition`) has `key`, `scope`, `type` (`boolean`, `number`, `string`, `stringList`), `group`, `field` (`keyof LoginConfigState`), and the optional `options` and `unit`.
+- **Entry shape**: an entry (`WebUISettingDefinition`) has `key`, `scope`, `type` (`boolean`, `number`, `string`, `stringList`), `group`, `field` (`keyof LoginConfigState`), and the optional `options`, `unit` and `min` / `max` (the inclusive range of a `number`; a value outside it is ignored when read and not saved).
 - **Single source**: the page (`WebUISettingList`), the merge (`applyWebUISettings`) and the save (`buildWebUISettingsDocument`) read only this table.
 - **Adding a setting**: a new setting adds a `LoginConfigState` field, its file parsing in `refreshConfigFromToml`, its `_config` copy in `applyConfigToClient`, one table entry, and its copy in `WebUISettingLabels.ts`, together.
 

@@ -82,7 +82,7 @@ flowchart LR
 
 ### 4. 정의표
 
-- **Entry shape**: 정의표의 항목(`WebUISettingDefinition`)은 `key`, `scope`, `type`(`boolean`, `number`, `string`, `stringList`), `group`, `field`(`keyof LoginConfigState`), 그리고 선택 필드 `options`, `unit`을 가진다.
+- **Entry shape**: 정의표의 항목(`WebUISettingDefinition`)은 `key`, `scope`, `type`(`boolean`, `number`, `string`, `stringList`), `group`, `field`(`keyof LoginConfigState`), 그리고 선택 필드 `options`, `unit`, `min` / `max`(`number`의 포함 범위. 범위 밖 값은 읽을 때 무시하고 저장하지 않는다)를 가진다.
 - **Single source**: 화면(`WebUISettingList`), 병합(`applyWebUISettings`), 저장(`buildWebUISettingsDocument`)은 이 표만 읽는다.
 - **Adding a setting**: 새 설정은 `LoginConfigState` 필드, `refreshConfigFromToml`의 파일 해석, `applyConfigToClient`의 `_config` 복사, 정의표 한 줄, `WebUISettingLabels.ts`의 문구를 함께 더한다.
 
