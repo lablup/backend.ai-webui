@@ -10,7 +10,7 @@
 - `react/`는 ui-common의 [Form.Item-aware form control](#용어)을 `@lablup/ui-common/<X>`가 아니라 `backend.ai-ui`의 `BAI<X>` 이름으로 import한다.
 - BUI는 control마다 `packages/backend.ai-ui/src/components/BAI<X>.tsx` 파일을 두고, 그 파일이 ui-common component를 [re-export](#용어)한다. re-export는 wrapper가 아니므로 props와 동작은 ui-common component 그대로다.
 - form control을 `Form.Item`에 맞추던 webui의 adapter(`AstryxForm*`)는 두지 않는다. value 보정, item 안의 기본 폭, label과 status와 disabled 전달은 ui-common이 한다.
-- BUI 쪽 동작이 필요해진 control은 그 `BAI<X>.tsx`의 re-export를 component로 바꾼다. 지금 그런 control은 `BAISegmentedControlItem` 하나다.
+- BUI 쪽 동작이 필요해진 control은 그 `BAI<X>.tsx`의 re-export를 component로 바꾼다. 지금 그런 control은 `BAISegmentedControlItem`과 `BAIMultiSelector`다.
 - BUI의 다른 source(component, fragment, story, test)도 form control을 그 `BAI<X>.tsx`에서 상대 경로로 import한다.
 - `react/eslint.config.js`의 `no-restricted-imports`가 `react/`에서 이 component 이름을 ui-common subpath로 import하는 것을 막는다. control 자신의 props type은 `BAI<X>Props`를 쓰고, 같은 subpath의 다른 type과 helper(`SelectorOptionType`, `ISODateTimeString`, `SearchSource` 등)는 그대로 import한다.
 
@@ -31,7 +31,7 @@ flowchart LR
     buiuse["BUI component / fragment / story / test"]
     barrel["index.ts"]
     fc["BAITextInput.tsx, BAINumberInput.tsx, ...<br/>re-export only"]
-    item["BAISegmentedControlItem.tsx<br/>own component"]
+    item["BAISegmentedControlItem.tsx, BAIMultiSelector.tsx<br/>own component"]
   end
   subgraph uic["@lablup/ui-common"]
     ctl["TextInput, NumberInput, Selector, ...<br/>Form.Item-aware wrapper"]
@@ -52,27 +52,27 @@ flowchart LR
 
 ### 1. BUI가 form control을 `BAI<X>` 이름으로 re-export한다
 
-| `backend.ai-ui` 이름 | ui-common subpath의 이름 |
-|---|---|
-| `BAICheckboxInput` | `CheckboxInput` |
+| `backend.ai-ui` 이름                     | ui-common subpath의 이름           |
+| ---------------------------------------- | ---------------------------------- |
+| `BAICheckboxInput`                       | `CheckboxInput`                    |
 | `BAICheckboxList`, `BAICheckboxListItem` | `CheckboxList`, `CheckboxListItem` |
-| `BAIDateInput` | `DateInput` |
-| `BAIDateRangeInput` | `DateRangeInput` |
-| `BAIDateTimeInput` | `DateTimeInput` |
-| `BAIFileInput` | `FileInput` |
-| `BAIMultiSelector` | `MultiSelector` |
-| `BAINumberInput` | `NumberInput` |
-| `BAIRadioList`, `BAIRadioListItem` | `RadioList`, `RadioListItem` |
-| `BAISegmentedControl` | `SegmentedControl` |
-| `BAISelector` | `Selector` |
-| `BAISlider` | `Slider` |
-| `BAISwitch` | `Switch` |
-| `BAITagsInput` | `TagsInput` |
-| `BAITextArea` | `TextArea` |
-| `BAITextInput` | `TextInput` |
-| `BAITimeInput` | `TimeInput` |
-| `BAITokenizer` | `Tokenizer` |
-| `BAITypeahead` | `Typeahead` |
+| `BAIDateInput`                           | `DateInput`                        |
+| `BAIDateRangeInput`                      | `DateRangeInput`                   |
+| `BAIDateTimeInput`                       | `DateTimeInput`                    |
+| `BAIFileInput`                           | `FileInput`                        |
+| `BAIMultiSelector`                       | `MultiSelector`                    |
+| `BAINumberInput`                         | `NumberInput`                      |
+| `BAIRadioList`, `BAIRadioListItem`       | `RadioList`, `RadioListItem`       |
+| `BAISegmentedControl`                    | `SegmentedControl`                 |
+| `BAISelector`                            | `Selector`                         |
+| `BAISlider`                              | `Slider`                           |
+| `BAISwitch`                              | `Switch`                           |
+| `BAITagsInput`                           | `TagsInput`                        |
+| `BAITextArea`                            | `TextArea`                         |
+| `BAITextInput`                           | `TextInput`                        |
+| `BAITimeInput`                           | `TimeInput`                        |
+| `BAITokenizer`                           | `Tokenizer`                        |
+| `BAITypeahead`                           | `Typeahead`                        |
 
 - **One file per control**: `BAI<X>.tsx`는 `export { X as default, type XProps as BAIXProps } from '@lablup/ui-common/X'` 한 문장이다. item component는 부모 파일에서 함께 낸다(`BAIRadioList.tsx`의 `BAIRadioListItem`, `BAICheckboxList.tsx`의 `BAICheckboxListItem`). components barrel `index.ts`는 다른 BUI component와 같이 `export { default as BAIX } from './BAIX'`로 낸다.
 - **Props type**: 각 control은 `BAI<X>Props` type도 함께 낸다. 이 type은 ui-common의 `<X>Props`와 같다. `react/`와 BUI의 call site는 control 자신의 props type으로 `BAI<X>Props`를 쓰고 ui-common `<X>Props`를 import하지 않는다. 2절대로 promotion되면 두 type이 달라지기 때문이다.
@@ -83,13 +83,14 @@ flowchart LR
 
 - **Promotion**: 어떤 control에 BUI 쪽 동작(번역, 기본값, 다른 props)이 필요해지면 그 `BAI<X>.tsx`의 re-export를 component로 바꾸고 `BAI<X>.doc.ts`에 그 props를 적는다. props interface는 ui-common `<X>Props`를 extend한다. 파일과 이름이 그대로이므로 barrel과 call site는 바뀌지 않는다.
 - **SegmentedControlItem**: `BAISegmentedControlItem`은 이미 그런 component다. `label`을 `ReactNode`로 넓히고, `isLabelHidden`은 `label`이 string일 때만 받는다. 그래서 `SegmentedControlItem`의 BAI 이름은 이것이고, 같은 이름의 re-export는 두지 않는다.
+- **MultiSelector**: `BAIMultiSelector`도 그런 component다. props는 ui-common `MultiSelectorProps` 그대로이고, 닫힌 trigger가 선택 항목을 다 보여 주지 못할 때 선택 항목 전체를 tooltip으로 보여 준다(#10951).
 - **Existing antd-shaped wrappers stay**: `BAISelect`, `BAICheckbox`, `BAIDynamicUnitInputNumber`처럼 frozen antd-v6 props를 받는 기존 BUI component는 그대로 남는다. 새 code는 Astryx 모양 props가 맞으면 이 문서의 `BAI<X>`를 쓴다.
 
 ### 3. BUI source도 `BAI<X>`를 쓴다
 
 - **Rule**: BUI의 component, fragment, story, test는 form control을 `BAI<X>` 이름으로 쓰고, import하는 파일에서 `components/BAI<X>.tsx`까지의 상대 경로로 import한다(`components/`에서는 `./BAITextInput`, `components/fragments/`에서는 `../BAITextInput`). item component는 부모 파일의 named export다(`import BAIRadioList, { BAIRadioListItem } from './BAIRadioList'`). `backend.ai-ui`나 components barrel `index.ts`에서 import하지 않는다. barrel을 거치면 순환 import가 생긴다.
 - **Antd-shaped wrappers included**: `BAISelect`, `BAICheckbox`, `BAIDynamicUnitInputNumber`처럼 2절의 기존 wrapper도 안에서 그리는 control을 `BAI<X>`로 import한다.
-- **Where the subpath stays**: ui-common subpath에서 control component를 import하는 파일은 1절의 `BAI<X>.tsx`와 2절의 promotion된 component(`BAISegmentedControlItem.tsx`)뿐이다.
+- **Where the subpath stays**: ui-common subpath에서 control component를 import하는 파일은 1절의 `BAI<X>.tsx`와 2절의 promotion된 component(`BAISegmentedControlItem.tsx`, `BAIMultiSelector.tsx`)뿐이다.
 - **Props type**: control 자신의 props type은 1절대로 `BAI<X>.tsx`의 `BAI<X>Props`를 쓴다.
 - **Types stay importable**: 그 밖의 type과 helper(`SelectorOptionData`, `ISODateTimeString`, `SearchSource` 등)는 BUI에서도 ui-common subpath에서 그대로 import한다.
 
@@ -97,6 +98,7 @@ flowchart LR
 
 - **Rule**: `react/eslint.config.js`의 `formControlImportBans`가 `no-restricted-imports`의 `paths`에 subpath마다 한 항목을 둔다. 항목은 그 subpath의 component 이름만 `importNames`로 막고, 메시지로 `BAI<X>`를 가리킨다. `restrictedImportPaths`와 project-agnostic page block이 이 배열을 펼친다.
 - **Types stay importable**: `importNames`에 없는 이름(type, helper, `TypeaheadItem` 같은 다른 component)은 막지 않는다. control 자신의 `<X>Props`도 lint로는 막히지 않으므로 1절의 Props type 규칙은 review가 지킨다.
+
 ## 대안과 기각 사유
 
 - **Direct ui-common imports**: ADR 0009의 규칙대로 webui가 `@lablup/ui-common/<X>`를 직접 import한다. BUI에 파일을 더하지 않는다는 것이 장점이다. 기각한 이유는 한 화면 안에서 component 출처가 `backend.ai-ui`와 ui-common으로 갈리고, 나중에 BUI 동작을 더하려면 call site를 다시 모두 고쳐야 하기 때문이다.
@@ -120,8 +122,8 @@ flowchart LR
 
 ## 용어
 
-| 용어 | 뜻 |
-|---|---|
+| 용어                         | 뜻                                                                                                                                                                                                                                    |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Form.Item-aware form control | ui-common이 Astryx 입력 component를 감싸 `Form.Item` 안에서 value, onChange, disabled, validation status, 접근 가능한 이름을 item에서 받게 한 component다. Astryx의 field chrome(`label`, `description`, `isRequired`)은 받지 않는다. |
-| promotion | `BAI<X>.tsx`의 re-export를 ui-common component를 감싸는 BUI component로 바꾸는 것이다(2절). 파일과 이름은 그대로다. |
-| re-export | 다른 module의 export를 이름만 바꿔 다시 내는 것이다. 새 component를 만들지 않으므로 `BAITextInput === TextInput`이다. |
+| promotion                    | `BAI<X>.tsx`의 re-export를 ui-common component를 감싸는 BUI component로 바꾸는 것이다(2절). 파일과 이름은 그대로다.                                                                                                                   |
+| re-export                    | 다른 module의 export를 이름만 바꿔 다시 내는 것이다. 새 component를 만들지 않으므로 `BAITextInput === TextInput`이다.                                                                                                                 |

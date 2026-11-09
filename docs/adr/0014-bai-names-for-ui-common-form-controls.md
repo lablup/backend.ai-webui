@@ -10,7 +10,7 @@
 - `react/` imports ui-common's [Form.Item-aware form controls](#glossary) under their `BAI<X>` names from `backend.ai-ui`, not from `@lablup/ui-common/<X>`.
 - BUI keeps one file `packages/backend.ai-ui/src/components/BAI<X>.tsx` per control, and that file is a [re-export](#glossary) of the ui-common component. A re-export is not a wrapper, so the props and the behaviour are exactly those of the ui-common component.
 - Webui keeps no adapters (`AstryxForm*`) that fit form controls to `Form.Item`. ui-common does the value correction, the default width inside an item, and the passing of label, status, and disabled.
-- When a control needs BUI-side behaviour, BUI replaces the re-export in its `BAI<X>.tsx` with a component. Today `BAISegmentedControlItem` is the only such control.
+- When a control needs BUI-side behaviour, BUI replaces the re-export in its `BAI<X>.tsx` with a component. Today these are `BAISegmentedControlItem` and `BAIMultiSelector`.
 - The other BUI source files (components, fragments, stories, tests) also import form controls from that `BAI<X>.tsx` through a relative path.
 - `no-restricted-imports` in `react/eslint.config.js` stops `react/` from importing these component names from the ui-common subpaths. For the control's own props type, code uses `BAI<X>Props`. Code still imports the other types and helpers of the same subpath (`SelectorOptionType`, `ISODateTimeString`, `SearchSource`, and so on) from there.
 
@@ -31,7 +31,7 @@ flowchart LR
     buiuse["BUI component / fragment / story / test"]
     barrel["index.ts"]
     fc["BAITextInput.tsx, BAINumberInput.tsx, ...<br/>re-export only"]
-    item["BAISegmentedControlItem.tsx<br/>own component"]
+    item["BAISegmentedControlItem.tsx, BAIMultiSelector.tsx<br/>own component"]
   end
   subgraph uic["@lablup/ui-common"]
     ctl["TextInput, NumberInput, Selector, ...<br/>Form.Item-aware wrapper"]
@@ -83,13 +83,14 @@ flowchart LR
 
 - **Promotion**: When a control needs BUI-side behaviour (translation, default values, different props), BUI replaces the re-export in that `BAI<X>.tsx` with a component and writes those props in `BAI<X>.doc.ts`. The props interface extends ui-common's `<X>Props`. The file and the name stay the same, so the barrel and the call sites do not change.
 - **SegmentedControlItem**: `BAISegmentedControlItem` is already such a component. It widens `label` to `ReactNode` and accepts `isLabelHidden` only when `label` is a string. For this reason this component is the BAI name of `SegmentedControlItem`, and no re-export with the same name exists.
+- **MultiSelector**: `BAIMultiSelector` is such a component too. Its props are ui-common's `MultiSelectorProps` unchanged; it adds a tooltip that names every selected option when the closed trigger cannot (#10951).
 - **Existing antd-shaped wrappers stay**: Existing BUI components that take frozen antd-v6 props, such as `BAISelect`, `BAICheckbox`, and `BAIDynamicUnitInputNumber`, stay as they are. New code uses the `BAI<X>` of this document when Astryx-shaped props fit.
 
 ### 3. BUI source also uses `BAI<X>`
 
 - **Rule**: BUI components, fragments, stories, and tests use form controls under their `BAI<X>` names, and they import them through the relative path from the importing file to `components/BAI<X>.tsx` (`./BAITextInput` in `components/`, `../BAITextInput` in `components/fragments/`). An item component is a named export of its parent file (`import BAIRadioList, { BAIRadioListItem } from './BAIRadioList'`). BUI source does not import them from `backend.ai-ui` or from the components barrel `index.ts`, because an import through the barrel creates a circular import.
 - **Antd-shaped wrappers included**: The existing wrappers of section 2, such as `BAISelect`, `BAICheckbox`, and `BAIDynamicUnitInputNumber`, also import the controls they render as `BAI<X>`.
-- **Where the subpath stays**: The only files that import a control component from a ui-common subpath are the `BAI<X>.tsx` files of section 1 and the promoted component of section 2 (`BAISegmentedControlItem.tsx`).
+- **Where the subpath stays**: The only files that import a control component from a ui-common subpath are the `BAI<X>.tsx` files of section 1 and the promoted components of section 2 (`BAISegmentedControlItem.tsx`, `BAIMultiSelector.tsx`).
 - **Props type**: For the control's own props type, code uses `BAI<X>Props` from `BAI<X>.tsx`, as section 1 says.
 - **Types stay importable**: BUI also still imports the other types and helpers (`SelectorOptionData`, `ISODateTimeString`, `SearchSource`, and so on) from the ui-common subpaths.
 
