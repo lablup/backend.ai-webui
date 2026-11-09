@@ -60,19 +60,29 @@ navTitle: 프로젝트 관리자 기능
 
 ## 프로젝트 관리자 사이드바
 
-프로젝트 관리자 권한을 가진 프로젝트를 선택하면 사이드바에 **프로젝트 설정** 항목이 표시됩니다. 이 항목을 선택하면 사이드바가 프로젝트 관리 메뉴로 전환되며, **운영** 섹션에 해당 프로젝트를 관리하기 위한 세 개의 항목이 표시됩니다:
+프로젝트 관리자 권한을 가진 프로젝트를 선택하면 사이드바에 **프로젝트 설정** 항목이 표시됩니다. 이 항목을 선택하면 사이드바가 프로젝트 관리 메뉴로 전환되며, **대시보드** 항목과 해당 프로젝트를 관리하기 위한 세 개의 항목이 담긴 **운영** 섹션이 표시됩니다:
 
+- **대시보드** — 현재 프로젝트의 개요
 - **사용자** — 현재 프로젝트의 구성원
 - **세션** — 현재 프로젝트의 사용자들이 소유한 연산 세션
 - **배포** — 현재 프로젝트가 소유한 모델 배포
 
 ![=240px](../images/project_admin_sidebar.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 프로젝트 관리자 페이지에서는 상단의 프로젝트 선택기로 선택한 프로젝트 하위의 항목들만 표기됩니다. 이 내용은 페이지 상단의 배너를 통해 확인할 수 있습니다.
 
 ![](../images/project_admin_scope_alert.png)
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
+
+<a id="project-admin-dashboard"></a>
+
+## 대시보드
+
+**대시보드** 항목을 선택하면 선택한 프로젝트로 범위가 한정된 카드 보드가 열립니다: **세션 현황**, **대기 세션 스케줄링 기록**, **장시간 실행 중인 세션**, **자원 할당**, **배포**, **프로젝트 폴더**, **프로젝트 사용자**, **감사 로그**. **대기 세션 스케줄링 기록**에서 행을 선택하면 해당 세션의 스케줄링 기록이 열립니다.
+
+![](../images/project_admin_dashboard.png)
+
+보드, 카드 설정, 새로고침 컨트롤은 사용자 [대시보드](#dashboard)와 동일하게 동작합니다.
 
 <a id="refreshing-project-admin-pages"></a>
 

@@ -60,19 +60,29 @@ When you add several users at once, any that fail are surfaced through an error 
 
 ## The Project Admin sidebar
 
-When you select a project in which you are a project admin, the sidebar shows a **Project Settings** entry. Selecting it switches the sidebar to the project management menu, whose **Operations** section lists three entries dedicated to managing that project:
+When you select a project in which you are a project admin, the sidebar shows a **Project Settings** entry. Selecting it switches the sidebar to the project management menu, which lists a **Dashboard** entry and an **Operations** section with three entries dedicated to managing that project:
 
+- **Dashboard** — an overview of the current project
 - **Users** — the members of the current project
 - **Sessions** — the compute sessions owned by users in the current project
 - **Deployments** — the model deployments owned by the current project
 
 ![=240px](../images/project_admin_sidebar.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 On the project-admin pages, only the items under the project selected with the project selector at the top are shown. You can check this through the banner at the top of the page.
 
 ![](../images/project_admin_scope_alert.png)
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
+
+<a id="project-admin-dashboard"></a>
+
+## Dashboard
+
+The **Dashboard** entry opens a board of cards scoped to the selected project: **Session Status**, **Pending Sessions and Reasons**, **Long-running Sessions**, **Resource Allocation**, **Deployments**, **Project Folders**, **Project Users**, and **Audit Log**. Select a row in **Pending Sessions and Reasons** to open that session's scheduling history.
+
+![](../images/project_admin_dashboard.png)
+
+Boards, card settings and the refresh control work as they do on the user [Dashboard](#dashboard).
 
 <a id="refreshing-project-admin-pages"></a>
 
