@@ -1,0 +1,182 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-11-09T16:20:21.027Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 1,
+        "changes": 12,
+        "added": 3,
+        "modified": 7,
+        "removed": 2,
+        "images": 5,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "Admin Features",
+          "status": "modified",
+          "url": "next/en/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 3,
+            "modified": 7,
+            "removed": 2,
+            "images": 5,
+            "total": 12
+          },
+          "fingerprints": [
+            "4a4ac8ce7c11",
+            "6eb0241290d8",
+            "2f11b5bac820",
+            "92d44210d6b8",
+            "32e35dcd85e8",
+            "94aeeca528e2",
+            "0ff35450f4d9",
+            "05b30fb84124",
+            "8d9c2456c8db",
+            "c440aec50e03",
+            "9250d2ee8a00",
+            "2832d5218e60"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 1,
+        "changes": 12,
+        "added": 3,
+        "modified": 7,
+        "removed": 2,
+        "images": 5,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "管理者機能",
+          "status": "modified",
+          "url": "next/ja/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 3,
+            "modified": 7,
+            "removed": 2,
+            "images": 5,
+            "total": 12
+          },
+          "fingerprints": [
+            "7c25e1517dc1",
+            "94f05e397d51",
+            "65ec08d2573a",
+            "0473d46f69eb",
+            "0fa4663a6711",
+            "5c2ea9220d09",
+            "bf359623bb3c",
+            "60c28c895f90",
+            "26873c45d6cc",
+            "b9e35edd4242",
+            "714455e900c7",
+            "1bccdad16dfa"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 1,
+        "changes": 12,
+        "added": 3,
+        "modified": 7,
+        "removed": 2,
+        "images": 5,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "관리자 기능",
+          "status": "modified",
+          "url": "next/ko/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 3,
+            "modified": 7,
+            "removed": 2,
+            "images": 5,
+            "total": 12
+          },
+          "fingerprints": [
+            "08457435dbbc",
+            "b9a0ce863a44",
+            "0195e2f181e3",
+            "ba117aaed8be",
+            "2f1dd7ef4904",
+            "343d9b555b29",
+            "3e89cbd8fb59",
+            "371cd7ee7f08",
+            "9f58ff4f1b6a",
+            "e88df7eeae15",
+            "5ce5dc317086",
+            "cf8a4bcb4ed7"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 1,
+        "changes": 12,
+        "added": 3,
+        "modified": 7,
+        "removed": 2,
+        "images": 5,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "ฟีเจอร์ผู้ดูแลระบบ",
+          "status": "modified",
+          "url": "next/th/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 3,
+            "modified": 7,
+            "removed": 2,
+            "images": 5,
+            "total": 12
+          },
+          "fingerprints": [
+            "4d3d7e8ca7c4",
+            "e7b12c06d3d7",
+            "3250f6d40a5f",
+            "a1d8738db844",
+            "f83a88aef2f4",
+            "a29764b875e0",
+            "ae5b7e27ca6c",
+            "edd40c01048c",
+            "349d317c7ea8",
+            "2dd78b7629e3",
+            "b33c990d721f",
+            "ed5e88e7a42f"
+          ]
+        }
+      ]
+    }
+  }
+}
