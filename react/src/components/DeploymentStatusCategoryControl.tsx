@@ -6,14 +6,13 @@ import type {
   DeploymentFilter,
   DeploymentStatus,
 } from '../__generated__/DeploymentListPageQuery.graphql';
-import { VisuallyHidden } from '@lablup/ui-common/VisuallyHidden';
 import {
   BAIFlex,
   BAIQuestionIconWithTooltip,
   BAISegmentedControl,
   BAISegmentedControlItem,
 } from 'backend.ai-ui';
-import React, { useId } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 export const DEPLOYMENT_STATUS_CATEGORIES = [
@@ -48,21 +47,13 @@ export const deploymentStatusCategoryOf = (
   return 'serving';
 };
 
-// The icon's aria-label would join the segment's name from content, so the
-// segment is named by its label and described by the help sentence instead.
-const renderTabLabel = (label: string, help: string, id: string) => (
+const renderTabLabel = (label: string, help: string) => (
   <BAIFlex gap="xxs" align="center">
-    <BAIFlex id={`${id}-label`}>{label}</BAIFlex>
+    {label}
     {/* Not focusable: the trigger sits inside the segment's own button. */}
     <BAIQuestionIconWithTooltip title={help} focusable={false} />
-    <VisuallyHidden id={`${id}-help`}>{help}</VisuallyHidden>
   </BAIFlex>
 );
-
-const tabA11yProps = (id: string) => ({
-  'aria-labelledby': `${id}-label`,
-  'aria-describedby': `${id}-help`,
-});
 
 interface DeploymentStatusCategoryControlProps {
   value: DeploymentStatusCategory;
@@ -74,8 +65,6 @@ const DeploymentStatusCategoryControl: React.FC<
 > = ({ value, onChange }) => {
   'use memo';
   const { t } = useTranslation();
-  const servingId = useId();
-  const pausedId = useId();
   return (
     <BAISegmentedControl
       value={value}
@@ -83,20 +72,16 @@ const DeploymentStatusCategoryControl: React.FC<
     >
       <BAISegmentedControlItem
         value="serving"
-        {...tabA11yProps(servingId)}
         label={renderTabLabel(
           t('deployment.Serving'),
           t('deployment.ServingTooltip'),
-          servingId,
         )}
       />
       <BAISegmentedControlItem
         value="paused"
-        {...tabA11yProps(pausedId)}
         label={renderTabLabel(
           t('deployment.Paused'),
           t('deployment.PausedTooltip'),
-          pausedId,
         )}
       />
       <BAISegmentedControlItem
