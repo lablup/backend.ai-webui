@@ -127,7 +127,10 @@ const PanelSettingsModal: React.FC<PanelSettingsModalProps> = ({
               label={t('dashboard.settings.DefaultTimeRange')}
               rules={[{ required: true }]}
             >
-              <PanelRangeSelect maxDays={maxRangeDaysOf(definition)} />
+              <PanelRangeSelect
+                isCompactLabel
+                maxDays={maxRangeDaysOf(definition)}
+              />
             </BAIFormItem>
           ) : null}
         </Form>

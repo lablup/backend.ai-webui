@@ -7,6 +7,7 @@ import {
   RANGE_LABEL_KEYS,
   RANGE_PRESETS,
   type RangePreset,
+  isRangePreset,
 } from './panelSettings';
 import {
   MAX_WINDOW_DAYS,
@@ -20,6 +21,7 @@ import {
   type BAIDateTimeRangeInputPreset,
   type BAIDateTimeRangeInputProps,
   type BAIDateTimeRangeInputValue,
+  BAISelect,
   useIntervalValue,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -99,6 +101,27 @@ const PanelRangeSelect: React.FC<PanelRangeSelectProps> = ({
     getRange: () => lastSpan(durationOf(preset), now),
     isRelative: true,
   }));
+
+  if (maxDays <= 0) {
+    // Presets only: no calendar to pick a window from.
+    return (
+      <BAISelect
+        showSearch={false}
+        size={inputProps.size === 'sm' ? 'small' : undefined}
+        id={inputProps.id}
+        aria-label={inputProps['aria-label']}
+        disabled={inputProps.disabled || inputProps.isDisabled}
+        options={presets.map((preset) => ({
+          value: preset.range,
+          label: preset.label,
+        }))}
+        value={isRangePreset(range) ? range : DEFAULT_RANGE}
+        onChange={(next: string | null) => {
+          if (next) onChange?.(next);
+        }}
+      />
+    );
+  }
 
   return (
     <BAIDateTimeRangeInput
