@@ -52,7 +52,7 @@ export const deploymentStatusCategoryOf = (
 // segment is named by its label and described by the help sentence instead.
 const renderTabLabel = (label: string, help: string, id: string) => (
   <BAIFlex gap="xxs" align="center">
-    <span id={`${id}-label`}>{label}</span>
+    <BAIFlex id={`${id}-label`}>{label}</BAIFlex>
     {/* Not focusable: the trigger sits inside the segment's own button. */}
     <BAIQuestionIconWithTooltip title={help} focusable={false} />
     <VisuallyHidden id={`${id}-help`}>{help}</VisuallyHidden>

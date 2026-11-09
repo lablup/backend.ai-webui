@@ -74,8 +74,10 @@ describe('DeploymentStatusCategoryControl', () => {
     expect(
       screen.getByRole('radio', { name: 'deployment.Paused' }),
     ).toHaveAccessibleDescription('deployment.PausedTooltip');
-    expect(
-      screen.getByRole('radio', { name: 'deployment.status.Terminated' }),
-    ).not.toBeChecked();
+    const terminated = screen.getByRole('radio', {
+      name: 'deployment.status.Terminated',
+    });
+    expect(terminated).not.toBeChecked();
+    expect(terminated).not.toHaveAccessibleDescription();
   });
 });
