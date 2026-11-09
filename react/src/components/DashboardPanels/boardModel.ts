@@ -435,6 +435,7 @@ export const toLegacyPanel = (
       filter: panel.filter ?? null,
       order: panel.order ?? null,
       gridView: panel.gridView ?? null,
+      chart: panel.chart ?? null,
       resourceGroups: panel.settings?.resourceGroups ?? null,
     },
   };

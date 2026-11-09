@@ -8,24 +8,30 @@ import {
   type SessionGridViewParams,
 } from '../../helper/sessionResourceGridData';
 import { DeploymentNodesPanelContent } from './DeploymentNodesPanel';
+import { ResourceChartContent } from './ResourceChartPanel';
 import { ResourceCountContent } from './ResourceCountPanel';
 import { ResourceTableContent } from './ResourceTablePanel';
 import { SessionNodesPanelContent } from './SessionNodesPanel';
 import { SessionResourceGridContent } from './SessionResourceGridPanel';
+import { CHART_GROUPINGS, resolveChart } from './chartSources';
 import { PanelPermissionBoundary } from './panelPermission';
 import { availablePanelTypes, panelTypeLabelKeys } from './panelRegistry';
+import { RANGE_LABEL_KEYS, RANGE_PRESETS } from './panelSettings';
 import { resourceRegistry } from './resourceRegistry';
-import type {
-  PanelInput,
-  PanelType,
-  PersistedPanel,
-  ResourceKey,
+import {
+  CHART_TYPES,
+  type ChartType,
+  type PanelInput,
+  type PanelType,
+  type PersistedPanel,
+  type ResourceKey,
 } from './types';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAISegmentedControl,
   BAISegmentedControlItem,
   BAISelect,
+  BAISwitch,
   BAITextInput,
   BAIBoardItemErrorBoundary,
   BAIFlex,
@@ -57,7 +63,17 @@ interface PanelFormValues {
   resourceType: ResourceKey;
   title?: string;
   filter?: GraphQLFilter | string | null;
+  chartType: ChartType;
+  groupBy?: string;
+  chartRange?: string;
+  showTable?: boolean;
 }
+
+const CHART_TYPE_LABEL_KEYS: Record<ChartType, string> = {
+  donut: 'dashboard.panelModal.Donut',
+  bar: 'dashboard.panelModal.Bar',
+  line: 'dashboard.panelModal.CreatedOverTime',
+};
 
 /**
  * Create/edit a table panel: pick a resource, build the condition with the same
@@ -104,6 +120,18 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
     initialPanel?.panelType ??
     'resourceTable') as PanelType;
   const filter = Form.useWatch('filter', form) ?? undefined;
+  const initialChart = resolveChart(
+    initialResource,
+    initialPanel?.descriptor.chart,
+  );
+  const chart = resolveChart(resourceType, {
+    type: Form.useWatch('chartType', form) ?? initialChart.type,
+    groupBy: Form.useWatch('groupBy', form) ?? initialChart.groupBy,
+    range: Form.useWatch('chartRange', form) ?? initialChart.range,
+    showTable: Form.useWatch('showTable', form) ?? initialChart.showTable,
+  });
+  // The preview's line buckets end at the modal's opening, so typing does not move them.
+  const [previewNow] = useState(() => Date.now());
   const config = resourceRegistry[resourceType];
   // A saved grid panel keeps offering the grid kind even with the flag off, so
   // editing it cannot silently rewrite the user's stored view.
@@ -133,6 +161,15 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
       filter: values.filter ?? null,
       order,
       gridView: values.panelType === 'sessionResourceGrid' ? gridView : null,
+      chart:
+        values.panelType === 'resourceChart'
+          ? resolveChart(values.resourceType, {
+              type: values.chartType,
+              groupBy: values.groupBy,
+              range: values.chartRange,
+              showTable: values.showTable,
+            })
+          : null,
     });
     onRequestClose();
   };
@@ -159,6 +196,10 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
           resourceType: initialResource,
           title: initialPanel?.descriptor.title,
           filter: initialPanel?.descriptor.filter ?? undefined,
+          chartType: initialChart.type,
+          groupBy: initialChart.groupBy,
+          chartRange: initialChart.range,
+          showTable: initialChart.showTable,
         }}
         onValuesChange={(changed: Partial<PanelFormValues>) => {
           // A resource switch invalidates the condition and sort of the old one,
@@ -174,6 +215,10 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
             if (!nextTypes.includes(form.getFieldValue('panelType'))) {
               form.setFieldsValue({ panelType: 'resourceTable' });
             }
+            // Groupings differ per source.
+            form.setFieldsValue({
+              groupBy: CHART_GROUPINGS[changed.resourceType][0].key,
+            });
           }
           // Switching only the kind keeps the condition and sort: the session
           // table and grid read the same minilang filter and order strings.
@@ -238,6 +283,66 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
             />
           </Form.Item>
         </BAIFlex>
+        {panelType === 'resourceChart' ? (
+          <BAIFlex direction="row" align="start" gap="md" wrap="wrap">
+            <Form.Item
+              name="chartType"
+              label={t('dashboard.panelModal.ChartType')}
+              style={{ flexShrink: 0 }}
+            >
+              <BAISegmentedControl
+                aria-label={t('dashboard.panelModal.ChartType')}
+              >
+                {CHART_TYPES.map((type) => (
+                  <BAISegmentedControlItem
+                    key={type}
+                    value={type}
+                    label={t(CHART_TYPE_LABEL_KEYS[type])}
+                  />
+                ))}
+              </BAISegmentedControl>
+            </Form.Item>
+            {chart.type === 'line' ? (
+              <Form.Item
+                name="chartRange"
+                label={t('dashboard.settings.TimeRange')}
+                extra={t('dashboard.panelModal.CreatedOverTimeDescription')}
+                style={{ flex: 1, minWidth: 180 }}
+              >
+                <BAISelect
+                  showSearch={false}
+                  aria-label={t('dashboard.settings.TimeRange')}
+                  options={RANGE_PRESETS.map((range) => ({
+                    value: range,
+                    label: t(RANGE_LABEL_KEYS[range]),
+                  }))}
+                />
+              </Form.Item>
+            ) : (
+              <Form.Item
+                name="groupBy"
+                label={t('dashboard.panelModal.GroupBy')}
+                style={{ flex: 1, minWidth: 180 }}
+              >
+                <BAISelect
+                  showSearch={false}
+                  aria-label={t('dashboard.panelModal.GroupBy')}
+                  options={CHART_GROUPINGS[resourceType].map((grouping) => ({
+                    value: grouping.key,
+                    label: t(grouping.labelKey),
+                  }))}
+                />
+              </Form.Item>
+            )}
+            <Form.Item
+              name="showTable"
+              label={t('dashboard.panelModal.ShowTable')}
+              style={{ flexShrink: 0 }}
+            >
+              <BAISwitch aria-label={t('dashboard.panelModal.ShowTable')} />
+            </Form.Item>
+          </BAIFlex>
+        ) : null}
         <Form.Item name="filter" label={t('dashboard.panelModal.Condition')}>
           {config.kind === 'sessionNodes' ? (
             // The sessions page's condition language (queryfilter minilang),
@@ -274,7 +379,24 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
             >
               <PanelPermissionBoundary>
                 <Suspense fallback={<BAISkeleton />}>
-                  {panelType === 'resourceCount' ? (
+                  {panelType === 'resourceChart' ? (
+                    <BAIFlex
+                      direction="column"
+                      align="stretch"
+                      style={{ height: 240 }}
+                    >
+                      <ResourceChartContent
+                        key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
+                        descriptor={{
+                          resourceType,
+                          filter: filter ?? null,
+                          order,
+                          chart: { ...chart, showTable: false },
+                        }}
+                        now={previewNow}
+                      />
+                    </BAIFlex>
+                  ) : panelType === 'resourceCount' ? (
                     <BAIFlex align="center" justify="center">
                       <ResourceCountContent
                         key={`${resourceType}:${JSON.stringify(filter ?? null)}`}

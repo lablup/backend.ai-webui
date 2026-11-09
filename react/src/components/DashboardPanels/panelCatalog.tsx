@@ -609,6 +609,7 @@ const PRESET_PANELS: ReadonlyArray<PanelDefinition> = resourceKeys.map(
         table: sizesOf('resourceTable'),
         stat: sizesOf('resourceCount'),
         grid: sizesOf('sessionResourceGrid'),
+        chart: sizesOf('resourceChart'),
       },
     };
   },

@@ -378,10 +378,11 @@ export const useDashboardBoard = ({
             </PanelFrame>
           )}
         >
-          {({ fetchKey }) => (
+          {({ fetchKey, vars }) => (
             <Panel
               descriptor={viewLegacyPanel.descriptor}
               fetchKey={fetchKey}
+              refreshedAt={vars.refreshedAt}
               panelId={panel.id}
               onEdit={() => onRequestEditCustomPanel(legacyPanel)}
               onRemove={() => removeById(panel.id)}

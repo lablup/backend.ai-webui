@@ -21,13 +21,31 @@ import type { GraphQLTaggedNode, OperationType } from 'relay-runtime';
 export const RESOURCE_KEYS = ['session', 'deployment', 'vfolder'] as const;
 export type ResourceKey = (typeof RESOURCE_KEYS)[number];
 
-/** Panel kinds the panel registry renders (table rows, a count, the session grid). */
+/** Panel kinds the panel registry renders (table rows, a count, the session grid, a chart). */
 export const PANEL_TYPES = [
   'resourceTable',
   'resourceCount',
   'sessionResourceGrid',
+  'resourceChart',
 ] as const;
 export type PanelType = (typeof PANEL_TYPES)[number];
+
+/** How a chart panel draws its counts. */
+export const CHART_TYPES = ['donut', 'bar', 'line'] as const;
+export type ChartType = (typeof CHART_TYPES)[number];
+
+/**
+ * A chart panel's settings. `groupBy` names a grouping of the source for a
+ * donut or bar; a line counts rows created in each bucket of `range`.
+ */
+export interface PanelChart {
+  type: ChartType;
+  groupBy?: string;
+  /** A relative range such as `now-24h`, for a line. */
+  range?: string;
+  /** Lists the matching rows under the chart. */
+  showTable?: boolean;
+}
 
 /**
  * Serializable per-panel configuration of a custom panel; it must survive a
@@ -45,12 +63,14 @@ export interface PanelDescriptor {
   gridView?: SessionGridViewParams | null;
   /** The panel's resource group setting, for sources that support one. */
   resourceGroups?: Array<string> | null;
+  /** Chart settings of a `resourceChart` panel, null on other kinds. */
+  chart?: PanelChart | null;
 }
 
 /** The fields the panel modal collects when creating or editing a panel. */
 export type PanelInput = Pick<
   PanelDescriptor,
-  'resourceType' | 'filter' | 'title' | 'order' | 'gridView'
+  'resourceType' | 'filter' | 'title' | 'order' | 'gridView' | 'chart'
 > & {
   panelType: PanelType;
 };
@@ -81,7 +101,7 @@ export const PANEL_GROUPS = [
 export type PanelGroup = (typeof PANEL_GROUPS)[number];
 
 /** How a preset panel draws its rows. */
-export const VIZ_TYPES = ['table', 'stat', 'grid'] as const;
+export const VIZ_TYPES = ['table', 'stat', 'grid', 'chart'] as const;
 export type Viz = (typeof VIZ_TYPES)[number];
 
 /** The current domain: `id` for `scoped*` scopes, `name` for fields keyed by name. */
@@ -158,6 +178,7 @@ export interface PersistedPanelV2 {
   viz?: Viz;
   order?: string | null;
   gridView?: SessionGridViewParams | null;
+  chart?: PanelChart | null;
   title?: string;
   settings?: PanelSettings;
   columnSpan: number;

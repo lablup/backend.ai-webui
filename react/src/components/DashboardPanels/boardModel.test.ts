@@ -427,6 +427,7 @@ describe('toLegacyPanel', () => {
       descriptor: {
         ...legacyPanel.descriptor,
         gridView: null,
+        chart: null,
         resourceGroups: null,
       },
     });

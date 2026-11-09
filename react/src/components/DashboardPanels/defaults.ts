@@ -4,6 +4,7 @@
  */
 import { DEFAULT_SESSION_GRID_VIEW } from '../../helper/sessionResourceGridData';
 import { generateUUID } from '../../helper/uuid';
+import { resolveChart } from './chartSources';
 import type {
   PanelInput,
   PanelType,
@@ -36,18 +37,25 @@ export const DEFAULT_PANEL_LAYOUTS: Record<
     columnSpan: 4,
     definition: { minRowSpan: 2, minColumnSpan: 2 },
   },
+  resourceChart: {
+    rowSpan: 3,
+    columnSpan: 2,
+    definition: { minRowSpan: 2, minColumnSpan: 1 },
+  },
 };
 
 export const VIZ_TO_PANEL_TYPE: Record<Viz, PanelType> = {
   table: 'resourceTable',
   stat: 'resourceCount',
   grid: 'sessionResourceGrid',
+  chart: 'resourceChart',
 };
 
 export const PANEL_TYPE_TO_VIZ: Record<PanelType, Viz> = {
   resourceTable: 'table',
   resourceCount: 'stat',
   sessionResourceGrid: 'grid',
+  resourceChart: 'chart',
 };
 
 /** Catalog key of the preset that lists `source`. */
@@ -69,6 +77,10 @@ export const panelConfigFromInput = (input: PanelInput) => ({
   gridView:
     input.panelType === 'sessionResourceGrid'
       ? (input.gridView ?? DEFAULT_SESSION_GRID_VIEW)
+      : null,
+  chart:
+    input.panelType === 'resourceChart'
+      ? resolveChart(input.resourceType, input.chart)
       : null,
 });
 

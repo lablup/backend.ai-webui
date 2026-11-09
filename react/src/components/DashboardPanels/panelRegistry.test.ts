@@ -6,18 +6,20 @@ import { availablePanelTypes, effectivePanelType } from './panelRegistry';
 import type { PersistedPanel, ResourceKey } from './types';
 
 describe('availablePanelTypes', () => {
-  it('offers all three kinds for session when the grid flag is on', () => {
+  it('offers every kind for session when the grid flag is on', () => {
     expect(availablePanelTypes('session', { gridEnabled: true })).toEqual([
       'resourceTable',
       'resourceCount',
+      'resourceChart',
       'sessionResourceGrid',
     ]);
   });
 
-  it('offers only table+count for session when the grid flag is off', () => {
+  it('offers table, count and chart for session when the grid flag is off', () => {
     expect(availablePanelTypes('session', { gridEnabled: false })).toEqual([
       'resourceTable',
       'resourceCount',
+      'resourceChart',
     ]);
   });
 
@@ -27,9 +29,10 @@ describe('availablePanelTypes', () => {
       expect(availablePanelTypes(resourceType, { gridEnabled: true })).toEqual([
         'resourceTable',
         'resourceCount',
+        'resourceChart',
       ]);
       expect(availablePanelTypes(resourceType, { gridEnabled: false })).toEqual(
-        ['resourceTable', 'resourceCount'],
+        ['resourceTable', 'resourceCount', 'resourceChart'],
       );
     },
   );
@@ -40,7 +43,12 @@ describe('availablePanelTypes', () => {
         gridEnabled: false,
         forcePanelType: 'sessionResourceGrid',
       }),
-    ).toEqual(['resourceTable', 'resourceCount', 'sessionResourceGrid']);
+    ).toEqual([
+      'resourceTable',
+      'resourceCount',
+      'resourceChart',
+      'sessionResourceGrid',
+    ]);
   });
 
   it.each<ResourceKey>(['deployment', 'vfolder'])(
@@ -51,7 +59,7 @@ describe('availablePanelTypes', () => {
           gridEnabled: false,
           forcePanelType: 'sessionResourceGrid',
         }),
-      ).toEqual(['resourceTable', 'resourceCount']);
+      ).toEqual(['resourceTable', 'resourceCount', 'resourceChart']);
     },
   );
 
