@@ -12,7 +12,11 @@ async function navigateToClusterModeSection(
   page: import('@playwright/test').Page,
 ) {
   await navigateTo(page, 'session/start');
-  await page.getByRole('button', { name: '2 Environments & Resource' }).click();
+  await page
+    .getByRole('button', {
+      name: 'Go to step 2: Environments & Resource Allocation',
+    })
+    .click();
   await expect(page.getByText('Cluster mode')).toBeVisible({ timeout: 10000 });
 }
 
@@ -58,16 +62,12 @@ test.describe(
         // runs an older WebUI build, this test will be skipped automatically.
         await navigateToClusterModeSection(page);
 
-        // Click the Multi Node label to select the Multi Node radio button
-        const multiNodeLabel = page
-          .locator('label')
-          .filter({ hasText: 'Multi Node' });
-        await multiNodeLabel.click();
+        // Click the Multi Node radio to select the Multi Node radio button
+        const multiNodeRadio = page.getByRole('radio', { name: 'Multi Node' });
+        await multiNodeRadio.click();
 
-        // Verify the Multi Node radio input is checked
-        await expect(
-          multiNodeLabel.locator('input[type="radio"]'),
-        ).toBeChecked();
+        // Verify the Multi Node radio is checked
+        await expect(multiNodeRadio).toBeChecked();
 
         // Cluster size should default to 1 with Multi Node selected.
         // The cluster-mode items in ResourceAllocationFormItems (FR-2381) render the spinbutton inside the
@@ -97,11 +97,9 @@ test.describe(
       // Navigate to step 2: Environments & Resource Allocation
       await navigateToClusterModeSection(page);
 
-      // Click the Multi Node label to select it
-      const multiNodeLabel = page
-        .locator('label')
-        .filter({ hasText: 'Multi Node' });
-      await multiNodeLabel.click();
+      // Click the Multi Node radio to select it
+      const multiNodeRadio = page.getByRole('radio', { name: 'Multi Node' });
+      await multiNodeRadio.click();
 
       const clusterSizeInput = page
         .locator('.uic-form-item')
@@ -134,11 +132,9 @@ test.describe(
       // Navigate to step 2: Environments & Resource Allocation
       await navigateToClusterModeSection(page);
 
-      // Click the Multi Node label to select it
-      const multiNodeLabel = page
-        .locator('label')
-        .filter({ hasText: 'Multi Node' });
-      await multiNodeLabel.click();
+      // Click the Multi Node radio to select it
+      const multiNodeRadio = page.getByRole('radio', { name: 'Multi Node' });
+      await multiNodeRadio.click();
 
       // Verify warning is initially visible (Multi Node + size 1)
       const clusterSizeInput = page
@@ -171,21 +167,19 @@ test.describe(
         // NOTE: Requires the cluster-mode items in ResourceAllocationFormItems.tsx (feat/FR-2381) — see note above.
         await navigateToClusterModeSection(page);
 
-        const multiNodeLabel = page
-          .locator('label')
-          .filter({ hasText: 'Multi Node' });
-        await multiNodeLabel.click();
+        const multiNodeRadio = page.getByRole('radio', { name: 'Multi Node' });
+        await multiNodeRadio.click();
 
         const warningMessage = page.getByText(
           'Multi-node with size 1 will be created as a single-node session.',
         );
         await skipUnlessSizeOneWarningAvailable(page);
 
-        // Switch to Single Node by clicking the Single Node label
-        const singleNodeLabel = page
-          .locator('label')
-          .filter({ hasText: 'Single Node' });
-        await singleNodeLabel.click();
+        // Switch to Single Node by clicking the Single Node radio
+        const singleNodeRadio = page.getByRole('radio', {
+          name: 'Single Node',
+        });
+        await singleNodeRadio.click();
 
         // Warning should disappear as soon as the mode is switched to Single Node
         await expect(warningMessage).toBeHidden({ timeout: 5000 });
@@ -199,26 +193,24 @@ test.describe(
         // NOTE: Requires the cluster-mode items in ResourceAllocationFormItems.tsx (feat/FR-2381) — see note above.
         await navigateToClusterModeSection(page);
 
-        const multiNodeLabel = page
-          .locator('label')
-          .filter({ hasText: 'Multi Node' });
-        const singleNodeLabel = page
-          .locator('label')
-          .filter({ hasText: 'Single Node' });
+        const multiNodeRadio = page.getByRole('radio', { name: 'Multi Node' });
+        const singleNodeRadio = page.getByRole('radio', {
+          name: 'Single Node',
+        });
         const warningMessage = page.getByText(
           'Multi-node with size 1 will be created as a single-node session.',
         );
 
         // Select Multi Node — check if warning feature is available
-        await multiNodeLabel.click();
+        await multiNodeRadio.click();
         await skipUnlessSizeOneWarningAvailable(page);
 
         // Switch to Single Node — warning should disappear
-        await singleNodeLabel.click();
+        await singleNodeRadio.click();
         await expect(warningMessage).toBeHidden({ timeout: 5000 });
 
         // Switch back to Multi Node
-        await multiNodeLabel.click();
+        await multiNodeRadio.click();
 
         // Cluster size should still be 1 (mode switch does not reset size)
         const clusterSizeInput = page
@@ -243,16 +235,14 @@ test.describe(
         // Navigate to step 2: Environments & Resource Allocation
         await navigateToClusterModeSection(page);
 
-        // Click the Single Node label to ensure Single Node mode is selected
-        const singleNodeLabel = page
-          .locator('label')
-          .filter({ hasText: 'Single Node' });
-        await singleNodeLabel.click();
+        // Click the Single Node radio to ensure Single Node mode is selected
+        const singleNodeRadio = page.getByRole('radio', {
+          name: 'Single Node',
+        });
+        await singleNodeRadio.click();
 
-        // Verify the Single Node radio input is checked
-        await expect(
-          singleNodeLabel.locator('input[type="radio"]'),
-        ).toBeChecked();
+        // Verify the Single Node radio is checked
+        await expect(singleNodeRadio).toBeChecked();
 
         // Verify the cluster size spinbutton has value '1'.
         // The cluster-mode items in ResourceAllocationFormItems (FR-2381) render the spinbutton inside the
@@ -279,11 +269,9 @@ test.describe(
       // Navigate to step 2: Environments & Resource Allocation
       await navigateToClusterModeSection(page);
 
-      // Click the Multi Node label
-      const multiNodeLabel = page
-        .locator('label')
-        .filter({ hasText: 'Multi Node' });
-      await multiNodeLabel.click();
+      // Click the Multi Node radio
+      const multiNodeRadio = page.getByRole('radio', { name: 'Multi Node' });
+      await multiNodeRadio.click();
 
       // Set cluster size to 2 via direct input
       const clusterSizeInput = page
@@ -308,11 +296,11 @@ test.describe(
         // Navigate to step 2: Environments & Resource Allocation
         await navigateToClusterModeSection(page);
 
-        // Click the Single Node label
-        const singleNodeLabel = page
-          .locator('label')
-          .filter({ hasText: 'Single Node' });
-        await singleNodeLabel.click();
+        // Click the Single Node radio
+        const singleNodeRadio = page.getByRole('radio', {
+          name: 'Single Node',
+        });
+        await singleNodeRadio.click();
 
         // In Single Node mode, the cluster size control is disabled and has no stepper buttons.
         // The cluster size remains at 1 and cannot be changed in this mode.

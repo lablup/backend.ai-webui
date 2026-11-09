@@ -404,7 +404,8 @@ test.describe(
       ).toHaveAttribute('aria-current', 'true');
 
       const readOnlyAlert = drawer.getByRole('alert').filter({
-        hasText: 'Permissions of a system role cannot be edited here.',
+        hasText:
+          "Roles automatically created from a preset inherit that preset's permissions.",
       });
       await expect(readOnlyAlert).toBeVisible({ timeout: 10000 });
 

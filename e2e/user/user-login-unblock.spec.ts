@@ -91,7 +91,12 @@ async function unblockLoginFromUserList(
 
   // `showInMenu: 'always'` keeps the action in the row's More actions menu.
   await userRow.hover();
-  await userRow.getByRole('button', { name: 'More actions' }).click();
+  // Scope to the email cell: the row also holds a second, hidden "More actions"
+  // button in another cell.
+  await userRow
+    .getByRole('cell', { name: email })
+    .getByRole('button', { name: 'More actions' })
+    .click();
   await page.getByRole('menuitem', { name: 'Unblock login' }).click();
 
   // A menu action's popConfirm falls back to the app-shim modal.confirm.
