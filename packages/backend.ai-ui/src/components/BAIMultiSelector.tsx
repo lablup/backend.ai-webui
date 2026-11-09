@@ -62,11 +62,15 @@ function BAIMultiSelector<
     if (value === undefined) setOwnValue(undefined);
   }
   const selected = (value !== undefined ? value : ownValue) ?? [];
+  const labels = selected.map((item) =>
+    labelOf(options as MultiSelectorOptionType[], item),
+  );
   const [isTextOverflowing, setIsTextOverflowing] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isListOpen, setIsListOpen] = useState(false);
 
-  // A custom trigger's text is unknown, so the tooltip cannot tell what it hides.
-  const hasCustomTrigger = !!formatValue || !!renderTrigger;
+  // Astryx reads formatValue only for the 'labels' trigger; a custom text is unknown.
+  const hasCustomTrigger =
+    !!renderTrigger || (!!formatValue && triggerDisplay === 'labels');
   const visibleCount =
     triggerDisplay === 'count'
       ? 0
@@ -79,7 +83,7 @@ function BAIMultiSelector<
     (selected.length > visibleCount ||
       (triggerDisplay !== 'badges' && isTextOverflowing));
 
-  const selectionKey = selected.join('\n');
+  const labelsKey = labels.join('\n');
   useLayoutEffect(() => {
     if (hasCustomTrigger) return;
     // The trigger's text span: button > content span > text span.
@@ -92,10 +96,10 @@ function BAIMultiSelector<
     const observer = new ResizeObserver(check);
     observer.observe(text);
     return () => observer.disconnect();
-  }, [selectionKey, triggerDisplay, hasCustomTrigger]);
+  }, [labelsKey, triggerDisplay, hasCustomTrigger]);
 
-  // Mounted only while it can show: Tooltip writes aria-describedby on mount.
-  const showsTooltip = isTruncated && !disabled && !isOpen;
+  // Mounted only when truncated: Tooltip writes aria-describedby on mount.
+  const showsTooltip = isTruncated && !disabled;
 
   return (
     <>
@@ -103,14 +107,14 @@ function BAIMultiSelector<
         {...props}
         ref={mergeRefs<HTMLElement>(triggerRef, ref)}
         options={options}
-        value={value}
-        defaultValue={defaultValue}
+        // Always controlled, so the trigger and the tooltip read one selection.
+        value={selected}
         onChange={(next, change) => {
           if (value === undefined) setOwnValue(next);
           onChange?.(next, change);
         }}
         onOpenChange={(open) => {
-          setIsOpen(open);
+          setIsListOpen(open);
           onOpenChange?.(open);
         }}
         triggerDisplay={triggerDisplay}
@@ -122,9 +126,9 @@ function BAIMultiSelector<
       {showsTooltip && (
         <Tooltip
           anchorRef={triggerRef}
-          content={selected
-            .map((item) => labelOf(options as MultiSelectorOptionType[], item))
-            .join(', ')}
+          // Held shut while the listbox is open; stays mounted so a later hover or focus still opens it.
+          isOpen={isListOpen ? false : undefined}
+          content={labels.join(', ')}
         />
       )}
     </>

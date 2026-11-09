@@ -23,7 +23,7 @@ const meta: Meta<typeof BAIMultiSelector> = {
     docs: {
       description: {
         component: `
-**BAIMultiSelector** is ui-common's \`MultiSelector\` promoted to a BUI component (ADR 0014): the same props, plus a tooltip that lists every selected option when the closed trigger shows "+N", "N selected" or cuts the text off.
+**BAIMultiSelector** is ui-common's \`MultiSelector\` promoted to a BUI component (ADR 0014): the same props, plus a tooltip that lists every selected option when the closed trigger shows "+N", "N selected" or cuts the text off. None while disabled or open, or when \`renderTrigger\` (or \`formatValue\` on a \`labels\` trigger) draws the text.
 
 ## Usage
 \`\`\`tsx

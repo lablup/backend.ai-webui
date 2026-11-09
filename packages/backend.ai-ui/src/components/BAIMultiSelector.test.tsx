@@ -114,19 +114,60 @@ describe('BAIMultiSelector selection tooltip', () => {
     );
   });
 
-  it('empties the selection when a set value is cleared', async () => {
+  it('keeps the tooltip for formatValue in badges mode, where Astryx ignores it', async () => {
+    render(
+      <BAIMultiSelector
+        aria-label="Menus"
+        options={OPTIONS}
+        value={ALL}
+        onChange={() => {}}
+        triggerDisplay="badges"
+        maxBadges={2}
+        formatValue={(items) => `${items.length} menus`}
+      />,
+    );
+    await hoverTrigger();
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(
+      'Alpha, Bravo, Charlie, Delta',
+    );
+  });
+
+  it('hides the tooltip while the listbox is open', async () => {
+    const user = userEvent.setup();
+    render(
+      <BAIMultiSelector
+        aria-label="Menus"
+        options={OPTIONS}
+        value={ALL}
+        onChange={() => {}}
+      />,
+    );
+    await user.click(screen.getByRole('combobox'));
+    await screen.findByRole('listbox');
+    await hoverTrigger();
+    expect(screen.queryByRole('tooltip')).toBeNull();
+  });
+
+  it('empties the selection, not the default, when a set value is cleared', async () => {
     const { rerender } = render(
-      <BAIMultiSelector aria-label="Menus" options={OPTIONS} value={ALL} />,
+      <BAIMultiSelector
+        aria-label="Menus"
+        options={OPTIONS}
+        defaultValue={ALL}
+        value={['a']}
+      />,
     );
     rerender(
       <BAIMultiSelector
         aria-label="Menus"
         options={OPTIONS}
+        defaultValue={ALL}
         value={undefined}
       />,
     );
-    expect(screen.getByRole('combobox')).not.toHaveTextContent('+1');
-    await hoverTrigger();
-    expect(screen.queryByRole('tooltip')).toBeNull();
+    expect(screen.getByRole('combobox')).not.toHaveTextContent('Alpha');
+    expect(screen.getByRole('combobox')).not.toHaveAttribute(
+      'aria-describedby',
+    );
   });
 });
