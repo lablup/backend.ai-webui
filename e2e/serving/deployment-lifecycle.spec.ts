@@ -217,7 +217,7 @@ test.describe(
         await expect(page.getByRole('tooltip')).toHaveCount(0);
         await statusTab(page, 'Paused').locator('svg').hover();
         await expect(page.getByRole('tooltip')).toContainText(
-          'Desired Replicas set to 0',
+          'Desired Replicas at 0',
         );
         await page.mouse.move(0, 0);
         await expect(
