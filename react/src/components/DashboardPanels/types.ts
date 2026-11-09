@@ -41,7 +41,7 @@ export type ChartType = (typeof CHART_TYPES)[number];
 export interface PanelChart {
   type: ChartType;
   groupBy?: string;
-  /** A relative range such as `now-24h`, for a line. */
+  /** A line's range, stored like a card's: a preset or a fixed window of at most 7 days. */
   range?: string;
   /** Lists the matching rows under the chart. */
   showTable?: boolean;

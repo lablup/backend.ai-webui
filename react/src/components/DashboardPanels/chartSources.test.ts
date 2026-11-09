@@ -63,6 +63,31 @@ describe('resolveChart', () => {
   });
 });
 
+describe('resolveChart range', () => {
+  it('keeps a fixed window of up to 7 days and drops a longer one', () => {
+    const threeDays = '2026-11-01T00:00:00.000Z/2026-11-04T00:00:00.000Z';
+    const tenDays = '2026-11-01T00:00:00.000Z/2026-11-11T00:00:00.000Z';
+    expect(
+      resolveChart('session', { type: 'line', range: threeDays }).range,
+    ).toBe(threeDays);
+    expect(
+      resolveChart('session', { type: 'line', range: tenDays }).range,
+    ).toBe('now-24h');
+  });
+
+  it('splits a fixed window into at most 8 equal buckets', () => {
+    const range = '2026-11-01T00:00:00.000Z/2026-11-04T00:00:00.000Z';
+    const counts = chartCounts(
+      'deployment',
+      resolveChart('deployment', { type: 'line', range }),
+      new Date('2026-11-09T00:00:00.000Z').getTime(),
+    );
+    expect(counts.length).toBeLessThanOrEqual(MAX_BUCKETS);
+    expect(counts[0].window?.after).toBe('2026-11-01T00:00:00.000Z');
+    expect(counts.at(-1)?.window?.before).toBe('2026-11-04T00:00:00.000Z');
+  });
+});
+
 describe('chartCounts', () => {
   it('offers at most one count alias per group for every source', () => {
     for (const source of RESOURCE_KEYS) {

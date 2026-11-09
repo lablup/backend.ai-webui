@@ -258,6 +258,7 @@ const CHART_QUERIES: Record<ResourceKey, GraphQLTaggedNode> = {
 };
 
 const ALIAS_KEYS = _.range(8).map((index) => `c${index}`);
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 // The bar and line charts keep their axes readable down to this height.
 const CHART_MIN_HEIGHT = 120;
@@ -318,8 +319,8 @@ export const ResourceChartContent: React.FC<{
   const queryScope = useDashboardQueryScope();
   const source = descriptor.resourceType;
   const config = resourceRegistry[source];
-  const chart = resolveChart(source, descriptor.chart);
-  const counts = chartCounts(source, chart, now);
+  const nextChart = resolveChart(source, descriptor.chart);
+  const nextCounts = chartCounts(source, nextChart, now);
 
   const variablesOf = (filter: PanelDescriptor['filter']) =>
     config.buildVariables({
@@ -330,20 +331,26 @@ export const ResourceChartContent: React.FC<{
       ...queryScope,
       resourceGroups: descriptor.resourceGroups,
     });
-  const variables = {
+  const nextVariables = {
     ..._.pick(variablesOf(descriptor.filter), ['scopeId', 'scope']),
     ...countAliasVariables(
       'c',
-      counts.map(
+      nextCounts.map(
         (count) =>
           variablesOf(combineFilters(descriptor.filter, count.filter)).filter ??
           null,
       ),
     ),
   };
-  const deferredVariables = useDeferredValue(variables);
+  // Deferred as one, so the old chart stays whole until the new counts arrive
+  // instead of drawing old counts under new groups or buckets.
+  const { chart, counts, variables } = useDeferredValue({
+    chart: nextChart,
+    counts: nextCounts,
+    variables: nextVariables,
+  });
   const deferredFetchKey = useDeferredValue(fetchKey);
-  const data = useLazyLoadQuery(CHART_QUERIES[source], deferredVariables, {
+  const data = useLazyLoadQuery(CHART_QUERIES[source], variables, {
     fetchPolicy: 'store-and-network',
     fetchKey: deferredFetchKey,
   }) as Record<string, CountAlias>;
@@ -418,8 +425,13 @@ const CountChart: React.FC<{
     fixedHeight ?? Math.floor(measuredHeight),
   );
   const isLine = chart.type === 'line';
-  // A bucket shows its start time; a 7-day range also needs the date.
-  const spansDays = chart.range === 'now-7d';
+  // A bucket shows its start time; a range longer than a day also needs the date.
+  const first = points[0]?.count.window;
+  const last = points[points.length - 1]?.count.window;
+  const spansDays =
+    !!first &&
+    !!last &&
+    new Date(last.before).getTime() - new Date(first.after).getTime() > DAY_MS;
   const data = points.map(({ count, value }, index) => ({
     x: isLine ? index : count.label(t),
     value: value ?? 0,

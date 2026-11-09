@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { getSessionTypeLabel } from '../../helper/sessionTypeLabel';
-import { DEFAULT_RANGE, isRangePreset } from './panelSettings';
+import { DEFAULT_RANGE, isStoredRange } from './panelSettings';
 import {
   MAX_BUCKETS,
   planBuckets,
@@ -195,7 +195,7 @@ const createdWithin = (
     ? `created_at >= ${JSON.stringify(window.after)} & created_at < ${JSON.stringify(window.before)}`
     : withinWindow('createdAt', window);
 
-/** A stored chart made valid for `source`: an unknown type, grouping or range falls back to the first one. */
+/** A stored chart made valid for `source`: an unknown type or grouping falls back to the first one, an unstorable range to the default. */
 export const resolveChart = (
   source: ResourceKey,
   chart: Partial<PanelChart> | null | undefined,
@@ -210,7 +210,8 @@ export const resolveChart = (
   return {
     type,
     groupBy,
-    range: isRangePreset(chart?.range) ? chart!.range : DEFAULT_RANGE,
+    // The cards' range rule: a preset, or a fixed window of at most 7 days.
+    range: isStoredRange(chart?.range) ? chart!.range : DEFAULT_RANGE,
     showTable: chart?.showTable === true,
   };
 };

@@ -8,6 +8,7 @@ import {
   type SessionGridViewParams,
 } from '../../helper/sessionResourceGridData';
 import { DeploymentNodesPanelContent } from './DeploymentNodesPanel';
+import PanelRangeSelect from './PanelRangeSelect';
 import { ResourceChartContent } from './ResourceChartPanel';
 import { ResourceCountContent } from './ResourceCountPanel';
 import { ResourceTableContent } from './ResourceTablePanel';
@@ -16,7 +17,6 @@ import { SessionResourceGridContent } from './SessionResourceGridPanel';
 import { CHART_GROUPINGS, resolveChart } from './chartSources';
 import { PanelPermissionBoundary } from './panelPermission';
 import { availablePanelTypes, panelTypeLabelKeys } from './panelRegistry';
-import { RANGE_LABEL_KEYS, RANGE_PRESETS } from './panelSettings';
 import { resourceRegistry } from './resourceRegistry';
 import {
   CHART_TYPES,
@@ -174,6 +174,42 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
     onRequestClose();
   };
 
+  // The table the Table kind previews, and a chart lists under it with Show table on.
+  const tablePreview =
+    config.kind === 'deploymentNodes' ? (
+      <DeploymentNodesPanelContent
+        key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
+        descriptor={{
+          resourceType,
+          filter: filter ?? null,
+          order,
+        }}
+        onChangeOrder={(next) => setOrder(next ?? null)}
+        disableNavigation
+      />
+    ) : config.kind === 'sessionNodes' ? (
+      <SessionNodesPanelContent
+        key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
+        descriptor={{
+          resourceType,
+          filter: filter ?? null,
+          order,
+        }}
+        onChangeOrder={(next) => setOrder(next ?? null)}
+        disableSessionDetail
+      />
+    ) : (
+      <ResourceTableContent
+        key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
+        descriptor={{
+          resourceType,
+          filter: filter ?? null,
+          order,
+        }}
+        onChangeOrder={(next) => setOrder(next ?? null)}
+      />
+    );
+
   return (
     <BAIModal
       open={open}
@@ -311,13 +347,8 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
                 extra={t('dashboard.panelModal.CreatedOverTimeDescription')}
                 style={{ flex: 1, minWidth: 180 }}
               >
-                <BAISelect
-                  showSearch={false}
+                <PanelRangeSelect
                   aria-label={t('dashboard.settings.TimeRange')}
-                  options={RANGE_PRESETS.map((range) => ({
-                    value: range,
-                    label: t(RANGE_LABEL_KEYS[range]),
-                  }))}
                 />
               </Form.Item>
             ) : (
@@ -384,21 +415,25 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
               <PanelPermissionBoundary>
                 <Suspense fallback={<BAISkeleton />}>
                   {panelType === 'resourceChart' ? (
-                    <BAIFlex
-                      direction="column"
-                      align="stretch"
-                      style={{ height: 240 }}
-                    >
-                      <ResourceChartContent
-                        key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
-                        descriptor={{
-                          resourceType,
-                          filter: filter ?? null,
-                          order,
-                          chart: { ...chart, showTable: false },
-                        }}
-                        now={previewNow}
-                      />
+                    <BAIFlex direction="column" align="stretch" gap="md">
+                      {/* With the table on, the chart keeps its own fixed height. */}
+                      <BAIFlex
+                        direction="column"
+                        align="stretch"
+                        style={chart.showTable ? undefined : { height: 240 }}
+                      >
+                        <ResourceChartContent
+                          key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
+                          descriptor={{
+                            resourceType,
+                            filter: filter ?? null,
+                            order,
+                            chart,
+                          }}
+                          now={previewNow}
+                        />
+                      </BAIFlex>
+                      {chart.showTable ? tablePreview : null}
                     </BAIFlex>
                   ) : panelType === 'resourceCount' ? (
                     <BAIFlex align="center" justify="center">
@@ -427,38 +462,8 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
                       onChangeViewParams={setGridView}
                       disableSessionDetail
                     />
-                  ) : config.kind === 'deploymentNodes' ? (
-                    <DeploymentNodesPanelContent
-                      key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
-                      descriptor={{
-                        resourceType,
-                        filter: filter ?? null,
-                        order,
-                      }}
-                      onChangeOrder={(next) => setOrder(next ?? null)}
-                      disableNavigation
-                    />
-                  ) : config.kind === 'sessionNodes' ? (
-                    <SessionNodesPanelContent
-                      key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
-                      descriptor={{
-                        resourceType,
-                        filter: filter ?? null,
-                        order,
-                      }}
-                      onChangeOrder={(next) => setOrder(next ?? null)}
-                      disableSessionDetail
-                    />
                   ) : (
-                    <ResourceTableContent
-                      key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
-                      descriptor={{
-                        resourceType,
-                        filter: filter ?? null,
-                        order,
-                      }}
-                      onChangeOrder={(next) => setOrder(next ?? null)}
-                    />
+                    tablePreview
                   )}
                 </Suspense>
               </PanelPermissionBoundary>
