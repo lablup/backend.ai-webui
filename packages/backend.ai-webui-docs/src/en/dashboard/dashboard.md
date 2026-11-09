@@ -12,8 +12,7 @@ your sessions, resource usage and recent activity in the current project.
 
 The **Get started** cards are **Start Interactive Session**, **Start Batch
 Session**, **Create New Storage Folder**, **Start Deployment** and **Start From
-URL**. For the sources you can import with **Start From URL**, refer to the
-[Start from URL](#start-from-url) section.
+URL**.
 
 The remaining cards are:
 
