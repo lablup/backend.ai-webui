@@ -519,7 +519,7 @@ const CountChart: React.FC<{
     x: isTime ? index : count.label(t),
     value: value ?? 0,
     // A denied count reads "-", as the donut and the other cards show it.
-    countText: countText(value),
+    countText: value === null ? countText(value) : value.toLocaleString(),
     zero: 0,
     tooltip:
       isTime && count.window ? formatBucketSpan(count.window) : count.label(t),
