@@ -28,11 +28,13 @@ import { toDonutRows } from './memberCards/memberCardData';
 import { resolvePanelTitle, resourceRegistry } from './resourceRegistry';
 import {
   isTimeChartType,
+  type ChartType,
   type PanelChart,
   type PanelDescriptor,
   type ResourceKey,
 } from './types';
 import { useDashboardQueryScope } from './useDashboardFilters';
+import { SkeletonChart } from '@lablup/ui-common';
 import { Text } from '@lablup/ui-common/Text';
 import {
   Chart,
@@ -48,7 +50,7 @@ import {
   useChartColors,
 } from '@lablup/ui-common/lab';
 import useResizeObserver from '@react-hook/resize-observer';
-import { BAIFlex, BAISkeleton } from 'backend.ai-ui';
+import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import React, { Suspense, useDeferredValue, useRef, useState } from 'react';
@@ -273,6 +275,20 @@ const CHART_QUERIES: Record<ResourceKey, GraphQLTaggedNode> = {
 const ALIAS_KEYS = _.range(8).map((index) => `c${index}`);
 const DAY_MS = 24 * 60 * 60 * 1000;
 
+/** The skeleton shape of each chart type while its counts load. */
+export const SKELETON_VARIANTS: Record<
+  ChartType,
+  'bar' | 'line' | 'pie' | 'area'
+> = {
+  donut: 'pie',
+  pie: 'pie',
+  radar: 'pie',
+  bar: 'bar',
+  column: 'bar',
+  line: 'line',
+  area: 'area',
+};
+
 // The bar and line charts keep their axes readable down to this height.
 const CHART_MIN_HEIGHT = 120;
 // The chart's share of the panel when the table is listed under it.
@@ -311,7 +327,14 @@ const ResourceChartPanel: React.FC<ResourceTablePanelProps> = ({
       onEdit={onEdit}
       onRemove={onRemove}
     >
-      <Suspense fallback={<BAISkeleton />}>
+      <Suspense
+        fallback={
+          <SkeletonChart
+            variant={SKELETON_VARIANTS[chart.type]}
+            height="200px"
+          />
+        }
+      >
         <ResourceChartContent
           key={`${descriptor.resourceType}:${JSON.stringify(descriptor.filter ?? null)}`}
           descriptor={descriptor}
@@ -367,13 +390,17 @@ export const ResourceChartContent: React.FC<{
   };
   // Deferred as one, so the old chart stays whole until the new counts arrive
   // instead of drawing old counts under new groups or buckets.
-  const { chart, counts, variables, window } = useDeferredValue({
+  const requestKey = JSON.stringify([nextChart, nextVariables]);
+  const { chart, counts, variables, window, shownKey } = useDeferredValue({
     chart: nextChart,
     counts: nextCounts,
     variables: nextVariables,
     window: chartWindow(nextChart, descriptor.range, now),
+    shownKey: requestKey,
   });
   const deferredFetchKey = useDeferredValue(fetchKey);
+  // A refresh updates in the background; a new chart shape shows a skeleton until its counts arrive.
+  const isSwitching = shownKey !== requestKey;
   const data = useLazyLoadQuery(CHART_QUERIES[source], variables, {
     fetchPolicy: 'store-and-network',
     fetchKey: deferredFetchKey,
@@ -433,18 +460,34 @@ export const ResourceChartContent: React.FC<{
       />
     );
   // A chart that counts within a period names it, like every period card (ADR 0027).
-  return window ? (
+  return (
     <BAIFlex
       direction="column"
       align="stretch"
       gap="xs"
+      aria-busy={isSwitching}
       style={fixedHeight ? undefined : { flex: 1, minHeight: 0 }}
     >
-      <PeriodCaption window={window} />
-      {chartBody}
+      {window && !isSwitching ? <PeriodCaption window={window} /> : null}
+      {isSwitching ? (
+        <BAIFlex
+          direction="column"
+          align="stretch"
+          style={
+            fixedHeight
+              ? { height: fixedHeight, flex: 'none' }
+              : { flex: 1, minHeight: CHART_MIN_HEIGHT }
+          }
+        >
+          <SkeletonChart
+            variant={SKELETON_VARIANTS[nextChart.type]}
+            height="100%"
+          />
+        </BAIFlex>
+      ) : (
+        chartBody
+      )}
     </BAIFlex>
-  ) : (
-    chartBody
   );
 };
 

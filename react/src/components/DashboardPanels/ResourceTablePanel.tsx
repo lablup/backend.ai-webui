@@ -128,7 +128,9 @@ export const ResourceTableContent: React.FC<{
   descriptor: PanelDescriptor;
   fetchKey?: string;
   onChangeOrder?: (nextOrder?: string) => void;
-}> = ({ descriptor, fetchKey, onChangeOrder }) => {
+  /** Turns row links off, as in the panel modal's preview. */
+  disableNavigation?: boolean;
+}> = ({ descriptor, fetchKey, onChangeOrder, disableNavigation }) => {
   'use memo';
   const { t } = useTranslation();
   const queryScope = useDashboardQueryScope();
@@ -164,7 +166,7 @@ export const ResourceTableContent: React.FC<{
   const isLoading =
     deferredVariables !== variables || deferredFetchKey !== fetchKey;
 
-  const columns = config.getColumns?.(t) ?? [];
+  const columns = config.getColumns?.(t, { disableNavigation }) ?? [];
   return (
     <BAITable
       rowKey="id"

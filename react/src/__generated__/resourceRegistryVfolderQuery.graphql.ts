@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bc958a7a047fdc872bf0304b642e4ffc>>
+ * @generated SignedSource<<da55f402d0808bf5589e9d94e08d124f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -113,6 +113,7 @@ export type resourceRegistryVfolderQuery$data = {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly entityId: string;
         readonly host: string;
         readonly id: string;
         readonly metadata: {
@@ -224,6 +225,13 @@ v5 = {
               "alias": null,
               "args": null,
               "kind": "ScalarField",
+              "name": "entityId",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
               "name": "host",
               "storageKey": null
             },
@@ -313,16 +321,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3ccdd2aea81f152b2c8c52ac225cbd2c",
+    "cacheID": "12f8c24d56ae53cd76f9cbbd48e36616",
     "id": null,
     "metadata": {},
     "name": "resourceRegistryVfolderQuery",
     "operationKind": "query",
-    "text": "query resourceRegistryVfolderQuery(\n  $scope: VFolderScope!\n  $filter: VFolderFilter\n  $orderBy: [VFolderOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  scopedVFoldersV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        host\n        status\n        metadata {\n          name\n          usageMode\n          createdAt\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query resourceRegistryVfolderQuery(\n  $scope: VFolderScope!\n  $filter: VFolderFilter\n  $orderBy: [VFolderOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  scopedVFoldersV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        host\n        status\n        metadata {\n          name\n          usageMode\n          createdAt\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "019620bd2d8cc4cf201f459ad98c2bcc";
+(node as any).hash = "6366b6420abca417cecdc2d2b4ffaa15";
 
 export default node;

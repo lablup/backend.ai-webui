@@ -366,8 +366,11 @@ export interface ResourceConfig<
   ) => ReadonlyArray<BAIGraphQLFilterProperty>;
   /** Properties for `BAIPropertyFilter` (string filter), `kind: 'sessionNodes'`. */
   getStringFilterProperties?: (t: TFunction) => Array<FilterProperty>;
-  /** Columns for the generic table (unused for `kind: 'sessionNodes'`). */
-  getColumns?: (t: TFunction) => BAIColumnsType<TNode>;
+  /** Columns for the generic table (unused for `kind: 'sessionNodes'`); `disableNavigation` turns row links off, as in the modal preview. */
+  getColumns?: (
+    t: TFunction,
+    options?: { disableNavigation?: boolean },
+  ) => BAIColumnsType<TNode>;
   buildVariables: (args: ResourceQueryArgs) => TQuery['variables'];
   selectConnection: (
     data: TQuery['response'],

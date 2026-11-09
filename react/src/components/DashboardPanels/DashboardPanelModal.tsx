@@ -8,8 +8,8 @@ import {
   type SessionGridViewParams,
 } from '../../helper/sessionResourceGridData';
 import { DeploymentNodesPanelContent } from './DeploymentNodesPanel';
-import PanelRangeSelect from './PanelRangeSelect';
-import { ResourceChartContent } from './ResourceChartPanel';
+import PanelRangeSelect, { NO_PERIOD } from './PanelRangeSelect';
+import { ResourceChartContent, SKELETON_VARIANTS } from './ResourceChartPanel';
 import { ResourceCountContent } from './ResourceCountPanel';
 import { ResourceTableContent } from './ResourceTablePanel';
 import { SessionNodesPanelContent } from './SessionNodesPanel';
@@ -36,6 +36,8 @@ import {
   type PersistedPanel,
   type ResourceKey,
 } from './types';
+import { SkeletonChart } from '@lablup/ui-common';
+import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAISegmentedControl,
@@ -84,9 +86,8 @@ interface PanelFormValues {
   filter?: GraphQLFilter | string | null;
   chartType: ChartType;
   groupBy?: string;
-  period?: boolean;
+  /** A range, or {@link NO_PERIOD} for a group chart that counts every row. */
   range?: string;
-  showTable?: boolean;
 }
 
 const CHART_TYPE_LABELS: Record<
@@ -154,16 +155,19 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
     initialResource,
     initialPanel?.descriptor.chart,
   );
+  const initialRange = chartUsesPeriod(initialChart)
+    ? (initialPanel?.descriptor.range ?? DEFAULT_RANGE)
+    : NO_PERIOD;
+  const rangeValue: string = Form.useWatch('range', form) ?? initialRange;
+  // Not a typed field: it shapes the preview below the form, as `order` does.
+  const [showTable, setShowTable] = useState(initialChart.showTable === true);
   const chart = resolveChart(resourceType, {
     type: Form.useWatch('chartType', form) ?? initialChart.type,
     groupBy: Form.useWatch('groupBy', form) ?? initialChart.groupBy,
-    period: Form.useWatch('period', form) ?? initialChart.period,
-    showTable: Form.useWatch('showTable', form) ?? initialChart.showTable,
+    period: rangeValue !== NO_PERIOD,
+    showTable,
   });
-  const range =
-    Form.useWatch('range', form) ??
-    initialPanel?.descriptor.range ??
-    DEFAULT_RANGE;
+  const range = rangeValue === NO_PERIOD ? undefined : rangeValue;
   const chartTypeOptions = chartTypesFor(resourceType, chart.groupBy);
   const chartTypeOption = (type: ChartType) => ({
     value: type,
@@ -210,11 +214,11 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
           ? resolveChart(values.resourceType, {
               type: values.chartType,
               groupBy: values.groupBy,
-              period: values.period,
-              showTable: values.showTable,
+              period: values.range !== NO_PERIOD,
+              showTable,
             })
           : null,
-      range: values.range,
+      range: values.range === NO_PERIOD ? undefined : values.range,
     });
     onRequestClose();
   };
@@ -252,6 +256,7 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
           order,
         }}
         onChangeOrder={(next) => setOrder(next ?? null)}
+        disableNavigation
       />
     );
 
@@ -279,9 +284,7 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
           filter: initialPanel?.descriptor.filter ?? undefined,
           chartType: initialChart.type,
           groupBy: initialChart.groupBy,
-          period: initialChart.period,
-          range: initialPanel?.descriptor.range ?? DEFAULT_RANGE,
-          showTable: initialChart.showTable,
+          range: initialRange,
         }}
         onValuesChange={(changed: Partial<PanelFormValues>) => {
           // A resource switch invalidates the condition and sort of the old one,
@@ -310,6 +313,10 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
           });
           if (values.chartType && valid.type !== values.chartType) {
             form.setFieldsValue({ chartType: valid.type });
+          }
+          // A time chart always has a period.
+          if (isTimeChartType(valid.type) && values.range === NO_PERIOD) {
+            form.setFieldsValue({ range: DEFAULT_RANGE });
           }
           // Switching only the kind keeps the condition and sort: the session
           // table and grid read the same minilang filter and order strings.
@@ -384,6 +391,7 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
             >
               <BAISelect
                 showSearch={false}
+                data-testid="dashboard-chart-type"
                 aria-label={t('dashboard.panelModal.ChartType')}
                 options={[
                   {
@@ -416,43 +424,26 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
                 />
               </Form.Item>
             )}
-            {isTimeChartType(chart.type) ? null : (
-              <Form.Item
-                name="period"
-                required
-                label={t('dashboard.panelModal.CountWithinPeriod')}
-                tooltip={t('dashboard.panelModal.CountWithinPeriodDescription')}
-                style={{ flexShrink: 0 }}
-              >
-                <BAISwitch
-                  aria-label={t('dashboard.panelModal.CountWithinPeriod')}
-                />
-              </Form.Item>
-            )}
-            {chartUsesPeriod(chart) ? (
-              <Form.Item
-                name="range"
-                required
-                label={t('dashboard.settings.DefaultTimeRange')}
-                extra={
-                  isTimeChartType(chart.type)
-                    ? t('dashboard.panelModal.CreatedOverTimeDescription')
-                    : undefined
-                }
-                style={{ flex: 1, minWidth: 180 }}
-              >
-                <PanelRangeSelect
-                  aria-label={t('dashboard.settings.DefaultTimeRange')}
-                />
-              </Form.Item>
-            ) : null}
             <Form.Item
-              name="showTable"
+              name="range"
               required
-              label={t('dashboard.panelModal.ShowTable')}
-              style={{ flexShrink: 0 }}
+              label={t('dashboard.settings.DefaultTimeRange')}
+              tooltip={
+                isTimeChartType(chart.type)
+                  ? t('dashboard.panelModal.CreatedOverTimeDescription')
+                  : t('dashboard.panelModal.CountWithinPeriodDescription')
+              }
+              style={{ flex: 1, minWidth: 180 }}
             >
-              <BAISwitch aria-label={t('dashboard.panelModal.ShowTable')} />
+              <PanelRangeSelect
+                aria-label={t('dashboard.settings.DefaultTimeRange')}
+                maxDays={0}
+                noPeriodLabel={
+                  isTimeChartType(chart.type)
+                    ? undefined
+                    : t('dashboard.panelModal.NoPeriod')
+                }
+              />
             </Form.Item>
           </BAIFlex>
         ) : null}
@@ -472,6 +463,17 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
         </Form.Item>
       </Form>
       <BAIFlex direction="column" align="stretch" gap="xs">
+        {panelType === 'resourceChart' ? (
+          <BAIFlex justify="end" align="center" gap="xs">
+            <Text size="sm">{t('dashboard.panelModal.ShowTable')}</Text>
+            <BAISwitch
+              size="sm"
+              value={showTable}
+              onChange={(checked) => setShowTable(checked)}
+              aria-label={t('dashboard.panelModal.ShowTable')}
+            />
+          </BAIFlex>
+        ) : null}
         <div
           style={{
             border: `1px solid ${token('--color-border')}`,
@@ -500,17 +502,26 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
                         align="stretch"
                         style={chart.showTable ? undefined : { height: 240 }}
                       >
-                        <ResourceChartContent
-                          key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
-                          descriptor={{
-                            resourceType,
-                            filter: filter ?? null,
-                            order,
-                            chart,
-                            range,
-                          }}
-                          now={previewNow}
-                        />
+                        <Suspense
+                          fallback={
+                            <SkeletonChart
+                              variant={SKELETON_VARIANTS[chart.type]}
+                              height="100%"
+                            />
+                          }
+                        >
+                          <ResourceChartContent
+                            key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
+                            descriptor={{
+                              resourceType,
+                              filter: filter ?? null,
+                              order,
+                              chart,
+                              range,
+                            }}
+                            now={previewNow}
+                          />
+                        </Suspense>
                       </BAIFlex>
                       {chart.showTable
                         ? renderTablePreview(
