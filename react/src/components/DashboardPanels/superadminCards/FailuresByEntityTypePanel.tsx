@@ -16,7 +16,6 @@ import {
 } from '../cards/AuditLogPanel';
 import ScopedCard from '../cards/ScopedCard';
 import DonutChart from '../charts/DonutChart';
-import PeriodCaption from '../charts/PeriodCaption';
 import { readCounts } from '../countAliases';
 import { toDonutRows } from '../memberCards/memberCardData';
 import { projectAuditScope } from '../projectAdminCards/projectCardData';
@@ -171,7 +170,6 @@ const EntityTypeFailures: React.FC<{
   ]);
   return (
     <BAIFlex direction="column" align="stretch" gap="xs" style={{ flex: 1 }}>
-      <PeriodCaption window={deferred.timeRange} />
       <DonutChart
         label={t('dashboard.card.FailuresByEntityType')}
         emptyText={t('dashboard.card.NoFailures')}
