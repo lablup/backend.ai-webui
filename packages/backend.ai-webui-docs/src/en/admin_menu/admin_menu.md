@@ -12,6 +12,16 @@ Superadmins land on the administration pages right after logging in, and move be
 
 
 
+<a id="admin-dashboard"></a>
+
+## Dashboard
+
+Superadmins have a **Dashboard** entry in the administration sidebar, showing a board of system-wide cards: **Session Status**, **Pending Sessions and Reasons**, **Agents**, **Agent Statistics**, **Failures by Entity Type**, **Audit Log**, and **Total Resources in Resource Group**. More cards, such as **Scheduling Failures**, **Resource Policies**, **Failed sign-ins**, and **Container Registries**, can be added from the edit sidebar.
+
+Boards, card settings, and the refresh control work the same way as on the user [Dashboard](#dashboard).
+
+![](../images/admin_dashboard.png)
+
 <a id="create-and-update-users"></a>
 
 ## Browse and manage users
