@@ -88,6 +88,13 @@ export const docs = {
         'Whether the trigger takes keyboard focus. Set it to `false` for an icon nested inside another interactive element.',
     },
     {
+      name: 'announceAs',
+      type: "'none' | 'name' | 'description'",
+      description:
+        "Where a `focusable={false}` trigger's text reaches assistive tech: `'description'` wires it into the enclosing control's `aria-describedby`, `'name'` adds it to that control's name, `'none'` keeps it hover-only. No effect on a focusable trigger.",
+      default: "'description'",
+    },
+    {
       name: 'style',
       type: 'CSSProperties',
       description: 'Inline style applied to the trigger element.',

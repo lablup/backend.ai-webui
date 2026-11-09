@@ -57,14 +57,21 @@ export const docs = {
       name: 'content',
       type: 'ReactNode',
       description:
-        'Tooltip body, inherited from Astryx TooltipProps. Its flattened text also becomes the trigger accessible name.',
+        'Tooltip body, inherited from Astryx TooltipProps. On a focusable trigger its flattened text also becomes the trigger accessible name; on a non-focusable one `announceAs` decides where it goes.',
     },
     {
       name: 'focusable',
       type: 'boolean',
       description:
-        'Whether the trigger is a real button. Set it to false inside another interactive element, which downgrades the trigger to a hover-only span.',
+        'Whether the trigger is a real button. Set it to false inside another interactive element, which downgrades the trigger to a hover-only span hidden from assistive tech.',
       default: 'true',
+    },
+    {
+      name: 'announceAs',
+      type: "'none' | 'name' | 'description'",
+      description:
+        "Where a `focusable={false}` trigger's text reaches assistive tech: `'description'` wires it into the enclosing control's `aria-describedby` (a help hint), `'name'` adds it to that control's name (an icon that carries information, such as a role mark), `'none'` keeps it hover-only. No effect on a focusable trigger.",
+      default: "'none'",
     },
     {
       name: 'style',

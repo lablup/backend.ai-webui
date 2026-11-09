@@ -30,7 +30,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Mark decorative label extras non-focusable (for example BAIQuestionIconWithTooltip with focusable={false}) so tabbing still moves segment to segment.',
+          "Mark label extras non-focusable (for example BAIQuestionIconWithTooltip with focusable={false}) so tabbing still moves segment to segment. Its help text then becomes the segment's accessible description, not part of its name.",
       },
       {
         guidance: false,

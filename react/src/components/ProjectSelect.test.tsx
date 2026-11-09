@@ -10,11 +10,14 @@ import '../../__test__/matchMedia.mock.js';
 import '../../__test__/resizeObserver.mock.js';
 import ProjectSelect from './ProjectSelect';
 import '@testing-library/jest-dom';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
-const captured = vi.hoisted(() => ({ options: undefined as unknown }));
+const captured = vi.hoisted(() => ({
+  options: undefined as unknown,
+  projectAdminIds: [] as Array<string>,
+}));
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -26,7 +29,9 @@ vi.mock('react-i18next', () => ({
 }));
 
 vi.mock('../hooks/useCurrentUserProjectRoles', () => ({
-  useCurrentUserProjectRoles: () => ({ projectAdminIds: [] }),
+  useCurrentUserProjectRoles: () => ({
+    projectAdminIds: captured.projectAdminIds,
+  }),
 }));
 
 const groups = [
@@ -171,5 +176,23 @@ describe('ProjectSelect personalProject', () => {
     expect(
       options.filter((option) => option.value === 'project-general'),
     ).toHaveLength(1);
+  });
+});
+
+describe('ProjectSelect project admin mark', () => {
+  it('keeps "Project Admin" in the admin project option\'s name', () => {
+    captured.projectAdminIds = ['project-general'];
+    try {
+      renderSelect({ value: ['project-general'] });
+      const general = readGroups()[0].options[0];
+      render(<div role="option">{general.label}</div>);
+      expect(
+        screen.getByRole('option', {
+          name: 'coredev projectSelect.ProjectAdminBadge',
+        }),
+      ).toBeInTheDocument();
+    } finally {
+      captured.projectAdminIds = [];
+    }
   });
 });

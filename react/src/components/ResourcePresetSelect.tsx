@@ -265,6 +265,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
           <BAIIconWithTooltip
             content={t('session.launcher.MiniumAllocationTooltip')}
             focusable={false}
+            announceAs="description"
             icon={
               <Info
                 style={{ color: token('--color-text-secondary') }}

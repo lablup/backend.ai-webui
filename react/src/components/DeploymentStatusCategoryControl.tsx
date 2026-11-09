@@ -51,11 +51,7 @@ const renderTabLabel = (label: string, help: string) => (
   <BAIFlex gap="xxs" align="center">
     {label}
     {/* Not focusable: the trigger sits inside the segment's own button. */}
-    <BAIQuestionIconWithTooltip
-      title={help}
-      focusable={false}
-      announceAs="description"
-    />
+    <BAIQuestionIconWithTooltip title={help} focusable={false} />
   </BAIFlex>
 );
 
