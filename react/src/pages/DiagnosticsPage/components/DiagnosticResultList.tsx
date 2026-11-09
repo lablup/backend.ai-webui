@@ -2,11 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
-  findWebUISettingDefinition,
-  webuiSettingGroupLabelKey,
-  webuiSettingLabelKey,
-} from '../../../helper/webuiSettings';
+import { diagnosticText } from '../../../diagnostics/diagnosticText';
 import { useWebUINavigate } from '../../../hooks';
 import type { DiagnosticResult } from '../../../types/diagnostics';
 import { Banner } from '@lablup/ui-common/Banner';
@@ -41,20 +37,6 @@ const DiagnosticResultList: React.FC<DiagnosticResultListProps> = ({
   const { token } = useTheme();
   const navigate = useWebUINavigate();
 
-  // `{{setting}}` / `{{group}}` are the row title and group on System Settings.
-  const valuesOf = (result: DiagnosticResult) => {
-    const definition = result.settingKey
-      ? findWebUISettingDefinition(result.settingKey)
-      : undefined;
-    return definition
-      ? {
-          ...result.interpolationValues,
-          setting: t(webuiSettingLabelKey(definition.key)),
-          group: t(webuiSettingGroupLabelKey(definition.group)),
-        }
-      : result.interpolationValues;
-  };
-
   if (loading) {
     return <BAISkeleton rows={2} />;
   }
@@ -68,14 +50,14 @@ const DiagnosticResultList: React.FC<DiagnosticResultListProps> = ({
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
       {issues.map((result) => {
-        const values = valuesOf(result);
+        const text = diagnosticText(result, t);
         return (
           <Banner
             key={result.id}
             data-testid={`diagnostic-${result.id}`}
             status={severityToBannerStatus[result.severity]}
             role={bannerLiveRole(severityToBannerStatus[result.severity])}
-            title={t(result.titleKey, values)}
+            title={text.title}
             endContent={
               result.settingKey || result.linksSystemSettings ? (
                 <Button
@@ -89,16 +71,16 @@ const DiagnosticResultList: React.FC<DiagnosticResultListProps> = ({
             }
             description={
               <BAIFlex align="start" direction="column" gap="xxs">
-                <span>{t(result.descriptionKey, values)}</span>
+                <span>{text.description}</span>
                 {result.interpolationValues?.errorMessage && (
                   // The `<pre>` keeps the parse error's line breaks.
                   <Text as="p" display="block">
                     <pre>{result.interpolationValues.errorMessage}</pre>
                   </Text>
                 )}
-                {result.remediationKey && (
+                {text.remediation && (
                   <span style={{ fontStyle: 'italic' }}>
-                    {t(result.remediationKey, values)}
+                    {text.remediation}
                   </span>
                 )}
               </BAIFlex>
@@ -106,19 +88,22 @@ const DiagnosticResultList: React.FC<DiagnosticResultListProps> = ({
           />
         );
       })}
-      {passed.map((result) => (
-        <BAIFlex key={result.id} gap="xs" align="center">
-          <CheckCircle
-            size={token('--font-size-sm')}
-            style={{ color: token('--color-success'), flexShrink: 0 }}
-          />
-          <Text color="secondary">
-            {t(result.titleKey, valuesOf(result))}
-            {' — '}
-            {t(result.descriptionKey, valuesOf(result))}
-          </Text>
-        </BAIFlex>
-      ))}
+      {passed.map((result) => {
+        const text = diagnosticText(result, t);
+        return (
+          <BAIFlex key={result.id} gap="xs" align="center">
+            <CheckCircle
+              size={token('--font-size-sm')}
+              style={{ color: token('--color-success'), flexShrink: 0 }}
+            />
+            <Text color="secondary">
+              {text.title}
+              {' — '}
+              {text.description}
+            </Text>
+          </BAIFlex>
+        );
+      })}
     </BAIFlex>
   );
 };

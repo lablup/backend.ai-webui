@@ -217,7 +217,13 @@ function settingsDiagnostics(
     descriptionKey: 'diagnostics.ImageReferencesPassedDesc',
   });
 
-  results.push(...checkSettingMenuKeys(state, VALID_MENU_KEYS));
+  // `useWebUIMenuItems` drops `system-settings` from both lists, so it hides nothing.
+  results.push(
+    ...checkSettingMenuKeys(
+      state,
+      _.without(VALID_MENU_KEYS, 'system-settings'),
+    ),
+  );
 
   const pluginIssues = checkPluginConfiguration(
     state.pluginPages,

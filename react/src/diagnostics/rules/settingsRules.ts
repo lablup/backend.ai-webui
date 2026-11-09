@@ -276,9 +276,10 @@ const fileValueAsSetting = (key: string, raw: unknown): unknown => {
   if (!definition) return undefined;
   switch (definition.type) {
     case 'boolean':
-      return typeof raw === 'boolean' ? raw : raw === 'true' ? true : raw;
+      if (typeof raw === 'boolean') return raw;
+      return raw === 'true' ? true : raw === 'false' ? false : raw;
     case 'number':
-      return raw === '' ? undefined : Number(raw);
+      return Number(raw);
     case 'string':
       return typeof raw === 'string' ? raw : String(raw);
     case 'stringList': {
@@ -315,14 +316,19 @@ export function findIgnoredConfigTomlKeys(
         RENAMED_CONFIG_TOML_KEYS[path] ??
         (SETTING_KEYS.has(key) && !fileOnly.includes(key) ? key : undefined);
       if (!settingKey) continue;
-      const unset =
-        raw === undefined || raw === null || raw === '' || isPlaceholder(raw);
-      const inEffect =
-        unset ||
-        _.isEqual(
-          fileValueAsSetting(settingKey, raw),
-          settingValue(state, settingKey),
-        );
+      // An empty or placeholder value sets nothing, so there is nothing to report.
+      if (
+        raw === undefined ||
+        raw === null ||
+        raw === '' ||
+        isPlaceholder(raw)
+      ) {
+        continue;
+      }
+      const inEffect = _.isEqual(
+        fileValueAsSetting(settingKey, raw),
+        settingValue(state, settingKey),
+      );
       found.push({ path, settingKey, inEffect });
     }
   }

@@ -256,11 +256,11 @@ describe('findIgnoredConfigTomlKeys', () => {
   it('maps the renamed keys of ADR 0028', () => {
     const found = findIgnoredConfigTomlKeys(
       {
-        menu: { blocklist: 'data, session', inactivelist: '' },
+        menu: { blocklist: 'data, session', inactivelist: 'dashboard' },
         plugin: { login: 'signup', page: 'a,b' },
         pipeline: { frontendEndpoint: 'https://ft.example.com' },
       },
-      state({ blockList: ['data', 'session'] }),
+      state({ blockList: ['data', 'session'], inactiveList: ['dashboard'] }),
     );
     expect(found).toEqual([
       { path: 'menu.blocklist', settingKey: 'menuBlocklist', inEffect: true },
@@ -282,29 +282,35 @@ describe('findIgnoredConfigTomlKeys', () => {
   it('compares the file value with the effective value in the setting shape', () => {
     const found = findIgnoredConfigTomlKeys(
       {
-        general: { autoLogout: 'true', maxCountForPreopenPorts: '10' },
+        general: {
+          autoLogout: 'true',
+          debug: 'false',
+          maxCountForPreopenPorts: '10',
+        },
         resources: { maxCPUCoresPerContainer: 256 },
       },
       state({ autoLogout: true }),
     );
     expect(_.map(found, (k) => [k.settingKey, k.inEffect])).toEqual([
       ['autoLogout', true],
+      ['debug', true],
       ['maxCountForPreopenPorts', true],
       ['maxCPUCoresPerContainer', false],
     ]);
   });
 
-  it('treats an empty or placeholder value as in effect', () => {
+  it('leaves out an empty or placeholder value, which sets nothing', () => {
     const found = findIgnoredConfigTomlKeys(
       {
         general: {
           defaultSessionEnvironment: '[Default session kernel]',
           appDownloadUrl: '',
+          systemSSHImage: '',
         },
       },
-      state(),
+      state({ systemSSHImage: 'cr.example/ssh:1' }),
     );
-    expect(found.every((k) => k.inEffect)).toBe(true);
+    expect(found).toEqual([]);
   });
 });
 
