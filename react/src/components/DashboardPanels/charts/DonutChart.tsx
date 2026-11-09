@@ -130,6 +130,8 @@ export interface DonutChartProps {
   total?: number | string | null;
   /** Makes each legend row a button that reports its row's key. */
   onRowClick?: (key: string) => void;
+  /** Draws a full pie: no hole, so no total in the centre. */
+  isPie?: boolean;
 }
 
 /** The rows' sum, "-" when a row's count was denied; an explicit `total` wins. */
@@ -156,8 +158,10 @@ const DonutChart: React.FC<DonutChartProps> = ({
   emptyText,
   total,
   onRowClick,
+  isPie = false,
 }) => {
   'use memo';
+  const innerRadius = isPie ? 0 : DONUT_INNER_RADIUS;
   const rootRef = useRef<HTMLDivElement>(null);
   const legendRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
@@ -216,12 +220,13 @@ const DonutChart: React.FC<DonutChartProps> = ({
     2 * RING_HALO;
   const ring = _.clamp(ringRoom, RING_MIN, RING_MAX);
   // Every donut card drops the ring by the same rule: too small, or its hole cannot hold the total.
-  const centreText = _.isNil(centre) ? '' : centre.toLocaleString();
+  const centreText = isPie || _.isNil(centre) ? '' : centre.toLocaleString();
   const hasRing =
     box.width > 0 &&
     ringRoom >= RING_MIN &&
-    ring * DONUT_INNER_RADIUS >=
-      centreText.length * CENTRE_CHAR_WIDTH + CENTRE_PADDING;
+    (isPie ||
+      ring * DONUT_INNER_RADIUS >=
+        centreText.length * CENTRE_CHAR_WIDTH + CENTRE_PADDING);
   const chartSize = ring + 2 * CHART_LABEL_ROOM;
 
   // Zero-value slices stay in the legend only; drawn, their separators show as a gap.
@@ -263,7 +268,7 @@ const DonutChart: React.FC<DonutChartProps> = ({
                 data={chartRows}
                 valueKey="value"
                 labelKey="label"
-                innerRadius={DONUT_INNER_RADIUS}
+                innerRadius={innerRadius}
                 height={chartSize}
                 label={label}
               >
@@ -321,10 +326,10 @@ const DonutChart: React.FC<DonutChartProps> = ({
                 <circle
                   cx={ring / 2}
                   cy={ring / 2}
-                  r={(ring / 2) * ((1 + DONUT_INNER_RADIUS) / 2)}
+                  r={(ring / 2) * ((1 + innerRadius) / 2)}
                   fill="none"
                   stroke={chartColors.structural.grid}
-                  strokeWidth={(ring / 2) * (1 - DONUT_INNER_RADIUS)}
+                  strokeWidth={(ring / 2) * (1 - innerRadius)}
                 />
               </svg>
               <Text

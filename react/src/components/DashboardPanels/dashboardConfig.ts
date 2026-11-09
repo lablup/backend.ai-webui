@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { resetBoard, sanitizeBoard, seedBoard } from './boardModel';
-import { ownedSettingKeys } from './panelSettings';
+import { ownedSettingKeys, panelDefinitionOf } from './panelSettings';
 import { isRefreshOption } from './refreshScheduler';
 import type {
   DashboardBoardVars,
@@ -122,7 +122,10 @@ export const keepUnreadablePanels = (
         const storedSettings = storedById.get(panel.id)?.settings;
         const definition = byKey.get(panel.key);
         if (!isRecord(storedSettings) || !definition) return panel;
-        const kept = _.omit(storedSettings, ownedSettingKeys(definition));
+        const kept = _.omit(
+          storedSettings,
+          ownedSettingKeys(panelDefinitionOf(definition, panel)),
+        );
         return _.isEmpty(kept)
           ? panel
           : { ...panel, settings: { ...kept, ...panel.settings } };

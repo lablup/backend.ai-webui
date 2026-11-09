@@ -5,11 +5,18 @@
 import {
   CHART_GROUPINGS,
   chartCounts,
+  chartTableFilter,
+  chartTypesFor,
+  chartWindow,
   combineFilters,
   resolveChart,
 } from './chartSources';
+import { settingsFromInput } from './defaults';
+import { hasSetting, panelDefinitionOf } from './panelSettings';
 import { MAX_BUCKETS } from './timeRange';
-import { RESOURCE_KEYS } from './types';
+import { RESOURCE_KEYS, type PanelDefinition, type PanelInput } from './types';
+
+const NOW = new Date('2026-11-09T12:34:00Z').getTime();
 
 describe('combineFilters', () => {
   it('ANDs a session minilang condition with the group clause', () => {
@@ -34,57 +41,37 @@ describe('resolveChart', () => {
     expect(resolveChart('session', null)).toEqual({
       type: 'donut',
       groupBy: 'status',
-      range: 'now-24h',
+      period: false,
       showTable: false,
     });
     expect(
-      resolveChart('vfolder', {
-        type: 'pie' as never,
-        groupBy: 'type',
-        range: 'now-30d',
-      }),
-    ).toMatchObject({ type: 'donut', groupBy: 'status', range: 'now-24h' });
+      resolveChart('vfolder', { type: 'scatter' as never, groupBy: 'type' }),
+    ).toMatchObject({ type: 'donut', groupBy: 'status' });
   });
 
   it('keeps valid settings', () => {
     expect(
       resolveChart('deployment', {
-        type: 'bar',
+        type: 'area',
         groupBy: 'openToPublic',
-        range: 'now-7d',
+        period: true,
         showTable: true,
       }),
     ).toEqual({
-      type: 'bar',
+      type: 'area',
       groupBy: 'openToPublic',
-      range: 'now-7d',
+      period: true,
       showTable: true,
     });
   });
-});
 
-describe('resolveChart range', () => {
-  it('keeps a fixed window of up to 7 days and drops a longer one', () => {
-    const threeDays = '2026-11-01T00:00:00.000Z/2026-11-04T00:00:00.000Z';
-    const tenDays = '2026-11-01T00:00:00.000Z/2026-11-11T00:00:00.000Z';
+  it('turns a radar into a bar when its grouping has fewer than three groups', () => {
+    expect(chartTypesFor('deployment', 'openToPublic')).not.toContain('radar');
+    expect(chartTypesFor('deployment', 'status')).toContain('radar');
     expect(
-      resolveChart('session', { type: 'line', range: threeDays }).range,
-    ).toBe(threeDays);
-    expect(
-      resolveChart('session', { type: 'line', range: tenDays }).range,
-    ).toBe('now-24h');
-  });
-
-  it('splits a fixed window into at most 8 equal buckets', () => {
-    const range = '2026-11-01T00:00:00.000Z/2026-11-04T00:00:00.000Z';
-    const counts = chartCounts(
-      'deployment',
-      resolveChart('deployment', { type: 'line', range }),
-      new Date('2026-11-09T00:00:00.000Z').getTime(),
-    );
-    expect(counts.length).toBeLessThanOrEqual(MAX_BUCKETS);
-    expect(counts[0].window?.after).toBe('2026-11-01T00:00:00.000Z');
-    expect(counts.at(-1)?.window?.before).toBe('2026-11-04T00:00:00.000Z');
+      resolveChart('deployment', { type: 'radar', groupBy: 'openToPublic' })
+        .type,
+    ).toBe('bar');
   });
 });
 
@@ -97,11 +84,12 @@ describe('chartCounts', () => {
     }
   });
 
-  it('returns the groups of the chosen grouping', () => {
+  it('counts every row of a group without a period', () => {
     const counts = chartCounts(
       'session',
       resolveChart('session', { type: 'bar', groupBy: 'type' }),
-      Date.now(),
+      'now-24h',
+      NOW,
     );
     expect(counts.map(({ key }) => key)).toEqual([
       'interactive',
@@ -112,25 +100,115 @@ describe('chartCounts', () => {
     expect(counts[0].filter).toBe('type == "interactive"');
   });
 
-  it('splits a line range into creation-time buckets', () => {
-    const now = new Date('2026-11-09T12:34:00Z').getTime();
+  it('narrows each group to the range with a period', () => {
+    const counts = chartCounts(
+      'deployment',
+      resolveChart('deployment', { type: 'pie', period: true }),
+      'now-1h',
+      NOW,
+    );
+    expect(counts[0].filter).toEqual({
+      AND: [
+        { status: { equals: 'PENDING' } },
+        expect.objectContaining({ AND: expect.any(Array) }),
+      ],
+    });
+  });
+
+  it('splits the range into creation-time buckets for a time chart', () => {
     const session = chartCounts(
       'session',
-      resolveChart('session', { type: 'line', range: 'now-24h' }),
-      now,
+      resolveChart('session', { type: 'line' }),
+      'now-24h',
+      NOW,
     );
     expect(session.length).toBeGreaterThan(1);
     expect(session.length).toBeLessThanOrEqual(MAX_BUCKETS);
     expect(session[0].filter).toMatch(
       /^created_at >= ".*" & created_at < ".*"$/,
     );
-    expect(session.at(-1)?.window?.before).toBe(new Date(now).toISOString());
+    expect(session.at(-1)?.window?.before).toBe(new Date(NOW).toISOString());
 
     const vfolder = chartCounts(
       'vfolder',
-      resolveChart('vfolder', { type: 'line', range: 'now-1h' }),
-      now,
+      resolveChart('vfolder', { type: 'column' }),
+      'now-1h',
+      NOW,
     );
     expect(vfolder[0].filter).toHaveProperty('AND');
+  });
+
+  it('keeps a fixed window of up to 7 days and drops a longer one to the default', () => {
+    const threeDays = '2026-11-01T00:00:00.000Z/2026-11-04T00:00:00.000Z';
+    const tenDays = '2026-11-01T00:00:00.000Z/2026-11-11T00:00:00.000Z';
+    const line = resolveChart('session', { type: 'line' });
+    const fixed = chartCounts('session', line, threeDays, NOW);
+    expect(fixed[0].window?.after).toBe('2026-11-01T00:00:00.000Z');
+    expect(fixed.at(-1)?.window?.before).toBe('2026-11-04T00:00:00.000Z');
+    expect(chartWindow(line, tenDays, NOW)).toEqual(
+      chartWindow(line, 'now-24h', NOW),
+    );
+  });
+});
+
+describe('chartTableFilter', () => {
+  it('lists the rows the chart counts', () => {
+    const donut = resolveChart('session', { type: 'donut' });
+    expect(
+      chartTableFilter(
+        'session',
+        'name == "a"',
+        chartWindow(donut, 'now-1h', NOW),
+      ),
+    ).toBe('name == "a"');
+    const withPeriod = resolveChart('session', { type: 'donut', period: true });
+    expect(
+      chartTableFilter(
+        'session',
+        'name == "a"',
+        chartWindow(withPeriod, 'now-1h', NOW),
+      ),
+    ).toMatch(/^\(name == "a"\) & \(created_at >= /);
+  });
+});
+
+describe('panel range setting', () => {
+  const preset = {
+    key: 'resource.session',
+    kind: 'preset',
+    settings: ['resourceGroup'],
+  } as unknown as PanelDefinition;
+
+  it('takes a range only on a chart that counts within a period', () => {
+    const rangeOf = (panel: Parameters<typeof panelDefinitionOf>[1]) =>
+      hasSetting(panelDefinitionOf(preset, panel), 'range');
+    expect(rangeOf({ viz: 'table' })).toBe(false);
+    expect(rangeOf({ viz: 'chart', chart: { type: 'donut' } })).toBe(false);
+    expect(
+      rangeOf({ viz: 'chart', chart: { type: 'bar', period: true } }),
+    ).toBe(true);
+    expect(rangeOf({ viz: 'chart', chart: { type: 'line' } })).toBe(true);
+  });
+
+  it('saves the modal range into the card settings and drops it when unused', () => {
+    const input: PanelInput = {
+      panelType: 'resourceChart',
+      resourceType: 'session',
+      chart: { type: 'line' },
+      range: 'now-7d',
+    };
+    expect(settingsFromInput({ resourceGroups: ['a'] }, input)).toEqual({
+      resourceGroups: ['a'],
+      range: 'now-7d',
+    });
+    expect(
+      settingsFromInput(
+        { resourceGroups: ['a'], range: 'now-7d' },
+        { ...input, chart: { type: 'donut' } },
+      ),
+    ).toEqual({ resourceGroups: ['a'] });
+    expect(
+      settingsFromInput(undefined, { ...input, range: 'now-30d' })?.range,
+    ).toBe('now-24h');
   });
 });

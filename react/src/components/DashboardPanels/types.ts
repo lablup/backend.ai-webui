@@ -30,19 +30,25 @@ export const PANEL_TYPES = [
 ] as const;
 export type PanelType = (typeof PANEL_TYPES)[number];
 
-/** How a chart panel draws its counts. */
-export const CHART_TYPES = ['donut', 'bar', 'line'] as const;
+/** How a chart panel draws its counts: across groups, or across the buckets of its range. */
+export const GROUP_CHART_TYPES = ['donut', 'pie', 'bar', 'radar'] as const;
+export const TIME_CHART_TYPES = ['line', 'area', 'column'] as const;
+export const CHART_TYPES = [...GROUP_CHART_TYPES, ...TIME_CHART_TYPES] as const;
 export type ChartType = (typeof CHART_TYPES)[number];
 
+export const isTimeChartType = (type: unknown): boolean =>
+  (TIME_CHART_TYPES as ReadonlyArray<unknown>).includes(type);
+
 /**
- * A chart panel's settings. `groupBy` names a grouping of the source for a
- * donut or bar; a line counts rows created in each bucket of `range`.
+ * A chart panel's settings. A group chart counts the rows per group of
+ * `groupBy`; a time chart counts the rows created in each bucket of the
+ * card's range setting (ADR 0027), which a group chart reads only with `period`.
  */
 export interface PanelChart {
   type: ChartType;
   groupBy?: string;
-  /** A line's range, stored like a card's: a preset or a fixed window of at most 7 days. */
-  range?: string;
+  /** A group chart counts only the rows created within the card's range; a time chart always does. */
+  period?: boolean;
   /** Lists the matching rows under the chart. */
   showTable?: boolean;
 }
@@ -65,12 +71,14 @@ export interface PanelDescriptor {
   resourceGroups?: Array<string> | null;
   /** Chart settings of a `resourceChart` panel, null on other kinds. */
   chart?: PanelChart | null;
+  /** The panel's range setting, which a line chart reads. */
+  range?: string | null;
 }
 
 /** The fields the panel modal collects when creating or editing a panel. */
 export type PanelInput = Pick<
   PanelDescriptor,
-  'resourceType' | 'filter' | 'title' | 'order' | 'gridView' | 'chart'
+  'resourceType' | 'filter' | 'title' | 'order' | 'gridView' | 'chart' | 'range'
 > & {
   panelType: PanelType;
 };

@@ -4,9 +4,11 @@
  */
 import { DEFAULT_SESSION_GRID_VIEW } from '../../helper/sessionResourceGridData';
 import { generateUUID } from '../../helper/uuid';
-import { resolveChart } from './chartSources';
+import { chartUsesPeriod, resolveChart } from './chartSources';
+import { DEFAULT_RANGE, isStoredRange } from './panelSettings';
 import type {
   PanelInput,
+  PanelSettings,
   PanelType,
   PersistedPanelV2,
   ResourceKey,
@@ -84,10 +86,33 @@ export const panelConfigFromInput = (input: PanelInput) => ({
       : null,
 });
 
+/**
+ * `settings` with the range a modal submission chose: kept on a chart that
+ * counts within a period, dropped otherwise; undefined when nothing is left.
+ */
+export const settingsFromInput = (
+  settings: PanelSettings | undefined,
+  input: PanelInput,
+): PanelSettings | undefined => {
+  const { range: _range, ...rest } = settings ?? {};
+  const next: PanelSettings =
+    input.panelType === 'resourceChart' &&
+    chartUsesPeriod(resolveChart(input.resourceType, input.chart))
+      ? {
+          ...rest,
+          range: isStoredRange(input.range) ? input.range : DEFAULT_RANGE,
+        }
+      : rest;
+  return Object.keys(next).length ? next : undefined;
+};
+
 export const createPanel = (input: PanelInput): PersistedPanelV2 => ({
   // generateUUID, not Date.now (a double submit must still yield two ids) nor
   // crypto.randomUUID (absent on plain-HTTP origins).
   id: `${input.resourceType}-${generateUUID()}`,
   ...panelConfigFromInput(input),
   ...defaultSizeOf(input.panelType),
+  ...(settingsFromInput(undefined, input)
+    ? { settings: settingsFromInput(undefined, input) }
+    : {}),
 });

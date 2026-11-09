@@ -8,7 +8,13 @@ import {
   fixedWindowOf,
   isStorableWindow,
 } from './timeRange';
-import type { PanelDefinition, PanelSettingKind, PanelSettings } from './types';
+import {
+  isTimeChartType,
+  type PanelDefinition,
+  type PanelSettingKind,
+  type PanelSettings,
+  type PersistedPanelV2,
+} from './types';
 import type { BAITableColumnOverrideRecord } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import type { TFunction } from 'i18next';
@@ -59,6 +65,18 @@ export const hasSetting = (
   definition: Pick<PanelDefinition, 'settings'> | undefined,
   kind: PanelSettingKind,
 ) => !!definition?.settings?.includes(kind);
+
+/** The definition a board panel's settings follow: a chart that counts within a period also takes a range. */
+export const panelDefinitionOf = <TDefinition extends PanelDefinition>(
+  definition: TDefinition,
+  panel: Pick<PersistedPanelV2, 'viz' | 'chart'>,
+): TDefinition =>
+  definition.kind === 'preset' &&
+  panel.viz === 'chart' &&
+  (isTimeChartType(panel.chart?.type) || panel.chart?.period === true) &&
+  !hasSetting(definition, 'range')
+    ? { ...definition, settings: [...(definition.settings ?? []), 'range'] }
+    : definition;
 
 const isFiniteNumber = (value: unknown): value is number =>
   typeof value === 'number' && Number.isFinite(value);

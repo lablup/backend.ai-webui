@@ -428,6 +428,7 @@ describe('toLegacyPanel', () => {
         ...legacyPanel.descriptor,
         gridView: null,
         chart: null,
+        range: null,
         resourceGroups: null,
       },
     });

@@ -10,11 +10,14 @@ import {
 import {
   CHART_GROUPINGS,
   chartCounts,
+  chartTableFilter,
+  chartWindow,
   combineFilters,
   resolveChart,
   type ChartCount,
 } from './chartSources';
 import DonutChart from './charts/DonutChart';
+import PeriodCaption from './charts/PeriodCaption';
 import { formatBucketSpan } from './charts/bucketSpan';
 import {
   countAliasVariables,
@@ -23,15 +26,25 @@ import {
 } from './countAliases';
 import { toDonutRows } from './memberCards/memberCardData';
 import { resolvePanelTitle, resourceRegistry } from './resourceRegistry';
-import type { PanelChart, PanelDescriptor, ResourceKey } from './types';
+import {
+  isTimeChartType,
+  type PanelChart,
+  type PanelDescriptor,
+  type ResourceKey,
+} from './types';
 import { useDashboardQueryScope } from './useDashboardFilters';
 import { Text } from '@lablup/ui-common/Text';
 import {
   Chart,
+  ChartArea,
   ChartAxis,
   ChartBar,
   ChartLine,
   ChartTooltip,
+  RadialArea,
+  RadialAxis,
+  RadialChart,
+  RadialGrid,
   useChartColors,
 } from '@lablup/ui-common/lab';
 import useResizeObserver from '@react-hook/resize-observer';
@@ -281,6 +294,16 @@ const ResourceChartPanel: React.FC<ResourceTablePanelProps> = ({
   const { t } = useTranslation();
   const chart = resolveChart(descriptor.resourceType, descriptor.chart);
   const [mountedAt] = useState(() => Date.now());
+  const now = refreshedAt ?? mountedAt;
+  // The table lists the rows the chart counts.
+  const tableDescriptor: PanelDescriptor = {
+    ...descriptor,
+    filter: chartTableFilter(
+      descriptor.resourceType,
+      descriptor.filter,
+      chartWindow(chart, descriptor.range, now),
+    ),
+  };
 
   return (
     <PanelFrame
@@ -293,12 +316,12 @@ const ResourceChartPanel: React.FC<ResourceTablePanelProps> = ({
           key={`${descriptor.resourceType}:${JSON.stringify(descriptor.filter ?? null)}`}
           descriptor={descriptor}
           fetchKey={fetchKey}
-          now={refreshedAt ?? mountedAt}
+          now={now}
         />
       </Suspense>
       {chart.showTable ? (
         <ResourceTableBody
-          descriptor={descriptor}
+          descriptor={tableDescriptor}
           fetchKey={fetchKey}
           panelId={panelId}
         />
@@ -320,7 +343,7 @@ export const ResourceChartContent: React.FC<{
   const source = descriptor.resourceType;
   const config = resourceRegistry[source];
   const nextChart = resolveChart(source, descriptor.chart);
-  const nextCounts = chartCounts(source, nextChart, now);
+  const nextCounts = chartCounts(source, nextChart, descriptor.range, now);
 
   const variablesOf = (filter: PanelDescriptor['filter']) =>
     config.buildVariables({
@@ -344,10 +367,11 @@ export const ResourceChartContent: React.FC<{
   };
   // Deferred as one, so the old chart stays whole until the new counts arrive
   // instead of drawing old counts under new groups or buckets.
-  const { chart, counts, variables } = useDeferredValue({
+  const { chart, counts, variables, window } = useDeferredValue({
     chart: nextChart,
     counts: nextCounts,
     variables: nextVariables,
+    window: chartWindow(nextChart, descriptor.range, now),
   });
   const deferredFetchKey = useDeferredValue(fetchKey);
   const data = useLazyLoadQuery(CHART_QUERIES[source], variables, {
@@ -362,11 +386,11 @@ export const ResourceChartContent: React.FC<{
   const title = resolvePanelTitle(descriptor, t);
   const fixedHeight = chart.showTable ? CHART_HEIGHT_WITH_TABLE : undefined;
 
-  if (chart.type === 'donut') {
-    const grouping = CHART_GROUPINGS[source].find(
-      ({ key }) => key === chart.groupBy,
-    );
-    return (
+  const grouping = CHART_GROUPINGS[source].find(
+    ({ key }) => key === chart.groupBy,
+  );
+  const chartBody =
+    chart.type === 'donut' || chart.type === 'pie' ? (
       <BAIFlex
         direction="column"
         align="stretch"
@@ -391,17 +415,36 @@ export const ResourceChartContent: React.FC<{
               count: value,
             })),
           )}
+          isPie={chart.type === 'pie'}
         />
       </BAIFlex>
+    ) : chart.type === 'radar' ? (
+      <RadarCountChart
+        label={title}
+        points={points}
+        fixedHeight={fixedHeight}
+      />
+    ) : (
+      <CountChart
+        chart={chart}
+        label={title}
+        points={points}
+        fixedHeight={fixedHeight}
+      />
     );
-  }
-  return (
-    <CountChart
-      chart={chart}
-      label={title}
-      points={points}
-      fixedHeight={fixedHeight}
-    />
+  // A chart that counts within a period names it, like every period card (ADR 0027).
+  return window ? (
+    <BAIFlex
+      direction="column"
+      align="stretch"
+      gap="xs"
+      style={fixedHeight ? undefined : { flex: 1, minHeight: 0 }}
+    >
+      <PeriodCaption window={window} />
+      {chartBody}
+    </BAIFlex>
+  ) : (
+    chartBody
   );
 };
 
@@ -424,7 +467,7 @@ const CountChart: React.FC<{
     CHART_MIN_HEIGHT,
     fixedHeight ?? Math.floor(measuredHeight),
   );
-  const isLine = chart.type === 'line';
+  const isTime = isTimeChartType(chart.type);
   // A bucket shows its start time; a range longer than a day also needs the date.
   const first = points[0]?.count.window;
   const last = points[points.length - 1]?.count.window;
@@ -433,10 +476,11 @@ const CountChart: React.FC<{
     !!last &&
     new Date(last.before).getTime() - new Date(first.after).getTime() > DAY_MS;
   const data = points.map(({ count, value }, index) => ({
-    x: isLine ? index : count.label(t),
+    x: isTime ? index : count.label(t),
     value: value ?? 0,
+    zero: 0,
     tooltip:
-      isLine && count.window ? formatBucketSpan(count.window) : count.label(t),
+      isTime && count.window ? formatBucketSpan(count.window) : count.label(t),
   }));
   const color = colors.categorical(1)[0];
 
@@ -462,10 +506,10 @@ const CountChart: React.FC<{
       >
         <ChartAxis
           position="bottom"
-          maxTicks={isLine ? 4 : 8}
+          maxTicks={isTime ? 4 : 8}
           truncate={12}
           tickFormat={
-            isLine
+            isTime
               ? (value) => {
                   const window = points[Number(value)]?.count.window;
                   return window
@@ -482,8 +526,13 @@ const CountChart: React.FC<{
             Number.isInteger(Number(value)) ? String(value) : ''
           }
         />
-        {isLine ? (
-          <ChartLine dataKey="value" color={color} strokeWidth={2} />
+        {chart.type === 'line' || chart.type === 'area' ? (
+          <>
+            {chart.type === 'area' ? (
+              <ChartArea yUpper="value" yLower="zero" color={color} />
+            ) : null}
+            <ChartLine dataKey="value" color={color} strokeWidth={2} />
+          </>
         ) : (
           <ChartBar dataKey="value" color={color} radius={2} />
         )}
@@ -496,6 +545,57 @@ const CountChart: React.FC<{
           )}
         />
       </Chart>
+    </BAIFlex>
+  );
+};
+
+/** A spider of counts, one axis per group; offered only for three groups or more. */
+const RadarCountChart: React.FC<{
+  label: string;
+  points: ReadonlyArray<{ count: ChartCount; value: number | null }>;
+  fixedHeight?: number;
+}> = ({ label, points, fixedHeight }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const colors = useChartColors();
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [measuredHeight, setMeasuredHeight] = useState(0);
+  useResizeObserver(rootRef, ({ contentRect }) =>
+    setMeasuredHeight(contentRect.height),
+  );
+  const height = Math.max(
+    CHART_MIN_HEIGHT,
+    fixedHeight ?? Math.floor(measuredHeight),
+  );
+  const axes = points.map(({ count }) => count.label(t));
+  const max = Math.max(1, ...points.map(({ value }) => value ?? 0));
+  // RadialChart scales each axis to its own maximum; the undrawn `scale` row gives every axis the same one.
+  const data = [
+    {
+      series: 'count',
+      ...Object.fromEntries(
+        points.map(({ count, value }) => [count.label(t), value ?? 0]),
+      ),
+    },
+    { series: 'scale', ...Object.fromEntries(axes.map((axis) => [axis, max])) },
+  ];
+
+  return (
+    <BAIFlex
+      ref={rootRef}
+      direction="column"
+      align="stretch"
+      style={
+        fixedHeight
+          ? { height: fixedHeight, flex: 'none' }
+          : { flex: 1, minHeight: CHART_MIN_HEIGHT }
+      }
+    >
+      <RadialChart data={data} axes={axes} height={height} label={label}>
+        <RadialGrid />
+        <RadialArea dataKey="count" color={colors.categorical(1)[0]} dots />
+        <RadialAxis />
+      </RadialChart>
     </BAIFlex>
   );
 };

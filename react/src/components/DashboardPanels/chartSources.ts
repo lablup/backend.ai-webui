@@ -12,6 +12,7 @@ import {
 } from './timeRange';
 import {
   CHART_TYPES,
+  isTimeChartType,
   type ChartType,
   type PanelChart,
   type PanelDescriptor,
@@ -21,13 +22,13 @@ import type { GraphQLFilter } from 'backend.ai-ui';
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash-es';
 
-/** One count of a chart: a slice, a bar or a line point. */
+/** One count of a chart: a slice, a bar, a radar axis or a point in time. */
 export interface ChartCount {
   key: string;
   label: (t: TFunction) => string;
   /** Narrows the panel's own condition to this count. */
   filter: GraphQLFilter | string;
-  /** The bucket a line point counts. */
+  /** The bucket a time chart point counts. */
   window?: DateTimeWindow;
 }
 
@@ -195,35 +196,79 @@ const createdWithin = (
     ? `created_at >= ${JSON.stringify(window.after)} & created_at < ${JSON.stringify(window.before)}`
     : withinWindow('createdAt', window);
 
-/** A stored chart made valid for `source`: an unknown type or grouping falls back to the first one, an unstorable range to the default. */
+/** The chart counts within the card's range: a time chart always, a group chart when asked to. */
+export const chartUsesPeriod = (chart: PanelChart) =>
+  isTimeChartType(chart.type) || chart.period === true;
+
+/** A radar needs three axes, so it is offered only for groupings of three or more groups. */
+export const chartTypesFor = (
+  source: ResourceKey,
+  groupBy: string | undefined,
+): Array<ChartType> => {
+  const grouping =
+    CHART_GROUPINGS[source].find(({ key }) => key === groupBy) ??
+    CHART_GROUPINGS[source][0];
+  return CHART_TYPES.filter(
+    (type) => type !== 'radar' || grouping.groups.length >= 3,
+  );
+};
+
+/** A stored chart made valid for `source`: an unknown grouping falls back to the first, a radar its grouping cannot draw to a bar, any other unknown type to a donut. */
 export const resolveChart = (
   source: ResourceKey,
   chart: Partial<PanelChart> | null | undefined,
 ): PanelChart => {
-  const type: ChartType = _.includes(CHART_TYPES, chart?.type)
-    ? (chart!.type as ChartType)
-    : 'donut';
   const groupings = CHART_GROUPINGS[source];
   const groupBy = groupings.some((grouping) => grouping.key === chart?.groupBy)
     ? chart!.groupBy!
     : groupings[0].key;
+  const type: ChartType = _.includes(
+    chartTypesFor(source, groupBy),
+    chart?.type,
+  )
+    ? (chart!.type as ChartType)
+    : chart?.type === 'radar'
+      ? 'bar'
+      : 'donut';
   return {
     type,
     groupBy,
-    // The cards' range rule: a preset, or a fixed window of at most 7 days.
-    range: isStoredRange(chart?.range) ? chart!.range : DEFAULT_RANGE,
+    period: chart?.period === true,
     showTable: chart?.showTable === true,
   };
 };
 
-/** The counts a chart draws: one per group of its grouping, or one per bucket of its range as of `now`. */
+/** The window a chart counts within, as of `now`; null when it counts every row. */
+export const chartWindow = (
+  chart: PanelChart,
+  range: string | null | undefined,
+  now: number,
+): DateTimeWindow | null =>
+  chartUsesPeriod(chart)
+    ? planBuckets(isStoredRange(range) ? range : DEFAULT_RANGE, now).window
+    : null;
+
+/** The panel's condition narrowed to the chart's window, so its table lists the rows the chart counts. */
+export const chartTableFilter = (
+  source: ResourceKey,
+  filter: PanelDescriptor['filter'],
+  window: DateTimeWindow | null,
+): PanelDescriptor['filter'] =>
+  window ? combineFilters(filter, createdWithin(source, window)) : filter;
+
+/**
+ * The counts a chart draws: one per bucket of the card's range for a time chart,
+ * else one per group, each within the range when the chart counts within one.
+ */
 export const chartCounts = (
   source: ResourceKey,
   chart: PanelChart,
+  range: string | null | undefined,
   now: number,
 ): Array<ChartCount> => {
-  if (chart.type === 'line') {
-    return planBuckets(chart.range ?? DEFAULT_RANGE, now)
+  const effectiveRange = isStoredRange(range) ? range : DEFAULT_RANGE;
+  if (isTimeChartType(chart.type)) {
+    return planBuckets(effectiveRange, now)
       .buckets.slice(0, MAX_BUCKETS)
       .map((window, index) => ({
         key: String(index),
@@ -235,5 +280,13 @@ export const chartCounts = (
   const grouping =
     CHART_GROUPINGS[source].find(({ key }) => key === chart.groupBy) ??
     CHART_GROUPINGS[source][0];
-  return grouping.groups.slice(0, MAX_BUCKETS);
+  const window = chartWindow(chart, effectiveRange, now);
+  return grouping.groups.slice(0, MAX_BUCKETS).map((group) =>
+    window
+      ? {
+          ...group,
+          filter: combineFilters(group.filter, createdWithin(source, window)),
+        }
+      : group,
+  );
 };
