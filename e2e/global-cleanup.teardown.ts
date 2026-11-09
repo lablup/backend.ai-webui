@@ -16,10 +16,15 @@
  *   - admin → /admin-data lists every admin-visible folder, so it doubles as a
  *     catch-all.
  *
- * The pattern is the broad `/e2e-/i` (covering `e2e-test-*`, `e2e-mod-*`, the
+ * The user sweep uses the broad `/e2e-/i` (covering `e2e-test-*`, `e2e-mod-*`, the
  * dot-prefixed auto-mount folder, etc.). Broad matching is safe HERE — unlike in
  * a per-test `sweepVFolders` call — because the teardown runs after every other
  * project has finished, so no parallel test owns a live `e2e-*` folder.
+ *
+ * The admin sweep is anchored to `/^e2e-/i` instead: /admin-data lists every
+ * account's folders, and the sweep matches against the whole row text, so an
+ * unanchored pattern could reach a folder that merely has `e2e-` somewhere else
+ * in its row. Dot-prefixed auto-mount folders stay covered by the user sweep.
  *
  * It also purges, via the admin GraphQL API (no browser UI involved), any
  * leftover `e2e-*` fixture user, stale e2e deployment (`E2E_DEPLOYMENT_PATTERN`),
@@ -43,6 +48,10 @@ import { Page, test } from '@playwright/test';
 
 // Matches every e2e vfolder naming scheme used across the specs.
 const E2E_VFOLDER_PATTERN = /e2e-/i;
+
+// Admin sweep: /admin-data shows every account's folders, so only rows that
+// start with the folder-name prefix qualify. Keeps the case-insensitive flag.
+const E2E_ADMIN_VFOLDER_PATTERN = /^e2e-/i;
 
 // Matches the disposable fixture accounts other specs create (e.g.
 // e2e-rbac-assign-*, e2e-mykeypair-*, e2e-test-user-*, e2e-profile-*). Anchored
@@ -201,7 +210,7 @@ test.describe('Global e2e cleanup', () => {
     await safeSweep(
       'admin /admin-data',
       (p) =>
-        sweepVFolders(p, E2E_VFOLDER_PATTERN, 'admin-data', undefined, {
+        sweepVFolders(p, E2E_ADMIN_VFOLDER_PATTERN, 'admin-data', undefined, {
           deadline: Date.now() + ADMIN_VFOLDER_SWEEP_BUDGET_MS,
         }),
       page,
