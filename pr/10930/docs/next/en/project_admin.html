@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Project Admin Features" />
   <meta name="twitter:description" content="A Project Admin is a user who has been granted administrative authority over a specific project." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Project Admin Features","inLanguage":"en","description":"A Project Admin is a user who has been granted administrative authority over a specific project.","dateModified":"2026-11-04T02:34:20.000Z","url":"https://webui.docs.backend.ai/next/en/project_admin.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Project Admin Features","inLanguage":"en","description":"A Project Admin is a user who has been granted administrative authority over a specific project.","dateModified":"2026-11-09T01:35:40.000Z","url":"https://webui.docs.backend.ai/next/en/project_admin.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/project_admin.html" />
   <link rel="alternate" hreflang="en" href="../en/project_admin.html" />
   <link rel="alternate" hreflang="ja" href="../ja/project_admin.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.2 (b5ad986)">v26.10.0-alpha.2 (b5ad986)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.2 (2958ab6)">v26.10.0-alpha.2 (2958ab6)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -261,121 +261,126 @@
 <p data-bai-block="23">When you add several users at once, any that fail are surfaced through an error notification that includes the number of users that could not be assigned; the users that succeeded are still granted.</p>
 <p><a id="the-project-admin-sidebar"></a></p>
 <h2 data-bai-block="24" id="project_admin-the-project-admin-sidebar">The Project Admin sidebar<a class="hash-link" href="#project_admin-the-project-admin-sidebar" aria-label="Direct link to The Project Admin sidebar">#</a></h2>
-<p data-bai-block="25">When you select a project in which you are a project admin, the sidebar shows a <strong>Project Settings</strong> entry. Selecting it switches the sidebar to the project management menu, whose <strong>Operations</strong> section lists three entries dedicated to managing that project:</p>
+<p data-bai-block="25">When you select a project in which you are a project admin, the sidebar shows a <strong>Project Settings</strong> entry. Selecting it switches the sidebar to the project management menu, which lists a <strong>Dashboard</strong> entry and an <strong>Operations</strong> section with three entries dedicated to managing that project:</p>
 <ul>
-<li data-bai-block="26"><strong>Users</strong> — the members of the current project</li>
-<li data-bai-block="27"><strong>Sessions</strong> — the compute sessions owned by users in the current project</li>
-<li data-bai-block="28"><strong>Deployments</strong> — the model deployments owned by the current project</li>
+<li data-bai-block="26"><strong>Dashboard</strong> — an overview of the current project</li>
+<li data-bai-block="27"><strong>Users</strong> — the members of the current project</li>
+<li data-bai-block="28"><strong>Sessions</strong> — the compute sessions owned by users in the current project</li>
+<li data-bai-block="29"><strong>Deployments</strong> — the model deployments owned by the current project</li>
 </ul>
-<p><figure data-bai-block="29" class="doc-figure"><img src="./images/project_admin_sidebar.png" alt="" class="doc-image" style="width:240px" loading="lazy" decoding="async" width="480" height="900" /><figcaption>Figure 20.5</figcaption></figure>
+<p><figure data-bai-block="30" class="doc-figure"><img src="./images/project_admin_sidebar.png" alt="" class="doc-image" style="width:240px" loading="lazy" decoding="async" width="480" height="900" /><figcaption>Figure 20.5</figcaption></figure>
+</p>
+<p data-bai-block="31">On the project-admin pages, only the items under the project selected with the project selector at the top are shown. You can check this through the banner at the top of the page.</p>
+<p><figure data-bai-block="32" class="doc-figure"><img src="./images/project_admin_scope_alert.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2676" height="92" /><figcaption>Figure 20.6</figcaption></figure>
 </p>
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
-<p data-bai-block="30">On the project-admin pages, only the items under the project selected with the project selector at the top are shown. You can check this through the banner at the top of the page.</p>
-<p><figure data-bai-block="31" class="doc-figure"><img src="./images/project_admin_scope_alert.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2676" height="92" /><figcaption>Figure 20.6</figcaption></figure>
+<p><a id="project-admin-dashboard"></a></p>
+<h2 data-bai-block="33" id="project_admin-dashboard">Dashboard<a class="hash-link" href="#project_admin-dashboard" aria-label="Direct link to Dashboard">#</a></h2>
+<p data-bai-block="34">The <strong>Dashboard</strong> entry opens a board of cards scoped to the selected project: <strong>Session Status</strong>, <strong>Pending Sessions and Reasons</strong>, <strong>Long-running Sessions</strong>, <strong>Resource Allocation</strong>, <strong>Deployments</strong>, <strong>Project Folders</strong>, <strong>Project Users</strong>, and <strong>Audit Log</strong>. Select a row in <strong>Pending Sessions and Reasons</strong> to open that session&#39;s scheduling history.</p>
+<p><figure data-bai-block="35" class="doc-figure"><img src="./images/project_admin_dashboard.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 20.7</figcaption></figure>
 </p>
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
-
+<p data-bai-block="36">Boards, card settings and the refresh control work as they do on the user <a href="#project_admin-dashboard">Dashboard</a>.</p>
 <p><a id="refreshing-project-admin-pages"></a></p>
-<h2 data-bai-block="32" id="project_admin-refreshing-project-admin-pages">Refreshing project-admin pages<a class="hash-link" href="#project_admin-refreshing-project-admin-pages" aria-label="Direct link to Refreshing project-admin pages">#</a></h2>
-<p data-bai-block="33">The project-admin pages provide the same refresh button. Click the refresh button to refresh the table list.</p>
-<p data-bai-block="34">The dropdown button next to the refresh button opens the <strong>Auto Refresh</strong> menu, where you can choose the auto-refresh interval.</p>
-<p><figure data-bai-block="35" class="doc-figure"><img src="./images/project_admin_auto_refresh_menu.png" alt="" class="doc-image" style="width:86px" loading="lazy" decoding="async" width="172" height="446" /><figcaption>Figure 20.7</figcaption></figure>
+<h2 data-bai-block="37" id="project_admin-refreshing-project-admin-pages">Refreshing project-admin pages<a class="hash-link" href="#project_admin-refreshing-project-admin-pages" aria-label="Direct link to Refreshing project-admin pages">#</a></h2>
+<p data-bai-block="38">The project-admin pages provide the same refresh button. Click the refresh button to refresh the table list.</p>
+<p data-bai-block="39">The dropdown button next to the refresh button opens the <strong>Auto Refresh</strong> menu, where you can choose the auto-refresh interval.</p>
+<p><figure data-bai-block="40" class="doc-figure"><img src="./images/project_admin_auto_refresh_menu.png" alt="" class="doc-image" style="width:86px" loading="lazy" decoding="async" width="172" height="446" /><figcaption>Figure 20.8</figcaption></figure>
 </p>
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 <p><a id="users"></a></p>
-<h2 data-bai-block="36" id="project_admin-users">Users<a class="hash-link" href="#project_admin-users" aria-label="Direct link to Users">#</a></h2>
-<p data-bai-block="37">The <strong>Users</strong> page lists every user who belongs to the currently selected project. Use this page to review project membership at a glance — for example, to confirm who has access to the project&#39;s resources or to identify inactive accounts.</p>
-<p><figure data-bai-block="38" class="doc-figure"><img src="./images/project_admin_users_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 20.8</figcaption></figure>
+<h2 data-bai-block="41" id="project_admin-users">Users<a class="hash-link" href="#project_admin-users" aria-label="Direct link to Users">#</a></h2>
+<p data-bai-block="42">The <strong>Users</strong> page lists every user who belongs to the currently selected project. Use this page to review project membership at a glance — for example, to confirm who has access to the project&#39;s resources or to identify inactive accounts.</p>
+<p><figure data-bai-block="43" class="doc-figure"><img src="./images/project_admin_users_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 20.9</figcaption></figure>
 </p>
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
-<p data-bai-block="39">The page provides the following controls:</p>
+<p data-bai-block="44">The page provides the following controls:</p>
 <ul>
-<li data-bai-block="40"><strong>Active / Inactive</strong> segmented control: Toggle between active and inactive users. Active is selected by default.</li>
-<li data-bai-block="41"><strong>Property filter</strong>: Filter the list by E-Mail, ID, Username, Role, or Created At.</li>
+<li data-bai-block="45"><strong>Active / Inactive</strong> segmented control: Toggle between active and inactive users. Active is selected by default.</li>
+<li data-bai-block="46"><strong>Property filter</strong>: Filter the list by E-Mail, ID, Username, Role, or Created At.</li>
 </ul>
-<p data-bai-block="42">The Users page is <strong>read-only</strong> for project admins. There are no create, edit, or deactivate actions on this page — those operations are reserved for superadmins on the system-wide Users page in the <a href="./admin_menu.html#admin-menus">Admin Features</a> chapter.</p>
+<p data-bai-block="47">The Users page is <strong>read-only</strong> for project admins. There are no create, edit, or deactivate actions on this page — those operations are reserved for superadmins on the system-wide Users page in the <a href="./admin_menu.html#admin-menus">Admin Features</a> chapter.</p>
 <p><a id="data"></a></p>
-<h2 data-bai-block="43" id="project_admin-storage-folders">Storage Folders<a class="hash-link" href="#project_admin-storage-folders" aria-label="Direct link to Storage Folders">#</a></h2>
-<p data-bai-block="44">A project&#39;s storage folders are managed from the <strong>Data</strong> page while that project is selected. For folder usage modes, permissions, and quota, see the <a href="./vfolder.html#vfolders">Storage Folders</a> chapter.</p>
+<h2 data-bai-block="48" id="project_admin-storage-folders">Storage Folders<a class="hash-link" href="#project_admin-storage-folders" aria-label="Direct link to Storage Folders">#</a></h2>
+<p data-bai-block="49">A project&#39;s storage folders are managed from the <strong>Data</strong> page while that project is selected. For folder usage modes, permissions, and quota, see the <a href="./vfolder.html#vfolders">Storage Folders</a> chapter.</p>
 <p><a id="sessions"></a></p>
-<h2 data-bai-block="45" id="project_admin-sessions">Sessions<a class="hash-link" href="#project_admin-sessions" aria-label="Direct link to Sessions">#</a></h2>
-<p data-bai-block="46">The <strong>Sessions</strong> page lists the compute sessions owned by users in the currently selected project. Use this page to monitor active workloads, identify long-running sessions, or terminate sessions that are no longer needed.</p>
-<p><figure data-bai-block="47" class="doc-figure"><img src="./images/project_admin_sessions_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 20.9</figcaption></figure>
+<h2 data-bai-block="50" id="project_admin-sessions">Sessions<a class="hash-link" href="#project_admin-sessions" aria-label="Direct link to Sessions">#</a></h2>
+<p data-bai-block="51">The <strong>Sessions</strong> page lists the compute sessions owned by users in the currently selected project. Use this page to monitor active workloads, identify long-running sessions, or terminate sessions that are no longer needed.</p>
+<p><figure data-bai-block="52" class="doc-figure"><img src="./images/project_admin_sessions_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 20.10</figcaption></figure>
 </p>
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
-<p data-bai-block="48">The page provides the following controls:</p>
+<p data-bai-block="53">The page provides the following controls:</p>
 <ul>
-<li data-bai-block="49"><strong>Running / Finished</strong> segmented control: Toggle between currently running sessions and sessions that have already finished.</li>
-<li data-bai-block="50"><strong>Property filter and sorting</strong>: Filter the list by ID, Session Name, or Owner. The Owner value is picked from a searchable dropdown of user accounts rather than typed as a UUID, and the resulting filter tag shows the account&#39;s email address. Click a sortable column header to sort the table.</li>
+<li data-bai-block="54"><strong>Running / Finished</strong> segmented control: Toggle between currently running sessions and sessions that have already finished.</li>
+<li data-bai-block="55"><strong>Property filter and sorting</strong>: Filter the list by ID, Session Name, or Owner. The Owner value is picked from a searchable dropdown of user accounts rather than typed as a UUID, and the resulting filter tag shows the account&#39;s email address. Click a sortable column header to sort the table.</li>
 </ul>
-<p data-bai-block="51">Sessions take key-value labels as well: use a session&#39;s <strong>Edit labels</strong> action, or select several sessions and click <strong>Add labels</strong> to label them in bulk.</p>
-<h3 data-bai-block="52" id="project_admin-terminate-sessions">Terminate sessions<a class="hash-link" href="#project_admin-terminate-sessions" aria-label="Direct link to Terminate sessions">#</a></h3>
-<p data-bai-block="53">To terminate one or more sessions:</p>
+<p data-bai-block="56">Sessions take key-value labels as well: use a session&#39;s <strong>Edit labels</strong> action, or select several sessions and click <strong>Add labels</strong> to label them in bulk.</p>
+<h3 data-bai-block="57" id="project_admin-terminate-sessions">Terminate sessions<a class="hash-link" href="#project_admin-terminate-sessions" aria-label="Direct link to Terminate sessions">#</a></h3>
+<p data-bai-block="58">To terminate one or more sessions:</p>
 <ol>
-<li data-bai-block="54">Select the sessions you want to terminate using the checkboxes in the leftmost column. To terminate a single session, you can use the <strong>Terminate</strong> button next to the session name.</li>
-<li data-bai-block="55">Click the power-off icon in the table header to open the confirmation modal.</li>
-<li data-bai-block="56">Review the list of targeted sessions in the modal.</li>
-<li data-bai-block="57">Optionally select the <strong>Force Terminate</strong> checkbox to terminate or cancel the sessions regardless of their current status. Enabling this option displays a warning and changes the confirm button label from <strong>Terminate</strong> to <strong>Force Terminate</strong>.</li>
-<li data-bai-block="58">Click the confirm button to terminate the sessions.</li>
+<li data-bai-block="59">Select the sessions you want to terminate using the checkboxes in the leftmost column. To terminate a single session, you can use the <strong>Terminate</strong> button next to the session name.</li>
+<li data-bai-block="60">Click the power-off icon in the table header to open the confirmation modal.</li>
+<li data-bai-block="61">Review the list of targeted sessions in the modal.</li>
+<li data-bai-block="62">Optionally select the <strong>Force Terminate</strong> checkbox to terminate or cancel the sessions regardless of their current status. Enabling this option displays a warning and changes the confirm button label from <strong>Terminate</strong> to <strong>Force Terminate</strong>.</li>
+<li data-bai-block="63">Click the confirm button to terminate the sessions.</li>
 </ol>
-<p><figure data-bai-block="59" class="doc-figure"><img src="./images/project_admin_terminate_session_modal.png" alt="" class="doc-image" style="width:520px" loading="lazy" decoding="async" width="1040" height="512" /><figcaption>Figure 20.10</figcaption></figure>
+<p><figure data-bai-block="64" class="doc-figure"><img src="./images/project_admin_terminate_session_modal.png" alt="" class="doc-image" style="width:520px" loading="lazy" decoding="async" width="1040" height="512" /><figcaption>Figure 20.11</figcaption></figure>
 </p>
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 <div class="admonition admonition-warning">
-<div data-bai-block="60" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>WARNING</div>
+<div data-bai-block="65" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>WARNING</div>
 <div class="admonition-content">
 
-<p data-bai-block="61">Use <strong>Force Terminate</strong> only when a session is stuck and its state does not change for an unreasonably long time. Force terminate does not delete the actual containers on the agent(s), so manual cleanup may be required afterward.</p>
+<p data-bai-block="66">Use <strong>Force Terminate</strong> only when a session is stuck and its state does not change for an unreasonably long time. Force terminate does not delete the actual containers on the agent(s), so manual cleanup may be required afterward.</p>
 </div></div>
 
 
 <div class="admonition admonition-note">
-<div data-bai-block="62" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="67" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="63">Clicking a session name on the project-admin Sessions page does not currently open a session detail drawer. For background on compute sessions and their detail view, see the <a href="./session_page.html#session-page">Session Page</a> chapter.</p>
+<p data-bai-block="68">Clicking a session name on the project-admin Sessions page does not currently open a session detail drawer. For background on compute sessions and their detail view, see the <a href="./session_page.html#session-page">Session Page</a> chapter.</p>
 </div></div>
 
 
 <p><a id="deployments"></a></p>
-<h2 data-bai-block="64" id="project_admin-deployments">Deployments<a class="hash-link" href="#project_admin-deployments" aria-label="Direct link to Deployments">#</a></h2>
-<p data-bai-block="65">The <strong>Deployments</strong> page lists the model deployments owned by the currently selected project. Use this page to oversee inference endpoints, edit deployment settings, or remove deployments that are no longer in use.</p>
-<p><figure data-bai-block="66" class="doc-figure"><img src="./images/project_admin_deployments_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 20.11</figcaption></figure>
+<h2 data-bai-block="69" id="project_admin-deployments">Deployments<a class="hash-link" href="#project_admin-deployments" aria-label="Direct link to Deployments">#</a></h2>
+<p data-bai-block="70">The <strong>Deployments</strong> page lists the model deployments owned by the currently selected project. Use this page to oversee inference endpoints, edit deployment settings, or remove deployments that are no longer in use.</p>
+<p><figure data-bai-block="71" class="doc-figure"><img src="./images/project_admin_deployments_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 20.12</figcaption></figure>
 </p>
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
-<p data-bai-block="67">The page provides the following controls:</p>
+<p data-bai-block="72">The page provides the following controls:</p>
 <ul>
-<li data-bai-block="68"><strong>Running / Terminated</strong> segmented control: Toggle between currently running deployments and deployments that have been terminated.</li>
-<li data-bai-block="69"><strong>Property filter</strong>: Filter the list by Name, Endpoint URL, or Open to Public.</li>
+<li data-bai-block="73"><strong>Running / Terminated</strong> segmented control: Toggle between currently running deployments and deployments that have been terminated.</li>
+<li data-bai-block="74"><strong>Property filter</strong>: Filter the list by Name, Endpoint URL, or Open to Public.</li>
 </ul>
-<p data-bai-block="70">The table displays the deployment&#39;s Name, Revision, Lifecycle, Replicas, Model, Owner, and Created At columns, along with the deployment&#39;s domain, project, and resource group when relevant.</p>
-<p data-bai-block="71">The <strong>Revision</strong> column shows the deployment&#39;s current revision as a clickable <code>#N</code> link. Click it to open a drawer that displays the details of the current revision.</p>
-<h3 data-bai-block="72" id="project_admin-deployment-actions">Deployment actions<a class="hash-link" href="#project_admin-deployment-actions" aria-label="Direct link to Deployment actions">#</a></h3>
-<p data-bai-block="73">The following actions are available on each deployment row:</p>
+<p data-bai-block="75">The table displays the deployment&#39;s Name, Revision, Lifecycle, Replicas, Model, Owner, and Created At columns, along with the deployment&#39;s domain, project, and resource group when relevant.</p>
+<p data-bai-block="76">The <strong>Revision</strong> column shows the deployment&#39;s current revision as a clickable <code>#N</code> link. Click it to open a drawer that displays the details of the current revision.</p>
+<h3 data-bai-block="77" id="project_admin-deployment-actions">Deployment actions<a class="hash-link" href="#project_admin-deployment-actions" aria-label="Direct link to Deployment actions">#</a></h3>
+<p data-bai-block="78">The following actions are available on each deployment row:</p>
 <ul>
-<li data-bai-block="74">Click the <strong>deployment name</strong> to navigate to the deployment detail page within the project-admin scope.</li>
-<li data-bai-block="75">Click the <strong>revision number</strong> (<code>#N</code>) to open the revision detail drawer for the current revision.</li>
-<li data-bai-block="76">Click the <strong>pencil icon</strong> to edit the deployment&#39;s configuration in the settings modal.</li>
-<li data-bai-block="77">Use the <strong>Edit labels</strong> action to add, change, or remove the deployment&#39;s key-value labels.</li>
-<li data-bai-block="78">Click the <strong>trash icon</strong> to delete the deployment. The confirmation modal requires you to type the deployment&#39;s name before the deletion is performed.</li>
+<li data-bai-block="79">Click the <strong>deployment name</strong> to navigate to the deployment detail page within the project-admin scope.</li>
+<li data-bai-block="80">Click the <strong>revision number</strong> (<code>#N</code>) to open the revision detail drawer for the current revision.</li>
+<li data-bai-block="81">Click the <strong>pencil icon</strong> to edit the deployment&#39;s configuration in the settings modal.</li>
+<li data-bai-block="82">Use the <strong>Edit labels</strong> action to add, change, or remove the deployment&#39;s key-value labels.</li>
+<li data-bai-block="83">Click the <strong>trash icon</strong> to delete the deployment. The confirmation modal requires you to type the deployment&#39;s name before the deletion is performed.</li>
 </ul>
-<p><figure data-bai-block="79" class="doc-figure"><img src="./images/project_admin_deployment_detail.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 20.12</figcaption></figure>
+<p><figure data-bai-block="84" class="doc-figure"><img src="./images/project_admin_deployment_detail.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 20.13</figcaption></figure>
 </p>
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
-<p data-bai-block="80">For details about deployment revisions, replicas, and traffic routing, see the <a href="./deployment.html#model-serving">Deployments</a> chapter.</p>
+<p data-bai-block="85">For details about deployment revisions, replicas, and traffic routing, see the <a href="./deployment.html#model-serving">Deployments</a> chapter.</p>
 
 </section>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/en/project_admin/project_admin.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> Edit this page</a>
-  <span class="last-updated">Last updated on Nov 4, 2026</span>
+  <span class="last-updated">Last updated on Nov 9, 2026</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./user_settings.html">
@@ -398,6 +403,7 @@
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#project_admin-identifying-project-admin-projects" data-toc-target="project_admin-identifying-project-admin-projects">Identifying Project Admin projects</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#project_admin-set-project-admin" data-toc-target="project_admin-set-project-admin">Set Project Admin</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#project_admin-the-project-admin-sidebar" data-toc-target="project_admin-the-project-admin-sidebar">The Project Admin sidebar</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#project_admin-dashboard" data-toc-target="project_admin-dashboard">Dashboard</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#project_admin-refreshing-project-admin-pages" data-toc-target="project_admin-refreshing-project-admin-pages">Refreshing project-admin pages</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#project_admin-users" data-toc-target="project_admin-users">Users</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#project_admin-storage-folders" data-toc-target="project_admin-storage-folders">Storage Folders</a></li>
