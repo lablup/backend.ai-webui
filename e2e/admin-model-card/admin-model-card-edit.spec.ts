@@ -1,12 +1,8 @@
 // spec: e2e/.agent-output/test-plan-admin-model-card.md
 // section: 4. Edit Model Card
+import { purgeVFoldersByNameViaApi } from '../utils/admin-api';
 import { AdminModelCardPage } from '../utils/classes/AdminModelCardPage';
-import {
-  deleteForeverAndVerifyFromTrash,
-  loginAsAdmin,
-  moveToTrashAndVerify,
-  webuiEndpoint,
-} from '../utils/test-util';
+import { loginAsAdmin, webuiEndpoint } from '../utils/test-util';
 import { test, expect } from '@playwright/test';
 
 // FR-3331/FR-3339 (PRs #8303/#8315) replaced the row's settings-cog icon with a
@@ -130,22 +126,7 @@ test.describe(
       }
 
       // Cleanup: purge the VFolder created in beforeEach
-      try {
-        await moveToTrashAndVerify(page, testFolderName, 'admin-data', {
-          skipTrashVerify: true,
-        });
-      } catch {
-        // Folder may already be in Trash or may not exist
-      }
-      try {
-        await deleteForeverAndVerifyFromTrash(
-          page,
-          testFolderName,
-          'admin-data',
-        );
-      } catch {
-        // Folder may not be in Trash (already purged or never created)
-      }
+      await purgeVFoldersByNameViaApi([testFolderName]);
     });
 
     // 4.1 Superadmin can open the Edit Model Card modal from a table row

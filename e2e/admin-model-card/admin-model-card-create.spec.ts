@@ -1,12 +1,8 @@
 // spec: e2e/.agent-output/test-plan-admin-model-card.md
 // section: 3. Create Model Card
+import { purgeVFoldersByNameViaApi } from '../utils/admin-api';
 import { AdminModelCardPage } from '../utils/classes/AdminModelCardPage';
-import {
-  deleteForeverAndVerifyFromTrash,
-  loginAsAdmin,
-  moveToTrashAndVerify,
-  webuiEndpoint,
-} from '../utils/test-util';
+import { loginAsAdmin, webuiEndpoint } from '../utils/test-util';
 import { getFormItemControlByLabel } from '../utils/test-util-antd';
 import { test, expect } from '@playwright/test';
 
@@ -47,22 +43,7 @@ test.describe(
         }
       }
       if (createdFolderName) {
-        try {
-          await moveToTrashAndVerify(page, createdFolderName, 'admin-data', {
-            skipTrashVerify: true,
-          });
-        } catch {
-          // Folder may already be in Trash or may not exist
-        }
-        try {
-          await deleteForeverAndVerifyFromTrash(
-            page,
-            createdFolderName,
-            'admin-data',
-          );
-        } catch {
-          // Folder may not be in Trash (already purged or never created)
-        }
+        await purgeVFoldersByNameViaApi([createdFolderName]);
       }
     });
 
@@ -418,18 +399,7 @@ test.describe(
       // Close the modal and clean up the folder created via "+"
       await adminModelCardPage.getCreateModalCancelButton().click();
       await expect(modal).toBeHidden();
-      try {
-        await moveToTrashAndVerify(page, folderName, 'admin-data', {
-          skipTrashVerify: true,
-        });
-      } catch {
-        // Folder may already be in Trash or may not exist
-      }
-      try {
-        await deleteForeverAndVerifyFromTrash(page, folderName, 'admin-data');
-      } catch {
-        // Folder may not be in Trash (already purged or never created)
-      }
+      await purgeVFoldersByNameViaApi([folderName]);
     });
 
     // 3.5 Superadmin cannot create a model card without a Model Storage Folder

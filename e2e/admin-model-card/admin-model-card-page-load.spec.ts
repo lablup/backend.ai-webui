@@ -1,11 +1,10 @@
 // spec: e2e/.agent-output/test-plan-admin-model-card.md
 // section: 1. Page Load and Table Display
+import { purgeVFoldersByNameViaApi } from '../utils/admin-api';
 import { AdminModelCardPage } from '../utils/classes/AdminModelCardPage';
 import {
-  deleteForeverAndVerifyFromTrash,
   getSortableColumnHeader,
   loginAsAdmin,
-  moveToTrashAndVerify,
   webuiEndpoint,
 } from '../utils/test-util';
 import { test, expect, type Page } from '@playwright/test';
@@ -127,18 +126,7 @@ test.describe(
 
       // Cleanup: delete the created model card, then purge the folder
       await adminModelCardPage.deleteModelCardByName(cardName);
-      try {
-        await moveToTrashAndVerify(page, folderName, 'admin-data', {
-          skipTrashVerify: true,
-        });
-      } catch {
-        // Folder may already be in Trash or may not exist
-      }
-      try {
-        await deleteForeverAndVerifyFromTrash(page, folderName, 'admin-data');
-      } catch {
-        // Folder may not be in Trash (already purged or never created)
-      }
+      await purgeVFoldersByNameViaApi([folderName]);
     });
 
     // 1.3 Superadmin can see pagination controls

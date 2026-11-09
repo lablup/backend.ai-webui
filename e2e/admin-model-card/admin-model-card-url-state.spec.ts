@@ -1,11 +1,10 @@
 // spec: e2e/.agent-output/test-plan-admin-model-card.md
 // section: 10. URL State Persistence
+import { purgeVFoldersByNameViaApi } from '../utils/admin-api';
 import { AdminModelCardPage } from '../utils/classes/AdminModelCardPage';
 import {
-  deleteForeverAndVerifyFromTrash,
   getSortableColumnHeader,
   loginAsAdmin,
-  moveToTrashAndVerify,
   webuiEndpoint,
 } from '../utils/test-util';
 import { test, expect } from '@playwright/test';
@@ -50,22 +49,7 @@ test.describe(
       } catch {
         // Ignore cleanup errors
       }
-      try {
-        await moveToTrashAndVerify(page, testFolderName, 'admin-data', {
-          skipTrashVerify: true,
-        });
-      } catch {
-        // Folder may already be in Trash or may not exist
-      }
-      try {
-        await deleteForeverAndVerifyFromTrash(
-          page,
-          testFolderName,
-          'admin-data',
-        );
-      } catch {
-        // Folder may not be in Trash (already purged or never created)
-      }
+      await purgeVFoldersByNameViaApi([testFolderName]);
     });
 
     // 10.1 Filter state is persisted in the URL query parameters

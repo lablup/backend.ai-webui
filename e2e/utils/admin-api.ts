@@ -405,6 +405,81 @@ export async function sweepLeftoverDeploymentsViaApi(
   return deleted;
 }
 
+// Past the trash: the manager is deleting it or already has, so nothing is left to do.
+const PURGED_VFOLDER_STATUSES = new Set([
+  'delete-ongoing',
+  'delete-complete',
+  'delete-error',
+]);
+
+async function purgeVFolderViaApi(
+  api: APIRequestContext,
+  name: string,
+): Promise<void> {
+  const data = await gqlAdmin<{
+    vfolder_list: { items: Array<{ id: string; status: string }> };
+  }>(
+    api,
+    `query($filter: String) {
+      vfolder_list(limit: 100, offset: 0, filter: $filter) {
+        items { id status }
+      }
+    }`,
+    { filter: `name == ${JSON.stringify(name)}` },
+  );
+  for (const { id, status } of data.vfolder_list.items) {
+    if (PURGED_VFOLDER_STATUSES.has(status)) continue;
+    const steps =
+      status === 'delete-pending'
+        ? (['purge'] as const)
+        : (['trash', 'purge'] as const);
+    for (const step of steps) {
+      const res =
+        step === 'trash'
+          ? await api.delete('/func/folders', { data: { vfolder_id: id } })
+          : await api.post('/func/folders/delete-from-trash-bin', {
+              data: { vfolder_id: id },
+            });
+      if (!res.ok()) {
+        throw new Error(
+          `${step} of folder "${name}" (${id}) failed: ${res.status()} ${(await res.text()).slice(0, 300)}`,
+        );
+      }
+    }
+  }
+}
+
+/**
+ * Permanently deletes the e2e folders named exactly `names`, whatever their
+ * current state; a name with no folder is not an error. Trashed folders still
+ * count toward `max_vfolder_count`, so both steps must succeed. Tries every
+ * name, then throws: a leak fills the project's quota for later runs.
+ */
+export async function purgeVFoldersByNameViaApi(
+  names: string[],
+): Promise<void> {
+  if (names.length === 0) return;
+  const api = await createAdminApiContext();
+  const failures: string[] = [];
+  try {
+    for (const name of names) {
+      try {
+        if (!name.startsWith('e2e-')) {
+          throw new Error(`refusing to purge non-e2e folder "${name}"`);
+        }
+        await purgeVFolderViaApi(api, name);
+      } catch (error) {
+        failures.push(error instanceof Error ? error.message : String(error));
+      }
+    }
+  } finally {
+    await api.dispose();
+  }
+  if (failures.length > 0) {
+    throw new Error(`Folder cleanup failed:\n${failures.join('\n')}`);
+  }
+}
+
 interface PrometheusQueryPresetRow {
   entityId: string;
   name: string;
