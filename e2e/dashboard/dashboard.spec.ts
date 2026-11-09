@@ -8,7 +8,7 @@
 // The member dashboard reads only the viewer's own data (#10584); Agent Stats
 // and Recently Created Sessions live on the superadmin dashboard.
 import { loginAsAdmin, loginAsUser, navigateTo } from '../utils/test-util';
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, type Locator, type Page } from '@playwright/test';
 
 // Timeout for widget visibility checks - widgets load after GraphQL data fetches,
 // which may be slow when multiple workers run in parallel.
@@ -42,6 +42,29 @@ const waitForGraphQL = async (
   expect(response.ok()).toBe(true);
   const json = await response.json();
   expect(json.errors ?? []).toEqual([]);
+};
+
+// Clicks a board-saved "Show failures only" switch to `checked` and waits
+// until the board write lands. Other board writes share the mutation, so match
+// the filter payload; a board that already holds the value (a concurrent run
+// on the shared account) sends no write.
+const setFailuresOnly = async (
+  page: Page,
+  toggle: Locator,
+  checked: boolean,
+) => {
+  if ((await toggle.isChecked()) === checked) return;
+  const saved = waitForGraphQL(
+    page,
+    'useAppConfigMyUpsertMutation',
+    (variables) => JSON.stringify(variables).includes('DENIED') === checked,
+    10_000,
+  ).catch((error: Error) => {
+    if (error.name !== 'TimeoutError') throw error;
+  });
+  await toggle.click();
+  await expect(toggle).toBeChecked({ checked });
+  await saved;
 };
 
 test.describe(
@@ -251,29 +274,43 @@ test.describe(
     // 9. My Activity Widget
     // -----------------------------------------------------------------------
     test.describe('My Activity Widget', () => {
+      // The switch is saved on the shared admin account's board.
+      const myActivityWidget = (page: Page) =>
+        page
+          .locator('.uic-board-item')
+          .filter({ hasText: 'My Activity' })
+          .first();
+      const failuresOnlySwitch = (page: Page) =>
+        myActivityWidget(page).getByRole('switch', {
+          name: 'Show failures only',
+        });
+
       test.beforeEach(async ({ page, request }) => {
         await loginAsAdmin(page, request);
         await navigateTo(page, 'summary');
       });
 
+      test.afterEach(async ({ page }) => {
+        const toggle = failuresOnlySwitch(page);
+        if (await toggle.isVisible().catch(() => false)) {
+          await setFailuresOnly(page, toggle, false);
+        }
+      });
+
       test('Admin can toggle "Show failures only" on the My Activity widget', async ({
         page,
       }) => {
-        // 1. Locate the "My Activity" widget
-        const widget = page
-          .locator('.uic-board-item')
-          .filter({ hasText: 'My Activity' })
-          .first();
+        // 1. Locate the "My Activity" widget, starting from the switch off
+        const widget = myActivityWidget(page);
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
+        const failuresOnly = failuresOnlySwitch(page);
+        await setFailuresOnly(page, failuresOnly, false);
+        await expect(failuresOnly).not.toBeChecked();
 
         // 2. The header switch is saved on the board, so turn it on and back off
-        const failuresOnly = widget.getByRole('switch', {
-          name: 'Show failures only',
-        });
-        await expect(failuresOnly).not.toBeChecked();
-        await failuresOnly.click();
+        await setFailuresOnly(page, failuresOnly, true);
         await expect(failuresOnly).toBeChecked();
-        await failuresOnly.click();
+        await setFailuresOnly(page, failuresOnly, false);
         await expect(failuresOnly).not.toBeChecked();
       });
     });
@@ -560,30 +597,10 @@ test.describe(
           auditLogCard(page).getByRole('switch', {
             name: 'Show failures only',
           });
-        // Clicks the switch to `checked` and waits until the board write lands.
-        const setFailuresOnly = async (page: Page, checked: boolean) => {
-          const toggle = failuresOnlySwitch(page);
-          if ((await toggle.isChecked()) === checked) return;
-          // Other board writes share the mutation, so match the filter payload.
-          // A board that already holds the value (a concurrent run) sends no write.
-          const saved = waitForGraphQL(
-            page,
-            'useAppConfigMyUpsertMutation',
-            (variables) =>
-              JSON.stringify(variables).includes('DENIED') === checked,
-            10_000,
-          ).catch((error: Error) => {
-            if (error.name !== 'TimeoutError') throw error;
-          });
-          await toggle.click();
-          await expect(toggle).toBeChecked({ checked });
-          await saved;
-        };
-
         test.afterEach(async ({ page }) => {
           const toggle = failuresOnlySwitch(page);
           if (await toggle.isVisible().catch(() => false)) {
-            await setFailuresOnly(page, false);
+            await setFailuresOnly(page, toggle, false);
           }
         });
 
@@ -594,7 +611,7 @@ test.describe(
           const widget = auditLogCard(page);
           await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
           const failuresOnly = failuresOnlySwitch(page);
-          await setFailuresOnly(page, false);
+          await setFailuresOnly(page, failuresOnly, false);
 
           // 2. Turning the switch on reloads the list with the failure statuses
           const filteredList = waitForGraphQL(
@@ -605,14 +622,14 @@ test.describe(
                 'DENIED',
               ),
           );
-          await setFailuresOnly(page, true);
+          await setFailuresOnly(page, failuresOnly, true);
           await filteredList;
           await expect(
             widget.getByRole('group', { name: 'Table' }).getByRole('table'),
           ).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
           // 3. Turning it off again saves the board without the filter
-          await setFailuresOnly(page, false);
+          await setFailuresOnly(page, failuresOnly, false);
           await expect(failuresOnly).not.toBeChecked();
         });
       });

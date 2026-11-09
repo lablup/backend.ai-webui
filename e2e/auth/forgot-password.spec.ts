@@ -13,7 +13,11 @@
 //   - All other requests hit the real server.
 //
 // No resource cleanup needed — all tests use mocked API responses; no real data is created.
-import { modifyConfigToml, webuiEndpoint } from '../utils/test-util';
+import {
+  modifyConfigToml,
+  seedStoredApiEndpoint,
+  webuiEndpoint,
+} from '../utils/test-util';
 import { test, expect, type Page } from '@playwright/test';
 
 // Astryx's ToastViewport renders every toast twice: once in the visible
@@ -74,7 +78,7 @@ const CHANGE_PASSWORD_ERROR_EMAIL_MISMATCH = {
  * allowAnonymousChangePassword config in place.
  */
 async function openForgotPasswordModal(page: Page): Promise<void> {
-  await page.getByText('Change').click();
+  await page.getByRole('link', { name: 'Change', exact: true }).click();
   await expect(
     page.getByRole('dialog', { name: 'Send change password email' }),
   ).toBeVisible({ timeout: 10_000 });
@@ -263,7 +267,9 @@ test.describe('Forgot password email modal', () => {
 
       // Verify "Forgot password?" text and "Change" link are not visible
       await expect(page.getByText('Forgot password?')).toBeHidden();
-      await expect(page.getByText('Change')).toBeHidden();
+      await expect(
+        page.getByRole('link', { name: 'Change', exact: true }),
+      ).toBeHidden();
     },
   );
 });
@@ -272,6 +278,12 @@ test.describe('Forgot password email modal', () => {
 
 test.describe('Change password page', () => {
   const changePasswordUrl = `${webuiEndpoint}/change-password?token=${TEST_TOKEN}`;
+
+  // Closing the view returns to `/`, which needs a stored endpoint to show the
+  // login form instead of the endpoint step.
+  test.beforeEach(async ({ page }) => {
+    await seedStoredApiEndpoint(page);
+  });
 
   test(
     'User sees the password change form with a valid token',
