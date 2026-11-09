@@ -198,7 +198,11 @@ export class FolderCreationModal {
       .poll(
         async () =>
           (await confirmModal.isVisible()) || !(await this.modal.isVisible()),
-        { timeout: 30000 },
+        {
+          timeout: 30000,
+          message:
+            'the shared-folder confirm opened or the create dialog closed',
+        },
       )
       .toBe(true);
     if (await confirmModal.isVisible()) {
