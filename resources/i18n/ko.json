@@ -487,7 +487,7 @@
     "ChatTitle": "채팅 제목",
     "CompareWithOtherModels": "다른 모델과 비교하기",
     "CreateCompareChat": "비교 채팅 추가",
-    "DeleteChatHistory": "채팅 삭제",
+    "DeleteChatHistory": "채팅 기록 삭제",
     "DeleteChattingSession": "채팅 삭제",
     "DeleteChattingSessionDescription": "이 주제를 삭제하려고 합니다. \n삭제한 후에는 복구할 수 없습니다. \n주의해서 진행하시기 바랍니다.",
     "Deployment": "배포",
