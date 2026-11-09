@@ -105,6 +105,8 @@ const PanelSettingsHeaderControls: React.FC = () => {
       ) : null}
       {hasSetting(definition, 'range') ? (
         <Tooltip
+          // Remount with the tooltip on an outside change (reset): drops the preset label the picker kept.
+          key={effective?.range ?? DEFAULT_RANGE}
           content={t('dashboard.settings.TimeRange')}
           placement="end"
           hasHoverIndication={false}

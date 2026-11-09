@@ -126,8 +126,6 @@ const PanelRangeSelect: React.FC<PanelRangeSelectProps> = ({
   return (
     <BAIDateTimeRangeInput
       {...inputProps}
-      // A new value from outside (reset) drops the preset label the control kept.
-      key={range}
       showTime
       hasClear={false}
       presets={presets}
