@@ -14,7 +14,10 @@ export function graphqlDevtools({ schemaPath }) {
       return {
         optimizeDeps: {
           entries: [
-            relative(config.root ?? process.cwd(), fileURLToPath(PANEL_URL)),
+            relative(
+              config.root ?? process.cwd(),
+              fileURLToPath(PANEL_URL),
+            ).replaceAll('\\', '/'),
           ],
         },
       };

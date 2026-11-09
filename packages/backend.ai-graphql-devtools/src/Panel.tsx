@@ -35,6 +35,9 @@ declare global {
       onError: (e: unknown) => void,
     ): void;
   };
+  interface JSON {
+    rawJSON?(text: string): unknown;
+  }
   var backendaiclient:
     | {
         ready?: boolean;
@@ -53,6 +56,7 @@ declare global {
 const MONACO_VS = '/resources/monaco/vs';
 const MARKER_OWNER = 'bai-graphql-devtools';
 const MAX_HISTORY = 50;
+const EXISTING_LOADER_WAIT_MS = 5000;
 
 let monacoPromise: Promise<MonacoApi> | undefined;
 
@@ -77,12 +81,20 @@ function loadMonaco(): Promise<MonacoApi> {
     }
     const script = existing ?? document.createElement('script');
     const fail = () => {
-      if (!existing) script.remove();
+      clearTimeout(existingTimer);
+      script.remove();
       reject(new Error(`could not load ${src}`));
     };
+    const existingTimer = existing
+      ? setTimeout(fail, EXISTING_LOADER_WAIT_MS)
+      : undefined;
     script.addEventListener(
       'load',
-      () => (typeof globalThis.require === 'function' ? start() : fail()),
+      () => {
+        clearTimeout(existingTimer);
+        if (typeof globalThis.require === 'function') start();
+        else fail();
+      },
       { once: true },
     );
     script.addEventListener('error', fail, { once: true });
@@ -232,6 +244,30 @@ function parseJson(text: string): unknown {
   }
 }
 
+function printJson(text: string): string {
+  if (!JSON.rawJSON) return text;
+  const keepNumberSource = (
+    _key: string,
+    value: unknown,
+    context: { source?: string },
+  ) =>
+    typeof value === 'number' && context.source
+      ? JSON.rawJSON?.(context.source)
+      : value;
+  try {
+    return JSON.stringify(
+      JSON.parse(
+        text,
+        keepNumberSource as (key: string, value: unknown) => unknown,
+      ),
+      null,
+      2,
+    );
+  } catch {
+    return text;
+  }
+}
+
 function replaceText(
   editor: Monaco.editor.IStandaloneCodeEditor | null,
   text: string,
@@ -366,6 +402,7 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
 
   useEffect(() => {
     if (!isOpen) return;
+    dragRef.current = null;
     setMonacoError(null);
     setSchemaError(null);
     void loadMonaco().then(
@@ -381,7 +418,10 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
     setTab('schema');
     if (tab === 'schema' || schemaText !== null) return;
     void loadSchema()
-      .then((schema) => setSchemaText(printSchema(schema)))
+      .then((schema) => {
+        setSchemaText(printSchema(schema));
+        setSchemaError(null);
+      })
       .catch((error: unknown) => {
         setTab('query');
         showSchemaError(error);
@@ -497,10 +537,10 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
         signal: AbortSignal.timeout(client.requestTimeout),
       });
       const text = await response.text();
-      const body = parseJson(text);
-      const printed = body === undefined ? text : JSON.stringify(body, null, 2);
+      const printed = printJson(text);
       record(
-        !response.ok || (body as { errors?: unknown[] } | null)?.errors?.length
+        !response.ok ||
+          (parseJson(text) as { errors?: unknown[] } | null)?.errors?.length
           ? 'error'
           : 'ok',
         label,
@@ -511,9 +551,8 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
     } catch (error) {
       const { name, message } = error as Error;
       record('error', label, `Request failed: ${name}: ${message}`);
-    } finally {
-      setIsRunning(false);
     }
+    setIsRunning(false);
   };
 
   if (!isOpen) return null;
@@ -528,7 +567,7 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
         if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
           event.preventDefault();
           event.stopPropagation();
-          if (tab === 'query') void run();
+          if (tab === 'query' && !event.repeat) void run();
         }
       }}
     >
@@ -684,7 +723,7 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
             <span className="bai-gql-devtools__label">Result</span>
             <Editor kind="result" value={result} editorRef={resultEditorRef} />
           </div>
-          {schemaText !== null && (
+          {(tab === 'schema' || schemaText !== null) && (
             <div
               role="tabpanel"
               className={
@@ -693,11 +732,15 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
                   : 'bai-gql-devtools__tabpanel bai-gql-devtools__tabpanel--hidden'
               }
             >
-              <Editor
-                kind="schema"
-                value={schemaText}
-                editorRef={schemaEditorRef}
-              />
+              {schemaText === null ? (
+                <span className="bai-gql-devtools__label">Loading schema…</span>
+              ) : (
+                <Editor
+                  kind="schema"
+                  value={schemaText}
+                  editorRef={schemaEditorRef}
+                />
+              )}
             </div>
           )}
         </div>
