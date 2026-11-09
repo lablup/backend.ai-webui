@@ -286,6 +286,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
         <ResourcePresetSettingModal
           resourcePresetFrgmt={editingResourcePreset}
           open={!!editingResourcePreset || isCreating}
+          unmountOnClose
           onRequestClose={(success) => {
             setEditingResourcePreset(null);
             setIsCreating(false);
