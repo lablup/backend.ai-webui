@@ -7,6 +7,7 @@ import { useBackendAIAppLauncherFragment$key } from '../__generated__/useBackend
 import { requestLocalProxyToken } from '../helper/localProxyToken';
 import { useSetBAINotification } from './useBAINotification';
 import { useProjectPath } from './useRouteScope';
+import { useLoginConfig } from './useWebUIConfig';
 import { BAILink, useBAILogger, useErrorMessageResolver } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
@@ -38,6 +39,7 @@ export const useBackendAIAppLauncher = (
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
   const baiClient = useSuspendedBackendaiClient();
+  const isDebugMode = useLoginConfig()?.debug === true;
   const { logger } = useBAILogger();
 
   const session = useFragment(
@@ -82,13 +84,11 @@ export const useBackendAIAppLauncher = (
       scaling_group: session?.scaling_group,
       project_id: session?.project_id,
       isElectron: globalThis.isElectron,
-      // @ts-ignore
-      debug: globalThis?.backendaiwebui?.debug,
+      debug: isDebugMode,
       forceUseV1Proxy: debugOptions?.forceUseV1Proxy,
       forceUseV2Proxy: debugOptions?.forceUseV2Proxy,
     });
-    // @ts-ignore
-    if (globalThis?.backendaiwebui?.debug === true) {
+    if (isDebugMode) {
       if (debugOptions?.forceUseV1Proxy) {
         logger.info('[wsproxy] forced v1 via debugOptions');
         return 'v1';

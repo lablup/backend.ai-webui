@@ -161,6 +161,9 @@ const SchedulerPage = React.lazy(
 const BrandingPage = React.lazy(
   () => import('./pages/BrandingPage/BrandingPage'),
 );
+const WebUISettingsPage = React.lazy(
+  () => import('./pages/WebUISettingsPage/WebUISettingsPage'),
+);
 const RBACManagementPage = React.lazy(
   () => import('./pages/RBACManagementPage/RBACManagementPage'),
 );
@@ -1001,6 +1004,20 @@ export const mainLayoutChildRoutes: RouteObject[] = [
           menuKey: 'branding',
           access: 'superadmin',
           labelKey: 'webui.menu.Branding',
+        },
+      },
+      {
+        path: 'system-settings',
+        element: (
+          <Suspense fallback={<BAISkeleton rows={4} />}>
+            <WebUISettingsPage />
+          </Suspense>
+        ),
+        handle: {
+          scope: 'admin',
+          menuKey: 'system-settings',
+          access: 'superadmin',
+          labelKey: 'webui.menu.SystemSettings',
         },
       },
       {

@@ -685,116 +685,36 @@ describe('checkImageReferences', () => {
 // ---------------------------------------------------------------------------
 
 describe('checkPluginConfiguration', () => {
-  it('should return empty array when pluginConfig is undefined', () => {
-    expect(checkPluginConfiguration(undefined)).toEqual([]);
+  it('returns nothing when no plugin is configured', () => {
+    expect(checkPluginConfiguration([], '')).toEqual([]);
   });
 
-  it('should return empty array when pluginConfig is empty', () => {
-    expect(checkPluginConfiguration({})).toEqual([]);
+  it('accepts the names and folder paths the loader accepts', () => {
+    expect(
+      checkPluginConfiguration(
+        ['plugin_name', 'another-plugin', 'vendor/dashboard'],
+        'auth/signup-cloud',
+      ),
+    ).toEqual([]);
   });
 
-  it('should return empty array for valid plugin page names', () => {
-    const results = checkPluginConfiguration({
-      page: 'cloud-reports, custom-page, my_plugin',
-    });
-    expect(results).toEqual([]);
-  });
-
-  it('should return empty array for valid JS filenames', () => {
-    const results = checkPluginConfiguration({
-      login: 'signup-cloud.js',
-      sidebar: 'report-cloud.js',
-    });
-    expect(results).toEqual([]);
-  });
-
-  it('should return warning for invalid plugin page name', () => {
-    const results = checkPluginConfiguration({
-      page: 'valid-plugin, invalid plugin!',
-    });
+  it('flags page entries and the login plugin the loader would refuse', () => {
+    const results = checkPluginConfiguration(
+      ['good', 'bad name', 'a/../b'],
+      'signup-cloud.js',
+    );
     expect(results).toHaveLength(1);
     expect(results[0].id).toBe('config-invalid-plugin-names');
     expect(results[0].severity).toBe('warning');
-    expect(results[0].category).toBe('config');
-    expect(results[0].interpolationValues?.plugins).toContain(
-      'invalid plugin!',
-    );
-    expect(results[0].interpolationValues?.count).toBe('1');
-  });
-
-  it('should return warning for invalid login JS filename', () => {
-    const results = checkPluginConfiguration({
-      login: 'invalid login.js',
+    expect(results[0].interpolationValues).toEqual({
+      plugins: 'bad name, a/../b, signup-cloud.js',
+      count: '3',
     });
-    expect(results).toHaveLength(1);
-    expect(results[0].id).toBe('config-invalid-plugin-login');
-    expect(results[0].severity).toBe('warning');
-    expect(results[0].interpolationValues?.field).toBe('plugin.login');
-    expect(results[0].interpolationValues?.value).toBe('invalid login.js');
   });
 
-  it('should return warning for sidebar filename without .js extension', () => {
-    const results = checkPluginConfiguration({
-      sidebar: 'report-cloud.ts',
-    });
-    expect(results).toHaveLength(1);
-    expect(results[0].id).toBe('config-invalid-plugin-sidebar');
-    expect(results[0].interpolationValues?.field).toBe('plugin.sidebar');
-  });
-
-  it('should skip placeholder page value', () => {
-    const results = checkPluginConfiguration({
-      page: '[Plugin Pages]',
-    });
-    expect(results).toEqual([]);
-  });
-
-  it('should skip placeholder JS filenames', () => {
-    const results = checkPluginConfiguration({
-      login: '[Login Plugin]',
-      sidebar: '[Sidebar Plugin]',
-    });
-    expect(results).toEqual([]);
-  });
-
-  it('should skip empty JS filename fields', () => {
-    const results = checkPluginConfiguration({
-      login: '',
-      sidebar: '',
-    });
-    expect(results).toEqual([]);
-  });
-
-  it('should return multiple warnings for multiple invalid entries', () => {
-    const results = checkPluginConfiguration({
-      page: 'valid-plugin, invalid!plugin',
-      login: 'bad file name.js',
-      sidebar: 'also bad.js',
-    });
-    expect(results).toHaveLength(3);
-    const ids = results.map((r) => r.id);
-    expect(ids).toContain('config-invalid-plugin-names');
-    expect(ids).toContain('config-invalid-plugin-login');
-    expect(ids).toContain('config-invalid-plugin-sidebar');
-  });
-
-  it('should count multiple invalid plugin page names', () => {
-    const results = checkPluginConfiguration({
-      page: 'bad!name1, bad!name2, valid-name',
-    });
-    expect(results).toHaveLength(1);
-    expect(results[0].interpolationValues?.count).toBe('2');
-  });
-
-  it('should accept single valid plugin page name', () => {
-    const results = checkPluginConfiguration({ page: 'my-plugin' });
-    expect(results).toEqual([]);
-  });
-
-  it('should accept underscores and hyphens in plugin names', () => {
-    const results = checkPluginConfiguration({
-      page: 'plugin_name, another-plugin, alphanumeric123',
-    });
-    expect(results).toEqual([]);
+  it('skips empty and placeholder entries', () => {
+    expect(
+      checkPluginConfiguration(['', '[Plugin Page]'], '[Login Plugin]'),
+    ).toEqual([]);
   });
 });

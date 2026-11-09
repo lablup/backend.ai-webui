@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useLoginConfig } from './useWebUIConfig';
 import { useTranslation } from 'react-i18next';
 
 const errorMessageTable: {
@@ -63,7 +64,9 @@ const regexTable: {
 };
 
 export const usePainKiller = () => {
+  'use memo';
   const { t } = useTranslation();
+  const isDebugMode = useLoginConfig()?.debug === true;
   const relieve = (msg: string) => {
     if (typeof msg === 'undefined') {
       if (
@@ -77,8 +80,7 @@ export const usePainKiller = () => {
         return 'Problem occurred.';
       }
     }
-    // @ts-ignore
-    if (globalThis.backendaiwebui.debug === true) {
+    if (isDebugMode) {
       return msg;
     }
     if ({}.hasOwnProperty.call(errorMessageTable, msg)) {

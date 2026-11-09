@@ -101,13 +101,13 @@ const sessionsHit = makeHit({
   target: { path: '/project/p/session' },
 });
 const settingHit = makeHit({
-  id: 'setting:/usersettings#userSettings.AutoLogout',
+  id: 'setting:/usersettings#userSettings.AutomaticUpdateCheck',
   kind: 'settingItem',
-  label: 'Auto logout',
+  label: 'Automatic update check',
   breadcrumbKeys: ['webui.menu.Settings', 'userSettings.Preferences'],
   target: {
     path: '/usersettings',
-    search: { tab: 'general', setting: 'userSettings.AutoLogout' },
+    search: { tab: 'general', setting: 'userSettings.AutomaticUpdateCheck' },
   },
   auxiliaryData: { group: 'System' },
 });
@@ -362,7 +362,7 @@ describe('GlobalSearchPalette', () => {
   it('lists the bootstrap rows grouped by the hit group', async () => {
     await openPalette();
 
-    expect(screen.getByText('Auto logout')).toBeInTheDocument();
+    expect(screen.getByText('Automatic update check')).toBeInTheDocument();
     expect(screen.getByText('Workload')).toBeInTheDocument();
     expect(screen.getByText('System')).toBeInTheDocument();
   });
@@ -417,17 +417,19 @@ describe('GlobalSearchPalette', () => {
   it('records a recent, navigates to the hit target, and closes', async () => {
     const user = await openPalette();
 
-    await user.click(screen.getByText('Auto logout'));
+    await user.click(screen.getByText('Automatic update check'));
 
     await waitFor(() =>
       expect(navigate).toHaveBeenCalledWith({
         pathname: '/usersettings',
-        search: 'tab=general&setting=userSettings.AutoLogout',
+        search: 'tab=general&setting=userSettings.AutomaticUpdateCheck',
       }),
     );
     expect(pushRecent).toHaveBeenCalledWith(settingHit);
     await waitFor(() =>
-      expect(screen.queryByText('Auto logout')).not.toBeInTheDocument(),
+      expect(
+        screen.queryByText('Automatic update check'),
+      ).not.toBeInTheDocument(),
     );
   });
 
@@ -441,11 +443,11 @@ describe('GlobalSearchPalette', () => {
     try {
       const user = await openPalette();
 
-      await user.click(screen.getByText('Auto logout'));
+      await user.click(screen.getByText('Automatic update check'));
 
       await waitFor(() =>
         expect(assign).toHaveBeenCalledWith(
-          '/usersettings?tab=general&setting=userSettings.AutoLogout',
+          '/usersettings?tab=general&setting=userSettings.AutomaticUpdateCheck',
         ),
       );
       expect(navigate).not.toHaveBeenCalled();
@@ -465,7 +467,7 @@ describe('GlobalSearchPalette', () => {
     try {
       const user = await openPalette();
 
-      await user.click(screen.getByText('Auto logout'));
+      await user.click(screen.getByText('Automatic update check'));
 
       await waitFor(() => expect(navigate).toHaveBeenCalledTimes(1));
       expect(assign).not.toHaveBeenCalled();
