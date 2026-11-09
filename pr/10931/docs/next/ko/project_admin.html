@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="프로젝트 관리자 기능" />
   <meta name="twitter:description" content="프로젝트 관리자는 특정 프로젝트에 대해 관리 권한을 부여받은 사용자입니다. 프로젝트 관리자는 시스템 전체의 슈퍼 관리자 권한 없이도 자신이 관리하는 프로젝트에 속한 사용자를 확인하고, 연산 세션과 모델 배포를 관리하며, 스토리지 폴더를 운영할 수 있습니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"프로젝트 관리자 기능","inLanguage":"ko","description":"프로젝트 관리자는 특정 프로젝트에 대해 관리 권한을 부여받은 사용자입니다. 프로젝트 관리자는 시스템 전체의 슈퍼 관리자 권한 없이도 자신이 관리하는 프로젝트에 속한 사용자를 확인하고, 연산 세션과 모델 배포를 관리하며, 스토리지 폴더를 운영할 수 있습니다.","dateModified":"2026-11-04T02:34:20.000Z","url":"https://webui.docs.backend.ai/next/ko/project_admin.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"프로젝트 관리자 기능","inLanguage":"ko","description":"프로젝트 관리자는 특정 프로젝트에 대해 관리 권한을 부여받은 사용자입니다. 프로젝트 관리자는 시스템 전체의 슈퍼 관리자 권한 없이도 자신이 관리하는 프로젝트에 속한 사용자를 확인하고, 연산 세션과 모델 배포를 관리하며, 스토리지 폴더를 운영할 수 있습니다.","dateModified":"2026-11-09T01:35:40.000Z","url":"https://webui.docs.backend.ai/next/ko/project_admin.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/project_admin.html" />
   <link rel="alternate" hreflang="en" href="../en/project_admin.html" />
   <link rel="alternate" hreflang="ja" href="../ja/project_admin.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.2 (63a3b63)">v26.10.0-alpha.2 (63a3b63)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.2 (e4b2c1e)">v26.10.0-alpha.2 (e4b2c1e)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -261,121 +261,126 @@
 <p data-bai-block="23">여러 사용자를 한 번에 추가할 때 실패한 사용자는 할당하지 못한 사용자 수를 포함한 오류 알림으로 표시되며, 성공한 사용자에게는 여전히 권한이 부여됩니다.</p>
 <p><a id="the-project-admin-sidebar"></a></p>
 <h2 data-bai-block="24" id="project_admin-프로젝트-관리자-사이드바">프로젝트 관리자 사이드바<a class="hash-link" href="#project_admin-프로젝트-관리자-사이드바" aria-label="Direct link to 프로젝트 관리자 사이드바">#</a></h2>
-<p data-bai-block="25">프로젝트 관리자 권한을 가진 프로젝트를 선택하면 사이드바에 <strong>프로젝트 설정</strong> 항목이 표시됩니다. 이 항목을 선택하면 사이드바가 프로젝트 관리 메뉴로 전환되며, <strong>운영</strong> 섹션에 해당 프로젝트를 관리하기 위한 세 개의 항목이 표시됩니다:</p>
+<p data-bai-block="25">프로젝트 관리자 권한을 가진 프로젝트를 선택하면 사이드바에 <strong>프로젝트 설정</strong> 항목이 표시됩니다. 이 항목을 선택하면 사이드바가 프로젝트 관리 메뉴로 전환되며, <strong>대시보드</strong> 항목과 해당 프로젝트를 관리하기 위한 세 개의 항목이 담긴 <strong>운영</strong> 섹션이 표시됩니다:</p>
 <ul>
-<li data-bai-block="26"><strong>사용자</strong> — 현재 프로젝트의 구성원</li>
-<li data-bai-block="27"><strong>세션</strong> — 현재 프로젝트의 사용자들이 소유한 연산 세션</li>
-<li data-bai-block="28"><strong>배포</strong> — 현재 프로젝트가 소유한 모델 배포</li>
+<li data-bai-block="26"><strong>대시보드</strong> — 현재 프로젝트의 개요</li>
+<li data-bai-block="27"><strong>사용자</strong> — 현재 프로젝트의 구성원</li>
+<li data-bai-block="28"><strong>세션</strong> — 현재 프로젝트의 사용자들이 소유한 연산 세션</li>
+<li data-bai-block="29"><strong>배포</strong> — 현재 프로젝트가 소유한 모델 배포</li>
 </ul>
-<p><figure data-bai-block="29" class="doc-figure"><img src="./images/project_admin_sidebar.png" alt="" class="doc-image" style="width:240px" loading="lazy" decoding="async" width="480" height="900" /><figcaption>그림 20.5</figcaption></figure>
+<p><figure data-bai-block="30" class="doc-figure"><img src="./images/project_admin_sidebar.png" alt="" class="doc-image" style="width:240px" loading="lazy" decoding="async" width="480" height="900" /><figcaption>그림 20.5</figcaption></figure>
+</p>
+<p data-bai-block="31">프로젝트 관리자 페이지에서는 상단의 프로젝트 선택기로 선택한 프로젝트 하위의 항목들만 표기됩니다. 이 내용은 페이지 상단의 배너를 통해 확인할 수 있습니다.</p>
+<p><figure data-bai-block="32" class="doc-figure"><img src="./images/project_admin_scope_alert.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2676" height="92" /><figcaption>그림 20.6</figcaption></figure>
 </p>
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
-<p data-bai-block="30">프로젝트 관리자 페이지에서는 상단의 프로젝트 선택기로 선택한 프로젝트 하위의 항목들만 표기됩니다. 이 내용은 페이지 상단의 배너를 통해 확인할 수 있습니다.</p>
-<p><figure data-bai-block="31" class="doc-figure"><img src="./images/project_admin_scope_alert.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2676" height="92" /><figcaption>그림 20.6</figcaption></figure>
+<p><a id="project-admin-dashboard"></a></p>
+<h2 data-bai-block="33" id="project_admin-대시보드">대시보드<a class="hash-link" href="#project_admin-대시보드" aria-label="Direct link to 대시보드">#</a></h2>
+<p data-bai-block="34"><strong>대시보드</strong> 항목을 선택하면 선택한 프로젝트로 범위가 한정된 카드 보드가 열립니다: <strong>세션 현황</strong>, <strong>대기 세션 스케줄링 기록</strong>, <strong>장시간 실행 중인 세션</strong>, <strong>자원 할당</strong>, <strong>배포</strong>, <strong>프로젝트 폴더</strong>, <strong>프로젝트 사용자</strong>, <strong>감사 로그</strong>. <strong>대기 세션 스케줄링 기록</strong>에서 행을 선택하면 해당 세션의 스케줄링 기록이 열립니다.</p>
+<p><figure data-bai-block="35" class="doc-figure"><img src="./images/project_admin_dashboard.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 20.7</figcaption></figure>
 </p>
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
-
+<p data-bai-block="36">보드, 카드 설정, 새로고침 컨트롤은 사용자 <a href="./dashboard.html#dashboard">대시보드</a>와 동일하게 동작합니다.</p>
 <p><a id="refreshing-project-admin-pages"></a></p>
-<h2 data-bai-block="32" id="project_admin-프로젝트-관리자-페이지-새로고침">프로젝트 관리자 페이지 새로고침<a class="hash-link" href="#project_admin-프로젝트-관리자-페이지-새로고침" aria-label="Direct link to 프로젝트 관리자 페이지 새로고침">#</a></h2>
-<p data-bai-block="33">프로젝트 관리자 페이지에서는 동일한 새로고침 버튼을 제공합니다. 새로고침 버튼을 클릭하면 테이블 목록을 갱신할 수 있습니다.</p>
-<p data-bai-block="34">새로고침 버튼 옆의 드롭다운 버튼을 클릭하면 <strong>자동 새로고침</strong> 메뉴가 열리며, 자동 새로고침 주기를 선택할 수 있습니다.</p>
-<p><figure data-bai-block="35" class="doc-figure"><img src="./images/project_admin_auto_refresh_menu.png" alt="" class="doc-image" style="width:94px" loading="lazy" decoding="async" width="188" height="446" /><figcaption>그림 20.7</figcaption></figure>
+<h2 data-bai-block="37" id="project_admin-프로젝트-관리자-페이지-새로고침">프로젝트 관리자 페이지 새로고침<a class="hash-link" href="#project_admin-프로젝트-관리자-페이지-새로고침" aria-label="Direct link to 프로젝트 관리자 페이지 새로고침">#</a></h2>
+<p data-bai-block="38">프로젝트 관리자 페이지에서는 동일한 새로고침 버튼을 제공합니다. 새로고침 버튼을 클릭하면 테이블 목록을 갱신할 수 있습니다.</p>
+<p data-bai-block="39">새로고침 버튼 옆의 드롭다운 버튼을 클릭하면 <strong>자동 새로고침</strong> 메뉴가 열리며, 자동 새로고침 주기를 선택할 수 있습니다.</p>
+<p><figure data-bai-block="40" class="doc-figure"><img src="./images/project_admin_auto_refresh_menu.png" alt="" class="doc-image" style="width:94px" loading="lazy" decoding="async" width="188" height="446" /><figcaption>그림 20.8</figcaption></figure>
 </p>
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 <p><a id="users"></a></p>
-<h2 data-bai-block="36" id="project_admin-사용자">사용자<a class="hash-link" href="#project_admin-사용자" aria-label="Direct link to 사용자">#</a></h2>
-<p data-bai-block="37"><strong>사용자</strong> 페이지에는 현재 선택된 프로젝트에 속한 모든 사용자가 표시됩니다. 이 페이지를 사용하면 프로젝트의 멤버를 한눈에 검토할 수 있습니다. 예를 들어 프로젝트 리소스에 접근 가능한 사용자를 확인하거나 비활성 계정을 식별할 수 있습니다.</p>
-<p><figure data-bai-block="38" class="doc-figure"><img src="./images/project_admin_users_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 20.8</figcaption></figure>
+<h2 data-bai-block="41" id="project_admin-사용자">사용자<a class="hash-link" href="#project_admin-사용자" aria-label="Direct link to 사용자">#</a></h2>
+<p data-bai-block="42"><strong>사용자</strong> 페이지에는 현재 선택된 프로젝트에 속한 모든 사용자가 표시됩니다. 이 페이지를 사용하면 프로젝트의 멤버를 한눈에 검토할 수 있습니다. 예를 들어 프로젝트 리소스에 접근 가능한 사용자를 확인하거나 비활성 계정을 식별할 수 있습니다.</p>
+<p><figure data-bai-block="43" class="doc-figure"><img src="./images/project_admin_users_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 20.9</figcaption></figure>
 </p>
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
-<p data-bai-block="39">페이지는 다음 컨트롤을 제공합니다:</p>
+<p data-bai-block="44">페이지는 다음 컨트롤을 제공합니다:</p>
 <ul>
-<li data-bai-block="40"><strong>활성 / 비활성</strong> 세그먼트 컨트롤: 활성 사용자와 비활성 사용자를 전환합니다. 기본적으로 활성이 선택되어 있습니다.</li>
-<li data-bai-block="41"><strong>속성 필터</strong>: E-Mail, ID, 사용자 이름, 역할 또는 생성일로 목록을 필터링합니다.</li>
+<li data-bai-block="45"><strong>활성 / 비활성</strong> 세그먼트 컨트롤: 활성 사용자와 비활성 사용자를 전환합니다. 기본적으로 활성이 선택되어 있습니다.</li>
+<li data-bai-block="46"><strong>속성 필터</strong>: E-Mail, ID, 사용자 이름, 역할 또는 생성일로 목록을 필터링합니다.</li>
 </ul>
-<p data-bai-block="42">프로젝트 관리자에게 사용자 페이지는 <strong>읽기 전용</strong>입니다. 이 페이지에는 사용자 생성, 편집, 비활성화 작업이 제공되지 않으며, 해당 작업은 슈퍼 관리자만 <a href="./admin_menu.html#admin-menus">관리자 기능</a> 장에 설명된 시스템 전체 사용자 페이지에서 수행할 수 있습니다.</p>
+<p data-bai-block="47">프로젝트 관리자에게 사용자 페이지는 <strong>읽기 전용</strong>입니다. 이 페이지에는 사용자 생성, 편집, 비활성화 작업이 제공되지 않으며, 해당 작업은 슈퍼 관리자만 <a href="./admin_menu.html#admin-menus">관리자 기능</a> 장에 설명된 시스템 전체 사용자 페이지에서 수행할 수 있습니다.</p>
 <p><a id="data"></a></p>
-<h2 data-bai-block="43" id="project_admin-스토리지-폴더">스토리지 폴더<a class="hash-link" href="#project_admin-스토리지-폴더" aria-label="Direct link to 스토리지 폴더">#</a></h2>
-<p data-bai-block="44">프로젝트의 스토리지 폴더는 해당 프로젝트를 선택한 상태에서 <strong>데이터</strong> 페이지를 통해 관리합니다. 폴더 사용 모드, 권한, 할당량에 대한 자세한 내용은 <a href="./vfolder.html#vfolders">스토리지 폴더</a> 장을 참고하세요.</p>
+<h2 data-bai-block="48" id="project_admin-스토리지-폴더">스토리지 폴더<a class="hash-link" href="#project_admin-스토리지-폴더" aria-label="Direct link to 스토리지 폴더">#</a></h2>
+<p data-bai-block="49">프로젝트의 스토리지 폴더는 해당 프로젝트를 선택한 상태에서 <strong>데이터</strong> 페이지를 통해 관리합니다. 폴더 사용 모드, 권한, 할당량에 대한 자세한 내용은 <a href="./vfolder.html#vfolders">스토리지 폴더</a> 장을 참고하세요.</p>
 <p><a id="sessions"></a></p>
-<h2 data-bai-block="45" id="project_admin-세션">세션<a class="hash-link" href="#project_admin-세션" aria-label="Direct link to 세션">#</a></h2>
-<p data-bai-block="46"><strong>세션</strong> 페이지에는 현재 선택된 프로젝트의 사용자들이 소유한 연산 세션이 표시됩니다. 이 페이지에서 활성 워크로드를 모니터링하거나, 장시간 실행 중인 세션을 식별하거나, 더 이상 필요하지 않은 세션을 종료할 수 있습니다.</p>
-<p><figure data-bai-block="47" class="doc-figure"><img src="./images/project_admin_sessions_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 20.9</figcaption></figure>
+<h2 data-bai-block="50" id="project_admin-세션">세션<a class="hash-link" href="#project_admin-세션" aria-label="Direct link to 세션">#</a></h2>
+<p data-bai-block="51"><strong>세션</strong> 페이지에는 현재 선택된 프로젝트의 사용자들이 소유한 연산 세션이 표시됩니다. 이 페이지에서 활성 워크로드를 모니터링하거나, 장시간 실행 중인 세션을 식별하거나, 더 이상 필요하지 않은 세션을 종료할 수 있습니다.</p>
+<p><figure data-bai-block="52" class="doc-figure"><img src="./images/project_admin_sessions_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 20.10</figcaption></figure>
 </p>
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
-<p data-bai-block="48">페이지는 다음 컨트롤을 제공합니다:</p>
+<p data-bai-block="53">페이지는 다음 컨트롤을 제공합니다:</p>
 <ul>
-<li data-bai-block="49"><strong>실행 중 / 종료됨</strong> 세그먼트 컨트롤: 현재 실행 중인 세션과 이미 종료된 세션을 전환합니다.</li>
-<li data-bai-block="50"><strong>속성 필터 및 정렬</strong>: ID, 세션 이름 또는 소유자로 목록을 필터링할 수 있습니다. 소유자 값은 UUID를 직접 입력하는 대신 검색 가능한 사용자 계정 목록에서 선택 가능합니다. 적용된 필터 태그에는 선택한 계정의 이메일 주소가 표시됩니다. 정렬 가능한 열 헤더를 클릭하여 테이블을 정렬할 수 있습니다.</li>
+<li data-bai-block="54"><strong>실행 중 / 종료됨</strong> 세그먼트 컨트롤: 현재 실행 중인 세션과 이미 종료된 세션을 전환합니다.</li>
+<li data-bai-block="55"><strong>속성 필터 및 정렬</strong>: ID, 세션 이름 또는 소유자로 목록을 필터링할 수 있습니다. 소유자 값은 UUID를 직접 입력하는 대신 검색 가능한 사용자 계정 목록에서 선택 가능합니다. 적용된 필터 태그에는 선택한 계정의 이메일 주소가 표시됩니다. 정렬 가능한 열 헤더를 클릭하여 테이블을 정렬할 수 있습니다.</li>
 </ul>
-<p data-bai-block="51">세션에도 키-값 라벨을 지정할 수 있습니다. 세션의 <strong>라벨 편집</strong> 작업을 사용하거나, 여러 세션을 선택한 뒤 <strong>라벨 추가</strong>를 클릭하여 한 번에 라벨을 지정합니다.</p>
-<h3 data-bai-block="52" id="project_admin-세션-종료">세션 종료<a class="hash-link" href="#project_admin-세션-종료" aria-label="Direct link to 세션 종료">#</a></h3>
-<p data-bai-block="53">하나 이상의 세션을 종료하려면:</p>
+<p data-bai-block="56">세션에도 키-값 라벨을 지정할 수 있습니다. 세션의 <strong>라벨 편집</strong> 작업을 사용하거나, 여러 세션을 선택한 뒤 <strong>라벨 추가</strong>를 클릭하여 한 번에 라벨을 지정합니다.</p>
+<h3 data-bai-block="57" id="project_admin-세션-종료">세션 종료<a class="hash-link" href="#project_admin-세션-종료" aria-label="Direct link to 세션 종료">#</a></h3>
+<p data-bai-block="58">하나 이상의 세션을 종료하려면:</p>
 <ol>
-<li data-bai-block="54">가장 왼쪽 열의 체크박스를 사용하여 종료할 세션을 선택합니다. 단일 세션을 종료하는 경우 세션 이름 옆의 <strong>종료</strong> 버튼을 활용할 수 있습니다.</li>
-<li data-bai-block="55">테이블 헤더의 전원 끄기 아이콘을 클릭하여 확인 모달을 엽니다.</li>
-<li data-bai-block="56">모달에 표시된 대상 세션 목록을 확인합니다.</li>
-<li data-bai-block="57">필요한 경우 <strong>강제 종료</strong> 체크박스를 선택하여 현재 상태와 상관없이 세션을 종료하거나 취소합니다. 이 옵션을 활성화하면 경고가 표시되고 확인 버튼 레이블이 <strong>종료</strong>에서 <strong>강제 종료</strong>로 변경됩니다.</li>
-<li data-bai-block="58">확인 버튼을 클릭하여 세션을 종료합니다.</li>
+<li data-bai-block="59">가장 왼쪽 열의 체크박스를 사용하여 종료할 세션을 선택합니다. 단일 세션을 종료하는 경우 세션 이름 옆의 <strong>종료</strong> 버튼을 활용할 수 있습니다.</li>
+<li data-bai-block="60">테이블 헤더의 전원 끄기 아이콘을 클릭하여 확인 모달을 엽니다.</li>
+<li data-bai-block="61">모달에 표시된 대상 세션 목록을 확인합니다.</li>
+<li data-bai-block="62">필요한 경우 <strong>강제 종료</strong> 체크박스를 선택하여 현재 상태와 상관없이 세션을 종료하거나 취소합니다. 이 옵션을 활성화하면 경고가 표시되고 확인 버튼 레이블이 <strong>종료</strong>에서 <strong>강제 종료</strong>로 변경됩니다.</li>
+<li data-bai-block="63">확인 버튼을 클릭하여 세션을 종료합니다.</li>
 </ol>
-<p><figure data-bai-block="59" class="doc-figure"><img src="./images/project_admin_terminate_session_modal.png" alt="" class="doc-image" style="width:520px" loading="lazy" decoding="async" width="1040" height="468" /><figcaption>그림 20.10</figcaption></figure>
+<p><figure data-bai-block="64" class="doc-figure"><img src="./images/project_admin_terminate_session_modal.png" alt="" class="doc-image" style="width:520px" loading="lazy" decoding="async" width="1040" height="468" /><figcaption>그림 20.11</figcaption></figure>
 </p>
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 <div class="admonition admonition-warning">
-<div data-bai-block="60" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>주의</div>
+<div data-bai-block="65" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>주의</div>
 <div class="admonition-content">
 
-<p data-bai-block="61"><strong>강제 종료</strong>는 세션이 멈춰 있고 비정상적으로 오랫동안 상태가 변하지 않을 때만 사용하세요. 강제 종료는 에이전트에 있는 실제 컨테이너를 삭제하지 않으므로, 이후 수동으로 컨테이너를 정리해야 할 수 있습니다.</p>
+<p data-bai-block="66"><strong>강제 종료</strong>는 세션이 멈춰 있고 비정상적으로 오랫동안 상태가 변하지 않을 때만 사용하세요. 강제 종료는 에이전트에 있는 실제 컨테이너를 삭제하지 않으므로, 이후 수동으로 컨테이너를 정리해야 할 수 있습니다.</p>
 </div></div>
 
 
 <div class="admonition admonition-note">
-<div data-bai-block="62" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div data-bai-block="67" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
 <div class="admonition-content">
 
-<p data-bai-block="63">프로젝트 관리자용 세션 페이지에서는 현재 세션 이름을 클릭해도 세션 상세 패널이 열리지 않습니다. 연산 세션과 상세 보기에 대한 배경 지식은 <a href="./session_page.html#session-page">세션 페이지</a> 장을 참고하세요.</p>
+<p data-bai-block="68">프로젝트 관리자용 세션 페이지에서는 현재 세션 이름을 클릭해도 세션 상세 패널이 열리지 않습니다. 연산 세션과 상세 보기에 대한 배경 지식은 <a href="./session_page.html#session-page">세션 페이지</a> 장을 참고하세요.</p>
 </div></div>
 
 
 <p><a id="deployments"></a></p>
-<h2 data-bai-block="64" id="project_admin-배포">배포<a class="hash-link" href="#project_admin-배포" aria-label="Direct link to 배포">#</a></h2>
-<p data-bai-block="65"><strong>배포</strong> 페이지에는 현재 선택된 프로젝트가 소유한 모델 배포가 표시됩니다. 이 페이지에서 추론 엔드포인트를 관리하거나, 배포 설정을 편집하거나, 더 이상 사용하지 않는 배포를 제거할 수 있습니다.</p>
-<p><figure data-bai-block="66" class="doc-figure"><img src="./images/project_admin_deployments_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 20.11</figcaption></figure>
+<h2 data-bai-block="69" id="project_admin-배포">배포<a class="hash-link" href="#project_admin-배포" aria-label="Direct link to 배포">#</a></h2>
+<p data-bai-block="70"><strong>배포</strong> 페이지에는 현재 선택된 프로젝트가 소유한 모델 배포가 표시됩니다. 이 페이지에서 추론 엔드포인트를 관리하거나, 배포 설정을 편집하거나, 더 이상 사용하지 않는 배포를 제거할 수 있습니다.</p>
+<p><figure data-bai-block="71" class="doc-figure"><img src="./images/project_admin_deployments_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 20.12</figcaption></figure>
 </p>
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
-<p data-bai-block="67">페이지는 다음 컨트롤을 제공합니다:</p>
+<p data-bai-block="72">페이지는 다음 컨트롤을 제공합니다:</p>
 <ul>
-<li data-bai-block="68"><strong>실행 중 / 종료됨</strong> 세그먼트 컨트롤: 현재 실행 중인 배포와 종료된 배포를 전환합니다.</li>
-<li data-bai-block="69"><strong>속성 필터</strong>: 이름, 엔드포인트 URL 또는 공개 여부로 목록을 필터링합니다.</li>
+<li data-bai-block="73"><strong>실행 중 / 종료됨</strong> 세그먼트 컨트롤: 현재 실행 중인 배포와 종료된 배포를 전환합니다.</li>
+<li data-bai-block="74"><strong>속성 필터</strong>: 이름, 엔드포인트 URL 또는 공개 여부로 목록을 필터링합니다.</li>
 </ul>
-<p data-bai-block="70">테이블에는 배포의 이름, 리비전, 라이프사이클, 복제본, 모델, 소유자, 생성일 열이 표시되며, 필요한 경우 도메인, 프로젝트, 자원 그룹 정보도 함께 표시됩니다.</p>
-<p data-bai-block="71"><strong>리비전</strong> 열에는 배포의 현재 리비전이 클릭 가능한 <code>#N</code> 링크로 표시됩니다. 이 링크를 클릭하면 현재 리비전의 상세 정보를 보여 주는 패널이 열립니다.</p>
-<h3 data-bai-block="72" id="project_admin-배포-작업">배포 작업<a class="hash-link" href="#project_admin-배포-작업" aria-label="Direct link to 배포 작업">#</a></h3>
-<p data-bai-block="73">각 배포 행에서는 다음 작업을 사용할 수 있습니다:</p>
+<p data-bai-block="75">테이블에는 배포의 이름, 리비전, 라이프사이클, 복제본, 모델, 소유자, 생성일 열이 표시되며, 필요한 경우 도메인, 프로젝트, 자원 그룹 정보도 함께 표시됩니다.</p>
+<p data-bai-block="76"><strong>리비전</strong> 열에는 배포의 현재 리비전이 클릭 가능한 <code>#N</code> 링크로 표시됩니다. 이 링크를 클릭하면 현재 리비전의 상세 정보를 보여 주는 패널이 열립니다.</p>
+<h3 data-bai-block="77" id="project_admin-배포-작업">배포 작업<a class="hash-link" href="#project_admin-배포-작업" aria-label="Direct link to 배포 작업">#</a></h3>
+<p data-bai-block="78">각 배포 행에서는 다음 작업을 사용할 수 있습니다:</p>
 <ul>
-<li data-bai-block="74"><strong>배포 이름</strong>을 클릭하면 프로젝트 관리자 범위 내의 배포 상세 페이지로 이동합니다.</li>
-<li data-bai-block="75"><strong>리비전 번호</strong>(<code>#N</code>)를 클릭하면 현재 리비전의 상세 정보 패널이 열립니다.</li>
-<li data-bai-block="76"><strong>연필 아이콘</strong>을 클릭하면 설정 모달에서 배포 구성을 편집할 수 있습니다.</li>
-<li data-bai-block="77"><strong>라벨 편집</strong> 작업으로 배포의 키-값 라벨을 추가, 변경, 삭제할 수 있습니다.</li>
-<li data-bai-block="78"><strong>휴지통 아이콘</strong>을 클릭하면 배포를 삭제할 수 있습니다. 삭제를 수행하려면 확인 모달에서 배포 이름을 직접 입력해야 합니다.</li>
+<li data-bai-block="79"><strong>배포 이름</strong>을 클릭하면 프로젝트 관리자 범위 내의 배포 상세 페이지로 이동합니다.</li>
+<li data-bai-block="80"><strong>리비전 번호</strong>(<code>#N</code>)를 클릭하면 현재 리비전의 상세 정보 패널이 열립니다.</li>
+<li data-bai-block="81"><strong>연필 아이콘</strong>을 클릭하면 설정 모달에서 배포 구성을 편집할 수 있습니다.</li>
+<li data-bai-block="82"><strong>라벨 편집</strong> 작업으로 배포의 키-값 라벨을 추가, 변경, 삭제할 수 있습니다.</li>
+<li data-bai-block="83"><strong>휴지통 아이콘</strong>을 클릭하면 배포를 삭제할 수 있습니다. 삭제를 수행하려면 확인 모달에서 배포 이름을 직접 입력해야 합니다.</li>
 </ul>
-<p><figure data-bai-block="79" class="doc-figure"><img src="./images/project_admin_deployment_detail.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 20.12</figcaption></figure>
+<p><figure data-bai-block="84" class="doc-figure"><img src="./images/project_admin_deployment_detail.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 20.13</figcaption></figure>
 </p>
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
-<p data-bai-block="80">배포 리비전, 복제본, 트래픽 라우팅에 대한 자세한 내용은 <a href="./deployment.html#model-serving">배포</a> 장을 참고하세요.</p>
+<p data-bai-block="85">배포 리비전, 복제본, 트래픽 라우팅에 대한 자세한 내용은 <a href="./deployment.html#model-serving">배포</a> 장을 참고하세요.</p>
 
 </section>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/project_admin/project_admin.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> 이 페이지 편집</a>
-  <span class="last-updated">마지막 업데이트 2026년 11월 4일</span>
+  <span class="last-updated">마지막 업데이트 2026년 11월 9일</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./user_settings.html">
@@ -398,6 +403,7 @@
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#project_admin-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EA%B4%80%EB%A6%AC%EC%9E%90-%EA%B6%8C%ED%95%9C-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EC%8B%9D%EB%B3%84" data-toc-target="project_admin-프로젝트-관리자-권한-프로젝트-식별">프로젝트 관리자 권한 프로젝트 식별</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#project_admin-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EA%B4%80%EB%A6%AC%EC%9E%90-%EA%B6%8C%ED%95%9C-%EC%84%A4%EC%A0%95" data-toc-target="project_admin-프로젝트-관리자-권한-설정">프로젝트 관리자 권한 설정</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#project_admin-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EA%B4%80%EB%A6%AC%EC%9E%90-%EC%82%AC%EC%9D%B4%EB%93%9C%EB%B0%94" data-toc-target="project_admin-프로젝트-관리자-사이드바">프로젝트 관리자 사이드바</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#project_admin-%EB%8C%80%EC%8B%9C%EB%B3%B4%EB%93%9C" data-toc-target="project_admin-대시보드">대시보드</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#project_admin-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EA%B4%80%EB%A6%AC%EC%9E%90-%ED%8E%98%EC%9D%B4%EC%A7%80-%EC%83%88%EB%A1%9C%EA%B3%A0%EC%B9%A8" data-toc-target="project_admin-프로젝트-관리자-페이지-새로고침">프로젝트 관리자 페이지 새로고침</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#project_admin-%EC%82%AC%EC%9A%A9%EC%9E%90" data-toc-target="project_admin-사용자">사용자</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#project_admin-%EC%8A%A4%ED%86%A0%EB%A6%AC%EC%A7%80-%ED%8F%B4%EB%8D%94" data-toc-target="project_admin-스토리지-폴더">스토리지 폴더</a></li>
