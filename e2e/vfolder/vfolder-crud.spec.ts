@@ -110,13 +110,15 @@ test.describe(
         const host = await getE2EVFolderHost(userInfo.user);
         await folderCreationModal.fillLocationSelector(host);
         await folderCreationModal.selectLocationOptionByText(host);
-        await (await folderCreationModal.getCreateButton()).click();
+        await folderCreationModal.submit();
+        await folderCreationModal.waitForClosed();
       });
       test('User can create default vFolder', async ({ page }) => {
         const folderCreationModal = new FolderCreationModal(page);
         await folderCreationModal.modalToBeVisible();
         await folderCreationModal.fillFolderName(creationFolderName);
-        await (await folderCreationModal.getCreateButton()).click();
+        await folderCreationModal.submit();
+        await folderCreationModal.waitForClosed();
       });
       test('User can create Model vFolder', async ({ page }) => {
         const folderCreationModal = new FolderCreationModal(page);
@@ -126,7 +128,8 @@ test.describe(
         await expect(
           await folderCreationModal.getModelUsageModeRadio(),
         ).toBeChecked();
-        await (await folderCreationModal.getCreateButton()).click();
+        await folderCreationModal.submit();
+        await folderCreationModal.waitForClosed();
       });
       test('User can create cloneable Model vFolder', async ({ page }) => {
         const folderCreationModal = new FolderCreationModal(page);
@@ -140,7 +143,8 @@ test.describe(
         await expect(
           await folderCreationModal.getCloneableSwitchButton(),
         ).toBeChecked();
-        await (await folderCreationModal.getCreateButton()).click();
+        await folderCreationModal.submit();
+        await folderCreationModal.waitForClosed();
       });
       // #10501: a folder created in a general project is a project folder its
       // members can see, so creation asks for confirmation first.
@@ -310,7 +314,7 @@ test.describe(
         await expect(
           await folderCreationModal.getAutoMountUsageModeRadio(),
         ).toBeChecked();
-        await (await folderCreationModal.getCreateButton()).click();
+        await folderCreationModal.submit();
         await expect(
           page.getByRole('dialog', { name: 'Create a new storage folder' }),
         ).toBeHidden({ timeout: 30000 });
