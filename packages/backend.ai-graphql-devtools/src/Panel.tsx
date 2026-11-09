@@ -80,9 +80,12 @@ function loadMonaco(): Promise<MonacoApi> {
       return;
     }
     const script = existing ?? document.createElement('script');
+    let isSettled = false;
     const fail = () => {
+      if (isSettled) return;
+      isSettled = true;
       clearTimeout(existingTimer);
-      script.remove();
+      if (!existing) script.remove();
       reject(new Error(`could not load ${src}`));
     };
     const existingTimer = existing
@@ -91,9 +94,14 @@ function loadMonaco(): Promise<MonacoApi> {
     script.addEventListener(
       'load',
       () => {
-        clearTimeout(existingTimer);
-        if (typeof globalThis.require === 'function') start();
-        else fail();
+        if (isSettled) return;
+        if (typeof globalThis.require === 'function') {
+          isSettled = true;
+          clearTimeout(existingTimer);
+          start();
+        } else {
+          fail();
+        }
       },
       { once: true },
     );
@@ -420,7 +428,6 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
     void loadSchema()
       .then((schema) => {
         setSchemaText(printSchema(schema));
-        setSchemaError(null);
       })
       .catch((error: unknown) => {
         setTab('query');
@@ -549,8 +556,13 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
           : `HTTP ${response.status} ${response.statusText}\n${printed}`.trimEnd(),
       );
     } catch (error) {
-      const { name, message } = error as Error;
-      record('error', label, `Request failed: ${name}: ${message}`);
+      const detail =
+        error instanceof Error
+          ? `${error.name}: ${error.message}`
+          : typeof error === 'string'
+            ? error
+            : 'unknown error';
+      record('error', label, `Request failed: ${detail}`);
     }
     setIsRunning(false);
   };
@@ -765,8 +777,8 @@ export function togglePanel() {
   if (!mounted) {
     const container = document.createElement('div');
     container.id = 'bai-graphql-devtools-root';
-    document.body.append(container);
     mounted = { root: createRoot(container), container };
+    document.body.append(container);
   }
   const { root, container } = mounted;
   isOpen = !isOpen;

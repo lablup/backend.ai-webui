@@ -1,6 +1,5 @@
 const isMac = /mac/i.test(navigator.platform);
 let isImporting = false;
-let failedImports = 0;
 
 window.addEventListener(
   'keydown',
@@ -17,22 +16,19 @@ window.addEventListener(
     event.stopPropagation();
     if (event.repeat || isImporting) return;
     isImporting = true;
-    const panelModule: Promise<typeof import('./Panel')> =
-      failedImports === 0
-        ? import('./Panel')
-        : import(
-            /* @vite-ignore */
-            `${import.meta.url.replace(/main\.tsx.*$/, 'Panel.tsx')}?retry=${failedImports}`
-          );
-    panelModule
-      .then((panel) => panel.togglePanel())
-      .catch((error: unknown) => {
-        failedImports += 1;
-        console.warn('GraphQL devtools failed to load', error);
-      })
-      .finally(() => {
+    import('./Panel').then(
+      (panel) => {
         isImporting = false;
-      });
+        panel.togglePanel();
+      },
+      (error: unknown) => {
+        isImporting = false;
+        console.warn(
+          'GraphQL devtools failed to load. Reload the page to try again.',
+          error,
+        );
+      },
+    );
   },
   { capture: true },
 );
