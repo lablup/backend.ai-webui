@@ -255,17 +255,52 @@ test.describe(
     });
     // Auto Mount uses a dedicated folder name (dot-prefixed) that is independent.
     // Not serial: single test — no ordering dependency.
+    // #10501: Auto Mount is offered only while the personal project is selected.
     test.describe('Auto Mount vFolder Creation', () => {
       const folderName = '.e2e-test-folder-auto-mount' + new Date().getTime();
+      let sharedProject = '';
+      let personalProjectSlug: string | undefined;
       test.beforeEach(async ({ page }) => {
+        personalProjectSlug = undefined;
         await page.getByRole('link', { name: 'Data' }).click();
+        const projectSelector = page.getByRole('button', {
+          name: 'Select Project',
+        });
+        await expect(projectSelector).toBeVisible({ timeout: 15000 });
+        sharedProject = (await projectSelector.innerText()).trim();
+        const previousSlug = new URL(page.url()).pathname.split('/')[2];
+        await projectSelector.click();
+        const personalOption = page
+          .getByRole('listbox', { name: 'Select Project' })
+          .getByRole('group', { name: 'Personal' })
+          .getByRole('option')
+          .first();
+        await expect(personalOption).toBeVisible({ timeout: 15000 });
+        await personalOption.click();
+        await expect(page).toHaveURL((url) => {
+          const [, segment, slug, subPath] = url.pathname.split('/');
+          return (
+            segment === 'project' && subPath === 'data' && slug !== previousSlug
+          );
+        });
+        personalProjectSlug = new URL(page.url()).pathname.split('/')[2];
         await page
           .getByRole('button', { name: 'Create Folder' })
           .first()
           .click();
       });
       test.afterEach(async ({ page }) => {
-        await cleanupVFolderSafely(page, folderName);
+        if (personalProjectSlug) {
+          await cleanupVFolderSafely(
+            page,
+            folderName,
+            `project/${personalProjectSlug}/data`,
+          );
+        }
+        // Leave the user on the shared project the other tests expect.
+        if (sharedProject) {
+          await navigateTo(page, `project/${sharedProject}/data`);
+        }
       });
       test('User can create Auto Mount vFolder', async ({ page }) => {
         const folderCreationModal = new FolderCreationModal(page);
@@ -276,6 +311,9 @@ test.describe(
           await folderCreationModal.getAutoMountUsageModeRadio(),
         ).toBeChecked();
         await (await folderCreationModal.getCreateButton()).click();
+        await expect(
+          page.getByRole('dialog', { name: 'Create a new storage folder' }),
+        ).toBeHidden({ timeout: 30000 });
       });
     });
 
