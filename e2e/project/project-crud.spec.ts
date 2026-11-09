@@ -328,8 +328,10 @@ test.describe(
       // value is already filled in, committing immediately on click — no
       // separate field pick + edit-popover + Apply step
       // (`usePowerSearchSource.ts`'s content-search branch).
+      // The pre-applied Type chip leaves the unfocused input 0px wide, which
+      // Playwright cannot click; it takes its width on focus.
       const searchBar = page.getByRole('combobox', { name: 'Search filters' });
-      await searchBar.click();
+      await searchBar.focus();
       await searchBar.fill(name);
       await page
         .getByRole('option', { name: `"${name}"`, exact: true })

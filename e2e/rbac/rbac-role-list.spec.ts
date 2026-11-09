@@ -201,7 +201,7 @@ test.describe(
 
       // 9. Remove the filter chip
       const filterChip = page.getByRole('button', {
-        name: 'Remove Role Name: contains',
+        name: 'Remove Role Name: contains admin',
         exact: true,
       });
       await expect(filterChip).toBeVisible({ timeout: 5000 });
@@ -253,7 +253,7 @@ test.describe(
 
       // 8. Remove the filter chip
       const filterChip = page.getByRole('button', {
-        name: 'Remove Source: equals',
+        name: 'Remove Source: equals System',
         exact: true,
       });
       await filterChip.click();
@@ -286,7 +286,7 @@ test.describe(
 
       // 6. Remove the filter
       const filterChip = page.getByRole('button', {
-        name: 'Remove Role Name: contains',
+        name: 'Remove Role Name: contains zzz-nonexistent-role-xyz',
         exact: true,
       });
       await filterChip.click();
