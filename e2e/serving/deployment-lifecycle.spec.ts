@@ -353,7 +353,7 @@ test.describe(
         });
         // `BAISegmentedControl` renders a directly-clickable `role="radio"` button
         // (see comment in "Admin can view the deployments list..." above).
-        await page.getByRole('radio', { name: 'Terminated' }).click();
+        await statusTab(page, 'Terminated').click();
         await expect(page.getByText(deploymentName).first()).toBeHidden({
           timeout: 10000,
         });
