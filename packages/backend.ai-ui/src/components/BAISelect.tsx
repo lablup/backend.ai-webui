@@ -86,9 +86,8 @@
 
  PILOT-DECISION — **`label` is required by Astryx and defaults to hidden.**
  No antd call site passes one. The wrapper accepts `label` and otherwise
- derives an accessible name from `placeholder` (which every call site does
- pass: 28 of 64) before falling back to the translated generic — the same
- policy `BAIButton` / `BAICheckbox` / `BAIUncontrolledInput` use here.
+ takes the accessible name from `aria-label`, then the Form.Item label, then
+ `placeholder`, before falling back to the translated generic.
 */
 import { FormItemInputContext } from '../form-engine';
 import { nodeToAccessibleLabel } from '../helper/astryxLabel';
@@ -517,10 +516,10 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   }, [autoSelectedValue]);
 
   const accessibleLabel =
-    label ??
-    ariaLabel ??
-    formItemLabel ??
-    nodeToAccessibleLabel(placeholder) ??
+    label ||
+    ariaLabel ||
+    formItemLabel ||
+    nodeToAccessibleLabel(placeholder) ||
     t('general.Select');
 
   const singleValue = toOptionKey(value ?? defaultValue);
@@ -560,7 +559,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
       ghost && 'bai-select-ghost',
       richTriggerNode !== undefined && 'bai-select-rich-trigger',
     ),
-    'aria-label': accessibleLabel || t('general.Select'),
+    'aria-label': accessibleLabel,
     placeholder:
       typeof placeholder === 'string'
         ? placeholder

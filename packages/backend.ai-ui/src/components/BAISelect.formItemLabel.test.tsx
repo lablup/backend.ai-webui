@@ -98,6 +98,37 @@ describe('BAISelect accessible name inside a Form.Item', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('takes the outer label through a noStyle Form.Item', () => {
+    render(
+      <Form>
+        <FormItem label="Project">
+          <FormItem noStyle name="project">
+            <BAISelect placeholder="Select Project" options={options} />
+          </FormItem>
+        </FormItem>
+      </Form>,
+    );
+    expect(
+      screen.getByRole('button', { name: /^Project/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /^Select Project/ }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('treats an empty aria-label as absent', () => {
+    render(
+      <Form>
+        <FormItem name="project" label="Project">
+          <BAISelect aria-label="" options={options} />
+        </FormItem>
+      </Form>,
+    );
+    expect(
+      screen.getByRole('button', { name: /^Project/ }),
+    ).toBeInTheDocument();
+  });
+
   it('falls back to the placeholder in a Form.Item without a label', () => {
     render(
       <Form>
