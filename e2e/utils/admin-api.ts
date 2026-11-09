@@ -412,10 +412,15 @@ const PURGED_VFOLDER_STATUSES = new Set([
   'delete-error',
 ]);
 
-async function purgeVFolderViaApi(
+// The manager leaves these on its own; no delete can succeed until it does.
+const TRANSITIONAL_VFOLDER_STATUSES = new Set(['cloning']);
+const VFOLDER_PURGE_DEADLINE_MS = 15_000;
+const VFOLDER_PURGE_POLL_MS = 1_000;
+
+async function listVFoldersByName(
   api: APIRequestContext,
   name: string,
-): Promise<void> {
+): Promise<Array<{ id: string; status: string }>> {
   const data = await gqlAdmin<{
     vfolder_list: { items: Array<{ id: string; status: string }> };
   }>(
@@ -427,24 +432,51 @@ async function purgeVFolderViaApi(
     }`,
     { filter: `name == ${JSON.stringify(name)}` },
   );
-  for (const { id, status } of data.vfolder_list.items) {
-    if (PURGED_VFOLDER_STATUSES.has(status)) continue;
-    const steps =
-      status === 'delete-pending'
-        ? (['purge'] as const)
-        : (['trash', 'purge'] as const);
-    for (const step of steps) {
+  return data.vfolder_list.items;
+}
+
+async function purgeVFolderViaApi(
+  api: APIRequestContext,
+  name: string,
+): Promise<void> {
+  const deadline = Date.now() + VFOLDER_PURGE_DEADLINE_MS;
+  for (;;) {
+    const remaining = (await listVFoldersByName(api, name)).filter(
+      ({ status }) => !PURGED_VFOLDER_STATUSES.has(status),
+    );
+    if (remaining.length === 0) return;
+    if (Date.now() >= deadline) {
+      const states = remaining.map((f) => `${f.id}: ${f.status}`).join(', ');
+      throw new Error(
+        `folder "${name}" not deleted after ${VFOLDER_PURGE_DEADLINE_MS}ms (${states})`,
+      );
+    }
+    let shouldWait = false;
+    for (const { id, status } of remaining) {
+      if (TRANSITIONAL_VFOLDER_STATUSES.has(status)) {
+        shouldWait = true;
+        continue;
+      }
+      const step = status === 'delete-pending' ? 'purge' : 'trash';
       const res =
         step === 'trash'
           ? await api.delete('/func/folders', { data: { vfolder_id: id } })
           : await api.post('/func/folders/delete-from-trash-bin', {
               data: { vfolder_id: id },
             });
-      if (!res.ok()) {
-        throw new Error(
-          `${step} of folder "${name}" (${id}) failed: ${res.status()} ${(await res.text()).slice(0, 300)}`,
-        );
-      }
+      if (res.ok()) continue;
+      const failure = `${step} of folder "${name}" (${id}) failed: ${res.status()} ${(await res.text()).slice(0, 300)}`;
+      // Only a folder the manager moved on meanwhile is worth another look.
+      const current = (await listVFoldersByName(api, name)).find(
+        (folder) => folder.id === id,
+      );
+      if (current?.status === status) throw new Error(failure);
+      shouldWait = true;
+    }
+    if (shouldWait) {
+      await new Promise((resolve) =>
+        setTimeout(resolve, VFOLDER_PURGE_POLL_MS),
+      );
     }
   }
 }

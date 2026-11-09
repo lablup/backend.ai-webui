@@ -94,7 +94,7 @@ test.describe(
       await deleteForeverAndVerifyFromTrash(page, rwFolderName);
     });
 
-    test('User can view files but cannot upload to read-only VFolder', async ({
+    test('User sees Read & Write mount permission on a project folder they created', async ({
       page,
     }) => {
       test.setTimeout(120000);
