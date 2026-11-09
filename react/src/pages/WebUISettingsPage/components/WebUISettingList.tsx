@@ -99,7 +99,8 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
   const setValue = (definition: WebUISettingDefinition, value: unknown) => {
     setDraft((prev) => {
       const next = { ...prev };
-      if (value === undefined || _.isEqual(value, fileValueOf(definition))) {
+      // Only a clear or a row reset drops the key; a typed default is saved.
+      if (value === undefined) {
         delete next[definition.key];
       } else {
         next[definition.key] = value;
@@ -164,12 +165,12 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
     try {
       await updateDomainAppConfig(
         WEBUI_SETTINGS_CONFIG_KEY,
-        buildWebUISettingsDocument('domain', next, fileState),
+        buildWebUISettingsDocument('domain', next),
       );
       isDomainSaved = true;
       await updatePublicDomainAppConfig(
         WEBUI_SETTINGS_CONFIG_KEY,
-        buildWebUISettingsDocument('public', next, fileState),
+        buildWebUISettingsDocument('public', next),
       );
       isLeavingAfterApplyRef.current = true;
       window.location.reload();

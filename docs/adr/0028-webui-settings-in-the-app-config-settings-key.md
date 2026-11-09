@@ -37,7 +37,7 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-  page["WebUISettingList<br/>draft: keys that differ from the file"]
+  page["WebUISettingList<br/>draft: keys the administrator set"]
   dset["domainConfig.settings"]
   pset["publicConfigByDomain.&lt;domain&gt;.settings<br/>superadmin only"]
   page -- "domain keys of the draft" --> dset
@@ -63,7 +63,7 @@ flowchart LR
 
 - **File first, then each document**: the state starts from the `config.toml` values, and `applyWebUISettings(state, doc, scope)` overrides only that scope's keys. Keys of another scope, keys missing from the definition table, and values that fail `isValidWebUISettingValue` are ignored, so the PUBLIC and DOMAIN documents never overlap.
 - **Option-limited lists**: a `stringList` definition with `options` drops values outside the list, both when merging and when saving (`restrictToOptions`).
-- **No seeding**: a save writes only the keys that differ from the file value (`buildWebUISettingsDocument`). When none differ, the `settings` sub-key is removed. An untouched key keeps following the file.
+- **No seeding**: a save writes the keys the administrator set, a value equal to the file value included (`buildWebUISettingsDocument`). Clearing a field or resetting its row removes the key, which then keeps following the file. When no key is left, the `settings` sub-key is removed.
 - **Read failures**: a document that cannot be read leaves a warning and the file values. The DOMAIN document rides in the sign-in query (`loginSessionAuthMyUserQuery`, `myAppConfigs … @catch(to: NULL)`, read by `readDomainWebUISettings`); the PUBLIC one comes from `fetchPublicDomainConfigOnce`.
 - **Merge points**: the PUBLIC document is merged at boot (`initializeConfigOnce`) and when another webserver's config is taken in (`loadConfigFromWebServer`), which looks the document up under that webserver's `apiEndpoint` and merges onto the bundled `config.toml`. The DOMAIN document is merged at sign-in (`connectViaGQL`).
 - **One store**: the merged values live only in `loginConfigState`. A value read outside React, such as `debug`, is read with `jotaiStore.get(loginConfigState)`; there is no `globalThis` copy. `refreshConfigFromToml`, which parses the file, has no side effects.

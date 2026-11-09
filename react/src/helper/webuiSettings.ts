@@ -248,23 +248,19 @@ export const readWebUISettingFromState = (
 ): unknown => state[definition.field];
 
 /**
- * The document to save for `scope`: only the keys whose draft differs from
- * the file value, so an untouched key keeps following `config.toml`.
- * `undefined` when nothing differs, which removes the sub-key.
+ * The document to save for `scope`: every key the draft holds with a valid
+ * value, a default included. `undefined` when it holds none, which removes the
+ * sub-key; a key left out follows the code default.
  */
 export const buildWebUISettingsDocument = (
   scope: WebUISettingScope,
   draft: WebUISettingsDocument,
-  fileState: LoginConfigState,
 ): WebUISettingsDocument | undefined => {
   const doc: WebUISettingsDocument = {};
   for (const definition of WEBUI_SETTING_DEFINITIONS) {
     if (definition.scope !== scope || !(definition.key in draft)) continue;
     const value = restrictToOptions(definition, draft[definition.key]);
-    if (
-      isValidWebUISettingValue(definition.type, value) &&
-      !_.isEqual(value, readWebUISettingFromState(fileState, definition))
-    ) {
+    if (isValidWebUISettingValue(definition.type, value)) {
       doc[definition.key] = value;
     }
   }

@@ -107,12 +107,10 @@ describe('applyWebUISettings', () => {
     );
     expect(next.singleSignOnVendors).toEqual(['openid', 'saml']);
     expect(
-      buildWebUISettingsDocument(
-        'public',
-        { singleSignOnVendors: ['not-a-vendor'] },
-        state,
-      ),
-    ).toBeUndefined();
+      buildWebUISettingsDocument('public', {
+        singleSignOnVendors: ['not-a-vendor'],
+      }),
+    ).toEqual({ singleSignOnVendors: [] });
   });
 
   it('does not mutate the input state', () => {
@@ -123,39 +121,31 @@ describe('applyWebUISettings', () => {
 });
 
 describe('buildWebUISettingsDocument', () => {
-  const fileState = getDefaultLoginConfig();
+  const defaults = getDefaultLoginConfig();
 
-  it('keeps only the keys that differ from the file value', () => {
-    const doc = buildWebUISettingsDocument(
-      'domain',
-      {
-        hideAgents: fileState.hideAgents,
-        maxCPUCoresPerContainer: 128,
-        menuBlocklist: [],
-        allowChangeSigninMode: true,
-      },
-      fileState,
-    );
-    expect(doc).toEqual({ maxCPUCoresPerContainer: 128 });
+  it('keeps every key of the scope, a default value included', () => {
+    const doc = buildWebUISettingsDocument('domain', {
+      hideAgents: defaults.hideAgents,
+      maxCPUCoresPerContainer: 128,
+      menuBlocklist: [],
+      allowChangeSigninMode: true,
+    });
+    expect(doc).toEqual({
+      hideAgents: defaults.hideAgents,
+      maxCPUCoresPerContainer: 128,
+      menuBlocklist: [],
+    });
   });
 
-  it('is undefined when nothing differs', () => {
+  it('is undefined when the draft holds no key of the scope', () => {
     expect(
-      buildWebUISettingsDocument(
-        'domain',
-        { hideAgents: fileState.hideAgents },
-        fileState,
-      ),
+      buildWebUISettingsDocument('domain', { allowChangeSigninMode: true }),
     ).toBeUndefined();
   });
 
   it('drops values of the wrong type', () => {
     expect(
-      buildWebUISettingsDocument(
-        'domain',
-        { maxCPUCoresPerContainer: '128' },
-        fileState,
-      ),
+      buildWebUISettingsDocument('domain', { maxCPUCoresPerContainer: '128' }),
     ).toBeUndefined();
   });
 });
