@@ -47,28 +47,14 @@ const nonEmptyString = (value: unknown): value is string =>
 // Numeric ranges
 // ---------------------------------------------------------------------------
 
+/** The `min` / `max` of every number setting in the definition table. */
 export const SETTING_RANGES: Readonly<
   Record<string, { min: number; max: number }>
-> = {
-  maxCPUCoresPerContainer: { min: 1, max: 8192 },
-  maxMemoryPerContainer: { min: 1, max: 16384 },
-  maxCUDADevicesPerContainer: { min: 0, max: 64 },
-  maxCUDASharesPerContainer: { min: 0, max: 64 },
-  maxROCMDevicesPerContainer: { min: 0, max: 64 },
-  maxTPUDevicesPerContainer: { min: 0, max: 64 },
-  maxIPUDevicesPerContainer: { min: 0, max: 64 },
-  maxATOMDevicesPerContainer: { min: 0, max: 64 },
-  maxATOMPLUSDevicesPerContainer: { min: 0, max: 64 },
-  maxGaudi2DevicesPerContainer: { min: 0, max: 64 },
-  maxWarboyDevicesPerContainer: { min: 0, max: 64 },
-  maxRNGDDevicesPerContainer: { min: 0, max: 64 },
-  maxHyperaccelLPUDevicesPerContainer: { min: 0, max: 64 },
-  maxShmPerContainer: { min: 0, max: 16384 },
-  // -1 means unlimited.
-  maxFileUploadSize: { min: -1, max: 107374182400 },
-  // 0 turns preopen ports off.
-  maxCountForPreopenPorts: { min: 0, max: 100 },
-};
+> = Object.fromEntries(
+  WEBUI_SETTING_DEFINITIONS.filter(
+    (d) => d.min !== undefined && d.max !== undefined,
+  ).map((d) => [d.key, { min: d.min!, max: d.max! }]),
+);
 
 export function checkSettingRanges(
   state: LoginConfigState,
