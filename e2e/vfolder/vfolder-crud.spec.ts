@@ -99,7 +99,9 @@ test.describe(
           .click();
       });
       test.afterEach(async () => {
-        await purgeVFoldersByNameViaApi([creationFolderName]);
+        if (creationFolderName) {
+          await purgeVFoldersByNameViaApi([creationFolderName]);
+        }
       });
       test('User can create a vFolder by selecting a specific location', async ({
         page,

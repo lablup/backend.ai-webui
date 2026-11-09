@@ -415,7 +415,7 @@ const PURGED_VFOLDER_STATUSES = new Set([
 // The manager leaves these on its own; no delete can succeed until it does.
 const TRANSITIONAL_VFOLDER_STATUSES = new Set(['cloning']);
 const VFOLDER_PURGE_DEADLINE_MS = 15_000;
-const VFOLDER_PURGE_POLL_MS = 1_000;
+const VFOLDER_PURGE_POLL_MS = 500;
 
 async function listVFoldersByName(
   api: APIRequestContext,
@@ -439,24 +439,17 @@ async function purgeVFolderViaApi(
   api: APIRequestContext,
   name: string,
 ): Promise<void> {
-  const deadline = Date.now() + VFOLDER_PURGE_DEADLINE_MS;
-  for (;;) {
-    const remaining = (await listVFoldersByName(api, name)).filter(
+  const listRemaining = async () =>
+    (await listVFoldersByName(api, name)).filter(
       ({ status }) => !PURGED_VFOLDER_STATUSES.has(status),
     );
+  const deadline = Date.now() + VFOLDER_PURGE_DEADLINE_MS;
+  let lastFailure = '';
+  for (;;) {
+    const remaining = await listRemaining();
     if (remaining.length === 0) return;
-    if (Date.now() >= deadline) {
-      const states = remaining.map((f) => `${f.id}: ${f.status}`).join(', ');
-      throw new Error(
-        `folder "${name}" not deleted after ${VFOLDER_PURGE_DEADLINE_MS}ms (${states})`,
-      );
-    }
-    let shouldWait = false;
     for (const { id, status } of remaining) {
-      if (TRANSITIONAL_VFOLDER_STATUSES.has(status)) {
-        shouldWait = true;
-        continue;
-      }
+      if (TRANSITIONAL_VFOLDER_STATUSES.has(status)) continue;
       const step = status === 'delete-pending' ? 'purge' : 'trash';
       const res =
         step === 'trash'
@@ -465,19 +458,22 @@ async function purgeVFolderViaApi(
               data: { vfolder_id: id },
             });
       if (res.ok()) continue;
-      const failure = `${step} of folder "${name}" (${id}) failed: ${res.status()} ${(await res.text()).slice(0, 300)}`;
+      lastFailure = `${step} of folder "${name}" (${id}) failed: ${res.status()} ${(await res.text()).slice(0, 300)}`;
       // Only a folder the manager moved on meanwhile is worth another look.
       const current = (await listVFoldersByName(api, name)).find(
         (folder) => folder.id === id,
       );
-      if (current?.status === status) throw new Error(failure);
-      shouldWait = true;
+      if (current?.status === status) throw new Error(lastFailure);
     }
-    if (shouldWait) {
-      await new Promise((resolve) =>
-        setTimeout(resolve, VFOLDER_PURGE_POLL_MS),
+    if (Date.now() >= deadline) {
+      const left = await listRemaining();
+      if (left.length === 0) return;
+      const states = left.map((f) => `${f.id}: ${f.status}`).join(', ');
+      throw new Error(
+        `folder "${name}" not deleted after ${VFOLDER_PURGE_DEADLINE_MS}ms (${states}) ${lastFailure}`.trim(),
       );
     }
+    await new Promise((resolve) => setTimeout(resolve, VFOLDER_PURGE_POLL_MS));
   }
 }
 
