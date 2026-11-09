@@ -111,12 +111,12 @@ flowchart LR
 - **App modals**: The panel is a plain element in `body`, so an open app modal makes the panel inert until the modal closes.
 - **Copied transform**: `src/graphql-transformer.ts` can drift from `react/src/helper/graphql-transformer.ts`, and nothing checks it.
 - **Undocumented client fields**: The tool depends on `ready`, `newSignedRequest` and the `uri` it returns, `requestTimeout`, `_config.connectionMode`, and `isManagerVersionCompatibleWith`. `Panel.tsx` declares their types by hand, so type-checking does not catch a change in `backend.ai-client`.
-- **Verification gap**: `scripts/verify.sh` does not cover this package, and no lint rule enforces sections 1 and 3. The tool's authors run the checks in `packages/backend.ai-graphql-devtools/TEST-PLAN.md` by hand.
+- **Verification gap**: `scripts/verify.sh` does not cover this package, and no lint rule enforces sections 1 and 3. The tool's authors check it by hand.
 
 ## Sources
 
 - GitHub issue: #10963.
-- `packages/backend.ai-graphql-devtools/vite-plugin.mjs`, `src/main.tsx`, `src/Panel.tsx`, `src/graphql-transformer.ts`, and `TEST-PLAN.md`.
+- `packages/backend.ai-graphql-devtools/vite-plugin.mjs`, `src/main.tsx`, `src/Panel.tsx`, and `src/graphql-transformer.ts`.
 - `react/src/helper/graphql-transformer.ts` and `react/src/RelayEnvironment.ts`.
 - `Client._wrapWithPromise` in `packages/backend.ai-client/src/client.ts`, and `react/src/components/NetworkStatusBanner.tsx`.
 - Decided: 2026-11-09.

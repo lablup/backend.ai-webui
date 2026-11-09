@@ -111,12 +111,12 @@ flowchart LR
 - **App modals**: panel은 `body`의 일반 element이므로, app modal이 열려 있으면 modal이 닫힐 때까지 panel은 inert 상태다.
 - **Copied transform**: `src/graphql-transformer.ts`는 `react/src/helper/graphql-transformer.ts`와 달라질 수 있고, 이를 검사하는 것은 없다.
 - **Undocumented client fields**: tool은 `ready`, `newSignedRequest`와 그 결과의 `uri`, `requestTimeout`, `_config.connectionMode`, `isManagerVersionCompatibleWith`에 의존한다. `Panel.tsx`가 이 타입을 손으로 선언하므로, `backend.ai-client`가 바뀌어도 type-checking은 잡지 못한다.
-- **Verification gap**: `scripts/verify.sh`는 이 package를 검사하지 않고, 1항과 3항을 강제하는 lint 규칙도 없다. tool 작성자가 `packages/backend.ai-graphql-devtools/TEST-PLAN.md`의 검사를 손으로 실행한다.
+- **Verification gap**: `scripts/verify.sh`는 이 package를 검사하지 않고, 1항과 3항을 강제하는 lint 규칙도 없다. tool 작성자가 손으로 검사한다.
 
 ## 출처
 
 - GitHub issue: #10963.
-- `packages/backend.ai-graphql-devtools/vite-plugin.mjs`, `src/main.tsx`, `src/Panel.tsx`, `src/graphql-transformer.ts`, `TEST-PLAN.md`.
+- `packages/backend.ai-graphql-devtools/vite-plugin.mjs`, `src/main.tsx`, `src/Panel.tsx`, `src/graphql-transformer.ts`.
 - `react/src/helper/graphql-transformer.ts`와 `react/src/RelayEnvironment.ts`.
 - `packages/backend.ai-client/src/client.ts`의 `Client._wrapWithPromise`와 `react/src/components/NetworkStatusBanner.tsx`.
 - 결정일: 2026-11-09.
