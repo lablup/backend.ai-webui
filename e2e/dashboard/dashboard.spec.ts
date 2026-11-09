@@ -342,6 +342,77 @@ test.describe(
     );
 
     // -----------------------------------------------------------------------
+    // Admin Dashboard Entry (sidebar menu and legacy /admin-dashboard URL)
+    // -----------------------------------------------------------------------
+    test.describe(
+      'Admin Dashboard Entry',
+      { tag: ['@requires-manager-v25.15'] },
+      () => {
+        test.beforeEach(async ({ page }) => {
+          // The superadmin intro tour (AdminViewSwitchTour) otherwise covers the page.
+          await page.addInitScript(() => {
+            for (const tour of [
+              'back_to_user_view',
+              'back_to_admin_settings',
+            ]) {
+              localStorage.setItem(
+                `backendaiwebui.settings.user.has_opened_tour_${tour}`,
+                'true',
+              );
+            }
+          });
+        });
+
+        test('Admin can open the admin dashboard from the admin sidebar menu', async ({
+          page,
+          request,
+        }) => {
+          // 1. Login as admin and open another admin page
+          await loginAsAdmin(page, request);
+          await navigateTo(page, 'admin/users');
+
+          // 2. Click the "Dashboard" entry in the admin side navigation
+          const sideNav = page.getByRole('navigation', {
+            name: 'Side navigation',
+          });
+          await sideNav
+            .getByRole('link', { name: 'Dashboard', exact: true })
+            .click();
+
+          // 3. Verify the URL and the superadmin board
+          await expect(page).toHaveURL(/\/admin\/dashboard\/?$/);
+          await expect(page.getByTestId('dashboard-filter-bar')).toBeVisible({
+            timeout: WIDGET_TIMEOUT,
+          });
+          await expect(
+            page
+              .locator('.uic-board-item')
+              .filter({ hasText: 'Agent Statistics' }),
+          ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+        });
+
+        test('Admin is redirected from the legacy admin dashboard URL to the admin dashboard', async ({
+          page,
+          request,
+        }) => {
+          // 1. Login as admin and open the legacy /admin-dashboard URL
+          await loginAsAdmin(page, request);
+          await navigateTo(page, 'admin-dashboard');
+
+          // 2. Verify the redirect and the superadmin board
+          await expect(page).toHaveURL(/\/admin\/dashboard\/?$/, {
+            timeout: WIDGET_TIMEOUT,
+          });
+          await expect(
+            page
+              .locator('.uic-board-item')
+              .filter({ hasText: 'Agent Statistics' }),
+          ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+        });
+      },
+    );
+
+    // -----------------------------------------------------------------------
     // 11. Recently Created Sessions Widget
     // -----------------------------------------------------------------------
     test.describe('Recently Created Sessions Widget', () => {

@@ -12,14 +12,14 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 393 / 543 features covered (72%)**
+**Overall (in-scope routes): 395 / 545 features covered (72%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
 | Authentication           | `/interactive-login`                             |    39    |   37    | 🔶 95%  |
 | Change Password          | `/change-password`                               |    9     |    9    | ✅ 100% |
 | Start Page               | `/start`                                         |    8     |    6    | 🔶 75%  |
-| Dashboard                | `/dashboard`                                     |    13    |   11    | 🔶 85%  |
+| Dashboard                | `/dashboard`                                     |    15    |   13    | 🔶 87%  |
 | Session List             | `/session`                                       |    27    |   19    | 🔶 70%  |
 | Session Launcher         | `/session/start`                                 |    13    |    3    | 🔶 23%  |
 | Serving                  | `/serving`                                       |    7     |    2    | 🔶 29%  |
@@ -54,7 +54,7 @@
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **543**  | **393** | **72%** |
+| **Total**                |                                                  | **545**  | **395** | **72%** |
 
 ---
 
@@ -166,23 +166,25 @@
 
 **Test files:** [`e2e/dashboard/dashboard.spec.ts`](dashboard/dashboard.spec.ts), visual regression: [`e2e/visual_regression/dashboard/dashboard_page.test.ts`](visual_regression/dashboard/dashboard_page.test.ts)
 
-| Feature                             | Status | Test                                                                         |
-| ----------------------------------- | ------ | ---------------------------------------------------------------------------- |
-| Dashboard rendering                 | ✅     | `Admin can see all expected dashboard widgets`                               |
-| Session count cards                 | ✅     | `Admin can see session type breakdown in the session count widget`           |
-| Resource usage display (MyResource) | ✅     | `Admin can view CPU and Memory usage in the My Resources widget`             |
-| Resource usage per resource group   | ✅     | `Admin can view resource usage scoped to the current resource group`         |
-| Agent statistics (admin)            | ✅     | `Admin can view cluster-level resource statistics in the Agent Stats widget` |
-| Active agents list (admin)          | ❌     | -                                                                            |
-| Recent sessions list                | ✅     | `Admin can view the recently created sessions list on the Dashboard`         |
-| Auto-refresh (15s)                  | ❌     | -                                                                            |
-| Dashboard item drag/resize          | ✅     | `Admin sees drag and resize handles on the dashboard board`                  |
-| Edit sider open/close (breadcrumb)  | ✅     | `Admin can open and close the dashboard edit sider`                          |
-| Custom panel add (edit sider/modal) | ✅     | `Admin can add a custom table panel from the dashboard edit sider`           |
-| Project admin dashboard cards       | ✅     | `Admin can view the project admin dashboard cards`                           |
-| Project admin Audit Log failures    | ✅     | `Admin can toggle "Show failures only" on the project admin Audit Log card`  |
+| Feature                             | Status | Test                                                                             |
+| ----------------------------------- | ------ | -------------------------------------------------------------------------------- |
+| Dashboard rendering                 | ✅     | `Admin can see all expected dashboard widgets`                                   |
+| Session count cards                 | ✅     | `Admin can see session type breakdown in the session count widget`               |
+| Resource usage display (MyResource) | ✅     | `Admin can view CPU and Memory usage in the My Resources widget`                 |
+| Resource usage per resource group   | ✅     | `Admin can view resource usage scoped to the current resource group`             |
+| Agent statistics (admin)            | ✅     | `Admin can view cluster-level resource statistics in the Agent Stats widget`     |
+| Active agents list (admin)          | ❌     | -                                                                                |
+| Recent sessions list                | ✅     | `Admin can view the recently created sessions list on the Dashboard`             |
+| Auto-refresh (15s)                  | ❌     | -                                                                                |
+| Dashboard item drag/resize          | ✅     | `Admin sees drag and resize handles on the dashboard board`                      |
+| Edit sider open/close (breadcrumb)  | ✅     | `Admin can open and close the dashboard edit sider`                              |
+| Custom panel add (edit sider/modal) | ✅     | `Admin can add a custom table panel from the dashboard edit sider`               |
+| Project admin dashboard cards       | ✅     | `Admin can view the project admin dashboard cards`                               |
+| Project admin Audit Log failures    | ✅     | `Admin can toggle "Show failures only" on the project admin Audit Log card`      |
+| Admin dashboard sidebar entry       | ✅     | `Admin can open the admin dashboard from the admin sidebar menu`                 |
+| Legacy `/admin-dashboard` redirect  | ✅     | `Admin is redirected from the legacy admin dashboard URL to the admin dashboard` |
 
-**Coverage: 🔶 11/13 features**
+**Coverage: 🔶 13/15 features**
 
 ---
 
