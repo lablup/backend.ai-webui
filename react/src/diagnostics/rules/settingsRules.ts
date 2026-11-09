@@ -179,7 +179,10 @@ export function checkSettingMenuKeys(
 ): DiagnosticResult[] {
   return SETTING_MENU_KEY_LISTS.flatMap((key): DiagnosticResult[] => {
     const value = settingValue(state, key);
-    const entries = Array.isArray(value) ? (value as string[]) : [];
+    // `useWebUIMenuItems` drops `system-settings` from both lists, so it hides nothing.
+    const entries = Array.isArray(value)
+      ? _.without(value as string[], 'system-settings')
+      : [];
     if (entries.length === 0) return [];
     const invalid = entries.filter((entry) => !validMenuKeys.includes(entry));
     if (invalid.length === 0) {
@@ -277,9 +280,14 @@ const fileValueAsSetting = (key: string, raw: unknown): unknown => {
   switch (definition.type) {
     case 'boolean':
       if (typeof raw === 'boolean') return raw;
-      return raw === 'true' ? true : raw === 'false' ? false : raw;
+      if (typeof raw !== 'string') return raw;
+      return { true: true, false: false }[raw.trim().toLowerCase()] ?? raw;
     case 'number':
-      return Number(raw);
+      if (typeof raw === 'number') return raw;
+      // Junk stays as written, so it never matches a number.
+      return typeof raw === 'string' && /^\s*-?\d+(\.\d+)?\s*$/.test(raw)
+        ? Number(raw)
+        : raw;
     case 'string':
       return typeof raw === 'string' ? raw : String(raw);
     case 'stringList': {
@@ -320,7 +328,7 @@ export function findIgnoredConfigTomlKeys(
       if (
         raw === undefined ||
         raw === null ||
-        raw === '' ||
+        (typeof raw === 'string' && raw.trim() === '') ||
         isPlaceholder(raw)
       ) {
         continue;

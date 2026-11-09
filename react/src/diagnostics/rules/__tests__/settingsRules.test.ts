@@ -195,6 +195,15 @@ describe('checkSettingMenuKeys', () => {
       count: '1',
     });
   });
+
+  it('ignores system-settings, which neither list can hide', () => {
+    expect(
+      checkSettingMenuKeys(state({ blockList: ['system-settings'] }), [
+        ...validMenuKeys,
+        'system-settings',
+      ]),
+    ).toEqual([]);
+  });
 });
 
 describe('checkPluginConfiguration', () => {
@@ -296,6 +305,24 @@ describe('findIgnoredConfigTomlKeys', () => {
       ['debug', true],
       ['maxCountForPreopenPorts', true],
       ['maxCPUCoresPerContainer', false],
+    ]);
+  });
+
+  it('reads boolean strings in any case and leaves junk numbers unmatched', () => {
+    const found = findIgnoredConfigTomlKeys(
+      {
+        general: {
+          debug: 'True',
+          maxCountForPreopenPorts: '10abc',
+          storageWarningThreshold: ' 90 ',
+        },
+      },
+      state(),
+    );
+    expect(_.map(found, (k) => [k.settingKey, k.inEffect])).toEqual([
+      ['debug', false],
+      ['maxCountForPreopenPorts', false],
+      ['storageWarningThreshold', true],
     ]);
   });
 

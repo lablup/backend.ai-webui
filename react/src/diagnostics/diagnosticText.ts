@@ -20,9 +20,9 @@ export const diagnosticValues = (
     : undefined;
   return definition
     ? {
-        ...result.interpolationValues,
         setting: t(webuiSettingLabelKey(definition.key)),
         group: t(webuiSettingGroupLabelKey(definition.group)),
+        ...result.interpolationValues,
       }
     : (result.interpolationValues ?? {});
 };
