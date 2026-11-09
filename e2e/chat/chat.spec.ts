@@ -655,8 +655,8 @@ test.describe(
       await chatInput.fill('Trigger an error');
       await chatInput.press('Enter');
 
-      // Astryx's always-present empty live region also has role="alert", so
-      // select the error Banner by its text.
+      // Astryx's empty live region also has role="alert", so select the Banner
+      // by its text. The chat client retries the 500 before reporting it.
       const errorAlert = page.getByRole('alert').filter({ hasText: /error/i });
       await expect(errorAlert).toBeVisible({ timeout: 15000 });
     });

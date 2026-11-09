@@ -142,10 +142,14 @@ test.describe(
       expect(personalProject).toBeTruthy();
 
       // The reload can add a trailing slash; the app encodes the project name.
-      const isPersonalDataPage = (url: URL) =>
-        decodeURIComponent(url.pathname)
-          .replace(/\/$/, '')
-          .endsWith(`/project/${personalProject}/data`);
+      const personalDataPaths = [
+        personalProject,
+        encodeURIComponent(personalProject),
+      ].map((name) => `/project/${name}/data`);
+      const isPersonalDataPage = (url: URL) => {
+        const path = url.pathname.replace(/\/$/, '');
+        return personalDataPaths.some((suffix) => path.endsWith(suffix));
+      };
       await personalOption.click();
       await expect(page).toHaveURL(isPersonalDataPage);
       await expect(selector).toHaveText('My Project');
