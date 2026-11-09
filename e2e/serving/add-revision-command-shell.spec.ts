@@ -26,10 +26,10 @@
 import { setupGraphQLMocks } from '../session/mocking/graphql-interceptor';
 import {
   cleanupDeploymentFixtures,
-  cleanupDeploymentSafely,
   provisionDeploymentModelFolder,
   selectRevisionModalOption,
 } from '../utils/deployment-fixtures';
+import { createTestResources } from '../utils/test-resources';
 import { loginAsAdmin, modifyConfigToml } from '../utils/test-util';
 import {
   createDeploymentAndOpenPage,
@@ -55,6 +55,11 @@ import {
   type Locator,
   type Page,
 } from '@playwright/test';
+
+// Every deployment a test names is declared here and deleted via the admin API
+// after each test, so a failure midway (or a broken UI delete) cannot leak it.
+const resources = createTestResources();
+test.afterEach(() => resources.cleanup());
 
 // Records the outgoing addModelRevision `input` for payload assertions.
 type Capture = { input: any };
@@ -134,93 +139,89 @@ test.describe(
       page,
       request,
     }) => {
-      const name = `e2e-fr3205-toggle-${Date.now()}`;
-      try {
-        const { modal } = await setupCommandScenario(page, request, name);
+      const name = resources.name('deployment', 'e2e-fr3205-toggle');
+      const { modal } = await setupCommandScenario(page, request, name);
 
-        // 1. Service Configuration section + the command input are shown for
-        //    the custom (config-reading) variant. Assert on the labeled
-        //    command control ("Command" in Shell mode) rather than the
-        //    Form.Item label text, whose <label> also wraps a tooltip icon.
-        await expect(
-          modal.getByText('Service Configuration', { exact: true }),
-        ).toBeVisible();
-        await expect(
-          modal.getByRole('textbox', { name: 'Command', exact: true }),
-        ).toBeVisible();
+      // 1. Service Configuration section + the command input are shown for
+      //    the custom (config-reading) variant. Assert on the labeled
+      //    command control ("Command" in Shell mode) rather than the
+      //    Form.Item label text, whose <label> also wraps a tooltip icon.
+      await expect(
+        modal.getByText('Service Configuration', { exact: true }),
+      ).toBeVisible();
+      await expect(
+        modal.getByRole('textbox', { name: 'Command', exact: true }),
+      ).toBeVisible();
 
-        // 2. No Basic/Advanced toggle: the Execution radios (Shell/Exec) and
-        //    the Shell input are visible immediately, pre-filled with the
-        //    backend default (/bin/bash).
-        await expect(
-          modal.getByRole('radio', { name: 'Shell', exact: true }),
-        ).toBeVisible();
-        await expect(
-          modal.getByRole('radio', { name: 'Exec', exact: true }),
-        ).toBeVisible();
-        const shellInput = modal.getByRole('textbox', {
-          name: 'Shell',
-          exact: true,
-        });
-        await expect(shellInput).toBeVisible();
-        await expect(shellInput).toHaveValue('/bin/bash');
+      // 2. No Basic/Advanced toggle: the Execution radios (Shell/Exec) and
+      //    the Shell input are visible immediately, pre-filled with the
+      //    backend default (/bin/bash).
+      await expect(
+        modal.getByRole('radio', { name: 'Shell', exact: true }),
+      ).toBeVisible();
+      await expect(
+        modal.getByRole('radio', { name: 'Exec', exact: true }),
+      ).toBeVisible();
+      const shellInput = modal.getByRole('textbox', {
+        name: 'Shell',
+        exact: true,
+      });
+      await expect(shellInput).toBeVisible();
+      await expect(shellInput).toHaveValue('/bin/bash');
 
-        // 2b. Execution defaults to Shell → the command control is a
-        //     multi-line TextArea (shell scripts span lines) and the shell
-        //     helper (operators allowed) is shown.
-        await expect(
-          modal.getByRole('textbox', { name: 'Command', exact: true }),
-        ).toHaveJSProperty('tagName', 'TEXTAREA');
-        await expect(
-          modal.getByText(
-            'Runs through the shell (e.g. bash -c "..."), so shell operators (; && | $VAR, redirection, etc.) work.',
-            { exact: true },
-          ),
-        ).toBeVisible();
+      // 2b. Execution defaults to Shell → the command control is a
+      //     multi-line TextArea (shell scripts span lines) and the shell
+      //     helper (operators allowed) is shown.
+      await expect(
+        modal.getByRole('textbox', { name: 'Command', exact: true }),
+      ).toHaveJSProperty('tagName', 'TEXTAREA');
+      await expect(
+        modal.getByText(
+          'Runs through the shell (e.g. bash -c "..."), so shell operators (; && | $VAR, redirection, etc.) work.',
+          { exact: true },
+        ),
+      ).toBeVisible();
 
-        // 3. Switch Execution to Exec → the Shell input is unmounted and the
-        //    command field is relabeled "Command (argv)". Assert on the labeled
-        //    command control by role+name: a text match on "Command (argv)"
-        //    strict-mode-violates because it resolves to BOTH the BAIFormItem
-        //    <label> and the Astryx control's own internal field label.
-        await modal.getByRole('radio', { name: 'Exec', exact: true }).click();
-        await expect(
-          modal.getByRole('textbox', { name: 'Shell', exact: true }),
-        ).toHaveCount(0);
-        await expect(
-          modal.getByRole('textbox', { name: 'Command (argv)', exact: true }),
-        ).toBeVisible();
+      // 3. Switch Execution to Exec → the Shell input is unmounted and the
+      //    command field is relabeled "Command (argv)". Assert on the labeled
+      //    command control by role+name: a text match on "Command (argv)"
+      //    strict-mode-violates because it resolves to BOTH the BAIFormItem
+      //    <label> and the Astryx control's own internal field label.
+      await modal.getByRole('radio', { name: 'Exec', exact: true }).click();
+      await expect(
+        modal.getByRole('textbox', { name: 'Shell', exact: true }),
+      ).toHaveCount(0);
+      await expect(
+        modal.getByRole('textbox', { name: 'Command (argv)', exact: true }),
+      ).toBeVisible();
 
-        // 3b. Exec swaps the command control to a single-line input (argv is
-        //     one token vector, not a script) — the accessible name flips from
-        //     "Command" to "Command (argv)" and the element from TEXTAREA to
-        //     INPUT — and switches the helper text to warn that shell
-        //     operators are NOT interpreted.
-        const execCommand = modal.getByRole('textbox', {
-          name: 'Command (argv)',
-          exact: true,
-        });
-        await expect(execCommand).toBeVisible();
-        await expect(execCommand).toHaveJSProperty('tagName', 'INPUT');
-        await expect(
-          modal.getByRole('textbox', { name: 'Command', exact: true }),
-        ).toHaveCount(0);
-        await expect(
-          modal.getByText(
-            'Runs directly as arguments, without a shell — operators (; && | $VAR, redirection, etc.) are treated as literal text. Separate arguments with spaces; quote ones containing spaces (e.g. --name "my model").',
-            { exact: true },
-          ),
-        ).toBeVisible();
-      } finally {
-        await cleanupDeploymentSafely(page, name);
-      }
+      // 3b. Exec swaps the command control to a single-line input (argv is
+      //     one token vector, not a script) — the accessible name flips from
+      //     "Command" to "Command (argv)" and the element from TEXTAREA to
+      //     INPUT — and switches the helper text to warn that shell
+      //     operators are NOT interpreted.
+      const execCommand = modal.getByRole('textbox', {
+        name: 'Command (argv)',
+        exact: true,
+      });
+      await expect(execCommand).toBeVisible();
+      await expect(execCommand).toHaveJSProperty('tagName', 'INPUT');
+      await expect(
+        modal.getByRole('textbox', { name: 'Command', exact: true }),
+      ).toHaveCount(0);
+      await expect(
+        modal.getByText(
+          'Runs directly as arguments, without a shell — operators (; && | $VAR, redirection, etc.) are treated as literal text. Separate arguments with spaces; quote ones containing spaces (e.g. --name "my model").',
+          { exact: true },
+        ),
+      ).toBeVisible();
     });
 
     test('Admin can add a revision with an empty Start Command (the command is optional)', async ({
       page,
       request,
     }) => {
-      const name = `e2e-fr3205-optional-${Date.now()}`;
+      const name = resources.name('deployment', 'e2e-fr3205-optional');
       let folderName: string | undefined;
       try {
         const setup = await setupCommandScenario(page, request, name, {
@@ -259,7 +260,6 @@ test.describe(
           expect('shell' in service).toBe(false);
         }
       } finally {
-        await cleanupDeploymentSafely(page, name);
         if (folderName) {
           await cleanupDeploymentFixtures(page, { folderName });
         }
@@ -270,7 +270,7 @@ test.describe(
       page,
       request,
     }) => {
-      const name = `e2e-fr3205-basic-${Date.now()}`;
+      const name = resources.name('deployment', 'e2e-fr3205-basic');
       let folderName: string | undefined;
       try {
         const setup = await setupCommandScenario(page, request, name, {
@@ -311,7 +311,6 @@ test.describe(
         // explicitly (no more implicit "Basic mode omits shell" state).
         expect(service.shell).toBe('/bin/bash');
       } finally {
-        await cleanupDeploymentSafely(page, name);
         if (folderName) {
           await cleanupDeploymentFixtures(page, { folderName });
         }
@@ -322,7 +321,7 @@ test.describe(
       page,
       request,
     }) => {
-      const name = `e2e-fr3205-advshell-${Date.now()}`;
+      const name = resources.name('deployment', 'e2e-fr3205-advshell');
       let folderName: string | undefined;
       try {
         const setup = await setupCommandScenario(page, request, name, {
@@ -371,7 +370,6 @@ test.describe(
         // Shell mode → the selected shell binary is submitted.
         expect(service.shell).toBe('/bin/zsh');
       } finally {
-        await cleanupDeploymentSafely(page, name);
         if (folderName) {
           await cleanupDeploymentFixtures(page, { folderName });
         }
@@ -382,7 +380,7 @@ test.describe(
       page,
       request,
     }) => {
-      const name = `e2e-fr3205-exec-${Date.now()}`;
+      const name = resources.name('deployment', 'e2e-fr3205-exec');
       let folderName: string | undefined;
       try {
         const setup = await setupCommandScenario(page, request, name, {
@@ -414,7 +412,6 @@ test.describe(
         expect('shell' in service).toBe(true);
         expect(service.shell).toBeNull();
       } finally {
-        await cleanupDeploymentSafely(page, name);
         if (folderName) {
           await cleanupDeploymentFixtures(page, { folderName });
         }
@@ -425,34 +422,30 @@ test.describe(
       page,
       request,
     }) => {
-      const name = `e2e-fr3205-modeldef-${Date.now()}`;
-      try {
-        const { modal } = await setupCommandScenario(page, request, name);
+      const name = resources.name('deployment', 'e2e-fr3205-modeldef');
+      const { modal } = await setupCommandScenario(page, request, name);
 
-        // The field lives inside the collapsed "Advanced Settings" panel.
-        // Astryx Collapsible keeps collapsed content MOUNTED (display:none),
-        // so assert on visibility, not existence.
-        await expect(
-          modal.getByRole('textbox', {
-            name: 'Model Definition File Path',
-            exact: true,
-          }),
-        ).not.toBeVisible();
-
-        await modal.getByRole('button', { name: 'Advanced Settings' }).click();
-
-        const modelDefPath = modal.getByRole('textbox', {
+      // The field lives inside the collapsed "Advanced Settings" panel.
+      // Astryx Collapsible keeps collapsed content MOUNTED (display:none),
+      // so assert on visibility, not existence.
+      await expect(
+        modal.getByRole('textbox', {
           name: 'Model Definition File Path',
           exact: true,
-        });
-        await expect(modelDefPath).toBeVisible({ timeout: 10000 });
+        }),
+      ).not.toBeVisible();
 
-        // It is optional (no required marker) and accepts free text.
-        await modelDefPath.fill('custom-def.yaml');
-        await expect(modelDefPath).toHaveValue('custom-def.yaml');
-      } finally {
-        await cleanupDeploymentSafely(page, name);
-      }
+      await modal.getByRole('button', { name: 'Advanced Settings' }).click();
+
+      const modelDefPath = modal.getByRole('textbox', {
+        name: 'Model Definition File Path',
+        exact: true,
+      });
+      await expect(modelDefPath).toBeVisible({ timeout: 10000 });
+
+      // It is optional (no required marker) and accepts free text.
+      await modelDefPath.fill('custom-def.yaml');
+      await expect(modelDefPath).toHaveValue('custom-def.yaml');
     });
   },
 );

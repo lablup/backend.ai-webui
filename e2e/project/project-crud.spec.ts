@@ -1,5 +1,6 @@
 // spec: e2e/.agent-output/test-plan-project.md
 import { getE2EDomainName } from '../utils/e2e-scope';
+import { createTestResources } from '../utils/test-resources';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import { clickRowAction } from '../utils/user-profile-util';
 import test, { expect, Page } from '@playwright/test';
@@ -11,9 +12,14 @@ const UPDATED_DESCRIPTION = 'Updated E2E description';
 // Each CRUD test provisions its own uniquely-named project so that edit,
 // filter and delete no longer depend on a create test having run first.
 // TEST_RUN_ID keeps names unique across runs; the per-test label keeps them
-// unique within a run.
+// unique within a run. The name is registered so afterEach purges it via the
+// admin API even when the test fails before its own UI cleanup.
+const resources = createTestResources();
 function projectName(label: string) {
-  return `e2e-test-project-${TEST_RUN_ID}-${label}`;
+  return resources.declare(
+    'project',
+    `e2e-test-project-${TEST_RUN_ID}-${label}`,
+  );
 }
 
 // `BAICard`'s `tabList` renders a `nav[aria-label="Tabs"]` of plain
@@ -249,15 +255,14 @@ test.describe(
   'Project CRUD',
   { tag: ['@critical', '@project', '@functional'] },
   () => {
+    test.afterEach(() => resources.cleanup());
+
     test('Admin can create a new project', async ({ page, request }) => {
       const name = projectName('create');
       await loginAsAdmin(page, request);
       await navigateTo(page, 'project');
 
       await createProject(page, name, PROJECT_DESCRIPTION);
-
-      // Self-cleanup so the created project does not leak to later runs.
-      await cleanupTestProject(page, name);
     });
 
     test('Admin can edit a project', async ({ page, request }) => {
@@ -303,9 +308,6 @@ test.describe(
       await expect(
         projectRow.getByRole('cell', { name: UPDATED_DESCRIPTION }),
       ).toBeVisible({ timeout: 10000 });
-
-      // Self-cleanup.
-      await cleanupTestProject(page, name);
     });
 
     test('Admin can filter projects by name', async ({ page, request }) => {
