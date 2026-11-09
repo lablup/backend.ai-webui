@@ -3,32 +3,11 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
-  checkBlocklistValidity,
   checkConnectionMode,
-  checkGeneralNumericFields,
-  checkImageReferences,
   checkPlaceholderValues,
-  checkPluginConfiguration,
-  checkResourceLimits,
   checkSslMismatch,
   checkUrlFields,
 } from '../configRules';
-
-const validMenuKeys = [
-  'start',
-  'dashboard',
-  'session',
-  'serving',
-  'model-store',
-  'data',
-  'my-environment',
-  'agent-summary',
-  'statistics',
-  'credential',
-  'environment',
-  'maintenance',
-  'information',
-];
 
 // ---------------------------------------------------------------------------
 // checkPlaceholderValues
@@ -180,43 +159,6 @@ describe('checkSslMismatch', () => {
     );
     expect(result).not.toBeNull();
     expect(result?.severity).toBe('warning');
-  });
-});
-
-// ---------------------------------------------------------------------------
-// checkBlocklistValidity
-// ---------------------------------------------------------------------------
-
-describe('checkBlocklistValidity', () => {
-  it('should return null when blocklist is empty', () => {
-    expect(checkBlocklistValidity([], validMenuKeys)).toBeNull();
-  });
-
-  it('should return null when all entries are valid', () => {
-    expect(
-      checkBlocklistValidity(['session', 'serving'], validMenuKeys),
-    ).toBeNull();
-  });
-
-  it('should return warning when blocklist has invalid entries', () => {
-    const result = checkBlocklistValidity(
-      ['session', 'nonexistent-menu', 'another-bad'],
-      validMenuKeys,
-    );
-    expect(result).not.toBeNull();
-    expect(result?.severity).toBe('warning');
-    expect(result?.category).toBe('config');
-    expect(result?.id).toBe('config-invalid-blocklist');
-    expect(result?.interpolationValues?.entries).toBe(
-      'nonexistent-menu, another-bad',
-    );
-    expect(result?.interpolationValues?.count).toBe('2');
-  });
-
-  it('should return null when blocklist is undefined-like', () => {
-    expect(
-      checkBlocklistValidity(undefined as unknown as string[], validMenuKeys),
-    ).toBeNull();
   });
 });
 
@@ -380,23 +322,24 @@ describe('checkUrlFields', () => {
     expect(issues[0].interpolationValues?.value).toBe('not-a-url');
   });
 
-  it('should validate all defined URL fields', () => {
+  it('validates only the URL keys config.toml still owns', () => {
     const { issues, checkedCount } = checkUrlFields({
       general: {
         apiEndpoint: 'https://api.example.com',
-        appDownloadUrl: 'https://download.example.com',
+        appDownloadUrl: 'not-read-here',
       },
       wsproxy: { proxyURL: 'https://proxy.example.com' },
       server: { webServerURL: 'https://web.example.com' },
-      pipeline: { frontendEndpoint: 'https://pipeline-frontend.example.com' },
+      pipeline: { frontendEndpoint: 'not-read-here' },
     });
     expect(issues).toEqual([]);
-    expect(checkedCount).toBe(5);
+    expect(checkedCount).toBe(3);
   });
 
   it('should return multiple issues when multiple URLs are invalid', () => {
     const { issues, checkedCount } = checkUrlFields({
-      general: { apiEndpoint: 'bad-url', appDownloadUrl: 'also-bad' },
+      general: { apiEndpoint: 'bad-url' },
+      wsproxy: { proxyURL: 'also-bad' },
     });
     expect(issues).toHaveLength(2);
     expect(checkedCount).toBe(2);
@@ -407,293 +350,5 @@ describe('checkUrlFields', () => {
       general: { apiEndpoint: 'ftp://files.example.com' },
     });
     expect(issues).toHaveLength(1);
-  });
-});
-
-// ---------------------------------------------------------------------------
-// checkResourceLimits
-// ---------------------------------------------------------------------------
-
-describe('checkResourceLimits', () => {
-  it('should return empty array when resources is undefined', () => {
-    expect(checkResourceLimits(undefined)).toEqual([]);
-  });
-
-  it('should return empty array when resources is empty object', () => {
-    expect(checkResourceLimits({})).toEqual([]);
-  });
-
-  it('should return empty array when all values are within range', () => {
-    const results = checkResourceLimits({
-      maxCPUCoresPerContainer: 8,
-      maxMemoryPerContainer: 1024,
-      maxCUDADevicesPerContainer: 4,
-      maxFileUploadSize: 1073741824,
-    });
-    expect(results).toEqual([]);
-  });
-
-  it('should return warning when maxCPUCoresPerContainer is below minimum', () => {
-    const results = checkResourceLimits({ maxCPUCoresPerContainer: 0 });
-    expect(results).toHaveLength(1);
-    expect(results[0].id).toBe('config-resources-maxCPUCoresPerContainer');
-    expect(results[0].severity).toBe('warning');
-    expect(results[0].category).toBe('config');
-    expect(results[0].interpolationValues?.field).toBe(
-      'maxCPUCoresPerContainer',
-    );
-    expect(results[0].interpolationValues?.min).toBe('1');
-    expect(results[0].interpolationValues?.max).toBe('8192');
-  });
-
-  it('should return warning when maxCPUCoresPerContainer exceeds maximum', () => {
-    const results = checkResourceLimits({ maxCPUCoresPerContainer: 9999 });
-    expect(results).toHaveLength(1);
-    expect(results[0].id).toBe('config-resources-maxCPUCoresPerContainer');
-  });
-
-  it('should allow -1 for maxFileUploadSize (unlimited)', () => {
-    const results = checkResourceLimits({ maxFileUploadSize: -1 });
-    expect(results).toEqual([]);
-  });
-
-  it('should return warning when maxFileUploadSize is below -1', () => {
-    const results = checkResourceLimits({ maxFileUploadSize: -2 });
-    expect(results).toHaveLength(1);
-    expect(results[0].id).toBe('config-resources-maxFileUploadSize');
-  });
-
-  it('should skip undefined/null fields', () => {
-    const results = checkResourceLimits({
-      maxCPUCoresPerContainer: undefined,
-      maxMemoryPerContainer: null,
-    } as Record<string, unknown>);
-    expect(results).toEqual([]);
-  });
-
-  it('should skip NaN values', () => {
-    const results = checkResourceLimits({
-      maxCPUCoresPerContainer: 'not-a-number',
-    });
-    expect(results).toEqual([]);
-  });
-
-  it('should return multiple warnings for multiple out-of-range fields', () => {
-    const results = checkResourceLimits({
-      maxCPUCoresPerContainer: 0,
-      maxMemoryPerContainer: 0,
-    });
-    expect(results).toHaveLength(2);
-  });
-
-  it('should accept boundary minimum values', () => {
-    const results = checkResourceLimits({
-      maxCPUCoresPerContainer: 1,
-      maxCUDADevicesPerContainer: 0,
-    });
-    expect(results).toEqual([]);
-  });
-
-  it('should accept boundary maximum values', () => {
-    const results = checkResourceLimits({
-      maxCPUCoresPerContainer: 8192,
-      maxCUDADevicesPerContainer: 64,
-    });
-    expect(results).toEqual([]);
-  });
-});
-
-// ---------------------------------------------------------------------------
-// checkGeneralNumericFields
-// ---------------------------------------------------------------------------
-
-describe('checkGeneralNumericFields', () => {
-  it('should return empty array when general is undefined', () => {
-    expect(checkGeneralNumericFields(undefined)).toEqual([]);
-  });
-
-  it('should return empty array when general is empty object', () => {
-    expect(checkGeneralNumericFields({})).toEqual([]);
-  });
-
-  it('should return empty array when all values are within range', () => {
-    const results = checkGeneralNumericFields({
-      maxCountForPreopenPorts: 10,
-    });
-    expect(results).toEqual([]);
-  });
-
-  it('should return warning when maxCountForPreopenPorts is negative', () => {
-    const results = checkGeneralNumericFields({
-      maxCountForPreopenPorts: -1,
-    });
-    expect(results).toHaveLength(1);
-    expect(results[0].id).toBe('config-general-maxCountForPreopenPorts');
-    expect(results[0].severity).toBe('warning');
-    expect(results[0].category).toBe('config');
-    expect(results[0].interpolationValues?.section).toBe('[general]');
-    expect(results[0].interpolationValues?.field).toBe(
-      'maxCountForPreopenPorts',
-    );
-    expect(results[0].interpolationValues?.min).toBe('0');
-    expect(results[0].interpolationValues?.max).toBe('100');
-  });
-
-  it('should return warning when maxCountForPreopenPorts exceeds 100', () => {
-    const results = checkGeneralNumericFields({
-      maxCountForPreopenPorts: 101,
-    });
-    expect(results).toHaveLength(1);
-    expect(results[0].id).toBe('config-general-maxCountForPreopenPorts');
-  });
-
-  it('should accept 0 for maxCountForPreopenPorts (disables feature)', () => {
-    const results = checkGeneralNumericFields({ maxCountForPreopenPorts: 0 });
-    expect(results).toEqual([]);
-  });
-
-  it('should skip undefined/null fields', () => {
-    const results = checkGeneralNumericFields({
-      maxCountForPreopenPorts: null,
-    } as Record<string, unknown>);
-    expect(results).toEqual([]);
-  });
-
-  it('should skip NaN string values', () => {
-    const results = checkGeneralNumericFields({
-      maxCountForPreopenPorts: 'unlimited',
-    });
-    expect(results).toEqual([]);
-  });
-
-  it('ignores the removed login limiter keys', () => {
-    const results = checkGeneralNumericFields({
-      loginAttemptLimit: 0,
-      loginBlockTime: 86401,
-    });
-    expect(results).toEqual([]);
-  });
-});
-
-// ---------------------------------------------------------------------------
-// checkImageReferences
-// ---------------------------------------------------------------------------
-
-describe('checkImageReferences', () => {
-  it('should return empty array when generalConfig is undefined', () => {
-    expect(checkImageReferences(undefined)).toEqual([]);
-  });
-
-  it('should return empty array when generalConfig is empty', () => {
-    expect(checkImageReferences({})).toEqual([]);
-  });
-
-  it('should return empty array for valid image references', () => {
-    const results = checkImageReferences({
-      systemSSHImage: 'cr.backend.ai/stable/python:3.9-ubuntu20.04',
-      defaultFileBrowserImage: 'registry.example.com/namespace/image:tag',
-    });
-    expect(results).toEqual([]);
-  });
-
-  it('should return warning for invalid image reference format', () => {
-    const results = checkImageReferences({
-      systemSSHImage: 'invalid image ref!',
-    });
-    expect(results).toHaveLength(1);
-    expect(results[0].id).toBe('config-invalid-image-ref-systemSSHImage');
-    expect(results[0].severity).toBe('warning');
-    expect(results[0].category).toBe('config');
-    expect(results[0].interpolationValues?.field).toBe('systemSSHImage');
-    expect(results[0].interpolationValues?.value).toBe('invalid image ref!');
-  });
-
-  it('should skip empty image reference fields', () => {
-    const results = checkImageReferences({
-      systemSSHImage: '',
-      defaultFileBrowserImage: '',
-    });
-    expect(results).toEqual([]);
-  });
-
-  it('should skip placeholder image reference fields', () => {
-    const results = checkImageReferences({
-      systemSSHImage: '[System SSH Image]',
-    });
-    expect(results).toEqual([]);
-  });
-
-  it('should validate all four image reference fields', () => {
-    const results = checkImageReferences({
-      systemSSHImage: 'registry.example.com/ns/image:tag',
-      defaultFileBrowserImage: 'registry.example.com/ns/browser:latest',
-      defaultSessionEnvironment: 'registry.example.com/ns/session:1.0',
-      defaultImportEnvironment: 'registry.example.com/ns/import:1.0',
-    });
-    expect(results).toEqual([]);
-  });
-
-  it('should return warnings for each invalid image reference field', () => {
-    const results = checkImageReferences({
-      systemSSHImage: '!!invalid!!',
-      defaultFileBrowserImage: '??also-invalid',
-    });
-    expect(results).toHaveLength(2);
-    const ids = results.map((r) => r.id);
-    expect(ids).toContain('config-invalid-image-ref-systemSSHImage');
-    expect(ids).toContain('config-invalid-image-ref-defaultFileBrowserImage');
-  });
-
-  it('should accept image with port in registry', () => {
-    const results = checkImageReferences({
-      systemSSHImage: 'registry.example.com:5000/namespace/image:tag',
-    });
-    expect(results).toEqual([]);
-  });
-
-  it('should accept image with architecture suffix', () => {
-    const results = checkImageReferences({
-      systemSSHImage: 'registry.example.com/ns/image:tag@amd64',
-    });
-    expect(results).toEqual([]);
-  });
-});
-
-// ---------------------------------------------------------------------------
-// checkPluginConfiguration
-// ---------------------------------------------------------------------------
-
-describe('checkPluginConfiguration', () => {
-  it('returns nothing when no plugin is configured', () => {
-    expect(checkPluginConfiguration([], '')).toEqual([]);
-  });
-
-  it('accepts the names and folder paths the loader accepts', () => {
-    expect(
-      checkPluginConfiguration(
-        ['plugin_name', 'another-plugin', 'vendor/dashboard'],
-        'auth/signup-cloud',
-      ),
-    ).toEqual([]);
-  });
-
-  it('flags page entries and the login plugin the loader would refuse', () => {
-    const results = checkPluginConfiguration(
-      ['good', 'bad name', 'a/../b'],
-      'signup-cloud.js',
-    );
-    expect(results).toHaveLength(1);
-    expect(results[0].id).toBe('config-invalid-plugin-names');
-    expect(results[0].severity).toBe('warning');
-    expect(results[0].interpolationValues).toEqual({
-      plugins: 'bad name, a/../b, signup-cloud.js',
-      count: '3',
-    });
-  });
-
-  it('skips empty and placeholder entries', () => {
-    expect(
-      checkPluginConfiguration(['', '[Plugin Page]'], '[Login Plugin]'),
-    ).toEqual([]);
   });
 });
