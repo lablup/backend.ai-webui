@@ -90,7 +90,10 @@
  `placeholder`, before falling back to the translated generic.
 */
 import { FormItemInputContext } from '../form-engine';
-import { nodeToAccessibleLabel } from '../helper/astryxLabel';
+import {
+  nodeToAccessibleLabel,
+  resolveAccessibleLabel,
+} from '../helper/astryxLabel';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIMultiSelector from './BAIMultiSelector';
 import './BAISelect.css';
@@ -176,8 +179,8 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
   tabIndex?: number;
   id?: string;
   /**
-   * Accessible name; falls back to the enclosing Form.Item's label, then to
-   * `placeholder`.
+   * Accessible name; falls back to `aria-label`, the enclosing Form.Item's
+   * label, then `placeholder`.
    */
   label?: string;
   /** Same as `label`, for a call site that names the control the DOM way. */
@@ -516,10 +519,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   }, [autoSelectedValue]);
 
   const accessibleLabel =
-    label ||
-    ariaLabel ||
-    formItemLabel ||
-    nodeToAccessibleLabel(placeholder) ||
+    resolveAccessibleLabel(label, ariaLabel, formItemLabel, placeholder) ||
     t('general.Select');
 
   const singleValue = toOptionKey(value ?? defaultValue);

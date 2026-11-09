@@ -116,11 +116,11 @@ describe('BAISelect accessible name inside a Form.Item', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('treats an empty aria-label as absent', () => {
+  it.each(['', ' '])('treats a blank aria-label (%j) as absent', (blank) => {
     render(
       <Form>
         <FormItem name="project" label="Project">
-          <BAISelect aria-label="" options={options} />
+          <BAISelect aria-label={blank} options={options} />
         </FormItem>
       </Form>,
     );
