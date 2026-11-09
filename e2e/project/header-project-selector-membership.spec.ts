@@ -141,9 +141,9 @@ test.describe(
       });
       expect(personalProject).toBeTruthy();
 
-      // The reload can add a trailing slash.
+      // The reload can add a trailing slash; the app encodes the project name.
       const isPersonalDataPage = (url: URL) =>
-        url.pathname
+        decodeURIComponent(url.pathname)
           .replace(/\/$/, '')
           .endsWith(`/project/${personalProject}/data`);
       await personalOption.click();

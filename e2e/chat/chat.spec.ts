@@ -655,10 +655,8 @@ test.describe(
       await chatInput.fill('Trigger an error');
       await chatInput.press('Enter');
 
-      // ChatCard renders the completion failure as an Astryx `Banner
-      // status="error"` (ChatCard.tsx). Astryx's empty assertive live region
-      // also has role="alert" and is always present, so select the banner by
-      // its text. The chat client retries the 500 before reporting it.
+      // Astryx's always-present empty live region also has role="alert", so
+      // select the error Banner by its text.
       const errorAlert = page.getByRole('alert').filter({ hasText: /error/i });
       await expect(errorAlert).toBeVisible({ timeout: 15000 });
     });

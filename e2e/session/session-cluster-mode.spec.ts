@@ -62,11 +62,11 @@ test.describe(
         // runs an older WebUI build, this test will be skipped automatically.
         await navigateToClusterModeSection(page);
 
-        // Click the Multi Node label to select the Multi Node radio button
+        // Click the Multi Node radio to select the Multi Node radio button
         const multiNodeRadio = page.getByRole('radio', { name: 'Multi Node' });
         await multiNodeRadio.click();
 
-        // Verify the Multi Node radio input is checked
+        // Verify the Multi Node radio is checked
         await expect(multiNodeRadio).toBeChecked();
 
         // Cluster size should default to 1 with Multi Node selected.
@@ -97,7 +97,7 @@ test.describe(
       // Navigate to step 2: Environments & Resource Allocation
       await navigateToClusterModeSection(page);
 
-      // Click the Multi Node label to select it
+      // Click the Multi Node radio to select it
       const multiNodeRadio = page.getByRole('radio', { name: 'Multi Node' });
       await multiNodeRadio.click();
 
@@ -132,7 +132,7 @@ test.describe(
       // Navigate to step 2: Environments & Resource Allocation
       await navigateToClusterModeSection(page);
 
-      // Click the Multi Node label to select it
+      // Click the Multi Node radio to select it
       const multiNodeRadio = page.getByRole('radio', { name: 'Multi Node' });
       await multiNodeRadio.click();
 
@@ -175,7 +175,7 @@ test.describe(
         );
         await skipUnlessSizeOneWarningAvailable(page);
 
-        // Switch to Single Node by clicking the Single Node label
+        // Switch to Single Node by clicking the Single Node radio
         const singleNodeRadio = page.getByRole('radio', {
           name: 'Single Node',
         });
@@ -235,13 +235,13 @@ test.describe(
         // Navigate to step 2: Environments & Resource Allocation
         await navigateToClusterModeSection(page);
 
-        // Click the Single Node label to ensure Single Node mode is selected
+        // Click the Single Node radio to ensure Single Node mode is selected
         const singleNodeRadio = page.getByRole('radio', {
           name: 'Single Node',
         });
         await singleNodeRadio.click();
 
-        // Verify the Single Node radio input is checked
+        // Verify the Single Node radio is checked
         await expect(singleNodeRadio).toBeChecked();
 
         // Verify the cluster size spinbutton has value '1'.
@@ -269,7 +269,7 @@ test.describe(
       // Navigate to step 2: Environments & Resource Allocation
       await navigateToClusterModeSection(page);
 
-      // Click the Multi Node label
+      // Click the Multi Node radio
       const multiNodeRadio = page.getByRole('radio', { name: 'Multi Node' });
       await multiNodeRadio.click();
 
@@ -296,7 +296,7 @@ test.describe(
         // Navigate to step 2: Environments & Resource Allocation
         await navigateToClusterModeSection(page);
 
-        // Click the Single Node label
+        // Click the Single Node radio
         const singleNodeRadio = page.getByRole('radio', {
           name: 'Single Node',
         });
