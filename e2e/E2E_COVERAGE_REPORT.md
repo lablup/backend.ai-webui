@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-11-08
+> **Last Updated:** 2026-11-10
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 426 / 580 features covered (73%)**
+**Overall (in-scope routes): 428 / 582 features covered (74%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -54,7 +54,7 @@
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| System Settings          | `/admin/system-settings`                         |    37    |   33    | 🔶 89%  |
+| System Settings          | `/admin/system-settings`                         |    39    |   35    | 🔶 90%  |
 | **Total**                |                                                  | **580**  | **426** | **73%** |
 
 ---
@@ -1350,7 +1350,7 @@ is deliberately out of scope — operate above project scope — the header proj
 
 ### 34. System Settings (`/admin/system-settings`) — config.toml → app config (#10436)
 
-**Test files:** [`e2e/webui-settings/webui-settings.spec.ts`](webui-settings/webui-settings.spec.ts)
+**Test files:** [`e2e/webui-settings/webui-settings.spec.ts`](webui-settings/webui-settings.spec.ts), [`e2e/webui-settings/webui-settings-json.spec.ts`](webui-settings/webui-settings-json.spec.ts) (JSON Config dialog, read-only: it never presses the page Apply)
 
 **Helpers:** [`e2e/utils/webui-settings-util.ts`](utils/webui-settings-util.ts) — the row table mirroring `WEBUI_SETTING_DEFINITIONS`, `WebUISettingsApi` (snapshot / write / restore of the `settings` sub-key per scope), row and Apply helpers, `enablePublicSlice` for the anonymous `publicConfigByDomain` read.
 
@@ -1362,6 +1362,8 @@ The spec writes the cluster-wide `settings` documents, so it runs sequentially (
 | Row inventory equals the definition table (`data-testid="webui-setting-<key>"`)                                                                                                                              | ✅     | same test                                                                                                                                                             |
 | Each row shows the code default, no changed marker                                                                                                                                                           | ✅     | same test                                                                                                                                                             |
 | Apply disabled while nothing changed                                                                                                                                                                         | ✅     | same test                                                                                                                                                             |
+| JSON Config shows the `public` and `domain` documents; Cancel leaves the page unchanged                                                                                                                      | ✅     | `Superadmin can view System Settings as JSON and cancel without changing the page`                                                                                    |
+| JSON Config Apply lists unknown keys and wrong-typed values, stays open, and leaves the draft unchanged                                                                                                      | ✅     | `Superadmin cannot apply JSON Config with an unknown key or a wrong-typed value`                                                                                      |
 | Domain admin cannot open System Settings (superadmin-only route, no menu item)                                                                                                                               | ✅     | `domain admin cannot open System Settings`                                                                                                                            |
 | Changed marker + per-row reset (checkbox row)                                                                                                                                                                | ✅     | `a checkbox row shows the changed marker and resets to the default`                                                                                                   |
 | Changed marker + per-row reset (number row)                                                                                                                                                                  | ✅     | `a number row shows the changed marker and resets to the default`                                                                                                     |
@@ -1397,7 +1399,7 @@ The spec writes the cluster-wide `settings` documents, so it runs sequentially (
 | `maxShmPerContainer` → launcher shmem cap                                                                                                                                                                    | ❌     | nothing reads it today; #10709 wires it up                                                                                                                            |
 | Accelerator caps other than CPU (`maxCUDADevicesPerContainer`, …)                                                                                                                                            | ❌     | need the device in the resource group                                                                                                                                 |
 
-**Coverage: 🔶 33/37 features**
+**Coverage: 🔶 35/39 features**
 
 ---
 
