@@ -968,7 +968,7 @@
       "CompareGroups": "Grupları karşılaştır",
       "Condition": "Koşul",
       "Count": "Sayı",
-      "CountWithinPeriodDescription": "Yalnızca zaman aralığında oluşturulan öğeleri sayar. Kapalıyken eşleşen tüm öğeleri sayar.",
+      "CountWithinPeriodDescription": "Yalnızca zaman aralığında oluşturulan öğeleri sayar. \"Dönem yok (tüm öğeler)\" eşleşen tüm öğeleri sayar.",
       "CreatedOverTime": "Zaman içinde oluşturulanlar",
       "CreatedOverTimeDescription": "Aralığın her diliminde oluşturulan öğeleri sayar.",
       "DataSource": "Veri kaynağı",

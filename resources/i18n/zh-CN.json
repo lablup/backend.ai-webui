@@ -968,7 +968,7 @@
       "CompareGroups": "分组比较",
       "Condition": "条件",
       "Count": "计数",
-      "CountWithinPeriodDescription": "只统计在时间范围内创建的项目。关闭时统计所有符合条件的项目。",
+      "CountWithinPeriodDescription": "只统计在时间范围内创建的项目。选择\"不限期间 (全部项目)\"时统计所有符合条件的项目。",
       "CreatedOverTime": "创建趋势",
       "CreatedOverTimeDescription": "统计范围内每个区间新创建的项目数。",
       "DataSource": "数据源",

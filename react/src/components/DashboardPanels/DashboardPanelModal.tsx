@@ -16,7 +16,6 @@ import { SessionNodesPanelContent } from './SessionNodesPanel';
 import { SessionResourceGridContent } from './SessionResourceGridPanel';
 import {
   CHART_GROUPINGS,
-  chartTableFilter,
   chartTypesFor,
   chartUsesPeriod,
   chartWindow,
@@ -31,6 +30,7 @@ import {
   TIME_CHART_TYPES,
   isTimeChartType,
   type ChartType,
+  type PanelDescriptor,
   type PanelInput,
   type PanelType,
   type PersistedPanel,
@@ -224,7 +224,10 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
   };
 
   // The table the Table kind previews, and a chart lists under it with Show table on.
-  const renderTablePreview = (previewFilter: PanelInput['filter']) =>
+  const renderTablePreview = (
+    previewFilter: PanelInput['filter'],
+    tableWindow: PanelDescriptor['tableWindow'] = null,
+  ) =>
     config.kind === 'deploymentNodes' ? (
       <DeploymentNodesPanelContent
         key={`${resourceType}:${JSON.stringify(previewFilter ?? null)}`}
@@ -232,6 +235,8 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
           resourceType,
           filter: previewFilter ?? null,
           order,
+          range,
+          tableWindow,
         }}
         onChangeOrder={(next) => setOrder(next ?? null)}
         disableNavigation
@@ -243,6 +248,8 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
           resourceType,
           filter: previewFilter ?? null,
           order,
+          range,
+          tableWindow,
         }}
         onChangeOrder={(next) => setOrder(next ?? null)}
         disableSessionDetail
@@ -254,6 +261,8 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
           resourceType,
           filter: previewFilter ?? null,
           order,
+          range,
+          tableWindow,
         }}
         onChangeOrder={(next) => setOrder(next ?? null)}
         disableNavigation
@@ -488,7 +497,7 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
               // Keyed so an errored preview retries when the condition changes
               // — including the kind, or a table that failed keeps its fallback
               // after switching to a count that would have rendered.
-              key={`${panelType}:${resourceType}:${JSON.stringify(filter ?? null)}`}
+              key={`${panelType}:${resourceType}:${JSON.stringify(filter ?? null)}:${chart.type}:${chart.groupBy}:${range ?? ''}`}
               title={t(config.labelKey)}
               status="error"
             >
@@ -523,15 +532,15 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
                           />
                         </Suspense>
                       </BAIFlex>
-                      {chart.showTable
-                        ? renderTablePreview(
-                            chartTableFilter(
-                              resourceType,
-                              filter,
-                              chartWindow(chart, range, previewNow),
-                            ),
-                          )
-                        : null}
+                      {chart.showTable ? (
+                        // Its own boundary, so a table load never hides the chart.
+                        <Suspense fallback={<BAISkeleton />}>
+                          {renderTablePreview(
+                            filter,
+                            chartWindow(chart, range, previewNow),
+                          )}
+                        </Suspense>
+                      ) : null}
                     </BAIFlex>
                   ) : panelType === 'resourceCount' ? (
                     <BAIFlex align="center" justify="center">

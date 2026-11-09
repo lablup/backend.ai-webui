@@ -968,7 +968,7 @@
       "CompareGroups": "Vertaa ryhmiä",
       "Condition": "Ehto",
       "Count": "Lukumäärä",
-      "CountWithinPeriodDescription": "Laskee vain aikavälillä luodut kohteet. Pois päältä laskee kaikki vastaavat kohteet.",
+      "CountWithinPeriodDescription": "Laskee vain aikavälillä luodut kohteet. \"Ei jaksoa (kaikki kohteet)\" laskee kaikki vastaavat kohteet.",
       "CreatedOverTime": "Luodut ajan mittaan",
       "CreatedOverTimeDescription": "Laskee kullakin aikavälin jaksolla luodut kohteet.",
       "DataSource": "Tietolähde",

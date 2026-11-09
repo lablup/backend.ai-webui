@@ -968,7 +968,7 @@
       "CompareGroups": "グループ比較",
       "Condition": "条件",
       "Count": "カウント",
-      "CountWithinPeriodDescription": "時間範囲内に作成された項目だけを数えます。オフにすると条件に一致するすべての項目を数えます。",
+      "CountWithinPeriodDescription": "時間範囲内に作成された項目だけを数えます。「期間なし (すべての項目)」を選ぶと、条件に一致するすべての項目を数えます。",
       "CreatedOverTime": "作成数の推移",
       "CreatedOverTimeDescription": "範囲を区切った各区間で作成された項目数を数えます。",
       "DataSource": "データソース",

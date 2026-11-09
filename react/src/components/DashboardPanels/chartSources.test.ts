@@ -151,6 +151,38 @@ describe('chartCounts', () => {
   });
 });
 
+describe('session status groups', () => {
+  it('put every legacy session status in exactly one group', () => {
+    const statuses = [
+      'PENDING',
+      'DEPRIORITIZING',
+      'RESERVED',
+      'SCHEDULED',
+      'PREPARING',
+      'PULLING',
+      'PREPARED',
+      'CREATING',
+      'RUNNING',
+      'RESTARTING',
+      'RUNNING_DEGRADED',
+      'PREEMPTED',
+      'RESCHEDULING',
+      'TERMINATING',
+      'TERMINATED',
+      'ERROR',
+      'CANCELLED',
+    ];
+    const filters = CHART_GROUPINGS.session
+      .find(({ key }) => key === 'status')!
+      .groups.map(({ filter }) => String(filter));
+    for (const status of statuses) {
+      expect(
+        filters.filter((filter) => filter.includes(`"${status}"`)),
+      ).toHaveLength(1);
+    }
+  });
+});
+
 describe('chartTableFilter', () => {
   it('lists the rows the chart counts', () => {
     const donut = resolveChart('session', { type: 'donut' });

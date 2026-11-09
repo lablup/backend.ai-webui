@@ -968,7 +968,7 @@
       "CompareGroups": "Confronta gruppi",
       "Condition": "Condizione",
       "Count": "Conteggio",
-      "CountWithinPeriodDescription": "Conta solo gli elementi creati nell'intervallo di tempo. Disattivato, conta tutti gli elementi corrispondenti.",
+      "CountWithinPeriodDescription": "Conta solo gli elementi creati nell'intervallo di tempo. \"Nessun periodo (tutti gli elementi)\" conta tutti gli elementi corrispondenti.",
       "CreatedOverTime": "Creati nel tempo",
       "CreatedOverTimeDescription": "Conta gli elementi creati in ogni intervallo dell'arco temporale.",
       "DataSource": "Origine dati",

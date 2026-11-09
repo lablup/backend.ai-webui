@@ -39,6 +39,11 @@ export type ChartType = (typeof CHART_TYPES)[number];
 export const isTimeChartType = (type: unknown): boolean =>
   (TIME_CHART_TYPES as ReadonlyArray<unknown>).includes(type);
 
+/** The chart counts within the card's range: a time chart always, a group chart when it has a period. */
+export const chartUsesPeriod = (
+  chart: { type?: unknown; period?: boolean } | null | undefined,
+): boolean => isTimeChartType(chart?.type) || chart?.period === true;
+
 /**
  * A chart panel's settings. A group chart counts the rows per group of
  * `groupBy`; a time chart counts the rows created in each bucket of the
@@ -71,8 +76,13 @@ export interface PanelDescriptor {
   resourceGroups?: Array<string> | null;
   /** Chart settings of a `resourceChart` panel, null on other kinds. */
   chart?: PanelChart | null;
-  /** The panel's range setting, which a line chart reads. */
+  /** The panel's range setting, which a chart that counts within a period reads. */
   range?: string | null;
+  /**
+   * The window a chart's table narrows to, resolved at the card's refresh. It
+   * changes on every refresh, so it is ANDed into the query and never reset on.
+   */
+  tableWindow?: { after: string; before: string } | null;
 }
 
 /** The fields the panel modal collects when creating or editing a panel. */

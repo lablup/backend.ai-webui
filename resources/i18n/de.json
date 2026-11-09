@@ -968,7 +968,7 @@
       "CompareGroups": "Gruppen vergleichen",
       "Condition": "Bedingung",
       "Count": "Anzahl",
-      "CountWithinPeriodDescription": "Zählt nur die im Zeitraum erstellten Einträge. Aus zählt es alle passenden Einträge.",
+      "CountWithinPeriodDescription": "Zählt nur die im Zeitraum erstellten Einträge. \"Kein Zeitraum (alle Einträge)\" zählt alle passenden Einträge.",
       "CreatedOverTime": "Erstellt im Zeitverlauf",
       "CreatedOverTimeDescription": "Zählt die in jedem Intervall des Zeitraums erstellten Einträge.",
       "DataSource": "Datenquelle",

@@ -968,7 +968,7 @@
       "CompareGroups": "묶음 비교",
       "Condition": "조건",
       "Count": "카운트",
-      "CountWithinPeriodDescription": "시간 범위 안에 만들어진 항목만 셉니다. 끄면 조건에 맞는 항목을 모두 셉니다.",
+      "CountWithinPeriodDescription": "시간 범위 안에 만들어진 항목만 셉니다. \"기간 없음 (모든 항목)\"을 고르면 조건에 맞는 항목을 모두 셉니다.",
       "CreatedOverTime": "생성 추이",
       "CreatedOverTimeDescription": "범위를 나눈 구간마다 새로 만들어진 항목 수를 셉니다.",
       "DataSource": "데이터 소스",

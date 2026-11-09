@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { resetBoard, sanitizeBoard, seedBoard } from './boardModel';
-import { ownedSettingKeys, panelDefinitionOf } from './panelSettings';
+import { ownedSettingKeys, withRangeSetting } from './panelSettings';
 import { isRefreshOption } from './refreshScheduler';
 import type {
   DashboardBoardVars,
@@ -124,7 +124,12 @@ export const keepUnreadablePanels = (
         if (!isRecord(storedSettings) || !definition) return panel;
         const kept = _.omit(
           storedSettings,
-          ownedSettingKeys(panelDefinitionOf(definition, panel)),
+          // This client writes a preset's range itself, also when it drops it.
+          ownedSettingKeys(
+            definition.kind === 'preset'
+              ? withRangeSetting(definition)
+              : definition,
+          ),
         );
         return _.isEmpty(kept)
           ? panel

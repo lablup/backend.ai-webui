@@ -968,7 +968,7 @@
       "CompareGroups": "Porównaj grupy",
       "Condition": "Warunek",
       "Count": "Liczba",
-      "CountWithinPeriodDescription": "Liczy tylko elementy utworzone w zakresie czasu. Wyłączone liczy wszystkie pasujące elementy.",
+      "CountWithinPeriodDescription": "Liczy tylko elementy utworzone w zakresie czasu. \"Bez okresu (wszystkie elementy)\" liczy wszystkie pasujące elementy.",
       "CreatedOverTime": "Utworzone w czasie",
       "CreatedOverTimeDescription": "Liczy elementy utworzone w każdym przedziale zakresu.",
       "DataSource": "Źródło danych",

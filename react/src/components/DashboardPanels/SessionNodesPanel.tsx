@@ -7,6 +7,7 @@ import { useWebUINavigate } from '../../hooks';
 import { useBAIPaginationOptionState } from '../../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import SessionNodes from '../SessionNodes';
+import { chartTableFilter } from './chartSources';
 import { readPrimary } from './panelPermission';
 import { resourceRegistry } from './resourceRegistry';
 import type { PanelDescriptor } from './types';
@@ -45,7 +46,12 @@ export const SessionNodesPanelContent: React.FC<{
     setTablePaginationOption,
   } = useBAIPaginationOptionState({ current: 1, pageSize: 10 });
   useResetPageOn(
-    [descriptor.filter, descriptor.resourceGroups, queryScope],
+    [
+      descriptor.filter,
+      descriptor.range,
+      descriptor.resourceGroups,
+      queryScope,
+    ],
     setTablePaginationOption,
   );
 
@@ -53,7 +59,12 @@ export const SessionNodesPanelContent: React.FC<{
   // so its sort cycle can reach ascending instead of snapping back to the default.
   const order = descriptor.order ?? config.defaultOrder;
   const variables = config.buildVariables({
-    filter: descriptor.filter ?? undefined,
+    filter:
+      chartTableFilter(
+        descriptor.resourceType,
+        descriptor.filter,
+        descriptor.tableWindow ?? null,
+      ) ?? undefined,
     order,
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,

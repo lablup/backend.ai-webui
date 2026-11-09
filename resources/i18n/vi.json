@@ -968,7 +968,7 @@
       "CompareGroups": "So sánh nhóm",
       "Condition": "Điều kiện",
       "Count": "Số lượng",
-      "CountWithinPeriodDescription": "Chỉ đếm các mục được tạo trong phạm vi thời gian. Khi tắt, đếm tất cả các mục phù hợp.",
+      "CountWithinPeriodDescription": "Chỉ đếm các mục được tạo trong phạm vi thời gian. \"Không giới hạn thời gian (mọi mục)\" đếm tất cả các mục phù hợp.",
       "CreatedOverTime": "Số tạo theo thời gian",
       "CreatedOverTimeDescription": "Đếm số mục được tạo trong mỗi khoảng của phạm vi.",
       "DataSource": "Nguồn dữ liệu",

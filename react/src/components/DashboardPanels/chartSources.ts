@@ -12,6 +12,7 @@ import {
 } from './timeRange';
 import {
   CHART_TYPES,
+  chartUsesPeriod,
   isTimeChartType,
   type ChartType,
   type PanelChart,
@@ -48,16 +49,27 @@ const rawLabel = (value: string) => () => value;
 
 // The legacy session statuses, every one in exactly one group.
 const SESSION_STATUS_GROUPS = [
-  { key: 'pending', labelKey: 'dashboard.card.Pending', statuses: ['PENDING'] },
+  {
+    key: 'pending',
+    labelKey: 'dashboard.card.Pending',
+    statuses: ['PENDING', 'PREEMPTED', 'RESCHEDULING'],
+  },
   {
     key: 'starting',
     labelKey: 'dashboard.card.Starting',
-    statuses: ['SCHEDULED', 'PREPARING', 'PULLING', 'PREPARED', 'CREATING'],
+    statuses: [
+      'RESERVED',
+      'SCHEDULED',
+      'PREPARING',
+      'PULLING',
+      'PREPARED',
+      'CREATING',
+    ],
   },
   {
     key: 'running',
     labelKey: 'dashboard.card.Running',
-    statuses: ['RUNNING', 'RESTARTING', 'RUNNING_DEGRADED'],
+    statuses: ['RUNNING', 'RESTARTING', 'RUNNING_DEGRADED', 'DEPRIORITIZING'],
   },
   {
     key: 'terminating',
@@ -94,7 +106,7 @@ const VFOLDER_STATUSES = [
 
 const VFOLDER_USAGE_MODES = [
   ['GENERAL', 'data.General'],
-  ['DATA', 'data.Pipeline'],
+  ['DATA', 'webui.menu.Data'],
   ['MODEL', 'data.Models'],
 ] as const;
 
@@ -197,9 +209,6 @@ const createdWithin = (
     : withinWindow('createdAt', window);
 
 /** The chart counts within the card's range: a time chart always, a group chart when asked to. */
-export const chartUsesPeriod = (chart: PanelChart) =>
-  isTimeChartType(chart.type) || chart.period === true;
-
 /** A radar needs three axes, so it is offered only for groupings of three or more groups. */
 export const chartTypesFor = (
   source: ResourceKey,
@@ -249,6 +258,8 @@ export const chartWindow = (
     : null;
 
 /** The panel's condition narrowed to the chart's window, so its table lists the rows the chart counts. */
+export { chartUsesPeriod };
+
 export const chartTableFilter = (
   source: ResourceKey,
   filter: PanelDescriptor['filter'],

@@ -968,7 +968,7 @@
       "CompareGroups": "Bandingkan kumpulan",
       "Condition": "Syarat",
       "Count": "Bilangan",
-      "CountWithinPeriodDescription": "Hanya mengira item yang dicipta dalam julat masa. Jika dimatikan, mengira semua item yang sepadan.",
+      "CountWithinPeriodDescription": "Hanya mengira item yang dicipta dalam julat masa. \"Tiada tempoh (semua item)\" mengira semua item yang sepadan.",
       "CreatedOverTime": "Dicipta mengikut masa",
       "CreatedOverTimeDescription": "Mengira item yang dicipta dalam setiap selang julat.",
       "DataSource": "Sumber data",

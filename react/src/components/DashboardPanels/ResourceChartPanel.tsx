@@ -10,7 +10,6 @@ import {
 import {
   CHART_GROUPINGS,
   chartCounts,
-  chartTableFilter,
   chartWindow,
   combineFilters,
   resolveChart,
@@ -21,6 +20,7 @@ import PeriodCaption from './charts/PeriodCaption';
 import { formatBucketSpan } from './charts/bucketSpan';
 import {
   countAliasVariables,
+  countText,
   readCounts,
   type CountAlias,
 } from './countAliases';
@@ -311,14 +311,11 @@ const ResourceChartPanel: React.FC<ResourceTablePanelProps> = ({
   const chart = resolveChart(descriptor.resourceType, descriptor.chart);
   const [mountedAt] = useState(() => Date.now());
   const now = refreshedAt ?? mountedAt;
-  // The table lists the rows the chart counts.
+  // The table lists the rows the chart counts; its window rides beside the
+  // filter so a refresh does not send it back to page 1.
   const tableDescriptor: PanelDescriptor = {
     ...descriptor,
-    filter: chartTableFilter(
-      descriptor.resourceType,
-      descriptor.filter,
-      chartWindow(chart, descriptor.range, now),
-    ),
+    tableWindow: chartWindow(chart, descriptor.range, now),
   };
 
   return (
@@ -521,6 +518,8 @@ const CountChart: React.FC<{
   const data = points.map(({ count, value }, index) => ({
     x: isTime ? index : count.label(t),
     value: value ?? 0,
+    // A denied count reads "-", as the donut and the other cards show it.
+    countText: countText(value),
     zero: 0,
     tooltip:
       isTime && count.window ? formatBucketSpan(count.window) : count.label(t),
@@ -583,7 +582,7 @@ const CountChart: React.FC<{
           render={(datum) => (
             <BAIFlex direction="column" align="start">
               <Text type="supporting">{String(datum.tooltip)}</Text>
-              <Text>{`${t('dashboard.card.Count')}: ${Number(datum.value).toLocaleString()}`}</Text>
+              <Text>{`${t('dashboard.card.Count')}: ${String(datum.countText)}`}</Text>
             </BAIFlex>
           )}
         />

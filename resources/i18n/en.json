@@ -955,7 +955,7 @@
       "CompareGroups": "Compare groups",
       "Condition": "Condition",
       "Count": "Count",
-      "CountWithinPeriodDescription": "Counts only the items created in the time range. Off, it counts every matching item.",
+      "CountWithinPeriodDescription": "Counts only the items created in the time range. \"No period (every item)\" counts every matching item.",
       "CreatedOverTime": "Created over time",
       "CreatedOverTimeDescription": "Counts the items created in each interval of the range.",
       "DataSource": "Data source",

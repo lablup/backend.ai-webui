@@ -968,7 +968,7 @@
       "CompareGroups": "分組比較",
       "Condition": "條件",
       "Count": "計數",
-      "CountWithinPeriodDescription": "只統計在時間範圍內建立的項目。關閉時統計所有符合條件的項目。",
+      "CountWithinPeriodDescription": "只統計在時間範圍內建立的項目。選擇「不限期間 (全部項目)」時統計所有符合條件的項目。",
       "CreatedOverTime": "建立趨勢",
       "CreatedOverTimeDescription": "統計範圍內每個區間新建立的項目數。",
       "DataSource": "資料來源",

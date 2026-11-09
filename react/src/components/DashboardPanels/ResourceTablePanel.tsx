@@ -6,6 +6,7 @@ import { useBAIPaginationOptionState } from '../../hooks/reactPaginationQueryOpt
 import { DeploymentNodesPanelContent } from './DeploymentNodesPanel';
 import PanelFrame from './PanelFrame';
 import { SessionNodesPanelContent } from './SessionNodesPanel';
+import { chartTableFilter } from './chartSources';
 import { resolvePanelTitle, resourceRegistry } from './resourceRegistry';
 import type { PanelDescriptor } from './types';
 import { useDashboardQueryScope } from './useDashboardFilters';
@@ -141,7 +142,12 @@ export const ResourceTableContent: React.FC<{
     setTablePaginationOption,
   } = useBAIPaginationOptionState({ current: 1, pageSize: 10 });
   useResetPageOn(
-    [descriptor.filter, descriptor.resourceGroups, queryScope],
+    [
+      descriptor.filter,
+      descriptor.range,
+      descriptor.resourceGroups,
+      queryScope,
+    ],
     setTablePaginationOption,
   );
 
@@ -149,7 +155,12 @@ export const ResourceTableContent: React.FC<{
   // so its sort cycle can reach ascending instead of snapping back to the default.
   const order = descriptor.order ?? config.defaultOrder;
   const variables = config.buildVariables({
-    filter: descriptor.filter ?? undefined,
+    filter:
+      chartTableFilter(
+        descriptor.resourceType,
+        descriptor.filter,
+        descriptor.tableWindow ?? null,
+      ) ?? undefined,
     order,
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,

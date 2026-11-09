@@ -246,6 +246,8 @@ export const useDashboardBoard = ({
             columnOffset: undefined,
           }
         : {};
+    // Like a settings-modal save, the saved default replaces a header pick.
+    clearOverrides([id]);
     save(
       updatePanel(board, id, {
         ...next,

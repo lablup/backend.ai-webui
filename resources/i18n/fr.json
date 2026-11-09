@@ -968,7 +968,7 @@
       "CompareGroups": "Comparer les groupes",
       "Condition": "Condition",
       "Count": "Nombre",
-      "CountWithinPeriodDescription": "Ne compte que les éléments créés dans la période. Désactivé, compte tous les éléments correspondants.",
+      "CountWithinPeriodDescription": "Ne compte que les éléments créés dans la période. « Sans période (tous les éléments) » compte tous les éléments correspondants.",
       "CreatedOverTime": "Créations dans le temps",
       "CreatedOverTimeDescription": "Compte les éléments créés dans chaque intervalle de la période.",
       "DataSource": "Source de données",
