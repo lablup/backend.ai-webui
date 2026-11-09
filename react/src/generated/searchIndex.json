@@ -2817,159 +2817,159 @@
       "settings": [
         {
           "key": "settings.ATOMMaxSupport",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
             "settings.DescATOMMaxSupport",
             "settings.RequireATOMMaxPlugin"
-          ],
-          "tab": "configurations"
+          ]
         },
         {
           "key": "settings.ATOMPlusSupport",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
             "settings.DescATOMPlusSupport",
             "settings.RequireATOMPlusPlugin"
-          ],
-          "tab": "configurations"
+          ]
         },
         {
           "key": "settings.ATOMSupport",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
             "settings.DescATOMSupport",
             "settings.RequireATOMPlugin"
-          ],
-          "tab": "configurations"
+          ]
         },
         {
           "key": "settings.FractionalGPU",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
             "settings.DescFractionalGPU",
             "settings.RequireFGPUPlugin"
-          ],
-          "tab": "configurations"
+          ]
         },
         {
           "key": "settings.Gaudi2Support",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
             "settings.DescGaudi2Support",
             "settings.RequireGaudi2Plugin"
-          ],
-          "tab": "configurations"
+          ]
         },
         {
           "key": "settings.HyperaccelLPUSupport",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
             "settings.DescHyperaccelLPUSupport",
             "settings.RequireHyperaccelLPUPlugin"
-          ],
-          "tab": "configurations"
+          ]
         },
         {
           "key": "settings.IPUSupport",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
             "settings.DescIPUSupport",
             "settings.RequireTPUPlugin"
-          ],
-          "tab": "configurations"
+          ]
         },
         {
           "key": "settings.ImagePullBehavior",
+          "tab": "configurations",
           "groupKey": "settings.General",
           "groupId": "settings-general",
           "descriptionKeys": [
             "settings.DescImagePullBehavior"
-          ],
-          "tab": "configurations"
+          ]
         },
         {
           "key": "settings.OpenSourceCudaGPUSupport",
+          "tab": "configurations",
           "groupKey": "settings.Plugins",
           "groupId": "settings-plugins",
           "descriptionKeys": [
             "settings.CUDAGPUdisabledByFGPUsupport",
             "settings.DescCudaGPUSupport"
-          ],
-          "tab": "configurations"
+          ]
         },
         {
           "key": "settings.OverlayNetwork",
+          "tab": "configurations",
           "groupKey": "settings.General",
           "groupId": "settings-general",
           "descriptionKeys": [
             "settings.OverlayNetworkConfiguration"
-          ],
-          "tab": "configurations"
+          ]
         },
         {
           "key": "settings.RNGDSupport",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
             "settings.DescRNGDSupport",
             "settings.RequireRNGDPlugin"
-          ],
-          "tab": "configurations"
+          ]
         },
         {
           "key": "settings.ROCMGPUSupport",
+          "tab": "configurations",
           "groupKey": "settings.Plugins",
           "groupId": "settings-plugins",
           "descriptionKeys": [
             "settings.DescRocmGPUSupport"
-          ],
-          "tab": "configurations"
+          ]
         },
         {
           "key": "settings.Rebel100Support",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
             "settings.DescRebel100Support",
             "settings.RequireRebel100Plugin"
-          ],
-          "tab": "configurations"
+          ]
         },
         {
           "key": "settings.Scheduler",
+          "tab": "configurations",
           "groupKey": "settings.General",
           "groupId": "settings-general",
           "descriptionKeys": [
             "settings.SchedulerConfiguration"
-          ],
-          "tab": "configurations"
+          ]
         },
         {
           "key": "settings.TPU",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
             "settings.DescTPU",
             "settings.RequireTPUPlugin"
-          ],
-          "tab": "configurations"
+          ]
         },
         {
           "key": "settings.WarboySupport",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
             "settings.DescWarboySupport",
             "settings.RequireWarboyPlugin"
-          ],
-          "tab": "configurations"
+          ]
         }
       ],
       "keys": [
