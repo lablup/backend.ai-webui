@@ -30,6 +30,15 @@ test.describe(
   'Admin Model Card Management - Page Load and Table Display',
   { tag: ['@admin-model-card', '@admin', '@functional'] },
   () => {
+    let createdFolderName = '';
+
+    test.afterEach(async () => {
+      if (createdFolderName) {
+        await purgeVFoldersByNameViaApi([createdFolderName]);
+        createdFolderName = '';
+      }
+    });
+
     test.beforeEach(async ({ page, request }) => {
       await loginAsAdmin(page, request);
     });
@@ -81,6 +90,7 @@ test.describe(
       const timestamp = Date.now();
       const cardName = `e2e-test-pageload-${testInfo.workerIndex}-${timestamp}`;
       const folderName = `e2e-test-pageload-folder-${testInfo.workerIndex}-${timestamp}`;
+      createdFolderName = folderName;
 
       // Create a dedicated model card so the table is guaranteed to have data
       await page.goto(
@@ -124,9 +134,8 @@ test.describe(
       const createdAtCell = firstRow.locator('td').last();
       await expect(createdAtCell).toHaveText(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}/);
 
-      // Cleanup: delete the created model card, then purge the folder
+      // Cleanup: delete the created model card; afterEach purges the folder
       await adminModelCardPage.deleteModelCardByName(cardName);
-      await purgeVFoldersByNameViaApi([folderName]);
     });
 
     // 1.3 Superadmin can see pagination controls

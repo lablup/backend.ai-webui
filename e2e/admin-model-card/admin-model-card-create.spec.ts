@@ -385,6 +385,7 @@ test.describe(
 
       // Create a new VFolder via the "+" button (leave Name empty) — self-provisions
       // so no pre-existing group-owned VFolder is required on the test backend.
+      createdFolderName = folderName;
       await adminModelCardPage.createNewFolderViaPlus(folderName);
 
       // Click Create (Name is empty — validation should fire)
@@ -396,10 +397,9 @@ test.describe(
       // Verify the modal remains open
       await expect(modal).toBeVisible();
 
-      // Close the modal and clean up the folder created via "+"
+      // Close the modal; afterEach purges the folder created via "+"
       await adminModelCardPage.getCreateModalCancelButton().click();
       await expect(modal).toBeHidden();
-      await purgeVFoldersByNameViaApi([folderName]);
     });
 
     // 3.5 Superadmin cannot create a model card without a Model Storage Folder
