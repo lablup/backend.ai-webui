@@ -295,7 +295,7 @@ export const userInfo = {
  * Mark the superadmin view-switch tours (`AdminViewSwitchTour`) as already seen.
  * Each test starts in a fresh browser context, where the tour's intro modal
  * would otherwise cover the page on every superadmin landing. Call it before
- * the page opens. The app only reads these keys for a superadmin.
+ * the page opens. The app only shows the tour to a superadmin.
  */
 export async function skipAdminViewSwitchTours(page: Page) {
   await page.addInitScript(() => {
