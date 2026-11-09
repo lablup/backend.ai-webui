@@ -45,6 +45,7 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
     status?: 'error' | 'warning' | '';
     size?: 'small' | 'middle' | 'large';
     variant?: 'outlined' | 'filled' | 'borderless';
+    /** Accepted and inert: ui-common's selectors own their popup visibility. */
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
     /**
@@ -62,7 +63,10 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
     autoFocus?: boolean;
     tabIndex?: number;
     id?: string;
-    /** Accessible name; derived from `placeholder` when absent. */
+    /**
+     * Accessible name; falls back to `aria-label`, the enclosing Form.Item's
+     * label, then `placeholder`.
+     */
     label?: string;
     /** Same as `label`, for a call site that names the control the DOM way. */
     'aria-label'?: string;
@@ -123,7 +127,7 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
     searchAction?: (value: string) => Promise<void>;
     [key: `data-${string}`]: string | undefined;
 }
-declare function BAISelect<ValueType = any, OptionType = BAISelectOption>({ ref: _ref, autoSelectOption, ghost, tooltip: _tooltip, atBottomThreshold: _atBottomThreshold, atBottomStateChange: _atBottomStateChange, bottomLoading: _bottomLoading, header, footer, endReached: _endReached, searchAction: _searchAction, options, value, defaultValue, onChange, onSelect, placeholder, mode, disabled, loading, allowClear, showSearch, status, size, optionRender, triggerDisplay, maxBadges, children, className, style, label, 'aria-label': ariaLabel, isLabelHidden: _isLabelHidden, popupMatchSelectWidth: _popupMatchSelectWidth, popupRender: _popupRender, notFoundContent: _notFoundContent, suffixIcon: _suffixIcon, labelRender, maxTagCount: _maxTagCount, maxTagPlaceholder: _maxTagPlaceholder, optionLabelProp, filterOption: _filterOption, defaultActiveFirstOption: _defaultActiveFirstOption, open: _open, onOpenChange: _onOpenChange, title: _title, variant, ...restProps }: BAISelectProps<ValueType, OptionType>): React.ReactElement;
+declare function BAISelect<ValueType = any, OptionType = BAISelectOption>({ ref: _ref, autoSelectOption, ghost, tooltip: _tooltip, atBottomThreshold: _atBottomThreshold, atBottomStateChange: _atBottomStateChange, bottomLoading: _bottomLoading, header, footer, endReached: _endReached, searchAction: _searchAction, options, value, defaultValue, onChange, onSelect, placeholder, mode, disabled, loading, allowClear, showSearch, status, size, optionRender, triggerDisplay, maxBadges, children, className, style, label, 'aria-label': ariaLabel, isLabelHidden: _isLabelHidden, popupMatchSelectWidth: _popupMatchSelectWidth, popupRender: _popupRender, notFoundContent: _notFoundContent, suffixIcon: _suffixIcon, labelRender, maxTagCount: _maxTagCount, maxTagPlaceholder: _maxTagPlaceholder, optionLabelProp, filterOption: _filterOption, defaultActiveFirstOption: _defaultActiveFirstOption, open: _open, title: _title, variant, ...restProps }: BAISelectProps<ValueType, OptionType>): React.ReactElement;
 /**
  * Carrier element for the `<Select.Option>` children API, replacing antd's
  * (phase 3, wave 3).
