@@ -4,12 +4,10 @@ navTitle: Get Started
 
 # Get Started
 
-The **Get started** cards provide quick access to frequently used WebUI
-features. Each card represents a common workflow such as creating storage
-folders, launching sessions, deploying models, or importing projects from
-external URLs. The cards are part of the [Dashboard](#dashboard), the page you
-land on after logging in; the separate Start page no longer exists, and links to
-it open the Dashboard instead.
+The [Dashboard](#dashboard) is the page you land on after logging in. Its
+**Get started** cards give you quick access to frequently used WebUI features:
+creating storage folders, launching sessions, deploying models, or importing
+projects from external URLs.
 
 ![](../images/start_page.png)
 
@@ -35,7 +33,7 @@ details, refer to the [System announcement](#system-announcement) section.
 
 ## Action cards
 
-The **Get started** group contains the following cards by default:
+The Dashboard shows the following **Get started** cards by default:
 
 - **Create New Storage Folder**: Create a storage folder and upload files. This
   is an essential first step for training models or providing external services.
