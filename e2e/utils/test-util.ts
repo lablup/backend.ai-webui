@@ -132,6 +132,24 @@ export async function seedStoredApiEndpoint(
   }, endpoint);
 }
 
+/**
+ * Mark the superadmin view-switch tours (`AdminViewSwitchTour`) as seen, so
+ * their intro modal does not cover the page in a fresh context. Keys already
+ * set (e.g. `'false'` by a spec that walks the tour) are left alone.
+ */
+export async function skipAdminViewSwitchTours(page: Page) {
+  await page.addInitScript(() => {
+    for (const key of [
+      'backendaiwebui.settings.user.has_opened_tour_back_to_user_view',
+      'backendaiwebui.settings.user.has_opened_tour_back_to_admin_settings',
+    ]) {
+      if (localStorage.getItem(key) === null) {
+        localStorage.setItem(key, 'true');
+      }
+    }
+  });
+}
+
 export async function login(
   page: Page,
   request: APIRequestContext,
@@ -147,6 +165,8 @@ export async function login(
       apiEndpointText: '',
     },
   });
+
+  await skipAdminViewSwitchTours(page);
 
   await page.goto(webuiEndpoint);
   // Remove webpack-dev-server overlay iframe that can intercept pointer events
