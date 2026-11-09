@@ -96,7 +96,7 @@ export function manipulateGraphQLQueryWithClientDirectives(
         }
       },
       leave(node) {
-        // when field has a empty selectionSet, delete it
+        // when field has an empty selectionSet, delete it
         if (
           node.selectionSet &&
           node.selectionSet.kind === 'SelectionSet' &&
