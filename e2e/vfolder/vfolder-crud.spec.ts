@@ -1,3 +1,4 @@
+import { purgeVFoldersByNameViaApi } from '../utils/admin-api';
 import { FolderCreationModal } from '../utils/classes/vfolder/FolderCreationModal';
 import { cleanupVFolderSafely } from '../utils/cleanup-util';
 import { getE2EVFolderHost } from '../utils/e2e-scope';
@@ -97,8 +98,10 @@ test.describe(
           .first()
           .click();
       });
-      test.afterEach(async ({ page }) => {
-        await cleanupVFolderSafely(page, creationFolderName);
+      test.afterEach(async () => {
+        if (creationFolderName) {
+          await purgeVFoldersByNameViaApi([creationFolderName]);
+        }
       });
       test('User can create a vFolder by selecting a specific location', async ({
         page,

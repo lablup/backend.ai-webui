@@ -405,6 +405,109 @@ export async function sweepLeftoverDeploymentsViaApi(
   return deleted;
 }
 
+// Past the trash: the manager is deleting it or already has, so nothing is left to do.
+const PURGED_VFOLDER_STATUSES = new Set([
+  'delete-ongoing',
+  'delete-complete',
+  'delete-error',
+]);
+
+// The manager leaves these on its own; no delete can succeed until it does.
+const TRANSITIONAL_VFOLDER_STATUSES = new Set(['cloning']);
+const VFOLDER_PURGE_DEADLINE_MS = 15_000;
+const VFOLDER_PURGE_POLL_MS = 500;
+
+async function listVFoldersByName(
+  api: APIRequestContext,
+  name: string,
+): Promise<Array<{ id: string; status: string }>> {
+  const data = await gqlAdmin<{
+    vfolder_list: { items: Array<{ id: string; status: string }> };
+  }>(
+    api,
+    `query($filter: String) {
+      vfolder_list(limit: 100, offset: 0, filter: $filter) {
+        items { id status }
+      }
+    }`,
+    { filter: `name == ${JSON.stringify(name)}` },
+  );
+  return data.vfolder_list.items;
+}
+
+async function purgeVFolderViaApi(
+  api: APIRequestContext,
+  name: string,
+): Promise<void> {
+  const listRemaining = async () =>
+    (await listVFoldersByName(api, name)).filter(
+      ({ status }) => !PURGED_VFOLDER_STATUSES.has(status),
+    );
+  const deadline = Date.now() + VFOLDER_PURGE_DEADLINE_MS;
+  let lastFailure = '';
+  for (;;) {
+    const remaining = await listRemaining();
+    if (remaining.length === 0) return;
+    for (const { id, status } of remaining) {
+      if (TRANSITIONAL_VFOLDER_STATUSES.has(status)) continue;
+      const step = status === 'delete-pending' ? 'purge' : 'trash';
+      const res =
+        step === 'trash'
+          ? await api.delete('/func/folders', { data: { vfolder_id: id } })
+          : await api.post('/func/folders/delete-from-trash-bin', {
+              data: { vfolder_id: id },
+            });
+      if (res.ok()) continue;
+      lastFailure = `${step} of folder "${name}" (${id}) failed: ${res.status()} ${(await res.text()).slice(0, 300)}`;
+      // Only a folder the manager moved on meanwhile is worth another look.
+      const current = (await listVFoldersByName(api, name)).find(
+        (folder) => folder.id === id,
+      );
+      if (current?.status === status) throw new Error(lastFailure);
+    }
+    if (Date.now() >= deadline) {
+      const left = await listRemaining();
+      if (left.length === 0) return;
+      const states = left.map((f) => `${f.id}: ${f.status}`).join(', ');
+      throw new Error(
+        `folder "${name}" not deleted after ${VFOLDER_PURGE_DEADLINE_MS}ms (${states}) ${lastFailure}`.trim(),
+      );
+    }
+    await new Promise((resolve) => setTimeout(resolve, VFOLDER_PURGE_POLL_MS));
+  }
+}
+
+/**
+ * Permanently deletes the e2e folders named exactly `names`, whatever their
+ * current state; a name with no folder is not an error. Trashed folders still
+ * count toward `max_vfolder_count`, so both steps must succeed. Tries every
+ * name, then throws: a leak fills the project's quota for later runs.
+ */
+export async function purgeVFoldersByNameViaApi(
+  names: string[],
+): Promise<void> {
+  if (names.length === 0) return;
+  const api = await createAdminApiContext();
+  const failures: string[] = [];
+  try {
+    for (const name of names) {
+      try {
+        if (!name.startsWith('e2e-')) {
+          throw new Error(`refusing to purge non-e2e folder "${name}"`);
+        }
+        await purgeVFolderViaApi(api, name);
+      } catch (error) {
+        failures.push(error instanceof Error ? error.message : String(error));
+      }
+    }
+  } finally {
+    await api.dispose();
+  }
+  if (failures.length > 0) {
+    throw new Error(`Folder cleanup failed:\n${failures.join('\n')}`);
+  }
+}
+
 interface PrometheusQueryPresetRow {
   entityId: string;
   name: string;
