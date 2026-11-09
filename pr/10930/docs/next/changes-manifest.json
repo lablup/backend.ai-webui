@@ -1,0 +1,142 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-11-08T17:29:22.351Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 1,
+        "changes": 2,
+        "added": 0,
+        "modified": 2,
+        "removed": 0,
+        "images": 2,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "sessions_all",
+          "title": "Compute Sessions",
+          "status": "modified",
+          "url": "next/en/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "7d2c267d8cc9",
+            "d5ee2a21b77c"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 1,
+        "changes": 2,
+        "added": 0,
+        "modified": 2,
+        "removed": 0,
+        "images": 2,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "sessions_all",
+          "title": "コンピュートセッション",
+          "status": "modified",
+          "url": "next/ja/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "d9fc4d6decd2",
+            "d06e6783d17e"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 1,
+        "changes": 2,
+        "added": 0,
+        "modified": 2,
+        "removed": 0,
+        "images": 2,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "sessions_all",
+          "title": "연산 세션",
+          "status": "modified",
+          "url": "next/ko/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "0ecc04007b3d",
+            "8d387e09b63d"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 1,
+        "changes": 2,
+        "added": 0,
+        "modified": 2,
+        "removed": 0,
+        "images": 2,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "sessions_all",
+          "title": "เซสชันการคำนวณ",
+          "status": "modified",
+          "url": "next/th/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "c9dc928f12fd",
+            "4c26458485c1"
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,20 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAIStatistic> (to-astryx phase 3, ticket A). Imported
+ by the component itself (P17).
+
+ JUSTIFICATION for per-component CSS: Astryx `ProgressBar` is a continuous
+ track and exposes no `steps`. The 20-notch bar is the recognisable shape of
+ the resource panel, so its geometry is rebuilt here rather than silently
+ redesigned — see the PILOT-DECISION in `BAIStatistic.tsx`.
+
+ The two `font-size` rules are the same class of value: antd rendered the
+ metric at a literal 32px and the caption at `fontSizeLG`. `Text`'s `size`
+ scale tops out below 32px for this role, so the value keeps its literal;
+ everything else is a token (P19 — names checked against the built theme's
+ declared variables).
+
+ Unlayered, matching the other co-located BUI stylesheets.
+*/.bai-statistic-title{margin-bottom:16px;line-height:1em}.bai-statistic-value{font-size:32px;line-height:1em}.bai-statistic-steps{display:flex;align-items:center;gap:2px}.bai-statistic-step{width:3px;height:10px;flex-shrink:0;background-color:var(--color-track)}.bai-statistic-step--filled{background-color:var(--color-text-disabled)}.bai-statistic-step--ghost{background-color:transparent}

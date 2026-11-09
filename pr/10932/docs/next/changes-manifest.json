@@ -1,0 +1,177 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-11-08T17:29:49.719Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 1,
+        "changes": 11,
+        "added": 1,
+        "modified": 6,
+        "removed": 4,
+        "images": 2,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "start",
+          "title": "Get Started",
+          "status": "modified",
+          "url": "next/en/start.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/start/start.md",
+          "counts": {
+            "added": 1,
+            "modified": 6,
+            "removed": 4,
+            "images": 2,
+            "total": 11
+          },
+          "fingerprints": [
+            "7203abeb8bd9",
+            "b0f8530e1dd8",
+            "80ec02dd4435",
+            "c5ebe0e43975",
+            "16c9c70264d7",
+            "6da17a324d6b",
+            "b822787fed36",
+            "7ea2eecee963",
+            "680bf083537c",
+            "978de1000af2",
+            "db219369dbbc"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 1,
+        "changes": 11,
+        "added": 1,
+        "modified": 6,
+        "removed": 4,
+        "images": 2,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "start",
+          "title": "はじめに",
+          "status": "modified",
+          "url": "next/ja/start.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/start/start.md",
+          "counts": {
+            "added": 1,
+            "modified": 6,
+            "removed": 4,
+            "images": 2,
+            "total": 11
+          },
+          "fingerprints": [
+            "47018c0d1074",
+            "ab8d93773a61",
+            "70caec307d48",
+            "0ba95b9c778c",
+            "94c78411c622",
+            "4cb34189d64d",
+            "7b22e5a9020a",
+            "fb17a988e561",
+            "f796c0636ba2",
+            "0fe7e9a1287d",
+            "681cde4d6e17"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 1,
+        "changes": 11,
+        "added": 1,
+        "modified": 6,
+        "removed": 4,
+        "images": 2,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "start",
+          "title": "시작하기",
+          "status": "modified",
+          "url": "next/ko/start.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/start/start.md",
+          "counts": {
+            "added": 1,
+            "modified": 6,
+            "removed": 4,
+            "images": 2,
+            "total": 11
+          },
+          "fingerprints": [
+            "39780a758dcd",
+            "fd4d03336b21",
+            "74eb64d2725e",
+            "5366cf773cd6",
+            "3f656cd8dc7f",
+            "9725ce91f913",
+            "a9df1639f599",
+            "4309e5e6ed67",
+            "f34a1480baef",
+            "21a10ff59ed1",
+            "6d6b803552df"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 1,
+        "changes": 10,
+        "added": 0,
+        "modified": 7,
+        "removed": 3,
+        "images": 2,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "start",
+          "title": "เริ่มต้นใช้งาน",
+          "status": "modified",
+          "url": "next/th/start.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/start/start.md",
+          "counts": {
+            "added": 0,
+            "modified": 7,
+            "removed": 3,
+            "images": 2,
+            "total": 10
+          },
+          "fingerprints": [
+            "91ef776e0ad0",
+            "3fc56dac37de",
+            "dc9100aa0782",
+            "3f8452855ddf",
+            "80920d127730",
+            "1b1bb698129d",
+            "d14599aa556b",
+            "6b2442d185ab",
+            "abd5c8d59b3b",
+            "cf12b7443261"
+          ]
+        }
+      ]
+    }
+  }
+}
