@@ -36,6 +36,7 @@ import {
 import { useDashboardQueryScope } from './useDashboardFilters';
 import { SkeletonChart } from '@lablup/ui-common';
 import { Text } from '@lablup/ui-common/Text';
+import { VStack } from '@lablup/ui-common/VStack';
 import {
   Chart,
   ChartArea,
@@ -50,6 +51,7 @@ import {
   useChartColors,
 } from '@lablup/ui-common/lab';
 import useResizeObserver from '@react-hook/resize-observer';
+import * as stylex from '@stylexjs/stylex';
 import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -294,6 +296,46 @@ const CHART_MIN_HEIGHT = 120;
 // The chart's share of the panel when the table is listed under it.
 const CHART_HEIGHT_WITH_TABLE = 200;
 
+const styles = stylex.create({
+  // Takes the panel's remaining height; the chart inside reads it back.
+  fill: { flexGrow: 1, flexShrink: 1, flexBasis: '0%' },
+  fixed: { flexShrink: 0 },
+  content: { flexGrow: 1, flexShrink: 1, flexBasis: '0%', minHeight: 0 },
+});
+
+/**
+ * The box a chart draws in: `fixedHeight` above a table, else the panel's
+ * remaining height (at least `CHART_MIN_HEIGHT`), measured and handed to the
+ * chart, whose height is a number.
+ */
+const ChartBox: React.FC<{
+  fixedHeight?: number;
+  children: React.ReactNode | ((height: number) => React.ReactNode);
+}> = ({ fixedHeight, children }) => {
+  'use memo';
+  const rootRef = useRef<HTMLElement>(null);
+  const [measuredHeight, setMeasuredHeight] = useState(0);
+  useResizeObserver(
+    rootRef as React.RefObject<HTMLElement>,
+    ({ contentRect }) => setMeasuredHeight(contentRect.height),
+  );
+  const height = Math.max(
+    CHART_MIN_HEIGHT,
+    fixedHeight ?? Math.floor(measuredHeight),
+  );
+  return (
+    <VStack
+      ref={rootRef}
+      align="stretch"
+      height={fixedHeight}
+      minHeight={fixedHeight ? undefined : CHART_MIN_HEIGHT}
+      xstyle={fixedHeight ? styles.fixed : styles.fill}
+    >
+      {typeof children === 'function' ? children(height) : children}
+    </VStack>
+  );
+};
+
 /**
  * A custom panel drawn as a chart: a donut or bar of counts per group, or a
  * line of rows created per bucket of its range, optionally above its table.
@@ -328,7 +370,7 @@ const ResourceChartPanel: React.FC<ResourceTablePanelProps> = ({
         fallback={
           <SkeletonChart
             variant={SKELETON_VARIANTS[chart.type]}
-            height="200px"
+            height={`${CHART_HEIGHT_WITH_TABLE}px`}
           />
         }
       >
@@ -415,15 +457,7 @@ export const ResourceChartContent: React.FC<{
   );
   const chartBody =
     chart.type === 'donut' || chart.type === 'pie' ? (
-      <BAIFlex
-        direction="column"
-        align="stretch"
-        style={
-          fixedHeight
-            ? { height: fixedHeight, flex: 'none' }
-            : { flex: 1, minHeight: CHART_MIN_HEIGHT }
-        }
-      >
+      <ChartBox fixedHeight={fixedHeight}>
         <DonutChart
           label={title}
           emptyText={t('dashboard.panelModal.NoMatchingRows')}
@@ -441,7 +475,7 @@ export const ResourceChartContent: React.FC<{
           )}
           isPie={chart.type === 'pie'}
         />
-      </BAIFlex>
+      </ChartBox>
     ) : chart.type === 'radar' ? (
       <RadarCountChart
         label={title}
@@ -458,33 +492,24 @@ export const ResourceChartContent: React.FC<{
     );
   // A chart that counts within a period names it, like every period card (ADR 0027).
   return (
-    <BAIFlex
-      direction="column"
+    <VStack
       align="stretch"
-      gap="xs"
+      gap={2}
       aria-busy={isSwitching}
-      style={fixedHeight ? undefined : { flex: 1, minHeight: 0 }}
+      xstyle={fixedHeight ? undefined : styles.content}
     >
       {window && !isSwitching ? <PeriodCaption window={window} /> : null}
       {isSwitching ? (
-        <BAIFlex
-          direction="column"
-          align="stretch"
-          style={
-            fixedHeight
-              ? { height: fixedHeight, flex: 'none' }
-              : { flex: 1, minHeight: CHART_MIN_HEIGHT }
-          }
-        >
+        <ChartBox fixedHeight={fixedHeight}>
           <SkeletonChart
             variant={SKELETON_VARIANTS[nextChart.type]}
             height="100%"
           />
-        </BAIFlex>
+        </ChartBox>
       ) : (
         chartBody
       )}
-    </BAIFlex>
+    </VStack>
   );
 };
 
@@ -498,15 +523,6 @@ const CountChart: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const colors = useChartColors();
-  const rootRef = useRef<HTMLDivElement>(null);
-  const [measuredHeight, setMeasuredHeight] = useState(0);
-  useResizeObserver(rootRef, ({ contentRect }) =>
-    setMeasuredHeight(contentRect.height),
-  );
-  const height = Math.max(
-    CHART_MIN_HEIGHT,
-    fixedHeight ?? Math.floor(measuredHeight),
-  );
   const isTime = isTimeChartType(chart.type);
   // A bucket shows its start time; a range longer than a day also needs the date.
   const first = points[0]?.count.window;
@@ -527,67 +543,60 @@ const CountChart: React.FC<{
   const color = colors.categorical(1)[0];
 
   return (
-    <BAIFlex
-      ref={rootRef}
-      direction="column"
-      align="stretch"
-      style={
-        fixedHeight
-          ? { height: fixedHeight, flex: 'none' }
-          : { flex: 1, minHeight: CHART_MIN_HEIGHT }
-      }
-    >
-      <Chart
-        data={data}
-        xKey="x"
-        yKeys={['value']}
-        height={height}
-        // From zero, so an all-zero chart lies on the baseline.
-        yDomain={[0, Math.max(1, ...data.map(({ value }) => value))]}
-        label={label}
-      >
-        <ChartAxis
-          position="bottom"
-          maxTicks={isTime ? 4 : 8}
-          truncate={12}
-          tickFormat={
-            isTime
-              ? (value) => {
-                  const window = points[Number(value)]?.count.window;
-                  return window
-                    ? dayjs(window.after).format(spansDays ? 'MM/DD' : 'LT')
-                    : '';
-                }
-              : undefined
-          }
-        />
-        <ChartAxis
-          position="left"
-          tickCount={4}
-          tickFormat={(value) =>
-            Number.isInteger(Number(value)) ? String(value) : ''
-          }
-        />
-        {chart.type === 'line' || chart.type === 'area' ? (
-          <>
-            {chart.type === 'area' ? (
-              <ChartArea yUpper="value" yLower="zero" color={color} />
-            ) : null}
-            <ChartLine dataKey="value" color={color} strokeWidth={2} />
-          </>
-        ) : (
-          <ChartBar dataKey="value" color={color} radius={2} />
-        )}
-        <ChartTooltip
-          render={(datum) => (
-            <BAIFlex direction="column" align="start">
-              <Text type="supporting">{String(datum.tooltip)}</Text>
-              <Text>{`${t('dashboard.card.Count')}: ${String(datum.countText)}`}</Text>
-            </BAIFlex>
+    <ChartBox fixedHeight={fixedHeight}>
+      {(height) => (
+        <Chart
+          data={data}
+          xKey="x"
+          yKeys={['value']}
+          height={height}
+          // From zero, so an all-zero chart lies on the baseline.
+          yDomain={[0, Math.max(1, ...data.map(({ value }) => value))]}
+          label={label}
+        >
+          <ChartAxis
+            position="bottom"
+            maxTicks={isTime ? 4 : 8}
+            truncate={12}
+            tickFormat={
+              isTime
+                ? (value) => {
+                    const window = points[Number(value)]?.count.window;
+                    return window
+                      ? dayjs(window.after).format(spansDays ? 'MM/DD' : 'LT')
+                      : '';
+                  }
+                : undefined
+            }
+          />
+          <ChartAxis
+            position="left"
+            tickCount={4}
+            tickFormat={(value) =>
+              Number.isInteger(Number(value)) ? String(value) : ''
+            }
+          />
+          {chart.type === 'line' || chart.type === 'area' ? (
+            <>
+              {chart.type === 'area' ? (
+                <ChartArea yUpper="value" yLower="zero" color={color} />
+              ) : null}
+              <ChartLine dataKey="value" color={color} strokeWidth={2} />
+            </>
+          ) : (
+            <ChartBar dataKey="value" color={color} radius={2} />
           )}
-        />
-      </Chart>
-    </BAIFlex>
+          <ChartTooltip
+            render={(datum) => (
+              <BAIFlex direction="column" align="start">
+                <Text type="supporting">{String(datum.tooltip)}</Text>
+                <Text>{`${t('dashboard.card.Count')}: ${String(datum.countText)}`}</Text>
+              </BAIFlex>
+            )}
+          />
+        </Chart>
+      )}
+    </ChartBox>
   );
 };
 
@@ -600,15 +609,6 @@ const RadarCountChart: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const colors = useChartColors();
-  const rootRef = useRef<HTMLDivElement>(null);
-  const [measuredHeight, setMeasuredHeight] = useState(0);
-  useResizeObserver(rootRef, ({ contentRect }) =>
-    setMeasuredHeight(contentRect.height),
-  );
-  const height = Math.max(
-    CHART_MIN_HEIGHT,
-    fixedHeight ?? Math.floor(measuredHeight),
-  );
   const axes = points.map(({ count }) => count.label(t));
   const max = Math.max(1, ...points.map(({ value }) => value ?? 0));
   // RadialChart scales each axis to its own maximum; the undrawn `scale` row gives every axis the same one.
@@ -623,22 +623,15 @@ const RadarCountChart: React.FC<{
   ];
 
   return (
-    <BAIFlex
-      ref={rootRef}
-      direction="column"
-      align="stretch"
-      style={
-        fixedHeight
-          ? { height: fixedHeight, flex: 'none' }
-          : { flex: 1, minHeight: CHART_MIN_HEIGHT }
-      }
-    >
-      <RadialChart data={data} axes={axes} height={height} label={label}>
-        <RadialGrid />
-        <RadialArea dataKey="count" color={colors.categorical(1)[0]} dots />
-        <RadialAxis />
-      </RadialChart>
-    </BAIFlex>
+    <ChartBox fixedHeight={fixedHeight}>
+      {(height) => (
+        <RadialChart data={data} axes={axes} height={height} label={label}>
+          <RadialGrid />
+          <RadialArea dataKey="count" color={colors.categorical(1)[0]} dots />
+          <RadialAxis />
+        </RadialChart>
+      )}
+    </ChartBox>
   );
 };
 
