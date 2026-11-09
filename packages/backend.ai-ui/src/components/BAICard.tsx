@@ -105,9 +105,10 @@ import { Divider } from '@lablup/ui-common/Divider';
 import { Skeleton } from '@lablup/ui-common/Skeleton';
 import { HStack, VStack } from '@lablup/ui-common/Stack';
 import { Tab } from '@lablup/ui-common/TabList';
-import { Heading } from '@lablup/ui-common/Text';
-import { CircleX, TriangleAlert } from 'lucide-react';
-import React from 'react';
+import { Heading, Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { CircleHelp, CircleX, TriangleAlert } from 'lucide-react';
+import React, { createRef } from 'react';
 import type { CSSProperties, ReactNode, Ref } from 'react';
 
 /** antd `Card`'s `tabList` item, restated locally. */
@@ -117,7 +118,7 @@ export interface BAICardTabItem {
   /** antd's pre-v5 name for `label`; still passed by a few call sites. */
   tab?: ReactNode;
   /**
-   * Trailing slot inside the tab (a count badge, a help tooltip icon).
+   * Trailing slot inside the tab (a count badge); help text goes in `tooltip`.
    *
    * Astryx `Tab` is `label` (a required STRING that doubles as the accessible
    * name) plus `endContent`. A JSX `label` therefore has to be SPLIT, and only
@@ -126,6 +127,12 @@ export interface BAICardTabItem {
    * happen when it did not.
    */
   endContent?: ReactNode;
+  /**
+   * Help text anchored on the tab itself (hover or focus the tab), shown with a
+   * decorative help glyph. Never put a tooltip trigger in `endContent`: it
+   * renders inside the tab's `<button>`.
+   */
+  tooltip?: ReactNode;
   /**
    * Accepted and ignored: Astryx `Tab` has no disabled state. No call site in
    * the repo passes it, so nothing regresses — it stays in the type only so an
@@ -219,6 +226,7 @@ const BAICard: React.FC<BAICardProps> = ({
   children,
   ...cardProps
 }) => {
+  'use memo';
   const extraNode =
     extra ||
     (extraButtonTitle ? (
@@ -253,6 +261,17 @@ const BAICard: React.FC<BAICardProps> = ({
   // or a cover comes first the strip is a mid-card rule instead, and the
   // top-edge weld must not apply.
   const tabsAreFirstRow = !hasTitleRow && !cover;
+  const tooltipTabKeys = tabs
+    .filter((tab) => tab.tooltip)
+    .map((tab) => tab.key)
+    .join('\n');
+  // Keyed on the joined keys so the compiler keeps the anchors stable across renders.
+  const tooltipAnchorRefs = new Map(
+    (tooltipTabKeys ? tooltipTabKeys.split('\n') : []).map((key) => [
+      key,
+      createRef<HTMLButtonElement>(),
+    ]),
+  );
 
   return (
     <Card
@@ -339,21 +358,24 @@ const BAICard: React.FC<BAICardProps> = ({
               return (
                 <Tab
                   key={tab.key}
+                  ref={tooltipAnchorRefs.get(tab.key)}
                   value={tab.key}
                   // `Tab.label` is a required STRING that doubles as the
                   // accessible name (P2), so a JSX tab label is flattened
-                  // for the name.
-                  //
-                  // DEFECT FIXED (phase 3, wave 3): the trailing slot used to
-                  // fall back to the WHOLE `rawLabel` node whenever the label
-                  // was JSX. Since `label` already renders the flattened text,
-                  // the text came out TWICE — measured on `SchedulerPage`,
-                  // whose tab read "Fair Share Setting Fair Share Setting ⓘ".
-                  // Only the call site knows where a rich label splits, so it
-                  // now passes `endContent` explicitly and keeps `label` a
-                  // string; there is no guess to get wrong.
+                  // for the name; extras come only from `endContent`.
                   label={nodeToAccessibleLabel(rawLabel)}
-                  endContent={tab.endContent}
+                  endContent={
+                    tab.tooltip ? (
+                      <>
+                        {tab.endContent}
+                        <Text color="placeholder">
+                          <CircleHelp size="1em" aria-hidden />
+                        </Text>
+                      </>
+                    ) : (
+                      tab.endContent
+                    )
+                  }
                 />
               );
             })}
@@ -361,6 +383,17 @@ const BAICard: React.FC<BAICardProps> = ({
         ) : showDivider ? (
           <Divider className="bai-card__divider" />
         ) : null}
+        {/* Outside the TabList, so the tab button itself gets aria-describedby. */}
+        {tabs.map((tab) => {
+          const anchorRef = tooltipAnchorRefs.get(tab.key);
+          return tab.tooltip && anchorRef ? (
+            <Tooltip
+              key={tab.key}
+              anchorRef={anchorRef}
+              content={tab.tooltip}
+            />
+          ) : null;
+        })}
         {loading ? (
           <VStack gap={2} align="stretch">
             <Skeleton height={16} width="60%" />

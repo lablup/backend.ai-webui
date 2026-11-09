@@ -6,11 +6,7 @@ import { type ErrorWithGraphQL } from '../../components/BAIErrorBoundary';
 import FairShareList from './components/FairShareItems/FairShareList';
 import { Button } from '@lablup/ui-common/Button';
 import { EmptyState } from '@lablup/ui-common/EmptyState';
-import {
-  BAISkeleton,
-  BAICard,
-  BAIQuestionIconWithTooltip,
-} from 'backend.ai-ui';
+import { BAISkeleton, BAICard } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { TriangleAlertIcon } from 'lucide-react';
 import {
@@ -39,17 +35,8 @@ const SchedulerPage: React.FC<SchedulerPageProps> = () => {
       tabList={[
         {
           key: 'fair-share',
-          // The tab's own text stays a plain STRING and the help affordance
-          // moves to `endContent` (added to `BAICardTabItem` in this wave).
-          // A JSX label was rendered twice — once flattened into Astryx `Tab`'s
-          // required string `label`, once again as the trailing node.
           label: t('fairShare.FairShareSetting'),
-          endContent: (
-            <BAIQuestionIconWithTooltip
-              title={<Trans i18nKey={t('fairShare.SchedulerDescription')} />}
-              style={{ alignItems: 'center' }}
-            />
-          ),
+          tooltip: <Trans i18nKey={t('fairShare.SchedulerDescription')} />,
         },
       ]}
     >

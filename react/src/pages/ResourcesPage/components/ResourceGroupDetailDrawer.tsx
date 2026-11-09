@@ -17,7 +17,9 @@ import ResourceGroupSettingModal from './ResourceGroupSettingModal';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import { Tab, TabList } from '@lablup/ui-common/TabList';
+import { Text } from '@lablup/ui-common/Text';
 import { Token } from '@lablup/ui-common/Token';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAICard,
@@ -27,7 +29,6 @@ import {
   BAIEntityLabelCell,
   BAIFetchKeyButton,
   BAIFlex,
-  BAIIconWithTooltip,
   BAIMetadataList,
   BAISkeleton,
   BAIText,
@@ -44,6 +45,7 @@ import React, {
   Suspense,
   useEffect,
   useEffectEvent,
+  useRef,
   useState,
   useTransition,
 } from 'react';
@@ -148,6 +150,8 @@ const ResourceGroupDetailDrawerContent: React.FC<{
   const { md } = useBAIBreakpoint();
   const isLabelable = useIsLabelableEntityType('resource_group');
   const [activeTab, setActiveTab] = useState<TabKey>('defaultSessionOptions');
+  const sessionOptionsTabRef = useRef<HTMLButtonElement>(null);
+  const deploymentOptionsTabRef = useRef<HTMLButtonElement>(null);
 
   const resourceGroupName = resourceGroup.name;
   // `ResourceGroup` has no counterpart for `scheduler_opts`.
@@ -266,26 +270,35 @@ const ResourceGroupDetailDrawerContent: React.FC<{
           onChange={(key) => setActiveTab(key as TabKey)}
         >
           <Tab
+            ref={sessionOptionsTabRef}
             value="defaultSessionOptions"
             label={t('resourceGroup.DefaultSessionOptions')}
             endContent={
-              <BAIIconWithTooltip
-                icon={<Info size="1em" aria-hidden />}
-                content={t('resourceGroup.DefaultSessionOptionsDesc')}
-              />
+              <Text color="placeholder">
+                <Info size="1em" aria-hidden />
+              </Text>
             }
           />
           <Tab
+            ref={deploymentOptionsTabRef}
             value="defaultDeploymentOptions"
             label={t('resourceGroup.DefaultDeploymentOptions')}
             endContent={
-              <BAIIconWithTooltip
-                icon={<Info size="1em" aria-hidden />}
-                content={t('resourceGroup.DefaultDeploymentOptionsDesc')}
-              />
+              <Text color="placeholder">
+                <Info size="1em" aria-hidden />
+              </Text>
             }
           />
         </TabList>
+        {/* Outside the TabList, so the tab button itself gets aria-describedby. */}
+        <Tooltip
+          anchorRef={sessionOptionsTabRef}
+          content={t('resourceGroup.DefaultSessionOptionsDesc')}
+        />
+        <Tooltip
+          anchorRef={deploymentOptionsTabRef}
+          content={t('resourceGroup.DefaultDeploymentOptionsDesc')}
+        />
         <BAIErrorBoundary>
           <Suspense fallback={<BAISkeleton />}>
             {activeTab === 'defaultSessionOptions' ? (
