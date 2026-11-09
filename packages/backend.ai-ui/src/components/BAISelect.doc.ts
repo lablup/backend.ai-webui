@@ -151,7 +151,8 @@ export const docs = {
         {
           name: 'onOpenChange',
           type: '(open: boolean) => void',
-          description: 'Accepted and inert, for the same reason as open.',
+          description:
+            'Called with the new state whenever the popup opens or closes, whether by the trigger, the keyboard, a light dismiss or Escape.',
         },
         {
           name: 'optionRender',

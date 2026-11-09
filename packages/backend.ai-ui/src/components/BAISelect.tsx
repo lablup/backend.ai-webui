@@ -158,7 +158,9 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
   status?: 'error' | 'warning' | '';
   size?: 'small' | 'middle' | 'large';
   variant?: 'outlined' | 'filled' | 'borderless';
+  /** Accepted and inert: ui-common's selectors own their popup visibility. */
   open?: boolean;
+  /** Called when the popup opens or closes, however that happened. */
   onOpenChange?: (open: boolean) => void;
   /**
    * antd handed the render function `{ data, label, value }`. The shape is
@@ -289,7 +291,6 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   filterOption: _filterOption,
   defaultActiveFirstOption: _defaultActiveFirstOption,
   open: _open,
-  onOpenChange: _onOpenChange,
   title: _title,
   variant,
   ...restProps

@@ -6,7 +6,7 @@
  * What BAISelect took over from the removed BAISelector re-export (ADR 0017).
  */
 import BAISelect from './BAISelect';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
@@ -45,6 +45,33 @@ describe('BAISelect as the single select', () => {
     await userEvent.click(trigger()!);
     expect(await screen.findByText('Cannot write')).toBeInTheDocument();
   });
+
+  it.each([
+    ['single', undefined],
+    ['multiple', 'multiple'],
+  ] as const)(
+    'reports popup open and close in %s mode',
+    async (_name, mode) => {
+      const onOpenChange = vi.fn();
+      render(
+        <BAISelect
+          aria-label="Scheduler"
+          mode={mode}
+          showSearch={false}
+          onOpenChange={onOpenChange}
+          options={[{ label: 'FIFO', value: 'fifo' }]}
+        />,
+      );
+      expect(onOpenChange).not.toHaveBeenCalled();
+
+      await userEvent.click(trigger()!);
+      await waitFor(() => expect(onOpenChange).toHaveBeenLastCalledWith(true));
+
+      await userEvent.keyboard('{Escape}');
+      await waitFor(() => expect(onOpenChange).toHaveBeenLastCalledWith(false));
+      expect(onOpenChange).toHaveBeenCalledTimes(2);
+    },
+  );
 
   it('renders labelRender on the closed trigger', () => {
     render(
