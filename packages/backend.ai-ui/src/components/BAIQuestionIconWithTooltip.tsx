@@ -36,7 +36,9 @@ import {
   splitAntdPlacement,
   type AntdPlacement,
 } from '../helper/astryxPlacement';
-import BAIIconWithTooltip from './BAIIconWithTooltip';
+import BAIIconWithTooltip, {
+  type BAIIconWithTooltipProps,
+} from './BAIIconWithTooltip';
 import { CircleHelp } from 'lucide-react';
 import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';
@@ -55,6 +57,8 @@ export interface BAIQuestionIconWithTooltipProps {
   iconProps?: React.ComponentProps<typeof CircleHelp>;
   /** See BAIIconWithTooltip — `false` for triggers nested in interactive elements. */
   focusable?: boolean;
+  /** Where a non-focusable trigger's text reaches assistive tech (ui-common `IconWithTooltip`). */
+  announceAs?: BAIIconWithTooltipProps['announceAs'];
 }
 
 const BAIQuestionIconWithTooltip = ({
@@ -67,6 +71,7 @@ const BAIQuestionIconWithTooltip = ({
   className,
   iconProps,
   focusable,
+  announceAs,
 }: BAIQuestionIconWithTooltipProps) => {
   const { placement: astryxPlacement, alignment } =
     splitAntdPlacement(placement);
@@ -82,6 +87,7 @@ const BAIQuestionIconWithTooltip = ({
       style={style}
       className={className}
       focusable={focusable}
+      announceAs={announceAs}
     />
   );
 };

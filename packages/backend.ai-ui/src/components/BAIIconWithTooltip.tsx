@@ -4,7 +4,8 @@
 
  ui-common `IconWithTooltip` under its BUI name; the props are identical
  (every Tooltip prop, with the text of `content` naming the trigger;
- a `focusable={false}` trigger is `aria-hidden` and names nothing).
+ a `focusable={false}` trigger is `aria-hidden`, and `announceAs` decides
+ whether its text names or describes the enclosing control).
  `BAIQuestionIconWithTooltip` specializes it with the CircleHelp glyph.
 */
 import {
