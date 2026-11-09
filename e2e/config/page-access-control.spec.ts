@@ -34,6 +34,42 @@ function getSideNavItem(
     .or(sideNav.getByRole('button', { name, exact: typeof name === 'string' }));
 }
 
+/**
+ * Since #10552 a superadmin lands on the admin pages, whose sider has no
+ * Dashboard / Start items, so open a project-scope page first. `/session` is a
+ * legacy shim that redirects to `/project/<current>/session`.
+ */
+async function openUserScope(page: Page) {
+  await page.goto(`${webuiEndpoint}/session`);
+  await expect(page).toHaveURL(/\/project\/[^/]+\/session/, {
+    timeout: 15_000,
+  });
+  await expect(
+    page.getByRole('navigation', { name: 'Side navigation' }),
+  ).toBeVisible({ timeout: 15_000 });
+}
+
+/**
+ * The project dashboard (menu key `dashboard`) and its legacy shim. Not
+ * `/admin/dashboard` or `/project/<name>/admin/dashboard`: those are the
+ * separate `admin-dashboard` menu key (#10595), which a `dashboard` blocklist
+ * entry does not cover.
+ */
+const PROJECT_DASHBOARD_PATH = /^\/(?:project\/[^/]+\/)?dashboard\/?$/;
+
+// The superadmin AdminViewSwitchTour (#10552) otherwise covers the page with
+// its intro modal on admin scope and its spotlight on project scope.
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    for (const name of [
+      'has_opened_tour_back_to_user_view',
+      'has_opened_tour_back_to_admin_settings',
+    ]) {
+      localStorage.setItem(`backendaiwebui.settings.user.${name}`, 'true');
+    }
+  });
+});
+
 test.describe(
   'Page Access Control - Config-Based Menu Management',
   { tag: ['@critical', '@config', '@functional'] },
@@ -120,6 +156,7 @@ test.describe(
 
         // 2. Login as superadmin user
         await loginAsAdmin(page, request);
+        await openUserScope(page);
 
         // 3. Verify "Dashboard" menu item is visible but has disabled attribute
         const dashboardMenuItem = getSideNavItem(page, 'Dashboard');
@@ -160,11 +197,13 @@ test.describe(
         // 2. Login as superadmin user
         await loginAsAdmin(page, request);
 
-        // 3. Navigate to root / - currently redirects to the dashboard even though it's inactive
-        // NOTE: InactiveList only disables menu items but doesn't prevent direct access or redirect
-        // This is expected behavior - inactive pages can still be accessed
+        // 3. Navigate to root / - a superadmin lands on the admin pages
+        // (#10552). InactiveList only disables menu items; it doesn't prevent
+        // direct access or redirect.
         await page.goto(`${webuiEndpoint}/`);
         await page.waitForURL((url) => !url.pathname.endsWith('/'));
+        await expect(page).toHaveURL(/\/admin\//);
+        await openUserScope(page);
 
         // 4. Verify "Dashboard" menu item appears disabled in sidebar
         const dashboardMenuItem = getSideNavItem(page, 'Dashboard');
@@ -195,6 +234,7 @@ test.describe(
 
         // 2. Login as superadmin user
         await loginAsAdmin(page, request);
+        await openUserScope(page);
 
         // 3. Verify "Dashboard" menu item is disabled
         const dashboardMenuItem = getSideNavItem(page, 'Dashboard');
@@ -535,7 +575,9 @@ test.describe(
 
         // 6. Verify user is redirected to first available menu item (not the blocked dashboard)
         await page.waitForURL((url) => !url.pathname.endsWith('/'));
-        expect(page.url()).not.toContain('/dashboard');
+        expect(new URL(page.url()).pathname).not.toMatch(
+          PROJECT_DASHBOARD_PATH,
+        );
       },
     );
 
@@ -634,7 +676,9 @@ test.describe(
 
         // 4. Verify user is redirected to first available page (not /dashboard)
         await page.waitForURL((url) => !url.pathname.endsWith('/'));
-        expect(page.url()).not.toContain('/dashboard');
+        expect(new URL(page.url()).pathname).not.toMatch(
+          PROJECT_DASHBOARD_PATH,
+        );
 
         // 5. Modify config.toml to set blocklist = "dashboard,job"
         await modifyConfigToml(page, request, {
@@ -652,7 +696,9 @@ test.describe(
 
         // 8. Verify user is redirected to next available page
         await page.waitForURL((url) => !url.pathname.endsWith('/'));
-        expect(page.url()).not.toContain('/dashboard');
+        expect(new URL(page.url()).pathname).not.toMatch(
+          PROJECT_DASHBOARD_PATH,
+        );
         expect(page.url()).not.toContain('/job');
       },
     );
@@ -703,6 +749,7 @@ test.describe(
 
         // 2. Login as superadmin user
         await loginAsAdmin(page, request);
+        await openUserScope(page);
 
         // 3. Verify "Start" menu item is hidden
         await expect(
@@ -750,7 +797,9 @@ test.describe(
         // 12. Verify user is redirected to first active, non-blocked page
         await page.waitForURL((url) => !url.pathname.endsWith('/'));
         expect(page.url()).not.toContain('/start');
-        expect(page.url()).not.toContain('/dashboard');
+        expect(new URL(page.url()).pathname).not.toMatch(
+          PROJECT_DASHBOARD_PATH,
+        );
       },
     );
 
@@ -776,6 +825,7 @@ test.describe(
 
         // 2. Login as superadmin user
         await loginAsAdmin(page, request);
+        await openUserScope(page);
 
         // 3. Verify "Start" is hidden
         await expect(
