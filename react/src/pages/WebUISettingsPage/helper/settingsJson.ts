@@ -4,7 +4,7 @@
  */
 import { isValidPluginPath } from '../../../helper/pluginPath';
 import {
-  isValidWebUISettingValue,
+  isValidWebUISetting,
   restrictToOptions,
   WEBUI_SETTING_DEFINITIONS,
   type WebUISettingDefinition,
@@ -33,7 +33,7 @@ export const isApplicableSettingValue = (
   definition: WebUISettingDefinition,
   value: unknown,
 ): boolean => {
-  if (!isValidWebUISettingValue(definition.type, value)) return false;
+  if (!isValidWebUISetting(definition, value)) return false;
   if (definition.key === 'pluginLogin') {
     return value === '' || isValidPluginPath(value as string);
   }

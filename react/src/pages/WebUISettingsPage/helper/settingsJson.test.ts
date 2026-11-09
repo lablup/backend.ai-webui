@@ -77,6 +77,16 @@ describe('parseSettingsJson', () => {
     });
   });
 
+  it('rejects a number outside the setting range', () => {
+    const result = parseSettingsJson(
+      '{"domain": {"maxCPUCoresPerContainer": -2, "maxFileUploadSize": -1}}',
+    );
+    expect(result).toEqual({
+      ok: false,
+      issues: [{ path: 'domain.maxCPUCoresPerContainer', reason: 'invalid' }],
+    });
+  });
+
   it('returns the parse error of a document that is not JSON', () => {
     const result = parseSettingsJson('{ nope');
     expect(result.ok).toBe(false);
