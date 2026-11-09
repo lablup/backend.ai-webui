@@ -127,12 +127,17 @@ const myUpsertMutation = graphql`
   }
 `;
 
+/** A sub-key's next value, or a function of its current raw value. */
+export type AppConfigUpdate = unknown | ((current: unknown) => unknown);
+
 const applySubKey = (
   base: AppConfigDocument,
   subKey: string | Array<string>,
-  nextValue: unknown,
+  update: AppConfigUpdate,
 ): AppConfigDocument => {
   const next = _.cloneDeep(base);
+  const nextValue =
+    typeof update === 'function' ? update(_.get(base, subKey)) : update;
   if (nextValue === undefined) {
     _.unset(next, subKey);
   } else {
@@ -248,7 +253,7 @@ export const useUpdatePublicDomainAppConfig = () => {
 
   return async (
     subKey: string | Array<string>,
-    nextValue: unknown,
+    nextValue: AppConfigUpdate,
     domainName?: string,
   ) => {
     const targetDomainName = domainName ?? currentDomainName;
@@ -294,10 +299,7 @@ export const useUpdateDomainAppConfig = () => {
   const upsert =
     useMutationWithPromise<useAppConfigUpsertMutation>(upsertMutation);
 
-  return async (
-    subKey: string | Array<string>,
-    nextValue: unknown | ((current: unknown) => unknown),
-  ) => {
+  return async (subKey: string | Array<string>, nextValue: AppConfigUpdate) => {
     const raw = await fetchQuery<useAppConfigDomainRawQuery>(
       relayEnv,
       domainRawQuery,

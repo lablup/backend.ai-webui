@@ -347,6 +347,35 @@ export const buildWebUISettingsDocument = (
   return _.isEmpty(doc) ? undefined : doc;
 };
 
+const OWNED_WEBUI_SETTING_KEYS = new Set(
+  WEBUI_SETTING_DEFINITIONS.map((d) => d.key),
+);
+
+/** The keys of `settings` that a definition owns. */
+export const ownedWebUISettings = (
+  settings: WebUISettingsDocument,
+): WebUISettingsDocument =>
+  _.pickBy(settings, (_v, key) => OWNED_WEBUI_SETTING_KEYS.has(key));
+
+/**
+ * `doc` plus every key of the stored `current` document that no definition
+ * owns (the announcement, #10713), so replacing the `settings` sub-key keeps
+ * them. `undefined` when nothing is left.
+ */
+export const withForeignWebUISettings = (
+  current: unknown,
+  doc: WebUISettingsDocument | undefined,
+): WebUISettingsDocument | undefined => {
+  const foreign = _.isPlainObject(current)
+    ? _.pickBy(
+        current as WebUISettingsDocument,
+        (_v, key) => !OWNED_WEBUI_SETTING_KEYS.has(key),
+      )
+    : {};
+  const next = { ...foreign, ...doc };
+  return _.isEmpty(next) ? undefined : next;
+};
+
 /**
  * The `settings` sub-key of the `domainConfig` row among `myAppConfigs`;
  * `undefined` when there is no document or the read failed.

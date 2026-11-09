@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 428 / 582 features covered (74%)**
+**Overall (in-scope routes): 426 / 580 features covered (73%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -35,7 +35,7 @@
 | Resources                | `/agent-summary`, `/agent`                       |    11    |    4    | 🔶 36%  |
 | Resource Policy          | `/resource-policy`                               |    13    |   10    | 🔶 77%  |
 | User Credentials         | `/credential`                                    |    27    |   20    | 🔶 74%  |
-| Maintenance              | `/maintenance`                                   |    5     |    4    | 🔶 80%  |
+| Maintenance              | `/maintenance`                                   |    3     |    2    | 🔶 67%  |
 | User Settings            | `/usersettings`                                  |    10    |    1    | 🔶 10%  |
 | Project                  | `/project`                                       |    6     |    5    | 🔶 83%  |
 | Statistics               | `/statistics`                                    |    2     |    2    | ✅ 100% |
@@ -55,7 +55,7 @@
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
 | System Settings          | `/admin/system-settings`                         |    37    |   33    | 🔶 89%  |
-| **Total**                |                                                  | **582**  | **428** | **74%** |
+| **Total**                |                                                  | **580**  | **426** | **73%** |
 
 ---
 
@@ -804,15 +804,13 @@
 
 **Test files:** [`e2e/maintenance/maintenance.spec.ts`](maintenance/maintenance.spec.ts)
 
-| Feature                     | Status | Test                                                                   |
-| --------------------------- | ------ | ---------------------------------------------------------------------- |
-| Recalculate usage           | ✅     | `click the Recalculate Usage button`                                   |
-| Rescan images               | ✅     | `click the Rescan Images button`                                       |
-| Publish system announcement | ✅     | `Admin can publish a system announcement with a title`                 |
-| Save announcement as draft  | ✅     | `Admin can save an announcement as a draft without showing the banner` |
-| Other maintenance actions   | ❌     | -                                                                      |
+| Feature                   | Status | Test                                 |
+| ------------------------- | ------ | ------------------------------------ |
+| Recalculate usage         | ✅     | `click the Recalculate Usage button` |
+| Rescan images             | ✅     | `click the Rescan Images button`     |
+| Other maintenance actions | ❌     | -                                    |
 
-**Coverage: 🔶 4/5 features**
+**Coverage: 🔶 2/3 features** (the system announcement moved to System Settings in #10713)
 
 ---
 

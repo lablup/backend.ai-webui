@@ -167,6 +167,22 @@ describe('useUpdatePublicDomainAppConfig', () => {
     });
   });
 
+  it('passes the current raw value to an updater and stores what it returns', async () => {
+    const { sent, pending } = await runPublicDomainWrite(
+      { default: { settings: { debug: true, extra: 1 } } },
+      (setter) =>
+        setter('settings', (current: unknown) => ({
+          ...(current as Record<string, unknown>),
+          debug: false,
+        })),
+    );
+    await pending;
+
+    expect(sent.items[0].config).toEqual({
+      default: { settings: { debug: false, extra: 1 } },
+    });
+  });
+
   it('rejects with the server message when the item fails', async () => {
     const { pending } = await runPublicDomainWrite(
       {},
