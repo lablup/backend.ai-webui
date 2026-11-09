@@ -172,9 +172,9 @@ test.describe(
       const dialog = page.getByRole('dialog', { name: 'Edit User Detail' });
       await expect(dialog).toBeVisible();
 
-      await dialog.getByRole('button', { name: 'Select Project' }).click();
+      await dialog.getByRole('button', { name: /^Projects/ }).click();
       const personalOption = page
-        .getByRole('listbox', { name: 'Select Project' })
+        .getByRole('listbox', { name: /^Projects/ })
         .getByRole('group', { name: 'Personal' })
         .getByRole('option');
       await expect(personalOption).toHaveCount(1, { timeout: 15000 });
