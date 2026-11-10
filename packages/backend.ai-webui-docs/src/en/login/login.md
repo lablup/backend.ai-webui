@@ -67,11 +67,6 @@ login dialog allowing you to choose between `Session` mode and `API` mode.
 
 ### API endpoint
 
-In the desktop app, and on installations where the server does not fix an
-endpoint, signing in starts with a `Login Endpoint` step. Enter the URL of the
-Backend.AI Webserver and click `Continue`; the login form then shows the address
-you chose, with a `Change endpoint` link for connecting to a different server.
-
 Click the `Advanced` link to expand the endpoint configuration section. In the
 API Endpoint field, enter the URL of the Backend.AI Webserver that relays
 requests to the Manager.
