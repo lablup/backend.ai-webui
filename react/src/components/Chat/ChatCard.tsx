@@ -51,7 +51,7 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 // PILOT-DECISION: the antd `CardProps` extension is gone — grepping every
-// call site (ChatPage's PureChatCard usage, ModelCardChat) shows only
+// call site (ChatPage's PureChatCard usage) shows only
 // `style` was ever passed externally; `title`/`styles`/`className`/`ref`
 // were internal to this component. Astryx `Card` (MAPPING.md §5.1) is a bare
 // container, so the header/body split below is hand-composed instead of
