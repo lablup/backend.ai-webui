@@ -394,7 +394,7 @@ const SessionDetailContent: React.FC<{
               <MetadataListItem label={t('credential.UserID')}>
                 {session.owner?.email ? (
                   session.owner.email
-                ) : session.user_id ? (
+                ) : session.user_id && domainId ? (
                   <Suspense
                     fallback={<BAISkeleton variant="input" size="small" />}
                   >
