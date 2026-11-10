@@ -114,13 +114,13 @@ const setEndpoint = (next: string) => {
 };
 
 type FakeClient = {
-  get_manager_version: Mock;
+  probeServer: Mock;
   check_login: Mock;
   token_login: Mock;
 };
 
 const buildFakeClient = (overrides: Partial<FakeClient> = {}): FakeClient => ({
-  get_manager_version: vi.fn().mockResolvedValue('1.0'),
+  probeServer: vi.fn().mockResolvedValue(undefined),
   check_login: vi.fn().mockResolvedValue(false),
   token_login: vi.fn().mockResolvedValue(true),
   ...overrides,
@@ -227,11 +227,11 @@ describe('STokenLoginBoundary', () => {
     expect(connectedEventCount).toBe(0);
   });
 
-  test('reports server-unreachable when get_manager_version rejects', async () => {
+  test('reports server-unreachable when probeServer rejects', async () => {
     const serverErr = new Error('network down');
     mockedCreateBackendAIClient.mockImplementation(() => ({
       client: {
-        get_manager_version: vi.fn().mockRejectedValue(serverErr),
+        probeServer: vi.fn().mockRejectedValue(serverErr),
         token_login: vi.fn(),
       },
       clientConfig: {},

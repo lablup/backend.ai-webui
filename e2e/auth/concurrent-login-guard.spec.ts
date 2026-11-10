@@ -7,7 +7,7 @@
  * request body parameters) rather than asserting navigation to /start.
  *
  * Mock strategy (following the pattern in e2e/auth/password-expiry.spec.ts):
- *   - GET  /func/              → mock server version (get_manager_version)
+ *   - GET  /func/health, /func/ → mock reachability probe / server version
  *   - POST /server/login-check → mock not-authenticated (show login form)
  *   - POST /server/login       → per-test mock (409, TOTP-required, etc.)
  */
@@ -70,11 +70,11 @@ const TEST_PASSWORD = userInfo.admin.password;
 
 /**
  * Set up common mocks so the app reaches the login form without a live backend.
- *   - GET /func/              → server version
+ *   - GET /func/health, /func/ → reachability probe / server version
  *   - POST /server/login-check → { authenticated: false }
  */
 async function setupBaseMocks(page: Page): Promise<void> {
-  await page.route(`${webServerEndpoint}/func/`, async (route) => {
+  await page.route(/\/func\/(health)?$/, async (route) => {
     if (route.request().method() === 'GET') {
       await route.fulfill({
         status: 200,

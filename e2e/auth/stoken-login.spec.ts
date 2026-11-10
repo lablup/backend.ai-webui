@@ -26,10 +26,9 @@ import { webuiEndpoint } from '../utils/test-util';
 import { expect, test, type Page } from '@playwright/test';
 
 /**
- * Mock webserver version response returned by the boundary's
- * `get_manager_version()` probe. Needed so the ping step passes and the
- * sequence actually reaches `token_login` where the test-specific
- * response is fulfilled.
+ * Mock answer for the boundary's `probeServer()` ping (and the version read).
+ * Needed so the ping step passes and the sequence actually reaches
+ * `token_login` where the test-specific response is fulfilled.
  */
 const MOCK_SERVER_VERSION = {
   manager: '25.0.0',
@@ -117,7 +116,8 @@ async function installConfigMock(page: Page): Promise<void> {
  */
 async function installBoundaryProbeMocks(page: Page): Promise<void> {
   await installConfigMock(page);
-  await page.route('**/func/', async (route) => {
+  // `/func/health` is the reachability probe; `/func/` answers the version.
+  await page.route(/\/func\/(health)?$/, async (route) => {
     if (route.request().method() !== 'GET') {
       await route.continue();
       return;
