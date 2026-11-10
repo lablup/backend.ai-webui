@@ -745,7 +745,7 @@
 
 ### 17. User Credentials (`/credential`)
 
-**Test files:** [`e2e/admin/users/user-crud.spec.ts`](admin/users/user-crud.spec.ts), [`e2e/admin/users/bulk-user-creation.spec.ts`](admin/users/bulk-user-creation.spec.ts), [`e2e/admin/users/credential-keypair.spec.ts`](admin/users/credential-keypair.spec.ts), [`e2e/project/profile/user-ip-restriction-enforcement.spec.ts`](project/profile/user-ip-restriction-enforcement.spec.ts), [`e2e/admin/users/bulk-create-from-csv.spec.ts`](admin/users/bulk-create-from-csv.spec.ts), [`e2e/admin/users/bulk-create-from-csv-submit.spec.ts`](admin/users/bulk-create-from-csv-submit.spec.ts), [`e2e/admin/users/user-project-membership.spec.ts`](admin/users/user-project-membership.spec.ts), [`e2e/admin/users/user-login-unblock.spec.ts`](admin/users/user-login-unblock.spec.ts)
+**Test files:** [`e2e/admin/users/user-crud.spec.ts`](admin/users/user-crud.spec.ts), [`e2e/admin/users/bulk-user-creation.spec.ts`](admin/users/bulk-user-creation.spec.ts), [`e2e/admin/users/credential-keypair.spec.ts`](admin/users/credential-keypair.spec.ts), [`e2e/admin/users/user-ip-restriction-enforcement.spec.ts`](admin/users/user-ip-restriction-enforcement.spec.ts), [`e2e/admin/users/bulk-create-from-csv.spec.ts`](admin/users/bulk-create-from-csv.spec.ts), [`e2e/admin/users/bulk-create-from-csv-submit.spec.ts`](admin/users/bulk-create-from-csv-submit.spec.ts), [`e2e/admin/users/user-project-membership.spec.ts`](admin/users/user-project-membership.spec.ts), [`e2e/admin/users/user-login-unblock.spec.ts`](admin/users/user-login-unblock.spec.ts)
 
 **Tabs:** Users | Credentials
 
