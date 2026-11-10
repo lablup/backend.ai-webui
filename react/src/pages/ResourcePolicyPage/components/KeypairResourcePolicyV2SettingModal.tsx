@@ -93,6 +93,7 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
     graphql`
       fragment KeypairResourcePolicyV2SettingModalFragment on KeypairResourcePolicyV2 {
         id
+        entityId
         name
         defaultForUnspecified
         totalResourceSlots {
@@ -135,10 +136,10 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
     isInFlightCommitModifyKeypairResourcePolicy,
   ] = useMutation<KeypairResourcePolicyV2SettingModalModifyMutation>(graphql`
     mutation KeypairResourcePolicyV2SettingModalModifyMutation(
-      $name: String!
+      $id: UUID!
       $input: UpdateKeypairResourcePolicyInput!
     ) {
-      adminUpdateKeypairResourcePolicyV2(name: $name, input: $input) {
+      updateKeypairResourcePolicyV2(id: $id, input: $input) {
         keypairResourcePolicy {
           id
           name
@@ -265,7 +266,7 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
           allowedVfolderHosts,
         };
 
-        if (keypairResourcePolicy === null) {
+        if (!keypairResourcePolicy) {
           const input: CreateKeypairResourcePolicyInput = {
             name: values.name,
             ...commonInput,
@@ -294,9 +295,9 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
         } else {
           const input: UpdateKeypairResourcePolicyInput = commonInput;
           commitModifyKeypairResourcePolicy({
-            variables: { name: values.name, input },
-            onCompleted(res, errors) {
-              if (!res?.adminUpdateKeypairResourcePolicyV2 || errors) {
+            variables: { id: keypairResourcePolicy.entityId, input },
+            onCompleted(_res, errors) {
+              if (errors) {
                 message.error(
                   errors?.[0]?.message ||
                     t('resourcePolicy.CannotUpdateResourcePolicy'),
