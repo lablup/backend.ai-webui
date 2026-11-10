@@ -6,7 +6,10 @@
  * `publicConfigByDomain.<domain>.settings` (PUBLIC scope, read anonymously
  * before sign-in) and `domainConfig.settings` (DOMAIN scope, read at sign-in).
  * A key no document carries keeps its code default (`getDefaultLoginConfig`);
- * `config.toml` no longer feeds these settings (#10664).
+ * `config.toml` no longer feeds these settings (#10664). Each row saves on
+ * change and the write lands in the background (#10941): assert the stored
+ * document with `WebUISettingsApi.expectSaved`. Settings are not on
+ * `backendaiclient._config`; `effectiveValuesOf` derives what the app uses.
  *
  * Both documents are cluster-wide, so a spec that writes them must run its
  * tests sequentially and restore what it found (`WebUISettingsApi.snapshot`
@@ -16,7 +19,10 @@
  * (`settings.announcement`, #10713) is carried over as read.
  */
 import { getDefaultLoginConfig } from '../../react/src/helper/loginConfig';
-import { WEBUI_SETTING_DEFINITIONS } from '../../react/src/helper/webuiSettings';
+import {
+  WEBUI_SETTING_DEFINITIONS,
+  withWebUISettings,
+} from '../../react/src/helper/webuiSettings';
 import { createAccountApiContext, gqlAdmin } from './admin-api';
 import {
   modifyConfigToml,
@@ -24,6 +30,7 @@ import {
   seedStoredApiEndpoint,
   userInfo,
   webuiEndpoint,
+  withRequestedSettings,
 } from './test-util';
 import {
   expect,
@@ -56,11 +63,6 @@ export interface WebUISettingRow {
   group: WebUISettingGroup;
   /** `[section, key]` the setting had in `config.toml`; the app no longer reads it there. */
   toml: [string, string];
-  /**
-   * Field on `globalThis.backendaiclient._config` after sign-in; `null` for
-   * the pre-login keys the client never receives.
-   */
-  configField: string | null;
 }
 
 const row = (
@@ -69,8 +71,9 @@ const row = (
   type: WebUISettingType,
   group: WebUISettingGroup,
   toml: [string, string] = ['general', key],
-  configField: string | null = key,
-): WebUISettingRow => ({ key, scope, type, group, toml, configField });
+): WebUISettingRow => ({ key, scope, type, group, toml });
+
+const resources = (key: string): [string, string] => ['resources', key];
 
 /**
  * Mirror of `WEBUI_SETTING_DEFINITIONS` (`react/src/helper/webuiSettings.ts`).
@@ -78,174 +81,96 @@ const row = (
  */
 export const WEBUI_SETTING_ROWS: ReadonlyArray<WebUISettingRow> = [
   // Public scope — read before sign-in.
-  row('autoLogout', 'public', 'boolean', 'login', undefined, null),
-  row('allowChangeSigninMode', 'public', 'boolean', 'login', undefined, null),
-  row(
-    'allowAnonymousChangePassword',
-    'public',
-    'boolean',
-    'login',
-    undefined,
-    null,
-  ),
-  row(
-    'allowSignupWithoutConfirmation',
-    'public',
-    'boolean',
-    'login',
-    undefined,
-    null,
-  ),
+  row('autoLogout', 'public', 'boolean', 'login'),
+  row('allowChangeSigninMode', 'public', 'boolean', 'login'),
+  row('allowAnonymousChangePassword', 'public', 'boolean', 'login'),
+  row('allowSignupWithoutConfirmation', 'public', 'boolean', 'login'),
   row('enableInteractiveLoginAccountSwitch', 'public', 'boolean', 'login'),
   row('singleSignOnVendors', 'public', 'stringList', 'login'),
   row('ssoRealmName', 'public', 'string', 'login'),
-  row('debug', 'public', 'boolean', 'diagnostics', undefined, null),
-  row('storageWarningThreshold', 'domain', 'number', 'diagnostics', [
-    'resources',
-    'storageWarningThreshold',
-  ]),
-  row('pluginLogin', 'public', 'string', 'plugins', ['plugin', 'login'], null),
+  row('debug', 'public', 'boolean', 'diagnostics'),
   row(
-    'pluginPage',
-    'public',
-    'stringList',
-    'plugins',
-    ['plugin', 'page'],
-    'pluginPages',
+    'storageWarningThreshold',
+    'domain',
+    'number',
+    'diagnostics',
+    resources('storageWarningThreshold'),
   ),
+  row('pluginLogin', 'public', 'string', 'plugins', ['plugin', 'login']),
+  row('pluginPage', 'public', 'stringList', 'plugins', ['plugin', 'page']),
 
   // Domain scope — session launcher.
-  row(
-    'defaultSessionEnvironment',
-    'domain',
-    'string',
-    'session',
-    undefined,
-    'default_session_environment',
-  ),
-  row(
-    'allowManualImageNameForSession',
-    'domain',
-    'boolean',
-    'session',
-    undefined,
-    'allow_manual_image_name_for_session',
-  ),
+  row('defaultSessionEnvironment', 'domain', 'string', 'session'),
+  row('allowManualImageNameForSession', 'domain', 'boolean', 'session'),
   row('allowCustomResourceAllocation', 'domain', 'boolean', 'session'),
   row('enableContainerCommit', 'domain', 'boolean', 'session'),
   row('maxCountForPreopenPorts', 'domain', 'number', 'session'),
-  row('maxCPUCoresPerContainer', 'domain', 'number', 'session', [
-    'resources',
+  ...[
     'maxCPUCoresPerContainer',
-  ]),
-  row('maxMemoryPerContainer', 'domain', 'number', 'session', [
-    'resources',
     'maxMemoryPerContainer',
-  ]),
-  row('maxShmPerContainer', 'domain', 'number', 'session', [
-    'resources',
     'maxShmPerContainer',
-  ]),
-  row('maxCUDADevicesPerContainer', 'domain', 'number', 'session', [
-    'resources',
     'maxCUDADevicesPerContainer',
-  ]),
-  row('maxCUDASharesPerContainer', 'domain', 'number', 'session', [
-    'resources',
     'maxCUDASharesPerContainer',
-  ]),
-  row('maxROCMDevicesPerContainer', 'domain', 'number', 'session', [
-    'resources',
     'maxROCMDevicesPerContainer',
-  ]),
-  row('maxTPUDevicesPerContainer', 'domain', 'number', 'session', [
-    'resources',
     'maxTPUDevicesPerContainer',
-  ]),
-  row('maxIPUDevicesPerContainer', 'domain', 'number', 'session', [
-    'resources',
     'maxIPUDevicesPerContainer',
-  ]),
-  row('maxATOMDevicesPerContainer', 'domain', 'number', 'session', [
-    'resources',
     'maxATOMDevicesPerContainer',
-  ]),
-  row('maxATOMPLUSDevicesPerContainer', 'domain', 'number', 'session', [
-    'resources',
     'maxATOMPLUSDevicesPerContainer',
-  ]),
-  row('maxGaudi2DevicesPerContainer', 'domain', 'number', 'session', [
-    'resources',
     'maxGaudi2DevicesPerContainer',
-  ]),
-  row('maxWarboyDevicesPerContainer', 'domain', 'number', 'session', [
-    'resources',
     'maxWarboyDevicesPerContainer',
-  ]),
-  row('maxRNGDDevicesPerContainer', 'domain', 'number', 'session', [
-    'resources',
     'maxRNGDDevicesPerContainer',
-  ]),
-  row('maxHyperaccelLPUDevicesPerContainer', 'domain', 'number', 'session', [
-    'resources',
     'maxHyperaccelLPUDevicesPerContainer',
-  ]),
+  ].map((key) => row(key, 'domain', 'number', 'session', resources(key))),
   row('showNonInstalledImages', 'domain', 'boolean', 'session', [
     'environments',
     'showNonInstalledImages',
   ]),
 
   // App launcher.
-  row('openPortToPublic', 'domain', 'boolean', 'appLauncher', [
-    'resources',
+  row(
     'openPortToPublic',
-  ]),
-  row('allowPreferredPort', 'domain', 'boolean', 'appLauncher', [
-    'resources',
+    'domain',
+    'boolean',
+    'appLauncher',
+    resources('openPortToPublic'),
+  ),
+  row(
     'allowPreferredPort',
-  ]),
-  row('allowNonAuthTCP', 'domain', 'boolean', 'appLauncher', [
-    'resources',
+    'domain',
+    'boolean',
+    'appLauncher',
+    resources('allowPreferredPort'),
+  ),
+  row(
     'allowNonAuthTCP',
-  ]),
+    'domain',
+    'boolean',
+    'appLauncher',
+    resources('allowNonAuthTCP'),
+  ),
 
   // Images.
-  row(
-    'defaultImportEnvironment',
-    'domain',
-    'string',
-    'environments',
-    undefined,
-    'default_import_environment',
-  ),
+  row('defaultImportEnvironment', 'domain', 'string', 'environments'),
   row('systemSSHImage', 'domain', 'string', 'environments'),
   row('defaultFileBrowserImage', 'domain', 'string', 'environments'),
 
   // Folders and uploads.
   row('isDirectorySizeVisible', 'domain', 'boolean', 'storage'),
   row('enableModelFolders', 'domain', 'boolean', 'storage'),
-  row('maxFileUploadSize', 'domain', 'number', 'storage', [
-    'resources',
+  row(
     'maxFileUploadSize',
-  ]),
+    'domain',
+    'number',
+    'storage',
+    resources('maxFileUploadSize'),
+  ),
 
   // Sidebar.
-  row(
-    'menuBlocklist',
-    'domain',
-    'stringList',
+  row('menuBlocklist', 'domain', 'stringList', 'menu', ['menu', 'blocklist']),
+  row('menuInactivelist', 'domain', 'stringList', 'menu', [
     'menu',
-    ['menu', 'blocklist'],
-    'blockList',
-  ),
-  row(
-    'menuInactivelist',
-    'domain',
-    'stringList',
-    'menu',
-    ['menu', 'inactivelist'],
-    'inactiveList',
-  ),
+    'inactivelist',
+  ]),
   row('hideAgents', 'domain', 'boolean', 'menu'),
   row('enableReservoir', 'domain', 'boolean', 'menu'),
   row('fasttrackEndpoint', 'domain', 'string', 'menu', [
@@ -261,14 +186,7 @@ export const WEBUI_SETTING_ROWS: ReadonlyArray<WebUISettingRow> = [
 
   // Account.
   row('maskUserInfo', 'domain', 'boolean', 'account'),
-  row(
-    'allowSignout',
-    'domain',
-    'boolean',
-    'account',
-    undefined,
-    'allowSignout',
-  ),
+  row('allowSignout', 'domain', 'boolean', 'account'),
   row('allowThemeMode', 'domain', 'boolean', 'account'),
   row('enableExtendLoginSession', 'domain', 'boolean', 'account'),
 ];
@@ -296,13 +214,36 @@ export const rowByKey = (key: string): WebUISettingRow => {
 
 export type SettingsDocument = Record<string, unknown>;
 
-/** The value a row falls back to when no document carries it: the app's code default. */
-export function defaultValueOf(setting: WebUISettingRow): unknown {
+function definitionOf(setting: WebUISettingRow) {
   const definition = WEBUI_SETTING_DEFINITIONS.find(
     (d) => d.key === setting.key,
   );
   if (!definition) throw new Error(`Unknown WebUI setting key: ${setting.key}`);
-  return getDefaultLoginConfig()[definition.field];
+  return definition;
+}
+
+/** The value a row falls back to when no document carries it: the app's code default. */
+export function defaultValueOf(setting: WebUISettingRow): unknown {
+  return getDefaultLoginConfig()[definitionOf(setting).field];
+}
+
+/**
+ * The value a signed-in app uses for each row, keyed by setting key: the
+ * domain value if valid, else the public value (public keys only), else the
+ * code default. Built with the app's own `withWebUISettings`.
+ */
+export function effectiveValuesOf(
+  snapshot: SettingsSnapshot,
+  rows: ReadonlyArray<WebUISettingRow> = WEBUI_SETTING_ROWS,
+): Record<string, unknown> {
+  const state = withWebUISettings(
+    getDefaultLoginConfig(),
+    snapshot.public,
+    snapshot.domain,
+  );
+  return Object.fromEntries(
+    rows.map((setting) => [setting.key, state[definitionOf(setting).field]]),
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -342,7 +283,13 @@ export class WebUISettingsApi {
     readonly domainId: string,
   ) {}
 
-  static async create(): Promise<WebUISettingsApi> {
+  /**
+   * `domainName` picks the domain whose documents are read; it defaults to
+   * the admin account's own domain.
+   */
+  static async create(
+    options: { domainName?: string } = {},
+  ): Promise<WebUISettingsApi> {
     const api = await createAccountApiContext(userInfo.admin, 'Admin');
     const user = await gqlAdmin<{
       user: { domain_name: string; role: string } | null;
@@ -353,7 +300,7 @@ export class WebUISettingsApi {
         email: userInfo.admin.email,
       },
     );
-    const domainName = user.user?.domain_name;
+    const domainName = options.domainName || user.user?.domain_name;
     if (!domainName) {
       throw new Error(
         `Could not resolve the domain of ${userInfo.admin.email}`,
@@ -472,6 +419,29 @@ export class WebUISettingsApi {
       public: await this.readSettings('public'),
       domain: await this.readSettings('domain'),
     };
+  }
+
+  /** The value a signed-in app of this domain uses for each of `rows`. */
+  async readEffectiveValues(
+    rows: ReadonlyArray<WebUISettingRow> = WEBUI_SETTING_ROWS,
+  ): Promise<Record<string, unknown>> {
+    return effectiveValuesOf(await this.snapshot(), rows);
+  }
+
+  /**
+   * Waits until the row-owned keys saved at `scope` equal `expected`: the page
+   * writes in the background after a change, so the document lands later.
+   */
+  async expectSaved(
+    scope: WebUISettingScope,
+    expected: SettingsDocument | undefined,
+  ): Promise<void> {
+    await expect
+      .poll(() => this.readSettings(scope), {
+        message: `saved ${scope} settings`,
+        timeout: 15_000,
+      })
+      .toEqual(expected);
   }
 
   async restore(snapshot: SettingsSnapshot): Promise<void> {
@@ -634,10 +604,6 @@ export async function resetRow(page: Page, rowLocator: Locator) {
   await expect(dialog).toBeHidden();
 }
 
-export function applyButton(page: Page): Locator {
-  return page.getByRole('button', { name: 'Apply', exact: true });
-}
-
 /**
  * The toolbar's Reset (every row). The per-row reset is an icon button named
  * through `aria-label`; the toolbar one carries visible text instead.
@@ -648,63 +614,59 @@ export function toolbarResetButton(page: Page): Locator {
     .and(page.locator('button:not([aria-label])'));
 }
 
-/**
- * Presses Apply, confirms, and waits for the reload the page performs plus
- * the client re-connect that follows it.
- */
-export async function applyWebUISettings(page: Page) {
-  await applyButton(page).click();
-  const dialog = page
-    .getByRole('dialog')
-    .filter({ hasText: 'Apply System Settings' });
-  await expect(dialog).toBeVisible();
-  await Promise.all([
-    page.waitForEvent('load'),
-    dialog.getByRole('button', { name: 'Apply', exact: true }).click(),
-  ]);
-  await waitForClientReady(page);
-  await expect(settingGroup(page, 'session')).toBeVisible({ timeout: 30_000 });
-}
-
-/** Resolves once `backendaiclient` has finished applying the login config. */
+/** Resolves once `backendaiclient` is connected (sign-in finished). */
 export async function waitForClientReady(page: Page) {
   await expect
     .poll(
       () =>
         page.evaluate(
-          () =>
-            (globalThis as any).backendaiclient?.ready === true &&
-            (globalThis as any).backendaiclient?._config !== undefined,
+          () => (globalThis as any).backendaiclient?.ready === true,
         ),
       { timeout: 60_000 },
     )
     .toBe(true);
 }
 
-/** `backendaiclient._config[field]` as the signed-in app holds it. */
-export async function readClientConfig(
+/**
+ * The value of one setting for the account signed in on `page`, read from the
+ * stored documents of that account's domain (see `effectiveValuesOf`). The
+ * app keeps settings in a jotai atom, not on `backendaiclient`.
+ */
+export async function readEffectiveWebUISetting(
   page: Page,
-  field: string,
+  key: string,
 ): Promise<unknown> {
-  return page.evaluate(
-    (f) => (globalThis as any).backendaiclient._config[f],
-    field,
+  await waitForClientReady(page);
+  const domainName = await page.evaluate(
+    () =>
+      (globalThis as any).backendaiclient?._config?.domainName as
+        string | undefined,
   );
+  const api = await WebUISettingsApi.create({ domainName });
+  try {
+    const stored = await api.snapshot();
+    // A spec's `modifyConfigToml` serves its own values over the stored ones.
+    const served: SettingsSnapshot = {
+      public: withRequestedSettings(page, 'public', stored.public),
+      domain: withRequestedSettings(page, 'domain', stored.domain),
+    };
+    return effectiveValuesOf(served, [rowByKey(key)])[key];
+  } finally {
+    await api.dispose();
+  }
 }
 
-/** `_config` for every row that has a client field, keyed by setting key. */
-export async function readClientConfigForRows(
-  page: Page,
-  rows: ReadonlyArray<WebUISettingRow>,
-): Promise<Record<string, unknown>> {
-  await waitForClientReady(page);
-  const fields = rows
-    .filter((r) => r.configField !== null)
-    .map((r) => [r.key, r.configField as string]);
-  return page.evaluate((pairs) => {
-    const cfg = (globalThis as any).backendaiclient._config;
-    return Object.fromEntries(pairs.map(([key, field]) => [key, cfg[field]]));
-  }, fields);
+/** The info alert at the top of the page about save-on-change. */
+export function saveNotice(page: Page): Locator {
+  return page.getByTestId('webui-settings-save-notice');
+}
+
+/** The error modal a failed background write opens. */
+export function notSavedDialog(page: Page): Locator {
+  return page
+    .getByRole('alertdialog')
+    .or(page.getByRole('dialog'))
+    .filter({ hasText: 'Some System Settings were not saved' });
 }
 
 /** A value of the row's type that differs from `current`. */

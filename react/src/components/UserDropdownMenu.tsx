@@ -14,6 +14,7 @@ import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { useOpenHelp } from '../hooks/useHelpURL';
 import { useActiveProjectName, useRouteScope } from '../hooks/useRouteScope';
 import { useThemeMode } from '../hooks/useThemeMode';
+import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 import {
   getPathFromMenuKey,
   useWebUIMenuItems,
@@ -83,7 +84,8 @@ const UserDropdownMenu: React.FC<{
   const screens = useBAIBreakpoint();
   const { isDarkMode, setThemeMode } = useThemeMode();
   const openHelp = useOpenHelp();
-  const baiClient = useSuspendedBackendaiClient();
+  useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
 
   const [isOpenUserSettingModal, { set: setIsOpenUserSettingModal }] =
     useToggle(false);
@@ -217,8 +219,8 @@ const UserDropdownMenu: React.FC<{
       icon: <CircleHelp size="1em" />,
       onClick: openHelp,
     },
-    (baiClient._config.allowAppDownloadPanel ||
-      baiClient._config.allowCLIDownloadPanel) && {
+    (loginConfig.allowAppDownloadPanel ||
+      loginConfig.allowCLIDownloadPanel) && {
       label: t('summary.Downloads'),
       icon: <Download size="1em" />,
       onClick: () => toggleDownloadModal(),

@@ -21,6 +21,7 @@ import {
 } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useThemeMode } from '../hooks/useThemeMode';
+import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 import { ImageMetaDivider, ImageTagTokens } from './ImageTags';
 import { Divider } from '@lablup/ui-common/Divider';
 import {
@@ -103,7 +104,8 @@ const ImageEnvironmentSelectFormItems: React.FC<
   'use memo';
   const form = Form.useFormInstance<ImageEnvironmentFormInput>();
   const environments = Form.useWatch('environments', { form, preserve: true });
-  const baiClient = useSuspendedBackendaiClient();
+  useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
 
   const [environmentSearch, setEnvironmentSearch] = useState(
     searchPrefill ?? '',
@@ -153,10 +155,8 @@ const ImageEnvironmentSelectFormItems: React.FC<
     [searchPrefill],
   );
 
-  const imageEnvironmentSelectFormItemsVariables = baiClient?._config
-    ?.showNonInstalledImages
-    ? {}
-    : { installed: true };
+  const imageEnvironmentSelectFormItemsVariables =
+    loginConfig.showNonInstalledImages ? {} : { installed: true };
   const { images } = useLazyLoadQuery<ImageEnvironmentSelectFormItemsQuery>(
     graphql`
       query ImageEnvironmentSelectFormItemsQuery($installed: Boolean) {
@@ -385,7 +385,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
     if (nextImage) {
       if (
         !matchedEnvironmentByVersion &&
-        baiClient._config.allow_manual_image_name_for_session &&
+        loginConfig.allow_manual_image_name_for_session &&
         version
       ) {
         form.setFieldsValue({
@@ -407,7 +407,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
           },
         });
       }
-    } else if (baiClient._config.allow_manual_image_name_for_session) {
+    } else if (loginConfig.allow_manual_image_name_for_session) {
       // if no image is available, only set manual if it's allowed
       form.setFieldValue(['environments', 'manual'], version);
     }
@@ -692,7 +692,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
               }
             }}
             disabled={
-              baiClient._config.allow_manual_image_name_for_session &&
+              loginConfig.allow_manual_image_name_for_session &&
               !_.isEmpty(environments?.manual)
             }
           >
@@ -819,7 +819,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                     </>
                   )}
                   disabled={
-                    baiClient._config.allow_manual_image_name_for_session &&
+                    loginConfig.allow_manual_image_name_for_session &&
                     !_.isEmpty(environments?.manual)
                   }
                 >
@@ -982,7 +982,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
         label={t('session.launcher.ManualImageName')}
         name={['environments', 'manual']}
         style={{
-          display: baiClient._config.allow_manual_image_name_for_session
+          display: loginConfig.allow_manual_image_name_for_session
             ? 'block'
             : 'none',
         }}

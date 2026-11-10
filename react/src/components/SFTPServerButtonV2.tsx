@@ -18,6 +18,7 @@ import {
   useStartSession,
 } from '../hooks/useStartSession';
 import { useVHostInfo } from '../hooks/useVHostInfo';
+import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 import { ProjectContext, ProjectContextOrNull } from '../types/projectContext';
 import { openSFTPFailureModal } from './sftpFailureModal';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
@@ -116,6 +117,7 @@ const SFTPServerButtonWithProject: React.FC<
   const buildProjectPath = useProjectPath();
 
   const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const currentDomain = useCurrentDomainValue();
   const currentUserAccessKey = baiClient?._config?.accessKey;
   const { unitedAllowedPermissionByVolume } =
@@ -175,11 +177,11 @@ const SFTPServerButtonWithProject: React.FC<
   const createSftpLauncherValue = (): StartSessionWithDefaultValue => ({
     sessionName: `sftp-${vfolderNode.entityId}`,
     sessionType: 'system',
-    ...(baiClient._config?.systemSSHImage &&
-    baiClient._config?.allow_manual_image_name_for_session
+    ...(loginConfig.systemSSHImage &&
+    loginConfig.allow_manual_image_name_for_session
       ? {
           environments: {
-            manual: baiClient._config.systemSSHImage,
+            manual: loginConfig.systemSSHImage,
           },
         }
       : {

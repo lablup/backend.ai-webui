@@ -210,7 +210,6 @@ export const createMockVFolderFileClient = (
     newSignedRequest,
     _wrapWithPromise,
     _config: {
-      isDirectorySizeVisible: false,
       domainName: 'default',
     },
   } as unknown as BAIClient;

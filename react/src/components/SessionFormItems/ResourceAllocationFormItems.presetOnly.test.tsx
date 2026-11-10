@@ -49,8 +49,20 @@ vi.mock('../../hooks', async (importOriginal) => {
   return {
     ...originalModule,
     useSuspendedBackendaiClient: () => ({
-      _config: { allowCustomResourceAllocation },
+      _config: {},
       resourcePreset: { check: vi.fn().mockResolvedValue(null) },
+    }),
+  };
+});
+vi.mock('../../hooks/useWebUIConfig', async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import('../../hooks/useWebUIConfig')>();
+  const { getDefaultLoginConfig } = await import('../../helper/loginConfig');
+  return {
+    ...actual,
+    useEffectiveLoginConfig: () => ({
+      ...getDefaultLoginConfig(),
+      allowCustomResourceAllocation,
     }),
   };
 });

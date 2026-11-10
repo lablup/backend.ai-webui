@@ -28,6 +28,7 @@ import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useCreateActionArrival } from '../../hooks/useCreateActionArrival';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { useVFolderInvitations } from '../../hooks/useVFolderInvitations';
+import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import { toProjectContext } from '../../types/projectContext';
 import WebMCPVFolderListTools from './components/WebMCPVFolderListTools';
 import { Button } from '@lablup/ui-common/Button';
@@ -139,7 +140,8 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const projectContext = toProjectContext(currentProject);
   const isPersonalProject = useIsPersonalProject(currentProject.id);
   const [currentUser] = useCurrentUserInfo();
-  const baiClient = useSuspendedBackendaiClient();
+  useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const [invitations] = useVFolderInvitations();
   const [, setInvitationOpen] = useQueryState(
     'invitation',
@@ -385,12 +387,12 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 {filterOutEmpty([
                   { label: t('data.All'), value: 'all' },
                   { label: t('data.General'), value: 'general' },
-                  baiClient?._config?.fasttrackEndpoint && {
+                  loginConfig.fasttrackEndpoint && {
                     label: t('data.Pipeline'),
                     value: 'data',
                   },
                   { label: t('data.AutoMount'), value: 'automount' },
-                  baiClient._config.enableModelFolders && {
+                  loginConfig.enableModelFolders && {
                     label: t('data.Models'),
                     value: 'model',
                   },

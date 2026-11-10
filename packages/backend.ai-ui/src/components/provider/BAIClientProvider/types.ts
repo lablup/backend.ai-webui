@@ -63,8 +63,6 @@ export interface BAIClient {
 
 export type BackendAIConfig = {
   domainName: string;
-  maxFileUploadSize: number;
-  isDirectorySizeVisible: boolean;
   [key: string]: any;
 };
 

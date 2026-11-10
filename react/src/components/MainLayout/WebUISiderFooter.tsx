@@ -4,6 +4,7 @@
  */
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
+import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import AboutBackendAIModal from '../AboutBackendAIModal';
 import PrivacyPolicyModal from '../PrivacyPolicyModal';
 import SignoutModal from '../SignoutModal';
@@ -40,7 +41,8 @@ const WebUISiderFooter: React.FC = () => {
   const { t } = useTranslation();
   const { token } = useTheme();
   const { rawThemeConfig } = useCustomThemeConfig();
-  const baiClient = useSuspendedBackendaiClient();
+  useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
 
   const [isOpenSignoutModal, { toggle: toggleSignoutModal }] = useToggle(false);
   const [isOpenTOSModal, { toggle: toggleTOSModal }] = useToggle(false);
@@ -122,7 +124,7 @@ const WebUISiderFooter: React.FC = () => {
         >
           {t('webui.menu.AboutBackendAI')}
         </Link>
-        {!!baiClient?._config?.allowSignout && (
+        {!!loginConfig.allow_signout && (
           <>
             <Text type="supporting">·</Text>
             <Link

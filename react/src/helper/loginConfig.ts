@@ -4,7 +4,7 @@
  */
 /**
  * Login configuration: the code defaults, the few keys `config.toml` still
- * carries, and the copy onto `backendaiclient._config` (ADR 0028).
+ * carries, and the connection fields copied onto `backendaiclient._config` (ADR 0028).
  */
 
 type ConfigValueType = 'boolean' | 'number' | 'string' | 'array';
@@ -259,8 +259,8 @@ export function refreshConfigFromToml(config: any): LoginConfigState {
 }
 
 /**
- * Apply the login configuration state to globalThis.backendaiclient._config
- * after a successful GQL connection.
+ * Copies the connection fields onto `globalThis.backendaiclient._config` after
+ * a successful GQL connection. WebUI settings stay in `loginConfigState` only.
  */
 export function applyConfigToClient(cfg: LoginConfigState): void {
   const client = (globalThis as any).backendaiclient;
@@ -270,64 +270,6 @@ export function applyConfigToClient(cfg: LoginConfigState): void {
   client._config._proxyToken = '';
   client._config.domainName = cfg.domain_name;
   client._config.domainId = cfg.domain_id;
-  client._config.default_session_environment = cfg.default_session_environment;
-  client._config.default_import_environment = cfg.default_import_environment;
-  client._config.allow_manual_image_name_for_session =
-    cfg.allow_manual_image_name_for_session;
-  client._config.openPortToPublic = cfg.openPortToPublic;
-  client._config.allowPreferredPort = cfg.allowPreferredPort;
-  client._config.allowNonAuthTCP = cfg.allowNonAuthTCP;
-  client._config.maxCPUCoresPerContainer = cfg.maxCPUCoresPerContainer;
-  client._config.maxMemoryPerContainer = cfg.maxMemoryPerContainer;
-  client._config.maxCUDADevicesPerContainer = cfg.maxCUDADevicesPerContainer;
-  client._config.maxCUDASharesPerContainer = cfg.maxCUDASharesPerContainer;
-  client._config.maxROCMDevicesPerContainer = cfg.maxROCMDevicesPerContainer;
-  client._config.maxTPUDevicesPerContainer = cfg.maxTPUDevicesPerContainer;
-  client._config.maxIPUDevicesPerContainer = cfg.maxIPUDevicesPerContainer;
-  client._config.maxATOMDevicesPerContainer = cfg.maxATOMDevicesPerContainer;
-  client._config.maxGaudi2DevicesPerContainer =
-    cfg.maxGaudi2DevicesPerContainer;
-  client._config.maxWarboyDevicesPerContainer =
-    cfg.maxWarboyDevicesPerContainer;
-  client._config.maxRNGDDevicesPerContainer = cfg.maxRNGDDevicesPerContainer;
-  if (cfg.maxATOMPLUSDevicesPerContainer !== undefined) {
-    client._config.maxATOMPLUSDevicesPerContainer =
-      cfg.maxATOMPLUSDevicesPerContainer;
-  }
-  if (cfg.maxHyperaccelLPUDevicesPerContainer !== undefined) {
-    client._config.maxHyperaccelLPUDevicesPerContainer =
-      cfg.maxHyperaccelLPUDevicesPerContainer;
-  }
-  client._config.maxShmPerContainer = cfg.maxShmPerContainer;
-  client._config.maxFileUploadSize = cfg.maxFileUploadSize;
-  client._config.storageWarningThreshold = cfg.storageWarningThreshold;
-  client._config.showNonInstalledImages = cfg.showNonInstalledImages;
-  client._config.maskUserInfo = cfg.maskUserInfo;
-  client._config.singleSignOnVendors = cfg.singleSignOnVendors;
-  client._config.ssoRealmName = cfg.ssoRealmName;
-  client._config.enableContainerCommit = cfg.enableContainerCommit;
-  client._config.appDownloadUrl = cfg.appDownloadUrl;
-  client._config.allowAppDownloadPanel = cfg.allowAppDownloadPanel;
-  client._config.cliDownloadUrl = cfg.cliDownloadUrl;
-  client._config.allowCLIDownloadPanel = cfg.allowCLIDownloadPanel;
-  client._config.systemSSHImage = cfg.systemSSHImage;
-  client._config.defaultFileBrowserImage = cfg.defaultFileBrowserImage;
-  client._config.fasttrackEndpoint = cfg.fasttrackEndpoint;
-  client._config.hideAgents = cfg.hideAgents;
-  client._config.maxCountForPreopenPorts = cfg.maxCountForPreopenPorts;
-  client._config.allowCustomResourceAllocation =
-    cfg.allowCustomResourceAllocation;
-  client._config.allowThemeMode = cfg.allowThemeMode;
-  client._config.isDirectorySizeVisible = cfg.isDirectorySizeVisible;
-  client._config.enableExtendLoginSession = cfg.enableExtendLoginSession;
-  client._config.enableInteractiveLoginAccountSwitch =
-    cfg.enableInteractiveLoginAccountSwitch;
-  client._config.enableModelFolders = cfg.enableModelFolders;
-  client._config.pluginPages = cfg.pluginPages;
-  client._config.blockList = cfg.blockList;
-  client._config.inactiveList = cfg.inactiveList;
-  client._config.allowSignout = cfg.allow_signout;
-  client._config.enableReservoir = cfg.enableReservoir;
   client._config.enableWebMCP = cfg.enableWebMCP;
   client.ready = true;
 }

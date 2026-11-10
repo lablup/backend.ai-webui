@@ -29,6 +29,7 @@ import {
   applyWebUISettings,
   readDomainWebUISettings,
   WEBUI_SETTINGS_CONFIG_KEY,
+  withWebUISettings,
 } from './webuiSettings';
 import * as _ from 'lodash-es';
 import { fetchQuery, graphql } from 'react-relay';
@@ -592,10 +593,10 @@ export async function loadConfigFromWebServer(
   const publicSlice = await fetchPublicDomainConfigOnce(publicTarget);
   const { applyJoinedServerAppearance } = await import('./customThemeConfig');
   await applyJoinedServerAppearance(publicSlice, publicTarget);
-  const effectiveLoginConfig = applyWebUISettings(
+  const effectiveLoginConfig = withWebUISettings(
     refreshConfigFromToml(mergedConfig),
     publicSlice?.[WEBUI_SETTINGS_CONFIG_KEY],
-    'public',
+    undefined,
   );
   jotaiStore.set(loginConfigState, effectiveLoginConfig);
   jotaiStore.set(autoLogoutState, effectiveLoginConfig.autoLogout);

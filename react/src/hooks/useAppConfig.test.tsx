@@ -105,6 +105,16 @@ const runPublicDomainWrite = async (
         : { data: { scopedAtomicBulkUpsertAppConfigFragments: { items: [] } } },
     );
   });
+  if (!errors) {
+    // A successful write refetches the merged view `usePublicDomainAppConfig` reads.
+    const refetch = await waitForOperation(
+      environment,
+      'useAppConfigPublicQuery',
+    );
+    act(() => {
+      environment.mock.resolve(refetch, { data: { publicAppConfigs: [] } });
+    });
+  }
   return { sent, pending };
 };
 

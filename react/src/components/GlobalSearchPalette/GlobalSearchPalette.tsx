@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
+import { useWebUINavigate } from '../../hooks';
 import { useOpenHelp } from '../../hooks/useHelpURL';
 import { useActiveProjectName } from '../../hooks/useRouteScope';
 import {
@@ -10,6 +10,7 @@ import {
   useSiderCollapsedState,
 } from '../../hooks/useShellPanels';
 import { useThemeMode } from '../../hooks/useThemeMode';
+import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import { plainText } from './rank';
 import type { PaletteActionContext, SearchHit } from './types';
 import {
@@ -101,7 +102,7 @@ const GlobalSearchPalette: React.FC<GlobalSearchPaletteProps> = ({
   const { t } = useTranslation();
   const { logger } = useBAILogger();
   const navigate = useWebUINavigate();
-  const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const projectName = useActiveProjectName();
   const { setThemeMode } = useThemeMode();
   const [, setNotificationDrawerOpen] = useNotificationDrawerState();
@@ -116,7 +117,7 @@ const GlobalSearchPalette: React.FC<GlobalSearchPaletteProps> = ({
   const actionContext: PaletteActionContext = {
     navigate,
     projectName: projectName ?? null,
-    config: toSearchConfigFlags(baiClient),
+    config: toSearchConfigFlags(loginConfig),
     setThemeMode,
     openNotifications: () => setNotificationDrawerOpen(true),
     toggleSider: () => setSiderCollapsed((collapsed) => !collapsed),

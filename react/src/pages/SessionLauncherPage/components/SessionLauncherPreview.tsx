@@ -23,6 +23,7 @@ import {
 } from '../../../hooks';
 import { useCurrentProjectValue } from '../../../hooks/useCurrentProject';
 import { useMountableStorageHosts } from '../../../hooks/useMountableStorageHosts';
+import { useEffectiveLoginConfig } from '../../../hooks/useWebUIConfig';
 import type {
   SessionLauncherFormValue,
   SessionLauncherStepKey,
@@ -117,6 +118,7 @@ const SessionLauncherPreview: React.FC<{
   const { t } = useTranslation();
   const form = Form.useFormInstance<SessionLauncherFormValue>();
   const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const sessionType = Form.useWatch('sessionType', { form, preserve: true });
   const currentProject = useCurrentProjectValue();
   const mountableHosts = useMountableStorageHosts(currentProjectId);
@@ -372,7 +374,7 @@ const SessionLauncherPreview: React.FC<{
                 />
               </BAIFlex>
             </MetadataListItem>
-            {!baiClient?._config?.hideAgents && (
+            {!loginConfig.hideAgents && (
               <MetadataListItem label={t('session.launcher.AgentNode')}>
                 {_.castArray(form.getFieldValue('agent')).join(', ') ||
                   t('session.launcher.AutoSelect')}

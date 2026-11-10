@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { LoginConfigState } from './loginConfig';
+import { getDefaultLoginConfig, type LoginConfigState } from './loginConfig';
 import * as _ from 'lodash-es';
 
 /**
@@ -320,6 +320,39 @@ export const applyWebUISettings = (
   }
   return next;
 };
+
+/**
+ * `state` with every setting field rebuilt from the code default, then the
+ * public and domain documents, so a key no document carries falls back to its
+ * default. Fields outside the definitions keep the value `state` holds.
+ */
+export const withWebUISettings = (
+  state: LoginConfigState,
+  publicDoc: unknown,
+  domainDoc: unknown,
+): LoginConfigState => {
+  const defaults = getDefaultLoginConfig();
+  const base = { ...state };
+  for (const { field } of WEBUI_SETTING_DEFINITIONS) {
+    (base as Record<string, unknown>)[field] = defaults[field];
+  }
+  return applyWebUISettings(
+    applyWebUISettings(base, publicDoc, 'public'),
+    domainDoc,
+    'domain',
+  );
+};
+
+/** The keys of `doc` whose definition belongs to `scope`. */
+export const pickWebUISettingsOfScope = (
+  doc: WebUISettingsDocument,
+  scope: WebUISettingScope,
+): WebUISettingsDocument =>
+  _.pickBy(
+    doc,
+    (_v, key) =>
+      WEBUI_SETTING_DEFINITIONS.find((d) => d.key === key)?.scope === scope,
+  );
 
 /** The value of one setting as `state` holds it. */
 export const readWebUISettingFromState = (

@@ -219,9 +219,9 @@ export const useRawPublicDomainAppConfig = <T = AppConfigDocument>(
 /**
  * Superadmin setter for ONE domain's slice of `publicConfigByDomain`:
  * re-reads the raw public document and replaces only `[domainName, ...subKey]`
- * so other domains' slices survive the whole-document write. Post-login admin
- * surfaces only. The anonymous read path picks the new document up on the
- * next load — the caller reloads for the own session (FR-1964).
+ * so other domains' slices survive the whole-document write, then refetches the
+ * merged view for `usePublicDomainAppConfig` readers. Post-login admin surfaces
+ * only; the anonymous pre-login read picks the new document up on the next load.
  */
 export const useUpdatePublicDomainAppConfig = () => {
   'use memo';
@@ -260,6 +260,12 @@ export const useUpdatePublicDomainAppConfig = () => {
         ],
       },
     });
+    await fetchQuery<useAppConfigPublicQuery>(
+      relayEnv,
+      publicQuery,
+      { configNames: ['publicConfigByDomain'] },
+      { fetchPolicy: 'network-only' },
+    ).toPromise();
   };
 };
 

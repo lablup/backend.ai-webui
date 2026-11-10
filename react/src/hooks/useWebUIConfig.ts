@@ -22,8 +22,8 @@ import {
   resolvePublicConfigTarget,
 } from '../helper/publicAppConfig';
 import {
-  applyWebUISettings,
   WEBUI_SETTINGS_CONFIG_KEY,
+  withWebUISettings,
 } from '../helper/webuiSettings';
 import { useBAILogger } from 'backend.ai-ui';
 import { atom, useAtomValue, useStore } from 'jotai';
@@ -298,10 +298,10 @@ export function initializeConfigOnce(
       const publicSlice = await fetchPublicDomainConfigOnce(
         resolvePublicConfigTarget(result.config),
       );
-      const effectiveLoginConfig = applyWebUISettings(
+      const effectiveLoginConfig = withWebUISettings(
         loginConfig,
         publicSlice?.[WEBUI_SETTINGS_CONFIG_KEY],
-        'public',
+        undefined,
       );
       store.set(loginConfigState, effectiveLoginConfig);
       store.set(autoLogoutState, effectiveLoginConfig.autoLogout);
@@ -357,10 +357,38 @@ export function useInitializeConfig(): {
 }
 
 /**
+ * Rebuilds the effective settings from the two `settings` documents and
+ * publishes them, so every `useEffectiveLoginConfig` reader re-renders.
+ */
+export function setEffectiveWebUISettings(
+  store: JotaiStore,
+  publicDoc: unknown,
+  domainDoc: unknown,
+): void {
+  const next = withWebUISettings(
+    store.get(loginConfigState) ?? getDefaultLoginConfig(),
+    publicDoc,
+    domainDoc,
+  );
+  store.set(loginConfigState, next);
+  store.set(autoLogoutState, next.autoLogout);
+}
+
+/**
  * Hook to access the processed login config state.
  */
 export function useLoginConfig(): LoginConfigState | null {
   return useAtomValue(loginConfigState);
+}
+
+const DEFAULT_LOGIN_CONFIG = getDefaultLoginConfig();
+
+/**
+ * The effective WebUI settings (code defaults < config.toml < app config
+ * `settings`), the code defaults until they load. Re-renders on a System Settings change.
+ */
+export function useEffectiveLoginConfig(): LoginConfigState {
+  return useAtomValue(loginConfigState) ?? DEFAULT_LOGIN_CONFIG;
 }
 
 /**
