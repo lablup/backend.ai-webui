@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<517a23e984bd7da635e78813ed230801>>
+ * @generated SignedSource<<244af4895f59484297d0f3dfd6d73e1b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,11 +18,11 @@ export type BinarySizeInput = {
   expr: string;
 };
 export type ProjectResourcePolicyV2SettingModalModifyMutation$variables = {
+  id: string;
   input: UpdateProjectResourcePolicyInput;
-  name: string;
 };
 export type ProjectResourcePolicyV2SettingModalModifyMutation$data = {
-  readonly adminUpdateProjectResourcePolicyV2: {
+  readonly updateProjectResourcePolicyV2: {
     readonly projectResourcePolicy: {
       readonly createdAt: string | null | undefined;
       readonly id: string;
@@ -33,7 +33,7 @@ export type ProjectResourcePolicyV2SettingModalModifyMutation$data = {
       readonly maxVfolderCount: number;
       readonly name: string;
     };
-  } | null | undefined;
+  };
 };
 export type ProjectResourcePolicyV2SettingModalModifyMutation = {
   response: ProjectResourcePolicyV2SettingModalModifyMutation$data;
@@ -41,34 +41,36 @@ export type ProjectResourcePolicyV2SettingModalModifyMutation = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "input"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "name"
-},
-v2 = [
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "id"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "input"
+  }
+],
+v1 = [
   {
     "alias": null,
     "args": [
       {
         "kind": "Variable",
-        "name": "input",
-        "variableName": "input"
+        "name": "id",
+        "variableName": "id"
       },
       {
         "kind": "Variable",
-        "name": "name",
-        "variableName": "name"
+        "name": "input",
+        "variableName": "input"
       }
     ],
     "concreteType": "UpdateProjectResourcePolicyPayload",
     "kind": "LinkedField",
-    "name": "adminUpdateProjectResourcePolicyV2",
+    "name": "updateProjectResourcePolicyV2",
     "plural": false,
     "selections": [
       {
@@ -141,38 +143,32 @@ v2 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "ProjectResourcePolicyV2SettingModalModifyMutation",
-    "selections": (v2/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v1/*: any*/),
-      (v0/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "ProjectResourcePolicyV2SettingModalModifyMutation",
-    "selections": (v2/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "2c96373fbbfdfc5b9f9aebc8fbeee01e",
+    "cacheID": "4c12069b24353372583bb83635142b33",
     "id": null,
     "metadata": {},
     "name": "ProjectResourcePolicyV2SettingModalModifyMutation",
     "operationKind": "mutation",
-    "text": "mutation ProjectResourcePolicyV2SettingModalModifyMutation(\n  $name: String!\n  $input: UpdateProjectResourcePolicyInput!\n) {\n  adminUpdateProjectResourcePolicyV2(name: $name, input: $input) {\n    projectResourcePolicy {\n      id\n      name\n      createdAt\n      maxVfolderCount\n      maxQuotaScopeSize {\n        expr\n      }\n      maxNetworkCount\n    }\n  }\n}\n"
+    "text": "mutation ProjectResourcePolicyV2SettingModalModifyMutation(\n  $id: UUID!\n  $input: UpdateProjectResourcePolicyInput!\n) {\n  updateProjectResourcePolicyV2(id: $id, input: $input) {\n    projectResourcePolicy {\n      id\n      name\n      createdAt\n      maxVfolderCount\n      maxQuotaScopeSize {\n        expr\n      }\n      maxNetworkCount\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "9a9c28802a896f925245b977923feb2a";
+(node as any).hash = "07e95ea1b68faa2495ea081c45bd4d52";
 
 export default node;

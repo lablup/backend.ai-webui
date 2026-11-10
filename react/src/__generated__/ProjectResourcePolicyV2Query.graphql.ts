@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fadfbd86e46b25fe0a66062e7d8167e3>>
+ * @generated SignedSource<<04f2d0c954e8d6ac52c89d3d04b1aa1d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -308,7 +308,14 @@ return {
                   (v8/*: any*/),
                   (v9/*: any*/),
                   (v10/*: any*/),
-                  (v11/*: any*/)
+                  (v11/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "entityId",
+                    "storageKey": null
+                  }
                 ],
                 "storageKey": null
               }
@@ -321,12 +328,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3f41f5ff31ff8ecc9d31dc5bd6866ed4",
+    "cacheID": "88836ffee9aa5847e30760531ea609e0",
     "id": null,
     "metadata": {},
     "name": "ProjectResourcePolicyV2Query",
     "operationKind": "query",
-    "text": "query ProjectResourcePolicyV2Query(\n  $filter: ProjectResourcePolicyV2Filter\n  $orderBy: [ProjectResourcePolicyV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminProjectResourcePoliciesV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        name\n        maxVfolderCount\n        maxQuotaScopeSize {\n          expr\n        }\n        maxNetworkCount\n        createdAt\n        ...BAIProjectResourcePolicyV2TableFragment\n        ...ProjectResourcePolicyV2SettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIProjectResourcePolicyV2TableFragment on ProjectResourcePolicyV2 {\n  id\n  name\n  createdAt\n  maxVfolderCount\n  maxQuotaScopeSize {\n    expr\n  }\n  maxNetworkCount\n}\n\nfragment ProjectResourcePolicyV2SettingModalFragment on ProjectResourcePolicyV2 {\n  id\n  name\n  maxVfolderCount\n  maxQuotaScopeSize {\n    expr\n  }\n  maxNetworkCount\n}\n"
+    "text": "query ProjectResourcePolicyV2Query(\n  $filter: ProjectResourcePolicyV2Filter\n  $orderBy: [ProjectResourcePolicyV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminProjectResourcePoliciesV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        name\n        maxVfolderCount\n        maxQuotaScopeSize {\n          expr\n        }\n        maxNetworkCount\n        createdAt\n        ...BAIProjectResourcePolicyV2TableFragment\n        ...ProjectResourcePolicyV2SettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIProjectResourcePolicyV2TableFragment on ProjectResourcePolicyV2 {\n  id\n  name\n  createdAt\n  maxVfolderCount\n  maxQuotaScopeSize {\n    expr\n  }\n  maxNetworkCount\n}\n\nfragment ProjectResourcePolicyV2SettingModalFragment on ProjectResourcePolicyV2 {\n  id\n  entityId\n  name\n  maxVfolderCount\n  maxQuotaScopeSize {\n    expr\n  }\n  maxNetworkCount\n}\n"
   }
 };
 })();

@@ -59,6 +59,7 @@ const ProjectResourcePolicyV2SettingModal: React.FC<
     graphql`
       fragment ProjectResourcePolicyV2SettingModalFragment on ProjectResourcePolicyV2 {
         id
+        entityId
         name
         maxVfolderCount
         maxQuotaScopeSize {
@@ -90,10 +91,10 @@ const ProjectResourcePolicyV2SettingModal: React.FC<
     isInFlightCommitModifyProjectResourcePolicy,
   ] = useMutation<ProjectResourcePolicyV2SettingModalModifyMutation>(graphql`
     mutation ProjectResourcePolicyV2SettingModalModifyMutation(
-      $name: String!
+      $id: UUID!
       $input: UpdateProjectResourcePolicyInput!
     ) {
-      adminUpdateProjectResourcePolicyV2(name: $name, input: $input) {
+      updateProjectResourcePolicyV2(id: $id, input: $input) {
         projectResourcePolicy {
           id
           name
@@ -134,7 +135,7 @@ const ProjectResourcePolicyV2SettingModal: React.FC<
           maxQuotaScopeSize: { expr: maxQuotaScopeSizeExpr },
           maxNetworkCount: values?.max_network_count ?? -1,
         };
-        if (projectResourcePolicy === null) {
+        if (!projectResourcePolicy) {
           const input: CreateProjectResourcePolicyInputV2 = {
             name: values?.name,
             ...commonInput,
@@ -163,9 +164,9 @@ const ProjectResourcePolicyV2SettingModal: React.FC<
         } else {
           const input: UpdateProjectResourcePolicyInput = commonInput;
           commitModifyProjectResourcePolicy({
-            variables: { name: values?.name, input },
+            variables: { id: projectResourcePolicy.entityId, input },
             onCompleted(res, errors) {
-              if (!res?.adminUpdateProjectResourcePolicyV2 || errors) {
+              if (!res?.updateProjectResourcePolicyV2 || errors) {
                 message.error(
                   errors?.[0]?.message ||
                     t('resourcePolicy.CannotUpdateResourcePolicy'),
