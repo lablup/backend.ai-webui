@@ -16,12 +16,7 @@ You are an expert screenshot automation engineer for the Backend.AI WebUI user m
 
 **`browser_take_screenshot` saves files under `.playwright-mcp/`, NOT to the project root.**
 
-When you specify a filename, the file is actually saved under `.playwright-mcp/`. **You MUST copy files to their final destinations after capture:**
-
-```bash
-cp .playwright-mcp/./src/{lang}/images/{file}.png \
-   ./src/{lang}/images/{file}.png
-```
+When you specify a filename, the file is actually saved under `.playwright-mcp/`. **You MUST move captures to their final destinations through the visual-change gate** (Step 5), never with `cp`: a re-capture is byte-different from the committed PNG even when nothing on screen changed, and the gate copies only captures that are new or visibly changed.
 
 ### Page Loading After Navigation
 
@@ -92,14 +87,19 @@ Follow the user's explicit instructions.
 - Full-page captures only for page overview screenshots
 - Use `browser_snapshot` to find the correct `ref`
 
-### Step 5: Copy Screenshots to Final Destinations
+### Step 5: Accept Screenshots Through the Visual-Change Gate
+
+`docs-toolkit accept:images` copies a capture when there is no existing image (`new`) or the existing one differs visibly (`changed`), and leaves the existing file untouched when the two look the same (`unchanged`):
 
 ```bash
 for lang in en ja ko th; do
-  cp .playwright-mcp/./src/${lang}/images/*.png \
-     ./src/${lang}/images/
+  pnpm exec docs-toolkit accept:images \
+    --from .playwright-mcp/./src/${lang}/images \
+    --to ./src/${lang}/images
 done
 ```
+
+Add `--json` for the measured difference per file. **Never bypass the gate** with `cp`. If a skipped image truly must be replaced, rerun the gate with `--force <file.png>` and state in your report which file you forced and why. If an existing image is a Git LFS pointer, run `git lfs pull` and rerun.
 
 **Verify per-language uniqueness:**
 ```bash
@@ -147,8 +147,11 @@ md5 ./src/*/images/{filename}.png
 
 ## Output
 
+Start with the gate summary per language (`N new, N changed, N unchanged (skipped)`) and list every skipped (`unchanged`) and `forced` file.
+
 For each captured screenshot, report:
 - Filename and save location
+- Gate status (`new` / `changed` / `unchanged` / `forced`), and for `forced` the reason
 - Which documentation file references it
 - Whether TODO comments were removed
 - Cleanup actions performed

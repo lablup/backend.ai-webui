@@ -169,6 +169,21 @@ Verify against rules in `packages/backend.ai-webui-docs/TRANSLATION-GUIDE.md` an
 - [ ] Images are placed after introductory text, not before
 - [ ] TODO comments are added for screenshots that need to be captured
 - [ ] No broken image references
+- [ ] Every modified PNG visibly changed. `docs-screenshot-capturer` copies captures through the `docs-toolkit accept:images` gate, so a modified screenshot that looks the same as `main`'s should not be in the diff. Re-check with the gate in dry-run; revert each `unchanged` file (`git checkout "$base" -- <file>`) unless the capturer forced it with a stated reason:
+  ```bash
+  rm -rf /tmp/gate-check
+  base=$(git merge-base origin/main HEAD)
+  git diff --name-only --diff-filter=M "$base" -- 'packages/backend.ai-webui-docs/src/*/images/*.png' |
+  while read -r f; do
+    lang=$(basename "$(dirname "$(dirname "$f")")")
+    mkdir -p "/tmp/gate-check/$lang/new" "/tmp/gate-check/$lang/old"
+    cp "$f" "/tmp/gate-check/$lang/new/"
+    git cat-file --filters "$base:$f" > "/tmp/gate-check/$lang/old/$(basename "$f")"
+  done
+  for d in /tmp/gate-check/*/; do
+    pnpm --filter backend.ai-webui-docs exec docs-toolkit accept:images --from "${d}new" --to "${d}old" --dry-run
+  done
+  ```
 
 #### Cross-References
 - [ ] Internal links use correct format: `[Display Text](#anchor-id)`

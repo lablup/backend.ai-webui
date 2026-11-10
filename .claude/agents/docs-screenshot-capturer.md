@@ -19,13 +19,9 @@ When you specify `filename: "packages/.../en/images/foo.png"`, the file is actua
 .playwright-mcp/packages/.../en/images/foo.png
 ```
 
-**You MUST copy files to their final destinations after capture:**
-```bash
-cp .playwright-mcp/packages/backend.ai-webui-docs/src/{lang}/images/{file}.png \
-   packages/backend.ai-webui-docs/src/{lang}/images/{file}.png
-```
+**You MUST move captures to their final destinations through the visual-change gate** (Step 5), never with `cp`. A re-capture is byte-different from the committed PNG even when nothing on screen changed; the gate copies only captures that are new or visibly changed, so unchanged screenshots do not add a new blob to the repository.
 
-After all captures are done, run a single batch copy and then verify with `md5sum` that per-language files are unique.
+After all captures are done, run the gate once per language (Step 5) and then verify with `md5sum` that per-language files are unique.
 
 ### File Upload Path Restriction
 
@@ -148,7 +144,8 @@ The filename of an existing screenshot encodes a contract about what it shows. S
 
 1. Inspect the previous version's dimensions and visual scope:
    ```bash
-   git show main:packages/backend.ai-webui-docs/src/en/images/foo.png > /tmp/old.png
+   # --filters applies the smudge filter, so this also works once the images are in Git LFS
+   git cat-file --filters main:packages/backend.ai-webui-docs/src/en/images/foo.png > /tmp/old.png
    file /tmp/old.png   # note WIDTH x HEIGHT
    ```
 2. Open `/tmp/old.png` and identify its scope:
@@ -170,17 +167,24 @@ If the framing genuinely needs to change, **rename the file** to reflect the new
 
 **Exception**: If the screenshot contains no translatable UI text (e.g., pure diagrams, code editors with no UI chrome), capture once and copy to all directories.
 
-### Step 5: Copy Screenshots to Final Destinations
+### Step 5: Accept Screenshots Through the Visual-Change Gate
 
-After all captures are complete, copy from `.playwright-mcp/` to docs:
+After all captures are complete, move them from `.playwright-mcp/` to the docs with `docs-toolkit accept:images`. For each capture it copies the file when there is no existing image (`new`) or when the existing image differs visibly (`changed`: different dimensions, or enough pixels differ overall or within one small area); it leaves the existing file untouched when the two look the same (`unchanged`).
 
 ```bash
-# Copy all captured screenshots to their final destinations
+pnpm --filter backend.ai-docs-toolkit build   # once per run
 for lang in en ko ja th; do
-  cp .playwright-mcp/packages/backend.ai-webui-docs/src/${lang}/images/*.png \
-     packages/backend.ai-webui-docs/src/${lang}/images/
+  pnpm --filter backend.ai-webui-docs exec docs-toolkit accept:images \
+    --from "$PWD/.playwright-mcp/packages/backend.ai-webui-docs/src/${lang}/images" \
+    --to "$PWD/packages/backend.ai-webui-docs/src/${lang}/images"
 done
 ```
+
+Add `--json` to get the measured difference per file. For a screenshot with no translatable text, captured once, pass the `en` capture directory as `--from` for every language.
+
+**Never bypass the gate** — no `cp`, `mv` or other copy into the docs images directory. An `unchanged` result means the capture would only add bytes to the repository. If a skipped image truly must be replaced (e.g. a difference the gate cannot weigh, such as a deliberately updated sample value in a tiny area), rerun the gate for that language with `--force <file.png>` (repeatable) and state in your report which file you forced and why.
+
+If the gate fails because an existing image is a Git LFS pointer, run `git lfs pull` (after `git lfs install` if needed) and rerun it. Do not work around the error.
 
 **Verify per-language uniqueness:**
 ```bash
@@ -277,8 +281,11 @@ To switch languages in the app:
 
 ## Output
 
+Start with the gate summary per language (`N new, N changed, N unchanged (skipped)`) and list every skipped (`unchanged`) and `forced` file with its language; the PR body carries that list.
+
 For each captured screenshot, report:
 - Filename and save location (both `.playwright-mcp/` path and final destination)
+- Gate status (`new` / `changed` / `unchanged` / `forced`), and for `forced` the reason
 - Which documentation file references it
 - Whether TODO comments were removed
 - Cleanup actions performed (resources deleted, language restored)

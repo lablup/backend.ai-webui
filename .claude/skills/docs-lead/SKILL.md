@@ -163,6 +163,16 @@ Only if the plan calls for screenshots. Decision gate first — see
 invoke `docs-screenshot-capturer` (see template). Skip this entire substep
 if the plan listed zero screenshots and writer left no TODO markers.
 
+The capturer copies captures into the docs only through the visual-change
+gate (`docs-toolkit accept:images`), which skips a capture that looks the
+same as the committed file, so a re-capture does not add a byte-different
+copy of an unchanged screenshot to the repository. Relay its per-language
+summary (`N new, N changed, N unchanged (skipped)`) to the user. When the
+change becomes a PR, the PR body lists the skipped files under
+**Screenshots kept (visually unchanged)** and any `--force`d file with its
+reason; a modified PNG that is in neither the `changed` nor the `forced`
+list must not be in the diff.
+
 #### 5d. Reviewer (automatic)
 
 Invoke `docs-update-reviewer` (see template). Summarize the report — critical
@@ -200,6 +210,9 @@ If queue is empty, do not gate; just report and stop.
   findings alone are not consent.
 - **Live-app gate before screenshots.** Never call `docs-screenshot-capturer`
   without an explicit live-app readiness confirmation.
+- **Visual-change gate before committing screenshots.** Captures reach
+  `src/{lang}/images/` only through `docs-toolkit accept:images`; never `cp`
+  them over, and never accept a worker report that did.
 - **Workers never call other workers.** Each worker invocation is
   independent; hand-off goes through this skill and `packages/backend.ai-webui-docs/.agent-output/`.
 - **No silent edits.** This skill itself must not `Edit` docs files. Mutation

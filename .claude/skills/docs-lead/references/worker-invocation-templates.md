@@ -78,9 +78,11 @@ Capture:
 
 Capture in all 4 language UI locales (en, ko, ja, th) using window.switchLanguage
 per SCREENSHOT-GUIDELINES.md. Use 2× zoom. Crop to the relevant element via
-'ref' parameter unless a page-overview capture is explicitly requested. Verify
-per-language MD5 uniqueness at the end and report results. Clean up any test
-resources created during capture.`
+'ref' parameter unless a page-overview capture is explicitly requested. Move
+captures into the docs only through the docs-toolkit accept:images gate
+(never cp) and report its per-language new / changed / unchanged counts and
+every skipped or forced file. Verify per-language MD5 uniqueness at the end
+and report results. Clean up any test resources created during capture.`
 })
 ```
 
@@ -111,7 +113,11 @@ attention.`
   yourself; don't trust the worker's claimed file list. Real diff is ground
   truth.
 - **Screenshot-capturer** — verify the per-language MD5 uniqueness report. If
-  the worker silently skipped a language, push back.
+  the worker silently skipped a language, push back. Check the gate summary
+  against `git status --short -- packages/backend.ai-webui-docs/src/*/images/`:
+  every modified PNG must be `changed` or `forced` (with a reason), and none
+  of the skipped files may show up as modified. Keep the skipped-file list;
+  the PR body carries it.
 - **Reviewer** — read the report file. Surface severity counts; if any
   "critical" exists, surface it to the user before declaring the topic
   completed.
