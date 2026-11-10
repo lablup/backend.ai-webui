@@ -20,7 +20,6 @@ import {
   BAISelect,
   BAIVFolderSelect,
   BAIVFolderSelectRef,
-  mergeFilterValues,
   toGlobalId,
   toLocalId,
   useBAILogger,
@@ -318,16 +317,14 @@ const ImportArtifactRevisionToFolderModal = ({
                     )}
                     isLabelHidden
                     excludeDeleted
-                    // Disabled rather than unfiltered without a destination:
-                    // dropping the `group` predicate would list every
-                    // group-owned folder and allow an import outside the
-                    // model store.
+                    // Model-store project folders only; without a destination
+                    // there is no scope to read, so the picker stays disabled.
                     isDisabled={!destinationProject?.id}
-                    // model-store-exclusive project folders only
-                    filter={mergeFilterValues([
-                      'ownership_type == "group"',
-                      `group == "${destinationProject?.id ?? ''}"`,
-                    ])}
+                    scope={{
+                      project: destinationProject?.id
+                        ? [{ value: destinationProject.id }]
+                        : [],
+                    }}
                   />
                 </Form.Item>
                 <Tooltip

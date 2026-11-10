@@ -72,17 +72,16 @@ vi.mock('../../../components/FolderCreateModal', async () => {
   };
 });
 
-// The folder picker surfaces the filter it was scoped to.
+// The folder picker surfaces the scope it reads.
 vi.mock('backend.ai-ui', async (importOriginal) => {
   const React = await import('react');
   const originalModule = await importOriginal<typeof import('backend.ai-ui')>();
   return {
     ...originalModule,
-    // The folder select crossed to Astryx (`…Astryx`).
     BAIVFolderSelect: (props: any) =>
       React.createElement('div', {
         'data-testid': 'mock-vfolder-select',
-        'data-filter': props.filter ?? '',
+        'data-scope': JSON.stringify(props.scope ?? {}),
       }),
   };
 });
@@ -172,10 +171,10 @@ describe('ImportArtifactRevisionToFolderModal destination project (ADR-0001, FR-
     renderModal([MODEL_STORE_PROJECT]);
 
     const folderSelect = await screen.findByTestId('mock-vfolder-select');
-    expect(folderSelect.getAttribute('data-filter')).toContain(
+    expect(folderSelect.getAttribute('data-scope')).toContain(
       'model-store-project-id',
     );
-    expect(folderSelect.getAttribute('data-filter')).not.toContain(
+    expect(folderSelect.getAttribute('data-scope')).not.toContain(
       'ambient-project-id',
     );
   });
@@ -219,7 +218,7 @@ describe('ImportArtifactRevisionToFolderModal destination project (ADR-0001, FR-
     expect(createButton).toBeDisabled();
     // …and the folder picker is not silently scoped to the ambient project.
     expect(
-      screen.getByTestId('mock-vfolder-select').getAttribute('data-filter'),
+      screen.getByTestId('mock-vfolder-select').getAttribute('data-scope'),
     ).not.toContain('ambient-project-id');
   });
 });

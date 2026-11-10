@@ -2,6 +2,7 @@ import type { BAIDirectoryPickerModalQuery } from '../../../__generated__/BAIDir
 import { Form } from '../../../form-engine';
 import MockVFolderFileProviders from '../../../tests/MockVFolderFileProviders';
 import {
+  mockMountFolder,
   mockVFolderFile as entry,
   type MockVFolderFileTrees,
 } from '../../../tests/mockVFolderFileTree';
@@ -17,6 +18,8 @@ import BAIVFolderPathPicker from './BAIVFolderPathPicker';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState, useTransition } from 'react';
 import { useQueryLoader } from 'react-relay';
+
+const MOCK_USER_ID = '00000000-0000-0000-0000-000000000001';
 
 const MOCK_VFOLDERS = [
   {
@@ -146,7 +149,7 @@ export const WithinForm: Story = {
     docs: {
       description: {
         story:
-          'The intended composition: a separate `BAIVFolderSelect` (with `valuePropName="row_id"` so the field holds the UUID) feeds `vfolderUuid`, and the picker plugs into its own Form.Item with `disabled={!vfolderUuid}` until a folder is chosen. Changing the vfolder resets the path field, and the required rule uses a custom validator because `""` (the vfolder root) is a valid pick.',
+          'The intended composition: a separate `BAIVFolderSelect` (with `valuePropName="entityId"` so the field holds the UUID) feeds `vfolderUuid`, and the picker plugs into its own Form.Item with `disabled={!vfolderUuid}` until a folder is chosen. Changing the vfolder resets the path field, and the required rule uses a custom validator because `""` (the vfolder root) is a valid pick.',
       },
     },
   },
@@ -161,6 +164,9 @@ export const WithinForm: Story = {
     return (
       <MockVFolderFileProviders
         vfolders={MOCK_VFOLDERS}
+        folders={MOCK_VFOLDERS.map(({ row_id, name }) =>
+          mockMountFolder({ id: row_id, name }),
+        )}
         trees={createInitialTrees}
       >
         <Form
@@ -179,7 +185,8 @@ export const WithinForm: Story = {
             <BAIVFolderSelect
               label="Folder"
               isLabelHidden
-              valuePropName="row_id"
+              valuePropName="entityId"
+              scope={{ user: [{ value: MOCK_USER_ID }] }}
               onChange={() => {
                 // A sub path belongs to the vfolder it was picked from.
                 form.setFieldValue('destination', undefined);

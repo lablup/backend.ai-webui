@@ -24,7 +24,7 @@ import {
   BAISelect,
   BAIStorageHostSelect,
   BAIAdminUserV2Select,
-  BAIVFolderSelect,
+  BAIVFolderNodeSelect,
   useBAILogger,
   BAICheckboxInput,
   BAITextArea,
@@ -155,7 +155,8 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   if (scopeType === 'VFOLDER') {
     return (
       <Suspense fallback={fallback}>
-        <BAIVFolderSelect {...branchProps} />
+        {/* TODO(#11082): move to an `adminVfoldersV2` select; a domain scope would narrow this superadmin list (ADR 0012). */}
+        <BAIVFolderNodeSelect {...branchProps} />
       </Suspense>
     );
   }

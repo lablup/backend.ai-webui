@@ -588,6 +588,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const { logger } = useBAILogger();
   const { open: openFolderExplorer } = useFolderExplorerOpener();
   const baiClient = useSuspendedBackendaiClient();
+  const modelFolderScope = mountableVFolderScope(
+    baiClient.user_uuid,
+    deploymentProject?.id,
+  );
   const commonEnvVars = useCommonEnvVarConfigs();
   // Single-string `command` + `shell` (BA-6742); older managers get the
   // deprecated `startCommand` token list instead.
@@ -2091,10 +2095,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                             fallbackLabels={revisionFolderFallbackLabels}
                             label={t('deployment.ModelFolder')}
                             isLabelHidden
-                            currentProjectId={deploymentProject?.id}
+                            scope={modelFolderScope}
                             isDisabled={!deploymentProject}
                             excludeDeleted
-                            filter='usage_mode == "model"'
+                            filter={{ usageMode: { equals: 'MODEL' } }}
                           />
                         </BAIFormItem>
                       </Suspense>
@@ -2286,10 +2290,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                     fallbackLabels={revisionFolderFallbackLabels}
                     label={t('deployment.ModelFolder')}
                     isLabelHidden
-                    currentProjectId={deploymentProject?.id}
+                    scope={modelFolderScope}
                     isDisabled={!deploymentProject}
                     excludeDeleted
-                    filter='usage_mode == "model"'
+                    filter={{ usageMode: { equals: 'MODEL' } }}
                     onChange={() => {
                       // A subpath belongs to the folder it was picked from.
                       customForm.setFieldValue('modelSubpath', undefined);

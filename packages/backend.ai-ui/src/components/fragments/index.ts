@@ -132,10 +132,16 @@ export type { BAIAgentTableProps, AgentNodeInList } from './BAIAgentTable';
 export { default as BAIVFolderSelect } from './BAIVFolderSelect';
 export type {
   BAIVFolderSelectProps,
+  BAIVFolderSelectRef,
+  VFolderSelectNode,
+} from './BAIVFolderSelect';
+export { default as BAIVFolderNodeSelect } from './BAIVFolderNodeSelect';
+export type {
+  BAIVFolderNodeSelectProps,
   VFolderNode,
   BAIVFolderPermission,
-  BAIVFolderSelectRef,
-} from './BAIVFolderSelect';
+  BAIVFolderNodeSelectRef,
+} from './BAIVFolderNodeSelect';
 export { default as BAIScopedVFolderSelect } from './BAIScopedVFolderSelect';
 export type {
   BAIScopedVFolderSelectProps,

@@ -20,8 +20,8 @@ import {
   BAIButton,
   BAIFlex,
   BAISelect,
-  BAIVFolderSelect,
-  BAIVFolderSelectRef,
+  BAIVFolderNodeSelect,
+  BAIVFolderNodeSelectRef,
   generateRandomString,
   toGlobalId,
   toLocalId,
@@ -150,9 +150,9 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
     useStartSession();
   const { open: openFolderExplorer } = useFolderExplorerOpener();
 
-  const vfolderSelectRef = useRef<BAIVFolderSelectRef>(null);
+  const vfolderSelectRef = useRef<BAIVFolderNodeSelectRef>(null);
   const [isFolderCreateModalOpen, setIsFolderCreateModalOpen] = useState(false);
-  // id → name for selected folders, resolved by BAIVFolderSelect (and seeded
+  // id → name for selected folders, resolved by BAIVFolderNodeSelect (and seeded
   // directly when a folder is created through FolderCreateModal). The name
   // is needed to build the download path under `/home/work/<folder>/`.
   const [folderNameMap, setFolderNameMap] = useState<Record<string, string>>(
@@ -330,7 +330,8 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
                   },
                 ]}
               >
-                <BAIVFolderSelect
+                {/* TODO(needs-backend): #11082 V2 cannot filter by the caller's mount permission. */}
+                <BAIVFolderNodeSelect
                   ref={vfolderSelectRef}
                   label={t('deployment.ModelFolder')}
                   isLabelHidden
@@ -426,7 +427,7 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
             return;
           }
           if (result?.entityId) {
-            // BAIVFolderSelect's value is a `VirtualFolderNode` global ID.
+            // BAIVFolderNodeSelect's value is a `VirtualFolderNode` global ID.
             const newFolderGlobalId = toGlobalId(
               'VirtualFolderNode',
               result.entityId,

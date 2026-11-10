@@ -12,7 +12,7 @@ import { App } from '../../../app-shim';
 import DeploymentRevisionDetailDrawer from '../../../components/DeploymentRevisionDetailDrawer';
 import FolderLink from '../../../components/FolderLink';
 import { convertToOrderBy } from '../../../helper';
-import { useCurrentDomain } from '../../../hooks';
+import { useCurrentDomain, useSuspendedBackendaiClient } from '../../../hooks';
 import { useBAISettingUserState } from '../../../hooks/useBAISetting';
 import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import { Badge } from '@lablup/ui-common/Badge';
@@ -35,6 +35,7 @@ import {
   BAIText,
   BAIUnmountAfterClose,
   BAIVFolderSelect,
+  mountableVFolderScope,
   INITIAL_FETCH_KEY,
   filterOutNullAndUndefined,
   isDeploymentInStoppedCategory,
@@ -110,6 +111,7 @@ const DeploymentRevisionHistoryTab: React.FC<
 > = ({ deploymentFrgmt, deploymentId, fetchKey }) => {
   'use memo';
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
   const { token } = useTheme();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
@@ -647,16 +649,17 @@ const DeploymentRevisionHistoryTab: React.FC<
       rule: uuidRule,
       renderInput: ({ onAddCondition, value, isDisabled }) => (
         <BAIVFolderSelect
-          // `modelVfolderId` is a `UUIDFilter`, so the folder's `row_id` — not
-          // its Relay global id — is what serializes.
-          valuePropName="row_id"
+          // `modelVfolderId` is a `UUIDFilter`, so the folder UUID serializes.
+          valuePropName="entityId"
           label={t('deployment.ModelFolder')}
           isLabelHidden
-          // Same scope as the revision creation picker: the deployment's own
-          // project, model folders only.
-          currentProjectId={deployment?.metadata?.projectId ?? undefined}
+          // Same scope as the revision creation picker.
+          scope={mountableVFolderScope(
+            baiClient.user_uuid,
+            deployment?.metadata?.projectId ?? undefined,
+          )}
           excludeDeleted
-          filter='usage_mode == "model"'
+          filter={{ usageMode: { equals: 'MODEL' } }}
           value={value}
           isDisabled={isDisabled}
           onChange={(next, option) =>
