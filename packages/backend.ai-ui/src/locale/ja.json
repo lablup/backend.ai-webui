@@ -983,7 +983,10 @@
     "AreYouSureYouWantToDeactivateSome": "{{count}}アーティファクトを無効にしたいですか？",
     "Deactivate": "無効にします",
     "DeactivateArtifacts": "アーティファクトを無効にします",
+    "Error": "エラー",
     "FailedToDeactivateArtifacts": "アーティファクトを非アクティブ化できませんでした。",
+    "Name": "名前",
+    "SomeArtifactsFailedToDeactivate": "{{count}} 件のアーティファクトを無効化できませんでした",
     "SuccessfullyDeactivated": "正常に非アクティブ化されたアーティファクト。"
   },
   "comp:BAIDeleteArtifactModal": {
