@@ -70,7 +70,15 @@ pull_one() {
 
   work="$(mktemp -d)"
   list="${work}/pointers"
-  (cd "$top" && lfs_find_pointer_files "${roots[@]}") > "$list"
+  # Only tracked files can be restored from the index; untracked pointer text is
+  # reported and left alone.
+  git -C "$top" -c core.quotePath=false ls-files -- "${roots[@]}" | sort > "${work}/tracked"
+  (cd "$top" && lfs_find_pointer_files "${roots[@]}") | sort > "${work}/found"
+  comm -12 "${work}/found" "${work}/tracked" > "$list"
+  if [ -s "${work}/found" ] && comm -23 "${work}/found" "${work}/tracked" | grep -q .; then
+    log "warning: untracked files with Git LFS pointer text are left as they are:" >&2
+    comm -23 "${work}/found" "${work}/tracked" | sed 's/^/  /' >&2
+  fi
   n="$(wc -l < "$list" | tr -d ' ')"
   if [ "$n" -eq 0 ]; then
     log "${top}: no LFS files — nothing to do"
@@ -109,7 +117,12 @@ pull_one() {
     -c filter.lfs.clean="git-lfs clean -- %f"
     -c filter.lfs.required=true
     -c lfs.fetchexclude=)
-  "${lfs_git[@]}" checkout --pathspec-from-file="${list}.nul" --pathspec-file-nul
+  if ! "${lfs_git[@]}" checkout --pathspec-from-file="${list}.nul" --pathspec-file-nul; then
+    git -C "$top" --literal-pathspecs -c filter.lfs.required=false \
+      checkout --pathspec-from-file="${list}.nul" --pathspec-file-nul || true
+    log "ERROR: ${top}: the LFS checkout failed; the pointer files were restored." >&2
+    exit 1
+  fi
   # Files written in the same second as the index are re-hashed by later git
   # commands, which without the clean filter would see them as modified.
   # Refreshing with the filter, once they are no longer racy, records them clean.
@@ -120,7 +133,7 @@ pull_one() {
   while IFS= read -r path; do
     [ -f "${top}/${path}" ] || { echo "  missing after checkout: ${path}" >&2; missing=1; }
   done < "$list"
-  (cd "$top" && lfs_find_pointer_files "${roots[@]}") > "$list"
+  (cd "$top" && lfs_find_pointer_files "${roots[@]}") | sort | comm -12 - "${work}/tracked" > "$list"
   n="$(wc -l < "$list" | tr -d ' ')"
   if [ "$n" -gt 0 ] || [ "$missing" -ne 0 ]; then
     log "ERROR: ${top}: ${n} file(s) are still Git LFS pointers after the pull:" >&2
