@@ -39,6 +39,7 @@ printf '<svg/>\n' > "$D/en/images/diagram.svg"
 head -c 20000 /dev/urandom > "$D/en/images/a.png"
 head -c 30000 /dev/urandom > "$D/en/chapter/images/nested.png"
 printf '%s\n' "$D/**/*.png filter=lfs diff=lfs merge=lfs -text" > .gitattributes
+printf '[lfs]\n\tfetchexclude = %s/**\n' "$D" > .lfsconfig   # as in the repository
 git add -A && git commit -qm base
 git remote add origin "file://$T/origin.git"
 quiet git push origin main
@@ -86,18 +87,38 @@ fresh "$T/c3" refs/pull/1/head
 quiet bash "$PULL" "$T/c3"; rc=$?
 check "origin alone cannot complete a fork PR" [ "$rc" -ne 0 ]
 check "nothing changed when the fetch is incomplete" is_pointer "$T/c3/$D/en/images/a.png"
-quiet bash "$PULL" --remote origin --remote "file://$T/fork.git" "$T/c3"; rc=$?
-check "origin then fork URL succeeds" [ "$rc" -eq 0 ]
+quiet bash "$PULL" --fallback-remote "file://$T/missing.git" "$T/c3"; rc=$?
+check "every source incomplete: exit 1" [ "$rc" -eq 1 ]
+check "every source incomplete: nothing changed" is_pointer "$T/c3/$D/en/images/a.png"
+quiet bash "$PULL" --fallback-remote "file://$T/fork.git" "$T/c3"; rc=$?
+check "fork fallback materializes, exit 3" [ "$rc" -eq 3 ]
 check "fork image materialized" [ "$(sha "$T/c3/$D/en/images/from-fork.png")" = "$F_SHA" ]
 check "base image materialized" [ "$(sha "$T/c3/$D/en/images/a.png")" = "$A_SHA" ]
+
+# 3b. Once origin holds the fork's objects (a maintainer pushed them), exit 0.
+# The command build-docs-preview.sh prints for a maintainer, run in a fresh clone.
+fresh "$T/maint"
+quiet git -C "$T/maint" fetch origin refs/pull/1/head
+quiet git -C "$T/maint" lfs fetch --exclude="" "file://$T/fork.git" FETCH_HEAD
+quiet git -C "$T/maint" lfs push origin FETCH_HEAD; rc=$?
+check "maintainer copy command succeeds" [ "$rc" -eq 0 ]
+fresh "$T/c3b" refs/pull/1/head
+quiet bash "$PULL" --fallback-remote "file://$T/fork.git" "$T/c3b"; rc=$?
+check "objects copied to origin: exit 0" [ "$rc" -eq 0 ]
+check "fork image materialized from origin" [ "$(sha "$T/c3b/$D/en/images/from-fork.png")" = "$F_SHA" ]
 
 # 4. A tree without pointer files needs no git-lfs.
 rm -rf "$T/raw" && git init -q "$T/raw" && mkdir -p "$T/raw/$D/en/images"
 printf 'title: T\nlanguages: [en]\n' > "$T/raw/$D/book.config.yaml"
 head -c 100 /dev/urandom > "$T/raw/$D/en/images/r.png"
 git -C "$T/raw" add -A && git -C "$T/raw" commit -qm raw
-out="$(PATH="$(echo "$PATH" | tr ':' '\n' | grep -v -e git-lfs | paste -sd:)" bash "$PULL" "$T/raw" 2>&1)"; rc=$?
-check "no pointers: exit 0, git-lfs not needed" [ "$rc" -eq 0 ]
+# A git-lfs that fails and records every call, ahead of any real one on PATH.
+mkdir -p "$T/stub"
+printf '#!/bin/sh\necho called >> "%s"\nexit 1\n' "$T/stub/calls" > "$T/stub/git-lfs"
+chmod +x "$T/stub/git-lfs"
+out="$(PATH="$T/stub:$PATH" bash "$PULL" "$T/raw" 2>&1)"; rc=$?
+check "no pointers: exit 0" [ "$rc" -eq 0 ]
+check "no pointers: git-lfs never called" [ ! -e "$T/stub/calls" ]
 check "no pointers: says nothing to do" grep -q "nothing to do" <<<"$out"
 
 echo

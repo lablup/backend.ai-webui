@@ -1,0 +1,26 @@
+# Fixture tests for the Git LFS scripts that docs builds run (#11040, #11055).
+# Local file:// remotes only: no network, no token, no git config outside a temp dir.
+name: lfs-scripts-test
+
+on:
+  pull_request:
+    paths:
+      - ".github/scripts/lfs/**"
+      - ".github/workflows/lfs-scripts-test.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lfs-scripts-test-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  lfs-scripts-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Test the docs image pull script
+        run: bash .github/scripts/lfs/test-pull-docs-images.sh
