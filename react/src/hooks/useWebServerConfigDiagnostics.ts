@@ -8,6 +8,7 @@ import {
   checkPlaceholderValues,
   checkSslMismatch,
   checkUrlFields,
+  fileOnlyConfig,
   isPlaceholder,
 } from '../diagnostics/rules/configRules';
 import {
@@ -23,7 +24,6 @@ import {
   checkSettingUrls,
 } from '../diagnostics/rules/settingsRules';
 import {
-  FILE_ONLY_CONFIG_KEYS,
   getDefaultLoginConfig,
   type LoginConfigState,
 } from '../helper/loginConfig';
@@ -35,14 +35,6 @@ import {
   useRawConfig,
 } from './useWebUIConfig';
 import { VALID_MENU_KEYS } from './useWebUIMenuItems';
-import * as _ from 'lodash-es';
-
-const fileOnlyConfig = (
-  rawConfig: Record<string, any>,
-): Record<string, Record<string, unknown>> =>
-  _.mapValues(FILE_ONLY_CONFIG_KEYS, (keys, section) =>
-    _.pick(rawConfig[section] ?? {}, keys),
-  );
 
 /**
  * Checks the keys `config.toml` still owns against the file, and the System
@@ -55,7 +47,9 @@ export function useWebServerConfigDiagnostics(
 
   const baiClient = useSuspendedBackendaiClient();
   const rawConfig = useRawConfig();
-  const fileConfig = rawConfig ? fileOnlyConfig(rawConfig) : {};
+  const fileConfig = rawConfig
+    ? fileOnlyConfig(rawConfig, !!globalThis.isElectron)
+    : {};
   const loginConfig = useLoginConfig();
   const proxyUrl = useProxyUrl();
   const configParseError = useConfigParseError();
@@ -135,8 +129,7 @@ export function useWebServerConfigDiagnostics(
     baiClient?._config?.connectionMode ??
     '';
   const webServerUrl: string =
-    ((rawConfig?.server as Record<string, unknown> | undefined)
-      ?.webServerURL as string) ?? '';
+    (fileConfig.server?.webServerURL as string) ?? '';
   const apiEndpointForCheck: string =
     (rawConfig?.general?.apiEndpoint as string) ?? apiEndpoint;
   const connectionModeIssues = checkConnectionMode(
@@ -175,7 +168,7 @@ export function useWebServerConfigDiagnostics(
 
   if (loginConfig) {
     results.push(
-      ...checkIgnoredConfigTomlKeys(rawConfig, loginConfig),
+      ...checkIgnoredConfigTomlKeys(rawConfig),
       ...settingsDiagnostics(loginConfig, getDefaultLoginConfig()),
     );
   }

@@ -247,130 +247,83 @@ describe('checkPluginConfiguration', () => {
 describe('findIgnoredConfigTomlKeys', () => {
   it('skips the keys config.toml still owns and unknown keys', () => {
     expect(
-      findIgnoredConfigTomlKeys(
-        {
-          general: {
-            apiEndpoint: 'https://api.example.com',
-            connectionMode: 'SESSION',
-            force2FA: true,
-          },
-          wsproxy: { proxyURL: 'http://127.0.0.1:5050/' },
-          server: { webServerURL: 'https://web.example.com' },
+      findIgnoredConfigTomlKeys({
+        general: {
+          apiEndpoint: 'https://api.example.com',
+          connectionMode: 'SESSION',
+          force2FA: true,
         },
-        state(),
-      ),
+        wsproxy: { proxyURL: 'http://127.0.0.1:5050/' },
+        server: { webServerURL: 'https://web.example.com' },
+      }),
     ).toEqual([]);
   });
 
   it('maps the renamed keys of ADR 0028', () => {
-    const found = findIgnoredConfigTomlKeys(
-      {
+    expect(
+      findIgnoredConfigTomlKeys({
         menu: { blocklist: 'data, session', inactivelist: 'dashboard' },
         plugin: { login: 'signup', page: 'a,b' },
         pipeline: { frontendEndpoint: 'https://ft.example.com' },
-      },
-      state({ blockList: ['data', 'session'], inactiveList: ['dashboard'] }),
-    );
-    expect(found).toEqual([
-      { path: 'menu.blocklist', settingKey: 'menuBlocklist', inEffect: true },
-      {
-        path: 'menu.inactivelist',
-        settingKey: 'menuInactivelist',
-        inEffect: true,
-      },
-      { path: 'plugin.login', settingKey: 'pluginLogin', inEffect: false },
-      { path: 'plugin.page', settingKey: 'pluginPage', inEffect: false },
-      {
-        path: 'pipeline.frontendEndpoint',
-        settingKey: 'fasttrackEndpoint',
-        inEffect: false,
-      },
+      }),
+    ).toEqual([
+      { path: 'menu.blocklist', settingKey: 'menuBlocklist' },
+      { path: 'menu.inactivelist', settingKey: 'menuInactivelist' },
+      { path: 'plugin.login', settingKey: 'pluginLogin' },
+      { path: 'plugin.page', settingKey: 'pluginPage' },
+      { path: 'pipeline.frontendEndpoint', settingKey: 'fasttrackEndpoint' },
     ]);
   });
 
-  it('compares the file value with the effective value in the setting shape', () => {
-    const found = findIgnoredConfigTomlKeys(
-      {
-        general: {
-          autoLogout: 'true',
-          debug: 'false',
-          maxCountForPreopenPorts: '10',
-        },
-        resources: { maxCPUCoresPerContainer: 256 },
-      },
-      state({ autoLogout: true }),
-    );
-    expect(_.map(found, (k) => [k.settingKey, k.inEffect])).toEqual([
-      ['autoLogout', true],
-      ['debug', true],
-      ['maxCountForPreopenPorts', true],
-      ['maxCPUCoresPerContainer', false],
-    ]);
-  });
-
-  it('reads boolean strings in any case and leaves junk numbers unmatched', () => {
-    const found = findIgnoredConfigTomlKeys(
-      {
-        general: {
-          debug: 'True',
-          maxCountForPreopenPorts: '10abc',
-          storageWarningThreshold: ' 90 ',
-        },
-      },
-      state(),
-    );
-    expect(_.map(found, (k) => [k.settingKey, k.inEffect])).toEqual([
-      ['debug', false],
-      ['maxCountForPreopenPorts', false],
-      ['storageWarningThreshold', true],
-    ]);
+  it('finds a key a System Settings key replaced under its own name', () => {
+    expect(
+      _.map(
+        findIgnoredConfigTomlKeys({
+          general: { autoLogout: 'true', debug: false },
+          resources: { maxCPUCoresPerContainer: 256 },
+        }),
+        'settingKey',
+      ),
+    ).toEqual(['autoLogout', 'debug', 'maxCPUCoresPerContainer']);
   });
 
   it('leaves out an empty or placeholder value, which sets nothing', () => {
-    const found = findIgnoredConfigTomlKeys(
-      {
+    expect(
+      findIgnoredConfigTomlKeys({
         general: {
           defaultSessionEnvironment: '[Default session kernel]',
           appDownloadUrl: '',
           systemSSHImage: '',
         },
-      },
-      state({ systemSSHImage: 'cr.example/ssh:1' }),
-    );
-    expect(found).toEqual([]);
+      }),
+    ).toEqual([]);
   });
 });
 
 describe('checkIgnoredConfigTomlKeys', () => {
   it('reports nothing without a file or ignored keys', () => {
-    expect(checkIgnoredConfigTomlKeys(null, state())).toEqual([]);
+    expect(checkIgnoredConfigTomlKeys(null)).toEqual([]);
     expect(
-      checkIgnoredConfigTomlKeys({ general: { apiEndpoint: 'x' } }, state()),
+      checkIgnoredConfigTomlKeys({ general: { apiEndpoint: 'x' } }),
     ).toEqual([]);
   });
 
-  it('warns about values not applied and lists the rest as info', () => {
-    const results = checkIgnoredConfigTomlKeys(
-      {
+  it('lists every ignored key in one info row', () => {
+    expect(
+      checkIgnoredConfigTomlKeys({
         general: { hideAgents: true, maskUserInfo: true },
         resources: { maxCPUCoresPerContainer: 256 },
-      },
-      state(),
-    );
-    expect(results).toEqual([
+      }),
+    ).toEqual([
       expect.objectContaining({
-        id: 'config-ignored-keys-not-applied',
+        id: 'config-unused-keys',
         severity: 'info',
+        titleKey: 'diagnostics.UnusedConfigKeys',
+        remediationKey: 'diagnostics.UnusedConfigKeysFix',
         linksSystemSettings: true,
         interpolationValues: {
-          keys: 'general.maskUserInfo, resources.maxCPUCoresPerContainer',
-          count: '2',
+          keys: 'general.hideAgents, general.maskUserInfo, resources.maxCPUCoresPerContainer',
         },
-      }),
-      expect.objectContaining({
-        id: 'config-ignored-keys',
-        severity: 'info',
-        interpolationValues: { keys: 'general.hideAgents', count: '1' },
       }),
     ]);
   });

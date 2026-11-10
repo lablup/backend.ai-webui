@@ -2,7 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { FILE_ONLY_CONFIG_KEYS } from '../../helper/loginConfig';
 import type { DiagnosticResult } from '../../types/diagnostics';
+import * as _ from 'lodash-es';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -16,6 +18,21 @@ export function isValidUrl(value: string): boolean {
   } catch {
     return false;
   }
+}
+
+/**
+ * The keys `config.toml` still owns, as the file sets them. `server.webServerURL`
+ * is read only by the Electron app (`electron-app/main.js`), so it is left out elsewhere.
+ */
+export function fileOnlyConfig(
+  rawConfig: Record<string, any>,
+  isElectron: boolean,
+): Record<string, Record<string, unknown>> {
+  return _.mapValues(FILE_ONLY_CONFIG_KEYS, (keys, section) =>
+    section === 'server' && !isElectron
+      ? {}
+      : _.pick(rawConfig[section] ?? {}, keys),
+  );
 }
 
 /**
@@ -113,14 +130,15 @@ export function checkSslMismatch(
 }
 
 // ---------------------------------------------------------------------------
-// Connection mode  (config.toml: "Default is API. Currently supports API and SESSION")
+// Connection mode  (API or SESSION; anything else runs as SESSION, see loginConfig.ts)
 // ---------------------------------------------------------------------------
 
 const VALID_CONNECTION_MODES = ['API', 'SESSION'];
 
 /**
- * 1) connectionMode must be "API" or "SESSION".
- * 2) In SESSION mode, apiEndpoint should match webServerURL.
+ * 1) connectionMode must be "API" or "SESSION"; the WebUI runs any other value as SESSION.
+ * 2) In SESSION mode, notes when apiEndpoint differs from webServerURL, which may be
+ *    intended. Pass an empty webServerUrl outside Electron, the only reader of it.
  */
 export function checkConnectionMode(
   connectionMode: string,
@@ -136,7 +154,7 @@ export function checkConnectionMode(
   if (!VALID_CONNECTION_MODES.includes(mode)) {
     results.push({
       id: 'config-invalid-connection-mode',
-      severity: 'warning',
+      severity: 'critical',
       category: 'config',
       titleKey: 'diagnostics.InvalidConnectionMode',
       descriptionKey: 'diagnostics.InvalidConnectionModeDesc',
@@ -157,7 +175,7 @@ export function checkConnectionMode(
     if (normalizedApi !== normalizedWeb) {
       results.push({
         id: 'config-connection-mode-mismatch',
-        severity: 'warning',
+        severity: 'info',
         category: 'config',
         titleKey: 'diagnostics.ConnectionModeMismatch',
         descriptionKey: 'diagnostics.ConnectionModeMismatchDesc',

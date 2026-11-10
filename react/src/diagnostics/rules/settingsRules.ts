@@ -9,7 +9,6 @@ import {
   WEBUI_SETTING_DEFINITIONS,
   findWebUISettingDefinition,
   readWebUISettingFromState,
-  restrictToOptions,
 } from '../../helper/webuiSettings';
 import type { DiagnosticResult } from '../../types/diagnostics';
 import { isPlaceholder, isValidUrl } from './configRules';
@@ -255,40 +254,7 @@ export interface IgnoredConfigTomlKey {
   /** `section.key` as written in the file. */
   path: string;
   settingKey: string;
-  /** Whether the file's value is what the WebUI runs with anyway. */
-  inEffect: boolean;
 }
-
-/** A file value in the setting's own shape; `undefined` when it cannot be read as one. */
-const fileValueAsSetting = (key: string, raw: unknown): unknown => {
-  const definition = findWebUISettingDefinition(key);
-  if (!definition) return undefined;
-  switch (definition.type) {
-    case 'boolean':
-      if (typeof raw === 'boolean') return raw;
-      if (typeof raw !== 'string') return raw;
-      return { true: true, false: false }[raw.trim().toLowerCase()] ?? raw;
-    case 'number':
-      if (typeof raw === 'number') return raw;
-      // Junk stays as written, so it never matches a number.
-      return typeof raw === 'string' && /^\s*-?\d+(\.\d+)?\s*$/.test(raw)
-        ? Number(raw)
-        : raw;
-    case 'string':
-      return typeof raw === 'string' ? raw : String(raw);
-    case 'stringList': {
-      const list = Array.isArray(raw)
-        ? raw
-        : typeof raw === 'string'
-          ? raw.split(',')
-          : [];
-      return restrictToOptions(
-        definition,
-        list.map((v) => String(v).trim()).filter(Boolean),
-      );
-    }
-  }
-};
 
 /**
  * Keys of the deployed `config.toml` (or `webserver.conf`) that a System
@@ -296,7 +262,6 @@ const fileValueAsSetting = (key: string, raw: unknown): unknown => {
  */
 export function findIgnoredConfigTomlKeys(
   rawConfig: Record<string, unknown>,
-  state: LoginConfigState,
 ): IgnoredConfigTomlKey[] {
   const found: IgnoredConfigTomlKey[] = [];
   for (const [section, sectionValue] of Object.entries(rawConfig)) {
@@ -319,60 +284,29 @@ export function findIgnoredConfigTomlKeys(
       ) {
         continue;
       }
-      const inEffect = _.isEqual(
-        fileValueAsSetting(settingKey, raw),
-        settingValue(state, settingKey),
-      );
-      found.push({ path, settingKey, inEffect });
+      found.push({ path, settingKey });
     }
   }
   return found;
 }
 
-/**
- * Two info rows: the keys whose file value is not what runs, and the rest.
- */
+/** One info row listing the keys; info so it does not raise the sidebar badge (useAutoDiagnostics). */
 export function checkIgnoredConfigTomlKeys(
   rawConfig: Record<string, unknown> | null | undefined,
-  state: LoginConfigState,
 ): DiagnosticResult[] {
   if (!rawConfig) return [];
-  const [inEffect, overridden] = _.partition(
-    findIgnoredConfigTomlKeys(rawConfig, state),
-    (k) => k.inEffect,
-  );
-  const results: DiagnosticResult[] = [];
-  if (overridden.length > 0) {
-    results.push({
-      id: 'config-ignored-keys-not-applied',
-      // Info, not warning: config.toml no longer carries these keys, so they
-      // must not raise the sidebar badge (useAutoDiagnostics).
+  const found = findIgnoredConfigTomlKeys(rawConfig);
+  if (found.length === 0) return [];
+  return [
+    {
+      id: 'config-unused-keys',
       severity: 'info',
       category: 'config',
-      titleKey: 'diagnostics.IgnoredConfigKeysNotApplied',
-      descriptionKey: 'diagnostics.IgnoredConfigKeysNotAppliedDesc',
-      remediationKey: 'diagnostics.IgnoredConfigKeysNotAppliedFix',
+      titleKey: 'diagnostics.UnusedConfigKeys',
+      descriptionKey: 'diagnostics.UnusedConfigKeysDesc',
+      remediationKey: 'diagnostics.UnusedConfigKeysFix',
       linksSystemSettings: true,
-      interpolationValues: {
-        keys: overridden.map((k) => k.path).join(', '),
-        count: String(overridden.length),
-      },
-    });
-  }
-  if (inEffect.length > 0) {
-    results.push({
-      id: 'config-ignored-keys',
-      severity: 'info',
-      category: 'config',
-      titleKey: 'diagnostics.IgnoredConfigKeys',
-      descriptionKey: 'diagnostics.IgnoredConfigKeysDesc',
-      remediationKey: 'diagnostics.IgnoredConfigKeysFix',
-      linksSystemSettings: true,
-      interpolationValues: {
-        keys: inEffect.map((k) => k.path).join(', '),
-        count: String(inEffect.length),
-      },
-    });
-  }
-  return results;
+      interpolationValues: { keys: found.map((k) => k.path).join(', ') },
+    },
+  ];
 }

@@ -7,7 +7,66 @@ import {
   checkPlaceholderValues,
   checkSslMismatch,
   checkUrlFields,
+  fileOnlyConfig,
 } from '../configRules';
+
+// ---------------------------------------------------------------------------
+// fileOnlyConfig
+// ---------------------------------------------------------------------------
+
+describe('fileOnlyConfig', () => {
+  const raw = {
+    general: {
+      apiEndpoint: 'https://api.example.com',
+      connectionMode: 'SESSION',
+      hideAgents: true,
+    },
+    server: { webServerURL: 'https://web.example.com' },
+  };
+
+  it('keeps webServerURL in Electron, so its checks run', () => {
+    const fileConfig = fileOnlyConfig(raw, true);
+    expect(fileConfig.general).toEqual({
+      apiEndpoint: 'https://api.example.com',
+      connectionMode: 'SESSION',
+    });
+    expect(fileConfig.server).toEqual({
+      webServerURL: 'https://web.example.com',
+    });
+    expect(
+      checkConnectionMode(
+        'SESSION',
+        'https://api.example.com',
+        fileConfig.server.webServerURL as string,
+      ),
+    ).toHaveLength(1);
+    expect(checkUrlFields(fileConfig).checkedCount).toBe(2);
+  });
+
+  it('leaves webServerURL out in the browser, which never reads it', () => {
+    const fileConfig = fileOnlyConfig(
+      { ...raw, server: { webServerURL: 'not-a-url' } },
+      false,
+    );
+    expect(fileConfig.server).toEqual({});
+    expect(
+      checkConnectionMode(
+        'SESSION',
+        'https://api.example.com',
+        (fileConfig.server.webServerURL as string) ?? '',
+      ),
+    ).toEqual([]);
+    expect(checkUrlFields(fileConfig)).toEqual({
+      issues: [],
+      checkedCount: 1,
+    });
+    expect(
+      checkPlaceholderValues(
+        fileOnlyConfig({ server: { webServerURL: '[Web server URL]' } }, false),
+      ),
+    ).toEqual([]);
+  });
+});
 
 // ---------------------------------------------------------------------------
 // checkPlaceholderValues
@@ -216,7 +275,7 @@ describe('checkConnectionMode', () => {
     ).toEqual([]);
   });
 
-  it('should return warning for invalid connection mode value', () => {
+  it('reports an invalid connection mode as critical', () => {
     const results = checkConnectionMode(
       'INVALID_MODE',
       'https://api.example.com',
@@ -224,14 +283,14 @@ describe('checkConnectionMode', () => {
     );
     expect(results).toHaveLength(1);
     expect(results[0].id).toBe('config-invalid-connection-mode');
-    expect(results[0].severity).toBe('warning');
+    expect(results[0].severity).toBe('critical');
     expect(results[0].category).toBe('config');
     expect(results[0].interpolationValues?.value).toBe('INVALID_MODE');
     expect(results[0].interpolationValues?.allowed).toContain('API');
     expect(results[0].interpolationValues?.allowed).toContain('SESSION');
   });
 
-  it('should return warning when SESSION mode endpoints do not match', () => {
+  it('notes as info when SESSION mode endpoints differ', () => {
     const results = checkConnectionMode(
       'SESSION',
       'https://api.example.com',
@@ -239,7 +298,7 @@ describe('checkConnectionMode', () => {
     );
     expect(results).toHaveLength(1);
     expect(results[0].id).toBe('config-connection-mode-mismatch');
-    expect(results[0].severity).toBe('warning');
+    expect(results[0].severity).toBe('info');
     expect(results[0].interpolationValues?.apiEndpoint).toBe(
       'https://api.example.com',
     );
