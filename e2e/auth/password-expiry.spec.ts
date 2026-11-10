@@ -9,7 +9,8 @@
 // Mock strategy:
 //   - POST /server/login → password-expired response (mocked in beforeEach)
 //   - POST /server/update-password-no-auth → success response (mocked per-test when needed)
-//   - All other requests (GET / for version, the bootstrap POST /func/admin/gql) hit the real cluster.
+//   - GET /func/health and /func/ → mocked reachability probe / version
+//   - All other requests (the bootstrap POST /func/admin/gql) hit the real cluster.
 import { createAdminApiContext, purgeUserViaApi } from '../utils/admin-api';
 import {
   fillLoginEndpoint,
@@ -31,12 +32,7 @@ const EXPIRED_PASSWORD_RESPONSE = {
   },
 };
 
-/**
- * Minimal server version response returned by the mocked GET /func/ endpoint.
- * The connectUsingSession flow calls get_manager_version() before attempting
- * login; without a reachable backend this call throws and shows
- * "Network connection failed", preventing the login mock from ever being hit.
- */
+/** Answer for the mocked reachability probe and version read. */
 const MOCK_SERVER_VERSION_RESPONSE = {
   manager: '25.0.0',
   version: 'v6.20220615',
@@ -78,12 +74,10 @@ test.beforeEach(async ({ page, request }) => {
     },
   });
 
-  // Mock GET /func/ (the Backend.AI server version endpoint).
-  // In SESSION mode, connectUsingSession() calls get_manager_version() which
-  // issues GET <endpoint>/func/ before attempting login. Without a reachable
-  // backend this call throws and the UI shows "Network connection failed",
-  // preventing the login mock below from ever being reached.
-  await page.route(`${webServerEndpoint}/func/`, async (route) => {
+  // Mock the reachability probe (GET /func/health, falling back to /func/):
+  // connectUsingSession() awaits it before attempting login, and a failure
+  // shows "Network connection failed" before the login mock is reached.
+  await page.route(/\/func\/(health)?$/, async (route) => {
     if (route.request().method() === 'GET') {
       await route.fulfill({
         status: 200,

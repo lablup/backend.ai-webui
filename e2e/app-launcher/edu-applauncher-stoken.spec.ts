@@ -78,7 +78,8 @@ async function installConfigMock(page: Page): Promise<void> {
  */
 async function installBoundaryProbeMocks(page: Page): Promise<void> {
   await installConfigMock(page);
-  await page.route('**/func/', async (route) => {
+  // `/func/health` is the reachability probe; `/func/` answers the version.
+  await page.route(/\/func\/(health)?$/, async (route) => {
     if (route.request().method() !== 'GET') {
       await route.continue();
       return;

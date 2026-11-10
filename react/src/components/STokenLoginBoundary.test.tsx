@@ -126,11 +126,13 @@ const setEndpoint = (next: string) => {
 };
 
 type FakeClient = {
+  probeServer: Mock;
   get_manager_version: Mock;
   token_login: Mock;
 };
 
 const buildFakeClient = (overrides: Partial<FakeClient> = {}): FakeClient => ({
+  probeServer: vi.fn().mockResolvedValue(undefined),
   get_manager_version: vi.fn().mockResolvedValue('1.0'),
   token_login: vi.fn().mockResolvedValue(true),
   ...overrides,
@@ -237,13 +239,28 @@ describe('STokenLoginBoundary', () => {
     expect(connectedEventCount).toBe(0);
   });
 
-  test('reports server-unreachable when get_manager_version rejects', async () => {
+  test('probes the server without asking for the manager version before login', async () => {
+    const client = buildFakeClient();
+    mockedCreateBackendAIClient.mockImplementation(() => ({
+      client,
+      clientConfig: {},
+    }));
+    renderBoundary({});
+
+    await waitFor(() => {
+      expect(screen.getByText('children-rendered')).toBeInTheDocument();
+    });
+    expect(client.probeServer).toHaveBeenCalledTimes(1);
+    expect(client.get_manager_version).not.toHaveBeenCalled();
+  });
+
+  test('reports server-unreachable when the server probe rejects', async () => {
     const serverErr = new Error('network down');
     mockedCreateBackendAIClient.mockImplementation(() => ({
-      client: {
-        get_manager_version: vi.fn().mockRejectedValue(serverErr),
+      client: buildFakeClient({
+        probeServer: vi.fn().mockRejectedValue(serverErr),
         token_login: vi.fn(),
-      },
+      }),
       clientConfig: {},
     }));
     const onError = vi.fn();
@@ -313,6 +330,31 @@ describe('STokenLoginBoundary', () => {
     });
     expect(mockedTokenLogin).not.toHaveBeenCalled();
     expect(mockedConnectViaGQL).not.toHaveBeenCalled();
+    expect(connectedEventCount).toBe(0);
+  });
+
+  test('reports a manager failure after sign-in as account-unavailable, not token-invalid', async () => {
+    const client = buildFakeClient();
+    mockedCreateBackendAIClient.mockImplementation(() => ({
+      client,
+      clientConfig: {},
+    }));
+    mockedProbeLoginSession.mockResolvedValueOnce({
+      keypair: null,
+      user: null,
+      groups: null,
+    });
+    const incomplete = new LoginBootstrapIncompleteError('version read 502');
+    mockedConnectViaGQL.mockRejectedValueOnce(incomplete);
+    const onError = vi.fn();
+    renderBoundary({ onError });
+
+    await waitFor(() => {
+      expect(onError).toHaveBeenCalledWith({
+        kind: 'account-unavailable',
+        cause: incomplete,
+      });
+    });
     expect(connectedEventCount).toBe(0);
   });
 

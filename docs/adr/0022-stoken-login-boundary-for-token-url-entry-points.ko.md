@@ -60,7 +60,7 @@ sequenceDiagram
   opt sToken이 비어 있지 않음
     B->>B: document.cookie sToken=encoding한 값
   end
-  B->>S: get_manager_version과 session probe
+  B->>S: probeServer와 session probe
   S-->>B: 접속 가능 여부, 기존 session 유무
   B->>B: await initializeConfigOnce (config.toml)
   alt browser에 이미 session이 있음
@@ -124,7 +124,7 @@ sequenceDiagram
 
 ### 7. login 순서와 기존 session 경로
 
-- **Order**: boundary는 endpoint를 정하고, cookie를 쓰고, `createBackendAIClient('', '', apiEndpoint, 'SESSION')`로 client를 만든 뒤, `get_manager_version()`과 `helper/loginBootstrap.ts`의 `probeLoginSession(client)`를 함께 실행한다.
+- **Order**: boundary는 endpoint를 정하고, cookie를 쓰고, `createBackendAIClient('', '', apiEndpoint, 'SESSION')`로 client를 만든 뒤, `probeServer()`(익명 연결 확인)와 `helper/loginBootstrap.ts`의 `probeLoginSession(client)`를 함께 실행한다. 매니저 버전은 로그인한 뒤에만 `connectViaGQL`이 읽는다.
 - **Probe failure**: `probeLoginSession`이 `LoginBootstrapIncompleteError`가 아닌 이유로 reject하면 boundary는 session이 없다고 보고 `token_login`으로 넘어간다.
 - **Existing session**: `probeLoginSession`이 살아 있는 session을 찾으면 boundary는 `token_login`을 건너뛰고 그 session으로 `connectViaGQL`을 부른다. 이 경로는 `extraParams`, OTP, `force` 중 어느 것도 보내지 않는다. boundary는 token이 있든 없든 이 경로를 타고, session의 사용자와 token을 비교하지 않는다. 그래서 URL token은 browser가 이미 가진 session을 대신하지 않는다.
 - **Missing token**: boundary는 session이 없고 `sToken`이 비어 있을 때만 `missing-token`을 보고한다.
@@ -140,11 +140,11 @@ sequenceDiagram
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
 | `missing-token`       | 살아 있는 session이 없고 `sToken`이 비어 있음                                                                                                                                                                                               | Retry                                                          |
 | `endpoint-unresolved` | `useResolvedApiEndpoint()`가 빈 string을 돌려줌                                                                                                                                                                                             | Retry                                                          |
-| `server-unreachable`  | `get_manager_version()`이 throw함                                                                                                                                                                                                           | Retry                                                          |
+| `server-unreachable`  | `probeServer()`가 throw함                                                                                                                                                                                                                   | Retry                                                          |
 | `token-invalid`       | `tokenLogin`이나 `connectViaGQL`이 throw했고 다른 kind에 해당하지 않음                                                                                                                                                                      | Retry                                                          |
 | `totp-required`       | `failType`이 `require-totp-authentication` 또는 `require-totp-registration`, 이유에 잘못된 OTP가 적힌 `rejected-by-hook` 실패, 또는 그에 맞는 legacy 이유 문자열; 코드를 제출했거나 server가 코드를 거부했으면 `invalidOtp`는 언제나 true다 | inline OTP form; 코드는 다음 시도에 `otp`로 더해진다           |
 | `concurrent-session`  | server가 `active-login-session-exists`를 보고함                                                                                                                                                                                             | Login confirm; 같은 mount의 이후 시도는 `force: true`를 보낸다 |
-| `account-unavailable` | `probeLoginSession`이 찾은 session의 사용자를 manager가 돌려주지 않음                                                                                                                                                                       | Retry                                                          |
+| `account-unavailable` | `probeLoginSession`이 찾은 session의 사용자를 manager가 돌려주지 않음, 또는 `tokenLogin`이나 `connectViaGQL`이 `LoginBootstrapIncompleteError`를 throw함(로그인한 뒤 manager가 실패)                                                        | Retry                                                          |
 | `unknown`             | union에 선언되어 있음; 지금은 boundary의 어느 분기도 이 kind를 만들지 않음                                                                                                                                                                  | Retry                                                          |
 
 - **Classification**: `classifyTokenLoginFailure`는 구조화된 `failType`을 먼저 읽고, type을 빼고 보내는 webserver에 대해서는 `failReason`의 부분 문자열로 판정한다.

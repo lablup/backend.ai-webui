@@ -111,6 +111,7 @@ const fakeUtils = (remembered: string | null) => ({
 
 const makeClient = () => ({
   logout: vi.fn().mockResolvedValue(undefined),
+  get_manager_version: vi.fn().mockResolvedValue('26.9.0'),
   _config: { endpoint: 'https://api.example.com', endpointHost: 'api' },
 });
 
@@ -293,6 +294,41 @@ describe('connectViaGQL', () => {
     ]);
     expect(g.backendaioptions.set).toHaveBeenCalledWith('endpoints', updated);
   });
+
+  test('reads the manager version before the user query, once signed in', async () => {
+    const client = makeClient();
+    environment.mock.queueOperationResolver(() => {
+      expect(client.get_manager_version).toHaveBeenCalledTimes(1);
+      return { data: meWith() } as any;
+    });
+
+    await connectViaGQL(client, cfg, []);
+  });
+
+  test('fails the connect when the manager refuses the version', async () => {
+    const refusal = { isError: true, statusCode: 401 };
+    const client = {
+      ...makeClient(),
+      get_manager_version: vi.fn().mockRejectedValue(refusal),
+    };
+
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBe(refusal);
+    expect(client.logout).toHaveBeenCalledTimes(1);
+  });
+
+  test('keeps the session when the version read fails with a 5xx', async () => {
+    const client = {
+      ...makeClient(),
+      get_manager_version: vi
+        .fn()
+        .mockRejectedValue({ isError: true, statusCode: 502 }),
+    };
+
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBeInstanceOf(
+      LoginBootstrapIncompleteError,
+    );
+    expect(client.logout).not.toHaveBeenCalled();
+  });
 });
 
 // A manager that never answers: the request settles only when its signal is
@@ -300,7 +336,7 @@ describe('connectViaGQL', () => {
 function makeHangingClient() {
   return {
     requestTimeout: 30_000,
-    get_manager_version: vi.fn(
+    probeServer: vi.fn(
       (signal: AbortSignal) =>
         new Promise((_, reject) => {
           signal.addEventListener('abort', () =>
@@ -320,12 +356,14 @@ describe('probeManager (dev build)', () => {
     vi.useRealTimers();
   });
 
-  it('resolves when the manager answers', async () => {
+  it('resolves when the server answers, without asking for the version', async () => {
     const client = {
       requestTimeout: 30_000,
-      get_manager_version: vi.fn().mockResolvedValue('26.9.0'),
+      probeServer: vi.fn().mockResolvedValue(undefined),
+      get_manager_version: vi.fn(),
     };
     await expect(probeManager(client)).resolves.toBeUndefined();
+    expect(client.get_manager_version).not.toHaveBeenCalled();
     expect(escapeLoginProbe()).toBe(false);
   });
 
@@ -451,7 +489,7 @@ describe('connectViaGQL — cancelled attempt', () => {
     } as unknown as Parameters<typeof connectViaGQL>[3];
 
     await expect(
-      connectViaGQL({ logout: vi.fn() }, cfg, [], bootstrap, () => true),
+      connectViaGQL(makeClient(), cfg, [], bootstrap, () => true),
     ).rejects.toBeInstanceOf(LoginAttemptCancelledError);
     expect((globalThis as Record<string, unknown>).backendaiclient).toBe(
       current,

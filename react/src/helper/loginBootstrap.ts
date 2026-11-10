@@ -21,9 +21,9 @@ import {
  * same document doubles as the login check (FR-2367). `keypair` and `user`
  * resolve to the requester when called without arguments.
  *
- * No version directives (`@since` …) here: the probe runs alongside
- * `get_manager_version`, so the manager version is unknown while this is
- * sent and any gated field would be stripped.
+ * No version directives (`@since` …) here: the probe runs before
+ * `get_manager_version` (an authenticated call), so the manager version is
+ * unknown while this is sent and any gated field would be stripped.
  */
 const loginBootstrapQueryNode = graphql`
   query loginBootstrapQuery {
