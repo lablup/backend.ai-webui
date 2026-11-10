@@ -4,9 +4,9 @@
 #
 # Usage: dir="$(bash .github/scripts/lfs/install-git-lfs.sh)" && export PATH="$dir:$PATH"
 #
-# stdout carries only the directory holding `git-lfs` (empty when git-lfs is
-# reachable without a PATH entry); progress goes to stderr. When $GITHUB_PATH is
-# set the directory is also appended there for later workflow steps.
+# stdout carries only the directory holding this script's `git-lfs` (empty when
+# git-lfs is already reachable); progress goes to stderr. When $GITHUB_PATH is
+# set, that directory is also appended there for later workflow steps.
 # GIT_LFS_INSTALL_DIR overrides the install directory.
 set -euo pipefail
 
@@ -25,9 +25,8 @@ publish() {
 }
 
 if git lfs version >/dev/null 2>&1; then
+  # Publishing its directory (often /usr/bin) to $GITHUB_PATH would reorder PATH.
   log "already available: $(git lfs version)"
-  found="$(command -v git-lfs 2>/dev/null || true)"
-  publish "${found:+$(dirname "$found")}"
   exit 0
 fi
 

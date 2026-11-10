@@ -88,8 +88,8 @@ jobs:
     timeout-minutes: 10
     # Git LFS: the archive keeps each image blob exactly as the source ref stores
     # it, a pointer or raw bytes, and never downloads or re-cleans anything:
-    #   - checkout skips the smudge of the runner's preinstalled git-lfs, so the
-    #     staged copy holds the same pointers as the source tree;
+    #   - checkout skips the smudge of the runner's preinstalled git-lfs (no
+    #     downloads); the staged src/ copy is for the dry-run listing only;
     #   - the archive commit reuses the source tree's blobs (`read-tree`) and
     #     hashes the two added files with `--no-filters`, so no clean filter runs;
     #   - when the source tree holds pointers, the archive root gets a
@@ -181,6 +181,9 @@ jobs:
         #   src/book.config.yaml
         #   src/<lang>/...                   # md + images
         #   .archive-info.txt
+        #   .gitattributes                   # only when src/ holds LFS pointers
+        # The commit step takes src/ from the source tree itself; from this
+        # staging dir it uses only .archive-info.txt and .gitattributes.
         # Inputs flow through env vars to avoid shell injection.
         env:
           MINOR_LABEL: ${{ steps.resolve.outputs.minor_label }}

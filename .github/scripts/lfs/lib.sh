@@ -22,7 +22,7 @@ lfs_find_pointer_files() {
   while IFS= read -r -d '' f; do
     line=""
     IFS= read -r line < "$f" || true
-    if [ "$line" = "$LFS_POINTER_HEADER" ]; then
+    if [ "${line%$'\r'}" = "$LFS_POINTER_HEADER" ]; then
       printf '%s\n' "$f"
     fi
   done < <(find "$@" -type f -size -1025c -print0 2>/dev/null)

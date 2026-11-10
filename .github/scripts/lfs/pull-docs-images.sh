@@ -2,13 +2,22 @@
 # Replace Git LFS pointer files under the user manual source with the real
 # images, in each given checkout (default: this repository's working tree).
 #
-# Usage: pull-docs-images.sh [--ref <rev>] [--remote <name>] [<worktree-dir>...]
+# Usage: pull-docs-images.sh [--ref <rev>] [--remote <name|url>]...
+#                            [--fallback-remote <url>]... [--fallback-report <file>]
+#                            [<worktree-dir>...]
 #
-#   --ref     revision whose LFS objects to fetch in one batch (default: HEAD).
-#             Pass it when the docs source was checked out from another commit
-#             (`git checkout <rev> -- <src>`); files are always restored from
-#             the index, so a wrong --ref costs only extra downloads.
-#   --remote  remote to fetch from (default: origin, else the first remote).
+#   --ref              revision whose LFS objects to fetch in one batch (default:
+#                      HEAD). Pass it when the docs source was checked out from
+#                      another commit (`git checkout <rev> -- <src>`); files are
+#                      always restored from the index.
+#   --remote           remote name or URL to fetch from; repeatable, tried in
+#                      order. Default: origin, else the first remote.
+#   --fallback-remote  URL tried, anonymously, after those when they lack objects
+#                      (a fork PR's head repository).
+#   --fallback-report  file to which a line `<checkout><TAB><url>` is appended when
+#                      a fallback supplied objects the remotes lack: builds of the
+#                      base repository's branches fetch from the base repository
+#                      only, so the caller decides what to do about it.
 #
 # Covers both layouts: packages/backend.ai-webui-docs/src on normal branches and
 # src/ on docs-archive/* branches. Without pointer files it exits 0 at once and
@@ -22,13 +31,17 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "${HERE}/lib.sh"
 
 REF="HEAD"
-REMOTE=""
+REMOTES=()
+FALLBACKS=()
+FALLBACK_REPORT=""
 DIRS=()
 while [ $# -gt 0 ]; do
   case "$1" in
     --ref) REF="${2:?--ref needs a value}"; shift 2 ;;
-    --remote) REMOTE="${2:?--remote needs a value}"; shift 2 ;;
-    -h|--help) sed -n '2,17p' "$0"; exit 0 ;;
+    --remote) REMOTES+=("${2:?--remote needs a value}"); shift 2 ;;
+    --fallback-remote) FALLBACKS+=("${2:?--fallback-remote needs a value}"); shift 2 ;;
+    --fallback-report) FALLBACK_REPORT="${2:?--fallback-report needs a value}"; shift 2 ;;
+    -h|--help) sed -n '2,26p' "$0"; exit 0 ;;
     -*) echo "Unknown option: $1" >&2; exit 2 ;;
     *) DIRS+=("$1"); shift ;;
   esac
@@ -45,9 +58,9 @@ ensure_git_lfs() {
   git lfs version >/dev/null 2>&1 || { log "git-lfs is still not runnable after installing it." >&2; exit 1; }
 }
 
-pick_remote() {
+pick_remotes() {
   local top="$1"
-  if [ -n "$REMOTE" ]; then echo "$REMOTE"; return; fi
+  if [ ${#REMOTES[@]} -gt 0 ]; then printf '%s\n' "${REMOTES[@]}"; return; fi
   if git -C "$top" remote get-url origin >/dev/null 2>&1; then echo origin; return; fi
   git -C "$top" remote | head -n1
 }
@@ -57,6 +70,13 @@ report_pointers() {
   n="$(wc -l < "$list" | tr -d ' ')"
   head -n 10 "$list" | sed 's/^/  /' >&2
   [ "$n" -le 10 ] || echo "  … and $((n - 10)) more" >&2
+}
+
+fail_on_untracked() { # <top> <file listing untracked pointer files>
+  [ -s "$2" ] || return 0
+  log "ERROR: $1: untracked files hold Git LFS pointer text, which the docs build rejects; replace or delete them:" >&2
+  report_pointers "$2"
+  exit 1
 }
 
 pull_one() {
@@ -70,9 +90,15 @@ pull_one() {
 
   work="$(mktemp -d)"
   list="${work}/pointers"
-  (cd "$top" && lfs_find_pointer_files "${roots[@]}") > "$list"
+  # Only tracked files can be restored from the index. Untracked pointer text is
+  # left alone, but fails the run at the end: every consumer would reject it.
+  git -C "$top" ls-files -z -- "${roots[@]}" | tr '\0' '\n' | LC_ALL=C sort > "${work}/tracked"
+  (cd "$top" && lfs_find_pointer_files "${roots[@]}") | LC_ALL=C sort > "${work}/found"
+  LC_ALL=C comm -12 "${work}/found" "${work}/tracked" > "$list"
+  LC_ALL=C comm -23 "${work}/found" "${work}/tracked" > "${work}/untracked"
   n="$(wc -l < "$list" | tr -d ' ')"
   if [ "$n" -eq 0 ]; then
+    fail_on_untracked "$top" "${work}/untracked"
     log "${top}: no LFS files — nothing to do"
     rm -rf "$work"
     return 0
@@ -80,18 +106,47 @@ pull_one() {
   log "${top}: ${n} LFS pointer file(s) under ${roots[*]}"
 
   ensure_git_lfs
-  remote="$(pick_remote "$top")"
-  [ -n "$remote" ] || { log "${top} has no git remote to fetch LFS objects from." >&2; exit 1; }
+  local remotes=()
+  while IFS= read -r remote; do [ -z "$remote" ] || remotes+=("$remote"); done < <(pick_remotes "$top")
+  [ ${#remotes[@]} -gt 0 ] || { log "${top} has no git remote to fetch LFS objects from." >&2; exit 1; }
 
   local includes=()
   for root in "${roots[@]}"; do includes+=("${root}/**"); done
-  log "fetching LFS objects of ${REF} from ${remote}"
   # git-lfs installs its hooks wherever core.hooksPath points; keep them out of
   # the checkout, whose later git commands would run them without git-lfs on PATH.
   local hooks="${work}/hooks"
   mkdir -p "$hooks"
-  git -C "$top" -c core.hooksPath="$hooks" \
-    lfs fetch --include="$(IFS=,; echo "${includes[*]}")" --exclude="" "$remote" "$REF"
+  # A fetch that misses objects still downloads the rest, so each later remote
+  # only fills in what the earlier ones lacked. A fallback URL is fetched without
+  # the base repository's credentials (actions/checkout's extraheader).
+  lfs_fetch() { # <remote> [git -c options...]
+    local from="$1"; shift
+    log "fetching LFS objects of ${REF} from ${from}"
+    git -C "$top" -c core.hooksPath="$hooks" "$@" \
+      lfs fetch --include="$(IFS=,; echo "${includes[*]}")" --exclude="" "$from" "$REF"
+  }
+  local r fetched=0 via_fallback=0
+  for r in "${remotes[@]}"; do
+    if lfs_fetch "$r"; then fetched=1; break; fi
+    log "warning: fetching from ${r} was incomplete" >&2
+  done
+  if [ "$fetched" -eq 0 ]; then
+    for r in ${FALLBACKS[@]+"${FALLBACKS[@]}"}; do
+      # The override must cover the LFS endpoint `<repo>.git/info/lfs`, so it is
+      # keyed on the URL with and without `.git`.
+      local base="${r%/}"; base="${base%.git}"
+      if lfs_fetch "$r" -c "http.${base}.extraheader=" -c "http.${base}.git.extraheader="; then
+        fetched=1; via_fallback=1; break
+      fi
+      log "warning: fetching from ${r} was incomplete" >&2
+    done
+  fi
+  if [ "$fetched" -eq 0 ]; then
+    log "ERROR: ${top}: the LFS objects of ${REF} are not all available from: ${remotes[*]} ${FALLBACKS[*]:-}; nothing was changed." >&2
+    log "For a fork PR's images, add --fallback-remote <the fork's clone URL>." >&2
+    rm -rf "$work"
+    exit 1
+  fi
 
   # Restore from the index through the LFS smudge filter. The attributes file
   # covers checkouts whose .gitattributes does not mark the images (yet). It
@@ -109,7 +164,16 @@ pull_one() {
     -c filter.lfs.clean="git-lfs clean -- %f"
     -c filter.lfs.required=true
     -c lfs.fetchexclude=)
-  "${lfs_git[@]}" checkout --pathspec-from-file="${list}.nul" --pathspec-file-nul
+  if ! "${lfs_git[@]}" checkout --pathspec-from-file="${list}.nul" --pathspec-file-nul; then
+    if git -C "$top" --literal-pathspecs -c filter.lfs.required=false \
+      checkout --pathspec-from-file="${list}.nul" --pathspec-file-nul; then
+      log "ERROR: ${top}: the LFS checkout failed; the pointer files were restored." >&2
+    else
+      log "ERROR: ${top}: the LFS checkout failed and restoring the pointer files failed too; run 'git checkout -- ${roots[*]}' to restore them." >&2
+    fi
+    rm -rf "$work"
+    exit 1
+  fi
   # Files written in the same second as the index are re-hashed by later git
   # commands, which without the clean filter would see them as modified.
   # Refreshing with the filter, once they are no longer racy, records them clean.
@@ -120,15 +184,20 @@ pull_one() {
   while IFS= read -r path; do
     [ -f "${top}/${path}" ] || { echo "  missing after checkout: ${path}" >&2; missing=1; }
   done < "$list"
-  (cd "$top" && lfs_find_pointer_files "${roots[@]}") > "$list"
+  (cd "$top" && lfs_find_pointer_files "${roots[@]}") | LC_ALL=C sort | LC_ALL=C comm -12 - "${work}/tracked" > "$list"
   n="$(wc -l < "$list" | tr -d ' ')"
   if [ "$n" -gt 0 ] || [ "$missing" -ne 0 ]; then
     log "ERROR: ${top}: ${n} file(s) are still Git LFS pointers after the pull:" >&2
     report_pointers "$list"
-    log "Check network access to the LFS server of '${remote}', then re-run this script. 'git checkout -- <path>' restores a missing file." >&2
+    log "Check network access to the LFS server, then re-run this script. 'git checkout -- <path>' restores a missing file." >&2
     exit 1
   fi
   log "${top}: materialized all LFS images"
+  fail_on_untracked "$top" "${work}/untracked"
+  if [ "$via_fallback" -eq 1 ]; then
+    log "warning: ${top}: some LFS objects came only from ${r}; ${remotes[*]} does not have them." >&2
+    [ -z "$FALLBACK_REPORT" ] || printf '%s\t%s\n' "$top" "$r" >> "$FALLBACK_REPORT"
+  fi
 
   if [ -z "${CI:-}" ] && [ -z "$(git -C "$top" config --get filter.lfs.process || true)" ]; then
     log "note: git-lfs filters are not configured here. Run 'git lfs install' before committing images."

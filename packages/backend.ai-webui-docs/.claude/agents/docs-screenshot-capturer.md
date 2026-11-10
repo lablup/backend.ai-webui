@@ -16,12 +16,7 @@ You are an expert screenshot automation engineer for the Backend.AI WebUI user m
 
 **`browser_take_screenshot` saves files under `.playwright-mcp/`, NOT to the project root.**
 
-When you specify a filename, the file is actually saved under `.playwright-mcp/`. **You MUST copy files to their final destinations after capture:**
-
-```bash
-cp .playwright-mcp/./src/{lang}/images/{file}.png \
-   ./src/{lang}/images/{file}.png
-```
+When you specify a filename, the file is actually saved under `.playwright-mcp/`. **You MUST move captures to their final destinations through the visual-change gate** (Step 5), never with `cp`: a re-capture is byte-different from the committed PNG even when nothing on screen changed, and the gate copies only captures that are new or visibly changed.
 
 ### Page Loading After Navigation
 
@@ -78,6 +73,8 @@ Follow the user's explicit instructions.
 
 **Language order**: en → ja → ko → th
 
+**Before the first capture, empty the capture directories** (`rm -rf .playwright-mcp/./src/*/images`): `.playwright-mcp/` persists across sessions, and Step 5 accepts every PNG it finds there.
+
 **Process for each language:**
 1. Switch the app language via language settings
 2. Wait for UI to refresh in the new language
@@ -91,15 +88,23 @@ Follow the user's explicit instructions.
 - **Prefer element-level screenshots** using the `ref` parameter
 - Full-page captures only for page overview screenshots
 - Use `browser_snapshot` to find the correct `ref`
+- A screenshot with no translatable text may be captured once; copy that file into each language's capture directory under `.playwright-mcp/`, never point one language's `--from` at another's
 
-### Step 5: Copy Screenshots to Final Destinations
+### Step 5: Accept Screenshots Through the Visual-Change Gate
+
+`docs-toolkit accept:images` copies a capture when there is no existing image (`new`) or the existing one differs visibly (`changed`), and leaves the existing file untouched when the two look the same (`unchanged`):
+
+When the toolkit is a workspace package rather than an installed release, build it first (`pnpm --filter backend.ai-docs-toolkit build`); its `dist/` is not committed.
 
 ```bash
 for lang in en ja ko th; do
-  cp .playwright-mcp/./src/${lang}/images/*.png \
-     ./src/${lang}/images/
+  pnpm exec docs-toolkit accept:images \
+    --from .playwright-mcp/./src/${lang}/images \
+    --to ./src/${lang}/images
 done
 ```
+
+Add `--json` for the measured difference per file. **Never bypass the gate** with `cp`. If a skipped image truly must be replaced, rerun the gate with `--force <file.png>` and state in your report which file you forced and why. If an existing image is a Git LFS pointer, fetch the real images with `git lfs pull --exclude=""` (the empty exclude overrides a `fetchexclude` in `.lfsconfig`; use the project's own pull script when it has one) and rerun.
 
 **Verify per-language uniqueness:**
 ```bash
@@ -147,8 +152,11 @@ md5 ./src/*/images/{filename}.png
 
 ## Output
 
+Start with the gate summary per language (`N new, N changed, N unchanged (skipped)`) and list every skipped (`unchanged`) and `forced` file.
+
 For each captured screenshot, report:
 - Filename and save location
+- Gate status (`new` / `changed` / `unchanged` / `forced`), and for `forced` the reason
 - Which documentation file references it
 - Whether TODO comments were removed
 - Cleanup actions performed

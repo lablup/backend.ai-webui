@@ -3283,6 +3283,7 @@
     "TensorboardPath": "TensorBoard가 참조할 로그 디렉토리 경로",
     "Terminate": "종료",
     "TerminateSession": "세션 종료하기",
+    "TerminateSessionsPartialFailureDescription": "세션 {{total}}개 중 {{failed}}개를 종료하지 못했습니다. 아래에서 세션별 사유를 확인하세요.",
     "TerminatedAt": "종료 시간",
     "Threshold": "수거 기준값",
     "ToStatus": "이후 상태",

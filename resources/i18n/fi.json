@@ -3281,6 +3281,7 @@
     "TensorboardPath": "TensorBoardin lokihakemisto",
     "Terminate": "Lopeta",
     "TerminateSession": "Lopeta istunto",
+    "TerminateSessionsPartialFailureDescription": "{{failed}}/{{total}} istuntoa ei voitu lopettaa. Tarkista kunkin istunnon syy alta.",
     "TerminatedAt": "Lopetusaika",
     "Threshold": "Kynnysarvo",
     "ToStatus": "Kohdetila",

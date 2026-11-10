@@ -37,6 +37,7 @@ on:
       - packages/backend.ai-docs-toolkit/**
       - .github/workflows/pr-preview.yml
       - .github/scripts/pr-preview/**
+      - .github/scripts/lfs/**
 
 permissions:
   contents: read
@@ -204,19 +205,24 @@ jobs:
         id: urls
         run: echo "short_hash=$(echo "${{ github.event.pull_request.head.sha }}" | cut -c1-7)" >> "$GITHUB_OUTPUT"
 
-      # Head images may be Git LFS pointers (#11040); a no-op while none is.
-      # The build script pulls the merge base's own LFS objects after swapping
-      # its `src` in.
-      - name: Pull the manual images (Git LFS)
-        run: bash .github/scripts/lfs/pull-docs-images.sh
-
+      # The script pulls Git LFS images for head and merge base (#11040). A fork
+      # PR's new images may exist only in the fork's LFS store, so the head pull
+      # falls back to the fork's public URL, fetched anonymously (#11055).
       - name: Build both docs trees and mark the changes
+        env:
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          HEAD_CLONE_URL: ${{ github.event.pull_request.head.repo.clone_url }}
         run: |
+          fork_args=()
+          if [ -n "$HEAD_REPO" ] && [ "$HEAD_REPO" != "$GITHUB_REPOSITORY" ]; then
+            fork_args=(--head-lfs-remote "$HEAD_CLONE_URL")
+          fi
           bash .github/scripts/pr-preview/build-docs-preview.sh \
             --base-ref "origin/${{ github.base_ref }}" \
             --languages "${{ needs.changes.outputs.docs_langs }}" \
             --out "${RUNNER_TEMP}/docs-preview" \
-            --label "PR preview"
+            --label "PR preview" \
+            "${fork_args[@]}"
 
       # `docs-meta.json` is re-derived rather than passed through the job outputs
       # so the artifact carries the same JSON the detection script produced.
@@ -246,6 +252,16 @@ jobs:
           path: docs-analysis/
           if-no-files-found: error
           retention-days: 7
+
+      # Fails after the uploads: the images built from the fork must reach this
+      # repository's LFS storage before merging, or main's builds break.
+      - name: Check that the PR's LFS images are in this repository
+        run: |
+          report="${RUNNER_TEMP}/docs-preview/lfs-fork-only.txt"
+          [ -f "$report" ] || exit 0
+          echo "::error::$(head -n1 "$report")"
+          cat "$report"
+          exit 1
 
   # ── the write half ─────────────────────────────────────────────────────────
   # `publish` and `report` hold the only write tokens in this workflow, one
