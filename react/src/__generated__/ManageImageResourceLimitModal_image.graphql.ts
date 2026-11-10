@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<235ac74fd8e626cc23f25485136f4853>>
+ * @generated SignedSource<<d8400afa57fbc94026aa9fa713a29ed3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,15 +11,12 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type ManageImageResourceLimitModal_image$data = {
-  readonly architecture: string | null | undefined;
-  readonly namespace: string | null | undefined;
-  readonly registry: string | null | undefined;
   readonly resource_limits: ReadonlyArray<{
     readonly key: string | null | undefined;
     readonly max: string | null | undefined;
     readonly min: string | null | undefined;
   } | null | undefined> | null | undefined;
-  readonly tag: string | null | undefined;
+  readonly row_id: string | null | undefined;
   readonly " $fragmentType": "ManageImageResourceLimitModal_image";
 };
 export type ManageImageResourceLimitModal_image$key = {
@@ -33,6 +30,13 @@ const node: ReaderFragment = {
   "metadata": null,
   "name": "ManageImageResourceLimitModal_image",
   "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "row_id",
+      "storageKey": null
+    },
     {
       "alias": null,
       "args": null,
@@ -64,40 +68,12 @@ const node: ReaderFragment = {
         }
       ],
       "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "registry",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "namespace",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "architecture",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "tag",
-      "storageKey": null
     }
   ],
   "type": "ImageNode",
   "abstractKey": null
 };
 
-(node as any).hash = "7c19e8a276f5c67a5823503248fd911f";
+(node as any).hash = "464ad0741296cef1b31411a172ecf9a0";
 
 export default node;

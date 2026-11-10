@@ -14,6 +14,7 @@ import {
   BAIModal,
   BAIModalProps,
   BAITextInput,
+  useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
@@ -36,19 +37,17 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const { message } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
   const formRef = React.useRef<FormInstance>(null);
 
   const image = useFragment(
     graphql`
       fragment ManageAppsModal_image on ImageNode {
+        row_id
         labels {
           key
           value
         }
-        registry
-        namespace
-        architecture
-        tag
       }
     `,
     imageFrgmt,
@@ -56,18 +55,11 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
 
   const [commitModifyImageInput, isInFlightModifyImageInput] =
     useMutation<ManageAppsModalMutation>(graphql`
-      mutation ManageAppsModalMutation(
-        $target: String!
-        $architecture: String
-        $props: ModifyImageInput!
-      ) {
-        modify_image(
-          target: $target
-          architecture: $architecture
-          props: $props
-        ) {
-          ok
-          msg
+      mutation ManageAppsModalMutation($id: UUID!, $input: UpdateImageInput!) {
+        updateImage(id: $id, input: $input) {
+          item {
+            id
+          }
         }
       }
     `);
@@ -120,23 +112,24 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
             }
           },
         );
+        if (!image.row_id) {
+          message.error(t('dialog.ErrorOccurred'));
+          return;
+        }
         // Service ports are stored as image label metadata read by the
         // manager at session-creation time, so a modification applies to
         // newly created sessions immediately without any image reinstall.
         commitModifyImageInput({
           variables: {
-            target: `${image?.registry}/${image?.namespace}:${image?.tag}`,
-            architecture: image?.architecture,
-            props: {
-              labels: labels,
-              resource_limits: undefined,
+            id: image.row_id,
+            input: {
+              // An empty label list left the labels untouched under `modify_image`.
+              labels: _.isEmpty(labels)
+                ? undefined
+                : _.fromPairs(_.map(labels, (l) => [l.key, l.value])),
             },
           },
-          onCompleted: (res, errors) => {
-            if (!res?.modify_image?.ok) {
-              message.error(res?.modify_image?.msg);
-              return;
-            }
+          onCompleted: (_res, errors) => {
             if (errors && errors?.length > 0) {
               const errorMsgList = _.map(errors, (error) => error.message);
               for (const error of errorMsgList) {
@@ -148,8 +141,8 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
             }
             return;
           },
-          onError: () => {
-            message.error(t('dialog.ErrorOccurred'));
+          onError: (error) => {
+            message.error(getErrorMessage(error, t('dialog.ErrorOccurred')));
           },
         });
       })

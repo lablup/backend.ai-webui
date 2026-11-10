@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<23252b52fcd76ea55a3dc390eaa4ee51>>
+ * @generated SignedSource<<2eee50cb3c4f2ac61017fd4d1eb2eeaf>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,14 +11,11 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type ManageAppsModal_image$data = {
-  readonly architecture: string | null | undefined;
   readonly labels: ReadonlyArray<{
     readonly key: string | null | undefined;
     readonly value: string | null | undefined;
   } | null | undefined> | null | undefined;
-  readonly namespace: string | null | undefined;
-  readonly registry: string | null | undefined;
-  readonly tag: string | null | undefined;
+  readonly row_id: string | null | undefined;
   readonly " $fragmentType": "ManageAppsModal_image";
 };
 export type ManageAppsModal_image$key = {
@@ -32,6 +29,13 @@ const node: ReaderFragment = {
   "metadata": null,
   "name": "ManageAppsModal_image",
   "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "row_id",
+      "storageKey": null
+    },
     {
       "alias": null,
       "args": null,
@@ -56,40 +60,12 @@ const node: ReaderFragment = {
         }
       ],
       "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "registry",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "namespace",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "architecture",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "tag",
-      "storageKey": null
     }
   ],
   "type": "ImageNode",
   "abstractKey": null
 };
 
-(node as any).hash = "6eb4eed02e97c3b3290ac08758d6c251";
+(node as any).hash = "fec1ae759ec0b780ff6905784330a09a";
 
 export default node;

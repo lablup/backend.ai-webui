@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c4abc3049561a173e72900256633ecfb>>
+ * @generated SignedSource<<ef076dd1486b222dc8bfdfe10fad2434>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,39 +9,30 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type ModifyImageInput = {
+export type UpdateImageInput = {
   architecture?: string | null | undefined;
-  digest?: string | null | undefined;
+  configDigest?: string | null | undefined;
   image?: string | null | undefined;
-  is_local?: boolean | null | undefined;
-  labels?: ReadonlyArray<KVPairInput | null | undefined> | null | undefined;
+  isLocal?: boolean | null | undefined;
+  labels?: any | null | undefined;
   name?: string | null | undefined;
   registry?: string | null | undefined;
-  resource_limits?: ReadonlyArray<ResourceLimitInput | null | undefined> | null | undefined;
-  size_bytes?: number | null | undefined;
-  supported_accelerators?: ReadonlyArray<string | null | undefined> | null | undefined;
+  resourceLimits?: any | null | undefined;
+  sizeBytes?: number | null | undefined;
+  supportedAccelerators?: string | null | undefined;
   tag?: string | null | undefined;
   type?: string | null | undefined;
 };
-export type KVPairInput = {
-  key?: string | null | undefined;
-  value?: string | null | undefined;
-};
-export type ResourceLimitInput = {
-  key?: string | null | undefined;
-  max?: string | null | undefined;
-  min?: string | null | undefined;
-};
 export type ManageAppsModalMutation$variables = {
-  architecture?: string | null | undefined;
-  props: ModifyImageInput;
-  target: string;
+  id: string;
+  input: UpdateImageInput;
 };
 export type ManageAppsModalMutation$data = {
-  readonly modify_image: {
-    readonly msg: string | null | undefined;
-    readonly ok: boolean | null | undefined;
-  } | null | undefined;
+  readonly updateImage: {
+    readonly item: {
+      readonly id: string;
+    };
+  };
 };
 export type ManageAppsModalMutation = {
   response: ManageAppsModalMutation$data;
@@ -49,58 +40,54 @@ export type ManageAppsModalMutation = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "architecture"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "props"
-},
-v2 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "target"
-},
-v3 = [
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "id"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "input"
+  }
+],
+v1 = [
   {
     "alias": null,
     "args": [
       {
         "kind": "Variable",
-        "name": "architecture",
-        "variableName": "architecture"
+        "name": "id",
+        "variableName": "id"
       },
       {
         "kind": "Variable",
-        "name": "props",
-        "variableName": "props"
-      },
-      {
-        "kind": "Variable",
-        "name": "target",
-        "variableName": "target"
+        "name": "input",
+        "variableName": "input"
       }
     ],
-    "concreteType": "ModifyImage",
+    "concreteType": "UpdateImagePayload",
     "kind": "LinkedField",
-    "name": "modify_image",
+    "name": "updateImage",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "kind": "ScalarField",
-        "name": "ok",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "msg",
+        "concreteType": "ImageV2",
+        "kind": "LinkedField",
+        "name": "item",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          }
+        ],
         "storageKey": null
       }
     ],
@@ -109,40 +96,32 @@ v3 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/),
-      (v2/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "ManageAppsModalMutation",
-    "selections": (v3/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v2/*: any*/),
-      (v0/*: any*/),
-      (v1/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "ManageAppsModalMutation",
-    "selections": (v3/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "b7a57119037085ec9f08346991633e0a",
+    "cacheID": "f93a70eb20fcd814b7400c0c035fd193",
     "id": null,
     "metadata": {},
     "name": "ManageAppsModalMutation",
     "operationKind": "mutation",
-    "text": "mutation ManageAppsModalMutation(\n  $target: String!\n  $architecture: String\n  $props: ModifyImageInput!\n) {\n  modify_image(target: $target, architecture: $architecture, props: $props) {\n    ok\n    msg\n  }\n}\n"
+    "text": "mutation ManageAppsModalMutation(\n  $id: UUID!\n  $input: UpdateImageInput!\n) {\n  updateImage(id: $id, input: $input) {\n    item {\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "bb280196745e96f5c488d1d785a5b012";
+(node as any).hash = "28579d8c1eb2396f289771a0f6747cc4";
 
 export default node;
