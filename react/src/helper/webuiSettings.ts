@@ -224,6 +224,12 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
       max: 107374182400,
       unit: 'Bytes',
     },
+    {
+      ...def('fileUploadChunkSize', 'domain', 'number', 'storage'),
+      min: 0,
+      max: 1024,
+      unit: 'MiB',
+    },
 
     // Sidebar.
     def('menuBlocklist', 'domain', 'stringList', 'menu', 'blockList'),
