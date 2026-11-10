@@ -1,6 +1,5 @@
 import { BAIVFolderSelectPaginatedQuery$data, VFolderFilter, VFolderScope } from '../../__generated__/BAIVFolderSelectPaginatedQuery.graphql';
 import { BAIComplexSelectProps, BAILabeledValue } from '../BAIComplexSelect';
-export type { VFolderFilter, VFolderScope };
 export type VFolderSelectNode = NonNullable<BAIVFolderSelectPaginatedQuery$data['scopedVFoldersV2']>['edges'][number]['node'];
 export interface BAIVFolderSelectRef {
     refetch: () => void;
