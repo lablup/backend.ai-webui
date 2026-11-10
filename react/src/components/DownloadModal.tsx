@@ -7,6 +7,7 @@ import {
   useCliDownloadMap,
   useSuspendedBackendaiClient,
 } from '../hooks';
+import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 import BAITabs from './BAITabs';
 import SourceCodeView from './SourceCodeView';
 import { Banner } from '@lablup/ui-common/Banner';
@@ -233,10 +234,11 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
+  useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
 
-  const showDesktopApp = baiClient?._config?.allowAppDownloadPanel;
-  const showCLI = baiClient?._config?.allowCLIDownloadPanel;
+  const showDesktopApp = loginConfig.allowAppDownloadPanel;
+  const showCLI = loginConfig.allowCLIDownloadPanel;
 
   // `BAITabs` renders the strip and the active panel as bare siblings, so the
   // gap under the underline has to come from the panel itself; adding it in

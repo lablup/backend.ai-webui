@@ -1,5 +1,7 @@
 # 0028 — WebUI settings in the app config settings key
 
+> ADR 0031 replaces the `applyConfigToClient` edge of the first diagram, the "Saving" diagram, the `_config` copy and the "Apply and Reset" wording of section 4, and the "Reload to apply" consequence.
+
 ## Summary
 
 > Unfamiliar terms are collected in the [Glossary](#glossary) at the end.

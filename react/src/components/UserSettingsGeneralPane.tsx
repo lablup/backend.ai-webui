@@ -18,6 +18,7 @@ import {
   useCustomThemeConfig,
 } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
+import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 import MyKeypairManagementModal from './MyKeypairManagementModal';
 import SSHKeypairManagementModal from './SSHKeypairManagementModal';
 import SettingList, { SettingGroup } from './SettingList';
@@ -40,7 +41,8 @@ const UserSettingsGeneralPane = () => {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
-  const baiClient = useSuspendedBackendaiClient();
+  useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
 
   const { themeMode, setThemeMode } = useThemeMode();
   const {
@@ -178,7 +180,7 @@ const UserSettingsGeneralPane = () => {
         // Theme family selection is operator-gated (config.toml
         // `allowThemeMode`) and needs more than the `default` family in the
         // catalog (a theme.json without a `families` block yields none).
-        baiClient._config.allowThemeMode &&
+        loginConfig.allowThemeMode &&
         !isThemePreviewMode &&
         Object.keys(families).length > 1
           ? {

@@ -29,6 +29,7 @@ import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useIsProjectAgnosticPage } from '../hooks/useIsProjectAgnosticPage';
 import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
+import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 import { toProjectContext } from '../types/projectContext';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import BAITabs from './BAITabs';
@@ -278,6 +279,7 @@ const FolderExplorerBody: React.FC<{
 
   const [fetchKey, updateFetchKey] = useFetchKey();
   const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const currentDomain = useCurrentDomainValue();
   const { pageProject } = usePageProject();
   const currentUserAccessKey = baiClient?._config?.accessKey;
@@ -457,6 +459,7 @@ const FolderExplorerBody: React.FC<{
       ref={fileExplorerRef}
       targetVFolderId={vfolderID}
       targetVFolderName={folderName ?? 'folder'}
+      isDirectorySizeVisible={loginConfig.isDirectorySizeVisible}
       deletingFilePaths={deletingFilePaths}
       fetchKey={fetchKey}
       onUpload={(files: RcFile[], currentPath: string) => {

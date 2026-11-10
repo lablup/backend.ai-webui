@@ -8,6 +8,7 @@ import { ContainerRegistryEditorModalModifyRegistryMutation } from '../__generat
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 import BAICodeEditor from './BAICodeEditor';
 import BAIFormItem from './BAIFormItem';
 import HiddenFormItem from './HiddenFormItem';
@@ -95,6 +96,7 @@ const ContainerRegistryEditorModal: React.FC<
   const { message, modal } = App.useApp();
 
   const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
 
   const formRef = useRef<FormInstance<RegistryFormInput>>(null);
 
@@ -130,7 +132,7 @@ const ContainerRegistryEditorModal: React.FC<
   );
 
   const projectTypes: Array<'GENERAL' | 'MODEL_STORE'> = _.includes(
-    baiClient._config.blockList,
+    loginConfig.blockList,
     'model-store',
   )
     ? ['GENERAL']

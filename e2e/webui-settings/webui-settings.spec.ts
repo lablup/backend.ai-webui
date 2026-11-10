@@ -1,5 +1,5 @@
 // E2E tests for the config.toml → app config migration and the System Settings
-// page (#10436, #10677).
+// page (#10436, #10677), which saves each row on change (#10941).
 //
 // Every test here writes the cluster-wide `settings` documents
 // (`publicConfigByDomain.<domain>.settings`, `domainConfig.settings`), so the
@@ -19,20 +19,19 @@ import {
 } from '../utils/test-util';
 import {
   allSettingRows,
-  applyButton,
-  applyWebUISettings,
   changedMarker,
   commitRowInput,
   differentValueFor,
+  effectiveValuesOf,
   enablePublicSlice,
+  notSavedDialog,
   openLoginPage,
   openWebUISettings,
-  readClientConfig,
-  readClientConfigForRows,
   resetRow,
   rowByKey,
   rowCheckbox,
   rowInput,
+  saveNotice,
   settingGroup,
   settingRow,
   suppressAdminViewSwitchTour,
@@ -169,8 +168,14 @@ test.describe(
         }
       });
 
-      await test.step('Apply is disabled while nothing changed', async () => {
-        await expect(applyButton(page)).toBeDisabled();
+      await test.step('the save notice is shown and there is no Apply step', async () => {
+        await expect(saveNotice(page)).toBeVisible();
+        await expect(saveNotice(page)).toContainText(
+          'Changes are saved as you make them and apply to every user.',
+        );
+        await expect(
+          page.getByRole('button', { name: 'Apply', exact: true }),
+        ).toHaveCount(0);
       });
     });
 
@@ -188,7 +193,7 @@ test.describe(
       await expect(allSettingRows(page)).toHaveCount(0);
     });
 
-    test('a checkbox row shows the changed marker and resets to the default', async ({
+    test('a checkbox row saves on change and its reset removes the saved key', async ({
       page,
       request,
     }) => {
@@ -201,15 +206,15 @@ test.describe(
       await checkbox.click();
       await expect(checkbox).toBeChecked({ checked: !before });
       await expect(changedMarker(row)).toBeVisible();
-      await expect(applyButton(page)).toBeEnabled();
+      await api.expectSaved('domain', { hideAgents: !before });
 
       await resetRow(page, row);
       await expect(checkbox).toBeChecked({ checked: before });
       await expect(changedMarker(row)).toHaveCount(0);
-      await expect(applyButton(page)).toBeDisabled();
+      await api.expectSaved('domain', undefined);
     });
 
-    test('a number row shows the changed marker and resets to the default', async ({
+    test('a number row saves on commit and its reset removes the saved key', async ({
       page,
       request,
     }) => {
@@ -217,14 +222,16 @@ test.describe(
       await openWebUISettings(page);
       const row = settingRow(page, 'maxCPUCoresPerContainer');
       const before = await rowInput(row).inputValue();
+      const next = Number(before) + 1;
 
-      await commitRowInput(row, String(Number(before) + 1));
+      await commitRowInput(row, String(next));
       await expect(changedMarker(row)).toBeVisible();
-      await expect(applyButton(page)).toBeEnabled();
+      await api.expectSaved('domain', { maxCPUCoresPerContainer: next });
 
       await resetRow(page, row);
       await expect(rowInput(row)).toHaveValue(before);
       await expect(changedMarker(row)).toHaveCount(0);
+      await api.expectSaved('domain', undefined);
     });
 
     test('the Reset button deletes both saved documents after a typed confirmation', async ({
@@ -238,13 +245,14 @@ test.describe(
 
       // Save one domain and one public value first, so the reset has
       // documents to delete.
+      const maskBefore = await rowCheckbox(checkboxRow).isChecked();
       await rowCheckbox(checkboxRow).click();
       await commitRowInput(textRow, 'e2e-realm');
-      await applyWebUISettings(page);
       await expect(changedMarker(checkboxRow)).toBeVisible();
       await expect(changedMarker(textRow)).toBeVisible();
-      expect(await api.readSettings('domain')).toBeDefined();
-      expect(await api.readSettings('public')).toBeDefined();
+      await api.expectSaved('domain', { maskUserInfo: !maskBefore });
+      await api.expectSaved('public', { ssoRealmName: 'e2e-realm' });
+      await page.evaluate(() => ((window as any).__e2eNoReload = true));
 
       await toolbarResetButton(page).click();
       const dialog = page.getByRole('dialog', {
@@ -258,73 +266,85 @@ test.describe(
       await expect(confirm).toBeDisabled();
       await dialog.getByRole('textbox').fill('Reset');
       await expect(confirm).toBeEnabled();
-      await Promise.all([page.waitForEvent('load'), confirm.click()]);
-      await waitForClientReady(page);
-      await expect(settingGroup(page, 'session')).toBeVisible({
-        timeout: 30_000,
-      });
+      await confirm.click();
+      await expect(dialog).toBeHidden();
 
       await expect(changedMarker(checkboxRow)).toHaveCount(0);
       await expect(changedMarker(textRow)).toHaveCount(0);
-      await expect(applyButton(page)).toBeDisabled();
-      expect(await api.readSettings('domain')).toBeUndefined();
-      expect(await api.readSettings('public')).toBeUndefined();
+      await api.expectSaved('domain', undefined);
+      await api.expectSaved('public', undefined);
+      // Reset all no longer reloads the page.
+      expect(await page.evaluate(() => (window as any).__e2eNoReload)).toBe(
+        true,
+      );
     });
 
-    test('Apply confirms, reloads, saves only the changed keys and resetting them removes the document', async ({
+    test('changes save only the changed keys, survive a reload, and resetting them removes the document', async ({
       page,
       request,
     }) => {
+      const defaultHideAgents = defaultValueOf(
+        rowByKey('hideAgents'),
+      ) as boolean;
+      const defaultMaxCpu = defaultValueOf(
+        rowByKey('maxCPUCoresPerContainer'),
+      ) as number;
       await signInAsAdmin(page, request);
-      await waitForClientReady(page);
-      const fileHideAgents = await readClientConfig(page, 'hideAgents');
-      const fileMaxCpu = await readClientConfig(
-        page,
-        'maxCPUCoresPerContainer',
-      );
       await openWebUISettings(page);
 
       const hideAgentsRow = settingRow(page, 'hideAgents');
       const maxCpuRow = settingRow(page, 'maxCPUCoresPerContainer');
-      const nextMaxCpu = Number(fileMaxCpu) + 3;
+      const nextMaxCpu = defaultMaxCpu + 3;
 
-      await test.step('change two domain rows and apply', async () => {
+      await test.step('change two domain rows', async () => {
         await rowCheckbox(hideAgentsRow).click();
         await commitRowInput(maxCpuRow, String(nextMaxCpu));
-        await applyWebUISettings(page);
       });
 
-      await test.step('the reloaded page keeps the rows marked and the client reads the new values', async () => {
-        await expect(changedMarker(hideAgentsRow)).toBeVisible();
-        await expect(changedMarker(maxCpuRow)).toBeVisible();
-        await expect(rowInput(maxCpuRow)).toHaveValue(String(nextMaxCpu));
-        expect(await readClientConfig(page, 'hideAgents')).toBe(
-          !fileHideAgents,
-        );
-        expect(await readClientConfig(page, 'maxCPUCoresPerContainer')).toBe(
-          nextMaxCpu,
-        );
-      });
-
-      await test.step('only the two differing keys were saved, in the domain document', async () => {
-        expect(await api.readSettings('domain')).toEqual({
-          hideAgents: !fileHideAgents,
+      await test.step('only the two changed keys are saved, in the domain document', async () => {
+        await api.expectSaved('domain', {
+          hideAgents: !defaultHideAgents,
           maxCPUCoresPerContainer: nextMaxCpu,
         });
         expect(await api.readSettings('public')).toBeUndefined();
+        expect(
+          effectiveValuesOf(await api.snapshot(), [
+            rowByKey('hideAgents'),
+            rowByKey('maxCPUCoresPerContainer'),
+          ]),
+        ).toEqual({
+          hideAgents: !defaultHideAgents,
+          maxCPUCoresPerContainer: nextMaxCpu,
+        });
       });
 
-      await test.step('resetting both rows and applying removes the document and the defaults return', async () => {
+      await test.step('a reloaded page shows the saved values', async () => {
+        await page.reload();
+        await expect(settingGroup(page, 'session')).toBeVisible({
+          timeout: 30_000,
+        });
+        await expect(changedMarker(hideAgentsRow)).toBeVisible();
+        await expect(rowCheckbox(hideAgentsRow)).toBeChecked({
+          checked: !defaultHideAgents,
+        });
+        await expect(changedMarker(maxCpuRow)).toBeVisible();
+        await expect(rowInput(maxCpuRow)).toHaveValue(String(nextMaxCpu));
+      });
+
+      await test.step('resetting both rows removes the document and the defaults return after a reload', async () => {
         await resetRow(page, hideAgentsRow);
         await resetRow(page, maxCpuRow);
-        await applyWebUISettings(page);
+        await api.expectSaved('domain', undefined);
+        await page.reload();
+        await expect(settingGroup(page, 'session')).toBeVisible({
+          timeout: 30_000,
+        });
         await expect(changedMarker(hideAgentsRow)).toHaveCount(0);
         await expect(changedMarker(maxCpuRow)).toHaveCount(0);
-        expect(await api.readSettings('domain')).toBeUndefined();
-        expect(await readClientConfig(page, 'hideAgents')).toBe(fileHideAgents);
-        expect(await readClientConfig(page, 'maxCPUCoresPerContainer')).toBe(
-          fileMaxCpu,
-        );
+        await expect(rowCheckbox(hideAgentsRow)).toBeChecked({
+          checked: defaultHideAgents,
+        });
+        await expect(rowInput(maxCpuRow)).toHaveValue(String(defaultMaxCpu));
       });
     });
 
@@ -337,41 +357,82 @@ test.describe(
       const row = settingRow(page, 'ssoRealmName');
 
       await commitRowInput(row, 'e2e-realm');
-      await applyWebUISettings(page);
 
       await expect(changedMarker(row)).toBeVisible();
       await expect(rowInput(row)).toHaveValue('e2e-realm');
-      expect(await api.readSettings('public')).toEqual({
-        ssoRealmName: 'e2e-realm',
-      });
+      await api.expectSaved('public', { ssoRealmName: 'e2e-realm' });
       expect(await api.readSettings('domain')).toBeUndefined();
     });
 
-    test('leaving the page with unapplied changes asks for confirmation', async ({
+    test('a change reaches the running app without a reload', async ({
       page,
       request,
     }) => {
       await signInAsAdmin(page, request);
       await openWebUISettings(page);
-      const row = settingRow(page, 'maskUserInfo');
-      await rowCheckbox(row).click();
-      await expect(changedMarker(row)).toBeVisible();
+      await page.evaluate(() => ((window as any).__e2eNoReload = true));
+      const downloadsItem = page.getByRole('menuitem', { name: 'Downloads' });
+      const openUserMenu = async () => {
+        await page.getByTestId('user-dropdown-button').click();
+        await expect(
+          page.getByRole('menuitem', { name: 'Log Out' }),
+        ).toBeVisible();
+      };
 
-      await getSideNavItem(page, 'Information').click();
-      // `modal.confirm` renders an AlertModal, not a plain dialog.
-      const dialog = page.getByRole('alertdialog', {
-        name: 'Leave without applying?',
+      // Both download panels are on by default.
+      await openUserMenu();
+      await expect(downloadsItem).toBeVisible();
+      await page.keyboard.press('Escape');
+
+      await rowCheckbox(settingRow(page, 'allowAppDownloadPanel')).click();
+      await rowCheckbox(settingRow(page, 'allowCLIDownloadPanel')).click();
+      await openUserMenu();
+      await expect(downloadsItem).toHaveCount(0);
+      await page.keyboard.press('Escape');
+
+      await api.expectSaved('domain', {
+        allowAppDownloadPanel: false,
+        allowCLIDownloadPanel: false,
       });
-      await expect(dialog).toBeVisible();
+      expect(await page.evaluate(() => (window as any).__e2eNoReload)).toBe(
+        true,
+      );
+    });
 
-      await dialog.getByRole('button', { name: 'Cancel' }).click();
-      await expect(dialog).toBeHidden();
-      await expect(page).toHaveURL(/\/admin\/system-settings/);
-      await expect(changedMarker(row)).toBeVisible();
+    test('a failed save rolls the row back and names the setting', async ({
+      page,
+      request,
+    }) => {
+      await signInAsAdmin(page, request);
+      await openWebUISettings(page);
+      await page.route('**/admin/gql', async (route) => {
+        if (
+          (route.request().postData() ?? '').includes(
+            'scopedAtomicBulkUpsertAppConfigFragments',
+          )
+        ) {
+          await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              data: null,
+              errors: [{ message: 'e2e-rejected' }],
+            }),
+          });
+          return;
+        }
+        await route.fallback();
+      });
+      const row = settingRow(page, 'maskUserInfo');
+      const checkbox = rowCheckbox(row);
+      const before = await checkbox.isChecked();
 
-      await getSideNavItem(page, 'Information').click();
-      await dialog.getByRole('button', { name: 'Discard' }).click();
-      await expect(page).toHaveURL(/\/admin\/information/);
+      await checkbox.click();
+      const dialog = notSavedDialog(page);
+      await expect(dialog).toBeVisible({ timeout: 15_000 });
+      await expect(dialog).toContainText('Mask user information');
+      await expect(checkbox).toBeChecked({ checked: before });
+      await expect(changedMarker(row)).toHaveCount(0);
       expect(await api.readSettings('domain')).toBeUndefined();
     });
   },
@@ -385,34 +446,46 @@ test.describe(
   'System Settings - Precedence',
   { tag: ['@critical', '@config', '@webui-settings', '@integration'] },
   () => {
-    test('a value in the domain document overrides the default for every domain key after sign-in', async ({
+    test('a value in the domain document overrides the default for every domain key', async ({
       browser,
       request,
     }) => {
-      const baselinePage = await signInAsAdminInNewContext(browser, request);
-      const baseline = await readClientConfigForRows(baselinePage, DOMAIN_ROWS);
-      await baselinePage.context().close();
-
       const override: SettingsDocument = Object.fromEntries(
         DOMAIN_ROWS.map((setting) => [
           setting.key,
-          differentValueFor(setting, baseline[setting.key]),
+          differentValueFor(setting, defaultValueOf(setting)),
         ]),
       );
       await api.writeSettings('domain', override);
 
-      const page = await signInAsAdminInNewContext(browser, request);
-      const effective = await readClientConfigForRows(page, DOMAIN_ROWS);
-      await page.context().close();
+      await test.step('the effective value of every domain key is the document value', async () => {
+        const effective = effectiveValuesOf(await api.snapshot(), DOMAIN_ROWS);
+        for (const setting of DOMAIN_ROWS) {
+          expect(effective[setting.key], setting.key).toEqual(
+            override[setting.key],
+          );
+        }
+      });
 
-      for (const setting of DOMAIN_ROWS) {
-        expect(effective[setting.key], setting.key).toEqual(
-          override[setting.key],
-        );
-        expect(effective[setting.key], setting.key).not.toEqual(
-          baseline[setting.key],
-        );
-      }
+      await test.step('a fresh sign-in shows every domain row with the document value', async () => {
+        const page = await signInAsAdminInNewContext(browser, request);
+        await openWebUISettings(page);
+        for (const setting of DOMAIN_ROWS) {
+          const row = settingRow(page, setting.key);
+          await expect(changedMarker(row), setting.key).toBeVisible();
+          const value = override[setting.key];
+          if (setting.type === 'boolean') {
+            await expect(rowCheckbox(row), setting.key).toBeChecked({
+              checked: value as boolean,
+            });
+          } else if (setting.type === 'string') {
+            await expect(rowInput(row), setting.key).toHaveValue(String(value));
+          }
+          // A number row may format its value with a unit; the marker above
+          // is its contract.
+        }
+        await page.context().close();
+      });
     });
 
     test('a wrong-typed value or an absent key keeps the default', async ({
@@ -428,10 +501,6 @@ test.describe(
       ];
       const rows = probed.map(rowByKey);
 
-      const baselinePage = await signInAsAdminInNewContext(browser, request);
-      const baseline = await readClientConfigForRows(baselinePage, rows);
-      await baselinePage.context().close();
-
       // Each value has the wrong type for its key; `ssoRealmName` is absent.
       await api.writeSettings('domain', {
         hideAgents: 'yes',
@@ -440,15 +509,15 @@ test.describe(
         enableModelFolders: 1,
       });
 
-      const page = await signInAsAdminInNewContext(browser, request);
-      const effective = await readClientConfigForRows(page, rows);
+      const effective = effectiveValuesOf(await api.snapshot(), rows);
       for (const setting of rows) {
         expect(effective[setting.key], setting.key).toEqual(
-          baseline[setting.key],
+          defaultValueOf(setting),
         );
       }
 
       // The page falls back the same way: none of these rows is marked.
+      const page = await signInAsAdminInNewContext(browser, request);
       await openWebUISettings(page);
       for (const key of probed) {
         await expect(changedMarker(settingRow(page, key))).toHaveCount(0);
@@ -460,24 +529,46 @@ test.describe(
       browser,
       request,
     }) => {
-      const rows = [rowByKey('hideAgents'), rowByKey('ssoRealmName')];
-      const baselinePage = await signInAsAdminInNewContext(browser, request);
-      const baseline = await readClientConfigForRows(baselinePage, rows);
-      await baselinePage.context().close();
+      // `maskUserInfo` is a domain key, `enableInteractiveLoginAccountSwitch`
+      // a public one; each is written to the other scope's document with a
+      // value that differs from its default (off and on).
+      expect(defaultValueOf(rowByKey('maskUserInfo'))).toBe(false);
+      expect(
+        defaultValueOf(rowByKey('enableInteractiveLoginAccountSwitch')),
+      ).toBe(true);
+      await api.writeSettings('public', { maskUserInfo: true });
+      await api.writeSettings('domain', {
+        enableInteractiveLoginAccountSwitch: false,
+      });
 
-      // `hideAgents` is a domain key, `ssoRealmName` a public one.
-      await api.writeSettings('public', { hideAgents: !baseline.hideAgents });
-      await api.writeSettings('domain', { ssoRealmName: 'e2e-wrong-scope' });
+      expect(
+        effectiveValuesOf(await api.snapshot(), [
+          rowByKey('maskUserInfo'),
+          rowByKey('enableInteractiveLoginAccountSwitch'),
+        ]),
+      ).toEqual({
+        maskUserInfo: false,
+        enableInteractiveLoginAccountSwitch: true,
+      });
 
       const context = await browser.newContext();
       const page = await context.newPage();
       await enablePublicSlice(page, request, api.domainName);
       await signInAsAdmin(page, request);
-      const effective = await readClientConfigForRows(page, rows);
+      await navigateTo(
+        page,
+        'interactive-login?callback=https://example.com&name=Test',
+      );
+      await expect(
+        page.getByText(/Would you like to sign in with/),
+      ).toBeVisible({ timeout: 30_000 });
+      await expect(
+        page.getByText(/Would you like to sign in with \S{2}\*{3,}/),
+      ).toHaveCount(0);
+      await expect(
+        page.getByRole('button', { name: 'Sign in with a different account' }),
+      ).toBeVisible();
       await context.close();
-
-      expect(effective.hideAgents).toEqual(baseline.hideAgents);
-      expect(effective.ssoRealmName).toEqual(baseline.ssoRealmName);
     });
 
     test('a value in the public document overrides the default on the login page before sign-in', async ({
@@ -556,7 +647,7 @@ test.describe(
       expect(publicDoc?.[api.domainName]?.settings?.ssoRealmName).toBe(
         'e2e-realm',
       );
-      if (fileVendors.includes('openid')) {
+      if (defaultVendors.includes('openid')) {
         await expect(
           page.getByRole('button', { name: 'Login with e2e-realm' }),
         ).toBeVisible();
@@ -600,14 +691,7 @@ test.describe(
       browser,
       request,
     }) => {
-      const baselinePage = await signInAsAdminInNewContext(browser, request);
-      const fileHideAgents = (await readClientConfig(
-        baselinePage,
-        'hideAgents',
-      )) as boolean;
-      await baselinePage.context().close();
-
-      const hideAgents = !fileHideAgents;
+      const hideAgents = !(defaultValueOf(rowByKey('hideAgents')) as boolean);
       await api.writeSettings('domain', { hideAgents });
 
       const page = await signInAsAdminInNewContext(browser, request);
@@ -658,7 +742,6 @@ test.describe(
       });
 
       const page = await signInAsAdminInNewContext(browser, request);
-      expect(await readClientConfig(page, 'maxCPUCoresPerContainer')).toBe(1);
       await navigateTo(page, 'session/start?step=1');
       await expect(
         page.getByRole('button', { name: 'Resource Presets' }),
@@ -778,9 +861,7 @@ test.describe(
 
 // ===========================================================================
 // 5. Effects, per page: one document carries every key the page reads, so
-//    one sign-in verifies them all. The precedence group already proves that
-//    each document key reaches `_config`; these tests prove what each
-//    `_config` value does on screen.
+//    one sign-in verifies them all.
 // ===========================================================================
 
 const PYTHON_IMAGE = 'cr.backend.ai/multiarch/python:3.9-ubuntu20.04@x86_64';

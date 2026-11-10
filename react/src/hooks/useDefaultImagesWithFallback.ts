@@ -12,6 +12,7 @@ import {
   parseImageString,
   resolveImageFullName,
 } from '../helper';
+import { loginConfigState, useEffectiveLoginConfig } from './useWebUIConfig';
 import { useBAILogger } from 'backend.ai-ui';
 import { atom, useAtom } from 'jotai';
 import { atomWithDefault } from 'jotai/utils';
@@ -46,20 +47,18 @@ const IMAGES_QUERY = graphql`
 
 const defaultFileBrowserImageAtom = atomWithDefault<
   string | null | undefined | Promise<string | null | undefined>
->(async () => {
-  const baiClient = await backendaiClientPromise;
-  return _.isEmpty(baiClient._config?.defaultFileBrowserImage)
-    ? undefined
-    : baiClient._config?.defaultFileBrowserImage;
+>(async (get) => {
+  const image = get(loginConfigState)?.defaultFileBrowserImage;
+  await backendaiClientPromise;
+  return _.isEmpty(image) ? undefined : image;
 });
 
 const systemSSHImageAtom = atomWithDefault<
   string | null | undefined | Promise<string | null | undefined>
->(async () => {
-  const baiClient = await backendaiClientPromise;
-  return _.isEmpty(baiClient._config?.systemSSHImage)
-    ? undefined
-    : baiClient._config?.systemSSHImage;
+>(async (get) => {
+  const image = get(loginConfigState)?.systemSSHImage;
+  await backendaiClientPromise;
+  return _.isEmpty(image) ? undefined : image;
 });
 const systemSSHImageInfoAtom =
   atom<NonNullable<useDefaultImagesWithFallbackQuery$data['images']>[number]>();
@@ -184,13 +183,14 @@ export const useDefaultSystemSSHImageWithFallback = () => {
 export const useResolveImageReference = () => {
   'use memo';
   const relayEnv = useRelayEnvironment();
-  const baiClient = useSuspendedBackendaiClient();
+  useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const { logger } = useBAILogger();
   // Mirror the candidate set `ImageEnvironmentSelectFormItems` queries, so both
   // launch paths resolve the same reference to the same image. Narrowing to
   // installed images here would make a tag-less default pick an older image
   // than the launcher form does when `showNonInstalledImages` is enabled.
-  const imageQueryVariables = baiClient?._config?.showNonInstalledImages
+  const imageQueryVariables = loginConfig.showNonInstalledImages
     ? {}
     : { installed: true };
 

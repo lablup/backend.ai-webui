@@ -3,7 +3,7 @@
 // cards, and `/start` redirects to the dashboard keeping the query string.
 import { StartPage } from '../utils/classes/common/StartPage';
 import { FolderCreationModal } from '../utils/classes/vfolder/FolderCreationModal';
-import { skipUnlessClientConfig } from '../utils/feature-gate-util';
+import { skipUnlessWebUISetting } from '../utils/feature-gate-util';
 import {
   loginAsAdmin,
   loginAsUser,
@@ -263,14 +263,12 @@ test.describe(
       }) => {
         const startPage = new StartPage(page);
 
-        // Declarative config gate (FR-3112): the "Start Deployment" card
-        // (formerly titled "Start Model Service") is rendered only when
-        // `enableModelFolders = true` in config.toml (the catalog locks the
-        // `start.deployment` card otherwise).
-        await skipUnlessClientConfig(
+        // Declarative settings gate (FR-3112): the "Start Deployment" card
+        // is rendered only when the `enableModelFolders` System Setting is on.
+        await skipUnlessWebUISetting(
           page,
           'enableModelFolders',
-          'Start Deployment card requires `enableModelFolders = true` in config.toml',
+          'Start Deployment card requires the `enableModelFolders` System Setting',
         );
 
         // 1. The config enables the feature — the card MUST be present; absence is a failure.

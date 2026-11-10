@@ -12,21 +12,23 @@ import { getDefaultLoginConfig } from '../../../helper/loginConfig';
 import {
   buildWebUISettingsDocument,
   isValidWebUISetting,
+  pickWebUISettingsOfScope,
   readWebUISettingFromState,
   WEBUI_SETTING_DEFINITIONS,
   WEBUI_SETTING_GROUPS,
   WEBUI_SETTINGS_CONFIG_KEY,
   type WebUISettingDefinition,
+  type WebUISettingScope,
   type WebUISettingsDocument,
   ownedWebUISettings,
   withForeignWebUISettings,
-  WEBUI_SETTINGS_DEFAULT_TAB,
 } from '../../../helper/webuiSettings';
 import { useCurrentDomainValue } from '../../../hooks';
 import {
   useUpdateDomainAppConfig,
   useUpdatePublicDomainAppConfig,
 } from '../../../hooks/useAppConfig';
+import { setEffectiveWebUISettings } from '../../../hooks/useWebUIConfig';
 import MenuKeySelector from './MenuKeySelector';
 import PluginPathInput from './PluginPathInput';
 import SettingsJsonModal from './SettingsJsonModal';
@@ -39,17 +41,16 @@ import {
   BAIDeleteConfirmModal,
   BAIFlex,
   BAIMultiSelector,
-  BAIModal,
   BAINumberInput,
   BAIUncontrolledInput,
   useErrorMessageResolver,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
+import { useStore } from 'jotai';
 import * as _ from 'lodash-es';
-import { Braces, CircleAlert, Redo2, SquarePenIcon } from 'lucide-react';
-import { useEffect, useEffectEvent, useRef, useState } from 'react';
+import { Braces, Redo2, SquarePenIcon } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useBlocker } from 'react-router-dom';
 
 interface WebUISettingListProps {
   /** The saved `domainConfig.settings` document, if any. */
@@ -67,6 +68,8 @@ const MENU_KEY_SETTINGS: ReadonlySet<string> = new Set([
   'menuInactivelist',
 ]);
 
+const SCOPES: ReadonlyArray<WebUISettingScope> = ['domain', 'public'];
+
 const parseStringList = (raw: string): Array<string> =>
   raw
     .split(',')
@@ -76,8 +79,9 @@ const parseStringList = (raw: string): Array<string> =>
 /**
  * Edits the flat `settings` app-config document (#10436). Each row's default
  * is the code default (`getDefaultLoginConfig`); only rows that differ from it
- * are saved, so an untouched row keeps following the default. Apply writes both scopes and
- * reloads, which is how the overrides reach `backendaiclient._config`.
+ * are saved, so an untouched row keeps following the default. A change shows
+ * at once (row and `loginConfigState`) and is written in the background;
+ * a failed write rolls it back (#10941).
  */
 const WebUISettingList: React.FC<WebUISettingListProps> = ({
   savedDomainSettings,
@@ -88,73 +92,176 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
   const { modal, message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
   const labels = useWebUISettingLabels();
+  const store = useStore();
   const updateDomainAppConfig = useUpdateDomainAppConfig();
   const updatePublicDomainAppConfig = useUpdatePublicDomainAppConfig();
 
   const baseState = getDefaultLoginConfig();
   // Only the keys a definition owns: the announcement beside them is saved by
-  // its own modal and must not make the page dirty.
+  // its own modal. Read once; afterwards this page's own state is the truth.
   const saved: WebUISettingsDocument = ownedWebUISettings({
     ...savedPublicSettings,
     ...savedDomainSettings,
   });
-  const [draft, setDraft] = useState<WebUISettingsDocument>(saved);
-  const isDirty = !_.isEqual(draft, saved);
+  const [values, setValues] = useState<WebUISettingsDocument>(saved);
+  // Read by the background writes, which outlive the render that started them.
+  const valuesRef = useRef<WebUISettingsDocument>(saved);
+  const confirmedRef = useRef<WebUISettingsDocument>(saved);
+  // Writes to one scope run one at a time (each is a read-modify-write); a
+  // change made meanwhile sets `rerun` and is written with the latest values.
+  const writesRef = useRef<
+    Record<WebUISettingScope, { running: boolean; rerun: boolean }>
+  >({
+    domain: { running: false, rerun: false },
+    public: { running: false, rerun: false },
+  });
 
   const defaultValueOf = (definition: WebUISettingDefinition) =>
     readWebUISettingFromState(baseState, definition);
   const valueOf = (definition: WebUISettingDefinition) =>
-    definition.key in draft &&
-    isValidWebUISetting(definition, draft[definition.key])
-      ? draft[definition.key]
+    definition.key in values &&
+    isValidWebUISetting(definition, values[definition.key])
+      ? values[definition.key]
       : defaultValueOf(definition);
-  const setValue = (definition: WebUISettingDefinition, value: unknown) => {
-    setDraft((prev) => {
-      const next = { ...prev };
-      // Only a clear or a row reset drops the key; a typed default is saved.
-      if (value === undefined) {
-        delete next[definition.key];
+
+  const show = (next: WebUISettingsDocument) => {
+    valuesRef.current = next;
+    setValues(next);
+    setEffectiveWebUISettings(
+      store,
+      buildWebUISettingsDocument('public', next),
+      buildWebUISettingsDocument('domain', next),
+    );
+  };
+
+  const writeScope = (
+    scope: WebUISettingScope,
+    doc: WebUISettingsDocument | undefined,
+  ) =>
+    (scope === 'domain' ? updateDomainAppConfig : updatePublicDomainAppConfig)(
+      WEBUI_SETTINGS_CONFIG_KEY,
+      (current: unknown) => withForeignWebUISettings(current, doc),
+    );
+
+  // Puts back the confirmed value of each key the failed write carried, unless
+  // the row has been changed again since.
+  const rollBack = (
+    scope: WebUISettingScope,
+    attempt: WebUISettingsDocument,
+    error: unknown,
+  ) => {
+    const confirmed = confirmedRef.current;
+    const failed = WEBUI_SETTING_DEFINITIONS.filter(
+      (definition) =>
+        definition.scope === scope &&
+        !_.isEqual(attempt[definition.key], confirmed[definition.key]),
+    );
+    const next = { ...valuesRef.current };
+    for (const { key } of failed) {
+      if (!_.isEqual(next[key], attempt[key])) continue;
+      if (key in confirmed) {
+        next[key] = confirmed[key];
       } else {
-        next[definition.key] = value;
+        delete next[key];
       }
-      return next;
+    }
+    show(next);
+    if (
+      !_.isEqual(
+        buildWebUISettingsDocument(scope, next),
+        buildWebUISettingsDocument(scope, confirmed),
+      )
+    ) {
+      writesRef.current[scope].rerun = true;
+    }
+    modal.error({
+      title: t('webuiSettings.NotSaved'),
+      content: (
+        <BAIFlex direction="column" align="stretch" gap="xs">
+          <Text>{getErrorMessage(error)}</Text>
+          <Text>{t('webuiSettings.NotSavedItems')}</Text>
+          <BAIFlex direction="column" align="start" gap="xxs">
+            {failed.map((definition) => (
+              <Text key={definition.key} weight="semibold">
+                {labels.items[definition.key].title}
+              </Text>
+            ))}
+          </BAIFlex>
+        </BAIFlex>
+      ),
     });
   };
 
-  // Set before the post-Apply reload so neither guard asks to confirm it.
-  const isLeavingAfterApplyRef = useRef(false);
-  // A `?tab=` switch unmounts the draft too; other query changes (the
-  // user-settings modal, a palette deep link) keep it mounted.
-  const tabOf = (search: string) =>
-    new URLSearchParams(search).get('tab') ?? WEBUI_SETTINGS_DEFAULT_TAB;
-  const blocker = useBlocker(
-    ({ currentLocation, nextLocation }) =>
-      isDirty &&
-      (currentLocation.pathname !== nextLocation.pathname ||
-        tabOf(currentLocation.search) !== tabOf(nextLocation.search)),
-  );
-  const confirmLeave = useEffectEvent(() => {
-    modal.confirm({
-      title: t('webuiSettings.LeaveWithoutApplying'),
-      content: t('webuiSettings.LeaveWithoutApplyingDesc'),
-      okText: t('button.Discard'),
-      okButtonProps: { danger: true },
-      cancelText: t('button.Cancel'),
-      onOk: () => blocker.proceed?.(),
-      onCancel: () => blocker.reset?.(),
-    });
-  });
-  useEffect(() => {
-    if (blocker.state === 'blocked') {
-      confirmLeave();
+  const flush = async (scope: WebUISettingScope) => {
+    const write = writesRef.current[scope];
+    if (write.running) {
+      write.rerun = true;
+      return;
     }
-  }, [blocker.state]);
-  const shouldConfirmUnload = useEffectEvent(
-    () => isDirty && !isLeavingAfterApplyRef.current,
-  );
+    write.running = true;
+    try {
+      do {
+        write.rerun = false;
+        const attempt = valuesRef.current;
+        const doc = buildWebUISettingsDocument(scope, attempt);
+        if (
+          _.isEqual(
+            doc,
+            buildWebUISettingsDocument(scope, confirmedRef.current),
+          )
+        ) {
+          continue;
+        }
+        try {
+          await writeScope(scope, doc);
+          confirmedRef.current = {
+            ..._.omit(
+              confirmedRef.current,
+              _.keys(pickWebUISettingsOfScope(confirmedRef.current, scope)),
+            ),
+            ...pickWebUISettingsOfScope(attempt, scope),
+          };
+        } catch (error) {
+          rollBack(scope, attempt, error);
+        }
+      } while (write.rerun);
+    } finally {
+      write.running = false;
+    }
+  };
+
+  // Shows `next` at once, then writes each scope it changed: one write per
+  // scope, however many keys changed (JSON import, reset all).
+  const commit = (next: WebUISettingsDocument) => {
+    const prev = valuesRef.current;
+    show(next);
+    for (const scope of SCOPES) {
+      if (
+        !_.isEqual(
+          buildWebUISettingsDocument(scope, prev),
+          buildWebUISettingsDocument(scope, next),
+        )
+      ) {
+        void flush(scope);
+      }
+    }
+  };
+
+  const setValue = (definition: WebUISettingDefinition, value: unknown) => {
+    const next = { ...valuesRef.current };
+    // Only a clear or a row reset drops the key; a typed default is saved.
+    if (value === undefined) {
+      delete next[definition.key];
+    } else {
+      next[definition.key] = value;
+    }
+    commit(next);
+  };
+
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (shouldConfirmUnload()) {
+      const writes = writesRef.current;
+      if (writes.domain.running || writes.public.running) {
         e.preventDefault();
       }
     };
@@ -162,81 +269,8 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, []);
 
-  const [isApplyConfirmOpen, setIsApplyConfirmOpen] = useState(false);
-  const [isApplying, setIsApplying] = useState(false);
-
-  // Writes both scopes from `next` and reloads; the reloaded page runs the
-  // merge again, which is the feedback.
-  const changedTitles = (
-    next: WebUISettingsDocument,
-    scope: WebUISettingDefinition['scope'],
-  ) =>
-    WEBUI_SETTING_DEFINITIONS.filter(
-      (definition) =>
-        definition.scope === scope &&
-        !_.isEqual(next[definition.key], saved[definition.key]),
-    ).map((definition) => labels.items[definition.key].title);
-
-  const persist = async (next: WebUISettingsDocument) => {
-    setIsApplying(true);
-    let isDomainSaved = false;
-    try {
-      await updateDomainAppConfig(
-        WEBUI_SETTINGS_CONFIG_KEY,
-        (current: unknown) =>
-          withForeignWebUISettings(
-            current,
-            buildWebUISettingsDocument('domain', next),
-          ),
-      );
-      isDomainSaved = true;
-      await updatePublicDomainAppConfig(
-        WEBUI_SETTINGS_CONFIG_KEY,
-        (current: unknown) =>
-          withForeignWebUISettings(
-            current,
-            buildWebUISettingsDocument('public', next),
-          ),
-      );
-      isLeavingAfterApplyRef.current = true;
-      window.location.reload();
-    } catch (error) {
-      setIsApplying(false);
-      // The domain write lands first, so a public failure leaves a partial save.
-      const notApplied = [
-        ...(isDomainSaved ? [] : changedTitles(next, 'domain')),
-        ...changedTitles(next, 'public'),
-      ];
-      modal.error({
-        title: isDomainSaved
-          ? t('webuiSettings.PartiallyApplied')
-          : t('webuiSettings.NotApplied'),
-        content: (
-          <BAIFlex direction="column" align="stretch" gap="xs">
-            <Text>{getErrorMessage(error)}</Text>
-            {notApplied.length > 0 && (
-              <>
-                <Text>{t('webuiSettings.NotAppliedItems')}</Text>
-                <BAIFlex direction="column" align="start" gap="xxs">
-                  {notApplied.map((title) => (
-                    <Text key={title} weight="semibold">
-                      {title}
-                    </Text>
-                  ))}
-                </BAIFlex>
-              </>
-            )}
-            {isDomainSaved && (
-              <Text>{t('webuiSettings.PartiallyAppliedDesc')}</Text>
-            )}
-          </BAIFlex>
-        ),
-      });
-    }
-  };
-  const applySettings = () => persist(draft);
   // Reset-all deletes the saved documents (irreversible), so it is confirmed
-  // by a typed word; a per-row reset only edits the draft and needs Apply.
+  // by a typed word.
   const domainName = useCurrentDomainValue();
   const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
   const [isJsonOpen, setIsJsonOpen] = useState(false);
@@ -274,7 +308,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
             <BAINumberInput
               aria-label={label.title}
               width={CONTROL_WIDTH}
-              value={definition.key in draft ? (current as number) : null}
+              value={definition.key in values ? (current as number) : null}
               placeholder={String(rowDefault ?? '')}
               min={definition.min}
               max={definition.max}
@@ -364,8 +398,8 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
   };
 
   const [isAnnouncementModalOpen, setIsAnnouncementModalOpen] = useState(false);
-  // The announcement is edited through its own modal and saved on its own,
-  // so its row takes no part in the draft (#10713).
+  // The announcement is edited through its own modal and saved on its own
+  // (#10713).
   const announcementGroup: Array<SettingGroup> = [
     {
       'data-testid': 'webui-settings-group-announcement',
@@ -407,6 +441,13 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
 
   return (
     <>
+      <BAIAlert
+        data-testid="webui-settings-save-notice"
+        type="info"
+        showIcon
+        title={t('webuiSettings.SaveNotice')}
+        description={t('webuiSettings.SaveNoticeDesc')}
+      />
       <SettingList
         settingGroups={[...settingGroups, ...announcementGroup]}
         showSearchBar
@@ -428,36 +469,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
             </BAIButton>
           </BAIFlex>
         }
-        primaryButton={
-          <Button
-            variant="primary"
-            label={t('webuiSettings.Apply')}
-            isDisabled={!isDirty}
-            onClick={() => setIsApplyConfirmOpen(true)}
-          />
-        }
       />
-      <BAIModal
-        open={isApplyConfirmOpen}
-        title={
-          <BAIFlex gap="xxs" align="center">
-            <CircleAlert size="1em" color="var(--color-warning)" />
-            {t('webuiSettings.ApplySettings')}
-          </BAIFlex>
-        }
-        okText={t('webuiSettings.Apply')}
-        cancelText={t('button.Cancel')}
-        confirmLoading={isApplying}
-        maskClosable={false}
-        onOk={applySettings}
-        onCancel={() => setIsApplyConfirmOpen(false)}
-      >
-        <BAIAlert
-          type="warning"
-          showIcon
-          title={t('webuiSettings.ApplySettingsDesc')}
-        />
-      </BAIModal>
       <BAIDeleteConfirmModal
         open={isResetConfirmOpen}
         title={t('webuiSettings.ResetAllSettings')}
@@ -468,20 +480,28 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
         requireConfirmInput
         confirmText={t('button.Reset')}
         okText={t('button.Reset')}
-        confirmLoading={isApplying}
-        onOk={() => persist({})}
+        onOk={() => {
+          commit({});
+          setIsResetConfirmOpen(false);
+        }}
         onCancel={() => setIsResetConfirmOpen(false)}
       />
       <SettingsJsonModal
         open={isJsonOpen}
         currentValueOf={valueOf}
-        onLoad={(values) => {
-          const changed = values.filter(
+        onLoad={(loaded) => {
+          const changed = loaded.filter(
             ({ definition, value }) => !_.isEqual(value, valueOf(definition)),
           );
+          const next = { ...valuesRef.current };
           for (const { definition, value } of changed) {
-            setValue(definition, value);
+            if (value === undefined) {
+              delete next[definition.key];
+            } else {
+              next[definition.key] = value;
+            }
           }
+          commit(next);
           setIsJsonOpen(false);
           message.success(
             t('webuiSettings.JsonLoaded', { count: changed.length }),

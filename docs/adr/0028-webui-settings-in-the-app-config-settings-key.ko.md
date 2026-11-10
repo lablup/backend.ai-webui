@@ -1,5 +1,7 @@
 # 0028 — WebUI settings in the app config settings key
 
+> ADR 0031이 첫 설계도의 `applyConfigToClient` 간선, "저장" 설계도, 4절의 `_config` 복사와 "Apply and Reset" 문구, "Reload to apply" consequence를 대체한다.
+
 ## Summary
 
 > 낯선 용어는 문서 맨 아래 [용어](#용어)에 모아 두었다.

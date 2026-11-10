@@ -11,6 +11,8 @@ import {
   WEBUI_SETTING_DEFINITIONS,
   withForeignWebUISettings,
   ownedWebUISettings,
+  pickWebUISettingsOfScope,
+  withWebUISettings,
 } from './webuiSettings';
 import { describe, expect, it } from 'vitest';
 
@@ -242,5 +244,56 @@ describe('ownedWebUISettings', () => {
         announcement: { enabled: true, title: 'hi' },
       }),
     ).toEqual({ hideAgents: true });
+  });
+});
+
+describe('withWebUISettings', () => {
+  const defaults = getDefaultLoginConfig();
+
+  it('applies the public document, then the domain one', () => {
+    const next = withWebUISettings(
+      defaults,
+      { debug: true, autoLogout: true },
+      { hideAgents: false, allowSignout: true },
+    );
+    expect(next.debug).toBe(true);
+    expect(next.autoLogout).toBe(true);
+    expect(next.hideAgents).toBe(false);
+    expect(next.allow_signout).toBe(true);
+  });
+
+  it('puts a key no document carries back to its code default', () => {
+    const changed = withWebUISettings(defaults, undefined, {
+      maxCPUCoresPerContainer: 4,
+      menuBlocklist: ['data'],
+    });
+    const reset = withWebUISettings(changed, undefined, {});
+    expect(reset.maxCPUCoresPerContainer).toBe(
+      defaults.maxCPUCoresPerContainer,
+    );
+    expect(reset.blockList).toEqual(defaults.blockList);
+  });
+
+  it('keeps the fields no definition owns', () => {
+    const state = {
+      ...defaults,
+      api_endpoint: 'https://manager.example',
+      connection_mode: 'API' as const,
+      domain_name: 'default',
+    };
+    const next = withWebUISettings(state, {}, {});
+    expect(next.api_endpoint).toBe('https://manager.example');
+    expect(next.connection_mode).toBe('API');
+    expect(next.domain_name).toBe('default');
+  });
+});
+
+describe('pickWebUISettingsOfScope', () => {
+  it('splits a merged document by scope', () => {
+    const doc = { debug: true, hideAgents: false, notASetting: 1 };
+    expect(pickWebUISettingsOfScope(doc, 'public')).toEqual({ debug: true });
+    expect(pickWebUISettingsOfScope(doc, 'domain')).toEqual({
+      hideAgents: false,
+    });
   });
 });

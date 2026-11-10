@@ -17,7 +17,7 @@ import {
   TCP_APPS,
   useBackendAIAppLauncher,
 } from '../../hooks/useBackendAIAppLauncher';
-import { useLoginConfig } from '../../hooks/useWebUIConfig';
+import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import AppLaunchConfirmationModal from './AppLaunchConfirmationModal';
 import TCPConnectionInfoModal from './TCPConnectionInfoModal';
 import TensorboardPathModal from './TensorboardPathModal';
@@ -79,8 +79,9 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { logger } = useBAILogger();
-  const baiClient = useSuspendedBackendaiClient();
-  const isDebugMode = useLoginConfig()?.debug === true;
+  useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
+  const isDebugMode = loginConfig.debug === true;
   const formRef = useRef<FormInstance>(null);
   const [openToPublic, setOpenToPublic] = useState<boolean>(false);
   const [tryPreferredPort, setTryPreferredPort] = useState<boolean>(false);
@@ -441,7 +442,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
           ) : null}
           <Form ref={formRef} layout="vertical" requiredMark={false}>
             {/* @ts-ignore */}
-            {!globalThis.isElectron && baiClient._config.openPortToPublic ? (
+            {!globalThis.isElectron && loginConfig.openPortToPublic ? (
               <Form.Item
                 name={'clientIps'}
                 tooltip={<Trans i18nKey="session.OpenToPublicDesc" />}
@@ -484,7 +485,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                 />
               </Form.Item>
             ) : null}
-            {baiClient._config.allowPreferredPort ? (
+            {loginConfig.allowPreferredPort ? (
               <Form.Item
                 name={'preferredPort'}
                 label={

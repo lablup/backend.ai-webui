@@ -71,7 +71,7 @@ export function useWebServerConfigDiagnostics(
   }
 
   const apiEndpoint: string = baiClient?._config?.endpoint ?? '';
-  const blockList: string[] = baiClient?._config?.blockList ?? [];
+  const blockList: string[] = loginConfig?.blockList ?? [];
 
   // --- Placeholder detection (e.g. "[Proxy URL]" left in config.toml) ---
   if (rawConfig) {

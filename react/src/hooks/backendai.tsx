@@ -11,6 +11,7 @@ import {
   useTanQuery,
 } from './reactQueryAlias';
 import { useBAISettingUserState, UserSettings } from './useBAISetting';
+import { useEffectiveLoginConfig } from './useWebUIConfig';
 import {
   ImageMetaData,
   ResourceSlotDetail,
@@ -154,6 +155,7 @@ export type mutationOptions<T> = {
 
 export const useCurrentUserInfo = () => {
   const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
 
   const [userInfo, _setUserInfo] = useState<UserInfo>({
     full_name: baiClient.full_name,
@@ -167,7 +169,7 @@ export const useCurrentUserInfo = () => {
         ? userInfo.full_name
         : userInfo.email;
     // mask username only when the configuration is enabled
-    if (baiClient._config.maskUserInfo) {
+    if (loginConfig.maskUserInfo) {
       const maskStartIdx = 2;
       const emailPattern =
         /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;

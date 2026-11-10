@@ -54,7 +54,6 @@ vi.mock('../hooks', async (importOriginal) => {
       is_superadmin: clientState.isSuperadmin,
       _config: {
         domainName: 'default',
-        enableModelFolders: true,
       },
       vfolder: {
         list_allowed_types: () => Promise.resolve(['user', 'group']),
