@@ -59,6 +59,7 @@ export const UserResourcePolicyV2Query = graphql`
       edges {
         node {
           id
+          entityId
           name
           maxVfolderCount
           maxConcurrentLogins
@@ -123,9 +124,8 @@ const UserResourcePolicyV2 = ({
   const [isCreatingPolicySetting, setIsCreatingPolicySetting] = useState(false);
   const [editingUserResourcePolicy, setEditingUserResourcePolicy] =
     useState<UserResourcePolicyV2Node | null>(null);
-  const [deletingPolicyName, setDeletingPolicyName] = useState<string | null>(
-    null,
-  );
+  const [deletingPolicy, setDeletingPolicy] =
+    useState<UserResourcePolicyV2Node | null>(null);
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.UserResourcePolicyV2',
@@ -149,9 +149,10 @@ const UserResourcePolicyV2 = ({
   );
 
   const [commitDelete] = useMutation<UserResourcePolicyV2Mutation>(graphql`
-    mutation UserResourcePolicyV2Mutation($name: String!) {
-      adminDeleteUserResourcePolicyV2(name: $name) {
-        name
+    mutation UserResourcePolicyV2Mutation($id: UUID!) {
+      purgeUserResourcePolicyV2(id: $id) {
+        purgedId
+        entityId
       }
     }
   `);
@@ -345,7 +346,11 @@ const UserResourcePolicyV2 = ({
                           icon: <Trash2 size="1em" />,
                           type: 'danger',
                           onClick: () => {
-                            setDeletingPolicyName(record.name);
+                            setDeletingPolicy(
+                              _.find(userResourcePolicies, {
+                                id: record.id,
+                              }) ?? null,
+                            );
                           },
                         },
                       ]}
@@ -390,21 +395,21 @@ const UserResourcePolicyV2 = ({
         }}
       />
       <BAIDeleteConfirmModal
-        open={!!deletingPolicyName}
+        open={!!deletingPolicy}
         items={
-          deletingPolicyName
-            ? [{ key: deletingPolicyName, label: deletingPolicyName }]
+          deletingPolicy
+            ? [{ key: deletingPolicy.entityId, label: deletingPolicy.name }]
             : []
         }
         title={t('resourcePolicy.DeletePolicy')}
         target={t('resourcePolicy.ResourcePolicy')}
-        confirmText={deletingPolicyName ?? ''}
+        confirmText={deletingPolicy?.name ?? ''}
         requireConfirmInput
         onOk={() => {
-          if (deletingPolicyName) {
+          if (deletingPolicy) {
             return new Promise<void>((resolve) => {
               commitDelete({
-                variables: { name: deletingPolicyName },
+                variables: { id: deletingPolicy.entityId },
                 onCompleted: (_res, errors) => {
                   if (errors && errors.length > 0) {
                     for (const error of errors) {
@@ -416,19 +421,19 @@ const UserResourcePolicyV2 = ({
                     });
                     message.success(t('resourcePolicy.ResourcePolicyDeleted'));
                   }
-                  setDeletingPolicyName(null);
+                  setDeletingPolicy(null);
                   resolve();
                 },
                 onError(err) {
                   message.error(err?.message);
-                  setDeletingPolicyName(null);
+                  setDeletingPolicy(null);
                   resolve();
                 },
               });
             });
           }
         }}
-        onCancel={() => setDeletingPolicyName(null)}
+        onCancel={() => setDeletingPolicy(null)}
       />
     </BAIFlex>
   );
