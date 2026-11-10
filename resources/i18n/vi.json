@@ -3283,6 +3283,7 @@
     "TensorboardPath": "Thư mục nhật ký cho TensorBoard",
     "Terminate": "Chấm dứt",
     "TerminateSession": "Chấm dứt phiên",
+    "TerminateSessionsPartialFailureDescription": "Không thể kết thúc {{failed}} trên {{total}} phiên. Hãy xem lý do của từng phiên bên dưới.",
     "TerminatedAt": "Kết thúc lúc",
     "Threshold": "Ngưỡng",
     "ToStatus": "Đến trạng thái",

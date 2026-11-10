@@ -31,7 +31,9 @@ const isBuildInput = (file) =>
   file.startsWith(`${DOCS_PKG}scripts/`) ||
   file.startsWith(`${DOCS_PKG}assets/`) ||
   file === ".github/workflows/pr-preview.yml" ||
-  file.startsWith(".github/scripts/pr-preview/");
+  file.startsWith(".github/scripts/pr-preview/") ||
+  (file.startsWith(".github/scripts/lfs/") &&
+    !file.startsWith(".github/scripts/lfs/test-"));
 
 const contentLanguage = (file) => {
   if (!file.startsWith(DOCS_SRC)) return null;

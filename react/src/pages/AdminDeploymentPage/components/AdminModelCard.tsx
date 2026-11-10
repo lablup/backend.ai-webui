@@ -29,6 +29,7 @@ import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIAdminProjectSelect,
   BAIAlert,
+  BAIBulkErrorModal,
   BAIButton,
   BAIColumnType,
   BAIDeleteConfirmModal,
@@ -66,6 +67,13 @@ import {
 type ModelCardNode = NonNullableNodeOnEdges<
   AdminModelCardQuery$data['adminModelCardsV2']
 >;
+
+/** One model card the bulk purge did not delete, for `BAIBulkErrorModal`. */
+interface BulkDeleteFailure {
+  key: string;
+  name: string;
+  message: string;
+}
 
 const availableModelCardSorterKeys = [
   'name',
@@ -178,6 +186,9 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   const [alsoDeleteFolder, setAlsoDeleteFolder] = useState(false);
   const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
   const [alsoDeleteFoldersBulk, setAlsoDeleteFoldersBulk] = useState(false);
+  const [bulkDeleteFailures, setBulkDeleteFailures] = useState<
+    BulkDeleteFailure[]
+  >([]);
 
   const order = convertFirstOrderByToString(queryRef.variables.orderBy);
   const pageSize = queryRef.variables.limit ?? 10;
@@ -199,8 +210,8 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
         $id: UUID!
         $options: DeleteModelCardV2Options
       ) {
-        adminDeleteModelCardV2(id: $id, options: $options) {
-          id
+        purgeModelCardV2(id: $id, options: $options) {
+          entityId
         }
       }
     `,
@@ -209,12 +220,14 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   const [commitBulkDeleteModelCards, isBulkDeleteInFlight] =
     useMutation<AdminModelCardBulkDeleteMutation>(graphql`
       mutation AdminModelCardBulkDeleteMutation(
-        $input: BulkDeleteModelCardsV2Input!
+        $input: PartialBulkPurgeModelCardsInput!
       ) {
-        adminBulkDeleteModelCardsV2(input: $input) {
-          successes
+        partialBulkPurgeModelCardsV2(input: $input) {
+          successes {
+            id
+          }
           failed {
-            cardId
+            id
             message
           }
         }
@@ -228,6 +241,36 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   const handleBulkDelete = () => {
     if (selectedModelCards.length === 0) return;
     setIsBulkDeleteOpen(true);
+  };
+
+  // Keeps the failed cards selected for a retry and lists them with their reasons.
+  const reportBulkDeleteFailures = (
+    failures: BulkDeleteFailure[],
+    successCount: number,
+  ) => {
+    const failedIds = new Set(failures.map((f) => f.key));
+    message.error(
+      t('adminModelCard.BulkDeletePartiallyCompleted', {
+        successCount,
+        failureCount: failures.length,
+      }),
+    );
+    setSelectedModelCards(
+      selectedModelCards.filter((mc) => failedIds.has(mc.entityId)),
+    );
+    setBulkDeleteFailures(failures);
+  };
+
+  // A rejected request deleted nothing, so every selected card counts as failed.
+  const reportBulkDeleteRejected = (errorMessage?: string) => {
+    reportBulkDeleteFailures(
+      selectedModelCards.map((mc) => ({
+        key: mc.entityId,
+        name: mc.name,
+        message: errorMessage || t('general.ErrorOccurred'),
+      })),
+      0,
+    );
   };
 
   const handleOpenEditModal = (modelCard: ModelCardNode) => {
@@ -740,7 +783,11 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
         }
         onOk={() => {
           const ids = selectedModelCards.map((mc) => mc.entityId);
-          return new Promise<void>((resolve, reject) => {
+          const closeBulkDelete = () => {
+            setAlsoDeleteFoldersBulk(false);
+            setIsBulkDeleteOpen(false);
+          };
+          return new Promise<void>((resolve) => {
             commitBulkDeleteModelCards({
               variables: {
                 input: {
@@ -751,55 +798,23 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
               onCompleted: (data, errors) => {
                 if (errors && errors.length > 0) {
                   logger.error(errors[0]);
-                  message.error(
-                    errors[0]?.message || t('general.ErrorOccurred'),
-                  );
-                  reject();
+                  reportBulkDeleteRejected(errors[0]?.message);
+                  closeBulkDelete();
+                  resolve();
                   return;
                 }
-                const { successes, failed } =
-                  data.adminBulkDeleteModelCardsV2 ?? {
-                    successes: [],
-                    failed: [],
-                  };
+                const { successes, failed } = data.partialBulkPurgeModelCardsV2;
                 if (failed.length > 0) {
-                  const failedIds = new Set(
-                    failed.map((f: { cardId: string }) => f.cardId),
+                  reportBulkDeleteFailures(
+                    failed.map((f) => ({
+                      key: f.id,
+                      name:
+                        selectedModelCards.find((mc) => mc.entityId === f.id)
+                          ?.name ?? f.id,
+                      message: f.message,
+                    })),
+                    successes.length,
                   );
-                  setSelectedModelCards(
-                    selectedModelCards.filter((mc) =>
-                      failedIds.has(mc.entityId),
-                    ),
-                  );
-                  upsertNotification({
-                    type: 'warning',
-                    message: t('adminModelCard.BulkDeletePartiallyCompleted', {
-                      successCount: successes.length,
-                      failureCount: failed.length,
-                    }),
-                    description: (
-                      <BAIFlex direction="column" gap="xs">
-                        {failed.map((f) => {
-                          const cardName =
-                            selectedModelCards.find(
-                              (mc) => mc.entityId === f.cardId,
-                            )?.name ?? f.cardId;
-                          return (
-                            <div key={f.cardId}>
-                              <Text weight="semibold">{cardName}</Text>
-                              <Text color="secondary">{' — '}</Text>
-                              <Text type="supporting" color="primary">
-                                {f.message}
-                              </Text>
-                            </div>
-                          );
-                        })}
-                      </BAIFlex>
-                    ),
-                    open: true,
-                    duration: 0,
-                    extraData: null,
-                  });
                 } else if (alsoDeleteFoldersBulk) {
                   upsertNotification({
                     type: 'success',
@@ -826,15 +841,20 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                   );
                   setSelectedModelCards([]);
                 }
-                setAlsoDeleteFoldersBulk(false);
-                setIsBulkDeleteOpen(false);
-                onReload(queryRef.variables, { fetchPolicy: 'network-only' });
+                closeBulkDelete();
+                // Only a deleted card changes the list.
+                if (successes.length > 0) {
+                  onReload(queryRef.variables, {
+                    fetchPolicy: 'network-only',
+                  });
+                }
                 resolve();
               },
               onError: (error) => {
                 logger.error(error);
-                message.error(error?.message || t('general.ErrorOccurred'));
-                reject();
+                reportBulkDeleteRejected(error?.message);
+                closeBulkDelete();
+                resolve();
               },
             });
           });
@@ -843,6 +863,19 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
           setIsBulkDeleteOpen(false);
           setAlsoDeleteFoldersBulk(false);
         }}
+      />
+      <BAIBulkErrorModal<BulkDeleteFailure>
+        open={bulkDeleteFailures.length > 0}
+        columns={[
+          { key: 'name', title: t('adminModelCard.Name'), dataIndex: 'name' },
+          {
+            key: 'message',
+            title: t('data.folders.ErrorMessage'),
+            dataIndex: 'message',
+          },
+        ]}
+        dataSource={bulkDeleteFailures}
+        onRequestClose={() => setBulkDeleteFailures([])}
       />
     </BAIFlex>
   );

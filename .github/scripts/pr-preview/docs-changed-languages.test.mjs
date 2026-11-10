@@ -45,6 +45,7 @@ test("build inputs inside the docs package also mean en", () => {
     `${DOCS}/assets/logo.svg`,
     ".github/workflows/pr-preview.yml",
     ".github/scripts/pr-preview/build-docs-preview.sh",
+    ".github/scripts/lfs/pull-docs-images.sh",
   ]) {
     assert.deepEqual(
       classify([file]),
@@ -72,6 +73,11 @@ test("non-source files in the docs package do not trigger a build", () => {
     `${DOCS}/terminology.json`,
     `${DOCS}/src/en`,
   ]);
+  assert.deepEqual(result, { docs: false, languages: [], reason: "none" });
+});
+
+test("a test of the LFS scripts is not a build input", () => {
+  const result = classify([".github/scripts/lfs/test-pull-docs-images.sh"]);
   assert.deepEqual(result, { docs: false, languages: [], reason: "none" });
 });
 

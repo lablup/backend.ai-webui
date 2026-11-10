@@ -3281,6 +3281,7 @@
     "TensorboardPath": "Direktori log untuk TensorBoard",
     "Terminate": "Tamatkan",
     "TerminateSession": "Tamatkan Sesi",
+    "TerminateSessionsPartialFailureDescription": "{{failed}} daripada {{total}} sesi tidak dapat ditamatkan. Semak sebab bagi setiap sesi di bawah.",
     "TerminatedAt": "Ditamatkan pada",
     "Threshold": "Ambang",
     "ToStatus": "Ke Status",

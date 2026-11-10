@@ -25,3 +25,10 @@ pnpm-lock.yaml linguist-generated=true
 # react/src/astryx-theme/built/backendai-default.ts (see built/index.ts).
 react/src/astryx-theme/built/bai-r* linguist-generated=true
 react/src/astryx-theme/built/backendai-default-built.css linguist-generated=true
+
+# User manual images live in Git LFS (#11040); .lfsconfig keeps them as pointers by default.
+packages/backend.ai-webui-docs/src/**/*.png filter=lfs diff=lfs merge=lfs -text
+packages/backend.ai-webui-docs/src/**/*.jpg filter=lfs diff=lfs merge=lfs -text
+packages/backend.ai-webui-docs/src/**/*.jpeg filter=lfs diff=lfs merge=lfs -text
+packages/backend.ai-webui-docs/src/**/*.gif filter=lfs diff=lfs merge=lfs -text
+packages/backend.ai-webui-docs/src/**/*.webp filter=lfs diff=lfs merge=lfs -text

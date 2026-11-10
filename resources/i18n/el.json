@@ -3281,6 +3281,7 @@
     "TensorboardPath": "Κατάλογος καταγραφής για TensorBoard",
     "Terminate": "Περατώ",
     "TerminateSession": "Τερματισμός συνεδρίας",
+    "TerminateSessionsPartialFailureDescription": "{{failed}} από {{total}} συνεδρίες δεν ήταν δυνατό να τερματιστούν. Ελέγξτε την αιτία για κάθε συνεδρία παρακάτω.",
     "TerminatedAt": "Τερματίστηκε στις",
     "Threshold": "Κατώφλι",
     "ToStatus": "Μετάβαση στην κατάσταση",

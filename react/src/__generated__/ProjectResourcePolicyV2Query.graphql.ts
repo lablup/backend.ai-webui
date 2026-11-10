@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<afbe5f91d30bbc2329e110bd8ceb0f70>>
+ * @generated SignedSource<<fae334584b4afc02b8a39860e6e36ac2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -331,12 +331,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "ee6e2c304e6a12ad4b053137a811a0c2",
+    "cacheID": "8d1d0420458fad64cafecd363c4e7bcb",
     "id": null,
     "metadata": {},
     "name": "ProjectResourcePolicyV2Query",
     "operationKind": "query",
-    "text": "query ProjectResourcePolicyV2Query(\n  $filter: ProjectResourcePolicyV2Filter\n  $orderBy: [ProjectResourcePolicyV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminProjectResourcePoliciesV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        name\n        maxVfolderCount\n        maxQuotaScopeSize {\n          expr\n        }\n        maxNetworkCount\n        createdAt\n        ...BAIProjectResourcePolicyV2TableFragment\n        ...ProjectResourcePolicyV2SettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIProjectResourcePolicyV2TableFragment on ProjectResourcePolicyV2 {\n  id\n  name\n  createdAt\n  maxVfolderCount\n  maxQuotaScopeSize {\n    expr\n  }\n  maxNetworkCount\n}\n\nfragment ProjectResourcePolicyV2SettingModalFragment on ProjectResourcePolicyV2 {\n  id\n  name\n  maxVfolderCount\n  maxQuotaScopeSize {\n    expr\n  }\n  maxNetworkCount\n}\n"
+    "text": "query ProjectResourcePolicyV2Query(\n  $filter: ProjectResourcePolicyV2Filter\n  $orderBy: [ProjectResourcePolicyV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminProjectResourcePoliciesV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        name\n        maxVfolderCount\n        maxQuotaScopeSize {\n          expr\n        }\n        maxNetworkCount\n        createdAt\n        ...BAIProjectResourcePolicyV2TableFragment\n        ...ProjectResourcePolicyV2SettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIProjectResourcePolicyV2TableFragment on ProjectResourcePolicyV2 {\n  id\n  name\n  createdAt\n  maxVfolderCount\n  maxQuotaScopeSize {\n    expr\n  }\n  maxNetworkCount\n}\n\nfragment ProjectResourcePolicyV2SettingModalFragment on ProjectResourcePolicyV2 {\n  id\n  entityId\n  name\n  maxVfolderCount\n  maxQuotaScopeSize {\n    expr\n  }\n  maxNetworkCount\n}\n"
   }
 };
 })();

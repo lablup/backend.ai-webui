@@ -983,7 +983,10 @@
     "AreYouSureYouWantToDeactivateSome": "Вы уверены, что хотите деактивировать {{count}} артефакты?",
     "Deactivate": "Деактивировать",
     "DeactivateArtifacts": "Деактивируйте артефакты",
+    "Error": "Ошибка",
     "FailedToDeactivateArtifacts": "Не удалось деактивировать артефакты.",
+    "Name": "Имя",
+    "SomeArtifactsFailedToDeactivate": "Не удалось деактивировать артефакты: {{count}}",
     "SuccessfullyDeactivated": "Успешно деактивированные артефакты."
   },
   "comp:BAIDeleteArtifactModal": {
