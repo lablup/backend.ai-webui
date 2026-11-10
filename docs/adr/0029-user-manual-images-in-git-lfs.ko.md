@@ -47,10 +47,10 @@ flowchart LR
 
 ### 2. 소비처는 하나의 script로 이미지를 받는다
 
-- **Script**: `.github/scripts/lfs/pull-docs-images.sh [--ref <rev>] [--remote <name>] [<worktree>...]`는 두 layout, 즉 `packages/backend.ai-webui-docs/src/`와 archive worktree의 `src/`를 모두 다룬다.
+- **Script**: `.github/scripts/lfs/pull-docs-images.sh [--ref <rev>] [--remote <name|url>]... [--fallback-remote <url>]... [<worktree>...]`는 두 layout, 즉 `packages/backend.ai-webui-docs/src/`와 archive worktree의 `src/`를 모두 다룬다.
 - **No-op**: 그 루트 아래에서 내용이 pointer text인 tracked working-tree file을 찾는다. 없으면 0으로 끝나고 git-lfs가 필요 없다.
 - **그 밖의 경우**: git-lfs가 없으면 `.github/scripts/lfs/install-git-lfs.sh`로 설치하고(Linux x86_64용 release 3.8.1, 그 script에 sha256과 함께 고정), `.lfsconfig`의 제외를 덮어써서 `--ref`(기본 `HEAD`)의 object를 fetch한 뒤, LFS filter로 index에서 pointer file을 복원한다. filter와 그 경로를 나열한 임시 attributes 파일은 명령마다 넘기므로, `.gitattributes`가 그 경로를 표시하든 아니든 복원되고 어떤 git config 파일도 쓰지 않는다. pointer가 남으면 실패한다.
-- **호출처**: `amplify.yml`(docs app, `main`과 각 archive worktree), `package.yml` `build_docs`, `.github/scripts/pr-preview/build-docs-preview.sh`(head에 대해 한 번, merge base의 `src`를 checkout한 뒤 `--ref`로 그 커밋의 object를 받아 다시 한 번). fork PR이면 `pr-preview.yml`이 head 저장소의 clone URL을 `--head-lfs-remote`로 넘기고, head pull은 `origin`에서 먼저 받은 뒤 그 URL, 즉 fork로 push할 때 object가 올라가는 endpoint에서 받는다. 기여자는 `pnpm --filter backend.ai-webui-docs run images:pull`을 실행한다.
+- **호출처**: `amplify.yml`(docs app, `main`과 각 archive worktree), `package.yml` `build_docs`, `.github/scripts/pr-preview/build-docs-preview.sh`(head에 대해 한 번, merge base의 `src`를 checkout한 뒤 `--ref`로 그 커밋의 object를 받아 다시 한 번). fork PR이면 `pr-preview.yml`이 head 저장소의 clone URL을 `--head-lfs-remote`로 넘기고, head pull은 이를 `--fallback-remote`로 쓴다. 이 URL은 base 저장소의 인증 정보 없이, `origin`에 없는 object에 대해서만 받는다. fork에만 있는 이미지도 빌드하지만, `main`의 빌드는 `origin`에서만 받으므로 job은 merge 전에 maintainer가 실행할 `git lfs push origin` 명령을 출력하고 실패한다. 기여자는 `pnpm --filter backend.ai-webui-docs run images:pull`을 실행한다.
 
 ### 3. toolkit은 pointer file을 거부한다
 

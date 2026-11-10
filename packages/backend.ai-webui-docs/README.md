@@ -28,8 +28,10 @@ pnpm --filter backend.ai-webui-docs run images:pull
 Editing Markdown only needs none of this.
 
 From a fork, commit images with git-lfs installed as well; `git push` uploads them to your
-fork's LFS storage, and the PR's docs preview fetches them from there when the base repository
-does not have them.
+fork's LFS storage. Builds of this repository's branches fetch images from this repository
+only, so when your PR's images are not here yet, the PR's `docs` check builds them from your
+fork and then fails with the command a maintainer runs to copy them over before merging.
+Fork PRs get no published docs preview.
 
 ## Quick Start
 
