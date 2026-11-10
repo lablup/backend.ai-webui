@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-11-09T16:20:35.361Z",
+  "generatedAt": "2026-11-10T02:49:53.760Z",
   "languages": [
     "en",
     "ja",
@@ -13,8 +13,8 @@
     "en": {
       "totals": {
         "pages": 1,
-        "changes": 3,
-        "added": 1,
+        "changes": 2,
+        "added": 0,
         "modified": 0,
         "removed": 2,
         "images": 0,
@@ -29,14 +29,13 @@
           "url": "next/en/login.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/en/login/login.md",
           "counts": {
-            "added": 1,
+            "added": 0,
             "modified": 0,
             "removed": 2,
             "images": 0,
-            "total": 3
+            "total": 2
           },
           "fingerprints": [
-            "0110da9c6678",
             "486f364bebdc",
             "635e4f6d7be0"
           ]
@@ -46,8 +45,8 @@
     "ja": {
       "totals": {
         "pages": 1,
-        "changes": 3,
-        "added": 1,
+        "changes": 2,
+        "added": 0,
         "modified": 0,
         "removed": 2,
         "images": 0,
@@ -62,14 +61,13 @@
           "url": "next/ja/login.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/ja/login/login.md",
           "counts": {
-            "added": 1,
+            "added": 0,
             "modified": 0,
             "removed": 2,
             "images": 0,
-            "total": 3
+            "total": 2
           },
           "fingerprints": [
-            "545ecc3a2c8a",
             "c5399fe154a4",
             "19f7b3547004"
           ]
@@ -79,8 +77,8 @@
     "ko": {
       "totals": {
         "pages": 1,
-        "changes": 3,
-        "added": 1,
+        "changes": 2,
+        "added": 0,
         "modified": 0,
         "removed": 2,
         "images": 0,
@@ -95,14 +93,13 @@
           "url": "next/ko/login.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/ko/login/login.md",
           "counts": {
-            "added": 1,
+            "added": 0,
             "modified": 0,
             "removed": 2,
             "images": 0,
-            "total": 3
+            "total": 2
           },
           "fingerprints": [
-            "94b29e44764d",
             "ce6a9bb84cdb",
             "cf2532570c31"
           ]
@@ -112,8 +109,8 @@
     "th": {
       "totals": {
         "pages": 1,
-        "changes": 3,
-        "added": 1,
+        "changes": 2,
+        "added": 0,
         "modified": 0,
         "removed": 2,
         "images": 0,
@@ -128,14 +125,13 @@
           "url": "next/th/login.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/th/login/login.md",
           "counts": {
-            "added": 1,
+            "added": 0,
             "modified": 0,
             "removed": 2,
             "images": 0,
-            "total": 3
+            "total": 2
           },
           "fingerprints": [
-            "7056bcfbc32c",
             "32fc780a5e41",
             "c91b40b7fbab"
           ]
