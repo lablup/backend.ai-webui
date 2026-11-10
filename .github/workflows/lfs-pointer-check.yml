@@ -36,3 +36,7 @@ jobs:
 
       - name: Check that LFS-tracked files are committed as pointers
         run: bash .github/scripts/lfs/check-lfs-pointers.sh
+
+      # Local file:// fixtures only: no network, no token, no git config outside a temp dir.
+      - name: Test the docs image pull script
+        run: bash .github/scripts/lfs/test-pull-docs-images.sh
