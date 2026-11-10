@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f3c21d79bde6ee74b185cfd477e93052>>
+ * @generated SignedSource<<1b779e8fcd5f76874797dc0ea0f74d23>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,6 @@
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type TotalResourceWithinResourceGroupFragmentRefetchQuery$variables = {
-  agentNodeFilter: string;
   isSuperAdmin: boolean;
   resourceGroup?: string | null | undefined;
 };
@@ -28,11 +27,6 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "agentNodeFilter"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
     "name": "isSuperAdmin"
   },
   {
@@ -41,43 +35,23 @@ var v0 = [
     "name": "resourceGroup"
   }
 ],
-v1 = [
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "id",
-    "storageKey": null
-  },
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "status",
-    "storageKey": null
-  },
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "available_slots",
-    "storageKey": null
-  },
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "occupied_slots",
-    "storageKey": null
-  },
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "scaling_group",
-    "storageKey": null
-  }
-];
+v1 = {
+  "kind": "Literal",
+  "name": "limit",
+  "value": 100
+},
+v2 = {
+  "kind": "Literal",
+  "name": "offset",
+  "value": 0
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
@@ -87,11 +61,6 @@ return {
     "selections": [
       {
         "args": [
-          {
-            "kind": "Variable",
-            "name": "agentNodeFilter",
-            "variableName": "agentNodeFilter"
-          },
           {
             "kind": "Variable",
             "name": "isSuperAdmin",
@@ -129,16 +98,8 @@ return {
                 "name": "filter",
                 "value": "schedulable == true"
               },
-              {
-                "kind": "Literal",
-                "name": "limit",
-                "value": 100
-              },
-              {
-                "kind": "Literal",
-                "name": "offset",
-                "value": 0
-              },
+              (v1/*: any*/),
+              (v2/*: any*/),
               {
                 "kind": "Variable",
                 "name": "scaling_group",
@@ -162,7 +123,37 @@ return {
                 "kind": "LinkedField",
                 "name": "items",
                 "plural": true,
-                "selections": (v1/*: any*/),
+                "selections": [
+                  (v3/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "status",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "available_slots",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "occupied_slots",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "scaling_group",
+                    "storageKey": null
+                  }
+                ],
                 "storageKey": null
               },
               {
@@ -186,25 +177,55 @@ return {
             "alias": null,
             "args": [
               {
-                "kind": "Variable",
-                "name": "filter",
-                "variableName": "agentNodeFilter"
+                "fields": [
+                  {
+                    "fields": [
+                      {
+                        "kind": "Variable",
+                        "name": "equals",
+                        "variableName": "resourceGroup"
+                      }
+                    ],
+                    "kind": "ObjectValue",
+                    "name": "scalingGroup"
+                  },
+                  {
+                    "kind": "Literal",
+                    "name": "schedulable",
+                    "value": true
+                  },
+                  {
+                    "kind": "Literal",
+                    "name": "status",
+                    "value": {
+                      "equals": "ALIVE"
+                    }
+                  }
+                ],
+                "kind": "ObjectValue",
+                "name": "filter"
               },
+              (v1/*: any*/),
+              (v2/*: any*/),
               {
                 "kind": "Literal",
-                "name": "first",
-                "value": 100
+                "name": "orderBy",
+                "value": [
+                  {
+                    "field": "ID"
+                  }
+                ]
               }
             ],
-            "concreteType": "AgentConnection",
+            "concreteType": "AgentV2Connection",
             "kind": "LinkedField",
-            "name": "agent_nodes",
+            "name": "agentsV2",
             "plural": false,
             "selections": [
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "AgentEdge",
+                "concreteType": "AgentV2Edge",
                 "kind": "LinkedField",
                 "name": "edges",
                 "plural": true,
@@ -212,11 +233,38 @@ return {
                   {
                     "alias": null,
                     "args": null,
-                    "concreteType": "AgentNode",
+                    "concreteType": "AgentV2",
                     "kind": "LinkedField",
                     "name": "node",
                     "plural": false,
-                    "selections": (v1/*: any*/),
+                    "selections": [
+                      (v3/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "AgentResource",
+                        "kind": "LinkedField",
+                        "name": "resourceInfo",
+                        "plural": false,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "capacity",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "used",
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      }
+                    ],
                     "storageKey": null
                   }
                 ],
@@ -237,16 +285,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "1d744418a6e7f182c9904c7383c730fd",
+    "cacheID": "4ebe3be55ca0f38b4c7be70666c58cf8",
     "id": null,
     "metadata": {},
     "name": "TotalResourceWithinResourceGroupFragmentRefetchQuery",
     "operationKind": "query",
-    "text": "query TotalResourceWithinResourceGroupFragmentRefetchQuery(\n  $agentNodeFilter: String!\n  $isSuperAdmin: Boolean!\n  $resourceGroup: String\n) {\n  ...TotalResourceWithinResourceGroupFragment_2otDCj\n}\n\nfragment TotalResourceWithinResourceGroupFragment_2otDCj on Query {\n  agent_summary_list(limit: 100, offset: 0, status: \"ALIVE\", scaling_group: $resourceGroup, filter: \"schedulable == true\") @skip(if: $isSuperAdmin) {\n    items {\n      id\n      status\n      available_slots\n      occupied_slots\n      scaling_group\n    }\n    total_count\n  }\n  agent_nodes(filter: $agentNodeFilter, first: 100) @include(if: $isSuperAdmin) {\n    edges {\n      node {\n        id\n        status\n        available_slots\n        occupied_slots\n        scaling_group\n      }\n    }\n    count\n  }\n}\n"
+    "text": "query TotalResourceWithinResourceGroupFragmentRefetchQuery(\n  $isSuperAdmin: Boolean!\n  $resourceGroup: String\n) {\n  ...TotalResourceWithinResourceGroupFragment_48CZqz\n}\n\nfragment TotalResourceWithinResourceGroupFragment_48CZqz on Query {\n  agent_summary_list(limit: 100, offset: 0, status: \"ALIVE\", scaling_group: $resourceGroup, filter: \"schedulable == true\") @skip(if: $isSuperAdmin) {\n    items {\n      id\n      status\n      available_slots\n      occupied_slots\n      scaling_group\n    }\n    total_count\n  }\n  agentsV2(filter: {status: {equals: ALIVE}, schedulable: true, scalingGroup: {equals: $resourceGroup}}, orderBy: [{field: ID}], limit: 100, offset: 0) @include(if: $isSuperAdmin) {\n    edges {\n      node {\n        id\n        resourceInfo {\n          capacity\n          used\n        }\n      }\n    }\n    count\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "7b179b18efbc97a0952f082b55315041";
+(node as any).hash = "fcbc47f65eb8dd82b6ad1f4622ef49f2";
 
 export default node;

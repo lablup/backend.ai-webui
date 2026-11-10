@@ -37,7 +37,6 @@ const ResourceGroupTotal: React.FC<{
   const variables = {
     resourceGroup,
     isSuperAdmin,
-    agentNodeFilter: `schedulable == true & status == "ALIVE" & scaling_group == "${resourceGroup}"`,
   };
   const deferredVariables = useDeferredValue(variables);
   const queryRef = useLazyLoadQuery<ResourceGroupTotalPanelQuery>(
@@ -45,14 +44,9 @@ const ResourceGroupTotal: React.FC<{
       query ResourceGroupTotalPanelQuery(
         $resourceGroup: String
         $isSuperAdmin: Boolean!
-        $agentNodeFilter: String!
       ) {
         ...TotalResourceWithinResourceGroupFragment
-          @arguments(
-            resourceGroup: $resourceGroup
-            isSuperAdmin: $isSuperAdmin
-            agentNodeFilter: $agentNodeFilter
-          )
+          @arguments(resourceGroup: $resourceGroup, isSuperAdmin: $isSuperAdmin)
       }
     `,
     deferredVariables,

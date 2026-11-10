@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6abda0dca0ed4848b70b3c3639eaf34c>>
+ * @generated SignedSource<<81985a727d3e2d157c1cd2f8dd0261ec>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,10 +19,10 @@ export type AgentStatsFragment$data = {
     };
   } | null | undefined, unknown>;
   readonly aliveAgents: Result<{
-    readonly count: number | null | undefined;
+    readonly count: number;
   } | null | undefined, unknown>;
   readonly schedulableAgents: Result<{
-    readonly count: number | null | undefined;
+    readonly count: number;
   } | null | undefined, unknown>;
   readonly " $fragmentType": "AgentStatsFragment";
 };
@@ -35,11 +35,14 @@ import AgentStatsRefetchQuery_graphql from './AgentStatsRefetchQuery.graphql';
 
 const node: ReaderFragment = (function(){
 var v0 = {
+  "equals": "ALIVE"
+},
+v1 = {
   "kind": "Literal",
-  "name": "first",
+  "name": "limit",
   "value": 1
 },
-v1 = [
+v2 = [
   {
     "alias": null,
     "args": null,
@@ -49,18 +52,7 @@ v1 = [
   }
 ];
 return {
-  "argumentDefinitions": [
-    {
-      "defaultValue": null,
-      "kind": "LocalArgument",
-      "name": "aliveAgentFilter"
-    },
-    {
-      "defaultValue": null,
-      "kind": "LocalArgument",
-      "name": "schedulableAgentFilter"
-    }
-  ],
+  "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": {
     "refetch": {
@@ -124,18 +116,20 @@ return {
         "alias": "aliveAgents",
         "args": [
           {
-            "kind": "Variable",
+            "kind": "Literal",
             "name": "filter",
-            "variableName": "aliveAgentFilter"
+            "value": {
+              "status": (v0/*: any*/)
+            }
           },
-          (v0/*: any*/)
+          (v1/*: any*/)
         ],
-        "concreteType": "AgentConnection",
+        "concreteType": "AgentV2Connection",
         "kind": "LinkedField",
-        "name": "agent_nodes",
+        "name": "agentsV2",
         "plural": false,
-        "selections": (v1/*: any*/),
-        "storageKey": null
+        "selections": (v2/*: any*/),
+        "storageKey": "agentsV2(filter:{\"status\":{\"equals\":\"ALIVE\"}},limit:1)"
       },
       "to": "RESULT"
     },
@@ -145,18 +139,21 @@ return {
         "alias": "schedulableAgents",
         "args": [
           {
-            "kind": "Variable",
+            "kind": "Literal",
             "name": "filter",
-            "variableName": "schedulableAgentFilter"
+            "value": {
+              "schedulable": true,
+              "status": (v0/*: any*/)
+            }
           },
-          (v0/*: any*/)
+          (v1/*: any*/)
         ],
-        "concreteType": "AgentConnection",
+        "concreteType": "AgentV2Connection",
         "kind": "LinkedField",
-        "name": "agent_nodes",
+        "name": "agentsV2",
         "plural": false,
-        "selections": (v1/*: any*/),
-        "storageKey": null
+        "selections": (v2/*: any*/),
+        "storageKey": "agentsV2(filter:{\"schedulable\":true,\"status\":{\"equals\":\"ALIVE\"}},limit:1)"
       },
       "to": "RESULT"
     }
@@ -166,6 +163,6 @@ return {
 };
 })();
 
-(node as any).hash = "da7ac79d9a8210f4be08f760587adfdb";
+(node as any).hash = "e217cb656048f87c06a9d79f978a321b";
 
 export default node;

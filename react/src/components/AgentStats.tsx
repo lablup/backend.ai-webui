@@ -238,16 +238,12 @@ export const AgentStatsView: React.FC<AgentStatsViewProps> = ({
   );
 };
 
-/** Cluster-wide agent totals; superadmins only (`agentStats`, `agent_nodes`). */
+/** Cluster-wide agent totals; superadmins only (`agentStats`, `agentsV2`). */
 const AgentStats: React.FC<AgentStatsProps> = ({ queryRef, ...props }) => {
   'use memo';
   const [data] = useRefetchableFragment(
     graphql`
       fragment AgentStatsFragment on Query
-      @argumentDefinitions(
-        aliveAgentFilter: { type: "String!" }
-        schedulableAgentFilter: { type: "String!" }
-      )
       @refetchable(queryName: "AgentStatsRefetchQuery") {
         agentStats @catch(to: RESULT) {
           totalResource {
@@ -256,13 +252,13 @@ const AgentStats: React.FC<AgentStatsProps> = ({ queryRef, ...props }) => {
             capacity
           }
         }
-        aliveAgents: agent_nodes(filter: $aliveAgentFilter, first: 1)
+        aliveAgents: agentsV2(filter: { status: { equals: ALIVE } }, limit: 1)
           @catch(to: RESULT) {
           count
         }
-        schedulableAgents: agent_nodes(
-          filter: $schedulableAgentFilter
-          first: 1
+        schedulableAgents: agentsV2(
+          filter: { status: { equals: ALIVE }, schedulable: true }
+          limit: 1
         ) @catch(to: RESULT) {
           count
         }
