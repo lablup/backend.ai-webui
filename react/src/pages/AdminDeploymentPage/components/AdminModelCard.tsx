@@ -199,8 +199,8 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
         $id: UUID!
         $options: DeleteModelCardV2Options
       ) {
-        adminDeleteModelCardV2(id: $id, options: $options) {
-          id
+        purgeModelCardV2(id: $id, options: $options) {
+          entityId
         }
       }
     `,
@@ -209,12 +209,14 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   const [commitBulkDeleteModelCards, isBulkDeleteInFlight] =
     useMutation<AdminModelCardBulkDeleteMutation>(graphql`
       mutation AdminModelCardBulkDeleteMutation(
-        $input: BulkDeleteModelCardsV2Input!
+        $input: PartialBulkPurgeModelCardsInput!
       ) {
-        adminBulkDeleteModelCardsV2(input: $input) {
-          successes
+        partialBulkPurgeModelCardsV2(input: $input) {
+          successes {
+            id
+          }
           failed {
-            cardId
+            id
             message
           }
         }
@@ -757,15 +759,9 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                   reject();
                   return;
                 }
-                const { successes, failed } =
-                  data.adminBulkDeleteModelCardsV2 ?? {
-                    successes: [],
-                    failed: [],
-                  };
+                const { successes, failed } = data.partialBulkPurgeModelCardsV2;
                 if (failed.length > 0) {
-                  const failedIds = new Set(
-                    failed.map((f: { cardId: string }) => f.cardId),
-                  );
+                  const failedIds = new Set(failed.map((f) => f.id));
                   setSelectedModelCards(
                     selectedModelCards.filter((mc) =>
                       failedIds.has(mc.entityId),
@@ -782,10 +778,10 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                         {failed.map((f) => {
                           const cardName =
                             selectedModelCards.find(
-                              (mc) => mc.entityId === f.cardId,
-                            )?.name ?? f.cardId;
+                              (mc) => mc.entityId === f.id,
+                            )?.name ?? f.id;
                           return (
-                            <div key={f.cardId}>
+                            <div key={f.id}>
                               <Text weight="semibold">{cardName}</Text>
                               <Text color="secondary">{' — '}</Text>
                               <Text type="supporting" color="primary">
