@@ -1352,7 +1352,7 @@ is deliberately out of scope — operate above project scope — the header proj
 
 ### 34. System Settings (`/admin/system-settings`) — config.toml → app config (#10436), save on change (#10941)
 
-**Test files:** [`e2e/admin/system-settings/webui-settings.spec.ts`](admin/system-settings/webui-settings.spec.ts)
+**Test files:** [`e2e-agent/webui-settings/webui-settings.e2e.ts`](../e2e-agent/webui-settings/webui-settings.e2e.ts) — act-only drafts ported from the removed Playwright spec (#10941); the automation adds the checks below back.
 
 **Helpers:** [`e2e/utils/webui-settings-util.ts`](utils/webui-settings-util.ts) — the row table mirroring `WEBUI_SETTING_DEFINITIONS`, `WebUISettingsApi` (snapshot / write / restore of the `settings` sub-key per scope, `expectSaved` to wait for a background write), `effectiveValuesOf` / `readEffectiveWebUISetting` (the value the app uses: domain document, then public document for public keys, then the code default; settings are no longer on `backendaiclient._config`), row helpers, `enablePublicSlice` for the anonymous `publicConfigByDomain` read.
 

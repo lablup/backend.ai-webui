@@ -1,13 +1,12 @@
 // E2E tests for the System Settings JSON Config dialog (#10870).
 //
-// Read-only on purpose: nothing here presses the page's Apply, so the
-// cluster-wide `settings` documents are never written. That is why these
+// Read-only on purpose: nothing here saves (a row saves on change, #10941), so
+// the cluster-wide `settings` documents are never written. That is why these
 // tests live outside `webui-settings.spec.ts`, whose file-level hooks clear
 // and restore those documents around every test.
 import { loginAsAdmin } from '../../utils/test-util';
 import {
   allSettingRows,
-  applyButton,
   changedMarker,
   openWebUISettings,
   rowInput,
@@ -22,6 +21,17 @@ function jsonConfigButton(page: Page) {
 
 function jsonConfigDialog(page: Page) {
   return page.getByRole('dialog', { name: 'JSON Config' });
+}
+
+/** Collects the app config upserts the page sends; a read-only test expects none. */
+function watchSettingsWrites(page: Page): Array<string> {
+  const writes: Array<string> = [];
+  page.on('request', (request) => {
+    if ((request.postData() ?? '').includes('AppConfigUpsert')) {
+      writes.push(request.url());
+    }
+  });
+  return writes;
 }
 
 /** Opens the JSON Config dialog and waits for the Monaco editor to load. */
@@ -68,6 +78,7 @@ test.describe(
       const cpuRow = settingRow(page, 'maxCPUCoresPerContainer');
       const cpuBefore = await rowInput(cpuRow).inputValue();
       const changedBefore = await changedMarker(allSettingRows(page)).count();
+      const writes = watchSettingsWrites(page);
 
       const dialog = await openJsonConfig(page);
 
@@ -89,7 +100,7 @@ test.describe(
         await expect(changedMarker(allSettingRows(page))).toHaveCount(
           changedBefore,
         );
-        await expect(applyButton(page)).toBeDisabled();
+        expect(writes).toHaveLength(0);
       });
     });
 
@@ -99,6 +110,7 @@ test.describe(
       const cpuRow = settingRow(page, 'maxCPUCoresPerContainer');
       const cpuBefore = await rowInput(cpuRow).inputValue();
       const changedBefore = await changedMarker(allSettingRows(page)).count();
+      const writes = watchSettingsWrites(page);
 
       const dialog = await openJsonConfig(page);
       await writeEditorText(
@@ -140,7 +152,7 @@ test.describe(
         await expect(changedMarker(allSettingRows(page))).toHaveCount(
           changedBefore,
         );
-        await expect(applyButton(page)).toBeDisabled();
+        expect(writes).toHaveLength(0);
       });
     });
   },
