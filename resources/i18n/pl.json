@@ -3284,6 +3284,7 @@
     "TensorboardPath": "Katalog dziennika dla TensorBoard",
     "Terminate": "Zakończyć",
     "TerminateSession": "Zakończenie sesji",
+    "TerminateSessionsPartialFailureDescription": "Nie udało się zakończyć {{failed}} z {{total}} sesji. Sprawdź poniżej przyczynę dla każdej sesji.",
     "TerminatedAt": "Zakończono",
     "Threshold": "Próg",
     "ToStatus": "Przejdź do statusu",

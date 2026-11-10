@@ -423,10 +423,16 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
       <TerminateSessionModalForProjectAdmin
         open={isTerminateOpen}
         sessionsFrgmt={terminateTargets}
-        onRequestClose={(success) => {
+        onRequestClose={(success, failedSessionIds) => {
           setIsTerminateOpen(false);
           if (success) {
-            setSelectedSessionList([]);
+            // Keep the sessions that failed selected so the next terminate
+            // retries them.
+            setSelectedSessionList(
+              terminateTargets.filter((session) =>
+                failedSessionIds?.includes(session.entityId),
+              ),
+            );
             updateFetchKey();
           }
         }}

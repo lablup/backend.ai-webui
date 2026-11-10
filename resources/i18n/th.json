@@ -3267,6 +3267,7 @@
     "TensorboardPath": "ไดเรกทอรีบันทึกสำหรับ TensorBoard",
     "Terminate": "ยุติ",
     "TerminateSession": "ยุติเซสชัน",
+    "TerminateSessionsPartialFailureDescription": "ไม่สามารถยุติเซสชัน {{failed}} จาก {{total}} รายการได้ ตรวจสอบสาเหตุของแต่ละเซสชันด้านล่าง",
     "TerminatedAt": "สิ้นสุดเมื่อ",
     "Threshold": "เกณฑ์",
     "ToStatus": "สู่สถานะ",

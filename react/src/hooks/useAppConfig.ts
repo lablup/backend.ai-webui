@@ -93,15 +93,11 @@ const upsertMutation = graphql`
   mutation useAppConfigUpsertMutation(
     $input: ScopedUpsertAppConfigFragmentsInput!
   ) {
-    scopedUpsertAppConfigFragments(input: $input) {
+    scopedAtomicBulkUpsertAppConfigFragments(input: $input) {
       items {
         id
         configName
         config
-      }
-      failed {
-        configName
-        message
       }
     }
   }
@@ -113,15 +109,11 @@ const myUpsertMutation = graphql`
   mutation useAppConfigMyUpsertMutation(
     $input: MyUpsertAppConfigFragmentsInput!
   ) {
-    myUpsertAppConfigFragments(input: $input) {
+    myAtomicBulkUpsertAppConfigFragments(input: $input) {
       items {
         id
         configName
         config
-      }
-      failed {
-        configName
-        message
       }
     }
   }
@@ -144,19 +136,6 @@ const applySubKey = (
     _.set(next, subKey, nextValue);
   }
   return next;
-};
-
-const throwOnFailed = (
-  failed: ReadonlyArray<{
-    readonly configName: string;
-    readonly message: string;
-  }>,
-) => {
-  if (failed.length > 0) {
-    throw new Error(
-      failed.map((f) => `${f.configName}: ${f.message}`).join('\n'),
-    );
-  }
 };
 
 /**
@@ -266,7 +245,7 @@ export const useUpdatePublicDomainAppConfig = () => {
     const rawDoc =
       (raw?.scopedAppConfigFragmentsByNames?.[0]?.config as
         AppConfigDocument | undefined) ?? {};
-    const response = await upsert({
+    await upsert({
       input: {
         scope: { scopeType: 'PUBLIC' },
         items: [
@@ -281,7 +260,6 @@ export const useUpdatePublicDomainAppConfig = () => {
         ],
       },
     });
-    throwOnFailed(response.scopedUpsertAppConfigFragments.failed);
   };
 };
 
@@ -309,7 +287,7 @@ export const useUpdateDomainAppConfig = () => {
     const rawDoc =
       (raw?.scopedAppConfigFragmentsByNames?.[0]?.config as
         AppConfigDocument | undefined) ?? {};
-    const response = await upsert({
+    await upsert({
       input: {
         scope: { scopeType: 'DOMAIN', scopeId },
         items: [
@@ -326,7 +304,6 @@ export const useUpdateDomainAppConfig = () => {
         ],
       },
     });
-    throwOnFailed(response.scopedUpsertAppConfigFragments.failed);
     await fetchQuery<useAppConfigMyQuery>(
       relayEnv,
       myQuery,
@@ -379,7 +356,7 @@ export const useUpdateMyUserAppConfig = () => {
     const rawDoc =
       (raw?.myAppConfigFragmentsByNames?.[0]?.config as
         AppConfigDocument | undefined) ?? {};
-    const response = await upsert({
+    await upsert({
       input: {
         items: [
           {
@@ -395,6 +372,5 @@ export const useUpdateMyUserAppConfig = () => {
         ],
       },
     });
-    throwOnFailed(response.myUpsertAppConfigFragments.failed);
   };
 };

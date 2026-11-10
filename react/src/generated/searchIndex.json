@@ -3955,6 +3955,7 @@
       "settings": [],
       "keys": [
         "button.ForceTerminate",
+        "dialog.error.Error",
         "session.ContainerToCleanUp",
         "session.ForceTerminateWarningMsg",
         "session.ForceTerminateWarningMsg2",
@@ -3964,6 +3965,7 @@
         "session.SessionTerminated",
         "session.Terminate",
         "session.TerminateSession",
+        "session.TerminateSessionsPartialFailureDescription",
         "userSettings.SessionTerminationDialog"
       ]
     },

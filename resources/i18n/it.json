@@ -3281,6 +3281,7 @@
     "TensorboardPath": "Directory di registro per TensorBoard",
     "Terminate": "Terminare",
     "TerminateSession": "Terminare la sessione",
+    "TerminateSessionsPartialFailureDescription": "{{failed}} sessioni su {{total}} non sono state terminate. Controlla il motivo per ogni sessione qui sotto.",
     "TerminatedAt": "Terminato il",
     "Threshold": "Soglia",
     "ToStatus": "Vai allo stato",

@@ -983,7 +983,10 @@
     "AreYouSureYouWantToDeactivateSome": "{{count}}개의 아티팩트를 비활성화 하시겠습니까?",
     "Deactivate": "비활성화",
     "DeactivateArtifacts": "아티팩트 비활성화",
+    "Error": "오류",
     "FailedToDeactivateArtifacts": "아티팩트를 비활성화하는 데 실패했습니다.",
+    "Name": "이름",
+    "SomeArtifactsFailedToDeactivate": "아티팩트 {{count}}개를 비활성화하지 못했습니다",
     "SuccessfullyDeactivated": "아티팩트를 비활성화했습니다."
   },
   "comp:BAIDeleteArtifactModal": {
