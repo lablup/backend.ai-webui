@@ -63,6 +63,7 @@ export const KeypairResourcePolicyV2Query = graphql`
       edges {
         node {
           id
+          entityId
           name
           defaultForUnspecified
           totalResourceSlots {
@@ -153,9 +154,8 @@ const KeypairResourcePolicyV2 = ({
   const [isCreatingPolicySetting, setIsCreatingPolicySetting] = useState(false);
   const [editingKeypairResourcePolicy, setEditingKeypairResourcePolicy] =
     useState<KeypairResourcePolicyV2Node | null>(null);
-  const [deletingPolicyName, setDeletingPolicyName] = useState<string | null>(
-    null,
-  );
+  const [deletingPolicy, setDeletingPolicy] =
+    useState<KeypairResourcePolicyV2Node | null>(null);
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.KeypairResourcePolicyV2',
@@ -179,9 +179,9 @@ const KeypairResourcePolicyV2 = ({
   );
 
   const [commitDelete] = useMutation<KeypairResourcePolicyV2Mutation>(graphql`
-    mutation KeypairResourcePolicyV2Mutation($name: String!) {
-      adminDeleteKeypairResourcePolicyV2(name: $name) {
-        name
+    mutation KeypairResourcePolicyV2Mutation($id: UUID!) {
+      purgeKeypairResourcePolicyV2(id: $id) {
+        entityId
       }
     }
   `);
@@ -421,7 +421,11 @@ const KeypairResourcePolicyV2 = ({
                           icon: <Trash2 size="1em" />,
                           type: 'danger',
                           onClick: () => {
-                            setDeletingPolicyName(record.name);
+                            setDeletingPolicy(
+                              _.find(keypairResourcePolicies, {
+                                id: record.id,
+                              }) ?? null,
+                            );
                           },
                         },
                       ]}
@@ -469,21 +473,21 @@ const KeypairResourcePolicyV2 = ({
         />
       </Suspense>
       <BAIDeleteConfirmModal
-        open={!!deletingPolicyName}
+        open={!!deletingPolicy}
         items={
-          deletingPolicyName
-            ? [{ key: deletingPolicyName, label: deletingPolicyName }]
+          deletingPolicy
+            ? [{ key: deletingPolicy.entityId, label: deletingPolicy.name }]
             : []
         }
         title={t('resourcePolicy.DeletePolicy')}
         target={t('resourcePolicy.ResourcePolicy')}
-        confirmText={deletingPolicyName ?? ''}
+        confirmText={deletingPolicy?.name ?? ''}
         requireConfirmInput
         onOk={() => {
-          if (deletingPolicyName) {
+          if (deletingPolicy) {
             return new Promise<void>((resolve) => {
               commitDelete({
-                variables: { name: deletingPolicyName },
+                variables: { id: deletingPolicy.entityId },
                 onCompleted: (_res, errors) => {
                   if (errors && errors.length > 0) {
                     for (const error of errors) {
@@ -495,19 +499,19 @@ const KeypairResourcePolicyV2 = ({
                     });
                     message.success(t('resourcePolicy.ResourcePolicyDeleted'));
                   }
-                  setDeletingPolicyName(null);
+                  setDeletingPolicy(null);
                   resolve();
                 },
                 onError(err) {
                   message.error(err?.message);
-                  setDeletingPolicyName(null);
+                  setDeletingPolicy(null);
                   resolve();
                 },
               });
             });
           }
         }}
-        onCancel={() => setDeletingPolicyName(null)}
+        onCancel={() => setDeletingPolicy(null)}
       />
     </BAIFlex>
   );
