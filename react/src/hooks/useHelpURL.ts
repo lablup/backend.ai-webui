@@ -10,36 +10,47 @@ import {
 } from '../helper/userSettingsModal';
 import { useWebUILocation } from './index';
 import { useCurrentMenuKey } from './useRouteScope';
+import { useEffectiveLoginConfig } from './useWebUIConfig';
 
 // Languages the hosted user manual (https://webui.docs.backend.ai) is
 // published in. Any other WebUI locale falls back to English.
 const DOCS_LANGUAGES = ['en', 'ko', 'ja', 'th'];
+export const HOSTED_MANUAL_ROOT = 'https://webui.docs.backend.ai';
 
-/** The hosted manual's root for this WebUI version and language, ending with `/`. */
-export const useManualBaseURL = (): { baseURL: string; docsLang: string } => {
-  'use memo';
-
-  const [lang] = useCurrentLanguage();
+/**
+ * `<root>/<version>/<lang>/`: an http(s) `manualUrl` (System Settings) replaces
+ * the hosted root, so a mirror keeps the hosted site's layout.
+ */
+export const buildManualBaseURL = (
+  manualUrl: string,
+  packageVersion: string,
+  lang: string,
+): string => {
+  const custom = manualUrl.trim().replace(/\/+$/, '');
+  const root = /^https?:\/\/[^/]/i.test(custom) ? custom : HOSTED_MANUAL_ROOT;
   const docsLang = DOCS_LANGUAGES.includes(lang) ? lang : 'en';
   // The manual is a versioned static site (FR-2729): a prerelease build has no
   // numbered docs site yet, so it tracks the `next` channel that every commit
   // rebuilds; a stable release uses its own `major.minor`.
-  const rawVersion = globalThis.packageVersion ?? '';
-  const docsVersion = rawVersion.includes('-')
+  const docsVersion = packageVersion.includes('-')
     ? 'next'
-    : rawVersion.split('.').slice(0, 2).filter(Boolean).join('.') || 'next';
-  return {
-    baseURL: `https://webui.docs.backend.ai/${docsVersion}/${docsLang}/`,
-    docsLang,
-  };
+    : packageVersion.split('.').slice(0, 2).filter(Boolean).join('.') || 'next';
+  return `${root}/${docsVersion}/${docsLang}/`;
 };
 
-/** The hosted manual page for the current route (and `?tab=` when it has one). */
+/** The user manual page for the current route (and `?tab=` when it has one). */
 export const useHelpURL = (): string => {
   'use memo';
 
+  const [lang] = useCurrentLanguage();
   const location = useWebUILocation();
-  const { baseURL: manualURL } = useManualBaseURL();
+  const { manualUrl } = useEffectiveLoginConfig();
+
+  const manualURL = buildManualBaseURL(
+    manualUrl,
+    globalThis.packageVersion ?? '',
+    lang,
+  );
 
   // Scope-aware menu key (route handle): under `/admin/<feature>` and
   // `/project/:name/<feature>` the first pathname segment is the scope prefix,
