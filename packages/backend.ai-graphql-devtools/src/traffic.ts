@@ -7,13 +7,6 @@ const SAVE_DELAY_MS = 300;
 
 export type Source = 'App' | 'Panel';
 
-export interface Origin {
-  id: number;
-  label: string;
-  query: string;
-  variables: string;
-}
-
 export interface LogEntry {
   id: number;
   source: Source;
@@ -28,8 +21,6 @@ export interface LogEntry {
   requestHeaders: [string, string][];
   responseHeaders: [string, string][];
   response: string;
-  origin?: Origin;
-  isModified?: boolean;
 }
 
 export type NewEntry = Omit<LogEntry, 'id'>;
