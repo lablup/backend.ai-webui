@@ -63,6 +63,11 @@ restore_src() {
   rm -rf "$SRC"
   git -C "$REPO_ROOT" checkout HEAD -- "$SRC"
   echo "Restored ${SRC} to HEAD."
+  # The checkout writes LFS pointers back; a local run gets its images again.
+  # CI skips it: nothing reads `src` afterwards.
+  if [ -z "${CI:-}" ]; then
+    pull_images || echo "warning: re-pulling the LFS images failed; run images:pull." >&2
+  fi
 }
 trap restore_src EXIT
 
@@ -102,6 +107,10 @@ BASE_SHA="$(resolve_base_sha)" || {
 echo "Head: $(git rev-parse --short HEAD) · Base: $(git rev-parse --short "$BASE_SHA") · Languages: ${LANGUAGES}"
 
 docs_toolkit() { pnpm --filter backend.ai-webui-docs exec docs-toolkit "$@"; }
+
+# Materializes Git LFS images in `src` (a no-op while it holds none). Base and
+# head reference different LFS objects, so each side is pulled after checkout.
+pull_images() { bash "${REPO_ROOT}/.github/scripts/lfs/pull-docs-images.sh" "$@" "$REPO_ROOT"; }
 
 src_langs() {
   find "$SRC" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort | tr '\n' ' '
@@ -147,6 +156,7 @@ echo "::endgroup::"
 rm -rf "${OUT}/head" "${OUT}/base"
 
 echo "::group::Build the docs site from the PR head"
+pull_images
 HEAD_LANGS="$(present_langs)"
 [ -n "${HEAD_LANGS// /}" ] || { echo "::error::None of '${LANGUAGES}' exists under ${SRC}." >&2; exit 1; }
 rm -rf "$WEB"
@@ -158,6 +168,7 @@ echo "::group::Build the docs site from the merge base"
 rm -rf "$SRC"
 SRC_SWAPPED=1
 git checkout "$BASE_SHA" -- "$SRC"
+pull_images --ref "$BASE_SHA"
 BASE_LANGS="$(present_langs)"
 rm -rf "$WEB"
 if [ -n "${BASE_LANGS// /}" ]; then

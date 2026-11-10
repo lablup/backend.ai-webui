@@ -8,6 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `pnpm run relay` - compile GraphQL queries (`relay:watch` for watch mode)
 - `bash scripts/verify.sh` - the verification harness (see Core Guidelines)
 - `make i18n` - extract translation strings
+- `pnpm --filter backend.ai-webui-docs run images:pull` - fetch the manual's screenshots once they are in Git LFS (needs git-lfs; only for building the manual or changing its images)
 - E2E tests (`/e2e/`, Playwright) require a full Backend.AI cluster running first
 
 ## Architecture Overview

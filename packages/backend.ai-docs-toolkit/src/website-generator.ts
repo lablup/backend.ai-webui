@@ -49,6 +49,7 @@ import {
 import type { ResolvedDocConfig } from "./config.js";
 import { writeHashedAsset, type AssetManifest } from "./asset-hasher.js";
 import { readImageDimensions } from "./image-meta.js";
+import { assertNoLfsPointers } from "./lfs-pointer.js";
 import {
   optimizeImage,
   newOptimizeImageStats,
@@ -270,6 +271,19 @@ export async function generateWebsite(
   const productName = config.productName;
   // Resolve versioned-docs config. `enabled === false` means flat layout.
   const loadedVersions = loadVersions(config);
+
+  // Pointer files would ship as broken images; `--no-strict` does not relax this.
+  const imageSourceRoots = [config.srcDir];
+  if (loadedVersions.enabled) {
+    for (const v of loadedVersions.entries) {
+      if (v.source.kind === "workspace") continue;
+      const resolved = resolveVersionSource(config, v);
+      if (resolved.ok && resolved.rootDir) {
+        imageSourceRoots.push(path.join(resolved.rootDir, "src"));
+      }
+    }
+  }
+  assertNoLfsPointers(imageSourceRoots, { cwd: config.projectRoot });
 
   console.log(`${productName} Website Generator`);
   console.log(`Title: ${title}`);
