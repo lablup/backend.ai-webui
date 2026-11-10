@@ -313,6 +313,21 @@ describe('connectViaGQL', () => {
     };
 
     await expect(connectViaGQL(client, cfg, [])).rejects.toBe(refusal);
+    expect(client.logout).toHaveBeenCalledTimes(1);
+  });
+
+  test('keeps the session when the version read fails with a 5xx', async () => {
+    const client = {
+      ...makeClient(),
+      get_manager_version: vi
+        .fn()
+        .mockRejectedValue({ isError: true, statusCode: 502 }),
+    };
+
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBeInstanceOf(
+      LoginBootstrapIncompleteError,
+    );
+    expect(client.logout).not.toHaveBeenCalled();
   });
 });
 

@@ -333,6 +333,31 @@ describe('STokenLoginBoundary', () => {
     expect(connectedEventCount).toBe(0);
   });
 
+  test('reports a manager failure after sign-in as account-unavailable, not token-invalid', async () => {
+    const client = buildFakeClient();
+    mockedCreateBackendAIClient.mockImplementation(() => ({
+      client,
+      clientConfig: {},
+    }));
+    mockedProbeLoginSession.mockResolvedValueOnce({
+      keypair: null,
+      user: null,
+      groups: null,
+    });
+    const incomplete = new LoginBootstrapIncompleteError('version read 502');
+    mockedConnectViaGQL.mockRejectedValueOnce(incomplete);
+    const onError = vi.fn();
+    renderBoundary({ onError });
+
+    await waitFor(() => {
+      expect(onError).toHaveBeenCalledWith({
+        kind: 'account-unavailable',
+        cause: incomplete,
+      });
+    });
+    expect(connectedEventCount).toBe(0);
+  });
+
   test('awaits the config.toml bootstrap before authenticating (FR-3128)', async () => {
     renderBoundary({});
 

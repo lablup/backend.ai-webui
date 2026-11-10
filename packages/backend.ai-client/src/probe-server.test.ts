@@ -40,14 +40,14 @@ describe('probeServer', () => {
     },
   );
 
-  it('rethrows the health error when the legacy root refuses too', async () => {
+  it('throws the legacy root error when the fallback fails too', async () => {
     const client = makeClient('SESSION');
-    const healthError = httpError(401);
+    const rootError = httpError(502);
     vi.spyOn(client, '_wrapWithPromise')
-      .mockRejectedValueOnce(healthError)
-      .mockRejectedValueOnce(httpError(401));
+      .mockRejectedValueOnce(httpError(401))
+      .mockRejectedValueOnce(rootError);
 
-    await expect(client.probeServer()).rejects.toBe(healthError);
+    await expect(client.probeServer()).rejects.toBe(rootError);
   });
 
   it('does not retry a server that did not answer', async () => {

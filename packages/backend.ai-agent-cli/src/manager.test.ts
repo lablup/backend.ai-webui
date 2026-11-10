@@ -1,5 +1,6 @@
 import {
   clearManagerVersionCache,
+  fetchManagerVersion,
   fetchPublicManagerVersion,
   fetchWhoAmI,
   gqlRequest,
@@ -194,8 +195,24 @@ describe('fetchPublicManagerVersion', () => {
         fetchImpl: jsonResponse(401, { error_code: 'user_auth_unauthorized' }),
       }),
     ).rejects.toMatchObject({
-      code: 'internal',
+      code: 'auth_required',
       hint: `bai-agent login --endpoint ${SESSION.endpoint}`,
+    });
+  });
+
+  it('asks for a new login when the manager refuses a stored session', async () => {
+    await expect(
+      fetchManagerVersion(
+        { ...SESSION, endpoint: 'https://expired.example.com' },
+        {
+          fetchImpl: jsonResponse(401, {
+            error_code: 'user_auth_unauthorized',
+          }),
+        },
+      ),
+    ).rejects.toMatchObject({
+      code: 'auth_required',
+      hint: 'bai-agent login --endpoint https://expired.example.com',
     });
   });
 });

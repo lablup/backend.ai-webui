@@ -404,7 +404,12 @@ const STokenLoginBoundaryInner: React.FC<STokenLoginBoundaryProps> = ({
       }
     } catch (cause) {
       logger.error('[STokenLoginBoundary] token_login failed', cause);
-      surfaceError(classifyTokenLoginFailure(cause, submittedOtp));
+      // Signed in, but the manager failed afterwards: not a token problem.
+      surfaceError(
+        cause instanceof LoginBootstrapIncompleteError
+          ? { kind: 'account-unavailable', cause }
+          : classifyTokenLoginFailure(cause, submittedOtp),
+      );
       return;
     }
 

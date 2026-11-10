@@ -246,9 +246,6 @@ export async function connectViaGQL(
   // tab must never log it out.
   const isActingAs = !!client.actAsUserId;
 
-  // The manager tells its version only to an authenticated caller; the Relay
-  // query below needs it to keep version-gated fields.
-  await client.get_manager_version();
   if (isCancelled?.()) throw new LoginAttemptCancelledError();
   // The Relay query below reads the global client, so a cancelled attempt
   // puts the previous one back.
@@ -263,6 +260,10 @@ export async function connectViaGQL(
     (globalThis as any).backendaiutils._peekRecentProjectGroup() ?? '';
   let response: loginSessionAuthMyUserQuery['response'] | undefined;
   try {
+    // The manager tells its version only to an authenticated caller; the
+    // Relay query needs it to keep version-gated fields.
+    await client.get_manager_version();
+    if (isCancelled?.()) throw cancel();
     response = await fetchQuery<loginSessionAuthMyUserQuery>(
       RelayEnvironment,
       myUserQuery,

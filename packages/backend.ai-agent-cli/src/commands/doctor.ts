@@ -637,9 +637,11 @@ const alignmentGroup: CheckGroup = {
         check: 'manager version',
         status: 'warn',
         detail: error instanceof Error ? error.message : String(error),
-        hint: session
-          ? `${CLI_NAME} login --endpoint ${endpoint}`
-          : `${CLI_NAME} init --endpoint <manager url>`,
+        hint:
+          session ||
+          (error instanceof CliError && error.code === 'auth_required')
+            ? `${CLI_NAME} login --endpoint ${endpoint}`
+            : `${CLI_NAME} init --endpoint <manager url>`,
       });
       checks.push({
         group: 'alignment',

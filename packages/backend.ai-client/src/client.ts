@@ -616,15 +616,11 @@ export class Client {
     } catch (err) {
       const statusCode = (err as { statusCode?: unknown } | null)?.statusCode;
       if (![401, 403, 404, 405].includes(statusCode as number)) throw err;
-      try {
-        await this._wrapWithPromise(
-          this.newPublicRequest('GET', '/', null, ''),
-          false,
-          signal,
-        );
-      } catch {
-        throw err;
-      }
+      await this._wrapWithPromise(
+        this.newPublicRequest('GET', '/', null, ''),
+        false,
+        signal,
+      );
     }
   }
 
@@ -844,7 +840,6 @@ export class Client {
           },
         };
       }
-      await this.get_manager_version();
       if (this._loginSessionId !== null && this._loginSessionId !== '') {
         safeStorage.setItem('backendaiwebui.sessionid', this._loginSessionId);
       }
@@ -898,7 +893,6 @@ export class Client {
     try {
       const result = await this._wrapWithPromise(rqst);
       if (result.authenticated === true) {
-        await this.get_manager_version();
         // Persist the login session ID so that the session survives a
         // page refresh — same as the regular login() path.
         if (this._loginSessionId !== null && this._loginSessionId !== '') {

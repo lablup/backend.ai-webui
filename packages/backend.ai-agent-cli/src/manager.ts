@@ -10,7 +10,7 @@ export const WHOAMI_QUERY =
 
 export interface ManagerSession {
   endpoint: string;
-  /** Empty for the public calls (`/func/`) that need no session. */
+  /** Empty for a session-less call; a manager with lablup/backend.ai#16736 refuses `/func/` then. */
   sessionId: string;
 }
 
@@ -262,9 +262,10 @@ export async function fetchManagerVersion(
     }
   }
 
-  if (refused && !session.sessionId) {
+  if (refused) {
+    if (session.sessionId) throw authRequiredError(session.endpoint);
     throw new CliError(
-      'internal',
+      'auth_required',
       `The manager at ${session.endpoint} tells its version only to a signed-in session.`,
       { hint: `${CLI_NAME} login --endpoint ${session.endpoint}` },
     );
