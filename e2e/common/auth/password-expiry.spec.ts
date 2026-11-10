@@ -45,7 +45,7 @@ const TEST_PASSWORD = 'oldPassword1!';
 
 /**
  * Fill the SESSION login form fields and expand the endpoint section.
- * Mirrors the pattern used in e2e/auth/login.spec.ts.
+ * Mirrors the pattern used in e2e/common/auth/login.spec.ts.
  */
 async function fillLoginForm(page: Page): Promise<void> {
   await fillLoginEndpoint(page, webServerEndpoint);

@@ -226,7 +226,7 @@ project: { id: string; name: string } | null
     `useCurrentProjectValue` import를 막고, 위반한 코드에 이 ADR을 가리킨다.
     `EnvironmentPage`, `ReservoirPage`, `AdminDashboardPage`(모두 전환에서
     제외)와 `DeploymentDetailPage`(허용된 page 수준 reader)는 제외한다.
-  - **E2E**(`e2e/admin-scope/`): 세 admin route에는 selector가 없고 user Data
+  - **E2E**(`e2e/admin/header/`): 세 admin route에는 selector가 없고 user Data
     page에는 있다. admin을 떠나면 이전 선택이 돌아온다. admin Data page에서 만든
     folder는 modal 안에서 고른 project에 들어간다.
 
@@ -336,7 +336,7 @@ resource_preset/row.py`). `data/schema.graphql`도 같다.
     들어갔다(정식 path와 legacy path 포함. reservoir 항목은 prefix이므로
     `/:artifactId` 자식도 포함된다).
   - **Fourth copy removed**:
-    `e2e/admin-scope/admin-header-project-selector.spec.ts`는 처음 세 route만
+    `e2e/admin/header/admin-header-project-selector.spec.ts`는 처음 세 route만
     다루는 자체 local `SUPER_ADMIN_ROUTES` 상수를 갖고 있었다. 이제 이 spec은
     목록을 `react/src/helper/projectAgnosticRoutes.ts`(의도적인 leaf module이라
     Playwright에 import해도 비용이 없다)에서 파생하고, 모든 test cluster에서

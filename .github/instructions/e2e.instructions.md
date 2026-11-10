@@ -59,13 +59,19 @@ Variables it defines (all consumed in `e2e/utils/test-util.ts`, each with a fall
 against `127.0.0.1` / `localhost` because remote deployments may cache `config.toml` before
 route interception takes effect.
 
+**Parts.** `E2E_PART` (`all` default, `admin`, `project`, `project-admin`, `common`, `user` =
+everything outside `e2e/admin/`, comma lists allowed) narrows the `chromium` project to folders;
+`E2E_ENV_FILE` picks the env file (default `e2e/envs/.env.playwright`; `E2E_PART=admin` uses
+`e2e/envs/.env.playwright.admin` when it exists). One run talks to one server, so run the admin
+part and the rest separately. Details and the folder rule: `e2e/README.md`.
+
 Running (a full Backend.AI cluster must already be up):
 
 ```bash
 pnpm exec playwright test                         # everything
 pnpm exec playwright test --grep @smoke           # tag subsets: @smoke / @critical / @regression
-pnpm exec playwright test e2e/vfolder/            # one directory
-pnpm exec playwright test e2e/auth/login.spec.ts  # one file
+pnpm exec playwright test e2e/project/data/       # one page folder
+pnpm exec playwright test e2e/common/auth/login.spec.ts  # one file
 pnpm exec playwright test --shard=1/4             # sharded
 ```
 
@@ -74,7 +80,7 @@ Config facts worth knowing (`playwright.config.ts`): `testDir` is `./e2e`, tests
 eat the whole test budget), trace is captured `on-first-retry`, the only enabled project is
 `chromium` with `locale: 'en-US'` — **UI strings are English**, so match English labels — and it
 declares a `cleanup` teardown project that runs `e2e/global-cleanup.teardown.ts` after the
-suite regardless of pass/fail. Snapshots resolve to `e2e/{testFileDir}/snapshot/{arg}{ext}`.
+suite regardless of pass/fail.
 
 ---
 
@@ -82,9 +88,11 @@ suite regardless of pass/fail. Snapshots resolve to `e2e/{testFileDir}/snapshot/
 
 ```
 e2e/
-├── auth/ user/ vfolder/ session/ serving/ environment/ agent/ project/
-│   credential/ config/ dashboard/ chat/ …          # feature directories, *.spec.ts
-├── envs/.env.playwright.sample                     # env template (real file git-ignored)
+├── admin/<page>/ project-admin/<page>/ project/<page>/ common/<area>/
+│                                                   # specs by console and page, see e2e/README.md
+├── mocks/ fixtures/                                # shared GraphQL mocks and fixture files
+├── envs/.env.playwright{,.admin}.sample            # env templates (real files git-ignored)
+├── e2e-parts.ts                                    # E2E_PART folder rule
 ├── global-cleanup.teardown.ts                      # suite-wide best-effort sweep
 ├── seed.spec.ts                                    # skipped seed for the Playwright MCP generator
 └── utils/
@@ -221,7 +229,7 @@ point for generated flows; do not turn it into a real test.
    refetch, so `toHaveCount(0)` on it right after the click passes before the refetch
    starts. Arm `page.waitForResponse` for the list query before the action, await it, and
    only then wait for `aria-busy` to clear (`settleTableAfter` in
-   `e2e/rbac/rbac-role-preset.spec.ts`).
+   `e2e/admin/rbac/rbac-role-preset.spec.ts`).
 
 ### What replaced what
 

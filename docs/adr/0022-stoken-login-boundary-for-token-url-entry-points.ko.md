@@ -170,7 +170,7 @@ sequenceDiagram
 - Jira: FR-2616 (epic), FR-2618 (spec, PR #6828), FR-2628 (PR #6850), FR-2629 (PR #6851), FR-2630 (PR #6852), FR-2631 (PR #6853), FR-2632 (PR #6855), FR-2633 (PR #6856), FR-2626 (PR #6861), FR-2627 (PR #6864), FR-2639 (PR #6865), PR #6897 (TOTP와 concurrent-session 처리), FR-3128 (PR #7873, config bootstrap), FR-3763 (PR #9249, `/cli-login`).
 - 결정일 2026-04-23.
 - 설계 기록: 예전 `.specs/draft-stoken-login-boundary/` (#10802에서 삭제, git history 참고).
-- Test: `react/src/components/STokenLoginBoundary.test.tsx`, `e2e/auth/stoken-login.spec.ts`, `e2e/app-launcher/edu-applauncher-stoken.spec.ts`.
+- Test: `react/src/components/STokenLoginBoundary.test.tsx`, `e2e/common/auth/stoken-login.spec.ts`, `e2e/project/session/edu-applauncher-stoken.spec.ts`.
 - 관련: [ADR 0018](0018-adrs-as-the-only-design-record.ko.md) (유일한 설계 기록인 ADR), [ADR 0021](0021-per-tab-url-state-for-multi-tab-pages.ko.md) (nuqs를 통한 URL state).
 
 ## 용어

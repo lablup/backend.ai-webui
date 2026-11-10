@@ -6,7 +6,7 @@
  * tests verify behavior UP TO the login API call (modal, form state,
  * request body parameters) rather than asserting navigation to /start.
  *
- * Mock strategy (following the pattern in e2e/auth/password-expiry.spec.ts):
+ * Mock strategy (following the pattern in e2e/common/auth/password-expiry.spec.ts):
  *   - GET  /func/health, /func/ → mock reachability probe / server version
  *   - POST /func/admin/gql   → mock 401 auth-failed (no session; show login form)
  *   - POST /server/login       → per-test mock (409, TOTP-required, etc.)

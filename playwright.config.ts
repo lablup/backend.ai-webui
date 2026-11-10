@@ -1,6 +1,49 @@
+import { e2ePartFilter, resolveE2EParts } from "./e2e/e2e-parts";
 import { defineConfig, devices } from "@playwright/test";
 import * as dotenv from "dotenv";
-dotenv.config({ path: "./e2e/envs/.env.playwright", override: true });
+import * as fs from "fs";
+import * as path from "path";
+
+/*
+ * E2E_PART narrows the `chromium` project to folders of the suite
+ * (e2e/e2e-parts.ts); unset means all. E2E_ENV_FILE picks the env file:
+ * default e2e/envs/.env.playwright, or e2e/envs/.env.playwright.admin for
+ * E2E_PART=admin when that file exists. One run talks to one server.
+ */
+const e2eParts = resolveE2EParts(process.env.E2E_PART);
+const defaultEnvFile = "./e2e/envs/.env.playwright";
+const adminEnvFile = "./e2e/envs/.env.playwright.admin";
+const e2eEnvFile =
+  process.env.E2E_ENV_FILE ||
+  (e2eParts.length === 1 &&
+  e2eParts[0] === "admin" &&
+  fs.existsSync(adminEnvFile)
+    ? adminEnvFile
+    : defaultEnvFile);
+if (process.env.E2E_ENV_FILE && !fs.existsSync(e2eEnvFile)) {
+  throw new Error(`E2E_ENV_FILE not found: ${e2eEnvFile}`);
+}
+dotenv.config({ path: e2eEnvFile, override: true });
+if (
+  !process.env.TEST_WORKER_INDEX &&
+  (!e2eParts.includes("all") || e2eEnvFile !== defaultEnvFile)
+) {
+  const host = (url?: string) => {
+    try {
+      return new URL(url ?? "").host;
+    } catch {
+      return "(unset)";
+    }
+  };
+  console.error(
+    `[e2e] part=${e2eParts.join(",")} env=${e2eEnvFile}` +
+      ` webui=${host(process.env.E2E_WEBUI_ENDPOINT)}` +
+      ` webserver=${host(process.env.E2E_WEBSERVER_ENDPOINT)}`,
+  );
+}
+
+const teardownSpec = /global-cleanup\.teardown\.ts/;
+const partFilter = e2ePartFilter(e2eParts, path.join(__dirname, "e2e"));
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -56,8 +99,12 @@ export default defineConfig({
       name: "chromium",
       use: { ...devices["Desktop Chrome"], locale: "en-US" },
       // The global cleanup runs as a dedicated teardown project, not as a
-      // regular test in the suite.
-      testIgnore: /global-cleanup\.teardown\.ts/,
+      // regular test in the suite. E2E_PART narrows this project rather than
+      // adding one per part, so `--project chromium` keeps working.
+      ...(partFilter.testMatch && { testMatch: partFilter.testMatch }),
+      testIgnore: partFilter.testIgnore
+        ? [teardownSpec, partFilter.testIgnore]
+        : teardownSpec,
       teardown: "cleanup",
     },
 

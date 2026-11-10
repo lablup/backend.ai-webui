@@ -573,7 +573,7 @@ let J = class t {
       const t = this.el.content.firstChild;
       t.replaceWith(...t.childNodes);
     }
-    for (; null !== (n = q.nextNode()) && h.length < l; ) {
+    for (; null !== (n = q.nextNode()) && h.length < l;) {
       if (1 === n.nodeType) {
         if (n.hasAttributes())
           for (const t of n.getAttributeNames())
@@ -609,7 +609,7 @@ let J = class t {
         if (n.data === x) h.push({ type: 2, index: o });
         else {
           let t = -1;
-          for (; -1 !== (t = n.data.indexOf(w, t + 1)); )
+          for (; -1 !== (t = n.data.indexOf(w, t + 1));)
             (h.push({ type: 7, index: o }), (t += w.length - 1));
         }
       o++;
@@ -675,7 +675,7 @@ let F = class {
         o = 0,
         r = 0,
         l = i[0];
-      for (; void 0 !== l; ) {
+      for (; void 0 !== l;) {
         if (o === l.index) {
           let e;
           (2 === l.type
@@ -1033,7 +1033,7 @@ function ot(t, e, i) {
 function rt(t, e) {
   const i = t.split('.');
   let s = e.strings;
-  for (; null != s && i.length > 0; ) s = s[i.shift()];
+  for (; null != s && i.length > 0;) s = s[i.shift()];
   return null != s ? s.toString() : null;
 }
 function lt(t) {
@@ -1105,7 +1105,7 @@ const Ot = (t, e) => {
       h,
       a = -1,
       c = 0;
-    for (; c < i.length && ((r.lastIndex = c), (h = r.exec(i)), null !== h); )
+    for (; c < i.length && ((r.lastIndex = c), (h = r.exec(i)), null !== h);)
       ((c = r.lastIndex),
         r === St
           ? '!--' === h[1]
@@ -1156,7 +1156,7 @@ class Rt {
         e = t.firstChild;
       (e.remove(), t.append(...e.childNodes));
     }
-    for (; null !== (s = kt.nextNode()) && l.length < r; ) {
+    for (; null !== (s = kt.nextNode()) && l.length < r;) {
       if (1 === s.nodeType) {
         if (s.hasAttributes()) {
           const t = [];
@@ -1200,7 +1200,7 @@ class Rt {
         if (s.data === At) l.push({ type: 2, index: n });
         else {
           let t = -1;
-          for (; -1 !== (t = s.data.indexOf(_t, t + 1)); )
+          for (; -1 !== (t = s.data.indexOf(_t, t + 1));)
             (l.push({ type: 7, index: n }), (t += _t.length - 1));
         }
       n++;
@@ -1262,7 +1262,7 @@ class Lt {
       r = 0,
       l = 0,
       h = s[0];
-    for (; void 0 !== h; ) {
+    for (; void 0 !== h;) {
       if (r === h.index) {
         let e;
         (2 === h.type

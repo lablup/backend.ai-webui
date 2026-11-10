@@ -33,6 +33,7 @@ This test plan focuses on user creation and complete deletion (purge) operations
 **Seed:** `tests/seed.spec.ts`
 
 **Preconditions:**
+
 - User is logged in as admin/superadmin
 - Browser is at `/credential` page
 - "Users" tab is active (default tab)
@@ -40,6 +41,7 @@ This test plan focuses on user creation and complete deletion (purge) operations
 #### 1.1 User can create a new user with required fields only
 
 **Steps:**
+
 1. Click "Create User" button (top right, has PlusIcon)
 2. Wait for "User Setting Modal" to appear
 3. Fill in the email field with a unique email (e.g., `test-user-${timestamp}@example.com`)
@@ -50,6 +52,7 @@ This test plan focuses on user creation and complete deletion (purge) operations
 8. Click "OK" or "Create" button to submit the form
 
 **Expected Results:**
+
 - Modal closes after successful creation
 - Success message appears: "User created successfully" or similar
 - User list automatically refreshes
@@ -60,6 +63,7 @@ This test plan focuses on user creation and complete deletion (purge) operations
 #### 1.2 User can create a new user with all optional fields
 
 **Steps:**
+
 1. Click "Create User" button
 2. Wait for "User Setting Modal" to appear
 3. Fill in required fields (email, username, password, domain, role)
@@ -76,6 +80,7 @@ This test plan focuses on user creation and complete deletion (purge) operations
 11. Click "OK" or "Create" button
 
 **Expected Results:**
+
 - Modal closes after successful creation
 - Success message appears
 - User appears in Active users list
@@ -85,6 +90,7 @@ This test plan focuses on user creation and complete deletion (purge) operations
 #### 1.3 User sees validation errors for invalid input
 
 **Steps:**
+
 1. Click "Create User" button
 2. Try to submit form without filling required fields
 3. Verify email field validation:
@@ -100,6 +106,7 @@ This test plan focuses on user creation and complete deletion (purge) operations
    - Verify error message about duplicate email
 
 **Expected Results:**
+
 - Form cannot be submitted when required fields are empty
 - Email field shows validation error for invalid format
 - IP/CIDR field shows validation error for invalid format
@@ -110,12 +117,14 @@ This test plan focuses on user creation and complete deletion (purge) operations
 #### 1.4 User can cancel user creation
 
 **Steps:**
+
 1. Click "Create User" button
 2. Fill in some fields in the modal
 3. Click "Cancel" button or close modal (X button)
 4. Confirm that modal closes
 
 **Expected Results:**
+
 - Modal closes without creating user
 - No new user appears in the list
 - No error or success messages appear
@@ -128,6 +137,7 @@ This test plan focuses on user creation and complete deletion (purge) operations
 **Seed:** `tests/seed.spec.ts`
 
 **Preconditions:**
+
 - User is logged in as admin/superadmin
 - Browser is at `/credential` page
 - "Users" tab is active
@@ -138,6 +148,7 @@ This test plan focuses on user creation and complete deletion (purge) operations
 #### 2.1 User can deactivate an active user
 
 **Steps:**
+
 1. Ensure "Active" filter is selected (radio button group at top)
 2. Locate the user to deactivate in the table
 3. Click the "Deactivate" button (Ban icon) in the Control column
@@ -146,6 +157,7 @@ This test plan focuses on user creation and complete deletion (purge) operations
 6. Click "Deactivate" button in popconfirm
 
 **Expected Results:**
+
 - Popconfirm closes
 - Success message appears: "Status updated successfully" or similar
 - User disappears from Active users list
@@ -155,6 +167,7 @@ This test plan focuses on user creation and complete deletion (purge) operations
 #### 2.2 User can permanently delete (purge) a single inactive user
 
 **Steps:**
+
 1. Ensure "Inactive" filter is selected (radio button group at top)
 2. Locate an inactive user in the table
 3. Click the "Delete" button (DeleteOutlined/trash icon) in the Control column for that user
@@ -167,6 +180,7 @@ This test plan focuses on user creation and complete deletion (purge) operations
 10. Click "Delete" button
 
 **Expected Results:**
+
 - Confirmation modal closes
 - Success message appears: "User permanently deleted" or "{count} users permanently deleted"
 - User completely disappears from inactive users list
@@ -176,6 +190,7 @@ This test plan focuses on user creation and complete deletion (purge) operations
 #### 2.3 User can purge a single inactive user with virtual folder deletion
 
 **Steps:**
+
 1. Ensure "Inactive" filter is selected
 2. Create a test inactive user with some virtual folders (preparation step)
 3. Click the "Delete" button for that inactive user
@@ -184,6 +199,7 @@ This test plan focuses on user creation and complete deletion (purge) operations
 6. Click "Delete" button
 
 **Expected Results:**
+
 - Confirmation modal closes
 - Success message appears
 - User is permanently deleted
@@ -193,6 +209,7 @@ This test plan focuses on user creation and complete deletion (purge) operations
 #### 2.4 User can purge multiple inactive users at once (batch operation)
 
 **Steps:**
+
 1. Ensure "Inactive" filter is selected
 2. Select checkboxes for 2 or more inactive users in the table
 3. Verify that selection count appears (e.g., "2 selected")
@@ -205,6 +222,7 @@ This test plan focuses on user creation and complete deletion (purge) operations
 10. Click "Delete" button
 
 **Expected Results:**
+
 - Modal closes
 - Success message shows count of deleted users (e.g., "2 of 2 users permanently deleted")
 - All selected users disappear from the list
@@ -214,6 +232,7 @@ This test plan focuses on user creation and complete deletion (purge) operations
 #### 2.5 User cannot purge an active user (only deactivate)
 
 **Steps:**
+
 1. Ensure "Active" filter is selected
 2. Select an active user by clicking its checkbox
 3. Verify that trash bin button is NOT visible in the top toolbar
@@ -221,6 +240,7 @@ This test plan focuses on user creation and complete deletion (purge) operations
 5. Verify that Delete icon is NOT present for active users
 
 **Expected Results:**
+
 - Purge/delete button is not available for active users
 - Only deactivate option is available
 - UI prevents accidental permanent deletion of active users
@@ -228,6 +248,7 @@ This test plan focuses on user creation and complete deletion (purge) operations
 #### 2.6 User can cancel purge operation
 
 **Steps:**
+
 1. Ensure "Inactive" filter is selected
 2. Select one or more inactive users
 3. Click the trash bin button
@@ -235,6 +256,7 @@ This test plan focuses on user creation and complete deletion (purge) operations
 5. Verify modal closes
 
 **Expected Results:**
+
 - Modal closes without deleting users
 - Selected users remain in the inactive list
 - No success or error messages appear
@@ -243,6 +265,7 @@ This test plan focuses on user creation and complete deletion (purge) operations
 #### 2.7 User must type exact confirmation text to enable purge
 
 **Steps:**
+
 1. Select an inactive user and open purge modal
 2. Try to click "Delete" button without typing anything in confirmation input
 3. Verify "Delete" button is disabled
@@ -252,6 +275,7 @@ This test plan focuses on user creation and complete deletion (purge) operations
 7. Verify "Delete" button becomes enabled
 
 **Expected Results:**
+
 - Delete button is disabled by default
 - Delete button remains disabled with incorrect confirmation text
 - Delete button becomes enabled only when exact confirmation text is entered
@@ -293,76 +317,74 @@ const testUser = {
 
 ### Users Tab Main Page
 
-| Element | Type | Selector/Description |
-|---------|------|---------------------|
-| Users Tab | Tab | Text: "Users" (credential.Users) |
-| Active/Inactive Toggle | Radio Button Group | Options: "Active", "Inactive" |
-| Property Filter | Filter Component | Filters: email, uuid, username, full_name, role, resource_policy, etc. |
-| Refresh Button | Button | Icon: ReloadOutlined |
-| Create User Button | Button | Text: "Create User", Icon: PlusIcon, type: primary |
-| User Table | Table | Shows user list with columns |
-| Control Column | Table Column | Contains Info, Edit, Activate/Deactivate buttons |
-| Selected Count | Text | Format: "{count} selected" (when users are selected) |
-| Batch Edit Button | Button | Icon: EditIcon, visible when users selected |
-| Batch Delete Button | Button | Icon: TrashBinIcon, visible when inactive users selected |
+| Element                | Type               | Selector/Description                                                   |
+| ---------------------- | ------------------ | ---------------------------------------------------------------------- |
+| Users Tab              | Tab                | Text: "Users" (credential.Users)                                       |
+| Active/Inactive Toggle | Radio Button Group | Options: "Active", "Inactive"                                          |
+| Property Filter        | Filter Component   | Filters: email, uuid, username, full_name, role, resource_policy, etc. |
+| Refresh Button         | Button             | Icon: ReloadOutlined                                                   |
+| Create User Button     | Button             | Text: "Create User", Icon: PlusIcon, type: primary                     |
+| User Table             | Table              | Shows user list with columns                                           |
+| Control Column         | Table Column       | Contains Info, Edit, Activate/Deactivate buttons                       |
+| Selected Count         | Text               | Format: "{count} selected" (when users are selected)                   |
+| Batch Edit Button      | Button             | Icon: EditIcon, visible when users selected                            |
+| Batch Delete Button    | Button             | Icon: TrashBinIcon, visible when inactive users selected               |
 
 ### User Table Columns
 
-| Column Key | Title | Sortable | Description |
-|------------|-------|----------|-------------|
-| email | Email / User ID | Yes | User's email address |
-| control | Control | No | Action buttons (Info, Edit, Activate/Deactivate/Delete) |
-| username | Name | Yes | User's username |
-| full_name | Full Name | Yes | User's full name |
-| role | Role | Yes | User role (superadmin/user) |
-| status | Status | Yes | User status (active/inactive) |
-| created_at | Created At | Yes | User creation timestamp |
-| resource_policy | Resource Policy | Yes | Assigned resource policy |
+| Column Key      | Title           | Sortable | Description                                             |
+| --------------- | --------------- | -------- | ------------------------------------------------------- |
+| email           | Email / User ID | Yes      | User's email address                                    |
+| control         | Control         | No       | Action buttons (Info, Edit, Activate/Deactivate/Delete) |
+| username        | Name            | Yes      | User's username                                         |
+| full_name       | Full Name       | Yes      | User's full name                                        |
+| role            | Role            | Yes      | User role (superadmin/user)                             |
+| status          | Status          | Yes      | User status (active/inactive)                           |
+| created_at      | Created At      | Yes      | User creation timestamp                                 |
+| resource_policy | Resource Policy | Yes      | Assigned resource policy                                |
 
 ### User Setting Modal (Create/Edit)
 
-| Field | Type | Required | Validation | Description |
-|-------|------|----------|------------|-------------|
-| Email | Input | Yes | Email format | User's email (unique) |
-| Username | Input | Yes | - | User's username |
-| Password | Input Password | Yes (create) | - | User's password |
-| Full Name | Input | No | - | User's full name |
-| Description | Input.TextArea | No | - | User description |
-| Role | Select | Yes | - | User role (superadmin/user) |
-| Domain | Select | Yes | - | User's domain |
-| Projects | Select (multiple) | No | - | Assigned projects/groups |
-| Status | Select | Yes | - | User status (active/inactive) |
-| Resource Policy | Select | No | - | Assigned resource policy |
-| Allowed Client IP | Input (tags) | No | IP/CIDR format | Allowed client IPs |
-| Require Password Change | Checkbox | No | - | Force password change on next login |
-| Enable Sudo Session | Checkbox | No | - | Enable sudo session capability |
-| 2FA Enabled | Checkbox | No | - | Enable TOTP 2FA (if supported) |
-| Container UID | InputNumber | No | - | Container UID |
-| Container Main GID | InputNumber | No | - | Container main GID |
-| Container GIDs | Input (tags) | No | - | Additional container GIDs |
+| Field                   | Type              | Required     | Validation     | Description                         |
+| ----------------------- | ----------------- | ------------ | -------------- | ----------------------------------- |
+| Email                   | Input             | Yes          | Email format   | User's email (unique)               |
+| Username                | Input             | Yes          | -              | User's username                     |
+| Password                | Input Password    | Yes (create) | -              | User's password                     |
+| Full Name               | Input             | No           | -              | User's full name                    |
+| Description             | Input.TextArea    | No           | -              | User description                    |
+| Role                    | Select            | Yes          | -              | User role (superadmin/user)         |
+| Domain                  | Select            | Yes          | -              | User's domain                       |
+| Projects                | Select (multiple) | No           | -              | Assigned projects/groups            |
+| Status                  | Select            | Yes          | -              | User status (active/inactive)       |
+| Resource Policy         | Select            | No           | -              | Assigned resource policy            |
+| Allowed Client IP       | Input (tags)      | No           | IP/CIDR format | Allowed client IPs                  |
+| Require Password Change | Checkbox          | No           | -              | Force password change on next login |
+| Enable Sudo Session     | Checkbox          | No           | -              | Enable sudo session capability      |
+| 2FA Enabled             | Checkbox          | No           | -              | Enable TOTP 2FA (if supported)      |
+| Container UID           | InputNumber       | No           | -              | Container UID                       |
+| Container Main GID      | InputNumber       | No           | -              | Container main GID                  |
+| Container GIDs          | Input (tags)      | No           | -              | Additional container GIDs           |
 
 ### Purge Users Modal
 
-| Element | Type | Description |
-|---------|------|-------------|
-| Title | Text | "Permanently Delete Users" |
-| Warning Alert | Alert | Shows list of users to be deleted |
-| Confirmation Message | Text | Warning about permanent deletion |
-| Delete Shared Virtual Folders | Checkbox | Option to delete user's virtual folders |
-| Confirmation Input | Input | Requires typing "Permanently Delete" |
-| Cancel Button | Button | Cancels the operation |
-| Delete Button | Button (danger) | Confirms and executes deletion |
+| Element                       | Type            | Description                             |
+| ----------------------------- | --------------- | --------------------------------------- |
+| Title                         | Text            | "Permanently Delete Users"              |
+| Warning Alert                 | Alert           | Shows list of users to be deleted       |
+| Confirmation Message          | Text            | Warning about permanent deletion        |
+| Delete Shared Virtual Folders | Checkbox        | Option to delete user's virtual folders |
+| Confirmation Input            | Input           | Requires typing "Permanently Delete"    |
+| Cancel Button                 | Button          | Cancels the operation                   |
+| Delete Button                 | Button (danger) | Confirms and executes deletion          |
 
 ---
 
 ## GraphQL Mutations Used
 
 ### User Creation
+
 ```graphql
-mutation UserSettingModalCreateMutation(
-  $email: String!
-  $props: UserInput!
-) {
+mutation UserSettingModalCreateMutation($email: String!, $props: UserInput!) {
   create_user(email: $email, props: $props) {
     ok
     msg
@@ -377,6 +399,7 @@ mutation UserSettingModalCreateMutation(
 ```
 
 ### User Deactivation
+
 ```graphql
 mutation UserManagementModifyMutation(
   $email: String!
@@ -390,11 +413,9 @@ mutation UserManagementModifyMutation(
 ```
 
 ### User Purge (Permanent Deletion)
+
 ```graphql
-mutation PurgeUsersModalMutation(
-  $email: String!
-  $props: PurgeUserInput!
-) {
+mutation PurgeUsersModalMutation($email: String!, $props: PurgeUserInput!) {
   purge_user(email: $email, props: $props) {
     ok
     msg
@@ -472,6 +493,7 @@ mutation PurgeUsersModalMutation(
 ## Browser Compatibility
 
 Tests should pass on:
+
 - Chrome (latest)
 - Firefox (latest)
 - Safari (latest)
@@ -518,6 +540,6 @@ Tests should pass on:
 
 ## Revision History
 
-| Date | Version | Changes |
-|------|---------|---------|
-| 2026-01-30 | 1.0 | Initial test plan created |
+| Date       | Version | Changes                   |
+| ---------- | ------- | ------------------------- |
+| 2026-01-30 | 1.0     | Initial test plan created |

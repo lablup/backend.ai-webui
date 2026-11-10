@@ -1,4 +1,4 @@
-// spec: e2e/user/bulk-user-creation.spec.ts
+// spec: e2e/admin/users/bulk-user-creation.spec.ts
 import { BulkCreateUserModal } from '../../utils/classes/user/BulkCreateUserModal';
 import { PurgeUsersModal } from '../../utils/classes/user/PurgeUsersModal';
 import { KeyPairModal } from '../../utils/classes/user/UserSettingModal';
