@@ -23,6 +23,7 @@ export type BAIProjectBulkEditModalProjectMutation$data = {
             readonly message: string;
         }>;
         readonly successes: ReadonlyArray<{
+            readonly entityId: string;
             readonly id: string;
         }>;
     };

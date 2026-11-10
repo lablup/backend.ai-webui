@@ -1,5 +1,6 @@
 import { ReaderFragment, FragmentRefs } from 'relay-runtime';
 export type BAIProjectBulkEditModalFragment$data = ReadonlyArray<{
+    readonly id: string;
     readonly name: string | null | undefined;
     readonly row_id: string | null | undefined;
     readonly " $fragmentType": "BAIProjectBulkEditModalFragment";
