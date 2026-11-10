@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6c3fc9f150985193dec136fe11bc3eeb>>
+ * @generated SignedSource<<ec221366bc6ac5ca78e54b3b3a07b6b8>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,12 +10,11 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type AdminUserCredentialListDeleteMutation$variables = {
-  access_key: string;
+  accessKey: string;
 };
 export type AdminUserCredentialListDeleteMutation$data = {
-  readonly delete_keypair: {
-    readonly msg: string | null | undefined;
-    readonly ok: boolean | null | undefined;
+  readonly adminDeleteKeypairV2: {
+    readonly accessKey: string;
   } | null | undefined;
 };
 export type AdminUserCredentialListDeleteMutation = {
@@ -28,7 +27,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "access_key"
+    "name": "accessKey"
   }
 ],
 v1 = [
@@ -37,27 +36,20 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "access_key",
-        "variableName": "access_key"
+        "name": "accessKey",
+        "variableName": "accessKey"
       }
     ],
-    "concreteType": "DeleteKeyPair",
+    "concreteType": "AdminDeleteKeypairPayload",
     "kind": "LinkedField",
-    "name": "delete_keypair",
+    "name": "adminDeleteKeypairV2",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "ok",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "msg",
+        "name": "accessKey",
         "storageKey": null
       }
     ],
@@ -82,16 +74,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "5d4c0a30295544e357a1da7cf1054b67",
+    "cacheID": "b51167cef6d60228f92da5565b40b7e3",
     "id": null,
     "metadata": {},
     "name": "AdminUserCredentialListDeleteMutation",
     "operationKind": "mutation",
-    "text": "mutation AdminUserCredentialListDeleteMutation(\n  $access_key: String!\n) {\n  delete_keypair(access_key: $access_key) {\n    ok\n    msg\n  }\n}\n"
+    "text": "mutation AdminUserCredentialListDeleteMutation(\n  $accessKey: String!\n) {\n  adminDeleteKeypairV2(accessKey: $accessKey) {\n    accessKey\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "06f98aed67b19b9454aaaefcc9d5bb8e";
+(node as any).hash = "fee9efb0a7d661147bb17fa71a6d0250";
 
 export default node;

@@ -156,22 +156,21 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
   const [commitModifyKeypair] =
     useMutation<AdminUserCredentialListModifyMutation>(graphql`
       mutation AdminUserCredentialListModifyMutation(
-        $access_key: String!
-        $props: ModifyKeyPairInput!
+        $input: AdminUpdateKeypairInput!
       ) {
-        modify_keypair(access_key: $access_key, props: $props) {
-          ok
-          msg
+        adminUpdateKeypairV2(input: $input) {
+          keypair {
+            id
+          }
         }
       }
     `);
 
   const [commitDeleteKeypair] =
     useMutation<AdminUserCredentialListDeleteMutation>(graphql`
-      mutation AdminUserCredentialListDeleteMutation($access_key: String!) {
-        delete_keypair(access_key: $access_key) {
-          ok
-          msg
+      mutation AdminUserCredentialListDeleteMutation($accessKey: String!) {
+        adminDeleteKeypairV2(accessKey: $accessKey) {
+          accessKey
         }
       }
     `);
@@ -201,14 +200,14 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
               new Promise<void>((resolve, reject) => {
                 commitModifyKeypair({
                   variables: {
-                    access_key: keypair.access_key ?? '',
-                    props: {
-                      is_active: isActive,
+                    input: {
+                      accessKey: keypair.access_key ?? '',
+                      isActive,
                     },
                   },
                   onCompleted: (res, errors) => {
-                    if (!res?.modify_keypair?.ok || errors) {
-                      reject(new Error(res?.modify_keypair?.msg ?? ''));
+                    if (!res?.adminUpdateKeypairV2 || errors?.length) {
+                      reject(new Error(errors?.[0]?.message ?? ''));
                       return;
                     }
                     resolve();
@@ -482,14 +481,17 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
                             return new Promise<void>((resolve) => {
                               commitModifyKeypair({
                                 variables: {
-                                  access_key: record.access_key ?? '',
-                                  props: {
-                                    is_active: true,
+                                  input: {
+                                    accessKey: record.access_key ?? '',
+                                    isActive: true,
                                   },
                                 },
                                 onCompleted: (res, errors) => {
-                                  if (!res?.modify_keypair?.ok || errors) {
-                                    message.error(res?.modify_keypair?.msg);
+                                  if (
+                                    !res?.adminUpdateKeypairV2 ||
+                                    errors?.length
+                                  ) {
+                                    message.error(errors?.[0]?.message);
                                     resolve();
                                     return;
                                   }
@@ -538,14 +540,17 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
                             return new Promise<void>((resolve) => {
                               commitModifyKeypair({
                                 variables: {
-                                  access_key: record.access_key ?? '',
-                                  props: {
-                                    is_active: false,
+                                  input: {
+                                    accessKey: record.access_key ?? '',
+                                    isActive: false,
                                   },
                                 },
                                 onCompleted: (res, errors) => {
-                                  if (!res?.modify_keypair?.ok || errors) {
-                                    message.error(res?.modify_keypair?.msg);
+                                  if (
+                                    !res?.adminUpdateKeypairV2 ||
+                                    errors?.length
+                                  ) {
+                                    message.error(errors?.[0]?.message);
                                     resolve();
                                     return;
                                   }
@@ -773,11 +778,11 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
           if (deletingKeypair) {
             commitDeleteKeypair({
               variables: {
-                access_key: deletingKeypair.access_key ?? '',
+                accessKey: deletingKeypair.access_key ?? '',
               },
               onCompleted: (res, errors) => {
-                if (!res?.delete_keypair?.ok || errors) {
-                  message.error(res?.delete_keypair?.msg);
+                if (!res?.adminDeleteKeypairV2 || errors?.length) {
+                  message.error(errors?.[0]?.message);
                   setDeletingKeypair(null);
                   return;
                 }

@@ -71,12 +71,12 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
   const [commitModifyKeypair, isInFlightCommitModifyKeypair] =
     useMutation<KeypairSettingModalModifyMutation>(graphql`
       mutation KeypairSettingModalModifyMutation(
-        $access_key: String!
-        $props: ModifyKeyPairInput!
+        $input: AdminUpdateKeypairInput!
       ) {
-        modify_keypair(access_key: $access_key, props: $props) {
-          ok
-          msg
+        adminUpdateKeypairV2(input: $input) {
+          keypair {
+            id
+          }
         }
       }
     `);
@@ -97,15 +97,15 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
             keypair
               ? commitModifyKeypair({
                   variables: {
-                    access_key: keypair.access_key ?? '',
-                    props: {
-                      rate_limit: values.rate_limit,
-                      resource_policy: values.resource_policy,
+                    input: {
+                      accessKey: keypair.access_key ?? '',
+                      rateLimit: values.rate_limit,
+                      resourcePolicy: values.resource_policy,
                     },
                   },
                   onCompleted: (res, errors) => {
-                    if (!res.modify_keypair?.ok || errors) {
-                      message.error(res?.modify_keypair?.msg);
+                    if (!res.adminUpdateKeypairV2 || errors?.length) {
+                      message.error(errors?.[0]?.message);
                       onRequestClose(false);
                       return;
                     }
