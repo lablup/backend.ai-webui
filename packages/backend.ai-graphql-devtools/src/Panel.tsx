@@ -1,5 +1,18 @@
 import './Panel.css';
 import { manipulateGraphQLQueryWithClientDirectives } from './graphql-transformer';
+import { hasGraphQLErrors, parseJson, printJson } from './json';
+import {
+  addEntry,
+  clearEntries,
+  getEntries,
+  getIsPreserved,
+  type LogEntry,
+  type NewEntry,
+  panelFetch,
+  setIsPreserved,
+  type Source,
+  subscribe,
+} from './traffic';
 import {
   buildSchema,
   type DocumentNode,
@@ -14,11 +27,14 @@ import {
 import { getAutocompleteSuggestions, Position } from 'graphql-language-service';
 import type * as Monaco from 'monaco-editor';
 import {
+  type ReactNode,
   type RefObject,
   useEffect,
   useEffectEvent,
+  useLayoutEffect,
   useRef,
   useState,
+  useSyncExternalStore,
 } from 'react';
 import { flushSync } from 'react-dom';
 import { createRoot, type Root } from 'react-dom/client';
@@ -36,9 +52,6 @@ declare global {
       onError: (e: unknown) => void,
     ): void;
   };
-  interface JSON {
-    rawJSON?(text: string): unknown;
-  }
   var backendaiclient:
     | {
         ready?: boolean;
@@ -57,7 +70,6 @@ declare global {
 
 const MONACO_VS = '/resources/monaco/vs';
 const MARKER_OWNER = 'bai-graphql-devtools';
-const MAX_HISTORY = 50;
 const EXISTING_LOADER_WAIT_MS = 5000;
 
 let monacoPromise: Promise<MonacoApi> | undefined;
@@ -246,38 +258,6 @@ function operationLabel(operation: OperationDefinitionNode) {
     .join(' ');
 }
 
-function parseJson(text: string): unknown {
-  try {
-    return JSON.parse(text);
-  } catch {
-    return undefined;
-  }
-}
-
-function printJson(text: string): string {
-  if (!JSON.rawJSON) return text;
-  const keepNumberSource = (
-    _key: string,
-    value: unknown,
-    context: { source?: string },
-  ) =>
-    typeof value === 'number' && context.source
-      ? JSON.rawJSON?.(context.source)
-      : value;
-  try {
-    return JSON.stringify(
-      JSON.parse(
-        text,
-        keepNumberSource as (key: string, value: unknown) => unknown,
-      ),
-      null,
-      2,
-    );
-  } catch {
-    return text;
-  }
-}
-
 function replaceText(
   editor: Monaco.editor.IStandaloneCodeEditor | null,
   text: string,
@@ -367,15 +347,362 @@ const Editor = ({ kind, value, editorRef, onChange }: EditorProps) => {
   );
 };
 
-interface HistoryEntry {
-  id: number;
-  status: 'ok' | 'error' | 'not sent';
-  label: string;
-  time: string;
-  query: string;
-  variables: string;
-  result: string;
+function formatSize(bytes: number) {
+  return bytes < 1024 ? `${bytes} B` : `${(bytes / 1024).toFixed(1)} kB`;
 }
+
+function summary(entry: LogEntry) {
+  return [
+    new Date(entry.time).toLocaleTimeString(),
+    statusText(entry),
+    entry.duration !== undefined && `${entry.duration} ms`,
+    entry.size !== undefined && formatSize(entry.size),
+  ]
+    .filter((part) => part !== false && part !== undefined)
+    .join(' · ');
+}
+
+type ViewerLanguage = 'graphql' | 'json' | 'plaintext';
+
+interface ViewerProps {
+  language: ViewerLanguage;
+  value: string;
+  isSmall?: boolean;
+  testId: string;
+}
+
+const Viewer = ({ language, value, isSmall, testId }: ViewerProps) => {
+  'use memo';
+  const hostRef = useRef<HTMLDivElement>(null);
+  const editorRef = useRef<Monaco.editor.IStandaloneCodeEditor>(null);
+  const [isFailed, setIsFailed] = useState(false);
+  const className = isSmall
+    ? 'bai-gql-devtools__editor bai-gql-devtools__editor--variables'
+    : 'bai-gql-devtools__editor';
+
+  const createViewer = useEffectEvent((monaco: MonacoApi) =>
+    monaco.editor.create(hostRef.current!, {
+      value,
+      language,
+      theme: document.body.classList.contains('dark-theme') ? 'vs-dark' : 'vs',
+      readOnly: true,
+      domReadOnly: true,
+      automaticLayout: true,
+      fixedOverflowWidgets: true,
+      minimap: { enabled: false },
+      scrollBeyondLastLine: false,
+    }),
+  );
+
+  useEffect(() => {
+    let isDisposed = false;
+    void loadMonaco().then(
+      (monaco) => {
+        if (!isDisposed) editorRef.current = createViewer(monaco);
+      },
+      () => setIsFailed(true),
+    );
+    return () => {
+      isDisposed = true;
+      editorRef.current?.dispose();
+      editorRef.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    const editor = editorRef.current;
+    if (editor && editor.getValue() !== value) editor.setValue(value);
+  }, [value]);
+
+  return isFailed ? (
+    <pre className={`${className} bai-gql-devtools__code`} data-testid={testId}>
+      {value || '(empty)'}
+    </pre>
+  ) : (
+    <div ref={hostRef} className={className} data-testid={testId} />
+  );
+};
+
+// GraphQL errors come from the capture-time flag, since the stored response may be cut.
+function statusTone(entry: LogEntry) {
+  const is2xx =
+    entry.status !== undefined && entry.status >= 200 && entry.status < 300;
+  if (is2xx && entry.hasGraphQLErrors) return 'warning';
+  if (entry.state === 'error' || entry.state === 'interrupted') return 'error';
+  if (entry.status === undefined) return undefined;
+  if (entry.status >= 400) return 'error';
+  return is2xx ? 'success' : undefined;
+}
+
+function statusText(entry: LogEntry) {
+  if (entry.status === undefined) return entry.state;
+  if (statusTone(entry) === 'warning')
+    return `${entry.status} · GraphQL errors`;
+  return entry.state === 'ok'
+    ? String(entry.status)
+    : `${entry.status} · ${entry.state}`;
+}
+
+function responseView(entry: LogEntry): {
+  language: ViewerLanguage;
+  text: string;
+} {
+  return parseJson(entry.response) === undefined
+    ? { language: 'plaintext', text: entry.response }
+    : { language: 'json', text: printJson(entry.response) };
+}
+
+const HeaderRows = ({
+  title,
+  list,
+}: {
+  title: string;
+  list: [string, string][];
+}) => (
+  <>
+    <tr>
+      <th colSpan={2} className="bai-gql-devtools__headers-title">
+        {title}
+      </th>
+    </tr>
+    {list.length ? (
+      list.map(([name, value], index) => (
+        <tr key={`${name}-${index}`}>
+          <td className="bai-gql-devtools__headers-name">{name}</td>
+          <td>{value}</td>
+        </tr>
+      ))
+    ) : (
+      <tr>
+        <td colSpan={2}>(none)</td>
+      </tr>
+    )}
+  </>
+);
+
+const CopyButton = ({
+  text,
+  testId,
+  label = 'Copy',
+}: {
+  text: string;
+  testId: string;
+  label?: string;
+}) => {
+  'use memo';
+  const [state, setState] = useState<'idle' | 'copied' | 'failed'>('idle');
+  useEffect(() => {
+    if (state === 'idle') return;
+    const timer = setTimeout(() => setState('idle'), 1500);
+    return () => clearTimeout(timer);
+  }, [state]);
+  return (
+    <button
+      type="button"
+      className="bai-gql-devtools__button bai-gql-devtools__button--small"
+      data-testid={testId}
+      onClick={() => {
+        // `navigator.clipboard` is undefined outside a secure context.
+        try {
+          navigator.clipboard.writeText(text).then(
+            () => setState('copied'),
+            () => setState('failed'),
+          );
+        } catch {
+          setState('failed');
+        }
+      }}
+    >
+      {state === 'copied'
+        ? 'Copied'
+        : state === 'failed'
+          ? 'Copy failed'
+          : label}
+    </button>
+  );
+};
+
+const SectionBar = ({
+  title,
+  text,
+  testId,
+  children,
+}: {
+  title: string;
+  text: string;
+  testId: string;
+  children?: ReactNode;
+}) => (
+  <div className="bai-gql-devtools__toolbar">
+    <span className="bai-gql-devtools__label">{title}</span>
+    <span className="bai-gql-devtools__actions">
+      {children}
+      <CopyButton text={text} testId={testId} />
+    </span>
+  </div>
+);
+
+// The body a GraphQL client would POST, ready to paste into another tool; numbers keep their source text.
+const requestBodyText = (entry: LogEntry) =>
+  JSON.stringify(
+    { query: entry.query, variables: parseJson(entry.variables) ?? {} },
+    null,
+    2,
+  );
+
+const headersText = (title: string, list: [string, string][]) =>
+  [`# ${title}`, ...list.map(([name, value]) => `${name}: ${value}`)].join(
+    '\n',
+  );
+
+const DETAIL_TABS = ['Request', 'Response', 'Headers'] as const;
+
+interface EntryDetailProps {
+  entry: LogEntry;
+  isRunning: boolean;
+  onOpen: (entry: LogEntry) => void;
+}
+
+const EntryDetail = ({ entry, isRunning, onOpen }: EntryDetailProps) => {
+  'use memo';
+  const [tab, setTab] = useState<(typeof DETAIL_TABS)[number]>('Request');
+  const [type, ...rest] = entry.label.split(' ');
+  const isTyped = ['query', 'mutation', 'subscription'].includes(type);
+  const tone = statusTone(entry);
+  const response = responseView(entry);
+  return (
+    <div className="bai-gql-devtools__detail" data-testid="gql-devtools-detail">
+      <div className="bai-gql-devtools__toolbar">
+        <span className="bai-gql-devtools__entry-title">
+          <span
+            className={`bai-gql-devtools__badge bai-gql-devtools__badge--${entry.source.toLowerCase()}`}
+          >
+            {entry.source}
+          </span>
+          {isTyped && <span className="bai-gql-devtools__muted">{type}</span>}
+          <span className="bai-gql-devtools__entry-label">
+            {isTyped ? rest.join(' ') : entry.label}
+          </span>
+          <span className="bai-gql-devtools__muted">#{entry.id}</span>
+        </span>
+        <button
+          type="button"
+          className="bai-gql-devtools__button"
+          disabled={isRunning}
+          onClick={() => onOpen(entry)}
+        >
+          Open in editor
+        </button>
+      </div>
+      <span
+        className="bai-gql-devtools__muted"
+        data-testid="gql-devtools-detail-summary"
+      >
+        <span
+          className={
+            tone
+              ? `bai-gql-devtools__status bai-gql-devtools__status--${tone}`
+              : 'bai-gql-devtools__status'
+          }
+          data-tone={tone}
+        >
+          {statusText(entry)}
+        </span>
+        {[
+          entry.duration !== undefined && `${entry.duration} ms`,
+          entry.size !== undefined && formatSize(entry.size),
+          new Date(entry.time).toLocaleTimeString(),
+        ]
+          .filter(Boolean)
+          .map((part) => ` · ${part}`)}
+      </span>
+      <div className="bai-gql-devtools__tabs" role="tablist">
+        {DETAIL_TABS.map((value) => (
+          <button
+            key={value}
+            type="button"
+            role="tab"
+            className="bai-gql-devtools__tab"
+            aria-selected={tab === value}
+            onClick={() => setTab(value)}
+          >
+            {value}
+          </button>
+        ))}
+      </div>
+      <div role="tabpanel" className="bai-gql-devtools__tabpanel">
+        {tab === 'Request' && (
+          <>
+            <SectionBar
+              title="Query"
+              text={entry.query}
+              testId="gql-devtools-copy-query"
+            >
+              <CopyButton
+                label="Copy with variables"
+                text={requestBodyText(entry)}
+                testId="gql-devtools-copy-request"
+              />
+            </SectionBar>
+            <Viewer
+              key={`query-${entry.id}`}
+              language="graphql"
+              value={entry.query}
+              testId="gql-devtools-detail-query"
+            />
+            <SectionBar
+              title="Variables"
+              text={entry.variables}
+              testId="gql-devtools-copy-variables"
+            />
+            <Viewer
+              key={`variables-${entry.id}`}
+              language="json"
+              value={entry.variables}
+              isSmall
+              testId="gql-devtools-detail-variables"
+            />
+          </>
+        )}
+        {tab === 'Response' && (
+          <>
+            <SectionBar
+              title="Body"
+              text={response.text}
+              testId="gql-devtools-copy-response"
+            />
+            <Viewer
+              key={`response-${entry.id}-${response.language}`}
+              language={response.language}
+              value={response.text}
+              testId="gql-devtools-detail-response"
+            />
+          </>
+        )}
+        {tab === 'Headers' && (
+          <>
+            <SectionBar
+              title="Headers"
+              text={[
+                headersText('Request', entry.requestHeaders),
+                headersText('Response', entry.responseHeaders),
+              ].join('\n\n')}
+              testId="gql-devtools-copy-headers"
+            />
+            <div className="bai-gql-devtools__headers">
+              <table data-testid="gql-devtools-detail-headers">
+                <tbody>
+                  <HeaderRows title="Request" list={entry.requestHeaders} />
+                  <HeaderRows title="Response" list={entry.responseHeaders} />
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
 
 interface PanelProps {
   isOpen: boolean;
@@ -391,8 +718,12 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
   const [result, setResult] = useState('');
   const [allowMutations, setAllowMutations] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
-  const [history, setHistory] = useState<HistoryEntry[]>([]);
-  const [tab, setTab] = useState<'query' | 'schema'>('query');
+  const entries = useSyncExternalStore(subscribe, getEntries);
+  const isPreserved = useSyncExternalStore(subscribe, getIsPreserved);
+  const [filter, setFilter] = useState<'All' | Source>('All');
+  const [search, setSearch] = useState('');
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [tab, setTab] = useState<'query' | 'detail' | 'schema'>('query');
   const [schemaText, setSchemaText] = useState<string | null>(null);
   const [monacoError, setMonacoError] = useState<string | null>(null);
   const [schemaError, setSchemaError] = useState<string | null>(null);
@@ -402,7 +733,9 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
   const schemaEditorRef = useRef<Monaco.editor.IStandaloneCodeEditor>(null);
 
   useEffect(() => {
-    (tab === 'schema' ? schemaEditorRef : queryEditorRef).current?.focus();
+    if (tab !== 'detail') {
+      (tab === 'schema' ? schemaEditorRef : queryEditorRef).current?.focus();
+    }
   }, [tab]);
 
   const showSchemaError = (error: unknown) =>
@@ -437,39 +770,68 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
       });
   };
 
-  const restore = (entry: HistoryEntry) => {
+  const fillEditors = (nextQuery: string, nextVariables: string) => {
     setTab('query');
-    setQuery(entry.query);
-    setVariables(entry.variables);
-    setResult(entry.result);
-    replaceText(queryEditorRef.current, entry.query);
-    replaceText(variablesEditorRef.current, entry.variables);
+    setQuery(nextQuery);
+    setVariables(nextVariables);
+    replaceText(queryEditorRef.current, nextQuery);
+    replaceText(variablesEditorRef.current, nextVariables);
   };
+
+  const openInEditor = (entry: LogEntry) => {
+    if (isRunning) return;
+    fillEditors(entry.query, entry.variables);
+    setResult(printJson(entry.response));
+  };
+
+  const startNew = () => {
+    fillEditors('', '');
+    setResult('');
+  };
+
+  // The store keeps newest first; the list shows oldest first, like the Network tab.
+  const visibleEntries = entries
+    .filter(
+      (entry) =>
+        (filter === 'All' || entry.source === filter) &&
+        entry.label.toLowerCase().includes(search.trim().toLowerCase()),
+    )
+    .reverse();
+  const lastVisibleId = visibleEntries.at(-1)?.id;
+  const listRef = useRef<HTMLUListElement>(null);
+  const isAtBottomRef = useRef(true);
+  useLayoutEffect(() => {
+    const list = listRef.current;
+    if (list && isAtBottomRef.current) list.scrollTop = list.scrollHeight;
+  }, [lastVisibleId, isOpen]);
+  const selected = entries.find((entry) => entry.id === selectedId);
 
   const run = async () => {
     if (isRunning) return;
-    const time = new Date().toLocaleTimeString();
+    const time = Date.now();
+    const startedAt = performance.now();
     const sentQuery = queryEditorRef.current?.getValue() ?? query;
     const sentVariables = variablesEditorRef.current?.getValue() ?? variables;
     const record = (
-      status: HistoryEntry['status'],
+      state: LogEntry['state'],
       label: string,
       text: string,
+      details: Partial<NewEntry> = {},
     ) => {
       setResult(text);
-      setHistory((entries) =>
-        [
-          {
-            id: (entries[0]?.id ?? 0) + 1,
-            status,
-            label,
-            time,
-            query: sentQuery,
-            variables: sentVariables,
-            result: text,
-          },
-          ...entries,
-        ].slice(0, MAX_HISTORY),
+      setSelectedId(
+        addEntry({
+          source: 'Panel',
+          label,
+          time,
+          state,
+          query: sentQuery,
+          variables: sentVariables,
+          requestHeaders: [],
+          responseHeaders: [],
+          response: text,
+          ...details,
+        }),
       );
     };
     let ast: DocumentNode;
@@ -555,9 +917,12 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
     try {
       const request = client.newSignedRequest('POST', '/admin/gql', {
         query: transformedQuery,
-        variables: parsedVariables,
+        // The directives read plain values; the body keeps big integers as written.
+        variables: sentVariables.trim()
+          ? (parseJson(sentVariables) ?? parsedVariables)
+          : parsedVariables,
       });
-      const response = await fetch(request.uri, {
+      const response = await panelFetch(request.uri, {
         ...request,
         ...(client._config.connectionMode === 'SESSION' && {
           credentials: 'include',
@@ -567,15 +932,22 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
       });
       const text = await response.text();
       const printed = printJson(text);
+      const hasErrors = hasGraphQLErrors(text);
+      const details: Partial<NewEntry> = {
+        hasGraphQLErrors: hasErrors,
+        status: response.status,
+        duration: Math.round(performance.now() - startedAt),
+        size: new TextEncoder().encode(text).length,
+        requestHeaders: [...new Headers(request.headers).entries()],
+        responseHeaders: [...response.headers.entries()],
+      };
       record(
-        !response.ok ||
-          (parseJson(text) as { errors?: unknown[] } | null)?.errors?.length
-          ? 'error'
-          : 'ok',
+        !response.ok || hasErrors ? 'error' : 'ok',
         label,
         response.ok
           ? printed
           : `HTTP ${response.status} ${response.statusText}\n${printed}`.trimEnd(),
+        details,
       );
     } catch (error) {
       const detail =
@@ -584,7 +956,9 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
           : typeof error === 'string'
             ? error
             : 'unknown error';
-      record('error', label, `Request failed: ${detail}`);
+      record('error', label, `Request failed: ${detail}`, {
+        duration: Math.round(performance.now() - startedAt),
+      });
     }
     setIsRunning(false);
   };
@@ -660,34 +1034,90 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
       <div className="bai-gql-devtools__body">
         <div className="bai-gql-devtools__history">
           <div className="bai-gql-devtools__toolbar">
-            <span className="bai-gql-devtools__label">History</span>
-            <button
-              type="button"
-              className="bai-gql-devtools__button"
-              onClick={() => setHistory([])}
-            >
-              Clear
-            </button>
+            <span className="bai-gql-devtools__label">Log</span>
+            <span className="bai-gql-devtools__actions">
+              <label className="bai-gql-devtools__switch">
+                <input
+                  type="checkbox"
+                  role="switch"
+                  checked={isPreserved}
+                  data-testid="gql-devtools-preserve-log"
+                  onChange={(event) => setIsPreserved(event.target.checked)}
+                />
+                Preserve log
+              </label>
+              <button
+                type="button"
+                className="bai-gql-devtools__button"
+                onClick={() => {
+                  clearEntries();
+                  setSelectedId(null);
+                }}
+              >
+                Clear
+              </button>
+            </span>
           </div>
+          <div
+            className="bai-gql-devtools__filter"
+            role="group"
+            aria-label="Source"
+          >
+            {(['All', 'App', 'Panel'] as const).map((value) => (
+              <button
+                key={value}
+                type="button"
+                className="bai-gql-devtools__button"
+                aria-pressed={filter === value}
+                onClick={() => setFilter(value)}
+              >
+                {value}
+              </button>
+            ))}
+          </div>
+          <input
+            type="search"
+            className="bai-gql-devtools__search"
+            placeholder="Search operation"
+            aria-label="Search operation"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+          />
           <ul
+            ref={listRef}
             className="bai-gql-devtools__history-list"
             data-testid="gql-devtools-history"
+            onScroll={(event) => {
+              const list = event.currentTarget;
+              isAtBottomRef.current =
+                list.scrollHeight - list.scrollTop - list.clientHeight < 8;
+            }}
           >
-            {history.map((entry) => (
+            {visibleEntries.map((entry) => (
               <li key={entry.id}>
                 <button
                   type="button"
                   className="bai-gql-devtools__entry"
-                  title={entry.label}
-                  disabled={isRunning}
-                  onClick={() => restore(entry)}
+                  title={`${entry.label} (double-click to open in the editor)`}
+                  aria-current={entry.id === selectedId}
+                  onClick={() => {
+                    setSelectedId(entry.id);
+                    setTab('detail');
+                  }}
+                  onDoubleClick={() => openInEditor(entry)}
                 >
-                  <span className="bai-gql-devtools__entry-label">
-                    {entry.label}
+                  <span className="bai-gql-devtools__entry-title">
+                    <span
+                      className={`bai-gql-devtools__badge bai-gql-devtools__badge--${entry.source.toLowerCase()}`}
+                    >
+                      {entry.source}
+                    </span>
+                    <span className="bai-gql-devtools__entry-label">
+                      {entry.label}
+                    </span>
+                    <span>#{entry.id}</span>
                   </span>
-                  <span>
-                    {entry.time} · {entry.status}
-                  </span>
+                  <span>{summary(entry)}</span>
                 </button>
               </li>
             ))}
@@ -708,6 +1138,15 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
               type="button"
               role="tab"
               className="bai-gql-devtools__tab"
+              aria-selected={tab === 'detail'}
+              onClick={() => setTab('detail')}
+            >
+              Detail
+            </button>
+            <button
+              type="button"
+              role="tab"
+              className="bai-gql-devtools__tab"
               aria-selected={tab === 'schema'}
               onClick={openSchema}
             >
@@ -722,6 +1161,17 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
                 : 'bai-gql-devtools__tabpanel bai-gql-devtools__tabpanel--hidden'
             }
           >
+            <div className="bai-gql-devtools__toolbar">
+              <span className="bai-gql-devtools__label">Query</span>
+              <button
+                type="button"
+                className="bai-gql-devtools__button"
+                disabled={isRunning}
+                onClick={startNew}
+              >
+                New
+              </button>
+            </div>
             <Editor
               kind="query"
               value={query}
@@ -757,6 +1207,21 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
             <span className="bai-gql-devtools__label">Result</span>
             <Editor kind="result" value={result} editorRef={resultEditorRef} />
           </div>
+          {tab === 'detail' && (
+            <div role="tabpanel" className="bai-gql-devtools__tabpanel">
+              {selected ? (
+                <EntryDetail
+                  entry={selected}
+                  isRunning={isRunning}
+                  onOpen={openInEditor}
+                />
+              ) : (
+                <span className="bai-gql-devtools__label">
+                  Select a log row to see its request and response.
+                </span>
+              )}
+            </div>
+          )}
           {(tab === 'schema' || schemaText !== null) && (
             <div
               role="tabpanel"
