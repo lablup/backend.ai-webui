@@ -1,1 +1,0 @@
-import{t as e}from"./iframe-BUIYvSv6.js";e();

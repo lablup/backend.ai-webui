@@ -24,9 +24,6 @@ export type BAIProjectBulkEditModalProjectMutation$data = {
         }>;
         readonly successes: ReadonlyArray<{
             readonly id: string;
-            readonly organization: {
-                readonly resourcePolicy: string;
-            };
         }>;
     };
 };
