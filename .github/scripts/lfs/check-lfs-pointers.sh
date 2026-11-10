@@ -15,10 +15,11 @@ cd "$(git rev-parse --show-toplevel)"
 tracked="$(mktemp)"
 sizes="$(mktemp)"
 trap 'rm -f "$tracked" "$sizes"' EXIT
-git ls-files -z | git check-attr --stdin -z filter |
+# Attributes from the index, like the files themselves; a git failure fails the check.
+git ls-files -z | git check-attr --cached --stdin -z filter |
   while IFS= read -r -d '' path && IFS= read -r -d '' _attr && IFS= read -r -d '' value; do
-    [ "$value" = lfs ] && printf '%s\n' "$path"
-  done > "$tracked" || true
+    if [ "$value" = lfs ]; then printf '%s\n' "$path"; fi
+  done > "$tracked"
 
 total="$(wc -l < "$tracked" | tr -d ' ')"
 if [ "$total" -eq 0 ]; then

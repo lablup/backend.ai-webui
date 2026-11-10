@@ -79,6 +79,24 @@ fail_on_untracked() { # <top> <file listing untracked pointer files>
   exit 1
 }
 
+# On any exit, including Ctrl-C or a cancelled job: remove the temp dir, and
+# put back the pointer files when they were deleted but not yet checked out.
+CUR_WORK="" RESTORE_TOP="" RESTORE_LIST=""
+on_exit() {
+  if [ -n "$RESTORE_LIST" ]; then
+    if git -C "$RESTORE_TOP" --literal-pathspecs -c filter.lfs.required=false \
+      checkout --pathspec-from-file="$RESTORE_LIST" --pathspec-file-nul >/dev/null 2>&1; then
+      log "${RESTORE_TOP}: stopped before the images were checked out; the pointer files were restored." >&2
+    else
+      log "ERROR: ${RESTORE_TOP}: stopped before the images were checked out, and restoring the pointer files failed; run 'git checkout -- <docs src>' there." >&2
+    fi
+  fi
+  [ -z "$CUR_WORK" ] || rm -rf "$CUR_WORK"
+}
+trap on_exit EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
 pull_one() {
   local dir="$1" top roots=() root remote work list attrs n
   top="$(git -C "$dir" rev-parse --show-toplevel)"
@@ -89,6 +107,7 @@ pull_one() {
   fi
 
   work="$(mktemp -d)"
+  CUR_WORK="$work"
   list="${work}/pointers"
   # Only tracked files can be restored from the index. Untracked pointer text is
   # left alone, but fails the run at the end: every consumer would reject it.
@@ -155,6 +174,7 @@ pull_one() {
   attrs="${work}/attributes"
   sed 's/[][*?\\]/\\&/g; s/[[:space:]]/?/g; s/$/ filter=lfs diff=lfs merge=lfs -text/' "$list" > "$attrs"
   tr '\n' '\0' < "$list" > "${list}.nul"
+  RESTORE_TOP="$top" RESTORE_LIST="${list}.nul"
   (cd "$top" && tr '\n' '\0' < "$list" | xargs -0 rm -f)
   local lfs_git=(env -u GIT_LFS_SKIP_SMUDGE git -C "$top" --literal-pathspecs
     -c core.attributesFile="$attrs"
@@ -165,6 +185,7 @@ pull_one() {
     -c filter.lfs.required=true
     -c lfs.fetchexclude=)
   if ! "${lfs_git[@]}" checkout --pathspec-from-file="${list}.nul" --pathspec-file-nul; then
+    RESTORE_LIST=""
     if git -C "$top" --literal-pathspecs -c filter.lfs.required=false \
       checkout --pathspec-from-file="${list}.nul" --pathspec-file-nul; then
       log "ERROR: ${top}: the LFS checkout failed; the pointer files were restored." >&2
@@ -174,6 +195,7 @@ pull_one() {
     rm -rf "$work"
     exit 1
   fi
+  RESTORE_LIST=""
   # Files written in the same second as the index are re-hashed by later git
   # commands, which without the clean filter would see them as modified.
   # Refreshing with the filter, once they are no longer racy, records them clean.

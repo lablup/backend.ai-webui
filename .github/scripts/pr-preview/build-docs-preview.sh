@@ -66,7 +66,7 @@ restore_src() {
   [ "$SRC_SWAPPED" -eq 1 ] || return 0
   SRC_SWAPPED=0
   rm -rf "$SRC"
-  git -C "$REPO_ROOT" checkout HEAD -- "$SRC"
+  git -C "$REPO_ROOT" checkout --no-overlay HEAD -- "$SRC"
   echo "Restored ${SRC} to HEAD."
   # The checkout writes LFS pointers back; a local run gets its images again.
   # CI skips it: nothing reads `src` afterwards.
@@ -200,7 +200,7 @@ echo "::endgroup::"
 echo "::group::Build the docs site from the merge base"
 rm -rf "$SRC"
 SRC_SWAPPED=1
-git checkout "$BASE_SHA" -- "$SRC"
+git checkout --no-overlay "$BASE_SHA" -- "$SRC"
 pull_images --ref "$BASE_SHA"
 BASE_LANGS="$(present_langs)"
 rm -rf "$WEB"

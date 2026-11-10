@@ -125,5 +125,23 @@ check "no pointers: exit 0" [ "$rc" -eq 0 ]
 check "no pointers: git-lfs never called" [ ! -e "$T/stub/calls" ]
 check "no pointers: says nothing to do" grep -q "nothing to do" <<<"$out"
 
+# 5. Cancelled during the checkout (after the pointer files were deleted): the
+# pointers come back and the temp dir is removed. The stub git-lfs signals the
+# pull's own process group (setsid) when the LFS checkout starts.
+fresh "$T/c5"
+REAL_LFS="$(command -v git-lfs)"
+mkdir -p "$T/stub5" "$T/tmp5"
+# shellcheck disable=SC2016 # the stub's own "$1" / "$@"
+printf '#!/bin/sh\ncase "$1" in filter-process|smudge) kill -TERM 0; sleep 5; exit 1 ;; esac\nexec "%s" "$@"\n' \
+  "$REAL_LFS" > "$T/stub5/git-lfs"
+chmod +x "$T/stub5/git-lfs"
+out="$(TMPDIR="$T/tmp5" PATH="$T/stub5:$PATH" setsid --wait bash "$PULL" "$T/c5" 2>&1)"; rc=$?
+check "cancelled: non-zero exit" [ "$rc" -ne 0 ]
+check "cancelled: a.png is a pointer again" is_pointer "$T/c5/$D/en/images/a.png"
+check "cancelled: nested.png is a pointer again" is_pointer "$T/c5/$D/en/chapter/images/nested.png"
+check "cancelled: git status clean" [ -z "$(git -C "$T/c5" status --porcelain)" ]
+check "cancelled: says the pointers were restored" grep -q "pointer files were restored" <<<"$out"
+check "cancelled: temp dir removed" [ -z "$(ls -A "$T/tmp5")" ]
+
 echo
 if [ "$fails" -eq 0 ]; then echo "all tests passed"; else echo "$fails test(s) failed"; exit 1; fi
