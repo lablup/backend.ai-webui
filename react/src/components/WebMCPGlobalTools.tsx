@@ -24,6 +24,7 @@ import {
   useCurrentMenuKey,
   useRouteScope,
 } from '../hooks/useRouteScope';
+import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 import { useWebUIMenuItems } from '../hooks/useWebUIMenuItems';
 import {
   useBAIWebMCPActive,
@@ -207,6 +208,7 @@ export const createNavigateTool = ({
 const WebMCPGlobalToolsRegistrar: React.FC = () => {
   'use memo';
   const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const role = useCurrentUserRole();
   // Sanctioned global reader (ADR 0001): bai_whoami reports the ambient project.
   const currentProject = useCurrentProjectValue();
@@ -239,7 +241,7 @@ const WebMCPGlobalToolsRegistrar: React.FC = () => {
 
   useWebMCPTool(
     createWhoamiTool({
-      email: displayedEmail(baiClient.email, baiClient._config?.maskUserInfo),
+      email: displayedEmail(baiClient.email, loginConfig.maskUserInfo),
       role: role ?? null,
       project: currentProject?.id
         ? { id: currentProject.id, name: currentProject.name ?? null }

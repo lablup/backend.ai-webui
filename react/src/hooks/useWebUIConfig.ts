@@ -13,7 +13,6 @@
  * non-React code (e.g. globalThis.packageEdition, globalThis.packageValidUntil).
  */
 import {
-  applySettingsToClient,
   getDefaultLoginConfig,
   refreshConfigFromToml,
   type LoginConfigState,
@@ -23,8 +22,8 @@ import {
   resolvePublicConfigTarget,
 } from '../helper/publicAppConfig';
 import {
-  applyWebUISettings,
   WEBUI_SETTINGS_CONFIG_KEY,
+  withWebUISettings,
 } from '../helper/webuiSettings';
 import { useBAILogger } from 'backend.ai-ui';
 import { atom, useAtomValue, useStore } from 'jotai';
@@ -73,31 +72,19 @@ export const publicWebUISettingsState = atom<unknown>(undefined);
 /** The signed-in domain's `domainConfig.settings` document (#10436). */
 export const domainWebUISettingsState = atom<unknown>(undefined);
 
-/** The effective config: base, then the public settings, then the domain's. */
+/**
+ * The effective config: base with every setting reset to its code default,
+ * then the public settings, then the domain's (`withWebUISettings`).
+ */
 export const loginConfigState = atom<LoginConfigState | null>((get) => {
   const base = get(baseLoginConfigState);
   if (!base) return null;
-  return applyWebUISettings(
-    applyWebUISettings(base, get(publicWebUISettingsState), 'public'),
+  return withWebUISettings(
+    base,
+    get(publicWebUISettingsState),
     get(domainWebUISettingsState),
-    'domain',
   );
 });
-
-/**
- * Mirrors every later change of `loginConfigState` into the connected
- * client's `_config`, which most screens still read; the sign-in itself
- * writes it through `applyConfigToClient`. Returns the unsubscribe.
- */
-export function syncLoginConfigToClient(store: JotaiStore): () => void {
-  return store.sub(loginConfigState, () => {
-    const client = (globalThis as Record<string, any>).backendaiclient;
-    const cfg = store.get(loginConfigState);
-    if (cfg && client?.ready && client._config) {
-      applySettingsToClient(client, cfg);
-    }
-  });
-}
 
 /**
  * Indicates whether config.toml has been fetched and processed.
@@ -388,10 +375,34 @@ export function useInitializeConfig(): {
 }
 
 /**
+ * Sets both `settings` layers, so `loginConfigState` and every
+ * `useEffectiveLoginConfig` reader update.
+ */
+export function setEffectiveWebUISettings(
+  store: JotaiStore,
+  publicDoc: unknown,
+  domainDoc: unknown,
+): void {
+  store.set(publicWebUISettingsState, publicDoc);
+  store.set(domainWebUISettingsState, domainDoc);
+  store.set(autoLogoutState, store.get(loginConfigState)?.autoLogout ?? false);
+}
+
+/**
  * Hook to access the processed login config state.
  */
 export function useLoginConfig(): LoginConfigState | null {
   return useAtomValue(loginConfigState);
+}
+
+const DEFAULT_LOGIN_CONFIG = getDefaultLoginConfig();
+
+/**
+ * The effective WebUI settings (code defaults < config.toml < app config
+ * `settings`), the code defaults until they load. Re-renders on a System Settings change.
+ */
+export function useEffectiveLoginConfig(): LoginConfigState {
+  return useAtomValue(loginConfigState) ?? DEFAULT_LOGIN_CONFIG;
 }
 
 /**

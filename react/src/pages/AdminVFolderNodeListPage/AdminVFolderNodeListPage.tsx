@@ -24,6 +24,7 @@ import { isDeletedCategory } from '../../helper/vfolderStatus';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
+import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import { Badge } from '@lablup/ui-common/Badge';
 import { Button } from '@lablup/ui-common/Button';
 import { IconButton } from '@lablup/ui-common/IconButton';
@@ -109,7 +110,8 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
 
   const { t } = useTranslation();
   const isLabelable = useIsLabelableEntityType('vfolder');
-  const baiClient = useSuspendedBackendaiClient();
+  useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.AdminVFolderNodeListPage',
@@ -336,7 +338,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                       label: t('data.General'),
                       value: 'general',
                     },
-                    baiClient?._config?.fasttrackEndpoint && {
+                    loginConfig.fasttrackEndpoint && {
                       label: t('data.Pipeline'),
                       value: 'data',
                     },
@@ -344,7 +346,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                       label: t('data.AutoMount'),
                       value: 'automount',
                     },
-                    baiClient._config.enableModelFolders && {
+                    loginConfig.enableModelFolders && {
                       label: t('data.Models'),
                       value: 'model',
                     },

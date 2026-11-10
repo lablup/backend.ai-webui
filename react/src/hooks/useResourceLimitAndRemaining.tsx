@@ -10,6 +10,7 @@ import { addNumberWithUnits, convertToBinaryUnit } from '../helper';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
 import { useSuspenseTanQuery } from './reactQueryAlias';
 import { useResourceGroupsForCurrentProject } from './useCurrentProject';
+import { useEffectiveLoginConfig } from './useWebUIConfig';
 import * as _ from 'lodash-es';
 import { useMemo } from 'react';
 import { graphql, useFragment } from 'react-relay';
@@ -129,6 +130,7 @@ export const useResourceLimitAndRemaining = ({
   accessibleResourceGroupNames,
 }: Props) => {
   const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const [resourceSlots] = useResourceSlots();
   const acceleratorSlots = _.omit(resourceSlots, ['cpu', 'mem', 'shmem']);
   const { nonSftpResourceGroups } = useResourceGroupsForCurrentProject();
@@ -258,15 +260,11 @@ export const useResourceLimitAndRemaining = ({
       },
     ),
   };
-  const perContainerConfigs = useMemo(
-    () =>
-      _.omitBy(baiClient._config, (_value, key) => {
-        return !maxPerContainerRegex.test(key);
-      }) as {
-        [key: string]: number;
-      },
-    [baiClient._config],
-  );
+  const perContainerConfigs = _.omitBy(loginConfig, (_value, key) => {
+    return !maxPerContainerRegex.test(key);
+  }) as {
+    [key: string]: number;
+  };
 
   // Helper function to create resource limits with optional resource group limits
   const createResourceLimits = (
@@ -285,7 +283,7 @@ export const useResourceLimitAndRemaining = ({
             max: _.min([
               ignorePerContainerConfig
                 ? undefined
-                : baiClient._config.maxCPUCoresPerContainer,
+                : loginConfig.maxCPUCoresPerContainer,
               limitParser(checkPresetInfo?.keypair_limits.cpu),
               limitParser(checkPresetInfo?.group_limits.cpu),
               includeResourceGroupLimits
@@ -315,7 +313,7 @@ export const useResourceLimitAndRemaining = ({
               const minValue = _.min([
                 ignorePerContainerConfig
                   ? undefined
-                  : baiClient._config.maxMemoryPerContainer,
+                  : loginConfig.maxMemoryPerContainer,
                 limitParser(checkPresetInfo?.keypair_limits.mem) &&
                   convertToBinaryUnit(
                     limitParser(checkPresetInfo?.keypair_limits.mem) + '',
@@ -346,7 +344,7 @@ export const useResourceLimitAndRemaining = ({
         const perContainerLimit =
           _.find(perContainerConfigs, (_configValue, configName) => {
             return isMatchingMaxPerContainer(configName, key);
-          }) ?? baiClient._config.maxCUDADevicesPerContainer; // NOTE: Fallback to maxCUDADevicesPerContainer if no specific config found
+          }) ?? loginConfig.maxCUDADevicesPerContainer; // NOTE: Fallback to maxCUDADevicesPerContainer if no specific config found
 
         result[key] = {
           min: parseInt(

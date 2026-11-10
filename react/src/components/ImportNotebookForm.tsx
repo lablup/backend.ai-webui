@@ -10,6 +10,7 @@ import {
   StartSessionWithDefaultValue,
   useStartSession,
 } from '../hooks/useStartSession';
+import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 import CopyButton from './Chat/CopyButton';
 import { PrimaryAppOption } from './ComputeSessionNodeItems/SessionActionButtons';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
@@ -63,7 +64,8 @@ const ImportNotebookForm: React.FC<ImportNotebookFormProps> = ({
   const app = App.useApp();
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
-  const baiClient = useSuspendedBackendaiClient();
+  useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const { startSessionWithDefault, upsertSessionNotification } =
     useStartSession();
   const { getErrorMessage } = useErrorMessageResolver();
@@ -75,7 +77,7 @@ const ImportNotebookForm: React.FC<ImportNotebookFormProps> = ({
 
     const launcherValue: StartSessionWithDefaultValue = createLauncherValue(
       notebookURL,
-      baiClient._config.default_import_environment,
+      loginConfig.default_import_environment,
     );
 
     const results = await startSessionWithDefault(launcherValue);
@@ -173,7 +175,7 @@ const ImportNotebookForm: React.FC<ImportNotebookFormProps> = ({
                     const notebookURL = regularizeGithubURL(url);
                     const launcherValue = createLauncherValue(
                       notebookURL,
-                      baiClient._config.default_import_environment,
+                      loginConfig.default_import_environment,
                     );
                     const params = new URLSearchParams();
                     params.set('formValues', JSON.stringify(launcherValue));

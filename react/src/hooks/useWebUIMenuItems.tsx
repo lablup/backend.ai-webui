@@ -22,6 +22,7 @@ import {
   useActiveProjectName,
   useCurrentMenuKey,
 } from './useRouteScope';
+import { useEffectiveLoginConfig } from './useWebUIConfig';
 import {
   useWebUIMenuCatalog,
   type WebUIMenuCatalogEntry,
@@ -253,15 +254,16 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   // `/admin/<feature>` for admin keys, where the name is ignored).
   const activeProjectName = useActiveProjectName();
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
-  const isHideAgents = baiClient?._config?.hideAgents ?? true;
-  const fasttrackEndpoint = baiClient?._config?.fasttrackEndpoint ?? null;
+  useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
+  const isHideAgents = loginConfig.hideAgents ?? true;
+  const fasttrackEndpoint = loginConfig.fasttrackEndpoint ?? null;
   // System Settings is where both lists are edited, so it can never be
   // hidden or disabled by them (that would lock the admin out of undoing it).
   const withoutSystemSettings = (list?: Array<string> | null) =>
     list ? _.without(list, 'system-settings') : null;
-  const blockList = withoutSystemSettings(baiClient?._config?.blockList);
-  const inactiveList = withoutSystemSettings(baiClient?._config?.inactiveList);
+  const blockList = withoutSystemSettings(loginConfig.blockList);
+  const inactiveList = withoutSystemSettings(loginConfig.inactiveList);
 
   const [experimentalAIAgents] = useBAISettingUserState(
     'experimental_ai_agents',
@@ -355,7 +357,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     isSuperAdmin &&
       createAdminMenuItem('admin-deployments', 'admin-operations'),
     createAdminMenuItem('environment', 'admin-operations'),
-    baiClient?._config.enableReservoir &&
+    loginConfig.enableReservoir &&
       createAdminMenuItem('reservoir', 'admin-operations'),
     isSuperAdmin && createAdminMenuItem('scheduler', 'admin-operations'),
     createAdminMenuItem('resource-policy', 'admin-operations'),

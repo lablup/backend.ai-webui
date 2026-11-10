@@ -86,9 +86,9 @@ export interface SearchContext {
   config: SearchConfigFlags;
   /** Menu keys `useWebUIMenuItems()` emitted. */
   visibleMenuKeys: ReadonlySet<string>;
-  /** Subset disabled by `_config.inactiveList` — hidden from search. */
+  /** Subset disabled by the `inactiveList` setting — hidden from search. */
   disabledMenuKeys: ReadonlySet<string>;
-  /** `_config.blockList`: removed from the menu outright, so a whitelisted
+  /** The `blockList` setting: removed from the menu outright, so a whitelisted
    * page has to be checked against it separately. */
   blockedMenuKeys: ReadonlySet<string>;
   t: HitTranslator;

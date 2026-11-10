@@ -10,6 +10,7 @@ import {
   useResourceSlotsDetails,
 } from '../hooks/backendai';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
+import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
 import { Heading } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
@@ -205,9 +206,10 @@ interface TotalResourceWithinResourceGroupProps extends BAIFlexProps {
 }
 
 export const useIsAvailableTotalResourceWithinResourceGroup = () => {
-  const baiClient = useSuspendedBackendaiClient();
+  useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const userRole = useCurrentUserRole();
-  const isHiddenAgents = !!baiClient?._config?.hideAgents;
+  const isHiddenAgents = !!loginConfig.hideAgents;
 
   // Superadmins read `agentsV2` even when hideAgents is true; others need `agent_summary_list`.
   return userRole === 'superadmin' || !isHiddenAgents;

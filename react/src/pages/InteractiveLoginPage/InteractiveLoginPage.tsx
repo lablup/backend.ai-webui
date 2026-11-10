@@ -5,6 +5,7 @@
 import { CSSTokenVariables } from '../../components/MainLayout/MainLayout';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserInfo } from '../../hooks/backendai';
+import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import { Button } from '@lablup/ui-common/Button';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import {
@@ -33,6 +34,7 @@ const InteractiveLoginPage = () => {
 const Children = () => {
   'use memo';
   useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const [userInfo] = useCurrentUserInfo();
   const { pathname, search } = useLocation();
   const [callback] = useQueryState('callback', parseAsString);
@@ -86,29 +88,25 @@ const Children = () => {
             justify="between"
             style={{ alignSelf: 'stretch' }}
           >
-            {
-              // @ts-ignore
-              globalThis?.backendaiclient?._config
-                ?.enableInteractiveLoginAccountSwitch ? (
-                <Button
-                  size="lg"
-                  label={t('interactiveLogin.UseAnotherAccount')}
-                  onClick={() => {
-                    const event: CustomEvent = new CustomEvent(
-                      'backend-ai-logout',
-                      {
-                        detail: {
-                          callbackURL: `${pathname}${search}`,
-                        },
+            {loginConfig.enableInteractiveLoginAccountSwitch ? (
+              <Button
+                size="lg"
+                label={t('interactiveLogin.UseAnotherAccount')}
+                onClick={() => {
+                  const event: CustomEvent = new CustomEvent(
+                    'backend-ai-logout',
+                    {
+                      detail: {
+                        callbackURL: `${pathname}${search}`,
                       },
-                    );
-                    document.dispatchEvent(event);
-                  }}
-                />
-              ) : (
-                <div></div>
-              )
-            }
+                    },
+                  );
+                  document.dispatchEvent(event);
+                }}
+              />
+            ) : (
+              <div></div>
+            )}
             <Button
               size="lg"
               variant="primary"

@@ -15,6 +15,7 @@ import {
 } from '../../../helper/webmcpPageTools';
 import { useSuspendedBackendaiClient } from '../../../hooks';
 import { useCurrentUserRole } from '../../../hooks/backendai';
+import { useEffectiveLoginConfig } from '../../../hooks/useWebUIConfig';
 import {
   filterOutNullAndUndefined,
   useBAIWebMCPActive,
@@ -72,7 +73,8 @@ const SessionListToolsRegistrar: React.FC<WebMCPSessionListToolsProps> = ({
   viewParams,
 }) => {
   'use memo';
-  const baiClient = useSuspendedBackendaiClient();
+  useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const userRole = useCurrentUserRole();
   const { pathname, search } = useLocation();
 
@@ -121,7 +123,7 @@ const SessionListToolsRegistrar: React.FC<WebMCPSessionListToolsProps> = ({
   const list = visibleRowsResult({
     rows,
     columns: sessionToolColumns({
-      showAgents: userRole === 'superadmin' || !baiClient._config?.hideAgents,
+      showAgents: userRole === 'superadmin' || !loginConfig.hideAgents,
       showOwner: userRole === 'superadmin',
     }),
     columnOverrides,

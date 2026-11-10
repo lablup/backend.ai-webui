@@ -5,6 +5,7 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { VStack } from '@lablup/ui-common/Stack';
 import { Text } from '@lablup/ui-common/Text';
@@ -392,6 +393,7 @@ export const useFileUploadManager = (id?: string, folderName?: string) => {
   'use memo';
 
   const baiClient = useConnectedBAIClient();
+  const loginConfig = useEffectiveLoginConfig();
   const { t } = useTranslation();
   const { upsertNotification } = useSetBAINotification();
 
@@ -405,7 +407,7 @@ export const useFileUploadManager = (id?: string, folderName?: string) => {
     requestedFiles: Array<RcFile>,
     vfolderId: string,
   ) => {
-    const maxPossibleFileSize = baiClient._config.maxFileUploadSize;
+    const maxPossibleFileSize = loginConfig.maxFileUploadSize;
     const maxRequestFileSize = _.map(
       requestedFiles,
       (file) => file.size,

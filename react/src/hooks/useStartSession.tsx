@@ -20,6 +20,7 @@ import {
   useCurrentResourceGroupState,
 } from './useCurrentProject';
 import { useResolveImageReference } from './useDefaultImagesWithFallback';
+import { useEffectiveLoginConfig } from './useWebUIConfig';
 import {
   generateRandomString,
   toGlobalId,
@@ -132,6 +133,7 @@ export const useStartSession = () => {
   const relayEnv = useRelayEnvironment();
   const resolveImageReference = useResolveImageReference();
   const baiClient = useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
 
   const [currentGlobalResourceGroup] = useCurrentResourceGroupState();
 
@@ -152,9 +154,9 @@ export const useStartSession = () => {
     },
     envvars: [],
     // set default_session_environment only if set
-    ...(baiClient._config?.default_session_environment && {
+    ...(loginConfig.default_session_environment && {
       environments: normalizeEnvironmentFormat(
-        baiClient._config.default_session_environment,
+        loginConfig.default_session_environment,
       ),
     }),
     ..._.omit(RESOURCE_ALLOCATION_INITIAL_FORM_VALUES, ['resource']),
@@ -305,7 +307,7 @@ export const useStartSession = () => {
           preopen_ports: transformPortValuesToNumbers(values.ports),
 
           // Agent selection (optional)
-          ...(!baiClient?._config?.hideAgents &&
+          ...(!loginConfig.hideAgents &&
           values.agent !== undefined &&
           !_.isEqual(_.castArray(values.agent), ['auto'])
             ? {
