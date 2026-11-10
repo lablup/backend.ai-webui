@@ -2633,7 +2633,7 @@
     "NoRolesToDisplay": "표시할 역할이 없습니다",
     "NoUsersAssigned": "할당된 사용자가 없습니다",
     "PagePlaceholder": "RBAC 관리 페이지가 여기에 표시됩니다.",
-    "PermissionChangesFailed": "권한 변경 {{count}}개에 실패했습니다.",
+    "PermissionChangesFailed": "권한 변경 {{count}}건이 실패했습니다.",
     "PermissionGroupRead": "읽기",
     "PermissionGroupWrite": "쓰기",
     "PermissionNotEditable": "해당 권한은 수정이 불가능합니다.",
