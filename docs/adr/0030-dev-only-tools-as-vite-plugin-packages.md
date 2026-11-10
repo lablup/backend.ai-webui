@@ -7,9 +7,9 @@
 - A tool that only developers use lives in its own private workspace package under `packages/`. It is not a dependency of `react/`, and `react/src` does not import it. The tool keeps its imports inside its own package, and logic it shares with the app is copied into the package.
 - A [Vite plugin](#glossary) with [`apply: 'serve'`](#glossary) attaches the tool to the dev server. The plugin injects one module script into the WebUI `index.html` and serves the tool's dev-only assets through a dev-server middleware. A production build has no path to the tool's code.
 - The plugin file may use only Node built-ins, because `react/vite.config.ts` loads it during production builds too.
-- The tool loads only a hotkey listener at page load, and loads everything else the first time it opens.
+- At page load the tool loads only a hotkey listener, plus, for the GraphQL devtools, a `fetch` wrapper that records the app's GraphQL traffic. Everything else loads the first time it opens.
 - `packages/backend.ai-graphql-devtools` is the first tool under this rule. It builds a [signed request](#glossary) with the app's global `backendaiclient` and sends it with its own `fetch`. Its panel is React and uses the app's Monaco runtime at `/resources/monaco/vs`.
-- Sections 1 to 4 of the Decision bind every dev-only tool. Sections 5 and 6 record how the GraphQL devtools panel uses the app.
+- Sections 1 to 4 of the Decision bind every dev-only tool. Sections 5 to 7 record how the GraphQL devtools panel uses the app.
 - **Out of scope**: the review overlay in `react/vite-plugins/review-overlay/` stays there, because it also has a build-time injection and a host component in `react/src`.
 
 ## Context
@@ -33,6 +33,7 @@ flowchart LR
   end
   subgraph page["Browser page"]
     main["src/main.tsx<br/>hotkey listener"]
+    capture["src/traffic.ts<br/>fetch wrapper and log"]
     panel["src/Panel.tsx<br/>own React root"]
     runtime["/resources/monaco/vs"]
     client["global backendaiclient"]
@@ -44,6 +45,8 @@ flowchart LR
   plugin -- "configureServer" --> schema
   sdl -- "file contents" --> schema
   html -- "script src under /@fs" --> main
+  main -- "static import at page load" --> capture
+  capture -- "app GraphQL requests and responses" --> panel
   main -- "dynamic import on first hotkey" --> panel
   panel -- "AMD require on first open" --> runtime
   schema -- "SDL text" --> panel
@@ -65,7 +68,7 @@ flowchart LR
 ### 2. A Vite plugin with `apply: 'serve'` attaches the tool
 
 - **Call site**: `react/vite.config.ts` imports the plugin by relative path and calls it. For this tool the call passes `schemaPath` and `clientDirectivesPath`, which resolve `data/schema.graphql` and `data/client-directives.graphql` from `projectRoot`.
-- **Injection**: `transformIndexHtml` adds one `<script type="module">` to the body, with its `src` under `/@fs` pointing at `src/main.tsx`. `server.fs.allow` in `react/vite.config.ts` includes the repository root, which lets the dev server serve that file.
+- **Injection**: `transformIndexHtml` adds one `<script type="module">` at the start of the head, with its `src` under `/@fs` pointing at `src/main.tsx`. Module scripts run in document order, so it runs before the app entry. `server.fs.allow` in `react/vite.config.ts` includes the repository root, which lets the dev server serve that file.
 - **Dev assets**: `configureServer` adds a middleware for assets only the tool needs. This tool has one, `/__graphql-devtools/schema.graphql`, which serves the two SDL files concatenated. A missing file is an error.
 - **Hook order**: `transformIndexHtml` stays a plain function, so Vite runs it after the `order: 'pre'` handler of `projectRootStaticPlugin`, which replaces the HTML with the project-root template.
 - **Prebundling**: The plugin's `config` hook adds the panel to `optimizeDeps.entries`, so Vite prebundles the panel's dependencies when the dev server starts.
@@ -76,9 +79,9 @@ flowchart LR
 - **Reason**: The static import in `react/vite.config.ts` evaluates this file during `vite build`. `apply: 'serve'` keeps the plugin's hooks from running there, but it does not keep the file from loading.
 - **Referencing source**: The plugin names `src/` files only through `new URL(..., import.meta.url)`, so loading the plugin does not load the tool.
 
-### 4. Only the hotkey listener loads at page load
+### 4. Only the hotkey listener and the fetch wrapper load at page load
 
-- **Page load cost**: `src/main.tsx` registers one capture-phase `keydown` listener and imports nothing else statically.
+- **Page load cost**: `src/main.tsx` registers one capture-phase `keydown` listener. Its only static import is `src/traffic.ts`, which has no dependencies and installs the `fetch` wrapper of section 7.
 - **First open**: The hotkey (Cmd+Shift+G on macOS, Ctrl+Shift+G elsewhere) dynamically imports `src/Panel.tsx`, and the panel then loads Monaco and the schema.
 - **Own root**: `togglePanel` appends one container to `document.body` and mounts a separate React root there. The panel does not enter the app's React tree.
 
@@ -86,13 +89,19 @@ flowchart LR
 
 - **Signing**: `Panel.tsx` calls `backendaiclient.newSignedRequest('POST', '/admin/gql', ...)` on the global client, so the request carries the logged-in session's credentials and no token is copied.
 - **Client directives**: Before signing, `Panel.tsx` applies its copy of the client-directive transform, with the version check from `client.isManagerVersionCompatibleWith` as in `react/src/RelayEnvironment.ts`. The request carries the transformed query. The operation guards and the history entry use the typed query.
-- **Sending**: `Panel.tsx` calls `fetch` itself with `AbortSignal.timeout(client.requestTimeout)`. In `SESSION` mode it sets `credentials: 'include'` and `mode: 'cors'`, as `_wrapWithPromise` does.
+- **Sending**: `Panel.tsx` calls the unwrapped `fetch` (`panelFetch` from `src/traffic.ts`) with `AbortSignal.timeout(client.requestTimeout)`, so the wrapper does not record the request a second time. In `SESSION` mode it sets `credentials: 'include'` and `mode: 'cors'`, as `_wrapWithPromise` does.
 - **Reason**: `_wrapWithPromise` raises the app's soft-timeout banner, can dismiss that banner on success, and writes the app log. A developer's test query must change none of these.
 
 ### 6. The panel reuses the app's Monaco runtime
 
 - **Runtime**: `loadMonaco` in `Panel.tsx` uses the AMD loader at `/resources/monaco/vs`, which `monacoStaticPlugin` in `react/vite.config.ts` serves during development. If the app has already loaded Monaco, `loadMonaco` uses `globalThis.monaco`.
 - **GraphQL support**: The panel sets markers on its own editor model. It also registers a completion provider for the `graphql` language, and that provider returns nothing for any model but the panel's. `graphql-language-service` computes the results.
+
+### 7. A `fetch` wrapper records the app's GraphQL traffic
+
+- **Scope**: `installCapture` in `src/traffic.ts` replaces `globalThis.fetch` before the app's modules run. It records only requests whose path ends in `/func/admin/gql`, which carries Relay queries and mutations and the `graphql-sse` subscriptions. `graphql-sse` keeps the `fetch` it sees when its client is created, which is why the wrapper must be in place first.
+- **No change to the app**: the wrapper returns the app's own response promise. It reads the body from `response.clone()`, and a `text/event-stream` body through the clone's tee. Every recording error is caught and dropped.
+- **Log**: the panel shows one log of `App` rows and its own `Panel` rows. The log keeps at most 200 entries, cuts a body at 100,000 characters, and lives in `sessionStorage`, so it survives a reload of the tab.
 
 ## Rejected alternatives
 
@@ -111,15 +120,17 @@ flowchart LR
 - **App modals**: The panel is a plain element in `body`, so an open app modal makes the panel inert until the modal closes.
 - **Copied transform**: `src/graphql-transformer.ts` can drift from `react/src/helper/graphql-transformer.ts`, and nothing checks it.
 - **Undocumented client fields**: The tool depends on `ready`, `newSignedRequest` and the `uri` it returns, `requestTimeout`, `_config.connectionMode`, and `isManagerVersionCompatibleWith`. `Panel.tsx` declares their types by hand, so type-checking does not catch a change in `backend.ai-client`.
+- **Every dev page load runs the wrapper**: on the dev server every app `fetch` passes through it, whether or not the panel is ever opened. A production build is unchanged.
+- **Credentials in the tab's storage**: the log keeps request headers, including the signed `Authorization` header in API-key mode, and response bodies in `sessionStorage` for the tab's lifetime.
 - **Verification gap**: `scripts/verify.sh` does not cover this package, and no lint rule enforces sections 1 and 3. The tool's authors check it by hand.
 
 ## Sources
 
-- GitHub issue: #10963.
-- `packages/backend.ai-graphql-devtools/vite-plugin.mjs`, `src/main.tsx`, `src/Panel.tsx`, and `src/graphql-transformer.ts`.
+- GitHub issues: #10963, and #11072 for the `fetch` wrapper.
+- `packages/backend.ai-graphql-devtools/vite-plugin.mjs`, `src/main.tsx`, `src/traffic.ts`, `src/Panel.tsx`, and `src/graphql-transformer.ts`.
 - `react/src/helper/graphql-transformer.ts` and `react/src/RelayEnvironment.ts`.
 - `Client._wrapWithPromise` in `packages/backend.ai-client/src/client.ts`, and `react/src/components/NetworkStatusBanner.tsx`.
-- Decided: 2026-11-09.
+- Decided: 2026-11-09. Section 7 added: 2026-11-10.
 - Related: [ADR 0008](0008-host-agnostic-review-overlay-client.md) decides the review overlay client, the other tool attached to the dev server.
 
 ## Glossary
