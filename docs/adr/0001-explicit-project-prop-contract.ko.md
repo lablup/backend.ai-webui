@@ -226,7 +226,7 @@ project: { id: string; name: string } | null
     `useCurrentProjectValue` import를 막고, 위반한 코드에 이 ADR을 가리킨다.
     `EnvironmentPage`, `ReservoirPage`, `AdminDashboardPage`(모두 전환에서
     제외)와 `DeploymentDetailPage`(허용된 page 수준 reader)는 제외한다.
-  - **E2E**(`e2e/admin/header/`): 세 admin route에는 selector가 없고 user Data
+  - **E2E**(`e2e/admin/header/`, `e2e/admin/data/`): 세 admin route에는 selector가 없고 user Data
     page에는 있다. admin을 떠나면 이전 선택이 돌아온다. admin Data page에서 만든
     folder는 modal 안에서 고른 project에 들어간다.
 

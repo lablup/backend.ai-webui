@@ -51,16 +51,21 @@ function escapeRegExp(value: string): string {
 
 /**
  * `testMatch` / `testIgnore` for the `chromium` project, given the absolute
- * path of `e2e/`. Playwright matches these against the absolute file path
- * (and, on Windows, its `file://` URL, which uses forward slashes).
+ * path of `e2e/`. Playwright matches these against the absolute file path.
  */
 export function e2ePartFilter(
   parts: E2EPart[],
   e2eDir: string,
 ): { testMatch?: RegExp; testIgnore?: RegExp } {
   if (parts.includes('all')) return {};
-  const root = escapeRegExp(e2eDir.replace(/\\/g, '/').replace(/\/+$/, ''));
-  const folder = (name: string) => `${root}/${escapeRegExp(name)}/`;
+  // Either separator, so a Windows path matches before its percent-encoded URL.
+  const sep = String.raw`[\\/]`;
+  const root = e2eDir
+    .split(/[\\/]+/)
+    .filter(Boolean)
+    .map(escapeRegExp)
+    .join(sep);
+  const folder = (name: string) => `${root}${sep}${escapeRegExp(name)}${sep}`;
   if (parts.includes('user')) {
     // `user` already holds every folder but admin; adding admin means all.
     return parts.includes('admin')

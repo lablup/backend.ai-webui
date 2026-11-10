@@ -136,7 +136,8 @@ Never hand-roll the login form. `e2e/utils/test-util.ts` exports role-specific h
 taking `(page, request)`:
 
 ```typescript
-import { loginAsAdmin, loginAsUser, navigateTo } from '../utils/test-util';
+// from e2e/<console>/<page>/; one more '../' per extra folder level
+import { loginAsAdmin, loginAsUser, navigateTo } from '../../utils/test-util';
 
 test.beforeEach(async ({ page, request }) => {
   await loginAsAdmin(page, request);   // or loginAsUser / loginAsUser2 /

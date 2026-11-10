@@ -244,7 +244,7 @@ narrowing helper for the loosely-typed ambient value).
     violators at this ADR. `EnvironmentPage`, `ReservoirPage`,
     `AdminDashboardPage` (all excluded from the flip) and
     `DeploymentDetailPage` (sanctioned page-level reader) are excluded.
-  - **E2E** (`e2e/admin/header/`): the selector is absent on the three admin
+  - **E2E** (`e2e/admin/header/`, `e2e/admin/data/`): the selector is absent on the three admin
     routes and present on the user Data page; leaving admin restores the
     previous selection; a folder created from the admin Data page lands in
     the project chosen inside the modal.

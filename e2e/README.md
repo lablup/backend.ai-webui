@@ -218,8 +218,9 @@ export class MyModal extends BaseModal {
 ### Test Example
 
 ```typescript
-import { MyPage } from '../utils/classes/MyPage';
-import { loginAsAdmin, navigateTo } from '../utils/test-util';
+// e2e/project/<page>/my-feature.spec.ts
+import { MyPage } from '../../utils/classes/MyPage';
+import { loginAsAdmin, navigateTo } from '../../utils/test-util';
 import { test, expect } from '@playwright/test';
 
 test.describe(
@@ -362,17 +363,12 @@ Consider Backend.AI domain constraints when writing tests:
 
 Follow these guidelines when writing new tests:
 
-1. **Directory Structure**: Place tests in appropriate feature directories
-   - Authentication: `auth/`
-   - User management: `user/`
-   - Virtual folders: `vfolder/`
-   - Session management: `session/`
-   - Service endpoints: `serving/`
-   - Environment management: `environment/`
-   - Agents: `agent/`
-   - Maintenance: `maintenance/`
-   - App launcher: `app-launcher/`
-   - Configuration: `config/`
+1. **Directory Structure**: Place tests in the folder of the console and page
+   they act on (see "Directory Structure" above)
+   - Admin console (`/admin/*`): `admin/<page>/`
+   - Project admin (`/project/:projectName/admin/*`): `project-admin/<page>/`
+   - User console: `project/<page>/`
+   - Auth, `config.toml` behaviour, global search, plugins: `common/<area>/`
 
 2. **File Naming Convention**:
    - Use `.spec.ts` extension (not `.test.ts`)

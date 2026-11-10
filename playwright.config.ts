@@ -10,7 +10,9 @@ import * as path from "path";
  * default e2e/envs/.env.playwright, or e2e/envs/.env.playwright.admin for
  * E2E_PART=admin when that file exists. One run talks to one server.
  */
-const e2eParts = resolveE2EParts(process.env.E2E_PART);
+const requestedPart = process.env.E2E_PART;
+const requestedEnvFile = process.env.E2E_ENV_FILE;
+const e2eParts = resolveE2EParts(requestedPart);
 const defaultEnvFile = "./e2e/envs/.env.playwright";
 const adminEnvFile = "./e2e/envs/.env.playwright.admin";
 const e2eEnvFile =
@@ -24,10 +26,15 @@ if (process.env.E2E_ENV_FILE && !fs.existsSync(e2eEnvFile)) {
   throw new Error(`E2E_ENV_FILE not found: ${e2eEnvFile}`);
 }
 dotenv.config({ path: e2eEnvFile, override: true });
-if (
-  !process.env.TEST_WORKER_INDEX &&
-  (!e2eParts.includes("all") || e2eEnvFile !== defaultEnvFile)
-) {
+// Workers re-evaluate this file, so an env file must not change the selection.
+for (const [key, value] of [
+  ["E2E_PART", requestedPart],
+  ["E2E_ENV_FILE", requestedEnvFile],
+] as const) {
+  if (value === undefined) delete process.env[key];
+  else process.env[key] = value;
+}
+if (!process.env.TEST_WORKER_INDEX && (requestedPart || requestedEnvFile)) {
   const host = (url?: string) => {
     try {
       return new URL(url ?? "").host;
