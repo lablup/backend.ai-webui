@@ -231,6 +231,7 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
     def('hideAgents', 'domain', 'boolean', 'menu'),
     def('enableReservoir', 'domain', 'boolean', 'menu'),
     def('fasttrackEndpoint', 'domain', 'string', 'menu'),
+    def('manualUrl', 'domain', 'string', 'menu'),
 
     // Downloads.
     def('allowAppDownloadPanel', 'domain', 'boolean', 'downloads'),
