@@ -1368,7 +1368,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       // architecture.
       const [reference, architecture] = manualImageName.split('@');
       setIsResolvingImage(true);
-      // TODO(needs-backend): #11081 no V2 lookup by reference falls back to the manager's
+      // TODO(needs-backend): #10300 no V2 lookup by reference falls back to the manager's
       // default architecture when the name carries no `@architecture`.
       try {
         const result =

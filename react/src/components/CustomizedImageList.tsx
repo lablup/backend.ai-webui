@@ -61,7 +61,7 @@ const CustomizedImageList: React.FC = () => {
   );
   const [, { tagAlias }] = useBackendAIImageMetaData();
 
-  // TODO(needs-backend): #11081 ImageV2 has no registry, tag, version or base image name, so
+  // TODO(needs-backend): #10300 ImageV2 has no registry, tag, version or base image name, so
   // `myImagesV2(filter: { customized: true })` cannot fill these columns yet.
   const { customized_images } = useLazyLoadQuery<CustomizedImageListQuery>(
     graphql`

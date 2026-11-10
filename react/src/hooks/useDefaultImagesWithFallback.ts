@@ -19,7 +19,7 @@ import * as _ from 'lodash-es';
 import { useEffect, useEffectEvent } from 'react';
 import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay';
 
-// TODO(needs-backend): #11081 `ImageV2Filter` has no installed-on-an-agent filter and ImageV2 has
+// TODO(needs-backend): #10300 `ImageV2Filter` has no installed-on-an-agent filter and ImageV2 has
 // no registry or tag field, so this stays on `images`.
 const IMAGES_QUERY = graphql`
   query useDefaultImagesWithFallbackQuery($installed: Boolean) {
