@@ -93,15 +93,11 @@ const upsertMutation = graphql`
   mutation useAppConfigUpsertMutation(
     $input: ScopedUpsertAppConfigFragmentsInput!
   ) {
-    scopedUpsertAppConfigFragments(input: $input) {
+    scopedAtomicBulkUpsertAppConfigFragments(input: $input) {
       items {
         id
         configName
         config
-      }
-      failed {
-        configName
-        message
       }
     }
   }
@@ -113,45 +109,33 @@ const myUpsertMutation = graphql`
   mutation useAppConfigMyUpsertMutation(
     $input: MyUpsertAppConfigFragmentsInput!
   ) {
-    myUpsertAppConfigFragments(input: $input) {
+    myAtomicBulkUpsertAppConfigFragments(input: $input) {
       items {
         id
         configName
         config
       }
-      failed {
-        configName
-        message
-      }
     }
   }
 `;
 
+/** A sub-key's next value, or a function of its current raw value. */
+export type AppConfigUpdate = unknown | ((current: unknown) => unknown);
+
 const applySubKey = (
   base: AppConfigDocument,
   subKey: string | Array<string>,
-  nextValue: unknown,
+  update: AppConfigUpdate,
 ): AppConfigDocument => {
   const next = _.cloneDeep(base);
+  const nextValue =
+    typeof update === 'function' ? update(_.get(base, subKey)) : update;
   if (nextValue === undefined) {
     _.unset(next, subKey);
   } else {
     _.set(next, subKey, nextValue);
   }
   return next;
-};
-
-const throwOnFailed = (
-  failed: ReadonlyArray<{
-    readonly configName: string;
-    readonly message: string;
-  }>,
-) => {
-  if (failed.length > 0) {
-    throw new Error(
-      failed.map((f) => `${f.configName}: ${f.message}`).join('\n'),
-    );
-  }
 };
 
 /**
@@ -211,6 +195,28 @@ export const usePublicDomainAppConfig = <T = AppConfigDocument>(
 };
 
 /**
+ * Superadmin read of one domain's slice of `publicConfigByDomain` — the raw
+ * PUBLIC document, so it is the edit base for the public setters. Post-login
+ * admin surfaces only.
+ */
+export const useRawPublicDomainAppConfig = <T = AppConfigDocument>(
+  subKey?: string | Array<string>,
+  domainName?: string,
+): T | undefined => {
+  'use memo';
+  const currentDomainName = useCurrentDomainValue();
+  const data = useLazyLoadQuery<useAppConfigPublicRawQuery>(
+    publicRawQuery,
+    { configNames: ['publicConfigByDomain'] },
+    { fetchPolicy: 'network-only' },
+  );
+  const doc = data?.scopedAppConfigFragmentsByNames?.[0]?.config as
+    AppConfigDocument | undefined;
+  const slice = _.get(doc, [domainName ?? currentDomainName]);
+  return (subKey === undefined ? slice : _.get(slice, subKey)) as T | undefined;
+};
+
+/**
  * Superadmin setter for ONE domain's slice of `publicConfigByDomain`:
  * re-reads the raw public document and replaces only `[domainName, ...subKey]`
  * so other domains' slices survive the whole-document write. Post-login admin
@@ -226,7 +232,7 @@ export const useUpdatePublicDomainAppConfig = () => {
 
   return async (
     subKey: string | Array<string>,
-    nextValue: unknown,
+    nextValue: AppConfigUpdate,
     domainName?: string,
   ) => {
     const targetDomainName = domainName ?? currentDomainName;
@@ -239,7 +245,7 @@ export const useUpdatePublicDomainAppConfig = () => {
     const rawDoc =
       (raw?.scopedAppConfigFragmentsByNames?.[0]?.config as
         AppConfigDocument | undefined) ?? {};
-    const response = await upsert({
+    await upsert({
       input: {
         scope: { scopeType: 'PUBLIC' },
         items: [
@@ -254,7 +260,6 @@ export const useUpdatePublicDomainAppConfig = () => {
         ],
       },
     });
-    throwOnFailed(response.scopedUpsertAppConfigFragments.failed);
   };
 };
 
@@ -272,10 +277,7 @@ export const useUpdateDomainAppConfig = () => {
   const upsert =
     useMutationWithPromise<useAppConfigUpsertMutation>(upsertMutation);
 
-  return async (
-    subKey: string | Array<string>,
-    nextValue: unknown | ((current: unknown) => unknown),
-  ) => {
+  return async (subKey: string | Array<string>, nextValue: AppConfigUpdate) => {
     const raw = await fetchQuery<useAppConfigDomainRawQuery>(
       relayEnv,
       domainRawQuery,
@@ -285,7 +287,7 @@ export const useUpdateDomainAppConfig = () => {
     const rawDoc =
       (raw?.scopedAppConfigFragmentsByNames?.[0]?.config as
         AppConfigDocument | undefined) ?? {};
-    const response = await upsert({
+    await upsert({
       input: {
         scope: { scopeType: 'DOMAIN', scopeId },
         items: [
@@ -302,7 +304,6 @@ export const useUpdateDomainAppConfig = () => {
         ],
       },
     });
-    throwOnFailed(response.scopedUpsertAppConfigFragments.failed);
     await fetchQuery<useAppConfigMyQuery>(
       relayEnv,
       myQuery,
@@ -355,7 +356,7 @@ export const useUpdateMyUserAppConfig = () => {
     const rawDoc =
       (raw?.myAppConfigFragmentsByNames?.[0]?.config as
         AppConfigDocument | undefined) ?? {};
-    const response = await upsert({
+    await upsert({
       input: {
         items: [
           {
@@ -371,6 +372,5 @@ export const useUpdateMyUserAppConfig = () => {
         ],
       },
     });
-    throwOnFailed(response.myUpsertAppConfigFragments.failed);
   };
 };

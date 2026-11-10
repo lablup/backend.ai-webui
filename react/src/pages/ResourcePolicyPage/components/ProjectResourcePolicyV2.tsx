@@ -24,6 +24,7 @@ import {
   BAINameActionCell,
   BAIProjectResourcePolicyV2Table,
   type BAIProjectResourcePolicyV2TableProps,
+  BAIUnmountAfterClose,
   filterOutNullAndUndefined,
   useFetchKey,
 } from 'backend.ai-ui';
@@ -59,6 +60,7 @@ export const ProjectResourcePolicyV2Query = graphql`
       edges {
         node {
           id
+          entityId
           name
           maxVfolderCount
           maxQuotaScopeSize {
@@ -121,9 +123,8 @@ const ProjectResourcePolicyV2 = ({
   const [isCreatingPolicySetting, setIsCreatingPolicySetting] = useState(false);
   const [editingProjectResourcePolicy, setEditingProjectResourcePolicy] =
     useState<ProjectResourcePolicyV2Node | null>(null);
-  const [deletingPolicyName, setDeletingPolicyName] = useState<string | null>(
-    null,
-  );
+  const [deletingPolicy, setDeletingPolicy] =
+    useState<ProjectResourcePolicyV2Node | null>(null);
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.ProjectResourcePolicyV2',
@@ -147,9 +148,9 @@ const ProjectResourcePolicyV2 = ({
   );
 
   const [commitDelete] = useMutation<ProjectResourcePolicyV2Mutation>(graphql`
-    mutation ProjectResourcePolicyV2Mutation($name: String!) {
-      adminDeleteProjectResourcePolicyV2(name: $name) {
-        name
+    mutation ProjectResourcePolicyV2Mutation($id: UUID!) {
+      purgeProjectResourcePolicyV2(id: $id) {
+        entityId
       }
     }
   `);
@@ -321,7 +322,7 @@ const ProjectResourcePolicyV2 = ({
                           onClick: () => {
                             setEditingProjectResourcePolicy(
                               _.find(projectResourcePolicies, {
-                                id: record.id,
+                                entityId: record.entityId,
                               }) ?? null,
                             );
                           },
@@ -332,7 +333,11 @@ const ProjectResourcePolicyV2 = ({
                           icon: <Trash2 size="1em" />,
                           type: 'danger',
                           onClick: () => {
-                            setDeletingPolicyName(record.name);
+                            setDeletingPolicy(
+                              _.find(projectResourcePolicies, {
+                                entityId: record.entityId,
+                              }) ?? null,
+                            );
                           },
                         },
                       ]}
@@ -359,65 +364,71 @@ const ProjectResourcePolicyV2 = ({
         }}
         {...tableProps}
       />
-      <ProjectResourcePolicyV2SettingModal
-        open={!!editingProjectResourcePolicy || isCreatingPolicySetting}
-        projectResourcePolicyFrgmt={editingProjectResourcePolicy}
-        onOk={() => {
-          // A create adds a new row the offset query can't know about, so it
-          // needs a refetch. An update returns every field, so Relay merges the
-          // record by id into the store and the list reflects it without one.
-          if (isCreatingPolicySetting) {
-            onReload(queryRef.variables, { fetchPolicy: 'network-only' });
+      <BAIUnmountAfterClose>
+        <ProjectResourcePolicyV2SettingModal
+          open={!!editingProjectResourcePolicy || isCreatingPolicySetting}
+          projectResourcePolicyFrgmt={editingProjectResourcePolicy}
+          onOk={() => {
+            // A create adds a new row the offset query can't know about, so it
+            // needs a refetch. An update returns every field, so Relay merges the
+            // record by id into the store and the list reflects it without one.
+            if (isCreatingPolicySetting) {
+              onReload(queryRef.variables, { fetchPolicy: 'network-only' });
+            }
+            setEditingProjectResourcePolicy(null);
+            setIsCreatingPolicySetting(false);
+          }}
+          onCancel={() => {
+            setEditingProjectResourcePolicy(null);
+            setIsCreatingPolicySetting(false);
+          }}
+        />
+      </BAIUnmountAfterClose>
+      <BAIUnmountAfterClose>
+        <BAIDeleteConfirmModal
+          open={!!deletingPolicy}
+          items={
+            deletingPolicy
+              ? [{ key: deletingPolicy.entityId, label: deletingPolicy.name }]
+              : []
           }
-          setEditingProjectResourcePolicy(null);
-          setIsCreatingPolicySetting(false);
-        }}
-        onCancel={() => {
-          setEditingProjectResourcePolicy(null);
-          setIsCreatingPolicySetting(false);
-        }}
-      />
-      <BAIDeleteConfirmModal
-        open={!!deletingPolicyName}
-        items={
-          deletingPolicyName
-            ? [{ key: deletingPolicyName, label: deletingPolicyName }]
-            : []
-        }
-        title={t('resourcePolicy.DeletePolicy')}
-        target={t('resourcePolicy.ResourcePolicy')}
-        confirmText={deletingPolicyName ?? ''}
-        requireConfirmInput
-        onOk={() => {
-          if (deletingPolicyName) {
-            return new Promise<void>((resolve) => {
-              commitDelete({
-                variables: { name: deletingPolicyName },
-                onCompleted: (_res, errors) => {
-                  if (errors && errors.length > 0) {
-                    for (const error of errors) {
-                      message.error(error.message);
+          title={t('resourcePolicy.DeletePolicy')}
+          target={t('resourcePolicy.ResourcePolicy')}
+          confirmText={deletingPolicy?.name ?? ''}
+          requireConfirmInput
+          onOk={() => {
+            if (deletingPolicy) {
+              return new Promise<void>((resolve) => {
+                commitDelete({
+                  variables: { id: deletingPolicy.entityId },
+                  onCompleted: (_res, errors) => {
+                    if (errors && errors.length > 0) {
+                      for (const error of errors) {
+                        message.error(error.message);
+                      }
+                    } else {
+                      onReload(queryRef.variables, {
+                        fetchPolicy: 'network-only',
+                      });
+                      message.success(
+                        t('resourcePolicy.ResourcePolicyDeleted'),
+                      );
                     }
-                  } else {
-                    onReload(queryRef.variables, {
-                      fetchPolicy: 'network-only',
-                    });
-                    message.success(t('resourcePolicy.ResourcePolicyDeleted'));
-                  }
-                  setDeletingPolicyName(null);
-                  resolve();
-                },
-                onError(err) {
-                  message.error(err?.message);
-                  setDeletingPolicyName(null);
-                  resolve();
-                },
+                    setDeletingPolicy(null);
+                    resolve();
+                  },
+                  onError(err) {
+                    message.error(err?.message);
+                    setDeletingPolicy(null);
+                    resolve();
+                  },
+                });
               });
-            });
-          }
-        }}
-        onCancel={() => setDeletingPolicyName(null)}
-      />
+            }
+          }}
+          onCancel={() => setDeletingPolicy(null)}
+        />
+      </BAIUnmountAfterClose>
     </BAIFlex>
   );
 };

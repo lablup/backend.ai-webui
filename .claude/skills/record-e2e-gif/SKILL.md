@@ -26,7 +26,7 @@ Record Playwright e2e tests as GIF animations, one GIF per test case.
 ## Usage
 
 When invoked, ask for or accept:
-- `testFile`: path to the spec file (e.g. `e2e/environment/environment.spec.ts`)
+- `testFile`: path to the spec file (e.g. `e2e/project/session/session-lifecycle.spec.ts`)
 - `grep`: optional test name pattern to filter (e.g. `BAIPropertyFilter`)
 - `project`: browser project, default `chromium`
 - `outputDir`: output directory for GIFs, default `e2e/recordings`

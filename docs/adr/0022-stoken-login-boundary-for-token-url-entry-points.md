@@ -60,7 +60,7 @@ sequenceDiagram
   opt sToken non-empty
     B->>B: document.cookie sToken=encoded value
   end
-  B->>S: get_manager_version and session probe
+  B->>S: probeServer and session probe
   S-->>B: reachable, plus an existing session or none
   B->>B: await initializeConfigOnce (config.toml)
   alt browser already has a session
@@ -124,7 +124,7 @@ sequenceDiagram
 
 ### 7. Login order and the existing-session path
 
-- **Order**: The boundary resolves the endpoint, writes the cookie, creates the client with `createBackendAIClient('', '', apiEndpoint, 'SESSION')`, and runs `get_manager_version()` together with `probeLoginSession(client)` from `helper/loginBootstrap.ts`.
+- **Order**: The boundary resolves the endpoint, writes the cookie, creates the client with `createBackendAIClient('', '', apiEndpoint, 'SESSION')`, and runs `probeServer()` (an anonymous reachability check) together with `probeLoginSession(client)` from `helper/loginBootstrap.ts`. The manager version is read only once signed in, by `connectViaGQL`.
 - **Probe failure**: A `probeLoginSession` rejection other than `LoginBootstrapIncompleteError` counts as no session, and the boundary continues to `token_login`.
 - **Existing session**: When `probeLoginSession` finds a live session, the boundary skips `token_login` and calls `connectViaGQL` with that session. This path sends none of `extraParams`, the OTP, or `force`. The boundary takes it whether or not a token is present, and it does not compare the session's user with the token. A URL token therefore does not replace a session the browser already holds.
 - **Missing token**: The boundary reports `missing-token` only when there is no session and `sToken` is empty.
@@ -140,11 +140,11 @@ sequenceDiagram
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
 | `missing-token`       | no live session and an empty `sToken`                                                                                                                                                                                                                         | Retry                                                           |
 | `endpoint-unresolved` | `useResolvedApiEndpoint()` returned an empty string                                                                                                                                                                                                           | Retry                                                           |
-| `server-unreachable`  | `get_manager_version()` threw                                                                                                                                                                                                                                 | Retry                                                           |
+| `server-unreachable`  | `probeServer()` threw                                                                                                                                                                                                                                         | Retry                                                           |
 | `token-invalid`       | `tokenLogin` or `connectViaGQL` threw and no other kind matched                                                                                                                                                                                               | Retry                                                           |
 | `totp-required`       | `failType` `require-totp-authentication` or `require-totp-registration`, a `rejected-by-hook` failure whose reason names an invalid OTP, or the matching legacy reason strings; `invalidOtp` is true whenever a code was submitted or the server rejected one | inline OTP form; the code is added to the next attempt as `otp` |
 | `concurrent-session`  | the server reported `active-login-session-exists`                                                                                                                                                                                                             | Login confirm; later attempts in the mount send `force: true`   |
-| `account-unavailable` | `probeLoginSession` found a session whose user the manager did not return                                                                                                                                                                                     | Retry                                                           |
+| `account-unavailable` | `probeLoginSession` found a session whose user the manager did not return, or `tokenLogin` / `connectViaGQL` threw `LoginBootstrapIncompleteError` (the manager failed after sign-in)                                                                         | Retry                                                           |
 | `unknown`             | declared in the union; no branch of the boundary produces it today                                                                                                                                                                                            | Retry                                                           |
 
 - **Classification**: `classifyTokenLoginFailure` reads the structured `failType` first and falls back to substrings of `failReason` for webservers that omit the type.
@@ -170,7 +170,7 @@ sequenceDiagram
 - Jira: FR-2616 (epic), FR-2618 (spec, PR #6828), FR-2628 (PR #6850), FR-2629 (PR #6851), FR-2630 (PR #6852), FR-2631 (PR #6853), FR-2632 (PR #6855), FR-2633 (PR #6856), FR-2626 (PR #6861), FR-2627 (PR #6864), FR-2639 (PR #6865), PR #6897 (TOTP and concurrent-session handling), FR-3128 (PR #7873, config bootstrap), FR-3763 (PR #9249, `/cli-login`).
 - Decided 2026-04-23.
 - Design record: formerly `.specs/draft-stoken-login-boundary/` (removed in #10802; see git history).
-- Tests: `react/src/components/STokenLoginBoundary.test.tsx`, `e2e/auth/stoken-login.spec.ts`, `e2e/app-launcher/edu-applauncher-stoken.spec.ts`.
+- Tests: `react/src/components/STokenLoginBoundary.test.tsx`, `e2e/common/auth/stoken-login.spec.ts`, `e2e/project/session/edu-applauncher-stoken.spec.ts`.
 - Related: [ADR 0018](0018-adrs-as-the-only-design-record.md) (ADRs as the only design record), [ADR 0021](0021-per-tab-url-state-for-multi-tab-pages.md) (URL state through nuqs).
 
 ## Glossary

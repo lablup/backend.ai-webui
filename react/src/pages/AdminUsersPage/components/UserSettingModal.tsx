@@ -1107,7 +1107,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
           <Suspense
             fallback={
               <BAIFormItem label={t('credential.Projects')}>
-                <BAISelect loading style={{ width: '100%' }} />
+                <BAISelect loading disabled style={{ width: '100%' }} />
               </BAIFormItem>
             }
           >
@@ -1276,7 +1276,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             <Suspense
               fallback={
                 <BAIFormItem label={t('credential.MainAccessKey')}>
-                  <BAISelect loading style={{ width: '100%' }} />
+                  <BAISelect loading disabled style={{ width: '100%' }} />
                 </BAIFormItem>
               }
             >

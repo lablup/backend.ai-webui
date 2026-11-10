@@ -16,7 +16,6 @@ import {
 } from '../cards/AuditLogPanel';
 import ScopedCard from '../cards/ScopedCard';
 import DonutChart from '../charts/DonutChart';
-import PeriodCaption from '../charts/PeriodCaption';
 import { readCounts } from '../countAliases';
 import { toDonutRows } from '../memberCards/memberCardData';
 import { projectAuditScope } from '../projectAdminCards/projectCardData';
@@ -84,11 +83,10 @@ const EntityTypeFailures: React.FC<{
 }> = ({ scope, timeRange, fetchKey }) => {
   'use memo';
   const { t } = useTranslation();
-  const deferred = useDeferredValue({
-    timeRange,
-    variables: { scope, ...entityTypeFailureFilters(timeRange) },
+  const variables = useDeferredValue({
+    scope,
+    ...entityTypeFailureFilters(timeRange),
   });
-  const variables = deferred.variables;
   // The legend row whose failed entries are listed, with its label.
   const [listed, setListed] = useState<{ key: string; label: string } | null>(
     null,
@@ -171,7 +169,6 @@ const EntityTypeFailures: React.FC<{
   ]);
   return (
     <BAIFlex direction="column" align="stretch" gap="xs" style={{ flex: 1 }}>
-      <PeriodCaption window={deferred.timeRange} />
       <DonutChart
         label={t('dashboard.card.FailuresByEntityType')}
         emptyText={t('dashboard.card.NoFailures')}

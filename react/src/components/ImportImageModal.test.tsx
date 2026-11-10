@@ -78,8 +78,7 @@ vi.mock('react-relay', async (importOriginal) => {
   };
 });
 
-// Identity by default; one test flips the switch to run the real hook, which
-// is the one that throws on a missing `globalThis.backendaiwebui` (FR-3953).
+// Identity by default; one test flips the switch to run the real hook.
 let isPainKillerStubbed = true;
 
 vi.mock('../hooks/usePainKiller', async (importOriginal) => {
@@ -335,7 +334,6 @@ describe('ImportImageModal (FR-3940 review round)', () => {
     mockRegistryEditorRender.mockReset();
     registryPageFetchCount = 0;
     isPainKillerStubbed = true;
-    (globalThis as any).backendaiwebui = { debug: false };
   });
 
   it('reads the registries afresh on every open, not the first open’s list', async () => {
@@ -851,13 +849,10 @@ describe('ImportImageModal (FR-3940 review round)', () => {
     expect(retryButton()).not.toHaveAttribute('aria-busy');
   });
 
-  it('clears the loading flag even when the error description itself throws', async () => {
+  it('clears the loading flag when the real painKiller describes the error', async () => {
     const user = userEvent.setup();
-    // The real `relieve` reads `globalThis.backendaiwebui.debug`; without the
-    // global it throws from inside the `catch`, which used to escape
-    // `handleAdd` and strand the button loading forever (FR-3953).
+    // Before config loads `relieve` must not throw out of `handleAdd` (FR-3953).
     isPainKillerStubbed = false;
-    delete (globalThis as any).backendaiwebui;
     // A 400 is the one status no branch classifies, so painKiller runs.
     mockScanRequest.mockRejectedValue({
       statusCode: 400,

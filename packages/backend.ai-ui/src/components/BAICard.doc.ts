@@ -137,7 +137,7 @@ export const docs = {
       name: 'tabList',
       type: 'Array<BAICardTabItem>',
       description:
-        'Tab descriptors ({ key, label | tab, endContent }) rendered as a BAITabList that full-bleeds to the card borders. A rich tab label must be split: keep label a string and pass the trailing node as endContent.',
+        'Tab descriptors ({ key, label | tab, endContent, tooltip }) rendered as a BAITabList that full-bleeds to the card borders. A rich tab label must be split: keep label a string and pass the trailing node as endContent. Help text goes in tooltip, which anchors a Tooltip on the tab itself and adds a decorative help glyph; never put a tooltip trigger in endContent, which renders inside the tab button.',
     },
     {
       name: 'activeTabKey',

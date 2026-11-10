@@ -4,6 +4,7 @@
  */
 import '../../../../__test__/matchMedia.mock.js';
 import '../../../../__test__/resizeObserver.mock.js';
+import type { ResourcePresetSettingModalSharedTestQuery } from '../../../__generated__/ResourcePresetSettingModalSharedTestQuery.graphql';
 import type { ResourcePresetSettingModalTestQuery } from '../../../__generated__/ResourcePresetSettingModalTestQuery.graphql';
 import ResourcePresetSettingModal from './ResourcePresetSettingModal';
 import '@testing-library/jest-dom';
@@ -259,5 +260,61 @@ describe('ResourcePresetSettingModal edit contract', () => {
           operation.name === 'ResourcePresetSettingModalCreateMutation',
       ),
     ).toBe(false);
+  });
+});
+
+// One modal instance shared by edit and create, as `ResourcePresetList` renders it.
+const SharedModalHost = ({ mode }: { mode: 'edit' | 'create' | null }) => {
+  const data = useLazyLoadQuery<ResourcePresetSettingModalSharedTestQuery>(
+    graphql`
+      query ResourcePresetSettingModalSharedTestQuery {
+        resource_presets {
+          ...ResourcePresetSettingModalFragment
+        }
+      }
+    `,
+    {},
+  );
+  return (
+    <ResourcePresetSettingModal
+      open={mode !== null}
+      unmountOnClose
+      resourcePresetFrgmt={
+        mode === 'edit' ? data.resource_presets?.[0] : undefined
+      }
+      onRequestClose={vi.fn()}
+    />
+  );
+};
+
+describe('ResourcePresetSettingModal shared create/edit instance', () => {
+  it('opens Create with an empty form after an edit was closed', async () => {
+    const environment: RelayMockEnvironment = createMockEnvironment();
+    environment.mock.queueOperationResolver((operation) =>
+      MockPayloadGenerator.generate(operation, {
+        ResourcePreset: () => EXISTING_PRESET,
+      }),
+    );
+    const renderHost = (mode: 'edit' | 'create' | null) => (
+      <RelayEnvironmentProvider environment={environment}>
+        <Suspense fallback={null}>
+          <SharedModalHost mode={mode} />
+        </Suspense>
+      </RelayEnvironmentProvider>
+    );
+    const { rerender } = render(renderHost('edit'));
+    expect(
+      await screen.findByLabelText('resourcePreset.PresetName'),
+    ).toHaveValue(EXISTING_PRESET.name);
+
+    rerender(renderHost(null));
+    rerender(renderHost('create'));
+
+    const presetName = await screen.findByLabelText(
+      'resourcePreset.PresetName',
+    );
+    expect(presetName).toHaveValue('');
+    expect(presetName).not.toHaveAttribute('readonly');
+    expect(screen.getByLabelText('cpu')).toHaveValue('');
   });
 });

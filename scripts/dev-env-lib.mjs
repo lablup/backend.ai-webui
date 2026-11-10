@@ -262,30 +262,33 @@ function parsePolicy(raw, warnings) {
   };
 }
 
+/**
+ * The keys the WebUI still reads from `config.toml` (ADR 0028, section 3); every
+ * other setting comes from the backend's System Settings (app config).
+ * Mirrors FILE_ONLY_CONFIG_KEYS in react/src/helper/loginConfig.ts; a test compares them.
+ */
+export const FILE_ONLY_CONFIG_KEYS = [
+  "general.apiEndpoint",
+  "general.apiDomainName",
+  "general.connectionMode",
+  "general.signupSupport",
+  "general.enableWebMCP",
+  "wsproxy.proxyURL",
+  "wsproxy.disableCertCheck",
+  "server.webServerURL",
+  "license.edition",
+  "license.validUntil",
+];
+
+/** Whether the WebUI reads `key` (`section.name`) from `config.toml` at all. */
+export const isFileOnlyConfigKey = (key) => FILE_ONLY_CONFIG_KEYS.includes(key);
+
 // Keep in sync with MANAGER_CONFIG_KEYS in lablup/frontend-board board/ui/src/lib/catalog.ts.
-/** The deployment switches in `config.toml` worth choosing a server by; `section.*` is the whole table. */
+/** The `config.toml` switches worth choosing a server by; a subset of FILE_ONLY_CONFIG_KEYS. */
 export const MANAGER_CONFIG_KEYS = [
   "general.connectionMode",
   "general.signupSupport",
-  "general.allowSignout",
-  "general.allowAnonymousChangePassword",
-  "general.allowSignupWithoutConfirmation",
-  "general.enableContainerCommit",
-  "general.enableModelFolders",
-  "general.enableImportFromHuggingFace",
-  "general.enableExtendLoginSession",
-  "general.enableReservoir",
-  "general.force2FA",
-  "general.allowProjectResourceMonitor",
-  "general.directoryBasedUsage",
-  "general.maxCountForPreopenPorts",
-  "resources.openPortToPublic",
-  "resources.allowPreferredPort",
-  "resources.allowNonAuthTCP",
-  "resources.maxFileUploadSize",
-  "environments.showNonInstalledImages",
-  "plugin.*",
-  "pipeline.*",
+  "general.apiDomainName",
 ];
 
 function lookup(config, dotted) {
@@ -297,26 +300,12 @@ function lookup(config, dotted) {
   return value;
 }
 
-/** `[{key, value, present}]` for MANAGER_CONFIG_KEYS; a present `section.*` expands to one row per key in it. */
+/** `[{key, value, present}]` for MANAGER_CONFIG_KEYS. */
 export function managerSettings(config) {
-  const rows = [];
-  for (const key of MANAGER_CONFIG_KEYS) {
-    if (key.endsWith(".*")) {
-      const section = key.slice(0, -2);
-      const table = lookup(config, section);
-      if (isObject(table) && Object.keys(table).length > 0) {
-        for (const [name, value] of Object.entries(table)) {
-          rows.push({ key: `${section}.${name}`, value, present: true });
-        }
-      } else {
-        rows.push({ key, value: null, present: false });
-      }
-      continue;
-    }
+  return MANAGER_CONFIG_KEYS.map((key) => {
     const value = lookup(config, key);
-    rows.push({ key, value: value ?? null, present: value !== undefined });
-  }
-  return rows;
+    return { key, value: value ?? null, present: value !== undefined };
+  });
 }
 
 /** Every leaf of `config` as `[{key, value, present: true}]`, for `config --all`. */
@@ -1041,11 +1030,10 @@ export const CONFIG_GENERATED_MARKER =
   "# Written by `pnpm run dev-env use`";
 
 /**
- * Probed keys `use` never copies: the login endpoint comes from
- * `.env.development.local` (a baked `apiEndpoint` disables API sign-in), and
- * `plugin.*` names bundle files the deployment has and a worktree does not.
+ * File-only keys `use` never copies: the login endpoint comes from
+ * `.env.development.local` (a baked `apiEndpoint` disables API sign-in).
  */
-export const CONFIG_COPY_SKIP = ["general.apiEndpoint", "general.apiEndpointText", "plugin"];
+export const CONFIG_COPY_SKIP = ["general.apiEndpoint"];
 
 const TOML_KEY = "[A-Za-z0-9_-]+";
 const PLACEHOLDER = /^"\[.*\]"$/;
@@ -1055,7 +1043,7 @@ export function parseConfigSet(arg) {
   const m = /^([A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)+)=(.*)$/s.exec(arg ?? "");
   if (!m) {
     throw new Error(
-      `--set takes "<section>.<key>=<value>", got "${arg}" (e.g. resources.openPortToPublic=true)`,
+      `--set takes "<section>.<key>=<value>", got "${arg}" (e.g. general.signupSupport=true)`,
     );
   }
   const [, key, raw] = m;
@@ -1174,7 +1162,29 @@ export function disablePlaceholders(text) {
 }
 
 const skipped = (key) =>
+  !isFileOnlyConfigKey(key) ||
   CONFIG_COPY_SKIP.some((s) => key === s || key.startsWith(`${s}.`));
+
+/**
+ * `--set` overrides split into the ones `config.toml` still owns and the ones
+ * the WebUI no longer reads from the file (System Settings keys, or unknown).
+ */
+export function splitConfigOverrides(overrides) {
+  const kept = overrides.filter(({ key }) => isFileOnlyConfigKey(key));
+  const ignored = overrides.filter(({ key }) => !isFileOnlyConfigKey(key));
+  return { kept, ignored };
+}
+
+/** The warning `use` prints for `--set` keys it did not write, or null. */
+export function ignoredOverridesWarning(ignored) {
+  if (ignored.length === 0) return null;
+  const keys = ignored.map(({ key }) => key).join(", ");
+  return (
+    `warning: not written to config.toml: ${keys}. The WebUI reads only ` +
+    `${FILE_ONLY_CONFIG_KEYS.join(", ")} from config.toml (ADR 0028); set the ` +
+    "rest in that server's System Settings (/admin/system-settings)."
+  );
+}
 
 /** `CONFIG_GENERATED_MARKER` on the first line. */
 export function isGeneratedConfig(text) {
@@ -1183,13 +1193,15 @@ export function isGeneratedConfig(text) {
 
 /**
  * config.toml for a worktree: the sample with its placeholders disabled, the
- * server's probed switches (minus CONFIG_COPY_SKIP) on top, then `overrides`
- * (`[{key, value}]`), under a header that says where each layer came from.
+ * server's probed file-only keys (minus CONFIG_COPY_SKIP) on top, then the
+ * file-only `overrides` (`[{key, value}]`), under a header that says where each
+ * layer came from. Settings served by System Settings are never written.
  */
 export function renderConfigToml({ sample, server = null, overrides = [] }) {
   let text = disablePlaceholders(sample);
   const config = server?.status?.config ?? null;
   const copied = config ? allSettings(config).filter(({ key }) => !skipped(key)) : [];
+  overrides = splitConfigOverrides(overrides).kept;
   for (const { key, value } of copied) text = setTomlValue(text, key, value);
   for (const { key, value } of overrides) text = setTomlValue(text, key, value);
   const source = !server

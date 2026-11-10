@@ -234,7 +234,7 @@ class BackendAIMetadataStore {
 // NOTE: `globalThis.tasker` is part of the runtime PLUGIN surface, not just
 // internal legacy. Compiled Lit-template plugins assign
 // `this.tasker = globalThis.tasker` in their shared BackendAIPage base class
-// (see e2e/plugin/*.js fixtures) and may call `tasker.add(...)` for
+// (see e2e/common/plugin/*.js fixtures) and may call `tasker.add(...)` for
 // background-task notifications. No in-repo code calls it anymore, but do not
 // remove it without auditing the plugin ecosystem. Its `add()` dispatches
 // `add-bai-notification`, which is consumed by the app-wide NotificationHost.

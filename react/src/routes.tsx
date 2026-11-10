@@ -136,9 +136,6 @@ const DiagnosticsPage = React.lazy(
 const StatisticsPage = React.lazy(
   () => import('./pages/StatisticsPage/StatisticsPage'),
 );
-const ConfigurationsPage = React.lazy(
-  () => import('./pages/ConfigurationsPage/ConfigurationsPage'),
-);
 const SessionDetailAndContainerLogOpenerLegacy = React.lazy(
   () => import('./components/SessionDetailAndContainerLogOpenerLegacy'),
 );
@@ -160,6 +157,9 @@ const SchedulerPage = React.lazy(
 );
 const BrandingPage = React.lazy(
   () => import('./pages/BrandingPage/BrandingPage'),
+);
+const WebUISettingsPage = React.lazy(
+  () => import('./pages/WebUISettingsPage/WebUISettingsPage'),
 );
 const RBACManagementPage = React.lazy(
   () => import('./pages/RBACManagementPage/RBACManagementPage'),
@@ -934,17 +934,19 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         },
       },
       {
+        // Configurations lives in the System Settings page (#10684); the
+        // old URL keeps its menu key so the block list and 401 still apply.
         path: 'settings',
         element: (
-          <Suspense fallback={<BAISkeleton rows={4} />}>
-            <ConfigurationsPage />
-          </Suspense>
+          <WebUINavigate
+            to="/admin/system-settings?tab=configurations"
+            replace
+          />
         ),
         handle: {
           scope: 'admin',
           menuKey: 'settings',
           access: 'superadmin',
-          labelKey: 'webui.menu.Configurations',
         },
       },
       {
@@ -1001,6 +1003,20 @@ export const mainLayoutChildRoutes: RouteObject[] = [
           menuKey: 'branding',
           access: 'superadmin',
           labelKey: 'webui.menu.Branding',
+        },
+      },
+      {
+        path: 'system-settings',
+        element: (
+          <Suspense fallback={<BAISkeleton rows={4} />}>
+            <WebUISettingsPage />
+          </Suspense>
+        ),
+        handle: {
+          scope: 'admin',
+          menuKey: 'system-settings',
+          access: 'superadmin',
+          labelKey: 'webui.menu.SystemSettings',
         },
       },
       {
@@ -1476,8 +1492,7 @@ const AutoDiagnosticsRunner = () => {
  * URL query for authentication (ADR 0022).
  *
  * On boundary success, the route-level `onSuccess` persists the login
- * state (`last_login`, `login_attempt`, saved-credential cleanup,
- * `api_endpoint`, `client.ready`) and nulls both `sToken` / `stoken` keys
+ * state (saved-credential cleanup, `api_endpoint`, `client.ready`) and nulls both `sToken` / `stoken` keys
  * from the URL via the nuqs setter so the token doesn't leak into browser
  * history or referer headers.
  */

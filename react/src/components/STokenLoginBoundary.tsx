@@ -175,7 +175,7 @@ export interface STokenLoginBoundaryProps {
   /**
    * Invoked after successful authentication with the connected client. This
    * is where callers perform their own post-setup work: panel close,
-   * last_login counters, URL cleanup via the `clear` tuple returned from
+   * URL cleanup via the `clear` tuple returned from
    * `useSToken`, etc.
    */
   onSuccess?: (client: unknown) => void;
@@ -320,7 +320,7 @@ const STokenLoginBoundaryInner: React.FC<STokenLoginBoundaryProps> = ({
       err instanceof LoginBootstrapIncompleteError ? err : null,
     );
     try {
-      await client.get_manager_version();
+      await client.probeServer();
     } catch (cause) {
       logger.error('[STokenLoginBoundary] server unreachable', cause);
       surfaceError({ kind: 'server-unreachable', cause });
@@ -349,9 +349,8 @@ const STokenLoginBoundaryInner: React.FC<STokenLoginBoundaryProps> = ({
     // deriving the login config. On sToken entry paths `LoginView` — the
     // usual `useInitializeConfig` caller — only mounts after this boundary
     // succeeds, so without this await the login would always run against
-    // `getDefaultLoginConfig()` and silently drop webserver-configured
-    // flags such as `[resources].allowNonAuthTCP`, hiding the SSH/SFTP app
-    // after SSO login (FR-3128). This is the same-origin bootstrap load,
+    // `getDefaultLoginConfig()` alone and silently drop the bootstrap's
+    // file-only keys and public settings slice (FR-3128). This is the same-origin bootstrap load,
     // not the cross-origin `loadConfigFromWebServer` merge — the latter is
     // still intentionally NOT invoked here (ADR 0022); callers may invoke it
     // from `onSuccess` when the API endpoint lives on another origin.
@@ -405,7 +404,12 @@ const STokenLoginBoundaryInner: React.FC<STokenLoginBoundaryProps> = ({
       }
     } catch (cause) {
       logger.error('[STokenLoginBoundary] token_login failed', cause);
-      surfaceError(classifyTokenLoginFailure(cause, submittedOtp));
+      // Signed in, but the manager failed afterwards: not a token problem.
+      surfaceError(
+        cause instanceof LoginBootstrapIncompleteError
+          ? { kind: 'account-unavailable', cause }
+          : classifyTokenLoginFailure(cause, submittedOtp),
+      );
       return;
     }
 
@@ -507,7 +511,7 @@ const kindToI18nKey = (kind: STokenLoginError['kind']): string =>
  *
  * `step` drives the description line so the user can see which phase is
  * currently running — mostly relevant on slower networks where
- * `get_manager_version` and `token_login` together take a few seconds.
+ * `probeServer` and `token_login` together take a few seconds.
  * The outer Suspense boundary (during endpoint resolution) renders this
  * without a `step` prop, which defaults to `connecting` — the same label
  * the inner component starts with on mount.

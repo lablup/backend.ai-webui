@@ -26,7 +26,10 @@
     "ActivateArtifacts": "激活工件",
     "AreYouSureYouWantToActivateOne": "您确定要激活{{name}}吗？",
     "AreYouSureYouWantToActivateSome": "您确定要激活{{count}}伪像吗？",
+    "Error": "错误",
     "FailedToActivateArtifacts": "未能激活伪影。",
+    "Name": "名称",
+    "SomeArtifactsFailedToActivate": "{{count}} 个制品激活失败",
     "SuccessfullyActivated": "成功激活的工件。"
   },
   "comp:BAIAdminKeypairResourcePolicySelect": {
@@ -980,7 +983,10 @@
     "AreYouSureYouWantToDeactivateSome": "您确定要停用{{count}}文物吗？",
     "Deactivate": "停用",
     "DeactivateArtifacts": "停用伪影",
+    "Error": "错误",
     "FailedToDeactivateArtifacts": "未能停用伪影。",
+    "Name": "名称",
+    "SomeArtifactsFailedToDeactivate": "{{count}} 个制品停用失败",
     "SuccessfullyDeactivated": "成功停用的伪影。"
   },
   "comp:BAIDeleteArtifactModal": {

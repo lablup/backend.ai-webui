@@ -28,6 +28,7 @@ import {
   BAINameActionCell,
   BAISelect,
   BAIScopedUserSelect,
+  BAIUnmountAfterClose,
   filterOutNullAndUndefined,
   useFetchKey,
 } from 'backend.ai-ui';
@@ -63,6 +64,7 @@ export const KeypairResourcePolicyV2Query = graphql`
       edges {
         node {
           id
+          entityId
           name
           defaultForUnspecified
           totalResourceSlots {
@@ -153,9 +155,8 @@ const KeypairResourcePolicyV2 = ({
   const [isCreatingPolicySetting, setIsCreatingPolicySetting] = useState(false);
   const [editingKeypairResourcePolicy, setEditingKeypairResourcePolicy] =
     useState<KeypairResourcePolicyV2Node | null>(null);
-  const [deletingPolicyName, setDeletingPolicyName] = useState<string | null>(
-    null,
-  );
+  const [deletingPolicy, setDeletingPolicy] =
+    useState<KeypairResourcePolicyV2Node | null>(null);
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.KeypairResourcePolicyV2',
@@ -179,9 +180,9 @@ const KeypairResourcePolicyV2 = ({
   );
 
   const [commitDelete] = useMutation<KeypairResourcePolicyV2Mutation>(graphql`
-    mutation KeypairResourcePolicyV2Mutation($name: String!) {
-      adminDeleteKeypairResourcePolicyV2(name: $name) {
-        name
+    mutation KeypairResourcePolicyV2Mutation($id: UUID!) {
+      purgeKeypairResourcePolicyV2(id: $id) {
+        entityId
       }
     }
   `);
@@ -410,7 +411,7 @@ const KeypairResourcePolicyV2 = ({
                           onClick: () => {
                             setEditingKeypairResourcePolicy(
                               _.find(keypairResourcePolicies, {
-                                id: record.id,
+                                entityId: record.entityId,
                               }) ?? null,
                             );
                           },
@@ -421,7 +422,11 @@ const KeypairResourcePolicyV2 = ({
                           icon: <Trash2 size="1em" />,
                           type: 'danger',
                           onClick: () => {
-                            setDeletingPolicyName(record.name);
+                            setDeletingPolicy(
+                              _.find(keypairResourcePolicies, {
+                                entityId: record.entityId,
+                              }) ?? null,
+                            );
                           },
                         },
                       ]}
@@ -449,66 +454,72 @@ const KeypairResourcePolicyV2 = ({
         {...tableProps}
       />
       <Suspense>
-        <KeypairResourcePolicyV2SettingModal
-          open={!!editingKeypairResourcePolicy || isCreatingPolicySetting}
-          keypairResourcePolicyFrgmt={editingKeypairResourcePolicy}
-          onOk={() => {
-            // A create adds a new row the offset query can't know about, so it
-            // needs a refetch. An update returns every field, so Relay merges the
-            // record by id into the store and the list reflects it without one.
-            if (isCreatingPolicySetting) {
-              onReload(queryRef.variables, { fetchPolicy: 'network-only' });
-            }
-            setEditingKeypairResourcePolicy(null);
-            setIsCreatingPolicySetting(false);
-          }}
-          onCancel={() => {
-            setEditingKeypairResourcePolicy(null);
-            setIsCreatingPolicySetting(false);
-          }}
-        />
+        <BAIUnmountAfterClose>
+          <KeypairResourcePolicyV2SettingModal
+            open={!!editingKeypairResourcePolicy || isCreatingPolicySetting}
+            keypairResourcePolicyFrgmt={editingKeypairResourcePolicy}
+            onOk={() => {
+              // A create adds a new row the offset query can't know about, so it
+              // needs a refetch. An update returns every field, so Relay merges the
+              // record by id into the store and the list reflects it without one.
+              if (isCreatingPolicySetting) {
+                onReload(queryRef.variables, { fetchPolicy: 'network-only' });
+              }
+              setEditingKeypairResourcePolicy(null);
+              setIsCreatingPolicySetting(false);
+            }}
+            onCancel={() => {
+              setEditingKeypairResourcePolicy(null);
+              setIsCreatingPolicySetting(false);
+            }}
+          />
+        </BAIUnmountAfterClose>
       </Suspense>
-      <BAIDeleteConfirmModal
-        open={!!deletingPolicyName}
-        items={
-          deletingPolicyName
-            ? [{ key: deletingPolicyName, label: deletingPolicyName }]
-            : []
-        }
-        title={t('resourcePolicy.DeletePolicy')}
-        target={t('resourcePolicy.ResourcePolicy')}
-        confirmText={deletingPolicyName ?? ''}
-        requireConfirmInput
-        onOk={() => {
-          if (deletingPolicyName) {
-            return new Promise<void>((resolve) => {
-              commitDelete({
-                variables: { name: deletingPolicyName },
-                onCompleted: (_res, errors) => {
-                  if (errors && errors.length > 0) {
-                    for (const error of errors) {
-                      message.error(error.message);
-                    }
-                  } else {
-                    onReload(queryRef.variables, {
-                      fetchPolicy: 'network-only',
-                    });
-                    message.success(t('resourcePolicy.ResourcePolicyDeleted'));
-                  }
-                  setDeletingPolicyName(null);
-                  resolve();
-                },
-                onError(err) {
-                  message.error(err?.message);
-                  setDeletingPolicyName(null);
-                  resolve();
-                },
-              });
-            });
+      <BAIUnmountAfterClose>
+        <BAIDeleteConfirmModal
+          open={!!deletingPolicy}
+          items={
+            deletingPolicy
+              ? [{ key: deletingPolicy.entityId, label: deletingPolicy.name }]
+              : []
           }
-        }}
-        onCancel={() => setDeletingPolicyName(null)}
-      />
+          title={t('resourcePolicy.DeletePolicy')}
+          target={t('resourcePolicy.ResourcePolicy')}
+          confirmText={deletingPolicy?.name ?? ''}
+          requireConfirmInput
+          onOk={() => {
+            if (deletingPolicy) {
+              return new Promise<void>((resolve) => {
+                commitDelete({
+                  variables: { id: deletingPolicy.entityId },
+                  onCompleted: (_res, errors) => {
+                    if (errors && errors.length > 0) {
+                      for (const error of errors) {
+                        message.error(error.message);
+                      }
+                    } else {
+                      onReload(queryRef.variables, {
+                        fetchPolicy: 'network-only',
+                      });
+                      message.success(
+                        t('resourcePolicy.ResourcePolicyDeleted'),
+                      );
+                    }
+                    setDeletingPolicy(null);
+                    resolve();
+                  },
+                  onError(err) {
+                    message.error(err?.message);
+                    setDeletingPolicy(null);
+                    resolve();
+                  },
+                });
+              });
+            }
+          }}
+          onCancel={() => setDeletingPolicy(null)}
+        />
+      </BAIUnmountAfterClose>
     </BAIFlex>
   );
 };

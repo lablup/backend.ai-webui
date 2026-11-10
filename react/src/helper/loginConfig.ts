@@ -3,10 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 /**
- * Login Configuration Utilities
- *
- * Extracted from backend-ai-login.ts to support the React LoginView component.
- * Handles reading and applying configuration values from config.toml to global state.
+ * Login configuration: the code defaults, the few keys `config.toml` still
+ * carries, and the copy onto `backendaiclient._config` (ADR 0028).
  */
 
 type ConfigValueType = 'boolean' | 'number' | 'string' | 'array';
@@ -48,21 +46,16 @@ function getConfigValueByExists(
 }
 
 /**
- * Configuration state that gets populated from config.toml.
- * These values are used to configure globalThis.backendaiclient._config
- * after successful login.
+ * The WebUI configuration: code defaults, overridden by the file-only
+ * `config.toml` keys, then by the app config `settings` documents.
  */
 export interface LoginConfigState {
   signup_support: boolean;
   allowAnonymousChangePassword: boolean;
   change_signin_support: boolean;
-  allow_project_resource_monitor: boolean;
   allow_manual_image_name_for_session: boolean;
   allow_signout: boolean;
-  login_attempt_limit: number;
-  login_block_time: number;
   api_endpoint: string;
-  api_endpoint_text: string;
   allowSignupWithoutConfirmation: boolean;
   default_session_environment: string;
   default_import_environment: string;
@@ -77,16 +70,12 @@ export interface LoginConfigState {
   systemSSHImage: string;
   defaultFileBrowserImage: string;
   hideAgents: boolean;
-  force2FA: boolean;
   enablePipeline: boolean;
   connection_mode: 'SESSION' | 'API';
-  directoryBasedUsage: boolean;
   maxCountForPreopenPorts: number;
   allowCustomResourceAllocation: boolean;
   allowThemeMode: boolean;
   isDirectorySizeVisible: boolean;
-  eduAppNamePrefix: string;
-  enableImportFromHuggingFace: boolean;
   enableExtendLoginSession: boolean;
   enableInteractiveLoginAccountSwitch: boolean;
   enableModelFolders: boolean;
@@ -108,29 +97,33 @@ export interface LoginConfigState {
   maxGaudi2DevicesPerContainer: number;
   maxWarboyDevicesPerContainer: number;
   maxRNGDDevicesPerContainer: number;
+  /** Unset unless the file or a document names it, so the launcher falls back to the CUDA cap. */
+  maxATOMPLUSDevicesPerContainer?: number;
+  maxHyperaccelLPUDevicesPerContainer?: number;
   maxShmPerContainer: number;
   maxFileUploadSize: number;
-  allow_image_list: string[];
+  storageWarningThreshold: number;
   blockList: string[];
   inactiveList: string[];
   fasttrackEndpoint: string;
-  pluginPages: string;
+  pluginPages: string[];
+  loginPlugin: string;
   domain_name: string;
   domain_id: string;
+  debug: boolean;
+  autoLogout: boolean;
 }
 
 export function getDefaultLoginConfig(): LoginConfigState {
   return {
+    debug: false,
+    autoLogout: false,
     signup_support: false,
     allowAnonymousChangePassword: false,
     change_signin_support: false,
-    allow_project_resource_monitor: false,
     allow_manual_image_name_for_session: false,
     allow_signout: false,
-    login_attempt_limit: 500,
-    login_block_time: 180,
     api_endpoint: '',
-    api_endpoint_text: '',
     allowSignupWithoutConfirmation: false,
     default_session_environment: '',
     default_import_environment:
@@ -148,16 +141,12 @@ export function getDefaultLoginConfig(): LoginConfigState {
     systemSSHImage: '',
     defaultFileBrowserImage: '',
     hideAgents: true,
-    force2FA: false,
     enablePipeline: false,
     connection_mode: 'SESSION',
-    directoryBasedUsage: false,
     maxCountForPreopenPorts: 10,
     allowCustomResourceAllocation: true,
     allowThemeMode: false,
     isDirectorySizeVisible: false,
-    eduAppNamePrefix: '',
-    enableImportFromHuggingFace: false,
     enableExtendLoginSession: false,
     enableInteractiveLoginAccountSwitch: true,
     enableModelFolders: true,
@@ -179,18 +168,41 @@ export function getDefaultLoginConfig(): LoginConfigState {
     maxGaudi2DevicesPerContainer: 8,
     maxWarboyDevicesPerContainer: 8,
     maxRNGDDevicesPerContainer: 8,
+    maxATOMPLUSDevicesPerContainer: undefined,
+    maxHyperaccelLPUDevicesPerContainer: undefined,
     maxShmPerContainer: 2,
     maxFileUploadSize: -1,
-    allow_image_list: [],
+    storageWarningThreshold: 90,
     blockList: [],
     inactiveList: [],
     fasttrackEndpoint: '',
-    pluginPages: '',
+    pluginPages: [],
+    loginPlugin: '',
     domain_name: '',
     domain_id: '',
   };
 }
 
+/** The keys config.toml still owns (ADR 0028, section 3); System Settings serves the rest. */
+export const FILE_ONLY_CONFIG_KEYS: Readonly<
+  Record<string, ReadonlyArray<string>>
+> = {
+  general: [
+    'apiEndpoint',
+    'apiDomainName',
+    'connectionMode',
+    'signupSupport',
+    'enableWebMCP',
+  ],
+  wsproxy: ['proxyURL', 'disableCertCheck'],
+  server: ['webServerURL'],
+  license: ['edition', 'validUntil'],
+};
+
+/**
+ * Applies the keys `config.toml` still owns (ADR 0028, section 3) over the code
+ * defaults. Every other setting comes from the app config documents.
+ */
 export function refreshConfigFromToml(config: any): LoginConfigState {
   const state = getDefaultLoginConfig();
 
@@ -198,19 +210,6 @@ export function refreshConfigFromToml(config: any): LoginConfigState {
 
   const g = config.general;
   const w = config.wsproxy;
-  const r = config.resources;
-  const e = config.environments;
-  const m = config.menu;
-  const pi = config.pipeline;
-  const pl = config.plugin;
-
-  // -- general section --
-  (globalThis as any).backendaiwebui = (globalThis as any).backendaiwebui || {};
-  (globalThis as any).backendaiwebui.debug = getConfigValueByExists(g, {
-    valueType: 'boolean',
-    defaultValue: false,
-    value: g?.debug,
-  }) as boolean;
 
   state.signup_support = getConfigValueByExists(g, {
     valueType: 'boolean',
@@ -218,163 +217,11 @@ export function refreshConfigFromToml(config: any): LoginConfigState {
     value: g?.signupSupport,
   }) as boolean;
 
-  state.allowAnonymousChangePassword = getConfigValueByExists(g, {
-    valueType: 'boolean',
-    defaultValue: false,
-    value: g?.allowAnonymousChangePassword,
-  }) as boolean;
-
-  state.change_signin_support = getConfigValueByExists(g, {
-    valueType: 'boolean',
-    defaultValue: false,
-    value: g?.allowChangeSigninMode,
-  }) as boolean;
-
-  state.allow_project_resource_monitor = getConfigValueByExists(g, {
-    valueType: 'boolean',
-    defaultValue: false,
-    value: g?.allowProjectResourceMonitor,
-  }) as boolean;
-
-  state.allow_manual_image_name_for_session = getConfigValueByExists(g, {
-    valueType: 'boolean',
-    defaultValue: false,
-    value: g?.allowManualImageNameForSession,
-  }) as boolean;
-
-  state.allow_signout = getConfigValueByExists(g, {
-    valueType: 'boolean',
-    defaultValue: false,
-    value: g?.allowSignout,
-  }) as boolean;
-
-  state.login_attempt_limit = getConfigValueByExists(g, {
-    valueType: 'number',
-    defaultValue: state.login_attempt_limit,
-    value: parseInt(g?.loginAttemptLimit),
-  }) as number;
-
-  state.login_block_time = getConfigValueByExists(g, {
-    valueType: 'number',
-    defaultValue: state.login_block_time,
-    value: parseInt(g?.loginBlockTime),
-  }) as number;
-
   state.api_endpoint = getConfigValueByExists(g, {
     valueType: 'string',
     defaultValue: '',
     value: g?.apiEndpoint,
   }) as string;
-
-  state.api_endpoint_text = getConfigValueByExists(g, {
-    valueType: 'string',
-    defaultValue: '',
-    value: g?.apiEndpointText,
-  }) as string;
-
-  state.allowSignupWithoutConfirmation = getConfigValueByExists(g, {
-    valueType: 'boolean',
-    defaultValue: false,
-    value: g?.allowSignupWithoutConfirmation,
-  }) as boolean;
-
-  state.default_session_environment = getConfigValueByExists(g, {
-    valueType: 'string',
-    defaultValue: '',
-    value: g?.defaultSessionEnvironment,
-  }) as string;
-
-  state.default_import_environment = getConfigValueByExists(g, {
-    valueType: 'string',
-    defaultValue: 'cr.backend.ai/multiarch/python:3.9-ubuntu20.04',
-    value: g?.defaultImportEnvironment,
-  }) as string;
-
-  state.maskUserInfo = getConfigValueByExists(g, {
-    valueType: 'boolean',
-    defaultValue: false,
-    value: g?.maskUserInfo,
-  }) as boolean;
-
-  state.singleSignOnVendors = getConfigValueByExists(g, {
-    valueType: 'array',
-    defaultValue: [] as string[],
-    value: g?.singleSignOnVendors
-      ? g.singleSignOnVendors.split(',').map((el: string) => el.trim())
-      : [],
-  }) as string[];
-
-  state.ssoRealmName = getConfigValueByExists(g, {
-    valueType: 'string',
-    defaultValue: '',
-    value: g?.ssoRealmName ? g.ssoRealmName : '',
-  }) as string;
-
-  state.enableContainerCommit = getConfigValueByExists(g, {
-    valueType: 'boolean',
-    defaultValue: false,
-    value: g?.enableContainerCommit,
-  }) as boolean;
-
-  state.appDownloadUrl = getConfigValueByExists(g, {
-    valueType: 'string',
-    defaultValue:
-      'https://github.com/lablup/backend.ai-webui/releases/download',
-    value: g?.appDownloadUrl,
-  }) as string;
-
-  state.allowAppDownloadPanel = getConfigValueByExists(g, {
-    valueType: 'boolean',
-    defaultValue: true,
-    value: g?.allowAppDownloadPanel,
-  }) as boolean;
-
-  // NOTE: these read `cliDownloadUrl` / `allowCLIDownloadPanel` from the
-  // webserver-provided config.toml when present, but the webserver does not
-  // ship them in its config yet, so today they typically resolve from the
-  // defaults below. They may also be migrated to appConfig later. FR-3226.
-  state.cliDownloadUrl = getConfigValueByExists(g, {
-    valueType: 'string',
-    defaultValue:
-      'https://github.com/lablup/backend.ai/releases/latest/download',
-    value: g?.cliDownloadUrl,
-  }) as string;
-
-  state.allowCLIDownloadPanel = getConfigValueByExists(g, {
-    valueType: 'boolean',
-    defaultValue: true,
-    value: g?.allowCLIDownloadPanel,
-  }) as boolean;
-
-  state.systemSSHImage = getConfigValueByExists(g, {
-    valueType: 'string',
-    defaultValue: '',
-    value: g?.systemSSHImage,
-  }) as string;
-
-  state.defaultFileBrowserImage = getConfigValueByExists(g, {
-    valueType: 'string',
-    defaultValue: '',
-    value: g?.defaultFileBrowserImage,
-  }) as string;
-
-  state.hideAgents = getConfigValueByExists(g, {
-    valueType: 'boolean',
-    defaultValue: true,
-    value: g?.hideAgents,
-  }) as boolean;
-
-  state.force2FA = getConfigValueByExists(g, {
-    valueType: 'boolean',
-    defaultValue: false,
-    value: g?.force2FA,
-  }) as boolean;
-
-  state.enablePipeline = getConfigValueByExists(g, {
-    valueType: 'boolean',
-    defaultValue: false,
-    value: false,
-  }) as boolean;
 
   // Connection mode
   const storedConnectionMode = localStorage.getItem(
@@ -398,224 +245,14 @@ export function refreshConfigFromToml(config: any): LoginConfigState {
       rawMode === 'SESSION' || rawMode === 'API' ? rawMode : 'SESSION';
   }
 
-  state.directoryBasedUsage = getConfigValueByExists(g, {
-    valueType: 'boolean',
-    defaultValue: false,
-    value: g?.directoryBasedUsage,
-  }) as boolean;
-
-  state.maxCountForPreopenPorts = getConfigValueByExists(g, {
-    valueType: 'number',
-    defaultValue: state.maxCountForPreopenPorts,
-    value: parseInt(g?.maxCountForPreopenPorts),
-  }) as number;
-
-  state.allowCustomResourceAllocation = getConfigValueByExists(g, {
-    valueType: 'boolean',
-    defaultValue: true,
-    value: g?.allowCustomResourceAllocation,
-  }) as boolean;
-
-  state.allowThemeMode = getConfigValueByExists(g, {
-    valueType: 'boolean',
-    defaultValue: false,
-    value: g?.allowThemeMode,
-  }) as boolean;
-
-  state.isDirectorySizeVisible = getConfigValueByExists(g, {
-    valueType: 'boolean',
-    defaultValue: false,
-    value: g?.isDirectorySizeVisible,
-  }) as boolean;
-
-  state.eduAppNamePrefix = getConfigValueByExists(g, {
-    valueType: 'string',
-    defaultValue: '',
-    value: g?.eduAppNamePrefix,
-  }) as string;
-
-  state.enableImportFromHuggingFace = getConfigValueByExists(g, {
-    valueType: 'boolean',
-    defaultValue: false,
-    value: g?.enableImportFromHuggingFace,
-  }) as boolean;
-
-  state.enableExtendLoginSession = getConfigValueByExists(g, {
-    valueType: 'boolean',
-    defaultValue: false,
-    value: g?.enableExtendLoginSession,
-  }) as boolean;
-
-  state.enableInteractiveLoginAccountSwitch = getConfigValueByExists(g, {
-    valueType: 'boolean',
-    defaultValue: true,
-    value: g?.enableInteractiveLoginAccountSwitch,
-  }) as boolean;
-
-  state.enableModelFolders = getConfigValueByExists(g, {
-    valueType: 'boolean',
-    defaultValue: true,
-    value: g?.enableModelFolders,
-  }) as boolean;
-
-  state.enableReservoir = getConfigValueByExists(g, {
-    valueType: 'boolean',
-    defaultValue: false,
-    value: g?.enableReservoir,
-  }) as boolean;
-
   // Strict: this gate exposes the page to agents, and a quoted "false" is truthy.
   // On when absent: the webserver's config.toml template cannot carry this key.
   state.enableWebMCP = g?.enableWebMCP === undefined || g.enableWebMCP === true;
 
-  // -- wsproxy section --
   state.proxy_url = getConfigValueByExists(w, {
     valueType: 'string',
-    defaultValue: 'http://127.0.0.1:5050/',
+    defaultValue: state.proxy_url,
     value: w?.proxyURL,
-  }) as string;
-
-  // -- resources section --
-  state.openPortToPublic = getConfigValueByExists(r, {
-    valueType: 'boolean',
-    defaultValue: false,
-    value: r?.openPortToPublic,
-  }) as boolean;
-
-  state.allowPreferredPort = getConfigValueByExists(r, {
-    valueType: 'boolean',
-    defaultValue: false,
-    value: r?.allowPreferredPort,
-  }) as boolean;
-
-  state.allowNonAuthTCP = getConfigValueByExists(r, {
-    valueType: 'boolean',
-    defaultValue: false,
-    value: r?.allowNonAuthTCP,
-  }) as boolean;
-
-  state.maxCPUCoresPerContainer = getConfigValueByExists(r, {
-    valueType: 'number',
-    defaultValue: 64,
-    value: parseInt(r?.maxCPUCoresPerContainer ?? ''),
-  }) as number;
-
-  state.maxMemoryPerContainer = getConfigValueByExists(r, {
-    valueType: 'number',
-    defaultValue: 16,
-    value: parseInt(r?.maxMemoryPerContainer),
-  }) as number;
-
-  state.maxCUDADevicesPerContainer = getConfigValueByExists(r, {
-    valueType: 'number',
-    defaultValue: 16,
-    value: parseInt(r?.maxCUDADevicesPerContainer),
-  }) as number;
-
-  state.maxCUDASharesPerContainer = getConfigValueByExists(r, {
-    valueType: 'number',
-    defaultValue: 16,
-    value: parseInt(r?.maxCUDASharesPerContainer),
-  }) as number;
-
-  state.maxROCMDevicesPerContainer = getConfigValueByExists(r, {
-    valueType: 'number',
-    defaultValue: 10,
-    value: parseInt(r?.maxROCMDevicesPerContainer),
-  }) as number;
-
-  state.maxTPUDevicesPerContainer = getConfigValueByExists(r, {
-    valueType: 'number',
-    defaultValue: 8,
-    value: parseInt(r?.maxTPUDevicesPerContainer),
-  }) as number;
-
-  state.maxIPUDevicesPerContainer = getConfigValueByExists(r, {
-    valueType: 'number',
-    defaultValue: 8,
-    value: parseInt(r?.maxIPUDevicesPerContainer),
-  }) as number;
-
-  state.maxATOMDevicesPerContainer = getConfigValueByExists(r, {
-    valueType: 'number',
-    defaultValue: 8,
-    value: parseInt(r?.maxATOMDevicesPerContainer),
-  }) as number;
-
-  state.maxGaudi2DevicesPerContainer = getConfigValueByExists(r, {
-    valueType: 'number',
-    defaultValue: 8,
-    value: parseInt(r?.maxGaudi2DevicesPerContainer),
-  }) as number;
-
-  state.maxWarboyDevicesPerContainer = getConfigValueByExists(r, {
-    valueType: 'number',
-    defaultValue: 8,
-    value: parseInt(r?.maxWarboyDevicesPerContainer),
-  }) as number;
-
-  state.maxRNGDDevicesPerContainer = getConfigValueByExists(r, {
-    valueType: 'number',
-    defaultValue: 8,
-    value: parseInt(r?.maxRNGDDevicesPerContainer),
-  }) as number;
-
-  state.maxShmPerContainer = getConfigValueByExists(r, {
-    valueType: 'number',
-    defaultValue: 2,
-    value: parseFloat(r?.maxShmPerContainer),
-  }) as number;
-
-  state.maxFileUploadSize = getConfigValueByExists(r, {
-    valueType: 'number',
-    defaultValue: -1,
-    value: parseInt(r?.maxFileUploadSize),
-  }) as number;
-
-  // -- environments section --
-  state.allow_image_list = getConfigValueByExists(e, {
-    valueType: 'array',
-    defaultValue: [] as string[],
-    value: e?.allowlist
-      ? e.allowlist.split(',').map((el: string) => el.trim())
-      : [],
-  }) as string[];
-
-  state.showNonInstalledImages = getConfigValueByExists(e, {
-    valueType: 'boolean',
-    defaultValue: false,
-    value: e?.showNonInstalledImages,
-  }) as boolean;
-
-  // -- menu section --
-  state.blockList = getConfigValueByExists(m, {
-    valueType: 'array',
-    defaultValue: [] as string[],
-    value: m?.blocklist
-      ? m.blocklist.split(',').map((el: string) => el.trim())
-      : [],
-  }) as string[];
-
-  state.inactiveList = getConfigValueByExists(m, {
-    valueType: 'array',
-    defaultValue: [] as string[],
-    value: m?.inactivelist
-      ? m.inactivelist.split(',').map((el: string) => el.trim())
-      : [],
-  }) as string[];
-
-  // -- pipeline section --
-  state.fasttrackEndpoint = getConfigValueByExists(pi, {
-    valueType: 'string',
-    defaultValue: '',
-    value: pi?.frontendEndpoint,
-  }) as string;
-
-  // -- plugin section --
-  state.pluginPages = getConfigValueByExists(pl, {
-    valueType: 'string',
-    defaultValue: '',
-    value: pl?.page,
   }) as string;
 
   return state;
@@ -635,8 +272,6 @@ export function applyConfigToClient(cfg: LoginConfigState): void {
   client._config.domainId = cfg.domain_id;
   client._config.default_session_environment = cfg.default_session_environment;
   client._config.default_import_environment = cfg.default_import_environment;
-  client._config.allow_project_resource_monitor =
-    cfg.allow_project_resource_monitor;
   client._config.allow_manual_image_name_for_session =
     cfg.allow_manual_image_name_for_session;
   client._config.openPortToPublic = cfg.openPortToPublic;
@@ -655,9 +290,17 @@ export function applyConfigToClient(cfg: LoginConfigState): void {
   client._config.maxWarboyDevicesPerContainer =
     cfg.maxWarboyDevicesPerContainer;
   client._config.maxRNGDDevicesPerContainer = cfg.maxRNGDDevicesPerContainer;
+  if (cfg.maxATOMPLUSDevicesPerContainer !== undefined) {
+    client._config.maxATOMPLUSDevicesPerContainer =
+      cfg.maxATOMPLUSDevicesPerContainer;
+  }
+  if (cfg.maxHyperaccelLPUDevicesPerContainer !== undefined) {
+    client._config.maxHyperaccelLPUDevicesPerContainer =
+      cfg.maxHyperaccelLPUDevicesPerContainer;
+  }
   client._config.maxShmPerContainer = cfg.maxShmPerContainer;
   client._config.maxFileUploadSize = cfg.maxFileUploadSize;
-  client._config.allow_image_list = cfg.allow_image_list;
+  client._config.storageWarningThreshold = cfg.storageWarningThreshold;
   client._config.showNonInstalledImages = cfg.showNonInstalledImages;
   client._config.maskUserInfo = cfg.maskUserInfo;
   client._config.singleSignOnVendors = cfg.singleSignOnVendors;
@@ -671,14 +314,11 @@ export function applyConfigToClient(cfg: LoginConfigState): void {
   client._config.defaultFileBrowserImage = cfg.defaultFileBrowserImage;
   client._config.fasttrackEndpoint = cfg.fasttrackEndpoint;
   client._config.hideAgents = cfg.hideAgents;
-  client._config.force2FA = cfg.force2FA;
-  client._config.directoryBasedUsage = cfg.directoryBasedUsage;
   client._config.maxCountForPreopenPorts = cfg.maxCountForPreopenPorts;
   client._config.allowCustomResourceAllocation =
     cfg.allowCustomResourceAllocation;
   client._config.allowThemeMode = cfg.allowThemeMode;
   client._config.isDirectorySizeVisible = cfg.isDirectorySizeVisible;
-  client._config.enableImportFromHuggingFace = cfg.enableImportFromHuggingFace;
   client._config.enableExtendLoginSession = cfg.enableExtendLoginSession;
   client._config.enableInteractiveLoginAccountSwitch =
     cfg.enableInteractiveLoginAccountSwitch;

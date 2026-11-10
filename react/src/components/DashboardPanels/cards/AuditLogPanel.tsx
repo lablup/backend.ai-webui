@@ -18,7 +18,6 @@ import { rbacTypeLabel } from '../../../helper/rbacElementTypes';
 import { useSuspendedBackendaiClient } from '../../../hooks';
 import { useBAIPaginationOptionState } from '../../../hooks/reactPaginationQueryOptions';
 import type { CardScope } from '../cardScope';
-import PeriodCaption from '../charts/PeriodCaption';
 import SuccessFailureStats from '../charts/SuccessFailureStats';
 import {
   readSuccessFailure,
@@ -611,7 +610,6 @@ const AuditLogTable: React.FC<{
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
-      <PeriodCaption window={counts.plan.window} />
       <Suspense fallback={<BAISkeleton />}>{stats}</Suspense>
       <Suspense fallback={<BAISkeleton />}>
         <ScopedAuditLogList

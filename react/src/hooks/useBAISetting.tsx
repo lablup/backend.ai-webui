@@ -35,7 +35,6 @@ export interface UserSettings {
   beta_feature?: boolean;
   last_window_close_time?: number;
   endpoints?: Array<string>;
-  auto_logout?: boolean;
   selected_language?: string;
   recentSessionHistory?: Array<SessionHistory>;
   pinnedSessionHistory?: Array<SessionHistory>;
@@ -83,8 +82,6 @@ export type SessionHistory = {
 };
 
 interface GeneralSettings {
-  last_login?: number;
-  login_attempt?: number;
   language?: string;
 }
 

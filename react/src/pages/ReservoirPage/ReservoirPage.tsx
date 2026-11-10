@@ -608,20 +608,30 @@ const ReservoirPage: React.FC = () => {
         open={!!selectedArtifacts.length}
         selectedArtifactsFragment={selectedArtifacts}
         onCancel={() => setSelectedArtifacts([])}
-        onOk={() => {
-          updateFetchKey();
+        onOk={(_e, failedArtifactIds) => {
+          if (failedArtifactIds.length < selectedArtifacts.length) {
+            updateFetchKey();
+          }
           setSelectedArtifacts([]);
-          setSelectedArtifactIdList([]);
+          // Keep only the failed artifacts selected so the next deactivate retries them.
+          setSelectedArtifactIdList((prev) =>
+            prev.filter((v) => failedArtifactIds.includes(v.id)),
+          );
         }}
       />
       <BAIActivateArtifactsModal
         open={!!selectedRestoreArtifacts.length}
         selectedArtifactsFragment={selectedRestoreArtifacts}
         onCancel={() => setSelectedRestoreArtifacts([])}
-        onOk={() => {
-          updateFetchKey();
+        onOk={(_e, failedArtifactIds) => {
+          if (failedArtifactIds.length < selectedRestoreArtifacts.length) {
+            updateFetchKey();
+          }
           setSelectedRestoreArtifacts([]);
-          setSelectedArtifactIdList([]);
+          // Keep only the failed artifacts selected so the next activate retries them.
+          setSelectedArtifactIdList((prev) =>
+            prev.filter((v) => failedArtifactIds.includes(v.id)),
+          );
         }}
       />
       {/* TODO(needs-backend): HuggingFace registry setting modal is hidden

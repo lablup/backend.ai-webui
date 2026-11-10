@@ -8,6 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `pnpm run relay` - compile GraphQL queries (`relay:watch` for watch mode)
 - `bash scripts/verify.sh` - the verification harness (see Core Guidelines)
 - `make i18n` - extract translation strings
+- `pnpm --filter backend.ai-webui-docs run images:pull` - fetch the manual's screenshots from Git LFS (needs git-lfs, set up once with `git lfs install --skip-repo`; only for building the manual or changing its images)
 - E2E tests (`/e2e/`, Playwright) require a full Backend.AI cluster running first
 
 ## Architecture Overview
@@ -57,7 +58,7 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
     - **Reviewing a PR here? Follow `REVIEW.md`** — what failure looks like in this repo, the evidence rule, the skip list, the Nit cap, and the risk tiers the gate reads.
   - **Before the PR exists: check user flows with the `e2e-flow` skill** before `gh stack submit --auto` / `gh pr create`. A PreToolUse hook (`.claude/scripts/require-e2e-flow.sh`) refuses both until the skill has recorded the branch HEAD. The PR only defines changed flows in `e2e-agent/`; automation runs them.
   - **After the PR exists: dev server, then walkthrough when it is needed.** First decide with `walkthrough` section 0 whether the PR needs one: it does when a reviewer would have to hunt for the change or set up a state to see it (a dialog or step, several places, data-dependent display). Then, right after `gh stack submit --auto` / `gh pr create`, boot the branch's dev server with the `dev-server` skill — or reuse the live one its boot record already names for the branch; one server per branch — so `advertise.sh` writes the record and the dev-server comment; and, when section 0 said so, run the `walkthrough` skill (`.claude/skills/walkthrough/`) as the last step. It mints the PR's review stops against that server, upserts one walkthrough comment, and gives you the `[Walkthrough](<set link>) · N stops` line for the final message — a markdown link, so chat and PR bodies render it short. Do not wait to be asked: nothing else in this workflow boots a server or makes that call. The endpoint and credentials follow `dev-server` sections 2c–2d as written there.
-    - Skips, each named in the final message with its one-line reason (`walkthrough` section 0): the PR changes nothing a person can recognize on screen (schema, tests, docs, generated files, i18n key plumbing, a same-render refactor), in which case boot no dev server either; the change is one spot a reader finds on landing (a relabel, copy, icon or spacing tweak), which gets a `Where to look:` line in the PR body instead; the connected backend can show none of it, which gets its value → what shows condition in the PR body; the backend is unreachable or kills the app shell after login. A change behind a `config.toml` switch is not a skip: the PR body carries a `Config: <section>.<key> = <value>` line and the dev server is booted with it (`dev-server` section 2f, `pnpm run dev-env use … --set`).
+    - Skips, each named in the final message with its one-line reason (`walkthrough` section 0): the PR changes nothing a person can recognize on screen (schema, tests, docs, generated files, i18n key plumbing, a same-render refactor), in which case boot no dev server either; the change is one spot a reader finds on landing (a relabel, copy, icon or spacing tweak), which gets a `Where to look:` line in the PR body instead; the connected backend can show none of it, which gets its value → what shows condition in the PR body; the backend is unreachable or kills the app shell after login. A change behind a `config.toml` switch is not a skip: the PR body carries a `Config: <section>.<key> = <value>` line and the dev server is booted with it (`dev-server` section 2f, `pnpm run dev-env use … --set`). `Config:` covers only the keys `config.toml` still owns (ADR 0028, section 3); a change behind a System Settings value names that setting in the PR body instead, and the reviewer uses the backend's own System Settings (`/admin/system-settings`) — nothing seeds it.
     - What the PR shows is **English**, whatever language the chat is in: each stop's base fields (`ch`, `ck`, `old`/`new`) are English with `"lng": "en"`, and so is the "Not shown" list. The stop itself carries a Korean translation under `i18n.ko`, so the reviewer can switch the popover between English and Korean (`walkthrough` section 5).
     - A stack submitted in one sitting gets one walkthrough per layer with on-screen changes: the top layer's server serves the lower ones (their heads are contained in it), so mint each lower layer with `/walkthrough <pr>` (`walkthrough` section 1a) against that same server — no second boot. The same command serves a PR opened by another session or on another day, from any checkout.
     - When the PR is done with, `advertise.sh stop --app <name>` after killing the server (`dev-server` section 5); a server nobody stopped is a ~1 GB process and a boot record every reader has to distrust (FR-3993).
@@ -82,7 +83,7 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
 
 ## Important Notes
 
-- Pre-commit hooks (Husky + lint-staged) run linting and formatting automatically
+- Husky hooks: pre-commit runs lint-staged (linting and formatting); pre-push uploads Git LFS objects and refuses LFS-tracked files committed as raw bytes (`scripts/git-hooks/lfs-pre-push.sh`)
 - Use `make clean` before building if encountering issues
 - Electron app requires special build process with `make dep`
 - React components use Relay; ensure GraphQL schema in `/data/` is up to date
@@ -157,7 +158,7 @@ When reviewing PRs (especially agent-generated ones), check:
 - No hardcoded strings, magic numbers, or debug artifacts left behind
 
 <!-- UI-COMMON:START -->
-@lablup/ui-common v0.2.0-alpha.21.canary-20261105072412-351c2634d · Astryx v0.7.7 · 174 components
+@lablup/ui-common v0.2.0-alpha.21.canary-20261109014528-8160304a1 · Astryx v0.7.7 · 174 components
 CLI: run every command as `pnpm exec ui-common <cmd>` (shown below as `ui-common ...`).
 
 SETUP (once, first in your entry stylesheet) — without these, components render unstyled:
@@ -190,7 +191,7 @@ RULES:
   docs authoring     build an integration package, and every field it holds
   upgrade --from <old version> --apply   run after a dependency bump
 
-UI-COMMON (@lablup/ui-common v0.2.0-alpha.21.canary-20261105072412-351c2634d wraps Astryx v0.7.7):
+UI-COMMON (@lablup/ui-common v0.2.0-alpha.21.canary-20261109014528-8160304a1 wraps Astryx v0.7.7):
 - Import only from @lablup/ui-common: the root, or the same subpath Astryx uses (@lablup/ui-common/Button, /theme/tokens.stylex, /lab). Never import @astryxdesign/* directly.
 - Layers: declare `@layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;` once, first, in the entry stylesheet. ui-common's styles sit in `ui-common`; yours go in `components` / `utilities`.
 - Use AlertModal (@lablup/ui-common/AlertModal), not AlertDialog: ui-common hides AlertDialog.
@@ -204,7 +205,7 @@ UI-COMMON (@lablup/ui-common v0.2.0-alpha.21.canary-20261105072412-351c2634d wra
 - Form controls (CheckboxInput, CheckboxList, DateInput, DateRangeInput, DateTimeInput, FileInput, MultiSelector, NumberInput, RadioList, SegmentedControl, Selector, Slider, Switch, TextArea, TextInput, TimeInput, Tokenizer, Typeahead) are ui-common's Form.Item wrappers at Astryx's import paths: no label, description, isRequired or status message props. Use them inside Form.Item, which owns label, extra, rules and help; `status` is "error" | "warning" for the border only.
 - Theme: <Theme theme={lablupTheme}> with lablupTheme from @lablup/ui-common/theme/lablup/built, plus @lablup/ui-common/theme/lablup/theme.css. A product palette is its own defineTheme over lablupTheme.
 - Strings: every built-in string is a prop; defaults come from ui-common's catalog. Pass uiCommonMessages from @lablup/ui-common/i18n-catalog to Astryx's InternationalizationProvider. Never a product i18n runtime.
-- ui-common's own components: AlertModal, Board, BoardItemTitle, BooleanToken, BulkEditFormItem, BulkErrorModal, ColorPicker, ConfirmPopover, CountBadge, CountdownBorder, DataGrid, DeleteConfirmModal, DigitPopIn, DividedRow, DoubleBadge, DoubleToken, ErrorState, Form, IconWithTooltip, ImageWithFallback, ListBanner, Modal, NotificationItem, NotificationStack, OverlayScrollbar, PageHeader, PageLayout, PagedSelector, ProgressWithLabel, SelectionLabel, SkeletonCard, SkeletonChart, SkeletonRow, SkeletonText, SmoothHeight, StatCard, Statistic, StepNumberInput, TagsInput, TextHighlighter, TokenList, TokenRow, UncontrolledInput, UnitGrid. `pnpm exec ui-common docs ui-common` explains them.
+- ui-common's own components: AlertModal, Board, BoardItemTitle, BooleanToken, BulkEditFormItem, BulkErrorModal, ColorPicker, ConfirmPopover, CountBadge, CountdownBorder, DataGrid, DateTimeRangeInput, TimeRangeInput, DeleteConfirmModal, DigitPopIn, DividedRow, DoubleBadge, DoubleToken, ErrorState, Form, IconWithTooltip, ImageWithFallback, ListBanner, Modal, NotificationItem, NotificationStack, OverlayScrollbar, PageHeader, PageLayout, PagedSelector, ProgressWithLabel, SelectionLabel, SkeletonCard, SkeletonChart, SkeletonRow, SkeletonText, SmoothHeight, StatCard, Statistic, StepNumberInput, TagsInput, TextHighlighter, TokenList, TokenRow, UncontrolledInput, UnitGrid. `pnpm exec ui-common docs ui-common` explains them.
 - Templates are ui-common's own: create-modal, dashboard-board, detail-drawer, info-modal, list-page, list-toolbar, settings-page, tabbed-page. They import only @lablup/ui-common, react and lucide-react. Astryx's templates are not offered (they import @astryxdesign/* directly).
 - The `ui-common` bin is @lablup/ui-common-cli, a devDependency pinned to the same version as @lablup/ui-common; bump both together. Without it installed, `pnpm dlx @lablup/ui-common-cli@next <cmd>` (or `npx @lablup/ui-common-cli@next <cmd>`); drop `@next` once 0.2.0 is published.
 - After bumping @lablup/ui-common and @lablup/ui-common-cli: `pnpm exec ui-common upgrade --from <old version>`, then read ui-common-upgrade-report.md.

@@ -10,13 +10,26 @@
  */
 import { RelayEnvironment } from '../RelayEnvironment';
 import { loginSessionAuthMyUserQuery } from '../__generated__/loginSessionAuthMyUserQuery.graphql';
-import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
+import {
+  fetchAndParseConfig,
+  fetchAppConfigOnce,
+} from '../hooks/useWebUIConfig';
 import { getActAsTarget } from './actAs';
 import {
   LoginBootstrapIncompleteError,
   type LoginBootstrap,
 } from './loginBootstrap';
 import { applyConfigToClient, type LoginConfigState } from './loginConfig';
+import {
+  fetchPublicDomainConfigOnce,
+  PUBLIC_CONFIG_FETCH_TIMEOUT_MS,
+  resolvePublicConfigTarget,
+} from './publicAppConfig';
+import {
+  applyWebUISettings,
+  readDomainWebUISettings,
+  WEBUI_SETTINGS_CONFIG_KEY,
+} from './webuiSettings';
 import * as _ from 'lodash-es';
 import { fetchQuery, graphql } from 'react-relay';
 
@@ -77,6 +90,11 @@ const myUserQuery = graphql`
           }
         }
       }
+    }
+    # The domain's System Settings; a failed read keeps the base config.
+    myAppConfigs(configNames: ["domainConfig"]) @catch(to: NULL) {
+      configName
+      config
     }
   }
 `;
@@ -180,7 +198,7 @@ async function failAsMockedManager(
  */
 export async function probeManager(client: any): Promise<void> {
   if (!import.meta.env.DEV) {
-    await client.get_manager_version();
+    await client.probeServer();
     return;
   }
   const controller = new AbortController();
@@ -189,7 +207,7 @@ export async function probeManager(client: any): Promise<void> {
   try {
     const mockMode = readMockManagerMode();
     if (mockMode) await failAsMockedManager(mockMode, controller.signal);
-    await client.get_manager_version(controller.signal);
+    await client.probeServer(controller.signal);
   } catch (err) {
     if (controller.signal.reason === LOGIN_PROBE_ESCAPED) {
       throw new LoginProbeCancelledError();
@@ -242,6 +260,10 @@ export async function connectViaGQL(
     (globalThis as any).backendaiutils._peekRecentProjectGroup() ?? '';
   let response: loginSessionAuthMyUserQuery['response'] | undefined;
   try {
+    // The manager tells its version only to an authenticated caller; the
+    // Relay query needs it to keep version-gated fields.
+    await client.get_manager_version();
+    if (isCancelled?.()) throw cancel();
     response = await fetchQuery<loginSessionAuthMyUserQuery>(
       RelayEnvironment,
       myUserQuery,
@@ -334,9 +356,16 @@ export async function connectViaGQL(
     ];
   };
 
-  // Apply config
+  // The domain's `settings` document overrides the base config for the keys
+  // it carries (#10436).
+  const domainSettings = readDomainWebUISettings(response?.myAppConfigs);
+  const effectiveCfg = applyWebUISettings(cfg, domainSettings, 'domain');
+  const { jotaiStore } = await import('../components/DefaultProviders');
+  const { loginConfigState } = await import('../hooks/useWebUIConfig');
+  jotaiStore.set(loginConfigState, effectiveCfg);
+
   applyConfigToClient({
-    ...cfg,
+    ...effectiveCfg,
     domain_name: domainName,
     domain_id: me.domain?.entityId ?? '',
   });
@@ -450,7 +479,6 @@ export async function tokenLogin(
  * etc.). Centralized here so every successful login path keeps the same
  * side effects in lockstep:
  *
- *   - `last_login` timestamp + reset of `login_attempt` counter
  *   - drop any saved username / password / keypair credentials from prior
  *     signed-out sessions on this device
  *   - persist the resolved API endpoint into `localStorage` so the next
@@ -465,14 +493,9 @@ export async function tokenLogin(
  * once the boundary migrations settle (see PR #6861 review discussion). Kept
  * separate from `connectViaGQL` because the GQL step also runs for the
  * non-authenticated paths (e.g. an already-logged-in session refresh) where
- * the counter and credential-cleanup side effects would be incorrect.
+ * the credential-cleanup side effect would be incorrect.
  */
 export function persistPostLoginState(client: any): void {
-  const options = (globalThis as any).backendaioptions;
-  if (options) {
-    options.set('last_login', Math.floor(Date.now() / 1000), 'general');
-    options.set('login_attempt', 0, 'general');
-  }
   localStorage.removeItem('backendaiwebui.login.api_key');
   localStorage.removeItem('backendaiwebui.login.secret_key');
   localStorage.removeItem('backendaiwebui.login.user_id');
@@ -486,60 +509,99 @@ export function persistPostLoginState(client: any): void {
   }
 }
 
+export type WebServerConfigResult =
+  | { status: 'invalid-url' | 'unreachable' | 'no-config' }
+  /** `domainName` is null when the server names no domain (code defaults then). */
+  | { status: 'loaded'; domainName: string | null };
+
+const isPageOrigin = (endpoint: string) => {
+  try {
+    return new URL(endpoint).origin === window.location.origin;
+  } catch {
+    return false;
+  }
+};
+
 /**
  * Load webserver config when the api_endpoint differs from current URL origin.
  * Uses React's fetchAndParseConfig instead of the Lit shell's _parseConfig.
  */
 export async function loadConfigFromWebServer(
   apiEndpoint: string,
-): Promise<void> {
-  if (!window.location.href.startsWith(apiEndpoint)) {
+): Promise<WebServerConfigResult> {
+  // Same origin: this page's own config.toml is the server's, so only the
+  // bundled config is merged — which also drops a previous server's.
+  let serverConfig: Record<string, any> = {};
+  if (!isPageOrigin(apiEndpoint)) {
     // Validate the endpoint URL scheme to prevent fetching config from
     // unexpected protocols (e.g., javascript:, data:, file:).
     try {
       const endpointUrl = new URL(apiEndpoint);
       if (!['http:', 'https:'].includes(endpointUrl.protocol)) {
-        return;
+        return { status: 'invalid-url' };
       }
     } catch {
-      return;
+      return { status: 'invalid-url' };
     }
-    const webserverConfigURL = new URL('./config.toml', apiEndpoint).href;
-    const { config } = await fetchAndParseConfig(webserverConfigURL);
-    if (!config) return;
-
-    const backendaiutils = (globalThis as Record<string, any>).backendaiutils;
-    if (!backendaiutils) return;
-
-    const fieldsToExclude = [
-      'general.apiEndpoint',
-      'general.apiEndpointText',
-      'general.appDownloadUrl',
-      'wsproxy',
-    ];
-    fieldsToExclude.forEach((key) => {
-      backendaiutils.deleteNestedKeyFromObject(config, key);
-    });
-
-    // Merge with the current raw config stored in the Jotai atom.
-    // For backward compat, we also try the Lit shell element.
-    const { jotaiStore } = await import('../components/DefaultProviders');
-    const { rawConfigState } = await import('../hooks/useWebUIConfig');
-    const currentConfig = jotaiStore.get(rawConfigState) ?? {};
-    const mergedConfig = backendaiutils.mergeNestedObjects(
-      currentConfig,
-      config,
+    // A trailing slash keeps a sub-path deployment's last segment.
+    const webserverConfigURL = new URL(
+      'config.toml',
+      apiEndpoint.endsWith('/') ? apiEndpoint : `${apiEndpoint}/`,
+    ).href;
+    const { config, unreachable } = await fetchAndParseConfig(
+      webserverConfigURL,
+      PUBLIC_CONFIG_FETCH_TIMEOUT_MS,
     );
-
-    // Update the Jotai store with merged config
-    jotaiStore.set(rawConfigState, mergedConfig);
-
-    // Re-process the merged config
-    const { refreshConfigFromToml } = await import('./loginConfig');
-    const { loginConfigState } = await import('../hooks/useWebUIConfig');
-    const loginConfig = refreshConfigFromToml(mergedConfig);
-    jotaiStore.set(loginConfigState, loginConfig);
+    if (!config) return { status: unreachable ? 'unreachable' : 'no-config' };
+    serverConfig = config;
   }
+
+  const backendaiutils = (globalThis as Record<string, any>).backendaiutils;
+  if (!backendaiutils) return { status: 'no-config' };
+
+  if (Object.keys(serverConfig).length > 0) {
+    ['general.apiEndpoint', 'wsproxy'].forEach((key) => {
+      backendaiutils.deleteNestedKeyFromObject(serverConfig, key);
+    });
+  }
+
+  // Merge onto the bundled config.toml, not the current state: that may
+  // already carry another endpoint's server config.
+  const { jotaiStore } = await import('../components/DefaultProviders');
+  const { rawConfigState } = await import('../hooks/useWebUIConfig');
+  const { config: bundledConfig } = await fetchAppConfigOnce();
+  const currentConfig = structuredClone(bundledConfig ?? {});
+  const mergedConfig = backendaiutils.mergeNestedObjects(
+    currentConfig,
+    serverConfig,
+  );
+
+  // Update the Jotai store with merged config
+  jotaiStore.set(rawConfigState, mergedConfig);
+
+  // Re-process the merged config
+  const { refreshConfigFromToml } = await import('./loginConfig');
+  const { loginConfigState, autoLogoutState } =
+    await import('../hooks/useWebUIConfig');
+  // `mergedConfig` keeps this page's own endpoint (the webserver's was
+  // stripped above); the public slice belongs to the server being joined.
+  const publicTarget = resolvePublicConfigTarget({
+    ...mergedConfig,
+    general: { ...mergedConfig.general, apiEndpoint },
+  });
+  const publicSlice = await fetchPublicDomainConfigOnce(publicTarget);
+  const { applyJoinedServerAppearance } = await import('./customThemeConfig');
+  await applyJoinedServerAppearance(publicSlice, publicTarget);
+  const effectiveLoginConfig = applyWebUISettings(
+    refreshConfigFromToml(mergedConfig),
+    publicSlice?.[WEBUI_SETTINGS_CONFIG_KEY],
+    'public',
+  );
+  jotaiStore.set(loginConfigState, effectiveLoginConfig);
+  jotaiStore.set(autoLogoutState, effectiveLoginConfig.autoLogout);
+  // loginPluginState stays on the bundled value; whether the joined
+  // server's login plugin should load is still open (#10872).
+  return { status: 'loaded', domainName: publicTarget?.domainName ?? null };
 }
 
 /**

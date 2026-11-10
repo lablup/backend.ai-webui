@@ -157,7 +157,7 @@ flowchart LR
 - **On by default**: A deployment without the key also registers tools, but they are visible only in browsers that implement WebMCP. To turn them off, an operator writes `enableWebMCP = false` in a static `config.toml`. The `/config.toml` the webserver builds has no such key, so a webserver deployment cannot turn the tools off today; when a way to turn them off is needed, the key is added to the webserver template. In a deployment with the setting off, `useWebMCPTool` reads the context, returns immediately in its effect, and does not touch the browser API.
 - **Browser support**: Tools are visible only in browsers that implement WebMCP. Today that is Chrome with the origin trial or the feature flag on.
 - **Writes stay manual**: Even when an agent fills a form, a person presses submit. These tools cannot build write automation that completes without a person.
-- **Plugin risk**: Third-party JavaScript that `[plugin]` in `config.toml` loads can also call `document.modelContext.registerTool` on the same page. The rules of this ADR apply only to code in the WebUI repository. The operator checks the tools a plugin registers.
+- **Plugin risk**: Third-party JavaScript that the `pluginLogin` / `pluginPage` System Settings load (ADR 0028) can also call `document.modelContext.registerTool` on the same page. The rules of this ADR apply only to code in the WebUI repository. The operator checks the tools a plugin registers.
 - **Flat inputs only**: A tool that needs a complex input splits the input into several flat properties, or splits the tool.
 
 ## Sources

@@ -1,13 +1,11 @@
 ---
-navTitle: Get Started
+navTitle: Start Your Work
 ---
 
-# Get Started
+# Start Your Work
 
-The [Dashboard](#dashboard) is the page you land on after logging in. Its
-**Get started** cards give you quick access to frequently used WebUI features:
-creating storage folders, launching sessions, deploying models, or importing
-projects from external URLs.
+Backend.AI opens the [Dashboard](#dashboard) after you log in. Its cards are
+the quickest way to start the tasks you need most often.
 
 ![](../images/start_page.png)
 
@@ -31,13 +29,13 @@ For superadmins, the banner also carries an **Edit** button that opens the Edit
 Announcement dialog, so an announcement can be edited from any page. For
 details, refer to the [System announcement](#system-announcement) section.
 
-## Action cards
+## Dashboard cards
 
-The Dashboard shows the following **Get started** cards by default:
+Click the button on a card to start its task. The Dashboard shows the following
+cards by default:
 
 - **Create New Storage Folder**: Create a storage folder and upload files. This
   is an essential first step for training models or providing external services.
-  Clicking the button opens the folder creation dialog.
 - **Start Interactive Session**: Create a session to train a model. Choose your
   preferred environment and resources to run your code.
 - **Start Batch Session**: Create a batch session for predefined files or

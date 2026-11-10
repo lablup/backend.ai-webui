@@ -12,6 +12,16 @@ Superadmins land on the administration pages right after logging in, and move be
 
 
 
+<a id="admin-dashboard"></a>
+
+## Dashboard
+
+Superadmins have a **Dashboard** entry in the administration sidebar, showing a board of system-wide cards: **Session Status**, **Pending Sessions and Reasons**, **Agents**, **Agent Statistics**, **Failures by Entity Type**, **Audit Log**, and **Total Resources in Resource Group**. More cards, such as **Scheduling Failures**, **Resource Policies**, **Failed sign-ins**, and **Container Registries**, can be added from the edit sidebar.
+
+Boards, card settings, and the refresh control work the same way as on the user [Dashboard](#dashboard).
+
+![](../images/admin_dashboard.png)
+
 <a id="create-and-update-users"></a>
 
 ## Browse and manage users
@@ -1774,7 +1784,18 @@ is used as the default value.
 
 ## System settings
 
-In the Configurations page, you can see main settings of Backend.AI server.
+Select **System Settings** from the admin sidebar menu to manage how the WebUI behaves for
+everyone on the server. The page has two tabs: **System Settings** and **Configurations**.
+
+On the **System Settings** tab, superadmins set the options the WebUI offers to every user in
+the domain, such as the available sign-in options, session creation options, and sidebar menus.
+Click **Apply** to save the changed values; **Reset** deletes every value saved for the domain,
+returning each setting to its default. **JSON Config** shows the current settings as JSON, and
+can export them to a file or import one.
+
+![](../images/system_settings_page.png)
+
+On the **Configurations** tab, you can see main settings of Backend.AI server.
 Currently, it provides several controls which can change and list settings.
 
 You can change image auto install and update rule by selecting one option from
@@ -1789,7 +1810,7 @@ Don't change rule selection unless you completely understand the meaning of each
 
 ![](../images/system_setting_about_image.png)
 
-The Configurations page also displays the status of plugins and enterprise features:
+The **Configurations** tab also displays the status of plugins and enterprise features:
 
 **Plugins:**
 
@@ -1906,12 +1927,6 @@ bar at the top of the page filters the list when you are looking for a specific 
   Backend.AI-connected docker registry. The scan can take a long time; progress is reported in the
   notification area.
 
-**Announcement**
-
-- **System announcement**: Click **Edit Announcement** to create or change the announcement banner shown
-  to every user at the top of every page. See the
-  [System announcement](#system-announcement) section below.
-
 :::note
 We will continue to add other settings needed for management, such as
 removing unused images or registering periodic maintenance schedules.
@@ -1927,8 +1942,9 @@ managed entirely from the WebUI, whether or not one has been published before.
 
 Open the editor in either of two ways:
 
-- From the Maintenance page, click **Edit Announcement** in the **System announcement** row. This works
-  even when no announcement exists yet, so it is the way to publish the first one.
+- From the **System Settings** tab of the System Settings page, click **Edit Announcement** in the
+  **System announcement** row. This works even when no announcement exists yet, so it is the way to
+  publish the first one.
 - From the announcement banner itself, when one is already published. Because the banner sits at the top
   of every page, a superadmin can open the editor from anywhere in the WebUI.
 

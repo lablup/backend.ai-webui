@@ -58,12 +58,13 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
   const [commitCreateKeypair, isInFlightCommitCreateKeypair] =
     useMutation<KeypairSettingModalCreateMutation>(graphql`
       mutation KeypairSettingModalCreateMutation(
-        $user_id: String!
-        $props: KeyPairInput!
+        $input: AdminCreateKeypairInput!
       ) {
-        create_keypair(user_id: $user_id, props: $props) {
-          ok
-          msg
+        adminCreateKeypairV2(input: $input) {
+          keypair {
+            id
+            accessKey
+          }
         }
       }
     `);
@@ -119,15 +120,17 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
                 })
               : commitCreateKeypair({
                   variables: {
-                    user_id: values.user_id ?? '',
-                    props: {
-                      rate_limit: values.rate_limit,
-                      resource_policy: values.resource_policy,
+                    input: {
+                      userId: values.user_id ?? '',
+                      rateLimit: values.rate_limit,
+                      resourcePolicy: values.resource_policy,
                     },
                   },
                   onCompleted: (res, errors) => {
-                    if (!res.create_keypair?.ok || errors) {
-                      message.error(res?.create_keypair?.msg);
+                    if (!res.adminCreateKeypairV2 || errors?.length) {
+                      message.error(
+                        errors?.[0]?.message ?? t('general.ErrorOccurred'),
+                      );
                       onRequestClose(false);
                       return;
                     }
@@ -170,7 +173,7 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
                   },
                 ]}
               >
-                <BAISelect loading style={{ width: '100%' }} />
+                <BAISelect loading disabled style={{ width: '100%' }} />
               </BAIFormItem>
             }
           >
@@ -186,6 +189,7 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
             >
               <BAIScopedUserSelect
                 scope={domainScope}
+                valuePropName="id"
                 label={t('general.User')}
                 isLabelHidden
                 placeholder={t('credential.SelectUser')}
@@ -213,7 +217,7 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
                     },
                   ]}
                 >
-                  <BAISelect loading style={{ width: '100%' }} />
+                  <BAISelect loading disabled style={{ width: '100%' }} />
                 </BAIFormItem>
               }
             >

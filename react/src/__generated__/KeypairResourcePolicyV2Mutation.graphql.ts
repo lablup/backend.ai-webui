@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e9c7b98db4859c9c5a1af8911ae01031>>
+ * @generated SignedSource<<090116a97e12626471e463aadc9fd63e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,12 +10,12 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type KeypairResourcePolicyV2Mutation$variables = {
-  name: string;
+  id: string;
 };
 export type KeypairResourcePolicyV2Mutation$data = {
-  readonly adminDeleteKeypairResourcePolicyV2: {
-    readonly name: string;
-  } | null | undefined;
+  readonly purgeKeypairResourcePolicyV2: {
+    readonly entityId: string;
+  };
 };
 export type KeypairResourcePolicyV2Mutation = {
   response: KeypairResourcePolicyV2Mutation$data;
@@ -27,7 +27,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "name"
+    "name": "id"
   }
 ],
 v1 = [
@@ -36,20 +36,20 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "name",
-        "variableName": "name"
+        "name": "id",
+        "variableName": "id"
       }
     ],
-    "concreteType": "DeleteKeypairResourcePolicyPayload",
+    "concreteType": "PurgeKeypairResourcePolicyPayload",
     "kind": "LinkedField",
-    "name": "adminDeleteKeypairResourcePolicyV2",
+    "name": "purgeKeypairResourcePolicyV2",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "name",
+        "name": "entityId",
         "storageKey": null
       }
     ],
@@ -74,16 +74,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "a79907aee60010ce5a10601c91e6c56f",
+    "cacheID": "5769effe6001aac23d922c5c29a8d165",
     "id": null,
     "metadata": {},
     "name": "KeypairResourcePolicyV2Mutation",
     "operationKind": "mutation",
-    "text": "mutation KeypairResourcePolicyV2Mutation(\n  $name: String!\n) {\n  adminDeleteKeypairResourcePolicyV2(name: $name) {\n    name\n  }\n}\n"
+    "text": "mutation KeypairResourcePolicyV2Mutation(\n  $id: UUID!\n) {\n  purgeKeypairResourcePolicyV2(id: $id) {\n    entityId\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b69cd12bcfdddcd9e5439c3d1c53b4af";
+(node as any).hash = "d2d8a7918184eda64abd73283effc631";
 
 export default node;

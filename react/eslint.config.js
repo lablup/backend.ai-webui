@@ -76,6 +76,12 @@ const formControlImportBans = [
           )
           .join(' / ')} from 'backend.ai-ui' (ADR 0014).`,
 }));
+// ui-common ships DateTimeRangeInput under components/ only, not at a top-level subpath.
+formControlImportBans.push({
+  name: '@lablup/ui-common/components/DateTimeRangeInput',
+  importNames: ['DateTimeRangeInput'],
+  message: "Import BAIDateTimeRangeInput from 'backend.ai-ui' (ADR 0014).",
+});
 // FR-3428: the URL owns the current project on `/project/:projectName/*`
 // routes (FR-3055). Components switch projects through `useSwitchProject`; the
 // raw setter is reserved for the URL→atom sync layer (allowlist block below).
@@ -168,7 +174,7 @@ export default [
   //   scheduler          -> SchedulerPage
   //   agent              -> ResourcesPage
   //   project            -> ProjectPage
-  //   settings           -> ConfigurationsPage
+  //   settings           -> WebUISettingsPage (its Configurations tab)
   //   maintenance        -> MaintenancePage
   //   diagnostics        -> DiagnosticsPage
   //   rbac               -> RBACManagementPage
@@ -187,7 +193,7 @@ export default [
   // the sanctioned page-level ambient reader (see the ADR).
   {
     files: [
-      'src/pages/{AdminSessionPage,AdminVFolderNodeListPage,AdminDeploymentPage,AdminDeploymentPresetSettingPage,AdminUsersPage,ResourcePolicyPage,SchedulerPage,ResourcesPage,ProjectPage,ConfigurationsPage,MaintenancePage,DiagnosticsPage,RBACManagementPage,BrandingPage,EnvironmentPage,ReservoirPage,ReservoirArtifactDetailPage,InformationPage,AdminDashboardPage}/**',
+      'src/pages/{AdminSessionPage,AdminVFolderNodeListPage,AdminDeploymentPage,AdminDeploymentPresetSettingPage,AdminUsersPage,ResourcePolicyPage,SchedulerPage,ResourcesPage,ProjectPage,WebUISettingsPage,MaintenancePage,DiagnosticsPage,RBACManagementPage,BrandingPage,EnvironmentPage,ReservoirPage,ReservoirArtifactDetailPage,InformationPage,AdminDashboardPage}/**',
       'src/components/DashboardPanels/**',
     ],
     rules: {

@@ -6,7 +6,12 @@ import { useDashboardResourceGroups } from './DashboardResourceGroups';
 import PanelRangeSelect from './PanelRangeSelect';
 import { cardResourceGroup } from './dashboardScope';
 import type { PanelSettingOverride } from './panelSettingOverrides';
-import { DEFAULT_RANGE, hasSetting, rangeLabel } from './panelSettings';
+import {
+  DEFAULT_RANGE,
+  hasSetting,
+  maxRangeDaysOf,
+  rangeLabel,
+} from './panelSettings';
 import type { PanelDefinition, PanelSettings } from './types';
 import { useDashboardFilterContext } from './useDashboardFilters';
 import { IconButton } from '@lablup/ui-common/IconButton';
@@ -100,14 +105,17 @@ const PanelSettingsHeaderControls: React.FC = () => {
       ) : null}
       {hasSetting(definition, 'range') ? (
         <Tooltip
+          // Remount with the tooltip on an outside change (reset): drops the preset label the picker kept.
+          key={effective?.range ?? DEFAULT_RANGE}
           content={t('dashboard.settings.TimeRange')}
           placement="end"
           hasHoverIndication={false}
         >
           <PanelRangeSelect
-            size="small"
-            variant={overridden.range ? 'filled' : 'borderless'}
+            size="sm"
+            isCompactLabel
             aria-label={t('dashboard.settings.TimeRange')}
+            maxDays={maxRangeDaysOf(definition)}
             value={effective?.range ?? DEFAULT_RANGE}
             onChange={(range) => onChange({ range })}
           />

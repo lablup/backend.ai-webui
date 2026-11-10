@@ -40,11 +40,11 @@ export const isStoredRange = (
   maxDays: number = MAX_WINDOW_DAYS,
 ): value is string => isRangePreset(value) || isStorableWindow(value, maxDays);
 
-/** A fixed window, compact: `Oct 29 09:39 - Oct 30 09:39`. */
+/** A fixed window in the locale's date and time: `Oct 29, 2026 9:39 AM - Oct 30, 2026 9:39 AM`. */
 export const formatWindowLabel = (range: string): string | undefined => {
   const window = fixedWindowOf(range);
   if (!window) return undefined;
-  const format = (iso: string) => dayjs(iso).format('MMM D HH:mm');
+  const format = (iso: string) => dayjs(iso).format('lll');
   return `${format(window.after)} - ${format(window.before)}`;
 };
 

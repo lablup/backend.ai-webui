@@ -26,7 +26,10 @@
     "ActivateArtifacts": "Artefakte aktivieren",
     "AreYouSureYouWantToActivateOne": "Sind Sie sicher, dass Sie {{name}} aktivieren möchten?",
     "AreYouSureYouWantToActivateSome": "Sind Sie sicher, dass Sie {{count}} Artefakte aktivieren möchten?",
+    "Error": "Fehler",
     "FailedToActivateArtifacts": "Es wurden Artefakte nicht aktiviert.",
+    "Name": "Name",
+    "SomeArtifactsFailedToActivate": "{{count}} Artefakt(e) konnten nicht aktiviert werden",
     "SuccessfullyActivated": "Erfolgreich aktivierte Artefakte."
   },
   "comp:BAIAdminKeypairResourcePolicySelect": {
@@ -980,7 +983,10 @@
     "AreYouSureYouWantToDeactivateSome": "Sind Sie sicher, dass Sie {{count}} Artefakte deaktivieren möchten?",
     "Deactivate": "Deaktivieren",
     "DeactivateArtifacts": "Deaktivieren Artefakte",
+    "Error": "Fehler",
     "FailedToDeactivateArtifacts": "Kaum die Artefakte deaktivieren.",
+    "Name": "Name",
+    "SomeArtifactsFailedToDeactivate": "{{count}} Artefakt(e) konnten nicht deaktiviert werden",
     "SuccessfullyDeactivated": "Erfolgreich deaktivierte Artefakte."
   },
   "comp:BAIDeleteArtifactModal": {

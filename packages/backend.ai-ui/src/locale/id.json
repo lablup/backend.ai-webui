@@ -26,7 +26,10 @@
     "ActivateArtifacts": "Aktifkan artefak",
     "AreYouSureYouWantToActivateOne": "Anda yakin ingin mengaktifkan {{name}}?",
     "AreYouSureYouWantToActivateSome": "Anda yakin ingin mengaktifkan {{count}} artefak?",
+    "Error": "Kesalahan",
     "FailedToActivateArtifacts": "Gagal mengaktifkan artefak.",
+    "Name": "Nama",
+    "SomeArtifactsFailedToActivate": "{{count}} artefak gagal diaktifkan",
     "SuccessfullyActivated": "Artefak yang berhasil diaktifkan."
   },
   "comp:BAIAdminKeypairResourcePolicySelect": {
@@ -980,7 +983,10 @@
     "AreYouSureYouWantToDeactivateSome": "Anda yakin ingin menonaktifkan artefak {{count}}?",
     "Deactivate": "Menonaktifkan",
     "DeactivateArtifacts": "Nonaktifkan artefak",
+    "Error": "Kesalahan",
     "FailedToDeactivateArtifacts": "Gagal menonaktifkan artefak.",
+    "Name": "Nama",
+    "SomeArtifactsFailedToDeactivate": "{{count}} artefak gagal dinonaktifkan",
     "SuccessfullyDeactivated": "Berhasil menonaktifkan artefak."
   },
   "comp:BAIDeleteArtifactModal": {

@@ -21,7 +21,7 @@ import {
   useWebUINavigate,
 } from '../hooks';
 import { useDeviceMetaData, useImageMetaData } from '../hooks/backendai';
-import { useLoginConfig } from '../hooks/useWebUIConfig';
+import { loginConfigState, useLoginConfig } from '../hooks/useWebUIConfig';
 import '../index.css';
 import I18nKeyMarkers, { appendI18nKeyMarker } from './I18nKeyMarkers';
 import NotificationHost from './NotificationHost';
@@ -93,8 +93,10 @@ i18n
       const isDebugByUrlParam =
         process.env.NODE_ENV === 'development' &&
         new URLSearchParams(window.location.search).get('debug') === 'true';
-      // @ts-ignore
-      if (globalThis?.backendaiwebui?.debug === true || isDebugByUrlParam) {
+      if (
+        jotaiStore.get(loginConfigState)?.debug === true ||
+        isDebugByUrlParam
+      ) {
         // Must stay a string: `t()` also feeds placeholders, tooltips and aria labels.
         // `I18nKeyMarkers` turns the invisible marker into the copy icon.
         if (typeof value !== 'string') return value;

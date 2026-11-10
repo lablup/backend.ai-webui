@@ -1324,6 +1324,7 @@
         "data.folders.ConfirmCreateFolderVisibleToMembers",
         "data.folders.CreatedAt",
         "data.folders.DontAskAgain",
+        "data.folders.ErrorMessage",
         "data.folders.FileRenamed",
         "data.folders.FolderCreated",
         "data.folders.FolderCreationFailed",
@@ -1706,7 +1707,9 @@
         "webui.menu.Resources",
         "webui.menu.Scheduler",
         "webui.menu.Sessions",
+        "webui.menu.Start",
         "webui.menu.Statistics",
+        "webui.menu.SystemSettings",
         "webui.menu.Users",
         "webui.menu.groupName.Metrics",
         "webui.menu.groupName.Mlops",
@@ -2034,20 +2037,10 @@
           "descriptionKeys": [
             "maintenance.DescRescanImageList"
           ]
-        },
-        {
-          "key": "maintenance.SystemAnnouncement",
-          "groupKey": "maintenance.Announcement",
-          "groupId": "maintenance-announcement",
-          "descriptionKeys": [
-            "maintenance.DescSystemAnnouncement"
-          ]
         }
       ],
       "keys": [
-        "button.Publish",
         "button.Reset",
-        "button.SaveAsDraft",
         "clientIpMasking.CreatePolicy",
         "clientIpMasking.DefaultPrefix",
         "clientIpMasking.DeletePolicy",
@@ -2064,7 +2057,6 @@
         "clientIpMasking.SuccessfullySaved",
         "clientIpMasking.Target",
         "clientIpMasking.TargetRequired",
-        "dialog.ask.DoYouWantToDelete",
         "dialog.ask.DoYouWantToResetChanges",
         "dialog.warning.CannotBeUndone",
         "general.All",
@@ -2099,23 +2091,6 @@
         "settings.NoChangesToDisplay",
         "settings.SearchPlaceholder",
         "settings.ShowOnlyChanged",
-        "summary.AnnouncementDeleted",
-        "summary.AnnouncementDraft",
-        "summary.AnnouncementMessage",
-        "summary.AnnouncementPreview",
-        "summary.AnnouncementTitle",
-        "summary.AnnouncementUpdated",
-        "summary.EditAnnouncement",
-        "summary.MarkdownBold",
-        "summary.MarkdownBulletList",
-        "summary.MarkdownCode",
-        "summary.MarkdownHeading",
-        "summary.MarkdownImage",
-        "summary.MarkdownItalic",
-        "summary.MarkdownLink",
-        "summary.MarkdownNumberedList",
-        "summary.MarkdownQuote",
-        "summary.MarkdownStrikethrough",
         "webui.menu.GoBack",
         "webui.menu.Settings"
       ]
@@ -2220,6 +2195,7 @@
         "rbac.GrantedAt",
         "rbac.Inactive",
         "rbac.NoPermissionsToDisplay",
+        "rbac.PermissionChangesFailed",
         "rbac.PermissionNotEditable",
         "rbac.PermissionType",
         "rbac.Permissions",
@@ -2796,14 +2772,36 @@
       ]
     },
     {
-      "menuKey": "settings",
+      "menuKey": "system-settings",
       "scope": "admin",
-      "path": "/admin/settings",
-      "labelKey": "webui.menu.Configurations",
-      "tabs": [],
+      "path": "/admin/system-settings",
+      "labelKey": "webui.menu.SystemSettings",
+      "tabs": [
+        {
+          "param": "tab",
+          "key": "configurations",
+          "labelKey": "webui.menu.Configurations"
+        },
+        {
+          "param": "tab",
+          "key": "settings",
+          "labelKey": "webui.menu.SystemSettings"
+        }
+      ],
       "settings": [
         {
+          "key": "maintenance.SystemAnnouncement",
+          "tab": "configurations",
+          "groupKey": "maintenance.Announcement",
+          "groupId": "webui-settings-group-announcement",
+          "testId": "system-announcement",
+          "descriptionKeys": [
+            "maintenance.DescSystemAnnouncement"
+          ]
+        },
+        {
           "key": "settings.ATOMMaxSupport",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
@@ -2813,6 +2811,7 @@
         },
         {
           "key": "settings.ATOMPlusSupport",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
@@ -2822,6 +2821,7 @@
         },
         {
           "key": "settings.ATOMSupport",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
@@ -2831,6 +2831,7 @@
         },
         {
           "key": "settings.FractionalGPU",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
@@ -2840,6 +2841,7 @@
         },
         {
           "key": "settings.Gaudi2Support",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
@@ -2849,6 +2851,7 @@
         },
         {
           "key": "settings.HyperaccelLPUSupport",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
@@ -2858,6 +2861,7 @@
         },
         {
           "key": "settings.IPUSupport",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
@@ -2867,6 +2871,7 @@
         },
         {
           "key": "settings.ImagePullBehavior",
+          "tab": "configurations",
           "groupKey": "settings.General",
           "groupId": "settings-general",
           "descriptionKeys": [
@@ -2875,6 +2880,7 @@
         },
         {
           "key": "settings.OpenSourceCudaGPUSupport",
+          "tab": "configurations",
           "groupKey": "settings.Plugins",
           "groupId": "settings-plugins",
           "descriptionKeys": [
@@ -2884,6 +2890,7 @@
         },
         {
           "key": "settings.OverlayNetwork",
+          "tab": "configurations",
           "groupKey": "settings.General",
           "groupId": "settings-general",
           "descriptionKeys": [
@@ -2892,6 +2899,7 @@
         },
         {
           "key": "settings.RNGDSupport",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
@@ -2901,6 +2909,7 @@
         },
         {
           "key": "settings.ROCMGPUSupport",
+          "tab": "configurations",
           "groupKey": "settings.Plugins",
           "groupId": "settings-plugins",
           "descriptionKeys": [
@@ -2909,6 +2918,7 @@
         },
         {
           "key": "settings.Rebel100Support",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
@@ -2918,6 +2928,7 @@
         },
         {
           "key": "settings.Scheduler",
+          "tab": "configurations",
           "groupKey": "settings.General",
           "groupId": "settings-general",
           "descriptionKeys": [
@@ -2926,6 +2937,7 @@
         },
         {
           "key": "settings.TPU",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
@@ -2935,6 +2947,7 @@
         },
         {
           "key": "settings.WarboySupport",
+          "tab": "configurations",
           "groupKey": "settings.EnterpriseFeatures",
           "groupId": "settings-enterprise",
           "descriptionKeys": [
@@ -2944,8 +2957,14 @@
         }
       ],
       "keys": [
+        "button.Apply",
+        "button.Discard",
+        "button.Publish",
         "button.Reset",
+        "button.SaveAsDraft",
+        "data.ModelStore",
         "data.explorer.ValueRequired",
+        "dialog.ask.DoYouWantToDelete",
         "dialog.ask.DoYouWantToResetChanges",
         "dialog.warning.CannotBeUndone",
         "general.All",
@@ -2971,8 +2990,193 @@
         "settings.image.Digest",
         "settings.image.None",
         "settings.image.Tag",
+        "summary.AnnouncementDeleted",
+        "summary.AnnouncementDraft",
+        "summary.AnnouncementMessage",
+        "summary.AnnouncementPreview",
+        "summary.AnnouncementTitle",
+        "summary.AnnouncementUpdated",
+        "summary.EditAnnouncement",
+        "summary.MarkdownBold",
+        "summary.MarkdownBulletList",
+        "summary.MarkdownCode",
+        "summary.MarkdownHeading",
+        "summary.MarkdownImage",
+        "summary.MarkdownItalic",
+        "summary.MarkdownLink",
+        "summary.MarkdownNumberedList",
+        "summary.MarkdownQuote",
+        "summary.MarkdownStrikethrough",
+        "webui.menu.AIAgents",
+        "webui.menu.AgentSummary",
+        "webui.menu.Branding",
+        "webui.menu.Chat",
+        "webui.menu.Dashboard",
+        "webui.menu.Data",
+        "webui.menu.Deployments",
+        "webui.menu.Diagnostics",
+        "webui.menu.Environments",
+        "webui.menu.FastTrack",
         "webui.menu.GoBack",
-        "webui.menu.Settings"
+        "webui.menu.Information",
+        "webui.menu.Maintenance",
+        "webui.menu.MyEnvironments",
+        "webui.menu.ProjectDeployments",
+        "webui.menu.ProjectMembers",
+        "webui.menu.ProjectSessions",
+        "webui.menu.Projects",
+        "webui.menu.RBACManagement",
+        "webui.menu.Reservoir",
+        "webui.menu.ResourcePolicies",
+        "webui.menu.Resources",
+        "webui.menu.Scheduler",
+        "webui.menu.Sessions",
+        "webui.menu.Settings",
+        "webui.menu.Start",
+        "webui.menu.Statistics",
+        "webui.menu.Users",
+        "webuiSettings.AllowAnonymousChangePassword",
+        "webuiSettings.AllowAppDownloadPanel",
+        "webuiSettings.AllowCLIDownloadPanel",
+        "webuiSettings.AllowChangeSigninMode",
+        "webuiSettings.AllowCustomResourceAllocation",
+        "webuiSettings.AllowManualImageNameForSession",
+        "webuiSettings.AllowNonAuthTCP",
+        "webuiSettings.AllowPreferredPort",
+        "webuiSettings.AllowSignout",
+        "webuiSettings.AllowSignupWithoutConfirmation",
+        "webuiSettings.AllowThemeMode",
+        "webuiSettings.AppDownloadUrl",
+        "webuiSettings.Apply",
+        "webuiSettings.ApplySettings",
+        "webuiSettings.ApplySettingsDesc",
+        "webuiSettings.AutoLogout",
+        "webuiSettings.CliDownloadUrl",
+        "webuiSettings.Debug",
+        "webuiSettings.DefaultFileBrowserImage",
+        "webuiSettings.DefaultImportEnvironment",
+        "webuiSettings.DefaultSessionEnvironment",
+        "webuiSettings.DescAllowAnonymousChangePassword",
+        "webuiSettings.DescAllowAppDownloadPanel",
+        "webuiSettings.DescAllowCLIDownloadPanel",
+        "webuiSettings.DescAllowChangeSigninMode",
+        "webuiSettings.DescAllowCustomResourceAllocation",
+        "webuiSettings.DescAllowManualImageNameForSession",
+        "webuiSettings.DescAllowNonAuthTCP",
+        "webuiSettings.DescAllowPreferredPort",
+        "webuiSettings.DescAllowSignout",
+        "webuiSettings.DescAllowSignupWithoutConfirmation",
+        "webuiSettings.DescAllowThemeMode",
+        "webuiSettings.DescAppDownloadUrl",
+        "webuiSettings.DescAutoLogout",
+        "webuiSettings.DescCliDownloadUrl",
+        "webuiSettings.DescDebug",
+        "webuiSettings.DescDefaultFileBrowserImage",
+        "webuiSettings.DescDefaultImportEnvironment",
+        "webuiSettings.DescDefaultSessionEnvironment",
+        "webuiSettings.DescEnableContainerCommit",
+        "webuiSettings.DescEnableExtendLoginSession",
+        "webuiSettings.DescEnableInteractiveLoginAccountSwitch",
+        "webuiSettings.DescEnableModelFolders",
+        "webuiSettings.DescEnableReservoir",
+        "webuiSettings.DescFasttrackEndpoint",
+        "webuiSettings.DescHideAgents",
+        "webuiSettings.DescIsDirectorySizeVisible",
+        "webuiSettings.DescMaskUserInfo",
+        "webuiSettings.DescMaxATOMDevicesPerContainer",
+        "webuiSettings.DescMaxATOMPLUSDevicesPerContainer",
+        "webuiSettings.DescMaxCPUCoresPerContainer",
+        "webuiSettings.DescMaxCUDADevicesPerContainer",
+        "webuiSettings.DescMaxCUDASharesPerContainer",
+        "webuiSettings.DescMaxCountForPreopenPorts",
+        "webuiSettings.DescMaxFileUploadSize",
+        "webuiSettings.DescMaxGaudi2DevicesPerContainer",
+        "webuiSettings.DescMaxHyperaccelLPUDevicesPerContainer",
+        "webuiSettings.DescMaxIPUDevicesPerContainer",
+        "webuiSettings.DescMaxMemoryPerContainer",
+        "webuiSettings.DescMaxRNGDDevicesPerContainer",
+        "webuiSettings.DescMaxROCMDevicesPerContainer",
+        "webuiSettings.DescMaxShmPerContainer",
+        "webuiSettings.DescMaxTPUDevicesPerContainer",
+        "webuiSettings.DescMaxWarboyDevicesPerContainer",
+        "webuiSettings.DescMenuBlocklist",
+        "webuiSettings.DescMenuInactivelist",
+        "webuiSettings.DescOpenPortToPublic",
+        "webuiSettings.DescPluginLogin",
+        "webuiSettings.DescPluginPage",
+        "webuiSettings.DescShowNonInstalledImages",
+        "webuiSettings.DescSingleSignOnVendors",
+        "webuiSettings.DescSsoRealmName",
+        "webuiSettings.DescStorageWarningThreshold",
+        "webuiSettings.DescSystemSSHImage",
+        "webuiSettings.EnableContainerCommit",
+        "webuiSettings.EnableExtendLoginSession",
+        "webuiSettings.EnableInteractiveLoginAccountSwitch",
+        "webuiSettings.EnableModelFolders",
+        "webuiSettings.EnableReservoir",
+        "webuiSettings.ExportJson",
+        "webuiSettings.FasttrackEndpoint",
+        "webuiSettings.HideAgents",
+        "webuiSettings.ImportFileReadError",
+        "webuiSettings.ImportFileTooLarge",
+        "webuiSettings.ImportJson",
+        "webuiSettings.IsDirectorySizeVisible",
+        "webuiSettings.JsonConfig",
+        "webuiSettings.JsonConfigDesc",
+        "webuiSettings.JsonInvalid",
+        "webuiSettings.JsonIssueInvalid",
+        "webuiSettings.JsonIssueUnknown",
+        "webuiSettings.JsonIssues",
+        "webuiSettings.JsonLoaded",
+        "webuiSettings.LeaveWithoutApplying",
+        "webuiSettings.LeaveWithoutApplyingDesc",
+        "webuiSettings.MaskUserInfo",
+        "webuiSettings.MaxATOMDevicesPerContainer",
+        "webuiSettings.MaxATOMPLUSDevicesPerContainer",
+        "webuiSettings.MaxCPUCoresPerContainer",
+        "webuiSettings.MaxCUDADevicesPerContainer",
+        "webuiSettings.MaxCUDASharesPerContainer",
+        "webuiSettings.MaxCountForPreopenPorts",
+        "webuiSettings.MaxFileUploadSize",
+        "webuiSettings.MaxGaudi2DevicesPerContainer",
+        "webuiSettings.MaxHyperaccelLPUDevicesPerContainer",
+        "webuiSettings.MaxIPUDevicesPerContainer",
+        "webuiSettings.MaxMemoryPerContainer",
+        "webuiSettings.MaxRNGDDevicesPerContainer",
+        "webuiSettings.MaxROCMDevicesPerContainer",
+        "webuiSettings.MaxShmPerContainer",
+        "webuiSettings.MaxTPUDevicesPerContainer",
+        "webuiSettings.MaxWarboyDevicesPerContainer",
+        "webuiSettings.MenuBlocklist",
+        "webuiSettings.MenuGroupAdmin",
+        "webuiSettings.MenuGroupProjectAdmin",
+        "webuiSettings.MenuGroupUser",
+        "webuiSettings.MenuInactivelist",
+        "webuiSettings.NotApplied",
+        "webuiSettings.NotAppliedItems",
+        "webuiSettings.OpenPortToPublic",
+        "webuiSettings.PartiallyApplied",
+        "webuiSettings.PartiallyAppliedDesc",
+        "webuiSettings.PluginLogin",
+        "webuiSettings.PluginPage",
+        "webuiSettings.ResetAllSettings",
+        "webuiSettings.ResetAllSettingsDesc",
+        "webuiSettings.ShowNonInstalledImages",
+        "webuiSettings.SingleSignOnVendors",
+        "webuiSettings.SsoRealmName",
+        "webuiSettings.StorageWarningThreshold",
+        "webuiSettings.SystemSSHImage",
+        "webuiSettings.UnknownMenuKeys",
+        "webuiSettings.group.Account",
+        "webuiSettings.group.AppLauncher",
+        "webuiSettings.group.Diagnostics",
+        "webuiSettings.group.Downloads",
+        "webuiSettings.group.Environments",
+        "webuiSettings.group.Login",
+        "webuiSettings.group.Menu",
+        "webuiSettings.group.Plugins",
+        "webuiSettings.group.Session",
+        "webuiSettings.group.Storage"
       ]
     },
     {
@@ -3190,6 +3394,7 @@
         "login.APIKey",
         "login.APIMode",
         "login.AdvancedSettings",
+        "login.ChangeEndpoint",
         "login.ChangePassword",
         "login.DescChangePasswordEmail",
         "login.DescEndpoint",
@@ -3752,6 +3957,7 @@
       "settings": [],
       "keys": [
         "button.ForceTerminate",
+        "dialog.error.Error",
         "session.ContainerToCleanUp",
         "session.ForceTerminateWarningMsg",
         "session.ForceTerminateWarningMsg2",
@@ -3761,6 +3967,7 @@
         "session.SessionTerminated",
         "session.Terminate",
         "session.TerminateSession",
+        "session.TerminateSessionsPartialFailureDescription",
         "userSettings.SessionTerminationDialog"
       ]
     },
@@ -5485,16 +5692,6 @@
           "testId": "items-experimental-ai-agents",
           "descriptionKeys": [
             "general.Enabled"
-          ]
-        },
-        {
-          "key": "userSettings.AutoLogout",
-          "tab": "general",
-          "groupKey": "userSettings.Preferences",
-          "groupId": "group-preferences",
-          "testId": "items-auto-logout",
-          "descriptionKeys": [
-            "userSettings.DescAutoLogout"
           ]
         },
         {

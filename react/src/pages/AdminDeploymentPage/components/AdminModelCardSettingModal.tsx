@@ -131,7 +131,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
       mutation AdminModelCardSettingModalUpdateMutation(
         $input: UpdateModelCardV2Input!
       ) {
-        adminUpdateModelCardV2(input: $input) {
+        updateModelCardV2(input: $input) {
           modelCard {
             id
             name
