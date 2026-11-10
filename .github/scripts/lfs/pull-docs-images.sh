@@ -81,7 +81,7 @@ fail_on_untracked() { # <top> <file listing untracked pointer files>
 
 # On any exit, including Ctrl-C or a cancelled job: remove the temp dir, and
 # put back the pointer files when they were deleted but not yet checked out.
-CUR_WORK="" RESTORE_TOP="" RESTORE_LIST="" LFS_RUN_ONLY_DIR=""
+CUR_WORK="" RESTORE_TOP="" RESTORE_LIST="" LFS_RUN_ONLY_DIR="" LFS_RUN_ONLY_NOTED=0
 on_exit() {
   if [ -n "$RESTORE_LIST" ]; then
     if git -C "$RESTORE_TOP" --literal-pathspecs -c filter.lfs.required=false \
@@ -173,7 +173,7 @@ pull_one() {
   # C-quoted): a wildcard would let git's index refresh run the clean filter over
   # unrelated files.
   attrs="${work}/attributes"
-  sed -e 's/[][*?\\]/\\&/g' -e '/[[:space:]]/{ s/[\\"]/\\&/g; s/.*/"&"/; }' \
+  sed -E -e 's/[][*?\\]/\\&/g' -e '/[[:space:]]|^"/{ s/[\\"]/\\&/g; s/.*/"&"/; }' \
     -e 's/$/ filter=lfs diff=lfs merge=lfs -text/' "$list" > "$attrs"
   tr '\n' '\0' < "$list" > "${list}.nul"
   RESTORE_TOP="$top" RESTORE_LIST="${list}.nul"
@@ -223,9 +223,11 @@ pull_one() {
     [ -z "$FALLBACK_REPORT" ] || printf '%s\t%s\n' "$top" "$r" >> "$FALLBACK_REPORT"
   fi
 
-  if [ -z "${CI:-}" ] && [ -n "$LFS_RUN_ONLY_DIR" ]; then
-    log "note: git-lfs is not on your PATH; this run used a copy in ${LFS_RUN_ONLY_DIR}. To commit images, install git-lfs (https://git-lfs.com) or add that directory to PATH, then run 'git lfs install --skip-repo'."
-  elif [ -z "${CI:-}" ] && [ -z "$(git -C "$top" config --get filter.lfs.process || true)" ]; then
+  if [ -z "${CI:-}" ] && [ -n "$LFS_RUN_ONLY_DIR" ] && [ "$LFS_RUN_ONLY_NOTED" -eq 0 ]; then
+    log "note: git-lfs is not on your PATH; this run used a copy in ${LFS_RUN_ONLY_DIR}. To commit images, install git-lfs (https://git-lfs.com) or add that directory to PATH."
+    LFS_RUN_ONLY_NOTED=1
+  fi
+  if [ -z "${CI:-}" ] && [ -z "$(git -C "$top" config --get filter.lfs.process || true)" ]; then
     log "note: git-lfs filters are not configured here. Run 'git lfs install --skip-repo' before committing images."
   fi
   rm -rf "$work"

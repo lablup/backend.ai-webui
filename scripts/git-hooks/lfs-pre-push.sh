@@ -5,7 +5,7 @@
 # Usage: lfs-pre-push.sh <remote-name> <remote-url>   (git's ref lines on stdin)
 #
 # Looks at the LFS-tracked files the pushed commits add or change (merge
-# resolutions included; commits already on any remote-tracking ref excluded):
+# resolutions included; commits the target remote already has excluded):
 # - any of them committed as raw bytes instead of an LFS pointer → refused;
 # - otherwise, with git-lfs installed and LFS files in the push, `git lfs
 #   pre-push` uploads their objects;
@@ -26,11 +26,20 @@ is_zero() { [[ ! "$1" =~ [^0] ]]; }
 src_ok=0
 git check-attr --source HEAD filter -- .gitattributes >/dev/null 2>&1 && src_ok=1
 
-# "<commit>\t<new blob>\t<path>" for every file a pushed commit adds or modifies.
+# Commits the target already has: its remote-tracking refs (all of them when
+# pushing to a URL), plus the ref's previous tip.
+if [ -n "${1:-}" ] && git remote get-url "$1" >/dev/null 2>&1; then
+  known=(--remotes="$1")
+else
+  known=(--remotes)
+fi
+
+# "<commit>\t<new blob>\t<path>" for every file (not a symlink or submodule)
+# a pushed commit adds or modifies.
 while read -r _lref lsha _rref rsha; do
   [ -n "${lsha:-}" ] || continue
   is_zero "$lsha" && continue
-  range=("$lsha" --not --remotes)
+  range=("$lsha" --not "${known[@]}")
   if ! is_zero "$rsha" && git cat-file -e "${rsha}^{commit}" 2>/dev/null; then
     range+=("$rsha")
   fi
@@ -42,6 +51,8 @@ while read -r _lref lsha _rref rsha; do
         :*)
           meta="${line%%$'\t'*}"
           read -ra f <<< "$meta"
+          # ":<modes…> <oids…> <status>": the result's mode and blob come last of each.
+          case "${f[${#f[@]}/2-1]}" in 120000 | 160000) continue ;; esac
           printf '%s\t%s\t%s\n' "$commit" "${f[${#f[@]}-2]}" "${line#*$'\t'}"
           ;;
       esac
@@ -56,7 +67,7 @@ if [ -s "${work}/changed" ]; then
     awk -F'\t' -v c="$commit" '$1 == c { print $2 "\t" $3 }' "${work}/changed" > "${work}/one"
     src=()
     [ "$src_ok" -eq 0 ] || src=(--source "$commit")
-    cut -f2- "${work}/one" | git -c core.quotePath=false check-attr "${src[@]}" --stdin filter |
+    cut -f2- "${work}/one" | git -c core.quotePath=false check-attr ${src[@]+"${src[@]}"} --stdin filter |
       paste "${work}/one" - |
       awk -F'\t' '$3 ~ /: filter: lfs$/ { print $1 "\t" $2 }' >> "${work}/lfs"
   done < "${work}/commits"
@@ -65,8 +76,9 @@ fi
 # Raw content: larger than any pointer, or small but not a valid pointer.
 : > "${work}/raw"
 if [ -s "${work}/lfs" ]; then
-  cut -f1 "${work}/lfs" | sort -u | git cat-file --batch-check='%(objectname) %(objectsize)' |
-    while read -r oid size; do
+  cut -f1 "${work}/lfs" | sort -u | git cat-file --batch-check='%(objectname) %(objecttype) %(objectsize)' |
+    while read -r oid type size; do
+      [ "$type" = blob ] || continue
       if [ "$size" -gt 1024 ] || ! git cat-file blob "$oid" | lfs_is_valid_pointer; then
         awk -F'\t' -v o="$oid" '$1 == o { print $2 }' "${work}/lfs"
       fi

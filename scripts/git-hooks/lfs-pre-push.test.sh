@@ -23,7 +23,7 @@ fi
 # PATH without any git-lfs; git-lfs is added per case.
 NOLFS="$TMP/nolfs-bin"
 mkdir -p "$NOLFS"
-for t in git sh bash sed sort head cut tr cat mktemp rm dirname env grep mkdir cp chmod awk paste wc; do
+for t in git sh bash sed sort head cut tr cat mktemp rm dirname env grep mkdir cp chmod awk paste wc ln; do
   ln -s "$(command -v "$t")" "$NOLFS/$t"
 done
 no_lfs() { export PATH="$NOLFS"; }
@@ -123,6 +123,10 @@ git merge -q --no-commit side >/dev/null 2>&1
 raw_img docs/src/en/images/in-merge.png && git add -A && git commit -qm "merge with an image"
 expect_refused "no git-lfs: a raw image added in a merge commit is refused" "in-merge.png"
 
+setup
+ln -s shot.png docs/src/en/images/link.png && git add -A && git commit -qm "symlink"
+expect_pass "no git-lfs: a symlink under an LFS path passes"
+
 # --- with git-lfs ---
 if [ -z "$LFS_DIR" ]; then
   echo "skip - git-lfs not found; set GIT_LFS_DIR to run the git-lfs cases"
@@ -136,6 +140,19 @@ else
   if [ -n "$oid" ] && push && remote_has_topic && [ -f "$TMP/remote.git/lfs/objects/${oid:0:2}/${oid:2:2}/${oid}" ]; then
     ok "git-lfs: changed image committed as pointer and its object uploaded"
   else ko "git-lfs: changed image committed as pointer and its object uploaded"; fi
+
+  # The commits are already on another remote: the target still gets the objects.
+  setup
+  with_lfs
+  git lfs install --skip-repo >/dev/null
+  git init -q --bare "$TMP/fork.git" && git remote add fork "file://$TMP/fork.git"
+  raw_img "$IMG" && git commit -qam "screenshot"
+  git push -q --no-verify fork HEAD:topic > "$TMP/out" 2>&1   # creates refs/remotes/fork/topic
+  oid="$(git cat-file blob "HEAD:$IMG" | sed -n 's/^oid sha256://p')"
+  if push && remote_has_topic && [ -f "$TMP/remote.git/lfs/objects/${oid:0:2}/${oid:2:2}/${oid}" ]; then
+    ok "git-lfs: pushed to another remote first, the target still gets the object"
+  else ko "git-lfs: pushed to another remote first, the target still gets the object"; fi
+  rm -rf "$TMP/fork.git"
 
   setup
   with_lfs   # on PATH, filters never configured
