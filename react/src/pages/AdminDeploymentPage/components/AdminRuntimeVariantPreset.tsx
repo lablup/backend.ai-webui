@@ -146,8 +146,8 @@ const AdminRuntimeVariantPreset = ({
   const [commitDeletePreset] =
     useMutation<AdminRuntimeVariantPresetDeleteMutation>(graphql`
       mutation AdminRuntimeVariantPresetDeleteMutation($id: UUID!) {
-        adminDeleteRuntimeVariantPreset(id: $id) {
-          id
+        purgeRuntimeVariantPreset(id: $id) {
+          entityId
         }
       }
     `);
