@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a6800159c2b1a42e7132e269d7fb2650>>
+ * @generated SignedSource<<428b06c5afdae2d699cadae664ffe481>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,7 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type ImportImageModalRegistriesQuery$variables = {
   after?: string | null | undefined;
-  domain: string;
+  domain?: string | null | undefined;
   first?: number | null | undefined;
 };
 export type ImportImageModalRegistriesQuery$data = {
@@ -32,9 +32,6 @@ export type ImportImageModalRegistriesQuery$data = {
   } | null | undefined;
   readonly domain: {
     readonly allowed_docker_registries: ReadonlyArray<string | null | undefined> | null | undefined;
-  } | null | undefined;
-  readonly domainV2: {
-    readonly entityId: string;
   } | null | undefined;
 };
 export type ImportImageModalRegistriesQuery = {
@@ -58,149 +55,136 @@ v2 = {
   "kind": "LocalArgument",
   "name": "first"
 },
-v3 = {
-  "alias": null,
-  "args": [
-    {
-      "kind": "Variable",
-      "name": "name",
-      "variableName": "domain"
-    }
-  ],
-  "concreteType": "Domain",
-  "kind": "LinkedField",
-  "name": "domain",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "allowed_docker_registries",
-      "storageKey": null
-    }
-  ],
-  "storageKey": null
-},
-v4 = [
+v3 = [
   {
-    "kind": "Variable",
-    "name": "domainName",
-    "variableName": "domain"
+    "alias": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "name",
+        "variableName": "domain"
+      }
+    ],
+    "concreteType": "Domain",
+    "kind": "LinkedField",
+    "name": "domain",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "allowed_docker_registries",
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "after",
+        "variableName": "after"
+      },
+      {
+        "kind": "Variable",
+        "name": "first",
+        "variableName": "first"
+      }
+    ],
+    "concreteType": "ContainerRegistryConnection",
+    "kind": "LinkedField",
+    "name": "container_registry_nodes",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "ContainerRegistryEdge",
+        "kind": "LinkedField",
+        "name": "edges",
+        "plural": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ContainerRegistryNode",
+            "kind": "LinkedField",
+            "name": "node",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "id",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "registry_name",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "project",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "url",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "type",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "PageInfo",
+        "kind": "LinkedField",
+        "name": "pageInfo",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "hasNextPage",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "endCursor",
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
   }
-],
-v5 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "entityId",
-  "storageKey": null
-},
-v6 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v7 = {
-  "alias": null,
-  "args": [
-    {
-      "kind": "Variable",
-      "name": "after",
-      "variableName": "after"
-    },
-    {
-      "kind": "Variable",
-      "name": "first",
-      "variableName": "first"
-    }
-  ],
-  "concreteType": "ContainerRegistryConnection",
-  "kind": "LinkedField",
-  "name": "container_registry_nodes",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "ContainerRegistryEdge",
-      "kind": "LinkedField",
-      "name": "edges",
-      "plural": true,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "ContainerRegistryNode",
-          "kind": "LinkedField",
-          "name": "node",
-          "plural": false,
-          "selections": [
-            (v6/*: any*/),
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "registry_name",
-              "storageKey": null
-            },
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "project",
-              "storageKey": null
-            },
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "url",
-              "storageKey": null
-            },
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "type",
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "PageInfo",
-      "kind": "LinkedField",
-      "name": "pageInfo",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "hasNextPage",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "endCursor",
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    }
-  ],
-  "storageKey": null
-};
+];
 return {
   "fragment": {
     "argumentDefinitions": [
@@ -211,22 +195,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "ImportImageModalRegistriesQuery",
-    "selections": [
-      (v3/*: any*/),
-      {
-        "alias": null,
-        "args": (v4/*: any*/),
-        "concreteType": "DomainV2",
-        "kind": "LinkedField",
-        "name": "domainV2",
-        "plural": false,
-        "selections": [
-          (v5/*: any*/)
-        ],
-        "storageKey": null
-      },
-      (v7/*: any*/)
-    ],
+    "selections": (v3/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -239,35 +208,19 @@ return {
     ],
     "kind": "Operation",
     "name": "ImportImageModalRegistriesQuery",
-    "selections": [
-      (v3/*: any*/),
-      {
-        "alias": null,
-        "args": (v4/*: any*/),
-        "concreteType": "DomainV2",
-        "kind": "LinkedField",
-        "name": "domainV2",
-        "plural": false,
-        "selections": [
-          (v5/*: any*/),
-          (v6/*: any*/)
-        ],
-        "storageKey": null
-      },
-      (v7/*: any*/)
-    ]
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "764b74bd564f45e5b824d0a3c68d79d5",
+    "cacheID": "fa10b4e07f503629972f5f359f1c370b",
     "id": null,
     "metadata": {},
     "name": "ImportImageModalRegistriesQuery",
     "operationKind": "query",
-    "text": "query ImportImageModalRegistriesQuery(\n  $first: Int\n  $after: String\n  $domain: String!\n) {\n  domain(name: $domain) {\n    allowed_docker_registries\n  }\n  domainV2(domainName: $domain) {\n    entityId\n    id\n  }\n  container_registry_nodes(first: $first, after: $after) @since(version: \"24.09.0\") {\n    edges {\n      node {\n        id\n        registry_name\n        project\n        url\n        type\n      }\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n"
+    "text": "query ImportImageModalRegistriesQuery(\n  $first: Int\n  $after: String\n  $domain: String\n) {\n  domain(name: $domain) {\n    allowed_docker_registries\n  }\n  container_registry_nodes(first: $first, after: $after) @since(version: \"24.09.0\") {\n    edges {\n      node {\n        id\n        registry_name\n        project\n        url\n        type\n      }\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "c9302492d0e9877a6dbcf561cd19834b";
+(node as any).hash = "7e6b2763b618a4248747cfe7dd38c9c3";
 
 export default node;

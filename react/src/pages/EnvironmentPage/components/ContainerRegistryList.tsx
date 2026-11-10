@@ -121,7 +121,7 @@ const ContainerRegistryList: React.FC<{
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const { container_registry_nodes, domain, domainV2 } =
+  const { container_registry_nodes, domain } =
     useLazyLoadQuery<ContainerRegistryListQuery>(
       graphql`
         query ContainerRegistryListQuery(
@@ -170,9 +170,6 @@ const ContainerRegistryList: React.FC<{
           domain(name: $domain) {
             name
             allowed_docker_registries
-          }
-          domainV2(domainName: $domain) {
-            entityId
           }
         }
       `,
@@ -417,10 +414,10 @@ const ContainerRegistryList: React.FC<{
               inFlightHostName === record.id + deferredFetchKey
             }
             onChange={(isOn) => {
-              if (!_.isString(record.registry_name) || !domainV2) return;
-              let newAllowedDockerRegistries = _.clone(
-                domain?.allowed_docker_registries || [],
-              ) as string[];
+              if (!_.isString(record.registry_name)) return;
+              let newAllowedDockerRegistries = _.compact(
+                domain?.allowed_docker_registries,
+              );
               if (isOn) {
                 newAllowedDockerRegistries.push(record.registry_name);
               } else {
@@ -433,7 +430,7 @@ const ContainerRegistryList: React.FC<{
               setInFlightHostName(record.id + deferredFetchKey);
               commitDomainMutation({
                 variables: {
-                  id: domainV2.entityId,
+                  id: baiClient._config.domainId,
                   allowedDockerRegistries: newAllowedDockerRegistries,
                 },
                 onCompleted: (_res, errors) => {
@@ -456,9 +453,9 @@ const ContainerRegistryList: React.FC<{
                       : t('registry.RegistryTurnedOff'),
                   });
                 },
-                // V2 raises what `modify_domain` returned as `ok: false`.
                 onError: (error) => {
                   message.error(error.message);
+                  updateFetchKey();
                 },
               });
             }}

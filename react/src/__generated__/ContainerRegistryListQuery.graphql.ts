@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ebaa2be158011f3e2d993d6f5e1e07bf>>
+ * @generated SignedSource<<237a0fe827382cd7c106bee201f11e2d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -50,9 +50,6 @@ export type ContainerRegistryListQuery$data = {
   readonly domain: {
     readonly allowed_docker_registries: ReadonlyArray<string | null | undefined> | null | undefined;
     readonly name: string | null | undefined;
-  } | null | undefined;
-  readonly domainV2: {
-    readonly entityId: string;
   } | null | undefined;
 };
 export type ContainerRegistryListQuery = {
@@ -263,20 +260,6 @@ v20 = {
     }
   ],
   "storageKey": null
-},
-v21 = [
-  {
-    "kind": "Variable",
-    "name": "domainName",
-    "variableName": "domain"
-  }
-],
-v22 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "entityId",
-  "storageKey": null
 };
 return {
   "fragment": {
@@ -343,19 +326,7 @@ return {
         ],
         "storageKey": null
       },
-      (v20/*: any*/),
-      {
-        "alias": null,
-        "args": (v21/*: any*/),
-        "concreteType": "DomainV2",
-        "kind": "LinkedField",
-        "name": "domainV2",
-        "plural": false,
-        "selections": [
-          (v22/*: any*/)
-        ],
-        "storageKey": null
-      }
+      (v20/*: any*/)
     ],
     "type": "Query",
     "abstractKey": null
@@ -483,33 +454,20 @@ return {
         ],
         "storageKey": null
       },
-      (v20/*: any*/),
-      {
-        "alias": null,
-        "args": (v21/*: any*/),
-        "concreteType": "DomainV2",
-        "kind": "LinkedField",
-        "name": "domainV2",
-        "plural": false,
-        "selections": [
-          (v22/*: any*/),
-          (v7/*: any*/)
-        ],
-        "storageKey": null
-      }
+      (v20/*: any*/)
     ]
   },
   "params": {
-    "cacheID": "728bef934b9ee95ca5ce1ffa04f8605a",
+    "cacheID": "ee536592e34a3ae3cb70450affbff74d",
     "id": null,
     "metadata": {},
     "name": "ContainerRegistryListQuery",
     "operationKind": "query",
-    "text": "query ContainerRegistryListQuery(\n  $domain: String!\n  $filter: String\n  $order: String\n  $first: Int\n  $offset: Int\n  $allowedProjectPreviewCount: Int\n) {\n  container_registry_nodes(filter: $filter, order: $order, first: $first, offset: $offset) {\n    edges {\n      node {\n        ...ContainerRegistryEditorModalFragment\n        id\n        row_id\n        registry_name\n        name\n        url\n        type\n        project\n        username\n        password\n        ssl_verify\n        is_global\n        allowed_groups_preview: allowed_groups(first: $allowedProjectPreviewCount) {\n          count\n          edges {\n            node {\n              id\n              name\n            }\n          }\n        }\n      }\n    }\n    count\n  }\n  domain(name: $domain) {\n    name\n    allowed_docker_registries\n  }\n  domainV2(domainName: $domain) {\n    entityId\n    id\n  }\n}\n\nfragment ContainerRegistryEditorModalFragment on ContainerRegistryNode {\n  id\n  row_id\n  name\n  registry_name\n  url\n  type\n  project\n  username\n  ssl_verify\n  extra\n  is_global\n  allowed_groups(first: 100) {\n    edges {\n      node {\n        id\n        row_id\n        name\n        type\n        is_active\n        domain_name\n      }\n    }\n  }\n}\n"
+    "text": "query ContainerRegistryListQuery(\n  $domain: String!\n  $filter: String\n  $order: String\n  $first: Int\n  $offset: Int\n  $allowedProjectPreviewCount: Int\n) {\n  container_registry_nodes(filter: $filter, order: $order, first: $first, offset: $offset) {\n    edges {\n      node {\n        ...ContainerRegistryEditorModalFragment\n        id\n        row_id\n        registry_name\n        name\n        url\n        type\n        project\n        username\n        password\n        ssl_verify\n        is_global\n        allowed_groups_preview: allowed_groups(first: $allowedProjectPreviewCount) {\n          count\n          edges {\n            node {\n              id\n              name\n            }\n          }\n        }\n      }\n    }\n    count\n  }\n  domain(name: $domain) {\n    name\n    allowed_docker_registries\n  }\n}\n\nfragment ContainerRegistryEditorModalFragment on ContainerRegistryNode {\n  id\n  row_id\n  name\n  registry_name\n  url\n  type\n  project\n  username\n  ssl_verify\n  extra\n  is_global\n  allowed_groups(first: 100) {\n    edges {\n      node {\n        id\n        row_id\n        name\n        type\n        is_active\n        domain_name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "40c68f9bec94e66ff2c368ddf44d380c";
+(node as any).hash = "d9a698f1064474787f290df2a33ce915";
 
 export default node;

@@ -108,8 +108,8 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
   const isSftpMapLoading =
     proxyResourceGroups === undefined || isSftpMapFetching;
 
-  // TODO(needs-backend): #11079 the V2 resource group inputs have no
-  // `scheduler_opts`; move create/update to `adminCreateResourceGroupV2` / `updateResourceGroup` then.
+  // TODO(needs-backend): lablup/backend.ai#16372, lablup/backend.ai#16373 the V2 resource group
+  // inputs have no `scheduler_opts`; move create/update to `adminCreateResourceGroupV2` / `updateResourceGroup` then.
   const [commitUpdateResourceGroup, isInFlightCommitUpdateResourceGroup] =
     useMutation<ResourceGroupSettingModalUpdateMutation>(graphql`
       mutation ResourceGroupSettingModalUpdateMutation(

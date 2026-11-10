@@ -111,7 +111,7 @@ vi.mock('../hooks', async (importOriginal) => {
   return {
     ...originalModule,
     useSuspendedBackendaiClient: () => ({
-      _config: { domainName: 'default' },
+      _config: { domainName: 'default', domainId: 'domain-uuid' },
     }),
   };
 });
@@ -269,7 +269,6 @@ const queueRegistryPages = (
           domain: allowedRegistries
             ? { allowed_docker_registries: allowedRegistries }
             : null,
-          domainV2: { entityId: 'domain-uuid' },
           container_registry_nodes: {
             edges: nodes.map((node) => ({ node })),
             pageInfo: {

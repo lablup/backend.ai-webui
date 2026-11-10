@@ -61,7 +61,7 @@ import {
 
 type TabKey = 'defaultSessionOptions' | 'defaultDeploymentOptions';
 
-// TODO(needs-backend): #11079 `adminResourceGroupV2` has no `scheduler_opts`,
+// TODO(needs-backend): lablup/backend.ai#16371 `adminResourceGroupV2` has no `scheduler_opts`,
 // which the edit form reads; started on the edit click (render-as-you-fetch).
 const SettingModalQuery = graphql`
   query ResourceGroupDetailDrawerSettingModalQuery($name: String!) {
@@ -153,7 +153,7 @@ const ResourceGroupDetailDrawerContent: React.FC<{
   const deploymentOptionsTabRef = useRef<HTMLButtonElement>(null);
 
   const resourceGroupName = resourceGroup.name;
-  // TODO(needs-backend): #11079 `ResourceGroup` has no `scheduler_opts`.
+  // TODO(needs-backend): lablup/backend.ai#16371 `ResourceGroup` has no `scheduler_opts`.
   const { scaling_group } = useLazyLoadQuery<ResourceGroupDetailDrawerQuery>(
     graphql`
       query ResourceGroupDetailDrawerQuery($name: String!) {
