@@ -139,6 +139,19 @@ test("generateWebsite — fails before writing output when the workspace has poi
   assert.equal(fs.existsSync(path.join(root, "dist")), false);
 });
 
+test("generateWebsite — finds pointers at any depth under src, in any language", async () => {
+  const { root, config } = makeVersionedProject();
+  write(root, "src/en/some_chapter/images/nested.png", POINTER);
+  write(root, "src/ko/images/other-lang.png", POINTER);
+  await assert.rejects(
+    generateWebsite(config, { lang: "en", strict: false }),
+    (err: unknown) =>
+      err instanceof LfsPointerError &&
+      err.files.length === 2 &&
+      /src\/en\/some_chapter\/images\/nested\.png/.test(err.message),
+  );
+});
+
 test("generateWebsite — also checks archive worktrees of the multi-version build", async () => {
   const { root, config } = makeVersionedProject();
   write(

@@ -90,10 +90,7 @@ export async function generatePdf(
     }
   }
 
-  assertNoLfsPointers(
-    languages.map((lang) => path.join(config.srcDir, lang)),
-    { cwd: config.projectRoot },
-  );
+  assertNoLfsPointers([config.srcDir], { cwd: config.projectRoot });
 
   const envConcurrency = Number.parseInt(
     process.env.BAI_DOCS_PDF_CONCURRENCY ?? '',

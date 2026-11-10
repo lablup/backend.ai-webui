@@ -17,7 +17,7 @@ cd packages/backend.ai-docs-toolkit && pnpm run build
 ```
 
 Once the manual images move to [Git LFS](https://git-lfs.com), a clone holds only pointer files
-for `src/*/images/` (`.lfsconfig` keeps it that way even with git-lfs installed), and the PDF,
+for the images under `src/` (`.lfsconfig` keeps it that way even with git-lfs installed), and the PDF,
 web build and previews stop with an error naming them. To build the manual or change its
 screenshots, install git-lfs, run `git lfs install` once, then fetch the images:
 
@@ -179,7 +179,7 @@ packages/backend.ai-webui-docs/
 
 - One `# H1` per file as the page title
 - `## H2` for major sections, `### H3` for subsections
-- Images: `![](images/filename.png)` — place image files in `src/{lang}/images/`. Once these move to Git LFS, commit them with git-lfs installed (`git lfs install`); the `lfs-pointer-check` CI job rejects images committed as raw bytes there
+- Images: `![](images/filename.png)` — place image files in `src/{lang}/images/`. Once the manual images move to Git LFS, commit images under `src/` with git-lfs installed (`git lfs install`); the `lfs-pointer-check` CI job rejects images committed there as raw bytes
 - Cross-references: `[Link Text](#heading-id)`
 - Inline code for UI elements: `` `Settings` ``, `` `config.toml` ``
 

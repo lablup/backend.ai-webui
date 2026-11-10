@@ -193,7 +193,7 @@ $ make compile_wsproxy
 
 #### User manual screenshots (Git LFS)
 
-Once the user manual images (`packages/backend.ai-webui-docs/src/*/images/`) move to
+Once the user manual images (anywhere under `packages/backend.ai-webui-docs/src/`) move to
 [Git LFS](https://git-lfs.com), normal development needs nothing extra: a clone keeps them as
 small pointer files, even with git-lfs installed (`.lfsconfig`). To build the manual or work on
 its screenshots, install git-lfs, run `git lfs install` once, and fetch the images:

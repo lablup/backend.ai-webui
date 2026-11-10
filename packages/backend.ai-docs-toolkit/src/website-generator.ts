@@ -283,12 +283,7 @@ export async function generateWebsite(
       }
     }
   }
-  assertNoLfsPointers(
-    imageSourceRoots.flatMap((root) =>
-      languages.map((lang) => path.join(root, lang)),
-    ),
-    { cwd: config.projectRoot },
-  );
+  assertNoLfsPointers(imageSourceRoots, { cwd: config.projectRoot });
 
   console.log(`${productName} Website Generator`);
   console.log(`Title: ${title}`);
