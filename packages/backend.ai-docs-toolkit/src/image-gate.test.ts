@@ -121,6 +121,20 @@ test("compareImages — a broad colour shift below the tolerance is changed by t
   assert.equal(r.reason, "faint");
 });
 
+test("compareImages — colour changes under full transparency are unchanged", async () => {
+  const pixels = basePixels();
+  for (let y = 0; y < 100; y++) {
+    for (let x = 0; x < 100; x++) pixels[(y * W + x) * 4 + 3] = 0;
+  }
+  const recoloured = Buffer.from(pixels);
+  for (let y = 0; y < 100; y++) {
+    for (let x = 0; x < 100; x++) recoloured[(y * W + x) * 4] = 255;
+  }
+  const r = await compareImages(await png(pixels), await png(recoloured));
+  assert.equal(r.changed, false);
+  assert.equal(r.diffPixels, 0);
+});
+
 test("compareImages — out-of-range options fail with ImageGateError", async () => {
   const a = await png(basePixels());
   for (const opts of [

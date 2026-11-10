@@ -99,7 +99,8 @@ Options:
     --to <dir>                Docs images directory to update (required)
     --force <file>            Copy this capture even if it looks unchanged
                               (repeatable or comma-separated file names)
-    --tolerance <0-255>       Per-channel difference ignored as noise (default: 16)
+    --tolerance <0-254>       Per-channel difference ignored as noise (default: 16);
+                              broad faint changes are judged by --faint-* below
     --threshold <fraction>    Differing-pixel fraction that counts as changed
                               (default: 0.0001)
     --tile-size <px>          Tile edge for the localized-change rule (default: 32)

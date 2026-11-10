@@ -97,7 +97,7 @@ Plan file: packages/backend.ai-webui-docs/.agent-output/docs-update-plan-<topic>
 Files touched by writer (from git status --short):
 <paste short list>
 Screenshots the capturer forced past the visual-change gate (keep these):
-<file — reason, one per line, or "none"; omit the section if no capture ran>
+<file — reason, one per line, or "none" — also when no capture ran>
 
 Run the standard accuracy / consistency / style / translation-quality review.
 Write the report to packages/backend.ai-webui-docs/.agent-output/docs-review-report-<topic>.md. Apply

@@ -119,9 +119,9 @@ function checkRange(
     (integer && !Number.isInteger(value))
   ) {
     const kind = integer ? "an integer" : "a number";
-    throw new ImageGateError(
-      `${name} must be ${kind} from ${min} to ${max}, got ${value}.`,
-    );
+    const range =
+      min > 0 && min < 1 ? `above 0 up to ${max}` : `from ${min} to ${max}`;
+    throw new ImageGateError(`${name} must be ${kind} ${range}, got ${value}.`);
   }
   return value;
 }
@@ -238,6 +238,8 @@ export async function compareImages(
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       const o = (y * width + x) * 4;
+      // Colour under full transparency is invisible.
+      if (a.data[o + 3] === 0 && b.data[o + 3] === 0) continue;
       const d = Math.max(
         Math.abs(a.data[o] - b.data[o]),
         Math.abs(a.data[o + 1] - b.data[o + 1]),

@@ -169,7 +169,7 @@ Verify against rules in `packages/backend.ai-webui-docs/TRANSLATION-GUIDE.md` an
 - [ ] Images are placed after introductory text, not before
 - [ ] TODO comments are added for screenshots that need to be captured
 - [ ] No broken image references
-- [ ] Every modified PNG visibly changed. `docs-screenshot-capturer` copies captures through the `docs-toolkit accept:images` gate, so a modified screenshot that looks the same as `main`'s should not be in the diff. Re-check with the gate in dry-run. Revert an `unchanged` file (`git checkout "$base" -- <file>`) only when your prompt lists the capturer's forced files and it is not among them; with no forced list, report it as a warning instead of reverting:
+- [ ] Every modified PNG visibly changed. `docs-screenshot-capturer` copies captures through the `docs-toolkit accept:images` gate, so a modified screenshot that looks the same as `main`'s should not be in the diff. Re-check with the gate in dry-run. Revert an `unchanged` file (`git checkout "$base" -- <file>`) unless your prompt lists it as forced by the capturer (docs-lead always passes that list, `none` included); only when your prompt has no such list at all, report it as a warning instead of reverting:
   ```bash
   rm -rf /tmp/gate-check
   pnpm --filter backend.ai-docs-toolkit build   # dist/ is gitignored
