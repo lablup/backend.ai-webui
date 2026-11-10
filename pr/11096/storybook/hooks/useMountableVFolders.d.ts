@@ -20,6 +20,8 @@ export declare const mountableVFolderScope: (userId: string, currentProjectId?: 
  * Hosts are sorted so every caller sends the same variables and shares one Relay cache entry.
  */
 export declare const mountableVFolderFilter: (mountableHosts: ReadonlyArray<string>) => VFolderFilter;
+/** Leaves out folders being deleted or already deleted. */
+export declare const notDeletedVFolderFilter: VFolderFilter;
 /**
  * The ready dotfile folders a session in `scope` mounts on its own.
  * Suspends. Callers passing the same scope share one query, so a `refetch`
