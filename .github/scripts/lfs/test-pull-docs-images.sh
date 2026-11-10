@@ -48,7 +48,9 @@ N_SHA="$(sha "$D/en/chapter/images/nested.png")"
 git clone -q --bare "file://$T/origin.git" "$T/fork.git"
 git remote add fork "file://$T/fork.git"
 head -c 25000 /dev/urandom > "$D/en/images/from-fork.png"
-git add -A && git commit -qm "fork PR"
+git add -A && git commit -qm "fork PR: add an image"
+head -c 26000 /dev/urandom > "$D/en/images/from-fork.png"
+git add -A && git commit -qm "fork PR: replace it"
 quiet git -c lfs.allowincompletepush=true push fork HEAD:refs/heads/feature
 quiet env GIT_LFS_SKIP_PUSH=1 git push origin HEAD:refs/pull/1/head
 F_SHA="$(sha "$D/en/images/from-fork.png")"
@@ -90,8 +92,9 @@ check "nothing changed when the fetch is incomplete" is_pointer "$T/c3/$D/en/ima
 quiet bash "$PULL" --fallback-remote "file://$T/missing.git" "$T/c3"; rc=$?
 check "every source incomplete: exit 1" [ "$rc" -eq 1 ]
 check "every source incomplete: nothing changed" is_pointer "$T/c3/$D/en/images/a.png"
-quiet bash "$PULL" --fallback-remote "file://$T/fork.git" "$T/c3"; rc=$?
-check "fork fallback materializes, exit 3" [ "$rc" -eq 3 ]
+quiet bash "$PULL" --fallback-remote "file://$T/fork.git" --fallback-report "$T/c3.report" "$T/c3"; rc=$?
+check "fork fallback materializes, exit 0" [ "$rc" -eq 0 ]
+check "fork fallback is reported" grep -q "fork.git" "$T/c3.report"
 check "fork image materialized" [ "$(sha "$T/c3/$D/en/images/from-fork.png")" = "$F_SHA" ]
 check "base image materialized" [ "$(sha "$T/c3/$D/en/images/a.png")" = "$A_SHA" ]
 
@@ -100,11 +103,12 @@ check "base image materialized" [ "$(sha "$T/c3/$D/en/images/a.png")" = "$A_SHA"
 fresh "$T/maint"
 quiet git -C "$T/maint" fetch origin refs/pull/1/head
 quiet git -C "$T/maint" lfs fetch --exclude="" "file://$T/fork.git" FETCH_HEAD
-quiet git -C "$T/maint" lfs push origin FETCH_HEAD; rc=$?
+quiet git -C "$T/maint" -c lfs.allowincompletepush=true lfs push origin FETCH_HEAD; rc=$?
 check "maintainer copy command succeeds" [ "$rc" -eq 0 ]
 fresh "$T/c3b" refs/pull/1/head
-quiet bash "$PULL" --fallback-remote "file://$T/fork.git" "$T/c3b"; rc=$?
+quiet bash "$PULL" --fallback-remote "file://$T/fork.git" --fallback-report "$T/c3b.report" "$T/c3b"; rc=$?
 check "objects copied to origin: exit 0" [ "$rc" -eq 0 ]
+check "objects copied to origin: no fallback reported" [ ! -s "$T/c3b.report" ]
 check "fork image materialized from origin" [ "$(sha "$T/c3b/$D/en/images/from-fork.png")" = "$F_SHA" ]
 
 # 4. A tree without pointer files needs no git-lfs.

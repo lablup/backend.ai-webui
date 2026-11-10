@@ -206,8 +206,8 @@ jobs:
         run: echo "short_hash=$(echo "${{ github.event.pull_request.head.sha }}" | cut -c1-7)" >> "$GITHUB_OUTPUT"
 
       # The script pulls Git LFS images for head and merge base (#11040). A fork
-      # PR's new images are stored in the fork's LFS endpoint, so the head pull
-      # falls back to the fork's public URL (read-only, the same token as before).
+      # PR's new images may exist only in the fork's LFS store, so the head pull
+      # falls back to the fork's public URL, fetched anonymously (#11055).
       - name: Build both docs trees and mark the changes
         env:
           HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
@@ -252,6 +252,16 @@ jobs:
           path: docs-analysis/
           if-no-files-found: error
           retention-days: 7
+
+      # Fails after the uploads: the images built from the fork must reach this
+      # repository's LFS storage before merging, or main's builds break.
+      - name: Check that the PR's LFS images are in this repository
+        run: |
+          report="${RUNNER_TEMP}/docs-preview/lfs-fork-only.txt"
+          [ -f "$report" ] || exit 0
+          echo "::error::$(head -n1 "$report")"
+          cat "$report"
+          exit 1
 
   # ── the write half ─────────────────────────────────────────────────────────
   # `publish` and `report` hold the only write tokens in this workflow, one

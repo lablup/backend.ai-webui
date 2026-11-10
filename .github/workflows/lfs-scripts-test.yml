@@ -6,6 +6,8 @@ on:
   pull_request:
     paths:
       - ".github/scripts/lfs/**"
+      # It prints the maintainer command the fixture runs.
+      - ".github/scripts/pr-preview/build-docs-preview.sh"
       - ".github/workflows/lfs-scripts-test.yml"
 
 permissions:

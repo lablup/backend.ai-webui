@@ -107,7 +107,7 @@ for lang in {{#each languages}}{{code}}{{#unless @last}} {{/unless}}{{/each}}; d
 done
 ```
 
-Add `--json` for the measured difference per file. **Never bypass the gate** with `cp`. If a skipped image truly must be replaced, rerun the gate with `--force <file.png>` and state in your report which file you forced and why. If an existing image is a Git LFS pointer, run `pnpm --filter backend.ai-webui-docs run images:pull` (a plain `git lfs pull` skips the manual's images because of `.lfsconfig`) and rerun.
+Add `--json` for the measured difference per file. **Never bypass the gate** with `cp`. If a skipped image truly must be replaced, rerun the gate with `--force <file.png>` and state in your report which file you forced and why. If an existing image is a Git LFS pointer, fetch the real images with `git lfs pull --exclude=""` (the empty exclude overrides a `fetchexclude` in `.lfsconfig`; use the project's own pull script when it has one) and rerun.
 
 **Verify per-language uniqueness:**
 ```bash

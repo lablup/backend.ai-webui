@@ -3,7 +3,8 @@
 # images, in each given checkout (default: this repository's working tree).
 #
 # Usage: pull-docs-images.sh [--ref <rev>] [--remote <name|url>]...
-#                            [--fallback-remote <url>]... [<worktree-dir>...]
+#                            [--fallback-remote <url>]... [--fallback-report <file>]
+#                            [<worktree-dir>...]
 #
 #   --ref              revision whose LFS objects to fetch in one batch (default:
 #                      HEAD). Pass it when the docs source was checked out from
@@ -12,16 +13,17 @@
 #   --remote           remote name or URL to fetch from; repeatable, tried in
 #                      order. Default: origin, else the first remote.
 #   --fallback-remote  URL tried, anonymously, after those when they lack objects
-#                      (a fork PR's head repository). Images it supplies are
-#                      materialized, but the run then exits 3: builds of the base
-#                      repository's branches fetch only from the base repository.
+#                      (a fork PR's head repository).
+#   --fallback-report  file to which a line `<checkout><TAB><url>` is appended when
+#                      a fallback supplied objects the remotes lack: builds of the
+#                      base repository's branches fetch from the base repository
+#                      only, so the caller decides what to do about it.
 #
 # Covers both layouts: packages/backend.ai-webui-docs/src on normal branches and
 # src/ on docs-archive/* branches. Without pointer files it exits 0 at once and
 # does not need git-lfs. Otherwise it installs git-lfs if missing, overrides
 # lfs.fetchexclude from .lfsconfig, configures the LFS filter per command only
 # (never in any git config file), and fails if a pointer file remains.
-# Exit codes: 0 done · 1 failure (files unchanged or restored) · 3 see above.
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -31,13 +33,15 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REF="HEAD"
 REMOTES=()
 FALLBACKS=()
+FALLBACK_REPORT=""
 DIRS=()
 while [ $# -gt 0 ]; do
   case "$1" in
     --ref) REF="${2:?--ref needs a value}"; shift 2 ;;
     --remote) REMOTES+=("${2:?--remote needs a value}"); shift 2 ;;
     --fallback-remote) FALLBACKS+=("${2:?--fallback-remote needs a value}"); shift 2 ;;
-    -h|--help) sed -n '2,24p' "$0"; exit 0 ;;
+    --fallback-report) FALLBACK_REPORT="${2:?--fallback-report needs a value}"; shift 2 ;;
+    -h|--help) sed -n '2,26p' "$0"; exit 0 ;;
     -*) echo "Unknown option: $1" >&2; exit 2 ;;
     *) DIRS+=("$1"); shift ;;
   esac
@@ -128,7 +132,12 @@ pull_one() {
   done
   if [ "$fetched" -eq 0 ]; then
     for r in ${FALLBACKS[@]+"${FALLBACKS[@]}"}; do
-      if lfs_fetch "$r" -c "http.${r}.extraheader="; then fetched=1; via_fallback=1; break; fi
+      # The override must cover the LFS endpoint `<repo>.git/info/lfs`, so it is
+      # keyed on the URL with and without `.git`.
+      local base="${r%/}"; base="${base%.git}"
+      if lfs_fetch "$r" -c "http.${base}.extraheader=" -c "http.${base}.git.extraheader="; then
+        fetched=1; via_fallback=1; break
+      fi
       log "warning: fetching from ${r} was incomplete" >&2
     done
   fi
@@ -186,8 +195,8 @@ pull_one() {
   log "${top}: materialized all LFS images"
   fail_on_untracked "$top" "${work}/untracked"
   if [ "$via_fallback" -eq 1 ]; then
-    FALLBACK_USED=1
     log "warning: ${top}: some LFS objects came only from ${r}; ${remotes[*]} does not have them." >&2
+    [ -z "$FALLBACK_REPORT" ] || printf '%s\t%s\n' "$top" "$r" >> "$FALLBACK_REPORT"
   fi
 
   if [ -z "${CI:-}" ] && [ -z "$(git -C "$top" config --get filter.lfs.process || true)" ]; then
@@ -196,8 +205,6 @@ pull_one() {
   rm -rf "$work"
 }
 
-FALLBACK_USED=0
 for d in "${DIRS[@]}"; do
   pull_one "$d"
 done
-[ "$FALLBACK_USED" -eq 0 ] || exit 3
