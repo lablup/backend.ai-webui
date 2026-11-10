@@ -55,7 +55,7 @@
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
 | System Settings          | `/admin/system-settings`                         |    39    |   35    | 🔶 90%  |
-| **Total**                |                                                  | **580**  | **426** | **73%** |
+| **Total**                |                                                  | **582**  | **428** | **74%** |
 
 ---
 
