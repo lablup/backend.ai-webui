@@ -49,20 +49,44 @@ tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
 tarball="${tmp}/git-lfs.tar.gz"
 
-log "downloading ${URL}"
+# Node (>= 18, global fetch) is the fallback: some CI images ship neither curl nor wget.
+# shellcheck disable=SC2016  # JavaScript, not shell
+NODE_DOWNLOAD='
+const [url, out] = process.argv.slice(1);
+(async () => {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      const res = await fetch(url, { redirect: "follow" });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      require("fs").writeFileSync(out, Buffer.from(await res.arrayBuffer()));
+      return;
+    } catch (err) {
+      if (attempt >= 3) { console.error(String(err)); process.exit(1); }
+      await new Promise((r) => setTimeout(r, 2000));
+    }
+  }
+})();'
+
 if command -v curl >/dev/null 2>&1; then
+  log "downloading ${URL} (curl)"
   curl -fsSL --retry 3 --retry-delay 2 -o "$tarball" "$URL"
 elif command -v wget >/dev/null 2>&1; then
+  log "downloading ${URL} (wget)"
   wget -q --tries=3 -O "$tarball" "$URL"
+elif command -v node >/dev/null 2>&1; then
+  log "downloading ${URL} (node)"
+  node -e "$NODE_DOWNLOAD" "$URL" "$tarball"
 else
-  log "neither curl nor wget is available to download git-lfs."
+  log "none of curl, wget or node is available to download git-lfs."
   exit 1
 fi
 
 if command -v sha256sum >/dev/null 2>&1; then
   actual="$(sha256sum "$tarball" | cut -d' ' -f1)"
-else
+elif command -v shasum >/dev/null 2>&1; then
   actual="$(shasum -a 256 "$tarball" | cut -d' ' -f1)"
+else
+  actual="$(node -e 'process.stdout.write(require("crypto").createHash("sha256").update(require("fs").readFileSync(process.argv[1])).digest("hex"))' "$tarball")"
 fi
 if [ "$actual" != "$SHA256" ]; then
   log "sha256 mismatch for ${URL}"
