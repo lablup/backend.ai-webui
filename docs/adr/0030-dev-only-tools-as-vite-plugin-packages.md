@@ -101,7 +101,7 @@ flowchart LR
 
 - **Scope**: `installCapture` in `src/traffic.ts` replaces `globalThis.fetch` before the app's modules run. It records only requests whose path ends in `/func/admin/gql`, which carries Relay queries and mutations and the `graphql-sse` subscriptions. `graphql-sse` keeps the `fetch` it sees when its client is created, which is why the wrapper must be in place first.
 - **No change to the app**: the wrapper returns the app's own response promise. It reads the body from `response.clone()`, and a `text/event-stream` body through the clone's tee. Every recording error is caught and dropped.
-- **Log**: the panel shows one log of `App` rows and its own `Panel` rows. The log keeps at most 200 entries, cuts a body at 100,000 characters, and lives in `sessionStorage`, so it survives a reload of the tab.
+- **Log**: the panel shows one log of `App` rows and its own `Panel` rows. The log keeps at most 200 entries, cuts a body at 100,000 characters, and lives in memory, so a reload starts it empty. A "Preserve log" switch, off by default and remembered in `localStorage`, keeps it in `sessionStorage` across reloads instead.
 
 ## Rejected alternatives
 
@@ -121,7 +121,7 @@ flowchart LR
 - **Copied transform**: `src/graphql-transformer.ts` can drift from `react/src/helper/graphql-transformer.ts`, and nothing checks it.
 - **Undocumented client fields**: The tool depends on `ready`, `newSignedRequest` and the `uri` it returns, `requestTimeout`, `_config.connectionMode`, and `isManagerVersionCompatibleWith`. `Panel.tsx` declares their types by hand, so type-checking does not catch a change in `backend.ai-client`.
 - **Every dev page load runs the wrapper**: on the dev server every app `fetch` passes through it, whether or not the panel is ever opened. A production build is unchanged.
-- **Credentials in the tab's storage**: the log keeps request headers, including the signed `Authorization` header in API-key mode, and response bodies in `sessionStorage` for the tab's lifetime.
+- **Credentials in the tab's storage**: the log keeps request headers, including the signed `Authorization` header in API-key mode, and response bodies in `sessionStorage` for the tab's lifetime while "Preserve log" is on.
 - **Verification gap**: `scripts/verify.sh` does not cover this package, and no lint rule enforces sections 1 and 3. The tool's authors check it by hand.
 
 ## Sources

@@ -1,5 +1,6 @@
 const GQL_PATH = '/func/admin/gql';
 const STORAGE_KEY = 'bai-graphql-devtools.log';
+const PRESERVE_KEY = 'bai-graphql-devtools.preserve-log';
 const MAX_ENTRIES = 200;
 const MAX_TEXT = 100_000;
 const MAX_MESSAGES = 100;
@@ -25,11 +26,30 @@ export interface LogEntry {
 
 export type NewEntry = Omit<LogEntry, 'id'>;
 
-let entries: readonly LogEntry[] = load();
+// Like the Network tab's "Preserve log": off by default, so a reload starts empty.
+let isPreserved = readPreserve();
+let entries: readonly LogEntry[] = isPreserved ? load() : [];
+if (!isPreserved) removeStored();
 let nextId = (entries[0]?.id ?? 0) + 1;
 let saveTimer: ReturnType<typeof setTimeout> | undefined;
 let isNotifyQueued = false;
 const listeners = new Set<() => void>();
+
+function readPreserve() {
+  try {
+    return localStorage.getItem(PRESERVE_KEY) === 'true';
+  } catch {
+    return false;
+  }
+}
+
+function removeStored() {
+  try {
+    sessionStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // Storage unavailable: nothing was kept.
+  }
+}
 
 function load(): LogEntry[] {
   try {
@@ -63,7 +83,7 @@ function save() {
 
 function commit(next: readonly LogEntry[]) {
   entries = next;
-  saveTimer ??= setTimeout(save, SAVE_DELAY_MS);
+  if (isPreserved) saveTimer ??= setTimeout(save, SAVE_DELAY_MS);
   // Deferred: the app may call `fetch` while React is rendering its own root.
   if (isNotifyQueued) return;
   isNotifyQueued = true;
@@ -79,6 +99,21 @@ const clip = (text: string) =>
     : text;
 
 export const getEntries = () => entries;
+
+export const getIsPreserved = () => isPreserved;
+
+export function setIsPreserved(value: boolean) {
+  isPreserved = value;
+  try {
+    localStorage.setItem(PRESERVE_KEY, String(value));
+  } catch {
+    // The choice then lasts only for this page.
+  }
+  clearTimeout(saveTimer);
+  saveTimer = undefined;
+  if (!value) removeStored();
+  commit(entries);
+}
 
 export function subscribe(listener: () => void) {
   listeners.add(listener);

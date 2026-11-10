@@ -101,7 +101,7 @@ flowchart LR
 
 - **Scope**: `src/traffic.ts`의 `installCapture`는 app module이 실행되기 전에 `globalThis.fetch`를 바꾼다. 기록 대상은 path가 `/func/admin/gql`로 끝나는 요청뿐이고, 여기에 Relay query와 mutation, `graphql-sse` subscription이 실린다. `graphql-sse`는 client를 만들 때 본 `fetch`를 계속 쓰므로 wrapper가 먼저 설치되어야 한다.
 - **No change to the app**: wrapper는 app의 response promise를 그대로 돌려준다. body는 `response.clone()`에서 읽고, `text/event-stream` body는 clone의 tee로 읽는다. 기록 중 생긴 error는 모두 잡아서 버린다.
-- **Log**: panel은 `App` 행과 자기 `Panel` 행을 한 log에 보여 준다. log는 최대 200개 항목을 두고, body를 100,000자에서 자르며, `sessionStorage`에 있어 tab을 새로 고쳐도 남는다.
+- **Log**: panel은 `App` 행과 자기 `Panel` 행을 한 log에 보여 준다. log는 최대 200개 항목을 두고, body를 100,000자에서 자르며, memory에만 있어 새로 고치면 비워진다. 기본값이 꺼짐이고 `localStorage`에 기억되는 "Preserve log" switch를 켜면 `sessionStorage`에 두어 새로 고쳐도 남는다.
 
 ## 대안과 기각 사유
 
@@ -121,7 +121,7 @@ flowchart LR
 - **Copied transform**: `src/graphql-transformer.ts`는 `react/src/helper/graphql-transformer.ts`와 달라질 수 있고, 이를 검사하는 것은 없다.
 - **Undocumented client fields**: tool은 `ready`, `newSignedRequest`와 그 결과의 `uri`, `requestTimeout`, `_config.connectionMode`, `isManagerVersionCompatibleWith`에 의존한다. `Panel.tsx`가 이 타입을 손으로 선언하므로, `backend.ai-client`가 바뀌어도 type-checking은 잡지 못한다.
 - **Every dev page load runs the wrapper**: dev server에서는 panel을 열지 않아도 app의 모든 `fetch`가 wrapper를 지난다. production build는 바뀌지 않는다.
-- **Credentials in the tab's storage**: log는 API key mode의 서명된 `Authorization` header를 포함한 request header와 response body를 tab이 살아 있는 동안 `sessionStorage`에 둔다.
+- **Credentials in the tab's storage**: log는 API key mode의 서명된 `Authorization` header를 포함한 request header와 response body를 "Preserve log"가 켜져 있으면 tab이 살아 있는 동안 `sessionStorage`에 둔다.
 - **Verification gap**: `scripts/verify.sh`는 이 package를 검사하지 않고, 1항과 3항을 강제하는 lint 규칙도 없다. tool 작성자가 손으로 검사한다.
 
 ## 출처

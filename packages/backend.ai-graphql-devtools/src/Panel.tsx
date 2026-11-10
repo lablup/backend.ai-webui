@@ -4,9 +4,11 @@ import {
   addEntry,
   clearEntries,
   getEntries,
+  getIsPreserved,
   type LogEntry,
   type NewEntry,
   panelFetch,
+  setIsPreserved,
   type Source,
   subscribe,
 } from './traffic';
@@ -760,6 +762,7 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
   const [allowMutations, setAllowMutations] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const entries = useSyncExternalStore(subscribe, getEntries);
+  const isPreserved = useSyncExternalStore(subscribe, getIsPreserved);
   const [filter, setFilter] = useState<'All' | Source>('All');
   const [search, setSearch] = useState('');
   const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -1070,16 +1073,28 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
         <div className="bai-gql-devtools__history">
           <div className="bai-gql-devtools__toolbar">
             <span className="bai-gql-devtools__label">Log</span>
-            <button
-              type="button"
-              className="bai-gql-devtools__button"
-              onClick={() => {
-                clearEntries();
-                setSelectedId(null);
-              }}
-            >
-              Clear
-            </button>
+            <span className="bai-gql-devtools__actions">
+              <label className="bai-gql-devtools__switch">
+                <input
+                  type="checkbox"
+                  role="switch"
+                  checked={isPreserved}
+                  data-testid="gql-devtools-preserve-log"
+                  onChange={(event) => setIsPreserved(event.target.checked)}
+                />
+                Preserve log
+              </label>
+              <button
+                type="button"
+                className="bai-gql-devtools__button"
+                onClick={() => {
+                  clearEntries();
+                  setSelectedId(null);
+                }}
+              >
+                Clear
+              </button>
+            </span>
           </div>
           <div
             className="bai-gql-devtools__filter"
