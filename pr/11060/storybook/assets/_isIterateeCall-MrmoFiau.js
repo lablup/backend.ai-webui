@@ -1,0 +1,1 @@
+import{ap as i,g as t,aq as f,ar as n}from"./iframe-Bcwh-I97.js";function p(e,a,r){if(!i(r))return!1;var s=typeof a;return(s=="number"?t(r)&&f(a,r.length):s=="string"&&a in r)?n(r[a],e):!1}export{p as i};
