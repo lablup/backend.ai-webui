@@ -3284,6 +3284,7 @@
     "TensorboardPath": "Répertoire des journaux pour TensorBoard",
     "Terminate": "Mettre fin",
     "TerminateSession": "Terminer la session",
+    "TerminateSessionsPartialFailureDescription": "{{failed}} session(s) sur {{total}} n'ont pas pu être arrêtées. Consultez la raison pour chaque session ci-dessous.",
     "TerminatedAt": "Terminé le",
     "Threshold": "Seuil",
     "ToStatus": "Vers le statut",

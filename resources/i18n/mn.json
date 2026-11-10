@@ -3282,6 +3282,7 @@
     "TensorboardPath": "TensorBoard-ийн бүртгэлийн лавлах",
     "Terminate": "Цуцлах",
     "TerminateSession": "Сессийг дуусгах",
+    "TerminateSessionsPartialFailureDescription": "{{total}} сессийн {{failed}}-г зогсоож чадсангүй. Сесс тус бүрийн шалтгааныг доороос шалгана уу.",
     "TerminatedAt": "Дууссан огноо",
     "Threshold": "Босго",
     "ToStatus": "Төлөв рүү",

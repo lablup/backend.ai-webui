@@ -3285,6 +3285,7 @@
     "TensorboardPath": "TensorBoard 的日誌目錄",
     "Terminate": "終止",
     "TerminateSession": "终止会话",
+    "TerminateSessionsPartialFailureDescription": "{{total}} 個工作階段中有 {{failed}} 個無法終止。請在下方查看每個工作階段的原因。",
     "TerminatedAt": "終止時間",
     "Threshold": "阈值",
     "ToStatus": "前往狀態",
