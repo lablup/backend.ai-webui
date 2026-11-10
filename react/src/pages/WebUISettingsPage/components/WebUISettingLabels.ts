@@ -199,6 +199,10 @@ export const useWebUISettingLabels = (): {
         title: t('webuiSettings.FasttrackEndpoint'),
         description: t('webuiSettings.DescFasttrackEndpoint'),
       },
+      manualUrl: {
+        title: t('webuiSettings.ManualUrl'),
+        description: t('webuiSettings.DescManualUrl'),
+      },
       allowAppDownloadPanel: {
         title: t('webuiSettings.AllowAppDownloadPanel'),
         description: t('webuiSettings.DescAllowAppDownloadPanel'),

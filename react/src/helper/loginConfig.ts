@@ -106,6 +106,8 @@ export interface LoginConfigState {
   blockList: string[];
   inactiveList: string[];
   fasttrackEndpoint: string;
+  /** Root of a mirrored user manual; empty opens the hosted one. */
+  manualUrl: string;
   pluginPages: string[];
   loginPlugin: string;
   domain_name: string;
@@ -176,6 +178,7 @@ export function getDefaultLoginConfig(): LoginConfigState {
     blockList: [],
     inactiveList: [],
     fasttrackEndpoint: '',
+    manualUrl: '',
     pluginPages: [],
     loginPlugin: '',
     domain_name: '',
