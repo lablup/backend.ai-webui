@@ -22,6 +22,7 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
+  BAIUnmountAfterClose,
   BAIUserResourcePolicyV2Table,
   type BAIUserResourcePolicyV2TableProps,
   filterOutNullAndUndefined,
@@ -371,65 +372,71 @@ const UserResourcePolicyV2 = ({
         }}
         {...tableProps}
       />
-      <UserResourcePolicyV2SettingModal
-        open={!!editingUserResourcePolicy || isCreatingPolicySetting}
-        userResourcePolicyFrgmt={editingUserResourcePolicy}
-        onOk={() => {
-          // A create adds a new row the offset query can't know about, so it
-          // needs a refetch. An update returns every field, so Relay merges the
-          // record by id into the store and the list reflects it without one.
-          if (isCreatingPolicySetting) {
-            onReload(queryRef.variables, { fetchPolicy: 'network-only' });
+      <BAIUnmountAfterClose>
+        <UserResourcePolicyV2SettingModal
+          open={!!editingUserResourcePolicy || isCreatingPolicySetting}
+          userResourcePolicyFrgmt={editingUserResourcePolicy}
+          onOk={() => {
+            // A create adds a new row the offset query can't know about, so it
+            // needs a refetch. An update returns every field, so Relay merges the
+            // record by id into the store and the list reflects it without one.
+            if (isCreatingPolicySetting) {
+              onReload(queryRef.variables, { fetchPolicy: 'network-only' });
+            }
+            setEditingUserResourcePolicy(null);
+            setIsCreatingPolicySetting(false);
+          }}
+          onCancel={() => {
+            setEditingUserResourcePolicy(null);
+            setIsCreatingPolicySetting(false);
+          }}
+        />
+      </BAIUnmountAfterClose>
+      <BAIUnmountAfterClose>
+        <BAIDeleteConfirmModal
+          open={!!deletingPolicyName}
+          items={
+            deletingPolicyName
+              ? [{ key: deletingPolicyName, label: deletingPolicyName }]
+              : []
           }
-          setEditingUserResourcePolicy(null);
-          setIsCreatingPolicySetting(false);
-        }}
-        onCancel={() => {
-          setEditingUserResourcePolicy(null);
-          setIsCreatingPolicySetting(false);
-        }}
-      />
-      <BAIDeleteConfirmModal
-        open={!!deletingPolicyName}
-        items={
-          deletingPolicyName
-            ? [{ key: deletingPolicyName, label: deletingPolicyName }]
-            : []
-        }
-        title={t('resourcePolicy.DeletePolicy')}
-        target={t('resourcePolicy.ResourcePolicy')}
-        confirmText={deletingPolicyName ?? ''}
-        requireConfirmInput
-        onOk={() => {
-          if (deletingPolicyName) {
-            return new Promise<void>((resolve) => {
-              commitDelete({
-                variables: { name: deletingPolicyName },
-                onCompleted: (_res, errors) => {
-                  if (errors && errors.length > 0) {
-                    for (const error of errors) {
-                      message.error(error.message);
+          title={t('resourcePolicy.DeletePolicy')}
+          target={t('resourcePolicy.ResourcePolicy')}
+          confirmText={deletingPolicyName ?? ''}
+          requireConfirmInput
+          onOk={() => {
+            if (deletingPolicyName) {
+              return new Promise<void>((resolve) => {
+                commitDelete({
+                  variables: { name: deletingPolicyName },
+                  onCompleted: (_res, errors) => {
+                    if (errors && errors.length > 0) {
+                      for (const error of errors) {
+                        message.error(error.message);
+                      }
+                    } else {
+                      onReload(queryRef.variables, {
+                        fetchPolicy: 'network-only',
+                      });
+                      message.success(
+                        t('resourcePolicy.ResourcePolicyDeleted'),
+                      );
                     }
-                  } else {
-                    onReload(queryRef.variables, {
-                      fetchPolicy: 'network-only',
-                    });
-                    message.success(t('resourcePolicy.ResourcePolicyDeleted'));
-                  }
-                  setDeletingPolicyName(null);
-                  resolve();
-                },
-                onError(err) {
-                  message.error(err?.message);
-                  setDeletingPolicyName(null);
-                  resolve();
-                },
+                    setDeletingPolicyName(null);
+                    resolve();
+                  },
+                  onError(err) {
+                    message.error(err?.message);
+                    setDeletingPolicyName(null);
+                    resolve();
+                  },
+                });
               });
-            });
-          }
-        }}
-        onCancel={() => setDeletingPolicyName(null)}
-      />
+            }
+          }}
+          onCancel={() => setDeletingPolicyName(null)}
+        />
+      </BAIUnmountAfterClose>
     </BAIFlex>
   );
 };
