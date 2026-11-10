@@ -4,7 +4,10 @@
 #
 # Usage:
 #   build-docs-preview.sh --base-ref origin/main --languages en,ko --out <dir> \
-#     [--label "PR preview"] [--skip-diff]
+#     [--label "PR preview"] [--skip-diff] [--head-lfs-remote <url>]
+#
+# --head-lfs-remote: a fork PR's head repository URL. Its new LFS objects live
+# in the fork, so the head images are fetched from origin first, then from it.
 #
 # Produces <out>/head (the stamped `dist/web` tree to publish) and <out>/base.
 # `packages/backend.ai-webui-docs/src` is swapped out for the base build and
@@ -16,6 +19,7 @@ LANGUAGES=""
 OUT=""
 LABEL="PR preview"
 SKIP_DIFF=0
+HEAD_LFS_REMOTE=""
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -24,6 +28,7 @@ while [ $# -gt 0 ]; do
     --out) OUT="${2:?--out needs a value}"; shift 2 ;;
     --label) LABEL="${2:?--label needs a value}"; shift 2 ;;
     --skip-diff) SKIP_DIFF=1; shift ;;
+    --head-lfs-remote) HEAD_LFS_REMOTE="${2:?--head-lfs-remote needs a value}"; shift 2 ;;
     *) echo "Unknown argument: $1" >&2; exit 2 ;;
   esac
 done
@@ -66,7 +71,7 @@ restore_src() {
   # The checkout writes LFS pointers back; a local run gets its images again.
   # CI skips it: nothing reads `src` afterwards.
   if [ -z "${CI:-}" ]; then
-    pull_images || echo "warning: re-pulling the LFS images failed; run images:pull." >&2
+    pull_head_images || echo "warning: re-pulling the LFS images failed; run images:pull." >&2
   fi
 }
 trap restore_src EXIT
@@ -111,6 +116,13 @@ docs_toolkit() { pnpm --filter backend.ai-webui-docs exec docs-toolkit "$@"; }
 # Materializes Git LFS images in `src` (a no-op while it holds none). Base and
 # head reference different LFS objects, so each side is pulled after checkout.
 pull_images() { bash "${REPO_ROOT}/.github/scripts/lfs/pull-docs-images.sh" "$@" "$REPO_ROOT"; }
+pull_head_images() {
+  if [ -n "$HEAD_LFS_REMOTE" ]; then
+    pull_images --remote origin --remote "$HEAD_LFS_REMOTE"
+  else
+    pull_images
+  fi
+}
 
 src_langs() {
   find "$SRC" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort | tr '\n' ' '
@@ -156,7 +168,7 @@ echo "::endgroup::"
 rm -rf "${OUT}/head" "${OUT}/base"
 
 echo "::group::Build the docs site from the PR head"
-pull_images
+pull_head_images
 HEAD_LANGS="$(present_langs)"
 [ -n "${HEAD_LANGS// /}" ] || { echo "::error::None of '${LANGUAGES}' exists under ${SRC}." >&2; exit 1; }
 rm -rf "$WEB"

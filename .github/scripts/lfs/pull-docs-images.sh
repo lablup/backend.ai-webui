@@ -2,13 +2,15 @@
 # Replace Git LFS pointer files under the user manual source with the real
 # images, in each given checkout (default: this repository's working tree).
 #
-# Usage: pull-docs-images.sh [--ref <rev>] [--remote <name>] [<worktree-dir>...]
+# Usage: pull-docs-images.sh [--ref <rev>] [--remote <name|url>]... [<worktree-dir>...]
 #
 #   --ref     revision whose LFS objects to fetch in one batch (default: HEAD).
 #             Pass it when the docs source was checked out from another commit
 #             (`git checkout <rev> -- <src>`); files are always restored from
 #             the index, so a wrong --ref costs only extra downloads.
-#   --remote  remote to fetch from (default: origin, else the first remote).
+#   --remote  remote name or URL to fetch from; repeatable, tried in order, each
+#             filling in what the earlier ones lacked (e.g. origin, then a fork
+#             PR's head repository). Default: origin, else the first remote.
 #
 # Covers both layouts: packages/backend.ai-webui-docs/src on normal branches and
 # src/ on docs-archive/* branches. Without pointer files it exits 0 at once and
@@ -22,13 +24,13 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "${HERE}/lib.sh"
 
 REF="HEAD"
-REMOTE=""
+REMOTES=()
 DIRS=()
 while [ $# -gt 0 ]; do
   case "$1" in
     --ref) REF="${2:?--ref needs a value}"; shift 2 ;;
-    --remote) REMOTE="${2:?--remote needs a value}"; shift 2 ;;
-    -h|--help) sed -n '2,17p' "$0"; exit 0 ;;
+    --remote) REMOTES+=("${2:?--remote needs a value}"); shift 2 ;;
+    -h|--help) sed -n '2,19p' "$0"; exit 0 ;;
     -*) echo "Unknown option: $1" >&2; exit 2 ;;
     *) DIRS+=("$1"); shift ;;
   esac
@@ -45,9 +47,9 @@ ensure_git_lfs() {
   git lfs version >/dev/null 2>&1 || { log "git-lfs is still not runnable after installing it." >&2; exit 1; }
 }
 
-pick_remote() {
+pick_remotes() {
   local top="$1"
-  if [ -n "$REMOTE" ]; then echo "$REMOTE"; return; fi
+  if [ ${#REMOTES[@]} -gt 0 ]; then printf '%s\n' "${REMOTES[@]}"; return; fi
   if git -C "$top" remote get-url origin >/dev/null 2>&1; then echo origin; return; fi
   git -C "$top" remote | head -n1
 }
@@ -93,18 +95,34 @@ pull_one() {
   log "${top}: ${n} LFS pointer file(s) under ${roots[*]}"
 
   ensure_git_lfs
-  remote="$(pick_remote "$top")"
-  [ -n "$remote" ] || { log "${top} has no git remote to fetch LFS objects from." >&2; exit 1; }
+  local remotes=()
+  while IFS= read -r remote; do [ -z "$remote" ] || remotes+=("$remote"); done < <(pick_remotes "$top")
+  [ ${#remotes[@]} -gt 0 ] || { log "${top} has no git remote to fetch LFS objects from." >&2; exit 1; }
+  remote="${remotes[*]}"
 
   local includes=()
   for root in "${roots[@]}"; do includes+=("${root}/**"); done
-  log "fetching LFS objects of ${REF} from ${remote}"
   # git-lfs installs its hooks wherever core.hooksPath points; keep them out of
   # the checkout, whose later git commands would run them without git-lfs on PATH.
   local hooks="${work}/hooks"
   mkdir -p "$hooks"
-  git -C "$top" -c core.hooksPath="$hooks" \
-    lfs fetch --include="$(IFS=,; echo "${includes[*]}")" --exclude="" "$remote" "$REF"
+  # A fetch that misses objects (a fork PR's new images live in the fork's LFS
+  # store) still downloads the rest; the next remote fills in what is missing.
+  local r fetched=0
+  for r in "${remotes[@]}"; do
+    log "fetching LFS objects of ${REF} from ${r}"
+    if git -C "$top" -c core.hooksPath="$hooks" \
+      lfs fetch --include="$(IFS=,; echo "${includes[*]}")" --exclude="" "$r" "$REF"; then
+      fetched=1
+      break
+    fi
+    log "warning: fetching from ${r} was incomplete" >&2
+  done
+  if [ "$fetched" -eq 0 ] && [ ${#remotes[@]} -eq 1 ]; then
+    log "ERROR: ${top}: could not fetch the LFS objects from ${remote}; nothing was changed." >&2
+    rm -rf "$work"
+    exit 1
+  fi
 
   # Restore from the index through the LFS smudge filter. The attributes file
   # covers checkouts whose .gitattributes does not mark the images (yet). It
