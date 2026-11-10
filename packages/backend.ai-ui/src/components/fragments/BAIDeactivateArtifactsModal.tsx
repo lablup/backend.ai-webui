@@ -38,12 +38,16 @@ const BAIDeactivateArtifactsModal = ({
   const [deleteArtifacts, isInflightDeleteArtifacts] =
     useMutation<BAIDeactivateArtifactsModalDeleteArtifactsMutation>(graphql`
       mutation BAIDeactivateArtifactsModalDeleteArtifactsMutation(
-        $input: DeleteArtifactsInput!
+        $input: PartialBulkDeleteArtifactsInput!
       ) {
-        deleteArtifacts(input: $input) {
-          artifacts {
+        partialBulkDeleteArtifacts(input: $input) {
+          successes {
             id
             availability
+          }
+          failed {
+            id
+            message
           }
         }
       }
@@ -59,10 +63,10 @@ const BAIDeactivateArtifactsModal = ({
           deleteArtifacts({
             variables: {
               input: {
-                artifactIds: selectedArtifacts.map((a) => a.entityId),
+                ids: selectedArtifacts.map((a) => a.entityId),
               },
             },
-            onCompleted: (_res, errors) => {
+            onCompleted: (res, errors) => {
               if (errors && errors.length > 0) {
                 errors.forEach((err) =>
                   message.error(
@@ -74,10 +78,21 @@ const BAIDeactivateArtifactsModal = ({
                 );
                 return;
               }
-              message.success(
-                t('comp:BAIDeactivateArtifactsModal.SuccessfullyDeactivated'),
-              );
-              onOk?.(e);
+              const { successes, failed } = res.partialBulkDeleteArtifacts;
+              failed.forEach((failure) => {
+                const name =
+                  selectedArtifacts.find((a) => a.entityId === failure.id)
+                    ?.name ?? failure.id;
+                message.error(`${name}: ${failure.message}`);
+              });
+              // The ones that succeeded stay deactivated, so close and refresh
+              // even when some failed.
+              if (successes.length > 0) {
+                message.success(
+                  t('comp:BAIDeactivateArtifactsModal.SuccessfullyDeactivated'),
+                );
+                onOk?.(e);
+              }
             },
             onError: (err) => {
               message.error(
