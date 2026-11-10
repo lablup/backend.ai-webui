@@ -200,3 +200,19 @@ export { getDocVersion } from "./version.js";
 // ── Sample Content ──────────────────────────────────────────────
 export { buildThemeInfoChapter } from "./sample-content.js";
 export { getCatalogMarkdown } from "./sample-content-markdown.js";
+
+// ── Screenshot visual-change gate ───────────────────────────────
+export {
+  acceptImages,
+  compareImages,
+  isLfsPointer,
+  ImageGateError,
+} from "./image-gate.js";
+export type {
+  AcceptImagesOptions,
+  CompareOptions,
+  CompareResult,
+  GateFileResult,
+  GateReport,
+  GateStatus,
+} from "./image-gate.js";
