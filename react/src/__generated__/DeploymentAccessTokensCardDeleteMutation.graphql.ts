@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6c8f2878181d310c69c5ad61ce2cd280>>
+ * @generated SignedSource<<1618f379bde221ec4505b997572a3176>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,16 +9,14 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type DeleteAccessTokenInput = {
+export type DeploymentAccessTokensCardDeleteMutation$variables = {
   id: string;
 };
-export type DeploymentAccessTokensCardDeleteMutation$variables = {
-  input: DeleteAccessTokenInput;
-};
 export type DeploymentAccessTokensCardDeleteMutation$data = {
-  readonly deleteAccessToken: {
-    readonly id: string;
-  } | null | undefined;
+  readonly purgeAccessToken: {
+    readonly fieldId: string;
+    readonly purgedId: string;
+  };
 };
 export type DeploymentAccessTokensCardDeleteMutation = {
   response: DeploymentAccessTokensCardDeleteMutation$data;
@@ -30,7 +28,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "input"
+    "name": "id"
   }
 ],
 v1 = [
@@ -39,20 +37,27 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "input",
-        "variableName": "input"
+        "name": "id",
+        "variableName": "id"
       }
     ],
-    "concreteType": "DeleteAccessTokenPayload",
+    "concreteType": "PurgeAccessTokenPayload",
     "kind": "LinkedField",
-    "name": "deleteAccessToken",
+    "name": "purgeAccessToken",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "id",
+        "name": "purgedId",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "fieldId",
         "storageKey": null
       }
     ],
@@ -77,16 +82,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "3001cf022c16a198843b296bca8e75f9",
+    "cacheID": "aa8098e331a7a0e5febc933a5456c0b8",
     "id": null,
     "metadata": {},
     "name": "DeploymentAccessTokensCardDeleteMutation",
     "operationKind": "mutation",
-    "text": "mutation DeploymentAccessTokensCardDeleteMutation(\n  $input: DeleteAccessTokenInput!\n) {\n  deleteAccessToken(input: $input) {\n    id\n  }\n}\n"
+    "text": "mutation DeploymentAccessTokensCardDeleteMutation(\n  $id: UUID!\n) {\n  purgeAccessToken(id: $id) {\n    purgedId\n    fieldId\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "6877559748beeee076979bb65393d59f";
+(node as any).hash = "4969e332ba8b941d77cd927bb8e7b9b4";
 
 export default node;
