@@ -47,10 +47,10 @@ flowchart LR
 
 ### 2. Consumers materialize images with one script
 
-- **Script**: `.github/scripts/lfs/pull-docs-images.sh [--ref <rev>] [--remote <name>] [<worktree>...]` handles both layouts, `packages/backend.ai-webui-docs/src/` and an archive worktree's `src/`.
+- **Script**: `.github/scripts/lfs/pull-docs-images.sh [--ref <rev>] [--remote <name|url>]... [--fallback-remote <url>]... [<worktree>...]` handles both layouts, `packages/backend.ai-webui-docs/src/` and an archive worktree's `src/`.
 - **No-op**: It looks for tracked working-tree files under those roots whose content is pointer text. With none it exits 0 and does not need git-lfs.
 - **Otherwise**: It installs git-lfs with `.github/scripts/lfs/install-git-lfs.sh` when missing (release 3.8.1 for Linux x86_64, pinned with its sha256 in that script), fetches the objects of `--ref` (default `HEAD`) with the `.lfsconfig` exclusion overridden, and restores the pointer files from the index through an LFS filter. The filter and a temporary attributes file naming those paths are passed per command, so the restore works whether or not `.gitattributes` marks them and no git config file is written. It fails if a pointer remains.
-- **Callers**: `amplify.yml` (the docs app, for `main` and every archive worktree), `package.yml` `build_docs`, and `.github/scripts/pr-preview/build-docs-preview.sh` (for the head, and again after it checks out the merge base's `src`, fetching that commit's objects with `--ref`). Contributors run `pnpm --filter backend.ai-webui-docs run images:pull`.
+- **Callers**: `amplify.yml` (the docs app, for `main` and every archive worktree), `package.yml` `build_docs`, and `.github/scripts/pr-preview/build-docs-preview.sh` (for the head, and again after it checks out the merge base's `src`, fetching that commit's objects with `--ref`). For a fork PR, `pr-preview.yml` passes the head repository's clone URL as `--head-lfs-remote`, which the head pull uses as `--fallback-remote`: it is fetched without the base repository's credentials, only for objects `origin` lacks. Images that come only from the fork are built, but the job then fails with the `git lfs push origin` command a maintainer runs before merging, because builds of `main` fetch from `origin` alone. Contributors run `pnpm --filter backend.ai-webui-docs run images:pull`.
 
 ### 3. The toolkit refuses pointer files
 

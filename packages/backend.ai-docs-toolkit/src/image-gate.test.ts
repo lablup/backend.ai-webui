@@ -299,7 +299,7 @@ test("acceptImages — --force naming a file that was not captured fails", async
   );
 });
 
-test("acceptImages — a Git LFS pointer in --to fails with a git lfs pull hint and copies nothing", async () => {
+test("acceptImages — a Git LFS pointer in --to fails with the images:pull hint and copies nothing", async () => {
   const { from, to } = await seedBatch();
   const pointer =
     "version https://git-lfs.github.com/spec/v1\n" +
@@ -311,13 +311,13 @@ test("acceptImages — a Git LFS pointer in --to fails with a git lfs pull hint 
   await assert.rejects(acceptImages({ from, to }), (err: unknown) => {
     assert.ok(err instanceof ImageGateError);
     assert.match(err.message, /Git LFS pointer/);
-    assert.match(err.message, /git lfs pull/);
+    assert.match(err.message, /images:pull/);
     return true;
   });
   assert.equal(fs.existsSync(path.join(to, "fresh.png")), false);
 });
 
-test("acceptImages — a Git LFS pointer in --from fails with a git lfs pull hint", async () => {
+test("acceptImages — a Git LFS pointer in --from fails with the images:pull hint", async () => {
   const { from, to } = await seedBatch();
   fs.writeFileSync(
     path.join(from, "same.png"),
@@ -325,7 +325,7 @@ test("acceptImages — a Git LFS pointer in --from fails with a git lfs pull hin
   );
   await assert.rejects(acceptImages({ from, to }), (err: unknown) => {
     assert.ok(err instanceof ImageGateError);
-    assert.match(err.message, /git lfs pull/);
+    assert.match(err.message, /images:pull/);
     return true;
   });
 });
