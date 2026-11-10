@@ -340,19 +340,15 @@ jobs:
             fonts-nanum fonts-takao-gothic fonts-thai-tlwg || true
           fc-cache -f || true
 
-      # upload-release.js normally takes the tag from GITHUB_REF_NAME, but its
-      # `git describe` fallback (workflow_dispatch on a branch ref) needs git to
-      # trust the checkout, which is owned by a different UID than the container
-      # user ("detected dubious ownership", FR-3322). The LFS pull below needs it too.
-      - name: Mark workspace safe for git inside the container
-        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
-
       # The manual's screenshots may be Git LFS pointers (#11040). The container
       # has no git-lfs, so the script installs the pinned release; a no-op while
-      # no image is in LFS.
+      # no image is in LFS. The checkout is trusted for this step only: trusting it
+      # before `pdf:all` would add a git hash to prerelease PDF names.
       - name: Pull the manual images (Git LFS)
         shell: bash
-        run: bash .github/scripts/lfs/pull-docs-images.sh
+        run: |
+          export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory GIT_CONFIG_VALUE_0="$GITHUB_WORKSPACE"
+          bash .github/scripts/lfs/pull-docs-images.sh
 
       - name: Build PDFs (en/ko/ja/th)
         run: pnpm --filter backend.ai-webui-docs run pdf:all
@@ -367,6 +363,13 @@ jobs:
           else
             echo "::warning::No PDFs were produced; nothing to upload."
           fi
+
+      # upload-release.js normally takes the tag from GITHUB_REF_NAME, but its
+      # `git describe` fallback (workflow_dispatch on a branch ref) needs git to
+      # trust the checkout, which is owned by a different UID than the container
+      # user ("detected dubious ownership", FR-3322).
+      - name: Mark workspace safe for git inside the container
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
       - name: Upload PDF release assets
         if: inputs.dry_run != true
