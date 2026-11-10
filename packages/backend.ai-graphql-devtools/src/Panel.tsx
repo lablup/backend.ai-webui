@@ -28,6 +28,7 @@ import {
   type RefObject,
   useEffect,
   useEffectEvent,
+  useLayoutEffect,
   useRef,
   useState,
   useSyncExternalStore,
@@ -652,11 +653,21 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
     setOrigin(null);
   };
 
-  const visibleEntries = entries.filter(
-    (entry) =>
-      (filter === 'All' || entry.source === filter) &&
-      entry.label.toLowerCase().includes(search.trim().toLowerCase()),
-  );
+  // The store keeps newest first; the list shows oldest first, like the Network tab.
+  const visibleEntries = entries
+    .filter(
+      (entry) =>
+        (filter === 'All' || entry.source === filter) &&
+        entry.label.toLowerCase().includes(search.trim().toLowerCase()),
+    )
+    .reverse();
+  const lastVisibleId = visibleEntries.at(-1)?.id;
+  const listRef = useRef<HTMLUListElement>(null);
+  const isAtBottomRef = useRef(true);
+  useLayoutEffect(() => {
+    const list = listRef.current;
+    if (list && isAtBottomRef.current) list.scrollTop = list.scrollHeight;
+  }, [lastVisibleId, isOpen]);
   const selected = entries.find((entry) => entry.id === selectedId);
 
   const run = async () => {
@@ -931,8 +942,14 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
             onChange={(event) => setSearch(event.target.value)}
           />
           <ul
+            ref={listRef}
             className="bai-gql-devtools__history-list"
             data-testid="gql-devtools-history"
+            onScroll={(event) => {
+              const list = event.currentTarget;
+              isAtBottomRef.current =
+                list.scrollHeight - list.scrollTop - list.clientHeight < 8;
+            }}
           >
             {visibleEntries.map((entry) => (
               <li key={entry.id}>
