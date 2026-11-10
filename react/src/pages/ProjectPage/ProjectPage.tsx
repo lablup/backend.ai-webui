@@ -4,13 +4,13 @@
  */
 import { ProjectAdminSettingModalQuery } from '../../__generated__/ProjectAdminSettingModalQuery.graphql';
 import { ProjectPageDeactivateMutation } from '../../__generated__/ProjectPageDeactivateMutation.graphql';
-import { ProjectPageModifyMutation } from '../../__generated__/ProjectPageModifyMutation.graphql';
 import { ProjectPagePurgeMutation } from '../../__generated__/ProjectPagePurgeMutation.graphql';
 import {
   ProjectPageQuery,
   ProjectPageQuery$data,
   ProjectPageQuery$variables,
 } from '../../__generated__/ProjectPageQuery.graphql';
+import { ProjectPageRestoreMutation } from '../../__generated__/ProjectPageRestoreMutation.graphql';
 import { App } from '../../app-shim';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
@@ -197,29 +197,32 @@ const ProjectPage = () => {
 
   const [commitDeactivateGroup] = useMutation<ProjectPageDeactivateMutation>(
     graphql`
-      mutation ProjectPageDeactivateMutation($gid: UUID!) {
-        delete_group(gid: $gid) {
-          msg
-          ok
+      mutation ProjectPageDeactivateMutation($id: UUID!) {
+        deleteProjectV2(id: $id) {
+          project {
+            id
+          }
         }
       }
     `,
   );
 
-  const [commitModifyGroup] = useMutation<ProjectPageModifyMutation>(graphql`
-    mutation ProjectPageModifyMutation($gid: UUID!, $props: ModifyGroupInput!) {
-      modify_group(gid: $gid, props: $props) {
-        ok
-        msg
+  const [commitRestoreProject] = useMutation<ProjectPageRestoreMutation>(
+    graphql`
+      mutation ProjectPageRestoreMutation($id: UUID!) {
+        restoreProjectV2(id: $id) {
+          project {
+            id
+          }
+        }
       }
-    }
-  `);
+    `,
+  );
 
   const [commitPurgeGroup] = useMutation<ProjectPagePurgeMutation>(graphql`
-    mutation ProjectPagePurgeMutation($gid: UUID!) {
-      purge_group(gid: $gid) {
-        ok
-        msg
+    mutation ProjectPagePurgeMutation($projectId: UUID!) {
+      adminPurgeProjectV2(projectId: $projectId) {
+        purged
       }
     }
   `);
@@ -279,8 +282,8 @@ const ProjectPage = () => {
         return;
       }
       commitDeactivateGroup({
-        variables: { gid: project.row_id },
-        onCompleted: (response, errors) => {
+        variables: { id: project.row_id },
+        onCompleted: (_response, errors) => {
           if (errors && errors.length > 0) {
             errors.forEach((error) => {
               message.error(
@@ -290,16 +293,9 @@ const ProjectPage = () => {
             resolve();
             return;
           }
-          if (response.delete_group?.ok) {
-            message.success(t('project.ProjectDeactivated'));
-            removeFromSelection(project.id);
-            updateFetchKey();
-          } else {
-            message.error(
-              response.delete_group?.msg ||
-                t('project.FailedToDeactivateProject'),
-            );
-          }
+          message.success(t('project.ProjectDeactivated'));
+          removeFromSelection(project.id);
+          updateFetchKey();
           resolve();
         },
         onError: (error) => {
@@ -318,12 +314,9 @@ const ProjectPage = () => {
         resolve();
         return;
       }
-      commitModifyGroup({
-        variables: {
-          gid: project.row_id,
-          props: { is_active: true },
-        },
-        onCompleted: (response, errors) => {
+      commitRestoreProject({
+        variables: { id: project.row_id },
+        onCompleted: (_response, errors) => {
           if (errors && errors.length > 0) {
             errors.forEach((error) => {
               message.error(
@@ -333,16 +326,9 @@ const ProjectPage = () => {
             resolve();
             return;
           }
-          if (response.modify_group?.ok) {
-            message.success(t('project.ProjectActivated'));
-            removeFromSelection(project.id);
-            updateFetchKey();
-          } else {
-            message.error(
-              response.modify_group?.msg ||
-                t('project.FailedToActivateProject'),
-            );
-          }
+          message.success(t('project.ProjectActivated'));
+          removeFromSelection(project.id);
+          updateFetchKey();
           resolve();
         },
         onError: (error) => {
@@ -361,7 +347,7 @@ const ProjectPage = () => {
       }
       const projectId = purgingProject.id;
       commitPurgeGroup({
-        variables: { gid: purgingProject.row_id },
+        variables: { projectId: purgingProject.row_id },
         onCompleted: (response, errors) => {
           if (errors && errors.length > 0) {
             errors.forEach((error) => {
@@ -372,15 +358,13 @@ const ProjectPage = () => {
             resolve();
             return;
           }
-          if (response.purge_group?.ok) {
+          if (response.adminPurgeProjectV2?.purged) {
             message.success(t('project.ProjectPurged'));
             removeFromSelection(projectId);
             setPurgingProject(null);
             updateFetchKey();
           } else {
-            message.error(
-              response.purge_group?.msg || t('project.FailedToPurgeProject'),
-            );
+            message.error(t('project.FailedToPurgeProject'));
           }
           resolve();
         },

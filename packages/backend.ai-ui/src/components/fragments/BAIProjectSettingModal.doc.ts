@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The create-and-edit form for a project, in one modal. `projectFragment` decides the mode: null means create (`create_group`, followed by `associate_scaling_groups_with_user_group` when resource groups were picked), a fragment reference means edit (`modify_group`, with the disassociate and associate steps skipped when the old and new resource-group lists are respectively empty). It reads `BAIProjectSettingModalFragment` on `GroupNode` for the initial values, so the caller spreads that fragment on the project nodes in its list query, and it runs its own `BAIProjectSettingModalQuery` for the vfolder host permission list — fetched from the network only while the modal is open, and served from the store otherwise. The resource-slot fields are generated from `useBAIResourceSlots`, so it needs the resource-slot provider above it. `title` and `loading` are Omitted from BAIModalProps because the modal owns both; everything else passes through to BAIModal, though `onOk` and `okButtonProps` are re-applied after the spread.',
+      'The create-and-edit form for a project, in one modal. `projectFragment` decides the mode: null means create (`create_group`, followed by `adminUpdateAllowedResourceGroupsForProjectV2` when resource groups were picked), a fragment reference means edit (`modify_group`, plus one `adminUpdateAllowedResourceGroupsForProjectV2` call adding and removing the difference between the old and new resource-group lists, skipped when they match). The resource-group write is superadmin only. It reads `BAIProjectSettingModalFragment` on `GroupNode` for the initial values, so the caller spreads that fragment on the project nodes in its list query, and it runs its own `BAIProjectSettingModalQuery` for the vfolder host permission list — fetched from the network only while the modal is open, and served from the store otherwise. The resource-slot fields are generated from `useBAIResourceSlots`, so it needs the resource-slot provider above it. `title` and `loading` are Omitted from BAIModalProps because the modal owns both; everything else passes through to BAIModal, though `onOk` and `okButtonProps` are re-applied after the spread.',
     bestPractices: [
       {
         guidance: true,
@@ -41,7 +41,7 @@ export const docs = {
       {
         guidance: false,
         description:
-          'Set `okButtonProps.loading` to track your own mutation — the modal overwrites that flag with the in-flight state of its create, modify and associate mutations.',
+          'Set `okButtonProps.loading` to track your own mutation — the modal overwrites that flag with the in-flight state of its create, modify and resource-group mutations.',
       },
     ],
   },
@@ -69,7 +69,7 @@ export const docs = {
       name: 'okButtonProps',
       type: 'BAIModalActionButtonProps',
       description:
-        'Confirm-button options. Passed through except for `loading`, which the modal overwrites with the combined in-flight state of its create, modify and associate mutations.',
+        'Confirm-button options. Passed through except for `loading`, which the modal overwrites with the combined in-flight state of its create, modify and resource-group mutations.',
     },
   ],
   examples: [

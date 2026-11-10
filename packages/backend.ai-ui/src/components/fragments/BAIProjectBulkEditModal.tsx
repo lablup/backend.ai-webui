@@ -1,5 +1,6 @@
 import { BAIProjectBulkEditModalFragment$key } from '../../__generated__/BAIProjectBulkEditModalFragment.graphql';
 import { BAIProjectBulkEditModalProjectMutation } from '../../__generated__/BAIProjectBulkEditModalProjectMutation.graphql';
+import { App } from '../../app-shim';
 import { Form } from '../../form-engine';
 import { useMutationWithPromise } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
@@ -20,17 +21,27 @@ const BAIProjectBulkEditModal = ({
   selectedProjectFragments,
   ...tableProps
 }: BAIProjectBulkEditModalProps) => {
+  'use memo';
   const { t } = useBAIi18n();
+  const { message } = App.useApp();
   const [form] = Form.useForm();
   const [isSaving, setIsSaving] = useState(false);
   const mutateProjectWithPromise =
     useMutationWithPromise<BAIProjectBulkEditModalProjectMutation>(graphql`
       mutation BAIProjectBulkEditModalProjectMutation(
-        $gid: UUID!
-        $props: ModifyGroupInput!
+        $input: PartialBulkUpdateProjectsInput!
       ) {
-        modify_group(gid: $gid, props: $props) {
-          ok
+        partialBulkUpdateProjectsV2(input: $input) {
+          successes {
+            id
+            organization {
+              resourcePolicy
+            }
+          }
+          failed {
+            id
+            message
+          }
         }
       }
     `);
@@ -57,19 +68,35 @@ const BAIProjectBulkEditModal = ({
         form
           .validateFields()
           .then((values) => {
-            const promises = _.map(
-              _.compact(_.map(selectedProjects, (project) => project.row_id)),
-              (id) => {
-                return mutateProjectWithPromise({
-                  gid: id,
-                  props: {
-                    resource_policy: values.resource_policy,
-                  },
-                });
-              },
+            const ids = _.compact(
+              _.map(selectedProjects, (project) => project.row_id),
             );
-
-            return Promise.all(promises).then(() => tableProps.onOk?.(e));
+            return mutateProjectWithPromise({
+              input: {
+                items: _.map(ids, (id) => ({
+                  id,
+                  input: { resourcePolicy: values.resource_policy },
+                })),
+              },
+            }).then(({ partialBulkUpdateProjectsV2: result }) => {
+              if (_.isEmpty(result.failed)) {
+                tableProps.onOk?.(e);
+                return;
+              }
+              _.forEach(result.failed, (failure) => {
+                const name = _.find(selectedProjects, {
+                  row_id: failure.id,
+                })?.name;
+                message.error(
+                  name ? `${name}: ${failure.message}` : failure.message,
+                );
+              });
+            });
+          })
+          .catch((error) => {
+            if (error instanceof Error) {
+              message.error(error.message);
+            }
           })
           .finally(() => setIsSaving(false));
       }}

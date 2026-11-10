@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d9b5d6c8388b708270a5b5f31312a2df>>
+ * @generated SignedSource<<ce9bd19bdb3b45b83552a7c1f946e856>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,27 +9,36 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type ModifyGroupInput = {
-  allowed_vfolder_hosts?: string | null | undefined;
-  container_registry?: string | null | undefined;
+export type PartialBulkUpdateProjectsInput = {
+  items: ReadonlyArray<PartialBulkUpdateProjectItemInput>;
+};
+export type PartialBulkUpdateProjectItemInput = {
+  id: string;
+  input: UpdateProjectInput;
+};
+export type UpdateProjectInput = {
   description?: string | null | undefined;
-  domain_name?: string | null | undefined;
-  integration_id?: string | null | undefined;
-  is_active?: boolean | null | undefined;
+  integrationName?: string | null | undefined;
+  isActive?: boolean | null | undefined;
   name?: string | null | undefined;
-  resource_policy?: string | null | undefined;
-  total_resource_slots?: string | null | undefined;
-  user_update_mode?: string | null | undefined;
-  user_uuids?: ReadonlyArray<string | null | undefined> | null | undefined;
+  resourcePolicy?: string | null | undefined;
 };
 export type BAIProjectBulkEditModalProjectMutation$variables = {
-  gid: string;
-  props: ModifyGroupInput;
+  input: PartialBulkUpdateProjectsInput;
 };
 export type BAIProjectBulkEditModalProjectMutation$data = {
-  readonly modify_group: {
-    readonly ok: boolean | null | undefined;
-  } | null | undefined;
+  readonly partialBulkUpdateProjectsV2: {
+    readonly failed: ReadonlyArray<{
+      readonly id: string;
+      readonly message: string;
+    }>;
+    readonly successes: ReadonlyArray<{
+      readonly id: string;
+      readonly organization: {
+        readonly resourcePolicy: string;
+      };
+    }>;
+  };
 };
 export type BAIProjectBulkEditModalProjectMutation = {
   response: BAIProjectBulkEditModalProjectMutation$data;
@@ -41,39 +50,78 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "gid"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "props"
+    "name": "input"
   }
 ],
-v1 = [
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v2 = [
   {
     "alias": null,
     "args": [
       {
         "kind": "Variable",
-        "name": "gid",
-        "variableName": "gid"
-      },
-      {
-        "kind": "Variable",
-        "name": "props",
-        "variableName": "props"
+        "name": "input",
+        "variableName": "input"
       }
     ],
-    "concreteType": "ModifyGroup",
+    "concreteType": "PartialBulkProjectsPayload",
     "kind": "LinkedField",
-    "name": "modify_group",
+    "name": "partialBulkUpdateProjectsV2",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "kind": "ScalarField",
-        "name": "ok",
+        "concreteType": "ProjectV2",
+        "kind": "LinkedField",
+        "name": "successes",
+        "plural": true,
+        "selections": [
+          (v1/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ProjectOrganizationInfo",
+            "kind": "LinkedField",
+            "name": "organization",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "resourcePolicy",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "PartialBulkFailure",
+        "kind": "LinkedField",
+        "name": "failed",
+        "plural": true,
+        "selections": [
+          (v1/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "message",
+            "storageKey": null
+          }
+        ],
         "storageKey": null
       }
     ],
@@ -86,7 +134,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "BAIProjectBulkEditModalProjectMutation",
-    "selections": (v1/*: any*/),
+    "selections": (v2/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -95,19 +143,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "BAIProjectBulkEditModalProjectMutation",
-    "selections": (v1/*: any*/)
+    "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "f40c80d0c744c4c03a07bd9c64c6cb58",
+    "cacheID": "e224687758e85158fdb85089e64c48a7",
     "id": null,
     "metadata": {},
     "name": "BAIProjectBulkEditModalProjectMutation",
     "operationKind": "mutation",
-    "text": "mutation BAIProjectBulkEditModalProjectMutation(\n  $gid: UUID!\n  $props: ModifyGroupInput!\n) {\n  modify_group(gid: $gid, props: $props) {\n    ok\n  }\n}\n"
+    "text": "mutation BAIProjectBulkEditModalProjectMutation(\n  $input: PartialBulkUpdateProjectsInput!\n) {\n  partialBulkUpdateProjectsV2(input: $input) {\n    successes {\n      id\n      organization {\n        resourcePolicy\n      }\n    }\n    failed {\n      id\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "7a741d4d92325e5c4775978312f23e3d";
+(node as any).hash = "8cec9f2084a7e839f36155174748c551";
 
 export default node;

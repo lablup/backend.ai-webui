@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e38d3caab2efc4326308f3334aa73509>>
+ * @generated SignedSource<<94d8e39f57c897f0ff02e321aa5c7e37>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -22,21 +22,20 @@ export type ModifyGroupInput = {
   user_update_mode?: string | null | undefined;
   user_uuids?: ReadonlyArray<string | null | undefined> | null | undefined;
 };
+export type UpdateAllowedResourceGroupsForProjectInput = {
+  add?: ReadonlyArray<string> | null | undefined;
+  projectId: string;
+  remove?: ReadonlyArray<string> | null | undefined;
+};
 export type BAIProjectSettingModalModifyMutation$variables = {
   gid: string;
-  isFetchedResourceGroupsEmpty: boolean;
-  isResourceGroupsEmpty: boolean;
+  isResourceGroupsUnchanged: boolean;
   props: ModifyGroupInput;
-  scaling_groups: ReadonlyArray<string | null | undefined>;
+  resourceGroupsInput: UpdateAllowedResourceGroupsForProjectInput;
 };
 export type BAIProjectSettingModalModifyMutation$data = {
-  readonly associate_scaling_groups_with_user_group?: {
-    readonly msg: string | null | undefined;
-    readonly ok: boolean | null | undefined;
-  } | null | undefined;
-  readonly disassociate_all_scaling_groups_with_group?: {
-    readonly msg: string | null | undefined;
-    readonly ok: boolean | null | undefined;
+  readonly adminUpdateAllowedResourceGroupsForProjectV2?: {
+    readonly items: ReadonlyArray<string>;
   } | null | undefined;
   readonly modify_group: {
     readonly group: {
@@ -61,47 +60,19 @@ var v0 = {
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "isFetchedResourceGroupsEmpty"
+  "name": "isResourceGroupsUnchanged"
 },
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "isResourceGroupsEmpty"
+  "name": "props"
 },
 v3 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "props"
+  "name": "resourceGroupsInput"
 },
-v4 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "scaling_groups"
-},
-v5 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "ok",
-  "storageKey": null
-},
-v6 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "msg",
-  "storageKey": null
-},
-v7 = {
-  "kind": "Variable",
-  "name": "user_group",
-  "variableName": "gid"
-},
-v8 = [
-  (v5/*: any*/),
-  (v6/*: any*/)
-],
-v9 = [
+v4 = [
   {
     "alias": null,
     "args": [
@@ -121,8 +92,20 @@ v9 = [
     "name": "modify_group",
     "plural": false,
     "selections": [
-      (v5/*: any*/),
-      (v6/*: any*/),
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "ok",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "msg",
+        "storageKey": null
+      },
       {
         "alias": null,
         "args": null,
@@ -152,26 +135,7 @@ v9 = [
     "storageKey": null
   },
   {
-    "condition": "isFetchedResourceGroupsEmpty",
-    "kind": "Condition",
-    "passingValue": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": [
-          (v7/*: any*/)
-        ],
-        "concreteType": "DisassociateAllScalingGroupsWithGroup",
-        "kind": "LinkedField",
-        "name": "disassociate_all_scaling_groups_with_group",
-        "plural": false,
-        "selections": (v8/*: any*/),
-        "storageKey": null
-      }
-    ]
-  },
-  {
-    "condition": "isResourceGroupsEmpty",
+    "condition": "isResourceGroupsUnchanged",
     "kind": "Condition",
     "passingValue": false,
     "selections": [
@@ -180,16 +144,23 @@ v9 = [
         "args": [
           {
             "kind": "Variable",
-            "name": "scaling_groups",
-            "variableName": "scaling_groups"
-          },
-          (v7/*: any*/)
+            "name": "input",
+            "variableName": "resourceGroupsInput"
+          }
         ],
-        "concreteType": "AssociateScalingGroupsWithUserGroup",
+        "concreteType": "AllowedResourceGroupsPayload",
         "kind": "LinkedField",
-        "name": "associate_scaling_groups_with_user_group",
+        "name": "adminUpdateAllowedResourceGroupsForProjectV2",
         "plural": false,
-        "selections": (v8/*: any*/),
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "items",
+            "storageKey": null
+          }
+        ],
         "storageKey": null
       }
     ]
@@ -201,13 +172,12 @@ return {
       (v0/*: any*/),
       (v1/*: any*/),
       (v2/*: any*/),
-      (v3/*: any*/),
-      (v4/*: any*/)
+      (v3/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
     "name": "BAIProjectSettingModalModifyMutation",
-    "selections": (v9/*: any*/),
+    "selections": (v4/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -215,26 +185,25 @@ return {
   "operation": {
     "argumentDefinitions": [
       (v0/*: any*/),
+      (v2/*: any*/),
       (v3/*: any*/),
-      (v4/*: any*/),
-      (v1/*: any*/),
-      (v2/*: any*/)
+      (v1/*: any*/)
     ],
     "kind": "Operation",
     "name": "BAIProjectSettingModalModifyMutation",
-    "selections": (v9/*: any*/)
+    "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "1f95a54db43d3bb454df1f3dfd4309db",
+    "cacheID": "dae55c647d5cf0aa257946cc7b09de3f",
     "id": null,
     "metadata": {},
     "name": "BAIProjectSettingModalModifyMutation",
     "operationKind": "mutation",
-    "text": "mutation BAIProjectSettingModalModifyMutation(\n  $gid: UUID!\n  $props: ModifyGroupInput!\n  $scaling_groups: [String]!\n  $isFetchedResourceGroupsEmpty: Boolean!\n  $isResourceGroupsEmpty: Boolean!\n) {\n  modify_group(gid: $gid, props: $props) {\n    ok\n    msg\n    group {\n      id\n      scaling_groups\n    }\n  }\n  disassociate_all_scaling_groups_with_group(user_group: $gid) @skip(if: $isFetchedResourceGroupsEmpty) {\n    ok\n    msg\n  }\n  associate_scaling_groups_with_user_group(scaling_groups: $scaling_groups, user_group: $gid) @skip(if: $isResourceGroupsEmpty) {\n    ok\n    msg\n  }\n}\n"
+    "text": "mutation BAIProjectSettingModalModifyMutation(\n  $gid: UUID!\n  $props: ModifyGroupInput!\n  $resourceGroupsInput: UpdateAllowedResourceGroupsForProjectInput!\n  $isResourceGroupsUnchanged: Boolean!\n) {\n  modify_group(gid: $gid, props: $props) {\n    ok\n    msg\n    group {\n      id\n      scaling_groups\n    }\n  }\n  adminUpdateAllowedResourceGroupsForProjectV2(input: $resourceGroupsInput) @skip(if: $isResourceGroupsUnchanged) {\n    items\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "889ba0e670039fa4a19f21993fd11dea";
+(node as any).hash = "9df89699f8381ef2523d88533788f1ae";
 
 export default node;
