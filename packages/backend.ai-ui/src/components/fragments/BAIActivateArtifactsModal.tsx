@@ -40,12 +40,16 @@ const BAIActivateArtifactsModal = ({
     useMutation<BAIActivateArtifactsModalArtifactsFragmentRestoreArtifactsMutation>(
       graphql`
         mutation BAIActivateArtifactsModalArtifactsFragmentRestoreArtifactsMutation(
-          $input: RestoreArtifactsInput!
+          $input: PartialBulkRestoreArtifactsInput!
         ) {
-          restoreArtifacts(input: $input) {
-            artifacts {
+          partialBulkRestoreArtifacts(input: $input) {
+            successes {
               id
               availability
+            }
+            failed {
+              id
+              message
             }
           }
         }
@@ -62,10 +66,10 @@ const BAIActivateArtifactsModal = ({
           restoreArtifacts({
             variables: {
               input: {
-                artifactIds: selectedArtifacts.map((a) => a.entityId),
+                ids: selectedArtifacts.map((a) => a.entityId),
               },
             },
-            onCompleted: (_res, errors) => {
+            onCompleted: (res, errors) => {
               if (errors && errors.length > 0) {
                 errors.forEach((err) =>
                   message.error(
@@ -77,10 +81,21 @@ const BAIActivateArtifactsModal = ({
                 );
                 return;
               }
-              message.success(
-                t('comp:BAIActivateArtifactsModal.SuccessfullyActivated'),
-              );
-              onOk?.(e);
+              const { successes, failed } = res.partialBulkRestoreArtifacts;
+              failed.forEach((failure) => {
+                const name =
+                  selectedArtifacts.find((a) => a.entityId === failure.id)
+                    ?.name ?? failure.id;
+                message.error(`${name}: ${failure.message}`);
+              });
+              // The ones that succeeded stay activated, so close and refresh
+              // even when some failed.
+              if (successes.length > 0) {
+                message.success(
+                  t('comp:BAIActivateArtifactsModal.SuccessfullyActivated'),
+                );
+                onOk?.(e);
+              }
             },
             onError: (err) => {
               message.error(
