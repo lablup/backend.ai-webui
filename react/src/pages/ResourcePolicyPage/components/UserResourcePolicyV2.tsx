@@ -335,7 +335,7 @@ const UserResourcePolicyV2 = ({
                           onClick: () => {
                             setEditingUserResourcePolicy(
                               _.find(userResourcePolicies, {
-                                id: record.id,
+                                entityId: record.entityId,
                               }) ?? null,
                             );
                           },
@@ -348,7 +348,7 @@ const UserResourcePolicyV2 = ({
                           onClick: () => {
                             setDeletingPolicy(
                               _.find(userResourcePolicies, {
-                                id: record.id,
+                                entityId: record.entityId,
                               }) ?? null,
                             );
                           },

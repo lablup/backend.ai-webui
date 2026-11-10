@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<68c9543b29ea4ab1781918b2baac9076>>
+ * @generated SignedSource<<20879c2f1ff6e196e08829063c9f9e18>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -353,12 +353,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e75e377cce91cf76f4223b61993e3dde",
+    "cacheID": "ca1195f189a0dde694b47652844bf66a",
     "id": null,
     "metadata": {},
     "name": "UserResourcePolicyV2Query",
     "operationKind": "query",
-    "text": "query UserResourcePolicyV2Query(\n  $filter: UserResourcePolicyV2Filter\n  $orderBy: [UserResourcePolicyV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminUserResourcePoliciesV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        name\n        maxVfolderCount\n        maxConcurrentLogins\n        maxSessionCountPerModelSession\n        maxQuotaScopeSize {\n          expr\n        }\n        maxCustomizedImageCount\n        createdAt\n        ...BAIUserResourcePolicyV2TableFragment\n        ...UserResourcePolicyV2SettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIUserResourcePolicyV2TableFragment on UserResourcePolicyV2 {\n  id\n  name\n  createdAt\n  maxVfolderCount\n  maxConcurrentLogins\n  maxSessionCountPerModelSession\n  maxQuotaScopeSize {\n    expr\n  }\n  maxCustomizedImageCount\n}\n\nfragment UserResourcePolicyV2SettingModalFragment on UserResourcePolicyV2 {\n  id\n  name\n  maxVfolderCount\n  maxConcurrentLogins\n  maxSessionCountPerModelSession\n  maxQuotaScopeSize {\n    expr\n  }\n  maxCustomizedImageCount\n}\n"
+    "text": "query UserResourcePolicyV2Query(\n  $filter: UserResourcePolicyV2Filter\n  $orderBy: [UserResourcePolicyV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminUserResourcePoliciesV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        name\n        maxVfolderCount\n        maxConcurrentLogins\n        maxSessionCountPerModelSession\n        maxQuotaScopeSize {\n          expr\n        }\n        maxCustomizedImageCount\n        createdAt\n        ...BAIUserResourcePolicyV2TableFragment\n        ...UserResourcePolicyV2SettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIUserResourcePolicyV2TableFragment on UserResourcePolicyV2 {\n  id\n  entityId\n  name\n  createdAt\n  maxVfolderCount\n  maxConcurrentLogins\n  maxSessionCountPerModelSession\n  maxQuotaScopeSize {\n    expr\n  }\n  maxCustomizedImageCount\n}\n\nfragment UserResourcePolicyV2SettingModalFragment on UserResourcePolicyV2 {\n  id\n  name\n  maxVfolderCount\n  maxConcurrentLogins\n  maxSessionCountPerModelSession\n  maxQuotaScopeSize {\n    expr\n  }\n  maxCustomizedImageCount\n}\n"
   }
 };
 })();
