@@ -3096,6 +3096,7 @@
         "webuiSettings.DescEnableReservoir",
         "webuiSettings.DescFasttrackEndpoint",
         "webuiSettings.DescHideAgents",
+        "webuiSettings.DescHideModelDefinitionPath",
         "webuiSettings.DescIsDirectorySizeVisible",
         "webuiSettings.DescManualUrl",
         "webuiSettings.DescMaskUserInfo",
@@ -3133,6 +3134,7 @@
         "webuiSettings.ExportJson",
         "webuiSettings.FasttrackEndpoint",
         "webuiSettings.HideAgents",
+        "webuiSettings.HideModelDefinitionPath",
         "webuiSettings.ImportFileReadError",
         "webuiSettings.ImportFileTooLarge",
         "webuiSettings.ImportJson",
@@ -3191,6 +3193,7 @@
         "webuiSettings.group.Login",
         "webuiSettings.group.Menu",
         "webuiSettings.group.Plugins",
+        "webuiSettings.group.Serving",
         "webuiSettings.group.Session",
         "webuiSettings.group.Storage"
       ]

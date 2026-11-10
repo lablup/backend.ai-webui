@@ -4508,6 +4508,7 @@
     "DescEnableReservoir": "Näyttää Reservoir-valikkokohdan.",
     "DescFasttrackEndpoint": "FastTrack-palvelun URL-osoite. Se tarjotaan omana valikkokohtanaan.",
     "DescHideAgents": "Piilottaa Agenttien yhteenveto -valikon ja agenttien tiedot käyttäjiltä, jotka eivät ole superadmin-käyttäjiä.",
+    "DescHideModelDefinitionPath": "Piilottaa mallin määritystiedoston polun käyttöönoton versioissa: version tiedot eivät näytä sitä, eikä kenttää ole versiolomakkeessa. Kopioitu versio säilyttää polkunsa; uusi käyttää tiedostoa model-definition.yaml.",
     "DescIsDirectorySizeVisible": "Näyttää kunkin hakemiston koon kansioselaimessa.",
     "DescManualUrl": "Asettaa sivun URL-osoitteen, jonka yläpalkin ohjepainike avaa. Jätä tyhjäksi piilottaaksesi ohjepainikkeen.",
     "DescMaskUserInfo": "Peittää käyttäjätilin sähköpostiosoitteen ja nimen näytettäessä.",
@@ -4545,6 +4546,7 @@
     "ExportJson": "Vie JSON",
     "FasttrackEndpoint": "FastTrack-URL",
     "HideAgents": "Piilota agentit",
+    "HideModelDefinitionPath": "Piilota mallin määritystiedoston polku",
     "ImportFileReadError": "Tiedostoa ei voitu lukea.",
     "ImportFileTooLarge": "Tiedosto on suurempi kuin 1 Mt.",
     "ImportJson": "Tuo JSON",
@@ -4604,6 +4606,7 @@
       "Login": "Kirjautuminen",
       "Menu": "Valikko",
       "Plugins": "Liitännäiset",
+      "Serving": "Käyttöönotot",
       "Session": "Istunto",
       "Storage": "Data"
     }

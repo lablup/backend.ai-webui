@@ -5,6 +5,7 @@
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import { convertToBinaryUnit } from '../helper';
 import { formatShellCommand } from '../helper/parseCliCommand';
+import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 // Co-located CSS (P17): keeps long values (model paths, image refs, shell
 // commands) wrapping inside their MetadataList cell instead of overflowing
 // the drawer, and provides the spinner animation for the "Applying" badge
@@ -60,6 +61,7 @@ const DeploymentRevisionDetail: React.FC<{
 }> = ({ revisionFrgmt, status = 'none', mergeRevisionInfo = false }) => {
   'use memo';
   const { t } = useTranslation();
+  const { hideModelDefinitionPath } = useEffectiveLoginConfig();
   const screens = useBAIBreakpoint();
 
   const revision = useFragment(
@@ -358,7 +360,7 @@ const DeploymentRevisionDetail: React.FC<{
         renderFallback()
       ),
     },
-    {
+    !hideModelDefinitionPath && {
       key: 'model-definition-path',
       label: t('deployment.ModelDefinitionPath'),
       children: mountConfig?.definitionPath || renderFallback(),

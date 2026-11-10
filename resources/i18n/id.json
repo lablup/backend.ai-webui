@@ -4511,6 +4511,7 @@
     "DescEnableReservoir": "Menampilkan item menu Reservoir.",
     "DescFasttrackEndpoint": "URL layanan FastTrack. Ditawarkan sebagai item menu tersendiri.",
     "DescHideAgents": "Menyembunyikan menu Ringkasan Agen dan detail agen dari pengguna yang bukan superadmin.",
+    "DescHideModelDefinitionPath": "Menyembunyikan jalur file definisi model pada revisi deployment: detail revisi tidak menampilkannya dan kolomnya hilang dari formulir revisi. Revisi yang disalin mempertahankan jalurnya; revisi baru memakai model-definition.yaml.",
     "DescIsDirectorySizeVisible": "Menampilkan ukuran setiap direktori di penjelajah folder.",
     "DescManualUrl": "Mengatur URL halaman yang dibuka oleh tombol bantuan di header atas. Biarkan kosong untuk menyembunyikan tombol bantuan.",
     "DescMaskUserInfo": "Menyamarkan email dan nama akun pengguna saat ditampilkan.",
@@ -4548,6 +4549,7 @@
     "ExportJson": "Ekspor JSON",
     "FasttrackEndpoint": "URL FastTrack",
     "HideAgents": "Sembunyikan agen",
+    "HideModelDefinitionPath": "Sembunyikan jalur file definisi model",
     "ImportFileReadError": "File tidak dapat dibaca.",
     "ImportFileTooLarge": "File lebih besar dari 1 MB.",
     "ImportJson": "Impor JSON",
@@ -4607,6 +4609,7 @@
       "Login": "Masuk",
       "Menu": "Menu",
       "Plugins": "Plugin",
+      "Serving": "Penerapan",
       "Session": "Sesi",
       "Storage": "Data"
     }

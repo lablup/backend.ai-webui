@@ -453,6 +453,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const { t } = useTranslation();
   const { token } = useTheme();
   const { message } = App.useApp();
+  const { hideModelDefinitionPath } = useEffectiveLoginConfig();
   const relayEnvironment = useRelayEnvironment();
   const { isDirectorySizeVisible } = useEffectiveLoginConfig();
 
@@ -2650,6 +2651,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   tooltip={t('modelService.ModelDefinitionPathTooltip')}
                   rules={[{ whitespace: true }]}
                   preserve={false}
+                  // Hidden, not unmounted: a copied revision keeps its path.
+                  hidden={hideModelDefinitionPath}
                 >
                   <BAITextInput
                     aria-label={t('deployment.ModelDefinitionPath')}

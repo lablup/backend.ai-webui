@@ -4507,6 +4507,7 @@
     "DescEnableReservoir": "Mostra la voce di menu Reservoir.",
     "DescFasttrackEndpoint": "URL del servizio FastTrack. Viene offerto come voce di menu a sé.",
     "DescHideAgents": "Nasconde il menu Riepilogo agenti e i dettagli degli agenti agli utenti che non sono superadmin.",
+    "DescHideModelDefinitionPath": "Nasconde il percorso del file di definizione del modello nelle revisioni di distribuzione: i dettagli della revisione non lo mostrano e il campo scompare dal modulo. Una revisione copiata mantiene il suo percorso; una nuova usa model-definition.yaml.",
     "DescIsDirectorySizeVisible": "Mostra la dimensione di ogni directory nell'esplora cartelle.",
     "DescManualUrl": "Imposta l'URL della pagina aperta dal pulsante di aiuto nell'intestazione superiore. Lascia vuoto per nascondere il pulsante di aiuto.",
     "DescMaskUserInfo": "Maschera l'e-mail e il nome dell'account utente quando vengono mostrati.",
@@ -4544,6 +4545,7 @@
     "ExportJson": "Esporta JSON",
     "FasttrackEndpoint": "URL FastTrack",
     "HideAgents": "Nascondi gli agenti",
+    "HideModelDefinitionPath": "Nascondi il percorso del file di definizione del modello",
     "ImportFileReadError": "Impossibile leggere il file.",
     "ImportFileTooLarge": "Il file supera 1 MB.",
     "ImportJson": "Importa JSON",
@@ -4603,6 +4605,7 @@
       "Login": "Accesso",
       "Menu": "Menu",
       "Plugins": "Plugin",
+      "Serving": "Distribuzioni",
       "Session": "Sessione",
       "Storage": "Dati"
     }

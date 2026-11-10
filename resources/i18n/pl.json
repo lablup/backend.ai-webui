@@ -4510,6 +4510,7 @@
     "DescEnableReservoir": "Pokazuje pozycję menu Reservoir.",
     "DescFasttrackEndpoint": "Adres URL usługi FastTrack. Jest oferowana jako osobna pozycja menu.",
     "DescHideAgents": "Ukrywa menu Podsumowanie agentów i szczegóły agentów przed użytkownikami, którzy nie są superadministratorami.",
+    "DescHideModelDefinitionPath": "Ukrywa ścieżkę pliku definicji modelu w rewizjach wdrożenia: szczegóły rewizji jej nie pokazują, a pole znika z formularza. Skopiowana rewizja zachowuje swoją ścieżkę; nowa używa model-definition.yaml.",
     "DescIsDirectorySizeVisible": "Pokazuje rozmiar każdego katalogu w eksploratorze folderów.",
     "DescManualUrl": "Ustawia adres URL strony otwieranej przez przycisk pomocy w górnym nagłówku. Pozostaw puste, aby ukryć przycisk pomocy.",
     "DescMaskUserInfo": "Maskuje adres e-mail i nazwę konta użytkownika podczas wyświetlania.",
@@ -4547,6 +4548,7 @@
     "ExportJson": "Eksportuj JSON",
     "FasttrackEndpoint": "Adres URL FastTrack",
     "HideAgents": "Ukryj agentów",
+    "HideModelDefinitionPath": "Ukryj ścieżkę pliku definicji modelu",
     "ImportFileReadError": "Nie można odczytać pliku.",
     "ImportFileTooLarge": "Plik jest większy niż 1 MB.",
     "ImportJson": "Importuj JSON",
@@ -4606,6 +4608,7 @@
       "Login": "Logowanie",
       "Menu": "Menu",
       "Plugins": "Wtyczki",
+      "Serving": "Wdrożenia",
       "Session": "Sesja",
       "Storage": "Dane"
     }
