@@ -26,7 +26,10 @@
     "ActivateArtifacts": "아티팩트를 활성화",
     "AreYouSureYouWantToActivateOne": "{{name}}을 활성화 하시겠습니까?",
     "AreYouSureYouWantToActivateSome": "{{count}}개의 아티팩트를 활성화 하시겠습니까?",
+    "Error": "오류",
     "FailedToActivateArtifacts": "아티팩트를 활성화하는 데 실패했습니다.",
+    "Name": "이름",
+    "SomeArtifactsFailedToActivate": "아티팩트 {{count}}개를 활성화하지 못했습니다",
     "SuccessfullyActivated": "아티팩트를 활성화했습니다."
   },
   "comp:BAIAdminKeypairResourcePolicySelect": {

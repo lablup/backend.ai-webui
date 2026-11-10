@@ -26,7 +26,10 @@
     "ActivateArtifacts": "Kích hoạt hiện vật",
     "AreYouSureYouWantToActivateOne": "Bạn có chắc là bạn muốn kích hoạt {{name}}?",
     "AreYouSureYouWantToActivateSome": "Bạn có chắc là bạn muốn kích hoạt {{count}} Artifacts không?",
+    "Error": "Lỗi",
     "FailedToActivateArtifacts": "Không thể kích hoạt hiện vật.",
+    "Name": "Tên",
+    "SomeArtifactsFailedToActivate": "Không thể kích hoạt {{count}} artifact",
     "SuccessfullyActivated": "Cổ vật được kích hoạt thành công."
   },
   "comp:BAIAdminKeypairResourcePolicySelect": {

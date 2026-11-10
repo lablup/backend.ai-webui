@@ -26,7 +26,10 @@
     "ActivateArtifacts": "激活工件",
     "AreYouSureYouWantToActivateOne": "您确定要激活{{name}}吗？",
     "AreYouSureYouWantToActivateSome": "您确定要激活{{count}}伪像吗？",
+    "Error": "错误",
     "FailedToActivateArtifacts": "未能激活伪影。",
+    "Name": "名称",
+    "SomeArtifactsFailedToActivate": "{{count}} 个制品激活失败",
     "SuccessfullyActivated": "成功激活的工件。"
   },
   "comp:BAIAdminKeypairResourcePolicySelect": {

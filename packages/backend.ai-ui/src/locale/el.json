@@ -26,7 +26,10 @@
     "ActivateArtifacts": "Ενεργοποιήστε αντικείμενα",
     "AreYouSureYouWantToActivateOne": "Είστε βέβαιοι ότι θέλετε να ενεργοποιήσετε {{name}};",
     "AreYouSureYouWantToActivateSome": "Είστε βέβαιοι ότι θέλετε να ενεργοποιήσετε {{count}} τεχνουργήματα;",
+    "Error": "Σφάλμα",
     "FailedToActivateArtifacts": "Αποτυχία ενεργοποίησης αντικειμένων.",
+    "Name": "Όνομα",
+    "SomeArtifactsFailedToActivate": "Αποτυχία ενεργοποίησης {{count}} τεχνουργημάτων",
     "SuccessfullyActivated": "Επιτυχώς ενεργοποιημένα αντικείμενα."
   },
   "comp:BAIAdminKeypairResourcePolicySelect": {
