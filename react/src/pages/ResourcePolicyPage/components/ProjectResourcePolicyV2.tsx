@@ -321,7 +321,7 @@ const ProjectResourcePolicyV2 = ({
                           onClick: () => {
                             setEditingProjectResourcePolicy(
                               _.find(projectResourcePolicies, {
-                                id: record.id,
+                                entityId: record.entityId,
                               }) ?? null,
                             );
                           },
@@ -334,7 +334,7 @@ const ProjectResourcePolicyV2 = ({
                           onClick: () => {
                             setDeletingPolicy(
                               _.find(projectResourcePolicies, {
-                                id: record.id,
+                                entityId: record.entityId,
                               }) ?? null,
                             );
                           },
