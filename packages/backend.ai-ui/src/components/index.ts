@@ -310,6 +310,12 @@ export { default as BAIDateInput } from './BAIDateInput';
 export type { BAIDateInputProps } from './BAIDateInput';
 export { default as BAIDateRangeInput } from './BAIDateRangeInput';
 export type { BAIDateRangeInputProps } from './BAIDateRangeInput';
+export { default as BAIDateTimeRangeInput } from './BAIDateTimeRangeInput';
+export type {
+  BAIDateTimeRangeInputPreset,
+  BAIDateTimeRangeInputProps,
+  BAIDateTimeRangeInputValue,
+} from './BAIDateTimeRangeInput';
 export { default as BAIDateTimeInput } from './BAIDateTimeInput';
 export type { BAIDateTimeInputProps } from './BAIDateTimeInput';
 export { default as BAIFileInput } from './BAIFileInput';

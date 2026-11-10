@@ -356,6 +356,8 @@ const PROJECT_ADMIN_PANELS: ReadonlyArray<PanelDefinition> = [
     defaultSize: size(4, 3),
     minSize: size(2, 2),
     settings: ['range'],
+    // The card reads only the range's start, so a custom end would change nothing.
+    maxRangeDays: 0,
     defaultHidden: ['admin'],
   },
   {

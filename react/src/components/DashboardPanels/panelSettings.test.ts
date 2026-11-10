@@ -13,8 +13,11 @@ import {
 } from './panelSettings';
 import { MAX_WINDOW_DAYS, windowRange } from './timeRange';
 import dayjs from 'dayjs';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
 import type { TFunction } from 'i18next';
 import { describe, expect, it, vi } from 'vitest';
+
+dayjs.extend(localizedFormat);
 
 vi.mock('../../hooks/useRouteScope', () => ({
   useProjectPath: () => () => '',
@@ -137,13 +140,13 @@ describe('range settings', () => {
     expect(sanitizePanelSettings({ range: eightDays }, RANGE)).toBeUndefined();
   });
 
-  it('labels a fixed window compactly and describes it in the sider', () => {
+  it("labels a fixed window in the locale's format and describes it in the sider", () => {
     const range = windowRange(WINDOW);
-    expect(formatWindowLabel(range)).toBe('Oct 29 09:39 - Oct 30 09:39');
+    const label = `${dayjs(WINDOW.after).format('lll')} - ${dayjs(WINDOW.before).format('lll')}`;
+    expect(label).toMatch(/^Oct 29, 2026 .+ - Oct 30, 2026 /);
+    expect(formatWindowLabel(range)).toBe(label);
     expect(formatWindowLabel('now-24h')).toBeUndefined();
-    expect(describePanelSettings({ range }, t)).toBe(
-      'Oct 29 09:39 - Oct 30 09:39',
-    );
+    expect(describePanelSettings({ range }, t)).toBe(label);
     expect(describePanelSettings({ range: 'now-1h' }, t)).toBe(
       'dashboard.settings.Last1Hour',
     );
