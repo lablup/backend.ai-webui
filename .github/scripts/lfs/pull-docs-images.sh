@@ -59,6 +59,13 @@ report_pointers() {
   [ "$n" -le 10 ] || echo "  … and $((n - 10)) more" >&2
 }
 
+fail_on_untracked() { # <top> <file listing untracked pointer files>
+  [ -s "$2" ] || return 0
+  log "ERROR: $1: untracked files hold Git LFS pointer text, which the docs build rejects; replace or delete them:" >&2
+  report_pointers "$2"
+  exit 1
+}
+
 pull_one() {
   local dir="$1" top roots=() root remote work list attrs n
   top="$(git -C "$dir" rev-parse --show-toplevel)"
@@ -70,17 +77,15 @@ pull_one() {
 
   work="$(mktemp -d)"
   list="${work}/pointers"
-  # Only tracked files can be restored from the index; untracked pointer text is
-  # reported and left alone.
-  git -C "$top" -c core.quotePath=false ls-files -- "${roots[@]}" | sort > "${work}/tracked"
-  (cd "$top" && lfs_find_pointer_files "${roots[@]}") | sort > "${work}/found"
-  comm -12 "${work}/found" "${work}/tracked" > "$list"
-  if [ -s "${work}/found" ] && comm -23 "${work}/found" "${work}/tracked" | grep -q .; then
-    log "warning: untracked files with Git LFS pointer text are left as they are:" >&2
-    comm -23 "${work}/found" "${work}/tracked" | sed 's/^/  /' >&2
-  fi
+  # Only tracked files can be restored from the index. Untracked pointer text is
+  # left alone, but fails the run at the end: every consumer would reject it.
+  git -C "$top" ls-files -z -- "${roots[@]}" | tr '\0' '\n' | LC_ALL=C sort > "${work}/tracked"
+  (cd "$top" && lfs_find_pointer_files "${roots[@]}") | LC_ALL=C sort > "${work}/found"
+  LC_ALL=C comm -12 "${work}/found" "${work}/tracked" > "$list"
+  LC_ALL=C comm -23 "${work}/found" "${work}/tracked" > "${work}/untracked"
   n="$(wc -l < "$list" | tr -d ' ')"
   if [ "$n" -eq 0 ]; then
+    fail_on_untracked "$top" "${work}/untracked"
     log "${top}: no LFS files — nothing to do"
     rm -rf "$work"
     return 0
@@ -118,9 +123,13 @@ pull_one() {
     -c filter.lfs.required=true
     -c lfs.fetchexclude=)
   if ! "${lfs_git[@]}" checkout --pathspec-from-file="${list}.nul" --pathspec-file-nul; then
-    git -C "$top" --literal-pathspecs -c filter.lfs.required=false \
-      checkout --pathspec-from-file="${list}.nul" --pathspec-file-nul || true
-    log "ERROR: ${top}: the LFS checkout failed; the pointer files were restored." >&2
+    if git -C "$top" --literal-pathspecs -c filter.lfs.required=false \
+      checkout --pathspec-from-file="${list}.nul" --pathspec-file-nul; then
+      log "ERROR: ${top}: the LFS checkout failed; the pointer files were restored." >&2
+    else
+      log "ERROR: ${top}: the LFS checkout failed and restoring the pointer files failed too; run 'git checkout -- ${roots[*]}' to restore them." >&2
+    fi
+    rm -rf "$work"
     exit 1
   fi
   # Files written in the same second as the index are re-hashed by later git
@@ -133,7 +142,7 @@ pull_one() {
   while IFS= read -r path; do
     [ -f "${top}/${path}" ] || { echo "  missing after checkout: ${path}" >&2; missing=1; }
   done < "$list"
-  (cd "$top" && lfs_find_pointer_files "${roots[@]}") | sort | comm -12 - "${work}/tracked" > "$list"
+  (cd "$top" && lfs_find_pointer_files "${roots[@]}") | LC_ALL=C sort | LC_ALL=C comm -12 - "${work}/tracked" > "$list"
   n="$(wc -l < "$list" | tr -d ' ')"
   if [ "$n" -gt 0 ] || [ "$missing" -ne 0 ]; then
     log "ERROR: ${top}: ${n} file(s) are still Git LFS pointers after the pull:" >&2
@@ -142,6 +151,7 @@ pull_one() {
     exit 1
   fi
   log "${top}: materialized all LFS images"
+  fail_on_untracked "$top" "${work}/untracked"
 
   if [ -z "${CI:-}" ] && [ -z "$(git -C "$top" config --get filter.lfs.process || true)" ]; then
     log "note: git-lfs filters are not configured here. Run 'git lfs install' before committing images."

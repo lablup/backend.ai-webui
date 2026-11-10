@@ -63,6 +63,11 @@ restore_src() {
   rm -rf "$SRC"
   git -C "$REPO_ROOT" checkout HEAD -- "$SRC"
   echo "Restored ${SRC} to HEAD."
+  # The checkout writes LFS pointers back; a local run gets its images again.
+  # CI skips it: nothing reads `src` afterwards.
+  if [ -z "${CI:-}" ]; then
+    pull_images || echo "warning: re-pulling the LFS images failed; run images:pull." >&2
+  fi
 }
 trap restore_src EXIT
 
@@ -174,8 +179,6 @@ else
   mkdir -p "${OUT}/base"
 fi
 restore_src
-# The restore checks out pointers again; leave `src` as the run found it.
-pull_images
 echo "::endgroup::"
 
 if [ "$SKIP_DIFF" -eq 1 ]; then

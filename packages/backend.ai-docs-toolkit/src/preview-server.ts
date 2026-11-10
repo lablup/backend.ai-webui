@@ -204,7 +204,7 @@ export async function startPreviewServer(
   const configPath = path.join(config.srcDir, "book.config.yaml");
   const bookConfig = loadBookConfig(config.srcDir);
   // Sample and catalog modes render built-in content, not the manual's images.
-  if (args.mode === "document") {
+  if (args.mode !== "sample" && args.mode !== "catalog") {
     assertNoLfsPointers([config.srcDir], { cwd: config.projectRoot });
   }
   const { display: version } = getDocVersion(
