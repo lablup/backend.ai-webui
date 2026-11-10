@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f8a051d53c482ea6da0b34043a1b606a>>
+ * @generated SignedSource<<a12145ac62f6131e8c18fe8bae1af5ff>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,7 @@ import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type BAIProjectResourcePolicyV2TableFragment$data = ReadonlyArray<{
   readonly createdAt: string | null | undefined;
+  readonly entityId: string;
   readonly id: string;
   readonly maxNetworkCount: number;
   readonly maxQuotaScopeSize: {
@@ -39,6 +40,13 @@ const node: ReaderFragment = {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
       "storageKey": null
     },
     {
@@ -92,6 +100,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "991ef65e96e8516fd0f0e2bde5cf3434";
+(node as any).hash = "21c033ae1905c96c88b3874348e8d212";
 
 export default node;

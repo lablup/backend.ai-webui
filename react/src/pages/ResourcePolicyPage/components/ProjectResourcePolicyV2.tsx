@@ -59,6 +59,7 @@ export const ProjectResourcePolicyV2Query = graphql`
       edges {
         node {
           id
+          entityId
           name
           maxVfolderCount
           maxQuotaScopeSize {
@@ -121,9 +122,8 @@ const ProjectResourcePolicyV2 = ({
   const [isCreatingPolicySetting, setIsCreatingPolicySetting] = useState(false);
   const [editingProjectResourcePolicy, setEditingProjectResourcePolicy] =
     useState<ProjectResourcePolicyV2Node | null>(null);
-  const [deletingPolicyName, setDeletingPolicyName] = useState<string | null>(
-    null,
-  );
+  const [deletingPolicy, setDeletingPolicy] =
+    useState<ProjectResourcePolicyV2Node | null>(null);
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.ProjectResourcePolicyV2',
@@ -147,9 +147,9 @@ const ProjectResourcePolicyV2 = ({
   );
 
   const [commitDelete] = useMutation<ProjectResourcePolicyV2Mutation>(graphql`
-    mutation ProjectResourcePolicyV2Mutation($name: String!) {
-      adminDeleteProjectResourcePolicyV2(name: $name) {
-        name
+    mutation ProjectResourcePolicyV2Mutation($id: UUID!) {
+      purgeProjectResourcePolicyV2(id: $id) {
+        entityId
       }
     }
   `);
@@ -321,7 +321,7 @@ const ProjectResourcePolicyV2 = ({
                           onClick: () => {
                             setEditingProjectResourcePolicy(
                               _.find(projectResourcePolicies, {
-                                id: record.id,
+                                entityId: record.entityId,
                               }) ?? null,
                             );
                           },
@@ -332,7 +332,11 @@ const ProjectResourcePolicyV2 = ({
                           icon: <Trash2 size="1em" />,
                           type: 'danger',
                           onClick: () => {
-                            setDeletingPolicyName(record.name);
+                            setDeletingPolicy(
+                              _.find(projectResourcePolicies, {
+                                entityId: record.entityId,
+                              }) ?? null,
+                            );
                           },
                         },
                       ]}
@@ -378,21 +382,21 @@ const ProjectResourcePolicyV2 = ({
         }}
       />
       <BAIDeleteConfirmModal
-        open={!!deletingPolicyName}
+        open={!!deletingPolicy}
         items={
-          deletingPolicyName
-            ? [{ key: deletingPolicyName, label: deletingPolicyName }]
+          deletingPolicy
+            ? [{ key: deletingPolicy.entityId, label: deletingPolicy.name }]
             : []
         }
         title={t('resourcePolicy.DeletePolicy')}
         target={t('resourcePolicy.ResourcePolicy')}
-        confirmText={deletingPolicyName ?? ''}
+        confirmText={deletingPolicy?.name ?? ''}
         requireConfirmInput
         onOk={() => {
-          if (deletingPolicyName) {
+          if (deletingPolicy) {
             return new Promise<void>((resolve) => {
               commitDelete({
-                variables: { name: deletingPolicyName },
+                variables: { id: deletingPolicy.entityId },
                 onCompleted: (_res, errors) => {
                   if (errors && errors.length > 0) {
                     for (const error of errors) {
@@ -404,19 +408,19 @@ const ProjectResourcePolicyV2 = ({
                     });
                     message.success(t('resourcePolicy.ResourcePolicyDeleted'));
                   }
-                  setDeletingPolicyName(null);
+                  setDeletingPolicy(null);
                   resolve();
                 },
                 onError(err) {
                   message.error(err?.message);
-                  setDeletingPolicyName(null);
+                  setDeletingPolicy(null);
                   resolve();
                 },
               });
             });
           }
         }}
-        onCancel={() => setDeletingPolicyName(null)}
+        onCancel={() => setDeletingPolicy(null)}
       />
     </BAIFlex>
   );
