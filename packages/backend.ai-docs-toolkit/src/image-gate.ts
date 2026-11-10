@@ -18,6 +18,7 @@
 
 import fs from "fs";
 import path from "path";
+import { LFS_PULL_HINT } from "./lfs-pointer.js";
 
 /** Per-channel difference (0–255) at or below which a pixel counts as equal. */
 export const DEFAULT_TOLERANCE = 16;
@@ -318,9 +319,7 @@ export async function acceptImages(
     const newBuf = fs.readFileSync(src);
     if (isLfsPointer(newBuf)) {
       throw new ImageGateError(
-        `${src} is a Git LFS pointer, not a PNG. Fetch the real images ` +
-          "first (`git lfs pull`, after `git lfs install` if LFS is not set " +
-          "up) and rerun.",
+        `${src} is a Git LFS pointer, not a PNG. ${LFS_PULL_HINT} Then rerun.`,
       );
     }
     if (!fs.existsSync(dest)) {
@@ -331,8 +330,7 @@ export async function acceptImages(
     if (isLfsPointer(oldBuf)) {
       throw new ImageGateError(
         `${dest} is a Git LFS pointer, not a PNG, so the capture cannot be ` +
-          "compared with it. Fetch the real images first (`git lfs pull`, " +
-          "after `git lfs install` if LFS is not set up) and rerun.",
+          `compared with it. ${LFS_PULL_HINT} Then rerun.`,
       );
     }
     const cmp = await compareImages(oldBuf, newBuf, opts, {

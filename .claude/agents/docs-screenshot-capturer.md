@@ -192,7 +192,7 @@ The gate compares with the file in the working tree. If you run it more than onc
 
 **Never bypass the gate** — no `cp`, `mv` or other copy into the docs images directory. An `unchanged` result means the capture would only add bytes to the repository. If a skipped image truly must be replaced (e.g. a difference the gate cannot weigh, such as a deliberately updated sample value in a tiny area), rerun the gate for that language with `--force <file.png>` (repeatable) and state in your report which file you forced and why.
 
-If the gate fails because an existing image is a Git LFS pointer, run `git lfs pull` (after `git lfs install` if needed) and rerun it. Do not work around the error.
+If the gate fails because an existing image is a Git LFS pointer, run `pnpm --filter backend.ai-webui-docs run images:pull` (a plain `git lfs pull` skips the manual's images because of `.lfsconfig`) and rerun it. Do not work around the error.
 
 **Verify per-language uniqueness:**
 ```bash
