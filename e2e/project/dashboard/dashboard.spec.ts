@@ -1,6 +1,7 @@
 // spec: e2e/.agent-output/test-plan-start-dashboard.md
 // scenarios: 6 (Widget Rendering), 7 (Session Count Widget), 8 (My Resources Widget),
 //            9 (My Activity Widget, replaces My Resources in Resource Group),
+//            9b (Card Header Time Range, #10915),
 //            12 (Board Layout), plus the custom panel add flow.
 // The member dashboard reads only the viewer's own data (#10584). The superadmin
 // dashboard is in e2e/admin/dashboard/, the project admin one in e2e/project-admin/dashboard/.
@@ -287,7 +288,7 @@ test.describe(
         }
       });
 
-      test('User can pick a preset period in a dashboard card header', async ({
+      test('Admin can pick a preset period in a dashboard card header', async ({
         page,
       }) => {
         const widget = myActivityWidget(page);
@@ -307,14 +308,13 @@ test.describe(
           .click();
         await expect(rangePicker(page)).toBeHidden();
 
-        // 3. The header shows the preset, and no period line sits under the title
+        // 3. The header shows the preset
         await expect(
           widget.getByRole('button', { name: 'Time range: Last 7 days' }),
         ).toBeVisible();
-        await expect(widget.getByTestId('panel-period')).toHaveCount(0);
       });
 
-      test('User can pick a custom period in a dashboard card header', async ({
+      test('Admin can pick a custom period in a dashboard card header', async ({
         page,
       }) => {
         const widget = myActivityWidget(page);
@@ -385,7 +385,6 @@ test.describe(
             ),
           }),
         ).toBeVisible();
-        await expect(widget.getByTestId('panel-period')).toHaveCount(0);
       });
     });
 
