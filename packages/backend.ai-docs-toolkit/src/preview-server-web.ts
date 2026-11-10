@@ -54,12 +54,14 @@ export async function startHtmlPreviewServer(
 
   const configPath = path.join(config.srcDir, "book.config.yaml");
   const bookConfig = loadBookConfig(config.srcDir);
-  assertNoLfsPointers([config.srcDir], { cwd: config.projectRoot });
   const { display: version } = getDocVersion(
     config.versionSource,
     config.version,
   );
   const isCatalog = args.mode === "catalog";
+  if (!isCatalog) {
+    assertNoLfsPointers([config.srcDir], { cwd: config.projectRoot });
+  }
   const title = isCatalog ? "Style Catalog" : bookConfig.title;
 
   if (!isCatalog) {

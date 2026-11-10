@@ -1050,7 +1050,7 @@ export async function generateWebDiff(
   const srcRoot = path.resolve(config.projectRoot, opts.src ?? config.srcDir);
   // Image changes are fingerprinted from the built images' bytes.
   assertNoLfsPointers([baseRoot, headRoot], { cwd: config.projectRoot });
-  const log =(msg: string): void => {
+  const log = (msg: string): void => {
     if (opts.quiet) console.error(msg);
     else console.log(msg);
   };
