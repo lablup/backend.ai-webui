@@ -80,10 +80,13 @@ const registriesQuery = graphql`
   query ImportImageModalRegistriesQuery(
     $first: Int
     $after: String
-    $domain: String
+    $domain: String!
   ) {
     domain(name: $domain) {
       allowed_docker_registries
+    }
+    domainV2(domainName: $domain) {
+      entityId
     }
     container_registry_nodes(first: $first, after: $after)
       @since(version: "24.09.0") {
@@ -125,15 +128,19 @@ const scanImageMutation = graphql`
 
 const enableRegistryMutation = graphql`
   mutation ImportImageModalEnableRegistryMutation(
-    $domain: String!
-    $allowed_docker_registries: [String]!
+    $id: UUID!
+    $allowedDockerRegistries: [String!]!
   ) {
-    modify_domain(
-      name: $domain
-      props: { allowed_docker_registries: $allowed_docker_registries }
+    updateDomainV2(
+      id: $id
+      input: { allowedDockerRegistries: $allowedDockerRegistries }
     ) {
-      ok
-      msg
+      domain {
+        id
+        registry {
+          allowedDockerRegistries
+        }
+      }
     }
   }
 `;
@@ -160,9 +167,11 @@ const fetchAllRegistries = async (
   nodes: Array<RegistryNode>;
   /** `null` when the manager did not say; treated as allowing everything. */
   allowedRegistries: ReadonlyArray<string> | null;
+  domainId: string | null;
 }> => {
   const nodes: Array<RegistryNode> = [];
   let allowedRegistries: ReadonlyArray<string> | null = null;
+  let domainId: string | null = null;
   let after: string | null = null;
   for (let page = 0; page < REGISTRY_PAGE_LIMIT; page++) {
     // Annotated: `after` is written from this very result, so an inferred
@@ -178,6 +187,7 @@ const fetchAllRegistries = async (
       allowedRegistries = data?.domain?.allowed_docker_registries
         ? _.compact(data.domain.allowed_docker_registries)
         : null;
+      domainId = data?.domainV2?.entityId ?? null;
     }
     const connection: RegistryConnection | null | undefined =
       data?.container_registry_nodes;
@@ -190,7 +200,7 @@ const fetchAllRegistries = async (
     }
     after = connection.pageInfo.endCursor;
   }
-  return { nodes, allowedRegistries };
+  return { nodes, allowedRegistries, domainId };
 };
 
 export interface ImportImageModalProps extends Omit<BAIModalProps, 'onOk'> {
@@ -294,7 +304,7 @@ const ImportImageModalContent: React.FC<{
   const registryNodes = filterOutNullAndUndefined(
     _.map(registryData.nodes, (edge) => edge?.node),
   ).filter((node) => !!node.registry_name);
-  const { allowedRegistries } = registryData;
+  const { allowedRegistries, domainId } = registryData;
   // Images of a registry the domain does not allow register fine but stay out
   // of the domain's image list (manager `ImageAccessCriteria`).
   const isEnabledInDomain = (registryName: string) =>
@@ -310,21 +320,21 @@ const ImportImageModalContent: React.FC<{
       refreshRegistries();
       return;
     }
+    if (!domainId) {
+      message.error(t('dialog.ErrorOccurred'));
+      return;
+    }
     commitEnableRegistry({
       variables: {
-        domain: domainName,
-        allowed_docker_registries: _.uniq([
+        id: domainId,
+        allowedDockerRegistries: _.uniq([
           ...(allowedRegistries ?? []),
           registryName,
         ]),
       },
-      onCompleted: (res, errors) => {
-        if (!res?.modify_domain?.ok || (errors && errors.length > 0)) {
-          message.error(
-            res?.modify_domain?.msg ||
-              errors?.[0]?.message ||
-              t('dialog.ErrorOccurred'),
-          );
+      onCompleted: (_res, errors) => {
+        if (errors && errors.length > 0) {
+          message.error(errors[0]?.message || t('dialog.ErrorOccurred'));
         } else {
           message.success({
             key: 'registry-enabled',

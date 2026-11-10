@@ -61,9 +61,8 @@ import {
 
 type TabKey = 'defaultSessionOptions' | 'defaultDeploymentOptions';
 
-// The basic-info form still edits the graphene `ScalingGroup` (it carries
-// `scheduler_opts`, which `ResourceGroup` does not).
-// The drawer starts this query on the edit click (render-as-you-fetch).
+// TODO(needs-backend): #11079 `adminResourceGroupV2` has no `scheduler_opts`,
+// which the edit form reads; started on the edit click (render-as-you-fetch).
 const SettingModalQuery = graphql`
   query ResourceGroupDetailDrawerSettingModalQuery($name: String!) {
     scaling_group(name: $name) {
@@ -154,7 +153,7 @@ const ResourceGroupDetailDrawerContent: React.FC<{
   const deploymentOptionsTabRef = useRef<HTMLButtonElement>(null);
 
   const resourceGroupName = resourceGroup.name;
-  // `ResourceGroup` has no counterpart for `scheduler_opts`.
+  // TODO(needs-backend): #11079 `ResourceGroup` has no `scheduler_opts`.
   const { scaling_group } = useLazyLoadQuery<ResourceGroupDetailDrawerQuery>(
     graphql`
       query ResourceGroupDetailDrawerQuery($name: String!) {

@@ -100,6 +100,8 @@ const DomainStoragePermissionTable: React.FC<
     permission?.vfolder_host_permission_list ?? [],
   );
 
+  // TODO(needs-backend): #11079 `UpdateDomainInput` has no allowed vfolder
+  // hosts until storage hosts are normalized (#10300); move to `updateDomainV2` then.
   const [commitModifyDomain] =
     useMutation<DomainStoragePermissionTableModifyDomainMutation>(graphql`
       mutation DomainStoragePermissionTableModifyDomainMutation(

@@ -108,6 +108,8 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
   const isSftpMapLoading =
     proxyResourceGroups === undefined || isSftpMapFetching;
 
+  // TODO(needs-backend): #11079 the V2 resource group inputs have no
+  // `scheduler_opts`; move create/update to `adminCreateResourceGroupV2` / `updateResourceGroup` then.
   const [commitUpdateResourceGroup, isInFlightCommitUpdateResourceGroup] =
     useMutation<ResourceGroupSettingModalUpdateMutation>(graphql`
       mutation ResourceGroupSettingModalUpdateMutation(
@@ -135,15 +137,10 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
   const [commitAssociateDomain, isInFlightCommitAssociateDomain] =
     useMutation<ResourceGroupSettingModalAssociateDomainMutation>(graphql`
       mutation ResourceGroupSettingModalAssociateDomainMutation(
-        $domain: String!
-        $scaling_group: String!
+        $input: UpdateAllowedDomainsForResourceGroupInput!
       ) {
-        associate_scaling_group_with_domain(
-          domain: $domain
-          scaling_group: $scaling_group
-        ) {
-          ok
-          msg
+        adminUpdateAllowedDomainsForResourceGroupV2(input: $input) {
+          items
         }
       }
     `);
@@ -300,17 +297,12 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
 
                 commitAssociateDomain({
                   variables: {
-                    domain: currentDomain,
-                    scaling_group: values.name,
+                    input: {
+                      resourceGroupName: values.name,
+                      add: [currentDomain],
+                    },
                   },
-                  onCompleted: (
-                    { associate_scaling_group_with_domain: res },
-                    errors,
-                  ) => {
-                    if (!res?.ok) {
-                      message.error(res?.msg);
-                      return;
-                    }
+                  onCompleted: (_res, errors) => {
                     if (errors && errors.length > 0) {
                       const errorMsgList = _.map(
                         errors,

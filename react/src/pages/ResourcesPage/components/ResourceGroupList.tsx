@@ -99,8 +99,10 @@ const ResourceGroupList: React.FC = () => {
   >(null);
   // Kept apart from the name so the drawer keeps its content while closing.
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [selectedResourceGroupName, setSelectedResourceGroupName] =
-    useState<string>();
+  const [deletingResourceGroup, setDeletingResourceGroup] = useState<{
+    name: string;
+    entityId: string;
+  }>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const isLabelable = useIsLabelableEntityType('resource_group');
   const [labelingResourceGroup, setLabelingResourceGroup] =
@@ -226,22 +228,25 @@ const ResourceGroupList: React.FC = () => {
   const [commitUpdateResourceGroup] =
     useMutation<ResourceGroupListUpdateMutation>(graphql`
       mutation ResourceGroupListUpdateMutation(
-        $name: String!
-        $input: ModifyScalingGroupInput!
+        $id: UUID!
+        $input: UpdateResourceGroupV2Input!
       ) {
-        modify_scaling_group(name: $name, props: $input) {
-          ok
-          msg
+        updateResourceGroup(id: $id, input: $input) {
+          resourceGroup {
+            id
+            status {
+              isActive
+            }
+          }
         }
       }
     `);
 
   const [commitDeleteResourceGroup, isInflightCommitDeleteResourceGroup] =
     useMutation<ResourceGroupListDeleteMutation>(graphql`
-      mutation ResourceGroupListDeleteMutation($name: String!) {
-        delete_scaling_group(name: $name) {
-          ok
-          msg
+      mutation ResourceGroupListDeleteMutation($id: UUID!) {
+        purgeResourceGroupV2(id: $id) {
+          entityId
         }
       }
     `);
@@ -300,17 +305,12 @@ const ResourceGroupList: React.FC = () => {
                   return new Promise<void>((resolve) => {
                     commitUpdateResourceGroup({
                       variables: {
-                        name: record.name ?? '',
+                        id: record.entityId,
                         input: {
-                          is_active: !record.status.isActive,
+                          isActive: !record.status.isActive,
                         },
                       },
-                      onCompleted: ({ modify_scaling_group: res }, errors) => {
-                        if (!res?.ok) {
-                          message.error(res?.msg);
-                          resolve();
-                          return;
-                        }
+                      onCompleted: (_res, errors) => {
                         if (errors && errors.length > 0) {
                           const errorMsgList = _.map(
                             errors,
@@ -349,7 +349,10 @@ const ResourceGroupList: React.FC = () => {
                     icon: <Trash2 size="1em" />,
                     type: 'danger' as const,
                     onClick: () => {
-                      setSelectedResourceGroupName(record?.name || '');
+                      setDeletingResourceGroup({
+                        name: record.name,
+                        entityId: record.entityId,
+                      });
                     },
                   },
                 ]
@@ -620,30 +623,27 @@ const ResourceGroupList: React.FC = () => {
         }}
       />
       <BAIDeleteConfirmModal
-        open={!!selectedResourceGroupName}
+        open={!!deletingResourceGroup}
         title={t('resourceGroup.DeleteResourceGroup')}
         target={t('general.ResourceGroup')}
         items={
-          selectedResourceGroupName
+          deletingResourceGroup
             ? [
                 {
-                  key: selectedResourceGroupName,
-                  label: selectedResourceGroupName,
+                  key: deletingResourceGroup.name,
+                  label: deletingResourceGroup.name,
                 },
               ]
             : []
         }
         requireConfirmInput
         onOk={() => {
+          if (!deletingResourceGroup) return;
           commitDeleteResourceGroup({
             variables: {
-              name: selectedResourceGroupName ?? '',
+              id: deletingResourceGroup.entityId,
             },
-            onCompleted: ({ delete_scaling_group: res }, errors) => {
-              if (!res?.ok) {
-                message.error(res?.msg);
-                return;
-              }
+            onCompleted: (_res, errors) => {
               if (errors && errors.length > 0) {
                 const errorMsgList = _.map(errors, (error) => error.message);
                 for (const error of errorMsgList) {
@@ -652,7 +652,7 @@ const ResourceGroupList: React.FC = () => {
                 return;
               }
               message.success(t('resourceGroup.ResourceGroupDeleted'));
-              setSelectedResourceGroupName(undefined);
+              setDeletingResourceGroup(undefined);
               startRefetchTransition(() => {
                 updateFetchKey();
               });
@@ -664,7 +664,7 @@ const ResourceGroupList: React.FC = () => {
         }}
         okButtonProps={{ loading: isInflightCommitDeleteResourceGroup }}
         onCancel={() => {
-          setSelectedResourceGroupName(undefined);
+          setDeletingResourceGroup(undefined);
         }}
       />
       <ResourceGroupSettingModal

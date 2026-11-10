@@ -121,7 +121,7 @@ const ContainerRegistryList: React.FC<{
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const { container_registry_nodes, domain } =
+  const { container_registry_nodes, domain, domainV2 } =
     useLazyLoadQuery<ContainerRegistryListQuery>(
       graphql`
         query ContainerRegistryListQuery(
@@ -171,6 +171,9 @@ const ContainerRegistryList: React.FC<{
             name
             allowed_docker_registries
           }
+          domainV2(domainName: $domain) {
+            entityId
+          }
         }
       `,
       deferredQueryVariables,
@@ -198,20 +201,19 @@ const ContainerRegistryList: React.FC<{
   const [commitDomainMutation, isInFlightDomainMutation] =
     useMutation<ContainerRegistryListDomainMutation>(graphql`
       mutation ContainerRegistryListDomainMutation(
-        $domain: String!
-        $allowed_docker_registries: [String]!
+        $id: UUID!
+        $allowedDockerRegistries: [String!]!
       ) {
-        modify_domain(
-          name: $domain
-          props: { allowed_docker_registries: $allowed_docker_registries }
+        updateDomainV2(
+          id: $id
+          input: { allowedDockerRegistries: $allowedDockerRegistries }
         ) {
-          ok
-          msg
-          # TODO: update domain when it supports relay global id
-          # domain {
-          #   name
-          #   allowed_vfolder_hosts
-          # }
+          domain {
+            id
+            registry {
+              allowedDockerRegistries
+            }
+          }
         }
       }
     `);
@@ -415,7 +417,7 @@ const ContainerRegistryList: React.FC<{
               inFlightHostName === record.id + deferredFetchKey
             }
             onChange={(isOn) => {
-              if (!_.isString(record.registry_name)) return;
+              if (!_.isString(record.registry_name) || !domainV2) return;
               let newAllowedDockerRegistries = _.clone(
                 domain?.allowed_docker_registries || [],
               ) as string[];
@@ -431,14 +433,10 @@ const ContainerRegistryList: React.FC<{
               setInFlightHostName(record.id + deferredFetchKey);
               commitDomainMutation({
                 variables: {
-                  domain: baiClient._config.domainName,
-                  allowed_docker_registries: newAllowedDockerRegistries,
+                  id: domainV2.entityId,
+                  allowedDockerRegistries: newAllowedDockerRegistries,
                 },
-                onCompleted: (res, errors) => {
-                  if (!res?.modify_domain?.ok) {
-                    message.error(res?.modify_domain?.msg);
-                    return;
-                  }
+                onCompleted: (_res, errors) => {
                   if (errors && errors?.length > 0) {
                     const errorMsgList = _.map(
                       errors,
@@ -457,6 +455,10 @@ const ContainerRegistryList: React.FC<{
                       ? t('registry.RegistryTurnedOn')
                       : t('registry.RegistryTurnedOff'),
                   });
+                },
+                // V2 raises what `modify_domain` returned as `ok: false`.
+                onError: (error) => {
+                  message.error(error.message);
                 },
               });
             }}

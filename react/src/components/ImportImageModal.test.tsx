@@ -56,7 +56,17 @@ vi.mock('react-relay', async (importOriginal) => {
               mockEnableRequest(config.variables);
               Promise.resolve().then(() =>
                 config.onCompleted(
-                  { modify_domain: { ok: true, msg: '' } },
+                  {
+                    updateDomainV2: {
+                      domain: {
+                        id: 'domain-global-id',
+                        registry: {
+                          allowedDockerRegistries:
+                            config.variables.allowedDockerRegistries,
+                        },
+                      },
+                    },
+                  },
                   null,
                 ),
               );
@@ -259,6 +269,7 @@ const queueRegistryPages = (
           domain: allowedRegistries
             ? { allowed_docker_registries: allowedRegistries }
             : null,
+          domainV2: { entityId: 'domain-uuid' },
           container_registry_nodes: {
             edges: nodes.map((node) => ({ node })),
             pageInfo: {
@@ -409,8 +420,8 @@ describe('ImportImageModal (FR-3940 review round)', () => {
     );
 
     expect(mockEnableRequest).toHaveBeenCalledWith({
-      domain: 'default',
-      allowed_docker_registries: ['cr.backend.ai', 'nvcr.io'],
+      id: 'domain-uuid',
+      allowedDockerRegistries: ['cr.backend.ai', 'nvcr.io'],
     });
     await waitFor(() =>
       expect(
@@ -655,8 +666,8 @@ describe('ImportImageModal (FR-3940 review round)', () => {
     await user.click(await screen.findByTestId('mock-registry-editor-modal'));
 
     expect(mockEnableRequest).toHaveBeenCalledWith({
-      domain: 'default',
-      allowed_docker_registries: ['cr.backend.ai', 'nvcr.io'],
+      id: 'domain-uuid',
+      allowedDockerRegistries: ['cr.backend.ai', 'nvcr.io'],
     });
     await waitFor(() =>
       expect(
