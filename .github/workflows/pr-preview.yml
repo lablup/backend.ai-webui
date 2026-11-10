@@ -37,6 +37,7 @@ on:
       - packages/backend.ai-docs-toolkit/**
       - .github/workflows/pr-preview.yml
       - .github/scripts/pr-preview/**
+      - .github/scripts/lfs/**
 
 permissions:
   contents: read
@@ -204,12 +205,7 @@ jobs:
         id: urls
         run: echo "short_hash=$(echo "${{ github.event.pull_request.head.sha }}" | cut -c1-7)" >> "$GITHUB_OUTPUT"
 
-      # Head images may be Git LFS pointers (#11040); a no-op while none is.
-      # The build script pulls the merge base's own LFS objects after swapping
-      # its `src` in.
-      - name: Pull the manual images (Git LFS)
-        run: bash .github/scripts/lfs/pull-docs-images.sh
-
+      # The script pulls Git LFS images for head and merge base (#11040).
       - name: Build both docs trees and mark the changes
         run: |
           bash .github/scripts/pr-preview/build-docs-preview.sh \

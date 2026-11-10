@@ -156,13 +156,6 @@ applications:
             # silently regressed the old install/build/install dance.)
             - pnpm --filter backend.ai-docs-toolkit run build
             - pnpm rebuild
-            # Git LFS (#11040): the manual's screenshots may be LFS pointers,
-            # and the Amplify image ships no git-lfs. Install the pinned,
-            # sha256-verified release into $HOME; the build phase pulls the
-            # images for every checkout (a no-op while none is in LFS).
-            - |
-              LFS_DIR="$(bash "$(git rev-parse --show-toplevel)/.github/scripts/lfs/install-git-lfs.sh")"
-              if [ -n "$LFS_DIR" ]; then export PATH="$LFS_DIR:$PATH"; fi
         build:
           commands:
             # The toolkit's website-generator (FR-2710 F6) iterates
@@ -192,8 +185,10 @@ applications:
                   | grep -oE 'docs-archive/[0-9]+\.[0-9]+' | sort -u
               )
               echo "Archive refs from config: ${ARCHIVE_REFS[*]:-(none)}"
-              # Replaces LFS pointers with the real images and fails if any
-              # remains; installs git-lfs itself if PATH lost it between phases.
+              # Git LFS (#11040): replaces manual-image pointers with the real
+              # images and fails if any remains. The Amplify image has no
+              # git-lfs; the script installs the pinned, sha256-verified release
+              # only when a pointer exists, so it is a no-op until then.
               PULL_IMAGES="$(git rev-parse --show-toplevel)/.github/scripts/lfs/pull-docs-images.sh"
               bash "$PULL_IMAGES"
               for ref in ${ARCHIVE_REFS[@]+"${ARCHIVE_REFS[@]}"}; do

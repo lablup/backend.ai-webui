@@ -174,6 +174,8 @@ else
   mkdir -p "${OUT}/base"
 fi
 restore_src
+# The restore checks out pointers again; leave `src` as the run found it.
+pull_images
 echo "::endgroup::"
 
 if [ "$SKIP_DIFF" -eq 1 ]; then
