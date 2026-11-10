@@ -35,6 +35,8 @@ export interface LogEntry {
   requestHeaders: [string, string][];
   responseHeaders: [string, string][];
   response: string;
+  /** Decided on the whole response at capture, since `response` may be cut. */
+  hasGraphQLErrors?: boolean;
 }
 
 export type NewEntry = Omit<LogEntry, 'id'>;
@@ -90,6 +92,8 @@ function isEntry(value: unknown): value is LogEntry {
     ['status', 'duration', 'size'].every(
       (key) => entry[key] === undefined || typeof entry[key] === 'number',
     ) &&
+    (entry.hasGraphQLErrors === undefined ||
+      typeof entry.hasGraphQLErrors === 'boolean') &&
     isHeaderList(entry.requestHeaders) &&
     isHeaderList(entry.responseHeaders)
   );
@@ -129,22 +133,21 @@ function load(): LogEntry[] {
 function save() {
   clearTimeout(saveTimer);
   saveTimer = undefined;
-  const stored = entries.map((entry) =>
-    entry.response.length > MAX_TEXT
-      ? { ...entry, response: clip(entry.response) }
-      : entry,
-  );
-  let text = JSON.stringify(stored);
-  if (text.length > MAX_STORED_CHARS) {
-    // Newest first, so keep the longest prefix that fits.
-    let total = 2;
-    const kept = stored.findIndex(
-      (entry) => (total += JSON.stringify(entry).length + 1) > MAX_STORED_CHARS,
+  // Newest first; a row that alone does not fit is skipped, not the end of the log.
+  const kept: string[] = [];
+  let total = 2;
+  for (const entry of entries) {
+    const text = JSON.stringify(
+      entry.response.length > MAX_TEXT
+        ? { ...entry, response: clip(entry.response) }
+        : entry,
     );
-    text = JSON.stringify(stored.slice(0, kept));
+    if (total + text.length + 1 > MAX_STORED_CHARS) continue;
+    total += text.length + 1;
+    kept.push(text);
   }
   try {
-    sessionStorage.setItem(STORAGE_KEY, text);
+    sessionStorage.setItem(STORAGE_KEY, `[${kept.join(',')}]`);
   } catch {
     removeStored();
   }
@@ -239,6 +242,20 @@ const describeError = (error: unknown) =>
 const messagesText = (messages: string[]) =>
   messages.length ? `[\n${messages.join(',\n')}\n]` : '';
 
+// `messagesText` adds 2 characters per message plus 2, so this keeps it within MAX_TEXT.
+const MAX_MESSAGE = MAX_TEXT - 4;
+
+function cutMessage(message: string) {
+  if (message.length <= MAX_MESSAGE) return message;
+  const keep = MAX_MESSAGE / 2;
+  const cut = JSON.stringify(
+    `${message.slice(0, keep)}… (${message.length - keep} characters not kept)`,
+  );
+  return cut.length <= MAX_MESSAGE
+    ? cut
+    : JSON.stringify(`… (${message.length} characters not kept)`);
+}
+
 /** Records each SSE `data` payload as one element of a JSON array, dropping the oldest past the bounds. */
 async function readEvents(
   id: number,
@@ -250,44 +267,61 @@ async function readEvents(
   const messages: string[] = [];
   let buffer = '';
   let size = 0;
-  let total = 0;
+  let total = 2;
+  let hasErrors = false;
+  const push = (message: string) => {
+    const kept = cutMessage(message);
+    messages.push(kept);
+    total += kept.length + 2;
+    while (
+      messages.length > MAX_MESSAGES ||
+      (total > MAX_TEXT && messages.length > 1)
+    ) {
+      total -= messages.shift()!.length + 2;
+    }
+  };
+  const record = (event: string) => {
+    const data = event
+      .split(/\r?\n/)
+      .filter((line) => line.startsWith('data:'))
+      .map((line) => line.slice(5).replace(/^ /, ''))
+      .join('\n');
+    if (!data) return false;
+    const value = parseJson(data);
+    if ((value as { errors?: unknown[] } | null)?.errors?.length) {
+      hasErrors = true;
+    }
+    push(value === undefined ? JSON.stringify(data) : data);
+    return true;
+  };
   const finish = (state: LogEntry['state']) =>
     updateEntry(id, {
       state,
       duration: Math.round(performance.now() - startedAt),
       size,
       response: messagesText(messages),
+      hasGraphQLErrors: hasErrors,
     });
   try {
     for (;;) {
       const { done, value } = await reader.read();
-      if (done) break;
-      size += value.byteLength;
-      buffer += decoder.decode(value, { stream: true });
+      if (!done) size += value.byteLength;
+      buffer += done
+        ? decoder.decode()
+        : decoder.decode(value, { stream: true });
       const events = buffer.split(/\r?\n\r?\n/);
-      buffer = events.pop() ?? '';
+      // At the end, a last event without its trailing blank line still counts.
+      buffer = done ? '' : (events.pop() ?? '');
       let isChanged = false;
-      for (const event of events) {
-        const data = event
-          .split(/\r?\n/)
-          .filter((line) => line.startsWith('data:'))
-          .map((line) => line.slice(5).replace(/^ /, ''))
-          .join('\n');
-        if (!data) continue;
-        const message =
-          parseJson(data) === undefined ? JSON.stringify(data) : data;
-        messages.push(message);
-        total += message.length;
-        isChanged = true;
+      for (const event of events) isChanged = record(event) || isChanged;
+      if (done) break;
+      if (isChanged) {
+        updateEntry(id, {
+          response: messagesText(messages),
+          size,
+          hasGraphQLErrors: hasErrors,
+        });
       }
-      if (!isChanged) continue;
-      while (
-        messages.length > MAX_MESSAGES ||
-        (total > MAX_TEXT && messages.length > 1)
-      ) {
-        total -= messages.shift()!.length;
-      }
-      updateEntry(id, { response: messagesText(messages), size });
     }
     finish('ok');
   } catch (error) {
@@ -296,7 +330,7 @@ async function readEvents(
       finish('ok');
       return;
     }
-    messages.push(JSON.stringify(describeError(error)));
+    push(JSON.stringify(describeError(error)));
     finish('error');
   }
 }
@@ -354,9 +388,11 @@ function observe(
       }
       return copy.arrayBuffer().then((bytes) => {
         const text = new TextDecoder().decode(bytes);
+        const hasErrors = hasGraphQLErrors(text);
         updateEntry(id, {
           ...head,
-          state: !response.ok || hasGraphQLErrors(text) ? 'error' : 'ok',
+          state: !response.ok || hasErrors ? 'error' : 'ok',
+          hasGraphQLErrors: hasErrors,
           duration: Math.round(performance.now() - startedAt),
           size: bytes.byteLength,
           response: clip(text),

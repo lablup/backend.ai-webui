@@ -354,8 +354,7 @@ function formatSize(bytes: number) {
 function summary(entry: LogEntry) {
   return [
     new Date(entry.time).toLocaleTimeString(),
-    entry.status ?? entry.state,
-    entry.status !== undefined && entry.state !== 'ok' && entry.state,
+    statusText(entry),
     entry.duration !== undefined && `${entry.duration} ms`,
     entry.size !== undefined && formatSize(entry.size),
   ]
@@ -424,20 +423,24 @@ const Viewer = ({ language, value, isSmall, testId }: ViewerProps) => {
   );
 };
 
-// The row's state is traffic.ts's verdict; the response may be cut, so it only refines a 2xx error.
+// GraphQL errors come from the capture-time flag, since the stored response may be cut.
 function statusTone(entry: LogEntry) {
-  if (entry.state === 'interrupted') return 'error';
-  if (entry.state === 'error') {
-    return entry.status !== undefined &&
-      entry.status >= 200 &&
-      entry.status < 300 &&
-      hasGraphQLErrors(entry.response)
-      ? 'warning'
-      : 'error';
-  }
+  const is2xx =
+    entry.status !== undefined && entry.status >= 200 && entry.status < 300;
+  if (is2xx && entry.hasGraphQLErrors) return 'warning';
+  if (entry.state === 'error' || entry.state === 'interrupted') return 'error';
   if (entry.status === undefined) return undefined;
   if (entry.status >= 400) return 'error';
-  return entry.status < 300 ? 'success' : undefined;
+  return is2xx ? 'success' : undefined;
+}
+
+function statusText(entry: LogEntry) {
+  if (entry.status === undefined) return entry.state;
+  if (statusTone(entry) === 'warning')
+    return `${entry.status} · GraphQL errors`;
+  return entry.state === 'ok'
+    ? String(entry.status)
+    : `${entry.status} · ${entry.state}`;
 }
 
 function responseView(entry: LogEntry): {
@@ -567,14 +570,6 @@ const EntryDetail = ({ entry, isRunning, onOpen }: EntryDetailProps) => {
   const isTyped = ['query', 'mutation', 'subscription'].includes(type);
   const tone = statusTone(entry);
   const response = responseView(entry);
-  const status =
-    entry.status === undefined
-      ? entry.state
-      : tone === 'warning'
-        ? `${entry.status} · GraphQL errors`
-        : entry.state === 'ok'
-          ? String(entry.status)
-          : `${entry.status} · ${entry.state}`;
   return (
     <div className="bai-gql-devtools__detail" data-testid="gql-devtools-detail">
       <div className="bai-gql-devtools__toolbar">
@@ -611,7 +606,7 @@ const EntryDetail = ({ entry, isRunning, onOpen }: EntryDetailProps) => {
           }
           data-tone={tone}
         >
-          {status}
+          {statusText(entry)}
         </span>
         {[
           entry.duration !== undefined && `${entry.duration} ms`,
@@ -876,10 +871,7 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
     }
     let parsedVariables: unknown;
     try {
-      // parseJson keeps big integers as written; JSON.parse only reports the error.
-      parsedVariables = sentVariables.trim()
-        ? (parseJson(sentVariables) ?? JSON.parse(sentVariables))
-        : {};
+      parsedVariables = sentVariables.trim() ? JSON.parse(sentVariables) : {};
     } catch (error) {
       record(
         'not sent',
@@ -925,7 +917,10 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
     try {
       const request = client.newSignedRequest('POST', '/admin/gql', {
         query: transformedQuery,
-        variables: parsedVariables,
+        // The directives read plain values; the body keeps big integers as written.
+        variables: sentVariables.trim()
+          ? (parseJson(sentVariables) ?? parsedVariables)
+          : parsedVariables,
       });
       const response = await panelFetch(request.uri, {
         ...request,
@@ -937,7 +932,9 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
       });
       const text = await response.text();
       const printed = printJson(text);
+      const hasErrors = hasGraphQLErrors(text);
       const details: Partial<NewEntry> = {
+        hasGraphQLErrors: hasErrors,
         status: response.status,
         duration: Math.round(performance.now() - startedAt),
         size: new TextEncoder().encode(text).length,
@@ -945,7 +942,7 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
         responseHeaders: [...response.headers.entries()],
       };
       record(
-        !response.ok || hasGraphQLErrors(text) ? 'error' : 'ok',
+        !response.ok || hasErrors ? 'error' : 'ok',
         label,
         response.ok
           ? printed
