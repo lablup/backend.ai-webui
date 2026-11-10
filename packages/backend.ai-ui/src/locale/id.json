@@ -26,7 +26,10 @@
     "ActivateArtifacts": "Aktifkan artefak",
     "AreYouSureYouWantToActivateOne": "Anda yakin ingin mengaktifkan {{name}}?",
     "AreYouSureYouWantToActivateSome": "Anda yakin ingin mengaktifkan {{count}} artefak?",
+    "Error": "Kesalahan",
     "FailedToActivateArtifacts": "Gagal mengaktifkan artefak.",
+    "Name": "Nama",
+    "SomeArtifactsFailedToActivate": "{{count}} artefak gagal diaktifkan",
     "SuccessfullyActivated": "Artefak yang berhasil diaktifkan."
   },
   "comp:BAIAdminKeypairResourcePolicySelect": {

@@ -26,7 +26,10 @@
     "ActivateArtifacts": "เปิดใช้งานสิ่งประดิษฐ์",
     "AreYouSureYouWantToActivateOne": "คุณแน่ใจหรือไม่ว่าต้องการเปิดใช้งาน {{name}}?",
     "AreYouSureYouWantToActivateSome": "คุณแน่ใจหรือไม่ว่าต้องการเปิดใช้งาน {{count}} สิ่งประดิษฐ์?",
+    "Error": "ข้อผิดพลาด",
     "FailedToActivateArtifacts": "ไม่สามารถเปิดใช้งานสิ่งประดิษฐ์ได้",
+    "Name": "ชื่อ",
+    "SomeArtifactsFailedToActivate": "ไม่สามารถเปิดใช้งานอาร์ติแฟกต์ {{count}} รายการ",
     "SuccessfullyActivated": "สิ่งประดิษฐ์ที่เปิดใช้งานสำเร็จ"
   },
   "comp:BAIAdminKeypairResourcePolicySelect": {

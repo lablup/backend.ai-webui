@@ -26,7 +26,10 @@
     "ActivateArtifacts": "Aktivoida esineitä",
     "AreYouSureYouWantToActivateOne": "Oletko varma, että haluat aktivoida {{name}}?",
     "AreYouSureYouWantToActivateSome": "Oletko varma, että haluat aktivoida {{count}} esineitä?",
+    "Error": "Virhe",
     "FailedToActivateArtifacts": "Artefaktien aktivointi epäonnistui.",
+    "Name": "Nimi",
+    "SomeArtifactsFailedToActivate": "{{count}} artefaktin aktivointi epäonnistui",
     "SuccessfullyActivated": "Onnistuneesti aktivoidut esineet."
   },
   "comp:BAIAdminKeypairResourcePolicySelect": {

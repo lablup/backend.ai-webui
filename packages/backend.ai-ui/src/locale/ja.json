@@ -26,7 +26,10 @@
     "ActivateArtifacts": "アーティファクトをアクティブにします",
     "AreYouSureYouWantToActivateOne": "{{name}}をアクティブにしたいですか？",
     "AreYouSureYouWantToActivateSome": "{{count}}アーティファクトをアクティブにしたいですか？",
+    "Error": "エラー",
     "FailedToActivateArtifacts": "アーティファクトをアクティブにすることができませんでした。",
+    "Name": "名前",
+    "SomeArtifactsFailedToActivate": "{{count}} 件のアーティファクトを有効化できませんでした",
     "SuccessfullyActivated": "正常にアクティブ化されたアーティファクト。"
   },
   "comp:BAIAdminKeypairResourcePolicySelect": {

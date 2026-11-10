@@ -26,7 +26,10 @@
     "ActivateArtifacts": "Активируйте артефакты",
     "AreYouSureYouWantToActivateOne": "Вы уверены, что хотите активировать {{name}}?",
     "AreYouSureYouWantToActivateSome": "Вы уверены, что хотите активировать {{count}} артефакты?",
+    "Error": "Ошибка",
     "FailedToActivateArtifacts": "Не удалось активировать артефакты.",
+    "Name": "Имя",
+    "SomeArtifactsFailedToActivate": "Не удалось активировать артефакты: {{count}}",
     "SuccessfullyActivated": "Успешно активированные артефакты."
   },
   "comp:BAIAdminKeypairResourcePolicySelect": {

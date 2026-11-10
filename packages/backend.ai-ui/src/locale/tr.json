@@ -26,7 +26,10 @@
     "ActivateArtifacts": "Eserleri etkinleştirin",
     "AreYouSureYouWantToActivateOne": "{{name}} etkinleştirmek istediğinizden emin misiniz?",
     "AreYouSureYouWantToActivateSome": "{{count}} artefaktları etkinleştirmek istediğinizden emin misiniz?",
+    "Error": "Hata",
     "FailedToActivateArtifacts": "Eserleri etkinleştiremedi.",
+    "Name": "Ad",
+    "SomeArtifactsFailedToActivate": "{{count}} yapıt etkinleştirilemedi",
     "SuccessfullyActivated": "Başarıyla etkinleştirilmiş eserler."
   },
   "comp:BAIAdminKeypairResourcePolicySelect": {

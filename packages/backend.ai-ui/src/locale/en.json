@@ -26,7 +26,10 @@
     "ActivateArtifacts": "Activate Artifacts",
     "AreYouSureYouWantToActivateOne": "Are you sure you want to activate {{name}}?",
     "AreYouSureYouWantToActivateSome": "Are you sure you want to activate {{count}} artifacts?",
+    "Error": "Error",
     "FailedToActivateArtifacts": "Failed to activate artifacts.",
+    "Name": "Name",
+    "SomeArtifactsFailedToActivate": "{{count}} artifact(s) failed to activate",
     "SuccessfullyActivated": "Successfully activated artifacts."
   },
   "comp:BAIAdminKeypairResourcePolicySelect": {
