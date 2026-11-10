@@ -205,11 +205,30 @@ jobs:
         id: urls
         run: echo "short_hash=$(echo "${{ github.event.pull_request.head.sha }}" | cut -c1-7)" >> "$GITHUB_OUTPUT"
 
+      # LFS object cache (#11070): the key changes only when an image does, and
+      # restore-keys fall back to this PR's or main's latest store, so only new
+      # objects are downloaded. A PR's cache is readable by that PR alone; main's
+      # is written by docs-lfs-cache.yml. pull-docs-images.sh hashes every object.
+      - name: Compute the LFS cache key
+        id: lfs-key
+        run: |
+          key="$(bash .github/scripts/lfs/docs-lfs-cache-key.sh)"
+          echo "key=${key}" >> "$GITHUB_OUTPUT"
+
+      - name: Restore the LFS object cache
+        id: lfs-cache
+        uses: actions/cache/restore@v6
+        with:
+          path: .git/lfs/objects
+          key: ${{ steps.lfs-key.outputs.key }}
+          restore-keys: docs-lfs-v1-
+
       # The script pulls Git LFS images for head and merge base (#11040). A fork
       # PR's new images may exist only in the fork's LFS store, so the head pull
       # falls back to the fork's public URL, fetched anonymously (#11055).
       - name: Build both docs trees and mark the changes
         env:
+          LFS_USED_OIDS_FILE: ${{ runner.temp }}/lfs-used-oids
           HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
           HEAD_CLONE_URL: ${{ github.event.pull_request.head.repo.clone_url }}
         run: |
@@ -223,6 +242,20 @@ jobs:
             --out "${RUNNER_TEMP}/docs-preview" \
             --label "PR preview" \
             "${fork_args[@]}"
+
+      # Saved only after a complete build, pruned to the head's and merge base's
+      # objects. Not for a fork PR: objects only the fork has would then skip the
+      # fetch from origin on the next run and pass the check at the end of this job.
+      - name: Prune the LFS object store to what the build used
+        if: steps.lfs-cache.outputs.cache-hit != 'true' && github.event.pull_request.head.repo.full_name == github.repository
+        run: bash .github/scripts/lfs/prune-lfs-store.sh "${RUNNER_TEMP}/lfs-used-oids"
+
+      - name: Save the LFS object cache
+        if: steps.lfs-cache.outputs.cache-hit != 'true' && github.event.pull_request.head.repo.full_name == github.repository
+        uses: actions/cache/save@v6
+        with:
+          path: .git/lfs/objects
+          key: ${{ steps.lfs-key.outputs.key }}
 
       # `docs-meta.json` is re-derived rather than passed through the job outputs
       # so the artifact carries the same JSON the detection script produced.

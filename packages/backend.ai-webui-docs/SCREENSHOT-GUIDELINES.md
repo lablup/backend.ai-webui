@@ -129,8 +129,11 @@ When **replacing an existing screenshot** (same filename), the new image MUST ma
 
 ```bash
 # 1. Inspect the previous version's dimensions and visual scope
-#    (--filters applies the smudge filter, so this also works for Git LFS files)
-git cat-file --filters main:path/to/images/foo.png > /tmp/old.png
+#    The images are in Git LFS and .lfsconfig excludes them, so `git cat-file --filters`
+#    prints the pointer text; smudge the pointer explicitly instead (needs git-lfs on PATH;
+#    it downloads the object when it is not local)
+p=packages/backend.ai-webui-docs/src/en/images/foo.png
+(set -o pipefail; git cat-file blob "main:$p" | git -c lfs.fetchexclude= lfs smudge -- "$p") > /tmp/old.png
 file /tmp/old.png        # note WIDTH x HEIGHT
 # 2. Open /tmp/old.png and identify:
 #    - Is it a header strip? (very wide, very short — e.g., 2358x222)
