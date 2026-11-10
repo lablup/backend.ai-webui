@@ -980,7 +980,10 @@
     "AreYouSureYouWantToDeactivateSome": "Oletko varma, että haluat deaktivoida {{count}} esineitä?",
     "Deactivate": "Deaktivoida",
     "DeactivateArtifacts": "Deaktivoida esineitä",
+    "Error": "Virhe",
     "FailedToDeactivateArtifacts": "Esineiden deaktivointi epäonnistui.",
+    "Name": "Nimi",
+    "SomeArtifactsFailedToDeactivate": "{{count}} artefaktin deaktivointi epäonnistui",
     "SuccessfullyDeactivated": "Deaktivoidut esineet onnistuneesti."
   },
   "comp:BAIDeleteArtifactModal": {

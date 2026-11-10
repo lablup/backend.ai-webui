@@ -980,7 +980,10 @@
     "AreYouSureYouWantToDeactivateSome": "Είστε βέβαιοι ότι θέλετε να απενεργοποιήσετε {{count}} τεχνουργήματα;",
     "Deactivate": "Απενεργοποιούμαι",
     "DeactivateArtifacts": "Απενεργοποιημένα αντικείμενα",
+    "Error": "Σφάλμα",
     "FailedToDeactivateArtifacts": "Απέτυχε να απενεργοποιήσει τα τεχνουργήματα.",
+    "Name": "Όνομα",
+    "SomeArtifactsFailedToDeactivate": "Αποτυχία απενεργοποίησης {{count}} τεχνουργημάτων",
     "SuccessfullyDeactivated": "Επιτυχώς απενεργοποιημένα αντικείμενα."
   },
   "comp:BAIDeleteArtifactModal": {

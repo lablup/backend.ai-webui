@@ -980,7 +980,10 @@
     "AreYouSureYouWantToDeactivateSome": "Bạn có chắc là bạn muốn hủy kích hoạt {{count}} Artifacts?",
     "Deactivate": "Vô hiệu hóa",
     "DeactivateArtifacts": "Vô hiệu hóa tạo tác",
+    "Error": "Lỗi",
     "FailedToDeactivateArtifacts": "Không thể hủy kích hoạt các tạo tác.",
+    "Name": "Tên",
+    "SomeArtifactsFailedToDeactivate": "Không thể hủy kích hoạt {{count}} artifact",
     "SuccessfullyDeactivated": "Thành công vô hiệu hóa các tạo tác."
   },
   "comp:BAIDeleteArtifactModal": {

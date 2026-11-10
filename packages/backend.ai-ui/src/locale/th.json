@@ -980,7 +980,10 @@
     "AreYouSureYouWantToDeactivateSome": "คุณแน่ใจหรือไม่ว่าต้องการปิดการใช้งาน {{count}} สิ่งประดิษฐ์?",
     "Deactivate": "ปิดใช้งาน",
     "DeactivateArtifacts": "ปิดการใช้งานสิ่งประดิษฐ์",
+    "Error": "ข้อผิดพลาด",
     "FailedToDeactivateArtifacts": "ล้มเหลวในการปิดการใช้งานสิ่งประดิษฐ์",
+    "Name": "ชื่อ",
+    "SomeArtifactsFailedToDeactivate": "ไม่สามารถปิดใช้งานอาร์ติแฟกต์ {{count}} รายการ",
     "SuccessfullyDeactivated": "ปิดการใช้งานสิ่งประดิษฐ์สำเร็จ"
   },
   "comp:BAIDeleteArtifactModal": {

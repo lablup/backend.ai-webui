@@ -980,7 +980,10 @@
     "AreYouSureYouWantToDeactivateSome": "Та {{count}} олдворуудыг идэвхгүй болгохыг хүсч байна уу?",
     "Deactivate": "Идэвхгүй болгох",
     "DeactivateArtifacts": "Олдворуудыг идэвхгүй болгох",
+    "Error": "Алдаа",
     "FailedToDeactivateArtifacts": "Олдворуудыг идэвхгүй болгож чадсангүй.",
+    "Name": "Нэр",
+    "SomeArtifactsFailedToDeactivate": "{{count}} артефактыг идэвхгүй болгож чадсангүй",
     "SuccessfullyDeactivated": "Олдворыг амжилттай идэвхгүй болгосон."
   },
   "comp:BAIDeleteArtifactModal": {

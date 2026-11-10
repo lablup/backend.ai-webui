@@ -980,7 +980,10 @@
     "AreYouSureYouWantToDeactivateSome": "Sind Sie sicher, dass Sie {{count}} Artefakte deaktivieren möchten?",
     "Deactivate": "Deaktivieren",
     "DeactivateArtifacts": "Deaktivieren Artefakte",
+    "Error": "Fehler",
     "FailedToDeactivateArtifacts": "Kaum die Artefakte deaktivieren.",
+    "Name": "Name",
+    "SomeArtifactsFailedToDeactivate": "{{count}} Artefakt(e) konnten nicht deaktiviert werden",
     "SuccessfullyDeactivated": "Erfolgreich deaktivierte Artefakte."
   },
   "comp:BAIDeleteArtifactModal": {

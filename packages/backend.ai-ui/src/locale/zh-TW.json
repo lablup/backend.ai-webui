@@ -980,7 +980,10 @@
     "AreYouSureYouWantToDeactivateSome": "您確定要停用{{count}}文物嗎？",
     "Deactivate": "停用",
     "DeactivateArtifacts": "停用偽影",
+    "Error": "錯誤",
     "FailedToDeactivateArtifacts": "未能停用偽影。",
+    "Name": "名稱",
+    "SomeArtifactsFailedToDeactivate": "{{count}} 個製品停用失敗",
     "SuccessfullyDeactivated": "成功停用的偽影。"
   },
   "comp:BAIDeleteArtifactModal": {

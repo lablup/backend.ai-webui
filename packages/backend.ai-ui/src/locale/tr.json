@@ -980,7 +980,10 @@
     "AreYouSureYouWantToDeactivateSome": "{{count}} artefaktları devre dışı bırakmak istediğinizden emin misiniz?",
     "Deactivate": "Devre dışı bırakmak",
     "DeactivateArtifacts": "Artefaktları devre dışı bırak",
+    "Error": "Hata",
     "FailedToDeactivateArtifacts": "Eserleri devre dışı bırakamadı.",
+    "Name": "Ad",
+    "SomeArtifactsFailedToDeactivate": "{{count}} yapıt devre dışı bırakılamadı",
     "SuccessfullyDeactivated": "Başarıyla devre dışı bırakıldı."
   },
   "comp:BAIDeleteArtifactModal": {
