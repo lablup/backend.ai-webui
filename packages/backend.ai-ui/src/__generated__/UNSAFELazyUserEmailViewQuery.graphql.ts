@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a4239a803bb40a324d4e2435d01d3bb0>>
+ * @generated SignedSource<<7eec1e1505a8ebb1e7befaa1feb99aa1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,12 +9,28 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+export type UserScope = {
+  domain?: ReadonlyArray<UUIDScope> | null | undefined;
+  project?: ReadonlyArray<UUIDScope> | null | undefined;
+  role?: ReadonlyArray<UUIDScope> | null | undefined;
+};
+export type UUIDScope = {
+  value: string;
+};
 export type UNSAFELazyUserEmailViewQuery$variables = {
+  scope: UserScope;
   uuid: string;
 };
 export type UNSAFELazyUserEmailViewQuery$data = {
-  readonly user_node: {
-    readonly email: string | null | undefined;
+  readonly scopedUsersV2: {
+    readonly edges: ReadonlyArray<{
+      readonly node: {
+        readonly basicInfo: {
+          readonly email: string;
+        };
+        readonly id: string;
+      };
+    }>;
   } | null | undefined;
 };
 export type UNSAFELazyUserEmailViewQuery = {
@@ -27,43 +43,109 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
+    "name": "scope"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
     "name": "uuid"
   }
 ],
 v1 = [
   {
-    "kind": "Variable",
-    "name": "id",
-    "variableName": "uuid"
+    "alias": null,
+    "args": [
+      {
+        "fields": [
+          {
+            "fields": [
+              {
+                "kind": "Variable",
+                "name": "equals",
+                "variableName": "uuid"
+              }
+            ],
+            "kind": "ObjectValue",
+            "name": "entityId"
+          }
+        ],
+        "kind": "ObjectValue",
+        "name": "filter"
+      },
+      {
+        "kind": "Literal",
+        "name": "limit",
+        "value": 1
+      },
+      {
+        "kind": "Variable",
+        "name": "scope",
+        "variableName": "scope"
+      }
+    ],
+    "concreteType": "UserV2Connection",
+    "kind": "LinkedField",
+    "name": "scopedUsersV2",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "UserV2Edge",
+        "kind": "LinkedField",
+        "name": "edges",
+        "plural": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "UserV2",
+            "kind": "LinkedField",
+            "name": "node",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "id",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "UserV2BasicInfo",
+                "kind": "LinkedField",
+                "name": "basicInfo",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "email",
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
   }
-],
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "email",
-  "storageKey": null
-};
+];
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "UNSAFELazyUserEmailViewQuery",
-    "selections": [
-      {
-        "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "UserNode",
-        "kind": "LinkedField",
-        "name": "user_node",
-        "plural": false,
-        "selections": [
-          (v2/*: any*/)
-        ],
-        "storageKey": null
-      }
-    ],
+    "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -72,39 +154,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "UNSAFELazyUserEmailViewQuery",
-    "selections": [
-      {
-        "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "UserNode",
-        "kind": "LinkedField",
-        "name": "user_node",
-        "plural": false,
-        "selections": [
-          (v2/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ]
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "6cb167705df49d003fee4ee02f1ee82e",
+    "cacheID": "2e65e0bf2d52e40ab3683fabefd46509",
     "id": null,
     "metadata": {},
     "name": "UNSAFELazyUserEmailViewQuery",
     "operationKind": "query",
-    "text": "query UNSAFELazyUserEmailViewQuery(\n  $uuid: String!\n) {\n  user_node(id: $uuid) {\n    email\n    id\n  }\n}\n"
+    "text": "query UNSAFELazyUserEmailViewQuery(\n  $scope: UserScope!\n  $uuid: UUID!\n) {\n  scopedUsersV2(scope: $scope, filter: {entityId: {equals: $uuid}}, limit: 1) {\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "67caa5daf6f6559a42a344a9b5eadff6";
+(node as any).hash = "c2eca30463d0b069ac333d707944ee15";
 
 export default node;

@@ -7,6 +7,7 @@ import { SessionDetailContentFragment$key } from '../__generated__/SessionDetail
 import { SessionDetailContentQuery } from '../__generated__/SessionDetailContentQuery.graphql';
 import { convertToBinaryUnit } from '../helper';
 import { getUnifiedSlotNameFromTag } from '../helper/unifiedAcceleratorSlot';
+import { useCurrentDomain } from '../hooks';
 import {
   useCurrentUserInfo,
   useCurrentUserRole,
@@ -120,6 +121,7 @@ const SessionDetailContent: React.FC<{
 
   const [currentUser] = useCurrentUserInfo();
   const userRole = useCurrentUserRole();
+  const { id: domainId } = useCurrentDomain();
 
   const [openIdleCheckDescriptionModal, setOpenIdleCheckDescriptionModal] =
     useState<boolean>(false);
@@ -396,7 +398,10 @@ const SessionDetailContent: React.FC<{
                   <Suspense
                     fallback={<BAISkeleton variant="input" size="small" />}
                   >
-                    <UNSAFELazyUserEmailView uuid={session.user_id} />
+                    <UNSAFELazyUserEmailView
+                      uuid={session.user_id}
+                      scope={{ domain: [{ value: domainId }] }}
+                    />
                   </Suspense>
                 ) : (
                   '-'

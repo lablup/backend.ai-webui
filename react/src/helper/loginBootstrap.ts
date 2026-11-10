@@ -18,8 +18,9 @@ import {
 /**
  * Everything the app needs to come up as the signed-in user, in one GraphQL
  * round trip. The webserver refuses it for a session it does not hold, so the
- * same document doubles as the login check (FR-2367). `keypair` and `user`
- * resolve to the requester when called without arguments.
+ * same document doubles as the login check (FR-2367). `myKeypairs` and
+ * `myUserV2` resolve to the requester; a session authorizes with the default
+ * keypair, so that one is the session's access key.
  *
  * No version directives (`@since` …) here: the probe runs before
  * `get_manager_version` (an authenticated call), so the manager version is
@@ -27,25 +28,32 @@ import {
  */
 const loginBootstrapQueryNode = graphql`
   query loginBootstrapQuery {
-    keypair {
-      access_key
-      user_id
-      resource_policy
-      user
-    }
-    user {
-      username
-      email
-      full_name
-      is_active
-      role
-      domain_name
-      groups {
-        name
-        id
+    myKeypairs(filter: { isDefault: true }, limit: 1) {
+      edges {
+        node {
+          id
+          accessKey
+          userId
+          resourcePolicy
+        }
       }
-      need_password_change
-      uuid
+    }
+    myUserV2 {
+      id
+      entityId
+      basicInfo {
+        username
+        email
+        fullName
+      }
+      status {
+        status
+        needPasswordChange
+      }
+      organization {
+        role
+        domainName
+      }
     }
     groups(is_active: true, type: ["GENERAL"]) {
       id
@@ -57,6 +65,11 @@ const loginBootstrapQueryNode = graphql`
 `;
 
 export type LoginBootstrap = loginBootstrapQuery$data;
+
+/** The access key the bootstrapped session authorizes with. */
+export const bootstrapAccessKey = (
+  bootstrap: LoginBootstrap | null | undefined,
+): string | undefined => bootstrap?.myKeypairs?.edges[0]?.node.accessKey;
 
 const AUTH_FAILED_TYPE = 'https://api.backend.ai/probs/auth-failed';
 
@@ -126,7 +139,7 @@ export class SessionAuthFailureError extends Error {
 }
 
 /**
- * The session is live but the manager failed to resolve `keypair` or `user`
+ * The session is live but the manager failed to resolve `myKeypairs` or `myUserV2`
  * (an `errors[]` entry that is not a refusal). Not a reason to log out.
  * `message` is the manager's text, else empty.
  */
@@ -178,10 +191,13 @@ function createLoginEnvironment(client: BackendAIClient) {
     }
     // Relay would hand back the nulls as data; `client.query` threw instead.
     const { data, errors } = result as {
-      data?: { keypair?: unknown; user?: unknown } | null;
+      data?: { myKeypairs?: unknown; myUserV2?: unknown } | null;
       errors?: unknown[];
     };
-    if (errors?.length && (data?.keypair == null || data?.user == null)) {
+    if (
+      errors?.length &&
+      (data?.myKeypairs == null || data?.myUserV2 == null)
+    ) {
       throw new LoginBootstrapIncompleteError(result);
     }
     return result;
@@ -220,7 +236,7 @@ export async function probeLoginSession(
     if (err instanceof SessionAuthFailureError) return null;
     throw err;
   }
-  if (!client.adoptLoginSession(bootstrap.keypair?.access_key)) {
+  if (!client.adoptLoginSession(bootstrapAccessKey(bootstrap))) {
     if (!(await client.check_login())) return null;
   }
   return bootstrap;

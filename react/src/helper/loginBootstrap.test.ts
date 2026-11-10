@@ -13,24 +13,28 @@ import { describe, expect, it, vi } from 'vitest';
 
 // A full response for the bootstrap document, as the manager returns it.
 const bootstrap = {
-  keypair: {
-    access_key: 'AKIATEST',
-    user_id: 'user@example.com',
-    resource_policy: 'default',
-    user: 'uuid-1',
-    id: 'KeyPair:AKIATEST',
+  myKeypairs: {
+    edges: [
+      {
+        node: {
+          id: 'KeyPairV2:AKIATEST',
+          accessKey: 'AKIATEST',
+          userId: 'uuid-1',
+          resourcePolicy: 'default',
+        },
+      },
+    ],
   },
-  user: {
-    username: 'user',
-    email: 'user@example.com',
-    full_name: 'Test User',
-    is_active: true,
-    role: 'user',
-    domain_name: 'default',
-    groups: [{ name: 'default', id: 'g-1' }],
-    need_password_change: false,
-    uuid: 'uuid-1',
-    id: 'User:uuid-1',
+  myUserV2: {
+    id: 'UserV2:uuid-1',
+    entityId: 'uuid-1',
+    basicInfo: {
+      username: 'user',
+      email: 'user@example.com',
+      fullName: 'Test User',
+    },
+    status: { status: 'ACTIVE', needPasswordChange: false },
+    organization: { role: 'USER', domainName: 'default' },
   },
   groups: [{ id: 'g-1', name: 'default', description: null, is_active: true }],
 };
@@ -48,8 +52,8 @@ const authFailed = {
 // The GraphQL router's shape for the same refusal: HTTP 200, the manager's
 // 401 wrapped per subgraph field, every root field null.
 const routerAuthFailed = {
-  data: { keypair: null, user: null, groups: null },
-  errors: ['keypair', 'user', 'groups'].map((field) => ({
+  data: { myKeypairs: null, myUserV2: null, groups: null },
+  errors: ['myKeypairs', 'myUserV2', 'groups'].map((field) => ({
     message: 'Unexpected empty "data" and "errors" fields in result: …',
     path: [field],
     extensions: {
@@ -104,8 +108,8 @@ describe('isSessionAuthFailure', () => {
     expect(
       isSessionAuthFailure({
         data: {
-          keypair: bootstrap.keypair,
-          user: bootstrap.user,
+          myKeypairs: bootstrap.myKeypairs,
+          myUserV2: bootstrap.myUserV2,
           groups: null,
         },
         errors: routerAuthFailed.errors.slice(2),
@@ -130,8 +134,8 @@ describe('probeLoginSession', () => {
   it('sends the compiled bootstrap document once and adopts the session', async () => {
     const client = makeClient();
     const data = await probeLoginSession(client);
-    expect(data?.keypair?.access_key).toBe('AKIATEST');
-    expect(data?.user?.email).toBe('user@example.com');
+    expect(data?.myKeypairs?.edges[0]?.node.accessKey).toBe('AKIATEST');
+    expect(data?.myUserV2?.basicInfo?.email).toBe('user@example.com');
     expect(data?.groups?.[0]?.name).toBe('default');
     expect(client._wrapWithPromise).toHaveBeenCalledTimes(1);
     const [method, path, body] = client.newSignedRequest.mock.calls[0];
@@ -177,7 +181,7 @@ describe('probeLoginSession', () => {
   it('reports a router-wrapped manager 5xx as incomplete', async () => {
     const client = makeClient({
       _wrapWithPromise: vi.fn().mockResolvedValue({
-        data: { keypair: null, user: null, groups: null },
+        data: { myKeypairs: null, myUserV2: null, groups: null },
         errors: [
           {
             message: 'upstream failed',
@@ -205,8 +209,12 @@ describe('probeLoginSession', () => {
   it('rejects, without asking check_login, when the identity fails to resolve', async () => {
     const client = makeClient({
       _wrapWithPromise: vi.fn().mockResolvedValue({
-        data: { keypair: bootstrap.keypair, user: null, groups: null },
-        errors: [{ message: 'resolver failed', path: ['user'] }],
+        data: {
+          myKeypairs: bootstrap.myKeypairs,
+          myUserV2: null,
+          groups: null,
+        },
+        errors: [{ message: 'resolver failed', path: ['myUserV2'] }],
       }),
     });
     await expect(probeLoginSession(client)).rejects.toBeInstanceOf(
@@ -223,7 +231,7 @@ describe('probeLoginSession', () => {
       }),
     });
     await expect(probeLoginSession(client)).resolves.toMatchObject({
-      keypair: { access_key: 'AKIATEST' },
+      myKeypairs: bootstrap.myKeypairs,
       groups: null,
     });
   });
@@ -233,7 +241,7 @@ describe('probeLoginSession', () => {
       adoptLoginSession: vi.fn().mockReturnValue(false),
     });
     await expect(probeLoginSession(client)).resolves.toMatchObject({
-      keypair: { access_key: 'AKIATEST' },
+      myKeypairs: bootstrap.myKeypairs,
     });
     expect(client.check_login).toHaveBeenCalledTimes(1);
   });

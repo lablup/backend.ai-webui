@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2262b0f6dd81bd5b84853167145245ab>>
+ * @generated SignedSource<<19d58477585ef5b61488021075bb9c2c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,12 +10,16 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type useMergedAllowedStorageHostPermission_KeypairQuery$variables = {
-  accessKey?: string | null | undefined;
-  domainName?: string | null | undefined;
+  accessKey: string;
 };
 export type useMergedAllowedStorageHostPermission_KeypairQuery$data = {
-  readonly keypair: {
-    readonly resource_policy: string;
+  readonly myKeypairs: {
+    readonly edges: ReadonlyArray<{
+      readonly node: {
+        readonly id: string;
+        readonly resourcePolicy: string;
+      };
+    }>;
   };
 };
 export type useMergedAllowedStorageHostPermission_KeypairQuery = {
@@ -24,63 +28,93 @@ export type useMergedAllowedStorageHostPermission_KeypairQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "accessKey"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "domainName"
-},
-v2 = [
+var v0 = [
   {
-    "kind": "Variable",
-    "name": "access_key",
-    "variableName": "accessKey"
-  },
-  {
-    "kind": "Variable",
-    "name": "domain_name",
-    "variableName": "domainName"
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "accessKey"
   }
 ],
-v3 = {
+v1 = {
   "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "resource_policy",
+  "args": [
+    {
+      "fields": [
+        {
+          "fields": [
+            {
+              "kind": "Variable",
+              "name": "equals",
+              "variableName": "accessKey"
+            }
+          ],
+          "kind": "ObjectValue",
+          "name": "accessKey"
+        }
+      ],
+      "kind": "ObjectValue",
+      "name": "filter"
+    },
+    {
+      "kind": "Literal",
+      "name": "limit",
+      "value": 1
+    }
+  ],
+  "concreteType": "KeyPairConnection",
+  "kind": "LinkedField",
+  "name": "myKeypairs",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "KeyPairV2Edge",
+      "kind": "LinkedField",
+      "name": "edges",
+      "plural": true,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "KeyPairV2",
+          "kind": "LinkedField",
+          "name": "node",
+          "plural": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "id",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "resourcePolicy",
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    }
+  ],
   "storageKey": null
 };
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "useMergedAllowedStorageHostPermission_KeypairQuery",
     "selections": [
       {
         "kind": "RequiredField",
-        "field": {
-          "alias": null,
-          "args": (v2/*: any*/),
-          "concreteType": "KeyPair",
-          "kind": "LinkedField",
-          "name": "keypair",
-          "plural": false,
-          "selections": [
-            {
-              "kind": "RequiredField",
-              "field": (v3/*: any*/),
-              "action": "THROW"
-            }
-          ],
-          "storageKey": null
-        },
+        "field": (v1/*: any*/),
         "action": "THROW"
       }
     ],
@@ -89,45 +123,24 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v1/*: any*/),
-      (v0/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "useMergedAllowedStorageHostPermission_KeypairQuery",
     "selections": [
-      {
-        "alias": null,
-        "args": (v2/*: any*/),
-        "concreteType": "KeyPair",
-        "kind": "LinkedField",
-        "name": "keypair",
-        "plural": false,
-        "selections": [
-          (v3/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
+      (v1/*: any*/)
     ]
   },
   "params": {
-    "cacheID": "05bd7db7ab185940108fba3f2cadc989",
+    "cacheID": "479eed23a50856c0b03fcb0cd95ad20f",
     "id": null,
     "metadata": {},
     "name": "useMergedAllowedStorageHostPermission_KeypairQuery",
     "operationKind": "query",
-    "text": "query useMergedAllowedStorageHostPermission_KeypairQuery(\n  $domainName: String\n  $accessKey: String\n) {\n  keypair(domain_name: $domainName, access_key: $accessKey) {\n    resource_policy\n    id\n  }\n}\n"
+    "text": "query useMergedAllowedStorageHostPermission_KeypairQuery(\n  $accessKey: String!\n) {\n  myKeypairs(filter: {accessKey: {equals: $accessKey}}, limit: 1) {\n    edges {\n      node {\n        id\n        resourcePolicy\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "bca5af88ccf1508389ec648bf31c4965";
+(node as any).hash = "d1110585d475bb5b2a2779e581e9751b";
 
 export default node;
