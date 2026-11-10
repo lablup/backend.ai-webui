@@ -6,71 +6,29 @@ This directory contains End-to-End tests for Backend.AI WebUI. Tests are automat
 
 ## Directory Structure
 
+The suite is laid out by the console a test acts on, then by page. The page
+folder is the first path segment after the scope in `react/src/routes.tsx`
+(`/admin/resource-policy` → `admin/resource-policy/`, `/project/:projectName/data`
+→ `project/data/`); sub-routes such as `session/start` or `deployments/:id` stay in
+their page folder, and legacy URLs count as their current route (`/serving` →
+`deployments`, `/credential` → `admin/users`, `/summary` → `dashboard`). A screen
+without a route is named after its surface (`project/settings`, `project/profile`,
+`project/header`, `admin/header`). When a flow touches several consoles, the screen
+the test acts on or checks decides; when unsure, `admin`.
+
 ```
 e2e/
-├── auth/                           # Authentication tests
-│   └── login.spec.ts               # Login, pre/post login, failure cases
-│
-├── user/                           # User management tests
-│   └── user-crud.spec.ts           # User create, update, delete, Purge
-│
-├── vfolder/                        # Virtual folder management tests
-│   ├── vfolder-crud.spec.ts        # VFolder create, update, delete, share
-│   ├── vfolder-explorer-modal.spec.ts  # Folder explorer modal
-│   └── vfolder-consecutive-deletion.spec.ts  # Consecutive deletion test
-│
-├── session/                        # Session management tests
-│   ├── session-creation.spec.ts    # Session creation (Interactive/Batch)
-│   └── session-lifecycle.spec.ts   # Session lifecycle
-│
-├── serving/                        # Service endpoint tests
-│   └── endpoint-lifecycle.spec.ts  # Endpoint lifecycle
-│
-├── environment/                    # Environment and image management tests
-│   └── environment.spec.ts         # Image list, resource limits, app management
-│
-├── agent/                          # Agent management tests
-│   └── agent.spec.ts               # Agent list and status
-│
-├── maintenance/                    # Maintenance page tests
-│   └── maintenance.spec.ts         # Recalculate Usage, Rescan Images
-│
-├── app-launcher/                   # App launcher tests
-│   ├── app-launcher-basic.spec.ts  # App launcher basic interaction
-│   └── app-launcher-launch.spec.ts # App launch tests
-│
-├── config/                         # Configuration and access control tests
-│   ├── config.spec.ts              # config.toml settings
-│   └── page-access-control.spec.ts # Page access control (404/401)
-│
-├── visual_regression/              # Visual regression tests
-│   └── [existing structure]
-│
-└── utils/                          # Utilities
-    ├── classes/                    # Page Object Model classes
-    │   ├── base/
-    │   │   ├── BasePage.ts
-    │   │   └── BaseModal.ts
-    │   ├── common/
-    │   │   ├── StartPage.ts
-    │   │   └── NotificationHandler.ts
-    │   ├── session/
-    │   │   ├── SessionLauncher.ts
-    │   │   ├── SessionDetailPage.ts
-    │   │   └── AppLauncherModal.ts
-    │   ├── user/
-    │   │   ├── UserSettingModal.ts
-    │   │   ├── KeyPairModal.ts
-    │   │   ├── UserInfoModal.ts
-    │   │   └── PurgeUsersModal.ts
-    │   ├── vfolder/
-    │   │   ├── FolderCreationModal.ts
-    │   │   └── FolderExplorerModal.ts
-    │   ├── serving/
-    │   │   └── EndpointPage.ts
-    │   └── ...
-    ├── test-util.ts                # Common utilities
-    └── test-util-antd.ts           # Ant Design utilities
+├── admin/<page>/            # admin console, /admin/* (AdminScopeLayout)
+│   └── deployments/<tab>/   # a tab with several files gets its own folder
+├── project-admin/<page>/    # /project/:projectName/admin/{dashboard,session,deployments,users}
+├── project/<page>/          # user console, /project/:projectName/*
+├── common/<area>/           # auth, config.toml behaviour, global search, plugins
+├── mocks/ fixtures/         # GraphQL mocks and fixture files shared across folders
+├── utils/                   # helpers and Page Object classes
+├── envs/                    # env files (samples committed, real files git-ignored)
+├── e2e-parts.ts             # E2E_PART folder rule
+├── global-cleanup.teardown.ts
+└── seed*.spec.ts screenshot*.ts …  # tooling specs, run in the user part
 ```
 
 ## Test Tags
@@ -97,7 +55,7 @@ e2e/
 ### Test Types
 
 - `@functional` - Functional tests
-- `@visual` - Visual regression tests
+- `@visual` - Screenshot capture (`screenshot.test.ts`, skipped by default)
 - `@integration` - Integration tests
 
 ## Running Tests
@@ -126,6 +84,45 @@ pnpm exec playwright test --grep @session
 pnpm exec playwright test --grep @vfolder
 pnpm exec playwright test --grep @serving
 ```
+
+### Run one part (admin or user server)
+
+`E2E_PART` narrows the `chromium` project to folders of the suite, and
+`E2E_ENV_FILE` picks the env file, so the admin console specs can run against
+their own server with their own accounts. One `playwright test` run talks to one
+server (the endpoints and accounts in `utils/test-util.ts` are read once), so run
+the admin part and the rest as separate invocations.
+
+| `E2E_PART`                           | Runs                                                                             |
+| ------------------------------------ | -------------------------------------------------------------------------------- |
+| unset, `all`                         | the whole suite, as before                                                       |
+| `admin`                              | `e2e/admin/`                                                                     |
+| `project`, `project-admin`, `common` | that folder                                                                      |
+| `user`                               | everything outside `e2e/admin/` (root-level specs included): the user server run |
+
+Comma lists select several parts (`E2E_PART=project,project-admin`).
+`E2E_ENV_FILE` defaults to `e2e/envs/.env.playwright`. A part list that includes
+`admin` uses `e2e/envs/.env.playwright.admin` instead and fails when that file is
+missing, so admin specs never fall back to the user server; an explicit
+`E2E_ENV_FILE` overrides both. The variable names inside every env file are the
+same (`E2E_*`).
+
+A part other than `all` writes to `test-results/<part>/` and
+`playwright-report/<part>/` (`E2E_PART=project,common` → `project-common`), so
+running the parts one after another keeps both results. `--output`,
+`PLAYWRIGHT_HTML_OUTPUT_DIR` and `PLAYWRIGHT_HTML_REPORT` still override these.
+
+```bash
+cp e2e/envs/.env.playwright.admin.sample e2e/envs/.env.playwright.admin  # admin server values
+E2E_PART=user  pnpm exec playwright test --project chromium
+E2E_PART=admin pnpm exec playwright test --project chromium
+E2E_PART=admin E2E_ENV_FILE=e2e/envs/.env.other pnpm exec playwright test --project chromium
+```
+
+When `E2E_PART` or `E2E_ENV_FILE` is set, the config prints one
+`[e2e] part=… env=… webui=<host> webserver=<host>` line to stderr. The `cleanup`
+teardown runs after whichever part ran, against that part's server; keep
+`--no-deps` for targeted runs on a shared server.
 
 ### Smoke run against an installed cluster
 
@@ -159,23 +156,17 @@ artifacts; a failed login leaves the password in the retained trace — treat
 ### Run specific directory
 
 ```bash
-pnpm exec playwright test e2e/auth/
-pnpm exec playwright test e2e/session/
-pnpm exec playwright test e2e/vfolder/
+pnpm exec playwright test e2e/common/auth/
+pnpm exec playwright test e2e/project/session/
+pnpm exec playwright test e2e/project/data/
 ```
 
 ### Run specific file
 
 ```bash
-pnpm exec playwright test e2e/auth/login.spec.ts
-pnpm exec playwright test e2e/session/session-lifecycle.spec.ts
-pnpm exec playwright test e2e/serving/endpoint-lifecycle.spec.ts
-```
-
-### Exclude visual regression
-
-```bash
-pnpm exec playwright test --grep-invert @visual
+pnpm exec playwright test e2e/common/auth/login.spec.ts
+pnpm exec playwright test e2e/project/session/session-lifecycle.spec.ts
+pnpm exec playwright test e2e/project/deployments/deployment-lifecycle.spec.ts
 ```
 
 ### Parallel execution
@@ -199,7 +190,8 @@ All tests follow the Page Object Model (POM) pattern.
 **BasePage** - Base class for all page classes
 
 ```typescript
-import { BasePage } from '../utils/classes/base/BasePage';
+// e2e/utils/classes/MyPage.ts
+import { BasePage } from './base/BasePage';
 
 export class MyPage extends BasePage {
   async waitForPageLoad(): Promise<void> {
@@ -216,7 +208,8 @@ export class MyPage extends BasePage {
 **BaseModal** - Base class for all modal classes
 
 ```typescript
-import { BaseModal } from '../utils/classes/base/BaseModal';
+// e2e/utils/classes/MyModal.ts
+import { BaseModal } from './base/BaseModal';
 
 export class MyModal extends BaseModal {
   async waitForModalOpen(): Promise<void> {
@@ -234,8 +227,9 @@ export class MyModal extends BaseModal {
 ### Test Example
 
 ```typescript
-import { MyPage } from '../utils/classes/MyPage';
-import { loginAsAdmin, navigateTo } from '../utils/test-util';
+// e2e/project/<page>/my-feature.spec.ts
+import { MyPage } from '../../utils/classes/MyPage';
+import { loginAsAdmin, navigateTo } from '../../utils/test-util';
 import { test, expect } from '@playwright/test';
 
 test.describe(
@@ -378,17 +372,12 @@ Consider Backend.AI domain constraints when writing tests:
 
 Follow these guidelines when writing new tests:
 
-1. **Directory Structure**: Place tests in appropriate feature directories
-   - Authentication: `auth/`
-   - User management: `user/`
-   - Virtual folders: `vfolder/`
-   - Session management: `session/`
-   - Service endpoints: `serving/`
-   - Environment management: `environment/`
-   - Agents: `agent/`
-   - Maintenance: `maintenance/`
-   - App launcher: `app-launcher/`
-   - Configuration: `config/`
+1. **Directory Structure**: Place tests in the folder of the console and page
+   they act on (see "Directory Structure" above)
+   - Admin console (`/admin/*`): `admin/<page>/`
+   - Project admin (`/project/:projectName/admin/*`): `project-admin/<page>/`
+   - User console: `project/<page>/`
+   - Auth, `config.toml` behaviour, global search, plugins: `common/<area>/`
 
 2. **File Naming Convention**:
    - Use `.spec.ts` extension (not `.test.ts`)

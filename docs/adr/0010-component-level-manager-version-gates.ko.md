@@ -99,7 +99,7 @@ flowchart TD
 
 - **E2E gate**: `e2e/utils/feature-gate-util.ts`의 `skipUnlessManagerVersion(page, version, reason)`이 페이지의 `backendaiclient.isManagerVersionCompatibleWith(version)`을 불러, `false`면 test를 skip한다. 같은 test에는 `@requires-manager-v26.9` 같은 version tag를 붙여 `--grep-invert`로 뺄 수 있게 한다.
 - **E2E records every minimum version as a tag**: 1절의 지원 기준은 애플리케이션 코드에 적용한다. e2e에서 매니저 버전에 따라 갈리는 test는 통과하는 최소 버전을 `@requires-manager-vX.Y` tag로 남기고, 그 버전이 26.4 이하여도 tag를 단다. 더 오래된 매니저를 상대로 돌리는 run은 `--grep-invert`로 그 test를 뺀다. 26.4 이하 버전에는 `skipUnlessManagerVersion`을 두지 않는다. `dashboard.spec.ts`의 Agent Statistics test는 `@requires-manager-v25.15`, `deployment-lifecycle.spec.ts`의 preset test는 `@requires-manager-v26.4` tag만 단다.
-- **E2E overrides**: 연결된 매니저와 다른 버전의 경로를 강제하는 spec은 `isManagerVersionCompatibleWith`를 감싸 특정 버전 문자열에 `true`나 `false`를 답하게 한다. `e2e/serving/admin-preset-service-config.spec.ts`가 그 예다.
+- **E2E overrides**: 연결된 매니저와 다른 버전의 경로를 강제하는 spec은 `isManagerVersionCompatibleWith`를 감싸 특정 버전 문자열에 `true`나 `false`를 답하게 한다. `e2e/admin/deployments/admin-preset-service-config.spec.ts`가 그 예다.
 - **Palette context**: `react/src/components/GlobalSearchPalette/types.ts`의 `SearchContext`는 `supports` 대신 `isManagerVersionCompatibleWith`를 갖는다.
 - **Palette gates**: `visibility.ts`의 `TAB_GATES`에 매니저 버전 gate를 둘 때는 탭을 그리는 page와 같은 버전 문자열로 `ctx.isManagerVersionCompatibleWith`를 부른다. 지금 `TAB_GATES`에 버전 gate 항목은 없다.
 

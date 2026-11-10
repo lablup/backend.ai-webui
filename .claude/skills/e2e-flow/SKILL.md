@@ -92,7 +92,7 @@ changed test, into one `e2e-agent/<feature>/<same-stem>.e2e.ts`:
 ```ts
 import { test } from "@e2e-dev/web";
 
-// ported from: e2e/session/session-creation.spec.ts › <test name>
+// ported from: e2e/project/session/session-creation.spec.ts › <test name>
 test(
   "the user launches an interactive session with a project",
   {
@@ -131,12 +131,12 @@ or `none`.
 ```md
 ## E2E flow
 
-Compared: e2e/session/session-creation.spec.ts › <test name>
+Compared: e2e/project/session/session-creation.spec.ts › <test name>
 Result: flow changed
 Change: <old step> → <new step>
 Intended: yes
 Agent flow: e2e-agent/session/<flow>.e2e.ts
-Ported from: e2e/session/session-creation.spec.ts (deleted)
+Ported from: e2e/project/session/session-creation.spec.ts (deleted)
 ```
 
 | `Result` | Lines after `Result` |

@@ -244,7 +244,7 @@ narrowing helper for the loosely-typed ambient value).
     violators at this ADR. `EnvironmentPage`, `ReservoirPage`,
     `AdminDashboardPage` (all excluded from the flip) and
     `DeploymentDetailPage` (sanctioned page-level reader) are excluded.
-  - **E2E** (`e2e/admin-scope/`): the selector is absent on the three admin
+  - **E2E** (`e2e/admin/header/`, `e2e/admin/data/`): the selector is absent on the three admin
     routes and present on the user Data page; leaving admin restores the
     previous selection; a folder created from the admin Data page lands in
     the project chosen inside the modal.
@@ -364,7 +364,7 @@ resource_preset/row.py`). `data/schema.graphql` agrees —
   - **Gating**: `environment` and `reservoir` joined
     `PROJECT_AGNOSTIC_MENU_KEYS` (with their canonical and legacy paths; the
     reservoir entry is a prefix, so the `/:artifactId` child is covered).
-  - **Fourth copy removed**: `e2e/admin-scope/admin-header-project-selector.spec.ts`
+  - **Fourth copy removed**: `e2e/admin/header/admin-header-project-selector.spec.ts`
     had its own local `SUPER_ADMIN_ROUTES` constant covering only the original
     three routes. It now derives the list from
     `react/src/helper/projectAgnosticRoutes.ts` (a deliberate leaf module, so

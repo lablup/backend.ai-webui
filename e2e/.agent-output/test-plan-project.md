@@ -12,7 +12,7 @@ E2E tests for the Project Management page (/project) in Backend.AI WebUI. Supera
 
 #### 1.1. Admin can see project list with expected columns
 
-**File:** `e2e/project/project-crud.spec.ts`
+**File:** `e2e/admin/project/project-crud.spec.ts`
 
 **Steps:**
   1. Navigate to /project page after admin login
@@ -26,7 +26,7 @@ E2E tests for the Project Management page (/project) in Backend.AI WebUI. Supera
 
 #### 1.2. Admin can create a new project
 
-**File:** `e2e/project/project-crud.spec.ts`
+**File:** `e2e/admin/project/project-crud.spec.ts`
 
 **Steps:**
   1. Click the 'Create Project' button
@@ -39,7 +39,7 @@ E2E tests for the Project Management page (/project) in Backend.AI WebUI. Supera
 
 #### 1.3. Admin can edit a project
 
-**File:** `e2e/project/project-crud.spec.ts`
+**File:** `e2e/admin/project/project-crud.spec.ts`
 
 **Steps:**
   1. Click the setting button on the test project row
@@ -51,7 +51,7 @@ E2E tests for the Project Management page (/project) in Backend.AI WebUI. Supera
 
 #### 1.4. Admin can filter projects by name
 
-**File:** `e2e/project/project-crud.spec.ts`
+**File:** `e2e/admin/project/project-crud.spec.ts`
 
 **Steps:**
   1. Type test project name in filter value search and click search button
@@ -61,7 +61,7 @@ E2E tests for the Project Management page (/project) in Backend.AI WebUI. Supera
 
 #### 1.5. Admin can delete a project
 
-**File:** `e2e/project/project-crud.spec.ts`
+**File:** `e2e/admin/project/project-crud.spec.ts`
 
 **Steps:**
   1. Click the delete button on the test project row

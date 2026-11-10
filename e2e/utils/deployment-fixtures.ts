@@ -17,7 +17,7 @@
  *    `runtimeVariantId`/`imageId` are resolved dynamically by name — they
  *    are per-cluster UUIDs.
  *  - The model folder is created through the same UI helpers the vfolder
- *    specs use, then seeded with `e2e/serving/fixtures/` (a GPU-free mock
+ *    specs use, then seeded with `e2e/fixtures/serving/` (a GPU-free mock
  *    OpenAI server, its model-definition.yaml, and a `start.sh` shim so the
  *    folder is startable under both this helper's own startup command and
  *    the common `bash /models/start.sh` convention of hand-made presets).
@@ -42,7 +42,7 @@ import { expect, Page } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
 
-const FIXTURES_DIR = path.join(__dirname, '..', 'serving', 'fixtures');
+const FIXTURES_DIR = path.join(__dirname, '..', 'fixtures', 'serving');
 
 /**
  * The runtime variant / image / resources the provisioned preset uses. These
