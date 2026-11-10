@@ -51,7 +51,7 @@ test.describe(
       request,
     }) => {
       await loginAsAdmin(page, request);
-      await navigateTo(page, 'start');
+      await navigateTo(page, 'dashboard');
       await openStartFromURLModal(page);
 
       const tabs = getTabs(page);
@@ -70,7 +70,7 @@ test.describe(
     }) => {
       await loginAsAdmin(page, request);
       await enableHuggingFaceImportSetting(page);
-      await navigateTo(page, 'start');
+      await navigateTo(page, 'dashboard');
       await openStartFromURLModal(page);
 
       const tabs = getTabs(page).getByRole('button');
@@ -97,7 +97,7 @@ test.describe(
       });
       await loginAsAdmin(page, request);
       await enableHuggingFaceImportSetting(page);
-      await navigateTo(page, 'start');
+      await navigateTo(page, 'dashboard');
       await openStartFromURLModal(page);
 
       const tabs = getTabs(page);
@@ -115,7 +115,7 @@ test.describe(
     }) => {
       await loginAsAdmin(page, request);
       await enableHuggingFaceImportSetting(page);
-      await navigateTo(page, 'start');
+      await navigateTo(page, 'dashboard');
       await openStartFromURLModal(page);
 
       await page

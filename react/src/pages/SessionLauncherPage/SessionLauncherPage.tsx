@@ -1,0 +1,1588 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import { App } from '../../app-shim';
+import DatePickerISO from '../../components/DatePickerISO';
+import EnvVarFormList, {
+  sanitizeSensitiveEnv,
+  EnvVarFormListValue,
+} from '../../components/EnvVarFormList';
+import ImageEnvironmentSelectFormItems, {
+  ImageEnvironmentFormInput,
+} from '../../components/ImageEnvironmentSelectFormItems';
+import { mainContentDivRefState } from '../../components/MainLayout/MainLayout';
+import PortSelectFormItem, {
+  PortSelectFormValues,
+} from '../../components/PortSelectFormItem';
+import { ResourceNumbersOfSession } from '../../components/ResourceNumbersOfSession';
+import ResourceAllocationFormItems, {
+  RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+  ResourceAllocationFormValue,
+} from '../../components/SessionFormItems/ResourceAllocationFormItems';
+import { Form, type FormInstance } from '../../form-engine';
+import { formatDuration } from '../../helper';
+import { normalizeLegacyMountFields } from '../../helper/vfolderMounts';
+import { AGENT_PREFILL_PARAM } from '../../helper/webmcpConstants';
+import {
+  useSuspendedBackendaiClient,
+  useWebUILocation,
+  useWebUINavigate,
+} from '../../hooks';
+import {
+  useCurrentProjectValue,
+  useCurrentResourceGroupState,
+} from '../../hooks/useCurrentProject';
+import { useRecentSessionHistory } from '../../hooks/useRecentSessionHistory';
+import { useStartSession } from '../../hooks/useStartSession';
+import { toProjectContext } from '../../types/projectContext';
+import LaunchMultipleSessionsModal from './components/LaunchMultipleSessionsModal';
+import SessionLauncherAgentPrefillNotice from './components/SessionLauncherAgentPrefillNotice';
+import SessionLauncherValidationTour from './components/SessionLauncherErrorTourProps';
+import SessionLauncherFormIncompatibleValueChecker from './components/SessionLauncherFormIncompatibleValueChecker';
+import SessionLauncherPreview from './components/SessionLauncherPreview';
+import SessionLauncherStorageStep from './components/SessionLauncherStorageStep';
+import SessionLauncherWebMCPTool from './components/SessionLauncherWebMCPTool';
+import SessionNameFormItem, {
+  SessionNameFormItemValue,
+} from './components/SessionNameFormItem';
+import SessionTemplateModal from './components/SessionTemplateModal';
+import { Button } from '@lablup/ui-common/Button';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { Grid as AstryxGrid } from '@lablup/ui-common/Grid';
+import { Heading } from '@lablup/ui-common/Heading';
+import { InputGroup } from '@lablup/ui-common/InputGroup';
+import { Step, Stepper } from '@lablup/ui-common/Stepper';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
+import type { SessionResources as ClientSessionResources } from 'backend.ai-client';
+import {
+  BAIPopconfirm,
+  BAICard,
+  BAIFlex,
+  BAIIntervalView,
+  BAIUnmountAfterClose,
+  type VFolderMountConfigValue,
+  filterOutEmpty,
+  generateRandomString,
+  useBAILogger,
+  useDebounceFn,
+  useErrorMessageResolver,
+  useToggle,
+  useUpdatableState,
+  useBAIBreakpoint,
+  useBAIWebMCPActive,
+  BAICheckboxInput,
+  BAINumberInput,
+  BAIRadioList,
+  BAIRadioListItem,
+  BAISelect,
+  BAISwitch,
+  BAITextArea,
+  BAITextInput,
+} from 'backend.ai-ui';
+import dayjs from 'dayjs';
+import { useAtomValue } from 'jotai';
+import * as _ from 'lodash-es';
+import {
+  ChevronsRight,
+  Ellipsis,
+  ChevronLeft,
+  CirclePlay,
+  CircleHelp,
+  ChevronRight,
+} from 'lucide-react';
+import {
+  parseAsInteger,
+  parseAsJson,
+  parseAsString,
+  useQueryStates,
+} from 'nuqs';
+import React, {
+  Suspense,
+  useEffect,
+  useEffectEvent,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { Trans, useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
+
+type SessionLauncherFormData = Omit<
+  Required<OptionalFieldsOnly<SessionLauncherFormValue>>,
+  'mounts'
+>;
+
+export interface SessionResources {
+  group_name?: string;
+  domain?: string;
+  type?: 'interactive' | 'batch' | 'inference' | 'system';
+  cluster_mode: 'single-node' | 'multi-node';
+  cluster_size: number;
+  maxWaitSeconds?: number;
+  starts_at?: string;
+  startupCommand?: string;
+  bootstrap_script?: string;
+  enqueueOnly?: boolean;
+  reuseIfExists?: boolean;
+  dependencies?: string[];
+  config?: {
+    resources?: {
+      cpu: number;
+      mem: string;
+      [key: string]: number | string;
+    };
+    resource_opts?: {
+      shmem?: string;
+      allow_fractional_resource_fragmentation?: boolean;
+    };
+    environ?: {
+      [key: string]: string;
+    };
+    scaling_group?: string;
+    preopen_ports?: number[];
+    agent_list?: string[];
+  } & Pick<
+    NonNullable<ClientSessionResources['config']>,
+    'mount_ids' | 'mount_id_map' | 'mount_options'
+  >;
+}
+
+interface SessionLauncherValue {
+  sessionType: 'interactive' | 'batch' | 'inference' | 'system';
+  batch: {
+    enabled: boolean;
+    scheduleDate?: string;
+    command?: string;
+    timeoutEnabled?: boolean;
+    timeout?: string;
+    timeoutUnit?: string;
+  };
+  allocationPreset: string;
+  envvars: EnvVarFormListValue[];
+  hpcOptimization: {
+    autoEnabled: boolean;
+    OMP_NUM_THREADS?: string;
+    OPENBLAS_NUM_THREADS?: string;
+  };
+  bootstrap_script?: string;
+  reuseIfExists?: boolean;
+}
+
+export interface SessionLauncherVFolderMountValues {
+  vfolderMounts?: VFolderMountConfigValue[];
+  /**
+   * Deprecated mount-by-name field. Only `SessionLauncherFormIncompatibleValueChecker`
+   * still reads it, to warn about and clear a stale `?formValues=` param.
+   */
+  mounts?: string[];
+}
+
+export type SessionLauncherFormValue = SessionLauncherValue &
+  SessionNameFormItemValue &
+  ImageEnvironmentFormInput &
+  ResourceAllocationFormValue &
+  SessionLauncherVFolderMountValues &
+  PortSelectFormValues;
+
+type SessionMode = 'normal' | 'inference' | 'import';
+
+export type AppOption = {
+  'session-name'?: string;
+  'session-uuid'?: string;
+  'access-key'?: string;
+  mode?: SessionMode;
+  'app-services'?: Array<string>;
+  runtime?: string;
+  filename?: string;
+  // [key in string]: any;
+};
+
+export type SessionLauncherStepKey =
+  'sessionType' | 'environment' | 'storage' | 'network' | 'review';
+
+/** The fields this page sets on a `Stepper` step. */
+type StepItem = {
+  title: string;
+  icon?: React.ReactNode;
+};
+
+interface StepPropsWithKey extends StepItem {
+  key: SessionLauncherStepKey;
+}
+
+/**
+ * Step-section container. `hidden` keeps the original
+ * `style={{display:'none'}}` show/hide behaviour, which preserves mounted
+ * form state across steps (the form engine requirement).
+ */
+const StepCard: React.FC<{
+  title?: React.ReactNode;
+  hidden?: boolean;
+  children?: React.ReactNode;
+}> = ({ title, hidden, children }) => {
+  'use memo';
+  return (
+    <BAICard title={title} style={{ display: hidden ? 'none' : undefined }}>
+      {children}
+    </BAICard>
+  );
+};
+
+/** The launcher's live form, tagged with the agent prefill it was opened for. */
+export interface LauncherFormHandle {
+  prefillId: string | null;
+  form: FormInstance<SessionLauncherFormValue>;
+}
+
+const SessionLauncherPageContent: React.FC<{
+  prefillId: string | null;
+  formHandleRef: React.RefObject<LauncherFormHandle | null>;
+}> = ({ prefillId, formHandleRef }) => {
+  const app = App.useApp();
+  const { logger } = useBAILogger();
+  const { getErrorMessage } = useErrorMessageResolver();
+
+  const mainContentDivRef = useAtomValue(mainContentDivRefState);
+  const baiClient = useSuspendedBackendaiClient();
+  const [, setCurrentGlobalResourceGroup] = useCurrentResourceGroupState();
+  // ADR-0001 (FR-3411): pages are the only readers of the ambient current
+  // project; ResourceAllocationFormItems takes it as an explicit required
+  // prop. The throw preserves the exact previous behavior — the form
+  // fragment used to raise this error itself when the ambient project was
+  // not resolvable (general pages always have one once login completes).
+  const currentProject = useCurrentProjectValue();
+  const currentProjectContext = toProjectContext(currentProject);
+  if (!currentProjectContext) {
+    throw new Error('Project ID is required for ResourceAllocationFormItems');
+  }
+
+  const { startSession, defaultFormValues, upsertSessionNotification } =
+    useStartSession();
+  const StepParam = parseAsInteger.withDefault(0);
+  // Migrate at the parser so every reader of `formValuesFromQueryParams` sees
+  // `vfolderMounts`, never the legacy mount fields.
+  const FormValuesParam = parseAsJson<DeepPartial<SessionLauncherFormValue>>(
+    (value) =>
+      normalizeLegacyMountFields(
+        value as DeepPartial<SessionLauncherFormValue>,
+      ),
+  ).withDefault(defaultFormValues);
+  const AppOptionParam = parseAsJson<AppOption>(
+    (value) => value as AppOption,
+  ).withDefault({});
+  const [
+    {
+      step: currentStep,
+      formValues: formValuesFromQueryParams,
+      redirectTo,
+      // TODO: handle appOption to launch app with specific options
+      // appOption: appOptionFromQueryParams,
+    },
+    setQuery,
+  ] = useQueryStates(
+    {
+      step: StepParam,
+      formValues: FormValuesParam,
+      redirectTo: parseAsString,
+      appOption: AppOptionParam,
+      [AGENT_PREFILL_PARAM]: parseAsString,
+    },
+    { history: 'replace' },
+  );
+
+  const { search } = useLocation();
+  const webuiNavigate = useWebUINavigate();
+
+  const [isOpenTemplateModal, { toggle: toggleIsOpenTemplateModal }] =
+    useToggle();
+  const [, { push: pushSessionHistory }] = useRecentSessionHistory();
+
+  const { run: syncFormToURLWithDebounce } = useDebounceFn(
+    () => {
+      // To sync the latest form values to URL,
+      // 'trailing' is set to true, and get the form values here."
+      // eslint-disable-next-line react-hooks/immutability -- forward reference to a later declaration kept as-is
+      const currentValue = form.getFieldsValue();
+      setQuery({
+        formValues: _.assign(
+          _.omit(form.getFieldsValue(), [
+            'environments.image',
+            'environments.customizedTag',
+            'envvars',
+          ]),
+          {
+            envvars: sanitizeSensitiveEnv(currentValue.envvars),
+          },
+        ),
+      });
+    },
+    {
+      leading: false,
+      wait: 500,
+      trailing: true,
+    },
+  );
+
+  const setCurrentStep = (nextStep: number) => {
+    setQuery(
+      {
+        step: nextStep,
+      },
+      { history: 'push' },
+    );
+  };
+  const { token } = useTheme();
+
+  const { t } = useTranslation();
+
+  const screens = useBAIBreakpoint();
+
+  const [form] = Form.useForm<SessionLauncherFormValue>();
+
+  useEffect(() => {
+    formHandleRef.current = { prefillId, form };
+    return () => {
+      if (formHandleRef.current?.form === form) formHandleRef.current = null;
+    };
+  }, [form, prefillId, formHandleRef]);
+
+  useEffect(() => {
+    if (!_.isEmpty(formValuesFromQueryParams)) {
+      form.validateFields().catch(() => {});
+    }
+    // Run this memo only for the first time
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const validateSilently = useEffectEvent(() => {
+    const id = _.isEmpty(formValuesFromQueryParams)
+      ? null
+      : setTimeout(() => {
+          form.validateFields().catch(() => {
+            // ignore errors in preview, it will be handled in UI preview.
+            return undefined;
+          });
+        }, 500);
+    return id;
+  });
+  useEffect(() => {
+    const id = validateSilently();
+    return () => {
+      id && clearTimeout(id);
+    };
+  }, []);
+
+  const mergedInitialValues: SessionLauncherFormValue = useMemo(() => {
+    return _.merge(
+      {},
+      defaultFormValues,
+      RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+      formValuesFromQueryParams,
+    ) as SessionLauncherFormValue;
+  }, [defaultFormValues, formValuesFromQueryParams]);
+
+  // ScrollTo top when step is changed
+  useEffect(() => {
+    mainContentDivRef.current?.scrollTo(0, 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStep]);
+
+  // before initialFormValues is set, use getFieldValue and useWatch will return undefined
+  const sessionType =
+    Form.useWatch('sessionType', { form, preserve: true }) ||
+    form.getFieldValue('sessionType') ||
+    formValuesFromQueryParams.sessionType;
+
+  const batchLaunchResource = Form.useWatch('resource', {
+    form,
+    preserve: true,
+  });
+  const batchLaunchClusterSize = Form.useWatch('cluster_size', {
+    form,
+    preserve: true,
+  });
+  const batchLaunchClusterMode = Form.useWatch('cluster_mode', {
+    form,
+    preserve: true,
+  });
+  const batchLaunchResourceGroup = Form.useWatch('resourceGroup', {
+    form,
+    preserve: true,
+  });
+
+  const steps: Array<StepPropsWithKey> = filterOutEmpty([
+    {
+      title: t('session.launcher.SessionType'),
+      key: 'sessionType',
+      // status: form.getFieldError('name').length > 0 ? 'error' : undefined,
+    },
+    {
+      title: `${t('session.launcher.Environments')} & ${t(
+        'session.launcher.ResourceAllocation',
+      )} `,
+      key: 'environment',
+    },
+    sessionType !== 'inference' && {
+      title: t('webui.menu.Data&Storage'),
+      key: 'storage',
+    },
+    {
+      title: t('session.launcher.Network'),
+      key: 'network',
+    },
+    {
+      title: t('session.launcher.ConfirmAndLaunch'),
+      icon: <CirclePlay size="1em" />,
+      // @ts-ignore
+      key: 'review',
+    },
+  ]);
+
+  const currentStepKey = steps[currentStep]?.key;
+
+  const hasError = _.some(
+    form.getFieldsError(),
+    (item) => item.errors.length > 0,
+  );
+
+  const [finalStepLastValidateTime, setFinalStepLastValidateTime] =
+    useUpdatableState('first'); // Force re-render after validation in final step.
+
+  useEffect(() => {
+    if (currentStep === steps.length - 1) {
+      form
+        .validateFields()
+        .catch(() => {})
+        .finally(() => setFinalStepLastValidateTime());
+    }
+  }, [currentStep, form, setFinalStepLastValidateTime, steps.length]);
+
+  useEffect(() => {
+    if (finalStepLastValidateTime !== 'first') {
+      if (hasError) {
+        // eslint-disable-next-line react-hooks/immutability -- forward reference to a later declaration kept as-is
+        setValidationTourOpen(true);
+      } else {
+        setValidationTourOpen(false);
+      }
+    }
+  }, [finalStepLastValidateTime, hasError]);
+
+  const [validationTourOpen, setValidationTourOpen] = useState(false);
+
+  const [
+    isLaunchMultipleSessionsModalOpen,
+    setIsLaunchMultipleSessionsModalOpen,
+  ] = useState(false);
+
+  const [isQueryReset, setIsQueryReset] = useState(false);
+  useLayoutEffect(() => {
+    if (isQueryReset) {
+      form.resetFields();
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- legacy query-reset flow kept as-is
+      setIsQueryReset(false);
+    }
+  }, [isQueryReset, form]);
+
+  const performLaunch = async (numOfSessions: number) => {
+    const usedSearchParams = search;
+    const values = await form.validateFields().catch((e) => {
+      logger.error('validation errors', e);
+    });
+
+    // validation failed do nothing
+    if (!values) {
+      return;
+    }
+
+    if (_.isEmpty(values.vfolderMounts)) {
+      const isConfirmed = await app.modal.confirm({
+        title: t('session.launcher.NoFolderMounted'),
+        content: (
+          <>
+            {t('session.launcher.HomeDirectoryDeletionDialog')}
+            <br />
+            <br />
+            {t('session.launcher.LaunchConfirmationDialog')}
+            <br />
+            <br />
+            {t('dialog.ask.DoYouWantToProceed')}
+          </>
+        ),
+        okText: t('session.launcher.Start'),
+        closable: true,
+      });
+      if (!isConfirmed) return;
+    }
+
+    await startSession({ ...values, num_of_sessions: numOfSessions })
+      .then((results) => {
+        // After sending a create request, navigate to job page and set current resource group
+        if (results?.fulfilled && results.fulfilled.length > 0) {
+          // Do not await here to speed up the navigation
+          upsertSessionNotification(results.fulfilled);
+          setCurrentGlobalResourceGroup(values.resourceGroup);
+          pushSessionHistory({
+            params: usedSearchParams,
+            name: results.fulfilled[0].value.sessionName,
+          });
+          webuiNavigate(redirectTo || '/job');
+        }
+
+        // If there are any failed session creations, show the first error message
+        if (results?.rejected && results.rejected.length > 0) {
+          const error = results.rejected[0].reason;
+          if (error?.error_code === 'session_create_already-exists') {
+            app.modal.error({
+              title: t('session.launcher.SessionAlreadyExists'),
+            });
+          } else if (
+            error?.error_code === 'storage_access_forbidden' ||
+            error?.error_code === 'vfolder_access_forbidden'
+          ) {
+            app.modal.error({
+              title: t('session.launcher.StorageAccessForbidden'),
+              content: getErrorMessage(error),
+            });
+          } else if (error?.error_code === 'vfolder_read_not-found') {
+            app.modal.error({
+              title: t('session.launcher.VFolderNotFound'),
+              content: getErrorMessage(error),
+            });
+          } else {
+            app.modal.error({
+              title: error?.title,
+              content: getErrorMessage(error),
+            });
+          }
+        }
+      })
+      .catch((error) => {
+        // Unexpected error in `then` of allSettled
+        logger.error('Unexpected error during session creation:', error);
+        app.message.error(t('error.UnexpectedError'));
+      });
+  };
+
+  return (
+    <BAIFlex
+      direction="column"
+      align="stretch"
+      style={{
+        justifyContent: 'revert',
+        // height: 500,
+        // overflow: 'scroll',
+      }}
+      gap={'md'}
+    >
+      <BAIFlex direction="row" gap="md" align="start">
+        <BAIFlex
+          direction="column"
+          align="stretch"
+          gap="md"
+          style={{ flex: 1, maxWidth: 700 }}
+        >
+          <BAIFlex direction="row" justify="between">
+            <Heading level={4}>{t('session.launcher.StartNewSession')}</Heading>
+            <BAIFlex direction="row" gap={'sm'}>
+              <Button
+                variant="ghost"
+                label={t('session.launcher.RecentHistory')}
+                onClick={() => toggleIsOpenTemplateModal()}
+              />
+            </BAIFlex>
+          </BAIFlex>
+          <SessionLauncherAgentPrefillNotice />
+          {/* <Suspense fallback={<FlexActivityIndicator />}> */}
+          <Form.Provider
+            onFormChange={() => {
+              // use OnFormChange instead of Form's onValuesChange,
+              // because onValuesChange will not be triggered when form is changed programmatically
+              syncFormToURLWithDebounce();
+            }}
+          >
+            <Form
+              form={form}
+              layout="vertical"
+              initialValues={mergedInitialValues}
+            >
+              <SessionLauncherFormIncompatibleValueChecker form={form} />
+              <BAIFlex
+                direction="column"
+                align="stretch"
+                gap="md"
+                // style={{  }}
+              >
+                {/* Step 0 fields */}
+                <StepCard
+                  title={t('session.launcher.SessionType')}
+                  hidden={currentStepKey !== 'sessionType'}
+                >
+                  <Form.Item name="sessionType">
+                    {/* antd `Radio.Group options=` with ReactNode labels ->
+                        Astryx `RadioList` + `RadioListItem`.
+                        The two-part antd label ("<mode name> <one-sentence
+                        description>") splits onto `RadioListItem`'s `label` +
+                        `description`; through `endContent` the sentences
+                        overlapped their own labels (measured). `Text
+                        type="code"` on the mode name is DROPPED: both are plain
+                        strings. */}
+                    <BAIRadioList
+                      aria-label={t('session.launcher.SessionType')}
+                      orientation="vertical"
+                    >
+                      <BAIRadioListItem
+                        value="interactive"
+                        label={t('session.launcher.InteractiveMode')}
+                        description={t('session.launcher.InteractiveModeDesc')}
+                      />
+                      <BAIRadioListItem
+                        value="batch"
+                        label={t('session.launcher.BatchMode')}
+                        description={t('session.launcher.BatchModeDesc')}
+                      />
+                    </BAIRadioList>
+                  </Form.Item>
+                  <SessionNameFormItem />
+                  <Form.Item
+                    name="bootstrap_script"
+                    label="Bootstrap Script"
+                    hidden
+                  >
+                    <BAITextInput aria-label="Bootstrap Script" />
+                  </Form.Item>
+                </StepCard>
+
+                {sessionType === 'batch' && (
+                  <StepCard
+                    title={t('session.launcher.BatchModeConfig')}
+                    hidden={currentStepKey !== 'sessionType'}
+                  >
+                    <Form.Item
+                      label={t('session.launcher.StartUpCommand')}
+                      name={['batch', 'command']}
+                      rules={[
+                        {
+                          required: true,
+                          type: 'string',
+                        },
+                      ]}
+                    >
+                      {/* antd `autoSize` has no destination — Astryx `TextArea`
+                          takes a fixed `rows`. */}
+                      <BAITextArea
+                        aria-label={t('session.launcher.StartUpCommand')}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      noStyle
+                      dependencies={[['batch', 'scheduleDate']]}
+                    >
+                      {() => {
+                        const scheduleDate = form.getFieldValue([
+                          'batch',
+                          'scheduleDate',
+                        ]);
+                        return (
+                          <BAIIntervalView
+                            delay={1000}
+                            callback={() => {
+                              const scheduleDate = form.getFieldValue([
+                                'batch',
+                                'scheduleDate',
+                              ]);
+                              if (scheduleDate) {
+                                if (dayjs(scheduleDate).isBefore(dayjs())) {
+                                  if (
+                                    form.getFieldError([
+                                      'batch',
+                                      'scheduleDate',
+                                    ]).length === 0
+                                  ) {
+                                    form.validateFields([
+                                      ['batch', 'scheduleDate'],
+                                    ]);
+                                  }
+                                  return undefined;
+                                } else {
+                                  return dayjs(scheduleDate).fromNow();
+                                }
+                              } else {
+                                return undefined;
+                              }
+                            }}
+                            triggerKey={scheduleDate ? scheduleDate : 'none'}
+                            render={(time) => {
+                              return (
+                                <Form.Item
+                                  label={t('session.launcher.SessionStartTime')}
+                                  extra={time}
+                                >
+                                  <BAIFlex direction="row" gap={'xs'}>
+                                    <Form.Item
+                                      noStyle
+                                      name={['batch', 'enabled']}
+                                      valuePropName="checked"
+                                    >
+                                      <BAICheckboxInput
+                                        onChange={(checked) => {
+                                          if (
+                                            checked &&
+                                            _.isEmpty(
+                                              form.getFieldValue([
+                                                'batch',
+                                                'scheduleDate',
+                                              ]),
+                                            )
+                                          ) {
+                                            form.setFieldValue(
+                                              ['batch', 'scheduleDate'],
+                                              dayjs()
+                                                .add(2, 'minutes')
+                                                .toISOString(),
+                                            );
+                                          } else if (checked === false) {
+                                            form.setFieldValue(
+                                              ['batch', 'scheduleDate'],
+                                              undefined,
+                                            );
+                                          }
+                                          form.validateFields([
+                                            ['batch', 'scheduleDate'],
+                                          ]);
+                                        }}
+                                      >
+                                        {t('session.launcher.Enable')}
+                                      </BAICheckboxInput>
+                                    </Form.Item>
+                                    <Form.Item
+                                      noStyle
+                                      // dependencies={[['batch', 'enabled']]}
+                                      shouldUpdate={(prev, next) => {
+                                        return (
+                                          // @ts-ignore
+                                          prev.batch?.enabled !==
+                                          next.batch?.enabled
+                                        );
+                                      }}
+                                    >
+                                      {() => {
+                                        const disabled =
+                                          form.getFieldValue('batch')
+                                            ?.enabled !== true;
+                                        return (
+                                          <>
+                                            <Form.Item
+                                              name={['batch', 'scheduleDate']}
+                                              noStyle
+                                              rules={[
+                                                {
+                                                  // required: true,
+                                                  validator: async (
+                                                    _rule,
+                                                    value,
+                                                  ) => {
+                                                    if (
+                                                      value &&
+                                                      dayjs(value).isBefore(
+                                                        dayjs(),
+                                                      )
+                                                    ) {
+                                                      return Promise.reject(
+                                                        t(
+                                                          'session.launcher.StartTimeMustBeInTheFuture',
+                                                        ),
+                                                      );
+                                                    }
+                                                    return Promise.resolve();
+                                                  },
+                                                },
+                                              ]}
+                                            >
+                                              <DatePickerISO
+                                                disabled={disabled}
+                                                showTime
+                                                localFormat
+                                                disabledDate={(value) => {
+                                                  return value.isBefore(
+                                                    dayjs().startOf('day'),
+                                                  );
+                                                }}
+                                              />
+                                            </Form.Item>
+                                            {/* <Form.Item
+                                              noStyle
+                                              name={['batch', 'scheduleTime']}
+                                            >
+                                              <TimePicker disabled={disabled} />
+                                            </Form.Item> */}
+                                          </>
+                                        );
+                                      }}
+                                    </Form.Item>
+                                  </BAIFlex>
+                                </Form.Item>
+                              );
+                            }}
+                          />
+                        );
+                      }}
+                    </Form.Item>
+
+                    <Form.Item
+                      noStyle
+                      dependencies={[
+                        ['batch', 'timeoutEnabled'],
+                        ['batch', 'timeoutUnit'],
+                      ]}
+                    >
+                      {() => {
+                        const timeout = form.getFieldValue([
+                          'batch',
+                          'timeout',
+                        ]);
+                        const unit = form.getFieldValue([
+                          'batch',
+                          'timeoutUnit',
+                        ]);
+
+                        const timeDuration = dayjs.duration(
+                          timeout,
+                          unit ?? 's',
+                        );
+
+                        const formattedDuration = formatDuration(
+                          timeDuration,
+                          t,
+                        );
+
+                        const durationText =
+                          !_.isNull(timeout) && _.toFinite(timeout) > 0
+                            ? formattedDuration
+                            : null;
+                        return (
+                          <Form.Item
+                            label={t(
+                              'session.launcher.BatchJobTimeoutDuration',
+                            )}
+                            tooltip={t(
+                              'session.launcher.BatchJobTimeoutDurationDesc',
+                            )}
+                            // extra={durationText}
+                            help={durationText}
+                          >
+                            <BAIFlex direction="row" gap={'xs'}>
+                              <Form.Item
+                                noStyle
+                                name={['batch', 'timeoutEnabled']}
+                                valuePropName="checked"
+                              >
+                                <BAICheckboxInput
+                                  onChange={(checked) => {
+                                    if (checked === false) {
+                                      form.setFieldValue(
+                                        ['batch', 'timeout'],
+                                        undefined,
+                                      );
+                                    }
+                                    form.validateFields([['batch', 'timeout']]);
+                                  }}
+                                >
+                                  {t('session.launcher.Enable')}
+                                </BAICheckboxInput>
+                              </Form.Item>
+                              <Form.Item
+                                noStyle
+                                dependencies={[['batch', 'timeoutEnabled']]}
+                              >
+                                {() => {
+                                  const disabled =
+                                    form.getFieldValue([
+                                      'batch',
+                                      'timeoutEnabled',
+                                    ]) !== true;
+                                  return (
+                                    <>
+                                      {/* antd `Space.Compact` (weld the
+                                            number field and its unit select
+                                            into one control) -> Astryx
+                                            `InputGroup`, the documented
+                                            destination for the input flavour
+                                            of Compact (MAPPING §"Space"). */}
+                                      <InputGroup
+                                        label={t(
+                                          'session.launcher.BatchJobTimeoutDuration',
+                                        )}
+                                        // `BAIFormItem` already renders the
+                                        // visible label above; without this
+                                        // the group printed it a second time
+                                        // inside the field (measured).
+                                        isLabelHidden
+                                      >
+                                        <Form.Item
+                                          name={['batch', 'timeout']}
+                                          label={t(
+                                            'session.launcher.BatchJobTimeoutDuration',
+                                          )}
+                                          noStyle
+                                          dependencies={[
+                                            ['batch', 'timeoutEnabled'],
+                                          ]}
+                                          rules={[
+                                            {
+                                              min: 0,
+                                              type: 'number',
+                                              message: t(
+                                                'error.AllowsPositiveNumberOnly',
+                                              ),
+                                            },
+                                            {
+                                              required: !disabled,
+                                            },
+                                          ]}
+                                        >
+                                          {/* The form engine composes this
+                                                `onChange` after its own. */}
+                                          <BAINumberInput
+                                            width="100%"
+                                            aria-label={t(
+                                              'session.launcher.BatchJobTimeoutDuration',
+                                            )}
+                                            disabled={disabled}
+                                            min={1}
+                                            onChange={() => {
+                                              form.validateFields([
+                                                ['batch', 'timeoutUnit'],
+                                              ]);
+                                            }}
+                                          />
+                                        </Form.Item>
+                                        <Form.Item
+                                          noStyle
+                                          name={['batch', 'timeoutUnit']}
+                                          dependencies={[
+                                            ['batch', 'timeout'],
+                                            ['batch', 'timeoutEnabled'],
+                                          ]}
+                                          rules={[
+                                            ({ getFieldValue }) => ({
+                                              validator() {
+                                                const timeout = getFieldValue([
+                                                  'batch',
+                                                  'timeout',
+                                                ]);
+                                                const timeoutEnabled =
+                                                  getFieldValue([
+                                                    'batch',
+                                                    'timeoutEnabled',
+                                                  ]);
+                                                if (
+                                                  timeoutEnabled === true &&
+                                                  (timeout === undefined ||
+                                                    timeout === null ||
+                                                    timeout < 1)
+                                                ) {
+                                                  return Promise.reject();
+                                                }
+                                                return Promise.resolve();
+                                              },
+                                            }),
+                                          ]}
+                                        >
+                                          {/* The accessible name repeats the
+                                                group's own label: there is no
+                                                localized "Unit" string (P8). */}
+                                          <BAISelect
+                                            showSearch={false}
+                                            aria-label={t(
+                                              'session.launcher.BatchJobTimeoutDuration',
+                                            )}
+                                            disabled={disabled}
+                                            style={{ width: 100 }}
+                                            options={[
+                                              {
+                                                label: t('time.Sec'),
+                                                value: 's',
+                                              },
+                                              {
+                                                label: t('time.Min'),
+                                                value: 'm',
+                                              },
+                                              {
+                                                label: t('time.Hour'),
+                                                value: 'h',
+                                              },
+                                              {
+                                                label: t('time.Day'),
+                                                value: 'd',
+                                              },
+                                              {
+                                                label: t('time.Week'),
+                                                value: 'w',
+                                              },
+                                            ]}
+                                          />
+                                        </Form.Item>
+                                      </InputGroup>
+                                    </>
+                                  );
+                                }}
+                              </Form.Item>
+                            </BAIFlex>
+                          </Form.Item>
+                        );
+                      }}
+                    </Form.Item>
+                  </StepCard>
+                )}
+
+                {sessionType === 'inference' && (
+                  <StepCard title={t('session.launcher.InferenceModeConfig')}>
+                    <Form.Item
+                      name={['inference', 'vFolderName']}
+                      label={t('session.launcher.ModelStorageToMount')}
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    >
+                      {/* Optionless placeholder left behind when the model
+                          folder select was removed from this step. */}
+                      <BAISelect
+                        showSearch={false}
+                        aria-label={t('session.launcher.ModelStorageToMount')}
+                        options={[]}
+                      />
+                    </Form.Item>
+                  </StepCard>
+                )}
+
+                {/* Step Start*/}
+                <StepCard
+                  title={t('session.launcher.Environments')}
+                  hidden={currentStepKey !== 'environment'}
+                >
+                  <ErrorBoundary
+                    fallbackRender={() => {
+                      return null;
+                    }}
+                  >
+                    <ImageEnvironmentSelectFormItems />
+                  </ErrorBoundary>
+                  <Form.Item label={t('session.launcher.EnvironmentVariable')}>
+                    <EnvVarFormList
+                      name={'envvars'}
+                      formItemProps={{
+                        validateTrigger: ['onChange', 'onBlur'],
+                      }}
+                    />
+                  </Form.Item>
+                </StepCard>
+                <StepCard
+                  title={t('session.launcher.ResourceAllocation')}
+                  hidden={currentStepKey !== 'environment'}
+                >
+                  <ResourceAllocationFormItems
+                    project={currentProjectContext}
+                    // An SSH/SFTP system session runs in the SFTP resource
+                    // group the selector hides from every other session type.
+                    includeSFTPResourceGroups={sessionType === 'system'}
+                    enableAgentSelect={!baiClient._config.hideAgents}
+                    enableResourcePresets
+                    showRemainingWarning
+                  />
+                </StepCard>
+                <StepCard
+                  title={t('session.launcher.HPCOptimization')}
+                  hidden={currentStepKey !== 'environment'}
+                >
+                  <Form.Item noStyle>
+                    <BAIFlex direction="row" gap={'sm'}>
+                      <Text>
+                        {t('session.launcher.SwitchOpenMPoptimization')}
+                      </Text>
+                      <Form.Item
+                        label={t('session.launcher.SwitchOpenMPoptimization')}
+                        name={['hpcOptimization', 'autoEnabled']}
+                        valuePropName="checked"
+                        required
+                        noStyle
+                      >
+                        {/* antd `checkedChildren`/`unCheckedChildren` have no
+                            Astryx destination and are DROPPED; the `Text`
+                            above names the toggle. */}
+                        <BAISwitch
+                          aria-label={t(
+                            'session.launcher.SwitchOpenMPoptimization',
+                          )}
+                          onChange={(checked) => {
+                            if (checked) {
+                              form.setFieldsValue({
+                                hpcOptimization: {
+                                  autoEnabled: true,
+                                  OMP_NUM_THREADS: undefined,
+                                  OPENBLAS_NUM_THREADS: undefined,
+                                },
+                              });
+                            } else {
+                              form.setFieldsValue({
+                                hpcOptimization: {
+                                  autoEnabled: false,
+                                  OMP_NUM_THREADS: '1',
+                                  OPENBLAS_NUM_THREADS: '1',
+                                },
+                              });
+                            }
+                          }}
+                        />
+                      </Form.Item>
+                    </BAIFlex>
+                  </Form.Item>
+                  <Form.Item
+                    noStyle
+                    shouldUpdate={(prev, next) => {
+                      return (
+                        prev.hpcOptimization?.autoEnabled !==
+                        next.hpcOptimization?.autoEnabled
+                      );
+                    }}
+                  >
+                    {() => {
+                      const enabled = form.getFieldValue([
+                        'hpcOptimization',
+                        'autoEnabled',
+                      ]);
+                      return (
+                        // ADR 0020 R1. A `Grid` child defaults to
+                        // `min-width: auto`, so a 100%-wide field pushes its
+                        // track past the container: `width="100%"` on the grid
+                        // plus `minWidth: 0` on every direct child prevents it.
+                        <AstryxGrid
+                          columns={{ minWidth: 280, max: 2 }}
+                          gap={4}
+                          width="100%"
+                          style={{
+                            display: enabled ? 'none' : undefined,
+                            marginTop: token('--spacing-5'),
+                          }}
+                        >
+                          <Form.Item
+                            style={{ minWidth: 0 }}
+                            label={t('session.launcher.NumOpenMPthreads')}
+                            name={['hpcOptimization', 'OMP_NUM_THREADS']}
+                            // antd `InputNumber stringMode` kept the stored
+                            // value a STRING; these two fields are spread
+                            // straight into the session's `environ` dict
+                            // (`useStartSession`), where a number would be an
+                            // invalid env value. Astryx's `NumberInput` emits
+                            // `number | null`, so the string contract moves to
+                            // the item's own `getValueFromEvent`.
+                            getValueFromEvent={(value) =>
+                              _.isNil(value) ? value : String(value)
+                            }
+                            tooltip={
+                              <>
+                                {t('session.launcher.OpenMPOptimization')}
+                                <Trans
+                                  i18nKey={
+                                    'session.launcher.DescOpenMPOptimization'
+                                  }
+                                />
+                              </>
+                            }
+                            required
+                          >
+                            <BAINumberInput
+                              width="100%"
+                              aria-label={t(
+                                'session.launcher.NumOpenMPthreads',
+                              )}
+                              min={1}
+                              max={1000}
+                              step={1}
+                              isIntegerOnly
+                            />
+                          </Form.Item>
+                          <Form.Item
+                            style={{ minWidth: 0 }}
+                            label={t('session.launcher.NumOpenBLASthreads')}
+                            name={['hpcOptimization', 'OPENBLAS_NUM_THREADS']}
+                            getValueFromEvent={(value) =>
+                              _.isNil(value) ? value : String(value)
+                            }
+                            tooltip={
+                              <>
+                                {t('session.launcher.OpenMPOptimization')}
+                                <Trans
+                                  i18nKey={
+                                    'session.launcher.DescOpenMPOptimization'
+                                  }
+                                />
+                              </>
+                            }
+                            required
+                          >
+                            <BAINumberInput
+                              width="100%"
+                              aria-label={t(
+                                'session.launcher.NumOpenBLASthreads',
+                              )}
+                              min={1}
+                              max={1000}
+                              step={1}
+                              isIntegerOnly
+                            />
+                          </Form.Item>
+                        </AstryxGrid>
+                      );
+                    }}
+                  </Form.Item>
+                </StepCard>
+                {/* Step Start*/}
+                <StepCard
+                  title={t('webui.menu.Data&Storage')}
+                  hidden={currentStepKey !== 'storage'}
+                >
+                  <SessionLauncherStorageStep
+                    form={form}
+                    project={currentProjectContext}
+                  />
+                </StepCard>
+
+                {/* Step Start*/}
+                <StepCard
+                  title={t('session.launcher.Network')}
+                  hidden={currentStepKey !== 'network'}
+                >
+                  <PortSelectFormItem />
+                </StepCard>
+
+                {/* Step Start*/}
+                {currentStepKey === 'review' && (
+                  <SessionLauncherPreview
+                    currentProjectId={currentProjectContext.id}
+                    onClickEditStep={(stepKey) => {
+                      const nextStep = _.findIndex(steps, { key: stepKey });
+                      setCurrentStep(nextStep);
+                    }}
+                  />
+                )}
+
+                <BAIFlex direction="row" justify="between">
+                  <BAIFlex gap={'sm'}>
+                    {/* Reversible action -> anchored one-click confirm
+                        (BAIPopconfirm, gap component 08); the typed
+                        confirm modal stays reserved for irreversible flows. */}
+                    <BAIPopconfirm
+                      title={t('button.Reset')}
+                      description={t('session.launcher.ResetFormConfirm')}
+                      onConfirm={() => {
+                        setQuery({
+                          step: null,
+                          formValues: null,
+                          redirectTo: null,
+                          appOption: null,
+                          [AGENT_PREFILL_PARAM]: null,
+                        });
+                        setIsQueryReset(true);
+                      }}
+                      icon={
+                        <CircleHelp
+                          style={{ color: 'var(--color-error)' }}
+                          size="1em"
+                        />
+                      }
+                      okText={t('button.Reset')}
+                      isDanger
+                    >
+                      {/* PILOT-DECISION: antd `Button danger type="link"` (red
+                          text link) -> Astryx ghost Button. A ghost+destructive
+                          combination is inexpressible in the closed variant
+                          enum (P5); the danger signal moves to the confirm
+                          popover. */}
+                      <Button variant="ghost" label={t('button.Reset')} />
+                    </BAIPopconfirm>
+                    {/* {currentStep === steps.length - 1 && (
+                      <Button
+                        icon={<SaveOutlined />}
+                        disabled
+                        onClick={() => {
+                          message.info(
+                            'Not implemented yet: Template edit modal',
+                          );
+                        }}
+                      >
+                        Save as a template
+                      </Button>
+                    )} */}
+                  </BAIFlex>
+                  <BAIFlex
+                    data-test-id="neo-session-launcher-tour-step-navigation"
+                    direction="row"
+                    gap="sm"
+                  >
+                    {currentStep > 0 && (
+                      <Button
+                        label={t('button.Previous')}
+                        icon={<ChevronLeft size="1em" />}
+                        onClick={() => {
+                          setCurrentStep(currentStep - 1);
+                        }}
+                      />
+                    )}
+                    {currentStep === steps.length - 1 ? (
+                      <Tooltip
+                        content={
+                          hasError
+                            ? t('session.launcher.PleaseCompleteForm')
+                            : undefined
+                        }
+                        isEnabled={hasError}
+                      >
+                        {/* antd `Space.Compact` + Dropdown split button ->
+                            Astryx ButtonGroup + DropdownMenu (MAPPING.md
+                            §5.3). The dropdown owns its own trigger button. */}
+                        <ButtonGroup label={t('session.launcher.Launch')}>
+                          <Button
+                            variant="primary"
+                            icon={<CirclePlay size="1em" />}
+                            isDisabled={hasError}
+                            label={t('session.launcher.Launch')}
+                            clickAction={() => performLaunch(1)}
+                          />
+                          <DropdownMenu
+                            hasChevron={false}
+                            button={{
+                              variant: 'primary',
+                              icon: <Ellipsis size="1em" />,
+                              isIconOnly: true,
+                              isDisabled: hasError,
+                              label: t(
+                                'session.launcher.LaunchMultipleSessions',
+                              ),
+                            }}
+                            items={[
+                              {
+                                label: t(
+                                  'session.launcher.LaunchMultipleSessions',
+                                ),
+                                onClick: () => {
+                                  setIsLaunchMultipleSessionsModalOpen(true);
+                                },
+                              },
+                            ]}
+                          />
+                        </ButtonGroup>
+                      </Tooltip>
+                    ) : (
+                      // PILOT-DECISION: antd `type="primary" ghost` (outlined
+                      // primary) has no Astryx variant; `secondary` is the
+                      // closest closed-enum destination (P5).
+                      //
+                      // The trailing chevron goes in `endContent`, NOT in
+                      // `children`. Astryx `Button` lays out
+                      // `icon | label | endContent` as three slots and renders
+                      // `children` INSIDE the label slot — a truncating text
+                      // span. An `<svg>` dropped in there is an inline
+                      // replaced element inside that span, so the chevron
+                      // broke onto a second line inside a 32px-tall button
+                      // (measured: 55x32 box, glyph clipped below the text).
+                      // `endContent` is the documented slot for "trailing
+                      // icon or badge" and inherits the variant's color.
+                      <Button
+                        variant="secondary"
+                        label={t('button.Next')}
+                        endContent={<ChevronRight size="1em" />}
+                        onClick={() => {
+                          setCurrentStep(currentStep + 1);
+                        }}
+                      />
+                    )}
+                    {currentStep !== steps.length - 1 && (
+                      // Same `endContent` fix. `ghost` rather than the default
+                      // `secondary`: legacy had TWO emphasis levels here
+                      // (Next = `primary ghost`, Skip = plain default), and
+                      // leaving both on `secondary` collapsed them into two
+                      // identical grey blocks. Within the closed variant enum,
+                      // secondary-over-ghost restores that ordering.
+                      <Button
+                        variant="ghost"
+                        label={t('session.launcher.SkipToConfirmAndLaunch')}
+                        endContent={<ChevronsRight size="1em" />}
+                        onClick={() => {
+                          setCurrentStep(steps.length - 1);
+                        }}
+                      />
+                    )}
+                  </BAIFlex>
+                </BAIFlex>
+              </BAIFlex>
+            </Form>
+          </Form.Provider>
+          {/* </Suspense> */}
+        </BAIFlex>
+        {screens.lg && (
+          <BAIFlex
+            data-test-id="neo-session-launcher-tour-step"
+            style={{ position: 'sticky', top: 20 }}
+          >
+            <Stepper
+              orientation="vertical"
+              density="compact"
+              // FR-3596: on-track puts each indicator on the connector line.
+              // Keep in sync with the deployment preset rail, which mirrors this one.
+              indicatorPosition="on-track"
+              activeStep={currentStep}
+              // `Stepper.label` names the whole sequence for assistive tech;
+              // antd's `Steps` had none. Reuses the page's own existing title
+              // string rather than adding a key across 22 catalogues (P8).
+              label={t('session.launcher.StartNewSession')}
+              onStepClick={(nextCurrent) => {
+                setCurrentStep(nextCurrent);
+              }}
+            >
+              {_.map(steps, (s, idx) => (
+                <Step
+                  key={s.key}
+                  step={idx}
+                  label={s.title}
+                  indicator={s.icon ?? 'number'}
+                />
+              ))}
+            </Stepper>
+          </BAIFlex>
+        )}
+      </BAIFlex>
+      <Suspense fallback={null}>
+        <BAIUnmountAfterClose>
+          <LaunchMultipleSessionsModal
+            open={isLaunchMultipleSessionsModalOpen}
+            resource={batchLaunchResource ?? form.getFieldValue('resource')}
+            clusterSize={
+              batchLaunchClusterSize ?? form.getFieldValue('cluster_size') ?? 1
+            }
+            clusterMode={
+              batchLaunchClusterMode ??
+              form.getFieldValue('cluster_mode') ??
+              'single-node'
+            }
+            resourceGroup={
+              batchLaunchResourceGroup ?? form.getFieldValue('resourceGroup')
+            }
+            ResourcePreview={ResourceNumbersOfSession}
+            onRequestClose={async (count) => {
+              setIsLaunchMultipleSessionsModalOpen(false);
+              if (typeof count === 'number') {
+                await performLaunch(count);
+              }
+            }}
+          />
+        </BAIUnmountAfterClose>
+      </Suspense>
+      <SessionTemplateModal
+        onRequestClose={(formValue) => {
+          if (formValue) {
+            const fieldsValue = _.merge(
+              {
+                // reset fields related to optional and nested fields
+                sessionName: '',
+                ports: [],
+                vfolderMounts: [],
+                bootstrap_script: '',
+                num_of_sessions: 1,
+                environments: {
+                  manual: '',
+                },
+                batch: {
+                  enabled: false,
+                  command: undefined,
+                  scheduleDate: undefined,
+                },
+                reuseIfExists: false,
+                agent: ['auto'], // Add the missing 'agent' property
+              } as SessionLauncherFormData,
+              normalizeLegacyMountFields(formValue),
+            );
+
+            if (!_.isEmpty(fieldsValue.sessionName)) {
+              fieldsValue.sessionName =
+                fieldsValue.sessionName + '-' + generateRandomString(4);
+            }
+            form.setFieldsValue(fieldsValue as SessionLauncherFormData);
+            setCurrentStep(steps.length - 1);
+            form.validateFields().catch(() => {});
+          }
+          toggleIsOpenTemplateModal();
+        }}
+        open={isOpenTemplateModal}
+      />
+      {currentStep === steps.length - 1 ? (
+        <ErrorBoundary fallback={null}>
+          <SessionLauncherValidationTour
+            open={validationTourOpen}
+            onClose={() => {
+              setValidationTourOpen(false);
+            }}
+            scrollIntoViewOptions
+          />
+        </ErrorBoundary>
+      ) : undefined}
+    </BAIFlex>
+  );
+};
+
+export { ResourceNumbersOfSession };
+
+/**
+ * Keyed by the agent prefill id so each `bai_prepare_session` call opens a
+ * fresh form, exactly as loading its URL would.
+ */
+const SessionLauncherPage: React.FC = () => {
+  'use memo';
+  const { pathname, search } = useWebUILocation();
+  const webuiNavigate = useWebUINavigate();
+  const isWebMCPActive = useBAIWebMCPActive();
+  // ADR-0001: the page is the reader of the ambient current project.
+  const currentProjectContext = toProjectContext(useCurrentProjectValue());
+  const formHandleRef = useRef<LauncherFormHandle | null>(null);
+  const prefillId = new URLSearchParams(search).get(AGENT_PREFILL_PARAM);
+
+  return (
+    <>
+      {isWebMCPActive && currentProjectContext ? (
+        <Suspense fallback={null}>
+          <SessionLauncherWebMCPTool
+            project={currentProjectContext}
+            openLauncher={(nextSearch) =>
+              webuiNavigate({ pathname, search: nextSearch })
+            }
+            readEnvironment={(id) => {
+              const handle = formHandleRef.current;
+              if (!handle || handle.prefillId !== id) return null;
+              const environments = handle.form.getFieldValue('environments');
+              if (!environments?.image && !environments?.manual) return null;
+              return {
+                version: environments.version,
+                manual: environments.manual,
+              };
+            }}
+          />
+        </Suspense>
+      ) : null}
+      <SessionLauncherPageContent
+        key={prefillId ?? ''}
+        prefillId={prefillId}
+        formHandleRef={formHandleRef}
+      />
+    </>
+  );
+};
+
+export default SessionLauncherPage;

@@ -1,12 +1,8 @@
 // spec: e2e/.agent-output/test-plan-admin-model-card.md
 // section: 3. Create Model Card
+import { purgeVFoldersByNameViaApi } from '../utils/admin-api';
 import { AdminModelCardPage } from '../utils/classes/AdminModelCardPage';
-import {
-  deleteForeverAndVerifyFromTrash,
-  loginAsAdmin,
-  moveToTrashAndVerify,
-  webuiEndpoint,
-} from '../utils/test-util';
+import { loginAsAdmin, webuiEndpoint } from '../utils/test-util';
 import { getFormItemControlByLabel } from '../utils/test-util-antd';
 import { test, expect } from '@playwright/test';
 
@@ -47,22 +43,7 @@ test.describe(
         }
       }
       if (createdFolderName) {
-        try {
-          await moveToTrashAndVerify(page, createdFolderName, 'admin-data', {
-            skipTrashVerify: true,
-          });
-        } catch {
-          // Folder may already be in Trash or may not exist
-        }
-        try {
-          await deleteForeverAndVerifyFromTrash(
-            page,
-            createdFolderName,
-            'admin-data',
-          );
-        } catch {
-          // Folder may not be in Trash (already purged or never created)
-        }
+        await purgeVFoldersByNameViaApi([createdFolderName]);
       }
     });
 
@@ -404,6 +385,7 @@ test.describe(
 
       // Create a new VFolder via the "+" button (leave Name empty) — self-provisions
       // so no pre-existing group-owned VFolder is required on the test backend.
+      createdFolderName = folderName;
       await adminModelCardPage.createNewFolderViaPlus(folderName);
 
       // Click Create (Name is empty — validation should fire)
@@ -415,21 +397,9 @@ test.describe(
       // Verify the modal remains open
       await expect(modal).toBeVisible();
 
-      // Close the modal and clean up the folder created via "+"
+      // Close the modal; afterEach purges the folder created via "+"
       await adminModelCardPage.getCreateModalCancelButton().click();
       await expect(modal).toBeHidden();
-      try {
-        await moveToTrashAndVerify(page, folderName, 'admin-data', {
-          skipTrashVerify: true,
-        });
-      } catch {
-        // Folder may already be in Trash or may not exist
-      }
-      try {
-        await deleteForeverAndVerifyFromTrash(page, folderName, 'admin-data');
-      } catch {
-        // Folder may not be in Trash (already purged or never created)
-      }
     });
 
     // 3.5 Superadmin cannot create a model card without a Model Storage Folder
@@ -451,7 +421,7 @@ test.describe(
       // Fill Name but leave VFolder empty.
       // Wait for the VFolder select to load out of Suspense before filling the name,
       // so the form field is registered and will fire validation on submit.
-      // The VFolder picker is Astryx `ComplexSelector` (role="button" trigger).
+      // The VFolder picker is Astryx `ComplexSelector` (role="combobox" trigger).
       await expect(
         adminModelCardPage.getCreateModalVFolderSelect(),
       ).toBeVisible({ timeout: 15000 });

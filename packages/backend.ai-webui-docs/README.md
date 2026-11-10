@@ -16,6 +16,23 @@ pnpm install
 cd packages/backend.ai-docs-toolkit && pnpm run build
 ```
 
+Once the manual images move to [Git LFS](https://git-lfs.com), a clone holds only pointer files
+for the images under `src/` (`.lfsconfig` keeps it that way even with git-lfs installed), and the PDF,
+web build and previews stop with an error naming them. To build the manual or change its
+screenshots, install git-lfs, run `git lfs install` once, then fetch the images:
+
+```bash
+pnpm --filter backend.ai-webui-docs run images:pull
+```
+
+Editing Markdown only needs none of this.
+
+From a fork, commit images with git-lfs installed as well; `git push` uploads them to your
+fork's LFS storage. Builds of this repository's branches fetch images from this repository
+only, so when your PR's images are not here yet, the PR's `docs` check builds them from your
+fork and then fails with the command a maintainer runs to copy them over before merging.
+Fork PRs get no published docs preview.
+
 ## Quick Start
 
 ```bash
@@ -168,7 +185,7 @@ packages/backend.ai-webui-docs/
 
 - One `# H1` per file as the page title
 - `## H2` for major sections, `### H3` for subsections
-- Images: `![](images/filename.png)` — place image files in `src/{lang}/images/`
+- Images: `![](images/filename.png)` — place image files in `src/{lang}/images/`. Once the manual images move to Git LFS, commit images under `src/` with git-lfs installed (`git lfs install`); the `lfs-pointer-check` CI job rejects images committed there as raw bytes
 - Cross-references: `[Link Text](#heading-id)`
 - Inline code for UI elements: `` `Settings` ``, `` `config.toml` ``
 

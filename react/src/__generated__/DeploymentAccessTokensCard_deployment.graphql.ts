@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d62944c99b33dadc3451c93c3c6b37ce>>
+ * @generated SignedSource<<2b32f02d9eca9ab5b68bc72e1e9d252c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,6 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type DeploymentAccessTokensCard_deployment$data = {
+  readonly entityId: string;
   readonly id: string;
   readonly networkAccess: {
     readonly endpointUrl: string | null | undefined;
@@ -38,6 +39,13 @@ const node: ReaderFragment = {
     {
       "alias": null,
       "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "ModelDeploymentNetworkAccess",
       "kind": "LinkedField",
       "name": "networkAccess",
@@ -58,6 +66,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "e7372d3fa2bb21537f6b39e44698dedf";
+(node as any).hash = "58ad32b2842a5c91fb4b81a4384e2b60";
 
 export default node;

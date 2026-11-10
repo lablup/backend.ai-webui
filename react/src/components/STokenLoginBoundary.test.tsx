@@ -5,23 +5,26 @@
 /**
  * Tests for STokenLoginBoundary (Epic FR-2616).
  *
- * Focus areas mapped to spec acceptance criteria:
+ * Focus areas, mapped to the contract in ADR 0022:
  * - Children only render after the authentication sequence succeeds.
  * - `backend-ai-connected` fires exactly once per successful login, even
- *   across a retry-then-success sequence (invariant from spec Pitfall #6).
+ *   across a retry-then-success sequence.
  * - Error classification surfaced via `onError` for each branch the test
  *   can provoke without network (missing-token, endpoint-unresolved,
  *   server-unreachable, token-invalid).
- * - `errorFallback` prop replaces the built-in card for every kind (Q4).
- * - Source file does not reference forbidden URL APIs — this is the
- *   CI-enforced gate for the spec FR-2616 "URL 파라미터 파싱 규약" rule.
+ * - `errorFallback` prop replaces the built-in card for every kind.
+ * - Source file does not reference forbidden URL APIs — the CI-enforced
+ *   gate for ADR 0022's no-URL-API rule.
  *
  * The helper module is mocked entirely because the real
  * `createBackendAIClient` instantiates a global `BackendAIClient` that is
  * only available at runtime in the browser bundle.
  */
 import '../../__test__/matchMedia.mock.js';
-import { probeLoginSession } from '../helper/loginBootstrap';
+import {
+  LoginBootstrapIncompleteError,
+  probeLoginSession,
+} from '../helper/loginBootstrap';
 import {
   connectViaGQL,
   createBackendAIClient,
@@ -78,6 +81,7 @@ vi.mock('../helper/loginSessionAuth', () => ({
 vi.mock('../helper/loginBootstrap', () => ({
   __esModule: true,
   probeLoginSession: vi.fn().mockResolvedValue(null),
+  LoginBootstrapIncompleteError: class LoginBootstrapIncompleteError extends Error {},
 }));
 
 vi.mock('backend.ai-ui', async () => {
@@ -293,6 +297,23 @@ describe('STokenLoginBoundary', () => {
     expect(mockedConnectViaGQL.mock.calls[0][3]).toBe(bootstrap);
     expect(connectedEventCount).toBe(1);
     expect(onSuccess).toHaveBeenCalledTimes(1);
+  });
+
+  test('offers a retry instead of token_login when the live session has no user', async () => {
+    const incomplete = new LoginBootstrapIncompleteError('resolver failed');
+    mockedProbeLoginSession.mockRejectedValueOnce(incomplete);
+    const onError = vi.fn();
+    renderBoundary({ onError });
+
+    await waitFor(() => {
+      expect(onError).toHaveBeenCalledWith({
+        kind: 'account-unavailable',
+        cause: incomplete,
+      });
+    });
+    expect(mockedTokenLogin).not.toHaveBeenCalled();
+    expect(mockedConnectViaGQL).not.toHaveBeenCalled();
+    expect(connectedEventCount).toBe(0);
   });
 
   test('awaits the config.toml bootstrap before authenticating (FR-3128)', async () => {

@@ -1,6 +1,14 @@
 // spec: e2e/.agent-output/test-plan-rbac-management.md
 // Scenarios: 1.1 – 1.4, 6.1, 6.4, 6.5 (Role list view, filtering, sorting, refresh)
-import { isManagerVersionCompatible } from '../utils/feature-gate-util';
+import {
+  isLabelFilter,
+  mockEntityLabelOnFirstRow,
+  waitForGraphQLVariables,
+} from '../utils/entity-label-mock';
+import {
+  isManagerVersionCompatible,
+  skipUnlessLabelableEntityType,
+} from '../utils/feature-gate-util';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import test, { expect, Page } from '@playwright/test';
 
@@ -193,7 +201,7 @@ test.describe(
 
       // 9. Remove the filter chip
       const filterChip = page.getByRole('button', {
-        name: 'Remove Role Name: contains',
+        name: 'Remove Role Name: contains admin',
         exact: true,
       });
       await expect(filterChip).toBeVisible({ timeout: 5000 });
@@ -236,15 +244,16 @@ test.describe(
         const rows = await roleDataRows(page).all();
         expect(rows.length).toBeGreaterThan(0);
         for (const row of rows) {
-          // Source is the 5th column (RoleNodes.tsx column order).
-          const source = await row.getByRole('cell').nth(4).innerText();
+          // Source is the 6th column, after Auto Assign (RoleNodes.tsx column
+          // order).
+          const source = await row.getByRole('cell').nth(5).innerText();
           expect(source.trim()).toBe('System');
         }
       }).toPass({ timeout: 10000 });
 
       // 8. Remove the filter chip
       const filterChip = page.getByRole('button', {
-        name: 'Remove Source: equals',
+        name: 'Remove Source: equals System',
         exact: true,
       });
       await filterChip.click();
@@ -277,7 +286,7 @@ test.describe(
 
       // 6. Remove the filter
       const filterChip = page.getByRole('button', {
-        name: 'Remove Role Name: contains',
+        name: 'Remove Role Name: contains zzz-nonexistent-role-xyz',
         exact: true,
       });
       await filterChip.click();
@@ -354,6 +363,93 @@ test.describe(
       await expect(roleDataRows(page).first()).toBeVisible({
         timeout: 10000,
       });
+    });
+  },
+);
+
+// #10691: a role's label token filters the role list by that label. No
+// shared role carries a label and labelling one would change RBAC state, so
+// the first row's label cell and the label-filtered list answer are mocked;
+// the test checks what the click sends and how the page shows it.
+test.describe(
+  'RBAC Role List Label Filter',
+  { tag: ['@rbac', '@regression', '@functional', '@requires-manager-v26.10'] },
+  () => {
+    test('Superadmin can filter the role list by clicking a label token', async ({
+      page,
+      request,
+    }) => {
+      // The superadmin intro tour (AdminViewSwitchTour) otherwise covers the page.
+      await page.addInitScript(() => {
+        for (const tour of ['back_to_user_view', 'back_to_admin_settings']) {
+          localStorage.setItem(
+            `backendaiwebui.settings.user.has_opened_tour_${tour}`,
+            'true',
+          );
+        }
+      });
+      await loginAsAdmin(page, request);
+      await skipUnlessLabelableEntityType(
+        page,
+        'role',
+        'Role labels require a manager that accepts role labels (#10691)',
+      );
+      const label = {
+        key: 'e2e-mock-label',
+        value: Date.now().toString(36),
+      };
+      const mock = await mockEntityLabelOnFirstRow(page, {
+        listQuery: 'RBACManagementPageQuery',
+        connectionField: 'adminRoles',
+        label,
+      });
+
+      await navigateTo(page, 'rbac');
+      await expect(rbacManagementTab(page)).toBeVisible({ timeout: 30000 });
+      const labelToken = page.getByRole('button', {
+        name: `${label.key}=${label.value}`,
+        exact: true,
+      });
+      await expect(labelToken).toBeVisible({ timeout: 30000 });
+      await expect(roleDataRows(page).nth(1)).toBeVisible();
+
+      // Act
+      const labelRequest = waitForGraphQLVariables(
+        page,
+        'RBACManagementPageQuery',
+        (variables) => isLabelFilter(variables.filter, label),
+      );
+      await labelToken.click();
+      const variables = await labelRequest;
+      expect(variables.offset).toBe(0);
+      expect(variables.filter.status).toEqual({ in: ['ACTIVE'] });
+
+      const filterGroup = page
+        .getByRole('group', { name: 'Search filters' })
+        .first();
+      await expect(
+        filterGroup.getByRole('button', { name: /^Label key/ }),
+      ).toBeVisible();
+      await expect(
+        filterGroup.getByRole('button', { name: /^Label value/ }),
+      ).toBeVisible();
+      await expect
+        .poll(() =>
+          JSON.parse(new URL(page.url()).searchParams.get('filter') ?? '{}'),
+        )
+        .toEqual({
+          labels: {
+            some: {
+              key: { iEquals: label.key },
+              value: { iEquals: label.value },
+            },
+          },
+        });
+      await expect(roleDataRows(page)).toHaveCount(1, { timeout: 20000 });
+      await expect(roleDataRows(page).first()).toContainText(
+        mock.targetName() ?? '',
+      );
+      await expect(labelToken).toBeVisible();
     });
   },
 );

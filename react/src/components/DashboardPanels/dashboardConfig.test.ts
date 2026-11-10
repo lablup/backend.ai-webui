@@ -1,0 +1,395 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import { syncBoard } from './boardModel';
+import {
+  DEFAULT_BOARD_ID,
+  DEFAULT_BOARD_VARS,
+  addBoard,
+  createEmptyBoard,
+  keepUnreadablePanels,
+  mergePanelEdits,
+  removeBoard,
+  renameBoard,
+  resetActiveBoard,
+  resolveBoards,
+  resolveTemplate,
+  sanitizeDashboardConfig,
+  selectBoard,
+} from './dashboardConfig';
+import type {
+  DashboardModel,
+  DashboardPageConfig,
+  PanelDefinition,
+} from './types';
+
+const card = (
+  key: string,
+  extra: Partial<PanelDefinition> = {},
+): PanelDefinition => ({
+  key,
+  page: ['project', 'admin'],
+  group: 'session',
+  titleKey: key,
+  kind: 'custom',
+  defaultSize: { columnSpan: 2, rowSpan: 2 },
+  minSize: { columnSpan: 2, rowSpan: 2 },
+  ...extra,
+});
+
+const sessionPreset: PanelDefinition = {
+  key: 'resource.session',
+  page: ['project', 'admin'],
+  group: 'other',
+  titleKey: 'webui.menu.Sessions',
+  kind: 'preset',
+  source: 'session',
+  viz: 'table',
+  defaultSize: { columnSpan: 2, rowSpan: 3 },
+  minSize: { columnSpan: 2, rowSpan: 3 },
+};
+
+const definitions: ReadonlyArray<PanelDefinition> = [
+  card('a'),
+  card('b'),
+  card('c', { defaultHidden: true }),
+  sessionPreset,
+];
+
+const keysOf = (board: { panels: ReadonlyArray<{ key: string }> }) =>
+  board.panels.map((panel) => panel.key);
+
+const board = (
+  id: string,
+  extra: Partial<DashboardModel> = {},
+): DashboardModel => ({
+  id,
+  title: id,
+  vars: { ...DEFAULT_BOARD_VARS },
+  panels: [{ id: 'a', key: 'a', columnSpan: 2, rowSpan: 2 }],
+  knownKeys: ['a', 'b', 'c'],
+  ...extra,
+});
+
+const noTemplates = {};
+
+describe('resolveTemplate', () => {
+  it('prefers the domain template over the public one', () => {
+    const template = resolveTemplate(
+      {
+        domainTemplates: { project: { panels: [{ id: 'b', key: 'b' }] } },
+        publicTemplates: { project: { panels: [{ id: 'a', key: 'a' }] } },
+      },
+      definitions,
+      'project',
+    );
+    expect(keysOf(template)).toEqual(['b']);
+    expect(template.id).toBe(DEFAULT_BOARD_ID);
+  });
+
+  it('falls back to the public template when the domain has none for the page', () => {
+    const template = resolveTemplate(
+      {
+        domainTemplates: { admin: { panels: [{ id: 'b', key: 'b' }] } },
+        publicTemplates: { project: { panels: [{ id: 'a', key: 'a' }] } },
+      },
+      definitions,
+      'project',
+    );
+    expect(keysOf(template)).toEqual(['a']);
+  });
+
+  it('falls back to the code default when no template is usable', () => {
+    const template = resolveTemplate(
+      { domainTemplates: 'broken', publicTemplates: { project: 42 } },
+      definitions,
+      'project',
+    );
+    expect(template).toEqual({
+      id: DEFAULT_BOARD_ID,
+      title: '',
+      vars: DEFAULT_BOARD_VARS,
+      panels: [
+        { id: 'a', key: 'a', columnSpan: 2, rowSpan: 2 },
+        { id: 'b', key: 'b', columnSpan: 2, rowSpan: 2 },
+      ],
+      knownKeys: ['a', 'b', 'c'],
+    });
+  });
+
+  it('treats a template without knownKeys as knowing every current card', () => {
+    const template = resolveTemplate(
+      { publicTemplates: { project: { panels: [{ id: 'b', key: 'b' }] } } },
+      definitions,
+      'project',
+    );
+    expect(template.knownKeys).toEqual(['a', 'b', 'c']);
+    expect(template.panels[0]).toEqual({
+      id: 'b',
+      key: 'b',
+      columnSpan: 2,
+      rowSpan: 2,
+    });
+  });
+});
+
+describe('sanitizeDashboardConfig', () => {
+  it('drops malformed pages, boards and panels and repairs active', () => {
+    const sanitized = sanitizeDashboardConfig(
+      {
+        project: {
+          boards: [
+            board('one', {
+              panels: [
+                { id: 'a', key: 'a', columnSpan: 2, rowSpan: 2 },
+                { id: 'x', key: 'unknown', columnSpan: 2, rowSpan: 2 },
+              ],
+            }),
+            board('one'),
+            { title: 'no id', panels: [] },
+          ],
+          active: 'missing',
+          migrated: true,
+        },
+        admin: { boards: [] },
+        projectAdmin: 'nope',
+      },
+      definitions,
+    );
+    expect(Object.keys(sanitized)).toEqual(['project']);
+    expect(sanitized.project?.boards.map((item) => item.id)).toEqual(['one']);
+    expect(keysOf(sanitized.project!.boards[0])).toEqual(['a']);
+    expect(sanitized.project?.active).toBe('one');
+    expect(sanitized.project).not.toHaveProperty('migrated');
+  });
+
+  it('keeps only the refresh var and drops retired values and pins', () => {
+    const sanitized = sanitizeDashboardConfig(
+      {
+        admin: {
+          boards: [
+            {
+              ...board('one'),
+              vars: {
+                project: ['p1'],
+                rg: ['g'],
+                range: 'now-1h',
+                refresh: '7s',
+              },
+              pinned: { project: ['p1'] },
+            },
+          ],
+          active: 'one',
+        },
+      },
+      definitions,
+    );
+    const model = sanitized.admin!.boards[0];
+    expect(model.vars).toEqual({ refresh: '1m' });
+    expect(model).not.toHaveProperty('pinned');
+  });
+
+  it('returns an empty config for a non-object', () => {
+    expect(sanitizeDashboardConfig(null, definitions)).toEqual({});
+  });
+});
+
+describe('resolveBoards', () => {
+  it('uses the stored config when there is one', () => {
+    const stored: DashboardPageConfig = {
+      boards: [board('saved')],
+      active: 'saved',
+    };
+    const resolved = resolveBoards({
+      stored,
+      templates: noTemplates,
+      definitions,
+      page: 'project',
+    });
+    expect(resolved.config.boards.map((item) => item.id)).toEqual(['saved']);
+  });
+
+  it('starts from the template when nothing is stored', () => {
+    const resolved = resolveBoards({
+      stored: undefined,
+      templates: {
+        publicTemplates: {
+          project: {
+            title: 'Team',
+            vars: { refresh: '5m' },
+            panels: [{ id: 'a', key: 'a' }],
+          },
+        },
+      },
+      definitions,
+      page: 'project',
+    });
+    expect(resolved.config.boards).toEqual([resolved.template]);
+    expect(resolved.config.active).toBe(DEFAULT_BOARD_ID);
+    expect(resolved.template.title).toBe('Team');
+    expect(keysOf(resolved.template)).toEqual(['a']);
+  });
+});
+
+describe('board operations', () => {
+  const config: DashboardPageConfig = {
+    boards: [board('one'), board('two'), board('three')],
+    active: 'two',
+  };
+
+  it('creates an empty board that every current card counts as seen, and makes it active', () => {
+    const next = addBoard(
+      config,
+      createEmptyBoard({ id: 'new', title: 'New' }, definitions, 'project'),
+    );
+    expect(next.active).toBe('new');
+    const created = next.boards[3];
+    expect(created).toMatchObject({ id: 'new', title: 'New', panels: [] });
+    expect(created.vars).toEqual(DEFAULT_BOARD_VARS);
+    expect(syncBoard(created, definitions, 'project').panels).toEqual([]);
+  });
+
+  it('hands the active board over to its neighbour on removal and keeps the last one', () => {
+    expect(removeBoard(config, 'two')).toMatchObject({ active: 'three' });
+    expect(removeBoard({ ...config, active: 'three' }, 'three').active).toBe(
+      'two',
+    );
+    expect(removeBoard(config, 'one').active).toBe('two');
+    const single: DashboardPageConfig = {
+      boards: [board('one')],
+      active: 'one',
+    };
+    expect(removeBoard(single, 'one')).toBe(single);
+  });
+
+  it('selects only an existing board', () => {
+    expect(selectBoard(config, 'three').active).toBe('three');
+    expect(selectBoard(config, 'missing')).toBe(config);
+  });
+
+  it('renames with a trimmed title', () => {
+    const renamed = renameBoard(config, 'one', '  NLP  ');
+    expect(renamed.boards[0].title).toBe('NLP');
+  });
+
+  it('resets the active board to the template panels and keeps its title', () => {
+    const template = board(DEFAULT_BOARD_ID, {
+      panels: [{ id: 'b', key: 'b', columnSpan: 2, rowSpan: 2 }],
+    });
+    const edited: DashboardPageConfig = {
+      boards: [
+        board('one', {
+          title: 'Mine',
+          panels: [
+            { id: 'a', key: 'a', columnSpan: 6, rowSpan: 6 },
+            {
+              id: 'p1',
+              key: 'resource.session',
+              viz: 'table',
+              columnSpan: 6,
+              rowSpan: 6,
+            },
+          ],
+        }),
+      ],
+      active: 'one',
+    };
+    const [reset] = resetActiveBoard(
+      edited,
+      template,
+      definitions,
+      'project',
+    ).boards;
+    expect(reset.title).toBe('Mine');
+    expect(reset.panels.map((panel) => panel.id)).toEqual(['b', 'p1']);
+    expect(reset.panels[1]).toMatchObject({ columnSpan: 2, rowSpan: 3 });
+  });
+});
+
+describe('keepUnreadablePanels', () => {
+  const ranged = [...definitions, card('r', { settings: ['range'] })];
+  const stored = {
+    active: 'default',
+    boards: [
+      {
+        id: 'default',
+        panels: [
+          { id: 'a', key: 'a', columnSpan: 2, rowSpan: 2 },
+          { id: 'b', key: 'b', columnSpan: 2, rowSpan: 2 },
+          { id: 'new', key: 'newer.card', columnSpan: 3, rowSpan: 2 },
+          {
+            id: 'r',
+            key: 'r',
+            columnSpan: 2,
+            rowSpan: 2,
+            settings: { range: 'now-7d', newerSetting: 'x' },
+          },
+        ],
+      },
+    ],
+  };
+  const written: DashboardPageConfig = {
+    active: 'default',
+    boards: [
+      board('default', {
+        panels: [
+          { id: 'a', key: 'a', columnSpan: 2, rowSpan: 2 },
+          { id: 'r', key: 'r', columnSpan: 2, rowSpan: 2 },
+        ],
+      }),
+    ],
+  };
+
+  it('keeps a card this client does not know, and drops one it removed', () => {
+    const result = keepUnreadablePanels(written, stored, ranged, 'project');
+    expect(result.boards[0].panels.map((panel) => panel.id)).toEqual([
+      'a',
+      'r',
+      'new',
+    ]);
+  });
+
+  it('keeps settings the card here does not declare, not the ones it cleared', () => {
+    const result = keepUnreadablePanels(written, stored, ranged, 'project');
+    expect(result.boards[0].panels[1].settings).toEqual({ newerSetting: 'x' });
+  });
+
+  it('leaves a board it cannot match alone', () => {
+    expect(keepUnreadablePanels(written, null, ranged, 'project')).toBe(
+      written,
+    );
+  });
+});
+
+describe('mergePanelEdits', () => {
+  const panel = (id: string, columnSpan = 2) => ({
+    id,
+    key: id,
+    columnSpan,
+    rowSpan: 2,
+  });
+
+  it('keeps a panel added elsewhere since this tab read the board', () => {
+    const base = [panel('a'), panel('b')];
+    const edited = [panel('a', 4), panel('b')];
+    const current = [panel('a'), panel('b'), panel('x')];
+    expect(mergePanelEdits(base, edited, current)).toEqual([
+      panel('a', 4),
+      panel('b'),
+      panel('x'),
+    ]);
+  });
+
+  it('applies a removal here and keeps a change made elsewhere to another panel', () => {
+    const base = [panel('a'), panel('b')];
+    const edited = [panel('a')];
+    const current = [panel('a', 3), panel('b')];
+    expect(mergePanelEdits(base, edited, current)).toEqual([panel('a', 3)]);
+  });
+
+  it('drops a panel removed elsewhere that this tab did not change', () => {
+    const base = [panel('a'), panel('b')];
+    expect(mergePanelEdits(base, base, [panel('a')])).toEqual([panel('a')]);
+  });
+});

@@ -286,7 +286,9 @@ test.describe(
 
       await navigateTo(page, 'session/start');
       await page
-        .getByRole('button', { name: '2 Environments & Resource' })
+        .getByRole('button', {
+          name: 'Go to step 2: Environments & Resource Allocation',
+        })
         .click();
       await page
         .getByRole('button', { name: 'Add environment variables' })
@@ -316,7 +318,9 @@ test.describe(
       // After reload, ensure we're on the Environments & Resource step where
       // envvars are rendered. The page may restore to step 1 first.
       await page
-        .getByRole('button', { name: '2 Environments & Resource' })
+        .getByRole('button', {
+          name: 'Go to step 2: Environments & Resource Allocation',
+        })
         .click();
       // Wait for the envvars Form.List to be restored from query params.
       await expect(page.locator('#envvars_1_variable')).toHaveValue(

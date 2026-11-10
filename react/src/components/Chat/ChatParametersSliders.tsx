@@ -8,9 +8,8 @@ import BAIFormItem from '../BAIFormItem';
 import InputNumberWithSlider from '../InputNumberWithSlider';
 import { DEFAULT_CHAT_PARAMETERS, type ChatParameters } from './ChatModel';
 import { Divider } from '@lablup/ui-common/Divider';
-import { Switch } from '@lablup/ui-common/Switch';
 import { Text } from '@lablup/ui-common/Text';
-import { BAIFlex, BAIQuestionIconWithTooltip } from 'backend.ai-ui';
+import { BAIFlex, BAIQuestionIconWithTooltip, BAISwitch } from 'backend.ai-ui';
 import { t } from 'i18next';
 import { useRef } from 'react';
 
@@ -165,10 +164,9 @@ export const ChatParametersSliders = ({
         <Text style={{ fontSize: 'var(--font-size-lg)' }}>
           {t('chatui.chat.parameter.Title')}
         </Text>
-        <Switch
+        <BAISwitch
           value={usingParameters}
-          label={t('chatui.chat.parameter.Title')}
-          isLabelHidden
+          aria-label={t('chatui.chat.parameter.Title')}
           onChange={() => {
             onChangeParameter(!usingParameters, {
               ...currentParameters.current,

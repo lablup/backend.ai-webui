@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ca8e943d9453698ab0e8871217f19326>>
+ * @generated SignedSource<<ecefbe87d92d9ad550ff790f27c9e14b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,6 +20,7 @@ export type BAIDomainSelectV2Query$data = {
         readonly basicInfo: {
           readonly name: string;
         };
+        readonly entityId: string;
         readonly id: string;
       };
     }>;
@@ -95,6 +96,13 @@ v1 = [
               {
                 "alias": null,
                 "args": null,
+                "kind": "ScalarField",
+                "name": "entityId",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
                 "concreteType": "DomainBasicInfo",
                 "kind": "LinkedField",
                 "name": "basicInfo",
@@ -138,16 +146,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "0b5bb508d51161552756e262c1a9fd88",
+    "cacheID": "c68c381179513f26b6fb6663698e6e56",
     "id": null,
     "metadata": {},
     "name": "BAIDomainSelectV2Query",
     "operationKind": "query",
-    "text": "query BAIDomainSelectV2Query(\n  $isActive: Boolean\n  $limit: Int!\n) {\n  adminDomainsV2(filter: {isActive: $isActive}, limit: $limit) {\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIDomainSelectV2Query(\n  $isActive: Boolean\n  $limit: Int!\n) {\n  adminDomainsV2(filter: {isActive: $isActive}, limit: $limit) {\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "875b72e929bb265848338c98f4698fa7";
+(node as any).hash = "0f8db6689d173a976ef91e4487eca03c";
 
 export default node;

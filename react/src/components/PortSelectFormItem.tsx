@@ -4,8 +4,8 @@
  */
 import { Form, type FormItemProps } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { AstryxFormTagsInput } from './astryxFormControls';
 import { Token } from '@lablup/ui-common/Token';
+import { BAITagsInput } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import type { CSSProperties } from 'react';
 import React from 'react';
@@ -108,25 +108,14 @@ const PortSelectFormItem: React.FC<Props> = ({
         nothing: the empty search source yields no dropdown and no suffix
         affordance.
 
-        `tokenSeparators` is RESTORED (input-parity pass) — the `extra` line
-        directly above this field tells the user to separate values with a
-        comma or a space, so dropping it made the UI lie. The adapter splits on
-        commit; see `AstryxFormTagsInputProps.tokenSeparators`.
+        `tokenSeparators` matches the `extra` line above, which tells the user
+        to separate values with a comma or a space.
       */}
-      <AstryxFormTagsInput
+      <BAITagsInput
         tokenSeparators={[',', ' ']}
-        label={t('session.launcher.PreOpenPortTitle')}
-        // QA-FINDINGS Q-39: an EMPTY placeholder, deliberately.
-        //
-        // Astryx's `Tokenizer` defaults its input to "Search…", and this field
-        // has no suggestion source at all (`EMPTY_TAG_SEARCH_SOURCE`) — so it
-        // invited the user to search, showed no list, and read as broken. The
-        // `extra` line directly above already says to separate values with a
-        // comma or a space, which is the actual instruction.
-        //
-        // Empty is also exact legacy parity: `git show origin/main:` has the
-        // `placeholder` prop COMMENTED OUT on the antd `Select mode="tags"`, so
-        // legacy rendered no placeholder either.
+        aria-label={t('session.launcher.PreOpenPortTitle')}
+        // An EMPTY placeholder, deliberately: Tokenizer defaults to "Search…",
+        // and this field has no suggestions to search (QA-FINDINGS Q-39).
         placeholder=""
       />
     </Form.Item>

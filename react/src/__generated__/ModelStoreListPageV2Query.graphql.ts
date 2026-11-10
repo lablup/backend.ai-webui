@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a7caa3f2e6d86185f1b3df7c8c58e3c0>>
+ * @generated SignedSource<<1e068e6b0952dcee61e2a11f16d70121>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -112,8 +112,9 @@ export type ModelStoreListPageV2Query$data = {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly entityId: string;
         readonly id: string;
-        readonly " $fragmentSpreads": FragmentRefs<"ModelStoreListPageV2_ModelCardV2Fragment">;
+        readonly " $fragmentSpreads": FragmentRefs<"ModelStoreListPageV2_ModelCardV2Fragment" | "WebMCPModelCardListToolsFragment">;
       };
     }>;
   } | null | undefined;
@@ -189,6 +190,13 @@ v7 = {
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
+},
+v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "entityId",
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -229,10 +237,16 @@ return {
                 "plural": false,
                 "selections": [
                   (v7/*: any*/),
+                  (v8/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
                     "name": "ModelStoreListPageV2_ModelCardV2Fragment"
+                  },
+                  {
+                    "args": null,
+                    "kind": "FragmentSpread",
+                    "name": "WebMCPModelCardListToolsFragment"
                   }
                 ],
                 "storageKey": null
@@ -285,6 +299,7 @@ return {
                 "plural": false,
                 "selections": [
                   (v7/*: any*/),
+                  (v8/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -373,16 +388,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "dbde5904adf578002ddc9f413150947d",
+    "cacheID": "1f0cc930e8ec02616b6162daf22d5803",
     "id": null,
     "metadata": {},
     "name": "ModelStoreListPageV2Query",
     "operationKind": "query",
-    "text": "query ModelStoreListPageV2Query(\n  $scope: ProjectModelCardV2Scope!\n  $filter: ModelCardV2Filter\n  $orderBy: [ModelCardV2OrderBy!]\n  $limit: Int!\n  $offset: Int!\n) {\n  projectModelCardsV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...ModelStoreListPageV2_ModelCardV2Fragment\n      }\n    }\n  }\n}\n\nfragment ModelStoreListPageV2_ModelCardV2Fragment on ModelCardV2 {\n  name\n  metadata {\n    title\n    task\n    author\n  }\n  updatedAt\n  createdAt\n  availablePresets(orderBy: [{field: RANK, direction: \"ASC\"}]) {\n    count\n  }\n}\n"
+    "text": "query ModelStoreListPageV2Query(\n  $scope: ProjectModelCardV2Scope!\n  $filter: ModelCardV2Filter\n  $orderBy: [ModelCardV2OrderBy!]\n  $limit: Int!\n  $offset: Int!\n) {\n  projectModelCardsV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        ...ModelStoreListPageV2_ModelCardV2Fragment\n        ...WebMCPModelCardListToolsFragment\n      }\n    }\n  }\n}\n\nfragment ModelStoreListPageV2_ModelCardV2Fragment on ModelCardV2 {\n  name\n  metadata {\n    title\n    task\n    author\n  }\n  updatedAt\n  createdAt\n  availablePresets(orderBy: [{field: RANK, direction: \"ASC\"}]) {\n    count\n  }\n}\n\nfragment WebMCPModelCardListToolsFragment on ModelCardV2 {\n  entityId\n  name\n  metadata {\n    title\n    task\n    author\n  }\n  createdAt\n  updatedAt\n}\n"
   }
 };
 })();
 
-(node as any).hash = "deba47dc7280cb92b05271fb176f72c7";
+(node as any).hash = "7410ae52d643ee43d1a1f3f2e0291f3b";
 
 export default node;

@@ -191,6 +191,19 @@ You must perform first-time compilation for testing. Some additional mandatory p
 $ make compile_wsproxy
 ```
 
+#### User manual screenshots (Git LFS)
+
+Once the user manual images (anywhere under `packages/backend.ai-webui-docs/src/`) move to
+[Git LFS](https://git-lfs.com), normal development needs nothing extra: a clone keeps them as
+small pointer files, even with git-lfs installed (`.lfsconfig`). To build the manual or work on
+its screenshots, install git-lfs, run `git lfs install` once, and fetch the images:
+
+```console
+$ pnpm --filter backend.ai-webui-docs run images:pull
+```
+
+Committing images under an LFS-tracked path without git-lfs is caught by the `lfs-pointer-check` CI job.
+
 ### Developing / testing with dev server
 
 On a terminal:
@@ -374,6 +387,7 @@ $ make bundle
 ```
 
 will generate compiled static web bundle at `./app` directory. Then you can serve the web bundle via webservers.
+It also generates `backend.ai-webui-bundle-<version>-nosourcemap.zip`, the same bundle without source maps, for deployments that must not expose them.
 
 ### Serving with nginx
 

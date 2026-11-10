@@ -1,22 +1,27 @@
+import packageJson from './package.json' with { type: 'json' };
 import react from '@vitejs/plugin-react';
 import glob from 'fast-glob';
+import { Features } from 'lightningcss';
 import { basename, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { defineConfig } from 'vite';
+import {
+  defineConfig,
+  esmExternalRequirePlugin,
+  transformWithOxc,
+  type Plugin,
+} from 'vite';
 import dts from 'vite-plugin-dts';
 import relay from 'vite-plugin-relay-lite';
 import svgr from 'vite-plugin-svgr';
 
-import { peerDependencies } from './package.json';
-
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// Rollup matches `external` strings exactly, so bare names left subpaths like
+// Rolldown matches `external` strings exactly, so bare names left subpaths like
 // `react-dom/client` bundled — a second renderer that blank-screens consumers
 // on any other React patch (#8595). i18next / react-i18next are dependencies
 // rather than peers, so they stay bundled and keep BUI's i18n isolated.
 const externalPatterns = [
-  ...Object.keys(peerDependencies).map(
+  ...Object.keys(packageJson.peerDependencies).map(
     // `.` is the only regex metacharacter an npm package name can hold.
     (name) => new RegExp(`^${name.replaceAll('.', '\\.')}(/.*)?$`),
   ),
@@ -24,6 +29,19 @@ const externalPatterns = [
   // directly must not bundle a second copy of it.
   /^@astryxdesign\//,
 ];
+
+const umdWithoutAmd = (): Plugin => ({
+  name: 'bai-umd-without-amd',
+  transform: {
+    filter: { id: /[\\/]node_modules[\\/]/, code: /\bdefine\.amd\b/ },
+    async handler(code, id) {
+      const result = await transformWithOxc(code, id, {
+        define: { define: 'undefined' },
+      });
+      return { code: result.code, map: result.map };
+    },
+  },
+});
 
 export default defineConfig(({ mode }) => {
   const isDevMode = mode === 'development';
@@ -34,6 +52,7 @@ export default defineConfig(({ mode }) => {
   const localeFiles = glob.sync('src/locale/*.ts', { cwd: __dirname });
   const entries: Record<string, string> = {
     'backend.ai-ui': resolve(__dirname, 'src/index.ts'),
+    theme: resolve(__dirname, 'src/theme/index.ts'),
   };
   localeFiles.forEach((file) => {
     const name = basename(file, '.ts');
@@ -49,31 +68,27 @@ export default defineConfig(({ mode }) => {
         './__generated__': resolve(__dirname, 'src/__generated__'),
       },
     },
+    css: {
+      lightningcss: { exclude: Features.LightDark },
+    },
     build: {
       lib: {
         entry: entries,
         formats: ['es'],
       },
-      rollupOptions: {
-        external: externalPatterns,
+      target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14'],
+      cssTarget: ['chrome111', 'edge111', 'firefox114', 'safari16.4', 'ios16.4'],
+      rolldownOptions: {
+        plugins: [esmExternalRequirePlugin({ external: externalPatterns })],
+        output: { comments: { legal: true } },
       },
       sourcemap: true,
       outDir: 'dist',
       emptyOutDir: !isDevMode,
     },
     plugins: [
-      react({
-        babel: {
-          plugins: [
-            [
-              'babel-plugin-react-compiler',
-              {
-                compilationMode: 'annotation',
-              },
-            ],
-          ],
-        },
-      }),
+      umdWithoutAmd(),
+      react({ compiler: { compilationMode: 'annotation' } }),
       relay({
         module: 'esmodule',
         codegen: !isDevMode,
@@ -85,16 +100,24 @@ export default defineConfig(({ mode }) => {
         // library, so they have no business in the published types.
         exclude: [
           '**/*.{stories,test}.{ts,tsx}',
+          '**/*.fixtures.{ts,tsx}',
           'src/locale/*.json',
           '**/*.doc.ts',
           'src/astryx-docs/**',
         ],
         rollupTypes: false,
         insertTypesEntry: true,
+        pathsToAliases: false,
+        afterDiagnostic(diagnostics) {
+          if (diagnostics.length > 0) {
+            throw new Error(
+              `vite-plugin-dts: ${diagnostics.length} declaration diagnostic(s)`,
+            );
+          }
+        },
         compilerOptions: {
           preserveSymlinks: false,
           rootDir: 'src',
-          paths: {}
         },
       }),
       svgr(),

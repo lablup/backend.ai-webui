@@ -18,7 +18,9 @@
  *     `handleLoginError`.
  */
 import {
+  fillLoginEndpoint,
   modifyConfigToml,
+  seedStoredApiEndpoint,
   userInfo,
   webServerEndpoint,
   webuiEndpoint,
@@ -73,14 +75,9 @@ async function setupBaseMocks(page: Page): Promise<void> {
 }
 
 async function fillLoginForm(page: Page): Promise<void> {
+  await fillLoginEndpoint(page, webServerEndpoint);
   await page.getByLabel('Email or Username').fill(TEST_EMAIL);
   await page.getByLabel('Password').fill(TEST_PASSWORD);
-
-  const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
-  if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
-    await page.getByText('Advanced').click();
-  }
-  await endpointInput.fill(webServerEndpoint);
 }
 
 async function gotoLoginPage(
@@ -95,6 +92,7 @@ async function gotoLoginPage(
     },
   });
   await setupBaseMocks(page);
+  await seedStoredApiEndpoint(page);
   // The app attempts a silent re-login on load; let that request finish
   // before a test installs its own /server/login mock or spy.
   const silentLogin = page.waitForResponse(
@@ -433,7 +431,7 @@ const GATEWAY_IP_REJECTION = {
     {
       message:
         'Unexpected empty "data" and "errors" fields in result: {"type": "https://api.backend.ai/probs/auth-failed"}',
-      path: ['keypair'],
+      path: ['myUserV2'],
       extensions: {
         response: {
           status: 401,
@@ -450,7 +448,7 @@ const GATEWAY_IP_REJECTION = {
       },
     },
   ],
-  data: { keypair: null },
+  data: { myUserV2: null },
 };
 
 test.describe(
@@ -490,7 +488,9 @@ test.describe(
       });
 
       await page.route('**/admin/gql', async (route) => {
-        if (route.request().postData()?.includes('keypair')) {
+        if (
+          route.request().postData()?.includes('loginSessionAuthMyUserQuery')
+        ) {
           await route.fulfill({
             status: 200,
             contentType: 'application/json',
@@ -504,8 +504,10 @@ test.describe(
       await fillLoginForm(page);
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
+      // #10202 titles a refused post-login query with error.LoginFailed and
+      // keeps the manager's reason as the description.
       await expect(
-        page.getByText('Credential/signature mismatch.'),
+        page.getByText('Login failed. Check login information.'),
       ).toBeVisible({ timeout: 10_000 });
       await expect(page.getByText(DISALLOWED_IP_MSG)).toBeVisible();
       await expect(
@@ -515,6 +517,81 @@ test.describe(
         page.getByRole('button', { name: 'Login', exact: true }),
       ).toBeVisible();
       expect(logoutCalled).toBe(true);
+    });
+  },
+);
+
+// ---------------------------------------------------------------------------
+// Phase 5: OpenID login failure reported back as `?bai_error=` (FR-4126)
+// ---------------------------------------------------------------------------
+
+async function gotoLoginPageWithOpenIDError(
+  page: Page,
+  request: APIRequestContext,
+  errorCode: string,
+): Promise<void> {
+  // Unlike gotoLoginPage, no later /server/login mock needs the silent login to settle.
+  // An empty realm name pins the banner title to the `OpenID` default.
+  await modifyConfigToml(page, request, {
+    general: {
+      connectionMode: 'SESSION',
+      apiEndpoint: '',
+      apiEndpointText: '',
+      ssoRealmName: '',
+    },
+  });
+  await setupBaseMocks(page);
+  await seedStoredApiEndpoint(page);
+  await page.goto(
+    `${webuiEndpoint}/?bai_error=${encodeURIComponent(errorCode)}`,
+  );
+  await page
+    .evaluate(() => {
+      document.getElementById('webpack-dev-server-client-overlay')?.remove();
+    })
+    .catch(() => {});
+}
+
+test.describe(
+  'Login error messages — OpenID login failure (FR-4126)',
+  { tag: ['@regression', '@auth', '@functional'] },
+  () => {
+    test('User sees an OpenID login failure banner that does not come back after a reload', async ({
+      page,
+      request,
+    }) => {
+      await gotoLoginPageWithOpenIDError(page, request, 'openid-access-denied');
+
+      const banner = page
+        .getByRole('alert')
+        .filter({ hasText: 'Login with OpenID failed' });
+      await expect(banner).toBeVisible({ timeout: 30_000 });
+      await expect(banner).toContainText(
+        'Login was canceled, or the requested permissions were not granted.',
+      );
+      await expect(page).not.toHaveURL(/bai_error=/);
+
+      await page.reload();
+      await expect(
+        page.getByRole('button', { name: 'Login', exact: true }),
+      ).toBeVisible({ timeout: 30_000 });
+      await expect(banner).toHaveCount(0);
+    });
+
+    test('User sees the error code in a generic banner for an unknown OpenID error', async ({
+      page,
+      request,
+    }) => {
+      await gotoLoginPageWithOpenIDError(page, request, 'e2e-unknown-code');
+
+      const banner = page
+        .getByRole('alert')
+        .filter({ hasText: 'Login with OpenID failed' });
+      await expect(banner).toBeVisible({ timeout: 30_000 });
+      await expect(banner).toContainText(
+        'An unexpected error occurred while logging in (error code: e2e-unknown-code).',
+      );
+      await expect(page).not.toHaveURL(/bai_error=/);
     });
   },
 );

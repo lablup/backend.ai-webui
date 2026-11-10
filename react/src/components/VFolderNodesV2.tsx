@@ -16,13 +16,13 @@ import {
 import { VFolderNodesV2RestoreMutation } from '../__generated__/VFolderNodesV2RestoreMutation.graphql';
 import { App } from '../app-shim';
 import { convertToDecimalUnit } from '../helper';
+import { isDeletedCategory } from '../helper/vfolderStatus';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useSuspenseTanQuery, useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
+import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import { ProjectContextOrNull } from '../types/projectContext';
 import DeleteForeverVFolderModalV2 from './DeleteForeverVFolderModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -33,7 +33,6 @@ import QuotaPerStorageVolumePanelCard, {
 import SharedFolderPermissionInfoModalV2 from './SharedFolderPermissionInfoModalV2';
 import VFolderDeployModal, { VFolderDeployQuery } from './VFolderDeployModal';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
-import VFolderPermissionCellV2 from './VFolderPermissionCellV2';
 import { Badge } from '@lablup/ui-common/Badge';
 import { Link } from '@lablup/ui-common/Link';
 import { HStack, VStack } from '@lablup/ui-common/Stack';
@@ -55,7 +54,6 @@ import {
   StorageUsageBadge,
   badgeVariantForStatus,
   filterOutNullAndUndefined,
-  toLocalId,
   useErrorMessageResolver,
   useIsLabelableEntityType,
   type BAIEntityLabel,
@@ -124,17 +122,9 @@ interface VFolderNameCellProps {
    * string as its tooltip. The component never infers on its own when
    * deployment should be blocked — the page decides and supplies the
    * reason (mirrors `FolderExplorerHeaderV2`'s `noProjectTooltip`,
-   * FR-3412). Absent by default, so every current caller
-   * (`ProjectAdminDataPage`, always project-scoped) keeps today's behavior
-   * unchanged. Mirrors `VFolderNodes` (V1, FR-3423).
+   * FR-3412). Mirrors `VFolderNodes` (V1, FR-3423).
    */
   noDeployTooltip?: string;
-  /**
-   * When true, project-type folders are locked from row-level destructive
-   * actions — the user-facing data page (`/data`) manages them from the
-   * admin data page instead. Mirrors `VFolderNodes` (V1, FR-4142).
-   */
-  disableProjectFolderActions?: boolean;
 }
 
 const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
@@ -145,30 +135,19 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
   onDeleteForever,
   onStartServiceFallback,
   noDeployTooltip,
-  disableProjectFolderActions = false,
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
   const { generateFolderPath } = useFolderExplorerOpener();
   const navigate = useWebUINavigate();
-  const effectiveAdminRole = useEffectiveAdminRole();
 
   const isPipelineFolder = vfolder?.metadata?.usageMode === 'DATA';
   const isModelFolder = vfolder?.metadata?.usageMode === 'MODEL';
   const isDeleted = isDeletedCategory(vfolder?.vfolderStatus);
   const hasDeletePermission = _.includes(vfolder?.permissions, 'SOFT_DELETE');
-  const isProjectFolder = vfolder?.accessControl?.ownershipType === 'GROUP';
-  const isProjectFolderManagedElsewhere =
-    disableProjectFolderActions && isProjectFolder;
-  // Admins get redirected to the admin data page; members fall back to the
-  // existing per-action reason (mirrors `VFolderNodes` V1).
-  const projectFolderAdminHint =
-    isProjectFolderManagedElsewhere && effectiveAdminRole !== 'none'
-      ? t('data.folders.ManageProjectFolderInAdmin')
-      : undefined;
 
-  const vfolderId = toLocalId(vfolder.id ?? '');
+  const vfolderId = vfolder.entityId;
   const folderPath = generateFolderPath(vfolderId);
 
   const actions: Array<BAINameActionCellAction> = filterOutNullAndUndefined([
@@ -208,15 +187,9 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           type: 'danger' as const,
           disabled: isPipelineFolder
             ? { reason: t('data.folders.CannotDeletePipelineFolder') }
-            : isProjectFolderManagedElsewhere
-              ? {
-                  reason:
-                    projectFolderAdminHint ??
-                    t('data.folders.NoDeletePermission'),
-                }
-              : !hasDeletePermission
-                ? { reason: t('data.folders.NoDeletePermission') }
-                : false,
+            : !hasDeletePermission
+              ? { reason: t('data.folders.NoDeletePermission') }
+              : false,
           popConfirm: {
             title: t('data.folders.MoveToTrash'),
             description: vfolder?.metadata?.name ?? undefined,
@@ -235,15 +208,9 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           icon: <RotateCcwIcon />,
           disabled: isPipelineFolder
             ? { reason: t('data.folders.CannotRestorePipelineFolder') }
-            : isProjectFolderManagedElsewhere
-              ? {
-                  reason:
-                    projectFolderAdminHint ??
-                    t('data.folders.NoRestorePermission'),
-                }
-              : vfolder?.vfolderStatus !== 'DELETE_PENDING'
-                ? { reason: t('data.folders.DeletionAlreadyStarted') }
-                : false,
+            : vfolder?.vfolderStatus !== 'DELETE_PENDING'
+              ? { reason: t('data.folders.DeletionAlreadyStarted') }
+              : false,
           popConfirm: {
             title: t('data.folders.Restore'),
             description: vfolder?.metadata?.name ?? undefined,
@@ -260,13 +227,8 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           title: t('data.folders.Delete'),
           icon: <Trash2Icon />,
           type: 'danger' as const,
-          disabled: isProjectFolderManagedElsewhere
-            ? {
-                reason:
-                  projectFolderAdminHint ??
-                  t('data.folders.NoDeletePermission'),
-              }
-            : vfolder?.vfolderStatus !== 'DELETE_PENDING'
+          disabled:
+            vfolder?.vfolderStatus !== 'DELETE_PENDING'
               ? { reason: t('data.folders.DeletionAlreadyStarted') }
               : false,
           onClick: onDeleteForever,
@@ -490,18 +452,8 @@ interface VFolderNodesV2Props extends Omit<
   /**
    * Forwarded to each row's name cell (FR-3423). When set, the "Deploy as
    * service" row action renders disabled with this string as its tooltip.
-   * No current caller passes this — `ProjectAdminDataPage` is always
-   * project-scoped — added for API parity with `VFolderNodes` (V1) so a
-   * future admin-oversight caller of V2 gets the same treatment for free.
    */
   noDeployTooltip?: string;
-  /**
-   * Forwarded to each row's name cell. Set on the user-facing data page
-   * (`/data`) so project folders are not deletable/restorable from there
-   * — those actions live on the admin data page instead. Mirrors
-   * `VFolderNodes` (V1, FR-4142).
-   */
-  disableProjectFolderActions?: boolean;
 }
 
 const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
@@ -512,14 +464,16 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   showLabelsByDefault = false,
   project,
   noDeployTooltip,
-  disableProjectFolderActions,
   ...tableProps
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [currentUser] = useCurrentUserInfo();
-  const [inviteFolderId, setInviteFolderId] = useState<string | null>(null);
+  const { isSuperAdmin, projectAdminIds } = useCurrentUserProjectRoles();
+  const [inviteVFolder, setInviteVFolder] = useState<VFolderNodeInList | null>(
+    null,
+  );
   const { getErrorMessage } = useErrorMessageResolver();
   const navigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
@@ -605,9 +559,9 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
           ...BAIEntityLabelTokensFragment
           ...BAIEntityLabelSettingModalFragment
         }
-        ...VFolderPermissionCellV2Fragment
         ...VFolderNodeIdenticonV2Fragment
         ...SharedFolderPermissionInfoModalV2Fragment
+        ...InviteFolderSettingModalFragment
         ...DeleteForeverVFolderModalV2Fragment
         ...BAINodeNotificationItemFragment @alias(as: "notificationFrgmt")
       }
@@ -695,17 +649,25 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
                 <VFolderNameCell
                   vfolder={vfolder}
                   noDeployTooltip={noDeployTooltip}
-                  disableProjectFolderActions={disableProjectFolderActions}
                   onShare={() => {
-                    vfolder?.ownership?.userId === currentUser?.uuid
-                      ? setInviteFolderId(toLocalId(vfolder?.id ?? null))
+                    // Whoever may edit the folder's sharing (its owner, a
+                    // superadmin, an admin of its project) gets the share
+                    // modal; a recipient sees their own share.
+                    const ownership = vfolder?.ownership;
+                    const canManageShares =
+                      ownership?.userId === currentUser?.uuid ||
+                      isSuperAdmin ||
+                      (!!ownership?.projectId &&
+                        projectAdminIds.includes(ownership.projectId));
+                    canManageShares
+                      ? setInviteVFolder(vfolder)
                       : setCurrentSharedVFolder(vfolder);
                   }}
                   onDelete={() => {
                     const folderId = vfolder?.id;
                     if (!folderId) return;
                     commitDeleteMutation({
-                      variables: { vfolderId: toLocalId(folderId) },
+                      variables: { vfolderId: vfolder.entityId },
                       onCompleted: (_data, errors) => {
                         if (errors && errors.length > 0) {
                           handleDeleteError(
@@ -736,7 +698,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
                       });
                     };
                     commitRestoreMutation({
-                      variables: { vfolderId: toLocalId(folderId) },
+                      variables: { vfolderId: vfolder.entityId },
                       onCompleted: (_data, errors) => {
                         if (errors && errors.length > 0) {
                           handleError(new Error(errors[0]?.message ?? ''));
@@ -770,6 +732,8 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
             key: 'status',
             title: t('data.folders.Status'),
             dataIndex: 'vfolderStatus',
+            // `vfolderStatus` is a Relay alias; the server order field is STATUS.
+            sortKey: 'status',
             render: (status: string) => {
               return (
                 <Badge
@@ -795,13 +759,6 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
               <VFolderHostCell host={host} />
             ),
             sorter: isEnableSorter('host'),
-          },
-          {
-            key: 'permissions',
-            title: t('data.folders.MountPermission'),
-            render: (_perm: string, vfolder) => {
-              return <VFolderPermissionCellV2 vfolderFrgmt={vfolder} />;
-            },
           },
           {
             key: 'ownership_type',
@@ -964,13 +921,15 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
           setPurgingVFolders([]);
         }}
       />
-      <InviteFolderSettingModal
-        onRequestClose={() => {
-          setInviteFolderId(null);
-        }}
-        vfolderId={inviteFolderId}
-        open={!!inviteFolderId}
-      />
+      <BAIUnmountAfterClose>
+        <InviteFolderSettingModal
+          onRequestClose={() => {
+            setInviteVFolder(null);
+          }}
+          vfolderFrgmt={inviteVFolder}
+          open={!!inviteVFolder}
+        />
+      </BAIUnmountAfterClose>
       <SharedFolderPermissionInfoModalV2
         vfolderFrgmt={currentSharedVFolder}
         open={!!currentSharedVFolder}

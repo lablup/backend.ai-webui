@@ -10,7 +10,7 @@ canonical reference, and each BAI wrapper's file header documents its deliberate
 
 ## React Compiler — `'use memo'`
 
-- `babel-plugin-react-compiler` runs in **annotation mode**: memoization happens only in
+- The React Compiler (Oxc, through `@vitejs/plugin-react`) runs in **annotation mode**: memoization happens only in
   function bodies that start with `'use memo'`.
 - Add `'use memo'` as the **first statement of every component body and every custom hook
   body** (function bodies, not files). Never remove, rename, or backtick an existing one.
@@ -105,6 +105,20 @@ inherited call sites needed no edit when their internals were rebuilt on Astryx.
 - Export the "one row" type so consumers don't re-derive it:
   `export type UserNodeInList = NonNullable<BAIUserNodesFragment$data[number]>;`
 - Pagination argument modes are mutually exclusive — see `.claude/rules/graphql-pagination.md`.
+- **Local ids**: when a type exposes `entityId` (or `fieldId` when it has no `entityId`),
+  select it and use it for values, filters, mutation inputs and React keys. Do not add new
+  `toLocalId(node.id)`, `row_id` or nested `{ id }` decoding for such a type (#10494).
+  A type with neither field keeps the existing approach.
+- **Bulk mutations**: a `partialBulk*` mutation reports each item. Select the success
+  list's ids and the failure list with its id and `message` (the field names differ per
+  payload: read the schema, do not assume `successes`/`failed { id }`). All succeeded →
+  `message.success`. Some failed → `message.error` with the count, keep the failed items
+  selected for a retry, and list them in `BAIBulkErrorModal`. The request itself rejected →
+  list every requested item as failed in the same modal. An `atomicBulk*` mutation succeeds
+  or fails as a whole: one success path, one error path (`onCompleted` errors and a null
+  payload, `onError`), no per-item UI. After any success, refetch when list membership
+  changed (see the `relay-mutation-store-updates` skill). References:
+  `RoleAssignmentTab.tsx` (partial), `FairShareWeightSettingModal.tsx` (atomic).
 - `@since` / `@sinceMultiple` / `@deprecatedSince` / `@deprecatedSinceMultiple` /
   `@skipOnClient` in `graphql` tags are
   **client-side** directives defined in `data/client-directives.graphql` and stripped at
@@ -120,7 +134,7 @@ inherited call sites needed no edit when their internals were rebuilt on Astryx.
 |---|---|
 | Shared component under `packages/backend.ai-ui/` | `BAI*` (`BAIButton`, `BAIFlex`, `BAIUserNodes`) |
 | Relay-backed table bound to a GraphQL type | `*Nodes` (`SessionNodes`, `VFolderNodes`) — colocates a `@relay(plural: true)` fragment |
-| Top-level route component in `react/src/pages/` | `*Page` (`AdminComputeSessionListPage`) |
+| Top-level route component | `react/src/pages/<Name>Page/<Name>Page.tsx` (tests in `<Name>Page.test.tsx`, no `index.tsx` barrel; importers name the file); the folder carries the route component's name (`SchedulerPage/`), its page-only code sits in `components/` / `hooks/` / `helper/` beside it, and its `CLAUDE.md` describes the page (ADR 0024) |
 | Modal / drawer shell | `*Modal` / `*Drawer` |
 | Reusable group of `Form.Item`s | `*FormItems` (`ResourceAllocationFormItems`) |
 

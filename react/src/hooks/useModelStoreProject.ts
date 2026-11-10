@@ -4,7 +4,6 @@
  */
 import { useSuspendedBackendaiClient, useCurrentDomainValue } from '.';
 import { useModelStoreProjectQuery } from '../__generated__/useModelStoreProjectQuery.graphql';
-import { toLocalId } from 'backend.ai-ui';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 /**
@@ -27,6 +26,7 @@ export const useModelStoreProject = () => {
           edges {
             node {
               id
+              entityId
               basicInfo {
                 name
               }
@@ -40,6 +40,7 @@ export const useModelStoreProject = () => {
             edges {
               node {
                 id
+                entityId
                 basicInfo {
                   name
                 }
@@ -65,7 +66,7 @@ export const useModelStoreProject = () => {
     null;
 
   return {
-    id: modelStoreProject ? toLocalId(modelStoreProject.id) : null,
+    id: modelStoreProject?.entityId ?? null,
     name: modelStoreProject?.basicInfo?.name ?? null,
   };
 };

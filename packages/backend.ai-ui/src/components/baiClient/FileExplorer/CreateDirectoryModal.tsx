@@ -2,7 +2,7 @@ import { App } from '../../../app-shim';
 import { Form, type FormInstance } from '../../../form-engine';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import BAIModal, { type BAIModalProps } from '../../BAIModal';
-import { AstryxFormTextInput } from '../../astryxFormControls';
+import BAITextInput from '../../BAITextInput';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { FolderInfoContext } from './BAIFileExplorer';
 import { useMutation } from '@tanstack/react-query';
@@ -80,7 +80,7 @@ const CreateDirectoryModal: React.FC<CreateDirectoryModalProps> = ({
             },
           ]}
         >
-          <AstryxFormTextInput label={t('comp:FileExplorer.FolderName')} />
+          <BAITextInput aria-label={t('comp:FileExplorer.FolderName')} />
         </Form.Item>
       </Form>
     </BAIModal>

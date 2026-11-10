@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<16f9ba842b6a5e614f39c31695957831>>
+ * @generated SignedSource<<7520857f20dfb4213425d57e8f1dee0e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,6 +18,7 @@ export type DomainV2Filter = {
   OR?: ReadonlyArray<DomainV2Filter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
   description?: StringFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   id?: UUIDFilter | null | undefined;
   isActive?: boolean | null | undefined;
   modifiedAt?: DateTimeFilter | null | undefined;
@@ -76,6 +77,7 @@ export type ProjectV2Filter = {
   description?: StringFilter | null | undefined;
   domain?: ProjectDomainNestedFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   id?: UUIDFilter | null | undefined;
   integrationName?: StringFilter | null | undefined;
   isActive?: boolean | null | undefined;
@@ -113,9 +115,11 @@ export type UserV2Filter = {
   domainId?: UUIDFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
   email?: StringFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   fullName?: StringFilter | null | undefined;
   integrationName?: StringFilter | null | undefined;
   keypairs?: UserKeypairNestedFilter | null | undefined;
+  labels?: EntityLabelNestedFilter | null | undefined;
   modifiedAt?: DateTimeFilter | null | undefined;
   needPasswordChange?: boolean | null | undefined;
   project?: UserProjectNestedFilter | null | undefined;
@@ -173,6 +177,7 @@ export type KeypairFilter = {
   OR?: ReadonlyArray<KeypairFilter> | null | undefined;
   accessKey?: StringFilter | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   isActive?: boolean | null | undefined;
   isAdmin?: boolean | null | undefined;
   isDefault?: boolean | null | undefined;
@@ -187,6 +192,22 @@ export type UserDomainNestedFilter = {
 export type UserProjectNestedFilter = {
   isActive?: boolean | null | undefined;
   name?: StringFilter | null | undefined;
+};
+export type EntityLabelNestedFilter = {
+  every?: EntityLabelFilter | null | undefined;
+  exists?: boolean | null | undefined;
+  none?: EntityLabelFilter | null | undefined;
+  some?: EntityLabelFilter | null | undefined;
+};
+export type EntityLabelFilter = {
+  AND?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  NOT?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
+  key?: StringFilter | null | undefined;
+  value?: StringFilter | null | undefined;
 };
 export type DateFilter = {
   after?: any | null | undefined;

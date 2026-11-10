@@ -116,7 +116,7 @@ failure produces **no comment and no walkthrough**, not a partial one.
 | A live server for the PR           | the boot record `mint.mjs` resolves (section 6): this branch's, or with `--pr` the one that serves the PR                                                                                                |
 | The server is routable             | the record's `url` answers a 2xx with `X-Portless: 1`                                                                                                                                                    |
 | The server has guided mode         | `/__review/guided.js` answers 200; an older overlay (a branch that predates FR-3950) draws a stop as a bare pin without its notes, so `mint.mjs` exits 3 and says to rebase onto a main that includes it |
-| The server serves a `config.toml`  | `<url>/config.toml` answers with a content type other than `text/html`; `text/html` is the SPA fallback for a worktree without the file, so every switch is at its default and a stop behind one (the PR body's `Config:` line) would mark nothing — `dev-server` section 2f writes the file |
+| The server serves a `config.toml`  | `<url>/config.toml` answers with a content type other than `text/html`; `text/html` is the SPA fallback for a worktree without the file, so every switch is at its default and a stop behind one (the PR body's `Config:` line) would mark nothing; System Settings values come from the backend, not this file — `dev-server` section 2f writes the file |
 | The app shell survives login       | `mint.mjs` checks it and exits 3                                                                                                                                                                         |
 
 The set link goes in a public PR comment, so an unroutable server is a
@@ -182,6 +182,14 @@ A JSON file — `{"stops": [...]}` or a bare array — one object per stop:
   `/project/<name>/data`). `mint.mjs` prepends the base the app lands on.
   A page outside the project scope — the admin pages under `/admin/…` —
   says `"scope": "app"` and is opened as written.
+  The link carries the project either way: each stop records the page path
+  it was minted on (`anchor.p`), after any redirect, and the set link opens
+  it. Project names differ per backend (the shared test box has `default`,
+  staging only `frontend-default`), and the minting login can land on
+  another project than expected. To pin one, write `"scope": "app"` with
+  the full path, `/project/frontend-default/deployments`. A project-less
+  flat route (`/deployments`) does not help: the app redirects to the
+  current project before the anchor is recorded.
 - `via` — the steps that reveal the element, replayed in order. At most 8,
   each exactly one of:
   - `{"click": {"text": "…"}}` (exact visible text) or `{"click": {"tid": "…"}}`;
@@ -292,6 +300,18 @@ contains it; a server behind the sha exits 3.
 checkout, then this one) — never print or commit it. `--dry-run` resolves
 everything and launches no browser — without `--manifest`, for the one
 question section 1a starts with.
+
+mint marks the superadmin view-switch tour as seen, so it never covers a
+stop; pass `--keep-tours` when the PR changes that tour and a stop shows it.
+
+Which backend: the one reviewers will sign in to, since the link's project
+must exist there (section 3, `route`). The PR's dev server pre-fills one
+backend and signs in by itself, so boot it on the same backend
+(`pnpm run dev-env use <server> <account>`, then restart the server) and
+pass that backend as `--endpoint`. `mint.mjs` signs in with
+`E2E_ADMIN_EMAIL` / `E2E_ADMIN_PASSWORD`; a catalog server without an admin
+entry (staging) needs an `--env-file` holding the account to use. Say in the
+PR which backend and project the walkthrough assumes.
 
 A translated stop carries the element's text (`txt`) per language, since
 every resolution tier ANDs it: `mint.mjs` replays the stop once in each

@@ -1,14 +1,13 @@
 // Covers the Model Store tab columns changed in #9639 (FR-3914): Project shows
 // the project name instead of its UUID, and a hidden-by-default Updated At
 // ("Modified At") column.
-import { createAdminApiContext, gqlAdmin } from '../utils/admin-api';
-import { AdminModelCardPage } from '../utils/classes/AdminModelCardPage';
 import {
-  deleteForeverAndVerifyFromTrash,
-  getSortableColumnHeader,
-  loginAsAdmin,
-  moveToTrashAndVerify,
-} from '../utils/test-util';
+  createAdminApiContext,
+  gqlAdmin,
+  purgeVFoldersByNameViaApi,
+} from '../utils/admin-api';
+import { AdminModelCardPage } from '../utils/classes/AdminModelCardPage';
+import { getSortableColumnHeader, loginAsAdmin } from '../utils/test-util';
 import { test, expect, type Page } from '@playwright/test';
 
 async function setColumnVisible(
@@ -67,18 +66,7 @@ test.describe(
       } catch {
         // Ignore cleanup errors
       }
-      try {
-        await moveToTrashAndVerify(page, folderName, 'admin-data', {
-          skipTrashVerify: true,
-        });
-      } catch {
-        // Folder may already be in Trash or may not exist
-      }
-      try {
-        await deleteForeverAndVerifyFromTrash(page, folderName, 'admin-data');
-      } catch {
-        // Folder may not be in Trash (already purged or never created)
-      }
+      await purgeVFoldersByNameViaApi([folderName]);
     });
 
     test('Admin sees model card project names in the Model Store tab', async ({

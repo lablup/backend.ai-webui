@@ -11,14 +11,19 @@ Backend.AI supports dedicated storage to preserve user's files. Since the files
 and directories of a compute session are deleted upon session termination, it is
 recommended to save them in a storage folder. List of storage folders can be
 found by selecting the Data page on the sidebar. You can see the information
-such as the folder name and ID, the storage host name where the folder is located
-(Location), and folder access rights (Permission).
+such as the folder name and ID and the storage host name where the folder is
+located (Location).
 
 
 ![](../images/data_page.png)
 
 There are two types of storage folders: `User` and `Project`. You can
 distinguish between them in the 'Type' column.
+
+The Data page lists the folders of the project selected with the project
+selector in the top bar: your personal project shows the `User` folders you
+own, and any other project shows its own folders and the folders shared with
+it.
 
 ## Invitation badge and entry point
 
@@ -53,14 +58,15 @@ The meaning of each field in the creation dialog is as follows.
 
    * General: Defines a folder for storing various data in a general-purpose manner.
    * Models: Defines a folder specialized for model serving and management. If this mode is selected, it is also possible to toggle the folder's copy availability.
-   * Auto Mount: Folders automatically mounted when a session is created. If selected, the folder name must start with a dot ('.').
+   * Auto Mount: Folders automatically mounted when a session is created. If selected, the folder name must start with a dot ('.'). This mode is offered only in your personal project.
 
 - **Location**: Select the storage host where the folder will be created. If there are multiple hosts, choose one. An indicator will show if there is enough available space.
-- **Mount Permission**: The mount permission applied when the folder is mounted into a compute session. **Read & Write** allows writing to the folder inside sessions; **Read only** prevents it.
 - **Cloneable**: Shown only when you select usage mode to "Model". Select whether the vfolder you are creating should be cloneable.
 
+A new folder's **Default mount permission** is **Read only**. To change it, click **Edit** in the **Folder Info** section of the folder's Share Folder modal (see [Adjust permission for shared folders](#adjust-permission-for-shared-folders)).
+
 :::note
-Folders created from the Data page are always **User folders**. **Project folders** are created by administrators from the admin Data pages.
+A folder created from the Data page belongs to the currently selected project, so the project's other members can see it. To create a folder for yourself only, select **My Project** from the project selector in the header first.
 :::
 
 The folders created here can be [mounted](#session-mounts) when creating a compute session. Folders are mounted
@@ -149,14 +155,15 @@ The **Audit Log** tab in the right panel shows a chronological list of all opera
 The audit log shows the following columns, in order:
 
 - **Time**: When the operation occurred.
+- **Action**: The name of the action that wrote the record.
 - **Operation**: The type of action (for example, create, update, or delete).
-- **Status**: The result of the operation (for example, SUCCESS or ERROR).
-- **Description**: Additional details about the operation.
+- **Result**: The outcome of the operation: **Success**, **Failed** (shown in red), **Denied**, **Running**, or **Unknown**.
+- **Description**: The error or denial details, shown only when the result is **Failed** or **Denied**; other rows show `-`.
 - **Duration**: How long the operation took.
 - **Triggered By**: The user who performed the operation, shown in "email (id)" format.
 - **Client IP**: The IP address the operation was requested from, shown exactly as the server reports it. It may be partially masked by the administrator's client IP masking policy, or `-` when it was not recorded.
 
-You can filter the log by **Time**, **Operation**, **Status**, and **Triggered By**.
+You can filter the log by **Time**, **Action**, **Operation**, **Result**, and **Triggered By**.
 
 ## Rename folder
 

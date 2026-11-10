@@ -11,8 +11,11 @@
  *     longer holds lands back on the login form.
  */
 import {
+  fillLoginEndpoint,
   loginAsUser,
   logout,
+  seedStoredApiEndpoint,
+  userInfo,
   webServerEndpoint,
   webuiEndpoint,
 } from '../utils/test-util';
@@ -24,27 +27,75 @@ const GQL = `${webServerEndpoint}/func/admin/gql`;
 type ApiTrace = {
   loginChecks: number;
   bootstraps: number;
+  myUserReads: number;
   loginPosts: number;
 };
 
 /** Count the login flow's API calls from the moment `trace()` is attached. */
 function trace(page: Page): ApiTrace {
-  const t: ApiTrace = { loginChecks: 0, bootstraps: 0, loginPosts: 0 };
+  const t: ApiTrace = {
+    loginChecks: 0,
+    bootstraps: 0,
+    myUserReads: 0,
+    loginPosts: 0,
+  };
   page.on('request', (request) => {
     const url = request.url();
     if (url === LOGIN_CHECK) t.loginChecks += 1;
     if (url === `${webServerEndpoint}/server/login`) t.loginPosts += 1;
-    if (
-      url === GQL &&
-      /query loginBootstrapQuery\b/.test(request.postData() ?? '')
-    ) {
-      t.bootstraps += 1;
+    if (url === GQL) {
+      const body = request.postData() ?? '';
+      if (/query loginBootstrapQuery\b/.test(body)) t.bootstraps += 1;
+      if (/query loginSessionAuthMyUserQuery\b/.test(body)) {
+        t.myUserReads += 1;
+      }
     }
   });
   return t;
 }
 
+/**
+ * Answer `loginBootstrapQuery` the way a manager resolver failure does:
+ * `200` with `errors[]` and a null identity. Returns a switch that lets the
+ * real bootstrap through again.
+ */
+async function failBootstrapWithNullIdentity(page: Page) {
+  let failing = true;
+  await page.route(GQL, async (route) => {
+    const isBootstrap = /query loginBootstrapQuery\b/.test(
+      route.request().postData() ?? '',
+    );
+    if (!failing || !isBootstrap) {
+      await route.fallback();
+      return;
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        data: { keypair: null, user: null, groups: [] },
+        errors: [{ message: 'e2e: mocked bootstrap resolver failure' }],
+      }),
+    });
+  });
+  return () => {
+    failing = false;
+  };
+}
+
+function countLogouts(page: Page) {
+  const counter = { logouts: 0 };
+  page.on('request', (request) => {
+    if (request.url() === `${webServerEndpoint}/server/logout`) {
+      counter.logouts += 1;
+    }
+  });
+  return counter;
+}
+
 const loginForm = (page: Page) => page.getByLabel('Email or Username');
+const accountInfoDialog = (page: Page) =>
+  page.getByRole('dialog', { name: "Couldn't load your account information" });
 const userMenu = (page: Page) => page.getByTestId('user-dropdown-button');
 
 test.describe(
@@ -54,6 +105,7 @@ test.describe(
     test('guest reaches the login form through one refused bootstrap query and no login-check', async ({
       page,
     }) => {
+      await seedStoredApiEndpoint(page);
       const api = trace(page);
       await page.goto(webuiEndpoint);
       await expect(loginForm(page)).toBeVisible({ timeout: 30_000 });
@@ -68,12 +120,14 @@ test.describe(
       page,
       request,
     }) => {
+      await seedStoredApiEndpoint(page);
       const api = trace(page);
       await loginAsUser(page, request);
       await expect(userMenu(page)).toBeVisible();
-      // The guest load probes once, pressing Login probes once more before
-      // the credentials go out, and the accepted login bootstraps once.
-      await expect.poll(() => api.bootstraps, { timeout: 15_000 }).toBe(3);
+      // The guest load probes once and pressing Login probes once more before
+      // the credentials go out; the accepted login then reads the user once.
+      await expect.poll(() => api.myUserReads, { timeout: 15_000 }).toBe(1);
+      expect(api.bootstraps).toBe(2);
       expect(api.loginChecks).toBe(0);
     });
 
@@ -107,6 +161,83 @@ test.describe(
       await expect.poll(() => api.bootstraps, { timeout: 15_000 }).toBe(1);
       expect(api.loginChecks).toBe(0);
       await expect(userMenu(page)).toHaveCount(0);
+    });
+  },
+);
+
+test.describe(
+  'Login bootstrap - Account info load failure',
+  { tag: ['@regression', '@auth', '@functional'] },
+  () => {
+    test('Signed-in user can retry when the account info fails to load', async ({
+      page,
+      request,
+    }) => {
+      await loginAsUser(page, request);
+      await expect(userMenu(page)).toBeVisible();
+
+      const restoreBootstrap = await failBootstrapWithNullIdentity(page);
+      const api = countLogouts(page);
+      await page.reload();
+
+      const dialog = accountInfoDialog(page);
+      await expect(dialog).toBeVisible({ timeout: 30_000 });
+      await expect(
+        dialog.getByRole('button', { name: 'Log Out', exact: true }),
+      ).toBeVisible();
+      await expect(
+        dialog.getByRole('button', { name: 'Retry', exact: true }),
+      ).toBeVisible();
+      await expect(loginForm(page)).toBeHidden();
+      await expect(userMenu(page)).toHaveCount(0);
+      expect(api.logouts).toBe(0);
+
+      restoreBootstrap();
+      const retried = trace(page);
+      await dialog.getByRole('button', { name: 'Retry', exact: true }).click();
+      await expect(dialog).toBeHidden({ timeout: 30_000 });
+      await expect(userMenu(page)).toBeVisible({ timeout: 30_000 });
+      await expect
+        .poll(() => retried.bootstraps, { timeout: 15_000 })
+        .toBeGreaterThanOrEqual(1);
+      expect(api.logouts).toBe(0);
+    });
+
+    test('User can log out from the account info load failure dialog and sign in again', async ({
+      page,
+      request,
+    }) => {
+      await loginAsUser(page, request);
+      await expect(userMenu(page)).toBeVisible();
+
+      const restoreBootstrap = await failBootstrapWithNullIdentity(page);
+      await page.reload();
+
+      const dialog = accountInfoDialog(page);
+      await expect(dialog).toBeVisible({ timeout: 30_000 });
+      const logoutResponse = page.waitForResponse(
+        (response) => response.url() === `${webServerEndpoint}/server/logout`,
+      );
+      await dialog
+        .getByRole('button', { name: 'Log Out', exact: true })
+        .click();
+      expect((await logoutResponse).ok()).toBe(true);
+      await expect(dialog).toBeHidden({ timeout: 30_000 });
+      await expect(loginForm(page)).toBeVisible({ timeout: 30_000 });
+
+      restoreBootstrap();
+      // After Log Out the form keeps the session's server; this re-asks only if it changed.
+      await fillLoginEndpoint(page, webServerEndpoint);
+      await loginForm(page).fill(userInfo.user.email);
+      await page.getByLabel('Password').fill(userInfo.user.password);
+      const loginResponse = page.waitForResponse(
+        (response) =>
+          response.url() === `${webServerEndpoint}/server/login` &&
+          response.request().method() === 'POST',
+      );
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
+      expect((await loginResponse).status()).toBe(200);
+      await expect(userMenu(page)).toBeVisible({ timeout: 30_000 });
     });
   },
 );

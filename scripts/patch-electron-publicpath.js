@@ -40,6 +40,40 @@ if (!fs.existsSync(buildDir)) {
 
 const ELECTRON_PUBLIC_PATH = 'es6://';
 
+const assetsDir = path.join(buildDir, 'assets');
+
+// Lazy-chunk preload deps must be chunk-relative (react/vite.config.ts `renderBuiltUrl`).
+function findNonRelativeLazyDeps(dir) {
+  if (!fs.existsSync(dir)) return [];
+  const offenders = [];
+  for (const file of fs.readdirSync(dir).filter((f) => f.endsWith('.js'))) {
+    const code = fs.readFileSync(path.join(dir, file), 'utf-8');
+    if (!code.includes('__vite__mapDeps')) continue;
+    const lists = [...code.matchAll(/\bm\.f\s*=\s*\[([^\]]*)\]/g)];
+    if (lists.length === 0) {
+      offenders.push(`${file}: __vite__mapDeps without a readable m.f=[…] list`);
+      continue;
+    }
+    for (const [, body] of lists) {
+      for (const [, dep] of body.matchAll(/["'`]([^"'`]*)["'`]/g)) {
+        if (!dep.startsWith('./')) offenders.push(`${file}: "${dep}"`);
+      }
+    }
+  }
+  return offenders;
+}
+
+const nonRelativeDeps = findNonRelativeLazyDeps(assetsDir);
+if (nonRelativeDeps.length > 0) {
+  console.error(
+    `✗ Verification failed: ${nonRelativeDeps.length} lazy-chunk preload dep(s) are not chunk-relative ("./…"), so they do not resolve under ${ELECTRON_PUBLIC_PATH}assets/. Nothing was patched.`,
+  );
+  for (const offender of nonRelativeDeps.slice(0, 10)) {
+    console.error(`  ${offender}`);
+  }
+  process.exit(1);
+}
+
 let patchedCount = 0;
 
 function patchFile(filePath, replacements) {
@@ -80,7 +114,6 @@ patchFile(path.join(buildDir, 'index.html'), [
 ]);
 
 // 2. Patch CSS files under assets/ — url(/assets/...) references for fonts/images
-const assetsDir = path.join(buildDir, 'assets');
 if (fs.existsSync(assetsDir)) {
   const cssFiles = fs.readdirSync(assetsDir).filter((f) => f.endsWith('.css'));
   for (const file of cssFiles) {

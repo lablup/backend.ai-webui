@@ -187,7 +187,7 @@ re-evaluating CSS exfil.
 
 ### `img-src 'self' data: blob: <BACKEND>`
 
-`data:` = `react/src/components/BrandingSettingItems/LogoPreviewer.tsx:120` 1x1 placeholder
+`data:` = `react/src/pages/BrandingPage/components/BrandingSettingItems/LogoPreviewer.tsx:120` 1x1 placeholder
 + antd `<Image>` fallback. `blob:` = Chat attachment previews
 (`react/src/components/Chat/ChatCard.tsx:368` `URL.createObjectURL` →
 `ChatMessage.tsx` `<Image src={blobUrl}>`). `<BACKEND>` is the same deployment-scoped backend

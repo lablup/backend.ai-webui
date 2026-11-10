@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d5dc322264475d0cfcdb50708411dbce>>
+ * @generated SignedSource<<d5b1c53d9da5d5df6e1503dbd9a6ab3b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -96,6 +96,13 @@ return {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
+            "name": "entityId",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "host",
             "storageKey": null
           },
@@ -123,7 +130,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "f9f4af925a11699e6e992300e2f37222",
+    "cacheID": "4a4940ad255af666a4f7a2ff67975efa",
     "id": null,
     "metadata": {
       "relayTestingSelectionTypeInfo": {
@@ -132,6 +139,12 @@ return {
           "nullable": true,
           "plural": false,
           "type": "VFolder"
+        },
+        "vfolderV2.entityId": {
+          "enumValues": null,
+          "nullable": false,
+          "plural": false,
+          "type": "UUID"
         },
         "vfolderV2.host": (v2/*: any*/),
         "vfolderV2.id": {
@@ -151,7 +164,7 @@ return {
     },
     "name": "SFTPServerButtonV2TestQuery",
     "operationKind": "query",
-    "text": "query SFTPServerButtonV2TestQuery(\n  $vfolderId: UUID!\n) {\n  vfolderV2(vfolderId: $vfolderId) {\n    ...SFTPServerButtonV2Fragment\n    id\n  }\n}\n\nfragment SFTPServerButtonV2Fragment on VFolder {\n  id\n  host\n  metadata {\n    name\n  }\n}\n"
+    "text": "query SFTPServerButtonV2TestQuery(\n  $vfolderId: UUID!\n) {\n  vfolderV2(vfolderId: $vfolderId) {\n    ...SFTPServerButtonV2Fragment\n    id\n  }\n}\n\nfragment SFTPServerButtonV2Fragment on VFolder {\n  id\n  entityId\n  host\n  metadata {\n    name\n  }\n}\n"
   }
 };
 })();

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a860e786a1285979e3379c636c704760>>
+ * @generated SignedSource<<34d72b03cc94ceec1e295202e5f35632>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,6 +17,7 @@ export type DeploymentAutoScalingCard_deployment$data = {
       readonly email: string;
     };
   } | null | undefined;
+  readonly entityId: string;
   readonly id: string;
   readonly metadata: {
     readonly status: DeploymentStatus;
@@ -39,6 +40,13 @@ const node: ReaderFragment = {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
       "storageKey": null
     },
     {
@@ -93,6 +101,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "a2b831bbd22e4bae5a638c98f33ff814";
+(node as any).hash = "192bda9a8f832f062b745048ddf0b807";
 
 export default node;

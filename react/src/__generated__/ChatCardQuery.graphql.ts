@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<98289759770227d3e3f411563ce60562>>
+ * @generated SignedSource<<7fb85563ee0fe50c6a15f6bdd007ddc1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,6 +15,7 @@ export type ChatCardQuery$variables = {
 };
 export type ChatCardQuery$data = {
   readonly deployment: Result<{
+    readonly entityId: string;
     readonly id: string;
     readonly networkAccess: {
       readonly endpointUrl: string | null | undefined;
@@ -55,6 +56,13 @@ v2 = {
 v3 = {
   "alias": null,
   "args": null,
+  "kind": "ScalarField",
+  "name": "entityId",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
   "concreteType": "ModelDeploymentNetworkAccess",
   "kind": "LinkedField",
   "name": "networkAccess",
@@ -70,7 +78,7 @@ v3 = {
   ],
   "storageKey": null
 },
-v4 = {
+v5 = {
   "alias": null,
   "args": null,
   "concreteType": "ReplicaState",
@@ -108,6 +116,7 @@ return {
             (v2/*: any*/),
             (v3/*: any*/),
             (v4/*: any*/),
+            (v5/*: any*/),
             {
               "args": null,
               "kind": "FragmentSpread",
@@ -139,6 +148,7 @@ return {
           (v2/*: any*/),
           (v3/*: any*/),
           (v4/*: any*/),
+          (v5/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -163,16 +173,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3f9013e20edcaafd1a678f53b915b406",
+    "cacheID": "206529818404486d75f5873e6ccee11a",
     "id": null,
     "metadata": {},
     "name": "ChatCardQuery",
     "operationKind": "query",
-    "text": "query ChatCardQuery(\n  $deploymentId: ID!\n) {\n  deployment(id: $deploymentId) {\n    id\n    networkAccess {\n      endpointUrl\n    }\n    replicaState {\n      desiredReplicaCount\n    }\n    ...ChatHeader_Deployment\n  }\n}\n\nfragment ChatHeader_Deployment on ModelDeployment {\n  id\n  metadata {\n    name\n  }\n}\n"
+    "text": "query ChatCardQuery(\n  $deploymentId: ID!\n) {\n  deployment(id: $deploymentId) {\n    id\n    entityId\n    networkAccess {\n      endpointUrl\n    }\n    replicaState {\n      desiredReplicaCount\n    }\n    ...ChatHeader_Deployment\n  }\n}\n\nfragment ChatHeader_Deployment on ModelDeployment {\n  id\n  entityId\n  metadata {\n    name\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0a7cffdb9b1bf06c7a0b1c1cff29396b";
+(node as any).hash = "1b705e50273fc5a4520614032d941c42";
 
 export default node;

@@ -11,25 +11,15 @@
  `string[]`, the deployment UUID) the antd wrapper exposes today —
  `labelInValue` lives strictly between this wrapper and `BAIComplexSelect`.
 
- CLASS: B (id-valued) — stored value is always `toLocalId(node.id)`, exactly
- as the antd original.
+ CLASS: B (id-valued) — stored value is always the node's `entityId`.
 
  PILOT-DECISIONs:
-  - The resolution query resolves only the FIRST selected key, carried over
-    unchanged from the antd original: `DeploymentFilter` has no id-based
-    filter, so the original falls back to the single-node `deployment(id:)`
-    query, which can only take one id. In `multiple` mode any selection
-    beyond the first therefore falls back to `label: key` (the raw UUID)
-    until it scrolls back into a loaded page — this is a pre-existing
-    limitation of the underlying schema/query, not something introduced by
-    this conversion.
   - `notFoundContent={<Skeleton.Input/>}` first-load placeholder dropped
     (P26-7).
   - This wrapper never used `optionRender`/`labelRender`.
 */
 import { BAIAdminModelServiceSelectPaginatedQuery } from '../../__generated__/BAIAdminModelServiceSelectPaginatedQuery.graphql';
 import { BAIAdminModelServiceSelectValueQuery } from '../../__generated__/BAIAdminModelServiceSelectValueQuery.graphql';
-import { toGlobalId, toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useControllableValue, useFetchKey } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
@@ -103,29 +93,28 @@ const BAIAdminModelServiceSelect: React.FC<BAIAdminModelServiceSelectProps> = ({
   const deferredControllableValue = useDeferredValue(controllableValue);
   const selectedKeys = _.compact(_.castArray(deferredControllableValue ?? []));
 
-  // Use single-node query to resolve the selected value's label.
-  // DeploymentFilter does not support id-based filtering, so we use the
-  // deployment(id:) query instead — it can only resolve ONE id (see the
-  // PILOT-DECISION in the header comment).
-  const { deployment: selectedDeployment } =
+  const { adminDeployments: selectedDeployments } =
     useLazyLoadQuery<BAIAdminModelServiceSelectValueQuery>(
       graphql`
         query BAIAdminModelServiceSelectValueQuery(
-          $id: ID!
+          $selectedFilter: DeploymentFilter
           $skipSelected: Boolean!
         ) {
-          deployment(id: $id) @skip(if: $skipSelected) {
-            id
-            metadata {
-              name
+          adminDeployments(filter: $selectedFilter) @skip(if: $skipSelected) {
+            edges {
+              node {
+                id
+                entityId
+                metadata {
+                  name
+                }
+              }
             }
           }
         }
       `,
       {
-        id: selectedKeys.length
-          ? toGlobalId('ModelDeployment', selectedKeys[0])
-          : '',
+        selectedFilter: { entityId: { in: selectedKeys } },
         skipSelected: selectedKeys.length === 0,
       },
       {
@@ -150,6 +139,7 @@ const BAIAdminModelServiceSelect: React.FC<BAIAdminModelServiceSelectProps> = ({
             edges {
               node {
                 id
+                entityId
                 metadata {
                   name
                 }
@@ -172,7 +162,7 @@ const BAIAdminModelServiceSelect: React.FC<BAIAdminModelServiceSelectProps> = ({
         getTotal: (result) => result.adminDeployments?.count ?? undefined,
         getItem: (result) =>
           result.adminDeployments?.edges?.map((edge) => edge?.node),
-        getId: (item) => (item?.id ? toLocalId(item.id) : item?.id),
+        getId: (item) => item?.entityId,
       },
     );
 
@@ -189,23 +179,20 @@ const BAIAdminModelServiceSelect: React.FC<BAIAdminModelServiceSelectProps> = ({
     [updateFetchKey, startRefetchTransition],
   );
 
-  // Use raw UUID (toLocalId) as value instead of Relay global ID
   const options = _.compact(
     _.map(paginationData, (item) => {
-      const key = item?.id ? toLocalId(item.id) : undefined;
+      const key = item?.entityId;
       return key ? { value: key, label: item?.metadata?.name ?? key } : null;
     }),
   );
 
   const labeledValue: BAIComplexSelectValue = (() => {
     const labeled: Array<BAILabeledValue> = _.map(selectedKeys, (key) => {
-      if (selectedDeployment && toLocalId(selectedDeployment.id) === key) {
-        return {
-          label: selectedDeployment.metadata?.name ?? key,
-          value: key,
-        };
-      }
-      return { label: key, value: key };
+      const selected = _.find(
+        selectedDeployments?.edges,
+        (edge) => edge?.node?.entityId === key,
+      )?.node;
+      return { label: selected?.metadata?.name ?? key, value: key };
     });
     if (multiple) return labeled;
     return labeled[0] ?? null;

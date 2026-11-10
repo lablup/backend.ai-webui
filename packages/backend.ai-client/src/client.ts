@@ -42,7 +42,13 @@ import type {
   SessionResources,
   requestInfo,
 } from './types';
-import CryptoES from 'crypto-es';
+// Subpath imports: the package's default export is an object that aggregates
+// every algorithm, which defeats tree-shaking (~160 KB → the 4 used here).
+import { AES } from 'crypto-es/lib/aes.js';
+import { CBC, Pkcs7 } from 'crypto-es/lib/cipher-core.js';
+import { Hex, Utf8, WordArray } from 'crypto-es/lib/core.js';
+import { Base64 } from 'crypto-es/lib/enc-base64.js';
+import { HmacSHA256, SHA256 } from 'crypto-es/lib/sha256.js';
 
 /**
  * Key stems whose values may carry secrets (passwords, API secret keys,
@@ -487,7 +493,8 @@ export class Client {
         type: errorType,
         requestUrl: rqst.uri,
         requestMethod: rqst.method,
-        requestParameters: rqst.body,
+        // Re-thrown to consumers that may log it, so redact like the debug log.
+        requestParameters: redactRequestParameters(rqst.body),
         statusCode: respOverlay.status,
         statusText: respOverlay.statusText,
         title: errorTitle,
@@ -1806,7 +1813,7 @@ export class Client {
     bodyValue: string,
     content_type: string = 'application/json',
   ): string {
-    let bodyHash = CryptoES.SHA256(bodyValue);
+    let bodyHash = SHA256(bodyValue);
     // let bodyHash = crypto.createHash(this._config.hashType)
     //  .update(bodyValue).digest('hex');
     return (
@@ -1844,10 +1851,10 @@ export class Client {
       iv +
       iv
     ).substring(0, 32);
-    let result = CryptoES.AES.encrypt(body, CryptoES.enc.Utf8.parse(key), {
-      iv: CryptoES.enc.Utf8.parse(iv),
-      padding: CryptoES.pad.Pkcs7,
-      mode: CryptoES.mode.CBC,
+    let result = AES.encrypt(body, Utf8.parse(key), {
+      iv: Utf8.parse(iv),
+      padding: Pkcs7,
+      mode: CBC,
     });
     return iv + ':' + result.toString();
   }
@@ -1884,24 +1891,20 @@ export class Client {
     msg: string,
     digest_type: 'binary' | 'hex' | 'base64',
   ): string {
-    const hashDigest = CryptoES.enc.Utf8.parse(msg);
-    let parsedKey: CryptoES.lib.WordArray;
+    const hashDigest = Utf8.parse(msg);
+    let parsedKey: WordArray;
     if (key_encoding == 'utf8') {
-      parsedKey = CryptoES.enc.Utf8.parse(key);
+      parsedKey = Utf8.parse(key);
     } else if (key_encoding == 'binary') {
-      parsedKey = CryptoES.enc.Hex.parse(key);
+      parsedKey = Hex.parse(key);
     } else {
-      parsedKey = CryptoES.enc.Utf8.parse(key);
+      parsedKey = Utf8.parse(key);
     }
     let hmacDigest: string;
     if (['binary', 'hex'].includes(digest_type)) {
-      hmacDigest = CryptoES.enc.Hex.stringify(
-        CryptoES.HmacSHA256(hashDigest, parsedKey),
-      );
+      hmacDigest = Hex.stringify(HmacSHA256(hashDigest, parsedKey));
     } else {
-      hmacDigest = CryptoES.enc.Base64.stringify(
-        CryptoES.HmacSHA256(hashDigest, parsedKey),
-      );
+      hmacDigest = Base64.stringify(HmacSHA256(hashDigest, parsedKey));
     }
     return hmacDigest;
     /*let kbuf = new Buffer(key, key_encoding);
@@ -1921,7 +1924,7 @@ export class Client {
     let result = '';
 
     for (let i = 0; i < length; i++) {
-      const random = CryptoES.lib.WordArray.random(4).words[0];
+      const random = WordArray.random(4).words[0];
       result += possible.charAt(Math.abs(random) % possible.length);
     }
 

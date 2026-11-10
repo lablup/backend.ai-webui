@@ -110,6 +110,7 @@ For each changed section, verify all 4 language versions:
 - [ ] All image references point to existing files
 - [ ] Image filenames use `snake_case.png` convention
 - [ ] Images are placed after introductory text
+- [ ] Every modified PNG visibly changed: screenshots reach the docs through the `docs-toolkit accept:images` gate, so a modified image that looks the same as the base branch's is reverted when your prompt lists the capturer's forced files and it is not among them, and reported as a warning otherwise
 - [ ] Cross-references use correct format
 - [ ] New pages registered in `book.config.yaml` for all languages
 

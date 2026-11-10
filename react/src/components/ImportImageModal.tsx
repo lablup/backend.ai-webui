@@ -26,7 +26,6 @@ import { List, ListItem } from '@lablup/ui-common/List';
 import { HStack } from '@lablup/ui-common/Stack';
 import { StatusDot } from '@lablup/ui-common/StatusDot';
 import { Text } from '@lablup/ui-common/Text';
-import { TextArea } from '@lablup/ui-common/TextArea';
 import {
   borderVars,
   typeScaleVars,
@@ -41,6 +40,7 @@ import {
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
   useFetchKey,
+  BAITextArea,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
@@ -463,15 +463,7 @@ const ImportImageModalContent: React.FC<{
       return t('environment.ImportImageScanFailedOnServer');
     }
     const title = _.isString(error?.title) ? error.title : undefined;
-    let relieved: string | undefined;
-    try {
-      // `usePainKiller().relieve` reads `globalThis.backendaiwebui.debug`
-      // unguarded and throws when config.toml never loaded; guarded here
-      // rather than in the hook, which every error path shares (FR-3953).
-      relieved = title ? painKiller.relieve(title) : undefined;
-    } catch {
-      relieved = undefined;
-    }
+    const relieved = title ? painKiller.relieve(title) : undefined;
     return (
       relieved ||
       title ||
@@ -662,13 +654,12 @@ const ImportImageModalContent: React.FC<{
         }
         style={{ marginBottom: 0 }}
       >
-        <TextArea
-          label={t('environment.ImportImageReferences')}
-          isLabelHidden
+        <BAITextArea
+          aria-label={t('environment.ImportImageReferences')}
           placeholder={t('environment.ImportImagePlaceholder')}
           rows={5}
           value={text}
-          isDisabled={isSubmitting}
+          disabled={isSubmitting}
           onChange={(value) => setText(value)}
         />
       </BAIFormItemVisual>

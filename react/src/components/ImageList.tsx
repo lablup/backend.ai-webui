@@ -595,6 +595,7 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
             icon={<LayoutGrid size="1em" />}
             label={t('environment.ManageApps')}
             tooltip={t('environment.ManageApps')}
+            data-testid="image-manage-apps-button"
             onClick={() => {
               setManagingApp(row);
             }}

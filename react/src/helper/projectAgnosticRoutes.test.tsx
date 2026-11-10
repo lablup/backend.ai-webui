@@ -112,6 +112,7 @@ describe('PROJECT_AGNOSTIC_PATHNAME_REGEX (FR-3414)', () => {
     '/admin/deployments/dep-1',
     '/admin/deployments/deployment-presets/new',
     '/admin/data',
+    '/admin/dashboard',
     // FR-3414 widening — canonical shapes
     '/admin/users',
     // FR-3415 widening
@@ -163,8 +164,9 @@ describe('PROJECT_AGNOSTIC_PATHNAME_REGEX (FR-3414)', () => {
     '/project/default/session',
     '/project/default/admin/deployments/dep-1', // project-admin space
     '/project/default/admin/users',
-    // The only excluded admin page: it still reads the ambient project.
-    '/admin/dashboard',
+    // The project admin dashboard, and the legacy path that redirects there or
+    // to `/admin/dashboard` by role.
+    '/project/default/admin/dashboard',
     '/admin-dashboard',
     '/admin', // bare admin root redirects; not a scoped surface itself
     '/administrator',

@@ -6,11 +6,21 @@ navTitle: Admin Features
 
 # Admin Features
 
-Logging in with an admin account adds an **Admin Settings** menu at the top of the sidebar. Selecting it switches the sidebar to show only the administration menus. User information registered in Backend.AI is listed under the **Users** menu. A super-admin can see all users' information, and create or deactivate users.
+Superadmins land on the administration pages right after logging in, and move between them and the user pages with **Switch to Admin Console** and **Switch to User Console** in the user menu. While you are on these pages, the sidebar lists only the administration menus. User information registered in Backend.AI is listed under the **Users** menu. A super-admin can see all users' information, and create or deactivate users.
 
 ![](../images/admin_user_page.png)
 
 
+
+<a id="admin-dashboard"></a>
+
+## Dashboard
+
+Superadmins have a **Dashboard** entry in the administration sidebar, showing a board of system-wide cards: **Session Status**, **Pending Sessions and Reasons**, **Agents**, **Agent Statistics**, **Failures by Entity Type**, **Audit Log**, and **Total Resources in Resource Group**. More cards, such as **Scheduling Failures**, **Resource Policies**, **Failed sign-ins**, and **Container Registries**, can be added from the edit sidebar.
+
+Boards, card settings, and the refresh control work the same way as on the user [Dashboard](#dashboard).
+
+![](../images/admin_dashboard.png)
 
 <a id="create-and-update-users"></a>
 
@@ -401,7 +411,7 @@ The dialog contains the following fields:
   pick the account the new keypair belongs to. Because the account is chosen from the list, it is no
   longer possible to submit an address that does not belong to a real user.
 - **Resource Policy**: The keypair resource policy to apply to the new keypair.
-- **Rate Limit (for 15 min.)**: The maximum number of requests that can be sent to the Backend.AI server
+- **Rate Limit (for 15 min)**: The maximum number of requests that can be sent to the Backend.AI server
   in 15 minutes. For example, if set to 1000 and the keypair sends more than 1000 API requests in 15
   minutes, the server throws an error and does not accept the request. It is recommended to use the
   default value and increase it when the API request frequency goes up high according to the user's
@@ -421,9 +431,7 @@ storage folder. A project storage folder is a folder belonging to a specific
 project, not a specific user, and can be accessed by all users in that project.
 
 :::note
-Project folders can be created only by administrators. Normal users can only
-access the contents of the project folder created by the administrator.
-Depending on the system settings, project folders may not be allowed.
+Project folder functionality may be restricted based on user permissions.
 :::
 
 First, log in with an admin account and create a project folder. After moving to
@@ -431,14 +439,14 @@ the admin Data page, click `Create Folder` to open the folder creation dialog.
 Because the admin Data page can create only project folders, the dialog does not show a folder type
 selector.
 In the **Target Project** field at the top of the dialog, choose the project that will own the
-folder, then enter the folder name and set **Mount Permission**.
+folder, then enter the folder name. A new folder is created read-only; its default mount permission is
+changed afterwards from the folder's **Share Folder** modal, under **Folder Info** → **Edit**.
 
 ![=650px](../images/group_folder_creation.png)
 
 After confirming that the folder has been created, log in with the User B's
 account and check that the project folder just created on the Data & Storage page
-is displayed without any invitation procedure. You can see that R (Read Only) is
-also displayed in the Permission panel.
+is displayed without any invitation procedure.
 
 ![](../images/group_folder_listed_in_B.png)
 <!-- TODO: Re-capture group_folder_listed_in_B.png — shows the old UI. -->
@@ -452,13 +460,11 @@ also displayed in the Permission panel.
 
 ### Admin deployments page
 
-Administrators and superadmins can access the Admin Deployments page at `/admin/deployments`, which provides a cross-project view of every deployment in the cluster. The **Project** column is available in the deployment list but is hidden by default; you can enable it using the column settings.
-
 ![](../images/admin_serving_page.png)
 
 The Admin Deployments page has up to four tabs:
 
-- **Deployments**: Displays the deployment list across all projects and provides the same lifecycle and property filters as the user-facing Deployments page. This cross-project view additionally offers a **Project** filter property.
+- **Deployments**: Displays the deployment list across all projects.
 - **Model Store Management**: See the [Admin Model Store Management](#admin-model-store-management) section below.
 - **Prometheus Preset**: Lets administrators manage reusable Prometheus query presets. See the [Prometheus Query Presets](#prometheus-query-presets) section below.
 - **Deployment Presets**: Lets administrators manage reusable deployment presets that end users can apply when deploying a model. See the [Deployment Presets](#deployment-presets) section below.
@@ -482,14 +488,15 @@ When you open a deployment from the Admin Deployments page, the **Revisions** ca
 The **Audit Log** tab tracks all action history for the deployment. Each entry includes:
 
 - **Time**: The timestamp when the action was performed.
+- **Action**: The name of the action that wrote the record.
 - **Operation**: The type of action performed.
-- **Status**: The result of the operation.
-- **Description**: Additional details about the operation.
+- **Result**: The outcome of the operation: **Success**, **Failed**, **Denied**, **Running**, or **Unknown**.
+- **Description**: The error or denial details, shown only when the result is **Failed** or **Denied**; other rows show `-`.
 - **Duration**: The time taken to complete the operation.
 - **Triggered By**: The user who initiated the action.
 - **Client IP**: The IP address the action was requested from, shown exactly as the server reports it. It may be partially masked by the administrator's client IP masking policy, or `-` when it was not recorded.
 
-You can filter entries by **Status**, **Operation**, **Triggered By**, and a **Time** date-range picker.
+You can filter entries by **Result**, **Action**, **Operation**, **Triggered By**, and a **Time** date-range picker.
 
 <a id="admin-model-store-management"></a>
 
@@ -569,7 +576,7 @@ Backend.AI lets administrators define reusable **Prometheus query presets** that
 The presets are managed from the **Prometheus Preset** tab on the Admin Deployments page (`/admin/deployments?tab=prometheus-preset`).
 
 :::note[Superadmin only: live preview in the Auto Scaling Rule editor]
-When a superadmin opens the Auto Scaling Rule editor for a deployment, sets **Metric Source** to `Prometheus`, and selects a preset, a live **Current value** preview appears below the preset selector showing the latest metric value from Prometheus. This preview is only visible to superadmin accounts — regular users and domain admins do not see it.
+When a superadmin opens the Auto Scaling Rule editor for a deployment, sets **Metric Source** to `Prometheus`, and selects a preset, a live **Current value** preview appears below the preset selector showing the latest metric value from Prometheus. This preview is only visible to superadmin accounts.
 :::
 
 ![](../images/admin_prometheus_preset_list.png)
@@ -835,7 +842,7 @@ About details of each option in resource policy dialog, see the description belo
 - Sessions
   - Cluster Size: Set the maximum limit for the number of multi-containers or
     multi-nodes that can be configured when creating a session.
-  - Session Lifetime (sec.): Limits the maximum lifetime of a compute session
+  - Session Lifetime (s): Limits the maximum lifetime of a compute session
     from the reservation in the active status, including `PENDING` and
     `RUNNING` statuses. After this time, the session will be force-terminated
     even if it is fully utilized. This will be useful to prevent the session
@@ -845,7 +852,7 @@ About details of each option in resource policy dialog, see the description belo
   - Concurrent Sessions: Maximum number of concurrent compute session per keypair.
     If this value is set to 3, for example, users bound to this resource policy
     cannot create more than 3 compute sessions simultaneously. (max value: 100)
-  - Idle timeout (sec.): Configurable period of time during which the user can
+  - Idle timeout (s): Configurable period of time during which the user can
     leave their session untouched. If there is no activity at all on a
     compute session for idle timeout, the session will be garbage collected
     and destroyed automatically. The criteria of the "idleness" can be
@@ -1060,7 +1067,7 @@ to `FAIR_SHARE`. To configure the scheduler type for a resource group, refer to 
 [Manage resource group](#manage-resource-group) section.
 :::
 
-To access this feature, click the **Scheduler** menu item under **Admin Settings** in the sidebar.
+To access this feature, click the **Scheduler** menu item in the sidebar of the administration pages.
 The page displays a Fair Share Setting tab with a 4-step drill-down interface.
 
 ![](../images/fair_share_resource_group_page.png)
@@ -1296,6 +1303,17 @@ are excluded from the request.
 
 ![=520px](../images/image_install_modal.png)
 
+Superadmins can register specific images without rescanning a whole registry. Click **Import Image**
+to open the **Import Image from Registry** dialog, enter one full image reference per line — tag
+included — under **Image references**, choose the **Architecture** to look up, review the
+**Images to import** list, and click **Import Image**. An NVIDIA NGC catalog container URL can be
+pasted in place of a reference.
+
+![=720px](../images/import_image_modal.png)
+
+Superadmins can also refresh a single image's metadata from its registry with the **Rescan** action
+in the image's row.
+
 You can change the minimum resource requirements for each image by clicking the
 **Edit** (pencil) action in the `Controls` panel, which opens the
 **Edit Minimum Image Resource Limit** dialog. Each image has hardware and resource
@@ -1317,9 +1335,9 @@ change the minimum resource amounts, it is recommended to keep the default value
 Additionally, you can add or modify the supported apps for each image by clicking the `Apps` icon located in the Controls column.
 Once you click the icon, the name of the app and its corresponding port number will be displayed accordingly.
 
-![=700px](../images/manage_app_dialog.png)
+![=800px](../images/manage_app_dialog.png)
 
-In this interface, you can add supported custom applications by clicking the `+ Add` button below. To delete an application, simply click the `trash can` button on the right side of each row.
+In this interface, you can add supported custom applications by clicking the **Add app** button. To delete an application, click the **Remove** button on the row.
 
 :::note
 
@@ -1460,11 +1478,11 @@ drawer you can also change its schedulable status and control the agent service 
 
 ![](../images/agent_list.png)
 
-Use the **Connected** / **Terminated** selector to switch between agents that are currently connected and
-agents that have been connected once and then terminated or disconnected. The Terminated list can be used
-as a reference for node management; if it is empty, then no disconnection or termination has occurred.
+Use the **Connected** / **Inactive** selector to switch between agents that are currently connected and
+agents that are not. The Inactive list covers terminated, lost, and restarting agents, each marked with
+its status.
 
-![](../images/terminated_agent_list.png)
+![](../images/inactive_agent_list.png)
 
 You can narrow the list with the property filter, which supports **ID**, **Endpoint**, and
 **Schedulable**.
@@ -1553,9 +1571,9 @@ action to change them, or select several resource groups and click **Add labels*
 
 <a id="scheduling-methods"></a>
 
-You can edit a resource group by clicking the **Edit** (pencil) action in the Name column, which opens
-the **Edit Resource Group** dialog. In the **Scheduler** field, you can choose the scheduling method for
-creating a compute session. Currently, there are four types: `FIFO`, `LIFO`,
+Click a resource group's name to open its [detail drawer](#resource-group-detail-drawer), then use the
+**Edit Resource Group** action there to open the edit dialog. In the **Scheduler** field, you can choose
+the scheduling method for creating a compute session. Currently, there are four types: `FIFO`, `LIFO`,
 `DRF`, and `FAIR_SHARE`. `FIFO` and `LIFO` are scheduling methods creating the first- or the
 last-enqueued compute session in the job queue. `DRF` stands for Dominant Resource
 Fairness, and it aims to provide resources as fair as possible for each user.
@@ -1570,7 +1588,6 @@ The resource group edit dialog contains the following additional fields:
 
 - **Allowed session types**: Since users can choose the type of session, the resource group can allow certain types. You should allow at least one session type. The allowed session types are Interactive, Batch, Inference, and System.
 - **App Proxy Server Address**: Sets the App Proxy address for the resource group's Agents to use. If you set a URL in this field, App Proxy will relay the traffic of an app like Jupyter directly to the compute session via Agent bypassing Manager.
-- **App Proxy API Token**: The API token for authenticating with the App Proxy server.
 - **SFTP Storage Proxies**: The storage proxies used when users in this resource group transfer files to
   their folders over SFTP. The field is available to superadmins and is pre-filled with the proxies that
   currently serve this resource group. Saving synchronizes only this group's membership — it is added to
@@ -1600,6 +1617,25 @@ Likewise other creating options, you cannot create a resource group with the nam
 that already exists, since name is the key value.
 
 ![=520px](../images/create_resource_group.png)
+
+<a id="resource-group-detail-drawer"></a>
+
+### Resource group detail drawer
+
+The detail drawer shows a resource group's settings at a glance and is where you edit them.
+
+![=800px](../images/resource_group_detail_drawer.png)
+
+The **Default Session Options** and **Default Deployment Options** tabs hold the defaults applied to sessions
+and deployments created in this resource group when the session or deployment does not set the value itself.
+Each section has its own edit action:
+
+- **Session Execution Options**: The image, resources, and start-up settings a session gets by default,
+  including the bootstrap script.
+- **Scheduler Options**: Priority, preemptible, failure policy, and agent selection policy.
+- **Handler Options**: The default timeout and maximum retry count, with per-handler overrides.
+
+The **Default Deployment Options** tab holds **Handler Options** only.
 
 <a id="bulk-edit-resource-groups"></a>
 
@@ -1748,7 +1784,18 @@ is used as the default value.
 
 ## System settings
 
-In the Configurations page, you can see main settings of Backend.AI server.
+Select **System Settings** from the admin sidebar menu to manage how the WebUI behaves for
+everyone on the server. The page has two tabs: **System Settings** and **Configurations**.
+
+On the **System Settings** tab, superadmins set the options the WebUI offers to every user in
+the domain, such as the available sign-in options, session creation options, and sidebar menus.
+Click **Apply** to save the changed values; **Reset** deletes every value saved for the domain,
+returning each setting to its default. **JSON Config** shows the current settings as JSON, and
+can export them to a file or import one.
+
+![](../images/system_settings_page.png)
+
+On the **Configurations** tab, you can see main settings of Backend.AI server.
 Currently, it provides several controls which can change and list settings.
 
 You can change image auto install and update rule by selecting one option from
@@ -1763,7 +1810,7 @@ Don't change rule selection unless you completely understand the meaning of each
 
 ![](../images/system_setting_about_image.png)
 
-The Configurations page also displays the status of plugins and enterprise features:
+The **Configurations** tab also displays the status of plugins and enterprise features:
 
 **Plugins:**
 
@@ -1880,12 +1927,6 @@ bar at the top of the page filters the list when you are looking for a specific 
   Backend.AI-connected docker registry. The scan can take a long time; progress is reported in the
   notification area.
 
-**Announcement**
-
-- **System announcement**: Click **Edit Announcement** to create or change the announcement banner shown
-  to every user at the top of every page. See the
-  [System announcement](#system-announcement) section below.
-
 :::note
 We will continue to add other settings needed for management, such as
 removing unused images or registering periodic maintenance schedules.
@@ -1901,8 +1942,9 @@ managed entirely from the WebUI, whether or not one has been published before.
 
 Open the editor in either of two ways:
 
-- From the Maintenance page, click **Edit Announcement** in the **System announcement** row. This works
-  even when no announcement exists yet, so it is the way to publish the first one.
+- From the **System Settings** tab of the System Settings page, click **Edit Announcement** in the
+  **System announcement** row. This works even when no announcement exists yet, so it is the way to
+  publish the first one.
 - From the announcement banner itself, when one is already published. Because the banner sits at the top
   of every page, a superadmin can open the editor from anywhere in the WebUI.
 
@@ -1924,6 +1966,43 @@ The footer holds four actions:
 - **Cancel**: Closes the dialog without saving.
 - **Delete**: Removes the published announcement so the banner disappears for everyone. A confirmation
   dialog appears first.
+
+<a id="data-retention"></a>
+
+### Data retention
+
+Superadmins can control how long Backend.AI keeps each target's data on the **Data Retention Policy** tab of
+the Maintenance page. Only targets with an enabled policy have data past its retention period cleaned up.
+The available policy targets are Logs, Login History, Reconcile History, Roles & Invitations, Deployments,
+Sessions, Usage Records, and Usage Buckets.
+
+![](../images/admin_data_retention_policy_list.png)
+
+- **Create Policy**: Click **Create Policy**, choose a **Policy Target**, enter a retention period of at least
+  1 day, and choose whether the policy is enabled. Only one policy can exist per target.
+- **Edit**: Use the edit action in the row to change the **Policy Target**, the retention period, or the
+  enabled setting.
+- **Delete**: Use the delete action in the row.
+
+<a id="client-ip-masking"></a>
+
+### Client IP masking
+
+Superadmins can set how client IP addresses are masked before they are stored on the **Client IP Masking**
+tab of the Maintenance page. The available policy targets are Default, Login History, and Audit Logs. A
+target without its own policy follows the Default policy, and when there is no Default policy the
+addresses are stored as observed.
+
+![](../images/admin_client_ip_masking_policy_list.png)
+
+- **Create Policy**: Click **Create Policy**, choose a **Policy Target**, and choose a **Masking Mode**.
+  Only one policy can exist per target.
+   * None: Client IPs are stored as observed.
+   * Truncate: Host bits are zeroed, keeping only the network prefix. Set the **IPv4 Prefix Length** and
+     **IPv6 Prefix Length** to choose how many leading bits are kept.
+   * Drop: No client IP is recorded.
+- **Edit**: Use the edit action in the row to change the masking mode or the prefix lengths.
+- **Delete**: Use the delete action in the row. The target then falls back to the Default policy.
 
 <a id="detailed-information"></a>
 

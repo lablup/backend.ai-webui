@@ -111,7 +111,7 @@ test.describe(
 
       const card = getRoutesInfoCard(page);
 
-      // The BAIRadioGroup toggle with "Running" and "Finished" should be visible
+      // The BAISegmentedControl toggle with "Running" and "Finished" should be visible
       await expect(
         card.locator('.ant-radio-button-wrapper', { hasText: 'Running' }),
       ).toBeVisible();

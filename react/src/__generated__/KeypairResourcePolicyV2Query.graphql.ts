@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5b4437ed4ea90a59a08ccbaa4ee96f43>>
+ * @generated SignedSource<<d2a40049da2f785f62ce10808083dad6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,6 +17,7 @@ export type KeypairResourcePolicyV2Filter = {
   NOT?: ReadonlyArray<KeypairResourcePolicyV2Filter> | null | undefined;
   OR?: ReadonlyArray<KeypairResourcePolicyV2Filter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   idleTimeout?: IntFilter | null | undefined;
   keypair?: KeypairResourcePolicyKeypairNestedFilter | null | undefined;
   maxConcurrentSessions?: IntFilter | null | undefined;
@@ -440,7 +441,14 @@ return {
                   (v16/*: any*/),
                   (v17/*: any*/),
                   (v18/*: any*/),
-                  (v19/*: any*/)
+                  (v19/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "entityId",
+                    "storageKey": null
+                  }
                 ],
                 "storageKey": null
               }
@@ -453,12 +461,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "2c42f1b8ff1d5487952639d8414644de",
+    "cacheID": "21b2e7fe16b63ab81d3c5696f2bd82c8",
     "id": null,
     "metadata": {},
     "name": "KeypairResourcePolicyV2Query",
     "operationKind": "query",
-    "text": "query KeypairResourcePolicyV2Query(\n  $filter: KeypairResourcePolicyV2Filter\n  $orderBy: [KeypairResourcePolicyV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminKeypairResourcePoliciesV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        name\n        defaultForUnspecified\n        totalResourceSlots {\n          resourceType\n          quantity\n          unlimited\n        }\n        maxConcurrentSessions\n        maxContainersPerSession\n        idleTimeout\n        maxSessionLifetime\n        allowedVfolderHosts {\n          host\n        }\n        maxPendingSessionCount\n        maxConcurrentSftpSessions\n        maxPendingSessionResourceSlots {\n          resourceType\n          quantity\n          unlimited\n        }\n        createdAt\n        ...BAIKeypairResourcePolicyV2TableFragment\n        ...KeypairResourcePolicyV2SettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIKeypairResourcePolicyV2TableFragment on KeypairResourcePolicyV2 {\n  id\n  name\n  createdAt\n  defaultForUnspecified\n  totalResourceSlots {\n    resourceType\n    quantity\n    unlimited\n  }\n  maxSessionLifetime\n  maxConcurrentSessions\n  maxPendingSessionCount\n  maxPendingSessionResourceSlots {\n    resourceType\n    quantity\n    unlimited\n  }\n  maxConcurrentSftpSessions\n  maxContainersPerSession\n  idleTimeout\n  allowedVfolderHosts {\n    host\n    permissions\n  }\n}\n\nfragment KeypairResourcePolicyV2SettingModalFragment on KeypairResourcePolicyV2 {\n  id\n  name\n  defaultForUnspecified\n  totalResourceSlots {\n    resourceType\n    quantity\n    unlimited\n  }\n  maxSessionLifetime\n  maxConcurrentSessions\n  maxContainersPerSession\n  idleTimeout\n  maxPendingSessionCount\n  maxConcurrentSftpSessions\n  allowedVfolderHosts {\n    host\n    permissions\n  }\n}\n"
+    "text": "query KeypairResourcePolicyV2Query(\n  $filter: KeypairResourcePolicyV2Filter\n  $orderBy: [KeypairResourcePolicyV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminKeypairResourcePoliciesV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        name\n        defaultForUnspecified\n        totalResourceSlots {\n          resourceType\n          quantity\n          unlimited\n        }\n        maxConcurrentSessions\n        maxContainersPerSession\n        idleTimeout\n        maxSessionLifetime\n        allowedVfolderHosts {\n          host\n        }\n        maxPendingSessionCount\n        maxConcurrentSftpSessions\n        maxPendingSessionResourceSlots {\n          resourceType\n          quantity\n          unlimited\n        }\n        createdAt\n        ...BAIKeypairResourcePolicyV2TableFragment\n        ...KeypairResourcePolicyV2SettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIKeypairResourcePolicyV2TableFragment on KeypairResourcePolicyV2 {\n  id\n  name\n  createdAt\n  defaultForUnspecified\n  totalResourceSlots {\n    resourceType\n    quantity\n    unlimited\n  }\n  maxSessionLifetime\n  maxConcurrentSessions\n  maxPendingSessionCount\n  maxPendingSessionResourceSlots {\n    resourceType\n    quantity\n    unlimited\n  }\n  maxConcurrentSftpSessions\n  maxContainersPerSession\n  idleTimeout\n  allowedVfolderHosts {\n    host\n    permissions\n  }\n}\n\nfragment KeypairResourcePolicyV2SettingModalFragment on KeypairResourcePolicyV2 {\n  id\n  entityId\n  name\n  defaultForUnspecified\n  totalResourceSlots {\n    resourceType\n    quantity\n    unlimited\n  }\n  maxSessionLifetime\n  maxConcurrentSessions\n  maxContainersPerSession\n  idleTimeout\n  maxPendingSessionCount\n  maxConcurrentSftpSessions\n  allowedVfolderHosts {\n    host\n    permissions\n  }\n}\n"
   }
 };
 })();

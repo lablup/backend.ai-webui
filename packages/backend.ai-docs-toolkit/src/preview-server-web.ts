@@ -15,6 +15,7 @@ import { buildWebDocument } from "./html-builder-web.js";
 import { getDocVersion } from "./version.js";
 import type { ResolvedDocConfig } from "./config.js";
 import { loadBookConfig } from "./book-config.js";
+import { assertNoLfsPointers } from "./lfs-pointer.js";
 // getCatalogMarkdown is dynamically imported in catalog mode for hot-reload support
 
 
@@ -58,6 +59,9 @@ export async function startHtmlPreviewServer(
     config.version,
   );
   const isCatalog = args.mode === "catalog";
+  if (!isCatalog) {
+    assertNoLfsPointers([config.srcDir], { cwd: config.projectRoot });
+  }
   const title = isCatalog ? "Style Catalog" : bookConfig.title;
 
   if (!isCatalog) {

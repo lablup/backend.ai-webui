@@ -4,12 +4,17 @@
  */
 import './SettingItem.css';
 import { Banner } from '@lablup/ui-common/Banner';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { IconButton } from '@lablup/ui-common/IconButton';
-import { Selector, type SelectorOptionData } from '@lablup/ui-common/Selector';
+import type { SelectorOptionData } from '@lablup/ui-common/Selector';
 import { StatusDot } from '@lablup/ui-common/StatusDot';
 import { Text } from '@lablup/ui-common/Text';
-import { BAIFlex, BAIModal, useToggle } from 'backend.ai-ui';
+import {
+  BAICheckboxInput,
+  BAIFlex,
+  BAIModal,
+  BAISelect,
+  useToggle,
+} from 'backend.ai-ui';
 import { t } from 'i18next';
 import { Settings } from 'lucide-react';
 import React, {
@@ -54,14 +59,10 @@ type SelectSettingItemProps = BaseSettingItemProps & {
   defaultValue?: string;
   value?: string;
   onChange?: (value?: string) => void;
-  // PILOT-DECISION: narrowed from `Omit<BAISelectProps,...>` to the fields
-  // this area's call sites actually pass (grepped, P1) — `options`,
-  // `showSearch` (renamed `hasSearch`). antd's `optionFilterProp:
-  // 'filterValue'` sites always set `filterValue` equal to the label text,
-  // which is Selector's default search target — dropped as a no-op.
+  // The `BAISelectProps` fields this area's call sites pass.
   selectProps?: {
     options: SettingSelectOption[];
-    hasSearch?: boolean;
+    showSearch?: boolean;
     disabled?: boolean;
     loading?: boolean;
   };
@@ -171,7 +172,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
           align="start"
           style={{ width: '100%' }}
         >
-          {description}
+          {description && <Text display="block">{description}</Text>}
           {children}
         </BAIFlex>
       )}
@@ -196,11 +197,10 @@ const SettingItem: React.FC<SettingItemProps> = ({
         // when the description wraps, which is what antd's `.ant-checkbox
         // { align-self: flex-start }` rule did.
         <BAIFlex direction="row" gap="sm" align="start">
-          <CheckboxInput
-            label={title}
-            isLabelHidden
+          <BAICheckboxInput
+            aria-label={title}
             value={!!value}
-            isDisabled={checkboxProps?.disabled}
+            disabled={checkboxProps?.disabled}
             onChange={(checked) => onChange?.(checked)}
           />
           {description && (
@@ -223,15 +223,14 @@ const SettingItem: React.FC<SettingItemProps> = ({
               {description}
             </Text>
           )}
-          <Selector
-            label={title}
-            isLabelHidden
+          <BAISelect
+            aria-label={title}
             options={selectProps?.options ?? []}
-            hasSearch={selectProps?.hasSearch}
-            isDisabled={selectProps?.disabled}
-            isLoading={selectProps?.loading}
+            showSearch={!!selectProps?.showSearch}
+            disabled={selectProps?.disabled}
+            loading={selectProps?.loading}
             value={value}
-            width="fit-content"
+            style={{ width: 'fit-content' }}
             onChange={(nextValue) => onChange?.(nextValue)}
           />
         </BAIFlex>

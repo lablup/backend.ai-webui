@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3d1d5f3583c071a95321de805165cdba>>
+ * @generated SignedSource<<dab7e7a81c630f857e30e9477bc2233a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,6 +15,7 @@ import { FragmentRefs } from "relay-runtime";
 export type BAIArtifactTableArtifactFragment$data = ReadonlyArray<{
   readonly availability: ArtifactAvailability;
   readonly description: string | null | undefined;
+  readonly entityId: string;
   readonly id: string;
   readonly latestVersion: {
     readonly edges: ReadonlyArray<{
@@ -80,6 +81,13 @@ return {
   "name": "BAIArtifactTableArtifactFragment",
   "selections": [
     (v0/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
+    },
     (v1/*: any*/),
     {
       "alias": null,
@@ -225,6 +233,6 @@ return {
 };
 })();
 
-(node as any).hash = "11911e07d43f4d7957f60fac6f53d56b";
+(node as any).hash = "99d9088d9d3951f760b1f65d41b319f9";
 
 export default node;

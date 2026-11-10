@@ -22,7 +22,7 @@
 */
 import { BAIRuntimeVariantSelectPaginatedQuery } from '../../__generated__/BAIRuntimeVariantSelectPaginatedQuery.graphql';
 import { BAIRuntimeVariantSelectValueQuery } from '../../__generated__/BAIRuntimeVariantSelectValueQuery.graphql';
-import { convertToUUID, toLocalId } from '../../helper';
+import { convertToUUID } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useControllableValue, useFetchKey } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
@@ -133,6 +133,7 @@ const BAIRuntimeVariantSelect: React.FC<BAIRuntimeVariantSelectProps> = ({
         query BAIRuntimeVariantSelectValueQuery($id: UUID!, $skip: Boolean!) {
           runtimeVariant(id: $id) @skip(if: $skip) {
             id
+            entityId
             name
             readsVfolderConfigFiles @since(version: "26.8.0")
           }
@@ -175,6 +176,7 @@ const BAIRuntimeVariantSelect: React.FC<BAIRuntimeVariantSelectProps> = ({
             edges {
               node {
                 id
+                entityId
                 name
                 readsVfolderConfigFiles @since(version: "26.8.0")
               }
@@ -222,25 +224,21 @@ const BAIRuntimeVariantSelect: React.FC<BAIRuntimeVariantSelectProps> = ({
       string,
       { name: string; readsVfolderConfigFiles: boolean }
     > = {};
-    if (selectedVariant?.id && selectedVariant.name) {
-      const uuid = toLocalId(selectedVariant.id);
-      if (uuid)
-        variantMap[uuid] = {
-          name: selectedVariant.name,
-          readsVfolderConfigFiles:
-            selectedVariant.readsVfolderConfigFiles ??
-            selectedVariant.name === 'custom',
-        };
+    if (selectedVariant?.entityId && selectedVariant.name) {
+      variantMap[selectedVariant.entityId] = {
+        name: selectedVariant.name,
+        readsVfolderConfigFiles:
+          selectedVariant.readsVfolderConfigFiles ??
+          selectedVariant.name === 'custom',
+      };
     }
     for (const node of paginationData ?? []) {
-      if (node?.id && node.name) {
-        const uuid = toLocalId(node.id);
-        if (uuid)
-          variantMap[uuid] = {
-            name: node.name,
-            readsVfolderConfigFiles:
-              node.readsVfolderConfigFiles ?? node.name === 'custom',
-          };
+      if (node?.entityId && node.name) {
+        variantMap[node.entityId] = {
+          name: node.name,
+          readsVfolderConfigFiles:
+            node.readsVfolderConfigFiles ?? node.name === 'custom',
+        };
       }
     }
     if (_.isEmpty(variantMap)) return;
@@ -256,7 +254,7 @@ const BAIRuntimeVariantSelect: React.FC<BAIRuntimeVariantSelectProps> = ({
 
   const options = _.compact(
     _.map(paginationData, (item) => {
-      const key = item?.id ? toLocalId(item.id) : undefined;
+      const key = item?.entityId;
       return key
         ? {
             value: key,

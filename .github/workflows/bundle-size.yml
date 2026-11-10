@@ -1,0 +1,44 @@
+# Production build of the React app plus the boot-path budget
+# (scripts/bundle-budget.mjs). No other PR check builds the app, so the
+# 5 MiB service-worker precache limit used to surface only on release
+# (observed on main, 2026-10-22). Advisory: see typecheck.yml on `paths:`.
+name: Bundle size
+
+on:
+  pull_request:
+    paths:
+      - "react/**"
+      - "packages/backend.ai-ui/**"
+      - "packages/backend.ai-client/**"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "scripts/bundle-budget.mjs"
+      - ".github/workflows/bundle-size.yml"
+  push:
+    branches: [main]
+    paths:
+      - "react/**"
+      - "packages/backend.ai-ui/**"
+      - "packages/backend.ai-client/**"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "scripts/bundle-budget.mjs"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bundle-size-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  bundle-size:
+    name: bundle-size
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-node-pnpm
+      - name: Build the React app
+        run: pnpm run build:react-only
+      - name: Boot-path budget
+        run: node scripts/bundle-budget.mjs --build react/build | tee -a "$GITHUB_STEP_SUMMARY"

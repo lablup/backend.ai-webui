@@ -90,7 +90,7 @@ test.describe(
       await expect(projectSelect).toContainText(targetProject);
 
       await folderCreationModal.fillFolderName(folderName);
-      await (await folderCreationModal.getCreateButton()).click();
+      await folderCreationModal.submit();
 
       // Modal closes on success.
       await page

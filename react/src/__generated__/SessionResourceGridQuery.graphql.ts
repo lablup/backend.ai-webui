@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7bdf9d5444e8f0ba664ddb6689617fd1>>
+ * @generated SignedSource<<d222d01578125044c77e29b08af6347e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,6 +11,7 @@
 import { ConcreteRequest } from 'relay-runtime';
 import { Result } from "relay-runtime";
 export type SessionResourceGridQuery$variables = {
+  domain_name?: string | null | undefined;
   filter?: string | null | undefined;
   group_id?: string | null | undefined;
   limit: number;
@@ -55,45 +56,55 @@ const node: ConcreteRequest = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "filter"
+  "name": "domain_name"
 },
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "group_id"
+  "name": "filter"
 },
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "limit"
+  "name": "group_id"
 },
 v3 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "offset"
+  "name": "limit"
 },
 v4 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "order"
+  "name": "offset"
 },
 v5 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "order"
+},
+v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v6 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "status",
   "storageKey": null
 },
-v7 = {
+v8 = {
   "alias": null,
   "args": [
+    {
+      "kind": "Variable",
+      "name": "domain_name",
+      "variableName": "domain_name"
+    },
     {
       "kind": "Variable",
       "name": "filter",
@@ -140,7 +151,7 @@ v7 = {
       "name": "items",
       "plural": true,
       "selections": [
-        (v5/*: any*/),
+        (v6/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -162,7 +173,7 @@ v7 = {
           "name": "type",
           "storageKey": null
         },
-        (v6/*: any*/),
+        (v7/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -234,7 +245,7 @@ v7 = {
           "name": "containers",
           "plural": true,
           "selections": [
-            (v5/*: any*/),
+            (v6/*: any*/),
             {
               "alias": null,
               "args": null,
@@ -249,7 +260,7 @@ v7 = {
               "name": "cluster_hostname",
               "storageKey": null
             },
-            (v6/*: any*/),
+            (v7/*: any*/),
             {
               "alias": null,
               "args": null,
@@ -280,7 +291,8 @@ return {
       (v1/*: any*/),
       (v2/*: any*/),
       (v3/*: any*/),
-      (v4/*: any*/)
+      (v4/*: any*/),
+      (v5/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
@@ -288,7 +300,7 @@ return {
     "selections": [
       {
         "kind": "CatchField",
-        "field": (v7/*: any*/),
+        "field": (v8/*: any*/),
         "to": "RESULT"
       }
     ],
@@ -298,29 +310,30 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v2/*: any*/),
       (v3/*: any*/),
-      (v0/*: any*/),
       (v4/*: any*/),
-      (v1/*: any*/)
+      (v1/*: any*/),
+      (v5/*: any*/),
+      (v2/*: any*/),
+      (v0/*: any*/)
     ],
     "kind": "Operation",
     "name": "SessionResourceGridQuery",
     "selections": [
-      (v7/*: any*/)
+      (v8/*: any*/)
     ]
   },
   "params": {
-    "cacheID": "6dab746b6fec57a0d90f4971581819ed",
+    "cacheID": "70501b38a13f993110e4f9e586725a07",
     "id": null,
     "metadata": {},
     "name": "SessionResourceGridQuery",
     "operationKind": "query",
-    "text": "query SessionResourceGridQuery(\n  $limit: Int!\n  $offset: Int!\n  $filter: String\n  $order: String\n  $group_id: String\n) {\n  compute_session_list(limit: $limit, offset: $offset, filter: $filter, order: $order, group_id: $group_id) {\n    total_count\n    items {\n      id\n      session_id\n      name\n      type\n      status\n      image\n      created_at\n      starts_at\n      terminated_at\n      cluster_mode\n      cluster_size\n      scaling_group\n      occupied_slots\n      requested_slots\n      containers {\n        id\n        cluster_role\n        cluster_hostname\n        status\n        agent\n        live_stat\n      }\n    }\n  }\n}\n"
+    "text": "query SessionResourceGridQuery(\n  $limit: Int!\n  $offset: Int!\n  $filter: String\n  $order: String\n  $group_id: String\n  $domain_name: String\n) {\n  compute_session_list(limit: $limit, offset: $offset, filter: $filter, order: $order, group_id: $group_id, domain_name: $domain_name) {\n    total_count\n    items {\n      id\n      session_id\n      name\n      type\n      status\n      image\n      created_at\n      starts_at\n      terminated_at\n      cluster_mode\n      cluster_size\n      scaling_group\n      occupied_slots\n      requested_slots\n      containers {\n        id\n        cluster_role\n        cluster_hostname\n        status\n        agent\n        live_stat\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "81f48d7a62611837b138d4b336c893ab";
+(node as any).hash = "9d99685df509d4e65f93ce86fecc4c52";
 
 export default node;

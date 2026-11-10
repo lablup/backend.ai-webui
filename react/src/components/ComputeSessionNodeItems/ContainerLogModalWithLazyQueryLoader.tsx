@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ContainerLogModalWithLazyQueryLoaderQuery } from '../../__generated__/ContainerLogModalWithLazyQueryLoaderQuery.graphql';
-import ContainerLogModal from './ContainerLogModal';
+import ContainerLogModal from './ContainerLogModalLazy';
 import { BAIUnmountAfterClose } from 'backend.ai-ui';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 

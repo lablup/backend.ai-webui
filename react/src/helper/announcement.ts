@@ -3,8 +3,35 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 
-/** `domainConfig` sub-key holding the domain's system announcement (FR-3877). */
-export const DOMAIN_ANNOUNCEMENT_CONFIG_KEY = 'announcement';
+/** `domainConfig` path of the domain's system announcement (#10713). */
+export const DOMAIN_ANNOUNCEMENT_CONFIG_KEY = ['settings', 'announcement'];
+
+/** The announcement inside a `settings` document, when it is an object. */
+export const readDomainAnnouncement = (
+  settings: Record<string, unknown> | undefined,
+): DomainAnnouncement | undefined => {
+  const value = settings?.announcement;
+  return value && typeof value === 'object' && !Array.isArray(value)
+    ? (value as DomainAnnouncement)
+    : undefined;
+};
+
+/**
+ * `settings` with the announcement set to `next` (removed when `undefined`);
+ * `undefined` when nothing is left, which removes the sub-key.
+ */
+export const withAnnouncement = (
+  settings: unknown,
+  next: DomainAnnouncement | undefined,
+): Record<string, unknown> | undefined => {
+  const rest: Record<string, unknown> =
+    settings && typeof settings === 'object' && !Array.isArray(settings)
+      ? { ...(settings as Record<string, unknown>) }
+      : {};
+  if (next === undefined) delete rest.announcement;
+  else rest.announcement = next;
+  return Object.keys(rest).length > 0 ? rest : undefined;
+};
 
 /**
  * The announcement as stored in the domain app config: a plain-text title the

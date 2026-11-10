@@ -79,6 +79,7 @@ describe('NoResourceGroupAlert (FR-3414 project-agnostic gating)', () => {
     // Widened in FR-3415 — both now have explicit in-page project selection.
     ['/admin/environment', 'environment'],
     ['/admin/reservoir', 'reservoir'],
+    ['/admin/dashboard', 'admin-dashboard'],
   ])(
     'renders nothing on the project-agnostic route %s even without a resource group',
     (path, menuKey) => {
@@ -88,10 +89,10 @@ describe('NoResourceGroupAlert (FR-3414 project-agnostic gating)', () => {
     },
   );
 
-  it('still renders on the one admin page that depends on the ambient project', () => {
+  it('still renders on the project admin dashboard, which is project-scoped', () => {
     mockedUseCurrentResourceGroupValue.mockReturnValue(null);
-    renderAt('/admin/dashboard', {
-      scope: 'admin',
+    renderAt('/project/default/admin/dashboard', {
+      scope: 'projectAdmin',
       menuKey: 'admin-dashboard',
     });
     expect(screen.getByText(ALERT_TEXT)).toBeInTheDocument();

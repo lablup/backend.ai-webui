@@ -1,6 +1,9 @@
 // spec: FolderExplorerModal-Test-Plan.md
+import { createAccountApiContext } from '../utils/admin-api';
 import { FolderExplorerModal } from '../utils/classes/vfolder/FolderExplorerModal';
 import { cleanupVFolderSafely } from '../utils/cleanup-util';
+import { getE2EVFolderHost } from '../utils/e2e-scope';
+import { skipUnlessLabelableEntityType } from '../utils/feature-gate-util';
 import {
   loginAsUser,
   navigateTo,
@@ -8,9 +11,14 @@ import {
   moveToTrashAndVerify,
   deleteForeverAndVerifyFromTrash,
   modifyConfigToml,
+  userInfo,
   webuiEndpoint,
 } from '../utils/test-util';
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, APIRequestContext, Page } from '@playwright/test';
+
+// The folder default is read-only (#10647), but the manager gives the creator
+// of a project folder a read & write mount policy of their own.
+const CREATOR_MOUNT_PERMISSION = 'Read & Write';
 
 const openFolderExplorer = async (
   page: Page,
@@ -49,8 +57,9 @@ test.describe(
       test.setTimeout(120000);
       const rwFolderName = 'e2e-test-folder-rw-' + new Date().getTime();
 
-      // 1. Create a VFolder with Read & Write permissions
-      await createVFolderAndVerify(page, rwFolderName, 'general', 'user', 'rw');
+      // 1. Create a VFolder; its owner always mounts it read & write, whatever
+      //    the shared-user default is (#10647 creates every folder read-only).
+      await createVFolderAndVerify(page, rwFolderName);
 
       // 2. Open the VFolder in FolderExplorerModal
       const modal = await openFolderExplorer(page, rwFolderName);
@@ -61,8 +70,11 @@ test.describe(
       // 4. Verify file explorer loads without errors
       await modal.verifyFileExplorerLoaded();
 
-      // 5. Verify Read & Write permission is displayed in folder details
-      await modal.verifyPermission('Read & Write');
+      // 5. Ownership decides whether the mount permission row is shown.
+      await modal.verifyFolderDetails(
+        userInfo.user.email,
+        CREATOR_MOUNT_PERMISSION,
+      );
 
       // 6. Verify upload functionality is available (Write permission)
       const uploadButton = await modal.getUploadButton();
@@ -82,38 +94,37 @@ test.describe(
       await deleteForeverAndVerifyFromTrash(page, rwFolderName);
     });
 
-    test('User can view files but cannot upload to read-only VFolder', async ({
+    test('User sees Read & Write mount permission on a project folder they created', async ({
       page,
     }) => {
       test.setTimeout(120000);
       const roFolderName = 'e2e-test-folder-ro-' + new Date().getTime();
 
-      // 1. Create a VFolder with Read Only permissions
-      await createVFolderAndVerify(page, roFolderName, 'general', 'user', 'ro');
+      // 1. Create a VFolder: new folders are read-only for shared users
+      //    (#10647), so no permission choice is made here.
+      await createVFolderAndVerify(page, roFolderName);
 
-      // 2. Verify folder shows "Read only" in the table
+      // 2. Open the VFolder in FolderExplorerModal (the list has no mount
+      //    permission column any more)
       await navigateTo(page, 'data');
-      const folderRow = page.getByRole('row', {
-        name: new RegExp(roFolderName),
-      });
-      await expect(folderRow.getByText('Read only').first()).toBeVisible();
-
-      // 3. Open the VFolder in FolderExplorerModal
       const modal = await openFolderExplorer(page, roFolderName);
 
-      // 4. Verify modal opens successfully
+      // 3. Verify modal opens successfully
       await modal.verifyFolderName(roFolderName);
 
-      // 5. Verify "Read only" mount permission is displayed in folder details
-      await modal.verifyPermission('Read only');
+      // 4. Ownership decides whether the mount permission row is shown.
+      await modal.verifyFolderDetails(
+        userInfo.user.email,
+        CREATOR_MOUNT_PERMISSION,
+      );
 
-      // 6. Verify file explorer loads
+      // 5. Verify file explorer loads
       await modal.verifyFileExplorerLoaded();
 
-      // 7. Close modal
+      // 6. Close modal
       await modal.close();
 
-      // 8. Cleanup
+      // 7. Cleanup
       await moveToTrashAndVerify(page, roFolderName, 'data', {
         skipTrashVerify: true,
       });
@@ -291,10 +302,162 @@ test.describe(
       const modal = await openFolderExplorer(page, testFolderName);
 
       // 2. Verify essential folder details are displayed
-      await modal.verifyFolderDetails();
+      await modal.verifyFolderDetails(
+        userInfo.user.email,
+        CREATOR_MOUNT_PERMISSION,
+      );
 
       // 3. Close modal
       await modal.close();
+    });
+  },
+);
+
+// #10388: the explorer's Metadata tab carries a Labels row whose hover
+// action edits the folder's labels. Each test creates its own user folder
+// through the API and purges it in afterEach.
+test.describe(
+  'VFolder Explorer Modal - Labels',
+  {
+    tag: ['@vfolder', '@functional', '@regression', '@requires-manager-v26.9'],
+  },
+  () => {
+    let api: APIRequestContext | undefined;
+    let folderId: string | undefined;
+    let folderName: string | undefined;
+
+    const createFolderAndOpenExplorer = async (page: Page) => {
+      // Set before the create call so afterEach can find a folder whose
+      // create response was lost.
+      folderName = `e2e-test-folder-explorer-label-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+      api = await createAccountApiContext(userInfo.user);
+      const created = await api.post('/func/folders', {
+        data: {
+          name: folderName,
+          host: await getE2EVFolderHost(),
+          usage_mode: 'general',
+          permission: 'rw',
+        },
+      });
+      expect(created.ok()).toBeTruthy();
+      folderId = (await created.json()).id;
+
+      await navigateTo(page, `data?folder=${folderId}`);
+      const modal = new FolderExplorerModal(page);
+      await modal.waitForOpen();
+      await modal.verifyFolderName(folderName);
+      const dialog = page
+        .getByRole('dialog')
+        .filter({ has: page.getByRole('heading', { name: folderName }) });
+      await expect(
+        dialog.getByRole('button', { name: 'Metadata', exact: true }),
+      ).toBeVisible();
+      await expect(
+        dialog.getByRole('term').filter({ hasText: /^Labels$/ }),
+      ).toBeVisible({ timeout: 20000 });
+      // Edit labels is a hover action of the Labels definition.
+      const labelsRow = dialog
+        .getByRole('definition')
+        .filter({ has: page.getByRole('button', { name: 'Edit labels' }) });
+      await labelsRow.hover();
+      return {
+        labelsRow,
+        editButton: labelsRow.getByRole('button', { name: 'Edit labels' }),
+      };
+    };
+
+    test.beforeEach(async ({ page, request }) => {
+      api = undefined;
+      folderId = undefined;
+      folderName = undefined;
+      await loginAsUser(page, request);
+      await skipUnlessLabelableEntityType(
+        page,
+        'vfolder',
+        'Folder labels require a manager that accepts vfolder labels (#10166)',
+      );
+    });
+
+    test.afterEach(async () => {
+      if (!api) return;
+      const userApi = api;
+      api = undefined;
+      try {
+        if (!folderId && folderName) {
+          const list = await userApi.get('/func/folders').catch(() => null);
+          const folders = list?.ok() ? await list.json() : [];
+          folderId = folders.find(
+            (folder: { name: string }) => folder.name === folderName,
+          )?.id;
+        }
+        if (folderId) {
+          for (const [method, path] of [
+            ['delete', '/func/folders'],
+            ['post', '/func/folders/delete-from-trash-bin'],
+          ] as const) {
+            const res = await userApi[method](path, {
+              data: { vfolder_id: folderId },
+            }).catch(() => null);
+            if (!res?.ok()) {
+              console.warn(
+                `could not clean up folder ${folderId} (${path}, status=${res?.status()})`,
+              );
+            }
+          }
+        }
+      } finally {
+        await userApi.dispose();
+      }
+    });
+
+    test('User can edit folder labels from the explorer Metadata tab', async ({
+      page,
+    }) => {
+      const { labelsRow, editButton } = await createFolderAndOpenExplorer(page);
+      await expect(labelsRow).toHaveText(/^-/);
+
+      await editButton.click();
+      const labelModal = page.getByRole('dialog', { name: 'Edit labels' });
+      await expect(labelModal).toBeVisible();
+      await labelModal.getByRole('textbox', { name: 'Key' }).fill('env');
+      await labelModal.getByRole('textbox', { name: 'Value' }).fill('prod');
+      await labelModal.getByRole('button', { name: 'Save' }).click();
+      await expect(page.getByText('Labels saved.').first()).toBeVisible();
+      await expect(labelModal).toBeHidden({ timeout: 30000 });
+
+      // The tokens are display-only here, not filter buttons.
+      await expect(
+        labelsRow.getByText('env=prod', { exact: true }),
+      ).toBeVisible({ timeout: 30000 });
+    });
+
+    test('User cannot edit labels of a folder without update permission in the explorer', async ({
+      page,
+    }) => {
+      // Report the folder without UPDATE so the explorer treats it as a
+      // folder the user may only read; this checks the UI gating only.
+      await page.route('**/admin/gql', async (route) => {
+        if (
+          !(route.request().postData() ?? '').includes(
+            'FolderExplorerModalV2Query',
+          )
+        ) {
+          await route.fallback();
+          return;
+        }
+        const response = await route.fetch();
+        const body = await response.json();
+        const node = body?.data?.vfolderNode;
+        if (Array.isArray(node?.permissions)) {
+          node.permissions = node.permissions.filter(
+            (permission: string) => permission !== 'UPDATE',
+          );
+        }
+        await route.fulfill({ response, json: body });
+      });
+
+      const { editButton } = await createFolderAndOpenExplorer(page);
+      await expect(editButton).toBeDisabled();
     });
   },
 );

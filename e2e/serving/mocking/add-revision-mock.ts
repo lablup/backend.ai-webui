@@ -64,6 +64,7 @@ export function buildRuntimeVariantNode(
   const node: Record<string, unknown> = {
     __typename: 'RuntimeVariant',
     id: btoa(`RuntimeVariant:${MOCK_RUNTIME_VARIANT_UUID}`),
+    entityId: MOCK_RUNTIME_VARIANT_UUID,
     name,
   };
   if (!omitReadsFlag) {
@@ -140,6 +141,7 @@ export function variantDefaultModelDefinitionMock() {
   return () => ({
     runtimeVariant: {
       id: btoa(`RuntimeVariant:${MOCK_RUNTIME_VARIANT_UUID}`),
+      entityId: MOCK_RUNTIME_VARIANT_UUID,
       defaultModelDefinition: {
         models: [
           {

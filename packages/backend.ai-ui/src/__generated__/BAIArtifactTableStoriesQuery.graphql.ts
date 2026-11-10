@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8725f9e167374b276deb44392f935976>>
+ * @generated SignedSource<<691224bfd859e74f06c7d4852c8f4abd>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -151,6 +151,13 @@ return {
                 "plural": false,
                 "selections": [
                   (v2/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "entityId",
+                    "storageKey": null
+                  },
                   (v3/*: any*/),
                   {
                     "alias": null,
@@ -295,12 +302,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "60909b5b17998801b8babed72f9f511c",
+    "cacheID": "b60b066f7e3f39045d87d4e23ad6274a",
     "id": null,
     "metadata": {},
     "name": "BAIArtifactTableStoriesQuery",
     "operationKind": "query",
-    "text": "query BAIArtifactTableStoriesQuery {\n  artifacts(limit: 100, offset: 0) {\n    edges {\n      node {\n        ...BAIArtifactTableArtifactFragment\n        id\n      }\n    }\n    count\n  }\n}\n\nfragment BAIArtifactRevisionDownloadButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactStatusBadgeFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactTableArtifactFragment on Artifact {\n  id\n  name\n  description\n  updatedAt\n  scannedAt\n  availability\n  registry {\n    name\n    url\n  }\n  source {\n    name\n    url\n  }\n  ...BAIArtifactTypeTokenFragment\n  latestVersion: revisions(limit: 1, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}]) {\n    edges {\n      node {\n        id\n        version\n        size\n        status\n        ...BAIArtifactStatusBadgeFragment\n        ...BAIArtifactRevisionDownloadButtonFragment\n      }\n    }\n  }\n}\n\nfragment BAIArtifactTypeTokenFragment on Artifact {\n  type\n}\n"
+    "text": "query BAIArtifactTableStoriesQuery {\n  artifacts(limit: 100, offset: 0) {\n    edges {\n      node {\n        ...BAIArtifactTableArtifactFragment\n        id\n      }\n    }\n    count\n  }\n}\n\nfragment BAIArtifactRevisionDownloadButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactStatusBadgeFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactTableArtifactFragment on Artifact {\n  id\n  entityId\n  name\n  description\n  updatedAt\n  scannedAt\n  availability\n  registry {\n    name\n    url\n  }\n  source {\n    name\n    url\n  }\n  ...BAIArtifactTypeTokenFragment\n  latestVersion: revisions(limit: 1, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}]) {\n    edges {\n      node {\n        id\n        version\n        size\n        status\n        ...BAIArtifactStatusBadgeFragment\n        ...BAIArtifactRevisionDownloadButtonFragment\n      }\n    }\n  }\n}\n\nfragment BAIArtifactTypeTokenFragment on Artifact {\n  type\n}\n"
   }
 };
 })();

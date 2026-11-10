@@ -40,7 +40,7 @@ import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import BAIFlex from '../../BAIFlex';
 import BAILink from '../../BAILink';
 import BAIText from '../../BAIText';
-import { AstryxFormTextInput } from '../../astryxFormControls';
+import BAITextInput from '../../BAITextInput';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
@@ -284,8 +284,8 @@ const EditableFileName: React.FC<EditableFileNameProps> = ({
               },
             ]}
           >
-            <AstryxFormTextInput
-              label={t('comp:FileExplorer.FileName')}
+            <BAITextInput
+              aria-label={t('comp:FileExplorer.FileName')}
               placeholder={fileInfo?.name || undefined}
               hasAutoFocus
             />

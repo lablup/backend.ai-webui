@@ -1,5 +1,6 @@
 // FR-4108 (#10000): the header project selector reads membership from
 // ProjectV2 — it lists only the active projects the user belongs to.
+// #10490: it also offers the user's personal project under a "Personal" group.
 import {
   createAdminApiContext,
   createProjectViaApi,
@@ -7,7 +8,14 @@ import {
   sweepStaleProjectsViaApi,
 } from '../utils/admin-api';
 import { getE2EDomainName } from '../utils/e2e-scope';
-import { loginAsUser, navigateTo, userInfo } from '../utils/test-util';
+import {
+  loginAsAdmin,
+  loginAsUser,
+  navigateTo,
+  notFoundPageHeading,
+  userInfo,
+} from '../utils/test-util';
+import { navigateToUsersPage } from '../utils/user-profile-util';
 import { expect, test, type APIRequestContext } from '@playwright/test';
 
 const PROJECT_PREFIX = 'e2e-membership-';
@@ -87,6 +95,106 @@ test.describe(
         url.pathname.endsWith(`/project/${memberProject}/session`),
       );
       await expect(selector).toHaveText(memberProject);
+    });
+  },
+);
+
+test.describe(
+  'Header ProjectSelect - Personal Project',
+  {
+    tag: ['@regression', '@project', '@functional', '@requires-manager-v26.9'],
+  },
+  () => {
+    test('User can switch to their personal project from the header project selector', async ({
+      page,
+      request,
+    }) => {
+      await loginAsUser(page, request);
+      await navigateTo(page, 'data');
+      const selector = page.getByRole('button', { name: 'Select Project' });
+      await expect(selector).toBeVisible({ timeout: 15000 });
+      await selector.click();
+
+      const personalOption = page
+        .getByRole('listbox', { name: 'Select Project' })
+        .getByRole('group', { name: 'Personal' })
+        .getByRole('option');
+      await expect(personalOption).toHaveCount(1, { timeout: 15000 });
+      await expect(personalOption).toBeEnabled();
+      // The header labels the signed-in user's personal project "My Project"
+      // (#10670), so the real name comes from the API.
+      await expect(personalOption).toHaveText('My Project');
+      const personalProject = await page.evaluate(async () => {
+        const result = await (globalThis as any).backendaiclient.query(
+          `query {
+            myUserV2 {
+              projects(filter: { isActive: true }, limit: 1000) {
+                edges { node { basicInfo { name type } } }
+              }
+            }
+          }`,
+          {},
+        );
+        return result.myUserV2.projects.edges
+          .map((edge: any) => edge.node.basicInfo)
+          .find((info: any) => info.type === 'PERSONAL')?.name as string;
+      });
+      expect(personalProject).toBeTruthy();
+
+      // The reload can add a trailing slash; the app encodes the project name.
+      const personalDataPaths = [
+        personalProject,
+        encodeURIComponent(personalProject),
+      ].map((name) => `/project/${name}/data`);
+      const isPersonalDataPage = (url: URL) => {
+        const path = url.pathname.replace(/\/$/, '');
+        return personalDataPaths.some((suffix) => path.endsWith(suffix));
+      };
+      await personalOption.click();
+      await expect(page).toHaveURL(isPersonalDataPage);
+      await expect(selector).toHaveText('My Project');
+
+      await page.reload();
+      await expect(selector).toHaveText('My Project', { timeout: 15000 });
+      await expect(page).toHaveURL(isPersonalDataPage);
+      await expect(notFoundPageHeading(page)).toBeHidden();
+      await expect(page.getByText(/Project .+ was not found/)).toBeHidden();
+    });
+
+    test('Admin cannot remove the personal project in the user project editor', async ({
+      page,
+      request,
+    }) => {
+      await loginAsAdmin(page, request);
+      await navigateToUsersPage(page);
+      const userRow = page
+        .getByRole('row')
+        .filter({ hasText: userInfo.user.email });
+      await expect(userRow).toBeVisible({ timeout: 20000 });
+      await userRow.hover();
+      await userRow.getByRole('button', { name: 'Edit', exact: true }).click();
+      const dialog = page.getByRole('dialog', { name: 'Edit User Detail' });
+      await expect(dialog).toBeVisible();
+
+      await dialog.getByRole('button', { name: /^Projects/ }).click();
+      const personalOption = page
+        .getByRole('listbox', { name: /^Projects/ })
+        .getByRole('group', { name: 'Personal' })
+        .getByRole('option');
+      await expect(personalOption).toHaveCount(1, { timeout: 15000 });
+      await expect(personalOption).toBeDisabled();
+      await expect(personalOption).toHaveAttribute('aria-selected', 'true');
+
+      await personalOption.hover();
+      await expect(
+        page.getByRole('tooltip', {
+          name: 'The personal project assigned to the user cannot be removed.',
+        }),
+      ).toBeVisible();
+
+      await page.keyboard.press('Escape');
+      await dialog.getByRole('button', { name: 'Cancel' }).click();
+      await expect(dialog).toBeHidden();
     });
   },
 );

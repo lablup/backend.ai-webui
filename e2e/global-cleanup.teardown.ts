@@ -12,26 +12,35 @@
  * run — a cleanup hiccup must not turn a green suite red. It sweeps as the user
  * (personal folders on /data) and as the admin (/admin-data), because different
  * specs create folders under different accounts:
- *   - vfolder-crud / file-* / type-selection (user) → personal folders on /data
- *   - type-selection project (admin) → project folders, created on /project-data
- *     but only DELETABLE from /admin-data (VFolderNodesV2 on /project-data does
- *     not expose trash/delete). /admin-data also lists every other admin-visible
- *     folder, so it doubles as a catch-all.
+ *   - vfolder-crud / file-* (user) → folders on /data
+ *   - admin → /admin-data lists every admin-visible folder, so it doubles as a
+ *     catch-all.
  *
- * The pattern is the broad `/e2e-/i` (covering `e2e-test-*`, `e2e-mod-*`, the
+ * The user sweep uses the broad `/e2e-/i` (covering `e2e-test-*`, `e2e-mod-*`, the
  * dot-prefixed auto-mount folder, etc.). Broad matching is safe HERE — unlike in
  * a per-test `sweepVFolders` call — because the teardown runs after every other
  * project has finished, so no parallel test owns a live `e2e-*` folder.
  *
- * It also purges any leftover `e2e-*` fixture user and `e2e-plan-*` /
- * `e2e-token-*` deployment via the admin GraphQL API (no browser UI involved),
- * so those sweeps cannot fail the same way a per-test UI-based cleanup can.
+ * The admin sweep is anchored to `/^e2e-/i` instead: /admin-data lists every
+ * account's folders, and the sweep matches against the whole row text, so an
+ * unanchored pattern could reach a folder that merely has `e2e-` somewhere else
+ * in its row. Dot-prefixed auto-mount folders stay covered by the user sweep.
+ *
+ * It also purges, via the admin GraphQL API (no browser UI involved), any
+ * leftover `e2e-*` fixture user, stale e2e deployment (`E2E_DEPLOYMENT_PATTERN`),
+ * stale `e2e-preset-*` Prometheus query preset, stale e2e role
+ * (`E2E_ROLE_PATTERN`) and stale `e2e-test-project-*` project, so those sweeps cannot fail the same way a per-test UI-based
+ * cleanup can. Specs register what they create with `createTestResources()`
+ * (utils/test-resources.ts); these prefix sweeps only catch hard-killed runs.
  */
 import {
   createAdminApiContext,
   listUsersByPattern,
   purgeUserViaApi,
   sweepLeftoverDeploymentsViaApi,
+  sweepStaleProjectsViaApi,
+  sweepStalePrometheusQueryPresetsViaApi,
+  sweepStaleRolesViaApi,
 } from './utils/admin-api';
 import { sweepServices, sweepVFolders } from './utils/cleanup-util';
 import { loginAsAdmin, loginAsUser } from './utils/test-util';
@@ -39,6 +48,10 @@ import { Page, test } from '@playwright/test';
 
 // Matches every e2e vfolder naming scheme used across the specs.
 const E2E_VFOLDER_PATTERN = /e2e-/i;
+
+// Admin sweep: /admin-data shows every account's folders, so only rows that
+// start with the folder-name prefix qualify. Keeps the case-insensitive flag.
+const E2E_ADMIN_VFOLDER_PATTERN = /^e2e-/i;
 
 // Matches the disposable fixture accounts other specs create (e.g.
 // e2e-rbac-assign-*, e2e-mykeypair-*, e2e-test-user-*, e2e-profile-*). Anchored
@@ -74,15 +87,15 @@ async function sweepLeftoverE2EUsers(): Promise<void> {
 }
 
 /**
- * Belt-and-suspenders deployment sweep. deployment-lifecycle.spec.ts and
- * deployment-access-token.spec.ts name their throwaway shells `e2e-plan-*` /
- * `e2e-token-*`, which neither sweepServices' `/e2e-svc-/` nor sweepVFolders'
+ * Belt-and-suspenders deployment sweep. The deployment specs name their
+ * throwaway shells `e2e-plan-*` / `e2e-token-*` / `e2e-fr<N>-*` /
+ * `e2e-gh<N>-*` (`E2E_DEPLOYMENT_PATTERN`), which neither sweepServices' `/e2e-svc-/` nor sweepVFolders'
  * `/e2e-/` folder pattern matches — deployments were the one e2e-provisioned
  * resource this teardown didn't cover. Each spec's own `cleanupDeploymentSafely`
  * (a UI-delete flow) is the primary cleanup path, but it can fail for the same
  * reason the test body already failed (e.g. mid-modal, a stuck locator),
  * leaking a `PENDING` deployment with no other backstop. This purges any
- * leftover via the admin GraphQL API instead of the UI, so it cannot fail the
+ * leftover past the helper's age gate via the admin GraphQL API instead of the UI, so it cannot fail the
  * same way. API-based, so it does not use `page`; guard it directly (like
  * sweepLeftoverE2EUsers) so a failure never reds the run.
  */
@@ -90,6 +103,47 @@ async function sweepLeftoverDeployments(): Promise<void> {
   const api = await createAdminApiContext();
   try {
     await sweepLeftoverDeploymentsViaApi(api);
+  } finally {
+    await api.dispose();
+  }
+}
+
+// project-crud.spec.ts names its GENERAL projects `e2e-test-project-<runId>-*`.
+const E2E_TEST_PROJECT_PATTERN = /^e2e-test-project-/;
+
+/**
+ * Backstop sweeps for Prometheus query presets (`e2e-preset-*`, the
+ * auto-scaling-rule-preset specs), the RBAC specs' roles and project-crud's
+ * GENERAL projects. All keep the helpers' age gate, as the deployment sweep does, so a concurrent
+ * run's fresh fixtures survive.
+ */
+async function sweepLeftoverPresetsRolesAndProjects(): Promise<void> {
+  const api = await createAdminApiContext();
+  try {
+    try {
+      await sweepStalePrometheusQueryPresetsViaApi(api, 'e2e-preset-');
+    } catch (error) {
+      console.warn('[global-cleanup] preset sweep failed (ignored):', error);
+    }
+    // Only custom roles matching E2E_ROLE_PATTERN; never a system role.
+    try {
+      await sweepStaleRolesViaApi(api);
+    } catch (error) {
+      console.warn('[global-cleanup] role sweep failed (ignored):', error);
+    }
+    try {
+      const purged = await sweepStaleProjectsViaApi(
+        api,
+        E2E_TEST_PROJECT_PATTERN,
+      );
+      if (purged > 0) {
+        console.log(
+          `[global-cleanup] purged ${purged} leftover e2e-test-project-* project(s).`,
+        );
+      }
+    } catch (error) {
+      console.warn('[global-cleanup] project sweep failed (ignored):', error);
+    }
   } finally {
     await api.dispose();
   }
@@ -131,7 +185,8 @@ test.describe('Global e2e cleanup', () => {
   // (and the previous 300s) so it can drain a larger backlog instead of timing
   // out mid-sweep; the per-sweep deadlines above keep it from ever reaching
   // this limit.
-  test.describe.configure({ timeout: 600_000 });
+  // `default` keeps file order under `fullyParallel`: API sweeps follow the UI ones.
+  test.describe.configure({ mode: 'default', timeout: 600_000 });
 
   test('sweep leftover e2e vfolders (user)', async ({ page, request }) => {
     await loginAsUser(page, request);
@@ -151,12 +206,11 @@ test.describe('Global e2e cleanup', () => {
   }) => {
     await loginAsAdmin(page, request);
     // /admin-data (AdminVFolderNodeListPage) lists every vfolder visible to an
-    // admin — project folders (only deletable here, not on /project-data) plus
-    // any folder another sweep missed — using the same table component as /data.
+    // admin — project folders plus any folder another sweep missed — using the same table component as /data.
     await safeSweep(
       'admin /admin-data',
       (p) =>
-        sweepVFolders(p, E2E_VFOLDER_PATTERN, 'admin-data', undefined, {
+        sweepVFolders(p, E2E_ADMIN_VFOLDER_PATTERN, 'admin-data', undefined, {
           deadline: Date.now() + ADMIN_VFOLDER_SWEEP_BUDGET_MS,
         }),
       page,
@@ -176,14 +230,25 @@ test.describe('Global e2e cleanup', () => {
     } catch (error) {
       console.warn('[global-cleanup] user sweep failed (ignored):', error);
     }
-    // Purge any e2e-plan-*/e2e-token-* deployment a per-spec afterEach failed
-    // to reap. API-based, so it does not use `page`; guard it directly so a
-    // failure never reds the run.
+  });
+
+  // Own test, so its own 600s budget: these sweeps have no deadline. No `page`;
+  // guard each directly so a failure never reds the run.
+  test('sweep leftover e2e deployments, presets, roles and projects (API)', async () => {
+    // Purge any e2e deployment past the age gate that an afterEach failed to reap.
     try {
       await sweepLeftoverDeployments();
     } catch (error) {
       console.warn(
         '[global-cleanup] deployment sweep failed (ignored):',
+        error,
+      );
+    }
+    try {
+      await sweepLeftoverPresetsRolesAndProjects();
+    } catch (error) {
+      console.warn(
+        '[global-cleanup] preset/role/project sweep failed (ignored):',
         error,
       );
     }

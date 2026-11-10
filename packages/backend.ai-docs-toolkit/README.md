@@ -126,6 +126,7 @@ agents:
 | `docs-toolkit diff:web` | Diff two website builds and mark the changed blocks |
 | `docs-toolkit init` | Scaffold a new documentation project |
 | `docs-toolkit agents` | Generate Claude AI agent files from templates |
+| `docs-toolkit accept:images` | Copy re-captured screenshots into an images directory only where they visibly changed (`--from`, `--to`, `--force <file>`, `--dry-run`, `--json`; needs `sharp`) |
 | `docs-toolkit help` | Show the CLI help message |
 
 ### Common Options

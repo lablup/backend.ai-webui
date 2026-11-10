@@ -1,0 +1,524 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import { ResourceGroupSettingModalAssociateDomainMutation } from '../../../__generated__/ResourceGroupSettingModalAssociateDomainMutation.graphql';
+import { ResourceGroupSettingModalCreateMutation } from '../../../__generated__/ResourceGroupSettingModalCreateMutation.graphql';
+import { ResourceGroupSettingModalFragment$key } from '../../../__generated__/ResourceGroupSettingModalFragment.graphql';
+import { ResourceGroupSettingModalUpdateMutation } from '../../../__generated__/ResourceGroupSettingModalUpdateMutation.graphql';
+import { App } from '../../../app-shim';
+import BAIFormItem from '../../../components/BAIFormItem';
+import { Form, FormInstance } from '../../../form-engine';
+import { newLineToBrElement } from '../../../helper';
+import { getSessionTypeLabel } from '../../../helper/sessionTypeLabel';
+import {
+  useCurrentDomainValue,
+  useSuspendedBackendaiClient,
+} from '../../../hooks';
+import {
+  computeProxyDelta,
+  proxiesServingGroups,
+  useSFTPProxyResourceGroupsQuery,
+  useSFTPResourceGroups,
+} from '../../../hooks/useSFTPResourceGroups';
+import { ScalingGroupOpts } from './ResourceGroupList';
+import { Grid } from '@lablup/ui-common/Grid';
+import {
+  BAICard,
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  BAIQuestionIconWithTooltip,
+  BAISkeleton,
+  BAIStorageProxySelect,
+  omitNullAndUndefinedFields,
+  useBAILogger,
+  BAIMultiSelector,
+  BAINumberInput,
+  BAISelect,
+  BAISwitch,
+  BAITextArea,
+  BAITextInput,
+} from 'backend.ai-ui';
+import * as _ from 'lodash-es';
+import React, { Suspense, useDeferredValue, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { graphql, useFragment, useMutation } from 'react-relay';
+
+type FormInputType = {
+  name: string;
+  description: string;
+  allowedSessionTypes: string[];
+  wsProxyAddress: string;
+  active: boolean;
+  public: boolean;
+  scheduler: string;
+  pendingTimeout: number;
+  retriesToSkip: number;
+  sftpProxies: string[];
+};
+
+interface ResourceGroupCreateModalProps extends BAIModalProps {
+  resourceGroupFrgmt?: ResourceGroupSettingModalFragment$key | null | undefined;
+  onRequestClose?: (success: boolean) => void;
+}
+
+const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
+  resourceGroupFrgmt,
+  onRequestClose,
+  ...modalProps
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { message } = App.useApp();
+  const { logger } = useBAILogger();
+  const baiClient = useSuspendedBackendaiClient();
+  const currentDomain = useCurrentDomainValue();
+  const { applyGroupProxyDelta } = useSFTPResourceGroups();
+  const formRef = useRef<FormInstance>(null);
+
+  const resourceGroup = useFragment(
+    graphql`
+      fragment ResourceGroupSettingModalFragment on ScalingGroup {
+        name @required(action: NONE)
+        description
+        is_active
+        is_public
+        wsproxy_addr
+        scheduler
+        scheduler_opts
+      }
+    `,
+    resourceGroupFrgmt,
+  );
+
+  // Superadmin-only SFTP proxy membership for this group, read from etcd without
+  // suspending: gate on a deferred `open` so enabling runs in a transition. The
+  // field below skeletons until the map resolves, then mounts with its prefill
+  // as the Form.Item `initialValue` — the rest of the form renders immediately.
+  const deferredOpen = useDeferredValue(modalProps.open);
+  const { data: proxyResourceGroups, isFetching: isSftpMapFetching } =
+    useSFTPProxyResourceGroupsQuery({
+      enabled: baiClient.is_superadmin && !!deferredOpen,
+    });
+  const currentSftpProxies = proxiesServingGroups(
+    proxyResourceGroups,
+    resourceGroup?.name ? [resourceGroup.name] : [],
+  );
+  const isSftpMapLoading =
+    proxyResourceGroups === undefined || isSftpMapFetching;
+
+  const [commitUpdateResourceGroup, isInFlightCommitUpdateResourceGroup] =
+    useMutation<ResourceGroupSettingModalUpdateMutation>(graphql`
+      mutation ResourceGroupSettingModalUpdateMutation(
+        $name: String!
+        $input: ModifyScalingGroupInput!
+      ) {
+        modify_scaling_group(name: $name, props: $input) {
+          ok
+          msg
+        }
+      }
+    `);
+  const [commitCreateResourceGroup, isInFlightCommitCreateResourceGroup] =
+    useMutation<ResourceGroupSettingModalCreateMutation>(graphql`
+      mutation ResourceGroupSettingModalCreateMutation(
+        $name: String!
+        $input: CreateScalingGroupInput!
+      ) {
+        create_scaling_group(name: $name, props: $input) {
+          ok
+          msg
+        }
+      }
+    `);
+  const [commitAssociateDomain, isInFlightCommitAssociateDomain] =
+    useMutation<ResourceGroupSettingModalAssociateDomainMutation>(graphql`
+      mutation ResourceGroupSettingModalAssociateDomainMutation(
+        $domain: String!
+        $scaling_group: String!
+      ) {
+        associate_scaling_group_with_domain(
+          domain: $domain
+          scaling_group: $scaling_group
+        ) {
+          ok
+          msg
+        }
+      }
+    `);
+
+  const schedulerOpts: Partial<ScalingGroupOpts> = JSON.parse(
+    resourceGroup?.scheduler_opts || '{}',
+  );
+
+  const INITIAL_FORM_VALUES = omitNullAndUndefinedFields({
+    name: resourceGroup?.name,
+    description: resourceGroup?.description,
+    scheduler: resourceGroup?.scheduler ?? 'fifo',
+    allowedSessionTypes: schedulerOpts?.allowed_session_types ?? [
+      'batch',
+      'interactive',
+    ],
+    active: resourceGroup?.is_active ?? true,
+    public: resourceGroup?.is_public ?? true,
+    pendingTimeout: schedulerOpts?.pending_timeout
+      ? _.toNumber(schedulerOpts?.pending_timeout)
+      : null,
+    retriesToSkip: schedulerOpts?.config?.num_retries_to_skip
+      ? _.toNumber(schedulerOpts?.config?.num_retries_to_skip)
+      : null,
+    wsProxyAddress: resourceGroup?.wsproxy_addr,
+  });
+
+  return (
+    <BAIModal
+      title={
+        resourceGroup
+          ? t('resourceGroup.ModifyResourceGroup')
+          : t('resourceGroup.CreateResourceGroup')
+      }
+      onCancel={() => {
+        onRequestClose?.(false);
+      }}
+      okText={resourceGroup ? t('button.Save') : t('button.Create')}
+      okButtonProps={{
+        loading:
+          isInFlightCommitCreateResourceGroup ||
+          isInFlightCommitAssociateDomain ||
+          isInFlightCommitUpdateResourceGroup,
+      }}
+      onOk={() => {
+        formRef.current
+          ?.validateFields()
+          .then((values: FormInputType) => {
+            const input = {
+              scheduler: values.scheduler,
+              description: values.description ?? null,
+              scheduler_opts: JSON.stringify({
+                allowed_session_types: values.allowedSessionTypes,
+                ...(values.pendingTimeout && {
+                  pending_timeout: values.pendingTimeout,
+                }),
+                ...(values.retriesToSkip && {
+                  config: {
+                    num_retries_to_skip: values.retriesToSkip,
+                  },
+                }),
+              }),
+              is_public: values.public,
+              is_active: values.active,
+              wsproxy_addr: values.wsProxyAddress,
+            };
+
+            // After the group is saved, sync its SFTP proxy membership to the
+            // selected proxies (add to newly-selected proxies, remove from
+            // deselected ones, preserving other groups on each proxy).
+            // Deselection here removes without a separate confirm — unlike the
+            // bulk modal — because Update is an explicit, per-group edit.
+            // Superadmin-only.
+            const applySftpProxies = (groupName: string): Promise<void> => {
+              if (!baiClient.is_superadmin) {
+                return Promise.resolve();
+              }
+              const { added, removed } = computeProxyDelta(
+                currentSftpProxies,
+                values.sftpProxies ?? [],
+              );
+              return applyGroupProxyDelta([groupName], added, removed).then(
+                (results) => {
+                  const failed = results.filter((r) => r.status === 'rejected');
+                  if (failed.length > 0) {
+                    failed.forEach((r) => {
+                      if (r.status === 'rejected') {
+                        logger.error(
+                          'Failed to update SFTP storage proxies:',
+                          r.reason,
+                        );
+                      }
+                    });
+                    message.error(
+                      t('storageProxy.FailedToUpdateSFTPResourceGroups'),
+                    );
+                  }
+                },
+              );
+            };
+
+            if (resourceGroup) {
+              commitUpdateResourceGroup({
+                variables: {
+                  name: resourceGroup.name,
+                  input: input,
+                },
+                onCompleted: ({ modify_scaling_group: res }, errors) => {
+                  if (!res?.ok) {
+                    message.error(res?.msg);
+                    return;
+                  }
+                  if (errors && errors.length > 0) {
+                    const errorMsgList = _.map(
+                      errors,
+                      (error) => error.message,
+                    );
+                    for (const error of errorMsgList) {
+                      message.error(error);
+                    }
+                    return;
+                  }
+                  message.success(t('resourceGroup.ResourceGroupModified'));
+                  applySftpProxies(resourceGroup.name).finally(() =>
+                    onRequestClose?.(true),
+                  );
+                },
+                onError: (err) => {
+                  message.error(err.message);
+                },
+              });
+              return;
+            }
+
+            commitCreateResourceGroup({
+              variables: {
+                name: values.name,
+                // `driver` is required by the schema but unused by the manager.
+                input: { ...input, driver: 'static' },
+              },
+              onCompleted: ({ create_scaling_group: res }, errors) => {
+                if (errors && errors.length > 0) {
+                  const errorMsgList = _.map(errors, (error) => error.message);
+                  for (const error of errorMsgList) {
+                    message.error(error);
+                  }
+                  return;
+                }
+
+                if (!res?.ok) {
+                  message.error(res?.msg);
+                  return;
+                }
+
+                commitAssociateDomain({
+                  variables: {
+                    domain: currentDomain,
+                    scaling_group: values.name,
+                  },
+                  onCompleted: (
+                    { associate_scaling_group_with_domain: res },
+                    errors,
+                  ) => {
+                    if (!res?.ok) {
+                      message.error(res?.msg);
+                      return;
+                    }
+                    if (errors && errors.length > 0) {
+                      const errorMsgList = _.map(
+                        errors,
+                        (error) => error.message,
+                      );
+                      for (const error of errorMsgList) {
+                        message.error(error);
+                      }
+                      return;
+                    }
+
+                    message.success(t('resourceGroup.ResourceGroupCreated'));
+                    applySftpProxies(values.name).finally(() =>
+                      onRequestClose?.(true),
+                    );
+                  },
+                  onError: (err) => {
+                    message.error(err.message);
+                  },
+                });
+              },
+              onError: (err) => {
+                message.error(err.message);
+              },
+            });
+          })
+          .catch(() => {});
+      }}
+      {...modalProps}
+    >
+      <Suspense fallback={<BAISkeleton rows={6} />}>
+        <Form
+          ref={formRef}
+          initialValues={INITIAL_FORM_VALUES}
+          layout="vertical"
+        >
+          <BAIFormItem
+            label={t('resourceGroup.Name')}
+            name="name"
+            rules={[
+              {
+                required: true,
+                message: t('general.ValueRequired', {
+                  name: t('resourceGroup.Name'),
+                }),
+              },
+            ]}
+          >
+            <BAITextInput
+              aria-label={t('resourceGroup.Name')}
+              disabled={!!resourceGroup}
+            />
+          </BAIFormItem>
+          <BAIFormItem
+            label={t('resourceGroup.Description')}
+            name="description"
+          >
+            <BAITextArea aria-label={t('resourceGroup.Description')} />
+          </BAIFormItem>
+          <BAIFormItem
+            label={t('resourceGroup.AllowedSessionTypes')}
+            name="allowedSessionTypes"
+            rules={[
+              {
+                required: true,
+                message: t('general.ValueRequired', {
+                  name: t('resourceGroup.AllowedSessionTypes'),
+                }),
+              },
+            ]}
+          >
+            <BAIMultiSelector
+              aria-label={t('resourceGroup.AllowedSessionTypes')}
+              options={_.map(
+                ['batch', 'interactive', 'inference', 'system'],
+                (value) => ({ label: getSessionTypeLabel(t, value), value }),
+              )}
+            />
+          </BAIFormItem>
+          <BAIFormItem
+            label={t('resourceGroup.AppProxyAddress')}
+            name="wsProxyAddress"
+            rules={[{ type: 'url', message: t('error.InvalidUrl') }]}
+          >
+            <BAITextInput
+              aria-label={t('resourceGroup.AppProxyAddress')}
+              placeholder="http://localhost:10200"
+            />
+          </BAIFormItem>
+          {baiClient.is_superadmin ? (
+            isSftpMapLoading ? (
+              <BAIFormItem label={t('storageProxy.SFTPStorageProxies')}>
+                <BAISkeleton variant="input" />
+              </BAIFormItem>
+            ) : (
+              // Wrap the Form.Item (not the select — that would break Form's
+              // value/onChange binding) in Suspense: BAIStorageProxySelect's
+              // proxy-options query suspends. The prefill is registered as the
+              // Form.Item `initialValue`, computed from the now-resolved map.
+              <Suspense fallback={<BAISkeleton variant="input" />}>
+                <BAIFormItem
+                  label={t('storageProxy.SFTPStorageProxies')}
+                  name="sftpProxies"
+                  initialValue={currentSftpProxies}
+                  tooltip={t('storageProxy.SFTPStorageProxiesDescription')}
+                >
+                  <BAIStorageProxySelect mode="multiple" allowClear />
+                </BAIFormItem>
+              </Suspense>
+            )
+          ) : null}
+          {/* antd Row + Col span={12}×2 → Grid columns={2} (MAPPING §3.9 R2:
+              fixed equal-width columns, no breakpoint props involved). */}
+          <Grid columns={2}>
+            <BAIFormItem
+              layout="horizontal"
+              label={t('resourceGroup.Active')}
+              name="active"
+            >
+              <BAISwitch aria-label={t('resourceGroup.Active')} />
+            </BAIFormItem>
+            <BAIFormItem
+              layout="horizontal"
+              label={t('resourceGroup.Public')}
+              name="public"
+              tooltip={t('resourceGroup.PublicDesc')}
+            >
+              <BAISwitch aria-label={t('resourceGroup.Public')} />
+            </BAIFormItem>
+          </Grid>
+          <BAIFormItem
+            label={t('resourceGroup.Scheduler')}
+            name="scheduler"
+            rules={[
+              {
+                required: true,
+                message: t('general.ValueRequired', {
+                  name: t('resourceGroup.Scheduler'),
+                }),
+              },
+            ]}
+          >
+            <BAISelect
+              showSearch={false}
+              aria-label={t('resourceGroup.Scheduler')}
+              options={[
+                {
+                  label: 'FIFO',
+                  value: 'fifo',
+                },
+                {
+                  label: 'LIFO',
+                  value: 'lifo',
+                },
+                {
+                  label: 'DRF',
+                  value: 'drf',
+                },
+                {
+                  label: 'Fair Share',
+                  value: 'fair-share',
+                },
+              ]}
+            />
+          </BAIFormItem>
+          <BAIFormItem label={t('resourceGroup.SchedulerOptions')}>
+            <BAICard styles={{ body: { paddingBottom: 0 } }}>
+              <BAIFormItem
+                label={
+                  <BAIFlex gap="xxs">
+                    {t('resourceGroup.PendingTimeout')}
+                    <BAIQuestionIconWithTooltip
+                      title={newLineToBrElement(
+                        t('resourceGroup.PendingTimeoutDesc'),
+                      )}
+                    />
+                  </BAIFlex>
+                }
+                name="pendingTimeout"
+              >
+                <BAINumberInput
+                  width="100%"
+                  aria-label={t('resourceGroup.PendingTimeout')}
+                  units={t('resourceGroup.TimeoutSeconds')}
+                  min={0}
+                />
+              </BAIFormItem>
+              <BAIFormItem
+                label={
+                  <BAIFlex style={{ whiteSpace: 'pre' }}>
+                    {t('resourceGroup.RetriesToSkipDesc')}
+                  </BAIFlex>
+                }
+                name="retriesToSkip"
+              >
+                <BAINumberInput
+                  width="100%"
+                  aria-label={t('resourceGroup.RetriesToSkipDesc')}
+                  units={t('resourceGroup.RetriesToSkip')}
+                  min={0}
+                />
+              </BAIFormItem>
+            </BAICard>
+          </BAIFormItem>
+        </Form>
+      </Suspense>
+    </BAIModal>
+  );
+};
+
+export default ResourceGroupSettingModal;

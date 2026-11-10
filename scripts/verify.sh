@@ -257,7 +257,7 @@ check_stylex_injection() {
   # stylesheet rollup emitted first — possibly a lazy route's. Nothing warns
   # when the predicate stops matching, so: (1) the config must declare it;
   # (2) when a production build is present, the sentinel rule authored in
-  # react/src/pages/AstryxStylexProbePage.tsx must land in the entry
+  # react/src/pages/AstryxStylexProbePage/AstryxStylexProbePage.tsx must land in the entry
   # stylesheet only. Keep STYLEX_SENTINEL in sync with that `sentinel` style.
   local STYLEX_SENTINEL='z-index: ?2147480001'
   local config=react/vite.config.ts
@@ -301,14 +301,10 @@ check_astryx_theme_built() {
   # The committed `astryx theme build` artifacts under
   # react/src/astryx-theme/built/ must match the theme source; `-c` recompiles
   # in memory and exits non-zero on drift. Rebuild procedure: built/index.ts.
-  # The theme source imports `backend.ai-ui`, which resolves to its dist, so a
-  # fresh worktree needs that package built once.
-  if [ ! -f packages/backend.ai-ui/dist/backend.ai-ui.js ]; then
-    note "backend.ai-ui dist missing — built it first (once per checkout)"
-    pnpm --filter backend.ai-ui run build > /dev/null || return 1
-  fi
-  # ui-common's dist imports .css, which Node cannot load; the stub empties them.
-  NODE_OPTIONS="--import=$PWD/scripts/astryx-theme-css-stub.mjs" \
+  # jiti ignores --conditions, so alias the subpath to what it resolves to (ADR 0013 §4).
+  local theme
+  theme=$(cd react && node --conditions=@backend.ai/source -p "require.resolve('backend.ai-ui/theme')") || return 1
+  JITI_ALIAS="{\"backend.ai-ui/theme\":\"$theme\"}" \
     bin react astryx theme build -c \
     src/astryx-theme/built/backendai-default.ts \
     -o src/astryx-theme/built/backendai-default-built.css
@@ -388,8 +384,10 @@ start_lane gate "Lint script coverage" node scripts/lint-ci-coverage-gate.mjs
 start_lane gate "Lint" check_lint
 start_lane gate "Format" check_format
 start_lane gate "TypeScript" bin react tsc --noEmit --incremental
-# The react lane reaches backend.ai-{ui,client} through tsconfig `paths`,
-# but nothing pulls in the agent CLI, so it gets its own lane.
+# The react lane sees only the backend.ai-ui files react imports (through the
+# `@backend.ai/source` export condition), and nothing pulls in the agent CLI,
+# so each gets its own lane.
+start_lane gate "TypeScript (backend.ai-ui)" bin packages/backend.ai-ui tsc --noEmit --incremental
 start_lane gate "TypeScript (agent-cli)" bin packages/backend.ai-agent-cli tsc --noEmit
 # The review overlay client is vendored by the Chrome extension (ADR 0008) and
 # built with narrower flags than react's. Deliberately the ROOT TypeScript
@@ -417,6 +415,8 @@ start_lane gate "z-index ladder mirrors" node scripts/migration-gates/z-index-la
 start_lane gate "Agent mappings" check_agent_mappings
 start_lane gate "Help anchors (user manual)" check_help_anchors
 start_lane gate "Terminology" check_terminology_drift
+# ADR 0018: every ADR and docs/ARCHITECTURE.md has a Korean `.ko.md` companion.
+start_lane gate "ADR pairs" node scripts/check-adr-pairs.mjs
 # Gates the non-English avoid-row DATA, a separate axis from CHECK 1 above; the
 # hard gate is terminology-selftest.yml (FR-3051).
 start_lane report "Terminology self-test (report-only here; hard gate in CI)" \
@@ -425,6 +425,9 @@ start_lane report "Astryx token gate (report-only; bar is no NEW findings)" \
   check_token_gate_report
 start_lane report "Compat floor (report-only; the floor is in the team dev catalog, ADR 0011)" \
   check_compat_floor_report
+# A `merge=` driver missing from git config does nothing, silently.
+start_lane report "Merge drivers (report-only)" \
+  node scripts/register-merge-drivers.mjs --check
 
 if [ -n "${VERIFY_TESTS:-}" ]; then
   start_lane gate "Vitest (react)" vitest_lane react

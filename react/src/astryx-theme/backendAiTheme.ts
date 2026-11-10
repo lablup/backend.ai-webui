@@ -15,7 +15,7 @@
  Every brand value comes from the appearance document (`resources/theme.json`
  shipped, the operator's document at runtime): `accent` (brand), `info`
  (admin accent + info), `success` (secondary accent + success), `error`,
- `warning`, `link`, `headerBg`, `fontFamily`. This module holds NO defaults
+ `warning`, `link`, `headerBg`, `headerBgAdmin`, `fontFamily`. This module holds NO defaults
  of its own — a seed the document omits is not pinned, and Astryx's own token
  applies (FR-3605).
 
@@ -57,13 +57,13 @@ import {
   ANTD_ALIGN_TOKENS,
   BAI_SELF_COLOR_TOKENS,
   buildBaiCustomTokens,
-} from 'backend.ai-ui';
+} from 'backend.ai-ui/theme';
 
 // Re-exported from BUI so this module keeps its ticket-02 public API.
 export { ANTD_ALIGN_TOKENS };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 28;
+export const THEME_NAME_REV = 29;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -396,37 +396,14 @@ const ANTD_NEUTRAL_BORDERS = {
 };
 
 /**
- * STATUS (SEMANTIC) COLOR FAMILY — pinned to the legacy antd values.
- *
- * The status HUES themselves already come from `resources/theme.json` seeds
- * (`--color-error`/`--color-success`/`--color-warning` below, plus their
- * `-muted` steps), so those needed no change. What was
- * NOT pinned is the ON-colour — the text/icon that sits on a solid status
- * fill — which `neutralTheme` derives for contrast and therefore FLIPS with
- * the mode:
- *
- *   --color-on-error    light #ffffff / dark #171717   (measured)
- *   --color-on-success  light #ffffff / dark #171717   (measured)
- *
- * antd had exactly one token for this, `colorTextLightSolid`, and it is
- * `#fff` in BOTH light and dark (measured; it is the same constant under
- * `darkAlgorithm`). So legacy error/success chips carried white text in both
- * modes, while today's dark mode inverts them to near-black — a mode-blind
- * inconsistency of the same class this migration keeps removing. Pinned to
- * white, which also matches `--color-on-accent` (already `#ffffff` in both
- * modes for the same reason).
- *
- * `--color-on-warning` is deliberately NOT pinned. antd never painted text
- * on a SOLID warning fill — its warning surfaces are `colorWarningBg` +
- * `colorText` (Alert) or `colorWarningBg` + `colorWarning` (Tag) — so there
- * is no legacy value to match, and Astryx's `#171717` is the legible choice
- * on `#FAAD14` (white on that yellow is ~1.9:1). Leaving the Astryx default
- * is the visual-values policy working as intended.
+ * Text on a SOLID status fill: antd `colorTextLightSolid`, #fff in both modes,
+ * where neutral flips to near-black in dark. `--color-on-warning` stays
+ * neutral's: white on #FAAD14 is ~1.9:1.
  */
 const ANTD_STATUS_ON_COLORS = {
-  // antd `colorTextLightSolid` — #fff in both algorithms.
   '--color-on-error': ['#ffffff', '#ffffff'] as [string, string],
   '--color-on-success': ['#ffffff', '#ffffff'] as [string, string],
+  '--color-on-info': ['#ffffff', '#ffffff'] as [string, string],
 };
 
 /**
@@ -524,15 +501,31 @@ const STATUS_TEXT_COLORS = {
   },
 };
 
-// Astryx fills `.astryx-banner.info` from `--color-accent-muted`, which the
-// theme points at `--color-background-blue` — dark-only alpha (`#9eb7ff3D` =
-// 24%), so page content read through the notification cards. `#393f50` is that
-// fill composited over the dark page: same colour, opaque (FR-3554).
+// Astryx fills `.astryx-banner.info` from `--color-info-muted`, a dark-mode
+// alpha (24%) that let page content read through notification cards.
+// `#393f50` is that fill composited over the dark page, opaque (FR-3554).
 const BANNER_INFO_SURFACE = 'light-dark(#c4ddfb, #393f50)';
+
+// Nested `Text` and end content read the status hue inside a status banner,
+// as neutral 0.7.3 did by re-pointing the text ramp there (0.7.7 dropped it).
+const BANNER_STATUS_FOREGROUND = {
+  info: 'var(--color-on-info-muted)',
+  success: 'var(--color-on-success-muted)',
+  warning: 'var(--color-on-warning-muted)',
+  error: 'var(--color-on-error-muted)',
+};
+
+const bannerStatusText = (status: keyof typeof BANNER_STATUS_FOREGROUND) => ({
+  '--color-text-primary': BANNER_STATUS_FOREGROUND[status],
+  '--color-text-secondary': BANNER_STATUS_FOREGROUND[status],
+});
 
 const BANNER_OPAQUE_INFO_SURFACE = {
   banner: {
-    'status:info': { '--color-accent-muted': BANNER_INFO_SURFACE },
+    'status:info': {
+      ...bannerStatusText('info'),
+      '--color-info-muted': BANNER_INFO_SURFACE,
+    },
   },
 };
 
@@ -745,12 +738,11 @@ const TOKEN_OUTLINED = {
  * Tinted `Badge`: a light fill, a 1px outline and dark text, all in one hue.
  * The palette variants are already a light fill with dark text and only gain
  * the outline. The solid semantic variants take the palette hue closest to
- * their status colour: the base theme fills them with a `background-color` of
- * its own in this layer, so the fill is declared directly, while the text is an
- * atom and is reached through the variable it reads.
+ * their status colour; their text is an atom, reached through the variable it
+ * reads.
  */
 const BADGE_SEMANTIC_HUES = {
-  info: ['--color-on-accent', 'blue'],
+  info: ['--color-on-info', 'blue'],
   success: ['--color-on-success', 'teal'],
   warning: ['--color-on-warning', 'yellow'],
   error: ['--color-on-error', 'red'],
@@ -957,6 +949,8 @@ const ANTD_HOVER_PARITY = {
     },
     'variant:destructive': {
       '--color-overlay-hover': 'rgba(255,255,255,0.16)',
+      // neutral paints the label in `--color-on-error-muted`; keep the seed.
+      '--color-on-error-muted': 'var(--color-error)',
     },
     // antd default-button parity (FR-3506): the non-primary button is an
     // OUTLINE — `colorBgContainer` + 1px `colorBorder` — not a solid fill.
@@ -995,6 +989,8 @@ export interface BuildBackendAIThemeOptions {
   link?: BrandSeedPair;
   /** Header band background pair (`--header-bg`); applied verbatim. */
   headerBg?: BrandSeedPair;
+  /** System admin header band pair (`--header-bg-admin`); applied verbatim. */
+  headerBgAdmin?: BrandSeedPair;
   fontFamily?: string;
 }
 
@@ -1076,6 +1072,7 @@ interface ResolvedSeeds {
   info?: BrandSeedPair;
   link?: BrandSeedPair;
   headerBg?: BrandSeedPair;
+  headerBgAdmin?: BrandSeedPair;
   fontFamily?: string;
 }
 
@@ -1106,6 +1103,7 @@ export const computeThemeName = (
       seeds.info,
       seeds.link,
       seeds.headerBg,
+      seeds.headerBgAdmin,
       seeds.fontFamily,
       BAI_SELF_COLOR_TOKENS,
       ANTD_ALIGN_TOKENS,
@@ -1155,10 +1153,12 @@ export function buildBackendAITheme(
   const error = toTuple(seeds.error);
   const success = toTuple(seeds.success);
   const warning = toTuple(seeds.warning);
+  const info = toTuple(seeds.info);
   const accentMuted = accent && toMutedTuple(accent);
   const errorMuted = error && toMutedTuple(error);
   const successMuted = success && toMutedTuple(success);
   const warningMuted = warning && toMutedTuple(warning);
+  const infoMuted = info && toMutedTuple(info);
   // Seed-derived opaque fills for the floating banner surfaces (FR-3700).
   const bannerFill = (
     token: string,
@@ -1170,9 +1170,18 @@ export function buildBackendAITheme(
   const warningFill = warning && toOpaqueMutedTuple(warning);
   const bannerStatusSurfaces = {
     banner: {
-      'status:error': bannerFill('--color-error-muted', errorFill),
-      'status:success': bannerFill('--color-success-muted', successFill),
-      'status:warning': bannerFill('--color-warning-muted', warningFill),
+      'status:error': {
+        ...bannerStatusText('error'),
+        ...bannerFill('--color-error-muted', errorFill),
+      },
+      'status:success': {
+        ...bannerStatusText('success'),
+        ...bannerFill('--color-success-muted', successFill),
+      },
+      'status:warning': {
+        ...bannerStatusText('warning'),
+        ...bannerFill('--color-warning-muted', warningFill),
+      },
     },
     'banner-content': {
       'status:error': bannerFill('--color-background-card', errorFill),
@@ -1209,16 +1218,21 @@ export function buildBackendAITheme(
           }
         : {}),
       // Status colors, brand-owned via theme.json (antd colorError /
-      // colorSuccess / colorWarning), so the semantic hues equal the legacy
-      // applied values by construction. INFO has no Astryx token family; the
-      // `info` seed reaches the page as `--color-info` and as the admin
-      // role accent.
+      // colorSuccess / colorWarning / colorInfo). `--color-info` itself comes
+      // from buildBaiCustomTokens.
       ...(error ? { '--color-error': error } : {}),
       ...(success ? { '--color-success': success } : {}),
       ...(warning ? { '--color-warning': warning } : {}),
       ...(errorMuted ? { '--color-error-muted': errorMuted } : {}),
       ...(successMuted ? { '--color-success-muted': successMuted } : {}),
       ...(warningMuted ? { '--color-warning-muted': warningMuted } : {}),
+      ...(infoMuted ? { '--color-info-muted': infoMuted } : {}),
+      // Status text roles (Astryx 0.7.7; icon and border roles alias them):
+      // the seed itself, as icons, field borders and danger menu items had it.
+      ...(error ? { '--color-text-error': error } : {}),
+      ...(success ? { '--color-text-success': success } : {}),
+      ...(warning ? { '--color-text-warning': warning } : {}),
+      ...(info ? { '--color-text-info': info } : {}),
       // Text/icons ON a solid status fill — antd `colorTextLightSolid`.
       // See ANTD_STATUS_ON_COLORS.
       ...ANTD_STATUS_ON_COLORS,
@@ -1316,6 +1330,8 @@ export const themeOptionsFromConfig = (
   const seeds = familyConfig?.seeds ?? config?.families?.default?.seeds;
   const headerBgValue =
     familyConfig?.headerBg ?? config?.families?.default?.headerBg;
+  const headerBgAdminValue =
+    familyConfig?.headerBgAdmin ?? config?.families?.default?.headerBgAdmin;
   const accentValue =
     role === 'admin'
       ? seeds?.info
@@ -1335,6 +1351,7 @@ export const themeOptionsFromConfig = (
     info: seedPairFromValue(seeds?.info),
     link: seedPairFromValue(seeds?.link),
     headerBg: seedPairFromValue(headerBgValue),
+    headerBgAdmin: seedPairFromValue(headerBgAdminValue),
     fontFamily:
       typeof config?.fontFamily === 'string' && config.fontFamily
         ? config.fontFamily

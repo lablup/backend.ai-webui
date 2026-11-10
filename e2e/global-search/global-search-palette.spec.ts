@@ -41,27 +41,11 @@ const search = async (page: Page, query: string) => {
   await searchInput(page).fill(query);
 };
 
-/**
- * The palette is behind the `experimental_global_search` user setting, which is
- * off by default. `addInitScript` runs before every document — including the
- * reloads `loginAsAdmin` / `navigateTo` trigger — so the flag is already in
- * `localStorage` by the time the settings atom first reads it.
- */
-const enableGlobalSearchSetting = async (page: Page) => {
-  await page.addInitScript(() => {
-    localStorage.setItem(
-      'backendaiwebui.settings.user.experimental_global_search',
-      'true',
-    );
-  });
-};
-
 test.describe(
   'Global Search Palette - Navigation',
   { tag: ['@regression', '@global-search', '@functional'] },
   () => {
     test.beforeEach(async ({ page, request }) => {
-      await enableGlobalSearchSetting(page);
       await loginAsAdmin(page, request);
       await navigateTo(page, 'summary');
     });
@@ -130,18 +114,19 @@ test.describe(
       page,
     }) => {
       await openPalette(page);
-      await search(page, 'Auto Logout');
+      await search(page, 'Automatic Update Check');
 
-      await resultRow(page, 'Auto Logout').click();
+      await resultRow(page, 'Automatic Update Check').click();
 
       // The param IS the highlight: it marks the item, then strips itself.
       // Asserting the un-stripped URL first would race that same window, so
       // the mark and the stripped URL are all this test looks at.
-      await expect(page.getByTestId('items-auto-logout')).toHaveAttribute(
-        'data-arrival',
-        'true',
+      await expect(
+        page.getByTestId('items-automatic-update-check'),
+      ).toHaveAttribute('data-arrival', 'true');
+      await expect(page).not.toHaveURL(
+        /setting=userSettings\.AutomaticUpdateCheck/,
       );
-      await expect(page).not.toHaveURL(/setting=userSettings\.AutoLogout/);
     });
 
     test('user can run the theme action from the palette', async ({ page }) => {

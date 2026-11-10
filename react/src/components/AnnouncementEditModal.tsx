@@ -5,8 +5,9 @@
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import {
-  DOMAIN_ANNOUNCEMENT_CONFIG_KEY,
+  readDomainAnnouncement,
   DomainAnnouncement,
+  withAnnouncement,
 } from '../helper/announcement';
 import {
   useDomainAppConfig,
@@ -15,7 +16,6 @@ import {
 import './AnnouncementEditModal.css';
 import BAICodeEditor from './BAICodeEditor';
 import BAIFormItem from './BAIFormItem';
-import { AstryxFormTextInput } from './astryxFormControls';
 import { Button } from '@lablup/ui-common/Button';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
 import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
@@ -32,6 +32,7 @@ import {
   BAISkeleton,
   useBAILogger,
   useErrorMessageResolver,
+  BAITextInput,
 } from 'backend.ai-ui';
 import {
   ALargeSmall,
@@ -67,7 +68,7 @@ type AnnouncementFormValues = { title: string };
 
 /**
  * Edits the domain's system announcement in the domain app config
- * (`domainConfig.announcement`, FR-3877). The content reads the saved
+ * (`domainConfig.settings.announcement`, #10713). The content reads the saved
  * announcement through Relay and suspends; the fallback keeps the modal
  * chrome on screen with a skeleton body while it loads.
  */
@@ -111,10 +112,14 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
   const { logger } = useBAILogger();
   const { getErrorMessage } = useErrorMessageResolver();
 
-  const announcement = useDomainAppConfig<DomainAnnouncement>(
-    DOMAIN_ANNOUNCEMENT_CONFIG_KEY,
-  );
+  const announcement = readDomainAnnouncement(useDomainAppConfig('settings'));
   const updateDomainAppConfig = useUpdateDomainAppConfig();
+  // One read-modify-write of `settings`, so the System Settings keys beside
+  // the announcement are kept as the manager holds them.
+  const writeAnnouncement = (next: DomainAnnouncement | undefined) =>
+    updateDomainAppConfig('settings', (current: unknown) =>
+      withAnnouncement(current, next),
+    );
 
   const formRef = useRef<FormInstance<AnnouncementFormValues>>(null);
   const [bodyDraft, setBodyDraft] = useState<string>();
@@ -144,7 +149,7 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
         body: body.trim() || undefined,
         updatedAt: new Date().toISOString(),
       };
-      await updateDomainAppConfig(DOMAIN_ANNOUNCEMENT_CONFIG_KEY, next);
+      await writeAnnouncement(next);
       appMessage.success(t('summary.AnnouncementUpdated'));
       onRequestClose(true);
     } catch (error) {
@@ -158,7 +163,7 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      await updateDomainAppConfig(DOMAIN_ANNOUNCEMENT_CONFIG_KEY, undefined);
+      await writeAnnouncement(undefined);
       appMessage.success(t('summary.AnnouncementDeleted'));
       onRequestClose(true);
     } catch (error) {
@@ -266,7 +271,7 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
             label={t('summary.AnnouncementTitle')}
             rules={[{ required: true, whitespace: true }]}
           >
-            <AstryxFormTextInput label={t('summary.AnnouncementTitle')} />
+            <BAITextInput aria-label={t('summary.AnnouncementTitle')} />
           </BAIFormItem>
         </Form>
         {!isEditorReady && <BAISkeleton rows={4} />}

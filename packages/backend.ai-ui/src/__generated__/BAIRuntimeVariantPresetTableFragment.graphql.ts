@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2beb1ee851c42df33e075e0cec070284>>
+ * @generated SignedSource<<214bb74534af2713681176969c7eaadb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,6 +17,7 @@ export type BAIRuntimeVariantPresetTableFragment$data = ReadonlyArray<{
   readonly createdAt: string;
   readonly description: string | null | undefined;
   readonly displayName: string | null | undefined;
+  readonly entityId: string;
   readonly id: string;
   readonly name: string;
   readonly rank: number;
@@ -68,6 +69,13 @@ return {
         "storageKey": null
       },
       "action": "NONE"
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
+      "storageKey": null
     },
     {
       "alias": null,
@@ -205,6 +213,6 @@ return {
 };
 })();
 
-(node as any).hash = "0b1cedcb66f99574c2f918dbfb394b85";
+(node as any).hash = "c0587b0be0ca13e0465a2699084c448d";
 
 export default node;

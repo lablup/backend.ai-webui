@@ -35,10 +35,10 @@
  ```tsx
  <BAICompactGroup>
    <BAIFormItem name="email_prefix" label={…} style={{ flex: 1 }} rules={…}>
-     <AstryxFormTextInput label={…} />
+     <TextInput />
    </BAIFormItem>
    <BAIFormItem name="email_suffix" label={…} style={{ flex: 1 }} rules={…}>
-     <AstryxFormTextInput label={…} />
+     <TextInput />
    </BAIFormItem>
  </BAICompactGroup>
  ```

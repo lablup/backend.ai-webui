@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0a60228f6132dfbdfb4861adb40cba91>>
+ * @generated SignedSource<<62ff9050dd16210606418146dfaa330f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,6 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type DeploymentSettingModal_deployment$data = {
+  readonly entityId: string;
   readonly id: string;
   readonly metadata: {
     readonly name: string;
@@ -22,6 +23,7 @@ export type DeploymentSettingModal_deployment$data = {
   };
   readonly replicaState: {
     readonly desiredReplicaCount: number;
+    readonly replicaCount: number;
   };
   readonly " $fragmentType": "DeploymentSettingModal_deployment";
 };
@@ -41,6 +43,13 @@ const node: ReaderFragment = {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
       "storageKey": null
     },
     {
@@ -105,6 +114,13 @@ const node: ReaderFragment = {
           "alias": null,
           "args": null,
           "kind": "ScalarField",
+          "name": "replicaCount",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "desiredReplicaCount",
           "storageKey": null
         }
@@ -116,6 +132,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "a1db8fa241030c6739e46cfa671510b0";
+(node as any).hash = "a3f99682153765330fcecce302611463";
 
 export default node;

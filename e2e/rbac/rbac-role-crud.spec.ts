@@ -1,5 +1,6 @@
 // spec: e2e/.agent-output/test-plan-rbac-management.md
 // Scenarios: 2.1 – 2.7 (Role CRUD lifecycle)
+import { createTestResources } from '../utils/test-resources';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import test, { expect, Page } from '@playwright/test';
 
@@ -7,6 +8,12 @@ const TEST_RUN_ID = Date.now().toString(36);
 const ROLE_NAME = `e2e-role-${TEST_RUN_ID}`;
 const ROLE_NAME_EDITED = `e2e-role-edited-${TEST_RUN_ID}`;
 const ROLE_DESCRIPTION = `E2E test role created at ${new Date().toISOString()}`;
+
+// A failed step skips the rest of the chain, including its UI purge, so the
+// role is also purged through the API, under either name.
+const resources = createTestResources();
+resources.declare('role', ROLE_NAME);
+resources.declare('role', ROLE_NAME_EDITED);
 
 // Run all groups in this file in order on a single worker so the independent
 // system-role check below doesn't interleave with the CRUD chain (role
@@ -19,6 +26,8 @@ test.describe.serial(
   'RBAC Role CRUD',
   { tag: ['@rbac', '@critical', '@functional'] },
   () => {
+    test.afterAll(() => resources.cleanup());
+
     // BAIPropertyFilter (Astryx PowerSearch) with more than one field opens a
     // Field / Operator / Value popover; see rbac-role-detail.spec.ts.
     async function applyRoleNameFilter(page: Page, roleName: string) {
@@ -72,60 +81,6 @@ test.describe.serial(
       }
     }
 
-    async function cleanupTestRole(page: Page, roleName: string) {
-      // Check Active tab first
-      await statusFilterOption(page, 'Active').click();
-      await clearRoleSearch(page);
-      const activeRow = page.getByRole('row').filter({ hasText: roleName });
-      const isActiveVisible = await activeRow
-        .isVisible({ timeout: 2000 })
-        .catch(() => false);
-
-      if (isActiveVisible) {
-        // Deactivate button is the first (and only) action button in Active view.
-        // It is wrapped in a BAINameActionCell popConfirm (Astryx Popover,
-        // role="dialog" labeled by the action's title) that requires a second
-        // "Deactivate" click.
-        await activeRow
-          .locator('.bai-name-action-cell-actions button')
-          .first()
-          .click();
-        await page
-          .getByRole('dialog', { name: 'Deactivate' })
-          .getByRole('button', { name: 'Deactivate', exact: true })
-          .click();
-        await expect(activeRow).toBeHidden({ timeout: 10000 });
-      }
-
-      // Check Inactive tab
-      await statusFilterOption(page, 'Inactive').click();
-      await clearRoleSearch(page);
-      const inactiveRow = page.getByRole('row').filter({ hasText: roleName });
-      const isInactiveVisible = await inactiveRow
-        .isVisible({ timeout: 2000 })
-        .catch(() => false);
-
-      if (isInactiveVisible) {
-        // Purge Role button is the second (last) action button in Inactive view
-        await inactiveRow
-          .locator('.bai-name-action-cell-actions button')
-          .last()
-          .click();
-        // BAIDeleteConfirmModal requires typing the role name into its
-        // textbox (carries `name="confirmText"`, not `id`) before Delete
-        // enables.
-        const purgeModal = page.getByRole('dialog', { name: 'Purge Role' });
-        await expect(purgeModal).toBeVisible({ timeout: 5000 });
-        await purgeModal.getByRole('textbox').fill(roleName);
-        await purgeModal.getByRole('button', { name: 'Delete' }).click();
-        await expect(inactiveRow).toBeHidden({ timeout: 10000 });
-      }
-
-      // Return to Active tab
-      await statusFilterOption(page, 'Active').click();
-      await clearRoleSearch(page);
-    }
-
     test('Superadmin can create a new custom role with name and description', async ({
       page,
       request,
@@ -135,10 +90,6 @@ test.describe.serial(
 
       // 2. Navigate to RBAC page
       await navigateTo(page, 'rbac');
-
-      // 3. Run cleanup to remove any leftover test roles from previous runs
-      await cleanupTestRole(page, ROLE_NAME);
-      await cleanupTestRole(page, ROLE_NAME_EDITED);
 
       // 4. Click the "Create Role" button
       await page.getByRole('button', { name: 'Create Role' }).click();
@@ -172,16 +123,16 @@ test.describe.serial(
       // 10. Fill in the Description field
       await modal.getByLabel('Description').fill(ROLE_DESCRIPTION);
 
-      // 11. Pick the required scope. BAISelect (Scope Type) and ScopeIdSelect
-      // (Target) render as Astryx Selector triggers (`role="button"`), each
-      // opening a floating `listbox`/`option` panel — not an antd
-      // `.ant-select`. A trigger's accessible name is its label plus its
-      // current value, so match the label as a substring.
+      // 11. Pick the required scope. Scope Type is a BAISelect trigger; Target
+      // is a combobox (project ComplexSelector) or, while it suspends, a
+      // BAISelect button, so the locator takes either.
       // A Project scope asks for its Target project.
       const scopeTypeTrigger = modal.getByRole('button', {
         name: 'Scope Type',
       });
-      const targetTrigger = modal.getByRole('button', { name: 'Target' });
+      const targetTrigger = modal
+        .getByRole('combobox', { name: 'Target' })
+        .or(modal.getByRole('button', { name: 'Target' }));
       await scopeTypeTrigger.click();
       await page.getByRole('option', { name: 'Project', exact: true }).click();
       await expect(targetTrigger).toBeEnabled({ timeout: 10000 });

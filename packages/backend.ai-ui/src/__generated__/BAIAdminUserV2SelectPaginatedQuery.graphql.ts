@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<68e94160a53a771a9a7b7e16a9114f05>>
+ * @generated SignedSource<<c024331f21dca106bf1243cc7f5dc0c8>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -26,9 +26,11 @@ export type UserV2Filter = {
   domainId?: UUIDFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
   email?: StringFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   fullName?: StringFilter | null | undefined;
   integrationName?: StringFilter | null | undefined;
   keypairs?: UserKeypairNestedFilter | null | undefined;
+  labels?: EntityLabelNestedFilter | null | undefined;
   modifiedAt?: DateTimeFilter | null | undefined;
   needPasswordChange?: boolean | null | undefined;
   project?: UserProjectNestedFilter | null | undefined;
@@ -120,6 +122,7 @@ export type KeypairFilter = {
   OR?: ReadonlyArray<KeypairFilter> | null | undefined;
   accessKey?: StringFilter | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   isActive?: boolean | null | undefined;
   isAdmin?: boolean | null | undefined;
   isDefault?: boolean | null | undefined;
@@ -134,6 +137,22 @@ export type UserDomainNestedFilter = {
 export type UserProjectNestedFilter = {
   isActive?: boolean | null | undefined;
   name?: StringFilter | null | undefined;
+};
+export type EntityLabelNestedFilter = {
+  every?: EntityLabelFilter | null | undefined;
+  exists?: boolean | null | undefined;
+  none?: EntityLabelFilter | null | undefined;
+  some?: EntityLabelFilter | null | undefined;
+};
+export type EntityLabelFilter = {
+  AND?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  NOT?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
+  key?: StringFilter | null | undefined;
+  value?: StringFilter | null | undefined;
 };
 export type UserV2OrderBy = {
   direction?: OrderDirection;
@@ -155,6 +174,7 @@ export type BAIAdminUserV2SelectPaginatedQuery$data = {
           readonly fullName: string | null | undefined;
           readonly username: string | null | undefined;
         };
+        readonly entityId: string;
         readonly id: string;
       };
     }>;
@@ -249,6 +269,13 @@ v4 = [
               {
                 "alias": null,
                 "args": null,
+                "kind": "ScalarField",
+                "name": "entityId",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
                 "concreteType": "UserV2BasicInfo",
                 "kind": "LinkedField",
                 "name": "basicInfo",
@@ -316,16 +343,16 @@ return {
     "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "368e3f7b0cad178c48a17c2f55fa6b49",
+    "cacheID": "d964e6db69be3ea4621776141153a22f",
     "id": null,
     "metadata": {},
     "name": "BAIAdminUserV2SelectPaginatedQuery",
     "operationKind": "query",
-    "text": "query BAIAdminUserV2SelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: UserV2Filter\n  $orderBy: [UserV2OrderBy!]\n) {\n  adminUsersV2(offset: $offset, limit: $limit, filter: $filter, orderBy: $orderBy) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          username\n          email\n          fullName\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIAdminUserV2SelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: UserV2Filter\n  $orderBy: [UserV2OrderBy!]\n) {\n  adminUsersV2(offset: $offset, limit: $limit, filter: $filter, orderBy: $orderBy) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          username\n          email\n          fullName\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "2f169ca5be6fb0d96fbdd2d14c0ea2bb";
+(node as any).hash = "f75c9575eef21ebcd16c8f12a9b15dbe";
 
 export default node;

@@ -1,5 +1,6 @@
 // spec: e2e/.agent-output/test-plan-project.md
 import { getE2EDomainName } from '../utils/e2e-scope';
+import { createTestResources } from '../utils/test-resources';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import { clickRowAction } from '../utils/user-profile-util';
 import test, { expect, Page } from '@playwright/test';
@@ -11,9 +12,14 @@ const UPDATED_DESCRIPTION = 'Updated E2E description';
 // Each CRUD test provisions its own uniquely-named project so that edit,
 // filter and delete no longer depend on a create test having run first.
 // TEST_RUN_ID keeps names unique across runs; the per-test label keeps them
-// unique within a run.
+// unique within a run. The name is registered so afterEach purges it via the
+// admin API even when the test fails before its own UI cleanup.
+const resources = createTestResources();
 function projectName(label: string) {
-  return `e2e-test-project-${TEST_RUN_ID}-${label}`;
+  return resources.declare(
+    'project',
+    `e2e-test-project-${TEST_RUN_ID}-${label}`,
+  );
 }
 
 // `BAICard`'s `tabList` renders a `nav[aria-label="Tabs"]` of plain
@@ -85,9 +91,8 @@ async function cleanupTestProject(page: Page, projectName: string) {
     }).toPass({ timeout: 60000 });
   }
 
-  // Switch to Inactive tab and purge. `BAIRadioGroup` renders on Astryx
-  // `SegmentedControl`, whose options are `<button role="radio">` with no
-  // `<label>` wrapper (see `BAIRadioGroup.tsx`).
+  // Switch to Inactive tab and purge. The status toggle is `BAISegmentedControl`,
+  // whose options are `<button role="radio">` with no `<label>` wrapper.
   await page.getByRole('radio', { name: 'Inactive', exact: true }).click();
   const inactiveProjectRow = page
     .getByRole('row')
@@ -203,8 +208,7 @@ test.describe(
 
       // 5. Verify the Active radio button is selected and that row has Type = GENERAL
       // (Active is a filter tab, not a table column; the project is active).
-      // `ProjectPage.tsx`'s status toggle is `BAIRadioGroup`, rendered on
-      // Astryx `SegmentedControl` since ticket 10 (`BAIRadioGroup.tsx`).
+      // `ProjectPage.tsx`'s status toggle is `BAISegmentedControl`.
       // `exact` matters: a substring match on "Active" also hits "Inactive".
       await expect(
         page.getByRole('radio', { name: 'Active', exact: true }),
@@ -251,15 +255,14 @@ test.describe(
   'Project CRUD',
   { tag: ['@critical', '@project', '@functional'] },
   () => {
+    test.afterEach(() => resources.cleanup());
+
     test('Admin can create a new project', async ({ page, request }) => {
       const name = projectName('create');
       await loginAsAdmin(page, request);
       await navigateTo(page, 'project');
 
       await createProject(page, name, PROJECT_DESCRIPTION);
-
-      // Self-cleanup so the created project does not leak to later runs.
-      await cleanupTestProject(page, name);
     });
 
     test('Admin can edit a project', async ({ page, request }) => {
@@ -305,9 +308,6 @@ test.describe(
       await expect(
         projectRow.getByRole('cell', { name: UPDATED_DESCRIPTION }),
       ).toBeVisible({ timeout: 10000 });
-
-      // Self-cleanup.
-      await cleanupTestProject(page, name);
     });
 
     test('Admin can filter projects by name', async ({ page, request }) => {
@@ -328,8 +328,10 @@ test.describe(
       // value is already filled in, committing immediately on click — no
       // separate field pick + edit-popover + Apply step
       // (`usePowerSearchSource.ts`'s content-search branch).
+      // The pre-applied Type chip leaves the unfocused input 0px wide, which
+      // Playwright cannot click; it takes its width on focus.
       const searchBar = page.getByRole('combobox', { name: 'Search filters' });
-      await searchBar.click();
+      await searchBar.focus();
       await searchBar.fill(name);
       await page
         .getByRole('option', { name: `"${name}"`, exact: true })

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5d96c676b585fb82181829b7d4bd8b91>>
+ * @generated SignedSource<<a36867902fa02327ea974e0968d6af53>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -22,6 +22,7 @@ export type useModelStoreProjectQuery$data = {
           readonly basicInfo: {
             readonly name: string;
           };
+          readonly entityId: string;
           readonly id: string;
         };
       }>;
@@ -33,6 +34,7 @@ export type useModelStoreProjectQuery$data = {
         readonly basicInfo: {
           readonly name: string;
         };
+        readonly entityId: string;
         readonly id: string;
       };
     }>;
@@ -89,6 +91,13 @@ v4 = [
         "plural": false,
         "selections": [
           (v3/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "entityId",
+            "storageKey": null
+          },
           {
             "alias": null,
             "args": null,
@@ -229,16 +238,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "cfbcff38c4659acdc5ba05a27e13a461",
+    "cacheID": "10c95ab49b74d86bea9b339edf0aede0",
     "id": null,
     "metadata": {},
     "name": "useModelStoreProjectQuery",
     "operationKind": "query",
-    "text": "query useModelStoreProjectQuery(\n  $userId: UUID!\n  $domainName: String!\n) {\n  scopedProjectsV2(scope: {user: [{value: $userId}]}, filter: {type: {equals: MODEL_STORE}, isActive: true}) @since(version: \"26.9.0a1\") {\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n  domainV2(domainName: $domainName) @deprecatedSince(version: \"26.9.0a1\") {\n    projects(filter: {type: {equals: MODEL_STORE}, isActive: true}) {\n      edges {\n        node {\n          id\n          basicInfo {\n            name\n          }\n        }\n      }\n    }\n    id\n  }\n}\n"
+    "text": "query useModelStoreProjectQuery(\n  $userId: UUID!\n  $domainName: String!\n) {\n  scopedProjectsV2(scope: {user: [{value: $userId}]}, filter: {type: {equals: MODEL_STORE}, isActive: true}) @since(version: \"26.9.0a1\") {\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n  domainV2(domainName: $domainName) @deprecatedSince(version: \"26.9.0a1\") {\n    projects(filter: {type: {equals: MODEL_STORE}, isActive: true}) {\n      edges {\n        node {\n          id\n          entityId\n          basicInfo {\n            name\n          }\n        }\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "72e6b16bbeffe81aafe3f2357db7ea0d";
+(node as any).hash = "53378a415725b39954098e3ca5244c7b";
 
 export default node;

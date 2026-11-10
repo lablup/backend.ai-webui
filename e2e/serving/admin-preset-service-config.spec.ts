@@ -148,8 +148,8 @@ async function installLegacyPresetFlagOverride(page: Page): Promise<void> {
 /**
  * Select an option in a `BAIComplexSelect`-backed field (here: the Image
  * select, `BAIScopedImageSelect`). The Astryx ComplexSelector's field
- * trigger is a plain `<button>` whose accessible name is the field label
- * (`aria-haspopup="dialog"`, NOT a combobox); its popup is a `role="dialog"`
+ * trigger is a `role="combobox"` named by the field label
+ * (`aria-haspopup="dialog"`); its popup is a `role="dialog"`
  * (aria-labelled with the same field label) hosting a search `TextInput` with
  * `role="combobox"` named "Search options" (ui-common `uic.PagedSelector.searchOptions`,
  * FR-3603 / #8914) and a `role="listbox"` of plain, clickable `role="option"`
@@ -166,7 +166,7 @@ async function selectComplexSelectOption(
   optionLabel: string,
   optionRowName: string,
 ): Promise<void> {
-  await page.getByRole('button', { name: fieldLabel, exact: true }).click();
+  await page.getByRole('combobox', { name: fieldLabel, exact: true }).click();
   const popup = page.getByRole('dialog', { name: fieldLabel, exact: true });
   await expect(popup).toBeVisible({ timeout: 10000 });
   // Narrow the (server-side) search to the wanted option, then click it.
@@ -182,7 +182,7 @@ async function selectComplexSelectOption(
   await expect(popup).toBeHidden({ timeout: 5000 });
   // The trigger renders the selected label once the selection committed.
   await expect(
-    page.getByRole('button', { name: fieldLabel, exact: true }),
+    page.getByRole('combobox', { name: fieldLabel, exact: true }),
   ).toContainText(optionLabel, { timeout: 10000 });
 }
 
@@ -443,10 +443,10 @@ test.describe(
       // Pre-Start Actions — add one row.
       await page.getByRole('button', { name: 'Add Pre-Start Action' }).click();
       await page
-        .getByRole('textbox', { name: 'Action', exact: true })
+        .getByRole('textbox', { name: 'Action 1', exact: true })
         .fill('warm_cache');
       await page
-        .getByRole('textbox', { name: 'Args (JSON)', exact: true })
+        .getByRole('textbox', { name: 'Args (JSON) 1', exact: true })
         .fill('{"size": 128}');
 
       // Deployment Defaults — replicaCount is required with no default.
@@ -680,10 +680,10 @@ test.describe(
 
       await page.getByRole('button', { name: 'Add Pre-Start Action' }).click();
       await page
-        .getByRole('textbox', { name: 'Action', exact: true })
+        .getByRole('textbox', { name: 'Action 1', exact: true })
         .fill('warm_cache');
       await page
-        .getByRole('textbox', { name: 'Args (JSON)', exact: true })
+        .getByRole('textbox', { name: 'Args (JSON) 1', exact: true })
         .fill('{"size": 128}');
 
       await page.getByText('Skip to Review', { exact: true }).click();

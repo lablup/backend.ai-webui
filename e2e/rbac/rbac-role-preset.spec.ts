@@ -1,5 +1,11 @@
 // Covers the RBAC page's Presets tab and the system-role "View Presets" link
 // added in #9924 (FR-4065). Read-only: no preset or role is created or edited.
+import {
+  isLabelFilter,
+  mockEntityLabelOnFirstRow,
+  waitForGraphQLVariables,
+} from '../utils/entity-label-mock';
+import { skipUnlessLabelableEntityType } from '../utils/feature-gate-util';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import test, { expect, Locator, Page } from '@playwright/test';
 
@@ -199,8 +205,7 @@ test.describe(
       );
 
       const filterChip = page.getByRole('button', {
-        name: 'Remove Preset Name: contains',
-        exact: true,
+        name: /^Remove Preset Name: contains /,
       });
       await filterChip.click();
       await expect(filterChip).toBeHidden({ timeout: 5000 });
@@ -220,7 +225,7 @@ test.describe(
       );
       await expect(
         page.getByRole('button', {
-          name: 'Remove Scope Type: equals',
+          name: 'Remove Scope Type: equals Project',
           exact: true,
         }),
       ).toBeVisible();
@@ -235,7 +240,7 @@ test.describe(
       );
       await expect(
         page.getByRole('button', {
-          name: 'Remove Scope Type: equals',
+          name: 'Remove Scope Type: equals Project',
           exact: true,
         }),
       ).toBeHidden();
@@ -255,6 +260,75 @@ test.describe(
         })
         .toBeGreaterThan(1);
     });
+
+    // #10691: no shared preset carries a label and labelling one would change
+    // RBAC state, so the first row's label cell and the label-filtered list
+    // answer are mocked; the test checks what the click sends and shows.
+    test(
+      'Superadmin can filter role presets by clicking a label token',
+      {
+        tag: ['@requires-manager-v26.10'],
+      },
+      async ({ page }) => {
+        await skipUnlessLabelableEntityType(
+          page,
+          'role_preset',
+          'Role preset labels require a manager that accepts them (#10691)',
+        );
+        // The superadmin intro tour (AdminViewSwitchTour) otherwise covers the page.
+        await page.addInitScript(() => {
+          for (const tour of ['back_to_user_view', 'back_to_admin_settings']) {
+            localStorage.setItem(
+              `backendaiwebui.settings.user.has_opened_tour_${tour}`,
+              'true',
+            );
+          }
+        });
+        const label = {
+          key: 'e2e-mock-label',
+          value: Date.now().toString(36),
+        };
+        const mock = await mockEntityLabelOnFirstRow(page, {
+          listQuery: 'RolePresetListTabQuery',
+          connectionField: 'adminRolePresets',
+          label,
+        });
+
+        await openPresetsTab(page);
+        const labelToken = page.getByRole('button', {
+          name: `${label.key}=${label.value}`,
+          exact: true,
+        });
+        await expect(labelToken).toBeVisible({ timeout: SLOW_PAGE_TIMEOUT });
+        await expect(dataRows(page).nth(1)).toBeVisible();
+
+        // Act
+        const labelRequest = waitForGraphQLVariables(
+          page,
+          'RolePresetListTabQuery',
+          (variables) => isLabelFilter(variables.filter, label),
+        );
+        await labelToken.click();
+        const variables = await labelRequest;
+        expect(variables.offset).toBe(0);
+        expect(variables.filter.deleted).toBe(false);
+
+        const filterGroup = page
+          .getByRole('group', { name: 'Search filters' })
+          .first();
+        await expect(
+          filterGroup.getByRole('button', { name: /^Label key/ }),
+        ).toBeVisible();
+        await expect(
+          filterGroup.getByRole('button', { name: /^Label value/ }),
+        ).toBeVisible();
+        await expect(dataRows(page)).toHaveCount(1, { timeout: 20000 });
+        await expect(
+          dataRows(page).first().getByRole('cell').nth(PRESET_NAME_COLUMN),
+        ).toHaveText(mock.targetName() ?? '');
+        await expect(labelToken).toBeVisible();
+      },
+    );
   },
 );
 
@@ -329,7 +403,8 @@ test.describe(
       ).toHaveAttribute('aria-current', 'true');
 
       const readOnlyAlert = drawer.getByRole('alert').filter({
-        hasText: 'Permissions of a system role cannot be edited here.',
+        hasText:
+          "Roles automatically created from a preset inherit that preset's permissions.",
       });
       await expect(readOnlyAlert).toBeVisible({ timeout: 10000 });
 
@@ -352,11 +427,9 @@ test.describe(
         'aria-current',
         'true',
       );
+      // A role linked to a preset opens exactly that preset by id.
       await expect(
-        page.getByRole('button', {
-          name: 'Remove Scope Type: equals',
-          exact: true,
-        }),
+        page.getByRole('button', { name: /^Remove ID: equals / }),
       ).toBeVisible({ timeout: 10000 });
       await expectEveryRowCell(
         page,

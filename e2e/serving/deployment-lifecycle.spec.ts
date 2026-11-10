@@ -48,6 +48,11 @@
 // then tear the deployment down through the same delete flow and clean up
 // everything the run itself created.
 import {
+  createAdminApiContext,
+  deleteDeploymentViaApi,
+  listDeploymentsByPattern,
+} from '../utils/admin-api';
+import {
   cleanupDeploymentFixtures,
   cleanupDeploymentSafely,
   createDeploymentShell,
@@ -58,6 +63,7 @@ import {
   provisionDeploymentFixtures,
   provisionDeploymentModelFolder,
 } from '../utils/deployment-fixtures';
+import { skipUnlessManagerVersion } from '../utils/feature-gate-util';
 import { loginAsAdmin, modifyConfigToml, navigateTo } from '../utils/test-util';
 import { getFormItemControlByLabel } from '../utils/test-util-antd';
 import { test, expect, Page } from '@playwright/test';
@@ -89,6 +95,38 @@ function columnHeader(page: Page, label: string) {
     .filter({ hasText: new RegExp(`^${escapeForRegExp(label)}`) });
 }
 
+// The deployment list's Serving / Paused / Terminated status tabs.
+function statusTab(page: Page, label: 'Serving' | 'Paused' | 'Terminated') {
+  return page.getByRole('radio', { name: label, exact: true });
+}
+
+// `deleteDeploymentAndVerify` for a deployment listed under the Paused tab:
+// the shared helper opens the default Serving tab, which never shows it.
+async function deletePausedDeploymentAndVerify(
+  page: Page,
+  name: string,
+): Promise<void> {
+  const row = page.getByRole('row', {
+    name: new RegExp(escapeForRegExp(name)),
+  });
+  await expect(async () => {
+    await navigateTo(page, 'deployments');
+    await statusTab(page, 'Paused').click();
+    await expect(row).toBeVisible({ timeout: 15000 });
+  }).toPass({ timeout: 60_000 });
+  await row.getByRole('button', { name: 'delete' }).click();
+  const dialog = page.getByRole('dialog', { name: /Delete Deployment/ });
+  await expect(dialog).toBeVisible({ timeout: 10000 });
+  await page.getByPlaceholder(name).fill(name);
+  const deleteButton = dialog.getByRole('button', {
+    name: 'Delete',
+    exact: true,
+  });
+  await expect(deleteButton).toBeEnabled({ timeout: 5000 });
+  await deleteButton.click();
+  await expect(row).toHaveCount(0, { timeout: 30000 });
+}
+
 // Local fork of deployment-fixtures.ts's `selectRevisionModalOption`: its
 // popup search box's accessible name is actually "Search options" (confirmed
 // live), not "Search" -- kept spec-local rather than editing the shared
@@ -98,7 +136,7 @@ async function selectRevisionModalOptionLocal(
   fieldLabel: string,
   optionName: string,
 ): Promise<void> {
-  await page.getByRole('button', { name: fieldLabel, exact: true }).click();
+  await page.getByRole('combobox', { name: fieldLabel, exact: true }).click();
   const popup = page.getByRole('dialog', { name: fieldLabel, exact: true });
   await expect(popup).toBeVisible({ timeout: 10000 });
   await popup
@@ -109,7 +147,7 @@ async function selectRevisionModalOptionLocal(
   await option.click();
   await expect(popup).toBeHidden({ timeout: 5000 });
   await expect(
-    page.getByRole('button', { name: fieldLabel, exact: true }),
+    page.getByRole('combobox', { name: fieldLabel, exact: true }),
   ).toContainText(optionName, { timeout: 5000 });
 }
 
@@ -118,6 +156,7 @@ test.describe(
   { tag: ['@functional', '@regression', '@serving', '@deployment'] },
   () => {
     let createdDeploymentName: string | null = null;
+    let pausedDeploymentName: string | null = null;
 
     test.beforeEach(async ({ page, request }) => {
       await loginAsAdmin(page, request);
@@ -127,6 +166,16 @@ test.describe(
       if (createdDeploymentName) {
         await cleanupDeploymentSafely(page, createdDeploymentName);
         createdDeploymentName = null;
+      }
+      if (pausedDeploymentName) {
+        const name = pausedDeploymentName;
+        pausedDeploymentName = null;
+        await deletePausedDeploymentAndVerify(page, name).catch((error) =>
+          console.warn(
+            `[afterEach] could not clean up paused deployment "${name}":`,
+            error,
+          ),
+        );
       }
     });
 
@@ -147,19 +196,30 @@ test.describe(
             .getByRole('navigation', { name: 'Side navigation' })
             .getByText('Deployments', { exact: true }),
         ).toBeVisible({ timeout: 20000 });
-        await expect(page.getByRole('radio', { name: 'Running' })).toBeChecked({
+        // `BAISegmentedControl` renders Astryx `SegmentedControl`: each tab is a
+        // directly-visible `<button role="radio">`.
+        await expect(statusTab(page, 'Serving')).toBeChecked({
           timeout: 20000,
         });
-        // `BAIRadioGroup` (`react/src/components/BAIRadioGroup.tsx`) has
-        // rendered on Astryx `SegmentedControl` since ticket 10 — a real,
-        // directly-visible `<button role="radio">`
-        // (`SegmentedControlItem.tsx`), not antd's button-style radio group
-        // with its opacity:0 input behind a clickable label wrapper. No
-        // `.ant-radio-button-wrapper` workaround is needed any more; the
-        // radio role itself is visible.
-        await expect(
-          page.getByRole('radio', { name: 'Terminated' }),
-        ).toBeVisible();
+        await expect(statusTab(page, 'Paused')).toBeVisible();
+        await expect(statusTab(page, 'Paused')).not.toBeChecked();
+        await expect(statusTab(page, 'Terminated')).toBeVisible();
+        await expect(statusTab(page, 'Terminated')).not.toBeChecked();
+
+        // The Serving and Paused labels carry a help icon whose tooltip
+        // explains the Desired Replicas split; the icon, not the tab, is
+        // the hover target.
+        await statusTab(page, 'Serving').locator('svg').hover();
+        await expect(page.getByRole('tooltip')).toContainText(
+          'Desired Replicas set to 1 or more',
+        );
+        await page.mouse.move(0, 0);
+        await expect(page.getByRole('tooltip')).toHaveCount(0);
+        await statusTab(page, 'Paused').locator('svg').hover();
+        await expect(page.getByRole('tooltip')).toContainText(
+          'Desired Replicas at 0',
+        );
+        await page.mouse.move(0, 0);
         await expect(
           page.getByRole('button', { name: 'Refresh', exact: true }),
         ).toBeVisible();
@@ -177,9 +237,7 @@ test.describe(
         await expect(
           page.getByRole('columnheader', { name: 'Lifecycle' }),
         ).toBeVisible();
-        await expect(
-          page.getByRole('columnheader', { name: /Replicas/ }),
-        ).toBeVisible();
+        await expect(columnHeader(page, 'Replicas')).toBeVisible();
         await expect(
           page.getByRole('columnheader', { name: 'Model' }),
         ).toBeVisible();
@@ -293,9 +351,9 @@ test.describe(
         await expect(page.getByText(deploymentName).first()).toBeHidden({
           timeout: 30000,
         });
-        // `BAIRadioGroup` renders a directly-clickable `role="radio"` button
+        // `BAISegmentedControl` renders a directly-clickable `role="radio"` button
         // (see comment in "Admin can view the deployments list..." above).
-        await page.getByRole('radio', { name: 'Terminated' }).click();
+        await statusTab(page, 'Terminated').click();
         await expect(page.getByText(deploymentName).first()).toBeHidden({
           timeout: 10000,
         });
@@ -303,6 +361,176 @@ test.describe(
         createdDeploymentName = null;
       },
     );
+
+    test(
+      'Admin can see why a paused deployment is paused',
+      { tag: ['@requires-manager-v26.10'] },
+      async ({ page }) => {
+        // The superadmin intro tour (AdminViewSwitchTour) otherwise covers
+        // the list.
+        await page.addInitScript(() => {
+          localStorage.setItem(
+            'backendaiwebui.settings.user.has_opened_tour_back_to_user_view',
+            'true',
+          );
+          localStorage.setItem(
+            'backendaiwebui.settings.user.has_opened_tour_back_to_admin_settings',
+            'true',
+          );
+        });
+        await skipUnlessManagerVersion(
+          page,
+          '26.10.0a1',
+          'The pause cause needs ReplicaState.replicaCount, manager >= 26.10.0 (#10662)',
+        );
+        const deploymentName = `e2e-plan-pause-cause-${Date.now()}`;
+        try {
+          await navigateTo(page, 'deployments');
+          await createDeploymentShell(page, deploymentName);
+
+          // 1. Set Desired Replicas to 0: the user-set replica count is 0.
+          await page.getByRole('button', { name: 'Edit', exact: true }).click();
+          const dialog = page.getByRole('dialog', { name: 'Edit Deployment' });
+          await expect(dialog).toBeVisible({ timeout: 20000 });
+          await dialog
+            .getByRole('spinbutton', { name: /Desired Replicas/ })
+            .fill('0');
+          await dialog.getByRole('button', { name: 'Save' }).click();
+          await expect(dialog).toBeHidden({ timeout: 20000 });
+          await expect(metadataValue(page, 'Desired Replicas')).toHaveText(
+            '0',
+            { timeout: 20000 },
+          );
+
+          // A shell without a revision stays PENDING, and only a READY or
+          // HEALTHY deployment reads as paused, so report this one as READY.
+          await page.route('**/admin/gql', async (route) => {
+            if (
+              !(route.request().postData() ?? '').includes(
+                'DeploymentListPageQuery',
+              )
+            ) {
+              return route.fallback();
+            }
+            const response = await route.fetch();
+            const body = await response.json();
+            const markReady = (value: unknown): void => {
+              if (!value || typeof value !== 'object') return;
+              const node = value as Record<string, any>;
+              if (node.metadata?.name === deploymentName) {
+                node.metadata.status = 'READY';
+              }
+              Object.values(node).forEach(markReady);
+            };
+            markReady(body);
+            await route.fulfill({ response, json: body });
+          });
+
+          // 2. The Paused tab shows the deployment with its pause cause. The
+          // tab's accessible name also carries its help tooltip.
+          const pausedTab = page.getByRole('radio', { name: /^Paused\b/ });
+          const row = page.getByRole('row', {
+            name: new RegExp(escapeForRegExp(deploymentName)),
+          });
+          await expect(async () => {
+            await navigateTo(page, 'deployments');
+            await pausedTab.click();
+            await expect(row).toBeVisible({ timeout: 15000 });
+          }).toPass({ timeout: 60_000 });
+          const lifecycleIndex = await page
+            .getByRole('columnheader')
+            .evaluateAll((headers) =>
+              headers.findIndex((h) => h.textContent?.trim() === 'Lifecycle'),
+            );
+          expect(lifecycleIndex).toBeGreaterThanOrEqual(0);
+          const lifecycleCell = row.locator(
+            `td:nth-child(${lifecycleIndex + 1})`,
+          );
+          await expect(lifecycleCell).toContainText('Paused');
+          await expect(lifecycleCell).toContainText('Set by user');
+          await expect(lifecycleCell).not.toContainText('Auto-scaling');
+        } finally {
+          // A cleanup error must not replace the test's own failure; the
+          // global teardown sweeps any `e2e-plan-` leftover.
+          await (async () => {
+            const api = await createAdminApiContext();
+            try {
+              const created = await listDeploymentsByPattern(
+                api,
+                new RegExp(`^${escapeForRegExp(deploymentName)}$`),
+              );
+              for (const { id } of created) {
+                await deleteDeploymentViaApi(api, id);
+              }
+            } finally {
+              await api.dispose();
+            }
+          })().catch((error) =>
+            console.warn(
+              `[cleanup] could not delete deployment "${deploymentName}":`,
+              error,
+            ),
+          );
+        }
+      },
+    );
+
+    test('Admin can find a deployment with zero Desired Replicas under the Paused tab', async ({
+      page,
+    }) => {
+      const deploymentName = `e2e-plan-paused-${Date.now()}`;
+      await navigateTo(page, 'deployments');
+      await createDeploymentShell(page, deploymentName);
+      createdDeploymentName = deploymentName;
+
+      // 1. Set Desired Replicas to 0 from the detail page's Edit modal.
+      await page.getByRole('button', { name: 'Edit', exact: true }).click();
+      const dialog = page.getByRole('dialog', { name: 'Edit Deployment' });
+      await expect(dialog).toBeVisible({ timeout: 20000 });
+      const replicasInput = dialog.getByRole('spinbutton', {
+        name: /Desired Replicas/,
+      });
+      await expect(replicasInput).toHaveValue('1');
+      await replicasInput.fill('0');
+      await dialog.getByRole('button', { name: 'Save' }).click();
+      await expect(dialog).toBeHidden({ timeout: 20000 });
+      await expect(metadataValue(page, 'Desired Replicas')).toHaveText('0', {
+        timeout: 20000,
+      });
+      // From here on only the Paused tab lists it.
+      pausedDeploymentName = deploymentName;
+      createdDeploymentName = null;
+
+      // 2. The Paused tab lists it, and the choice lands in the URL. The
+      // list read can lag the mutation, so re-navigate until the row shows.
+      const row = page.getByRole('row', {
+        name: new RegExp(escapeForRegExp(deploymentName)),
+      });
+      await expect(async () => {
+        await navigateTo(page, 'deployments');
+        await statusTab(page, 'Paused').click();
+        await expect(row).toBeVisible({ timeout: 15000 });
+      }).toPass({ timeout: 60_000 });
+      await expect(statusTab(page, 'Paused')).toBeChecked();
+      await expect(page).toHaveURL(/[?&]statusCategory=paused(&|$)/);
+
+      // 3. The tab survives a reload.
+      await page.reload();
+      await expect(statusTab(page, 'Paused')).toBeChecked({ timeout: 20000 });
+      await expect(row).toBeVisible({ timeout: 20000 });
+
+      // 4. The Serving tab does not list it. Switching from Paused keeps the
+      // previous rows until the Serving page arrives, so the row disappearing
+      // means the Serving result is the one on screen.
+      await statusTab(page, 'Serving').click();
+      await expect(statusTab(page, 'Serving')).toBeChecked();
+      await expect(page).not.toHaveURL(/statusCategory=paused/);
+      await expect(row).toHaveCount(0, { timeout: 20000 });
+
+      // 5. Delete it from the Paused tab.
+      await deletePausedDeploymentAndVerify(page, deploymentName);
+      pausedDeploymentName = null;
+    });
   },
 );
 
@@ -400,7 +628,7 @@ test.describe(
         revisionTabBar(page).getByRole('button', { name: 'Add Revision' }),
       ).toBeVisible();
 
-      // Replicas section (`DeploymentReplicasCard.tsx`'s `BAIRadioGroup`
+      // Replicas section (`DeploymentReplicasCard.tsx`'s `BAISegmentedControl`
       // toggle — see the deployments list page's toggle comment above).
       // The title shares its element with the help icon's tooltip text, so
       // anchor on the leading word instead of an exact match.
@@ -427,7 +655,7 @@ test.describe(
         { timeout: 20000 },
       );
       await expect(columnHeader(page, 'Metric Source')).toBeVisible();
-      await expect(columnHeader(page, 'Cooldown Sec.')).toBeVisible();
+      await expect(columnHeader(page, 'Cooldown (s)')).toBeVisible();
       await expect(columnHeader(page, 'Step Size')).toBeVisible();
       await expect(columnHeader(page, 'Min / MAX Replicas')).toBeVisible();
       await expect(columnHeader(page, 'Last Triggered')).toBeVisible();
@@ -565,7 +793,7 @@ test.describe(
       const dialog = page.getByRole('dialog', { name: /Add Revision/ });
       await expect(dialog).toBeVisible({ timeout: 20000 });
 
-      // 2. Select the "Advanced Mode" segmented-control option. `BAIRadioGroup`
+      // 2. Select the "Advanced Mode" segmented-control option. `BAISegmentedControl`
       // now renders Astryx `SegmentedControl` -- a directly-clickable
       // `role="radio"` button, not antd's hidden-input-behind-a-label.
       await dialog.getByRole('radio', { name: 'Advanced Mode' }).click();
@@ -575,10 +803,9 @@ test.describe(
         timeout: 10000,
       });
       await expect(dialog.getByText('Select Folder')).toBeVisible();
-      // Runtime is a ComplexSelector trigger button ("Select Runtime
-      // Variant" placeholder), not a native combobox.
+      // Runtime is a ComplexSelector: its trigger is a role="combobox".
       await expect(
-        dialog.getByRole('button', { name: 'Runtime' }),
+        dialog.getByRole('combobox', { name: 'Runtime', exact: true }),
       ).toBeVisible();
       await expect(
         dialog.getByRole('checkbox', { name: 'Enable Health Check' }),
@@ -588,15 +815,18 @@ test.describe(
       await expect(
         dialog.getByRole('separator', { name: 'Environments' }),
       ).toBeVisible();
-      await expect(dialog.getByText('Environments / Version')).toBeVisible();
+      await expect(
+        dialog.locator('.uic-form-item__label', {
+          hasText: 'Environments / Version',
+        }),
+      ).toBeVisible();
       await expect(
         dialog.getByRole('button', { name: 'Add environment variables' }),
       ).toBeVisible();
       await expect(dialog.getByText('Cluster & Resources')).toBeVisible({
         timeout: 20000,
       });
-      // Resource Presets is also a ComplexSelector trigger button, not a
-      // native combobox.
+      // Resource Presets is a BAISelect (Astryx Selector) trigger button.
       await expect(
         dialog.getByRole('button', { name: 'Resource Presets' }),
       ).toBeVisible({ timeout: 20000 });
@@ -671,7 +901,7 @@ test.describe(
           ).toBeChecked();
 
           // 2. Select the ensured preset from the "Preset" select — the
-          // ComplexSelector interaction (trigger button → search → option
+          // ComplexSelector interaction (combobox trigger → search → option
           // click) lives on selectRevisionModalOptionLocal above.
           await selectRevisionModalOptionLocal(
             page,
@@ -819,7 +1049,7 @@ test.describe(
             .click();
           const dialog = page.getByRole('dialog', { name: /Add Revision/ });
           await expect(dialog).toBeVisible({ timeout: 20000 });
-          // `BAIRadioGroup` renders Astryx `SegmentedControl` -- a
+          // `BAISegmentedControl` renders Astryx `SegmentedControl` -- a
           // directly-clickable `role="radio"` button (see the "view
           // Advanced Mode fields" test above).
           await dialog.getByRole('radio', { name: 'Advanced Mode' }).click();
@@ -838,7 +1068,7 @@ test.describe(
           );
 
           // 3. Select the "custom" runtime variant -- Runtime is the same
-          // ComplexSelector pattern (trigger button -> popup search -> option
+          // ComplexSelector pattern (combobox trigger -> popup search -> option
           // click) as Preset/Model Folder now, not an antd Select.
           await selectRevisionModalOptionLocal(page, 'Runtime', 'custom');
 
@@ -869,7 +1099,7 @@ test.describe(
           // dies on the missing values with no visible error at all --
           // observed live as a click that produced no form error, no
           // notification, and no mutation. Gate on the section's landmark --
-          // also a ComplexSelector trigger button now, not a combobox.
+          // a BAISelect (Astryx Selector) trigger button.
           await expect(
             dialog.getByRole('button', { name: 'Resource Presets' }),
           ).toBeVisible({ timeout: 30000 });
@@ -1073,7 +1303,7 @@ test.describe(
         dialog.getByRole('spinbutton', { name: /Step Size/ }),
       ).toHaveValue('1');
       await expect(
-        dialog.getByRole('spinbutton', { name: /Cooldown Sec\./ }),
+        dialog.getByRole('spinbutton', { name: /Cooldown \(s\)/ }),
       ).toHaveValue('300');
       await expect(
         dialog.getByRole('spinbutton', { name: /Min Replicas/ }),
@@ -1122,7 +1352,7 @@ test.describe(
         .getByRole('spinbutton', { name: 'Max Threshold' })
         .fill('80');
 
-      // 4. Leave Step Size (1), Cooldown Sec. (300), Min Replicas (0), Max
+      // 4. Leave Step Size (1), Cooldown (s) (300), Min Replicas (0), Max
       // Replicas (5) at their defaults.
 
       // 5. Click "OK".

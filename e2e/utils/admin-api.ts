@@ -193,25 +193,70 @@ function toRawUUID(id: string): string {
 }
 
 /**
+ * Deployment statuses that mean the deployment is already gone or going away.
+ * `deleteModelDeployment` is a soft-delete (the row stays, as STOPPING then
+ * STOPPED), so sweeps and per-test cleanup skip these instead of re-deleting
+ * them and over-counting. DESTROYING/DESTROYED are not in the current
+ * `DeploymentStatus` enum; they are listed only for the client-side check so
+ * an older or newer manager that reports them is handled the same way.
+ */
+const TERMINAL_DEPLOYMENT_STATUSES = new Set([
+  'STOPPING',
+  'STOPPED',
+  'DESTROYING',
+  'DESTROYED',
+]);
+
+/** Server-side filter that leaves soft-deleted deployments out of a listing. */
+const LIVE_DEPLOYMENT_STATUS_FILTER = { notIn: ['STOPPING', 'STOPPED'] };
+
+/**
  * Lists every deployment whose display name matches `pattern`. `limit: 300`
  * comfortably covers realistic leak volumes without needing offset
- * pagination.
+ * pagination. With `liveOnly`, soft-deleted (STOPPING/STOPPED) deployments are
+ * filtered out server-side, so the accumulated stopped rows of earlier runs
+ * cannot fill the 300-row window and hide a live leak.
  */
 export async function listDeploymentsByPattern(
   api: APIRequestContext,
   pattern: RegExp,
-): Promise<Array<{ id: string; name: string }>> {
+  options: { liveOnly?: boolean } = {},
+): Promise<
+  Array<{ id: string; name: string; status: string; createdAt: string }>
+> {
   const data = await gqlAdmin<{
     adminDeployments: {
-      edges: Array<{ node: { id: string; metadata: { name: string } } }>;
+      edges: Array<{
+        node: {
+          id: string;
+          metadata: { name: string; status: string; createdAt: string };
+        };
+      }>;
     };
   }>(
     api,
-    `query { adminDeployments(limit: 300) { edges { node { id metadata { name } } } } }`,
+    `query($filter: DeploymentFilter) {
+      adminDeployments(filter: $filter, limit: 300) {
+        edges { node { id metadata { name status createdAt } } }
+      }
+    }`,
+    {
+      filter: options.liveOnly
+        ? { status: LIVE_DEPLOYMENT_STATUS_FILTER }
+        : null,
+    },
   );
   return (data.adminDeployments?.edges ?? [])
-    .map((e) => ({ id: e.node.id, name: e.node.metadata.name }))
-    .filter((d) => pattern.test(d.name));
+    .map((e) => ({
+      id: e.node.id,
+      name: e.node.metadata.name,
+      status: e.node.metadata.status,
+      createdAt: e.node.metadata.createdAt,
+    }))
+    .filter((d) => pattern.test(d.name))
+    .filter(
+      (d) => !options.liveOnly || !TERMINAL_DEPLOYMENT_STATUSES.has(d.status),
+    );
 }
 
 /**
@@ -277,30 +322,453 @@ export async function setDeploymentTagsViaApi(
 }
 
 /**
- * Sweep-deletes every deployment whose display name matches `pattern` — by
- * default the `e2e-plan-*` / `e2e-token-*` shells the deployment specs
- * create (deployment-lifecycle.spec.ts / deployment-access-token.spec.ts).
- * These names are NOT covered by sweepServices'/sweepVFolders' `/e2e-svc-/`
- * `/e2e-mod-/` patterns in global-cleanup.teardown.ts, and the per-test
- * `cleanupDeploymentSafely` (a UI-delete flow, same fragility as the test
- * body it backstops) can itself fail when a test already failed mid-modal —
- * leaking a PENDING deployment with no other safety net. API-based and
- * pagination-immune for the same reason `sweepProfileTestUsersViaApi` is.
- * Returns the number of deployments deleted.
+ * Deletes every live (not yet STOPPING/STOPPED) deployment named exactly
+ * `name`. Used by `createTestResources().cleanup()`. Returns how many live
+ * deployments it found and how many of those it deleted; `found: 0` means the
+ * deployment was already gone (not an error), and `deleted < found` means a
+ * delete failed. Throws only when the lookup itself fails; a failed delete is
+ * reported through `deleteDeploymentViaApi`'s warning.
+ */
+export async function deleteDeploymentsByNameViaApi(
+  api: APIRequestContext,
+  name: string,
+): Promise<{ found: number; deleted: number }> {
+  const data = await gqlAdmin<{
+    adminDeployments: {
+      edges: Array<{ node: { id: string; metadata: { status: string } } }>;
+    };
+  }>(
+    api,
+    `query($filter: DeploymentFilter) {
+      adminDeployments(filter: $filter, limit: 50) {
+        edges { node { id metadata { status } } }
+      }
+    }`,
+    {
+      filter: {
+        name: { equals: name },
+        status: LIVE_DEPLOYMENT_STATUS_FILTER,
+      },
+    },
+  );
+  const live = (data.adminDeployments?.edges ?? [])
+    .map((e) => e.node)
+    .filter((n) => !TERMINAL_DEPLOYMENT_STATUSES.has(n.metadata.status));
+  let deleted = 0;
+  for (const { id } of live) {
+    if (await deleteDeploymentViaApi(api, id)) deleted++;
+  }
+  return { found: live.length, deleted };
+}
+
+/**
+ * Display-name prefixes of the deployments e2e specs create:
+ * `e2e-plan-*` / `e2e-token-*` (deployment-lifecycle / deployment-access-token
+ * / preset-integration) and the ticket-scoped `e2e-fr<N>-*` / `e2e-gh<N>-*`
+ * shells (add-revision-command-shell / add-revision-runtime-defaults).
+ */
+export const E2E_DEPLOYMENT_PATTERN = /^e2e-(plan|token|fr\d+|gh\d+)-/i;
+
+/**
+ * Sweep-deletes every live deployment whose display name matches `pattern` —
+ * by default every e2e deployment prefix in `E2E_DEPLOYMENT_PATTERN` — and that
+ * is older than `minAgeMs`, so a concurrent run's in-use deployments survive
+ * (same age gate as `sweepStaleProjectsViaApi`). These
+ * names are NOT covered by sweepServices'/sweepVFolders' `/e2e-svc-/`
+ * `/e2e-mod-/` patterns in global-cleanup.teardown.ts, and a per-test
+ * UI-delete flow (same fragility as the test body it backstops) can itself
+ * fail when a test already failed mid-modal — leaking a PENDING deployment.
+ * Already soft-deleted (STOPPING/STOPPED) deployments are skipped, so the
+ * returned count is the number of deployments this sweep actually deleted.
+ * API-based and pagination-immune for the same reason
+ * `sweepProfileTestUsersViaApi` is.
  */
 export async function sweepLeftoverDeploymentsViaApi(
   api: APIRequestContext,
-  pattern: RegExp = /^e2e-(plan|token)-/i,
+  pattern: RegExp = E2E_DEPLOYMENT_PATTERN,
+  minAgeMs = 60 * 60 * 1000,
 ): Promise<number> {
-  const matches = await listDeploymentsByPattern(api, pattern);
+  const matches = await listDeploymentsByPattern(api, pattern, {
+    liveOnly: true,
+  });
+  const stale = matches.filter(({ createdAt }) => {
+    const created = new Date(createdAt).getTime();
+    return Number.isFinite(created) && Date.now() - created > minAgeMs;
+  });
   let deleted = 0;
-  for (const { id } of matches) {
+  for (const { id } of stale) {
     if (await deleteDeploymentViaApi(api, id)) deleted++;
   }
   if (deleted > 0) {
     console.log(`Swept ${deleted} leftover deployment(s) matching ${pattern}`);
   }
   return deleted;
+}
+
+// Past the trash: the manager is deleting it or already has, so nothing is left to do.
+const PURGED_VFOLDER_STATUSES = new Set([
+  'delete-ongoing',
+  'delete-complete',
+  'delete-error',
+]);
+
+// The manager leaves these on its own; no delete can succeed until it does.
+const TRANSITIONAL_VFOLDER_STATUSES = new Set(['cloning']);
+const VFOLDER_PURGE_DEADLINE_MS = 15_000;
+const VFOLDER_PURGE_POLL_MS = 500;
+
+async function listVFoldersByName(
+  api: APIRequestContext,
+  name: string,
+): Promise<Array<{ id: string; status: string }>> {
+  const data = await gqlAdmin<{
+    vfolder_list: { items: Array<{ id: string; status: string }> };
+  }>(
+    api,
+    `query($filter: String) {
+      vfolder_list(limit: 100, offset: 0, filter: $filter) {
+        items { id status }
+      }
+    }`,
+    { filter: `name == ${JSON.stringify(name)}` },
+  );
+  return data.vfolder_list.items;
+}
+
+async function purgeVFolderViaApi(
+  api: APIRequestContext,
+  name: string,
+): Promise<void> {
+  const listRemaining = async () =>
+    (await listVFoldersByName(api, name)).filter(
+      ({ status }) => !PURGED_VFOLDER_STATUSES.has(status),
+    );
+  const deadline = Date.now() + VFOLDER_PURGE_DEADLINE_MS;
+  let lastFailure = '';
+  for (;;) {
+    const remaining = await listRemaining();
+    if (remaining.length === 0) return;
+    for (const { id, status } of remaining) {
+      if (TRANSITIONAL_VFOLDER_STATUSES.has(status)) continue;
+      const step = status === 'delete-pending' ? 'purge' : 'trash';
+      const res =
+        step === 'trash'
+          ? await api.delete('/func/folders', { data: { vfolder_id: id } })
+          : await api.post('/func/folders/delete-from-trash-bin', {
+              data: { vfolder_id: id },
+            });
+      if (res.ok()) continue;
+      lastFailure = `${step} of folder "${name}" (${id}) failed: ${res.status()} ${(await res.text()).slice(0, 300)}`;
+      // Only a folder the manager moved on meanwhile is worth another look.
+      const current = (await listVFoldersByName(api, name)).find(
+        (folder) => folder.id === id,
+      );
+      if (current?.status === status) throw new Error(lastFailure);
+    }
+    if (Date.now() >= deadline) {
+      const left = await listRemaining();
+      if (left.length === 0) return;
+      const states = left.map((f) => `${f.id}: ${f.status}`).join(', ');
+      throw new Error(
+        `folder "${name}" not deleted after ${VFOLDER_PURGE_DEADLINE_MS}ms (${states}) ${lastFailure}`.trim(),
+      );
+    }
+    await new Promise((resolve) => setTimeout(resolve, VFOLDER_PURGE_POLL_MS));
+  }
+}
+
+/**
+ * Permanently deletes the e2e folders named exactly `names`, whatever their
+ * current state; a name with no folder is not an error. Trashed folders still
+ * count toward `max_vfolder_count`, so both steps must succeed. Tries every
+ * name, then throws: a leak fills the project's quota for later runs.
+ */
+export async function purgeVFoldersByNameViaApi(
+  names: string[],
+): Promise<void> {
+  if (names.length === 0) return;
+  const api = await createAdminApiContext();
+  const failures: string[] = [];
+  try {
+    for (const name of names) {
+      try {
+        if (!name.startsWith('e2e-')) {
+          throw new Error(`refusing to purge non-e2e folder "${name}"`);
+        }
+        await purgeVFolderViaApi(api, name);
+      } catch (error) {
+        failures.push(error instanceof Error ? error.message : String(error));
+      }
+    }
+  } finally {
+    await api.dispose();
+  }
+  if (failures.length > 0) {
+    throw new Error(`Folder cleanup failed:\n${failures.join('\n')}`);
+  }
+}
+
+interface PrometheusQueryPresetRow {
+  entityId: string;
+  name: string;
+  createdAt: string;
+}
+
+/**
+ * Lists Prometheus query presets (auto-scaling rule presets) matching a
+ * server-side `QueryDefinitionFilter`, paging with limit/offset in creation
+ * order, before anything is purged.
+ */
+async function listPrometheusQueryPresets(
+  api: APIRequestContext,
+  filter: Record<string, unknown>,
+): Promise<PrometheusQueryPresetRow[]> {
+  const pageSize = 100;
+  const rows: PrometheusQueryPresetRow[] = [];
+  for (let offset = 0; offset < 10_000; offset += pageSize) {
+    const data = await gqlAdmin<{
+      prometheusQueryPresets: {
+        edges: Array<{ node: PrometheusQueryPresetRow }>;
+      } | null;
+    }>(
+      api,
+      `query($filter: QueryDefinitionFilter, $limit: Int, $offset: Int) {
+        prometheusQueryPresets(
+          filter: $filter
+          orderBy: [{ field: CREATED_AT, direction: ASC }]
+          limit: $limit
+          offset: $offset
+        ) {
+          edges { node { entityId name createdAt } }
+        }
+      }`,
+      { filter, limit: pageSize, offset },
+    );
+    const page = (data.prometheusQueryPresets?.edges ?? []).map((e) => e.node);
+    rows.push(...page);
+    if (page.length < pageSize) break;
+  }
+  return rows;
+}
+
+/**
+ * Purges one Prometheus query preset by its raw UUID with
+ * `purgePrometheusQueryPreset` (what the preset list's Delete action uses).
+ * Defensive: returns `false` and warns instead of throwing.
+ */
+export async function purgePrometheusQueryPresetViaApi(
+  api: APIRequestContext,
+  entityId: string,
+): Promise<boolean> {
+  try {
+    const data = await gqlAdmin<{
+      purgePrometheusQueryPreset: { entityId: string } | null;
+    }>(
+      api,
+      `mutation($id: UUID!) { purgePrometheusQueryPreset(id: $id) { entityId } }`,
+      { id: entityId },
+    );
+    return !!data.purgePrometheusQueryPreset?.entityId;
+  } catch (error) {
+    console.warn(
+      `[admin-api] could not purge Prometheus query preset ${entityId}:`,
+      error,
+    );
+    return false;
+  }
+}
+
+/**
+ * Purges every Prometheus query preset named exactly `name`. `found: 0` means
+ * it was already gone (not an error). Throws only when the lookup fails.
+ */
+export async function purgePrometheusQueryPresetsByNameViaApi(
+  api: APIRequestContext,
+  name: string,
+): Promise<{ found: number; deleted: number }> {
+  const matches = await listPrometheusQueryPresets(api, {
+    name: { equals: name },
+  });
+  let deleted = 0;
+  for (const { entityId } of matches) {
+    if (await purgePrometheusQueryPresetViaApi(api, entityId)) deleted++;
+  }
+  return { found: matches.length, deleted };
+}
+
+/**
+ * Purges Prometheus query presets whose name starts with `prefix` and that are
+ * older than `minAgeMs` — the global-cleanup backstop for `e2e-preset-*`
+ * presets a hard-killed run left behind. The age gate leaves a concurrent
+ * run's fresh presets alone. Returns the number purged.
+ */
+export async function sweepStalePrometheusQueryPresetsViaApi(
+  api: APIRequestContext,
+  prefix = 'e2e-preset-',
+  minAgeMs = 60 * 60 * 1000,
+): Promise<number> {
+  const rows = await listPrometheusQueryPresets(api, {
+    name: { startsWith: prefix },
+  });
+  const stale = rows.filter((row) => {
+    const createdAt = new Date(row.createdAt).getTime();
+    return (
+      row.name.startsWith(prefix) &&
+      Number.isFinite(createdAt) &&
+      Date.now() - createdAt > minAgeMs
+    );
+  });
+  let purged = 0;
+  for (const { entityId } of stale) {
+    if (await purgePrometheusQueryPresetViaApi(api, entityId)) purged++;
+  }
+  if (purged > 0) {
+    console.log(
+      `Swept ${purged} stale Prometheus query preset(s) starting with "${prefix}"`,
+    );
+  }
+  return purged;
+}
+
+export interface RoleRow {
+  id: string;
+  name: string;
+  source: string;
+  status: string;
+  createdAt: string;
+}
+
+/**
+ * Custom roles only: sweeps and by-name cleanup must never reach a system role.
+ * Every status is requested explicitly, so a soft-deleted role left behind by a
+ * killed run is found whatever the manager's default listing returns. `id`, not
+ * `entityId`, because `entityId` needs manager 26.9.0.
+ */
+export async function listCustomRolesViaApi(
+  api: APIRequestContext,
+  name: { equals: string } | { startsWith: string },
+): Promise<RoleRow[]> {
+  const pageSize = 100;
+  const rows: RoleRow[] = [];
+  for (let offset = 0; offset < 10_000; offset += pageSize) {
+    const data = await gqlAdmin<{
+      adminRoles: { edges: Array<{ node: RoleRow }> } | null;
+    }>(
+      api,
+      `query($filter: RoleFilter, $limit: Int, $offset: Int) {
+        adminRoles(
+          filter: $filter
+          orderBy: [{ field: CREATED_AT, direction: ASC }]
+          limit: $limit
+          offset: $offset
+        ) {
+          edges { node { id name source status createdAt } }
+        }
+      }`,
+      {
+        filter: {
+          name,
+          source: { equals: 'CUSTOM' },
+          status: { in: ['ACTIVE', 'INACTIVE', 'DELETED'] },
+        },
+        limit: pageSize,
+        offset,
+      },
+    );
+    const page = (data.adminRoles?.edges ?? []).map((e) => e.node);
+    rows.push(...page);
+    if (page.length < pageSize) break;
+  }
+  return rows.filter((row) => row.source === 'CUSTOM');
+}
+
+/**
+ * Soft-deletes a role unless it already is, then purges it. Assignments and
+ * permissions go with it by FK cascade, so they cannot block the purge.
+ *
+ * Uses `adminDeleteRole` / `adminPurgeRole`, deprecated since 26.10.0, because
+ * `deleteRole` / `purgeRole` do not exist on the LTS manager (26.4) and the
+ * RBAC page itself still calls the admin mutations.
+ *
+ * Defensive: returns `false` and warns instead of throwing.
+ */
+export async function purgeRoleViaApi(
+  api: APIRequestContext,
+  role: Pick<RoleRow, 'id' | 'status'>,
+): Promise<boolean> {
+  try {
+    const input = { id: toRawUUID(role.id) };
+    if (role.status !== 'DELETED') {
+      await gqlAdmin(
+        api,
+        `mutation($input: DeleteRoleInput!) { adminDeleteRole(input: $input) { id } }`,
+        { input },
+      );
+    }
+    const data = await gqlAdmin<{ adminPurgeRole: { id: string } | null }>(
+      api,
+      `mutation($input: PurgeRoleInput!) { adminPurgeRole(input: $input) { id } }`,
+      { input },
+    );
+    return !!data.adminPurgeRole?.id;
+  } catch (error) {
+    console.warn(`[admin-api] could not purge role ${role.id}:`, error);
+    return false;
+  }
+}
+
+/**
+ * Purges every custom role named exactly `name`, in any status. `found: 0`
+ * means it was already gone (not an error). Throws only when the lookup fails.
+ */
+export async function purgeRolesByNameViaApi(
+  api: APIRequestContext,
+  name: string,
+): Promise<{ found: number; deleted: number }> {
+  const matches = await listCustomRolesViaApi(api, { equals: name });
+  let deleted = 0;
+  for (const role of matches) {
+    if (await purgeRoleViaApi(api, role)) deleted++;
+  }
+  return { found: matches.length, deleted };
+}
+
+/**
+ * Name prefixes of the roles the e2e specs create: `e2e-role-*` (including
+ * `e2e-role-edited-*`, rbac-role-crud), `e2e-detail-role-*`, `e2e-scope-role-*`,
+ * `e2e-granted-role-*` (rbac-role-detail), and `e2e-skip-role-*` (the closed
+ * #10783, whose runs may have left some).
+ */
+export const E2E_ROLE_PATTERN =
+  /^e2e-(role|detail-role|scope-role|granted-role|skip-role)-/;
+
+/**
+ * Purges custom roles matching `pattern` that are older than `minAgeMs` — the
+ * global-cleanup backstop for roles a hard-killed run left behind. The age gate
+ * leaves a concurrent run's fresh roles alone. Returns the number purged.
+ */
+export async function sweepStaleRolesViaApi(
+  api: APIRequestContext,
+  pattern: RegExp = E2E_ROLE_PATTERN,
+  minAgeMs = 60 * 60 * 1000,
+): Promise<number> {
+  const rows = await listCustomRolesViaApi(api, { startsWith: 'e2e-' });
+  const stale = rows.filter((row) => {
+    const createdAt = new Date(row.createdAt).getTime();
+    return (
+      pattern.test(row.name) &&
+      Number.isFinite(createdAt) &&
+      Date.now() - createdAt > minAgeMs
+    );
+  });
+  let purged = 0;
+  for (const role of stale) {
+    if (await purgeRoleViaApi(api, role)) purged++;
+  }
+  if (purged > 0) {
+    console.log(`Swept ${purged} stale e2e role(s) matching ${pattern}`);
+  }
+  return purged;
 }
 
 /**
@@ -414,6 +882,25 @@ export async function purgeProjectViaApi(
 }
 
 /**
+ * Purges every project (any status) named exactly `name`. `found: 0` means it
+ * was already gone (not an error). Throws only when the lookup fails.
+ */
+export async function purgeProjectsByNameViaApi(
+  api: APIRequestContext,
+  name: string,
+): Promise<{ found: number; deleted: number }> {
+  const data = await gqlAdmin<{
+    groups: Array<{ id: string; name: string }>;
+  }>(api, `query { groups(is_active: null) { id name } }`);
+  const matches = (data.groups ?? []).filter((g) => g.name === name);
+  let deleted = 0;
+  for (const { id } of matches) {
+    if (await purgeProjectViaApi(api, id)) deleted++;
+  }
+  return { found: matches.length, deleted };
+}
+
+/**
  * Purges projects matching `pattern` that are older than `minAgeMs`, so a
  * hard-killed run cannot leak them while a concurrent worker's fresh
  * fixtures are left alone.
@@ -439,4 +926,92 @@ export async function sweepStaleProjectsViaApi(
     if (await purgeProjectViaApi(api, id)) purged++;
   }
   return purged;
+}
+
+/**
+ * Creates an active, public, empty resource group (no agents) so a test can
+ * edit its options without touching the groups other specs schedule on.
+ */
+export async function createResourceGroupViaApi(
+  api: APIRequestContext,
+  name: string,
+  description = 'e2e',
+): Promise<void> {
+  const data = await gqlAdmin<{
+    create_scaling_group: { ok: boolean; msg: string };
+  }>(
+    api,
+    `mutation($name: String!, $props: CreateScalingGroupInput!) {
+      create_scaling_group(name: $name, props: $props) { ok msg }
+    }`,
+    {
+      name,
+      props: {
+        description,
+        is_active: true,
+        is_public: true,
+        driver: 'static',
+        driver_opts: '{}',
+        scheduler: 'fifo',
+        scheduler_opts: '{}',
+        wsproxy_addr: '',
+        use_host_network: false,
+      },
+    },
+  );
+  if (!data.create_scaling_group?.ok) {
+    throw new Error(
+      `create_scaling_group failed: ${data.create_scaling_group?.msg}`,
+    );
+  }
+}
+
+/**
+ * Deletes a resource group. Returns `false` instead of throwing so teardown
+ * never masks the test result.
+ */
+export async function deleteResourceGroupViaApi(
+  api: APIRequestContext,
+  name: string,
+): Promise<boolean> {
+  try {
+    const data = await gqlAdmin<{
+      delete_scaling_group: { ok: boolean; msg: string };
+    }>(
+      api,
+      `mutation($name: String!) { delete_scaling_group(name: $name) { ok msg } }`,
+      { name },
+    );
+    return data.delete_scaling_group?.ok === true;
+  } catch (error) {
+    console.warn(`[admin-api] could not delete resource group ${name}:`, error);
+    return false;
+  }
+}
+
+/**
+ * Deletes resource groups matching `pattern` that are older than `minAgeMs`,
+ * so a hard-killed run cannot leak them.
+ */
+export async function sweepStaleResourceGroupsViaApi(
+  api: APIRequestContext,
+  pattern: RegExp,
+  minAgeMs = 60 * 60 * 1000,
+): Promise<number> {
+  const data = await gqlAdmin<{
+    scaling_groups: Array<{ name: string; created_at: string }>;
+  }>(api, `query { scaling_groups(is_active: null) { name created_at } }`);
+  const stale = (data.scaling_groups ?? []).filter((g) => {
+    const createdAt = new Date(g.created_at).getTime();
+    return (
+      pattern.test(g.name) &&
+      Number.isFinite(createdAt) &&
+      Date.now() - createdAt > minAgeMs
+    );
+  });
+  let deleted = 0;
+  for (const { name } of stale) {
+    if (await deleteResourceGroupViaApi(api, name)) deleted++;
+  }
+  return deleted;
 }
