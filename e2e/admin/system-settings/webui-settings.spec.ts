@@ -523,8 +523,8 @@ test.describe(
       await expect(
         page.getByRole('button', { name: 'Login with e2e-realm' }),
       ).toBeVisible();
-      // `debug` turns on the i18n key markers next to every translated string.
-      await expect(i18nKeyMarkers(page).first()).toBeVisible();
+      // Debug mode is an act-as tab option now; a stored `debug` is ignored.
+      await expect(i18nKeyMarkers(page)).toHaveCount(0);
     });
 
     test('a key absent from the public document keeps the login page default', async ({
@@ -577,13 +577,7 @@ test.describe(
       } else {
         await expect(samlButton).toBeHidden();
       }
-      const defaultDebug =
-        (defaultValueOf(rowByKey('debug')) as boolean | undefined) ?? false;
-      if (defaultDebug) {
-        await expect(i18nKeyMarkers(page).first()).toBeVisible();
-      } else {
-        await expect(i18nKeyMarkers(page)).toHaveCount(0);
-      }
+      await expect(i18nKeyMarkers(page)).toHaveCount(0);
     });
   },
 );

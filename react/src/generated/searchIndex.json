@@ -3058,7 +3058,6 @@
         "webuiSettings.ApplySettingsDesc",
         "webuiSettings.AutoLogout",
         "webuiSettings.CliDownloadUrl",
-        "webuiSettings.Debug",
         "webuiSettings.DefaultFileBrowserImage",
         "webuiSettings.DefaultImportEnvironment",
         "webuiSettings.DefaultSessionEnvironment",
@@ -3076,7 +3075,6 @@
         "webuiSettings.DescAppDownloadUrl",
         "webuiSettings.DescAutoLogout",
         "webuiSettings.DescCliDownloadUrl",
-        "webuiSettings.DescDebug",
         "webuiSettings.DescDefaultFileBrowserImage",
         "webuiSettings.DescDefaultImportEnvironment",
         "webuiSettings.DescDefaultSessionEnvironment",
@@ -3206,6 +3204,7 @@
       "keys": [
         "actAs.ConfirmDescription",
         "actAs.ConfirmTitle",
+        "actAs.DebugMode",
         "actAs.FailedToOpen",
         "actAs.OpenInNewTab",
         "actAs.UseAsThisUser",

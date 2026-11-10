@@ -6,6 +6,7 @@ import { AppLauncherModalFragment$key } from '../../__generated__/AppLauncherMod
 import { App } from '../../app-shim';
 import { Form, FormInstance } from '../../form-engine';
 import { isValidIPOrCidr } from '../../helper';
+import { isActAsDebugMode } from '../../helper/actAs';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import {
   ServicePort,
@@ -17,7 +18,6 @@ import {
   TCP_APPS,
   useBackendAIAppLauncher,
 } from '../../hooks/useBackendAIAppLauncher';
-import { useLoginConfig } from '../../hooks/useWebUIConfig';
 import AppLaunchConfirmationModal from './AppLaunchConfirmationModal';
 import TCPConnectionInfoModal from './TCPConnectionInfoModal';
 import TensorboardPathModal from './TensorboardPathModal';
@@ -80,7 +80,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
   const { t } = useTranslation();
   const { logger } = useBAILogger();
   const baiClient = useSuspendedBackendaiClient();
-  const isDebugMode = useLoginConfig()?.debug === true;
+  const isDebugMode = isActAsDebugMode();
   const formRef = useRef<FormInstance>(null);
   const [openToPublic, setOpenToPublic] = useState<boolean>(false);
   const [tryPreferredPort, setTryPreferredPort] = useState<boolean>(false);

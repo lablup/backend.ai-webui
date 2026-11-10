@@ -43,18 +43,18 @@ describe('parseSettingsJson', () => {
   });
 
   it('sets only the keys the document names', () => {
-    const result = parseSettingsJson('{"public": {"debug": true}}');
+    const result = parseSettingsJson('{"public": {"autoLogout": true}}');
     if (!result.ok) throw new Error(JSON.stringify(result));
     expect(result.values.map((v) => [v.definition.key, v.value])).toEqual([
-      ['debug', true],
+      ['autoLogout', true],
     ]);
   });
 
   it('reports unknown keys, a key under the wrong scope and wrong types', () => {
     const result = parseSettingsJson(
       JSON.stringify({
-        public: { force2FA: true, debug: 'yes' },
-        domain: { debug: true },
+        public: { force2FA: true, autoLogout: 'yes' },
+        domain: { autoLogout: true },
         other: {},
       }),
     );
@@ -62,8 +62,8 @@ describe('parseSettingsJson', () => {
       ok: false,
       issues: [
         { path: 'public.force2FA', reason: 'unknown' },
-        { path: 'public.debug', reason: 'invalid' },
-        { path: 'domain.debug', reason: 'unknown' },
+        { path: 'public.autoLogout', reason: 'invalid' },
+        { path: 'domain.autoLogout', reason: 'unknown' },
         { path: 'other', reason: 'unknown' },
       ],
     });

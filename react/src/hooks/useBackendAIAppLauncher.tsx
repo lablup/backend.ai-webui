@@ -4,10 +4,10 @@
  */
 import { useSuspendedBackendaiClient, useWebUINavigate } from '.';
 import { useBackendAIAppLauncherFragment$key } from '../__generated__/useBackendAIAppLauncherFragment.graphql';
+import { isActAsDebugMode } from '../helper/actAs';
 import { requestLocalProxyToken } from '../helper/localProxyToken';
 import { useSetBAINotification } from './useBAINotification';
 import { useProjectPath } from './useRouteScope';
-import { useLoginConfig } from './useWebUIConfig';
 import { BAILink, useBAILogger, useErrorMessageResolver } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
@@ -39,7 +39,7 @@ export const useBackendAIAppLauncher = (
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
   const baiClient = useSuspendedBackendaiClient();
-  const isDebugMode = useLoginConfig()?.debug === true;
+  const isDebugMode = isActAsDebugMode();
   const { logger } = useBAILogger();
 
   const session = useFragment(

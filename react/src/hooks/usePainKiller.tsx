@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useLoginConfig } from './useWebUIConfig';
+import { isActAsDebugMode } from '../helper/actAs';
 import { useTranslation } from 'react-i18next';
 
 const errorMessageTable: {
@@ -66,7 +66,7 @@ const regexTable: {
 export const usePainKiller = () => {
   'use memo';
   const { t } = useTranslation();
-  const isDebugMode = useLoginConfig()?.debug === true;
+  const isDebugMode = isActAsDebugMode();
   const relieve = (msg: string) => {
     if (typeof msg === 'undefined') {
       if (

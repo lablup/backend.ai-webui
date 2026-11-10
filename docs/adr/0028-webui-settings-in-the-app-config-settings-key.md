@@ -4,8 +4,8 @@
 
 > Unfamiliar terms are collected in the [Glossary](#glossary) at the end.
 
-- Administrators change the 53 WebUI settings that lived only in `config.toml` on the System Settings page (`/admin/system-settings`). The values are stored in the manager's [app config](#glossary) documents.
-- Each [scope](#glossary) document carries one flat key, `settings`. The 10 keys needed before sign-in live in `publicConfigByDomain.<domain>.settings`; the 43 used after sign-in live in `domainConfig.settings`.
+- Administrators change the 52 WebUI settings that lived only in `config.toml` on the System Settings page (`/admin/system-settings`). The values are stored in the manager's [app config](#glossary) documents.
+- Each [scope](#glossary) document carries one flat key, `settings`. The 9 keys needed before sign-in live in `publicConfigByDomain.<domain>.settings`; the 43 used after sign-in live in `domainConfig.settings`.
 - The two documents hold different keys. Only a key the document carries, with the right type, overrides the setting's code default (`getDefaultLoginConfig`); with no document, or a document that cannot be read, the code default is used.
 - `config.toml` no longer carries these settings (#10664). It keeps only the values needed before the documents can be read and the values the webserver enforces as well (section 3).
 - The scope and type of each key are set by the [definition table](#glossary) `WEBUI_SETTING_DEFINITIONS` in `react/src/helper/webuiSettings.ts`. The page, the merge and the save all read that table.
@@ -30,7 +30,7 @@ flowchart LR
   client["backendaiclient._config"]
   defaults -- "every setting's default" --> state
   toml -- "the section 3 keys only (refreshConfigFromToml)" --> state
-  pub -- "10 public keys, before sign-in" --> state
+  pub -- "9 public keys, before sign-in" --> state
   dom -- "43 domain keys, at sign-in" --> state
   state -- "applyConfigToClient" --> client
 ```
@@ -50,14 +50,14 @@ flowchart LR
 
 ### 1. One flat `settings` key per scope
 
-| Scope  | Document path                            | Read         | Keys                                                                                                                                                                                                                        |
-| ------ | ---------------------------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| PUBLIC | `publicConfigByDomain.<domain>.settings` | before login | `autoLogout`, `allowChangeSigninMode`, `allowAnonymousChangePassword`, `allowSignupWithoutConfirmation`, `enableInteractiveLoginAccountSwitch`, `singleSignOnVendors`, `ssoRealmName`, `debug`, `pluginLogin`, `pluginPage` |
-| DOMAIN | `domainConfig.settings`                  | at sign-in   | the other 43 keys of the definition table                                                                                                                                                                                   |
+| Scope  | Document path                            | Read         | Keys                                                                                                                                                                                                               |
+| ------ | ---------------------------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| PUBLIC | `publicConfigByDomain.<domain>.settings` | before login | `autoLogout`, `allowChangeSigninMode`, `allowAnonymousChangePassword`, `allowSignupWithoutConfirmation`, `enableInteractiveLoginAccountSwitch`, `singleSignOnVendors`, `ssoRealmName`, `pluginLogin`, `pluginPage` |
+| DOMAIN | `domainConfig.settings`                  | at sign-in   | the other 43 keys of the definition table                                                                                                                                                                          |
 
 - **Document shape**: the value of `settings` is a `WebUISettingsDocument` (`Record<string, unknown>`), with no section or group level inside it. The page groups come only from the definition table's `group` field.
 - **Key names**: a key keeps the name it had in `config.toml`. The exceptions are `menuBlocklist`/`menuInactivelist` (the file's `menu.blocklist`/`inactivelist`), `fasttrackEndpoint` (the file's `pipeline.frontendEndpoint`) and `pluginLogin`/`pluginPage` (the file's `plugin.login`/`page`). A comma-joined string in the file is an array of strings.
-- **Public scope criterion**: only the keys the login page uses, and keys applied once before sign-in (`debug`, and `pluginPage`, loaded once at boot), are PUBLIC.
+- **Public scope criterion**: only the keys the login page uses, and keys applied once before sign-in (`pluginPage`, loaded once at boot), are PUBLIC.
 - **Domain lookup**: the `<domain>` of the PUBLIC document is `general.apiDomainName` in `config.toml` (`resolvePublicConfigTarget`).
 - **Write scope**: a save changes the `settings` sub-key only, never the whole document. The write hooks (`useUpdateDomainAppConfig`, `useUpdatePublicDomainAppConfig`) re-read the manager's raw document and change `settings` alone ([read-modify-write](#glossary)).
 
@@ -68,7 +68,7 @@ flowchart LR
 - **No seeding**: a save writes the keys the administrator set, a value equal to the code default included (`buildWebUISettingsDocument`). Clearing a field or resetting its row removes the key, which then keeps following the default. When no key is left, the `settings` sub-key is removed.
 - **Read failures**: a document that cannot be read leaves a warning and the code defaults. The DOMAIN document rides in the sign-in query (`loginSessionAuthMyUserQuery`, `myAppConfigs … @catch(to: NULL)`, read by `readDomainWebUISettings`); the PUBLIC one comes from `fetchPublicDomainConfigOnce`.
 - **Merge points**: the PUBLIC document is merged at boot (`initializeConfigOnce`) and when another webserver's config is taken in (`loadConfigFromWebServer`), which looks the document up under that webserver's `apiEndpoint` and merges that server's file keys onto the bundled `config.toml`. The DOMAIN document is merged at sign-in (`connectViaGQL`).
-- **One store**: the merged values live only in `loginConfigState`. A value read outside React, such as `debug`, is read with `jotaiStore.get(loginConfigState)`; there is no `globalThis` copy. `refreshConfigFromToml`, which parses the file, has no side effects.
+- **One store**: the merged values live only in `loginConfigState`. A value read outside React is read with `jotaiStore.get(loginConfigState)`; there is no `globalThis` copy. `refreshConfigFromToml`, which parses the file, has no side effects.
 
 ### 3. Keys that stay in `config.toml` only
 
@@ -95,6 +95,11 @@ flowchart LR
 - **Who may write**: whether a save succeeds is the manager's RBAC call; only a superadmin may write the PUBLIC document. A refused save lists the settings that were not saved.
 - **Reset**: the toolbar's Reset removes the table's keys from `settings` in the scopes on screen. It cannot be undone, so it runs only after the button's name (`button.Reset`) is typed into a `BAIDeleteConfirmModal`.
 - **Self-hiding**: `system-settings` in `menuBlocklist`/`menuInactivelist` is ignored (`useWebUIMenuItems`); hiding this page would leave no screen to undo it from.
+
+### 6. Debug mode is not a setting
+
+- **Where it lives**: debug mode (i18n key markers, raw error messages, the app launcher's proxy options, error details) is not in the definition table and no document carries it; a stored `debug` key is ignored. A superadmin turns it on with the "Debug mode" checkbox of the "Use as this user" modal, for that act-as tab only (`ActAsTarget.debug`, read by `isActAsDebugMode`).
+- **Why**: a PUBLIC key showed these details to every user of the domain, the login page included (#10952), and writing the flag into the target user's USER document would turn it on for that user too. The act-as tab's `sessionStorage` holds it, so it ends when the act-as tab exits or closes.
 
 ## Rejected alternatives
 
