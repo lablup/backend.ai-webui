@@ -157,8 +157,16 @@ pull_one() {
   store="$(git -C "$top" lfs env 2>/dev/null | sed -n 's/^LocalMediaDir=//p')"
   [ -n "$store" ] || { log "ERROR: ${top}: git lfs env does not name the local object storage." >&2; exit 1; }
   lfs_index_pointers "$top" "$list" > "${work}/pointers.idx"
+  if cut -f1 "${work}/pointers.idx" | grep -qx ''; then
+    log "ERROR: ${top}: some pointer files have no valid Git LFS pointer staged (an unmerged path?):" >&2
+    awk -F '\t' '$1 == "" { print $3 }' "${work}/pointers.idx" > "${work}/unstaged"
+    report_pointers "${work}/unstaged"
+    exit 1
+  fi
   cut -f1,2 "${work}/pointers.idx" | LC_ALL=C sort -u > "$needed"
   n_needed="$(wc -l < "$needed" | tr -d ' ')"
+  # CI prunes its cached store to the objects the build used (prune-lfs-store.sh).
+  [ -z "${LFS_USED_OIDS_FILE:-}" ] || cut -f1 "$needed" >> "$LFS_USED_OIDS_FILE"
   local oid size
   while IFS=$'\t' read -r oid size; do
     [ ! -f "${store}/${oid:0:2}/${oid:2:2}/${oid}" ] || printf '%s\t%s/%s/%s\n' "$oid" "${oid:0:2}" "${oid:2:2}" "$oid"
@@ -262,9 +270,13 @@ pull_one() {
   if [ "$n" -gt 0 ]; then
     log "ERROR: ${top}: ${n} file(s) do not match the oid of their LFS pointer:" >&2
     report_pointers "$bad"
-    log "Their local objects were deleted; re-run this script to download them again." >&2
     awk -F '\t' 'NR == FNR { b[$0] = 1; next } $2 in b { print substr($1, 1, 2) "/" substr($1, 3, 2) "/" $1 }' \
       "$bad" "${work}/files.map" | (cd "$store" && tr '\n' '\0' | xargs -0 rm -f)
+    # Back to pointer text, so that a re-run pulls them again.
+    while IFS= read -r path; do
+      git -C "$top" cat-file blob ":${path}" > "${top}/${path}" || true
+    done < "$bad"
+    log "Their local objects were deleted and the files are pointers again; re-run this script to download them." >&2
     exit 1
   fi
   log "${top}: materialized all LFS images (each checked against its oid)"

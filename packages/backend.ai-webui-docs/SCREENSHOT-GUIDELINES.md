@@ -133,7 +133,7 @@ When **replacing an existing screenshot** (same filename), the new image MUST ma
 #    prints the pointer text; smudge the pointer explicitly instead (needs git-lfs on PATH;
 #    it downloads the object when it is not local)
 p=packages/backend.ai-webui-docs/src/en/images/foo.png
-git cat-file blob "main:$p" | git -c lfs.fetchexclude= lfs smudge -- "$p" > /tmp/old.png
+(set -o pipefail; git cat-file blob "main:$p" | git -c lfs.fetchexclude= lfs smudge -- "$p") > /tmp/old.png
 file /tmp/old.png        # note WIDTH x HEIGHT
 # 2. Open /tmp/old.png and identify:
 #    - Is it a header strip? (very wide, very short — e.g., 2358x222)

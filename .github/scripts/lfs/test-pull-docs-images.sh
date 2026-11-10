@@ -156,6 +156,50 @@ quiet bash "$PULL" --remote "file://$T/missing.git" "$T/c7b"; rc=$?
 check "corrupted object, no remote: fails" [ "$rc" -ne 0 ]
 check "corrupted object, no remote: a.png left a pointer" is_pointer "$T/c7b/$D/en/images/a.png"
 
+# 7c. An object corrupted after the store check (the stub flips a byte when the
+# LFS checkout starts) is caught by the post-checkout hash, and the file goes
+# back to a pointer so that a re-run pulls it again.
+fresh "$T/c7c"
+mkdir -p "$(store_of "$T/c7c")" && cp -R "$(store_of "$T/c1")/." "$(store_of "$T/c7c")/"
+O7="$(a_oid "$T/c7c")"; OBJ7="$(store_of "$T/c7c")/${O7:0:2}/${O7:2:2}/$O7"
+mkdir -p "$T/stub7"
+# shellcheck disable=SC2016 # the stub's own "$1" / "$@"
+printf '#!/bin/sh\ncase "$1" in filter-process) chmod u+w "%s"; printf X | dd of="%s" bs=1 seek=100 conv=notrunc 2>/dev/null ;; esac\nexec "%s" "$@"\n' \
+  "$OBJ7" "$OBJ7" "$(command -v git-lfs)" > "$T/stub7/git-lfs"
+chmod +x "$T/stub7/git-lfs"
+out="$(PATH="$T/stub7:$PATH" bash "$PULL" "$T/c7c" 2>&1)"; rc=$?
+check "late corruption: fails" [ "$rc" -ne 0 ]
+check "late corruption: names the file" grep -q "do not match the oid" <<<"$out"
+check "late corruption: a.png is a pointer again" is_pointer "$T/c7c/$D/en/images/a.png"
+check "late corruption: bad object deleted" [ ! -e "$OBJ7" ]
+quiet bash "$PULL" "$T/c7c"; rc=$?
+check "late corruption: re-run succeeds" [ "$rc" -eq 0 ]
+check "late corruption: re-run materializes a.png" [ "$(sha "$T/c7c/$D/en/images/a.png")" = "$A_SHA" ]
+
+# 8. LFS_USED_OIDS_FILE records what a pull needed; prune-lfs-store.sh keeps only that.
+fresh "$T/c8"
+mkdir -p "$(store_of "$T/c8")" && cp -R "$(store_of "$T/c3c")/." "$(store_of "$T/c8")/"
+check "store starts with 3 objects" [ "$(find "$(store_of "$T/c8")" -type f | wc -l)" -eq 3 ]
+LFS_USED_OIDS_FILE="$T/c8.used" quiet bash "$PULL" "$T/c8"; rc=$?
+check "used oids: pull exits 0" [ "$rc" -eq 0 ]
+check "used oids: 2 recorded" [ "$(sort -u "$T/c8.used" | wc -l)" -eq 2 ]
+out="$(cd "$T/c8" && bash "${HERE}/prune-lfs-store.sh" "$T/c8.used")"
+check "prune: reports 1 removed" grep -q "kept 2 object(s), removed 1" <<<"$out"
+check "prune: store holds 2 objects" [ "$(find "$(store_of "$T/c8")" -type f | wc -l)" -eq 2 ]
+
+# 9. Helpers: a path with no staged pointer gets an empty oid without shifting
+# the others; an unreadable file is reported, not an abort.
+# shellcheck source=SCRIPTDIR/lib.sh
+. "${HERE}/lib.sh"
+printf '%s\n' "$D/en/images/a.png" "$D/en/images/none.png" "$D/en/chapter/images/nested.png" > "$T/l9"
+idx="$(lfs_index_pointers "$T/c8" "$T/l9")"
+check "index: missing path has an empty oid" grep -q $'^\t\t'"$D/en/images/none.png\$" <<<"$idx"
+check "index: next path keeps its own oid" [ "$(awk -F '\t' -v p="$D/en/chapter/images/nested.png" '$3 == p { print $1 }' <<<"$idx")" = "$N_SHA" ]
+printf '%s\t%s\n' "$A_SHA" "$D/en/images/a.png" "$A_SHA" "$D/en/images/gone.png" > "$T/m9"
+out="$(lfs_hash_mismatches "$T/c8" "$T/m9")"; rc=$?
+check "hash check: exit 0 with an unreadable file" [ "$rc" -eq 0 ]
+check "hash check: reports only the unreadable file" [ "$out" = "$D/en/images/gone.png" ]
+
 # 4. A tree without pointer files needs no git-lfs.
 rm -rf "$T/raw" && git init -q "$T/raw" && mkdir -p "$T/raw/$D/en/images"
 printf 'title: T\nlanguages: [en]\n' > "$T/raw/$D/book.config.yaml"

@@ -50,12 +50,14 @@ lfs_is_valid_pointer() {
 if command -v sha256sum >/dev/null 2>&1; then LFS_SHA256=(sha256sum); else LFS_SHA256=(shasum -a 256); fi
 
 # Prints `<oid><TAB><size><TAB><path>` for each path listed (one per line) in
-# <list-file>, read from the pointer blobs staged in the index of <top>.
+# <list-file>, read from the pointer blobs staged in the index of <top>. A path
+# without a readable pointer (no stage-0 entry, malformed oid) gets an empty oid.
 lfs_index_pointers() { # <top> <list-file>
   sed 's/^/:/' "$2" | git -C "$1" cat-file --batch |
     awk -v OFS='\t' '
-      function flush() { if (i) print o, s, p[i] }
+      function flush() { if (i) print (o ~ /^[0-9a-f]+$/ && length(o) == 64 ? o : ""), s, p[i] }
       NR == FNR { p[NR] = $0; next }
+      NF == 2 && $2 == "missing" { flush(); i++; o = ""; s = ""; next }
       NF == 3 && $2 == "blob" && length($1) >= 40 { flush(); i++; o = ""; s = ""; next }
       $1 == "oid" { o = substr($2, 8) }
       $1 == "size" { s = $2 }
@@ -66,7 +68,8 @@ lfs_index_pointers() { # <top> <list-file>
 # <dir>) and prints each path whose content does not hash to its oid.
 lfs_hash_mismatches() { # <dir> <map>
   [ -s "$2" ] || return 0
-  (cd "$1" && cut -f2 "$2" | tr '\n' '\0' | xargs -0 "${LFS_SHA256[@]}") |
+  # A file that cannot be read is reported by the END block, not by an abort.
+  (cd "$1" && cut -f2 "$2" | tr '\n' '\0' | xargs -0 "${LFS_SHA256[@]}" 2>/dev/null || true) |
     awk -F '\t' '
       NR == FNR { want[$2] = $1; next }
       { h = substr($0, 1, 64); f = substr($0, 67); if (want[f] != h) print f; seen[f] = 1 }

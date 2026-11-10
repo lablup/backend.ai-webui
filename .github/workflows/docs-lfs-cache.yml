@@ -1,8 +1,9 @@
 # Keeps main's cache of the user manual's Git LFS objects current (#11070).
-# PR previews and release builds restore it and download only the objects it
-# lacks. GitHub scopes caches by ref: PR runs can read main's cache, but main and
-# tag runs cannot read a PR's, so only this workflow writes the store those
-# builds start from. It downloads only the images that changed since the last save.
+# PR previews restore it and download only the objects it lacks. GitHub scopes
+# caches by ref: PR runs can read main's cache, but main runs cannot read a PR's,
+# so this workflow is what writes the store new PRs start from. It downloads
+# only the images changed since the last save; the weekly run restores the entry
+# so that GitHub does not evict it after 7 days without use.
 name: docs-lfs-cache
 
 on:
@@ -16,13 +17,15 @@ on:
       - "packages/backend.ai-webui-docs/src/**/*.webp"
       - ".github/scripts/lfs/**"
       - ".github/workflows/docs-lfs-cache.yml"
+  schedule:
+    - cron: "17 3 * * 1"
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: docs-lfs-cache
+  group: docs-lfs-cache-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -36,18 +39,12 @@ jobs:
 
       - name: Compute the LFS cache key
         id: key
-        run: echo "key=$(bash .github/scripts/lfs/docs-lfs-cache-key.sh)" >> "$GITHUB_OUTPUT"
+        run: |
+          key="$(bash .github/scripts/lfs/docs-lfs-cache-key.sh)"
+          echo "key=${key}" >> "$GITHUB_OUTPUT"
 
-      - name: Look up the cache
-        id: lookup
-        uses: actions/cache/restore@v6
-        with:
-          path: .git/lfs/objects
-          key: ${{ steps.key.outputs.key }}
-          lookup-only: true
-
-      - name: Restore the latest store
-        if: steps.lookup.outputs.cache-hit != 'true'
+      - name: Restore the LFS object cache
+        id: restore
         uses: actions/cache/restore@v6
         with:
           path: .git/lfs/objects
@@ -55,11 +52,17 @@ jobs:
           restore-keys: docs-lfs-v1-
 
       - name: Pull the manual images (Git LFS)
-        if: steps.lookup.outputs.cache-hit != 'true'
+        if: steps.restore.outputs.cache-hit != 'true'
+        env:
+          LFS_USED_OIDS_FILE: ${{ runner.temp }}/lfs-used-oids
         run: bash .github/scripts/lfs/pull-docs-images.sh
 
+      - name: Prune the LFS object store to what main uses
+        if: steps.restore.outputs.cache-hit != 'true'
+        run: bash .github/scripts/lfs/prune-lfs-store.sh "${RUNNER_TEMP}/lfs-used-oids"
+
       - name: Save the LFS object cache
-        if: steps.lookup.outputs.cache-hit != 'true'
+        if: steps.restore.outputs.cache-hit != 'true'
         uses: actions/cache/save@v6
         with:
           path: .git/lfs/objects

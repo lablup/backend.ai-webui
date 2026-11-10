@@ -211,7 +211,9 @@ jobs:
       # by main or release builds; pull-docs-images.sh hashes every object it uses.
       - name: Compute the LFS cache key
         id: lfs-key
-        run: echo "key=$(bash .github/scripts/lfs/docs-lfs-cache-key.sh)" >> "$GITHUB_OUTPUT"
+        run: |
+          key="$(bash .github/scripts/lfs/docs-lfs-cache-key.sh)"
+          echo "key=${key}" >> "$GITHUB_OUTPUT"
 
       - name: Restore the LFS object cache
         id: lfs-cache
@@ -226,6 +228,7 @@ jobs:
       # falls back to the fork's public URL, fetched anonymously (#11055).
       - name: Build both docs trees and mark the changes
         env:
+          LFS_USED_OIDS_FILE: ${{ runner.temp }}/lfs-used-oids
           HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
           HEAD_CLONE_URL: ${{ github.event.pull_request.head.repo.clone_url }}
         run: |
@@ -240,9 +243,15 @@ jobs:
             --label "PR preview" \
             "${fork_args[@]}"
 
-      # Holds the merge base's objects as well as the head's.
+      # Saved only after a complete build, pruned to the head's and merge base's
+      # objects. Not for a fork PR: objects only the fork has would then skip the
+      # fetch from origin on the next run and pass the check at the end of this job.
+      - name: Prune the LFS object store to what the build used
+        if: steps.lfs-cache.outputs.cache-hit != 'true' && github.event.pull_request.head.repo.full_name == github.repository
+        run: bash .github/scripts/lfs/prune-lfs-store.sh "${RUNNER_TEMP}/lfs-used-oids"
+
       - name: Save the LFS object cache
-        if: ${{ !cancelled() && steps.lfs-cache.outputs.cache-hit != 'true' }}
+        if: steps.lfs-cache.outputs.cache-hit != 'true' && github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/cache/save@v6
         with:
           path: .git/lfs/objects

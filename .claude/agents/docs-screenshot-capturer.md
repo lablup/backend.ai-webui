@@ -155,7 +155,7 @@ The filename of an existing screenshot encodes a contract about what it shows. S
    # (.lfsconfig excludes these paths), so smudge the pointer explicitly. Needs git-lfs on PATH;
    # it downloads the object when it is not local. A non-LFS blob passes through unchanged.
    p=packages/backend.ai-webui-docs/src/en/images/foo.png
-   git cat-file blob "main:$p" | git -c lfs.fetchexclude= lfs smudge -- "$p" > /tmp/old.png
+   (set -o pipefail; git cat-file blob "main:$p" | git -c lfs.fetchexclude= lfs smudge -- "$p") > /tmp/old.png
    file /tmp/old.png   # note WIDTH x HEIGHT
    ```
 2. Open `/tmp/old.png` and identify its scope:

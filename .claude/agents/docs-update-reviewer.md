@@ -180,7 +180,7 @@ Verify against rules in `packages/backend.ai-webui-docs/TRANSLATION-GUIDE.md` an
     mkdir -p "/tmp/gate-check/$lang/new" "/tmp/gate-check/$lang/old"
     cp "$f" "/tmp/gate-check/$lang/new/"
     # Git LFS: `git cat-file --filters` would print the pointer (.lfsconfig excludes these paths)
-    git cat-file blob "$base:$f" | git -c lfs.fetchexclude= lfs smudge -- "$f" > "/tmp/gate-check/$lang/old/$(basename "$f")"
+    (set -o pipefail; git cat-file blob "$base:$f" | git -c lfs.fetchexclude= lfs smudge -- "$f") > "/tmp/gate-check/$lang/old/$(basename "$f")"
   done
   for d in /tmp/gate-check/*/; do
     [ -d "${d}new" ] || continue   # no modified PNG: the glob did not match
