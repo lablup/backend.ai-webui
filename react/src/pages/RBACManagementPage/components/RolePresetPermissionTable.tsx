@@ -93,16 +93,9 @@ const RolePresetPermissionTable: React.FC<RolePresetPermissionTableProps> = ({
       mutation RolePresetPermissionTableAddMutation(
         $input: BulkAddRolePermissionPresetsInput!
       ) {
-        adminBulkAddRolePresetPermissions(input: $input) {
+        atomicBulkAddRolePresetPermissions(input: $input) {
           items {
             id
-            entityType
-            permission
-          }
-          failed {
-            entityType
-            permission
-            message
           }
         }
       }
@@ -110,14 +103,14 @@ const RolePresetPermissionTable: React.FC<RolePresetPermissionTableProps> = ({
   const removePermissions =
     useMutationWithPromise<RolePresetPermissionTableRemoveMutation>(graphql`
       mutation RolePresetPermissionTableRemoveMutation(
-        $input: BulkRemoveRolePermissionPresetsInput!
+        $input: PartialBulkRemoveRolePresetPermissionsInput!
       ) {
-        adminBulkRemoveRolePresetPermissions(input: $input) {
-          items {
+        partialBulkRemoveRolePresetPermissions(input: $input) {
+          successes {
             id
           }
           failed {
-            permissionPresetId
+            id
             message
           }
         }
@@ -149,24 +142,14 @@ const RolePresetPermissionTable: React.FC<RolePresetPermissionTableProps> = ({
         : Promise.resolve(null),
       toRevoke.length > 0
         ? removePermissions({
-            input: { permissionPresetIds: toRevoke.map(({ id }) => id) },
+            input: { ids: toRevoke.map(({ id }) => id) },
           })
         : Promise.resolve(null),
     ]);
 
     const failures: RBACPermissionSaveFailure[] = [];
-    if (addResult.status === 'fulfilled') {
-      addResult.value?.adminBulkAddRolePresetPermissions?.failed.forEach(
-        (failure) => {
-          logger.error('Failed to add preset permission', failure.message);
-          failures.push({
-            entityType: failure.entityType,
-            bit: failure.permission,
-            message: failure.message,
-          });
-        },
-      );
-    } else {
+    // The add is all or nothing: a rejection fails every requested entry.
+    if (addResult.status === 'rejected') {
       logger.error('Failed to add preset permissions', addResult.reason);
       toGrant.forEach(({ entityType, bit }) =>
         failures.push({
@@ -179,11 +162,9 @@ const RolePresetPermissionTable: React.FC<RolePresetPermissionTableProps> = ({
     if (removeResult.status === 'fulfilled') {
       const failedById = new Map(
         (
-          removeResult.value?.adminBulkRemoveRolePresetPermissions?.failed ?? []
-        ).map((failure) => [
-          String(failure.permissionPresetId),
-          failure.message,
-        ]),
+          removeResult.value?.partialBulkRemoveRolePresetPermissions.failed ??
+          []
+        ).map((failure) => [String(failure.id), failure.message]),
       );
       toRevoke.forEach(({ entityType, bit, id }) => {
         const failureMessage = failedById.get(id);

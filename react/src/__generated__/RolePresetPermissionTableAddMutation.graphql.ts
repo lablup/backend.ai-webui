@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c5cd65b8e229945d289626b0784a91ff>>
+ * @generated SignedSource<<24555f7f1e17808510ce297cf2f64abe>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -24,18 +24,11 @@ export type RolePresetPermissionTableAddMutation$variables = {
   input: BulkAddRolePermissionPresetsInput;
 };
 export type RolePresetPermissionTableAddMutation$data = {
-  readonly adminBulkAddRolePresetPermissions: {
-    readonly failed: ReadonlyArray<{
-      readonly entityType: string;
-      readonly message: string;
-      readonly permission: PermissionBit;
-    }>;
+  readonly atomicBulkAddRolePresetPermissions: {
     readonly items: ReadonlyArray<{
-      readonly entityType: string;
       readonly id: string;
-      readonly permission: PermissionBit;
     }>;
-  } | null | undefined;
+  };
 };
 export type RolePresetPermissionTableAddMutation = {
   response: RolePresetPermissionTableAddMutation$data;
@@ -50,21 +43,7 @@ var v0 = [
     "name": "input"
   }
 ],
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "entityType",
-  "storageKey": null
-},
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "permission",
-  "storageKey": null
-},
-v3 = [
+v1 = [
   {
     "alias": null,
     "args": [
@@ -74,9 +53,9 @@ v3 = [
         "variableName": "input"
       }
     ],
-    "concreteType": "BulkAddRolePermissionPresetsPayload",
+    "concreteType": "AtomicBulkAddRolePresetPermissionsPayload",
     "kind": "LinkedField",
-    "name": "adminBulkAddRolePresetPermissions",
+    "name": "atomicBulkAddRolePresetPermissions",
     "plural": false,
     "selections": [
       {
@@ -93,28 +72,6 @@ v3 = [
             "kind": "ScalarField",
             "name": "id",
             "storageKey": null
-          },
-          (v1/*: any*/),
-          (v2/*: any*/)
-        ],
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "BulkAddRolePermissionPresetFailureInfo",
-        "kind": "LinkedField",
-        "name": "failed",
-        "plural": true,
-        "selections": [
-          (v1/*: any*/),
-          (v2/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "message",
-            "storageKey": null
           }
         ],
         "storageKey": null
@@ -129,7 +86,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "RolePresetPermissionTableAddMutation",
-    "selections": (v3/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -138,19 +95,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "RolePresetPermissionTableAddMutation",
-    "selections": (v3/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "75e974b7faa2fb568ac96d5bfb7a19a0",
+    "cacheID": "df20af7bc0e023ee9484001152772c11",
     "id": null,
     "metadata": {},
     "name": "RolePresetPermissionTableAddMutation",
     "operationKind": "mutation",
-    "text": "mutation RolePresetPermissionTableAddMutation(\n  $input: BulkAddRolePermissionPresetsInput!\n) {\n  adminBulkAddRolePresetPermissions(input: $input) {\n    items {\n      id\n      entityType\n      permission\n    }\n    failed {\n      entityType\n      permission\n      message\n    }\n  }\n}\n"
+    "text": "mutation RolePresetPermissionTableAddMutation(\n  $input: BulkAddRolePermissionPresetsInput!\n) {\n  atomicBulkAddRolePresetPermissions(input: $input) {\n    items {\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b94edf4710bf841855abca2e643488c9";
+(node as any).hash = "b54158188c916d2479f3dbe2bd76a855";
 
 export default node;
