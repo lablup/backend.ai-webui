@@ -263,11 +263,10 @@ const DeploymentAutoScalingCardContent: React.FC<
 
   const commitDeleteMutation =
     useMutationWithPromise<DeploymentAutoScalingCardDeleteMutation>(graphql`
-      mutation DeploymentAutoScalingCardDeleteMutation(
-        $input: DeleteAutoScalingRuleInput!
-      ) {
-        deleteAutoScalingRule(input: $input) {
-          id
+      mutation DeploymentAutoScalingCardDeleteMutation($id: UUID!) {
+        purgeAutoScalingRule(id: $id) {
+          purgedId
+          fieldId
         }
       }
     `);
@@ -404,9 +403,7 @@ const DeploymentAutoScalingCardContent: React.FC<
         reversible
         onOk={() => {
           if (!deletingRule) return;
-          return commitDeleteMutation({
-            input: { id: deletingRule.fieldId },
-          })
+          return commitDeleteMutation({ id: deletingRule.fieldId })
             .then(() => {
               setDeletingRule(null);
               handleRefetch();
