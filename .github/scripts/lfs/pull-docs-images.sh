@@ -101,15 +101,20 @@ pull_one() {
   sed 's/[][*?\\]/\\&/g; s/[[:space:]]/?/g; s/$/ filter=lfs diff=lfs merge=lfs -text/' "$list" > "$attrs"
   tr '\n' '\0' < "$list" > "${list}.nul"
   (cd "$top" && tr '\n' '\0' < "$list" | xargs -0 rm -f)
-  env -u GIT_LFS_SKIP_SMUDGE git -C "$top" --literal-pathspecs \
-    -c core.attributesFile="$attrs" \
-    -c core.hooksPath="$hooks" \
-    -c filter.lfs.process="git-lfs filter-process" \
-    -c filter.lfs.smudge="git-lfs smudge -- %f" \
-    -c filter.lfs.clean="git-lfs clean -- %f" \
-    -c filter.lfs.required=true \
-    -c lfs.fetchexclude= \
-    checkout --pathspec-from-file="${list}.nul" --pathspec-file-nul
+  local lfs_git=(env -u GIT_LFS_SKIP_SMUDGE git -C "$top" --literal-pathspecs
+    -c core.attributesFile="$attrs"
+    -c core.hooksPath="$hooks"
+    -c filter.lfs.process="git-lfs filter-process"
+    -c filter.lfs.smudge="git-lfs smudge -- %f"
+    -c filter.lfs.clean="git-lfs clean -- %f"
+    -c filter.lfs.required=true
+    -c lfs.fetchexclude=)
+  "${lfs_git[@]}" checkout --pathspec-from-file="${list}.nul" --pathspec-file-nul
+  # Files written in the same second as the index are re-hashed by later git
+  # commands, which without the clean filter would see them as modified.
+  # Refreshing with the filter, once they are no longer racy, records them clean.
+  sleep 1
+  "${lfs_git[@]}" update-index -q --refresh >/dev/null || true
 
   local missing=0 path
   while IFS= read -r path; do
