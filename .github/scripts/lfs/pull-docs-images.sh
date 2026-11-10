@@ -54,7 +54,7 @@ ensure_git_lfs() {
   git lfs version >/dev/null 2>&1 && return 0
   local dir
   dir="$(bash "${HERE}/install-git-lfs.sh")"
-  [ -z "$dir" ] || export PATH="${dir}:${PATH}"
+  [ -z "$dir" ] || { export PATH="${dir}:${PATH}"; LFS_RUN_ONLY_DIR="$dir"; }
   git lfs version >/dev/null 2>&1 || { log "git-lfs is still not runnable after installing it." >&2; exit 1; }
 }
 
@@ -81,7 +81,7 @@ fail_on_untracked() { # <top> <file listing untracked pointer files>
 
 # On any exit, including Ctrl-C or a cancelled job: remove the temp dir, and
 # put back the pointer files when they were deleted but not yet checked out.
-CUR_WORK="" RESTORE_TOP="" RESTORE_LIST=""
+CUR_WORK="" RESTORE_TOP="" RESTORE_LIST="" LFS_RUN_ONLY_DIR=""
 on_exit() {
   if [ -n "$RESTORE_LIST" ]; then
     if git -C "$RESTORE_TOP" --literal-pathspecs -c filter.lfs.required=false \
@@ -169,10 +169,12 @@ pull_one() {
 
   # Restore from the index through the LFS smudge filter. The attributes file
   # covers checkouts whose .gitattributes does not mark the images (yet). It
-  # names only the pointer paths (glob chars escaped, whitespace as `?`): a `*`
-  # would let git's index refresh run the clean filter over unrelated files.
+  # names only the pointer paths (glob chars escaped, a path with whitespace
+  # C-quoted): a wildcard would let git's index refresh run the clean filter over
+  # unrelated files.
   attrs="${work}/attributes"
-  sed 's/[][*?\\]/\\&/g; s/[[:space:]]/?/g; s/$/ filter=lfs diff=lfs merge=lfs -text/' "$list" > "$attrs"
+  sed -e 's/[][*?\\]/\\&/g' -e '/[[:space:]]/{ s/[\\"]/\\&/g; s/.*/"&"/; }' \
+    -e 's/$/ filter=lfs diff=lfs merge=lfs -text/' "$list" > "$attrs"
   tr '\n' '\0' < "$list" > "${list}.nul"
   RESTORE_TOP="$top" RESTORE_LIST="${list}.nul"
   (cd "$top" && tr '\n' '\0' < "$list" | xargs -0 rm -f)
@@ -221,7 +223,9 @@ pull_one() {
     [ -z "$FALLBACK_REPORT" ] || printf '%s\t%s\n' "$top" "$r" >> "$FALLBACK_REPORT"
   fi
 
-  if [ -z "${CI:-}" ] && [ -z "$(git -C "$top" config --get filter.lfs.process || true)" ]; then
+  if [ -z "${CI:-}" ] && [ -n "$LFS_RUN_ONLY_DIR" ]; then
+    log "note: git-lfs is not on your PATH; this run used a copy in ${LFS_RUN_ONLY_DIR}. To commit images, install git-lfs (https://git-lfs.com) or add that directory to PATH, then run 'git lfs install --skip-repo'."
+  elif [ -z "${CI:-}" ] && [ -z "$(git -C "$top" config --get filter.lfs.process || true)" ]; then
     log "note: git-lfs filters are not configured here. Run 'git lfs install --skip-repo' before committing images."
   fi
   rm -rf "$work"

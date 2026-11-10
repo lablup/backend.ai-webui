@@ -74,7 +74,7 @@ flowchart LR
 ## Consequences
 
 - A default clone and every non-docs CI job skip the image bytes; only docs builds and screenshot work download them.
-- Contributors who change screenshots need git-lfs, set up with `git lfs install --skip-repo` (Husky owns the hooks, so `.husky/pre-push` runs `git lfs pre-push`); the pre-push hook refuses their push and the pointer check fails their pull request otherwise.
+- Contributors who change screenshots need git-lfs, set up with `git lfs install --skip-repo` (Husky owns the hooks, so `.husky/pre-push` runs `git lfs pre-push`); images committed without it are raw bytes, which the pre-push hook refuses and the pointer check fails.
 - A docs build fails loudly when its images were not fetched, instead of publishing broken images.
 - Docs builds download the images on each run; nothing caches the LFS objects between runs.
 - `main`'s history keeps the raw PNGs until a separate history rewrite, so a full clone shrinks only after it.

@@ -1,85 +1,102 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # Git LFS pre-push step, run from .husky/pre-push. Husky owns core.hooksPath, so
 # `git lfs install` cannot install its own pre-push hook here (#11040).
 #
 # Usage: lfs-pre-push.sh <remote-name> <remote-url>   (git's ref lines on stdin)
 #
-# - git-lfs installed: refuses images under an LFS path committed as raw bytes,
-#   then hands the push to `git lfs pre-push`, which uploads the LFS objects.
-# - git-lfs missing: refuses the push only when it changes an LFS-tracked file;
-#   every other push goes through without git-lfs.
-set -eu
+# Looks at the LFS-tracked files the pushed commits add or change (merge
+# resolutions included; commits already on any remote-tracking ref excluded):
+# - any of them committed as raw bytes instead of an LFS pointer → refused;
+# - otherwise, with git-lfs installed and LFS files in the push, `git lfs
+#   pre-push` uploads their objects;
+# - every other push goes through, with or without git-lfs.
+set -euo pipefail
+
+top="$(git rev-parse --show-toplevel)"
+# shellcheck source=SCRIPTDIR/../../.github/scripts/lfs/lib.sh
+. "${top}/.github/scripts/lfs/lib.sh"
 
 work="$(mktemp -d)"
 trap 'rm -rf "$work"' EXIT
-cat > "$work/refs"
+cat > "${work}/refs"
 
-is_zero() { case "$1" in *[!0]*) return 1 ;; *) return 0 ;; esac; }
+is_zero() { [[ ! "$1" =~ [^0] ]]; }
 
-# "<commit> <path>" for each LFS-tracked file added or modified by the pushed commits.
-changed() { git -c core.quotePath=false log --format= --name-only --no-renames --diff-filter=d "$@"; }
+# Attributes as each pushed commit has them (git >= 2.40), else the working tree's.
+src_ok=0
+git check-attr --source HEAD filter -- .gitattributes >/dev/null 2>&1 && src_ok=1
+
+# "<commit>\t<new blob>\t<path>" for every file a pushed commit adds or modifies.
 while read -r _lref lsha _rref rsha; do
   [ -n "${lsha:-}" ] || continue
   is_zero "$lsha" && continue
+  range=("$lsha" --not --remotes)
   if ! is_zero "$rsha" && git cat-file -e "${rsha}^{commit}" 2>/dev/null; then
-    changed "${rsha}..${lsha}"
-  else
-    changed "$lsha" --not --remotes
-  fi |
-    sed '/^$/d' | sort -u |
-    git -c core.quotePath=false check-attr --stdin filter |
-    sed -n 's/: filter: lfs$//p' |
-    sed "s|^|${lsha} |" >> "$work/lfs"
-done < "$work/refs"
+    range+=("$rsha")
+  fi
+  git -c core.quotePath=false log --format='commit %H' --raw --no-abbrev --no-renames \
+    --diff-filter=d --cc "${range[@]}" |
+    while IFS= read -r line; do
+      case "$line" in
+        "commit "*) commit="${line#commit }" ;;
+        :*)
+          meta="${line%%$'\t'*}"
+          read -ra f <<< "$meta"
+          printf '%s\t%s\t%s\n' "$commit" "${f[${#f[@]}-2]}" "${line#*$'\t'}"
+          ;;
+      esac
+    done >> "${work}/changed"
+done < "${work}/refs"
 
-if [ -s "$work/lfs" ]; then
-  # Raw content: the newest pushed version is not an LFS pointer.
-  while read -r sha path; do
-    git cat-file -e "${sha}:${path}" 2>/dev/null || continue
-    size="$(git cat-file -s "${sha}:${path}")"
-    head="$(git cat-file blob "${sha}:${path}" | head -c 39 | tr -d '\000')"
-    if [ "$size" -gt 1024 ] || [ "$head" != "version https://git-lfs.github.com/spec" ]; then
-      echo "$path" >> "$work/raw"
-    fi
-  done < "$work/lfs"
+# Keep the LFS-tracked ones: "<blob>\t<path>".
+: > "${work}/lfs"
+if [ -s "${work}/changed" ]; then
+  cut -f1 "${work}/changed" | awk '!seen[$0]++' > "${work}/commits"
+  while IFS= read -r commit; do
+    awk -F'\t' -v c="$commit" '$1 == c { print $2 "\t" $3 }' "${work}/changed" > "${work}/one"
+    src=()
+    [ "$src_ok" -eq 0 ] || src=(--source "$commit")
+    cut -f2- "${work}/one" | git -c core.quotePath=false check-attr "${src[@]}" --stdin filter |
+      paste "${work}/one" - |
+      awk -F'\t' '$3 ~ /: filter: lfs$/ { print $1 "\t" $2 }' >> "${work}/lfs"
+  done < "${work}/commits"
 fi
 
-list() { sort -u "$1" | head -n 10 | sed 's/^/  /' >&2; }
+# Raw content: larger than any pointer, or small but not a valid pointer.
+: > "${work}/raw"
+if [ -s "${work}/lfs" ]; then
+  cut -f1 "${work}/lfs" | sort -u | git cat-file --batch-check='%(objectname) %(objectsize)' |
+    while read -r oid size; do
+      if [ "$size" -gt 1024 ] || ! git cat-file blob "$oid" | lfs_is_valid_pointer; then
+        awk -F'\t' -v o="$oid" '$1 == o { print $2 }' "${work}/lfs"
+      fi
+    done | sort -u > "${work}/raw"
+fi
 
-if ! command -v git-lfs >/dev/null 2>&1; then
-  [ -s "$work/lfs" ] || exit 0
-  cut -d' ' -f2- "$work/lfs" > "$work/paths"
+has_lfs=0
+command -v git-lfs >/dev/null 2>&1 && has_lfs=1
+
+if [ -s "${work}/raw" ]; then
   {
     echo
-    echo "This push changes files stored in Git LFS, but git-lfs is not installed,"
-    echo "so their content would not be uploaded and GitHub would reject the push:"
-  } >&2
-  list "$work/paths"
-  {
+    echo "These files belong in Git LFS but were committed as raw bytes (git-lfs was not set up"
+    echo "when they were added), so the push is refused:"
+    head -n 10 "${work}/raw" | sed 's/^/  /'
+    n="$(wc -l < "${work}/raw" | tr -d ' ')"
+    [ "$n" -le 10 ] || echo "  … and $((n - 10)) more"
     echo
-    echo "Install git-lfs (https://git-lfs.com), run 'git lfs install --skip-repo' once, then:"
-    echo "  git add --renormalize -- <the files above> && git commit"
-    echo "(it turns files committed without git-lfs into LFS pointers), and push again."
+    [ "$has_lfs" -eq 1 ] || echo "Install git-lfs (https://git-lfs.com) first."
+    echo "Run 'git lfs install --skip-repo' once, then rewrite the commits that added them, so the"
+    echo "raw bytes do not stay in the history:"
+    echo "  last commit:  git add --renormalize -- <the files> && git commit --amend --no-edit"
+    echo "  older ones:   git rebase -i <base>, and the same for each 'edit'ed commit"
     echo
   } >&2
   exit 1
 fi
 
-if [ -s "$work/raw" ]; then
-  {
-    echo
-    echo "These files belong in Git LFS but were committed as raw bytes (git-lfs filters not"
-    echo "configured when they were added):"
-  } >&2
-  list "$work/raw"
-  {
-    echo
-    echo "Run 'git lfs install --skip-repo' once, then:"
-    echo "  git add --renormalize -- <the files above> && git commit"
-    echo "and push again."
-    echo
-  } >&2
-  exit 1
-fi
+# Nothing to upload, or no git-lfs: without it a pointer can only come from an
+# existing one (moved, merged, rebased), whose object the remote already has.
+[ -s "${work}/lfs" ] && [ "$has_lfs" -eq 1 ] || exit 0
 
-git lfs pre-push "$@" < "$work/refs"
+git lfs pre-push "$@" < "${work}/refs"

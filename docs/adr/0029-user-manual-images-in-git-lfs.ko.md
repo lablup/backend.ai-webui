@@ -74,7 +74,7 @@ flowchart LR
 ## Consequences
 
 - 기본 clone과 docs가 아닌 모든 CI job은 이미지 바이트를 받지 않는다. docs 빌드와 스크린샷 작업만 받는다.
-- 스크린샷을 바꾸는 기여자는 git-lfs가 필요하고 `git lfs install --skip-repo`로 설정한다(hook은 Husky가 관리하므로 `.husky/pre-push`가 `git lfs pre-push`를 실행한다). 그렇지 않으면 pre-push hook이 push를 거부하고 pointer 검사가 pull request를 실패시킨다.
+- 스크린샷을 바꾸는 기여자는 git-lfs가 필요하고 `git lfs install --skip-repo`로 설정한다(hook은 Husky가 관리하므로 `.husky/pre-push`가 `git lfs pre-push`를 실행한다). git-lfs 없이 커밋한 이미지는 raw 바이트가 되며, pre-push hook이 그 push를 거부하고 pointer 검사도 실패시킨다.
 - 이미지를 받지 않은 docs 빌드는 깨진 이미지를 게시하는 대신 분명히 실패한다.
 - docs 빌드는 실행마다 이미지를 내려받으며, 실행 사이에 LFS object를 캐시하는 장치는 없다.
 - `main` 히스토리는 별도의 히스토리 재작성 전까지 원본 PNG를 그대로 가지므로, 전체 clone은 그 이후에야 줄어든다.

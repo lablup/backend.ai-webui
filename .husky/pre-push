@@ -1,2 +1,2 @@
 # Upload Git LFS objects (the user manual images, #11040); see the script header.
-sh scripts/git-hooks/lfs-pre-push.sh "$@"
+bash scripts/git-hooks/lfs-pre-push.sh "$@"

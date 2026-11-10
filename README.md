@@ -206,8 +206,9 @@ $ pnpm --filter backend.ai-webui-docs run images:pull
 Use `--skip-repo`: Husky owns this repository's hooks, so a plain `git lfs install` stops at
 `Hook already exists: pre-push` (it still sets up the filters). The upload is done by Husky's
 `.husky/pre-push`, which runs `git lfs pre-push`. Then add or replace images and commit and
-push as usual; the images are committed as pointers and `git push` uploads them. Without
-git-lfs, `git push` refuses only pushes that add or change files under an LFS path.
+push as usual; the images are committed as pointers and `git push` uploads them. A push
+that carries an image committed as raw bytes (added without git-lfs) is refused, with the
+commands that rewrite the commit; every other push goes through, with or without git-lfs.
 
 ### Developing / testing with dev server
 

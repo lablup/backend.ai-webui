@@ -30,9 +30,9 @@ pnpm --filter backend.ai-webui-docs run images:pull
 Editing Markdown only needs none of this.
 
 Add or replace images, then commit and push as usual: the filters commit them as pointers and
-`.husky/pre-push` runs `git lfs pre-push`, which uploads them. The hook refuses a push that adds
-or changes images when git-lfs is missing, or when an image was committed as raw bytes; it prints
-the `git add --renormalize` command that fixes the commit.
+`.husky/pre-push` runs `git lfs pre-push`, which uploads them. The hook refuses a push in which
+an image was committed as raw bytes (added without git-lfs set up), and prints the commands that
+rewrite that commit with `git add --renormalize`.
 
 From a fork, the same applies; `git push` uploads the images to your
 fork's LFS storage. Builds of this repository's branches fetch images from this repository

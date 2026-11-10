@@ -62,7 +62,7 @@ A fixed delay is not a substitute — `document.fonts.ready` resolves only once 
 - **All 4 language directories have identical filenames** but each must be captured in its own UI locale
 - **E2E environment**: `e2e/envs/.env.playwright` - endpoint URLs, credentials
 - **Existing screenshot test**: `e2e/screenshot.test.ts` - reference patterns
-- **Images are in Git LFS**: a checkout holds pointer files until `pnpm --filter backend.ai-webui-docs run images:pull` fetches the real images. It needs git-lfs, set up once with `git lfs install --skip-repo`; without git-lfs, stop and report that it is missing. Run it before Step 5: the gate cannot compare a capture with a pointer, and committing or pushing the accepted images needs git-lfs too (`.husky/pre-push` refuses the push without it).
+- **Images are in Git LFS**: a checkout holds pointer files until `pnpm --filter backend.ai-webui-docs run images:pull` fetches the real images. It needs git-lfs, set up once with `git lfs install --skip-repo`; without git-lfs, stop and report that it is missing. Run it before Step 5: the gate cannot compare a capture with a pointer, and committing or pushing the accepted images needs git-lfs too (without it the images are committed as raw bytes and `.husky/pre-push` refuses the push).
 
 ## Workflow
 

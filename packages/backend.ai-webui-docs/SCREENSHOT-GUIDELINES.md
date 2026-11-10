@@ -163,7 +163,7 @@ pnpm run accept:images --from "<capture dir for one language>" --to "src/<lang>/
 
 It prints `new` / `changed` / `unchanged` per file (`--json` adds the measured difference) and copies only `new` and `changed`. To replace an `unchanged` image anyway, pass `--force <file.png>` and say why in the PR.
 
-The images are in Git LFS, so the gate needs the real files: run `git lfs install --skip-repo` once, then `pnpm run images:pull` before it (the gate refuses to compare a capture with a pointer). Commit and push the accepted images as usual: they are committed as LFS pointers, and `.husky/pre-push` uploads them, refusing the push when git-lfs is missing.
+The images are in Git LFS, so the gate needs the real files: run `git lfs install --skip-repo` once, then `pnpm run images:pull` before it (the gate refuses to compare a capture with a pointer). Commit and push the accepted images as usual: they are committed as LFS pointers, and `.husky/pre-push` uploads them; it refuses a push that carries an image committed as raw bytes.
 
 ### Cleanup After Capture
 

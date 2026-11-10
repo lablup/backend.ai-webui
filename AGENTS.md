@@ -83,7 +83,7 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
 
 ## Important Notes
 
-- Husky hooks: pre-commit runs lint-staged (linting and formatting); pre-push uploads Git LFS objects and refuses LFS-tracked changes when git-lfs is missing (`scripts/git-hooks/lfs-pre-push.sh`)
+- Husky hooks: pre-commit runs lint-staged (linting and formatting); pre-push uploads Git LFS objects and refuses LFS-tracked files committed as raw bytes (`scripts/git-hooks/lfs-pre-push.sh`)
 - Use `make clean` before building if encountering issues
 - Electron app requires special build process with `make dep`
 - React components use Relay; ensure GraphQL schema in `/data/` is up to date
