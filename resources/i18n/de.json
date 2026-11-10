@@ -4425,6 +4425,7 @@
     "DescEnableReservoir": "Zeigt den Menüeintrag Reservoir.",
     "DescFasttrackEndpoint": "URL des FastTrack-Dienstes. Er wird als eigener Menüeintrag angeboten.",
     "DescHideAgents": "Blendet das Menü \"Agent-Zusammenfassung\" und Agent-Details für Benutzer aus, die keine Superadmins sind.",
+    "DescHideModelDefinitionPath": "Blendet den Pfad der Modelldefinitionsdatei in Bereitstellungsrevisionen aus: Die Revisionsdetails zeigen ihn nicht, und das Feld fehlt im Revisionsformular. Eine kopierte Revision behält ihren Pfad; eine neue verwendet model-definition.yaml.",
     "DescIsDirectorySizeVisible": "Zeigt im Ordner-Explorer die Größe jedes Verzeichnisses an.",
     "DescMaskUserInfo": "Maskiert E-Mail-Adresse und Namen des Benutzerkontos bei der Anzeige.",
     "DescMaxATOMDevicesPerContainer": "Maximale Anzahl an ATOM-Geräten, die einer Sitzung zugewiesen werden können.",
@@ -4461,6 +4462,7 @@
     "ExportJson": "JSON exportieren",
     "FasttrackEndpoint": "FastTrack-URL",
     "HideAgents": "Agents ausblenden",
+    "HideModelDefinitionPath": "Pfad der Modelldefinitionsdatei ausblenden",
     "ImportFileReadError": "Die Datei konnte nicht gelesen werden.",
     "ImportFileTooLarge": "Die Datei ist größer als 1 MB.",
     "ImportJson": "JSON importieren",
@@ -4518,6 +4520,7 @@
       "Login": "Anmeldung",
       "Menu": "Menü",
       "Plugins": "Plugins",
+      "Serving": "Bereitstellungen",
       "Session": "Sitzung",
       "Storage": "Daten"
     }

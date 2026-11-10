@@ -4409,6 +4409,7 @@
     "DescEnableReservoir": "แสดงรายการเมนู Reservoir",
     "DescFasttrackEndpoint": "URL ของบริการ FastTrack โดยจะแสดงเป็นรายการเมนูแยกต่างหาก",
     "DescHideAgents": "ซ่อนเมนูสรุปเอเจนต์และรายละเอียดเอเจนต์จากผู้ใช้ที่ไม่ใช่ superadmin",
+    "DescHideModelDefinitionPath": "ซ่อนเส้นทางไฟล์นิยามโมเดลในรีวิชันของการปรับใช้ รายละเอียดรีวิชันจะไม่แสดง และช่องนี้จะหายไปจากฟอร์มรีวิชัน รีวิชันที่คัดลอกจะคงเส้นทางเดิม ส่วนรีวิชันใหม่จะใช้ model-definition.yaml",
     "DescIsDirectorySizeVisible": "แสดงขนาดของแต่ละไดเรกทอรีในตัวสำรวจโฟลเดอร์",
     "DescMaskUserInfo": "ปิดบังอีเมลและชื่อของบัญชีผู้ใช้เมื่อแสดงผล",
     "DescMaxATOMDevicesPerContainer": "จำนวนอุปกรณ์ ATOM สูงสุดที่จัดสรรให้เซสชันหนึ่งได้",
@@ -4445,6 +4446,7 @@
     "ExportJson": "ส่งออก JSON",
     "FasttrackEndpoint": "URL ของ FastTrack",
     "HideAgents": "ซ่อนเอเจนต์",
+    "HideModelDefinitionPath": "ซ่อนเส้นทางไฟล์นิยามโมเดล",
     "ImportFileReadError": "ไม่สามารถอ่านไฟล์ได้",
     "ImportFileTooLarge": "ไฟล์มีขนาดใหญ่กว่า 1 MB",
     "ImportJson": "นำเข้า JSON",
@@ -4502,6 +4504,7 @@
       "Login": "การลงชื่อเข้าใช้",
       "Menu": "เมนู",
       "Plugins": "ปลั๊กอิน",
+      "Serving": "การปรับใช้",
       "Session": "เซสชัน",
       "Storage": "ข้อมูล"
     }

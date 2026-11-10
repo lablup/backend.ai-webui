@@ -26,6 +26,7 @@ export type WebUISettingGroup =
   | 'appLauncher'
   | 'environments'
   | 'storage'
+  | 'serving'
   | 'menu'
   | 'downloads'
   | 'account'
@@ -225,6 +226,9 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
       unit: 'Bytes',
     },
 
+    // Model serving.
+    def('hideModelDefinitionPath', 'domain', 'boolean', 'serving'),
+
     // Sidebar.
     def('menuBlocklist', 'domain', 'stringList', 'menu', 'blockList'),
     def('menuInactivelist', 'domain', 'stringList', 'menu', 'inactiveList'),
@@ -251,6 +255,7 @@ export const WEBUI_SETTING_GROUPS: ReadonlyArray<WebUISettingGroup> = [
   'appLauncher',
   'environments',
   'storage',
+  'serving',
   'menu',
   'downloads',
   'account',

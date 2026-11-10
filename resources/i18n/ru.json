@@ -4423,6 +4423,7 @@
     "DescEnableReservoir": "Показывает пункт меню Reservoir.",
     "DescFasttrackEndpoint": "URL сервиса FastTrack. Он предлагается как отдельный пункт меню.",
     "DescHideAgents": "Скрывает меню «Резюме агента» и сведения об агентах от пользователей, не являющихся суперадминистраторами.",
+    "DescHideModelDefinitionPath": "Скрывает путь к файлу определения модели в ревизиях развертывания: сведения о ревизии его не показывают, а поле исчезает из формы. Скопированная ревизия сохраняет свой путь; новая использует model-definition.yaml.",
     "DescIsDirectorySizeVisible": "Показывает размер каждого каталога в проводнике папок.",
     "DescMaskUserInfo": "Маскирует e-mail и имя учётной записи пользователя при отображении.",
     "DescMaxATOMDevicesPerContainer": "Максимальное число устройств ATOM, которое можно выделить одной сессии.",
@@ -4459,6 +4460,7 @@
     "ExportJson": "Экспорт JSON",
     "FasttrackEndpoint": "URL FastTrack",
     "HideAgents": "Скрыть агентов",
+    "HideModelDefinitionPath": "Скрыть путь к файлу определения модели",
     "ImportFileReadError": "Не удалось прочитать файл.",
     "ImportFileTooLarge": "Файл больше 1 МБ.",
     "ImportJson": "Импорт JSON",
@@ -4516,6 +4518,7 @@
       "Login": "Вход",
       "Menu": "Меню",
       "Plugins": "Плагины",
+      "Serving": "Развёртывания",
       "Session": "Сессия",
       "Storage": "Данные"
     }

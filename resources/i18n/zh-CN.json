@@ -4425,6 +4425,7 @@
     "DescEnableReservoir": "显示 Reservoir 菜单项。",
     "DescFasttrackEndpoint": "FastTrack 服务的 URL。它将作为独立的菜单项提供。",
     "DescHideAgents": "对非超级管理员用户隐藏代理摘要菜单和代理详情。",
+    "DescHideModelDefinitionPath": "在部署修订版本中隐藏模型定义文件路径：修订详情不显示该路径，修订表单中也不再有此字段。复制的修订保留原路径，新修订使用 model-definition.yaml。",
     "DescIsDirectorySizeVisible": "在文件夹浏览器中显示每个目录的大小。",
     "DescMaskUserInfo": "显示时遮盖用户账户的邮箱和姓名。",
     "DescMaxATOMDevicesPerContainer": "可分配给单个会话的最大 ATOM 设备数量。",
@@ -4461,6 +4462,7 @@
     "ExportJson": "导出 JSON",
     "FasttrackEndpoint": "FastTrack URL",
     "HideAgents": "隐藏代理",
+    "HideModelDefinitionPath": "隐藏模型定义文件路径",
     "ImportFileReadError": "无法读取文件。",
     "ImportFileTooLarge": "文件大于 1 MB。",
     "ImportJson": "导入 JSON",
@@ -4518,6 +4520,7 @@
       "Login": "登录",
       "Menu": "菜单",
       "Plugins": "插件",
+      "Serving": "部署",
       "Session": "会话",
       "Storage": "数据"
     }

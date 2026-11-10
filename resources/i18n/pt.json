@@ -4425,6 +4425,7 @@
     "DescEnableReservoir": "Mostra a entrada de menu Reservoir.",
     "DescFasttrackEndpoint": "URL do serviço FastTrack. É oferecido como um item de menu próprio.",
     "DescHideAgents": "Oculta o menu Resumo dos agentes e os detalhes dos agentes aos utilizadores que não são superadmins.",
+    "DescHideModelDefinitionPath": "Oculta o caminho do ficheiro de definição do modelo nas revisões de implementação: os detalhes da revisão não o mostram e o campo desaparece do formulário. Uma revisão copiada mantém o seu caminho; uma nova usa model-definition.yaml.",
     "DescIsDirectorySizeVisible": "Mostra o tamanho de cada diretório no explorador de pastas.",
     "DescMaskUserInfo": "Oculta o e-mail e o nome da conta de utilizador ao apresentá-los.",
     "DescMaxATOMDevicesPerContainer": "Número máximo de dispositivos ATOM que podem ser alocados a uma sessão.",
@@ -4461,6 +4462,7 @@
     "ExportJson": "Exportar JSON",
     "FasttrackEndpoint": "URL do FastTrack",
     "HideAgents": "Ocultar agentes",
+    "HideModelDefinitionPath": "Ocultar o caminho do ficheiro de definição do modelo",
     "ImportFileReadError": "Não foi possível ler o ficheiro.",
     "ImportFileTooLarge": "O ficheiro é maior do que 1 MB.",
     "ImportJson": "Importar JSON",
@@ -4518,6 +4520,7 @@
       "Login": "Início de sessão",
       "Menu": "Menu",
       "Plugins": "Plugins",
+      "Serving": "Implementações",
       "Session": "Sessão",
       "Storage": "Dados"
     }

@@ -4425,6 +4425,7 @@
     "DescEnableReservoir": "Reservoir цэсийн зүйлийг харуулна.",
     "DescFasttrackEndpoint": "FastTrack үйлчилгээний URL хаяг. Тусдаа цэсийн зүйл болгон санал болгогдоно.",
     "DescHideAgents": "Супер админ биш хэрэглэгчдээс Агентын хураангуй цэс болон агентын дэлгэрэнгүйг нуудаг.",
+    "DescHideModelDefinitionPath": "Байршуулалтын засварт загварын тодорхойлолтын файлын замыг нууна: засварын дэлгэрэнгүйд харуулахгүй, засварын маягтаас талбарыг хасна. Хуулсан засвар хуучин замаа хадгална; шинэ засвар model-definition.yaml-г ашиглана.",
     "DescIsDirectorySizeVisible": "Хавтас хөтөчид директор бүрийн хэмжээг харуулна.",
     "DescMaskUserInfo": "Хэрэглэгчийн бүртгэлийн имэйл болон нэрийг далдлан харуулна.",
     "DescMaxATOMDevicesPerContainer": "Нэг session-д хуваарилж болох ATOM төхөөрөмжийн дээд тоо.",
@@ -4461,6 +4462,7 @@
     "ExportJson": "JSON экспортлох",
     "FasttrackEndpoint": "FastTrack URL",
     "HideAgents": "Агентуудыг нуух",
+    "HideModelDefinitionPath": "Загварын тодорхойлолтын файлын замыг нуух",
     "ImportFileReadError": "Файлыг уншиж чадсангүй.",
     "ImportFileTooLarge": "Файл 1 MB-аас том байна.",
     "ImportJson": "JSON импортлох",
@@ -4518,6 +4520,7 @@
       "Login": "Нэвтрэлт",
       "Menu": "Цэс",
       "Plugins": "Нэмэлтүүд",
+      "Serving": "Байршуулалтууд",
       "Session": "Session",
       "Storage": "Өгөгдөл"
     }

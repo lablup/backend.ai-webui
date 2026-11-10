@@ -4426,6 +4426,7 @@
     "DescEnableReservoir": "Reservoir 메뉴를 표시합니다.",
     "DescFasttrackEndpoint": "FastTrack 서비스의 URL 주소입니다. 별도 메뉴로 제공됩니다.",
     "DescHideAgents": "슈퍼 관리자가 아닌 사용자에게 에이전트 요약 메뉴와 에이전트 정보를 숨깁니다.",
+    "DescHideModelDefinitionPath": "배포 리비전에서 모델 정의 파일 경로를 숨깁니다. 리비전 상세에 표시하지 않고 리비전 입력 폼에서 항목을 없앱니다. 복사한 리비전은 기존 경로를 유지하고, 새 리비전은 model-definition.yaml을 사용합니다.",
     "DescIsDirectorySizeVisible": "폴더 탐색기에서 각 디렉터리의 크기를 표시합니다.",
     "DescMaskUserInfo": "사용자 계정 이메일과 이름을 가려서 표시합니다.",
     "DescMaxATOMDevicesPerContainer": "한 세션에 할당할 수 있는 최대 ATOM 수입니다.",
@@ -4462,6 +4463,7 @@
     "ExportJson": "JSON 내보내기",
     "FasttrackEndpoint": "FastTrack URL",
     "HideAgents": "에이전트 숨김",
+    "HideModelDefinitionPath": "모델 정의 파일 경로 숨기기",
     "ImportFileReadError": "파일을 읽을 수 없습니다.",
     "ImportFileTooLarge": "파일이 1MB보다 큽니다.",
     "ImportJson": "JSON 가져오기",
@@ -4519,6 +4521,7 @@
       "Login": "로그인",
       "Menu": "메뉴",
       "Plugins": "플러그인",
+      "Serving": "배포",
       "Session": "세션",
       "Storage": "데이터"
     }
