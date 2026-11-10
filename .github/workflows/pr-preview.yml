@@ -204,6 +204,12 @@ jobs:
         id: urls
         run: echo "short_hash=$(echo "${{ github.event.pull_request.head.sha }}" | cut -c1-7)" >> "$GITHUB_OUTPUT"
 
+      # Head images may be Git LFS pointers (#11040); a no-op while none is.
+      # The build script pulls the merge base's own LFS objects after swapping
+      # its `src` in.
+      - name: Pull the manual images (Git LFS)
+        run: bash .github/scripts/lfs/pull-docs-images.sh
+
       - name: Build both docs trees and mark the changes
         run: |
           bash .github/scripts/pr-preview/build-docs-preview.sh \

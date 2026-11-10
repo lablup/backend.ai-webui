@@ -103,6 +103,10 @@ echo "Head: $(git rev-parse --short HEAD) · Base: $(git rev-parse --short "$BAS
 
 docs_toolkit() { pnpm --filter backend.ai-webui-docs exec docs-toolkit "$@"; }
 
+# Materializes Git LFS images in `src` (a no-op while it holds none). Base and
+# head reference different LFS objects, so each side is pulled after checkout.
+pull_images() { bash "${REPO_ROOT}/.github/scripts/lfs/pull-docs-images.sh" "$@" "$REPO_ROOT"; }
+
 src_langs() {
   find "$SRC" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort | tr '\n' ' '
 }
@@ -147,6 +151,7 @@ echo "::endgroup::"
 rm -rf "${OUT}/head" "${OUT}/base"
 
 echo "::group::Build the docs site from the PR head"
+pull_images
 HEAD_LANGS="$(present_langs)"
 [ -n "${HEAD_LANGS// /}" ] || { echo "::error::None of '${LANGUAGES}' exists under ${SRC}." >&2; exit 1; }
 rm -rf "$WEB"
@@ -158,6 +163,7 @@ echo "::group::Build the docs site from the merge base"
 rm -rf "$SRC"
 SRC_SWAPPED=1
 git checkout "$BASE_SHA" -- "$SRC"
+pull_images --ref "$BASE_SHA"
 BASE_LANGS="$(present_langs)"
 rm -rf "$WEB"
 if [ -n "${BASE_LANGS// /}" ]; then

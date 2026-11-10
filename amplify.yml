@@ -156,6 +156,13 @@ applications:
             # silently regressed the old install/build/install dance.)
             - pnpm --filter backend.ai-docs-toolkit run build
             - pnpm rebuild
+            # Git LFS (#11040): the manual's screenshots may be LFS pointers,
+            # and the Amplify image ships no git-lfs. Install the pinned,
+            # sha256-verified release into $HOME; the build phase pulls the
+            # images for every checkout (a no-op while none is in LFS).
+            - |
+              LFS_DIR="$(bash "$(git rev-parse --show-toplevel)/.github/scripts/lfs/install-git-lfs.sh")"
+              if [ -n "$LFS_DIR" ]; then export PATH="$LFS_DIR:$PATH"; fi
         build:
           commands:
             # The toolkit's website-generator (FR-2710 F6) iterates
@@ -185,6 +192,10 @@ applications:
                   | grep -oE 'docs-archive/[0-9]+\.[0-9]+' | sort -u
               )
               echo "Archive refs from config: ${ARCHIVE_REFS[*]:-(none)}"
+              # Replaces LFS pointers with the real images and fails if any
+              # remains; installs git-lfs itself if PATH lost it between phases.
+              PULL_IMAGES="$(git rev-parse --show-toplevel)/.github/scripts/lfs/pull-docs-images.sh"
+              bash "$PULL_IMAGES"
               for ref in ${ARCHIVE_REFS[@]+"${ARCHIVE_REFS[@]}"}; do
                 sanitized="${ref//\//__}"
                 worktree=".docs-archive/${sanitized}"
@@ -197,6 +208,7 @@ applications:
                 worktree_abs="$(realpath -m "${worktree}")"
                 if git worktree list --porcelain | grep -q "^worktree ${worktree_abs}$"; then
                   echo "Archive worktree already registered: ${worktree}"
+                  bash "$PULL_IMAGES" "${worktree}"
                   continue
                 fi
                 # If a stray non-worktree directory exists at the path,
@@ -215,6 +227,7 @@ applications:
                   continue
                 }
                 git worktree add --detach "${worktree}" "${ref}"
+                bash "$PULL_IMAGES" "${worktree}"
               done
             # Bypass the `build:web` script's wrapper (which re-runs
             # `build:toolkit` redundantly — toolkit is already built in
