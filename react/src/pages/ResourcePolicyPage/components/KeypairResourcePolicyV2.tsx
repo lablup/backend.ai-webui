@@ -410,7 +410,7 @@ const KeypairResourcePolicyV2 = ({
                           onClick: () => {
                             setEditingKeypairResourcePolicy(
                               _.find(keypairResourcePolicies, {
-                                id: record.id,
+                                entityId: record.entityId,
                               }) ?? null,
                             );
                           },
@@ -423,7 +423,7 @@ const KeypairResourcePolicyV2 = ({
                           onClick: () => {
                             setDeletingPolicy(
                               _.find(keypairResourcePolicies, {
-                                id: record.id,
+                                entityId: record.entityId,
                               }) ?? null,
                             );
                           },
