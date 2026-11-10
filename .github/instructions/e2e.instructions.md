@@ -410,6 +410,10 @@ are only reliable when `isLocalEnvironment` is true.
   `sweepProfileTestUsersViaApi`, `sweepLeftoverDeploymentsViaApi`.
 - Track created resources in a variable and clean up in `afterEach`, wrapped in try/catch —
   never assume creation succeeded.
+- **Admin-side preparation goes through the API.** A user console or project admin spec that
+  needs a user, keypair, project or resource policy creates and cleans it up through the API
+  helpers above, never through `/admin/*` pages. Admin console specs (`e2e/admin/<page>/`) act
+  on those pages as usual: `.claude/rules/e2e-admin-prep-via-api.md`.
 - Skip rather than fail when the target deployment lacks a feature:
   `skipUnlessWebUIVersion`, `skipUnlessManagerVersion`, `skipUnlessClientConfig`,
   `skipUnlessAllowedVFolderType` from `e2e/utils/feature-gate-util.ts`.
