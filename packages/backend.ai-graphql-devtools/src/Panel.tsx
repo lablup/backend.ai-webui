@@ -519,6 +519,55 @@ const HeaderRows = ({
   </>
 );
 
+const CopyButton = ({ text, testId }: { text: string; testId: string }) => {
+  'use memo';
+  const [state, setState] = useState<'idle' | 'copied' | 'failed'>('idle');
+  useEffect(() => {
+    if (state === 'idle') return;
+    const timer = setTimeout(() => setState('idle'), 1500);
+    return () => clearTimeout(timer);
+  }, [state]);
+  return (
+    <button
+      type="button"
+      className="bai-gql-devtools__button bai-gql-devtools__button--small"
+      data-testid={testId}
+      onClick={() =>
+        navigator.clipboard.writeText(text).then(
+          () => setState('copied'),
+          () => setState('failed'),
+        )
+      }
+    >
+      {state === 'copied'
+        ? 'Copied'
+        : state === 'failed'
+          ? 'Copy failed'
+          : 'Copy'}
+    </button>
+  );
+};
+
+const SectionBar = ({
+  title,
+  text,
+  testId,
+}: {
+  title: string;
+  text: string;
+  testId: string;
+}) => (
+  <div className="bai-gql-devtools__toolbar">
+    <span className="bai-gql-devtools__label">{title}</span>
+    <CopyButton text={text} testId={testId} />
+  </div>
+);
+
+const headersText = (title: string, list: [string, string][]) =>
+  [`# ${title}`, ...list.map(([name, value]) => `${name}: ${value}`)].join(
+    '\n',
+  );
+
 const DETAIL_TABS = ['Request', 'Response', 'Headers'] as const;
 
 interface EntryDetailProps {
@@ -603,14 +652,22 @@ const EntryDetail = ({ entry, isRunning, onOpen }: EntryDetailProps) => {
       <div role="tabpanel" className="bai-gql-devtools__tabpanel">
         {tab === 'Request' && (
           <>
-            <span className="bai-gql-devtools__label">Query</span>
+            <SectionBar
+              title="Query"
+              text={entry.query}
+              testId="gql-devtools-copy-query"
+            />
             <Viewer
               key={`query-${entry.id}`}
               language="graphql"
               value={entry.query}
               testId="gql-devtools-detail-query"
             />
-            <span className="bai-gql-devtools__label">Variables</span>
+            <SectionBar
+              title="Variables"
+              text={entry.variables}
+              testId="gql-devtools-copy-variables"
+            />
             <Viewer
               key={`variables-${entry.id}`}
               language="json"
@@ -621,22 +678,39 @@ const EntryDetail = ({ entry, isRunning, onOpen }: EntryDetailProps) => {
           </>
         )}
         {tab === 'Response' && (
-          <Viewer
-            key={`response-${entry.id}-${response.language}`}
-            language={response.language}
-            value={response.text}
-            testId="gql-devtools-detail-response"
-          />
+          <>
+            <SectionBar
+              title="Body"
+              text={response.text}
+              testId="gql-devtools-copy-response"
+            />
+            <Viewer
+              key={`response-${entry.id}-${response.language}`}
+              language={response.language}
+              value={response.text}
+              testId="gql-devtools-detail-response"
+            />
+          </>
         )}
         {tab === 'Headers' && (
-          <div className="bai-gql-devtools__headers">
-            <table data-testid="gql-devtools-detail-headers">
-              <tbody>
-                <HeaderRows title="Request" list={entry.requestHeaders} />
-                <HeaderRows title="Response" list={entry.responseHeaders} />
-              </tbody>
-            </table>
-          </div>
+          <>
+            <SectionBar
+              title="Headers"
+              text={[
+                headersText('Request', entry.requestHeaders),
+                headersText('Response', entry.responseHeaders),
+              ].join('\n\n')}
+              testId="gql-devtools-copy-headers"
+            />
+            <div className="bai-gql-devtools__headers">
+              <table data-testid="gql-devtools-detail-headers">
+                <tbody>
+                  <HeaderRows title="Request" list={entry.requestHeaders} />
+                  <HeaderRows title="Response" list={entry.responseHeaders} />
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </div>
     </div>

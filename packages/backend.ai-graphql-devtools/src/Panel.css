@@ -71,6 +71,11 @@
   cursor: pointer;
 }
 
+.bai-gql-devtools__button--small {
+  padding: 0.125rem 0.5rem;
+  font-size: 0.75rem;
+}
+
 .bai-gql-devtools__button:disabled,
 .bai-gql-devtools__entry:disabled {
   cursor: progress;
