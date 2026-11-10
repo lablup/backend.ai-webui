@@ -53,7 +53,6 @@ import {
 const AGENT_PAGE_SIZE = 100;
 
 interface AgentSlots {
-  id: string;
   capacity: unknown;
   used: unknown;
 }
@@ -69,18 +68,17 @@ type AgentPage = Pick<
 const toAgentSlots = (page: AgentPage | null | undefined): Array<AgentSlots> =>
   page?.agentsV2
     ? page.agentsV2.edges.map(({ node }) => ({
-        id: node.id,
         capacity: node.resourceInfo.capacity,
         used: node.resourceInfo.used,
       }))
     : filterOutNullAndUndefined(page?.agent_summary_list?.items ?? []).map(
         (item) => ({
-          id: item.id ?? '',
           capacity: item.available_slots,
           used: item.occupied_slots,
         }),
       );
 
+// Offset paging: keep these filters and orderBy identical to the fragment's first page.
 const remainingAgentsQuery = graphql`
   query TotalResourceWithinResourceGroupRemainingAgentsQuery(
     $resourceGroup: String
