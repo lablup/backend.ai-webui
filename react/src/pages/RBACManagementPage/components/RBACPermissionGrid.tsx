@@ -4,6 +4,7 @@
  */
 import { RBACPermissionGridMatrixQuery } from '../../../__generated__/RBACPermissionGridMatrixQuery.graphql';
 import { App } from '../../../app-shim';
+import { reasonMessage } from '../../../helper/mutationError';
 import { rbacTypeI18nKey } from '../../../helper/rbacElementTypes';
 import './RBACPermissionGrid.css';
 import { Button } from '@lablup/ui-common/Button';
@@ -12,12 +13,12 @@ import { Text } from '@lablup/ui-common/Text';
 import { Token } from '@lablup/ui-common/Token';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
+  BAIBulkErrorModal,
   BAIButton,
   BAICheckbox,
   type BAIColumnsType,
   BAIFetchKeyButton,
   BAIFlex,
-  BAIListAlert,
   BAITable,
   BAITextInput,
   useDebounceFn,
@@ -105,7 +106,10 @@ export interface RBACPermissionGridProps {
   readOnly?: boolean;
   /** Re-reads `grants`; called with no argument after a save. */
   onRefresh: (fetchKey?: string) => void;
-  /** Ships the pending changes and resolves with the cells the backend rejected. */
+  /**
+   * Ships the pending changes and resolves with the cells the backend rejected.
+   * Rejects when the save failed as a whole; the grid then shows one error.
+   */
   onSave: (
     changes: RBACPermissionChanges,
   ) => Promise<RBACPermissionSaveFailure[]>;
@@ -230,25 +234,34 @@ const RBACPermissionGrid: React.FC<RBACPermissionGridProps> = ({
   );
 
   const save = async () => {
-    const nextFailures = await onSave({
-      toGrant: changes
-        .filter((change) => !change.isRevoke)
-        .map(({ row, bit }) => ({ entityType: row.entityType, bit })),
-      toRevoke: changes
-        .filter((change) => change.isRevoke)
-        .map(({ row, bit }) => ({
-          entityType: row.entityType,
-          bit,
-          id: row.granted.get(bit) as string,
-        })),
-    });
+    let nextFailures: RBACPermissionSaveFailure[];
+    try {
+      nextFailures = await onSave({
+        toGrant: changes
+          .filter((change) => !change.isRevoke)
+          .map(({ row, bit }) => ({ entityType: row.entityType, bit })),
+        toRevoke: changes
+          .filter((change) => change.isRevoke)
+          .map(({ row, bit }) => ({
+            entityType: row.entityType,
+            bit,
+            id: row.granted.get(bit) as string,
+          })),
+      });
+    } catch (error) {
+      onRefresh();
+      message.error(reasonMessage(error));
+      return;
+    }
     setFailures(nextFailures);
     onRefresh();
     if (nextFailures.length === 0) {
       message.success(t('rbac.PermissionsSaved'));
       return;
     }
-    message.error(t('rbac.PermissionsPartialFailureDescription'));
+    message.error(
+      t('rbac.PermissionChangesFailed', { count: nextFailures.length }),
+    );
   };
 
   const discard = () => {
@@ -389,27 +402,6 @@ const RBACPermissionGrid: React.FC<RBACPermissionGridProps> = ({
             padding: 'var(--spacing-3) var(--spacing-4)',
           }}
         >
-          {failures.length > 0 && (
-            <BAIListAlert
-              type="error"
-              showIcon
-              title={t('rbac.PermissionsPartialFailureDescription')}
-              maxHeight={160}
-              items={failures.map((failure, index) => ({
-                key: `${failure.entityType}-${failure.bit}-${index}`,
-                content: (
-                  <BAIFlex gap="xs" align="center" wrap="wrap">
-                    <Token
-                      color="default"
-                      label={rbacTypeLabel(failure.entityType)}
-                    />
-                    <Token color="default" label={bitLabel(failure.bit)} />
-                    <Text>{failure.message}</Text>
-                  </BAIFlex>
-                ),
-              }))}
-            />
-          )}
           <BAIFlex justify="between" align="center" gap="md" wrap="wrap">
             <Text>
               {t('rbac.UnsavedPermissionChanges', { count: changes.length })}
@@ -423,6 +415,34 @@ const RBACPermissionGrid: React.FC<RBACPermissionGridProps> = ({
           </BAIFlex>
         </BAIFlex>
       )}
+      <BAIBulkErrorModal<RBACPermissionSaveFailure & { key: string }>
+        open={failures.length > 0}
+        alertDescription={t('rbac.PermissionsPartialFailureDescription')}
+        columns={[
+          {
+            key: 'entityType',
+            title: t('rbac.PermissionType'),
+            dataIndex: 'entityType',
+            render: (_value, failure) => rbacTypeLabel(failure.entityType),
+          },
+          {
+            key: 'bit',
+            title: t('rbac.Permissions'),
+            dataIndex: 'bit',
+            render: (_value, failure) => bitLabel(failure.bit),
+          },
+          {
+            key: 'message',
+            title: t('rbac.ErrorMessage'),
+            dataIndex: 'message',
+          },
+        ]}
+        dataSource={failures.map((failure) => ({
+          ...failure,
+          key: `${failure.entityType}-${failure.bit}`,
+        }))}
+        onRequestClose={() => setFailures([])}
+      />
     </BAIFlex>
   );
 };

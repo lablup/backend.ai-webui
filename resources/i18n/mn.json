@@ -2632,6 +2632,7 @@
     "NoRolesToDisplay": "Харуулах үүрэг байхгүй",
     "NoUsersAssigned": "Оноосон хэрэглэгч байхгүй",
     "PagePlaceholder": "RBAC удирдлагын хуудас энд харагдах болно.",
+    "PermissionChangesFailed": "{{count}} эрхийн өөрчлөлт амжилтгүй боллоо.",
     "PermissionGroupRead": "Унших",
     "PermissionGroupWrite": "Бичих",
     "PermissionNotEditable": "Энэ эрхийг өөрчлөх боломжгүй.",

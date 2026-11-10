@@ -128,62 +128,51 @@ const RolePresetPermissionTable: React.FC<RolePresetPermissionTableProps> = ({
   }));
 
   const save = async ({ toGrant, toRevoke }: RBACPermissionChanges) => {
-    const [addResult, removeResult] = await Promise.allSettled([
-      toGrant.length > 0
-        ? addPermissions({
-            input: {
-              rolePresetId,
-              permissions: toGrant.map(({ entityType, bit }) => ({
-                entityType,
-                permission: bit,
-              })),
-            },
-          })
-        : Promise.resolve(null),
-      toRevoke.length > 0
-        ? removePermissions({
-            input: { ids: toRevoke.map(({ id }) => id) },
-          })
-        : Promise.resolve(null),
-    ]);
-
-    const failures: RBACPermissionSaveFailure[] = [];
-    // The add is all or nothing: a rejection fails every requested entry.
-    if (addResult.status === 'rejected') {
-      logger.error('Failed to add preset permissions', addResult.reason);
-      toGrant.forEach(({ entityType, bit }) =>
-        failures.push({
-          entityType,
-          bit,
-          message: reasonMessage(addResult.reason),
-        }),
-      );
-    }
-    if (removeResult.status === 'fulfilled') {
-      const failedById = new Map(
-        (
-          removeResult.value?.partialBulkRemoveRolePresetPermissions.failed ??
-          []
-        ).map((failure) => [String(failure.id), failure.message]),
-      );
-      toRevoke.forEach(({ entityType, bit, id }) => {
-        const failureMessage = failedById.get(id);
-        if (failureMessage !== undefined) {
-          logger.error('Failed to remove preset permission', failureMessage);
-          failures.push({ entityType, bit, message: failureMessage });
-        }
+    // The add is all or nothing, so it goes first: a rejection saves nothing
+    // and reaches the grid as one error.
+    if (toGrant.length > 0) {
+      await addPermissions({
+        input: {
+          rolePresetId,
+          permissions: toGrant.map(({ entityType, bit }) => ({
+            entityType,
+            permission: bit,
+          })),
+        },
+      }).catch((error) => {
+        logger.error('Failed to add preset permissions', error);
+        throw error;
       });
-    } else {
-      logger.error('Failed to remove preset permissions', removeResult.reason);
-      toRevoke.forEach(({ entityType, bit }) =>
-        failures.push({
-          entityType,
-          bit,
-          message: reasonMessage(removeResult.reason),
-        }),
-      );
     }
-    return failures;
+    if (toRevoke.length === 0) {
+      return [];
+    }
+
+    // The remove answers per entry; a rejected request fails every entry.
+    try {
+      const result = await removePermissions({
+        input: { ids: toRevoke.map(({ id }) => id) },
+      });
+      const failedById = new Map(
+        result.partialBulkRemoveRolePresetPermissions.failed.map((failure) => [
+          String(failure.id),
+          failure.message,
+        ]),
+      );
+      return toRevoke.flatMap(({ entityType, bit, id }) => {
+        const failureMessage = failedById.get(id);
+        if (failureMessage === undefined) return [];
+        logger.error('Failed to remove preset permission', failureMessage);
+        return [{ entityType, bit, message: failureMessage }];
+      });
+    } catch (error) {
+      logger.error('Failed to remove preset permissions', error);
+      return toRevoke.map(({ entityType, bit }): RBACPermissionSaveFailure => ({
+        entityType,
+        bit,
+        message: reasonMessage(error),
+      }));
+    }
   };
 
   return (

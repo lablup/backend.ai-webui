@@ -2631,6 +2631,7 @@
     "NoRolesToDisplay": "Görüntülenecek rol yok",
     "NoUsersAssigned": "Atanmış kullanıcı yok",
     "PagePlaceholder": "RBAC yönetim sayfası burada görüntülenecektir.",
+    "PermissionChangesFailed": "{{count}} izin değişikliği başarısız oldu.",
     "PermissionGroupRead": "Okuma",
     "PermissionGroupWrite": "Yazma",
     "PermissionNotEditable": "Bu izin değiştirilemez.",

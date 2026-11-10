@@ -2623,6 +2623,7 @@
     "NoRolesToDisplay": "ไม่มีบทบาทที่จะแสดง",
     "NoUsersAssigned": "ไม่มีผู้ใช้ที่ถูกมอบหมาย",
     "PagePlaceholder": "หน้าการจัดการ RBAC จะแสดงที่นี่",
+    "PermissionChangesFailed": "การเปลี่ยนแปลงสิทธิ์ {{count}} รายการล้มเหลว",
     "PermissionGroupRead": "อ่าน",
     "PermissionGroupWrite": "เขียน",
     "PermissionNotEditable": "ไม่สามารถแก้ไขสิทธิ์นี้ได้",

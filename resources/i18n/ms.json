@@ -2631,6 +2631,7 @@
     "NoRolesToDisplay": "Tiada peranan untuk dipaparkan",
     "NoUsersAssigned": "Tiada pengguna ditugaskan",
     "PagePlaceholder": "Halaman pengurusan RBAC akan dipaparkan di sini.",
+    "PermissionChangesFailed": "{{count}} perubahan kebenaran gagal.",
     "PermissionGroupRead": "Baca",
     "PermissionGroupWrite": "Tulis",
     "PermissionNotEditable": "Kebenaran ini tidak boleh diubah suai.",
