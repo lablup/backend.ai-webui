@@ -99,9 +99,9 @@ flowchart LR
 
 ### 7. `fetch` wrapper가 app의 GraphQL 요청을 기록한다
 
-- **Scope**: `src/traffic.ts`의 `installCapture`는 app module이 실행되기 전에 `globalThis.fetch`를 바꾼다. 기록 대상은 path가 `/func/admin/gql`로 끝나는 요청뿐이고, 여기에 Relay query와 mutation, `graphql-sse` subscription이 실린다. `graphql-sse`는 client를 만들 때 본 `fetch`를 계속 쓰므로 wrapper가 먼저 설치되어야 한다.
+- **Scope**: `src/traffic.ts`의 `installCapture`는 app module이 실행되기 전에 `globalThis.fetch`를 바꾼다. 기록 대상은 path가 `/admin/gql`로 끝나는 요청(session mode에서는 `/func/admin/gql`, API key mode에서는 `<endpoint>/admin/gql`)뿐이고, 여기에 Relay query와 mutation, `graphql-sse` subscription이 실린다. `graphql-sse`는 client를 만들 때 본 `fetch`를 계속 쓰므로 wrapper가 먼저 설치되어야 한다.
 - **No change to the app**: wrapper는 app의 response promise를 그대로 돌려준다. body는 `response.clone()`에서 읽고, `text/event-stream` body는 clone의 tee로 읽는다. 기록 중 생긴 error는 모두 잡아서 버린다.
-- **Log**: panel은 `App` 행과 자기 `Panel` 행을 한 log에 보여 준다. log는 최대 200개 항목을 두고, body를 100,000자에서 자르며, memory에만 있어 새로 고치면 비워진다. 기본값이 꺼짐이고 `localStorage`에 기억되는 "Preserve log" switch를 켜면 `sessionStorage`에 두어 새로 고쳐도 남는다.
+- **Log**: panel은 `App` 행과 자기 `Panel` 행을 한 log에 보여 준다. log는 `App` 행을 최대 200개, `Panel` 행을 최대 50개 두고 각각 오래된 것부터 버리며, `App` 행의 body를 100,000자에서 자르고, memory에만 있어 새로 고치면 비워진다. 기본값이 꺼짐이고 `localStorage`에 기억되는 "Preserve log" switch를 켜면 `sessionStorage`에 두어 새로 고쳐도 남는다. 저장본은 모든 body를 100,000자에서 자르고, JSON이 1,000,000자를 넘지 않도록 오래된 행부터 버린다.
 
 ## 대안과 기각 사유
 

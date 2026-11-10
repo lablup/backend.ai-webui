@@ -1,5 +1,6 @@
 import './Panel.css';
 import { manipulateGraphQLQueryWithClientDirectives } from './graphql-transformer';
+import { hasGraphQLErrors, parseJson, printJson } from './json';
 import {
   addEntry,
   clearEntries,
@@ -51,9 +52,6 @@ declare global {
       onError: (e: unknown) => void,
     ): void;
   };
-  interface JSON {
-    rawJSON?(text: string): unknown;
-  }
   var backendaiclient:
     | {
         ready?: boolean;
@@ -260,38 +258,6 @@ function operationLabel(operation: OperationDefinitionNode) {
     .join(' ');
 }
 
-function parseJson(text: string): unknown {
-  try {
-    return JSON.parse(text);
-  } catch {
-    return undefined;
-  }
-}
-
-function printJson(text: string): string {
-  if (!JSON.rawJSON) return text;
-  const keepNumberSource = (
-    _key: string,
-    value: unknown,
-    context: { source?: string },
-  ) =>
-    typeof value === 'number' && context.source
-      ? JSON.rawJSON?.(context.source)
-      : value;
-  try {
-    return JSON.stringify(
-      JSON.parse(
-        text,
-        keepNumberSource as (key: string, value: unknown) => unknown,
-      ),
-      null,
-      2,
-    );
-  } catch {
-    return text;
-  }
-}
-
 function replaceText(
   editor: Monaco.editor.IStandaloneCodeEditor | null,
   text: string,
@@ -458,20 +424,19 @@ const Viewer = ({ language, value, isSmall, testId }: ViewerProps) => {
   );
 };
 
-function hasGraphQLErrors(text: string) {
-  return Boolean(
-    (parseJson(text) as { errors?: unknown[] } | null)?.errors?.length,
-  );
-}
-
+// The row's state is traffic.ts's verdict; the response may be cut, so it only refines a 2xx error.
 function statusTone(entry: LogEntry) {
-  if (entry.status === undefined) {
-    return entry.state === 'error' || entry.state === 'interrupted'
-      ? 'error'
-      : undefined;
+  if (entry.state === 'interrupted') return 'error';
+  if (entry.state === 'error') {
+    return entry.status !== undefined &&
+      entry.status >= 200 &&
+      entry.status < 300 &&
+      hasGraphQLErrors(entry.response)
+      ? 'warning'
+      : 'error';
   }
+  if (entry.status === undefined) return undefined;
   if (entry.status >= 400) return 'error';
-  if (hasGraphQLErrors(entry.response)) return 'warning';
   return entry.status < 300 ? 'success' : undefined;
 }
 
@@ -479,19 +444,9 @@ function responseView(entry: LogEntry): {
   language: ViewerLanguage;
   text: string;
 } {
-  const isStream = entry.responseHeaders.some(
-    ([name, value]) =>
-      name.toLowerCase() === 'content-type' &&
-      value.startsWith('text/event-stream'),
-  );
-  // traffic.ts keeps one SSE message per line; show them as one JSON array.
-  const source =
-    isStream && entry.response
-      ? `[${entry.response.split('\n').join(',')}]`
-      : entry.response;
-  return parseJson(source) === undefined
+  return parseJson(entry.response) === undefined
     ? { language: 'plaintext', text: entry.response }
-    : { language: 'json', text: printJson(source) };
+    : { language: 'json', text: printJson(entry.response) };
 }
 
 const HeaderRows = ({
@@ -543,12 +498,17 @@ const CopyButton = ({
       type="button"
       className="bai-gql-devtools__button bai-gql-devtools__button--small"
       data-testid={testId}
-      onClick={() =>
-        navigator.clipboard.writeText(text).then(
-          () => setState('copied'),
-          () => setState('failed'),
-        )
-      }
+      onClick={() => {
+        // `navigator.clipboard` is undefined outside a secure context.
+        try {
+          navigator.clipboard.writeText(text).then(
+            () => setState('copied'),
+            () => setState('failed'),
+          );
+        } catch {
+          setState('failed');
+        }
+      }}
     >
       {state === 'copied'
         ? 'Copied'
@@ -579,7 +539,7 @@ const SectionBar = ({
   </div>
 );
 
-// The body a GraphQL client would POST, ready to paste into another tool.
+// The body a GraphQL client would POST, ready to paste into another tool; numbers keep their source text.
 const requestBodyText = (entry: LogEntry) =>
   JSON.stringify(
     { query: entry.query, variables: parseJson(entry.variables) ?? {} },
@@ -612,7 +572,9 @@ const EntryDetail = ({ entry, isRunning, onOpen }: EntryDetailProps) => {
       ? entry.state
       : tone === 'warning'
         ? `${entry.status} · GraphQL errors`
-        : String(entry.status);
+        : entry.state === 'ok'
+          ? String(entry.status)
+          : `${entry.status} · ${entry.state}`;
   return (
     <div className="bai-gql-devtools__detail" data-testid="gql-devtools-detail">
       <div className="bai-gql-devtools__toolbar">

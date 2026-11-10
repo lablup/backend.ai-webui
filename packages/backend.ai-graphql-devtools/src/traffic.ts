@@ -1,10 +1,23 @@
-const GQL_PATH = '/func/admin/gql';
+import { hasGraphQLErrors, parseJson } from './json';
+
+// Session mode posts to `/func/admin/gql`, API-key mode to `<endpoint>/admin/gql`.
+const GQL_PATH = '/admin/gql';
 const STORAGE_KEY = 'bai-graphql-devtools.log';
 const PRESERVE_KEY = 'bai-graphql-devtools.preserve-log';
-const MAX_ENTRIES = 200;
+const MAX_ROWS = { App: 200, Panel: 50 };
 const MAX_TEXT = 100_000;
 const MAX_MESSAGES = 100;
+// Leaves the app's own sessionStorage writes room under the ~5 MB quota.
+const MAX_STORED_CHARS = 1_000_000;
 const SAVE_DELAY_MS = 300;
+const STATES = [
+  'pending',
+  'streaming',
+  'ok',
+  'error',
+  'not sent',
+  'interrupted',
+] as const;
 
 export type Source = 'App' | 'Panel';
 
@@ -13,7 +26,7 @@ export interface LogEntry {
   source: Source;
   label: string;
   time: number;
-  state: 'pending' | 'streaming' | 'ok' | 'error' | 'not sent' | 'interrupted';
+  state: (typeof STATES)[number];
   status?: number;
   duration?: number;
   size?: number;
@@ -30,7 +43,7 @@ export type NewEntry = Omit<LogEntry, 'id'>;
 let isPreserved = readPreserve();
 let entries: readonly LogEntry[] = isPreserved ? load() : [];
 if (!isPreserved) removeStored();
-let nextId = (entries[0]?.id ?? 0) + 1;
+let nextId = Math.max(0, ...entries.map((entry) => entry.id)) + 1;
 let saveTimer: ReturnType<typeof setTimeout> | undefined;
 let isNotifyQueued = false;
 const listeners = new Set<() => void>();
@@ -51,14 +64,62 @@ function removeStored() {
   }
 }
 
+function isHeaderList(value: unknown) {
+  return (
+    Array.isArray(value) &&
+    value.every(
+      (pair) =>
+        Array.isArray(pair) &&
+        pair.length === 2 &&
+        pair.every((part) => typeof part === 'string'),
+    )
+  );
+}
+
+function isEntry(value: unknown): value is LogEntry {
+  if (typeof value !== 'object' || value === null) return false;
+  const entry = value as Record<string, unknown>;
+  return (
+    Number.isSafeInteger(entry.id) &&
+    (entry.source === 'App' || entry.source === 'Panel') &&
+    STATES.includes(entry.state as LogEntry['state']) &&
+    typeof entry.time === 'number' &&
+    ['label', 'query', 'variables', 'response'].every(
+      (key) => typeof entry[key] === 'string',
+    ) &&
+    ['status', 'duration', 'size'].every(
+      (key) => entry[key] === undefined || typeof entry[key] === 'number',
+    ) &&
+    isHeaderList(entry.requestHeaders) &&
+    isHeaderList(entry.responseHeaders)
+  );
+}
+
+/** Keeps the newest rows of each source, up to its cap. */
+function capRows(list: readonly LogEntry[]) {
+  const counts = { App: 0, Panel: 0 };
+  return list.filter(
+    (entry) => ++counts[entry.source] <= MAX_ROWS[entry.source],
+  );
+}
+
 function load(): LogEntry[] {
   try {
-    const stored = JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? '[]');
+    const stored: unknown = JSON.parse(
+      sessionStorage.getItem(STORAGE_KEY) ?? '[]',
+    );
     if (!Array.isArray(stored)) return [];
-    return (stored as LogEntry[]).map((entry) =>
-      entry.state === 'pending' || entry.state === 'streaming'
-        ? { ...entry, state: 'interrupted' }
-        : entry,
+    const ids = new Set<number>();
+    const valid = stored.filter(
+      (entry): entry is LogEntry =>
+        isEntry(entry) && !ids.has(entry.id) && Boolean(ids.add(entry.id)),
+    );
+    return capRows(
+      valid.map((entry) =>
+        entry.state === 'pending' || entry.state === 'streaming'
+          ? { ...entry, state: 'interrupted' }
+          : entry,
+      ),
     );
   } catch {
     return [];
@@ -66,20 +127,38 @@ function load(): LogEntry[] {
 }
 
 function save() {
+  clearTimeout(saveTimer);
   saveTimer = undefined;
-  // Drop the oldest entries until the log fits the sessionStorage quota.
-  for (let kept = entries.length; kept >= 0; kept = Math.floor(kept / 2)) {
-    try {
-      sessionStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(entries.slice(0, kept)),
-      );
-      return;
-    } catch {
-      if (kept === 0) return;
-    }
+  const stored = entries.map((entry) =>
+    entry.response.length > MAX_TEXT
+      ? { ...entry, response: clip(entry.response) }
+      : entry,
+  );
+  let text = JSON.stringify(stored);
+  if (text.length > MAX_STORED_CHARS) {
+    // Newest first, so keep the longest prefix that fits.
+    let total = 2;
+    const kept = stored.findIndex(
+      (entry) => (total += JSON.stringify(entry).length + 1) > MAX_STORED_CHARS,
+    );
+    text = JSON.stringify(stored.slice(0, kept));
+  }
+  try {
+    sessionStorage.setItem(STORAGE_KEY, text);
+  } catch {
+    removeStored();
   }
 }
+
+function flushSave() {
+  if (saveTimer !== undefined) save();
+}
+
+// A reload right after a request would otherwise lose the newest rows.
+addEventListener('pagehide', flushSave);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') flushSave();
+});
 
 function commit(next: readonly LogEntry[]) {
   entries = next;
@@ -120,19 +199,16 @@ export function subscribe(listener: () => void) {
   return () => listeners.delete(listener);
 }
 
+// Panel rows keep their whole result in memory, so restoring one brings it all back.
 export function addEntry(entry: NewEntry): number {
   const id = nextId++;
-  commit(
-    [{ ...entry, id, response: clip(entry.response) }, ...entries].slice(
-      0,
-      MAX_ENTRIES,
-    ),
-  );
+  const response =
+    entry.source === 'App' ? clip(entry.response) : entry.response;
+  commit(capRows([{ ...entry, id, response }, ...entries]));
   return id;
 }
 
 function updateEntry(id: number, patch: Partial<LogEntry>) {
-  if (patch.response !== undefined) patch.response = clip(patch.response);
   commit(
     entries.map((entry) => (entry.id === id ? { ...entry, ...patch } : entry)),
   );
@@ -157,18 +233,13 @@ const headerList = (headers: HeadersInit | undefined): [string, string][] => [
   ...new Headers(headers).entries(),
 ];
 
-const byteLength = (text: string) => new TextEncoder().encode(text).length;
+const describeError = (error: unknown) =>
+  `Request failed: ${error instanceof Error ? `${error.name}: ${error.message}` : String(error)}`;
 
-function hasErrors(text: string) {
-  try {
-    return Boolean(
-      (JSON.parse(text) as { errors?: unknown[] })?.errors?.length,
-    );
-  } catch {
-    return false;
-  }
-}
+const messagesText = (messages: string[]) =>
+  messages.length ? `[\n${messages.join(',\n')}\n]` : '';
 
+/** Records each SSE `data` payload as one element of a JSON array, dropping the oldest past the bounds. */
 async function readEvents(
   id: number,
   stream: ReadableStream<Uint8Array>,
@@ -179,32 +250,55 @@ async function readEvents(
   const messages: string[] = [];
   let buffer = '';
   let size = 0;
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    size += value.byteLength;
-    buffer += decoder.decode(value, { stream: true });
-    const events = buffer.split(/\r?\n\r?\n/);
-    buffer = events.pop() ?? '';
-    const data = events
-      .map((event) =>
-        event
+  let total = 0;
+  const finish = (state: LogEntry['state']) =>
+    updateEntry(id, {
+      state,
+      duration: Math.round(performance.now() - startedAt),
+      size,
+      response: messagesText(messages),
+    });
+  try {
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      size += value.byteLength;
+      buffer += decoder.decode(value, { stream: true });
+      const events = buffer.split(/\r?\n\r?\n/);
+      buffer = events.pop() ?? '';
+      let isChanged = false;
+      for (const event of events) {
+        const data = event
           .split(/\r?\n/)
           .filter((line) => line.startsWith('data:'))
-          .map((line) => line.slice(5).trimStart())
-          .join('\n'),
-      )
-      .filter(Boolean);
-    if (!data.length) continue;
-    messages.push(...data);
-    messages.splice(0, Math.max(0, messages.length - MAX_MESSAGES));
-    updateEntry(id, { response: messages.join('\n'), size });
+          .map((line) => line.slice(5).replace(/^ /, ''))
+          .join('\n');
+        if (!data) continue;
+        const message =
+          parseJson(data) === undefined ? JSON.stringify(data) : data;
+        messages.push(message);
+        total += message.length;
+        isChanged = true;
+      }
+      if (!isChanged) continue;
+      while (
+        messages.length > MAX_MESSAGES ||
+        (total > MAX_TEXT && messages.length > 1)
+      ) {
+        total -= messages.shift()!.length;
+      }
+      updateEntry(id, { response: messagesText(messages), size });
+    }
+    finish('ok');
+  } catch (error) {
+    // graphql-sse aborts the request on `complete` and on unsubscribe.
+    if ((error as Error)?.name === 'AbortError') {
+      finish('ok');
+      return;
+    }
+    messages.push(JSON.stringify(describeError(error)));
+    finish('error');
   }
-  updateEntry(id, {
-    state: 'ok',
-    duration: Math.round(performance.now() - startedAt),
-    size,
-  });
 }
 
 function observe(
@@ -215,8 +309,9 @@ function observe(
   const url = input instanceof Request ? input.url : String(input);
   if (!new URL(url, location.href).pathname.endsWith(GQL_PATH)) return;
   const startedAt = performance.now();
-  const body: { query?: string; variables?: unknown; operationName?: string } =
-    typeof init?.body === 'string' ? JSON.parse(init.body) : {};
+  const body = (typeof init?.body === 'string' ? parseJson(init.body) : {}) as
+    { query?: string; variables?: unknown; operationName?: string } | undefined;
+  if (!body) return;
   const query = body.query ?? '';
   const id = addEntry({
     source: 'App',
@@ -236,7 +331,7 @@ function observe(
       updateEntry(id, {
         state: 'error',
         duration: Math.round(performance.now() - startedAt),
-        response: `Request failed: ${error instanceof Error ? `${error.name}: ${error.message}` : String(error)}`,
+        response: describeError(error),
       });
     } catch {
       // Recording never throws into the app's promise chain.
@@ -257,13 +352,14 @@ function observe(
         updateEntry(id, { ...head, state: 'streaming' });
         return readEvents(id, copy.body, startedAt);
       }
-      return copy.text().then((text) => {
+      return copy.arrayBuffer().then((bytes) => {
+        const text = new TextDecoder().decode(bytes);
         updateEntry(id, {
           ...head,
-          state: !response.ok || hasErrors(text) ? 'error' : 'ok',
+          state: !response.ok || hasGraphQLErrors(text) ? 'error' : 'ok',
           duration: Math.round(performance.now() - startedAt),
-          size: byteLength(text),
-          response: text,
+          size: bytes.byteLength,
+          response: clip(text),
         });
       });
     })

@@ -99,9 +99,9 @@ flowchart LR
 
 ### 7. A `fetch` wrapper records the app's GraphQL traffic
 
-- **Scope**: `installCapture` in `src/traffic.ts` replaces `globalThis.fetch` before the app's modules run. It records only requests whose path ends in `/func/admin/gql`, which carries Relay queries and mutations and the `graphql-sse` subscriptions. `graphql-sse` keeps the `fetch` it sees when its client is created, which is why the wrapper must be in place first.
+- **Scope**: `installCapture` in `src/traffic.ts` replaces `globalThis.fetch` before the app's modules run. It records only requests whose path ends in `/admin/gql` (`/func/admin/gql` in session mode, `<endpoint>/admin/gql` with an API key), which carries Relay queries and mutations and the `graphql-sse` subscriptions. `graphql-sse` keeps the `fetch` it sees when its client is created, which is why the wrapper must be in place first.
 - **No change to the app**: the wrapper returns the app's own response promise. It reads the body from `response.clone()`, and a `text/event-stream` body through the clone's tee. Every recording error is caught and dropped.
-- **Log**: the panel shows one log of `App` rows and its own `Panel` rows. The log keeps at most 200 entries, cuts a body at 100,000 characters, and lives in memory, so a reload starts it empty. A "Preserve log" switch, off by default and remembered in `localStorage`, keeps it in `sessionStorage` across reloads instead.
+- **Log**: the panel shows one log of `App` rows and its own `Panel` rows. The log keeps at most 200 `App` rows and 50 `Panel` rows, dropping the oldest of each, cuts an `App` row's body at 100,000 characters, and lives in memory, so a reload starts it empty. A "Preserve log" switch, off by default and remembered in `localStorage`, keeps it in `sessionStorage` across reloads instead; the stored copy cuts every body at 100,000 characters and drops the oldest rows to stay under 1,000,000 characters of JSON.
 
 ## Rejected alternatives
 
