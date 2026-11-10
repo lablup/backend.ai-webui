@@ -1324,6 +1324,7 @@
         "data.folders.ConfirmCreateFolderVisibleToMembers",
         "data.folders.CreatedAt",
         "data.folders.DontAskAgain",
+        "data.folders.ErrorMessage",
         "data.folders.FileRenamed",
         "data.folders.FolderCreated",
         "data.folders.FolderCreationFailed",

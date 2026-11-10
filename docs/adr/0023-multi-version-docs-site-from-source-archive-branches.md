@@ -1,5 +1,7 @@
 # 0023 — Multi-version docs site from source archive branches
 
+> [ADR 0029](0029-user-manual-images-in-git-lfs.md) extends the **Branch content** item of Decision 2: an archive keeps each image blob as its source ref stores it, and when those are Git LFS pointers the archive root also holds a `.gitattributes` marking them `filter=lfs`. The other decisions stay in force.
+
 ## Summary
 
 > Unfamiliar terms are collected in the [Glossary](#glossary) at the end.

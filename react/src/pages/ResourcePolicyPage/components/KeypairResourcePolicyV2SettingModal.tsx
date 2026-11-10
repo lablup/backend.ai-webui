@@ -296,8 +296,8 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
           const input: UpdateKeypairResourcePolicyInput = commonInput;
           commitModifyKeypairResourcePolicy({
             variables: { id: keypairResourcePolicy.entityId, input },
-            onCompleted(_res, errors) {
-              if (errors) {
+            onCompleted(res, errors) {
+              if (!res?.updateKeypairResourcePolicyV2 || errors) {
                 message.error(
                   errors?.[0]?.message ||
                     t('resourcePolicy.CannotUpdateResourcePolicy'),

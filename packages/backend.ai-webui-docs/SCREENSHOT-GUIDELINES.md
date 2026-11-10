@@ -129,7 +129,8 @@ When **replacing an existing screenshot** (same filename), the new image MUST ma
 
 ```bash
 # 1. Inspect the previous version's dimensions and visual scope
-git show main:path/to/images/foo.png > /tmp/old.png
+#    (--filters applies the smudge filter, so this also works for Git LFS files)
+git cat-file --filters main:path/to/images/foo.png > /tmp/old.png
 file /tmp/old.png        # note WIDTH x HEIGHT
 # 2. Open /tmp/old.png and identify:
 #    - Is it a header strip? (very wide, very short — e.g., 2358x222)
@@ -151,6 +152,16 @@ Then capture the new screenshot at the **same scope**:
 **Anti-pattern observed in PR #6708**: `header.png` was 2358×222 (header strip only) on `main`, recaptured as 2880×1800 (full viewport including sidebar + main content + breadcrumbs). The filename promises "header" but the new image shows everything. **Always run the preflight above before re-capturing.**
 
 If the framing genuinely needs to change (e.g., the feature now spans more of the page), update the filename to reflect the new scope (e.g., `header.png` → `top_bar_with_session_timer.png`) rather than silently broadening an existing image.
+
+### Copying Captures Into the Docs
+
+A re-capture is byte-different from the committed PNG even when nothing on screen changed, and every committed byte stays in the repository history. Never `cp` captures over `src/{lang}/images/`; copy them through the visual-change gate, which skips captures that look the same as the existing file:
+
+```bash
+pnpm run accept:images --from "<capture dir for one language>" --to "src/<lang>/images"
+```
+
+It prints `new` / `changed` / `unchanged` per file (`--json` adds the measured difference) and copies only `new` and `changed`. To replace an `unchanged` image anyway, pass `--force <file.png>` and say why in the PR.
 
 ### Cleanup After Capture
 

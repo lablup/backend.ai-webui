@@ -165,8 +165,8 @@ const ProjectResourcePolicyV2SettingModal: React.FC<
           const input: UpdateProjectResourcePolicyInput = commonInput;
           commitModifyProjectResourcePolicy({
             variables: { id: projectResourcePolicy.entityId, input },
-            onCompleted(_res, errors) {
-              if (errors) {
+            onCompleted(res, errors) {
+              if (!res?.updateProjectResourcePolicyV2 || errors) {
                 message.error(
                   errors?.[0]?.message ||
                     t('resourcePolicy.CannotUpdateResourcePolicy'),

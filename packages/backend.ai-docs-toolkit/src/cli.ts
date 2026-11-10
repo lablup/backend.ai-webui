@@ -9,6 +9,7 @@
  *   docs-toolkit preview:html [--mode document|catalog] [--lang en] [--port 3457]
  *   docs-toolkit init
  *   docs-toolkit agents [--force]
+ *   docs-toolkit accept:images --from <dir> --to <dir> [--dry-run] [--json]
  */
 
 import fs from "fs";
@@ -26,6 +27,7 @@ const COMMANDS = [
   "diff:web",
   "init",
   "agents",
+  "accept:images",
   "help",
 ] as const;
 type Command = (typeof COMMANDS)[number];
@@ -46,6 +48,7 @@ Commands:
   diff:web       Mark a head website build against a base build (PR preview)
   init           Initialize a new documentation project
   agents         Generate Claude AI agent files from templates
+  accept:images  Copy re-captured screenshots only where they visibly changed
   help           Show this help message
 
 Options:
@@ -91,6 +94,24 @@ Options:
   agents:
     --force                    Overwrite existing agent files
 
+  accept:images:
+    --from <dir>              Directory holding the new captures (required)
+    --to <dir>                Docs images directory to update (required)
+    --force <file>            Copy this capture even if it looks unchanged
+                              (repeatable or comma-separated file names)
+    --tolerance <0-254>       Per-channel difference ignored as noise (default: 16);
+                              broad faint changes are judged by --faint-* below
+    --threshold <fraction>    Differing-pixel fraction that counts as changed
+                              (default: 0.0001)
+    --tile-size <px>          Tile edge for the localized-change rule (default: 32)
+    --tile-min-pixels <n>     Differing pixels in one tile that count as changed
+                              (default: 16)
+    --faint-tolerance <0-254> Per-channel difference for the faint rule (default: 4)
+    --faint-threshold <frac>  Fraction of faintly differing pixels that counts as
+                              changed, e.g. a theme colour shift (default: 0.01)
+    --dry-run                 Report only; copy nothing
+    --json                    Print the report as JSON
+
 Examples:
   docs-toolkit pdf --lang all
   docs-toolkit pdf --lang en
@@ -106,6 +127,7 @@ Examples:
   docs-toolkit init
   docs-toolkit agents
   docs-toolkit agents --force
+  docs-toolkit accept:images --from captures/en/images --to src/en/images --dry-run
 `);
 }
 
@@ -115,6 +137,38 @@ function getCommand(argv: string[]): Command | null {
   if (COMMANDS.includes(cmd as Command)) return cmd as Command;
   if (cmd === "--help" || cmd === "-h") return "help";
   return null;
+}
+
+function getFlagValues(argv: string[], flag: string): string[] {
+  const values: string[] = [];
+  argv.forEach((arg, i) => {
+    if (arg !== flag) return;
+    const value = argv[i + 1];
+    if (!value || value.startsWith("--")) {
+      console.error(`Error: ${flag} requires a value.`);
+      process.exit(1);
+    }
+    values.push(
+      ...value
+        .split(",")
+        .map((v) => v.trim())
+        .filter(Boolean),
+    );
+  });
+  return values;
+}
+
+function getNumberFlag(argv: string[], flag: string): number | undefined {
+  const raw = getFlagValue(argv, flag);
+  if (raw === undefined) return undefined;
+  const value = Number(raw);
+  if (!Number.isFinite(value) || value < 0) {
+    console.error(
+      `Error: ${flag} must be a non-negative number, got "${raw}".`,
+    );
+    process.exit(1);
+  }
+  return value;
 }
 
 function hasFlag(argv: string[], flag: string): boolean {
@@ -374,6 +428,47 @@ async function runAgents(
   }
 }
 
+// ── Accept Images Command ───────────────────────────────────────
+
+async function runAcceptImages(argv: string[]): Promise<void> {
+  const { acceptImages, formatGateLine, formatGateSummary, ImageGateError } =
+    await import("./image-gate.js");
+  const from = getFlagValue(argv, "--from");
+  const to = getFlagValue(argv, "--to");
+  if (!from || !to) {
+    console.error("Error: accept:images requires --from <dir> and --to <dir>.");
+    process.exit(1);
+  }
+  const json = hasFlag(argv, "--json");
+  try {
+    const report = await acceptImages({
+      from,
+      to,
+      dryRun: hasFlag(argv, "--dry-run"),
+      force: getFlagValues(argv, "--force"),
+      tolerance: getNumberFlag(argv, "--tolerance"),
+      threshold: getNumberFlag(argv, "--threshold"),
+      tileSize: getNumberFlag(argv, "--tile-size"),
+      tileMinPixels: getNumberFlag(argv, "--tile-min-pixels"),
+      faintTolerance: getNumberFlag(argv, "--faint-tolerance"),
+      faintThreshold: getNumberFlag(argv, "--faint-threshold"),
+    });
+    if (json) {
+      console.log(JSON.stringify(report, null, 2));
+      return;
+    }
+    console.log(`  ${report.from} -> ${report.to}`);
+    for (const r of report.files) console.log(formatGateLine(r));
+    console.log(`  ${formatGateSummary(report)}`);
+  } catch (err) {
+    if (err instanceof ImageGateError) {
+      console.error(`Error: ${err.message}`);
+      process.exit(1);
+    }
+    throw err;
+  }
+}
+
 // ── Main ────────────────────────────────────────────────────────
 
 async function main(): Promise<void> {
@@ -388,6 +483,12 @@ async function main(): Promise<void> {
   // Init doesn't need an existing config
   if (command === "init") {
     await runInit();
+    return;
+  }
+
+  // accept:images compares two directories and needs no config either
+  if (command === "accept:images") {
+    await runAcceptImages(argv);
     return;
   }
 
@@ -504,6 +605,10 @@ async function main(): Promise<void> {
 }
 
 main().catch((err) => {
+  if (err instanceof Error && err.name === "LfsPointerError") {
+    console.error(`docs-toolkit error: ${err.message}`);
+    process.exit(1);
+  }
   console.error("docs-toolkit error:", err);
   process.exit(1);
 });
