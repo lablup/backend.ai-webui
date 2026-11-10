@@ -2,11 +2,15 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { PersistedPanel } from '../components/DashboardPanels/types';
 import { jotaiStore } from '../components/DefaultProviders';
 import type { RecentSearchHit } from '../components/GlobalSearchPalette/types';
 import { backendaiOptions } from '../global-stores';
 import { BAIAppearanceConfig } from '../helper/customThemeConfig';
+import {
+  queueUserSettingWrite,
+  rawToSetting,
+  settingToRaw,
+} from '../helper/userSettingsAppConfig';
 import type { AgentEndpointBindings, AgentProfile } from './useAIAgent';
 import { type BAIBoardItem, BAITableColumnOverrideRecord } from 'backend.ai-ui';
 import { atom, useAtom } from 'jotai';
@@ -15,7 +19,6 @@ import { SetStateAction } from 'react';
 
 export interface UserSettings {
   has_opened_tour_neo_session_validation?: boolean;
-  has_opened_tour_neo_deployment_validation?: boolean;
   has_opened_tour_deployment_preset_validation?: boolean;
   has_opened_tour_back_to_user_view?: boolean;
   has_opened_tour_back_to_admin_settings?: boolean;
@@ -31,15 +34,12 @@ export interface UserSettings {
   compact_sidebar?: boolean;
   preserve_login?: boolean;
   automatic_update_check?: boolean;
-  custom_ssh_port?: string;
-  beta_feature?: boolean;
   last_window_close_time?: number;
   endpoints?: Array<string>;
   selected_language?: string;
   recentSessionHistory?: Array<SessionHistory>;
   pinnedSessionHistory?: Array<SessionHistory>;
   recentSearchHits?: Array<RecentSearchHit>;
-  start_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   experimental_ai_agents?: boolean;
   experimental_import_from_huggingface?: boolean;
   experimental_session_resource_grid?: boolean;
@@ -48,9 +48,6 @@ export interface UserSettings {
   extra_ai_agents?: Array<AgentProfile>;
   agent_endpoints?: AgentEndpointBindings;
   session_metrics_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
-  dashboard_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
-  admin_dashboard_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
-  custom_dashboard_panels?: Array<PersistedPanel>;
   resource_panel_type?:
     | 'MyResource'
     | 'MyResourceWithinResourceGroup'
@@ -114,41 +111,6 @@ export const useBAISettingGeneralState = <K extends keyof GeneralSettings>(
   return useAtom(SettingAtomFamily('general.' + name));
 };
 
-const isJson = (str: any) => {
-  try {
-    JSON.parse(str);
-  } catch {
-    return false;
-  }
-  return true;
-};
-
-const rawToSetting = (value: string | null) => {
-  if (value !== null && value !== '' && value !== '""') {
-    if (value === 'false') {
-      return false;
-    } else if (value === 'true') {
-      return true;
-    } else if (isJson(value)) {
-      return JSON.parse(value);
-    } else {
-      return value;
-    }
-  } else {
-    return null;
-  }
-};
-
-const settingToRaw = (settingValue: any) => {
-  if (typeof settingValue === 'boolean') {
-    return settingValue ? 'true' : 'false';
-  } else if (typeof settingValue === 'object') {
-    return JSON.stringify(settingValue);
-  } else {
-    return settingValue;
-  }
-};
-
 const settingAtom = atom<{
   [key: string]: any;
 }>({});
@@ -189,6 +151,7 @@ const SettingAtomFamily = atomFamily((param: string) => {
       } else {
         backendaiOptions?.set?.(name, newValue, namespace, true);
       }
+      if (namespace === 'user') queueUserSettingWrite(name, newValue);
     },
   );
 });
@@ -214,5 +177,13 @@ document?.addEventListener('backendaiwebui.settings:delete', (e: any) => {
       ...prev,
       ['backendaiwebui.settings.' + key]: null,
     });
+    if (detail.namespace === 'user') {
+      queueUserSettingWrite(detail.name, undefined);
+    }
   }
 });
+
+/** Re-reads every setting atom after the localStorage mirror changed underneath. */
+export const refreshSettingAtoms = () => {
+  jotaiStore.set(settingAtom, {});
+};
