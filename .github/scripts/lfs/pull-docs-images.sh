@@ -94,9 +94,11 @@ pull_one() {
     lfs fetch --include="$(IFS=,; echo "${includes[*]}")" --exclude="" "$remote" "$REF"
 
   # Restore from the index through the LFS smudge filter. The attributes file
-  # covers checkouts whose .gitattributes does not mark the images (yet).
+  # covers checkouts whose .gitattributes does not mark the images (yet). It
+  # names only the pointer paths (glob chars escaped, whitespace as `?`): a `*`
+  # would let git's index refresh run the clean filter over unrelated files.
   attrs="${work}/attributes"
-  echo '* filter=lfs diff=lfs merge=lfs -text' > "$attrs"
+  sed 's/[][*?\\]/\\&/g; s/[[:space:]]/?/g; s/$/ filter=lfs diff=lfs merge=lfs -text/' "$list" > "$attrs"
   tr '\n' '\0' < "$list" > "${list}.nul"
   (cd "$top" && tr '\n' '\0' < "$list" | xargs -0 rm -f)
   env -u GIT_LFS_SKIP_SMUDGE git -C "$top" --literal-pathspecs \
