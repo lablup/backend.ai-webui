@@ -16,7 +16,6 @@ import {
   type ChartCount,
 } from './chartSources';
 import DonutChart from './charts/DonutChart';
-import PeriodCaption from './charts/PeriodCaption';
 import { formatBucketSpan } from './charts/bucketSpan';
 import {
   countAliasVariables,
@@ -430,11 +429,10 @@ export const ResourceChartContent: React.FC<{
   // Deferred as one, so the old chart stays whole until the new counts arrive
   // instead of drawing old counts under new groups or buckets.
   const requestKey = JSON.stringify([nextChart, nextVariables]);
-  const { chart, counts, variables, window, shownKey } = useDeferredValue({
+  const { chart, counts, variables, shownKey } = useDeferredValue({
     chart: nextChart,
     counts: nextCounts,
     variables: nextVariables,
-    window: chartWindow(nextChart, descriptor.range, now),
     shownKey: requestKey,
   });
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -490,7 +488,6 @@ export const ResourceChartContent: React.FC<{
         fixedHeight={fixedHeight}
       />
     );
-  // A chart that counts within a period names it, like every period card (ADR 0027).
   return (
     <VStack
       align="stretch"
@@ -498,7 +495,6 @@ export const ResourceChartContent: React.FC<{
       aria-busy={isSwitching}
       xstyle={fixedHeight ? undefined : styles.content}
     >
-      {window && !isSwitching ? <PeriodCaption window={window} /> : null}
       {isSwitching ? (
         <ChartBox fixedHeight={fixedHeight}>
           <SkeletonChart
