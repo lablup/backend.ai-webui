@@ -66,16 +66,21 @@ export function e2ePartFilter(
     .map(escapeRegExp)
     .join(sep);
   const folder = (name: string) => `${root}${sep}${escapeRegExp(name)}${sep}`;
+  // Windows paths (drive letter or backslash) are case-insensitive.
+  const flags = /^[a-z]:|\\/i.test(e2eDir) ? 'i' : '';
   if (parts.includes('user')) {
     // `user` already holds every folder but admin; adding admin means all.
     return parts.includes('admin')
       ? {}
-      : { testIgnore: new RegExp(folder('admin')) };
+      : { testIgnore: new RegExp(folder('admin'), flags) };
   }
   const folders = PART_FOLDERS.filter((name) => parts.includes(name));
   // testMatch replaces Playwright's default, so keep its test-file suffixes.
   const testFile = String.raw`(?=.*\.(?:spec|test)\.[cm]?[jt]sx?$)`;
   return {
-    testMatch: new RegExp(`(?:${folders.map(folder).join('|')})${testFile}`),
+    testMatch: new RegExp(
+      `(?:${folders.map(folder).join('|')})${testFile}`,
+      flags,
+    ),
   };
 }
