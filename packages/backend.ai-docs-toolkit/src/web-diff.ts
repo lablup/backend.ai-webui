@@ -15,6 +15,7 @@ import { fileURLToPath } from "url";
 
 import type { ResolvedDocConfig } from "./config.js";
 import { loadVersions } from "./versions.js";
+import { assertNoLfsPointers } from "./lfs-pointer.js";
 
 /** Pairing threshold: below this a delete/insert pair stays two changes. */
 const SIM_THRESHOLD = 0.4;
@@ -1047,7 +1048,9 @@ export async function generateWebDiff(
   const baseRoot = path.resolve(config.projectRoot, opts.base);
   const headRoot = path.resolve(config.projectRoot, opts.head);
   const srcRoot = path.resolve(config.projectRoot, opts.src ?? config.srcDir);
-  const log = (msg: string): void => {
+  // Image changes are fingerprinted from the built images' bytes.
+  assertNoLfsPointers([baseRoot, headRoot], { cwd: config.projectRoot });
+  const log =(msg: string): void => {
     if (opts.quiet) console.error(msg);
     else console.log(msg);
   };

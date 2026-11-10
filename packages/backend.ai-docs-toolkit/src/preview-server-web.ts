@@ -15,6 +15,7 @@ import { buildWebDocument } from "./html-builder-web.js";
 import { getDocVersion } from "./version.js";
 import type { ResolvedDocConfig } from "./config.js";
 import { loadBookConfig } from "./book-config.js";
+import { assertNoLfsPointers } from "./lfs-pointer.js";
 // getCatalogMarkdown is dynamically imported in catalog mode for hot-reload support
 
 
@@ -53,6 +54,7 @@ export async function startHtmlPreviewServer(
 
   const configPath = path.join(config.srcDir, "book.config.yaml");
   const bookConfig = loadBookConfig(config.srcDir);
+  assertNoLfsPointers([config.srcDir], { cwd: config.projectRoot });
   const { display: version } = getDocVersion(
     config.versionSource,
     config.version,

@@ -12,6 +12,7 @@ import { buildThemeInfoChapter } from "./sample-content.js";
 import { getDocVersion } from "./version.js";
 import type { ResolvedDocConfig } from "./config.js";
 import { loadBookConfig } from "./book-config.js";
+import { assertNoLfsPointers } from "./lfs-pointer.js";
 
 
 type PreviewMode = "catalog" | "document" | "sample";
@@ -202,6 +203,7 @@ export async function startPreviewServer(
 
   const configPath = path.join(config.srcDir, "book.config.yaml");
   const bookConfig = loadBookConfig(config.srcDir);
+  assertNoLfsPointers([config.srcDir], { cwd: config.projectRoot });
   const { display: version } = getDocVersion(
     config.versionSource,
     config.version,
