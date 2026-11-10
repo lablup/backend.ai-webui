@@ -2,21 +2,26 @@
 # Replace Git LFS pointer files under the user manual source with the real
 # images, in each given checkout (default: this repository's working tree).
 #
-# Usage: pull-docs-images.sh [--ref <rev>] [--remote <name|url>]... [<worktree-dir>...]
+# Usage: pull-docs-images.sh [--ref <rev>] [--remote <name|url>]...
+#                            [--fallback-remote <url>]... [<worktree-dir>...]
 #
-#   --ref     revision whose LFS objects to fetch in one batch (default: HEAD).
-#             Pass it when the docs source was checked out from another commit
-#             (`git checkout <rev> -- <src>`); files are always restored from
-#             the index, so a wrong --ref costs only extra downloads.
-#   --remote  remote name or URL to fetch from; repeatable, tried in order, each
-#             filling in what the earlier ones lacked (e.g. origin, then a fork
-#             PR's head repository). Default: origin, else the first remote.
+#   --ref              revision whose LFS objects to fetch in one batch (default:
+#                      HEAD). Pass it when the docs source was checked out from
+#                      another commit (`git checkout <rev> -- <src>`); files are
+#                      always restored from the index.
+#   --remote           remote name or URL to fetch from; repeatable, tried in
+#                      order. Default: origin, else the first remote.
+#   --fallback-remote  URL tried, anonymously, after those when they lack objects
+#                      (a fork PR's head repository). Images it supplies are
+#                      materialized, but the run then exits 3: builds of the base
+#                      repository's branches fetch only from the base repository.
 #
 # Covers both layouts: packages/backend.ai-webui-docs/src on normal branches and
 # src/ on docs-archive/* branches. Without pointer files it exits 0 at once and
 # does not need git-lfs. Otherwise it installs git-lfs if missing, overrides
 # lfs.fetchexclude from .lfsconfig, configures the LFS filter per command only
 # (never in any git config file), and fails if a pointer file remains.
+# Exit codes: 0 done · 1 failure (files unchanged or restored) · 3 see above.
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -25,12 +30,14 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 REF="HEAD"
 REMOTES=()
+FALLBACKS=()
 DIRS=()
 while [ $# -gt 0 ]; do
   case "$1" in
     --ref) REF="${2:?--ref needs a value}"; shift 2 ;;
     --remote) REMOTES+=("${2:?--remote needs a value}"); shift 2 ;;
-    -h|--help) sed -n '2,19p' "$0"; exit 0 ;;
+    --fallback-remote) FALLBACKS+=("${2:?--fallback-remote needs a value}"); shift 2 ;;
+    -h|--help) sed -n '2,24p' "$0"; exit 0 ;;
     -*) echo "Unknown option: $1" >&2; exit 2 ;;
     *) DIRS+=("$1"); shift ;;
   esac
@@ -98,7 +105,6 @@ pull_one() {
   local remotes=()
   while IFS= read -r remote; do [ -z "$remote" ] || remotes+=("$remote"); done < <(pick_remotes "$top")
   [ ${#remotes[@]} -gt 0 ] || { log "${top} has no git remote to fetch LFS objects from." >&2; exit 1; }
-  remote="${remotes[*]}"
 
   local includes=()
   for root in "${roots[@]}"; do includes+=("${root}/**"); done
@@ -106,20 +112,29 @@ pull_one() {
   # the checkout, whose later git commands would run them without git-lfs on PATH.
   local hooks="${work}/hooks"
   mkdir -p "$hooks"
-  # A fetch that misses objects (a fork PR's new images live in the fork's LFS
-  # store) still downloads the rest; the next remote fills in what is missing.
-  local r fetched=0
+  # A fetch that misses objects still downloads the rest, so each later remote
+  # only fills in what the earlier ones lacked. A fallback URL is fetched without
+  # the base repository's credentials (actions/checkout's extraheader).
+  lfs_fetch() { # <remote> [git -c options...]
+    local from="$1"; shift
+    log "fetching LFS objects of ${REF} from ${from}"
+    git -C "$top" -c core.hooksPath="$hooks" "$@" \
+      lfs fetch --include="$(IFS=,; echo "${includes[*]}")" --exclude="" "$from" "$REF"
+  }
+  local r fetched=0 via_fallback=0
   for r in "${remotes[@]}"; do
-    log "fetching LFS objects of ${REF} from ${r}"
-    if git -C "$top" -c core.hooksPath="$hooks" \
-      lfs fetch --include="$(IFS=,; echo "${includes[*]}")" --exclude="" "$r" "$REF"; then
-      fetched=1
-      break
-    fi
+    if lfs_fetch "$r"; then fetched=1; break; fi
     log "warning: fetching from ${r} was incomplete" >&2
   done
-  if [ "$fetched" -eq 0 ] && [ ${#remotes[@]} -eq 1 ]; then
-    log "ERROR: ${top}: could not fetch the LFS objects from ${remote}; nothing was changed." >&2
+  if [ "$fetched" -eq 0 ]; then
+    for r in ${FALLBACKS[@]+"${FALLBACKS[@]}"}; do
+      if lfs_fetch "$r" -c "http.${r}.extraheader="; then fetched=1; via_fallback=1; break; fi
+      log "warning: fetching from ${r} was incomplete" >&2
+    done
+  fi
+  if [ "$fetched" -eq 0 ]; then
+    log "ERROR: ${top}: the LFS objects of ${REF} are not all available from: ${remotes[*]} ${FALLBACKS[*]:-}; nothing was changed." >&2
+    log "For a fork PR's images, add --fallback-remote <the fork's clone URL>." >&2
     rm -rf "$work"
     exit 1
   fi
@@ -165,11 +180,15 @@ pull_one() {
   if [ "$n" -gt 0 ] || [ "$missing" -ne 0 ]; then
     log "ERROR: ${top}: ${n} file(s) are still Git LFS pointers after the pull:" >&2
     report_pointers "$list"
-    log "Check network access to the LFS server of '${remote}', then re-run this script. 'git checkout -- <path>' restores a missing file." >&2
+    log "Check network access to the LFS server, then re-run this script. 'git checkout -- <path>' restores a missing file." >&2
     exit 1
   fi
   log "${top}: materialized all LFS images"
   fail_on_untracked "$top" "${work}/untracked"
+  if [ "$via_fallback" -eq 1 ]; then
+    FALLBACK_USED=1
+    log "warning: ${top}: some LFS objects came only from ${r}; ${remotes[*]} does not have them." >&2
+  fi
 
   if [ -z "${CI:-}" ] && [ -z "$(git -C "$top" config --get filter.lfs.process || true)" ]; then
     log "note: git-lfs filters are not configured here. Run 'git lfs install' before committing images."
@@ -177,6 +196,8 @@ pull_one() {
   rm -rf "$work"
 }
 
+FALLBACK_USED=0
 for d in "${DIRS[@]}"; do
   pull_one "$d"
 done
+[ "$FALLBACK_USED" -eq 0 ] || exit 3

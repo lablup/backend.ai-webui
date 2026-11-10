@@ -116,12 +116,31 @@ docs_toolkit() { pnpm --filter backend.ai-webui-docs exec docs-toolkit "$@"; }
 # Materializes Git LFS images in `src` (a no-op while it holds none). Base and
 # head reference different LFS objects, so each side is pulled after checkout.
 pull_images() { bash "${REPO_ROOT}/.github/scripts/lfs/pull-docs-images.sh" "$@" "$REPO_ROOT"; }
+# Exit 3 from the pull: some head images exist only in the fork's LFS store.
+# The preview still builds, but the run fails at the end (fork_lfs_verdict):
+# once merged, every build of main fetches from origin alone.
+FORK_LFS_ONLY=0
 pull_head_images() {
-  if [ -n "$HEAD_LFS_REMOTE" ]; then
-    pull_images --remote origin --remote "$HEAD_LFS_REMOTE"
-  else
-    pull_images
-  fi
+  [ -n "$HEAD_LFS_REMOTE" ] || { pull_images; return; }
+  local rc=0
+  pull_images --fallback-remote "$HEAD_LFS_REMOTE" || rc=$?
+  case "$rc" in
+    0) ;;
+    3) FORK_LFS_ONLY=1 ;;
+    *) return "$rc" ;;
+  esac
+}
+fork_lfs_verdict() {
+  [ "$FORK_LFS_ONLY" -eq 1 ] || return 0
+  local head_ref
+  case "${GITHUB_REF:-}" in
+    refs/pull/*/merge) head_ref="${GITHUB_REF%/merge}/head" ;;
+    *) head_ref="$(git rev-parse HEAD)" ;;
+  esac
+  echo "::error::Some of this PR's manual images are stored only in the fork's Git LFS (${HEAD_LFS_REMOTE}). Builds of main fetch from this repository alone, so a maintainer must copy them before merging, from a clone with git-lfs installed:" >&2
+  echo "  git fetch origin ${head_ref} && git lfs fetch --exclude=\"\" ${HEAD_LFS_REMOTE} FETCH_HEAD && git lfs push origin FETCH_HEAD" >&2
+  echo "Then re-run this job." >&2
+  return 1
 }
 
 src_langs() {
@@ -195,6 +214,7 @@ echo "::endgroup::"
 
 if [ "$SKIP_DIFF" -eq 1 ]; then
   echo "Skipping diff:web (--skip-diff)."
+  fork_lfs_verdict
   exit 0
 fi
 
@@ -205,3 +225,5 @@ docs_toolkit diff:web \
   --lang "$LANGUAGES" \
   --label "$LABEL"
 echo "::endgroup::"
+
+fork_lfs_verdict
