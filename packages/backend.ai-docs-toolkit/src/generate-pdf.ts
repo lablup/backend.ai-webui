@@ -7,6 +7,7 @@ import { renderPdf } from './pdf-renderer.js';
 import { loadTheme, resolveTheme } from './theme.js';
 import { getDocVersion } from './version.js';
 import { loadBookConfig } from './book-config.js';
+import { assertNoLfsPointers } from './lfs-pointer.js';
 import type { ResolvedDocConfig } from './config.js';
 
 export interface GeneratePdfOptions {
@@ -88,6 +89,8 @@ export async function generatePdf(
       process.exit(1);
     }
   }
+
+  assertNoLfsPointers([config.srcDir], { cwd: config.projectRoot });
 
   const envConcurrency = Number.parseInt(
     process.env.BAI_DOCS_PDF_CONCURRENCY ?? '',

@@ -13,6 +13,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `pnpm run build` - Full production build (cleans `build/web/`, copies resources, builds React via Vite with `vite-plugin-pwa` service worker generation, builds workspace packages)
 - `pnpm run build:react-only` - Build only React app via Vite
 - `pnpm run relay` - Compile GraphQL queries with Relay compiler
+- `pnpm --filter backend.ai-webui-docs run images:pull` - fetch the manual's screenshots once they are in Git LFS (needs git-lfs; only for building the manual or changing its images)
 
 ### Quality Control
 
