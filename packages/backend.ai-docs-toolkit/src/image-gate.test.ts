@@ -5,7 +5,7 @@
  * temp directory with sharp, a devDependency of this package.
  */
 
-import { test } from "node:test";
+import { after, test } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
@@ -66,8 +66,15 @@ async function png(
     .toBuffer();
 }
 
+const tmpRoots: string[] = [];
+after(() => {
+  for (const root of tmpRoots)
+    fs.rmSync(root, { recursive: true, force: true });
+});
+
 function tmpDirs(): { from: string; to: string } {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "image-gate-"));
+  tmpRoots.push(root);
   const from = path.join(root, "from");
   const to = path.join(root, "to");
   fs.mkdirSync(from);
@@ -87,16 +94,45 @@ test("compareImages — a byte-different re-encode of the same pixels is unchang
   assert.equal(r.diffPixels, 0);
 });
 
-test("compareImages — per-channel noise within the tolerance is unchanged", async () => {
+test("compareImages — per-channel noise within the faint tolerance is unchanged", async () => {
   const pixels = basePixels();
   const noisy = Buffer.from(pixels);
   for (let i = 0; i < noisy.length; i += 4) {
-    noisy[i] = Math.min(255, noisy[i] + 8);
-    noisy[i + 2] = Math.max(0, noisy[i + 2] - 8);
+    noisy[i] = Math.min(255, noisy[i] + 4);
+    noisy[i + 2] = Math.max(0, noisy[i + 2] - 4);
   }
   const r = await compareImages(await png(pixels), await png(noisy));
   assert.equal(r.changed, false);
   assert.equal(r.diffPixels, 0);
+  assert.equal(r.faintFraction, 0);
+});
+
+test("compareImages — a broad colour shift below the tolerance is changed by the faint rule", async () => {
+  // e.g. a background token moving from #FFFFFF to #F2F2F2 (13 per channel)
+  const pixels = basePixels();
+  const shifted = Buffer.from(pixels);
+  for (let i = 0; i < shifted.length; i += 4) {
+    for (const c of [0, 1, 2])
+      shifted[i + c] = Math.max(0, shifted[i + c] - 13);
+  }
+  const r = await compareImages(await png(pixels), await png(shifted));
+  assert.equal(r.diffPixels, 0);
+  assert.equal(r.changed, true);
+  assert.equal(r.reason, "faint");
+});
+
+test("compareImages — out-of-range options fail with ImageGateError", async () => {
+  const a = await png(basePixels());
+  for (const opts of [
+    { tileSize: 0 },
+    { tileSize: 1.5 },
+    { threshold: 0 },
+    { tileMinPixels: 0 },
+    { tolerance: 255 },
+    { faintThreshold: 0 },
+  ]) {
+    await assert.rejects(compareImages(a, a, opts), ImageGateError);
+  }
 });
 
 test("compareImages — a few scattered anti-aliasing pixels are unchanged", async () => {
@@ -265,6 +301,19 @@ test("acceptImages — a Git LFS pointer in --to fails with a git lfs pull hint 
     return true;
   });
   assert.equal(fs.existsSync(path.join(to, "fresh.png")), false);
+});
+
+test("acceptImages — a Git LFS pointer in --from fails with a git lfs pull hint", async () => {
+  const { from, to } = await seedBatch();
+  fs.writeFileSync(
+    path.join(from, "same.png"),
+    "version https://git-lfs.github.com/spec/v1\noid sha256:00\nsize 1\n",
+  );
+  await assert.rejects(acceptImages({ from, to }), (err: unknown) => {
+    assert.ok(err instanceof ImageGateError);
+    assert.match(err.message, /git lfs pull/);
+    return true;
+  });
 });
 
 test("acceptImages — an undecodable existing file fails instead of being overwritten", async () => {

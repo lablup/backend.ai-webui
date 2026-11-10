@@ -122,6 +122,12 @@ Open the browser and log in:
 
 **Language order**: en → ko → ja → th
 
+**Before the first capture, empty the capture directories.** `.playwright-mcp/` persists across sessions, and Step 5 accepts every PNG it finds there, so a leftover capture from an earlier run would be copied back over a newer screenshot:
+
+```bash
+rm -rf .playwright-mcp/packages/backend.ai-webui-docs/src/*/images
+```
+
 **Process for each language:**
 1. Switch the app language via **User Settings (`/usersettings`) → Language dropdown**
 2. Wait for UI to refresh in the new language
@@ -165,7 +171,7 @@ If the framing genuinely needs to change, **rename the file** to reflect the new
 .playwright-mcp/packages/backend.ai-webui-docs/src/th/images/{filename}.png  ← captured with Thai UI
 ```
 
-**Exception**: If the screenshot contains no translatable UI text (e.g., pure diagrams, code editors with no UI chrome), capture once and copy to all directories.
+**Exception**: If the screenshot contains no translatable UI text (e.g., pure diagrams, code editors with no UI chrome), capture once and copy that one file into each language's **capture** directory (`.playwright-mcp/packages/backend.ai-webui-docs/src/{lang}/images/`); Step 5 then gates it per language like any other capture.
 
 ### Step 5: Accept Screenshots Through the Visual-Change Gate
 
@@ -180,7 +186,9 @@ for lang in en ko ja th; do
 done
 ```
 
-Add `--json` to get the measured difference per file. For a screenshot with no translatable text, captured once, pass the `en` capture directory as `--from` for every language.
+Add `--json` to get the measured difference per file. Never point one language's `--from` at another language's capture directory: the gate takes every PNG in it, so localized captures would overwrite the other language's screenshots.
+
+The gate compares with the file in the working tree. If you run it more than once before the change is committed, report every run's `changed` / `forced` files, not only the last run's.
 
 **Never bypass the gate** — no `cp`, `mv` or other copy into the docs images directory. An `unchanged` result means the capture would only add bytes to the repository. If a skipped image truly must be replaced (e.g. a difference the gate cannot weigh, such as a deliberately updated sample value in a tiny area), rerun the gate for that language with `--force <file.png>` (repeatable) and state in your report which file you forced and why.
 

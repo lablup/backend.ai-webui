@@ -76,6 +76,8 @@ Follow the user's explicit instructions.
 
 **Language order**: {{#each languages}}{{code}}{{#unless @last}} → {{/unless}}{{/each}}
 
+**Before the first capture, empty the capture directories** (`rm -rf .playwright-mcp/{{docsRoot}}/src/*/images`): `.playwright-mcp/` persists across sessions, and Step 5 accepts every PNG it finds there.
+
 **Process for each language:**
 1. Switch the app language via language settings
 2. Wait for UI to refresh in the new language
@@ -89,10 +91,13 @@ Follow the user's explicit instructions.
 - **Prefer element-level screenshots** using the `ref` parameter
 - Full-page captures only for page overview screenshots
 - Use `browser_snapshot` to find the correct `ref`
+- A screenshot with no translatable text may be captured once; copy that file into each language's capture directory under `.playwright-mcp/`, never point one language's `--from` at another's
 
 ### Step 5: Accept Screenshots Through the Visual-Change Gate
 
 `docs-toolkit accept:images` copies a capture when there is no existing image (`new`) or the existing one differs visibly (`changed`), and leaves the existing file untouched when the two look the same (`unchanged`):
+
+When the toolkit is a workspace package rather than an installed release, build it first (`pnpm --filter backend.ai-docs-toolkit build`); its `dist/` is not committed.
 
 ```bash
 for lang in {{#each languages}}{{code}}{{#unless @last}} {{/unless}}{{/each}}; do

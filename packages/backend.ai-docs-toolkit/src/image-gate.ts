@@ -10,7 +10,10 @@
  * `tolerance`. A capture is `changed` when the differing pixels exceed
  * `threshold` of the image OR any `tileSize`×`tileSize` tile holds at least
  * `tileMinPixels` of them — the tile rule keeps a single relabelled menu item
- * in a full-page capture from hiding under the global fraction.
+ * in a full-page capture from hiding under the global fraction. A third rule
+ * catches broad faint changes (a theme colour moving by less than
+ * `tolerance`): `faintThreshold` of the pixels moving by more than
+ * `faintTolerance` also counts as `changed`.
  */
 
 import fs from "fs";
@@ -24,6 +27,10 @@ export const DEFAULT_THRESHOLD = 0.0001;
 export const DEFAULT_TILE_SIZE = 32;
 /** Differing pixels in one tile at or above which a capture is `changed`. */
 export const DEFAULT_TILE_MIN_PIXELS = 16;
+/** Per-channel difference above which a pixel counts for the faint rule. */
+export const DEFAULT_FAINT_TOLERANCE = 4;
+/** Fraction of faintly differing pixels at or above which a capture is `changed`. */
+export const DEFAULT_FAINT_THRESHOLD = 0.01;
 
 const LFS_POINTER_PREFIX = "version https://git-lfs.github.com/spec/v1";
 
@@ -32,16 +39,19 @@ export interface CompareOptions {
   threshold?: number;
   tileSize?: number;
   tileMinPixels?: number;
+  faintTolerance?: number;
+  faintThreshold?: number;
 }
 
 export interface CompareResult {
   changed: boolean;
-  reason: "dimensions" | "pixels" | "tile" | null;
+  reason: "dimensions" | "pixels" | "tile" | "faint" | null;
   oldSize: [number, number];
   newSize: [number, number];
   diffPixels: number;
   diffFraction: number;
   maxTileDiffPixels: number;
+  faintFraction: number;
 }
 
 export type GateStatus = "new" | "changed" | "unchanged" | "forced";
@@ -95,12 +105,71 @@ export function isLfsPointer(buf: Buffer): boolean {
   );
 }
 
+function checkRange(
+  name: string,
+  value: number,
+  min: number,
+  max: number,
+  integer: boolean,
+): number {
+  if (
+    !Number.isFinite(value) ||
+    value < min ||
+    value > max ||
+    (integer && !Number.isInteger(value))
+  ) {
+    const kind = integer ? "an integer" : "a number";
+    throw new ImageGateError(
+      `${name} must be ${kind} from ${min} to ${max}, got ${value}.`,
+    );
+  }
+  return value;
+}
+
 function resolveOptions(opts: CompareOptions): Required<CompareOptions> {
   return {
-    tolerance: opts.tolerance ?? DEFAULT_TOLERANCE,
-    threshold: opts.threshold ?? DEFAULT_THRESHOLD,
-    tileSize: opts.tileSize ?? DEFAULT_TILE_SIZE,
-    tileMinPixels: opts.tileMinPixels ?? DEFAULT_TILE_MIN_PIXELS,
+    tolerance: checkRange(
+      "--tolerance",
+      opts.tolerance ?? DEFAULT_TOLERANCE,
+      0,
+      254,
+      true,
+    ),
+    threshold: checkRange(
+      "--threshold",
+      opts.threshold ?? DEFAULT_THRESHOLD,
+      Number.MIN_VALUE,
+      1,
+      false,
+    ),
+    tileSize: checkRange(
+      "--tile-size",
+      opts.tileSize ?? DEFAULT_TILE_SIZE,
+      2,
+      4096,
+      true,
+    ),
+    tileMinPixels: checkRange(
+      "--tile-min-pixels",
+      opts.tileMinPixels ?? DEFAULT_TILE_MIN_PIXELS,
+      1,
+      16777216,
+      true,
+    ),
+    faintTolerance: checkRange(
+      "--faint-tolerance",
+      opts.faintTolerance ?? DEFAULT_FAINT_TOLERANCE,
+      0,
+      254,
+      true,
+    ),
+    faintThreshold: checkRange(
+      "--faint-threshold",
+      opts.faintThreshold ?? DEFAULT_FAINT_THRESHOLD,
+      Number.MIN_VALUE,
+      1,
+      false,
+    ),
   };
 }
 
@@ -145,6 +214,7 @@ export async function compareImages(
       diffPixels: 0,
       diffFraction: 1,
       maxTileDiffPixels: 0,
+      faintFraction: 1,
     };
   }
 
@@ -164,15 +234,18 @@ export async function compareImages(
     return { ox, oy, cols, tiles: new Uint32Array(cols * rows) };
   });
   let diffPixels = 0;
+  let faintPixels = 0;
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       const o = (y * width + x) * 4;
-      if (
-        Math.abs(a.data[o] - b.data[o]) > opts.tolerance ||
-        Math.abs(a.data[o + 1] - b.data[o + 1]) > opts.tolerance ||
-        Math.abs(a.data[o + 2] - b.data[o + 2]) > opts.tolerance ||
-        Math.abs(a.data[o + 3] - b.data[o + 3]) > opts.tolerance
-      ) {
+      const d = Math.max(
+        Math.abs(a.data[o] - b.data[o]),
+        Math.abs(a.data[o + 1] - b.data[o + 1]),
+        Math.abs(a.data[o + 2] - b.data[o + 2]),
+        Math.abs(a.data[o + 3] - b.data[o + 3]),
+      );
+      if (d > opts.faintTolerance) faintPixels++;
+      if (d > opts.tolerance) {
         diffPixels++;
         for (const g of grids) {
           g.tiles[
@@ -188,10 +261,12 @@ export async function compareImages(
     for (const t of g.tiles) if (t > maxTileDiffPixels) maxTileDiffPixels = t;
   }
   const diffFraction = diffPixels / (width * height);
+  const faintFraction = faintPixels / (width * height);
 
   let reason: CompareResult["reason"] = null;
   if (diffFraction >= opts.threshold) reason = "pixels";
   else if (maxTileDiffPixels >= opts.tileMinPixels) reason = "tile";
+  else if (faintFraction >= opts.faintThreshold) reason = "faint";
   return {
     ...base,
     changed: reason !== null,
@@ -199,6 +274,7 @@ export async function compareImages(
     diffPixels,
     diffFraction,
     maxTileDiffPixels,
+    faintFraction,
   };
 }
 
@@ -238,6 +314,13 @@ export async function acceptImages(
     const src = path.join(from, file);
     const dest = path.join(to, file);
     const newBuf = fs.readFileSync(src);
+    if (isLfsPointer(newBuf)) {
+      throw new ImageGateError(
+        `${src} is a Git LFS pointer, not a PNG. Fetch the real images ` +
+          "first (`git lfs pull`, after `git lfs install` if LFS is not set " +
+          "up) and rerun.",
+      );
+    }
     if (!fs.existsSync(dest)) {
       results.push({ file, status: "new", copied: false });
       continue;
@@ -299,7 +382,8 @@ export function formatGateLine(r: GateFileResult): string {
   }
   return (
     `  ${label} ${r.file}  (diff ${pct(r.diffFraction ?? 0)}, ` +
-    `${r.diffPixels} px, max tile ${r.maxTileDiffPixels} px)`
+    `${r.diffPixels} px, max tile ${r.maxTileDiffPixels} px, ` +
+    `faint ${pct(r.faintFraction ?? 0)})`
   );
 }
 

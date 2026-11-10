@@ -96,6 +96,8 @@ Agent({
 Plan file: packages/backend.ai-webui-docs/.agent-output/docs-update-plan-<topic>.md
 Files touched by writer (from git status --short):
 <paste short list>
+Screenshots the capturer forced past the visual-change gate (keep these):
+<file — reason, one per line, or "none"; omit the section if no capture ran>
 
 Run the standard accuracy / consistency / style / translation-quality review.
 Write the report to packages/backend.ai-webui-docs/.agent-output/docs-review-report-<topic>.md. Apply
@@ -115,9 +117,12 @@ attention.`
 - **Screenshot-capturer** — verify the per-language MD5 uniqueness report. If
   the worker silently skipped a language, push back. Check the gate summary
   against `git status --short -- packages/backend.ai-webui-docs/src/*/images/`:
-  every modified PNG must be `changed` or `forced` (with a reason), and none
-  of the skipped files may show up as modified. Keep the skipped-file list;
-  the PR body carries it.
+  every modified PNG must be `changed` or `forced` (with a reason) in some
+  capturer run of this topic — the gate compares with the working tree, so a
+  later run reports an earlier run's uncommitted copy as `unchanged` — and a
+  file skipped in every run may not show up as modified. Keep the
+  skipped-file and forced-file lists; the PR body carries the first, the
+  reviewer prompt the second.
 - **Reviewer** — read the report file. Surface severity counts; if any
   "critical" exists, surface it to the user before declaring the topic
   completed.

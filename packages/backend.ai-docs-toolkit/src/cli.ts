@@ -105,6 +105,9 @@ Options:
     --tile-size <px>          Tile edge for the localized-change rule (default: 32)
     --tile-min-pixels <n>     Differing pixels in one tile that count as changed
                               (default: 16)
+    --faint-tolerance <0-254> Per-channel difference for the faint rule (default: 4)
+    --faint-threshold <frac>  Fraction of faintly differing pixels that counts as
+                              changed, e.g. a theme colour shift (default: 0.01)
     --dry-run                 Report only; copy nothing
     --json                    Print the report as JSON
 
@@ -446,6 +449,8 @@ async function runAcceptImages(argv: string[]): Promise<void> {
       threshold: getNumberFlag(argv, "--threshold"),
       tileSize: getNumberFlag(argv, "--tile-size"),
       tileMinPixels: getNumberFlag(argv, "--tile-min-pixels"),
+      faintTolerance: getNumberFlag(argv, "--faint-tolerance"),
+      faintThreshold: getNumberFlag(argv, "--faint-threshold"),
     });
     if (json) {
       console.log(JSON.stringify(report, null, 2));

@@ -171,7 +171,8 @@ summary (`N new, N changed, N unchanged (skipped)`) to the user. When the
 change becomes a PR, the PR body lists the skipped files under
 **Screenshots kept (visually unchanged)** and any `--force`d file with its
 reason; a modified PNG that is in neither the `changed` nor the `forced`
-list must not be in the diff.
+list of any capturer run in this topic must not be in the diff. Pass the
+forced list to the reviewer (see the template) so it does not revert them.
 
 #### 5d. Reviewer (automatic)
 

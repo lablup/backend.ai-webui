@@ -169,9 +169,10 @@ Verify against rules in `packages/backend.ai-webui-docs/TRANSLATION-GUIDE.md` an
 - [ ] Images are placed after introductory text, not before
 - [ ] TODO comments are added for screenshots that need to be captured
 - [ ] No broken image references
-- [ ] Every modified PNG visibly changed. `docs-screenshot-capturer` copies captures through the `docs-toolkit accept:images` gate, so a modified screenshot that looks the same as `main`'s should not be in the diff. Re-check with the gate in dry-run; revert each `unchanged` file (`git checkout "$base" -- <file>`) unless the capturer forced it with a stated reason:
+- [ ] Every modified PNG visibly changed. `docs-screenshot-capturer` copies captures through the `docs-toolkit accept:images` gate, so a modified screenshot that looks the same as `main`'s should not be in the diff. Re-check with the gate in dry-run. Revert an `unchanged` file (`git checkout "$base" -- <file>`) only when your prompt lists the capturer's forced files and it is not among them; with no forced list, report it as a warning instead of reverting:
   ```bash
   rm -rf /tmp/gate-check
+  pnpm --filter backend.ai-docs-toolkit build   # dist/ is gitignored
   base=$(git merge-base origin/main HEAD)
   git diff --name-only --diff-filter=M "$base" -- 'packages/backend.ai-webui-docs/src/*/images/*.png' |
   while read -r f; do
@@ -181,6 +182,7 @@ Verify against rules in `packages/backend.ai-webui-docs/TRANSLATION-GUIDE.md` an
     git cat-file --filters "$base:$f" > "/tmp/gate-check/$lang/old/$(basename "$f")"
   done
   for d in /tmp/gate-check/*/; do
+    [ -d "${d}new" ] || continue   # no modified PNG: the glob did not match
     pnpm --filter backend.ai-webui-docs exec docs-toolkit accept:images --from "${d}new" --to "${d}old" --dry-run
   done
   ```
