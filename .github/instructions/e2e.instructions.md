@@ -275,7 +275,7 @@ await expect(modal).toBeHidden({ timeout: 30000 });
 ### Form items
 
 ```typescript
-import { getFormItemControlByLabel } from '../utils/test-util-antd';
+import { getFormItemControlByLabel } from '../../utils/test-util-antd';
 
 const location = getFormItemControlByLabel(page, 'Location');
 await location.getByRole('combobox').click();

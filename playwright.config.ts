@@ -16,13 +16,13 @@ const e2eParts = resolveE2EParts(requestedPart);
 const defaultEnvFile = "./e2e/envs/.env.playwright";
 const adminEnvFile = "./e2e/envs/.env.playwright.admin";
 const e2eEnvFile =
-  process.env.E2E_ENV_FILE ||
+  requestedEnvFile ||
   (e2eParts.length === 1 &&
   e2eParts[0] === "admin" &&
   fs.existsSync(adminEnvFile)
     ? adminEnvFile
     : defaultEnvFile);
-if (process.env.E2E_ENV_FILE && !fs.existsSync(e2eEnvFile)) {
+if (requestedEnvFile && !fs.existsSync(e2eEnvFile)) {
   throw new Error(`E2E_ENV_FILE not found: ${e2eEnvFile}`);
 }
 dotenv.config({ path: e2eEnvFile, override: true });
