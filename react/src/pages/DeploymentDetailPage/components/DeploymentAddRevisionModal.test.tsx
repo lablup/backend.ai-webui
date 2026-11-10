@@ -164,7 +164,7 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
       autoMountedFolders: [],
       refetch: () => {},
     }),
-    BAIVFolderSelect: (props: any) =>
+    BAIScopedVFolderSelect: (props: any) =>
       React.createElement(
         'button',
         {

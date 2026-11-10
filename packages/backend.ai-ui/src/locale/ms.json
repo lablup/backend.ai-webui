@@ -1550,9 +1550,6 @@
     "SubpathTooltip": "Mount subfolder di dalam folder sebagai sumber dan bukannya root-nya. Klik medan ini untuk melayari folder dan memilih satu; biarkan kosong untuk mount root folder.",
     "UnmountableFoldersRemoved": "Folder yang tidak lagi boleh anda lekapkan telah dibuang daripada pilihan."
   },
-  "comp:BAIVFolderSelect": {
-    "SelectFolder": "Pilih Folder"
-  },
   "comp:FileExplorer": {
     "ArchiveDownloadStarted": "Muat turun untuk {{count}} item telah bermula.",
     "ChangeFileExtension": "Tukar Sambungan Fail",

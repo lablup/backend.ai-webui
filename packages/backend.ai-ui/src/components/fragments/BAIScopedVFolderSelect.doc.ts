@@ -50,7 +50,7 @@ export const docs = {
       name: 'scope',
       type: 'VFolderScope',
       description:
-        'The scopes whose folders are read (`user`, `project`, `domain`, each a list of `{ value: uuid }`), combined with OR. Every scope is authorized by the manager before the read runs.',
+        'The scopes whose folders are read (`user`, `project`, `domain`, each a list of `{ value: uuid }`), combined with OR. Every scope is authorized by the manager before the read runs. A scope whose lists are all empty reads nothing, so a caller without a range yet passes an empty list and disables the select.',
       required: true,
     },
     {
@@ -118,6 +118,19 @@ export const docs = {
     setFolderIds((ids) => ids.filter((id) => !unresolved.includes(id)))
   }
 />`,
+    },
+    {
+      label: "One model folder in a deployment's project, inside a Form.Item",
+      code: `<Form.Item name="modelFolderId">
+  <BAIScopedVFolderSelect
+    label={t('deployment.ModelFolder')}
+    isLabelHidden
+    scope={mountableVFolderScope(baiClient.user_uuid, projectId)}
+    filter={{
+      AND: [notDeletedVFolderFilter, { usageMode: { equals: 'MODEL' } }],
+    }}
+  />
+</Form.Item>`,
     },
   ],
 } satisfies ComponentDoc;

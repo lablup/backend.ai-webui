@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<20bcb7cd5ca72786a97680803f55c1b6>>
+ * @generated SignedSource<<ae7626499b5f25379e607bcc0941f388>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,14 +11,6 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type VFolderOperationStatus = "CLONING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
 export type VFolderUsageMode = "DATA" | "GENERAL" | "MODEL" | "%future added value";
-export type VFolderScope = {
-  domain?: ReadonlyArray<UUIDScope> | null | undefined;
-  project?: ReadonlyArray<UUIDScope> | null | undefined;
-  user?: ReadonlyArray<UUIDScope> | null | undefined;
-};
-export type UUIDScope = {
-  value: string;
-};
 export type VFolderFilter = {
   AND?: ReadonlyArray<VFolderFilter> | null | undefined;
   NOT?: ReadonlyArray<VFolderFilter> | null | undefined;
@@ -94,17 +86,18 @@ export type UUIDFilter = {
   notEquals?: string | null | undefined;
   notIn?: ReadonlyArray<string> | null | undefined;
 };
-export type BAIVFolderSelectValueQuery$variables = {
+export type RoleFormModalVFolderQuery$variables = {
   filter?: VFolderFilter | null | undefined;
   limit: number;
-  scope: VFolderScope;
-  skip: boolean;
+  offset: number;
 };
-export type BAIVFolderSelectValueQuery$data = {
-  readonly scopedVFoldersV2?: {
+export type RoleFormModalVFolderQuery$data = {
+  readonly adminVfoldersV2: {
+    readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly entityId: string;
+        readonly host: string;
         readonly metadata: {
           readonly name: string;
         };
@@ -112,33 +105,30 @@ export type BAIVFolderSelectValueQuery$data = {
     }>;
   } | null | undefined;
 };
-export type BAIVFolderSelectValueQuery = {
-  response: BAIVFolderSelectValueQuery$data;
-  variables: BAIVFolderSelectValueQuery$variables;
+export type RoleFormModalVFolderQuery = {
+  response: RoleFormModalVFolderQuery$data;
+  variables: RoleFormModalVFolderQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "filter"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "limit"
-},
-v2 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "scope"
-},
-v3 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "skip"
-},
-v4 = [
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "filter"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "limit"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "offset"
+  }
+],
+v1 = [
   {
     "kind": "Variable",
     "name": "filter",
@@ -151,18 +141,42 @@ v4 = [
   },
   {
     "kind": "Variable",
-    "name": "scope",
-    "variableName": "scope"
+    "name": "offset",
+    "variableName": "offset"
+  },
+  {
+    "kind": "Literal",
+    "name": "orderBy",
+    "value": [
+      {
+        "direction": "DESC",
+        "field": "CREATED_AT"
+      }
+    ]
   }
 ],
-v5 = {
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "count",
+  "storageKey": null
+},
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "entityId",
   "storageKey": null
 },
-v6 = {
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "host",
+  "storageKey": null
+},
+v5 = {
   "alias": null,
   "args": null,
   "concreteType": "VFolderMetadataInfo",
@@ -182,57 +196,47 @@ v6 = {
 };
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/),
-      (v2/*: any*/),
-      (v3/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "BAIVFolderSelectValueQuery",
+    "name": "RoleFormModalVFolderQuery",
     "selections": [
       {
-        "condition": "skip",
-        "kind": "Condition",
-        "passingValue": false,
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "VFolderConnection",
+        "kind": "LinkedField",
+        "name": "adminVfoldersV2",
+        "plural": false,
         "selections": [
+          (v2/*: any*/),
           {
             "alias": null,
-            "args": (v4/*: any*/),
-            "concreteType": "VFolderConnection",
+            "args": null,
+            "concreteType": "VFolderEdge",
             "kind": "LinkedField",
-            "name": "scopedVFoldersV2",
-            "plural": false,
+            "name": "edges",
+            "plural": true,
             "selections": [
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "VFolderEdge",
+                "concreteType": "VFolder",
                 "kind": "LinkedField",
-                "name": "edges",
-                "plural": true,
+                "name": "node",
+                "plural": false,
                 "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "VFolder",
-                    "kind": "LinkedField",
-                    "name": "node",
-                    "plural": false,
-                    "selections": [
-                      (v5/*: any*/),
-                      (v6/*: any*/)
-                    ],
-                    "storageKey": null
-                  }
+                  (v3/*: any*/),
+                  (v4/*: any*/),
+                  (v5/*: any*/)
                 ],
                 "storageKey": null
               }
             ],
             "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
     ],
     "type": "Query",
@@ -240,54 +244,43 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v2/*: any*/),
-      (v0/*: any*/),
-      (v1/*: any*/),
-      (v3/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "BAIVFolderSelectValueQuery",
+    "name": "RoleFormModalVFolderQuery",
     "selections": [
       {
-        "condition": "skip",
-        "kind": "Condition",
-        "passingValue": false,
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "VFolderConnection",
+        "kind": "LinkedField",
+        "name": "adminVfoldersV2",
+        "plural": false,
         "selections": [
+          (v2/*: any*/),
           {
             "alias": null,
-            "args": (v4/*: any*/),
-            "concreteType": "VFolderConnection",
+            "args": null,
+            "concreteType": "VFolderEdge",
             "kind": "LinkedField",
-            "name": "scopedVFoldersV2",
-            "plural": false,
+            "name": "edges",
+            "plural": true,
             "selections": [
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "VFolderEdge",
+                "concreteType": "VFolder",
                 "kind": "LinkedField",
-                "name": "edges",
-                "plural": true,
+                "name": "node",
+                "plural": false,
                 "selections": [
+                  (v3/*: any*/),
+                  (v4/*: any*/),
+                  (v5/*: any*/),
                   {
                     "alias": null,
                     "args": null,
-                    "concreteType": "VFolder",
-                    "kind": "LinkedField",
-                    "name": "node",
-                    "plural": false,
-                    "selections": [
-                      (v5/*: any*/),
-                      (v6/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "id",
-                        "storageKey": null
-                      }
-                    ],
+                    "kind": "ScalarField",
+                    "name": "id",
                     "storageKey": null
                   }
                 ],
@@ -296,21 +289,22 @@ return {
             ],
             "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "b4a9c546a6716bf73971af526f839cc1",
+    "cacheID": "83e5fe69b59ddde59cc55f5ae613c2fd",
     "id": null,
     "metadata": {},
-    "name": "BAIVFolderSelectValueQuery",
+    "name": "RoleFormModalVFolderQuery",
     "operationKind": "query",
-    "text": "query BAIVFolderSelectValueQuery(\n  $scope: VFolderScope!\n  $filter: VFolderFilter\n  $limit: Int!\n  $skip: Boolean!\n) {\n  scopedVFoldersV2(scope: $scope, filter: $filter, limit: $limit) @skip(if: $skip) {\n    edges {\n      node {\n        entityId\n        metadata {\n          name\n        }\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query RoleFormModalVFolderQuery(\n  $filter: VFolderFilter\n  $limit: Int!\n  $offset: Int!\n) {\n  adminVfoldersV2(filter: $filter, limit: $limit, offset: $offset, orderBy: [{field: CREATED_AT, direction: DESC}]) {\n    count\n    edges {\n      node {\n        entityId\n        host\n        metadata {\n          name\n        }\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "6bd89e3f80121249cadec8a0f1149957";
+(node as any).hash = "1884b17d58ddf1b7413886880dc7ecce";
 
 export default node;

@@ -94,12 +94,13 @@ import {
   BAIRuntimeVariantSelect,
   BAISkeleton,
   BAIVFolderMountConfigInput,
+  BAIScopedVFolderSelect,
+  BAIScopedVFolderSelectRef,
   BAIVFolderPathPicker,
-  BAIVFolderSelect,
-  BAIVFolderSelectRef,
   convertToUUID,
   mountDestinationToInput,
   mountableVFolderScope,
+  notDeletedVFolderFilter,
   resolveVFolderMounts,
   safeDecodeUuid,
   toGlobalId,
@@ -107,6 +108,7 @@ import {
   useBAILogger,
   useSuspendedAutoMountedVFolders,
   useVFolderMountConfigFormRule,
+  type VFolderFilter,
   type VFolderMountConfigValue,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -361,6 +363,22 @@ const ModelCardDetailLoader: React.FC<{
 // Suspense fallback for the self-fetching selects: the same `BAIComplexSelect`
 // they render, so the placeholder keeps their exact height and 100% width
 // (`BAISelect` sits on Astryx `Selector` — taller, and it ignores `flex: 1`).
+const toModelFolderUuid = (globalId: string) =>
+  convertToUUID(toLocalId(globalId));
+
+// The forms hold the `VirtualFolderNode` global id; the select takes the folder UUID.
+const modelFolderFieldAdapter = {
+  getValueProps: (globalId?: string | null) => ({
+    value: globalId ? toModelFolderUuid(globalId) : globalId,
+  }),
+  getValueFromEvent: (uuid?: string) =>
+    uuid ? toGlobalId('VirtualFolderNode', uuid) : uuid,
+};
+
+const modelFolderFilter: VFolderFilter = {
+  AND: [notDeletedVFolderFilter, { usageMode: { equals: 'MODEL' } }],
+};
+
 const SelectLoadingFallback: React.FC<{ label: string }> = ({ label }) => {
   'use memo';
   return <BAIComplexSelect label={label} isLabelHidden isLoading isDisabled />;
@@ -561,12 +579,14 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     );
   // Display names for prefilled model folders the selector may not resolve
   // itself (deleted, or outside its project scope — e.g. a model-store
-  // folder behind a card-born revision). Keyed by the folder's global id.
+  // folder behind a card-born revision). Keyed by the folder UUID the select holds.
   const revisionFolderFallbackLabels: Record<string, string> = _.fromPairs(
     _.compact(
       [currentRevision, sourceRevision].map((rev) => {
         const vfolder = rev?.modelMountConfig?.vfolder;
-        return vfolder?.id && vfolder.name ? [vfolder.id, vfolder.name] : null;
+        return vfolder?.id && vfolder.name
+          ? [toModelFolderUuid(vfolder.id), vfolder.name]
+          : null;
       }),
     ),
   );
@@ -604,9 +624,9 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
 
   // Refs to refetch each form's model folder select after creating a new
   // model-usage folder, or via the manual refresh button. Two refs because
-  // the Preset and Custom forms each mount their own BAIVFolderSelect.
-  const presetVFolderSelectRef = useRef<BAIVFolderSelectRef>(null);
-  const customVFolderSelectRef = useRef<BAIVFolderSelectRef>(null);
+  // the Preset and Custom forms each mount their own BAIScopedVFolderSelect.
+  const presetVFolderSelectRef = useRef<BAIScopedVFolderSelectRef>(null);
+  const customVFolderSelectRef = useRef<BAIScopedVFolderSelectRef>(null);
   const [isModelFolderCreateModalOpen, setIsModelFolderCreateModalOpen] =
     useState(false);
 
@@ -2089,16 +2109,16 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                           }}
                           noStyle
                           rules={[{ required: true }]}
+                          {...modelFolderFieldAdapter}
                         >
-                          <BAIVFolderSelect
+                          <BAIScopedVFolderSelect
                             ref={presetVFolderSelectRef}
                             fallbackLabels={revisionFolderFallbackLabels}
                             label={t('deployment.ModelFolder')}
                             isLabelHidden
                             scope={modelFolderScope}
                             isDisabled={!deploymentProject}
-                            excludeDeleted
-                            filter={{ usageMode: { equals: 'MODEL' } }}
+                            filter={modelFolderFilter}
                           />
                         </BAIFormItem>
                       </Suspense>
@@ -2131,7 +2151,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                                 icon={<PlusIcon />}
                                 label={t('data.CreateANewStorageFolder')}
                                 tooltip={t('data.CreateANewStorageFolder')}
-                                // Same gate as the BAIVFolderSelect above.
+                                // Same gate as the BAIScopedVFolderSelect above.
                                 isDisabled={!deploymentProject}
                                 onClick={() =>
                                   setIsModelFolderCreateModalOpen(true)
@@ -2284,16 +2304,16 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   messageVariables={{ label: t('deployment.ModelFolder') }}
                   noStyle
                   rules={[{ required: true }]}
+                  {...modelFolderFieldAdapter}
                 >
-                  <BAIVFolderSelect
+                  <BAIScopedVFolderSelect
                     ref={customVFolderSelectRef}
                     fallbackLabels={revisionFolderFallbackLabels}
                     label={t('deployment.ModelFolder')}
                     isLabelHidden
                     scope={modelFolderScope}
                     isDisabled={!deploymentProject}
-                    excludeDeleted
-                    filter={{ usageMode: { equals: 'MODEL' } }}
+                    filter={modelFolderFilter}
                     onChange={() => {
                       // A subpath belongs to the folder it was picked from.
                       customForm.setFieldValue('modelSubpath', undefined);
@@ -2322,7 +2342,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                         icon={<PlusIcon />}
                         label={t('data.CreateANewStorageFolder')}
                         tooltip={t('data.CreateANewStorageFolder')}
-                        // Same gate as the BAIVFolderSelect above.
+                        // Same gate as the BAIScopedVFolderSelect above.
                         isDisabled={!deploymentProject}
                         onClick={() => setIsModelFolderCreateModalOpen(true)}
                       />
@@ -2619,7 +2639,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         onRequestClose={(result) => {
           setIsModelFolderCreateModalOpen(false);
           if (result?.entityId) {
-            // BAIVFolderSelect's value is a `VirtualFolderNode` global ID.
+            // The form holds the `VirtualFolderNode` global ID.
             const newFolderGlobalId = toGlobalId(
               'VirtualFolderNode',
               result.entityId,

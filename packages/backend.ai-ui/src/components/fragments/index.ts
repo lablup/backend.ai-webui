@@ -129,19 +129,6 @@ export { default as BAIProjectBulkEditModal } from './BAIProjectBulkEditModal';
 export type { BAIProjectBulkEditModalProps } from './BAIProjectBulkEditModal';
 export { default as BAIAgentTable } from './BAIAgentTable';
 export type { BAIAgentTableProps, AgentNodeInList } from './BAIAgentTable';
-export { default as BAIVFolderSelect } from './BAIVFolderSelect';
-export type {
-  BAIVFolderSelectProps,
-  BAIVFolderSelectRef,
-  VFolderSelectNode,
-} from './BAIVFolderSelect';
-export { default as BAIVFolderNodeSelect } from './BAIVFolderNodeSelect';
-export type {
-  BAIVFolderNodeSelectProps,
-  VFolderNode,
-  BAIVFolderPermission,
-  BAIVFolderNodeSelectRef,
-} from './BAIVFolderNodeSelect';
 export { default as BAIScopedVFolderSelect } from './BAIScopedVFolderSelect';
 export type {
   BAIScopedVFolderSelectProps,

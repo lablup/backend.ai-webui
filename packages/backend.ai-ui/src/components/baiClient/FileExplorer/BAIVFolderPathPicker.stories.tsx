@@ -10,7 +10,7 @@ import BAIButton from '../../BAIButton';
 import BAIFlex from '../../BAIFlex';
 import BAIText from '../../BAIText';
 import BAIUnmountAfterClose from '../../BAIUnmountAfterClose';
-import BAIVFolderSelect from '../../fragments/BAIVFolderSelect';
+import BAIScopedVFolderSelect from '../../fragments/BAIScopedVFolderSelect';
 import BAIDirectoryPickerModal, {
   BAIDirectoryPickerQuery,
 } from './BAIDirectoryPickerModal';
@@ -86,7 +86,7 @@ const meta: Meta<typeof BAIVFolderPathPicker> = {
     docs: {
       description: {
         component: `
-**BAIVFolderPathPicker** is a sub path picker for a given vfolder: a select-like trigger that opens a directory-only picker modal. The vfolder itself is chosen elsewhere (e.g. a \`BAIVFolderSelect\`) and passed in as \`vfolderUuid\`. The modal's vfolder query is preloaded from the open gesture (\`useQueryLoader\` + transition), so the trigger shows its own \`loading\` state while the data is in flight.
+**BAIVFolderPathPicker** is a sub path picker for a given vfolder: a select-like trigger that opens a directory-only picker modal. The vfolder itself is chosen elsewhere (e.g. a \`BAIScopedVFolderSelect\`) and passed in as \`vfolderUuid\`. The modal's vfolder query is preloaded from the open gesture (\`useQueryLoader\` + transition), so the trigger shows its own \`loading\` state while the data is in flight.
 
 The value is the **sub path inside the vfolder** — \`''\` for the vfolder root, \`"sub/path"\` below it, \`undefined\` while nothing is picked — so it plugs directly into a Form.Item; \`value\`/\`onChange\` follow the controllable-state convention, so the component works both controlled and uncontrolled. Files are visible but disabled inside the picker; only directories can be entered and chosen. Folder CRUD (create / rename / delete) stays available via \`BAIFileExplorer\`'s \`directoryPicker\` mode. When the vfolder changes, reset the value — a sub path only makes sense within the vfolder it was picked from.
 
@@ -144,12 +144,12 @@ export const Default: Story = {
 };
 
 export const WithinForm: Story = {
-  name: 'Within Form (with external BAIVFolderSelect)',
+  name: 'Within Form (with external BAIScopedVFolderSelect)',
   parameters: {
     docs: {
       description: {
         story:
-          'The intended composition: a separate `BAIVFolderSelect` (with `valuePropName="entityId"` so the field holds the UUID) feeds `vfolderUuid`, and the picker plugs into its own Form.Item with `disabled={!vfolderUuid}` until a folder is chosen. Changing the vfolder resets the path field, and the required rule uses a custom validator because `""` (the vfolder root) is a valid pick.',
+          'The intended composition: a separate `BAIScopedVFolderSelect` (its value is the folder UUID) feeds `vfolderUuid`, and the picker plugs into its own Form.Item with `disabled={!vfolderUuid}` until a folder is chosen. Changing the vfolder resets the path field, and the required rule uses a custom validator because `""` (the vfolder root) is a valid pick.',
       },
     },
   },
@@ -182,10 +182,9 @@ export const WithinForm: Story = {
             label="Folder"
             rules={[{ required: true }]}
           >
-            <BAIVFolderSelect
+            <BAIScopedVFolderSelect
               label="Folder"
               isLabelHidden
-              valuePropName="entityId"
               scope={{ user: [{ value: MOCK_USER_ID }] }}
               onChange={() => {
                 // A sub path belongs to the vfolder it was picked from.

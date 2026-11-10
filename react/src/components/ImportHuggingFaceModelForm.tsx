@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { ImportHuggingFaceModelFormWritableFoldersQuery } from '../__generated__/ImportHuggingFaceModelFormWritableFoldersQuery.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance, FormProps } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
@@ -19,24 +20,34 @@ import { IconButton } from '@lablup/ui-common/IconButton';
 import {
   BAIButton,
   BAIFlex,
+  BAIScopedVFolderSelect,
+  BAIScopedVFolderSelectProps,
+  BAIScopedVFolderSelectRef,
   BAISelect,
-  BAIVFolderNodeSelect,
-  BAIVFolderNodeSelectRef,
   generateRandomString,
-  toGlobalId,
-  toLocalId,
+  mountableVFolderScope,
+  notDeletedVFolderFilter,
   useBAILogger,
+  useFetchKey,
   useErrorMessageResolver,
   BAITextInput,
 } from 'backend.ai-ui';
+import _ from 'lodash';
 import {
   RotateCw,
   CloudDownload,
   FolderOpenIcon,
   PlusIcon,
 } from 'lucide-react';
-import { startTransition, Suspense, useRef, useState } from 'react';
+import {
+  startTransition,
+  Suspense,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 interface ImportHuggingFaceModelFormValues {
   model: string;
@@ -132,6 +143,78 @@ const createHuggingFaceDownloadScript = (
   ].join('\n');
 };
 
+// Covers the folders one user can write into; the legacy connection may cap pages at 100.
+const WRITABLE_FOLDER_LIMIT = 100;
+
+/**
+ * Model folders in the current project the user can mount read-write. The list
+ * and labels come from `scopedVFoldersV2`; the read-write set from the legacy
+ * `vfolder_nodes`, because V2 only reports a folder's default mount level.
+ */
+const WritableModelFolderSelect: React.FC<
+  Omit<BAIScopedVFolderSelectProps, 'scope' | 'filter'> & { projectId?: string }
+> = ({ projectId, ref, ...selectProps }) => {
+  'use memo';
+  const baiClient = useSuspendedBackendaiClient();
+  const [fetchKey, updateFetchKey] = useFetchKey();
+  const selectRef = useRef<BAIScopedVFolderSelectRef>(null);
+  useImperativeHandle(ref, () => ({
+    refetch: () => {
+      updateFetchKey();
+      selectRef.current?.refetch();
+    },
+  }));
+  // TODO(needs-backend): #11103 V2 cannot filter by the caller's own mount level.
+  const { vfolder_nodes } =
+    useLazyLoadQuery<ImportHuggingFaceModelFormWritableFoldersQuery>(
+      graphql`
+        query ImportHuggingFaceModelFormWritableFoldersQuery(
+          $scopeId: ScopeField
+          $filter: String
+          $first: Int!
+        ) {
+          vfolder_nodes(
+            scope_id: $scopeId
+            permission: "mount_rw"
+            filter: $filter
+            first: $first
+          ) {
+            edges {
+              node {
+                row_id
+              }
+            }
+          }
+        }
+      `,
+      {
+        scopeId: projectId ? `project:${projectId}` : undefined,
+        // `mount_rw` is checked after scoping and still returns a folder
+        // whose own row permission is read-only, so exclude that too.
+        filter: 'usage_mode == "model" & permission != "ro"',
+        first: WRITABLE_FOLDER_LIMIT,
+      },
+      { fetchKey, fetchPolicy: 'store-and-network' },
+    );
+  const writableIds = _.compact(
+    _.map(vfolder_nodes?.edges, (edge) => edge?.node?.row_id),
+  );
+  return (
+    <BAIScopedVFolderSelect
+      ref={selectRef}
+      {...selectProps}
+      scope={mountableVFolderScope(baiClient.user_uuid, projectId)}
+      filter={{
+        AND: [
+          notDeletedVFolderFilter,
+          { usageMode: { equals: 'MODEL' } },
+          { entityId: { in: writableIds } },
+        ],
+      }}
+    />
+  );
+};
+
 const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
   onRequestClose,
   ...formProps
@@ -150,9 +233,9 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
     useStartSession();
   const { open: openFolderExplorer } = useFolderExplorerOpener();
 
-  const vfolderSelectRef = useRef<BAIVFolderNodeSelectRef>(null);
+  const vfolderSelectRef = useRef<BAIScopedVFolderSelectRef>(null);
   const [isFolderCreateModalOpen, setIsFolderCreateModalOpen] = useState(false);
-  // id → name for selected folders, resolved by BAIVFolderNodeSelect (and seeded
+  // UUID → name for selected folders, resolved by the folder select (and seeded
   // directly when a folder is created through FolderCreateModal). The name
   // is needed to build the download path under `/home/work/<folder>/`.
   const [folderNameMap, setFolderNameMap] = useState<Record<string, string>>(
@@ -204,9 +287,7 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
           shmem: '0g',
           accelerator: 0,
         },
-        vfolderMounts: [
-          { vfolderId: toLocalId(values.vfolderId), name: folderName },
-        ],
+        vfolderMounts: [{ vfolderId: values.vfolderId, name: folderName }],
         // Pass the token as an environment variable instead of interpolating
         // it into the shell command.
         ...(token ? { envvars: [{ variable: 'HF_TOKEN', value: token }] } : {}),
@@ -330,22 +411,21 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
                   },
                 ]}
               >
-                {/* TODO(needs-backend): #11103 V2 cannot filter by the caller's mount permission. */}
-                <BAIVFolderNodeSelect
+                <WritableModelFolderSelect
                   ref={vfolderSelectRef}
                   label={t('deployment.ModelFolder')}
                   isLabelHidden
-                  excludeDeleted
-                  // The session writes into the folder, so a read-only mount
-                  // fails. `mount_rw` covers read-only *shares* and hosts, but
-                  // the resolver filters rows by scope only and strips
-                  // MOUNT_RW afterwards, so a row-level `ro` folder still comes
-                  // back — exclude it here too.
-                  filter='usage_mode == "model" & permission != "ro"'
-                  requiredPermission="mount_rw"
-                  currentProjectId={currentProject.id ?? undefined}
-                  onResolvedNamesChange={(nameMap) => {
-                    setFolderNameMap((prev) => ({ ...prev, ...nameMap }));
+                  projectId={currentProject.id ?? undefined}
+                  onResolve={({ resolved }) => {
+                    setFolderNameMap((prev) => ({
+                      ...prev,
+                      ..._.fromPairs(
+                        _.map(resolved, (folder) => [
+                          folder.entityId,
+                          folder.name,
+                        ]),
+                      ),
+                    }));
                   }}
                 />
               </Form.Item>
@@ -371,7 +451,7 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
                       isDisabled={!vfolderId}
                       onClick={() => {
                         if (vfolderId) {
-                          openFolderExplorer(toLocalId(vfolderId));
+                          openFolderExplorer(vfolderId);
                         }
                       }}
                     />
@@ -427,18 +507,14 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
             return;
           }
           if (result?.entityId) {
-            // BAIVFolderNodeSelect's value is a `VirtualFolderNode` global ID.
-            const newFolderGlobalId = toGlobalId(
-              'VirtualFolderNode',
-              result.entityId,
-            );
+            const newFolderId = result.entityId;
             if (result.metadata?.name) {
               setFolderNameMap((prev) => ({
                 ...prev,
-                [newFolderGlobalId]: result.metadata.name,
+                [newFolderId]: result.metadata.name,
               }));
             }
-            formRef.current?.setFieldValue('vfolderId', newFolderGlobalId);
+            formRef.current?.setFieldValue('vfolderId', newFolderId);
             startTransition(() => {
               vfolderSelectRef.current?.refetch();
             });

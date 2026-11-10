@@ -34,8 +34,9 @@ import {
   BAITable,
   BAIText,
   BAIUnmountAfterClose,
-  BAIVFolderSelect,
+  BAIScopedVFolderSelect,
   mountableVFolderScope,
+  notDeletedVFolderFilter,
   INITIAL_FETCH_KEY,
   filterOutNullAndUndefined,
   isDeploymentInStoppedCategory,
@@ -648,9 +649,8 @@ const DeploymentRevisionHistoryTab: React.FC<
       fixedOperator: 'equals' as const,
       rule: uuidRule,
       renderInput: ({ onAddCondition, value, isDisabled }) => (
-        <BAIVFolderSelect
-          // `modelVfolderId` is a `UUIDFilter`, so the folder UUID serializes.
-          valuePropName="entityId"
+        <BAIScopedVFolderSelect
+          // `modelVfolderId` is a `UUIDFilter`; the select's value is the folder UUID.
           label={t('deployment.ModelFolder')}
           isLabelHidden
           // Same scope as the revision creation picker.
@@ -658,8 +658,9 @@ const DeploymentRevisionHistoryTab: React.FC<
             baiClient.user_uuid,
             deployment?.metadata?.projectId ?? undefined,
           )}
-          excludeDeleted
-          filter={{ usageMode: { equals: 'MODEL' } }}
+          filter={{
+            AND: [notDeletedVFolderFilter, { usageMode: { equals: 'MODEL' } }],
+          }}
           value={value}
           isDisabled={isDisabled}
           onChange={(next, option) =>

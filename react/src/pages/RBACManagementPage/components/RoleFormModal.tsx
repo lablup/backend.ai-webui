@@ -7,16 +7,22 @@ import { RoleFormModalFragment$key } from '../../../__generated__/RoleFormModalF
 import { RoleFormModalPermissionMatrixQuery } from '../../../__generated__/RoleFormModalPermissionMatrixQuery.graphql';
 import { RoleFormModalResourceGroupQuery } from '../../../__generated__/RoleFormModalResourceGroupQuery.graphql';
 import { RoleFormModalUpdateMutation } from '../../../__generated__/RoleFormModalUpdateMutation.graphql';
+import {
+  RoleFormModalVFolderQuery,
+  RoleFormModalVFolderQuery$data,
+} from '../../../__generated__/RoleFormModalVFolderQuery.graphql';
 import { App } from '../../../app-shim';
 import { Form } from '../../../form-engine';
 import { rbacTypeI18nKey } from '../../../helper/rbacElementTypes';
 import { useCurrentDomain } from '../../../hooks';
+import { useLazyPaginatedQuery } from '../../../hooks/usePaginatedQuery';
 import {
   BAIAdminContainerRegistrySelect,
   BAIAdminModelServiceSelect,
   BAIAdminProjectSelect,
   BAIAdminResourceGroupSelect,
   BAIAdminSessionSelect,
+  BAIComplexSelect,
   BAIFlex,
   BAIKeypairSelect,
   BAIModal,
@@ -24,14 +30,14 @@ import {
   BAISelect,
   BAIStorageHostSelect,
   BAIAdminUserV2Select,
-  BAIVFolderNodeSelect,
   useBAILogger,
+  useDebouncedDeferredValue,
   BAICheckboxInput,
   BAITextArea,
   BAITextInput,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, { Suspense } from 'react';
+import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -110,6 +116,90 @@ const ResourceGroupScopeIdSelect: React.FC<ScopeIdBranchProps> = (props) => {
   return <BAIAdminResourceGroupSelect queryRef={queryRef} {...props} />;
 };
 
+type AdminVFolderNode = NonNullable<
+  RoleFormModalVFolderQuery$data['adminVfoldersV2']
+>['edges'][number]['node'];
+
+/** Every folder in the system: RBAC is managed system-wide (ADR 0012), so no scope narrows it. */
+const VFolderScopeIdSelect: React.FC<ScopeIdBranchProps> = ({
+  value,
+  onChange,
+  isDisabled,
+  ...selectProps
+}) => {
+  'use memo';
+  const [isOpen, setIsOpen] = useState(false);
+  const deferredOpen = useDeferredValue(isOpen);
+  const [searchStr, setSearchStr] = useState('');
+  const deferredSearchStr = useDebouncedDeferredValue(searchStr);
+  // The value is only ever picked here, so the picked option names it.
+  const [pickedLabel, setPickedLabel] = useState<string>();
+  const { paginationData, result, loadNext, isLoadingNext } =
+    useLazyPaginatedQuery<RoleFormModalVFolderQuery, AdminVFolderNode>(
+      graphql`
+        query RoleFormModalVFolderQuery(
+          $filter: VFolderFilter
+          $limit: Int!
+          $offset: Int!
+        ) {
+          adminVfoldersV2(
+            filter: $filter
+            limit: $limit
+            offset: $offset
+            orderBy: [{ field: CREATED_AT, direction: DESC }]
+          ) {
+            count
+            edges {
+              node {
+                entityId
+                host
+                metadata {
+                  name
+                }
+              }
+            }
+          }
+        }
+      `,
+      { limit: 20 },
+      {
+        filter: deferredSearchStr
+          ? { name: { iContains: deferredSearchStr } }
+          : null,
+      },
+      { fetchPolicy: deferredOpen ? 'network-only' : 'store-only' },
+      {
+        getTotal: (data) => data.adminVfoldersV2?.count ?? undefined,
+        getItem: (data) => data.adminVfoldersV2?.edges.map((edge) => edge.node),
+        getId: (node) => node?.entityId,
+      },
+    );
+  return (
+    <BAIComplexSelect
+      {...selectProps}
+      isDisabled={isDisabled}
+      isLoading={(isOpen && !deferredOpen) || searchStr !== deferredSearchStr}
+      isLoadingNext={isLoadingNext}
+      total={result.adminVfoldersV2?.count ?? undefined}
+      options={_.map(paginationData, (folder) => ({
+        value: folder.entityId,
+        label: folder.metadata.name,
+        description: folder.host,
+      }))}
+      value={value ? { value, label: pickedLabel ?? value } : null}
+      onChange={(next) => {
+        const picked = _.castArray(next ?? [])[0];
+        setPickedLabel(picked?.label);
+        onChange?.(picked?.value);
+      }}
+      searchValue={searchStr}
+      onSearch={setSearchStr}
+      onOpenChange={setIsOpen}
+      endReached={loadNext}
+    />
+  );
+};
+
 /** True for the DOMAIN scope, whose id is the signed-in domain and is never shown. */
 export const isDomainScopeType = (scopeType?: string) =>
   scopeType?.toUpperCase() === 'DOMAIN';
@@ -155,8 +245,7 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   if (scopeType === 'VFOLDER') {
     return (
       <Suspense fallback={fallback}>
-        {/* TODO(#11103): move to an `adminVfoldersV2` select; a domain scope would narrow this superadmin list (ADR 0012). */}
-        <BAIVFolderNodeSelect {...branchProps} />
+        <VFolderScopeIdSelect {...branchProps} />
       </Suspense>
     );
   }

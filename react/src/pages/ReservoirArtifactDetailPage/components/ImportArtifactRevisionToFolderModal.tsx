@@ -18,10 +18,9 @@ import {
   BAIModal,
   BAIModalProps,
   BAISelect,
-  BAIVFolderSelect,
-  BAIVFolderSelectRef,
-  toGlobalId,
-  toLocalId,
+  BAIScopedVFolderSelect,
+  BAIScopedVFolderSelectRef,
+  notDeletedVFolderFilter,
   useBAILogger,
   useToggle,
 } from 'backend.ai-ui';
@@ -77,7 +76,7 @@ const ImportArtifactRevisionToFolderModal = ({
 
   const formRef =
     useRef<FormInstance<ImportArtifactRevisionToFolderModalInput>>(null);
-  const vfolderSelectRef = useRef<BAIVFolderSelectRef>(null);
+  const vfolderSelectRef = useRef<BAIScopedVFolderSelectRef>(null);
   const [isOpenCreateModal, { toggle: toggleIsOpenCreateModal }] =
     useToggle(false);
 
@@ -179,9 +178,7 @@ const ImportArtifactRevisionToFolderModal = ({
                 variables: {
                   input: {
                     artifactRevisionIds: selectedArtifactRevisionIds,
-                    vfolderId: values.vfolderId
-                      ? toLocalId(values.vfolderId)
-                      : null,
+                    vfolderId: values.vfolderId || null,
                     options: {
                       force: true,
                     },
@@ -310,13 +307,13 @@ const ImportArtifactRevisionToFolderModal = ({
             >
               <BAIFlex gap="xs" align="center">
                 <Form.Item name="vfolderId" noStyle>
-                  <BAIVFolderSelect
+                  <BAIScopedVFolderSelect
                     ref={vfolderSelectRef}
                     label={t(
                       'importArtifactRevisionToFolderModal.FolderMountForModelStore',
                     )}
                     isLabelHidden
-                    excludeDeleted
+                    filter={notDeletedVFolderFilter}
                     // Model-store project folders only; without a destination
                     // there is no scope to read, so the picker stays disabled.
                     isDisabled={!destinationProject?.id}
@@ -358,7 +355,7 @@ const ImportArtifactRevisionToFolderModal = ({
           toggleIsOpenCreateModal();
           if (result) {
             formRef.current?.setFieldsValue({
-              vfolderId: toGlobalId('VirtualFolderNode', result.entityId),
+              vfolderId: result.entityId,
             });
             vfolderSelectRef.current?.refetch();
           }
