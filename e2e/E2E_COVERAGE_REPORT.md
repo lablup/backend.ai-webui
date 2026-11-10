@@ -144,7 +144,7 @@
 
 ### 2. Start Page (`/start`)
 
-**Test files:** [`e2e/start/start-page.spec.ts`](start/start-page.spec.ts), visual regression: [`e2e/visual_regression/start/start_page.test.ts`](visual_regression/start/start_page.test.ts)
+**Test files:** [`e2e/start/start-page.spec.ts`](start/start-page.spec.ts)
 
 **Modals:** `FolderCreateModal`, `StartFromURLModal`
 
@@ -165,7 +165,7 @@
 
 ### 3. Dashboard (`/dashboard`)
 
-**Test files:** [`e2e/dashboard/dashboard.spec.ts`](dashboard/dashboard.spec.ts), visual regression: [`e2e/visual_regression/dashboard/dashboard_page.test.ts`](visual_regression/dashboard/dashboard_page.test.ts)
+**Test files:** [`e2e/dashboard/dashboard.spec.ts`](dashboard/dashboard.spec.ts)
 
 | Feature                             | Status | Test                                                                             |
 | ----------------------------------- | ------ | -------------------------------------------------------------------------------- |

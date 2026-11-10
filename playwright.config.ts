@@ -50,7 +50,6 @@ export default defineConfig({
     actionTimeout: 30000,
   },
 
-  snapshotPathTemplate: `e2e/{testFileDir}/snapshot/{arg}{ext}`,
   /* Configure projects for major browsers */
   projects: [
     {

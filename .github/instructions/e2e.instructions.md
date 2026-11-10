@@ -52,7 +52,6 @@ Variables it defines (all consumed in `e2e/utils/test-util.ts`, each with a fall
 | `E2E_USER2_EMAIL` / `E2E_USER2_PASSWORD` | second regular user (sharing/invitation flows) |
 | `E2E_MONITOR_EMAIL` / `E2E_MONITOR_PASSWORD` | monitor account |
 | `E2E_DOMAIN_ADMIN_EMAIL` / `E2E_DOMAIN_ADMIN_PASSWORD` | domain admin |
-| `E2E_ADMIN_EMAIL_FOR_VISUAL` / `E2E_USER_EMAIL_FOR_VISUAL` (+ `_PASSWORD`) | visual-regression accounts; fall back to the normal admin/user pair |
 | `E2E_DEFAULT_IMAGE` | container image used by session-creation specs |
 | `SCREENSHOT_PATH` | output directory for screenshot specs |
 
@@ -65,7 +64,6 @@ Running (a full Backend.AI cluster must already be up):
 ```bash
 pnpm exec playwright test                         # everything
 pnpm exec playwright test --grep @smoke           # tag subsets: @smoke / @critical / @regression
-pnpm exec playwright test --grep-invert @visual   # skip visual regression
 pnpm exec playwright test e2e/vfolder/            # one directory
 pnpm exec playwright test e2e/auth/login.spec.ts  # one file
 pnpm exec playwright test --shard=1/4             # sharded
@@ -86,7 +84,6 @@ suite regardless of pass/fail. Snapshots resolve to `e2e/{testFileDir}/snapshot/
 e2e/
 ├── auth/ user/ vfolder/ session/ serving/ environment/ agent/ project/
 │   credential/ config/ dashboard/ chat/ …          # feature directories, *.spec.ts
-├── visual_regression/                              # screenshot comparisons
 ├── envs/.env.playwright.sample                     # env template (real file git-ignored)
 ├── global-cleanup.teardown.ts                      # suite-wide best-effort sweep
 ├── seed.spec.ts                                    # skipped seed for the Playwright MCP generator
@@ -136,7 +133,7 @@ import { loginAsAdmin, loginAsUser, navigateTo } from '../utils/test-util';
 test.beforeEach(async ({ page, request }) => {
   await loginAsAdmin(page, request);   // or loginAsUser / loginAsUser2 /
   await navigateTo(page, 'data');      // loginAsDomainAdmin / loginAsMonitor /
-});                                    // loginAsCreatedAccount / loginAsVisualRegression*
+});                                    // loginAsCreatedAccount
 ```
 
 What `login()` actually does, so you can reason about failures:

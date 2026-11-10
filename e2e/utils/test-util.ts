@@ -323,26 +323,6 @@ export const userInfo = {
     email: process.env.E2E_DOMAIN_ADMIN_EMAIL || 'domain-admin@lablup.com',
     password: process.env.E2E_DOMAIN_ADMIN_PASSWORD || 'cWbsM_vB',
   },
-  visualRegressionAdmin: {
-    email:
-      process.env.E2E_ADMIN_EMAIL_FOR_VISUAL ||
-      process.env.E2E_ADMIN_EMAIL ||
-      'admin@lablup.com',
-    password:
-      process.env.E2E_ADMIN_PASSWORD_FOR_VISUAL ||
-      process.env.E2E_ADMIN_PASSWORD ||
-      'wJalrXUt',
-  },
-  visualRegressionUser: {
-    email:
-      process.env.E2E_USER_EMAIL_FOR_VISUAL ||
-      process.env.E2E_USER_EMAIL ||
-      'user@lablup.com',
-    password:
-      process.env.E2E_USER_PASSWORD_FOR_VISUAL ||
-      process.env.E2E_USER_PASSWORD ||
-      'C8qnIo29',
-  },
 };
 
 export async function loginAsAdmin(page: Page, request: APIRequestContext) {
@@ -400,32 +380,6 @@ export async function loginAsCreatedAccount(
   password: string,
 ) {
   await login(page, request, email, password, webServerEndpoint);
-}
-
-export async function loginAsVisualRegressionAdmin(
-  page: Page,
-  request: APIRequestContext,
-) {
-  await login(
-    page,
-    request,
-    userInfo.visualRegressionAdmin.email,
-    userInfo.visualRegressionAdmin.password,
-    webServerEndpoint,
-  );
-}
-
-export async function loginAsVisualRegressionUser(
-  page: Page,
-  request: APIRequestContext,
-) {
-  await login(
-    page,
-    request,
-    userInfo.visualRegressionUser.email,
-    userInfo.visualRegressionUser.password,
-    webServerEndpoint,
-  );
 }
 
 export async function logout(page: Page) {

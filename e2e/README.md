@@ -43,9 +43,6 @@ e2e/
 │   ├── config.spec.ts              # config.toml settings
 │   └── page-access-control.spec.ts # Page access control (404/401)
 │
-├── visual_regression/              # Visual regression tests
-│   └── [existing structure]
-│
 └── utils/                          # Utilities
     ├── classes/                    # Page Object Model classes
     │   ├── base/
@@ -97,7 +94,7 @@ e2e/
 ### Test Types
 
 - `@functional` - Functional tests
-- `@visual` - Visual regression tests
+- `@visual` - Screenshot capture (`screenshot.test.ts`, skipped by default)
 - `@integration` - Integration tests
 
 ## Running Tests
@@ -170,12 +167,6 @@ pnpm exec playwright test e2e/vfolder/
 pnpm exec playwright test e2e/auth/login.spec.ts
 pnpm exec playwright test e2e/session/session-lifecycle.spec.ts
 pnpm exec playwright test e2e/serving/endpoint-lifecycle.spec.ts
-```
-
-### Exclude visual regression
-
-```bash
-pnpm exec playwright test --grep-invert @visual
 ```
 
 ### Parallel execution
