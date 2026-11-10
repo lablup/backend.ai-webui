@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-11-10T16:24:49.685Z",
+  "generatedAt": "2026-11-10T17:33:06.139Z",
   "languages": [
     "ko"
   ],
@@ -33,7 +33,7 @@
             "total": 1
           },
           "fingerprints": [
-            "80585b2f596e"
+            "e2a430bda52e"
           ]
         }
       ]
