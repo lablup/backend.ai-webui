@@ -24,6 +24,7 @@ import {
 import { getAutocompleteSuggestions, Position } from 'graphql-language-service';
 import type * as Monaco from 'monaco-editor';
 import {
+  type ReactNode,
   type RefObject,
   useEffect,
   useEffectEvent,
@@ -519,7 +520,15 @@ const HeaderRows = ({
   </>
 );
 
-const CopyButton = ({ text, testId }: { text: string; testId: string }) => {
+const CopyButton = ({
+  text,
+  testId,
+  label = 'Copy',
+}: {
+  text: string;
+  testId: string;
+  label?: string;
+}) => {
   'use memo';
   const [state, setState] = useState<'idle' | 'copied' | 'failed'>('idle');
   useEffect(() => {
@@ -543,7 +552,7 @@ const CopyButton = ({ text, testId }: { text: string; testId: string }) => {
         ? 'Copied'
         : state === 'failed'
           ? 'Copy failed'
-          : 'Copy'}
+          : label}
     </button>
   );
 };
@@ -552,16 +561,29 @@ const SectionBar = ({
   title,
   text,
   testId,
+  children,
 }: {
   title: string;
   text: string;
   testId: string;
+  children?: ReactNode;
 }) => (
   <div className="bai-gql-devtools__toolbar">
     <span className="bai-gql-devtools__label">{title}</span>
-    <CopyButton text={text} testId={testId} />
+    <span className="bai-gql-devtools__actions">
+      {children}
+      <CopyButton text={text} testId={testId} />
+    </span>
   </div>
 );
+
+// The body a GraphQL client would POST, ready to paste into another tool.
+const requestBodyText = (entry: LogEntry) =>
+  JSON.stringify(
+    { query: entry.query, variables: parseJson(entry.variables) ?? {} },
+    null,
+    2,
+  );
 
 const headersText = (title: string, list: [string, string][]) =>
   [`# ${title}`, ...list.map(([name, value]) => `${name}: ${value}`)].join(
@@ -656,7 +678,13 @@ const EntryDetail = ({ entry, isRunning, onOpen }: EntryDetailProps) => {
               title="Query"
               text={entry.query}
               testId="gql-devtools-copy-query"
-            />
+            >
+              <CopyButton
+                label="Copy with variables"
+                text={requestBodyText(entry)}
+                testId="gql-devtools-copy-request"
+              />
+            </SectionBar>
             <Viewer
               key={`query-${entry.id}`}
               language="graphql"
