@@ -69,14 +69,14 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
   const [commitBulkDeleteMutation, isInFlightBulkDelete] =
     useMutation<DeleteVFolderModalV2Mutation>(graphql`
       mutation DeleteVFolderModalV2Mutation(
-        $input: BulkDeleteVFoldersV2Input!
+        $input: PartialBulkDeleteVFoldersInput!
       ) {
-        bulkDeleteVfoldersV2(input: $input) {
-          items @since(version: "26.9.0rc1") {
+        partialBulkDeleteVfoldersV2(input: $input) {
+          successes {
             id
           }
-          failed @since(version: "26.9.0rc1") {
-            vfolderId
+          failed {
+            id
             message
           }
         }
@@ -128,9 +128,8 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
                 );
                 return;
               }
-              const deletedCount =
-                data?.bulkDeleteVfoldersV2?.items?.length ?? 0;
-              const failed = data?.bulkDeleteVfoldersV2?.failed ?? [];
+              const { successes, failed } = data.partialBulkDeleteVfoldersV2;
+              const deletedCount = successes.length;
               // The mutation answers per id, so a partial failure arrives as a
               // success with `failed` populated rather than as a top-level error.
               if (failed.length > 0) {
@@ -140,21 +139,11 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
                 setFailureReport({
                   total: folders.length,
                   failures: _.map(failed, (f) => ({
-                    key: f.vfolderId,
-                    name: nameByLocalId[f.vfolderId] ?? f.vfolderId,
+                    key: f.id,
+                    name: nameByLocalId[f.id] ?? f.id,
                     message: f.message,
                   })),
                 });
-              } else if (deletedCount === 0) {
-                // Older managers report only the count, so there is no reason
-                // to show per folder.
-                message.error(
-                  t('data.folders.FailedToDeleteFolders', {
-                    folderNames: _.map(folders, (v) => v?.metadata?.name).join(
-                      ', ',
-                    ),
-                  }),
-                );
               }
               if (deletedCount === 0) {
                 return;
