@@ -295,8 +295,11 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
 
   const [commitUpdateRole, isInFlightUpdateRole] =
     useMutation<RoleFormModalUpdateMutation>(graphql`
-      mutation RoleFormModalUpdateMutation($input: UpdateRoleInput!) {
-        adminUpdateRole(input: $input) {
+      mutation RoleFormModalUpdateMutation(
+        $id: UUID!
+        $input: UpdateRoleInput!
+      ) {
+        updateRole(id: $id, input: $input) {
           id
           name
           description
@@ -343,10 +346,8 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
 
           commitUpdateRole({
             variables: {
-              input: {
-                id: editingRole.entityId,
-                ...changedFields,
-              },
+              id: editingRole.entityId,
+              input: changedFields,
             },
             onCompleted: (_data, errors) => {
               if (errors && errors.length > 0) {

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5d0fabd7d4e1e97191675c5dd4b2931f>>
+ * @generated SignedSource<<d34c1f0a81dd44bc637d5eb52ee94bd4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,16 +18,17 @@ export type UpdateRoleInput = {
   status?: RoleStatus | null | undefined;
 };
 export type RoleFormModalUpdateMutation$variables = {
+  id: string;
   input: UpdateRoleInput;
 };
 export type RoleFormModalUpdateMutation$data = {
-  readonly adminUpdateRole: {
+  readonly updateRole: {
     readonly autoAssign: boolean;
     readonly description: string | null | undefined;
     readonly id: string;
     readonly name: string;
     readonly updatedAt: string;
-  } | null | undefined;
+  };
 };
 export type RoleFormModalUpdateMutation = {
   response: RoleFormModalUpdateMutation$data;
@@ -36,6 +37,11 @@ export type RoleFormModalUpdateMutation = {
 
 const node: ConcreteRequest = (function(){
 var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "id"
+  },
   {
     "defaultValue": null,
     "kind": "LocalArgument",
@@ -48,13 +54,18 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
+        "name": "id",
+        "variableName": "id"
+      },
+      {
+        "kind": "Variable",
         "name": "input",
         "variableName": "input"
       }
     ],
     "concreteType": "Role",
     "kind": "LinkedField",
-    "name": "adminUpdateRole",
+    "name": "updateRole",
     "plural": false,
     "selections": [
       {
@@ -114,16 +125,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "9efec51c4f535a81b3a1ca89982223fc",
+    "cacheID": "7f84e5487ae0e8ed66968136320bddbe",
     "id": null,
     "metadata": {},
     "name": "RoleFormModalUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation RoleFormModalUpdateMutation(\n  $input: UpdateRoleInput!\n) {\n  adminUpdateRole(input: $input) {\n    id\n    name\n    description\n    autoAssign\n    updatedAt\n  }\n}\n"
+    "text": "mutation RoleFormModalUpdateMutation(\n  $id: UUID!\n  $input: UpdateRoleInput!\n) {\n  updateRole(id: $id, input: $input) {\n    id\n    name\n    description\n    autoAssign\n    updatedAt\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "2f0291b09a65c29ee579453b3c9c7e88";
+(node as any).hash = "c99699a92de5bb5ef733b0c5637e7f4e";
 
 export default node;
