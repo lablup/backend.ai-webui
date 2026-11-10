@@ -101,9 +101,16 @@ the admin part and the rest as separate invocations.
 | `user`                               | everything outside `e2e/admin/` (root-level specs included): the user server run |
 
 Comma lists select several parts (`E2E_PART=project,project-admin`).
-`E2E_ENV_FILE` defaults to `e2e/envs/.env.playwright`; with `E2E_PART=admin` it
-defaults to `e2e/envs/.env.playwright.admin` when that file exists. The variable
-names inside every env file are the same (`E2E_*`).
+`E2E_ENV_FILE` defaults to `e2e/envs/.env.playwright`. A part list that includes
+`admin` uses `e2e/envs/.env.playwright.admin` instead and fails when that file is
+missing, so admin specs never fall back to the user server; an explicit
+`E2E_ENV_FILE` overrides both. The variable names inside every env file are the
+same (`E2E_*`).
+
+A part other than `all` writes to `test-results/<part>/` and
+`playwright-report/<part>/` (`E2E_PART=project,common` → `project-common`), so
+running the parts one after another keeps both results. `--output`,
+`PLAYWRIGHT_HTML_OUTPUT_DIR` and `PLAYWRIGHT_HTML_REPORT` still override these.
 
 ```bash
 cp e2e/envs/.env.playwright.admin.sample e2e/envs/.env.playwright.admin  # admin server values
@@ -183,7 +190,8 @@ All tests follow the Page Object Model (POM) pattern.
 **BasePage** - Base class for all page classes
 
 ```typescript
-import { BasePage } from '../utils/classes/base/BasePage';
+// e2e/utils/classes/MyPage.ts
+import { BasePage } from './base/BasePage';
 
 export class MyPage extends BasePage {
   async waitForPageLoad(): Promise<void> {
@@ -200,7 +208,8 @@ export class MyPage extends BasePage {
 **BaseModal** - Base class for all modal classes
 
 ```typescript
-import { BaseModal } from '../utils/classes/base/BaseModal';
+// e2e/utils/classes/MyModal.ts
+import { BaseModal } from './base/BaseModal';
 
 export class MyModal extends BaseModal {
   async waitForModalOpen(): Promise<void> {

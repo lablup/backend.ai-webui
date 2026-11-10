@@ -7,21 +7,23 @@ import * as path from "path";
 /*
  * E2E_PART narrows the `chromium` project to folders of the suite
  * (e2e/e2e-parts.ts); unset means all. E2E_ENV_FILE picks the env file:
- * default e2e/envs/.env.playwright, or e2e/envs/.env.playwright.admin for
- * E2E_PART=admin when that file exists. One run talks to one server.
+ * default e2e/envs/.env.playwright; a part list with `admin` requires
+ * e2e/envs/.env.playwright.admin. One run talks to one server.
  */
 const requestedPart = process.env.E2E_PART;
 const requestedEnvFile = process.env.E2E_ENV_FILE;
 const e2eParts = resolveE2EParts(requestedPart);
 const defaultEnvFile = "./e2e/envs/.env.playwright";
 const adminEnvFile = "./e2e/envs/.env.playwright.admin";
+const includesAdmin = e2eParts.includes("admin");
+if (!requestedEnvFile && includesAdmin && !fs.existsSync(adminEnvFile)) {
+  throw new Error(
+    `E2E_PART=${e2eParts.join(",")} needs ${adminEnvFile} (copy ` +
+      `e2e/envs/.env.playwright.admin.sample) or an explicit E2E_ENV_FILE`,
+  );
+}
 const e2eEnvFile =
-  requestedEnvFile ||
-  (e2eParts.length === 1 &&
-  e2eParts[0] === "admin" &&
-  fs.existsSync(adminEnvFile)
-    ? adminEnvFile
-    : defaultEnvFile);
+  requestedEnvFile || (includesAdmin ? adminEnvFile : defaultEnvFile);
 if (requestedEnvFile && !fs.existsSync(e2eEnvFile)) {
   throw new Error(`E2E_ENV_FILE not found: ${e2eEnvFile}`);
 }
@@ -49,6 +51,17 @@ if (!process.env.TEST_WORKER_INDEX && (requestedPart || requestedEnvFile)) {
   );
 }
 
+// Separate outputs per part, so one part's run does not wipe the other's;
+// PLAYWRIGHT_HTML_OUTPUT_DIR / PLAYWRIGHT_HTML_REPORT and --output still win.
+const partOutput = e2eParts.includes("all") ? undefined : e2eParts.join("-");
+const htmlReporter: [string, Record<string, unknown>] = [
+  "html",
+  {
+    open: "never",
+    ...(partOutput && { outputFolder: `playwright-report/${partOutput}` }),
+  },
+];
+
 const teardownSpec = /global-cleanup\.teardown\.ts/;
 const partFilter = e2ePartFilter(e2eParts, path.join(__dirname, "e2e"));
 /**
@@ -73,9 +86,10 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
+  ...(partOutput && { outputDir: `test-results/${partOutput}` }),
   reporter: process.env.CI
-    ? [["html", { open: "never" }], ["github"]]
-    : [["html", { open: "never" }], ["list"]],
+    ? [htmlReporter, ["github"]]
+    : [htmlReporter, ["list"]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   /* Default timeout for each test */
   timeout: 180000,

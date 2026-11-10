@@ -61,9 +61,10 @@ route interception takes effect.
 
 **Parts.** `E2E_PART` (`all` default, `admin`, `project`, `project-admin`, `common`, `user` =
 everything outside `e2e/admin/`, comma lists allowed) narrows the `chromium` project to folders;
-`E2E_ENV_FILE` picks the env file (default `e2e/envs/.env.playwright`; `E2E_PART=admin` uses
-`e2e/envs/.env.playwright.admin` when it exists). One run talks to one server, so run the admin
-part and the rest separately. Details and the folder rule: `e2e/README.md`.
+`E2E_ENV_FILE` picks the env file (default `e2e/envs/.env.playwright`; a part list with `admin`
+requires `e2e/envs/.env.playwright.admin` and fails without it). Parts other than `all` write to
+`test-results/<part>/` and `playwright-report/<part>/`. One run talks to one server, so run the
+admin part and the rest separately. Details and the folder rule: `e2e/README.md`.
 
 Running (a full Backend.AI cluster must already be up):
 
