@@ -54,6 +54,7 @@ const UserResourcePolicyV2SettingModal: React.FC<
     graphql`
       fragment UserResourcePolicyV2SettingModalFragment on UserResourcePolicyV2 {
         id
+        entityId
         name
         maxVfolderCount
         maxConcurrentLogins
@@ -87,10 +88,10 @@ const UserResourcePolicyV2SettingModal: React.FC<
     isInFlightCommitModifyUserResourcePolicy,
   ] = useMutation<UserResourcePolicyV2SettingModalModifyMutation>(graphql`
     mutation UserResourcePolicyV2SettingModalModifyMutation(
-      $name: String!
+      $id: UUID!
       $input: UpdateUserResourcePolicyInput!
     ) {
-      adminUpdateUserResourcePolicyV2(name: $name, input: $input) {
+      updateUserResourcePolicyV2(id: $id, input: $input) {
         userResourcePolicy {
           id
           name
@@ -139,7 +140,7 @@ const UserResourcePolicyV2SettingModal: React.FC<
             values?.max_session_count_per_model_session,
           maxCustomizedImageCount: values?.max_customized_image_count,
         };
-        if (userResourcePolicy === null) {
+        if (!userResourcePolicy) {
           const input: CreateUserResourcePolicyInputV2 = {
             name: values?.name,
             ...commonInput,
@@ -168,9 +169,9 @@ const UserResourcePolicyV2SettingModal: React.FC<
         } else {
           const input: UpdateUserResourcePolicyInput = commonInput;
           commitModifyUserResourcePolicy({
-            variables: { name: values?.name, input },
-            onCompleted(res, errors) {
-              if (!res?.adminUpdateUserResourcePolicyV2 || errors) {
+            variables: { id: userResourcePolicy.entityId, input },
+            onCompleted(_res, errors) {
+              if (errors) {
                 message.error(
                   errors?.[0]?.message ||
                     t('resourcePolicy.CannotUpdateResourcePolicy'),
