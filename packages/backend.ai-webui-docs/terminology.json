@@ -595,6 +595,19 @@
         "th": "พารามิเตอร์ Runtime"
       },
       "description": "A single configurable parameter that an inference runtime (vLLM, SGLang, …) exposes. Administrators define them on the Deployment page's Runtime Parameters tab; users fill in their values in the deployment form's Runtime Parameters section. Definition and value share one term because they are the same entity at two stages — do NOT call the admin-side one a \"preset\". The GraphQL type is `RuntimeVariantPreset`; that name is an internal identifier only and must never surface as a UI label. Distinct from the Deployment Preset, which is a whole saved deployment template. KO uses \"파라미터\" (not \"매개변수\") and JA \"パラメータ\" (not \"パラメーター\"), matching the modelService.RuntimeParam* labels. Documentation section: deployment/deployment_presets.md"
+    },
+    {
+      "id": "audit-log",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "Audit Log",
+        "ko": "감사로그",
+        "ja": "監査ログ",
+        "th": "บันทึกการตรวจสอบ"
+      },
+      "description": "The record of actions performed on a resource (session, folder, deployment, project), shown in Audit Log tabs and dashboard cards. KO writes it as one word, \"감사로그\", following the team writing glossary (#10965). The Korean manual still uses the spaced form until it is updated separately, so no KO avoid row exists yet."
     }
   ],
   "avoid": [
