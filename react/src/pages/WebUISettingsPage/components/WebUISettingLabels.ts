@@ -175,6 +175,10 @@ export const useWebUISettingLabels = (): {
         title: t('webuiSettings.AllowCustomModelDefinitionPath'),
         description: t('webuiSettings.DescAllowCustomModelDefinitionPath'),
       },
+      fileUploadChunkSize: {
+        title: t('webuiSettings.FileUploadChunkSize'),
+        description: t('webuiSettings.DescFileUploadChunkSize'),
+      },
       storageWarningThreshold: {
         title: t('webuiSettings.StorageWarningThreshold'),
         description: t('webuiSettings.DescStorageWarningThreshold'),

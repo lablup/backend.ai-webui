@@ -102,6 +102,8 @@ export interface LoginConfigState {
   maxHyperaccelLPUDevicesPerContainer?: number;
   maxShmPerContainer: number;
   maxFileUploadSize: number;
+  /** MiB; 0 picks the chunk size from the file size. */
+  fileUploadChunkSize: number;
   storageWarningThreshold: number;
   blockList: string[];
   inactiveList: string[];
@@ -173,6 +175,7 @@ export function getDefaultLoginConfig(): LoginConfigState {
     maxHyperaccelLPUDevicesPerContainer: undefined,
     maxShmPerContainer: 2,
     maxFileUploadSize: -1,
+    fileUploadChunkSize: 0,
     storageWarningThreshold: 90,
     blockList: [],
     inactiveList: [],
