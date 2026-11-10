@@ -193,16 +193,21 @@ $ make compile_wsproxy
 
 #### User manual screenshots (Git LFS)
 
-Once the user manual images (anywhere under `packages/backend.ai-webui-docs/src/`) move to
-[Git LFS](https://git-lfs.com), normal development needs nothing extra: a clone keeps them as
+The user manual images (anywhere under `packages/backend.ai-webui-docs/src/`) are in
+[Git LFS](https://git-lfs.com). Normal development needs nothing extra: a clone keeps them as
 small pointer files, even with git-lfs installed (`.lfsconfig`). To build the manual or work on
-its screenshots, install git-lfs, run `git lfs install` once, and fetch the images:
+its screenshots, install git-lfs, set it up once, and fetch the images:
 
 ```console
+$ git lfs install --skip-repo
 $ pnpm --filter backend.ai-webui-docs run images:pull
 ```
 
-Committing images under an LFS-tracked path without git-lfs is caught by the `lfs-pointer-check` CI job.
+Use `--skip-repo`: Husky owns this repository's hooks, so a plain `git lfs install` stops at
+`Hook already exists: pre-push` (it still sets up the filters). The upload is done by Husky's
+`.husky/pre-push`, which runs `git lfs pre-push`. Then add or replace images and commit and
+push as usual; the images are committed as pointers and `git push` uploads them. Without
+git-lfs, `git push` refuses only pushes that add or change files under an LFS path.
 
 ### Developing / testing with dev server
 

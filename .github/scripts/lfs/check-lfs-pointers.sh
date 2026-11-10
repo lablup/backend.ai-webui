@@ -45,7 +45,7 @@ echo "::error::${#offenders[@]} of ${total} file(s) with filter=lfs are not comm
 printf '  %s\n' "${offenders[@]}"
 cat <<'EOF'
 
-Fix: install git-lfs (https://git-lfs.com) and run `git lfs install` once, then re-add the files so
+Fix: install git-lfs (https://git-lfs.com) and run `git lfs install --skip-repo` once, then re-add the files so
 the LFS clean filter turns them into pointers, and commit:
   git rm --cached -- <file>... && git add -- <file>... && git commit
 EOF

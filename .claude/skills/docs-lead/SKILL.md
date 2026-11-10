@@ -214,6 +214,11 @@ If queue is empty, do not gate; just report and stop.
 - **Visual-change gate before committing screenshots.** Captures reach
   `src/{lang}/images/` only through `docs-toolkit accept:images`; never `cp`
   them over, and never accept a worker report that did.
+- **Real images before screenshots.** The manual's images are Git LFS
+  pointers until `pnpm --filter backend.ai-webui-docs run images:pull` runs,
+  which needs git-lfs (`git lfs install --skip-repo` once). Check
+  `git lfs version` before invoking `docs-screenshot-capturer`; without
+  git-lfs the gate cannot compare captures and the push is refused.
 - **Workers never call other workers.** Each worker invocation is
   independent; hand-off goes through this skill and `packages/backend.ai-webui-docs/.agent-output/`.
 - **No silent edits.** This skill itself must not `Edit` docs files. Mutation

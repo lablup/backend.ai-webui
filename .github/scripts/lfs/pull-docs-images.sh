@@ -200,7 +200,7 @@ pull_one() {
   fi
 
   if [ -z "${CI:-}" ] && [ -z "$(git -C "$top" config --get filter.lfs.process || true)" ]; then
-    log "note: git-lfs filters are not configured here. Run 'git lfs install' before committing images."
+    log "note: git-lfs filters are not configured here. Run 'git lfs install --skip-repo' before committing images."
   fi
   rm -rf "$work"
 }

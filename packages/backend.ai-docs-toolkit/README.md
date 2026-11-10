@@ -112,6 +112,7 @@ agents:
       label: English
   terminologyFile: "TERMINOLOGY.md"
   styleGuideFile: "STYLE-GUIDE.md"
+  imagesPullCommand: "pnpm run images:pull" # images in Git LFS: the screenshot agent runs this first
 ```
 
 ## CLI Commands
