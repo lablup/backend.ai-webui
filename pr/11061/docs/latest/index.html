@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Backend.AI WebUI User Guide</title>
+  <meta name="description" content="Multilingual user manual by Lablup Inc." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Backend.AI WebUI User Guide" />
+  <meta property="og:description" content="Multilingual user manual by Lablup Inc." />
+  <meta property="og:url" content="https://webui.docs.backend.ai/latest/" />
+  <meta property="og:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
+  <meta property="og:site_name" content="Backend.AI WebUI User Guide" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Backend.AI WebUI User Guide" />
+  <meta name="twitter:description" content="Multilingual user manual by Lablup Inc." />
+  <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
+  <meta name="robots" content="noindex" />
+  <script>(function(){
+  var SUPPORTED=["en"];
+  var HREFS={"en":"en"};
+  var FALLBACK="en";
+  var VERSION_PREFIX="26.8/";
+  var HREF_BASE="../";
+  function pick(){
+    try{
+      var ls=window.localStorage&&window.localStorage.getItem("lang");
+      if(ls){
+        var lsl=String(ls).toLowerCase();
+        if(SUPPORTED.indexOf(lsl)>=0)return lsl;
+      }
+    }catch(e){}
+    var navs=[];
+    if(navigator.languages&&navigator.languages.length){
+      for(var i=0;i<navigator.languages.length;i++)navs.push(navigator.languages[i]);
+    }
+    if(navigator.language)navs.push(navigator.language);
+    for(var j=0;j<navs.length;j++){
+      var tag=String(navs[j]||"").toLowerCase();
+      if(SUPPORTED.indexOf(tag)>=0)return tag;
+      var primary=tag.split("-")[0];
+      if(SUPPORTED.indexOf(primary)>=0)return primary;
+    }
+    return FALLBACK;
+  }
+  // Loop-safety guard: only fire from the page's own mount point (the
+  // site root, or /<basePath>/ for mounted alias pages). Anything else
+  // — e.g. /26.3/ served by a hosting 404 fallback that preserves the
+  // requested URL — must NOT trigger the redirect, because
+  // `location.replace(HREF_BASE+"...")` would resolve the relative
+  // target against the bogus URL and land the user on a doubly-broken
+  // path.
+  var p=window.location.pathname||"";
+  if(!/^\/latest\/?(?:index\.html)?$/i.test(p))return;
+  var picked=pick();
+  // Map the matched (lower-cased) tag back to its original config
+  // casing so the URL hits the actual on-disk directory name.
+  var dir=Object.prototype.hasOwnProperty.call(HREFS,picked)?HREFS[picked]:HREFS[FALLBACK];
+  window.location.replace(HREF_BASE+VERSION_PREFIX+dir+"/index.html");
+})();</script>
+</head>
+<body>
+  <noscript>
+    <main style="font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;max-width:30rem;margin:4rem auto;padding:2rem;border:1px solid #ebedf0;border-radius:.5rem;">
+      <h1 style="margin:0 0 .25rem 0;font-size:1.5rem;">Backend.AI WebUI User Guide</h1>
+      <p style="margin:0 0 1.5rem 0;color:#606770;font-size:.875rem;">Backend.AI WebUI Docs</p>
+      <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.5rem;">
+      <li><a hreflang="en" lang="en" href="../26.8/en/index.html">English</a></li>
+      </ul>
+    </main>
+  </noscript>
+</body>
+</html>
