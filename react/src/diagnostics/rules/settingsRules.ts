@@ -43,46 +43,6 @@ const nonEmptyString = (value: unknown): value is string =>
   typeof value === 'string' && value.trim() !== '' && !isPlaceholder(value);
 
 // ---------------------------------------------------------------------------
-// Numeric ranges
-// ---------------------------------------------------------------------------
-
-/** The `min` / `max` of every number setting in the definition table. */
-export const SETTING_RANGES: Readonly<
-  Record<string, { min: number; max: number }>
-> = Object.fromEntries(
-  WEBUI_SETTING_DEFINITIONS.filter(
-    (d) => d.min !== undefined && d.max !== undefined,
-  ).map((d) => [d.key, { min: d.min!, max: d.max! }]),
-);
-
-export function checkSettingRanges(
-  state: LoginConfigState,
-): DiagnosticResult[] {
-  const results: DiagnosticResult[] = [];
-  for (const [key, { min, max }] of Object.entries(SETTING_RANGES)) {
-    const raw = settingValue(state, key);
-    if (raw === undefined || raw === null) continue;
-    const value = Number(raw);
-    if (Number.isNaN(value) || (value >= min && value <= max)) continue;
-    results.push({
-      id: `settings-out-of-range-${key}`,
-      severity: 'warning',
-      category: 'config',
-      titleKey: 'diagnostics.ResourceLimitOutOfRange',
-      descriptionKey: 'diagnostics.ResourceLimitOutOfRangeDesc',
-      remediationKey: 'diagnostics.ResourceLimitOutOfRangeFix',
-      settingKey: key,
-      interpolationValues: {
-        value: String(value),
-        min: String(min),
-        max: String(max),
-      },
-    });
-  }
-  return results;
-}
-
-// ---------------------------------------------------------------------------
 // URLs
 // ---------------------------------------------------------------------------
 

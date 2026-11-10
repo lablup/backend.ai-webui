@@ -1654,11 +1654,6 @@
     "ProxyUrlConfigured": "URL-адрес прокси настроен",
     "ProxyUrlConfiguredDesc": "wsproxy.proxyURL установлен на {{proxyUrl}}.",
     "Refresh": "Повторить диагностику",
-    "ResourceLimitOutOfRange": "Настройка вне диапазона",
-    "ResourceLimitOutOfRangeDesc": "Для {{setting}} задано значение {{value}}, которое выходит за ожидаемый диапазон ({{min}}~{{max}}).",
-    "ResourceLimitOutOfRangeFix": "В разделе Системные настройки, в группе {{group}}, задайте для {{setting}} значение от {{min}} до {{max}}.",
-    "ResourceLimitsPassed": "Ограничения ресурсов OK",
-    "ResourceLimitsPassedDesc": "Ограничения ресурсов, заданные в разделе Системные настройки, находятся в разумных пределах.",
     "SettingUrlsValid": "URL настроек действительны",
     "SettingUrlsValidDesc": "URL, заданные в разделе Системные настройки, действительны.",
     "ShowOnlyFailedItems": "Показать только неуспешные",
@@ -1673,11 +1668,11 @@
     "StorageVolumeHighUsage": "Высокое использование тома хранилища",
     "StorageVolumeHighUsageDesc": "Том хранилища {{volumeId}} ({{backend}}) заполнен на {{percentage}}%.",
     "StorageVolumeHighUsageFix": "Рассмотрите возможность расширения тома хранилища или очистки неиспользуемых данных.",
-    "ViewDiagnostics": "Просмотр диагностики",
-    "WebServerConfig": "Конфигурация веб-сервера",
     "UnusedConfigKeys": "Неиспользуемые ключи настроек",
     "UnusedConfigKeysDesc": "config.toml содержит ключи настроек, которые WebUI не использует. Проверьте файл.",
-    "UnusedConfigKeysFix": "Ключи: {{keys}}"
+    "UnusedConfigKeysFix": "Ключи: {{keys}}",
+    "ViewDiagnostics": "Просмотр диагностики",
+    "WebServerConfig": "Конфигурация веб-сервера"
   },
   "dialog": {
     "ErrorOccurred": "Возникла ошибка",

@@ -98,7 +98,7 @@ const DiagnosticResultList: React.FC<DiagnosticResultListProps> = ({
             />
             <Text color="secondary">
               {text.title}
-              {' — '}
+              {' - '}
               {text.description}
             </Text>
           </BAIFlex>

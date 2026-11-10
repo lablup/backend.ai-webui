@@ -13,14 +13,12 @@ import {
 } from '../diagnostics/rules/configRules';
 import {
   SETTING_IMAGE_KEYS,
-  SETTING_RANGES,
   SETTING_URL_KEYS,
   changedSettingKeys,
   checkIgnoredConfigTomlKeys,
   checkPluginConfiguration,
   checkSettingImageReferences,
   checkSettingMenuKeys,
-  checkSettingRanges,
   checkSettingUrls,
 } from '../diagnostics/rules/settingsRules';
 import {
@@ -194,11 +192,6 @@ function settingsDiagnostics(
     }
   };
 
-  passedIfChanged(checkSettingRanges(state), Object.keys(SETTING_RANGES), {
-    id: 'settings-ranges-passed',
-    titleKey: 'diagnostics.ResourceLimitsPassed',
-    descriptionKey: 'diagnostics.ResourceLimitsPassedDesc',
-  });
   passedIfChanged(checkSettingUrls(state), SETTING_URL_KEYS, {
     id: 'settings-urls-valid',
     titleKey: 'diagnostics.SettingUrlsValid',

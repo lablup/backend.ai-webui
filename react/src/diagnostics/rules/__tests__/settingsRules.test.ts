@@ -18,7 +18,6 @@ import {
   checkPluginConfiguration,
   checkSettingImageReferences,
   checkSettingMenuKeys,
-  checkSettingRanges,
   checkSettingUrls,
   findIgnoredConfigTomlKeys,
 } from '../settingsRules';
@@ -69,45 +68,6 @@ describe('changedSettingKeys', () => {
         ['defaultImportEnvironment', 'appDownloadUrl'],
       ),
     ).toEqual([]);
-  });
-});
-
-describe('checkSettingRanges', () => {
-  it('passes the code defaults', () => {
-    expect(checkSettingRanges(state())).toEqual([]);
-  });
-
-  it('flags an out-of-range value with its setting key', () => {
-    const [result, ...rest] = checkSettingRanges(
-      state({ maxCPUCoresPerContainer: 0 }),
-    );
-    expect(rest).toEqual([]);
-    expect(result).toMatchObject({
-      id: 'settings-out-of-range-maxCPUCoresPerContainer',
-      severity: 'warning',
-      settingKey: 'maxCPUCoresPerContainer',
-      interpolationValues: { value: '0', min: '1', max: '8192' },
-    });
-  });
-
-  it('accepts -1 for maxFileUploadSize and 0 preopen ports', () => {
-    expect(
-      checkSettingRanges(
-        state({ maxFileUploadSize: -1, maxCountForPreopenPorts: 0 }),
-      ),
-    ).toEqual([]);
-  });
-
-  it('flags preopen ports over 100 and skips an unset cap', () => {
-    const results = checkSettingRanges(
-      state({
-        maxCountForPreopenPorts: 101,
-        maxATOMPLUSDevicesPerContainer: undefined,
-      }),
-    );
-    expect(results.map((r) => r.settingKey)).toEqual([
-      'maxCountForPreopenPorts',
-    ]);
   });
 });
 
