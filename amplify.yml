@@ -176,6 +176,12 @@ applications:
                   | grep -oE 'docs-archive/[0-9]+\.[0-9]+' | sort -u
               )
               echo "Archive refs from config: ${ARCHIVE_REFS[*]:-(none)}"
+              # Git LFS (#11040): replaces manual-image pointers with the real
+              # images and fails if any remains. The Amplify image has no
+              # git-lfs; the script installs the pinned, sha256-verified release
+              # only when a pointer exists, so it is a no-op until then.
+              PULL_IMAGES="$(git rev-parse --show-toplevel)/.github/scripts/lfs/pull-docs-images.sh"
+              bash "$PULL_IMAGES"
               for ref in ${ARCHIVE_REFS[@]+"${ARCHIVE_REFS[@]}"}; do
                 sanitized="${ref//\//__}"
                 worktree=".docs-archive/${sanitized}"
@@ -188,6 +194,7 @@ applications:
                 worktree_abs="$(realpath -m "${worktree}")"
                 if git worktree list --porcelain | grep -q "^worktree ${worktree_abs}$"; then
                   echo "Archive worktree already registered: ${worktree}"
+                  bash "$PULL_IMAGES" "${worktree}"
                   continue
                 fi
                 # If a stray non-worktree directory exists at the path,
@@ -206,6 +213,7 @@ applications:
                   continue
                 }
                 git worktree add --detach "${worktree}" "${ref}"
+                bash "$PULL_IMAGES" "${worktree}"
               done
             # Bypass the `build:web` script's wrapper (which re-runs
             # `build:toolkit` redundantly — toolkit is already built in

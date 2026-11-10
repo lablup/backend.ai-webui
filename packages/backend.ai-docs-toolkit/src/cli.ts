@@ -459,6 +459,10 @@ async function main(): Promise<void> {
 }
 
 main().catch((err) => {
+  if (err instanceof Error && err.name === "LfsPointerError") {
+    console.error(`docs-toolkit error: ${err.message}`);
+    process.exit(1);
+  }
   console.error("docs-toolkit error:", err);
   process.exit(1);
 });
