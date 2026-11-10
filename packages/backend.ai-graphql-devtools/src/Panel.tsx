@@ -876,7 +876,10 @@ const Panel = ({ isOpen, width, onClose }: PanelProps) => {
     }
     let parsedVariables: unknown;
     try {
-      parsedVariables = sentVariables.trim() ? JSON.parse(sentVariables) : {};
+      // parseJson keeps big integers as written; JSON.parse only reports the error.
+      parsedVariables = sentVariables.trim()
+        ? (parseJson(sentVariables) ?? JSON.parse(sentVariables))
+        : {};
     } catch (error) {
       record(
         'not sent',
