@@ -1,114 +1,20 @@
-// FR-4119: admin pages list the signed-in admin's domain (the WebUI assumes a
-// single domain); the project-admin session page lists the project's members.
+// FR-4119: the project-admin session page lists the project's members. The
+// admin console half is in e2e/admin/session/admin-user-select-scope-by-role.spec.ts.
 import { createAdminApiContext, gqlAdmin } from '../../utils/admin-api';
 import { getE2EDomainName } from '../../utils/e2e-scope';
 import {
-  loginAsAdmin,
   loginAsUser,
   logout,
   navigateTo,
   userInfo,
 } from '../../utils/test-util';
-import test, {
-  APIRequestContext,
-  expect,
-  Locator,
-  Page,
-} from '@playwright/test';
-
-type UserSelectOperation = {
-  name: string;
-  variables: Record<string, any>;
-  response: Record<string, any> | null;
-};
-
-/** Records every `BAIScopedUserSelect*` GraphQL operation the page sends. */
-function recordUserSelectOperations(page: Page): Array<UserSelectOperation> {
-  const operations: Array<UserSelectOperation> = [];
-  page.on('response', async (response) => {
-    const req = response.request();
-    if (req.method() !== 'POST' || !req.url().includes('/admin/gql')) return;
-    let body: { query?: string; variables?: Record<string, any> } | null;
-    try {
-      body = req.postDataJSON();
-    } catch {
-      return;
-    }
-    const name = body?.query?.match(/query\s+(BAIScopedUserSelect\w+)/)?.[1];
-    if (!name) return;
-    operations.push({
-      name,
-      variables: body?.variables ?? {},
-      response: await response.json().catch(() => null),
-    });
-  });
-  return operations;
-}
-
-/** The global id of a Strawberry node is base64 `Type:<uuid>`. */
-const toRawUUID = (globalId: string) =>
-  Buffer.from(globalId, 'base64').toString().split(':')[1];
-
-async function skipUnlessManager269(page: Page) {
-  await page.waitForFunction(
-    () => (globalThis as any).backendaiclient?.ready === true,
-  );
-  // ADR 0012: scopedUsersV2 and UserV2.organization.domainId need 26.9.0a4.
-  const supported = await page.evaluate(() =>
-    (globalThis as any).backendaiclient.isManagerVersionCompatibleWith(
-      '26.9.0a4',
-    ),
-  );
-  test.skip(
-    !supported,
-    'scopedUsersV2 needs a Backend.AI manager >= 26.9.0a4 (@requires-manager-v26.9)',
-  );
-}
-
-const optionOf = (listbox: Locator, email: string) =>
-  listbox.getByRole('option', { name: new RegExp(`^${email}`) });
-
-/**
- * Opens the picker labelled `label`, checks the list loaded (exactly
- * `listedEmails` when given), narrows it by typing part of `email`, and
- * picks that user.
- */
-async function searchAndPickUser(
-  page: Page,
-  trigger: Locator,
-  label: string,
-  email: string,
-  listedEmails?: Array<string>,
-) {
-  await trigger.click();
-  const popup = page.getByRole('dialog', { name: label, exact: true });
-  const listbox = popup.getByRole('listbox');
-  await expect(listbox.getByRole('option').first()).toBeVisible({
-    timeout: 30000,
-  });
-  if (listedEmails) {
-    await expect(listbox.getByRole('option')).toHaveCount(listedEmails.length);
-    for (const listed of listedEmails) {
-      await expect(optionOf(listbox, listed)).toBeVisible();
-    }
-  }
-  await popup
-    .getByRole('combobox', { name: 'Search options' })
-    .fill(email.split('@')[0]);
-  await expect(listbox.getByRole('option')).toHaveCount(1, { timeout: 15000 });
-  await optionOf(listbox, email).click();
-}
-
-/**
- * Opens Admin Settings > Resource Policies > Keypair and stages the 'User'
- * filter (the admin console is superadmin-only).
- */
-async function openKeypairPolicyUserFilter(page: Page) {
-  await navigateTo(page, 'admin/resource-policy?tab=keypair');
-  await page.getByRole('combobox', { name: 'Search filters' }).click();
-  await page.getByRole('option', { name: 'User', exact: true }).click();
-  return page.getByRole('combobox', { name: 'User', exact: true });
-}
+import {
+  recordUserSelectOperations,
+  searchAndPickUser,
+  skipUnlessManager269,
+  toRawUUID,
+} from '../../utils/user-select-util';
+import test, { APIRequestContext, expect } from '@playwright/test';
 
 test.describe(
   'User picker - Users each role can list',
@@ -122,65 +28,6 @@ test.describe(
     ],
   },
   () => {
-    for (const [role, login] of [['Superadmin', loginAsAdmin]] as const) {
-      test(`${role} can pick users of their domain from the keypair policy user filter`, async ({
-        page,
-        request,
-      }) => {
-        const operations = recordUserSelectOperations(page);
-        // The superadmin intro tour (AdminViewSwitchTour) otherwise covers the page.
-        await page.addInitScript(() => {
-          localStorage.setItem(
-            'backendaiwebui.settings.user.has_opened_tour_back_to_user_view',
-            'true',
-          );
-          localStorage.setItem(
-            'backendaiwebui.settings.user.has_opened_tour_back_to_admin_settings',
-            'true',
-          );
-        });
-        await login(page, request);
-        await skipUnlessManager269(page);
-
-        const domainName = await page.evaluate(
-          () => (globalThis as any).backendaiclient._config.domainName,
-        );
-        const api = await createAdminApiContext();
-        const { domainV2 } = await gqlAdmin<{
-          domainV2: { entityId: string };
-        }>(
-          api,
-          `query ($name: String!) { domainV2(domainName: $name) { entityId } }`,
-          { name: domainName },
-        ).finally(() => api.dispose());
-
-        const trigger = await openKeypairPolicyUserFilter(page);
-        await searchAndPickUser(page, trigger, 'User', userInfo.user2.email);
-        await expect(trigger).toHaveText(userInfo.user2.email);
-        await page.getByRole('button', { name: 'Apply', exact: true }).click();
-        await expect(
-          page.getByRole('group', { name: 'Search filters' }),
-        ).toContainText(userInfo.user2.email);
-
-        // The admin reads the current domain only (ADR 0012).
-        const scoped = operations.filter(
-          (op) => op.name === 'BAIScopedUserSelectPaginatedQuery',
-        );
-        expect(scoped.length).toBeGreaterThan(0);
-        for (const op of scoped) {
-          expect(op.variables.scope).toEqual({
-            domain: [{ value: domainV2.entityId }],
-          });
-          expect(op.response?.errors).toBeUndefined();
-        }
-        expect(
-          scoped.some((op) =>
-            JSON.stringify(op.variables.filter ?? {}).includes('iContains'),
-          ),
-        ).toBe(true);
-      });
-    }
-
     test.describe('Project admin', () => {
       const projectName = `e2e-user-select-${Date.now()}`;
       let api: APIRequestContext;
