@@ -602,7 +602,7 @@ export function getTableRefreshButton(page: Page) {
  * the display label) for sortable columns; match the header's visible TEXT
  * instead. Anchored exactly (`^...$`) so a short label doesn't substring-match
  * a longer header sharing a prefix. See
- * `e2e/auto-scaling-rule-preset/preset-crud.spec.ts` (`presetColumnHeader`) /
+ * `e2e/admin/deployments/prometheus-preset/preset-crud.spec.ts` (`presetColumnHeader`) /
  * `e2e/environment/registry.spec.ts` (`registryColumnHeader`) for the
  * original pattern (ledger id
  * `e2e/*::sortable-column-header-accessible-name-override`).
