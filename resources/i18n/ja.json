@@ -3283,6 +3283,7 @@
     "TensorboardPath": "TensorBoardのログディレクトリ",
     "Terminate": "終了する",
     "TerminateSession": "セッションを終了する",
+    "TerminateSessionsPartialFailureDescription": "{{total}} 件中 {{failed}} 件のセッションを終了できませんでした。以下でセッションごとの理由を確認してください。",
     "TerminatedAt": "終了時刻",
     "Threshold": "回収基準値",
     "ToStatus": "ステータスへ",

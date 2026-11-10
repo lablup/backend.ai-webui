@@ -983,7 +983,10 @@
     "AreYouSureYouWantToDeactivateSome": "Adakah anda pasti mahu menyahaktifkan {{count}} artifak?",
     "Deactivate": "Menyahaktifkan",
     "DeactivateArtifacts": "Menyahaktifkan artifak",
+    "Error": "Ralat",
     "FailedToDeactivateArtifacts": "Gagal menyahaktifkan artifak.",
+    "Name": "Nama",
+    "SomeArtifactsFailedToDeactivate": "{{count}} artifak gagal dinyahaktifkan",
     "SuccessfullyDeactivated": "Berjaya dinyahaktifkan artifak."
   },
   "comp:BAIDeleteArtifactModal": {

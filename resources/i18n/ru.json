@@ -3281,6 +3281,7 @@
     "TensorboardPath": "Каталог журналов для TensorBoard",
     "Terminate": "Закончить",
     "TerminateSession": "Прервать сеанс",
+    "TerminateSessionsPartialFailureDescription": "Не удалось завершить {{failed}} из {{total}} сеансов. Причину для каждого сеанса см. ниже.",
     "TerminatedAt": "Завершено",
     "Threshold": "Порог",
     "ToStatus": "Перейти к статусу",

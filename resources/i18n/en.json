@@ -3268,6 +3268,7 @@
     "TensorboardPath": "Log directory for TensorBoard",
     "Terminate": "Terminate",
     "TerminateSession": "Terminate Session",
+    "TerminateSessionsPartialFailureDescription": "{{failed}} of {{total}} sessions could not be terminated. Check the reason for each session below.",
     "TerminatedAt": "Terminated At",
     "Threshold": "Threshold",
     "ToStatus": "To Status",
