@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-11-09T15:17:23.417Z",
+  "generatedAt": "2026-11-10T15:48:59.374Z",
   "languages": [
     "en",
     "ja",
@@ -13,9 +13,9 @@
     "en": {
       "totals": {
         "pages": 1,
-        "changes": 11,
+        "changes": 13,
         "added": 1,
-        "modified": 6,
+        "modified": 8,
         "removed": 4,
         "images": 2,
         "newPages": 0,
@@ -24,25 +24,27 @@
       "pages": [
         {
           "slug": "start",
-          "title": "Get Started",
+          "title": "Start Your Work",
           "status": "modified",
           "url": "next/en/start.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/en/start/start.md",
           "counts": {
             "added": 1,
-            "modified": 6,
+            "modified": 8,
             "removed": 4,
             "images": 2,
-            "total": 11
+            "total": 13
           },
           "fingerprints": [
-            "7203abeb8bd9",
-            "b0f8530e1dd8",
-            "fa2bda591ee4",
-            "c5ebe0e43975",
+            "834fde7443b7",
+            "91d96dc34b6d",
+            "a869921ce015",
+            "2ff6e9eeb0e5",
             "16c9c70264d7",
-            "6da17a324d6b",
-            "d1d801d2c78b",
+            "b8fef437b54d",
+            "e74b0d788f93",
+            "5425946d020d",
+            "bbe1f3aaef89",
             "7ea2eecee963",
             "680bf083537c",
             "978de1000af2",
@@ -54,10 +56,10 @@
     "ja": {
       "totals": {
         "pages": 1,
-        "changes": 11,
-        "added": 1,
-        "modified": 6,
-        "removed": 4,
+        "changes": 14,
+        "added": 2,
+        "modified": 7,
+        "removed": 5,
         "images": 2,
         "newPages": 0,
         "deletedPages": 0
@@ -65,25 +67,28 @@
       "pages": [
         {
           "slug": "start",
-          "title": "はじめに",
+          "title": "作業を始める",
           "status": "modified",
           "url": "next/ja/start.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/ja/start/start.md",
           "counts": {
-            "added": 1,
-            "modified": 6,
-            "removed": 4,
+            "added": 2,
+            "modified": 7,
+            "removed": 5,
             "images": 2,
-            "total": 11
+            "total": 14
           },
           "fingerprints": [
             "47018c0d1074",
-            "ab8d93773a61",
-            "112022058018",
-            "0ba95b9c778c",
+            "cd41c81ef212",
+            "a41c57f0f0ca",
+            "7410253f52e0",
+            "eceb85f3e69b",
             "94c78411c622",
-            "4cb34189d64d",
-            "a784ed3ffe7e",
+            "9df060d29b65",
+            "eb374b91ccb7",
+            "5318b1fbb0af",
+            "b9783d312506",
             "fb17a988e561",
             "f796c0636ba2",
             "0fe7e9a1287d",
@@ -95,10 +100,10 @@
     "ko": {
       "totals": {
         "pages": 1,
-        "changes": 11,
-        "added": 1,
-        "modified": 6,
-        "removed": 4,
+        "changes": 14,
+        "added": 2,
+        "modified": 7,
+        "removed": 5,
         "images": 2,
         "newPages": 0,
         "deletedPages": 0
@@ -106,25 +111,28 @@
       "pages": [
         {
           "slug": "start",
-          "title": "시작하기",
+          "title": "작업 시작하기",
           "status": "modified",
           "url": "next/ko/start.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/ko/start/start.md",
           "counts": {
-            "added": 1,
-            "modified": 6,
-            "removed": 4,
+            "added": 2,
+            "modified": 7,
+            "removed": 5,
             "images": 2,
-            "total": 11
+            "total": 14
           },
           "fingerprints": [
             "39780a758dcd",
-            "fd4d03336b21",
-            "d2213cdf1b82",
-            "5366cf773cd6",
+            "70bfcb14f904",
+            "a4c8daa9dc62",
+            "e5980f5f188c",
+            "3db03b446e21",
             "3f656cd8dc7f",
-            "9725ce91f913",
-            "72ad3e8952fc",
+            "c9014e7abbc1",
+            "c7e49c04f998",
+            "fbc864fb0a8b",
+            "9bf2ecea0456",
             "4309e5e6ed67",
             "f34a1480baef",
             "21a10ff59ed1",
@@ -136,10 +144,10 @@
     "th": {
       "totals": {
         "pages": 1,
-        "changes": 10,
-        "added": 0,
+        "changes": 14,
+        "added": 2,
         "modified": 7,
-        "removed": 3,
+        "removed": 5,
         "images": 2,
         "newPages": 0,
         "deletedPages": 0
@@ -147,24 +155,28 @@
       "pages": [
         {
           "slug": "start",
-          "title": "เริ่มต้นใช้งาน",
+          "title": "เริ่มต้นการทำงาน",
           "status": "modified",
           "url": "next/th/start.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/th/start/start.md",
           "counts": {
-            "added": 0,
+            "added": 2,
             "modified": 7,
-            "removed": 3,
+            "removed": 5,
             "images": 2,
-            "total": 10
+            "total": 14
           },
           "fingerprints": [
-            "91ef776e0ad0",
-            "175f0f2ac8bb",
-            "dc9100aa0782",
+            "438dd810a9b5",
+            "eeb6d863c842",
+            "8bee7706ccdd",
+            "847b2daf0346",
             "3f8452855ddf",
-            "80920d127730",
-            "3b63abe8537f",
+            "28edc26f10fe",
+            "a05b3054a567",
+            "da5e2fc78fe1",
+            "080e15bf1306",
+            "f634024f5e84",
             "d14599aa556b",
             "6b2442d185ab",
             "abd5c8d59b3b",
