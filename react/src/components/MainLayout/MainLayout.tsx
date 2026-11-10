@@ -7,9 +7,10 @@ import {
   AstryxReverseTheme,
   resolveRoleTheme,
 } from '../../astryx-theme';
+import { USER_SETTINGS_CONFIG_KEY } from '../../helper/userSettingsAppConfig';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
-import { useMyAppConfig } from '../../hooks/useAppConfig';
+import { useMyAppConfigFragments } from '../../hooks/useAppConfig';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
@@ -17,6 +18,7 @@ import { useLogoutEventListeners } from '../../hooks/useLogout';
 import { useRouteAccessDecision } from '../../hooks/useRouteAccess';
 import { useCurrentMenuKey, useRouteScope } from '../../hooks/useRouteScope';
 import { useSiderCollapsedState } from '../../hooks/useShellPanels';
+import { useUserSettingsAppConfigSync } from '../../hooks/useUserSettingsAppConfigSync';
 import { useSetupWebUIPluginEffect } from '../../hooks/useWebUIPluginState';
 import ActAsBanner from '../ActAsBanner';
 import AnnouncementBanner from '../AnnouncementBanner';
@@ -519,23 +521,25 @@ export const CSSTokenVariables = () => {
  * (its own `Suspense`), so nothing else in this boundary suspends and the
  * splash was torn down before login had even finished.
  *
- * Also copies the signed-in user's `userConfig.themeFamily`, which sign-in
- * loaded before the client became ready, into the localStorage mirror BEFORE the splash goes, so the account's
+ * Also suspends on the signed-in user's `userConfig.themeFamily` and copies
+ * it into the localStorage mirror BEFORE the splash goes, so the account's
  * family is what the page reveals (FR-3834). The mirror survives logout; the
- * next login overrides it here.
+ * next login overrides it here. The account's personal settings are mirrored
+ * the same way (ADR 0032).
  */
 const DismissSplashOnMount = () => {
   'use memo';
   useSuspendedBackendaiClient();
-  const [userConfigFamily, , , userConfigStatus] = useMyAppConfig(
-    'userConfig',
-    'themeFamily',
+  const { myAppConfigFragments, upsertMyAppConfigFragments } =
+    useMyAppConfigFragments(['userConfig']);
+  const userConfig = myAppConfigFragments.userConfig;
+  useUserSettingsAppConfigSync(
+    userConfig?.[USER_SETTINGS_CONFIG_KEY],
+    upsertMyAppConfigFragments,
   );
-  // A failed sign-in read keeps the mirrored family instead of clearing it.
-  const isUserConfigLoaded = userConfigStatus === 'loaded';
+  const userConfigFamily = userConfig?.themeFamily;
   const { setActiveThemeFamily } = useCustomThemeConfig();
   const syncThemeFamilyMirror = useEffectEvent(() => {
-    if (!isUserConfigLoaded) return;
     setActiveThemeFamily(
       typeof userConfigFamily === 'string' ? userConfigFamily : undefined,
     );
