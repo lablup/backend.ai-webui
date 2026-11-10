@@ -2195,6 +2195,7 @@
         "rbac.GrantedAt",
         "rbac.Inactive",
         "rbac.NoPermissionsToDisplay",
+        "rbac.PermissionChangesFailed",
         "rbac.PermissionNotEditable",
         "rbac.PermissionType",
         "rbac.Permissions",

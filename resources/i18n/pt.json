@@ -2633,6 +2633,7 @@
     "NoRolesToDisplay": "Sem funções para apresentar",
     "NoUsersAssigned": "Nenhum utilizador atribuído",
     "PagePlaceholder": "A página de gestão RBAC será apresentada aqui.",
+    "PermissionChangesFailed": "Falha em {{count}} alteração(ões) de permissão.",
     "PermissionGroupRead": "Leitura",
     "PermissionGroupWrite": "Escrita",
     "PermissionNotEditable": "Esta permissão não pode ser modificada.",

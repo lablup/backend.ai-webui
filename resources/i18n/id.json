@@ -2634,6 +2634,7 @@
     "NoRolesToDisplay": "Tidak ada peran untuk ditampilkan",
     "NoUsersAssigned": "Tidak ada pengguna yang ditetapkan",
     "PagePlaceholder": "Halaman manajemen RBAC akan ditampilkan di sini.",
+    "PermissionChangesFailed": "{{count}} perubahan izin gagal.",
     "PermissionGroupRead": "Baca",
     "PermissionGroupWrite": "Tulis",
     "PermissionNotEditable": "Izin ini tidak dapat diubah.",

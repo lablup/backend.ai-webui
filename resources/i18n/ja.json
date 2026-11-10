@@ -2633,6 +2633,7 @@
     "NoRolesToDisplay": "表示するロールがありません",
     "NoUsersAssigned": "割り当てられたユーザーがいません",
     "PagePlaceholder": "RBAC管理ページがここに表示されます。",
+    "PermissionChangesFailed": "{{count}}件の権限変更に失敗しました。",
     "PermissionGroupRead": "読み取り",
     "PermissionGroupWrite": "書き込み",
     "PermissionNotEditable": "この権限は変更できません。",

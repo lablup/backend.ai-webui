@@ -2631,6 +2631,7 @@
     "NoRolesToDisplay": "Δεν υπάρχουν ρόλοι για εμφάνιση",
     "NoUsersAssigned": "Δεν υπάρχουν χρήστες ανατεθειμένοι",
     "PagePlaceholder": "Η σελίδα διαχείρισης RBAC θα εμφανιστεί εδώ.",
+    "PermissionChangesFailed": "Απέτυχαν {{count}} αλλαγές δικαιωμάτων.",
     "PermissionGroupRead": "Ανάγνωση",
     "PermissionGroupWrite": "Εγγραφή",
     "PermissionNotEditable": "Αυτό το δικαίωμα δεν μπορεί να τροποποιηθεί.",

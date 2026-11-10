@@ -2633,6 +2633,7 @@
     "NoRolesToDisplay": "Không có vai trò để hiển thị",
     "NoUsersAssigned": "Không có người dùng được phân công",
     "PagePlaceholder": "Trang quản lý RBAC sẽ được hiển thị tại đây.",
+    "PermissionChangesFailed": "{{count}} thay đổi quyền không thành công.",
     "PermissionGroupRead": "Đọc",
     "PermissionGroupWrite": "Ghi",
     "PermissionNotEditable": "Không thể sửa đổi quyền này.",

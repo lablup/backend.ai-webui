@@ -2631,6 +2631,7 @@
     "NoRolesToDisplay": "Ei näytettäviä rooleja",
     "NoUsersAssigned": "Ei käyttäjiä määritetty",
     "PagePlaceholder": "RBAC-hallintasivu näytetään tässä.",
+    "PermissionChangesFailed": "{{count}} käyttöoikeusmuutosta epäonnistui.",
     "PermissionGroupRead": "Luku",
     "PermissionGroupWrite": "Kirjoitus",
     "PermissionNotEditable": "Tätä käyttöoikeutta ei voi muokata.",

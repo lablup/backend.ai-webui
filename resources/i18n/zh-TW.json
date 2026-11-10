@@ -2635,6 +2635,7 @@
     "NoRolesToDisplay": "沒有可顯示的角色",
     "NoUsersAssigned": "沒有已分配的使用者",
     "PagePlaceholder": "RBAC管理頁面將在此處顯示。",
+    "PermissionChangesFailed": "{{count}} 項權限變更失敗。",
     "PermissionGroupRead": "讀取",
     "PermissionGroupWrite": "寫入",
     "PermissionNotEditable": "此權限無法修改。",

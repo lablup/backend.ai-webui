@@ -2631,6 +2631,7 @@
     "NoRolesToDisplay": "Нет ролей для отображения",
     "NoUsersAssigned": "Пользователи не назначены",
     "PagePlaceholder": "Здесь будет отображена страница управления RBAC.",
+    "PermissionChangesFailed": "Не удалось применить изменений разрешений: {{count}}.",
     "PermissionGroupRead": "Чтение",
     "PermissionGroupWrite": "Запись",
     "PermissionNotEditable": "Это разрешение нельзя изменить.",

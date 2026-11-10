@@ -2633,6 +2633,7 @@
     "NoRolesToDisplay": "没有可显示的角色",
     "NoUsersAssigned": "没有已分配的用户",
     "PagePlaceholder": "RBAC管理页面将在此处显示。",
+    "PermissionChangesFailed": "{{count}} 项权限更改失败。",
     "PermissionGroupRead": "读取",
     "PermissionGroupWrite": "写入",
     "PermissionNotEditable": "此权限无法修改。",
