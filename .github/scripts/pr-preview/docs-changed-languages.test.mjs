@@ -45,6 +45,7 @@ test("build inputs inside the docs package also mean en", () => {
     `${DOCS}/assets/logo.svg`,
     ".github/workflows/pr-preview.yml",
     ".github/scripts/pr-preview/build-docs-preview.sh",
+    ".github/scripts/lfs/pull-docs-images.sh",
   ]) {
     assert.deepEqual(
       classify([file]),
