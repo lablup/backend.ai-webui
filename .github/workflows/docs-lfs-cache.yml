@@ -1,0 +1,66 @@
+# Keeps main's cache of the user manual's Git LFS objects current (#11070).
+# PR previews and release builds restore it and download only the objects it
+# lacks. GitHub scopes caches by ref: PR runs can read main's cache, but main and
+# tag runs cannot read a PR's, so only this workflow writes the store those
+# builds start from. It downloads only the images that changed since the last save.
+name: docs-lfs-cache
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "packages/backend.ai-webui-docs/src/**/*.png"
+      - "packages/backend.ai-webui-docs/src/**/*.jpg"
+      - "packages/backend.ai-webui-docs/src/**/*.jpeg"
+      - "packages/backend.ai-webui-docs/src/**/*.gif"
+      - "packages/backend.ai-webui-docs/src/**/*.webp"
+      - ".github/scripts/lfs/**"
+      - ".github/workflows/docs-lfs-cache.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-lfs-cache
+  cancel-in-progress: true
+
+jobs:
+  docs-lfs-cache:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        env:
+          GIT_LFS_SKIP_SMUDGE: "1"
+
+      - name: Compute the LFS cache key
+        id: key
+        run: echo "key=$(bash .github/scripts/lfs/docs-lfs-cache-key.sh)" >> "$GITHUB_OUTPUT"
+
+      - name: Look up the cache
+        id: lookup
+        uses: actions/cache/restore@v6
+        with:
+          path: .git/lfs/objects
+          key: ${{ steps.key.outputs.key }}
+          lookup-only: true
+
+      - name: Restore the latest store
+        if: steps.lookup.outputs.cache-hit != 'true'
+        uses: actions/cache/restore@v6
+        with:
+          path: .git/lfs/objects
+          key: ${{ steps.key.outputs.key }}
+          restore-keys: docs-lfs-v1-
+
+      - name: Pull the manual images (Git LFS)
+        if: steps.lookup.outputs.cache-hit != 'true'
+        run: bash .github/scripts/lfs/pull-docs-images.sh
+
+      - name: Save the LFS object cache
+        if: steps.lookup.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: .git/lfs/objects
+          key: ${{ steps.key.outputs.key }}

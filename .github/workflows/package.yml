@@ -332,13 +332,33 @@ jobs:
       #
       # The container runs as root, so no `sudo`. Best-effort: a missing
       # pdf-lib font fails only that language's header stamp, not the others.
-      - name: Install CJK + Thai fonts (best effort)
+      - name: Install CJK + Thai fonts and zstd (best effort)
         run: |
           apt-get update
           apt-get install -y --no-install-recommends \
             fonts-noto-cjk \
             fonts-nanum fonts-takao-gothic fonts-thai-tlwg || true
           fc-cache -f || true
+          # actions/cache falls back to gzip without zstd, and a gzip entry
+          # never matches the zstd ones docs-lfs-cache.yml saves on main.
+          apt-get install -y --no-install-recommends zstd || true
+
+      # Release runs are tag-scoped, so nothing they saved could be read again:
+      # restore only, from main's store (docs-lfs-cache.yml, #11070). The pull
+      # downloads what it lacks and hashes every object it uses.
+      - name: Compute the LFS cache key
+        id: lfs-key
+        shell: bash
+        run: |
+          export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory GIT_CONFIG_VALUE_0="$GITHUB_WORKSPACE"
+          echo "key=$(bash .github/scripts/lfs/docs-lfs-cache-key.sh)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore the LFS object cache
+        uses: actions/cache/restore@v6
+        with:
+          path: .git/lfs/objects
+          key: ${{ steps.lfs-key.outputs.key }}
+          restore-keys: docs-lfs-v1-
 
       # The manual's screenshots are Git LFS pointers (#11040). The container
       # has no git-lfs, so the script installs the pinned release. The checkout is

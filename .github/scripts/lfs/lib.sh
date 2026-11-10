@@ -45,3 +45,30 @@ lfs_is_valid_pointer() {
   done
   [ "$has_oid" -eq 1 ] && [ "$has_size" -eq 1 ]
 }
+
+# `sha256sum`, or `shasum -a 256` where coreutils is missing (macOS); same output.
+if command -v sha256sum >/dev/null 2>&1; then LFS_SHA256=(sha256sum); else LFS_SHA256=(shasum -a 256); fi
+
+# Prints `<oid><TAB><size><TAB><path>` for each path listed (one per line) in
+# <list-file>, read from the pointer blobs staged in the index of <top>.
+lfs_index_pointers() { # <top> <list-file>
+  sed 's/^/:/' "$2" | git -C "$1" cat-file --batch |
+    awk -v OFS='\t' '
+      function flush() { if (i) print o, s, p[i] }
+      NR == FNR { p[NR] = $0; next }
+      NF == 3 && $2 == "blob" && length($1) >= 40 { flush(); i++; o = ""; s = ""; next }
+      $1 == "oid" { o = substr($2, 8) }
+      $1 == "size" { s = $2 }
+      END { flush() }' "$2" -
+}
+
+# Hashes the files named in <map> (`<oid><TAB><path>` lines, paths relative to
+# <dir>) and prints each path whose content does not hash to its oid.
+lfs_hash_mismatches() { # <dir> <map>
+  [ -s "$2" ] || return 0
+  (cd "$1" && cut -f2 "$2" | tr '\n' '\0' | xargs -0 "${LFS_SHA256[@]}") |
+    awk -F '\t' '
+      NR == FNR { want[$2] = $1; next }
+      { h = substr($0, 1, 64); f = substr($0, 67); if (want[f] != h) print f; seen[f] = 1 }
+      END { for (f in want) if (!(f in seen)) print f }' "$2" -
+}

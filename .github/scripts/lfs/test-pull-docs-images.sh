@@ -111,6 +111,51 @@ check "objects copied to origin: exit 0" [ "$rc" -eq 0 ]
 check "objects copied to origin: no fallback reported" [ ! -s "$T/c3b.report" ]
 check "fork image materialized from origin" [ "$(sha "$T/c3b/$D/en/images/from-fork.png")" = "$F_SHA" ]
 
+# 3c. Merge base after head in one checkout (build-docs-preview.sh): the base's
+# objects the head pull fetched are reused, not downloaded again.
+fresh "$T/c3c" refs/pull/1/head
+out="$(bash "$PULL" "$T/c3c" 2>&1)"; rc=$?
+check "head pull: exit 0" [ "$rc" -eq 0 ]
+check "head pull: reports 3 downloaded" grep -q "LFS objects: 3 needed, 0 already local, 3 downloaded" <<<"$out"
+rm -rf "${T:?}/c3c/$D" && git -C "$T/c3c" checkout -q --no-overlay origin/main -- "$D"
+out="$(bash "$PULL" --ref origin/main "$T/c3c" 2>&1)"; rc=$?
+check "base pull: exit 0" [ "$rc" -eq 0 ]
+check "base pull: reuses the head's objects" grep -q "LFS objects: 2 needed, 2 already local, 0 downloaded (0.0 MiB, 0 bytes)" <<<"$out"
+check "base pull: a.png materialized" [ "$(sha "$T/c3c/$D/en/images/a.png")" = "$A_SHA" ]
+
+# 6. A warm object store (a restored CI cache) downloads nothing; the fetch is
+# skipped, so even an unreachable remote does not matter.
+store_of() { echo "$1/.git/lfs/objects"; }
+fresh "$T/c6"
+mkdir -p "$(store_of "$T/c6")" && cp -R "$(store_of "$T/c1")/." "$(store_of "$T/c6")/"
+out="$(bash "$PULL" --remote "file://$T/missing.git" "$T/c6" 2>&1)"; rc=$?
+check "warm store: exit 0 without a reachable remote" [ "$rc" -eq 0 ]
+check "warm store: reports 0 downloaded" grep -q "LFS objects: 2 needed, 2 already local, 0 downloaded (0.0 MiB, 0 bytes)" <<<"$out"
+check "warm store: a.png materialized" [ "$(sha "$T/c6/$D/en/images/a.png")" = "$A_SHA" ]
+fresh "$T/c6b"
+out="$(bash "$PULL" "$T/c6b" 2>&1)"
+check "cold store: reports the bytes downloaded" grep -q "LFS objects: 2 needed, 0 already local, 2 downloaded (0.0 MiB, 50000 bytes)" <<<"$out"
+
+# 7. A corrupted object in the store (same size, one byte changed) is detected
+# and downloaded again, never smudged into the checkout.
+a_oid() { git -C "$1" cat-file blob "HEAD:$D/en/images/a.png" | sed -n 's/^oid sha256://p'; }
+corrupt_a() { # <checkout>: copy c1's store in, then flip one byte of a.png's object
+  local s o; s="$(store_of "$1")"; o="$(a_oid "$1")"
+  mkdir -p "$s" && cp -R "$(store_of "$T/c1")/." "$s/"
+  chmod u+w "$s/${o:0:2}/${o:2:2}/$o"
+  printf 'X' | dd of="$s/${o:0:2}/${o:2:2}/$o" bs=1 seek=100 conv=notrunc 2>/dev/null
+}
+fresh "$T/c7" && corrupt_a "$T/c7"
+out="$(bash "$PULL" "$T/c7" 2>&1)"; rc=$?
+check "corrupted object: exit 0 after re-downloading it" [ "$rc" -eq 0 ]
+check "corrupted object: reported" grep -q "1 corrupted local object(s) replaced" <<<"$out"
+check "corrupted object: 1 local, 1 downloaded" grep -q "2 needed, 1 already local, 1 downloaded" <<<"$out"
+check "corrupted object: a.png has the right content" [ "$(sha "$T/c7/$D/en/images/a.png")" = "$A_SHA" ]
+fresh "$T/c7b" && corrupt_a "$T/c7b"
+quiet bash "$PULL" --remote "file://$T/missing.git" "$T/c7b"; rc=$?
+check "corrupted object, no remote: fails" [ "$rc" -ne 0 ]
+check "corrupted object, no remote: a.png left a pointer" is_pointer "$T/c7b/$D/en/images/a.png"
+
 # 4. A tree without pointer files needs no git-lfs.
 rm -rf "$T/raw" && git init -q "$T/raw" && mkdir -p "$T/raw/$D/en/images"
 printf 'title: T\nlanguages: [en]\n' > "$T/raw/$D/book.config.yaml"

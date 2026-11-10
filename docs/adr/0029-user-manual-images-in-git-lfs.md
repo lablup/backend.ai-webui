@@ -43,7 +43,7 @@ flowchart LR
 - **Rule**: The root `.gitattributes` holds `packages/backend.ai-webui-docs/src/**/*.<ext> filter=lfs diff=lfs merge=lfs -text` for `<ext>` in `png`, `jpg`, `jpeg`, `gif`, `webp`. Nothing outside `packages/backend.ai-webui-docs/src/` is LFS-tracked.
 - **Landing**: The rule lands together with the commit that converts the existing images (#11040). Before it, nothing is LFS-tracked, and the check, the pull script and the guard below find nothing to do.
 - **Default checkout**: `.lfsconfig` sets `lfs.fetchexclude = packages/backend.ai-webui-docs/src/**`, so `git clone`, `git checkout` and a plain `git lfs pull` leave pointer files there.
-- **Commit check**: The workflow `.github/workflows/lfs-pointer-check.yml` runs `.github/scripts/lfs/check-lfs-pointers.sh` on pull requests. Every tracked file whose `filter` attribute is `lfs` must be staged as a valid pointer; a raw file there fails the check.
+- **Commit check**: The workflow `.github/workflows/lfs-pointer-check.yml` runs `.github/scripts/lfs/check-lfs-pointers.sh` on pull requests and on pushes to `main` (#11065), so a raw file that reaches `main` is reported by the push that landed it. Every tracked file whose `filter` attribute is `lfs` must be staged as a valid pointer; a raw file there fails the check.
 
 ### 2. Consumers materialize images with one script
 
@@ -76,7 +76,7 @@ flowchart LR
 - A default clone and every non-docs CI job skip the image bytes; only docs builds and screenshot work download them.
 - Contributors who change screenshots need git-lfs, set up with `git lfs install --skip-repo` (Husky owns the hooks, so `.husky/pre-push` runs `git lfs pre-push`); images committed without it are raw bytes, which the pre-push hook refuses and the pointer check fails.
 - A docs build fails loudly when its images were not fetched, instead of publishing broken images.
-- Docs builds download the images on each run; nothing caches the LFS objects between runs.
+- GitHub Actions docs builds cache the LFS object store (#11070): `docs-lfs-cache.yml` keeps `main`'s cache current, `pr-preview.yml` restores and saves a PR-scoped one, and `package.yml` `build_docs` restores `main`'s. The key is `.github/scripts/lfs/docs-lfs-cache-key.sh`, so a build downloads only the images missing from the cache it restored. GitHub scopes caches by ref, so a PR's cache is never read by `main` or release builds, and `pull-docs-images.sh` hashes every object it takes from local storage, because git-lfs does not. Amplify builds still download every image on each run.
 - `main`'s history keeps the raw PNGs until a separate history rewrite, so a full clone shrinks only after it.
 
 ## Sources

@@ -151,8 +151,11 @@ The filename of an existing screenshot encodes a contract about what it shows. S
 
 1. Inspect the previous version's dimensions and visual scope:
    ```bash
-   # --filters applies the smudge filter, so this also works once the images are in Git LFS
-   git cat-file --filters main:packages/backend.ai-webui-docs/src/en/images/foo.png > /tmp/old.png
+   # The images are in Git LFS: `git cat-file --filters` would print the pointer text
+   # (.lfsconfig excludes these paths), so smudge the pointer explicitly. Needs git-lfs on PATH;
+   # it downloads the object when it is not local. A non-LFS blob passes through unchanged.
+   p=packages/backend.ai-webui-docs/src/en/images/foo.png
+   git cat-file blob "main:$p" | git -c lfs.fetchexclude= lfs smudge -- "$p" > /tmp/old.png
    file /tmp/old.png   # note WIDTH x HEIGHT
    ```
 2. Open `/tmp/old.png` and identify its scope:

@@ -1,10 +1,25 @@
 # Files marked `filter=lfs` in .gitattributes must be committed as Git LFS
 # pointers. A contributor without git-lfs commits the raw bytes instead, which
-# nothing else notices. A no-op while nothing is LFS-tracked (#11040).
+# nothing else notices. It also runs on pushes to main (#11065): a PR checked
+# before an image path became LFS-tracked can still merge a raw file, which then
+# fails every later image PR. No merge queue is used, so no `merge_group`.
 name: lfs-pointer-check
 
 on:
   pull_request:
+    paths:
+      - "**/.gitattributes"
+      - ".lfsconfig"
+      - "**/*.png"
+      - "**/*.jpg"
+      - "**/*.jpeg"
+      - "**/*.gif"
+      - "**/*.webp"
+      - "**/*.svg"
+      - ".github/scripts/lfs/**"
+      - ".github/workflows/lfs-pointer-check.yml"
+  push:
+    branches: [main]
     paths:
       - "**/.gitattributes"
       - ".lfsconfig"
@@ -21,8 +36,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: lfs-pointer-check-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+  group: lfs-pointer-check-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   lfs-pointer-check:
