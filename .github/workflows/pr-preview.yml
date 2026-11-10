@@ -207,8 +207,8 @@ jobs:
 
       # LFS object cache (#11070): the key changes only when an image does, and
       # restore-keys fall back to this PR's or main's latest store, so only new
-      # objects are downloaded. A PR's cache is readable by that PR alone, never
-      # by main or release builds; pull-docs-images.sh hashes every object it uses.
+      # objects are downloaded. A PR's cache is readable by that PR alone; main's
+      # is written by docs-lfs-cache.yml. pull-docs-images.sh hashes every object.
       - name: Compute the LFS cache key
         id: lfs-key
         run: |

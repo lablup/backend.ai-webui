@@ -12,7 +12,7 @@ if [ ! -s "$used" ]; then
   echo "[prune-lfs-store] ${used} is empty; nothing pruned"
   exit 0
 fi
-store="$(git lfs env 2>/dev/null | sed -n 's/^LocalMediaDir=//p')"
+store="$({ git lfs env 2>/dev/null || true; } | sed -n 's/^LocalMediaDir=//p')"
 if [ -z "$store" ] || [ ! -d "$store" ]; then
   echo "[prune-lfs-store] no local LFS storage; nothing pruned"
   exit 0

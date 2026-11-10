@@ -57,7 +57,7 @@ lfs_index_pointers() { # <top> <list-file>
     awk -v OFS='\t' '
       function flush() { if (i) print (o ~ /^[0-9a-f]+$/ && length(o) == 64 ? o : ""), s, p[i] }
       NR == FNR { p[NR] = $0; next }
-      NF == 2 && $2 == "missing" { flush(); i++; o = ""; s = ""; next }
+      substr($0, 1, 1) == ":" && ($NF == "missing" || $NF == "ambiguous") { flush(); i++; o = ""; s = ""; next }
       NF == 3 && $2 == "blob" && length($1) >= 40 { flush(); i++; o = ""; s = ""; next }
       $1 == "oid" { o = substr($2, 8) }
       $1 == "size" { s = $2 }
@@ -69,7 +69,7 @@ lfs_index_pointers() { # <top> <list-file>
 lfs_hash_mismatches() { # <dir> <map>
   [ -s "$2" ] || return 0
   # A file that cannot be read is reported by the END block, not by an abort.
-  (cd "$1" && cut -f2 "$2" | tr '\n' '\0' | xargs -0 "${LFS_SHA256[@]}" 2>/dev/null || true) |
+  (cd "$1" || exit 1; cut -f2 "$2" | tr '\n' '\0' | { xargs -0 "${LFS_SHA256[@]}" 2>/dev/null || true; }) |
     awk -F '\t' '
       NR == FNR { want[$2] = $1; next }
       { h = substr($0, 1, 64); f = substr($0, 67); if (want[f] != h) print f; seen[f] = 1 }

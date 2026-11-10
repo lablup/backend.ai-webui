@@ -157,7 +157,7 @@ pull_one() {
   store="$(git -C "$top" lfs env 2>/dev/null | sed -n 's/^LocalMediaDir=//p')"
   [ -n "$store" ] || { log "ERROR: ${top}: git lfs env does not name the local object storage." >&2; exit 1; }
   lfs_index_pointers "$top" "$list" > "${work}/pointers.idx"
-  if cut -f1 "${work}/pointers.idx" | grep -qx ''; then
+  if awk -F '\t' '$1 == "" { found = 1 } END { exit !found }' "${work}/pointers.idx"; then
     log "ERROR: ${top}: some pointer files have no valid Git LFS pointer staged (an unmerged path?):" >&2
     awk -F '\t' '$1 == "" { print $3 }' "${work}/pointers.idx" > "${work}/unstaged"
     report_pointers "${work}/unstaged"
@@ -273,10 +273,19 @@ pull_one() {
     awk -F '\t' 'NR == FNR { b[$0] = 1; next } $2 in b { print substr($1, 1, 2) "/" substr($1, 3, 2) "/" $1 }' \
       "$bad" "${work}/files.map" | (cd "$store" && tr '\n' '\0' | xargs -0 rm -f)
     # Back to pointer text, so that a re-run pulls them again.
+    local restored=1
     while IFS= read -r path; do
-      git -C "$top" cat-file blob ":${path}" > "${top}/${path}" || true
+      if git -C "$top" cat-file blob ":${path}" > "${work}/pointer" 2>/dev/null; then
+        cp "${work}/pointer" "${top}/${path}"
+      else
+        restored=0; echo "  could not restore the pointer of: ${path}" >&2
+      fi
     done < "$bad"
-    log "Their local objects were deleted and the files are pointers again; re-run this script to download them." >&2
+    if [ "$restored" -eq 1 ]; then
+      log "Their local objects were deleted and the files are pointers again; re-run this script to download them." >&2
+    else
+      log "Their local objects were deleted; run 'git checkout -- <path>' on the files listed, then re-run this script." >&2
+    fi
     exit 1
   fi
   log "${top}: materialized all LFS images (each checked against its oid)"
