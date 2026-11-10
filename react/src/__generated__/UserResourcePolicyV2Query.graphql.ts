@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a50017221d7d29bf0d6fb090e624967f>>
+ * @generated SignedSource<<dff32d27be092914722f1a8779d7cd8d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -83,6 +83,7 @@ export type UserResourcePolicyV2Query$data = {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly createdAt: string | null | undefined;
+        readonly entityId: string;
         readonly id: string;
         readonly maxConcurrentLogins: number | null | undefined;
         readonly maxCustomizedImageCount: number;
@@ -163,31 +164,38 @@ v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "entityId",
   "storageKey": null
 },
 v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "maxVfolderCount",
+  "name": "name",
   "storageKey": null
 },
 v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "maxConcurrentLogins",
+  "name": "maxVfolderCount",
   "storageKey": null
 },
 v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "maxSessionCountPerModelSession",
+  "name": "maxConcurrentLogins",
   "storageKey": null
 },
 v11 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "maxSessionCountPerModelSession",
+  "storageKey": null
+},
+v12 = {
   "alias": null,
   "args": null,
   "concreteType": "BinarySizeInfo",
@@ -205,14 +213,14 @@ v11 = {
   ],
   "storageKey": null
 },
-v12 = {
+v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "maxCustomizedImageCount",
   "storageKey": null
 },
-v13 = {
+v14 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -264,6 +272,7 @@ return {
                   (v11/*: any*/),
                   (v12/*: any*/),
                   (v13/*: any*/),
+                  (v14/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -330,7 +339,8 @@ return {
                   (v10/*: any*/),
                   (v11/*: any*/),
                   (v12/*: any*/),
-                  (v13/*: any*/)
+                  (v13/*: any*/),
+                  (v14/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -343,16 +353,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "9b51e1e38d314c01ac01f244f0860085",
+    "cacheID": "2db15f30ceaedb516925ecd6e1a6ba0b",
     "id": null,
     "metadata": {},
     "name": "UserResourcePolicyV2Query",
     "operationKind": "query",
-    "text": "query UserResourcePolicyV2Query(\n  $filter: UserResourcePolicyV2Filter\n  $orderBy: [UserResourcePolicyV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminUserResourcePoliciesV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        name\n        maxVfolderCount\n        maxConcurrentLogins\n        maxSessionCountPerModelSession\n        maxQuotaScopeSize {\n          expr\n        }\n        maxCustomizedImageCount\n        createdAt\n        ...BAIUserResourcePolicyV2TableFragment\n        ...UserResourcePolicyV2SettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIUserResourcePolicyV2TableFragment on UserResourcePolicyV2 {\n  id\n  name\n  createdAt\n  maxVfolderCount\n  maxConcurrentLogins\n  maxSessionCountPerModelSession\n  maxQuotaScopeSize {\n    expr\n  }\n  maxCustomizedImageCount\n}\n\nfragment UserResourcePolicyV2SettingModalFragment on UserResourcePolicyV2 {\n  id\n  name\n  maxVfolderCount\n  maxConcurrentLogins\n  maxSessionCountPerModelSession\n  maxQuotaScopeSize {\n    expr\n  }\n  maxCustomizedImageCount\n}\n"
+    "text": "query UserResourcePolicyV2Query(\n  $filter: UserResourcePolicyV2Filter\n  $orderBy: [UserResourcePolicyV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminUserResourcePoliciesV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        name\n        maxVfolderCount\n        maxConcurrentLogins\n        maxSessionCountPerModelSession\n        maxQuotaScopeSize {\n          expr\n        }\n        maxCustomizedImageCount\n        createdAt\n        ...BAIUserResourcePolicyV2TableFragment\n        ...UserResourcePolicyV2SettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIUserResourcePolicyV2TableFragment on UserResourcePolicyV2 {\n  id\n  entityId\n  name\n  createdAt\n  maxVfolderCount\n  maxConcurrentLogins\n  maxSessionCountPerModelSession\n  maxQuotaScopeSize {\n    expr\n  }\n  maxCustomizedImageCount\n}\n\nfragment UserResourcePolicyV2SettingModalFragment on UserResourcePolicyV2 {\n  id\n  entityId\n  name\n  maxVfolderCount\n  maxConcurrentLogins\n  maxSessionCountPerModelSession\n  maxQuotaScopeSize {\n    expr\n  }\n  maxCustomizedImageCount\n}\n"
   }
 };
 })();
 
-(node as any).hash = "63156949e2611a89dc37f8decfad3bf7";
+(node as any).hash = "796185305541f799a72a181afed110f1";
 
 export default node;

@@ -96,7 +96,7 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
     vfolder_host_permissions?.vfolder_host_permission_list ?? [],
   );
 
-  // Read AND write via V2: `adminUpdateKeypairResourcePolicyV2` returns the
+  // Read AND write via V2: `updateKeypairResourcePolicyV2` returns the
   // updated entity, so requesting `allowedVfolderHosts` in the mutation
   // response lets Relay update the normalized node in place — the table
   // refreshes from the orchestrator's store without a manual refetch.
@@ -111,6 +111,7 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
         fragment KeypairResourcePolicyStoragePermissionTableV2_nodeFrgmt on KeypairResourcePolicyV2
         @relay(plural: true) {
           id
+          entityId
           name
           allowedVfolderHosts {
             host
@@ -140,10 +141,10 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
     useMutation<KeypairResourcePolicyStoragePermissionTableV2UpdateMutation>(
       graphql`
         mutation KeypairResourcePolicyStoragePermissionTableV2UpdateMutation(
-          $name: String!
+          $id: UUID!
           $input: UpdateKeypairResourcePolicyInput!
         ) {
-          adminUpdateKeypairResourcePolicyV2(name: $name, input: $input) {
+          updateKeypairResourcePolicyV2(id: $id, input: $input) {
             keypairResourcePolicy {
               id
               allowedVfolderHosts {
@@ -159,8 +160,8 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
   const handleSave = async (
     newKeys: string[],
   ): Promise<{ ok: boolean; msg?: string | null }> => {
-    const policyName = editingRow?.name;
-    if (!policyName) {
+    const policyId = editingRow?.entityId;
+    if (!policyId) {
       return { ok: false, msg: t('storageHost.permission.SaveFailed') };
     }
     // Rebuild the full host list, replacing only this host's permissions.
@@ -181,11 +182,11 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
     ];
     return new Promise((resolve) => {
       commitUpdateKrp({
-        variables: { name: policyName, input: { allowedVfolderHosts } },
+        variables: { id: policyId, input: { allowedVfolderHosts } },
         onCompleted: (res, errors) => {
           if (
             errors?.length ||
-            !res?.adminUpdateKeypairResourcePolicyV2?.keypairResourcePolicy
+            !res?.updateKeypairResourcePolicyV2?.keypairResourcePolicy
           ) {
             resolve({ ok: false, msg: errors?.[0]?.message });
           } else {

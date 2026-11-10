@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8f7b46cf3a0be6f840364588e0814c64>>
+ * @generated SignedSource<<219f2dfb0fab0735e0f5f5e7f4f88a85>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -464,12 +464,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "4c1716e06e742984dffe3edbceb1049d",
+    "cacheID": "25c922738bc0c5952863b858523f3d79",
     "id": null,
     "metadata": {},
     "name": "KeypairResourcePolicyV2Query",
     "operationKind": "query",
-    "text": "query KeypairResourcePolicyV2Query(\n  $filter: KeypairResourcePolicyV2Filter\n  $orderBy: [KeypairResourcePolicyV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminKeypairResourcePoliciesV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        name\n        defaultForUnspecified\n        totalResourceSlots {\n          resourceType\n          quantity\n          unlimited\n        }\n        maxConcurrentSessions\n        maxContainersPerSession\n        idleTimeout\n        maxSessionLifetime\n        allowedVfolderHosts {\n          host\n        }\n        maxPendingSessionCount\n        maxConcurrentSftpSessions\n        maxPendingSessionResourceSlots {\n          resourceType\n          quantity\n          unlimited\n        }\n        createdAt\n        ...BAIKeypairResourcePolicyV2TableFragment\n        ...KeypairResourcePolicyV2SettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIKeypairResourcePolicyV2TableFragment on KeypairResourcePolicyV2 {\n  id\n  name\n  createdAt\n  defaultForUnspecified\n  totalResourceSlots {\n    resourceType\n    quantity\n    unlimited\n  }\n  maxSessionLifetime\n  maxConcurrentSessions\n  maxPendingSessionCount\n  maxPendingSessionResourceSlots {\n    resourceType\n    quantity\n    unlimited\n  }\n  maxConcurrentSftpSessions\n  maxContainersPerSession\n  idleTimeout\n  allowedVfolderHosts {\n    host\n    permissions\n  }\n}\n\nfragment KeypairResourcePolicyV2SettingModalFragment on KeypairResourcePolicyV2 {\n  id\n  name\n  defaultForUnspecified\n  totalResourceSlots {\n    resourceType\n    quantity\n    unlimited\n  }\n  maxSessionLifetime\n  maxConcurrentSessions\n  maxContainersPerSession\n  idleTimeout\n  maxPendingSessionCount\n  maxConcurrentSftpSessions\n  allowedVfolderHosts {\n    host\n    permissions\n  }\n}\n"
+    "text": "query KeypairResourcePolicyV2Query(\n  $filter: KeypairResourcePolicyV2Filter\n  $orderBy: [KeypairResourcePolicyV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminKeypairResourcePoliciesV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        name\n        defaultForUnspecified\n        totalResourceSlots {\n          resourceType\n          quantity\n          unlimited\n        }\n        maxConcurrentSessions\n        maxContainersPerSession\n        idleTimeout\n        maxSessionLifetime\n        allowedVfolderHosts {\n          host\n        }\n        maxPendingSessionCount\n        maxConcurrentSftpSessions\n        maxPendingSessionResourceSlots {\n          resourceType\n          quantity\n          unlimited\n        }\n        createdAt\n        ...BAIKeypairResourcePolicyV2TableFragment\n        ...KeypairResourcePolicyV2SettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIKeypairResourcePolicyV2TableFragment on KeypairResourcePolicyV2 {\n  id\n  name\n  createdAt\n  defaultForUnspecified\n  totalResourceSlots {\n    resourceType\n    quantity\n    unlimited\n  }\n  maxSessionLifetime\n  maxConcurrentSessions\n  maxPendingSessionCount\n  maxPendingSessionResourceSlots {\n    resourceType\n    quantity\n    unlimited\n  }\n  maxConcurrentSftpSessions\n  maxContainersPerSession\n  idleTimeout\n  allowedVfolderHosts {\n    host\n    permissions\n  }\n}\n\nfragment KeypairResourcePolicyV2SettingModalFragment on KeypairResourcePolicyV2 {\n  id\n  entityId\n  name\n  defaultForUnspecified\n  totalResourceSlots {\n    resourceType\n    quantity\n    unlimited\n  }\n  maxSessionLifetime\n  maxConcurrentSessions\n  maxContainersPerSession\n  idleTimeout\n  maxPendingSessionCount\n  maxConcurrentSftpSessions\n  allowedVfolderHosts {\n    host\n    permissions\n  }\n}\n"
   }
 };
 })();

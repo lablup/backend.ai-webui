@@ -3283,6 +3283,7 @@
     "TensorboardPath": "Protokollverzeichnis für TensorBoard",
     "Terminate": "Beenden",
     "TerminateSession": "Sitzung beenden",
+    "TerminateSessionsPartialFailureDescription": "{{failed}} von {{total}} Sitzungen konnten nicht beendet werden. Den Grund für jede Sitzung finden Sie unten.",
     "TerminatedAt": "Beendet am",
     "Threshold": "Schwellenwert",
     "ToStatus": "Zum Status",

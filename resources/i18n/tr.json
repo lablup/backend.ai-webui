@@ -3281,6 +3281,7 @@
     "TensorboardPath": "TensorBoard için günlük dizini",
     "Terminate": "sonlandırmak",
     "TerminateSession": "Oturumu Sonlandır",
+    "TerminateSessionsPartialFailureDescription": "{{total}} oturumdan {{failed}} tanesi sonlandırılamadı. Her oturumun nedenini aşağıda kontrol edin.",
     "TerminatedAt": "Sonlandırma Zamanı",
     "Threshold": "Eşik",
     "ToStatus": "Hedef Durum",
