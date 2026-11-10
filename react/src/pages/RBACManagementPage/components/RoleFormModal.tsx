@@ -155,7 +155,7 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   if (scopeType === 'VFOLDER') {
     return (
       <Suspense fallback={fallback}>
-        {/* TODO(#11082): move to an `adminVfoldersV2` select; a domain scope would narrow this superadmin list (ADR 0012). */}
+        {/* TODO(#11103): move to an `adminVfoldersV2` select; a domain scope would narrow this superadmin list (ADR 0012). */}
         <BAIVFolderNodeSelect {...branchProps} />
       </Suspense>
     );

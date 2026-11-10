@@ -28,8 +28,6 @@ import {
 } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-export type { VFolderFilter, VFolderScope };
-
 export type VFolderSelectNode = NonNullable<
   BAIVFolderSelectPaginatedQuery$data['scopedVFoldersV2']
 >['edges'][number]['node'];
@@ -118,8 +116,11 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
     valuePropName === 'id'
       ? toGlobalId('VirtualFolderNode', entityId)
       : entityId;
-  const entityIdOf = (key: string) =>
+  const entityIdOf = (key: string): string | undefined =>
     valuePropName === 'id' ? toLocalId(key) : key;
+  const selectedEntityIds = _.compact(_.map(selectedKeys, entityIdOf));
+  // The manager rejects a scope whose range lists are all empty (ADR 0012).
+  const hasScope = _.some(scope, (ranges) => !_.isEmpty(ranges));
 
   const { scopedVFoldersV2: selectedVFolders } =
     useLazyLoadQuery<BAIVFolderSelectValueQuery>(
@@ -146,16 +147,16 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
       {
         scope,
         filter: {
-          AND: [
-            ...baseFilters,
-            { entityId: { in: _.map(selectedKeys, entityIdOf) } },
-          ],
+          AND: [...baseFilters, { entityId: { in: selectedEntityIds } }],
         },
-        limit: Math.max(selectedKeys.length, 1),
-        skip: selectedKeys.length === 0,
+        limit: Math.max(selectedEntityIds.length, 1),
+        skip: selectedEntityIds.length === 0 || !hasScope,
       },
       {
-        fetchPolicy: selectedKeys.length ? 'store-or-network' : 'store-only',
+        fetchPolicy:
+          selectedEntityIds.length && hasScope
+            ? 'store-or-network'
+            : 'store-only',
         fetchKey: deferredFetchKey,
       },
     );
@@ -201,7 +202,7 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
         },
       },
       {
-        fetchPolicy: deferredOpen ? 'network-only' : 'store-only',
+        fetchPolicy: deferredOpen && hasScope ? 'network-only' : 'store-only',
         fetchKey: deferredFetchKey,
       },
       {
@@ -240,7 +241,10 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
       // Unreachable value: a caller-supplied label, then the readable UUID.
       return {
         label:
-          edge?.node.metadata.name ?? fallbackLabels?.[key] ?? entityIdOf(key),
+          edge?.node.metadata.name ??
+          fallbackLabels?.[key] ??
+          entityIdOf(key) ??
+          key,
         value: key,
       };
     });

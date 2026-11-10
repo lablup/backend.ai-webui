@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 */
-// TODO(needs-backend): #11082 V2 has no filter on the caller's mount permission (`requiredPermission`);
+// TODO(needs-backend): #11103 V2 has no filter on the caller's mount permission (`requiredPermission`);
 // the scope-less RBAC picker also stays here until an `adminVfoldersV2` select exists.
 import { BAIVFolderNodeSelectPaginatedQuery } from '../../__generated__/BAIVFolderNodeSelectPaginatedQuery.graphql';
 import { BAIVFolderNodeSelectValueQuery } from '../../__generated__/BAIVFolderNodeSelectValueQuery.graphql';

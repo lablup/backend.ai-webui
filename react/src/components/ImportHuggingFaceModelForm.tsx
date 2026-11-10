@@ -330,7 +330,7 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
                   },
                 ]}
               >
-                {/* TODO(needs-backend): #11082 V2 cannot filter by the caller's mount permission. */}
+                {/* TODO(needs-backend): #11103 V2 cannot filter by the caller's mount permission. */}
                 <BAIVFolderNodeSelect
                   ref={vfolderSelectRef}
                   label={t('deployment.ModelFolder')}
