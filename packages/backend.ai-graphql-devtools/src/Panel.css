@@ -1,0 +1,176 @@
+.bai-gql-devtools {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-end: 0;
+  z-index: 100000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  box-sizing: border-box;
+  width: min(64rem, 95vw);
+  min-width: min(50rem, 95vw);
+  max-width: 95vw;
+  padding: 0.75rem;
+  border-inline-start: 1px solid var(--color-border);
+  background: var(--color-background-surface);
+  color: var(--color-text-primary);
+  font:
+    0.8125rem/1.4 system-ui,
+    sans-serif;
+  box-shadow: var(--shadow-high);
+}
+
+.bai-gql-devtools__resize {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 0.5rem;
+  cursor: col-resize;
+  touch-action: none;
+  user-select: none;
+}
+
+.bai-gql-devtools__resize:hover,
+.bai-gql-devtools__resize:active {
+  background: var(--color-border);
+}
+
+.bai-gql-devtools__header,
+.bai-gql-devtools__toolbar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.bai-gql-devtools__title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.bai-gql-devtools__label {
+  flex: none;
+  font-weight: 600;
+}
+
+.bai-gql-devtools__switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  cursor: pointer;
+}
+
+.bai-gql-devtools__button {
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-inner);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.bai-gql-devtools__button:disabled,
+.bai-gql-devtools__entry:disabled {
+  cursor: progress;
+  opacity: 0.6;
+}
+
+.bai-gql-devtools__editor {
+  flex: 3;
+  min-height: 0;
+  border: 1px solid var(--color-border);
+}
+
+.bai-gql-devtools__editor--variables {
+  flex: 1;
+}
+
+.bai-gql-devtools__body {
+  display: flex;
+  flex: 1;
+  gap: 0.75rem;
+  min-height: 0;
+}
+
+.bai-gql-devtools__history,
+.bai-gql-devtools__main,
+.bai-gql-devtools__tabpanel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+  min-height: 0;
+}
+
+.bai-gql-devtools__history {
+  flex: none;
+  width: 15rem;
+}
+
+.bai-gql-devtools__main,
+.bai-gql-devtools__tabpanel {
+  flex: 1;
+}
+
+.bai-gql-devtools__tabpanel--hidden {
+  display: none;
+}
+
+.bai-gql-devtools__tabs {
+  display: flex;
+  flex: none;
+  gap: 0.75rem;
+  border-block-end: 1px solid var(--color-border);
+}
+
+.bai-gql-devtools__tab {
+  padding: 0.25rem 0.5rem;
+  border: 0;
+  border-block-end: 2px solid transparent;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.bai-gql-devtools__tab[aria-selected='true'] {
+  border-block-end-color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.bai-gql-devtools__history-list {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  list-style: none;
+}
+
+.bai-gql-devtools__entry {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0.375rem 0.5rem;
+  border: 0;
+  border-block-end: 1px solid var(--color-border);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.bai-gql-devtools__entry:hover:enabled {
+  background: var(--color-border);
+}
+
+.bai-gql-devtools__entry-label {
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

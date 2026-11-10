@@ -1,3 +1,4 @@
+import { graphqlDevtools } from '../packages/backend.ai-graphql-devtools/vite-plugin.mjs';
 import { chunkReport } from './vite-plugins/chunk-report';
 import { relay } from './vite-plugins/relay';
 import {
@@ -1052,6 +1053,13 @@ export default defineConfig(({ command, mode }) => {
       // projectRootStaticPlugin — its 'pre' HTML handler discards earlier
       // transforms (see review-overlay/index.ts).
       devReviewOverlayPlugin(),
+      graphqlDevtools({
+        schemaPath: resolve(projectRoot, 'data/schema.graphql'),
+        clientDirectivesPath: resolve(
+          projectRoot,
+          'data/client-directives.graphql',
+        ),
+      }),
       // FR-3880: the same overlay inside a `vite build` artifact, for the
       // nightly Amplify deployment. Opt IN with VITE_REVIEW_OVERLAY_BUILD=1;
       // inert (and so a byte-identical bundle) without it.
