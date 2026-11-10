@@ -2528,6 +2528,7 @@
     "ActivateProject": "Aktifkan Proyek",
     "Active": "Aktif",
     "BulkEdit": "Edit Massal",
+    "BulkUpdatePartialFailure": "Gagal memperbarui {{count}} proyek.",
     "CreateProject": "Buat Proyek",
     "Deactivate": "Nonaktifkan",
     "DeactivateProject": "Nonaktifkan Proyek",

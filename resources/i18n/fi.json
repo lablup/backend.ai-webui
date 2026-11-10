@@ -2525,6 +2525,7 @@
     "ActivateProject": "Ota projekti käyttöön",
     "Active": "Aktiivinen",
     "BulkEdit": "Massamuokkaus",
+    "BulkUpdatePartialFailure": "{{count}} projektin päivitys epäonnistui.",
     "CreateProject": "Luo projekti",
     "Deactivate": "Poista käytöstä",
     "DeactivateProject": "Poista projekti käytöstä",

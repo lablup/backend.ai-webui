@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2fa6214c01aa0b57764a48f48285c50a>>
+ * @generated SignedSource<<c34966cc6253a569bae07c5f4e3ccc94>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,6 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type BAIProjectBulkEditModalFragment$data = ReadonlyArray<{
+  readonly id: string;
   readonly name: string | null | undefined;
   readonly row_id: string | null | undefined;
   readonly " $fragmentType": "BAIProjectBulkEditModalFragment";
@@ -32,6 +33,13 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
+      "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "name",
       "storageKey": null
     },
@@ -47,6 +55,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "317d7350cbe767a8531fc765f9efe84b";
+(node as any).hash = "10772c6331209f8670097b9a3249fbbd";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1892dac4665f033e39d800fc93b4cbc7>>
+ * @generated SignedSource<<6ce584a54df76c0ea1ed1b6b4be0c70b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -341,12 +341,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "1259c7dbe47bf1fb6902f2df8ee1f955",
+    "cacheID": "ea03932fe331e753508c67d8bebfc297",
     "id": null,
     "metadata": {},
     "name": "ProjectPageQuery",
     "operationKind": "query",
-    "text": "query ProjectPageQuery(\n  $filter: String\n  $order: String\n  $offset: Int\n  $first: Int\n  $before: String\n  $after: String\n  $last: Int\n) {\n  group_nodes(filter: $filter, order: $order, offset: $offset, first: $first, after: $after, before: $before, last: $last) {\n    count\n    edges {\n      node {\n        id\n        ...BAIProjectSettingModalFragment\n        ...BAIProjectTableFragment\n        ...BAIProjectBulkEditModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIAllowedVfolderHostsWithPermissionFromGroupFragment on GroupNode {\n  allowed_vfolder_hosts\n}\n\nfragment BAIProjectBulkEditModalFragment on GroupNode {\n  name\n  row_id\n}\n\nfragment BAIProjectSettingModalFragment on GroupNode {\n  id\n  row_id\n  name\n  description\n  is_active\n  total_resource_slots\n  allowed_vfolder_hosts\n  integration_id\n  resource_policy\n  type\n  container_registry\n  scaling_groups\n}\n\nfragment BAIProjectTableFragment on GroupNode {\n  id\n  row_id\n  name\n  domain_name\n  description\n  is_active\n  created_at\n  modified_at\n  total_resource_slots\n  integration_id\n  resource_policy\n  type\n  container_registry\n  scaling_groups\n  ...BAIAllowedVfolderHostsWithPermissionFromGroupFragment\n}\n"
+    "text": "query ProjectPageQuery(\n  $filter: String\n  $order: String\n  $offset: Int\n  $first: Int\n  $before: String\n  $after: String\n  $last: Int\n) {\n  group_nodes(filter: $filter, order: $order, offset: $offset, first: $first, after: $after, before: $before, last: $last) {\n    count\n    edges {\n      node {\n        id\n        ...BAIProjectSettingModalFragment\n        ...BAIProjectTableFragment\n        ...BAIProjectBulkEditModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIAllowedVfolderHostsWithPermissionFromGroupFragment on GroupNode {\n  allowed_vfolder_hosts\n}\n\nfragment BAIProjectBulkEditModalFragment on GroupNode {\n  id\n  name\n  row_id\n}\n\nfragment BAIProjectSettingModalFragment on GroupNode {\n  id\n  row_id\n  name\n  description\n  is_active\n  total_resource_slots\n  allowed_vfolder_hosts\n  integration_id\n  resource_policy\n  type\n  container_registry\n  scaling_groups\n}\n\nfragment BAIProjectTableFragment on GroupNode {\n  id\n  row_id\n  name\n  domain_name\n  description\n  is_active\n  created_at\n  modified_at\n  total_resource_slots\n  integration_id\n  resource_policy\n  type\n  container_registry\n  scaling_groups\n  ...BAIAllowedVfolderHostsWithPermissionFromGroupFragment\n}\n"
   }
 };
 })();

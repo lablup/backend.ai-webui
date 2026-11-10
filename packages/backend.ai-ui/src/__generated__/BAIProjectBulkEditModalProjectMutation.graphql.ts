@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<27a640641d2b11ecb14aa94bc281de5f>>
+ * @generated SignedSource<<1111f4e79cf51b9bf8e6be985b443463>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -33,6 +33,7 @@ export type BAIProjectBulkEditModalProjectMutation$data = {
       readonly message: string;
     }>;
     readonly successes: ReadonlyArray<{
+      readonly entityId: string;
       readonly id: string;
     }>;
   };
@@ -80,7 +81,14 @@ v2 = [
         "name": "successes",
         "plural": true,
         "selections": [
-          (v1/*: any*/)
+          (v1/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "entityId",
+            "storageKey": null
+          }
         ],
         "storageKey": null
       },
@@ -125,16 +133,16 @@ return {
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "7e9c908b74d4c483d68699d851195eef",
+    "cacheID": "d1c3dcd8ddd37770e4e74c52c0c7563f",
     "id": null,
     "metadata": {},
     "name": "BAIProjectBulkEditModalProjectMutation",
     "operationKind": "mutation",
-    "text": "mutation BAIProjectBulkEditModalProjectMutation(\n  $input: PartialBulkUpdateProjectsInput!\n) {\n  partialBulkUpdateProjectsV2(input: $input) {\n    successes {\n      id\n    }\n    failed {\n      id\n      message\n    }\n  }\n}\n"
+    "text": "mutation BAIProjectBulkEditModalProjectMutation(\n  $input: PartialBulkUpdateProjectsInput!\n) {\n  partialBulkUpdateProjectsV2(input: $input) {\n    successes {\n      id\n      entityId\n    }\n    failed {\n      id\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "cc4fd05715293523cb12284592d64f6e";
+(node as any).hash = "0d72be36233058ecc9143192d3395b6c";
 
 export default node;

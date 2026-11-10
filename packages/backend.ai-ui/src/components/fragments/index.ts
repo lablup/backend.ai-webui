@@ -126,7 +126,11 @@ export type { BAIResourceGroupFilter } from './BAIResourceGroupSelect';
 export { default as BAIStorageProxySelect } from './BAIStorageProxySelect';
 export type { BAIStorageProxySelectProps } from './BAIStorageProxySelect';
 export { default as BAIProjectBulkEditModal } from './BAIProjectBulkEditModal';
-export type { BAIProjectBulkEditModalProps } from './BAIProjectBulkEditModal';
+export type {
+  BAIProjectBulkEditModalProps,
+  BAIProjectBulkEditFailure,
+  BAIProjectBulkEditResult,
+} from './BAIProjectBulkEditModal';
 export { default as BAIAgentTable } from './BAIAgentTable';
 export type { BAIAgentTableProps, AgentNodeInList } from './BAIAgentTable';
 export { default as BAIVFolderSelect } from './BAIVFolderSelect';

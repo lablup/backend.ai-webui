@@ -2527,6 +2527,7 @@
     "ActivateProject": "激活项目",
     "Active": "活跃",
     "BulkEdit": "批量编辑",
+    "BulkUpdatePartialFailure": "{{count}} 个项目更新失败。",
     "CreateProject": "创建项目",
     "Deactivate": "停用",
     "DeactivateProject": "停用项目",

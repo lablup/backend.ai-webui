@@ -35,7 +35,7 @@ const meta: Meta<typeof BAIProjectBulkEditModal> = {
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | \`selectedProjectFragments\` | \`BAIProjectBulkEditModalFragment$key\` | - | GraphQL fragment reference for selected projects (required) |
-| \`onOk\` | \`(e: React.MouseEvent) => void\` | - | Called when every project was updated |
+| \`onCompleted\` | \`(result: BAIProjectBulkEditResult) => void\` | - | Called when the mutation settles, with the updated ids and the failed projects |
 | \`onCancel\` | \`(e: React.MouseEvent) => void\` | - | Called when modal is cancelled |
 
 ## Features
@@ -70,11 +70,12 @@ Mutation is mocked and will execute successfully, closing the modal on completio
         defaultValue: { summary: 'false' },
       },
     },
-    onOk: {
+    onCompleted: {
       control: false,
-      description: 'Called when every project was updated',
+      description:
+        'Called when the mutation settles, with `succeededIds` and `failures` (id, name, message)',
       table: {
-        type: { summary: '(e: React.MouseEvent) => void' },
+        type: { summary: '(result: BAIProjectBulkEditResult) => void' },
       },
     },
     onCancel: {
@@ -119,7 +120,7 @@ const QueryResolver = () => {
         <BAIProjectBulkEditModal
           selectedProjectFragments={projectNodes}
           open={open}
-          onOk={() => setOpen(false)}
+          onCompleted={() => setOpen(false)}
           onCancel={() => setOpen(false)}
         />
       </BAIFlex>

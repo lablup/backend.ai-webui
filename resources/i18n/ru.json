@@ -2525,6 +2525,7 @@
     "ActivateProject": "Активировать проект",
     "Active": "Активен",
     "BulkEdit": "Массовое редактирование",
+    "BulkUpdatePartialFailure": "Не удалось обновить {{count}} проект(ов).",
     "CreateProject": "Создать проект",
     "Deactivate": "Деактивировать",
     "DeactivateProject": "Деактивировать проект",

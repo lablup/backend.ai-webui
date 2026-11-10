@@ -2525,6 +2525,7 @@
     "ActivateProject": "Ενεργοποίηση έργου",
     "Active": "Ενεργό",
     "BulkEdit": "Μαζική επεξεργασία",
+    "BulkUpdatePartialFailure": "Απέτυχε η ενημέρωση {{count}} έργων.",
     "CreateProject": "Δημιουργία έργου",
     "Deactivate": "Απενεργοποίηση",
     "DeactivateProject": "Απενεργοποίηση έργου",

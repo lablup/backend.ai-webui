@@ -2525,6 +2525,7 @@
     "ActivateProject": "Attiva progetto",
     "Active": "Attivo",
     "BulkEdit": "Modifica in blocco",
+    "BulkUpdatePartialFailure": "{{count}} progetto/i non aggiornato/i.",
     "CreateProject": "Crea progetto",
     "Deactivate": "Disattiva",
     "DeactivateProject": "Disattiva progetto",

@@ -2527,6 +2527,7 @@
     "ActivateProject": "Aktywuj projekt",
     "Active": "Aktywny",
     "BulkEdit": "Masowa edycja",
+    "BulkUpdatePartialFailure": "Nie udało się zaktualizować {{count}} projektu(-ów).",
     "CreateProject": "Utwórz projekt",
     "Deactivate": "Dezaktywuj",
     "DeactivateProject": "Dezaktywuj projekt",

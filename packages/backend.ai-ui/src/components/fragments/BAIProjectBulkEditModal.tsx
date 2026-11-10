@@ -13,13 +13,32 @@ import * as _ from 'lodash-es';
 import { Suspense, useState } from 'react';
 import { graphql, useFragment } from 'react-relay';
 
-export interface BAIProjectBulkEditModalProps extends BAIModalProps {
+/** One project the bulk update did not apply to. `id` is the `GroupNode` id. */
+export interface BAIProjectBulkEditFailure {
+  id: string;
+  name: string;
+  message: string;
+}
+
+/** Per-project outcome of one save; ids are `GroupNode` ids. */
+export interface BAIProjectBulkEditResult {
+  succeededIds: string[];
+  failures: BAIProjectBulkEditFailure[];
+}
+
+export interface BAIProjectBulkEditModalProps extends Omit<
+  BAIModalProps,
+  'onOk'
+> {
   selectedProjectFragments: BAIProjectBulkEditModalFragment$key;
+  /** Called once the request settles; a rejected request fails every project. */
+  onCompleted?: (result: BAIProjectBulkEditResult) => void;
 }
 
 const BAIProjectBulkEditModal = ({
   selectedProjectFragments,
-  ...tableProps
+  onCompleted,
+  ...modalProps
 }: BAIProjectBulkEditModalProps) => {
   'use memo';
   const { t } = useBAIi18n();
@@ -35,6 +54,7 @@ const BAIProjectBulkEditModal = ({
         partialBulkUpdateProjectsV2(input: $input) {
           successes {
             id
+            entityId
           }
           failed {
             id
@@ -48,6 +68,7 @@ const BAIProjectBulkEditModal = ({
     graphql`
       fragment BAIProjectBulkEditModalFragment on GroupNode
       @relay(plural: true) {
+        id
         name
         row_id
       }
@@ -57,39 +78,54 @@ const BAIProjectBulkEditModal = ({
 
   return (
     <BAIModal
-      {...tableProps}
+      {...modalProps}
       confirmLoading={isSaving}
       title={t('comp:BAIProjectBulkEditModal.UpdateMultipleProjects')}
       okText={t('general.button.Save')}
-      onOk={(e) => {
+      onOk={() => {
         setIsSaving(true);
         form
           .validateFields()
           .then((values) => {
-            const ids = _.compact(
-              _.map(selectedProjects, (project) => project.row_id),
+            const targets = _.filter(selectedProjects, (project) =>
+              Boolean(project.row_id),
             );
+            const byRowId = _.keyBy(targets, 'row_id');
             return mutateProjectWithPromise({
               input: {
-                items: _.map(ids, (id) => ({
-                  id,
+                items: _.map(targets, (project) => ({
+                  id: project.row_id as string,
                   input: { resourcePolicy: values.resource_policy },
                 })),
               },
-            }).then(({ partialBulkUpdateProjectsV2: result }) => {
-              if (_.isEmpty(result.failed)) {
-                tableProps.onOk?.(e);
-                return;
-              }
-              _.forEach(result.failed, (failure) => {
-                const name = _.find(selectedProjects, {
-                  row_id: failure.id,
-                })?.name;
-                message.error(
-                  name ? `${name}: ${failure.message}` : failure.message,
-                );
-              });
-            });
+            }).then(
+              ({ partialBulkUpdateProjectsV2: result }) => {
+                onCompleted?.({
+                  succeededIds: _.compact(
+                    _.map(
+                      result.successes,
+                      (project) => byRowId[project.entityId]?.id,
+                    ),
+                  ),
+                  failures: _.map(result.failed, (failure) => ({
+                    id: byRowId[failure.id]?.id ?? failure.id,
+                    name: byRowId[failure.id]?.name ?? failure.id,
+                    message: failure.message,
+                  })),
+                });
+              },
+              (error) => {
+                const reason = getErrorMessage(error);
+                onCompleted?.({
+                  succeededIds: [],
+                  failures: _.map(targets, (project) => ({
+                    id: project.id,
+                    name: project.name ?? project.id,
+                    message: reason,
+                  })),
+                });
+              },
+            );
           })
           .catch((error) => {
             // `validateFields` rejects with `errorFields`; the form shows those.

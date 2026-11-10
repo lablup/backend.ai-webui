@@ -2512,6 +2512,7 @@
     "ActivateProject": "Activate Project",
     "Active": "Active",
     "BulkEdit": "Bulk Edit",
+    "BulkUpdatePartialFailure": "{{count}} project(s) failed to be updated.",
     "CreateProject": "Create Project",
     "Deactivate": "Deactivate",
     "DeactivateProject": "Deactivate Project",

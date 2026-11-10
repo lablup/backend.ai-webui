@@ -2525,6 +2525,7 @@
     "ActivateProject": "Aktifkan Projek",
     "Active": "Aktif",
     "BulkEdit": "Sunting Pukal",
+    "BulkUpdatePartialFailure": "Gagal mengemas kini {{count}} projek.",
     "CreateProject": "Buat Projek",
     "Deactivate": "Nyahaktifkan",
     "DeactivateProject": "Nyahaktifkan Projek",

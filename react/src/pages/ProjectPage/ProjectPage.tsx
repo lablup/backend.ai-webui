@@ -23,6 +23,7 @@ import ProjectAdminSettingModal, {
 } from './components/ProjectAdminSettingModal';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
+  BAIBulkErrorModal,
   BAIButton,
   BAICard,
   BAIDeleteConfirmModal,
@@ -40,6 +41,9 @@ import {
   filterOutEmpty,
   isValidUUID,
   mergeFilterValues,
+  type BAIColumnsType,
+  type BAIProjectBulkEditFailure,
+  type BAIProjectBulkEditResult,
   type ProjectInList,
   useBAILogger,
   useErrorMessageResolver,
@@ -99,6 +103,10 @@ const ProjectPage = () => {
   const [selectedProject, setSelectedProject] = useState<ProjectNode | null>(
     null,
   );
+  // Projects the last bulk edit could not update; the error modal is open while non-empty.
+  const [bulkEditFailures, setBulkEditFailures] = useState<
+    BAIProjectBulkEditFailure[]
+  >([]);
   const [purgingProject, setPurgingProject] = useState<ProjectInList | null>(
     null,
   );
@@ -274,6 +282,46 @@ const ProjectPage = () => {
       prev.filter((project) => project.id !== projectId),
     );
   };
+
+  const handleBulkEditCompleted = ({
+    succeededIds,
+    failures,
+  }: BAIProjectBulkEditResult) => {
+    toggleBulkEditModal();
+    if (!_.isEmpty(succeededIds)) {
+      updateFetchKey();
+    }
+    if (_.isEmpty(failures)) {
+      message.success(t('notification.SuccessfullyUpdated'));
+      setSelectedProjectList([]);
+      return;
+    }
+    failures.forEach((failure) =>
+      logger.error('Failed to update project', failure.message),
+    );
+    // Keep only the failed projects selected so the next bulk edit retries them.
+    const failedIds = _.map(failures, 'id');
+    setSelectedProjectList((prev) =>
+      prev.filter((project) => failedIds.includes(project.id)),
+    );
+    message.error(
+      t('project.BulkUpdatePartialFailure', { count: failures.length }),
+    );
+    setBulkEditFailures(failures);
+  };
+
+  const bulkEditFailureColumns: BAIColumnsType<BAIProjectBulkEditFailure> = [
+    {
+      key: 'name',
+      title: t('project.Name'),
+      dataIndex: 'name',
+    },
+    {
+      key: 'message',
+      title: t('rbac.ErrorMessage'),
+      dataIndex: 'message',
+    },
+  ];
 
   const handleDeactivateProject = (project: ProjectInList) =>
     new Promise<void>((resolve) => {
@@ -659,14 +707,19 @@ const ProjectPage = () => {
         <BAIProjectBulkEditModal
           open={openBulkEditModal}
           selectedProjectFragments={selectedProjectList}
-          onOk={() => {
-            updateFetchKey();
-            toggleBulkEditModal();
-            setSelectedProjectList([]);
-          }}
+          onCompleted={handleBulkEditCompleted}
           onCancel={() => {
             toggleBulkEditModal();
           }}
+        />
+        <BAIBulkErrorModal<BAIProjectBulkEditFailure>
+          open={!_.isEmpty(bulkEditFailures)}
+          alertDescription={t('project.BulkUpdatePartialFailure', {
+            count: bulkEditFailures.length,
+          })}
+          columns={bulkEditFailureColumns}
+          dataSource={bulkEditFailures}
+          onRequestClose={() => setBulkEditFailures([])}
         />
         {projectAdminQueryRef != null && (
           <BAIUnmountAfterClose>

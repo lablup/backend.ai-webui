@@ -2527,6 +2527,7 @@
     "ActivateProject": "プロジェクトを有効化",
     "Active": "アクティブ",
     "BulkEdit": "一括編集",
+    "BulkUpdatePartialFailure": "{{count}}件のプロジェクトの更新に失敗しました。",
     "CreateProject": "プロジェクトを作成",
     "Deactivate": "無効化",
     "DeactivateProject": "プロジェクトを無効化",
