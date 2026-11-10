@@ -260,7 +260,8 @@ const AllocationCell: React.FC<{ record: AgentNodeInList }> = ({ record }) => {
 const UtilizationCell: React.FC<{
   value: string | null | undefined;
   record: AgentNodeInList;
-}> = ({ value, record }) => {
+  hiddenLiveStatKeys?: ReadonlyArray<string>;
+}> = ({ value, record, hiddenLiveStatKeys }) => {
   'use memo';
   const { t } = useBAIi18n();
   const { mergedResourceSlots } = useBAIResourceSlots();
@@ -471,6 +472,9 @@ const UtilizationCell: React.FC<{
               </BAIFlex>
             );
           }
+          if (_.includes(hiddenLiveStatKeys, statKey)) {
+            return null;
+          }
           if (_.includes(['net_rx', 'net_tx'], statKey)) {
             const convertedValue = convertToDecimalUnit(
               parsedValue.node[statKey]?.current,
@@ -605,6 +609,8 @@ export interface BAIAgentTableProps extends Omit<
   customizeColumns?: (
     baseColumns: BAIColumnType<AgentNodeInList>[],
   ) => BAIColumnType<AgentNodeInList>[];
+  /** Live-stat keys the utilization cell leaves out (`net_rx`, `net_tx`). */
+  hiddenLiveStatKeys?: ReadonlyArray<string>;
 }
 
 const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
@@ -612,6 +618,7 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
   onClickAgentName,
   onChangeOrder,
   customizeColumns,
+  hiddenLiveStatKeys,
   ...tableProps
 }) => {
   'use memo';
@@ -748,7 +755,11 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
       dataIndex: 'live_stat',
       render: (value, record) => (
         <CellErrorBoundary resetKeys={[value, record?.available_slots]}>
-          <UtilizationCell value={value} record={record} />
+          <UtilizationCell
+            value={value}
+            record={record}
+            hiddenLiveStatKeys={hiddenLiveStatKeys}
+          />
         </CellErrorBoundary>
       ),
     },

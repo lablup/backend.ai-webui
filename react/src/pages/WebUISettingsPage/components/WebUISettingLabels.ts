@@ -191,6 +191,10 @@ export const useWebUISettingLabels = (): {
         title: t('webuiSettings.HideAgents'),
         description: t('webuiSettings.DescHideAgents'),
       },
+      hiddenAgentLiveStats: {
+        title: t('webuiSettings.HiddenAgentLiveStats'),
+        description: t('webuiSettings.DescHiddenAgentLiveStats'),
+      },
       enableReservoir: {
         title: t('webuiSettings.EnableReservoir'),
         description: t('webuiSettings.DescEnableReservoir'),

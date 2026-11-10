@@ -10,6 +10,7 @@ import {
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useThemeMode } from '../hooks/useThemeMode';
+import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 import AgentDetailDrawer from './AgentDetailDrawer';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import WebMCPAgentListTools from './WebMCPAgentListTools';
@@ -64,6 +65,7 @@ const AgentList: React.FC<AgentListProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { isDarkMode } = useThemeMode();
+  const { hiddenAgentLiveStats } = useEffectiveLoginConfig();
   const [currentAgentInfo, setCurrentAgentInfo] = useState<Agent | null>();
   const [queryParams, setQueryParams] = useQueryStates({
     status: parseAsString.withDefault('ALIVE'),
@@ -337,6 +339,7 @@ const AgentList: React.FC<AgentListProps> = ({
       <BAIAgentTable
         resizable
         agentsFragment={agentNodes}
+        hiddenLiveStatKeys={hiddenAgentLiveStats}
         onClickAgentName={(agent) => {
           const targetAgent = _.find(
             agent_nodes?.edges,
