@@ -76,6 +76,12 @@ export const docs = {
       description:
         'Transforms the built-in column list before it reaches the table. Left unset, the base columns are used as-is.',
     },
+    {
+      name: 'hiddenLiveStatKeys',
+      type: 'ReadonlyArray<string>',
+      description:
+        'Live-stat keys the utilization cell leaves out, such as `net_rx` and `net_tx`. Left unset, every stat the agent reports is shown.',
+    },
   ],
   examples: [
     {

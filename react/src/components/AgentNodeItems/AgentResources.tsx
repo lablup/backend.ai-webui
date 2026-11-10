@@ -4,6 +4,7 @@
  */
 import { AgentResourcesFragment$key } from '../../__generated__/AgentResourcesFragment.graphql';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
+import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import AgentDetailModal from '../AgentDetailModal';
 import SimpleProgressWithLabel from '../SimpleProgressWithLabel';
 import { HStack } from '@lablup/ui-common';
@@ -38,6 +39,7 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
 
   const { t } = useTranslation();
   const { mergedResourceSlots } = useResourceSlotsDetails();
+  const { hiddenAgentLiveStats } = useEffectiveLoginConfig();
 
   const [openInfoModal, setOpenInfoModal] = useState(false);
 
@@ -369,6 +371,9 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
                         <BAIText>{`${toFixedFloorWithoutTrailingZeros(parsedLiveStat?.node?.[statKey]?.current, 2)} °C`}</BAIText>
                       </BAIFlex>
                     );
+                  }
+                  if (hiddenAgentLiveStats.includes(statKey)) {
+                    return null;
                   }
                   if (['net_rx', 'net_tx'].includes(statKey)) {
                     const convertedValue = convertToDecimalUnit(
