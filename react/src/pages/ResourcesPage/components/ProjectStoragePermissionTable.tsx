@@ -213,7 +213,7 @@ const ProjectStoragePermissionTable: React.FC<
     (domainProjectsV2?.edges ?? []).map((edge) => edge?.node ?? null),
   );
 
-  // TODO(needs-backend): #11078 UpdateProjectInput has no allowed vfolder hosts,
+  // TODO(needs-backend): #11105 UpdateProjectInput has no allowed vfolder hosts,
   // so this write stays on modify_group.
   const [commitModifyGroup] =
     useMutation<ProjectStoragePermissionTableModifyGroupMutation>(graphql`

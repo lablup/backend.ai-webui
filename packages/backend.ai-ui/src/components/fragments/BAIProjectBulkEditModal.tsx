@@ -2,7 +2,7 @@ import { BAIProjectBulkEditModalFragment$key } from '../../__generated__/BAIProj
 import { BAIProjectBulkEditModalProjectMutation } from '../../__generated__/BAIProjectBulkEditModalProjectMutation.graphql';
 import { App } from '../../app-shim';
 import { Form } from '../../form-engine';
-import { useMutationWithPromise } from '../../hooks';
+import { useErrorMessageResolver, useMutationWithPromise } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIFlex from '../BAIFlex';
 import BAIListAlert from '../BAIListAlert';
@@ -24,6 +24,7 @@ const BAIProjectBulkEditModal = ({
   'use memo';
   const { t } = useBAIi18n();
   const { message } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
   const [form] = Form.useForm();
   const [isSaving, setIsSaving] = useState(false);
   const mutateProjectWithPromise =
@@ -34,9 +35,6 @@ const BAIProjectBulkEditModal = ({
         partialBulkUpdateProjectsV2(input: $input) {
           successes {
             id
-            organization {
-              resourcePolicy
-            }
           }
           failed {
             id
@@ -94,9 +92,9 @@ const BAIProjectBulkEditModal = ({
             });
           })
           .catch((error) => {
-            if (error instanceof Error) {
-              message.error(error.message);
-            }
+            // `validateFields` rejects with `errorFields`; the form shows those.
+            if (error?.errorFields) return;
+            message.error(getErrorMessage(error));
           })
           .finally(() => setIsSaving(false));
       }}

@@ -105,7 +105,7 @@ const BAIProjectSettingModal = ({
       },
     );
 
-  // TODO(needs-backend): #11078 Create/UpdateProjectInput lack resource slots,
+  // TODO(needs-backend): #11105 Create/UpdateProjectInput lack resource slots,
   // vfolder hosts, registry and is_active; create/edit stay on *_group.
   const [commitCreateProject, isInFlightCreateProject] =
     useMutation<BAIProjectSettingModalCreateMutation>(graphql`

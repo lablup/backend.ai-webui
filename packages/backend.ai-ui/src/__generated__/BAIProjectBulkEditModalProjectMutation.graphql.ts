@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ce9bd19bdb3b45b83552a7c1f946e856>>
+ * @generated SignedSource<<27a640641d2b11ecb14aa94bc281de5f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -34,9 +34,6 @@ export type BAIProjectBulkEditModalProjectMutation$data = {
     }>;
     readonly successes: ReadonlyArray<{
       readonly id: string;
-      readonly organization: {
-        readonly resourcePolicy: string;
-      };
     }>;
   };
 };
@@ -83,25 +80,7 @@ v2 = [
         "name": "successes",
         "plural": true,
         "selections": [
-          (v1/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ProjectOrganizationInfo",
-            "kind": "LinkedField",
-            "name": "organization",
-            "plural": false,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "resourcePolicy",
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
+          (v1/*: any*/)
         ],
         "storageKey": null
       },
@@ -146,16 +125,16 @@ return {
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "e224687758e85158fdb85089e64c48a7",
+    "cacheID": "7e9c908b74d4c483d68699d851195eef",
     "id": null,
     "metadata": {},
     "name": "BAIProjectBulkEditModalProjectMutation",
     "operationKind": "mutation",
-    "text": "mutation BAIProjectBulkEditModalProjectMutation(\n  $input: PartialBulkUpdateProjectsInput!\n) {\n  partialBulkUpdateProjectsV2(input: $input) {\n    successes {\n      id\n      organization {\n        resourcePolicy\n      }\n    }\n    failed {\n      id\n      message\n    }\n  }\n}\n"
+    "text": "mutation BAIProjectBulkEditModalProjectMutation(\n  $input: PartialBulkUpdateProjectsInput!\n) {\n  partialBulkUpdateProjectsV2(input: $input) {\n    successes {\n      id\n    }\n    failed {\n      id\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "8cec9f2084a7e839f36155174748c551";
+(node as any).hash = "cc4fd05715293523cb12284592d64f6e";
 
 export default node;
