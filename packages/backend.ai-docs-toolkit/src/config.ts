@@ -111,6 +111,8 @@ export interface AgentConfig {
   styleGuideFile?: string;
   translationGuideFile?: string;
   screenshotGuideFile?: string;
+  /** Command that replaces the Git LFS pointer images under the docs source with the real files. */
+  imagesPullCommand?: string;
   app?: {
     baseUrl?: string;
     routes?: Array<{ path: string; name: string }>;

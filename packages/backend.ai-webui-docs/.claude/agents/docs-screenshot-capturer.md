@@ -33,6 +33,7 @@ After `browser_navigate`, the page often shows loading states. **Always use `bro
 - **Documentation images**: `./src/{lang}/images/`
 - **All 4 language directories have identical filenames** but each must be captured in its own UI locale
 - **Environment variables**: `E2E_USER`, `E2E_PASSWORD`
+- **Images are in Git LFS**: a checkout holds pointer files until `pnpm --filter backend.ai-webui-docs run images:pull` fetches the real images. It needs git-lfs, set up once with `git lfs install --skip-repo`; without git-lfs, stop and report that it is missing. Run it before Step 5: the gate cannot compare a capture with a pointer, and committing or pushing the accepted images needs git-lfs too.
 
 ## Workflow
 
@@ -104,7 +105,7 @@ for lang in en ja ko th; do
 done
 ```
 
-Add `--json` for the measured difference per file. **Never bypass the gate** with `cp`. If a skipped image truly must be replaced, rerun the gate with `--force <file.png>` and state in your report which file you forced and why. If an existing image is a Git LFS pointer, fetch the real images with `git lfs pull --exclude=""` (the empty exclude overrides a `fetchexclude` in `.lfsconfig`; use the project's own pull script when it has one) and rerun.
+Add `--json` for the measured difference per file. **Never bypass the gate** with `cp`. If a skipped image truly must be replaced, rerun the gate with `--force <file.png>` and state in your report which file you forced and why. If an existing image is still a Git LFS pointer, run `pnpm --filter backend.ai-webui-docs run images:pull` and rerun.
 
 **Verify per-language uniqueness:**
 ```bash

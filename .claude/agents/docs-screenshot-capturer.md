@@ -62,6 +62,7 @@ A fixed delay is not a substitute — `document.fonts.ready` resolves only once 
 - **All 4 language directories have identical filenames** but each must be captured in its own UI locale
 - **E2E environment**: `e2e/envs/.env.playwright` - endpoint URLs, credentials
 - **Existing screenshot test**: `e2e/screenshot.test.ts` - reference patterns
+- **Images are in Git LFS**: a checkout holds pointer files until `pnpm --filter backend.ai-webui-docs run images:pull` fetches the real images. It needs git-lfs, set up once with `git lfs install --skip-repo`; without git-lfs, stop and report that it is missing. Run it before Step 5: the gate cannot compare a capture with a pointer, and committing or pushing the accepted images needs git-lfs too (without it the images are committed as raw bytes and `.husky/pre-push` refuses the push).
 
 ## Workflow
 
@@ -192,7 +193,7 @@ The gate compares with the file in the working tree. If you run it more than onc
 
 **Never bypass the gate** — no `cp`, `mv` or other copy into the docs images directory. An `unchanged` result means the capture would only add bytes to the repository. If a skipped image truly must be replaced (e.g. a difference the gate cannot weigh, such as a deliberately updated sample value in a tiny area), rerun the gate for that language with `--force <file.png>` (repeatable) and state in your report which file you forced and why.
 
-If the gate fails because an existing image is a Git LFS pointer, run `pnpm --filter backend.ai-webui-docs run images:pull` (a plain `git lfs pull` skips the manual's images because of `.lfsconfig`) and rerun it. Do not work around the error.
+If the gate still fails because an existing image is a Git LFS pointer, run `pnpm --filter backend.ai-webui-docs run images:pull` (a plain `git lfs pull` skips the manual's images because of `.lfsconfig`) and rerun it. Do not work around the error.
 
 **Verify per-language uniqueness:**
 ```bash

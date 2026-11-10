@@ -40,7 +40,7 @@ os="$(uname -s)"
 arch="$(uname -m)"
 if [ "$os" != "Linux" ] || [ "$arch" != "x86_64" ]; then
   log "git-lfs is not installed and this script only downloads it for Linux x86_64 (this is ${os} ${arch})."
-  log "Install git-lfs yourself (https://git-lfs.com, e.g. 'brew install git-lfs'), then run 'git lfs install'."
+  log "Install git-lfs yourself (https://git-lfs.com, e.g. 'brew install git-lfs'), then run 'git lfs install --skip-repo'."
   exit 1
 fi
 

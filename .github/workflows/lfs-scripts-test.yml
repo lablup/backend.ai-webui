@@ -8,6 +8,9 @@ on:
       - ".github/scripts/lfs/**"
       # It prints the maintainer command the fixture runs.
       - ".github/scripts/pr-preview/build-docs-preview.sh"
+      # The contributors' pre-push hook (Husky).
+      - ".husky/pre-push"
+      - "scripts/git-hooks/**"
       - ".github/workflows/lfs-scripts-test.yml"
 
 permissions:
@@ -26,3 +29,6 @@ jobs:
 
       - name: Test the docs image pull script
         run: bash .github/scripts/lfs/test-pull-docs-images.sh
+
+      - name: Test the pre-push hook
+        run: bash scripts/git-hooks/lfs-pre-push.test.sh

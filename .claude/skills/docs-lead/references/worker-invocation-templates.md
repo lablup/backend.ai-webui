@@ -78,7 +78,9 @@ Capture:
 
 Capture in all 4 language UI locales (en, ko, ja, th) using window.switchLanguage
 per SCREENSHOT-GUIDELINES.md. Use 2× zoom. Crop to the relevant element via
-'ref' parameter unless a page-overview capture is explicitly requested. Move
+'ref' parameter unless a page-overview capture is explicitly requested. Run
+pnpm --filter backend.ai-webui-docs run images:pull first (needs git-lfs; stop
+and report if it is missing). Move
 captures into the docs only through the docs-toolkit accept:images gate
 (never cp) and report its per-language new / changed / unchanged counts and
 every skipped or forced file. Verify per-language MD5 uniqueness at the end
