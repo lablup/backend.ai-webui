@@ -36,8 +36,7 @@ export const useWebUILocation = () => useLocation();
 
 /**
  * Per-tab query-string snapshot/restore for page-like tab hosts
- * (pattern A-ii in .specs/FR-3267-tab-url-state). Reads the tab from router
- * location, not nuqs —
+ * (ADR 0021). Reads the tab from router location, not nuqs —
  * nuqs applies external URL changes in a transition that can hang on the
  * incoming tab's Suspense.
  */
@@ -708,7 +707,6 @@ type BackendAIConfig = {
   domainId: string;
   default_session_environment: string;
   default_import_environment: string;
-  allow_project_resource_monitor: boolean;
   allow_manual_image_name_for_session: boolean;
   openPortToPublic: boolean;
   allowPreferredPort: boolean;
@@ -720,17 +718,17 @@ type BackendAIConfig = {
   maxTPUDevicesPerContainer: number;
   maxIPUDevicesPerContainer: number;
   maxATOMDevicesPerContainer: number;
-  maxATOMPlusDevicesPerContainer: number;
+  maxATOMPLUSDevicesPerContainer: number;
+  maxHyperaccelLPUDevicesPerContainer: number;
   maxGaudi2DevicesPerContainer: number;
   maxWarboyDevicesPerContainer: number;
   maxRNGDDevicesPerContainer: number;
   maxShmPerContainer: number;
   maxFileUploadSize: number;
-  allow_image_list: string[];
+  storageWarningThreshold: number;
   maskUserInfo: boolean;
   singleSignOnVendors: string[];
   ssoRealmName: string;
-  enableImportFromHuggingFace: boolean;
   enableContainerCommit: boolean;
   enableModelFolders: boolean;
   appDownloadUrl: string;
@@ -739,10 +737,8 @@ type BackendAIConfig = {
   defaultFileBrowserImage: string;
   fasttrackEndpoint: string;
   hideAgents: boolean;
-  force2FA: boolean;
-  directoryBasedUsage: boolean;
   maxCountForPreopenPorts: number;
-  pluginPages: string;
+  pluginPages: string[];
   blockList: MenuKeys[];
   inactiveList: MenuKeys[];
   allowSignout: boolean;
@@ -752,6 +748,7 @@ type BackendAIConfig = {
   enableInteractiveLoginAccountSwitch: boolean;
   isDirectorySizeVisible: boolean;
   enableReservoir: boolean;
+  enableWebMCP: boolean;
   debug: boolean;
   proxyURL: string;
   allowCustomResourceAllocation: boolean;

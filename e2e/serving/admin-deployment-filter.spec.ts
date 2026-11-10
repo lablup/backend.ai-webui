@@ -1,6 +1,7 @@
 // Covers the filters on Admin Settings > Deployments > Deployments tab: the
 // Owner (`createdUserId`) filter added in #9639 (FR-3914) and the Label key /
-// Label value filters added in #10166.
+// Label value filters added in #10166, and the Serving / Paused / Terminated
+// status tabs added in #10662.
 import {
   createAdminApiContext,
   deleteDeploymentViaApi,
@@ -10,7 +11,10 @@ import {
   createDeploymentShell,
   escapeForRegExp,
 } from '../utils/deployment-fixtures';
-import { skipUnlessLabelableEntityType } from '../utils/feature-gate-util';
+import {
+  skipUnlessLabelableEntityType,
+  skipUnlessManagerVersion,
+} from '../utils/feature-gate-util';
 import {
   loginAsAdmin,
   navigateTo,
@@ -38,7 +42,7 @@ async function applyOwnerFilter(page: Page, email: string): Promise<void> {
     await expect(typeahead).toBeVisible({ timeout: 2000 });
   }).toPass({ timeout: 15000 });
   await typeahead.getByRole('option', { name: 'Owner', exact: true }).click();
-  await page.getByRole('button', { name: 'Owner', exact: true }).click();
+  await page.getByRole('combobox', { name: 'Owner', exact: true }).click();
   await page
     .getByRole('combobox', { name: 'Search options' })
     .fill(email.split('@')[0]);
@@ -89,6 +93,27 @@ async function applyTextFilter(
   ).toHaveCount(0, { timeout: 20000 });
 }
 
+// Sets Desired Replicas to 0 from the deployment detail page's Edit modal,
+// which pauses the deployment. The caller must be on that detail page.
+async function pauseDeploymentFromDetailPage(page: Page): Promise<void> {
+  await page.getByRole('button', { name: 'Edit', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Edit Deployment' });
+  await expect(dialog).toBeVisible({ timeout: 20000 });
+  const replicasInput = dialog.getByRole('spinbutton', {
+    name: /Desired Replicas/,
+  });
+  await expect(replicasInput).toHaveValue('1');
+  await replicasInput.fill('0');
+  await dialog.getByRole('button', { name: 'Save' }).click();
+  await expect(dialog).toBeHidden({ timeout: 20000 });
+  await expect(
+    page
+      .getByRole('term')
+      .filter({ hasText: /^Desired Replicas$/ })
+      .locator('xpath=following-sibling::dd[1]'),
+  ).toHaveText('0', { timeout: 20000 });
+}
+
 test.describe(
   'Admin Deployments - Filters',
   {
@@ -124,6 +149,84 @@ test.describe(
       }
     });
 
+    test(
+      'Admin can switch the admin deployment list between Serving, Paused and Terminated tabs',
+      { tag: ['@functional', '@requires-manager-v26.10'] },
+      async ({ page }) => {
+        // The superadmin intro tour (AdminViewSwitchTour) otherwise covers
+        // the list.
+        await page.addInitScript(() => {
+          localStorage.setItem(
+            'backendaiwebui.settings.user.has_opened_tour_back_to_user_view',
+            'true',
+          );
+          localStorage.setItem(
+            'backendaiwebui.settings.user.has_opened_tour_back_to_admin_settings',
+            'true',
+          );
+        });
+        await skipUnlessManagerVersion(
+          page,
+          '26.10.0a1',
+          'The Paused tab needs ReplicaState.replicaCount, manager >= 26.10.0 (#10662)',
+        );
+        // Arrange: a deployment whose Desired Replicas is set to 0.
+        await navigateTo(page, 'deployments');
+        await createDeploymentShell(page, deploymentName);
+        await pauseDeploymentFromDetailPage(page);
+
+        // A tab's accessible name carries its help tooltip after the label.
+        const statusTab = (label: 'Serving' | 'Paused' | 'Terminated') =>
+          page.getByRole('radio', { name: new RegExp(`^${label}\\b`) });
+        const row = page.getByRole('row', {
+          name: new RegExp(escapeForRegExp(deploymentName)),
+        });
+        const busyGrid = page.locator('.uic-data-grid__body[aria-busy="true"]');
+        // The list keeps the previous tab's rows until the refetch answers, so
+        // wait for the response the tab click triggers before asserting.
+        const switchTab = async (
+          label: 'Serving' | 'Paused' | 'Terminated',
+        ) => {
+          const refetch = page.waitForResponse(
+            (response) =>
+              (response.request().postData() ?? '').includes(
+                'AdminDeploymentQuery',
+              ),
+            { timeout: 30000 },
+          );
+          await statusTab(label).click();
+          await refetch;
+          await expect(statusTab(label)).toBeChecked();
+          await expect(busyGrid).toHaveCount(0, { timeout: 30000 });
+        };
+
+        // The old Running / Terminated toggle is gone; Serving is the default.
+        await page.goto(ADMIN_DEPLOYMENTS_URL);
+        await expect(statusTab('Serving')).toBeChecked({ timeout: 30000 });
+        await expect(statusTab('Paused')).not.toBeChecked();
+        await expect(statusTab('Terminated')).not.toBeChecked();
+        await expect(
+          page.getByRole('radio', { name: 'Running', exact: true }),
+        ).toHaveCount(0);
+
+        // Act: the Paused tab lists the deployment. The list read can lag the
+        // mutation, so reload until the row shows.
+        await expect(async () => {
+          await page.goto(ADMIN_DEPLOYMENTS_URL);
+          await switchTab('Paused');
+          await expect(row).toBeVisible({ timeout: 15000 });
+        }).toPass({ timeout: 60_000 });
+
+        // Neither the Terminated tab nor the Serving tab lists it.
+        await switchTab('Terminated');
+        await expect(row).toHaveCount(0);
+        await switchTab('Paused');
+        await expect(row).toBeVisible({ timeout: 30000 });
+        await switchTab('Serving');
+        await expect(row).toHaveCount(0);
+      },
+    );
+
     test('Admin can filter deployments by owner', async ({ page }) => {
       // Arrange: a deployment owned by the admin account.
       await navigateTo(page, 'deployments');
@@ -141,10 +244,7 @@ test.describe(
       // The condition chip reads as the owner's email, not the user UUID.
       const filterGroup = page.getByRole('group', { name: 'Search filters' });
       await expect(
-        filterGroup.getByRole('button', {
-          name: 'Owner: equals',
-          exact: true,
-        }),
+        filterGroup.getByRole('button', { name: /^Owner: equals / }),
       ).toBeVisible();
       await expect(filterGroup).toContainText(userInfo.admin.email);
       await expect(filterGroup).not.toContainText(
@@ -162,10 +262,13 @@ test.describe(
       const ownerCells = page
         .locator('tbody tr')
         .locator(`td:nth-child(${ownerHeaderIndex + 1})`);
-      await expect(ownerCells.first()).toBeVisible();
-      for (const owner of await ownerCells.allTextContents()) {
-        expect(owner.trim()).toBe(userInfo.admin.email);
-      }
+      // The table keeps the previous rows on screen until the refetch lands.
+      await expect(async () => {
+        await expect(ownerCells.first()).toBeVisible();
+        for (const owner of await ownerCells.allTextContents()) {
+          expect(owner.trim()).toBe(userInfo.admin.email);
+        }
+      }).toPass({ timeout: 30000 });
 
       // Switching the owner to another user drops the admin's deployment.
       await filterGroup

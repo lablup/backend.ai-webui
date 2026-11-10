@@ -5,7 +5,7 @@
  * login error scenario handled by `handleLoginError` in LoginView.tsx.
  *
  * Mock strategy:
- *   - GET  /func/              -> mock server version
+ *   - GET  /func/health, /func/ -> mock reachability probe / server version
  *   - POST /func/admin/gql   -> mock 401 auth-failed (no session; show login form)
  *   - POST /server/login       -> per-test mock response (envelope cases)
  *   - POST /admin/gql          -> gateway-wrapped 401 for the keypair query
@@ -18,6 +18,7 @@
  *     `handleLoginError`.
  */
 import {
+  fillLoginEndpoint,
   modifyConfigToml,
   seedStoredApiEndpoint,
   userInfo,
@@ -49,7 +50,7 @@ const TEST_PASSWORD = userInfo.admin.password;
 // ---------------------------------------------------------------------------
 
 async function setupBaseMocks(page: Page): Promise<void> {
-  await page.route(`${webServerEndpoint}/func/`, async (route) => {
+  await page.route(/\/func\/(health)?$/, async (route) => {
     if (route.request().method() === 'GET') {
       await route.fulfill({
         status: 200,
@@ -74,14 +75,9 @@ async function setupBaseMocks(page: Page): Promise<void> {
 }
 
 async function fillLoginForm(page: Page): Promise<void> {
+  await fillLoginEndpoint(page, webServerEndpoint);
   await page.getByLabel('Email or Username').fill(TEST_EMAIL);
   await page.getByLabel('Password').fill(TEST_PASSWORD);
-
-  const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
-  if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
-    await page.getByText('Advanced').click();
-  }
-  await endpointInput.fill(webServerEndpoint);
 }
 
 async function gotoLoginPage(
@@ -521,6 +517,81 @@ test.describe(
         page.getByRole('button', { name: 'Login', exact: true }),
       ).toBeVisible();
       expect(logoutCalled).toBe(true);
+    });
+  },
+);
+
+// ---------------------------------------------------------------------------
+// Phase 5: OpenID login failure reported back as `?bai_error=` (FR-4126)
+// ---------------------------------------------------------------------------
+
+async function gotoLoginPageWithOpenIDError(
+  page: Page,
+  request: APIRequestContext,
+  errorCode: string,
+): Promise<void> {
+  // Unlike gotoLoginPage, no later /server/login mock needs the silent login to settle.
+  // An empty realm name pins the banner title to the `OpenID` default.
+  await modifyConfigToml(page, request, {
+    general: {
+      connectionMode: 'SESSION',
+      apiEndpoint: '',
+      apiEndpointText: '',
+      ssoRealmName: '',
+    },
+  });
+  await setupBaseMocks(page);
+  await seedStoredApiEndpoint(page);
+  await page.goto(
+    `${webuiEndpoint}/?bai_error=${encodeURIComponent(errorCode)}`,
+  );
+  await page
+    .evaluate(() => {
+      document.getElementById('webpack-dev-server-client-overlay')?.remove();
+    })
+    .catch(() => {});
+}
+
+test.describe(
+  'Login error messages — OpenID login failure (FR-4126)',
+  { tag: ['@regression', '@auth', '@functional'] },
+  () => {
+    test('User sees an OpenID login failure banner that does not come back after a reload', async ({
+      page,
+      request,
+    }) => {
+      await gotoLoginPageWithOpenIDError(page, request, 'openid-access-denied');
+
+      const banner = page
+        .getByRole('alert')
+        .filter({ hasText: 'Login with OpenID failed' });
+      await expect(banner).toBeVisible({ timeout: 30_000 });
+      await expect(banner).toContainText(
+        'Login was canceled, or the requested permissions were not granted.',
+      );
+      await expect(page).not.toHaveURL(/bai_error=/);
+
+      await page.reload();
+      await expect(
+        page.getByRole('button', { name: 'Login', exact: true }),
+      ).toBeVisible({ timeout: 30_000 });
+      await expect(banner).toHaveCount(0);
+    });
+
+    test('User sees the error code in a generic banner for an unknown OpenID error', async ({
+      page,
+      request,
+    }) => {
+      await gotoLoginPageWithOpenIDError(page, request, 'e2e-unknown-code');
+
+      const banner = page
+        .getByRole('alert')
+        .filter({ hasText: 'Login with OpenID failed' });
+      await expect(banner).toBeVisible({ timeout: 30_000 });
+      await expect(banner).toContainText(
+        'An unexpected error occurred while logging in (error code: e2e-unknown-code).',
+      );
+      await expect(page).not.toHaveURL(/bai_error=/);
     });
   },
 );

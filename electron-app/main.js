@@ -75,6 +75,173 @@ let mainContent;
 let devtools;
 const manager = new ProxyManager();
 let mainURL;
+// Operator opt-in (`wsproxy.disableCertCheck`, bundled or user config): accept
+// invalid certificates without asking.
+let allowInvalidCertificates = false;
+let nodeTlsCheckDisabledByConfig = false;
+// Only these are offered to the user; revoked, expired or weak certificates are refused.
+const TRUSTABLE_CERT_ERRORS = new Set([
+  'net::ERR_CERT_AUTHORITY_INVALID',
+  'net::ERR_CERT_COMMON_NAME_INVALID',
+]);
+const pendingCertPrompts = new Map();
+const refusedCerts = new Set();
+let trustedCerts;
+
+const trustedCertsPath = () =>
+  path.join(app.getPath('userData'), 'trusted-certificates.json');
+
+// host -> { fingerprint, certificate (PEM) }; the PEM lets the wsproxy pin the
+// same certificate for its Node TLS connections.
+function getTrustedCerts() {
+  if (!trustedCerts) {
+    trustedCerts = {};
+    try {
+      const parsed = JSON.parse(nfs.readFileSync(trustedCertsPath(), 'utf-8'));
+      for (const [host, pin] of Object.entries(parsed ?? {})) {
+        if (
+          typeof pin?.fingerprint === 'string' &&
+          typeof pin?.certificate === 'string'
+        ) {
+          trustedCerts[host] = pin;
+        }
+      }
+    } catch {
+      // Missing or unreadable: nothing is trusted.
+    }
+    if (typeof manager.setTrustedCertificates === 'function') {
+      manager.setTrustedCertificates(trustedCerts);
+    } else {
+      console.warn(
+        'The bundled wsproxy cannot pin trusted certificates; rebuild it (make compile_wsproxy).',
+      );
+    }
+  }
+  return trustedCerts;
+}
+
+// The bundled config.toml sits inside app.asar; this one can be edited on site.
+function readUserConfig() {
+  try {
+    const file = path.join(app.getPath('userData'), 'config.toml');
+    return toml(nfs.readFileSync(file, 'utf-8'));
+  } catch {
+    return {};
+  }
+}
+
+function resetCertCheckOptIn() {
+  allowInvalidCertificates = false;
+  if (nodeTlsCheckDisabledByConfig) {
+    delete process.env.NODE_TLS_REJECT_UNAUTHORIZED;
+    nodeTlsCheckDisabledByConfig = false;
+  }
+}
+
+function applyCertCheckOptIn(config) {
+  if (config?.wsproxy?.disableCertCheck == true) {
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+    nodeTlsCheckDisabledByConfig = true;
+    allowInvalidCertificates = true;
+  }
+}
+
+function showMessage(options, parent = mainWindow) {
+  return parent && !parent.isDestroyed()
+    ? dialog.showMessageBox(parent, options)
+    : dialog.showMessageBox(options);
+}
+
+// Trust on first use: the user confirms a host's fingerprint once; a changed
+// fingerprint asks again with a warning. One dialog per host and certificate;
+// a refusal holds until restart or reset, so polling requests do not re-ask.
+function promptCertificateTrust(host, certificate, previous, parent) {
+  const key = `${host} ${certificate.fingerprint}`;
+  if (refusedCerts.has(key)) return Promise.resolve(false);
+  if (!pendingCertPrompts.has(key)) {
+    const prompt = showMessage(
+      {
+        type: 'warning',
+        buttons: ['Cancel', previous ? 'Trust New Certificate' : 'Trust'],
+        defaultId: 0,
+        cancelId: 0,
+        message: previous
+          ? `The certificate of ${host} has changed.`
+          : `${host} uses a certificate that is not trusted.`,
+        detail: [
+          previous
+            ? 'The server may have renewed its certificate, or someone may be intercepting the connection. Trust it only if your administrator confirms the new fingerprint.'
+            : 'Trust it only if your administrator confirms this fingerprint.',
+          '',
+          `Issued to: ${certificate.subjectName}`,
+          `Issued by: ${certificate.issuerName}`,
+          `Valid until: ${new Date(certificate.validExpiry * 1000).toISOString()}${
+            certificate.validExpiry * 1000 < Date.now() ? ' (expired)' : ''
+          }`,
+          `Fingerprint: ${certificate.fingerprint}`,
+          ...(certificate.validExpiry * 1000 < Date.now()
+            ? [
+                '',
+                'This certificate has expired: terminal and app connections will still fail until it is renewed, unless your administrator sets wsproxy.disableCertCheck.',
+              ]
+            : []),
+        ].join('\n'),
+      },
+      parent,
+    )
+      .then(({ response }) => {
+        if (response !== 1) {
+          refusedCerts.add(key);
+          return false;
+        }
+        getTrustedCerts()[host] = {
+          fingerprint: certificate.fingerprint,
+          certificate: certificate.data,
+        };
+        try {
+          nfs.writeFileSync(
+            trustedCertsPath(),
+            JSON.stringify(trustedCerts, null, 2),
+          );
+        } catch (err) {
+          console.error('Could not save the trusted certificate:', err);
+        }
+        return true;
+      })
+      .finally(() => pendingCertPrompts.delete(key));
+    pendingCertPrompts.set(key, prompt);
+  }
+  return pendingCertPrompts.get(key);
+}
+
+async function resetTrustedCertificates() {
+  const hosts = [
+    ...new Set([
+      ...Object.keys(getTrustedCerts()),
+      ...[...refusedCerts].map((key) => key.split(' ')[0]),
+    ]),
+  ];
+  if (hosts.length === 0) {
+    await showMessage({
+      type: 'info',
+      message: 'No certificates are trusted or refused.',
+    });
+    return;
+  }
+  const { response } = await showMessage({
+    type: 'question',
+    buttons: ['Cancel', 'Reset and Restart'],
+    defaultId: 0,
+    cancelId: 0,
+    message: 'Forget the certificates you trusted or refused?',
+    detail: `Backend.AI Desktop restarts and asks again on the next connection to:\n${hosts.join('\n')}`,
+  });
+  if (response !== 1) return;
+  nfs.rmSync(trustedCertsPath(), { force: true });
+  // Chromium remembers accepted certificates for the session; only a restart forgets them.
+  app.relaunch();
+  app.exit(0);
+}
 
 app.once('ready', function () {
   let template;
@@ -123,6 +290,10 @@ app.once('ready', function () {
               );
               console.log('Re-connected to proxy: ' + proxyUrl);
             },
+          },
+          {
+            label: 'Reset Trusted Certificates…',
+            click: resetTrustedCertificates,
           },
           {
             type: 'separator',
@@ -293,6 +464,10 @@ app.once('ready', function () {
             },
           },
           {
+            label: 'Reset Trusted Certificates…',
+            click: resetTrustedCertificates,
+          },
+          {
             type: 'separator',
           },
           {
@@ -398,6 +573,8 @@ function createWindow() {
     };
     nfs.readFile(path.join(es6Path, 'config.toml'), 'utf-8', (err, data) => {
       console.log('Running on build-resource debug mode...');
+      resetCertCheckOptIn();
+      applyCertCheckOptIn(readUserConfig());
       if (err) {
         console.log('No configuration file found.');
         loadFallbackIndex();
@@ -405,13 +582,7 @@ function createWindow() {
       }
       try {
         const config = toml(data);
-        if (
-          'wsproxy' in config &&
-          'disableCertCheck' in config.wsproxy &&
-          config.wsproxy.disableCertCheck == true
-        ) {
-          process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-        }
+        applyCertCheckOptIn(config);
         if (
           'server' in config &&
           'webServerURL' in config.server &&
@@ -419,7 +590,9 @@ function createWindow() {
           config.server.webServerURL != '""'
         ) {
           mainURL = config.server.webServerURL;
-          mainWindow.loadURL(mainURL);
+          mainWindow.loadURL(mainURL).catch((loadErr) => {
+            console.error(`Failed to load ${mainURL}:`, loadErr);
+          });
         } else {
           loadFallbackIndex();
         }
@@ -552,6 +725,7 @@ function setSameSitePolicy() {
 }
 
 app.on('ready', () => {
+  getTrustedCerts(); // hands the pins to the wsproxy before any session starts
   // Registering the 'file' protocol
   protocol.handle('file', async (request) => {
     let url = request.url.substr(7); // strip 'file://' from the URL
@@ -563,7 +737,11 @@ app.on('ready', () => {
 
     // Files in app/ directory: HTML, JS bundles, config.toml, manifest.json, etc.
     // Files at root level: resources/, manifest/
-    if (!url.startsWith('app/') && !url.startsWith('resources/') && !url.startsWith('manifest/')) {
+    if (
+      !url.startsWith('app/') &&
+      !url.startsWith('resources/') &&
+      !url.startsWith('manifest/')
+    ) {
       url = path.join('app', url);
     }
 
@@ -582,6 +760,10 @@ app.on('ready', () => {
     // Remove trailing slash that browsers may add
     const filePath = request.url.replace('es6://', '').replace(/\/$/, '');
     const fullPath = npjoin(es6Path, filePath);
+    // `path.join` collapses `..`, so confine the result to app/.
+    if (!fullPath.startsWith(es6Path + path.sep)) {
+      return new Response(null, { status: 403 });
+    }
     try {
       const data = await fs.readFile(fullPath);
       const mimeType = mime.lookup(filePath) || 'application/octet-stream';
@@ -594,7 +776,7 @@ app.on('ready', () => {
       });
     } catch (err) {
       console.error('Error reading file:', err);
-      return { error: -2 };
+      return new Response(null, { status: 404 });
     }
   });
   createWindow();
@@ -603,8 +785,10 @@ app.on('ready', () => {
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
   if (mainWindow) {
-    e.preventDefault();
     mainWindow.webContents.send('app-close-window');
+  } else if (process.platform !== 'darwin') {
+    // Default Electron behavior once no window is left.
+    app.quit();
   }
 });
 
@@ -618,8 +802,27 @@ app.on('activate', function () {
 app.on(
   'certificate-error',
   function (event, webContents, url, error, certificate, callback) {
+    // Applies to every window, popups included: launched apps open in popups.
     event.preventDefault();
-    callback(true);
+    if (allowInvalidCertificates) {
+      callback(true);
+      return;
+    }
+    const host = new URL(url).host;
+    const previous = getTrustedCerts()[host]?.fingerprint;
+    if (previous === certificate.fingerprint) {
+      callback(true);
+      return;
+    }
+    if (!TRUSTABLE_CERT_ERRORS.has(error)) {
+      callback(false);
+      return;
+    }
+    const parent = BrowserWindow.fromWebContents(webContents) ?? mainWindow;
+    promptCertificateTrust(host, certificate, previous, parent).then(
+      callback,
+      () => callback(false),
+    );
   },
 );
 // Let windows without node integration

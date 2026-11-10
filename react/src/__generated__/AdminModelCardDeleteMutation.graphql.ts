@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<11cfc1c57cb7ec54ba01d30bb5f996a7>>
+ * @generated SignedSource<<5e84e5b1df0bbfd304c824c230e57ca8>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,9 +17,9 @@ export type AdminModelCardDeleteMutation$variables = {
   options?: DeleteModelCardV2Options | null | undefined;
 };
 export type AdminModelCardDeleteMutation$data = {
-  readonly adminDeleteModelCardV2: {
-    readonly id: string;
-  } | null | undefined;
+  readonly purgeModelCardV2: {
+    readonly entityId: string;
+  };
 };
 export type AdminModelCardDeleteMutation = {
   response: AdminModelCardDeleteMutation$data;
@@ -54,16 +54,16 @@ v1 = [
         "variableName": "options"
       }
     ],
-    "concreteType": "DeleteModelCardPayload",
+    "concreteType": "PurgeModelCardPayload",
     "kind": "LinkedField",
-    "name": "adminDeleteModelCardV2",
+    "name": "purgeModelCardV2",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "id",
+        "name": "entityId",
         "storageKey": null
       }
     ],
@@ -88,16 +88,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "2ca7a8106333ce590a04113064d28810",
+    "cacheID": "638b823d8968073122fcd0579386466f",
     "id": null,
     "metadata": {},
     "name": "AdminModelCardDeleteMutation",
     "operationKind": "mutation",
-    "text": "mutation AdminModelCardDeleteMutation(\n  $id: UUID!\n  $options: DeleteModelCardV2Options\n) {\n  adminDeleteModelCardV2(id: $id, options: $options) {\n    id\n  }\n}\n"
+    "text": "mutation AdminModelCardDeleteMutation(\n  $id: UUID!\n  $options: DeleteModelCardV2Options\n) {\n  purgeModelCardV2(id: $id, options: $options) {\n    entityId\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "12f399aebf9f17f39e4ca922f19ba040";
+(node as any).hash = "77df40da86c8befbec0d28da77746c45";
 
 export default node;

@@ -1,0 +1,846 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import {
+  AdminUserManagementQuery as AdminUserManagementQueryType,
+  AdminUserManagementQuery$data,
+  UserV2Filter,
+  UserV2OrderBy,
+} from '../../../__generated__/AdminUserManagementQuery.graphql';
+import { AdminUserManagementUpdateUserMutation } from '../../../__generated__/AdminUserManagementUpdateUserMutation.graphql';
+import { App } from '../../../app-shim';
+import { convertFirstOrderByToString, convertToOrderBy } from '../../../helper';
+import { openActAsTab } from '../../../helper/actAs';
+import { buildUserCSVExportFilter } from '../../../helper/userCSVExportFilter';
+import { useSuspendedBackendaiClient } from '../../../hooks';
+import { useBAISettingUserState } from '../../../hooks/useBAISetting';
+import { useCSVExport } from '../../../hooks/useCSVExport';
+import { useUnblockUserLogin } from '../../../hooks/useUnblockUserLogin';
+import BulkCreateUserFromCSVModal from './BulkCreateUserFromCSVModal';
+import PurgeUsersModal from './PurgeUsersModal';
+import UpdateUsersModal from './UpdateUsersModal';
+import UserInfoModal from './UserInfoModal';
+import UserSettingModal from './UserSettingModal';
+import { WebMCPAdminUserTools } from './WebMCPAdminUserTools';
+import { Button } from '@lablup/ui-common/Button';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { useTheme } from '@lablup/ui-common/theme';
+import {
+  BAIAdminUserV2Table,
+  BAIButton,
+  BAIFetchKeyButton,
+  BAIFlex,
+  BAIGraphQLFilterProperty,
+  BAIGraphQLPropertyFilter,
+  BAINameActionCell,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
+  BAISelectionLabel,
+  BAIUnmountAfterClose,
+  UserV2InList,
+  filterOutEmpty,
+  filterOutNullAndUndefined,
+  useBAILogger,
+  useToggle,
+  toEntityLabelFilter,
+  entityLabelFilterProperties,
+  useIsLabelableEntityType,
+} from 'backend.ai-ui';
+import * as _ from 'lodash-es';
+import {
+  BanIcon,
+  Ellipsis,
+  Info,
+  LockOpen,
+  PlusIcon,
+  SquarePenIcon,
+  Trash2,
+  UndoIcon,
+  UserRoundCheckIcon,
+} from 'lucide-react';
+import React, { useDeferredValue, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+  graphql,
+  useMutation,
+  usePreloadedQuery,
+  type PreloadedQuery,
+  type UseQueryLoaderLoadQueryOptions,
+} from 'react-relay';
+
+export const AdminUserManagementQuery = graphql`
+  query AdminUserManagementQuery(
+    $scope: UserScope!
+    $filter: UserV2Filter
+    $orderBy: [UserV2OrderBy!]
+    $limit: Int
+    $offset: Int
+    $isNotSupportTotp: Boolean!
+  ) {
+    scopedUsersV2(
+      scope: $scope
+      filter: $filter
+      orderBy: $orderBy
+      limit: $limit
+      offset: $offset
+    ) {
+      count
+      edges {
+        node {
+          id
+          basicInfo {
+            email
+          }
+          ...BAIAdminUserV2TableFragment @arguments(withProjects: true)
+          ...PurgeUsersModalFragment
+          ...UpdateUsersModalFragment
+          ...UserInfoModalFragment
+          ...UserSettingModalFragment
+          ...WebMCPAdminUserToolsFragment
+        }
+      }
+    }
+  }
+`;
+
+export const USER_LIST_DEFAULT_PAGE_SIZE = 10;
+
+interface AdminUserManagementProps {
+  queryRef: PreloadedQuery<AdminUserManagementQueryType>;
+  onReload: (
+    variables: AdminUserManagementQueryType['variables'],
+    options?: UseQueryLoaderLoadQueryOptions,
+  ) => void;
+}
+
+type UserNode = NonNullable<
+  NonNullable<AdminUserManagementQuery$data['scopedUsersV2']>['edges']
+>[number];
+
+const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
+  queryRef,
+  onReload,
+}) => {
+  'use memo';
+
+  const { logger } = useBAILogger();
+  const { t } = useTranslation();
+  const { token } = useTheme();
+  const isLabelable = useIsLabelableEntityType('user');
+
+  const bailClient = useSuspendedBackendaiClient();
+  const { message, modal } = App.useApp();
+
+  const [selectedUserForInfoModal, setSelectedUserForInfoModal] = useState<
+    UserNode['node'] | null
+  >(null);
+  const [selectedUserForSettingModal, setSelectedUserForSettingModal] =
+    useState<UserNode['node'] | null>(null);
+  const [openCreateModal, setOpenCreateModal] = useState<boolean>(false);
+  const [openBulkCreateModal, setOpenBulkCreateModal] =
+    useState<boolean>(false);
+  const [openBulkCreateCSVModal, setOpenBulkCreateCSVModal] =
+    useState<boolean>(false);
+  const [selectedUserList, setSelectedUserList] = useState<UserNode[]>([]);
+  const [openPurgeUsersModal, { toggle: togglePurgeUsersModal }] =
+    useToggle(false);
+  const [purgeTargetId, setPurgeTargetId] = useState<string | null>(null);
+  const [openUpdateUsersModal, { toggle: toggleUpdateUsersModal }] =
+    useToggle(false);
+
+  // The page owns URL state and the fetch; this component derives every
+  // filter/order/pagination control from the last requested variables and
+  // funnels changes back through `onReload`.
+  const variables = queryRef.variables;
+  const isTOTPSupported = !variables.isNotSupportTotp;
+  const statusValue =
+    variables.filter?.status?.equals === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE';
+  const propertyFilterValue = _.omit(variables.filter ?? {}, [
+    'status',
+    'domainName',
+  ]);
+  const orderValue = convertFirstOrderByToString(variables.orderBy);
+  const pageSize = variables.limit ?? USER_LIST_DEFAULT_PAGE_SIZE;
+  const current = Math.floor((variables.offset ?? 0) / pageSize) + 1;
+
+  const deferredQueryRef = useDeferredValue(queryRef);
+  const isPending = deferredQueryRef !== queryRef;
+
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.AdminUserManagement',
+  );
+
+  const { supportedFields, exportCSV } = useCSVExport('users');
+  const unblockUserLogin = useUnblockUserLogin();
+
+  const { scopedUsersV2 } = usePreloadedQuery<AdminUserManagementQueryType>(
+    AdminUserManagementQuery,
+    deferredQueryRef,
+  );
+
+  // >= 26.4.0: adminUpdateUserV2 — status toggle keyed by userId.
+  const [commitUpdateUserV2] =
+    useMutation<AdminUserManagementUpdateUserMutation>(graphql`
+      mutation AdminUserManagementUpdateUserMutation(
+        $userId: UUID!
+        $input: UpdateUserV2Input!
+      ) {
+        adminUpdateUserV2(userId: $userId, input: $input) {
+          user {
+            id
+          }
+        }
+      }
+    `);
+
+  // v2 UserV2 fragment refs driving the Update / Purge modals.
+  const selectedUserFragmentRefs = filterOutNullAndUndefined(
+    selectedUserList.map((user) => user?.node),
+  );
+
+  // Resolve the full user node (carrying the modal fragment refs) for a row id.
+  // The detail / edit modals are driven by the presence of this fragment rather
+  // than by an id, so `open` follows whether a user is selected.
+  const findUserNode = (id: string) =>
+    scopedUsersV2?.edges?.find((edge) => edge?.node?.id === id)?.node ?? null;
+
+  // User management (create, edit, status, purge, unblock) is out of scope for the
+  // scoped migration and stays superadmin-only by design (ADR 0012).
+  const isSuperAdmin = bailClient.is_superadmin;
+
+  const canActAs =
+    bailClient.isManagerVersionCompatibleWith('26.9.0') &&
+    isSuperAdmin &&
+    !globalThis.isElectron;
+
+  const confirmActAs = (userId: string, email: string, name: string) => {
+    modal.confirm({
+      title: t('actAs.ConfirmTitle', { name: name || email }),
+      content: t('actAs.ConfirmDescription', { email }),
+      okText: t('actAs.OpenInNewTab'),
+      cancelText: t('button.Cancel'),
+      onOk: () => {
+        if (!openActAsTab({ userId, email, name })) {
+          message.error(t('actAs.FailedToOpen'));
+        }
+      },
+    });
+  };
+
+  const renderEmailWithActions = (__: unknown, record: UserV2InList) => {
+    const email = record.basicInfo?.email ?? '';
+    const isActive = record.status?.status === 'ACTIVE';
+    const userId = record.entityId;
+    return (
+      <BAINameActionCell
+        title={email}
+        showActions="always"
+        actions={filterOutEmpty([
+          {
+            key: 'info',
+            title: t('credential.UserDetail'),
+            icon: <Info size="1em" />,
+            onClick: () => {
+              setSelectedUserForInfoModal(findUserNode(record.id));
+            },
+          },
+          isSuperAdmin && {
+            key: 'edit',
+            title: t('button.Edit'),
+            icon: <SquarePenIcon />,
+            onClick: () => {
+              setSelectedUserForSettingModal(findUserNode(record.id));
+            },
+          },
+          isSuperAdmin && {
+            key: 'toggle-status',
+            title: isActive
+              ? t('credential.Deactivate')
+              : t('credential.Activate'),
+            icon: isActive ? <BanIcon /> : <UndoIcon />,
+            type: isActive ? ('danger' as const) : ('default' as const),
+            popConfirm: {
+              title: isActive
+                ? t('credential.DeactivateUser')
+                : t('credential.ActivateUser'),
+              description: email,
+              okText: isActive
+                ? t('credential.Deactivate')
+                : t('credential.Activate'),
+              cancelText: t('button.Cancel'),
+              okButtonProps: isActive ? { danger: true } : undefined,
+              onConfirm: () => {
+                const handleStatusUpdated = () => {
+                  message.success(t('credential.StatusUpdatedSuccessfully'));
+                  setSelectedUserList((prev) =>
+                    prev.filter((user) => user?.node?.id !== record?.id),
+                  );
+                  onReload(variables, { fetchPolicy: 'network-only' });
+                };
+
+                if (record?.id) {
+                  return new Promise<void>((resolve) => {
+                    commitUpdateUserV2({
+                      variables: {
+                        userId: record.entityId,
+                        input: { status: isActive ? 'INACTIVE' : 'ACTIVE' },
+                      },
+                      onCompleted: (_res, errors) => {
+                        if (errors?.[0]) {
+                          message.error(
+                            errors[0].message || t('error.UnknownError'),
+                          );
+                          logger.error(errors);
+                          resolve();
+                          return;
+                        }
+                        handleStatusUpdated();
+                        resolve();
+                      },
+                      onError: (error) => {
+                        message.error(error?.message);
+                        logger.error(error);
+                        resolve();
+                      },
+                    });
+                  });
+                }
+              },
+            },
+          },
+          canActAs &&
+            isActive &&
+            userId !== bailClient.user_uuid && {
+              key: 'act-as',
+              title: t('actAs.UseAsThisUser'),
+              icon: <UserRoundCheckIcon />,
+              showInMenu: 'always' as const,
+              onClick: () =>
+                confirmActAs(
+                  userId,
+                  email,
+                  record.basicInfo?.fullName ||
+                    record.basicInfo?.username ||
+                    '',
+                ),
+            },
+          isSuperAdmin && {
+            key: 'unblock-login',
+            title: t('credential.UnblockLogin'),
+            icon: <LockOpen />,
+            showInMenu: 'always' as const,
+            popConfirm: {
+              title: t('credential.UnblockLoginConfirm'),
+              description: email,
+              okText: t('credential.UnblockLogin'),
+              cancelText: t('button.Cancel'),
+              onConfirm: () =>
+                unblockUserLogin({
+                  email,
+                  username: record.basicInfo?.username,
+                }),
+            },
+          },
+          isSuperAdmin &&
+            !isActive && {
+              key: 'purge',
+              title: t('credential.PermanentlyDelete'),
+              icon: <Trash2 size="1em" />,
+              type: 'danger' as const,
+              onClick: () => {
+                if (record?.id) {
+                  setPurgeTargetId(record.id);
+                }
+              },
+            },
+        ])}
+      />
+    );
+  };
+
+  // Container UID/GID filters map to a raw GraphQL Int; reject non-integer
+  // input before BAIGraphQLPropertyFilter coerces it via Number(...), which
+  // would otherwise produce NaN / invalid Int variables.
+  const integerRule = {
+    message: t('error.OnlyIntegersAreAllowed'),
+    validate: (value: string) => /^-?\d+$/.test(String(value).trim()),
+  };
+
+  // Filters the v2 user search API evaluates (BA-6247 / BA-6249).
+  const extendedFilterProperties: Array<BAIGraphQLFilterProperty> = [
+    {
+      key: 'fullName',
+      propertyLabel: t('credential.FullName'),
+      type: 'string',
+    },
+    {
+      key: 'resourcePolicy',
+      propertyLabel: t('credential.ResourcePolicy'),
+      type: 'string',
+    },
+    {
+      key: 'description',
+      propertyLabel: t('credential.Description'),
+      type: 'string',
+    },
+    {
+      key: 'statusInfo',
+      propertyLabel: t('credential.StatusInfo'),
+      type: 'string',
+    },
+    {
+      key: 'needPasswordChange',
+      propertyLabel: t('credential.DescRequirePasswordChange'),
+      type: 'boolean',
+    },
+    {
+      key: 'totpActivated',
+      propertyLabel: t('credential.2FAEnabled'),
+      type: 'boolean',
+    },
+    {
+      key: 'sudoSessionEnabled',
+      propertyLabel: t('credential.EnableSudoSession'),
+      type: 'boolean',
+    },
+    {
+      key: 'containerUid',
+      propertyLabel: t('credential.ContainerUID'),
+      type: 'number',
+      rule: integerRule,
+    },
+    {
+      key: 'containerMainGid',
+      propertyLabel: t('credential.ContainerGID'),
+      type: 'number',
+      rule: integerRule,
+    },
+    {
+      // IntArrayFilter: only single-GID membership (`contains`) is exposed
+      // since BAIGraphQLPropertyFilter has no array-operator input for
+      // `containsAny` / `containsAll`.
+      key: 'containerGids',
+      propertyLabel: t('credential.ContainerSupplementaryGIDs'),
+      type: 'number',
+      fixedOperator: 'contains',
+      rule: integerRule,
+    },
+  ];
+
+  const filterProperties: Array<BAIGraphQLFilterProperty> = filterOutEmpty([
+    {
+      key: 'email',
+      propertyLabel: t('general.E-Mail'),
+      type: 'string',
+    },
+    {
+      key: 'uuid',
+      propertyLabel: 'ID',
+      type: 'uuid',
+    },
+    {
+      key: 'username',
+      propertyLabel: t('credential.Name'),
+      type: 'string',
+    },
+    {
+      key: 'project.name',
+      propertyLabel: t('general.Project'),
+      type: 'string',
+    },
+    {
+      key: 'project.isActive',
+      propertyLabel: t('credential.ProjectIsActive'),
+      type: 'boolean',
+    },
+    {
+      key: 'integrationName',
+      propertyLabel: t('credential.IntegrationName'),
+      type: 'string',
+    },
+    {
+      key: 'createdAt',
+      propertyLabel: t('general.CreatedAt'),
+      type: 'datetime',
+      defaultOperator: 'after',
+    },
+    {
+      key: 'role',
+      propertyLabel: t('credential.Role'),
+      type: 'enum',
+      strictSelection: true,
+      options: [
+        {
+          label: 'superadmin',
+          value: 'SUPERADMIN',
+        },
+        {
+          label: 'admin',
+          value: 'ADMIN',
+        },
+        {
+          label: 'user',
+          value: 'USER',
+        },
+        {
+          label: 'monitor',
+          value: 'MONITOR',
+        },
+      ],
+    },
+    ...extendedFilterProperties,
+    ...(isLabelable
+      ? entityLabelFilterProperties({
+          key: t('entityLabel.LabelKey'),
+          value: t('entityLabel.LabelValue'),
+        })
+      : []),
+  ]);
+
+  // The property filter and a label-token click both land here.
+  const applyPropertyFilter = (value: UserV2Filter | undefined) => {
+    onReload({
+      ...variables,
+      filter: {
+        ...(value ?? {}),
+        status: variables.filter?.status,
+      },
+      offset: 0,
+    });
+    setSelectedUserList([]);
+  };
+
+  return (
+    <BAIFlex direction="column" align="stretch" gap="sm">
+      <BAIFlex justify="between" align="start" gap="xs" wrap="wrap">
+        <BAIFlex
+          direction="row"
+          gap={'sm'}
+          align="start"
+          wrap="wrap"
+          style={{ flexShrink: 1 }}
+        >
+          <BAISegmentedControl
+            value={statusValue}
+            onChange={(value) => {
+              onReload({
+                ...variables,
+                filter: {
+                  ...propertyFilterValue,
+                  status:
+                    value === 'ACTIVE'
+                      ? { equals: 'ACTIVE' }
+                      : { notEquals: 'ACTIVE' },
+                },
+                offset: 0,
+              });
+              setSelectedUserList([]);
+            }}
+          >
+            <BAISegmentedControlItem
+              value="ACTIVE"
+              label={t('general.Active')}
+            />
+            <BAISegmentedControlItem
+              value="INACTIVE"
+              label={t('general.Inactive')}
+            />
+          </BAISegmentedControl>
+          <BAIGraphQLPropertyFilter<UserV2Filter>
+            filterProperties={filterProperties}
+            value={
+              _.isEmpty(propertyFilterValue)
+                ? undefined
+                : (propertyFilterValue as UserV2Filter)
+            }
+            onChange={applyPropertyFilter}
+          />
+        </BAIFlex>
+        <BAIFlex gap="xs">
+          {selectedUserList.length > 0 && (
+            <BAIFlex gap="xs">
+              <BAISelectionLabel
+                count={selectedUserList.length}
+                onClearSelection={() => setSelectedUserList([])}
+              />
+              {isSuperAdmin && (
+                <BAIButton
+                  icon={
+                    <SquarePenIcon style={{ color: token('--color-info') }} />
+                  }
+                  onClick={toggleUpdateUsersModal}
+                />
+              )}
+              {isSuperAdmin && statusValue === 'INACTIVE' && (
+                <BAIButton
+                  icon={
+                    <Trash2
+                      style={{ color: token('--color-error') }}
+                      size="1em"
+                    />
+                  }
+                  onClick={togglePurgeUsersModal}
+                />
+              )}
+            </BAIFlex>
+          )}
+          <BAIFetchKeyButton
+            loading={isPending}
+            onChange={() => {
+              onReload(variables, { fetchPolicy: 'network-only' });
+            }}
+          />
+          {isSuperAdmin && (
+            <ButtonGroup label={t('credential.CreateUser')}>
+              <Button
+                variant="primary"
+                icon={<PlusIcon size="1em" />}
+                label={t('credential.CreateUser')}
+                onClick={() => {
+                  setOpenCreateModal(true);
+                }}
+              />
+              <DropdownMenu
+                button={{
+                  label: t('button.More'),
+                  variant: 'primary',
+                  isIconOnly: true,
+                  icon: <Ellipsis size="1em" />,
+                }}
+                hasChevron={false}
+                placement="below"
+                alignment="end"
+                items={[
+                  {
+                    label: t('credential.BulkCreateUser'),
+                    onClick: () => {
+                      setOpenBulkCreateModal(true);
+                    },
+                  },
+                  {
+                    label: t('credential.BulkCreateUserFromCSV'),
+                    onClick: () => {
+                      setOpenBulkCreateCSVModal(true);
+                    },
+                  },
+                ]}
+              />
+            </ButtonGroup>
+          )}
+        </BAIFlex>
+      </BAIFlex>
+      <WebMCPAdminUserTools
+        usersFrgmt={filterOutNullAndUndefined(
+          _.map(scopedUsersV2?.edges, 'node'),
+        )}
+        columnOverrides={columnOverrides}
+        page={current}
+        pageSize={pageSize}
+        total={scopedUsersV2?.count}
+        pending={isPending}
+        viewParams={{
+          tab: 'users',
+          status: statusValue,
+          filter: _.isEmpty(propertyFilterValue)
+            ? null
+            : JSON.stringify(propertyFilterValue),
+          order: orderValue,
+        }}
+        openedUserId={
+          selectedUserForInfoModal?.id ?? selectedUserForSettingModal?.id
+        }
+      />
+      <BAIAdminUserV2Table
+        onLabelClick={(label) =>
+          applyPropertyFilter(toEntityLabelFilter(label))
+        }
+        usersFrgmt={filterOutNullAndUndefined(
+          _.map(scopedUsersV2?.edges, 'node'),
+        )}
+        withProjects
+        customizeColumns={(baseColumns) => {
+          // The TOTP columns are meaningless when the manager has no TOTP
+          // plugin (their data is skipped via @skipOnClient), so hide them.
+          const columns = isTOTPSupported
+            ? baseColumns
+            : baseColumns.filter(
+                (column) =>
+                  column.key !== 'totp_activated' &&
+                  column.key !== 'totp_activated_at',
+              );
+          return [
+            {
+              ...columns[0],
+              render: renderEmailWithActions,
+            },
+            ...columns.slice(1),
+          ];
+        }}
+        pagination={{
+          pageSize,
+          total: scopedUsersV2?.count || 0,
+          current,
+          onChange: (nextCurrent, nextPageSize) => {
+            if (_.isNumber(nextCurrent) && _.isNumber(nextPageSize)) {
+              onReload({
+                ...variables,
+                limit: nextPageSize,
+                offset: (nextCurrent - 1) * nextPageSize,
+              });
+              setSelectedUserList([]);
+            }
+          },
+        }}
+        rowSelection={{
+          type: 'checkbox',
+          onChange: (keys) => {
+            const userNodes = _.compact(scopedUsersV2?.edges);
+            setSelectedUserList(() => {
+              return userNodes.filter(
+                (edge) => edge.node && keys.includes(edge?.node.id),
+              );
+            });
+          },
+          selectedRowKeys: _.compact(
+            selectedUserList.map((user) => user?.node?.id),
+          ),
+        }}
+        onChangeOrder={(nextOrder) => {
+          onReload({
+            ...variables,
+            orderBy: convertToOrderBy<Required<UserV2OrderBy>>(nextOrder),
+          });
+          setSelectedUserList([]);
+        }}
+        order={orderValue}
+        loading={isPending}
+        tableSettings={{
+          columnOverrides: columnOverrides,
+          onColumnOverridesChange: setColumnOverrides,
+        }}
+        exportSettings={
+          !_.isEmpty(supportedFields)
+            ? {
+                supportedFields,
+                onExport: async (selectedExportKeys) => {
+                  const { filter: exportFilter, unsupportedKeys } =
+                    buildUserCSVExportFilter({
+                      ...propertyFilterValue,
+                      domainName: variables.filter?.domainName,
+                    });
+                  if (unsupportedKeys.length > 0) {
+                    message.warning(
+                      t('credential.SomeFiltersAreNotAppliedToCSVExport'),
+                    );
+                  }
+                  await exportCSV(selectedExportKeys, {
+                    ...exportFilter,
+                    status: [_.toLower(statusValue)],
+                  }).catch((err) => {
+                    message.error(t('general.ErrorOccurred'));
+                    logger.error(err);
+                  });
+                },
+              }
+            : undefined
+        }
+      />
+      <BAIUnmountAfterClose>
+        <UserInfoModal
+          userInfoFrgmt={selectedUserForInfoModal}
+          open={!!selectedUserForInfoModal}
+          onRequestClose={() => setSelectedUserForInfoModal(null)}
+        />
+      </BAIUnmountAfterClose>
+      <BAIUnmountAfterClose>
+        <UserSettingModal
+          userSettingFrgmt={selectedUserForSettingModal}
+          open={!!selectedUserForSettingModal}
+          onRequestClose={(success) => {
+            setSelectedUserForSettingModal(null);
+            if (success) {
+              onReload(variables, { fetchPolicy: 'network-only' });
+            }
+          }}
+        />
+      </BAIUnmountAfterClose>
+      <BAIUnmountAfterClose>
+        <UserSettingModal
+          userSettingFrgmt={null}
+          open={openCreateModal || openBulkCreateModal}
+          bulkCreate={openBulkCreateModal}
+          onRequestClose={(success) => {
+            setOpenCreateModal(false);
+            setOpenBulkCreateModal(false);
+            if (success) {
+              onReload(variables, { fetchPolicy: 'network-only' });
+            }
+          }}
+        />
+      </BAIUnmountAfterClose>
+      <BAIUnmountAfterClose>
+        <BulkCreateUserFromCSVModal
+          open={openBulkCreateCSVModal}
+          onRequestClose={(success) => {
+            setOpenBulkCreateCSVModal(false);
+            if (success) {
+              onReload(variables, { fetchPolicy: 'network-only' });
+            }
+          }}
+        />
+      </BAIUnmountAfterClose>
+      <BAIUnmountAfterClose>
+        <PurgeUsersModal
+          open={openPurgeUsersModal}
+          onOk={() => {
+            togglePurgeUsersModal();
+            setSelectedUserList([]);
+            onReload(variables, { fetchPolicy: 'network-only' });
+          }}
+          onCancel={() => {
+            togglePurgeUsersModal();
+          }}
+          usersFrgmt={selectedUserFragmentRefs}
+        />
+      </BAIUnmountAfterClose>
+      <BAIUnmountAfterClose>
+        <PurgeUsersModal
+          open={!!purgeTargetId}
+          onOk={() => {
+            setSelectedUserList((prev) =>
+              prev.filter((user) => user?.node?.id !== purgeTargetId),
+            );
+            setPurgeTargetId(null);
+            onReload(variables, { fetchPolicy: 'network-only' });
+          }}
+          onCancel={() => {
+            setPurgeTargetId(null);
+          }}
+          usersFrgmt={filterOutNullAndUndefined(
+            scopedUsersV2?.edges
+              ?.filter((edge) => edge?.node?.id === purgeTargetId)
+              .map((edge) => edge?.node),
+          )}
+        />
+      </BAIUnmountAfterClose>
+      <BAIUnmountAfterClose>
+        <UpdateUsersModal
+          open={openUpdateUsersModal}
+          onOk={() => {
+            toggleUpdateUsersModal();
+            setSelectedUserList([]);
+            onReload(variables, { fetchPolicy: 'network-only' });
+          }}
+          onCancel={() => {
+            toggleUpdateUsersModal();
+          }}
+          usersFrgmt={selectedUserFragmentRefs}
+        />
+      </BAIUnmountAfterClose>
+    </BAIFlex>
+  );
+};
+
+export default AdminUserManagement;

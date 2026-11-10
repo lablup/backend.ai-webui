@@ -1,7 +1,7 @@
 /**
  * Authoring a pin set (FR-3858), end to end through `main.ts`: pick, note,
- * ⌘⏎ — and the pin stays, so the next ⌘⏎ copies every pin so far as one
- * comment behind one link. Only `main.ts` composes the store, the composer,
+ * ⌘⏎ — and the pin joins the set, which the dock copies as one comment
+ * behind one link. Only `main.ts` composes the store, the composer,
  * the layer and the dock, so this is where the flow can be asserted at all.
  */
 import { DRAFT_KEY, MAX_SET_PINS } from './draft.js';
@@ -22,7 +22,7 @@ const all = (selector: string) =>
   Array.from(shadow()?.querySelectorAll<HTMLElement>(selector) ?? []);
 
 const textarea = () => node<HTMLTextAreaElement>('.compose textarea');
-const copyButton = () => node<HTMLButtonElement>('[data-act="copy"]');
+const saveButton = () => node<HTMLButtonElement>('[data-act="save"]');
 const toast = () => node('.toast')?.textContent ?? '';
 const dockRows = () => all('.setdock .row');
 const composeOpen = () => node('.compose').style.display === 'block';
@@ -103,7 +103,7 @@ async function pick(testid: string, note: string) {
   await ticks(6, 100);
 }
 
-const pressCopy = () =>
+const pressAdd = () =>
   textarea().dispatchEvent(
     new KeyboardEvent('keydown', {
       key: 'Enter',
@@ -130,9 +130,9 @@ const pressEscape = () =>
     new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }),
   );
 
-async function pickAndCopy(testid: string, note: string) {
+async function pickAndAdd(testid: string, note: string) {
   await pick(testid, note);
-  pressCopy();
+  pressAdd();
   await ticks(2);
 }
 
@@ -195,11 +195,13 @@ afterEach(() => {
 });
 
 describe('the first pin of a set', () => {
-  it('copies the block the overlay has always copied', async () => {
+  it('copies the block the overlay has always copied, from the dock', async () => {
     await bootOverlay();
     const written = stubExecCommand();
 
-    await pickAndCopy('create', 'The label is cut off.');
+    await pickAndAdd('create', 'The label is cut off.');
+    expect(written['text/plain']).toBeUndefined();
+    node<HTMLButtonElement>('.setdock .copyall').click();
 
     const id = storedIds()[0];
     const lines = written['text/plain'].split('\n');
@@ -224,7 +226,7 @@ describe('the first pin of a set', () => {
     await bootOverlay();
     stubExecCommand();
 
-    await pickAndCopy('create', 'The label is cut off.');
+    await pickAndAdd('create', 'The label is cut off.');
 
     expect(storedIds()).toHaveLength(1);
     expect(dockRows()).toHaveLength(1);
@@ -233,25 +235,33 @@ describe('the first pin of a set', () => {
     expect(composeOpen()).toBe(false);
   });
 
-  it('says what the next ⌘⏎ will do', async () => {
+  it('adds on ⌘⏎ without touching the clipboard', async () => {
     await bootOverlay();
     stubExecCommand();
-    expect(copyButton().textContent).toBe('Copy block');
+    expect(saveButton().textContent).toBe('Add to set');
 
-    await pickAndCopy('create', 'The label is cut off.');
+    await pickAndAdd('create', 'The label is cut off.');
 
-    expect(copyButton().textContent).toBe('Add & copy all (2)');
+    expect(document.execCommand).not.toHaveBeenCalled();
+    expect(toast()).toBe(
+      'Added pin 1 to your set — copy it from the dock when you are done',
+    );
+    expect(saveButton().textContent).toBe('Add to set');
   });
 });
 
 describe('adding to a set', () => {
   it('copies every pin so far, behind its own link and one set link', async () => {
     await bootOverlay();
-    stubExecCommand();
-    await pickAndCopy('create', 'The label is cut off.');
     const written = stubExecCommand();
+    await pickAndAdd('create', 'The label is cut off.');
+    await pickAndAdd('cancel', 'And this one is unreachable.');
+    expect(document.execCommand).not.toHaveBeenCalled();
+    expect(toast()).toBe(
+      'Added pin 2 to your set — copy it from the dock when you are done',
+    );
 
-    await pickAndCopy('cancel', 'And this one is unreachable.');
+    node<HTMLButtonElement>('.setdock .copyall').click();
 
     const text = written['text/plain'];
     expect(text.split('📍')).toHaveLength(3);
@@ -277,103 +287,111 @@ describe('adding to a set', () => {
   it('draws the whole set, numbered', async () => {
     await bootOverlay();
     stubExecCommand();
-    await pickAndCopy('create', 'one');
+    await pickAndAdd('create', 'one');
 
-    await pickAndCopy('cancel', 'two');
+    await pickAndAdd('cancel', 'two');
 
     expect(storedIds()).toHaveLength(2);
     expect(dockRows()).toHaveLength(2);
     expect(all('.pin').map((marker) => marker.textContent)).toEqual(['1', '2']);
   });
 
-  // The clipboard is the whole point: a pin that was never handed over must
-  // not be in the set the next copy claims to have written.
-  it('adds nothing when the clipboard write fails', async () => {
+  it('adds from the button too, and a second ⌘⏎ adds nothing more', async () => {
     await bootOverlay();
     stubExecCommand();
-    await pickAndCopy('create', 'one');
-    stubExecCommand(false);
-
-    await pickAndCopy('cancel', 'two');
-
-    expect(storedIds()).toHaveLength(1);
-    expect(dockRows()).toHaveLength(1);
-    // The note is still in the box, for the ⌘⏎ that retries it.
-    expect(composeOpen()).toBe(true);
-    expect(textarea().value).toBe('two');
-  });
-
-  /**
-   * A secure-context dev run gets `navigator.clipboard`, and its write lands
-   * a tick later — long enough for the composer to be gone by then.
-   */
-  it('commits the pin the copy actually wrote, whatever closed meanwhile', async () => {
-    await bootOverlay();
-    let landed: () => void = () => undefined;
-    const writeText = vi.fn(
-      () =>
-        new Promise<void>((resolve) => {
-          landed = resolve;
-        }),
-    );
-    Object.defineProperty(navigator, 'clipboard', {
-      value: { writeText },
-      configurable: true,
-    });
-    Object.defineProperty(window, 'isSecureContext', {
-      value: true,
-      configurable: true,
-    });
 
     await pick('create', 'one');
-    pressCopy();
-    // A second ⌘⏎ would build a second pin for the same pick.
-    pressCopy();
-    await ticks(1);
-    expect(storedIds()).toHaveLength(0);
-    pressEscape();
-    landed();
+    saveButton().click();
+    pressAdd();
     await ticks(2);
 
-    expect(writeText).toHaveBeenCalledTimes(1);
+    expect(document.execCommand).not.toHaveBeenCalled();
     expect(storedIds()).toHaveLength(1);
-    expect(dockRows()).toHaveLength(1);
+    expect(composeOpen()).toBe(false);
   });
 
-  /**
-   * The write settles long after the composer it ran from is gone, and the
-   * reviewer is by then typing into the next pick.
-   */
-  it('never closes a composer opened after the copy it settles for', async () => {
-    await bootOverlay();
-    let landed: () => void = () => undefined;
-    const writeText = vi.fn(
-      () =>
-        new Promise<void>((resolve) => {
-          landed = resolve;
+  describe('⌘⌥⏎', () => {
+    const pressAddAndCopy = () =>
+      textarea().dispatchEvent(
+        new KeyboardEvent('keydown', {
+          key: 'Enter',
+          metaKey: true,
+          altKey: true,
+          bubbles: true,
         }),
-    );
-    Object.defineProperty(navigator, 'clipboard', {
-      value: { writeText },
-      configurable: true,
-    });
-    Object.defineProperty(window, 'isSecureContext', {
-      value: true,
-      configurable: true,
+      );
+
+    it('adds the pin and copies the whole set, as the composer used to', async () => {
+      await bootOverlay();
+      const written = stubExecCommand();
+      await pickAndAdd('create', 'First note.');
+
+      await pick('cancel', 'Second note.');
+      pressAddAndCopy();
+      await ticks(2);
+
+      const text = written['text/plain'];
+      expect(text.split('📍')).toHaveLength(3);
+      expect(text).toContain('First note.');
+      expect(text).toContain('Second note.');
+      expect(storedIds()).toHaveLength(2);
+      expect(composeOpen()).toBe(false);
+      expect(toast()).toBe('Copied all 2 pins — replaces your last paste');
     });
 
-    await pick('create', 'one');
-    pressCopy();
-    await ticks(1);
-    pressEscape();
-    await pick('cancel', 'two');
-    landed();
-    await ticks(2);
+    it('adds nothing when the clipboard write fails', async () => {
+      await bootOverlay();
+      stubExecCommand(false);
 
-    expect(composeOpen()).toBe(true);
-    expect(textarea().value).toBe('two');
-    // The first pick still joined the set: closing did not cancel its write.
-    expect(storedIds()).toHaveLength(1);
+      await pick('create', 'one');
+      pressAddAndCopy();
+      await ticks(2);
+
+      expect(storedIds()).toHaveLength(0);
+      expect(composeOpen()).toBe(true);
+      expect(textarea().value).toBe('one');
+    });
+
+    it('relabels the button while ⌥ is held', async () => {
+      await bootOverlay();
+      stubExecCommand();
+      await pick('create', 'one');
+
+      textarea().dispatchEvent(
+        new KeyboardEvent('keydown', {
+          key: 'Alt',
+          altKey: true,
+          bubbles: true,
+          composed: true,
+        }),
+      );
+      expect(saveButton().textContent).toBe('Add & copy');
+      textarea().dispatchEvent(
+        new KeyboardEvent('keyup', {
+          key: 'Alt',
+          altKey: false,
+          bubbles: true,
+          composed: true,
+        }),
+      );
+      expect(saveButton().textContent).toBe('Add to set');
+    });
+  });
+
+  it('copies one pin, and only that one, from its dock row', async () => {
+    await bootOverlay();
+    const written = stubExecCommand();
+    await pickAndAdd('create', 'First note.');
+    await pickAndAdd('cancel', 'Second note.');
+
+    dockRows()[1].querySelector<HTMLButtonElement>('.copy')?.click();
+
+    const text = written['text/plain'];
+    expect(text.split('📍')).toHaveLength(2);
+    expect(text).toContain('Second note.');
+    expect(text).not.toContain('First note.');
+    expect(text).toContain(storedIds()[1]);
+    expect(toast()).toBe('Copied 1 pin');
   });
 
   it('refuses the pin that would overflow the set', async () => {
@@ -385,7 +403,7 @@ describe('adding to a set', () => {
     await bootOverlay();
     const written = stubExecCommand();
 
-    await pickAndCopy('create', 'one too many');
+    await pickAndAdd('create', 'one too many');
 
     expect(written['text/plain']).toBeUndefined();
     expect(toast()).toContain('full at 30 pins');
@@ -404,8 +422,8 @@ describe('adding to a set', () => {
 
     await pick('create', 'one too many');
 
-    expect(copyButton().textContent).toBe('Set is full (30)');
-    expect(copyButton().disabled).toBe(true);
+    expect(saveButton().textContent).toBe('Set is full (30)');
+    expect(saveButton().disabled).toBe(true);
   });
 });
 
@@ -479,7 +497,6 @@ describe('the set the tab was left with', () => {
 
     expect(storedIds()).toEqual(['c_twoaaaa']);
     expect(dockRows()).toHaveLength(1);
-    expect(copyButton().textContent).toBe('Add & copy all (2)');
     expect(toast()).toBe('Removed pin 1 of 2');
   });
 
@@ -899,21 +916,21 @@ describe('editing a pin’s note', () => {
       textarea().dispatchEvent(new Event('input'));
       await ticks(6, 100);
     }
-    pressCopy();
+    pressAdd();
     await ticks(2);
   }
 
   it('opens with the note it is about to change', async () => {
     await bootOverlay();
     stubExecCommand();
-    await pickAndCopy('create', 'first note');
+    await pickAndAdd('create', 'first note');
 
     editRow(storedIds()[0]).click();
     await ticks(4);
 
     expect(composeOpen()).toBe(true);
     expect(textarea().value).toBe('first note');
-    expect(copyButton().textContent).toBe('Save note');
+    expect(saveButton().textContent).toBe('Save note');
     // An editor picks nothing, so the row it was opened from stays in view.
     expect(node('.setdock').classList.contains('folded')).toBe(false);
     pressEscape();
@@ -922,8 +939,8 @@ describe('editing a pin’s note', () => {
   it('re-keys the pin in place and names the id the paste no longer has', async () => {
     await bootOverlay();
     stubExecCommand();
-    await pickAndCopy('create', 'first note');
-    await pickAndCopy('cancel', 'second note');
+    await pickAndAdd('create', 'first note');
+    await pickAndAdd('cancel', 'second note');
     const [first, second] = storedIds();
 
     await editFrom(editRow(first), 'rewritten');
@@ -961,7 +978,7 @@ describe('editing a pin’s note', () => {
   it('keeps a card hidden while the editor was open', async () => {
     await bootOverlay();
     stubExecCommand();
-    await pickAndCopy('create', 'first note');
+    await pickAndAdd('create', 'first note');
     const [id] = storedIds();
     editRow(id).click();
     await ticks(6, 100);
@@ -971,7 +988,7 @@ describe('editing a pin’s note', () => {
     textarea().value = 'rewritten';
     textarea().dispatchEvent(new Event('input'));
     await ticks(6, 100);
-    pressCopy();
+    pressAdd();
     await ticks(2);
 
     expect(storedPins()[0].note).toBe('rewritten');
@@ -985,7 +1002,7 @@ describe('editing a pin’s note', () => {
     await bootOverlay();
     stubExecCommand();
     const long = 'x'.repeat(400);
-    await pickAndCopy('create', long);
+    await pickAndAdd('create', long);
     const [id] = storedIds();
 
     await editFrom(editRow(id), `${long} and a tail`);
@@ -999,7 +1016,7 @@ describe('editing a pin’s note', () => {
   it('caps what the new anchor carries and says the note was cut', async () => {
     await bootOverlay();
     stubExecCommand();
-    await pickAndCopy('create', 'short');
+    await pickAndAdd('create', 'short');
     const long = 'x'.repeat(400);
 
     await editFrom(editRow(storedIds()[0]), long);
@@ -1014,7 +1031,7 @@ describe('editing a pin’s note', () => {
   it('gives the pin its old id back when the old note comes back', async () => {
     await bootOverlay();
     stubExecCommand();
-    await pickAndCopy('create', 'first note');
+    await pickAndAdd('create', 'first note');
     const original = storedIds()[0];
 
     await editFrom(editRow(original), 'rewritten');
@@ -1028,7 +1045,7 @@ describe('editing a pin’s note', () => {
   it('writes nothing when the note comes back unchanged', async () => {
     await bootOverlay();
     stubExecCommand();
-    await pickAndCopy('create', 'first note');
+    await pickAndAdd('create', 'first note');
     const [id] = storedIds();
 
     await editFrom(editRow(id));
@@ -1041,7 +1058,7 @@ describe('editing a pin’s note', () => {
   it('copies the whole set behind the new note and the new id', async () => {
     await bootOverlay();
     stubExecCommand();
-    await pickAndCopy('create', 'first note');
+    await pickAndAdd('create', 'first note');
     const original = storedIds()[0];
     await editFrom(editRow(original), 'rewritten');
     const written = stubExecCommand();
@@ -1058,7 +1075,7 @@ describe('editing a pin’s note', () => {
   it('edits from the card of a pin that is on this page', async () => {
     await bootOverlay();
     stubExecCommand();
-    await pickAndCopy('create', 'first note');
+    await pickAndAdd('create', 'first note');
     const [id] = storedIds();
 
     await editFrom(editCard(id), 'from the card');
@@ -1111,7 +1128,8 @@ describe('the environment footer', () => {
     await bootOverlay();
     const written = stubExecCommand();
 
-    await pickAndCopy('create', 'The label is cut off.');
+    await pickAndAdd('create', 'The label is cut off.');
+    node<HTMLButtonElement>('.setdock .copyall').click();
 
     const lines = written['text/plain'].split('\n');
     expect(lines.at(-1)).toBe(
@@ -1126,7 +1144,7 @@ describe('the environment footer', () => {
     window.__BAI_REVIEW__ = { env: () => env };
     await bootOverlay();
     stubExecCommand();
-    await pickAndCopy('create', 'The label is cut off.');
+    await pickAndAdd('create', 'The label is cut off.');
 
     node<HTMLButtonElement>('.setdock .account').click();
     const written = stubExecCommand();
@@ -1146,7 +1164,7 @@ describe('the environment footer', () => {
     window.__BAI_REVIEW__ = { env: () => env };
     await bootOverlay();
     stubExecCommand();
-    await pickAndCopy('create', 'The label is cut off.');
+    await pickAndAdd('create', 'The label is cut off.');
 
     localStorage.setItem('bai-review:share-account', '0');
     window.dispatchEvent(
@@ -1169,9 +1187,10 @@ describe('the environment footer', () => {
     window.__BAI_REVIEW__ = { env: () => current };
     await bootOverlay();
     const written = stubExecCommand();
+    await pickAndAdd('create', 'The label is cut off.');
     current = { webui: '26.9.0' };
 
-    await pickAndCopy('create', 'The label is cut off.');
+    node<HTMLButtonElement>('.setdock .copyall').click();
 
     expect(written['text/plain'].split('\n').at(-1)).toBe(
       '<sub>WebUI 26.9.0</sub>',
@@ -1182,7 +1201,8 @@ describe('the environment footer', () => {
     await bootOverlay();
     const written = stubExecCommand();
 
-    await pickAndCopy('create', 'The label is cut off.');
+    await pickAndAdd('create', 'The label is cut off.');
+    node<HTMLButtonElement>('.setdock .copyall').click();
 
     expect(written['text/plain']).not.toContain('<sub>');
     expect(written['text/plain'].split('\n').at(-1)).toContain(

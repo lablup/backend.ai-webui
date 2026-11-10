@@ -3,7 +3,12 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '.';
-import { buildPath, MENU_KEY_TO_SCOPE_FEATURE } from '../helper/pathBuilder';
+import {
+  buildPath,
+  type MenuAdminRole,
+  PROJECT_ADMIN_MENU_KEY_ROUTES,
+  resolveMenuKeyScopeFeature,
+} from '../helper/pathBuilder';
 import { useCurrentUserRole } from './backendai';
 import { useDiagnosticsBadgeSeverity } from './useAutoDiagnostics';
 import { useBAISettingUserState } from './useBAISetting';
@@ -18,46 +23,22 @@ import {
   useCurrentMenuKey,
 } from './useRouteScope';
 import {
+  useWebUIMenuCatalog,
+  type WebUIMenuCatalogEntry,
+  type WebUIMenuCatalogKey,
+} from './useWebUIMenuCatalog';
+import {
   PluginPage,
   useWebUIPluginLoadedValue,
   useWebUIPluginValue,
 } from './useWebUIPluginState';
-import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIBadgeCount,
-  BAIEndpointsIcon,
-  BAIModelStoreIcon,
-  BAIMyEnvironmentsIcon,
-  BAIPipelinesIcon,
-  BAISessionsIcon,
   filterOutEmpty,
   useSessionStorageState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import {
-  CirclePlay,
-  Gauge,
-  MessageSquare,
-  CloudUpload,
-  HardDrive,
-  ChartColumn,
-  User,
-  FileCheck,
-  FileUser,
-  SlidersHorizontal,
-  Wrench,
-  Info,
-  Plug,
-  Users,
-  BadgeCheck,
-  Activity,
-  BotMessageSquare,
-  ClipboardClock,
-  PackagePlus,
-  LinkIcon,
-  ExternalLinkIcon,
-  Palette,
-} from 'lucide-react';
+import { ExternalLinkIcon, LinkIcon, Plug } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
@@ -79,7 +60,7 @@ export type AdminMenuGroupName =
  */
 export const VALID_MENU_KEYS = [
   // generalMenu keys
-  'start',
+  'start', // alias to dashboard (the retired Start page); blocking it hides the dashboard's Start cards
   'dashboard',
   'summary', // alias to dashboard for backward compatibility
   'session',
@@ -104,7 +85,6 @@ export const VALID_MENU_KEYS = [
   'admin-dashboard',
   'admin-data',
   'project-admin-users',
-  'project-data',
   'project-admin-deployments',
   'project-admin-session',
   'agent',
@@ -115,6 +95,7 @@ export const VALID_MENU_KEYS = [
   'branding',
   'rbac',
   'information',
+  'system-settings',
 ] as const;
 
 export type MenuKeys = (typeof VALID_MENU_KEYS)[number];
@@ -133,7 +114,6 @@ const ALL_ADMIN_PAGE_KEYS: ReadonlySet<string> = new Set([
   'admin-dashboard',
   'admin-data',
   'project-admin-users',
-  'project-data',
   'project-admin-deployments',
   'project-admin-session',
   'agent',
@@ -144,19 +124,16 @@ const ALL_ADMIN_PAGE_KEYS: ReadonlySet<string> = new Set([
   'branding',
   'rbac',
   'information',
+  'system-settings',
 ]);
 
 // Admin-category page keys reachable by a project admin (3-tier admin gating).
-// Project admins see Sessions, Deployments, Data (vfolders) and Members within
-// the admin category. Other admin pages remain visible only to domain admins or
-// superadmins. Kept as a plain array so it can be exported and reused (e.g. for
-// per-page route gating in follow-up PRs).
+// Project admins see the dashboard, Sessions, Deployments and Members within
+// the admin category; the project's folders are on its Data page. Other admin
+// pages remain visible only to superadmins.
 const PROJECT_ADMIN_PAGE_KEYS = [
-  // 'admin-session',
-  // 'admin-deployments',
-  // 'admin-data',
+  'admin-dashboard',
   'project-admin-users',
-  'project-data',
   'project-admin-deployments',
   'project-admin-session',
 ] as const;
@@ -165,8 +142,13 @@ export const PROJECT_ADMIN_PAGE_KEY_SET: ReadonlySet<string> = new Set(
   PROJECT_ADMIN_PAGE_KEYS,
 );
 
+// Project-admin keys a superadmin also sees, at the route `resolveMenuKeyScopeFeature` picks.
+const SUPERADMIN_SHARED_PAGE_KEY_SET: ReadonlySet<string> = new Set([
+  'admin-dashboard',
+]);
+
 // Legacy flat path for a menu key (the pre-scope-aware URL, e.g. `/session`,
-// `/project-data`, `/admin-session`). These flat paths are still mounted as
+// `/project-admin-users`, `/admin-session`). These flat paths are still mounted as
 // backward-compat redirect shims (`legacyRedirects.tsx`), so emitting one is a
 // safe fallback: the shim resolves it to the canonical scope-aware URL at
 // runtime. Used when a project-scoped menu key has no resolvable project name
@@ -174,27 +156,22 @@ export const PROJECT_ADMIN_PAGE_KEY_SET: ReadonlySet<string> = new Set(
 const getLegacyFlatPath = (key: MenuKeys): string => {
   // 'job' is an alias for '/session' (backward compatibility)
   if (key === 'job') return '/session';
-  if (key === 'summary') return '/dashboard';
+  if (key === 'summary' || key === 'start') return '/dashboard';
   return `/${key}`;
 };
 
-// Convert a menu key to its scope-aware URL path.
-//
-// Delegates to `buildPath` via `MENU_KEY_TO_SCOPE_FEATURE` so a menu key like
-// `session` (project scope) becomes `/project/<projectName>/session`,
-// `project-data` (project-admin scope) becomes
-// `/project/<projectName>/admin/data`, and `admin-session` (global admin)
-// becomes `/admin/session`.
-//
-// `projectName` is required for project / projectAdmin scopes. When it is
-// missing (e.g. the rare "no current project" edge case), we fall back to the
-// legacy flat path which the redirect shims resolve, rather than building a
-// broken `/project//...` URL. Admin-scope keys never need a project name.
+// Convert a menu key to its scope-aware URL path (`session` ->
+// `/project/<name>/session`, `project-admin-users` ->
+// `/project/<name>/admin/users`, `admin-session` -> `/admin/session`). `adminRole` picks the route of a key
+// that has one per role (`admin-dashboard`). Without a project name a
+// project-scoped key falls back to its legacy flat path, which the redirect
+// shims resolve, instead of a broken `/project//...` URL.
 export const getPathFromMenuKey = (
   key: MenuKeys,
   projectName?: string | null,
+  adminRole?: MenuAdminRole,
 ): string => {
-  const scopeFeature = MENU_KEY_TO_SCOPE_FEATURE[key];
+  const scopeFeature = resolveMenuKeyScopeFeature(key, adminRole);
   if (!scopeFeature) {
     // Unknown key (e.g. a plugin url passed through): preserve legacy behavior.
     return getLegacyFlatPath(key);
@@ -263,7 +240,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   const isCurrentProjectAdmin = useIsCurrentProjectAdmin();
 
   // Scope-aware current menu key (legacy hyphenated key, e.g. 'admin-session',
-  // 'project-data', 'session'). Derived from the matched route `handle.menuKey`
+  // 'project-admin-users', 'session'). Derived from the matched route `handle.menuKey`
   // (with a pathname-parse fallback) so it stays correct under the new
   // `/project/:name/<feature>` and `/admin/<feature>` URL shapes, where
   // `location.pathname.split('/')[1]` would return the scope prefix
@@ -279,9 +256,12 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   const baiClient = useSuspendedBackendaiClient();
   const isHideAgents = baiClient?._config?.hideAgents ?? true;
   const fasttrackEndpoint = baiClient?._config?.fasttrackEndpoint ?? null;
-  const blockList = baiClient?._config?.blockList ?? null;
-  const inactiveList = baiClient?._config?.inactiveList ?? null;
-  const { token } = useTheme();
+  // System Settings is where both lists are edited, so it can never be
+  // hidden or disabled by them (that would lock the admin out of undoing it).
+  const withoutSystemSettings = (list?: Array<string> | null) =>
+    list ? _.without(list, 'system-settings') : null;
+  const blockList = withoutSystemSettings(baiClient?._config?.blockList);
+  const inactiveList = withoutSystemSettings(baiClient?._config?.inactiveList);
 
   const [experimentalAIAgents] = useBAISettingUserState(
     'experimental_ai_agents',
@@ -293,288 +273,116 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
 
   const diagnosticsBadgeSeverity = useDiagnosticsBadgeSeverity();
 
-  // Helper to create a menu item. The `to` path is derived from the menu `key`
-  // via `getPathFromMenuKey` (scope-aware: `/project/<name>/<feature>` for
-  // general keys), so call sites no longer hardcode the URL — a single source
-  // of truth that stays correct under the scope-prefixed routing scheme.
+  const catalog = _.keyBy(useWebUIMenuCatalog(), 'key') as Record<
+    WebUIMenuCatalogKey,
+    WebUIMenuCatalogEntry
+  >;
+
+  // `to` comes from the key (`getPathFromMenuKey`), label and icon from the
+  // catalog, so the sidebar and the System Settings menu-key selector agree.
   const createMenuItem = (
-    labelText: string,
-    icon: React.ReactNode,
-    key: MenuKeys,
+    key: WebUIMenuCatalogKey,
     group: MenuGroupName,
   ): WebUIGeneralMenuItemType => ({
     to: getPathFromMenuKey(key, activeProjectName),
-    icon,
+    icon: catalog[key].icon,
     key,
     group,
-    labelText,
+    labelText: catalog[key].labelText,
   });
 
-  // Admin menu item builder — same scope-aware `to` derivation, with the admin
-  // menu's info-color icons and admin group typing.
   const createAdminMenuItem = (
-    labelText: string,
-    icon: React.ReactNode,
-    key: MenuKeys,
+    key: WebUIMenuCatalogKey,
     group: AdminMenuGroupName,
+    icon: React.ReactNode = catalog[key].icon,
   ): WebUIAdminMenuItemType => ({
-    to: getPathFromMenuKey(key, activeProjectName),
+    to: getPathFromMenuKey(key, activeProjectName, effectiveAdminRole),
     icon,
     key,
     group,
-    labelText,
+    labelText: catalog[key].labelText,
   });
 
   const generalMenu = filterOutEmpty<WebUIGeneralMenuItemType>([
-    createMenuItem(
-      t('webui.menu.Start'),
-      <CirclePlay style={{ color: token('--color-accent') }} size="1em" />,
-      'start',
-      'none',
-    ),
-    createMenuItem(
-      t('webui.menu.Dashboard'),
-      <Gauge style={{ color: token('--color-accent') }} size="1em" />,
-      'dashboard',
-      'none',
-    ),
-    createMenuItem(
-      t('webui.menu.Sessions'),
-      <BAISessionsIcon style={{ color: token('--color-accent') }} />,
-      'session',
-      'workload',
-    ),
-    createMenuItem(
-      t('webui.menu.Deployments'),
-      <BAIEndpointsIcon style={{ color: token('--color-accent') }} />,
-      'deployments',
-      'service',
-    ),
-    createMenuItem(
-      t('data.ModelStore'),
-      <BAIModelStoreIcon style={{ color: token('--color-accent') }} />,
-      'model-store',
-      'service',
-    ),
-    experimentalAIAgents &&
-      createMenuItem(
-        t('webui.menu.AIAgents'),
-        <BotMessageSquare style={{ color: token('--color-accent') }} />,
-        'ai-agent',
-        'playground',
-      ),
-    createMenuItem(
-      t('webui.menu.Chat'),
-      <MessageSquare style={{ color: token('--color-accent') }} size="1em" />,
-      'chat',
-      'playground',
-    ),
-    createMenuItem(
-      t('webui.menu.Data'),
-      <CloudUpload style={{ color: token('--color-accent') }} size="1em" />,
-      'data',
-      'storage',
-    ),
-    createMenuItem(
-      t('webui.menu.MyEnvironments'),
-      <BAIMyEnvironmentsIcon style={{ color: token('--color-accent') }} />,
-      'my-environment',
-      'workload',
-    ),
-    !isHideAgents &&
-      createMenuItem(
-        t('webui.menu.AgentSummary'),
-        <HardDrive style={{ color: token('--color-accent') }} size="1em" />,
-        'agent-summary',
-        'metrics',
-      ),
-    createMenuItem(
-      t('webui.menu.Statistics'),
-      <ChartColumn style={{ color: token('--color-accent') }} size="1em" />,
-      'statistics',
-      'metrics',
-    ),
+    createMenuItem('dashboard', 'none'),
+    createMenuItem('session', 'workload'),
+    createMenuItem('deployments', 'service'),
+    createMenuItem('model-store', 'service'),
+    experimentalAIAgents && createMenuItem('ai-agent', 'playground'),
+    createMenuItem('chat', 'playground'),
+    createMenuItem('data', 'storage'),
+    createMenuItem('my-environment', 'workload'),
+    !isHideAgents && createMenuItem('agent-summary', 'metrics'),
+    createMenuItem('statistics', 'metrics'),
     !!fasttrackEndpoint && {
-      icon: <BAIPipelinesIcon style={{ color: token('--color-accent') }} />,
+      icon: catalog.pipeline.icon,
       key: 'pipeline' as MenuKeys,
       onClick: () => {
         window.open(fasttrackEndpoint, '_blank', 'noopener noreferrer');
       },
       group: 'mlops' as MenuGroupName,
-      labelText: t('webui.menu.FastTrack'),
+      labelText: catalog.pipeline.labelText,
     },
   ]);
 
   const isSuperAdmin = currentUserRole === 'superadmin';
 
-  // PILOT-DECISION: antd `Badge dot offset color` — a DOT OVERLAY on a child
-  // — is MAPPING §3.8's explicit NONE ("no count overlay, no Badge.Ribbon;
-  // self-build, build once"). The gap component built for exactly that in
-  // ticket 08 is `BAIBadgeCount`, used here in its `dot` form. The
-  // arbitrary `color={token('--color-error')|colorWarning}` becomes the component's
-  // closed `variant` enum.
   const diagnosticsIcon = diagnosticsBadgeSeverity ? (
     <BAIBadgeCount
       hasDot
       offset={[-2, 2]}
       variant={diagnosticsBadgeSeverity === 'critical' ? 'error' : 'warning'}
-      title={t('webui.menu.Diagnostics')}
+      title={catalog.diagnostics.labelText}
     >
-      <Activity style={{ color: token('--color-info') }} />
+      {catalog.diagnostics.icon}
     </BAIBadgeCount>
   ) : (
-    <Activity style={{ color: token('--color-info') }} />
+    catalog.diagnostics.icon
   );
 
   const fullAdminMenu: Array<WebUIAdminMenuItemType> = filterOutEmpty([
+    // Superadmins and the current project's admins only; not domain admins.
+    (isSuperAdmin || isCurrentProjectAdmin) &&
+      createAdminMenuItem('admin-dashboard', 'none'),
     // --- Operations group ---
-    createAdminMenuItem(
-      t('webui.menu.Users'),
-      <User style={{ color: token('--color-info') }} size="1em" />,
-      'credential',
-      'admin-operations',
-    ),
-    createAdminMenuItem(
-      t('webui.menu.ProjectMembers'),
-      <Users style={{ color: token('--color-info') }} size="1em" />,
-      'project-admin-users',
-      'admin-operations',
-    ),
-    createAdminMenuItem(
-      t('webui.menu.Data'),
-      <CloudUpload style={{ color: token('--color-info') }} size="1em" />,
-      'project-data',
-      'admin-operations',
-    ),
-    createAdminMenuItem(
-      t('webui.menu.ProjectSessions'),
-      <BAISessionsIcon style={{ color: token('--color-info') }} />,
-      'project-admin-session',
-      'admin-operations',
-    ),
-    createAdminMenuItem(
-      t('webui.menu.ProjectDeployments'),
-      <BAIEndpointsIcon style={{ color: token('--color-info') }} />,
-      'project-admin-deployments',
-      'admin-operations',
-    ),
+    createAdminMenuItem('credential', 'admin-operations'),
+    createAdminMenuItem('project-admin-users', 'admin-operations'),
+    createAdminMenuItem('project-admin-session', 'admin-operations'),
+    createAdminMenuItem('project-admin-deployments', 'admin-operations'),
+    isSuperAdmin && createAdminMenuItem('project', 'admin-operations'),
+    isSuperAdmin && createAdminMenuItem('admin-data', 'admin-operations'),
+    createAdminMenuItem('admin-session', 'admin-operations'),
     isSuperAdmin &&
-      createAdminMenuItem(
-        t('webui.menu.Projects'),
-        <Users style={{ color: token('--color-info') }} size="1em" />,
-        'project',
-        'admin-operations',
-      ),
-    isSuperAdmin &&
-      createAdminMenuItem(
-        t('webui.menu.Data'),
-        <CloudUpload style={{ color: token('--color-info') }} size="1em" />,
-        'admin-data',
-        'admin-operations',
-      ),
-    createAdminMenuItem(
-      t('webui.menu.Sessions'),
-      <BAISessionsIcon style={{ color: token('--color-info') }} />,
-      'admin-session',
-      'admin-operations',
-    ),
-    isSuperAdmin &&
-      createAdminMenuItem(
-        t('webui.menu.Deployments'),
-        <BAIEndpointsIcon style={{ color: token('--color-info') }} />,
-        'admin-deployments',
-        'admin-operations',
-      ),
-    createAdminMenuItem(
-      t('webui.menu.Environments'),
-      <FileCheck style={{ color: token('--color-info') }} size="1em" />,
-      'environment',
-      'admin-operations',
-    ),
+      createAdminMenuItem('admin-deployments', 'admin-operations'),
+    createAdminMenuItem('environment', 'admin-operations'),
     baiClient?._config.enableReservoir &&
-      createAdminMenuItem(
-        t('webui.menu.Reservoir'),
-        <PackagePlus style={{ color: token('--color-info') }} />,
-        'reservoir',
-        'admin-operations',
-      ),
-    isSuperAdmin &&
-      createAdminMenuItem(
-        t('webui.menu.Scheduler'),
-        <ClipboardClock style={{ color: token('--color-info') }} />,
-        'scheduler',
-        'admin-operations',
-      ),
-    createAdminMenuItem(
-      t('webui.menu.ResourcePolicies'),
-      <FileUser style={{ color: token('--color-info') }} size="1em" />,
-      'resource-policy',
-      'admin-operations',
-    ),
+      createAdminMenuItem('reservoir', 'admin-operations'),
+    isSuperAdmin && createAdminMenuItem('scheduler', 'admin-operations'),
+    createAdminMenuItem('resource-policy', 'admin-operations'),
     // --- Infrastructure group (superadmin only) ---
+    isSuperAdmin && createAdminMenuItem('agent', 'admin-infrastructure'),
+    isSuperAdmin && createAdminMenuItem('maintenance', 'admin-infrastructure'),
     isSuperAdmin &&
       createAdminMenuItem(
-        t('webui.menu.Resources'),
-        <HardDrive style={{ color: token('--color-info') }} size="1em" />,
-        'agent',
-        'admin-infrastructure',
-      ),
-    isSuperAdmin &&
-      createAdminMenuItem(
-        t('webui.menu.Configurations'),
-        <SlidersHorizontal
-          style={{ color: token('--color-info') }}
-          size="1em"
-        />,
-        'settings',
-        'admin-infrastructure',
-      ),
-    isSuperAdmin &&
-      createAdminMenuItem(
-        t('webui.menu.Maintenance'),
-        <Wrench style={{ color: token('--color-info') }} size="1em" />,
-        'maintenance',
-        'admin-infrastructure',
-      ),
-    isSuperAdmin &&
-      createAdminMenuItem(
-        t('webui.menu.Diagnostics'),
-        diagnosticsIcon,
         'diagnostics',
         'admin-infrastructure',
+        diagnosticsIcon,
       ),
     // --- System group (superadmin only) ---
-    isSuperAdmin &&
-      createAdminMenuItem(
-        t('webui.menu.RBACManagement'),
-        <BadgeCheck style={{ color: token('--color-info') }} size="1em" />,
-        'rbac',
-        'admin-system',
-      ),
+    isSuperAdmin && createAdminMenuItem('rbac', 'admin-system'),
     isSuperAdmin &&
       !isThemePreviewMode &&
-      createAdminMenuItem(
-        t('webui.menu.Branding'),
-        <Palette style={{ color: token('--color-info') }} />,
-        'branding',
-        'admin-system',
-      ),
-    isSuperAdmin &&
-      createAdminMenuItem(
-        t('webui.menu.Information'),
-        <Info style={{ color: token('--color-info') }} size="1em" />,
-        'information',
-        'admin-system',
-      ),
+      createAdminMenuItem('branding', 'admin-system'),
+    isSuperAdmin && createAdminMenuItem('information', 'admin-system'),
+    isSuperAdmin && createAdminMenuItem('system-settings', 'admin-system'),
   ]);
 
   // 3-tier admin gating:
   // - 'none': no admin items
   // - 'currentProjectAdmin': only PROJECT_ADMIN_PAGE_KEYS
-  // - 'domainAdmin' / 'superadmin': full admin menu MINUS project-admin-only
-  //   pages. Higher-tier admins have broader equivalents (e.g. `credential`
-  //   covers users across the domain/system), so per-project admin pages would
-  //   be redundant and confusing to show.
+  // - 'superadmin': full admin menu MINUS project-admin-only pages, which
+  //   their broader equivalents (e.g. `credential`) already cover, except
+  //   the keys a superadmin shares at its own route.
   const adminMenu: Array<WebUIAdminMenuItemType> =
     effectiveAdminRole === 'none'
       ? []
@@ -583,16 +391,31 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
             PROJECT_ADMIN_PAGE_KEY_SET.has(item.key as string),
           )
         : fullAdminMenu.filter(
-            (item) => !PROJECT_ADMIN_PAGE_KEY_SET.has(item.key as string),
+            (item) =>
+              !PROJECT_ADMIN_PAGE_KEY_SET.has(item.key as string) ||
+              (isSuperAdmin &&
+                SUPERADMIN_SHARED_PAGE_KEY_SET.has(item.key as string)),
           );
 
-  // The project-admin pages' sider menu: every admin tier can open them.
+  // The project-admin pages' sider menu: every admin tier can open them. A key
+  // with a route per role always leads to its project-admin route here.
   const projectAdminMenu: Array<WebUIAdminMenuItemType> =
     effectiveAdminRole === 'none'
       ? []
-      : fullAdminMenu.filter((item) =>
-          PROJECT_ADMIN_PAGE_KEY_SET.has(item.key as string),
-        );
+      : fullAdminMenu
+          .filter((item) => PROJECT_ADMIN_PAGE_KEY_SET.has(item.key as string))
+          .map((item) =>
+            PROJECT_ADMIN_MENU_KEY_ROUTES[item.key as string]
+              ? {
+                  ...item,
+                  to: getPathFromMenuKey(
+                    item.key,
+                    activeProjectName,
+                    'currentProjectAdmin',
+                  ),
+                }
+              : item,
+          );
 
   const pluginMap: Record<string, MenuItem[]> = {
     'menuitem-user': generalMenu as unknown as MenuItem[],
@@ -807,7 +630,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
 
   // First project-admin page in sider order that survives blocklist /
   // inactive-list filtering. Computed from the un-role-filtered fullAdminMenu
-  // (super/domain admins' `adminMenu` excludes project-admin items, but they
+  // (superadmins' `adminMenu` excludes project-admin items, but they
   // can access all of them) — the redirect target for `/project/:name/admin`.
   // `undefined` when the config hides every project-admin page.
   const firstAvailableProjectAdminMenuKey = _.find(
@@ -819,23 +642,29 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   )?.key;
 
   // The sider's Project Settings entry: only for a project admin of the
-  // current project, even for super/domain admins (who can still open the
+  // current project, even for superadmins (who can still open the
   // pages by URL).
   const firstAvailableProjectAdminMenuItem = isCurrentProjectAdmin
     ? _.find(projectAdminMenu, (item) => !item.disabled)
     : undefined;
 
+  // A key with a route per role (`admin-dashboard`) is selected only in the
+  // menu whose item points at the current URL's scope.
+  const currentUrlScope = getRouteScopeAndKey(routerLocation.pathname).scope;
+  const isCurrentMenuItem = (item: WebUIAdminMenuItemType) =>
+    item.key === currentMenuKeyFromRoute &&
+    (!PROJECT_ADMIN_MENU_KEY_ROUTES[item.key as string] ||
+      getRouteScopeAndKey(item.to ?? '').scope === currentUrlScope);
+
   const isSelectedProjectAdminMenu = _.some(
     projectAdminMenu,
-    (item) => item.key === currentMenuKeyFromRoute,
+    isCurrentMenuItem,
   );
 
-  const isSelectedAdminCategoryMenu = _.some(adminMenu, (item) => {
-    if (item && 'key' in item) {
-      return item.key === currentMenuKeyFromRoute;
-    }
-    return false;
-  });
+  const isSelectedAdminCategoryMenu = _.some(
+    adminMenu,
+    (item) => !!item && 'key' in item && isCurrentMenuItem(item),
+  );
 
   // Role-independent variant: true when the current path is *any* admin
   // category page, regardless of whether the current user's effective role
@@ -852,7 +681,6 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   // redirect, which used to classify them as "general" and pollute the
   // sider's `goBackPath` with `/admin` — making "go back" a no-op loop
   // (FR-3388, deep-link-then-login repro).
-  const currentUrlScope = getRouteScopeAndKey(routerLocation.pathname).scope;
   const isCurrentPathAdminCategory =
     ALL_ADMIN_PAGE_KEYS.has(currentPageMenuKey) ||
     PROJECT_ADMIN_PAGE_KEY_SET.has(currentPageMenuKey) ||
@@ -903,16 +731,16 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   const { rawThemeConfig } = useCustomThemeConfig();
 
   // Default menu path considering theme config's logo href.
-  // Priority: rawThemeConfig.branding.logo.href > firstAvailableMenuItem path > '/start'.
+  // Priority: rawThemeConfig.branding.logo.href > firstAvailableMenuItem path > '/dashboard'.
   // Project-aware: `getPathFromMenuKey` builds `/project/<name>/<feature>` for
   // the first general menu item using the active project name. When no project
-  // is resolvable it falls back to the legacy flat path (e.g. `/start`), which
+  // is resolvable it falls back to the legacy flat path (e.g. `/dashboard`), which
   // the redirect shims resolve to the canonical project URL at runtime.
   const defaultMenuPath =
     rawThemeConfig?.branding?.logo?.href ||
     (firstAvailableMenuItem?.key
       ? getPathFromMenuKey(firstAvailableMenuItem.key, activeProjectName)
-      : '/start');
+      : '/dashboard');
 
   return {
     generalMenu,

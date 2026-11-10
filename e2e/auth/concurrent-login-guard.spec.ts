@@ -7,11 +7,13 @@
  * request body parameters) rather than asserting navigation to /start.
  *
  * Mock strategy (following the pattern in e2e/auth/password-expiry.spec.ts):
- *   - GET  /func/              → mock server version (get_manager_version)
+ *   - GET  /func/health, /func/ → mock reachability probe / server version
  *   - POST /func/admin/gql   → mock 401 auth-failed (no session; show login form)
  *   - POST /server/login       → per-test mock (409, TOTP-required, etc.)
  */
 import {
+  fillLoginEndpoint,
+  loginEndpointRow,
   modifyConfigToml,
   seedStoredApiEndpoint,
   userInfo,
@@ -71,11 +73,11 @@ const TEST_PASSWORD = userInfo.admin.password;
 
 /**
  * Set up common mocks so the app reaches the login form without a live backend.
- *   - GET /func/              → server version
+ *   - GET /func/health, /func/ → reachability probe / server version
  *   - POST /func/admin/gql   → 401 auth-failed (no session)
  */
 async function setupBaseMocks(page: Page): Promise<void> {
-  await page.route(`${webServerEndpoint}/func/`, async (route) => {
+  await page.route(/\/func\/(health)?$/, async (route) => {
     if (route.request().method() === 'GET') {
       await route.fulfill({
         status: 200,
@@ -103,14 +105,9 @@ async function setupBaseMocks(page: Page): Promise<void> {
  * Fill the SESSION login form with test credentials and endpoint.
  */
 async function fillLoginForm(page: Page): Promise<void> {
+  await fillLoginEndpoint(page, webServerEndpoint);
   await page.getByLabel('Email or Username').fill(TEST_EMAIL);
   await page.getByLabel('Password').fill(TEST_PASSWORD);
-
-  const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
-  if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
-    await page.getByText('Advanced').click();
-  }
-  await endpointInput.fill(webServerEndpoint);
 }
 
 /**
@@ -233,9 +230,7 @@ test.describe(
       );
       await expect(page.getByLabel('Password')).toBeVisible();
       await expect(page.getByLabel('Password')).toHaveValue(TEST_PASSWORD);
-      await expect(page.getByRole('textbox', { name: 'Endpoint' })).toHaveValue(
-        webServerEndpoint,
-      );
+      await expect(loginEndpointRow(page)).toContainText(webServerEndpoint);
     });
 
     // ── 3. Force login sends force=true ──────────────────────────────────

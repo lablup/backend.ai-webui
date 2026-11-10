@@ -16,6 +16,7 @@ The top bar includes various features that support use of the WebUI.
 
 Users can switch between projects using the project selector provided in the top bar.
 By default, the project that the user currently belongs to is selected.
+You can access your personal project by selecting **My Project**.
 Since each project may have different resource policies, switching projects may also change the available resource policies.
 
 The selector lists the projects you can access. If you open an address that names a
@@ -159,7 +160,7 @@ small screens.
 
 Click the user icon on the right side of the top bar to see the user menu.
 
-![=177px](../images/user_drop_down.png)
+![=212px](../images/user_drop_down.png)
 
 At the top of the dropdown, the following user information is displayed for
 reference. These items are not clickable.
@@ -170,6 +171,8 @@ reference. These items are not clickable.
 
 Below the user information, the following action items are available.
 
+- `Switch to Admin Console` / `Switch to User Console`: For superadmins, moves
+  between the user pages and the administration pages.
 - `About Backend.AI`: Displays information such as the version of Backend.AI WebUI,
   license type, etc.
 - `My Account`: Check and update information of the current logged-in user.

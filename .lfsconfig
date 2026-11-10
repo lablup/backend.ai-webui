@@ -1,0 +1,6 @@
+# Keep the user manual's LFS-tracked images (anywhere under its src/) as pointer
+# files on clone, checkout and `git lfs pull`, even when git-lfs is installed
+# globally. Fetch them with `pnpm --filter backend.ai-webui-docs run images:pull`
+# (.github/scripts/lfs/pull-docs-images.sh), which overrides this setting.
+[lfs]
+	fetchexclude = packages/backend.ai-webui-docs/src/**

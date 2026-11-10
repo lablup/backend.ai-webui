@@ -3,7 +3,7 @@
 Project-specific guidance for AI coding agents.
 
 <!-- UI-COMMON:START -->
-@lablup/ui-common v0.2.0-alpha.20.canary-20261024004224-2768d882e · Astryx v0.7.3 · 173 components
+@lablup/ui-common v0.2.0-alpha.21.canary-20261109014528-8160304a1 · Astryx v0.7.7 · 174 components
 CLI: run every command as `pnpm exec ui-common <cmd>` (shown below as `ui-common ...`).
 
 SETUP (once, first in your entry stylesheet) — without these, components render unstyled:
@@ -18,6 +18,7 @@ WORKFLOW — start every page from a template, never from scratch:
 2. `ui-common template <name> <path>` — scaffold it; keep its frame, gap and padding; replace the content.
 3. `ui-common template <Block>` for parts it lacks; `ui-common component <Name>` to read props before using one.
 Changing an existing page? Keep it: skip step 2 and add blocks/components inside its sections.
+Before you deliver a build, run `ui-common doctor --built <dir>`; don't deliver it if it fails.
 
 RULES:
 - No <div> — components handle all layout and spacing.
@@ -35,7 +36,7 @@ RULES:
   docs authoring     build an integration package, and every field it holds
   upgrade --from <old version> --apply   run after a dependency bump
 
-UI-COMMON (@lablup/ui-common v0.2.0-alpha.20.canary-20261024004224-2768d882e wraps Astryx v0.7.3):
+UI-COMMON (@lablup/ui-common v0.2.0-alpha.21.canary-20261109014528-8160304a1 wraps Astryx v0.7.7):
 - Import only from @lablup/ui-common: the root, or the same subpath Astryx uses (@lablup/ui-common/Button, /theme/tokens.stylex, /lab). Never import @astryxdesign/* directly.
 - Layers: declare `@layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;` once, first, in the entry stylesheet. ui-common's styles sit in `ui-common`; yours go in `components` / `utilities`.
 - Use AlertModal (@lablup/ui-common/AlertModal), not AlertDialog: ui-common hides AlertDialog.
@@ -44,11 +45,12 @@ UI-COMMON (@lablup/ui-common v0.2.0-alpha.20.canary-20261024004224-2768d882e wra
 - ComplexSelector (@lablup/ui-common/ComplexSelector) comes from ui-common: its own copy of Astryx's, same API and import path. Adds hasClear and onClear, a clear button as Selector has (facebook/astryx#6362).
 - Drawer (@lablup/ui-common/Drawer) comes from ui-common: its own copy of Astryx's, same API and import path. A scrimless drawer stays out of the top layer (show() and a z-index), so ui-common's Modal and notification stack paint above it; a Modal inside a scrimmed drawer opens above it; aria-modal passes through. DrawerHeader is Astryx's, re-exported unchanged.
 - Popover (@lablup/ui-common/Popover) comes from ui-common: Astryx's, wrapped, same API and import path. Its content is not part of the Form.Item it opens from, as antd's: a control inside takes none of the item's status or label. The API is Astryx's.
+- Stat (@lablup/ui-common/lab) comes from ui-common: its own copy of Astryx's, same API and import path. Adds deltaTooltip, a tooltip that explains the delta, anchored to it and reachable by keyboard, with media outside it.
 - Tour (@lablup/ui-common/lab) comes from ui-common: its own copy of Astryx's, same API and import path. A step's highlight is promoted into the top layer once, so under StrictMode the spotlight dim no longer covers the callout.
 - Form controls (CheckboxInput, CheckboxList, DateInput, DateRangeInput, DateTimeInput, FileInput, MultiSelector, NumberInput, RadioList, SegmentedControl, Selector, Slider, Switch, TextArea, TextInput, TimeInput, Tokenizer, Typeahead) are ui-common's Form.Item wrappers at Astryx's import paths: no label, description, isRequired or status message props. Use them inside Form.Item, which owns label, extra, rules and help; `status` is "error" | "warning" for the border only.
 - Theme: <Theme theme={lablupTheme}> with lablupTheme from @lablup/ui-common/theme/lablup/built, plus @lablup/ui-common/theme/lablup/theme.css. A product palette is its own defineTheme over lablupTheme.
 - Strings: every built-in string is a prop; defaults come from ui-common's catalog. Pass uiCommonMessages from @lablup/ui-common/i18n-catalog to Astryx's InternationalizationProvider. Never a product i18n runtime.
-- ui-common's own components: AlertModal, Board, BoardItemTitle, BooleanToken, BulkEditFormItem, BulkErrorModal, ColorPicker, ConfirmPopover, CountBadge, CountdownBorder, DataGrid, DeleteConfirmModal, DigitPopIn, DividedRow, DoubleBadge, DoubleToken, ErrorState, Form, IconWithTooltip, ImageWithFallback, ListBanner, Modal, NotificationItem, NotificationStack, OverlayScrollbar, PageHeader, PageLayout, PagedSelector, ProgressWithLabel, SelectionLabel, SkeletonCard, SkeletonChart, SkeletonRow, SkeletonText, SmoothHeight, StatCard, Statistic, StepNumberInput, TagsInput, TextHighlighter, TokenList, TokenRow, UncontrolledInput, UnitGrid. `pnpm exec ui-common docs ui-common` explains them.
+- ui-common's own components: AlertModal, Board, BoardItemTitle, BooleanToken, BulkEditFormItem, BulkErrorModal, ColorPicker, ConfirmPopover, CountBadge, CountdownBorder, DataGrid, DateTimeRangeInput, TimeRangeInput, DeleteConfirmModal, DigitPopIn, DividedRow, DoubleBadge, DoubleToken, ErrorState, Form, IconWithTooltip, ImageWithFallback, ListBanner, Modal, NotificationItem, NotificationStack, OverlayScrollbar, PageHeader, PageLayout, PagedSelector, ProgressWithLabel, SelectionLabel, SkeletonCard, SkeletonChart, SkeletonRow, SkeletonText, SmoothHeight, StatCard, Statistic, StepNumberInput, TagsInput, TextHighlighter, TokenList, TokenRow, UncontrolledInput, UnitGrid. `pnpm exec ui-common docs ui-common` explains them.
 - Templates are ui-common's own: create-modal, dashboard-board, detail-drawer, info-modal, list-page, list-toolbar, settings-page, tabbed-page. They import only @lablup/ui-common, react and lucide-react. Astryx's templates are not offered (they import @astryxdesign/* directly).
 - The `ui-common` bin is @lablup/ui-common-cli, a devDependency pinned to the same version as @lablup/ui-common; bump both together. Without it installed, `pnpm dlx @lablup/ui-common-cli@next <cmd>` (or `npx @lablup/ui-common-cli@next <cmd>`); drop `@next` once 0.2.0 is published.
 - After bumping @lablup/ui-common and @lablup/ui-common-cli: `pnpm exec ui-common upgrade --from <old version>`, then read ui-common-upgrade-report.md.
@@ -59,19 +61,4 @@ PROJECT LINES (this repo; outside the generated markers so `ui-common agents --w
 - MIGRATION RELAXATION (antd → Astryx): the className=/style={{…}} part of the SELF-CHECK is relaxed for files carried over from the antd era, which are still full of `className` / inline `style` and `useTheme().token('--…')` reads (the former `theme.useToken()` reads; FR-3605 retired the theme-shim). Do not rewrite those wholesale — convert a file's idioms when you are already changing it for another reason. A style that props/xstyle cannot express goes in a co-located `.css` file the component imports (P17), with `var(--…)` Astryx tokens; never a runtime style engine. In a style position, prefer `'var(--…)'` over a `token()` read: `token()` is for values JS must compute with (numeric props, SVG attributes).
 - STATUS SEMANTICS (this repo; overrides "Status = StatusDot/Token; Badge = counts only" above — ADR 0007): Badge = a value the system changes on its own over time (lifecycle/health status, in-progress markers, live tickers, counts). Token = a value that changes only when a user edits it, or a category/classification label (names, types, permissions, tags, versions, on/off settings, recorded outcomes). StatusDot stays for dot-only status. BUI chips are named *Badge / *Token by the primitive they render; "Tag" is only a domain noun. Rule: .claude/rules/badge-vs-token.md.
 - BUI INTEGRATION (this repo): `backend.ai-ui` is registered as an Astryx integration, so `ui-common component`, `ui-common search` and `ui-common component --list` cover the `BAI*` wrappers next to ui-common's and core's components, and `ui-common docs backend-ai-ui` explains the layer. The component count in the block's first line is core's own, so the live catalog is larger; run the command to see it. When a `BAI*` component and a ui-common or core component both fit, use the `BAI*` one — it carries the project defaults, and it imports from `backend.ai-ui`. A new `BAI*` component ships a same-stem `{Name}.doc.ts` beside its source; a new product-neutral component goes to ui-common instead (.claude/rules/bui-component-home.md).
-- FORM CONTROLS (this repo; overrides the "Form controls … at Astryx's import paths" line above for `react/` — ADR 0014): import ui-common's Form.Item-aware controls from `backend.ai-ui` as `BAI<X>` (`BAITextInput`, `BAINumberInput`, `BAISelector`, `BAISwitch`, `BAICheckboxInput`, `BAITagsInput`, `BAIRadioList`/`BAIRadioListItem`, `BAISegmentedControl`/`BAISegmentedControlItem`, …). They are plain re-exports, so the props are ui-common's; ESLint blocks the component names from the ui-common subpaths, while their types stay importable there.
-
-## Migration conversion idioms (branch `to-astryx`)
-
-Some antd patterns have no one-to-one Astryx component and are **not** allowed
-to be dropped ad hoc — they have a standing composition recipe in
-`.specs/FR-3482-astryx-migration/CONVERSION-IDIOMS.md`. Read it before recording a
-PILOT-DECISION that gives up a layout capability. Currently:
-
-- **antd vertical tabs** (`tabPosition`/`tabPlacement="left" | "start"`) →
-  the Astryx `settings-sidebar` template composition
-  (`Layout` + `LayoutPanel` nav column of `List`/`ListItem isSelected` +
-  `LayoutContent` pane), **not** a horizontal `TabList`. Run
-  `pnpm exec ui-common template settings-sidebar`. The "discover, don't guess"
-  workflow above includes `ui-common template --list` / `ui-common search` — a
-  component-level lookup alone will wrongly report the capability as missing.
+- FORM CONTROLS (this repo; overrides the "Form controls … at Astryx's import paths" line above for `react/` — ADR 0014): import ui-common's Form.Item-aware controls from `backend.ai-ui` as `BAI<X>` (`BAITextInput`, `BAINumberInput`, `BAISwitch`, `BAICheckboxInput`, `BAITagsInput`, `BAIRadioList`/`BAIRadioListItem`, `BAISegmentedControl`/`BAISegmentedControlItem`, …). They are plain re-exports, so the props are ui-common's; ESLint blocks the component names from the ui-common subpaths, while their types stay importable there. `Selector` has no re-export: the single select is the antd-shaped `BAISelect` (ADR 0017).

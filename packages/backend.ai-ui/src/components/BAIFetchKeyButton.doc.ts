@@ -53,9 +53,9 @@ export const docs = {
   props: [
     {
       name: 'onChange',
-      type: '(fetchKey: string) => void',
+      type: '(fetchKey: string, info: { isAuto: boolean }) => void',
       description:
-        'Called with a new ISO timestamp on every refresh, manual or automatic. Trigger the refetch here.',
+        'Called with a new ISO timestamp on every refresh, manual or automatic; `info.isAuto` is true for an interval refresh. Trigger the refetch here.',
       required: true,
     },
     {

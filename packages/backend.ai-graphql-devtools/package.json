@@ -1,0 +1,17 @@
+{
+  "name": "backend.ai-graphql-devtools",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "graphql": "catalog:",
+    "graphql-language-service": "5.7.0",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "monaco-editor": "^0.55.1"
+  }
+}

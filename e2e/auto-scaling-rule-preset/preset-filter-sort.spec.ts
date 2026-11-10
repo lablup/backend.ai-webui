@@ -1,7 +1,12 @@
 // spec: e2e/.agent-output/test-plan-auto-scaling-rule-preset.md
 // sections: 5. Filter by Name, 6. Sorting
+import { createTestResources } from '../utils/test-resources';
 import { loginAsAdmin, webuiEndpoint } from '../utils/test-util';
 import { test, expect, Page } from '@playwright/test';
+
+// Every preset a test names is declared here and purged via the admin API in
+// afterEach, so a test that fails midway cannot leak it.
+const resources = createTestResources();
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers
@@ -66,29 +71,6 @@ async function createPreset(
   await expect(modal).toBeHidden({ timeout: 30000 });
 }
 
-async function deletePreset(page: Page, presetName: string): Promise<void> {
-  await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
-  await page.waitForLoadState('domcontentloaded');
-  await expect(
-    page.getByRole('button', { name: /Create Preset/i }),
-  ).toBeVisible({
-    timeout: 60000,
-  });
-  const row = page.getByRole('row').filter({ hasText: presetName });
-  if ((await row.count()) === 0) return;
-  await row.getByRole('button', { name: 'Delete', exact: true }).click();
-  const confirmModal = page.getByRole('dialog');
-  await expect(confirmModal).toBeVisible({ timeout: 30000 });
-  await expect(confirmModal).not.toHaveClass(/ant-zoom-appear/, {
-    timeout: 10000,
-  });
-  await confirmModal.locator('input').fill(presetName);
-  await confirmModal
-    .getByRole('button', { name: 'Delete', exact: true })
-    .click();
-  await expect(confirmModal).toBeHidden({ timeout: 30000 });
-}
-
 /**
  * Apply a "Name" filter using BAIPropertyFilter (Astryx PowerSearch): open
  * the typeahead, pick the "Name" field, fill the Value in the edit popover
@@ -101,12 +83,11 @@ async function applyNameFilter(page: Page, searchValue: string): Promise<void> {
   await page.getByRole('option', { name: 'Name', exact: true }).click();
   await page.getByRole('textbox', { name: 'Value' }).fill(searchValue);
   await page.getByRole('button', { name: 'Apply', exact: true }).click();
-  // Wait for the committed filter token to appear, confirming the condition
-  // was added to local state. Token remove buttons carry `aria-label="Remove
-  // {field}: {operator}"` (`@astryxdesign/core`'s `Token` component); the
-  // label excludes the value, so match on the fixed "Name: contains" prefix.
+  // Wait for the committed filter token to appear. Since Astryx 0.7.7 the
+  // remove button is named "Remove <field>: <operator> <value>", and a long
+  // value is truncated in that name, so match the field and operator.
   await expect(
-    page.getByRole('button', { name: 'Remove Name: contains', exact: true }),
+    page.getByRole('button', { name: /^Remove Name: contains / }),
   ).toBeVisible({
     timeout: 5000,
   });
@@ -126,24 +107,18 @@ test.describe(
       await loginAsAdmin(page, request);
     });
 
-    test.afterEach(async ({ page }) => {
-      if (presetName) {
-        try {
-          await deletePreset(page, presetName);
-        } catch {
-          // ignore cleanup errors
-        }
-        presetName = '';
-      }
-    });
+    test.afterEach(() => resources.cleanup());
 
     // 5.1 Superadmin can filter presets by name using the property filter bar
     test('Superadmin can filter presets by name using the property filter bar', async ({
       page,
     }) => {
-      const timestamp = Date.now();
-      presetName = `e2e-preset-filter-target-${timestamp}`;
-      const filterKey = `${timestamp}`;
+      presetName = resources.name(
+        'prometheusQueryPreset',
+        'e2e-preset-filter-target',
+      );
+      // The unique `<timestamp>` suffix the registry appended to the name.
+      const filterKey = presetName.split('-').pop()!;
 
       // Create a test preset
       await createPreset(page, presetName);
@@ -238,8 +213,7 @@ test.describe(
 
       // Click the remove button on the filter token to remove the filter
       const removeFilterButton = page.getByRole('button', {
-        name: 'Remove Name: contains',
-        exact: true,
+        name: /^Remove Name: contains /,
       });
       await removeFilterButton.click();
 

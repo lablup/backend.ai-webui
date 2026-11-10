@@ -60,20 +60,29 @@ When you add several users at once, any that fail are surfaced through an error 
 
 ## The Project Admin sidebar
 
-When you select a project in which you are a project admin, the sidebar shows a **Project Settings** entry. Selecting it switches the sidebar to the project management menu, whose **Operations** section lists four entries dedicated to managing that project:
+When you select a project in which you are a project admin, the sidebar shows a **Project Settings** entry. Selecting it switches the sidebar to the project management menu, which lists a **Dashboard** entry and an **Operations** section with three entries dedicated to managing that project:
 
+- **Dashboard** — an overview of the current project
 - **Users** — the members of the current project
-- **Data** — the storage folders owned by the current project
 - **Sessions** — the compute sessions owned by users in the current project
 - **Deployments** — the model deployments owned by the current project
 
 ![=240px](../images/project_admin_sidebar.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 On the project-admin pages, only the items under the project selected with the project selector at the top are shown. You can check this through the banner at the top of the page.
 
 ![](../images/project_admin_scope_alert.png)
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
+
+<a id="project-admin-dashboard"></a>
+
+## Dashboard
+
+The **Dashboard** entry opens a board of cards scoped to the selected project: **Session Status**, **Pending Sessions and Reasons**, **Long-running Sessions**, **Resource Allocation**, **Deployments**, **Project Folders**, **Project Users**, and **Audit Log**. Select a row in **Pending Sessions and Reasons** to open that session's scheduling history.
+
+![](../images/project_admin_dashboard.png)
+
+Boards, card settings and the refresh control work as they do on the user [Dashboard](#dashboard).
 
 <a id="refreshing-project-admin-pages"></a>
 
@@ -104,56 +113,9 @@ The Users page is **read-only** for project admins. There are no create, edit, o
 
 <a id="data"></a>
 
-## Data
+## Storage Folders
 
-The **Data** page lists the storage folders (vfolders) owned by the currently selected project. Use this page to create project-shared folders, restore folders that were accidentally deleted, or purge folders that no longer need to be retained.
-
-![](../images/project_admin_data_page.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
-
-The page provides the following controls:
-
-- **Active / Trash** tabs: Switch between currently active folders and folders that have been soft-deleted. Each tab shows a count badge with the number of folders it contains.
-- **Mode pill**: Filter by folder usage mode — **All**, **General**, **Pipeline**, **Auto Mount**, or **Models**.
-
-   The **Pipeline** and **Models** options appear only when the corresponding features are enabled in the deployment — the FastTrack pipeline endpoint for **Pipeline**, and model folders for **Models**.
-
-- **Property filter**: Filter the list using the standard storage-folder property filter.
-
-Use a folder's **Edit labels** action to attach key-value labels to it, or select several folders and click **Add labels** to label them in bulk.
-
-### Create a folder
-
-To create a new folder from this page:
-
-1. Click the **Create Folder** button at the top right of the page.
-2. Fill in the folder details in the creation modal.
-3. Click **Create** to create the folder.
-
-![=650px](../images/project_admin_create_folder_modal.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
-
-:::info
-Folders created from the Project Admin Data page are always **project folders** — the creation modal has no folder-type selection. The modal displays the following message to make this explicit:
-
-> Folders are created as project folders on the Project Admin Data page.
-:::
-
-For details about folder usage modes, permissions, and quota, see the [Storage Folders](#vfolders) chapter.
-
-### Restore or permanently delete a folder
-
-Switch to the **Trash** tab to see folders that have been soft-deleted. Select one or more folders using the row checkboxes, then use the header action buttons that appear next to the selection count:
-
-- **Restore**: Move the selected folders back to the Active tab.
-- **Delete forever**: Permanently purge the selected folders. This action is irreversible and requires you to type the folder's name to confirm.
-
-![](../images/project_admin_data_deleted_tab.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
-
-:::danger
-Permanently deleting a storage folder removes all of its contents and cannot be undone. The confirmation modal requires you to type the folder's name before the deletion button becomes enabled.
-:::
+A project's storage folders are managed from the **Data** page while that project is selected. For folder usage modes, permissions, and quota, see the [Storage Folders](#vfolders) chapter.
 
 <a id="sessions"></a>
 

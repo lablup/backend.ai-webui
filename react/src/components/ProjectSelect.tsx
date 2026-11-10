@@ -5,7 +5,6 @@
 import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
-import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIFlex,
   BAIIconWithTooltip,
@@ -35,6 +34,9 @@ export interface ProjectSelectProps extends BAISelectProps {
   personalProject?: { id: string; name: string };
   /** Whether the personal project is a locked option. Defaults to true. */
   lockPersonalProject?: boolean;
+  /** Label the personal project "My Project" instead of its name; only for
+   * the signed-in user's own personal project. */
+  labelPersonalProjectAsMine?: boolean;
   'aria-label'?: string;
 }
 
@@ -45,6 +47,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
   lockedProjectTypes,
   personalProject,
   lockPersonalProject = true,
+  labelPersonalProjectAsMine,
   'aria-label': ariaLabel,
   ...selectProps
 }) => {
@@ -120,23 +123,16 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
         title: key,
         options: _.map(_.sortBy(value, 'name'), (project) => {
           const isAdmin = !!project?.id && projectAdminIds.includes(project.id);
-          const isLockedPersonal =
-            lockPersonalProject &&
-            !!personalProject &&
-            project?.id === personalProject.id;
-          // Fills the option row so the whole item opens the hint; `pointerEvents`
-          // covers single mode, whose disabled Item sets `none` (FR-3837).
+          const isPersonal =
+            !!personalProject && project?.id === personalProject.id;
+          const isLockedPersonal = lockPersonalProject && isPersonal;
+          const displayName =
+            labelPersonalProjectAsMine && isPersonal
+              ? t('projectSelect.MyProject')
+              : project?.name;
           const row = (
-            <BAIFlex
-              gap="xs"
-              align="center"
-              style={
-                isLockedPersonal
-                  ? { flexGrow: 1, pointerEvents: 'auto' }
-                  : undefined
-              }
-            >
-              <span>{project?.name}</span>
+            <BAIFlex gap="xs" align="center">
+              <span>{displayName}</span>
               {isAdmin && (
                 <BAIIconWithTooltip
                   content={t('projectSelect.ProjectAdminBadge')}
@@ -153,23 +149,16 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
             </BAIFlex>
           );
           return {
-            label: isLockedPersonal ? (
-              <Tooltip
-                content={t('projectSelect.PersonalProjectCannotBeRemoved')}
-              >
-                {row}
-              </Tooltip>
-            ) : isAdmin ? (
-              row
-            ) : (
-              project?.name
-            ),
+            label: isAdmin ? row : displayName,
             value: project?.id,
             projectId: project?.id,
             projectResourcePolicy: project?.resource_policy,
             projectName: project?.name,
-            disabled:
-              isLockedPersonal || lockedProjectIds.includes(project?.id ?? ''),
+            disabled: isLockedPersonal
+              ? { reason: t('projectSelect.PersonalProjectCannotBeRemoved') }
+              : lockedProjectIds.includes(project?.id ?? '')
+                ? { reason: t('projectSelect.LockedProjectCannotBeRemoved') }
+                : false,
           };
         }),
       };

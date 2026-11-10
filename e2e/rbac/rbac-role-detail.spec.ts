@@ -1,12 +1,17 @@
 // spec: e2e/.agent-output/test-plan-rbac-management.md
 // Scenarios: 3.1 – 3.4, 5.1 – 5.4, 6.2 – 6.3
 // (Role detail drawer, user assignments, edge cases)
-import { createAdminApiContext, purgeUserViaApi } from '../utils/admin-api';
+import {
+  createAdminApiContext,
+  gqlAdmin,
+  purgeUserViaApi,
+} from '../utils/admin-api';
 import {
   KeyPairModal,
   UserSettingModal,
 } from '../utils/classes/user/UserSettingModal';
 import { getE2EDomainName } from '../utils/e2e-scope';
+import { createTestResources } from '../utils/test-resources';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import test, {
   expect,
@@ -24,6 +29,10 @@ function toLocalId(globalId: string) {
 }
 const ROLE_NAME = `e2e-detail-role-${TEST_RUN_ID}`;
 const ROLE_DESCRIPTION = `E2E detail test role created at ${new Date().toISOString()}`;
+
+// `createTestRole` registers each role, so it is purged however the test ended.
+const resources = createTestResources();
+test.afterEach(() => resources.cleanup());
 
 // BAIPropertyFilter (Astryx PowerSearch): the RBAC page has multiple filter
 // fields (Role Name, Source), so typing opens a Field/Operator/Value edit
@@ -45,6 +54,7 @@ async function searchForRole(page: Page, roleName: string) {
 // Domain scope with the signed-in domain and hides the Target field, so the
 // role always lands in the admin's own domain.
 async function createTestRole(page: Page, roleName = ROLE_NAME) {
+  resources.declare('role', roleName);
   await page.getByRole('button', { name: 'Create Role' }).click();
   const modal = page.getByRole('dialog', { name: 'Create Role' });
   await expect(modal).toBeVisible();
@@ -56,7 +66,13 @@ async function createTestRole(page: Page, roleName = ROLE_NAME) {
   // matched exactly.
   await modal.getByRole('button', { name: 'Scope Type' }).click();
   await page.getByRole('option', { name: 'Domain', exact: true }).click();
-  await expect(modal.getByRole('button', { name: 'Target' })).toBeHidden();
+  // Target is a combobox (project ComplexSelector) or, while it suspends, a
+  // BAISelect button; neither may remain.
+  await expect(
+    modal
+      .getByRole('combobox', { name: 'Target' })
+      .or(modal.getByRole('button', { name: 'Target' })),
+  ).toBeHidden();
 
   await modal.getByRole('button', { name: 'OK' }).click();
   await expect(modal).toBeHidden({ timeout: 10000 });
@@ -64,37 +80,6 @@ async function createTestRole(page: Page, roleName = ROLE_NAME) {
   await expect(toast(page, /Role created successfully/i)).toBeVisible({
     timeout: 10000,
   });
-}
-
-// Same PowerSearch interaction as `searchForRole`, without asserting the
-// row appears — cleanup callers branch on `isVisible` themselves since the
-// role may not exist yet (first run) or may already be gone.
-async function applyRoleNameFilter(page: Page, roleName: string) {
-  const searchBar = page.getByRole('combobox', { name: 'Search filters' });
-  await searchBar.click();
-  await page.getByRole('option', { name: 'Role Name', exact: true }).click();
-  await page.getByRole('textbox', { name: 'Value' }).fill(roleName);
-  await page.getByRole('button', { name: 'Apply', exact: true }).click();
-}
-
-async function clearRoleSearch(page: Page) {
-  // PowerSearch ships its own "Clear all" button, gated on there being at
-  // least one committed filter token.
-  const clearAllButton = page.getByRole('button', {
-    name: 'Clear all',
-    exact: true,
-  });
-  if (await clearAllButton.isVisible({ timeout: 1000 }).catch(() => false)) {
-    await clearAllButton.click();
-    await expect(clearAllButton).toBeHidden({ timeout: 5000 });
-  }
-}
-
-// Scope status-filter clicks to the radiogroup — the AutoAssign column also
-// renders per-row "Active"/"Inactive" tags, which collide with a bare
-// getByText locator (strict-mode violation).
-function statusFilterOption(page: Page, status: 'Active' | 'Inactive') {
-  return page.getByRole('radiogroup').getByText(status, { exact: true });
 }
 
 // `BAICard`'s `tabList` renders a `nav[aria-label="Tabs"]` of plain
@@ -129,10 +114,12 @@ function dataRows(page: Page, scope: Locator | Page = page) {
     .filter({ hasNot: page.getByRole('columnheader') });
 }
 
-// The Add User modal's "Users" field is a paged selector: a trigger button
+// The Add User modal's "Users" field is a paged selector: a combobox trigger
 // opening a "Users" popover with its own "Search options" combobox.
 async function pickAssignUser(page: Page, assignModal: Locator, email: string) {
-  await assignModal.getByRole('button', { name: 'Users' }).click();
+  await assignModal
+    .getByRole('combobox', { name: 'Users', exact: true })
+    .click();
   const userPicker = page.getByRole('dialog', { name: 'Users' });
   await userPicker
     .getByRole('combobox', { name: 'Search options' })
@@ -146,7 +133,7 @@ async function pickAssignUser(page: Page, assignModal: Locator, email: string) {
   await page.keyboard.press('Escape');
   await expect(userPicker).toBeHidden();
   await expect(
-    assignModal.getByRole('button', { name: 'Users' }),
+    assignModal.getByRole('combobox', { name: 'Users', exact: true }),
   ).toContainText(email);
 }
 
@@ -160,81 +147,6 @@ function toast(page: Page, text: RegExp) {
 // render on a busy shared backend; give the page chrome more headroom than
 // the default wait.
 const SLOW_PAGE_TIMEOUT = 30000;
-
-async function cleanupTestRole(page: Page, roleName = ROLE_NAME) {
-  // Close any lingering drawer from a previous test so it doesn't block clicks.
-  const openDrawer = roleDrawer(page);
-  if (await openDrawer.isVisible().catch(() => false)) {
-    await openDrawer.getByRole('button', { name: 'close' }).first().click();
-    await expect(openDrawer).toBeHidden({ timeout: 5000 });
-  }
-
-  // Check Active tab first
-  await statusFilterOption(page, 'Active').click();
-  await clearRoleSearch(page);
-  // Use name filter to find the role even if it's on a later page
-  await applyRoleNameFilter(page, roleName);
-
-  const activeRow = page.getByRole('row').filter({ hasText: roleName }).first();
-  const isActiveVisible = await expect(activeRow)
-    .toBeVisible({ timeout: 10000 })
-    .then(() => true)
-    .catch(() => false);
-
-  if (isActiveVisible) {
-    // Retry deactivation until the row is removed from the Active list.
-    // A stale "Role deactivated" notice from a parallel test can make a single
-    // notification check unreliable, so drive the loop off of row visibility instead.
-    // The deactivate action is gated by a Popconfirm — click it then confirm.
-    await expect(async () => {
-      await activeRow.hover();
-      const deactivateBtn = activeRow.getByRole('button', {
-        name: 'Deactivate',
-        exact: true,
-      });
-      await expect(deactivateBtn).toBeVisible();
-      await deactivateBtn.click();
-      // Confirm the Popconfirm that appears after clicking the deactivate button
-      await page
-        .getByRole('dialog', { name: 'Deactivate' })
-        .getByRole('button', { name: 'Deactivate' })
-        .click({ timeout: 5000 });
-      await expect(activeRow).toBeHidden({ timeout: 5000 });
-    }).toPass({ timeout: 20000 });
-  }
-
-  // Check Inactive tab. The Role Name filter set above persists across the
-  // Active/Inactive status switch (it's carried in the URL's `filter` query
-  // param), so there's no need to reapply it here.
-  await statusFilterOption(page, 'Inactive').click();
-
-  // Older describe blocks can share ROLE_NAME; purge every matching row.
-  while (true) {
-    const inactiveRow = page
-      .getByRole('row')
-      .filter({ hasText: roleName })
-      .first();
-    const isInactiveVisible = await expect(inactiveRow)
-      .toBeVisible({ timeout: 10000 })
-      .then(() => true)
-      .catch(() => false);
-    if (!isInactiveVisible) break;
-
-    await expect(async () => {
-      await inactiveRow.hover();
-      await inactiveRow.getByRole('button', { name: 'Purge Role' }).click();
-      const purgeModal = page.getByRole('dialog', { name: 'Purge Role' });
-      await expect(purgeModal).toBeVisible({ timeout: 5000 });
-      await purgeModal.getByRole('textbox').fill(roleName);
-      await purgeModal.getByRole('button', { name: 'Delete' }).click();
-      await expect(inactiveRow).toBeHidden({ timeout: 5000 });
-    }).toPass({ timeout: 20000 });
-  }
-
-  // Return to Active tab and clear any search filters
-  await statusFilterOption(page, 'Active').click();
-  await clearRoleSearch(page);
-}
 
 test.describe(
   'RBAC Role Detail Drawer',
@@ -404,7 +316,7 @@ test.describe(
   },
 );
 
-// Not serial: each test provisions its own role (cleanupTestRole + createTestRole),
+// Not serial: each test provisions its own role (createTestRole, purged in afterEach),
 // so a failure doesn't cascade. mode: 'default' keeps tests sequential on one worker
 // because they share the same ROLE_NAME (fullyParallel would make them race).
 // Disposable fixture user for the Role Assignments block. These tests
@@ -421,7 +333,7 @@ const ASSIGN_FIXTURE_EMAIL = `e2e-rbac-assign-${ASSIGN_FIXTURE_RUN_ID}@lablup.co
 const ASSIGN_FIXTURE_USERNAME = `e2e-rbac-assign-${ASSIGN_FIXTURE_RUN_ID}`;
 const ASSIGN_FIXTURE_PASSWORD = 'testing@123';
 
-// Not serial: each test provisions its own role (cleanupTestRole + createTestRole),
+// Not serial: each test provisions its own role (createTestRole, purged in afterEach),
 // so a failure doesn't cascade. mode: 'default' keeps tests sequential on one worker
 // because they share the same ROLE_NAME (fullyParallel would make them race).
 test.describe(
@@ -498,7 +410,6 @@ test.describe(
       await navigateTo(page, 'rbac');
 
       // 3. Create a fresh test role
-      await cleanupTestRole(page);
       await createTestRole(page);
 
       // 4. Search for and click the test custom role's name to open the drawer
@@ -526,7 +437,7 @@ test.describe(
       const assignModal = page.getByRole('dialog', { name: 'Add User' });
       await expect(assignModal).toBeVisible();
       await expect(
-        assignModal.getByRole('button', { name: 'Users' }),
+        assignModal.getByRole('combobox', { name: 'Users', exact: true }),
       ).toBeVisible();
 
       // 8. Attempt to click "Add" (OK) without selecting any user – verify validation error
@@ -568,7 +479,6 @@ test.describe(
       await navigateTo(page, 'rbac');
 
       // 3. Create a fresh test role and assign a user to it
-      await cleanupTestRole(page);
       await createTestRole(page);
 
       // Open drawer and assign user
@@ -628,6 +538,97 @@ test.describe(
       ).toBeVisible({ timeout: 10000 });
     });
 
+    test('Superadmin sees the refused user listed when a revoke partially fails', async ({
+      page,
+      request,
+    }) => {
+      const TEST_USER_EMAIL = ASSIGN_FIXTURE_EMAIL;
+
+      // 1. Login, create a fresh role and assign the fixture user to it
+      await loginAsAdmin(page, request);
+      await navigateTo(page, 'rbac');
+      await createTestRole(page);
+      const drawer = await openRoleDrawer(page, ROLE_NAME);
+      await drawerTab(page, 'Role Assignments').click();
+      await drawer.getByRole('button', { name: 'Add User' }).click();
+      const assignModal = page.getByRole('dialog', { name: 'Add User' });
+      await expect(assignModal).toBeVisible();
+      await pickAssignUser(page, assignModal, TEST_USER_EMAIL);
+      await assignModal.getByRole('button', { name: 'Add' }).click();
+      await expect(assignModal).toBeHidden({ timeout: 10000 });
+      const userRow = drawer
+        .getByRole('row')
+        .filter({ hasText: TEST_USER_EMAIL });
+      await expect(userRow).toBeVisible({ timeout: 10000 });
+
+      // 2. Revoke the same user from a second tab, leaving this tab's list stale
+      const otherPage = await page.context().newPage();
+      try {
+        const otherDrawer = await openRoleDrawer(otherPage, ROLE_NAME);
+        await drawerTab(otherPage, 'Role Assignments').click();
+        const otherRow = otherDrawer
+          .getByRole('row')
+          .filter({ hasText: TEST_USER_EMAIL });
+        await otherRow.hover();
+        await otherRow
+          .getByRole('button', { name: 'Revoke User', exact: true })
+          .click();
+        await otherPage
+          .getByRole('dialog', { name: 'Revoke User' })
+          .getByRole('button', { name: 'Revoke User' })
+          .click();
+        await expect(otherRow).toBeHidden({ timeout: 10000 });
+      } finally {
+        await otherPage.close();
+      }
+
+      // 3. Revoke the already-revoked user from the stale list
+      await userRow.hover();
+      await userRow
+        .getByRole('button', { name: 'Revoke User', exact: true })
+        .click();
+      const revokeModal = page.getByRole('dialog', { name: 'Revoke User' });
+      await revokeModal.getByRole('button', { name: 'Revoke User' }).click();
+      await expect(revokeModal).toBeHidden({ timeout: 10000 });
+
+      // 4. The server refuses that user: the bulk error modal lists one row
+      //    per refused user with the server's reason. The modal makes the
+      //    page behind it inert, so the matching toast is not reachable here.
+      const errorModal = page.getByRole('dialog', {
+        name: 'Action execution failed',
+      });
+      await expect(errorModal).toBeVisible({ timeout: 10000 });
+      await expect(
+        errorModal.getByText('1 user(s) failed to be revoked.'),
+      ).toBeVisible();
+      const failureRow = errorModal
+        .getByRole('row')
+        .filter({ hasText: TEST_USER_EMAIL });
+      await expect(failureRow).toBeVisible();
+      await expect(failureRow).toContainText(/is not assigned to user/i);
+
+      // 5. Closing the report leaves the refused user selected for a retry
+      await page.keyboard.press('Escape');
+      await expect(errorModal).toBeHidden();
+      await expect(userRow.getByRole('checkbox')).toBeChecked();
+      await expect(drawer.getByText('1 selected')).toBeVisible();
+
+      // 6. Reopening the drawer shows the user is no longer assigned
+      await drawer.getByRole('button', { name: 'Close' }).click();
+      await expect(drawer).toBeHidden({ timeout: 5000 });
+      await page
+        .getByRole('row')
+        .filter({ hasText: ROLE_NAME })
+        .first()
+        .getByRole('button', { name: ROLE_NAME, exact: true })
+        .click();
+      await expect(drawer).toBeVisible({ timeout: 10000 });
+      await drawerTab(page, 'Role Assignments').click();
+      await expect(userRow).toBeHidden({ timeout: 10000 });
+      await drawer.getByRole('button', { name: 'Close' }).click();
+      await expect(drawer).toBeHidden({ timeout: 5000 });
+    });
+
     test('Superadmin sees empty state in Role Assignments tab when role has no users', async ({
       page,
       request,
@@ -639,7 +640,6 @@ test.describe(
       await navigateTo(page, 'rbac');
 
       // 3. Create a fresh test role with no assignments
-      await cleanupTestRole(page);
       await createTestRole(page);
 
       // 4. Search for and click the test custom role name to open the drawer
@@ -679,7 +679,6 @@ test.describe(
       // so cleanup does not try to close a drawer that is already leaving.
       await drawer.getByRole('button', { name: 'Close' }).click();
       await expect(drawer).toBeHidden({ timeout: 5000 });
-      await cleanupTestRole(page);
     });
   },
 );
@@ -722,34 +721,12 @@ test.describe(
   { tag: ['@rbac', '@regression', '@functional', '@requires-manager-v26.9'] },
   () => {
     let roleName: string;
-    let roleToCleanup: string | undefined;
 
     test.beforeEach(async ({ page, request }) => {
-      roleToCleanup = undefined;
       await loginAsAdmin(page, request);
       roleName = `e2e-scope-role-${Date.now().toString(36)}${randomUUID().slice(0, 4)}`;
-      roleToCleanup = roleName;
       await navigateTo(page, 'rbac');
       await createTestRole(page, roleName);
-    });
-
-    test.afterEach(async ({ page }) => {
-      if (!roleToCleanup) return;
-      try {
-        await navigateTo(page, 'rbac');
-        const createModal = page.getByRole('dialog', { name: 'Create Role' });
-        if (await createModal.isVisible()) {
-          await createModal.getByRole('button', { name: 'Cancel' }).click();
-        }
-        await cleanupTestRole(page, roleToCleanup);
-      } catch (error) {
-        console.warn(
-          `[rbac-role-detail] failed to purge role ${roleName}:`,
-          error,
-        );
-      } finally {
-        roleToCleanup = undefined;
-      }
     });
 
     test('Superadmin can see the role scope as a type and target token in the role drawer', async ({
@@ -960,13 +937,10 @@ test.describe(
       // The id condition shows as a removable chip in the Presets filter.
       const searchFilters = page.getByRole('group', { name: 'Search filters' });
       await expect(
-        searchFilters.getByRole('button', { name: 'ID: equals', exact: true }),
+        searchFilters.getByRole('button', { name: /^ID: equals / }),
       ).toBeVisible();
       await expect(
-        searchFilters.getByRole('button', {
-          name: 'Remove ID: equals',
-          exact: true,
-        }),
+        searchFilters.getByRole('button', { name: /^Remove ID: equals / }),
       ).toBeVisible();
 
       // Exactly one preset is listed, and it is the role's own preset.
@@ -981,6 +955,166 @@ test.describe(
       await expect(dataRows(page)).toHaveCount(1, {
         timeout: SLOW_PAGE_TIMEOUT,
       });
+    });
+  },
+);
+
+// Role Assignments list `adminRoleAssignments` rows since #10275, so each row
+// carries its grant time and the Granted At column sorts server-side.
+test.describe(
+  'RBAC Role Assignments - Granted At',
+  { tag: ['@rbac', '@regression', '@functional', '@requires-manager-v26.9'] },
+  () => {
+    const runId = Date.now().toString(36) + randomUUID().slice(0, 4);
+    const roleName = `e2e-granted-role-${runId}`;
+    // Granted in this order, so ascending Granted At lists the first one first.
+    const userEmails = [
+      `e2e-rbac-granted-a-${runId}@lablup.com`,
+      `e2e-rbac-granted-b-${runId}@lablup.com`,
+    ];
+    let api: APIRequestContext | undefined;
+
+    test.beforeAll(async () => {
+      api = await createAdminApiContext();
+      const domainName = await getE2EDomainName(api);
+      for (const email of userEmails) {
+        const created = await gqlAdmin<{
+          create_user: { ok: boolean; msg: string };
+        }>(
+          api,
+          `mutation($email: String!, $props: UserInput!) {
+            create_user(email: $email, props: $props) { ok msg }
+          }`,
+          {
+            email,
+            props: {
+              username: email.split('@')[0],
+              password: `e2e-${randomUUID().slice(0, 12)}@Pw`,
+              need_password_change: false,
+              domain_name: domainName,
+            },
+          },
+        );
+        expect(created.create_user.ok, created.create_user.msg).toBe(true);
+      }
+    });
+
+    test.afterAll(async () => {
+      if (!api) return;
+      for (const email of userEmails) {
+        await purgeUserViaApi(api, email).catch((error) =>
+          console.warn(`[rbac-role-detail] could not purge ${email}:`, error),
+        );
+      }
+      await api.dispose();
+    });
+
+    test('Superadmin can sort role assignments by Granted At', async ({
+      page,
+      request,
+    }) => {
+      const adminApi = api!;
+      // Keep the superadmin first-use tour modal from covering the page.
+      await page.addInitScript(() => {
+        for (const tour of ['back_to_user_view', 'back_to_admin_settings']) {
+          localStorage.setItem(
+            `backendaiwebui.settings.user.has_opened_tour_${tour}`,
+            'true',
+          );
+        }
+      });
+      await loginAsAdmin(page, request);
+      await navigateTo(page, 'rbac');
+      await createTestRole(page, roleName);
+
+      const { adminRoles } = await gqlAdmin<{
+        adminRoles: { edges: Array<{ node: { id: string } }> };
+      }>(
+        adminApi,
+        `query ($name: String!) {
+          adminRoles(filter: { name: { equals: $name } }, limit: 1) {
+            edges { node { id } }
+          }
+        }`,
+        { name: roleName },
+      );
+      expect(adminRoles.edges).toHaveLength(1);
+      const roleId = toLocalId(adminRoles.edges[0].node.id);
+      const { adminUsersV2 } = await gqlAdmin<{
+        adminUsersV2: {
+          edges: Array<{ node: { id: string; basicInfo: { email: string } } }>;
+        };
+      }>(
+        adminApi,
+        `query ($emails: [String!]) {
+          adminUsersV2(filter: { email: { in: $emails } }) {
+            edges { node { id basicInfo { email } } }
+          }
+        }`,
+        { emails: userEmails },
+      );
+      const userIdByEmail = Object.fromEntries(
+        adminUsersV2.edges.map((e) => [
+          e.node.basicInfo.email,
+          toLocalId(e.node.id),
+        ]),
+      );
+      expect(Object.keys(userIdByEmail).sort()).toEqual([...userEmails].sort());
+      for (const [index, email] of userEmails.entries()) {
+        // Keep the two grant times apart so the sort order is unambiguous.
+        if (index > 0) await page.waitForTimeout(2000);
+        const { adminBulkAssignRole } = await gqlAdmin<{
+          adminBulkAssignRole: { failed: Array<{ message: string }> };
+        }>(
+          adminApi,
+          `mutation ($input: BulkAssignRoleInput!) {
+            adminBulkAssignRole(input: $input) { failed { message } }
+          }`,
+          { input: { roleId, userIds: [userIdByEmail[email]] } },
+        );
+        expect(adminBulkAssignRole.failed).toEqual([]);
+      }
+
+      const drawer = await openRoleDrawer(page, roleName);
+      await drawerTab(page, 'Role Assignments').click();
+      await expect(drawerTab(page, 'Role Assignments')).toHaveAttribute(
+        'aria-current',
+        'true',
+      );
+
+      const rows = dataRows(page, drawer);
+      await expect(rows).toHaveCount(2, { timeout: 10000 });
+      for (const email of userEmails) {
+        await expect(rows.filter({ hasText: email })).toContainText(
+          /\d{4}-\d{2}-\d{2} \d{2}:\d{2}/,
+        );
+      }
+
+      const grantedAtHeader = drawer
+        .getByRole('columnheader')
+        .filter({ hasText: 'Granted At' });
+      const sortBy = async (direction: 'ASC' | 'DESC') => {
+        const response = page.waitForResponse((res) => {
+          const body = res.request().postData() ?? '';
+          return (
+            body.includes('RoleAssignmentTabQuery') &&
+            body.includes('GRANTED_AT') &&
+            body.includes(direction)
+          );
+        });
+        await grantedAtHeader.getByRole('button').click();
+        await response;
+      };
+
+      await sortBy('ASC');
+      await expect(grantedAtHeader).toHaveAttribute('aria-sort', 'ascending');
+      await expect(rows.first()).toContainText(userEmails[0]);
+      await expect(rows.last()).toContainText(userEmails[1]);
+
+      await sortBy('DESC');
+      await expect(grantedAtHeader).toHaveAttribute('aria-sort', 'descending');
+      await expect(rows.first()).toContainText(userEmails[1]);
+      await expect(rows.last()).toContainText(userEmails[0]);
     });
   },
 );

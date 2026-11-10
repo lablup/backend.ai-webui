@@ -119,11 +119,8 @@ function defaultPolicyRow(page: Page) {
 async function createKeypairPolicy(page: Page, name: string) {
   // Keypair is the default tab.
   await cleanupPolicy(page, name);
-  // Anchored regex: a substring match on 'Create' also matches the
-  // "Sort by created_at" column-header button (accessible name contains
-  // "creat" from "created_at"). Anchoring at the start excludes it while
-  // still matching both "Create" and "Create Policy" button labels.
-  await page.getByRole('button', { name: /^Create/i }).click();
+  // Exact: the "Created At" sort header also starts with "Create".
+  await page.getByRole('button', { name: 'Create', exact: true }).click();
   const modal = page.getByRole('dialog', {
     name: 'Create Keypair Resource Policy',
   });
@@ -139,8 +136,7 @@ async function createKeypairPolicy(page: Page, name: string) {
 async function createUserPolicy(page: Page, name: string) {
   await selectPolicyTab(page, 'User');
   await cleanupPolicy(page, name);
-  // See createKeypairPolicy: anchored to exclude "Sort by created_at".
-  await page.getByRole('button', { name: /^Create/i }).click();
+  await page.getByRole('button', { name: 'Create', exact: true }).click();
   const modal = page.getByRole('dialog', {
     name: 'Create User Resource Policy',
   });
@@ -163,8 +159,7 @@ async function createUserPolicy(page: Page, name: string) {
 async function createProjectPolicy(page: Page, name: string) {
   await selectPolicyTab(page, 'Project');
   await cleanupPolicy(page, name);
-  // See createKeypairPolicy: anchored to exclude "Sort by created_at".
-  await page.getByRole('button', { name: /^Create/i }).click();
+  await page.getByRole('button', { name: 'Create', exact: true }).click();
   const modal = page.getByRole('dialog');
   await expect(modal).toBeVisible();
   await modal.getByRole('textbox', { name: 'Name' }).fill(name);

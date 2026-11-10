@@ -143,7 +143,9 @@ describe('ContainerRegistryEditorModal (FR-3939)', () => {
 
     const registryName = screen.getByLabelText('registry.RegistryName');
     expect(registryName).toHaveValue('nvcr.io');
-    expect(registryName).toBeEnabled();
+    // A disabled field is aria-disabled + readOnly, never native `disabled`.
+    expect(registryName).not.toHaveAttribute('aria-disabled', 'true');
+    expect(registryName).not.toHaveAttribute('readonly');
     expect(screen.getByLabelText('registry.RegistryURL')).toHaveValue(
       'https://nvcr.io',
     );

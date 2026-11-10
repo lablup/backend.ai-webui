@@ -1,5 +1,5 @@
 ---
-description: Use React 19.2's useEffectEvent to keep useEffect dependencies precise
+description: Use React 19's useEffectEvent to keep useEffect dependencies precise
 paths:
   - "react/**/*.{tsx,ts}"
   - "packages/backend.ai-ui/**/*.{tsx,ts}"
@@ -7,8 +7,9 @@ paths:
 
 # `useEffectEvent` Convention
 
-This project targets **React 19.2+** which exposes `useEffectEvent` as a stable
-API (`@version 19.2.0` in `@types/react`). Use it to keep `useEffect` dependency
+This project runs **React 19** (the exact version is the `react` pin in
+`pnpm-workspace.yaml`), which exposes `useEffectEvent` as a stable API since
+19.2. Use it to keep `useEffect` dependency
 arrays focused on the values that genuinely drive synchronization, while still
 reading the latest props/state/closures inside the effect body.
 

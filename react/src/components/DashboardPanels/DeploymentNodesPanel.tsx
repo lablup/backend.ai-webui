@@ -6,10 +6,12 @@ import type { resourceRegistryDeploymentQuery } from '../../__generated__/resour
 import { useWebUINavigate } from '../../hooks';
 import { useBAIPaginationOptionState } from '../../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
-import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { useProjectPath } from '../../hooks/useRouteScope';
+import { readPrimary } from './panelPermission';
 import { resourceRegistry } from './resourceRegistry';
 import type { PanelDescriptor } from './types';
+import { useDashboardQueryScope } from './useDashboardFilters';
+import { useResetPageOn } from './useResetPageOn';
 import {
   BAIModelDeploymentNodes,
   filterOutNullAndUndefined,
@@ -40,7 +42,7 @@ export const DeploymentNodesPanelContent: React.FC<{
   disableNavigation?: boolean;
 }> = ({ descriptor, fetchKey, onChangeOrder, disableNavigation }) => {
   'use memo';
-  const currentProject = useCurrentProjectValue();
+  const queryScope = useDashboardQueryScope();
   const webUINavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
   const config = resourceRegistry.deployment;
@@ -52,14 +54,21 @@ export const DeploymentNodesPanelContent: React.FC<{
     tablePaginationOption,
     setTablePaginationOption,
   } = useBAIPaginationOptionState({ current: 1, pageSize: 10 });
+  useResetPageOn(
+    [descriptor.filter, descriptor.resourceGroups, queryScope],
+    setTablePaginationOption,
+  );
 
+  // The query falls back to the default order; the table shows only a chosen one,
+  // so its sort cycle can reach ascending instead of snapping back to the default.
   const order = descriptor.order ?? config.defaultOrder;
   const variables = config.buildVariables({
     filter: descriptor.filter ?? undefined,
     order,
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
-    projectId: currentProject.id ?? '',
+    ...queryScope,
+    resourceGroups: descriptor.resourceGroups,
   });
   const deferredVariables = useDeferredValue(variables);
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -68,7 +77,7 @@ export const DeploymentNodesPanelContent: React.FC<{
     deferredVariables,
     { fetchPolicy: 'store-and-network', fetchKey: deferredFetchKey },
   );
-  const connection = data.myDeployments;
+  const connection = readPrimary(data.scopedDeployments);
   const deployments = filterOutNullAndUndefined(
     connection?.edges.map((e) => e?.node),
   );
@@ -76,7 +85,7 @@ export const DeploymentNodesPanelContent: React.FC<{
   return (
     <BAIModelDeploymentNodes
       deploymentsFrgmt={deployments}
-      order={order}
+      order={descriptor.order ?? undefined}
       disableSorter={!onChangeOrder}
       onChangeOrder={
         onChangeOrder ? (next) => onChangeOrder(next ?? undefined) : undefined

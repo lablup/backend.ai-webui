@@ -1,6 +1,7 @@
 /*
  FR-3517 — `BAIMetadataListItem` widens Astryx's `string`-typed `label` to a
- `ReactNode` (CONVERSION-IDIOMS §3). These assert the two things idiom 3 says to
+ `ReactNode` (`component-props-extension.md`, "Widening a `string`-typed slot").
+ These assert the two things that recipe says to
  check after using it: the node actually renders into the label cell, and the
  row's accessible name still reads as the label with the added control
  separately reachable.

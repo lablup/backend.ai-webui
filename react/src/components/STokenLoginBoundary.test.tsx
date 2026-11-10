@@ -5,16 +5,16 @@
 /**
  * Tests for STokenLoginBoundary (Epic FR-2616).
  *
- * Focus areas mapped to spec acceptance criteria:
+ * Focus areas, mapped to the contract in ADR 0022:
  * - Children only render after the authentication sequence succeeds.
  * - `backend-ai-connected` fires exactly once per successful login, even
- *   across a retry-then-success sequence (invariant from spec Pitfall #6).
+ *   across a retry-then-success sequence.
  * - Error classification surfaced via `onError` for each branch the test
  *   can provoke without network (missing-token, endpoint-unresolved,
  *   server-unreachable, token-invalid).
- * - `errorFallback` prop replaces the built-in card for every kind (Q4).
- * - Source file does not reference forbidden URL APIs — this is the
- *   CI-enforced gate for the spec FR-2616 "URL 파라미터 파싱 규약" rule.
+ * - `errorFallback` prop replaces the built-in card for every kind.
+ * - Source file does not reference forbidden URL APIs — the CI-enforced
+ *   gate for ADR 0022's no-URL-API rule.
  *
  * The helper module is mocked entirely because the real
  * `createBackendAIClient` instantiates a global `BackendAIClient` that is
@@ -126,11 +126,13 @@ const setEndpoint = (next: string) => {
 };
 
 type FakeClient = {
+  probeServer: Mock;
   get_manager_version: Mock;
   token_login: Mock;
 };
 
 const buildFakeClient = (overrides: Partial<FakeClient> = {}): FakeClient => ({
+  probeServer: vi.fn().mockResolvedValue(undefined),
   get_manager_version: vi.fn().mockResolvedValue('1.0'),
   token_login: vi.fn().mockResolvedValue(true),
   ...overrides,
@@ -237,13 +239,28 @@ describe('STokenLoginBoundary', () => {
     expect(connectedEventCount).toBe(0);
   });
 
-  test('reports server-unreachable when get_manager_version rejects', async () => {
+  test('probes the server without asking for the manager version before login', async () => {
+    const client = buildFakeClient();
+    mockedCreateBackendAIClient.mockImplementation(() => ({
+      client,
+      clientConfig: {},
+    }));
+    renderBoundary({});
+
+    await waitFor(() => {
+      expect(screen.getByText('children-rendered')).toBeInTheDocument();
+    });
+    expect(client.probeServer).toHaveBeenCalledTimes(1);
+    expect(client.get_manager_version).not.toHaveBeenCalled();
+  });
+
+  test('reports server-unreachable when the server probe rejects', async () => {
     const serverErr = new Error('network down');
     mockedCreateBackendAIClient.mockImplementation(() => ({
-      client: {
-        get_manager_version: vi.fn().mockRejectedValue(serverErr),
+      client: buildFakeClient({
+        probeServer: vi.fn().mockRejectedValue(serverErr),
         token_login: vi.fn(),
-      },
+      }),
       clientConfig: {},
     }));
     const onError = vi.fn();
@@ -313,6 +330,31 @@ describe('STokenLoginBoundary', () => {
     });
     expect(mockedTokenLogin).not.toHaveBeenCalled();
     expect(mockedConnectViaGQL).not.toHaveBeenCalled();
+    expect(connectedEventCount).toBe(0);
+  });
+
+  test('reports a manager failure after sign-in as account-unavailable, not token-invalid', async () => {
+    const client = buildFakeClient();
+    mockedCreateBackendAIClient.mockImplementation(() => ({
+      client,
+      clientConfig: {},
+    }));
+    mockedProbeLoginSession.mockResolvedValueOnce({
+      keypair: null,
+      user: null,
+      groups: null,
+    });
+    const incomplete = new LoginBootstrapIncompleteError('version read 502');
+    mockedConnectViaGQL.mockRejectedValueOnce(incomplete);
+    const onError = vi.fn();
+    renderBoundary({ onError });
+
+    await waitFor(() => {
+      expect(onError).toHaveBeenCalledWith({
+        kind: 'account-unavailable',
+        cause: incomplete,
+      });
+    });
     expect(connectedEventCount).toBe(0);
   });
 

@@ -35,15 +35,12 @@ export interface UserSettings {
   beta_feature?: boolean;
   last_window_close_time?: number;
   endpoints?: Array<string>;
-  auto_logout?: boolean;
   selected_language?: string;
   recentSessionHistory?: Array<SessionHistory>;
   pinnedSessionHistory?: Array<SessionHistory>;
   recentSearchHits?: Array<RecentSearchHit>;
   start_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
-  start_page_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   experimental_ai_agents?: boolean;
-  experimental_custom_dashboard_panels?: boolean;
   experimental_import_from_huggingface?: boolean;
   experimental_session_resource_grid?: boolean;
   /** Header session monitor (chip, polling, idle alerts); default off. */
@@ -53,7 +50,6 @@ export interface UserSettings {
   session_metrics_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   dashboard_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   admin_dashboard_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
-  /** Decoupled-dashboard custom panels (serialized descriptors + layout). */
   custom_dashboard_panels?: Array<PersistedPanel>;
   resource_panel_type?:
     | 'MyResource'
@@ -86,8 +82,6 @@ export type SessionHistory = {
 };
 
 interface GeneralSettings {
-  last_login?: number;
-  login_attempt?: number;
   language?: string;
 }
 
@@ -173,7 +167,10 @@ const SettingAtomFamily = atomFamily((param: string) => {
           ? newValueOrUpdater(currentValue)
           : newValueOrUpdater;
 
-      const [namespace, name] = param.split('.', 2);
+      // Split at the first dot only: a setting name may itself contain dots.
+      const separator = param.indexOf('.');
+      const namespace = param.slice(0, separator);
+      const name = param.slice(separator + 1);
       // `undefined` removes the key; writing it would store the string "undefined".
       if (newValue === undefined) {
         localStorage.removeItem(key);

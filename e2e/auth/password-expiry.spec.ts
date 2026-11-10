@@ -9,9 +9,11 @@
 // Mock strategy:
 //   - POST /server/login → password-expired response (mocked in beforeEach)
 //   - POST /server/update-password-no-auth → success response (mocked per-test when needed)
-//   - All other requests (GET / for version, the bootstrap POST /func/admin/gql) hit the real cluster.
+//   - GET /func/health and /func/ → mocked reachability probe / version
+//   - All other requests (the bootstrap POST /func/admin/gql) hit the real cluster.
 import { createAdminApiContext, purgeUserViaApi } from '../utils/admin-api';
 import {
+  fillLoginEndpoint,
   loginAsAdmin,
   logout,
   modifyConfigToml,
@@ -30,12 +32,7 @@ const EXPIRED_PASSWORD_RESPONSE = {
   },
 };
 
-/**
- * Minimal server version response returned by the mocked GET /func/ endpoint.
- * The connectUsingSession flow calls get_manager_version() before attempting
- * login; without a reachable backend this call throws and shows
- * "Network connection failed", preventing the login mock from ever being hit.
- */
+/** Answer for the mocked reachability probe and version read. */
 const MOCK_SERVER_VERSION_RESPONSE = {
   manager: '25.0.0',
   version: 'v6.20220615',
@@ -51,14 +48,9 @@ const TEST_PASSWORD = 'oldPassword1!';
  * Mirrors the pattern used in e2e/auth/login.spec.ts.
  */
 async function fillLoginForm(page: Page): Promise<void> {
+  await fillLoginEndpoint(page, webServerEndpoint);
   await page.getByLabel('Email or Username').fill(TEST_EMAIL);
   await page.getByLabel('Password').fill(TEST_PASSWORD);
-
-  const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
-  if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
-    await page.getByText('Advanced').click();
-  }
-  await endpointInput.fill(webServerEndpoint);
 }
 
 /**
@@ -82,12 +74,10 @@ test.beforeEach(async ({ page, request }) => {
     },
   });
 
-  // Mock GET /func/ (the Backend.AI server version endpoint).
-  // In SESSION mode, connectUsingSession() calls get_manager_version() which
-  // issues GET <endpoint>/func/ before attempting login. Without a reachable
-  // backend this call throws and the UI shows "Network connection failed",
-  // preventing the login mock below from ever being reached.
-  await page.route(`${webServerEndpoint}/func/`, async (route) => {
+  // Mock the reachability probe (GET /func/health, falling back to /func/):
+  // connectUsingSession() awaits it before attempting login, and a failure
+  // shows "Network connection failed" before the login mock is reached.
+  await page.route(/\/func\/(health)?$/, async (route) => {
     if (route.request().method() === 'GET') {
       await route.fulfill({
         status: 200,
@@ -243,18 +233,9 @@ test.describe('real account password change flow', () => {
       // The app's orchestration hook calls /server/login on load (auto-login check).
       // We must let that pass through to the real backend so it doesn't consume our mock.
       await page.goto(webuiEndpoint);
-      await expect(page.getByLabel('Email or Username')).toBeVisible({
-        timeout: 15_000,
-      });
+      await fillLoginEndpoint(page, webServerEndpoint);
       await page.getByLabel('Email or Username').fill(USER_EMAIL);
       await page.getByLabel('Password').fill(ORIGINAL_PASSWORD);
-      const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
-      if (
-        !(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))
-      ) {
-        await page.getByText('Advanced').click();
-      }
-      await endpointInput.fill(webServerEndpoint);
 
       // ── Now register the mock: first user-initiated call → expired, rest → real backend ──
       // The mock is registered late (after page.goto and form fill) so that the app's

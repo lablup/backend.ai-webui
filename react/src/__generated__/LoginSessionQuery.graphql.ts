@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9bdf7ddf2753336d0397b3321b9afb4f>>
+ * @generated SignedSource<<febaf7a8bbebcc19472a6c679223e21d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,6 +19,7 @@ export type LoginSessionFilter = {
   OR?: ReadonlyArray<LoginSessionFilter> | null | undefined;
   accessKey?: StringFilter | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   lastAccessedAt?: DateTimeFilter | null | undefined;
   status?: LoginSessionStatusFilter | null | undefined;
   userId?: UUIDFilter | null | undefined;

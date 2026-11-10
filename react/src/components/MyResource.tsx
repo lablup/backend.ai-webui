@@ -4,21 +4,28 @@
  */
 import { MyResourceQuery } from '../__generated__/MyResourceQuery.graphql';
 import { MyResourceV2StatisticsFragment$key } from '../__generated__/MyResourceV2StatisticsFragment.graphql';
-import { useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import ResourceUsageStatistics from './DashboardPanels/memberCards/ResourceUsageStatistics';
+import {
+  offeredSlotsOf,
+  toUsageRows,
+} from './DashboardPanels/memberCards/memberCardData';
+import { readPrimary, readSecondary } from './DashboardPanels/panelPermission';
+import { Heading } from '@lablup/ui-common/Heading';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIBoardItemTitle,
   BAIFlex,
   BAIFlexProps,
+  BAIIconWithTooltip,
   ResourceStatistics,
-  convertToNumber,
-  processMemoryValue,
   BAIFetchKeyButton,
   BAISkeleton,
   useFetchKey,
+  useIsInBAIBoardItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { CircleHelp } from 'lucide-react';
 import { ReactNode, Suspense, useTransition } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
@@ -27,18 +34,22 @@ import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 interface MyResourceProps extends BAIFlexProps {
   fetchKey?: string;
   refetching?: boolean;
+  /** Hides the card's own refresh button, for hosts that refresh it themselves. */
+  hideRefreshButton?: boolean;
   extra?: ReactNode;
 }
 
 const MyResource: React.FC<MyResourceProps> = ({
   fetchKey,
   refetching,
+  hideRefreshButton,
   extra,
   ...props
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
+  const isInBoard = useIsInBAIBoardItem();
   const currentProject = useCurrentProjectValue();
 
   const [internalFetchKey, updateInternalFetchKey] = useFetchKey();
@@ -49,18 +60,34 @@ const MyResource: React.FC<MyResourceProps> = ({
       direction="column"
       align="stretch"
       style={{
-        paddingInline: token('--spacing-8'),
-        paddingBottom: token('--spacing-4'),
+        // On a board the board pads the item.
+        ...(isInBoard
+          ? {}
+          : {
+              paddingBlock: token('--spacing-4'),
+              paddingInline: token('--spacing-8'),
+              flex: 1,
+              // A narrow cell leaves no height to center in; the title still keeps its distance.
+              rowGap: token('--spacing-4'),
+            }),
         ...props.style,
       }}
       {..._.omit(props, ['style'])}
     >
       <BAIBoardItemTitle
-        title={t('webui.menu.MyResources')}
-        tooltip={<Trans i18nKey={'webui.menu.MyResourcesDescription'} />}
+        title={
+          <BAIFlex gap="xs" wrap="wrap" align="center">
+            <Heading level={5}>{t('webui.menu.MyResources')}</Heading>
+            <BAIIconWithTooltip
+              icon={<CircleHelp size="1em" />}
+              content={<Trans i18nKey="webui.menu.MyResourcesDescription" />}
+            />
+          </BAIFlex>
+        }
         extra={
           <BAIFlex gap={'xs'}>
             <BAIFetchKeyButton
+              hidden={hideRefreshButton}
               size="small"
               loading={isPending || refetching}
               value=""
@@ -76,83 +103,82 @@ const MyResource: React.FC<MyResourceProps> = ({
           </BAIFlex>
         }
       />
-      {/* A transport failure escapes @catch; keep the title and let refresh retry. */}
-      <ErrorBoundary
-        resetKeys={[fetchKey, internalFetchKey, currentProject.id]}
-        fallbackRender={() => (
-          <ResourceStatistics
-            resourceData={NO_RESOURCE_DATA}
-            displayType="used"
-            progressMode="normal"
-          />
-        )}
+      {/* Off a board the card is taller than its numbers; they sit in its middle. */}
+      <BAIFlex
+        direction="column"
+        align="stretch"
+        justify="center"
+        style={{ flex: 1 }}
       >
-        <Suspense fallback={<BAISkeleton />}>
-          <MyResourceStatistics fetchKey={`${fetchKey}${internalFetchKey}`} />
-        </Suspense>
-      </ErrorBoundary>
+        {/* A transport failure escapes @catch; keep the title and let refresh retry. */}
+        <ErrorBoundary
+          resetKeys={[fetchKey, internalFetchKey, currentProject.id]}
+          fallbackRender={() => (
+            <ResourceStatistics
+              resourceData={NO_RESOURCE_DATA}
+              displayType="used"
+              progressMode="normal"
+            />
+          )}
+        >
+          <Suspense fallback={<BAISkeleton />}>
+            {currentProject.id ? (
+              <MyTotalResourceStatistics
+                projectId={currentProject.id}
+                fetchKey={`${fetchKey}${internalFetchKey}`}
+              />
+            ) : (
+              <ResourceStatistics
+                resourceData={NO_RESOURCE_DATA}
+                displayType="used"
+                progressMode="normal"
+              />
+            )}
+          </Suspense>
+        </ErrorBoundary>
+      </BAIFlex>
     </BAIFlex>
   );
 };
 
 const NO_RESOURCE_DATA = { cpu: null, memory: null, accelerators: [] };
 
-const MyResourceStatistics: React.FC<{ fetchKey: string }> = ({ fetchKey }) => {
+/**
+ * The viewer's used-vs-limit per slot across all resource groups, for one
+ * project; the session page card and the dashboard card both render it.
+ */
+export const MyTotalResourceStatistics: React.FC<{
+  projectId: string;
+  fetchKey: string;
+}> = ({ projectId, fetchKey }) => {
   'use memo';
-  const currentProject = useCurrentProjectValue();
-  if (!currentProject.id) {
-    throw new Error('Project id is required for MyResource');
-  }
-
   const queryRef = useLazyLoadQuery<MyResourceQuery>(
     graphql`
       query MyResourceQuery($projectId: UUID!) {
         ...MyResourceV2StatisticsFragment @arguments(projectId: $projectId)
       }
     `,
-    { projectId: currentProject.id },
+    { projectId },
     { fetchPolicy: 'network-only', fetchKey },
   );
 
-  return <MyResourceStatisticsContent queryRef={queryRef} />;
+  return <MyTotalResourceStatisticsContent queryRef={queryRef} />;
 };
 
-type LimitEntries = ReadonlyArray<{
-  readonly resourceType: string;
-  readonly quantity: unknown;
-  readonly unlimited: boolean;
-}>;
-
-// Undefined when the slot is unlimited; a slot with no entry is unlimited too.
-const finiteQuantity = (entries: LimitEntries | undefined, slot: string) => {
-  const entry = _.find(entries, (e) => e.resourceType === slot);
-  return !entry || entry.unlimited || entry.quantity == null
-    ? undefined
-    : _.toNumber(entry.quantity);
-};
-
-const smallestFinite = (...values: Array<number | undefined>) =>
-  _.min(_.filter(values, (v): v is number => v !== undefined));
-
-const MyResourceStatisticsContent: React.FC<{
+const MyTotalResourceStatisticsContent: React.FC<{
   queryRef: MyResourceV2StatisticsFragment$key;
 }> = ({ queryRef }) => {
   'use memo';
-  const resourceSlotsDetails = useResourceSlotsDetails();
+  // Fields a plain project member can read; the user's figures count every keypair.
   const data = useFragment(
     graphql`
       fragment MyResourceV2StatisticsFragment on Query
       @argumentDefinitions(projectId: { type: "UUID!" }) {
-        myKeypairResourceAllocationV2 @catch(to: RESULT) {
-          keypair {
+        myUserResourceAllocationV2 @catch(to: RESULT) {
+          user {
             used {
               resourceType
               quantity
-            }
-            limits {
-              resourceType
-              quantity
-              unlimited
             }
             assignable {
               resourceType
@@ -163,11 +189,6 @@ const MyResourceStatisticsContent: React.FC<{
         }
         projectResourceAllocationV2(projectId: $projectId) @catch(to: RESULT) {
           project {
-            limits {
-              resourceType
-              quantity
-              unlimited
-            }
             assignable {
               resourceType
               quantity
@@ -175,116 +196,53 @@ const MyResourceStatisticsContent: React.FC<{
             }
           }
         }
+        scopedResourceGroups(
+          scope: { project: [{ value: $projectId }] }
+          limit: 100
+        ) @catch(to: RESULT) {
+          edges {
+            node {
+              resourceInfo {
+                capacity {
+                  entries {
+                    resourceType
+                    quantity
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     `,
     queryRef,
   );
-
-  const keypair = data.myKeypairResourceAllocationV2.ok
-    ? data.myKeypairResourceAllocationV2.value?.keypair
-    : undefined;
-  const project = data.projectResourceAllocationV2.ok
-    ? data.projectResourceAllocationV2.value?.project
-    : undefined;
-
-  // Raw units (cores, bytes, device counts); an undefined limit or remaining
-  // means unlimited, and a slot the keypair holds nothing of is 0 used.
-  const amountsOf = (slot: string) => ({
-    used: _.find(keypair?.used, (e) => e.resourceType === slot)?.quantity ?? 0,
-    limit: smallestFinite(
-      finiteQuantity(keypair?.limits, slot),
-      finiteQuantity(project?.limits, slot),
+  const user = readPrimary(data.myUserResourceAllocationV2)?.user;
+  const project = readSecondary(data.projectResourceAllocationV2).value
+    ?.project;
+  // Only the slots some group of the project offers; the allocation lists every slot the manager knows.
+  const groupSlots = _.compact(
+    _.map(readSecondary(data.scopedResourceGroups).value?.edges, (edge) =>
+      offeredSlotsOf(edge?.node?.resourceInfo?.capacity.entries),
     ),
-    remaining: smallestFinite(
-      finiteQuantity(keypair?.assignable, slot),
-      finiteQuantity(project?.assignable, slot),
-    ),
-  });
-
-  const cpuSlot = resourceSlotsDetails?.resourceSlotsInRG?.['cpu'];
-  const memSlot = resourceSlotsDetails?.resourceSlotsInRG?.['mem'];
-  const cpuAmounts = amountsOf('cpu');
-  const memAmounts = amountsOf('mem');
-
-  // Without the keypair figures there is nothing to show, not zero usage.
-  const resourceData = !keypair
-    ? NO_RESOURCE_DATA
-    : {
-        cpu: cpuSlot
-          ? {
-              used: {
-                current: convertToNumber(cpuAmounts.used),
-                total: convertToNumber(cpuAmounts.limit),
-              },
-              free: {
-                current: convertToNumber(cpuAmounts.remaining),
-                total: convertToNumber(cpuAmounts.limit),
-              },
-              metadata: {
-                title: cpuSlot.human_readable_name,
-                displayUnit: cpuSlot.display_unit,
-              },
-            }
-          : null,
-        memory: memSlot
-          ? {
-              used: {
-                current: processMemoryValue(
-                  memAmounts.used,
-                  memSlot.display_unit,
-                ),
-                total: processMemoryValue(
-                  memAmounts.limit,
-                  memSlot.display_unit,
-                ),
-              },
-              free: {
-                current: processMemoryValue(
-                  memAmounts.remaining,
-                  memSlot.display_unit,
-                ),
-                total: processMemoryValue(
-                  memAmounts.limit,
-                  memSlot.display_unit,
-                ),
-              },
-              metadata: {
-                title: memSlot.human_readable_name,
-                displayUnit: memSlot.display_unit,
-              },
-            }
-          : null,
-        accelerators: _.compact(
-          _.map(
-            _.omit(resourceSlotsDetails?.resourceSlotsInRG, ['cpu', 'mem']),
-            (resourceSlot, key) => {
-              if (!resourceSlot) return null;
-              const amounts = amountsOf(key);
-              return {
-                key,
-                used: {
-                  current: convertToNumber(amounts.used),
-                  total: convertToNumber(amounts.limit),
-                },
-                free: {
-                  current: convertToNumber(amounts.remaining),
-                  total: convertToNumber(amounts.limit),
-                },
-                metadata: {
-                  title: resourceSlot.human_readable_name,
-                  displayUnit: resourceSlot.display_unit,
-                },
-              };
-            },
-          ),
-        ),
-      };
+  );
+  const slots = groupSlots.length
+    ? new Set(groupSlots.flatMap((offered) => [...offered]))
+    : undefined;
 
   return (
-    <ResourceStatistics
-      resourceData={resourceData}
-      displayType="used"
-      progressMode="normal"
+    <ResourceUsageStatistics
+      rows={
+        user
+          ? toUsageRows(
+              user.used,
+              [user.assignable, project?.assignable ?? []],
+              {
+                slots,
+              },
+            )
+          : []
+      }
     />
   );
 };

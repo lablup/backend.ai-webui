@@ -1,7 +1,12 @@
 // spec: e2e/.agent-output/test-plan-auto-scaling-rule-preset.md
 // sections: 7. Column Visibility, 8. Refresh, 10. Query Template Copy
+import { createTestResources } from '../utils/test-resources';
 import { loginAsAdmin, webuiEndpoint } from '../utils/test-util';
 import { test, expect, Page } from '@playwright/test';
+
+// Every preset a test names is declared here and purged via the admin API in
+// afterEach, so a test that fails midway cannot leak it.
+const resources = createTestResources();
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers
@@ -50,29 +55,6 @@ async function createPreset(
       .getByText('Prometheus query preset has been successfully created.'),
   ).toBeVisible({ timeout: 120000 });
   await expect(modal).toBeHidden({ timeout: 30000 });
-}
-
-async function deletePreset(page: Page, presetName: string): Promise<void> {
-  await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
-  await page.waitForLoadState('domcontentloaded');
-  await expect(
-    page.getByRole('button', { name: /Create Preset/i }),
-  ).toBeVisible({
-    timeout: 60000,
-  });
-  const row = page.getByRole('row').filter({ hasText: presetName });
-  if ((await row.count()) === 0) return;
-  await row.getByRole('button', { name: 'Delete', exact: true }).click();
-  const confirmModal = page.getByRole('dialog');
-  await expect(confirmModal).toBeVisible({ timeout: 30000 });
-  await expect(confirmModal).not.toHaveClass(/ant-zoom-appear/, {
-    timeout: 10000,
-  });
-  await confirmModal.locator('input').fill(presetName);
-  await confirmModal
-    .getByRole('button', { name: 'Delete', exact: true })
-    .click();
-  await expect(confirmModal).toBeHidden({ timeout: 30000 });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -270,22 +252,13 @@ test.describe(
       await loginAsAdmin(page, request);
     });
 
-    test.afterEach(async ({ page }) => {
-      if (presetName) {
-        try {
-          await deletePreset(page, presetName);
-        } catch {
-          // ignore cleanup errors
-        }
-        presetName = '';
-      }
-    });
+    test.afterEach(() => resources.cleanup());
 
     // 10.1 Superadmin can copy the Query Template text from the table row
     test('Superadmin can copy the Query Template text from the table row via copy icon', async ({
       page,
     }) => {
-      presetName = `e2e-preset-copy-${Date.now()}`;
+      presetName = resources.name('prometheusQueryPreset', 'e2e-preset-copy');
       const queryTemplate = 'rate(container_cpu_usage_seconds_total[5m])';
 
       // Create a preset with a distinctive Query Template

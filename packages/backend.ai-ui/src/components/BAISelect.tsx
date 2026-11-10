@@ -2,32 +2,21 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- `BAISelect` on Astryx (to-astryx phase 3, wave 2 / ticket W2-D).
+ The one select of webui and BUI for a list the client already holds (ADR 0017).
+ The prop surface stays antd `Select`-SHAPED and translates internally, and
+ this file is the only one in `backend.ai-ui` that imports ui-common `Selector`.
 
- FRONTIER COMPONENT, and the widest one in this slice: 64 call sites in 56
- files, plus **12 components that declare `interface XProps extends
- BAISelectProps`** and spread the bag straight through — `StorageSelect`,
- `AccessKeySelect`, `ProjectSelect`, `PrometheusCategorySelect`,
- `Chat/ModelSelect`, `SettingItem`, `SharedResourceGroupSelectForCurrentProject`,
- `BAIProjectResourceGroupSelect`, `BAIProjectResourcePolicySelect`,
- `BAIResourceGroupSelect`, `BAIStorageProxySelect`, `BAIVFolderPathPicker`.
- None of those are in this ticket's scope, so the public prop surface stays
- antd `Select`-SHAPED and translates internally. `SelectProps` /
- `BaseOptionType` / `DefaultOptionType` / `GetRef` are replaced by locally
- declared equivalents so the module — a 574-file taint hub — drops out of the
- antd import graph (P15).
-
- Internals, per MAPPING §3.1:
+ Internals:
 
    `mode="multiple"`  -> `MultiSelector` (`value: string[]`, required)
    everything else    -> `Selector`
-   `showSearch`       -> `hasSearch` (+ the `searchAction` transition below)
+   `showSearch`       -> `hasSearch` (on unless `false`, as antd's composed default)
    `allowClear`       -> `hasClear`
    `loading`          -> `isLoading`
-   `disabled`         -> `isDisabled`
    `optionRender`     -> `renderOption`
-   `status="error"`   -> `status={{ type: 'error' }}`
+   `labelRender`      -> `renderValue` (single mode)
    `style.width`      -> `width`
+   `variant`          -> `variant` (`outlined` input, `filled` secondary, `borderless` ghost)
 
  PILOT-DECISION — **ReactNode option labels survive via `renderOption`.**
  Astryx's `SelectorOptionData.label` is a plain `string`, but real call sites
@@ -97,16 +86,19 @@
 
  PILOT-DECISION — **`label` is required by Astryx and defaults to hidden.**
  No antd call site passes one. The wrapper accepts `label` and otherwise
- derives an accessible name from `placeholder` (which every call site does
- pass: 28 of 64) before falling back to the translated generic — the same
- policy `BAIButton` / `BAICheckbox` / `BAIUncontrolledInput` use here.
+ takes the accessible name from `aria-label`, then the Form.Item label, then
+ `placeholder`, before falling back to the translated generic.
 */
-import { nodeToAccessibleLabel } from '../helper/astryxLabel';
+import { FormItemInputContext } from '../form-engine';
+import {
+  nodeToAccessibleLabel,
+  resolveAccessibleLabel,
+} from '../helper/astryxLabel';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIMultiSelector from './BAIMultiSelector';
 import './BAISelect.css';
-import BAISelector from './BAISelector';
 import {
+  Selector,
   type SelectorOptionData,
   type SelectorOptionType,
 } from '@lablup/ui-common/Selector';
@@ -119,8 +111,13 @@ import type { CSSProperties, ReactNode } from 'react';
 export interface BAISelectOption {
   value?: string | number | null;
   label?: ReactNode;
-  disabled?: boolean;
+  /** `{ reason }` disables the option and shows why at the end of its row. */
+  disabled?: SelectorOptionData['disabled'];
   title?: string;
+  /** Second line of the default option row. */
+  description?: SelectorOptionData['description'];
+  /** Leading glyph of the default option row and of the trigger. */
+  icon?: SelectorOptionData['icon'];
   // antd's `DefaultOptionType` carried an open index signature and call sites
   // read arbitrary keys off it (`option.data.description`,
   // `optionFilterProp: 'filterValue'`). `any` preserves that, exactly as antd
@@ -141,6 +138,8 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
   /** antd's multi-value modes. */
   mode?: 'multiple' | 'tags';
   disabled?: boolean;
+  /** Tooltip on the trigger while it is disabled, saying why. */
+  disabledMessage?: string;
   loading?: boolean;
   allowClear?: boolean;
   /**
@@ -161,6 +160,8 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
       };
   status?: 'error' | 'warning' | '';
   size?: 'small' | 'middle' | 'large';
+  variant?: 'outlined' | 'filled' | 'borderless';
+  /** Accepted and inert: ui-common's selectors own their popup visibility. */
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   /**
@@ -177,8 +178,14 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
   style?: CSSProperties;
   autoFocus?: boolean;
   tabIndex?: number;
-  /** Accessible name (`aria-label`); derived from `placeholder` when absent. */
+  id?: string;
+  /**
+   * Accessible name; falls back to `aria-label`, the enclosing Form.Item's
+   * label, then `placeholder`.
+   */
   label?: string;
+  /** Same as `label`, for a call site that names the control the DOM way. */
+  'aria-label'?: string;
   /** Accepted and inert: ui-common's controls never render their own label. */
   isLabelHidden?: boolean;
   /**
@@ -189,7 +196,8 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
   popupRender?: (menu: ReactNode) => ReactNode;
   notFoundContent?: ReactNode;
   suffixIcon?: ReactNode;
-  labelRender?: (props: any) => ReactNode;
+  /** The closed trigger's content in single mode. Gets the `Selector` option. */
+  labelRender?: (option: SelectorOptionData) => ReactNode;
   maxTagCount?: number | 'responsive';
   maxTagPlaceholder?: ReactNode | ((omitted: Array<any>) => ReactNode);
   /**
@@ -274,24 +282,28 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   className,
   style,
   label,
+  'aria-label': ariaLabel,
   isLabelHidden: _isLabelHidden,
   // Accepted and inert — the antd popup mechanisms Astryx owns internally.
   popupMatchSelectWidth: _popupMatchSelectWidth,
   popupRender: _popupRender,
   notFoundContent: _notFoundContent,
   suffixIcon: _suffixIcon,
-  labelRender: _labelRender,
+  labelRender,
   maxTagCount: _maxTagCount,
   maxTagPlaceholder: _maxTagPlaceholder,
   optionLabelProp,
   filterOption: _filterOption,
   defaultActiveFirstOption: _defaultActiveFirstOption,
   open: _open,
-  onOpenChange: _onOpenChange,
   title: _title,
+  variant,
   ...restProps
 }: BAISelectProps<ValueType, OptionType>): React.ReactElement {
+  'use memo';
   const { t } = useBAIi18n();
+  const formItemLabel =
+    React.useContext(FormItemInputContext).label || undefined;
 
   // antd's OTHER option API: `<Select.Option>` / `<Select.OptGroup>` children.
   // Astryx's `Selector` is `options`-driven only, so the element tree is
@@ -315,7 +327,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
         const childProps = child.props as {
           value?: unknown;
           label?: ReactNode;
-          disabled?: boolean;
+          disabled?: BAISelectOption['disabled'];
           filterValue?: string;
           children?: ReactNode;
         };
@@ -410,7 +422,13 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   const toAstryxOption = (option: BAISelectOption): SelectorOptionData => {
     const key = toOptionKey(option.value);
     const text = option.title ?? (nodeToAccessibleLabel(option.label) || key);
-    return { value: key, label: text, disabled: option.disabled };
+    return {
+      value: key,
+      label: text,
+      disabled: option.disabled,
+      description: option.description,
+      icon: option.icon,
+    };
   };
   const astryxOptions: Array<SelectorOptionType> =
     childSections.length > 0
@@ -501,7 +519,8 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   }, [autoSelectedValue]);
 
   const accessibleLabel =
-    label ?? nodeToAccessibleLabel(placeholder) ?? t('general.Select');
+    resolveAccessibleLabel(label, ariaLabel, formItemLabel, placeholder) ||
+    t('general.Select');
 
   const singleValue = toOptionKey(value ?? defaultValue);
   const resolvedSingleValue =
@@ -540,7 +559,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
       ghost && 'bai-select-ghost',
       richTriggerNode !== undefined && 'bai-select-rich-trigger',
     ),
-    'aria-label': accessibleLabel || t('general.Select'),
+    'aria-label': accessibleLabel,
     placeholder:
       typeof placeholder === 'string'
         ? placeholder
@@ -562,9 +581,17 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
         : size === 'large'
           ? ('lg' as const)
           : undefined,
+    variant:
+      variant === 'filled'
+        ? ('secondary' as const)
+        : variant === 'borderless'
+          ? ('ghost' as const)
+          : undefined,
     width: style?.width,
     controlStyle: style,
-    renderOption,
+    // Astryx's own row is the one that draws an option's `icon` and `description`.
+    renderOption:
+      optionRender || nodeLabels.size > 0 ? renderOption : undefined,
   };
 
   if (mode === 'multiple' || mode === 'tags') {
@@ -596,23 +623,12 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   }
 
   return (
-    <BAISelector
-      // QA-FINDINGS Q-34 — `placement` is the documented opt-out from
-      // Astryx's selected-item overlay, and every search-less `BAISelect`
-      // needs it. `Selector` computes
-      // `shouldOverlaySelectedItem = placement == null && !hasSearch`, and
-      // when that is true it applies a negative `margin-block-start` sized to
-      // centre the SELECTED option on top of the trigger — so the field's
-      // label and its current value both disappear behind the panel the moment
-      // it opens. antd's `Select` never drew its dropdown over its trigger, so
-      // this reads as a broken control rather than a style. Naming a placement
-      // takes the standard layer-positioning path (offset 0, panel below), and
-      // `MultiSelector` already hard-codes exactly this. Written BEFORE the
-      // spread so a call site that genuinely wants `above` still wins.
-      placement="below"
+    <Selector
       {...shared}
       options={optionsWithSlots}
-      hasClear={allowClear}
+      // `Selector` shows the clear button for any non-null value, `''` included.
+      hasClear={allowClear && resolvedSingleValue !== ''}
+      renderValue={labelRender}
       // `autoSelectOption` is honoured without the antd layout effect: when
       // nothing is selected the resolved first (or caller-chosen) option is
       // the rendered value, and the caller is told on mount by the same
@@ -646,7 +662,8 @@ export interface BAISelectOptionProps {
    * live in props the text flattener cannot reach (FR-3544).
    */
   label?: string;
-  disabled?: boolean;
+  /** `{ reason }` also puts a glyph at the end of the row whose tooltip says why. */
+  disabled?: BAISelectOption['disabled'];
   /**
    * Accepted and IGNORED, for antd's `optionFilterProp="filterValue"` call
    * sites. Search matches the option's visible text only — Astryx renders the

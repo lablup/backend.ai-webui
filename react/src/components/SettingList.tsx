@@ -26,7 +26,13 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { ArrowLeft, ChevronRight, Redo2, Search } from 'lucide-react';
-import React, { CSSProperties, ReactNode, useState } from 'react';
+import React, {
+  CSSProperties,
+  ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 
 // Frame budget for the settings shell (astryx docs layout — pick the shell and
@@ -45,18 +51,28 @@ const navPanelPadding: CSSProperties = {
   paddingInline: 'var(--spacing-3)',
 };
 
-// Layout escapes the card padding on its own (`--container-padding-*`); only
-// its top margin is kept so the gap under the toolbar survives, and the top
-// border runs edge to edge like the card header's divider.
-const bodyBleed: CSSProperties = {
-  marginBlockStart: 0,
-  borderBlockStart: '1px solid var(--color-border)',
-};
-// The narrow nav list is a plain flex column, so it bleeds by hand.
-const narrowNavBleed: CSSProperties = {
-  ...bodyBleed,
+// Layout escapes the card padding on its own (`--container-padding-*`); the
+// edge-to-edge divider above it belongs to the toolbar band.
+const bodyBleed: CSSProperties = { marginBlockStart: 0 };
+const inlineBleed: CSSProperties = {
   marginInlineStart: 'calc(-1 * var(--container-padding-inline-start, 0px))',
   marginInlineEnd: 'calc(-1 * var(--container-padding-inline-end, 0px))',
+};
+// The narrow nav list is a plain flex column, so it bleeds by hand.
+const narrowNavBleed: CSSProperties = { ...bodyBleed, ...inlineBleed };
+
+// The toolbar band runs edge to edge from just under the card header (BAICard
+// stacks header and body with gap 4) down to the divider, so the sticky part
+// covers the whole strip without covering the tab rail's rule.
+const toolbarBand: CSSProperties = {
+  ...inlineBleed,
+  marginBlockStart: 'calc(-1 * var(--spacing-4))',
+  paddingBlockStart: 'var(--spacing-4)',
+  paddingInlineStart: 'var(--container-padding-inline-start, 0px)',
+  paddingInlineEnd: 'var(--container-padding-inline-end, 0px)',
+  paddingBlockEnd: 'var(--spacing-5)',
+  borderBlockEnd: '1px solid var(--color-border)',
+  background: 'var(--color-background-card)',
 };
 
 const ALL_NAV_KEY = 'all';
@@ -72,18 +88,6 @@ export type SettingGroup = {
 
 interface SettingPageProps {
   settingGroups: Array<SettingGroup>;
-  // CONVERSION-IDIOM (supersedes ticket 22's horizontal-collapse
-  // PILOT-DECISION): antd's vertical tabs (`tabPlacement="start"`, formerly
-  // this component's `tabDirection='left'` default) are NOT a horizontal
-  // `TabList`. Astryx's canonical equivalent is the `settings-sidebar`
-  // template composition — `Layout` + `LayoutPanel` nav column (`List` /
-  // `ListItem` with `isSelected`) + `LayoutContent` pane — which is what this
-  // component now renders. `TabList` genuinely has no side orientation, but
-  // the missing capability was never "tabs on the left"; it was "settings
-  // shell", and Layout provides it. See
-  // `.specs/FR-3482-astryx-migration/CONVERSION-IDIOMS.md`.
-  // `tabDirection` stays dropped: the vertical shell is now the only layout,
-  // and no call site ever asked for the horizontal one.
   showChangedOptionFilter?: boolean;
   showResetButton?: boolean;
   showSearchBar?: boolean;
@@ -96,14 +100,27 @@ interface SettingPageProps {
    * `LayoutPanel` would be a nav inside a nav and a `Layout` inside a `Layout`.
    */
   hideGroupNav?: boolean;
+  /**
+   * Keep the toolbar band (search, filters, Reset / Apply, down to its divider)
+   * and the group nav in view while the page scrolls. On by default with the
+   * group nav; the stacked `hideGroupNav` layout has no band.
+   */
+  isStickyHeader?: boolean;
 }
+
+const stickyBand: CSSProperties = {
+  ...toolbarBand,
+  position: 'sticky',
+  top: 0,
+  zIndex: 1,
+};
 
 const GroupSettingItems: React.FC<
   {
     group: SettingGroup;
     hideEmpty?: boolean;
     // Narrow drill-down already names the section beside the back button
-    // (settings-sidebar template), so the in-pane heading would be a duplicate.
+    // (the rail composition), so the in-pane heading would be a duplicate.
     hideTitle?: boolean;
     arrivalTitle?: string | null;
   } & React.HTMLAttributes<HTMLDivElement>
@@ -147,6 +164,8 @@ const GroupSettingItems: React.FC<
   );
 };
 
+// The left rail is a `Layout` + `LayoutPanel` + `List` composition (ADR 0020
+// §6); its selection is page-internal state, not `?tab=` (ADR 0021).
 const SettingList: React.FC<SettingPageProps> = ({
   settingGroups,
   showChangedOptionFilter,
@@ -156,16 +175,28 @@ const SettingList: React.FC<SettingPageProps> = ({
   extraButton,
   onReset,
   hideGroupNav = false,
+  isStickyHeader = !hideGroupNav,
 }) => {
   'use memo';
 
   const { t } = useTranslation();
-  // RESPONSIVE-POLICY §2: JS behaviour branches use `useBAIBreakpoint()`, not
+  // ADR 0020 R3: JS behaviour branches use `useBAIBreakpoint()`, not
   // Astryx `useMediaQuery` (which reports `false` on first render and flashes).
   // `md` is antd's 768px step — the same breakpoint the template drills down at.
   const { md } = useBAIBreakpoint();
   const isNarrow = !md;
   const [searchValue, setSearchValue] = useState('');
+  const toolbarRef = useRef<HTMLDivElement>(null);
+  const [toolbarHeight, setToolbarHeight] = useState(0);
+  useEffect(() => {
+    const toolbar = toolbarRef.current;
+    if (!isStickyHeader || !toolbar) return;
+    const observer = new ResizeObserver(() =>
+      setToolbarHeight(toolbar.offsetHeight),
+    );
+    observer.observe(toolbar);
+    return () => observer.disconnect();
+  }, [isStickyHeader]);
   const [changedOptionFilter, setChangedOptionFilter] = useState(false);
   const [isOpenResetChangesModal, { toggle: setIsOpenResetChangesModal }] =
     useToggle(false);
@@ -247,7 +278,15 @@ const SettingList: React.FC<SettingPageProps> = ({
   };
 
   const navList = (
-    <BAIFlex direction="column" align="stretch" style={navPanelPadding}>
+    <BAIFlex
+      direction="column"
+      align="stretch"
+      style={
+        isStickyHeader && !isNarrow
+          ? { ...navPanelPadding, position: 'sticky', top: toolbarHeight }
+          : navPanelPadding
+      }
+    >
       <List density="spacious">
         {_.map(navItems, (item) => (
           <ListItem
@@ -303,8 +342,16 @@ const SettingList: React.FC<SettingPageProps> = ({
 
   return (
     <>
-      <BAIFlex direction="column" gap={'md'} align="stretch">
-        <BAIFlex justify="start" gap={'xs'} wrap="nowrap">
+      <BAIFlex direction="column" gap={hideGroupNav ? 'md' : 0} align="stretch">
+        <BAIFlex
+          ref={toolbarRef}
+          justify="start"
+          gap={'xs'}
+          wrap="nowrap"
+          style={
+            hideGroupNav ? undefined : isStickyHeader ? stickyBand : toolbarBand
+          }
+        >
           {!!showSearchBar && (
             // The flex item is the field's OUTER box, which `TextInput` does
             // not expose (its `style` lands on the inner control), so the

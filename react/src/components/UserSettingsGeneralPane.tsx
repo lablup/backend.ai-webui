@@ -83,7 +83,6 @@ const UserSettingsGeneralPane = () => {
   const [, setLanguage] = useBAISettingGeneralState('language');
   const [autoAutomaticUpdateCheck, setAutoAutomaticUpdateCheck] =
     useBAISettingUserState('automatic_update_check');
-  const [autoLogout, setAutoLogout] = useBAISettingUserState('auto_logout');
   const [isOpenSSHKeypairInfoModal, { toggle: toggleSSHKeypairInfoModal }] =
     useToggle(false);
   const [
@@ -94,8 +93,6 @@ const UserSettingsGeneralPane = () => {
     useBAISettingUserState('preserve_login');
   const [experimentalAIAgents, setExperimentalAIAgents] =
     useBAISettingUserState('experimental_ai_agents');
-  const [experimentalCustomDashboard, setExperimentalCustomDashboard] =
-    useBAISettingUserState('experimental_custom_dashboard_panels');
   const [
     experimentalImportFromHuggingFace,
     setExperimentalImportFromHuggingFace,
@@ -275,7 +272,7 @@ const UserSettingsGeneralPane = () => {
                   }
                 : item,
             ),
-            hasSearch: true,
+            showSearch: true,
           },
           defaultValue: defaultLanguage,
           value: selectedLanguage || defaultLanguage,
@@ -311,15 +308,6 @@ const UserSettingsGeneralPane = () => {
           defaultValue: false,
           value: autoAutomaticUpdateCheck,
           onChange: setAutoAutomaticUpdateCheck,
-        },
-        {
-          'data-testid': 'items-auto-logout',
-          type: 'checkbox',
-          title: t('userSettings.AutoLogout'),
-          description: t('userSettings.DescAutoLogout'),
-          defaultValue: false,
-          value: autoLogout,
-          onChange: setAutoLogout,
         },
         {
           'data-testid': 'items-my-keypair-info',
@@ -429,15 +417,6 @@ const UserSettingsGeneralPane = () => {
           defaultValue: false,
           value: experimentalAIAgents,
           onChange: setExperimentalAIAgents,
-        },
-        {
-          'data-testid': 'items-experimental-custom-dashboard-panels',
-          type: 'checkbox',
-          title: t('userSettings.CustomDashboardPanels'),
-          description: t('general.Enabled'),
-          defaultValue: false,
-          value: experimentalCustomDashboard,
-          onChange: setExperimentalCustomDashboard,
         },
         {
           'data-testid': 'items-experimental-import-from-huggingface',

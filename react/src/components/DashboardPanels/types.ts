@@ -3,56 +3,48 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { SessionGridViewParams } from '../../helper/sessionResourceGridData';
+import type { UserRole } from '../../helper/userRole';
+import type { MenuKeys } from '../../hooks/useWebUIMenuItems';
+import type { PanelDetailLink, PanelDetailLinkContext } from './detailLink';
 import type {
   BAIColumnsType,
   BAIGraphQLFilterProperty,
+  BAITableColumnOverrideRecord,
   FilterProperty,
   GraphQLFilter,
 } from 'backend.ai-ui';
 import type { TFunction } from 'i18next';
+import type React from 'react';
 import type { GraphQLTaggedNode, OperationType } from 'relay-runtime';
 
-/**
- * The decoupled-dashboard "query-as-config" engine: a panel is a serializable
- * {@link PanelDescriptor} (which resource, which condition, which order — never
- * JSX), persisted to localStorage and resolved at render time against the
- * {@link ResourceConfig} registry. The same descriptor can later drive charts or
- * an AI-emitted spec without changing the render path.
- */
+/** Data sources a custom panel can list. */
+export const RESOURCE_KEYS = ['session', 'deployment', 'vfolder'] as const;
+export type ResourceKey = (typeof RESOURCE_KEYS)[number];
 
-/** Data sources a panel can list. Regular-user scope: no admin-only resources. */
-export type ResourceKey = 'session' | 'deployment' | 'vfolder';
-
-/**
- * Panel kinds the registry can render: table rows, a single count stat, or the
- * session resource grid (session resource only, experimental — FR-3570).
- */
-export type PanelType =
-  'resourceTable' | 'resourceCount' | 'sessionResourceGrid';
+/** Panel kinds the panel registry renders (table rows, a count, the session grid). */
+export const PANEL_TYPES = [
+  'resourceTable',
+  'resourceCount',
+  'sessionResourceGrid',
+] as const;
+export type PanelType = (typeof PANEL_TYPES)[number];
 
 /**
- * Serializable, persisted per-panel configuration. MUST stay plain JSON (no JSX,
- * functions, or class instances) so it survives the localStorage round-trip.
- * The condition is expressed to users through the panel TITLE — panels render no
- * filter UI; the descriptor changes only through the panel modal.
+ * Serializable per-panel configuration of a custom panel; it must survive a
+ * JSON round-trip. The condition reaches users through the panel title.
  */
 export interface PanelDescriptor {
   resourceType: ResourceKey;
-  /** Optional override for the panel header; falls back to the resource label. */
+  /** Overrides the panel header; falls back to the resource label. */
   title?: string;
-  /**
-   * The condition, verbatim from the modal's filter control: a `GraphQLFilter`
-   * object for V2 resources, or the minilang filter STRING for `sessionNodes`
-   * resources (same language the sessions page uses).
-   */
+  /** A `GraphQLFilter` for V2 resources, or the minilang string for `sessionNodes` ones. */
   filter?: GraphQLFilter | string | null;
-  /** Sort order string, e.g. `'-createdAt'`; falls back to the resource default. */
+  /** Sort order, e.g. `'-createdAt'`; falls back to the resource default. */
   order?: string | null;
-  /**
-   * View settings for a `sessionResourceGrid` panel (null on other kinds).
-   * Plain JSON, like every other descriptor field, so it survives localStorage.
-   */
+  /** View settings of a `sessionResourceGrid` panel, null on other kinds. */
   gridView?: SessionGridViewParams | null;
+  /** The panel's resource group setting, for sources that support one. */
+  resourceGroups?: Array<string> | null;
 }
 
 /** The fields the panel modal collects when creating or editing a panel. */
@@ -64,14 +56,238 @@ export type PanelInput = Pick<
 };
 
 /**
- * A persisted custom panel: identity + serializable descriptor only. Layout
- * (order/spans/offset) for the WHOLE board — built-in and custom alike — is
- * owned solely by the unified `dashboard_board_items` list.
+ * The custom-panel shape the panel modal and the edit sider read, and the
+ * shape of the legacy `custom_dashboard_panels` localStorage value.
  */
 export interface PersistedPanel {
   id: string;
   panelType: PanelType;
   descriptor: PanelDescriptor;
+}
+
+/** Dashboard pages a panel can be placed on. */
+export type PanelPage = 'project' | 'projectAdmin' | 'admin';
+
+/** Catalog groups, in the order the edit sider lists them. */
+export const PANEL_GROUPS = [
+  'start',
+  'session',
+  'resource',
+  'deployment',
+  'users',
+  'activity',
+  'other',
+] as const;
+export type PanelGroup = (typeof PANEL_GROUPS)[number];
+
+/** How a preset panel draws its rows. */
+export const VIZ_TYPES = ['table', 'stat', 'grid'] as const;
+export type Viz = (typeof VIZ_TYPES)[number];
+
+/** The current domain: `id` for `scoped*` scopes, `name` for fields keyed by name. */
+export interface DashboardDomain {
+  id: string;
+  name: string;
+}
+
+/**
+ * Whose data every card on a board reads, from the page alone. `mine` is the
+ * member page: the viewer's own data in the header project. `projects` is an
+ * admin page; `projectIds` is `'all'` only on the superadmin page, meaning
+ * every project of `domain` (ADR 0012).
+ */
+export type DashboardScope =
+  | {
+      kind: 'mine';
+      projectId: string | null;
+    }
+  | {
+      kind: 'projects';
+      projectIds: Array<string> | 'all';
+      domain: DashboardDomain;
+    };
+
+/** What a card reads besides its scope: its own settings, resolved. */
+export interface DashboardVars {
+  /** The card's range setting, `now-24h` by default. */
+  range: string;
+  /**
+   * `range` resolved at the card's last refresh, so it stays stable until the
+   * next one. Filter with `withinWindow`, never as one `DateTimeFilter`.
+   */
+  timeRange: { after: string; before: string };
+  /** The card's last refresh time, the `now` behind `timeRange`. */
+  refreshedAt: number;
+  /** The page's project, for cards that read one. */
+  currentProjectId: string | null;
+  /** The card's resource group setting while allowed, else the page's default group. */
+  resourceGroup: string | null;
+}
+
+/** The per-card settings a catalog entry can take, edited in edit mode. */
+export const PANEL_SETTING_KINDS = ['resourceGroup', 'range'] as const;
+export type PanelSettingKind = (typeof PANEL_SETTING_KINDS)[number];
+
+/** A card's own settings; an absent field means the card's default. */
+export interface PanelSettings {
+  /**
+   * The card's one resource group, stored as a one-item array; absent means the
+   * card's default group. Older boards may hold several: the first one is read.
+   */
+  resourceGroups?: Array<string>;
+  /** A relative range such as `now-24h`. */
+  range?: string;
+  /** The card table's column picks (visibility, order, width), on cards with `columnSettings`. */
+  columnOverrides?: BAITableColumnOverrideRecord;
+}
+
+export interface PanelSize {
+  columnSpan: number;
+  rowSpan: number;
+}
+
+/**
+ * One panel on a board, layout included. Plain JSON: it is persisted as is.
+ * `id` equals `key` for single-instance panels, so layouts saved before the
+ * catalog existed keep their positions.
+ */
+export interface PersistedPanelV2 {
+  id: string;
+  key: string;
+  filter?: GraphQLFilter | string | null;
+  viz?: Viz;
+  order?: string | null;
+  gridView?: SessionGridViewParams | null;
+  title?: string;
+  settings?: PanelSettings;
+  columnSpan: number;
+  rowSpan: number;
+  columnOffset?: Record<number, number>;
+  /** A user-made panel taken off the board; it stays listed in the edit sider. */
+  hidden?: boolean;
+}
+
+export interface DashboardBoard {
+  panels: Array<PersistedPanelV2>;
+  /** Catalog keys this board has seen, so a removed panel stays removed while a new one appears. */
+  knownKeys: Array<string>;
+}
+
+/** A board's dashboard-level values. */
+export interface DashboardBoardVars {
+  /** The auto refresh interval (`30s`, `5m`), or `off`. */
+  refresh: string;
+}
+
+/** One saved board: its panels plus the refresh interval it opens with. */
+export interface DashboardModel extends DashboardBoard {
+  id: string;
+  /** Empty for the default board, which the tabs label generically. */
+  title: string;
+  vars: DashboardBoardVars;
+}
+
+/** One page's boards in `userConfig.dashboard`. */
+export interface DashboardPageConfig {
+  boards: Array<DashboardModel>;
+  active: string;
+}
+
+/** `userConfig.dashboard`. */
+export type DashboardConfig = Partial<Record<PanelPage, DashboardPageConfig>>;
+
+/** `dashboardTemplates` in `domainConfig` / `publicConfigByDomain[domain]`. */
+export type DashboardTemplates = Partial<Record<PanelPage, DashboardModel>>;
+
+/** The parts of the WebUI config the catalog reads. */
+export interface PanelCatalogConfig {
+  blockList?: ReadonlyArray<string>;
+  inactiveList?: ReadonlyArray<string>;
+  hideAgents?: boolean;
+  enableModelFolders?: boolean;
+}
+
+export interface PanelCatalogContext {
+  page: PanelPage;
+  role: UserRole | null | undefined;
+  config: PanelCatalogConfig;
+  /** The viewer holds the RBAC admin role of the page's project. */
+  isProjectAdmin?: boolean;
+}
+
+/** Fragment keys a page query hands its cards; every card now runs its own query. */
+export type DashboardPageQueryRefs = Record<string, never>;
+
+export interface PanelComponentProps {
+  panel: PersistedPanelV2;
+  scope: DashboardScope;
+  vars: DashboardVars;
+  fetchKey: string;
+  /** Changes only on a manual refresh, for data that cannot change by itself. */
+  manualFetchKey: string;
+  isRefetching: boolean;
+  queryRefs: DashboardPageQueryRefs;
+  /** Refreshes every card now. */
+  onRefresh: () => void;
+  /** Saves the card's own filter on the board. */
+  onChangeFilter?: (filter: PersistedPanelV2['filter']) => void;
+  /** Saves part of the card's own settings on the board, keeping the rest. */
+  onChangeSettings?: (patch: Partial<PanelSettings>) => void;
+  onEdit?: () => void;
+  onRemove?: () => void;
+}
+
+/** One catalog entry: a dedicated card (`custom`) or a data source × filter × viz preset. */
+export interface PanelDefinition {
+  key: string;
+  page: ReadonlyArray<PanelPage>;
+  group: PanelGroup;
+  titleKey: string;
+  /** Replaces `titleKey` for a superadmin, whose card shows a wider range. */
+  superadminTitleKey?: string;
+  /** Replaces `titleKey` (and `superadminTitleKey`) on the pages listed. */
+  pageTitleKeys?: Partial<Record<PanelPage, string>>;
+  requires?: {
+    role?: 'projectAdmin' | 'superadmin';
+    /**
+     * Any of these in `blockList` / `inactiveList` drops the entry. `import` is
+     * a blockList key of its own, though it has no menu item.
+     */
+    menuKey?: MenuKeys | 'import' | ReadonlyArray<MenuKeys | 'import'>;
+    /** True drops the entry for this viewer: not listed and not rendered. */
+    hidden?: (
+      config: PanelCatalogConfig,
+      role: UserRole | null | undefined,
+    ) => boolean;
+    /** False locks the entry: listed but disabled, and not rendered. */
+    config?: (
+      config: PanelCatalogConfig,
+      role: UserRole | null | undefined,
+    ) => boolean;
+  };
+  kind: 'preset' | 'custom';
+  source?: ResourceKey;
+  filter?: GraphQLFilter | string;
+  viz?: Viz;
+  Component?: React.FC<PanelComponentProps>;
+  defaultSize: PanelSize;
+  minSize: PanelSize;
+  /** Per-viz sizes of a preset, overriding `defaultSize` / `minSize`. */
+  sizeByViz?: Partial<
+    Record<Viz, { defaultSize: PanelSize; minSize: PanelSize }>
+  >;
+  /** The settings the card reads; only these cards get a settings control. */
+  settings?: ReadonlyArray<PanelSettingKind>;
+  /** The longest custom range the card accepts, in days; `MAX_WINDOW_DAYS` when absent, `0` for the presets only. */
+  maxRangeDays?: number;
+  /** The card's table offers column settings, kept in its `columnOverrides` setting. */
+  columnSettings?: boolean;
+  /** Like a BAITable column's `defaultHidden`: in the catalog, not on a new board; a page list limits it to those pages. */
+  defaultHidden?: boolean | ReadonlyArray<PanelPage>;
+  /** Where a new board of the page places the card; cards without one follow, in catalog order. */
+  order?: Partial<Record<PanelPage, number>>;
+  /** The list page behind the card, opened from its header; null on a page that has none. */
+  detailLink?: (context: PanelDetailLinkContext) => PanelDetailLink | null;
 }
 
 /** Inputs the generic executor hands to a resource's `buildVariables`. */
@@ -80,8 +296,14 @@ export interface ResourceQueryArgs {
   order?: string | null;
   limit: number;
   offset: number;
-  /** Ambient project scope (ADR-0001) for project-scoped connections. */
-  projectId: string;
+  /** Restricts the rows to these resource groups; absent or empty means all. */
+  resourceGroups?: ReadonlyArray<string> | null;
+  /** The page's project; `null` on the superadmin page, which reads the current domain. */
+  projectId: string | null;
+  domainName: string;
+  domainId: string;
+  /** The viewer, when the page reads only the viewer's own rows (the member page). */
+  ownerId: string | null;
 }
 
 /** Normalized connection slice the executor renders. */
@@ -91,9 +313,8 @@ export interface ResourceConnectionResult<TNode> {
 }
 
 /**
- * Non-serializable registry entry — one per {@link ResourceKey}. Holds the
- * statically-compiled Relay query (Relay is compile-time, so each resource ships
- * its own query) plus the per-resource glue the generic panel needs.
+ * Registry entry per {@link ResourceKey}: the statically compiled Relay query
+ * plus the per-resource glue the generic panel needs.
  */
 export interface ResourceConfig<
   TQuery extends OperationType = OperationType,
@@ -102,32 +323,23 @@ export interface ResourceConfig<
   key: ResourceKey;
   /** i18n key for the resource's display label. */
   labelKey: string;
-  /** Statically-defined `graphql` query. */
   query: GraphQLTaggedNode;
-  /** Default sort order string when the descriptor doesn't specify one. */
+  /** Default sort order when the descriptor doesn't specify one. */
   defaultOrder: string;
-  /**
-   * Minimum role required to run this resource's connection (schema-enforced).
-   * Undefined = any project member.
-   */
+  /** Minimum role the connection requires (schema-enforced); undefined = any project member. */
   minRole?: 'superadmin' | 'admin';
-  /**
-   * Render the list PAGE's own table component instead of the generic one, for
-   * behavioral parity with that page — name click, badges, column settings.
-   * Undefined = generic V2 table built from `getColumns`.
-   */
+  /** The source can be narrowed to resource groups (the panel's setting). */
+  supportsResourceGroup?: boolean;
+  /** Render the list page's own table instead of the generic one. */
   kind?: 'sessionNodes' | 'deploymentNodes';
-  /** Properties offered to `BAIGraphQLPropertyFilter`, built with the host `t`. */
   getFilterProperties?: (
     t: TFunction,
   ) => ReadonlyArray<BAIGraphQLFilterProperty>;
-  /** Properties for `BAIPropertyFilter` (string filter) — `kind: 'sessionNodes'`. */
+  /** Properties for `BAIPropertyFilter` (string filter), `kind: 'sessionNodes'`. */
   getStringFilterProperties?: (t: TFunction) => Array<FilterProperty>;
   /** Columns for the generic table (unused for `kind: 'sessionNodes'`). */
   getColumns?: (t: TFunction) => BAIColumnsType<TNode>;
-  /** Maps query args into the typed Relay variables for this resource. */
   buildVariables: (args: ResourceQueryArgs) => TQuery['variables'];
-  /** Extracts the normalized `{ count, nodes }` slice from the query response. */
   selectConnection: (
     data: TQuery['response'],
   ) => ResourceConnectionResult<TNode> | null | undefined;

@@ -1,9 +1,9 @@
 // FR-4119: admin pages list the signed-in admin's domain (the WebUI assumes a
 // single domain); the project-admin session page lists the project's members.
 import { createAdminApiContext, gqlAdmin } from '../utils/admin-api';
+import { getE2EDomainName } from '../utils/e2e-scope';
 import {
   loginAsAdmin,
-  loginAsDomainAdmin,
   loginAsUser,
   logout,
   navigateTo,
@@ -101,13 +101,13 @@ async function searchAndPickUser(
 
 /**
  * Opens Admin Settings > Resource Policies > Keypair and stages the 'User'
- * filter, which both admin roles reach (credential creation is superadmin-only).
+ * filter (the admin console is superadmin-only).
  */
 async function openKeypairPolicyUserFilter(page: Page) {
   await navigateTo(page, 'admin/resource-policy?tab=keypair');
   await page.getByRole('combobox', { name: 'Search filters' }).click();
   await page.getByRole('option', { name: 'User', exact: true }).click();
-  return page.getByRole('button', { name: 'User', exact: true });
+  return page.getByRole('combobox', { name: 'User', exact: true });
 }
 
 test.describe(
@@ -122,15 +122,23 @@ test.describe(
     ],
   },
   () => {
-    for (const [role, login] of [
-      ['Superadmin', loginAsAdmin],
-      ['Domain admin', loginAsDomainAdmin],
-    ] as const) {
+    for (const [role, login] of [['Superadmin', loginAsAdmin]] as const) {
       test(`${role} can pick users of their domain from the keypair policy user filter`, async ({
         page,
         request,
       }) => {
         const operations = recordUserSelectOperations(page);
+        // The superadmin intro tour (AdminViewSwitchTour) otherwise covers the page.
+        await page.addInitScript(() => {
+          localStorage.setItem(
+            'backendaiwebui.settings.user.has_opened_tour_back_to_user_view',
+            'true',
+          );
+          localStorage.setItem(
+            'backendaiwebui.settings.user.has_opened_tour_back_to_admin_settings',
+            'true',
+          );
+        });
         await login(page, request);
         await skipUnlessManager269(page);
 
@@ -154,7 +162,7 @@ test.describe(
           page.getByRole('group', { name: 'Search filters' }),
         ).toContainText(userInfo.user2.email);
 
-        // Both admin roles read the current domain only (ADR 0012).
+        // The admin reads the current domain only (ADR 0012).
         const scoped = operations.filter(
           (op) => op.name === 'BAIScopedUserSelectPaginatedQuery',
         );
@@ -184,16 +192,18 @@ test.describe(
       /** Creates the project, adds two members and makes the first its admin. */
       async function seedProject() {
         api = await createAdminApiContext();
+        // The e2e accounts' domain: it is not `default` on every server.
+        const domainName = await getE2EDomainName(api);
         const created = await gqlAdmin<{
           create_group: { group: { id: string } };
         }>(
           api,
-          `mutation ($name: String!) {
-            create_group(name: $name, props: { domain_name: "default" }) {
+          `mutation ($name: String!, $domain: String!) {
+            create_group(name: $name, props: { domain_name: $domain }) {
               group { id }
             }
           }`,
-          { name: projectName },
+          { name: projectName, domain: domainName },
         );
         projectId = created.create_group.group.id;
 
@@ -310,13 +320,13 @@ test.describe(
         // Exactly the project's two members, no one else in the domain.
         await searchAndPickUser(
           page,
-          page.getByRole('button', { name: 'Owner', exact: true }),
+          page.getByRole('combobox', { name: 'Owner', exact: true }),
           'Owner',
           userInfo.user2.email,
           [userInfo.user.email, userInfo.user2.email],
         );
         await expect(
-          page.getByRole('button', { name: 'Owner', exact: true }),
+          page.getByRole('combobox', { name: 'Owner', exact: true }),
         ).toHaveText(userInfo.user2.email);
         await page.getByRole('button', { name: 'Apply', exact: true }).click();
         await expect(

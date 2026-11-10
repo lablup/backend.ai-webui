@@ -79,6 +79,7 @@ export type {
 } from './BAIEntityLabelSettingModal';
 export {
   default as BAIEntityLabelTokens,
+  entityLabelFilterProperties,
   formatEntityLabel,
   toEntityLabelFilter,
 } from './BAIEntityLabelTokens';
@@ -88,6 +89,8 @@ export type {
 } from './BAIEntityLabelTokens';
 export { default as BAIEntityLabelCell } from './BAIEntityLabelCell';
 export type { BAIEntityLabelCellProps } from './BAIEntityLabelCell';
+export { default as BAIEntityLabelTargetCell } from './BAIEntityLabelTargetCell';
+export type { BAIEntityLabelTargetCellProps } from './BAIEntityLabelTargetCell';
 export { default as BAIActivateArtifactsModal } from './BAIActivateArtifactsModal';
 export type {
   BAIActivateArtifactsModalProps,
@@ -183,8 +186,14 @@ export type {
   BAIScopedUserSelectProps,
   BAIScopedUserSelectFilter,
   BAIScopedUserSelectRef,
+  BAIScopedUserSelectOption,
   ScopedUserNode,
 } from './BAIScopedUserSelect';
+export { default as BAIScopedResourceGroupSelect } from './BAIScopedResourceGroupSelect';
+export type {
+  BAIScopedResourceGroupSelectProps,
+  BAIScopedResourceGroupSelectFilter,
+} from './BAIScopedResourceGroupSelect';
 export { default as BAIAdminUserV2Select } from './BAIAdminUserV2Select';
 export type {
   BAIAdminUserV2SelectProps,

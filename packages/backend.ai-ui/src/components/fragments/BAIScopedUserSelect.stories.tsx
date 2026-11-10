@@ -174,6 +174,21 @@ export const Multiple: Story = {
   ),
 };
 
+export const CustomSelect: Story = {
+  name: 'Custom e-mail entry',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`allowCustomSelect` — an e-mail address typed in the search box that no listed user matches is offered as one more option; picking it makes the value that address and `onChange` marks it `isCustom`.',
+      },
+    },
+  },
+  render: (args) => (
+    <Sandbox {...args} label="User" allowCustomSelect defaultOpen />
+  ),
+};
+
 export const ExcludeInactive: Story = {
   name: 'Exclude Inactive Users',
   parameters: {
@@ -193,7 +208,7 @@ export const IdValued: Story = {
     docs: {
       description: {
         story:
-          '`valuePropName="id"` — the plain-key value is the local user UUID, which is what `adminBulkAssignRole` and friends take. This is the only mode that runs the `uuid in` label-resolution query.',
+          '`valuePropName="id"` — the plain-key value is the local user UUID, which is what `partialBulkAssignRoles` and friends take. This is the only mode that runs the `uuid in` label-resolution query.',
       },
     },
   },

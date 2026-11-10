@@ -10,11 +10,8 @@ type KnownSettingName =
   | 'ContainerRegistryList'
   | 'CustomizedImageList'
   | 'ImageList'
-  | 'KeypairResourcePolicyList'
-  | 'ProjectResourcePolicyList'
   | 'RoleList'
-  | 'RolePresetList'
-  | 'UserResourcePolicyList';
+  | 'RolePresetList';
 
 export const useHiddenColumnKeysSetting = (listName: KnownSettingName) => {
   const [hiddenColumnKeys, setHiddenColumnKeys] = useBAISettingUserState(

@@ -1,12 +1,8 @@
 // spec: e2e/.agent-output/test-plan-admin-model-card.md
 // section: 2. Filtering
+import { purgeVFoldersByNameViaApi } from '../utils/admin-api';
 import { AdminModelCardPage } from '../utils/classes/AdminModelCardPage';
-import {
-  deleteForeverAndVerifyFromTrash,
-  loginAsAdmin,
-  moveToTrashAndVerify,
-  webuiEndpoint,
-} from '../utils/test-util';
+import { loginAsAdmin, webuiEndpoint } from '../utils/test-util';
 import { test, expect } from '@playwright/test';
 
 test.describe(
@@ -53,22 +49,7 @@ test.describe(
       } catch {
         // Ignore cleanup errors
       }
-      try {
-        await moveToTrashAndVerify(page, filterFolderName, 'admin-data', {
-          skipTrashVerify: true,
-        });
-      } catch {
-        // Folder may already be in Trash or may not exist
-      }
-      try {
-        await deleteForeverAndVerifyFromTrash(
-          page,
-          filterFolderName,
-          'admin-data',
-        );
-      } catch {
-        // Folder may not be in Trash (already purged or never created)
-      }
+      await purgeVFoldersByNameViaApi([filterFolderName]);
     });
 
     // 2.1 Superadmin can filter model cards by name

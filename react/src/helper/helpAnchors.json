@@ -74,7 +74,8 @@
       "anchor": "storages"
     },
     {
-      "path": "settings",
+      "path": "system-settings",
+      "tab": "configurations",
       "docPage": "admin_menu.html",
       "anchor": "system-settings"
     },
@@ -104,11 +105,6 @@
       "path": "project-admin-users",
       "docPage": "project_admin.html",
       "anchor": "users"
-    },
-    {
-      "path": "project-data",
-      "docPage": "project_admin.html",
-      "anchor": "data"
     },
     {
       "path": "project-admin-session",

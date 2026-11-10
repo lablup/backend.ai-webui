@@ -17,10 +17,12 @@ import AdminScopeLayout from './components/MainLayout/AdminScopeLayout';
 import MainLayout from './components/MainLayout/MainLayout';
 import ProjectScopeLayout from './components/MainLayout/ProjectScopeLayout';
 import RouteAccessGuard from './components/RouteAccessGuard';
+import RouteDocumentTitle from './components/RouteDocumentTitle';
 import RouteErrorBoundary from './components/RouteErrorBoundary';
 import { STokenLoginBoundary } from './components/STokenLoginBoundary';
 import StorageHostFetchErrorBoundary from './components/StorageHostFetchErrorBoundary';
 import UserSettingsRouteRedirect from './components/UserSettingsRouteRedirect';
+import WebMCPGlobalTools from './components/WebMCPGlobalTools';
 import WebUINavigate from './components/WebUINavigate';
 import { persistPostLoginState } from './helper/loginSessionAuth';
 import { useSuspendedBackendaiClient } from './hooks';
@@ -39,9 +41,13 @@ import {
   getPathFromMenuKey,
 } from './hooks/useWebUIMenuItems';
 import { pluginApiEndpointState } from './hooks/useWebUIPluginState';
-import { AdminRedirect, ProjectScopedRedirect } from './legacyRedirects';
-import Page404 from './pages/Page404';
-import UnknownRoutePage from './pages/UnknownRoutePage';
+import {
+  AdminRedirect,
+  ProjectScopedRedirect,
+  ProjectStartRedirect,
+} from './legacyRedirects';
+import Page404 from './pages/Page404/Page404';
+import UnknownRoutePage from './pages/UnknownRoutePage/UnknownRoutePage';
 import { toProjectContext } from './types/projectContext';
 import { useTheme } from '@lablup/ui-common/theme';
 import { BAISkeleton, BAIFlex, BAICard } from 'backend.ai-ui';
@@ -52,31 +58,40 @@ import { useTranslation } from 'react-i18next';
 import { RouteObject, useParams } from 'react-router-dom';
 
 const ComputeSessionListPage = React.lazy(
-  () => import('./pages/ComputeSessionListPage'),
+  () => import('./pages/ComputeSessionListPage/ComputeSessionListPage'),
 );
 const VFolderNodeListPage = React.lazy(
-  () => import('./pages/VFolderNodeListPage'),
+  () => import('./pages/VFolderNodeListPage/VFolderNodeListPage'),
 );
 
-const Information = React.lazy(() => import('./components/Information'));
-const StartPage = React.lazy(() => import('./pages/StartPage'));
+const InformationPage = React.lazy(
+  () => import('./pages/InformationPage/InformationPage'),
+);
 // Astryx/StyleX foundation probe (to-astryx ticket 01).
 const AstryxStylexProbePage = React.lazy(
-  () => import('./pages/AstryxStylexProbePage'),
+  () => import('./pages/AstryxStylexProbePage/AstryxStylexProbePage'),
 );
-const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
+const DashboardPage = React.lazy(
+  () => import('./pages/DashboardPage/DashboardPage'),
+);
 const AdminDashboardPage = React.lazy(
-  () => import('./pages/AdminDashboardPage'),
+  () => import('./pages/AdminDashboardPage/AdminDashboardPage'),
 );
-const EnvironmentPage = React.lazy(() => import('./pages/EnvironmentPage'));
-const MyEnvironmentPage = React.lazy(() => import('./pages/MyEnvironmentPage'));
+const EnvironmentPage = React.lazy(
+  () => import('./pages/EnvironmentPage/EnvironmentPage'),
+);
+const MyEnvironmentPage = React.lazy(
+  () => import('./pages/MyEnvironmentPage/MyEnvironmentPage'),
+);
 const SessionLauncherPage = React.lazy(
-  () => import('./pages/SessionLauncherPage'),
+  () => import('./pages/SessionLauncherPage/SessionLauncherPage'),
 );
 const ResourcePolicyPage = React.lazy(
-  () => import('./pages/ResourcePolicyPage'),
+  () => import('./pages/ResourcePolicyPage/ResourcePolicyPage'),
 );
-const ResourcesPage = React.lazy(() => import('./pages/ResourcesPage'));
+const ResourcesPage = React.lazy(
+  () => import('./pages/ResourcesPage/ResourcesPage'),
+);
 const FolderExplorerOpener = React.lazy(
   () => import('./components/FolderExplorerOpener'),
 );
@@ -91,75 +106,95 @@ const UserSettingsModalOpener = React.lazy(
 );
 
 const DeploymentListPage = React.lazy(
-  () => import('./pages/DeploymentListPage'),
+  () => import('./pages/DeploymentListPage/DeploymentListPage'),
 );
 const DeploymentDetailPage = React.lazy(
-  () => import('./pages/DeploymentDetailPage'),
+  () => import('./pages/DeploymentDetailPage/DeploymentDetailPage'),
 );
 const AdminDeploymentPage = React.lazy(
-  () => import('./pages/AdminDeploymentPage'),
+  () => import('./pages/AdminDeploymentPage/AdminDeploymentPage'),
 );
-const CliLoginPage = React.lazy(() => import('./pages/CliLoginPage'));
+const CliLoginPage = React.lazy(
+  () => import('./pages/CliLoginPage/CliLoginPage'),
+);
 const InteractiveLoginPage = React.lazy(
-  () => import('./pages/InteractiveLoginPage'),
+  () => import('./pages/InteractiveLoginPage/InteractiveLoginPage'),
 );
-const AdminUsersPage = React.lazy(() => import('./pages/AdminUsersPage'));
+const AdminUsersPage = React.lazy(
+  () => import('./pages/AdminUsersPage/AdminUsersPage'),
+);
 
-const AgentSummaryPage = React.lazy(() => import('./pages/AgentSummaryPage'));
-const MaintenancePage = React.lazy(() => import('./pages/MaintenancePage'));
-const DiagnosticsPage = React.lazy(() => import('./pages/DiagnosticsPage'));
-const StatisticsPage = React.lazy(() => import('./pages/StatisticsPage'));
-const ConfigurationsPage = React.lazy(
-  () => import('./pages/ConfigurationsPage'),
+const AgentSummaryPage = React.lazy(
+  () => import('./pages/AgentSummaryPage/AgentSummaryPage'),
+);
+const MaintenancePage = React.lazy(
+  () => import('./pages/MaintenancePage/MaintenancePage'),
+);
+const DiagnosticsPage = React.lazy(
+  () => import('./pages/DiagnosticsPage/DiagnosticsPage'),
+);
+const StatisticsPage = React.lazy(
+  () => import('./pages/StatisticsPage/StatisticsPage'),
 );
 const SessionDetailAndContainerLogOpenerLegacy = React.lazy(
   () => import('./components/SessionDetailAndContainerLogOpenerLegacy'),
 );
-const ProjectPage = React.lazy(() => import('./pages/ProjectPage'));
+const ProjectPage = React.lazy(() => import('./pages/ProjectPage/ProjectPage'));
 
-const ChatPage = React.lazy(() => import('./pages/ChatPage'));
+const ChatPage = React.lazy(() => import('./pages/ChatPage/ChatPage'));
 
-const AIAgentPage = React.lazy(() => import('./pages/AIAgentPage'));
-const ReservoirPage = React.lazy(() => import('./pages/ReservoirPage'));
+const AIAgentPage = React.lazy(() => import('./pages/AIAgentPage/AIAgentPage'));
+const ReservoirPage = React.lazy(
+  () => import('./pages/ReservoirPage/ReservoirPage'),
+);
 const ReservoirArtifactDetailPage = React.lazy(
-  () => import('./pages/ReservoirArtifactDetailPage'),
+  () =>
+    import('./pages/ReservoirArtifactDetailPage/ReservoirArtifactDetailPage'),
 );
 
-const SchedulerPage = React.lazy(() => import('./pages/SchedulerPage'));
-const BrandingPage = React.lazy(() => import('./pages/BrandingPage'));
-const RBACManagementPage = React.lazy(
-  () => import('./pages/RBACManagementPage'),
+const SchedulerPage = React.lazy(
+  () => import('./pages/SchedulerPage/SchedulerPage'),
 );
-const AdminSessionPage = React.lazy(() => import('./pages/AdminSessionPage'));
+const BrandingPage = React.lazy(
+  () => import('./pages/BrandingPage/BrandingPage'),
+);
+const WebUISettingsPage = React.lazy(
+  () => import('./pages/WebUISettingsPage/WebUISettingsPage'),
+);
+const RBACManagementPage = React.lazy(
+  () => import('./pages/RBACManagementPage/RBACManagementPage'),
+);
+const AdminSessionPage = React.lazy(
+  () => import('./pages/AdminSessionPage/AdminSessionPage'),
+);
 const AdminDeploymentPresetSettingPage = React.lazy(
-  () => import('./pages/AdminDeploymentPresetSettingPage'),
+  () =>
+    import('./pages/AdminDeploymentPresetSettingPage/AdminDeploymentPresetSettingPage'),
 );
 const AdminVFolderNodeListPage = React.lazy(
-  () => import('./pages/AdminVFolderNodeListPage'),
+  () => import('./pages/AdminVFolderNodeListPage/AdminVFolderNodeListPage'),
 );
 const ProjectAdminUsersPage = React.lazy(
-  () => import('./pages/ProjectAdminUsersPage'),
-);
-const ProjectAdminDataPage = React.lazy(
-  () => import('./pages/ProjectAdminDataPage'),
+  () => import('./pages/ProjectAdminUsersPage/ProjectAdminUsersPage'),
 );
 const ProjectAdminDeploymentsPage = React.lazy(
-  () => import('./pages/ProjectAdminDeploymentsPage'),
+  () =>
+    import('./pages/ProjectAdminDeploymentsPage/ProjectAdminDeploymentsPage'),
 );
 const ProjectAdminSessionPage = React.lazy(
-  () => import('./pages/ProjectAdminSessionPage'),
+  () => import('./pages/ProjectAdminSessionPage/ProjectAdminSessionPage'),
 );
 const EmailVerificationPage = React.lazy(
-  () => import('./pages/EmailVerificationPage'),
+  () => import('./pages/EmailVerificationPage/EmailVerificationPage'),
 );
 const ChangePasswordPage = React.lazy(
-  () => import('./pages/ChangePasswordPage'),
+  () => import('./pages/ChangePasswordPage/ChangePasswordPage'),
 );
 const EduAppLauncherPage = React.lazy(
-  () => import('./pages/EduAppLauncherPage'),
+  () => import('./pages/EduAppLauncherPage/EduAppLauncherPage'),
 );
 const ModelStoreListPageV2 = React.lazy(
-  () => import('./pages/ModelStoreListPageV2'),
+  () => import('./pages/ModelStoreListPageV2/ModelStoreListPageV2'),
 );
 
 const DefaultMenuRedirect: React.FC = () => {
@@ -174,11 +209,7 @@ const RootRedirect: React.FC = () => {
   const isSuperAdmin = useEffectiveAdminRole() === 'superadmin';
   return (
     <WebUINavigate
-      to={
-        isSuperAdmin && firstAvailableAdminMenuItem
-          ? getPathFromMenuKey(firstAvailableAdminMenuItem.key)
-          : defaultMenuPath
-      }
+      to={(isSuperAdmin && firstAvailableAdminMenuItem?.to) || defaultMenuPath}
       replace
     />
   );
@@ -205,7 +236,7 @@ const ScopeIndexRedirect: React.FC<{ scope: 'admin' | 'projectAdmin' }> = ({
   if (scope === 'projectAdmin') {
     // First project-admin page in sider order, already narrowed by the
     // config blocklist / inactive-list (so a hidden Users page falls through
-    // to Data, etc.). Only super/domain admins and project admins of the
+    // to Data, etc.). Only superadmins and project admins of the
     // URL project reach this element (RouteAccessGuard enforces
     // `access: 'projectAdmin'`). When the config hides every project-admin
     // page, fall back to the user's general default page.
@@ -216,6 +247,7 @@ const ScopeIndexRedirect: React.FC<{ scope: 'admin' | 'projectAdmin' }> = ({
             ? getPathFromMenuKey(
                 firstAvailableProjectAdminMenuKey,
                 activeProjectName,
+                'currentProjectAdmin',
               )
             : defaultMenuPath
         }
@@ -224,22 +256,25 @@ const ScopeIndexRedirect: React.FC<{ scope: 'admin' | 'projectAdmin' }> = ({
     );
   }
 
-  // `/admin`: first admin menu item. Only super/domain admins reach this
+  // `/admin`: first admin menu item. Only superadmins reach this
   // element (RouteAccessGuard enforces the subtree's 'admin' requirement),
   // so an admin menu item always exists; defaultMenuPath is a defensive
   // fallback only.
   return (
     <WebUINavigate
-      to={
-        firstAvailableAdminMenuItem?.key
-          ? getPathFromMenuKey(
-              firstAvailableAdminMenuItem.key,
-              activeProjectName,
-            )
-          : defaultMenuPath
-      }
+      to={firstAvailableAdminMenuItem?.to ?? defaultMenuPath}
       replace
     />
+  );
+};
+
+/** Legacy `/admin-dashboard`: superadmins go to `/admin/dashboard`, others to the project admin one. */
+const AdminDashboardRedirect: React.FC = () => {
+  'use memo';
+  return useEffectiveAdminRole() === 'superadmin' ? (
+    <AdminRedirect featureKey="dashboard" />
+  ) : (
+    <ProjectScopedRedirect scope="projectAdmin" featureKey="dashboard" />
   );
 };
 
@@ -293,17 +328,10 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         handle: { hideBreadcrumb: true },
       },
       {
+        // The Start page is retired; its actions are dashboard cards.
         path: 'start',
-        element: (
-          <Suspense fallback={<BAISkeleton rows={4} />}>
-            <StartPage />
-          </Suspense>
-        ),
-        handle: {
-          scope: 'project',
-          menuKey: 'start',
-          labelKey: 'webui.menu.Start',
-        },
+        Component: ProjectStartRedirect,
+        handle: { scope: 'project' },
       },
       {
         path: 'dashboard',
@@ -524,7 +552,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
               <AIAgentPage />
             </Suspense>
           ) : (
-            <WebUINavigate to={'/start'} replace />
+            <WebUINavigate to={'/dashboard'} replace />
           );
         },
         handle: {
@@ -536,8 +564,8 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       // --- project-admin scope: /project/:projectName/admin/* ---
       {
         path: 'admin',
-        // Subtree default (FR-3383): project-admin pages need super/domain
-        // admin or project-admin rights over the URL project.
+        // Subtree default (FR-3383): project-admin pages need superadmin
+        // or project-admin rights over the URL project.
         handle: { access: 'projectAdmin' },
         children: [
           // Bare `/project/:name/admin` -> first project-admin menu item.
@@ -548,6 +576,22 @@ export const mainLayoutChildRoutes: RouteObject[] = [
             path: '*',
             handle: { hideBreadcrumb: true, notFound: true },
             Component: UnknownRoutePage,
+          },
+          {
+            // Domain admins reach it by URL through the subtree default; the menu hides it.
+            path: 'dashboard',
+            Component: () => (
+              <BAIErrorBoundary>
+                <Suspense fallback={<BAISkeleton rows={4} />}>
+                  <AdminDashboardPage page="projectAdmin" />
+                </Suspense>
+              </BAIErrorBoundary>
+            ),
+            handle: {
+              scope: 'projectAdmin',
+              menuKey: 'admin-dashboard',
+              labelKey: 'webui.menu.Dashboard',
+            },
           },
           {
             path: 'session',
@@ -604,22 +648,6 @@ export const mainLayoutChildRoutes: RouteObject[] = [
             ],
           },
           {
-            path: 'data',
-            Component: () => {
-              useSuspendedBackendaiClient();
-              return (
-                <Suspense fallback={<BAISkeleton rows={4} />}>
-                  <ProjectAdminDataPage />
-                </Suspense>
-              );
-            },
-            handle: {
-              scope: 'projectAdmin',
-              menuKey: 'project-data',
-              labelKey: 'webui.menu.Data',
-            },
-          },
-          {
             path: 'users',
             Component: () => {
               useSuspendedBackendaiClient();
@@ -646,13 +674,13 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   {
     path: 'admin',
     element: <AdminScopeLayout />,
-    // Subtree default (FR-3383): global admin pages need super/domain admin.
+    // Subtree default (FR-3383): global admin pages need superadmin.
     // Superadmin-only leaves override with `access: 'superadmin'`.
     handle: { access: 'admin' },
     children: [
       // Bare `/admin` -> first admin menu item. Inherits the subtree's
       // 'admin' requirement, so the /admin namespace (including its root) is
-      // super/domain-admin only — project admins get the forbidden page.
+      // superadmin only — project admins get the forbidden page.
       { index: true, element: <ScopeIndexRedirect scope="admin" /> },
       // Router-owned 404: any URL unmatched within this scope falls here
       // (plugin-aware — see UnknownRoutePage).
@@ -767,20 +795,18 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       },
       {
         path: 'dashboard',
-        Component: () => {
-          return (
-            <BAIErrorBoundary>
-              <Suspense fallback={<BAISkeleton rows={4} />}>
-                <AdminDashboardPage />
-              </Suspense>
-            </BAIErrorBoundary>
-          );
-        },
+        Component: () => (
+          <BAIErrorBoundary>
+            <Suspense fallback={<BAISkeleton rows={4} />}>
+              <AdminDashboardPage page="admin" />
+            </Suspense>
+          </BAIErrorBoundary>
+        ),
         handle: {
           scope: 'admin',
           menuKey: 'admin-dashboard',
           access: 'superadmin',
-          labelKey: 'webui.menu.AdminDashboard',
+          labelKey: 'webui.menu.Dashboard',
         },
       },
       {
@@ -908,17 +934,19 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         },
       },
       {
+        // Configurations lives in the System Settings page (#10684); the
+        // old URL keeps its menu key so the block list and 401 still apply.
         path: 'settings',
         element: (
-          <Suspense fallback={<BAISkeleton rows={4} />}>
-            <ConfigurationsPage />
-          </Suspense>
+          <WebUINavigate
+            to="/admin/system-settings?tab=configurations"
+            replace
+          />
         ),
         handle: {
           scope: 'admin',
           menuKey: 'settings',
           access: 'superadmin',
-          labelKey: 'webui.menu.Configurations',
         },
       },
       {
@@ -978,10 +1006,24 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         },
       },
       {
+        path: 'system-settings',
+        element: (
+          <Suspense fallback={<BAISkeleton rows={4} />}>
+            <WebUISettingsPage />
+          </Suspense>
+        ),
+        handle: {
+          scope: 'admin',
+          menuKey: 'system-settings',
+          access: 'superadmin',
+          labelKey: 'webui.menu.SystemSettings',
+        },
+      },
+      {
         path: 'information',
         element: (
           <Suspense fallback={<BAISkeleton rows={4} />}>
-            <Information />
+            <InformationPage />
           </Suspense>
         ),
         handle: {
@@ -1000,14 +1042,14 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   //
   // Class A (static admin): no runtime project needed.
   // Class B (runtime project): inject the current project NAME via
-  // `useActiveProjectName()`; fall back to `/start` when none is resolvable.
+  // `useActiveProjectName()`; render the "no accessible projects" notice when none is resolvable.
   // --- Class B: user (project) scope ---
   {
     path: '/start',
     Component: () => (
-      <ProjectScopedRedirect scope="project" featureKey="start" />
+      <ProjectScopedRedirect scope="project" featureKey="dashboard" />
     ),
-    handle: { labelKey: 'webui.menu.Start' },
+    handle: { labelKey: 'webui.menu.Dashboard' },
   },
   {
     path: '/dashboard',
@@ -1177,17 +1219,17 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     ),
     handle: { labelKey: 'webui.menu.AIAgents' },
   },
-  // legacy aliases that historically pointed at /start
+  // legacy aliases that historically pointed at /start; the dashboard opens their import links
   {
     path: '/import',
     Component: () => (
-      <ProjectScopedRedirect scope="project" featureKey="start" />
+      <ProjectScopedRedirect scope="project" featureKey="dashboard" />
     ),
   },
   {
     path: '/github',
     Component: () => (
-      <ProjectScopedRedirect scope="project" featureKey="start" />
+      <ProjectScopedRedirect scope="project" featureKey="dashboard" />
     ),
   },
   // --- Class B: project-admin scope ---
@@ -1197,13 +1239,6 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       <ProjectScopedRedirect scope="projectAdmin" featureKey="session" />
     ),
     handle: { labelKey: 'webui.menu.ProjectSessions' },
-  },
-  {
-    path: '/project-data',
-    Component: () => (
-      <ProjectScopedRedirect scope="projectAdmin" featureKey="data" />
-    ),
-    handle: { labelKey: 'webui.menu.Data' },
   },
   {
     path: '/project-admin-users',
@@ -1310,8 +1345,8 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   },
   {
     path: '/admin-dashboard',
-    Component: () => <AdminRedirect featureKey="dashboard" />,
-    handle: { labelKey: 'webui.menu.AdminDashboard' },
+    Component: AdminDashboardRedirect,
+    handle: { labelKey: 'webui.menu.Dashboard' },
   },
   {
     path: '/credential',
@@ -1454,12 +1489,10 @@ const AutoDiagnosticsRunner = () => {
  * Route-level gate that delegates to `STokenLoginBoundary` when an sToken
  * is present in the URL (transparently passes through otherwise). Sourced
  * here so the regular `LoginView` + `MainLayout` tree never re-reads the
- * URL query for authentication — see the spec "URL 파라미터 파싱 규약
- * (nuqs)" section for the invariant.
+ * URL query for authentication (ADR 0022).
  *
  * On boundary success, the route-level `onSuccess` persists the login
- * state (`last_login`, `login_attempt`, saved-credential cleanup,
- * `api_endpoint`, `client.ready`) and nulls both `sToken` / `stoken` keys
+ * state (saved-credential cleanup, `api_endpoint`, `client.ready`) and nulls both `sToken` / `stoken` keys
  * from the URL via the nuqs setter so the token doesn't leak into browser
  * history or referer headers.
  */
@@ -1686,6 +1719,15 @@ export const routes: RouteObject[] = [
             <ErrorBoundaryWithNullFallback>
               <RoutingEventHandler />
             </ErrorBoundaryWithNullFallback>
+            <ErrorBoundaryWithNullFallback>
+              <RouteDocumentTitle />
+            </ErrorBoundaryWithNullFallback>
+            {/* Suspends until login; renders nothing unless WebMCP is on. */}
+            <Suspense fallback={null}>
+              <ErrorBoundaryWithNullFallback>
+                <WebMCPGlobalTools />
+              </ErrorBoundaryWithNullFallback>
+            </Suspense>
             {/* Handoff to the review overlay (FR-3811). Dev servers: on
                 unless VITE_DEV_REVIEW_OVERLAY opts out, as in the Vite
                 plugin. Built bundles: only where VITE_REVIEW_OVERLAY_BUILD

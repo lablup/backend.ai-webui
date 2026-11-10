@@ -2,7 +2,7 @@ export { default as BAIImageWithFallback } from './BAIImageWithFallback';
 export type { BAIImageWithFallbackProps } from './BAIImageWithFallback';
 export { default as BAIBadge } from './BAIBadge';
 export type { BAIBadgeProps } from './BAIBadge';
-export { default as BAIBoard } from './BAIBoard';
+export { default as BAIBoard, useIsInBAIBoardItem } from './BAIBoard';
 export type {
   BAIBoardDataType,
   BAIBoardItem,
@@ -15,6 +15,11 @@ export { default as BAIBulkEditFormItem } from './BAIBulkEditFormItem';
 export type { BAIBulkEditFormItemProps } from './BAIBulkEditFormItem';
 export { default as BAIFlex } from './BAIFlex';
 export type { BAIFlexProps } from './BAIFlex';
+export { default as BAIDynamicList } from './BAIDynamicList';
+export type {
+  BAIDynamicListColumn,
+  BAIDynamicListProps,
+} from './BAIDynamicList';
 export { default as BAICard } from './BAICard';
 export type { BAICardProps, BAICardTabItem } from './BAICard';
 export { default as BAITabList } from './BAITabList';
@@ -76,6 +81,7 @@ export {
 } from './BAISelect';
 export type {
   BAISelectProps,
+  BAISelectOption,
   BAISelectOptionProps,
   BAISelectOptionGroupProps,
 } from './BAISelect';
@@ -86,6 +92,20 @@ export type {
   BAIComplexSelectValue,
   BAILabeledValue,
 } from './BAIComplexSelect';
+export { default as BAIEntitySharePermissionSelector } from './BAIEntitySharePermissionSelector';
+export {
+  ENTITY_SHARE_PERMISSION_BITS,
+  ENTITY_SHARE_PERMISSION_PRESETS,
+  normalizeEntitySharePermissionBits,
+  toEntitySharePermissionChoice,
+  useEntitySharePermissionLabels,
+} from './BAIEntitySharePermissionSelector';
+export type {
+  BAIEntitySharePermissionBit,
+  BAIEntitySharePermissionChoice,
+  BAIEntitySharePermissionPreset,
+  BAIEntitySharePermissionSelectorProps,
+} from './BAIEntitySharePermissionSelector';
 export { default as BAINotificationItem } from './BAINotificationItem';
 export type { BAINotificationItemProps } from './BAINotificationItem';
 export { default as BAIModal } from './BAIModal';
@@ -194,6 +214,14 @@ export type {
   BAIProjectResourcePolicyV2TableProps,
   ProjectResourcePolicyV2InList,
 } from './BAIProjectResourcePolicyV2Table';
+export {
+  default as BAIAdminRetentionPolicyTable,
+  availableRetentionPolicySorterValues,
+} from './BAIAdminRetentionPolicyTable';
+export type {
+  BAIAdminRetentionPolicyTableProps,
+  RetentionPolicyInList,
+} from './BAIAdminRetentionPolicyTable';
 export type { BAIUncontrolledInputProps } from './BAIUncontrolledInput';
 export { default as BAIUncontrolledInput } from './BAIUncontrolledInput';
 export { default as BAITokenList } from './BAITokenList';
@@ -204,10 +232,12 @@ export {
   DEPLOYMENT_STOPPED_CATEGORY_STATUSES,
   isDeploymentInProgress,
   DEPLOYMENT_IN_PROGRESS_STATUSES,
+  getDeploymentPauseCause,
 } from './BAIDeploymentStatusBadge';
 export type {
   BAIDeploymentStatusBadgeProps,
   BAIDeploymentStatus,
+  DeploymentPauseCause,
 } from './BAIDeploymentStatusBadge';
 export { default as BAIIntervalView } from './BAIIntervalView';
 export { default as BAIImageMetaIcon } from './BAIImageMetaIcon';
@@ -280,6 +310,12 @@ export { default as BAIDateInput } from './BAIDateInput';
 export type { BAIDateInputProps } from './BAIDateInput';
 export { default as BAIDateRangeInput } from './BAIDateRangeInput';
 export type { BAIDateRangeInputProps } from './BAIDateRangeInput';
+export { default as BAIDateTimeRangeInput } from './BAIDateTimeRangeInput';
+export type {
+  BAIDateTimeRangeInputPreset,
+  BAIDateTimeRangeInputProps,
+  BAIDateTimeRangeInputValue,
+} from './BAIDateTimeRangeInput';
 export { default as BAIDateTimeInput } from './BAIDateTimeInput';
 export type { BAIDateTimeInputProps } from './BAIDateTimeInput';
 export { default as BAIFileInput } from './BAIFileInput';
@@ -292,8 +328,6 @@ export { default as BAIRadioList, BAIRadioListItem } from './BAIRadioList';
 export type { BAIRadioListProps, BAIRadioListItemProps } from './BAIRadioList';
 export { default as BAISegmentedControl } from './BAISegmentedControl';
 export type { BAISegmentedControlProps } from './BAISegmentedControl';
-export { default as BAISelector } from './BAISelector';
-export type { BAISelectorProps } from './BAISelector';
 export { default as BAISlider } from './BAISlider';
 export type { BAISliderProps } from './BAISlider';
 export { default as BAISwitch } from './BAISwitch';

@@ -1,3 +1,4 @@
+import { purgeVFoldersByNameViaApi } from '../utils/admin-api';
 import { FolderCreationModal } from '../utils/classes/vfolder/FolderCreationModal';
 import { cleanupVFolderSafely } from '../utils/cleanup-util';
 import { getE2EVFolderHost } from '../utils/e2e-scope';
@@ -97,8 +98,10 @@ test.describe(
           .first()
           .click();
       });
-      test.afterEach(async ({ page }) => {
-        await cleanupVFolderSafely(page, creationFolderName);
+      test.afterEach(async () => {
+        if (creationFolderName) {
+          await purgeVFoldersByNameViaApi([creationFolderName]);
+        }
       });
       test('User can create a vFolder by selecting a specific location', async ({
         page,
@@ -110,13 +113,15 @@ test.describe(
         const host = await getE2EVFolderHost(userInfo.user);
         await folderCreationModal.fillLocationSelector(host);
         await folderCreationModal.selectLocationOptionByText(host);
-        await (await folderCreationModal.getCreateButton()).click();
+        await folderCreationModal.submit();
+        await folderCreationModal.waitForClosed();
       });
       test('User can create default vFolder', async ({ page }) => {
         const folderCreationModal = new FolderCreationModal(page);
         await folderCreationModal.modalToBeVisible();
         await folderCreationModal.fillFolderName(creationFolderName);
-        await (await folderCreationModal.getCreateButton()).click();
+        await folderCreationModal.submit();
+        await folderCreationModal.waitForClosed();
       });
       test('User can create Model vFolder', async ({ page }) => {
         const folderCreationModal = new FolderCreationModal(page);
@@ -126,7 +131,8 @@ test.describe(
         await expect(
           await folderCreationModal.getModelUsageModeRadio(),
         ).toBeChecked();
-        await (await folderCreationModal.getCreateButton()).click();
+        await folderCreationModal.submit();
+        await folderCreationModal.waitForClosed();
       });
       test('User can create cloneable Model vFolder', async ({ page }) => {
         const folderCreationModal = new FolderCreationModal(page);
@@ -140,42 +146,168 @@ test.describe(
         await expect(
           await folderCreationModal.getCloneableSwitchButton(),
         ).toBeChecked();
-        await (await folderCreationModal.getCreateButton()).click();
+        await folderCreationModal.submit();
+        await folderCreationModal.waitForClosed();
       });
-      test('User can create Read & Write vFolder', async ({ page }) => {
+      // #10501: a folder created in a general project is a project folder its
+      // members can see, so creation asks for confirmation first.
+      test('User can create a project folder in a general project after confirming its visibility', async ({
+        page,
+      }) => {
+        // A saved "Don't ask again" on the shared account would skip the
+        // confirm modal; report it unset without touching the stored value.
+        await page.route('**/admin/gql', async (route) => {
+          if (
+            !(route.request().postData() ?? '').includes('useAppConfigMyQuery')
+          ) {
+            await route.fallback();
+            return;
+          }
+          const response = await route.fetch();
+          const body = await response.json();
+          for (const entry of body?.data?.myAppConfigs ?? []) {
+            if (entry?.configName !== 'userConfig') continue;
+            const isString = typeof entry.config === 'string';
+            const config = isString
+              ? JSON.parse(entry.config || '{}')
+              : (entry.config ?? {});
+            config.skip_project_folder_confirm = false;
+            entry.config = isString ? JSON.stringify(config) : config;
+          }
+          await route.fulfill({ response, json: body });
+        });
+        // Reload so the modal reads the config through the route.
+        await page.reload();
+        await page
+          .getByRole('button', { name: 'Create Folder' })
+          .first()
+          .click();
+        const currentProject = (
+          await page.getByRole('button', { name: 'Select Project' }).innerText()
+        ).trim();
         const folderCreationModal = new FolderCreationModal(page);
         await folderCreationModal.modalToBeVisible();
-        await folderCreationModal.fillFolderName(creationFolderName);
-        await (await folderCreationModal.getReadWritePermissionRadio()).check();
+        const creationDialog = page
+          .getByRole('dialog', { name: 'Create a new storage folder' })
+          .filter({ has: page.getByTestId('create-folder-button') });
         await expect(
-          await folderCreationModal.getReadWritePermissionRadio(),
-        ).toBeChecked();
+          creationDialog.getByRole('status').filter({
+            hasText: "can be seen by the project's other members",
+          }),
+        ).toBeVisible();
+        await folderCreationModal.fillFolderName(creationFolderName);
         await (await folderCreationModal.getCreateButton()).click();
+
+        const confirmModal = page.getByTestId('shared-folder-confirm-modal');
+        await expect(confirmModal).toBeVisible();
+        await expect(confirmModal).toContainText(
+          'Other members of this project will also be able to see this folder.',
+        );
+        await expect(
+          confirmModal.getByRole('checkbox', { name: "Don't ask again" }),
+        ).not.toBeChecked();
+        await confirmModal
+          .getByRole('button', { name: 'Create', exact: true })
+          .click();
+        await expect(confirmModal).toBeHidden();
+        await expect(creationDialog).toBeHidden({ timeout: 30000 });
+
+        const folderRow = getVFolderRow(page, creationFolderName);
+        await expect(folderRow).toBeVisible({ timeout: 20000 });
+        await folderRow
+          .getByRole('link', { name: creationFolderName, exact: true })
+          .click();
+        const folderInfo = page.getByRole('dialog').filter({
+          has: page.getByRole('heading', { name: creationFolderName }),
+        });
+        await expect(folderInfo).toBeVisible();
+        const definitionOf = (term: string) =>
+          folderInfo
+            .getByRole('term')
+            .filter({ hasText: new RegExp(`^${term}$`) })
+            .locator('xpath=following-sibling::*[1]');
+        await expect(definitionOf('Ownership')).toHaveText('Project');
+        await expect(definitionOf('Project')).toHaveText(currentProject);
+        await page.keyboard.press('Escape');
+        await expect(folderInfo).toBeHidden();
       });
-      test('User can create Read Only vFolder', async ({ page }) => {
+    });
+    // Not serial: single test — it creates no folder.
+    test.describe('vFolder Creation modal', () => {
+      test('User can reopen the folder creation modal with an empty form after canceling', async ({
+        page,
+      }) => {
+        await page.getByRole('link', { name: 'Data' }).click();
+        const createFolderButton = page
+          .getByRole('button', { name: 'Create Folder' })
+          .first();
+        await createFolderButton.click();
         const folderCreationModal = new FolderCreationModal(page);
         await folderCreationModal.modalToBeVisible();
-        await folderCreationModal.fillFolderName(creationFolderName);
-        await (await folderCreationModal.getReadOnlyPermissionRadio()).check();
+        await folderCreationModal.fillFolderName(
+          `e2e-test-folder-cancel-${uniqueSuffix()}`,
+        );
+        await (await folderCreationModal.getCancelButton()).click();
         await expect(
-          await folderCreationModal.getReadOnlyPermissionRadio(),
-        ).toBeChecked();
-        await (await folderCreationModal.getCreateButton()).click();
+          page.getByRole('dialog', { name: 'Create a new storage folder' }),
+        ).toBeHidden();
+
+        await createFolderButton.click();
+        await folderCreationModal.modalToBeVisible();
+        await expect(
+          await folderCreationModal.getFolderNameInput(),
+        ).toHaveValue('');
+        await (await folderCreationModal.getCancelButton()).click();
       });
     });
     // Auto Mount uses a dedicated folder name (dot-prefixed) that is independent.
     // Not serial: single test — no ordering dependency.
+    // #10501: Auto Mount is offered only while the personal project is selected.
     test.describe('Auto Mount vFolder Creation', () => {
       const folderName = '.e2e-test-folder-auto-mount' + new Date().getTime();
+      let sharedProject = '';
+      let personalProjectSlug: string | undefined;
       test.beforeEach(async ({ page }) => {
+        personalProjectSlug = undefined;
         await page.getByRole('link', { name: 'Data' }).click();
+        const projectSelector = page.getByRole('button', {
+          name: 'Select Project',
+        });
+        await expect(projectSelector).toBeVisible({ timeout: 15000 });
+        sharedProject = (await projectSelector.innerText()).trim();
+        const previousSlug = new URL(page.url()).pathname.split('/')[2];
+        await projectSelector.click();
+        const personalOption = page
+          .getByRole('listbox', { name: 'Select Project' })
+          .getByRole('group', { name: 'Personal' })
+          .getByRole('option')
+          .first();
+        await expect(personalOption).toBeVisible({ timeout: 15000 });
+        await personalOption.click();
+        await expect(page).toHaveURL((url) => {
+          const [, segment, slug, subPath] = url.pathname.split('/');
+          return (
+            segment === 'project' && subPath === 'data' && slug !== previousSlug
+          );
+        });
+        personalProjectSlug = new URL(page.url()).pathname.split('/')[2];
         await page
           .getByRole('button', { name: 'Create Folder' })
           .first()
           .click();
       });
       test.afterEach(async ({ page }) => {
-        await cleanupVFolderSafely(page, folderName);
+        if (personalProjectSlug) {
+          await cleanupVFolderSafely(
+            page,
+            folderName,
+            `project/${personalProjectSlug}/data`,
+          );
+        }
+        // Leave the user on the shared project the other tests expect.
+        if (sharedProject) {
+          await navigateTo(page, `project/${sharedProject}/data`);
+        }
       });
       test('User can create Auto Mount vFolder', async ({ page }) => {
         const folderCreationModal = new FolderCreationModal(page);
@@ -185,7 +317,10 @@ test.describe(
         await expect(
           await folderCreationModal.getAutoMountUsageModeRadio(),
         ).toBeChecked();
-        await (await folderCreationModal.getCreateButton()).click();
+        await folderCreationModal.submit();
+        await expect(
+          page.getByRole('dialog', { name: 'Create a new storage folder' }),
+        ).toBeHidden({ timeout: 30000 });
       });
     });
 
@@ -233,9 +368,6 @@ test.describe(
       );
     });
 
-    // Regression guard for FR-2978: previously the leave_invited client
-    // sent `null` as the request body, which the manager's
-    // BodyParam[LeaveVFolderReq] rejected with HTTP 400.
     test('Invitee can leave a shared vFolder', async ({
       page,
       browser,

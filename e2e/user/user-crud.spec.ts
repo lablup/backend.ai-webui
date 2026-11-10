@@ -11,7 +11,9 @@ import {
   UserSettingModal,
 } from '../utils/classes/user/UserSettingModal';
 import { getE2EDomainName } from '../utils/e2e-scope';
+import { skipUnlessLabelableEntityType } from '../utils/feature-gate-util';
 import {
+  fillLoginEndpoint,
   loginAsAdmin,
   loginAsCreatedAccount,
   logout,
@@ -403,17 +405,9 @@ test.describe.serial(
 
       // 2. Attempt to login as the deleted user
       await page.goto(webuiEndpoint);
+      await fillLoginEndpoint(page, webServerEndpoint);
       await page.getByLabel('Email or Username').fill(EMAIL);
       await page.getByRole('textbox', { name: 'Password' }).fill(NEW_PASSWORD);
-      // The endpoint input is collapsed under "Advanced" on the login form.
-      const endpointInput = page.getByRole('textbox', {
-        name: 'Endpoint',
-        exact: true,
-      });
-      if (!(await endpointInput.isVisible())) {
-        await page.getByText('Advanced').click();
-      }
-      await endpointInput.fill(webServerEndpoint);
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       // 3. Verify "Login information mismatch" error notification appears
@@ -480,7 +474,9 @@ async function expectRowActions(
   menuOnly: Array<string> = [],
 ) {
   await row.hover();
-  const moreButton = row.getByRole('button', { name: 'More actions' });
+  // The row can hold a second, hidden "More actions" button in a later cell;
+  // the row's own actions come first in DOM order.
+  const moreButton = row.getByRole('button', { name: 'More actions' }).first();
   const menu = page.getByRole('menu');
   if (menuOnly.length > 0) {
     await expect(moreButton).toBeVisible({ timeout: 10000 });
@@ -658,6 +654,310 @@ test.describe(
       const keypairRow = credentialTable.locator('tbody tr').first();
       await expect(keypairRow).toBeVisible({ timeout: 20000 });
       await expectRowActions(page, keypairRow, ['Info', 'Edit', 'Deactivate']);
+    });
+  },
+);
+
+// #10388: the User Detail modal carries a Labels row whose hover action edits
+// the user's labels. Each test creates its own active user through the admin
+// API and purges it in afterEach.
+test.describe(
+  'User Labels - Superadmin',
+  { tag: ['@regression', '@user', '@functional', '@requires-manager-v26.9'] },
+  () => {
+    let api: APIRequestContext | null = null;
+    let labelUserEmail: string | null = null;
+
+    test.beforeEach(async ({ page, request }) => {
+      await loginAsAdmin(page, request);
+      await skipUnlessLabelableEntityType(
+        page,
+        'user',
+        'User labels require a manager that accepts user labels (#10387)',
+      );
+
+      api = await createAdminApiContext();
+      const runId = `${Date.now().toString(36)}${randomBytes(3).toString('hex')}`;
+      const email = `e2e-user-label-${runId}@lablup.com`;
+      // Set before the create call so a partial failure is still purged.
+      labelUserEmail = email;
+      const { create_user } = await gqlAdmin<{
+        create_user: { ok: boolean; msg: string };
+      }>(
+        api,
+        `mutation($email: String!, $props: UserInput!) {
+          create_user(email: $email, props: $props) { ok msg }
+        }`,
+        {
+          email,
+          props: {
+            username: email.split('@')[0],
+            password: `e2e-${randomBytes(12).toString('hex')}@Pw`,
+            need_password_change: false,
+            domain_name: await getE2EDomainName(api),
+            is_active: true,
+            status: 'active',
+          },
+        },
+      );
+      expect(create_user.ok, create_user.msg).toBe(true);
+    });
+
+    test.afterEach(async () => {
+      if (!api) return;
+      const adminApi = api;
+      api = null;
+      try {
+        if (labelUserEmail) {
+          await purgeUserViaApi(adminApi, labelUserEmail).catch((error) =>
+            console.warn(`could not purge ${labelUserEmail}:`, error),
+          );
+        }
+      } finally {
+        labelUserEmail = null;
+        await adminApi.dispose();
+      }
+    });
+
+    test("Admin can edit a user's labels from the user info modal", async ({
+      page,
+    }) => {
+      // The superadmin intro tour (AdminViewSwitchTour) otherwise covers the page.
+      await page.addInitScript(() => {
+        localStorage.setItem(
+          'backendaiwebui.settings.user.has_opened_tour_back_to_user_view',
+          'true',
+        );
+        localStorage.setItem(
+          'backendaiwebui.settings.user.has_opened_tour_back_to_admin_settings',
+          'true',
+        );
+      });
+      await navigateTo(
+        page,
+        `credential?tab=users&filter=${encodeURIComponent(
+          JSON.stringify({ email: { equals: labelUserEmail } }),
+        )}`,
+      );
+      const userRow = page
+        .getByRole('row')
+        .filter({ has: page.getByRole('cell', { name: labelUserEmail! }) });
+      await expect(userRow).toBeVisible({ timeout: 20000 });
+      await clickRowAction(page, userRow, 'User Detail');
+      const userInfoModal = new UserInfoModal(page);
+      await userInfoModal.waitForVisible();
+      const modal = userInfoModal.getModal();
+
+      await expect(
+        modal.getByRole('term').filter({ hasText: /^Labels$/ }),
+      ).toBeVisible({ timeout: 20000 });
+      // Edit labels is a hover action of the Labels definition.
+      const labelsRow = modal
+        .getByRole('definition')
+        .filter({ has: page.getByRole('button', { name: 'Edit labels' }) });
+      await labelsRow.hover();
+      await labelsRow.getByRole('button', { name: 'Edit labels' }).click();
+
+      const labelModal = page.getByRole('dialog', { name: 'Edit labels' });
+      await expect(labelModal).toBeVisible();
+      await labelModal.getByRole('textbox', { name: 'Key' }).fill('team');
+      await labelModal.getByRole('textbox', { name: 'Value' }).fill('e2e');
+      await labelModal.getByRole('button', { name: 'Save' }).click();
+      await expect(page.getByText('Labels saved.').first()).toBeVisible();
+      await expect(labelModal).toBeHidden({ timeout: 30000 });
+
+      await expect(
+        labelsRow.getByText('team=e2e', { exact: true }),
+      ).toBeVisible({ timeout: 30000 });
+    });
+  },
+);
+
+/** Resolves with the response to the next `AdminUserManagementQuery` whose variables match `predicate`. */
+function waitForUserListResponse(
+  page: Page,
+  predicate: (variables: Record<string, any>) => boolean,
+) {
+  return page.waitForResponse(
+    (response) => {
+      const req = response.request();
+      if (req.method() !== 'POST' || !req.url().includes('/admin/gql')) {
+        return false;
+      }
+      const body = req.postDataJSON?.() ?? null;
+      return (
+        /query\s+AdminUserManagementQuery\b/.test(body?.query ?? '') &&
+        predicate(body?.variables ?? {})
+      );
+    },
+    { timeout: 20000 },
+  );
+}
+
+// #10691: a Labels column token on Admin › Users filters the list by that
+// label. The label sits on a user this test creates (inactive, so the test
+// also checks the Inactive status survives the label filter).
+test.describe(
+  'User list - Label filter',
+  { tag: ['@regression', '@user', '@functional', '@requires-manager-v26.10'] },
+  () => {
+    let api: APIRequestContext | null = null;
+    let labeledEmail: string | null = null;
+    let labelId: string | null = null;
+
+    test.afterEach(async () => {
+      if (!api) return;
+      const adminApi = api;
+      api = null;
+      try {
+        if (labelId) {
+          await gqlAdmin(
+            adminApi,
+            `mutation($id: ID!) { purgeEntityLabel(id: $id) { label { id } } }`,
+            { id: labelId },
+          ).catch((error) =>
+            console.warn(`could not purge label ${labelId}:`, error),
+          );
+        }
+        if (labeledEmail) {
+          await purgeUserViaApi(adminApi, labeledEmail).catch((error) =>
+            console.warn(`could not purge ${labeledEmail}:`, error),
+          );
+        }
+      } finally {
+        labeledEmail = null;
+        labelId = null;
+        await adminApi.dispose();
+      }
+    });
+
+    test('Admin can filter the user list by clicking a label token', async ({
+      page,
+      request,
+    }) => {
+      api = await createAdminApiContext();
+      // Gate before any setup: UserV2Filter.labels needs 26.10.0a5.
+      const info = await (await api.get('/func/')).json().catch(() => ({}));
+      test.skip(
+        !isVersionAtLeast(String(info?.manager ?? ''), '26.10.0a5'),
+        'Filtering users by label needs a Backend.AI manager >= 26.10.0a5 (#10691)',
+      );
+
+      const runId = `${Date.now().toString(36)}${randomBytes(3).toString('hex')}`;
+      const email = `e2e-label-user-${runId}@lablup.com`;
+      const label = { key: 'e2e-label', value: runId };
+      const domainName = await getE2EDomainName(api);
+      const { create_user } = await gqlAdmin<{
+        create_user: { ok: boolean; msg: string; user: { uuid: string } };
+      }>(
+        api,
+        `mutation($email: String!, $props: UserInput!) {
+          create_user(email: $email, props: $props) { ok msg user { uuid } }
+        }`,
+        {
+          email,
+          props: {
+            username: email.split('@')[0],
+            password: `e2e-${randomBytes(12).toString('hex')}@Pw`,
+            need_password_change: false,
+            domain_name: domainName,
+            is_active: false,
+            status: 'inactive',
+          },
+        },
+      );
+      expect(create_user.ok, create_user.msg).toBe(true);
+      labeledEmail = email;
+      const { upsertEntityLabel } = await gqlAdmin<{
+        upsertEntityLabel: { label: { fieldId: string } };
+      }>(
+        api,
+        `mutation($input: UpsertEntityLabelInput!) {
+          upsertEntityLabel(input: $input) { label { fieldId } }
+        }`,
+        {
+          input: {
+            target: { entityType: 'user', entityId: create_user.user.uuid },
+            ...label,
+          },
+        },
+      );
+      // purgeEntityLabel takes the label's fieldId, not its global id.
+      labelId = upsertEntityLabel.label.fieldId;
+
+      // The superadmin intro tour (AdminViewSwitchTour) otherwise covers the page.
+      await page.addInitScript(() => {
+        for (const tour of ['back_to_user_view', 'back_to_admin_settings']) {
+          localStorage.setItem(
+            `backendaiwebui.settings.user.has_opened_tour_${tour}`,
+            'true',
+          );
+        }
+      });
+      await loginAsAdmin(page, request);
+      await navigateTo(
+        page,
+        `credential?tab=users&status=INACTIVE&filter=${encodeURIComponent(
+          JSON.stringify({ email: { equals: email } }),
+        )}`,
+      );
+      const inactiveRadio = page.getByRole('radio', {
+        name: 'Inactive',
+        exact: true,
+      });
+      await expect(inactiveRadio).toBeChecked({ timeout: 20000 });
+      const row = page
+        .getByRole('row')
+        .filter({ has: page.getByRole('cell', { name: email }) });
+      const labelToken = row.getByRole('button', {
+        name: `${label.key}=${label.value}`,
+        exact: true,
+      });
+      await expect(labelToken).toBeVisible({ timeout: 30000 });
+
+      // Act: the token click replaces the email filter with the label filter.
+      const labelResponse = waitForUserListResponse(
+        page,
+        (variables) =>
+          variables.filter?.labels?.some?.key?.iEquals === label.key &&
+          variables.filter?.labels?.some?.value?.iEquals === label.value,
+      );
+      await labelToken.click();
+      const response = await labelResponse;
+      const variables = response.request().postDataJSON().variables;
+      expect(variables.offset).toBe(0);
+      expect(variables.filter.email).toBeUndefined();
+      expect(variables.filter.status).toEqual({ notEquals: 'ACTIVE' });
+      // The label is unique to this run, so the manager returns only this user.
+      const body = await response.json();
+      expect(body.errors).toBeUndefined();
+      expect(body.data.scopedUsersV2.count).toBe(1);
+      expect(JSON.stringify(body.data.scopedUsersV2.edges)).toContain(email);
+      await expect(
+        page.locator('.uic-data-grid__body[aria-busy="true"]'),
+      ).toHaveCount(0, { timeout: 20000 });
+
+      const filterGroup = page
+        .getByRole('group', { name: 'Search filters' })
+        .first();
+      await expect(
+        filterGroup.getByRole('button', { name: /^Label key/ }),
+      ).toBeVisible();
+      await expect(
+        filterGroup.getByRole('button', { name: /^Label value/ }),
+      ).toBeVisible();
+      await expect(inactiveRadio).toBeChecked();
+      await expect(row).toBeVisible({ timeout: 30000 });
+      const rows = page
+        .getByRole('row')
+        .filter({ has: page.getByRole('cell', { name: /@/ }) });
+      await expect(async () => {
+        const texts = await rows.allTextContents();
+        expect(texts.length).toBeGreaterThan(0);
+        for (const text of texts) {
+          expect(text).toContain(`${label.key}=${label.value}`);
+        }
+      }).toPass({ timeout: 30000 });
     });
   },
 );

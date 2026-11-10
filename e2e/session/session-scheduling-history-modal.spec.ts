@@ -1,6 +1,7 @@
 // E2E spec: Session Scheduling History Modal
 import { skipUnlessWebUIVersion } from '../utils/feature-gate-util';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
+import { scopedAuditLogMockResponse } from './mocking/audit-log-mock';
 import { setupGraphQLMocks } from './mocking/graphql-interceptor';
 import { schedulingHistoryMockResponse } from './mocking/scheduling-history-mock';
 import {
@@ -848,6 +849,91 @@ test.describe(
       // 12. Verify the Session Detail drawer is still visible
       const drawer = page.getByRole('dialog', { name: 'Session Info' });
       await expect(drawer).toBeVisible();
+    });
+  },
+);
+
+test.describe(
+  'Session Detail Audit Log - Action column and filter',
+  { tag: ['@session', '@functional', '@regression'] },
+  () => {
+    test.beforeEach(async ({ page, request }) => {
+      await loginAsAdmin(page, request);
+
+      await setupGraphQLMocks(page, {
+        ComputeSessionListPageQuery: () => sessionListMockResponse(),
+        SessionDetailContentLegacyQuery: (vars) =>
+          sessionDetailLegacyMockResponse(vars),
+        SessionDetailContentQuery: (vars) => sessionDetailMockResponse(vars),
+        ScopedAuditLogQuery: (vars) => scopedAuditLogMockResponse(vars),
+      });
+
+      await navigateTo(page, 'session');
+      await expect(page.locator('table').first()).toBeVisible({
+        timeout: 10000,
+      });
+    });
+
+    test('Admin can filter a session audit log by action name', async ({
+      page,
+    }) => {
+      // 1. Open the Session Detail drawer of the mocked session
+      const sessionNameButton = page.getByRole('button', {
+        name: 'mock-session-for-scheduling-history',
+        exact: true,
+      });
+      await expect(sessionNameButton).toBeVisible({ timeout: 10000 });
+      await sessionNameButton.click();
+      const drawer = page.getByRole('dialog', { name: 'Session Info' });
+      await expect(drawer).toBeVisible({ timeout: 10000 });
+
+      // 2. Open the Audit Log tab
+      // The tab list renders its tabs as buttons inside navigation "Tabs".
+      await drawer
+        .getByRole('navigation', { name: 'Tabs' })
+        .getByRole('button', { name: 'Audit Log', exact: true })
+        .click();
+      const dataRows = drawer
+        .getByRole('row')
+        .filter({ has: page.getByRole('cell') });
+      await expect(dataRows).toHaveCount(3, { timeout: 10000 });
+
+      // 3. The translated Action column follows Time, and Result is shown
+      const headers = (
+        await drawer.getByRole('columnheader').allInnerTexts()
+      ).map((text) => text.split('\n')[0].trim());
+      const timeIndex = headers.indexOf('Time');
+      expect(timeIndex).toBeGreaterThanOrEqual(0);
+      expect(headers[timeIndex + 1]).toBe('Action');
+      expect(headers).toContain('Result');
+      await expect(
+        dataRows.filter({ hasText: 'Create session' }),
+      ).toBeVisible();
+      await expect(
+        dataRows.filter({ hasText: 'Commit session' }),
+      ).toBeVisible();
+      await expect(
+        dataRows.filter({ hasText: 'Terminate session' }),
+      ).toBeVisible();
+
+      // 4. Filter by Action
+      await drawer.getByRole('combobox', { name: 'Search filters' }).click();
+      await page.getByRole('option', { name: 'Action', exact: true }).click();
+      await page.getByRole('textbox', { name: 'Value' }).fill('commit');
+      const applyButton = page.getByRole('button', {
+        name: 'Apply',
+        exact: true,
+      });
+      await applyButton.click();
+      await expect(applyButton).toBeHidden();
+
+      // 5. Only the row whose action name contains the value remains
+      await expect(
+        drawer.getByRole('button', { name: /^Remove Action: / }),
+      ).toBeVisible();
+      await expect(dataRows).toHaveCount(1);
+      await expect(dataRows.first()).toContainText('Commit session');
+      await expect(dataRows.first()).toContainText('Failed');
     });
   },
 );

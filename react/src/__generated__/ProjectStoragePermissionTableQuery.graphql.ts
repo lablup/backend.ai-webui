@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<eb0b804c29af2e41a3766a3e82e25ada>>
+ * @generated SignedSource<<adda953c468416474d5df4595f51274d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -21,6 +21,7 @@ export type ProjectV2Filter = {
   description?: StringFilter | null | undefined;
   domain?: ProjectDomainNestedFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   id?: UUIDFilter | null | undefined;
   integrationName?: StringFilter | null | undefined;
   isActive?: boolean | null | undefined;

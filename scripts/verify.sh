@@ -257,7 +257,7 @@ check_stylex_injection() {
   # stylesheet rollup emitted first — possibly a lazy route's. Nothing warns
   # when the predicate stops matching, so: (1) the config must declare it;
   # (2) when a production build is present, the sentinel rule authored in
-  # react/src/pages/AstryxStylexProbePage.tsx must land in the entry
+  # react/src/pages/AstryxStylexProbePage/AstryxStylexProbePage.tsx must land in the entry
   # stylesheet only. Keep STYLEX_SENTINEL in sync with that `sentinel` style.
   local STYLEX_SENTINEL='z-index: ?2147480001'
   local config=react/vite.config.ts
@@ -301,8 +301,10 @@ check_astryx_theme_built() {
   # The committed `astryx theme build` artifacts under
   # react/src/astryx-theme/built/ must match the theme source; `-c` recompiles
   # in memory and exits non-zero on drift. Rebuild procedure: built/index.ts.
-  # The condition resolves `backend.ai-ui/theme` to source (ADR 0013 §4).
-  NODE_OPTIONS="--conditions=@backend.ai/source" \
+  # jiti ignores --conditions, so alias the subpath to what it resolves to (ADR 0013 §4).
+  local theme
+  theme=$(cd react && node --conditions=@backend.ai/source -p "require.resolve('backend.ai-ui/theme')") || return 1
+  JITI_ALIAS="{\"backend.ai-ui/theme\":\"$theme\"}" \
     bin react astryx theme build -c \
     src/astryx-theme/built/backendai-default.ts \
     -o src/astryx-theme/built/backendai-default-built.css
@@ -413,6 +415,8 @@ start_lane gate "z-index ladder mirrors" node scripts/migration-gates/z-index-la
 start_lane gate "Agent mappings" check_agent_mappings
 start_lane gate "Help anchors (user manual)" check_help_anchors
 start_lane gate "Terminology" check_terminology_drift
+# ADR 0018: every ADR and docs/ARCHITECTURE.md has a Korean `.ko.md` companion.
+start_lane gate "ADR pairs" node scripts/check-adr-pairs.mjs
 # Gates the non-English avoid-row DATA, a separate axis from CHECK 1 above; the
 # hard gate is terminology-selftest.yml (FR-3051).
 start_lane report "Terminology self-test (report-only here; hard gate in CI)" \
@@ -421,6 +425,9 @@ start_lane report "Astryx token gate (report-only; bar is no NEW findings)" \
   check_token_gate_report
 start_lane report "Compat floor (report-only; the floor is in the team dev catalog, ADR 0011)" \
   check_compat_floor_report
+# A `merge=` driver missing from git config does nothing, silently.
+start_lane report "Merge drivers (report-only)" \
+  node scripts/register-merge-drivers.mjs --check
 
 if [ -n "${VERIFY_TESTS:-}" ]; then
   start_lane gate "Vitest (react)" vitest_lane react

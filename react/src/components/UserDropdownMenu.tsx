@@ -102,9 +102,7 @@ const UserDropdownMenu: React.FC<{
   // A project admin's admin menu is project-scoped; the sider's Project
   // Settings item serves it, so this entry is for system admins only.
   const systemAdminMenuItem =
-    effectiveAdminRole === 'superadmin' || effectiveAdminRole === 'domainAdmin'
-      ? firstAvailableAdminMenuItem
-      : null;
+    effectiveAdminRole === 'superadmin' ? firstAvailableAdminMenuItem : null;
 
   // The settings surface is a modal over the current page, not a route.
   const { open: openUserSettings } = useUserSettingsModal();
@@ -177,7 +175,11 @@ const UserDropdownMenu: React.FC<{
             icon: <ArrowLeftRight size="1em" />,
             onClick: () => {
               webuiNavigate(
-                getPathFromMenuKey(systemAdminMenuItem.key, activeProjectName),
+                systemAdminMenuItem.to ??
+                  getPathFromMenuKey(
+                    systemAdminMenuItem.key,
+                    activeProjectName,
+                  ),
               );
             },
           }),

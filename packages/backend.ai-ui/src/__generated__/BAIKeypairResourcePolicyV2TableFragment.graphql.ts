@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ac8dee02b0468df1a5d7c431554660b5>>
+ * @generated SignedSource<<65f84fb89cd15c4a2a3bad3d5e25f6b6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,6 +18,7 @@ export type BAIKeypairResourcePolicyV2TableFragment$data = ReadonlyArray<{
   }>;
   readonly createdAt: string | null | undefined;
   readonly defaultForUnspecified: string;
+  readonly entityId: string;
   readonly id: string;
   readonly idleTimeout: number;
   readonly maxConcurrentSessions: number;
@@ -80,6 +81,13 @@ return {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "entityId",
       "storageKey": null
     },
     {
@@ -196,6 +204,6 @@ return {
 };
 })();
 
-(node as any).hash = "1a19df2e16d3bde603641cb63be4eec7";
+(node as any).hash = "7cad07b7865924faa7a4bae44d546e26";
 
 export default node;
