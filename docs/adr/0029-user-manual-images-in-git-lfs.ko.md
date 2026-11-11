@@ -43,13 +43,13 @@ flowchart LR
 - **규칙**: 루트 `.gitattributes`는 `<ext>`가 `png`, `jpg`, `jpeg`, `gif`, `webp`인 `packages/backend.ai-webui-docs/src/**/*.<ext> filter=lfs diff=lfs merge=lfs -text`를 가진다. `packages/backend.ai-webui-docs/src/` 밖의 파일은 LFS로 추적하지 않는다.
 - **Landing**: 이 규칙은 기존 이미지를 변환하는 커밋과 함께 들어간다(#11040). 그 전에는 LFS로 추적하는 파일이 없으므로, 검사와 pull script와 아래 guard는 할 일이 없다.
 - **기본 checkout**: `.lfsconfig`가 `lfs.fetchexclude = packages/backend.ai-webui-docs/src/**`를 설정하므로 `git clone`, `git checkout`, 일반 `git lfs pull`은 그곳에 pointer file을 남긴다.
-- **커밋 검사**: workflow `.github/workflows/lfs-pointer-check.yml`이 pull request마다 `.github/scripts/lfs/check-lfs-pointers.sh`를 실행한다. `filter` attribute가 `lfs`인 tracked file은 모두 올바른 pointer로 stage되어 있어야 하고, `filter=lfs` 경로의 원본 파일은 검사를 실패시킨다.
+- **커밋 검사**: workflow `.github/workflows/lfs-pointer-check.yml`이 pull request마다 `.github/scripts/lfs/check-lfs-pointers.sh`를 실행하고, `main`에 push될 때도 실행해(#11065) `main`에 들어온 원본 파일을 그 push에서 바로 보고한다. `filter` attribute가 `lfs`인 tracked file은 모두 올바른 pointer로 stage되어 있어야 하고, `filter=lfs` 경로의 원본 파일은 검사를 실패시킨다.
 
 ### 2. 소비처는 하나의 script로 이미지를 받는다
 
 - **Script**: `.github/scripts/lfs/pull-docs-images.sh [--ref <rev>] [--remote <name|url>]... [--fallback-remote <url>]... [<worktree>...]`는 두 layout, 즉 `packages/backend.ai-webui-docs/src/`와 archive worktree의 `src/`를 모두 다룬다.
 - **No-op**: 그 루트 아래에서 내용이 pointer text인 tracked working-tree file을 찾는다. 없으면 0으로 끝나고 git-lfs가 필요 없다.
-- **그 밖의 경우**: git-lfs가 없으면 `.github/scripts/lfs/install-git-lfs.sh`로 설치하고(Linux x86_64용 release 3.8.1, 그 script에 sha256과 함께 고정), `.lfsconfig`의 제외를 덮어써서 `--ref`(기본 `HEAD`)의 object를 fetch한 뒤, LFS filter로 index에서 pointer file을 복원한다. filter와 그 경로를 나열한 임시 attributes 파일은 명령마다 넘기므로, `.gitattributes`가 그 경로를 표시하든 아니든 복원되고 어떤 git config 파일도 쓰지 않는다. pointer가 남으면 실패한다.
+- **그 밖의 경우**: git-lfs가 없으면 `.github/scripts/lfs/install-git-lfs.sh`로 설치하고(Linux x86_64용 release 3.8.1, 그 script에 sha256과 함께 고정), staged pointer가 가리키는 object 중 로컬 LFS 저장소에 이미 있는 것을 sha256으로 검사해 손상된 것은 지우고, 모두 로컬에 있지 않으면 `.lfsconfig`의 제외를 덮어써서 `--ref`(기본 `HEAD`)의 object를 fetch한 뒤, LFS filter로 index에서 pointer file을 복원한다. filter와 그 경로를 나열한 임시 attributes 파일은 명령마다 넘기므로, `.gitattributes`가 그 경로를 표시하든 아니든 복원되고 어떤 git config 파일도 쓰지 않는다. pointer가 남거나 쓴 파일의 sha256이 pointer의 oid와 다르면 실패하고, 필요한 object 수, 이미 로컬에 있던 수, 내려받은 수를 한 줄로 출력한다.
 - **호출처**: `amplify.yml`(docs app, `main`과 각 archive worktree), `package.yml` `build_docs`, `.github/scripts/pr-preview/build-docs-preview.sh`(head에 대해 한 번, merge base의 `src`를 checkout한 뒤 `--ref`로 그 커밋의 object를 받아 다시 한 번). fork PR이면 `pr-preview.yml`이 head 저장소의 clone URL을 `--head-lfs-remote`로 넘기고, head pull은 이를 `--fallback-remote`로 쓴다. 이 URL은 base 저장소의 인증 정보 없이, `origin`에 없는 object에 대해서만 받는다. fork에만 있는 이미지도 빌드하지만, `main`의 빌드는 `origin`에서만 받으므로 job은 merge 전에 maintainer가 실행할 `git lfs push origin` 명령을 출력하고 실패한다. 기여자는 `pnpm --filter backend.ai-webui-docs run images:pull`을 실행한다.
 
 ### 3. toolkit은 pointer file을 거부한다
@@ -76,7 +76,7 @@ flowchart LR
 - 기본 clone과 docs가 아닌 모든 CI job은 이미지 바이트를 받지 않는다. docs 빌드와 스크린샷 작업만 받는다.
 - 스크린샷을 바꾸는 기여자는 git-lfs가 필요하고 `git lfs install --skip-repo`로 설정한다(hook은 Husky가 관리하므로 `.husky/pre-push`가 `git lfs pre-push`를 실행한다). git-lfs 없이 커밋한 이미지는 raw 바이트가 되며, pre-push hook이 그 push를 거부하고 pointer 검사도 실패시킨다.
 - 이미지를 받지 않은 docs 빌드는 깨진 이미지를 게시하는 대신 분명히 실패한다.
-- docs 빌드는 실행마다 이미지를 내려받으며, 실행 사이에 LFS object를 캐시하는 장치는 없다.
+- PR preview는 LFS object 저장소를 캐시한다(#11070). `docs-lfs-cache.yml`이 `main`의 캐시를 최신으로 유지하고, `pr-preview.yml`은 그 캐시(또는 PR 자신의 캐시)를 복원한 뒤 빌드에 쓴 object만 남겨(`prune-lfs-store.sh`) PR 범위 캐시로 저장한다. 키는 `.github/scripts/lfs/docs-lfs-cache-key.sh`가 만들므로, 빌드는 복원한 캐시에 없는 이미지만 내려받는다. GitHub는 캐시를 ref 단위로 격리하므로 PR의 캐시를 `main`이 읽는 일은 없다. fork PR 실행은 캐시를 저장하지 않는다. fork에만 있는 object는 merge 전에 `origin`으로 옮겨야 하는데, 캐시된 사본이 있으면 그 검사를 건너뛰기 때문이다. 쓰기 token을 가진 `package.yml` `build_docs`는 캐시를 복원하지 않는다. git-lfs는 로컬 저장소의 object를 검증하지 않으므로 `pull-docs-images.sh`가 쓰는 object마다 sha256을 확인한다. 릴리스 빌드와 Amplify 빌드는 여전히 실행마다 모든 이미지를 내려받는다.
 - `main` 히스토리는 별도의 히스토리 재작성 전까지 원본 PNG를 그대로 가지므로, 전체 clone은 그 이후에야 줄어든다.
 
 ## 출처

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0839e9c4cc7d679d3dd7db7b3d1bdfd0>>
+ * @generated SignedSource<<19881b61a8df70f4d43fdf3a8cdb70e9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,16 +9,17 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type DeleteRoleInput = {
+export type RoleStatus = "ACTIVE" | "DELETED" | "INACTIVE" | "%future added value";
+export type RBACManagementPageDeactivateRoleMutation$variables = {
   id: string;
 };
-export type RBACManagementPageDeactivateRoleMutation$variables = {
-  input: DeleteRoleInput;
-};
 export type RBACManagementPageDeactivateRoleMutation$data = {
-  readonly adminDeleteRole: {
-    readonly id: string;
-  } | null | undefined;
+  readonly deleteRole: {
+    readonly role: {
+      readonly id: string;
+      readonly status: RoleStatus;
+    };
+  };
 };
 export type RBACManagementPageDeactivateRoleMutation = {
   response: RBACManagementPageDeactivateRoleMutation$data;
@@ -30,7 +31,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "input"
+    "name": "id"
   }
 ],
 v1 = [
@@ -39,20 +40,38 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "input",
-        "variableName": "input"
+        "name": "id",
+        "variableName": "id"
       }
     ],
     "concreteType": "DeleteRolePayload",
     "kind": "LinkedField",
-    "name": "adminDeleteRole",
+    "name": "deleteRole",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "kind": "ScalarField",
-        "name": "id",
+        "concreteType": "Role",
+        "kind": "LinkedField",
+        "name": "role",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "status",
+            "storageKey": null
+          }
+        ],
         "storageKey": null
       }
     ],
@@ -77,16 +96,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "5ef51a672f57125f66f442c8c90276db",
+    "cacheID": "184839538311bd5547d7fa564a64d351",
     "id": null,
     "metadata": {},
     "name": "RBACManagementPageDeactivateRoleMutation",
     "operationKind": "mutation",
-    "text": "mutation RBACManagementPageDeactivateRoleMutation(\n  $input: DeleteRoleInput!\n) {\n  adminDeleteRole(input: $input) {\n    id\n  }\n}\n"
+    "text": "mutation RBACManagementPageDeactivateRoleMutation(\n  $id: UUID!\n) {\n  deleteRole(id: $id) {\n    role {\n      id\n      status\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "80afe2309693a5fc29589ea7cb76826e";
+(node as any).hash = "dd649cd15662a361893cbbc0aa025109";
 
 export default node;

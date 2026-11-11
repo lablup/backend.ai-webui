@@ -41,7 +41,9 @@ export function graphqlDevtools({ schemaPath, clientDirectivesPath }) {
       {
         tag: 'script',
         attrs: { type: 'module', src: `/@fs${MAIN_URL.pathname}` },
-        injectTo: 'body',
+        // Ahead of the app entry, so the fetch wrapper exists before the app's
+        // modules run (graphql-sse keeps the `fetch` it sees at creation).
+        injectTo: 'head-prepend',
       },
     ],
   };

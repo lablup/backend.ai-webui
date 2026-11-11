@@ -1,0 +1,298 @@
+// spec: e2e/.agent-output/test-plan-auto-scaling-rule-preset.md
+// sections: 7. Column Visibility, 8. Refresh, 10. Query Template Copy
+import { createTestResources } from '../../../utils/test-resources';
+import { loginAsAdmin, webuiEndpoint } from '../../../utils/test-util';
+import { test, expect, Page } from '@playwright/test';
+
+// Every preset a test names is declared here and purged via the admin API in
+// afterEach, so a test that fails midway cannot leak it.
+const resources = createTestResources();
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Sortable headers take their accessible name from the sort button, which
+// falls back to the column key ("Sort by createdAt"), so match the header text.
+function presetColumnHeader(page: Page, label: string) {
+  const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return page
+    .getByRole('columnheader')
+    .filter({ hasText: new RegExp(`^${escaped}$`) });
+}
+
+async function createPreset(
+  page: Page,
+  name: string,
+  metricName = 'e2e_metric',
+  queryTemplate = 'up',
+): Promise<void> {
+  await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
+  await page.waitForLoadState('domcontentloaded');
+  await expect(
+    page.getByRole('button', { name: /Create Preset/i }),
+  ).toBeVisible({
+    timeout: 60000,
+  });
+  await page.getByRole('button', { name: /Create Preset/i }).click();
+  const modal = page.getByRole('dialog');
+  await expect(modal).toBeVisible();
+  // Form.Item's input is named "visible label + hidden label" ("Name Name").
+  const nameInput = modal.getByRole('textbox', { name: /^Name\b/ });
+  await expect(nameInput).toBeVisible({ timeout: 30000 });
+  await nameInput.fill(name);
+  await modal.getByRole('textbox', { name: 'Metric Name' }).fill(metricName);
+  await modal
+    .getByRole('textbox', { name: 'Query Template' })
+    .fill(queryTemplate);
+  await modal.getByRole('button', { name: 'Create' }).click({ force: true });
+  // A toast's text is rendered twice: once in the visible notification
+  // stack (`role="region"`, named "Notifications") and once in a singleton
+  // screen-reader announcer node.
+  await expect(
+    page
+      .getByRole('region', { name: 'Notifications' })
+      .getByText('Prometheus query preset has been successfully created.'),
+  ).toBeVisible({ timeout: 120000 });
+  await expect(modal).toBeHidden({ timeout: 30000 });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 7. Column Visibility (Table Settings)
+// ─────────────────────────────────────────────────────────────────────────────
+
+test.describe(
+  'Auto Scaling Rule Preset - Column Visibility',
+  { tag: ['@auto-scaling-rule-preset', '@admin', '@functional'] },
+  () => {
+    test.beforeEach(async ({ page, request }) => {
+      await loginAsAdmin(page, request);
+    });
+
+    // 7.1 Superadmin can show the hidden "Created At" and "Updated At" columns
+    test('Superadmin can show the hidden Created At and Updated At columns via table settings', async ({
+      page,
+    }) => {
+      // Navigate to the tab
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
+      await page.waitForLoadState('domcontentloaded');
+      await expect(page.getByRole('table')).toBeVisible({ timeout: 30000 });
+
+      // Verify "Created At" and "Updated At" are NOT visible by default
+      await expect(presetColumnHeader(page, 'Created At')).toBeHidden();
+      await expect(presetColumnHeader(page, 'Updated At')).toBeHidden();
+
+      // Click the column settings (gear) button
+      await page.getByRole('button', { name: 'Table Settings' }).click();
+      const settingsModal = page.getByRole('dialog');
+      await expect(settingsModal).toBeVisible();
+      await expect(settingsModal).not.toHaveClass(/ant-zoom-appear/, {
+        timeout: 10000,
+      });
+      await expect(settingsModal).toContainText('Table Settings');
+
+      // Enable "Created At"
+      await settingsModal.getByRole('checkbox', { name: 'Created At' }).check();
+
+      // Enable "Updated At"
+      await settingsModal.getByRole('checkbox', { name: 'Updated At' }).check();
+
+      // Click "Apply"
+      await settingsModal.getByRole('button', { name: 'Apply' }).click();
+      await expect(settingsModal).toBeHidden({ timeout: 30000 });
+
+      // Verify "Created At" column header is now visible
+      await expect(presetColumnHeader(page, 'Created At')).toBeVisible({
+        timeout: 10000,
+      });
+
+      // Verify "Updated At" column header is now visible
+      await expect(presetColumnHeader(page, 'Updated At')).toBeVisible({
+        timeout: 10000,
+      });
+
+      // Restore hidden state for cleanup
+      await page.getByRole('button', { name: 'Table Settings' }).click();
+      await expect(settingsModal).toBeVisible();
+      await expect(settingsModal).not.toHaveClass(/ant-zoom-appear/, {
+        timeout: 10000,
+      });
+      await settingsModal
+        .getByRole('checkbox', { name: 'Created At' })
+        .uncheck();
+      await settingsModal
+        .getByRole('checkbox', { name: 'Updated At' })
+        .uncheck();
+      await settingsModal.getByRole('button', { name: 'Apply' }).click();
+      await expect(settingsModal).toBeHidden({ timeout: 30000 });
+    });
+
+    // 7.2 Superadmin can hide the "Created At" and "Updated At" columns again
+    test('Superadmin can hide the Created At and Updated At columns after enabling them', async ({
+      page,
+    }) => {
+      // Navigate to the tab
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
+      await page.waitForLoadState('domcontentloaded');
+      await expect(page.getByRole('table')).toBeVisible({ timeout: 30000 });
+
+      // Open column settings and enable both columns
+      await page.getByRole('button', { name: 'Table Settings' }).click();
+      const settingsModal = page.getByRole('dialog');
+      await expect(settingsModal).toBeVisible();
+      await expect(settingsModal).not.toHaveClass(/ant-zoom-appear/, {
+        timeout: 10000,
+      });
+      await settingsModal.getByRole('checkbox', { name: 'Created At' }).check();
+      await settingsModal.getByRole('checkbox', { name: 'Updated At' }).check();
+      await settingsModal.getByRole('button', { name: 'Apply' }).click();
+      await expect(settingsModal).toBeHidden({ timeout: 30000 });
+
+      // Verify both headers are visible
+      await expect(presetColumnHeader(page, 'Created At')).toBeVisible({
+        timeout: 10000,
+      });
+      await expect(presetColumnHeader(page, 'Updated At')).toBeVisible({
+        timeout: 10000,
+      });
+
+      // Open column settings again and disable "Created At"
+      await page.getByRole('button', { name: 'Table Settings' }).click();
+      await expect(settingsModal).toBeVisible();
+      await expect(settingsModal).not.toHaveClass(/ant-zoom-appear/, {
+        timeout: 10000,
+      });
+      await settingsModal
+        .getByRole('checkbox', { name: 'Created At' })
+        .uncheck();
+      await settingsModal.getByRole('button', { name: 'Apply' }).click();
+      await expect(settingsModal).toBeHidden({ timeout: 30000 });
+
+      // Verify "Created At" header is no longer visible
+      await expect(presetColumnHeader(page, 'Created At')).toBeHidden();
+
+      // Open column settings again and disable "Updated At"
+      await page.getByRole('button', { name: 'Table Settings' }).click();
+      await expect(settingsModal).toBeVisible();
+      await expect(settingsModal).not.toHaveClass(/ant-zoom-appear/, {
+        timeout: 10000,
+      });
+      await settingsModal
+        .getByRole('checkbox', { name: 'Updated At' })
+        .uncheck();
+      await settingsModal.getByRole('button', { name: 'Apply' }).click();
+      await expect(settingsModal).toBeHidden({ timeout: 30000 });
+
+      // Verify "Updated At" header is no longer visible
+      await expect(presetColumnHeader(page, 'Updated At')).toBeHidden();
+    });
+  },
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 8. Refresh
+// ─────────────────────────────────────────────────────────────────────────────
+
+test.describe(
+  'Auto Scaling Rule Preset - Refresh',
+  { tag: ['@auto-scaling-rule-preset', '@admin', '@functional'] },
+  () => {
+    test.beforeEach(async ({ page, request }) => {
+      await loginAsAdmin(page, request);
+    });
+
+    // 8.1 Superadmin can refresh the preset list using the refresh button
+    test('Superadmin can refresh the preset list using the refresh button', async ({
+      page,
+    }) => {
+      // Navigate to the tab
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
+      await page.waitForLoadState('domcontentloaded');
+
+      // Verify table is visible
+      await expect(page.getByRole('table')).toBeVisible({ timeout: 30000 });
+
+      // Click the refresh button (renamed from icon-name "reload" to
+      // "Refresh"). `exact: true` avoids matching the adjacent "Auto
+      // Refresh" button. Await the refetch itself -- the table and its
+      // "X - Y of Z items" caption stay mounted across a refetch, so
+      // asserting on them alone would pass without any request going out.
+      const refetch = page.waitForResponse(
+        (response) =>
+          (response.request().postData() ?? '').includes(
+            'AdminPrometheusPresetQuery',
+          ),
+        { timeout: 30000 },
+      );
+      await page.getByRole('button', { name: 'Refresh', exact: true }).click();
+      await refetch;
+
+      // Verify table is still visible after the refetch resolved
+      await expect(page.getByRole('table')).toBeVisible({ timeout: 15000 });
+
+      // Verify pagination info is still present. The "X - Y of Z items"
+      // caption is now a plain text node, not a `role="listitem"` (antd
+      // Pagination is gone).
+      await expect(page.getByText(/items$/)).toBeVisible({ timeout: 15000 });
+    });
+  },
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 10. Query Template Copy Interaction
+// ─────────────────────────────────────────────────────────────────────────────
+
+test.describe(
+  'Auto Scaling Rule Preset - Query Template Copy',
+  { tag: ['@auto-scaling-rule-preset', '@admin', '@functional'] },
+  () => {
+    let presetName: string;
+
+    test.beforeEach(async ({ page, request }) => {
+      await loginAsAdmin(page, request);
+    });
+
+    test.afterEach(() => resources.cleanup());
+
+    // 10.1 Superadmin can copy the Query Template text from the table row
+    test('Superadmin can copy the Query Template text from the table row via copy icon', async ({
+      page,
+    }) => {
+      presetName = resources.name('prometheusQueryPreset', 'e2e-preset-copy');
+      const queryTemplate = 'rate(container_cpu_usage_seconds_total[5m])';
+
+      // Create a preset with a distinctive Query Template
+      await createPreset(page, presetName, 'e2e_metric', queryTemplate);
+
+      // Navigate to the tab
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
+      await page.waitForLoadState('domcontentloaded');
+      await expect(page.getByRole('table')).toBeVisible({ timeout: 30000 });
+
+      // Locate the preset row
+      const row = page.getByRole('row').filter({ hasText: presetName });
+      await expect(row).toBeVisible({ timeout: 15000 });
+
+      // Find and click the copy icon in the Query Template cell
+      // The cell text is truncated in the DOM (CSS ellipsis), so we locate it by column index (3rd cell = Query Template)
+      const queryTemplateCell = row.locator('td').nth(2);
+      await expect(queryTemplateCell).toBeVisible({ timeout: 15000 });
+
+      // The label flips from "Copy" to "Copied" after a click.
+      const copyButton = queryTemplateCell.getByRole('button', {
+        name: /^cop(y|ied)$/i,
+      });
+      await expect(copyButton).toBeVisible();
+      await copyButton.click();
+
+      // Verify the copy interaction is acknowledged ("Copied" state appears).
+      // to-astryx final-B: was `.anticon-check, [aria-label="check"]`, both
+      // from antd's `Typography.Text copyable`. The control is now BUI's own
+      // `BAIText` copy button (`packages/backend.ai-ui/src/components/
+      // BAIText.tsx`), which swaps its icon to lucide's Check AND disables
+      // itself for 1.5s after a copy. The disabled state is the behavioural
+      // assertion — it does not depend on any icon class name.
+      await expect(copyButton).toBeDisabled({ timeout: 5000 });
+    });
+  },
+);

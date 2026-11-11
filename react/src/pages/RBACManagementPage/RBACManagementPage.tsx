@@ -183,32 +183,33 @@ const RoleListTab: React.FC = () => {
 
   const [commitDeactivateRole] =
     useMutation<RBACManagementPageDeactivateRoleMutation>(graphql`
-      mutation RBACManagementPageDeactivateRoleMutation(
-        $input: DeleteRoleInput!
-      ) {
-        adminDeleteRole(input: $input) {
-          id
+      mutation RBACManagementPageDeactivateRoleMutation($id: UUID!) {
+        deleteRole(id: $id) {
+          role {
+            id
+            status
+          }
         }
       }
     `);
 
   const [commitActivateRole] =
     useMutation<RBACManagementPageActivateRoleMutation>(graphql`
-      mutation RBACManagementPageActivateRoleMutation(
-        $input: UpdateRoleInput!
-      ) {
-        adminUpdateRole(input: $input) {
-          id
-          status
+      mutation RBACManagementPageActivateRoleMutation($id: UUID!) {
+        restoreRole(id: $id) {
+          role {
+            id
+            status
+          }
         }
       }
     `);
 
   const mutatePurgeRole =
     useMutationWithPromise<RBACManagementPagePurgeRoleMutation>(graphql`
-      mutation RBACManagementPagePurgeRoleMutation($input: PurgeRoleInput!) {
-        adminPurgeRole(input: $input) {
-          id
+      mutation RBACManagementPagePurgeRoleMutation($id: UUID!) {
+        purgeRole(id: $id) {
+          purgedId
         }
       }
     `);
@@ -225,7 +226,7 @@ const RoleListTab: React.FC = () => {
   );
   const handleDeactivateRole = (role: RoleNodeInList) => {
     commitDeactivateRole({
-      variables: { input: { id: role.entityId } },
+      variables: { id: role.entityId },
       onCompleted: (_data, errors) => {
         if (errors && errors.length > 0) {
           logger.error(errors[0]);
@@ -244,9 +245,7 @@ const RoleListTab: React.FC = () => {
 
   const handleActivateRole = (role: RoleNodeInList) => {
     commitActivateRole({
-      variables: {
-        input: { id: role.entityId, status: 'ACTIVE' },
-      },
+      variables: { id: role.entityId },
       onCompleted: (_data, errors) => {
         if (errors && errors.length > 0) {
           logger.error(errors[0]);
@@ -542,9 +541,7 @@ const RoleListTab: React.FC = () => {
         requireConfirmInput
         onOk={() => {
           if (purgingRole) {
-            return mutatePurgeRole({
-              input: { id: purgingRole.entityId },
-            })
+            return mutatePurgeRole({ id: purgingRole.entityId })
               .then(() => {
                 message.success(t('rbac.RolePurged'));
                 updateFetchKey();

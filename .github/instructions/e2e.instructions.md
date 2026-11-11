@@ -52,7 +52,6 @@ Variables it defines (all consumed in `e2e/utils/test-util.ts`, each with a fall
 | `E2E_USER2_EMAIL` / `E2E_USER2_PASSWORD` | second regular user (sharing/invitation flows) |
 | `E2E_MONITOR_EMAIL` / `E2E_MONITOR_PASSWORD` | monitor account |
 | `E2E_DOMAIN_ADMIN_EMAIL` / `E2E_DOMAIN_ADMIN_PASSWORD` | domain admin |
-| `E2E_ADMIN_EMAIL_FOR_VISUAL` / `E2E_USER_EMAIL_FOR_VISUAL` (+ `_PASSWORD`) | visual-regression accounts; fall back to the normal admin/user pair |
 | `E2E_DEFAULT_IMAGE` | container image used by session-creation specs |
 | `SCREENSHOT_PATH` | output directory for screenshot specs |
 
@@ -60,14 +59,20 @@ Variables it defines (all consumed in `e2e/utils/test-util.ts`, each with a fall
 against `127.0.0.1` / `localhost` because remote deployments may cache `config.toml` before
 route interception takes effect.
 
+**Parts.** `E2E_PART` (`all` default, `admin`, `project`, `project-admin`, `common`, `user` =
+everything outside `e2e/admin/`, comma lists allowed) narrows the `chromium` project to folders;
+`E2E_ENV_FILE` picks the env file (default `e2e/envs/.env.playwright`; a part list with `admin`
+requires `e2e/envs/.env.playwright.admin` and fails without it). Parts other than `all` write to
+`test-results/<part>/` and `playwright-report/<part>/`. One run talks to one server, so run the
+admin part and the rest separately. Details and the folder rule: `e2e/README.md`.
+
 Running (a full Backend.AI cluster must already be up):
 
 ```bash
 pnpm exec playwright test                         # everything
 pnpm exec playwright test --grep @smoke           # tag subsets: @smoke / @critical / @regression
-pnpm exec playwright test --grep-invert @visual   # skip visual regression
-pnpm exec playwright test e2e/vfolder/            # one directory
-pnpm exec playwright test e2e/auth/login.spec.ts  # one file
+pnpm exec playwright test e2e/project/data/       # one page folder
+pnpm exec playwright test e2e/common/auth/login.spec.ts  # one file
 pnpm exec playwright test --shard=1/4             # sharded
 ```
 
@@ -76,7 +81,7 @@ Config facts worth knowing (`playwright.config.ts`): `testDir` is `./e2e`, tests
 eat the whole test budget), trace is captured `on-first-retry`, the only enabled project is
 `chromium` with `locale: 'en-US'` — **UI strings are English**, so match English labels — and it
 declares a `cleanup` teardown project that runs `e2e/global-cleanup.teardown.ts` after the
-suite regardless of pass/fail. Snapshots resolve to `e2e/{testFileDir}/snapshot/{arg}{ext}`.
+suite regardless of pass/fail.
 
 ---
 
@@ -84,10 +89,11 @@ suite regardless of pass/fail. Snapshots resolve to `e2e/{testFileDir}/snapshot/
 
 ```
 e2e/
-├── auth/ user/ vfolder/ session/ serving/ environment/ agent/ project/
-│   credential/ config/ dashboard/ chat/ …          # feature directories, *.spec.ts
-├── visual_regression/                              # screenshot comparisons
-├── envs/.env.playwright.sample                     # env template (real file git-ignored)
+├── admin/<page>/ project-admin/<page>/ project/<page>/ common/<area>/
+│                                                   # specs by console and page, see e2e/README.md
+├── mocks/ fixtures/                                # shared GraphQL mocks and fixture files
+├── envs/.env.playwright{,.admin}.sample            # env templates (real files git-ignored)
+├── e2e-parts.ts                                    # E2E_PART folder rule
 ├── global-cleanup.teardown.ts                      # suite-wide best-effort sweep
 ├── seed.spec.ts                                    # skipped seed for the Playwright MCP generator
 └── utils/
@@ -131,12 +137,13 @@ Never hand-roll the login form. `e2e/utils/test-util.ts` exports role-specific h
 taking `(page, request)`:
 
 ```typescript
-import { loginAsAdmin, loginAsUser, navigateTo } from '../utils/test-util';
+// from e2e/<console>/<page>/; one more '../' per extra folder level
+import { loginAsAdmin, loginAsUser, navigateTo } from '../../utils/test-util';
 
 test.beforeEach(async ({ page, request }) => {
   await loginAsAdmin(page, request);   // or loginAsUser / loginAsUser2 /
   await navigateTo(page, 'data');      // loginAsDomainAdmin / loginAsMonitor /
-});                                    // loginAsCreatedAccount / loginAsVisualRegression*
+});                                    // loginAsCreatedAccount
 ```
 
 What `login()` actually does, so you can reason about failures:
@@ -224,7 +231,7 @@ point for generated flows; do not turn it into a real test.
    refetch, so `toHaveCount(0)` on it right after the click passes before the refetch
    starts. Arm `page.waitForResponse` for the list query before the action, await it, and
    only then wait for `aria-busy` to clear (`settleTableAfter` in
-   `e2e/rbac/rbac-role-preset.spec.ts`).
+   `e2e/admin/rbac/rbac-role-preset.spec.ts`).
 
 ### What replaced what
 
@@ -269,7 +276,7 @@ await expect(modal).toBeHidden({ timeout: 30000 });
 ### Form items
 
 ```typescript
-import { getFormItemControlByLabel } from '../utils/test-util-antd';
+import { getFormItemControlByLabel } from '../../utils/test-util-antd';
 
 const location = getFormItemControlByLabel(page, 'Location');
 await location.getByRole('combobox').click();

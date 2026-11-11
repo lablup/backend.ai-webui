@@ -294,29 +294,6 @@ On another terminal:
 $ pnpm run test      # Run tests (tests are located in `tests` directory)
 ```
 
-#### Visual Regression test
-
-To perform visual regression tests,
-On a terminal;
-
-```console
-$ pnpm playwright test e2e/visual_regression
-```
-
-You can see screenshots in `e2e/snapshots`.
-
-If you want to update screenshots due to UI changes, On a terminal;
-
-```console
-$ pnpm playwright test e2e/visual_regression --update-snapshots
-```
-
-Also, If you want to see visual regression test report, On a terminal;
-
-```console
-$ pnpm exec playwright show-report
-```
-
 #### Jest test
 
 To perform JavaScript test,

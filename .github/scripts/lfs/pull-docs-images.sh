@@ -24,6 +24,10 @@
 # does not need git-lfs. Otherwise it installs git-lfs if missing, overrides
 # lfs.fetchexclude from .lfsconfig, configures the LFS filter per command only
 # (never in any git config file), and fails if a pointer file remains.
+# Objects already in local LFS storage (a CI cache) are hashed and not fetched
+# again; a corrupted one is re-downloaded. Every image written is checked against
+# its pointer's oid. One line per checkout reports the objects needed, already
+# local and downloaded.
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -41,7 +45,7 @@ while [ $# -gt 0 ]; do
     --remote) REMOTES+=("${2:?--remote needs a value}"); shift 2 ;;
     --fallback-remote) FALLBACKS+=("${2:?--fallback-remote needs a value}"); shift 2 ;;
     --fallback-report) FALLBACK_REPORT="${2:?--fallback-report needs a value}"; shift 2 ;;
-    -h|--help) sed -n '2,26p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,30p' "$0"; exit 0 ;;
     -*) echo "Unknown option: $1" >&2; exit 2 ;;
     *) DIRS+=("$1"); shift ;;
   esac
@@ -144,8 +148,43 @@ pull_one() {
     git -C "$top" -c core.hooksPath="$hooks" "$@" \
       lfs fetch --include="$(IFS=,; echo "${includes[*]}")" --exclude="" "$from" "$REF"
   }
+  # The objects the staged pointers name. git-lfs does not hash an object it
+  # finds in local storage (a CI cache restores that storage), neither when
+  # fetching nor when smudging, so each local object is hashed here and a
+  # corrupted one deleted, which makes the fetch download it again.
+  local store needed="${work}/needed" have="${work}/have" bad="${work}/bad"
+  local n_needed n_local n_bad n_dl=0 dl_bytes=0
+  store="$(git -C "$top" lfs env 2>/dev/null | sed -n 's/^LocalMediaDir=//p')"
+  [ -n "$store" ] || { log "ERROR: ${top}: git lfs env does not name the local object storage." >&2; exit 1; }
+  lfs_index_pointers "$top" "$list" > "${work}/pointers.idx"
+  if awk -F '\t' '$1 == "" { found = 1 } END { exit !found }' "${work}/pointers.idx"; then
+    log "ERROR: ${top}: some pointer files have no valid Git LFS pointer staged (an unmerged path?):" >&2
+    awk -F '\t' '$1 == "" { print $3 }' "${work}/pointers.idx" > "${work}/unstaged"
+    report_pointers "${work}/unstaged"
+    exit 1
+  fi
+  cut -f1,2 "${work}/pointers.idx" | LC_ALL=C sort -u > "$needed"
+  n_needed="$(wc -l < "$needed" | tr -d ' ')"
+  # CI prunes its cached store to the objects the build used (prune-lfs-store.sh).
+  [ -z "${LFS_USED_OIDS_FILE:-}" ] || cut -f1 "$needed" >> "$LFS_USED_OIDS_FILE"
+  local oid size
+  while IFS=$'\t' read -r oid size; do
+    [ ! -f "${store}/${oid:0:2}/${oid:2:2}/${oid}" ] || printf '%s\t%s/%s/%s\n' "$oid" "${oid:0:2}" "${oid:2:2}" "$oid"
+  done < "$needed" > "$have"
+  lfs_hash_mismatches "$store" "$have" > "$bad"
+  n_bad="$(wc -l < "$bad" | tr -d ' ')"
+  if [ "$n_bad" -gt 0 ]; then
+    log "warning: ${top}: ${n_bad} local LFS object(s) do not match their oid; discarding them" >&2
+    (cd "$store" && tr '\n' '\0' < "$bad" | xargs -0 rm -f)
+  fi
+  n_local="$(( $(wc -l < "$have" | tr -d ' ') - n_bad ))"
+
   local r fetched=0 via_fallback=0
-  for r in "${remotes[@]}"; do
+  if [ "$n_local" -eq "$n_needed" ]; then
+    fetched=1
+    remotes=()
+  fi
+  for r in ${remotes[@]+"${remotes[@]}"}; do
     if lfs_fetch "$r"; then fetched=1; break; fi
     log "warning: fetching from ${r} was incomplete" >&2
   done
@@ -166,6 +205,15 @@ pull_one() {
     rm -rf "$work"
     exit 1
   fi
+  if [ "$n_local" -lt "$n_needed" ]; then
+    while IFS=$'\t' read -r oid size; do
+      [ -f "${store}/${oid:0:2}/${oid:2:2}/${oid}" ] || continue
+      n_dl=$((n_dl + 1)); dl_bytes=$((dl_bytes + size))
+    done < <(awk -F '\t' 'FILENAME == ARGV[1] { sub(/.*\//, ""); bad[$0] = 1; next }
+      FILENAME == ARGV[2] { if (!($1 in bad)) ok[$1] = 1; next }
+      !($1 in ok)' "$bad" "$have" "$needed")
+  fi
+  log "${top}: LFS objects: ${n_needed} needed, ${n_local} already local, ${n_dl} downloaded ($(awk -v b="$dl_bytes" 'BEGIN { printf "%.1f MiB", b / 1048576 }'), ${dl_bytes} bytes)$([ "$n_bad" -eq 0 ] || echo ", ${n_bad} corrupted local object(s) replaced")"
 
   # Restore from the index through the LFS smudge filter. The attributes file
   # covers checkouts whose .gitattributes does not mark the images (yet). It
@@ -216,7 +264,31 @@ pull_one() {
     log "Check network access to the LFS server, then re-run this script. 'git checkout -- <path>' restores a missing file." >&2
     exit 1
   fi
-  log "${top}: materialized all LFS images"
+  cut -f1,3 "${work}/pointers.idx" > "${work}/files.map"
+  lfs_hash_mismatches "$top" "${work}/files.map" > "$bad"
+  n="$(wc -l < "$bad" | tr -d ' ')"
+  if [ "$n" -gt 0 ]; then
+    log "ERROR: ${top}: ${n} file(s) do not match the oid of their LFS pointer:" >&2
+    report_pointers "$bad"
+    awk -F '\t' 'NR == FNR { b[$0] = 1; next } $2 in b { print substr($1, 1, 2) "/" substr($1, 3, 2) "/" $1 }' \
+      "$bad" "${work}/files.map" | (cd "$store" && tr '\n' '\0' | xargs -0 rm -f)
+    # Back to pointer text, so that a re-run pulls them again.
+    local restored=1
+    while IFS= read -r path; do
+      if git -C "$top" cat-file blob ":${path}" > "${work}/pointer" 2>/dev/null; then
+        cp "${work}/pointer" "${top}/${path}"
+      else
+        restored=0; echo "  could not restore the pointer of: ${path}" >&2
+      fi
+    done < "$bad"
+    if [ "$restored" -eq 1 ]; then
+      log "Their local objects were deleted and the files are pointers again; re-run this script to download them." >&2
+    else
+      log "Their local objects were deleted; run 'git checkout -- <path>' on the files listed, then re-run this script." >&2
+    fi
+    exit 1
+  fi
+  log "${top}: materialized all LFS images (each checked against its oid)"
   fail_on_untracked "$top" "${work}/untracked"
   if [ "$via_fallback" -eq 1 ]; then
     log "warning: ${top}: some LFS objects came only from ${r}; ${remotes[*]} does not have them." >&2

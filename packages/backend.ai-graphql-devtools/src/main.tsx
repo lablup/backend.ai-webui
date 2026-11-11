@@ -1,3 +1,7 @@
+import { installCapture } from './traffic';
+
+installCapture();
+
 const isMac = /mac/i.test(navigator.platform);
 let isImporting = false;
 

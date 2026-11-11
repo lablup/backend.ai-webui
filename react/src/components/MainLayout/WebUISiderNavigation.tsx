@@ -5,7 +5,7 @@
 import { AstryxAdminTheme } from '../../astryx-theme';
 import { useBackToUserView } from '../../hooks/useBackToUserView';
 import { useRouteAccessDecision } from '../../hooks/useRouteAccess';
-import { useCurrentMenuKey } from '../../hooks/useRouteScope';
+import { isUserViewPath, useCurrentMenuKey } from '../../hooks/useRouteScope';
 import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
 import BAIMenu from '../BAIMenu';
 import { IconButton } from '@lablup/ui-common/IconButton';
@@ -67,9 +67,10 @@ const WebUISiderNavigation: React.FC<WebUISiderNavigationProps> = ({
   // project-admin header, the user menu) can return the user. Use the role-
   // independent `isCurrentPathAdminCategory`: the role-filtered flags would
   // misclassify an admin page the user's menu excludes as "general" and
-  // pollute `goBackPath` with an admin path.
+  // pollute `goBackPath` with an admin path. A redirecting path (e.g. the
+  // legacy `/project`) is skipped too.
   useEffect(() => {
-    if (!isCurrentPathAdminCategory) {
+    if (!isCurrentPathAdminCategory && isUserViewPath(location.pathname)) {
       setGoBackPath(location.pathname);
     }
     // `location` is from react-router useLocation() — pathname is reactive across navigations.
