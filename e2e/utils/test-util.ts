@@ -3,13 +3,15 @@ import { FolderCreationModal } from './classes/vfolder/FolderCreationModal';
 import {
   accountLabel,
   applyLoginState,
-  clearAppliedCookies,
+  clearLoginState,
   dropLoginState,
   extendTestTimeout,
   forgetSharedSession,
+  holdsSharedSession,
   isAuthSpec,
   loginStateFile,
   rateLimitWaitMs,
+  readLocalStorage,
   readLoginState,
   saveLoginState,
 } from './login-state';
@@ -257,8 +259,12 @@ export async function login(
   if (stateFile && (await restoreLogin(page, stateFile, endpoint, username))) {
     return;
   }
-  await submitLogin(page, username, password, endpoint);
-  if (stateFile) await saveLoginState(page, stateFile, username);
+  // A context holding a restored account would boot straight into it.
+  if (holdsSharedSession(page)) {
+    await clearLoginState(page, new URL(webuiEndpoint).origin);
+  }
+  const before = await submitLogin(page, username, password, endpoint);
+  if (stateFile) await saveLoginState(page, stateFile, username, before);
 }
 
 function removeDevServerOverlay(page: Page) {
@@ -273,9 +279,20 @@ function removeDevServerOverlay(page: Page) {
     .catch(() => {});
 }
 
+/** The signed-in account's email as the app's client holds it, or `''`. */
+async function signedInEmail(page: Page): Promise<string> {
+  return page
+    .waitForFunction(() => (globalThis as any).backendaiclient?.email, null, {
+      timeout: 15_000,
+    })
+    .then((handle) => handle.jsonValue() as Promise<string>)
+    .catch(() => '');
+}
+
 /**
- * Boots the app on a saved login state. `false` (state dropped) when it lands
- * on the login form or the server answers 401, so the caller logs in again.
+ * Boots the app on a saved login state. `false` (state dropped, context
+ * cleared) when it lands on the login form, gets a 401 or shows another
+ * account, so the caller logs in for real.
  */
 async function restoreLogin(
   page: Page,
@@ -285,16 +302,20 @@ async function restoreLogin(
 ): Promise<boolean> {
   const state = readLoginState(stateFile);
   if (!state) return false;
-  await applyLoginState(page, stateFile, state);
+  const appOrigin = new URL(webuiEndpoint).origin;
+  await applyLoginState(page, stateFile, state, appOrigin);
   const serverOrigin = new URL(endpoint).origin;
   let unauthorized: string | undefined;
   const onResponse = (response: Response) => {
-    if (response.status() === 401 && response.url().startsWith(serverOrigin)) {
-      unauthorized ??= new URL(response.url()).pathname;
+    const { origin, pathname } = new URL(response.url());
+    // The health and version probes answer 401 to a signed-in app too.
+    const probe = /\/health$|^\/func\/?$/.test(pathname);
+    if (response.status() === 401 && origin === serverOrigin && !probe) {
+      unauthorized ??= pathname;
     }
   };
   page.on('response', onResponse);
-  let restored = false;
+  let problem: string | undefined;
   try {
     await page.goto(webuiEndpoint);
     await removeDevServerOverlay(page);
@@ -305,33 +326,46 @@ async function restoreLogin(
     await expect(signedIn.or(loginForm).first()).toBeVisible({
       timeout: 60_000,
     });
-    restored = !unauthorized && (await signedIn.isVisible());
-  } catch {
-    restored = false;
+    if (!(await signedIn.isVisible())) {
+      problem = 'login form shown';
+    } else {
+      const email = await signedInEmail(page);
+      if (email.toLowerCase() !== username.toLowerCase()) {
+        problem = email
+          ? `signed in as account ${accountLabel(email)}`
+          : 'signed-in account unknown';
+      }
+    }
+  } catch (error) {
+    problem = `boot failed: ${String(error).split('\n')[0].slice(0, 120)}`;
   } finally {
     page.off('response', onResponse);
   }
-  if (restored) {
+  if (!problem && unauthorized) problem = `401 on ${unauthorized}`;
+  if (!problem) {
     console.log(
       `[login-cache] restored session for account ${accountLabel(username)}`,
     );
     return true;
   }
   console.log(
-    `[login-cache] stale state for account ${accountLabel(username)} (${unauthorized ? `401 on ${unauthorized}` : 'login form shown'}); logging in again`,
+    `[login-cache] stale state for account ${accountLabel(username)} (${problem}); logging in again`,
   );
   dropLoginState(stateFile);
-  await clearAppliedCookies(page, state);
+  await clearLoginState(page, appOrigin);
   return false;
 }
 
-/** Fills and submits the login form until the app shows the signed-in header. */
+/**
+ * Fills and submits the login form until the app shows the signed-in header.
+ * Returns the app origin's localStorage as it was just before the submit.
+ */
 async function submitLogin(
   page: Page,
   username: string,
   password: string,
   endpoint: string,
-) {
+): Promise<Record<string, string>> {
   await page.goto(webuiEndpoint);
   await removeDevServerOverlay(page);
   await fillLoginEndpoint(page, endpoint);
@@ -340,6 +374,7 @@ async function submitLogin(
   // Astryx Button exposes no aria-label — its accessible name is the visible text.
   const loginButton = page.getByRole('button', { name: 'Login', exact: true });
   const account = accountLabel(username);
+  const before = await readLocalStorage(page);
   // A busy shared backend can transiently reject a valid login, so a
   // rejection is retried twice, 5s apart. A 429 is the manager's per-IP
   // anonymous window, which retries only refill: it waits for the reset once.
@@ -378,7 +413,7 @@ async function submitLogin(
         timeout: 30000,
       });
       console.log(`[login-cache] real login for account ${account}`);
-      return;
+      return before;
     } catch (error) {
       const stillOnLoginForm = await loginButton.isVisible().catch(() => false);
       if (!stillOnLoginForm) {
@@ -388,7 +423,7 @@ async function submitLogin(
           timeout: 60000,
         });
         console.log(`[login-cache] real login for account ${account}`);
-        return;
+        return before;
       }
       // The UI collapses every failure into "Login information mismatch";
       // the response the form got carries the server's actual reason.
@@ -404,6 +439,7 @@ async function submitLogin(
       await page.waitForTimeout(retryDelayMs);
     }
   }
+  throw new Error(`[login] no login attempt left for account ${account}`);
 }
 
 export const userInfo = {

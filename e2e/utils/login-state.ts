@@ -80,12 +80,43 @@ export function writeLoginState(file: string, state: StorageState): void {
   fs.renameSync(tmp, file);
 }
 
+/** The page origin's localStorage, to tell what a login adds to it. */
+export async function readLocalStorage(
+  page: Page,
+): Promise<Record<string, string>> {
+  return page
+    .evaluate(() => ({ ...localStorage }))
+    .catch(() => ({}) as Record<string, string>);
+}
+
+/**
+ * Saves what the login produced: the context's cookies and the localStorage
+ * entries the login added or changed (`before` is the storage just before
+ * the submit), so nothing a test seeded itself travels to the next test.
+ */
 export async function saveLoginState(
   page: Page,
   file: string,
   email: string,
+  before: Record<string, string>,
 ): Promise<void> {
-  const state = await page.context().storageState();
+  const full = await page.context().storageState();
+  const pageOrigin = new URL(page.url()).origin;
+  const state: StorageState = {
+    cookies: full.cookies,
+    origins: full.origins
+      .map((origin) =>
+        origin.origin === pageOrigin
+          ? {
+              ...origin,
+              localStorage: origin.localStorage.filter(
+                ({ name, value }) => before[name] !== value,
+              ),
+            }
+          : origin,
+      )
+      .filter((origin) => origin.localStorage.length > 0),
+  };
   writeLoginState(file, state);
   sharedContexts.set(page.context(), file);
   const now = Date.now() / 1000;
@@ -104,44 +135,72 @@ export function dropLoginState(file: string): void {
   fs.rmSync(file, { force: true });
 }
 
+const BLANK_PATH = '/__e2e_login_state__';
+
 /**
- * Puts the saved cookies into the page's context and the saved localStorage
- * into its origins (only keys the page has not set, once per tab), so the next
- * navigation boots into the signed-in app.
+ * Empties `origin`'s localStorage and sessionStorage in this tab, then writes
+ * `entries`, from a blank page on that origin so the app does not boot on
+ * the half-written storage.
+ */
+async function resetOriginStorage(
+  page: Page,
+  origin: string,
+  entries: { name: string; value: string }[],
+): Promise<void> {
+  const blank = `${origin}${BLANK_PATH}`;
+  await page.route(blank, (route) =>
+    route.fulfill({ contentType: 'text/html', body: '<!doctype html>' }),
+  );
+  try {
+    await page.goto(blank);
+    await page.evaluate((items) => {
+      localStorage.clear();
+      sessionStorage.clear();
+      for (const { name, value } of items) localStorage.setItem(name, value);
+    }, entries);
+  } finally {
+    await page.unroute(blank);
+  }
+}
+
+/**
+ * Signs the page's context out of whatever it held: clears every cookie and
+ * `appOrigin`'s storage, so a real login or another account starts clean.
+ */
+export async function clearLoginState(
+  page: Page,
+  appOrigin: string,
+): Promise<void> {
+  await page.context().clearCookies();
+  await resetOriginStorage(page, appOrigin, []);
+  sharedContexts.delete(page.context());
+}
+
+/**
+ * Replaces the context's cookies and `appOrigin`'s storage with the saved
+ * state, so the next navigation boots signed in as that account and nothing
+ * of an account the page held before is left.
  */
 export async function applyLoginState(
   page: Page,
   file: string,
   state: StorageState,
+  appOrigin: string,
 ): Promise<void> {
+  await page.context().clearCookies();
   await page.context().addCookies(state.cookies);
-  await page.addInitScript((origins) => {
-    const marker = '__e2e_login_state_restored';
-    try {
-      if (sessionStorage.getItem(marker)) return;
-      const entry = origins.find((o) => o.origin === location.origin);
-      for (const { name, value } of entry?.localStorage ?? []) {
-        if (localStorage.getItem(name) === null) {
-          localStorage.setItem(name, value);
-        }
-      }
-      sessionStorage.setItem(marker, '1');
-    } catch {
-      // opaque origins (about:blank) have no storage
-    }
-  }, state.origins);
+  const origins = new Map(
+    state.origins.map((origin) => [origin.origin, origin.localStorage]),
+  );
+  if (!origins.has(appOrigin)) origins.set(appOrigin, []);
+  for (const [origin, entries] of origins) {
+    await resetOriginStorage(page, origin, entries);
+  }
   sharedContexts.set(page.context(), file);
 }
 
-/** Removes the restored cookies again, so a real login starts unauthenticated. */
-export async function clearAppliedCookies(
-  page: Page,
-  state: StorageState,
-): Promise<void> {
-  for (const { name, domain, path: cookiePath } of state.cookies) {
-    await page.context().clearCookies({ name, domain, path: cookiePath });
-  }
-  sharedContexts.delete(page.context());
+export function holdsSharedSession(page: Page): boolean {
+  return sharedContexts.has(page.context());
 }
 
 /**
