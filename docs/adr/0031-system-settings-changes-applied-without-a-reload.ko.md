@@ -57,7 +57,7 @@ sequenceDiagram
 ### 1. 설정은 `loginConfigState`에 있고 `_config`에는 없다
 
 - **Client config**: `applyConfigToClient`(`react/src/helper/loginConfig.ts`)는 `backendaiclient._config`에 `_proxyURL`, `_proxyToken`, `domainName`, `domainId`, `enableWebMCP`만 넣고 client를 ready로 표시한다.
-- **Type guard**: host의 `BackendAIConfig` 타입(`react/src/hooks/index.tsx`)은 설정 필드를 선언하지 않으므로, `tsc`가 `useSuspendedBackendaiClient()._config.<setting>`을 거부한다. `globalThis`를 거친 타입 없는 읽기는 검사되지 않는다.
+- **Type guard**: host의 `BackendAIConfig` 타입(`react/src/hooks/index.tsx`)은 설정 필드를 선언하지 않으므로, `tsc`가 `useSuspendedBackendaiClient()._config.<setting>`을 거부한다. `globalThis`를 거친 타입 없는 읽기와 `useConnectedBAIClient()`를 거친 읽기(BUI의 `BackendAIConfig`는 `[key: string]: any`를 유지한다)는 검사되지 않는다.
 - **Reading in React**: `useEffectiveLoginConfig()`(`react/src/hooks/useWebUIConfig.ts`)는 `loginConfigState`를, 로드되기 전에는 코드 기본값을 돌려준다. `null`을 돌려주지 않는다.
 - **Reading outside React**: `jotaiStore.get(loginConfigState)`로 읽는다. config가 로드되기 전에는 `null`이므로 호출자가 `getDefaultLoginConfig()`로 대신하거나 optional chaining을 쓴다. 설정에서 값을 얻는 Jotai atom은 `get(loginConfigState)`로 읽는다.
 - **Atoms beside it**: `autoLogoutState`는 `autoLogout`을 따라가며, `loginConfigState`를 설정하는 곳마다 함께 설정된다. `loginPluginState`는 부트 때 한 번 설정되고 저장 뒤에 다시 만들어지지 않는다.

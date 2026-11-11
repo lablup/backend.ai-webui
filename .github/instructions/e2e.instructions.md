@@ -398,7 +398,7 @@ are only reliable when `isLocalEnvironment` is true.
 - Track created resources in a variable and clean up in `afterEach`, wrapped in try/catch —
   never assume creation succeeded.
 - Skip rather than fail when the target deployment lacks a feature:
-  `skipUnlessWebUIVersion`, `skipUnlessManagerVersion`, `skipUnlessClientConfig`,
+  `skipUnlessWebUIVersion`, `skipUnlessManagerVersion`, `skipUnlessWebUISetting`,
   `skipUnlessAllowedVFolderType` from `e2e/utils/feature-gate-util.ts`.
   A test that depends on a manager version records the minimum version it
   passes on as a `@requires-manager-vX.Y` tag, even at or below the app's

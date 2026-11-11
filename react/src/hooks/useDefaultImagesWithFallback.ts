@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { backendaiClientPromise, useSuspendedBackendaiClient } from '.';
+import { useSuspendedBackendaiClient } from '.';
 import {
   useDefaultImagesWithFallbackQuery,
   useDefaultImagesWithFallbackQuery$data,
@@ -12,10 +12,9 @@ import {
   parseImageString,
   resolveImageFullName,
 } from '../helper';
-import { loginConfigState, useEffectiveLoginConfig } from './useWebUIConfig';
+import { useEffectiveLoginConfig } from './useWebUIConfig';
 import { useBAILogger } from 'backend.ai-ui';
 import { atom, useAtom } from 'jotai';
-import { atomWithDefault } from 'jotai/utils';
 import * as _ from 'lodash-es';
 import { useEffect, useEffectEvent } from 'react';
 import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay';
@@ -45,33 +44,28 @@ const IMAGES_QUERY = graphql`
   }
 `;
 
-const defaultFileBrowserImageAtom = atomWithDefault<
-  string | null | undefined | Promise<string | null | undefined>
->(async (get) => {
-  const image = get(loginConfigState)?.defaultFileBrowserImage;
-  await backendaiClientPromise;
-  return _.isEmpty(image) ? undefined : image;
-});
-
-const systemSSHImageAtom = atomWithDefault<
-  string | null | undefined | Promise<string | null | undefined>
->(async (get) => {
-  const image = get(loginConfigState)?.systemSSHImage;
-  await backendaiClientPromise;
-  return _.isEmpty(image) ? undefined : image;
-});
+// The image found in the image list while the setting is empty; a set value always wins.
+const defaultFileBrowserImageFallbackAtom = atom<string | null | undefined>(
+  undefined,
+);
+const systemSSHImageFallbackAtom = atom<string | null | undefined>(undefined);
+const configuredImage = (image: string | undefined) =>
+  _.isEmpty(image) ? undefined : image;
 const systemSSHImageInfoAtom =
   atom<NonNullable<useDefaultImagesWithFallbackQuery$data['images']>[number]>();
 
 export const useDefaultFileBrowserImageWithFallback = () => {
   'use memo';
-  const [defaultFileBrowserImage, setDefaultFileBrowserImage] = useAtom(
-    defaultFileBrowserImageAtom,
+  const configured = configuredImage(
+    useEffectiveLoginConfig().defaultFileBrowserImage,
+  );
+  const [fallback, setDefaultFileBrowserImage] = useAtom(
+    defaultFileBrowserImageFallbackAtom,
   );
   const relayEnv = useRelayEnvironment();
 
   const getImage = useEffectEvent(() => {
-    if (defaultFileBrowserImage === undefined) {
+    if (configured === undefined && fallback === undefined) {
       // TODO: Currently, file browser filtering by server-side is not supported.
       // Once supported, modify the query to fetch only relevant images.
       fetchQuery<useDefaultImagesWithFallbackQuery>(
@@ -109,21 +103,22 @@ export const useDefaultFileBrowserImageWithFallback = () => {
 
   useEffect(() => {
     getImage();
-  }, []);
+  }, [configured]);
 
-  return defaultFileBrowserImage;
+  return configured ?? fallback;
 };
 
 export const useDefaultSystemSSHImageWithFallback = () => {
   'use memo';
-  const [systemSSHImage, setSystemSSHImage] = useAtom(systemSSHImageAtom);
+  const configured = configuredImage(useEffectiveLoginConfig().systemSSHImage);
+  const [fallback, setSystemSSHImage] = useAtom(systemSSHImageFallbackAtom);
   const [systemSSHImageInfo, setSystemSSHImageInfo] = useAtom(
     systemSSHImageInfoAtom,
   );
   const relayEnv = useRelayEnvironment();
 
   const getImage = useEffectEvent(() => {
-    if (systemSSHImage === undefined) {
+    if (configured === undefined && fallback === undefined) {
       // TODO: Currently, SSH/SFTP filtering by server-side is not supported.
       // Once supported, modify the query to fetch only relevant images.
       fetchQuery<useDefaultImagesWithFallbackQuery>(
@@ -160,9 +155,9 @@ export const useDefaultSystemSSHImageWithFallback = () => {
 
   useEffect(() => {
     getImage();
-  }, []);
+  }, [configured]);
 
-  return { systemSSHImage, systemSSHImageInfo };
+  return { systemSSHImage: configured ?? fallback, systemSSHImageInfo };
 };
 
 /**

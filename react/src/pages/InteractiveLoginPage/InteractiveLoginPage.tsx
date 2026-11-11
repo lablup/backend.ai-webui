@@ -85,10 +85,14 @@ const Children = () => {
           </BAIMetadataList>
           <BAIFlex
             direction="row"
-            justify="between"
+            justify={
+              loginConfig.enableInteractiveLoginAccountSwitch
+                ? 'between'
+                : 'end'
+            }
             style={{ alignSelf: 'stretch' }}
           >
-            {loginConfig.enableInteractiveLoginAccountSwitch ? (
+            {loginConfig.enableInteractiveLoginAccountSwitch && (
               <Button
                 size="lg"
                 label={t('interactiveLogin.UseAnotherAccount')}
@@ -104,8 +108,6 @@ const Children = () => {
                   document.dispatchEvent(event);
                 }}
               />
-            ) : (
-              <div></div>
             )}
             <Button
               size="lg"
