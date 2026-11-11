@@ -111,6 +111,13 @@ export const docs = {
       description:
         'Accessible name of the trigger; visually hidden (the surrounding Form.Item renders the visible label). Defaults to the picker\'s own "Select a path" copy.',
     },
+    {
+      name: 'isDirectorySizeVisible',
+      type: 'boolean',
+      default: 'false',
+      description:
+        "Shows each directory's size in the picker modal; the host passes its `isDirectorySizeVisible` setting.",
+    },
   ],
   examples: [
     {
