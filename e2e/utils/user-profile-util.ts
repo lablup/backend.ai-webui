@@ -51,17 +51,8 @@ export function createUserMoreButton(page: Page): Locator {
 }
 
 /**
- * Clicks a BAINameActionCell action by its title.
- * Handles both directly visible icon buttons and overflow dropdown menu items.
- *
- * BAINameActionCell exposes each action's `title` (not the icon name) as the
- * visible button's accessible name (`aria-label={action.title}`), e.g. the
- * "Edit" action's title is t('button.Edit') = "Edit", "User Detail" is
- * t('credential.UserDetail') = "User Detail", etc. The caller's
- * `actionTitle` argument already matches these titles exactly, so a direct
- * role-based lookup replaces the older icon-class-based lookup (which broke
- * once BAINameActionCell started deriving the aria-label from the action
- * title instead of the icon).
+ * Clicks a BAINameActionCell action by its title (the button's aria-label),
+ * whether it is an inline icon button or an item of a "More actions" menu.
  */
 export async function clickRowAction(
   page: Page,
@@ -69,35 +60,48 @@ export async function clickRowAction(
   actionTitle: string,
 ) {
   await row.hover();
+  const moreActions = page.getByRole('button', { name: 'More actions' });
+  const inlineButton = row.getByRole('button', {
+    name: actionTitle,
+    exact: true,
+  });
+  // `isVisible()` never waits, so wait for the row's actions to render first.
+  await inlineButton
+    .or(row.getByRole('button', { name: 'More actions' }))
+    .first()
+    .waitFor({ timeout: 5000 })
+    .catch(() => {});
 
-  // Case 1: the action overflowed into a "More actions" menu. A row can hold
-  // several BAINameActionCells (e.g. a Labels cell, which mounts after its own
-  // Suspense), so open each cell's menu and use the one that lists the action.
-  const moreButtonCells = row
-    .getByRole('cell')
-    .filter({ has: page.getByRole('button', { name: 'More actions' }) });
+  // A row can hold several cells with a "More actions" menu (e.g. Labels,
+  // behind its own Suspense): open each until one lists the action.
+  const moreButtonCells = row.getByRole('cell').filter({ has: moreActions });
   const cellCount = await moreButtonCells.count();
   for (let i = 0; i < cellCount; i++) {
     const moreButton = moreButtonCells
       .nth(i)
       .getByRole('button', { name: 'More actions' });
-    if (!(await moreButton.isVisible().catch(() => false))) continue;
+    if (!(await moreButton.isVisible())) continue;
     await moreButton.click();
-    const menuItem = page.getByRole('menuitem', {
+    const menu = page.getByRole('menu');
+    await menu
+      .getByRole('menuitem')
+      .first()
+      .waitFor({ timeout: 2000 })
+      .catch(() => {});
+    const menuItem = menu.getByRole('menuitem', {
       name: actionTitle,
       exact: true,
     });
-    if (await menuItem.isVisible({ timeout: 2000 }).catch(() => false)) {
+    if (await menuItem.isVisible()) {
       await menuItem.click();
       return;
     }
     await page.keyboard.press('Escape');
+    await menu.waitFor({ state: 'hidden', timeout: 2000 }).catch(() => {});
   }
 
-  // Case 2: Actions are directly visible — find by accessible name
-  const button = row.getByRole('button', { name: actionTitle, exact: true });
-  if (await button.isVisible({ timeout: 5000 }).catch(() => false)) {
-    await button.click();
+  if (await inlineButton.isVisible()) {
+    await inlineButton.click();
     return;
   }
 
