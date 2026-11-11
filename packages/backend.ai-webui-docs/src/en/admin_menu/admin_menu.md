@@ -2104,7 +2104,7 @@ The diagnostics are organized into the following collapsible sections, each show
 - **Content Security Policy**: Verifies the Content Security Policy headers (such as `connect-src`, `frame-src`, `script-src`, and `style-src`) so that the application can reach the resources it needs.
 - **Storage Proxy**: Checks the storage volume list together with the storage proxy's reachability and usage metrics.
 - **Endpoint Connectivity**: Validates that the API endpoint is reachable and that a connection can be established.
-- **Web Server Configuration**: Validates the `config.toml` settings, including URL formatting, SSL/protocol consistency, and connection mode.
+- **Web Server Configuration**: Validates the web server settings — the values in **System Settings** and the remaining `config.toml` entries — including URL formatting, SSL/protocol consistency, and connection mode.
 
 When **Show only failed items** is enabled and every check passes, the page does not go blank: it shows a
 placeholder reading `No failed items. All diagnostics passed.`, so a clean result is unmistakable.
