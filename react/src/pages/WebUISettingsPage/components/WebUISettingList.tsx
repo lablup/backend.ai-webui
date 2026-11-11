@@ -46,10 +46,10 @@ import {
   useErrorMessageResolver,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
-import { atom, useStore } from 'jotai';
+import { atom, useAtomValue, useStore } from 'jotai';
 import * as _ from 'lodash-es';
 import { Braces, Redo2, SquarePenIcon } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface WebUISettingListProps {
@@ -70,12 +70,19 @@ const MENU_KEY_SETTINGS: ReadonlySet<string> = new Set([
 
 const SCOPES: ReadonlyArray<WebUISettingScope> = ['domain', 'public'];
 
-// The page's values while a write is in flight, so a remount (a tab switch)
-// starts from them instead of the not-yet-refetched documents.
-const pendingSettingsAtom = atom<{
-  values: WebUISettingsDocument | null;
-  inFlight: number;
-}>({ values: null, inFlight: 0 });
+type WriteState = { running: boolean; rerun: boolean; force: boolean };
+
+// One owner per Jotai store for the values being saved and the per-scope write
+// queue, so a remount (a tab switch) joins the writes in flight instead of
+// starting a second queue from documents that are not refetched yet.
+interface SettingsSession {
+  confirmed: WebUISettingsDocument;
+  writes: Record<WebUISettingScope, WriteState>;
+  isStale: boolean;
+}
+const sessions = new WeakMap<ReturnType<typeof useStore>, SettingsSession>();
+// The values the rows show while a session lives; `null` means the saved documents.
+const sessionValuesAtom = atom<WebUISettingsDocument | null>(null);
 
 const shownValueOf = (
   doc: WebUISettingsDocument,
@@ -113,30 +120,30 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
 
   const baseState = getDefaultLoginConfig();
   // Only the keys a definition owns: the announcement beside them is saved by
-  // its own modal. Read once; afterwards this page's own state is the truth.
+  // its own modal.
   const saved: WebUISettingsDocument = ownedWebUISettings({
     ...savedPublicSettings,
     ...savedDomainSettings,
   });
-  const [initialValues] = useState<WebUISettingsDocument>(() => {
-    const pending = store.get(pendingSettingsAtom);
-    return pending.inFlight > 0 && pending.values ? pending.values : saved;
-  });
-  const [values, setValues] = useState<WebUISettingsDocument>(initialValues);
+  const sessionValues = useAtomValue(sessionValuesAtom);
+  const values = sessionValues ?? saved;
+
   // Read by the background writes, which outlive the render that started them.
-  const valuesRef = useRef<WebUISettingsDocument>(initialValues);
-  const confirmedRef = useRef<WebUISettingsDocument>(saved);
-  // Writes to one scope run one at a time (each is a read-modify-write); a
-  // change made meanwhile sets `rerun` and is written with the latest values.
-  const writesRef = useRef<
-    Record<
-      WebUISettingScope,
-      { running: boolean; rerun: boolean; force: boolean }
-    >
-  >({
-    domain: { running: false, rerun: false, force: false },
-    public: { running: false, rerun: false, force: false },
-  });
+  const currentValues = () => store.get(sessionValuesAtom) ?? saved;
+  const sessionOf = (): SettingsSession => {
+    const existing = sessions.get(store);
+    if (existing) return existing;
+    const created: SettingsSession = {
+      confirmed: saved,
+      writes: {
+        domain: { running: false, rerun: false, force: false },
+        public: { running: false, rerun: false, force: false },
+      },
+      isStale: false,
+    };
+    sessions.set(store, created);
+    return created;
+  };
 
   const defaultValueOf = (definition: WebUISettingDefinition) =>
     readWebUISettingFromState(baseState, definition);
@@ -144,9 +151,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
     shownValueOf(values, definition);
 
   const show = (next: WebUISettingsDocument) => {
-    valuesRef.current = next;
-    setValues(next);
-    store.set(pendingSettingsAtom, (prev) => ({ ...prev, values: next }));
+    store.set(sessionValuesAtom, next);
     setEffectiveWebUISettings(
       store,
       buildWebUISettingsDocument('public', next),
@@ -166,17 +171,18 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
   // Puts back the confirmed value of each key the failed write carried, unless
   // the row has been changed again since.
   const rollBack = (
+    session: SettingsSession,
     scope: WebUISettingScope,
     attempt: WebUISettingsDocument,
     error: unknown,
   ) => {
-    const confirmed = confirmedRef.current;
+    const confirmed = session.confirmed;
     const failed = WEBUI_SETTING_DEFINITIONS.filter(
       (definition) =>
         definition.scope === scope &&
         !_.isEqual(attempt[definition.key], confirmed[definition.key]),
     );
-    const next = { ...valuesRef.current };
+    const next = { ...currentValues() };
     const reverted = failed.filter(({ key }) =>
       _.isEqual(next[key], attempt[key]),
     );
@@ -194,7 +200,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
         buildWebUISettingsDocument(scope, confirmed),
       )
     ) {
-      writesRef.current[scope].rerun = true;
+      session.writes[scope].rerun = true;
     }
     // A key changed again meanwhile is retried, not reverted, so it is not listed.
     if (reverted.length === 0) return;
@@ -216,8 +222,18 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
     });
   };
 
+  // The session ends once nothing is in flight and every write refetched, so
+  // the rows follow the saved documents again; a failed refetch keeps it.
+  const endSessionIfIdle = (session: SettingsSession) => {
+    if (SCOPES.some((scope) => session.writes[scope].running)) return;
+    if (session.isStale) return;
+    sessions.delete(store);
+    store.set(sessionValuesAtom, null);
+  };
+
   const flush = async (scope: WebUISettingScope) => {
-    const write = writesRef.current[scope];
+    const session = sessionOf();
+    const write = session.writes[scope];
     if (write.running) {
       write.rerun = true;
       return;
@@ -228,41 +244,31 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
         write.rerun = false;
         const force = write.force;
         write.force = false;
-        const attempt = valuesRef.current;
+        const attempt = currentValues();
         const doc = buildWebUISettingsDocument(scope, attempt);
         if (
           !force &&
-          _.isEqual(
-            doc,
-            buildWebUISettingsDocument(scope, confirmedRef.current),
-          )
+          _.isEqual(doc, buildWebUISettingsDocument(scope, session.confirmed))
         ) {
           continue;
         }
-        store.set(pendingSettingsAtom, (prev) => ({
-          ...prev,
-          inFlight: prev.inFlight + 1,
-        }));
         try {
-          await writeScope(scope, doc);
-          confirmedRef.current = {
+          const refetched = await writeScope(scope, doc);
+          session.isStale = session.isStale || !refetched;
+          session.confirmed = {
             ..._.omit(
-              confirmedRef.current,
-              _.keys(pickWebUISettingsOfScope(confirmedRef.current, scope)),
+              session.confirmed,
+              _.keys(pickWebUISettingsOfScope(session.confirmed, scope)),
             ),
             ...pickWebUISettingsOfScope(attempt, scope),
           };
         } catch (error) {
-          rollBack(scope, attempt, error);
-        } finally {
-          store.set(pendingSettingsAtom, (prev) => ({
-            ...prev,
-            inFlight: prev.inFlight - 1,
-          }));
+          rollBack(session, scope, attempt, error);
         }
       } while (write.rerun);
     } finally {
       write.running = false;
+      endSessionIfIdle(session);
     }
   };
 
@@ -270,11 +276,12 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
   // scope, however many keys changed (JSON import, reset all). `force` writes
   // both scopes, so reset all also drops stored keys whose value is invalid.
   const commit = (next: WebUISettingsDocument, force = false) => {
-    const prev = valuesRef.current;
+    const prev = currentValues();
+    const session = sessionOf();
     show(next);
     for (const scope of SCOPES) {
       if (force) {
-        writesRef.current[scope].force = true;
+        session.writes[scope].force = true;
         void flush(scope);
       } else if (
         !_.isEqual(
@@ -288,35 +295,37 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
   };
 
   const setValue = (definition: WebUISettingDefinition, value: unknown) => {
-    const current = valuesRef.current;
-    // Leaving a field unchanged must not pin its default into the document.
-    if (
+    const current = currentValues();
+    const { key } = definition;
+    // Leaving a field unchanged must not pin its default into the document;
+    // a stored value, even an invalid one, is compared as stored.
+    const isUnchanged =
       value === undefined
-        ? !(definition.key in current)
-        : _.isEqual(value, shownValueOf(current, definition))
-    ) {
-      return;
-    }
+        ? !(key in current)
+        : key in current
+          ? _.isEqual(value, current[key])
+          : _.isEqual(value, defaultValueOf(definition));
+    if (isUnchanged) return;
     const next = { ...current };
     // Only a clear or a row reset drops the key.
     if (value === undefined) {
-      delete next[definition.key];
+      delete next[key];
     } else {
-      next[definition.key] = value;
+      next[key] = value;
     }
     commit(next);
   };
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      const writes = writesRef.current;
-      if (writes.domain.running || writes.public.running) {
+      const session = sessions.get(store);
+      if (session && SCOPES.some((scope) => session.writes[scope].running)) {
         e.preventDefault();
       }
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, []);
+  }, [store]);
 
   // Reset-all deletes the saved documents (irreversible), so it is confirmed
   // by a typed word.
@@ -542,7 +551,7 @@ const WebUISettingList: React.FC<WebUISettingListProps> = ({
           const changed = loaded.filter(
             ({ definition, value }) => !_.isEqual(value, valueOf(definition)),
           );
-          const next = { ...valuesRef.current };
+          const next = { ...currentValues() };
           for (const { definition, value } of changed) {
             if (value === undefined) {
               delete next[definition.key];

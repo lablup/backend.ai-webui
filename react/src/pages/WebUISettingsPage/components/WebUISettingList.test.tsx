@@ -45,7 +45,7 @@ vi.mock('../../../hooks', async (importOriginal) => ({
 type Write = (
   key: string,
   update: (current: unknown) => unknown,
-) => Promise<void>;
+) => Promise<boolean>;
 const domainWrite = vi.fn<Write>();
 const publicWrite = vi.fn<Write>();
 vi.mock('../../../hooks/useAppConfig', () => ({
@@ -61,12 +61,13 @@ vi.mock('./MenuKeySelector', () => ({ default: () => null }));
 vi.mock('./PluginPathInput', () => ({ default: () => null }));
 
 const deferred = () => {
-  let resolve!: () => void;
+  let resolveWith!: (refetched: boolean) => void;
   let reject!: (error: unknown) => void;
-  const promise = new Promise<void>((res, rej) => {
-    resolve = res;
+  const promise = new Promise<boolean>((res, rej) => {
+    resolveWith = res;
     reject = rej;
   });
+  const resolve = () => resolveWith(true);
   return { promise, resolve, reject };
 };
 
@@ -140,7 +141,7 @@ describe('WebUISettingList', () => {
 
   it('writes one scope at a time, the latest values last', async () => {
     const first = deferred();
-    domainWrite.mockReturnValueOnce(first.promise).mockResolvedValue();
+    domainWrite.mockReturnValueOnce(first.promise).mockResolvedValue(true);
     const store = renderList();
 
     fireEvent.click(checkboxOf('hideAgents'));
@@ -157,7 +158,7 @@ describe('WebUISettingList', () => {
   });
 
   it('writes a public setting to the public document only', async () => {
-    publicWrite.mockResolvedValue();
+    publicWrite.mockResolvedValue(true);
     const store = renderList();
 
     await act(async () => {
@@ -172,7 +173,7 @@ describe('WebUISettingList', () => {
 
   it('a remount during a write starts from the values being written', async () => {
     const write = deferred();
-    domainWrite.mockReturnValueOnce(write.promise).mockResolvedValue();
+    domainWrite.mockReturnValueOnce(write.promise).mockResolvedValue(true);
     const store = renderList();
 
     fireEvent.click(checkboxOf('hideAgents'));

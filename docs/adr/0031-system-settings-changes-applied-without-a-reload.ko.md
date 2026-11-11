@@ -76,12 +76,12 @@ sequenceDiagram
 
 - **When a row saves**: checkbox, selector, 목록, plugin 경로 컨트롤은 바뀔 때 저장한다. 숫자 입력은 blur, Enter, stepper 클릭 때 저장한다(`NumberInput`이 그때만 값을 확정한다). 텍스트 입력은 확정할 때(`BAIUncontrolledInput`의 `onCommit`) 저장한다. 행 리셋은 즉시 저장한다.
 - **Order of effects**: `WebUISettingList`는 행의 값을 바꾸고 페이지 값으로 만든 문서(`buildWebUISettingsDocument`)로 `setEffectiveWebUISettings`를 부른 뒤, 바뀐 스코프마다 `useUpdateDomainAppConfig` / `useUpdatePublicDomainAppConfig`로 쓴다. 두 hook은 `settings` 서브키의 [read-modify-write](#용어)를 그대로 하고, 표 밖의 키를 그대로 옮긴다(`withForeignWebUISettings`).
-- **Where the state lives**: `WebUISettingList`는 화면에 보이는 값을 `valuesRef`에, 서버가 마지막으로 받아들인 값을 `confirmedRef`(페이지가 mount될 때 읽은 문서로 시작한다)에, 스코프마다 `{ running, rerun }` 항목 하나를 `writesRef`에 둔다.
-- **One write per scope at a time**: 한 스코프의 쓰기가 도는 동안 그 스코프가 또 바뀌면 `rerun`을 세우고, 다음 쓰기가 최신 값을 저장한다. 페이지에서 빠르게 두 번 고쳐도 서로의 read-modify-write를 덮어쓰지 않는다.
+- **Where the state lives**: Jotai store마다 settings session 하나(`WebUISettingList.tsx`의 모듈 `WeakMap`)가 서버가 마지막으로 받아들인 값(`confirmed`, session이 시작될 때 문서로 채운다)과 스코프마다 `{ running, rerun, force }` 항목 하나를 가진다. 화면에 보이는 값은 `sessionValuesAtom`에 둔다. 쓰기가 도는 동안 다시 mount되면 같은 session에 합류하므로, 쓰는 쪽과 되돌릴 기준이 하나뿐이다. 도는 쓰기가 없고 모든 쓰기가 다시 조회를 마치면 session이 끝나고, 행은 다시 저장된 문서를 따른다.
+- **One write per scope at a time**: 한 스코프의 쓰기가 도는 동안 그 스코프가 또 바뀌면 `rerun`을 세우고, 다음 쓰기가 최신 값을 저장한다. `useAppConfig`도 한 문서에 대한 모든 쓰기를 줄 세우므로(`serializeWrite`), 공지 modal과 설정 행이 서로의 read-modify-write를 덮어쓰지 않는다.
 - **Several keys at once**: JSON Config 가져오기와 툴바 Reset은 바뀐 스코프마다 한 번만 쓴다. Reset은 입력 확인(`BAIDeleteConfirmModal`)을 유지한다.
 - **Refused write**: 페이지는 거부된 쓰기가 담았던 키마다 확정된 값을 되돌린다. 그사이 행이 다시 바뀌었으면 되돌리지 않는다. 스코프가 아직 확정된 값과 다르면 쓰기를 한 번 더 예약하고, 해당 설정을 나열한 오류 modal(`webuiSettings.NotSaved`, `webuiSettings.NotSavedItems`)을 연다.
 - **Leaving the page**: `beforeunload` 확인은 쓰기가 진행 중일 때만 뜬다.
-- **Refetch**: DOMAIN 쓰기가 이미 `domainConfig`를 다시 조회하듯, PUBLIC 쓰기는 병합된 `publicConfigByDomain` view를 다시 조회한다. 그래서 `usePublicDomainAppConfig` reader가 갱신된다.
+- **Refetch**: DOMAIN 쓰기가 이미 `domainConfig`를 다시 조회하듯, PUBLIC 쓰기는 병합된 `publicConfigByDomain` view를 다시 조회한다. 그래서 `usePublicDomainAppConfig` reader가 갱신된다. 다시 조회만 실패하면 setter는 `false`로 끝난다. 쓰기는 저장된 것으로 치고, session은 열린 채로 남아 행이 오래된 cache로 돌아가지 않는다.
 
 ### 4. 누가 언제 변경을 보는가
 

@@ -59,9 +59,7 @@ export const useDefaultFileBrowserImageWithFallback = () => {
   const configured = configuredImage(
     useEffectiveLoginConfig().defaultFileBrowserImage,
   );
-  const [fallback, setDefaultFileBrowserImage] = useAtom(
-    defaultFileBrowserImageFallbackAtom,
-  );
+  const [fallback, setFallback] = useAtom(defaultFileBrowserImageFallbackAtom);
   const relayEnv = useRelayEnvironment();
 
   const getImage = useEffectEvent(() => {
@@ -90,13 +88,11 @@ export const useDefaultFileBrowserImageWithFallback = () => {
         )
         .then(async (filebrowserImages) => {
           const firstImage = _.first(filebrowserImages);
-          setDefaultFileBrowserImage(
-            firstImage ? getImageFullName(firstImage) : null,
-          );
+          setFallback(firstImage ? getImageFullName(firstImage) : null);
         })
         .catch(() => {
           // in case of error, set null to disable file browser button
-          setDefaultFileBrowserImage(null);
+          setFallback(null);
         });
     }
   });
@@ -111,7 +107,7 @@ export const useDefaultFileBrowserImageWithFallback = () => {
 export const useDefaultSystemSSHImageWithFallback = () => {
   'use memo';
   const configured = configuredImage(useEffectiveLoginConfig().systemSSHImage);
-  const [fallback, setSystemSSHImage] = useAtom(systemSSHImageFallbackAtom);
+  const [fallback, setFallback] = useAtom(systemSSHImageFallbackAtom);
   const [systemSSHImageInfo, setSystemSSHImageInfo] = useAtom(
     systemSSHImageInfoAtom,
   );
@@ -143,12 +139,12 @@ export const useDefaultSystemSSHImageWithFallback = () => {
         )
         .then(async (sshImages) => {
           const firstImage = _.first(sshImages);
-          setSystemSSHImage(firstImage ? getImageFullName(firstImage) : null);
+          setFallback(firstImage ? getImageFullName(firstImage) : null);
           setSystemSSHImageInfo(firstImage || undefined);
         })
         .catch(() => {
           // in case of error, set null to disable SFTP button
-          setSystemSSHImage(null);
+          setFallback(null);
         });
     }
   });
@@ -157,7 +153,11 @@ export const useDefaultSystemSSHImageWithFallback = () => {
     getImage();
   }, [configured]);
 
-  return { systemSSHImage: configured ?? fallback, systemSSHImageInfo };
+  return {
+    systemSSHImage: configured ?? fallback,
+    // Describes the fallback image only.
+    systemSSHImageInfo: configured ? undefined : systemSSHImageInfo,
+  };
 };
 
 /**

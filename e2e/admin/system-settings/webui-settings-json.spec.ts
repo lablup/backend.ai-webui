@@ -27,11 +27,10 @@ function jsonConfigDialog(page: Page) {
 function watchSettingsWrites(page: Page): Array<string> {
   const writes: Array<string> = [];
   page.on('request', (request) => {
-    // A save starts with the raw-document read, so it shows before its upsert.
+    // Only a save sends the domain raw read, and it sends it first; the public
+    // raw read is also an ordinary page read, so it is not counted.
     if (
-      /AppConfigUpsert|AppConfig(Domain|Public)RawQuery/.test(
-        request.postData() ?? '',
-      )
+      /AppConfigUpsert|AppConfigDomainRawQuery/.test(request.postData() ?? '')
     ) {
       writes.push(request.url());
     }

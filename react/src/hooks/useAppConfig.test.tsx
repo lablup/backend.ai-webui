@@ -59,13 +59,13 @@ const runPublicDomainWrite = async (
   rawConfig: Record<string, unknown> | null,
   write: (
     setter: ReturnType<typeof useUpdatePublicDomainAppConfig>,
-  ) => Promise<void>,
+  ) => Promise<unknown>,
   errors?: Array<{ message: string }>,
 ) => {
   const { environment, result } = renderWithRelay(() =>
     useUpdatePublicDomainAppConfig(),
   );
-  let pending!: Promise<void>;
+  let pending!: Promise<unknown>;
   act(() => {
     pending = write(result.current);
   });

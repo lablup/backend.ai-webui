@@ -276,15 +276,19 @@ export const useUpdatePublicDomainAppConfig = () => {
           ],
         },
       });
-      // The write has landed; a failed refetch only leaves the merged view stale.
-      await fetchQuery<useAppConfigPublicQuery>(
+      // The write has landed; a failed refetch only leaves the merged view
+      // stale, which the caller learns from the `false` this resolves to.
+      return fetchQuery<useAppConfigPublicQuery>(
         relayEnv,
         publicQuery,
         { configNames: ['publicConfigByDomain'] },
         { fetchPolicy: 'network-only' },
       )
         .toPromise()
-        .catch(() => undefined);
+        .then(
+          () => true,
+          () => false,
+        );
     });
 };
 
@@ -330,15 +334,19 @@ export const useUpdateDomainAppConfig = () => {
           ],
         },
       });
-      // The write has landed; a failed refetch only leaves the merged view stale.
-      await fetchQuery<useAppConfigMyQuery>(
+      // The write has landed; a failed refetch only leaves the merged view
+      // stale, which the caller learns from the `false` this resolves to.
+      return fetchQuery<useAppConfigMyQuery>(
         relayEnv,
         myQuery,
         { configNames: ['domainConfig'] },
         { fetchPolicy: 'network-only' },
       )
         .toPromise()
-        .catch(() => undefined);
+        .then(
+          () => true,
+          () => false,
+        );
     });
 };
 
