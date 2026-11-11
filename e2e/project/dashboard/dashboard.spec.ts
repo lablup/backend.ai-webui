@@ -1,6 +1,7 @@
 // spec: e2e/.agent-output/test-plan-start-dashboard.md
 // scenarios: 6 (Widget Rendering), 7 (Session Count Widget), 8 (My Resources Widget),
 //            9 (My Activity Widget, replaces My Resources in Resource Group),
+//            9b (Card Header Time Range, #10915),
 //            12 (Board Layout), plus the custom panel add flow.
 // The member dashboard reads only the viewer's own data (#10584). The superadmin
 // dashboard is in e2e/admin/dashboard/, the project admin one in e2e/project-admin/dashboard/.
@@ -253,6 +254,137 @@ test.describe(
         await expect(failuresOnly).toBeChecked();
         await setFailuresOnly(page, failuresOnly, false);
         await expect(failuresOnly).not.toBeChecked();
+      });
+    });
+
+    // -----------------------------------------------------------------------
+    // 9b. Card header time range (a header pick is temporary, never saved)
+    // -----------------------------------------------------------------------
+    test.describe('Card Header Time Range', () => {
+      const myActivityWidget = (page: Page) =>
+        page
+          .locator('.uic-board-item')
+          .filter({ hasText: 'My Activity' })
+          .first();
+      const rangePicker = (page: Page) =>
+        page.getByRole('dialog', { name: 'Choose date and time range' });
+      const dayButton = (page: Page, label: string) =>
+        rangePicker(page).getByRole('button', { name: label, exact: true });
+
+      test.beforeEach(async ({ page, request }) => {
+        await loginAsAdmin(page, request);
+        await navigateTo(page, 'summary');
+        await expect(myActivityWidget(page)).toBeVisible({
+          timeout: WIDGET_TIMEOUT,
+        });
+      });
+
+      test.afterEach(async ({ page }) => {
+        const reset = myActivityWidget(page).getByRole('button', {
+          name: /^Back to the saved setting/,
+        });
+        if (await reset.isVisible().catch(() => false)) {
+          await reset.click();
+        }
+      });
+
+      test('Admin can pick a preset period in a dashboard card header', async ({
+        page,
+      }) => {
+        const widget = myActivityWidget(page);
+
+        // 1. Open the header's time range control
+        await widget
+          .getByTestId('panel-header-settings')
+          .getByRole('button', { name: /^Time range/ })
+          .first()
+          .click();
+        await expect(rangePicker(page)).toBeVisible();
+
+        // 2. Pick the "Last 7 days" preset; a preset commits at once
+        await rangePicker(page)
+          .getByRole('group', { name: 'Preset ranges' })
+          .getByRole('button', { name: 'Last 7 days', exact: true })
+          .click();
+        await expect(rangePicker(page)).toBeHidden();
+
+        // 3. The header shows the preset
+        await expect(
+          widget.getByRole('button', { name: 'Time range: Last 7 days' }),
+        ).toBeVisible();
+      });
+
+      test('Admin can pick a custom period in a dashboard card header', async ({
+        page,
+      }) => {
+        const widget = myActivityWidget(page);
+
+        // Day labels in the browser's own calendar, as the control renders them
+        const days = await page.evaluate(() => {
+          const label = (offset: number) => {
+            const d = new Date();
+            d.setHours(12, 0, 0, 0);
+            d.setDate(d.getDate() - offset);
+            const pad = (n: number) => String(n).padStart(2, '0');
+            return {
+              label: d.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              }),
+              iso: `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`,
+            };
+          };
+          return { start: label(9), end: label(4), tooFar: label(1) };
+        });
+
+        // 1. Open the header's time range control
+        await widget
+          .getByTestId('panel-header-settings')
+          .getByRole('button', { name: /^Time range/ })
+          .first()
+          .click();
+        await expect(rangePicker(page)).toBeVisible();
+
+        // 2. Pick the start day and hour, then confirm the start
+        await dayButton(page, days.start.label).click();
+        await rangePicker(page)
+          .getByRole('group', { name: 'Start time' })
+          .getByRole('listbox', { name: 'Hour' })
+          .getByRole('option', { name: '09', exact: true })
+          .click();
+        await rangePicker(page)
+          .getByRole('button', { name: 'OK', exact: true })
+          .click();
+        await expect(
+          rangePicker(page).getByRole('group', { name: 'End time' }),
+        ).toBeVisible();
+
+        // 3. A day more than 7 days after the start is disabled
+        await expect(dayButton(page, days.tooFar.label)).toBeDisabled();
+
+        // 4. Pick an end within 7 days and confirm
+        await dayButton(page, days.end.label).click();
+        await rangePicker(page)
+          .getByRole('button', { name: 'OK', exact: true })
+          .click();
+        await expect(rangePicker(page)).toBeHidden();
+
+        // 5. The header shows both ends of the custom period
+        const header = widget.getByTestId('panel-header-settings');
+        await expect(
+          header.getByRole('button', {
+            name: `Time range, Start date: ${days.start.iso} 09:00`,
+          }),
+        ).toBeVisible();
+        await expect(
+          header.getByRole('button', {
+            name: new RegExp(
+              `^Time range, End date: ${days.end.iso} \\d{2}:\\d{2}$`,
+            ),
+          }),
+        ).toBeVisible();
       });
     });
 

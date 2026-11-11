@@ -12,14 +12,14 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 426 / 580 features covered (73%)**
+**Overall (in-scope routes): 428 / 582 features covered (74%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
 | Authentication           | `/interactive-login`                             |    39    |   37    | 🔶 95%  |
 | Change Password          | `/change-password`                               |    9     |    9    | ✅ 100% |
 | Start Page               | `/start`                                         |    8     |    6    | 🔶 75%  |
-| Dashboard                | `/dashboard`                                     |    15    |   13    | 🔶 87%  |
+| Dashboard                | `/dashboard`                                     |    17    |   15    | 🔶 88%  |
 | Session List             | `/session`                                       |    27    |   19    | 🔶 70%  |
 | Session Launcher         | `/session/start`                                 |    13    |    3    | 🔶 23%  |
 | Serving                  | `/serving`                                       |    7     |    2    | 🔶 29%  |
@@ -55,7 +55,7 @@
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
 | System Settings          | `/admin/system-settings`                         |    37    |   33    | 🔶 89%  |
-| **Total**                |                                                  | **580**  | **426** | **73%** |
+| **Total**                |                                                  | **582**  | **428** | **74%** |
 
 ---
 
@@ -184,8 +184,10 @@
 | Project admin Audit Log failures    | ✅     | `Admin can toggle "Show failures only" on the project admin Audit Log card`      |
 | Admin dashboard sidebar entry       | ✅     | `Admin can open the admin dashboard from the admin sidebar menu`                 |
 | Legacy `/admin-dashboard` redirect  | ✅     | `Admin is redirected from the legacy admin dashboard URL to the admin dashboard` |
+| Card header preset time range       | ✅     | `Admin can pick a preset period in a dashboard card header`                      |
+| Card header custom time range       | ✅     | `Admin can pick a custom period in a dashboard card header`                      |
 
-**Coverage: 🔶 13/15 features**
+**Coverage: 🔶 15/17 features**
 
 ---
 
