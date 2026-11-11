@@ -8,6 +8,8 @@ import type { VFolderAutoMountSettingModalUpdateMutation } from '../__generated_
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import BAIFormItem from './BAIFormItem';
+import { HStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAIModal,
   type BAIModalProps,
@@ -17,6 +19,7 @@ import {
   useErrorMessageResolver,
   useMutationWithPromise,
 } from 'backend.ai-ui';
+import { FolderIcon } from 'lucide-react';
 import { Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -176,16 +179,16 @@ const VFolderAutoMountSettingModal: React.FC<
         }}
       >
         {isEditMode || vfolder ? (
-          <BAIFormItem label={t('autoMount.Folder')} required>
-            <BAITextInput
-              aria-label={t('autoMount.Folder')}
-              value={
-                autoMount
+          // Plain text, not a read-only input, so the fixed folder does not look editable.
+          <BAIFormItem label={t('autoMount.Folder')}>
+            <HStack gap={2} vAlign="center">
+              <FolderIcon size="1em" />
+              <Text weight="semibold">
+                {autoMount
                   ? (autoMount.vfolder?.metadata?.name ?? autoMount.vfolderId)
-                  : (vfolder?.name ?? '')
-              }
-              isReadOnly
-            />
+                  : (vfolder?.name ?? '')}
+              </Text>
+            </HStack>
           </BAIFormItem>
         ) : (
           <BAIFormItem
