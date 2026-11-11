@@ -211,7 +211,7 @@ test.describe(
       ).toHaveCount(0);
       await expect(
         modal.getByText(
-          'Runs directly as arguments, without a shell — operators (; && | $VAR, redirection, etc.) are treated as literal text. Separate arguments with spaces; quote ones containing spaces (e.g. --name "my model").',
+          'Runs directly as arguments, without a shell - operators (; && | $VAR, redirection, etc.) are treated as literal text. Separate arguments with spaces; quote ones containing spaces (e.g. --name "my model").',
           { exact: true },
         ),
       ).toBeVisible();
