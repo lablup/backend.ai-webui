@@ -9,7 +9,10 @@ import {
   forgetSharedSession,
   holdsHelperSession,
   isAnonymousRateLimit,
+  loginProblem,
   markHelperSession,
+  noteUnusableState,
+  noteUsableState,
   isAuthSpec,
   loginStateFile,
   rateLimitWaitMs,
@@ -257,8 +260,11 @@ export async function login(
   const stateFile =
     options.fresh || isAuthSpec()
       ? undefined
-      : loginStateFile(endpoint, username, password);
-  if (stateFile && (await restoreLogin(page, stateFile, endpoint, username))) {
+      : loginStateFile(endpoint, username);
+  if (
+    stateFile &&
+    (await restoreLogin(page, stateFile, endpoint, username, password))
+  ) {
     return;
   }
   // A context still holding a helper login would boot straight into it.
@@ -267,7 +273,9 @@ export async function login(
   }
   const before = await submitLogin(page, username, password, endpoint);
   markHelperSession(page);
-  if (stateFile) await saveLoginState(page, stateFile, username, before);
+  if (stateFile) {
+    await saveLoginState(page, stateFile, username, password, before);
+  }
 }
 
 function removeDevServerOverlay(page: Page) {
@@ -314,9 +322,15 @@ async function restoreLogin(
   stateFile: string,
   endpoint: string,
   username: string,
+  password: string,
 ): Promise<boolean> {
-  const state = readLoginState(stateFile);
-  if (!state) return false;
+  const saved = readLoginState(stateFile, password);
+  if (!saved) return false;
+  const { state } = saved;
+  // The account the saved login showed; a username login compares to it.
+  const expected = (
+    saved.account ?? (username.includes('@') ? username : '')
+  ).toLowerCase();
   const appOrigin = new URL(webuiEndpoint).origin;
   let unauthorized: string | undefined;
   const onResponse = (response: Response) => {
@@ -345,10 +359,7 @@ async function restoreLogin(
       const email = await signedInEmail(page);
       if (!email) {
         failed = 'signed-in account unknown';
-      } else if (
-        username.includes('@') &&
-        email.toLowerCase() !== username.toLowerCase()
-      ) {
+      } else if (expected && email.toLowerCase() !== expected) {
         dead = `signed in as account ${accountLabel(email)}`;
       }
     }
@@ -359,6 +370,7 @@ async function restoreLogin(
   }
   if (!dead && unauthorized) dead = `401 on ${unauthorized}`;
   if (!dead && !failed) {
+    noteUsableState(stateFile);
     console.log(
       `[login-cache] restored session for account ${accountLabel(username)}`,
     );
@@ -368,6 +380,11 @@ async function restoreLogin(
     `[login-cache] ${dead ? 'stale' : 'unusable'} state for account ${accountLabel(username)} (${dead ?? failed}); logging in again`,
   );
   if (dead) dropLoginState(stateFile);
+  else if (noteUnusableState(stateFile)) {
+    console.log(
+      '[login-cache] second unusable restore in a row; state dropped',
+    );
+  }
   // The restore spent part of the test's budget; the real login gets its own.
   extendTestTimeout(90_000);
   await clearLoginState(page, appOrigin);
@@ -382,10 +399,7 @@ async function restoreLogin(
 async function describeLoginAnswer(
   response: Response,
 ): Promise<{ text: string; rateLimited: boolean }> {
-  const body = await response.json().catch(() => ({}));
-  const problem = body?.data ?? body ?? {};
-  const type = String(problem.type ?? '').replace(/.*\//, '');
-  const title = String(problem.title ?? '').slice(0, 120);
+  const { type, title } = loginProblem(await response.json().catch(() => ({})));
   const path = new URL(response.url()).pathname;
   const text = `${response.status()} on ${path}${type ? ` ${type}` : ''}${title ? ` "${title}"` : ''}`;
   return {
@@ -426,11 +440,19 @@ async function submitLogin(
     const loginResponse = page
       .waitForResponse(
         (response) => {
+          const { pathname } = new URL(response.url());
+          if (
+            response.request().method() === 'POST' &&
+            pathname.endsWith('/server/login')
+          ) {
+            return true;
+          }
+          // The version probe and login-check the form sends before it.
           const path = pathBelow(endpoint, response.url());
-          if (path === undefined) return false;
           return (
-            response.status() === 429 ||
-            (response.request().method() === 'POST' && path === '/server/login')
+            response.status() === 429 &&
+            path !== undefined &&
+            /^\/func\/?$|^\/server\/login-check$/.test(path)
           );
         },
         { timeout: 30_000 },
@@ -457,8 +479,8 @@ async function submitLogin(
     }
     try {
       await page.waitForSelector('[data-testid="user-dropdown-button"]', {
-        // No answer at all in 30s: the submit went nowhere, do not wait again.
-        timeout: response ? 30000 : 1000,
+        // No answer at all in 30s: the submit most likely went nowhere.
+        timeout: response ? 30000 : 10000,
       });
       console.log(`[login-cache] real login for account ${account}`);
       return before;

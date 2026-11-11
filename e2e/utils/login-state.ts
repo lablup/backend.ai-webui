@@ -7,7 +7,7 @@
  * saved under `e2e/.auth/<run>/` and later calls restore it instead.
  */
 import { BrowserContext, Page, test } from '@playwright/test';
-import { createHash, scryptSync } from 'crypto';
+import { createHash, randomBytes, scryptSync, timingSafeEqual } from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -35,44 +35,31 @@ export function accountLabel(email: string): string {
   return createHash('sha256').update(email).digest('hex').slice(0, 8);
 }
 
-/**
- * The state file for this worker slot, server and account (the password is
- * part of the key, so a wrong one never finds a saved session); no cache →
- * undefined.
- */
+/** The state file for this worker slot, server and account; no cache → undefined. */
 export function loginStateFile(
   endpoint: string,
   email: string,
-  password: string,
   kind: 'browser' | 'api' = 'browser',
 ): string | undefined {
   const dir = runDir();
   if (!dir) return undefined;
   const key = createHash('sha256')
-    .update(
-      [
-        kind,
-        slot(),
-        endpoint.replace(/\/+$/, ''),
-        email,
-        passwordDigest(password),
-      ].join('\n'),
-    )
+    .update([kind, slot(), endpoint.replace(/\/+$/, ''), email].join('\n'))
     .digest('hex')
     .slice(0, 32);
   return path.join(dir, `${key}.json`);
 }
 
-const passwordDigests = new Map<string, string>();
+/** What a state file holds: the state, the signed-in email, a password check. */
+type SavedLogin = {
+  state: StorageState;
+  account?: string;
+  salt: string;
+  verifier: string;
+};
 
-/** A slow (scrypt) digest of the password, so the key never weakly hashes it. */
-function passwordDigest(password: string): string {
-  let digest = passwordDigests.get(password);
-  if (!digest) {
-    digest = scryptSync(password, 'e2e-login-state', 32).toString('hex');
-    passwordDigests.set(password, digest);
-  }
-  return digest;
+function verifierOf(password: string, salt: string): Buffer {
+  return scryptSync(password, Buffer.from(salt, 'hex'), 32);
 }
 
 /** Specs whose login is the subject under test always log in for real. */
@@ -84,26 +71,50 @@ export function isAuthSpec(): boolean {
   }
 }
 
-export function readLoginState(file: string): StorageState | undefined {
+/**
+ * The saved login, if it was saved with this password (so a wrong password
+ * never gets a saved session) and still holds a session.
+ */
+export function readLoginState(
+  file: string,
+  password: string,
+): { state: StorageState; account?: string } | undefined {
   try {
-    const state = JSON.parse(fs.readFileSync(file, 'utf8')) as StorageState;
+    const saved = JSON.parse(fs.readFileSync(file, 'utf8')) as SavedLogin;
+    const expected = Buffer.from(saved.verifier, 'hex');
+    const actual = verifierOf(password, saved.salt);
+    if (expected.length !== actual.length) return undefined;
+    if (!timingSafeEqual(expected, actual)) return undefined;
+    const { state } = saved;
     // The browser may carry the session in localStorage (the
     // X-BackendAI-SessionID header) instead of a third-party cookie.
     const held =
       state.cookies?.length > 0 ||
       state.origins?.some((origin) => origin.localStorage.length > 0);
-    return held ? state : undefined;
+    return held ? { state, account: saved.account } : undefined;
   } catch {
     return undefined;
   }
 }
 
 /** Writes the state; a failure only costs the cache, never the login. */
-export function writeLoginState(file: string, state: StorageState): boolean {
+export function writeLoginState(
+  file: string,
+  state: StorageState,
+  password: string,
+  account?: string,
+): boolean {
   try {
+    const salt = randomBytes(16).toString('hex');
+    const saved: SavedLogin = {
+      state,
+      account,
+      salt,
+      verifier: verifierOf(password, salt).toString('hex'),
+    };
     fs.mkdirSync(path.dirname(file), { recursive: true, mode: 0o700 });
     const tmp = `${file}.${process.pid}.tmp`;
-    fs.writeFileSync(tmp, JSON.stringify(state), { mode: 0o600 });
+    fs.writeFileSync(tmp, JSON.stringify(saved), { mode: 0o600 });
     fs.renameSync(tmp, file);
     return true;
   } catch (error) {
@@ -135,6 +146,7 @@ export async function saveLoginState(
   page: Page,
   file: string,
   email: string,
+  password: string,
   before: Record<string, string>,
 ): Promise<void> {
   const full = await page.context().storageState();
@@ -155,7 +167,10 @@ export async function saveLoginState(
       )
       .filter((origin) => origin.localStorage.length > 0),
   };
-  if (!writeLoginState(file, state)) return;
+  const account = await page
+    .evaluate(() => (globalThis as any).backendaiclient?.email as string)
+    .catch(() => undefined);
+  if (!writeLoginState(file, state, password, account || undefined)) return;
   sharedContexts.set(page.context(), file);
   const now = Date.now() / 1000;
   const expiries = state.cookies
@@ -170,7 +185,27 @@ export async function saveLoginState(
 }
 
 export function dropLoginState(file: string): void {
+  unusableCounts.delete(file);
   fs.rmSync(file, { force: true });
+}
+
+const unusableCounts = new Map<string, number>();
+
+/**
+ * Records a restore that failed without proving the session dead; the second
+ * one in a row drops the state, so a state that keeps failing is not retried
+ * for every test.
+ */
+export function noteUnusableState(file: string): boolean {
+  const count = (unusableCounts.get(file) ?? 0) + 1;
+  unusableCounts.set(file, count);
+  if (count < 2) return false;
+  dropLoginState(file);
+  return true;
+}
+
+export function noteUsableState(file: string): void {
+  unusableCounts.delete(file);
 }
 
 const BLANK_PATH = '/__e2e_login_state__';
@@ -256,6 +291,7 @@ export function holdsHelperSession(page: Page): boolean {
  * is dead from here on; drop it so the next call logs in for real.
  */
 export function forgetSharedSession(page: Page): void {
+  helperContexts.delete(page.context());
   const file = sharedContexts.get(page.context());
   if (!file) return;
   sharedContexts.delete(page.context());
@@ -285,13 +321,23 @@ export function isAnonymousRateLimit(
   return true;
 }
 
+/** The problem `type` (last path segment) and `title` of a login answer body. */
+export function loginProblem(body: any): { type: string; title: string } {
+  const detail = body?.data ?? body ?? {};
+  return {
+    type: String(detail.type ?? '').replace(/.*\//, ''),
+    title: String(detail.title ?? '').slice(0, 120),
+  };
+}
+
 /** How long to wait after a login 429, from its reset header, capped. */
 export function rateLimitWaitMs(headers: Record<string, string>): number {
   let seconds = Number(
     headers['x-ratelimit-reset'] ?? headers['retry-after'] ?? NaN,
   );
-  // The manager sends seconds until the reset; an epoch value is converted.
-  if (seconds > 1e9) seconds -= Date.now() / 1000;
+  // The manager sends seconds until the reset; epoch values are converted.
+  if (seconds > 1e12) seconds /= 1000;
+  if (seconds > 1e9) seconds = Math.max(0, seconds - Date.now() / 1000);
   const waitMs =
     Number.isFinite(seconds) && seconds >= 0
       ? (seconds + 1) * 1000

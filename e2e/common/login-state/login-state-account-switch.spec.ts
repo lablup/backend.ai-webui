@@ -40,9 +40,17 @@ test.describe(
         await loginAsUser(page, request);
         await expectSignedInAs(page, userInfo.user.email);
 
-        const restoresBefore = helperLog.filter((line) =>
-          line.startsWith('[login-cache] restored'),
-        ).length;
+        // A restore attempt ends restored, or unusable after a transient
+        // boot failure; a stale (dead) state would mean the cache is broken.
+        const attempts = () =>
+          helperLog.filter((line) =>
+            /^\[login-cache\] (restored|unusable state)/.test(line),
+          ).length;
+        const stale = () =>
+          helperLog.filter((line) => line.startsWith('[login-cache] stale'))
+            .length;
+        const attemptsBefore = attempts();
+        const staleBefore = stale();
         // Both accounts now have a saved state in this worker.
         await loginAsAdmin(page, request);
         await expectSignedInAs(page, userInfo.admin.email);
@@ -52,12 +60,9 @@ test.describe(
         const cacheOn = !!loginStateFile(
           webServerEndpoint,
           userInfo.admin.email,
-          userInfo.admin.password,
         );
-        const restores =
-          helperLog.filter((line) => line.startsWith('[login-cache] restored'))
-            .length - restoresBefore;
-        expect(restores).toBe(cacheOn ? 2 : 0);
+        expect(attempts() - attemptsBefore).toBe(cacheOn ? 2 : 0);
+        expect(stale() - staleBefore).toBe(0);
       } finally {
         console.log = log;
       }

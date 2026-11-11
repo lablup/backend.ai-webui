@@ -4,6 +4,7 @@ import {
   extendTestTimeout,
   isAnonymousRateLimit,
   isAuthSpec,
+  loginProblem,
   loginStateFile,
   rateLimitWaitMs,
   readLoginState,
@@ -53,13 +54,15 @@ export async function createAccountApiContext(
     !isAuthSpec() &&
     Object.values(userInfo).some(({ email }) => email === account.email);
   const stateFile = shared
-    ? loginStateFile(webServerEndpoint, account.email, account.password, 'api')
+    ? loginStateFile(webServerEndpoint, account.email, 'api')
     : undefined;
-  const saved = stateFile ? readLoginState(stateFile) : undefined;
+  const saved = stateFile
+    ? readLoginState(stateFile, account.password)
+    : undefined;
   if (stateFile && saved) {
     const api = await request.newContext({
       baseURL: webServerEndpoint,
-      storageState: saved,
+      storageState: saved.state,
     });
     const check = await api.post('/server/login-check').catch(() => undefined);
     const checked = check?.ok() ? await check.json().catch(() => ({})) : {};
@@ -80,18 +83,7 @@ export async function createAccountApiContext(
       },
     });
   let res = await submit();
-  const problem = async () => {
-    const answer = await res.json().catch(() => ({}));
-    const detail = answer?.data ?? answer ?? {};
-    return {
-      type:
-        String(detail.type ?? '')
-          .split('/')
-          .pop() ?? '',
-      title: String(detail.title ?? ''),
-    };
-  };
-  const first = await problem();
+  const first = loginProblem(await res.json().catch(() => ({})));
   if (isAnonymousRateLimit(res.status(), first.type, first.title)) {
     // The manager's per-IP anonymous window: wait for its reset, retry once.
     const waitMs = rateLimitWaitMs(res.headers());
@@ -116,7 +108,9 @@ export async function createAccountApiContext(
   console.log(
     `[login-cache] real API login for account ${accountLabel(account.email)}`,
   );
-  if (stateFile) writeLoginState(stateFile, await api.storageState());
+  if (stateFile) {
+    writeLoginState(stateFile, await api.storageState(), account.password);
+  }
   return api;
 }
 
