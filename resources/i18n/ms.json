@@ -4423,6 +4423,7 @@
     "DescEnableReservoir": "Tunjukkan item menu Reservoir.",
     "DescFasttrackEndpoint": "URL perkhidmatan FastTrack. Ia ditawarkan sebagai item menu tersendiri.",
     "DescHideAgents": "Sembunyikan menu Ringkasan Agen dan butiran agen daripada pengguna yang bukan superadmin.",
+    "DescHideModelDefinitionPath": "Menyembunyikan laluan fail definisi model dalam semakan penggunaan: butiran semakan tidak memaparkannya dan medan itu hilang daripada borang semakan. Semakan yang disalin mengekalkan laluannya; semakan baharu menggunakan model-definition.yaml.",
     "DescIsDirectorySizeVisible": "Tunjukkan saiz setiap direktori dalam penjelajah folder.",
     "DescMaskUserInfo": "Sembunyikan e-mel dan nama akaun pengguna apabila dipaparkan.",
     "DescMaxATOMDevicesPerContainer": "Bilangan maksimum peranti ATOM yang boleh diperuntukkan kepada satu sesi.",
@@ -4459,6 +4460,7 @@
     "ExportJson": "Eksport JSON",
     "FasttrackEndpoint": "URL FastTrack",
     "HideAgents": "Sembunyikan agen",
+    "HideModelDefinitionPath": "Sembunyikan laluan fail definisi model",
     "ImportFileReadError": "Fail tidak dapat dibaca.",
     "ImportFileTooLarge": "Fail lebih besar daripada 1 MB.",
     "ImportJson": "Import JSON",
@@ -4516,6 +4518,7 @@
       "Login": "Log masuk",
       "Menu": "Menu",
       "Plugins": "Pemalam",
+      "Serving": "Penggunaan",
       "Session": "Sesi",
       "Storage": "Data"
     }

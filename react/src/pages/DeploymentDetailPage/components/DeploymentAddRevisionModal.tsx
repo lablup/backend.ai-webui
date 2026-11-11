@@ -72,6 +72,7 @@ import {
   type RuntimeVariantPresetValueEntry,
 } from '../../../hooks/useRuntimeParameterSchema';
 import { useCommonEnvVarConfigs } from '../../../hooks/useVariantConfigs';
+import { useEffectiveLoginConfig } from '../../../hooks/useWebUIConfig';
 import type { ProjectContextOrNull } from '../../../types/projectContext';
 import ModelCardSelect from './ModelCardSelect';
 import { Banner } from '@lablup/ui-common/Banner';
@@ -425,6 +426,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const { t } = useTranslation();
   const { token } = useTheme();
   const { message } = App.useApp();
+  const { hideModelDefinitionPath } = useEffectiveLoginConfig();
   const relayEnvironment = useRelayEnvironment();
 
   // Deployment-scoped data (resourceGroupName for resource defaults,
@@ -2537,6 +2539,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   tooltip={t('modelService.ModelDefinitionPathTooltip')}
                   rules={[{ whitespace: true }]}
                   preserve={false}
+                  // Hidden, not unmounted: a copied revision keeps its path.
+                  hidden={hideModelDefinitionPath}
                 >
                   <BAITextInput
                     aria-label={t('deployment.ModelDefinitionPath')}

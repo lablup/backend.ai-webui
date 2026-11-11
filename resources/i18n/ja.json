@@ -4425,6 +4425,7 @@
     "DescEnableReservoir": "Reservoir メニュー項目を表示します。",
     "DescFasttrackEndpoint": "FastTrack サービスの URL です。独立したメニュー項目として提供されます。",
     "DescHideAgents": "スーパー管理者でないユーザーに対してエージェント概要メニューとエージェントの詳細を非表示にします。",
+    "DescHideModelDefinitionPath": "デプロイのリビジョンでモデル定義ファイルパスを非表示にします。リビジョンの詳細に表示せず、リビジョンフォームから項目を除きます。コピーしたリビジョンは元のパスを保持し、新しいリビジョンは model-definition.yaml を使用します。",
     "DescIsDirectorySizeVisible": "フォルダーエクスプローラーで各ディレクトリのサイズを表示します。",
     "DescMaskUserInfo": "ユーザーアカウントのメールアドレスと名前をマスクして表示します。",
     "DescMaxATOMDevicesPerContainer": "1 つのセッションに割り当てられる ATOM デバイスの最大数です。",
@@ -4461,6 +4462,7 @@
     "ExportJson": "JSON をエクスポート",
     "FasttrackEndpoint": "FastTrack URL",
     "HideAgents": "エージェントを非表示",
+    "HideModelDefinitionPath": "モデル定義ファイルパスを非表示",
     "ImportFileReadError": "ファイルを読み込めませんでした。",
     "ImportFileTooLarge": "ファイルが 1 MB を超えています。",
     "ImportJson": "JSON をインポート",
@@ -4518,6 +4520,7 @@
       "Login": "サインイン",
       "Menu": "メニュー",
       "Plugins": "プラグイン",
+      "Serving": "デプロイ",
       "Session": "セッション",
       "Storage": "データ"
     }

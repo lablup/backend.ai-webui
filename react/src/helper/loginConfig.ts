@@ -106,6 +106,7 @@ export interface LoginConfigState {
   blockList: string[];
   inactiveList: string[];
   fasttrackEndpoint: string;
+  hideModelDefinitionPath: boolean;
   pluginPages: string[];
   loginPlugin: string;
   domain_name: string;
@@ -176,6 +177,7 @@ export function getDefaultLoginConfig(): LoginConfigState {
     blockList: [],
     inactiveList: [],
     fasttrackEndpoint: '',
+    hideModelDefinitionPath: false,
     pluginPages: [],
     loginPlugin: '',
     domain_name: '',

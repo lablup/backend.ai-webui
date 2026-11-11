@@ -4423,6 +4423,7 @@
     "DescEnableReservoir": "Reservoir menü öğesini gösterir.",
     "DescFasttrackEndpoint": "FastTrack hizmetinin URL'si. Ayrı bir menü öğesi olarak sunulur.",
     "DescHideAgents": "Süper yönetici olmayan kullanıcılardan Temsilci Özeti menüsünü ve temsilci ayrıntılarını gizler.",
+    "DescHideModelDefinitionPath": "Dağıtım revizyonlarında model tanım dosyası yolunu gizler: revizyon ayrıntıları onu göstermez ve alan revizyon formundan kalkar. Kopyalanan bir revizyon yolunu korur; yenisi model-definition.yaml kullanır.",
     "DescIsDirectorySizeVisible": "Klasör gezgininde her dizinin boyutunu gösterir.",
     "DescMaskUserInfo": "Görüntülenirken kullanıcı hesabının e-postasını ve adını maskeler.",
     "DescMaxATOMDevicesPerContainer": "Bir oturuma ayrılabilecek en fazla ATOM cihazı sayısı.",
@@ -4459,6 +4460,7 @@
     "ExportJson": "JSON dışa aktar",
     "FasttrackEndpoint": "FastTrack URL'si",
     "HideAgents": "Temsilcileri gizle",
+    "HideModelDefinitionPath": "Model tanım dosyası yolunu gizle",
     "ImportFileReadError": "Dosya okunamadı.",
     "ImportFileTooLarge": "Dosya 1 MB’tan büyük.",
     "ImportJson": "JSON içe aktar",
@@ -4516,6 +4518,7 @@
       "Login": "Oturum açma",
       "Menu": "Menü",
       "Plugins": "Eklentiler",
+      "Serving": "Dağıtımlar",
       "Session": "Oturum",
       "Storage": "Veri"
     }
