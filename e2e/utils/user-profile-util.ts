@@ -70,11 +70,23 @@ export async function clickRowAction(
 ) {
   await row.hover();
 
-  // Case 1: Actions overflowed into "More actions" dropdown
-  const moreButton = row.getByRole('button', { name: 'More actions' });
-  if (await moreButton.isVisible().catch(() => false)) {
+  // Case 1: the action overflowed into a "More actions" menu. A row can hold
+  // several BAINameActionCells (e.g. a Labels cell, which mounts after its own
+  // Suspense), so open each cell's menu and use the one that lists the action.
+  const moreButtonCells = row
+    .getByRole('cell')
+    .filter({ has: page.getByRole('button', { name: 'More actions' }) });
+  const cellCount = await moreButtonCells.count();
+  for (let i = 0; i < cellCount; i++) {
+    const moreButton = moreButtonCells
+      .nth(i)
+      .getByRole('button', { name: 'More actions' });
+    if (!(await moreButton.isVisible().catch(() => false))) continue;
     await moreButton.click();
-    const menuItem = page.getByRole('menuitem', { name: actionTitle });
+    const menuItem = page.getByRole('menuitem', {
+      name: actionTitle,
+      exact: true,
+    });
     if (await menuItem.isVisible({ timeout: 2000 }).catch(() => false)) {
       await menuItem.click();
       return;
