@@ -123,7 +123,7 @@ test.describe.serial(
 
     test('Admin can create a new user', async ({ page, request }) => {
       // 1. Login as admin
-      await loginAsAdmin(page, request);
+      await loginAsAdmin(page, request, { fresh: true });
 
       // 2. Navigate to credential page
       await navigateToUsersPage(page);
@@ -166,7 +166,7 @@ test.describe.serial(
       request,
     }) => {
       // 1. Login as admin
-      await loginAsAdmin(page, request);
+      await loginAsAdmin(page, request, { fresh: true });
 
       // 2. Navigate to credential page
       await navigateToUsersPage(page);
@@ -270,7 +270,7 @@ test.describe.serial(
 
     test('Admin can reactivate an inactive user', async ({ page, request }) => {
       // 1. Login as admin
-      await loginAsAdmin(page, request);
+      await loginAsAdmin(page, request, { fresh: true });
 
       // 2. Navigate to credential page
       await navigateToUsersPage(page);

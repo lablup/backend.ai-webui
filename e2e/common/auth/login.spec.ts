@@ -43,7 +43,7 @@ test.describe(
   { tag: ['@smoke', '@smoke-admin', '@auth', '@functional'] },
   () => {
     test.beforeEach(async ({ page, request }) => {
-      await loginAsAdmin(page, request);
+      await loginAsAdmin(page, request, { fresh: true });
     });
 
     // Since #10552 a superadmin lands on the first system admin page, the admin dashboard.

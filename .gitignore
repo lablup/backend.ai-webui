@@ -73,6 +73,9 @@ react/.env.local
 !/e2e/envs/.env.playwright.admin.sample
 !/e2e/envs/.env.e2e-agent.sample
 
+# saved e2e login states (cookies); deleted at the end of each run
+/e2e/.auth/
+
 # e2e (e2e.tester.army) run output: report, artifacts, replay cache
 /.e2e/
 

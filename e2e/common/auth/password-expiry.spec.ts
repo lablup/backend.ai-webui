@@ -219,7 +219,7 @@ test.describe('real account password change flow', () => {
     async ({ page, request }) => {
       // ── Setup: remove the beforeEach mock and create a real test user ──
       await page.unroute('**/server/login');
-      await loginAsAdmin(page, request);
+      await loginAsAdmin(page, request, { fresh: true });
       userCreated = true;
       await createDisposableUser(
         page,

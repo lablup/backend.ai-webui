@@ -1,12 +1,25 @@
 import { WEBUI_SETTING_DEFINITIONS } from '../../react/src/helper/webuiSettings';
 import { FolderCreationModal } from './classes/vfolder/FolderCreationModal';
+import {
+  accountLabel,
+  applyLoginState,
+  clearAppliedCookies,
+  dropLoginState,
+  extendTestTimeout,
+  forgetSharedSession,
+  isAuthSpec,
+  loginStateFile,
+  rateLimitWaitMs,
+  readLoginState,
+  saveLoginState,
+} from './login-state';
 import TOML from '@iarna/toml';
 import {
   APIRequestContext,
   Locator,
   Page,
+  Response,
   expect,
-  request as apiRequest,
 } from '@playwright/test';
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
@@ -209,12 +222,22 @@ export function loginEndpointRow(page: Page) {
   return page.getByTestId('login-endpoint-row');
 }
 
+export type LoginOptions = {
+  /**
+   * Log in for real and keep the session private to this page: it neither
+   * reads nor writes the worker's saved login state. Use it for logins as
+   * the subject under test and before a logout, which ends the session.
+   */
+  fresh?: boolean;
+};
+
 export async function login(
   page: Page,
   request: APIRequestContext,
   username: string,
   password: string,
   endpoint: string,
+  options: LoginOptions = {},
 ) {
   // Modify config.toml to enable session-based login with manual endpoint input
   await modifyConfigToml(page, request, {
@@ -227,9 +250,20 @@ export async function login(
 
   await skipAdminViewSwitchTours(page);
 
-  await page.goto(webuiEndpoint);
+  const stateFile =
+    options.fresh || isAuthSpec()
+      ? undefined
+      : loginStateFile(endpoint, username);
+  if (stateFile && (await restoreLogin(page, stateFile, endpoint, username))) {
+    return;
+  }
+  await submitLogin(page, username, password, endpoint);
+  if (stateFile) await saveLoginState(page, stateFile, username);
+}
+
+function removeDevServerOverlay(page: Page) {
   // Remove webpack-dev-server overlay iframe that can intercept pointer events
-  await page
+  return page
     .evaluate(() => {
       const overlay = document.getElementById(
         'webpack-dev-server-client-overlay',
@@ -237,31 +271,113 @@ export async function login(
       if (overlay) overlay.remove();
     })
     .catch(() => {});
+}
+
+/**
+ * Boots the app on a saved login state. `false` (state dropped) when it lands
+ * on the login form or the server answers 401, so the caller logs in again.
+ */
+async function restoreLogin(
+  page: Page,
+  stateFile: string,
+  endpoint: string,
+  username: string,
+): Promise<boolean> {
+  const state = readLoginState(stateFile);
+  if (!state) return false;
+  await applyLoginState(page, stateFile, state);
+  const serverOrigin = new URL(endpoint).origin;
+  let unauthorized: string | undefined;
+  const onResponse = (response: Response) => {
+    if (response.status() === 401 && response.url().startsWith(serverOrigin)) {
+      unauthorized ??= new URL(response.url()).pathname;
+    }
+  };
+  page.on('response', onResponse);
+  let restored = false;
+  try {
+    await page.goto(webuiEndpoint);
+    await removeDevServerOverlay(page);
+    const signedIn = page.getByTestId('user-dropdown-button');
+    const loginForm = page
+      .getByLabel('Email or Username')
+      .or(page.getByTestId('login-endpoint-step-input'));
+    await expect(signedIn.or(loginForm).first()).toBeVisible({
+      timeout: 60_000,
+    });
+    restored = !unauthorized && (await signedIn.isVisible());
+  } catch {
+    restored = false;
+  } finally {
+    page.off('response', onResponse);
+  }
+  if (restored) {
+    console.log(
+      `[login-cache] restored session for account ${accountLabel(username)}`,
+    );
+    return true;
+  }
+  console.log(
+    `[login-cache] stale state for account ${accountLabel(username)} (${unauthorized ? `401 on ${unauthorized}` : 'login form shown'}); logging in again`,
+  );
+  dropLoginState(stateFile);
+  await clearAppliedCookies(page, state);
+  return false;
+}
+
+/** Fills and submits the login form until the app shows the signed-in header. */
+async function submitLogin(
+  page: Page,
+  username: string,
+  password: string,
+  endpoint: string,
+) {
+  await page.goto(webuiEndpoint);
+  await removeDevServerOverlay(page);
   await fillLoginEndpoint(page, endpoint);
   await page.getByLabel('Email or Username').fill(username);
   await page.getByLabel('Password').fill(password);
   // Astryx Button exposes no aria-label — its accessible name is the visible text.
   const loginButton = page.getByRole('button', { name: 'Login', exact: true });
-  // A busy shared test backend can transiently reject a *valid* login (the
-  // manager surfaces an internal error, the UI renders it as "Login
-  // information mismatch"). Retry the submit a couple of times, with a fixed
-  // 5s delay between attempts, so a short server hiccup doesn't fail the whole
-  // (often serial) suite at a random beforeEach.
-  //
-  // Cost of that choice, since login() runs per test: against a backend that
-  // is genuinely down this burns up to 3 x 30s + 2 x 5s = 100s per test before
-  // reporting, instead of failing fast. The per-attempt wait stays at 30s on
-  // purpose — a rejection surfaces far sooner than that, but a slow-but-
-  // accepted login keeps the form up for an unknown while, and a shorter wait
-  // would misread it as a rejection and re-submit.
+  const account = accountLabel(username);
+  // A busy shared backend can transiently reject a valid login, so a
+  // rejection is retried twice, 5s apart. A 429 is the manager's per-IP
+  // anonymous window, which retries only refill: it waits for the reset once.
   const maxAttempts = 3;
   const retryDelayMs = 5000;
+  let rateLimitWaited = false;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const loginResponse = page
+      .waitForResponse(
+        (response) =>
+          response.request().method() === 'POST' &&
+          response.url().split('?')[0].endsWith('/server/login'),
+        { timeout: 30_000 },
+      )
+      .catch(() => undefined);
     await loginButton.click();
+    const response = await loginResponse;
+    if (response?.status() === 429) {
+      if (rateLimitWaited) {
+        throw new Error(
+          `[login] rate limited (429) again for account ${account} after waiting for the window reset; the server's anonymous request limit is exhausted`,
+        );
+      }
+      rateLimitWaited = true;
+      const waitMs = rateLimitWaitMs(response.headers());
+      console.log(
+        `[login] rate limited (429) for account ${account}; waiting ${Math.round(waitMs / 1000)}s, then retrying once`,
+      );
+      extendTestTimeout(waitMs);
+      await page.waitForTimeout(waitMs);
+      attempt = maxAttempts - 1;
+      continue;
+    }
     try {
       await page.waitForSelector('[data-testid="user-dropdown-button"]', {
         timeout: 30000,
       });
+      console.log(`[login-cache] real login for account ${account}`);
       return;
     } catch (error) {
       const stillOnLoginForm = await loginButton.isVisible().catch(() => false);
@@ -271,29 +387,17 @@ export async function login(
         await page.waitForSelector('[data-testid="user-dropdown-button"]', {
           timeout: 60000,
         });
+        console.log(`[login-cache] real login for account ${account}`);
         return;
       }
-      // Diagnostic: surface the server's actual rejection reason (the UI
-      // collapses every failure into "Login information mismatch"). Runs in a
-      // throwaway context so a successful probe cannot leave its session
-      // cookie in the page's context and silently authenticate the next
-      // attempt.
-      let probeContext: APIRequestContext | undefined;
-      try {
-        probeContext = await apiRequest.newContext();
-        const probe = await probeContext.post(`${endpoint}/server/login`, {
-          data: { username, password },
-        });
-        console.log(
-          `[login] attempt ${attempt} rejected for ${username}; direct API login → ${probe.status()} ${(await probe.text()).slice(0, 300)}`,
-        );
-      } catch (probeError) {
-        console.log(
-          `[login] attempt ${attempt} rejected for ${username}; probe failed: ${String(probeError).slice(0, 200)}`,
-        );
-      } finally {
-        await probeContext?.dispose();
-      }
+      // The UI collapses every failure into "Login information mismatch";
+      // the response the form got carries the server's actual reason.
+      const reason = response
+        ? `${response.status()} ${(await response.text().catch(() => '')).slice(0, 300)}`
+        : 'no /server/login response';
+      console.log(
+        `[login] attempt ${attempt} rejected for account ${account}; server answered ${reason}`,
+      );
       if (attempt === maxAttempts) {
         throw error;
       }
@@ -325,18 +429,24 @@ export const userInfo = {
   },
 };
 
-export async function loginAsAdmin(page: Page, request: APIRequestContext) {
+export async function loginAsAdmin(
+  page: Page,
+  request: APIRequestContext,
+  options?: LoginOptions,
+) {
   await login(
     page,
     request,
     userInfo.admin.email,
     userInfo.admin.password,
     webServerEndpoint,
+    options,
   );
 }
 export async function loginAsDomainAdmin(
   page: Page,
   request: APIRequestContext,
+  options?: LoginOptions,
 ) {
   await login(
     page,
@@ -344,33 +454,49 @@ export async function loginAsDomainAdmin(
     userInfo.domainAdmin.email,
     userInfo.domainAdmin.password,
     webServerEndpoint,
+    options,
   );
 }
-export async function loginAsUser(page: Page, request: APIRequestContext) {
+export async function loginAsUser(
+  page: Page,
+  request: APIRequestContext,
+  options?: LoginOptions,
+) {
   await login(
     page,
     request,
     userInfo.user.email,
     userInfo.user.password,
     webServerEndpoint,
+    options,
   );
 }
-export async function loginAsUser2(page: Page, request: APIRequestContext) {
+export async function loginAsUser2(
+  page: Page,
+  request: APIRequestContext,
+  options?: LoginOptions,
+) {
   await login(
     page,
     request,
     userInfo.user2.email,
     userInfo.user2.password,
     webServerEndpoint,
+    options,
   );
 }
-export async function loginAsMonitor(page: Page, request: APIRequestContext) {
+export async function loginAsMonitor(
+  page: Page,
+  request: APIRequestContext,
+  options?: LoginOptions,
+) {
   await login(
     page,
     request,
     userInfo.monitor.email,
     userInfo.monitor.password,
     webServerEndpoint,
+    options,
   );
 }
 export async function loginAsCreatedAccount(
@@ -379,10 +505,14 @@ export async function loginAsCreatedAccount(
   email: string,
   password: string,
 ) {
-  await login(page, request, email, password, webServerEndpoint);
+  // A created account is the subject under test, never a shared session.
+  await login(page, request, email, password, webServerEndpoint, {
+    fresh: true,
+  });
 }
 
 export async function logout(page: Page) {
+  forgetSharedSession(page);
   await page.getByTestId('user-dropdown-button').click();
   await page.getByRole('menuitem', { name: 'Log Out' }).click();
   await page.waitForTimeout(1000);

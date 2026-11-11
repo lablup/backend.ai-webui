@@ -152,13 +152,13 @@ test.describe(
         request,
       }) => {
         const operations = recordUserSelectOperations(page);
-        await loginAsUser(page, request);
+        await loginAsUser(page, request, { fresh: true });
         await skipUnlessManager269(page);
         // Seeded after the version check so an older manager skips cleanly, and
         // before a fresh login so the new project is in the user's project list.
         await seedProject();
         await logout(page);
-        await loginAsUser(page, request);
+        await loginAsUser(page, request, { fresh: true });
 
         await navigateTo(page, `project/${projectName}/admin/session`);
         await page.getByRole('combobox', { name: 'Search filters' }).click();
