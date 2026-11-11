@@ -86,8 +86,8 @@ sequenceDiagram
 ### 4. 누가 언제 변경을 보는가
 
 - **The admin who saves**: `useEffectiveLoginConfig()`를 읽는 모든 component가 즉시 다시 렌더된다.
-- **Other signed-in users**: 이들의 앱은 부트와 로그인 때만 문서를 읽으므로, 페이지를 새로고침한 뒤에 변경을 본다. System Settings 상단의 info alert(`webuiSettings.SaveNotice`, `webuiSettings.SaveNoticeDesc`)가 관리자에게 이 사실과, 일부 설정은 새로고침한 뒤에 적용된다는 점을 알린다.
-- **Settings read once per page load**: `pluginPage`(`PluginLoader`가 부트 때 plugin을 불러온다)와 `pluginLogin`(`loginPluginState`)은 관리자 본인에게도 새로고침한 뒤에 적용된다. 페이지 alert가 이를 다루고, 행마다 따로 안내하지 않는다.
+- **Other signed-in users**: 이들의 앱은 부트와 로그인 때만 문서를 읽으므로, 페이지를 새로고침한 뒤에 변경을 본다. System Settings 상단의 info alert(`webuiSettings.SaveNotice`, `webuiSettings.SaveNoticeDesc`)가 관리자에게 변경이 모든 사용자에게 적용되며, 로그인한 사용자는 새로고침한 뒤에 본다는 점을 알린다.
+- **Settings read once per page load**: `pluginPage`(`PluginLoader`가 부트 때 plugin을 불러온다)와 `pluginLogin`(`loginPluginState`)은 관리자 본인에게도 새로고침한 뒤에 적용된다. alert와 행 어디에서도 이를 안내하지 않는다.
 
 ## 대안과 기각 사유
 
