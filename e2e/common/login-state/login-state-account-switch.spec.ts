@@ -8,13 +8,16 @@ import {
   webServerEndpoint,
 } from '../../utils/test-util';
 import { expect, Page, test } from '@playwright/test';
-import * as fs from 'fs';
 
 async function expectSignedInAs(page: Page, email: string) {
   await expect(page.getByTestId('user-dropdown-button')).toBeVisible();
   await expect
-    .poll(() => page.evaluate(() => (globalThis as any).backendaiclient?.email))
-    .toBe(email);
+    .poll(() =>
+      page.evaluate(() =>
+        String((globalThis as any).backendaiclient?.email ?? '').toLowerCase(),
+      ),
+    )
+    .toBe(email.toLowerCase());
 }
 
 test.describe(
@@ -25,23 +28,39 @@ test.describe(
       page,
       request,
     }) => {
-      await loginAsAdmin(page, request);
-      await expectSignedInAs(page, userInfo.admin.email);
-      const adminState = loginStateFile(
-        webServerEndpoint,
-        userInfo.admin.email,
-      );
-      if (adminState) expect(fs.existsSync(adminState)).toBe(true);
+      const helperLog: string[] = [];
+      const log = console.log;
+      console.log = (...args: unknown[]) => {
+        helperLog.push(args.map(String).join(' '));
+        log(...args);
+      };
+      try {
+        await loginAsAdmin(page, request);
+        await expectSignedInAs(page, userInfo.admin.email);
+        await loginAsUser(page, request);
+        await expectSignedInAs(page, userInfo.user.email);
 
-      await loginAsUser(page, request);
-      await expectSignedInAs(page, userInfo.user.email);
+        const restoresBefore = helperLog.filter((line) =>
+          line.startsWith('[login-cache] restored'),
+        ).length;
+        // Both accounts now have a saved state in this worker.
+        await loginAsAdmin(page, request);
+        await expectSignedInAs(page, userInfo.admin.email);
+        await loginAsUser(page, request);
+        await expectSignedInAs(page, userInfo.user.email);
 
-      // Both accounts now come from their saved states.
-      await loginAsAdmin(page, request);
-      await expectSignedInAs(page, userInfo.admin.email);
-
-      await loginAsUser(page, request);
-      await expectSignedInAs(page, userInfo.user.email);
+        const cacheOn = !!loginStateFile(
+          webServerEndpoint,
+          userInfo.admin.email,
+          userInfo.admin.password,
+        );
+        const restores =
+          helperLog.filter((line) => line.startsWith('[login-cache] restored'))
+            .length - restoresBefore;
+        expect(restores).toBe(cacheOn ? 2 : 0);
+      } finally {
+        console.log = log;
+      }
     });
   },
 );

@@ -7,7 +7,9 @@ import {
   dropLoginState,
   extendTestTimeout,
   forgetSharedSession,
-  holdsSharedSession,
+  holdsHelperSession,
+  isAnonymousRateLimit,
+  markHelperSession,
   isAuthSpec,
   loginStateFile,
   rateLimitWaitMs,
@@ -255,15 +257,16 @@ export async function login(
   const stateFile =
     options.fresh || isAuthSpec()
       ? undefined
-      : loginStateFile(endpoint, username);
+      : loginStateFile(endpoint, username, password);
   if (stateFile && (await restoreLogin(page, stateFile, endpoint, username))) {
     return;
   }
-  // A context holding a restored account would boot straight into it.
-  if (holdsSharedSession(page)) {
+  // A context still holding a helper login would boot straight into it.
+  if (holdsHelperSession(page)) {
     await clearLoginState(page, new URL(webuiEndpoint).origin);
   }
   const before = await submitLogin(page, username, password, endpoint);
+  markHelperSession(page);
   if (stateFile) await saveLoginState(page, stateFile, username, before);
 }
 
@@ -289,10 +292,22 @@ async function signedInEmail(page: Page): Promise<string> {
     .catch(() => '');
 }
 
+/** The path of `url` below `endpoint`'s own path (a webserver may sit under a prefix). */
+function pathBelow(endpoint: string, url: string): string | undefined {
+  const base = new URL(endpoint);
+  const target = new URL(url);
+  const prefix = base.pathname.replace(/\/+$/, '');
+  if (target.origin !== base.origin || !target.pathname.startsWith(prefix)) {
+    return undefined;
+  }
+  return target.pathname.slice(prefix.length) || '/';
+}
+
 /**
- * Boots the app on a saved login state. `false` (state dropped, context
- * cleared) when it lands on the login form, gets a 401 or shows another
- * account, so the caller logs in for real.
+ * Boots the app on a saved login state. `false` when it does not end signed
+ * in as `username`; the context is then cleared for a real login, and the
+ * state is dropped only when it is known dead (login form, 401, another
+ * account) rather than when the boot merely failed.
  */
 async function restoreLogin(
   page: Page,
@@ -303,20 +318,18 @@ async function restoreLogin(
   const state = readLoginState(stateFile);
   if (!state) return false;
   const appOrigin = new URL(webuiEndpoint).origin;
-  await applyLoginState(page, stateFile, state, appOrigin);
-  const serverOrigin = new URL(endpoint).origin;
   let unauthorized: string | undefined;
   const onResponse = (response: Response) => {
-    const { origin, pathname } = new URL(response.url());
+    const path = pathBelow(endpoint, response.url());
     // The health and version probes answer 401 to a signed-in app too.
-    const probe = /\/health$|^\/func\/?$/.test(pathname);
-    if (response.status() === 401 && origin === serverOrigin && !probe) {
-      unauthorized ??= pathname;
-    }
+    const probe = path === undefined || /\/health$|^\/func\/?$/.test(path);
+    if (response.status() === 401 && !probe) unauthorized ??= path;
   };
-  page.on('response', onResponse);
-  let problem: string | undefined;
+  let dead: string | undefined;
+  let failed: string | undefined;
   try {
+    await applyLoginState(page, stateFile, state, appOrigin);
+    page.on('response', onResponse);
     await page.goto(webuiEndpoint);
     await removeDevServerOverlay(page);
     const signedIn = page.getByTestId('user-dropdown-button');
@@ -327,33 +340,58 @@ async function restoreLogin(
       timeout: 60_000,
     });
     if (!(await signedIn.isVisible())) {
-      problem = 'login form shown';
+      dead = 'login form shown';
     } else {
       const email = await signedInEmail(page);
-      if (email.toLowerCase() !== username.toLowerCase()) {
-        problem = email
-          ? `signed in as account ${accountLabel(email)}`
-          : 'signed-in account unknown';
+      if (!email) {
+        failed = 'signed-in account unknown';
+      } else if (
+        username.includes('@') &&
+        email.toLowerCase() !== username.toLowerCase()
+      ) {
+        dead = `signed in as account ${accountLabel(email)}`;
       }
     }
   } catch (error) {
-    problem = `boot failed: ${String(error).split('\n')[0].slice(0, 120)}`;
+    failed = `boot failed: ${String(error).split('\n')[0].slice(0, 120)}`;
   } finally {
     page.off('response', onResponse);
   }
-  if (!problem && unauthorized) problem = `401 on ${unauthorized}`;
-  if (!problem) {
+  if (!dead && unauthorized) dead = `401 on ${unauthorized}`;
+  if (!dead && !failed) {
     console.log(
       `[login-cache] restored session for account ${accountLabel(username)}`,
     );
     return true;
   }
   console.log(
-    `[login-cache] stale state for account ${accountLabel(username)} (${problem}); logging in again`,
+    `[login-cache] ${dead ? 'stale' : 'unusable'} state for account ${accountLabel(username)} (${dead ?? failed}); logging in again`,
   );
-  dropLoginState(stateFile);
+  if (dead) dropLoginState(stateFile);
+  // The restore spent part of the test's budget; the real login gets its own.
+  extendTestTimeout(90_000);
   await clearLoginState(page, appOrigin);
   return false;
+}
+
+/**
+ * The status and the problem `type`/`title` of a login answer — never the
+ * body itself, which carries the access key on success. `rateLimited` only
+ * for the anonymous rate limit, not the webserver's failed-login block.
+ */
+async function describeLoginAnswer(
+  response: Response,
+): Promise<{ text: string; rateLimited: boolean }> {
+  const body = await response.json().catch(() => ({}));
+  const problem = body?.data ?? body ?? {};
+  const type = String(problem.type ?? '').replace(/.*\//, '');
+  const title = String(problem.title ?? '').slice(0, 120);
+  const path = new URL(response.url()).pathname;
+  const text = `${response.status()} on ${path}${type ? ` ${type}` : ''}${title ? ` "${title}"` : ''}`;
+  return {
+    text,
+    rateLimited: isAnonymousRateLimit(response.status(), type, title),
+  };
 }
 
 /**
@@ -384,17 +422,24 @@ async function submitLogin(
   const retryDelayMs = 5000;
   let rateLimitWaited = false;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    // The form's /server/login answer, or a 429 on a probe it sends first.
     const loginResponse = page
       .waitForResponse(
-        (response) =>
-          response.request().method() === 'POST' &&
-          response.url().split('?')[0].endsWith('/server/login'),
+        (response) => {
+          const path = pathBelow(endpoint, response.url());
+          if (path === undefined) return false;
+          return (
+            response.status() === 429 ||
+            (response.request().method() === 'POST' && path === '/server/login')
+          );
+        },
         { timeout: 30_000 },
       )
       .catch(() => undefined);
     await loginButton.click();
     const response = await loginResponse;
-    if (response?.status() === 429) {
+    const answer = response ? await describeLoginAnswer(response) : undefined;
+    if (response && answer?.rateLimited) {
       if (rateLimitWaited) {
         throw new Error(
           `[login] rate limited (429) again for account ${account} after waiting for the window reset; the server's anonymous request limit is exhausted`,
@@ -412,7 +457,8 @@ async function submitLogin(
     }
     try {
       await page.waitForSelector('[data-testid="user-dropdown-button"]', {
-        timeout: 30000,
+        // No answer at all in 30s: the submit went nowhere, do not wait again.
+        timeout: response ? 30000 : 1000,
       });
       console.log(`[login-cache] real login for account ${account}`);
       return before;
@@ -428,12 +474,9 @@ async function submitLogin(
         return before;
       }
       // The UI collapses every failure into "Login information mismatch";
-      // the response the form got carries the server's actual reason.
-      const reason = response
-        ? `${response.status()} ${(await response.text().catch(() => '')).slice(0, 300)}`
-        : 'no /server/login response';
+      // the form's own answer carries the server's reason.
       console.log(
-        `[login] attempt ${attempt} rejected for account ${account}; server answered ${reason}`,
+        `[login] attempt ${attempt} rejected for account ${account}; server answered ${answer?.text ?? 'nothing'}`,
       );
       if (attempt === maxAttempts) {
         throw error;

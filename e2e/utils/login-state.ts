@@ -35,16 +35,23 @@ export function accountLabel(email: string): string {
   return createHash('sha256').update(email).digest('hex').slice(0, 8);
 }
 
-/** The state file for this worker slot, server and account; no cache → undefined. */
+/**
+ * The state file for this worker slot, server and account (the password is
+ * part of the key, so a wrong one never finds a saved session); no cache →
+ * undefined.
+ */
 export function loginStateFile(
   endpoint: string,
   email: string,
+  password: string,
   kind: 'browser' | 'api' = 'browser',
 ): string | undefined {
   const dir = runDir();
   if (!dir) return undefined;
   const key = createHash('sha256')
-    .update(`${kind}\n${slot()}\n${endpoint.replace(/\/+$/, '')}\n${email}`)
+    .update(
+      [kind, slot(), endpoint.replace(/\/+$/, ''), email, password].join('\n'),
+    )
     .digest('hex')
     .slice(0, 32);
   return path.join(dir, `${key}.json`);
@@ -73,12 +80,24 @@ export function readLoginState(file: string): StorageState | undefined {
   }
 }
 
-export function writeLoginState(file: string, state: StorageState): void {
-  fs.mkdirSync(path.dirname(file), { recursive: true, mode: 0o700 });
-  const tmp = `${file}.${process.pid}.tmp`;
-  fs.writeFileSync(tmp, JSON.stringify(state), { mode: 0o600 });
-  fs.renameSync(tmp, file);
+/** Writes the state; a failure only costs the cache, never the login. */
+export function writeLoginState(file: string, state: StorageState): boolean {
+  try {
+    fs.mkdirSync(path.dirname(file), { recursive: true, mode: 0o700 });
+    const tmp = `${file}.${process.pid}.tmp`;
+    fs.writeFileSync(tmp, JSON.stringify(state), { mode: 0o600 });
+    fs.renameSync(tmp, file);
+    return true;
+  } catch (error) {
+    console.log(
+      `[login-cache] could not save the login state (${String(error).slice(0, 120)}); continuing without it`,
+    );
+    return false;
+  }
 }
+
+/** Kept even when a test had seeded the same value before the login. */
+const LOGIN_KEYS = ['backendaiwebui.api_endpoint', 'backendaiwebui.sessionid'];
 
 /** The page origin's localStorage, to tell what a login adds to it. */
 export async function readLocalStorage(
@@ -110,14 +129,15 @@ export async function saveLoginState(
           ? {
               ...origin,
               localStorage: origin.localStorage.filter(
-                ({ name, value }) => before[name] !== value,
+                ({ name, value }) =>
+                  LOGIN_KEYS.includes(name) || before[name] !== value,
               ),
             }
           : origin,
       )
       .filter((origin) => origin.localStorage.length > 0),
   };
-  writeLoginState(file, state);
+  if (!writeLoginState(file, state)) return;
   sharedContexts.set(page.context(), file);
   const now = Date.now() / 1000;
   const expiries = state.cookies
@@ -174,6 +194,7 @@ export async function clearLoginState(
   await page.context().clearCookies();
   await resetOriginStorage(page, appOrigin, []);
   sharedContexts.delete(page.context());
+  helperContexts.delete(page.context());
 }
 
 /**
@@ -199,8 +220,17 @@ export async function applyLoginState(
   sharedContexts.set(page.context(), file);
 }
 
-export function holdsSharedSession(page: Page): boolean {
-  return sharedContexts.has(page.context());
+/** Contexts a login helper signed in, saved state or not. */
+const helperContexts = new WeakSet<BrowserContext>();
+
+export function markHelperSession(page: Page): void {
+  helperContexts.add(page.context());
+}
+
+export function holdsHelperSession(page: Page): boolean {
+  return (
+    helperContexts.has(page.context()) || sharedContexts.has(page.context())
+  );
 }
 
 /**
@@ -222,11 +252,28 @@ const RATE_LIMIT_MAX_WAIT_MS = 120_000;
 /** Wait when a 429 carries no reset header. */
 const RATE_LIMIT_DEFAULT_WAIT_MS = 60_000;
 
+/**
+ * A 429 from the manager's anonymous per-IP window, as opposed to the
+ * webserver's per-account block after failed logins, which waiting for a
+ * window reset does not lift.
+ */
+export function isAnonymousRateLimit(
+  status: number,
+  type: string,
+  title: string,
+): boolean {
+  if (status !== 429) return false;
+  if (/block|failed login/i.test(`${type} ${title}`)) return false;
+  return true;
+}
+
 /** How long to wait after a login 429, from its reset header, capped. */
 export function rateLimitWaitMs(headers: Record<string, string>): number {
-  const seconds = Number(
+  let seconds = Number(
     headers['x-ratelimit-reset'] ?? headers['retry-after'] ?? NaN,
   );
+  // The manager sends seconds until the reset; an epoch value is converted.
+  if (seconds > 1e9) seconds -= Date.now() / 1000;
   const waitMs =
     Number.isFinite(seconds) && seconds >= 0
       ? (seconds + 1) * 1000

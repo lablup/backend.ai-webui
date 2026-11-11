@@ -2,6 +2,7 @@ import {
   accountLabel,
   dropLoginState,
   extendTestTimeout,
+  isAnonymousRateLimit,
   isAuthSpec,
   loginStateFile,
   rateLimitWaitMs,
@@ -52,7 +53,7 @@ export async function createAccountApiContext(
     !isAuthSpec() &&
     Object.values(userInfo).some(({ email }) => email === account.email);
   const stateFile = shared
-    ? loginStateFile(webServerEndpoint, account.email, 'api')
+    ? loginStateFile(webServerEndpoint, account.email, account.password, 'api')
     : undefined;
   const saved = stateFile ? readLoginState(stateFile) : undefined;
   if (stateFile && saved) {
@@ -61,12 +62,13 @@ export async function createAccountApiContext(
       storageState: saved,
     });
     const check = await api.post('/server/login-check').catch(() => undefined);
-    const body = await check?.json().catch(() => ({}));
-    if (check?.ok() && body?.authenticated === true) return api;
+    const checked = check?.ok() ? await check.json().catch(() => ({})) : {};
+    if (checked?.authenticated === true) return api;
     await api.dispose();
-    dropLoginState(stateFile);
+    // Only a definite "not signed in" drops the state; a failed check retries.
+    if (checked?.authenticated === false) dropLoginState(stateFile);
     console.log(
-      `[login-cache] stale API state for account ${accountLabel(account.email)}; logging in again`,
+      `[login-cache] ${checked?.authenticated === false ? 'stale' : 'unchecked'} API state for account ${accountLabel(account.email)}; logging in again`,
     );
   }
   const api = await request.newContext({ baseURL: webServerEndpoint });
@@ -78,7 +80,19 @@ export async function createAccountApiContext(
       },
     });
   let res = await submit();
-  if (res.status() === 429) {
+  const problem = async () => {
+    const answer = await res.json().catch(() => ({}));
+    const detail = answer?.data ?? answer ?? {};
+    return {
+      type:
+        String(detail.type ?? '')
+          .split('/')
+          .pop() ?? '',
+      title: String(detail.title ?? ''),
+    };
+  };
+  const first = await problem();
+  if (isAnonymousRateLimit(res.status(), first.type, first.title)) {
     // The manager's per-IP anonymous window: wait for its reset, retry once.
     const waitMs = rateLimitWaitMs(res.headers());
     console.log(
