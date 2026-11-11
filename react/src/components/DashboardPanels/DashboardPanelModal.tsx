@@ -17,7 +17,6 @@ import { SessionResourceGridContent } from './SessionResourceGridPanel';
 import {
   CHART_GROUPINGS,
   chartTypesFor,
-  chartUsesPeriod,
   chartWindow,
   resolveChart,
 } from './chartSources';
@@ -27,6 +26,7 @@ import { DEFAULT_RANGE } from './panelSettings';
 import { resourceRegistry } from './resourceRegistry';
 import {
   GROUP_CHART_TYPES,
+  chartUsesPeriod,
   TIME_CHART_TYPES,
   isTimeChartType,
   type ChartType,
@@ -379,12 +379,12 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
           </Form.Item>
           <Form.Item
             name="title"
-            label={t('dashboard.panelModal.TitleOptional')}
+            label={t('dashboard.panelModal.Title')}
             extra={t('dashboard.panelModal.TitleDescription')}
             style={{ flex: 1, minWidth: 180 }}
           >
             <BAITextInput
-              aria-label={t('dashboard.panelModal.TitleOptional')}
+              aria-label={t('dashboard.panelModal.Title')}
               placeholder={t(config.labelKey)}
               hasClear
             />
@@ -497,8 +497,10 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
               // Keyed so an errored preview retries when the condition changes
               // — including the kind, or a table that failed keeps its fallback
               // after switching to a count that would have rendered.
-              key={`${panelType}:${resourceType}:${JSON.stringify(filter ?? null)}:${chart.type}:${chart.groupBy}:${range ?? ''}`}
+              key={`${panelType}:${resourceType}:${JSON.stringify(filter ?? null)}`}
               title={t(config.labelKey)}
+              // A chart change retries an errored preview without remounting a working one.
+              resetKeys={[chart.type, chart.groupBy, range]}
               status="error"
             >
               <PanelPermissionBoundary>

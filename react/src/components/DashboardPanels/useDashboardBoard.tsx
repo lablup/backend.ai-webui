@@ -314,7 +314,6 @@ export const useDashboardBoard = ({
                 panel.id,
                 nextOverride(override, change, panel.settings, definition),
               ),
-            onReset: () => setOverride(panel.id, undefined),
           }}
         >
           {content}

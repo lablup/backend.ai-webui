@@ -982,8 +982,8 @@
       "Radar": "เรดาร์",
       "ShowTable": "แสดงตาราง",
       "Table": "ตาราง",
-      "TitleDescription": "แสดงเป็นหัวเรื่องของแผง - ใช้เพื่ออธิบายเงื่อนไข",
-      "TitleOptional": "ชื่อ (ไม่บังคับ)"
+      "Title": "ชื่อ",
+      "TitleDescription": "แสดงเป็นหัวเรื่องของแผง - ใช้เพื่ออธิบายเงื่อนไข"
     },
     "permission": {
       "NoPermissionForResourceGroup": "ไม่มีสิทธิ์สำหรับกลุ่มทรัพยากรนี้",
@@ -992,7 +992,6 @@
     },
     "settings": {
       "AllResourceGroups": "ทุกกลุ่มทรัพยากร",
-      "BackToSavedSetting": "กลับไปใช้การตั้งค่าที่บันทึกไว้ ({{value}})",
       "DefaultCardSettings": "การตั้งค่าเริ่มต้นของการ์ด",
       "DefaultResourceGroup": "กลุ่มทรัพยากรเริ่มต้น",
       "DefaultSettings": "การตั้งค่าเริ่มต้น",

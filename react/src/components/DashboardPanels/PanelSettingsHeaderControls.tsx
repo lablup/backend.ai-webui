@@ -6,18 +6,11 @@ import { useDashboardResourceGroups } from './DashboardResourceGroups';
 import PanelRangeSelect from './PanelRangeSelect';
 import { cardResourceGroup } from './dashboardScope';
 import type { PanelSettingOverride } from './panelSettingOverrides';
-import {
-  DEFAULT_RANGE,
-  hasSetting,
-  maxRangeDaysOf,
-  rangeLabel,
-} from './panelSettings';
+import { DEFAULT_RANGE, hasSetting, maxRangeDaysOf } from './panelSettings';
 import type { PanelDefinition, PanelSettings } from './types';
 import { useDashboardFilterContext } from './useDashboardFilters';
-import { IconButton } from '@lablup/ui-common/IconButton';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { BAIFlex, BAIScopedResourceGroupSelect } from 'backend.ai-ui';
-import { RotateCcw } from 'lucide-react';
 import React, { Suspense, createContext, use } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -28,7 +21,6 @@ export interface PanelHeaderSettings {
   effective: PanelSettings | undefined;
   overridden: { resourceGroup: boolean; range: boolean };
   onChange: (change: PanelSettingOverride) => void;
-  onReset: () => void;
 }
 
 /** Set per card by the board; the shared card header renders it as compact controls. */
@@ -47,8 +39,7 @@ const PanelSettingsHeaderControls: React.FC = () => {
   // The page's allowed groups, never the header's (ADR 0027).
   const allowed = useDashboardResourceGroups();
   if (!settings || !filters) return null;
-  const { definition, saved, effective, overridden, onChange, onReset } =
-    settings;
+  const { definition, effective, overridden, onChange } = settings;
   const isPreset = definition.kind === 'preset';
   // A pick the page's project can no longer use reads the default, so it shows as unset.
   const validPick = (pick: ReadonlyArray<string> | undefined) =>
@@ -58,21 +49,9 @@ const PanelSettingsHeaderControls: React.FC = () => {
         ? pick[0]
         : null;
   const resourceGroup = validPick(effective?.resourceGroups);
-  const savedRange = saved?.range;
   const defaultResourceGroupLabel = isPreset
     ? t('dashboard.settings.AllResourceGroups')
     : (allowed?.defaultResourceGroup ?? undefined);
-  const savedLabel = [
-    hasSetting(definition, 'resourceGroup')
-      ? (validPick(saved?.resourceGroups) ?? defaultResourceGroupLabel)
-      : null,
-    hasSetting(definition, 'range') ? rangeLabel(savedRange, t) : null,
-  ]
-    .filter(Boolean)
-    .join(' · ');
-  const resetLabel = t('dashboard.settings.BackToSavedSetting', {
-    value: savedLabel,
-  });
 
   return (
     <BAIFlex align="center" gap="xxs" data-testid="panel-header-settings">
@@ -120,16 +99,6 @@ const PanelSettingsHeaderControls: React.FC = () => {
             onChange={(range) => onChange({ range })}
           />
         </Tooltip>
-      ) : null}
-      {overridden.resourceGroup || overridden.range ? (
-        <IconButton
-          variant="ghost"
-          size="sm"
-          label={resetLabel}
-          tooltip={resetLabel}
-          icon={<RotateCcw size="1em" />}
-          onClick={onReset}
-        />
       ) : null}
     </BAIFlex>
   );

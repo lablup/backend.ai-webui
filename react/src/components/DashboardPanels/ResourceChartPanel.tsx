@@ -428,7 +428,12 @@ export const ResourceChartContent: React.FC<{
   };
   // Deferred as one, so the old chart stays whole until the new counts arrive
   // instead of drawing old counts under new groups or buckets.
-  const requestKey = JSON.stringify([nextChart, nextVariables]);
+  // The chart's shape, not its time window: a refresh moves the window and must keep the drawn chart.
+  const requestKey = JSON.stringify([
+    nextChart,
+    nextCounts.map(({ key }) => key),
+    descriptor.range ?? null,
+  ]);
   const { chart, counts, variables, shownKey } = useDeferredValue({
     chart: nextChart,
     counts: nextCounts,

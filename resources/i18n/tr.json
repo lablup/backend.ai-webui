@@ -985,8 +985,8 @@
       "Radar": "Radar",
       "ShowTable": "Tabloyu göster",
       "Table": "Tablo",
-      "TitleDescription": "Panel başlığı olarak gösterilir - koşulu açıklamak için kullanın.",
-      "TitleOptional": "Başlık (isteğe bağlı)"
+      "Title": "Başlık",
+      "TitleDescription": "Panel başlığı olarak gösterilir - koşulu açıklamak için kullanın."
     },
     "permission": {
       "NoPermissionForResourceGroup": "Bu kaynak grubu için izin yok",
@@ -995,7 +995,6 @@
     },
     "settings": {
       "AllResourceGroups": "Tüm kaynak grupları",
-      "BackToSavedSetting": "Kaydedilen ayara dön ({{value}})",
       "DefaultCardSettings": "Varsayılan kart ayarları",
       "DefaultResourceGroup": "Varsayılan kaynak grubu",
       "DefaultSettings": "Varsayılan ayarlar",

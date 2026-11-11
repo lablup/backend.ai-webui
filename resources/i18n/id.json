@@ -985,8 +985,8 @@
       "Radar": "Radar",
       "ShowTable": "Tampilkan tabel",
       "Table": "Tabel",
-      "TitleDescription": "Ditampilkan sebagai judul panel - gunakan untuk menjelaskan kondisinya.",
-      "TitleOptional": "Judul (opsional)"
+      "Title": "Judul",
+      "TitleDescription": "Ditampilkan sebagai judul panel - gunakan untuk menjelaskan kondisinya."
     },
     "permission": {
       "NoPermissionForResourceGroup": "Tidak ada izin untuk grup sumber daya ini",
@@ -995,7 +995,6 @@
     },
     "settings": {
       "AllResourceGroups": "Semua grup sumber daya",
-      "BackToSavedSetting": "Kembali ke pengaturan tersimpan ({{value}})",
       "DefaultCardSettings": "Pengaturan default kartu",
       "DefaultResourceGroup": "Grup sumber daya default",
       "DefaultSettings": "Pengaturan default",

@@ -4,8 +4,9 @@
  */
 import { DEFAULT_SESSION_GRID_VIEW } from '../../helper/sessionResourceGridData';
 import { generateUUID } from '../../helper/uuid';
-import { chartUsesPeriod, resolveChart } from './chartSources';
+import { resolveChart } from './chartSources';
 import { DEFAULT_RANGE, isStoredRange } from './panelSettings';
+import { chartUsesPeriod } from './types';
 import type {
   PanelInput,
   PanelSettings,

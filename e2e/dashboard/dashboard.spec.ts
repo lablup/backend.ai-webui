@@ -728,7 +728,7 @@ test.describe(
         //    condition is expressed on the board.
         const panelTitle = `e2e-panel-${Date.now()}`;
         await modal
-          .getByRole('textbox', { name: 'Title (optional)' })
+          .getByRole('textbox', { name: 'Title', exact: true })
           .fill(panelTitle);
 
         // 5. Confirm — the modal's OK button is labelled "Add" in create mode

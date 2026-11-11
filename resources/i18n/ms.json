@@ -985,8 +985,8 @@
       "Radar": "Radar",
       "ShowTable": "Tunjukkan jadual",
       "Table": "Jadual",
-      "TitleDescription": "Dipaparkan sebagai tajuk panel - gunakannya untuk menerangkan syarat.",
-      "TitleOptional": "Tajuk (pilihan)"
+      "Title": "Tajuk",
+      "TitleDescription": "Dipaparkan sebagai tajuk panel - gunakannya untuk menerangkan syarat."
     },
     "permission": {
       "NoPermissionForResourceGroup": "Tiada kebenaran untuk kumpulan sumber ini",
@@ -995,7 +995,6 @@
     },
     "settings": {
       "AllResourceGroups": "Semua kumpulan sumber",
-      "BackToSavedSetting": "Kembali ke tetapan yang disimpan ({{value}})",
       "DefaultCardSettings": "Tetapan lalai kad",
       "DefaultResourceGroup": "Kumpulan sumber lalai",
       "DefaultSettings": "Tetapan lalai",

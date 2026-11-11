@@ -985,8 +985,8 @@
       "Radar": "Tutka",
       "ShowTable": "Näytä taulukko",
       "Table": "Taulukko",
-      "TitleDescription": "Näytetään paneelin otsikkona - kuvaa sillä ehto.",
-      "TitleOptional": "Otsikko (valinnainen)"
+      "Title": "Otsikko",
+      "TitleDescription": "Näytetään paneelin otsikkona - kuvaa sillä ehto."
     },
     "permission": {
       "NoPermissionForResourceGroup": "Ei oikeutta tähän resurssiryhmään",
@@ -995,7 +995,6 @@
     },
     "settings": {
       "AllResourceGroups": "Kaikki resurssiryhmät",
-      "BackToSavedSetting": "Palaa tallennettuun asetukseen ({{value}})",
       "DefaultCardSettings": "Kortin oletusasetukset",
       "DefaultResourceGroup": "Oletusresurssiryhmä",
       "DefaultSettings": "Oletusasetukset",

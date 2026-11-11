@@ -985,8 +985,8 @@
       "Radar": "Radar",
       "ShowTable": "Mostra tabella",
       "Table": "Tabella",
-      "TitleDescription": "Mostrato come intestazione del pannello - usalo per descrivere la condizione.",
-      "TitleOptional": "Titolo (facoltativo)"
+      "Title": "Titolo",
+      "TitleDescription": "Mostrato come intestazione del pannello - usalo per descrivere la condizione."
     },
     "permission": {
       "NoPermissionForResourceGroup": "Nessuna autorizzazione per questo gruppo di risorse",
@@ -995,7 +995,6 @@
     },
     "settings": {
       "AllResourceGroups": "Tutti i gruppi di risorse",
-      "BackToSavedSetting": "Torna all'impostazione salvata ({{value}})",
       "DefaultCardSettings": "Impostazioni predefinite della scheda",
       "DefaultResourceGroup": "Gruppo di risorse predefinito",
       "DefaultSettings": "Impostazioni predefinite",

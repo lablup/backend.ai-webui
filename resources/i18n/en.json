@@ -972,8 +972,8 @@
       "Radar": "Radar",
       "ShowTable": "Show table",
       "Table": "Table",
-      "TitleDescription": "Shown as the panel header - use it to describe the condition.",
-      "TitleOptional": "Title (optional)"
+      "Title": "Title",
+      "TitleDescription": "Shown as the panel header - use it to describe the condition."
     },
     "permission": {
       "NoPermissionForResourceGroup": "No permission for this resource group",
@@ -982,7 +982,6 @@
     },
     "settings": {
       "AllResourceGroups": "All resource groups",
-      "BackToSavedSetting": "Back to the saved setting ({{value}})",
       "DefaultCardSettings": "Default card settings",
       "DefaultResourceGroup": "Default resource group",
       "DefaultSettings": "Default settings",

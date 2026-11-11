@@ -985,8 +985,8 @@
       "Radar": "Radarowy",
       "ShowTable": "Pokaż tabelę",
       "Table": "Tabela",
-      "TitleDescription": "Wyświetlany jako nagłówek panelu - użyj go do opisania warunku.",
-      "TitleOptional": "Tytuł (opcjonalnie)"
+      "Title": "Tytuł",
+      "TitleDescription": "Wyświetlany jako nagłówek panelu - użyj go do opisania warunku."
     },
     "permission": {
       "NoPermissionForResourceGroup": "Brak uprawnień do tej grupy zasobów",
@@ -995,7 +995,6 @@
     },
     "settings": {
       "AllResourceGroups": "Wszystkie grupy zasobów",
-      "BackToSavedSetting": "Wróć do zapisanego ustawienia ({{value}})",
       "DefaultCardSettings": "Domyślne ustawienia karty",
       "DefaultResourceGroup": "Domyślna grupa zasobów",
       "DefaultSettings": "Ustawienia domyślne",

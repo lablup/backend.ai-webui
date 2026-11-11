@@ -985,8 +985,8 @@
       "Radar": "Радар",
       "ShowTable": "Хүснэгт харуулах",
       "Table": "Хүснэгт",
-      "TitleDescription": "Самбарын гарчиг болж харагдана - нөхцөлийг тайлбарлахад ашиглана уу.",
-      "TitleOptional": "Гарчиг (заавал биш)"
+      "Title": "Гарчиг",
+      "TitleDescription": "Самбарын гарчиг болж харагдана - нөхцөлийг тайлбарлахад ашиглана уу."
     },
     "permission": {
       "NoPermissionForResourceGroup": "Энэ нөөцийн бүлгийн эрх байхгүй",
@@ -995,7 +995,6 @@
     },
     "settings": {
       "AllResourceGroups": "Бүх нөөцийн бүлэг",
-      "BackToSavedSetting": "Хадгалсан тохиргоо руу буцах ({{value}})",
       "DefaultCardSettings": "Картын үндсэн тохиргоо",
       "DefaultResourceGroup": "Үндсэн нөөцийн бүлэг",
       "DefaultSettings": "Үндсэн тохиргоо",

@@ -5,7 +5,6 @@
 import * as _ from 'lodash-es';
 
 /** Timer jitter tolerated when checking whether a card is due. */
-const TICK_TOLERANCE_MS = 500;
 
 /** The auto refresh choices, slowest last; `off` stops automatic refresh. */
 export const REFRESH_OPTIONS = [
@@ -60,34 +59,25 @@ export interface RefreshSchedulerOptions {
  */
 export class RefreshScheduler {
   private readonly subscribers = new Map<string, RefreshSubscriber>();
-  private readonly lastRefreshAt = new Map<string, number>();
   private readonly listeners = new Set<() => void>();
   private readonly hidden = new Set<string>();
   private readonly pending = new Set<string>();
   private readonly now: () => number;
   private lastTickAt: number;
-  private intervalMs: number | null = null;
 
   constructor(options: RefreshSchedulerOptions = {}) {
     this.now = options.now ?? Date.now;
     this.lastTickAt = this.now();
   }
 
-  /** Adds a subscriber; it counts as refreshed now, by its own first fetch. */
+  /** Adds a subscriber; its own first fetch is its first refresh. */
   register(id: string, subscriber: RefreshSubscriber): () => void {
     this.subscribers.set(id, subscriber);
-    if (!this.lastRefreshAt.has(id)) this.lastRefreshAt.set(id, this.now());
     return () => {
       if (this.subscribers.get(id) === subscriber) {
         this.subscribers.delete(id);
-        this.lastRefreshAt.delete(id);
       }
     };
-  }
-
-  /** The automatic refresh interval, or null when it is off. */
-  setIntervalMs(intervalMs: number | null) {
-    this.intervalMs = intervalMs;
   }
 
   /** Refreshes every visible subscriber whose previous refresh has finished. */
@@ -95,7 +85,7 @@ export class RefreshScheduler {
     const at = this.now();
     this.subscribers.forEach((subscriber, id) => {
       if (!this.hidden.has(id) && !this.pending.has(id)) {
-        this.refresh(id, subscriber, at, false);
+        this.refresh(subscriber, at, false);
       }
     });
     this.markTicked(at);
@@ -104,25 +94,20 @@ export class RefreshScheduler {
   /** Refreshes every subscriber now, visible or not. */
   refreshAll() {
     const at = this.now();
-    this.subscribers.forEach((subscriber, id) =>
-      this.refresh(id, subscriber, at, true),
+    this.subscribers.forEach((subscriber) =>
+      this.refresh(subscriber, at, true),
     );
     this.markTicked(at);
   }
 
   /**
-   * Ticks skip a hidden subscriber; one that comes back into view refreshes
-   * right away if its last refresh is older than the interval. Ids are
-   * visible until reported otherwise.
+   * Ticks skip a hidden subscriber. One that comes back into view waits for
+   * the next tick, so scrolling alone never reads again. Ids are visible until
+   * reported otherwise.
    */
   setVisible(id: string, visible: boolean) {
-    if (!visible) {
-      this.hidden.add(id);
-      return;
-    }
-    if (!this.hidden.delete(id)) return;
-    const subscriber = this.subscribers.get(id);
-    if (subscriber) this.refreshIfDue(id, subscriber, this.now());
+    if (visible) this.hidden.delete(id);
+    else this.hidden.add(id);
   }
 
   /** Marks a subscriber's refresh as in flight until reported otherwise. */
@@ -149,21 +134,7 @@ export class RefreshScheduler {
     };
   }
 
-  private refreshIfDue(id: string, subscriber: RefreshSubscriber, at: number) {
-    if (this.intervalMs === null) return;
-    const last = this.lastRefreshAt.get(id) ?? 0;
-    if (at - last + TICK_TOLERANCE_MS >= this.intervalMs) {
-      this.refresh(id, subscriber, at, false);
-    }
-  }
-
-  private refresh(
-    id: string,
-    subscriber: RefreshSubscriber,
-    at: number,
-    manual: boolean,
-  ) {
-    this.lastRefreshAt.set(id, at);
+  private refresh(subscriber: RefreshSubscriber, at: number, manual: boolean) {
     subscriber.refresh(at, manual);
   }
 

@@ -985,8 +985,8 @@
       "Radar": "Радар",
       "ShowTable": "Показать таблицу",
       "Table": "Таблица",
-      "TitleDescription": "Отображается как заголовок панели - используйте его для описания условия.",
-      "TitleOptional": "Заголовок (необязательно)"
+      "Title": "Заголовок",
+      "TitleDescription": "Отображается как заголовок панели - используйте его для описания условия."
     },
     "permission": {
       "NoPermissionForResourceGroup": "Нет прав на эту группу ресурсов",
@@ -995,7 +995,6 @@
     },
     "settings": {
       "AllResourceGroups": "Все группы ресурсов",
-      "BackToSavedSetting": "Вернуть сохранённую настройку ({{value}})",
       "DefaultCardSettings": "Настройки карточки по умолчанию",
       "DefaultResourceGroup": "Группа ресурсов по умолчанию",
       "DefaultSettings": "Настройки по умолчанию",

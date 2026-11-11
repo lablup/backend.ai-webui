@@ -151,12 +151,12 @@ export const CHART_GROUPINGS: Record<
       groups: [
         {
           key: 'public',
-          label: labelOf('button.Yes'),
+          label: labelOf('deployment.Public'),
           filter: { openToPublic: true },
         },
         {
           key: 'private',
-          label: labelOf('button.No'),
+          label: labelOf('deployment.Private'),
           filter: { openToPublic: false },
         },
       ],
@@ -208,7 +208,6 @@ const createdWithin = (
     ? `created_at >= ${JSON.stringify(window.after)} & created_at < ${JSON.stringify(window.before)}`
     : withinWindow('createdAt', window);
 
-/** The chart counts within the card's range: a time chart always, a group chart when asked to. */
 /** A radar needs three axes, so it is offered only for groupings of three or more groups. */
 export const chartTypesFor = (
   source: ResourceKey,
@@ -258,8 +257,6 @@ export const chartWindow = (
     : null;
 
 /** The panel's condition narrowed to the chart's window, so its table lists the rows the chart counts. */
-export { chartUsesPeriod };
-
 export const chartTableFilter = (
   source: ResourceKey,
   filter: PanelDescriptor['filter'],

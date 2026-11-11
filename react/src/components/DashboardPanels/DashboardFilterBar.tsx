@@ -15,7 +15,7 @@ import {
 } from './refreshScheduler';
 import type { DashboardFilters } from './useDashboardFilters';
 import { BAIFetchKeyButton, BAIFlex } from 'backend.ai-ui';
-import React, { useEffect } from 'react';
+import React from 'react';
 
 export interface DashboardFilterBarProps {
   filters: DashboardFilters;
@@ -40,9 +40,6 @@ const DashboardFilterBar: React.FC<DashboardFilterBarProps> = ({
   // While a card is still loading the button spins and holds the next tick back.
   const isCardRefreshing = useDashboardIsRefreshing();
   const refreshMs = refreshToMs(filters.refresh);
-  useEffect(() => {
-    scheduler?.setIntervalMs(refreshMs);
-  }, [scheduler, refreshMs]);
 
   return (
     <BAIFlex

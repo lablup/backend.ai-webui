@@ -985,8 +985,8 @@
       "Radar": "雷達圖",
       "ShowTable": "同時顯示表格",
       "Table": "表格",
-      "TitleDescription": "顯示為面板標題 - 建議用於描述篩選條件。",
-      "TitleOptional": "標題（選填）"
+      "Title": "標題",
+      "TitleDescription": "顯示為面板標題 - 建議用於描述篩選條件。"
     },
     "permission": {
       "NoPermissionForResourceGroup": "沒有此資源組的權限",
@@ -995,7 +995,6 @@
     },
     "settings": {
       "AllResourceGroups": "所有資源群組",
-      "BackToSavedSetting": "還原為已儲存的設定（{{value}}）",
       "DefaultCardSettings": "卡片預設設定",
       "DefaultResourceGroup": "預設資源群組",
       "DefaultSettings": "預設設定",

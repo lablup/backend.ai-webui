@@ -985,8 +985,8 @@
       "Radar": "Radar",
       "ShowTable": "Tabelle anzeigen",
       "Table": "Tabelle",
-      "TitleDescription": "Wird als Panel-Überschrift angezeigt - beschreiben Sie damit die Bedingung.",
-      "TitleOptional": "Titel (optional)"
+      "Title": "Titel",
+      "TitleDescription": "Wird als Panel-Überschrift angezeigt - beschreiben Sie damit die Bedingung."
     },
     "permission": {
       "NoPermissionForResourceGroup": "Keine Berechtigung für diese Ressourcengruppe",
@@ -995,7 +995,6 @@
     },
     "settings": {
       "AllResourceGroups": "Alle Ressourcengruppen",
-      "BackToSavedSetting": "Zur gespeicherten Einstellung zurück ({{value}})",
       "DefaultCardSettings": "Standardeinstellungen der Karte",
       "DefaultResourceGroup": "Standard-Ressourcengruppe",
       "DefaultSettings": "Standardeinstellungen",
