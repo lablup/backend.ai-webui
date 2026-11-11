@@ -16,9 +16,8 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "types": ["node"],
+    "customConditions": ["@backend.ai/source"],
     "paths": {
-      "backend.ai-ui": ["../packages/backend.ai-ui/src/index.ts"],
-      "backend.ai-ui/*": ["../packages/backend.ai-ui/src/*"],
       "backend.ai-client": ["../packages/backend.ai-client/src/index.ts"],
       "backend.ai-client/*": ["../packages/backend.ai-client/src/*"],
       "react": ["./node_modules/@types/react"],
@@ -31,12 +30,6 @@
     "src",
     "astryx.config.ts",
     "vite-plugins",
-    "../packages/backend.ai-ui/src",
     "../packages/backend.ai-client/src"
-  ],
-  "exclude": [
-    "../packages/backend.ai-ui/src/**/*.test.*",
-    "../packages/backend.ai-ui/src/**/*.stories.*",
-    "../packages/backend.ai-ui/src/**/*.spec.*"
   ]
 }

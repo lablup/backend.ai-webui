@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<27d5f979ac8da222ea42d59dff52ddc5>>
+ * @generated SignedSource<<16d416694009355b44a0dc34427351a3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -96,6 +96,13 @@ return {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
+            "name": "entityId",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "host",
             "storageKey": null
           },
@@ -123,7 +130,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "69e349b3bad588ca899ad9d50b48aa56",
+    "cacheID": "83bc6dcbf20f9bd7141cfb2b501ed39f",
     "id": null,
     "metadata": {
       "relayTestingSelectionTypeInfo": {
@@ -132,6 +139,12 @@ return {
           "nullable": true,
           "plural": false,
           "type": "VFolder"
+        },
+        "vfolderV2.entityId": {
+          "enumValues": null,
+          "nullable": false,
+          "plural": false,
+          "type": "UUID"
         },
         "vfolderV2.host": (v2/*: any*/),
         "vfolderV2.id": {
@@ -151,7 +164,7 @@ return {
     },
     "name": "FileBrowserButtonV2TestQuery",
     "operationKind": "query",
-    "text": "query FileBrowserButtonV2TestQuery(\n  $vfolderId: UUID!\n) {\n  vfolderV2(vfolderId: $vfolderId) {\n    ...FileBrowserButtonV2Fragment\n    id\n  }\n}\n\nfragment FileBrowserButtonV2Fragment on VFolder {\n  id\n  host\n  metadata {\n    name\n  }\n}\n"
+    "text": "query FileBrowserButtonV2TestQuery(\n  $vfolderId: UUID!\n) {\n  vfolderV2(vfolderId: $vfolderId) {\n    ...FileBrowserButtonV2Fragment\n    id\n  }\n}\n\nfragment FileBrowserButtonV2Fragment on VFolder {\n  id\n  entityId\n  host\n  metadata {\n    name\n  }\n}\n"
   }
 };
 })();

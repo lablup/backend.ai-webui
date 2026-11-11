@@ -8,16 +8,24 @@ import jsoncParser from 'jsonc-eslint-parser';
 // below can re-declare the rule (flat-config rule configs replace, not merge)
 // without duplicating these entries.
 const restrictedImportPatterns = [
-  // `locale` is a published export-map alias (→ dist/locale/*), not a deep
-  // reach into package internals.
+  // `locale` and `theme` are published subpath exports, not deep reaches into internals.
   {
-    group: ['backend.ai-ui/*', '!backend.ai-ui/dist', '!backend.ai-ui/locale'],
+    group: ['backend.ai-ui/*', '!backend.ai-ui/locale', '!backend.ai-ui/theme'],
   },
   // ADR 0009: Astryx is reached only through its @lablup/ui-common mirror.
   {
     group: ['@astryxdesign/*'],
     message:
       'Import Astryx through @lablup/ui-common: @astryxdesign/core/<X> -> @lablup/ui-common/<X>, @astryxdesign/lab -> @lablup/ui-common/lab (ADR 0009).',
+  },
+  {
+    group: [
+      '**/pages/**/components/**',
+      '**/pages/**/hooks/**',
+      '**/pages/**/helper/**',
+    ],
+    message:
+      'Page-local modules are private to their page folder; move the module to react/src (or BUI / ui-common) once shared code needs it (ADR 0024).',
   },
 ];
 // `no-restricted-imports` sees only static imports and re-exports.
@@ -31,6 +39,58 @@ const astryxDynamicImportBan = [
   message:
     'Import Astryx through @lablup/ui-common, dynamic imports and require() included (ADR 0009).',
 }));
+// ADR 0014: ui-common's form controls are imported as BAI* from backend.ai-ui.
+// Types and helpers on the same subpaths stay importable. `Selector` has only
+// the antd-shaped BAISelect (ADR 0017).
+const formControlImportBans = [
+  ['CheckboxInput'],
+  ['CheckboxList', 'CheckboxListItem'],
+  ['DateInput'],
+  ['DateRangeInput'],
+  ['DateTimeInput'],
+  ['FileInput'],
+  ['MultiSelector'],
+  ['NumberInput'],
+  ['RadioList', 'RadioListItem'],
+  ['SegmentedControl', 'SegmentedControlItem'],
+  ['Selector'],
+  ['Slider'],
+  ['Switch'],
+  ['TagsInput'],
+  ['TextArea'],
+  ['TextInput'],
+  ['TimeInput'],
+  ['Tokenizer'],
+  ['Typeahead'],
+].map((importNames) => ({
+  name: `@lablup/ui-common/${importNames[0]}`,
+  importNames,
+  message:
+    importNames[0] === 'Selector'
+      ? "Import BAISelect from 'backend.ai-ui' (ADR 0017)."
+      : `Import ${importNames
+          .map((name) =>
+            name === 'SegmentedControlItem'
+              ? 'BAISegmentedControlItem'
+              : `BAI${name}`,
+          )
+          .join(' / ')} from 'backend.ai-ui' (ADR 0014).`,
+}));
+// ui-common ships DateTimeRangeInput under components/ only, not at a top-level subpath.
+formControlImportBans.push({
+  name: '@lablup/ui-common/components/DateTimeRangeInput',
+  importNames: ['DateTimeRangeInput'],
+  message: "Import BAIDateTimeRangeInput from 'backend.ai-ui' (ADR 0014).",
+});
+// FR-3428: the URL owns the current project on `/project/:projectName/*`
+// routes (FR-3055). Components switch projects through `useSwitchProject`; the
+// raw setter is reserved for the URL→atom sync layer (allowlist block below).
+const setCurrentProjectBan = {
+  group: ['**/useCurrentProject'],
+  importNames: ['useSetCurrentProject'],
+  message:
+    "Use 'useSwitchProject' from 'src/hooks/useRouteScope' instead — the URL owns the current project on project-scoped routes (FR-3055/FR-3428).",
+};
 const restrictedImportPaths = [
   {
     name: 'react-router-dom',
@@ -38,6 +98,7 @@ const restrictedImportPaths = [
     message:
       "Use 'useWebUINavigate' from 'src/hooks' or '<WebUINavigate>' from 'src/components/WebUINavigate' instead.",
   },
+  ...formControlImportBans,
 ];
 
 export default [
@@ -74,23 +135,7 @@ export default [
       'no-restricted-imports': [
         'error',
         {
-          patterns: [
-            ...restrictedImportPatterns,
-            // FR-3428: the URL owns the current project on
-            // `/project/:projectName/*` routes (FR-3055). Writing
-            // `currentProjectAtom` directly from a component leaves the URL on
-            // the old project (sider links, reloads, and the next navigation
-            // snap back). Components must switch projects through
-            // `useSwitchProject` from 'src/hooks/useRouteScope', which applies
-            // the scope rule; the raw setter is reserved for the URL→atom sync
-            // layer (see the allowlist block below).
-            {
-              group: ['**/useCurrentProject'],
-              importNames: ['useSetCurrentProject'],
-              message:
-                "Use 'useSwitchProject' from 'src/hooks/useRouteScope' instead — the URL owns the current project on project-scoped routes (FR-3055/FR-3428).",
-            },
-          ],
+          patterns: [...restrictedImportPatterns, setCurrentProjectBan],
           paths: restrictedImportPaths,
         },
       ],
@@ -114,15 +159,14 @@ export default [
     },
   },
 
-  // FR-3414 / FR-3415 (ADR-0001): the project-agnostic surface — the whole `/admin/*`
-  // subtree except the pages that still genuinely depend on the ambient
-  // project — operates above project scope, so its sources must never read
+  // FR-3414 / FR-3415 (ADR 0001): the project-agnostic surface — the whole
+  // `/admin/*` subtree — operates above project scope, so its sources must never read
   // the ambient current project. Converted components receive the decision
   // via their required `project` prop instead. This list must stay in sync
   // with `PROJECT_AGNOSTIC_MENU_KEYS`
   // (react/src/helper/projectAgnosticRoutes.ts); the mapping from menu key to
   // page component is:
-  //   admin-session      -> AdminSessionPage / AdminComputeSessionListPage
+  //   admin-session      -> AdminSessionPage
   //   admin-deployments  -> AdminDeployment*Page / AdminModelCardListPage
   //   admin-data         -> AdminVFolderNodeListPage
   //   credential         -> AdminUsersPage
@@ -130,45 +174,27 @@ export default [
   //   scheduler          -> SchedulerPage
   //   agent              -> ResourcesPage
   //   project            -> ProjectPage
-  //   settings           -> ConfigurationsPage
+  //   settings           -> WebUISettingsPage (its Configurations tab)
   //   maintenance        -> MaintenancePage
   //   diagnostics        -> DiagnosticsPage
   //   rbac               -> RBACManagementPage
   //   branding           -> BrandingPage
-  //   information        -> components/Information
+  //   information        -> InformationPage
   //   environment        -> EnvironmentPage                        (FR-3415)
   //   reservoir          -> ReservoirPage / ReservoirArtifactDetailPage
   //                                                                (FR-3415)
+  //   admin-dashboard    -> AdminDashboardPage + DashboardPanels/** (#10583;
+  //                         the project admin variant takes its URL project)
   // NOTE: this block redeclares `no-restricted-imports`, which REPLACES the
   // global options above for these files, so the global paths/patterns are
   // repeated here (patterns must be all-strings or all-objects, hence the
   // object form).
-  // Only `admin-dashboard` (AdminDashboardPage) stays excluded — it still
-  // reads ambient state and is not gated by `PROJECT_AGNOSTIC_MENU_KEYS`
-  // either. DeploymentDetailPage is excluded because it serves three URL
-  // spaces and is the sanctioned page-level ambient reader (see the ADR).
+  // DeploymentDetailPage is excluded because it serves three URL spaces and is
+  // the sanctioned page-level ambient reader (see the ADR).
   {
     files: [
-      'src/pages/AdminSessionPage.tsx',
-      'src/pages/AdminComputeSessionListPage.tsx',
-      'src/pages/AdminVFolderNodeListPage.tsx',
-      'src/pages/AdminDeploymentPage.tsx',
-      'src/pages/AdminDeploymentPresetSettingPage.tsx',
-      'src/components/PendingSessionNodeList.tsx',
-      'src/pages/AdminUsersPage.tsx',
-      'src/pages/ResourcePolicyPage.tsx',
-      'src/pages/SchedulerPage.tsx',
-      'src/pages/ResourcesPage.tsx',
-      'src/pages/ProjectPage.tsx',
-      'src/pages/ConfigurationsPage.tsx',
-      'src/pages/MaintenancePage.tsx',
-      'src/pages/DiagnosticsPage.tsx',
-      'src/pages/RBACManagementPage.tsx',
-      'src/pages/BrandingPage.tsx',
-      'src/components/Information.tsx',
-      'src/pages/EnvironmentPage.tsx',
-      'src/pages/ReservoirPage.tsx',
-      'src/pages/ReservoirArtifactDetailPage.tsx',
+      'src/pages/{AdminSessionPage,AdminVFolderNodeListPage,AdminDeploymentPage,AdminDeploymentPresetSettingPage,AdminUsersPage,ResourcePolicyPage,SchedulerPage,ResourcesPage,ProjectPage,WebUISettingsPage,MaintenancePage,DiagnosticsPage,RBACManagementPage,BrandingPage,EnvironmentPage,ReservoirPage,ReservoirArtifactDetailPage,InformationPage,AdminDashboardPage}/**',
+      'src/components/DashboardPanels/**',
     ],
     rules: {
       'no-restricted-imports': [
@@ -176,6 +202,7 @@ export default [
         {
           patterns: [
             ...restrictedImportPatterns,
+            setCurrentProjectBan,
             { group: ['@lobehub/fluent-emoji'] },
             {
               group: ['**/useCurrentProject'],
@@ -197,6 +224,7 @@ export default [
               message:
                 "Use 'useWebUINavigate' from 'src/hooks' or '<WebUINavigate>' from 'src/components/WebUINavigate' instead.",
             },
+            ...formControlImportBans,
           ],
         },
       ],

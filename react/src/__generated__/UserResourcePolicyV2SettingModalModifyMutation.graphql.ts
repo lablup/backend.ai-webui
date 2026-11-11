@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c54db8d5b5ac5a197f1fffe9ddd30fb8>>
+ * @generated SignedSource<<a0c9259ce0b3d902477488384537a7b8>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,11 +20,11 @@ export type BinarySizeInput = {
   expr: string;
 };
 export type UserResourcePolicyV2SettingModalModifyMutation$variables = {
+  id: string;
   input: UpdateUserResourcePolicyInput;
-  name: string;
 };
 export type UserResourcePolicyV2SettingModalModifyMutation$data = {
-  readonly adminUpdateUserResourcePolicyV2: {
+  readonly updateUserResourcePolicyV2: {
     readonly userResourcePolicy: {
       readonly createdAt: string | null | undefined;
       readonly id: string;
@@ -37,7 +37,7 @@ export type UserResourcePolicyV2SettingModalModifyMutation$data = {
       readonly maxVfolderCount: number;
       readonly name: string;
     };
-  } | null | undefined;
+  };
 };
 export type UserResourcePolicyV2SettingModalModifyMutation = {
   response: UserResourcePolicyV2SettingModalModifyMutation$data;
@@ -45,34 +45,36 @@ export type UserResourcePolicyV2SettingModalModifyMutation = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "input"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "name"
-},
-v2 = [
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "id"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "input"
+  }
+],
+v1 = [
   {
     "alias": null,
     "args": [
       {
         "kind": "Variable",
-        "name": "input",
-        "variableName": "input"
+        "name": "id",
+        "variableName": "id"
       },
       {
         "kind": "Variable",
-        "name": "name",
-        "variableName": "name"
+        "name": "input",
+        "variableName": "input"
       }
     ],
     "concreteType": "UpdateUserResourcePolicyPayload",
     "kind": "LinkedField",
-    "name": "adminUpdateUserResourcePolicyV2",
+    "name": "updateUserResourcePolicyV2",
     "plural": false,
     "selections": [
       {
@@ -159,38 +161,32 @@ v2 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "UserResourcePolicyV2SettingModalModifyMutation",
-    "selections": (v2/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v1/*: any*/),
-      (v0/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "UserResourcePolicyV2SettingModalModifyMutation",
-    "selections": (v2/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "668ead374374e2bafbf822d7f3de3a81",
+    "cacheID": "a528bc47ddafbae7b828942defabf33a",
     "id": null,
     "metadata": {},
     "name": "UserResourcePolicyV2SettingModalModifyMutation",
     "operationKind": "mutation",
-    "text": "mutation UserResourcePolicyV2SettingModalModifyMutation(\n  $name: String!\n  $input: UpdateUserResourcePolicyInput!\n) {\n  adminUpdateUserResourcePolicyV2(name: $name, input: $input) {\n    userResourcePolicy {\n      id\n      name\n      createdAt\n      maxVfolderCount\n      maxConcurrentLogins\n      maxSessionCountPerModelSession\n      maxQuotaScopeSize {\n        expr\n      }\n      maxCustomizedImageCount\n    }\n  }\n}\n"
+    "text": "mutation UserResourcePolicyV2SettingModalModifyMutation(\n  $id: UUID!\n  $input: UpdateUserResourcePolicyInput!\n) {\n  updateUserResourcePolicyV2(id: $id, input: $input) {\n    userResourcePolicy {\n      id\n      name\n      createdAt\n      maxVfolderCount\n      maxConcurrentLogins\n      maxSessionCountPerModelSession\n      maxQuotaScopeSize {\n        expr\n      }\n      maxCustomizedImageCount\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "748639f1ecc7608a99549d1cb7ecb1e2";
+(node as any).hash = "074893475b985a2042c8b61deddc0efe";
 
 export default node;

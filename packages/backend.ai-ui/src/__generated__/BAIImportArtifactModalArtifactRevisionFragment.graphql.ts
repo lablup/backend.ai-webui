@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8829057e40bae09b309b4d68a18b63c6>>
+ * @generated SignedSource<<489cc1fb5709700941a9602b58c0fdc1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,7 @@ import { ReaderFragment } from 'relay-runtime';
 export type ArtifactStatus = "AVAILABLE" | "FAILED" | "NEEDS_APPROVAL" | "PULLED" | "PULLING" | "REJECTED" | "SCANNED" | "VERIFYING" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type BAIImportArtifactModalArtifactRevisionFragment$data = ReadonlyArray<{
+  readonly fieldId: string;
   readonly id: string;
   readonly size: any | null | undefined;
   readonly status: ArtifactStatus;
@@ -42,6 +43,13 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
+      "name": "fieldId",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "version",
       "storageKey": null
     },
@@ -64,6 +72,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "be471319e927479366f2951cd59d48f3";
+(node as any).hash = "ffe03fd9195e02d00eac623a59a5915e";
 
 export default node;

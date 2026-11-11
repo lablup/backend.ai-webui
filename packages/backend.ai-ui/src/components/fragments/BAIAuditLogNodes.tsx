@@ -2,11 +2,13 @@ import {
   BAIAuditLogNodesFragment$data,
   BAIAuditLogNodesFragment$key,
 } from '../../__generated__/BAIAuditLogNodesFragment.graphql';
-import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
+import {
+  filterOutEmpty,
+  filterOutNullAndUndefined,
+  formatCompactDuration,
+  parseTimedelta,
+} from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import BAIAuditLogStatusBadge, {
-  AuditLogStatus,
-} from '../BAIAuditLogStatusBadge';
 import BAIId from '../BAIId';
 import BAIText from '../BAIText';
 import {
@@ -26,6 +28,7 @@ export type AuditLogNodeInList = NonNullable<
 
 const availableAuditLogSorterKeys = [
   'createdAt',
+  'actionName',
   'operation',
   'status',
 ] as const;
@@ -37,15 +40,6 @@ export const availableAuditLogSorterValues = [
 
 const isEnableSorter = (key: string) => {
   return _.includes(availableAuditLogSorterKeys, key);
-};
-
-const toAuditLogStatus = (status: string): AuditLogStatus | null => {
-  return _.includes(
-    ['SUCCESS', 'ERROR', 'UNKNOWN', 'RUNNING', 'DENIED'],
-    status,
-  )
-    ? (status as AuditLogStatus)
-    : null;
 };
 
 export interface BAIAuditLogNodesProps extends Omit<
@@ -87,6 +81,7 @@ const BAIAuditLogNodes = ({
       fragment BAIAuditLogNodesFragment on AuditLogV2 @relay(plural: true) {
         id
         createdAt
+        actionName
         operation
         status
         description
@@ -94,11 +89,12 @@ const BAIAuditLogNodes = ({
         requestId
         actionId
         entityType
-        entityId
+        targetEntityId
         triggeredBy
         clientIp @since(version: "26.9.0")
         user {
           id
+          entityId
           basicInfo {
             email
           }
@@ -119,6 +115,23 @@ const BAIAuditLogNodes = ({
           record.createdAt ? dayjs(record.createdAt).format('ll LTS') : '-',
       },
       {
+        key: 'actionName',
+        title: t('comp:BAIAuditLogNodes.Action'),
+        dataIndex: 'actionName',
+        sorter: isEnableSorter('actionName'),
+        onCell: () => ({ style: { maxWidth: 300 } }),
+        render: (__, record) =>
+          record.actionName ? (
+            <BAIText ellipsis={{ tooltip: true }} style={{ width: '100%' }}>
+              {t(`comp:BAIAuditLogNodes.ActionName_${record.actionName}`, {
+                defaultValue: record.actionName,
+              })}
+            </BAIText>
+          ) : (
+            '-'
+          ),
+      },
+      {
         key: 'operation',
         title: t('comp:BAIAuditLogNodes.Operation'),
         dataIndex: 'operation',
@@ -127,12 +140,23 @@ const BAIAuditLogNodes = ({
       },
       {
         key: 'status',
-        title: t('comp:BAIAuditLogNodes.Status'),
+        title: t('comp:BAIAuditLogNodes.Result'),
         dataIndex: 'status',
         sorter: isEnableSorter('status'),
-        render: (__, record) => (
-          <BAIAuditLogStatusBadge status={toAuditLogStatus(record.status)} />
-        ),
+        render: (__, record) => {
+          const resultLabels: Record<string, string> = {
+            SUCCESS: t('comp:BAIAuditLogNodes.ResultSuccess'),
+            ERROR: t('comp:BAIAuditLogNodes.ResultFailed'),
+            DENIED: t('comp:BAIAuditLogNodes.ResultDenied'),
+            UNKNOWN: t('comp:BAIAuditLogNodes.ResultUnknown'),
+            RUNNING: t('comp:BAIAuditLogNodes.ResultRunning'),
+          };
+          return (
+            <BAIText type={record.status === 'ERROR' ? 'danger' : undefined}>
+              {resultLabels[record.status] ?? record.status}
+            </BAIText>
+          );
+        },
       },
       {
         key: 'description',
@@ -140,6 +164,7 @@ const BAIAuditLogNodes = ({
         dataIndex: 'description',
         onCell: () => ({ style: { maxWidth: 400 } }),
         render: (__, record) =>
+          (record.status === 'ERROR' || record.status === 'DENIED') &&
           record.description ? (
             <BAIText ellipsis={{ tooltip: true }} style={{ width: '100%' }}>
               {record.description}
@@ -152,7 +177,11 @@ const BAIAuditLogNodes = ({
         key: 'duration',
         title: t('comp:BAIAuditLogNodes.Duration'),
         dataIndex: 'duration',
-        render: (__, record) => record.duration || '-',
+        render: (__, record) => {
+          if (!record.duration) return '-';
+          const ms = parseTimedelta(record.duration);
+          return ms === null ? record.duration : formatCompactDuration(ms);
+        },
       },
       {
         key: 'triggeredBy',
@@ -166,16 +195,13 @@ const BAIAuditLogNodes = ({
           if (!record.user) {
             return fallback;
           }
-          // Show "email (id)" when the email is available; otherwise fall back
-          // to the user id alone so we never render an empty label before the
-          // parentheses when basicInfo.email is missing/null.
           const email = record.user.basicInfo?.email;
           return email ? (
             <>
-              {email} &nbsp; (<BAIId globalId={record.user.id} />)
+              {email} &nbsp; (<BAIId uuid={record.user.entityId} />)
             </>
           ) : (
-            <BAIId globalId={record.user.id} />
+            <BAIId uuid={record.user.entityId} />
           );
         },
       },
@@ -184,8 +210,6 @@ const BAIAuditLogNodes = ({
             key: 'clientIp',
             title: t('comp:BAIAuditLogNodes.ClientIp'),
             dataIndex: 'clientIp',
-            // Shown exactly as the server returns it: the manager already
-            // applies the client IP masking policy, so it may be masked or null.
             render: (__, record) => record.clientIp || '-',
           }
         : undefined,
@@ -197,11 +221,11 @@ const BAIAuditLogNodes = ({
         render: (__, record) => record.entityType || '-',
       },
       {
-        key: 'entityId',
+        key: 'targetEntityId',
         title: t('comp:BAIAuditLogNodes.EntityId'),
         defaultHidden: true,
         render: (__, record) =>
-          record.entityId ? <BAIId uuid={record.entityId} /> : '-',
+          record.targetEntityId ? <BAIId uuid={record.targetEntityId} /> : '-',
       },
       {
         key: 'requestId',

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<26021ad8492d496cc2ee4d8f771a49d1>>
+ * @generated SignedSource<<fb8d1d539d77580a93a18c7d76b552cd>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -28,7 +28,7 @@ export type PrometheusQueryPresetEditorModalUpdateMutation$variables = {
   input: ModifyQueryDefinitionInput;
 };
 export type PrometheusQueryPresetEditorModalUpdateMutation$data = {
-  readonly adminModifyPrometheusQueryPreset: {
+  readonly updatePrometheusQueryPreset: {
     readonly preset: {
       readonly category: {
         readonly id: string;
@@ -48,7 +48,7 @@ export type PrometheusQueryPresetEditorModalUpdateMutation$data = {
       readonly timeWindow: string | null | undefined;
       readonly updatedAt: string;
     };
-  } | null | undefined;
+  };
 };
 export type PrometheusQueryPresetEditorModalUpdateMutation = {
   response: PrometheusQueryPresetEditorModalUpdateMutation$data;
@@ -99,7 +99,7 @@ v3 = [
     ],
     "concreteType": "ModifyQueryDefinitionPayload",
     "kind": "LinkedField",
-    "name": "adminModifyPrometheusQueryPreset",
+    "name": "updatePrometheusQueryPreset",
     "plural": false,
     "selections": [
       {
@@ -224,16 +224,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "61a27c4ce0475b01d0d3ae229e64207a",
+    "cacheID": "f339e3c5148d7990373b7def614b6a98",
     "id": null,
     "metadata": {},
     "name": "PrometheusQueryPresetEditorModalUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation PrometheusQueryPresetEditorModalUpdateMutation(\n  $id: ID!\n  $input: ModifyQueryDefinitionInput!\n) {\n  adminModifyPrometheusQueryPreset(id: $id, input: $input) {\n    preset {\n      id\n      name\n      description\n      rank\n      categoryId\n      metricName\n      queryTemplate\n      timeWindow\n      options {\n        filterLabels\n        groupLabels\n      }\n      updatedAt\n      category {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "mutation PrometheusQueryPresetEditorModalUpdateMutation(\n  $id: UUID!\n  $input: ModifyQueryDefinitionInput!\n) {\n  updatePrometheusQueryPreset(id: $id, input: $input) {\n    preset {\n      id\n      name\n      description\n      rank\n      categoryId\n      metricName\n      queryTemplate\n      timeWindow\n      options {\n        filterLabels\n        groupLabels\n      }\n      updatedAt\n      category {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "fddc5b518607f53d20f7dde90ac7e946";
+(node as any).hash = "adc70464062cf3b726c5ec6c5740f0ef";
 
 export default node;

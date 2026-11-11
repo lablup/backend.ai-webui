@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<dd82ea98f2737cad952045ab250a7c57>>
+ * @generated SignedSource<<6c6d9402f71501634342444bb2305e35>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,6 +15,10 @@ export type loginSessionAuthMyUserQuery$variables = {
   recentProjectName: string;
 };
 export type loginSessionAuthMyUserQuery$data = {
+  readonly myAppConfigs: ReadonlyArray<{
+    readonly config: any;
+    readonly configName: string;
+  }> | null | undefined;
   readonly myUserV2: {
     readonly basicInfo: {
       readonly email: string;
@@ -26,6 +30,7 @@ export type loginSessionAuthMyUserQuery$data = {
           readonly basicInfo: {
             readonly name: string;
           };
+          readonly entityId: string;
           readonly id: string;
         };
       }>;
@@ -36,6 +41,7 @@ export type loginSessionAuthMyUserQuery$data = {
       };
       readonly entityId: string;
     } | null | undefined;
+    readonly entityId: string;
     readonly id: string;
     readonly organization: {
       readonly domainName: string | null | undefined;
@@ -47,6 +53,7 @@ export type loginSessionAuthMyUserQuery$data = {
           readonly basicInfo: {
             readonly name: string;
           };
+          readonly entityId: string;
           readonly id: string;
         };
       }>;
@@ -79,6 +86,13 @@ v2 = {
 v3 = {
   "alias": null,
   "args": null,
+  "kind": "ScalarField",
+  "name": "entityId",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
   "concreteType": "UserV2BasicInfo",
   "kind": "LinkedField",
   "name": "basicInfo",
@@ -101,7 +115,7 @@ v3 = {
   ],
   "storageKey": null
 },
-v4 = {
+v5 = {
   "alias": null,
   "args": null,
   "concreteType": "UserV2OrganizationInfo",
@@ -124,13 +138,6 @@ v4 = {
       "storageKey": null
     }
   ],
-  "storageKey": null
-},
-v5 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "entityId",
   "storageKey": null
 },
 v6 = [
@@ -178,6 +185,7 @@ v10 = [
         "plural": false,
         "selections": [
           (v2/*: any*/),
+          (v3/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -270,6 +278,39 @@ v12 = {
   "plural": false,
   "selections": (v10/*: any*/),
   "storageKey": "projects(filter:{\"isActive\":true,\"type\":{\"equals\":\"GENERAL\"}},limit:1,orderBy:[{\"direction\":\"ASC\",\"field\":\"NAME\"}])"
+},
+v13 = {
+  "alias": null,
+  "args": [
+    {
+      "kind": "Literal",
+      "name": "configNames",
+      "value": [
+        "domainConfig"
+      ]
+    }
+  ],
+  "concreteType": "AppConfig",
+  "kind": "LinkedField",
+  "name": "myAppConfigs",
+  "plural": true,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "configName",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "config",
+      "storageKey": null
+    }
+  ],
+  "storageKey": "myAppConfigs(configNames:[\"domainConfig\"])"
 };
 return {
   "fragment": {
@@ -292,6 +333,7 @@ return {
           (v2/*: any*/),
           (v3/*: any*/),
           (v4/*: any*/),
+          (v5/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -300,7 +342,7 @@ return {
             "name": "domain",
             "plural": false,
             "selections": [
-              (v5/*: any*/),
+              (v3/*: any*/),
               (v7/*: any*/)
             ],
             "storageKey": null
@@ -309,6 +351,11 @@ return {
           (v12/*: any*/)
         ],
         "storageKey": null
+      },
+      {
+        "kind": "CatchField",
+        "field": (v13/*: any*/),
+        "to": "NULL"
       }
     ],
     "type": "Query",
@@ -334,6 +381,7 @@ return {
           (v2/*: any*/),
           (v3/*: any*/),
           (v4/*: any*/),
+          (v5/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -342,7 +390,7 @@ return {
             "name": "domain",
             "plural": false,
             "selections": [
-              (v5/*: any*/),
+              (v3/*: any*/),
               (v7/*: any*/),
               (v2/*: any*/)
             ],
@@ -352,20 +400,21 @@ return {
           (v12/*: any*/)
         ],
         "storageKey": null
-      }
+      },
+      (v13/*: any*/)
     ]
   },
   "params": {
-    "cacheID": "b5bf366d0d2179c0a7d1238e63d0196b",
+    "cacheID": "33ea6b2667a33956765d5e57df19e716",
     "id": null,
     "metadata": {},
     "name": "loginSessionAuthMyUserQuery",
     "operationKind": "query",
-    "text": "query loginSessionAuthMyUserQuery(\n  $recentProjectName: String!\n  $hasRecentProject: Boolean!\n) {\n  myUserV2 {\n    id\n    basicInfo {\n      email\n      fullName\n    }\n    organization {\n      domainName\n      role\n    }\n    domain {\n      entityId\n      basicInfo {\n        name\n      }\n      id\n    }\n    recentProject: projects(filter: {isActive: true, type: {equals: GENERAL}, name: {equals: $recentProjectName}}, limit: 1) @include(if: $hasRecentProject) {\n      edges {\n        node {\n          id\n          basicInfo {\n            name\n          }\n        }\n      }\n    }\n    defaultProject: projects(filter: {isActive: true, type: {equals: GENERAL}}, orderBy: [{field: NAME, direction: ASC}], limit: 1) {\n      edges {\n        node {\n          id\n          basicInfo {\n            name\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query loginSessionAuthMyUserQuery(\n  $recentProjectName: String!\n  $hasRecentProject: Boolean!\n) {\n  myUserV2 {\n    id\n    entityId\n    basicInfo {\n      email\n      fullName\n    }\n    organization {\n      domainName\n      role\n    }\n    domain {\n      entityId\n      basicInfo {\n        name\n      }\n      id\n    }\n    recentProject: projects(filter: {isActive: true, type: {equals: GENERAL}, name: {equals: $recentProjectName}}, limit: 1) @include(if: $hasRecentProject) {\n      edges {\n        node {\n          id\n          entityId\n          basicInfo {\n            name\n          }\n        }\n      }\n    }\n    defaultProject: projects(filter: {isActive: true, type: {equals: GENERAL}}, orderBy: [{field: NAME, direction: ASC}], limit: 1) {\n      edges {\n        node {\n          id\n          entityId\n          basicInfo {\n            name\n          }\n        }\n      }\n    }\n  }\n  myAppConfigs(configNames: [\"domainConfig\"]) {\n    configName\n    config\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "1f045c010e1773e462189296d4fe9594";
+(node as any).hash = "c81b7cab827ff3def49849789c8ad221";
 
 export default node;

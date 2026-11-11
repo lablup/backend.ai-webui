@@ -65,5 +65,9 @@
       "resources/i18n",
       "packages/backend.ai-ui/src/locale",
     ],
+    // Astryx is imported only through @lablup/ui-common (ADR 0009)
+    "typescript.preferences.autoImportSpecifierExcludeRegexes": [
+      "^@astryxdesign/",
+    ],
   },
 }

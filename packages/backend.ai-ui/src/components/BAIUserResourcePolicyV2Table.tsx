@@ -80,6 +80,7 @@ const BAIUserResourcePolicyV2Table = ({
         fragment BAIUserResourcePolicyV2TableFragment on UserResourcePolicyV2
         @relay(plural: true) {
           id
+          entityId
           name
           createdAt
           maxVfolderCount

@@ -26,7 +26,6 @@ import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIButton,
   BAIButtonProps,
-  toLocalId,
   useBAILogger,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
@@ -137,6 +136,7 @@ const FileBrowserButtonWithProject: React.FC<
     graphql`
       fragment FileBrowserButtonV2Fragment on VFolder {
         id
+        entityId
         host
         metadata {
           name
@@ -163,7 +163,7 @@ const FileBrowserButtonWithProject: React.FC<
 
   // Helper to create launcher value for filebrowser
   const createFilebrowserLauncherValue = (): StartSessionWithDefaultValue => ({
-    sessionName: `filebrowser-${toLocalId(vfolderNode.id || '')}`,
+    sessionName: `filebrowser-${vfolderNode.entityId}`,
     sessionType: 'interactive',
     environments: {
       version: filebrowserImage || '',
@@ -173,7 +173,7 @@ const FileBrowserButtonWithProject: React.FC<
     cluster_size: 1,
     vfolderMounts: [
       {
-        vfolderId: toLocalId(vfolderNode.id || ''),
+        vfolderId: vfolderNode.entityId,
         name: vfolderNode.metadata.name,
       },
     ],
@@ -223,7 +223,7 @@ const FileBrowserButtonWithProject: React.FC<
                 if (results?.fulfilled && results.fulfilled.length > 0) {
                   upsertSessionNotification(results.fulfilled, [
                     {
-                      key: `filebrowser-${toLocalId(vfolderNode.id || '')}`,
+                      key: `filebrowser-${vfolderNode.entityId}`,
                       extraData: {
                         appName: 'filebrowser',
                       } as PrimaryAppOption,

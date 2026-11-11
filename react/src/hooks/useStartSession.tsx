@@ -10,10 +10,10 @@ import {
   UNIFIED_SLOT_TAG_PREFIX,
   isUnifiedAcceleratorSlot,
 } from '../components/SessionFormItems/ResourceAllocationFormItems';
-import {
+import type {
   SessionLauncherFormValue,
   SessionResources,
-} from '../pages/SessionLauncherPage';
+} from '../pages/SessionLauncherPage/SessionLauncherPage';
 import { useSetBAINotification } from './useBAINotification';
 import {
   useCurrentProjectValue,

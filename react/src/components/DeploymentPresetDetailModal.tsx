@@ -3,18 +3,20 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { DeploymentPresetDetailModalFragment$key } from '../__generated__/DeploymentPresetDetailModalFragment.graphql';
-import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
-import { ResourceAllocationFormValue } from './SessionFormItems/ResourceAllocationFormItems';
+import { ResourceNumbersOfSession } from './ResourceNumbersOfSession';
+import type { ResourceAllocationFormValue } from './SessionFormItems/ResourceAllocationFormItems';
 import { Heading } from '@lablup/ui-common/Heading';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAICard,
+  BAIEntityLabelTargetCell,
   BAIFlex,
   BAIMetadataList,
   BAIModal,
   BAIModalProps,
   BAIText,
+  useIsLabelableEntityType,
 } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -40,11 +42,13 @@ const DeploymentPresetDetailModal: React.FC<
   'use memo';
 
   const { t } = useTranslation();
+  const isLabelable = useIsLabelableEntityType('deployment_preset');
 
   const preset = useFragment(
     graphql`
       fragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {
         id
+        entityId
         name
         description
         runtimeVariantId
@@ -145,6 +149,17 @@ const DeploymentPresetDetailModal: React.FC<
           <Heading level={5}>{preset.name}</Heading>
           {preset.description && (
             <Text color="secondary">{preset.description}</Text>
+          )}
+          {isLabelable && (
+            <BAIMetadataList columns={1}>
+              <MetadataListItem label={t('entityLabel.Labels')}>
+                <BAIEntityLabelTargetCell
+                  entityType="deployment_preset"
+                  entityId={preset.entityId}
+                  name={preset.name}
+                />
+              </MetadataListItem>
+            </BAIMetadataList>
           )}
           <BAICard
             size="small"

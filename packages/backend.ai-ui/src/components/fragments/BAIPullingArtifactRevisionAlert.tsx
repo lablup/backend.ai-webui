@@ -8,7 +8,6 @@
 import { BAIPullingArtifactRevisionAlertCancelMutation } from '../../__generated__/BAIPullingArtifactRevisionAlertCancelMutation.graphql';
 import { BAIPullingArtifactRevisionAlertFragment$key } from '../../__generated__/BAIPullingArtifactRevisionAlertFragment.graphql';
 import { App } from '../../app-shim';
-import { toLocalId } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIAlert from '../BAIAlert';
 import BAIButton from '../BAIButton';
@@ -33,6 +32,7 @@ const BAIPullingArtifactRevisionAlert = ({
       graphql`
         fragment BAIPullingArtifactRevisionAlertFragment on ArtifactRevision {
           id
+          fieldId
           status
           version
         }
@@ -99,7 +99,7 @@ const BAIPullingArtifactRevisionAlert = ({
                 cancelPulling({
                   variables: {
                     input: {
-                      artifactRevisionId: toLocalId(pullingArtifactRevision.id),
+                      artifactRevisionId: pullingArtifactRevision.fieldId,
                     },
                   },
                   onCompleted: (_res, errors) => {

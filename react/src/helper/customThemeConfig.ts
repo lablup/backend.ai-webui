@@ -2,8 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { resolveApiEndpoint } from '../hooks/useResolvedApiEndpoint';
 import { fetchAppConfigOnce } from '../hooks/useWebUIConfig';
+import {
+  fetchPublicDomainConfigOnce,
+  resolvePublicConfigTarget,
+  type PublicConfigTarget,
+  type PublicDomainConfigSlice,
+} from './publicAppConfig';
 import * as _ from 'lodash-es';
 
 /**
@@ -34,6 +39,8 @@ export type BAIThemeFamily = {
   seeds?: BAIThemeSeeds;
   /** Header band background (was `components.Layout.headerBg`). */
   headerBg?: BAIThemeSeedValue;
+  /** Header band background on system admin pages. */
+  headerBgAdmin?: BAIThemeSeedValue;
 };
 
 export type BAIThemeConfig = {
@@ -242,67 +249,37 @@ function injectFontCSS(fontFamilies: string[]) {
   }
 }
 
-// `general.apiDomainName` from config.toml: webserver-hosted deployments are
-// 1:1 with a domain and expose it there (BA-7405/BA-7406). Electron / direct
-// API mode has no single domain, so this stays undefined and the theme keeps
-// theme.json.
-const resolveConfigDomainName = async (): Promise<string | undefined> => {
-  try {
-    const { config } = await fetchAppConfigOnce();
-    const raw = config?.general?.apiDomainName;
-    return typeof raw === 'string' && raw.trim() ? raw.trim() : undefined;
-  } catch {
-    return undefined;
-  }
-};
-
-// config.toml `apiEndpoint`, else the stored login endpoint.
-const resolveRestBase = async (): Promise<string> => {
-  const endpoint = await resolveApiEndpoint();
-  return endpoint.replace(/^"+|"+$/g, '').replace(/\/+$/, '');
+const appearanceFromSlice = (
+  slice: PublicDomainConfigSlice | undefined,
+  target: PublicConfigTarget,
+): BAIAppearanceConfig | undefined => {
+  const doc = slice?.[DOMAIN_APPEARANCE_CONFIG_KEY];
+  // No saved slice is the normal case; only a present-but-invalid one warns.
+  return _.isNil(doc)
+    ? undefined
+    : pickValidAppearanceConfig(
+        doc,
+        `publicConfigByDomain[${target.domainName}].appearance`,
+      );
 };
 
 /**
- * `publicConfigByDomain` read path (FR-1964). REST (`POST
- * /func/v2/app-config/public/get`, served anonymously) rather than
- * GraphQL/Relay: this runs once at bootstrap, before login and outside
- * `RelayEnvironmentProvider`, so the domain and endpoint come from config.toml
- * (or the stored login endpoint), never from a connected client. A session
- * that cannot fetch here keeps theme.json until the next reload — accepted per
- * FR-1964; there is no retry and no connect listener.
+ * The domain's saved `appearance` slice out of the one anonymous
+ * `publicConfigByDomain` read per page load (`publicAppConfig.ts`). A
+ * session that cannot fetch it keeps theme.json until the next reload —
+ * accepted per FR-1964; there is no retry and no connect listener.
  */
 const fetchDomainDoc = async (): Promise<BAIAppearanceConfig | undefined> => {
   try {
-    const domainName = await resolveConfigDomainName();
-    if (!domainName) {
+    const { config } = await fetchAppConfigOnce();
+    const target = resolvePublicConfigTarget(config);
+    if (!target) {
       return undefined;
     }
-    const base = await resolveRestBase();
-    if (!base) {
-      return undefined;
-    }
-    const response = await fetch(`${base}/func/v2/app-config/public/get`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ config_names: ['publicConfigByDomain'] }),
-    });
-    if (!response.ok) {
-      throw new Error(
-        `Failed to load the public app config: ${response.status}`,
-      );
-    }
-    const payload = await response.json();
-    const doc = payload?.app_configs?.find(
-      (c: { config_name: string }) => c.config_name === 'publicConfigByDomain',
-    )?.config;
-    const slice = _.get(doc, [domainName, DOMAIN_APPEARANCE_CONFIG_KEY]);
-    // No saved slice is the normal case; only a present-but-invalid one warns.
-    return _.isNil(slice)
-      ? undefined
-      : pickValidAppearanceConfig(
-          slice,
-          `publicConfigByDomain[${domainName}].appearance`,
-        );
+    return appearanceFromSlice(
+      await fetchPublicDomainConfigOnce(target),
+      target,
+    );
   } catch (error) {
     logAppearanceError(
       `the domain appearance document could not be fetched (${String(error)}).`,
@@ -350,6 +327,19 @@ const applyDevServerHeaderColorOverride = (
   return applied;
 };
 
+const applyDomainDoc = (domainDoc: BAIAppearanceConfig | undefined) => {
+  store.domainDoc = domainDoc;
+  store.appliedDoc = applyDevServerHeaderColorOverride(
+    domainDoc ?? store.staticDoc,
+  );
+  const fontFamily = store.appliedDoc?.theme?.fontFamily;
+  if (_.isString(fontFamily) && fontFamily) {
+    injectFontCSS(parseFontFamilies(fontFamily));
+  }
+};
+
+let bootstrap: Promise<void> | undefined;
+
 /**
  * One-shot appearance bootstrap: theme.json and the domain's saved document
  * are fetched in parallel, the domain slice wins wholesale, and a single
@@ -357,18 +347,10 @@ const applyDevServerHeaderColorOverride = (
  * neither document is usable, so listeners never wait forever.
  */
 export const loadCustomThemeConfig = () => {
-  Promise.all([fetchStaticDoc(), fetchDomainDoc()])
+  bootstrap = Promise.all([fetchStaticDoc(), fetchDomainDoc()])
     .then(([staticDoc, domainDoc]) => {
       store.staticDoc = staticDoc;
-      store.domainDoc = domainDoc;
-      store.appliedDoc = applyDevServerHeaderColorOverride(
-        domainDoc ?? staticDoc,
-      );
-
-      const fontFamily = store.appliedDoc?.theme?.fontFamily;
-      if (_.isString(fontFamily) && fontFamily) {
-        injectFontCSS(parseFontFamilies(fontFamily));
-      }
+      applyDomainDoc(domainDoc);
     })
     .catch((error) => {
       logAppearanceError(`appearance bootstrap failed (${String(error)}).`);
@@ -376,4 +358,18 @@ export const loadCustomThemeConfig = () => {
     .finally(() => {
       document.dispatchEvent(new CustomEvent('custom-theme-loaded'));
     });
+};
+
+/**
+ * Re-applies the appearance for a server joined after start-up (the Electron
+ * endpoint step, #10872): its saved `appearance`, else theme.json — never the
+ * previous server's. Waits for the bootstrap so it cannot be overwritten by it.
+ */
+export const applyJoinedServerAppearance = async (
+  slice: PublicDomainConfigSlice | undefined,
+  target: PublicConfigTarget | undefined,
+) => {
+  await bootstrap;
+  applyDomainDoc(target ? appearanceFromSlice(slice, target) : undefined);
+  document.dispatchEvent(new CustomEvent('custom-theme-loaded'));
 };

@@ -1,5 +1,7 @@
 import {
+  type BAIEntityLabel,
   BAIColumnType,
+  BAIEntityLabelTargetCell,
   BAIFlex,
   BAIQuestionIconWithTooltip,
   BAITable,
@@ -9,7 +11,7 @@ import {
   BAIBooleanToken,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  toLocalId,
+  useIsLabelableEntityType,
 } from '..';
 import type {
   BAIAdminUserV2TableFragment$data,
@@ -61,6 +63,8 @@ interface BAIAdminUserV2TableProps extends Omit<
   onChangeOrder?: (
     order: (typeof availableUserV2SorterValues)[number] | null,
   ) => void;
+  /** Fired when a label token is clicked; the surface filters its list by it. */
+  onLabelClick?: (label: BAIEntityLabel) => void;
 }
 
 const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
@@ -69,10 +73,12 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
   disableSorter,
   withProjects,
   onChangeOrder,
+  onLabelClick,
   ...tableProps
 }) => {
   'use memo';
   const { t } = useBAIi18n();
+  const isLabelable = useIsLabelableEntityType('user');
 
   const users = useFragment(
     graphql`
@@ -82,6 +88,7 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
       )
       @relay(plural: true) {
         id @required(action: NONE)
+        entityId @since(version: "26.9.0a4")
         basicInfo {
           email
           fullName
@@ -166,7 +173,7 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
             monospace
             style={{ maxWidth: 100 }}
           >
-            {toLocalId(record.id)}
+            {record.entityId}
           </BAIText>
         ),
       },
@@ -372,6 +379,22 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
           record.timestamps?.modifiedAt
             ? dayjs(record.timestamps.modifiedAt).format('lll')
             : '-',
+      },
+      // UserV2 carries no entityLabels field, so each row loads its own.
+      isLabelable && {
+        key: 'labels',
+        title: t('comp:BAIEntityLabelTokens.Labels'),
+        render: (__, record) =>
+          record.entityId ? (
+            <BAIEntityLabelTargetCell
+              entityType="user"
+              entityId={record.entityId}
+              name={record.basicInfo?.email ?? undefined}
+              onLabelClick={onLabelClick}
+            />
+          ) : (
+            '-'
+          ),
       },
     ]),
     (column) => {

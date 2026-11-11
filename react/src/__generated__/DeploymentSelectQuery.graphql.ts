@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<292ccb69ace24cc56e0322c8d1e64fd9>>
+ * @generated SignedSource<<f3e264df2c18f1ed6ad7d9008310503c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -130,6 +130,7 @@ export type EntityLabelFilter = {
   OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
   entityId?: UUIDFilter | null | undefined;
   entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   key?: StringFilter | null | undefined;
   value?: StringFilter | null | undefined;
 };
@@ -157,6 +158,7 @@ export type DeploymentSelectQuery$data = {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly entityId: string;
         readonly id: string;
         readonly metadata: {
           readonly name: string;
@@ -244,6 +246,13 @@ v3 = [
               {
                 "alias": null,
                 "args": null,
+                "kind": "ScalarField",
+                "name": "entityId",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
                 "concreteType": "ModelDeploymentMetadata",
                 "kind": "LinkedField",
                 "name": "metadata",
@@ -295,16 +304,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "7c1ce672457121fefc901809e1a4595b",
+    "cacheID": "4d462e963b4c908eb4fba25c64d25058",
     "id": null,
     "metadata": {},
     "name": "DeploymentSelectQuery",
     "operationKind": "query",
-    "text": "query DeploymentSelectQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: DeploymentFilter\n) {\n  myDeployments(offset: $offset, limit: $limit, filter: $filter) {\n    count\n    edges {\n      node {\n        id\n        metadata {\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query DeploymentSelectQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: DeploymentFilter\n) {\n  myDeployments(offset: $offset, limit: $limit, filter: $filter) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        metadata {\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "7719e1cc261159b0bce6274453b16609";
+(node as any).hash = "7ce831086b06d535d7c61398ad58d14d";
 
 export default node;

@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useOpenHelp } from '../hooks/useHelpURL';
-import { IconButton } from '@lablup/ui-common/IconButton';
+import { IconButton, type IconButtonProps } from '@lablup/ui-common/IconButton';
 import { CircleHelp } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -14,9 +14,9 @@ import { useTranslation } from 'react-i18next';
 // branch (`Link`) would drop the header's icon-button chrome. The anchor
 // affordances (middle-click, "copy link address") are lost; the click
 // behaviour and the new-tab target are identical.
-// P1 grep: the only consumer (WebUIHeader) passes `data-testid` alone.
 interface WEBUIHelpButtonProps {
   'data-testid'?: string;
+  size?: IconButtonProps['size'];
 }
 const WEBUIHelpButton: React.FC<WEBUIHelpButtonProps> = ({ ...props }) => {
   'use memo';

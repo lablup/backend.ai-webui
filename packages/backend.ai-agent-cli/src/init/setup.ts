@@ -186,7 +186,8 @@ export async function runSetup(options: SetupOptions): Promise<SetupData> {
   const endpoint = normalizeEndpoint(rawEndpoint);
   let { path: configPath } = updateConfig({ endpoint }, env);
 
-  // 2. Manager version — public, no session needed.
+  // 2. Manager version — session-less, so a manager with
+  //    lablup/backend.ai#16736 refuses it until the user logs in.
   let manager: SetupData['manager'];
   try {
     manager = await deps.fetchVersion(endpoint);

@@ -1,0 +1,53 @@
+# Files marked `filter=lfs` in .gitattributes must be committed as Git LFS
+# pointers. A contributor without git-lfs commits the raw bytes instead, which
+# nothing else notices. It also runs on pushes to main (#11065): a PR checked
+# before an image path became LFS-tracked can still merge a raw file, which then
+# fails every later image PR. No merge queue is used, so no `merge_group`.
+name: lfs-pointer-check
+
+on:
+  pull_request:
+    paths:
+      - "**/.gitattributes"
+      - ".lfsconfig"
+      - "**/*.png"
+      - "**/*.jpg"
+      - "**/*.jpeg"
+      - "**/*.gif"
+      - "**/*.webp"
+      - "**/*.svg"
+      - ".github/scripts/lfs/**"
+      - ".github/workflows/lfs-pointer-check.yml"
+  push:
+    branches: [main]
+    paths:
+      - "**/.gitattributes"
+      - ".lfsconfig"
+      - "**/*.png"
+      - "**/*.jpg"
+      - "**/*.jpeg"
+      - "**/*.gif"
+      - "**/*.webp"
+      - "**/*.svg"
+      - ".github/scripts/lfs/**"
+      - ".github/workflows/lfs-pointer-check.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lfs-pointer-check-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  lfs-pointer-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # Only blobs are read, never LFS content.
+      - uses: actions/checkout@v7
+        env:
+          GIT_LFS_SKIP_SMUDGE: "1"
+
+      - name: Check that LFS-tracked files are committed as pointers
+        run: bash .github/scripts/lfs/check-lfs-pointers.sh

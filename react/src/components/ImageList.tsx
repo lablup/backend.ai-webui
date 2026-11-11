@@ -8,16 +8,18 @@ import {
   ImageListQuery$variables,
 } from '../__generated__/ImageListQuery.graphql';
 import { App } from '../app-shim';
-import { getImageFullName, isPrivateImage } from '../helper';
+import { getImageCanonical, getImageFullName, isPrivateImage } from '../helper';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
 } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
+import { useDescribeScanImageError, useScanImage } from '../hooks/useScanImage';
 import { ProjectContextOrNull } from '../types/projectContext';
 import AliasedImageTagTokens from './AliasedImageTagTokens';
 import ImageInstallModal from './ImageInstallModal';
+import ImportImageModal from './ImportImageModal';
 import ManageAppsModal from './ManageAppsModal';
 import ManageImageResourceLimitModal from './ManageImageResourceLimitModal';
 import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
@@ -52,6 +54,8 @@ import {
   RotateCw,
   Settings,
   ArrowDownToLine,
+  Import,
+  ScanSearch,
   SquarePenIcon,
 } from 'lucide-react';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
@@ -92,6 +96,9 @@ const isEnableSorter = (key: string) =>
  * `status` is in here because the list is live-only unless the user adds a
  * status condition, so the column would read ALIVE on every row by default.
  */
+/** Newest registration first, so an image imported a moment ago is on page 1. */
+const DEFAULT_IMAGE_ORDER = '-created_at';
+
 const DEFAULT_HIDDEN_IMAGE_COLUMN_KEYS = [
   'status',
   'type',
@@ -230,12 +237,15 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
   'use memo';
 
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
   const [selectedRows, setSelectedRows] = useState<EnvironmentImage[]>([]);
   const [, { tagAlias }] = useBackendAIImageMetaData();
   const [managingApp, setManagingApp] = useState<EnvironmentImage | null>(null);
   const [managingResourceLimit, setManagingResourceLimit] =
     useState<EnvironmentImage | null>(null);
   const [isOpenInstallModal, setIsOpenInstallModal] = useState<boolean>(false);
+  const [isOpenImportImageModal, setIsOpenImportImageModal] =
+    useState<boolean>(false);
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [, startTransition] = useTransition();
   const [installingImages, setInstallingImages] = useState<string[]>([]);
@@ -244,6 +254,8 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
     useToggle();
   const [isPendingRefreshTransition, startRefreshTransition] = useTransition();
+  const scanImage = useScanImage();
+  const describeScanError = useDescribeScanImageError();
 
   // Selected rows belong to one scope. Reset during render rather than
   // remounting on a `key`, which would discard the deferred scope transition
@@ -275,7 +287,7 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
     offset: baiPaginationOption.offset,
     first: baiPaginationOption.first,
     filter: imageFilter || undefined,
-    order: queryParams.order || undefined,
+    order: queryParams.order || DEFAULT_IMAGE_ORDER,
     filterByStatuses: filterByStatusesFor(imageFilter),
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
@@ -352,7 +364,6 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
   const imageData = filterOutNullAndUndefined(
     image_nodes?.edges?.map((edge) => edge?.node) ?? [],
   );
-
   const columns: Array<BAIColumnType<EnvironmentImage>> = filterOutEmpty([
     {
       title: t('environment.Status'),
@@ -584,10 +595,42 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
             icon={<LayoutGrid size="1em" />}
             label={t('environment.ManageApps')}
             tooltip={t('environment.ManageApps')}
+            data-testid="image-manage-apps-button"
             onClick={() => {
               setManagingApp(row);
             }}
           />
+          {/* `adminScanImage` is superadmin-only; a non-ALIVE row is not
+              offered a refresh. */}
+          {baiClient.is_superadmin && row.status === 'ALIVE' ? (
+            <IconButton
+              className="bai-action-accent"
+              variant="ghost"
+              icon={<ScanSearch size="1em" />}
+              label={t('environment.RescanImage')}
+              tooltip={t('environment.RescanImage')}
+              clickAction={async () => {
+                const canonical = getImageCanonical(row) ?? '';
+                const architecture = row.architecture ?? '';
+                try {
+                  await scanImage({ canonical, architecture });
+                  message.success(
+                    t('environment.RescanImageSuccess', { name: canonical }),
+                  );
+                  updateFetchKey();
+                } catch (error) {
+                  message.error(
+                    describeScanError(error, {
+                      notFound: t('environment.ImportImageNotFoundInRegistry', {
+                        architecture,
+                      }),
+                      forbidden: t('environment.RescanImageRequiresSuperadmin'),
+                    }),
+                  );
+                }
+              }}
+            />
+          ) : null}
         </BAIFlex>
       ),
     },
@@ -736,6 +779,16 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
                 startRefreshTransition(() => updateFetchKey());
               }}
             />
+            {/* `adminScanImage` is superadmin-only, a narrower role than this
+                admin-scoped tab. */}
+            {baiClient.is_superadmin ? (
+              <Button
+                variant="secondary"
+                icon={<Import size="1em" />}
+                label={t('environment.ImportImage')}
+                onClick={() => setIsOpenImportImageModal(true)}
+              />
+            ) : null}
             {/* PILOT-DECISION: the hand-painted primary button
                 (style backgroundColor token('--color-accent')) becomes Astryx
                 `Button variant="primary"` — the brand accent comes from the
@@ -839,6 +892,18 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
         }}
         imageFrgmt={managingApp}
       />
+      <BAIUnmountAfterClose>
+        <ImportImageModal
+          open={isOpenImportImageModal}
+          onRequestClose={() => setIsOpenImportImageModal(false)}
+          onAdded={() => {
+            startTransition(() => {
+              setTablePaginationOption({ current: 1 });
+              updateFetchKey();
+            });
+          }}
+        />
+      </BAIUnmountAfterClose>
       {/* No project is handed down: installing an image enqueues a session,
           and the modal asks for that session's own project and resource group.
           The list's project filter only decides which images are on screen.

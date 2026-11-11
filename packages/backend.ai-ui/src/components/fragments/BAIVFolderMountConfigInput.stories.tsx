@@ -1,11 +1,11 @@
 import { Form } from '../../form-engine';
-import { convertToUUID } from '../../helper';
+import { useSuspendedAutoMountedVFolders } from '../../hooks/useMountableVFolders';
 import MockVFolderFileProviders from '../../tests/MockVFolderFileProviders';
 import {
-  MOCK_LEGACY_PROJECT_ID,
+  MOCK_MOUNT_SCOPE,
   MOCK_MOUNTABLE_HOSTS,
-  mockLegacyVFolder,
-  mockLegacyVFolders,
+  mockMountFolder,
+  mockMountFolders,
   mockVFolderFile as entry,
   type MockVFolderFileTrees,
 } from '../../tests/mockVFolderFileTree';
@@ -24,20 +24,18 @@ import { action } from 'storybook/actions';
 
 const DEMO_WIDTH = 760;
 
-// The shared REST fixture exercises every gate the select applies; a third
+// The shared folder fixture exercises every gate the select applies; a third
 // mountable folder is added here so the alias modes fit on one screen.
-const legacyFolders = [
-  ...mockLegacyVFolders,
-  mockLegacyVFolder({
-    id: 'aaaaaaaabbbbccccddddeeeeffff0006',
+const fixtureFolders = [
+  ...mockMountFolders,
+  mockMountFolder({
+    id: 'aaaaaaaa-bbbb-cccc-dddd-eeeeffff0006',
     name: 'model-checkpoints',
   }),
 ];
 
-// The REST fixture keys folders by the 32-hex `id`; the select emits the
-// dashed UUID, which is what the row's path picker browses by.
-const folderId = (index: number) => convertToUUID(legacyFolders[index].id);
-const folderName = (index: number) => legacyFolders[index].name;
+const folderId = (index: number) => fixtureFolders[index].id;
+const folderName = (index: number) => fixtureFolders[index].name;
 
 // Directory trees keyed by vfolder UUID, then by the path notation
 // `useSearchVFolderFiles` uses ('.' = root, 'a/b' below it), so every row's
@@ -90,7 +88,7 @@ const ControlledDemo = ({
     <div style={{ width: DEMO_WIDTH }}>
       <BAIVFolderMountConfigInput
         ref={inputRef}
-        currentProjectId={MOCK_LEGACY_PROJECT_ID}
+        scope={MOCK_MOUNT_SCOPE}
         mountableHosts={MOCK_MOUNTABLE_HOSTS}
         {...props}
         value={value}
@@ -151,15 +149,16 @@ const meta: Meta<typeof BAIVFolderMountConfigInput> = {
 **BAIVFolderMountConfigInput** is a reusable, schema-agnostic controlled input
 for configuring vfolder mounts.
 
-- Picks folders from the REST \`GET /folders\` list rather than the \`vfolder_nodes\`
-  connection, because the session launcher's mount gates cannot be expressed as a
-  GraphQL filter: the host must be in \`mountableHosts\` (those granting
-  \`mount-in-session\`), the folder must be reachable from \`currentProjectId\`, and
-  folders in \`autoMountedFolders\` are dropped — the session mounts them anyway.
-  \`filter\` hides rows on top of that without shrinking the selection.
-- It **suspends** on that list, so the consumer owns the Suspense boundary. An entry
-  the mount gates reject is dropped from the value with a warning toast; one that
-  merely became auto-mounted is kept, since it is mounted anyway.
+- Picks folders with \`BAIScopedVFolderSelect\`, which pages \`scopedVFoldersV2\` over the
+  \`scope\` the caller passes (usually its own folders and the current project's), filtered on the server: the host must be in
+  \`mountableHosts\` (those granting \`mount-in-session\`), the folder must be ready,
+  and dotfile folders are left out (the session mounts them anyway). Search runs
+  on the server too, and \`filter\` (a \`VFolderFilter\`) narrows the options further
+  without shrinking the selection. A folder whose mount level is NONE is listed
+  but cannot be picked.
+- It **suspends** on the first page, so the consumer owns the Suspense boundary. A
+  selected folder the loaded options do not cover is looked up by id; one the
+  mount gates reject is dropped from the value with a warning toast.
 - Beside the select sits a button group: **⟳** always re-runs the folder query (also
   exposed imperatively as \`ref.refetch()\`), and **+** is rendered only when
   \`onClickCreateFolder\` is given — the folder-creation modal belongs to the host app.
@@ -169,18 +168,18 @@ for configuring vfolder mounts.
 - \`mountDestination\` stores the **raw alias** the user typed — \`''\` mounts at the default
   \`/home/work/<name>\`, a relative segment like \`data\` resolves to \`/home/work/data\`, and an
   absolute path like \`/data\` is used as-is. Resolve it with the exported \`inputToMountDestination\`.
-- \`autoMountedFolders\` drop out of the offered folder options, join the overlap check (a user
-  alias colliding with an auto-mounted folder is flagged) and are shown as read-only badges at the bottom.
+- It reads the auto-mounted folders (ready dotfile folders in the same scope) itself: they join the
+  overlap check (a user alias colliding with one is flagged) and are shown as read-only tokens at the bottom.
 - \`folderExplorerPath\` turns every folder name the component renders — each mount row and each
   auto-mounted badge — into a link into the host app's folder explorer (see **WithFolderExplorerLinks**).
 - Emits a single \`VFolderMountConfigValue[]\`. The inline per-row errors are advisory UX; to gate a
   form, wrap the component in one named \`Form.Item\` whose \`rules\` carry
   \`useVFolderMountConfigFormRule\` (see the **WithFormValidation** story).
 
-The stories below mock the REST folder list behind the providers' \`suspenseFallback\`,
+The stories below mock the folder list behind the providers' \`suspenseFallback\`,
 so of the six fixture folders \`cold-archive\` is dropped (its host is not in
 \`mountableHosts\`), \`other-team-data\` belongs to another project, and \`.config\` is
-dropped in the **WithAutoMountedFolders** story.
+never offered but listed as an auto-mounted folder.
 `,
       },
     },
@@ -189,7 +188,7 @@ dropped in the **WithAutoMountedFolders** story.
     (Story) => (
       <MemoryRouter>
         <MockVFolderFileProviders
-          folders={legacyFolders}
+          folders={fixtureFolders}
           trees={createTrees}
           suspenseFallback="Loading..."
         >
@@ -207,20 +206,17 @@ dropped in the **WithAutoMountedFolders** story.
       action: 'changed',
       description: 'Called with the updated mount configuration list',
     },
-    currentProjectId: {
-      control: { type: 'text' },
-      description: 'Project ID to scope vfolder selection',
-      table: { type: { summary: 'string' } },
-    },
-    ownerEmail: {
-      control: { type: 'text' },
-      description: "Lists this user's folders instead of the caller's own",
-      table: { type: { summary: 'string' } },
+    scope: {
+      control: false,
+      description:
+        'The scopes a session mounts from (usually `mountableVFolderScope(userId, projectId)`)',
+      table: { type: { summary: 'VFolderScope' } },
     },
     filter: {
       control: false,
-      description: 'Display-only folder filter, applied after the mount gates',
-      table: { type: { summary: '(folder: LegacyVFolder) => boolean' } },
+      description:
+        'Server-side VFolderFilter ANDed onto the options query; narrows the options only',
+      table: { type: { summary: 'VFolderFilter' } },
     },
     disabled: {
       control: { type: 'boolean' },
@@ -236,14 +232,6 @@ dropped in the **WithAutoMountedFolders** story.
       table: {
         type: { summary: 'string' },
         defaultValue: { summary: '/home/work/' },
-      },
-    },
-    autoMountedFolders: {
-      control: { type: 'object' },
-      description:
-        'Auto-mounted folders: dropped from the offered folder options, folded into the overlap check and shown as read-only badges',
-      table: {
-        type: { summary: 'Array<{ vfolderId: string; name: string }>' },
       },
     },
     folderExplorerPath: {
@@ -266,8 +254,8 @@ dropped in the **WithAutoMountedFolders** story.
     },
   },
   args: {
+    scope: MOCK_MOUNT_SCOPE,
     mountableHosts: MOCK_MOUNTABLE_HOSTS,
-    autoMountedFolders: [],
   },
 };
 
@@ -356,14 +344,11 @@ export const OverlappingPaths: Story = {
  * alias that collides with one of them is flagged as an overlap.
  */
 export const WithAutoMountedFolders: Story = {
-  args: {
-    autoMountedFolders: [{ vfolderId: folderId(2), name: folderName(2) }],
-  },
   parameters: {
     docs: {
       description: {
         story:
-          '`autoMountedFolders` naming `.config` drops that folder from the select and renders it as a read-only badge below the rows. The first folder aliases to `.config`, colliding with the auto-mounted `/home/work/.config`, so it shows the overlap error.',
+          'The ready dotfile folder `.config` is read as auto-mounted and listed as a read-only token below the rows (dotfile folders are never offered in the select). The first folder aliases to `.config`, colliding with the auto-mounted `/home/work/.config`, so it shows the overlap error.',
       },
     },
   },
@@ -394,7 +379,6 @@ export const WithAutoMountedFolders: Story = {
  */
 export const WithFolderExplorerLinks: Story = {
   args: {
-    autoMountedFolders: [{ vfolderId: folderId(2), name: folderName(2) }],
     // The host builds a real route; here the id just lands in the hash.
     folderExplorerPath: (vfolderId) => `#folder=${vfolderId}`,
   },
@@ -439,9 +423,13 @@ export const WithFormValidation: Story = {
     const FormValidationDemo = () => {
       const [form] = Form.useForm();
       const [result, setResult] = useState<string>('');
+      const { autoMountedFolders } = useSuspendedAutoMountedVFolders({
+        scope: MOCK_MOUNT_SCOPE,
+        mountableHosts: args.mountableHosts,
+      });
       const mountConfigRule = useVFolderMountConfigFormRule({
         aliasBasePath: args.aliasBasePath,
-        autoMountedFolders: args.autoMountedFolders,
+        autoMountedFolders,
       });
       return (
         <Form
@@ -455,10 +443,7 @@ export const WithFormValidation: Story = {
             label="VFolder mounts"
             rules={[mountConfigRule]}
           >
-            <BAIVFolderMountConfigInput
-              currentProjectId={MOCK_LEGACY_PROJECT_ID}
-              {...args}
-            />
+            <BAIVFolderMountConfigInput {...args} />
           </Form.Item>
           <BAIButton
             type="primary"
@@ -492,7 +477,7 @@ export const WithCreateFolderButton: Story = {
     docs: {
       description: {
         story:
-          'Passing `onClickCreateFolder` adds a **+** button to the group beside the select; clicking it logs to the Actions panel, standing in for the host opening its folder-creation modal. In the app the host then calls `ref.refetch()` (the **Refetch via ref** button below does the same) and appends the created folder to the value. The **⟳** button next to it is always rendered and re-runs `GET /folders` on its own.',
+          'Passing `onClickCreateFolder` adds a **+** button to the group beside the select; clicking it logs to the Actions panel, standing in for the host opening its folder-creation modal. In the app the host then calls `ref.refetch()` (the **Refetch via ref** button below does the same) and appends the created folder to the value. The **⟳** button next to it is always rendered and re-runs the folder list on its own.',
       },
     },
   },

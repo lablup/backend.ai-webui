@@ -13,7 +13,6 @@ import {
   BAIListAlert,
   BAIModal,
   type BAIModalProps,
-  toLocalId,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -34,7 +33,8 @@ interface DeleteVFolderModalV2Props extends Omit<
   /** App-level contract, kept: consumers outside this area use it. */
   open?: boolean;
   vfolderFrgmts?: DeleteVFolderModalV2Fragment$key;
-  onRequestClose?: (success: boolean) => void;
+  /** `failedIds` are the Relay ids of the folders that were not moved to trash. */
+  onRequestClose?: (success: boolean, failedIds?: string[]) => void;
 }
 
 const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
@@ -47,7 +47,7 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
   // Per-folder failures of the last request; `total` is what the request
-  // carried, kept apart from the selection the parent clears on success.
+  // carried, kept apart from the selection the parent narrows to the failures.
   const [failureReport, setFailureReport] = useState<{
     failures: DeleteFailure[];
     total: number;
@@ -57,6 +57,7 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
     graphql`
       fragment DeleteVFolderModalV2Fragment on VFolder @relay(plural: true) {
         id
+        entityId
         metadata {
           name
         }
@@ -69,14 +70,14 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
   const [commitBulkDeleteMutation, isInFlightBulkDelete] =
     useMutation<DeleteVFolderModalV2Mutation>(graphql`
       mutation DeleteVFolderModalV2Mutation(
-        $input: BulkDeleteVFoldersV2Input!
+        $input: PartialBulkDeleteVFoldersInput!
       ) {
-        bulkDeleteVfoldersV2(input: $input) {
-          items @since(version: "26.9.0rc1") {
+        partialBulkDeleteVfoldersV2(input: $input) {
+          successes {
             id
           }
-          failed @since(version: "26.9.0rc1") {
-            vfolderId
+          failed {
+            id
             message
           }
         }
@@ -117,46 +118,54 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
             onRequestClose?.(false);
             return;
           }
-          const ids = _.map(folders, (vfolder) => toLocalId(vfolder.id));
+          const ids = _.map(folders, (vfolder) => vfolder.entityId);
+          const reportFailures = (
+            failures: DeleteFailure[],
+            deletedCount: number,
+          ) => {
+            message.error(
+              t('data.folders.DeleteFailureDescription', {
+                failed: failures.length,
+                total: folders.length,
+              }),
+            );
+            setFailureReport({ total: folders.length, failures });
+            onRequestClose?.(
+              deletedCount > 0,
+              _.map(failures, (f) => f.key),
+            );
+          };
+          // A rejected request counts every requested folder as failed.
+          const failAll = (errorMessage: string) =>
+            reportFailures(
+              _.map(folders, (v) => ({
+                key: v.id,
+                name: v.metadata?.name ?? v.entityId,
+                message: errorMessage,
+              })),
+              0,
+            );
           commitBulkDeleteMutation({
             variables: { input: { ids } },
             onCompleted: (data, errors) => {
               if (errors && errors.length > 0) {
                 const firstError = errors[0];
-                message.error(
-                  firstError?.message ?? getErrorMessage(firstError),
-                );
+                failAll(firstError?.message ?? getErrorMessage(firstError));
                 return;
               }
-              const deletedCount =
-                data?.bulkDeleteVfoldersV2?.items?.length ?? 0;
-              const failed = data?.bulkDeleteVfoldersV2?.failed ?? [];
+              const { successes, failed } = data.partialBulkDeleteVfoldersV2;
               // The mutation answers per id, so a partial failure arrives as a
               // success with `failed` populated rather than as a top-level error.
               if (failed.length > 0) {
-                const nameByLocalId = _.fromPairs(
-                  _.map(folders, (v) => [toLocalId(v.id), v.metadata?.name]),
-                );
-                setFailureReport({
-                  total: folders.length,
-                  failures: _.map(failed, (f) => ({
-                    key: f.vfolderId,
-                    name: nameByLocalId[f.vfolderId] ?? f.vfolderId,
+                const folderByLocalId = _.keyBy(folders, (v) => v.entityId);
+                reportFailures(
+                  _.map(failed, (f) => ({
+                    key: folderByLocalId[f.id]?.id ?? f.id,
+                    name: folderByLocalId[f.id]?.metadata?.name ?? f.id,
                     message: f.message,
                   })),
-                });
-              } else if (deletedCount === 0) {
-                // Older managers report only the count, so there is no reason
-                // to show per folder.
-                message.error(
-                  t('data.folders.FailedToDeleteFolders', {
-                    folderNames: _.map(folders, (v) => v?.metadata?.name).join(
-                      ', ',
-                    ),
-                  }),
+                  successes.length,
                 );
-              }
-              if (deletedCount === 0) {
                 return;
               }
               if (folders.length === 1) {
@@ -168,15 +177,15 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
               } else {
                 message.success(
                   t('data.folders.MultipleFolderDeleted', {
-                    count: deletedCount,
+                    count: successes.length,
                     total: folders.length,
                   }),
                 );
               }
-              onRequestClose?.(true);
+              onRequestClose?.(true, []);
             },
             onError: (error) => {
-              message.error(getErrorMessage(error));
+              failAll(getErrorMessage(error));
             },
           });
         }}

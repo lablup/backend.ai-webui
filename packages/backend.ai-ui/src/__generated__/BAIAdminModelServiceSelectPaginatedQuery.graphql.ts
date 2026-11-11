@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3ef33289906f5113be809664c5d252bd>>
+ * @generated SignedSource<<e4e2fdb37043735dba29309375f3f78f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -130,6 +130,7 @@ export type EntityLabelFilter = {
   OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
   entityId?: UUIDFilter | null | undefined;
   entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   key?: StringFilter | null | undefined;
   value?: StringFilter | null | undefined;
 };
@@ -157,6 +158,7 @@ export type BAIAdminModelServiceSelectPaginatedQuery$data = {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly entityId: string;
         readonly id: string;
         readonly metadata: {
           readonly name: string;
@@ -244,6 +246,13 @@ v3 = [
               {
                 "alias": null,
                 "args": null,
+                "kind": "ScalarField",
+                "name": "entityId",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
                 "concreteType": "ModelDeploymentMetadata",
                 "kind": "LinkedField",
                 "name": "metadata",
@@ -295,16 +304,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "97fceec950ba67b19cf2f665031ac9c8",
+    "cacheID": "b2fde337a41947d3425835add6f7b107",
     "id": null,
     "metadata": {},
     "name": "BAIAdminModelServiceSelectPaginatedQuery",
     "operationKind": "query",
-    "text": "query BAIAdminModelServiceSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: DeploymentFilter\n) {\n  adminDeployments(offset: $offset, limit: $limit, filter: $filter) {\n    count\n    edges {\n      node {\n        id\n        metadata {\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIAdminModelServiceSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: DeploymentFilter\n) {\n  adminDeployments(offset: $offset, limit: $limit, filter: $filter) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        metadata {\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "6ecf21458164d1956a1a5e024936c5a9";
+(node as any).hash = "693138ba5bbab731fc1d3e75483037ed";
 
 export default node;

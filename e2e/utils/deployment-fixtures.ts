@@ -17,7 +17,7 @@
  *    `runtimeVariantId`/`imageId` are resolved dynamically by name — they
  *    are per-cluster UUIDs.
  *  - The model folder is created through the same UI helpers the vfolder
- *    specs use, then seeded with `e2e/serving/fixtures/` (a GPU-free mock
+ *    specs use, then seeded with `e2e/fixtures/serving/` (a GPU-free mock
  *    OpenAI server, its model-definition.yaml, and a `start.sh` shim so the
  *    folder is startable under both this helper's own startup command and
  *    the common `bash /models/start.sh` convention of hand-made presets).
@@ -42,7 +42,7 @@ import { expect, Page } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
 
-const FIXTURES_DIR = path.join(__dirname, '..', 'serving', 'fixtures');
+const FIXTURES_DIR = path.join(__dirname, '..', 'fixtures', 'serving');
 
 /**
  * The runtime variant / image / resources the provisioned preset uses. These
@@ -660,8 +660,8 @@ export async function cleanupDeploymentFixtures(
  *
  * Both fields are `BAIComplexSelect`-backed (BAIAvailablePresetSelect /
  * BAIVFolderSelect): the Astryx ComplexSelector's field trigger is a
- * plain `<button>` whose accessible name is the field label
- * (`aria-haspopup="dialog"`, NOT a combobox), and its popup is a
+ * `role="combobox"` named by the field label (`aria-haspopup="dialog"`), and
+ * its popup is a
  * `role="dialog"` (aria-labelled with the same field label) hosting a search
  * `TextInput` with `role="combobox"` named "Search options"
  * (ui-common `uic.PagedSelector.searchOptions`, FR-3603 / #8914) plus a
@@ -682,7 +682,7 @@ export async function selectRevisionModalOption(
   fieldLabel: string,
   optionName: string,
 ): Promise<void> {
-  await page.getByRole('button', { name: fieldLabel, exact: true }).click();
+  await page.getByRole('combobox', { name: fieldLabel, exact: true }).click();
   const popup = page.getByRole('dialog', { name: fieldLabel, exact: true });
   await expect(popup).toBeVisible({ timeout: 10000 });
   await popup
@@ -693,6 +693,6 @@ export async function selectRevisionModalOption(
   await option.click();
   await expect(popup).toBeHidden({ timeout: 5000 });
   await expect(
-    page.getByRole('button', { name: fieldLabel, exact: true }),
+    page.getByRole('combobox', { name: fieldLabel, exact: true }),
   ).toContainText(optionName, { timeout: 5000 });
 }

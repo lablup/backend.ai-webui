@@ -28,13 +28,17 @@ import { App } from '../app-shim';
 //     Message is rendered here at all and the override was already dead.
 import { Form } from '../form-engine';
 import { extractErrorType } from '../helper';
+import { getActAsTarget } from '../helper/actAs';
 import {
   devApiEndpointOverride,
   devEmailOverride,
   devPasswordOverride,
 } from '../helper/devLoginOverrides';
 import {
+  LoginBootstrapIncompleteError,
+  SessionAuthFailureError,
   probeLoginSession,
+  refusalDetail,
   type LoginBootstrap,
 } from '../helper/loginBootstrap';
 import {
@@ -52,7 +56,9 @@ import {
   loginWithSAML,
   probeManager,
 } from '../helper/loginSessionAuth';
+import { resolvePluginScriptUrl } from '../helper/pluginPath';
 import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
+import { useElectronEndpointStep } from '../hooks/useElectronEndpointStep';
 import { useLoginOrchestration } from '../hooks/useLoginOrchestration';
 import {
   useInitializeConfig,
@@ -63,11 +69,21 @@ import {
 import { pluginApiEndpointState } from '../hooks/useWebUIPluginState';
 import { preloadPostLoginChunks } from '../preload';
 import { jotaiStore } from './DefaultProviders';
+import LoginEndpointStep from './LoginEndpointStep';
 import LoginFormPanel, { type EndpointHistoryEntry } from './LoginFormPanel';
 import { Button } from '@lablup/ui-common/Button';
-import { BAIModal, useBAILogger } from 'backend.ai-ui';
+import { Spinner } from '@lablup/ui-common/Spinner';
+import { Text } from '@lablup/ui-common/Text';
+import {
+  BAIAlert,
+  BAIButton,
+  BAIFlex,
+  BAIModal,
+  useBAILogger,
+} from 'backend.ai-ui';
 import i18n from 'i18next';
 import { useAtomValue, useSetAtom } from 'jotai';
+import { parseAsString, useQueryState } from 'nuqs';
 import React, {
   useCallback,
   useEffect,
@@ -79,7 +95,30 @@ import { useTranslation } from 'react-i18next';
 
 type ConnectionMode = 'SESSION' | 'API';
 
+// Only echo code-shaped `bai_error` values, so a crafted link cannot put prose in the banner.
+const DISPLAYABLE_OPENID_ERROR_CODE = /^[A-Za-z0-9_-]{1,64}$/;
+
 const STORED_API_ENDPOINT_KEY = 'backendaiwebui.api_endpoint';
+// Electron: the webserver the endpoint step confirmed. API-mode sign-in stores a
+// manager in STORED_API_ENDPOINT_KEY, which serves no config.toml to confirm.
+const STORED_SERVER_ENDPOINT_KEY = 'backendaiwebui.electron_server_endpoint';
+const readStored = (key: string) =>
+  (localStorage.getItem(key) ?? '').replace(/^"+|"+$/g, '');
+
+// Logged-out: turn the splash into the login backdrop (keep the weave +
+// version/copyright metadata, hide the loader); the login modals render above
+// it. Older index.html shells without __enterLoginBackdrop get full dismissal.
+function enterLoginBackdrop() {
+  const splashApi = globalThis as unknown as {
+    __enterLoginBackdrop?: () => void;
+    __dismissSplash?: () => void;
+  };
+  if (typeof splashApi.__enterLoginBackdrop === 'function') {
+    splashApi.__enterLoginBackdrop();
+  } else {
+    splashApi.__dismissSplash?.();
+  }
+}
 
 const LoginView: React.FC<{
   /**
@@ -136,6 +175,9 @@ const LoginView: React.FC<{
     const storedEndpoint = stored ? stored.replace(/^"+|"+$/g, '') : '';
     return storedEndpoint || devApiEndpointOverride || '';
   });
+  const [serverEndpoint, setServerEndpoint] = useState(
+    () => readStored(STORED_SERVER_ENDPOINT_KEY) || apiEndpoint,
+  );
   const [otpRequired, setOtpRequired] = useState(false);
   const [needsOtpRegistration, setNeedsOtpRegistration] = useState(false);
   const [totpRegistrationToken, setTotpRegistrationToken] = useState('');
@@ -155,10 +197,23 @@ const LoginView: React.FC<{
   const [blockMessage, setBlockMessage] = useState('');
   const [blockType, setBlockType] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  // The session is live but the manager could not return the user; the login
+  // form would only get "already logged in" back, so offer retry / log out.
+  const [sessionLoadError, setSessionLoadError] = useState<string | null>(null);
+  const [isSessionLogoutFailed, setIsSessionLogoutFailed] = useState(false);
+  // A silent login could not reach the manager, so whether the session is
+  // live is unknown; offer retry instead of a login form that looks logged out.
+  const [serverUnreachableRetry, setServerUnreachableRetry] = useState<
+    (() => Promise<void>) | null
+  >(null);
   const [loginError, setLoginError] = useState<{
     message: string;
     description?: string;
   } | null>(null);
+  const [, setOpenIDLoginErrorParam] = useQueryState(
+    'bai_error',
+    parseAsString,
+  );
   const [endpoints, setEndpoints] = useState<string[]>(() => {
     return (globalThis as any).backendaioptions?.get('endpoints', []) ?? [];
   });
@@ -173,6 +228,37 @@ const LoginView: React.FC<{
   const [isEndpointDisabled, setIsEndpointDisabled] = useState(false);
 
   const [form] = Form.useForm();
+  // A config.toml that pins apiEndpoint keeps it fixed: no endpoint step and
+  // no "Change endpoint". Without one, the web asks for the server first, as
+  // Electron does; it waits for the file so a pinned page never flashes it.
+  const isEndpointPinned =
+    isConfigLoaded &&
+    !!atomLoginConfig?.api_endpoint &&
+    !devApiEndpointOverride;
+  const usesEndpointStep = (globalThis as Record<string, unknown>).isElectron
+    ? !isEndpointPinned
+    : isConfigLoaded && !isEndpointPinned;
+  const endpointStep = useElectronEndpointStep({
+    isEnabled: usesEndpointStep,
+    isPanelOpen: isLoginPanelOpen,
+    storedEndpoint: serverEndpoint,
+    onConfirmed: (endpoint) => {
+      setServerEndpoint(endpoint);
+      localStorage.setItem(STORED_SERVER_ENDPOINT_KEY, endpoint);
+      // Keep the manager an API-mode sign-in last used for the manager field.
+      const lastSignIn = readStored(STORED_API_ENDPOINT_KEY);
+      const signInEndpoint =
+        connectionMode === 'API' && lastSignIn ? lastSignIn : endpoint;
+      setApiEndpoint(signInEndpoint);
+      form.setFieldValue('api_endpoint', signInEndpoint);
+      localStorage.setItem(STORED_API_ENDPOINT_KEY, signInEndpoint);
+    },
+  });
+  const endpointStepErrorMessage = {
+    invalidUrl: t('login.EndpointStartWith'),
+    unreachable: t('login.EndpointUnreachable'),
+    noConfig: t('login.EndpointNoConfig'),
+  };
   const clientRef =
     useRef<ReturnType<typeof createBackendAIClient>['client']>(null);
   const configRef = useRef<LoginConfigState>(loginConfig);
@@ -244,25 +330,13 @@ const LoginView: React.FC<{
     }
   }
 
-  // Load login plugin when config is ready.
-  // Mirrors `PluginLoader.tsx`'s URL resolution so login plugins follow
-  // the same deployment model as page plugins: the file is served by the
-  // backend WebServer (or a Vite/static host that mounts `/dist/plugins/`).
-  // No build-time bundling — plugins can be deployed independently of the
-  // WebUI bundle.
+  // Load the login plugin once config is ready; it is served from
+  // `/dist/plugins/` like page plugins, never bundled.
   useEffect(() => {
     if (!isConfigLoaded || !loginPlugin) return;
 
-    // Sanitize the plugin name to prevent path traversal attacks.
-    // Only allow alphanumeric characters, hyphens, and underscores.
-    const sanitizedPlugin = loginPlugin.replace(/[^a-zA-Z0-9_-]/g, '');
-    if (!sanitizedPlugin || sanitizedPlugin !== loginPlugin) return;
-
-    const isElectronEnv = (globalThis as Record<string, unknown>).isElectron;
-    const pluginUrl =
-      isElectronEnv && apiEndpoint
-        ? `${apiEndpoint}/dist/plugins/${sanitizedPlugin}.js`
-        : `/dist/plugins/${sanitizedPlugin}.js`;
+    const pluginUrl = resolvePluginScriptUrl(loginPlugin, apiEndpoint);
+    if (!pluginUrl) return;
 
     // `@vite-ignore` opts out of Vite's static analysis. The URL is an
     // absolute path (no relative `..` traversal), so esbuild's
@@ -281,7 +355,11 @@ const LoginView: React.FC<{
   // origin into `config.toml`), and a webserver cannot serve API-mode sign-in.
   // Derived, never stored: a config refresh re-applies the configured mode at
   // any time, so a value pinned once here would be silently reverted.
-  const isApiSigninBlocked = !!loginConfig.api_endpoint;
+  // Electron also signs in by session unless the confirmed server allows API
+  // sign-in, so a mode stored from an earlier version cannot strand the user.
+  const isApiSigninBlocked =
+    !!loginConfig.api_endpoint ||
+    (usesEndpointStep && !loginConfig.change_signin_support);
   const effectiveConnectionMode: ConnectionMode = isApiSigninBlocked
     ? 'SESSION'
     : connectionMode;
@@ -348,19 +426,8 @@ const LoginView: React.FC<{
     }
     setIsLoginPanelOpen(true);
     setIsBlockPanelOpen(false);
-    // Logged-out: turn the splash into the login backdrop (keep the weave +
-    // version/copyright metadata, hide the loader). The login modal renders
-    // above it. Fall back to full dismissal on older index.html shells that
-    // don't expose __enterLoginBackdrop.
-    const splashApi = globalThis as unknown as {
-      __enterLoginBackdrop?: () => void;
-      __dismissSplash?: () => void;
-    };
-    if (typeof splashApi.__enterLoginBackdrop === 'function') {
-      splashApi.__enterLoginBackdrop();
-    } else {
-      splashApi.__dismissSplash?.();
-    }
+    setServerUnreachableRetry(null);
+    enterLoginBackdrop();
 
     const urlParams = new URLSearchParams(window.location.search);
     const tokenParam = urlParams.get('token');
@@ -373,7 +440,52 @@ const LoginView: React.FC<{
       setSignupPreloadedToken(tokenParam);
       setShowSignupModal(true);
     }
-  }, [loginConfig.signup_support, apiEndpoint]);
+
+    // The manager's OpenID plugin reports a failed login as `?bai_error=`;
+    // drop it once shown so a reload does not repeat the message.
+    const openIDLoginError = urlParams.get('bai_error')?.trim();
+    if (openIDLoginError !== undefined) {
+      const descriptions: Record<string, string> = {
+        'openid-access-denied': t('login.singleSignOn.OpenIDAccessDenied'),
+        'invalid-openid-session': t('login.singleSignOn.OpenIDSessionInvalid'),
+        'openid-not-authenticated': t(
+          'login.singleSignOn.OpenIDNotAuthenticated',
+        ),
+        'openid-group-not-allowed': t(
+          'login.singleSignOn.OpenIDGroupNotAllowed',
+        ),
+        'openid-domain-not-found': t('login.singleSignOn.OpenIDDomainNotFound'),
+        'openid-provider-misconfigured': t(
+          'login.singleSignOn.OpenIDProviderMisconfigured',
+        ),
+        'openid-provider-unavailable': t(
+          'login.singleSignOn.OpenIDProviderUnavailable',
+        ),
+        'internal-server-error': t(
+          'login.singleSignOn.OpenIDInternalServerError',
+        ),
+      };
+      setLoginError({
+        message: t('login.singleSignOn.LoginWithRealmFailed', {
+          realmName: loginConfig.ssoRealmName || 'OpenID',
+        }),
+        description: Object.hasOwn(descriptions, openIDLoginError)
+          ? descriptions[openIDLoginError]
+          : DISPLAYABLE_OPENID_ERROR_CODE.test(openIDLoginError)
+            ? t('login.singleSignOn.OpenIDUnknownErrorWithCode', {
+                code: openIDLoginError,
+              })
+            : t('login.singleSignOn.OpenIDUnknownError'),
+      });
+      setOpenIDLoginErrorParam(null);
+    }
+  }, [
+    loginConfig.signup_support,
+    loginConfig.ssoRealmName,
+    apiEndpoint,
+    setOpenIDLoginErrorParam,
+    t,
+  ]);
 
   const close = useCallback(() => {
     // Cancel any pending block timer so a delayed timer from block()
@@ -384,6 +496,7 @@ const LoginView: React.FC<{
     }
     setIsLoginPanelOpen(false);
     setIsBlockPanelOpen(false);
+    setServerUnreachableRetry(null);
     setLoginError(null);
   }, []);
 
@@ -411,6 +524,31 @@ const LoginView: React.FC<{
     }, 2000);
   }, []);
 
+  const showSessionLoadError = (err: LoginBootstrapIncompleteError) => {
+    if (blockTimerRef.current) {
+      clearTimeout(blockTimerRef.current);
+      blockTimerRef.current = null;
+    }
+    setIsBlockPanelOpen(false);
+    setIsLoginPanelOpen(false);
+    setIsLoading(false);
+    setIsSessionLogoutFailed(false);
+    setServerUnreachableRetry(null);
+    setSessionLoadError(err.message);
+  };
+
+  const showServerUnreachable = (retry: () => Promise<void>) => {
+    if (blockTimerRef.current) {
+      clearTimeout(blockTimerRef.current);
+      blockTimerRef.current = null;
+    }
+    setIsBlockPanelOpen(false);
+    setIsLoginPanelOpen(false);
+    setIsLoading(false);
+    enterLoginBackdrop();
+    setServerUnreachableRetry(() => retry);
+  };
+
   const clearSavedLoginInfo = useCallback(() => {
     localStorage.removeItem('backendaiwebui.login.api_key');
     localStorage.removeItem('backendaiwebui.login.secret_key');
@@ -420,18 +558,10 @@ const LoginView: React.FC<{
 
   // Shared post-connection setup used by both the regular session login
   // (doGQLConnect) and the sToken SSO path. Keeps the two flows consistent:
-  // login_attempt/last_login counters, saved-credentials cleanup, panel
-  // close, connected-event dispatch, and endpoint persistence.
+  // saved-credentials cleanup, panel close, connected-event dispatch, and
+  // endpoint persistence.
   const postConnectSetup = useCallback(
     (client: ReturnType<typeof createBackendAIClient>['client']) => {
-      const currentTime = Math.floor(Date.now() / 1000);
-      (globalThis as any).backendaioptions.set(
-        'last_login',
-        currentTime,
-        'general',
-      );
-      (globalThis as any).backendaioptions.set('login_attempt', 0, 'general');
-
       const event = new CustomEvent('backend-ai-connected', {
         detail: client,
       });
@@ -691,6 +821,17 @@ const LoginView: React.FC<{
         return 'reopen';
       }
 
+      // --- A refused post-login query: show the manager's text, not the wrapper's ---
+      if (
+        err instanceof SessionAuthFailureError ||
+        (err as Error | null)?.name === 'AuthorizationError'
+      ) {
+        if (showError) {
+          notification(t('error.LoginFailed'), refusalDetail(err) || undefined);
+        }
+        return 'reopen';
+      }
+
       // --- Unstructured errors (network failures, etc.) ---
       if (showError) {
         if (e.message) {
@@ -704,33 +845,40 @@ const LoginView: React.FC<{
     [notification, t, otpRequired, form, modal, logger],
   );
 
-  const handleGQLError = useCallback(
-    (err: unknown, showError: boolean) => {
-      setIsBlockPanelOpen(false);
-      if (showError) {
-        const e = err as {
-          title?: string;
-          message?: string;
-          status?: number;
-        };
-        if (e.message) {
-          if (e.status === 408) {
-            notification(
-              t('error.LoginSucceededManagerNotResponding'),
-              e.message,
-            );
-          } else {
-            notification(e.title || t('error.LoginFailed'), e.message);
-          }
+  const handleGQLError = (err: unknown, showError: boolean) => {
+    if (err instanceof LoginBootstrapIncompleteError) {
+      showSessionLoadError(err);
+      return;
+    }
+    setIsBlockPanelOpen(false);
+    if (showError) {
+      const e = err as {
+        title?: string;
+        message?: string;
+        status?: number;
+      };
+      // connectViaGQL rethrows the app environment's AuthorizationError as is.
+      if (
+        err instanceof SessionAuthFailureError ||
+        (err as Error | null)?.name === 'AuthorizationError'
+      ) {
+        notification(t('error.LoginFailed'), refusalDetail(err) || undefined);
+      } else if (e.message) {
+        if (e.status === 408) {
+          notification(
+            t('error.LoginSucceededManagerNotResponding'),
+            e.message,
+          );
         } else {
-          notification(t('error.LoginInformationMismatch'));
+          notification(e.title || t('error.LoginFailed'), e.message);
         }
+      } else {
+        notification(t('error.LoginInformationMismatch'));
       }
-      open();
-      setIsLoading(false);
-    },
-    [notification, t, open],
-  );
+    }
+    open();
+    setIsLoading(false);
+  };
 
   const connectUsingSession = useCallback(
     async (
@@ -768,11 +916,19 @@ const LoginView: React.FC<{
 
       // The session probe runs alongside the reachability check, which is
       // awaited first so Backspace can still abort it.
-      const sessionProbe = probeLoginSession(client).catch(() => null);
+      const sessionProbe = probeLoginSession(client).catch((err: unknown) =>
+        err instanceof LoginBootstrapIncompleteError ? err : null,
+      );
       try {
         await probeManager(client);
       } catch (err: unknown) {
         if (isCancelled()) return;
+        if (!showError && !(err instanceof LoginProbeCancelledError)) {
+          showServerUnreachable(async () => {
+            await connectUsingSessionRef.current?.(false, ep);
+          });
+          return;
+        }
         setIsBlockPanelOpen(false);
         open();
         setIsLoading(false);
@@ -784,6 +940,10 @@ const LoginView: React.FC<{
 
       const bootstrap = await sessionProbe;
       if (isCancelled()) return;
+      if (bootstrap instanceof LoginBootstrapIncompleteError) {
+        showSessionLoadError(bootstrap);
+        return;
+      }
       if (bootstrap) {
         try {
           await doGQLConnect(client, bootstrap, attempt);
@@ -814,6 +974,10 @@ const LoginView: React.FC<{
         return;
       } catch (err: unknown) {
         if (isCancelled()) return;
+        if (err instanceof LoginBootstrapIncompleteError) {
+          showSessionLoadError(err);
+          return;
+        }
         setIsBlockPanelOpen(false);
 
         // The server can report a password change as applied when it was not
@@ -883,52 +1047,12 @@ const LoginView: React.FC<{
     const isReloginAfterPasswordChange = reloginAfterPasswordChangeRef.current;
     reloginAfterPasswordChangeRef.current = false;
 
-    const loginAttempt = (globalThis as any).backendaioptions.get(
-      'login_attempt',
-      0,
-      'general',
-    );
-    const lastLogin = (globalThis as any).backendaioptions.get(
-      'last_login',
-      Math.floor(Date.now() / 1000),
-      'general',
-    );
-
-    const currentTime = Math.floor(Date.now() / 1000);
-
-    if (
-      loginAttempt >= loginConfig.login_attempt_limit &&
-      currentTime - lastLogin > loginConfig.login_block_time
-    ) {
-      (globalThis as any).backendaioptions.set(
-        'last_login',
-        currentTime,
-        'general',
-      );
-      (globalThis as any).backendaioptions.set('login_attempt', 0, 'general');
-    } else if (loginAttempt >= loginConfig.login_attempt_limit) {
-      (globalThis as any).backendaioptions.set(
-        'last_login',
-        currentTime,
-        'general',
-      );
-      (globalThis as any).backendaioptions.set(
-        'login_attempt',
-        loginAttempt + 1,
-        'general',
-      );
-
-      notification(t('login.TooManyAttempt'));
-      return;
-    } else {
-      (globalThis as any).backendaioptions.set(
-        'login_attempt',
-        loginAttempt + 1,
-        'general',
-      );
-    }
-
-    const epInput = form.getFieldValue('api_endpoint') || apiEndpoint;
+    // Electron signs in by session against the confirmed webserver; the form
+    // field is the manager for API mode.
+    const epInput =
+      usesEndpointStep && effectiveConnectionMode === 'SESSION'
+        ? serverEndpoint
+        : form.getFieldValue('api_endpoint') || apiEndpoint;
     const ep = epInput.replace(/\/+$/, '').trim();
     setApiEndpoint(ep);
 
@@ -939,7 +1063,7 @@ const LoginView: React.FC<{
 
     setIsLoading(true);
 
-    if ((globalThis as Record<string, unknown>).isElectron) {
+    if (usesEndpointStep && effectiveConnectionMode === 'SESSION') {
       await loadConfigFromWebServer(ep);
     }
 
@@ -975,9 +1099,10 @@ const LoginView: React.FC<{
       await connectUsingAPI(true, ep);
     }
   }, [
-    loginConfig,
     form,
     apiEndpoint,
+    serverEndpoint,
+    usesEndpointStep,
     effectiveConnectionMode,
     connectUsingSession,
     connectUsingAPI,
@@ -1003,7 +1128,7 @@ const LoginView: React.FC<{
   const login = useCallback(
     async (showError = true) => {
       const ep = resolveEndpoint();
-      if ((globalThis as Record<string, unknown>).isElectron) {
+      if (usesEndpointStep && effectiveConnectionMode === 'SESSION') {
         await loadConfigFromWebServer(ep);
       }
       if (effectiveConnectionMode === 'SESSION') {
@@ -1016,6 +1141,7 @@ const LoginView: React.FC<{
     },
     [
       resolveEndpoint,
+      usesEndpointStep,
       effectiveConnectionMode,
       connectUsingSession,
       connectUsingAPI,
@@ -1025,9 +1151,9 @@ const LoginView: React.FC<{
 
   // Check if a session login exists on the server.
   // Used by the orchestration hook as `onCheckLogin`.
-  const checkLogin = useCallback(async (): Promise<boolean> => {
+  const checkLogin = useCallback(async (): Promise<boolean | 'unreachable'> => {
     const ep = resolveEndpoint();
-    if ((globalThis as Record<string, unknown>).isElectron) {
+    if (usesEndpointStep && effectiveConnectionMode === 'SESSION') {
       await loadConfigFromWebServer(ep);
     }
     if (effectiveConnectionMode === 'SESSION') {
@@ -1035,22 +1161,29 @@ const LoginView: React.FC<{
       const { client } = createBackendAIClient('', '', ep, 'SESSION');
       clientRef.current = client;
       const attempt = loginAttemptRef.current;
+      const sessionProbe = probeLoginSession(client);
+      // Awaited only once the manager answers; keep its rejection handled.
+      sessionProbe.catch(() => {});
       try {
-        const [, bootstrap] = await Promise.all([
-          probeManager(client),
-          probeLoginSession(client),
-        ]);
+        await probeManager(client);
+      } catch (err) {
+        if (attempt !== loginAttemptRef.current) return false;
+        return err instanceof LoginProbeCancelledError ? false : 'unreachable';
+      }
+      try {
+        const bootstrap = await sessionProbe;
         if (attempt !== loginAttemptRef.current) return false;
         probedSessionRef.current = bootstrap
           ? { endpoint: ep, client, bootstrap }
           : null;
         return bootstrap !== null;
-      } catch {
-        return false;
+      } catch (err) {
+        // Live, only its user failed to load; the connect step shows the dialog.
+        return err instanceof LoginBootstrapIncompleteError;
       }
     }
     return false;
-  }, [resolveEndpoint, effectiveConnectionMode]);
+  }, [resolveEndpoint, usesEndpointStep, effectiveConnectionMode]);
 
   // Log out the current session on the server.
   // Used by the orchestration hook as `onLogoutSession`.
@@ -1068,6 +1201,7 @@ const LoginView: React.FC<{
     onOpen: open,
     onBlock: block,
     onCheckLogin: checkLogin,
+    onServerUnreachable: showServerUnreachable,
     onLogoutSession: logoutSession,
     apiEndpoint,
     connectionMode: effectiveConnectionMode,
@@ -1251,6 +1385,45 @@ const LoginView: React.FC<{
           if (!v) expiredCredentialsRef.current = null;
         }}
         onSetShowSignupModal={setShowSignupModal}
+        endpointStep={
+          endpointStep.isCheckingStored ? (
+            <BAIFlex justify="center" style={{ padding: 'var(--spacing-6)' }}>
+              <Spinner size="lg" />
+            </BAIFlex>
+          ) : endpointStep.isStepOpen ? (
+            <LoginEndpointStep
+              defaultEndpoint={serverEndpoint}
+              history={endpointHistory}
+              onDeleteEndpoint={deleteEndpoint}
+              isConnecting={endpointStep.isConnecting}
+              error={
+                endpointStep.error
+                  ? endpointStepErrorMessage[endpointStep.error]
+                  : null
+              }
+              onContinue={endpointStep.continueWith}
+            />
+          ) : undefined
+        }
+        onChangeEndpoint={
+          usesEndpointStep
+            ? () => {
+                setLoginError(null);
+                setOtpRequired(false);
+                setNeedsOtpRegistration(false);
+                setNeedToResetPassword(false);
+                expiredCredentialsRef.current = null;
+                form.setFieldValue('otp', '');
+                endpointStep.changeEndpoint();
+              }
+            : undefined
+        }
+        serverEndpoint={usesEndpointStep ? serverEndpoint : undefined}
+        endpointNotice={
+          usesEndpointStep && endpointStep.hasNoDomain
+            ? t('login.EndpointNoDomain')
+            : null
+        }
       />
 
       {/* Block/Error Panel */}
@@ -1273,6 +1446,101 @@ const LoginView: React.FC<{
         <div style={{ textAlign: 'center', paddingTop: 15 }}>
           {blockMessage}
         </div>
+      </BAIModal>
+
+      <BAIModal
+        open={sessionLoadError !== null}
+        title={t('login.AccountInfoLoadFailed')}
+        footer={
+          <BAIFlex gap="xs" justify="end">
+            {/* An act-as tab shares the super admin's cookie; never log it out. */}
+            {!getActAsTarget() && (
+              <Button
+                onClick={async () => {
+                  try {
+                    await logoutSession();
+                  } catch (err) {
+                    // The cookie is still live, so the login form would be refused.
+                    logger.error('[LoginView] logout failed', err);
+                    setIsSessionLogoutFailed(true);
+                    return;
+                  }
+                  setSessionLoadError(null);
+                  open();
+                }}
+                label={t('webui.menu.LogOut')}
+              />
+            )}
+            <Button
+              variant="primary"
+              onClick={() => {
+                setSessionLoadError(null);
+                setIsLoading(true);
+                connectUsingSession(true);
+              }}
+              label={t('button.Retry')}
+            />
+          </BAIFlex>
+        }
+        closable={false}
+        mask={{ closable: false }}
+      >
+        <BAIFlex direction="column" align="stretch" gap="xs">
+          <Text as="p" display="block" style={{ margin: 0 }}>
+            {t('login.AccountInfoLoadFailedDesc')}
+          </Text>
+          {sessionLoadError ? (
+            <Text
+              as="p"
+              display="block"
+              type="supporting"
+              style={{ margin: 0, whiteSpace: 'pre-wrap' }}
+            >
+              {sessionLoadError}
+            </Text>
+          ) : null}
+          {isSessionLogoutFailed ? (
+            <BAIAlert type="error" showIcon title={t('error.UnknownError')} />
+          ) : null}
+        </BAIFlex>
+      </BAIModal>
+
+      <BAIModal
+        open={serverUnreachableRetry !== null}
+        title={t('login.CannotReachServer')}
+        footer={
+          <BAIFlex gap="xs" justify="end">
+            <Button
+              onClick={() => {
+                // Drop a Retry still in flight, or its failure reopens this dialog over the form.
+                loginAttemptRef.current += 1;
+                probedSessionRef.current = null;
+                open();
+                notification(t('error.CannotConnectToServer'));
+              }}
+              label={t('login.GoToLogin')}
+            />
+            <BAIButton
+              type="primary"
+              action={async () => {
+                try {
+                  await serverUnreachableRetry?.();
+                } catch (err) {
+                  logger.error('[LoginView] retry after unreachable', err);
+                  open();
+                }
+              }}
+            >
+              {t('button.Retry')}
+            </BAIButton>
+          </BAIFlex>
+        }
+        closable={false}
+        mask={{ closable: false }}
+      >
+        <Text as="p" display="block" style={{ margin: 0 }}>
+          {t('login.CannotReachServerDesc')}
+        </Text>
       </BAIModal>
     </>
   );

@@ -16,6 +16,30 @@ pnpm install
 cd packages/backend.ai-docs-toolkit && pnpm run build
 ```
 
+The manual images are in [Git LFS](https://git-lfs.com): a clone holds only pointer files
+for the images under `src/` (`.lfsconfig` keeps it that way even with git-lfs installed), and the PDF,
+web build and previews stop with an error naming them. To build the manual or change its
+screenshots, install git-lfs, set it up once with `--skip-repo` (Husky owns the hooks, so a plain
+`git lfs install` stops at `Hook already exists: pre-push`), then fetch the images:
+
+```bash
+git lfs install --skip-repo
+pnpm --filter backend.ai-webui-docs run images:pull
+```
+
+Editing Markdown only needs none of this.
+
+Add or replace images, then commit and push as usual: the filters commit them as pointers and
+`.husky/pre-push` runs `git lfs pre-push`, which uploads them. The hook refuses a push in which
+an image was committed as raw bytes (added without git-lfs set up), and prints the commands that
+rewrite that commit with `git add --renormalize`.
+
+From a fork, the same applies; `git push` uploads the images to your
+fork's LFS storage. Builds of this repository's branches fetch images from this repository
+only, so when your PR's images are not here yet, the PR's `docs` check builds them from your
+fork and then fails with the command a maintainer runs to copy them over before merging.
+Fork PRs get no published docs preview.
+
 ## Quick Start
 
 ```bash
@@ -168,7 +192,7 @@ packages/backend.ai-webui-docs/
 
 - One `# H1` per file as the page title
 - `## H2` for major sections, `### H3` for subsections
-- Images: `![](images/filename.png)` — place image files in `src/{lang}/images/`
+- Images: `![](images/filename.png)` — place image files in `src/{lang}/images/`. Images under `src/` are in Git LFS: commit them with git-lfs set up (`git lfs install --skip-repo`, see above); `.husky/pre-push` and the `lfs-pointer-check` CI job reject images committed as raw bytes
 - Cross-references: `[Link Text](#heading-id)`
 - Inline code for UI elements: `` `Settings` ``, `` `config.toml` ``
 

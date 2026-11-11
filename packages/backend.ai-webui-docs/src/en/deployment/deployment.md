@@ -22,7 +22,8 @@ The Deployments page displays a list of all deployments in the current project. 
 
 At the top of the page, you can filter deployments by lifecycle stage:
 
-- **Running**: Shows deployments that are currently running or being created. This is the default view.
+- **Serving**: Shows deployments whose Desired Replicas is 1 or more. This is the default view.
+- **Paused**: Shows deployments that are not terminated but have Desired Replicas at 0, so they serve no requests. The **Lifecycle** column shows whether you set Desired Replicas to 0 or an auto-scaling rule scaled the deployment down. They move back to **Serving** once Desired Replicas is 1 or more.
 - **Terminated**: Shows deployments that have been terminated.
 
 Click the `Create Deployment` button to open the **Create Deployment** modal.
@@ -48,7 +49,7 @@ The modal contains the following fields:
 
 - **Deployment Name**: A unique name used to identify the deployment across the dashboard, API, and the endpoint URL.
 - **Resource Group**: The resource group where the deployment will run. If only one resource group is available to your project, the field is auto-selected and you can proceed without choosing one manually.
-- **Desired Replicas**: The number of replicas to keep running for this deployment. The system scales the active pool toward this target.
+- **Desired Replicas**: The number of replicas you set for this deployment. Auto-scaling rules can change the running target without changing this value, and setting it to 0 pauses the deployment.
 - **Tags**: Optional labels for organizing and filtering deployments. Press Enter or comma to add.
 - **Open to Public**: When enabled, the endpoint is reachable without an access token. When disabled, every request must carry a token. See [Access Tokens](#generating-tokens).
 
@@ -240,7 +241,7 @@ The **Cluster and Resources** section lets you specify the compute resources to 
 Expand the **Advanced Settings** collapse panel to point at the model definition file and to mount additional storage folders alongside the model storage folder.
 
 - **Model Definition File Path**: The path to the model definition file within the model storage folder (default: `model-definition.yaml`). Shown only for runtime variants that read their configuration from the model folder, such as `Custom`.
-- **Additional Mounts**: A table of storage folders to mount into the inference server container. Only general-purpose (non-model) folders in `ready` state are listed. Hidden folders (names starting with `.`) and the model storage folder itself are excluded.
+- **Additional Mounts**: Storage folders to mount into the inference server container. Pick a folder with the folder selector to add it as a mount row with its own source and container path fields, as in the session launcher's [Data & Storage](#session-mounts) step.
 
 <a id="custom-runtime-config-files"></a>
 
@@ -669,7 +670,7 @@ The rule list provides:
 
 - A property filter bar to filter rules by **Created At** and **Last Triggered** datetime ranges.
 - Server-side pagination.
-- The following columns: **Metric Source**, **Condition**, **Cooldown Sec.**, **Step Size**, **Min / Max Replicas**, **Created At**, and **Last Triggered**. The **Step Size** column automatically shows `+`, `−`, or `±` based on the direction derived from the thresholds you have set.
+- The following columns: **Metric Source**, **Condition**, **Cooldown (s)**, **Step Size**, **Min / Max Replicas**, **Created At**, and **Last Triggered**. The **Step Size** column automatically shows `+`, `−`, or `±` based on the direction derived from the thresholds you have set.
 - Per-row edit and delete icons shown next to the condition summary in each row.
 
 Click the `Add Rules` button to open the **Add Auto Scaling Rule** editor.
@@ -678,7 +679,7 @@ To modify an existing rule, click the edit icon on its row; the **Edit Auto Scal
 
 - **Metric Source**: Select `Kernel` or `Prometheus`.
 - **Metric Name**: For `Kernel`, enter a metric name. Common metrics such as `cpu_util`, `mem`, `net_rx`, and `net_tx` are offered as autocomplete suggestions, and you can also type a custom name freely.
-- **Metric Name (Prometheus Preset)**: Shown only when **Metric Source** is `Prometheus`. Select a preset from the dropdown; the preset's metric name, query template, and (when defined) **Cooldown Sec.** are filled in automatically.
+- **Metric Name (Prometheus Preset)**: Shown only when **Metric Source** is `Prometheus`. Select a preset from the dropdown; the preset's metric name, query template, and (when defined) **Cooldown (s)** are filled in automatically.
 - **Condition**: A segmented control for choosing the scaling direction. It provides three options.
 
    - **Scale In**: Decreases replicas when the metric falls below a threshold. Sets `Metric < [threshold]`.
@@ -693,7 +694,7 @@ To modify an existing rule, click the edit icon on its row; the **Edit Auto Scal
    - Only a maximum threshold is set: `[metric] > [maxThreshold]` triggers **Scale Out** (replicas increase when the metric rises above the threshold).
    - Both thresholds are set: if `[metric] < [minThreshold]`, replicas **scale in**; if `[metric] > [maxThreshold]`, replicas **scale out**.
 
-- **Cooldown Sec.**: The time, in seconds, to wait after a scaling event before the next evaluation.
+- **Cooldown (s)**: The time, in seconds, to wait after a scaling event before the next evaluation.
 - **Min Replicas** and **Max Replicas**: The lower and upper bounds that auto-scaling enforces on the replica count. Auto-scaling will not reduce the number of replicas below **Min Replicas** or increase it above **Max Replicas**.
 
 ![=520px](../images/auto_scaling_rules_modal_v2.png)

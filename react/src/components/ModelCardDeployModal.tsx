@@ -19,7 +19,6 @@ import {
   BAILink,
   BAIModal,
   BAIProjectResourceGroupSelect,
-  toLocalId,
   useErrorMessageResolver,
   useProjectResourceGroups,
   type BAIModalProps,
@@ -83,6 +82,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
     graphql`
       fragment ModelCardDeployModalFragment on ModelCardV2 {
         id
+        entityId
         availablePresets(
           orderBy: [{ field: RANK, direction: "ASC" }]
           limit: 100
@@ -90,6 +90,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
           edges {
             node {
               id
+              entityId
               name
               runtimeVariantId
               ...DeploymentPresetDetailModalFragment
@@ -100,7 +101,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
     `,
     modelCardFrgmt ?? null,
   );
-  const modelCardRowId = modelCard?.id ? toLocalId(modelCard.id) : undefined;
+  const modelCardRowId = modelCard?.entityId;
   const availablePresets =
     modelCard?.availablePresets?.edges
       ?.map((edge) => edge?.node)
@@ -136,8 +137,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
   >(undefined);
   const [presetDetailId, setPresetDetailId] = useState<string | null>(null);
   const effectivePresetId =
-    userSelectedPresetId ??
-    (availablePresets[0]?.id ? toLocalId(availablePresets[0].id) : undefined);
+    userSelectedPresetId ?? availablePresets[0]?.entityId;
 
   // The resource-group selection is held in an antd Form. `Form.useWatch`
   // subscribes to changes on the `resourceGroup` field so the Deploy button's
@@ -151,7 +151,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
     if (!modelCardRowId || !projectId) return Promise.resolve();
 
     const presetId = isAutoDeployScenario
-      ? toLocalId(availablePresets[0]?.id)
+      ? availablePresets[0]?.entityId
       : effectivePresetId;
     const resourceGroup = isAutoDeployScenario
       ? resourceGroups[0]?.name
@@ -353,7 +353,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
           open={!!presetDetailId}
           presetFrgmt={
             presetDetailId
-              ? availablePresets.find((p) => toLocalId(p.id) === presetDetailId)
+              ? availablePresets.find((p) => p.entityId === presetDetailId)
               : null
           }
           onCancel={() => setPresetDetailId(null)}

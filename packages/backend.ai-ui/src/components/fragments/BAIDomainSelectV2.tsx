@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 */
 import { BAIDomainSelectV2Query } from '../../__generated__/BAIDomainSelectV2Query.graphql';
-import { toLocalId } from '../../helper';
 import { useControllableValue } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAISelect, { type BAISelectProps } from '../BAISelect';
@@ -41,6 +40,7 @@ const BAIDomainSelectV2: React.FC<BAIDomainSelectV2Props> = ({
           edges {
             node {
               id
+              entityId
               basicInfo {
                 name
               }
@@ -67,7 +67,7 @@ const BAIDomainSelectV2: React.FC<BAIDomainSelectV2Props> = ({
           edge?.node
             ? {
                 label: edge.node.basicInfo?.name,
-                value: toLocalId(edge.node.id),
+                value: edge.node.entityId,
               }
             : null,
         ),

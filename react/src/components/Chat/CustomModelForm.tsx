@@ -5,13 +5,12 @@
 // `Form`/`FormInstance` state engine stays (SHIM); visuals are BAIFormItem.
 import { Form, type FormInstance } from '../../form-engine';
 import BAIFormItem from '../BAIFormItem';
-import { AstryxFormTextInput } from '../astryxFormControls';
 import DeploymentTokenSelect from './DeploymentTokenSelect';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
 import { useTheme } from '@lablup/ui-common/theme';
 import useResizeObserver from '@react-hook/resize-observer';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAITextInput } from 'backend.ai-ui';
 import { RotateCw } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -98,8 +97,8 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
               `InputGroup`, disproportionate for a decorative hint here —
               dropped (simplicity policy). The URL is still shown in the page
               header above this form. */}
-          <AstryxFormTextInput
-            label={t('modelService.BasePath')}
+          <BAITextInput
+            aria-label={t('modelService.BasePath')}
             placeholder="v1"
             disabled={loading}
           />

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ee92b931c6aa223e666e3b8ddf19b0e9>>
+ * @generated SignedSource<<46607fbfac72538ebe797d699d2b1542>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -201,17 +201,24 @@ v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "revisionNumber",
+  "name": "fieldId",
   "storageKey": null
 },
 v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "createdAt",
+  "name": "revisionNumber",
   "storageKey": null
 },
 v9 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "createdAt",
+  "storageKey": null
+},
+v10 = {
   "alias": null,
   "args": null,
   "concreteType": "ClusterConfig",
@@ -236,7 +243,7 @@ v9 = {
   ],
   "storageKey": null
 },
-v10 = {
+v11 = {
   "alias": null,
   "args": null,
   "concreteType": "AllocatedResourceSlot",
@@ -261,25 +268,25 @@ v10 = {
   ],
   "storageKey": null
 },
-v11 = {
+v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v12 = {
+v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "value",
   "storageKey": null
 },
-v13 = [
-  (v11/*: any*/),
-  (v12/*: any*/)
+v14 = [
+  (v12/*: any*/),
+  (v13/*: any*/)
 ],
-v14 = {
+v15 = {
   "alias": null,
   "args": null,
   "concreteType": "ResourceConfig",
@@ -302,7 +309,7 @@ v14 = {
           "kind": "LinkedField",
           "name": "entries",
           "plural": true,
-          "selections": (v13/*: any*/),
+          "selections": (v14/*: any*/),
           "storageKey": null
         }
       ],
@@ -311,14 +318,14 @@ v14 = {
   ],
   "storageKey": null
 },
-v15 = {
+v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "key",
   "storageKey": null
 },
-v16 = {
+v17 = {
   "alias": null,
   "args": null,
   "concreteType": "ModelRuntimeConfig",
@@ -334,7 +341,7 @@ v16 = {
       "name": "runtimeVariant",
       "plural": false,
       "selections": [
-        (v11/*: any*/),
+        (v12/*: any*/),
         (v2/*: any*/)
       ],
       "storageKey": null
@@ -361,7 +368,7 @@ v16 = {
           "kind": "LinkedField",
           "name": "entries",
           "plural": true,
-          "selections": (v13/*: any*/),
+          "selections": (v14/*: any*/),
           "storageKey": null
         }
       ],
@@ -382,7 +389,7 @@ v16 = {
           "name": "presetId",
           "storageKey": null
         },
-        (v12/*: any*/),
+        (v13/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -391,7 +398,7 @@ v16 = {
           "name": "preset",
           "plural": false,
           "selections": [
-            (v11/*: any*/),
+            (v12/*: any*/),
             {
               "alias": null,
               "args": null,
@@ -407,7 +414,7 @@ v16 = {
               "name": "targetSpec",
               "plural": false,
               "selections": [
-                (v15/*: any*/)
+                (v16/*: any*/)
               ],
               "storageKey": null
             },
@@ -421,21 +428,21 @@ v16 = {
   ],
   "storageKey": null
 },
-v17 = {
+v18 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "vfolderId",
   "storageKey": null
 },
-v18 = {
+v19 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "mountDestination",
   "storageKey": null
 },
-v19 = {
+v20 = {
   "alias": null,
   "args": null,
   "concreteType": "VirtualFolderNode",
@@ -444,7 +451,7 @@ v19 = {
   "plural": false,
   "selections": [
     (v2/*: any*/),
-    (v11/*: any*/),
+    (v12/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -455,7 +462,7 @@ v19 = {
   ],
   "storageKey": null
 },
-v20 = {
+v21 = {
   "alias": null,
   "args": null,
   "concreteType": "ModelMountConfig",
@@ -463,8 +470,8 @@ v20 = {
   "name": "modelMountConfig",
   "plural": false,
   "selections": [
-    (v17/*: any*/),
     (v18/*: any*/),
+    (v19/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -479,11 +486,11 @@ v20 = {
       "name": "subpath",
       "storageKey": null
     },
-    (v19/*: any*/)
+    (v20/*: any*/)
   ],
   "storageKey": null
 },
-v21 = {
+v22 = {
   "alias": null,
   "args": null,
   "concreteType": "ExtraVFolderMountInfo",
@@ -491,8 +498,8 @@ v21 = {
   "name": "extraMounts",
   "plural": true,
   "selections": [
-    (v17/*: any*/),
     (v18/*: any*/),
+    (v19/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -500,15 +507,15 @@ v21 = {
       "name": "mountPerm",
       "storageKey": null
     },
-    (v19/*: any*/)
+    (v20/*: any*/)
   ],
   "storageKey": null
 },
-v22 = [
-  (v15/*: any*/),
-  (v12/*: any*/)
+v23 = [
+  (v16/*: any*/),
+  (v13/*: any*/)
 ],
-v23 = {
+v24 = {
   "alias": null,
   "args": null,
   "concreteType": "ImageV2",
@@ -557,7 +564,7 @@ v23 = {
           "kind": "LinkedField",
           "name": "tags",
           "plural": true,
-          "selections": (v22/*: any*/),
+          "selections": (v23/*: any*/),
           "storageKey": null
         },
         {
@@ -567,7 +574,7 @@ v23 = {
           "kind": "LinkedField",
           "name": "labels",
           "plural": true,
-          "selections": (v22/*: any*/),
+          "selections": (v23/*: any*/),
           "storageKey": null
         }
       ],
@@ -576,7 +583,7 @@ v23 = {
   ],
   "storageKey": null
 },
-v24 = {
+v25 = {
   "alias": null,
   "args": null,
   "concreteType": "ModelDefinition",
@@ -592,7 +599,7 @@ v24 = {
       "name": "models",
       "plural": true,
       "selections": [
-        (v11/*: any*/),
+        (v12/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -723,18 +730,19 @@ v24 = {
   ],
   "storageKey": null
 },
-v25 = [
+v26 = [
   (v2/*: any*/),
   (v7/*: any*/),
   (v8/*: any*/),
   (v9/*: any*/),
   (v10/*: any*/),
-  (v14/*: any*/),
-  (v16/*: any*/),
-  (v20/*: any*/),
+  (v11/*: any*/),
+  (v15/*: any*/),
+  (v17/*: any*/),
   (v21/*: any*/),
-  (v23/*: any*/),
-  (v24/*: any*/)
+  (v22/*: any*/),
+  (v24/*: any*/),
+  (v25/*: any*/)
 ];
 return {
   "fragment": {
@@ -832,12 +840,13 @@ return {
               (v8/*: any*/),
               (v9/*: any*/),
               (v10/*: any*/),
-              (v14/*: any*/),
-              (v16/*: any*/),
-              (v20/*: any*/),
+              (v11/*: any*/),
+              (v15/*: any*/),
+              (v17/*: any*/),
               (v21/*: any*/),
-              (v23/*: any*/),
+              (v22/*: any*/),
               (v24/*: any*/),
+              (v25/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -856,7 +865,7 @@ return {
                     "kind": "LinkedField",
                     "name": "currentRevision",
                     "plural": false,
-                    "selections": (v25/*: any*/),
+                    "selections": (v26/*: any*/),
                     "storageKey": null
                   },
                   {
@@ -866,7 +875,7 @@ return {
                     "kind": "LinkedField",
                     "name": "deployingRevision",
                     "plural": false,
-                    "selections": (v25/*: any*/),
+                    "selections": (v26/*: any*/),
                     "storageKey": null
                   }
                 ],
@@ -881,12 +890,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "a79f83635503b9441298784db042da7c",
+    "cacheID": "bebb593de21ea5b8b06bf6e818691b76",
     "id": null,
     "metadata": {},
     "name": "DeploymentAddRevisionModalAddMutation",
     "operationKind": "mutation",
-    "text": "mutation DeploymentAddRevisionModalAddMutation(\n  $input: AddRevisionInput!\n) {\n  addModelRevision(input: $input) {\n    revision {\n      id\n      ...DeploymentRevisionDetail_revision\n      deployment {\n        id\n        currentRevisionId\n        deployingRevisionId\n        currentRevision {\n          id\n          ...DeploymentRevisionDetail_revision\n        }\n        deployingRevision {\n          id\n          ...DeploymentRevisionDetail_revision\n        }\n      }\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  revisionNumber\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    inferenceRuntimeConfig\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n    runtimeVariantPresetValues {\n      presetId\n      value\n      preset {\n        name\n        displayName\n        targetSpec {\n          key\n        }\n        id\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    subpath\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n    ...BAIImageNodeSimpleTagV2Fragment\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        command @since(version: \"26.7.0\")\n        startCommand\n        shell\n        port\n        preStartActions {\n          action\n          args\n        }\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n"
+    "text": "mutation DeploymentAddRevisionModalAddMutation(\n  $input: AddRevisionInput!\n) {\n  addModelRevision(input: $input) {\n    revision {\n      id\n      ...DeploymentRevisionDetail_revision\n      deployment {\n        id\n        currentRevisionId\n        deployingRevisionId\n        currentRevision {\n          id\n          ...DeploymentRevisionDetail_revision\n        }\n        deployingRevision {\n          id\n          ...DeploymentRevisionDetail_revision\n        }\n      }\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  fieldId\n  revisionNumber\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    inferenceRuntimeConfig\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n    runtimeVariantPresetValues {\n      presetId\n      value\n      preset {\n        name\n        displayName\n        targetSpec {\n          key\n        }\n        id\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    subpath\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n    ...BAIImageNodeSimpleTagV2Fragment\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        command @since(version: \"26.7.0\")\n        startCommand\n        shell\n        port\n        preStartActions {\n          action\n          args\n        }\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n"
   }
 };
 })();

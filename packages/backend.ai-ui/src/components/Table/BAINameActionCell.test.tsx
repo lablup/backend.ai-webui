@@ -112,15 +112,18 @@ describe('BAINameActionCell — disabled carries its reason (FR-3722)', () => {
     expect(onConfirm).not.toHaveBeenCalled();
   });
 
-  it('the overflow-menu row folds the reason into its label and disables it', () => {
+  it('the overflow-menu row keeps its label plain, disables it and shows the reason on hover', async () => {
     renderAction({
       showInMenu: 'always',
       disabled: { reason: 'Not allowed' },
     });
 
-    const item = screen.getByText('Act — Not allowed');
-    expect(item).toBeInTheDocument();
+    const item = screen.getByText('Act');
     expect(item.closest('[aria-disabled="true"],[disabled]')).not.toBeNull();
+    expect(screen.queryByText(/Act — /)).not.toBeInTheDocument();
+
+    await userEvent.hover(item, { pointerEventsCheck: 0 });
+    expect(await screen.findByText('Not allowed')).toBeInTheDocument();
   });
 });
 

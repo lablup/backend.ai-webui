@@ -11,23 +11,20 @@ import { useCurrentDomainValue, useWebUINavigate } from '../hooks';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { ProjectContext } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
-import {
-  AstryxFormNumberInput,
-  AstryxFormTagsInput,
-  AstryxFormTextInput,
-} from './astryxFormControls';
 import { Button } from '@lablup/ui-common/Button';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
+  BAICheckboxInput,
+  BAINumberInput,
+  BAITagsInput,
+  BAITextInput,
   BAIButton,
   BAIFlex,
   BAIModal,
   BAIModalProps,
   BAIProjectResourceGroupSelect,
   BAISkeleton,
-  toLocalId,
 } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -85,12 +82,13 @@ const PublicCheckbox: React.FC<{
 }> = ({ checked, onChange, label, disabled }) => {
   'use memo';
   return (
-    <CheckboxInput
-      label={label}
+    <BAICheckboxInput
       value={checked ?? false}
       onChange={(next) => onChange?.(next)}
-      isDisabled={disabled}
-    />
+      disabled={disabled}
+    >
+      {label}
+    </BAICheckboxInput>
   );
 };
 
@@ -113,6 +111,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
     graphql`
       fragment DeploymentSettingModal_deployment on ModelDeployment {
         id
+        entityId
         metadata {
           name
           tags
@@ -122,6 +121,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
           openToPublic
         }
         replicaState {
+          replicaCount
           desiredReplicaCount
         }
       }
@@ -139,6 +139,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
         createModelDeployment(input: $input) {
           deployment {
             id
+            entityId
           }
         }
       }
@@ -162,6 +163,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
               openToPublic
             }
             replicaState {
+              replicaCount
               desiredReplicaCount
             }
           }
@@ -177,7 +179,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
           commitUpdate({
             variables: {
               input: {
-                id: toLocalId(deployment.id) ?? deployment.id,
+                id: deployment.entityId,
                 name: values.name,
                 tags: values.tags?.length ? values.tags : null,
                 openToPublic: values.openToPublic,
@@ -242,7 +244,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
                 message.error(t('deployment.FailedToCreateDeployment'));
                 return;
               }
-              const newId = toLocalId(createModelDeployment.deployment.id);
+              const newId = createModelDeployment.deployment.entityId;
               message.success(t('deployment.DeploymentCreated'));
               onRequestClose(true);
               navigate(buildProjectPath(`deployments/${newId}`));
@@ -301,8 +303,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
                       .filter(Boolean),
                   ),
                   openToPublic: deployment.networkAccess.openToPublic ?? false,
-                  replicaCount:
-                    deployment.replicaState?.desiredReplicaCount ?? 1,
+                  replicaCount: deployment.replicaState?.replicaCount ?? 1,
                 }
               : { openToPublic: false, replicaCount: 1, tags: [] }
           }
@@ -314,8 +315,8 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
             tooltip={t('deployment.DeploymentNameTooltip')}
             rules={[{ required: true, message: t('deployment.NameRequired') }]}
           >
-            <AstryxFormTextInput
-              label={t('deployment.DeploymentName')}
+            <BAITextInput
+              aria-label={t('deployment.DeploymentName')}
               placeholder={t('deployment.NamePlaceholder')}
             />
           </BAIFormItem>
@@ -364,8 +365,9 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
               },
             ]}
           >
-            <AstryxFormNumberInput
-              label={t('deployment.DesiredReplicas')}
+            <BAINumberInput
+              width="100%"
+              aria-label={t('deployment.DesiredReplicas')}
               min={deployment ? 0 : 1}
             />
           </BAIFormItem>
@@ -374,12 +376,10 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
             label={t('deployment.Tags')}
             tooltip={t('deployment.TagsTooltip')}
           >
-            {/* The shared adapter, not a local Tokenizer bridge: it is the
-                same component, and it carries `tokenSeparators`, which this
-                field's own placeholder ("Enter tags, separated by commas")
-                promises. */}
-            <AstryxFormTagsInput
-              label={t('deployment.Tags')}
+            {/* `tokenSeparators` is what the placeholder ("Enter tags,
+                separated by commas") promises. */}
+            <BAITagsInput
+              aria-label={t('deployment.Tags')}
               placeholder={t('deployment.TagsPlaceholder')}
               tokenSeparators={[',', ' ']}
             />

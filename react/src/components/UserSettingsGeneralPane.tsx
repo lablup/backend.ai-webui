@@ -83,7 +83,6 @@ const UserSettingsGeneralPane = () => {
   const [, setLanguage] = useBAISettingGeneralState('language');
   const [autoAutomaticUpdateCheck, setAutoAutomaticUpdateCheck] =
     useBAISettingUserState('automatic_update_check');
-  const [autoLogout, setAutoLogout] = useBAISettingUserState('auto_logout');
   const [isOpenSSHKeypairInfoModal, { toggle: toggleSSHKeypairInfoModal }] =
     useToggle(false);
   const [
@@ -94,16 +93,14 @@ const UserSettingsGeneralPane = () => {
     useBAISettingUserState('preserve_login');
   const [experimentalAIAgents, setExperimentalAIAgents] =
     useBAISettingUserState('experimental_ai_agents');
-  const [experimentalCustomDashboard, setExperimentalCustomDashboard] =
-    useBAISettingUserState('experimental_custom_dashboard_panels');
-  const [experimentalGlobalSearch, setExperimentalGlobalSearch] =
-    useBAISettingUserState('experimental_global_search');
   const [
     experimentalImportFromHuggingFace,
     setExperimentalImportFromHuggingFace,
   ] = useBAISettingUserState('experimental_import_from_huggingface');
   const [experimentalSessionResourceGrid, setExperimentalSessionResourceGrid] =
     useBAISettingUserState('experimental_session_resource_grid');
+  const [experimentalSessionMonitor, setExperimentalSessionMonitor] =
+    useBAISettingUserState('experimental_session_monitor');
   const [shellInfo, setShellInfo] = useState<ShellScriptType>('bootstrap');
   const [isOpenShellScriptEditModal, { toggle: toggleShellScriptEditModal }] =
     useToggle(false);
@@ -275,7 +272,7 @@ const UserSettingsGeneralPane = () => {
                   }
                 : item,
             ),
-            hasSearch: true,
+            showSearch: true,
           },
           defaultValue: defaultLanguage,
           value: selectedLanguage || defaultLanguage,
@@ -311,15 +308,6 @@ const UserSettingsGeneralPane = () => {
           defaultValue: false,
           value: autoAutomaticUpdateCheck,
           onChange: setAutoAutomaticUpdateCheck,
-        },
-        {
-          'data-testid': 'items-auto-logout',
-          type: 'checkbox',
-          title: t('userSettings.AutoLogout'),
-          description: t('userSettings.DescAutoLogout'),
-          defaultValue: false,
-          value: autoLogout,
-          onChange: setAutoLogout,
         },
         {
           'data-testid': 'items-my-keypair-info',
@@ -431,24 +419,6 @@ const UserSettingsGeneralPane = () => {
           onChange: setExperimentalAIAgents,
         },
         {
-          'data-testid': 'items-experimental-custom-dashboard-panels',
-          type: 'checkbox',
-          title: t('userSettings.CustomDashboardPanels'),
-          description: t('general.Enabled'),
-          defaultValue: false,
-          value: experimentalCustomDashboard,
-          onChange: setExperimentalCustomDashboard,
-        },
-        {
-          'data-testid': 'items-experimental-command-palette',
-          type: 'checkbox',
-          title: t('userSettings.CommandPalette'),
-          description: t('general.Enabled'),
-          defaultValue: false,
-          value: experimentalGlobalSearch,
-          onChange: setExperimentalGlobalSearch,
-        },
-        {
           'data-testid': 'items-experimental-import-from-huggingface',
           type: 'checkbox',
           title: t('userSettings.ImportFromHuggingFace'),
@@ -465,6 +435,15 @@ const UserSettingsGeneralPane = () => {
           defaultValue: false,
           value: experimentalSessionResourceGrid,
           onChange: setExperimentalSessionResourceGrid,
+        },
+        {
+          'data-testid': 'items-experimental-session-monitor',
+          type: 'checkbox',
+          title: t('userSettings.SessionMonitor'),
+          description: <Trans i18nKey="userSettings.DescSessionMonitor" />,
+          defaultValue: false,
+          value: experimentalSessionMonitor,
+          onChange: setExperimentalSessionMonitor,
         },
       ],
     },

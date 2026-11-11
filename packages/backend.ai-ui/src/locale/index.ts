@@ -1,98 +1,66 @@
-import de from './de.json';
-import el from './el.json';
 import en from './en.json';
-import es from './es.json';
-import fi from './fi.json';
-import fr from './fr.json';
-import id from './id.json';
-import it from './it.json';
-import ja from './ja.json';
-import ko from './ko.json';
-import mn from './mn.json';
-import ms from './ms.json';
-import pl from './pl.json';
-import pt_BR from './pt-BR.json';
-import pt from './pt.json';
-import ru from './ru.json';
-import th from './th.json';
-import tr from './tr.json';
-import vi from './vi.json';
-import zh_CN from './zh-CN.json';
-import zh_TW from './zh-TW.json';
-import { createInstance, type i18n as I18nInstance } from 'i18next';
+import {
+  createInstance,
+  type BackendModule,
+  type i18n as I18nInstance,
+} from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
-const resources = {
-  en: {
-    'backend.ai-ui': en,
-  },
-  ko: {
-    'backend.ai-ui': ko,
-  },
-  de: {
-    'backend.ai-ui': de,
-  },
-  el: {
-    'backend.ai-ui': el,
-  },
-  es: {
-    'backend.ai-ui': es,
-  },
-  fi: {
-    'backend.ai-ui': fi,
-  },
-  fr: {
-    'backend.ai-ui': fr,
-  },
-  id: {
-    'backend.ai-ui': id,
-  },
-  it: {
-    'backend.ai-ui': it,
-  },
-  ja: {
-    'backend.ai-ui': ja,
-  },
-  mn: {
-    'backend.ai-ui': mn,
-  },
-  ms: {
-    'backend.ai-ui': ms,
-  },
-  pl: {
-    'backend.ai-ui': pl,
-  },
-  'pt-BR': {
-    'backend.ai-ui': pt_BR,
-  },
-  pt: {
-    'backend.ai-ui': pt,
-  },
-  ru: {
-    'backend.ai-ui': ru,
-  },
-  th: {
-    'backend.ai-ui': th,
-  },
-  tr: {
-    'backend.ai-ui': tr,
-  },
-  vi: {
-    'backend.ai-ui': vi,
-  },
-  'zh-CN': {
-    'backend.ai-ui': zh_CN,
-  },
-  'zh-TW': {
-    'backend.ai-ui': zh_TW,
+const NAMESPACE = 'backend.ai-ui';
+
+type Catalog = { default: Record<string, unknown> };
+
+// Only `en` is bundled; every other language is its own lazy chunk.
+// Specifiers must stay literal so Vite/Rollup can split them.
+const catalogLoaders: Record<string, () => Promise<Catalog>> = {
+  de: () => import('./de.json'),
+  el: () => import('./el.json'),
+  es: () => import('./es.json'),
+  fi: () => import('./fi.json'),
+  fr: () => import('./fr.json'),
+  id: () => import('./id.json'),
+  it: () => import('./it.json'),
+  ja: () => import('./ja.json'),
+  ko: () => import('./ko.json'),
+  mn: () => import('./mn.json'),
+  ms: () => import('./ms.json'),
+  pl: () => import('./pl.json'),
+  'pt-BR': () => import('./pt-BR.json'),
+  pt: () => import('./pt.json'),
+  ru: () => import('./ru.json'),
+  th: () => import('./th.json'),
+  tr: () => import('./tr.json'),
+  vi: () => import('./vi.json'),
+  'zh-CN': () => import('./zh-CN.json'),
+  'zh-TW': () => import('./zh-TW.json'),
+};
+
+const lazyCatalogBackend: BackendModule = {
+  type: 'backend',
+  init: () => {},
+  read: (language, _namespace, callback) => {
+    const load = catalogLoaders[language];
+    // i18next also asks for base codes (`zh` for `zh-CN`) that ship no catalog.
+    if (!load) {
+      callback(null, {});
+      return;
+    }
+    load().then(
+      (mod) => callback(null, mod.default),
+      (error: Error) => callback(error, null),
+    );
   },
 };
 
 export const i18n: I18nInstance = createInstance({
   lng: 'en',
   fallbackLng: 'en',
-  defaultNS: 'backend.ai-ui',
-  resources,
+  // `ns` is what the backend loads; it defaults to `translation`.
+  ns: [NAMESPACE],
+  defaultNS: NAMESPACE,
+  resources: { en: { [NAMESPACE]: en } },
+  // Keep the bundled `en`; every other language goes through the backend.
+  partialBundledLanguages: true,
   interpolation: {
     escapeValue: false,
     prefix: '{{',
@@ -105,32 +73,31 @@ export const i18n: I18nInstance = createInstance({
   nsSeparator: '^',
 });
 
-i18n.use(initReactI18next).init();
+i18n.use(lazyCatalogBackend).use(initReactI18next).init();
 
-// Dev-only HMR boundary for BUI's own locale JSONs.
-//
-// BUI keeps its own i18n singleton (separate from the host app — see the
-// note in `react/vite.config.ts` about why `i18next`/`react-i18next` are
-// excluded from optimizeDeps). Without this boundary, editing a JSON under
-// this directory would propagate up the import graph and Vite would
-// re-evaluate this module — that creates a fresh `i18n` instance and
-// orphans the singleton that `BAIConfigProvider` is already holding, so
-// nothing visibly updates.
-//
-// `import.meta.hot` is dev-only — Vite tree-shakes the entire branch out
-// of production builds.
+const languageLoads = new Map<string, Promise<void>>();
+
+/**
+ * Loads BUI's catalog for `lng` without switching to it. One promise per
+ * language, so React's `use()` sees the same object on every render.
+ */
+export const loadBAILanguage = (lng: string): Promise<void> => {
+  let pending = languageLoads.get(lng);
+  if (!pending) {
+    pending = i18n.loadLanguages(lng);
+    languageLoads.set(lng, pending);
+  }
+  return pending;
+};
+
+// Dev-only HMR boundary for BUI's locale JSONs. Without it a JSON edit
+// re-evaluates this module, and the fresh `i18n` instance orphans the one
+// `BAIConfigProvider` already holds. Vite drops this branch in production.
 if (import.meta.hot) {
-  // IMPORTANT: Vite analyses the `accept(deps, cb)` deps argument STATICALLY
-  // (at transform time, not at runtime). Passing a variable reference like
-  // `accept(localeFiles, cb)` causes Vite to silently fall back to a plain
-  // self-accept, which RE-EVALUATES this module on every JSON change and
-  // creates a fresh `i18n` instance — orphaning the singleton that
-  // BAIConfigProvider already holds. So the dep list MUST be an inline
-  // literal array of string literals.
-  //
-  // Languages are zipped from the JSON path: `./ko.json` → `ko`. Keep this
-  // mapping in `LANG_BY_FILE` so removing the constant doesn't silently
-  // change behaviour.
+  // TRAP: Vite reads the `accept(deps, cb)` list STATICALLY. A variable
+  // reference silently degrades to a self-accept (the orphaning above), so
+  // the list MUST stay an inline literal array, in the same order as
+  // LANG_BY_FILE (the callback zips them by index).
   const LANG_BY_FILE: Record<string, string> = {
     './de.json': 'de',
     './el.json': 'el',
@@ -154,8 +121,6 @@ if (import.meta.hot) {
     './zh-CN.json': 'zh-CN',
     './zh-TW.json': 'zh-TW',
   };
-  // The path order here MUST match the keys of LANG_BY_FILE above so the
-  // index-based zip in the callback stays correct.
   import.meta.hot.accept(
     [
       './de.json',
@@ -187,16 +152,13 @@ if (import.meta.hot) {
       modules.forEach((mod, idx) => {
         if (!mod) return;
         const lng = LANG_BY_FILE[fileKeys[idx]];
-        const data = (mod as unknown as { default: Record<string, unknown> })
-          .default;
-        // `deep=true, overwrite=true` — replace the whole bundle for this
-        // (lng, ns) so removed keys actually disappear rather than linger.
-        i18n.addResourceBundle(lng, 'backend.ai-ui', data, true, true);
+        const data = (mod as unknown as Catalog).default;
+        // Overwrite the whole bundle so removed keys disappear too.
+        i18n.addResourceBundle(lng, NAMESPACE, data, true, true);
         updated = true;
       });
-      // `loaded` is not in react-i18next's default `bindI18n` set, so we
-      // bounce the language through `changeLanguage` to trigger
-      // `languageChanged`, which IS bound and re-renders subscribers.
+      // `loaded` is not in react-i18next's default `bindI18n`; re-trigger
+      // `languageChanged`, which is, to re-render subscribers.
       if (updated && i18n.language) {
         i18n.changeLanguage(i18n.language);
       }
@@ -207,11 +169,10 @@ if (import.meta.hot) {
 /**
  * The locale a host hands `<BAIConfigProvider locale={…}>`.
  *
- * `astryxLocale` is the flat `@astryx.*` → string catalog for the language.
- * The per-language modules under this directory (`ko_KR.ts`, …, published as
- * the `backend.ai-ui/locale/*` package export) each bundle their
- * `./astryx/*.json` catalog into this shape — the host imports one and passes
- * it whole, exactly like the antd-era `antdLocale` flow this replaces.
+ * `astryxLocale` is the flat `@astryx.*` / `uic.*` → string override catalog
+ * for the language. The per-language modules under this directory (`ko_KR.ts`,
+ * …, the `backend.ai-ui/locale/*` package export) each build one; hosts load
+ * the one they need and pass it whole.
  */
 export interface BAILocale {
   lang: string;

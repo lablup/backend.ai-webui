@@ -191,6 +191,25 @@ You must perform first-time compilation for testing. Some additional mandatory p
 $ make compile_wsproxy
 ```
 
+#### User manual screenshots (Git LFS)
+
+The user manual images (anywhere under `packages/backend.ai-webui-docs/src/`) are in
+[Git LFS](https://git-lfs.com). Normal development needs nothing extra: a clone keeps them as
+small pointer files, even with git-lfs installed (`.lfsconfig`). To build the manual or work on
+its screenshots, install git-lfs, set it up once, and fetch the images:
+
+```console
+$ git lfs install --skip-repo
+$ pnpm --filter backend.ai-webui-docs run images:pull
+```
+
+Use `--skip-repo`: Husky owns this repository's hooks, so a plain `git lfs install` stops at
+`Hook already exists: pre-push` (it still sets up the filters). The upload is done by Husky's
+`.husky/pre-push`, which runs `git lfs pre-push`. Then add or replace images and commit and
+push as usual; the images are committed as pointers and `git push` uploads them. A push
+that carries an image committed as raw bytes (added without git-lfs) is refused, with the
+commands that rewrite the commit; every other push goes through, with or without git-lfs.
+
 ### Developing / testing with dev server
 
 On a terminal:
@@ -275,29 +294,6 @@ On another terminal:
 $ pnpm run test      # Run tests (tests are located in `tests` directory)
 ```
 
-#### Visual Regression test
-
-To perform visual regression tests,
-On a terminal;
-
-```console
-$ pnpm playwright test e2e/visual_regression
-```
-
-You can see screenshots in `e2e/snapshots`.
-
-If you want to update screenshots due to UI changes, On a terminal;
-
-```console
-$ pnpm playwright test e2e/visual_regression --update-snapshots
-```
-
-Also, If you want to see visual regression test report, On a terminal;
-
-```console
-$ pnpm exec playwright show-report
-```
-
 #### Jest test
 
 To perform JavaScript test,
@@ -374,6 +370,7 @@ $ make bundle
 ```
 
 will generate compiled static web bundle at `./app` directory. Then you can serve the web bundle via webservers.
+It also generates `backend.ai-webui-bundle-<version>-nosourcemap.zip`, the same bundle without source maps, for deployments that must not expose them.
 
 ### Serving with nginx
 

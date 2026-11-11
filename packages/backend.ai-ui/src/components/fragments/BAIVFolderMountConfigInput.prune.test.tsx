@@ -3,12 +3,12 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { BAIAppProvider, message } from '../../app-shim';
-import { convertToUUID } from '../../helper';
 import MockVFolderFileProviders from '../../tests/MockVFolderFileProviders';
 import {
-  MOCK_LEGACY_PROJECT_ID,
+  MOCK_MOUNT_SCOPE,
   MOCK_MOUNTABLE_HOSTS,
-  mockLegacyVFolders,
+  mockMountFolder,
+  mockMountFolders,
 } from '../../tests/mockVFolderFileTree';
 import BAIVFolderMountConfigInput, {
   type VFolderMountConfigValue,
@@ -18,8 +18,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 // `my-project-data` sits on a host granting mount-in-session; `cold-archive`
 // is on `archive:cold`, which is not in MOCK_MOUNTABLE_HOSTS.
-const mountableId = convertToUUID(mockLegacyVFolders[0].id);
-const unmountableId = convertToUUID(mockLegacyVFolders[3].id);
+const mountableId = mockMountFolders[0].id;
+const unmountableId = mockMountFolders[3].id;
 
 const mountableEntry: VFolderMountConfigValue = {
   vfolderId: mountableId,
@@ -33,11 +33,23 @@ const unmountableEntry: VFolderMountConfigValue = {
 };
 
 // A suspended fetch only retries once its `act` scope is awaited: one scope for
-// the render, one more for the mock's 250 ms `GET /folders`.
+// the render, one more for the mountability lookup.
 const flush = () =>
   act(async () => {
     await new Promise((resolve) => setTimeout(resolve, 400));
   });
+
+// Reachable and on a mountable host, but the caller's mount level is NONE.
+const noMountFolder = mockMountFolder({
+  id: 'aaaaaaaa-bbbb-cccc-dddd-eeeeffff0009',
+  name: 'no-mount',
+  permission: 'NONE',
+});
+const noMountEntry: VFolderMountConfigValue = {
+  vfolderId: noMountFolder.id,
+  name: 'no-mount',
+  mountDestination: '',
+};
 
 const renderWithFolders = async (
   value: Array<VFolderMountConfigValue>,
@@ -47,11 +59,11 @@ const renderWithFolders = async (
     render(
       <BAIAppProvider>
         <MockVFolderFileProviders
-          folders={mockLegacyVFolders}
+          folders={[...mockMountFolders, noMountFolder]}
           suspenseFallback="Loading..."
         >
           <BAIVFolderMountConfigInput
-            currentProjectId={MOCK_LEGACY_PROJECT_ID}
+            scope={MOCK_MOUNT_SCOPE}
             mountableHosts={MOCK_MOUNTABLE_HOSTS}
             value={value}
             onChange={onChange}
@@ -77,6 +89,16 @@ describe('BAIVFolderMountConfigInput prune', () => {
 
     expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
     expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenCalledWith([mountableEntry]);
+    expect(warning).toHaveBeenCalledTimes(1);
+  });
+
+  it('drops an entry whose mount level is NONE', async () => {
+    const warning = vi.spyOn(message, 'warning').mockImplementation(vi.fn());
+    const onChange = vi.fn();
+
+    await renderWithFolders([mountableEntry, noMountEntry], onChange);
+
     expect(onChange).toHaveBeenCalledWith([mountableEntry]);
     expect(warning).toHaveBeenCalledTimes(1);
   });

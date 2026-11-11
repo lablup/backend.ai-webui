@@ -4,94 +4,99 @@
  */
 import { useSuspendedBackendaiClient } from '.';
 import { useCurrentUserProjectRolesQuery } from '../__generated__/useCurrentUserProjectRolesQuery.graphql';
+import { useAccessibleProjects } from './useAccessibleProjects';
 import { useCurrentProjectValue } from './useCurrentProject';
 import { useUrlProjectValidity } from './useUrlProjectValidity';
+import * as _ from 'lodash-es';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export interface CurrentUserProjectRolesResult {
   /** `true` when the authenticated user is a super-admin (derived from baiClient). */
   isSuperAdmin: boolean;
-  /** Domain names the user has domain-admin rights over (derived from baiClient for now). */
-  domainAdminDomains: string[];
   /**
-   * Project UUIDs where the user holds a project-scoped admin role. Grants
-   * inherited from the domain or global scope are not counted.
+   * UUIDs of the user's member projects on which they hold the `scope_admin`
+   * permission, through any scope that governs the project.
    */
   projectAdminIds: string[];
 }
 
+// `myAtomicBulkScopePermissions` refuses more than 100 targets.
+const MAX_PERMISSION_TARGETS = 100;
+
 /**
- * Hook that reports which projects the user holds a project-admin role in:
- * `myRolesV2` filtered to the user's project-scoped roles that carry a
- * `scope_admin` permission. `@catch(to: RESULT)` keeps general pages
- * rendering when the query fails.
+ * Hook that reports which projects the header's selector lists grant the
+ * `scope_admin` permission, asked through `myAtomicBulkScopePermissions`.
+ * A super-admin bypasses RBAC, so every listed project counts for them.
+ * `@catch(to: RESULT)` keeps general pages rendering when the query fails.
  */
 export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
+  'use memo';
   const baiClient = useSuspendedBackendaiClient();
+
+  // The same member list the header's project selector renders.
+  const { accessibleProjects, personalProject } = useAccessibleProjects();
+  const memberProjectIds = _.uniq(
+    _.compact([
+      ..._.map(accessibleProjects, (project) => project?.id),
+      personalProject?.id,
+    ]),
+  )
+    .sort()
+    .slice(0, MAX_PERMISSION_TARGETS);
 
   const data = useLazyLoadQuery<useCurrentUserProjectRolesQuery>(
     graphql`
-      query useCurrentUserProjectRolesQuery {
-        projectAdminRoles: myRolesV2(
-          first: 100
-          filter: {
-            status: { equals: ACTIVE }
-            mappedScope: { scopeType: { iEquals: "project" } }
-            permissions: { some: { entityType: { iEquals: "scope_admin" } } }
-          }
+      query useCurrentUserProjectRolesQuery($targets: [PermissionTarget!]!) {
+        projectAdminPermissions: myAtomicBulkScopePermissions(
+          input: { targets: $targets }
         ) @catch(to: RESULT) {
-          edges {
-            node {
-              id
-              scopeId
-            }
+          items {
+            scopeId
+            permissions
           }
         }
       }
     `,
-    {},
     {
-      // store-or-network keeps the result cached across pages for the session.
-      fetchPolicy: 'store-or-network',
+      targets: _.map(memberProjectIds, (scopeId) => ({
+        scopeType: 'project',
+        scopeId,
+        entityType: 'scope_admin',
+      })),
+    },
+    {
+      fetchPolicy:
+        memberProjectIds.length > 0 ? 'store-or-network' : 'store-only',
     },
   );
 
-  const ids = new Set<string>();
-  if (data.projectAdminRoles?.ok === true) {
-    for (const roleEdge of data.projectAdminRoles.value?.edges ?? []) {
-      if (roleEdge?.node?.scopeId) {
-        ids.add(roleEdge.node.scopeId);
-      }
-    }
-  }
-  // Sort for deterministic output across fetches.
-  const projectAdminIds = Array.from(ids).sort();
+  const projectAdminIds =
+    data.projectAdminPermissions?.ok === true
+      ? _.uniq(
+          _.map(
+            _.filter(
+              data.projectAdminPermissions.value?.items,
+              (item) => item.permissions.length > 0,
+            ),
+            'scopeId',
+          ),
+        ).sort()
+      : [];
 
   const isSuperAdmin: boolean = !!baiClient?.is_superadmin;
-  // Domain-admin detection via RBAC is out of scope for this PR (no stable
-  // signal yet agreed with backend). Fall back to the existing baiClient
-  // heuristic: non-super admins whose legacy role === 'admin'.
-  const isLegacyAdmin: boolean = !!baiClient?.is_admin && !isSuperAdmin;
-  const domainName: string | undefined =
-    typeof baiClient?.current_domain === 'string'
-      ? baiClient.current_domain
-      : baiClient?._config?.domainName;
-  const domainAdminDomains: string[] =
-    isLegacyAdmin && domainName ? [domainName] : [];
 
   return {
     isSuperAdmin,
-    domainAdminDomains,
     projectAdminIds,
   };
 };
 
-export type EffectiveAdminRole =
-  'superadmin' | 'domainAdmin' | 'currentProjectAdmin' | 'none';
+export type EffectiveAdminRole = 'superadmin' | 'currentProjectAdmin' | 'none';
 
 /**
  * Derived hook returning the user's effective admin role with priority:
- * super > domain > project > none.
+ * superadmin > project > none. The legacy `admin` role (domain admin) gets no
+ * admin tier of its own.
  *
  * Project-admin rights are evaluated against the project the URL names
  * (`/project/:projectName/*`), falling back to the ambient current-project
@@ -102,16 +107,23 @@ export type EffectiveAdminRole =
  * what converges the atom to the URL — from ever mounting.
  */
 export const useEffectiveAdminRole = (): EffectiveAdminRole => {
-  const { isSuperAdmin, domainAdminDomains, projectAdminIds } =
-    useCurrentUserProjectRoles();
+  const { isSuperAdmin } = useCurrentUserProjectRoles();
+  const isCurrentProjectAdmin = useIsCurrentProjectAdmin();
 
+  if (isSuperAdmin) return 'superadmin';
+  if (isCurrentProjectAdmin) return 'currentProjectAdmin';
+  return 'none';
+};
+
+/**
+ * Whether the user holds a project-scoped admin role in the target project
+ * (URL project, else the current-project atom), regardless of superadmin
+ * rights.
+ */
+export const useIsCurrentProjectAdmin = (): boolean => {
+  const { projectAdminIds } = useCurrentUserProjectRoles();
   const { urlProjectName, resolvedId } = useUrlProjectValidity();
   const currentProjectId = useCurrentProjectValue()?.id;
   const targetProjectId = urlProjectName ? resolvedId : currentProjectId;
-
-  if (isSuperAdmin) return 'superadmin';
-  if (domainAdminDomains.length > 0) return 'domainAdmin';
-  if (targetProjectId && projectAdminIds.includes(targetProjectId))
-    return 'currentProjectAdmin';
-  return 'none';
+  return !!targetProjectId && projectAdminIds.includes(targetProjectId);
 };

@@ -4,16 +4,14 @@
  */
 import { AgentStatsFragment$key } from '../__generated__/AgentStatsFragment.graphql';
 import { useResourceSlotsDetails } from '../hooks/backendai';
-import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '@lablup/ui-common/SegmentedControl';
+import PanelDetailLinkButton from './DashboardPanels/PanelDetailLinkButton';
+import { countText, readCount } from './DashboardPanels/countAliases';
+import { readPrimary } from './DashboardPanels/panelPermission';
 import { Heading } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIBoardItemTitle,
   BAIDoubleBadge,
-  BAIFetchKeyButton,
   BAIFlex,
   BAIFlexProps,
   BAISkeleton,
@@ -21,80 +19,71 @@ import {
   convertToNumber,
   processMemoryValue,
   useControllableValue,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
+  useIsInBAIBoardItem,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { ReactNode, useTransition } from 'react';
+import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
 
-interface AgentStatsProps extends BAIFlexProps {
-  queryRef: AgentStatsFragment$key;
-  isRefetching?: boolean;
+interface AgentStatsViewProps extends BAIFlexProps {
+  /** Slot totals keyed by slot name; null when they could not be read. */
+  totalResource: AgentSlotTotals | null;
+  schedulableText: string;
+  aliveText: string;
   displayType?: 'used' | 'free';
   onDisplayTypeChange?: (type: 'used' | 'free') => void;
   extra?: ReactNode;
 }
 
-const AgentStats: React.FC<AgentStatsProps> = ({
-  queryRef,
-  isRefetching,
+export interface AgentSlotTotals {
+  free: Record<string, number>;
+  used: Record<string, number>;
+  capacity: Record<string, number>;
+}
+
+interface AgentStatsProps extends Omit<
+  AgentStatsViewProps,
+  'totalResource' | 'schedulableText' | 'aliveText'
+> {
+  queryRef: AgentStatsFragment$key;
+}
+
+const agentCountText = (alias: Parameters<typeof readCount>[0]) => {
+  const { count, denied } = readCount(alias);
+  return countText(denied ? null : count);
+};
+
+export const AgentStatsView: React.FC<AgentStatsViewProps> = ({
+  totalResource,
+  schedulableText,
+  aliveText,
   extra,
   ...props
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
-
-  const [isPendingRefetch, startRefetchTransition] = useTransition();
+  const isInBoard = useIsInBAIBoardItem();
 
   const [displayType, setDisplayType] = useControllableValue<
-    Exclude<AgentStatsProps['displayType'], undefined>
+    Exclude<AgentStatsViewProps['displayType'], undefined>
   >(props, {
     defaultValue: 'used',
     trigger: 'onDisplayTypeChange',
     defaultValuePropName: 'defaultDisplayType',
   });
 
-  const [data, refetch] = useRefetchableFragment(
-    graphql`
-      fragment AgentStatsFragment on Query
-      @argumentDefinitions(
-        aliveAgentFilter: { type: "String!" }
-        schedulableAgentFilter: { type: "String!" }
-      )
-      @refetchable(queryName: "AgentStatsRefetchQuery") {
-        agentStats {
-          totalResource {
-            free
-            used
-            capacity
-          }
-        }
-        aliveAgents: agent_nodes(filter: $aliveAgentFilter, first: 1) {
-          count
-        }
-        schedulableAgents: agent_nodes(
-          filter: $schedulableAgentFilter
-          first: 1
-        ) {
-          count
-        }
-      }
-    `,
-    queryRef,
-  );
-
   const resourceSlotsDetails = useResourceSlotsDetails();
 
   const agentStatsData = (() => {
-    const totalResource = data.agentStats?.totalResource;
     if (!totalResource) {
       return { cpu: null, memory: null, accelerators: [] };
     }
 
-    const free = totalResource.free as Record<string, number>;
-    const used = totalResource.used as Record<string, number>;
-    const capacity = totalResource.capacity as Record<string, number>;
+    const { free, used, capacity } = totalResource;
 
     const cpuSlot = resourceSlotsDetails?.resourceSlotsInRG?.['cpu'];
     const memSlot = resourceSlotsDetails?.resourceSlotsInRG?.['mem'];
@@ -179,8 +168,13 @@ const AgentStats: React.FC<AgentStatsProps> = ({
       direction="column"
       align="stretch"
       style={{
-        paddingInline: token('--spacing-8'),
-        paddingBottom: token('--spacing-4'),
+        // On a board the board pads the item.
+        ...(isInBoard
+          ? {}
+          : {
+              paddingInline: token('--spacing-8'),
+              paddingBottom: token('--spacing-4'),
+            }),
         ...props.style,
       }}
       {..._.omit(props, ['style'])}
@@ -195,9 +189,7 @@ const AgentStats: React.FC<AgentStatsProps> = ({
               values={[
                 { label: t('agentStats.SchedulableAgents') },
                 {
-                  label: `${data.schedulableAgents?.count ?? 0} / ${
-                    data.aliveAgents?.count ?? 0
-                  }`,
+                  label: `${schedulableText} / ${aliveText}`,
                 },
               ]}
             />
@@ -209,38 +201,26 @@ const AgentStats: React.FC<AgentStatsProps> = ({
             {/* PILOT-DECISION: SegmentedControl.label is aria-only and required;
                 composed from the two existing option labels to avoid adding new
                 i18n keys while page tickets run in parallel. */}
-            <SegmentedControl
+            <BAISegmentedControl
               size="sm"
-              label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
+              aria-label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
               value={displayType}
               onChange={(v) =>
                 setDisplayType(
-                  v as Exclude<AgentStatsProps['displayType'], undefined>,
+                  v as Exclude<AgentStatsViewProps['displayType'], undefined>,
                 )
               }
             >
-              <SegmentedControlItem value="used" label={t('dashboard.Used')} />
-              <SegmentedControlItem value="free" label={t('dashboard.Free')} />
-            </SegmentedControl>
-            <BAIFetchKeyButton
-              size="small"
-              loading={isPendingRefetch || isRefetching}
-              value=""
-              onChange={() => {
-                startRefetchTransition(() => {
-                  refetch(
-                    {},
-                    {
-                      fetchPolicy: 'network-only',
-                    },
-                  );
-                });
-              }}
-              type="text"
-              style={{
-                backgroundColor: 'transparent',
-              }}
-            />
+              <BAISegmentedControlItem
+                value="used"
+                label={t('dashboard.Used')}
+              />
+              <BAISegmentedControlItem
+                value="free"
+                label={t('dashboard.Free')}
+              />
+            </BAISegmentedControl>
+            <PanelDetailLinkButton />
             {extra}
           </BAIFlex>
         }
@@ -255,6 +235,58 @@ const AgentStats: React.FC<AgentStatsProps> = ({
         />
       )}
     </BAIFlex>
+  );
+};
+
+/** Cluster-wide agent totals; superadmins only (`agentStats`, `agent_nodes`). */
+const AgentStats: React.FC<AgentStatsProps> = ({ queryRef, ...props }) => {
+  'use memo';
+  const [data] = useRefetchableFragment(
+    graphql`
+      fragment AgentStatsFragment on Query
+      @argumentDefinitions(
+        aliveAgentFilter: { type: "String!" }
+        schedulableAgentFilter: { type: "String!" }
+      )
+      @refetchable(queryName: "AgentStatsRefetchQuery") {
+        agentStats @catch(to: RESULT) {
+          totalResource {
+            free
+            used
+            capacity
+          }
+        }
+        aliveAgents: agent_nodes(filter: $aliveAgentFilter, first: 1)
+          @catch(to: RESULT) {
+          count
+        }
+        schedulableAgents: agent_nodes(
+          filter: $schedulableAgentFilter
+          first: 1
+        ) @catch(to: RESULT) {
+          count
+        }
+      }
+    `,
+    queryRef,
+  );
+
+  const totals = readPrimary(data.agentStats)?.totalResource;
+  return (
+    <AgentStatsView
+      totalResource={
+        totals
+          ? {
+              free: totals.free as Record<string, number>,
+              used: totals.used as Record<string, number>,
+              capacity: totals.capacity as Record<string, number>,
+            }
+          : null
+      }
+      schedulableText={agentCountText(data.schedulableAgents)}
+      aliveText={agentCountText(data.aliveAgents)}
+      {...props}
+    />
   );
 };
 

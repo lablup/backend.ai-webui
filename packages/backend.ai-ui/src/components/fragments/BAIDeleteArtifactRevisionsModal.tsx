@@ -9,7 +9,6 @@ import {
   convertToDecimalUnit,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  toLocalId,
 } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIAlert from '../BAIAlert';
@@ -86,6 +85,7 @@ const BAIDeleteArtifactRevisionsModal = ({
         fragment BAIDeleteArtifactRevisionsModalArtifactRevisionFragment on ArtifactRevision
         @relay(plural: true) {
           id
+          fieldId
           version
           size
           status
@@ -127,8 +127,8 @@ const BAIDeleteArtifactRevisionsModal = ({
           cleanupVersion({
             variables: {
               input: {
-                artifactRevisionIds: filteredSelectedRevisions.map((revision) =>
-                  toLocalId(revision.id),
+                artifactRevisionIds: filteredSelectedRevisions.map(
+                  (revision) => revision.fieldId,
                 ),
               },
             },

@@ -430,8 +430,10 @@ manager cannot answer instead of sending it.
 The manager version is read from `GET <endpoint>/func/`, which answers
 `{ version, manager }` — the same call the WebUI client makes
 (`packages/backend.ai-client/src/client.ts`, `get_manager_version` →
-`getServerVersion` → `newPublicRequest('GET', '/')`, rewritten to `/func/` in
-SESSION mode). `/server/version` is the fallback. The answer is cached per
+`getServerVersion` → `GET /`, rewritten to `/func/` in SESSION mode).
+`/server/version` is the fallback. A manager with lablup/backend.ai#16736
+answers only a signed-in session, so `init` and `doctor` without one report
+that the version needs `login`. The answer is cached per
 process, so a run asks once. Introspection is attempted **opportunistically**
 (`{ __schema { queryType { name } } }`, once) purely to confirm the GraphQL
 endpoint answers; a manager with introspection disabled reports nothing and the
@@ -763,7 +765,7 @@ carries `requires: "superadmin"`.
 
 This matters because permission to run a query is not permission to open the
 page: an ordinary account may legitimately list its own keypairs while the only
-keypair *page* is admin-only. The one-line stderr notice carries it too:
+keypair _page_ is admin-only. The one-line stderr notice carries it too:
 
 ```
 links: 1 — resource_preset (admin) https://webui.example.com/admin/environment?tab=preset
@@ -780,10 +782,10 @@ is the same one the admin-wide field returns (`myKeypairs` and
 at the field. `SELF_SCOPED_LIST_BY_ROOT_FIELD` in `src/query/links.ts` overrides
 the type table for those:
 
-| Root field          | Link                                                        |
-| ------------------- | ----------------------------------------------------------- |
-| `customized_images` | `/my-environment` — the page that runs this very field       |
-| `myKeypairs`        | **none** — see below                                          |
+| Root field          | Link                                                   |
+| ------------------- | ------------------------------------------------------ |
+| `customized_images` | `/my-environment` — the page that runs this very field |
+| `myKeypairs`        | **none** — see below                                   |
 
 `myKeypairs` gets no link at all. `/my-environment` is not a keypair page: it
 renders `CustomizedImageList` only (images). The single keypair list in the app
@@ -1002,8 +1004,10 @@ a repository-level `.claude/skills` entry, so a checkout gets it the same way
 any other machine does (`pnpm run bai-agent init --skill --no-login`). It
 carries what the block deliberately does not: the preflight and login procedure, when to answer
 directly versus point the user at the WebUI, the neighbouring skills'
-boundaries, and `references/query-cookbook.md` — ready-to-run documents that
-`src/init/skill.test.ts` re-validates against the SDL.
+boundaries, `references/query-cookbook.md` — ready-to-run documents that
+`src/init/skill.test.ts` re-validates against the SDL — and
+`references/webui-browser.md`, the guide to operating the WebUI itself through
+agent-browser and the WebMCP tools it registers (ADR 0025).
 
 ## Output contract
 

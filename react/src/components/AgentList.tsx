@@ -12,7 +12,7 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useThemeMode } from '../hooks/useThemeMode';
 import AgentDetailDrawer from './AgentDetailDrawer';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
-import BAIRadioGroup from './BAIRadioGroup';
+import WebMCPAgentListTools from './WebMCPAgentListTools';
 import { Token } from '@lablup/ui-common/Token';
 import {
   AgentNodeInList,
@@ -22,6 +22,8 @@ import {
   BAIFlex,
   BAIFlexProps,
   BAIPropertyFilter,
+  BAISegmentedControl,
+  BAISegmentedControlItem,
   BAITableProps,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
@@ -49,11 +51,14 @@ interface AgentListProps {
   headerProps?: BAIFlexProps;
   fetchKey?: string;
   onChangeFetchKey?: (key: string) => void;
+  /** Register the WebMCP agent tools; only the agent page owns them. */
+  registerWebMCPTools?: boolean;
 }
 
 const AgentList: React.FC<AgentListProps> = ({
   tableProps,
   headerProps,
+  registerWebMCPTools,
   ...otherProps
 }) => {
   'use memo';
@@ -81,10 +86,11 @@ const AgentList: React.FC<AgentListProps> = ({
     defaultValue: INITIAL_FETCH_KEY,
   });
 
+  // Any value other than ALIVE (including the old `status=TERMINATED` links)
+  // opens the second tab, which lists LOST, RESTARTING and TERMINATED agents.
+  const statusTab = queryParams.status === 'ALIVE' ? 'ALIVE' : 'INACTIVE';
   const statusFilter =
-    queryParams.status === 'ALIVE'
-      ? 'status == "ALIVE"'
-      : 'status == "TERMINATED"';
+    statusTab === 'ALIVE' ? 'status == "ALIVE"' : 'status != "ALIVE"';
 
   const queryVariables: AgentListQuery$variables = {
     offset: baiPaginationOption.offset,
@@ -124,6 +130,7 @@ const AgentList: React.FC<AgentListProps> = ({
             node {
               id
               ...BAIAgentTableFragment
+              ...WebMCPAgentListToolsFragment
               ...AgentDetailModalFragment
               ...AgentDetailDrawerFragment
             }
@@ -196,6 +203,9 @@ const AgentList: React.FC<AgentListProps> = ({
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.AgentList',
   );
+  const agentNodes = filterOutEmpty(
+    agent_nodes?.edges.map((e) => e?.node) ?? [],
+  );
 
   return (
     <BAIFlex
@@ -212,23 +222,22 @@ const AgentList: React.FC<AgentListProps> = ({
           style={{ flex: 1 }}
           wrap="wrap"
         >
-          <BAIRadioGroup
-            options={[
-              {
-                label: t('agent.Connected'),
-                value: 'ALIVE',
-              },
-              {
-                label: t('agent.Terminated'),
-                value: 'TERMINATED',
-              },
-            ]}
-            value={queryParams.status}
-            onChange={(e) => {
-              setQueryParams({ status: e.target.value });
+          <BAISegmentedControl
+            value={statusTab}
+            onChange={(value) => {
+              setQueryParams({ status: value });
               setTablePaginationOption({ current: 1 });
             }}
-          />
+          >
+            <BAISegmentedControlItem
+              value="ALIVE"
+              label={t('agent.Connected')}
+            />
+            <BAISegmentedControlItem
+              value="INACTIVE"
+              label={t('general.Inactive')}
+            />
+          </BAISegmentedControl>
 
           <BAIPropertyFilter
             filterProperties={[
@@ -313,11 +322,21 @@ const AgentList: React.FC<AgentListProps> = ({
           />
         </BAIFlex>
       </BAIFlex>
+      {registerWebMCPTools && (
+        <WebMCPAgentListTools
+          agentsFrgmt={agentNodes}
+          columnOverrides={columnOverrides}
+          page={tablePaginationOption.current}
+          pageSize={tablePaginationOption.pageSize}
+          total={agent_nodes?.count}
+          pending={deferredQueryVariables !== queryVariables}
+          viewParams={{ tab: 'agents', ...queryParams }}
+          openedAgentId={currentAgentInfo?.id}
+        />
+      )}
       <BAIAgentTable
         resizable
-        agentsFragment={filterOutEmpty(
-          agent_nodes?.edges.map((e) => e?.node) ?? [],
-        )}
+        agentsFragment={agentNodes}
         onClickAgentName={(agent) => {
           const targetAgent = _.find(
             agent_nodes?.edges,

@@ -4,7 +4,10 @@
  */
 import { RelayEnvironment } from '../RelayEnvironment';
 import myUserQueryNode from '../__generated__/loginSessionAuthMyUserQuery.graphql';
-import type { LoginBootstrap } from './loginBootstrap';
+import {
+  LoginBootstrapIncompleteError,
+  type LoginBootstrap,
+} from './loginBootstrap';
 import { getDefaultLoginConfig } from './loginConfig';
 import {
   LoginAttemptCancelledError,
@@ -18,6 +21,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('../hooks/useWebUIConfig', () => ({
   fetchAndParseConfig: vi.fn(),
+  loginConfigState: Symbol('loginConfigState'),
+}));
+vi.mock('../components/DefaultProviders', () => ({
+  jotaiStore: { get: vi.fn(), set: vi.fn() },
 }));
 vi.mock('../RelayEnvironment', async () => {
   const { createMockEnvironment } = await import('relay-test-utils');
@@ -34,11 +41,17 @@ const DOMAIN_UUID = '22222222-2222-4222-8222-222222222222';
 const PROJECT_A = '33333333-3333-4333-8333-333333333333';
 const PROJECT_B = '44444444-4444-4444-8444-444444444444';
 
-type Edges = Array<{ node: { id: string; basicInfo: { name: string } } }>;
+type Edges = Array<{
+  node: { id: string; entityId: string; basicInfo: { name: string } };
+}>;
 
 const edges = (nodes: Array<[string, string]>): Edges =>
   nodes.map(([uuid, name]) => ({
-    node: { id: globalId('ProjectV2', uuid), basicInfo: { name } },
+    node: {
+      id: globalId('ProjectV2', uuid),
+      entityId: uuid,
+      basicInfo: { name },
+    },
   }));
 
 const meWith = (
@@ -50,10 +63,12 @@ const meWith = (
     role: string | null;
     domainName: string | null;
     domain: { entityId: string; basicInfo: { name: string } } | null;
+    domainConfig: Record<string, unknown>;
   }> = {},
 ) => ({
   myUserV2: {
     id: globalId('UserV2', USER_UUID),
+    entityId: USER_UUID,
     basicInfo: { email: 'me@example.com', fullName: 'Me' },
     organization: {
       domainName: 'domainName' in overrides ? overrides.domainName : 'default',
@@ -66,6 +81,9 @@ const meWith = (
     recentProject: projects.recent ? { edges: edges(projects.recent) } : null,
     defaultProject: { edges: edges(projects.default ?? []) },
   },
+  myAppConfigs: overrides.domainConfig
+    ? [{ configName: 'domainConfig', config: overrides.domainConfig }]
+    : [],
 });
 
 // Queues one Relay payload per page and records the variables each was asked for.
@@ -93,6 +111,7 @@ const fakeUtils = (remembered: string | null) => ({
 
 const makeClient = () => ({
   logout: vi.fn().mockResolvedValue(undefined),
+  get_manager_version: vi.fn().mockResolvedValue('26.9.0'),
   _config: { endpoint: 'https://api.example.com', endpointHost: 'api' },
 });
 
@@ -110,6 +129,23 @@ describe('connectViaGQL', () => {
     delete g.backendaioptions;
     delete g.backendaiutils;
     delete g.backendaiclient;
+  });
+
+  test("layers the domain's settings document from the same read onto the config", async () => {
+    const { jotaiStore } = await import('../components/DefaultProviders');
+    const { loginConfigState } = await import('../hooks/useWebUIConfig');
+    queueResponses([
+      meWith(
+        { default: [[PROJECT_A, 'alpha']] },
+        { domainConfig: { settings: { hideAgents: !cfg.hideAgents } } },
+      ),
+    ]);
+
+    await connectViaGQL(makeClient(), cfg, []);
+    expect(jotaiStore.set).toHaveBeenCalledWith(
+      loginConfigState,
+      expect.objectContaining({ hideAgents: !cfg.hideAgents }),
+    );
   });
 
   test('stores the user, the default project, and the domain name + uuid from one myUserV2 read', async () => {
@@ -227,14 +263,20 @@ describe('connectViaGQL', () => {
     expect(g.backendaiclient.current_group).toBe('alpha');
   });
 
-  test('logs out and throws when the session has no user', async () => {
-    queueResponses([{ myUserV2: null }]);
+  test('keeps the session when the manager fails to resolve the user', async () => {
+    environment.mock.queueOperationResolver(
+      () =>
+        ({
+          data: { myUserV2: null },
+          errors: [{ message: 'database is unavailable', path: ['myUserV2'] }],
+        }) as any,
+    );
     const client = makeClient();
 
-    await expect(connectViaGQL(client, cfg, [])).rejects.toThrow(
-      'User information is missing.',
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBeInstanceOf(
+      LoginBootstrapIncompleteError,
     );
-    expect(client.logout).toHaveBeenCalledTimes(1);
+    expect(client.logout).not.toHaveBeenCalled();
   });
 
   test('records the endpoint in the history, keeping the five most recent', async () => {
@@ -252,6 +294,41 @@ describe('connectViaGQL', () => {
     ]);
     expect(g.backendaioptions.set).toHaveBeenCalledWith('endpoints', updated);
   });
+
+  test('reads the manager version before the user query, once signed in', async () => {
+    const client = makeClient();
+    environment.mock.queueOperationResolver(() => {
+      expect(client.get_manager_version).toHaveBeenCalledTimes(1);
+      return { data: meWith() } as any;
+    });
+
+    await connectViaGQL(client, cfg, []);
+  });
+
+  test('fails the connect when the manager refuses the version', async () => {
+    const refusal = { isError: true, statusCode: 401 };
+    const client = {
+      ...makeClient(),
+      get_manager_version: vi.fn().mockRejectedValue(refusal),
+    };
+
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBe(refusal);
+    expect(client.logout).toHaveBeenCalledTimes(1);
+  });
+
+  test('keeps the session when the version read fails with a 5xx', async () => {
+    const client = {
+      ...makeClient(),
+      get_manager_version: vi
+        .fn()
+        .mockRejectedValue({ isError: true, statusCode: 502 }),
+    };
+
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBeInstanceOf(
+      LoginBootstrapIncompleteError,
+    );
+    expect(client.logout).not.toHaveBeenCalled();
+  });
 });
 
 // A manager that never answers: the request settles only when its signal is
@@ -259,7 +336,7 @@ describe('connectViaGQL', () => {
 function makeHangingClient() {
   return {
     requestTimeout: 30_000,
-    get_manager_version: vi.fn(
+    probeServer: vi.fn(
       (signal: AbortSignal) =>
         new Promise((_, reject) => {
           signal.addEventListener('abort', () =>
@@ -279,12 +356,14 @@ describe('probeManager (dev build)', () => {
     vi.useRealTimers();
   });
 
-  it('resolves when the manager answers', async () => {
+  it('resolves when the server answers, without asking for the version', async () => {
     const client = {
       requestTimeout: 30_000,
-      get_manager_version: vi.fn().mockResolvedValue('26.9.0'),
+      probeServer: vi.fn().mockResolvedValue(undefined),
+      get_manager_version: vi.fn(),
     };
     await expect(probeManager(client)).resolves.toBeUndefined();
+    expect(client.get_manager_version).not.toHaveBeenCalled();
     expect(escapeLoginProbe()).toBe(false);
   });
 
@@ -366,7 +445,9 @@ describe('connectViaGQL — myUserV2 query rejects (FR-3998)', () => {
     rejectWith(timeout);
     const client = makeClient();
 
-    await expect(connectViaGQL(client, cfg, [])).rejects.toBe(timeout);
+    const result = connectViaGQL(client, cfg, []);
+    await expect(result).rejects.toBeInstanceOf(LoginBootstrapIncompleteError);
+    await expect(result).rejects.toMatchObject({ cause: timeout });
     expect(client.logout).not.toHaveBeenCalled();
   });
 
@@ -408,7 +489,7 @@ describe('connectViaGQL — cancelled attempt', () => {
     } as unknown as Parameters<typeof connectViaGQL>[3];
 
     await expect(
-      connectViaGQL({ logout: vi.fn() }, cfg, [], bootstrap, () => true),
+      connectViaGQL(makeClient(), cfg, [], bootstrap, () => true),
     ).rejects.toBeInstanceOf(LoginAttemptCancelledError);
     expect((globalThis as Record<string, unknown>).backendaiclient).toBe(
       current,
@@ -467,8 +548,8 @@ describe('connectViaGQL — act-as tab (FR-4111)', () => {
     queueResponses([{ myUserV2: null }]);
     const client = actAsClient();
 
-    await expect(connectViaGQL(client, cfg, [])).rejects.toThrow(
-      'User information is missing.',
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBeInstanceOf(
+      LoginBootstrapIncompleteError,
     );
     expect(client.logout).not.toHaveBeenCalled();
   });
@@ -495,7 +576,10 @@ describe('connectViaGQL — act-as tab (FR-4111)', () => {
     } as unknown as LoginBootstrap;
 
     await connectViaGQL(client, cfg, [], bootstrap);
-    expect(client.query).not.toHaveBeenCalled();
+    expect(client.query).not.toHaveBeenCalledWith(
+      expect.stringContaining('keypair'),
+      expect.anything(),
+    );
     expect((client._config as Record<string, unknown>)._accessKey).toBe(
       'TARGET_KEY',
     );
@@ -506,6 +590,9 @@ describe('connectViaGQL — act-as tab (FR-4111)', () => {
     const client = { ...makeClient(), query: vi.fn() };
 
     await connectViaGQL(client, cfg, []);
-    expect(client.query).not.toHaveBeenCalled();
+    expect(client.query).not.toHaveBeenCalledWith(
+      expect.stringContaining('keypair'),
+      expect.anything(),
+    );
   });
 });

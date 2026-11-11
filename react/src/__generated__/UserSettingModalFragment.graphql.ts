@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d8ce0fe11c3929bdf6473f23e5624f74>>
+ * @generated SignedSource<<a07cc5fb1457f81f25fd4f2699aa21d0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -25,6 +25,7 @@ export type UserSettingModalFragment$data = {
     readonly containerMainGid: number | null | undefined;
     readonly containerUid: number | null | undefined;
   };
+  readonly entityId: string;
   readonly id: string;
   readonly organization: {
     readonly domainName: string | null | undefined;
@@ -39,6 +40,7 @@ export type UserSettingModalFragment$data = {
           readonly name: string;
           readonly type: ProjectTypeV2;
         };
+        readonly entityId: string;
         readonly id: string;
       };
     }>;
@@ -67,6 +69,13 @@ var v0 = {
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
+},
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "entityId",
+  "storageKey": null
 };
 return {
   "argumentDefinitions": [
@@ -80,6 +89,7 @@ return {
   "name": "UserSettingModalFragment",
   "selections": [
     (v0/*: any*/),
+    (v1/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -285,6 +295,7 @@ return {
               "plural": false,
               "selections": [
                 (v0/*: any*/),
+                (v1/*: any*/),
                 {
                   "alias": null,
                   "args": null,
@@ -330,6 +341,6 @@ return {
 };
 })();
 
-(node as any).hash = "ced5ed4a17807fedee6435df29bac47f";
+(node as any).hash = "63be51d812c32e69c36b55513cc497ba";
 
 export default node;

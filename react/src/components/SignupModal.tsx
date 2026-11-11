@@ -11,12 +11,16 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIFormItem from './BAIFormItem';
 import PrivacyPolicyModal from './PrivacyPolicyModal';
 import TermsOfServiceModal from './TermsOfServiceModal';
-import { AstryxFormCheckbox, AstryxFormTextInput } from './astryxFormControls';
 import { Button } from '@lablup/ui-common/Button';
 import { Link } from '@lablup/ui-common/Link';
 import { HStack } from '@lablup/ui-common/Stack';
 import { Text } from '@lablup/ui-common/Text';
-import { BAIModal, BAIModalProps } from 'backend.ai-ui';
+import {
+  BAICheckboxInput,
+  BAIModal,
+  BAIModalProps,
+  BAITextInput,
+} from 'backend.ai-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -135,12 +139,8 @@ const SignupModal: React.FC<SignupModalProps> = ({
           disabled={signupMutation.isPending}
           requiredMark="optional"
         >
-          {/* RESTORED (input-parity pass): `maxLength` DOES reach the
-              native `<input>` — Astryx spreads unknown props onto it, so the
-              adapter only had to declare the prop. The placeholders in this
-              form state the limit ("Up to 64 characters"), so silently
-              accepting a 200-character password was the UI contradicting
-              itself. */}
+          {/* `maxLength` reaches the native `<input>`; the placeholders in
+              this form state the same limit ("Up to 64 characters"). */}
           <BAIFormItem
             name="email"
             label={t('signUp.E-mail')}
@@ -155,17 +155,17 @@ const SignupModal: React.FC<SignupModalProps> = ({
               },
             ]}
           >
-            <AstryxFormTextInput
+            <BAITextInput
               type="email"
-              label={t('signUp.E-mail')}
+              aria-label={t('signUp.E-mail')}
               placeholder={t('maxLength.64chars')}
               maxLength={64}
               hasAutoFocus
             />
           </BAIFormItem>
           <BAIFormItem name="user_name" label={t('signUp.UserName')}>
-            <AstryxFormTextInput
-              label={t('signUp.UserName')}
+            <BAITextInput
+              aria-label={t('signUp.UserName')}
               placeholder={t('maxLength.64chars')}
               maxLength={64}
             />
@@ -181,8 +181,8 @@ const SignupModal: React.FC<SignupModalProps> = ({
                 },
               ]}
             >
-              <AstryxFormTextInput
-                label={t('signUp.InvitationToken')}
+              <BAITextInput
+                aria-label={t('signUp.InvitationToken')}
                 maxLength={50}
               />
             </BAIFormItem>
@@ -202,9 +202,9 @@ const SignupModal: React.FC<SignupModalProps> = ({
             ]}
             hasFeedback
           >
-            <AstryxFormTextInput
+            <BAITextInput
               type="password"
-              label={t('signUp.Password')}
+              aria-label={t('signUp.Password')}
               maxLength={64}
             />
           </BAIFormItem>
@@ -230,9 +230,9 @@ const SignupModal: React.FC<SignupModalProps> = ({
               }),
             ]}
           >
-            <AstryxFormTextInput
+            <BAITextInput
               type="password"
-              label={t('signUp.PasswordAgain')}
+              aria-label={t('signUp.PasswordAgain')}
               maxLength={64}
             />
           </BAIFormItem>
@@ -282,9 +282,9 @@ const SignupModal: React.FC<SignupModalProps> = ({
                 links move to the field's `extra` row, where they are real
                 links instead of anchors nested inside a `<label>` that
                 swallowed their clicks. */}
-            <AstryxFormCheckbox
-              label={`${t('signUp.PolicyAgreement_1')}${t('signUp.TermsOfService')}${t('signUp.PolicyAgreement_2')}${t('signUp.PrivacyPolicy')}${t('signUp.PolicyAgreement_3')}`}
-            />
+            <BAICheckboxInput>
+              {`${t('signUp.PolicyAgreement_1')}${t('signUp.TermsOfService')}${t('signUp.PolicyAgreement_2')}${t('signUp.PrivacyPolicy')}${t('signUp.PolicyAgreement_3')}`}
+            </BAICheckboxInput>
           </BAIFormItem>
         </Form>
       </BAIModal>

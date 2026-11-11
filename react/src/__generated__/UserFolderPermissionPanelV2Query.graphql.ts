@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bd89badc17334329601177fe709308eb>>
+ * @generated SignedSource<<94209905554cb8effdb910b7e1ccc776>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,6 +15,7 @@ export type KeypairResourcePolicyV2Filter = {
   NOT?: ReadonlyArray<KeypairResourcePolicyV2Filter> | null | undefined;
   OR?: ReadonlyArray<KeypairResourcePolicyV2Filter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   idleTimeout?: IntFilter | null | undefined;
   keypair?: KeypairResourcePolicyKeypairNestedFilter | null | undefined;
   maxConcurrentSessions?: IntFilter | null | undefined;
@@ -76,6 +77,7 @@ export type KeypairFilter = {
   OR?: ReadonlyArray<KeypairFilter> | null | undefined;
   accessKey?: StringFilter | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   isActive?: boolean | null | undefined;
   isAdmin?: boolean | null | undefined;
   isDefault?: boolean | null | undefined;
@@ -270,6 +272,13 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
+                    "name": "entityId",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "name",
                     "storageKey": null
                   },
@@ -399,12 +408,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "7f9f80b6002c1311c909cde56de283b6",
+    "cacheID": "e267bc5259a37fd15190b8106a73fcd3",
     "id": null,
     "metadata": {},
     "name": "UserFolderPermissionPanelV2Query",
     "operationKind": "query",
-    "text": "query UserFolderPermissionPanelV2Query(\n  $filter: KeypairResourcePolicyV2Filter\n  $limit: Int!\n  $offset: Int!\n  $includeKeypairs: Boolean!\n  $keypairFilter: KeypairFilter\n) {\n  adminKeypairResourcePoliciesV2(filter: $filter, limit: $limit, offset: $offset, orderBy: [{field: NAME, direction: ASC}]) {\n    count\n    edges {\n      node {\n        ...KeypairResourcePolicyStoragePermissionTableV2_nodeFrgmt\n        id\n      }\n    }\n  }\n}\n\nfragment KeypairResourcePolicyStoragePermissionTableV2_nodeFrgmt on KeypairResourcePolicyV2 {\n  id\n  name\n  allowedVfolderHosts {\n    host\n    permissions\n  }\n  keypairs(filter: $keypairFilter, limit: 100) @include(if: $includeKeypairs) {\n    edges {\n      node {\n        id\n        accessKey\n        user {\n          organization {\n            mainAccessKey\n          }\n          id\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query UserFolderPermissionPanelV2Query(\n  $filter: KeypairResourcePolicyV2Filter\n  $limit: Int!\n  $offset: Int!\n  $includeKeypairs: Boolean!\n  $keypairFilter: KeypairFilter\n) {\n  adminKeypairResourcePoliciesV2(filter: $filter, limit: $limit, offset: $offset, orderBy: [{field: NAME, direction: ASC}]) {\n    count\n    edges {\n      node {\n        ...KeypairResourcePolicyStoragePermissionTableV2_nodeFrgmt\n        id\n      }\n    }\n  }\n}\n\nfragment KeypairResourcePolicyStoragePermissionTableV2_nodeFrgmt on KeypairResourcePolicyV2 {\n  id\n  entityId\n  name\n  allowedVfolderHosts {\n    host\n    permissions\n  }\n  keypairs(filter: $keypairFilter, limit: 100) @include(if: $includeKeypairs) {\n    edges {\n      node {\n        id\n        accessKey\n        user {\n          organization {\n            mainAccessKey\n          }\n          id\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();

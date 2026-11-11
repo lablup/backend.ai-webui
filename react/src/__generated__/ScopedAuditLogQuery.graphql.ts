@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<dfd866cf8251cc0547e10aab3afa14ed>>
+ * @generated SignedSource<<e57e88f7a128d4ad961749d27e23866c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,8 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type AuditLogOrderField = "CREATED_AT" | "ENTITY_TYPE" | "OPERATION" | "STATUS" | "%future added value";
+export type AuditLogActionKind = "BULK" | "GLOBAL" | "LOOKUP" | "MEMBERSHIP" | "RELATION" | "SCOPE" | "SINGLE_ENTITY" | "%future added value";
+export type AuditLogOrderField = "ACTION_KIND" | "ACTION_NAME" | "CREATED_AT" | "ENTITY_TYPE" | "OPERATION" | "STATUS" | "%future added value";
 export type AuditLogStatus = "DENIED" | "ERROR" | "RUNNING" | "SUCCESS" | "UNKNOWN" | "%future added value";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type AuditLogScope = {
@@ -29,11 +30,18 @@ export type AuditLogFilter = {
   NOT?: ReadonlyArray<AuditLogFilter> | null | undefined;
   OR?: ReadonlyArray<AuditLogFilter> | null | undefined;
   actedAs?: UUIDFilter | null | undefined;
+  actionId?: UUIDFilter | null | undefined;
+  actionKind?: AuditLogActionKindFilter | null | undefined;
+  actionName?: StringFilter | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
   entityId?: StringFilter | null | undefined;
   entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
+  lookupKey?: StringFilter | null | undefined;
+  lookupKind?: StringFilter | null | undefined;
   operation?: StringFilter | null | undefined;
   status?: AuditLogStatusFilter | null | undefined;
+  targetEntityId?: UUIDFilter | null | undefined;
   triggeredBy?: StringFilter | null | undefined;
 };
 export type StringFilter = {
@@ -58,6 +66,12 @@ export type StringFilter = {
   notStartsWith?: string | null | undefined;
   startsWith?: string | null | undefined;
 };
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
+};
 export type AuditLogStatusFilter = {
   equals?: AuditLogStatus | null | undefined;
   in?: ReadonlyArray<AuditLogStatus> | null | undefined;
@@ -70,11 +84,11 @@ export type DateTimeFilter = {
   equals?: string | null | undefined;
   notEquals?: string | null | undefined;
 };
-export type UUIDFilter = {
-  equals?: string | null | undefined;
-  in?: ReadonlyArray<string> | null | undefined;
-  notEquals?: string | null | undefined;
-  notIn?: ReadonlyArray<string> | null | undefined;
+export type AuditLogActionKindFilter = {
+  equals?: AuditLogActionKind | null | undefined;
+  in?: ReadonlyArray<AuditLogActionKind> | null | undefined;
+  notEquals?: AuditLogActionKind | null | undefined;
+  notIn?: ReadonlyArray<AuditLogActionKind> | null | undefined;
 };
 export type AuditLogOrderBy = {
   direction?: OrderDirection;
@@ -274,6 +288,13 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
+                    "name": "actionName",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "operation",
                     "storageKey": null
                   },
@@ -323,7 +344,7 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "entityId",
+                    "name": "targetEntityId",
                     "storageKey": null
                   },
                   {
@@ -349,6 +370,13 @@ return {
                     "plural": false,
                     "selections": [
                       (v7/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "entityId",
+                        "storageKey": null
+                      },
                       {
                         "alias": null,
                         "args": null,
@@ -382,12 +410,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "a683abe05a2f7bb62f8c45cccd816fdf",
+    "cacheID": "47c802b572e02635b1dac53d69009788",
     "id": null,
     "metadata": {},
     "name": "ScopedAuditLogQuery",
     "operationKind": "query",
-    "text": "query ScopedAuditLogQuery(\n  $scope: AuditLogScope!\n  $filter: AuditLogFilter\n  $orderBy: [AuditLogOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  scopedAuditLogsV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAIAuditLogNodesFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIAuditLogNodesFragment on AuditLogV2 {\n  id\n  createdAt\n  operation\n  status\n  description\n  duration\n  requestId\n  actionId\n  entityType\n  entityId\n  triggeredBy\n  clientIp @since(version: \"26.9.0\")\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n"
+    "text": "query ScopedAuditLogQuery(\n  $scope: AuditLogScope!\n  $filter: AuditLogFilter\n  $orderBy: [AuditLogOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  scopedAuditLogsV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAIAuditLogNodesFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIAuditLogNodesFragment on AuditLogV2 {\n  id\n  createdAt\n  actionName\n  operation\n  status\n  description\n  duration\n  requestId\n  actionId\n  entityType\n  targetEntityId\n  triggeredBy\n  clientIp @since(version: \"26.9.0\")\n  user {\n    id\n    entityId\n    basicInfo {\n      email\n    }\n  }\n}\n"
   }
 };
 })();

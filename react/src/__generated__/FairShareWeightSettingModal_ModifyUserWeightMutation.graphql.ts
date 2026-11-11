@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ef5f207b41558135a199dce6afbc753f>>
+ * @generated SignedSource<<227f2de1e98cde2aebb30c1139e06541>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,7 +20,7 @@ export type FairShareWeightSettingModal_ModifyUserWeightMutation$variables = {
   input: UpsertUserFairShareWeightInput;
 };
 export type FairShareWeightSettingModal_ModifyUserWeightMutation$data = {
-  readonly adminUpsertUserFairShareWeight: {
+  readonly upsertUserFairShareWeight: {
     readonly userFairShare: {
       readonly id: string;
       readonly spec: {
@@ -56,7 +56,7 @@ v1 = [
     ],
     "concreteType": "UpsertUserFairShareWeightPayload",
     "kind": "LinkedField",
-    "name": "adminUpsertUserFairShareWeight",
+    "name": "upsertUserFairShareWeight",
     "plural": false,
     "selections": [
       {
@@ -131,16 +131,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "2760d45ee5a858c48fec8884c44dcbbd",
+    "cacheID": "65a43fab2c5ef63c7bfb6f231a341220",
     "id": null,
     "metadata": {},
     "name": "FairShareWeightSettingModal_ModifyUserWeightMutation",
     "operationKind": "mutation",
-    "text": "mutation FairShareWeightSettingModal_ModifyUserWeightMutation(\n  $input: UpsertUserFairShareWeightInput!\n) {\n  adminUpsertUserFairShareWeight(input: $input) {\n    userFairShare {\n      id\n      spec {\n        weight\n        usesDefault\n      }\n      updatedAt\n    }\n  }\n}\n"
+    "text": "mutation FairShareWeightSettingModal_ModifyUserWeightMutation(\n  $input: UpsertUserFairShareWeightInput!\n) {\n  upsertUserFairShareWeight(input: $input) {\n    userFairShare {\n      id\n      spec {\n        weight\n        usesDefault\n      }\n      updatedAt\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "17d7340222a70e1dc4570a7aabc825fd";
+(node as any).hash = "099aa52589dd7c06531da138437988d7";
 
 export default node;

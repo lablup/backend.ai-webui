@@ -13,6 +13,7 @@ on:
       - react/vite-plugins/**
       - react/package.json
       - react/vitest.config.ts
+      - packages/backend.ai-ui/package.json
       - .github/workflows/vitest-react.yml
 
 permissions:
@@ -63,9 +64,9 @@ jobs:
         name: Vitest fs-module cache
         with:
           path: node_modules/.experimental-vitest-cache
-          key: ${{ runner.os }}-vitest-fsmod-react-${{ hashFiles('**/pnpm-lock.yaml', 'react/vitest.config.ts') }}-${{ github.sha }}
+          key: ${{ runner.os }}-vitest-fsmod-react-${{ hashFiles('**/pnpm-lock.yaml', 'react/vitest.config.ts', 'packages/backend.ai-ui/package.json') }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-vitest-fsmod-react-${{ hashFiles('**/pnpm-lock.yaml', 'react/vitest.config.ts') }}-
+            ${{ runner.os }}-vitest-fsmod-react-${{ hashFiles('**/pnpm-lock.yaml', 'react/vitest.config.ts', 'packages/backend.ai-ui/package.json') }}-
       - name: Run relay-compiler
         run: pnpm run relay
       - name: Run Vitest with coverage

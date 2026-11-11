@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2c248ed1ebf45b41c710b4541c202bf5>>
+ * @generated SignedSource<<2d9ebdfe855471dd941b637cb47d77a0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -28,6 +28,7 @@ export type DeploymentRevisionDetail_revision$data = {
     } | null | undefined;
     readonly vfolderId: string;
   }>;
+  readonly fieldId: string;
   readonly id: string;
   readonly imageV2: {
     readonly id: string;
@@ -180,6 +181,13 @@ return {
   "name": "DeploymentRevisionDetail_revision",
   "selections": [
     (v0/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "fieldId",
+      "storageKey": null
+    },
     {
       "alias": null,
       "args": null,
@@ -627,6 +635,6 @@ return {
 };
 })();
 
-(node as any).hash = "c8ec59a16a9cf41b6c6b663150a5a891";
+(node as any).hash = "64be4a9c47429494449261024711f627";
 
 export default node;

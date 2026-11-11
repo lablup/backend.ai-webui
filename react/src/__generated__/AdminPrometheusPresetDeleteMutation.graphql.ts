@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5c2bf73ca54fe57875c562e3a071fbd3>>
+ * @generated SignedSource<<9cdd2e1d37a66033d165eb4d28c990cb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,9 +13,9 @@ export type AdminPrometheusPresetDeleteMutation$variables = {
   id: string;
 };
 export type AdminPrometheusPresetDeleteMutation$data = {
-  readonly adminDeletePrometheusQueryPreset: {
-    readonly id: string;
-  } | null | undefined;
+  readonly purgePrometheusQueryPreset: {
+    readonly entityId: string;
+  };
 };
 export type AdminPrometheusPresetDeleteMutation = {
   response: AdminPrometheusPresetDeleteMutation$data;
@@ -40,16 +40,16 @@ v1 = [
         "variableName": "id"
       }
     ],
-    "concreteType": "DeleteQueryDefinitionPayload",
+    "concreteType": "PurgeQueryDefinitionPayload",
     "kind": "LinkedField",
-    "name": "adminDeletePrometheusQueryPreset",
+    "name": "purgePrometheusQueryPreset",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "id",
+        "name": "entityId",
         "storageKey": null
       }
     ],
@@ -74,16 +74,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "b36af27d5e2d8eb384beacc072fda555",
+    "cacheID": "9bc2796d59cc27fefa282504d95dbd82",
     "id": null,
     "metadata": {},
     "name": "AdminPrometheusPresetDeleteMutation",
     "operationKind": "mutation",
-    "text": "mutation AdminPrometheusPresetDeleteMutation(\n  $id: ID!\n) {\n  adminDeletePrometheusQueryPreset(id: $id) {\n    id\n  }\n}\n"
+    "text": "mutation AdminPrometheusPresetDeleteMutation(\n  $id: UUID!\n) {\n  purgePrometheusQueryPreset(id: $id) {\n    entityId\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "83b31f89a1ea2a1e314fa98a8be6a6df";
+(node as any).hash = "483a510645da7ea069d27a975f9739d5";
 
 export default node;

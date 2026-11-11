@@ -11,12 +11,12 @@ import { AgentSettingModalQuery } from '../__generated__/AgentSettingModalQuery.
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import BAIFormItem from './BAIFormItem';
-import { AstryxFormSwitch } from './astryxFormControls';
 import {
   BAIAdminResourceGroupSelect,
   BAIModal,
   BAIModalProps,
   toLocalId,
+  BAISwitch,
 } from 'backend.ai-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -146,7 +146,7 @@ const AgentSettingModal: React.FC<AgentSettingModalProps> = ({
           valuePropName="checked"
           required={true}
         >
-          <AstryxFormSwitch label={t('agent.Schedulable')} />
+          <BAISwitch aria-label={t('agent.Schedulable')} />
         </BAIFormItem>
       </Form>
     </BAIModal>

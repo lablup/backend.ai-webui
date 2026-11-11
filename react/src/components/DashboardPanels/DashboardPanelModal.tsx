@@ -7,16 +7,12 @@ import {
   DEFAULT_SESSION_GRID_VIEW,
   type SessionGridViewParams,
 } from '../../helper/sessionResourceGridData';
-import {
-  AstryxFormSegmented,
-  AstryxFormSelector,
-  AstryxFormTextInput,
-} from '../astryxFormControls';
 import { DeploymentNodesPanelContent } from './DeploymentNodesPanel';
 import { ResourceCountContent } from './ResourceCountPanel';
 import { ResourceTableContent } from './ResourceTablePanel';
 import { SessionNodesPanelContent } from './SessionNodesPanel';
 import { SessionResourceGridContent } from './SessionResourceGridPanel';
+import { PanelPermissionBoundary } from './panelPermission';
 import { availablePanelTypes, panelTypeLabelKeys } from './panelRegistry';
 import { resourceRegistry } from './resourceRegistry';
 import type {
@@ -27,6 +23,10 @@ import type {
 } from './types';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
+  BAISegmentedControl,
+  BAISegmentedControlItem,
+  BAISelect,
+  BAITextInput,
   BAIBoardItemErrorBoundary,
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -192,13 +192,17 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
             ]}
             style={{ flexShrink: 0 }}
           >
-            <AstryxFormSegmented
-              label={t('dashboard.panelModal.PanelType')}
-              options={panelTypeOptions.map((type) => ({
-                value: type,
-                label: t(panelTypeLabelKeys[type]),
-              }))}
-            />
+            <BAISegmentedControl
+              aria-label={t('dashboard.panelModal.PanelType')}
+            >
+              {panelTypeOptions.map((type) => (
+                <BAISegmentedControlItem
+                  key={type}
+                  value={type}
+                  label={t(panelTypeLabelKeys[type])}
+                />
+              ))}
+            </BAISegmentedControl>
           </Form.Item>
           <Form.Item
             name="resourceType"
@@ -212,8 +216,9 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
             ]}
             style={{ flex: 1, minWidth: 180 }}
           >
-            <AstryxFormSelector
-              label={t('dashboard.panelModal.DataSource')}
+            <BAISelect
+              showSearch={false}
+              aria-label={t('dashboard.panelModal.DataSource')}
               options={resourceOptions.map((key) => ({
                 value: key,
                 label: t(resourceRegistry[key].labelKey),
@@ -226,8 +231,8 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
             extra={t('dashboard.panelModal.TitleDescription')}
             style={{ flex: 1, minWidth: 180 }}
           >
-            <AstryxFormTextInput
-              label={t('dashboard.panelModal.TitleOptional')}
+            <BAITextInput
+              aria-label={t('dashboard.panelModal.TitleOptional')}
               placeholder={t(config.labelKey)}
               hasClear
             />
@@ -267,68 +272,70 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
               title={t(config.labelKey)}
               status="error"
             >
-              <Suspense fallback={<BAISkeleton />}>
-                {panelType === 'resourceCount' ? (
-                  <BAIFlex align="center" justify="center">
-                    <ResourceCountContent
+              <PanelPermissionBoundary>
+                <Suspense fallback={<BAISkeleton />}>
+                  {panelType === 'resourceCount' ? (
+                    <BAIFlex align="center" justify="center">
+                      <ResourceCountContent
+                        key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
+                        descriptor={{
+                          resourceType,
+                          filter: filter ?? null,
+                          order,
+                        }}
+                      />
+                    </BAIFlex>
+                  ) : panelType === 'sessionResourceGrid' ? (
+                    // The grid's own toolbar IS this panel kind's settings UI —
+                    // the same symmetry as sorting the table preview to set the
+                    // panel's order. `gridView` stays out of the key so toggling a
+                    // setting doesn't remount and refetch.
+                    <SessionResourceGridContent
+                      key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
+                      descriptor={{
+                        resourceType,
+                        filter: filter ?? null,
+                        order,
+                        gridView,
+                      }}
+                      onChangeViewParams={setGridView}
+                      disableSessionDetail
+                    />
+                  ) : config.kind === 'deploymentNodes' ? (
+                    <DeploymentNodesPanelContent
                       key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
                       descriptor={{
                         resourceType,
                         filter: filter ?? null,
                         order,
                       }}
+                      onChangeOrder={(next) => setOrder(next ?? null)}
+                      disableNavigation
                     />
-                  </BAIFlex>
-                ) : panelType === 'sessionResourceGrid' ? (
-                  // The grid's own toolbar IS this panel kind's settings UI —
-                  // the same symmetry as sorting the table preview to set the
-                  // panel's order. `gridView` stays out of the key so toggling a
-                  // setting doesn't remount and refetch.
-                  <SessionResourceGridContent
-                    key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
-                    descriptor={{
-                      resourceType,
-                      filter: filter ?? null,
-                      order,
-                      gridView,
-                    }}
-                    onChangeViewParams={setGridView}
-                    disableSessionDetail
-                  />
-                ) : config.kind === 'deploymentNodes' ? (
-                  <DeploymentNodesPanelContent
-                    key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
-                    descriptor={{
-                      resourceType,
-                      filter: filter ?? null,
-                      order,
-                    }}
-                    onChangeOrder={(next) => setOrder(next ?? null)}
-                    disableNavigation
-                  />
-                ) : config.kind === 'sessionNodes' ? (
-                  <SessionNodesPanelContent
-                    key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
-                    descriptor={{
-                      resourceType,
-                      filter: filter ?? null,
-                      order,
-                    }}
-                    onChangeOrder={(next) => setOrder(next ?? null)}
-                    disableSessionDetail
-                  />
-                ) : (
-                  <ResourceTableContent
-                    key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
-                    descriptor={{
-                      resourceType,
-                      filter: filter ?? null,
-                      order,
-                    }}
-                    onChangeOrder={(next) => setOrder(next ?? null)}
-                  />
-                )}
-              </Suspense>
+                  ) : config.kind === 'sessionNodes' ? (
+                    <SessionNodesPanelContent
+                      key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
+                      descriptor={{
+                        resourceType,
+                        filter: filter ?? null,
+                        order,
+                      }}
+                      onChangeOrder={(next) => setOrder(next ?? null)}
+                      disableSessionDetail
+                    />
+                  ) : (
+                    <ResourceTableContent
+                      key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
+                      descriptor={{
+                        resourceType,
+                        filter: filter ?? null,
+                        order,
+                      }}
+                      onChangeOrder={(next) => setOrder(next ?? null)}
+                    />
+                  )}
+                </Suspense>
+              </PanelPermissionBoundary>
             </BAIBoardItemErrorBoundary>
           ) : null}
         </div>

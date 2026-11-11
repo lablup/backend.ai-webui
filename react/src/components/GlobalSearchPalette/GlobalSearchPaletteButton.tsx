@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { OPEN_MODAL_ROOT_SELECTOR } from '../../helper/openModalRoot';
-import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Kbd } from '@lablup/ui-common/Kbd';
@@ -25,8 +24,7 @@ type GlobalSearchPaletteButtonProps = Pick<
 
 /**
  * Header trigger + the single `mod+k` registration for the palette. Mounted
- * once, by `WebUIHeader`, and gated on the `experimental_global_search` user
- * setting (default off). Like `BAINotificationButton`, the band's on-dark
+ * once, by `WebUIHeader`. Like `BAINotificationButton`, the band's on-dark
  * context sits on the BUTTON via `data-astryx-media`, never on a wrapper: the
  * tooltip panel and the palette's `<dialog>` render as inline siblings and
  * would inherit a `MediaTheme` wrapper's forced scheme. The tooltip's `Kbd` is
@@ -39,36 +37,25 @@ const GlobalSearchPaletteButton: React.FC<GlobalSearchPaletteButtonProps> = ({
 
   const { t, i18n } = useTranslation();
   const { isDarkMode } = useThemeMode();
-  const [isExperimentalGlobalSearchEnabled] = useBAISettingUserState(
-    'experimental_global_search',
-  );
   const [isOpen, setIsOpen] = useState(false);
 
-  // `allowInInputs`: reachable from a focused form field. An empty array still
-  // attaches the listener, but nothing matches, so the browser keeps `mod+k`.
-  // An open modal or scrimmed drawer keeps the keyboard: the press does nothing.
-  useHotkeys(
-    isExperimentalGlobalSearchEnabled
-      ? [
-          {
-            keys: 'mod+k',
-            allowInInputs: true,
-            onPress: () => {
-              if (document.querySelector(OPEN_MODAL_ROOT_SELECTOR)) return;
-              setIsOpen(true);
-            },
-          },
-        ]
-      : [],
-  );
+  // `allowInInputs`: reachable from a focused form field. An open modal or scrimmed drawer keeps the keyboard: the press does nothing.
+  useHotkeys([
+    {
+      keys: 'mod+k',
+      allowInInputs: true,
+      onPress: () => {
+        if (document.querySelector(OPEN_MODAL_ROOT_SELECTOR)) return;
+        setIsOpen(true);
+      },
+    },
+  ]);
 
   // Warm the chunk AND the artifacts it builds while the header is idle:
   // `import()` caches its module promise, and `warmGlobalSearch` resolves the
   // whole index against the current locale and English, so neither the first
-  // open nor the first keystroke pays for them. Stays above the gate's early
-  // return — it is a hook.
+  // open nor the first keystroke pays for them.
   useEffect(() => {
-    if (!isExperimentalGlobalSearchEnabled) return;
     const warm = () => {
       void importPalette().then((palette) => palette.warmGlobalSearch(i18n));
     };
@@ -80,14 +67,7 @@ const GlobalSearchPaletteButton: React.FC<GlobalSearchPaletteButtonProps> = ({
     return () => window.clearTimeout(handle);
     // `changeLanguage` mutates this same `i18n` instance, so the locale must
     // be its own dependency for a language switch to re-warm the index.
-  }, [isExperimentalGlobalSearchEnabled, i18n, i18n.resolvedLanguage]);
-
-  if (!isExperimentalGlobalSearchEnabled) {
-    // The gate unmounts the palette but not this flag; clear it here (React's
-    // adjust-state-while-rendering) so a later toggle-on does not re-open it.
-    if (isOpen) setIsOpen(false);
-    return null;
-  }
+  }, [i18n, i18n.resolvedLanguage]);
 
   const bandMediaMode = isDarkMode ? 'light' : 'dark';
 

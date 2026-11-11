@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d6b35ecba8721244593417c2f1cf6bdd>>
+ * @generated SignedSource<<e78c86f3e22e9c173d8a96c4e520badf>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,19 +10,23 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type ArtifactAvailability = "ALIVE" | "DELETED" | "%future added value";
-export type RestoreArtifactsInput = {
-  artifactIds: ReadonlyArray<string>;
+export type PartialBulkRestoreArtifactsInput = {
+  ids: ReadonlyArray<string>;
 };
 export type BAIActivateArtifactsModalArtifactsFragmentRestoreArtifactsMutation$variables = {
-  input: RestoreArtifactsInput;
+  input: PartialBulkRestoreArtifactsInput;
 };
 export type BAIActivateArtifactsModalArtifactsFragmentRestoreArtifactsMutation$data = {
-  readonly restoreArtifacts: {
-    readonly artifacts: ReadonlyArray<{
+  readonly partialBulkRestoreArtifacts: {
+    readonly failed: ReadonlyArray<{
+      readonly id: string;
+      readonly message: string;
+    }>;
+    readonly successes: ReadonlyArray<{
       readonly availability: ArtifactAvailability;
       readonly id: string;
     }>;
-  } | null | undefined;
+  };
 };
 export type BAIActivateArtifactsModalArtifactsFragmentRestoreArtifactsMutation = {
   response: BAIActivateArtifactsModalArtifactsFragmentRestoreArtifactsMutation$data;
@@ -37,7 +41,14 @@ var v0 = [
     "name": "input"
   }
 ],
-v1 = [
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v2 = [
   {
     "alias": null,
     "args": [
@@ -47,9 +58,9 @@ v1 = [
         "variableName": "input"
       }
     ],
-    "concreteType": "RestoreArtifactsPayload",
+    "concreteType": "PartialBulkArtifactsPayload",
     "kind": "LinkedField",
-    "name": "restoreArtifacts",
+    "name": "partialBulkRestoreArtifacts",
     "plural": false,
     "selections": [
       {
@@ -57,21 +68,34 @@ v1 = [
         "args": null,
         "concreteType": "Artifact",
         "kind": "LinkedField",
-        "name": "artifacts",
+        "name": "successes",
         "plural": true,
         "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
+          (v1/*: any*/),
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
             "name": "availability",
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "PartialBulkFailure",
+        "kind": "LinkedField",
+        "name": "failed",
+        "plural": true,
+        "selections": [
+          (v1/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "message",
             "storageKey": null
           }
         ],
@@ -87,7 +111,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "BAIActivateArtifactsModalArtifactsFragmentRestoreArtifactsMutation",
-    "selections": (v1/*: any*/),
+    "selections": (v2/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -96,19 +120,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "BAIActivateArtifactsModalArtifactsFragmentRestoreArtifactsMutation",
-    "selections": (v1/*: any*/)
+    "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "818ab68b4b27d1f6b18220eae06fef22",
+    "cacheID": "432d20cc8421a9533d0a1abdafb0584c",
     "id": null,
     "metadata": {},
     "name": "BAIActivateArtifactsModalArtifactsFragmentRestoreArtifactsMutation",
     "operationKind": "mutation",
-    "text": "mutation BAIActivateArtifactsModalArtifactsFragmentRestoreArtifactsMutation(\n  $input: RestoreArtifactsInput!\n) {\n  restoreArtifacts(input: $input) {\n    artifacts {\n      id\n      availability\n    }\n  }\n}\n"
+    "text": "mutation BAIActivateArtifactsModalArtifactsFragmentRestoreArtifactsMutation(\n  $input: PartialBulkRestoreArtifactsInput!\n) {\n  partialBulkRestoreArtifacts(input: $input) {\n    successes {\n      id\n      availability\n    }\n    failed {\n      id\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "e6f2f3dbacb79c2439cde2be032f9fe0";
+(node as any).hash = "fd1ec5137350e8e324994d4c7dfe351f";
 
 export default node;

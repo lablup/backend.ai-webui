@@ -72,7 +72,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
       <BAIFlex direction="column" align="stretch" gap={'md'}>
         {/* antd Row gutter={[24,24]} + Col xs={24} sm={12} (uniform 2-up from
             576px) → Grid columns={{minWidth:280, max:2}} gap={6}
-            (RESPONSIVE-POLICY R1; 24px gutter = step 6). */}
+            (ADR 0020 R1; 24px gutter = step 6). */}
         <Grid columns={{ minWidth: 280, max: 2 }} gap={6}>
           {parsedLiveStat?.devices?.cpu_util ? (
             <BAIFlex direction="column" gap="xxs" align="stretch">

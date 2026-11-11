@@ -8,7 +8,9 @@ import { useIsLabelableEntityType } from '../../hooks/useLabelableEntityTypes';
 import BAIBooleanToken from '../BAIBooleanToken';
 import BAIDeploymentStatusBadge, {
   BAIDeploymentStatus,
+  getDeploymentPauseCause,
 } from '../BAIDeploymentStatusBadge';
+import BAIDoubleBadge from '../BAIDoubleBadge';
 import BAIFlex from '../BAIFlex';
 import BAIId from '../BAIId';
 import BAIText from '../BAIText';
@@ -48,6 +50,7 @@ export const availableDeploymentSorterKeys = [
   'createdAt',
   'project',
   'resourceGroup',
+  'desiredReplicas',
 ] as const;
 
 export type DeploymentSorterKey =
@@ -100,7 +103,11 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
   const deployments = useFragment<BAIModelDeploymentNodesFragment$key>(
     graphql`
       fragment BAIModelDeploymentNodesFragment on ModelDeployment
-      @relay(plural: true) {
+      @relay(plural: true)
+      @argumentDefinitions(
+        # false skips what only the optional columns read.
+        withDetails: { type: "Boolean", defaultValue: true }
+      ) {
         id
         entityId
         currentRevisionId
@@ -112,28 +119,29 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
           createdAt
           updatedAt
           resourceGroupName
-          projectV2 {
+          projectV2 @include(if: $withDetails) {
             basicInfo {
               name
             }
             id
           }
         }
-        networkAccess {
+        networkAccess @include(if: $withDetails) {
           endpointUrl
           preferredDomainName
           openToPublic
         }
-        defaultDeploymentStrategy {
+        defaultDeploymentStrategy @include(if: $withDetails) {
           type
         }
         replicaState {
+          replicaCount
           desiredReplicaCount
         }
         runningReplicas: replicas(filter: { status: { equals: RUNNING } }) {
           count
         }
-        currentRevision {
+        currentRevision @include(if: $withDetails) {
           id
           revisionNumber
           modelMountConfig {
@@ -143,11 +151,13 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
             }
           }
         }
-        entityLabels(limit: 100) {
+        entityLabels(limit: 100) @include(if: $withDetails) {
           ...BAIEntityLabelTokensFragment
           ...BAIEntityLabelSettingModalFragment
         }
         ...BAIDeploymentOwnerInfo_deployment
+          @include(if: $withDetails)
+          @alias(as: "ownerInfo")
       }
     `,
     deploymentsFrgmt,
@@ -200,6 +210,25 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
           if (!status || status === '%future added value') {
             return '-';
           }
+          const pauseCause = getDeploymentPauseCause(
+            status,
+            record.replicaState,
+          );
+          if (pauseCause) {
+            return (
+              <BAIDoubleBadge
+                values={[
+                  {
+                    label: t('comp:BAIModelDeploymentNodes.Paused'),
+                    variant: 'warning',
+                  },
+                  pauseCause === 'user'
+                    ? t('comp:BAIModelDeploymentNodes.PausedByUser')
+                    : t('comp:BAIModelDeploymentNodes.PausedByAutoScaling'),
+                ]}
+              />
+            );
+          }
           return (
             <BAIDeploymentStatusBadge status={status as BAIDeploymentStatus} />
           );
@@ -207,6 +236,8 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
       },
       {
         key: 'replicaSummary',
+        dataIndex: 'desiredReplicas',
+        sorter: isEnableSorter('desiredReplicas'),
         title: (
           <BAIFlex gap="xxs" align="center">
             {t('comp:BAIModelDeploymentNodes.ReplicaSummary')}
@@ -255,6 +286,8 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         key: 'replicas',
         title: t('comp:BAIModelDeploymentNodes.Replicas'),
         defaultHidden: true,
+        dataIndex: 'desiredReplicas',
+        sorter: isEnableSorter('desiredReplicas'),
         render: (__, record) => {
           const desired = record.replicaState?.desiredReplicaCount;
           if (!_.isNumber(desired)) {
@@ -267,7 +300,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         key: 'id',
         title: t('comp:BAIModelDeploymentNodes.DeploymentID'),
         defaultHidden: true,
-        render: (__, record) => <BAIId globalId={record.id} copyable />,
+        render: (__, record) => <BAIId uuid={record.entityId} copyable />,
       },
       {
         key: 'projectId',
@@ -398,7 +431,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         title: t('comp:BAIModelDeploymentNodes.Owner'),
         defaultHidden: true,
         render: (__, record) => (
-          <BAIDeploymentOwnerInfo deploymentFrgmt={record} />
+          <BAIDeploymentOwnerInfo deploymentFrgmt={record.ownerInfo} />
         ),
       },
       {

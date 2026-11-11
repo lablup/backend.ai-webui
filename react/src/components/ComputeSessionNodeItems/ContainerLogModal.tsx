@@ -28,7 +28,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
-interface ContainerLogModalProps extends BAIModalProps {
+export interface ContainerLogModalProps extends BAIModalProps {
   sessionFrgmt: ContainerLogModalFragment$key | null;
   defaultKernelId?: string;
 }

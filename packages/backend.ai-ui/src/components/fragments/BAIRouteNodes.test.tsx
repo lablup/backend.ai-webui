@@ -8,6 +8,7 @@ vi.mock('react-relay', async (importOriginal) => ({
 
 const route = (localId: string, status: string, healthStatus: string) => ({
   id: btoa(`Route:${localId}`),
+  fieldId: localId,
   status,
   healthStatus,
   trafficRatio: 1,

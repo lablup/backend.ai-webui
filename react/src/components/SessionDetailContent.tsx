@@ -6,16 +6,15 @@ import type { ScopedAuditLogQuery as ScopedAuditLogQueryType } from '../__genera
 import { SessionDetailContentFragment$key } from '../__generated__/SessionDetailContentFragment.graphql';
 import { SessionDetailContentQuery } from '../__generated__/SessionDetailContentQuery.graphql';
 import { convertToBinaryUnit } from '../helper';
+import { getUnifiedSlotNameFromTag } from '../helper/unifiedAcceleratorSlot';
 import {
   useCurrentUserInfo,
   useCurrentUserRole,
   useResourceSlotsDetails,
 } from '../hooks/backendai';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
-import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
 import { ProjectContextOrNull } from '../types/projectContext';
 import BAIErrorBoundary from './BAIErrorBoundary';
-import CodeHighlighterModal from './CodeHighlighterModal';
 import ConnectedKernelList from './ComputeSessionNodeItems/ConnectedKernelList';
 import EditableSessionName from './ComputeSessionNodeItems/EditableSessionName';
 import SessionAccessKey from './ComputeSessionNodeItems/SessionAccessKey';
@@ -28,8 +27,8 @@ import SessionStatusBadge from './ComputeSessionNodeItems/SessionStatusBadge';
 import IdleCheckDescriptionModal from './IdleCheckDescriptionModal';
 import { UNSAFELazySessionImageTag } from './ImageTags';
 import MountedVFolderLinks from './MountedVFolderLinks';
+import { ResourceNumbersOfSession } from './ResourceNumbersOfSession';
 import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
-import { getUnifiedSlotNameFromTag } from './SessionFormItems/ResourceAllocationFormItems';
 import SessionSchedulingHistoryModal from './SessionSchedulingHistoryModal';
 import SessionUsageMonitor from './SessionUsageMonitor';
 import { Banner } from '@lablup/ui-common/Banner';
@@ -61,7 +60,7 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { History, Info, CircleHelp, TriangleAlert } from 'lucide-react';
-import { Suspense, useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -70,6 +69,9 @@ import {
   useQueryLoader,
 } from 'react-relay';
 import { useLocation } from 'react-router-dom';
+
+// The highlighter modal carries shiki; load it when the modal first opens.
+const CodeHighlighterModal = React.lazy(() => import('./CodeHighlighterModal'));
 
 // When a session is tagged as using a unified-memory accelerator slot, its
 // quantity is auto-allocated and not meaningfully stored in `requested_slots`.
@@ -667,22 +669,26 @@ const SessionDetailContent: React.FC<{
         open={openIdleCheckDescriptionModal}
         onCancel={() => setOpenIdleCheckDescriptionModal(false)}
       />
-      <CodeHighlighterModal
-        open={openCodeHighlighterModal}
-        language="shell"
-        content={session.startup_command || ''}
-        title={t('session.StartupCommand')}
-        footer={
-          <Button
-            variant="primary"
-            label={t('button.Close')}
-            onClick={() => {
-              toggleOpenCodeHighlighterModal();
-            }}
+      {openCodeHighlighterModal && (
+        <Suspense fallback={null}>
+          <CodeHighlighterModal
+            open={openCodeHighlighterModal}
+            language="shell"
+            content={session.startup_command || ''}
+            title={t('session.StartupCommand')}
+            footer={
+              <Button
+                variant="primary"
+                label={t('button.Close')}
+                onClick={() => {
+                  toggleOpenCodeHighlighterModal();
+                }}
+              />
+            }
+            onCancel={toggleOpenCodeHighlighterModal}
           />
-        }
-        onCancel={toggleOpenCodeHighlighterModal}
-      />
+        </Suspense>
+      )}
       <SessionSchedulingHistoryModal
         sessionId={id}
         open={openSessionSchedulingHistoryModal}

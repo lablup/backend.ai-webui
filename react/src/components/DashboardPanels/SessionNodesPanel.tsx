@@ -6,10 +6,12 @@ import type { resourceRegistrySessionQuery } from '../../__generated__/resourceR
 import { useWebUINavigate } from '../../hooks';
 import { useBAIPaginationOptionState } from '../../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
-import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import SessionNodes from '../SessionNodes';
+import { readPrimary } from './panelPermission';
 import { resourceRegistry } from './resourceRegistry';
 import type { PanelDescriptor } from './types';
+import { useDashboardQueryScope } from './useDashboardFilters';
+import { useResetPageOn } from './useResetPageOn';
 import { filterOutNullAndUndefined } from 'backend.ai-ui';
 import React, { useDeferredValue } from 'react';
 import { useLazyLoadQuery } from 'react-relay';
@@ -30,7 +32,7 @@ export const SessionNodesPanelContent: React.FC<{
   disableSessionDetail?: boolean;
 }> = ({ descriptor, fetchKey, onChangeOrder, disableSessionDetail }) => {
   'use memo';
-  const currentProject = useCurrentProjectValue();
+  const queryScope = useDashboardQueryScope();
   const webUINavigate = useWebUINavigate();
   const location = useLocation();
   const config = resourceRegistry.session;
@@ -42,14 +44,21 @@ export const SessionNodesPanelContent: React.FC<{
     tablePaginationOption,
     setTablePaginationOption,
   } = useBAIPaginationOptionState({ current: 1, pageSize: 10 });
+  useResetPageOn(
+    [descriptor.filter, descriptor.resourceGroups, queryScope],
+    setTablePaginationOption,
+  );
 
+  // The query falls back to the default order; the table shows only a chosen one,
+  // so its sort cycle can reach ascending instead of snapping back to the default.
   const order = descriptor.order ?? config.defaultOrder;
   const variables = config.buildVariables({
     filter: descriptor.filter ?? undefined,
     order,
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
-    projectId: currentProject.id ?? '',
+    ...queryScope,
+    resourceGroups: descriptor.resourceGroups,
   });
   const deferredVariables = useDeferredValue(variables);
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -61,7 +70,7 @@ export const SessionNodesPanelContent: React.FC<{
       fetchKey: deferredFetchKey,
     },
   );
-  const connection = data.compute_session_nodes;
+  const connection = readPrimary(data.compute_session_nodes);
   const sessions = filterOutNullAndUndefined(
     connection?.edges.map((e) => e?.node),
   );
@@ -69,7 +78,7 @@ export const SessionNodesPanelContent: React.FC<{
   return (
     <SessionNodes
       sessionsFrgmt={sessions}
-      order={order}
+      order={descriptor.order ?? undefined}
       disableSorter={!onChangeOrder}
       onChangeOrder={
         onChangeOrder ? (next) => onChangeOrder(next ?? undefined) : undefined

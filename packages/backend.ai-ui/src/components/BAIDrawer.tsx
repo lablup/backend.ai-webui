@@ -5,10 +5,10 @@
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import './BAIDrawer.css';
 import BAIDrawerPortal from './BAIDrawerPortal';
+import { Drawer } from '@lablup/ui-common/Drawer';
 import { Heading } from '@lablup/ui-common/Heading';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { HStack, StackItem, VStack } from '@lablup/ui-common/Stack';
-import { Drawer } from '@lablup/ui-common/lab';
 import classNames from 'classnames';
 import { X } from 'lucide-react';
 import React, {
@@ -181,6 +181,8 @@ const BAIDrawer: React.FC<BAIDrawerProps> = ({
     side,
     width: size,
     label: accessibleName,
+    // The header and body above own the insets; core's default would add a second one.
+    padding: 0 as const,
   };
 
   // A scrimmed lab `Drawer` would `showModal()` and inert every portalled modal

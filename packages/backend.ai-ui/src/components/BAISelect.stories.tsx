@@ -316,3 +316,20 @@ export const AsyncSearch: Story = {
     );
   },
 };
+
+export const DisabledOptionReason: Story = {
+  name: 'Disabled Option With Reason',
+  args: {
+    options: [
+      { label: 'AK1A2B3C4D', value: 'ak1' },
+      {
+        label: 'AK9Z8Y7X6W',
+        value: 'ak2',
+        disabled: { reason: 'This keypair is inactive.' },
+      },
+      { label: 'AK5E6F7G8H', value: 'ak3' },
+    ],
+    placeholder: 'Select an access key',
+    style: { width: 280 },
+  },
+};

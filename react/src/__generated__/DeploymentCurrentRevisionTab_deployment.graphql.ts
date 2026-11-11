@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9de37920cfbb96ed03005384989c7412>>
+ * @generated SignedSource<<2a074bf455756d394584b499d4c6a83d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,6 +17,7 @@ export type DeploymentCurrentRevisionTab_deployment$data = {
     readonly " $fragmentSpreads": FragmentRefs<"DeploymentRevisionDetail_revision">;
   } | null | undefined;
   readonly deployingRevision: {
+    readonly fieldId: string;
     readonly id: string;
     readonly revisionNumber: number;
     readonly " $fragmentSpreads": FragmentRefs<"DeploymentRevisionDetail_revision">;
@@ -37,21 +38,18 @@ var v0 = {
   "name": "id",
   "storageKey": null
 },
-v1 = [
-  (v0/*: any*/),
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "revisionNumber",
-    "storageKey": null
-  },
-  {
-    "args": null,
-    "kind": "FragmentSpread",
-    "name": "DeploymentRevisionDetail_revision"
-  }
-];
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "revisionNumber",
+  "storageKey": null
+},
+v2 = {
+  "args": null,
+  "kind": "FragmentSpread",
+  "name": "DeploymentRevisionDetail_revision"
+};
 return {
   "argumentDefinitions": [],
   "kind": "Fragment",
@@ -66,7 +64,11 @@ return {
       "kind": "LinkedField",
       "name": "currentRevision",
       "plural": false,
-      "selections": (v1/*: any*/),
+      "selections": [
+        (v0/*: any*/),
+        (v1/*: any*/),
+        (v2/*: any*/)
+      ],
       "storageKey": null
     },
     {
@@ -76,7 +78,18 @@ return {
       "kind": "LinkedField",
       "name": "deployingRevision",
       "plural": false,
-      "selections": (v1/*: any*/),
+      "selections": [
+        (v0/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "fieldId",
+          "storageKey": null
+        },
+        (v1/*: any*/),
+        (v2/*: any*/)
+      ],
       "storageKey": null
     }
   ],
@@ -85,6 +98,6 @@ return {
 };
 })();
 
-(node as any).hash = "28e3397e8a94310a7797f095fa97f158";
+(node as any).hash = "37a6ee89b0e7af9134182752c0ba9fc3";
 
 export default node;

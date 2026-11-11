@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c5c621e5b9f7033c8d1c4707ef07d3a9>>
+ * @generated SignedSource<<7e6c7e4f3ff6d2d2fc97b483dafde5ce>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,7 +13,9 @@ export type DeploymentRevisionPresetFilter = {
   AND?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
   NOT?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
   OR?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   id?: UUIDFilter | null | undefined;
+  labels?: EntityLabelNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;
   runtimeVariantId?: UUIDFilter | null | undefined;
 };
@@ -45,6 +47,22 @@ export type StringFilter = {
   notStartsWith?: string | null | undefined;
   startsWith?: string | null | undefined;
 };
+export type EntityLabelNestedFilter = {
+  every?: EntityLabelFilter | null | undefined;
+  exists?: boolean | null | undefined;
+  none?: EntityLabelFilter | null | undefined;
+  some?: EntityLabelFilter | null | undefined;
+};
+export type EntityLabelFilter = {
+  AND?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  NOT?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
+  key?: StringFilter | null | undefined;
+  value?: StringFilter | null | undefined;
+};
 export type ModelCardAvailablePresetsScope = {
   modelCardId: string;
 };
@@ -60,6 +78,7 @@ export type BAIAvailablePresetSelectCardScopedQuery$data = {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly description: string | null | undefined;
+        readonly entityId: string;
         readonly id: string;
         readonly name: string;
         readonly rank: number;
@@ -147,24 +166,31 @@ v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "entityId",
   "storageKey": null
 },
 v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "description",
+  "name": "name",
   "storageKey": null
 },
 v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "rank",
+  "name": "description",
   "storageKey": null
 },
 v10 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "rank",
+  "storageKey": null
+},
+v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -213,6 +239,7 @@ return {
                   (v8/*: any*/),
                   (v9/*: any*/),
                   (v10/*: any*/),
+                  (v11/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -221,7 +248,7 @@ return {
                     "name": "runtimeVariant",
                     "plural": false,
                     "selections": [
-                      (v7/*: any*/)
+                      (v8/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -279,6 +306,7 @@ return {
                   (v8/*: any*/),
                   (v9/*: any*/),
                   (v10/*: any*/),
+                  (v11/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -287,7 +315,7 @@ return {
                     "name": "runtimeVariant",
                     "plural": false,
                     "selections": [
-                      (v7/*: any*/),
+                      (v8/*: any*/),
                       (v6/*: any*/)
                     ],
                     "storageKey": null
@@ -304,16 +332,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "6b782a28ed210de525b86ae3777bd1fa",
+    "cacheID": "ba131a27216052d230443266c5b38152",
     "id": null,
     "metadata": {},
     "name": "BAIAvailablePresetSelectCardScopedQuery",
     "operationKind": "query",
-    "text": "query BAIAvailablePresetSelectCardScopedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: DeploymentRevisionPresetFilter\n  $scope: ModelCardAvailablePresetsScope!\n) {\n  modelCardAvailablePresets(scope: $scope, offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: RANK, direction: \"ASC\"}]) {\n    count\n    edges {\n      node {\n        id\n        name\n        description\n        rank\n        runtimeVariantId\n        runtimeVariant {\n          name\n          id\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIAvailablePresetSelectCardScopedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: DeploymentRevisionPresetFilter\n  $scope: ModelCardAvailablePresetsScope!\n) {\n  modelCardAvailablePresets(scope: $scope, offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: RANK, direction: \"ASC\"}]) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        name\n        description\n        rank\n        runtimeVariantId\n        runtimeVariant {\n          name\n          id\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "45e8541f5c075d3d30165484e7f98bee";
+(node as any).hash = "1f79f628a2f17aa2e426c6dd964ddfa9";
 
 export default node;

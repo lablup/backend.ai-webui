@@ -15,7 +15,7 @@ navTitle: プロジェクト管理者機能
 ヘッダーのプロジェクトドロップダウンを開くと、プロジェクト管理者ロールを持つプロジェクトには名前の横に盾の形のバッジが表示されます。バッジにカーソルを合わせると **プロジェクト管理者** ツールチップが表示され、このプロジェクトを選択すると以下で説明するプロジェクト管理者向けサイドバー項目が表示されることが確認できます。
 
 ![=300px](../images/header_project_selector_with_admin_badge.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 ヘッダーのプロジェクトセレクターで別のプロジェクトに切り替えると、ユーザーのロールが再評価されます。同じユーザーが同一のログインセッション内で、あるプロジェクトではプロジェクト管理者として、別のプロジェクトでは一般ユーザーとして振る舞うことがあります。プロジェクト管理者ロールの付与と取り消しの方法については、RBAC管理章の[プロジェクト管理者権限の付与](#grant-project-admin)セクションを参照してください。
 
@@ -60,20 +60,29 @@ navTitle: プロジェクト管理者機能
 
 ## プロジェクト管理者用サイドバー
 
-プロジェクト管理者ロールを持つプロジェクトを選択すると、サイドバーの **運用** セクションに、そのプロジェクトを管理するための4つの項目が表示されます:
+プロジェクト管理者ロールを持つプロジェクトを選択すると、サイドバーに **プロジェクト設定** 項目が表示されます。この項目を選択するとサイドバーがプロジェクト管理メニューに切り替わり、**ダッシュボード** 項目と、そのプロジェクトを管理するための3つの項目を含む **運用** セクションが表示されます:
 
+- **ダッシュボード** — 現在のプロジェクトの概要
 - **ユーザー** — 現在のプロジェクトのメンバー
-- **データ** — 現在のプロジェクトが所有するストレージフォルダ
 - **セッション** — 現在のプロジェクトのユーザーが所有するコンピュートセッション
 - **デプロイメント** — 現在のプロジェクトが所有するモデルデプロイメント
 
 ![=240px](../images/project_admin_sidebar.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 プロジェクト管理者ページでは、上部のプロジェクトセレクターで選択したプロジェクト配下の項目のみが表示されます。この内容はページ上部のバナーで確認できます。
 
 ![](../images/project_admin_scope_alert.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
+
+<a id="project-admin-dashboard"></a>
+
+## ダッシュボード
+
+**ダッシュボード** 項目を選択すると、選択中のプロジェクトに範囲が限定されたカードのボードが開きます: **セッションの状況**、**保留中のセッションと理由**、**長時間実行中のセッション**、**リソース割り当て**、**デプロイメント**、**プロジェクトフォルダ**、**プロジェクトユーザー**、**監査ログ**。**保留中のセッションと理由** で行を選択すると、そのセッションのスケジューリング履歴が開きます。
+
+![](../images/project_admin_dashboard.png)
+
+ボード、カード設定、更新コントロールはユーザーの [ダッシュボード](#dashboard) と同じように動作します。
 
 <a id="refreshing-project-admin-pages"></a>
 
@@ -84,7 +93,7 @@ navTitle: プロジェクト管理者機能
 更新ボタンの横のドロップダウンボタンをクリックすると **自動更新** メニューが開き、自動更新の間隔を選択できます。
 
 ![=94px](../images/project_admin_auto_refresh_menu.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 <a id="users"></a>
 
@@ -93,7 +102,7 @@ navTitle: プロジェクト管理者機能
 **ユーザー** ページには、現在選択されているプロジェクトに所属するすべてのユーザーが表示されます。このページを使用して、プロジェクトのメンバーを一目で確認できます。例えば、プロジェクトのリソースにアクセスできるユーザーを確認したり、非アクティブなアカウントを特定したりできます。
 
 ![](../images/project_admin_users_page.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 このページには以下のコントロールが用意されています:
 
@@ -104,56 +113,9 @@ navTitle: プロジェクト管理者機能
 
 <a id="data"></a>
 
-## データ
+## ストレージフォルダ
 
-**データ** ページには、現在選択されているプロジェクトが所有するストレージフォルダ（vfolder）が表示されます。このページから、プロジェクト共有フォルダの作成、誤って削除されたフォルダの復元、保持の必要がなくなったフォルダの完全削除を行えます。
-
-![](../images/project_admin_data_page.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
-
-このページには以下のコントロールが用意されています:
-
-- **アクティブ / ゴミ箱** タブ: 現在アクティブなフォルダとソフト削除されたフォルダを切り替えます。各タブには、含まれるフォルダ数を示す件数バッジが表示されます。
-- **モードフィルター**: フォルダの使用モードでフィルタリングします — **全て**、**一般**、**パイプラインフォルダ**、**オートマウント**、**モデル**。
-
-   **パイプラインフォルダ** と **モデル** のオプションは、デプロイメントで対応する機能が有効になっている場合にのみ表示されます — **パイプラインフォルダ** には FastTrack パイプラインエンドポイント、**モデル** にはモデルフォルダが有効になっている必要があります。
-
-- **プロパティフィルター**: 標準のストレージフォルダプロパティフィルターを使用して一覧を絞り込みます。
-
-フォルダの **ラベルを編集** アクションでキーと値のラベルを付与できます。複数のフォルダを選択して **ラベルを追加** をクリックすると、一括でラベルを付けられます。
-
-### フォルダの作成
-
-このページから新しいフォルダを作成するには:
-
-1. ページ右上の **フォルダー作成** ボタンをクリックします。
-2. 作成モーダルでフォルダ情報を入力します。
-3. **作成** をクリックしてフォルダを作成します。
-
-![=650px](../images/project_admin_create_folder_modal.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
-
-:::info
-プロジェクト管理者用データページで作成したフォルダは、常に**プロジェクトフォルダ**です。作成モーダルにはフォルダタイプを選択する項目がなく、これを明示する次のメッセージが表示されます:
-
-> プロジェクト管理者用データページではプロジェクトフォルダーとして作成されます。
-:::
-
-フォルダの使用モード、権限、クォータの詳細については、[ストレージフォルダ](#vfolders)章を参照してください。
-
-### フォルダの復元または完全削除
-
-**ゴミ箱** タブに切り替えると、ソフト削除されたフォルダを確認できます。行のチェックボックスで1つ以上のフォルダを選択し、選択件数の横に表示されるヘッダーのアクションボタンを使用します:
-
-- **復元**: 選択したフォルダをアクティブタブに戻します。
-- **完全削除**: 選択したフォルダを完全に削除します。この操作は取り消せず、確認のためにフォルダ名を入力する必要があります。
-
-![](../images/project_admin_data_deleted_tab.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
-
-:::danger
-ストレージフォルダを完全削除すると、すべてのコンテンツが削除され、取り消すことはできません。確認モーダルでは、削除ボタンが有効になる前にフォルダ名を正確に入力する必要があります。
-:::
+プロジェクトのストレージフォルダは、そのプロジェクトを選択した状態で **データ** ページから管理します。フォルダの使用モード、権限、クォータの詳細については、[ストレージフォルダ](#vfolders)章を参照してください。
 
 <a id="sessions"></a>
 
@@ -162,7 +124,7 @@ navTitle: プロジェクト管理者機能
 **セッション** ページには、現在選択されているプロジェクトのユーザーが所有するコンピュートセッションが表示されます。このページから、アクティブなワークロードの監視、長時間実行されているセッションの特定、不要になったセッションの終了を行えます。
 
 ![](../images/project_admin_sessions_page.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 このページには以下のコントロールが用意されています:
 
@@ -182,7 +144,7 @@ navTitle: プロジェクト管理者機能
 5. 確認ボタンをクリックしてセッションを終了します。
 
 ![=520px](../images/project_admin_terminate_session_modal.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 :::warning
 **強制終了** は、セッションがハングして状態が不当に長時間変化しない場合にのみ使用してください。強制終了はエージェント上の実際のコンテナを削除しないため、その後に手動でのクリーンアップが必要になる場合があります。
@@ -199,12 +161,12 @@ navTitle: プロジェクト管理者機能
 **デプロイメント** ページには、現在選択されているプロジェクトが所有するモデルデプロイメントが表示されます。このページから、推論エンドポイントの管理、デプロイメント設定の編集、使用しなくなったデプロイメントの削除を行えます。
 
 ![](../images/project_admin_deployments_page.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 このページには以下のコントロールが用意されています:
 
 - **実行中 / 終了済み** セグメントコントロール: 現在実行中のデプロイメントと終了したデプロイメントを切り替えます。
-- **プロパティフィルター**: 名前、タグ、エンドポイントURL、公開設定で一覧をフィルタリングします。
+- **プロパティフィルター**: 名前、エンドポイントURL、公開設定で一覧をフィルタリングします。
 
 テーブルにはデプロイメントの名前、リビジョン、ライフサイクル、レプリカ、モデル、所有者、作成日時の各列に加え、必要に応じてドメイン、プロジェクト、リソースグループも表示されます。
 
@@ -221,6 +183,6 @@ navTitle: プロジェクト管理者機能
 - **ゴミ箱アイコン**をクリックすると、デプロイメントを削除できます。削除を実行するには、確認モーダルでデプロイメント名を入力する必要があります。
 
 ![](../images/project_admin_deployment_detail.png)
-<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; the project-admin fixture account cannot load the WebUI on the capture backend (the manager denies it `app_config` read). -->
 
 デプロイメントのリビジョン、レプリカ、トラフィックルーティングの詳細については、[デプロイ](#model-serving)章を参照してください。

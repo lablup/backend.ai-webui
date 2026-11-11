@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b8ba62d7db9b4ac975621c61015f073e>>
+ * @generated SignedSource<<e27b39e3f5619b6fa12cbc51ccb66143>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -205,7 +205,14 @@ return {
                     "name": "node",
                     "plural": false,
                     "selections": [
-                      (v3/*: any*/)
+                      (v3/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "fieldId",
+                        "storageKey": null
+                      }
                     ],
                     "storageKey": null
                   }
@@ -222,7 +229,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "97d724394c8e156f73fc012143d8be20",
+    "cacheID": "f802abfba7a2e5433d5e9e19d68438b2",
     "id": null,
     "metadata": {
       "relayTestingSelectionTypeInfo": {
@@ -251,6 +258,12 @@ return {
           "plural": false,
           "type": "ArtifactRevision"
         },
+        "artifact.revisions.edges.node.fieldId": {
+          "enumValues": null,
+          "nullable": false,
+          "plural": false,
+          "type": "UUID"
+        },
         "artifact.revisions.edges.node.id": (v4/*: any*/),
         "groups": {
           "enumValues": null,
@@ -274,7 +287,7 @@ return {
     },
     "name": "ImportArtifactRevisionToFolderModalTestQuery",
     "operationKind": "query",
-    "text": "query ImportArtifactRevisionToFolderModalTestQuery {\n  groups(is_active: true, type: [\"MODEL_STORE\"]) {\n    ...ImportArtifactRevisionToFolderModalModelStoreProjectsFragment\n  }\n  artifact(id: \"test-artifact-id\") {\n    revisions(limit: 1) {\n      edges {\n        node {\n          ...ImportArtifactRevisionToFolderModalArtifactRevisionFragment\n          id\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment ImportArtifactRevisionToFolderModalArtifactRevisionFragment on ArtifactRevision {\n  id\n}\n\nfragment ImportArtifactRevisionToFolderModalModelStoreProjectsFragment on Group {\n  id\n  name\n}\n"
+    "text": "query ImportArtifactRevisionToFolderModalTestQuery {\n  groups(is_active: true, type: [\"MODEL_STORE\"]) {\n    ...ImportArtifactRevisionToFolderModalModelStoreProjectsFragment\n  }\n  artifact(id: \"test-artifact-id\") {\n    revisions(limit: 1) {\n      edges {\n        node {\n          ...ImportArtifactRevisionToFolderModalArtifactRevisionFragment\n          id\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment ImportArtifactRevisionToFolderModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  fieldId\n}\n\nfragment ImportArtifactRevisionToFolderModalModelStoreProjectsFragment on Group {\n  id\n  name\n}\n"
   }
 };
 })();

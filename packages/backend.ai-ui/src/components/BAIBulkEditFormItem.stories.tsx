@@ -2,12 +2,10 @@ import { Form } from '../form-engine';
 import BAIBulkEditFormItem from './BAIBulkEditFormItem';
 import BAIButton from './BAIButton';
 import BAIFlex from './BAIFlex';
+import BAINumberInput from './BAINumberInput';
 import BAISelect from './BAISelect';
-import {
-  AstryxFormNumberInput,
-  AstryxFormTextArea,
-  AstryxFormTextInput,
-} from './astryxFormControls';
+import BAITextArea from './BAITextArea';
+import BAITextInput from './BAITextInput';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
@@ -153,7 +151,7 @@ export const Default: Story = {
     name: 'nickname',
     label: 'Nickname',
     children: (
-      <AstryxFormTextInput label="Nickname" placeholder="Enter nickname" />
+      <BAITextInput aria-label="Nickname" placeholder="Enter nickname" />
     ),
   },
 };
@@ -235,7 +233,12 @@ export const WithInputNumber: Story = {
     label: 'Container UID',
     showClear: true,
     children: (
-      <AstryxFormNumberInput label="Container UID" placeholder="Enter UID" />
+      <BAINumberInput
+        width="100%"
+        hasClear={false}
+        aria-label="Container UID"
+        placeholder="Enter UID"
+      />
     ),
   },
 };
@@ -335,7 +338,7 @@ export const MultipleFields: Story = {
         />
       </BAIBulkEditFormItem>
       <BAIBulkEditFormItem name="notes" label="Notes" showClear>
-        <AstryxFormTextArea label="Notes" rows={3} placeholder="Add notes" />
+        <BAITextArea aria-label="Notes" rows={3} placeholder="Add notes" />
       </BAIBulkEditFormItem>
     </>
   ),

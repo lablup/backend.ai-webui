@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<13a26d43e760627e50d7570c293fce86>>
+ * @generated SignedSource<<bc958a7a047fdc872bf0304b642e4ffc>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,16 +9,26 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+import { Result } from "relay-runtime";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type VFolderOperationStatus = "CLONING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
 export type VFolderOrderField = "CREATED_AT" | "HOST" | "NAME" | "STATUS" | "USAGE_MODE" | "%future added value";
 export type VFolderUsageMode = "DATA" | "GENERAL" | "MODEL" | "%future added value";
+export type VFolderScope = {
+  domain?: ReadonlyArray<UUIDScope> | null | undefined;
+  project?: ReadonlyArray<UUIDScope> | null | undefined;
+  user?: ReadonlyArray<UUIDScope> | null | undefined;
+};
+export type UUIDScope = {
+  value: string;
+};
 export type VFolderFilter = {
   AND?: ReadonlyArray<VFolderFilter> | null | undefined;
   NOT?: ReadonlyArray<VFolderFilter> | null | undefined;
   OR?: ReadonlyArray<VFolderFilter> | null | undefined;
   cloneable?: boolean | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   host?: StringFilter | null | undefined;
   labels?: EntityLabelNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;
@@ -77,6 +87,7 @@ export type EntityLabelFilter = {
   OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
   entityId?: UUIDFilter | null | undefined;
   entityType?: StringFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   key?: StringFilter | null | undefined;
   value?: StringFilter | null | undefined;
 };
@@ -95,9 +106,10 @@ export type resourceRegistryVfolderQuery$variables = {
   limit?: number | null | undefined;
   offset?: number | null | undefined;
   orderBy?: ReadonlyArray<VFolderOrderBy> | null | undefined;
+  scope: VFolderScope;
 };
 export type resourceRegistryVfolderQuery$data = {
-  readonly adminVfoldersV2: {
+  readonly scopedVFoldersV2: Result<{
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -111,7 +123,7 @@ export type resourceRegistryVfolderQuery$data = {
         readonly status: VFolderOperationStatus;
       };
     }>;
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type resourceRegistryVfolderQuery = {
   response: resourceRegistryVfolderQuery$data;
@@ -139,140 +151,156 @@ v3 = {
   "kind": "LocalArgument",
   "name": "orderBy"
 },
-v4 = [
-  {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "filter",
-        "variableName": "filter"
-      },
-      {
-        "kind": "Variable",
-        "name": "limit",
-        "variableName": "limit"
-      },
-      {
-        "kind": "Variable",
-        "name": "offset",
-        "variableName": "offset"
-      },
-      {
-        "kind": "Variable",
-        "name": "orderBy",
-        "variableName": "orderBy"
-      }
-    ],
-    "concreteType": "VFolderConnection",
-    "kind": "LinkedField",
-    "name": "adminVfoldersV2",
-    "plural": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "count",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "VFolderEdge",
-        "kind": "LinkedField",
-        "name": "edges",
-        "plural": true,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "VFolder",
-            "kind": "LinkedField",
-            "name": "node",
-            "plural": false,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "id",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "host",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "status",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "VFolderMetadataInfo",
-                "kind": "LinkedField",
-                "name": "metadata",
-                "plural": false,
-                "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "name",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "usageMode",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "createdAt",
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
-  }
-];
+v4 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "scope"
+},
+v5 = {
+  "alias": null,
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "filter",
+      "variableName": "filter"
+    },
+    {
+      "kind": "Variable",
+      "name": "limit",
+      "variableName": "limit"
+    },
+    {
+      "kind": "Variable",
+      "name": "offset",
+      "variableName": "offset"
+    },
+    {
+      "kind": "Variable",
+      "name": "orderBy",
+      "variableName": "orderBy"
+    },
+    {
+      "kind": "Variable",
+      "name": "scope",
+      "variableName": "scope"
+    }
+  ],
+  "concreteType": "VFolderConnection",
+  "kind": "LinkedField",
+  "name": "scopedVFoldersV2",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "count",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "VFolderEdge",
+      "kind": "LinkedField",
+      "name": "edges",
+      "plural": true,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "VFolder",
+          "kind": "LinkedField",
+          "name": "node",
+          "plural": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "id",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "host",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "status",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "VFolderMetadataInfo",
+              "kind": "LinkedField",
+              "name": "metadata",
+              "plural": false,
+              "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "name",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "usageMode",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "createdAt",
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": [
       (v0/*: any*/),
       (v1/*: any*/),
       (v2/*: any*/),
-      (v3/*: any*/)
+      (v3/*: any*/),
+      (v4/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
     "name": "resourceRegistryVfolderQuery",
-    "selections": (v4/*: any*/),
+    "selections": [
+      {
+        "kind": "CatchField",
+        "field": (v5/*: any*/),
+        "to": "RESULT"
+      }
+    ],
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
+      (v4/*: any*/),
       (v0/*: any*/),
       (v3/*: any*/),
       (v1/*: any*/),
@@ -280,19 +308,21 @@ return {
     ],
     "kind": "Operation",
     "name": "resourceRegistryVfolderQuery",
-    "selections": (v4/*: any*/)
+    "selections": [
+      (v5/*: any*/)
+    ]
   },
   "params": {
-    "cacheID": "0bf78ebbd78040d6acf4915a3b7744cc",
+    "cacheID": "3ccdd2aea81f152b2c8c52ac225cbd2c",
     "id": null,
     "metadata": {},
     "name": "resourceRegistryVfolderQuery",
     "operationKind": "query",
-    "text": "query resourceRegistryVfolderQuery(\n  $filter: VFolderFilter\n  $orderBy: [VFolderOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminVfoldersV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        host\n        status\n        metadata {\n          name\n          usageMode\n          createdAt\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query resourceRegistryVfolderQuery(\n  $scope: VFolderScope!\n  $filter: VFolderFilter\n  $orderBy: [VFolderOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  scopedVFoldersV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        host\n        status\n        metadata {\n          name\n          usageMode\n          createdAt\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "f0f996cac5aac86ee5907d16f7b69a3c";
+(node as any).hash = "019620bd2d8cc4cf201f459ad98c2bcc";
 
 export default node;

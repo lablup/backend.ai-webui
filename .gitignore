@@ -70,6 +70,7 @@ react/.env.local
 # dotenv environment variables file for playwright test
 /e2e/envs/*
 !/e2e/envs/.env.playwright.sample
+!/e2e/envs/.env.playwright.admin.sample
 !/e2e/envs/.env.e2e-agent.sample
 
 # e2e (e2e.tester.army) run output: report, artifacts, replay cache
@@ -184,9 +185,7 @@ e2e/.agent-output/
 
 e2e/recordings/
 
-# Local scratch space — never committed (the FR-3482 migration's working
-# directory briefly lived here; its durable records moved to
-# .specs/FR-3482-astryx-migration/ in FR-3488).
+# Local scratch space — never committed.
 .scratch/
 
 # smoke run reports (e2e/playwright.smoke.config.ts)

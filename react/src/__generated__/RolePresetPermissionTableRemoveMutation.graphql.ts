@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<afbb3498835da227319bbc2927140459>>
+ * @generated SignedSource<<8f21fd709371af239f98dc2556c2d53c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,22 +9,22 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type BulkRemoveRolePermissionPresetsInput = {
-  permissionPresetIds: ReadonlyArray<string>;
+export type PartialBulkRemoveRolePresetPermissionsInput = {
+  ids: ReadonlyArray<string>;
 };
 export type RolePresetPermissionTableRemoveMutation$variables = {
-  input: BulkRemoveRolePermissionPresetsInput;
+  input: PartialBulkRemoveRolePresetPermissionsInput;
 };
 export type RolePresetPermissionTableRemoveMutation$data = {
-  readonly adminBulkRemoveRolePresetPermissions: {
+  readonly partialBulkRemoveRolePresetPermissions: {
     readonly failed: ReadonlyArray<{
+      readonly id: string;
       readonly message: string;
-      readonly permissionPresetId: string;
     }>;
-    readonly items: ReadonlyArray<{
+    readonly successes: ReadonlyArray<{
       readonly id: string;
     }>;
-  } | null | undefined;
+  };
 };
 export type RolePresetPermissionTableRemoveMutation = {
   response: RolePresetPermissionTableRemoveMutation$data;
@@ -39,7 +39,14 @@ var v0 = [
     "name": "input"
   }
 ],
-v1 = [
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v2 = [
   {
     "alias": null,
     "args": [
@@ -49,9 +56,9 @@ v1 = [
         "variableName": "input"
       }
     ],
-    "concreteType": "BulkRemoveRolePermissionPresetsPayload",
+    "concreteType": "PartialBulkRolePresetPermissionsPayload",
     "kind": "LinkedField",
-    "name": "adminBulkRemoveRolePresetPermissions",
+    "name": "partialBulkRemoveRolePresetPermissions",
     "plural": false,
     "selections": [
       {
@@ -59,34 +66,22 @@ v1 = [
         "args": null,
         "concreteType": "RolePermissionPreset",
         "kind": "LinkedField",
-        "name": "items",
+        "name": "successes",
         "plural": true,
         "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          }
+          (v1/*: any*/)
         ],
         "storageKey": null
       },
       {
         "alias": null,
         "args": null,
-        "concreteType": "BulkRolePermissionPresetFailureInfo",
+        "concreteType": "PartialBulkFailure",
         "kind": "LinkedField",
         "name": "failed",
         "plural": true,
         "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "permissionPresetId",
-            "storageKey": null
-          },
+          (v1/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -107,7 +102,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "RolePresetPermissionTableRemoveMutation",
-    "selections": (v1/*: any*/),
+    "selections": (v2/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -116,19 +111,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "RolePresetPermissionTableRemoveMutation",
-    "selections": (v1/*: any*/)
+    "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "3e3163dcdbfb1073f6450d144773d8f0",
+    "cacheID": "f00878abe495bbf98a3aba1998c5441d",
     "id": null,
     "metadata": {},
     "name": "RolePresetPermissionTableRemoveMutation",
     "operationKind": "mutation",
-    "text": "mutation RolePresetPermissionTableRemoveMutation(\n  $input: BulkRemoveRolePermissionPresetsInput!\n) {\n  adminBulkRemoveRolePresetPermissions(input: $input) {\n    items {\n      id\n    }\n    failed {\n      permissionPresetId\n      message\n    }\n  }\n}\n"
+    "text": "mutation RolePresetPermissionTableRemoveMutation(\n  $input: PartialBulkRemoveRolePresetPermissionsInput!\n) {\n  partialBulkRemoveRolePresetPermissions(input: $input) {\n    successes {\n      id\n    }\n    failed {\n      id\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "7926069880c7481b9bf3e42087ef4740";
+(node as any).hash = "2fc727ea4bcd40501c487cd1448229d5";
 
 export default node;
