@@ -358,7 +358,7 @@
     "AddAutoMount": "添加自动挂载",
     "AutoMount": "自动挂载",
     "AutoMountAdded": "已添加自动挂载。",
-    "AutoMountFailedAfterCreation": "文件夹已创建,但无法设置为自动挂载。",
+    "AutoMountFailedAfterCreation": "文件夹已创建,但无法设置自动挂载。请在文件夹详情的自动挂载部分重试。",
     "AutoMountFolders": "自动挂载文件夹",
     "AutoMountInSessionsDesc": "将此文件夹挂载到此项目中创建的每个会话。",
     "AutoMountRemoved": "已移除自动挂载。",

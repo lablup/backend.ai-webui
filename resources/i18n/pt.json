@@ -358,7 +358,7 @@
     "AddAutoMount": "Adicionar montagem automática",
     "AutoMount": "Montagem automática",
     "AutoMountAdded": "Montagem automática adicionada.",
-    "AutoMountFailedAfterCreation": "A pasta foi criada, mas não foi possível configurar a montagem automática.",
+    "AutoMountFailedAfterCreation": "A pasta foi criada, mas não foi possível configurar a sua montagem automática. Tente novamente na secção Montagem automática dos detalhes da pasta.",
     "AutoMountFolders": "Pastas de montagem automática",
     "AutoMountInSessionsDesc": "Montar esta pasta em todas as sessões criadas neste projeto.",
     "AutoMountRemoved": "Montagem automática removida.",

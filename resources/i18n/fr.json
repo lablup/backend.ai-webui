@@ -358,7 +358,7 @@
     "AddAutoMount": "Ajouter un montage automatique",
     "AutoMount": "Montage automatique",
     "AutoMountAdded": "Montage automatique ajouté.",
-    "AutoMountFailedAfterCreation": "Le dossier a été créé, mais le montage automatique n'a pas pu être configuré.",
+    "AutoMountFailedAfterCreation": "Le dossier a été créé, mais son montage automatique n'a pas pu être configuré. Réessayez depuis la section Montage automatique des détails du dossier.",
     "AutoMountFolders": "Dossiers montés automatiquement",
     "AutoMountInSessionsDesc": "Monter ce dossier dans chaque session créée dans ce projet.",
     "AutoMountRemoved": "Montage automatique supprimé.",

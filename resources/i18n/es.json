@@ -358,7 +358,7 @@
     "AddAutoMount": "Añadir montaje automático",
     "AutoMount": "Montaje automático",
     "AutoMountAdded": "Montaje automático añadido.",
-    "AutoMountFailedAfterCreation": "La carpeta se creó, pero no se pudo configurar el montaje automático.",
+    "AutoMountFailedAfterCreation": "La carpeta se creó, pero no se pudo configurar su montaje automático. Vuelva a intentarlo desde la sección Montaje automático de los detalles de la carpeta.",
     "AutoMountFolders": "Carpetas de montaje automático",
     "AutoMountInSessionsDesc": "Montar esta carpeta en cada sesión creada en este proyecto.",
     "AutoMountRemoved": "Montaje automático eliminado.",

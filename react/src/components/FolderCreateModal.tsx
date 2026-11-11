@@ -398,6 +398,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
     const autoMountScopeId = autoMountsForUser
       ? baiClient.user_uuid
       : (effectiveProject?.id ?? values.group);
+    let autoMountError: string | undefined;
     if (wantsAutoMountSetting && vfolderResults && autoMountScopeId) {
       // The folder exists by now; a refused auto-mount is reported, not undone.
       await commitCreateAutoMountMutation({
@@ -413,24 +414,23 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         },
       }).catch((error) => {
         logger.error(error);
-        upsertNotification({
-          key: `folder-auto-mount-failure-${vfolderResults.entityId}`,
-          type: 'error',
-          icon: 'folder',
-          message: `${t('general.Folder')}: ${folderName}`,
-          description: t('autoMount.AutoMountFailedAfterCreation'),
-          extraDescription: getErrorMessage(error),
-          open: true,
-        });
+        autoMountError = getErrorMessage(error);
       });
     }
 
     if (vfolderResults) {
+      // A refused auto-mount rides on the creation notice instead of a second one.
       upsertNotification({
         key: `folder-create-success-${vfolderResults.entityId}`,
         icon: 'folder',
         node: vfolderResults.notificationFrgmt,
-        description: t('data.folders.FolderCreated'),
+        ...(autoMountError !== undefined
+          ? {
+              type: 'warning' as const,
+              description: t('autoMount.AutoMountFailedAfterCreation'),
+              extraDescription: autoMountError,
+            }
+          : { description: t('data.folders.FolderCreated') }),
         open: true,
       });
     } else {

@@ -358,7 +358,7 @@
     "AddAutoMount": "자동 마운트 추가",
     "AutoMount": "자동 마운트",
     "AutoMountAdded": "자동 마운트를 추가했습니다.",
-    "AutoMountFailedAfterCreation": "폴더는 만들었지만 자동 마운트로 설정하지 못했습니다.",
+    "AutoMountFailedAfterCreation": "폴더는 만들었지만 자동 마운트를 설정하지 못했습니다. 폴더 상세의 자동 마운트 영역에서 다시 시도해 주세요.",
     "AutoMountFolders": "자동 마운트 폴더",
     "AutoMountInSessionsDesc": "이 프로젝트에서 만드는 모든 세션에 이 폴더를 마운트합니다.",
     "AutoMountRemoved": "자동 마운트를 제거했습니다.",

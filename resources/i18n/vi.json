@@ -358,7 +358,7 @@
     "AddAutoMount": "Thêm gắn tự động",
     "AutoMount": "Gắn tự động",
     "AutoMountAdded": "Đã thêm gắn tự động.",
-    "AutoMountFailedAfterCreation": "Đã tạo thư mục nhưng không thể thiết lập gắn tự động.",
+    "AutoMountFailedAfterCreation": "Đã tạo thư mục nhưng không thể thiết lập gắn tự động. Hãy thử lại trong phần Gắn tự động ở chi tiết thư mục.",
     "AutoMountFolders": "Thư mục gắn tự động",
     "AutoMountInSessionsDesc": "Gắn thư mục này vào mọi phiên tạo trong dự án này.",
     "AutoMountRemoved": "Đã xóa gắn tự động.",

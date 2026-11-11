@@ -358,7 +358,7 @@
     "AddAutoMount": "Aggiungi montaggio automatico",
     "AutoMount": "Montaggio automatico",
     "AutoMountAdded": "Montaggio automatico aggiunto.",
-    "AutoMountFailedAfterCreation": "La cartella è stata creata, ma non è stato possibile impostare il montaggio automatico.",
+    "AutoMountFailedAfterCreation": "La cartella è stata creata, ma non è stato possibile impostarne il montaggio automatico. Riprova dalla sezione Montaggio automatico dei dettagli della cartella.",
     "AutoMountFolders": "Cartelle a montaggio automatico",
     "AutoMountInSessionsDesc": "Monta questa cartella in ogni sessione creata in questo progetto.",
     "AutoMountRemoved": "Montaggio automatico rimosso.",

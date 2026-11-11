@@ -358,7 +358,7 @@
     "AddAutoMount": "新增自動掛載",
     "AutoMount": "自動掛載",
     "AutoMountAdded": "已新增自動掛載。",
-    "AutoMountFailedAfterCreation": "資料夾已建立,但無法設定為自動掛載。",
+    "AutoMountFailedAfterCreation": "資料夾已建立,但無法設定自動掛載。請在資料夾詳細資料的自動掛載區塊重試。",
     "AutoMountFolders": "自動掛載資料夾",
     "AutoMountInSessionsDesc": "將此資料夾掛載到此專案中建立的每個工作階段。",
     "AutoMountRemoved": "已移除自動掛載。",

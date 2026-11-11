@@ -358,7 +358,7 @@
     "AddAutoMount": "自動マウントを追加",
     "AutoMount": "自動マウント",
     "AutoMountAdded": "自動マウントを追加しました。",
-    "AutoMountFailedAfterCreation": "フォルダは作成されましたが、自動マウントに設定できませんでした。",
+    "AutoMountFailedAfterCreation": "フォルダは作成されましたが、自動マウントを設定できませんでした。フォルダ詳細の自動マウント欄から再度お試しください。",
     "AutoMountFolders": "自動マウントフォルダ",
     "AutoMountInSessionsDesc": "このプロジェクトで作成されるすべてのセッションにこのフォルダをマウントします。",
     "AutoMountRemoved": "自動マウントを削除しました。",
