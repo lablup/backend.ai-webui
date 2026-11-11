@@ -45,6 +45,7 @@ import {
   BAIEntityLabelSettingModal,
   toEntityLabelFilter,
   useIsLabelableEntityType,
+  useErrorMessageResolver,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -84,6 +85,7 @@ const ResourceGroupList: React.FC = () => {
   const { t } = useTranslation();
   const { token } = useTheme();
   const { message } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
   const baiClient = useSuspendedBackendaiClient();
   // AND/OR/NOT sub-filters need manager 26.7.0; older ones reject them, so
   // restrict to a single condition.
@@ -331,7 +333,7 @@ const ResourceGroupList: React.FC = () => {
                         resolve();
                       },
                       onError: (err) => {
-                        message.error(err.message);
+                        message.error(getErrorMessage(err));
                         resolve();
                       },
                     });
@@ -658,7 +660,7 @@ const ResourceGroupList: React.FC = () => {
               });
             },
             onError: (err) => {
-              message.error(err.message);
+              message.error(getErrorMessage(err));
             },
           });
         }}

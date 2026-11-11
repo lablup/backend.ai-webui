@@ -35,6 +35,7 @@ import {
   useFetchKey,
   useToggle,
   BAISwitch,
+  useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
@@ -79,6 +80,7 @@ const ContainerRegistryList: React.FC<{
   const [fetchKey, updateFetchKey] = useFetchKey();
   const painKiller = usePainKiller();
   const { message } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
   const { upsertNotification } = useSetBAINotification();
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
     useToggle();
@@ -454,7 +456,7 @@ const ContainerRegistryList: React.FC<{
                   });
                 },
                 onError: (error) => {
-                  message.error(error.message);
+                  message.error(getErrorMessage(error));
                   updateFetchKey();
                 },
               });

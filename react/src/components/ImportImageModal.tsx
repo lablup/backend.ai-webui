@@ -41,6 +41,7 @@ import {
   filterOutNullAndUndefined,
   useFetchKey,
   BAITextArea,
+  useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
@@ -260,6 +261,7 @@ const ImportImageModalContent: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
   const painKiller = usePainKiller();
   const baiClient = useSuspendedBackendaiClient();
   const domainName: string = baiClient._config.domainName;
@@ -335,7 +337,10 @@ const ImportImageModalContent: React.FC<{
         refreshRegistries();
       },
       onError: (error) => {
-        message.error(describeError(error));
+        // A Relay error carries the server's `errors` on `source`.
+        message.error(
+          'source' in error ? getErrorMessage(error) : describeError(error),
+        );
         refreshRegistries();
       },
     });

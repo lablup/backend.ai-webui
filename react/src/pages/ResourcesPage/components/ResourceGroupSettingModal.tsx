@@ -39,6 +39,7 @@ import {
   BAISwitch,
   BAITextArea,
   BAITextInput,
+  useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense, useDeferredValue, useRef } from 'react';
@@ -71,6 +72,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
   const { logger } = useBAILogger();
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
@@ -269,7 +271,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                   );
                 },
                 onError: (err) => {
-                  message.error(err.message);
+                  message.error(getErrorMessage(err));
                 },
               });
               return;
@@ -320,12 +322,12 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                     );
                   },
                   onError: (err) => {
-                    message.error(err.message);
+                    message.error(getErrorMessage(err));
                   },
                 });
               },
               onError: (err) => {
-                message.error(err.message);
+                message.error(getErrorMessage(err));
               },
             });
           })
