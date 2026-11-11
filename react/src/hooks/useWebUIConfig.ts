@@ -334,6 +334,65 @@ export function initializeConfigOnce(
   return configInitPromise;
 }
 
+/**
+ * Re-fetch config.toml after a successful login and re-process it into the
+ * store.
+ *
+ * The webserver serves only the login-screen fields of config.toml before
+ * authentication (lablup/backend.ai#16486): the rest of `[general]` plus
+ * `[resources]`, `[environments]`, `[menu]`, `[plugin]`, `[wsproxy]`,
+ * `[pipeline]` are rendered only once the session is authenticated. The
+ * initial `initializeConfigOnce` fetch runs before login, so those values
+ * must be read again after login.
+ *
+ * Fetch/parse failure is not an error: the pre-login state stays as-is
+ * (wiping it to defaults would drop values that are already loaded) and the
+ * promise resolves.
+ */
+export async function refreshConfigAfterLogin(
+  store: JotaiStore,
+  logger: Pick<Console, 'error' | 'warn'> = console,
+): Promise<void> {
+  // Electron uses es6:// protocol which resolves from app/ directory
+  // Web uses relative path from the HTML location
+  const configPath = (globalThis as Record<string, unknown>).isElectron
+    ? 'es6://config.toml'
+    : '../../config.toml';
+
+  const result = await fetchAndParseConfig(configPath);
+
+  if (!result.config) {
+    if (result.error) {
+      store.set(configParseErrorState, result.error);
+      logger.error(
+        '[config.toml] Post-login re-fetch failed to parse — keeping pre-login configuration:',
+        result.error,
+      );
+    } else {
+      logger.warn(
+        '[config.toml] Post-login re-fetch found no config — keeping pre-login configuration',
+      );
+    }
+    return;
+  }
+
+  store.set(rawConfigState, result.config);
+
+  const { autoLogout, proxyUrl, loginPlugin, loginConfig } = processConfig(
+    result.config,
+  );
+
+  store.set(loginConfigState, loginConfig);
+  store.set(autoLogoutState, autoLogout);
+  store.set(proxyUrlState, proxyUrl);
+  store.set(loginPluginState, loginPlugin);
+  store.set(configLoadedState, true);
+
+  // Drop the cached pre-login promise so a later initializeConfigOnce caller
+  // re-reads the full post-login document instead of the truncated one.
+  configInitPromise = null;
+}
+
 // ---------------------------------------------------------------------------
 // Hooks
 // ---------------------------------------------------------------------------
@@ -444,8 +503,7 @@ export function useConfigRefreshPageEffect(): void {
   useEffect(() => {
     const handleConnected = () => {
       const client = (globalThis as Record<string, unknown>).backendaiclient as
-        | { proxyURL?: string }
-        | undefined;
+        { proxyURL?: string } | undefined;
       if (client) {
         client.proxyURL = proxyUrl;
       }

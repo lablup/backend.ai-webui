@@ -23,6 +23,7 @@ import {
   loginPluginState,
   type RawTomlConfig,
 } from './useWebUIConfig';
+import { createStore } from 'jotai';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -321,6 +322,80 @@ describe('RawTomlConfig structure', () => {
       customSection: { foo: 'bar' },
     };
     expect(config.customSection).toBeDefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// refreshConfigAfterLogin (post-login config.toml re-read, #10912)
+// ---------------------------------------------------------------------------
+
+describe('refreshConfigAfterLogin', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    delete (globalThis as Record<string, unknown>).isElectron;
+  });
+
+  it('re-reads config.toml and populates the previously missing values', async () => {
+    const { refreshConfigAfterLogin, configParseErrorState } =
+      await import('./useWebUIConfig');
+    // Pre-login: the truncated document has no wsproxy section (the webserver
+    // serves only the login-screen fields before login).
+    const preLoginToml = '[general]\napiEndpoint = "https://api.example.com"';
+    mockFetch(200, preLoginToml);
+    const store = createStore();
+    await refreshConfigAfterLogin(store);
+
+    const postLoginToml = `
+[general]
+apiEndpoint = "https://api.example.com"
+
+[wsproxy]
+proxyURL = "http://127.0.0.1:5050/"
+
+[license]
+edition = "Enterprise"
+validUntil = "2030-12-31"
+
+[plugin]
+login = "custom-login"
+`;
+    mockFetch(200, postLoginToml);
+    await refreshConfigAfterLogin(store);
+
+    expect(store.get(proxyUrlState)).toBe('http://127.0.0.1:5050/');
+    expect(store.get(loginPluginState)).toBe('custom-login');
+    expect(store.get(loginConfigState)?.proxy_url).toBe(
+      'http://127.0.0.1:5050/',
+    );
+    expect((globalThis as any).packageEdition).toBe('Enterprise');
+    expect((globalThis as any).packageValidUntil).toBe('2030-12-31');
+    expect(store.get(configLoadedState)).toBe(true);
+    expect(store.get(configParseErrorState)).toBeNull();
+  });
+
+  it('keeps the pre-login state when the re-fetch finds no config', async () => {
+    const { refreshConfigAfterLogin } = await import('./useWebUIConfig');
+    const store = createStore();
+    store.set(proxyUrlState, 'http://keep:5050');
+
+    mockFetch(404, '');
+    await refreshConfigAfterLogin(store);
+
+    expect(store.get(proxyUrlState)).toBe('http://keep:5050');
+    expect(store.get(configLoadedState)).toBe(false);
+  });
+
+  it('records a parse error but keeps the pre-login state', async () => {
+    const { refreshConfigAfterLogin, configParseErrorState } =
+      await import('./useWebUIConfig');
+    const store = createStore();
+    store.set(proxyUrlState, 'http://keep:5050');
+
+    mockFetch(200, '[general]\ninvalid toml = = =');
+    await refreshConfigAfterLogin(store);
+
+    expect(store.get(configParseErrorState)).toBeDefined();
+    expect(store.get(proxyUrlState)).toBe('http://keep:5050');
   });
 });
 

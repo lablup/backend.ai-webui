@@ -8,7 +8,10 @@
  * Extracted from backend-ai-login.ts _connectViaGQL method.
  * Handles post-authentication GQL connection and client setup.
  */
-import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
+import {
+  fetchAndParseConfig,
+  refreshConfigAfterLogin,
+} from '../hooks/useWebUIConfig';
 import { applyConfigToClient, type LoginConfigState } from './loginConfig';
 
 /**
@@ -164,6 +167,14 @@ export async function connectViaGQL(
   // Apply config
   const updatedConfig = { ...cfg, domain_name: domainName };
   applyConfigToClient(updatedConfig);
+
+  // Re-read config.toml now that the session is authenticated: the webserver
+  // serves only the login-screen fields before login (lablup/backend.ai#16486),
+  // so the remaining config values are only available post-login. Awaited so
+  // the proxy URL and config atoms are set before `backend-ai-connected`
+  // fires on the callers' post-connect setup.
+  const { jotaiStore } = await import('../components/DefaultProviders');
+  await refreshConfigAfterLogin(jotaiStore);
 
   // Manage endpoint history
   let updatedEndpoints = [...endpoints];

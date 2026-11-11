@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { refreshConfigAfterLogin } from '../hooks/useWebUIConfig';
 import type { LoginConfigState } from './loginConfig';
 import { checkLoginSession, connectViaGQL } from './loginSessionAuth';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -9,11 +10,17 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 vi.mock('../hooks/useWebUIConfig', () => ({
   __esModule: true,
   fetchAndParseConfig: vi.fn(),
+  refreshConfigAfterLogin: vi.fn().mockResolvedValue(undefined),
 }));
 
 vi.mock('./loginConfig', () => ({
   __esModule: true,
   applyConfigToClient: vi.fn(),
+}));
+
+vi.mock('../components/DefaultProviders', () => ({
+  __esModule: true,
+  jotaiStore: {},
 }));
 
 const cfg = {} as LoginConfigState;
@@ -113,6 +120,69 @@ describe('connectViaGQL — manager version read (#10994)', () => {
 
     await expect(connectViaGQL(client, cfg, [])).rejects.toBe(outage);
     expect(logout).not.toHaveBeenCalled();
+  });
+});
+
+describe('connectViaGQL — post-login config re-fetch (#10912)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+  afterEach(() => {
+    delete (globalThis as Record<string, unknown>).backendaiclient;
+    delete (globalThis as Record<string, unknown>).backendaiutils;
+    delete (globalThis as Record<string, unknown>).backendaioptions;
+  });
+
+  const successClient = () => ({
+    get_manager_version: versionOk(),
+    _config: { endpoint: 'https://api.test' },
+    query: vi
+      .fn()
+      .mockResolvedValueOnce({
+        keypair: { user_id: 'u', resource_policy: 'p', user: 'uid' },
+      })
+      .mockResolvedValueOnce({
+        user: {
+          username: 'u',
+          email: 'u@test',
+          full_name: 'u',
+          is_active: true,
+          role: 'user',
+          domain_name: 'd',
+          groups: [],
+          need_password_change: false,
+          uuid: 'uid',
+        },
+      }),
+    group: { list: vi.fn().mockResolvedValue({ groups: [] }) },
+    logout: vi.fn(),
+  });
+
+  it('re-reads config.toml after a successful connect (lablup/backend.ai#16486)', async () => {
+    (globalThis as Record<string, unknown>).backendaiutils = {
+      _readRecentProjectGroup: vi.fn().mockReturnValue(null),
+    };
+    (globalThis as Record<string, unknown>).backendaioptions = {
+      set: vi.fn(),
+    };
+    const client = successClient();
+
+    await connectViaGQL(client, cfg, []);
+
+    expect(refreshConfigAfterLogin).toHaveBeenCalledTimes(1);
+    expect(refreshConfigAfterLogin).toHaveBeenCalledWith({});
+  });
+
+  it('skips the re-fetch when the connect fails before it', async () => {
+    const refusal = { isError: true, statusCode: 401, message: 'auth' };
+    const client = {
+      get_manager_version: versionOk(),
+      query: vi.fn().mockRejectedValue(refusal),
+      logout: vi.fn().mockResolvedValue(undefined),
+    };
+
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBe(refusal);
+    expect(refreshConfigAfterLogin).not.toHaveBeenCalled();
   });
 });
 
