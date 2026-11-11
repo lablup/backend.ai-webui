@@ -5038,6 +5038,8 @@
         "autoMount.EditAutoMount",
         "autoMount.FolderProjectAutoMountDesc",
         "autoMount.FolderUserAutoMountDesc",
+        "autoMount.NoPermissionToSetAutoMount",
+        "autoMount.NoPermissionToSetProjectAutoMount",
         "autoMount.NotAutoMounted",
         "autoMount.RemoveAutoMount",
         "autoMount.RemoveAutoMountConfirm",

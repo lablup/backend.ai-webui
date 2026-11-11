@@ -20,6 +20,7 @@ import {
   useFetchKey,
   useMutationWithPromise,
 } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import { PlusIcon, SquarePenIcon, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -43,13 +44,28 @@ const VFolderAutoMountMetadataSection: React.FC<
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { scopedVfolderAutoMounts } =
+  const { scopedVfolderAutoMounts, myScopePermissions } =
     useLazyLoadQuery<VFolderAutoMountMetadataSectionQuery>(
       graphql`
         query VFolderAutoMountMetadataSectionQuery(
           $scope: VFolderAutoMountScope!
           $filter: VFolderAutoMountFilter
+          $permissionScopeType: String!
+          $permissionScopeId: UUID!
         ) {
+          myScopePermissions(
+            input: {
+              target: {
+                scopeType: $permissionScopeType
+                scopeId: $permissionScopeId
+                entityType: "vfolder_auto_mount"
+              }
+            }
+          ) {
+            item {
+              permissions
+            }
+          }
           scopedVfolderAutoMounts(scope: $scope, filter: $filter, limit: 1) {
             edges {
               node {
@@ -73,10 +89,21 @@ const VFolderAutoMountMetadataSection: React.FC<
           scopeType: { equals: scopeType },
           vfolderId: { equals: vfolder.id },
         },
+        permissionScopeType: scopeType === 'PROJECT' ? 'project' : 'user',
+        permissionScopeId: scopeId,
       },
       { fetchKey, fetchPolicy: 'store-and-network' },
     );
   const autoMount = scopedVfolderAutoMounts?.edges[0]?.node ?? null;
+  const permissions = myScopePermissions?.item.permissions ?? [];
+  const noPermission = {
+    reason:
+      scopeType === 'PROJECT'
+        ? t('autoMount.NoPermissionToSetProjectAutoMount')
+        : t('autoMount.NoPermissionToSetAutoMount'),
+  };
+  const disabledUnless = (permission: string) =>
+    _.includes(permissions, permission) ? undefined : noPermission;
 
   const deleteAutoMount =
     useMutationWithPromise<VFolderAutoMountMetadataSectionDeleteMutation>(
@@ -135,6 +162,7 @@ const VFolderAutoMountMetadataSection: React.FC<
                   key: 'edit-auto-mount',
                   title: t('autoMount.EditAutoMount'),
                   icon: <SquarePenIcon />,
+                  disabled: disabledUnless('UPDATE'),
                   onClick: () => setIsModalOpen(true),
                 },
                 {
@@ -142,6 +170,7 @@ const VFolderAutoMountMetadataSection: React.FC<
                   title: t('autoMount.RemoveAutoMount'),
                   icon: <Trash2 />,
                   type: 'danger' as const,
+                  disabled: disabledUnless('SOFT_DELETE'),
                   popConfirm: {
                     title: t('autoMount.RemoveAutoMountConfirm'),
                     description: autoMount.mountDestination,
@@ -156,6 +185,7 @@ const VFolderAutoMountMetadataSection: React.FC<
                   key: 'add-auto-mount',
                   title: t('autoMount.AddAutoMount'),
                   icon: <PlusIcon />,
+                  disabled: disabledUnless('CREATE'),
                   onClick: () => setIsModalOpen(true),
                 },
               ]
