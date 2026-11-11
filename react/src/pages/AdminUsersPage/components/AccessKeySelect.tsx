@@ -22,6 +22,7 @@ const AccessKeySelect: React.FC<AccessKeySelectProps> = ({
   const { t } = useTranslation();
 
   // Only the user edit modal mounts this, and it is superadmin-only (ADR 0012).
+  // TODO: Switch to infinite scroll; keypairs past the first 100 are not listed.
   const { adminKeypairsV2 } = useLazyLoadQuery<AccessKeySelectQuery>(
     graphql`
       query AccessKeySelectQuery($userId: UUID!) {
