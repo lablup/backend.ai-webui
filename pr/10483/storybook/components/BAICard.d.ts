@@ -1,5 +1,5 @@
 import { Card } from '@lablup/ui-common/Card';
-import { default as React, CSSProperties, ReactNode, Ref } from '../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.2.8/01dc110d7f872a8caacc052aa0e86f46609c662315b6d5b76a7913331f487dd1/node_modules/react';
+import { default as React, CSSProperties, ReactNode, Ref } from '../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.3.1/389d2ab16b7e9a891f1811154c26db12b2fd74e8cb0d60e295d30c107a842d5d/node_modules/react';
 /** antd `Card`'s `tabList` item, restated locally. */
 export interface BAICardTabItem {
     key: string;
@@ -7,7 +7,7 @@ export interface BAICardTabItem {
     /** antd's pre-v5 name for `label`; still passed by a few call sites. */
     tab?: ReactNode;
     /**
-     * Trailing slot inside the tab (a count badge, a help tooltip icon).
+     * Trailing slot inside the tab (a count badge); help text goes in `tooltip`.
      *
      * Astryx `Tab` is `label` (a required STRING that doubles as the accessible
      * name) plus `endContent`. A JSX `label` therefore has to be SPLIT, and only
@@ -17,9 +17,14 @@ export interface BAICardTabItem {
      */
     endContent?: ReactNode;
     /**
-     * Accepted and ignored: Astryx `Tab` has no disabled state. No call site in
-     * the repo passes it, so nothing regresses — it stays in the type only so an
-     * antd-shaped `tabList` literal keeps type-checking.
+     * Help text anchored on the tab itself (hover or focus the tab), shown with a
+     * decorative help glyph. Never put a tooltip trigger in `endContent`: it
+     * renders inside the tab's `<button>`.
+     */
+    tooltip?: ReactNode;
+    /**
+     * Rendered as `aria-disabled`: the tab stays visible, Astryx `Tab` ignores
+     * its clicks, and `onTabChange` is never called with its key.
      */
     disabled?: boolean;
 }

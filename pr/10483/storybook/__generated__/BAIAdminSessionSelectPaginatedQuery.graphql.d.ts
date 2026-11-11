@@ -12,6 +12,7 @@ export type SessionV2Filter = {
     clusterSize?: IntFilter | null | undefined;
     creationId?: StringFilter | null | undefined;
     domainName?: StringFilter | null | undefined;
+    entityId?: UUIDFilter | null | undefined;
     id?: UUIDFilter | null | undefined;
     isPreemptible?: boolean | null | undefined;
     jobPriority?: IntFilter | null | undefined;
@@ -22,8 +23,10 @@ export type SessionV2Filter = {
     priority?: IntFilter | null | undefined;
     projectId?: UUIDFilter | null | undefined;
     replicaId?: UUIDFilter | null | undefined;
+    requestedStartsAt?: DateTimeFilter | null | undefined;
     resourceGroupName?: StringFilter | null | undefined;
     result?: SessionV2ResultFilter | null | undefined;
+    sessionGroupId?: UUIDFilter | null | undefined;
     sessionType?: SessionV2TypeFilter | null | undefined;
     startsAt?: DateTimeFilter | null | undefined;
     status?: SessionV2StatusFilter | null | undefined;
@@ -79,6 +82,7 @@ export type EntityLabelFilter = {
     OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
     entityId?: UUIDFilter | null | undefined;
     entityType?: StringFilter | null | undefined;
+    fieldId?: UUIDFilter | null | undefined;
     key?: StringFilter | null | undefined;
     value?: StringFilter | null | undefined;
 };
@@ -124,6 +128,7 @@ export type BAIAdminSessionSelectPaginatedQuery$data = {
         readonly count: number;
         readonly edges: ReadonlyArray<{
             readonly node: {
+                readonly entityId: string;
                 readonly id: string;
                 readonly metadata: {
                     readonly name: string;

@@ -1,5 +1,4 @@
-import { LegacyVFolder } from '../components/fragments/BAIVFolderMountConfigInput';
-import { MockVFolderFileTrees } from './mockVFolderFileTree';
+import { MockMountFolder, MockVFolderFileTrees } from './mockVFolderFileTree';
 export interface MockVFolder {
     name: string;
     row_id: string;
@@ -9,17 +8,17 @@ export interface MockVFolder {
 export interface MockVFolderFileProvidersProps {
     vfolders?: Array<MockVFolder>;
     trees?: MockVFolderFileTrees | (() => MockVFolderFileTrees);
-    /** Rows the mocked REST `GET /folders` request answers with. */
-    folders?: Array<LegacyVFolder>;
+    /** Folders `scopedVFoldersV2` answers with, after its scope and filter. */
+    folders?: Array<MockMountFolder>;
     /** Fallback for a Suspense boundary around `children`; omit to render bare. */
     suspenseFallback?: React.ReactNode;
     children?: React.ReactNode;
 }
 /**
  * Everything a vfolder file-browsing story needs without a backend: a mock
- * Relay environment answering `vfolder_nodes` / the picker's `vfolderV2` from
- * `vfolders`, and a mock `BAIClient` whose file APIs read and write `trees`
- * and whose signed `GET /folders` request answers `folders`.
+ * Relay environment answering `scopedVFoldersV2` from `folders` and
+ * `vfolder_nodes` / the picker's `vfolderV2` from `vfolders`, and a mock
+ * `BAIClient` whose file APIs read and write `trees`.
  */
 declare const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps>;
 export default MockVFolderFileProviders;

@@ -6,6 +6,7 @@ export type BAIRuntimeVariantPresetTableFragment$data = ReadonlyArray<{
     readonly createdAt: string;
     readonly description: string | null | undefined;
     readonly displayName: string | null | undefined;
+    readonly entityId: string;
     readonly id: string;
     readonly name: string;
     readonly rank: number;

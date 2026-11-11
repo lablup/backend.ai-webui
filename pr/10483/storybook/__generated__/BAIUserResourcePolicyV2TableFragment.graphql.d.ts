@@ -1,6 +1,7 @@
 import { ReaderFragment, FragmentRefs } from 'relay-runtime';
 export type BAIUserResourcePolicyV2TableFragment$data = ReadonlyArray<{
     readonly createdAt: string | null | undefined;
+    readonly entityId: string;
     readonly id: string;
     readonly maxConcurrentLogins: number | null | undefined;
     readonly maxCustomizedImageCount: number;

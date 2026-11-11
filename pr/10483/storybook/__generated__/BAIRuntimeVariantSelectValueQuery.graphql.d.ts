@@ -5,6 +5,7 @@ export type BAIRuntimeVariantSelectValueQuery$variables = {
 };
 export type BAIRuntimeVariantSelectValueQuery$data = {
     readonly runtimeVariant?: {
+        readonly entityId: string;
         readonly id: string;
         readonly name: string;
         readonly readsVfolderConfigFiles: boolean;

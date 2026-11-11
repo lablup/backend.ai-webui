@@ -1,5 +1,5 @@
 import { BadgeProps } from '@lablup/ui-common/Badge';
-import { default as React } from '../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.2.8/01dc110d7f872a8caacc052aa0e86f46609c662315b6d5b76a7913331f487dd1/node_modules/react';
+import { default as React } from '../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.3.1/389d2ab16b7e9a891f1811154c26db12b2fd74e8cb0d60e295d30c107a842d5d/node_modules/react';
 export type BAIDeploymentStatus = 'HEALTHY' | 'UNHEALTHY' | 'DEGRADED' | 'NOT_CHECKED' | 'DEPLOYING' | 'SCALING' | 'STOPPED' | 'STOPPING' | 'TERMINATED' | 'PENDING' | 'READY';
 /**
  * Deployment statuses that belong to the "stopped" lifecycle category — the
@@ -26,6 +26,16 @@ export declare const isDeploymentInStoppedCategory: (status: BAIDeploymentStatus
  */
 export declare const DEPLOYMENT_IN_PROGRESS_STATUSES: readonly ["DEPLOYING", "SCALING"];
 export declare const isDeploymentInProgress: (status: BAIDeploymentStatus | "%future added value" | null | undefined) => boolean;
+export type DeploymentPauseCause = 'user' | 'autoScaling';
+/**
+ * Why a ready deployment runs no replicas, or `null` when it is not paused.
+ * Autoscaling changes only `desiredReplicaCount`, so a user-set
+ * `replicaCount` above zero means an autoscaling rule paused it.
+ */
+export declare const getDeploymentPauseCause: (status: BAIDeploymentStatus | "%future added value" | null | undefined, replicaState: {
+    replicaCount: number;
+    desiredReplicaCount: number;
+} | null | undefined) => DeploymentPauseCause | null;
 export interface BAIDeploymentStatusBadgeProps extends Omit<BadgeProps, 'variant' | 'label'> {
     /**
      * The deployment-level status to display. Consolidates lifecycle (e.g.

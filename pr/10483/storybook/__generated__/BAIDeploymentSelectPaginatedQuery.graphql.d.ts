@@ -120,6 +120,7 @@ export type EntityLabelFilter = {
     OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
     entityId?: UUIDFilter | null | undefined;
     entityType?: StringFilter | null | undefined;
+    fieldId?: UUIDFilter | null | undefined;
     key?: StringFilter | null | undefined;
     value?: StringFilter | null | undefined;
 };

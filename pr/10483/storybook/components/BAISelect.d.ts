@@ -1,10 +1,16 @@
-import { default as React, CSSProperties, ReactNode } from '../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.2.8/01dc110d7f872a8caacc052aa0e86f46609c662315b6d5b76a7913331f487dd1/node_modules/react';
+import { SelectorOptionData } from '@lablup/ui-common/Selector';
+import { default as React, CSSProperties, ReactNode } from '../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.3.1/389d2ab16b7e9a891f1811154c26db12b2fd74e8cb0d60e295d30c107a842d5d/node_modules/react';
 /** antd `DefaultOptionType`, restated locally. */
 export interface BAISelectOption {
     value?: string | number | null;
     label?: ReactNode;
-    disabled?: boolean;
+    /** `{ reason }` disables the option and shows why at the end of its row. */
+    disabled?: SelectorOptionData['disabled'];
     title?: string;
+    /** Second line of the default option row. */
+    description?: SelectorOptionData['description'];
+    /** Leading glyph of the default option row and of the trigger. */
+    icon?: SelectorOptionData['icon'];
     [key: string]: any;
 }
 export type BAISelectValue = string | number | null | undefined;
@@ -18,6 +24,8 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
     /** antd's multi-value modes. */
     mode?: 'multiple' | 'tags';
     disabled?: boolean;
+    /** Tooltip on the trigger while it is disabled, saying why. */
+    disabledMessage?: string;
     loading?: boolean;
     allowClear?: boolean;
     /**
@@ -36,6 +44,8 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
     };
     status?: 'error' | 'warning' | '';
     size?: 'small' | 'middle' | 'large';
+    variant?: 'outlined' | 'filled' | 'borderless';
+    /** Accepted and inert: ui-common's selectors own their popup visibility. */
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
     /**
@@ -52,8 +62,15 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
     style?: CSSProperties;
     autoFocus?: boolean;
     tabIndex?: number;
-    /** Visible accessible name; derived from `placeholder` when absent. */
+    id?: string;
+    /**
+     * Accessible name; falls back to `aria-label`, the enclosing Form.Item's
+     * label, then `placeholder`.
+     */
     label?: string;
+    /** Same as `label`, for a call site that names the control the DOM way. */
+    'aria-label'?: string;
+    /** Accepted and inert: ui-common's controls never render their own label. */
     isLabelHidden?: boolean;
     /**
      * Accepted and inert on Astryx — each names an antd popup mechanism the
@@ -63,7 +80,8 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
     popupRender?: (menu: ReactNode) => ReactNode;
     notFoundContent?: ReactNode;
     suffixIcon?: ReactNode;
-    labelRender?: (props: any) => ReactNode;
+    /** The closed trigger's content in single mode. Gets the `Selector` option. */
+    labelRender?: (option: SelectorOptionData) => ReactNode;
     maxTagCount?: number | 'responsive';
     maxTagPlaceholder?: ReactNode | ((omitted: Array<any>) => ReactNode);
     /**
@@ -98,6 +116,7 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
     children?: ReactNode;
     ghost?: boolean;
     autoSelectOption?: boolean | ((options: Array<OptionType> | undefined) => ValueType);
+    /** Accepted and inert: ui-common's controls take no `labelTooltip`. */
     tooltip?: string;
     atBottomThreshold?: number;
     atBottomStateChange?: (atBottom: boolean) => void;
@@ -108,7 +127,7 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
     searchAction?: (value: string) => Promise<void>;
     [key: `data-${string}`]: string | undefined;
 }
-declare function BAISelect<ValueType = any, OptionType = BAISelectOption>({ ref: _ref, autoSelectOption, ghost, tooltip, atBottomThreshold: _atBottomThreshold, atBottomStateChange: _atBottomStateChange, bottomLoading: _bottomLoading, header, footer, endReached: _endReached, searchAction: _searchAction, options, value, defaultValue, onChange, onSelect, placeholder, mode, disabled, loading, allowClear, showSearch, status, size, optionRender, triggerDisplay, maxBadges, children, className, style, label, isLabelHidden, popupMatchSelectWidth: _popupMatchSelectWidth, popupRender: _popupRender, notFoundContent: _notFoundContent, suffixIcon: _suffixIcon, labelRender: _labelRender, maxTagCount: _maxTagCount, maxTagPlaceholder: _maxTagPlaceholder, optionLabelProp, filterOption: _filterOption, defaultActiveFirstOption: _defaultActiveFirstOption, open: _open, onOpenChange: _onOpenChange, title: _title, ...restProps }: BAISelectProps<ValueType, OptionType>): React.ReactElement;
+declare function BAISelect<ValueType = any, OptionType = BAISelectOption>({ ref: _ref, autoSelectOption, ghost, tooltip: _tooltip, atBottomThreshold: _atBottomThreshold, atBottomStateChange: _atBottomStateChange, bottomLoading: _bottomLoading, header, footer, endReached: _endReached, searchAction: _searchAction, options, value, defaultValue, onChange, onSelect, placeholder, mode, disabled, loading, allowClear, showSearch, status, size, optionRender, triggerDisplay, maxBadges, children, className, style, label, 'aria-label': ariaLabel, isLabelHidden: _isLabelHidden, popupMatchSelectWidth: _popupMatchSelectWidth, popupRender: _popupRender, notFoundContent: _notFoundContent, suffixIcon: _suffixIcon, labelRender, maxTagCount: _maxTagCount, maxTagPlaceholder: _maxTagPlaceholder, optionLabelProp, filterOption: _filterOption, defaultActiveFirstOption: _defaultActiveFirstOption, open: _open, title: _title, variant, ...restProps }: BAISelectProps<ValueType, OptionType>): React.ReactElement;
 /**
  * Carrier element for the `<Select.Option>` children API, replacing antd's
  * (phase 3, wave 3).
@@ -132,7 +151,8 @@ export interface BAISelectOptionProps {
      * live in props the text flattener cannot reach (FR-3544).
      */
     label?: string;
-    disabled?: boolean;
+    /** `{ reason }` also puts a glyph at the end of the row whose tooltip says why. */
+    disabled?: BAISelectOption['disabled'];
     /**
      * Accepted and IGNORED, for antd's `optionFilterProp="filterValue"` call
      * sites. Search matches the option's visible text only — Astryx renders the

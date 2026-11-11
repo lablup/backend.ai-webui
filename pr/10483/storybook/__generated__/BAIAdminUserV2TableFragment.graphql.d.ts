@@ -14,6 +14,7 @@ export type BAIAdminUserV2TableFragment$data = ReadonlyArray<{
         readonly containerMainGid: number | null | undefined;
         readonly containerUid: number | null | undefined;
     };
+    readonly entityId: string;
     readonly id: string;
     readonly organization: {
         readonly domainName: string | null | undefined;

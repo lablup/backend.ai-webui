@@ -59,23 +59,23 @@ export declare const STATUS_BADGE_VARIANT: {
         readonly CANCELLED: "error";
         readonly ERROR: "error";
     };
-    /** Kernel status (ConnectedKernelList). */
+    /** Kernel status (ConnectedKernelList). Statuses shared with `session` take its variant. */
     readonly kernel: {
+        readonly PENDING: "neutral";
+        readonly RESERVED: "info";
+        readonly SCHEDULED: "info";
+        readonly RESTARTING: "info";
         readonly PREPARING: "info";
         readonly BUILDING: "info";
         readonly PULLING: "info";
         readonly PREPARED: "info";
         readonly CREATING: "info";
-        readonly PENDING: "success";
-        readonly RESERVED: "success";
-        readonly SCHEDULED: "success";
         readonly RUNNING: "success";
-        readonly RESTARTING: "success";
         readonly RESIZING: "success";
         readonly SUSPENDED: "success";
-        readonly TERMINATING: "neutral";
+        readonly TERMINATING: "warning";
         readonly TERMINATED: "neutral";
-        readonly CANCELLED: "neutral";
+        readonly CANCELLED: "error";
         readonly ERROR: "error";
     };
     /** Session `status_info` reason strings (SessionStatusDetailModal). */
@@ -191,6 +191,11 @@ export declare const STATUS_BADGE_VARIANT: {
         readonly DELETED: "error";
         readonly SYSTEM: "neutral";
         readonly CUSTOM: "success";
+    };
+    /** Resource group active state (ResourceGroupDetailDrawer). */
+    readonly resourceGroup: {
+        readonly ACTIVE: "success";
+        readonly INACTIVE: "neutral";
     };
     /** Cloud platform / region category colors (AgentList, StorageProxyList). */
     readonly cloudPlatform: {

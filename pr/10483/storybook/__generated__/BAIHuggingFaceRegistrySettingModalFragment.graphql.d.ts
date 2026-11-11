@@ -1,5 +1,6 @@
 import { ReaderFragment, FragmentRefs } from 'relay-runtime';
 export type BAIHuggingFaceRegistrySettingModalFragment$data = {
+    readonly entityId: string;
     readonly id: string;
     readonly token: string | null | undefined;
     readonly " $fragmentType": "BAIHuggingFaceRegistrySettingModalFragment";

@@ -7,6 +7,7 @@ export type BAIKeypairResourcePolicyV2TableFragment$data = ReadonlyArray<{
     }>;
     readonly createdAt: string | null | undefined;
     readonly defaultForUnspecified: string;
+    readonly entityId: string;
     readonly id: string;
     readonly idleTimeout: number;
     readonly maxConcurrentSessions: number;

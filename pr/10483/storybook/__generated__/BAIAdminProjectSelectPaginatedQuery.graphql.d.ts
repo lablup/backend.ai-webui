@@ -8,6 +8,7 @@ export type ProjectV2Filter = {
     description?: StringFilter | null | undefined;
     domain?: ProjectDomainNestedFilter | null | undefined;
     domainName?: StringFilter | null | undefined;
+    entityId?: UUIDFilter | null | undefined;
     id?: UUIDFilter | null | undefined;
     integrationName?: StringFilter | null | undefined;
     isActive?: boolean | null | undefined;
@@ -79,6 +80,7 @@ export type BAIAdminProjectSelectPaginatedQuery$data = {
                 readonly basicInfo: {
                     readonly name: string;
                 };
+                readonly entityId: string;
                 readonly id: string;
             };
         }>;

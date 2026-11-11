@@ -1,8 +1,8 @@
 import { RuleObject } from '../../form-engine';
-import { LegacyVFolder } from '../../hooks/useSuspendedLegacyVFolders';
-import { default as React } from '../../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.2.8/01dc110d7f872a8caacc052aa0e86f46609c662315b6d5b76a7913331f487dd1/node_modules/react';
+import { AutoMountedFolder, VFolderFilter, VFolderScope } from '../../hooks/useMountableVFolders';
+import { default as React } from '../../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.3.1/389d2ab16b7e9a891f1811154c26db12b2fd74e8cb0d60e295d30c107a842d5d/node_modules/react';
 import { LinkProps } from 'react-router-dom';
-export type { LegacyVFolder };
+export type { AutoMountedFolder };
 /**
  * A single vfolder mount configuration emitted by BAIVFolderMountConfigInput.
  * `mountDestination` holds the **raw alias** the user typed, verbatim, so the
@@ -20,47 +20,32 @@ export interface VFolderMountConfigValue {
     mountDestination?: string;
     subpath?: string;
 }
-/** A folder the session mounts on its own, identified so it can be linked. */
-export interface AutoMountedFolder {
-    vfolderId: string;
-    name: string;
-}
 export interface BAIVFolderMountConfigInputRef {
-    /** Re-runs the `GET /folders` query behind the folder select. */
-    refetch: () => Promise<unknown>;
+    /** Re-reads the folder options and the auto-mounted folders. */
+    refetch: () => void;
 }
 export interface BAIVFolderMountConfigInputProps {
     value?: VFolderMountConfigValue[];
     defaultValue?: VFolderMountConfigValue[];
     onChange?: (value: VFolderMountConfigValue[]) => void;
-    currentProjectId?: string;
     /**
-     * Name of `currentProjectId`. `GET /folders` leaves `group_name` empty, so a
-     * project folder's owner line needs it from the host.
+     * The scopes a session mounts from, usually `mountableVFolderScope(userId,
+     * projectId)`. The folder options and the auto-mounted folders are read over it.
      */
-    currentProjectName?: string;
-    /** Lists the folders of this user instead of the caller's own. */
-    ownerEmail?: string;
+    scope: VFolderScope;
     /**
      * Hosts granting `mount-in-session`. Which policies merge into that list
      * is the host app's business, so it is supplied rather than queried here.
      */
     mountableHosts: string[];
     /**
-     * Display-only folder filter, applied after the mount gates. An already
-     * selected folder stays visible even when it filters out.
+     * Server-side filter ANDed onto the options query. It narrows the options
+     * only; a selected folder it excludes stays selected.
      */
-    filter?: (folder: LegacyVFolder) => boolean;
+    filter?: VFolderFilter;
     disabled?: boolean;
-    /** Base path prepended to a relative alias input (mirrors VFolderTable). */
+    /** Base path prepended to a relative alias input. */
     aliasBasePath?: string;
-    /**
-     * Folders that are auto-mounted. Their default mount paths
-     * (`${aliasBasePath}${name}`) join the overlap set so a colliding user alias
-     * is flagged, they are shown as a read-only badge list at the bottom, and
-     * they are dropped from the folder options.
-     */
-    autoMountedFolders?: Array<AutoMountedFolder>;
     /**
      * Route that opens a folder in the host's folder explorer. Given, every
      * folder name the component renders becomes a link to it.
@@ -74,10 +59,9 @@ export interface BAIVFolderMountConfigInputProps {
     ref?: React.Ref<BAIVFolderMountConfigInputRef>;
 }
 export declare const vFolderAliasNameRegExp: RegExp;
-/**
- * Convert a user-entered alias input into the resolved mount destination,
- * following the same rule as VFolderTable's `inputToAliasPath`.
- */
+/** Container path a folder mounts under when its alias is left empty. */
+export declare const DEFAULT_ALIAS_BASE_PATH = "/home/work/";
+/** Convert a user-entered alias input into the resolved mount destination. */
 export declare const inputToMountDestination: (name: string, input: string | undefined, basePath?: string) => string;
 /**
  * Inverse of {@link inputToMountDestination}: recover the raw alias a resolved
@@ -86,7 +70,7 @@ export declare const inputToMountDestination: (name: string, input: string | und
  */
 export declare const mountDestinationToInput: (name: string, mountDestination: string | undefined, basePath?: string) => string;
 export interface VFolderMountConfigStatusOptions {
-    /** Base path prepended to a relative alias input (mirrors VFolderTable). */
+    /** Base path prepended to a relative alias input. */
     aliasBasePath?: string;
     /** Auto-mounted folders, included in the overlap check. */
     autoMountedFolders?: ReadonlyArray<Pick<AutoMountedFolder, 'name'>>;
@@ -136,13 +120,10 @@ export declare const toMountCreationConfig: (value: VFolderMountConfigValue[] | 
  */
 export declare const useVFolderMountConfigFormRule: (options?: VFolderMountConfigStatusOptions) => RuleObject;
 /**
- * Reusable, schema-agnostic input for configuring vfolder mounts.
- *
- * The folder list comes from REST `GET /folders` rather than the
- * `vfolder_nodes` connection because the `mountableHosts` /
- * `autoMountedFolders` gates the host supplies cannot be expressed there.
- * The component suspends on that fetch, so the consumer owns the Suspense
- * boundary.
+ * Reusable input for configuring vfolder mounts. Folders are picked with
+ * `BAIScopedVFolderSelect` over the caller's `scope`,
+ * and the auto-mounted folders are read here too; both suspend on first load,
+ * so the consumer owns the Suspense boundary.
  *
  * Props, form gating and usage: `BAIVFolderMountConfigInput.doc.ts`.
  */

@@ -1,6 +1,7 @@
 import { ReaderFragment, FragmentRefs } from 'relay-runtime';
 export type BAIProjectResourcePolicyV2TableFragment$data = ReadonlyArray<{
     readonly createdAt: string | null | undefined;
+    readonly entityId: string;
     readonly id: string;
     readonly maxNetworkCount: number;
     readonly maxQuotaScopeSize: {
