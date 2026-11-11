@@ -16,7 +16,11 @@ import {
   MENU_KEY_TO_SCOPE_FEATURE,
   RouteScope,
 } from '../helper/pathBuilder';
-import { getRouteScopeAndKey, rewriteProjectNameInPath } from './useRouteScope';
+import {
+  getRouteScopeAndKey,
+  isUserViewPath,
+  rewriteProjectNameInPath,
+} from './useRouteScope';
 
 describe('getRouteScopeAndKey', () => {
   it('parses global admin paths', () => {
@@ -97,12 +101,43 @@ describe('getRouteScopeAndKey', () => {
     });
   });
 
+  it('parses the legacy bare /project path with an empty feature key', () => {
+    expect(getRouteScopeAndKey('/project')).toEqual({
+      scope: 'project',
+      featureKey: '',
+      projectName: '',
+    });
+  });
+
   it('handles a malformed encoded project name without throwing', () => {
     // '%' alone is not a valid escape sequence; decodeSafe should not throw.
     expect(() => getRouteScopeAndKey('/project/%/session')).not.toThrow();
     const result = getRouteScopeAndKey('/project/%/session');
     expect(result.scope).toBe('project');
     expect(result.featureKey).toBe('session');
+  });
+});
+
+describe('isUserViewPath', () => {
+  it('accepts project-scoped and legacy unprefixed user pages', () => {
+    expect(isUserViewPath('/project/my-proj/session')).toBe(true);
+    expect(isUserViewPath('/project/alpha/deployments/dep-1')).toBe(true);
+    expect(isUserViewPath('/session')).toBe(true);
+  });
+
+  it('rejects admin paths', () => {
+    expect(isUserViewPath('/admin/project')).toBe(false);
+    expect(isUserViewPath('/project/my-proj/admin/users')).toBe(false);
+  });
+
+  it('rejects paths that redirect instead of rendering a user page', () => {
+    expect(isUserViewPath('/project')).toBe(false);
+    expect(isUserViewPath('/project/')).toBe(false);
+    expect(isUserViewPath('/project/my-proj')).toBe(false);
+    expect(isUserViewPath('/project//session')).toBe(false);
+    expect(isUserViewPath('/')).toBe(false);
+    expect(isUserViewPath('/app/index.html')).toBe(false);
+    expect(isUserViewPath('/build/electron-app/app/index.html/')).toBe(false);
   });
 });
 
