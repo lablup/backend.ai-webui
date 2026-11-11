@@ -175,6 +175,10 @@ export const useWebUISettingLabels = (): {
         title: t('webuiSettings.MaxFileUploadSize'),
         description: t('webuiSettings.DescMaxFileUploadSize'),
       },
+      fileUploadChunkSize: {
+        title: t('webuiSettings.FileUploadChunkSize'),
+        description: t('webuiSettings.DescFileUploadChunkSize'),
+      },
       storageWarningThreshold: {
         title: t('webuiSettings.StorageWarningThreshold'),
         description: t('webuiSettings.DescStorageWarningThreshold'),

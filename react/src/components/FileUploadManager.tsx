@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { resolveUploadChunkSize } from '../helper/uploadChunkSize';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -470,7 +471,10 @@ export const useFileUploadManager = (id?: string, folderName?: string) => {
                   endpoint: uploadUrl,
                   uploadUrl: uploadUrl,
                   retryDelays: [0, 3000, 5000, 10000, 20000],
-                  chunkSize: getOptimalChunkSize(file.size),
+                  chunkSize: resolveUploadChunkSize(
+                    loginConfig.fileUploadChunkSize,
+                    file.size,
+                  ),
                   storeFingerprintForResuming: false, // Disable localStorage storage
                   metadata: {
                     filename: file.name,
@@ -531,18 +535,4 @@ export const useFileUploadManager = (id?: string, folderName?: string) => {
     setUploadStatus,
     uploadFiles,
   };
-};
-
-const getOptimalChunkSize = (fileSize: number): number => {
-  const MB = 1024 * 1024;
-
-  if (fileSize >= 5 * 1024 * MB) {
-    return 200 * MB;
-  } else if (fileSize >= 1 * 1024 * MB) {
-    return 100 * MB;
-  } else if (fileSize >= 100 * MB) {
-    return 50 * MB;
-  } else {
-    return 15 * MB;
-  }
 };
