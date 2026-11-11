@@ -4488,6 +4488,7 @@
     "JsonIssueUnknown": "{{key}}：不支援的設定",
     "JsonIssues": "以下項目無法套用：",
     "JsonLoaded": "已變更 {{count}} 項設定。請按「套用」儲存。",
+    "JsonUnknownSkipped": "以下項目不受支援，已略過：",
     "LeaveWithoutApplying": "不套用就離開？",
     "LeaveWithoutApplyingDesc": "未儲存的變更將被捨棄。",
     "MaskUserInfo": "遮蔽使用者資訊",

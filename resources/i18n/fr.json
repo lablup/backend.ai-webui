@@ -4487,6 +4487,7 @@
     "JsonIssueUnknown": "{{key}} : paramètre non pris en charge",
     "JsonIssues": "Ces entrées ne peuvent pas être appliquées :",
     "JsonLoaded": "{{count}} paramètres modifiés. Appuyez sur Appliquer pour les enregistrer.",
+    "JsonUnknownSkipped": "Ces entrées ne sont pas prises en charge et ont été ignorées :",
     "LeaveWithoutApplying": "Quitter sans appliquer ?",
     "LeaveWithoutApplyingDesc": "Vos modifications non enregistrées seront perdues.",
     "MaskUserInfo": "Masquer les informations utilisateur",

@@ -4485,6 +4485,7 @@
     "JsonIssueUnknown": "{{key}}: asetusta ei tueta",
     "JsonIssues": "Näitä kohtia ei voi käyttää:",
     "JsonLoaded": "{{count}} asetusta muutettu. Tallenna painamalla Käytä.",
+    "JsonUnknownSkipped": "Näitä kohteita ei tueta, joten ne jätettiin pois:",
     "LeaveWithoutApplying": "Poistutaanko ottamatta käyttöön?",
     "LeaveWithoutApplyingDesc": "Tallentamattomat muutoksesi hylätään.",
     "MaskUserInfo": "Peitä käyttäjätiedot",

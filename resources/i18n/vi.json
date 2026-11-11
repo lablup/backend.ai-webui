@@ -4486,6 +4486,7 @@
     "JsonIssueUnknown": "{{key}}: cài đặt không được hỗ trợ",
     "JsonIssues": "Không thể áp dụng các mục sau:",
     "JsonLoaded": "Đã thay đổi {{count}} cài đặt. Nhấn Áp dụng để lưu.",
+    "JsonUnknownSkipped": "Các mục sau không được hỗ trợ và đã bị bỏ qua:",
     "LeaveWithoutApplying": "Rời đi mà không áp dụng?",
     "LeaveWithoutApplyingDesc": "Các thay đổi chưa lưu sẽ bị hủy.",
     "MaskUserInfo": "Che thông tin người dùng",

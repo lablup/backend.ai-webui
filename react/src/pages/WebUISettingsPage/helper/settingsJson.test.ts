@@ -69,6 +69,20 @@ describe('parseSettingsJson', () => {
     });
   });
 
+  it('skips unknown entries when nothing else is wrong', () => {
+    const result = parseSettingsJson(
+      JSON.stringify({
+        public: { autoLogout: true, debug: true },
+        other: {},
+      }),
+    );
+    if (!result.ok) throw new Error(JSON.stringify(result));
+    expect(result.values.map((v) => [v.definition.key, v.value])).toEqual([
+      ['autoLogout', true],
+    ]);
+    expect(result.skipped).toEqual(['public.debug', 'other']);
+  });
+
   it('rejects plugin paths the page would reject', () => {
     const result = parseSettingsJson('{"public": {"pluginLogin": "../x"}}');
     expect(result).toEqual({

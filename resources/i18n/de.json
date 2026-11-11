@@ -4486,6 +4486,7 @@
     "JsonIssueUnknown": "{{key}}: nicht unterstützte Einstellung",
     "JsonIssues": "Diese Einträge können nicht angewendet werden:",
     "JsonLoaded": "{{count}} Einstellungen geändert. Klicken Sie auf Anwenden, um sie zu speichern.",
+    "JsonUnknownSkipped": "Diese Einträge werden nicht unterstützt und wurden ausgelassen:",
     "LeaveWithoutApplying": "Verlassen, ohne anzuwenden?",
     "LeaveWithoutApplyingDesc": "Ihre nicht gespeicherten Änderungen werden verworfen.",
     "MaskUserInfo": "Benutzerinformationen maskieren",

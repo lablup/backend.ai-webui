@@ -4484,6 +4484,7 @@
     "JsonIssueUnknown": "{{key}}: desteklenmeyen ayar",
     "JsonIssues": "Bu girdiler uygulanamaz:",
     "JsonLoaded": "{{count}} ayar değiştirildi. Kaydetmek için Uygula’ya basın.",
+    "JsonUnknownSkipped": "Bu girdiler desteklenmiyor ve atlandı:",
     "LeaveWithoutApplying": "Uygulamadan çıkılsın mı?",
     "LeaveWithoutApplyingDesc": "Kaydedilmemiş değişiklikleriniz atılacak.",
     "MaskUserInfo": "Kullanıcı bilgilerini maskele",

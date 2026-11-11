@@ -4484,6 +4484,7 @@
     "JsonIssueUnknown": "{{key}}: tetapan tidak disokong",
     "JsonIssues": "Entri ini tidak boleh digunakan:",
     "JsonLoaded": "{{count}} tetapan ditukar. Tekan Guna untuk menyimpannya.",
+    "JsonUnknownSkipped": "Entri berikut tidak disokong dan telah ditinggalkan:",
     "LeaveWithoutApplying": "Keluar tanpa menggunakan?",
     "LeaveWithoutApplyingDesc": "Perubahan yang belum disimpan akan dibuang.",
     "MaskUserInfo": "Sembunyikan maklumat pengguna",

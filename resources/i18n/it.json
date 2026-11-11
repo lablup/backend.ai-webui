@@ -4484,6 +4484,7 @@
     "JsonIssueUnknown": "{{key}}: impostazione non supportata",
     "JsonIssues": "Queste voci non possono essere applicate:",
     "JsonLoaded": "{{count}} impostazioni modificate. Premi Applica per salvarle.",
+    "JsonUnknownSkipped": "Queste voci non sono supportate e sono state escluse:",
     "LeaveWithoutApplying": "Uscire senza applicare?",
     "LeaveWithoutApplyingDesc": "Le modifiche non salvate andranno perse.",
     "MaskUserInfo": "Maschera le informazioni utente",

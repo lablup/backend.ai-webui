@@ -4487,6 +4487,7 @@
     "JsonIssueUnknown": "{{key}}: nieobsługiwane ustawienie",
     "JsonIssues": "Tych wpisów nie można zastosować:",
     "JsonLoaded": "Zmieniono {{count}} ustawień. Naciśnij Zastosuj, aby je zapisać.",
+    "JsonUnknownSkipped": "Te wpisy nie są obsługiwane i zostały pominięte:",
     "LeaveWithoutApplying": "Wyjść bez zastosowania?",
     "LeaveWithoutApplyingDesc": "Niezapisane zmiany zostaną odrzucone.",
     "MaskUserInfo": "Maskuj informacje o użytkowniku",

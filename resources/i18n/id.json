@@ -4488,6 +4488,7 @@
     "JsonIssueUnknown": "{{key}}: pengaturan tidak didukung",
     "JsonIssues": "Entri berikut tidak dapat diterapkan:",
     "JsonLoaded": "{{count}} pengaturan diubah. Tekan Terapkan untuk menyimpannya.",
+    "JsonUnknownSkipped": "Entri berikut tidak didukung dan dilewati:",
     "LeaveWithoutApplying": "Keluar tanpa menerapkan?",
     "LeaveWithoutApplyingDesc": "Perubahan yang belum disimpan akan dibuang.",
     "MaskUserInfo": "Samarkan informasi pengguna",

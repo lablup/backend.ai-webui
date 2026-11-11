@@ -4486,6 +4486,7 @@
     "JsonIssueUnknown": "{{key}}：不支持的设置",
     "JsonIssues": "以下条目无法应用：",
     "JsonLoaded": "已更改 {{count}} 项设置。请点击“应用”保存。",
+    "JsonUnknownSkipped": "以下条目不受支持，已被忽略：",
     "LeaveWithoutApplying": "不应用就离开？",
     "LeaveWithoutApplyingDesc": "未保存的更改将被丢弃。",
     "MaskUserInfo": "隐藏用户信息",

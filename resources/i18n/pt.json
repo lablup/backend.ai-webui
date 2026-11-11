@@ -4486,6 +4486,7 @@
     "JsonIssueUnknown": "{{key}}: definição não suportada",
     "JsonIssues": "Estas entradas não podem ser aplicadas:",
     "JsonLoaded": "{{count}} definições alteradas. Prima Aplicar para as guardar.",
+    "JsonUnknownSkipped": "Estas entradas não são suportadas e foram ignoradas:",
     "LeaveWithoutApplying": "Sair sem aplicar?",
     "LeaveWithoutApplyingDesc": "As alterações não guardadas serão descartadas.",
     "MaskUserInfo": "Ocultar informações do utilizador",

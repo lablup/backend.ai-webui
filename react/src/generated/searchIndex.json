@@ -3132,6 +3132,7 @@
         "webuiSettings.JsonIssueUnknown",
         "webuiSettings.JsonIssues",
         "webuiSettings.JsonLoaded",
+        "webuiSettings.JsonUnknownSkipped",
         "webuiSettings.LeaveWithoutApplying",
         "webuiSettings.LeaveWithoutApplyingDesc",
         "webuiSettings.MaskUserInfo",

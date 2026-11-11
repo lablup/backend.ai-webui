@@ -4486,6 +4486,7 @@
     "JsonIssueUnknown": "{{key}}: サポートされていない設定",
     "JsonIssues": "次の項目は適用できません:",
     "JsonLoaded": "{{count}} 件の設定を変更しました。「適用」を押して保存してください。",
+    "JsonUnknownSkipped": "次の項目はサポートされていないため除外しました:",
     "LeaveWithoutApplying": "適用せずに移動しますか？",
     "LeaveWithoutApplyingDesc": "保存していない変更は破棄されます。",
     "MaskUserInfo": "ユーザー情報をマスク",

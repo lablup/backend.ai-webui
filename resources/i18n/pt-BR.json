@@ -4484,6 +4484,7 @@
     "JsonIssueUnknown": "{{key}}: configuração não suportada",
     "JsonIssues": "Estas entradas não podem ser aplicadas:",
     "JsonLoaded": "{{count}} configurações alteradas. Pressione Aplicar para salvá-las.",
+    "JsonUnknownSkipped": "Estas entradas não são compatíveis e foram ignoradas:",
     "LeaveWithoutApplying": "Sair sem aplicar?",
     "LeaveWithoutApplyingDesc": "As alterações não salvas serão descartadas.",
     "MaskUserInfo": "Ocultar informações do usuário",
