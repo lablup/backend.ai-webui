@@ -327,9 +327,6 @@ const ResourceGroupList: React.FC = () => {
                         message.success(
                           t('resourceGroup.ResourceGroupModified'),
                         );
-                        startRefetchTransition(() => {
-                          updateFetchKey();
-                        });
                         resolve();
                       },
                       onError: (err) => {
