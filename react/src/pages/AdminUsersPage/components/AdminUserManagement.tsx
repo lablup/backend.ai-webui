@@ -211,9 +211,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   const isSuperAdmin = bailClient.is_superadmin;
 
   const canActAs =
-    bailClient.isManagerVersionCompatibleWith('26.9.0') &&
-    isSuperAdmin &&
-    !globalThis.isElectron;
+    bailClient.isManagerVersionCompatibleWith('26.9.0') && isSuperAdmin;
 
   const confirmActAs = (userId: string, email: string, name: string) => {
     modal.confirm({

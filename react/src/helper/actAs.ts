@@ -63,6 +63,14 @@ const sweepExpiredHandoffs = (now: number) => {
   }
 };
 
+// The Electron build serves the app from `file://`, where only the initial
+// index.html resolves; `/` would point at the filesystem root.
+const appEntryURL = () =>
+  new URL(
+    globalThis.isElectron ? globalThis.electronInitialHref : '/',
+    window.location.href,
+  );
+
 export const getActAsTarget = (): ActAsTarget | null => {
   try {
     const value = parseJSON(sessionStorage.getItem(SESSION_KEY));
@@ -89,7 +97,8 @@ export const openActAsTab = (target: ActAsTarget): boolean => {
   } catch {
     return false;
   }
-  const url = new URL('/', window.location.href);
+  const url = appEntryURL();
+  url.hash = '';
   url.searchParams.set(ACT_AS_HANDOFF_PARAM, nonce);
   // Not `noopener`: with it `window.open` always returns null, so a blocked
   // popup would be indistinguishable from success.
@@ -116,6 +125,8 @@ export const adoptActAsHandoff = () => {
   if (!nonce) return;
   url.searchParams.delete(ACT_AS_HANDOFF_PARAM);
   window.history.replaceState(window.history.state, '', url.href);
+  // index.html captured it with the nonce; later reloads must not carry it.
+  if (globalThis.isElectron) globalThis.electronInitialHref = url.href;
 
   const key = HANDOFF_KEY_PREFIX + nonce;
   try {
@@ -147,6 +158,6 @@ export const exitActAs = () => {
   window.close();
   // `window.close()` is ignored for tabs the script did not open.
   setTimeout(() => {
-    window.location.replace(new URL('/', window.location.href).href);
+    window.location.replace(appEntryURL().href);
   }, 200);
 };
