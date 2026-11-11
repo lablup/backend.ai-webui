@@ -7,22 +7,17 @@ import { RoleFormModalFragment$key } from '../../../__generated__/RoleFormModalF
 import { RoleFormModalPermissionMatrixQuery } from '../../../__generated__/RoleFormModalPermissionMatrixQuery.graphql';
 import { RoleFormModalResourceGroupQuery } from '../../../__generated__/RoleFormModalResourceGroupQuery.graphql';
 import { RoleFormModalUpdateMutation } from '../../../__generated__/RoleFormModalUpdateMutation.graphql';
-import {
-  RoleFormModalVFolderQuery,
-  RoleFormModalVFolderQuery$data,
-} from '../../../__generated__/RoleFormModalVFolderQuery.graphql';
 import { App } from '../../../app-shim';
 import { Form } from '../../../form-engine';
 import { rbacTypeI18nKey } from '../../../helper/rbacElementTypes';
 import { useCurrentDomain } from '../../../hooks';
-import { useLazyPaginatedQuery } from '../../../hooks/usePaginatedQuery';
 import {
   BAIAdminContainerRegistrySelect,
   BAIAdminModelServiceSelect,
   BAIAdminProjectSelect,
   BAIAdminResourceGroupSelect,
   BAIAdminSessionSelect,
-  BAIComplexSelect,
+  BAIScopedVFolderSelect,
   BAIFlex,
   BAIKeypairSelect,
   BAIModal,
@@ -31,13 +26,12 @@ import {
   BAIStorageHostSelect,
   BAIAdminUserV2Select,
   useBAILogger,
-  useDebouncedDeferredValue,
   BAICheckboxInput,
   BAITextArea,
   BAITextInput,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, { Suspense, useDeferredValue, useState } from 'react';
+import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -116,86 +110,13 @@ const ResourceGroupScopeIdSelect: React.FC<ScopeIdBranchProps> = (props) => {
   return <BAIAdminResourceGroupSelect queryRef={queryRef} {...props} />;
 };
 
-type AdminVFolderNode = NonNullable<
-  RoleFormModalVFolderQuery$data['adminVfoldersV2']
->['edges'][number]['node'];
-
-/** Every folder in the system: RBAC is managed system-wide (ADR 0012), so no scope narrows it. */
-const VFolderScopeIdSelect: React.FC<ScopeIdBranchProps> = ({
-  value,
-  onChange,
-  isDisabled,
-  ...selectProps
-}) => {
+const VFolderScopeIdSelect: React.FC<ScopeIdBranchProps> = (props) => {
   'use memo';
-  const [isOpen, setIsOpen] = useState(false);
-  const deferredOpen = useDeferredValue(isOpen);
-  const [searchStr, setSearchStr] = useState('');
-  const deferredSearchStr = useDebouncedDeferredValue(searchStr);
-  // The value is only ever picked here, so the picked option names it.
-  const [pickedLabel, setPickedLabel] = useState<string>();
-  const { paginationData, result, loadNext, isLoadingNext } =
-    useLazyPaginatedQuery<RoleFormModalVFolderQuery, AdminVFolderNode>(
-      graphql`
-        query RoleFormModalVFolderQuery(
-          $filter: VFolderFilter
-          $limit: Int!
-          $offset: Int!
-        ) {
-          adminVfoldersV2(
-            filter: $filter
-            limit: $limit
-            offset: $offset
-            orderBy: [{ field: CREATED_AT, direction: DESC }]
-          ) {
-            count
-            edges {
-              node {
-                entityId
-                host
-                metadata {
-                  name
-                }
-              }
-            }
-          }
-        }
-      `,
-      { limit: 20 },
-      {
-        filter: deferredSearchStr
-          ? { name: { iContains: deferredSearchStr } }
-          : null,
-      },
-      { fetchPolicy: deferredOpen ? 'network-only' : 'store-only' },
-      {
-        getTotal: (data) => data.adminVfoldersV2?.count ?? undefined,
-        getItem: (data) => data.adminVfoldersV2?.edges.map((edge) => edge.node),
-        getId: (node) => node?.entityId,
-      },
-    );
+  const { id: domainId } = useCurrentDomain();
   return (
-    <BAIComplexSelect
-      {...selectProps}
-      isDisabled={isDisabled}
-      isLoading={(isOpen && !deferredOpen) || searchStr !== deferredSearchStr}
-      isLoadingNext={isLoadingNext}
-      total={result.adminVfoldersV2?.count ?? undefined}
-      options={_.map(paginationData, (folder) => ({
-        value: folder.entityId,
-        label: folder.metadata.name,
-        description: folder.host,
-      }))}
-      value={value ? { value, label: pickedLabel ?? value } : null}
-      onChange={(next) => {
-        const picked = _.castArray(next ?? [])[0];
-        setPickedLabel(picked?.label);
-        onChange?.(picked?.value);
-      }}
-      searchValue={searchStr}
-      onSearch={setSearchStr}
-      onOpenChange={setIsOpen}
-      endReached={loadNext}
+    <BAIScopedVFolderSelect
+      {...props}
+      scope={{ domain: [{ value: domainId }] }}
     />
   );
 };
