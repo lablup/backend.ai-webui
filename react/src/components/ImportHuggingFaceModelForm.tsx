@@ -42,6 +42,7 @@ import {
 import {
   startTransition,
   Suspense,
+  useDeferredValue,
   useImperativeHandle,
   useRef,
   useState,
@@ -153,10 +154,14 @@ const WRITABLE_FOLDER_LIMIT = 100;
  */
 const WritableModelFolderSelect: React.FC<
   Omit<BAIScopedVFolderSelectProps, 'scope' | 'filter'> & { projectId?: string }
-> = ({ projectId, ref, ...selectProps }) => {
+> = ({ projectId, ref, onOpenChange, ...selectProps }) => {
   'use memo';
   const baiClient = useSuspendedBackendaiClient();
   const [fetchKey, updateFetchKey] = useFetchKey();
+  const [isOpen, setIsOpen] = useState(false);
+  // Read the writable set once the popup opens or a value needs its label;
+  // deferred so the read suspends behind the open popup, not the fallback.
+  const shouldRead = useDeferredValue(isOpen || !_.isEmpty(selectProps.value));
   const selectRef = useRef<BAIScopedVFolderSelectRef>(null);
   useImperativeHandle(ref, () => ({
     refetch: () => {
@@ -194,7 +199,10 @@ const WritableModelFolderSelect: React.FC<
         filter: 'usage_mode == "model" & permission != "ro"',
         first: WRITABLE_FOLDER_LIMIT,
       },
-      { fetchKey, fetchPolicy: 'store-and-network' },
+      {
+        fetchKey,
+        fetchPolicy: shouldRead ? 'store-and-network' : 'store-only',
+      },
     );
   const writableIds = _.compact(
     _.map(vfolder_nodes?.edges, (edge) => edge?.node?.row_id),
@@ -203,6 +211,10 @@ const WritableModelFolderSelect: React.FC<
     <BAIScopedVFolderSelect
       ref={selectRef}
       {...selectProps}
+      onOpenChange={(open) => {
+        setIsOpen(open);
+        onOpenChange?.(open);
+      }}
       scope={mountableVFolderScope(baiClient.user_uuid, projectId)}
       filter={{
         AND: [
