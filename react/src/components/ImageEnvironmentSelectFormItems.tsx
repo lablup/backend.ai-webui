@@ -157,6 +157,8 @@ const ImageEnvironmentSelectFormItems: React.FC<
     ?.showNonInstalledImages
     ? {}
     : { installed: true };
+  // TODO(needs-backend): #10300 `ImageV2Filter` has no installed-on-an-agent filter and ImageV2 has
+  // no registry, tag, version or installed field, so the launcher stays on `images`.
   const { images } = useLazyLoadQuery<ImageEnvironmentSelectFormItemsQuery>(
     graphql`
       query ImageEnvironmentSelectFormItemsQuery($installed: Boolean) {

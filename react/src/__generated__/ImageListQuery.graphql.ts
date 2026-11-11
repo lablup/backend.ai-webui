@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e0b14b34d69201dc832a0812b4637640>>
+ * @generated SignedSource<<8fb8a829f8712022dd8f914b3f361dd6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -476,12 +476,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "7764b42effef907b28d38345c00bfd98",
+    "cacheID": "b36e473dc1fd55e0b52355f7dfa48b6b",
     "id": null,
     "metadata": {},
     "name": "ImageListQuery",
     "operationKind": "query",
-    "text": "query ImageListQuery(\n  $scopeId: ScopeField!\n  $offset: Int\n  $first: Int\n  $filter: String\n  $order: String\n  $filterByStatuses: [ImageStatus]\n) {\n  image_nodes(scope_id: $scopeId, offset: $offset, first: $first, filter: $filter, order: $order, filter_by_statuses: $filterByStatuses) {\n    edges {\n      node {\n        id\n        tag\n        registry\n        architecture\n        digest\n        installed\n        labels {\n          key\n          value\n        }\n        humanized_name\n        resource_limits {\n          key\n          min\n          max\n        }\n        namespace\n        base_image_name\n        tags {\n          key\n          value\n        }\n        version\n        size_bytes\n        is_local\n        supported_accelerators\n        status\n        type\n        aliases\n        ...AliasedImageTagTokensFragment\n        ...ManageImageResourceLimitModal_image\n        ...ManageAppsModal_image\n      }\n    }\n    count\n  }\n}\n\nfragment AliasedImageTagTokensFragment on ImageNode {\n  labels {\n    key\n    value\n  }\n  tags {\n    key\n    value\n  }\n}\n\nfragment ManageAppsModal_image on ImageNode {\n  labels {\n    key\n    value\n  }\n  registry\n  namespace\n  architecture\n  tag\n}\n\nfragment ManageImageResourceLimitModal_image on ImageNode {\n  resource_limits {\n    key\n    min\n    max\n  }\n  registry\n  namespace\n  architecture\n  tag\n}\n"
+    "text": "query ImageListQuery(\n  $scopeId: ScopeField!\n  $offset: Int\n  $first: Int\n  $filter: String\n  $order: String\n  $filterByStatuses: [ImageStatus]\n) {\n  image_nodes(scope_id: $scopeId, offset: $offset, first: $first, filter: $filter, order: $order, filter_by_statuses: $filterByStatuses) {\n    edges {\n      node {\n        id\n        tag\n        registry\n        architecture\n        digest\n        installed\n        labels {\n          key\n          value\n        }\n        humanized_name\n        resource_limits {\n          key\n          min\n          max\n        }\n        namespace\n        base_image_name\n        tags {\n          key\n          value\n        }\n        version\n        size_bytes\n        is_local\n        supported_accelerators\n        status\n        type\n        aliases\n        ...AliasedImageTagTokensFragment\n        ...ManageImageResourceLimitModal_image\n        ...ManageAppsModal_image\n      }\n    }\n    count\n  }\n}\n\nfragment AliasedImageTagTokensFragment on ImageNode {\n  labels {\n    key\n    value\n  }\n  tags {\n    key\n    value\n  }\n}\n\nfragment ManageAppsModal_image on ImageNode {\n  id\n  labels {\n    key\n    value\n  }\n}\n\nfragment ManageImageResourceLimitModal_image on ImageNode {\n  id\n  resource_limits {\n    key\n    min\n    max\n  }\n}\n"
   }
 };
 })();

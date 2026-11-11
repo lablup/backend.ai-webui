@@ -293,6 +293,8 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
+  // TODO(needs-backend): #10300 ImageV2 has no `installed`, registry, tag, version, type or is_local
+  // field, and `ImageV2Filter` has no equivalent of the legacy filter string.
   const { image_nodes } = useLazyLoadQuery<ImageListQuery>(
     graphql`
       query ImageListQuery(

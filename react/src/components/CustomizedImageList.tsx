@@ -29,6 +29,8 @@ import {
   useUpdatableState,
   BAITextHighlighter,
   BAITextInput,
+  toLocalId,
+  useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Trash2, RotateCw, Search, Settings } from 'lucide-react';
@@ -43,6 +45,7 @@ export type CommittedImage = NonNullable<
 const CustomizedImageList: React.FC = () => {
   const { t } = useTranslation();
   const { message } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
 
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
     useToggle();
@@ -59,6 +62,8 @@ const CustomizedImageList: React.FC = () => {
   );
   const [, { tagAlias }] = useBackendAIImageMetaData();
 
+  // TODO(needs-backend): #10300 ImageV2 has no registry, tag, version or base image name, so
+  // `myImagesV2(filter: { customized: true })` cannot fill these columns yet.
   const { customized_images } = useLazyLoadQuery<CustomizedImageListQuery>(
     graphql`
       query CustomizedImageListQuery {
@@ -97,10 +102,11 @@ const CustomizedImageList: React.FC = () => {
 
   const [commitForget, isInFlightForget] =
     useMutation<CustomizedImageListForgetMutation>(graphql`
-      mutation CustomizedImageListForgetMutation($id: String!) {
-        forget_image_by_id(image_id: $id) {
-          ok
-          msg
+      mutation CustomizedImageListForgetMutation($id: UUID!) {
+        deleteImage(id: $id) {
+          item {
+            id
+          }
         }
       }
     `);
@@ -404,15 +410,8 @@ const CustomizedImageList: React.FC = () => {
                   return;
                 }
                 commitForget({
-                  variables: { id: imageToDelete.id },
-                  onCompleted: (res, errors) => {
-                    if (
-                      !_.isNil(res.forget_image_by_id) &&
-                      !res.forget_image_by_id.ok
-                    ) {
-                      message.error(res.forget_image_by_id.msg);
-                      return;
-                    }
+                  variables: { id: toLocalId(imageToDelete.id) },
+                  onCompleted: (_res, errors) => {
                     if (errors && errors?.length > 0) {
                       const errorMsgList = _.map(
                         errors,
@@ -432,9 +431,12 @@ const CustomizedImageList: React.FC = () => {
                     );
                     setImageToDelete(null);
                   },
-                  onError: () => {
+                  onError: (error) => {
                     message.error(
-                      t('environment.FailedToDeleteCustomizedImage'),
+                      getErrorMessage(
+                        error,
+                        t('environment.FailedToDeleteCustomizedImage'),
+                      ),
                     );
                   },
                 });

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0c77002b198203b41aeb00efad97dd60>>
+ * @generated SignedSource<<2ac0b93152682fc09bb847c1f6a01aba>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,10 +13,11 @@ export type CustomizedImageListForgetMutation$variables = {
   id: string;
 };
 export type CustomizedImageListForgetMutation$data = {
-  readonly forget_image_by_id: {
-    readonly msg: string | null | undefined;
-    readonly ok: boolean | null | undefined;
-  } | null | undefined;
+  readonly deleteImage: {
+    readonly item: {
+      readonly id: string;
+    };
+  };
 };
 export type CustomizedImageListForgetMutation = {
   response: CustomizedImageListForgetMutation$data;
@@ -37,27 +38,31 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "image_id",
+        "name": "id",
         "variableName": "id"
       }
     ],
-    "concreteType": "ForgetImageById",
+    "concreteType": "DeleteImagePayload",
     "kind": "LinkedField",
-    "name": "forget_image_by_id",
+    "name": "deleteImage",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "kind": "ScalarField",
-        "name": "ok",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "msg",
+        "concreteType": "ImageV2",
+        "kind": "LinkedField",
+        "name": "item",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          }
+        ],
         "storageKey": null
       }
     ],
@@ -82,16 +87,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "6b517a276517434fdeb129e0535f9519",
+    "cacheID": "62d4b7aca1530b345015d358a5968139",
     "id": null,
     "metadata": {},
     "name": "CustomizedImageListForgetMutation",
     "operationKind": "mutation",
-    "text": "mutation CustomizedImageListForgetMutation(\n  $id: String!\n) {\n  forget_image_by_id(image_id: $id) {\n    ok\n    msg\n  }\n}\n"
+    "text": "mutation CustomizedImageListForgetMutation(\n  $id: UUID!\n) {\n  deleteImage(id: $id) {\n    item {\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "ab2f38ba9700f7c548544a3bc471eb01";
+(node as any).hash = "34937dbb8189c2b1f756797517d4cc7c";
 
 export default node;
