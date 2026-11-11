@@ -8,6 +8,7 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
+import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 import { Grid } from '@lablup/ui-common/Grid';
 import { Heading } from '@lablup/ui-common/Heading';
 import { Text } from '@lablup/ui-common/Text';
@@ -59,6 +60,9 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
     agentNodeFrgmt,
   );
   const parsedLiveStat = JSON.parse(agent?.live_stat || '{}');
+  const { hiddenAgentLiveStats } = useEffectiveLoginConfig();
+  const showsNetTx = !hiddenAgentLiveStats.includes('net_tx');
+  const showsNetRx = !hiddenAgentLiveStats.includes('net_rx');
   const parsedAvailableSlots = JSON.parse(agent?.available_slots || '{}');
 
   return (
@@ -116,35 +120,39 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                 />
               </BAIFlex>
             ) : null}
-            {parsedLiveStat?.node ? (
+            {parsedLiveStat?.node && (showsNetTx || showsNetRx) ? (
               <BAIFlex direction="column" gap="xxs" align="start">
                 <Heading level={5}>{t('session.launcher.Network')}</Heading>
-                <BAIFlex gap="xl">
-                  <Text>TX:</Text>
-                  <Text>
-                    {
-                      convertToDecimalUnit(
-                        parsedLiveStat?.node?.net_tx?.current,
-                        'm',
-                        2,
-                      )?.displayValue
-                    }
-                    B
-                  </Text>
-                </BAIFlex>
-                <BAIFlex gap="xl">
-                  <Text>RX:</Text>
-                  <Text>
-                    {
-                      convertToDecimalUnit(
-                        parsedLiveStat?.node?.net_rx?.current,
-                        'm',
-                        2,
-                      )?.displayValue
-                    }
-                    B
-                  </Text>
-                </BAIFlex>
+                {showsNetTx && (
+                  <BAIFlex gap="xl">
+                    <Text>TX:</Text>
+                    <Text>
+                      {
+                        convertToDecimalUnit(
+                          parsedLiveStat?.node?.net_tx?.current,
+                          'm',
+                          2,
+                        )?.displayValue
+                      }
+                      B
+                    </Text>
+                  </BAIFlex>
+                )}
+                {showsNetRx && (
+                  <BAIFlex gap="xl">
+                    <Text>RX:</Text>
+                    <Text>
+                      {
+                        convertToDecimalUnit(
+                          parsedLiveStat?.node?.net_rx?.current,
+                          'm',
+                          2,
+                        )?.displayValue
+                      }
+                      B
+                    </Text>
+                  </BAIFlex>
+                )}
               </BAIFlex>
             ) : null}
           </BAIFlex>

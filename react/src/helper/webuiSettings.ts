@@ -49,6 +49,15 @@ export interface WebUISettingDefinition {
   max?: number;
 }
 
+/** The agent live stats System Settings can hide. */
+export const AGENT_LIVE_STAT_OPTIONS: ReadonlyArray<{
+  value: string;
+  label: string;
+}> = [
+  { value: 'net_rx', label: 'Net Rx' },
+  { value: 'net_tx', label: 'Net Tx' },
+];
+
 /** The SSO vendors the login form renders a button for. */
 export const SSO_VENDOR_OPTIONS: ReadonlyArray<{
   value: string;
@@ -229,6 +238,10 @@ export const WEBUI_SETTING_DEFINITIONS: ReadonlyArray<WebUISettingDefinition> =
     def('menuBlocklist', 'domain', 'stringList', 'menu', 'blockList'),
     def('menuInactivelist', 'domain', 'stringList', 'menu', 'inactiveList'),
     def('hideAgents', 'domain', 'boolean', 'menu'),
+    {
+      ...def('hiddenAgentLiveStats', 'domain', 'stringList', 'menu'),
+      options: AGENT_LIVE_STAT_OPTIONS,
+    },
     def('enableReservoir', 'domain', 'boolean', 'menu'),
     def('fasttrackEndpoint', 'domain', 'string', 'menu'),
 
