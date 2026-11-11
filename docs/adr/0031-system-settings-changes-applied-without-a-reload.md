@@ -86,8 +86,8 @@ sequenceDiagram
 ### 4. Who sees a change, and when
 
 - **The admin who saves**: every component reading `useEffectiveLoginConfig()` re-renders at once.
-- **Other signed-in users**: their app reads the documents only at boot and sign-in, so they see a change after a page reload. An info alert at the top of System Settings (`webuiSettings.SaveNotice`, `webuiSettings.SaveNoticeDesc`) tells the admin this, and that some settings take effect only after a reload.
-- **Settings read once per page load**: `pluginPage` (`PluginLoader` loads plugins at boot) and `pluginLogin` (`loginPluginState`) take effect after a reload, for the admin as well. The page alert covers them; no row carries its own hint.
+- **Other signed-in users**: their app reads the documents only at boot and sign-in, so they see a change after a page reload. An info alert at the top of System Settings (`webuiSettings.SaveNotice`, `webuiSettings.SaveNoticeDesc`) tells the admin that a change applies to every user and that signed-in users see it after a reload.
+- **Settings read once per page load**: `pluginPage` (`PluginLoader` loads plugins at boot) and `pluginLogin` (`loginPluginState`) take effect after a reload, for the admin as well. Neither the alert nor the row says so.
 
 ## Rejected alternatives
 
