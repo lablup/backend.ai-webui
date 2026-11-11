@@ -8,13 +8,12 @@ import { App } from '../app-shim';
 import VFolderAutoMountSettingModal, {
   type VFolderAutoMountScopeType,
 } from './VFolderAutoMountSettingModal';
-import { IconButton } from '@lablup/ui-common/IconButton';
 import { HStack, VStack } from '@lablup/ui-common/Stack';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAIMetadataList,
   BAIMetadataListItem,
-  BAIPopconfirm,
+  BAINameActionCell,
   BAIQuestionIconWithTooltip,
   BAIUnmountAfterClose,
   useErrorMessageResolver,
@@ -114,51 +113,54 @@ const VFolderAutoMountMetadataSection: React.FC<
 
   return (
     <VStack gap={2} align="stretch">
-      <HStack justify="between" vAlign="center" gap={2}>
-        <HStack gap={1} vAlign="center">
-          <Text weight="semibold">{t('autoMount.AutoMount')}</Text>
-          <BAIQuestionIconWithTooltip
-            title={
-              scopeType === 'PROJECT'
-                ? t('autoMount.FolderProjectAutoMountDesc')
-                : t('autoMount.FolderUserAutoMountDesc')
-            }
-          />
-        </HStack>
-        {autoMount ? (
-          <HStack gap={1}>
-            <IconButton
-              size="sm"
-              variant="ghost"
-              icon={<SquarePenIcon size="1em" />}
-              label={t('autoMount.EditAutoMount')}
-              onClick={() => setIsModalOpen(true)}
+      {/* The row-action cell, so the buttons match the tables' tooltips and colours. */}
+      <BAINameActionCell
+        title={
+          <HStack gap={1} vAlign="center">
+            <Text weight="semibold">{t('autoMount.AutoMount')}</Text>
+            <BAIQuestionIconWithTooltip
+              title={
+                scopeType === 'PROJECT'
+                  ? t('autoMount.FolderProjectAutoMountDesc')
+                  : t('autoMount.FolderUserAutoMountDesc')
+              }
             />
-            <BAIPopconfirm
-              title={t('autoMount.RemoveAutoMountConfirm')}
-              description={autoMount.mountDestination}
-              isDanger
-              okText={t('button.Remove')}
-              onConfirm={handleDelete}
-            >
-              <IconButton
-                size="sm"
-                variant="ghost"
-                icon={<Trash2 size="1em" />}
-                label={t('autoMount.RemoveAutoMount')}
-              />
-            </BAIPopconfirm>
           </HStack>
-        ) : (
-          <IconButton
-            size="sm"
-            variant="ghost"
-            icon={<PlusIcon size="1em" />}
-            label={t('autoMount.AddAutoMount')}
-            onClick={() => setIsModalOpen(true)}
-          />
-        )}
-      </HStack>
+        }
+        showActions="always"
+        actions={
+          autoMount
+            ? [
+                {
+                  key: 'edit-auto-mount',
+                  title: t('autoMount.EditAutoMount'),
+                  icon: <SquarePenIcon />,
+                  onClick: () => setIsModalOpen(true),
+                },
+                {
+                  key: 'remove-auto-mount',
+                  title: t('autoMount.RemoveAutoMount'),
+                  icon: <Trash2 />,
+                  type: 'danger' as const,
+                  popConfirm: {
+                    title: t('autoMount.RemoveAutoMountConfirm'),
+                    description: autoMount.mountDestination,
+                    okButtonProps: { danger: true },
+                    okText: t('button.Remove'),
+                    onConfirm: handleDelete,
+                  },
+                },
+              ]
+            : [
+                {
+                  key: 'add-auto-mount',
+                  title: t('autoMount.AddAutoMount'),
+                  icon: <PlusIcon />,
+                  onClick: () => setIsModalOpen(true),
+                },
+              ]
+        }
+      />
       {autoMount ? (
         <BAIMetadataList columns="single">
           <BAIMetadataListItem label={t('autoMount.MountDestination')}>
