@@ -1461,6 +1461,23 @@ function overrideSettings(
   return merged;
 }
 
+/**
+ * `stored` with the settings `modifyConfigToml` serves to `page` for `scope`
+ * layered on top, as that page's route handlers do.
+ */
+export function withRequestedSettings(
+  page: Page,
+  scope: SettingScope,
+  stored: Record<string, unknown> | undefined,
+): Record<string, unknown> | undefined {
+  const requested = requestedConfigCache.get(page);
+  if (!requested) return stored;
+  const settings = settingsFromToml(requested);
+  return touchesScope(settings, scope)
+    ? overrideSettings(stored, settings, scope)
+    : stored;
+}
+
 type RouteHandler = Parameters<Page['route']>[1];
 const appConfigRoutes = new WeakMap<
   Page,

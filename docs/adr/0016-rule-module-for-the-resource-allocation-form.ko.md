@@ -12,7 +12,7 @@
 
 ## Context
 
-- **Form fragment**: `ResourceAllocationFormItems`는 세션 런처(`SessionLauncherPage`)와 `DeploymentAddRevisionModal`이 같은 `Form` 안에서 렌더하는 자원 할당 fragment다. 이 fragment가 소유하는 필드는 `resourceGroup`, `allocationPreset`, `resource.{cpu, mem, shmem, accelerator, acceleratorType}`, `enabledAutomaticShmem`, `agent`, `cluster_mode`, `cluster_size`다. 같은 폼의 `environments.image`와 `environments.manual`은 `ImageEnvironmentSelectFormItems`가 소유하고, 이 fragment는 `Form.useWatch`로 읽기만 한다. 폼 밖에서는 자원 그룹의 슬롯 목록(`useResourceSlotsDetails`), `resourcePreset.check`의 preset 목록과 한도(`useResourceLimitAndRemaining`), `baiClient._config.allowCustomResourceAllocation`이 들어온다.
+- **Form fragment**: `ResourceAllocationFormItems`는 세션 런처(`SessionLauncherPage`)와 `DeploymentAddRevisionModal`이 같은 `Form` 안에서 렌더하는 자원 할당 fragment다. 이 fragment가 소유하는 필드는 `resourceGroup`, `allocationPreset`, `resource.{cpu, mem, shmem, accelerator, acceleratorType}`, `enabledAutomaticShmem`, `agent`, `cluster_mode`, `cluster_size`다. 같은 폼의 `environments.image`와 `environments.manual`은 `ImageEnvironmentSelectFormItems`가 소유하고, 이 fragment는 `Form.useWatch`로 읽기만 한다. 폼 밖에서는 자원 그룹의 슬롯 목록(`useResourceSlotsDetails`), `resourcePreset.check`의 preset 목록과 한도(`useResourceLimitAndRemaining`), `allowCustomResourceAllocation` 설정(`useEffectiveLoginConfig()`)이 들어온다.
 - **Previous shape**: 2026-10-22의 `main`(`a04bf4cbdb`)에서 이 규칙은 핸들러 6곳, `Form.useWatch`를 감시하는 `useEffect` 3개, 서로의 누락을 뒤에서 메우는 `useEventNotStable` 헬퍼 4개에 흩어져 있었다. 자원 값이 preset과 달라진 같은 상태가 경로에 따라 `custom`으로 읽히기도 하고 preset 이름을 유지하기도 했다. effect가 자기가 쓴 `resource` 값에 다시 반응해 멈추지 않는 루프가 두 번 사고로 났다(FR-3523, FR-3985).
 - **Decision trigger**: 규칙을 한 모듈로 옮기는 작업은 "어떤 반응이 자동이고 어떤 반응이 메시지인가"라는 경계를 먼저 요구한다. 이전 코드는 그 경계를 경로마다 다르게 두고 있었으므로, 옮기기만 하면 그 차이가 모듈 안에 그대로 들어간다.
 

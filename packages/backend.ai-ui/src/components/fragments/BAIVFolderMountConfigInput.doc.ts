@@ -134,6 +134,13 @@ export const docs = {
       description:
         'Exposes `refetch(): void`, which re-reads the folder options and the auto-mounted folders. Call it after creating a folder from `onClickCreateFolder`, then append the new entry to the value.',
     },
+    {
+      name: 'isDirectorySizeVisible',
+      type: 'boolean',
+      default: 'false',
+      description:
+        "Shows each directory's size in the subpath picker; the host passes its `isDirectorySizeVisible` setting.",
+    },
   ],
   examples: [
     {

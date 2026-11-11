@@ -238,8 +238,8 @@ not a `Config:` pair: the dev server reads the backend's own System Settings, `u
 and skips such a `--set`, and the PR body names the setting for the reviewer instead.
 Read it from the same `gh pr view --json body` as 2c and pass each pair as
 `--set <section>.<key>=<value>`; repeat it on every `use`, since `use` rewrites the file whole.
-When you are the one opening the PR and your change is behind a `baiClient._config.*` /
-`loginConfig` switch, write that line into the PR body yourself — the reviewer's server
+When you are the one opening the PR and your change is behind a `config.toml` key that
+`loginConfig` maps, write that line into the PR body yourself — the reviewer's server
 and the walkthrough are minted from it. Values are TOML literals (`true`, `3`,
 `"SESSION"`); the key is the one the app reads, which `pnpm run dev-env config <server> --all`
 lists and `react/src/helper/loginConfig.ts` maps.

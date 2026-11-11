@@ -293,7 +293,7 @@ npx playwright test --grep-invert "@requires-manager-v26.9"
 ```
 
 Pair the tag with a **declarative gate** from `e2e/utils/feature-gate-util.ts`
-(`skipUnlessManagerVersion`, `skipUnlessClientConfig`) instead of probing for a
+(`skipUnlessManagerVersion`, `skipUnlessWebUISetting`) instead of probing for a
 UI element inside the test body and skipping when it is absent. The gate skips
 with an auditable reason on incapable backends; on capable backends a missing
 UI element fails the test instead of silently skipping. Named capability flags

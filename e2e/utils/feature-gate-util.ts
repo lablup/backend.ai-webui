@@ -15,8 +15,9 @@
  *   in components), only for features newer than the 26.4 LTS baseline.
  *   A test that depends on an older manager version carries only its
  *   `@requires-manager-vX.Y` tag, even at or below 26.4 (ADR 0010).
- * - `config.toml` toggles → `skipUnlessClientConfig(page, 'enableModelFolders', ...)`
- *   (same source of truth as `baiClient._config.*` in components)
+ * - System Settings → `skipUnlessWebUISetting(page, 'enableModelFolders', ...)`
+ *   (the value the app's `loginConfigState` holds: the stored `settings`
+ *   documents over the code default)
  * - Client properties (FR-3114) → `getClientProperty(page, 'current_group')`
  *   (same source of truth as `baiClient.<property>` in components)
  * - etcd-configured vfolder types (FR-3114) →
@@ -30,6 +31,7 @@
  * See e2e/E2E-TEST-NAMING-GUIDELINES.md ("Feature-gate tags (FR-3112)" and
  * "Environment-constraint tags (FR-3114)").
  */
+import { readEffectiveWebUISetting } from './webui-settings-util';
 import { test, Page } from '@playwright/test';
 
 /**
@@ -113,18 +115,16 @@ export async function isManagerVersionCompatible(
 }
 
 /**
- * Returns a value from the logged-in Backend.AI client's parsed `config.toml`
- * (`baiClient._config`), e.g. `enableModelFolders`.
+ * The value of a System Settings key (e.g. `enableModelFolders`) for the
+ * account signed in on `page`, from the stored `settings` documents of its
+ * domain over the code default — what the app's `loginConfigState` holds.
  */
-export async function getClientConfigValue(
+export async function getWebUISettingValue(
   page: Page,
   key: string,
 ): Promise<unknown> {
   await waitForBackendAIClient(page);
-  return page.evaluate(
-    (k) => (globalThis as any).backendaiclient?._config?.[k],
-    key,
-  );
+  return readEffectiveWebUISetting(page, key);
 }
 
 /**
@@ -147,15 +147,15 @@ export async function skipUnlessManagerVersion(
 }
 
 /**
- * Declarative config gate: skips the current test (with the given auditable
- * reason) when the given `config.toml` key is falsy for the logged-in client.
+ * Declarative settings gate: skips the current test (with the given auditable
+ * reason) when the given System Settings key is falsy for the signed-in account.
  */
-export async function skipUnlessClientConfig(
+export async function skipUnlessWebUISetting(
   page: Page,
   key: string,
   reason: string,
 ): Promise<void> {
-  const value = await getClientConfigValue(page, key);
+  const value = await getWebUISettingValue(page, key);
   test.skip(!value, reason);
 }
 

@@ -4,6 +4,7 @@
  */
 import { Form, type FormItemProps } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 import { Token } from '@lablup/ui-common/Token';
 import { BAITagsInput } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -24,7 +25,8 @@ const PortSelectFormItem: React.FC<Props> = ({
   ...formItemProps
 }) => {
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
+  useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   return (
     <Form.Item
       label={t('session.launcher.PreOpenPortTitle')}
@@ -36,14 +38,14 @@ const PortSelectFormItem: React.FC<Props> = ({
           validator(_rule, values) {
             if (
               transformPortValuesToNumbers(values).length <=
-              baiClient._config.maxCountForPreopenPorts
+              loginConfig.maxCountForPreopenPorts
             ) {
               return Promise.resolve();
             } else {
               return Promise.reject(
                 new Error(
                   t('session.launcher.PreOpenPortMaxCountLimit', {
-                    count: baiClient._config.maxCountForPreopenPorts,
+                    count: loginConfig.maxCountForPreopenPorts,
                   }),
                 ),
               );

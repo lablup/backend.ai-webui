@@ -23,8 +23,20 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('../../../hooks', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../../../hooks')>()),
-  useSuspendedBackendaiClient: () => ({ _config: { hideAgents: false } }),
+  useSuspendedBackendaiClient: () => ({ _config: {} }),
 }));
+vi.mock('../../../hooks/useWebUIConfig', async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import('../../../hooks/useWebUIConfig')>();
+  const { getDefaultLoginConfig } = await import('../../../helper/loginConfig');
+  return {
+    ...actual,
+    useEffectiveLoginConfig: () => ({
+      ...getDefaultLoginConfig(),
+      hideAgents: false,
+    }),
+  };
+});
 vi.mock('../../../hooks/backendai', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../../../hooks/backendai')>()),
   useCurrentUserRole: () => 'user',

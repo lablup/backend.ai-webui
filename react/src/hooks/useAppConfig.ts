@@ -119,6 +119,21 @@ const myUpsertMutation = graphql`
   }
 `;
 
+// One write at a time per document: each is a read-modify-write of the whole
+// document, so two overlapping writers (a settings row, the announcement) would drop one change.
+const writeQueues = new Map<string, Promise<unknown>>();
+const serializeWrite = <T>(
+  doc: string,
+  write: () => Promise<T>,
+): Promise<T> => {
+  const next = (writeQueues.get(doc) ?? Promise.resolve()).then(write, write);
+  writeQueues.set(
+    doc,
+    next.catch(() => undefined),
+  );
+  return next;
+};
+
 /** A sub-key's next value, or a function of its current raw value. */
 export type AppConfigUpdate = unknown | ((current: unknown) => unknown);
 
@@ -219,9 +234,9 @@ export const useRawPublicDomainAppConfig = <T = AppConfigDocument>(
 /**
  * Superadmin setter for ONE domain's slice of `publicConfigByDomain`:
  * re-reads the raw public document and replaces only `[domainName, ...subKey]`
- * so other domains' slices survive the whole-document write. Post-login admin
- * surfaces only. The anonymous read path picks the new document up on the
- * next load — the caller reloads for the own session (FR-1964).
+ * so other domains' slices survive the whole-document write, then refetches the
+ * merged view for `usePublicDomainAppConfig` readers. Post-login admin surfaces
+ * only; the anonymous pre-login read picks the new document up on the next load.
  */
 export const useUpdatePublicDomainAppConfig = () => {
   'use memo';
@@ -230,37 +245,51 @@ export const useUpdatePublicDomainAppConfig = () => {
   const upsert =
     useMutationWithPromise<useAppConfigUpsertMutation>(upsertMutation);
 
-  return async (
+  return (
     subKey: string | Array<string>,
     nextValue: AppConfigUpdate,
     domainName?: string,
-  ) => {
-    const targetDomainName = domainName ?? currentDomainName;
-    const raw = await fetchQuery<useAppConfigPublicRawQuery>(
-      relayEnv,
-      publicRawQuery,
-      { configNames: ['publicConfigByDomain'] },
-      { fetchPolicy: 'network-only' },
-    ).toPromise();
-    const rawDoc =
-      (raw?.scopedAppConfigFragmentsByNames?.[0]?.config as
-        AppConfigDocument | undefined) ?? {};
-    await upsert({
-      input: {
-        scope: { scopeType: 'PUBLIC' },
-        items: [
-          {
-            configName: 'publicConfigByDomain',
-            config: applySubKey(
-              rawDoc,
-              [targetDomainName, ..._.toPath(subKey)],
-              nextValue,
-            ),
-          },
-        ],
-      },
+  ) =>
+    serializeWrite('publicConfigByDomain', async () => {
+      const targetDomainName = domainName ?? currentDomainName;
+      const raw = await fetchQuery<useAppConfigPublicRawQuery>(
+        relayEnv,
+        publicRawQuery,
+        { configNames: ['publicConfigByDomain'] },
+        { fetchPolicy: 'network-only' },
+      ).toPromise();
+      const rawDoc =
+        (raw?.scopedAppConfigFragmentsByNames?.[0]?.config as
+          AppConfigDocument | undefined) ?? {};
+      await upsert({
+        input: {
+          scope: { scopeType: 'PUBLIC' },
+          items: [
+            {
+              configName: 'publicConfigByDomain',
+              config: applySubKey(
+                rawDoc,
+                [targetDomainName, ..._.toPath(subKey)],
+                nextValue,
+              ),
+            },
+          ],
+        },
+      });
+      // The write has landed; a failed refetch only leaves the merged view
+      // stale, which the caller learns from the `false` this resolves to.
+      return fetchQuery<useAppConfigPublicQuery>(
+        relayEnv,
+        publicQuery,
+        { configNames: ['publicConfigByDomain'] },
+        { fetchPolicy: 'network-only' },
+      )
+        .toPromise()
+        .then(
+          () => true,
+          () => false,
+        );
     });
-  };
 };
 
 /**
@@ -277,40 +306,48 @@ export const useUpdateDomainAppConfig = () => {
   const upsert =
     useMutationWithPromise<useAppConfigUpsertMutation>(upsertMutation);
 
-  return async (subKey: string | Array<string>, nextValue: AppConfigUpdate) => {
-    const raw = await fetchQuery<useAppConfigDomainRawQuery>(
-      relayEnv,
-      domainRawQuery,
-      { scopeId, configNames: ['domainConfig'] },
-      { fetchPolicy: 'network-only' },
-    ).toPromise();
-    const rawDoc =
-      (raw?.scopedAppConfigFragmentsByNames?.[0]?.config as
-        AppConfigDocument | undefined) ?? {};
-    await upsert({
-      input: {
-        scope: { scopeType: 'DOMAIN', scopeId },
-        items: [
-          {
-            configName: 'domainConfig',
-            config: applySubKey(
-              rawDoc,
-              _.toPath(subKey),
-              typeof nextValue === 'function'
-                ? nextValue(_.get(rawDoc, subKey))
-                : nextValue,
-            ),
-          },
-        ],
-      },
+  return (subKey: string | Array<string>, nextValue: AppConfigUpdate) =>
+    serializeWrite(`domainConfig:${scopeId}`, async () => {
+      const raw = await fetchQuery<useAppConfigDomainRawQuery>(
+        relayEnv,
+        domainRawQuery,
+        { scopeId, configNames: ['domainConfig'] },
+        { fetchPolicy: 'network-only' },
+      ).toPromise();
+      const rawDoc =
+        (raw?.scopedAppConfigFragmentsByNames?.[0]?.config as
+          AppConfigDocument | undefined) ?? {};
+      await upsert({
+        input: {
+          scope: { scopeType: 'DOMAIN', scopeId },
+          items: [
+            {
+              configName: 'domainConfig',
+              config: applySubKey(
+                rawDoc,
+                _.toPath(subKey),
+                typeof nextValue === 'function'
+                  ? nextValue(_.get(rawDoc, subKey))
+                  : nextValue,
+              ),
+            },
+          ],
+        },
+      });
+      // The write has landed; a failed refetch only leaves the merged view
+      // stale, which the caller learns from the `false` this resolves to.
+      return fetchQuery<useAppConfigMyQuery>(
+        relayEnv,
+        myQuery,
+        { configNames: ['domainConfig'] },
+        { fetchPolicy: 'network-only' },
+      )
+        .toPromise()
+        .then(
+          () => true,
+          () => false,
+        );
     });
-    await fetchQuery<useAppConfigMyQuery>(
-      relayEnv,
-      myQuery,
-      { configNames: ['domainConfig'] },
-      { fetchPolicy: 'network-only' },
-    ).toPromise();
-  };
 };
 
 /**

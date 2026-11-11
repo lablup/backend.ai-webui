@@ -72,6 +72,7 @@ import {
   type RuntimeVariantPresetValueEntry,
 } from '../../../hooks/useRuntimeParameterSchema';
 import { useCommonEnvVarConfigs } from '../../../hooks/useVariantConfigs';
+import { useEffectiveLoginConfig } from '../../../hooks/useWebUIConfig';
 import type { ProjectContextOrNull } from '../../../types/projectContext';
 import ModelCardSelect from './ModelCardSelect';
 import { Banner } from '@lablup/ui-common/Banner';
@@ -379,6 +380,7 @@ const ExtraVFolderMountsFormItem: React.FC<{
   const { t } = useTranslation();
   const { generateFolderPath } = useFolderExplorerOpener();
   const baiClient = useSuspendedBackendaiClient();
+  const { isDirectorySizeVisible } = useEffectiveLoginConfig();
   const scope = mountableVFolderScope(baiClient.user_uuid, project?.id);
   const mountableHosts = useMountableStorageHosts(project?.id ?? null);
   // Shares the query the input reads, so the rule sees what the input lists.
@@ -400,6 +402,7 @@ const ExtraVFolderMountsFormItem: React.FC<{
       <BAIVFolderMountConfigInput
         scope={scope}
         mountableHosts={mountableHosts}
+        isDirectorySizeVisible={isDirectorySizeVisible}
         folderExplorerPath={generateFolderPath}
         // The model folder is mounted already, and other model folders are
         // not data mounts.
@@ -426,6 +429,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const { token } = useTheme();
   const { message } = App.useApp();
   const relayEnvironment = useRelayEnvironment();
+  const { isDirectorySizeVisible } = useEffectiveLoginConfig();
 
   // Deployment-scoped data (resourceGroupName for resource defaults,
   // currentRevision for the optional "Load current" affordance). Fragment-
@@ -2363,6 +2367,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             >
               <BAIVFolderPathPicker
                 label={t('modelService.Subpath')}
+                isDirectorySizeVisible={isDirectorySizeVisible}
                 vfolderUuid={
                   watchedModelFolderId
                     ? toLocalId(watchedModelFolderId)

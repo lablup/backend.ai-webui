@@ -59,13 +59,13 @@ const runPublicDomainWrite = async (
   rawConfig: Record<string, unknown> | null,
   write: (
     setter: ReturnType<typeof useUpdatePublicDomainAppConfig>,
-  ) => Promise<void>,
+  ) => Promise<unknown>,
   errors?: Array<{ message: string }>,
 ) => {
   const { environment, result } = renderWithRelay(() =>
     useUpdatePublicDomainAppConfig(),
   );
-  let pending!: Promise<void>;
+  let pending!: Promise<unknown>;
   act(() => {
     pending = write(result.current);
   });
@@ -105,6 +105,16 @@ const runPublicDomainWrite = async (
         : { data: { scopedAtomicBulkUpsertAppConfigFragments: { items: [] } } },
     );
   });
+  if (!errors) {
+    // A successful write refetches the merged view `usePublicDomainAppConfig` reads.
+    const refetch = await waitForOperation(
+      environment,
+      'useAppConfigPublicQuery',
+    );
+    act(() => {
+      environment.mock.resolve(refetch, { data: { publicAppConfigs: [] } });
+    });
+  }
   return { sent, pending };
 };
 

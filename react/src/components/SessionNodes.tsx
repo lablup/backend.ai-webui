@@ -9,6 +9,7 @@ import {
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useSuspendedAppTemplateConfig } from '../hooks/useAppTemplate';
+import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 import AppLauncherModal from './ComputeSessionNodeItems/AppLauncherModal';
 import EditSessionPriorityModal from './ComputeSessionNodeItems/EditSessionPriorityModal';
 import SessionAccessKey from './ComputeSessionNodeItems/SessionAccessKey';
@@ -92,7 +93,8 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
   'use memo';
   const { t } = useTranslation();
   const userRole = useCurrentUserRole();
-  const baiClient = useSuspendedBackendaiClient();
+  useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const { hideAppsOnBatchSession } = useSuspendedAppTemplateConfig();
   const [userInfo] = useCurrentUserInfo();
   const [terminateTarget, setTerminateTarget] =
@@ -443,7 +445,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         sorter: isEnableSorter('project_id'),
         render: (project_id: string) => project_id || '-',
       },
-      (userRole === 'superadmin' || !baiClient._config.hideAgents) && {
+      (userRole === 'superadmin' || !loginConfig.hideAgents) && {
         key: 'agent',
         dataIndex: 'agent_ids',
         title: t('session.Agent'),

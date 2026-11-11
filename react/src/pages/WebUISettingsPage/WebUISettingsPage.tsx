@@ -9,6 +9,7 @@ import {
   useDomainAppConfig,
   useRawPublicDomainAppConfig,
 } from '../../hooks/useAppConfig';
+import { useEffectiveLoginConfig } from '../../hooks/useWebUIConfig';
 import ConfigurationsSettingList from './components/ConfigurationsSettingList';
 import WebUISettingList from './components/WebUISettingList';
 import { BAICard, BAIFlex, BAISkeleton } from 'backend.ai-ui';
@@ -39,18 +40,19 @@ const SavedWebUISettingList: React.FC = () => {
 const WebUISettingsPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
+  useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const { currentTab, onTabChange } = useTabQuerySnapshot(tabParser);
 
   // The Configurations tab replaced the `settings` sidebar entry (#10684), so
   // the menu lists keyed on `settings` still govern it: blocked hides the
   // tab, inactive shows it disabled but keeps the URL reachable.
-  const showsConfigurations = !(baiClient._config.blockList ?? []).includes(
+  const showsConfigurations = !(loginConfig.blockList ?? []).includes(
     'settings',
   );
-  const isConfigurationsInactive = (
-    baiClient._config.inactiveList ?? []
-  ).includes('settings');
+  const isConfigurationsInactive = (loginConfig.inactiveList ?? []).includes(
+    'settings',
+  );
   const activeTab = showsConfigurations ? currentTab : 'settings';
 
   return (

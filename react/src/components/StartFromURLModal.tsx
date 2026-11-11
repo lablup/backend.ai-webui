@@ -4,6 +4,7 @@
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { useEffectiveLoginConfig } from '../hooks/useWebUIConfig';
 import BAITabs from './BAITabs';
 import ImportHuggingFaceModelForm from './ImportHuggingFaceModelForm';
 import ImportNotebookForm from './ImportNotebookForm';
@@ -35,15 +36,16 @@ const StartFromURLModal: React.FC<StartFromURLModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
+  useSuspendedBackendaiClient();
+  const loginConfig = useEffectiveLoginConfig();
   const [experimentalImportFromHuggingFace] = useBAISettingUserState(
     'experimental_import_from_huggingface',
   );
   // The Hugging Face import targets model folders, which are only meaningful
   // when the deployments (model serving) feature is available. Follow the
   // same menu-key gating the Start page uses for its deployment card.
-  const blockList = baiClient?._config?.blockList ?? [];
-  const inactiveList = baiClient?._config?.inactiveList ?? [];
+  const blockList = loginConfig.blockList ?? [];
+  const inactiveList = loginConfig.inactiveList ?? [];
   const isDeploymentsEnabled = ![...blockList, ...inactiveList].includes(
     'deployments',
   );
