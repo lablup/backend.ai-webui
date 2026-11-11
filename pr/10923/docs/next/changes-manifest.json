@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-11-09T15:11:46.986Z",
+  "generatedAt": "2026-11-11T15:11:41.197Z",
   "languages": [
     "en",
     "ja",
@@ -13,8 +13,8 @@
     "en": {
       "totals": {
         "pages": 1,
-        "changes": 34,
-        "added": 13,
+        "changes": 33,
+        "added": 12,
         "modified": 12,
         "removed": 9,
         "images": 2,
@@ -29,19 +29,18 @@
           "url": "next/en/dashboard.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/en/dashboard/dashboard.md",
           "counts": {
-            "added": 13,
+            "added": 12,
             "modified": 12,
             "removed": 9,
             "images": 2,
-            "total": 34
+            "total": 33
           },
           "fingerprints": [
             "d6b15dbdac40",
-            "cdd3b604a409",
+            "1b4d84bf32b9",
             "8fa75bfb4c42",
             "a8eed8953d27",
-            "d4993dccb122",
-            "a5ef760a0cd2",
+            "57ee9d0e6835",
             "03cd4c6ba0cf",
             "ae782d8fdf8a",
             "785992e0324a",
@@ -77,8 +76,8 @@
     "ja": {
       "totals": {
         "pages": 1,
-        "changes": 33,
-        "added": 13,
+        "changes": 32,
+        "added": 12,
         "modified": 11,
         "removed": 9,
         "images": 2,
@@ -93,19 +92,18 @@
           "url": "next/ja/dashboard.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/ja/dashboard/dashboard.md",
           "counts": {
-            "added": 13,
+            "added": 12,
             "modified": 11,
             "removed": 9,
             "images": 2,
-            "total": 33
+            "total": 32
           },
           "fingerprints": [
             "f90f1da4afc9",
-            "727114f8f643",
+            "0b64bc8d5824",
             "88e4d89c603b",
             "3e84aeaac140",
-            "0a5955a119da",
-            "5ca7d5295065",
+            "d532d9a50d27",
             "f9d31d22dc72",
             "8408bee37de4",
             "a120dd73a668",
@@ -140,8 +138,8 @@
     "ko": {
       "totals": {
         "pages": 1,
-        "changes": 33,
-        "added": 13,
+        "changes": 32,
+        "added": 12,
         "modified": 11,
         "removed": 9,
         "images": 2,
@@ -156,19 +154,18 @@
           "url": "next/ko/dashboard.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/ko/dashboard/dashboard.md",
           "counts": {
-            "added": 13,
+            "added": 12,
             "modified": 11,
             "removed": 9,
             "images": 2,
-            "total": 33
+            "total": 32
           },
           "fingerprints": [
             "b93a76d35ca6",
-            "6a4a50c0ef4e",
+            "e72e0a11a77e",
             "c83f063d7aed",
             "3833b2101572",
-            "a0b8367c8f1b",
-            "89ae1aa2cfd8",
+            "026ecccb3d88",
             "cdd9630b5770",
             "855e5fdb390c",
             "4469bf6b0cb9",
@@ -203,8 +200,8 @@
     "th": {
       "totals": {
         "pages": 1,
-        "changes": 34,
-        "added": 13,
+        "changes": 33,
+        "added": 12,
         "modified": 12,
         "removed": 9,
         "images": 2,
@@ -219,19 +216,18 @@
           "url": "next/th/dashboard.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/th/dashboard/dashboard.md",
           "counts": {
-            "added": 13,
+            "added": 12,
             "modified": 12,
             "removed": 9,
             "images": 2,
-            "total": 34
+            "total": 33
           },
           "fingerprints": [
             "576f8122de4e",
-            "26848adfe5a1",
+            "0f48fcc9f879",
             "0e157e203845",
             "712e4292b882",
-            "8fb32495ef26",
-            "dc1860338825",
+            "83a1567f201b",
             "a90f06ff963e",
             "1304a7fe5e93",
             "95ba9b317e57",

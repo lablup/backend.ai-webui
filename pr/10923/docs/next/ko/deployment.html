@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="배포" />
   <meta name="twitter:description" content="Backend.AI는 배포(Deployments) 기능을 통해 AI 모델을 추론 서비스로 배포할 수 있도록 지원합니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"배포","inLanguage":"ko","description":"Backend.AI는 배포(Deployments) 기능을 통해 AI 모델을 추론 서비스로 배포할 수 있도록 지원합니다.","dateModified":"2026-11-05T04:31:08.000Z","url":"https://webui.docs.backend.ai/next/ko/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"배포","inLanguage":"ko","description":"Backend.AI는 배포(Deployments) 기능을 통해 AI 모델을 추론 서비스로 배포할 수 있도록 지원합니다.","dateModified":"2026-11-11T01:38:49.000Z","url":"https://webui.docs.backend.ai/next/ko/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/deployment.html" />
   <link rel="alternate" hreflang="en" href="../en/deployment.html" />
   <link rel="alternate" hreflang="ja" href="../ja/deployment.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.2 (aaea080)">v26.10.0-alpha.2 (aaea080)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.3 (92081a1)">v26.10.0-alpha.3 (92081a1)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -688,7 +688,7 @@
 <p data-bai-block="250">복제본 탭에서 여는 <strong>복제본 스케줄링 기록</strong> 모달도 동일한 표를 사용합니다. <a href="#replicas-tab-history">복제본</a>을 참고하세요.</p>
 <p><a id="revisions-tab"></a></p>
 <h3 data-bai-block="251" id="deployment-리비전-탭">리비전 탭<a class="hash-link" href="#deployment-리비전-탭" aria-label="Direct link to 리비전 탭">#</a></h3>
-<p data-bai-block="252">배포 상세 페이지의 <strong>리비전</strong> 카드에는 <strong>현재 리비전</strong>, <strong>리비전 히스토리</strong>, <strong>감사 로그</strong> 세 개의 탭이 있습니다. 카드 상단의 <code>리비전 추가</code> 버튼은 모든 탭에서 사용할 수 있으며, 리비전 추가 모달을 엽니다(<a href="#add-revision">리비전 추가</a> 참고).</p>
+<p data-bai-block="252">배포 상세 페이지의 <strong>리비전</strong> 카드에는 <strong>현재 리비전</strong>, <strong>리비전 히스토리</strong>, <strong>감사로그</strong> 세 개의 탭이 있습니다. 카드 상단의 <code>리비전 추가</code> 버튼은 모든 탭에서 사용할 수 있으며, 리비전 추가 모달을 엽니다(<a href="#add-revision">리비전 추가</a> 참고).</p>
 <h4 data-bai-block="253" id="deployment-현재-리비전-탭">현재 리비전 탭<a class="hash-link" href="#deployment-현재-리비전-탭" aria-label="Direct link to 현재 리비전 탭">#</a></h4>
 <p data-bai-block="254"><strong>현재 리비전</strong> 탭은 현재 활성 상태로 트래픽을 처리 중인 리비전의 전체 설정을 표시합니다.</p>
 <p><figure data-bai-block="255" class="doc-figure"><img src="./images/current_revision_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="1374" /><figcaption>그림 12.16</figcaption></figure>
@@ -756,8 +756,8 @@
 </div></div>
 
 
-<h4 data-bai-block="297" id="deployment-감사-로그-탭">감사 로그 탭<a class="hash-link" href="#deployment-감사-로그-탭" aria-label="Direct link to 감사 로그 탭">#</a></h4>
-<p data-bai-block="298"><strong>감사 로그</strong> 탭은 이 배포에 대해 수행된 모든 작업의 시간 순 기록을 표시합니다. 누가 언제 배포를 변경했는지 추적하는 데 활용합니다.</p>
+<h4 data-bai-block="297" id="deployment-감사로그-탭">감사로그 탭<a class="hash-link" href="#deployment-감사로그-탭" aria-label="Direct link to 감사로그 탭">#</a></h4>
+<p data-bai-block="298"><strong>감사로그</strong> 탭은 이 배포에 대해 수행된 모든 작업의 시간 순 기록을 표시합니다. 누가 언제 배포를 변경했는지 추적하는 데 활용합니다.</p>
 <p><figure data-bai-block="299" class="doc-figure"><img src="./images/audit_log_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="578" /><figcaption>그림 12.18</figcaption></figure>
 </p>
 <h3 data-bai-block="300" id="deployment-복제본">복제본<a class="hash-link" href="#deployment-복제본" aria-label="Direct link to 복제본">#</a></h3>
@@ -1026,7 +1026,7 @@ Backend.AI뿐만 아니라 다양한 서비스에서 생성할 수 있습니다.
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/deployment/deployment.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> 이 페이지 편집</a>
-  <span class="last-updated">마지막 업데이트 2026년 11월 5일</span>
+  <span class="last-updated">마지막 업데이트 2026년 11월 11일</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./cluster_session.html">

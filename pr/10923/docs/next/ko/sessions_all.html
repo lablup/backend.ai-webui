@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="연산 세션" />
   <meta name="twitter:description" content="여기서는 세션 페이지에서 컨테이너 기반의 연산 세션을 생성하고 각종 웹 애플리케이션을 활용하는 방법을 알아봅니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"연산 세션","inLanguage":"ko","description":"여기서는 세션 페이지에서 컨테이너 기반의 연산 세션을 생성하고 각종 웹 애플리케이션을 활용하는 방법을 알아봅니다.","dateModified":"2026-11-05T04:31:08.000Z","url":"https://webui.docs.backend.ai/next/ko/sessions_all.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"연산 세션","inLanguage":"ko","description":"여기서는 세션 페이지에서 컨테이너 기반의 연산 세션을 생성하고 각종 웹 애플리케이션을 활용하는 방법을 알아봅니다.","dateModified":"2026-11-11T01:37:33.000Z","url":"https://webui.docs.backend.ai/next/ko/sessions_all.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/sessions_all.html" />
   <link rel="alternate" hreflang="en" href="../en/sessions_all.html" />
   <link rel="alternate" hreflang="ja" href="../ja/sessions_all.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.2 (aaea080)">v26.10.0-alpha.2 (aaea080)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.10.0-alpha.3 (92081a1)">v26.10.0-alpha.3 (92081a1)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -253,7 +253,7 @@
 <p data-bai-block="21">다른 사용자를 위한 세션을 생성하려면, 슈퍼 관리자는 사용자 페이지에서 <strong>이 사용자로 이용하기</strong> 작업을 사용합니다.</p>
 <p><figure data-bai-block="22" class="doc-figure"><img src="./images/admin_user_act_as_menu.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2424" height="832" /><figcaption>그림 10.4</figcaption></figure>
 </p>
-<p data-bai-block="23">작업을 확인하면 선택한 사용자의 권한과 화면으로 동작하는 새 탭이 열리므로, 그 탭에서 생성한 세션은 해당 사용자의 세션이 되며 작업 내용은 두 계정 모두로 감사 로그에 기록됩니다. <strong>이용 종료</strong>를 클릭하면 원래 계정으로 돌아갑니다.</p>
+<p data-bai-block="23">작업을 확인하면 선택한 사용자의 권한과 화면으로 동작하는 새 탭이 열리므로, 그 탭에서 생성한 세션은 해당 사용자의 세션이 되며 작업 내용은 두 계정 모두로 감사로그에 기록됩니다. <strong>이용 종료</strong>를 클릭하면 원래 계정으로 돌아갑니다.</p>
 <p><figure data-bai-block="24" class="doc-figure"><img src="./images/act_as_banner.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="132" /><figcaption>그림 10.5</figcaption></figure>
 </p>
 <p><a id="environments-and-resource-allocation"></a></p>
@@ -627,8 +627,8 @@
 </tr>
 </tbody></table>
 <p><a id="session-audit-log"></a></p>
-<h3 data-bai-block="182" id="sessions_all-세션-감사-로그">세션 감사 로그<a class="hash-link" href="#sessions_all-세션-감사-로그" aria-label="Direct link to 세션 감사 로그">#</a></h3>
-<p data-bai-block="183"><strong>감사 로그</strong> 탭은 세션 상세 정보 패널 하단에 <strong>커널</strong> 탭과 나란히 표시됩니다. 상태 변경, 자원 수정, 관리 작업 등 세션에 대해 수행된 모든 작업의 시간순 기록을 제공하며, 각 작업을 수행한 사람과 수행 시각을 함께 표시합니다.</p>
+<h3 data-bai-block="182" id="sessions_all-세션-감사로그">세션 감사로그<a class="hash-link" href="#sessions_all-세션-감사로그" aria-label="Direct link to 세션 감사로그">#</a></h3>
+<p data-bai-block="183"><strong>감사로그</strong> 탭은 세션 상세 정보 패널 하단에 <strong>커널</strong> 탭과 나란히 표시됩니다. 상태 변경, 자원 수정, 관리 작업 등 세션에 대해 수행된 모든 작업의 시간순 기록을 제공하며, 각 작업을 수행한 사람과 수행 시각을 함께 표시합니다.</p>
 <p><figure data-bai-block="184" class="doc-figure"><img src="./images/session_audit_log.png" alt="" class="doc-image" style="width:799px" loading="lazy" decoding="async" width="1598" height="1880" /><figcaption>그림 10.30</figcaption></figure>
 </p>
 <!-- TODO: Capture screenshot showing the Client IP column (FR-3661) -->
@@ -637,12 +637,12 @@
 <div data-bai-block="185" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
 <div class="admonition-content">
 
-<p data-bai-block="186">감사 로그는 백엔드에 의해 적용되며, 슈퍼 관리자에게만 표시될 수 있습니다. 일반 사용자는 탭에 접근할 수 있더라도 결과가 비어 있을 수 있습니다.</p>
+<p data-bai-block="186">감사로그는 백엔드에 의해 적용되며, 슈퍼 관리자에게만 표시될 수 있습니다. 일반 사용자는 탭에 접근할 수 있더라도 결과가 비어 있을 수 있습니다.</p>
 </div></div>
 
 
-<h4 data-bai-block="187" id="sessions_all-감사-로그-컬럼">감사 로그 컬럼<a class="hash-link" href="#sessions_all-감사-로그-컬럼" aria-label="Direct link to 감사 로그 컬럼">#</a></h4>
-<p data-bai-block="188">감사 로그 테이블에는 다음 컬럼이 포함됩니다:</p>
+<h4 data-bai-block="187" id="sessions_all-감사로그-컬럼">감사로그 컬럼<a class="hash-link" href="#sessions_all-감사로그-컬럼" aria-label="Direct link to 감사로그 컬럼">#</a></h4>
+<p data-bai-block="188">감사로그 테이블에는 다음 컬럼이 포함됩니다:</p>
 <ul>
 <li data-bai-block="189"><strong>수행자</strong>: 작업을 수행한 사용자의 이메일 주소와 계정 ID</li>
 <li data-bai-block="190"><strong>클라이언트 IP</strong>: 작업을 요청한 IP 주소. 서버가 보고한 그대로 표시되며, 관리자의 클라이언트 IP 마스킹 정책에 따라 일부가 가려지거나 기록되지 않은 경우 <code>-</code>로 표시됨</li>
@@ -651,7 +651,7 @@
 <li data-bai-block="193"><strong>결과</strong>: 작업의 결과 (<strong>성공</strong>, <strong>실패</strong>, <strong>거부됨</strong>, <strong>진행 중</strong> 또는 <strong>알 수 없음</strong>). <strong>거부됨</strong>은 오류로 실패한 것이 아니라 정책에 의해 의도적으로 거부되었음을 의미합니다</li>
 <li data-bai-block="194"><strong>시각</strong>: 작업이 발생한 시각</li>
 </ul>
-<h4 data-bai-block="195" id="sessions_all-감사-로그-필터">감사 로그 필터<a class="hash-link" href="#sessions_all-감사-로그-필터" aria-label="Direct link to 감사 로그 필터">#</a></h4>
+<h4 data-bai-block="195" id="sessions_all-감사로그-필터">감사로그 필터<a class="hash-link" href="#sessions_all-감사로그-필터" aria-label="Direct link to 감사로그 필터">#</a></h4>
 <p data-bai-block="196">테이블 위의 필터 바를 사용하여 로그 항목을 좁혀볼 수 있습니다:</p>
 <ul>
 <li data-bai-block="197"><strong>결과</strong>: 작업 결과로 필터링 (<strong>성공</strong>, <strong>실패</strong>, <strong>거부됨</strong>, <strong>진행 중</strong>, <strong>알 수 없음</strong>)</li>
@@ -660,7 +660,7 @@
 <li data-bai-block="200"><strong>수행자</strong>: 수행자 ID로 검색</li>
 <li data-bai-block="201"><strong>시각</strong>: 날짜 범위 선택기로 필터링</li>
 </ul>
-<p data-bai-block="202"><strong>새로고침</strong> 버튼을 클릭하면 로그를 다시 불러옵니다. 감사 로그 쿼리는 지연 실행되며, <strong>감사 로그</strong> 탭을 처음 활성화할 때만 전송됩니다.</p>
+<p data-bai-block="202"><strong>새로고침</strong> 버튼을 클릭하면 로그를 다시 불러옵니다. 감사로그 쿼리는 지연 실행되며, <strong>감사로그</strong> 탭을 처음 활성화할 때만 전송됩니다.</p>
 <p><a id="use_session"></a></p>
 <h2 data-bai-block="203" id="sessions_all-jupyter-notebook-사용하기">Jupyter Notebook 사용하기<a class="hash-link" href="#sessions_all-jupyter-notebook-사용하기" aria-label="Direct link to Jupyter Notebook 사용하기">#</a></h2>
 <p data-bai-block="204">이미 실행 중인 연산 세션을 어떻게 사용하고 관리하는지 살펴봅시다. 세션 상세 정보 패널 우측 상단의 첫 번째 아이콘을 클릭하여 앱 런처를 열면 해당 세션에서 사용할 수 있는 앱 서비스가 표시됩니다.</p>
@@ -897,7 +897,7 @@
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/sessions_all/sessions_all.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> 이 페이지 편집</a>
-  <span class="last-updated">마지막 업데이트 2026년 11월 5일</span>
+  <span class="last-updated">마지막 업데이트 2026년 11월 11일</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./session_page.html">
@@ -931,7 +931,7 @@
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#sessions_all-%EC%84%B8%EC%85%98-%EC%83%81%EC%84%B8-%EC%A0%95%EB%B3%B4-%ED%8C%A8%EB%84%90" data-toc-target="sessions_all-세션-상세-정보-패널">세션 상세 정보 패널</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#sessions_all-%EC%84%A0%EC%A0%90-%EA%B4%80%EB%A0%A8-%EC%83%81%ED%83%9C" data-toc-target="sessions_all-선점-관련-상태">선점 관련 상태</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#sessions_all-%EC%84%B8%EC%85%98-%EC%8A%A4%EC%BC%80%EC%A4%84%EB%A7%81-%EA%B8%B0%EB%A1%9D" data-toc-target="sessions_all-세션-스케줄링-기록">세션 스케줄링 기록</a></li>
-      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#sessions_all-%EC%84%B8%EC%85%98-%EA%B0%90%EC%82%AC-%EB%A1%9C%EA%B7%B8" data-toc-target="sessions_all-세션-감사-로그">세션 감사 로그</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#sessions_all-%EC%84%B8%EC%85%98-%EA%B0%90%EC%82%AC%EB%A1%9C%EA%B7%B8" data-toc-target="sessions_all-세션-감사로그">세션 감사로그</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#sessions_all-jupyter-notebook-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0" data-toc-target="sessions_all-jupyter-notebook-사용하기">Jupyter Notebook 사용하기</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#sessions_all-%EC%9B%B9-%ED%84%B0%EB%AF%B8%EB%84%90-%ED%99%9C%EC%9A%A9" data-toc-target="sessions_all-웹-터미널-활용">웹 터미널 활용</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#sessions_all-%EC%97%B0%EC%82%B0-%EC%84%B8%EC%85%98-%EB%A1%9C%EA%B7%B8-%EC%A1%B0%ED%9A%8C" data-toc-target="sessions_all-연산-세션-로그-조회">연산 세션 로그 조회</a></li>
