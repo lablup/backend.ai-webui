@@ -79,4 +79,23 @@ describe('ActAsConfirmModal', () => {
       await screen.findByRole('checkbox', { name: 'actAs.DebugMode' }),
     ).not.toBeChecked();
   });
+
+  // A reopen within the exit transition keeps the modal mounted, as a direct
+  // target switch does; jsdom finishes the transition at once, so test the switch.
+  it('resets the Debug mode choice when the target changes while mounted', async () => {
+    const user = userEvent.setup();
+    render(<Harness />);
+
+    await user.click(screen.getByRole('button', { name: 'open-a' }));
+    await user.click(
+      await screen.findByRole('checkbox', { name: 'actAs.DebugMode' }),
+    );
+    await user.click(
+      screen.getByRole('button', { name: 'open-b', hidden: true }),
+    );
+
+    expect(
+      await screen.findByRole('checkbox', { name: 'actAs.DebugMode' }),
+    ).not.toBeChecked();
+  });
 });

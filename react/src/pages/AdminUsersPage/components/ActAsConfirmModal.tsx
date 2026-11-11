@@ -17,7 +17,13 @@ import { useTranslation } from 'react-i18next';
 
 interface ActAsConfirmModalProps extends Omit<
   BAIModalProps,
-  'title' | 'footer' | 'children' | 'onOk' | 'onCancel'
+  | 'title'
+  | 'footer'
+  | 'children'
+  | 'onOk'
+  | 'onCancel'
+  | 'isOpen'
+  | 'onOpenChange'
 > {
   target: Omit<ActAsTarget, 'debug'> | null;
   onRequestClose: () => void;
@@ -32,10 +38,12 @@ const ActAsConfirmModal: React.FC<ActAsConfirmModalProps> = ({
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [debug, setDebug] = useState(false);
-  // Keeps the name on screen while the modal plays its exit transition.
+  // Keeps the name on screen during the exit transition; a reopen within it
+  // keeps the modal mounted, so a new target also resets the Debug mode choice.
   const [shownTarget, setShownTarget] = useState(target);
   if (target && target !== shownTarget) {
     setShownTarget(target);
+    setDebug(false);
   }
 
   const openTab = () => {
