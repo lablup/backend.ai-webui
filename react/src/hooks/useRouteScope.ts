@@ -94,6 +94,29 @@ export const getRouteScopeAndKey = (pathname: string): RouteScopeInfo => {
   };
 };
 
+// The `RootRedirect` routes in `routes.tsx`.
+const ROOT_REDIRECT_PATHS: ReadonlySet<string> = new Set([
+  '/',
+  '/build/electron-app/app/index.html',
+  '/app/index.html',
+]);
+
+/**
+ * Whether `pathname` is a user (general) page that renders in place, so it can
+ * be the target of leaving an admin view. Rejects root redirects, which send a
+ * superadmin to the admin pages, and paths without a feature key or project
+ * name, such as the legacy `/project` that redirects to `/admin/project`.
+ */
+export const isUserViewPath = (pathname: string): boolean => {
+  const { scope, featureKey, projectName } = getRouteScopeAndKey(pathname);
+  return (
+    scope === 'project' &&
+    !!featureKey &&
+    projectName !== '' &&
+    !ROOT_REDIRECT_PATHS.has(pathname.replace(/\/+$/, '') || '/')
+  );
+};
+
 const decodeSafe = (value: string): string => {
   try {
     return decodeURIComponent(value);
