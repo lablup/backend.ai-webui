@@ -371,6 +371,8 @@
     "MountDestination": "掛載路徑",
     "MountDestinationDesc": "資料夾在工作階段容器中的掛載路徑。",
     "MountPermission": "掛載權限",
+    "NoPermissionToSetAutoMount": "您沒有設定自動掛載的權限。",
+    "NoPermissionToSetProjectAutoMount": "您沒有在此專案中設定自動掛載的權限。若要在自己的工作階段中自動掛載資料夾,請在個人專案中建立。",
     "NotAutoMounted": "此資料夾未設定自動掛載。",
     "PleaseEnterMountDestination": "請輸入掛載路徑。",
     "PleaseSelectFolder": "請選擇資料夾。",

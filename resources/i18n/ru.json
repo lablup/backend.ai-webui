@@ -371,6 +371,8 @@
     "MountDestination": "Путь монтирования",
     "MountDestinationDesc": "Путь в контейнере сеанса, куда монтируется папка.",
     "MountPermission": "Права монтирования",
+    "NoPermissionToSetAutoMount": "У вас нет прав на настройку автомонтирования.",
+    "NoPermissionToSetProjectAutoMount": "У вас нет прав на настройку автомонтирования в этом проекте. Чтобы автоматически монтировать папку в свои сеансы, создайте её в личном проекте.",
     "NotAutoMounted": "Эта папка не монтируется автоматически.",
     "PleaseEnterMountDestination": "Введите путь монтирования.",
     "PleaseSelectFolder": "Выберите папку.",

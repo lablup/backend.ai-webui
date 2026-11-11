@@ -371,6 +371,8 @@
     "MountDestination": "Percorso di montaggio",
     "MountDestinationDesc": "Percorso nel container della sessione in cui viene montata la cartella.",
     "MountPermission": "Permesso di montaggio",
+    "NoPermissionToSetAutoMount": "Non hai l'autorizzazione per impostare montaggi automatici.",
+    "NoPermissionToSetProjectAutoMount": "Non hai l'autorizzazione per impostare montaggi automatici in questo progetto. Per montare automaticamente una cartella nelle tue sessioni, creala nel tuo progetto personale.",
     "NotAutoMounted": "Questa cartella non viene montata automaticamente.",
     "PleaseEnterMountDestination": "Inserisci il percorso di montaggio.",
     "PleaseSelectFolder": "Seleziona una cartella.",

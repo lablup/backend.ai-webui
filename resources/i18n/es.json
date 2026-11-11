@@ -371,6 +371,8 @@
     "MountDestination": "Ruta de montaje",
     "MountDestinationDesc": "Ruta en el contenedor de la sesión donde se monta la carpeta.",
     "MountPermission": "Permiso de montaje",
+    "NoPermissionToSetAutoMount": "No tiene permiso para configurar montajes automáticos.",
+    "NoPermissionToSetProjectAutoMount": "No tiene permiso para configurar montajes automáticos en este proyecto. Para montar automáticamente una carpeta en sus propias sesiones, créela en su proyecto personal.",
     "NotAutoMounted": "Esta carpeta no se monta automáticamente.",
     "PleaseEnterMountDestination": "Introduzca la ruta de montaje.",
     "PleaseSelectFolder": "Seleccione una carpeta.",

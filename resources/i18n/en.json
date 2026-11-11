@@ -358,6 +358,8 @@
     "MountDestination": "Mount path",
     "MountDestinationDesc": "Path in the session container where the folder is mounted.",
     "MountPermission": "Mount permission",
+    "NoPermissionToSetAutoMount": "You do not have permission to set auto-mounts.",
+    "NoPermissionToSetProjectAutoMount": "You do not have permission to set auto-mounts in this project. To auto-mount a folder in your own sessions, create it in your personal project.",
     "NotAutoMounted": "This folder is not auto-mounted.",
     "PleaseEnterMountDestination": "Enter the mount path.",
     "PleaseSelectFolder": "Select a folder.",

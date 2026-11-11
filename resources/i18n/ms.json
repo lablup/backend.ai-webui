@@ -371,6 +371,8 @@
     "MountDestination": "Laluan lekap",
     "MountDestinationDesc": "Laluan dalam bekas sesi tempat folder dilekapkan.",
     "MountPermission": "Kebenaran lekap",
+    "NoPermissionToSetAutoMount": "Anda tidak mempunyai kebenaran untuk menetapkan lekap automatik.",
+    "NoPermissionToSetProjectAutoMount": "Anda tidak mempunyai kebenaran untuk menetapkan lekap automatik dalam projek ini. Untuk melekapkan folder secara automatik dalam sesi anda sendiri, ciptanya dalam projek peribadi anda.",
     "NotAutoMounted": "Folder ini tidak dilekapkan secara automatik.",
     "PleaseEnterMountDestination": "Masukkan laluan lekap.",
     "PleaseSelectFolder": "Pilih folder.",

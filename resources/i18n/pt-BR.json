@@ -371,6 +371,8 @@
     "MountDestination": "Caminho de montagem",
     "MountDestinationDesc": "Caminho no contêiner da sessão onde a pasta é montada.",
     "MountPermission": "Permissão de montagem",
+    "NoPermissionToSetAutoMount": "Você não tem permissão para definir montagens automáticas.",
+    "NoPermissionToSetProjectAutoMount": "Você não tem permissão para definir montagens automáticas neste projeto. Para montar automaticamente uma pasta nas suas próprias sessões, crie-a no seu projeto pessoal.",
     "NotAutoMounted": "Esta pasta não é montada automaticamente.",
     "PleaseEnterMountDestination": "Informe o caminho de montagem.",
     "PleaseSelectFolder": "Selecione uma pasta.",

@@ -371,6 +371,8 @@
     "MountDestination": "พาธที่เมานต์",
     "MountDestinationDesc": "พาธในคอนเทนเนอร์ของเซสชันที่โฟลเดอร์ถูกเมานต์",
     "MountPermission": "สิทธิ์การเมานต์",
+    "NoPermissionToSetAutoMount": "คุณไม่มีสิทธิ์ตั้งค่าการเมานต์อัตโนมัติ",
+    "NoPermissionToSetProjectAutoMount": "คุณไม่มีสิทธิ์ตั้งค่าการเมานต์อัตโนมัติในโปรเจกต์นี้ หากต้องการเมานต์โฟลเดอร์อัตโนมัติในเซสชันของคุณเอง ให้สร้างโฟลเดอร์ในโปรเจกต์ส่วนตัว",
     "NotAutoMounted": "โฟลเดอร์นี้ไม่ได้เมานต์อัตโนมัติ",
     "PleaseEnterMountDestination": "กรอกพาธที่เมานต์",
     "PleaseSelectFolder": "เลือกโฟลเดอร์",

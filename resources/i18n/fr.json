@@ -371,6 +371,8 @@
     "MountDestination": "Chemin de montage",
     "MountDestinationDesc": "Chemin dans le conteneur de session où le dossier est monté.",
     "MountPermission": "Permission de montage",
+    "NoPermissionToSetAutoMount": "Vous n'avez pas l'autorisation de définir des montages automatiques.",
+    "NoPermissionToSetProjectAutoMount": "Vous n'avez pas l'autorisation de définir des montages automatiques dans ce projet. Pour monter automatiquement un dossier dans vos propres sessions, créez-le dans votre projet personnel.",
     "NotAutoMounted": "Ce dossier n'est pas monté automatiquement.",
     "PleaseEnterMountDestination": "Saisissez le chemin de montage.",
     "PleaseSelectFolder": "Sélectionnez un dossier.",

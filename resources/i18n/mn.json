@@ -371,6 +371,8 @@
     "MountDestination": "Холбох зам",
     "MountDestinationDesc": "Сешний контейнер дотор хавтас холбогдох зам.",
     "MountPermission": "Холбох эрх",
+    "NoPermissionToSetAutoMount": "Танд автомат холболт тохируулах эрх байхгүй.",
+    "NoPermissionToSetProjectAutoMount": "Танд энэ төсөлд автомат холболт тохируулах эрх байхгүй. Өөрийн сешнд хавтсыг автоматаар холбохын тулд хувийн төсөлдөө үүсгэнэ үү.",
     "NotAutoMounted": "Энэ хавтас автоматаар холбогддоггүй.",
     "PleaseEnterMountDestination": "Холбох замыг оруулна уу.",
     "PleaseSelectFolder": "Хавтас сонгоно уу.",

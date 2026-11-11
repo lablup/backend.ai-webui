@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { FolderCreateModalAutoMountMutation } from '../__generated__/FolderCreateModalAutoMountMutation.graphql';
+import { FolderCreateModalAutoMountPermissionQuery } from '../__generated__/FolderCreateModalAutoMountPermissionQuery.graphql';
 import { FolderCreateModalPermissionQuery } from '../__generated__/FolderCreateModalPermissionQuery.graphql';
 import {
   FolderCreateModalPersonalMutation,
@@ -197,6 +198,26 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   const supportsAutoMountSetting =
     baiClient.isManagerVersionCompatibleWith('26.10.0a5') &&
     !isFolderTypeLocked;
+  // A personal project's folder auto-mounts for the user, any other for its project.
+  const isPersonalTarget =
+    !!effectiveProject && effectiveProject.id === personalProject?.id;
+  const autoMountTarget = effectiveProject
+    ? isPersonalTarget
+      ? { scopeType: 'user', scopeId: baiClient.user_uuid }
+      : { scopeType: 'project', scopeId: effectiveProject.id }
+    : null;
+  const autoMountTargetKey = autoMountTarget
+    ? `${autoMountTarget.scopeType}:${autoMountTarget.scopeId}`
+    : null;
+  const [autoMountPermission, setAutoMountPermission] = useState<{
+    key: string;
+    canCreate: boolean;
+  } | null>(null);
+  // `undefined` while the check for the current target is in flight.
+  const canSetAutoMount: boolean | undefined =
+    autoMountPermission && autoMountPermission.key === autoMountTargetKey
+      ? autoMountPermission.canCreate
+      : undefined;
   // When folderType narrows the form, these preset values override any
   // user-passed initialValues for the affected fields.
   const folderTypePreset: Partial<FolderCreateFormItemsType> | undefined =
@@ -477,6 +498,17 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
           }
         }}
       >
+        {supportsAutoMountSetting && autoMountTarget && autoMountTargetKey ? (
+          <Suspense fallback={null}>
+            <AutoMountPermissionCheck
+              scopeType={autoMountTarget.scopeType}
+              scopeId={autoMountTarget.scopeId}
+              onResolved={(canCreate) =>
+                setAutoMountPermission({ key: autoMountTargetKey, canCreate })
+              }
+            />
+          </Suspense>
+        ) : null}
         {shouldCheckCreatePermission && effectiveProject ? (
           <Suspense fallback={null}>
             <FolderCreatePermissionCheck
@@ -743,6 +775,17 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                         <Form.Item name={'auto_mount_enabled'} noStyle>
                           <BAISwitch
                             aria-label={t('autoMount.AutoMountSettings')}
+                            isLoading={canSetAutoMount === undefined}
+                            disabled={canSetAutoMount !== true}
+                            disabledMessage={
+                              canSetAutoMount === false
+                                ? isPersonalTarget
+                                  ? t('autoMount.NoPermissionToSetAutoMount')
+                                  : t(
+                                      'autoMount.NoPermissionToSetProjectAutoMount',
+                                    )
+                                : undefined
+                            }
                           />
                         </Form.Item>
                       </HStack>
@@ -875,6 +918,48 @@ interface FolderCreatePermissionCheckProps {
   projectId: string;
   onResolved: (canCreate: boolean) => void;
 }
+
+/** Reports whether the caller may create auto-mounts on the scope. */
+const AutoMountPermissionCheck: React.FC<{
+  scopeType: string;
+  scopeId: string;
+  onResolved: (canCreate: boolean) => void;
+}> = ({ scopeType, scopeId, onResolved }) => {
+  'use memo';
+  const { myScopePermissions } =
+    useLazyLoadQuery<FolderCreateModalAutoMountPermissionQuery>(
+      graphql`
+        query FolderCreateModalAutoMountPermissionQuery(
+          $scopeType: String!
+          $scopeId: UUID!
+        ) {
+          myScopePermissions(
+            input: {
+              target: {
+                scopeType: $scopeType
+                scopeId: $scopeId
+                entityType: "vfolder_auto_mount"
+              }
+            }
+          ) {
+            item {
+              permissions
+            }
+          }
+        }
+      `,
+      { scopeType, scopeId },
+      { fetchPolicy: 'store-and-network' },
+    );
+  const canCreate = _.includes(myScopePermissions?.item.permissions, 'CREATE');
+
+  const reportResolved = useEffectEvent(() => onResolved(canCreate));
+  useEffect(() => {
+    reportResolved();
+  }, [scopeType, scopeId, canCreate]);
+
+  return null;
+};
 
 /** Reports whether the caller holds CREATE on vfolders in the project. */
 const FolderCreatePermissionCheck: React.FC<

@@ -371,6 +371,8 @@
     "MountDestination": "Liitospolku",
     "MountDestinationDesc": "Polku istunnon kontissa, johon kansio liitetään.",
     "MountPermission": "Liitosoikeus",
+    "NoPermissionToSetAutoMount": "Sinulla ei ole oikeutta asettaa automaattisia liitoksia.",
+    "NoPermissionToSetProjectAutoMount": "Sinulla ei ole oikeutta asettaa automaattisia liitoksia tässä projektissa. Jos haluat liittää kansion automaattisesti omiin istuntoihisi, luo se henkilökohtaiseen projektiisi.",
     "NotAutoMounted": "Tätä kansiota ei liitetä automaattisesti.",
     "PleaseEnterMountDestination": "Anna liitospolku.",
     "PleaseSelectFolder": "Valitse kansio.",

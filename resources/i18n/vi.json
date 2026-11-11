@@ -371,6 +371,8 @@
     "MountDestination": "Đường dẫn gắn",
     "MountDestinationDesc": "Đường dẫn trong container phiên nơi thư mục được gắn.",
     "MountPermission": "Quyền gắn",
+    "NoPermissionToSetAutoMount": "Bạn không có quyền thiết lập gắn tự động.",
+    "NoPermissionToSetProjectAutoMount": "Bạn không có quyền thiết lập gắn tự động trong dự án này. Để gắn tự động một thư mục vào phiên của bạn, hãy tạo nó trong dự án cá nhân.",
     "NotAutoMounted": "Thư mục này không được gắn tự động.",
     "PleaseEnterMountDestination": "Nhập đường dẫn gắn.",
     "PleaseSelectFolder": "Chọn một thư mục.",

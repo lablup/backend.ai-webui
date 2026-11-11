@@ -371,6 +371,8 @@
     "MountDestination": "マウントパス",
     "MountDestinationDesc": "セッションコンテナ内でフォルダがマウントされるパスです。",
     "MountPermission": "マウント権限",
+    "NoPermissionToSetAutoMount": "自動マウントを設定する権限がありません。",
+    "NoPermissionToSetProjectAutoMount": "このプロジェクトで自動マウントを設定する権限がありません。自分のセッションに自動マウントするには、個人プロジェクトでフォルダを作成してください。",
     "NotAutoMounted": "このフォルダは自動マウントされません。",
     "PleaseEnterMountDestination": "マウントパスを入力してください。",
     "PleaseSelectFolder": "フォルダを選択してください。",

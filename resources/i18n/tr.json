@@ -371,6 +371,8 @@
     "MountDestination": "Bağlama yolu",
     "MountDestinationDesc": "Klasörün oturum kapsayıcısında bağlandığı yol.",
     "MountPermission": "Bağlama izni",
+    "NoPermissionToSetAutoMount": "Otomatik bağlama ayarlama izniniz yok.",
+    "NoPermissionToSetProjectAutoMount": "Bu projede otomatik bağlama ayarlama izniniz yok. Bir klasörü kendi oturumlarınıza otomatik bağlamak için kişisel projenizde oluşturun.",
     "NotAutoMounted": "Bu klasör otomatik olarak bağlanmıyor.",
     "PleaseEnterMountDestination": "Bağlama yolunu girin.",
     "PleaseSelectFolder": "Bir klasör seçin.",
