@@ -48,7 +48,7 @@ export type BAIRuntimeVariantPresetSettingModalUpdateMutation$variables = {
     input: UpdateRuntimeVariantPresetInput;
 };
 export type BAIRuntimeVariantPresetSettingModalUpdateMutation$data = {
-    readonly adminUpdateRuntimeVariantPreset: {
+    readonly updateRuntimeVariantPreset: {
         readonly preset: {
             readonly category: string | null | undefined;
             readonly createdAt: string;
@@ -88,7 +88,7 @@ export type BAIRuntimeVariantPresetSettingModalUpdateMutation$data = {
             } | null | undefined;
             readonly updatedAt: string | null | undefined;
         };
-    } | null | undefined;
+    };
 };
 export type BAIRuntimeVariantPresetSettingModalUpdateMutation = {
     response: BAIRuntimeVariantPresetSettingModalUpdateMutation$data;
