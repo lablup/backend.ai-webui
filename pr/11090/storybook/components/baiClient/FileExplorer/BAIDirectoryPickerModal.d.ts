@@ -13,6 +13,8 @@ export interface BAIDirectoryPickerModalProps extends Omit<BAIModalProps, 'onOk'
     defaultPath?: string;
     /** Called with the chosen sub path, or `undefined` when cancelled. */
     onRequestClose: (selectedSubPath?: string) => void;
+    /** Shows each directory's size in the explorer; the host passes its setting. */
+    isDirectorySizeVisible?: boolean;
 }
 /**
  * A directory-only picker built on `BAIFileExplorer`'s `directoryPicker`

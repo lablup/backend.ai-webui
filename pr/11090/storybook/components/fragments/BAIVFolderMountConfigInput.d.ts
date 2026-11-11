@@ -56,6 +56,8 @@ export interface BAIVFolderMountConfigInputProps {
      * when this is given, because the modal lives in the host app.
      */
     onClickCreateFolder?: () => void;
+    /** Shows each directory's size in the explorer; the host passes its setting. */
+    isDirectorySizeVisible?: boolean;
     ref?: React.Ref<BAIVFolderMountConfigInputRef>;
 }
 export declare const vFolderAliasNameRegExp: RegExp;

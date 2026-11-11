@@ -32,6 +32,8 @@ export interface BAIVFolderPathPickerProps {
      * "Select a path" copy.
      */
     label?: string;
+    /** Shows each directory's size in the explorer; the host passes its setting. */
+    isDirectorySizeVisible?: boolean;
 }
 /**
  * A sub path picker for a given vfolder: a select-like trigger that opens a
