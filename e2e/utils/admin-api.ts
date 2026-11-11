@@ -1,3 +1,15 @@
+import {
+  accountLabel,
+  dropLoginState,
+  extendTestTimeout,
+  isAnonymousRateLimit,
+  isAuthSpec,
+  loginProblem,
+  loginStateFile,
+  rateLimitWaitMs,
+  readLoginState,
+  writeLoginState,
+} from './login-state';
 import { userInfo, webServerEndpoint } from './test-util';
 import { request, type APIRequestContext } from '@playwright/test';
 
@@ -28,18 +40,60 @@ export async function createAdminApiContext(): Promise<APIRequestContext> {
  * Same as `createAdminApiContext`, signed in as `account` instead — for reads
  * that must reflect what that account itself is allowed (e.g. its storage
  * hosts). The caller owns the context and must `dispose()` it.
+ *
+ * A standard account (`userInfo`) reuses the worker's saved API session, as
+ * the `loginAs*` helpers do; other accounts and `fresh` always log in.
  */
 export async function createAccountApiContext(
   account: { email: string; password: string },
   label = account.email,
+  options: { fresh?: boolean } = {},
 ): Promise<APIRequestContext> {
+  const shared =
+    !options.fresh &&
+    !isAuthSpec() &&
+    Object.values(userInfo).some(({ email }) => email === account.email);
+  const stateFile = shared
+    ? loginStateFile(webServerEndpoint, account.email, 'api')
+    : undefined;
+  const saved = stateFile
+    ? readLoginState(stateFile, account.password)
+    : undefined;
+  if (stateFile && saved) {
+    const api = await request.newContext({
+      baseURL: webServerEndpoint,
+      storageState: saved.state,
+    });
+    const check = await api.post('/server/login-check').catch(() => undefined);
+    const checked = check?.ok() ? await check.json().catch(() => ({})) : {};
+    if (checked?.authenticated === true) return api;
+    await api.dispose();
+    // Only a definite "not signed in" drops the state; a failed check retries.
+    if (checked?.authenticated === false) dropLoginState(stateFile);
+    console.log(
+      `[login-cache] ${checked?.authenticated === false ? 'stale' : 'unchecked'} API state for account ${accountLabel(account.email)}; logging in again`,
+    );
+  }
   const api = await request.newContext({ baseURL: webServerEndpoint });
-  const res = await api.post('/server/login', {
-    data: {
-      username: account.email,
-      password: account.password,
-    },
-  });
+  const submit = () =>
+    api.post('/server/login', {
+      data: {
+        username: account.email,
+        password: account.password,
+      },
+    });
+  let res = await submit();
+  const first = loginProblem(await res.json().catch(() => ({})));
+  if (isAnonymousRateLimit(res.status(), first.type, first.title)) {
+    // The manager's per-IP anonymous window: wait for its reset, retry once.
+    const waitMs = rateLimitWaitMs(res.headers());
+    console.log(
+      `[login] rate limited (429) on API login for account ${accountLabel(account.email)}; waiting ${Math.round(waitMs / 1000)}s, then retrying once`,
+    );
+    extendTestTimeout(waitMs);
+    await new Promise((resolve) => setTimeout(resolve, waitMs));
+    res = await submit();
+  }
   const body = await res.json().catch(() => ({}));
   if (!res.ok() || !body?.authenticated) {
     await api.dispose();
@@ -50,6 +104,12 @@ export async function createAccountApiContext(
         body?.authenticated ?? false,
       )})`,
     );
+  }
+  console.log(
+    `[login-cache] real API login for account ${accountLabel(account.email)}`,
+  );
+  if (stateFile) {
+    writeLoginState(stateFile, await api.storageState(), account.password);
   }
   return api;
 }

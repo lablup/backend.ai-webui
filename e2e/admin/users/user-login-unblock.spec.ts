@@ -191,7 +191,7 @@ test.describe(
         }),
       ).toBeVisible({ timeout: 10000 });
 
-      await loginAsAdmin(page, request);
+      await loginAsAdmin(page, request, { fresh: true });
       await unblockLoginFromUserList(page, email);
 
       await logout(page);

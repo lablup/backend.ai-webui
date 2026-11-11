@@ -425,7 +425,7 @@ test.describe(
       page,
       request,
     }) => {
-      await loginAsUser(page, request);
+      await loginAsUser(page, request, { fresh: true });
       await expect(page.getByTestId('user-dropdown-button')).toBeVisible();
 
       // The boundary needs a resolved endpoint; point it at the real

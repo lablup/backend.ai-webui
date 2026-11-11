@@ -122,7 +122,7 @@ test.describe(
     }) => {
       await seedStoredApiEndpoint(page);
       const api = trace(page);
-      await loginAsUser(page, request);
+      await loginAsUser(page, request, { fresh: true });
       await expect(userMenu(page)).toBeVisible();
       // The guest load probes once and pressing Login probes once more before
       // the credentials go out; the accepted login then reads the user once.
@@ -135,7 +135,7 @@ test.describe(
       page,
       request,
     }) => {
-      await loginAsUser(page, request);
+      await loginAsUser(page, request, { fresh: true });
       await expect(userMenu(page)).toBeVisible();
 
       const api = trace(page);
@@ -150,7 +150,7 @@ test.describe(
       page,
       request,
     }) => {
-      await loginAsUser(page, request);
+      await loginAsUser(page, request, { fresh: true });
       await expect(userMenu(page)).toBeVisible();
       await logout(page);
       await expect(loginForm(page)).toBeVisible({ timeout: 30_000 });
@@ -173,7 +173,7 @@ test.describe(
       page,
       request,
     }) => {
-      await loginAsUser(page, request);
+      await loginAsUser(page, request, { fresh: true });
       await expect(userMenu(page)).toBeVisible();
 
       const restoreBootstrap = await failBootstrapWithNullIdentity(page);
@@ -207,7 +207,7 @@ test.describe(
       page,
       request,
     }) => {
-      await loginAsUser(page, request);
+      await loginAsUser(page, request, { fresh: true });
       await expect(userMenu(page)).toBeVisible();
 
       const restoreBootstrap = await failBootstrapWithNullIdentity(page);

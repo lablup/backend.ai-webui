@@ -62,6 +62,12 @@ const htmlReporter: [string, Record<string, unknown>] = [
   },
 ];
 
+// One saved-login directory per run (e2e/utils/login-state.ts); workers
+// inherit the variable, and globalTeardown deletes the directory.
+if (!process.env.TEST_WORKER_INDEX && !process.env.E2E_LOGIN_STATE_RUN) {
+  process.env.E2E_LOGIN_STATE_RUN = `${Date.now()}-${process.pid}`;
+}
+
 const teardownSpec = /global-cleanup\.teardown\.ts/;
 const partFilter = e2ePartFilter(e2eParts, path.join(__dirname, "e2e"));
 /**
@@ -93,6 +99,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   /* Default timeout for each test */
   timeout: 180000,
+  globalTeardown: "./e2e/utils/login-state-teardown.ts",
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://127.0.0.1:3000',

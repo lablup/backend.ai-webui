@@ -153,9 +153,22 @@ What `login()` actually does, so you can reason about failures:
 2. Navigates to `webuiEndpoint`, fills **Email or Username** / **Password** by label, expands
    the **Advanced** section when the Endpoint field is hidden, fills the endpoint.
 3. Submits up to 3 times with a 5 s gap — a busy shared backend can transiently reject a valid
-   login. Success is `[data-testid="user-dropdown-button"]` appearing. On rejection it probes
-   `POST {endpoint}/server/login` from a throwaway request context and logs the real status, so
-   check the test output before assuming a frontend bug.
+   login. Success is `[data-testid="user-dropdown-button"]` appearing. On rejection it logs the
+   status and body of the form's own `POST /server/login` (`[login] attempt N rejected …`), so
+   check the test output before assuming a frontend bug. A 429 is the manager's per-IP
+   anonymous window: it waits for the reset header (capped at 120 s) and retries once.
+
+Only the first login per worker slot, server and account is real. It saves the context's
+storageState under `e2e/.auth/<run>/` (gitignored, deleted by `globalTeardown`), and later
+calls in that worker restore it and open the app signed in (`[login-cache] restored …`). A
+restored state that lands on the login form or gets a 401 is dropped and the login repeats.
+`createAccountApiContext` does the same for the standard accounts' API contexts.
+
+Pass `{ fresh: true }` (`loginAsAdmin(page, request, { fresh: true })`) when the login must
+stay real and private: before a `logout(page)` (the webserver deletes the server-side session,
+so a shared one would die for the rest of the worker), and in password, lock, session-expiry or
+concurrent-login tests. Specs under `e2e/common/auth/` and `loginAsCreatedAccount` are always
+fresh.
 
 Related helpers: `logout(page)`, `navigateTo(page, path)` (resolves against `webuiEndpoint` —
 never hardcode a URL), `notFoundPageHeading(page)` / `forbiddenPageHeading(page)` for the
