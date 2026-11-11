@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-sJBDdmOt.js";function t({enterKeyHint:e,inputMode:t,autoCapitalize:n,hasAutoCorrect:r}){let i={};return e!=null&&(i.enterKeyHint=e),t!=null&&(i.inputMode=t),n!=null&&(i.autoCapitalize=n),r!=null&&(i.autoCorrect=r?`on`:`off`),i}function n(){return(n=e((()=>{})))()}export{t as n,n as t};
