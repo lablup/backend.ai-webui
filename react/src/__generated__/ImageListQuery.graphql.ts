@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d3f5d325a151d922ae4154d432ebe8fd>>
+ * @generated SignedSource<<8fb8a829f8712022dd8f914b3f361dd6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -462,14 +462,7 @@ return {
                   (v24/*: any*/),
                   (v25/*: any*/),
                   (v26/*: any*/),
-                  (v27/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "row_id",
-                    "storageKey": null
-                  }
+                  (v27/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -483,12 +476,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "12c042df2f2e1449ee6eace40c9a1b8f",
+    "cacheID": "b36e473dc1fd55e0b52355f7dfa48b6b",
     "id": null,
     "metadata": {},
     "name": "ImageListQuery",
     "operationKind": "query",
-    "text": "query ImageListQuery(\n  $scopeId: ScopeField!\n  $offset: Int\n  $first: Int\n  $filter: String\n  $order: String\n  $filterByStatuses: [ImageStatus]\n) {\n  image_nodes(scope_id: $scopeId, offset: $offset, first: $first, filter: $filter, order: $order, filter_by_statuses: $filterByStatuses) {\n    edges {\n      node {\n        id\n        tag\n        registry\n        architecture\n        digest\n        installed\n        labels {\n          key\n          value\n        }\n        humanized_name\n        resource_limits {\n          key\n          min\n          max\n        }\n        namespace\n        base_image_name\n        tags {\n          key\n          value\n        }\n        version\n        size_bytes\n        is_local\n        supported_accelerators\n        status\n        type\n        aliases\n        ...AliasedImageTagTokensFragment\n        ...ManageImageResourceLimitModal_image\n        ...ManageAppsModal_image\n      }\n    }\n    count\n  }\n}\n\nfragment AliasedImageTagTokensFragment on ImageNode {\n  labels {\n    key\n    value\n  }\n  tags {\n    key\n    value\n  }\n}\n\nfragment ManageAppsModal_image on ImageNode {\n  row_id\n  labels {\n    key\n    value\n  }\n}\n\nfragment ManageImageResourceLimitModal_image on ImageNode {\n  row_id\n  resource_limits {\n    key\n    min\n    max\n  }\n}\n"
+    "text": "query ImageListQuery(\n  $scopeId: ScopeField!\n  $offset: Int\n  $first: Int\n  $filter: String\n  $order: String\n  $filterByStatuses: [ImageStatus]\n) {\n  image_nodes(scope_id: $scopeId, offset: $offset, first: $first, filter: $filter, order: $order, filter_by_statuses: $filterByStatuses) {\n    edges {\n      node {\n        id\n        tag\n        registry\n        architecture\n        digest\n        installed\n        labels {\n          key\n          value\n        }\n        humanized_name\n        resource_limits {\n          key\n          min\n          max\n        }\n        namespace\n        base_image_name\n        tags {\n          key\n          value\n        }\n        version\n        size_bytes\n        is_local\n        supported_accelerators\n        status\n        type\n        aliases\n        ...AliasedImageTagTokensFragment\n        ...ManageImageResourceLimitModal_image\n        ...ManageAppsModal_image\n      }\n    }\n    count\n  }\n}\n\nfragment AliasedImageTagTokensFragment on ImageNode {\n  labels {\n    key\n    value\n  }\n  tags {\n    key\n    value\n  }\n}\n\nfragment ManageAppsModal_image on ImageNode {\n  id\n  labels {\n    key\n    value\n  }\n}\n\nfragment ManageImageResourceLimitModal_image on ImageNode {\n  id\n  resource_limits {\n    key\n    min\n    max\n  }\n}\n"
   }
 };
 })();

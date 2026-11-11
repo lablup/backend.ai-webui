@@ -29,6 +29,7 @@ import {
   useUpdatableState,
   BAITextHighlighter,
   BAITextInput,
+  toLocalId,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -68,7 +69,6 @@ const CustomizedImageList: React.FC = () => {
       query CustomizedImageListQuery {
         customized_images {
           id
-          row_id
           humanized_name
           tag
           registry
@@ -391,11 +391,6 @@ const CustomizedImageList: React.FC = () => {
         confirmLoading={isInFlightForget || isInFlightUntag}
         onOk={() => {
           if (imageToDelete) {
-            const imageRowId = imageToDelete.row_id;
-            if (!imageRowId) {
-              message.error(t('environment.FailedToDeleteCustomizedImage'));
-              return;
-            }
             // TODO: when BA-1905 resolved. use commitPurgeImage
             commitUntag({
               variables: { id: imageToDelete.id },
@@ -415,7 +410,7 @@ const CustomizedImageList: React.FC = () => {
                   return;
                 }
                 commitForget({
-                  variables: { id: imageRowId },
+                  variables: { id: toLocalId(imageToDelete.id) },
                   onCompleted: (_res, errors) => {
                     if (errors && errors?.length > 0) {
                       const errorMsgList = _.map(

@@ -14,6 +14,7 @@ import {
   BAIModal,
   BAIModalProps,
   BAITextInput,
+  toLocalId,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -43,7 +44,7 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
   const image = useFragment(
     graphql`
       fragment ManageAppsModal_image on ImageNode {
-        row_id
+        id
         labels {
           key
           value
@@ -112,16 +113,12 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
             }
           },
         );
-        if (!image.row_id) {
-          message.error(t('dialog.ErrorOccurred'));
-          return;
-        }
         // Service ports are stored as image label metadata read by the
         // manager at session-creation time, so a modification applies to
         // newly created sessions immediately without any image reinstall.
         commitModifyImageInput({
           variables: {
-            id: image.row_id,
+            id: toLocalId(image.id),
             input: {
               // An empty label list left the labels untouched under `modify_image`.
               labels: _.isEmpty(labels)

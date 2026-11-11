@@ -17,6 +17,7 @@ import {
   BAIModalProps,
   BAIDynamicUnitInputNumber,
   BAINumberInput,
+  toLocalId,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -46,7 +47,7 @@ const ManageImageResourceLimitModal: React.FC<
   const image = useFragment(
     graphql`
       fragment ManageImageResourceLimitModal_image on ImageNode {
-        row_id
+        id
         resource_limits {
           key
           min
@@ -76,7 +77,7 @@ const ManageImageResourceLimitModal: React.FC<
     if (!isValid) {
       return;
     }
-    if (!image?.row_id) {
+    if (!image) {
       message.error(t('dialog.ErrorOccurred'));
       return;
     }
@@ -101,7 +102,7 @@ const ManageImageResourceLimitModal: React.FC<
     // sessions immediately without any image reinstall.
     commitModifyImageInput({
       variables: {
-        id: image.row_id,
+        id: toLocalId(image.id),
         input: { resourceLimits },
       },
       onCompleted: (_res, errors) => {

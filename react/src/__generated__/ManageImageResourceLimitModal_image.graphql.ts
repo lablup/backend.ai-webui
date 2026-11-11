@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d8400afa57fbc94026aa9fa713a29ed3>>
+ * @generated SignedSource<<2e0cd614e80d785fbd8524bdec29a237>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,12 +11,12 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type ManageImageResourceLimitModal_image$data = {
+  readonly id: string;
   readonly resource_limits: ReadonlyArray<{
     readonly key: string | null | undefined;
     readonly max: string | null | undefined;
     readonly min: string | null | undefined;
   } | null | undefined> | null | undefined;
-  readonly row_id: string | null | undefined;
   readonly " $fragmentType": "ManageImageResourceLimitModal_image";
 };
 export type ManageImageResourceLimitModal_image$key = {
@@ -34,7 +34,7 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "row_id",
+      "name": "id",
       "storageKey": null
     },
     {
@@ -74,6 +74,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "464ad0741296cef1b31411a172ecf9a0";
+(node as any).hash = "6cb6fc78a327f0c2ade6bfbf2289a96c";
 
 export default node;
