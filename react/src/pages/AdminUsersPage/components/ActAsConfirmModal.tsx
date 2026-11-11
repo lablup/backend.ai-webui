@@ -6,11 +6,19 @@ import { App } from '../../../app-shim';
 import { type ActAsTarget, openActAsTab } from '../../../helper/actAs';
 import { Button } from '@lablup/ui-common/Button';
 import { HStack } from '@lablup/ui-common/Stack';
-import { BAICheckboxInput, BAIModal, BAIText } from 'backend.ai-ui';
+import {
+  BAICheckboxInput,
+  BAIModal,
+  type BAIModalProps,
+  BAIText,
+} from 'backend.ai-ui';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface ActAsConfirmModalProps {
+interface ActAsConfirmModalProps extends Omit<
+  BAIModalProps,
+  'title' | 'footer' | 'children' | 'onOk' | 'onCancel'
+> {
   target: Omit<ActAsTarget, 'debug'> | null;
   onRequestClose: () => void;
 }
@@ -18,11 +26,17 @@ interface ActAsConfirmModalProps {
 const ActAsConfirmModal: React.FC<ActAsConfirmModalProps> = ({
   target,
   onRequestClose,
+  ...modalProps
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [debug, setDebug] = useState(false);
+  // Keeps the name on screen while the modal plays its exit transition.
+  const [shownTarget, setShownTarget] = useState(target);
+  if (target && target !== shownTarget) {
+    setShownTarget(target);
+  }
 
   const openTab = () => {
     if (!target) return;
@@ -35,12 +49,12 @@ const ActAsConfirmModal: React.FC<ActAsConfirmModalProps> = ({
 
   return (
     <BAIModal
-      isOpen={!!target}
+      {...modalProps}
       onOpenChange={(next) => {
         if (!next) onRequestClose();
       }}
       title={t('actAs.ConfirmTitle', {
-        name: target?.name || target?.email,
+        name: shownTarget?.name || shownTarget?.email,
       })}
       footer={
         <HStack justify="between" align="center" gap={2}>
@@ -63,7 +77,7 @@ const ActAsConfirmModal: React.FC<ActAsConfirmModalProps> = ({
       }
     >
       <BAIText>
-        {t('actAs.ConfirmDescription', { email: target?.email })}
+        {t('actAs.ConfirmDescription', { email: shownTarget?.email })}
       </BAIText>
     </BAIModal>
   );

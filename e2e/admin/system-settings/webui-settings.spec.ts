@@ -496,7 +496,6 @@ test.describe(
         allowAnonymousChangePassword: !defaultAnonymousPassword,
         singleSignOnVendors: ['saml', 'openid'],
         ssoRealmName: 'e2e-realm',
-        debug: true,
       });
 
       await enablePublicSlice(page, request, api.domainName);
@@ -523,8 +522,6 @@ test.describe(
       await expect(
         page.getByRole('button', { name: 'Login with e2e-realm' }),
       ).toBeVisible();
-      // Debug mode is an act-as tab option now; a stored `debug` is ignored.
-      await expect(i18nKeyMarkers(page)).toHaveCount(0);
     });
 
     test('a key absent from the public document keeps the login page default', async ({

@@ -735,6 +735,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
       />
       <BAIUnmountAfterClose>
         <ActAsConfirmModal
+          open={!!actAsTarget}
           target={actAsTarget}
           onRequestClose={() => setActAsTarget(null)}
         />

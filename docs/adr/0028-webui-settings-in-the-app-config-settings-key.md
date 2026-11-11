@@ -99,7 +99,7 @@ flowchart LR
 ### 6. Debug mode is not a setting
 
 - **Where it lives**: debug mode (i18n key markers, raw error messages, the app launcher's proxy options, error details) is not in the definition table and no document carries it; a stored `debug` key is ignored. A superadmin turns it on with the "Debug mode" checkbox of the "Use as this user" modal, for that act-as tab only (`ActAsTarget.debug`, read by `isActAsDebugMode`).
-- **Why**: a PUBLIC key showed these details to every user of the domain, the login page included (#10952), and writing the flag into the target user's USER document would turn it on for that user too. The act-as tab's `sessionStorage` holds it, so it ends when the act-as tab exits or closes.
+- **Why**: a PUBLIC key showed these details to every user of the domain, the login page included (#10952), and writing the flag into the target user's USER document would turn it on for that user too. The act-as tab's `sessionStorage` holds it, so it ends when the act-as tab exits or closes. A browser that duplicates the tab or reopens a closed one copies its `sessionStorage`, and the flag with it.
 
 ## Rejected alternatives
 
