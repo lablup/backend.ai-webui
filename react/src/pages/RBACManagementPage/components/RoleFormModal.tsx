@@ -110,17 +110,6 @@ const ResourceGroupScopeIdSelect: React.FC<ScopeIdBranchProps> = (props) => {
   return <BAIAdminResourceGroupSelect queryRef={queryRef} {...props} />;
 };
 
-const VFolderScopeIdSelect: React.FC<ScopeIdBranchProps> = (props) => {
-  'use memo';
-  const { id: domainId } = useCurrentDomain();
-  return (
-    <BAIScopedVFolderSelect
-      {...props}
-      scope={{ domain: [{ value: domainId }] }}
-    />
-  );
-};
-
 /** True for the DOMAIN scope, whose id is the signed-in domain and is never shown. */
 export const isDomainScopeType = (scopeType?: string) =>
   scopeType?.toUpperCase() === 'DOMAIN';
@@ -132,6 +121,7 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   'use memo';
   const { t } = useTranslation();
   const scopeType = rawScopeType?.toUpperCase();
+  const { id: domainId } = useCurrentDomain();
   // The surrounding `Form.Item` already prints "Scope ID", so the Astryx
   // field's own label is the accessible name only.
   const branchProps: ScopeIdBranchProps = {
@@ -166,7 +156,10 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   if (scopeType === 'VFOLDER') {
     return (
       <Suspense fallback={fallback}>
-        <VFolderScopeIdSelect {...branchProps} />
+        <BAIScopedVFolderSelect
+          {...branchProps}
+          scope={{ domain: [{ value: domainId }] }}
+        />
       </Suspense>
     );
   }
