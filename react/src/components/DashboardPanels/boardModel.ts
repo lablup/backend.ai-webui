@@ -4,7 +4,7 @@
  */
 import { mergeHiddenLayoutEntries, type BoardLayoutEntry } from './boardLayout';
 import { VIZ_TO_PANEL_TYPE } from './defaults';
-import { sanitizePanelSettings } from './panelSettings';
+import { panelDefinitionOf, sanitizePanelSettings } from './panelSettings';
 import {
   PANEL_TYPES,
   RESOURCE_KEYS,
@@ -372,7 +372,10 @@ export const sanitizeBoard = (
     }
     seenIds.add(panel.id);
     const { defaultSize } = sizeOf(definition, panel.viz);
-    const settings = sanitizePanelSettings(panel.settings, definition);
+    const settings = sanitizePanelSettings(
+      panel.settings,
+      panelDefinitionOf(definition, panel),
+    );
     return [
       {
         ..._.omit(panel, 'settings', 'hidden'),
@@ -435,6 +438,8 @@ export const toLegacyPanel = (
       filter: panel.filter ?? null,
       order: panel.order ?? null,
       gridView: panel.gridView ?? null,
+      chart: panel.chart ?? null,
+      range: panel.settings?.range ?? null,
       resourceGroups: panel.settings?.resourceGroups ?? null,
     },
   };

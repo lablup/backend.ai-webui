@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import ResourceChartPanel from './ResourceChartPanel';
 import ResourceCountPanel from './ResourceCountPanel';
 import ResourceTablePanel, {
   type ResourceTablePanelProps,
@@ -22,6 +23,7 @@ export const panelRegistry: Record<PanelType, React.FC<PanelKindProps>> = {
   resourceTable: ResourceTablePanel,
   resourceCount: ResourceCountPanel,
   sessionResourceGrid: SessionResourceGridPanel,
+  resourceChart: ResourceChartPanel,
 };
 
 /** i18n key for each kind's label in the panel modal's kind selector. */
@@ -31,6 +33,7 @@ export const panelTypeLabelKeys: Record<PanelType, string> = {
   // Reuse the sessions page's own view-toggle label so the two surfaces read as
   // the same "two ways to look at sessions".
   sessionResourceGrid: 'session.resourceGrid.GridView',
+  resourceChart: 'dashboard.panelModal.Chart',
 };
 
 export interface PanelTypeAvailabilityOptions {
@@ -49,7 +52,11 @@ export const availablePanelTypes = (
   resourceType: ResourceKey,
   { gridEnabled, forcePanelType }: PanelTypeAvailabilityOptions,
 ): Array<PanelType> => {
-  const types: Array<PanelType> = ['resourceTable', 'resourceCount'];
+  const types: Array<PanelType> = [
+    'resourceTable',
+    'resourceCount',
+    'resourceChart',
+  ];
   const gridOfferable = gridEnabled || forcePanelType === 'sessionResourceGrid';
   if (resourceType === 'session' && gridOfferable) {
     types.push('sessionResourceGrid');

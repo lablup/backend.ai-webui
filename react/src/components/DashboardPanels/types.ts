@@ -21,13 +21,42 @@ import type { GraphQLTaggedNode, OperationType } from 'relay-runtime';
 export const RESOURCE_KEYS = ['session', 'deployment', 'vfolder'] as const;
 export type ResourceKey = (typeof RESOURCE_KEYS)[number];
 
-/** Panel kinds the panel registry renders (table rows, a count, the session grid). */
+/** Panel kinds the panel registry renders (table rows, a count, the session grid, a chart). */
 export const PANEL_TYPES = [
   'resourceTable',
   'resourceCount',
   'sessionResourceGrid',
+  'resourceChart',
 ] as const;
 export type PanelType = (typeof PANEL_TYPES)[number];
+
+/** How a chart panel draws its counts: across groups, or across the buckets of its range. */
+export const GROUP_CHART_TYPES = ['donut', 'pie', 'bar', 'radar'] as const;
+export const TIME_CHART_TYPES = ['line', 'area', 'column'] as const;
+export const CHART_TYPES = [...GROUP_CHART_TYPES, ...TIME_CHART_TYPES] as const;
+export type ChartType = (typeof CHART_TYPES)[number];
+
+export const isTimeChartType = (type: unknown): boolean =>
+  (TIME_CHART_TYPES as ReadonlyArray<unknown>).includes(type);
+
+/** The chart counts within the card's range: a time chart always, a group chart when it has a period. */
+export const chartUsesPeriod = (
+  chart: { type?: unknown; period?: boolean } | null | undefined,
+): boolean => isTimeChartType(chart?.type) || chart?.period === true;
+
+/**
+ * A chart panel's settings. A group chart counts the rows per group of
+ * `groupBy`; a time chart counts the rows created in each bucket of the
+ * card's range setting (ADR 0027), which a group chart reads only with `period`.
+ */
+export interface PanelChart {
+  type: ChartType;
+  groupBy?: string;
+  /** A group chart counts only the rows created within the card's range; a time chart always does. */
+  period?: boolean;
+  /** Lists the matching rows under the chart. */
+  showTable?: boolean;
+}
 
 /**
  * Serializable per-panel configuration of a custom panel; it must survive a
@@ -45,12 +74,21 @@ export interface PanelDescriptor {
   gridView?: SessionGridViewParams | null;
   /** The panel's resource group setting, for sources that support one. */
   resourceGroups?: Array<string> | null;
+  /** Chart settings of a `resourceChart` panel, null on other kinds. */
+  chart?: PanelChart | null;
+  /** The panel's range setting, which a chart that counts within a period reads. */
+  range?: string | null;
+  /**
+   * The window a chart's table narrows to, resolved at the card's refresh. It
+   * changes on every refresh, so it is ANDed into the query and never reset on.
+   */
+  tableWindow?: { after: string; before: string } | null;
 }
 
 /** The fields the panel modal collects when creating or editing a panel. */
 export type PanelInput = Pick<
   PanelDescriptor,
-  'resourceType' | 'filter' | 'title' | 'order' | 'gridView'
+  'resourceType' | 'filter' | 'title' | 'order' | 'gridView' | 'chart' | 'range'
 > & {
   panelType: PanelType;
 };
@@ -81,7 +119,7 @@ export const PANEL_GROUPS = [
 export type PanelGroup = (typeof PANEL_GROUPS)[number];
 
 /** How a preset panel draws its rows. */
-export const VIZ_TYPES = ['table', 'stat', 'grid'] as const;
+export const VIZ_TYPES = ['table', 'stat', 'grid', 'chart'] as const;
 export type Viz = (typeof VIZ_TYPES)[number];
 
 /** The current domain: `id` for `scoped*` scopes, `name` for fields keyed by name. */
@@ -158,6 +196,7 @@ export interface PersistedPanelV2 {
   viz?: Viz;
   order?: string | null;
   gridView?: SessionGridViewParams | null;
+  chart?: PanelChart | null;
   title?: string;
   settings?: PanelSettings;
   columnSpan: number;
@@ -337,8 +376,11 @@ export interface ResourceConfig<
   ) => ReadonlyArray<BAIGraphQLFilterProperty>;
   /** Properties for `BAIPropertyFilter` (string filter), `kind: 'sessionNodes'`. */
   getStringFilterProperties?: (t: TFunction) => Array<FilterProperty>;
-  /** Columns for the generic table (unused for `kind: 'sessionNodes'`). */
-  getColumns?: (t: TFunction) => BAIColumnsType<TNode>;
+  /** Columns for the generic table (unused for `kind: 'sessionNodes'`); `disableNavigation` turns row links off, as in the modal preview. */
+  getColumns?: (
+    t: TFunction,
+    options?: { disableNavigation?: boolean },
+  ) => BAIColumnsType<TNode>;
   buildVariables: (args: ResourceQueryArgs) => TQuery['variables'];
   selectConnection: (
     data: TQuery['response'],

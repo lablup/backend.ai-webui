@@ -6,6 +6,7 @@ import type { resourceRegistryDeploymentQuery } from '../../__generated__/resour
 import type { resourceRegistrySessionQuery } from '../../__generated__/resourceRegistrySessionQuery.graphql';
 import type { resourceRegistryVfolderQuery } from '../../__generated__/resourceRegistryVfolderQuery.graphql';
 import { convertToOrderBy } from '../../helper';
+import FolderLink from '../FolderLink';
 import { readPrimary, type CaughtValue } from './panelPermission';
 import { getSessionFilterProperties } from './sessionFilterProperties';
 import type {
@@ -288,6 +289,7 @@ const vfolderConfig: ResourceConfig<resourceRegistryVfolderQuery, VfolderNode> =
           edges {
             node {
               id
+              entityId
               host
               status
               metadata {
@@ -308,13 +310,22 @@ const vfolderConfig: ResourceConfig<resourceRegistryVfolderQuery, VfolderNode> =
         type: 'string',
       },
     ],
-    getColumns: (t) => [
+    getColumns: (t, options) => [
       {
         key: 'name',
         dataIndex: 'name',
         title: t('data.folders.Name'),
         sorter: true,
-        render: (_value, record) => record.metadata?.name,
+        // The name opens the folder explorer, as on the Data page.
+        render: (_value, record) =>
+          options?.disableNavigation ? (
+            record.metadata?.name
+          ) : (
+            <FolderLink
+              folderId={record.entityId}
+              folderName={record.metadata?.name ?? ''}
+            />
+          ),
       },
       {
         key: 'host',

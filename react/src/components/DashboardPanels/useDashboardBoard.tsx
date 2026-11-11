@@ -27,7 +27,11 @@ import {
   type CatalogEntry,
 } from './boardModel';
 import { mergePanelEdits, updateBoard } from './dashboardConfig';
-import { createPanel, panelConfigFromInput } from './defaults';
+import {
+  createPanel,
+  panelConfigFromInput,
+  settingsFromInput,
+} from './defaults';
 import { DetailLinkContext, resolveDetailLink } from './detailLink';
 import { effectivePanelType, panelRegistry } from './panelRegistry';
 import {
@@ -37,7 +41,7 @@ import {
   overriddenSettings,
   panelSettingOverridesAtom,
 } from './panelSettingOverrides';
-import { mergeSettings } from './panelSettings';
+import { mergeSettings, panelDefinitionOf } from './panelSettings';
 import { availableResourceKeys, resolvePanelTitle } from './resourceRegistry';
 import type {
   DashboardBoard,
@@ -242,7 +246,15 @@ export const useDashboardBoard = ({
             columnOffset: undefined,
           }
         : {};
-    save(updatePanel(board, id, { ...next, ...resized }));
+    // Like a settings-modal save, the saved default replaces a header pick.
+    clearOverrides([id]);
+    save(
+      updatePanel(board, id, {
+        ...next,
+        ...resized,
+        settings: settingsFromInput(current.settings, input),
+      }),
+    );
   };
 
   const setPanelsActive = (keys: ReadonlyArray<string>, active: boolean) => {
@@ -275,8 +287,9 @@ export const useDashboardBoard = ({
 
   // A card reads its header pick over its saved settings; edits and saves keep using `panel`.
   const contentOf = (panel: PersistedPanelV2): React.ReactNode => {
-    const definition = definitionByKey.get(panel.key);
-    if (!definition) return null;
+    const catalogDefinition = definitionByKey.get(panel.key);
+    if (!catalogDefinition) return null;
+    const definition = panelDefinitionOf(catalogDefinition, panel);
     const override = settingOverrides[overrideKey(panel.id)];
     const effective = effectivePanelSettings(
       panel.settings,
@@ -301,7 +314,6 @@ export const useDashboardBoard = ({
                 panel.id,
                 nextOverride(override, change, panel.settings, definition),
               ),
-            onReset: () => setOverride(panel.id, undefined),
           }}
         >
           {content}
@@ -378,10 +390,11 @@ export const useDashboardBoard = ({
             </PanelFrame>
           )}
         >
-          {({ fetchKey }) => (
+          {({ fetchKey, vars }) => (
             <Panel
               descriptor={viewLegacyPanel.descriptor}
               fetchKey={fetchKey}
+              refreshedAt={vars.refreshedAt}
               panelId={panel.id}
               onEdit={() => onRequestEditCustomPanel(legacyPanel)}
               onRemove={() => removeById(panel.id)}
@@ -431,7 +444,13 @@ export const useDashboardBoard = ({
     removePanel: removeById,
     settingsTargetOf: (id) => {
       const panel = board.panels.find((item) => item.id === id);
-      const definition = panel ? definitionByKey.get(panel.key) : undefined;
+      const catalogDefinition = panel
+        ? definitionByKey.get(panel.key)
+        : undefined;
+      const definition =
+        panel && catalogDefinition
+          ? panelDefinitionOf(catalogDefinition, panel)
+          : undefined;
       if (!panel || !definition?.settings?.length) return null;
       const legacyPanel = toLegacyPanel(panel, definition);
       return {

@@ -3,14 +3,16 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { DonutRow } from '../memberCards/memberCardData';
+import { HStack } from '@lablup/ui-common/HStack';
 import { Text } from '@lablup/ui-common/Text';
+import { VStack } from '@lablup/ui-common/VStack';
 import {
   RadialChart,
   RadialSlice,
   RadialTooltip,
   useChartColors,
 } from '@lablup/ui-common/lab';
-import { colorVars } from '@lablup/ui-common/theme/tokens.stylex';
+import { borderVars, colorVars } from '@lablup/ui-common/theme/tokens.stylex';
 import useResizeObserver from '@react-hook/resize-observer';
 import * as stylex from '@stylexjs/stylex';
 import { BAIFlex } from 'backend.ai-ui';
@@ -37,6 +39,52 @@ const DONUT_INNER_RADIUS = 0.6;
 // The centre total's `xl` digit advance and the margin it keeps from the ring.
 const CENTRE_CHAR_WIDTH = 13;
 const CENTRE_PADDING = 16;
+
+// Layout; the ring's sizes are measured, so they enter as dynamic styles.
+const layout = stylex.create({
+  root: {
+    flexGrow: 1,
+    flexShrink: 1,
+    flexBasis: 0,
+    minHeight: 0,
+    minWidth: 0,
+    overflow: 'hidden',
+  },
+  ringBox: (size: number) => ({
+    flexShrink: 0,
+    width: size,
+    height: size,
+    position: 'relative',
+  }),
+  chartBox: (width: number, margin: number) => ({
+    flexShrink: 0,
+    width,
+    margin,
+    position: 'relative',
+  }),
+  // The legend moves under the ring when the box is narrow.
+  column: { flexDirection: 'column' },
+  overlay: { position: 'absolute', inset: 0 },
+  passThrough: { pointerEvents: 'none' },
+  legend: { maxWidth: '100%', maxHeight: '100%', overflowY: 'auto' },
+  legendOneColumn: { flexShrink: 0 },
+  legendTwoColumns: {
+    flexGrow: 0,
+    flexShrink: 1,
+    flexBasis: 'auto',
+    minWidth: 0,
+  },
+  columnOne: { width: 'max-content', maxWidth: '100%' },
+  columnTwo: { flexGrow: 1, flexShrink: 1, flexBasis: 0, minWidth: 0 },
+  legendLine: (height: number) => ({
+    height,
+    borderBottomWidth: borderVars['--border-width'],
+    borderBottomStyle: 'solid',
+    borderBottomColor: colorVars['--color-border'],
+  }),
+  nameCell: { flexGrow: 1, minWidth: 0 },
+  noShrink: { flexShrink: 0 },
+});
 
 const styles = stylex.create({
   name: { flex: 1, minWidth: 0 },
@@ -76,17 +124,14 @@ const LegendLine: React.FC<{
   isCompact?: boolean;
   children: React.ReactNode;
 }> = ({ height, isCompact, children }) => (
-  <BAIFlex
+  <HStack
     align="center"
-    gap={isCompact ? 'xs' : 'md'}
+    gap={isCompact ? 2 : 5}
     wrap="nowrap"
-    style={{
-      height,
-      borderBottom: '1px solid var(--color-border)',
-    }}
+    xstyle={layout.legendLine(height)}
   >
     {children}
-  </BAIFlex>
+  </HStack>
 );
 
 interface LegendRow extends Record<string, unknown> {
@@ -130,6 +175,8 @@ export interface DonutChartProps {
   total?: number | string | null;
   /** Makes each legend row a button that reports its row's key. */
   onRowClick?: (key: string) => void;
+  /** Draws a full pie: no hole, so no total in the centre. */
+  isPie?: boolean;
 }
 
 /** The rows' sum, "-" when a row's count was denied; an explicit `total` wins. */
@@ -156,11 +203,13 @@ const DonutChart: React.FC<DonutChartProps> = ({
   emptyText,
   total,
   onRowClick,
+  isPie = false,
 }) => {
   'use memo';
-  const rootRef = useRef<HTMLDivElement>(null);
-  const legendRef = useRef<HTMLDivElement>(null);
-  const ringRef = useRef<HTMLDivElement>(null);
+  const innerRadius = isPie ? 0 : DONUT_INNER_RADIUS;
+  const rootRef = useRef<HTMLElement>(null);
+  const legendRef = useRef<HTMLElement>(null);
+  const ringRef = useRef<HTMLElement>(null);
   const [box, setBox] = useState({ width: 0, height: 0 });
   const [legendWidth, setLegendWidth] = useState(LEGEND_WIDTH_GUESS);
   useResizeObserver(rootRef, ({ contentRect }) => {
@@ -216,12 +265,13 @@ const DonutChart: React.FC<DonutChartProps> = ({
     2 * RING_HALO;
   const ring = _.clamp(ringRoom, RING_MIN, RING_MAX);
   // Every donut card drops the ring by the same rule: too small, or its hole cannot hold the total.
-  const centreText = _.isNil(centre) ? '' : centre.toLocaleString();
+  const centreText = isPie || _.isNil(centre) ? '' : centre.toLocaleString();
   const hasRing =
     box.width > 0 &&
     ringRoom >= RING_MIN &&
-    ring * DONUT_INNER_RADIUS >=
-      centreText.length * CENTRE_CHAR_WIDTH + CENTRE_PADDING;
+    (isPie ||
+      ring * DONUT_INNER_RADIUS >=
+        centreText.length * CENTRE_CHAR_WIDTH + CENTRE_PADDING);
   const chartSize = ring + 2 * CHART_LABEL_ROOM;
 
   // Zero-value slices stay in the legend only; drawn, their separators show as a gap.
@@ -231,39 +281,31 @@ const DonutChart: React.FC<DonutChartProps> = ({
   );
 
   return (
-    <BAIFlex
+    <HStack
       ref={rootRef}
-      direction={sideBySide ? 'row' : 'column'}
       align="center"
       justify="center"
-      gap="lg"
-      style={{ flex: '1 1 0', minHeight: 0, overflow: 'hidden' }}
+      gap={6}
+      // One element in both layouts, so the size observers keep watching it.
+      xstyle={[layout.root, !sideBySide && layout.column]}
     >
       {hasRing && (
-        <BAIFlex
+        <HStack
           ref={ringRef}
           justify="center"
           align="center"
-          style={{
-            flex: 'none',
-            width: ring + 2 * RING_HALO,
-            height: ring + 2 * RING_HALO,
-            position: 'relative',
-          }}
+          xstyle={layout.ringBox(ring + 2 * RING_HALO)}
         >
           {hasValue ? (
-            <BAIFlex
-              style={{
-                flex: 'none',
-                width: chartSize,
-                margin: RING_HALO - CHART_LABEL_ROOM,
-              }}
+            <HStack
+              align="center"
+              xstyle={layout.chartBox(chartSize, RING_HALO - CHART_LABEL_ROOM)}
             >
               <RadialChart
                 data={chartRows}
                 valueKey="value"
                 labelKey="label"
-                innerRadius={DONUT_INNER_RADIUS}
+                innerRadius={innerRadius}
                 height={chartSize}
                 label={label}
               >
@@ -280,51 +322,41 @@ const DonutChart: React.FC<DonutChartProps> = ({
                 />
               </RadialChart>
               {/* The total sits in the hole; pointer events pass through to the slices' tooltips. */}
-              <BAIFlex
+              <HStack
                 justify="center"
                 align="center"
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  pointerEvents: 'none',
-                }}
+                xstyle={[layout.overlay, layout.passThrough]}
               >
                 {centreText ? (
                   <Text size="xl" weight="semibold" hasTabularNumbers>
                     {centreText}
                   </Text>
                 ) : null}
-              </BAIFlex>
-            </BAIFlex>
+              </HStack>
+            </HStack>
           ) : (
             // A neutral track the filled ring's size and thickness, with the 0 in its hole.
-            <BAIFlex
+            <HStack
               justify="center"
               align="center"
-              role="img"
-              aria-label={emptyText}
-              title={emptyText}
-              style={{
-                flex: 'none',
-                width: ring,
-                height: ring,
-                position: 'relative',
-              }}
+              xstyle={layout.ringBox(ring)}
             >
               <svg
                 width={ring}
                 height={ring}
                 viewBox={`0 0 ${ring} ${ring}`}
-                aria-hidden
-                style={{ position: 'absolute', inset: 0 }}
+                role="img"
+                aria-label={emptyText}
+                {...stylex.props(layout.overlay)}
               >
+                <title>{emptyText}</title>
                 <circle
                   cx={ring / 2}
                   cy={ring / 2}
-                  r={(ring / 2) * ((1 + DONUT_INNER_RADIUS) / 2)}
+                  r={(ring / 2) * ((1 + innerRadius) / 2)}
                   fill="none"
                   stroke={chartColors.structural.grid}
-                  strokeWidth={(ring / 2) * (1 - DONUT_INNER_RADIUS)}
+                  strokeWidth={(ring / 2) * (1 - innerRadius)}
                 />
               </svg>
               <Text
@@ -335,39 +367,33 @@ const DonutChart: React.FC<DonutChartProps> = ({
               >
                 {_.isString(centre) ? centre : 0}
               </Text>
-            </BAIFlex>
+            </HStack>
           )}
-        </BAIFlex>
+        </HStack>
       )}
-      <BAIFlex
+      <HStack
         ref={legendRef}
         align="start"
-        gap="md"
+        gap={5}
         aria-label={label}
         role="group"
-        style={{
-          ...(density.columns === 2
-            ? { flex: '0 1 auto', minWidth: 0, maxWidth: '100%' }
-            : { flex: 'none', maxWidth: '100%' }),
-          // Rows the box cannot hold scroll inside the legend.
-          maxHeight: '100%',
-          overflowY: 'auto',
-        }}
+        // Rows the box cannot hold scroll inside the legend.
+        xstyle={[
+          layout.legend,
+          density.columns === 2
+            ? layout.legendTwoColumns
+            : layout.legendOneColumn,
+        ]}
       >
         {_.chunk(
           legendRows,
           Math.max(1, Math.ceil(legendRows.length / density.columns)),
         ).map((columnRows, columnIndex) => (
-          <BAIFlex
+          <VStack
             key={columnIndex}
-            direction="column"
             align="stretch"
             // Columns size to their lines and shrink, names truncating, when the card is narrow.
-            style={
-              density.columns === 2
-                ? { flex: '1 1 0', minWidth: 0 }
-                : { width: 'max-content', maxWidth: '100%' }
-            }
+            xstyle={density.columns === 2 ? layout.columnTwo : layout.columnOne}
           >
             {density.hasHeader && (
               <LegendLine
@@ -391,11 +417,11 @@ const DonutChart: React.FC<DonutChartProps> = ({
                   height={density.rowHeight}
                   isCompact={density.columns === 2}
                 >
-                  <BAIFlex
-                    gap="xs"
+                  <HStack
+                    gap={2}
                     align="center"
                     wrap="nowrap"
-                    style={{ flex: 1, minWidth: 0 }}
+                    xstyle={layout.nameCell}
                   >
                     {/* The swatch takes the slice's data colour, which no token carries. */}
                     <Circle
@@ -403,7 +429,7 @@ const DonutChart: React.FC<DonutChartProps> = ({
                       fill={row.color}
                       color={row.color}
                       aria-hidden
-                      style={{ flexShrink: 0 }}
+                      {...stylex.props(layout.noShrink)}
                     />
                     <Text
                       maxLines={1}
@@ -411,7 +437,7 @@ const DonutChart: React.FC<DonutChartProps> = ({
                     >
                       {row.label}
                     </Text>
-                  </BAIFlex>
+                  </HStack>
                   <Text hasTabularNumbers xstyle={styles.number}>
                     {row.value.toLocaleString()}
                   </Text>
@@ -433,10 +459,10 @@ const DonutChart: React.FC<DonutChartProps> = ({
                 <React.Fragment key={row.key}>{line}</React.Fragment>
               );
             })}
-          </BAIFlex>
+          </VStack>
         ))}
-      </BAIFlex>
-    </BAIFlex>
+      </HStack>
+    </HStack>
   );
 };
 

@@ -4,8 +4,12 @@
  */
 import { DEFAULT_SESSION_GRID_VIEW } from '../../helper/sessionResourceGridData';
 import { generateUUID } from '../../helper/uuid';
+import { resolveChart } from './chartSources';
+import { DEFAULT_RANGE, isStoredRange } from './panelSettings';
+import { chartUsesPeriod } from './types';
 import type {
   PanelInput,
+  PanelSettings,
   PanelType,
   PersistedPanelV2,
   ResourceKey,
@@ -36,18 +40,25 @@ export const DEFAULT_PANEL_LAYOUTS: Record<
     columnSpan: 4,
     definition: { minRowSpan: 2, minColumnSpan: 2 },
   },
+  resourceChart: {
+    rowSpan: 3,
+    columnSpan: 2,
+    definition: { minRowSpan: 2, minColumnSpan: 1 },
+  },
 };
 
 export const VIZ_TO_PANEL_TYPE: Record<Viz, PanelType> = {
   table: 'resourceTable',
   stat: 'resourceCount',
   grid: 'sessionResourceGrid',
+  chart: 'resourceChart',
 };
 
 export const PANEL_TYPE_TO_VIZ: Record<PanelType, Viz> = {
   resourceTable: 'table',
   resourceCount: 'stat',
   sessionResourceGrid: 'grid',
+  resourceChart: 'chart',
 };
 
 /** Catalog key of the preset that lists `source`. */
@@ -70,7 +81,31 @@ export const panelConfigFromInput = (input: PanelInput) => ({
     input.panelType === 'sessionResourceGrid'
       ? (input.gridView ?? DEFAULT_SESSION_GRID_VIEW)
       : null,
+  chart:
+    input.panelType === 'resourceChart'
+      ? resolveChart(input.resourceType, input.chart)
+      : null,
 });
+
+/**
+ * `settings` with the range a modal submission chose: kept on a chart that
+ * counts within a period, dropped otherwise; undefined when nothing is left.
+ */
+export const settingsFromInput = (
+  settings: PanelSettings | undefined,
+  input: PanelInput,
+): PanelSettings | undefined => {
+  const { range: _range, ...rest } = settings ?? {};
+  const next: PanelSettings =
+    input.panelType === 'resourceChart' &&
+    chartUsesPeriod(resolveChart(input.resourceType, input.chart))
+      ? {
+          ...rest,
+          range: isStoredRange(input.range) ? input.range : DEFAULT_RANGE,
+        }
+      : rest;
+  return Object.keys(next).length ? next : undefined;
+};
 
 export const createPanel = (input: PanelInput): PersistedPanelV2 => ({
   // generateUUID, not Date.now (a double submit must still yield two ids) nor
@@ -78,4 +113,7 @@ export const createPanel = (input: PanelInput): PersistedPanelV2 => ({
   id: `${input.resourceType}-${generateUUID()}`,
   ...panelConfigFromInput(input),
   ...defaultSizeOf(input.panelType),
+  ...(settingsFromInput(undefined, input)
+    ? { settings: settingsFromInput(undefined, input) }
+    : {}),
 });

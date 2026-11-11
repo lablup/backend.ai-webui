@@ -6,6 +6,7 @@ import { useBAIPaginationOptionState } from '../../hooks/reactPaginationQueryOpt
 import { DeploymentNodesPanelContent } from './DeploymentNodesPanel';
 import PanelFrame from './PanelFrame';
 import { SessionNodesPanelContent } from './SessionNodesPanel';
+import { chartTableFilter } from './chartSources';
 import { resolvePanelTitle, resourceRegistry } from './resourceRegistry';
 import type { PanelDescriptor } from './types';
 import { useDashboardQueryScope } from './useDashboardFilters';
@@ -26,6 +27,8 @@ export interface ResourceTablePanelProps {
   onRemove?: () => void;
   /** The board panel's id; keys its temporary header sort. */
   panelId?: string;
+  /** The card's last refresh time, where a chart's time buckets end. */
+  refreshedAt?: number;
 }
 
 // Temporary header sorts per board panel, in memory: a refresh keeps them; leaving
@@ -50,7 +53,27 @@ const ResourceTablePanel: React.FC<ResourceTablePanelProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const title = resolvePanelTitle(descriptor, t);
+
+  return (
+    <PanelFrame
+      title={resolvePanelTitle(descriptor, t)}
+      onEdit={onEdit}
+      onRemove={onRemove}
+    >
+      <ResourceTableBody
+        descriptor={descriptor}
+        fetchKey={fetchKey}
+        panelId={panelId}
+      />
+    </PanelFrame>
+  );
+};
+
+/** The table of a board panel, with its temporary header sort; also listed under a chart. */
+export const ResourceTableBody: React.FC<
+  Pick<ResourceTablePanelProps, 'descriptor' | 'fetchKey' | 'panelId'>
+> = ({ descriptor, fetchKey, panelId }) => {
+  'use memo';
   const [boardSorts, setBoardSorts] = useAtom(boardSortsAtom);
   const sortKey = panelId ?? descriptor.resourceType;
   const boardSort = boardSorts[sortKey];
@@ -66,36 +89,34 @@ const ResourceTablePanel: React.FC<ResourceTablePanelProps> = ({
     }));
 
   return (
-    <PanelFrame title={title} onEdit={onEdit} onRemove={onRemove}>
-      <Suspense fallback={<BAISkeleton />}>
-        {/* Keyed by the query-shaping config so a descriptor edit (filter/order)
-              resets pagination AND retries out of a stuck error state. */}
-        {resourceRegistry[viewDescriptor.resourceType]?.kind ===
-        'deploymentNodes' ? (
-          <DeploymentNodesPanelContent
-            key={`${viewDescriptor.resourceType}:${JSON.stringify(viewDescriptor.filter ?? null)}:${viewDescriptor.order ?? ''}`}
-            descriptor={viewDescriptor}
-            onChangeOrder={onChangeOrder}
-            fetchKey={fetchKey}
-          />
-        ) : resourceRegistry[viewDescriptor.resourceType]?.kind ===
-          'sessionNodes' ? (
-          <SessionNodesPanelContent
-            key={`${viewDescriptor.resourceType}:${JSON.stringify(viewDescriptor.filter ?? null)}:${viewDescriptor.order ?? ''}`}
-            descriptor={viewDescriptor}
-            onChangeOrder={onChangeOrder}
-            fetchKey={fetchKey}
-          />
-        ) : (
-          <ResourceTableContent
-            key={`${viewDescriptor.resourceType}:${JSON.stringify(viewDescriptor.filter ?? null)}:${viewDescriptor.order ?? ''}`}
-            descriptor={viewDescriptor}
-            onChangeOrder={onChangeOrder}
-            fetchKey={fetchKey}
-          />
-        )}
-      </Suspense>
-    </PanelFrame>
+    <Suspense fallback={<BAISkeleton />}>
+      {/* Keyed by the query-shaping config so a descriptor edit (filter/order)
+            resets pagination AND retries out of a stuck error state. */}
+      {resourceRegistry[viewDescriptor.resourceType]?.kind ===
+      'deploymentNodes' ? (
+        <DeploymentNodesPanelContent
+          key={`${viewDescriptor.resourceType}:${JSON.stringify(viewDescriptor.filter ?? null)}:${viewDescriptor.order ?? ''}`}
+          descriptor={viewDescriptor}
+          onChangeOrder={onChangeOrder}
+          fetchKey={fetchKey}
+        />
+      ) : resourceRegistry[viewDescriptor.resourceType]?.kind ===
+        'sessionNodes' ? (
+        <SessionNodesPanelContent
+          key={`${viewDescriptor.resourceType}:${JSON.stringify(viewDescriptor.filter ?? null)}:${viewDescriptor.order ?? ''}`}
+          descriptor={viewDescriptor}
+          onChangeOrder={onChangeOrder}
+          fetchKey={fetchKey}
+        />
+      ) : (
+        <ResourceTableContent
+          key={`${viewDescriptor.resourceType}:${JSON.stringify(viewDescriptor.filter ?? null)}:${viewDescriptor.order ?? ''}`}
+          descriptor={viewDescriptor}
+          onChangeOrder={onChangeOrder}
+          fetchKey={fetchKey}
+        />
+      )}
+    </Suspense>
   );
 };
 
@@ -108,7 +129,9 @@ export const ResourceTableContent: React.FC<{
   descriptor: PanelDescriptor;
   fetchKey?: string;
   onChangeOrder?: (nextOrder?: string) => void;
-}> = ({ descriptor, fetchKey, onChangeOrder }) => {
+  /** Turns row links off, as in the panel modal's preview. */
+  disableNavigation?: boolean;
+}> = ({ descriptor, fetchKey, onChangeOrder, disableNavigation }) => {
   'use memo';
   const { t } = useTranslation();
   const queryScope = useDashboardQueryScope();
@@ -119,7 +142,12 @@ export const ResourceTableContent: React.FC<{
     setTablePaginationOption,
   } = useBAIPaginationOptionState({ current: 1, pageSize: 10 });
   useResetPageOn(
-    [descriptor.filter, descriptor.resourceGroups, queryScope],
+    [
+      descriptor.filter,
+      descriptor.range,
+      descriptor.resourceGroups,
+      queryScope,
+    ],
     setTablePaginationOption,
   );
 
@@ -127,7 +155,12 @@ export const ResourceTableContent: React.FC<{
   // so its sort cycle can reach ascending instead of snapping back to the default.
   const order = descriptor.order ?? config.defaultOrder;
   const variables = config.buildVariables({
-    filter: descriptor.filter ?? undefined,
+    filter:
+      chartTableFilter(
+        descriptor.resourceType,
+        descriptor.filter,
+        descriptor.tableWindow ?? null,
+      ) ?? undefined,
     order,
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
@@ -144,7 +177,7 @@ export const ResourceTableContent: React.FC<{
   const isLoading =
     deferredVariables !== variables || deferredFetchKey !== fetchKey;
 
-  const columns = config.getColumns?.(t) ?? [];
+  const columns = config.getColumns?.(t, { disableNavigation }) ?? [];
   return (
     <BAITable
       rowKey="id"

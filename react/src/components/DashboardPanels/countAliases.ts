@@ -32,12 +32,22 @@ export const bucketVariables = <TPrefix extends string, TFilter>(
   buckets: ReadonlyArray<DateTimeWindow | null>,
   makeFilter: (window: DateTimeWindow) => TFilter,
 ): BucketAliasVariables<TPrefix, TFilter> =>
+  countAliasVariables(
+    prefix,
+    buckets.map((window) => (window ? makeFilter(window) : null)),
+  );
+
+/** Variables for count aliases `<prefix>0..7`, one per filter; a missing or null filter switches its alias off. */
+export const countAliasVariables = <TPrefix extends string, TFilter>(
+  prefix: TPrefix,
+  filters: ReadonlyArray<TFilter | null>,
+): BucketAliasVariables<TPrefix, TFilter> =>
   Object.fromEntries(
     _.range(MAX_BUCKETS).flatMap((index) => {
-      const window = buckets[index];
+      const filter = filters[index] ?? null;
       return [
-        [`${prefix}${index}`, window ? makeFilter(window) : null],
-        [`${prefix}${index}On`, !!window],
+        [`${prefix}${index}`, filter],
+        [`${prefix}${index}On`, filter !== null],
       ];
     }),
   ) as BucketAliasVariables<TPrefix, TFilter>;

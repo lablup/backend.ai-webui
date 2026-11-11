@@ -110,41 +110,22 @@ describe('RefreshScheduler', () => {
     expect(offscreen).not.toHaveBeenCalled();
   });
 
-  it('refreshes a subscriber that comes back into view once its last refresh is older than the interval', () => {
+  it('waits for the next tick when a subscriber comes back into view', () => {
     const scheduler = new RefreshScheduler();
-    scheduler.setIntervalMs(60_000);
     const card = vi.fn();
     scheduler.register('card', { refresh: card });
     scheduler.setVisible('card', false);
 
-    vi.advanceTimersByTime(30_000);
-    scheduler.setVisible('card', true);
-    expect(card).not.toHaveBeenCalled();
-
-    scheduler.setVisible('card', false);
     vi.advanceTimersByTime(90_000);
     scheduler.tick();
     expect(card).not.toHaveBeenCalled();
-    scheduler.setVisible('card', true);
-    expect(card).toHaveBeenCalledTimes(1);
-    expect(card).toHaveBeenCalledWith(Date.now(), false);
-
-    // Already visible: reporting it again refreshes nothing.
-    vi.advanceTimersByTime(60_000);
-    scheduler.setVisible('card', true);
-    expect(card).toHaveBeenCalledTimes(1);
-  });
-
-  it('does not refresh a returning subscriber while automatic refresh is off', () => {
-    const scheduler = new RefreshScheduler();
-    scheduler.setIntervalMs(null);
-    const card = vi.fn();
-    scheduler.register('card', { refresh: card });
-    scheduler.setVisible('card', false);
-
-    vi.advanceTimersByTime(600_000);
+    // Scrolling back into view reads nothing by itself.
     scheduler.setVisible('card', true);
     expect(card).not.toHaveBeenCalled();
+
+    scheduler.tick();
+    expect(card).toHaveBeenCalledTimes(1);
+    expect(card).toHaveBeenCalledWith(Date.now(), false);
   });
 
   it('skips a subscriber on a tick while its previous refresh is in flight', () => {

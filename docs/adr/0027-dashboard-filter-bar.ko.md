@@ -54,8 +54,9 @@ sequenceDiagram
   C->>T: 1m 지남, onChange isAuto true, tick()
   T->>A: fetchKey 갱신
   T--xB: 화면 밖, 건너뜀
-  Note over B: 스크롤로 다시 보임
-  T->>B: 마지막 refresh가 1m보다 오래됨, fetchKey 갱신
+  Note over B: 스크롤로 다시 보임, 읽지 않음
+  C->>T: 1m 지남, tick()
+  T->>B: fetchKey 갱신
   C->>T: 사용자가 누름, onChange isAuto false, refreshAll()
   T->>A: fetchKey 갱신
   T->>B: fetchKey 갱신
@@ -89,7 +90,7 @@ sequenceDiagram
 
 - **Declared settings**: `PanelDefinition.settings`가 카드가 읽는 설정(`resourceGroup`, `range`)을 적는다. 값은 보드 패널의 `PersistedPanelV2.settings`(`{ resourceGroups?: string[]; range?: string }`)에 저장한다. 카드는 자원 그룹을 하나만 갖고, `resourceGroups`는 항목 하나인 배열로 저장한다. `sanitizeBoard`는 카드 정의가 적지 않은 설정을 버리고, 예전 보드에 남은 여러 자원 그룹은 첫 번째만 남긴다.
 - **Saved default in edit mode**: 편집 모드의 사이드 패널은 보드에 있는 카드 중 설정을 적은 카드에만 설정 버튼과 지금 값을 보여 주고, 버튼은 `PanelSettingsModal`을 연다. 여기서 고른 값이 보드에 저장되는 카드의 기본값이다. 설정을 적지 않은 카드는 control이 없다.
-- **Header pickers in view mode**: 설정을 적은 카드는 보기 모드에서도 머리의 제목 옆에 자원 그룹 picker와 기간 picker를 그린다(`PanelSettingsHeaderControls`). 각 picker는 hover하면 무엇을 고르는지(자원 그룹, 기간) tooltip으로 알린다. 머리에서 고른 값은 저장하지 않고 메모리(`panelSettingOverridesAtom`)에만 두어, 자동 새로고침 동안 유지되고 page를 떠나거나 다시 읽으면 저장된 기본값으로 돌아간다. 저장된 값과 다르면 자원 그룹 picker가 강조되고, picker 옆에 되돌리기 버튼이 나타나 저장된 값으로 돌린다. 기간 picker(ui-common의 `DateTimeRangeInput`, 강조 스타일이 없다)는 그 버튼으로만 표시된다.
+- **Header pickers in view mode**: 설정을 적은 카드는 보기 모드에서도 머리의 제목 옆에 자원 그룹 picker와 기간 picker를 그린다(`PanelSettingsHeaderControls`). 각 picker는 hover하면 무엇을 고르는지(자원 그룹, 기간) tooltip으로 알린다. 머리에서 고른 값은 저장하지 않고 메모리(`panelSettingOverridesAtom`)에만 두어, 자동 새로고침 동안 유지되고 page를 떠나거나 다시 읽으면 저장된 기본값으로 돌아간다. 저장된 값과 다르면 자원 그룹 picker가 강조된다. 머리에는 되돌리기 버튼이 없다. 그 아이콘이 데이터 새로고침처럼 읽혀서, 사용자는 저장된 기본값을 다시 고르거나 page를 떠나거나 다시 읽어 기본값으로 돌아간다.
 - **Resource group choices**: `PanelSettingsModal`과 머리의 picker는 자원 그룹 하나를 `BAIScopedResourceGroupSelect`로 고른다. 선택지는 page의 URL 프로젝트(`scope: { project }`)에서, superadmin page에서는 현재 도메인(`scope: { domain }`)에서 읽는다(`resourceGroupScopeOf`, `dashboardScope.ts`). SFTP 전용 자원 그룹은 뺀다. 그 목록은 같은 프로젝트의 storage host(`vfolder.list_hosts(projectId)`, superadmin page는 프로젝트 없이)의 `sftp_scaling_groups`다.
 - **Allowed groups**: `DashboardResourceGroupsProvider`(`DashboardResourceGroups.tsx`)가 page마다 한 번 그 범위의 `scopedResourceGroups`(프로젝트 page는 프로젝트 scope만 쓴다, `resourceGroupScopeOf`. scope는 OR로 합쳐지므로 도메인 scope를 더하면 그 프로젝트가 쓸 수 없는 그룹까지 나온다)를 SFTP 전용 그룹을 뺀 채 `NAME` 오름차순으로 100개까지 읽어 `useDashboardResourceGroups()`로 나눈다. 카드, 머리의 picker, 설정 modal이 이 값을 함께 쓰고, 목록을 받기 전에는 board 대신 skeleton을 그린다.
 - **Defaults**: 자원 그룹 설정이 비어 있으면 고정 카드는 그 목록의 첫 자원 그룹(`defaultResourceGroupOf`)을, 사용자 정의 패널은 모든 자원 그룹을 읽는다. 저장된 값이나 머리에서 고른 값이 목록에 없으면(프로젝트가 더 쓸 수 없으면) 같은 기본값으로 돌아간다. 목록이 100개에서 잘렸거나 읽기에 실패했으면 저장된 값을 그대로 쓴다. 헤더의 현재 자원 그룹은 읽지 않으므로 헤더에서 자원 그룹을 바꿔도 카드는 바뀌지 않는다. 기간 설정의 기본은 최근 24시간(`DEFAULT_RANGE`, `panelSettings.ts`)이고, 선택지는 최근 1시간, 24시간, 7일과 직접 고른 시작과 끝이다.
@@ -101,7 +102,7 @@ sequenceDiagram
 - **Single resource group cards**: 자원 그룹 하나만 받는 field를 읽는 카드는 `cardResourceGroup(settings.resourceGroups, allowed)`가 정한 자원 그룹 하나만 읽는다. 자원 그룹마다 요청을 나누지 않는다.
 - **Group slots**: 일반 사용자 page의 "My Total Resource Usage" 카드는 cpu, mem과 카드 자원 그룹의 `ResourceGroup.resourceInfo.capacity`에서 0보다 큰 slot만 막대로 그린다(`offeredSlotsOf`, `memberCardData.ts`). `myUserResourceAllocationV2`는 자원 그룹과 무관하게 매니저가 아는 slot을 모두 주기 때문이다. `resourceInfo`가 `null`이면 거르지 않는다. 세션 page의 자원 카드(`ConfigurableResourceCard.tsx`)는 대시보드와 같은 두 보기(My Total Resource Usage, Total Resources in Resource Group)를 같은 머리와 본문(`MyResourcesInResourceGroup`)으로 보여 주고, 자원 그룹 picker만 다르다. 그 picker는 헤더의 현재 자원 그룹을 읽고 바꾼다. slot은 대시보드 카드와 같은 방식으로, 그룹의 `resourceInfo.capacity`에 `offeredSlotsOf`를 적용해 거른다.
 - **Member allocation**: 이 카드는 일반 프로젝트 멤버가 읽을 수 있는 field만 읽는다. 사용량은 `myUserResourceAllocationV2.user.used`이고, 한도는 사용량에 `myUserResourceAllocationV2.user.assignable`, `projectResourceAllocationV2(projectId).project.assignable`, 카드 자원 그룹의 `resourceInfo.free` 중 가장 작은 값을 더한 값이다. `effectiveResourceAllocationV2`는 일반 멤버에게 `permission_access_forbidden`(프로젝트의 session READ 없음)이라 쓰지 않는다(staging, 2026-11-03 `frontend-session-guest` 계정으로 확인). 도메인 한도는 멤버가 읽을 field가 없어 빠진다. 프로젝트 한도와 자원 그룹 여유분이 거부되면 그 한도만 빼고, 카드를 숨기는 것은 주 field인 `myUserResourceAllocationV2`의 거부뿐이다.
-- **Custom panels**: data source가 자원 그룹으로 좁힐 수 있으면(`ResourceConfig.supportsResourceGroup`) 사용자 정의 패널도 자원 그룹 설정을 갖는다. 세션은 minilang filter에 `scaling_group == ...`를 붙이고, 배포는 `resourceGroup: { in }`을 쓴다. 폴더 패널은 설정이 없다.
+- **Custom panels**: data source가 자원 그룹으로 좁힐 수 있으면(`ResourceConfig.supportsResourceGroup`) 사용자 정의 패널도 자원 그룹 설정을 갖는다. 세션은 minilang filter에 `scaling_group == ...`를 붙이고, 배포는 `resourceGroup: { in }`을 쓴다. 폴더 패널은 설정이 없다. 기간 안에서 세는 사용자 정의 차트 패널은 기간 설정도 갖는다. 시간 차트(선, 영역, 세로 막대)는 언제나, 묶음 차트(도넛, 파이, 막대, 레이더)는 기본 시간 범위가 "기간 없음 (모든 항목)"이 아닐 때 갖는다. 보드 패널의 설정 종류는 `panelDefinitionOf(definition, panel)`(`panelSettings.ts`)이 정하고, 이런 차트에는 preset의 `settings`에 `range`를 더한다. 보드 패널의 `settings`를 읽는 곳은 모두 이 함수를 거친다. 기간은 위 카드 규칙(저장된 기본값, 머리글 선택기, 7일 상한, 헤더에만 보이는 기간)을 그대로 따른다. 이런 차트 아래의 테이블도 같은 기간으로 좁힌다.
 
 ### 4. 기간은 두 bound의 AND로 거른다
 
@@ -114,7 +115,7 @@ sequenceDiagram
 - **Ticks**: `BAIFetchKeyButton`이 간격마다 `onChange(key, { isAuto: true })`를 부르면 바가 `tick()`을, 사용자가 누르면(`isAuto: false`) `refreshAll()`을 부른다. 버튼은 숨겨진 탭에서 간격을 멈춘다.
 - **Subscribers**: 카드는 `useDashboardFetchKey('panel:<id>')`, 카드가 아직 읽는 page query는 `useDashboardFetchKey('page-query')`, TanStack query는 `useDashboardRefreshQuery(queryKey)`로 scheduler에 등록한다.
 - **One cadence**: `tick()`은 화면에 보이는 모든 구독자를 다시 읽는다. 카드 정의에는 refresh 간격이 없어 대시보드 전체가 함께 다시 읽힌다. `refreshAll()`은 화면 밖 구독자까지 모든 구독자를 바로 다시 읽는다.
-- **Off-screen cards**: `useBoardItemVisibility`가 화면 밖 카드를 scheduler에 알리면 `tick()`은 그 카드를 건너뛴다. 카드가 다시 보이면 마지막 refresh가 지금 간격(`setIntervalMs`, 바가 넘긴다)보다 오래됐을 때 바로 다시 읽는다. 500ms까지 이른 값도 지난 것으로 친다. 간격이 끔이면 다시 읽지 않는다.
+- **Off-screen cards**: `useBoardItemVisibility`가 화면 밖 카드를 scheduler에 알리면 `tick()`은 그 카드를 건너뛴다. 다시 보이는 카드는 바로가 아니라 다음 tick에 다시 읽으므로, 스크롤만으로는 요청이 나가지 않는다.
 - **No card buttons**: 카드와 사용자 정의 패널의 머리에는 refresh 버튼이 없다(`PanelFrame`). 대시보드 밖에서도 쓰는 카드 component는 `hideRefreshButton`으로 버튼을 숨긴다.
 - **No suspense flash**: `useDashboardFetchKey`는 fetch key를 `useTransition`의 transition 안에서 바꾸고, 카드와 page는 그 key로 query를 다시 읽는다. 새 query가 suspend하는 동안 화면은 이전 값을 그대로 보여 준다.
 - **In-flight refresh**: transition이 끝나지 않은 구독자는 `isPending`이고 scheduler에 `setPending`으로 알린다. 바의 refresh 버튼은 구독자 하나라도 진행 중이면 loading을 보이며 다음 간격을 시작하지 않고, `tick()`은 진행 중인 구독자를 건너뛴다.
@@ -139,7 +140,7 @@ sequenceDiagram
 - **Primary and secondary**: 카드의 주 데이터 field는 `readPrimary`로 읽는다. 거부면 `PermissionDeniedError`를 던지고, 다른 오류는 예전처럼 `null`이다. 보조 field(추가 count, 이전 기간 count, bucket)는 `readSecondary`로 읽고, 거부된 값과 그 값으로 만든 합계, 증감, 도넛 합계는 0 대신 "-"로 그린다.
 - **Hide through the board**: 카드 안의 `PanelPermissionBoundary`가 거부를 잡아 effect에서 `DeniedPanelsContext`로 알린다. `useDeniedPanels`(`DashboardPanelBoard`)가 거부된 panel id를 page의 scope key(`dashboardScopeKey`: page와 프로젝트, superadmin page는 도메인)별로 들고, `useDashboardBoard`는 그 panel을 board item에서 빼 board가 빈칸 없이 다시 흐른다. 저장된 보드와 `activeKeys`에는 남고, `applyLayout`은 그리지 않는 panel의 자리를 지킨다. 편집 모드의 사이드 패널은 그 카드에 "볼 권한이 없습니다"를 적는다.
 - **Reset**: scope가 바뀌면 거부 목록은 비고, 사용자가 refresh control을 누르면(`refreshAll`) 비운다. 그 사이에 받은 권한은 다음 수동 refresh에서 보인다. 자동 tick은 목록을 비우지 않는다. 같은 scope의 같은 panel은 `useBAILogger`로 한 번만 기록한다.
-- **Notice instead of hiding**: 카드 설정이나 머리 picker가 범위를 좁힌 카드(자원 그룹, 기간 등)는 숨기지 않고 본문에 "이 자원 그룹에 대한 권한이 없습니다" 같은 안내를 그린다. 머리의 picker와 되돌리기 버튼은 남아 사용자가 고른 값을 되돌릴 수 있다. 사용자 정의 패널(`kind: 'preset'`)도 숨기지 않고 안내를 그린다.
+- **Notice instead of hiding**: 카드 설정이나 머리 picker가 범위를 좁힌 카드(자원 그룹, 기간 등)는 숨기지 않고 본문에 "이 자원 그룹에 대한 권한이 없습니다" 같은 안내를 그린다. 머리의 picker는 남아 사용자가 다른 값을 고를 수 있다. 사용자 정의 패널(`kind: 'preset'`)도 숨기지 않고 안내를 그린다.
 
 ## 대안과 기각 사유
 

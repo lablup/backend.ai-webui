@@ -7,6 +7,7 @@ import {
   RANGE_LABEL_KEYS,
   RANGE_PRESETS,
   type RangePreset,
+  formatWindowLabel,
   isRangePreset,
 } from './panelSettings';
 import {
@@ -76,15 +77,21 @@ export interface PanelRangeSelectProps extends Omit<
   /** A preset (`now-24h`) or a stored fixed window (`windowRange`). */
   value?: string;
   onChange?: (range: string) => void;
-  /** The longest custom range, in days. */
+  /** The longest custom range, in days; 0 or less renders a preset select. */
   maxDays?: number;
+  /** Adds a first option, valued {@link NO_PERIOD}, to the preset select. */
+  noPeriodLabel?: string;
 }
+
+/** The value of the option `noPeriodLabel` adds. */
+export const NO_PERIOD = 'none';
 
 /** A card's time range: a rolling preset, or a fixed window of at most `maxDays`. */
 const PanelRangeSelect: React.FC<PanelRangeSelectProps> = ({
   value,
   onChange,
   maxDays = MAX_WINDOW_DAYS,
+  noPeriodLabel,
   ...inputProps
 }) => {
   'use memo';
@@ -103,7 +110,12 @@ const PanelRangeSelect: React.FC<PanelRangeSelectProps> = ({
   }));
 
   if (maxDays <= 0) {
-    // Presets only: no calendar to pick a window from.
+    // Presets only: no calendar to pick a window from, but a window the card already holds stays selectable.
+    const windowLabel = formatWindowLabel(range);
+    const isKnown =
+      isRangePreset(range) ||
+      !!windowLabel ||
+      (!!noPeriodLabel && range === NO_PERIOD);
     return (
       <BAISelect
         showSearch={false}
@@ -111,11 +123,17 @@ const PanelRangeSelect: React.FC<PanelRangeSelectProps> = ({
         id={inputProps.id}
         aria-label={inputProps['aria-label']}
         disabled={inputProps.disabled || inputProps.isDisabled}
-        options={presets.map((preset) => ({
-          value: preset.range,
-          label: preset.label,
-        }))}
-        value={isRangePreset(range) ? range : DEFAULT_RANGE}
+        options={[
+          ...(noPeriodLabel
+            ? [{ value: NO_PERIOD, label: noPeriodLabel }]
+            : []),
+          ...presets.map((preset) => ({
+            value: preset.range,
+            label: preset.label,
+          })),
+          ...(windowLabel ? [{ value: range, label: windowLabel }] : []),
+        ]}
+        value={isKnown ? range : DEFAULT_RANGE}
         onChange={(next: string | null) => {
           if (next) onChange?.(next);
         }}
