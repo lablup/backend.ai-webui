@@ -62,23 +62,39 @@ export async function clickRowAction(
   await row.hover();
   const moreActionsIn = (scope: Locator | Page) =>
     scope.getByRole('button', { name: 'More actions', exact: true });
-  const openMenu = page.getByRole('menu');
+  const expandedMoreButtons = row.getByRole('button', {
+    name: 'More actions',
+    exact: true,
+    expanded: true,
+  });
   // Retried as a whole: the row's cells mount and re-measure their overflow
   // after the row is visible (BAINameActionCell, the Labels cell's Suspense).
   await expect(async () => {
-    if ((await openMenu.count()) > 0) {
+    if ((await expandedMoreButtons.count()) > 0) {
       await page.keyboard.press('Escape');
-      await expect(openMenu).toHaveCount(0);
+      await expect(expandedMoreButtons).toHaveCount(0);
     }
     const menuCells = row
       .getByRole('cell')
       .filter({ has: moreActionsIn(page) });
     for (const cell of await menuCells.all()) {
       const moreButton = moreActionsIn(cell);
-      if (!(await moreButton.isVisible())) continue;
+      // The Labels cell's hover-only button passes isVisible() but takes no
+      // clicks, so check that a click would land before making it.
+      const clickable = await moreButton
+        .click({ trial: true, timeout: 1000 })
+        .then(
+          () => true,
+          () => false,
+        );
+      if (!clickable) continue;
       await moreButton.click();
-      await expect(openMenu.getByRole('menuitem').first()).toBeVisible();
-      const menuItem = openMenu.getByRole('menuitem', {
+      await expect(moreButton).toHaveAttribute('aria-expanded', 'true');
+      // The opened menu is the element the trigger's aria-controls names.
+      const menuId = await moreButton.getAttribute('aria-controls');
+      const menu = page.locator(`[id="${menuId}"]`);
+      await expect(menu.getByRole('menuitem').first()).toBeVisible();
+      const menuItem = menu.getByRole('menuitem', {
         name: actionTitle,
         exact: true,
       });
@@ -87,7 +103,7 @@ export async function clickRowAction(
         return;
       }
       await page.keyboard.press('Escape');
-      await expect(openMenu).toHaveCount(0);
+      await expect(moreButton).toHaveAttribute('aria-expanded', 'false');
     }
     await row
       .getByRole('button', { name: actionTitle, exact: true })
