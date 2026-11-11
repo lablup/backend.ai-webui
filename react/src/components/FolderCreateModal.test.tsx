@@ -52,6 +52,8 @@ vi.mock('../hooks', async (importOriginal) => {
     ...originalModule,
     useSuspendedBackendaiClient: () => ({
       is_superadmin: clientState.isSuperadmin,
+      // Keeps the auto-mount settings section out of these flows.
+      isManagerVersionCompatibleWith: () => false,
       _config: {
         domainName: 'default',
         enableModelFolders: true,
