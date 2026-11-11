@@ -581,10 +581,15 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
         <DeleteVFolderModalV2
           vfolderFrgmts={selectedFolderList}
           open={isOpenDeleteModal}
-          onRequestClose={(success) => {
+          onRequestClose={(success, failedIds) => {
             if (success) {
               updateFetchKey();
-              setSelectedFolderList([]);
+            }
+            // Keep only the failed folders selected so the next delete retries them.
+            if (failedIds) {
+              setSelectedFolderList((prev) =>
+                _.filter(prev, (folder) => _.includes(failedIds, folder.id)),
+              );
             }
             toggleDeleteModal();
           }}

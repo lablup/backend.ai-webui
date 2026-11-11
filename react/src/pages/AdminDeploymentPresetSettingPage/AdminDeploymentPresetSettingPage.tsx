@@ -376,7 +376,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
         mutation AdminDeploymentPresetSettingPageUpdateMutation(
           $input: UpdateDeploymentRevisionPresetInput!
         ) {
-          adminUpdateDeploymentRevisionPreset(input: $input) {
+          updateDeploymentRevisionPreset(input: $input) {
             preset {
               id
               name

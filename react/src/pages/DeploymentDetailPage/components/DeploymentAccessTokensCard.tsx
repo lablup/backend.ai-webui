@@ -371,11 +371,10 @@ const DeploymentAccessTokensTable: React.FC<
 
   const [commitDelete, isDeletingToken] =
     useMutation<DeploymentAccessTokensCardDeleteMutation>(graphql`
-      mutation DeploymentAccessTokensCardDeleteMutation(
-        $input: DeleteAccessTokenInput!
-      ) {
-        deleteAccessToken(input: $input) {
-          id
+      mutation DeploymentAccessTokensCardDeleteMutation($id: UUID!) {
+        purgeAccessToken(id: $id) {
+          purgedId
+          fieldId
         }
       }
     `);
@@ -472,9 +471,7 @@ const DeploymentAccessTokensTable: React.FC<
         onOk={() => {
           if (!deletingToken) return;
           commitDelete({
-            variables: {
-              input: { id: deletingToken.fieldId },
-            },
+            variables: { id: deletingToken.fieldId },
             onCompleted: (_res, errors) => {
               if (errors && errors.length > 0) {
                 logger.error(errors[0]);

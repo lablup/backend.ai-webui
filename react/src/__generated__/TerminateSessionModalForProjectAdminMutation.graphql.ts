@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bc1c2a7db82d47e4f5977b1c56768d7e>>
+ * @generated SignedSource<<01d2ceb28316f8530d6ed6c389ddaf8a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,17 +9,23 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+export type PartialBulkTerminateSessionsInput = {
+  forced?: boolean;
+  ids: ReadonlyArray<string>;
+};
 export type TerminateSessionModalForProjectAdminMutation$variables = {
-  forced: boolean;
-  sessionIds: ReadonlyArray<string>;
+  input: PartialBulkTerminateSessionsInput;
 };
 export type TerminateSessionModalForProjectAdminMutation$data = {
-  readonly terminateSessionsV2: {
-    readonly cancelled: ReadonlyArray<string>;
-    readonly forceTerminated: ReadonlyArray<string>;
-    readonly skipped: ReadonlyArray<string>;
-    readonly terminating: ReadonlyArray<string>;
-  } | null | undefined;
+  readonly partialBulkTerminateSessionsV2: {
+    readonly failed: ReadonlyArray<{
+      readonly id: string;
+      readonly message: string;
+    }>;
+    readonly successes: ReadonlyArray<{
+      readonly id: string;
+    }>;
+  };
 };
 export type TerminateSessionModalForProjectAdminMutation = {
   response: TerminateSessionModalForProjectAdminMutation$data;
@@ -27,15 +33,19 @@ export type TerminateSessionModalForProjectAdminMutation = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "forced"
-},
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "input"
+  }
+],
 v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "sessionIds"
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
 },
 v2 = [
   {
@@ -43,46 +53,44 @@ v2 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "forced",
-        "variableName": "forced"
-      },
-      {
-        "kind": "Variable",
-        "name": "sessionIds",
-        "variableName": "sessionIds"
+        "name": "input",
+        "variableName": "input"
       }
     ],
-    "concreteType": "TerminateSessionsPayload",
+    "concreteType": "PartialBulkTerminateSessionsPayload",
     "kind": "LinkedField",
-    "name": "terminateSessionsV2",
+    "name": "partialBulkTerminateSessionsV2",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "kind": "ScalarField",
-        "name": "cancelled",
+        "concreteType": "SessionTerminationInfo",
+        "kind": "LinkedField",
+        "name": "successes",
+        "plural": true,
+        "selections": [
+          (v1/*: any*/)
+        ],
         "storageKey": null
       },
       {
         "alias": null,
         "args": null,
-        "kind": "ScalarField",
-        "name": "terminating",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "forceTerminated",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "skipped",
+        "concreteType": "PartialBulkFailure",
+        "kind": "LinkedField",
+        "name": "failed",
+        "plural": true,
+        "selections": [
+          (v1/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "message",
+            "storageKey": null
+          }
+        ],
         "storageKey": null
       }
     ],
@@ -91,10 +99,7 @@ v2 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "TerminateSessionModalForProjectAdminMutation",
@@ -104,25 +109,22 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v1/*: any*/),
-      (v0/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "TerminateSessionModalForProjectAdminMutation",
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "be4736b37ff54351dd17b8f5d312c2bd",
+    "cacheID": "813ed9b29eaf96d4b79345999ddd9b4a",
     "id": null,
     "metadata": {},
     "name": "TerminateSessionModalForProjectAdminMutation",
     "operationKind": "mutation",
-    "text": "mutation TerminateSessionModalForProjectAdminMutation(\n  $sessionIds: [ID!]!\n  $forced: Boolean!\n) {\n  terminateSessionsV2(sessionIds: $sessionIds, forced: $forced) {\n    cancelled\n    terminating\n    forceTerminated\n    skipped\n  }\n}\n"
+    "text": "mutation TerminateSessionModalForProjectAdminMutation(\n  $input: PartialBulkTerminateSessionsInput!\n) {\n  partialBulkTerminateSessionsV2(input: $input) {\n    successes {\n      id\n    }\n    failed {\n      id\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "8c1ab011f362b60cae0d0e3b7c59bf7e";
+(node as any).hash = "0c40238a78ac4d415a26d0857ec09d7f";
 
 export default node;

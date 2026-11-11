@@ -109,6 +109,16 @@ inherited call sites needed no edit when their internals were rebuilt on Astryx.
   select it and use it for values, filters, mutation inputs and React keys. Do not add new
   `toLocalId(node.id)`, `row_id` or nested `{ id }` decoding for such a type (#10494).
   A type with neither field keeps the existing approach.
+- **Bulk mutations**: a `partialBulk*` mutation reports each item. Select the success
+  list's ids and the failure list with its id and `message` (the field names differ per
+  payload: read the schema, do not assume `successes`/`failed { id }`). All succeeded →
+  `message.success`. Some failed → `message.error` with the count, keep the failed items
+  selected for a retry, and list them in `BAIBulkErrorModal`. The request itself rejected →
+  list every requested item as failed in the same modal. An `atomicBulk*` mutation succeeds
+  or fails as a whole: one success path, one error path (`onCompleted` errors and a null
+  payload, `onError`), no per-item UI. After any success, refetch when list membership
+  changed (see the `relay-mutation-store-updates` skill). References:
+  `RoleAssignmentTab.tsx` (partial), `FairShareWeightSettingModal.tsx` (atomic).
 - `@since` / `@sinceMultiple` / `@deprecatedSince` / `@deprecatedSinceMultiple` /
   `@skipOnClient` in `graphql` tags are
   **client-side** directives defined in `data/client-directives.graphql` and stripped at

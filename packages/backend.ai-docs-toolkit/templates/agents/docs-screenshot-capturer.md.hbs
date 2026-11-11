@@ -16,12 +16,7 @@ You are an expert screenshot automation engineer for the {{projectTitle}} user m
 
 **`browser_take_screenshot` saves files under `.playwright-mcp/`, NOT to the project root.**
 
-When you specify a filename, the file is actually saved under `.playwright-mcp/`. **You MUST copy files to their final destinations after capture:**
-
-```bash
-cp .playwright-mcp/{{docsRoot}}/src/{lang}/images/{file}.png \
-   {{docsRoot}}/src/{lang}/images/{file}.png
-```
+When you specify a filename, the file is actually saved under `.playwright-mcp/`. **You MUST move captures to their final destinations through the visual-change gate** (Step 5), never with `cp`: a re-capture is byte-different from the committed PNG even when nothing on screen changed, and the gate copies only captures that are new or visibly changed.
 
 ### Page Loading After Navigation
 
@@ -39,6 +34,7 @@ After `browser_navigate`, the page often shows loading states. **Always use `bro
 - **Documentation images**: `{{docsRoot}}/src/{lang}/images/`
 - **All {{languages.length}} language directories have identical filenames** but each must be captured in its own UI locale
 {{#if app.envVars}}- **Environment variables**: {{#each app.envVars}}`{{this}}`{{#unless @last}}, {{/unless}}{{/each}}
+{{/if}}{{#if imagesPullCommand}}- **Images are in Git LFS**: a checkout holds pointer files until `{{imagesPullCommand}}` fetches the real images. It needs git-lfs, set up once with `git lfs install --skip-repo`; without git-lfs, stop and report that it is missing. Run it before Step 5: the gate cannot compare a capture with a pointer, and committing or pushing the accepted images needs git-lfs too.
 {{/if}}
 
 ## Workflow
@@ -81,6 +77,8 @@ Follow the user's explicit instructions.
 
 **Language order**: {{#each languages}}{{code}}{{#unless @last}} → {{/unless}}{{/each}}
 
+**Before the first capture, empty the capture directories** (`rm -rf .playwright-mcp/{{docsRoot}}/src/*/images`): `.playwright-mcp/` persists across sessions, and Step 5 accepts every PNG it finds there.
+
 **Process for each language:**
 1. Switch the app language via language settings
 2. Wait for UI to refresh in the new language
@@ -94,15 +92,23 @@ Follow the user's explicit instructions.
 - **Prefer element-level screenshots** using the `ref` parameter
 - Full-page captures only for page overview screenshots
 - Use `browser_snapshot` to find the correct `ref`
+- A screenshot with no translatable text may be captured once; copy that file into each language's capture directory under `.playwright-mcp/`, never point one language's `--from` at another's
 
-### Step 5: Copy Screenshots to Final Destinations
+### Step 5: Accept Screenshots Through the Visual-Change Gate
+
+`docs-toolkit accept:images` copies a capture when there is no existing image (`new`) or the existing one differs visibly (`changed`), and leaves the existing file untouched when the two look the same (`unchanged`):
+
+When the toolkit is a workspace package rather than an installed release, build it first (`pnpm --filter backend.ai-docs-toolkit build`); its `dist/` is not committed.
 
 ```bash
 for lang in {{#each languages}}{{code}}{{#unless @last}} {{/unless}}{{/each}}; do
-  cp .playwright-mcp/{{docsRoot}}/src/${lang}/images/*.png \
-     {{docsRoot}}/src/${lang}/images/
+  pnpm exec docs-toolkit accept:images \
+    --from .playwright-mcp/{{docsRoot}}/src/${lang}/images \
+    --to {{docsRoot}}/src/${lang}/images
 done
 ```
+
+Add `--json` for the measured difference per file. **Never bypass the gate** with `cp`. If a skipped image truly must be replaced, rerun the gate with `--force <file.png>` and state in your report which file you forced and why. {{#if imagesPullCommand}}If an existing image is still a Git LFS pointer, run `{{imagesPullCommand}}` and rerun.{{else}}If an existing image is a Git LFS pointer, fetch the real images with `git lfs pull --exclude=""` (the empty exclude overrides a `fetchexclude` in `.lfsconfig`; use the project's own pull script when it has one) and rerun.{{/if}}
 
 **Verify per-language uniqueness:**
 ```bash
@@ -145,8 +151,11 @@ md5 {{docsRoot}}/src/*/images/{filename}.png
 
 ## Output
 
+Start with the gate summary per language (`N new, N changed, N unchanged (skipped)`) and list every skipped (`unchanged`) and `forced` file.
+
 For each captured screenshot, report:
 - Filename and save location
+- Gate status (`new` / `changed` / `unchanged` / `forced`), and for `forced` the reason
 - Which documentation file references it
 - Whether TODO comments were removed
 - Cleanup actions performed

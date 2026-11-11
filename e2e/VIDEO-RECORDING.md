@@ -6,16 +6,16 @@
 
 ## Configuration
 
-| Setting | Value | Description |
-|---------|-------|-------------|
-| `video` | `retain-on-failure` (default) | Records video only for failed tests |
-| `video` | `on` (with `PLAYWRIGHT_VIDEO=on`) | Records video for all tests |
-| `workers` | `1` | Single worker for deterministic, sequential recordings |
+| Setting   | Value                             | Description                                            |
+| --------- | --------------------------------- | ------------------------------------------------------ |
+| `video`   | `retain-on-failure` (default)     | Records video only for failed tests                    |
+| `video`   | `on` (with `PLAYWRIGHT_VIDEO=on`) | Records video for all tests                            |
+| `workers` | `1`                               | Single worker for deterministic, sequential recordings |
 
 ### Environment Variables
 
-| Variable | Default | Description |
-|----------|---------|-------------|
+| Variable           | Default | Description                                                                |
+| ------------------ | ------- | -------------------------------------------------------------------------- |
 | `PLAYWRIGHT_VIDEO` | (unset) | Set to `on` to record all tests. Otherwise only failed tests are recorded. |
 
 ## Usage
@@ -29,7 +29,7 @@ PLAYWRIGHT_VIDEO=on pnpm exec playwright test --config=playwright-video.config.t
 ### Record specific test file
 
 ```bash
-PLAYWRIGHT_VIDEO=on pnpm exec playwright test e2e/auth/login.spec.ts --config=playwright-video.config.ts
+PLAYWRIGHT_VIDEO=on pnpm exec playwright test e2e/common/auth/login.spec.ts --config=playwright-video.config.ts
 ```
 
 ### Record only failed tests (default)

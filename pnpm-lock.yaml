@@ -682,6 +682,31 @@ importers:
         specifier: ^4.21.0
         version: 4.21.0
 
+  packages/backend.ai-graphql-devtools:
+    dependencies:
+      graphql:
+        specifier: 'catalog:'
+        version: 16.14.2
+      graphql-language-service:
+        specifier: 5.7.0
+        version: 5.7.0(graphql@16.14.2)
+      react:
+        specifier: 'catalog:'
+        version: 19.3.1
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.3.1(react@19.3.1)
+    devDependencies:
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.3.0(@types/react@19.3.0)
+      monaco-editor:
+        specifier: ^0.55.1
+        version: 0.55.1
+
   packages/backend.ai-ui:
     dependencies:
       '@dicebear/core':
@@ -6179,6 +6204,9 @@ packages:
   de-indent@1.0.2:
     resolution: {integrity: sha512-e/1zu3xH5MQryN2zdVaF0OrdNLUbvWxzMbi+iNA6Bky7l1RoP8a2fIbRocyHclXt/arDrrR6lL3TqFD9pMQTsg==}
 
+  debounce-promise@3.1.2:
+    resolution: {integrity: sha512-rZHcgBkbYavBeD9ej6sP56XfG53d51CD4dnaw989YX/nZ/ZJfgRx/9ePKmTNiUiyQvh4mtrMoS3OAWW+yoYtpg==}
+
   debug@2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
     peerDependencies:
@@ -7176,6 +7204,12 @@ packages:
 
   graphemer@1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
+
+  graphql-language-service@5.7.0:
+    resolution: {integrity: sha512-5mwDb9HyHxMcO9RCLLieg6rC1u9XKJKWhFuvaZFJi3broQZDz1fcFNlm96UCMrIgI6MSsb9RwwqKKp2sZOZ9Gw==}
+    hasBin: true
+    peerDependencies:
+      graphql: ^15.5.0 || ^16.0.0 || ^17.0.0
 
   graphql-sse@2.6.0:
     resolution: {integrity: sha512-BXT5Rjv9UFunjQsmN9WWEIq+TFNhgYibgwo1xkXLxzguQVyOd6paJ4v5DlL9K5QplS0w74bhF+aUiqaGXZBaug==}
@@ -10768,6 +10802,9 @@ packages:
   void-elements@3.1.0:
     resolution: {integrity: sha512-Dhxzh5HZuiHQhbvTW9AMetFfBHDMYpo23Uo9btPXgdYP+3T5S+p+jgNy7spra+veYhBP2dCSgxR/i2Y02h5/6w==}
     engines: {node: '>=0.10.0'}
+
+  vscode-languageserver-types@3.18.5:
+    resolution: {integrity: sha512-kPd6+JQNz3HMJvjKlqUxERSlZHAntl/aGpsk7ImwIh0ewDKDcjgAEyVSYciPiOJD3ftbK9IrfiqUeTZLSbCizw==}
 
   vscode-uri@3.1.0:
     resolution: {integrity: sha512-/BpdSx+yCQGnCvecbyXdxHDkuk55/G3xwnC0GqY4gmQ3j+A+g8kzzgB4Nk/SINjqn6+waqw3EgbVF2QKExkRxQ==}
@@ -16663,6 +16700,8 @@ snapshots:
 
   de-indent@1.0.2: {}
 
+  debounce-promise@3.1.2: {}
+
   debug@2.6.9(supports-color@5.5.0):
     dependencies:
       ms: 2.0.0
@@ -18040,6 +18079,13 @@ snapshots:
   graceful-fs@4.2.11: {}
 
   graphemer@1.4.0: {}
+
+  graphql-language-service@5.7.0(graphql@16.14.2):
+    dependencies:
+      debounce-promise: 3.1.2
+      graphql: 16.14.2
+      nullthrows: 1.1.1
+      vscode-languageserver-types: 3.18.5
 
   graphql-sse@2.6.0(graphql@16.14.2):
     dependencies:
@@ -22465,6 +22511,8 @@ snapshots:
 
   void-elements@3.1.0: {}
 
+  vscode-languageserver-types@3.18.5: {}
+
   vscode-uri@3.1.0: {}
 
   w3c-xmlserializer@5.0.0:
@@ -22987,6 +23035,7 @@ time:
   fuse.js@7.5.0: '2026-07-13T17:23:36.705Z'
   globals@16.5.0: '2025-11-01T06:01:40.916Z'
   gpt-tokenizer@3.4.0: '2025-11-07T20:15:06.227Z'
+  graphql-language-service@5.7.0: '2026-08-30T19:50:52.665Z'
   graphql-sse@2.6.0: '2025-10-22T16:19:37.488Z'
   graphql@16.14.2: '2026-06-09T09:08:23.122Z'
   handlebars@4.7.10: '2026-10-05T22:37:37.837Z'

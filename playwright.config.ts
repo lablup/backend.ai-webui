@@ -1,6 +1,69 @@
+import { e2ePartFilter, resolveE2EParts } from "./e2e/e2e-parts";
 import { defineConfig, devices } from "@playwright/test";
 import * as dotenv from "dotenv";
-dotenv.config({ path: "./e2e/envs/.env.playwright", override: true });
+import * as fs from "fs";
+import * as path from "path";
+
+/*
+ * E2E_PART narrows the `chromium` project to folders of the suite
+ * (e2e/e2e-parts.ts); unset means all. E2E_ENV_FILE picks the env file:
+ * default e2e/envs/.env.playwright; a part list with `admin` requires
+ * e2e/envs/.env.playwright.admin. One run talks to one server.
+ */
+const requestedPart = process.env.E2E_PART;
+const requestedEnvFile = process.env.E2E_ENV_FILE;
+const e2eParts = resolveE2EParts(requestedPart);
+const defaultEnvFile = "./e2e/envs/.env.playwright";
+const adminEnvFile = "./e2e/envs/.env.playwright.admin";
+const includesAdmin = e2eParts.includes("admin");
+if (!requestedEnvFile && includesAdmin && !fs.existsSync(adminEnvFile)) {
+  throw new Error(
+    `E2E_PART=${e2eParts.join(",")} needs ${adminEnvFile} (copy ` +
+      `e2e/envs/.env.playwright.admin.sample) or an explicit E2E_ENV_FILE`,
+  );
+}
+const e2eEnvFile =
+  requestedEnvFile || (includesAdmin ? adminEnvFile : defaultEnvFile);
+if (requestedEnvFile && !fs.existsSync(e2eEnvFile)) {
+  throw new Error(`E2E_ENV_FILE not found: ${e2eEnvFile}`);
+}
+dotenv.config({ path: e2eEnvFile, override: true });
+// Workers re-evaluate this file, so an env file must not change the selection.
+for (const [key, value] of [
+  ["E2E_PART", requestedPart],
+  ["E2E_ENV_FILE", requestedEnvFile],
+] as const) {
+  if (value === undefined) delete process.env[key];
+  else process.env[key] = value;
+}
+if (!process.env.TEST_WORKER_INDEX && (requestedPart || requestedEnvFile)) {
+  const host = (url?: string) => {
+    try {
+      return new URL(url ?? "").host;
+    } catch {
+      return "(unset)";
+    }
+  };
+  console.error(
+    `[e2e] part=${e2eParts.join(",")} env=${e2eEnvFile}` +
+      ` webui=${host(process.env.E2E_WEBUI_ENDPOINT)}` +
+      ` webserver=${host(process.env.E2E_WEBSERVER_ENDPOINT)}`,
+  );
+}
+
+// Separate outputs per part, so one part's run does not wipe the other's;
+// PLAYWRIGHT_HTML_OUTPUT_DIR / PLAYWRIGHT_HTML_REPORT and --output still win.
+const partOutput = e2eParts.includes("all") ? undefined : e2eParts.join("-");
+const htmlReporter: [string, Record<string, unknown>] = [
+  "html",
+  {
+    open: "never",
+    ...(partOutput && { outputFolder: `playwright-report/${partOutput}` }),
+  },
+];
+
+const teardownSpec = /global-cleanup\.teardown\.ts/;
+const partFilter = e2ePartFilter(e2eParts, path.join(__dirname, "e2e"));
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -23,9 +86,10 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
+  ...(partOutput && { outputDir: `test-results/${partOutput}` }),
   reporter: process.env.CI
-    ? [["html", { open: "never" }], ["github"]]
-    : [["html", { open: "never" }], ["list"]],
+    ? [htmlReporter, ["github"]]
+    : [htmlReporter, ["list"]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   /* Default timeout for each test */
   timeout: 180000,
@@ -50,15 +114,18 @@ export default defineConfig({
     actionTimeout: 30000,
   },
 
-  snapshotPathTemplate: `e2e/{testFileDir}/snapshot/{arg}{ext}`,
   /* Configure projects for major browsers */
   projects: [
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"], locale: "en-US" },
       // The global cleanup runs as a dedicated teardown project, not as a
-      // regular test in the suite.
-      testIgnore: /global-cleanup\.teardown\.ts/,
+      // regular test in the suite. E2E_PART narrows this project rather than
+      // adding one per part, so `--project chromium` keeps working.
+      ...(partFilter.testMatch && { testMatch: partFilter.testMatch }),
+      testIgnore: partFilter.testIgnore
+        ? [teardownSpec, partFilter.testIgnore]
+        : teardownSpec,
       teardown: "cleanup",
     },
 

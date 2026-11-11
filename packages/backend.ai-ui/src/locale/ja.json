@@ -26,7 +26,10 @@
     "ActivateArtifacts": "アーティファクトをアクティブにします",
     "AreYouSureYouWantToActivateOne": "{{name}}をアクティブにしたいですか？",
     "AreYouSureYouWantToActivateSome": "{{count}}アーティファクトをアクティブにしたいですか？",
+    "Error": "エラー",
     "FailedToActivateArtifacts": "アーティファクトをアクティブにすることができませんでした。",
+    "Name": "名前",
+    "SomeArtifactsFailedToActivate": "{{count}} 件のアーティファクトを有効化できませんでした",
     "SuccessfullyActivated": "正常にアクティブ化されたアーティファクト。"
   },
   "comp:BAIAdminKeypairResourcePolicySelect": {
@@ -980,7 +983,10 @@
     "AreYouSureYouWantToDeactivateSome": "{{count}}アーティファクトを無効にしたいですか？",
     "Deactivate": "無効にします",
     "DeactivateArtifacts": "アーティファクトを無効にします",
+    "Error": "エラー",
     "FailedToDeactivateArtifacts": "アーティファクトを非アクティブ化できませんでした。",
+    "Name": "名前",
+    "SomeArtifactsFailedToDeactivate": "{{count}} 件のアーティファクトを無効化できませんでした",
     "SuccessfullyDeactivated": "正常に非アクティブ化されたアーティファクト。"
   },
   "comp:BAIDeleteArtifactModal": {

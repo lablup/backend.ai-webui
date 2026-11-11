@@ -8,6 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `pnpm run relay` - compile GraphQL queries (`relay:watch` for watch mode)
 - `bash scripts/verify.sh` - the verification harness (see Core Guidelines)
 - `make i18n` - extract translation strings
+- `pnpm --filter backend.ai-webui-docs run images:pull` - fetch the manual's screenshots from Git LFS (needs git-lfs, set up once with `git lfs install --skip-repo`; only for building the manual or changing its images)
 - E2E tests (`/e2e/`, Playwright) require a full Backend.AI cluster running first
 
 ## Architecture Overview
@@ -82,7 +83,7 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
 
 ## Important Notes
 
-- Pre-commit hooks (Husky + lint-staged) run linting and formatting automatically
+- Husky hooks: pre-commit runs lint-staged (linting and formatting); pre-push uploads Git LFS objects and refuses LFS-tracked files committed as raw bytes (`scripts/git-hooks/lfs-pre-push.sh`)
 - Use `make clean` before building if encountering issues
 - Electron app requires special build process with `make dep`
 - React components use Relay; ensure GraphQL schema in `/data/` is up to date

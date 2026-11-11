@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<23099bde65b87f4412e478f65f452d1a>>
+ * @generated SignedSource<<cf91774407fe9b0dec826dca11070c50>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,16 +9,14 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type DeleteAutoScalingRuleInput = {
+export type DeploymentAutoScalingCardDeleteMutation$variables = {
   id: string;
 };
-export type DeploymentAutoScalingCardDeleteMutation$variables = {
-  input: DeleteAutoScalingRuleInput;
-};
 export type DeploymentAutoScalingCardDeleteMutation$data = {
-  readonly deleteAutoScalingRule: {
-    readonly id: string;
-  } | null | undefined;
+  readonly purgeAutoScalingRule: {
+    readonly fieldId: string;
+    readonly purgedId: string;
+  };
 };
 export type DeploymentAutoScalingCardDeleteMutation = {
   response: DeploymentAutoScalingCardDeleteMutation$data;
@@ -30,7 +28,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "input"
+    "name": "id"
   }
 ],
 v1 = [
@@ -39,20 +37,27 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "input",
-        "variableName": "input"
+        "name": "id",
+        "variableName": "id"
       }
     ],
-    "concreteType": "DeleteAutoScalingRulePayload",
+    "concreteType": "PurgeAutoScalingRulePayload",
     "kind": "LinkedField",
-    "name": "deleteAutoScalingRule",
+    "name": "purgeAutoScalingRule",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "id",
+        "name": "purgedId",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "fieldId",
         "storageKey": null
       }
     ],
@@ -77,16 +82,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "1b7b8f1adf6afd81d338607d63841181",
+    "cacheID": "fcfb1491b322ef5d512320ef227505a3",
     "id": null,
     "metadata": {},
     "name": "DeploymentAutoScalingCardDeleteMutation",
     "operationKind": "mutation",
-    "text": "mutation DeploymentAutoScalingCardDeleteMutation(\n  $input: DeleteAutoScalingRuleInput!\n) {\n  deleteAutoScalingRule(input: $input) {\n    id\n  }\n}\n"
+    "text": "mutation DeploymentAutoScalingCardDeleteMutation(\n  $id: UUID!\n) {\n  purgeAutoScalingRule(id: $id) {\n    purgedId\n    fieldId\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "051eb6f0b4919363bd328fca5366d60b";
+(node as any).hash = "acf7a61edccd823cc4e8ad41668a19ba";
 
 export default node;

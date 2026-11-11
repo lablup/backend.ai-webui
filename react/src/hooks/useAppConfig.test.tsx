@@ -60,7 +60,7 @@ const runPublicDomainWrite = async (
   write: (
     setter: ReturnType<typeof useUpdatePublicDomainAppConfig>,
   ) => Promise<void>,
-  failed: Array<{ configName: string; message: string }> = [],
+  errors?: Array<{ message: string }>,
 ) => {
   const { environment, result } = renderWithRelay(() =>
     useUpdatePublicDomainAppConfig(),
@@ -96,9 +96,14 @@ const runPublicDomainWrite = async (
   );
   const sent = upsert.request.variables.input;
   act(() => {
-    environment.mock.resolve(upsert, {
-      data: { scopedUpsertAppConfigFragments: { items: [], failed } },
-    });
+    environment.mock.resolve(
+      upsert,
+      // The atomic upsert has no `failed` list: a rejected item fails the
+      // whole write as a GraphQL error.
+      errors
+        ? ({ data: null, errors } as any)
+        : { data: { scopedAtomicBulkUpsertAppConfigFragments: { items: [] } } },
+    );
   });
   return { sent, pending };
 };
@@ -183,11 +188,11 @@ describe('useUpdatePublicDomainAppConfig', () => {
     });
   });
 
-  it('rejects with the server message when the item fails', async () => {
+  it('rejects with the server message when the write fails', async () => {
     const { pending } = await runPublicDomainWrite(
       {},
       (setter) => setter('appearance', { brand: 'denied' }),
-      [{ configName: 'publicConfigByDomain', message: 'not allowed' }],
+      [{ message: 'publicConfigByDomain: not allowed' }],
     );
 
     await expect(pending).rejects.toThrow('publicConfigByDomain: not allowed');
@@ -234,7 +239,7 @@ describe('useUpdateMyUserAppConfig', () => {
     ]);
     act(() => {
       environment.mock.resolve(upsert, {
-        data: { myUpsertAppConfigFragments: { items: [], failed: [] } },
+        data: { myAtomicBulkUpsertAppConfigFragments: { items: [] } },
       });
     });
     await pending;

@@ -1324,6 +1324,7 @@
         "data.folders.ConfirmCreateFolderVisibleToMembers",
         "data.folders.CreatedAt",
         "data.folders.DontAskAgain",
+        "data.folders.ErrorMessage",
         "data.folders.FileRenamed",
         "data.folders.FolderCreated",
         "data.folders.FolderCreationFailed",
@@ -2194,6 +2195,7 @@
         "rbac.GrantedAt",
         "rbac.Inactive",
         "rbac.NoPermissionsToDisplay",
+        "rbac.PermissionChangesFailed",
         "rbac.PermissionNotEditable",
         "rbac.PermissionType",
         "rbac.Permissions",
@@ -3955,6 +3957,7 @@
       "settings": [],
       "keys": [
         "button.ForceTerminate",
+        "dialog.error.Error",
         "session.ContainerToCleanUp",
         "session.ForceTerminateWarningMsg",
         "session.ForceTerminateWarningMsg2",
@@ -3964,6 +3967,7 @@
         "session.SessionTerminated",
         "session.Terminate",
         "session.TerminateSession",
+        "session.TerminateSessionsPartialFailureDescription",
         "userSettings.SessionTerminationDialog"
       ]
     },

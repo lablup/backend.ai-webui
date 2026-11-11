@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f64276fa0e08c36e603a889943fefdaf>>
+ * @generated SignedSource<<0aec2fa6d023cc551c92031fd361fc49>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -30,7 +30,7 @@ export type AdminModelCardSettingModalUpdateMutation$variables = {
   input: UpdateModelCardV2Input;
 };
 export type AdminModelCardSettingModalUpdateMutation$data = {
-  readonly adminUpdateModelCardV2: {
+  readonly updateModelCardV2: {
     readonly modelCard: {
       readonly accessLevel: ModelCardV2AccessLevel;
       readonly id: string;
@@ -50,7 +50,7 @@ export type AdminModelCardSettingModalUpdateMutation$data = {
       readonly readme: string | null | undefined;
       readonly updatedAt: string | null | undefined;
     };
-  } | null | undefined;
+  };
 };
 export type AdminModelCardSettingModalUpdateMutation = {
   response: AdminModelCardSettingModalUpdateMutation$data;
@@ -77,7 +77,7 @@ v1 = [
     ],
     "concreteType": "UpdateModelCardPayload",
     "kind": "LinkedField",
-    "name": "adminUpdateModelCardV2",
+    "name": "updateModelCardV2",
     "plural": false,
     "selections": [
       {
@@ -229,16 +229,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "2c67dd7a1e68ec97e0178dff31395b29",
+    "cacheID": "6f139b84e31992990123250463fb6e75",
     "id": null,
     "metadata": {},
     "name": "AdminModelCardSettingModalUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation AdminModelCardSettingModalUpdateMutation(\n  $input: UpdateModelCardV2Input!\n) {\n  adminUpdateModelCardV2(input: $input) {\n    modelCard {\n      id\n      name\n      accessLevel\n      metadata {\n        author\n        title\n        modelVersion\n        description\n        task\n        category\n        architecture\n        framework\n        label\n        license\n      }\n      readme\n      updatedAt\n    }\n  }\n}\n"
+    "text": "mutation AdminModelCardSettingModalUpdateMutation(\n  $input: UpdateModelCardV2Input!\n) {\n  updateModelCardV2(input: $input) {\n    modelCard {\n      id\n      name\n      accessLevel\n      metadata {\n        author\n        title\n        modelVersion\n        description\n        task\n        category\n        architecture\n        framework\n        label\n        license\n      }\n      readme\n      updatedAt\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "a006479f7e997c05b292895d15386c86";
+(node as any).hash = "22cdc69044e9c812f5d97c345236ac6f";
 
 export default node;

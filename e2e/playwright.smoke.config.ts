@@ -67,7 +67,6 @@ export default defineConfig({
     ['json', { outputFile: path.join(reportDir, 'results.json') }],
     ['list'],
   ],
-  snapshotPathTemplate: `${__dirname}/{testFileDir}/snapshot/{arg}{ext}`,
   use: {
     trace: 'retain-on-failure',
     video: 'retain-on-failure',
